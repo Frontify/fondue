@@ -1,7 +1,7 @@
-name: Pull Request Tests
+name: Main Branch Test
 
 on:
-    pull_request:
+    push:
         branches:
             - "main"
 
