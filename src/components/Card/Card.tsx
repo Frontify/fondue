@@ -3,7 +3,7 @@
 import React, { ReactElement, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { usePopper } from "react-popper";
-import { ReactComponent as IconActions } from "@components/Icon/Svg/Actions";
+import { ReactComponent as IconActions } from "@components/Icon/Svg/Actions.svg";
 import css from "./Card.module.css";
 import { IconSize } from "@components/Icon/Icon";
 import useClickOutsideNotify from "@utilities/useClickOutsideNotify";
