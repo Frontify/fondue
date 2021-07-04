@@ -1,4 +1,4 @@
-name: Main Branch Test
+name: Continuous Integration
 
 on:
     push:
@@ -9,7 +9,7 @@ env:
     CI: true
 
 jobs:
-    tests:
+    continuous-integration:
         runs-on: ubuntu-latest
 
         steps:
@@ -46,4 +46,4 @@ jobs:
               run: npm run lint
 
             - name: Test Components
-              run: npx cypress run-ct
+              run: npm test
