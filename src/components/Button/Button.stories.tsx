@@ -24,9 +24,9 @@ Default.argTypes = {
 export const withIcon = ButtonTemplate.bind({});
 withIcon.args = {
     children: (
-        <span>
+        <>
             <IconCaretLeft />
             Ok
-        </span>
+        </>
     ),
 };
