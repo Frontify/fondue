@@ -21,6 +21,8 @@
         "lint:css": "stylelint 'src/**/*.css'",
         "lint:css:fix": "stylelint --fix 'src/**/*.css'",
         "test": "cypress run-ct",
+        "test:browser": "cypress open-ct",
+        "test:file": "cypress run-ct --spec",
         "typecheck": "tsc",
         "storybook": "start-storybook -p 6006",
         "prepublishOnly": "npm run build",
