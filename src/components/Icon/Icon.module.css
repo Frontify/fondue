@@ -1,0 +1,29 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    fill: currentColor;
+}
+
+/* Sizes */
+.iconSize13 {
+    width: 13px;
+}
+
+.iconSize16 {
+    width: 16px;
+}
+
+.iconSize20 {
+    width: 20px;
+}
+
+.iconSize24 {
+    width: 24px;
+}
+
+.iconSize32 {
+    width: 32px;
+}

@@ -1,0 +1,73 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.breadcrumb {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    font-family: var(--f-font-standard);
+    list-style: none;
+}
+
+.item {
+    display: block;
+}
+
+.item::after {
+    position: relative;
+    top: 4px;
+    right: 4px;
+    content: url("/img/diagonal-line.svg");
+}
+
+.link {
+    display: inline-block;
+    height: 16px;
+    padding: var(--f-spacing-3x) var(--f-spacing-2x) 0 0;
+    color: var(--f-black-80);
+    font-size: var(--f-font-12-size);
+    line-height: 16px;
+    text-decoration: none;
+}
+
+.item:last-child {
+    flex-basis: 100%;
+}
+
+.item:nth-last-child(2) .link {
+    padding-right: 0;
+}
+
+.item:last-child::after,
+.item:nth-last-child(2)::after {
+    content: none;
+}
+
+.item:last-child .link {
+    height: var(--f-font-16-line-height);
+    padding: var(--f-spacing-1x-half) 0 10px;
+    color: var(--f-black);
+    font-size: var(--f-font-16-size);
+    line-height: var(--f-font-16-line-height);
+}
+
+.item:only-child .link {
+    padding: var(--f-spacing-5x) 0;
+}
+
+@keyframes skeletonColor {
+    0%,
+    100% {
+        background-color: var(--f-black-10);
+    }
+    50% {
+        background-color: var(--f-black-20);
+    }
+}
+
+.loading {
+    width: 80px;
+    height: var(--f-font-16-line-height);
+    animation: skeletonColor 2s infinite linear;
+    border-radius: 4px;
+}

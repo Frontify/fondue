@@ -1,0 +1,73 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+const alias = require("@rollup/plugin-alias");
+const dts = require("rollup-plugin-dts").default;
+const esbuild = require("rollup-plugin-esbuild");
+const IconTemplate = require("./src/components/Icon/IconTemplate");
+const peerDepsExternal = require("rollup-plugin-peer-deps-external");
+const pkg = require("./package.json");
+const postcss = require("rollup-plugin-postcss");
+const svgrPlugin = require("esbuild-plugin-svgr");
+const resolve = require("path").resolve;
+
+const name = pkg.main.replace(/\.js$/, "");
+
+const bundle = (config) => ({
+    ...config,
+    input: "src/index.ts",
+    external: (id) => !/^[./]/.test(id),
+});
+
+const rollupConfig = [
+    bundle({
+        plugins: [
+            alias({
+                entries: [
+                    { find: "@components", replacement: resolve(__dirname, "./src/components") },
+                    { find: "@utilities", replacement: resolve(__dirname, "./src/utilities") },
+                ],
+            }),
+            svgrPlugin({
+                memo: true,
+                icon: true,
+                template: IconTemplate,
+                svgProps: {
+                    className: "{customClassName}",
+                },
+            }),
+            esbuild({
+                include: /\.[jt]sx?$/,
+                exclude: /node_modules/,
+                jsx: "transform",
+                jsxFactory: "React.createElement",
+                jsxFragment: "React.Fragment",
+                minify: process.env.NODE_ENV === "production",
+                loaders: {
+                    ".json": "json",
+                },
+            }),
+            peerDepsExternal(),
+            postcss(),
+        ],
+        output: [
+            {
+                file: `${name}.js`,
+                format: "cjs",
+                sourcemap: true,
+            },
+            {
+                file: `${name}.mjs`,
+                format: "es",
+                sourcemap: true,
+            },
+        ],
+    }),
+    bundle({
+        plugins: [dts()],
+        output: {
+            file: `${name}.d.ts`,
+            format: "es",
+        },
+    }),
+];
+
+module.exports = rollupConfig;

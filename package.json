@@ -1,0 +1,89 @@
+{
+    "name": "@frontify/react-components",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
+    "files": [
+        "dist"
+    ],
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "cross-env NODE_ENV=production npm run clean && npm run build:ts",
+        "build:ts": "rollup -c",
+        "build:storybook": "build-storybook",
+        "clean": "rimraf dist",
+        "component:create": "ts-node scripts/createNewComponent.ts",
+        "lint": "npm run lint:ts && npm run lint:css",
+        "lint:fix": "npm run lint:ts:fix && npm run lint:css:fix",
+        "lint:ts": "eslint 'src/**/*.{ts,tsx}'",
+        "lint:ts:fix": "eslint --fix 'src/**/*.{ts,tsx}'",
+        "lint:css": "stylelint 'src/**/*.css'",
+        "lint:css:fix": "stylelint --fix 'src/**/*.css'",
+        "test": "cypress run-ct",
+        "typecheck": "tsc",
+        "storybook": "start-storybook -p 6006",
+        "prepublishOnly": "npm run build",
+        "prepare": "is-ci || husky install"
+    },
+    "keywords": [
+        "frontify",
+        "react",
+        "components",
+        "design system"
+    ],
+    "author": "Frontify Developers <developers@frontify.com>",
+    "repository": {
+        "url": "https://github.com/frontify/react-components"
+    },
+    "bugs": {
+        "url": "https://github.com/frontify/react-components/issues"
+    },
+    "devDependencies": {
+        "@cypress/react": "^5.9.1",
+        "@cypress/vite-dev-server": "^2.0.1",
+        "@frontify/eslint-config-react": "^0.7.0",
+        "@frontify/stylelint-config": "^0.0.5",
+        "@rollup/plugin-alias": "^3.1.2",
+        "@storybook/addon-actions": "^6.3.2",
+        "@storybook/addon-essentials": "^6.3.2",
+        "@storybook/addon-links": "^6.3.2",
+        "@storybook/addon-postcss": "^2.0.0",
+        "@storybook/react": "^6.3.2",
+        "@svgr/rollup": "^5.5.0",
+        "@svgr/webpack": "^5.5.0",
+        "@types/react": "^17.0.13",
+        "@types/react-dom": "^17.0.8",
+        "@types/react-router-dom": "^5.1.7",
+        "@types/svgr__rollup": "^4.3.1",
+        "@vitejs/plugin-react-refresh": "^1.3.4",
+        "chalk": "^4.1.1",
+        "cross-env": "^7.0.3",
+        "cypress": "^7.6.0",
+        "esbuild": "^0.12.14",
+        "eslint": "^7.30.0",
+        "husky": "^7.0.0",
+        "is-ci": "^2.0.0",
+        "postcss": "^8.3.5",
+        "postcss-preset-env": "^6.7.0",
+        "prettier": "^2.3.2",
+        "rimraf": "^3.0.2",
+        "rollup": "^2.52.7",
+        "rollup-plugin-dts": "^3.0.2",
+        "rollup-plugin-esbuild": "^4.5.0",
+        "rollup-plugin-peer-deps-external": "^2.2.4",
+        "rollup-plugin-postcss": "^4.0.0",
+        "storybook-builder-vite": "^0.0.10",
+        "stylelint": "^13.13.1",
+        "ts-node": "^10.0.0",
+        "typescript": "^4.3.5",
+        "vite": "^2.3.8",
+        "vite-react-jsx": "^1.1.1"
+    },
+    "peerDependencies": {
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-popper": "^2.2.5",
+        "react-router-dom": "^5.2.0"
+    }
+}

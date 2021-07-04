@@ -1,0 +1,54 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.container {
+    display: flex;
+    align-items: center;
+    padding: var(--f-spacing-2x) var(--f-spacing-3x);
+    border: var(--f-border);
+    border-radius: var(--f-corner-4px);
+}
+
+.container.disabled {
+    border: solid 1px var(--f-black-05);
+    background-color: var(--f-black-05);
+}
+
+.container:focus-within {
+    border: var(--f-border-focus);
+}
+
+.container > * + * {
+    padding-left: var(--f-spacing-2x);
+}
+
+.input {
+    flex-grow: 1;
+    border: none;
+    color: var(--f-black);
+    outline: none;
+}
+
+.input::placeholder {
+    color: var(--f-black-60);
+}
+
+.input:disabled {
+    color: var(--f-black-40);
+}
+
+.decorator,
+.clear,
+.toggleVisibility {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.decorator {
+    color: var(--f-black-80);
+}
+
+.clear,
+.toggleVisibility {
+    color: var(--f-black-60);
+}

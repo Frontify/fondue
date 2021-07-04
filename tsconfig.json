@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+        "esModuleInterop": true,
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noUnusedLocals": true,
+        "noEmit": true,
+        "strict": true,
+        "target": "esnext",
+        "jsx": "react-jsx",
+        "plugins": [{ "name": "typescript-plugin-css-modules" }],
+        "paths": {
+            "@components/*": ["./src/components/*"],
+            "@utilities/*": ["./src/utilities/*"]
+        }
+    },
+    "include": ["src/**/*", "src/svg.d.ts"],
+    "exclude": ["node_modules", "dist", "src/**/*.stories.tsx", "src/**/*.spec.tsx"]
+}
