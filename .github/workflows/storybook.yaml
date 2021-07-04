@@ -1,0 +1,38 @@
+name: Deploy Storybook
+
+on:
+    schedule:
+        # Monday to Friday at 9am (Zurich time)
+        - cron: '0 7 * * 1-5'
+    # Trigger manually the script
+    workflow_dispatch:
+
+env:
+    CI: true
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout default branch
+              uses: actions/checkout@v2
+
+            - name: Use Node.js 16
+              uses: actions/setup-node@v1
+              with:
+                  node-version: '16'
+
+            - name: Cache npm dependencies
+              id: npm_cache
+              uses: actions/cache@v2
+              with:
+                  path: '**/node_modules'
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+            - name: Install npm dependencies
+              if: steps.npm_cache.outputs.cache-hit != 'true'
+              run: npm ci
+
+            - name: Build Storybook
+              run: npm run build:storybook
