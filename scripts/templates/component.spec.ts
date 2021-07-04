@@ -19,5 +19,5 @@ describe("${componentName} Component", () => {
     });
 });
 `,
-    extension: `.test.tsx`,
+    extension: `.spec.tsx`,
 });

@@ -1,6 +1,6 @@
 import component from "./component";
 import componentStories from "./component.stories";
-import componentTest from "./component.test";
+import componentSpec from "./component.spec";
 import componentStyles from "./component.module";
 
-export default [component, componentStories, componentTest, componentStyles];
+export default [component, componentStories, componentSpec, componentStyles];
