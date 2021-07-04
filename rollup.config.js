@@ -6,7 +6,7 @@ const IconTemplate = require("./src/components/Icon/IconTemplate");
 const peerDepsExternal = require("rollup-plugin-peer-deps-external");
 const pkg = require("./package.json");
 const postcss = require("rollup-plugin-postcss");
-const svgrPlugin = require("esbuild-plugin-svgr");
+const svgr = require("@svgr/rollup").default;
 const resolve = require("path").resolve;
 
 const name = pkg.main.replace(/\.js$/, "");
@@ -26,7 +26,7 @@ const rollupConfig = [
                     { find: "@utilities", replacement: resolve(__dirname, "./src/utilities") },
                 ],
             }),
-            svgrPlugin({
+            svgr({
                 memo: true,
                 icon: true,
                 template: IconTemplate,
