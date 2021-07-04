@@ -15,8 +15,7 @@ export default function ${componentName}({ foo }: ${componentName}Props): ReactE
             {foo}
         </div>
     );
-};
-
+}
 `,
     extension: `.tsx`,
 });
