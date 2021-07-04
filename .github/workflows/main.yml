@@ -16,7 +16,34 @@ jobs:
             - name: Checkout current commit
               uses: actions/checkout@v2
 
-            - name: Run Component tests
-              uses: cypress-io/github-action@v2
+            - name: Use Node.js 16
+              uses: actions/setup-node@v1
               with:
-                  command: yarn cypress run-ct
+                  node-version: '16'
+
+            - name: Cache NPM dependencies
+              id: npm_cache
+              uses: actions/cache@v2
+              with:
+                  path: '**/node_modules'
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+            - name: Install NPM dependencies
+              if: steps.npm_cache.outputs.cache-hit != 'true'
+              run: npm ci
+
+            - name: Cache Cypress binary
+              id: cypress_cache
+              uses: actions/cache@v2
+              with:
+                  path: ~/.cache/Cypress
+                  key: ${{ runner.os }}-cypress-${{ hashFiles('package-lock.json') }}
+
+            - name: Typecheck files
+              run: npm run typecheck
+
+            - name: Lint files (JS/TS & CSS)
+              run: npm run lint
+
+            - name: Test Components
+              run: npx cypress run-ct
