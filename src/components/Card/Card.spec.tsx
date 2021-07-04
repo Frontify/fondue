@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
 import { mount } from "@cypress/react";
 import Card from "./Card";
 import { MemoryRouter } from "react-router-dom";

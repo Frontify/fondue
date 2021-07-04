@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useRef, useState } from "react";
+import { ReactElement, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { usePopper } from "react-popper";
 import { ReactComponent as IconActions } from "@components/Icon/Svg/Actions.svg";
