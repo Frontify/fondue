@@ -1,3 +1,4 @@
 {
-    "extends": "@frontify/stylelint-config"
+    "extends": "@frontify/stylelint-config",
+    "ignoreFiles": ["**/*.tsx"]
 }
