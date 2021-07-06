@@ -4,7 +4,7 @@ import { Meta, Story } from "@storybook/react";
 import Divider, { DividerHeight, DividerProps, DividerStyle } from "./Divider";
 
 export default {
-    title: "Styleguide/Divider",
+    title: "Divider",
     component: Divider,
 } as Meta;
 

@@ -3,6 +3,7 @@ import ComponentFileBuilderResponse from "./ComponentFileBuilderResponse";
 export default (componentName: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ReactElement } from "react";
 import css from "./${componentName}.module.css";
 
 export interface ${componentName}Props {
