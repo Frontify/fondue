@@ -17,6 +17,28 @@ const bundle = (config) => ({
     ...config,
     input: "src/index.ts",
     external: (id) => !/^([./]|@components|@utilities)/.test(id),
+    plugins: [
+        nodeResolve({
+            extensions: [".js", ".ts", ".tsx", ".json"],
+        }),
+        alias({
+            entries: [
+                { find: "@components", replacement: resolve(__dirname, "./src/components") },
+                { find: "@utilities", replacement: resolve(__dirname, "./src/utilities") },
+            ],
+        }),
+        url(),
+        svgr({
+            memo: true,
+            icon: true,
+            template: IconTemplate,
+            svgProps: {
+                className: "{customClassName}",
+            },
+        }),
+        postcss(),
+        ...config.plugins,
+    ],
 });
 
 const rollupConfig = [
@@ -24,21 +46,6 @@ const rollupConfig = [
         plugins: [
             nodeResolve({
                 extensions: [".js", ".ts", ".tsx", ".json"],
-            }),
-            alias({
-                entries: [
-                    { find: "@components", replacement: resolve(__dirname, "./src/components") },
-                    { find: "@utilities", replacement: resolve(__dirname, "./src/utilities") },
-                ],
-            }),
-            url(),
-            svgr({
-                memo: true,
-                icon: true,
-                template: IconTemplate,
-                svgProps: {
-                    className: "{customClassName}",
-                },
             }),
             esbuild({
                 include: /\.[jt]sx?$/,
@@ -52,7 +59,6 @@ const rollupConfig = [
                 },
             }),
             peerDepsExternal(),
-            postcss(),
         ],
         output: [
             {
