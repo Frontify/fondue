@@ -3,29 +3,35 @@ const alias = require("@rollup/plugin-alias");
 const dts = require("rollup-plugin-dts").default;
 const esbuild = require("rollup-plugin-esbuild");
 const IconTemplate = require("./src/components/Icon/IconTemplate");
+const nodeResolve = require("@rollup/plugin-node-resolve").nodeResolve;
 const peerDepsExternal = require("rollup-plugin-peer-deps-external");
 const pkg = require("./package.json");
 const postcss = require("rollup-plugin-postcss");
 const svgr = require("@svgr/rollup").default;
 const resolve = require("path").resolve;
+const url = require("@rollup/plugin-url");
 
 const name = pkg.main.replace(/\.js$/, "");
 
 const bundle = (config) => ({
     ...config,
     input: "src/index.ts",
-    external: (id) => !/^[./]/.test(id),
+    external: (id) => !/^([./]|@components|@utilities)/.test(id),
 });
 
 const rollupConfig = [
     bundle({
         plugins: [
+            nodeResolve({
+                extensions: [".js", ".ts", ".tsx", ".json"],
+            }),
             alias({
                 entries: [
                     { find: "@components", replacement: resolve(__dirname, "./src/components") },
                     { find: "@utilities", replacement: resolve(__dirname, "./src/utilities") },
                 ],
             }),
+            url(),
             svgr({
                 memo: true,
                 icon: true,
