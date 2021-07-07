@@ -1,8 +1,9 @@
 declare module "*.svg" {
-    import * as React from "react";
-    import { IconProps } from "@components/Icon/Icon";
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    import Icon from "./components/Icon/Icon";
 
-    const ReactComponent: React.FunctionComponent<React.SVGProps<SVGSVGElement> & IconProps>;
-
-    export { ReactComponent };
+    export const ReactComponent: Icon;
+    const src: string;
+    export default src;
 }
