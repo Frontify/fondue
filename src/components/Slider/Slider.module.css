@@ -1,0 +1,33 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    border: var(--f-border);
+    border-color: var(--f-black-20);
+    border-radius: var(--f-corner-4px);
+    background-color: var(--f-black-00);
+    font-family: var(--f-font-standard);
+}
+
+.item {
+    flex: 1;
+    text-align: center;
+    padding: var(--f-spacing-2x);
+    color: var(--f-black-80);
+}
+
+.item:hover {
+    cursor: pointer;
+}
+
+.item.active {
+    box-sizing: border-box;
+    border: var(--f-border);
+    border-color: var(--f-black-100);
+    border-radius: var(--f-corner-4px);
+    background-color: var(--f-white);
+    color: var(--f-black-100);
+    margin: -1px;
+}
