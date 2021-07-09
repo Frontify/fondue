@@ -23,7 +23,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition: var(--f-transition-ease-in-out);
+    transition: color var(--f-transition-ease-in-out);
 }
 
 .item > * {
