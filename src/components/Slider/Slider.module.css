@@ -23,10 +23,12 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: color 150ms ease-in-out;
 }
 
 .item:hover {
     cursor: pointer;
+    color: var(--f-black-100);
 }
 
 .item.active {
