@@ -2,6 +2,7 @@
 
 import { ReactComponent as TextAlignCenter } from "@components/Icon/Svg/TextAlignCenter.svg";
 import { Meta, Story } from "@storybook/react";
+import { useState } from "react";
 import Slider, { SliderProps } from "./Slider";
 
 export default {
@@ -9,7 +10,10 @@ export default {
     component: Slider,
 } as Meta;
 
-const SliderTemplate: Story<SliderProps> = (args) => <Slider {...args} />;
+const SliderTemplate: Story<SliderProps> = (args) => {
+    const [activeItemId, setActiveItemId] = useState(args.items[0].id);
+    return <Slider activeItemId={activeItemId} onChange={setActiveItemId} {...args} />;
+};
 
 export const Text = SliderTemplate.bind({});
 Text.args = {
@@ -18,7 +22,6 @@ Text.args = {
         { id: "b", name: "def" },
         { id: "c", name: "ghi" },
     ],
-    activeItemId: "a",
 };
 
 export const Icon = SliderTemplate.bind({});
@@ -28,5 +31,4 @@ Icon.args = {
         { id: "b", icon: <TextAlignCenter /> },
         { id: "c", icon: <TextAlignCenter /> },
     ],
-    activeItemId: "a",
 };
