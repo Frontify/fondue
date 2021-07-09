@@ -19,6 +19,9 @@
     text-align: center;
     padding: var(--f-spacing-2x);
     color: var(--f-black-80);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .item:hover {
