@@ -9,14 +9,14 @@
     border-radius: var(--f-corner-4px);
     background-color: var(--f-black-00);
     font-family: var(--f-font-standard);
+    font-size: var(--f-font-14-size);
     list-style-type: none;
     padding: 0px;
     margin: 0px;
 }
 
 .item {
-    display: flex;
-    justify-content: center;
+    text-align: center;
     flex: 1;
     padding: var(--f-spacing-2x);
     color: var(--f-black-80);
@@ -24,6 +24,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     transition: color 150ms ease-in-out;
+}
+
+.item > * {
+    margin: auto;
 }
 
 .item:hover {
