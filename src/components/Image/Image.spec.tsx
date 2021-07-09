@@ -99,9 +99,9 @@ describe("Image component", () => {
     });
 
     it("calls the onReplaceImageClick event", () => {
-        const ON_REPLACE_IMAGE_STUB = cy.stub().as("onReplaceImageClick");
+        const onReplaceImageStub = cy.stub().as("onReplaceImageClick");
 
-        mount(<Image src={IMAGE_URL} onReplaceImage={ON_REPLACE_IMAGE_STUB} />);
+        mount(<Image src={IMAGE_URL} onReplaceImage={onReplaceImageStub} />);
         cy.get("[data-test-id=image-controls]").as("controls");
         cy.get("@controls").invoke("show");
         cy.get("[data-test-id=image-controls] [data-test-id=button]").as("button").click();
@@ -110,9 +110,9 @@ describe("Image component", () => {
     });
 
     it("calls the onOpenSettingsClick event", () => {
-        const ON_OPEN_SETTINGS_STUB = cy.stub().as("onOpenSettingsClick");
+        const onOpenSettingsStub = cy.stub().as("onOpenSettingsClick");
 
-        mount(<Image src={IMAGE_URL} onOpenSettings={ON_OPEN_SETTINGS_STUB} />);
+        mount(<Image src={IMAGE_URL} onOpenSettings={onOpenSettingsStub} />);
         cy.get("[data-test-id=image-controls]").as("controls");
         cy.get("@controls").invoke("show");
         cy.get("[data-test-id=image-controls] [data-test-id=button]").as("button").click();
@@ -121,9 +121,9 @@ describe("Image component", () => {
     });
 
     it("calls the onHandleDeleteClick event", () => {
-        const ON_HANDLE_DELETE_STUB = cy.stub().as("onHandleDeleteClick");
+        const onHandleDeleteStub = cy.stub().as("onHandleDeleteClick");
 
-        mount(<Image src={IMAGE_URL} onDeleteImage={ON_HANDLE_DELETE_STUB} />);
+        mount(<Image src={IMAGE_URL} onDeleteImage={onHandleDeleteStub} />);
         cy.get("[data-test-id=image-controls]").as("controls");
         cy.get("@controls").invoke("show");
         cy.get("[data-test-id=image-controls] [data-test-id=button]").as("button").click();

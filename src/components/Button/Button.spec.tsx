@@ -90,8 +90,8 @@ describe("Button component", () => {
     });
 
     it("react on click", () => {
-        const ON_CLICK_STUB = cy.stub().as("onClickStub");
-        mount(<Button onClick={ON_CLICK_STUB}>{BUTTON_TEXT}</Button>);
+        const onClickStub = cy.stub().as("onClickStub");
+        mount(<Button onClick={onClickStub}>{BUTTON_TEXT}</Button>);
 
         cy.get("[data-test-id=button]").as("button");
         cy.get("@onClickStub").should("not.be.called");

@@ -56,22 +56,22 @@ describe("Text Input component", () => {
     });
 
     it("calls the onInput event", () => {
-        const ON_INPUT_STUB = cy.stub().as("onInputStub");
-        mount(<TextInput onInput={ON_INPUT_STUB} />);
+        const onInputStub = cy.stub().as("onInputStub");
+        mount(<TextInput onInput={onInputStub} />);
         cy.get("[data-test-id=text-input]").type(INPUT_TEXT);
         cy.get("@onInputStub").should("to.have.always.been.callCount", INPUT_TEXT.length);
     });
 
     it("calls the onBlur event", () => {
-        const ON_BLUR_STUB = cy.stub().as("onBlurStub");
-        mount(<TextInput onBlur={ON_BLUR_STUB} />);
+        const onBlurStub = cy.stub().as("onBlurStub");
+        mount(<TextInput onBlur={onBlurStub} />);
         cy.get("[data-test-id=text-input]").type(INPUT_TEXT).blur();
         cy.get("@onBlurStub").should("be.calledOnce");
     });
 
     it("calls the onClear event", () => {
-        const ON_CLEAR_STUB = cy.stub().as("onClearStub");
-        mount(<TextInput onClear={ON_CLEAR_STUB} clearable />);
+        const onClearStub = cy.stub().as("onClearStub");
+        mount(<TextInput onClear={onClearStub} clearable />);
         cy.get("[data-test-id=text-input]").as("input");
         cy.get("@input").type(INPUT_TEXT);
         cy.get("[data-test-id=clear-icon]").click();

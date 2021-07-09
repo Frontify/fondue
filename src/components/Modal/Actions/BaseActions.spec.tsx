@@ -6,10 +6,10 @@ import css from "./BaseActions.module.css";
 
 describe("Base Actions", () => {
     it("renders", () => {
-        const ON_HANDLE_CANCEL_STUB = cy.stub().as("onHandleCancelClick");
-        const ON_HANDLE_CONFIRM_STUB = cy.stub().as("onHandleConfirmClick");
+        const onHandleCancelStub = cy.stub().as("onHandleCancelClick");
+        const onHandleConfirmStub = cy.stub().as("onHandleConfirmClick");
 
-        mount(<BaseActions onCancel={ON_HANDLE_CANCEL_STUB} onConfirm={ON_HANDLE_CONFIRM_STUB} />);
+        mount(<BaseActions onCancel={onHandleCancelStub} onConfirm={onHandleConfirmStub} />);
 
         cy.get("[data-test-id=modal-base-actions]").as("base-actions");
         cy.get("@base-actions").should("have.class", css.actions);
@@ -19,13 +19,13 @@ describe("Base Actions", () => {
     });
 
     it("has custom cancelText and confirmText", () => {
-        const ON_HANDLE_CANCEL_STUB = cy.stub().as("onHandleCancelClick");
-        const ON_HANDLE_CONFIRM_STUB = cy.stub().as("onHandleConfirmClick");
+        const onHandleCancelStub = cy.stub().as("onHandleCancelClick");
+        const onHandleConfirmStub = cy.stub().as("onHandleConfirmClick");
 
         mount(
             <BaseActions
-                onCancel={ON_HANDLE_CANCEL_STUB}
-                onConfirm={ON_HANDLE_CONFIRM_STUB}
+                onCancel={onHandleCancelStub}
+                onConfirm={onHandleConfirmStub}
                 cancelText="Cancel here"
                 confirmText="Confirm here"
             />,
@@ -39,10 +39,10 @@ describe("Base Actions", () => {
     });
 
     it("calls the onCancel event", () => {
-        const ON_HANDLE_CANCEL_STUB = cy.stub().as("onHandleCancelClick");
-        const ON_HANDLE_CONFIRM_STUB = cy.stub().as("onHandleConfirmClick");
+        const onHandleCancelStub = cy.stub().as("onHandleCancelClick");
+        const onHandleConfirmStub = cy.stub().as("onHandleConfirmClick");
 
-        mount(<BaseActions onCancel={ON_HANDLE_CANCEL_STUB} onConfirm={ON_HANDLE_CONFIRM_STUB} />);
+        mount(<BaseActions onCancel={onHandleCancelStub} onConfirm={onHandleConfirmStub} />);
 
         cy.get("[data-test-id=modal-base-actions] [data-test-id=button]").should("have.length", 2);
         cy.get("[data-test-id=modal-base-actions] [data-test-id=button]").first().as("button-cancel").click();
@@ -50,10 +50,10 @@ describe("Base Actions", () => {
     });
 
     it("calls the onConfirm event", () => {
-        const ON_HANDLE_CANCEL_STUB = cy.stub().as("onHandleCancelClick");
-        const ON_HANDLE_CONFIRM_STUB = cy.stub().as("onHandleConfirmClick");
+        const onHandleCancelStub = cy.stub().as("onHandleCancelClick");
+        const onHandleConfirmStub = cy.stub().as("onHandleConfirmClick");
 
-        mount(<BaseActions onCancel={ON_HANDLE_CANCEL_STUB} onConfirm={ON_HANDLE_CONFIRM_STUB} />);
+        mount(<BaseActions onCancel={onHandleCancelStub} onConfirm={onHandleConfirmStub} />);
 
         cy.get("[data-test-id=modal-base-actions] [data-test-id=button]").should("have.length", 2);
         cy.get("[data-test-id=modal-base-actions] [data-test-id=button]").last().as("button-confirm").click();

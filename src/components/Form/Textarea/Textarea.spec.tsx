@@ -51,15 +51,15 @@ describe("Textarea component", () => {
     });
 
     it("calls the onInput event", () => {
-        const ON_INPUT_STUB = cy.stub().as("onInputStub");
-        mount(<Textarea onInput={ON_INPUT_STUB}></Textarea>);
+        const onInputStub = cy.stub().as("onInputStub");
+        mount(<Textarea onInput={onInputStub}></Textarea>);
         cy.get("textarea").type(INPUT_TEXT);
         cy.get("@onInputStub").should("to.have.always.been.callCount", INPUT_TEXT.length);
     });
 
     it("calls the onBlur event", () => {
-        const ON_BLUR_STUB = cy.stub().as("onBlurStub");
-        mount(<Textarea onBlur={ON_BLUR_STUB}></Textarea>);
+        const onBlurStub = cy.stub().as("onBlurStub");
+        mount(<Textarea onBlur={onBlurStub}></Textarea>);
         cy.get("textarea").type(INPUT_TEXT).blur();
         cy.get("@onBlurStub").should("be.calledOnce");
     });
