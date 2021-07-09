@@ -25,11 +25,10 @@ jobs:
               id: npm_cache
               uses: actions/cache@v2
               with:
-                  path: '**/node_modules'
+                  path: ~/.npm
                   key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
             - name: Install NPM dependencies
-              if: steps.npm_cache.outputs.cache-hit != 'true'
               run: npm ci
 
             - name: Cache Cypress binary
