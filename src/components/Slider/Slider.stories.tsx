@@ -13,6 +13,10 @@ const SliderTemplate: Story<SliderProps> = (args) => <Slider {...args} />;
 export const Default = SliderTemplate.bind({});
 
 Default.args = {
-    items: ["abc", "def", "ghi"],
-    activeItem: "abc",
+    items: [
+        { id: "a", name: "abc" },
+        { id: "b", name: "def" },
+        { id: "c", name: "ghi" },
+    ],
+    activeItemId: "a",
 };

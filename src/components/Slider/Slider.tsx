@@ -5,37 +5,36 @@ import { Dispatch, ReactElement, SetStateAction } from "react";
 import css from "./Slider.module.css";
 
 export interface IconItem {
+    id: string;
     icon: ReactElement<IconProps>;
+}
+
+export interface TextItem {
+    id: string;
     name: string;
 }
 
 export interface SliderProps {
-    items: string[] | IconItem[];
-    activeItem: string;
+    items: TextItem[] | IconItem[];
+    activeItemId: string;
     onChange: Dispatch<SetStateAction<string>>;
 }
 
-const isIconItem = (item: string | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
+const isIconItem = (item: TextItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
 
-export default function Slider({ items, activeItem: active, onChange }: SliderProps): ReactElement<SliderProps> {
+export default function Slider({ items, activeItemId, onChange }: SliderProps): ReactElement<SliderProps> {
+    const getItemClasses = (id: string) => [css.item, id === activeItemId ? css.active : ""].join(" ");
+
     return (
         <div data-test-id="Slider" className={css.wrapper}>
-            {items.map((item, i) =>
+            {items.map((item) =>
                 isIconItem(item) ? (
-                    <div
-                        key={i}
-                        onClick={() => onChange(item.name)}
-                        className={`${css.item} ${item.name === active ? css.active : ""}`}
-                    >
+                    <div key={item.id} onClick={() => onChange(item.id)} className={getItemClasses(item.id)}>
                         {item.icon}
                     </div>
                 ) : (
-                    <div
-                        key={i}
-                        onClick={() => onChange(item)}
-                        className={`${css.item} ${item === active ? css.active : ""}`}
-                    >
-                        {item}
+                    <div key={item.id} onClick={() => onChange(item.id)} className={getItemClasses(item.id)}>
+                        {item.name}
                     </div>
                 ),
             )}
