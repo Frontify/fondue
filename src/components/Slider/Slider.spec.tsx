@@ -11,24 +11,26 @@ const SLIDER_ITEMS = [
     { id: "c", name: "ghi" },
 ];
 
+const Component = () => {
+    const [active, setActive] = useState(SLIDER_ITEMS[0].id);
+    return <Slider items={SLIDER_ITEMS} activeItemId={active} onChange={setActive} />;
+};
+
+beforeEach(() => {
+    mount(<Component />);
+    cy.get("[data-test-id=slider]").as("slider");
+    cy.get("@slider").children().first().as("firstItem");
+    cy.get("@slider").children().last().as("lastItem");
+});
+
 describe("Slider Component", () => {
-    it("should render foo text correctly", () => {
-        const Component = () => {
-            const [active, setActive] = useState(SLIDER_ITEMS[0].id);
-
-            return <Slider items={SLIDER_ITEMS} activeItemId={active} onChange={setActive} />;
-        };
-
-        mount(<Component />);
-
-        cy.get("[data-test-id=Slider]").as("slider");
-        cy.get("@slider").children().first().as("firstItem");
-        cy.get("@slider").children().last().as("lastItem");
-
+    it("renders", () => {
         cy.get("@slider").should("have.class", css.wrapper);
         cy.get("@slider").children().should("have.length", 3);
         cy.get("@firstItem").should("have.class", css.active);
         cy.get("@firstItem").contains(SLIDER_ITEMS[0].name);
+    });
+    it("changes active item on click", () => {
         cy.get("@lastItem").click();
         cy.get("@lastItem").should("have.class", css.active);
         cy.get("@firstItem").should("not.have.class", css.active);
