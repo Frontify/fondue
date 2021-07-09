@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconProps } from "@components/Icon/Icon";
-import { Dispatch, ReactElement, SetStateAction } from "react";
+import { ReactElement } from "react";
 import css from "./Slider.module.css";
 
 export interface IconItem {
@@ -17,23 +17,31 @@ export interface TextItem {
 export interface SliderProps {
     items: TextItem[] | IconItem[];
     activeItemId: string;
-    onChange: Dispatch<SetStateAction<string>>;
+    onChange: (id: string) => void;
 }
 
 const isIconItem = (item: TextItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
+const getItemClasses = (id: string, activeItemId: string) =>
+    [css.item, id === activeItemId ? css.active : ""].join(" ");
 
 export default function Slider({ items, activeItemId, onChange }: SliderProps): ReactElement<SliderProps> {
-    const getItemClasses = (id: string) => [css.item, id === activeItemId ? css.active : ""].join(" ");
-
     return (
-        <ul data-test-id="Slider" className={css.wrapper}>
+        <ul data-test-id="slider" className={css.wrapper}>
             {items.map((item) =>
                 isIconItem(item) ? (
-                    <li key={item.id} onClick={() => onChange(item.id)} className={getItemClasses(item.id)}>
+                    <li
+                        key={item.id}
+                        onClick={() => onChange(item.id)}
+                        className={getItemClasses(item.id, activeItemId)}
+                    >
                         {item.icon}
                     </li>
                 ) : (
-                    <li key={item.id} onClick={() => onChange(item.id)} className={getItemClasses(item.id)}>
+                    <li
+                        key={item.id}
+                        onClick={() => onChange(item.id)}
+                        className={getItemClasses(item.id, activeItemId)}
+                    >
                         {item.name}
                     </li>
                 ),
