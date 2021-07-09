@@ -9,6 +9,9 @@
     border-radius: var(--f-corner-4px);
     background-color: var(--f-black-00);
     font-family: var(--f-font-standard);
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
 }
 
 .item {

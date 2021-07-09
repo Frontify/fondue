@@ -26,18 +26,18 @@ export default function Slider({ items, activeItemId, onChange }: SliderProps): 
     const getItemClasses = (id: string) => [css.item, id === activeItemId ? css.active : ""].join(" ");
 
     return (
-        <div data-test-id="Slider" className={css.wrapper}>
+        <ul data-test-id="Slider" className={css.wrapper}>
             {items.map((item) =>
                 isIconItem(item) ? (
-                    <div key={item.id} onClick={() => onChange(item.id)} className={getItemClasses(item.id)}>
+                    <li key={item.id} onClick={() => onChange(item.id)} className={getItemClasses(item.id)}>
                         {item.icon}
-                    </div>
+                    </li>
                 ) : (
-                    <div key={item.id} onClick={() => onChange(item.id)} className={getItemClasses(item.id)}>
+                    <li key={item.id} onClick={() => onChange(item.id)} className={getItemClasses(item.id)}>
                         {item.name}
-                    </div>
+                    </li>
                 ),
             )}
-        </div>
+        </ul>
     );
 }
