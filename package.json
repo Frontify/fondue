@@ -1,7 +1,7 @@
 {
     "name": "@frontify/arcade",
     "version": "0.0.5",
-    "description": "",
+    "description": "Design system of Frontify",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
     "files": [
@@ -37,10 +37,10 @@
     ],
     "author": "Frontify Developers <developers@frontify.com>",
     "repository": {
-        "url": "https://github.com/frontify/react-components"
+        "url": "https://github.com/frontify/arcade"
     },
     "bugs": {
-        "url": "https://github.com/frontify/react-components/issues"
+        "url": "https://github.com/frontify/arcade/issues"
     },
     "devDependencies": {
         "@cypress/react": "^5.9.1",
