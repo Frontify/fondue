@@ -15,8 +15,9 @@
 }
 
 .item {
+    display: flex;
+    justify-content: center;
     flex: 1;
-    text-align: center;
     padding: var(--f-spacing-2x);
     color: var(--f-black-80);
     white-space: nowrap;
