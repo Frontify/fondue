@@ -3,40 +3,52 @@
 import { IconSize } from "@components/Icon/Icon";
 import { ReactComponent as Audio } from "@components/Icon/Svg/Audio.svg";
 import { Meta, Story } from "@storybook/react";
-import Dropdown, { DropdownProps } from "./Dropdown";
+import { useState } from "react";
+import Dropdown, { DropdownProps, DropdownVariants } from "./Dropdown";
+import { MenuItemVariant } from "./DropdownMenuItem/DropdownMenuItem";
 
 export default {
     title: "Dropdown",
     component: Dropdown,
+    argTypes: {
+        variant: {
+            options: [DropdownVariants.Small, DropdownVariants.Large],
+            control: { type: "radio" },
+        },
+    },
 } as Meta;
 
-const DropdownTemplate: Story<DropdownProps> = (args) => <Dropdown {...args} />;
+const DropdownTemplate: Story<DropdownProps> = (args) => {
+    const [activeItemId, setActiveItemId] = useState("");
+    return <Dropdown activeItemId={activeItemId} onChange={setActiveItemId} {...args} />;
+};
 
-export const Default = DropdownTemplate.bind({});
+export const SmallSelect = DropdownTemplate.bind({});
 
-Default.args = {
+SmallSelect.args = {
     placeholder: "select item",
+    variant: DropdownVariants.Small,
     menuItems: [
         [
             {
-                id: "b",
+                id: "1",
                 title: "Small icon",
                 icon: <Audio size={IconSize.Size16} />,
             },
             {
-                id: "b",
+                id: "2",
                 title: "Small icon warning",
                 icon: <Audio size={IconSize.Size16} />,
                 warning: true,
             },
             {
-                id: "b",
+                id: "3",
                 title: "Small icon disabled",
                 icon: <Audio size={IconSize.Size16} />,
                 disabled: true,
             },
             {
-                id: "b",
+                id: "4",
                 title: "Small icon warning disabled",
                 icon: <Audio size={IconSize.Size16} />,
                 warning: true,
@@ -45,78 +57,95 @@ Default.args = {
         ],
         [
             {
-                id: "b",
-                title: "Large icon",
-                subtitle: "Subtitle",
-                icon: <Audio size={IconSize.Size16} />,
-            },
-            {
-                id: "b",
-                title: "Large icon warning",
-                subtitle: "Subtitle",
-                icon: <Audio size={IconSize.Size16} />,
-                warning: true,
-            },
-            {
-                id: "b",
-                title: "Large icon disabled",
-                subtitle: "Subtitle",
-                icon: <Audio size={IconSize.Size16} />,
-                disabled: true,
-            },
-            {
-                id: "b",
-                title: "Large icon warning disabled",
-                subtitle: "Subtitle",
-                icon: <Audio size={IconSize.Size16} />,
-                warning: true,
-                disabled: true,
-            },
-        ],
-        [
-            {
-                id: "b",
+                id: "9",
                 title: "Small",
             },
             {
-                id: "b",
+                id: "10",
                 title: "Small warning",
                 warning: true,
             },
             {
-                id: "b",
+                id: "11",
                 title: "Small disabled",
                 disabled: true,
             },
             {
-                id: "b",
+                id: "12",
                 title: "Small warning disabled",
                 warning: true,
                 disabled: true,
             },
         ],
+    ],
+};
+
+export const LargeSelect = DropdownTemplate.bind({});
+
+LargeSelect.args = {
+    placeholder: "select item",
+    variant: DropdownVariants.Large,
+    menuItems: [
         [
             {
-                id: "a",
-                title: "Large",
+                id: "5",
+                title: "Large icon",
                 subtitle: "Subtitle",
+                icon: <Audio size={IconSize.Size16} />,
+                variant: MenuItemVariant.Large,
             },
             {
-                id: "a",
-                title: "Large warning",
+                id: "6",
+                title: "Large icon warning",
                 subtitle: "Subtitle",
+                icon: <Audio size={IconSize.Size16} />,
+                variant: MenuItemVariant.Large,
                 warning: true,
             },
             {
-                id: "a",
-                title: "Large disabled",
+                id: "7",
+                title: "Large icon disabled",
                 subtitle: "Subtitle",
+                icon: <Audio size={IconSize.Size16} />,
+                variant: MenuItemVariant.Large,
                 disabled: true,
             },
             {
-                id: "a",
+                id: "8",
+                title: "Large icon warning disabled",
+                subtitle: "Subtitle",
+                icon: <Audio size={IconSize.Size16} />,
+                variant: MenuItemVariant.Large,
+                warning: true,
+                disabled: true,
+            },
+        ],
+        [
+            {
+                id: "13",
+                title: "Large",
+                subtitle: "Subtitle",
+                variant: MenuItemVariant.Large,
+            },
+            {
+                id: "14",
+                title: "Large warning",
+                subtitle: "Subtitle",
+                variant: MenuItemVariant.Large,
+                warning: true,
+            },
+            {
+                id: "15",
+                title: "Large disabled",
+                subtitle: "Subtitle",
+                variant: MenuItemVariant.Large,
+                disabled: true,
+            },
+            {
+                id: "16",
                 title: "Large warning disabled",
                 subtitle: "Subtitle",
+                variant: MenuItemVariant.Large,
                 warning: true,
                 disabled: true,
             },

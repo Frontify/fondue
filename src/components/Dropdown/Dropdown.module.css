@@ -12,10 +12,15 @@
     position: relative;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     border: var(--f-border);
     border-color: var(--f-black-20);
     border-radius: var(--f-corner-4px);
-    padding: var(--f-spacing-2x);
+    padding-right: var(--f-spacing-2x);
+}
+
+.trigger > svg {
+    color: var(--f-black-80);
 }
 
 .trigger:hover {
@@ -26,10 +31,16 @@
     color: var(--f-black-80);
 }
 
+.trigger li:focus,
+.trigger li:hover {
+    box-shadow: none;
+    background-color: var(--f-white);
+}
+
 .menu {
     position: absolute;
     box-sizing: border-box;
-    top: var(--f-spacing-9x);
+    top: var(--f-spacing-11x);
     left: 0px;
     width: 100%;
     border: var(--f-border);
@@ -38,7 +49,11 @@
     box-shadow: var(--f-shadow-mid);
 }
 
-.menu ul {
+.menu.large {
+    top: var(--f-spacing-18x);
+}
+
+.list {
     padding: var(--f-spacing-6x);
     list-style-type: none;
     margin: 0px;
