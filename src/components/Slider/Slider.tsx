@@ -33,6 +33,7 @@ export default function Slider({ items, activeItemId, onChange }: SliderProps): 
                         key={item.id}
                         onClick={() => onChange(item.id)}
                         className={getItemClasses(item.id, activeItemId)}
+                        data-test-id="slider-icon-item"
                     >
                         {item.icon}
                     </li>
@@ -41,6 +42,7 @@ export default function Slider({ items, activeItemId, onChange }: SliderProps): 
                         key={item.id}
                         onClick={() => onChange(item.id)}
                         className={getItemClasses(item.id, activeItemId)}
+                        data-test-id="slider-text-item"
                     >
                         {item.name}
                     </li>
