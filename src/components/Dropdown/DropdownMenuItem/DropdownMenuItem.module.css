@@ -11,17 +11,18 @@
     cursor: pointer;
     transition: background-color var(--f-transition-ease-in-out);
     border-radius: var(--f-corner-4px);
+    gap: var(--f-spacing-2x);
+    font-family: var(--f-font-standard);
+    font-size: var(--f-font-14-size);
 }
 
 .item.small {
-    padding: var(--f-spacing-2x) var(--f-spacing-3x);
-    gap: var(--f-spacing-2x);
+    padding: var(--f-spacing-2x) var(--f-spacing-5x);
 }
 
 .item.large {
-    padding: var(--f-spacing-5x) var(--f-spacing-4x);
+    padding: var(--f-spacing-3x) var(--f-spacing-5x);
     min-height: 62px;
-    gap: var(--f-spacing-3x);
 }
 
 .item.has-subtitle {

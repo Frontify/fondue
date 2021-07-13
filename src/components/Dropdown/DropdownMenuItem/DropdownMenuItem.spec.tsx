@@ -29,7 +29,7 @@ const ITEMS = [
 ];
 describe("DropdownMenuItem Component", () => {
     it("should render foo text correctly", () => {
-        mount(<DropdownMenuItem item={ITEMS[0]} />);
+        mount(<DropdownMenuItem {...ITEMS[0]} />);
         cy.get(MENU_ITEM_ID).contains("Small");
     });
 });

@@ -9,7 +9,7 @@ export enum MenuItemVariant {
     "Large",
 }
 
-export interface MenuItem {
+export type MenuItem = {
     id: string;
     title: string;
     subtitle?: string;
@@ -17,14 +17,13 @@ export interface MenuItem {
     variant?: MenuItemVariant;
     warning?: boolean;
     disabled?: boolean;
-}
+};
 
-export interface DropdownMenuItemProps {
-    item: MenuItem;
+export type DropdownMenuItemProps = {
     onClick?: () => void;
-}
+} & Omit<MenuItem, "id">;
 
-const getClassNames = (variant: MenuItemVariant, warning: boolean, disabled: boolean, hasSubtitle: boolean) => {
+const getClassNames = (variant: MenuItemVariant, warning: boolean, disabled: boolean, subtitle: string) => {
     const classNames = [css.item];
     if (variant === MenuItemVariant.Small) {
         classNames.push(css.small);
@@ -37,20 +36,25 @@ const getClassNames = (variant: MenuItemVariant, warning: boolean, disabled: boo
     if (disabled) {
         classNames.push(css.disabled);
     }
-    if (hasSubtitle) {
+    if (subtitle.length > 0) {
         classNames.push(css["has-subtitle"]);
     }
     return classNames.join(" ");
 };
 
 export default function DropdownMenuItem({
-    item: { title, icon, subtitle = "", variant = MenuItemVariant.Small, warning = false, disabled = false },
+    title,
+    icon,
+    subtitle = "",
+    variant = MenuItemVariant.Small,
+    warning = false,
+    disabled = false,
     onClick,
 }: DropdownMenuItemProps): ReactElement<DropdownMenuItemProps> {
     return (
         <li
             data-test-id="dropdown-menu-item"
-            className={getClassNames(variant, warning, disabled, subtitle.length > 0)}
+            className={getClassNames(variant, warning, disabled, subtitle)}
             tabIndex={1}
             onClick={onClick}
         >
