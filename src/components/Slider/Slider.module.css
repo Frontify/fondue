@@ -1,29 +1,29 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 .wrapper {
-    width: 100%;
     display: flex;
+    width: 100%;
     justify-content: space-evenly;
+    padding: 0;
     border: var(--f-border);
     border-color: var(--f-black-20);
-    border-radius: var(--f-corner-4px);
+    margin: 0;
     background-color: var(--f-black-00);
+    border-radius: var(--f-corner-4px);
     font-family: var(--f-font-standard);
     font-size: var(--f-font-14-size);
     list-style-type: none;
-    padding: 0px;
-    margin: 0px;
 }
 
 .item {
-    text-align: center;
+    overflow: hidden;
     flex: 1;
     padding: var(--f-spacing-2x);
     color: var(--f-black-80);
-    white-space: nowrap;
-    overflow: hidden;
+    text-align: center;
     text-overflow: ellipsis;
     transition: color var(--f-transition-ease-in-out);
+    white-space: nowrap;
 }
 
 .item > * {
@@ -31,16 +31,16 @@
 }
 
 .item:hover {
-    cursor: pointer;
     color: var(--f-black-100);
+    cursor: pointer;
 }
 
 .item.active {
     box-sizing: border-box;
     border: var(--f-border);
     border-color: var(--f-black-100);
-    border-radius: var(--f-corner-4px);
-    background-color: var(--f-white);
-    color: var(--f-black-100);
     margin: -1px;
+    background-color: var(--f-white);
+    border-radius: var(--f-corner-4px);
+    color: var(--f-black-100);
 }
