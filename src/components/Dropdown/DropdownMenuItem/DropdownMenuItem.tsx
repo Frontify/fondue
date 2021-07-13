@@ -70,7 +70,7 @@ export default function DropdownMenuItem({
                     </div>
                 )}
             </div>
-            {active && <Check size={IconSize.Size16} />}
+            {active && <Check size={IconSize.Size20} />}
         </li>
     );
 }
