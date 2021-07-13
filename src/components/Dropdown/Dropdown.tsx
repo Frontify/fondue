@@ -44,7 +44,7 @@ export default function Dropdown({
     };
 
     return (
-        <div data-test-id="dropdown" className={css.wrapper}>
+        <div className={css.wrapper}>
             <div
                 data-test-id="dropdown-trigger"
                 onClick={() => setOpen(!open)}

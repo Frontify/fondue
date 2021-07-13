@@ -1,14 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconSize } from "@components/Icon/Icon";
+import { ReactComponent as Audio } from "@components/Icon/Svg/Audio.svg";
 import { mount } from "@cypress/react";
-import DropdownMenuItem from "./DropdownMenuItem";
+import DropdownMenuItem, { MenuItemVariant } from "./DropdownMenuItem";
+import css from "./DropdownMenuItem.module.css";
 
-const MENU_ITEM_ID = "[data-test-id=dropdown-menu-item]";
+export const MENU_ITEM_TEXT_ID = "[data-test-id=dropdown-menu-item-text]";
+export const MENU_ITEM_ICON_ID = "[data-test-id=dropdown-menu-item-icon]";
 
 const ITEMS = [
     {
         id: "1",
         title: "Small",
+        icon: <Audio size={IconSize.Size16} />,
     },
     {
         id: "2",
@@ -26,10 +31,83 @@ const ITEMS = [
         warning: true,
         disabled: true,
     },
+    {
+        id: "5",
+        title: "Large icon",
+        subtitle: "Large icon subtitle",
+        icon: <Audio size={IconSize.Size16} />,
+        variant: MenuItemVariant.Large,
+    },
+    {
+        id: "6",
+        title: "Large warning",
+        subtitle: "Large warning subtitle",
+        variant: MenuItemVariant.Large,
+        warning: true,
+    },
+    {
+        id: "7",
+        title: "Large disabled",
+        subtitle: "Large disabled subtitle",
+        variant: MenuItemVariant.Large,
+        disabled: true,
+    },
+    {
+        id: "8",
+        title: "Large warning disabled",
+        subtitle: "Large warning disabled subtitle",
+        variant: MenuItemVariant.Large,
+        warning: true,
+        disabled: true,
+    },
 ];
 describe("DropdownMenuItem Component", () => {
-    it("should render foo text correctly", () => {
+    it("renders small item with icon", () => {
         mount(<DropdownMenuItem {...ITEMS[0]} />);
-        cy.get(MENU_ITEM_ID).contains("Small");
+        cy.get(MENU_ITEM_ICON_ID).contains("Small");
+    });
+    it("renders small warning item", () => {
+        mount(<DropdownMenuItem {...ITEMS[1]} />);
+        cy.get(MENU_ITEM_TEXT_ID).contains("Small warning");
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.warning);
+    });
+    it("renders small disabled item", () => {
+        mount(<DropdownMenuItem {...ITEMS[2]} />);
+        cy.get(MENU_ITEM_TEXT_ID).contains("Small disabled");
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.disabled);
+    });
+    it("renders small disabled warning item", () => {
+        mount(<DropdownMenuItem {...ITEMS[3]} />);
+        cy.get(MENU_ITEM_TEXT_ID).contains("Small warning disabled");
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.warning);
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.disabled);
+    });
+    it("renders large item with icon", () => {
+        mount(<DropdownMenuItem {...ITEMS[4]} />);
+        cy.get(MENU_ITEM_ICON_ID).contains("Large icon");
+        cy.get(MENU_ITEM_ICON_ID).contains("Large icon subtitle");
+        cy.get(MENU_ITEM_ICON_ID).should("have.class", css.large);
+    });
+    it("renders large warning item", () => {
+        mount(<DropdownMenuItem {...ITEMS[5]} />);
+        cy.get(MENU_ITEM_TEXT_ID).contains("Large warning");
+        cy.get(MENU_ITEM_TEXT_ID).contains("Large warning subtitle");
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.large);
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.warning);
+    });
+    it("renders large disabled item", () => {
+        mount(<DropdownMenuItem {...ITEMS[6]} />);
+        cy.get(MENU_ITEM_TEXT_ID).contains("Large disabled");
+        cy.get(MENU_ITEM_TEXT_ID).contains("Large disabled subtitle");
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.large);
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.disabled);
+    });
+    it("renders large disabled warning item", () => {
+        mount(<DropdownMenuItem {...ITEMS[7]} />);
+        cy.get(MENU_ITEM_TEXT_ID).contains("Large warning disabled");
+        cy.get("." + css.subtitle).contains("Large warning disabled subtitle");
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.large);
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.warning);
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.disabled);
     });
 });
