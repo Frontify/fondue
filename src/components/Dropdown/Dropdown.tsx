@@ -46,6 +46,7 @@ export default function Dropdown({
     return (
         <div data-test-id="dropdown" className={css.wrapper}>
             <div
+                data-test-id="dropdown-trigger"
                 onClick={() => setOpen(!open)}
                 className={`${css.trigger} ${!activeItem ? css.inactive : ""} ${
                     variant === DropdownVariants.Large ? css.large : ""
@@ -61,6 +62,7 @@ export default function Dropdown({
             {open && (
                 <DropdownMenu
                     items={menuItems}
+                    activeItemId={activeItemId}
                     variant={variant}
                     onChange={(id) => {
                         onChange(id);

@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconProps } from "@components/Icon/Icon";
+import { IconProps, IconSize } from "@components/Icon/Icon";
+import { ReactComponent as Check } from "@components/Icon/Svg/Check.svg";
 import { ReactElement } from "react";
 import css from "./DropdownMenuItem.module.css";
 
@@ -17,6 +18,7 @@ export type MenuItem = {
     variant?: MenuItemVariant;
     warning?: boolean;
     disabled?: boolean;
+    active?: boolean;
 };
 
 export type DropdownMenuItemProps = {
@@ -45,21 +47,22 @@ const getClassNames = (variant: MenuItemVariant, warning: boolean, disabled: boo
 export default function DropdownMenuItem({
     title,
     icon,
+    onClick,
     subtitle = "",
     variant = MenuItemVariant.Small,
     warning = false,
     disabled = false,
-    onClick,
+    active = false,
 }: DropdownMenuItemProps): ReactElement<DropdownMenuItemProps> {
     return (
         <li
-            data-test-id="dropdown-menu-item"
+            data-test-id={icon !== undefined ? "dropdown-menu-item-icon" : "dropdown-menu-item-text"}
             className={getClassNames(variant, warning, disabled, subtitle)}
             tabIndex={1}
             onClick={onClick}
         >
             {icon !== undefined && icon}
-            <div className={css.truncate} title={title}>
+            <div className={`${css.truncate} ${css.content}`} title={title}>
                 {title}
                 {subtitle && (
                     <div className={css.subtitle} title={subtitle}>
@@ -67,6 +70,7 @@ export default function DropdownMenuItem({
                     </div>
                 )}
             </div>
+            {active && <Check size={IconSize.Size16} />}
         </li>
     );
 }

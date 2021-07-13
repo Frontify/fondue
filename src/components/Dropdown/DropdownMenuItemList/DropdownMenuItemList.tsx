@@ -7,11 +7,13 @@ import css from "./DropdownMenuItemList.module.css";
 export interface DropdownMenuItemListProps {
     items: MenuItem[];
     onChange: (id: string) => void;
+    activeItemId?: string;
 }
 
 export default function DropdownMenuItemList({
     items,
     onChange,
+    activeItemId = "",
 }: DropdownMenuItemListProps): ReactElement<DropdownMenuItemListProps> {
     return (
         <ul className={css.list}>
@@ -25,6 +27,7 @@ export default function DropdownMenuItemList({
                     variant={variant}
                     warning={warning}
                     disabled={disabled}
+                    active={id === activeItemId}
                 />
             ))}
         </ul>
