@@ -36,25 +36,3 @@
     box-shadow: none;
     background-color: var(--f-white);
 }
-
-.menu {
-    position: absolute;
-    box-sizing: border-box;
-    top: var(--f-spacing-11x);
-    left: 0px;
-    width: 100%;
-    border: var(--f-border);
-    border-color: var(--f-black-10);
-    border-radius: var(--f-corner-4px);
-    box-shadow: var(--f-shadow-mid);
-}
-
-.menu.large {
-    top: var(--f-spacing-18x);
-}
-
-.list {
-    padding: var(--f-spacing-6x);
-    list-style-type: none;
-    margin: 0px;
-}
