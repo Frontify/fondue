@@ -64,7 +64,7 @@ const LARGE_ITEMS = [
 ];
 
 type Props = {
-    items: MenuItem[];
+    items: MenuItem[] | MenuItem[][];
     variant: DropdownVariants;
     placeholder?: string;
     initialActiveId?: string;
@@ -103,5 +103,16 @@ describe("Dropdown Component", () => {
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(MENU_ITEM_TEXT_ID).eq(2).click();
         cy.get(MENU_ITEM_TEXT_ID).first().contains("Large warning");
+    });
+    it("renders divider", () => {
+        mount(
+            <Component
+                items={[SMALL_ITEMS, LARGE_ITEMS]}
+                variant={DropdownVariants.Large}
+                initialActiveId={LARGE_ITEMS[0].id}
+            />,
+        );
+        cy.get(DROPDOWN_TRIGGER_ID).click();
+        cy.get("hr").should("have.length", 1);
     });
 });
