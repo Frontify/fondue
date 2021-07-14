@@ -9,15 +9,10 @@ import DropdownMenuItem, { DropdownMenuItemProps } from "./DropdownMenuItem";
 export default {
     title: "DropdownMenuItem",
     component: DropdownMenuItem,
-    argTypes: {
-        warning: {
-            options: [true, false],
-            control: { type: "radio" },
-        },
-        disabled: {
-            options: [true, false],
-            control: { type: "radio" },
-        },
+    args: {
+        warning: false,
+        disabled: false,
+        onClick: { action: "onClear" },
     },
 } as Meta;
 
@@ -29,16 +24,10 @@ Large.args = {
     subtitle: "Subtitle",
     icon: <Audio size={IconSize.Size16} />,
     size: Size.Large,
-    warning: false,
-    disabled: false,
-    onClick: { action: "onClear" },
 };
 
 export const Small = DropdownMenuItemTemplate.bind({});
 Small.args = {
     title: "Small Menu Item",
     icon: <Audio size={IconSize.Size16} />,
-    warning: false,
-    disabled: false,
-    onClick: { action: "onClear" },
 };

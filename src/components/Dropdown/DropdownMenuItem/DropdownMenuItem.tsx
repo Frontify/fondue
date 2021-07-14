@@ -64,7 +64,7 @@ export default function DropdownMenuItem({
             className={getClassNames(size, warning, disabled, subtitle)}
             tabIndex={1}
             onClick={() => {
-                if (onClick) {
+                if (onClick && !disabled) {
                     onClick();
                 }
             }}

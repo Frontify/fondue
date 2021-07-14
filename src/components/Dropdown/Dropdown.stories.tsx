@@ -10,13 +10,12 @@ import Dropdown, { DropdownProps } from "./Dropdown";
 export default {
     title: "Dropdown",
     component: Dropdown,
+    args: {
+        disabled: false,
+    },
     argTypes: {
         size: {
             options: [Size.Small, Size.Large],
-            control: { type: "radio" },
-        },
-        disabled: {
-            options: [true, false],
             control: { type: "radio" },
         },
     },
@@ -32,7 +31,6 @@ export const SmallSelect = DropdownTemplate.bind({});
 SmallSelect.args = {
     placeholder: "select item",
     size: Size.Small,
-    disabled: false,
     menuItems: [
         [
             {
@@ -90,7 +88,6 @@ export const LargeSelect = DropdownTemplate.bind({});
 LargeSelect.args = {
     placeholder: "select item",
     size: Size.Large,
-    disabled: false,
     menuItems: [
         [
             {
