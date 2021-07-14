@@ -2,6 +2,7 @@
 
 import { IconSize } from "@components/Icon/Icon";
 import { ReactComponent as IconCaretDown } from "@components/Icon/Svg/CaretDown.svg";
+import { ReactComponent as IconCaretUp } from "@components/Icon/Svg/CaretUp.svg";
 import { Size } from "@utilities/enum";
 import { ReactElement, useState } from "react";
 import css from "./Dropdown.module.css";
@@ -49,7 +50,7 @@ export default function Dropdown({
                 ) : (
                     <DropdownMenuItem title={placeholder} size={size} />
                 )}
-                <IconCaretDown size={IconSize.Size16} />
+                {open ? <IconCaretUp size={IconSize.Size16} /> : <IconCaretDown size={IconSize.Size16} />}
             </div>
             {open && (
                 <DropdownMenu

@@ -27,6 +27,10 @@
     cursor: pointer;
 }
 
+.trigger.large {
+    padding-right: var(--f-spacing-5x);
+}
+
 .trigger.inactive {
     color: var(--f-black-80);
 }
