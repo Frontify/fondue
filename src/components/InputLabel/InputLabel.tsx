@@ -43,7 +43,7 @@ export default function InputLabel({
             <label
                 htmlFor={htmlFor}
                 className={[css.label, css[`theme${theme}`], disabled && css.disabled].filter(Boolean).join(" ")}
-                data-test-id="label"
+                data-test-id="input-label"
             >
                 {children}
             </label>

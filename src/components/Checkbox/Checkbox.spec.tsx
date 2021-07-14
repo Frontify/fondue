@@ -52,7 +52,7 @@ describe("Checkbox component", () => {
         mount(<Checkbox label={CHECKBOX_LABEL} />);
 
         cy.get("[data-test-id=checkbox-wrapper]").contains(CHECKBOX_LABEL);
-        cy.get("[data-test-id=label]").should("have.length", 1);
+        cy.get("[data-test-id=input-label]").should("have.length", 1);
     });
 
     it("has a disabled state", () => {
@@ -87,8 +87,14 @@ describe("Checkbox component", () => {
         cy.get("@checkbox").should("not.have.class", css.indeterminate);
     });
 
+<<<<<<< HEAD
     it(`has the light theme with primary style`, () => {
         mount(<Checkbox theme={Theme.Light} style={Style.Primary} />);
+=======
+    Object.values(CheckboxStyle).forEach((style) => {
+        it(`has the light theme with ${style} style`, () => {
+            mount(<Checkbox theme={Theme.Light} style={style} />);
+>>>>>>> extract theme into enum file
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
 
@@ -98,8 +104,13 @@ describe("Checkbox component", () => {
         cy.get("@checkbox").should("not.have.class", css.themeDark);
     });
 
+<<<<<<< HEAD
     it(`has the dark theme with secondary style`, () => {
         mount(<Checkbox theme={Theme.Dark} style={Style.Secondary} />);
+=======
+        it(`has the dark theme with ${style} style`, () => {
+            mount(<Checkbox theme={Theme.Dark} style={style} />);
+>>>>>>> extract theme into enum file
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
 

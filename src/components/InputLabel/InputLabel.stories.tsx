@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Story, Meta } from "@storybook/react";
-
-import InputLabel, { InputLabelProps, Theme } from "./InputLabel";
+import { Meta, Story } from "@storybook/react";
+import { Theme } from "../../utilities/enums";
+import InputLabel, { InputLabelProps } from "./InputLabel";
 
 export default {
     title: "InputLabel",

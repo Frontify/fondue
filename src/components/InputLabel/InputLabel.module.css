@@ -21,9 +21,9 @@
 }
 
 .asterisk {
-    height: var(--f-font-16-size); /* Center asterisk vertically */
-    font-size: var(--f-font-16-size);
-    line-height: var(--f-font-16-line-height);
+    height: var(--f-font-14-size); /* Center asterisk vertically */
+    font-size: var(--f-font-14-size);
+    line-height: var(--f-font-14-line-height);
 }
 
 .icon {

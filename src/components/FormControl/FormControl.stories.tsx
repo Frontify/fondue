@@ -1,18 +1,49 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Story, Meta } from "@storybook/react";
-
+import { Meta, Story } from "@storybook/react";
+import { Theme } from "../../utilities/enums";
 import FormControl, { FormControlProps } from "./FormControl";
+import TextInput from "../Form/TextInput/TextInput";
 
 export default {
     title: "FormControl",
     component: FormControl,
 } as Meta;
 
-const FormControlTemplate: Story<FormControlProps> = (args) => <FormControl {...args} />;
+const FormControlTemplate: Story<FormControlProps> = (args) => (
+    <FormControl {...args}>
+        <TextInput id="input" disabled={args.disabled} />
+    </FormControl>
+);
 
 export const Default = FormControlTemplate.bind({});
 
 Default.args = {
-    foo: "bar",
+    disabled: false,
+    direction: "vertical",
+    label: {
+        children: "Input Label",
+        disabled: false,
+        required: false,
+        htmlFor: "input",
+    },
+    extra: "",
+    helper: {
+        text: "",
+        position: "before",
+    },
+} as FormControlProps;
+
+Default.argTypes = {
+    direction: {
+        options: ["vertical", "horizontal"],
+        control: "select",
+    },
+    label: {
+        tooltip: { type: "string" },
+        theme: {
+            options: [Theme.Light, Theme.Dark],
+            control: { type: "radio" },
+        },
+    },
 };
