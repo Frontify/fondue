@@ -6,16 +6,24 @@ import { Size } from "@utilities/enum";
 import { ReactElement } from "react";
 import css from "./DropdownMenuItem.module.css";
 
-export type MenuItem = {
+type MenuItemBase = {
     id: string;
     title: string;
-    subtitle?: string;
     icon?: ReactElement<IconProps>;
-    size?: Size.Small | Size.Large;
     warning?: boolean;
     disabled?: boolean;
     active?: boolean;
 };
+
+export type MenuItem =
+    | (MenuItemBase & {
+          subtitle: undefined;
+          size?: Size.Small;
+      })
+    | (MenuItemBase & {
+          subtitle?: string;
+          size?: Size.Large;
+      });
 
 export type DropdownMenuItemProps = {
     onClick?: () => void;
