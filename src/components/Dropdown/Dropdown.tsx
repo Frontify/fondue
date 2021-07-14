@@ -3,7 +3,7 @@
 import { IconSize } from "@components/Icon/Icon";
 import { ReactComponent as IconCaretDown } from "@components/Icon/Svg/CaretDown.svg";
 import { Size } from "@utilities/enum";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useState } from "react";
 import css from "./Dropdown.module.css";
 import DropdownMenu from "./DropdownMenu/DropdownMenu";
 import DropdownMenuItem, { MenuItem } from "./DropdownMenuItem/DropdownMenuItem";
@@ -27,17 +27,7 @@ export default function Dropdown({
     size = Size.Small,
 }: DropdownProps): ReactElement<DropdownProps> {
     const [open, setOpen] = useState(false);
-    const [activeItem, setActiveItem] = useState<MenuItem | null>(getActiveItem(menuItems, activeItemId));
-
-    useEffect(() => {
-        setActiveItem(getActiveItem(menuItems, activeItemId));
-    }, [activeItemId]);
-
-    const triggerPlaceholder = {
-        id: "placeholder",
-        title: placeholder,
-        size,
-    };
+    const activeItem = getActiveItem(menuItems, activeItemId);
 
     return (
         <div className={css.wrapper}>
@@ -47,9 +37,17 @@ export default function Dropdown({
                 className={`${css.trigger} ${!activeItem ? css.inactive : ""} ${size === Size.Large ? css.large : ""}`}
             >
                 {activeItem ? (
-                    <DropdownMenuItem {...activeItem} onClick={() => onChange(activeItem.id)} />
+                    <DropdownMenuItem
+                        title={activeItem.title}
+                        icon={activeItem.icon}
+                        subtitle={activeItem.subtitle}
+                        size={activeItem.size}
+                        warning={activeItem.warning}
+                        disabled={activeItem.disabled}
+                        active={false}
+                    />
                 ) : (
-                    <DropdownMenuItem {...triggerPlaceholder} />
+                    <DropdownMenuItem title={placeholder} size={size} />
                 )}
                 <IconCaretDown size={IconSize.Size16} />
             </div>

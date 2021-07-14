@@ -55,7 +55,11 @@ export default function DropdownMenuItem({
             data-test-id={icon !== undefined ? "dropdown-menu-item-icon" : "dropdown-menu-item-text"}
             className={getClassNames(size, warning, disabled, subtitle)}
             tabIndex={1}
-            onClick={onClick}
+            onClick={() => {
+                if (onClick) {
+                    onClick();
+                }
+            }}
         >
             {icon !== undefined && icon}
             <div className={`${css.truncate} ${css.content}`} title={title}>
