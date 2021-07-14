@@ -9,63 +9,71 @@ import { MenuItem } from "./DropdownMenuItem/DropdownMenuItem";
 import { MENU_ITEM_TEXT_ID } from "./DropdownMenuItem/DropdownMenuItem.spec";
 
 const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
+const DROPDOWN_MENU_ID = "[data-test-id=dropdown-menu]";
+const BORDER_STYLE = "1px solid rgb(234, 235, 235)";
 
 const SMALL_ITEMS = [
-    {
-        id: "1",
-        title: "Small",
-    },
-    {
-        id: "2",
-        title: "Small warning",
-        warning: true,
-    },
-    {
-        id: "3",
-        title: "Small disabled",
-        disabled: true,
-    },
-    {
-        id: "4",
-        title: "Small warning disabled",
-        warning: true,
-        disabled: true,
-    },
+    [
+        {
+            id: "1",
+            title: "Small",
+        },
+        {
+            id: "2",
+            title: "Small warning",
+            warning: true,
+        },
+        {
+            id: "3",
+            title: "Small disabled",
+            disabled: true,
+        },
+        {
+            id: "4",
+            title: "Small warning disabled",
+            warning: true,
+            disabled: true,
+        },
+    ],
 ];
 
 const LARGE_ITEMS = [
-    {
-        id: "5",
-        title: "Large",
-        subtitle: "Subtitle",
-        size: Size.Large,
-    },
-    {
-        id: "6",
-        title: "Large warning",
-        subtitle: "Subtitle",
-        size: Size.Large,
-        warning: true,
-    },
-    {
-        id: "7",
-        title: "Large disabled",
-        subtitle: "Subtitle",
-        size: Size.Large,
-        disabled: true,
-    },
-    {
-        id: "8",
-        title: "Large warning disabled",
-        subtitle: "Subtitle",
-        size: Size.Large,
-        warning: true,
-        disabled: true,
-    },
+    [
+        {
+            id: "5",
+            title: "Large",
+            subtitle: "Subtitle",
+            size: Size.Large,
+        },
+        {
+            id: "6",
+            title: "Large warning",
+            subtitle: "Subtitle",
+            size: Size.Large,
+            warning: true,
+        },
+    ],
+    [
+        {
+            id: "7",
+            title: "Large disabled",
+            subtitle: "Subtitle",
+            size: Size.Large,
+            disabled: true,
+        },
+        {
+            id: "8",
+            title: "Large warning disabled",
+            subtitle: "Subtitle",
+            size: Size.Large,
+            warning: true,
+            disabled: true,
+        },
+    ],
 ];
 
 type Props = {
-    items: MenuItem[] | MenuItem[][];
+    items: MenuItem[][];
     size: Size;
     placeholder?: string;
     initialActiveId?: string;
@@ -93,12 +101,12 @@ describe("Dropdown Component", () => {
         cy.get(MENU_ITEM_TEXT_ID).should("have.length", 5);
     });
     it("renders with initial active item", () => {
-        mount(<Component items={SMALL_ITEMS} size={Size.Small} initialActiveId={SMALL_ITEMS[0].id} />);
+        mount(<Component items={SMALL_ITEMS} size={Size.Small} initialActiveId={SMALL_ITEMS[0][0].id} />);
         cy.get(MENU_ITEM_TEXT_ID).first().contains("Small");
         cy.get(DROPDOWN_TRIGGER_ID).should("not.have.class", css.inactive);
     });
     it("changes selection on click", () => {
-        mount(<Component items={LARGE_ITEMS} size={Size.Large} initialActiveId={LARGE_ITEMS[0].id} />);
+        mount(<Component items={LARGE_ITEMS} size={Size.Large} initialActiveId={LARGE_ITEMS[0][0].id} />);
         cy.get(DROPDOWN_TRIGGER_ID).should("have.class", css.large);
         cy.get(MENU_ITEM_TEXT_ID).first().contains("Large");
         cy.get(DROPDOWN_TRIGGER_ID).click();
@@ -106,8 +114,11 @@ describe("Dropdown Component", () => {
         cy.get(MENU_ITEM_TEXT_ID).first().contains("Large warning");
     });
     it("renders divider", () => {
-        mount(<Component items={[SMALL_ITEMS, LARGE_ITEMS]} size={Size.Large} initialActiveId={LARGE_ITEMS[0].id} />);
+        mount(<Component items={LARGE_ITEMS} size={Size.Large} initialActiveId={LARGE_ITEMS[0][0].id} />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
-        cy.get("hr").should("have.length", 1);
+        cy.get(DROPDOWN_MENU_ID).children().as("itemBlocks");
+        cy.get("@itemBlocks").should("have.length", 2);
+        cy.get("@itemBlocks").first().should("have.css", "border-bottom", BORDER_STYLE);
+        cy.get("@itemBlocks").last().should("not.have.css", "border-bottom", BORDER_STYLE);
     });
 });

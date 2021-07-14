@@ -18,3 +18,15 @@
 .menu.large {
     top: var(--f-spacing-18x);
 }
+
+.list {
+    padding: var(--f-spacing-2x) 0;
+    list-style-type: none;
+    margin: 0px;
+}
+
+.divider:not(:last-child) {
+    margin-bottom: var(--f-spacing-2x);
+    border-bottom: var(--f-border);
+    padding-bottom: var(--f-spacing-2x);
+}

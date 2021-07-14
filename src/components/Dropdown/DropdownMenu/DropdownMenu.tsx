@@ -1,21 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import Divider, { DividerHeight } from "@components/Divider/Divider";
 import { Size } from "@utilities/enum";
 import { ReactElement } from "react";
-import { MenuItem } from "../DropdownMenuItem/DropdownMenuItem";
-import DropdownMenuItemList from "../DropdownMenuItemList/DropdownMenuItemList";
+import DropdownMenuItem, { MenuItem } from "../DropdownMenuItem/DropdownMenuItem";
 import css from "./DropdownMenu.module.css";
 
 export interface DropdownMenuProps {
-    items: MenuItem[] | MenuItem[][];
+    items: MenuItem[][];
     onChange: (id: string) => void;
     size?: Size.Small | Size.Large;
     activeItemId?: string;
 }
-
-const hasSubarrays = (items: MenuItem[] | MenuItem[][]): items is MenuItem[][] =>
-    (items as MenuItem[][]).every(Array.isArray);
 
 export default function DropdownMenu({
     items,
@@ -24,17 +19,26 @@ export default function DropdownMenu({
     activeItemId = "",
 }: DropdownMenuProps): ReactElement<DropdownMenuProps> {
     return (
-        <ul className={`${css.menu} ${size === Size.Large ? css.large : ""}`}>
-            {hasSubarrays(items) ? (
-                items.map((menuItems, i) => (
-                    <li key={i}>
-                        <DropdownMenuItemList items={menuItems} onChange={onChange} activeItemId={activeItemId} />
-                        {i < items.length - 1 && <Divider height={DividerHeight.Height10} color="rgb(234, 235, 235)" />}
-                    </li>
-                ))
-            ) : (
-                <DropdownMenuItemList items={items} onChange={onChange} activeItemId={activeItemId} />
-            )}
+        <ul data-test-id="dropdown-menu" className={`${css.menu} ${size === Size.Large ? css.large : ""}`}>
+            {items.map((menuItems, i) => (
+                <li key={i} className={css.divider}>
+                    <ul className={css.list}>
+                        {menuItems.map(({ id, title, icon, subtitle, size, warning, disabled }) => (
+                            <DropdownMenuItem
+                                key={id}
+                                onClick={() => onChange(id)}
+                                title={title}
+                                icon={icon}
+                                subtitle={subtitle}
+                                size={size}
+                                warning={warning}
+                                disabled={disabled}
+                                active={id === activeItemId}
+                            />
+                        ))}
+                    </ul>
+                </li>
+            ))}
         </ul>
     );
 }

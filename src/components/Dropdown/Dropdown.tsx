@@ -10,15 +10,14 @@ import DropdownMenu from "./DropdownMenu/DropdownMenu";
 import DropdownMenuItem, { MenuItem } from "./DropdownMenuItem/DropdownMenuItem";
 
 export interface DropdownProps {
-    menuItems: MenuItem[][] | MenuItem[];
+    menuItems: MenuItem[][];
     onChange: (id?: string) => void;
     activeItemId?: string;
     placeholder?: string;
     size?: Size.Small | Size.Large;
 }
 
-const getActiveItem = (menuItems: MenuItem[] | MenuItem[][], id: string) =>
-    menuItems.flat().find((item) => item.id === id) || null;
+const getActiveItem = (menuItems: MenuItem[][], id: string) => menuItems.flat().find((item) => item.id === id) || null;
 
 export default function Dropdown({
     menuItems,
