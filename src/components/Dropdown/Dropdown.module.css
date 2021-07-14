@@ -30,12 +30,23 @@
     cursor: pointer;
 }
 
+.trigger:focus {
+    border-color: var(--f-black-80);
+}
+
 .trigger.large {
     padding-right: var(--f-spacing-5x);
 }
 
 .trigger.inactive {
     color: var(--f-black-80);
+}
+
+.trigger.disabled {
+    pointer-events: none;
+    background-color: var(--f-black-05);
+    border-color: var(--f-black-05);
+    color: var(--f-black-40);
 }
 
 .trigger li:focus,

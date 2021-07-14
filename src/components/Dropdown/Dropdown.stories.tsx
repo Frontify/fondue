@@ -15,6 +15,10 @@ export default {
             options: [Size.Small, Size.Large],
             control: { type: "radio" },
         },
+        disabled: {
+            options: [true, false],
+            control: { type: "radio" },
+        },
     },
 } as Meta;
 
@@ -28,6 +32,7 @@ export const SmallSelect = DropdownTemplate.bind({});
 SmallSelect.args = {
     placeholder: "select item",
     size: Size.Small,
+    disabled: false,
     menuItems: [
         [
             {
@@ -85,6 +90,7 @@ export const LargeSelect = DropdownTemplate.bind({});
 LargeSelect.args = {
     placeholder: "select item",
     size: Size.Large,
+    disabled: false,
     menuItems: [
         [
             {

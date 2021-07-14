@@ -15,9 +15,23 @@ export interface DropdownProps {
     activeItemId?: string;
     placeholder?: string;
     size?: Size.Small | Size.Large;
+    disabled?: boolean;
 }
 
 const getActiveItem = (menuItems: MenuItem[][], id: string) => menuItems.flat().find((item) => item.id === id) || null;
+const getClassNames = (size: Size, active: boolean, disabled: boolean) => {
+    const classNames = [css.trigger];
+    if (size === Size.Large) {
+        classNames.push(css.large);
+    }
+    if (!active) {
+        classNames.push(css.inactive);
+    }
+    if (disabled) {
+        classNames.push(css.disabled);
+    }
+    return classNames.join(" ");
+};
 
 export default function Dropdown({
     menuItems,
@@ -25,6 +39,7 @@ export default function Dropdown({
     activeItemId = "",
     placeholder = "",
     size = Size.Small,
+    disabled = false,
 }: DropdownProps): ReactElement<DropdownProps> {
     const [open, setOpen] = useState(false);
     const activeItem = getActiveItem(menuItems, activeItemId);
@@ -34,7 +49,8 @@ export default function Dropdown({
             <button
                 data-test-id="dropdown-trigger"
                 onClick={() => setOpen(!open)}
-                className={`${css.trigger} ${!activeItem ? css.inactive : ""} ${size === Size.Large ? css.large : ""}`}
+                className={getClassNames(size, !!activeItem, disabled)}
+                disabled={disabled}
             >
                 {activeItem ? (
                     <DropdownMenuItem
