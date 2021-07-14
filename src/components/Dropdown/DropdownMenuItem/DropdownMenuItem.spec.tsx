@@ -3,7 +3,8 @@
 import { IconSize } from "@components/Icon/Icon";
 import { ReactComponent as Audio } from "@components/Icon/Svg/Audio.svg";
 import { mount } from "@cypress/react";
-import DropdownMenuItem, { MenuItemVariant } from "./DropdownMenuItem";
+import { Size } from "@utilities/enum";
+import DropdownMenuItem from "./DropdownMenuItem";
 import css from "./DropdownMenuItem.module.css";
 
 export const MENU_ITEM_TEXT_ID = "[data-test-id=dropdown-menu-item-text]";
@@ -36,27 +37,27 @@ const ITEMS = [
         title: "Large icon",
         subtitle: "Large icon subtitle",
         icon: <Audio size={IconSize.Size16} />,
-        variant: MenuItemVariant.Large,
+        size: Size.Large,
     },
     {
         id: "6",
         title: "Large warning",
         subtitle: "Large warning subtitle",
-        variant: MenuItemVariant.Large,
+        size: Size.Large,
         warning: true,
     },
     {
         id: "7",
         title: "Large disabled",
         subtitle: "Large disabled subtitle",
-        variant: MenuItemVariant.Large,
+        size: Size.Large,
         disabled: true,
     },
     {
         id: "8",
         title: "Large warning disabled",
         subtitle: "Large warning disabled subtitle",
-        variant: MenuItemVariant.Large,
+        size: Size.Large,
         warning: true,
         disabled: true,
     },

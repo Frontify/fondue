@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import Button, { ButtonSize, ButtonStyle, ButtonTheme } from "./Button";
+import { Size } from "@utilities/enum";
+import Button, { ButtonStyle, ButtonTheme } from "./Button";
 import css from "./Button.module.css";
 
 const BUTTON_TEXT = "Frontify";
@@ -75,7 +76,7 @@ describe("Button component", () => {
         });
     });
 
-    Object.values(ButtonSize).forEach((size) => {
+    Object.values(Size).forEach((size) => {
         it(`has the ${size} size`, () => {
             mount(<Button size={size}>{BUTTON_TEXT}</Button>);
 
