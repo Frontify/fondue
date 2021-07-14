@@ -69,21 +69,11 @@
 /**
  * Disabled
  */
-.item.disabled,
-.item.disabled .subtitle {
-    cursor: not-allowed;
+.disabled {
+    pointer-events: none;
     color: var(--f-black-40);
     background-color: var(--f-black-00);
-    z-index: -1;
     pointer-events: none;
-}
-
-.item.disabled:hover .subtitle {
-    color: var(--f-black-40);
-}
-
-.item.disabled:focus {
-    box-shadow: none;
 }
 
 /**

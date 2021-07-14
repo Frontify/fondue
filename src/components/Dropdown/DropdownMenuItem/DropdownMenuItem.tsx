@@ -58,10 +58,20 @@ export default function DropdownMenuItem({
     disabled = false,
     active = false,
 }: DropdownMenuItemProps): ReactElement<DropdownMenuItemProps> {
+    const itemClassNames = [
+        css.item,
+        size === Size.Small ? css.small : css.large,
+        warning ? css.warning : "",
+        disabled ? css.disabled : "",
+        subtitle.length > 0 ? css["has-subtitle"] : "",
+    ].join(" ");
+    const contentClassNames = [css.content, css.truncate, disabled ? css.disabled : ""].join(" ");
+    const subtitleClassNames = [css.subtitle, disabled ? css.disabled : ""].join(" ");
+
     return (
         <li
             data-test-id={icon !== undefined ? "dropdown-menu-item-icon" : "dropdown-menu-item-text"}
-            className={getClassNames(size, warning, disabled, subtitle)}
+            className={itemClassNames}
             tabIndex={1}
             onClick={() => {
                 if (onClick && !disabled) {
@@ -70,10 +80,10 @@ export default function DropdownMenuItem({
             }}
         >
             {icon}
-            <div className={`${css.truncate} ${css.content}`} title={title}>
+            <div className={contentClassNames} title={title}>
                 {title}
                 {subtitle && (
-                    <div className={css.subtitle} title={subtitle}>
+                    <div className={subtitleClassNames} title={subtitle}>
                         {subtitle}
                     </div>
                 )}

@@ -12,6 +12,7 @@ export default {
     component: Dropdown,
     args: {
         disabled: false,
+        clearable: false,
     },
     argTypes: {
         size: {
