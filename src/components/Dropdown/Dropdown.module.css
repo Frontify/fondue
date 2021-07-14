@@ -9,14 +9,17 @@
 }
 
 .trigger {
+    width: 100%;
     position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    text-align: left;
     border: var(--f-border);
     border-color: var(--f-black-20);
     border-radius: var(--f-corner-4px);
     padding-right: var(--f-spacing-2x);
+    background-color: var(--f-white);
 }
 
 .trigger > svg {

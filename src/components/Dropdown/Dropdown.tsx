@@ -31,7 +31,7 @@ export default function Dropdown({
 
     return (
         <div className={css.wrapper}>
-            <div
+            <button
                 data-test-id="dropdown-trigger"
                 onClick={() => setOpen(!open)}
                 className={`${css.trigger} ${!activeItem ? css.inactive : ""} ${size === Size.Large ? css.large : ""}`}
@@ -50,7 +50,7 @@ export default function Dropdown({
                     <DropdownMenuItem title={placeholder} size={size} />
                 )}
                 {open ? <IconCaretUp size={IconSize.Size16} /> : <IconCaretDown size={IconSize.Size16} />}
-            </div>
+            </button>
             {open && (
                 <DropdownMenu
                     items={menuItems}
