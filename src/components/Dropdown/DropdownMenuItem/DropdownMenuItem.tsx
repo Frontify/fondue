@@ -61,7 +61,7 @@ export default function DropdownMenuItem({
                 }
             }}
         >
-            {icon !== undefined && icon}
+            {icon}
             <div className={`${css.truncate} ${css.content}`} title={title}>
                 {title}
                 {subtitle && (
