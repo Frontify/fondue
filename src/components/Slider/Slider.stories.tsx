@@ -24,7 +24,6 @@ Text.args = {
         { id: "c", name: "ghi" },
     ],
 };
-Text.argTypes = { onChange: { action: "onClear" } };
 
 export const Icon = SliderTemplate.bind({});
 Icon.args = {
@@ -34,4 +33,3 @@ Icon.args = {
         { id: "c", icon: <TextAlignCenter size={IconSize.Size16} /> },
     ],
 };
-Icon.argTypes = { onChange: { action: "onClear" } };
