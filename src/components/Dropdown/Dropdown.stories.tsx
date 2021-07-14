@@ -3,16 +3,16 @@
 import { IconSize } from "@components/Icon/Icon";
 import { ReactComponent as Audio } from "@components/Icon/Svg/Audio.svg";
 import { Meta, Story } from "@storybook/react";
+import { Size } from "@utilities/enum";
 import { useState } from "react";
-import Dropdown, { DropdownProps, DropdownVariants } from "./Dropdown";
-import { MenuItemVariant } from "./DropdownMenuItem/DropdownMenuItem";
+import Dropdown, { DropdownProps } from "./Dropdown";
 
 export default {
     title: "Dropdown",
     component: Dropdown,
     argTypes: {
-        variant: {
-            options: [DropdownVariants.Small, DropdownVariants.Large],
+        size: {
+            options: [Size.Small, Size.Large],
             control: { type: "radio" },
         },
     },
@@ -27,7 +27,7 @@ export const SmallSelect = DropdownTemplate.bind({});
 
 SmallSelect.args = {
     placeholder: "select item",
-    variant: DropdownVariants.Small,
+    size: Size.Small,
     menuItems: [
         [
             {
@@ -84,7 +84,7 @@ export const LargeSelect = DropdownTemplate.bind({});
 
 LargeSelect.args = {
     placeholder: "select item",
-    variant: DropdownVariants.Large,
+    size: Size.Large,
     menuItems: [
         [
             {
@@ -92,14 +92,14 @@ LargeSelect.args = {
                 title: "Large icon",
                 subtitle: "Subtitle",
                 icon: <Audio size={IconSize.Size16} />,
-                variant: MenuItemVariant.Large,
+                size: Size.Large,
             },
             {
                 id: "6",
                 title: "Large icon warning",
                 subtitle: "Subtitle",
                 icon: <Audio size={IconSize.Size16} />,
-                variant: MenuItemVariant.Large,
+                size: Size.Large,
                 warning: true,
             },
             {
@@ -107,7 +107,7 @@ LargeSelect.args = {
                 title: "Large icon disabled",
                 subtitle: "Subtitle",
                 icon: <Audio size={IconSize.Size16} />,
-                variant: MenuItemVariant.Large,
+                size: Size.Large,
                 disabled: true,
             },
             {
@@ -115,7 +115,7 @@ LargeSelect.args = {
                 title: "Large icon warning disabled",
                 subtitle: "Subtitle",
                 icon: <Audio size={IconSize.Size16} />,
-                variant: MenuItemVariant.Large,
+                size: Size.Large,
                 warning: true,
                 disabled: true,
             },
@@ -125,27 +125,27 @@ LargeSelect.args = {
                 id: "13",
                 title: "Large",
                 subtitle: "Subtitle",
-                variant: MenuItemVariant.Large,
+                size: Size.Large,
             },
             {
                 id: "14",
                 title: "Large warning",
                 subtitle: "Subtitle",
-                variant: MenuItemVariant.Large,
+                size: Size.Large,
                 warning: true,
             },
             {
                 id: "15",
                 title: "Large disabled",
                 subtitle: "Subtitle",
-                variant: MenuItemVariant.Large,
+                size: Size.Large,
                 disabled: true,
             },
             {
                 id: "16",
                 title: "Large warning disabled",
                 subtitle: "Subtitle",
-                variant: MenuItemVariant.Large,
+                size: Size.Large,
                 warning: true,
                 disabled: true,
             },

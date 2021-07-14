@@ -17,14 +17,14 @@ export default function DropdownMenuItemList({
 }: DropdownMenuItemListProps): ReactElement<DropdownMenuItemListProps> {
     return (
         <ul className={css.list}>
-            {items.map(({ id, title, icon, subtitle, variant, warning, disabled }) => (
+            {items.map(({ id, title, icon, subtitle, size, warning, disabled }) => (
                 <DropdownMenuItem
                     key={id}
                     onClick={() => onChange(id)}
                     title={title}
                     icon={icon}
                     subtitle={subtitle}
-                    variant={variant}
+                    size={size}
                     warning={warning}
                     disabled={disabled}
                     active={id === activeItemId}

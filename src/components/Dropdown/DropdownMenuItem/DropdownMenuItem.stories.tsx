@@ -3,7 +3,8 @@
 import { IconSize } from "@components/Icon/Icon";
 import { ReactComponent as Audio } from "@components/Icon/Svg/Audio.svg";
 import { Meta, Story } from "@storybook/react";
-import DropdownMenuItem, { DropdownMenuItemProps, MenuItemVariant } from "./DropdownMenuItem";
+import { Size } from "@utilities/enum";
+import DropdownMenuItem, { DropdownMenuItemProps } from "./DropdownMenuItem";
 
 export default {
     title: "DropdownMenuItem",
@@ -27,7 +28,7 @@ Large.args = {
     title: "Large Menu Item",
     subtitle: "Subtitle",
     icon: <Audio size={IconSize.Size16} />,
-    variant: MenuItemVariant.Large,
+    size: Size.Large,
     warning: false,
     disabled: false,
     onClick: { action: "onClear" },

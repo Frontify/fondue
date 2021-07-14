@@ -2,22 +2,18 @@
 
 import { IconSize } from "@components/Icon/Icon";
 import { ReactComponent as IconCaretDown } from "@components/Icon/Svg/CaretDown.svg";
+import { Size } from "@utilities/enum";
 import { ReactElement, useEffect, useState } from "react";
 import css from "./Dropdown.module.css";
 import DropdownMenu from "./DropdownMenu/DropdownMenu";
-import DropdownMenuItem, { MenuItem, MenuItemVariant } from "./DropdownMenuItem/DropdownMenuItem";
-
-export enum DropdownVariants {
-    "Small",
-    "Large",
-}
+import DropdownMenuItem, { MenuItem } from "./DropdownMenuItem/DropdownMenuItem";
 
 export interface DropdownProps {
     menuItems: MenuItem[][] | MenuItem[];
     onChange: (id?: string) => void;
     activeItemId?: string;
     placeholder?: string;
-    variant?: DropdownVariants;
+    size?: Size.Small | Size.Large;
 }
 
 const getActiveItem = (menuItems: MenuItem[] | MenuItem[][], id: string) =>
@@ -28,7 +24,7 @@ export default function Dropdown({
     onChange,
     activeItemId = "",
     placeholder = "",
-    variant = DropdownVariants.Small,
+    size = Size.Small,
 }: DropdownProps): ReactElement<DropdownProps> {
     const [open, setOpen] = useState(false);
     const [activeItem, setActiveItem] = useState<MenuItem | null>(getActiveItem(menuItems, activeItemId));
@@ -40,7 +36,7 @@ export default function Dropdown({
     const triggerPlaceholder = {
         id: "placeholder",
         title: placeholder,
-        variant: variant === DropdownVariants.Small ? MenuItemVariant.Small : MenuItemVariant.Large,
+        size,
     };
 
     return (
@@ -48,9 +44,7 @@ export default function Dropdown({
             <div
                 data-test-id="dropdown-trigger"
                 onClick={() => setOpen(!open)}
-                className={`${css.trigger} ${!activeItem ? css.inactive : ""} ${
-                    variant === DropdownVariants.Large ? css.large : ""
-                }`}
+                className={`${css.trigger} ${!activeItem ? css.inactive : ""} ${size === Size.Large ? css.large : ""}`}
             >
                 {activeItem ? (
                     <DropdownMenuItem {...activeItem} onClick={() => onChange(activeItem.id)} />
@@ -63,7 +57,7 @@ export default function Dropdown({
                 <DropdownMenu
                     items={menuItems}
                     activeItemId={activeItemId}
-                    variant={variant}
+                    size={size}
                     onChange={(id) => {
                         onChange(id);
                         setOpen(!open);
