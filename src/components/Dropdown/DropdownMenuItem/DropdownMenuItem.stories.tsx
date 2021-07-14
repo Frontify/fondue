@@ -12,6 +12,8 @@ export default {
     args: {
         warning: false,
         disabled: false,
+    },
+    argTypes: {
         onClick: { action: "onClear" },
     },
 } as Meta;
