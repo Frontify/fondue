@@ -10,6 +10,9 @@
     border-color: var(--f-black-10);
     border-radius: var(--f-corner-4px);
     box-shadow: var(--f-shadow-mid);
+    padding: 0px;
+    margin: 0px;
+    list-style-type: none;
 }
 
 .menu.large {

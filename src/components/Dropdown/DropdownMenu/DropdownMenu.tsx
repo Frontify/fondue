@@ -24,17 +24,17 @@ export default function DropdownMenu({
     activeItemId = "",
 }: DropdownMenuProps): ReactElement<DropdownMenuProps> {
     return (
-        <div className={`${css.menu} ${size === Size.Large ? css.large : ""}`}>
+        <ul className={`${css.menu} ${size === Size.Large ? css.large : ""}`}>
             {hasSubarrays(items) ? (
                 items.map((menuItems, i) => (
-                    <>
+                    <li key={i}>
                         <DropdownMenuItemList items={menuItems} onChange={onChange} activeItemId={activeItemId} />
                         {i < items.length - 1 && <Divider height={DividerHeight.Height10} color="rgb(234, 235, 235)" />}
-                    </>
+                    </li>
                 ))
             ) : (
                 <DropdownMenuItemList items={items} onChange={onChange} activeItemId={activeItemId} />
             )}
-        </div>
+        </ul>
     );
 }
