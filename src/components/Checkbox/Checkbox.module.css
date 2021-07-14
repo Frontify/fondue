@@ -2,10 +2,10 @@
 
 .wrapper {
     display: flex;
-    cursor: pointer;
 }
 
 .checkbox {
+    cursor: pointer;
     position: relative;
     display: flex;
     width: 16px;

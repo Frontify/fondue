@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import Label from "@components/Form/Label/Label";
 import { ReactComponent as IconCheck } from "@components/Icon/Svg/Check.svg";
 import { ReactComponent as IconMinus } from "@components/Icon/Svg/Minus.svg";
+import InputLabel from "@components/InputLabel/InputLabel";
 import { Style, Theme } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
 import { KeyboardEvent, MouseEvent, ReactElement, ReactNode, useState } from "react";
@@ -97,9 +97,9 @@ export default function Checkbox({
                 {checkboxState === CheckboxSelectionState.Indeterminate && <IconMinus />}
             </span>
             {label && (
-                <Label htmlFor={id} required={required} disabled={disabled} tooltip={tooltip}>
+                <InputLabel htmlFor={id} required={required} disabled={disabled} tooltip={tooltip}>
                     {label}
-                </Label>
+                </InputLabel>
             )}
         </div>
     );

@@ -3,8 +3,17 @@
 .container {
     display: inline-flex;
     align-items: center;
-    font-size: var(--f-font-13-size);
-    line-height: var(--f-font-13-line-height);
+    line-height: var(--f-font-14-line-height);
+    font-family: var(--f-font-standard);
+    font-size: var(--f-font-14-size);
+}
+
+.label:hover {
+    cursor: pointer;
+}
+
+.disabled .label:hover {
+    cursor: not-allowed;
 }
 
 .container > * + * {
@@ -13,7 +22,6 @@
 
 .asterisk {
     height: var(--f-font-16-size); /* Center asterisk vertically */
-    color: var(--f-red-60);
     font-size: var(--f-font-16-size);
     line-height: var(--f-font-16-line-height);
 }
@@ -46,7 +54,17 @@
     color: var(--f-black-60);
 }
 
-.themeLight .disabled {
+.themeLight .icon:hover,
+.themeLight .label:hover {
+    color: var(--f-black-100);
+}
+
+.themeLight .asterisk {
+    color: var(--f-red-60);
+}
+
+.themeLight .disabled,
+.themeLight .disabled:hover {
     color: var(--f-black-40);
 }
 
@@ -58,6 +76,16 @@
     color: var(--f-black-40);
 }
 
-.themeDark .disabled {
+.themeDark .icon:hover,
+.themeDark .label:hover {
+    color: var(--f-white);
+}
+
+.themeDark .asterisk {
+    color: var(--f-red-50);
+}
+
+.themeDark .disabled,
+.themeDark .disabled:hover {
     color: var(--f-black-60);
 }

@@ -3,11 +3,11 @@
 import { IconSize } from "@components/Icon/Icon";
 import { ReactComponent as IconQuestion } from "@components/Icon/Svg/Question.svg";
 import { Theme } from "@utilities/enum";
-import { ReactElement, ReactNode, useState } from "react";
+import { ReactElement, ReactNode, useRef } from "react";
 import { usePopper } from "react-popper";
-import css from "./Label.module.css";
+import css from "./InputLabel.module.css";
 
-export interface LabelProps {
+export interface InputLabelProps {
     children: ReactNode;
     htmlFor: string;
     required?: boolean;
@@ -16,18 +16,18 @@ export interface LabelProps {
     theme?: Theme;
 }
 
-export default function Label({
+export default function InputLabel({
     children,
     htmlFor,
     required = false,
     disabled = false,
     tooltip,
     theme = Theme.Light,
-}: LabelProps): ReactElement<LabelProps> {
-    const [iconElement, setIconElement] = useState<HTMLDivElement | null>(null);
-    const [tooltipElement, setTooltipElement] = useState<HTMLDivElement | null>(null);
-    const { styles, attributes } = usePopper(iconElement, tooltipElement, {
-        placement: "right",
+}: InputLabelProps): ReactElement<InputLabelProps> {
+    const tooltipIconRef = useRef(null);
+    const tooltipRef = useRef(null);
+    const { styles, attributes } = usePopper(tooltipIconRef.current, tooltipRef.current, {
+        placement: "auto",
         modifiers: [
             {
                 name: "offset",
@@ -37,20 +37,23 @@ export default function Label({
             },
         ],
     });
-    const containerClasses = [css.container, css[`theme${theme}`], ...(disabled ? [css.disabled] : [])].join(" ");
 
     return (
-        <div className={containerClasses}>
-            <label htmlFor={htmlFor} data-test-id="label">
+        <div className={[css.container, css[`theme${theme}`], disabled && css.disabled].filter(Boolean).join(" ")}>
+            <label
+                htmlFor={htmlFor}
+                className={[css.label, css[`theme${theme}`], disabled && css.disabled].filter(Boolean).join(" ")}
+                data-test-id="label"
+            >
                 {children}
             </label>
             {required && <span className={css.asterisk}>*</span>}
             {tooltip && (
                 <>
-                    <div ref={setIconElement} className={css.icon}>
+                    <div ref={tooltipIconRef} className={css.icon}>
                         <IconQuestion size={IconSize.Size16} />
                     </div>
-                    <div className={css.tooltip} ref={setTooltipElement} style={styles.popper} {...attributes.popper}>
+                    <div className={css.tooltip} ref={tooltipRef} style={styles.popper} {...attributes.popper}>
                         {tooltip}
                     </div>
                 </>
