@@ -96,7 +96,7 @@ describe("Dropdown Component", () => {
     it("renders with placeholder", () => {
         mount(<Component items={SMALL_ITEMS} size={Size.Small} placeholder="Select item" />);
         cy.get(MENU_ITEM_TEXT_ID).first().contains("Select item");
-        cy.get(DROPDOWN_TRIGGER_ID).should("have.class", css.inactive);
+        cy.get(DROPDOWN_TRIGGER_ID).should("have.class", css.placeholder);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(MENU_ITEM_TEXT_ID).should("have.length", 5);
     });
@@ -107,7 +107,6 @@ describe("Dropdown Component", () => {
     });
     it("changes selection on click", () => {
         mount(<Component items={LARGE_ITEMS} size={Size.Large} initialActiveId={LARGE_ITEMS[0][0].id} />);
-        cy.get(DROPDOWN_TRIGGER_ID).should("have.class", css.large);
         cy.get(MENU_ITEM_TEXT_ID).first().contains("Large");
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(MENU_ITEM_TEXT_ID).eq(2).click();

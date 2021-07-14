@@ -32,10 +32,6 @@
     padding-right: var(--f-spacing-5x);
 }
 
-.trigger-wrapper.inactive {
-    color: var(--f-black-80);
-}
-
 .trigger-wrapper li:focus,
 .trigger-wrapper li:hover {
     box-shadow: none;
