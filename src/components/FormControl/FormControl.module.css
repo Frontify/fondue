@@ -9,6 +9,11 @@
     margin-right: var(--f-spacing-2x);
 }
 
+.vertical > * {
+    margin-right: 0;
+    margin-bottom: var(--f-spacing-2x);
+}
+
 .container > *:last-child {
     margin-right: 0;
 }
@@ -18,11 +23,6 @@
     flex-direction: column;
 }
 
-.vertical > * {
-    margin-right: 0;
-    margin-bottom: var(--f-spacing-2x);
-}
-
 .vertical > *:last-child {
     margin-bottom: 0;
 }
@@ -30,23 +30,24 @@
 .label {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
 }
 
 .extra {
-    line-height: var(--f-font-13-line-height);
+    padding-left: var(--f-spacing-2x);
+    color: var(--f-black-80);
     font-family: var(--f-font-standard);
     font-size: var(--f-font-13-size);
-    color: var(--f-black-80);
-    padding-left: var(--f-spacing-2x);
+    line-height: var(--f-font-13-line-height);
+    white-space: nowrap;
 }
 
 .helper {
-    line-height: var(--f-font-13-line-height);
+    color: var(--f-black-80);
     font-family: var(--f-font-standard);
     font-size: var(--f-font-13-size);
-    color: var(--f-black-80);
+    line-height: var(--f-font-13-line-height);
 }
 
 .vertical > .label,

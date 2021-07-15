@@ -3,9 +3,9 @@
 .container {
     display: inline-flex;
     align-items: center;
-    line-height: var(--f-font-14-line-height);
     font-family: var(--f-font-standard);
     font-size: var(--f-font-14-size);
+    line-height: var(--f-font-14-line-height);
 }
 
 .label:hover {
@@ -54,6 +54,10 @@
     color: var(--f-black-60);
 }
 
+.themeDark .icon {
+    color: var(--f-black-40);
+}
+
 .themeLight .icon:hover,
 .themeLight .label:hover {
     color: var(--f-black-100);
@@ -63,17 +67,24 @@
     color: var(--f-red-60);
 }
 
-.themeLight .disabled,
+.themeDark .disabled {
+    color: var(--f-black-60);
+}
+
+.themeLight .disabled{
+    color: var(--f-black-40);
+}
+
 .themeLight .disabled:hover {
     color: var(--f-black-40);
 }
 
-.themeDark {
-    color: var(--f-white);
+.themeDark .disabled:hover {
+    color: var(--f-black-60);
 }
 
-.themeDark .icon {
-    color: var(--f-black-40);
+.themeDark {
+    color: var(--f-white);
 }
 
 .themeDark .icon:hover,
@@ -85,7 +96,3 @@
     color: var(--f-red-50);
 }
 
-.themeDark .disabled,
-.themeDark .disabled:hover {
-    color: var(--f-black-60);
-}

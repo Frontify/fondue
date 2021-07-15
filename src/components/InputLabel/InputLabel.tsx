@@ -27,7 +27,7 @@ export default function InputLabel({
     const tooltipIconRef = useRef(null);
     const tooltipRef = useRef(null);
     const { styles, attributes } = usePopper(tooltipIconRef.current, tooltipRef.current, {
-        placement: "auto",
+        placement: "auto-end",
         modifiers: [
             {
                 name: "offset",
@@ -47,13 +47,23 @@ export default function InputLabel({
             >
                 {children}
             </label>
-            {required && <span className={css.asterisk}>*</span>}
+            {required && (
+                <span data-test-id="input-label-required" className={css.asterisk}>
+                    *
+                </span>
+            )}
             {tooltip && (
                 <>
-                    <div ref={tooltipIconRef} className={css.icon}>
+                    <div data-test-id="input-label-tooltip-icon" ref={tooltipIconRef} className={css.icon}>
                         <IconQuestion size={IconSize.Size16} />
                     </div>
-                    <div className={css.tooltip} ref={tooltipRef} style={styles.popper} {...attributes.popper}>
+                    <div
+                        data-test-id="input-label-tooltip"
+                        ref={tooltipRef}
+                        className={css.tooltip}
+                        style={styles.popper}
+                        {...attributes.popper}
+                    >
                         {tooltip}
                     </div>
                 </>

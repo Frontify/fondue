@@ -5,7 +5,6 @@
 }
 
 .checkbox {
-    cursor: pointer;
     position: relative;
     display: flex;
     width: 16px;
@@ -13,6 +12,7 @@
     align-items: center;
     justify-content: center;
     border-radius: var(--f-corner-4px);
+    cursor: pointer;
     transition: color var(--f-transition-linear), background-color var(--f-transition-linear);
 }
 

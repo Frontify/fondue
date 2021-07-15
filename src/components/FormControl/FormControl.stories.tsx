@@ -23,14 +23,16 @@ Default.args = {
     direction: "vertical",
     label: {
         children: "Input Label",
-        disabled: false,
         required: false,
         htmlFor: "input",
+        theme: Theme.Light,
+        tooltip: "Tooltip Text",
     },
-    extra: "",
+    extra: "Extra Text or Element",
     helper: {
-        text: "",
-        position: "before",
+        text: "Helper Text (before/after) and variant (Success/Error)",
+        position: "after",
+        variant: "",
     },
 } as FormControlProps;
 
