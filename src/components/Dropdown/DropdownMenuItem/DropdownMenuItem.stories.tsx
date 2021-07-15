@@ -12,6 +12,7 @@ export default {
     args: {
         warning: false,
         disabled: false,
+        active: false,
     },
     argTypes: {
         onClick: { action: "onClear" },

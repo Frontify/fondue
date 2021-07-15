@@ -77,7 +77,7 @@ describe("DropdownMenuItem Component", () => {
     it("renders small warning item", () => {
         mount(<DropdownMenuItem {...ITEMS[1]} />);
         cy.get(MENU_ITEM_TITLE_ID).contains("Small warning");
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.warning);
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.danger);
     });
     it("renders small disabled item", () => {
         mount(<DropdownMenuItem {...ITEMS[2]} />);
@@ -87,7 +87,7 @@ describe("DropdownMenuItem Component", () => {
     it("renders small disabled warning item", () => {
         mount(<DropdownMenuItem {...ITEMS[3]} />);
         cy.get(MENU_ITEM_TITLE_ID).contains("Small warning disabled");
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.warning);
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.danger);
         cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.disabled);
     });
     it("renders large item with icon", () => {
@@ -105,7 +105,7 @@ describe("DropdownMenuItem Component", () => {
         cy.get(MENU_ITEM_TITLE_ID).contains("Large warning");
         cy.get(MENU_ITEM_SUBTITLE_ID).contains("Large warning subtitle");
         cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.large);
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.warning);
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.danger);
     });
     it("renders large disabled item", () => {
         mount(<DropdownMenuItem {...ITEMS[6]} />);
@@ -119,7 +119,7 @@ describe("DropdownMenuItem Component", () => {
         cy.get(MENU_ITEM_TITLE_ID).contains("Large warning disabled");
         cy.get(MENU_ITEM_SUBTITLE_ID).contains("Large warning disabled subtitle");
         cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.large);
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.warning);
+        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.danger);
         cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.disabled);
     });
 });

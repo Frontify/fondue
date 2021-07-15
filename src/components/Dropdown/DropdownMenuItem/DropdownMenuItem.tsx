@@ -29,25 +29,6 @@ export type DropdownMenuItemProps = {
     onClick?: () => void;
 } & Omit<MenuItem, "id">;
 
-const getClassNames = (size: Size, warning: boolean, disabled: boolean, subtitle: string) => {
-    const classNames = [css.item];
-    if (size === Size.Small) {
-        classNames.push(css.small);
-    } else {
-        classNames.push(css.large);
-    }
-    if (warning) {
-        classNames.push(css.warning);
-    }
-    if (disabled) {
-        classNames.push(css.disabled);
-    }
-    if (subtitle.length > 0) {
-        classNames.push(css["has-subtitle"]);
-    }
-    return classNames.join(" ");
-};
-
 export default function DropdownMenuItem({
     title,
     icon,
@@ -61,18 +42,11 @@ export default function DropdownMenuItem({
     const itemClassNames = [
         css.item,
         size === Size.Small ? css.small : css.large,
-        warning ? css.warning : "",
-        disabled ? css.disabled : "",
-        subtitle.length > 0 ? css["has-subtitle"] : "",
-    ].join(" ");
-    const contentClassNames = [
-        css.content,
-        css.truncate,
         active ? css.active : "",
-        warning ? css.warning : "",
+        warning ? css.danger : "",
         disabled ? css.disabled : "",
     ].join(" ");
-    const subtitleClassNames = [css.subtitle, disabled ? css.disabled : "", warning ? css.warning : ""].join(" ");
+    const contentClassNames = [css.content, css.truncate].join(" ");
 
     return (
         <li
@@ -91,7 +65,7 @@ export default function DropdownMenuItem({
                     <div data-test-id="dropdown-menu-item-title" title={title}>
                         {title}
                     </div>
-                    <div data-test-id="dropdown-menu-item-subtitle" className={subtitleClassNames} title={subtitle}>
+                    <div data-test-id="dropdown-menu-item-subtitle" className={css.subtitle} title={subtitle}>
                         {subtitle}
                     </div>
                 </div>
