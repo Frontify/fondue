@@ -77,7 +77,7 @@ const Component: FC<Props> = ({
     placeholder = "",
     initialActiveId = "",
     clearable = false,
-}) => {
+}: Props) => {
     const [activeItemId, setActiveItemId] = useState(initialActiveId);
     return (
         <Dropdown
