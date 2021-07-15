@@ -65,8 +65,14 @@ export default function DropdownMenuItem({
         disabled ? css.disabled : "",
         subtitle.length > 0 ? css["has-subtitle"] : "",
     ].join(" ");
-    const contentClassNames = [css.content, css.truncate, disabled ? css.disabled : ""].join(" ");
-    const subtitleClassNames = [css.subtitle, disabled ? css.disabled : ""].join(" ");
+    const contentClassNames = [
+        css.content,
+        css.truncate,
+        active ? css.active : "",
+        warning ? css.warning : "",
+        disabled ? css.disabled : "",
+    ].join(" ");
+    const subtitleClassNames = [css.subtitle, disabled ? css.disabled : "", warning ? css.warning : ""].join(" ");
 
     return (
         <li
@@ -80,15 +86,21 @@ export default function DropdownMenuItem({
             }}
         >
             {icon}
-            <div className={contentClassNames} title={title}>
-                {title}
-                {subtitle && (
-                    <div className={subtitleClassNames} title={subtitle}>
+            {subtitle ? (
+                <div className={contentClassNames}>
+                    <div data-test-id="dropdown-menu-item-title" title={title}>
+                        {title}
+                    </div>
+                    <div data-test-id="dropdown-menu-item-subtitle" className={subtitleClassNames} title={subtitle}>
                         {subtitle}
                     </div>
-                )}
-            </div>
-            {active && <Check size={IconSize.Size20} />}
+                </div>
+            ) : (
+                <div data-test-id="dropdown-menu-item-title" className={contentClassNames} title={title}>
+                    {title}
+                </div>
+            )}
+            {active && <Check data-test-id="dropdown-menu-item-active" size={IconSize.Size20} />}
         </li>
     );
 }

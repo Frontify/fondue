@@ -19,10 +19,10 @@ export default function DropdownMenu({
     activeItemId = "",
 }: DropdownMenuProps): ReactElement<DropdownMenuProps> {
     return (
-        <ul data-test-id="dropdown-menu" className={`${css.menu} ${size === Size.Large ? css.large : ""}`}>
+        <ul className={`${css.menu} ${size === Size.Large ? css.large : ""}`}>
             {items.map((menuItems, i) => (
-                <li key={i} className={css.divider}>
-                    <ul className={css.list}>
+                <li key={i} className={css.divider} data-test-id="dropdown-divider">
+                    <ul className={css.list} data-test-id="dropdown-item-list">
                         {menuItems.map(({ id, title, icon, subtitle, size, warning, disabled }) => (
                             <DropdownMenuItem
                                 key={id}

@@ -43,7 +43,7 @@ export default function Dropdown({
 
     return (
         <div className={css.dropdown}>
-            <div className={wrapperClassNames}>
+            <div data-test-id="dropdown" className={wrapperClassNames}>
                 <button
                     data-test-id="dropdown-trigger"
                     onClick={() => setOpen(!open)}
@@ -65,7 +65,12 @@ export default function Dropdown({
                     )}
                 </button>
                 {clearable && activeItem && (
-                    <button className={clearButtonClassNames} onClick={() => onChange("")} disabled={disabled}>
+                    <button
+                        data-test-id="dropdown-clear-button"
+                        className={clearButtonClassNames}
+                        onClick={() => onChange("")}
+                        disabled={disabled}
+                    >
                         <IconReject size={IconSize.Size13} />
                     </button>
                 )}
