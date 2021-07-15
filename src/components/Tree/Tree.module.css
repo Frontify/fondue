@@ -1,0 +1,49 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.tree {
+    max-width: 800px;
+    margin-top: 10px;
+    text-align: left;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: var(--f-font-standard);
+    font-weight: 400;
+}
+
+.node {
+    padding-left: 10px;
+}
+
+.nodeLink {
+    display: flex;
+    text-decoration: none;
+    color: var(--f-black);
+    margin: 0 25px;
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: var(--f-corner-4px);
+}
+
+.nodeLinkActive {
+    color: var(--f-white);
+    background-color: var(--f-violet-60);
+}
+
+.nodeToggle {
+    transition: var(--f-transition-ease-in-out);
+}
+
+.nodeIcon {
+    padding-right: var(--f-spacing-2x);
+}
+
+.nodeToggleActive {
+    color: var(--f-white);
+    transform: rotate(90deg);
+}
+
+.nodeLabel {
+    margin-left: auto;
+    color: var(--f-black-opacity-mid);
+}
