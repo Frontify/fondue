@@ -9,19 +9,19 @@
 }
 
 .trigger-wrapper {
-    width: 100%;
-    box-sizing: border-box;
     position: relative;
     display: flex;
-    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
     align-items: center;
-    gap: var(--f-spacing-2x);
+    justify-content: space-between;
+    padding-right: var(--f-spacing-2x);
     border: var(--f-border);
     border-color: var(--f-black-20);
-    border-radius: var(--f-corner-4px);
-    padding-right: var(--f-spacing-2x);
     background-color: var(--f-white);
+    border-radius: var(--f-corner-4px);
     color: var(--f-black-80);
+    gap: var(--f-spacing-2x);
 }
 
 .trigger-wrapper:focus-within {
@@ -34,14 +34,14 @@
 
 .trigger-wrapper li:focus,
 .trigger-wrapper li:hover {
-    box-shadow: none;
     background-color: var(--f-white);
+    box-shadow: none;
 }
 
 .trigger-wrapper button {
-    background-color: var(--f-white);
+    padding: 0;
     border: none;
-    padding: 0px;
+    background-color: var(--f-white);
 }
 
 .trigger-wrapper button:hover {
@@ -50,17 +50,17 @@
 
 .disabled,
 button.disabled {
-    pointer-events: none;
-    background-color: var(--f-black-05);
     border-color: var(--f-black-05);
+    background-color: var(--f-black-05);
     color: var(--f-black-40);
+    pointer-events: none;
 }
 
 .trigger {
-    flex: 1 1 auto;
-    text-align: left;
-    border-radius: var(--f-corner-4px);
     overflow: hidden;
+    flex: 1 1 auto;
+    border-radius: var(--f-corner-4px);
+    text-align: left;
 }
 
 .trigger svg {

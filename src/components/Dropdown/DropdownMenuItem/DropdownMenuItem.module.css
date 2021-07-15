@@ -5,26 +5,26 @@
  */
 .item {
     position: relative;
+    display: flex;
     box-sizing: border-box;
     align-items: center;
-    display: flex;
-    cursor: pointer;
-    transition: background-color var(--f-transition-ease-in-out), color var(--f-transition-ease-in-out);
     border-radius: var(--f-corner-4px);
-    gap: var(--f-spacing-2x);
+    color: var(--f-black-80);
+    cursor: pointer;
     font-family: var(--f-font-standard);
     font-size: var(--f-font-14-size);
-    color: var(--f-black-80);
+    gap: var(--f-spacing-2x);
+    transition: background-color var(--f-transition-ease-in-out), color var(--f-transition-ease-in-out);
 }
 
 .item.small {
-    padding: var(--f-spacing-2x) var(--f-spacing-5x);
     min-height: 36px;
+    padding: var(--f-spacing-2x) var(--f-spacing-5x);
 }
 
 .item.large {
-    padding: var(--f-spacing-3x) var(--f-spacing-5x);
     min-height: 62px;
+    padding: var(--f-spacing-3x) var(--f-spacing-5x);
 }
 
 .item.active {
@@ -33,8 +33,8 @@
 }
 
 .item:hover {
-    color: var(--f-black-100);
     background-color: var(--f-black-00);
+    color: var(--f-black-100);
 }
 
 .item:focus {
@@ -53,14 +53,14 @@
 
 .subtitle {
     font-size: var(--f-font-12-size);
-    word-break: break-word;
     white-space: normal;
+    word-break: break-word;
 }
 
 .truncate {
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /**
@@ -86,7 +86,7 @@
  * Disabled
  */
 .item.disabled {
-    pointer-events: none;
-    color: var(--f-black-40);
     background-color: var(--f-black-00);
+    color: var(--f-black-40);
+    pointer-events: none;
 }
