@@ -104,7 +104,7 @@ describe("Dropdown Component", () => {
         cy.get(MENU_ITEM_TITLE_ID).contains("Small");
         cy.get(DROPDOWN_TRIGGER_ID).should("not.have.class", css.inactive);
         cy.get(DROPDOWN_TRIGGER_ID).click();
-        cy.get(MENU_ITEM_TEXT_ID).first().children(MENU_ITEM_ACTIVE_ID).should("not.exist");
+        cy.get(MENU_ITEM_TEXT_ID).first().children(MENU_ITEM_ACTIVE_ID).should("not.be.visible");
         cy.get(MENU_ITEM_TEXT_ID).eq(1).children(MENU_ITEM_ACTIVE_ID).should("exist");
     });
     it("changes selection on click", () => {

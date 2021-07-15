@@ -58,7 +58,7 @@ export default function Dropdown({
                             size={activeItem.size}
                             style={activeItem.style}
                             disabled={disabled}
-                            active={false}
+                            active
                         />
                     ) : (
                         <DropdownMenuItem title={placeholder} size={size} disabled={disabled} />

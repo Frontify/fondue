@@ -63,6 +63,10 @@ button.disabled {
     overflow: hidden;
 }
 
+.trigger svg {
+    display: none;
+}
+
 .placeholder,
 .clear {
     color: var(--f-black-80);
