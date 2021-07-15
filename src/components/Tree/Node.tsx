@@ -3,32 +3,35 @@
 import { IconProps, IconSize } from "@components/Icon/Icon";
 import { ReactComponent as IconCaretDown } from "@components/Icon/Svg/CaretDown.svg";
 import { ReactComponent as IconCaretRight } from "@components/Icon/Svg/CaretRight.svg";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import css from "./Tree.module.css";
 
 export interface TreeNode {
+    id: string;
     name: string;
     icon?: ReactElement<IconProps>;
     label?: string;
-    link?: string;
+    value?: string;
     nodes?: TreeNode[];
 }
 
 export interface NodeProps {
     node: TreeNode;
     strong?: boolean;
-    onToggle?: () => void;
-    onClick?: () => void;
+    activeNodeId?: string;
+    onClick: (id: string) => void;
 }
 
 export default function Node({
-    node: { name, label, icon, nodes },
+    node: { id, value, name, label, icon, nodes },
     strong,
-    onToggle,
+    activeNodeId,
     onClick,
 }: NodeProps): ReactElement<NodeProps> {
     const [showNodes, setShowNodes] = useState(false);
     const [active, setActive] = useState(false);
+
+    useEffect(() => setActive(id === activeNodeId), [activeNodeId]);
 
     const classNames = [css.nodeLink];
     if (active) {
@@ -43,15 +46,16 @@ export default function Node({
             <a
                 className={classNames.join(" ")}
                 onClick={() => {
-                    setActive(true);
-                    onToggle && onToggle();
+                    if (value) {
+                        setActive(true);
+                        onClick && onClick(id);
+                    }
                 }}
             >
                 <span
                     onClick={(event) => {
                         event.stopPropagation();
                         setShowNodes(!showNodes);
-                        onClick && onClick();
                     }}
                 >
                     {nodes &&
@@ -68,7 +72,7 @@ export default function Node({
             {nodes && showNodes && (
                 <ul className={css.tree}>
                     {nodes.map((node) => {
-                        return <Node key={node.name} node={node} />;
+                        return <Node key={node.name} node={node} activeNodeId={activeNodeId} onClick={onClick} />;
                     })}
                 </ul>
             )}
