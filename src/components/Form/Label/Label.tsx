@@ -1,15 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, ReactNode, useState } from "react";
 import { IconSize } from "@components/Icon/Icon";
 import { ReactComponent as IconQuestion } from "@components/Icon/Svg/Question.svg";
+import { Theme } from "@utilities/enum";
+import { ReactElement, ReactNode, useState } from "react";
 import { usePopper } from "react-popper";
 import css from "./Label.module.css";
-
-export enum LabelTheme {
-    Light = "Light",
-    Dark = "Dark",
-}
 
 export interface LabelProps {
     children: ReactNode;
@@ -17,7 +13,7 @@ export interface LabelProps {
     required?: boolean;
     disabled?: boolean;
     tooltip?: ReactNode;
-    theme?: LabelTheme;
+    theme?: Theme;
 }
 
 export default function Label({
@@ -26,7 +22,7 @@ export default function Label({
     required = false,
     disabled = false,
     tooltip,
-    theme = LabelTheme.Light,
+    theme = Theme.Light,
 }: LabelProps): ReactElement<LabelProps> {
     const [iconElement, setIconElement] = useState<HTMLDivElement | null>(null);
     const [tooltipElement, setTooltipElement] = useState<HTMLDivElement | null>(null);

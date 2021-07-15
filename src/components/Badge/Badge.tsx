@@ -1,12 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Theme } from "@utilities/enum";
 import { ReactElement } from "react";
 import css from "./Badge.module.css";
-
-export enum BadgeTheme {
-    Light = "Light",
-    Dark = "Dark",
-}
 
 export enum BadgeStatus {
     Success = "Success",
@@ -18,14 +14,14 @@ export enum BadgeStatus {
 
 export interface BadgeProps {
     children: ReactElement | ReactElement[] | string;
-    theme?: BadgeTheme;
+    theme?: Theme;
     status?: BadgeStatus;
     customColor?: string;
 }
 
 export default function Badge({
     children,
-    theme = BadgeTheme.Light,
+    theme = Theme.Light,
     status,
     customColor,
 }: BadgeProps): ReactElement<BadgeProps> {

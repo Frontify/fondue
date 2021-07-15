@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Size } from "@utilities/enum";
+import { Size, Style, Theme } from "@utilities/enum";
 import { ReactElement } from "react";
 import css from "./Button.module.css";
 
 export interface ButtonProps {
-    theme?: ButtonTheme;
-    style?: ButtonStyle;
+    theme?: Theme;
+    style?: Style;
     size?: Size;
     disabled?: boolean;
 
@@ -15,20 +15,9 @@ export interface ButtonProps {
     children: ReactElement | ReactElement[] | string;
 }
 
-export enum ButtonStyle {
-    Primary = "Primary",
-    Secondary = "Secondary",
-    Danger = "Danger",
-}
-
-export enum ButtonTheme {
-    "Light" = "Light",
-    "Dark" = "Dark",
-}
-
 export default function Button({
-    theme = ButtonTheme.Light,
-    style = ButtonStyle.Primary,
+    theme = Theme.Light,
+    style = Style.Primary,
     size = Size.Small,
     disabled = false,
     onClick,
