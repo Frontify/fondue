@@ -3,19 +3,23 @@
 import { IconSize } from "@components/Icon/Icon";
 import { ReactComponent as Audio } from "@components/Icon/Svg/Audio.svg";
 import { Meta, Story } from "@storybook/react";
-import { Size } from "@utilities/enum";
+import { Size, Style } from "@utilities/enum";
 import DropdownMenuItem, { DropdownMenuItemProps } from "./DropdownMenuItem";
 
 export default {
     title: "DropdownMenuItem",
     component: DropdownMenuItem,
     args: {
-        warning: false,
         disabled: false,
         active: false,
+        style: Style.Primary,
     },
     argTypes: {
         onClick: { action: "onClear" },
+        style: {
+            options: [Style.Primary, Style.Danger],
+            control: { type: "radio" },
+        },
     },
 } as Meta;
 

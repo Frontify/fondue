@@ -2,7 +2,7 @@
 
 import { IconProps, IconSize } from "@components/Icon/Icon";
 import { ReactComponent as Check } from "@components/Icon/Svg/Check.svg";
-import { Size } from "@utilities/enum";
+import { Size, Style } from "@utilities/enum";
 import { ReactElement } from "react";
 import css from "./DropdownMenuItem.module.css";
 
@@ -10,7 +10,7 @@ type MenuItemBase = {
     id: string;
     title: string;
     icon?: ReactElement<IconProps>;
-    warning?: boolean;
+    style?: Style.Primary | Style.Danger;
     disabled?: boolean;
     active?: boolean;
 };
@@ -35,7 +35,7 @@ export default function DropdownMenuItem({
     onClick,
     subtitle = "",
     size = Size.Small,
-    warning = false,
+    style = Style.Primary,
     disabled = false,
     active = false,
 }: DropdownMenuItemProps): ReactElement<DropdownMenuItemProps> {
@@ -43,7 +43,7 @@ export default function DropdownMenuItem({
         css.item,
         size === Size.Small ? css.small : css.large,
         active ? css.active : "",
-        warning ? css.danger : "",
+        style === Style.Danger ? css.danger : "",
         disabled ? css.disabled : "",
     ].join(" ");
     const contentClassNames = [css.content, css.truncate].join(" ");

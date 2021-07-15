@@ -56,7 +56,7 @@ export default function Dropdown({
                             icon={activeItem.icon}
                             subtitle={activeItem.subtitle}
                             size={activeItem.size}
-                            warning={activeItem.warning}
+                            style={activeItem.style}
                             disabled={disabled}
                             active={false}
                         />

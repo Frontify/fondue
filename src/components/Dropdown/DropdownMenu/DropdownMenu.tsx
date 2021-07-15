@@ -23,7 +23,7 @@ export default function DropdownMenu({
             {items.map((menuItems, i) => (
                 <li key={i} className={css.divider} data-test-id="dropdown-divider">
                     <ul className={css.list} data-test-id="dropdown-item-list">
-                        {menuItems.map(({ id, title, icon, subtitle, size, warning, disabled }) => (
+                        {menuItems.map(({ id, title, icon, subtitle, size, style, disabled }) => (
                             <DropdownMenuItem
                                 key={id}
                                 onClick={() => onChange(id)}
@@ -31,7 +31,7 @@ export default function DropdownMenu({
                                 icon={icon}
                                 subtitle={subtitle}
                                 size={size}
-                                warning={warning}
+                                style={style}
                                 disabled={disabled}
                                 active={id === activeItemId}
                             />

@@ -3,3 +3,14 @@ export enum Size {
     Medium = "Medium",
     Large = "Large",
 }
+
+export enum Style {
+    Primary = "Primary",
+    Secondary = "Secondary",
+    Danger = "Danger",
+}
+
+export enum Theme {
+    Light = "Light",
+    Dark = "Dark",
+}
