@@ -2,7 +2,7 @@
 
 import { IconProps, IconSize } from "@components/Icon/Icon";
 import { ReactComponent as IconCaretRight } from "@components/Icon/Svg/CaretRight.svg";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useState } from "react";
 import css from "./Tree.module.css";
 
 export interface TreeNode {
@@ -15,22 +15,32 @@ export interface TreeNode {
 
 export interface NodeProps {
     node: TreeNode;
+    strong?: boolean;
     onToggle?: () => void;
     onClick?: () => void;
 }
 
 export default function Node({
     node: { name, label, icon, nodes },
+    strong,
     onToggle,
     onClick,
 }: NodeProps): ReactElement<NodeProps> {
     const [showNodes, setShowNodes] = useState(false);
     const [active, setActive] = useState(false);
 
+    const classNames = [css.nodeLink];
+    if (active) {
+        classNames.push(css.nodeLinkActive);
+    }
+    if (strong) {
+        classNames.push(css.nodeLinkStrong);
+    }
+
     return (
         <li className={css.node}>
             <a
-                className={active ? `${css.nodeLink} ${css.nodeLinkActive}` : css.nodeLink}
+                className={classNames.join(" ")}
                 onClick={() => {
                     setActive(true);
                     onToggle && onToggle();
@@ -50,8 +60,8 @@ export default function Node({
                         />
                     )}
                 </span>
-                <span className={css.nodeIcon}>{icon}</span>
-                <span>{name}</span>
+                {icon && <span className={css.nodeIcon}>{icon}</span>}
+                <span className={css.nodeName}>{name}</span>
                 <span className={css.nodeLabel}>{label}</span>
             </a>
             {nodes && showNodes && (

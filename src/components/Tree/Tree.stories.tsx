@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactComponent as IconGuidelines } from "@components/Icon/Svg/Guidelines.svg";
+import { ReactComponent as IconDocument } from "@components/Icon/Svg/Document.svg";
 import { Meta, Story } from "@storybook/react";
 import { TreeNode } from "./Node";
 import Tree, { TreeProps } from "./Tree";
@@ -30,44 +31,44 @@ Default.args = {
                             name: "Home",
                             label: "Page",
                             link: "https://weare.frontify.com/page/1",
+                            icon: <IconDocument size={IconSize.Size16} />,
                         },
                         {
                             name: "Members",
                             label: "Page",
                             link: "https://weare.frontify.com/page/2",
+                            icon: <IconDocument size={IconSize.Size16} />,
                         },
                         {
                             name: "About us",
                             label: "Page",
                             link: "https://weare.frontify.com/page/3",
+                            icon: <IconDocument size={IconSize.Size16} />,
                         },
                     ],
                 },
-            ],
-        },
-        {
-            name: "Smartive Design System",
-            label: "Document",
-            link: "https://weare.frontify.com/document/923#/test",
-            icon: <IconGuidelines size={IconSize.Size16} />,
-            nodes: [
                 {
-                    name: "Uncategorizes Pages",
+                    name: "Test Category",
+                    label: "Document",
+                    link: "https://weare.frontify.com/document/923#/test",
                     nodes: [
                         {
                             name: "Home",
                             label: "Page",
                             link: "https://weare.frontify.com/page/1",
+                            icon: <IconDocument size={IconSize.Size16} />,
                         },
                         {
                             name: "Members",
                             label: "Page",
                             link: "https://weare.frontify.com/page/2",
+                            icon: <IconDocument size={IconSize.Size16} />,
                         },
                         {
                             name: "About us",
                             label: "Page",
                             link: "https://weare.frontify.com/page/3",
+                            icon: <IconDocument size={IconSize.Size16} />,
                         },
                     ],
                 },

@@ -12,7 +12,7 @@ export default function Tree({ nodes }: TreeProps): ReactElement<TreeProps> {
     return (
         <ul data-test-id="Tree" className={css.tree}>
             {nodes.map((node) => (
-                <Node key={node.name} node={node} />
+                <Node key={node.name} node={node} strong />
             ))}
         </ul>
     );
