@@ -39,10 +39,6 @@
     font-weight: 700;
 }
 
-.nodeToggle {
-    transition: var(--f-transition-ease-in-out);
-}
-
 .nodeIcon {
     padding-left: var(--f-spacing-2x);
 }
@@ -51,13 +47,12 @@
     padding-left: var(--f-spacing-2x);
 }
 
-.nodeToggleActive {
-    color: var(--f-white);
-    transform: rotate(90deg);
-}
-
 .nodeLabel {
     font-weight: 400;
     margin-left: auto;
     color: var(--f-black-opacity-mid);
+}
+
+.nodeLabelActive {
+    color: hsla(0, 0%, 100%, 0.6);
 }
