@@ -3,7 +3,7 @@
 import { IconSize } from "@components/Icon/Icon";
 import { ReactComponent as Audio } from "@components/Icon/Svg/Audio.svg";
 import { mount } from "@cypress/react";
-import { Size } from "@utilities/enum";
+import { Size, Style } from "@utilities/enum";
 import DropdownMenuItem from "./DropdownMenuItem";
 import css from "./DropdownMenuItem.module.css";
 
@@ -22,7 +22,7 @@ const ITEMS = [
     {
         id: "2",
         title: "Small warning",
-        warning: true,
+        style: Style.Danger,
     },
     {
         id: "3",
@@ -32,7 +32,7 @@ const ITEMS = [
     {
         id: "4",
         title: "Small warning disabled",
-        warning: true,
+        style: Style.Danger,
         disabled: true,
     },
     {
@@ -47,7 +47,7 @@ const ITEMS = [
         title: "Large warning",
         subtitle: "Large warning subtitle",
         size: Size.Large,
-        warning: true,
+        style: Style.Danger,
     },
     {
         id: "7",
@@ -61,7 +61,7 @@ const ITEMS = [
         title: "Large warning disabled",
         subtitle: "Large warning disabled subtitle",
         size: Size.Large,
-        warning: true,
+        style: Style.Danger,
         disabled: true,
     },
 ];
@@ -74,7 +74,7 @@ describe("DropdownMenuItem Component", () => {
         mount(<DropdownMenuItem {...ITEMS[0]} active />);
         cy.get(MENU_ITEM_ACTIVE_ID).should("exist");
     });
-    it("renders small warning item", () => {
+    it("renders small danger item", () => {
         mount(<DropdownMenuItem {...ITEMS[1]} />);
         cy.get(MENU_ITEM_TITLE_ID).contains("Small warning");
         cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.danger);

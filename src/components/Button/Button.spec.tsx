@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import { Size } from "@utilities/enum";
-import Button, { ButtonStyle, ButtonTheme } from "./Button";
+import { Size, Style, Theme } from "@utilities/enum";
+import Button from "./Button";
 import css from "./Button.module.css";
 
 const BUTTON_TEXT = "Frontify";
@@ -23,7 +23,7 @@ describe("Button component", () => {
     });
 
     it("has light theme", () => {
-        mount(<Button theme={ButtonTheme.Light}>{BUTTON_TEXT}</Button>);
+        mount(<Button theme={Theme.Light}>{BUTTON_TEXT}</Button>);
 
         cy.get("[data-test-id=button]").as("button");
 
@@ -37,7 +37,7 @@ describe("Button component", () => {
     });
 
     it("has dark theme", () => {
-        mount(<Button theme={ButtonTheme.Dark}>{BUTTON_TEXT}</Button>);
+        mount(<Button theme={Theme.Dark}>{BUTTON_TEXT}</Button>);
 
         cy.get("[data-test-id=button]").as("button");
 
@@ -62,7 +62,7 @@ describe("Button component", () => {
         cy.get("@button").should("not.have.class", css.stylePrimary);
     });
 
-    Object.values(ButtonStyle).forEach((style) => {
+    Object.values(Style).forEach((style) => {
         it(`has ${style} style`, () => {
             mount(<Button style={style}>{BUTTON_TEXT}</Button>);
 
