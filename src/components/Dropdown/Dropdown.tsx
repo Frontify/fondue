@@ -10,8 +10,13 @@ import css from "./Dropdown.module.css";
 import DropdownMenu from "./DropdownMenu/DropdownMenu";
 import DropdownMenuItem, { MenuItem } from "./DropdownMenuItem/DropdownMenuItem";
 
+export interface ItemBlock {
+    id: string;
+    menuItems: MenuItem[];
+}
+
 export interface DropdownProps {
-    menuItems: MenuItem[][];
+    itemBlocks: ItemBlock[];
     onChange: (id?: string) => void;
     activeItemId?: string;
     placeholder?: string;
@@ -20,10 +25,14 @@ export interface DropdownProps {
     clearable?: boolean;
 }
 
-const getActiveItem = (menuItems: MenuItem[][], id: string) => menuItems.flat().find((item) => item.id === id) || null;
+const getActiveItem = (itemBlocks: ItemBlock[], id: string) =>
+    itemBlocks
+        .map((block) => block.menuItems)
+        .flat()
+        .find((item) => item.id === id) || null;
 
 export default function Dropdown({
-    menuItems,
+    itemBlocks,
     onChange,
     activeItemId = "",
     placeholder = "Select item",
@@ -33,7 +42,7 @@ export default function Dropdown({
 }: DropdownProps): ReactElement<DropdownProps> {
     const [open, setOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
-    const activeItem = getActiveItem(menuItems, activeItemId);
+    const activeItem = getActiveItem(itemBlocks, activeItemId);
     const wrapperClassNames = [
         css["trigger-wrapper"],
         size === Size.Large ? css.large : "",
@@ -93,7 +102,7 @@ export default function Dropdown({
             </div>
             {open && (
                 <DropdownMenu
-                    items={menuItems}
+                    itemBlocks={itemBlocks}
                     activeItemId={activeItemId}
                     size={size}
                     onChange={(id) => {
