@@ -11,23 +11,23 @@
     font-weight: 400;
 }
 
-.node {
-    padding-left: var(--f-spacing-2x);
-}
-
-.node .tree {
-    margin-left: var(--f-spacing-7x);
-}
-
 .nodeLink {
     display: flex;
     text-decoration: none;
     color: var(--f-black);
-    margin: 0 var(--f-spacing-6x);
+    /* margin: 0 var(--f-spacing-6x); */
     padding: var(--f-spacing-1x) var(--f-spacing-2x);
     cursor: pointer;
     border-radius: var(--f-corner-4px);
     vertical-align: middle;
+}
+
+.tree .tree .nodeLink {
+    padding-left: var(--f-spacing-8x);
+}
+
+.tree .tree .tree .nodeLink {
+    padding-left: var(--f-spacing-16x);
 }
 
 .selectableNodeLink:hover {

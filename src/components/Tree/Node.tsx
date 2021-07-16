@@ -49,7 +49,7 @@ export default function Node({
     useEffect(() => setActive(id === activeNodeId), [activeNodeId]);
 
     return (
-        <li className={css.node}>
+        <li>
             <a
                 className={getNodeClassNames(active, strong, !!value).join(" ")}
                 onClick={() => {
