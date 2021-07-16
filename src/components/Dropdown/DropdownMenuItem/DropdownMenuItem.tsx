@@ -1,10 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconProps, IconSize } from "@components/Icon/Icon";
-import { ReactComponent as Check } from "@components/Icon/Svg/Check.svg";
+import { ReactComponent as CaretRightIcon } from "@components/Icon/Svg/CaretRight.svg";
+import { ReactComponent as CheckIcon } from "@components/Icon/Svg/Check.svg";
 import { Size, Style } from "@utilities/enum";
 import { ReactElement } from "react";
 import css from "./DropdownMenuItem.module.css";
+
+export enum SelectionIndicatorIcon {
+    Check = "Check",
+    CaretRight = "CaretRight",
+}
 
 type MenuItemBase = {
     id: string;
@@ -13,6 +19,7 @@ type MenuItemBase = {
     style?: Style.Primary | Style.Danger;
     disabled?: boolean;
     active?: boolean;
+    selectionIndicator?: SelectionIndicatorIcon;
 };
 
 export type MenuItem =
@@ -38,6 +45,7 @@ export default function DropdownMenuItem({
     style = Style.Primary,
     disabled = false,
     active = false,
+    selectionIndicator = SelectionIndicatorIcon.Check,
 }: DropdownMenuItemProps): ReactElement<DropdownMenuItemProps> {
     const itemClassNames = [
         css.item,
@@ -74,7 +82,12 @@ export default function DropdownMenuItem({
                     {title}
                 </div>
             )}
-            {active && <Check data-test-id="dropdown-menu-item-active" size={IconSize.Size20} />}
+            {active &&
+                (selectionIndicator === SelectionIndicatorIcon.Check ? (
+                    <CheckIcon data-test-id="dropdown-menu-item-active" size={IconSize.Size20} />
+                ) : (
+                    <CaretRightIcon data-test-id="dropdown-menu-item-active" size={IconSize.Size20} />
+                ))}
         </li>
     );
 }
