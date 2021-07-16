@@ -30,7 +30,12 @@
     vertical-align: middle;
 }
 
-.nodeLinkActive {
+.nodeLink:hover {
+    background-color: var(--f-black-05);
+}
+
+.nodeLinkActive,
+.nodeLinkActive:hover {
     color: var(--f-white);
     background-color: var(--f-violet-60);
 }
