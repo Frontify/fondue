@@ -1,14 +1,31 @@
 import Badge from "./components/Badge/Badge";
-import Breadcrumb from "./components/Breadcrumb/Breadcrumb";
 import Button from "./components/Button/Button";
+import Breadcrumb from "./components/Breadcrumb/Breadcrumb";
 import Card from "./components/Card/Card";
-import Checkbox from "./components/Checkbox/Checkbox";
 import Divider from "./components/Divider/Divider";
+import Checkbox from "./components/Checkbox/Checkbox";
 import Dropdown from "./components/Dropdown/Dropdown";
+import Iframe from "./components/Iframe/Iframe";
+import FrontifyImage from "./components/Image/FrontifyImage";
+import Image from "./components/Image/Image";
+import Modal from "./components/Modal/Modal";
+import ModalPortal from "./components/Modal/ModalPortal";
+import Sidebar from "./components/Sidebar/Sidebar";
+import Slider from "./components/Slider/Slider";
+import Stepper from "./components/Stepper/Stepper";
+import Tabs from "./components/Tabs/Tabs";
+import DropdownMenu from "./components/Dropdown/DropdownMenu/DropdownMenu";
 import DropdownMenuItem from "./components/Dropdown/DropdownMenuItem/DropdownMenuItem";
 import Label from "./components/Form/Label/Label";
-import Textarea from "./components/Form/Textarea/Textarea";
 import TextInput from "./components/Form/TextInput/TextInput";
+import Textarea from "./components/Form/Textarea/Textarea";
+import BaseActions from "./components/Modal/Actions/BaseActions";
+import SidebarItemCheckbox from "./components/Sidebar/SidebarItemCheckbox/SidebarItemCheckbox";
+import SidebarItemDefault from "./components/Sidebar/SidebarItemDefault/SidebarItemDefault";
+import SidebarItemLink from "./components/Sidebar/SidebarItemLink/SidebarItemLink";
+import SidebarItemSearch from "./components/Sidebar/SidebarItemSearch/SidebarItemSearch";
+import Tab from "./components/Tabs/Tab/Tab";
+import TabTitle from "./components/Tabs/TabTitle/TabTitle";
 import { ReactComponent as IconAcademy } from "./components/Icon/Svg/Academy.svg";
 import { ReactComponent as IconActions } from "./components/Icon/Svg/Actions.svg";
 import { ReactComponent as IconActivities } from "./components/Icon/Svg/Activities.svg";
@@ -61,20 +78,20 @@ import { ReactComponent as IconCollapse } from "./components/Icon/Svg/Collapse.s
 import { ReactComponent as IconCollectionLarge } from "./components/Icon/Svg/CollectionLarge.svg";
 import { ReactComponent as IconCollectionMedium } from "./components/Icon/Svg/CollectionMedium.svg";
 import { ReactComponent as IconCollectionSmall } from "./components/Icon/Svg/CollectionSmall.svg";
-import { ReactComponent as IconColors } from "./components/Icon/Svg/Colors.svg";
 import { ReactComponent as IconColorScale } from "./components/Icon/Svg/ColorScale.svg";
 import { ReactComponent as IconColorScaleSmall } from "./components/Icon/Svg/ColorScaleSmall.svg";
 import { ReactComponent as IconColorScaleTall } from "./components/Icon/Svg/ColorScaleTall.svg";
 import { ReactComponent as IconColorSwatch } from "./components/Icon/Svg/ColorSwatch.svg";
+import { ReactComponent as IconColors } from "./components/Icon/Svg/Colors.svg";
 import { ReactComponent as IconColumnBreak } from "./components/Icon/Svg/ColumnBreak.svg";
 import { ReactComponent as IconCopyToClipboard } from "./components/Icon/Svg/CopyToClipboard.svg";
 import { ReactComponent as IconCrop } from "./components/Icon/Svg/Crop.svg";
 import { ReactComponent as IconCut } from "./components/Icon/Svg/Cut.svg";
 import { ReactComponent as IconDivider } from "./components/Icon/Svg/Divider.svg";
-import { ReactComponent as IconDocument } from "./components/Icon/Svg/Document.svg";
-import { ReactComponent as IconDocumentLibrary } from "./components/Icon/Svg/DocumentLibrary.svg";
 import { ReactComponent as IconDoDontsStrikethrough } from "./components/Icon/Svg/DoDontsStrikethrough.svg";
 import { ReactComponent as IconDoDontsUnderline } from "./components/Icon/Svg/DoDontsUnderline.svg";
+import { ReactComponent as IconDocument } from "./components/Icon/Svg/Document.svg";
+import { ReactComponent as IconDocumentLibrary } from "./components/Icon/Svg/DocumentLibrary.svg";
 import { ReactComponent as IconDosImages } from "./components/Icon/Svg/DosImages.svg";
 import { ReactComponent as IconDosText } from "./components/Icon/Svg/DosText.svg";
 import { ReactComponent as IconDownload } from "./components/Icon/Svg/Download.svg";
@@ -233,32 +250,15 @@ import { ReactComponent as IconVolumeOff } from "./components/Icon/Svg/VolumeOff
 import { ReactComponent as IconVolumeOn } from "./components/Icon/Svg/VolumeOn.svg";
 import { ReactComponent as IconWorkflow } from "./components/Icon/Svg/Workflow.svg";
 import { ReactComponent as IconZoom } from "./components/Icon/Svg/Zoom.svg";
-import Iframe from "./components/Iframe/Iframe";
-import FrontifyImage from "./components/Image/FrontifyImage";
-import Image from "./components/Image/Image";
-import BaseActions from "./components/Modal/Actions/BaseActions";
-import Modal from "./components/Modal/Modal";
-import ModalPortal from "./components/Modal/ModalPortal";
-import Sidebar from "./components/Sidebar/Sidebar";
-import SidebarItemCheckbox from "./components/Sidebar/SidebarItemCheckbox/SidebarItemCheckbox";
-import SidebarItemDefault from "./components/Sidebar/SidebarItemDefault/SidebarItemDefault";
-import SidebarItemLink from "./components/Sidebar/SidebarItemLink/SidebarItemLink";
-import SidebarItemSearch from "./components/Sidebar/SidebarItemSearch/SidebarItemSearch";
-import Slider from "./components/Slider/Slider";
-import Stepper from "./components/Stepper/Stepper";
-import Tab from "./components/Tabs/Tab/Tab";
-import Tabs from "./components/Tabs/Tabs";
-import TabTitle from "./components/Tabs/TabTitle/TabTitle";
 
 export {
-    Breadcrumb,
     Badge,
     Button,
+    Breadcrumb,
     Card,
-    Checkbox,
     Divider,
+    Checkbox,
     Dropdown,
-    DropdownMenuItem,
     Iframe,
     FrontifyImage,
     Image,
@@ -268,16 +268,18 @@ export {
     Slider,
     Stepper,
     Tabs,
+    DropdownMenu,
+    DropdownMenuItem,
     Label,
     TextInput,
     Textarea,
     BaseActions,
     SidebarItemCheckbox,
     SidebarItemDefault,
-    SidebarItemSearch,
     SidebarItemLink,
-    TabTitle,
+    SidebarItemSearch,
     Tab,
+    TabTitle,
     IconAcademy,
     IconActions,
     IconActivities,
