@@ -84,9 +84,9 @@ type Props = {
 
 const Component: FC<Props> = ({
     menuBlocks,
+    placeholder,
+    initialActiveId,
     size = Size.Small,
-    placeholder = "",
-    initialActiveId = "",
     clearable = false,
 }: Props) => {
     const [activeItemId, setActiveItemId] = useState(initialActiveId);

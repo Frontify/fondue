@@ -8,7 +8,7 @@
     line-height: var(--f-font-14-line-height);
 }
 
-.trigger-wrapper {
+.triggerWrapper {
     position: relative;
     display: flex;
     width: 100%;
@@ -24,27 +24,27 @@
     gap: var(--f-spacing-2x);
 }
 
-.trigger-wrapper:focus-within {
+.triggerWrapper:focus-within {
     border-color: var(--f-black-90);
 }
 
-.trigger-wrapper.large {
+.triggerWrapper.large {
     padding-right: var(--f-spacing-5x);
 }
 
-.trigger-wrapper li:focus,
-.trigger-wrapper li:hover {
+.triggerWrapper li:focus,
+.triggerWrapper li:hover {
     background-color: var(--f-white);
     box-shadow: none;
 }
 
-.trigger-wrapper button {
+.triggerWrapper button {
     padding: 0;
     border: none;
     background-color: var(--f-white);
 }
 
-.trigger-wrapper button:hover {
+.triggerWrapper button:hover {
     cursor: pointer;
 }
 

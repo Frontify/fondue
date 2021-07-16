@@ -40,7 +40,7 @@ export default function Dropdown({
     const dropdownElement = useRef<HTMLDivElement | null>(null);
     const activeItem = getActiveItem(menuBlocks, activeItemId);
     const wrapperClassNames = [
-        css["trigger-wrapper"],
+        css["triggerWrapper"],
         size === Size.Large ? css.large : "",
         disabled ? css.disabled : "",
     ].join(" ");

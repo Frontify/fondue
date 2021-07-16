@@ -13,7 +13,7 @@
     cursor: pointer;
     font-family: var(--f-font-standard);
     font-size: var(--f-font-14-size);
-    gap: var(--f-spacing-2x);
+    gap: var(--f-spacing-3x);
     transition: background-color var(--f-transition-ease-in-out), color var(--f-transition-ease-in-out);
 }
 
