@@ -6,17 +6,17 @@ import { ReactComponent as IconCaretRight } from "@components/Icon/Svg/CaretRigh
 import { ReactElement, useEffect, useState } from "react";
 import css from "./Tree.module.css";
 
-export interface TreeNode {
+export interface TreeNodeProps {
     id: string;
     name: string;
     icon?: ReactElement<IconProps>;
     label?: string;
     value?: string;
-    nodes?: TreeNode[];
+    nodes?: TreeNodeProps[];
 }
 
 interface NodeProps {
-    node: TreeNode;
+    node: TreeNodeProps;
     strong?: boolean;
     activeNodeId?: string;
     onClick: (id: string) => void;
@@ -37,7 +37,7 @@ const getNodeClassNames = (active: boolean, strong: boolean, hasValue: boolean) 
     return classNames;
 };
 
-export default function Node({
+export default function TreeNode({
     node: { id, value, name, label, icon, nodes },
     strong = false,
     activeNodeId,
@@ -82,7 +82,7 @@ export default function Node({
             {nodes && showNodes && (
                 <ul className={css.tree} data-test-id="sub-tree">
                     {nodes.map((node) => {
-                        return <Node key={node.name} node={node} activeNodeId={activeNodeId} onClick={onClick} />;
+                        return <TreeNode key={node.name} node={node} activeNodeId={activeNodeId} onClick={onClick} />;
                     })}
                 </ul>
             )}

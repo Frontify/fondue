@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactComponent as IconGuidelines } from "@components/Icon/Svg/Guidelines.svg";
-import { ReactComponent as IconDocument } from "@components/Icon/Svg/Document.svg";
-import { Meta, Story } from "@storybook/react";
-import { TreeNode } from "./Node";
-import Tree, { TreeProps } from "./Tree";
 import { IconSize } from "@components/Icon/Icon";
+import { ReactComponent as IconDocument } from "@components/Icon/Svg/Document.svg";
+import { ReactComponent as IconGuidelines } from "@components/Icon/Svg/Guidelines.svg";
+import { Meta, Story } from "@storybook/react";
+import { TreeNodeProps } from "./Node";
+import Tree, { TreeProps } from "./Tree";
 
 export default {
     title: "Tree",
@@ -83,7 +83,7 @@ Default.args = {
                 },
             ],
         },
-    ] as TreeNode[],
+    ] as TreeNodeProps[],
     activeNodeId: "1-1-3",
 };
 

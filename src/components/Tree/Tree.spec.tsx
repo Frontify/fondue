@@ -5,11 +5,11 @@ import { ReactComponent as IconDocument } from "@components/Icon/Svg/Document.sv
 import { ReactComponent as IconGuidelines } from "@components/Icon/Svg/Guidelines.svg";
 import { mount } from "@cypress/react";
 import { FC, useState } from "react";
-import { TreeNode } from "./Node";
+import { TreeNodeProps } from "./Node";
 import Tree from "./Tree";
 import css from "./Tree.module.css";
 
-const Component: FC<{ nodes: TreeNode[] }> = ({ nodes }) => {
+const Component: FC<{ nodes: TreeNodeProps[] }> = ({ nodes }) => {
     const [selectedId, setSelectedId] = useState<string | undefined>();
     return <Tree nodes={nodes} activeNodeId={selectedId} onSelect={(id: string) => setSelectedId(id)} />;
 };
@@ -19,7 +19,7 @@ const NODE_ID = "[data-test-id=node]";
 const TOGGLE_ID = "[data-test-id=toggle]";
 const SUB_TREE_ID = "[data-test-id=sub-tree]";
 
-const nodes: TreeNode[] = [
+const nodes: TreeNodeProps[] = [
     {
         id: "1",
         name: "Design System Testing",

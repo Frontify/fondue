@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement, useState } from "react";
-import Node, { TreeNode } from "./Node";
+import TreeNode, { TreeNodeProps } from "./Node";
 import css from "./Tree.module.css";
 
 export interface TreeProps {
-    nodes: TreeNode[];
+    nodes: TreeNodeProps[];
     onSelect: (id: string) => void;
     activeNodeId?: string;
 }
@@ -24,7 +24,7 @@ export default function Tree({
     return (
         <ul data-test-id="tree" className={css.tree}>
             {nodes.map((node) => (
-                <Node key={node.id} node={node} activeNodeId={activeNodeId} strong onClick={onClick} />
+                <TreeNode key={node.id} node={node} activeNodeId={activeNodeId} strong onClick={onClick} />
             ))}
         </ul>
     );
