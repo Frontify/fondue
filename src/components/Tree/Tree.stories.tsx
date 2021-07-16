@@ -12,7 +12,11 @@ export default {
     component: Tree,
 } as Meta;
 
-const TreeTemplate: Story<TreeProps> = (args) => <Tree {...args} />;
+const TreeTemplate: Story<TreeProps> = (args) => (
+    <div style={{ maxWidth: "800px" }}>
+        <Tree {...args} />
+    </div>
+);
 
 export const Default = TreeTemplate.bind({});
 
