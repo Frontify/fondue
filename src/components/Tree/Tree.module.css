@@ -2,7 +2,6 @@
 
 .tree {
     max-width: 800px;
-    margin-top: var(--f-spacing-2x);
     text-align: left;
     list-style: none;
     margin: 0;
@@ -18,7 +17,8 @@
     padding: var(--f-spacing-1x) var(--f-spacing-2x);
     cursor: pointer;
     border-radius: var(--f-corner-4px);
-    vertical-align: middle;
+    justify-content: center;
+    align-items: center;
 }
 
 .tree .tree .nodeLink {
