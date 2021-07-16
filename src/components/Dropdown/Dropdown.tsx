@@ -5,7 +5,7 @@ import { ReactComponent as IconCaretDown } from "@components/Icon/Svg/CaretDown.
 import { ReactComponent as IconCaretUp } from "@components/Icon/Svg/CaretUp.svg";
 import { ReactComponent as IconReject } from "@components/Icon/Svg/Reject.svg";
 import { Size } from "@utilities/enum";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import css from "./Dropdown.module.css";
 import DropdownMenu from "./DropdownMenu/DropdownMenu";
 import DropdownMenuItem, { MenuItem } from "./DropdownMenuItem/DropdownMenuItem";
@@ -32,6 +32,7 @@ export default function Dropdown({
     clearable = false,
 }: DropdownProps): ReactElement<DropdownProps> {
     const [open, setOpen] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
     const activeItem = getActiveItem(menuItems, activeItemId);
     const wrapperClassNames = [
         css["trigger-wrapper"],
@@ -41,8 +42,20 @@ export default function Dropdown({
     const triggerClassNames = [css.trigger, !activeItem ? css.placeholder : "", disabled ? css.disabled : ""].join(" ");
     const clearButtonClassNames = [css.clear, disabled ? css.disabled : ""].join(" ");
 
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (e.target instanceof HTMLElement && !ref.current?.contains(e.target)) {
+                setOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
-        <div className={css.dropdown}>
+        <div className={css.dropdown} ref={ref}>
             <div data-test-id="dropdown" className={wrapperClassNames}>
                 <button
                     data-test-id="dropdown-trigger"
