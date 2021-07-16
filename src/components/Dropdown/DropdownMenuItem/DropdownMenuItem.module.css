@@ -48,7 +48,11 @@
 
 .content {
     flex: 1;
-    padding-right: var(--f-spacing-1x);
+}
+
+.title,
+.subtitle {
+    user-select: none;
 }
 
 .subtitle {

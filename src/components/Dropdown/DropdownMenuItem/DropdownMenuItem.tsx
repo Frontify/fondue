@@ -62,7 +62,7 @@ export default function DropdownMenuItem({
             {icon}
             {subtitle ? (
                 <div className={contentClassNames}>
-                    <div data-test-id="dropdown-menu-item-title" title={title}>
+                    <div data-test-id="dropdown-menu-item-title" className={css.title} title={title}>
                         {title}
                     </div>
                     <div data-test-id="dropdown-menu-item-subtitle" className={css.subtitle} title={subtitle}>
