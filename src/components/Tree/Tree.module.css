@@ -2,23 +2,23 @@
 
 .tree {
     max-width: 800px;
-    text-align: left;
-    list-style: none;
-    margin: 0;
     padding: 0;
+    margin: 0;
     font-family: var(--f-font-standard);
     font-weight: 400;
+    list-style: none;
+    text-align: left;
 }
 
 .nodeLink {
     display: flex;
-    text-decoration: none;
-    color: var(--f-black);
-    padding: var(--f-spacing-1x) var(--f-spacing-2x);
-    cursor: pointer;
-    border-radius: var(--f-corner-4px);
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    padding: var(--f-spacing-1x) var(--f-spacing-2x);
+    border-radius: var(--f-corner-4px);
+    color: var(--f-black);
+    cursor: pointer;
+    text-decoration: none;
 }
 
 .tree .tree .nodeLink {
@@ -35,8 +35,8 @@
 
 .nodeLinkSelected,
 .nodeLinkSelected:hover {
-    color: var(--f-white);
     background-color: var(--f-violet-60);
+    color: var(--f-white);
 }
 
 .nodeIcon {
@@ -48,9 +48,9 @@
 }
 
 .nodeLabel {
-    font-weight: 400;
     margin-left: auto;
     color: var(--f-black-opacity-mid);
+    font-weight: 400;
 }
 
 .nodeLinkSelected .nodeLabel {

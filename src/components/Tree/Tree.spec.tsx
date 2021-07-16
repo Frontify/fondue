@@ -6,10 +6,10 @@ import { ReactComponent as IconGuidelines } from "@components/Icon/Svg/Guideline
 import { mount } from "@cypress/react";
 import { FC, useState } from "react";
 import { TreeNodeProps } from "./Node";
-import Tree from "./Tree";
+import Tree, { TreeProps } from "./Tree";
 import css from "./Tree.module.css";
 
-const Component: FC<{ nodes: TreeNodeProps[] }> = ({ nodes }) => {
+const Component: FC<{ nodes: TreeNodeProps[] }> = ({ nodes }: TreeProps) => {
     const [selectedId, setSelectedId] = useState<string | undefined>();
     return <Tree nodes={nodes} activeNodeId={selectedId} onSelect={(id: string) => setSelectedId(id)} />;
 };
