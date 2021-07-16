@@ -7,11 +7,15 @@ import css from "./Tree.module.css";
 export interface TreeProps {
     nodes: TreeNode[];
     onSelect: (id: string) => void;
-    selectedNodeId?: string;
+    activeNodeId?: string;
 }
 
-export default function Tree({ nodes, onSelect, selectedNodeId }: TreeProps): ReactElement<TreeProps> {
-    const [activeNodeId, setActiveNodeId] = useState<string | undefined>(selectedNodeId);
+export default function Tree({
+    nodes,
+    onSelect,
+    activeNodeId: initialActiveNodeId,
+}: TreeProps): ReactElement<TreeProps> {
+    const [activeNodeId, setActiveNodeId] = useState<string | undefined>(initialActiveNodeId);
     const onClick = (id: string) => {
         setActiveNodeId(id);
         onSelect(id);

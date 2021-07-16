@@ -11,7 +11,7 @@ import css from "./Tree.module.css";
 
 const Component: FC<{ nodes: TreeNode[] }> = ({ nodes }) => {
     const [selectedId, setSelectedId] = useState<string | undefined>();
-    return <Tree nodes={nodes} selectedNodeId={selectedId} onSelect={(id: string) => setSelectedId(id)} />;
+    return <Tree nodes={nodes} activeNodeId={selectedId} onSelect={(id: string) => setSelectedId(id)} />;
 };
 
 const TREE_ID = "[data-test-id=tree]";

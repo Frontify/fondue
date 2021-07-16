@@ -84,7 +84,7 @@ Default.args = {
             ],
         },
     ] as TreeNode[],
-    selectedNodeId: "1-1-3",
+    activeNodeId: "1-1-3",
 };
 
 Default.argTypes = { onSelect: { action: "onSelect" } };
