@@ -32,7 +32,7 @@ export const SmallSelect = DropdownTemplate.bind({});
 SmallSelect.args = {
     placeholder: "select item",
     size: Size.Small,
-    itemBlocks: [
+    menuBlocks: [
         {
             id: "block1",
             menuItems: [
@@ -95,7 +95,7 @@ export const LargeSelect = DropdownTemplate.bind({});
 LargeSelect.args = {
     placeholder: "select item",
     size: Size.Large,
-    itemBlocks: [
+    menuBlocks: [
         {
             id: "block3",
             menuItems: [
