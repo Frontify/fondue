@@ -15,16 +15,31 @@ export interface TreeNode {
     nodes?: TreeNode[];
 }
 
-export interface NodeProps {
+interface NodeProps {
     node: TreeNode;
     strong?: boolean;
     activeNodeId?: string;
     onClick: (id: string) => void;
 }
 
+const getNodeClassNames = (active: boolean, strong: boolean, hasValue: boolean) => {
+    const classNames = [css.nodeLink];
+    if (active) {
+        classNames.push(css.nodeLinkSelected);
+    }
+    if (hasValue) {
+        classNames.push(css.selectableNodeLink);
+    }
+    if (strong) {
+        classNames.push(css.strong);
+    }
+
+    return classNames;
+};
+
 export default function Node({
     node: { id, value, name, label, icon, nodes },
-    strong,
+    strong = false,
     activeNodeId,
     onClick,
 }: NodeProps): ReactElement<NodeProps> {
@@ -33,18 +48,10 @@ export default function Node({
 
     useEffect(() => setActive(id === activeNodeId), [activeNodeId]);
 
-    const classNames = [css.nodeLink];
-    if (active) {
-        classNames.push(css.nodeLinkActive);
-    }
-    if (strong) {
-        classNames.push(css.nodeLinkStrong);
-    }
-
     return (
         <li className={css.node}>
             <a
-                className={classNames.join(" ")}
+                className={getNodeClassNames(active, strong, !!value).join(" ")}
                 onClick={() => {
                     if (value) {
                         setActive(true);
@@ -69,7 +76,7 @@ export default function Node({
                 </span>
                 {icon && <span className={css.nodeIcon}>{icon}</span>}
                 <span className={css.nodeName}>{name}</span>
-                <span className={active ? [css.nodeLabel, css.nodeLabelActive].join(" ") : css.nodeLabel}>{label}</span>
+                <span className={css.nodeLabel}>{label}</span>
             </a>
             {nodes && showNodes && (
                 <ul className={css.tree}>

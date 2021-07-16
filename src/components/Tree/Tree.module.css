@@ -30,18 +30,14 @@
     vertical-align: middle;
 }
 
-.nodeLink:hover {
+.selectableNodeLink:hover {
     background-color: var(--f-black-05);
 }
 
-.nodeLinkActive,
-.nodeLinkActive:hover {
+.nodeLinkSelected,
+.nodeLinkSelected:hover {
     color: var(--f-white);
     background-color: var(--f-violet-60);
-}
-
-.nodeLinkStrong {
-    font-weight: 700;
 }
 
 .nodeIcon {
@@ -58,6 +54,10 @@
     color: var(--f-black-opacity-mid);
 }
 
-.nodeLabelActive {
+.nodeLinkSelected .nodeLabel {
     color: hsla(0, 0%, 100%, 0.6);
+}
+
+.strong {
+    font-weight: 700;
 }
