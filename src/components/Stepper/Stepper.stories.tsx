@@ -1,19 +1,31 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Story, Meta } from "@storybook/react";
-import Stepper, { StepperProps } from "./Stepper";
+import { Meta, Story } from "@storybook/react";
+import { Theme } from "@utilities/enum";
+import StepperComponent, { StepperIconStyle, StepperProps } from "./Stepper";
 
 export default {
-    title: "Stepper",
-    component: Stepper,
+    title: "Components/Stepper",
+    component: StepperComponent,
+    args: {
+        initialStep: 0,
+        totalSteps: 10,
+        useInternalCounter: true,
+        theme: Theme.Dark,
+        iconStyle: StepperIconStyle.ArrowLeftRight,
+    },
+    argTypes: {
+        initialStep: { control: { type: "range" } },
+        totalSteps: { control: { type: "range" } },
+        theme: {
+            options: Object.keys(Theme),
+            control: { type: "radio" },
+        },
+        iconStyle: {
+            options: Object.keys(StepperIconStyle),
+            control: { type: "radio" },
+        },
+    },
 } as Meta;
 
-const StepperTemplate: Story<StepperProps> = (args) => <Stepper {...args} />;
-
-export const Default = StepperTemplate.bind({});
-
-Default.args = {
-    initialStep: 0,
-    totalSteps: 10,
-    useInternalCounter: true,
-};
+export const Stepper: Story<StepperProps> = (args) => <StepperComponent {...args} />;

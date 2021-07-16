@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import Button from "@components/Button/Button";
+import Button from "@elements/Button/Button";
 import { Style } from "@utilities/enum";
 import { ReactElement } from "react";
 import css from "./BaseActions.module.css";

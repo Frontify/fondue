@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@components/Icon/Icon";
-import { ReactComponent as Audio } from "@components/Icon/Svg/Audio.svg";
+import { IconSize } from "@elements/Icon/Icon";
+import { ReactComponent as Audio } from "@elements/Icon/Svg/Audio.svg";
 import { Meta, Story } from "@storybook/react";
 import { Size, Style } from "@utilities/enum";
 import { useState } from "react";
 import Dropdown, { DropdownProps } from "./Dropdown";
 
 export default {
-    title: "Dropdown",
+    title: "Components/Dropdown",
     component: Dropdown,
     args: {
         disabled: false,
@@ -16,15 +16,14 @@ export default {
     },
     argTypes: {
         size: {
-            options: [Size.Small, Size.Large],
-            control: { type: "radio" },
+            table: { disable: true },
         },
     },
 } as Meta;
 
 const DropdownTemplate: Story<DropdownProps> = (args) => {
-    const [activeItemId, setActiveItemId] = useState("");
-    return <Dropdown activeItemId={activeItemId} onChange={setActiveItemId} {...args} />;
+    const [activeItemId, setActiveItemId] = useState<string>();
+    return <Dropdown {...args} activeItemId={activeItemId} onChange={(id) => setActiveItemId(id)} />;
 };
 
 export const SmallSelect = DropdownTemplate.bind({});
@@ -39,23 +38,27 @@ SmallSelect.args = {
                 {
                     id: "1",
                     title: "Small icon",
+                    size: Size.Small,
                     icon: <Audio size={IconSize.Size16} />,
                 },
                 {
                     id: "2",
                     title: "Small icon warning",
+                    size: Size.Small,
                     icon: <Audio size={IconSize.Size16} />,
                     style: Style.Danger,
                 },
                 {
                     id: "3",
                     title: "Small icon disabled",
+                    size: Size.Small,
                     icon: <Audio size={IconSize.Size16} />,
                     disabled: true,
                 },
                 {
                     id: "4",
                     title: "Small icon warning disabled",
+                    size: Size.Small,
                     icon: <Audio size={IconSize.Size16} />,
                     style: Style.Danger,
                     disabled: true,
@@ -68,21 +71,25 @@ SmallSelect.args = {
                 {
                     id: "9",
                     title: "Small",
+                    size: Size.Small,
                 },
                 {
                     id: "10",
                     title: "Small warning",
+                    size: Size.Small,
                     style: Style.Danger,
                 },
                 {
                     id: "11",
                     title: "Small disabled",
+                    size: Size.Small,
                     disabled: true,
                 },
                 {
                     id: "12",
                     title: "Small warning disabled",
                     style: Style.Danger,
+                    size: Size.Small,
                     disabled: true,
                 },
             ],

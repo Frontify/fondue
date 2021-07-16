@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import Button from "@elements/Button/Button";
+import { ReactComponent as IconSettings } from "@elements/Icon/Svg/Settings.svg";
+import { ReactComponent as IconTrash } from "@elements/Icon/Svg/Trash.svg";
 import { ReactElement } from "react";
-import Button from "@components/Button/Button";
 import css from "./Image.module.css";
-import { ReactComponent as IconTrash } from "@components/Icon/Svg/Trash.svg";
-import { ReactComponent as IconSettings } from "@components/Icon/Svg/Settings.svg";
 
 export interface ImageProps {
     src: string;

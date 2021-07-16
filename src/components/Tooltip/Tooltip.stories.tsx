@@ -2,24 +2,20 @@
 
 import { Meta, Story } from "@storybook/react";
 import { Theme } from "@utilities/enum";
-import Tooltip, { TooltipProps } from "./Tooltip";
+import TooltipComponent, { TooltipProps } from "./Tooltip";
 
 export default {
-    title: "Tooltip",
-    component: Tooltip,
+    title: "Components/Tooltip",
+    component: TooltipComponent,
+    args: {
+        tooltip: "Tooltip Content (Reactnode)",
+    },
+    argTypes: {
+        theme: {
+            options: [Theme.Light, Theme.Dark],
+            control: { type: "radio" },
+        },
+    },
 } as Meta;
 
-const TooltipTemplate: Story<TooltipProps> = (args) => <Tooltip {...args} />;
-
-export const Default = TooltipTemplate.bind({});
-
-Default.args = {
-    tooltip: "Tooltip Content (Reactnode)",
-};
-
-Default.argTypes = {
-    theme: {
-        options: [Theme.Light, Theme.Dark],
-        control: { type: "radio" },
-    },
-};
+export const Tooltip: Story<TooltipProps> = (args) => <TooltipComponent {...args} />;

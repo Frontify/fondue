@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@components/Icon/Icon";
-import { ReactComponent as Audio } from "@components/Icon/Svg/Audio.svg";
 import { mount } from "@cypress/react";
+import { IconSize } from "@elements/Icon/Icon";
+import { ReactComponent as Audio } from "@elements/Icon/Svg/Audio.svg";
 import { Size, Style } from "@utilities/enum";
-import DropdownMenuItem from "./DropdownMenuItem";
+import DropdownMenuItem, { MenuItem } from "./DropdownMenuItem";
 import css from "./DropdownMenuItem.module.css";
 
 export const MENU_ITEM_ACTIVE_ID = "[data-test-id=dropdown-menu-item-active]";
@@ -13,25 +13,29 @@ export const MENU_ITEM_TEXT_ID = "[data-test-id=dropdown-menu-item-text]";
 const MENU_ITEM_ICON_ID = "[data-test-id=dropdown-menu-item-icon]";
 const MENU_ITEM_SUBTITLE_ID = "[data-test-id=dropdown-menu-item-subtitle]";
 
-const ITEMS = [
+const ITEMS: MenuItem[] = [
     {
         id: "1",
         title: "Small",
+        size: Size.Small,
         icon: <Audio size={IconSize.Size16} />,
     },
     {
         id: "2",
         title: "Small warning",
+        size: Size.Small,
         style: Style.Danger,
     },
     {
         id: "3",
         title: "Small disabled",
+        size: Size.Small,
         disabled: true,
     },
     {
         id: "4",
         title: "Small warning disabled",
+        size: Size.Small,
         style: Style.Danger,
         disabled: true,
     },

@@ -1,15 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@components/Icon/Icon";
-import { ReactComponent as IconDocument } from "@components/Icon/Svg/Document.svg";
-import { ReactComponent as IconGuidelines } from "@components/Icon/Svg/Guidelines.svg";
 import { mount } from "@cypress/react";
+import { IconSize } from "@elements/Icon/Icon";
+import { ReactComponent as IconDocument } from "@elements/Icon/Svg/Document.svg";
+import { ReactComponent as IconGuidelines } from "@elements/Icon/Svg/Guidelines.svg";
 import { FC, useState } from "react";
 import { TreeNodeProps } from "./Node";
-import Tree, { TreeProps } from "./Tree";
+import Tree from "./Tree";
 import css from "./Tree.module.css";
 
-const Component: FC<{ nodes: TreeNodeProps[] }> = ({ nodes }: TreeProps) => {
+type ComponentProps = {
+    nodes: TreeNodeProps[];
+};
+const Component: FC<ComponentProps> = ({ nodes }: ComponentProps) => {
     const [selectedId, setSelectedId] = useState<string | undefined>();
     return <Tree nodes={nodes} activeNodeId={selectedId} onSelect={(id: string) => setSelectedId(id)} />;
 };

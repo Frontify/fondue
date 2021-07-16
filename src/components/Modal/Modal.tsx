@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import useClickOutside from "@hooks/useClickOutside";
-import { ReactElement, useState } from "react";
+import { ReactElement, ReactNode, useState } from "react";
 import css from "./Modal.module.css";
 
 export enum ModalPatternColor {
@@ -12,17 +12,15 @@ export enum ModalPatternColor {
 }
 
 export interface ModalProps {
-    pattern?: boolean;
-    patternColor?: ModalPatternColor;
+    pattern?: ModalPatternColor;
     title: string;
-    content: ReactElement | ReactElement[] | string;
-    actions: ReactElement | ReactElement[] | string;
+    content: ReactNode;
+    actions: ReactNode;
     onClickedOutside?: () => void;
 }
 
 export default function Modal({
-    pattern = true,
-    patternColor = ModalPatternColor.Violet,
+    pattern,
     title,
     content,
     actions,
@@ -38,7 +36,7 @@ export default function Modal({
         });
     }
 
-    const patternClasses = [css.pattern, css[`patternColor${patternColor}`]].join(" ");
+    const patternClasses = [css.pattern, css[`patternColor${pattern}`]].join(" ");
 
     return (
         <div className={css.container} data-test-id="modal-container">

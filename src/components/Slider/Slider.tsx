@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconProps } from "@components/Icon/Icon";
+import { IconProps } from "@elements/Icon/Icon";
 import { ReactElement } from "react";
 import css from "./Slider.module.css";
 

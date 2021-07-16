@@ -1,13 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@components/Icon/Icon";
-import { ReactComponent as IconCaretDown } from "@components/Icon/Svg/CaretDown.svg";
-import { ReactComponent as IconCaretLeft } from "@components/Icon/Svg/CaretLeft.svg";
-import { ReactComponent as IconCaretRight } from "@components/Icon/Svg/CaretRight.svg";
-import { ReactComponent as IconCaretUp } from "@components/Icon/Svg/CaretUp.svg";
+import { IconSize } from "@elements/Icon/Icon";
+import { ReactComponent as IconCaretDown } from "@elements/Icon/Svg/CaretDown.svg";
+import { ReactComponent as IconCaretLeft } from "@elements/Icon/Svg/CaretLeft.svg";
+import { ReactComponent as IconCaretRight } from "@elements/Icon/Svg/CaretRight.svg";
+import { ReactComponent as IconCaretUp } from "@elements/Icon/Svg/CaretUp.svg";
 import { Theme } from "@utilities/enum";
 import { useEffect, useState } from "react";
 import stepperStyle from "./Stepper.module.css";
+
+export enum StepperIconStyle {
+    ArrowLeftRight = "ArrowLeftRight",
+    ArrowUpDown = "ArrowUpDown",
+}
 
 export interface StepperProps {
     initialStep: number;
@@ -19,7 +24,7 @@ export interface StepperProps {
     hasStepInput?: boolean;
     prevStepDisabled?: boolean;
     nextStepDisabled?: boolean;
-    iconStyle?: "arrow-left-right" | "arrow-up-down";
+    iconStyle?: StepperIconStyle;
     theme?: Theme;
 }
 
@@ -33,18 +38,18 @@ export default function Stepper({
     hasStepInput = false,
     prevStepDisabled = false,
     nextStepDisabled = false,
-    iconStyle = "arrow-left-right",
+    iconStyle = StepperIconStyle.ArrowLeftRight,
     theme = Theme.Dark,
 }: StepperProps): React.ReactElement<StepperProps> {
     const [currentStep, setCurrentStep] = useState(initialStep);
     let PrevStepIcon, NextStepIcon;
 
     switch (iconStyle) {
-        case "arrow-left-right":
+        case StepperIconStyle.ArrowLeftRight:
             PrevStepIcon = IconCaretLeft;
             NextStepIcon = IconCaretRight;
             break;
-        case "arrow-up-down":
+        case StepperIconStyle.ArrowUpDown:
             PrevStepIcon = IconCaretUp;
             NextStepIcon = IconCaretDown;
             break;

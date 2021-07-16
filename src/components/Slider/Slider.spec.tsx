@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@components/Icon/Icon";
-import { ReactComponent as TextAlignCenter } from "@components/Icon/Svg/TextAlignCenter.svg";
+import { IconSize } from "@elements/Icon/Icon";
+import { ReactComponent as TextAlignCenter } from "@elements/Icon/Svg/TextAlignCenter.svg";
 import { mount } from "@cypress/react";
 import { FC, useState } from "react";
 import Slider, { IconItem, TextItem } from "./Slider";

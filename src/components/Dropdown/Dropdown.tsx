@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@components/Icon/Icon";
-import { ReactComponent as IconCaretDown } from "@components/Icon/Svg/CaretDown.svg";
-import { ReactComponent as IconCaretUp } from "@components/Icon/Svg/CaretUp.svg";
-import { ReactComponent as IconReject } from "@components/Icon/Svg/Reject.svg";
+import { IconSize } from "@elements/Icon/Icon";
+import { ReactComponent as IconCaretDown } from "@elements/Icon/Svg/CaretDown.svg";
+import { ReactComponent as IconCaretUp } from "@elements/Icon/Svg/CaretUp.svg";
+import { ReactComponent as IconReject } from "@elements/Icon/Svg/Reject.svg";
 import useClickOutside from "@hooks/useClickOutside";
 import { Size } from "@utilities/enum";
 import { ReactElement, useRef, useState } from "react";
