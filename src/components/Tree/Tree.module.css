@@ -15,7 +15,6 @@
     display: flex;
     text-decoration: none;
     color: var(--f-black);
-    /* margin: 0 var(--f-spacing-6x); */
     padding: var(--f-spacing-1x) var(--f-spacing-2x);
     cursor: pointer;
     border-radius: var(--f-corner-4px);
