@@ -4,8 +4,9 @@ import { IconSize } from "@components/Icon/Icon";
 import { ReactComponent as IconCaretDown } from "@components/Icon/Svg/CaretDown.svg";
 import { ReactComponent as IconCaretUp } from "@components/Icon/Svg/CaretUp.svg";
 import { ReactComponent as IconReject } from "@components/Icon/Svg/Reject.svg";
+import useClickOutside from "@hooks/useClickOutside";
 import { Size } from "@utilities/enum";
-import { ReactElement, useEffect, useRef, useState } from "react";
+import { ReactElement, useRef, useState } from "react";
 import css from "./Dropdown.module.css";
 import DropdownMenu from "./DropdownMenu/DropdownMenu";
 import DropdownMenuItem, { MenuItem } from "./DropdownMenuItem/DropdownMenuItem";
@@ -40,8 +41,8 @@ export default function Dropdown({
     disabled = false,
     clearable = false,
 }: DropdownProps): ReactElement<DropdownProps> {
-    const [open, setOpen] = useState(false);
-    const ref = useRef<HTMLDivElement>(null);
+    const [menuIsOpen, setMenuIsOpen] = useState(false);
+    const dropdownElement = useRef<HTMLDivElement | null>(null);
     const activeItem = getActiveItem(itemBlocks, activeItemId);
     const wrapperClassNames = [
         css["trigger-wrapper"],
@@ -51,24 +52,16 @@ export default function Dropdown({
     const triggerClassNames = [css.trigger, !activeItem ? css.placeholder : "", disabled ? css.disabled : ""].join(" ");
     const clearButtonClassNames = [css.clear, disabled ? css.disabled : ""].join(" ");
 
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (e.target instanceof HTMLElement && !ref.current?.contains(e.target)) {
-                setOpen(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
+    useClickOutside(dropdownElement.current, () => {
+        setMenuIsOpen(false);
+    });
 
     return (
-        <div className={css.dropdown} ref={ref}>
+        <div className={css.dropdown} ref={dropdownElement}>
             <div data-test-id="dropdown" className={wrapperClassNames}>
                 <button
                     data-test-id="dropdown-trigger"
-                    onClick={() => setOpen(!open)}
+                    onClick={() => setMenuIsOpen(!menuIsOpen)}
                     className={triggerClassNames}
                     disabled={disabled}
                 >
@@ -96,18 +89,22 @@ export default function Dropdown({
                         <IconReject size={IconSize.Size13} />
                     </button>
                 )}
-                <button className={disabled ? css.disabled : ""} onClick={() => setOpen(!open)} disabled={disabled}>
-                    {open ? <IconCaretUp size={IconSize.Size16} /> : <IconCaretDown size={IconSize.Size16} />}
+                <button
+                    className={disabled ? css.disabled : ""}
+                    onClick={() => setMenuIsOpen(!menuIsOpen)}
+                    disabled={disabled}
+                >
+                    {menuIsOpen ? <IconCaretUp size={IconSize.Size16} /> : <IconCaretDown size={IconSize.Size16} />}
                 </button>
             </div>
-            {open && (
+            {menuIsOpen && (
                 <DropdownMenu
                     itemBlocks={itemBlocks}
                     activeItemId={activeItemId}
                     size={size}
                     onChange={(id) => {
                         onChange(id);
-                        setOpen(!open);
+                        setMenuIsOpen(!menuIsOpen);
                     }}
                 />
             )}

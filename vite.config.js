@@ -10,6 +10,7 @@ const viteConfig = defineConfig({
         alias: {
             "@components": resolve(__dirname, "./src/components"),
             "@utilities": resolve(__dirname, "./src/utilities"),
+            "@hooks": resolve(__dirname, "./src/hooks"),
         },
     },
     plugins: [

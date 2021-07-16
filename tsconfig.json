@@ -13,7 +13,8 @@
         "plugins": [{ "name": "typescript-plugin-css-modules" }],
         "paths": {
             "@components/*": ["./src/components/*"],
-            "@utilities/*": ["./src/utilities/*"]
+            "@utilities/*": ["./src/utilities/*"],
+            "@hooks/*": ["./src/hooks/*"]
         }
     },
     "include": ["src/**/*", "src/svg.d.ts"],

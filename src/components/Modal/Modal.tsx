@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import useClickOutside from "@hooks/useClickOutside";
 import { ReactElement, useState } from "react";
-import useClickOutsideNotify from "@utilities/useClickOutsideNotify";
 import css from "./Modal.module.css";
 
 export enum ModalPatternColor {
@@ -33,7 +33,7 @@ export default function Modal({
     const modalClasses = [css.modal, ...(pattern ? [css.withPattern] : [])].join(" ");
 
     if (onClickedOutside) {
-        useClickOutsideNotify(modalElement, () => {
+        useClickOutside(modalElement, () => {
             onClickedOutside();
         });
     }
