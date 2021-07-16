@@ -11,7 +11,7 @@
     "scripts": {
         "build": "cross-env NODE_ENV=production npm run clean && npm run generate && npm run build:ts",
         "build:ts": "rollup -c",
-        "build:storybook": "build-storybook",
+        "build:storybook": "build-storybook -s .storybook/assets",
         "clean": "rimraf dist",
         "component:create": "ts-node scripts/createNewComponent.ts",
         "generate": "ts-node scripts/generateExports.ts",
@@ -25,7 +25,7 @@
         "test:browser": "cypress open-ct",
         "test:file": "cypress run-ct --spec",
         "typecheck": "tsc",
-        "storybook": "start-storybook -p 6006",
+        "storybook": "start-storybook -p 6006 -s .storybook/assets",
         "prepublishOnly": "npm run build",
         "prepare": "is-ci || husky install"
     },
