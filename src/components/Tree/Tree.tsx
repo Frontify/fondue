@@ -18,7 +18,7 @@ export default function Tree({ nodes, onSelect, selectedNodeId }: TreeProps): Re
     };
 
     return (
-        <ul data-test-id="Tree" className={css.tree}>
+        <ul data-test-id="tree" className={css.tree}>
             {nodes.map((node) => (
                 <Node key={node.id} node={node} activeNodeId={activeNodeId} strong onClick={onClick} />
             ))}

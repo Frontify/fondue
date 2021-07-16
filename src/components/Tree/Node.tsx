@@ -49,7 +49,7 @@ export default function Node({
     useEffect(() => setActive(id === activeNodeId), [activeNodeId]);
 
     return (
-        <li>
+        <li data-test-id="node">
             <a
                 className={getNodeClassNames(active, strong, !!value).join(" ")}
                 onClick={() => {
@@ -62,6 +62,7 @@ export default function Node({
                 }}
             >
                 <span
+                    data-test-id="toggle"
                     onClick={(event) => {
                         event.stopPropagation();
                         setShowNodes(!showNodes);
@@ -79,7 +80,7 @@ export default function Node({
                 <span className={css.nodeLabel}>{label}</span>
             </a>
             {nodes && showNodes && (
-                <ul className={css.tree}>
+                <ul className={css.tree} data-test-id="sub-tree">
                     {nodes.map((node) => {
                         return <Node key={node.name} node={node} activeNodeId={activeNodeId} onClick={onClick} />;
                     })}
