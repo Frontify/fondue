@@ -3,8 +3,9 @@
 import { mount } from "@cypress/react";
 import { Size } from "@utilities/enum";
 import { FC, useState } from "react";
-import Dropdown, { ItemBlock } from "./Dropdown";
+import Dropdown from "./Dropdown";
 import css from "./Dropdown.module.css";
+import { MenuBlock } from "./DropdownMenu/DropdownMenu";
 import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_TEXT_ID, MENU_ITEM_TITLE_ID } from "./DropdownMenuItem/DropdownMenuItem.spec";
 
 const DROPDOWN_ID = "[data-test-id=dropdown]";
@@ -74,7 +75,7 @@ const LARGE_ITEMS = [
 ];
 
 type Props = {
-    itemBlocks: ItemBlock[];
+    menuBlocks: MenuBlock[];
     size?: Size;
     placeholder?: string;
     initialActiveId?: string;
@@ -82,7 +83,7 @@ type Props = {
 };
 
 const Component: FC<Props> = ({
-    itemBlocks,
+    menuBlocks,
     size = Size.Small,
     placeholder = "",
     initialActiveId = "",
@@ -93,7 +94,7 @@ const Component: FC<Props> = ({
         <Dropdown
             activeItemId={activeItemId}
             onChange={setActiveItemId}
-            itemBlocks={itemBlocks}
+            menuBlocks={menuBlocks}
             placeholder={placeholder}
             size={size}
             clearable={clearable}
@@ -103,14 +104,14 @@ const Component: FC<Props> = ({
 
 describe("Dropdown Component", () => {
     it("renders with placeholder", () => {
-        mount(<Component itemBlocks={SMALL_ITEMS} placeholder="Select item" />);
+        mount(<Component menuBlocks={SMALL_ITEMS} placeholder="Select item" />);
         cy.get(MENU_ITEM_TITLE_ID).contains("Select item");
         cy.get(DROPDOWN_TRIGGER_ID).should("have.class", css.placeholder);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_ITEM_LIST_ID).children().should("have.length", 3);
     });
     it("renders with initial active item", () => {
-        mount(<Component itemBlocks={SMALL_ITEMS} initialActiveId={FIRST_ITEM_ID} />);
+        mount(<Component menuBlocks={SMALL_ITEMS} initialActiveId={FIRST_ITEM_ID} />);
         cy.get(MENU_ITEM_TITLE_ID).contains("Small");
         cy.get(DROPDOWN_TRIGGER_ID).should("not.have.class", css.inactive);
         cy.get(DROPDOWN_TRIGGER_ID).click();
@@ -118,7 +119,7 @@ describe("Dropdown Component", () => {
         cy.get(MENU_ITEM_TEXT_ID).eq(1).children(MENU_ITEM_ACTIVE_ID).should("exist");
     });
     it("changes selection on click", () => {
-        mount(<Component itemBlocks={SMALL_ITEMS} initialActiveId={FIRST_ITEM_ID} />);
+        mount(<Component menuBlocks={SMALL_ITEMS} initialActiveId={FIRST_ITEM_ID} />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_ITEM_LIST_ID).children().first().as("firstListItem");
         cy.get(DROPDOWN_ITEM_LIST_ID).children().eq(1).as("secondListItem");
@@ -136,7 +137,7 @@ describe("Dropdown Component", () => {
         cy.get("@secondListItem").children(MENU_ITEM_ACTIVE_ID).should("not.exist");
     });
     it("renders with clearable option", () => {
-        mount(<Component itemBlocks={SMALL_ITEMS} placeholder="Select item" clearable />);
+        mount(<Component menuBlocks={SMALL_ITEMS} placeholder="Select item" clearable />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_ITEM_LIST_ID).children().first().as("firstListItem");
 
@@ -150,7 +151,7 @@ describe("Dropdown Component", () => {
     });
     it("renders large items with divider", () => {
         mount(
-            <Component itemBlocks={LARGE_ITEMS} size={Size.Large} initialActiveId={LARGE_ITEMS[0].menuItems[0].id} />,
+            <Component menuBlocks={LARGE_ITEMS} size={Size.Large} initialActiveId={LARGE_ITEMS[0].menuItems[0].id} />,
         );
         cy.get(DROPDOWN_ID).should("have.class", css.large);
         cy.get(DROPDOWN_TRIGGER_ID).click();

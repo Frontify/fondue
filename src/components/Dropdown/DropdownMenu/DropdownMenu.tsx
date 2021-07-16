@@ -2,26 +2,30 @@
 
 import { Size } from "@utilities/enum";
 import { ReactElement } from "react";
-import { ItemBlock } from "../Dropdown";
-import DropdownMenuItem from "../DropdownMenuItem/DropdownMenuItem";
+import DropdownMenuItem, { MenuItem } from "../DropdownMenuItem/DropdownMenuItem";
 import css from "./DropdownMenu.module.css";
 
+export interface MenuBlock {
+    id: string;
+    menuItems: MenuItem[];
+}
+
 export interface DropdownMenuProps {
-    itemBlocks: ItemBlock[];
+    menuBlocks: MenuBlock[];
     onChange: (id: string) => void;
     size?: Size.Small | Size.Large;
     activeItemId?: string;
 }
 
 export default function DropdownMenu({
-    itemBlocks,
+    menuBlocks,
     onChange,
     size = Size.Small,
     activeItemId = "",
 }: DropdownMenuProps): ReactElement<DropdownMenuProps> {
     return (
         <ul className={`${css.menu} ${size === Size.Large ? css.large : ""}`}>
-            {itemBlocks.map(({ id, menuItems }) => (
+            {menuBlocks.map(({ id, menuItems }) => (
                 <li key={id} className={css.divider} data-test-id="dropdown-divider">
                     <ul className={css.list} data-test-id="dropdown-item-list">
                         {menuItems.map((menuItem) => (

@@ -8,16 +8,11 @@ import useClickOutside from "@hooks/useClickOutside";
 import { Size } from "@utilities/enum";
 import { ReactElement, useRef, useState } from "react";
 import css from "./Dropdown.module.css";
-import DropdownMenu from "./DropdownMenu/DropdownMenu";
-import DropdownMenuItem, { MenuItem } from "./DropdownMenuItem/DropdownMenuItem";
-
-export interface ItemBlock {
-    id: string;
-    menuItems: MenuItem[];
-}
+import DropdownMenu, { MenuBlock } from "./DropdownMenu/DropdownMenu";
+import DropdownMenuItem from "./DropdownMenuItem/DropdownMenuItem";
 
 export interface DropdownProps {
-    itemBlocks: ItemBlock[];
+    menuBlocks: MenuBlock[];
     onChange: (id?: string) => void;
     activeItemId?: string;
     placeholder?: string;
@@ -26,14 +21,14 @@ export interface DropdownProps {
     clearable?: boolean;
 }
 
-const getActiveItem = (itemBlocks: ItemBlock[], id: string) =>
-    itemBlocks
+const getActiveItem = (menuBlocks: MenuBlock[], id: string) =>
+    menuBlocks
         .map((block) => block.menuItems)
         .flat()
         .find((item) => item.id === id) || null;
 
 export default function Dropdown({
-    itemBlocks,
+    menuBlocks,
     onChange,
     activeItemId = "",
     placeholder = "Select item",
@@ -43,7 +38,7 @@ export default function Dropdown({
 }: DropdownProps): ReactElement<DropdownProps> {
     const [menuIsOpen, setMenuIsOpen] = useState(false);
     const dropdownElement = useRef<HTMLDivElement | null>(null);
-    const activeItem = getActiveItem(itemBlocks, activeItemId);
+    const activeItem = getActiveItem(menuBlocks, activeItemId);
     const wrapperClassNames = [
         css["trigger-wrapper"],
         size === Size.Large ? css.large : "",
@@ -99,7 +94,7 @@ export default function Dropdown({
             </div>
             {menuIsOpen && (
                 <DropdownMenu
-                    itemBlocks={itemBlocks}
+                    menuBlocks={menuBlocks}
                     activeItemId={activeItemId}
                     size={size}
                     onChange={(id) => {
