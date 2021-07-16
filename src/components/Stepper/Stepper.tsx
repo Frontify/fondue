@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useState, useEffect } from "react";
+import { IconSize } from "@components/Icon/Icon";
+import { ReactComponent as IconCaretDown } from "@components/Icon/Svg/CaretDown.svg";
 import { ReactComponent as IconCaretLeft } from "@components/Icon/Svg/CaretLeft.svg";
 import { ReactComponent as IconCaretRight } from "@components/Icon/Svg/CaretRight.svg";
 import { ReactComponent as IconCaretUp } from "@components/Icon/Svg/CaretUp.svg";
-import { ReactComponent as IconCaretDown } from "@components/Icon/Svg/CaretDown.svg";
-import { IconSize } from "@components/Icon/Icon";
+import { Theme } from "@utilities/enum";
+import { useEffect, useState } from "react";
 import stepperStyle from "./Stepper.module.css";
 
 export interface StepperProps {
@@ -19,7 +20,7 @@ export interface StepperProps {
     prevStepDisabled?: boolean;
     nextStepDisabled?: boolean;
     iconStyle?: "arrow-left-right" | "arrow-up-down";
-    theme?: "light" | "dark";
+    theme?: Theme;
 }
 
 export default function Stepper({
@@ -33,7 +34,7 @@ export default function Stepper({
     prevStepDisabled = false,
     nextStepDisabled = false,
     iconStyle = "arrow-left-right",
-    theme = "dark",
+    theme = Theme.Dark,
 }: StepperProps): React.ReactElement<StepperProps> {
     const [currentStep, setCurrentStep] = useState(initialStep);
     let PrevStepIcon, NextStepIcon;
@@ -102,12 +103,16 @@ export default function Stepper({
     return (
         <div className={stepperStyle.stepper}>
             <div className={stepperStyle.stepperDetails}>
-                <nav className={`${stepperStyle.stepperNav} ${theme === "light" ? stepperStyle.stepperNavLight : ""}`}>
+                <nav
+                    className={`${stepperStyle.stepperNav} ${
+                        theme === Theme.Light ? stepperStyle.stepperNavLight : ""
+                    }`}
+                >
                     <button
                         className={`
                             ${stepperStyle.stepperControl}
                             ${stepperStyle.stepperControlPrev}
-                            ${theme === "light" ? stepperStyle.stepperControlLight : ""}
+                            ${theme === Theme.Light ? stepperStyle.stepperControlLight : ""}
                         `}
                         disabled={prevStepDisabled}
                         onClick={() => handlePrevious()}
@@ -118,7 +123,7 @@ export default function Stepper({
                     <div
                         className={`
                             ${stepperStyle.stepperCount}
-                            ${theme === "light" ? stepperStyle.stepperCountLight : ""}
+                            ${theme === Theme.Light ? stepperStyle.stepperCountLight : ""}
                         `}
                     >
                         {hasStepInput ? (
@@ -141,7 +146,7 @@ export default function Stepper({
                         className={`
                             ${stepperStyle.stepperControl}
                             ${stepperStyle.stepperControlNext}
-                            ${theme === "light" ? stepperStyle.stepperControlLight : ""}
+                            ${theme === Theme.Light ? stepperStyle.stepperControlLight : ""}
                         `}
                         disabled={nextStepDisabled}
                         onClick={() => handleNext()}

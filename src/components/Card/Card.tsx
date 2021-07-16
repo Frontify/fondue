@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { usePopper } from "react-popper";
-import { ReactComponent as IconActions } from "@components/Icon/Svg/Actions.svg";
-import css from "./Card.module.css";
 import { IconSize } from "@components/Icon/Icon";
-import useClickOutsideNotify from "@utilities/useClickOutsideNotify";
+import { ReactComponent as IconActions } from "@components/Icon/Svg/Actions.svg";
+import useClickOutside from "@hooks/useClickOutside";
+import { ReactElement, useRef, useState } from "react";
+import { usePopper } from "react-popper";
+import { Link } from "react-router-dom";
+import css from "./Card.module.css";
 
 export interface CardProps {
     children: ReactElement | ReactElement[] | string;
@@ -34,7 +34,7 @@ export default function Card({ children, icon, link, dropdown, cover }: CardProp
         ],
     });
 
-    useClickOutsideNotify(containerElement.current, () => {
+    useClickOutside(containerElement.current, () => {
         setShowDropdown(false);
     });
 

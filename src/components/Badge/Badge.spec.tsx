@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import Badge, { BadgeStatus, BadgeTheme } from "./Badge";
+import { Theme } from "@utilities/enum";
+import Badge, { BadgeStatus } from "./Badge";
 import css from "./Badge.module.css";
 
 const BADGE_TEXT = "Frontify";
@@ -19,7 +20,7 @@ describe("Badge component", () => {
     });
 
     it("has the light theme", () => {
-        mount(<Badge theme={BadgeTheme.Light}>{BADGE_TEXT}</Badge>);
+        mount(<Badge theme={Theme.Light}>{BADGE_TEXT}</Badge>);
 
         cy.get("[data-test-id=badge]").as("badge");
 
@@ -30,7 +31,7 @@ describe("Badge component", () => {
     });
 
     it("has the dark theme", () => {
-        mount(<Badge theme={BadgeTheme.Dark}>{BADGE_TEXT}</Badge>);
+        mount(<Badge theme={Theme.Dark}>{BADGE_TEXT}</Badge>);
 
         cy.get("[data-test-id=badge]").as("badge");
 

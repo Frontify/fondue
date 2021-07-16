@@ -1,0 +1,73 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.dropdown {
+    position: relative;
+    width: 100%;
+    font-family: var(--f-font-standard);
+    font-size: var(--f-font-14-size);
+    line-height: var(--f-font-14-line-height);
+}
+
+.triggerWrapper {
+    position: relative;
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: var(--f-spacing-2x);
+    border: var(--f-border);
+    border-color: var(--f-black-20);
+    background-color: var(--f-white);
+    border-radius: var(--f-corner-4px);
+    color: var(--f-black-80);
+    gap: var(--f-spacing-2x);
+}
+
+.triggerWrapper:focus-within {
+    border-color: var(--f-black-90);
+}
+
+.triggerWrapper.large {
+    padding-right: var(--f-spacing-5x);
+}
+
+.triggerWrapper li:focus,
+.triggerWrapper li:hover {
+    background-color: var(--f-white);
+    box-shadow: none;
+}
+
+.triggerWrapper button {
+    padding: 0;
+    border: none;
+    background-color: var(--f-white);
+}
+
+.triggerWrapper button:hover {
+    cursor: pointer;
+}
+
+.disabled,
+button.disabled {
+    border-color: var(--f-black-05);
+    background-color: var(--f-black-05);
+    color: var(--f-black-40);
+    pointer-events: none;
+}
+
+.trigger {
+    overflow: hidden;
+    flex: 1 1 auto;
+    border-radius: var(--f-corner-4px);
+    text-align: left;
+}
+
+.trigger svg {
+    display: none;
+}
+
+.placeholder,
+.clear {
+    color: var(--f-black-80);
+}

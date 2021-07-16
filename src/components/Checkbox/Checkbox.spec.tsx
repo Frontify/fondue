@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import Checkbox, { CheckboxStyle, CheckboxSelectionState, CheckboxTheme } from "./Checkbox";
+import { Style, Theme } from "@utilities/enum";
+import Checkbox, { CheckboxSelectionState } from "./Checkbox";
 import css from "./Checkbox.module.css";
 
 const CHECKBOX_LABEL = "Holà";
@@ -86,27 +87,25 @@ describe("Checkbox component", () => {
         cy.get("@checkbox").should("not.have.class", css.indeterminate);
     });
 
-    Object.values(CheckboxStyle).forEach((style) => {
-        it(`has the light theme with ${style} style`, () => {
-            mount(<Checkbox theme={CheckboxTheme.Light} style={style} />);
+    it(`has the light theme with primary style`, () => {
+        mount(<Checkbox theme={Theme.Light} style={Style.Primary} />);
 
-            cy.get("[data-test-id=checkbox]").as("checkbox");
+        cy.get("[data-test-id=checkbox]").as("checkbox");
 
-            cy.get("@checkbox").should("have.class", css[`style${style}`]);
+        cy.get("@checkbox").should("have.class", css.stylePrimary);
 
-            cy.get("@checkbox").should("have.class", css.themeLight);
-            cy.get("@checkbox").should("not.have.class", css.themeDark);
-        });
+        cy.get("@checkbox").should("have.class", css.themeLight);
+        cy.get("@checkbox").should("not.have.class", css.themeDark);
+    });
 
-        it(`has the dark theme with ${style} style`, () => {
-            mount(<Checkbox theme={CheckboxTheme.Dark} style={style} />);
+    it(`has the dark theme with secondary style`, () => {
+        mount(<Checkbox theme={Theme.Dark} style={Style.Secondary} />);
 
-            cy.get("[data-test-id=checkbox]").as("checkbox");
+        cy.get("[data-test-id=checkbox]").as("checkbox");
 
-            cy.get("@checkbox").should("have.class", css[`style${style}`]);
+        cy.get("@checkbox").should("have.class", css.styleSecondary);
 
-            cy.get("@checkbox").should("have.class", css.themeDark);
-            cy.get("@checkbox").should("not.have.class", css.themeLight);
-        });
+        cy.get("@checkbox").should("have.class", css.themeDark);
+        cy.get("@checkbox").should("not.have.class", css.themeLight);
     });
 });

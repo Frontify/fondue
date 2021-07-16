@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-export default function useClickOutsideNotify(reference: HTMLElement | null, callback: () => void): void {
+export default function useClickOutside(reference: HTMLElement | null, callback: () => void): void {
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (!reference?.contains(event.target as Node)) {

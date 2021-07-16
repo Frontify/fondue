@@ -16,7 +16,7 @@ const name = pkg.main.replace(/\.js$/, "");
 const bundle = (config) => ({
     ...config,
     input: "src/index.ts",
-    external: (id) => !/^([./]|@components|@utilities)/.test(id),
+    external: (id) => !/^([./]|@components|@utilities|@hooks)/.test(id),
     plugins: [
         nodeResolve({
             extensions: [".js", ".ts", ".tsx", ".json"],
@@ -25,6 +25,7 @@ const bundle = (config) => ({
             entries: [
                 { find: "@components", replacement: resolve(__dirname, "./src/components") },
                 { find: "@utilities", replacement: resolve(__dirname, "./src/utilities") },
+                { find: "@hooks", replacement: resolve(__dirname, "./src/hooks") },
             ],
         }),
         url(),

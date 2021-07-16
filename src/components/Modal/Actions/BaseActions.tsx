@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import Button from "@components/Button/Button";
+import { Style } from "@utilities/enum";
 import { ReactElement } from "react";
-import Button, { ButtonStyle } from "@components/Button/Button";
 import css from "./BaseActions.module.css";
 
 export interface BaseActionsProps {
@@ -20,7 +21,7 @@ export default function BaseActions({
     return (
         <div className={css.actions} data-test-id="modal-base-actions">
             <div>
-                <Button style={ButtonStyle.Secondary} onClick={onCancel}>
+                <Button style={Style.Secondary} onClick={onCancel}>
                     {cancelText}
                 </Button>
             </div>

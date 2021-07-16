@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, ReactNode, useState, MouseEvent, KeyboardEvent } from "react";
+import Label from "@components/Form/Label/Label";
 import { ReactComponent as IconCheck } from "@components/Icon/Svg/Check.svg";
 import { ReactComponent as IconMinus } from "@components/Icon/Svg/Minus.svg";
-
-import css from "./Checkbox.module.css";
+import { Style, Theme } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
-import Label from "@components/Form/Label/Label";
+import { KeyboardEvent, MouseEvent, ReactElement, ReactNode, useState } from "react";
+import css from "./Checkbox.module.css";
 
 export enum CheckboxSelectionState {
     Unselected = "Unselected",
@@ -14,19 +14,9 @@ export enum CheckboxSelectionState {
     Indeterminate = "Indeterminate",
 }
 
-export enum CheckboxTheme {
-    Light = "Light",
-    Dark = "Dark",
-}
-
-export enum CheckboxStyle {
-    Primary = "Primary",
-    Secondary = "Secondary",
-}
-
 export interface CheckboxProps {
-    theme?: CheckboxTheme;
-    style?: CheckboxStyle;
+    theme?: Theme;
+    style?: Style.Primary | Style.Secondary;
     value?: CheckboxSelectionState;
     disabled?: boolean;
     required?: boolean;
@@ -37,8 +27,8 @@ export interface CheckboxProps {
 }
 
 export default function Checkbox({
-    theme = CheckboxTheme.Light,
-    style = CheckboxStyle.Primary,
+    theme = Theme.Light,
+    style = Style.Primary,
     value = CheckboxSelectionState.Unselected,
     disabled = false,
     required = false,
