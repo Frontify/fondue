@@ -49,6 +49,8 @@ export default function Node({
                     if (value) {
                         setActive(true);
                         onClick && onClick(id);
+                    } else {
+                        setShowNodes(!showNodes);
                     }
                 }}
             >
