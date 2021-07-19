@@ -26,39 +26,10 @@
     line-height: var(--f-font-14-line-height);
 }
 
-.icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.tooltip {
-    z-index: 100;
-    padding: var(--f-spacing-4x);
-    border: var(--f-border);
-    background-color: var(--f-white);
-    border-radius: var(--f-corner-4px);
-    box-shadow: var(--f-shadow-mid);
-    visibility: hidden;
-}
-
-.icon:hover + .tooltip {
-    visibility: visible;
-}
-
 .themeLight {
     color: var(--f-black-90);
 }
 
-.themeLight .icon {
-    color: var(--f-black-60);
-}
-
-.themeDark .icon {
-    color: var(--f-black-40);
-}
-
-.themeLight .icon:hover,
 .themeLight .label:hover {
     color: var(--f-black-100);
 }
@@ -71,7 +42,7 @@
     color: var(--f-black-60);
 }
 
-.themeLight .disabled{
+.themeLight .disabled {
     color: var(--f-black-40);
 }
 
@@ -87,7 +58,6 @@
     color: var(--f-white);
 }
 
-.themeDark .icon:hover,
 .themeDark .label:hover {
     color: var(--f-white);
 }
@@ -95,4 +65,3 @@
 .themeDark .asterisk {
     color: var(--f-red-50);
 }
-

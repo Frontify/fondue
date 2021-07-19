@@ -1,10 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@components/Icon/Icon";
-import { ReactComponent as IconQuestion } from "@components/Icon/Svg/Question.svg";
+import Tooltip from "@components/Tooltip/Tooltip";
 import { Theme } from "@utilities/enum";
-import { ReactElement, ReactNode, useRef } from "react";
-import { usePopper } from "react-popper";
+import { ReactElement, ReactNode } from "react";
 import css from "./InputLabel.module.css";
 
 export interface InputLabelProps {
@@ -24,20 +22,6 @@ export default function InputLabel({
     tooltip,
     theme = Theme.Light,
 }: InputLabelProps): ReactElement<InputLabelProps> {
-    const tooltipIconRef = useRef(null);
-    const tooltipRef = useRef(null);
-    const { styles, attributes } = usePopper(tooltipIconRef.current, tooltipRef.current, {
-        placement: "auto-end",
-        modifiers: [
-            {
-                name: "offset",
-                options: {
-                    offset: [0, 9],
-                },
-            },
-        ],
-    });
-
     return (
         <div className={[css.container, css[`theme${theme}`], disabled && css.disabled].filter(Boolean).join(" ")}>
             <label
@@ -52,22 +36,7 @@ export default function InputLabel({
                     *
                 </span>
             )}
-            {tooltip && (
-                <>
-                    <div data-test-id="input-label-tooltip-icon" ref={tooltipIconRef} className={css.icon}>
-                        <IconQuestion size={IconSize.Size16} />
-                    </div>
-                    <div
-                        data-test-id="input-label-tooltip"
-                        ref={tooltipRef}
-                        className={css.tooltip}
-                        style={styles.popper}
-                        {...attributes.popper}
-                    >
-                        {tooltip}
-                    </div>
-                </>
-            )}
+            {tooltip && <Tooltip tooltip={tooltip} theme={theme} />}
         </div>
     );
 }
