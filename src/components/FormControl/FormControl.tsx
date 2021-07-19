@@ -5,6 +5,7 @@ import { FC, ReactElement, ReactNode } from "react";
 import css from "./FormControl.module.css";
 
 export enum HelperVariant {
+    Default = "Default",
     Success = "Success",
     Error = "Error",
 }

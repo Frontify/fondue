@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, Story } from "@storybook/react";
-import { Theme } from "../../utilities/enums";
-import FormControl, { FormControlProps } from "./FormControl";
+import { Theme } from "@utilities/enum";
+import FormControl, { FormControlProps, HelperVariant } from "./FormControl";
 import TextInput from "../Form/TextInput/TextInput";
 
 export default {
@@ -30,10 +30,11 @@ Default.args = {
     },
     extra: "Extra Text or Element",
     helper: {
-        text: "Helper Text (before/after) and variant (Success/Error)",
+        text: "Helper Text (before/after) and variant (Default/Success/Error)",
         position: "after",
-        variant: "",
+        variant: HelperVariant.Default,
     },
+    children: "",
 } as FormControlProps;
 
 Default.argTypes = {
@@ -41,11 +42,9 @@ Default.argTypes = {
         options: ["vertical", "horizontal"],
         control: "select",
     },
-    label: {
-        tooltip: { type: "string" },
-        theme: {
-            options: [Theme.Light, Theme.Dark],
-            control: { type: "radio" },
+    children: {
+        table: {
+            disable: true,
         },
     },
 };

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, Story } from "@storybook/react";
-import { Theme } from "../../utilities/enums";
+import { Theme } from "@utilities/enum";
 import InputLabel, { InputLabelProps } from "./InputLabel";
 
 export default {

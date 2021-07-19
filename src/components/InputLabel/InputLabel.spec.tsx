@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import { Theme } from "../../utilities/enums";
+import { Theme } from "@utilities/enum";
 import InputLabel from "./InputLabel";
 import css from "./InputLabel.module.css";
 

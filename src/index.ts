@@ -9,6 +9,7 @@ import DropdownMenu from "./components/Dropdown/DropdownMenu/DropdownMenu";
 import DropdownMenuItem from "./components/Dropdown/DropdownMenuItem/DropdownMenuItem";
 import Textarea from "./components/Form/Textarea/Textarea";
 import TextInput from "./components/Form/TextInput/TextInput";
+import FormControl from "./components/FormControl/FormControl";
 import { ReactComponent as IconAcademy } from "./components/Icon/Svg/Academy.svg";
 import { ReactComponent as IconActions } from "./components/Icon/Svg/Actions.svg";
 import { ReactComponent as IconActivities } from "./components/Icon/Svg/Activities.svg";
@@ -270,6 +271,7 @@ export {
     Tabs,
     DropdownMenu,
     DropdownMenuItem,
+    FormControl,
     InputLabel,
     TextInput,
     Textarea,
