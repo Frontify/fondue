@@ -25,7 +25,7 @@ export default function Switch({
         <button
             disabled={disabled}
             name={name}
-            data-test-id="switch"
+            data-test-id="Switch"
             className={merge([
                 css.switch,
                 on ? css.active : css.inactive,
