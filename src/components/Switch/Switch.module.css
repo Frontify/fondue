@@ -1,5 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+.container {
+    width: 100%;
+    background: lime;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .switch {
     display: inline-flex;
     padding: 0 var(--f-spacing-1x-half);

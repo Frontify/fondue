@@ -2,7 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import { Size } from "@utilities/enum";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Switch, { SwitchProps } from "./Switch";
 
 export default {
@@ -19,6 +19,10 @@ export default {
 const SwitchTemplate: Story<SwitchProps> = (args) => {
     const [on, setOn] = useState(args.on);
     const toggle = () => setOn(!on);
+
+    useEffect(() => {
+        setOn(args.on);
+    }, [args.on]);
 
     return (
         <Switch
@@ -37,5 +41,6 @@ Default.args = {
     on: true,
     disabled: false,
     name: "switch-name",
+    label: "Switch",
     size: Size.Small,
 };
