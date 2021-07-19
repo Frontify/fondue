@@ -1,0 +1,66 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.switch {
+    border-radius: 9999px;
+    border: none;
+    display: inline-flex;
+    padding: 0 var(--f-spacing-1x-half);
+    transition: background-color var(--f-transition-ease-in-out);
+}
+
+.switch.inactive {
+    background-color: var(--f-black-30);
+}
+
+.switch.inactive:hover {
+    background-color: var(--f-black-60);
+}
+
+.switch.active {
+    background-color: var(--f-black-90);
+}
+
+.switch.active:hover {
+    background-color: var(--f-black-100);
+}
+
+.switch.disabled {
+    background-color: var(--f-black-10);
+    pointer-events: none;
+}
+
+.switch.small {
+    height: 1.25rem;
+    width: 2.25rem;
+}
+
+.switch.large {
+    height: 1.5rem;
+    width: 2.75rem;
+}
+
+.indicator {
+    display: block;
+    background: var(--f-white);
+    border-radius: 50%;
+    align-self: center;
+    transition: transform var(--f-transition-ease-in-out);
+}
+
+.indicator.small {
+    height: 1rem;
+    width: 1rem;
+}
+
+.indicator.large {
+    height: 1.25rem;
+    width: 1.25rem;
+}
+
+.indicator.inactive {
+    transform: translateX(0%);
+}
+
+.indicator.active {
+    transform: translateX(100%);
+}
