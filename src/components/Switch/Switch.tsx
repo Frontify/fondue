@@ -12,8 +12,7 @@ export type SwitchProps = {
     onChange?: (e: MouseEvent) => void;
 };
 
-const merge = (classNames: (string | undefined | boolean)[]) =>
-    classNames.filter(Boolean).join(" ");
+const merge = (classNames: (string | undefined | boolean)[]) => classNames.filter(Boolean).join(" ");
 
 export default function Switch({
     name,
