@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 .switch {
-    border-radius: 9999px;
-    border: none;
     display: inline-flex;
     padding: 0 var(--f-spacing-1x-half);
+    border: none;
+    border-radius: 9999px;
     transition: background-color var(--f-transition-ease-in-out);
 }
 
@@ -30,31 +30,31 @@
 }
 
 .switch.small {
-    height: 1.25rem;
     width: 2.25rem;
+    height: 1.25rem;
 }
 
 .switch.large {
-    height: 1.5rem;
     width: 2.75rem;
+    height: 1.5rem;
 }
 
 .indicator {
     display: block;
+    align-self: center;
     background: var(--f-white);
     border-radius: 50%;
-    align-self: center;
     transition: transform var(--f-transition-ease-in-out);
 }
 
 .indicator.small {
-    height: 1rem;
     width: 1rem;
+    height: 1rem;
 }
 
 .indicator.large {
-    height: 1.25rem;
     width: 1.25rem;
+    height: 1.25rem;
 }
 
 .indicator.inactive {
