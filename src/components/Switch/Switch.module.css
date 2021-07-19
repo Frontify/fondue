@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 .container {
-    width: 100%;
-    background: lime;
     display: flex;
+    width: 100%;
     align-items: center;
     justify-content: space-between;
 }
