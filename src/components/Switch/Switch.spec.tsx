@@ -1,14 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import { useState } from "react";
-import { FC } from "react";
 import { Size } from "@utilities/enum";
-
+import { FC, useState } from "react";
 import Switch, { SwitchProps } from "./Switch";
 import css from "./Switch.module.css";
 
-const Component: FC<SwitchProps> = ({ on = false, ...props }) => {
+const Component: FC<SwitchProps> = ({ on = false, ...props }: SwitchProps) => {
     const [active, setActive] = useState(on);
 
     return <Switch {...props} on={active} onChange={() => setActive(!active)} />;
