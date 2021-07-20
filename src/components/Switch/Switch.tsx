@@ -2,6 +2,7 @@
 
 import { Size } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
+import { merge } from "@utilities/merge";
 import { MouseEvent, ReactElement } from "react";
 import Label from "../Form/Label/Label";
 import css from "./Switch.module.css";
@@ -14,8 +15,6 @@ export type SwitchProps = {
     size?: Size.Large | Size.Small;
     onChange?: (e: MouseEvent) => void;
 };
-
-const merge = (classNames: (string | undefined | boolean)[]) => classNames.filter(Boolean).join(" ");
 
 export default function Switch({
     name,
@@ -38,7 +37,7 @@ export default function Switch({
                 id={id}
                 disabled={disabled}
                 name={name}
-                data-test-id="Switch"
+                data-test-id="switch"
                 className={merge([
                     css.switch,
                     on ? css.active : css.inactive,

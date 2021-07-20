@@ -16,7 +16,7 @@ describe("Switch Component", () => {
     it("should render the value correctly", () => {
         mount(<Component name="switch-test-value" />);
 
-        cy.get("[data-test-id=Switch]").as("Switch");
+        cy.get("[data-test-id=switch]").as("Switch");
         cy.get("@Switch").invoke("attr", "name").should("eq", "switch-test-value");
         cy.get("@Switch").should("have.value", "false");
 
@@ -27,7 +27,7 @@ describe("Switch Component", () => {
     it("should do nothing if disabled", () => {
         mount(<Component name="switch-test-disabled" disabled />);
 
-        cy.get("[data-test-id=Switch]").as("Switch");
+        cy.get("[data-test-id=switch]").as("Switch");
         cy.get("@Switch").invoke("attr", "name").should("eq", "switch-test-disabled");
         cy.get("@Switch").invoke("attr", "disabled").should("eq", "disabled");
     });
@@ -35,7 +35,7 @@ describe("Switch Component", () => {
     it("can be rendered as large", () => {
         mount(<Component name="switch-test-disabled" size={Size.Large} />);
 
-        cy.get("[data-test-id=Switch]").as("Switch");
+        cy.get("[data-test-id=switch]").as("Switch");
         cy.get("@Switch").should("have.class", css.large);
     });
 });
