@@ -6,6 +6,7 @@
     padding: var(--f-spacing-2x) var(--f-spacing-3x);
     border: var(--f-border);
     border-radius: var(--f-corner-4px);
+    font-family: var(--f-font-standard);
 }
 
 .container.disabled {
