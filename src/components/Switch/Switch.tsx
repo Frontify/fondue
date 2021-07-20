@@ -4,7 +4,7 @@ import { Size } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import { MouseEvent, ReactElement } from "react";
-import Label from "../Form/Label/Label";
+import InputLabel from "@components/InputLabel/InputLabel";
 import css from "./Switch.module.css";
 
 export type SwitchProps = {
@@ -29,9 +29,9 @@ export default function Switch({
     return (
         <div className={css.container}>
             {label && id && (
-                <Label htmlFor={id} disabled={disabled}>
+                <InputLabel htmlFor={id} disabled={disabled}>
                     {label}
-                </Label>
+                </InputLabel>
             )}
             <button
                 id={id}
