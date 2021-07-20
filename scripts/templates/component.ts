@@ -1,4 +1,5 @@
 import ComponentFileBuilderResponse from "./ComponentFileBuilderResponse";
+import { toKebabCase } from "./transforms";
 
 export default (componentName: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
@@ -12,7 +13,7 @@ export interface ${componentName}Props {
 
 export default function ${componentName}({ foo }: ${componentName}Props): ReactElement<${componentName}Props> {
     return (
-        <div data-test-id="Foo" className={css.fooBar}>
+        <div data-test-id="${toKebabCase(componentName)}" className={css.fooBar}>
             {foo}
         </div>
     );
