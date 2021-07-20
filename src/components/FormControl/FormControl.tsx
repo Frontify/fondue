@@ -67,9 +67,7 @@ export default function FormControl({
                 <HelperText text={helper.text} disabled={disabled} style={helper.style} />
             )}
             <div className={css.input}>{children}</div>
-            {(helper?.text || helper?.position === HelperPosition.After) && (
-                <HelperText text={helper.text} disabled={disabled} style={helper.style} />
-            )}
+            {helper?.text && <HelperText text={helper.text} disabled={disabled} style={helper.style} />}
         </div>
     );
 }
