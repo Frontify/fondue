@@ -7,7 +7,9 @@ export enum Size {
 export enum Style {
     Primary = "Primary",
     Secondary = "Secondary",
+    Success = "Success",
     Danger = "Danger",
+    Error = "Error",
 }
 
 export enum Theme {

@@ -6,7 +6,7 @@ import css from "./Button.module.css";
 
 export interface ButtonProps {
     theme?: Theme;
-    style?: Style;
+    style?: Style.Primary | Style.Secondary | Style.Danger;
     size?: Size;
     disabled?: boolean;
 

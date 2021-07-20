@@ -1,25 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import InputLabel, { InputLabelProps } from "@components/InputLabel/InputLabel";
+import { Style } from "@utilities/enum";
 import { FC, ReactElement, ReactNode } from "react";
 import css from "./FormControl.module.css";
-
-export enum HelperVariant {
-    Default = "Default",
-    Success = "Success",
-    Error = "Error",
-}
 
 type HelperTextProps = {
     text: string;
     disabled?: boolean;
-    variant?: HelperVariant;
+    style?: Style.Primary | Style.Success | Style.Error;
 };
-const HelperText: FC<HelperTextProps> = ({ text, disabled, variant }: HelperTextProps) => (
+const HelperText: FC<HelperTextProps> = ({ text, disabled, style }: HelperTextProps) => (
     <span
         data-test-id="form-control-helper-text"
         className={`${css.helper} ${disabled ? css.disabled : ""} ${
-            variant === HelperVariant.Error ? css.error : variant === HelperVariant.Success ? css.success : ""
+            style === Style.Error ? css.error : style === Style.Success ? css.success : ""
         }`}
     >
         {text}
@@ -61,12 +56,10 @@ export default function FormControl({
                 </div>
             )}
             {helper?.position === "before" && (
-                <HelperText text={helper.text} disabled={disabled} variant={helper.variant} />
+                <HelperText text={helper.text} disabled={disabled} style={helper.style} />
             )}
             <div className={css.input}>{children}</div>
-            {helper?.position === "after" && (
-                <HelperText text={helper.text} disabled={disabled} variant={helper.variant} />
-            )}
+            {helper?.position === "after" && <HelperText text={helper.text} disabled={disabled} style={helper.style} />}
         </div>
     );
 }
