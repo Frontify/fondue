@@ -21,16 +21,24 @@ const HelperText: FC<HelperTextProps> = ({ text, disabled, style }: HelperTextPr
     </span>
 );
 
-export interface FormControlProps {
+export enum FormControlDirection {
+    Horizontal = "Horizontal",
+    Vertical = "Vertical",
+}
+
+export enum HelperPosition {
+    Before = "Before",
+    After = "After",
+}
+
+export type FormControlProps = {
     children: ReactNode;
-    direction?: "horizontal" | "vertical";
+    direction?: FormControlDirection;
     disabled?: boolean;
     label?: Omit<InputLabelProps, "disabled">;
     extra?: ReactNode;
-    helper?: Omit<HelperTextProps, "disabled"> & {
-        position: "before" | "after";
-    };
-}
+    helper?: Omit<HelperTextProps, "disabled"> & { position?: HelperPosition };
+};
 
 export default function FormControl({
     label,
@@ -43,7 +51,7 @@ export default function FormControl({
     return (
         <div
             data-test-id="form-control"
-            className={`${css.container} ${direction === "horizontal" ? "" : css.vertical}`}
+            className={`${css.container} ${direction === FormControlDirection.Horizontal ? "" : css.vertical}`}
         >
             {(label || extra) && (
                 <div className={css.label}>
@@ -55,11 +63,13 @@ export default function FormControl({
                     )}
                 </div>
             )}
-            {helper?.position === "before" && (
+            {helper?.text && helper?.position === HelperPosition.Before && (
                 <HelperText text={helper.text} disabled={disabled} style={helper.style} />
             )}
             <div className={css.input}>{children}</div>
-            {helper?.position === "after" && <HelperText text={helper.text} disabled={disabled} style={helper.style} />}
+            {(helper?.text || helper?.position === HelperPosition.After) && (
+                <HelperText text={helper.text} disabled={disabled} style={helper.style} />
+            )}
         </div>
     );
 }

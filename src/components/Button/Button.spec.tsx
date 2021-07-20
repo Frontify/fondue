@@ -62,7 +62,7 @@ describe("Button component", () => {
         cy.get("@button").should("not.have.class", css.stylePrimary);
     });
 
-    Object.values(Style).forEach((style) => {
+    [Style.Primary, Style.Secondary, Style.Danger].forEach((style) =>
         it(`has ${style} style`, () => {
             mount(<Button style={style}>{BUTTON_TEXT}</Button>);
 
@@ -73,8 +73,8 @@ describe("Button component", () => {
             cy.get("@button").should("have.class", css.sizeSmall);
             cy.get("@button").should("have.class", css[`style${style}`]);
             cy.get("@button").should("not.have.class", css.disabled);
-        });
-    });
+        }),
+    );
 
     Object.values(Size).forEach((size) => {
         it(`has the ${size} size`, () => {

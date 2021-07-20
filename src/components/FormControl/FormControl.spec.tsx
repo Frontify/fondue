@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import FormControl, { HelperVariant } from "./FormControl";
+import { Style } from "@utilities/enum";
+import FormControl, { FormControlDirection, HelperPosition } from "./FormControl";
 import css from "./FormControl.module.css";
 
 const FORM_CONTROL_ID = "[data-test-id=form-control]";
@@ -17,7 +18,7 @@ describe("FormControl Component", () => {
     });
 
     it("should render a horizontal form control", () => {
-        mount(<FormControl direction="horizontal">{FORM_CONTROL_CONTENT}</FormControl>);
+        mount(<FormControl direction={FormControlDirection.Horizontal}>{FORM_CONTROL_CONTENT}</FormControl>);
 
         cy.get(FORM_CONTROL_ID).should("not.have.class", css.vertical);
     });
@@ -42,7 +43,7 @@ describe("FormControl Component", () => {
             <FormControl
                 helper={{
                     text: HELPER_TEXT,
-                    position: "before",
+                    position: HelperPosition.Before,
                 }}
             >
                 {FORM_CONTROL_CONTENT}
@@ -59,16 +60,7 @@ describe("FormControl Component", () => {
 
     it("should render a helper text after the control content", () => {
         const HELPER_TEXT = "Helper text";
-        mount(
-            <FormControl
-                helper={{
-                    text: HELPER_TEXT,
-                    position: "after",
-                }}
-            >
-                {FORM_CONTROL_CONTENT}
-            </FormControl>,
-        );
+        mount(<FormControl helper={{ text: HELPER_TEXT }}>{FORM_CONTROL_CONTENT}</FormControl>);
 
         cy.get(FORM_CONTROL_HELPER_TEXT_ID).should("be.visible");
         cy.get(FORM_CONTROL_ID)
@@ -85,7 +77,7 @@ describe("FormControl Component", () => {
                 label={{ children: "Label" }}
                 helper={{
                     text: "Helper text",
-                    position: "after",
+                    position: HelperPosition.Before,
                 }}
                 disabled
             >
@@ -102,8 +94,7 @@ describe("FormControl Component", () => {
                 label={{ children: "Label" }}
                 helper={{
                     text: "Helper text",
-                    position: "after",
-                    variant: HelperVariant.Error,
+                    style: Style.Error,
                 }}
             >
                 {FORM_CONTROL_CONTENT}
@@ -119,8 +110,7 @@ describe("FormControl Component", () => {
                 label={{ children: "Label" }}
                 helper={{
                     text: "Helper text",
-                    position: "after",
-                    variant: HelperVariant.Success,
+                    style: Style.Success,
                 }}
             >
                 {FORM_CONTROL_CONTENT}
