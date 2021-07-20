@@ -1,20 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 .button {
+    position: relative;
+    display: inline-flex;
+    width: 28px;
+    height: 24px;
+    align-items: center;
+    padding: 4px 4px;
     border: none;
     background-color: var(--f-violet-60);
-    transition: background-color var(--f-transition-ease-in-out);
-    color: var(--f-white);
     border-radius: 4px;
-    height: 24px;
-    width: 28px;
-    padding: 4px 4px;
-    display: inline-flex;
-    align-items: center;
-    position: relative;
     clip-path: path(
         "M27.3333 10.9369L21.7246 2C20.5 0.5 19.5 0 18 0H4C1.79086 0 0 1.79086 0 4V20C0 22.2091 1.79086 24 4 24H18C19.5 24 20.5 23.5 21.7246 22L27.3333 13.0631C27.7412 12.4131 27.7412 11.5869 27.3333 10.9369Z"
     );
+    color: var(--f-white);
+    transition: background-color var(--f-transition-ease-in-out);
 }
 
 .button:hover {
