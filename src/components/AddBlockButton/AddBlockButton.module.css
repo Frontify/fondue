@@ -24,3 +24,7 @@
 .button:active {
     background-color: var(--f-violet-90);
 }
+
+.vertical {
+    transform: rotate(90deg);
+}
