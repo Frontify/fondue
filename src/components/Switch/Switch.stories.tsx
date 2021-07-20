@@ -27,9 +27,7 @@ const SwitchTemplate: Story<SwitchProps> = (args) => {
     return (
         <Switch
             {...args}
-            onChange={() => {
-                toggle();
-            }}
+            onChange={toggle}
             on={on}
         />
     );
