@@ -24,13 +24,7 @@ const SwitchTemplate: Story<SwitchProps> = (args) => {
         setOn(args.on);
     }, [args.on]);
 
-    return (
-        <Switch
-            {...args}
-            onChange={toggle}
-            on={on}
-        />
-    );
+    return <Switch {...args} onChange={toggle} on={on} />;
 };
 
 export const Default = SwitchTemplate.bind({});
