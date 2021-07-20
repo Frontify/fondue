@@ -7,7 +7,18 @@ module.exports = {
         builder: "storybook-builder-vite",
     },
     stories: ["../src/components/**/*.stories.tsx"],
-    addons: ["@storybook/addon-postcss", "@storybook/addon-links", "@storybook/addon-essentials"],
+    addons: [
+        "@storybook/addon-links",
+        "@storybook/addon-essentials",
+        {
+            name: "@storybook/addon-postcss",
+            options: {
+                postcssLoaderOptions: {
+                    implementation: require("postcss"),
+                },
+            },
+        },
+    ],
     async viteFinal(config) {
         config.resolve.alias = {
             ...config.resolve.alias,

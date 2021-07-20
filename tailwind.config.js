@@ -1,0 +1,116 @@
+module.exports = {
+    mode: "jit",
+    purge: ["./src/**/*.tsx"],
+    darkMode: "class",
+    theme: {
+        boxShadow: {
+            large: "0 25px 80px 0 rgba(45, 50, 50, 0.4)",
+            mid: "0 3px 10px 0 rgba(45, 50, 50, 0.1)",
+            "mid-top": "0 -10px 10px -5px rgba(45, 50, 50, 0.1)",
+            "mid-bottom": "0 10px 10px -5px rgba(45, 50, 50, 0.1)",
+            none: "none",
+        },
+        colors: {
+            transparent: "transparent",
+            current: "currentColor",
+            //TODO: Wise to keep it?
+            hyperlink: "#6449c4",
+            white: "#ffffff",
+            black: "#2d3232",
+            gray: {
+                // Solids
+                superdark: "#1a1d1d",
+                100: "#2d3232",
+                95: "#424747",
+                90: "#575b5b",
+                85: "#5f6363",
+                80: "#6c7070",
+                70: "#818484",
+                60: "#969898",
+                50: "#abadad",
+                40: "#b3b5b5",
+                30: "#c0c2c2",
+                20: "#d5d6d6",
+                10: "#eaebeb",
+                05: "#f7f7f7",
+                00: "#fafafa",
+                warm: "#e6dcdc",
+
+                //TODO: discuss about how to deal with translucent colors
+                // Translucents
+                "opacity-high": "rgba(45, 50, 50, 0.7)",
+                "opacity-mid": "rgba(45, 50, 50, 0.4)",
+                "opacity-low": "rgba(45, 50, 50, 0.25)",
+                "opacity-lower": "rgba(45, 50, 50, 0.1)",
+            },
+            violet: {
+                // Solids
+                70: "#6449c4",
+                60: "#825fff",
+                50: "#9088ff",
+                40: "#c8d1ed",
+                20: "#e3d4f6",
+
+                //TODO: discuss about how to deal with translucent colors
+                // Translucents
+                "opacity-high": "rgba(110, 95, 255, 0.8)",
+                "opacity-mid": "rgba(60, 100, 237, 0.4)",
+                "opacity-low": "rgba(40, 80, 220, 0.2)",
+                "opacity-lower": "rgba(50, 85, 200, 0.1)",
+                "opacity-none": "rgba(50, 85, 200, 0)",
+            },
+            green: {
+                90: "#006452",
+                70: "#00a084",
+                60: "#00c8a5",
+                50: "#80dbb7",
+                40: "#bee1d4",
+                20: "#def0e9",
+            },
+
+            yellow: {
+                90: "#cc9000",
+                70: "#e6a200",
+                60: "#ffb400",
+                50: "#eec779",
+                40: "#e1d4be",
+                20: "#f0e9de",
+            },
+
+            red: {
+                90: "#992136",
+                70: "#cc2c48",
+                60: "#ff375a",
+                50: "#ff8066",
+                40: "#e1c4be",
+                20: "#f0e1de",
+            },
+        },
+        fontFamily: {
+            sans: [
+                '"Space Grotesk Frontify"',
+                "Arial",
+                "-apple-system",
+                "BlinkMacSystemFont",
+                "Segoe UI",
+                "Roboto",
+                "Helvetica",
+                "sans-serif",
+                '"Apple Color Emoji"',
+                '"Segoe UI Emoji"',
+                '"Segoe UI Symbol"',
+            ],
+            mono: ["Menlo", "Courier", "monospace"],
+        },
+        fontSize: {
+            xxs: ["0.75rem", "1rem"],
+            xs: ["0.813rem", "1rem"],
+            s: ["0.875rem", "1rem"],
+            m: ["1rem", "1.25rem"],
+            l: ["1.125rem", "1.5rem"],
+            xl: ["1.5rem", "2rem"],
+            xxl: ["2rem", "2.5rem"],
+            xxxl: ["3rem", "3.5rem"],
+        },
+    },
+};
