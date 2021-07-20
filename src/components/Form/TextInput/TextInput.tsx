@@ -13,6 +13,7 @@ export enum TextInputType {
 }
 
 export interface TextInputProps {
+    id?: string;
     type?: TextInputType;
     decorator?: ReactElement<IconProps>;
     clearable?: boolean;
@@ -26,6 +27,7 @@ export interface TextInputProps {
 }
 
 export default function TextInput({
+    id,
     type = TextInputType.Text,
     decorator,
     clearable = false,
@@ -74,6 +76,7 @@ export default function TextInput({
                 </div>
             )}
             <input
+                id={id}
                 ref={inputElement}
                 className={css.input}
                 onInput={onInputInput}

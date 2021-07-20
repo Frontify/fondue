@@ -10,7 +10,9 @@ const CheckboxTemplate: Story<CheckboxProps> = (args) => <Checkbox {...args} />;
 
 export const Default = CheckboxTemplate.bind({});
 
-Default.args = {};
+Default.args = {
+    label: "Checkbox Label",
+};
 
 Default.argTypes = {
     tooltip: { type: "string" },

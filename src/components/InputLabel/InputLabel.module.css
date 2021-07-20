@@ -1,0 +1,67 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.container {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--f-font-standard);
+    font-size: var(--f-font-14-size);
+    line-height: var(--f-font-14-line-height);
+}
+
+.label:hover {
+    cursor: pointer;
+}
+
+.disabled .label:hover {
+    cursor: not-allowed;
+}
+
+.container > * + * {
+    padding-left: var(--f-spacing-1x);
+}
+
+.asterisk {
+    height: var(--f-font-14-size); /* Center asterisk vertically */
+    font-size: var(--f-font-14-size);
+    line-height: var(--f-font-14-line-height);
+}
+
+.themeLight {
+    color: var(--f-black-90);
+}
+
+.themeLight .label:hover {
+    color: var(--f-black-100);
+}
+
+.themeLight .asterisk {
+    color: var(--f-red-60);
+}
+
+.themeDark .disabled {
+    color: var(--f-black-60);
+}
+
+.themeLight .disabled {
+    color: var(--f-black-40);
+}
+
+.themeLight .disabled:hover {
+    color: var(--f-black-40);
+}
+
+.themeDark .disabled:hover {
+    color: var(--f-black-60);
+}
+
+.themeDark {
+    color: var(--f-white);
+}
+
+.themeDark .label:hover {
+    color: var(--f-white);
+}
+
+.themeDark .asterisk {
+    color: var(--f-red-50);
+}

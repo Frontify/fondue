@@ -2,7 +2,6 @@
 
 .wrapper {
     display: flex;
-    cursor: pointer;
 }
 
 .checkbox {
@@ -13,6 +12,7 @@
     align-items: center;
     justify-content: center;
     border-radius: var(--f-corner-4px);
+    cursor: pointer;
     transition: color var(--f-transition-linear), background-color var(--f-transition-linear);
 }
 

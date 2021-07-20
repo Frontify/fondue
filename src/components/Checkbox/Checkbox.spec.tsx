@@ -52,7 +52,7 @@ describe("Checkbox component", () => {
         mount(<Checkbox label={CHECKBOX_LABEL} />);
 
         cy.get("[data-test-id=checkbox-wrapper]").contains(CHECKBOX_LABEL);
-        cy.get("[data-test-id=label]").should("have.length", 1);
+        cy.get("[data-test-id=input-label]").should("have.length", 1);
     });
 
     it("has a disabled state", () => {
