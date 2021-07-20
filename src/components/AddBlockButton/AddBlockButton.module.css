@@ -6,7 +6,7 @@
     width: 28px;
     height: 24px;
     align-items: center;
-    padding: 4px 4px;
+    padding: var(--f-spacing-1x);
     border: none;
     background-color: var(--f-violet-60);
     border-radius: 4px;
