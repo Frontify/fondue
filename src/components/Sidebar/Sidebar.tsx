@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { CheckboxSelectionState } from "@elements/Checkbox/Checkbox";
 import { ReactElement } from "react";
+import css from "./Sidebar.module.css";
+import SidebarItemCheckbox from "./SidebarItemCheckbox/SidebarItemCheckbox";
 import SidebarItemDefault from "./SidebarItemDefault/SidebarItemDefault";
 import SidebarItemLink from "./SidebarItemLink/SidebarItemLink";
-import SidebarItemCheckbox from "./SidebarItemCheckbox/SidebarItemCheckbox";
-import css from "./Sidebar.module.css";
 import SidebarItemSearch from "./SidebarItemSearch/SidebarItemSearch";
-import { CheckboxSelectionState } from "@components/Checkbox/Checkbox";
 
 export enum SidebarItemType {
     Default,

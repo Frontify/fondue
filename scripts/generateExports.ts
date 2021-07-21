@@ -3,7 +3,10 @@ import { join } from "path";
 import { writeFile } from "fs/promises";
 
 (async () => {
-    const componentsFilePath = await fastGlob("src/components/**/[a-zA-Z]*.tsx", { objectMode: true });
+    const componentsFilePath = await fastGlob(
+        ["src/elements/**/[a-zA-Z]*.tsx", "src/components/**/[a-zA-Z]*.tsx", "src/compositions/**/[a-zA-Z]*.tsx"],
+        { objectMode: true },
+    );
     const components = componentsFilePath
         .sort()
         .map((filePath) => {
@@ -19,14 +22,12 @@ import { writeFile } from "fs/promises";
     const componentNameToImport = (name: string, path: string) =>
         `import ${name} from "./${path.replace("src/", "")}";`;
 
-    const iconsFilePath = await fastGlob("src/components/Icon/Svg/**/*.svg", { objectMode: true });
+    const iconsFilePath = await fastGlob("src/elements/Icon/Svg/**/*.svg", { objectMode: true });
     const iconsName = iconsFilePath.sort().map((filePath) => filePath.name.replace(".svg", ""));
     const componentizedIconsName = (iconName: string) => `Icon${iconName}`;
 
     const IconNameToImport = (iconName: string) =>
-        `import { ReactComponent as ${componentizedIconsName(
-            iconName,
-        )} } from "./components/Icon/Svg/${iconName}.svg";`;
+        `import { ReactComponent as ${componentizedIconsName(iconName)} } from "./elements/Icon/Svg/${iconName}.svg";`;
 
     const fileContent = `${components.map((c) => componentNameToImport(c.name, c.path)).join("\n")}
 ${iconsName.map(IconNameToImport).join("\n")}

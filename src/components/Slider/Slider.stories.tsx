@@ -1,19 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@components/Icon/Icon";
-import { ReactComponent as TextAlignCenter } from "@components/Icon/Svg/TextAlignCenter.svg";
+import { IconSize } from "@elements/Icon/Icon";
+import { ReactComponent as TextAlignCenter } from "@elements/Icon/Svg/TextAlignCenter.svg";
 import { Meta, Story } from "@storybook/react";
 import { useState } from "react";
 import Slider, { SliderProps } from "./Slider";
 
 export default {
-    title: "Slider",
+    title: "Components/Slider",
     component: Slider,
 } as Meta;
 
 const SliderTemplate: Story<SliderProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(args.items[0].id);
-    return <Slider activeItemId={activeItemId} onChange={setActiveItemId} {...args} />;
+    return <Slider {...args} activeItemId={activeItemId} onChange={setActiveItemId} />;
 };
 
 export const Text = SliderTemplate.bind({});

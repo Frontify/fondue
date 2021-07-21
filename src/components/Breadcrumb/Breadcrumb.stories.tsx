@@ -1,19 +1,16 @@
-import { Story, Meta } from "@storybook/react";
-import Breadcrumb, { BreadcrumbProps } from "./Breadcrumb";
+import { Meta, Story } from "@storybook/react";
+import BreadcrumbComponent, { BreadcrumbProps } from "./Breadcrumb";
 
 export default {
-    title: "Breadcrumb",
-    component: Breadcrumb,
+    title: "Components/Breadcrumb",
+    component: BreadcrumbComponent,
+    args: {
+        items: [
+            { label: "Item 1", link: "/" },
+            { label: "Item 2", link: "/" },
+            { label: "Item 3", link: "/" },
+        ],
+    },
 } as Meta;
 
-const BreadcrumbTemplate: Story<BreadcrumbProps> = (args) => <Breadcrumb {...args} />;
-
-export const Default = BreadcrumbTemplate.bind({});
-
-Default.args = {
-    items: [
-        { label: "Item 1", link: "/" },
-        { label: "Item 2", link: "/" },
-        { label: "Item 3", link: "/" },
-    ],
-};
+export const Breadcrumb: Story<BreadcrumbProps> = (args) => <BreadcrumbComponent {...args} />;
