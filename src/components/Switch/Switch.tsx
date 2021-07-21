@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import InputLabel from "@components/InputLabel/InputLabel";
 import { Size } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import { MouseEvent, ReactElement } from "react";
-import InputLabel from "@components/InputLabel/InputLabel";
 import css from "./Switch.module.css";
 
 export type SwitchProps = {
