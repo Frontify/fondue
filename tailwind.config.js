@@ -13,11 +13,10 @@ module.exports = {
         colors: {
             transparent: "transparent",
             current: "currentColor",
-            //TODO: Wise to keep it?
-            hyperlink: "#6449c4",
             white: "#ffffff",
-            black: "#2d3232",
-            gray: {
+            black: {
+                DEFAULT: "#2d3232",
+
                 // Solids
                 superdark: "#1a1d1d",
                 100: "#2d3232",
@@ -36,12 +35,11 @@ module.exports = {
                 00: "#fafafa",
                 warm: "#e6dcdc",
 
-                //TODO: discuss about how to deal with translucent colors
                 // Translucents
-                "opacity-high": "rgba(45, 50, 50, 0.7)",
-                "opacity-mid": "rgba(45, 50, 50, 0.4)",
-                "opacity-low": "rgba(45, 50, 50, 0.25)",
-                "opacity-lower": "rgba(45, 50, 50, 0.1)",
+                "opacity-70": "rgba(45, 50, 50, 0.7)",
+                "opacity-40": "rgba(45, 50, 50, 0.4)",
+                "opacity-25": "rgba(45, 50, 50, 0.25)",
+                "opacity-10": "rgba(45, 50, 50, 0.1)",
             },
             violet: {
                 // Solids
@@ -51,13 +49,11 @@ module.exports = {
                 40: "#c8d1ed",
                 20: "#e3d4f6",
 
-                //TODO: discuss about how to deal with translucent colors
                 // Translucents
-                "opacity-high": "rgba(110, 95, 255, 0.8)",
-                "opacity-mid": "rgba(60, 100, 237, 0.4)",
-                "opacity-low": "rgba(40, 80, 220, 0.2)",
-                "opacity-lower": "rgba(50, 85, 200, 0.1)",
-                "opacity-none": "rgba(50, 85, 200, 0)",
+                "opacity-80": "rgba(110, 95, 255, 0.8)",
+                "opacity-40": "rgba(60, 100, 237, 0.4)",
+                "opacity-20": "rgba(40, 80, 220, 0.2)",
+                "opacity-10": "rgba(50, 85, 200, 0.1)",
             },
             green: {
                 90: "#006452",
