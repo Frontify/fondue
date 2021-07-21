@@ -6,8 +6,23 @@ module.exports = {
     core: {
         builder: "storybook-builder-vite",
     },
-    stories: ["../src/elements/**/*.stories.tsx", "../src/components/**/*.stories.tsx", "../src/compositions/**/*.stories.tsx"],
-    addons: ["@storybook/addon-postcss", "@storybook/addon-links", "@storybook/addon-essentials"],
+    stories: [
+        "../src/elements/**/*.stories.tsx",
+        "../src/components/**/*.stories.tsx",
+        "../src/compositions/**/*.stories.tsx",
+    ],
+    addons: [
+        "@storybook/addon-links",
+        "@storybook/addon-essentials",
+        {
+            name: "@storybook/addon-postcss",
+            options: {
+                postcssLoaderOptions: {
+                    implementation: require("postcss"),
+                },
+            },
+        },
+    ],
     async viteFinal(config) {
         config.resolve.alias = {
             ...config.resolve.alias,

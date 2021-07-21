@@ -1,4 +1,20 @@
 {
     "extends": "@frontify/stylelint-config",
-    "ignoreFiles": ["**/*.tsx"]
+    "ignoreFiles": ["**/*.tsx"],
+    "rules": {
+        "at-rule-no-unknown": [
+            true,
+            {
+                "ignoreAtRules": [
+                    "tailwind",
+                    "apply",
+                    "variants",
+                    "responsive",
+                    "screen"
+                ]
+            }
+        ],
+        "declaration-block-trailing-semicolon": null,
+        "no-descending-specificity": null
+    }
 }

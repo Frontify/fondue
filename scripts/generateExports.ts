@@ -8,7 +8,7 @@ import { writeFile } from "fs/promises";
         { objectMode: true },
     );
     const components = componentsFilePath
-        .sort()
+        .sort((a, b) => a.name.localeCompare(b.name))
         .map((filePath) => {
             const filename = filePath.name;
             return {
@@ -23,7 +23,9 @@ import { writeFile } from "fs/promises";
         `import ${name} from "./${path.replace("src/", "")}";`;
 
     const iconsFilePath = await fastGlob("src/elements/Icon/Svg/**/*.svg", { objectMode: true });
-    const iconsName = iconsFilePath.sort().map((filePath) => filePath.name.replace(".svg", ""));
+    const iconsName = iconsFilePath
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((filePath) => filePath.name.replace(".svg", ""));
     const componentizedIconsName = (iconName: string) => `Icon${iconName}`;
 
     const IconNameToImport = (iconName: string) =>
