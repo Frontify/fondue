@@ -1,37 +1,37 @@
 import AddBlockButton from "./elements/AddBlockButton/AddBlockButton";
-import Checkbox from "./elements/Checkbox/Checkbox";
 import Badge from "./elements/Badge/Badge";
-import Button from "./elements/Button/Button";
-import Divider from "./elements/Divider/Divider";
-import InputLabel from "./elements/InputLabel/InputLabel";
-import Switch from "./elements/Switch/Switch";
-import Textarea from "./elements/Textarea/Textarea";
-import TextInput from "./elements/TextInput/TextInput";
+import BaseActions from "./components/Modal/Actions/BaseActions";
 import Breadcrumb from "./components/Breadcrumb/Breadcrumb";
-import Dropdown from "./components/Dropdown/Dropdown";
+import Button from "./elements/Button/Button";
 import Card from "./components/Card/Card";
-import Iframe from "./components/Iframe/Iframe";
+import Checkbox from "./elements/Checkbox/Checkbox";
+import Divider from "./elements/Divider/Divider";
+import Dropdown from "./components/Dropdown/Dropdown";
+import DropdownMenu from "./components/Dropdown/DropdownMenu/DropdownMenu";
+import DropdownMenuItem from "./components/Dropdown/DropdownMenuItem/DropdownMenuItem";
+import FormControl from "./compositions/FormControl/FormControl";
 import FrontifyImage from "./components/Image/FrontifyImage";
+import Iframe from "./components/Iframe/Iframe";
 import Image from "./components/Image/Image";
-import Slider from "./components/Slider/Slider";
+import InputLabel from "./elements/InputLabel/InputLabel";
 import Modal from "./components/Modal/Modal";
 import ModalPortal from "./components/Modal/ModalPortal";
-import Stepper from "./components/Stepper/Stepper";
-import Tabs from "./components/Tabs/Tabs";
-import Tooltip from "./components/Tooltip/Tooltip";
-import Sidebar from "./components/Sidebar/Sidebar";
-import DropdownMenu from "./components/Dropdown/DropdownMenu/DropdownMenu";
 import Node from "./components/Tree/Node";
-import Tree from "./components/Tree/Tree";
-import DropdownMenuItem from "./components/Dropdown/DropdownMenuItem/DropdownMenuItem";
-import Tab from "./components/Tabs/Tab/Tab";
-import BaseActions from "./components/Modal/Actions/BaseActions";
-import TabTitle from "./components/Tabs/TabTitle/TabTitle";
+import Sidebar from "./components/Sidebar/Sidebar";
 import SidebarItemCheckbox from "./components/Sidebar/SidebarItemCheckbox/SidebarItemCheckbox";
 import SidebarItemDefault from "./components/Sidebar/SidebarItemDefault/SidebarItemDefault";
-import SidebarItemSearch from "./components/Sidebar/SidebarItemSearch/SidebarItemSearch";
 import SidebarItemLink from "./components/Sidebar/SidebarItemLink/SidebarItemLink";
-import FormControl from "./compositions/FormControl/FormControl";
+import SidebarItemSearch from "./components/Sidebar/SidebarItemSearch/SidebarItemSearch";
+import Slider from "./components/Slider/Slider";
+import Stepper from "./components/Stepper/Stepper";
+import Switch from "./elements/Switch/Switch";
+import Tab from "./components/Tabs/Tab/Tab";
+import Tabs from "./components/Tabs/Tabs";
+import TabTitle from "./components/Tabs/TabTitle/TabTitle";
+import Textarea from "./elements/Textarea/Textarea";
+import TextInput from "./elements/TextInput/TextInput";
+import Tooltip from "./components/Tooltip/Tooltip";
+import Tree from "./components/Tree/Tree";
 import { ReactComponent as IconAcademy } from "./elements/Icon/Svg/Academy.svg";
 import { ReactComponent as IconActions } from "./elements/Icon/Svg/Actions.svg";
 import { ReactComponent as IconActivities } from "./elements/Icon/Svg/Activities.svg";
@@ -84,20 +84,20 @@ import { ReactComponent as IconCollapse } from "./elements/Icon/Svg/Collapse.svg
 import { ReactComponent as IconCollectionLarge } from "./elements/Icon/Svg/CollectionLarge.svg";
 import { ReactComponent as IconCollectionMedium } from "./elements/Icon/Svg/CollectionMedium.svg";
 import { ReactComponent as IconCollectionSmall } from "./elements/Icon/Svg/CollectionSmall.svg";
+import { ReactComponent as IconColors } from "./elements/Icon/Svg/Colors.svg";
 import { ReactComponent as IconColorScale } from "./elements/Icon/Svg/ColorScale.svg";
 import { ReactComponent as IconColorScaleSmall } from "./elements/Icon/Svg/ColorScaleSmall.svg";
 import { ReactComponent as IconColorScaleTall } from "./elements/Icon/Svg/ColorScaleTall.svg";
 import { ReactComponent as IconColorSwatch } from "./elements/Icon/Svg/ColorSwatch.svg";
-import { ReactComponent as IconColors } from "./elements/Icon/Svg/Colors.svg";
 import { ReactComponent as IconColumnBreak } from "./elements/Icon/Svg/ColumnBreak.svg";
 import { ReactComponent as IconCopyToClipboard } from "./elements/Icon/Svg/CopyToClipboard.svg";
 import { ReactComponent as IconCrop } from "./elements/Icon/Svg/Crop.svg";
 import { ReactComponent as IconCut } from "./elements/Icon/Svg/Cut.svg";
 import { ReactComponent as IconDivider } from "./elements/Icon/Svg/Divider.svg";
-import { ReactComponent as IconDoDontsStrikethrough } from "./elements/Icon/Svg/DoDontsStrikethrough.svg";
-import { ReactComponent as IconDoDontsUnderline } from "./elements/Icon/Svg/DoDontsUnderline.svg";
 import { ReactComponent as IconDocument } from "./elements/Icon/Svg/Document.svg";
 import { ReactComponent as IconDocumentLibrary } from "./elements/Icon/Svg/DocumentLibrary.svg";
+import { ReactComponent as IconDoDontsStrikethrough } from "./elements/Icon/Svg/DoDontsStrikethrough.svg";
+import { ReactComponent as IconDoDontsUnderline } from "./elements/Icon/Svg/DoDontsUnderline.svg";
 import { ReactComponent as IconDosImages } from "./elements/Icon/Svg/DosImages.svg";
 import { ReactComponent as IconDosText } from "./elements/Icon/Svg/DosText.svg";
 import { ReactComponent as IconDownload } from "./elements/Icon/Svg/Download.svg";
@@ -259,39 +259,39 @@ import { ReactComponent as IconZoom } from "./elements/Icon/Svg/Zoom.svg";
 
 export {
     AddBlockButton,
-    Checkbox,
     Badge,
-    Button,
-    Divider,
-    InputLabel,
-    Switch,
-    Textarea,
-    TextInput,
+    BaseActions,
     Breadcrumb,
-    Dropdown,
+    Button,
     Card,
-    Iframe,
+    Checkbox,
+    Divider,
+    Dropdown,
+    DropdownMenu,
+    DropdownMenuItem,
+    FormControl,
     FrontifyImage,
+    Iframe,
     Image,
-    Slider,
+    InputLabel,
     Modal,
     ModalPortal,
-    Stepper,
-    Tabs,
-    Tooltip,
-    Sidebar,
-    DropdownMenu,
     Node,
-    Tree,
-    DropdownMenuItem,
-    Tab,
-    BaseActions,
-    TabTitle,
+    Sidebar,
     SidebarItemCheckbox,
     SidebarItemDefault,
-    SidebarItemSearch,
     SidebarItemLink,
-    FormControl,
+    SidebarItemSearch,
+    Slider,
+    Stepper,
+    Switch,
+    Tab,
+    Tabs,
+    TabTitle,
+    Textarea,
+    TextInput,
+    Tooltip,
+    Tree,
     IconAcademy,
     IconActions,
     IconActivities,
@@ -344,20 +344,20 @@ export {
     IconCollectionLarge,
     IconCollectionMedium,
     IconCollectionSmall,
+    IconColors,
     IconColorScale,
     IconColorScaleSmall,
     IconColorScaleTall,
     IconColorSwatch,
-    IconColors,
     IconColumnBreak,
     IconCopyToClipboard,
     IconCrop,
     IconCut,
     IconDivider,
-    IconDoDontsStrikethrough,
-    IconDoDontsUnderline,
     IconDocument,
     IconDocumentLibrary,
+    IconDoDontsStrikethrough,
+    IconDoDontsUnderline,
     IconDosImages,
     IconDosText,
     IconDownload,
