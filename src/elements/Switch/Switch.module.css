@@ -1,0 +1,73 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.switch {
+    display: inline-flex;
+    padding: 0 var(--f-spacing-1x-half);
+    border: none;
+    border-radius: 9999px;
+    transition: background-color var(--f-transition-ease-in-out);
+}
+
+.switch.inactive {
+    background-color: var(--f-black-30);
+}
+
+.switch.inactive:hover {
+    background-color: var(--f-black-60);
+}
+
+.switch.active {
+    background-color: var(--f-black-90);
+}
+
+.switch.active:hover {
+    background-color: var(--f-black-100);
+}
+
+.switch.disabled {
+    background-color: var(--f-black-10);
+    pointer-events: none;
+}
+
+.switch.small {
+    width: 2.25rem;
+    height: 1.25rem;
+}
+
+.switch.large {
+    width: 2.75rem;
+    height: 1.5rem;
+}
+
+.indicator {
+    display: block;
+    align-self: center;
+    background: var(--f-white);
+    border-radius: 50%;
+    transition: transform var(--f-transition-ease-in-out);
+}
+
+.indicator.small {
+    width: 1rem;
+    height: 1rem;
+}
+
+.indicator.large {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.indicator.inactive {
+    transform: translateX(0%);
+}
+
+.indicator.active {
+    transform: translateX(100%);
+}

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ReactComponent as IconSearch } from "@elements/Icon/Svg/Search.svg";
+import TextInput from "@elements/TextInput/TextInput";
 import { ReactElement } from "react";
-import TextInput from "@components/Form/TextInput/TextInput";
-import { ReactComponent as IconSearch } from "@components/Icon/Svg/Search.svg";
 
 export interface SidebarItemSearchProps {
     value?: string;

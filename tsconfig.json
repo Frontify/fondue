@@ -12,11 +12,13 @@
         "jsx": "react-jsx",
         "plugins": [{ "name": "typescript-plugin-css-modules" }],
         "paths": {
+            "@elements/*": ["./src/elements/*"],
             "@components/*": ["./src/components/*"],
+            "@compositions/*": ["./src/compositions/*"],
             "@utilities/*": ["./src/utilities/*"],
             "@hooks/*": ["./src/hooks/*"]
         }
     },
     "include": ["src/**/*", "src/svg.d.ts"],
-    "exclude": ["node_modules", "dist", "src/**/*.stories.tsx", "src/**/*.spec.tsx"]
+    "exclude": ["node_modules", "dist"]
 }

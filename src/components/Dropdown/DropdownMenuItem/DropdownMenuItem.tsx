@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconProps, IconSize } from "@components/Icon/Icon";
-import { ReactComponent as CaretRightIcon } from "@components/Icon/Svg/CaretRight.svg";
-import { ReactComponent as CheckIcon } from "@components/Icon/Svg/Check.svg";
+import { IconProps, IconSize } from "@elements/Icon/Icon";
+import { ReactComponent as CaretRightIcon } from "@elements/Icon/Svg/CaretRight.svg";
+import { ReactComponent as CheckIcon } from "@elements/Icon/Svg/Check.svg";
 import { Size, Style } from "@utilities/enum";
 import { ReactElement } from "react";
 import css from "./DropdownMenuItem.module.css";
@@ -19,17 +19,18 @@ type MenuItemBase = {
     style?: Style.Primary | Style.Danger;
     disabled?: boolean;
     active?: boolean;
+    subtitle?: string;
+    size?: Size.Small | Size.Large;
     selectionIndicator?: SelectionIndicatorIcon;
 };
 
 export type MenuItem =
     | (MenuItemBase & {
-          subtitle: undefined;
-          size?: Size.Small;
+          size: Size.Small;
       })
     | (MenuItemBase & {
-          subtitle?: string;
-          size?: Size.Large;
+          subtitle: string;
+          size: Size.Large;
       });
 
 export type DropdownMenuItemProps = {

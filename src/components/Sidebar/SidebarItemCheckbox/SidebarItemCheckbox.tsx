@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import Checkbox, { CheckboxSelectionState } from "@elements/Checkbox/Checkbox";
 import { ReactElement } from "react";
 import css from "./SidebarItemCheckbox.module.css";
-import Checkbox, { CheckboxSelectionState } from "@components/Checkbox/Checkbox";
 
 export interface SidebarItemCheckboxProps {
     label: string;

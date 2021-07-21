@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@components/Icon/Icon";
-import { ReactComponent as IconActions } from "@components/Icon/Svg/Actions.svg";
+import { IconSize } from "@elements/Icon/Icon";
+import { ReactComponent as IconActions } from "@elements/Icon/Svg/Actions.svg";
 import useClickOutside from "@hooks/useClickOutside";
-import { ReactElement, useRef, useState } from "react";
+import { ReactElement, useState } from "react";
 import { usePopper } from "react-popper";
 import { Link } from "react-router-dom";
 import css from "./Card.module.css";
@@ -16,25 +16,26 @@ export interface CardProps {
     dropdown?: ReactElement | string;
 }
 
-export default function Card({ children, icon, link, dropdown, cover }: CardProps): ReactElement<CardProps> {
-    const containerElement = useRef<HTMLDivElement | null>(null);
-    const [buttonElement, setButtonElement] = useState<HTMLDivElement | null>(null);
-    const [popperElement, setDropdownElement] = useState<HTMLDivElement | null>(null);
-    const [showDropdown, setShowDropdown] = useState<boolean>(false);
+const DROPDOWN_DISTANCE = 9;
+const DROPDOWN_SKIDDING = 0;
 
-    const { styles, attributes } = usePopper(buttonElement, popperElement, {
+export default function Card({ children, icon, link, dropdown, cover }: CardProps): ReactElement<CardProps> {
+    const [dropdownTriggerElement, setDropdownTriggerElement] = useState<HTMLDivElement | null>(null);
+    const [dropdownElement, setDropdownElement] = useState<HTMLDivElement | null>(null);
+    const [showDropdown, setShowDropdown] = useState<boolean>(false);
+    const { styles, attributes } = usePopper(dropdownTriggerElement, dropdownElement, {
         placement: "bottom-end",
         modifiers: [
             {
                 name: "offset",
                 options: {
-                    offset: [0, 9],
+                    offset: [DROPDOWN_SKIDDING, DROPDOWN_DISTANCE],
                 },
             },
         ],
     });
 
-    useClickOutside(containerElement.current, () => {
+    useClickOutside(dropdownElement, () => {
         setShowDropdown(false);
     });
 
@@ -47,7 +48,7 @@ export default function Card({ children, icon, link, dropdown, cover }: CardProp
     const dropdownIconClasses = [css.dropdownIcon, ...(showDropdown ? [css.selected] : [])].join(" ");
 
     return (
-        <div ref={containerElement}>
+        <>
             <Link className={css.card} to={link}>
                 {cover && <img src={cover} className={css.header} alt="Cover card" data-test-id="card-cover" />}
                 <div className={css.body}>
@@ -59,7 +60,7 @@ export default function Card({ children, icon, link, dropdown, cover }: CardProp
                         <div
                             className={dropdownIconClasses}
                             onClick={toggleDropdown}
-                            ref={setButtonElement}
+                            ref={setDropdownTriggerElement}
                             tabIndex={0}
                             data-test-id="card-dropdown-button"
                         >
@@ -79,6 +80,6 @@ export default function Card({ children, icon, link, dropdown, cover }: CardProp
                     {dropdown}
                 </div>
             )}
-        </div>
+        </>
     );
 }

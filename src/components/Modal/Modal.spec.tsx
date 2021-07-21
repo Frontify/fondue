@@ -10,7 +10,7 @@ const MODAL_ACTIONS = "Modal actions";
 
 describe("Modal", () => {
     it("renders without pattern", () => {
-        mount(<Modal title={MODAL_TITLE} content={MODAL_CONTENT} pattern={false} actions={MODAL_ACTIONS} />);
+        mount(<Modal title={MODAL_TITLE} content={MODAL_CONTENT} actions={MODAL_ACTIONS} />);
 
         cy.get("[data-test-id=modal-container]").as("container");
         cy.get("[data-test-id=modal]").as("modal");
@@ -28,26 +28,14 @@ describe("Modal", () => {
         cy.get("[data-test-id=modal-actions]").contains(MODAL_ACTIONS);
     });
 
-    it("renders with default pattern", () => {
-        mount(<Modal title={MODAL_TITLE} content={MODAL_CONTENT} actions={MODAL_ACTIONS} />);
-
-        cy.get("[data-test-id=modal]").as("modal");
-        cy.get("[data-test-id=modal-pattern]").as("pattern");
-
-        cy.get("@modal").should("have.class", css.withPattern);
-        cy.get("@pattern").should("have.class", css.pattern);
-        cy.get("@pattern").should("have.class", css.patternColorViolet);
-    });
-
     Object.values(ModalPatternColor).forEach((patternColor) => {
-        it(`has ${patternColor} pattern color `, () => {
+        it(`renders with ${patternColor} pattern`, () => {
             mount(
                 <Modal
                     title={MODAL_TITLE}
                     content={MODAL_CONTENT}
                     actions={MODAL_ACTIONS}
-                    pattern
-                    patternColor={ModalPatternColor[patternColor]}
+                    pattern={ModalPatternColor[patternColor]}
                 />,
             );
 

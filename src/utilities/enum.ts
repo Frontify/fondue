@@ -16,3 +16,8 @@ export enum Theme {
     Light = "Light",
     Dark = "Dark",
 }
+
+export enum Orientation {
+    Horizontal = "Horizontal",
+    Vertical = "Vertical",
+}
