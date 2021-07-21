@@ -7,21 +7,21 @@ import { merge } from "@utilities/merge";
 import { ReactElement, useState } from "react";
 import css from "./Tree.module.css";
 
-export interface TreeNodeProps {
+export type TreeNodeProps = {
     id: string;
     name: string;
     icon?: ReactElement<IconProps>;
     label?: string;
     value?: string;
     nodes?: TreeNodeProps[];
-}
+};
 
-interface NodeProps {
+type NodeProps = {
     node: TreeNodeProps;
     strong?: boolean;
     activeNodeId?: string;
     onClick: (id: string) => void;
-}
+};
 
 export default function TreeNode({
     node: { id, value, name, label, icon, nodes },

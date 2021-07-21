@@ -14,12 +14,12 @@ export enum IframePointerEvents {
     None = "None",
 }
 
-export interface IframeProps {
+export type IframeProps = {
     src: string;
     border?: IframeBorder;
     height?: IframeHeight;
     pointerEvents?: IframePointerEvents;
-}
+};
 
 export default function Iframe({ src, border, height, pointerEvents }: IframeProps): React.ReactElement<IframeProps> {
     const classNames = [

@@ -4,11 +4,11 @@ import Checkbox, { CheckboxSelectionState } from "@elements/Checkbox/Checkbox";
 import { ReactElement } from "react";
 import css from "./SidebarItemCheckbox.module.css";
 
-export interface SidebarItemCheckboxProps {
+export type SidebarItemCheckboxProps = {
     label: string;
     value?: CheckboxSelectionState;
     onChange: (value: CheckboxSelectionState) => void;
-}
+};
 
 export default function SidebarItemCheckbox({
     label,

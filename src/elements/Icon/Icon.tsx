@@ -8,9 +8,9 @@ export enum IconSize {
     Size32 = "iconSize32",
 }
 
-export interface IconProps extends React.SVGProps<SVGSVGElement> {
+export type IconProps = {
     size?: IconSize;
-}
+} & React.SVGProps<SVGSVGElement>;
 
 interface Icon extends React.FC<IconProps> {
     size?: IconSize;

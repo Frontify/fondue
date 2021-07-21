@@ -4,10 +4,10 @@ import { ReactElement } from "react";
 import { NavLink } from "react-router-dom";
 import css from "./SidebarItemLink.module.css";
 
-export interface SidebarItemLinkProps {
+export type SidebarItemLinkProps = {
     label: string;
     link: string;
-}
+};
 
 export default function SidebarItemLink({ label, link }: SidebarItemLinkProps): ReactElement<SidebarItemLinkProps> {
     return (

@@ -4,21 +4,21 @@ import { IconProps } from "@elements/Icon/Icon";
 import { ReactElement } from "react";
 import css from "./Slider.module.css";
 
-export interface IconItem {
+export type IconItem = {
     id: string;
     icon: ReactElement<IconProps>;
-}
+};
 
-export interface TextItem {
+export type TextItem = {
     id: string;
     name: string;
-}
+};
 
-export interface SliderProps {
+export type SliderProps = {
     items: TextItem[] | IconItem[];
     activeItemId: string;
     onChange: (id: string) => void;
-}
+};
 
 const isIconItem = (item: TextItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
 const getItemClasses = (id: string, activeItemId: string) =>

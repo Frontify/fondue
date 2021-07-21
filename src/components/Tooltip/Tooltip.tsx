@@ -7,10 +7,10 @@ import { ReactElement, ReactNode, useState } from "react";
 import { usePopper } from "react-popper";
 import css from "./Tooltip.module.css";
 
-export interface TooltipProps {
+export type TooltipProps = {
     tooltip: ReactNode;
     theme?: Theme;
-}
+};
 
 const TOOLTIP_DISTANCE = 9;
 const TOOLTIP_SKIDDING = 0;

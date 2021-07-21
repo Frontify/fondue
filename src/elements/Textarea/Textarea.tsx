@@ -1,17 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ChangeEvent, FormEvent, ReactElement } from "react";
+import { ChangeEvent, FormEvent, PropsWithChildren, ReactElement } from "react";
 import css from "./Textarea.module.css";
 
-export interface TextareaProps {
-    children?: string | ReactElement | ReactElement[];
+export type TextareaProps = PropsWithChildren<{
     required?: boolean;
     decorator?: ReactElement;
     placeholder?: string;
     disabled?: boolean;
     onInput?: (value: string) => void;
     onBlur?: (value: string) => void;
-}
+}>;
 
 export default function Textarea({
     children,

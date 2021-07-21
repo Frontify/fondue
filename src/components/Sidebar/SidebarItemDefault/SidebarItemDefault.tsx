@@ -3,11 +3,11 @@
 import { ReactElement, useCallback } from "react";
 import css from "./SidebarItemDefault.module.css";
 
-export interface SidebarItemDefaultProps {
+export type SidebarItemDefaultProps = {
     label: string;
     selected?: boolean;
     onClick: () => void;
-}
+};
 
 export default function SidebarItemDefault({
     label,

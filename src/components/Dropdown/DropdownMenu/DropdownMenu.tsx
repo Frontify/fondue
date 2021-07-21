@@ -5,17 +5,17 @@ import { ReactElement } from "react";
 import DropdownMenuItem, { MenuItem } from "../DropdownMenuItem/DropdownMenuItem";
 import css from "./DropdownMenu.module.css";
 
-export interface MenuBlock {
+export type MenuBlock = {
     id: string;
     menuItems: MenuItem[];
-}
+};
 
-export interface DropdownMenuProps {
+export type DropdownMenuProps = {
     menuBlocks: MenuBlock[];
     onChange: (id: string) => void;
     size?: Size.Small | Size.Large;
     activeItemId?: string;
-}
+};
 
 export default function DropdownMenu({
     menuBlocks,

@@ -15,42 +15,42 @@ export enum SidebarItemType {
     Search,
 }
 
-export interface DefaultSidebarItem {
+export type DefaultSidebarItem = {
     id: string;
     group?: string;
-}
+};
 
-export interface SidebarItemForDefault extends DefaultSidebarItem {
+export type SidebarItemForDefault = {
     label: string;
     type: SidebarItemType.Default;
     onClick: () => void;
     selected?: boolean;
-}
+} & DefaultSidebarItem;
 
-export interface SidebarItemForCheckbox extends DefaultSidebarItem {
+export type SidebarItemForCheckbox = {
     label: string;
     type: SidebarItemType.Checkbox;
     value?: CheckboxSelectionState;
     onChange: (value: CheckboxSelectionState) => void;
-}
+} & DefaultSidebarItem;
 
-export interface SidebarItemForLink extends DefaultSidebarItem {
+export type SidebarItemForLink = {
     label: string;
     type: SidebarItemType.Link;
     link: string;
-}
+} & DefaultSidebarItem;
 
-export interface SidebarItemForSearch extends DefaultSidebarItem {
+export type SidebarItemForSearch = {
     type: SidebarItemType.Search;
     value?: string;
     onInput: (value: string) => void;
-}
+} & DefaultSidebarItem;
 
 export type SidebarItem = SidebarItemForDefault | SidebarItemForCheckbox | SidebarItemForLink | SidebarItemForSearch;
 
-export interface SidebarProps {
+export type SidebarProps = {
     items: readonly SidebarItem[];
-}
+};
 
 export default function Sidebar({ items }: SidebarProps): ReactElement<SidebarProps> {
     const itemsGrouped = items.reduce(function (itemsGroupedStack: Record<string, SidebarItem[]>, value) {
