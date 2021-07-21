@@ -3,6 +3,7 @@
 import { IconProps, IconSize } from "@components/Icon/Icon";
 import { ReactComponent as IconCaretDown } from "@components/Icon/Svg/CaretDown.svg";
 import { ReactComponent as IconCaretRight } from "@components/Icon/Svg/CaretRight.svg";
+import { merge } from "@utilities/merge";
 import { ReactElement, useState } from "react";
 import css from "./Tree.module.css";
 
@@ -22,21 +23,6 @@ interface NodeProps {
     onClick: (id: string) => void;
 }
 
-const getNodeClassNames = (active: boolean, strong: boolean, hasValue: boolean) => {
-    const classNames = [css.nodeLink];
-    if (active) {
-        classNames.push(css.nodeLinkSelected);
-    }
-    if (hasValue) {
-        classNames.push(css.selectableNodeLink);
-    }
-    if (strong) {
-        classNames.push(css.strong);
-    }
-
-    return classNames;
-};
-
 export default function TreeNode({
     node: { id, value, name, label, icon, nodes },
     strong = false,
@@ -48,7 +34,12 @@ export default function TreeNode({
     return (
         <li data-test-id="node">
             <a
-                className={getNodeClassNames(id === activeNodeId, strong, !!value).join(" ")}
+                className={merge([
+                    css.nodeLink,
+                    id === activeNodeId && css.nodeLinkSelected,
+                    strong && css.strong,
+                    value && css.selectableNodeLink,
+                ])}
                 onClick={() => {
                     if (value) {
                         onClick && onClick(id);
