@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import TreeNode, { TreeNodeProps } from "./Node";
 import css from "./Tree.module.css";
 
@@ -16,15 +16,21 @@ export default function Tree({
     activeNodeId: initialActiveNodeId,
 }: TreeProps): ReactElement<TreeProps> {
     const [activeNodeId, setActiveNodeId] = useState<string | undefined>(initialActiveNodeId);
-    const onClick = (id: string) => {
-        setActiveNodeId(id);
-        onSelect(id);
-    };
+    useEffect(() => setActiveNodeId(initialActiveNodeId), [initialActiveNodeId]);
 
     return (
         <ul data-test-id="tree" className={css.tree}>
             {nodes.map((node) => (
-                <TreeNode key={node.id} node={node} activeNodeId={activeNodeId} strong onClick={onClick} />
+                <TreeNode
+                    key={node.id}
+                    node={node}
+                    activeNodeId={activeNodeId}
+                    strong
+                    onClick={(id: string) => {
+                        setActiveNodeId(id);
+                        onSelect(id);
+                    }}
+                />
             ))}
         </ul>
     );

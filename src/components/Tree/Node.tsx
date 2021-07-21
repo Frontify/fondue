@@ -3,7 +3,7 @@
 import { IconProps, IconSize } from "@components/Icon/Icon";
 import { ReactComponent as IconCaretDown } from "@components/Icon/Svg/CaretDown.svg";
 import { ReactComponent as IconCaretRight } from "@components/Icon/Svg/CaretRight.svg";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useState } from "react";
 import css from "./Tree.module.css";
 
 export interface TreeNodeProps {
@@ -44,17 +44,13 @@ export default function TreeNode({
     onClick,
 }: NodeProps): ReactElement<NodeProps> {
     const [showNodes, setShowNodes] = useState(false);
-    const [active, setActive] = useState(false);
-
-    useEffect(() => setActive(id === activeNodeId), [activeNodeId]);
 
     return (
         <li data-test-id="node">
             <a
-                className={getNodeClassNames(active, strong, !!value).join(" ")}
+                className={getNodeClassNames(id === activeNodeId, strong, !!value).join(" ")}
                 onClick={() => {
                     if (value) {
-                        setActive(true);
                         onClick && onClick(id);
                     } else {
                         setShowNodes(!showNodes);
