@@ -13,12 +13,11 @@ function IconTemplate({ template }, opts, { imports, interfaces, componentName, 
       ${imports}
 
       import { IconSize } from '@elements/Icon/Icon';
-      import css from '@elements/Icon/Icon.module.css';
 
       ${interfaces}
 
       function ${componentName}(${props}) {
-        const customClassName = [css.icon, css[props.size || IconSize.Size16]].join(' ');
+        const customClassName = ["flex items-center justify-center fill-current stroke-current", IconSize[props.size || IconSize.Size16]].join(' ');
         return ${jsx};
       }
 
