@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import TabTitle from "./TabTitle/TabTitle";
 import css from "./Tabs.module.css";
 import generateRandomId from "@utilities/generateRandomId";
@@ -11,8 +11,15 @@ export type TabsProps = {
     selectedIndex?: number;
 };
 
-export default function Tabs({ id = generateRandomId(), children, selectedIndex }: TabsProps): ReactElement<TabsProps> {
-    const [selectedTab, setSelectedTab] = useState(selectedIndex || 0);
+export default function Tabs({
+    id = generateRandomId(),
+    children,
+    selectedIndex = 0,
+}: TabsProps): ReactElement<TabsProps> {
+    const [selectedTab, setSelectedTab] = useState(selectedIndex);
+    useEffect(() => {
+        setSelectedTab(selectedIndex);
+    }, [selectedIndex]);
 
     return (
         <>
