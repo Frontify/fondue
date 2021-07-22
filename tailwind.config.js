@@ -31,8 +31,8 @@ module.exports = {
                 30: "#c0c2c2",
                 20: "#d5d6d6",
                 10: "#eaebeb",
-                05: "#f7f7f7",
-                00: "#fafafa",
+                5: "#f7f7f7",
+                0: "#fafafa",
                 warm: "#e6dcdc",
 
                 // Translucents
