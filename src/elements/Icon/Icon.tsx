@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export enum IconSize {
-    Size13 = "iconSize13",
-    Size16 = "iconSize16",
-    Size20 = "iconSize20",
-    Size24 = "iconSize24",
-    Size32 = "iconSize32",
+    Size12 = "h-3 w-3",
+    Size16 = "h-4 w-4",
+    Size20 = "h-5 w-5",
+    Size24 = "h-6 w-6",
+    Size32 = "h-8 w-8",
 }
 
 export type IconProps = {

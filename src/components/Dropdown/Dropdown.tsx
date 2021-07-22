@@ -81,7 +81,7 @@ export default function Dropdown({
                         onClick={() => onChange("")}
                         disabled={disabled}
                     >
-                        <IconReject size={IconSize.Size13} />
+                        <IconReject size={IconSize.Size12} />
                     </button>
                 )}
                 <button
