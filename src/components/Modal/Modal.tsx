@@ -11,13 +11,13 @@ export enum ModalPatternColor {
     Red = "Red",
 }
 
-export interface ModalProps {
+export type ModalProps = {
     pattern?: ModalPatternColor;
     title: string;
     content: ReactNode;
     actions: ReactNode;
     onClickedOutside?: () => void;
-}
+};
 
 export default function Modal({
     pattern,

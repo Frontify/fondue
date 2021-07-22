@@ -5,12 +5,12 @@ import { Style } from "@utilities/enum";
 import { ReactElement } from "react";
 import css from "./BaseActions.module.css";
 
-export interface BaseActionsProps {
+export type BaseActionsProps = {
     cancelText?: string;
     confirmText?: string;
     onCancel: () => void;
     onConfirm: () => void;
-}
+};
 
 export default function BaseActions({
     cancelText = "Cancel",

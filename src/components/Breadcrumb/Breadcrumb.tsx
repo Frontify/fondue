@@ -4,14 +4,14 @@ import { ReactElement, Fragment } from "react";
 import { Link } from "react-router-dom";
 import css from "./Breadcrumb.module.css";
 
-export interface BreadcrumbItem {
+export type BreadcrumbItem = {
     label?: string;
     link?: string;
-}
+};
 
-export interface BreadcrumbProps {
+export type BreadcrumbProps = {
     items: BreadcrumbItem[];
-}
+};
 
 export default function Breadcrumb({ items }: BreadcrumbProps): ReactElement<BreadcrumbProps> {
     return (

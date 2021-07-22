@@ -2,7 +2,7 @@
 
 import InputLabel, { InputLabelProps } from "@elements/InputLabel/InputLabel";
 import { Orientation, Style } from "@utilities/enum";
-import { FC, ReactElement, ReactNode } from "react";
+import { FC, PropsWithChildren, ReactElement, ReactNode } from "react";
 import css from "./FormControl.module.css";
 
 type HelperTextProps = {
@@ -26,14 +26,13 @@ export enum HelperPosition {
     After = "After",
 }
 
-export type FormControlProps = {
-    children: ReactNode;
+export type FormControlProps = PropsWithChildren<{
     direction?: Orientation;
     disabled?: boolean;
     label?: Omit<InputLabelProps, "disabled">;
     extra?: ReactNode;
     helper?: Omit<HelperTextProps, "disabled"> & { position?: HelperPosition };
-};
+}>;
 
 export default function FormControl({
     label,

@@ -3,18 +3,17 @@
 import Button from "@elements/Button/Button";
 import { ReactComponent as IconSettings } from "@elements/Icon/Svg/Settings.svg";
 import { ReactComponent as IconTrash } from "@elements/Icon/Svg/Trash.svg";
-import { ReactElement } from "react";
+import { PropsWithChildren, ReactElement } from "react";
 import css from "./Image.module.css";
 
-export interface ImageProps {
+export type ImageProps = PropsWithChildren<{
     src: string;
     alt?: string;
     roundedCorners?: boolean;
-    children?: ReactElement | ReactElement[] | string;
     onReplaceImage?: () => void;
     onOpenSettings?: () => void;
     onDeleteImage?: () => void;
-}
+}>;
 
 export default function Image({
     src,

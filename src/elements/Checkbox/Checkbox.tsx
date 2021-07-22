@@ -14,7 +14,7 @@ export enum CheckboxSelectionState {
     Indeterminate = "Indeterminate",
 }
 
-export interface CheckboxProps {
+export type CheckboxProps = {
     theme?: Theme;
     style?: Style.Primary | Style.Secondary;
     value?: CheckboxSelectionState;
@@ -24,7 +24,7 @@ export interface CheckboxProps {
     tooltip?: ReactNode;
 
     onChange?: (newValue: CheckboxSelectionState) => void;
-}
+};
 
 export default function Checkbox({
     theme = Theme.Light,

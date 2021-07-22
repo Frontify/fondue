@@ -10,9 +10,8 @@ import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_TEXT_ID, MENU_ITEM_TITLE_ID } from "./Dr
 const DROPDOWN_ID = "[data-test-id=dropdown]";
 const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
 const DROPDOWN_ITEM_LIST_ID = "[data-test-id=dropdown-item-list]";
+const DROPDOWN_ITEM_SUBTITLE = "[data-test-id=dropdown-menu-item-subtitle]";
 const DROPDOWN_CLEAR_BUTTON_ID = "[data-test-id=dropdown-clear-button]";
-const DROPDOWN_DIVIDER_ID = "[data-test-id=dropdown-divider]";
-const BORDER_STYLE = "1px solid rgb(234, 235, 235)";
 
 const SMALL_ITEMS: DropdownProps["menuBlocks"] = [
     {
@@ -151,14 +150,13 @@ describe("Dropdown Component", () => {
         cy.get(MENU_ITEM_TITLE_ID).contains("Select item");
         cy.get("@firstListItem").children(MENU_ITEM_ACTIVE_ID).should("not.exist");
     });
-    it("renders large items with divider", () => {
+    it("renders large items", () => {
         mount(
             <Component menuBlocks={LARGE_ITEMS} size={Size.Large} initialActiveId={LARGE_ITEMS[0].menuItems[0].id} />,
         );
         cy.get(DROPDOWN_ID).should("have.class", css.large);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_ITEM_LIST_ID).should("have.length", 2);
-        cy.get(DROPDOWN_DIVIDER_ID).first().should("have.css", "border-bottom", BORDER_STYLE);
-        cy.get(DROPDOWN_DIVIDER_ID).last().should("not.have.css", "border-bottom", BORDER_STYLE);
+        cy.get(DROPDOWN_ITEM_SUBTITLE).should("exist");
     });
 });

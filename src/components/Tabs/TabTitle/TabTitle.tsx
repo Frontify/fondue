@@ -3,13 +3,13 @@
 import { ReactElement, useCallback } from "react";
 import css from "./TabTitle.module.css";
 
-export interface TabTitleProps {
+export type TabTitleProps = {
     id: string;
     title: string;
     index: number;
     selected?: boolean;
     onClick: (index: number) => void;
-}
+};
 
 export default function TabTitle({
     id,

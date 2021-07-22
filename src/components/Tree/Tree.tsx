@@ -4,11 +4,11 @@ import { ReactElement, useEffect, useState } from "react";
 import TreeNode, { TreeNodeProps } from "./Node";
 import css from "./Tree.module.css";
 
-export interface TreeProps {
+export type TreeProps = {
     nodes: TreeNodeProps[];
     onSelect: (id: string) => void;
     activeNodeId?: string;
-}
+};
 
 export default function Tree({
     nodes,

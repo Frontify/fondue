@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Theme } from "@utilities/enum";
-import { ReactElement } from "react";
+import { PropsWithChildren, ReactElement } from "react";
 import css from "./Badge.module.css";
 
 export enum BadgeStatus {
@@ -12,12 +12,11 @@ export enum BadgeStatus {
     Custom = "Custom",
 }
 
-export interface BadgeProps {
-    children: ReactElement | ReactElement[] | string;
+export type BadgeProps = PropsWithChildren<{
     theme?: Theme;
     status?: BadgeStatus;
     customColor?: string;
-}
+}>;
 
 export default function Badge({
     children,

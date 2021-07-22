@@ -5,11 +5,11 @@ import TabTitle from "./TabTitle/TabTitle";
 import css from "./Tabs.module.css";
 import generateRandomId from "@utilities/generateRandomId";
 
-export interface TabsProps {
+export type TabsProps = {
     id?: string;
     children: ReactElement[];
     selectedIndex?: number;
-}
+};
 
 export default function Tabs({ id = generateRandomId(), children, selectedIndex }: TabsProps): ReactElement<TabsProps> {
     const [selectedTab, setSelectedTab] = useState(selectedIndex || 0);

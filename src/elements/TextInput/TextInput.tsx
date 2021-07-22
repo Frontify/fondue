@@ -12,7 +12,7 @@ export enum TextInputType {
     Password = "password",
 }
 
-export interface TextInputProps {
+export type TextInputProps = {
     id?: string;
     type?: TextInputType;
     decorator?: ReactElement<IconProps>;
@@ -24,7 +24,7 @@ export interface TextInputProps {
     onInput?: (value: string) => void;
     onBlur?: (value: string) => void;
     onClear?: () => void;
-}
+};
 
 export default function TextInput({
     id,

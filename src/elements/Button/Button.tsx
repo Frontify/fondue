@@ -1,17 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Size, Style, Theme } from "@utilities/enum";
-import { ReactElement } from "react";
+import { PropsWithChildren, ReactElement } from "react";
 import css from "./Button.module.css";
 
-export interface ButtonProps {
+export type ButtonProps = PropsWithChildren<{
     theme?: Theme;
     style?: Style.Primary | Style.Secondary | Style.Danger;
     size?: Size;
     disabled?: boolean;
     onClick?: () => void;
-    children: ReactElement | ReactElement[] | string;
-}
+}>;
 
 export default function Button({
     theme = Theme.Light,

@@ -17,11 +17,11 @@ export enum DividerHeight {
     Height100 = "100px",
 }
 
-export interface DividerProps {
+export type DividerProps = {
     style?: DividerStyle;
     height?: DividerHeight;
     color?: string;
-}
+};
 
 export default function Divider({
     style = DividerStyle.Solid,

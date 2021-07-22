@@ -2,17 +2,16 @@
 
 import Tooltip from "@components/Tooltip/Tooltip";
 import { Theme } from "@utilities/enum";
-import { ReactElement, ReactNode } from "react";
+import { PropsWithChildren, ReactElement, ReactNode } from "react";
 import css from "./InputLabel.module.css";
 
-export interface InputLabelProps {
-    children: ReactNode;
+export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;
     required?: boolean;
     disabled?: boolean;
     tooltip?: ReactNode;
     theme?: Theme;
-}
+}>;
 
 export default function InputLabel({
     children,

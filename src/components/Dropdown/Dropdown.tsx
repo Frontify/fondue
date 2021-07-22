@@ -11,7 +11,7 @@ import css from "./Dropdown.module.css";
 import DropdownMenu, { MenuBlock } from "./DropdownMenu/DropdownMenu";
 import DropdownMenuItem from "./DropdownMenuItem/DropdownMenuItem";
 
-export interface DropdownProps {
+export type DropdownProps = {
     menuBlocks: MenuBlock[];
     onChange: (id?: string) => void;
     activeItemId?: string;
@@ -19,7 +19,7 @@ export interface DropdownProps {
     size?: Size.Small | Size.Large;
     disabled?: boolean;
     clearable?: boolean;
-}
+};
 
 const getActiveItem = (menuBlocks: MenuBlock[], id: string) =>
     menuBlocks

@@ -3,18 +3,17 @@
 import { IconSize } from "@elements/Icon/Icon";
 import { ReactComponent as IconActions } from "@elements/Icon/Svg/Actions.svg";
 import useClickOutside from "@hooks/useClickOutside";
-import { ReactElement, useState } from "react";
+import { PropsWithChildren, ReactElement, useState } from "react";
 import { usePopper } from "react-popper";
 import { Link } from "react-router-dom";
 import css from "./Card.module.css";
 
-export interface CardProps {
-    children: ReactElement | ReactElement[] | string;
+export type CardProps = PropsWithChildren<{
     icon: string;
     link: string;
     cover?: string;
     dropdown?: ReactElement | string;
-}
+}>;
 
 const DROPDOWN_DISTANCE = 9;
 const DROPDOWN_SKIDDING = 0;

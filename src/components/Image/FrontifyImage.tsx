@@ -3,7 +3,7 @@
 import { ReactElement } from "react";
 import Image from "./Image";
 
-export interface FrontifyImageProps {
+export type FrontifyImageProps = {
     src: string;
     alt?: string;
     roundedCorners?: boolean;
@@ -11,7 +11,7 @@ export interface FrontifyImageProps {
     onReplaceImage?: () => void;
     onOpenSettings?: () => void;
     onDeleteImage?: () => void;
-}
+};
 
 export enum ImageSize {
     Small = 640,

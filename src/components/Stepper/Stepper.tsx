@@ -14,7 +14,7 @@ export enum StepperIconStyle {
     ArrowUpDown = "ArrowUpDown",
 }
 
-export interface StepperProps {
+export type StepperProps = {
     initialStep: number;
     totalSteps: number;
     useInternalCounter?: boolean;
@@ -26,7 +26,7 @@ export interface StepperProps {
     nextStepDisabled?: boolean;
     iconStyle?: StepperIconStyle;
     theme?: Theme;
-}
+};
 
 export default function Stepper({
     initialStep,
