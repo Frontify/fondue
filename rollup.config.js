@@ -62,6 +62,7 @@ const rollupConfig = [
                     ".json": "json",
                 },
             }),
+            peerDepsExternal(),
         ],
         output: [
             {
