@@ -3,6 +3,11 @@ module.exports = {
     purge: ["./src/**/*.tsx"],
     darkMode: "class",
     theme: {
+        extend: {
+            outline: {
+                violet: "2px solid #825fff",
+            },
+        },
         boxShadow: {
             large: "0 25px 80px 0 rgba(45, 50, 50, 0.4)",
             mid: "0 3px 10px 0 rgba(45, 50, 50, 0.1)",

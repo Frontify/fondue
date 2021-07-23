@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import { Orientation, Style } from "@utilities/enum";
+import { Orientation } from "@utilities/enum";
 import FormControl, { HelperPosition } from "./FormControl";
-import css from "./FormControl.module.css";
 
 const FORM_CONTROL_ID = "[data-test-id=form-control]";
 const FORM_CONTROL_EXTRA_ID = "[data-test-id=form-control-extra]";
@@ -18,9 +17,9 @@ describe("FormControl Component", () => {
     });
 
     it("should render a horizontal form control", () => {
-        mount(<FormControl direction={Orientation.Horizontal}>{FORM_CONTROL_CONTENT}</FormControl>);
+        mount(<FormControl orientation={Orientation.Horizontal}>{FORM_CONTROL_CONTENT}</FormControl>);
 
-        cy.get(FORM_CONTROL_ID).should("not.have.class", css.vertical);
+        cy.get(FORM_CONTROL_ID).should("have.css", "flex-direction", "row");
     });
 
     it("should render a form control with an extra", () => {
@@ -69,54 +68,5 @@ describe("FormControl Component", () => {
             .should("contain", FORM_CONTROL_CONTENT)
             .next()
             .and("contain", HELPER_TEXT);
-    });
-
-    it("should render a disabled form control", () => {
-        mount(
-            <FormControl
-                label={{ htmlFor: "foo", children: "Label" }}
-                helper={{
-                    text: "Helper text",
-                    position: HelperPosition.Before,
-                }}
-                disabled
-            >
-                {FORM_CONTROL_CONTENT}
-            </FormControl>,
-        );
-
-        cy.get(FORM_CONTROL_ID).children().last().should("have.class", css.disabled);
-    });
-
-    it("should render an error helper text", () => {
-        mount(
-            <FormControl
-                label={{ htmlFor: "foo", children: "Label" }}
-                helper={{
-                    text: "Helper text",
-                    style: Style.Error,
-                }}
-            >
-                {FORM_CONTROL_CONTENT}
-            </FormControl>,
-        );
-
-        cy.get(FORM_CONTROL_ID).children().last().should("have.class", css.error);
-    });
-
-    it("should render an success helper text", () => {
-        mount(
-            <FormControl
-                label={{ htmlFor: "foo", children: "Label" }}
-                helper={{
-                    text: "Helper text",
-                    style: Style.Success,
-                }}
-            >
-                {FORM_CONTROL_CONTENT}
-            </FormControl>,
-        );
-
-        cy.get(FORM_CONTROL_ID).children().last().should("have.class", css.success);
     });
 });

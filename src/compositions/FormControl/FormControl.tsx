@@ -1,20 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import InputLabel, { InputLabelProps } from "@elements/InputLabel/InputLabel";
-import { Orientation, Style } from "@utilities/enum";
+import { Orientation, Variant } from "@utilities/enum";
 import { FC, PropsWithChildren, ReactElement, ReactNode } from "react";
-import css from "./FormControl.module.css";
 
 type HelperTextProps = {
     text: string;
     disabled?: boolean;
-    style?: Style.Primary | Style.Success | Style.Error;
+    variant?: Variant.Primary | Variant.Success | Variant.Error;
+    fullWidth?: boolean;
 };
-const HelperText: FC<HelperTextProps> = ({ text, disabled, style }: HelperTextProps) => (
+const HelperText: FC<HelperTextProps> = ({ text, disabled, variant, fullWidth = false }: HelperTextProps) => (
     <span
         data-test-id="form-control-helper-text"
-        className={`${css.helper} ${disabled ? css.disabled : ""} ${
-            style === Style.Error ? css.error : style === Style.Success ? css.success : ""
+        className={`text-s font-sans ${fullWidth ? "w-full" : ""} ${
+            disabled
+                ? "text-black-40"
+                : variant === Variant.Error
+                ? "text-red-60"
+                : variant === Variant.Success
+                ? "text-green-60"
+                : "text-black-80"
         }`}
     >
         {text}
@@ -27,7 +33,7 @@ export enum HelperPosition {
 }
 
 export type FormControlProps = PropsWithChildren<{
-    direction?: Orientation;
+    orientation?: Orientation;
     disabled?: boolean;
     label?: Omit<InputLabelProps, "disabled">;
     extra?: ReactNode;
@@ -40,28 +46,49 @@ export default function FormControl({
     extra,
     helper,
     disabled,
-    direction,
+    orientation = Orientation.Vertical,
 }: FormControlProps): ReactElement<FormControlProps> {
     return (
         <div
             data-test-id="form-control"
-            className={`${css.container} ${direction === Orientation.Horizontal ? "" : css.vertical}`}
+            className={`flex items-center gap-2 ${
+                orientation === Orientation.Horizontal ? "flex-row" : "w-full flex-col"
+            }`}
         >
             {(label || extra) && (
-                <div className={css.label}>
+                <div
+                    className={`flex flew-row items-center justify-between ${
+                        orientation === Orientation.Vertical ? "w-full" : ""
+                    }`}
+                >
                     {label && <InputLabel {...label} disabled={disabled} />}
                     {extra && (
-                        <span data-test-id="form-control-extra" className={css.extra}>
+                        <span
+                            data-test-id="form-control-extra"
+                            className="pl-2 text-black-80 font-sans text-s whitespace-nowrap"
+                        >
                             {extra}
                         </span>
                     )}
                 </div>
             )}
             {helper?.text && helper?.position === HelperPosition.Before && (
-                <HelperText text={helper.text} disabled={disabled} style={helper.style} />
+                <HelperText
+                    fullWidth={orientation === Orientation.Vertical}
+                    text={helper.text}
+                    disabled={disabled}
+                    variant={helper.variant}
+                />
             )}
-            <div className={css.input}>{children}</div>
-            {helper?.text && <HelperText text={helper.text} disabled={disabled} style={helper.style} />}
+            <div className={orientation === Orientation.Vertical ? "w-full" : ""}>{children}</div>
+            {helper?.text && (
+                <HelperText
+                    fullWidth={orientation === Orientation.Vertical}
+                    text={helper.text}
+                    disabled={disabled}
+                    variant={helper.variant}
+                />
+            )}
         </div>
     );
 }

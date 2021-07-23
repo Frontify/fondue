@@ -1,20 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CSSProperties } from "react";
-
 export enum DividerStyle {
-    NoLine = "noline",
-    Dashed = "dashed",
-    Solid = "solid",
-    Dotted = "dotted",
+    NoLine = "border-none",
+    Dashed = "border-dashed",
+    Solid = "border-solid",
+    Dotted = "border-dotted",
 }
 
 export enum DividerHeight {
-    Height10 = "10px",
-    Height25 = "25px",
-    Height50 = "50px",
-    Height75 = "75px",
-    Height100 = "100px",
+    Height10 = "h-[10px]",
+    Height25 = "h-[25px]",
+    Height50 = "h-[50px]",
+    Height75 = "h-[75px]",
+    Height100 = "h-[100px]",
 }
 
 export type DividerProps = {
@@ -26,22 +24,11 @@ export type DividerProps = {
 export default function Divider({
     style = DividerStyle.Solid,
     height = DividerHeight.Height50,
-    color = "#CCC",
+    color: borderTopColor = "#CCC",
 }: DividerProps): React.ReactElement<DividerProps> {
-    const divStyle: CSSProperties = { height: height, display: "flex", alignItems: "center" };
-
-    const lineStyle: CSSProperties = {
-        border: 0,
-        borderTopWidth: "1px",
-        borderTopColor: style === "noline" ? "transparent" : color,
-        borderStyle: style === "noline" ? "none" : style,
-        margin: "0",
-        width: "100%",
-    };
-
     return (
-        <div style={divStyle} data-test-id="divider">
-            <hr style={lineStyle} data-test-id="divider-hr" />
+        <div className={`flex items-center ${height}`} data-test-id="divider">
+            <hr className={`border-t m-0 w-full ${style}`} style={{ borderTopColor }} data-test-id="divider-hr" />
         </div>
     );
 }

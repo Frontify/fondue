@@ -3,7 +3,8 @@ import { green, red } from "chalk";
 import templates from "./templates";
 
 (async () => {
-    const componentName = process.argv[2];
+    const componentType = process.argv[3] ? process.argv[2] : "components";
+    const componentName = process.argv[3] || process.argv[2];
 
     if (!componentName) {
         console.error(red("You need to supply a component name."));
@@ -12,7 +13,7 @@ import templates from "./templates";
 
     console.log(`Creating ${componentName} component...`);
 
-    const componentDirectory = `./src/components/${componentName}`;
+    const componentDirectory = `./src/${componentType}/${componentName}`;
 
     let directoryExists: boolean;
     try {
@@ -29,7 +30,7 @@ import templates from "./templates";
 
     await mkdir(componentDirectory);
 
-    const generatedTemplates = templates.map((template) => template(componentName));
+    const generatedTemplates = templates.map((template) => template(componentName, componentType));
 
     generatedTemplates.forEach(async (template) => {
         await writeFile(`${componentDirectory}/${componentName}${template.extension}`, template.content);

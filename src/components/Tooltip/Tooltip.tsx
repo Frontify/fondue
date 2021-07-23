@@ -2,22 +2,20 @@
 
 import { IconSize } from "@elements/Icon/Icon";
 import { ReactComponent as IconQuestion } from "@elements/Icon/Svg/Question.svg";
-import { Theme } from "@utilities/enum";
 import { ReactElement, ReactNode, useState } from "react";
 import { usePopper } from "react-popper";
-import css from "./Tooltip.module.css";
 
 export type TooltipProps = {
     tooltip: ReactNode;
-    theme?: Theme;
 };
 
 const TOOLTIP_DISTANCE = 9;
 const TOOLTIP_SKIDDING = 0;
 
-export default function Tooltip({ tooltip, theme = Theme.Light }: TooltipProps): ReactElement<TooltipProps> {
-    const [tooltipTriggerElement, setTooltipTriggerElement] = useState<HTMLDivElement | null>(null);
+export default function Tooltip({ tooltip }: TooltipProps): ReactElement<TooltipProps> {
+    const [tooltipTriggerElement, setTooltipTriggerElement] = useState<HTMLElement | null>(null);
     const [tooltipElement, setTooltipElement] = useState<HTMLDivElement | null>(null);
+    const [showTooltip, setShowTooltip] = useState(false);
     const { styles, attributes } = usePopper(tooltipTriggerElement, tooltipElement, {
         placement: "auto-end",
         modifiers: [
@@ -32,19 +30,23 @@ export default function Tooltip({ tooltip, theme = Theme.Light }: TooltipProps):
 
     return (
         <>
-            <div
+            <i
                 data-test-id="tooltip-icon"
                 ref={setTooltipTriggerElement}
-                className={[css[`theme${theme}`], css.icon].join(" ")}
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+                className="inline-flex items-center justify-center text-black-60 hover:text-black dark:text-black-40 dark:hover:white"
             >
                 <IconQuestion size={IconSize.Size16} />
-            </div>
+            </i>
             <div
                 data-test-id="tooltip"
                 ref={setTooltipElement}
-                className={css.tooltip}
                 style={styles.popper}
                 {...attributes.popper}
+                className={`p-4 border border-black-10 bg-white rounded-md shadow-mid ${
+                    showTooltip ? "visible" : "invisible"
+                }`}
             >
                 {tooltip}
             </div>

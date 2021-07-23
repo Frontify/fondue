@@ -20,7 +20,7 @@ describe("Text Input component", () => {
     });
 
     it("set and get the value", () => {
-        mount(<TextInput value={INPUT_TEXT} />);
+        mount(<TextInput defaultValue={INPUT_TEXT} />);
         cy.get("[data-test-id=text-input]").as("input").should("have.value", INPUT_TEXT);
     });
 

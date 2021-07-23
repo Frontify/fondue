@@ -1,65 +1,68 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Size, Style, Theme } from "@utilities/enum";
-import { PropsWithChildren, ReactElement } from "react";
-import css from "./Button.module.css";
+import { Size, Variant } from "@utilities/enum";
+import { merge } from "@utilities/merge";
+import React, { PropsWithChildren, ReactElement } from "react";
 
 export type ButtonProps = PropsWithChildren<{
-    theme?: Theme;
-    style?: Style.Primary | Style.Secondary | Style.Danger;
+    variant?: Variant.Primary | Variant.Secondary | Variant.Danger;
     size?: Size;
     disabled?: boolean;
     onClick?: () => void;
 }>;
 
+const sizeClasses: Record<Size, string> = {
+    [Size.Small]: "px-3 py-1",
+    [Size.Medium]: "px-4 py-2",
+    [Size.Large]: "px-5 py-3",
+};
+
+const variantClasses: Record<Variant.Primary | Variant.Secondary | Variant.Danger, string> = {
+    [Variant.Primary]:
+        "text-white bg-black-90 hover:bg-black active:bg-black-superdark dark:text-black dark:bg-white dark:hover:bg-black-10 active:bg-black-20",
+    [Variant.Secondary]:
+        "text-black bg-black-10 hover:bg-black-20 active:bg-black-30 dark:text-white dark:bg-black-80 dark:hover:bg-black-95 active:bg-black-superdark",
+    [Variant.Danger]: "text-white bg-red-60 hober:bg-red-70 active:bg-red-90",
+};
+
+// `event.keyCode` for IE
+const isSpaceKey = (event: React.KeyboardEvent) => event.keyCode == 32 || event.code === "Space";
+
 export default function Button({
-    theme = Theme.Light,
-    style = Style.Primary,
+    variant = Variant.Primary,
     size = Size.Small,
     disabled = false,
     onClick,
     children,
 }: ButtonProps): ReactElement<ButtonProps> {
-    const onButtonKeyUp = (event: React.KeyboardEvent): void => {
-        event.preventDefault();
-        // `event.keyCode` for IE
-        if (event.keyCode === 32 || event.code === "Space") {
-            onClick && onClick();
-        }
-    };
-
-    // Disable scrolling when pressing space
-    const onButtonKeyDown = (event: React.KeyboardEvent): void => {
-        if (event.keyCode == 32 || event.code === "Space") {
-            event.preventDefault();
-        }
-    };
-
-    const onButtonClick = (event: React.MouseEvent): void => {
-        event.preventDefault();
-        onClick && onClick();
-    };
-
-    const buttonClasses = [
-        css.button,
-        css[`theme${theme}`],
-        css[`size${size}`],
-        ...(disabled ? [css.disabled] : [css[`style${style}`]]),
-    ].join(" ");
-
-    const buttonConditionalAttributes = {
-        ...(!disabled && {
-            onClick: onButtonClick,
-            onKeyUp: onButtonKeyUp,
-            onKeyDown: onButtonKeyDown,
-        }),
-    };
-
     return (
         <button
-            className={buttonClasses}
+            className={merge([
+                "outline-none relative flex items-center justify-center border-0 rounded cursor-pointer font-sans transition-colors",
+                sizeClasses[size],
+                disabled
+                    ? "not-allowed pointer-events-none text-black-50 bg-black-10 dark:text-black-70 dark:bg-black-95"
+                    : `focus:outline-none focus:ring focus:border-violet-70 ${variantClasses[variant]}`,
+            ])}
+            disabled={disabled}
             tabIndex={disabled ? -1 : 0}
-            {...buttonConditionalAttributes}
+            onKeyDown={(event) => {
+                if (isSpaceKey(event)) {
+                    event.preventDefault();
+                }
+            }}
+            onKeyUp={(event) => {
+                event.preventDefault();
+                if (onClick && isSpaceKey(event)) {
+                    onClick();
+                }
+            }}
+            onClick={(event) => {
+                event.preventDefault();
+                if (onClick) {
+                    onClick();
+                }
+            }}
             data-test-id="button"
         >
             {children}

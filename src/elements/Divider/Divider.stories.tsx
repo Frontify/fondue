@@ -8,20 +8,30 @@ export default {
     component: DividerComponent,
     args: {
         color: "red",
-        height: DividerHeight.Height10,
-        style: DividerStyle.Solid,
     },
     argTypes: {
         color: {
             control: { type: "color" },
         },
         style: {
-            options: Object.keys(DividerStyle),
-            control: { type: "radio" },
+            options: Object.values(DividerStyle),
+            control: {
+                type: "select",
+                labels: Object.entries(DividerStyle).reduce(
+                    (labels, [key, value]) => ({ ...labels, [value]: key }),
+                    {},
+                ),
+            },
         },
         height: {
-            options: Object.keys(DividerHeight),
-            control: { type: "radio" },
+            options: Object.values(DividerHeight),
+            control: {
+                type: "select",
+                labels: Object.entries(DividerHeight).reduce(
+                    (labels, [key, value]) => ({ ...labels, [value]: key }),
+                    {},
+                ),
+            },
         },
     },
 } as Meta;

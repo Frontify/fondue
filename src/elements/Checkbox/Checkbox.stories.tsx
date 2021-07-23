@@ -1,34 +1,41 @@
 import { Meta, Story } from "@storybook/react";
-import { Style, Theme } from "@utilities/enum";
-import { useState } from "react";
+import { Variant } from "@utilities/enum";
+import { useEffect, useState } from "react";
 import CheckboxComponent, { CheckboxProps, CheckboxSelectionState } from "./Checkbox";
 
 export default {
     title: "Elements/Checkbox",
     component: CheckboxComponent,
     args: {
-        style: Style.Primary,
-        theme: Theme.Light,
+        variant: Variant.Primary,
+        value: CheckboxSelectionState.Unselected,
         disabled: false,
         required: false,
         tooltip: "tooltip",
         label: "Label",
     },
     argTypes: {
-        style: {
-            options: Object.keys(Style),
+        variant: {
+            options: [Variant.Primary, Variant.Secondary],
             control: { type: "radio" },
         },
-        theme: {
-            options: Object.keys(Theme),
+        value: {
+            options: [
+                CheckboxSelectionState.Unselected,
+                CheckboxSelectionState.Indeterminate,
+                CheckboxSelectionState.Selected,
+            ],
             control: { type: "radio" },
         },
         onChange: { action: "onChange" },
     },
-} as Meta;
+} as Meta<CheckboxProps>;
 
 export const Checkbox: Story<CheckboxProps> = (args) => {
-    const [selectionState, setSelectionState] = useState(CheckboxSelectionState.Unselected);
+    const [selectionState, setSelectionState] = useState(args.value);
+    useEffect(() => {
+        setSelectionState(args.value);
+    }, [args.value]);
     return (
         <CheckboxComponent
             {...args}

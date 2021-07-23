@@ -7,7 +7,6 @@ import { ReactComponent as IconReject } from "@elements/Icon/Svg/Reject.svg";
 import useClickOutside from "@hooks/useClickOutside";
 import { Size } from "@utilities/enum";
 import { ReactElement, useRef, useState } from "react";
-import css from "./Dropdown.module.css";
 import DropdownMenu, { MenuBlock } from "./DropdownMenu/DropdownMenu";
 import DropdownMenuItem from "./DropdownMenuItem/DropdownMenuItem";
 
@@ -38,26 +37,26 @@ export default function Dropdown({
 }: DropdownProps): ReactElement<DropdownProps> {
     const [menuIsOpen, setMenuIsOpen] = useState(false);
     const dropdownElement = useRef<HTMLDivElement | null>(null);
-    const activeItem = getActiveItem(menuBlocks, activeItemId);
-    const wrapperClassNames = [
-        css["triggerWrapper"],
-        size === Size.Large ? css.large : "",
-        disabled ? css.disabled : "",
-    ].join(" ");
-    const triggerClassNames = [css.trigger, !activeItem ? css.placeholder : "", disabled ? css.disabled : ""].join(" ");
-    const clearButtonClassNames = [css.clear, disabled ? css.disabled : ""].join(" ");
+    useClickOutside(dropdownElement.current, () => setMenuIsOpen(false));
 
-    useClickOutside(dropdownElement.current, () => {
-        setMenuIsOpen(false);
-    });
+    const activeItem = getActiveItem(menuBlocks, activeItemId);
 
     return (
-        <div className={css.dropdown} ref={dropdownElement}>
-            <div data-test-id="dropdown" className={wrapperClassNames}>
+        <div className="relative w-full font-sans text-s" ref={dropdownElement}>
+            <div
+                data-test-id="dropdown"
+                className={`relative flex w-full box-border items-center justify-between border border-black-40 rounded gap-2 ${
+                    size === Size.Large ? "pr-5" : "pr-2"
+                } ${
+                    disabled
+                        ? "border-black-5 bg-black-5 text-black-40 pointer-events-none"
+                        : "border-black-20 bg-white text-black-80 focus-within:border-black-90"
+                }`}
+            >
                 <button
                     data-test-id="dropdown-trigger"
                     onClick={() => setMenuIsOpen(!menuIsOpen)}
-                    className={triggerClassNames}
+                    className={`overflow-hidden flex-auto rounded text-left p-0`}
                     disabled={disabled}
                 >
                     {activeItem ? (
@@ -77,7 +76,7 @@ export default function Dropdown({
                 {clearable && activeItem && (
                     <button
                         data-test-id="dropdown-clear-button"
-                        className={clearButtonClassNames}
+                        className={`p-0 ${disabled ? "pointer-events-none text-black-40" : "text-black-80"}`}
                         onClick={() => onChange("")}
                         disabled={disabled}
                     >
@@ -85,7 +84,7 @@ export default function Dropdown({
                     </button>
                 )}
                 <button
-                    className={disabled ? css.disabled : ""}
+                    className={`p-0 ${disabled ? "pointer-events-none text-black-40" : "text-black-80"}`}
                     onClick={() => setMenuIsOpen(!menuIsOpen)}
                     disabled={disabled}
                 >

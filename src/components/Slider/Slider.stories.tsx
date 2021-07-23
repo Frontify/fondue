@@ -9,7 +9,7 @@ import Slider, { SliderProps } from "./Slider";
 export default {
     title: "Components/Slider",
     component: Slider,
-} as Meta;
+} as Meta<SliderProps>;
 
 const SliderTemplate: Story<SliderProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(args.items[0].id);

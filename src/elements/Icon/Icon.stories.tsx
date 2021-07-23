@@ -229,9 +229,11 @@ import { IconProps, IconSize } from "./Icon";
 
 export default {
     title: "Elements/Icon",
+    args: {
+        size: Object.keys(IconSize)[2],
+    },
     argTypes: {
         size: {
-            defaultValue: Object.keys(IconSize)[2],
             options: Object.keys(IconSize),
             control: { type: "select" },
         },

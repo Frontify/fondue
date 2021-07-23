@@ -4,7 +4,7 @@ export enum Size {
     Large = "Large",
 }
 
-export enum Style {
+export enum Variant {
     Primary = "Primary",
     Secondary = "Secondary",
     Success = "Success",

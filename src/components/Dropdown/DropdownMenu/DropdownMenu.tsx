@@ -3,7 +3,6 @@
 import { Size } from "@utilities/enum";
 import { ReactElement } from "react";
 import DropdownMenuItem, { MenuItem } from "../DropdownMenuItem/DropdownMenuItem";
-import css from "./DropdownMenu.module.css";
 
 export type MenuBlock = {
     id: string;
@@ -24,10 +23,18 @@ export default function DropdownMenu({
     activeItemId = "",
 }: DropdownMenuProps): ReactElement<DropdownMenuProps> {
     return (
-        <ul className={`${css.menu} ${size === Size.Large ? css.large : ""}`}>
+        <ul
+            className={`absolute left-0 w-full box-border p-0 border border-black-10 rounded shadow-mid list-none m-0 ${
+                size === Size.Large ? "top-18" : "top-11"
+            }`}
+        >
             {menuBlocks.map(({ id, menuItems }) => (
-                <li key={id} className={css.divider} data-test-id="dropdown-divider">
-                    <ul className={css.list} data-test-id="dropdown-item-list">
+                <li
+                    key={id}
+                    className="pb-2 border-b border-b-black-40 mb-2 last:pb-0 last:border-0 last:mb-0"
+                    data-test-id="dropdown-divider"
+                >
+                    <ul className="py-2 px-0 m-0 list-none" data-test-id="dropdown-item-list">
                         {menuItems.map((menuItem) => (
                             <DropdownMenuItem
                                 key={menuItem.id}

@@ -3,9 +3,8 @@
 import { mount } from "@cypress/react";
 import { IconSize } from "@elements/Icon/Icon";
 import { ReactComponent as Audio } from "@elements/Icon/Svg/Audio.svg";
-import { Size, Style } from "@utilities/enum";
+import { Size } from "@utilities/enum";
 import DropdownMenuItem, { MenuItem } from "./DropdownMenuItem";
-import css from "./DropdownMenuItem.module.css";
 
 export const MENU_ITEM_ACTIVE_ID = "[data-test-id=dropdown-menu-item-active]";
 export const MENU_ITEM_TITLE_ID = "[data-test-id=dropdown-menu-item-title]";
@@ -22,108 +21,64 @@ const ITEMS: MenuItem[] = [
     },
     {
         id: "2",
-        title: "Small warning",
+        title: "Small",
         size: Size.Small,
-        style: Style.Danger,
     },
     {
         id: "3",
-        title: "Small disabled",
-        size: Size.Small,
-        disabled: true,
-    },
-    {
-        id: "4",
-        title: "Small warning disabled",
-        size: Size.Small,
-        style: Style.Danger,
-        disabled: true,
-    },
-    {
-        id: "5",
         title: "Large icon",
         subtitle: "Large icon subtitle",
         icon: <Audio size={IconSize.Size16} />,
         size: Size.Large,
     },
     {
-        id: "6",
-        title: "Large warning",
-        subtitle: "Large warning subtitle",
+        id: "4",
+        title: "Large icon",
+        subtitle: "Large icon subtitle",
         size: Size.Large,
-        style: Style.Danger,
-    },
-    {
-        id: "7",
-        title: "Large disabled",
-        subtitle: "Large disabled subtitle",
-        size: Size.Large,
-        disabled: true,
-    },
-    {
-        id: "8",
-        title: "Large warning disabled",
-        subtitle: "Large warning disabled subtitle",
-        size: Size.Large,
-        style: Style.Danger,
-        disabled: true,
     },
 ];
+
 describe("DropdownMenuItem Component", () => {
     it("renders small item with icon", () => {
         mount(<DropdownMenuItem {...ITEMS[0]} />);
+        cy.get(MENU_ITEM_TEXT_ID).should("not.exist");
+        cy.get(MENU_ITEM_ICON_ID).should("exist");
         cy.get(MENU_ITEM_ICON_ID).contains("Small");
+        cy.get(MENU_ITEM_SUBTITLE_ID).should("not.exist");
     });
+
+    it("renders small item without icon", () => {
+        mount(<DropdownMenuItem {...ITEMS[1]} />);
+        cy.get(MENU_ITEM_TEXT_ID).should("exist");
+        cy.get(MENU_ITEM_ICON_ID).should("not.exist");
+        cy.get(MENU_ITEM_TITLE_ID).contains("Small");
+        cy.get(MENU_ITEM_SUBTITLE_ID).should("not.exist");
+    });
+
     it("renders small active item", () => {
-        mount(<DropdownMenuItem {...ITEMS[0]} active />);
+        mount(<DropdownMenuItem {...ITEMS[1]} active />);
         cy.get(MENU_ITEM_ACTIVE_ID).should("exist");
     });
-    it("renders small danger item", () => {
-        mount(<DropdownMenuItem {...ITEMS[1]} />);
-        cy.get(MENU_ITEM_TITLE_ID).contains("Small warning");
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.danger);
-    });
-    it("renders small disabled item", () => {
-        mount(<DropdownMenuItem {...ITEMS[2]} />);
-        cy.get(MENU_ITEM_TITLE_ID).contains("Small disabled");
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.disabled);
-    });
-    it("renders small disabled warning item", () => {
-        mount(<DropdownMenuItem {...ITEMS[3]} />);
-        cy.get(MENU_ITEM_TITLE_ID).contains("Small warning disabled");
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.danger);
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.disabled);
-    });
+
     it("renders large item with icon", () => {
-        mount(<DropdownMenuItem {...ITEMS[4]} />);
+        mount(<DropdownMenuItem {...ITEMS[2]} />);
+        cy.get(MENU_ITEM_TEXT_ID).should("not.exist");
+        cy.get(MENU_ITEM_ICON_ID).should("exist");
         cy.get(MENU_ITEM_TITLE_ID).contains("Large icon");
         cy.get(MENU_ITEM_SUBTITLE_ID).contains("Large icon subtitle");
-        cy.get(MENU_ITEM_ICON_ID).should("have.class", css.large);
     });
+
+    it("renders large item without icon", () => {
+        mount(<DropdownMenuItem {...ITEMS[3]} />);
+        cy.get(MENU_ITEM_TEXT_ID).should("exist");
+        cy.get(MENU_ITEM_ICON_ID).should("not.exist");
+        cy.get(MENU_ITEM_TITLE_ID).contains("Large icon");
+        cy.get(MENU_ITEM_SUBTITLE_ID).contains("Large icon subtitle");
+    });
+
     it("renders large active item", () => {
-        mount(<DropdownMenuItem {...ITEMS[4]} active />);
+        mount(<DropdownMenuItem {...ITEMS[3]} active />);
         cy.get(MENU_ITEM_ACTIVE_ID).should("exist");
-    });
-    it("renders large warning item", () => {
-        mount(<DropdownMenuItem {...ITEMS[5]} />);
-        cy.get(MENU_ITEM_TITLE_ID).contains("Large warning");
-        cy.get(MENU_ITEM_SUBTITLE_ID).contains("Large warning subtitle");
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.large);
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.danger);
-    });
-    it("renders large disabled item", () => {
-        mount(<DropdownMenuItem {...ITEMS[6]} />);
-        cy.get(MENU_ITEM_TITLE_ID).contains("Large disabled");
-        cy.get(MENU_ITEM_SUBTITLE_ID).contains("Large disabled subtitle");
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.large);
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.disabled);
-    });
-    it("renders large disabled warning item", () => {
-        mount(<DropdownMenuItem {...ITEMS[7]} />);
-        cy.get(MENU_ITEM_TITLE_ID).contains("Large warning disabled");
-        cy.get(MENU_ITEM_SUBTITLE_ID).contains("Large warning disabled subtitle");
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.large);
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.danger);
-        cy.get(MENU_ITEM_TEXT_ID).should("have.class", css.disabled);
     });
 });

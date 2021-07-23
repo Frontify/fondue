@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ChangeEvent, FormEvent, PropsWithChildren, ReactElement } from "react";
-import css from "./Textarea.module.css";
 
 export type TextareaProps = PropsWithChildren<{
     required?: boolean;
@@ -30,16 +29,20 @@ export default function Textarea({
     };
 
     return (
-        <div className={css.container}>
+        <div className="relative">
             {decorator && (
-                <div className={css.decorator} data-test-id="decorator">
+                <div className="absolute top-2 left-2 inline-flex items-end text-black-80" data-test-id="decorator">
                     {decorator}
                 </div>
             )}
             <textarea
                 placeholder={placeholder}
                 required={required}
-                className={css.textarea}
+                className={`p-2 border rounded text-s outline-none transition placeholder-black-60 ${
+                    disabled
+                        ? "border-black-5 bg-black-5 text-black-40"
+                        : "text-black border-black-40 hover:border-black-90"
+                } ${decorator ? "pl-7 " : ""}`}
                 disabled={disabled}
                 onBlur={onTextareaBlur}
                 onInput={onTextareaInput}

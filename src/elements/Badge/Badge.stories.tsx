@@ -1,18 +1,13 @@
 import { Meta, Story } from "@storybook/react";
-import { Theme } from "@utilities/enum";
 import BadgeComponent, { BadgeProps, BadgeStatus } from "./Badge";
 
 export default {
     title: "Elements/Badge",
     component: BadgeComponent,
     argTypes: {
-        theme: {
-            options: Object.keys(Theme),
-            control: { type: "radio" },
-        },
         status: {
             options: Object.keys(BadgeStatus),
-            control: { type: "radio" },
+            control: { type: "select" },
         },
         customColor: {
             control: { type: "color" },
@@ -20,10 +15,9 @@ export default {
     },
     args: {
         children: "Badge",
-        theme: Theme.Light,
-        status: BadgeStatus.Success,
+        status: undefined,
         customColor: "",
     },
-} as Meta;
+} as Meta<BadgeProps>;
 
 export const Badge: Story<BadgeProps> = (args) => <BadgeComponent {...args} />;

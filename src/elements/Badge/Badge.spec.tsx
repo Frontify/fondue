@@ -1,64 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import { Theme } from "@utilities/enum";
-import Badge, { BadgeStatus } from "./Badge";
-import css from "./Badge.module.css";
+import Badge, { BadgeStatus, statusClasses } from "./Badge";
 
 const BADGE_TEXT = "Frontify";
+const BADGE_ID = "[data-test-id=badge]";
+const BADGE_STATUS_ID = "[data-test-id=badge-status]";
 
 describe("Badge component", () => {
     it("renders", () => {
         mount(<Badge>{BADGE_TEXT}</Badge>);
 
-        cy.get("[data-test-id=badge]").as("badge");
-
-        cy.get("@badge").contains(BADGE_TEXT);
-
-        cy.get("@badge").should("have.class", css.badge);
-        cy.get("@badge").should("have.class", css.themeLight);
-    });
-
-    it("has the light theme", () => {
-        mount(<Badge theme={Theme.Light}>{BADGE_TEXT}</Badge>);
-
-        cy.get("[data-test-id=badge]").as("badge");
-
-        cy.get("@badge").contains(BADGE_TEXT);
-
-        cy.get("@badge").should("have.class", css.badge);
-        cy.get("@badge").should("have.class", css.themeLight);
-    });
-
-    it("has the dark theme", () => {
-        mount(<Badge theme={Theme.Dark}>{BADGE_TEXT}</Badge>);
-
-        cy.get("[data-test-id=badge]").as("badge");
-
-        cy.get("@badge").contains(BADGE_TEXT);
-
-        cy.get("@badge").should("have.class", css.badge);
-        cy.get("@badge").should("have.class", css.themeDark);
+        cy.get(BADGE_ID).should("be.visible");
+        cy.get(BADGE_ID).contains(BADGE_TEXT);
     });
 
     Object.values(BadgeStatus).forEach((status) => {
-        it(`has the ${status} status`, () => {
-            mount(<Badge status={status}>{BADGE_TEXT}</Badge>);
+        status !== BadgeStatus.Custom &&
+            it(`has the ${status} status`, () => {
+                mount(<Badge status={status}>{BADGE_TEXT}</Badge>);
 
-            cy.get("[data-test-id=badge]").as("badge");
-
-            cy.get("@badge").should("have.class", css.badge);
-            cy.get("@badge").should("have.class", css.themeLight);
-
-            if (status === BadgeStatus.Custom) {
-                cy.get("[data-test-id=badge] i").should("not.exist");
-            } else {
-                cy.get("[data-test-id=badge] i").as("icon");
-                cy.get("@icon").should("have.class", css.bubble);
-                cy.get("@icon").should("have.class", css[`status${status}`]);
-                cy.get("@icon").should("have.css", "background-color");
-            }
-        });
+                cy.get(BADGE_STATUS_ID).should("have.class", statusClasses[status]);
+            });
     });
 
     it("has a custom status with color", () => {
@@ -71,14 +34,6 @@ describe("Badge component", () => {
             </Badge>,
         );
 
-        cy.get("[data-test-id=badge]").as("badge");
-        cy.get("[data-test-id=badge] i").as("icon");
-
-        cy.get("@badge").contains(BADGE_TEXT);
-
-        cy.get("@badge").should("have.class", css.badge);
-        cy.get("@badge").should("have.class", css.themeLight);
-        cy.get("@icon").should("have.class", css.bubble);
-        cy.get("@icon").should("have.css", "background-color", colorRgb);
+        cy.get(BADGE_STATUS_ID).should("have.css", "background-color", colorRgb);
     });
 });

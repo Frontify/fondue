@@ -2,7 +2,7 @@
 
 import TextInput from "@elements/TextInput/TextInput";
 import { Meta, Story } from "@storybook/react";
-import { Orientation, Style, Theme } from "@utilities/enum";
+import { Orientation, Variant, Theme } from "@utilities/enum";
 import FormControlComponent, { FormControlProps, HelperPosition } from "./FormControl";
 
 export default {
@@ -10,7 +10,7 @@ export default {
     component: FormControlComponent,
     args: {
         disabled: false,
-        direction: Orientation.Vertical,
+        orientation: Orientation.Vertical,
         label: {
             children: "Input Label",
             required: false,
@@ -20,14 +20,14 @@ export default {
         },
         extra: "Extra Text or Element",
         helper: {
-            text: "Helper Text (before/after) and style (Primary/Success/Error)",
+            text: "Helper Text (before/after) and variant (Primary/Success/Error)",
             position: HelperPosition.After,
-            style: Style.Primary,
+            variant: Variant.Primary,
         },
         children: "",
     },
     argTypes: {
-        direction: {
+        orientation: {
             options: [Orientation.Vertical, Orientation.Horizontal],
             control: "select",
         },
@@ -35,7 +35,7 @@ export default {
             table: { disable: true },
         },
     },
-} as Meta;
+} as Meta<FormControlProps>;
 
 export const FormControl: Story<FormControlProps> = (args) => (
     <FormControlComponent {...args}>

@@ -2,7 +2,7 @@
 
 import { ReactComponent as IconCaretLeft } from "@elements/Icon/Svg/CaretLeft.svg";
 import { Meta, Story } from "@storybook/react";
-import { Size, Style, Theme } from "@utilities/enum";
+import { Size, Variant } from "@utilities/enum";
 import Button, { ButtonProps } from "./Button";
 
 export default {
@@ -11,25 +11,20 @@ export default {
     args: {
         disabled: false,
         size: Size.Small,
-        style: Style.Primary,
-        theme: Theme.Light,
+        variant: Variant.Primary,
     },
     argTypes: {
         size: {
             options: [Size.Small, Size.Large],
             control: { type: "radio" },
         },
-        style: {
-            options: Object.keys(Style),
-            control: { type: "radio" },
-        },
-        theme: {
-            options: Object.keys(Theme),
-            control: { type: "radio" },
+        variant: {
+            options: [Variant.Primary, Variant.Secondary, Variant.Danger],
+            control: { type: "select" },
         },
         onClick: { action: "onClick" },
     },
-} as Meta;
+} as Meta<ButtonProps>;
 
 const ButtonTemplate: Story<ButtonProps> = (args) => <Button {...args} />;
 
