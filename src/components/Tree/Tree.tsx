@@ -2,11 +2,10 @@
 
 import { ReactElement, useEffect, useState } from "react";
 import TreeNode, { TreeNodeProps } from "./Node";
-import css from "./Tree.module.css";
 
 export type TreeProps = {
     nodes: TreeNodeProps[];
-    onSelect: (id: string) => void;
+    onSelect: (id?: string) => void;
     activeNodeId?: string;
 };
 
@@ -19,14 +18,14 @@ export default function Tree({
     useEffect(() => setActiveNodeId(initialActiveNodeId), [initialActiveNodeId]);
 
     return (
-        <ul data-test-id="tree" className={css.tree}>
+        <ul data-test-id="tree" className="p-0 m-0 font-sans font-normal list-none text-left">
             {nodes.map((node) => (
                 <TreeNode
                     key={node.id}
                     node={node}
                     activeNodeId={activeNodeId}
                     strong
-                    onClick={(id: string) => {
+                    onClick={(id?: string) => {
                         setActiveNodeId(id);
                         onSelect(id);
                     }}

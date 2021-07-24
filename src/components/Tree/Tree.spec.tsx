@@ -7,7 +7,6 @@ import { ReactComponent as IconGuidelines } from "@elements/Icon/Svg/Guidelines.
 import { FC, useState } from "react";
 import { TreeNodeProps } from "./Node";
 import Tree from "./Tree";
-import css from "./Tree.module.css";
 
 type ComponentProps = {
     nodes: TreeNodeProps[];
@@ -19,6 +18,8 @@ const Component: FC<ComponentProps> = ({ nodes }: ComponentProps) => {
 
 const TREE_ID = "[data-test-id=tree]";
 const NODE_ID = "[data-test-id=node]";
+const NODE_LINK_ID = "[data-test-id=node-link]";
+const NODE_LINK_NAME_ID = "[data-test-id=node-link-name]";
 const TOGGLE_ID = "[data-test-id=toggle]";
 const SUB_TREE_ID = "[data-test-id=sub-tree]";
 
@@ -94,7 +95,7 @@ describe("Tree Component", () => {
     it("renders tree", () => {
         mount(<Component nodes={nodes} />);
 
-        cy.get(TREE_ID).should("have.class", css.tree);
+        cy.get(TREE_ID).should("be.visible");
         cy.get(NODE_ID).should("have.length", 1);
     });
 
@@ -112,9 +113,8 @@ describe("Tree Component", () => {
     it("selects a node with a value on click", () => {
         mount(<Component nodes={nodes} />);
 
-        cy.get(`${NODE_ID} > a`).as("NodeLink");
-        cy.get("@NodeLink").click();
-        cy.get("@NodeLink").should("have.class", css.nodeLinkSelected);
+        cy.get(NODE_LINK_NAME_ID).click();
+        cy.get(NODE_LINK_ID).should("have.attr", "aria-selected", "true");
     });
 
     it("doesn't select a node without a value", () => {
@@ -122,20 +122,20 @@ describe("Tree Component", () => {
 
         cy.get(`${NODE_ID} ${TOGGLE_ID}`).click();
         cy.get(`${SUB_TREE_ID} > ${NODE_ID}:first ${TOGGLE_ID}`).click();
-        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:first a`).should("not.have.class", css.nodeLinkSelected);
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:first a`).should("have.attr", "aria-selected", "false");
     });
 
     it("deselects all the other nodes when selecting a new one", () => {
         mount(<Component nodes={nodes} />);
 
         cy.get(`${NODE_ID} ${TOGGLE_ID}`).click();
-        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:last > a`).as("InitiallySelectedItem");
-        cy.get("@InitiallySelectedItem").click();
-        cy.get("@InitiallySelectedItem").should("have.class", css.nodeLinkSelected);
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:last > ${NODE_LINK_ID}`).as("InitiallySelectedItem");
+        cy.get(`${SUB_TREE_ID} ${NODE_LINK_NAME_ID}:last`).click();
+        cy.get("@InitiallySelectedItem").should("have.attr", "aria-selected", "true");
 
-        cy.get(`${NODE_ID}:first > a`).as("NextSelectedItem");
-        cy.get(`@NextSelectedItem`).click();
-        cy.get("@InitiallySelectedItem").should("not.have.class", css.nodeLinkSelected);
-        cy.get(`@NextSelectedItem`).should("have.class", css.nodeLinkSelected);
+        cy.get(`${NODE_ID}:first ${NODE_LINK_ID}:first`).as("NextSelectedItem");
+        cy.get(`${NODE_ID}:first ${NODE_LINK_NAME_ID}:first`).click();
+        cy.get("@InitiallySelectedItem").should("have.attr", "aria-selected", "false");
+        cy.get(`@NextSelectedItem`).should("have.attr", "aria-selected", "true");
     });
 });

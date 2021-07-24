@@ -5,7 +5,6 @@ import { ReactComponent as IconCaretDown } from "@elements/Icon/Svg/CaretDown.sv
 import { ReactComponent as IconCaretRight } from "@elements/Icon/Svg/CaretRight.svg";
 import { merge } from "@utilities/merge";
 import { ReactElement, useState } from "react";
-import css from "./Tree.module.css";
 
 export type TreeNodeProps = {
     id: string;
@@ -20,7 +19,8 @@ type NodeProps = {
     node: TreeNodeProps;
     strong?: boolean;
     activeNodeId?: string;
-    onClick: (id: string) => void;
+    parentIds?: string[];
+    onClick: (id?: string) => void;
 };
 
 export default function TreeNode({
@@ -28,23 +28,34 @@ export default function TreeNode({
     strong = false,
     activeNodeId,
     onClick,
+    parentIds = [],
 }: NodeProps): ReactElement<NodeProps> {
     const [showNodes, setShowNodes] = useState(false);
+    const selected = id === activeNodeId;
 
     return (
         <li data-test-id="node">
             <a
+                data-test-id="node-link"
                 className={merge([
-                    css.nodeLink,
-                    id === activeNodeId && css.nodeLinkSelected,
-                    strong && css.strong,
-                    value && css.selectableNodeLink,
+                    "flex items-center justify-center py-1 px-2 rounded text-black cursor-pointer no-underline",
+                    strong && "font-bold",
+                    value && !selected && "hover:bg-black-5",
+                    selected && "bg-violet-60 text-white",
+                    parentIds.length == 1 && "pl-8",
+                    parentIds.length > 1 && "pl-16",
                 ])}
+                aria-selected={selected}
                 onClick={() => {
-                    if (value) {
-                        onClick && onClick(id);
-                    } else {
+                    if (!value) {
                         setShowNodes(!showNodes);
+                        return;
+                    }
+
+                    if (activeNodeId === id) {
+                        onClick && onClick(undefined);
+                    } else {
+                        onClick && onClick(id);
                     }
                 }}
             >
@@ -62,14 +73,29 @@ export default function TreeNode({
                             <IconCaretRight size={IconSize.Size16} />
                         ))}
                 </span>
-                {icon && <span className={css.nodeIcon}>{icon}</span>}
-                <span className={css.nodeName}>{name}</span>
-                <span className={css.nodeLabel}>{label}</span>
+                {icon && <span className="pl-2">{icon}</span>}
+                <span className="pl-2" data-test-id="node-link-name">
+                    {name}
+                </span>
+                <span
+                    className={merge(["ml-auto text-black-opacity-40 font-normal", selected && "text-black-hsla-60"])}
+                >
+                    {label}
+                </span>
             </a>
+
             {nodes && showNodes && (
-                <ul className={css.tree} data-test-id="sub-tree">
+                <ul className="p-0 m-0 font-sans font-normal list-none text-left" data-test-id="sub-tree">
                     {nodes.map((node) => {
-                        return <TreeNode key={node.name} node={node} activeNodeId={activeNodeId} onClick={onClick} />;
+                        return (
+                            <TreeNode
+                                key={node.id}
+                                node={node}
+                                activeNodeId={activeNodeId}
+                                onClick={onClick}
+                                parentIds={[...parentIds, id]}
+                            />
+                        );
                     })}
                 </ul>
             )}

@@ -40,6 +40,8 @@ module.exports = {
                 "opacity-40": "rgba(45, 50, 50, 0.4)",
                 "opacity-25": "rgba(45, 50, 50, 0.25)",
                 "opacity-10": "rgba(45, 50, 50, 0.1)",
+
+                "hsla-60": "hsla(0, 0%, 100%, 0.6)",
             },
             violet: {
                 // Solids
