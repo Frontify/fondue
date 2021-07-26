@@ -48,6 +48,8 @@ export default function FormControl({
     disabled,
     orientation = Orientation.Vertical,
 }: FormControlProps): ReactElement<FormControlProps> {
+    const isHelperBefore = helper?.position === HelperPosition.Before;
+
     return (
         <div
             data-test-id="form-control"
@@ -72,7 +74,7 @@ export default function FormControl({
                     )}
                 </div>
             )}
-            {helper?.text && helper?.position === HelperPosition.Before && (
+            {helper?.text && isHelperBefore && (
                 <HelperText
                     fullWidth={orientation === Orientation.Vertical}
                     text={helper.text}
@@ -81,7 +83,7 @@ export default function FormControl({
                 />
             )}
             <div className={orientation === Orientation.Vertical ? "w-full" : ""}>{children}</div>
-            {helper?.text && (
+            {helper?.text && !isHelperBefore && (
                 <HelperText
                     fullWidth={orientation === Orientation.Vertical}
                     text={helper.text}
