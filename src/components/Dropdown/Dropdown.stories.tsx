@@ -3,14 +3,15 @@
 import { IconSize } from "@elements/Icon/Icon";
 import { ReactComponent as Audio } from "@elements/Icon/Svg/Audio.svg";
 import { Meta, Story } from "@storybook/react";
-import { Size, Variant } from "@utilities/enum";
-import { useState } from "react";
+import { Size, Style } from "@utilities/enum";
+import { useEffect, useState } from "react";
 import Dropdown, { DropdownProps } from "./Dropdown";
 
 export default {
     title: "Components/Dropdown",
     component: Dropdown,
     args: {
+        placeholder: "select item",
         disabled: false,
         clearable: false,
     },
@@ -18,18 +19,20 @@ export default {
         size: {
             table: { disable: true },
         },
+        activeItemId: { type: "string" },
     },
 } as Meta;
 
 const DropdownTemplate: Story<DropdownProps> = (args) => {
-    const [activeItemId, setActiveItemId] = useState<string>();
-    return <Dropdown {...args} activeItemId={activeItemId} onChange={(id) => setActiveItemId(id)} />;
+    const [active, setActive] = useState(args.activeItemId);
+    useEffect(() => setActive(args.activeItemId), [args.activeItemId]);
+
+    return <Dropdown {...args} activeItemId={active} onChange={(id) => setActive(id)} />;
 };
 
 export const SmallSelect = DropdownTemplate.bind({});
 
 SmallSelect.args = {
-    placeholder: "select item",
     size: Size.Small,
     menuBlocks: [
         {
@@ -46,7 +49,7 @@ SmallSelect.args = {
                     title: "Small icon warning",
                     size: Size.Small,
                     icon: <Audio size={IconSize.Size16} />,
-                    style: Variant.Danger,
+                    style: Style.Danger,
                 },
                 {
                     id: "3",
@@ -60,7 +63,7 @@ SmallSelect.args = {
                     title: "Small icon warning disabled",
                     size: Size.Small,
                     icon: <Audio size={IconSize.Size16} />,
-                    style: Variant.Danger,
+                    style: Style.Danger,
                     disabled: true,
                 },
             ],
@@ -77,7 +80,7 @@ SmallSelect.args = {
                     id: "10",
                     title: "Small warning",
                     size: Size.Small,
-                    style: Variant.Danger,
+                    style: Style.Danger,
                 },
                 {
                     id: "11",
@@ -88,7 +91,7 @@ SmallSelect.args = {
                 {
                     id: "12",
                     title: "Small warning disabled",
-                    style: Variant.Danger,
+                    style: Style.Danger,
                     size: Size.Small,
                     disabled: true,
                 },
@@ -100,7 +103,6 @@ SmallSelect.args = {
 export const LargeSelect = DropdownTemplate.bind({});
 
 LargeSelect.args = {
-    placeholder: "select item",
     size: Size.Large,
     menuBlocks: [
         {
@@ -119,7 +121,7 @@ LargeSelect.args = {
                     subtitle: "Subtitle",
                     icon: <Audio size={IconSize.Size16} />,
                     size: Size.Large,
-                    style: Variant.Danger,
+                    style: Style.Danger,
                 },
                 {
                     id: "7",
@@ -135,7 +137,7 @@ LargeSelect.args = {
                     subtitle: "Subtitle",
                     icon: <Audio size={IconSize.Size16} />,
                     size: Size.Large,
-                    style: Variant.Danger,
+                    style: Style.Danger,
                     disabled: true,
                 },
             ],
@@ -154,7 +156,7 @@ LargeSelect.args = {
                     title: "Large warning",
                     subtitle: "Subtitle",
                     size: Size.Large,
-                    style: Variant.Danger,
+                    style: Style.Danger,
                 },
                 {
                     id: "15",
@@ -168,7 +170,7 @@ LargeSelect.args = {
                     title: "Large warning disabled",
                     subtitle: "Subtitle",
                     size: Size.Large,
-                    style: Variant.Danger,
+                    style: Style.Danger,
                     disabled: true,
                 },
             ],

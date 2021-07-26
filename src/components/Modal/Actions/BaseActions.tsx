@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import Button from "@elements/Button/Button";
-import { Variant } from "@utilities/enum";
+import { Style } from "@utilities/enum";
 import { ReactElement } from "react";
 import css from "./BaseActions.module.css";
 
@@ -21,7 +21,7 @@ export default function BaseActions({
     return (
         <div className={css.actions} data-test-id="modal-base-actions">
             <div>
-                <Button variant={Variant.Secondary} onClick={onCancel}>
+                <Button style={Style.Secondary} onClick={onCancel}>
                     {cancelText}
                 </Button>
             </div>
