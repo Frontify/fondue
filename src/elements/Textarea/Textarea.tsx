@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ChangeEvent, FormEvent, PropsWithChildren, ReactElement } from "react";
+import { merge } from "@utilities/merge";
+import { PropsWithChildren, ReactElement } from "react";
 
 export type TextareaProps = PropsWithChildren<{
     required?: boolean;
@@ -20,14 +21,6 @@ export default function Textarea({
     onInput,
     onBlur,
 }: TextareaProps): ReactElement<TextareaProps> {
-    const onTextareaInput = (event: FormEvent) => {
-        onInput && onInput((event.target as HTMLTextAreaElement).value);
-    };
-
-    const onTextareaBlur = (event: ChangeEvent<HTMLTextAreaElement>) => {
-        onBlur && onBlur(event.target.value);
-    };
-
     return (
         <div className="relative">
             {decorator && (
@@ -38,14 +31,16 @@ export default function Textarea({
             <textarea
                 placeholder={placeholder}
                 required={required}
-                className={`p-2 border rounded text-s outline-none transition placeholder-black-60 ${
+                className={merge([
+                    "p-2 border rounded text-s outline-none transition placeholder-black-60",
+                    decorator && "pl-7 ",
                     disabled
                         ? "border-black-5 bg-black-5 text-black-40"
-                        : "text-black border-black-40 hover:border-black-90"
-                } ${decorator ? "pl-7 " : ""}`}
+                        : "text-black border-black-40 hover:border-black-90",
+                ])}
                 disabled={disabled}
-                onBlur={onTextareaBlur}
-                onInput={onTextareaInput}
+                onBlur={(event) => onBlur && onBlur(event.target.value)}
+                onInput={(event) => onInput && onInput((event.target as HTMLTextAreaElement).value)}
             >
                 {children}
             </textarea>

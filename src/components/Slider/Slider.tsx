@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconProps } from "@elements/Icon/Icon";
+import { merge } from "@utilities/merge";
 import { ReactElement } from "react";
 
 export type IconItem = {
@@ -31,11 +32,11 @@ export default function Slider({ items, activeItemId, onChange }: SliderProps): 
                 <li
                     key={item.id}
                     onClick={() => onChange(item.id)}
-                    className={`overflow-hidden flex-1 p-2 text-black-80 text-center overflow-ellipsis transition-colors whitespace-nowrap hover:text-black hover:cursor-pointer                    ${
-                        item.id === activeItemId
-                            ? "box-border border border-black m-[-1px] bg-white rounded text-black"
-                            : ""
-                    }`}
+                    className={merge([
+                        "overflow-hidden flex-1 p-2 text-black-80 text-center overflow-ellipsis transition-colors whitespace-nowrap hover:text-black hover:cursor-pointer",
+                        item.id === activeItemId &&
+                            "box-border border border-black m-[-1px] bg-white rounded text-black",
+                    ])}
                     data-test-id={`slider-item-${isIconItem(item) ? "icon" : "text"}`}
                 >
                     {isIconItem(item) ? item.icon : item.name}
