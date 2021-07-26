@@ -71,7 +71,7 @@ const rollupConfig = [
                 sourcemap: true,
             },
             {
-                file: `${name}.module.js`,
+                file: `${name}.mjs`,
                 format: "es",
                 sourcemap: true,
             },
