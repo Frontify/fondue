@@ -4,6 +4,7 @@ const dts = require("rollup-plugin-dts").default;
 const esbuild = require("rollup-plugin-esbuild");
 const IconTemplate = require("./src/elements/Icon/IconTemplate");
 const nodeResolve = require("@rollup/plugin-node-resolve").nodeResolve;
+const commonJs = require("@rollup/plugin-commonjs");
 const peerDepsExternal = require("rollup-plugin-peer-deps-external");
 const pkg = require("./package.json");
 const postcss = require("rollup-plugin-postcss");
@@ -14,8 +15,8 @@ const url = require("@rollup/plugin-url");
 const name = pkg.main.replace(/\.js$/, "");
 
 const bundle = (config) => ({
-    ...config,
     input: "src/index.ts",
+    ...config,
     external: (id) => !/^([./]|@elements|@components|@compositions|@utilities|@hooks)/.test(id),
     plugins: [
         nodeResolve({
@@ -70,7 +71,7 @@ const rollupConfig = [
                 sourcemap: true,
             },
             {
-                file: `${name}.mjs`,
+                file: `${name}.module.js`,
                 format: "es",
                 sourcemap: true,
             },
@@ -83,6 +84,28 @@ const rollupConfig = [
             format: "es",
         },
     }),
+    {
+        input: "src/tailwind-config.ts",
+        plugins: [
+            nodeResolve({
+                extensions: [".js", ".ts"],
+            }),
+            commonJs(),
+            esbuild({
+                include: /\.[jt]s?$/,
+                exclude: /node_modules/,
+                minify: process.env.NODE_ENV === "production",
+            }),
+            peerDepsExternal(),
+        ],
+        output: [
+            {
+                file: "dist/config.js",
+                format: "cjs",
+                sourcemap: true,
+            },
+        ],
+    },
 ];
 
 module.exports = rollupConfig;
