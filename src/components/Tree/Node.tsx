@@ -18,15 +18,15 @@ export type TreeNodeProps = {
 type NodeProps = {
     node: TreeNodeProps;
     strong?: boolean;
-    activeNodeId?: string;
+    activeNodeId?: string | null;
     parentIds?: string[];
-    onClick: (id?: string) => void;
+    onClick: (id: string | null) => void;
 };
 
 export default function TreeNode({
     node: { id, value, name, label, icon, nodes },
     strong = false,
-    activeNodeId,
+    activeNodeId = null,
     onClick,
     parentIds = [],
 }: NodeProps): ReactElement<NodeProps> {
@@ -53,7 +53,7 @@ export default function TreeNode({
                     }
 
                     if (activeNodeId === id) {
-                        onClick && onClick(undefined);
+                        onClick && onClick(null);
                     } else {
                         onClick && onClick(id);
                     }

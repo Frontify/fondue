@@ -12,8 +12,8 @@ type ComponentProps = {
     nodes: TreeNodeProps[];
 };
 const Component: FC<ComponentProps> = ({ nodes }: ComponentProps) => {
-    const [selectedId, setSelectedId] = useState<string | undefined>();
-    return <Tree nodes={nodes} activeNodeId={selectedId} onSelect={(id?: string) => setSelectedId(id)} />;
+    const [selectedId, setSelectedId] = useState<string | null>();
+    return <Tree nodes={nodes} activeNodeId={selectedId} onSelect={(id: string | null) => setSelectedId(id)} />;
 };
 
 const TREE_ID = "[data-test-id=tree]";
