@@ -105,6 +105,7 @@
         "react-router-dom": "^5.2.0"
     },
     "dependencies": {
-        "deepmerge": "^4.2.2"
+        "deepmerge": "^4.2.2",
+        "framer-motion": "^4.1.17"
     }
 }

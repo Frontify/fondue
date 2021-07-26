@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Size } from "@utilities/enum";
+import { motion } from "framer-motion";
 import { ReactElement } from "react";
-import DropdownMenuItem, { MenuItem } from "../DropdownMenuItem/DropdownMenuItem";
+import DropdownMenuItem from "../DropdownMenuItem/DropdownMenuItem";
+import { MenuItem } from "../MenuItemContent/MenuItemContent";
 
 export type MenuBlock = {
     id: string;
@@ -12,21 +13,22 @@ export type MenuBlock = {
 export type DropdownMenuProps = {
     menuBlocks: MenuBlock[];
     onChange: (id: string) => void;
-    size?: Size.Small | Size.Large;
     activeItemId?: string;
 };
 
 export default function DropdownMenu({
     menuBlocks,
     onChange,
-    size = Size.Small,
     activeItemId = "",
 }: DropdownMenuProps): ReactElement<DropdownMenuProps> {
     return (
-        <ul
-            className={`absolute left-0 w-full box-border p-0 border border-black-10 rounded shadow-mid list-none m-0 ${
-                size === Size.Large ? "top-18" : "top-11"
-            }`}
+        <motion.ul
+            className="absolute left-0 w-full overflow-hidden box-border p-0 border border-black-10 rounded shadow-mid list-none m-0 mt-2"
+            key="content"
+            initial={{ height: 0 }}
+            animate={{ height: "auto" }}
+            exit={{ height: 0 }}
+            transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
         >
             {menuBlocks.map(({ id, menuItems }) => (
                 <li
@@ -51,6 +53,6 @@ export default function DropdownMenu({
                     </ul>
                 </li>
             ))}
-        </ul>
+        </motion.ul>
     );
 }

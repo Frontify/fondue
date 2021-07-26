@@ -3,6 +3,7 @@
 import { IconProps } from "@elements/Icon/Icon";
 import { merge } from "@utilities/merge";
 import { ReactElement } from "react";
+import { AnimateSharedLayout, motion } from "framer-motion";
 
 export type IconItem = {
     id: string;
@@ -24,24 +25,41 @@ const isIconItem = (item: TextItem | IconItem): item is IconItem => (item as Ico
 
 export default function Slider({ items, activeItemId, onChange }: SliderProps): ReactElement<SliderProps> {
     return (
-        <ul
-            data-test-id="slider"
-            className="flex w-full justify-evenly p-0 border border-black-20 m-0 bg-black-0 rounded font-sans text-s list-none"
-        >
-            {items.map((item) => (
-                <li
-                    key={item.id}
-                    onClick={() => onChange(item.id)}
-                    className={merge([
-                        "overflow-hidden flex-1 p-2 text-black-80 text-center overflow-ellipsis transition-colors whitespace-nowrap hover:text-black hover:cursor-pointer",
-                        item.id === activeItemId &&
-                            "box-border border border-black m-[-1px] bg-white rounded text-black",
-                    ])}
-                    data-test-id={`slider-item-${isIconItem(item) ? "icon" : "text"}`}
-                >
-                    {isIconItem(item) ? item.icon : item.name}
-                </li>
-            ))}
-        </ul>
+        <AnimateSharedLayout>
+            <ul
+                data-test-id="slider"
+                className="w-full grid grid-flow-col auto-cols-fr justify-evenly p-0 border border-black-20 m-0 bg-black-0 rounded font-sans text-s list-none"
+            >
+                {items.map((item) => {
+                    const isActive = item.id === activeItemId;
+                    return (
+                        <li
+                            key={item.id}
+                            data-test-id={isIconItem(item) ? "slider-item-icon" : "slider-item-text"}
+                            onClick={() => onChange(item.id)}
+                            className="relative"
+                            aria-selected={isActive}
+                        >
+                            {isActive && (
+                                <motion.div
+                                    layoutId="border"
+                                    className="absolute top-0 bottom-0 right-0 left-0 border border-black rounded bg-white"
+                                />
+                            )}
+                            <div
+                                className={merge([
+                                    "relative w-full z-10 inline-flex justify-center items-center font-sans font-normal p-2 text-center hover:text-black hover:cursor-pointer",
+                                    isActive ? "text-black" : "text-black-80",
+                                ])}
+                            >
+                                <span className="overflow-hidden overflow-ellipsis whitespace-nowrap">
+                                    {isIconItem(item) ? item.icon : item.name}
+                                </span>
+                            </div>
+                        </li>
+                    );
+                })}
+            </ul>
+        </AnimateSharedLayout>
     );
 }

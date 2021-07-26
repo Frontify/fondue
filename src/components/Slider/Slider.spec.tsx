@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { mount } from "@cypress/react";
 import { IconSize } from "@elements/Icon/Icon";
 import { ReactComponent as TextAlignCenter } from "@elements/Icon/Svg/TextAlignCenter.svg";
-import { mount } from "@cypress/react";
 import { FC, useState } from "react";
 import Slider, { IconItem, TextItem } from "./Slider";
 
@@ -37,20 +37,20 @@ describe("Slider Component", () => {
 
         cy.get(SLIDER_ID).should("be.visible");
         cy.get(TEXT_ITEM_ID).should("have.length", 3);
-        cy.get(TEXT_ITEM_ID).first().should("have.class", "border");
+        cy.get(TEXT_ITEM_ID).first().should("have.attr", "aria-selected", "true");
         cy.get(TEXT_ITEM_ID).first().contains(TEXT_ITEMS[0].name);
     });
     it("renders icon items", () => {
         mount(<Component items={ICON_ITEMS} />);
 
         cy.get(ICON_ITEM_ID).should("have.length", 3);
-        cy.get(ICON_ITEM_ID).first().should("have.class", "border");
+        cy.get(ICON_ITEM_ID).first().should("have.attr", "aria-selected", "true");
     });
     it("changes active item on click", () => {
         mount(<Component items={TEXT_ITEMS} />);
 
         cy.get(TEXT_ITEM_ID).last().click();
-        cy.get(TEXT_ITEM_ID).last().should("have.class", "border");
-        cy.get(TEXT_ITEM_ID).first().should("not.have.class", "border");
+        cy.get(TEXT_ITEM_ID).last().should("have.attr", "aria-selected", "true");
+        cy.get(TEXT_ITEM_ID).first().should("have.attr", "aria-selected", "false");
     });
 });
