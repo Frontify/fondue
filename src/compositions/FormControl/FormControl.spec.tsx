@@ -50,7 +50,7 @@ describe("FormControl Component", () => {
         );
 
         cy.get(FORM_CONTROL_HELPER_TEXT_ID).should("be.visible");
-        // check if the helper text is only presence once
+        // check if the helper text is only present once
         cy.get(FORM_CONTROL_HELPER_TEXT_ID).should("have.length", 1);
         cy.get(FORM_CONTROL_ID)
             .children()
