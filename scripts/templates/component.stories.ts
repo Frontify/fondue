@@ -1,24 +1,22 @@
 import ComponentFileBuilderResponse from "./ComponentFileBuilderResponse";
 
-export default (componentName: string): ComponentFileBuilderResponse => ({
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default (componentName: string, componentType: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Story, Meta } from "@storybook/react";
 
-import ${componentName}, { ${componentName}Props } from "./${componentName}";
+import ${componentName}Component, { ${componentName}Props } from "./${componentName}";
 
 export default {
-    title: "${componentName}",
-    component: ${componentName},
-} as Meta;
+    title: "${componentType[0].toUpperCase()}${componentType.slice(1)}/${componentName}",
+    component: ${componentName}Component,
+    args: {
+        foo: "bar",
+    },
+} as Meta<${componentName}Props>;
 
-const ${componentName}Template: Story<${componentName}Props> = (args) => <${componentName} {...args} />;
-
-export const Default = ${componentName}Template.bind({});
-
-Default.args = {
-    foo: "bar",
-};
+export const ${componentName}: Story<${componentName}Props> = (args) => <${componentName}Component {...args} />;
 `,
     extension: `.stories.tsx`,
 });

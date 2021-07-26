@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, Story } from "@storybook/react";
-import { Theme } from "@utilities/enum";
 import InputLabelComponent, { InputLabelProps } from "./InputLabel";
 
 export default {
@@ -14,10 +13,6 @@ export default {
     },
     argTypes: {
         tooltip: { type: "string" },
-        theme: {
-            options: [Theme.Light, Theme.Dark],
-            control: { type: "radio" },
-        },
     },
 } as Meta;
 

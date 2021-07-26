@@ -15,7 +15,7 @@ export default function SidebarItemSearch({
 }: SidebarItemSearchProps): ReactElement<SidebarItemSearchProps> {
     return (
         <div data-test-id="sidebar-item-search">
-            <TextInput decorator={<IconSearch />} onInput={onInput} value={value} />
+            <TextInput decorator={<IconSearch />} onInput={onInput} defaultValue={value} />
         </div>
     );
 }

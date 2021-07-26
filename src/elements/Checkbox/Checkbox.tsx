@@ -3,10 +3,9 @@
 import { ReactComponent as IconCheck } from "@elements/Icon/Svg/Check.svg";
 import { ReactComponent as IconMinus } from "@elements/Icon/Svg/Minus.svg";
 import InputLabel from "@elements/InputLabel/InputLabel";
-import { Style, Theme } from "@utilities/enum";
+import { Variant } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
-import { KeyboardEvent, MouseEvent, ReactElement, ReactNode, useState } from "react";
-import css from "./Checkbox.module.css";
+import { KeyboardEvent, MouseEvent, ReactElement, ReactNode } from "react";
 
 export enum CheckboxSelectionState {
     Unselected = "Unselected",
@@ -14,9 +13,17 @@ export enum CheckboxSelectionState {
     Indeterminate = "Indeterminate",
 }
 
+const unselectedVariantClasses: Record<Variant.Primary | Variant.Secondary, string> = {
+    [Variant.Primary]: "border-black-90 dark:border-white",
+    [Variant.Secondary]: "border-violet-60 dark:border-violet-50",
+};
+const selectedVariantClasses: Record<Variant.Primary | Variant.Secondary, string> = {
+    [Variant.Primary]: "bg-black-90 text-white dark:bg-white dark:text-black hover:bg-black dark:hover:bg-black-20",
+    [Variant.Secondary]: "bg-violet-60 text-white dark:bg-violet-50 hover:bg-violet-70 dark:hover:bg-violet-60",
+};
+
 export type CheckboxProps = {
-    theme?: Theme;
-    style?: Style.Primary | Style.Secondary;
+    variant?: Variant.Primary | Variant.Secondary;
     value?: CheckboxSelectionState;
     disabled?: boolean;
     required?: boolean;
@@ -27,17 +34,14 @@ export type CheckboxProps = {
 };
 
 export default function Checkbox({
-    theme = Theme.Light,
-    style = Style.Primary,
-    value = CheckboxSelectionState.Unselected,
+    variant = Variant.Primary,
+    value: checkboxState = CheckboxSelectionState.Unselected,
     disabled = false,
     required = false,
     label,
     tooltip,
     onChange,
 }: CheckboxProps): ReactElement<CheckboxProps> {
-    const [checkboxState, setCheckboxState] = useState<CheckboxSelectionState>(value);
-
     const onClick = (event: MouseEvent | KeyboardEvent): void => {
         event.preventDefault();
 
@@ -46,7 +50,6 @@ export default function Checkbox({
                 ? CheckboxSelectionState.Unselected
                 : CheckboxSelectionState.Selected;
 
-        setCheckboxState(newState);
         onChange && onChange(newState);
     };
 
@@ -64,15 +67,6 @@ export default function Checkbox({
         }
     };
 
-    const checkboxClasses = [
-        css.checkbox,
-        css[`theme${theme}`],
-        ...(disabled ? [css.disabled] : [css[`style${style}`]]),
-        ...(checkboxState === CheckboxSelectionState.Selected ? [css.selected] : []),
-        ...(checkboxState === CheckboxSelectionState.Indeterminate ? [css.indeterminate] : []),
-        ...(label ? [css.withLabel] : []),
-    ].join(" ");
-
     const checkboxConditionalAttributes = {
         ...(!disabled && {
             onClick,
@@ -84,15 +78,36 @@ export default function Checkbox({
     const id = generateRandomId();
 
     return (
-        <div className={css.wrapper} {...checkboxConditionalAttributes} data-test-id="checkbox-wrapper">
+        <div className="flex" {...checkboxConditionalAttributes} data-test-id="checkbox-wrapper">
             <input
                 id={id}
-                className={css.hidden}
+                className="hidden"
                 type="checkbox"
+                disabled={disabled}
                 defaultChecked={checkboxState === CheckboxSelectionState.Selected}
                 onClick={onClick}
             />
-            <span className={checkboxClasses} tabIndex={disabled ? -1 : 0} data-test-id="checkbox">
+            <span
+                className={`relative flex w-4 h-4 items-center justify-center rounded cursor-pointer transition-colors border ${
+                    label ? "mr-2" : ""
+                } ${
+                    disabled
+                        ? `cursor-not-allowed border-black-40 text-black-20 dark:border-black-60 dark:bg-black-60 dark:text-black-80 ${
+                              checkboxState === CheckboxSelectionState.Unselected ? "bg-transparent" : "bg-black-40"
+                          }`
+                        : checkboxState === CheckboxSelectionState.Unselected
+                        ? `hover:bg-black-5 dark:hover:bg-black-90 focus-visible:outline-violet ${unselectedVariantClasses[variant]}`
+                        : `focus-visible:outline-violet ${unselectedVariantClasses[variant]} ${selectedVariantClasses[variant]}`
+                }`}
+                tabIndex={disabled ? -1 : 0}
+                data-test-id="checkbox"
+                aria-disabled={disabled}
+                aria-checked={
+                    checkboxState === CheckboxSelectionState.Indeterminate
+                        ? "mixed"
+                        : checkboxState === CheckboxSelectionState.Selected
+                }
+            >
                 {checkboxState === CheckboxSelectionState.Selected && <IconCheck />}
                 {checkboxState === CheckboxSelectionState.Indeterminate && <IconMinus />}
             </span>

@@ -1,7 +1,8 @@
 import ComponentFileBuilderResponse from "./ComponentFileBuilderResponse";
 import { toKebabCase } from "./transforms";
 
-export default (componentName: string): ComponentFileBuilderResponse => ({
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default (componentName: string, componentType: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";

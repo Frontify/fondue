@@ -5,11 +5,10 @@ import { ReactComponent as TextAlignCenter } from "@elements/Icon/Svg/TextAlignC
 import { mount } from "@cypress/react";
 import { FC, useState } from "react";
 import Slider, { IconItem, TextItem } from "./Slider";
-import css from "./Slider.module.css";
 
 const SLIDER_ID = "[data-test-id=slider]";
-const ICON_ITEM_ID = "[data-test-id=slider-icon-item]";
-const TEXT_ITEM_ID = "[data-test-id=slider-text-item]";
+const ICON_ITEM_ID = "[data-test-id=slider-item-icon]";
+const TEXT_ITEM_ID = "[data-test-id=slider-item-text]";
 
 const TEXT_ITEMS = [
     { id: "a", name: "abc" },
@@ -36,22 +35,22 @@ describe("Slider Component", () => {
     it("renders text items", () => {
         mount(<Component items={TEXT_ITEMS} />);
 
-        cy.get(SLIDER_ID).should("have.class", css.wrapper);
+        cy.get(SLIDER_ID).should("be.visible");
         cy.get(TEXT_ITEM_ID).should("have.length", 3);
-        cy.get(TEXT_ITEM_ID).first().should("have.class", css.active);
+        cy.get(TEXT_ITEM_ID).first().should("have.class", "border");
         cy.get(TEXT_ITEM_ID).first().contains(TEXT_ITEMS[0].name);
     });
     it("renders icon items", () => {
         mount(<Component items={ICON_ITEMS} />);
 
         cy.get(ICON_ITEM_ID).should("have.length", 3);
-        cy.get(ICON_ITEM_ID).first().should("have.class", css.active);
+        cy.get(ICON_ITEM_ID).first().should("have.class", "border");
     });
     it("changes active item on click", () => {
         mount(<Component items={TEXT_ITEMS} />);
 
         cy.get(TEXT_ITEM_ID).last().click();
-        cy.get(TEXT_ITEM_ID).last().should("have.class", css.active);
-        cy.get(TEXT_ITEM_ID).first().should("not.have.class", css.active);
+        cy.get(TEXT_ITEM_ID).last().should("have.class", "border");
+        cy.get(TEXT_ITEM_ID).first().should("not.have.class", "border");
     });
 });

@@ -1,111 +1,78 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import { Style, Theme } from "@utilities/enum";
-import Checkbox, { CheckboxSelectionState } from "./Checkbox";
-import css from "./Checkbox.module.css";
+import { FC, useState } from "react";
+import Checkbox, { CheckboxProps, CheckboxSelectionState } from "./Checkbox";
 
 const CHECKBOX_LABEL = "Holà";
 
+const Component: FC<CheckboxProps> = (props: CheckboxProps) => {
+    const [checkboxValue, setCheckboxValue] = useState(props.value);
+
+    return <Checkbox {...props} value={checkboxValue} onChange={(value) => setCheckboxValue(value)} />;
+};
+
 describe("Checkbox component", () => {
     it("renders", () => {
-        mount(<Checkbox label={CHECKBOX_LABEL} />);
+        mount(<Component label={CHECKBOX_LABEL} />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
-
         cy.get("[data-test-id=checkbox-wrapper]").contains(CHECKBOX_LABEL);
-
-        cy.get("@checkbox").should("have.class", css.checkbox);
-        cy.get("@checkbox").should("have.class", css.checkbox);
-        cy.get("@checkbox").should("have.class", css.themeLight);
-        cy.get("@checkbox").should("have.class", css.stylePrimary);
     });
 
     it("has the unselected state", () => {
-        mount(<Checkbox value={CheckboxSelectionState.Unselected} />);
+        mount(<Component value={CheckboxSelectionState.Unselected} />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
-
-        cy.get("@checkbox").should("not.have.class", css.selected);
-        cy.get("@checkbox").should("not.have.class", css.indeterminate);
+        cy.get("@checkbox").should("have.attr", "aria-checked", "false");
     });
 
     it("has the selected state", () => {
-        mount(<Checkbox value={CheckboxSelectionState.Selected} />);
+        mount(<Component value={CheckboxSelectionState.Selected} />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
-
-        cy.get("@checkbox").should("have.class", css.selected);
-        cy.get("@checkbox").should("not.have.class", css.indeterminate);
+        cy.get("@checkbox").should("have.attr", "aria-checked", "true");
     });
 
     it("has the default state of indeterminate", () => {
-        mount(<Checkbox value={CheckboxSelectionState.Indeterminate} />);
+        mount(<Component value={CheckboxSelectionState.Indeterminate} />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
-
-        cy.get("@checkbox").should("have.class", css.indeterminate);
-        cy.get("@checkbox").should("not.have.class", css.selected);
+        cy.get("@checkbox").should("have.attr", "aria-checked", "mixed");
     });
 
     it("has a label", () => {
-        mount(<Checkbox label={CHECKBOX_LABEL} />);
+        mount(<Component label={CHECKBOX_LABEL} />);
 
         cy.get("[data-test-id=checkbox-wrapper]").contains(CHECKBOX_LABEL);
         cy.get("[data-test-id=input-label]").should("have.length", 1);
     });
 
     it("has a disabled state", () => {
-        mount(<Checkbox disabled={true} />);
+        mount(<Component disabled={true} />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
 
-        cy.get("@checkbox").should("have.class", css.disabled);
+        cy.get("@checkbox").should("have.attr", "aria-disabled", "true");
 
-        cy.get("@checkbox").click();
+        cy.get("@checkbox").click({ force: true });
 
-        cy.get("@checkbox").should("not.have.class", css.selected);
-        cy.get("@checkbox").should("not.have.class", css.indeterminate);
+        cy.get("@checkbox").should("have.attr", "aria-checked", "false");
     });
 
     it("cycle in the selection state on click", () => {
-        mount(<Checkbox />);
+        mount(<Component />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
 
-        cy.get("@checkbox").should("not.have.class", css.selected);
-        cy.get("@checkbox").should("not.have.class", css.indeterminate);
+        cy.get("@checkbox").should("have.attr", "aria-checked", "false");
 
-        cy.get("@checkbox").click();
+        cy.get("@checkbox").click({ force: true });
 
-        cy.get("@checkbox").should("have.class", css.selected);
-        cy.get("@checkbox").should("not.have.class", css.indeterminate);
+        cy.get("@checkbox").should("have.attr", "aria-checked", "true");
 
-        cy.get("@checkbox").click();
+        cy.get("@checkbox").click({ force: true });
 
-        cy.get("@checkbox").should("not.have.class", css.selected);
-        cy.get("@checkbox").should("not.have.class", css.indeterminate);
-    });
-
-    it(`has the light theme with primary style`, () => {
-        mount(<Checkbox theme={Theme.Light} style={Style.Primary} />);
-
-        cy.get("[data-test-id=checkbox]").as("checkbox");
-
-        cy.get("@checkbox").should("have.class", css.stylePrimary);
-
-        cy.get("@checkbox").should("have.class", css.themeLight);
-        cy.get("@checkbox").should("not.have.class", css.themeDark);
-    });
-
-    it(`has the dark theme with secondary style`, () => {
-        mount(<Checkbox theme={Theme.Dark} style={Style.Secondary} />);
-
-        cy.get("[data-test-id=checkbox]").as("checkbox");
-
-        cy.get("@checkbox").should("have.class", css.styleSecondary);
-
-        cy.get("@checkbox").should("have.class", css.themeDark);
-        cy.get("@checkbox").should("not.have.class", css.themeLight);
+        cy.get("@checkbox").should("have.attr", "aria-checked", "false");
     });
 });

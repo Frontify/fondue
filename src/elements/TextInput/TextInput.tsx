@@ -1,11 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, ChangeEvent, FormEvent, useState, useRef } from "react";
-import { IconProps } from "@elements/Icon/Icon";
-import css from "./TextInput.module.css";
 import { ReactComponent as IconReject } from "@elements/Icon/Svg/Reject.svg";
 import { ReactComponent as IconView } from "@elements/Icon/Svg/View.svg";
 import { ReactComponent as IconViewSlash } from "@elements/Icon/Svg/ViewSlash.svg";
+import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 
 export enum TextInputType {
     Text = "text",
@@ -15,9 +13,9 @@ export enum TextInputType {
 export type TextInputProps = {
     id?: string;
     type?: TextInputType;
-    decorator?: ReactElement<IconProps>;
+    decorator?: ReactNode;
     clearable?: boolean;
-    value?: string;
+    defaultValue?: string;
     placeholder?: string;
     required?: boolean;
     disabled?: boolean;
@@ -31,72 +29,73 @@ export default function TextInput({
     type = TextInputType.Text,
     decorator,
     clearable = false,
-    value,
+    defaultValue,
     placeholder,
     required,
-    disabled,
+    disabled = false,
     onInput,
     onBlur,
     onClear,
 }: TextInputProps): ReactElement<TextInputProps> {
+    const isTextInput = type === TextInputType.Text;
     const inputElement = useRef<HTMLInputElement | null>(null);
-    const [inputValue, setInputValue] = useState<string | undefined>(value);
-    const [passwordVisible, setPasswordVisible] = useState(type === TextInputType.Password);
-    const [inputType, setInputType] = useState<TextInputType>(type);
-
-    const onInputInput = (event: FormEvent) => {
-        const newInputValue = (event.target as HTMLInputElement).value;
-        setInputValue(newInputValue);
-        onInput && onInput(newInputValue);
-    };
-
-    const onInputBlur = (event: ChangeEvent<HTMLInputElement>) => {
-        onBlur && onBlur(event.target.value);
-    };
-
-    const clearInput = () => {
-        if (inputElement.current) {
-            setInputValue("");
-            onClear && onClear();
-        }
-    };
-
-    const toggleVisibility = () => {
-        setPasswordVisible((passwordVisible: boolean) => !passwordVisible);
-        setInputType(passwordVisible ? TextInputType.Text : TextInputType.Password);
-    };
-
-    const containerClasses = [css.container, ...(disabled ? [css.disabled] : [])].join(" ");
+    const [inputValueVisible, setInputValueVisible] = useState(isTextInput);
+    useEffect(() => setInputValueVisible(isTextInput), [isTextInput]);
 
     return (
-        <div className={containerClasses}>
+        <div
+            className={`flex items-center py-2 px-3 border rounded font-sans ${
+                disabled ? "border-black-5 bg-black-5" : "border-black-10 focus-within:border-black-90"
+            }`}
+        >
             {decorator && (
-                <div className={css.decorator} data-test-id="decorator">
+                <div className="flex items-center justify-center pl-2 text-black-80" data-test-id="decorator">
                     {decorator}
                 </div>
             )}
             <input
                 id={id}
                 ref={inputElement}
-                className={css.input}
-                onInput={onInputInput}
-                onBlur={onInputBlur}
+                className={`flex-grow border-none outline-none pl-2 placeholder-black-60 ${
+                    disabled ? "text-black-40" : "text-black"
+                }`}
+                onInput={(event) => onInput && onInput((event.target as HTMLInputElement).value)}
+                onBlur={(event) => onBlur && onBlur(event.target.value)}
                 placeholder={placeholder}
-                value={inputValue}
-                type={inputType}
+                defaultValue={defaultValue}
+                type={inputValueVisible ? TextInputType.Text : TextInputType.Password}
                 required={required}
                 disabled={disabled}
                 data-test-id="text-input"
             />
             {clearable && (
-                <div className={css.clear} onClick={clearInput} data-test-id="clear-icon">
+                <button
+                    className={`flex items-center justify-center pl-2 ${
+                        disabled ? "pointer-events-none text-black-40" : "text-black-60"
+                    }`}
+                    onClick={() => {
+                        if (inputElement.current) {
+                            inputElement.current.value = "";
+                            inputElement.current.focus();
+                            onClear && onClear();
+                        }
+                    }}
+                    data-test-id="clear-icon"
+                    title="clear input"
+                    disabled={disabled}
+                >
                     <IconReject />
-                </div>
+                </button>
             )}
             {type === TextInputType.Password && (
-                <div className={css.toggleVisibility} onClick={toggleVisibility} data-test-id="visibility-icon">
-                    {passwordVisible ? <IconViewSlash /> : <IconView />}
-                </div>
+                <button
+                    className="flex items-center justify-center pl-2 text-black-60"
+                    onClick={() => setInputValueVisible(!inputValueVisible)}
+                    data-test-id="visibility-icon"
+                    title="toggle text visibility"
+                >
+                    {inputValueVisible ? <IconViewSlash /> : <IconView />}
+                </button>
             )}
         </div>
     );

@@ -3,7 +3,7 @@
 import { IconSize } from "@elements/Icon/Icon";
 import { ReactComponent as Audio } from "@elements/Icon/Svg/Audio.svg";
 import { Meta, Story } from "@storybook/react";
-import { Size, Style } from "@utilities/enum";
+import { Size, Variant } from "@utilities/enum";
 import { useState } from "react";
 import Dropdown, { DropdownProps } from "./Dropdown";
 
@@ -46,7 +46,7 @@ SmallSelect.args = {
                     title: "Small icon warning",
                     size: Size.Small,
                     icon: <Audio size={IconSize.Size16} />,
-                    style: Style.Danger,
+                    style: Variant.Danger,
                 },
                 {
                     id: "3",
@@ -60,7 +60,7 @@ SmallSelect.args = {
                     title: "Small icon warning disabled",
                     size: Size.Small,
                     icon: <Audio size={IconSize.Size16} />,
-                    style: Style.Danger,
+                    style: Variant.Danger,
                     disabled: true,
                 },
             ],
@@ -77,7 +77,7 @@ SmallSelect.args = {
                     id: "10",
                     title: "Small warning",
                     size: Size.Small,
-                    style: Style.Danger,
+                    style: Variant.Danger,
                 },
                 {
                     id: "11",
@@ -88,7 +88,7 @@ SmallSelect.args = {
                 {
                     id: "12",
                     title: "Small warning disabled",
-                    style: Style.Danger,
+                    style: Variant.Danger,
                     size: Size.Small,
                     disabled: true,
                 },
@@ -119,7 +119,7 @@ LargeSelect.args = {
                     subtitle: "Subtitle",
                     icon: <Audio size={IconSize.Size16} />,
                     size: Size.Large,
-                    style: Style.Danger,
+                    style: Variant.Danger,
                 },
                 {
                     id: "7",
@@ -135,7 +135,7 @@ LargeSelect.args = {
                     subtitle: "Subtitle",
                     icon: <Audio size={IconSize.Size16} />,
                     size: Size.Large,
-                    style: Style.Danger,
+                    style: Variant.Danger,
                     disabled: true,
                 },
             ],
@@ -154,7 +154,7 @@ LargeSelect.args = {
                     title: "Large warning",
                     subtitle: "Subtitle",
                     size: Size.Large,
-                    style: Style.Danger,
+                    style: Variant.Danger,
                 },
                 {
                     id: "15",
@@ -168,7 +168,7 @@ LargeSelect.args = {
                     title: "Large warning disabled",
                     subtitle: "Subtitle",
                     size: Size.Large,
-                    style: Style.Danger,
+                    style: Variant.Danger,
                     disabled: true,
                 },
             ],

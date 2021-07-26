@@ -5,7 +5,6 @@ import { Size } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import { MouseEvent, ReactElement } from "react";
-import css from "./Switch.module.css";
 
 export type SwitchProps = {
     on?: boolean;
@@ -27,7 +26,7 @@ export default function Switch({
     const id = label && generateRandomId();
 
     return (
-        <div className={css.container}>
+        <div className="flex w-full items-center justify-between">
             {label && id && (
                 <InputLabel htmlFor={id} disabled={disabled}>
                     {label}
@@ -39,19 +38,22 @@ export default function Switch({
                 name={name}
                 data-test-id="switch"
                 className={merge([
-                    css.switch,
-                    on ? css.active : css.inactive,
-                    disabled && css.disabled,
-                    size === Size.Small ? css.small : css.large,
+                    "inline-flex py-0 px-[0.125rem] border-0 rounded-full transition-colors",
+                    disabled
+                        ? "bg-black-10 pointer-events-none"
+                        : on
+                        ? "bg-black-90 hover:bg-black"
+                        : "bg-black-30 hover:bg-black-60",
+                    size === Size.Small ? "w-9 h-5" : "w-11 h-6",
                 ])}
                 value={on.toString()}
                 onClick={onChange}
             >
                 <div
                     className={merge([
-                        css.indicator,
-                        size === Size.Small ? css.small : css.large,
-                        on ? css.active : css.inactive,
+                        "block self-center bg-white rounded-full transition-transform",
+                        size === Size.Small ? "w-4 h-4" : "w-5 h-5",
+                        on ? "translate-x-full" : "translate-x-0",
                     ])}
                 />
             </button>

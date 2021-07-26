@@ -4,10 +4,8 @@ import { mount } from "@cypress/react";
 import { Size } from "@utilities/enum";
 import { FC, useState } from "react";
 import Dropdown, { DropdownProps } from "./Dropdown";
-import css from "./Dropdown.module.css";
 import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_TEXT_ID, MENU_ITEM_TITLE_ID } from "./DropdownMenuItem/DropdownMenuItem.spec";
 
-const DROPDOWN_ID = "[data-test-id=dropdown]";
 const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
 const DROPDOWN_ITEM_LIST_ID = "[data-test-id=dropdown-item-list]";
 const DROPDOWN_ITEM_SUBTITLE = "[data-test-id=dropdown-menu-item-subtitle]";
@@ -107,16 +105,13 @@ describe("Dropdown Component", () => {
     it("renders with placeholder", () => {
         mount(<Component menuBlocks={SMALL_ITEMS} placeholder="Select item" />);
         cy.get(MENU_ITEM_TITLE_ID).contains("Select item");
-        cy.get(DROPDOWN_TRIGGER_ID).should("have.class", css.placeholder);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_ITEM_LIST_ID).children().should("have.length", 3);
     });
     it("renders with initial active item", () => {
         mount(<Component menuBlocks={SMALL_ITEMS} initialActiveId={FIRST_ITEM_ID} />);
         cy.get(MENU_ITEM_TITLE_ID).contains("Small");
-        cy.get(DROPDOWN_TRIGGER_ID).should("not.have.class", css.inactive);
         cy.get(DROPDOWN_TRIGGER_ID).click();
-        cy.get(MENU_ITEM_TEXT_ID).first().children(MENU_ITEM_ACTIVE_ID).should("not.be.visible");
         cy.get(MENU_ITEM_TEXT_ID).eq(1).children(MENU_ITEM_ACTIVE_ID).should("exist");
     });
     it("changes selection on click", () => {
@@ -154,7 +149,6 @@ describe("Dropdown Component", () => {
         mount(
             <Component menuBlocks={LARGE_ITEMS} size={Size.Large} initialActiveId={LARGE_ITEMS[0].menuItems[0].id} />,
         );
-        cy.get(DROPDOWN_ID).should("have.class", css.large);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_ITEM_LIST_ID).should("have.length", 2);
         cy.get(DROPDOWN_ITEM_SUBTITLE).should("exist");
