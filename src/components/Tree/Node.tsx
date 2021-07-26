@@ -38,11 +38,11 @@ export default function TreeNode({
             <a
                 data-test-id="node-link"
                 className={merge([
-                    "flex items-center justify-center py-1 px-2 rounded text-black cursor-pointer no-underline",
+                    "flex items-center justify-center py-1 px-2 rounded cursor-pointer no-underline",
                     strong && "font-bold",
                     value && !selected && "hover:bg-black-5",
-                    selected && "bg-violet-60 text-white",
-                    parentIds.length == 1 && "pl-8",
+                    selected ? "bg-violet-60 text-white" : "text-black",
+                    parentIds.length === 1 && "pl-8",
                     parentIds.length > 1 && "pl-16",
                 ])}
                 aria-selected={selected}
@@ -52,10 +52,8 @@ export default function TreeNode({
                         return;
                     }
 
-                    if (activeNodeId === id) {
-                        onClick && onClick(null);
-                    } else {
-                        onClick && onClick(id);
+                    if (onClick) {
+                        onClick(activeNodeId === id ? null : id);
                     }
                 }}
             >
@@ -77,9 +75,7 @@ export default function TreeNode({
                 <span className="pl-2" data-test-id="node-link-name">
                     {name}
                 </span>
-                <span
-                    className={merge(["ml-auto text-black-opacity-40 font-normal", selected && "text-black-hsla-60"])}
-                >
+                <span className={merge(["ml-auto text-black-opacity-40 font-normal", selected && "text-black-50"])}>
                     {label}
                 </span>
             </a>
