@@ -2,31 +2,30 @@
 
 import { ReactElement, useEffect, useState } from "react";
 import TreeNode, { TreeNodeProps } from "./Node";
-import css from "./Tree.module.css";
 
 export type TreeProps = {
     nodes: TreeNodeProps[];
-    onSelect: (id: string) => void;
-    activeNodeId?: string;
+    onSelect: (id: string | null) => void;
+    activeNodeId?: string | null;
 };
 
 export default function Tree({
     nodes,
     onSelect,
-    activeNodeId: initialActiveNodeId,
+    activeNodeId: initialActiveNodeId = null,
 }: TreeProps): ReactElement<TreeProps> {
-    const [activeNodeId, setActiveNodeId] = useState<string | undefined>(initialActiveNodeId);
+    const [activeNodeId, setActiveNodeId] = useState<string | null>(initialActiveNodeId);
     useEffect(() => setActiveNodeId(initialActiveNodeId), [initialActiveNodeId]);
 
     return (
-        <ul data-test-id="tree" className={css.tree}>
+        <ul data-test-id="tree" className="p-0 m-0 font-sans font-normal list-none text-left">
             {nodes.map((node) => (
                 <TreeNode
                     key={node.id}
                     node={node}
                     activeNodeId={activeNodeId}
                     strong
-                    onClick={(id: string) => {
+                    onClick={(id: string | null) => {
                         setActiveNodeId(id);
                         onSelect(id);
                     }}
