@@ -1,5 +1,5 @@
 import { Meta, Story } from "@storybook/react";
-import { Variant } from "@utilities/enum";
+import { Style } from "@utilities/enum";
 import { useEffect, useState } from "react";
 import CheckboxComponent, { CheckboxProps, CheckboxSelectionState } from "./Checkbox";
 
@@ -7,7 +7,7 @@ export default {
     title: "Elements/Checkbox",
     component: CheckboxComponent,
     args: {
-        variant: Variant.Primary,
+        style: Style.Primary,
         value: CheckboxSelectionState.Unselected,
         disabled: false,
         required: false,
@@ -16,7 +16,7 @@ export default {
     },
     argTypes: {
         variant: {
-            options: [Variant.Primary, Variant.Secondary],
+            options: [Style.Primary, Style.Secondary],
             control: { type: "radio" },
         },
         value: {
@@ -33,9 +33,8 @@ export default {
 
 export const Checkbox: Story<CheckboxProps> = (args) => {
     const [selectionState, setSelectionState] = useState(args.value);
-    useEffect(() => {
-        setSelectionState(args.value);
-    }, [args.value]);
+    useEffect(() => setSelectionState(args.value), [args.value]);
+
     return (
         <CheckboxComponent
             {...args}

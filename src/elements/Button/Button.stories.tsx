@@ -2,7 +2,7 @@
 
 import { ReactComponent as IconCaretLeft } from "@elements/Icon/Svg/CaretLeft.svg";
 import { Meta, Story } from "@storybook/react";
-import { Size, Variant } from "@utilities/enum";
+import { Size, Style } from "@utilities/enum";
 import Button, { ButtonProps } from "./Button";
 
 export default {
@@ -11,7 +11,7 @@ export default {
     args: {
         disabled: false,
         size: Size.Small,
-        variant: Variant.Primary,
+        style: Style.Primary,
     },
     argTypes: {
         size: {
@@ -19,7 +19,7 @@ export default {
             control: { type: "radio" },
         },
         variant: {
-            options: [Variant.Primary, Variant.Secondary, Variant.Danger],
+            options: [Style.Primary, Style.Secondary, Style.Danger],
             control: { type: "select" },
         },
         onClick: { action: "onClick" },

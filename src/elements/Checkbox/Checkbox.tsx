@@ -3,7 +3,7 @@
 import { ReactComponent as IconCheck } from "@elements/Icon/Svg/Check.svg";
 import { ReactComponent as IconMinus } from "@elements/Icon/Svg/Minus.svg";
 import InputLabel from "@elements/InputLabel/InputLabel";
-import { Variant } from "@utilities/enum";
+import { Style } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
 import { KeyboardEvent, MouseEvent, ReactElement, ReactNode } from "react";
 
@@ -13,17 +13,17 @@ export enum CheckboxSelectionState {
     Indeterminate = "Indeterminate",
 }
 
-const unselectedVariantClasses: Record<Variant.Primary | Variant.Secondary, string> = {
-    [Variant.Primary]: "border-black-90 dark:border-white",
-    [Variant.Secondary]: "border-violet-60 dark:border-violet-50",
+const unselectedStyleClasses: Record<Style.Primary | Style.Secondary, string> = {
+    [Style.Primary]: "border-black-90 dark:border-white",
+    [Style.Secondary]: "border-violet-60 dark:border-violet-50",
 };
-const selectedVariantClasses: Record<Variant.Primary | Variant.Secondary, string> = {
-    [Variant.Primary]: "bg-black-90 text-white dark:bg-white dark:text-black hover:bg-black dark:hover:bg-black-20",
-    [Variant.Secondary]: "bg-violet-60 text-white dark:bg-violet-50 hover:bg-violet-70 dark:hover:bg-violet-60",
+const selectedStyleClasses: Record<Style.Primary | Style.Secondary, string> = {
+    [Style.Primary]: "bg-black-90 text-white dark:bg-white dark:text-black hover:bg-black dark:hover:bg-black-20",
+    [Style.Secondary]: "bg-violet-60 text-white dark:bg-violet-50 hover:bg-violet-70 dark:hover:bg-violet-60",
 };
 
 export type CheckboxProps = {
-    variant?: Variant.Primary | Variant.Secondary;
+    style?: Style.Primary | Style.Secondary;
     value?: CheckboxSelectionState;
     disabled?: boolean;
     required?: boolean;
@@ -34,7 +34,7 @@ export type CheckboxProps = {
 };
 
 export default function Checkbox({
-    variant = Variant.Primary,
+    style = Style.Primary,
     value: checkboxState = CheckboxSelectionState.Unselected,
     disabled = false,
     required = false,
@@ -92,12 +92,11 @@ export default function Checkbox({
                     label ? "mr-2" : ""
                 } ${
                     disabled
-                        ? `cursor-not-allowed border-black-40 text-black-20 dark:border-black-60 dark:bg-black-60 dark:text-black-80 ${
-                              checkboxState === CheckboxSelectionState.Unselected ? "bg-transparent" : "bg-black-40"
-                          }`
+                        ? `cursor-not-allowed border-black-40 text-black-20 dark:border-black-60 dark:bg-black-60 dark:text-black-80
+                            ${checkboxState === CheckboxSelectionState.Unselected ? "bg-transparent" : "bg-black-40"}`
                         : checkboxState === CheckboxSelectionState.Unselected
-                        ? `hover:bg-black-5 dark:hover:bg-black-90 focus-visible:outline-violet ${unselectedVariantClasses[variant]}`
-                        : `focus-visible:outline-violet ${unselectedVariantClasses[variant]} ${selectedVariantClasses[variant]}`
+                        ? `hover:bg-black-5 dark:hover:bg-black-90 focus-visible:outline-violet ${unselectedStyleClasses[style]}`
+                        : `focus-visible:outline-violet ${unselectedStyleClasses[style]} ${selectedStyleClasses[style]}`
                 }`}
                 tabIndex={disabled ? -1 : 0}
                 data-test-id="checkbox"

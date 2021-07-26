@@ -1,24 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import InputLabel, { InputLabelProps } from "@elements/InputLabel/InputLabel";
-import { Orientation, Variant } from "@utilities/enum";
+import { Orientation, Style } from "@utilities/enum";
 import { FC, PropsWithChildren, ReactElement, ReactNode } from "react";
 
 type HelperTextProps = {
     text: string;
     disabled?: boolean;
-    variant?: Variant.Primary | Variant.Success | Variant.Error;
+    style?: Style.Primary | Style.Success | Style.Error;
     fullWidth?: boolean;
 };
-const HelperText: FC<HelperTextProps> = ({ text, disabled, variant, fullWidth = false }: HelperTextProps) => (
+const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = false }: HelperTextProps) => (
     <span
         data-test-id="form-control-helper-text"
         className={`text-s font-sans ${fullWidth ? "w-full" : ""} ${
             disabled
                 ? "text-black-40"
-                : variant === Variant.Error
+                : style === Style.Error
                 ? "text-red-60"
-                : variant === Variant.Success
+                : style === Style.Success
                 ? "text-green-60"
                 : "text-black-80"
         }`}
@@ -77,7 +77,7 @@ export default function FormControl({
                     fullWidth={orientation === Orientation.Vertical}
                     text={helper.text}
                     disabled={disabled}
-                    variant={helper.variant}
+                    style={helper.style}
                 />
             )}
             <div className={orientation === Orientation.Vertical ? "w-full" : ""}>{children}</div>
@@ -86,7 +86,7 @@ export default function FormControl({
                     fullWidth={orientation === Orientation.Vertical}
                     text={helper.text}
                     disabled={disabled}
-                    variant={helper.variant}
+                    style={helper.style}
                 />
             )}
         </div>

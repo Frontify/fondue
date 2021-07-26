@@ -2,7 +2,7 @@
 
 import TextInput from "@elements/TextInput/TextInput";
 import { Meta, Story } from "@storybook/react";
-import { Orientation, Variant, Theme } from "@utilities/enum";
+import { Orientation, Style, Theme } from "@utilities/enum";
 import FormControlComponent, { FormControlProps, HelperPosition } from "./FormControl";
 
 export default {
@@ -22,7 +22,7 @@ export default {
         helper: {
             text: "Helper Text (before/after) and variant (Primary/Success/Error)",
             position: HelperPosition.After,
-            variant: Variant.Primary,
+            style: Style.Primary,
         },
         children: "",
     },

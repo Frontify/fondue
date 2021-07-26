@@ -3,7 +3,7 @@
 import { IconProps, IconSize } from "@elements/Icon/Icon";
 import { ReactComponent as CaretRightIcon } from "@elements/Icon/Svg/CaretRight.svg";
 import { ReactComponent as CheckIcon } from "@elements/Icon/Svg/Check.svg";
-import { Size, Variant } from "@utilities/enum";
+import { Size, Style } from "@utilities/enum";
 import { ReactElement } from "react";
 
 export enum SelectionIndicatorIcon {
@@ -15,7 +15,7 @@ type MenuItemBase = {
     id: string;
     title: string;
     icon?: ReactElement<IconProps>;
-    style?: Variant.Primary | Variant.Danger;
+    style?: Style.Primary | Style.Danger;
     disabled?: boolean;
     active?: boolean;
     subtitle?: string;
@@ -42,7 +42,7 @@ export default function DropdownMenuItem({
     onClick,
     subtitle = "",
     size = Size.Small,
-    style = Variant.Primary,
+    style = Style.Primary,
     disabled = false,
     active = false,
     selectionIndicator = SelectionIndicatorIcon.Check,
@@ -54,13 +54,13 @@ export default function DropdownMenuItem({
                 size === Size.Small ? "min-h-[36px]" : "min-h-[62px]"
             } ${
                 disabled
-                    ? `bg-black-0 pointer-events-none ${style === Variant.Danger ? "text-red-40" : "text-black-40"}`
+                    ? `bg-black-0 pointer-events-none ${style === Style.Danger ? "text-red-40" : "text-black-40"}`
                     : active
-                    ? `font-medium ${style === Variant.Danger ? "text-red-70" : "text-black"}`
-                    : style === Variant.Danger
+                    ? `font-medium ${style === Style.Danger ? "text-red-70" : "text-black"}`
+                    : style === Style.Danger
                     ? "text-red-60"
                     : "text-black-80"
-            } hover:bg-black-0 ${style === Variant.Danger ? "hover:text-red-70" : "hover:text-black"} focus:bg-white`}
+            } hover:bg-black-0 ${style === Style.Danger ? "hover:text-red-70" : "hover:text-black"} focus:bg-white`}
             tabIndex={1}
             onClick={() => {
                 if (onClick && !disabled) {
