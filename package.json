@@ -3,14 +3,14 @@
     "version": "0.0.6",
     "description": "Design system of Frontify",
     "main": "dist/index.js",
-    "module": "dist/index.module.js",
+    "module": "dist/index.mjs",
     "files": [
         "dist"
     ],
     "exports": {
         ".": {
             "require": "./dist/index.js",
-            "import": "./dist/index.module.js",
+            "import": "./dist/index.mjs",
             "default": "./dist/index.js"
         },
         "./config": "./dist/config.js"
