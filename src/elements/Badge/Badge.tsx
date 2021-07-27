@@ -1,51 +1,47 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PropsWithChildren, ReactElement } from "react";
+import { IconProps, IconSize } from "@elements/Icon/Icon";
+import { Style } from "@utilities/enum";
+import { merge } from "@utilities/merge";
+import { cloneElement, FC, PropsWithChildren, ReactElement } from "react";
 
-export enum BadgeStatus {
-    Success = "Success",
-    Progress = "Progress",
-    Warning = "Warning",
-    Danger = "Danger",
-    Custom = "Custom",
-}
+type StatusStyle = Style.Success | Style.Progress | Style.Warning | Style.Danger;
 
-export type BadgeProps =
-    | PropsWithChildren<{
-          status?: BadgeStatus;
-          customColor?: string;
-      }>
-    | PropsWithChildren<{
-          status: BadgeStatus.Custom;
-          customColor: string;
-      }>
-    | PropsWithChildren<{
-          status: BadgeStatus.Success | BadgeStatus.Progress | BadgeStatus.Warning | BadgeStatus.Danger;
-          customColor: undefined;
-      }>;
-
-export const statusClasses: Record<BadgeStatus, string> = {
-    [BadgeStatus.Success]: "bg-green-60",
-    [BadgeStatus.Progress]: "bg-violet-60",
-    [BadgeStatus.Warning]: "bg-yellow-60",
-    [BadgeStatus.Danger]: "bg-red-60",
-    [BadgeStatus.Custom]: "",
+const statusClasses: Record<StatusStyle, string> = {
+    [Style.Success]: "bg-green-60",
+    [Style.Progress]: "bg-violet-60",
+    [Style.Warning]: "bg-yellow-60",
+    [Style.Danger]: "bg-red-60",
 };
 
-export default function Badge({ children, status, customColor }: BadgeProps): ReactElement<BadgeProps> {
+export type BadgeProps = PropsWithChildren<{
+    icon?: ReactElement<IconProps>;
+    status?: StatusStyle;
+}>;
+
+const Badge: FC<BadgeProps> = ({ children, status, icon }: BadgeProps) => {
+    if (!children && !icon && !status) {
+        return null;
+    }
+
     return (
         <div
-            className="bg-black-10 text-black-80 dark:bg-black-100 dark:text-white inline-flex flex-grow-0 flex-shrink-0 flex-auto items-center justify-center px-2 py-1 rounded-full font-sans text-xxs font-normal text-center"
+            className={merge([
+                "h-6 bg-black-10 box-border text-black-80 dark:bg-black-100 dark:text-white inline-flex flex-auto gap-1 items-center justify-center rounded-full font-sans text-xxs font-normal text-center",
+                (status && !icon && !children) || (!status && icon && !children) ? "w-6" : "px-2 py-1",
+            ])}
             data-test-id="badge"
         >
             {status && (
                 <i
                     data-test-id="badge-status"
-                    className={`inline-block w-2 h-2 rounded-full mr-1 ${statusClasses[status]}`}
-                    style={BadgeStatus.Custom ? { backgroundColor: customColor } : undefined}
+                    className={`inline-block w-2 h-2 rounded-full ${statusClasses[status]}`}
                 />
             )}
+            {icon && <span data-test-id="badge-icon">{cloneElement(icon, { size: IconSize.Size12 })}</span>}
             {children}
         </div>
     );
-}
+};
+
+export default Badge;
