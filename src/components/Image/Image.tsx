@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import Button from "@elements/Button/Button";
+import Button, { Size } from "@elements/Button/Button";
 import { ReactComponent as IconSettings } from "@elements/Icon/Svg/Settings.svg";
 import { ReactComponent as IconTrash } from "@elements/Icon/Svg/Trash.svg";
 import { PropsWithChildren, ReactElement } from "react";
@@ -34,9 +34,13 @@ export default function Image({
             </picture>
             {(onReplaceImage || onOpenSettings || onDeleteImage) && (
                 <div className={css.controls} data-test-id="image-controls">
-                    {onReplaceImage && <Button onClick={onReplaceImage}>Replace...</Button>}
-                    {onOpenSettings && <Button onClick={onOpenSettings} icon={<IconSettings />} />}
-                    {onDeleteImage && <Button onClick={onDeleteImage} icon={<IconTrash />} />}
+                    {onReplaceImage && (
+                        <Button size={Size.Small} onClick={onReplaceImage}>
+                            Replace...
+                        </Button>
+                    )}
+                    {onOpenSettings && <Button size={Size.Small} onClick={onOpenSettings} icon={<IconSettings />} />}
+                    {onDeleteImage && <Button size={Size.Small} onClick={onDeleteImage} icon={<IconTrash />} />}
                 </div>
             )}
         </div>

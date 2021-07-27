@@ -28,7 +28,7 @@ Default.args = {
     disabled: false,
     size: Size.Medium,
     solid: true,
-    style: Style.Secondary,
+    style: Style.Primary,
 };
 
 Default.storyName = "Text Label Only";
@@ -38,7 +38,7 @@ export const withIcon = ButtonTemplate.bind({});
 withIcon.args = {
     disabled: false,
     size: Size.Medium,
-    style: Style.Secondary,
+    style: Style.Primary,
     icon: <Icon />,
 };
 
@@ -49,7 +49,7 @@ export const withIconAndLabel = ButtonTemplate.bind({});
 withIconAndLabel.args = {
     disabled: false,
     size: Size.Medium,
-    style: Style.Secondary,
+    style: Style.Primary,
     icon: <Icon />,
     children: "Button Text",
 };

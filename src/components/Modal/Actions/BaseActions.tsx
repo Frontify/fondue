@@ -20,12 +20,14 @@ export default function BaseActions({
     return (
         <div className={css.actions} data-test-id="modal-base-actions">
             <div>
-                <Button style={Style.Secondary} onClick={onCancel}>
+                <Button size={Size.Small} style={Style.Secondary} onClick={onCancel}>
                     {cancelText}
                 </Button>
             </div>
             <div>
-                <Button onClick={onConfirm}>{confirmText}</Button>
+                <Button size={Size.Small} onClick={onConfirm}>
+                    {confirmText}
+                </Button>
             </div>
         </div>
     );
