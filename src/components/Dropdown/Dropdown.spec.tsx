@@ -4,7 +4,7 @@ import { mount } from "@cypress/react";
 import { Size } from "@utilities/enum";
 import { FC, useState } from "react";
 import Dropdown, { DropdownProps } from "./Dropdown";
-import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_TEXT_ID, MENU_ITEM_TITLE_ID } from "./DropdownMenuItem/DropdownMenuItem.spec";
+import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_ID, MENU_ITEM_TITLE_ID } from "./DropdownMenuItem/DropdownMenuItem.spec";
 
 const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
 const DROPDOWN_ITEM_LIST_ID = "[data-test-id=dropdown-item-list]";
@@ -112,38 +112,39 @@ describe("Dropdown Component", () => {
         mount(<Component menuBlocks={SMALL_ITEMS} initialActiveId={FIRST_ITEM_ID} />);
         cy.get(MENU_ITEM_TITLE_ID).contains("Small");
         cy.get(DROPDOWN_TRIGGER_ID).click();
-        cy.get(MENU_ITEM_TEXT_ID).eq(1).children(MENU_ITEM_ACTIVE_ID).should("exist");
+        cy.get(MENU_ITEM_ACTIVE_ID).should("exist").and("have.length", 2);
     });
     it("changes selection on click", () => {
         mount(<Component menuBlocks={SMALL_ITEMS} initialActiveId={FIRST_ITEM_ID} />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
-        cy.get(DROPDOWN_ITEM_LIST_ID).children().first().as("firstListItem");
-        cy.get(DROPDOWN_ITEM_LIST_ID).children().eq(1).as("secondListItem");
-        cy.get(DROPDOWN_ITEM_LIST_ID).children().eq(2).as("thirdListItem");
+        cy.get(MENU_ITEM_ID).first().as("firstListItem");
+        cy.get(MENU_ITEM_ID).eq(1).as("secondListItem");
+        cy.get(MENU_ITEM_ID).eq(2).as("thirdListItem");
 
         cy.get("@secondListItem").click();
         cy.get(MENU_ITEM_TITLE_ID).contains("Small second");
+
         cy.get(DROPDOWN_TRIGGER_ID).click();
-        cy.get("@secondListItem").children(MENU_ITEM_ACTIVE_ID).should("exist");
-        cy.get("@firstListItem").children(MENU_ITEM_ACTIVE_ID).should("not.exist");
+        cy.get("@firstListItem").should("have.attr", "aria-selected", "false");
+        cy.get("@secondListItem").should("have.attr", "aria-selected", "true");
         cy.get("@thirdListItem").click();
         cy.get(MENU_ITEM_TITLE_ID).contains("Small third");
         cy.get(DROPDOWN_TRIGGER_ID).click();
-        cy.get("@thirdListItem").children(MENU_ITEM_ACTIVE_ID).should("exist");
-        cy.get("@secondListItem").children(MENU_ITEM_ACTIVE_ID).should("not.exist");
+        cy.get("@thirdListItem").should("have.attr", "aria-selected", "true");
+        cy.get("@secondListItem").should("have.attr", "aria-selected", "false");
     });
     it("renders with clearable option", () => {
         mount(<Component menuBlocks={SMALL_ITEMS} placeholder="Select item" clearable />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
-        cy.get(DROPDOWN_ITEM_LIST_ID).children().first().as("firstListItem");
+        cy.get(MENU_ITEM_ID).first().as("firstListItem");
 
         cy.get("@firstListItem").click();
         cy.get(MENU_ITEM_TITLE_ID).contains("Small");
         cy.get(DROPDOWN_TRIGGER_ID).click();
-        cy.get("@firstListItem").children(MENU_ITEM_ACTIVE_ID).should("exist");
+        cy.get("@firstListItem").should("have.attr", "aria-selected", "true");
         cy.get(DROPDOWN_CLEAR_BUTTON_ID).click();
         cy.get(MENU_ITEM_TITLE_ID).contains("Select item");
-        cy.get("@firstListItem").children(MENU_ITEM_ACTIVE_ID).should("not.exist");
+        cy.get("@firstListItem").should("have.attr", "aria-selected", "false");
     });
     it("renders large items", () => {
         mount(

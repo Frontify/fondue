@@ -4,8 +4,10 @@ import { mount } from "@cypress/react";
 import { IconSize } from "@elements/Icon/Icon";
 import { ReactComponent as Audio } from "@elements/Icon/Svg/Audio.svg";
 import { Size } from "@utilities/enum";
-import DropdownMenuItem, { MenuItem } from "./DropdownMenuItem";
+import { MenuItem } from "../MenuItemContent/MenuItemContent";
+import DropdownMenuItem from "./DropdownMenuItem";
 
+export const MENU_ITEM_ID = "[data-test-id=dropdown-menu-item]";
 export const MENU_ITEM_ACTIVE_ID = "[data-test-id=dropdown-menu-item-active]";
 export const MENU_ITEM_TITLE_ID = "[data-test-id=dropdown-menu-item-title]";
 export const MENU_ITEM_TEXT_ID = "[data-test-id=dropdown-menu-item-text]";

@@ -1,40 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconProps, IconSize } from "@elements/Icon/Icon";
-import { ReactComponent as CaretRightIcon } from "@elements/Icon/Svg/CaretRight.svg";
-import { ReactComponent as CheckIcon } from "@elements/Icon/Svg/Check.svg";
 import { Size, Style } from "@utilities/enum";
+import { merge } from "@utilities/merge";
 import { ReactElement } from "react";
-
-export enum SelectionIndicatorIcon {
-    Check = "Check",
-    CaretRight = "CaretRight",
-}
-
-type MenuItemBase = {
-    id: string;
-    title: string;
-    icon?: ReactElement<IconProps>;
-    style?: Style.Primary | Style.Danger;
-    disabled?: boolean;
-    active?: boolean;
-    subtitle?: string;
-    size?: Size.Small | Size.Large;
-    selectionIndicator?: SelectionIndicatorIcon;
-};
-
-export type MenuItem =
-    | (MenuItemBase & {
-          size: Size.Small;
-      })
-    | (MenuItemBase & {
-          subtitle: string;
-          size: Size.Large;
-      });
+import MenuItemContent, { MenuItemContentProps, SelectionIndicatorIcon } from "../MenuItemContent/MenuItemContent";
 
 export type DropdownMenuItemProps = {
     onClick?: () => void;
-} & Omit<MenuItem, "id">;
+} & MenuItemContentProps;
 
 export default function DropdownMenuItem({
     title,
@@ -49,42 +22,22 @@ export default function DropdownMenuItem({
 }: DropdownMenuItemProps): ReactElement<DropdownMenuItemProps> {
     return (
         <li
-            data-test-id={icon !== undefined ? "dropdown-menu-item-icon" : "dropdown-menu-item-text"}
-            className={`relative flex box-border items-center rounded cursor-pointer font-sans text-s gap-3 transition-colors  py-3 px-5 ${
-                size === Size.Small ? "min-h-[36px]" : "min-h-[62px]"
-            } ${
-                disabled
-                    ? `bg-black-0 pointer-events-none ${style === Style.Danger ? "text-red-40" : "text-black-40"}`
-                    : active
-                    ? `font-medium ${style === Style.Danger ? "text-red-70" : "text-black"}`
-                    : style === Style.Danger
-                    ? "text-red-60"
-                    : "text-black-80"
-            } hover:bg-black-0 ${style === Style.Danger ? "hover:text-red-70" : "hover:text-black"} focus:bg-white`}
-            tabIndex={1}
-            onClick={() => {
-                if (onClick && !disabled) {
-                    onClick();
-                }
-            }}
+            data-test-id="dropdown-menu-item"
+            className={merge(["relative focus:bg-white hover:bg-black-0", disabled && "pointer-events-none"])}
+            tabIndex={disabled ? 0 : 1}
+            onClick={() => onClick && onClick()}
+            aria-selected={active}
         >
-            {icon && <span className="flex-shrink-0">{icon}</span>}
-            <div className="flex-1 overflow-hidden overflow-ellipsis whitespace-nowrap">
-                <div data-test-id="dropdown-menu-item-title" className="select-none" title={title}>
-                    {title}
-                </div>
-                {subtitle && (
-                    <div data-test-id="dropdown-menu-item-subtitle" className="select-none text-xxs" title={subtitle}>
-                        {subtitle}
-                    </div>
-                )}
-            </div>
-            {active &&
-                (selectionIndicator === SelectionIndicatorIcon.Check ? (
-                    <CheckIcon data-test-id="dropdown-menu-item-active" size={IconSize.Size20} />
-                ) : (
-                    <CaretRightIcon data-test-id="dropdown-menu-item-active" size={IconSize.Size20} />
-                ))}
+            <MenuItemContent
+                title={title}
+                icon={icon}
+                subtitle={subtitle}
+                size={size}
+                style={style}
+                disabled={disabled}
+                active={active}
+                selectionIndicator={selectionIndicator}
+            />
         </li>
     );
 }
