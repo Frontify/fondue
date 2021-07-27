@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactComponent as Icon } from "@elements/Icon/Svg/Icons.svg";
+import { ReactComponent as Icons } from "@elements/Icon/Svg/Icons.svg";
 import { Meta, Story } from "@storybook/react";
 import Button, { ButtonProps, Size, Style } from "./Button";
 
@@ -39,7 +39,7 @@ withIcon.args = {
     disabled: false,
     size: Size.Medium,
     style: Style.Primary,
-    icon: <Icon />,
+    icon: <Icons />,
 };
 
 withIcon.storyName = "Icon Only";
@@ -50,7 +50,7 @@ withIconAndLabel.args = {
     disabled: false,
     size: Size.Medium,
     style: Style.Primary,
-    icon: <Icon />,
+    icon: <Icons />,
     children: "Button Text",
 };
 
