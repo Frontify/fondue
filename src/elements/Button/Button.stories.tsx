@@ -24,7 +24,7 @@ const ButtonTemplate: Story<ButtonProps> = (args) => <Button {...args} />;
 
 export const Default = ButtonTemplate.bind({});
 Default.args = {
-    chldren: "Button Text",
+    children: "Button Text",
     disabled: false,
     size: Size.Medium,
     solid: true,

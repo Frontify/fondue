@@ -35,16 +35,8 @@ export default function Image({
             {(onReplaceImage || onOpenSettings || onDeleteImage) && (
                 <div className={css.controls} data-test-id="image-controls">
                     {onReplaceImage && <Button onClick={onReplaceImage}>Replace...</Button>}
-                    {onOpenSettings && (
-                        <Button onClick={onOpenSettings}>
-                            <IconSettings />
-                        </Button>
-                    )}
-                    {onDeleteImage && (
-                        <Button onClick={onDeleteImage}>
-                            <IconTrash />
-                        </Button>
-                    )}
+                    {onOpenSettings && <Button onClick={onOpenSettings} icon={<IconSettings />} />}
+                    {onDeleteImage && <Button onClick={onDeleteImage} icon={<IconTrash />} />}
                 </div>
             )}
         </div>
