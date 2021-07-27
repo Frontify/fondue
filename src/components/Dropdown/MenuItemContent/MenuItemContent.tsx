@@ -26,10 +26,11 @@ type MenuItemContentBase = {
 export type MenuItem =
     | (MenuItemContentBase & {
           size: Size.Small;
+          subtitle?: undefined;
       })
     | (MenuItemContentBase & {
-          subtitle: string;
           size: Size.Large;
+          subtitle: string;
       });
 
 export type MenuItemContentProps = Omit<MenuItem, "id">;
@@ -37,7 +38,7 @@ export type MenuItemContentProps = Omit<MenuItem, "id">;
 export default function MenuItemContent({
     title,
     icon,
-    subtitle = "",
+    subtitle,
     size = Size.Small,
     style = Style.Primary,
     disabled = false,
