@@ -2,6 +2,12 @@ module.exports = {
     mode: "jit",
     purge: ["./src/**/*.tsx", "./src/**/*.js"],
     darkMode: "class",
+    variants: {
+        extend: {
+            backgroundColor: ["active"],
+            textColor: ["active"],
+        },
+    },
     theme: {
         extend: {
             outline: {
