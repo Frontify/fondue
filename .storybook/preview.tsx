@@ -11,4 +11,9 @@ export const parameters = {
             order: ["Elements", "Components", "Compositions"],
         },
     },
+    darkMode: {
+        darkClass: "dark",
+        classTarget: "html",
+        stylePreview: true,
+    },
 };
