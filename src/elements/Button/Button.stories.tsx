@@ -2,8 +2,7 @@
 
 import { ReactComponent as IconCaretLeft } from "@elements/Icon/Svg/CaretLeft.svg";
 import { Meta, Story } from "@storybook/react";
-import { Size } from "@utilities/enum";
-import Button, { ButtonProps, Style } from "./Button";
+import Button, { ButtonProps, Size, Style } from "./Button";
 
 export default {
     title: "Elements/Button",
