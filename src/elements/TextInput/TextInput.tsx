@@ -56,7 +56,7 @@ export default function TextInput({
             <input
                 id={id}
                 ref={inputElement}
-                className={`flex-grow border-none outline-none pl-2 placeholder-black-60 ${
+                className={`flex-grow border-none outline-none placeholder-black-60 ${
                     disabled ? "text-black-40" : "text-black"
                 }`}
                 onInput={(event) => onInput && onInput((event.target as HTMLInputElement).value)}
