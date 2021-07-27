@@ -24,7 +24,7 @@ const ButtonTemplate: Story<ButtonProps> = (args) => <Button {...args} />;
 
 export const Default = ButtonTemplate.bind({});
 Default.args = {
-    label: "Button Text",
+    chldren: "Button Text",
     disabled: false,
     size: Size.Medium,
     solid: true,
@@ -51,7 +51,7 @@ withIconAndLabel.args = {
     size: Size.Medium,
     style: Style.Secondary,
     icon: <Icon />,
-    label: "Button Text",
+    children: "Button Text",
 };
 
 withIconAndLabel.storyName = "Icon and Text Label";

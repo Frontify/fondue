@@ -3,7 +3,6 @@
 import { IconSize } from "@elements/Icon/Icon";
 import { merge } from "@utilities/merge";
 import { cloneElement, MouseEvent, ReactElement } from "react";
-import { ReactComponent as Icon } from "@elements/Icon/Svg/Icons.svg";
 
 export enum Style {
     Secondary = "Secondary",
@@ -56,7 +55,7 @@ export type ButtonProps = {
     solid?: boolean;
     disabled?: boolean;
     icon?: ReactElement;
-    label?: string;
+    children?: string;
     onClick?: (event: MouseEvent) => void;
 };
 
@@ -66,7 +65,7 @@ export default function Button({
     solid = true,
     disabled = false,
     icon,
-    label,
+    children,
     onClick,
 }: ButtonProps): ReactElement<ButtonProps> {
     return (
@@ -88,7 +87,7 @@ export default function Button({
             data-test-id="button"
         >
             {icon && cloneElement(icon, { size: iconSizes[size] })}
-            {label}
+            {children}
         </button>
     );
 }
