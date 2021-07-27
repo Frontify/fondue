@@ -230,7 +230,7 @@ import { IconProps, IconSize } from "./Icon";
 export default {
     title: "Elements/Icon",
     args: {
-        size: Object.keys(IconSize)[2],
+        size: IconSize.Size16,
     },
     argTypes: {
         size: {

@@ -37,6 +37,8 @@ const bundle = (config) => ({
             icon: true,
             template: IconTemplate,
             svgProps: {
+                width: "100%",
+                height: "100%",
                 className: "{customClassName}",
             },
         }),
