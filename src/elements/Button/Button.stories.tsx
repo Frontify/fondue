@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactComponent as IconCaretLeft } from "@elements/Icon/Svg/CaretLeft.svg";
+import { ReactComponent as Icon } from "@elements/Icon/Svg/Icons.svg";
 import { Meta, Story } from "@storybook/react";
 import Button, { ButtonProps, Size, Style } from "./Button";
 
@@ -24,22 +24,34 @@ const ButtonTemplate: Story<ButtonProps> = (args) => <Button {...args} />;
 
 export const Default = ButtonTemplate.bind({});
 Default.args = {
-    children: "Button Text",
+    label: "Button Text",
     disabled: false,
-    size: Size.Small,
+    size: Size.Medium,
     solid: true,
     style: Style.Secondary,
 };
 
+Default.storyName = "Text Label Only";
+
 export const withIcon = ButtonTemplate.bind({});
+
 withIcon.args = {
     disabled: false,
-    size: Size.Small,
-    style: Style.Primary,
-    children: (
-        <>
-            <IconCaretLeft />
-            Ok
-        </>
-    ),
+    size: Size.Medium,
+    style: Style.Secondary,
+    icon: <Icon />,
 };
+
+withIcon.storyName = "Icon Only";
+
+export const withIconAndLabel = ButtonTemplate.bind({});
+
+withIconAndLabel.args = {
+    disabled: false,
+    size: Size.Medium,
+    style: Style.Secondary,
+    icon: <Icon />,
+    label: "Button Text",
+};
+
+withIconAndLabel.storyName = "Icon and Text Label";

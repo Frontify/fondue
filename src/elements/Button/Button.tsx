@@ -1,7 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconSize } from "@elements/Icon/Icon";
 import { merge } from "@utilities/merge";
-import { MouseEvent, PropsWithChildren, ReactElement } from "react";
+import { cloneElement, MouseEvent, ReactElement } from "react";
+import { ReactComponent as Icon } from "@elements/Icon/Svg/Icons.svg";
 
 export enum Style {
     Secondary = "Secondary",
@@ -15,14 +17,6 @@ export enum Size {
     Medium = "Medium",
     Large = "Large",
 }
-
-export type ButtonProps = PropsWithChildren<{
-    style?: Style;
-    size?: Size;
-    solid?: boolean;
-    disabled?: boolean;
-    onClick?: (event: MouseEvent) => void;
-}>;
 
 const sizeClasses: Record<Size, string> = {
     [Size.Small]: "px-3 py-1 text-xs",
@@ -50,13 +44,30 @@ const styles: Record<"solid" | "translucent", Record<Style, string>> = {
     },
 };
 
+const iconSizes: Record<Size, IconSize> = {
+    [Size.Small]: IconSize.Size16,
+    [Size.Medium]: IconSize.Size20,
+    [Size.Large]: IconSize.Size24,
+};
+
+export type ButtonProps = {
+    style?: Style;
+    size?: Size;
+    solid?: boolean;
+    disabled?: boolean;
+    icon?: ReactElement;
+    label?: string;
+    onClick?: (event: MouseEvent) => void;
+};
+
 export default function Button({
     style = Style.Secondary,
     size = Size.Small,
     solid = true,
     disabled = false,
+    icon,
+    label,
     onClick,
-    children,
 }: ButtonProps): ReactElement<ButtonProps> {
     return (
         <button
@@ -76,7 +87,8 @@ export default function Button({
             onClick={onClick}
             data-test-id="button"
         >
-            {children}
+            {icon && cloneElement(icon, { size: iconSizes[size] })}
+            {label}
         </button>
     );
 }
