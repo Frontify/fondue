@@ -32,18 +32,21 @@ const sizeClasses: Record<Size, string> = {
 
 const styles: Record<"solid" | "translucent", Record<Style, string>> = {
     solid: {
-        [Style.Primary]: "text-white bg-black-90 hover:bg-black-100 active:bg-black-superdark",
+        [Style.Primary]:
+            "text-white bg-black-90 hover:bg-black-100 active:bg-black-superdark dark:text-black dark:bg-white dark:hover:bg-black-10 dark:active:bg-black-20",
         [Style.Secondary]:
-            "text-black bg-black-10 hover:bg-black-20 active:bg-black-30 dark:text-white dark:bg-black-80 dark:hover:bg-black-95 dark:active:bg-black-superblack",
+            "text-black bg-black-10 hover:bg-black-20 active:bg-black-30 dark:text-white dark:bg-black-80 dark:hover:bg-black-95 dark:active:bg-black-superdark",
         [Style.Danger]: "text-black bg-red-50 hover:bg-red-65 active:bg-red-70",
-        [Style.Positive]: "text-black bg-green-60 hover:bg-green-70 active:bg-green-75",
+        [Style.Positive]: "text-black bg-green-60 hover:bg-green-70 active:bg-green-75 dark:active:bg-green-90",
     },
     translucent: {
         [Style.Primary]: "text-white bg-black-90 hover:bg-black-100 active:bg-black-superdark",
         [Style.Secondary]:
-            "text-black-80 bg-transparent hover:bg-black-10 hover:text-black active:bg-black-20 active:text-black dark:text-white dark:hover:bg-black-95 dark:active:bg-black-superblack dark:hover:text-white",
-        [Style.Danger]: "text-red-65 bg-transparent hover:bg-black-10 active:bg-black-20",
-        [Style.Positive]: "text-green-75 bg-transparent hover:bg-black-10 active:bg-black-20",
+            "text-black-80 bg-transparent hover:bg-black-10 hover:text-black active:bg-black-20 active:text-black dark:text-white dark:hover:bg-black-95 dark:active:bg-black-superdark dark:hover:text-white",
+        [Style.Danger]:
+            "text-red-65 bg-transparent hover:bg-black-10 active:bg-black-20 dark:text-red-50 dark:hover:bg-black-95 dark:active:bg-black-superdark",
+        [Style.Positive]:
+            "text-green-75 bg-transparent hover:bg-black-10 active:bg-black-20 dark:text-green-60 dark:hover:bg-black-95 dark:active:bg-black-superdark",
     },
 };
 
@@ -61,7 +64,10 @@ export default function Button({
                 "outline-none relative flex items-center justify-center border-0 rounded cursor-pointer font-sans transition-colors",
                 sizeClasses[size],
                 disabled
-                    ? merge(["not-allowed pointer-events-none text-black-40 ", solid ? "bg-black-5" : "bg-transparent"])
+                    ? merge([
+                          "not-allowed pointer-events-none text-black-40 dark:text-black-60",
+                          solid ? "bg-black-5 dark:bg-black-90" : "bg-transparent",
+                      ])
                     : `focus:outline-none focus:ring-4 focus:border-violet-70 ${
                           styles[solid ? "solid" : "translucent"][style]
                       }`,
