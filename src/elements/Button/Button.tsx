@@ -2,7 +2,7 @@
 
 import { IconSize } from "@elements/Icon/Icon";
 import { merge } from "@utilities/merge";
-import { cloneElement, MouseEvent, ReactElement } from "react";
+import { cloneElement, MouseEvent, ReactElement, ReactNode } from "react";
 
 export enum Style {
     Secondary = "Secondary",
@@ -21,6 +21,18 @@ const sizeClasses: Record<Size, string> = {
     [Size.Small]: "px-3 py-1 text-xs",
     [Size.Medium]: "px-4 py-2 text-s",
     [Size.Large]: "px-6 py-3 text-m",
+};
+
+const iconOnlySizeClasses: Record<Size, string> = {
+    [Size.Small]: "p-1",
+    [Size.Medium]: "p-2",
+    [Size.Large]: "p-3",
+};
+
+const iconSpacing: Record<Size, string> = {
+    [Size.Small]: "mr-1",
+    [Size.Medium]: "mr-1.5",
+    [Size.Large]: "mr-2",
 };
 
 const styles: Record<"solid" | "translucent", Record<Style, string>> = {
@@ -68,11 +80,13 @@ export default function Button({
     children,
     onClick,
 }: ButtonProps): ReactElement<ButtonProps> {
+    const wrap = (child: ReactNode) => (children ? <span className={iconSpacing[size]}>{child}</span> : child);
+
     return (
         <button
             className={merge([
                 "outline-none relative flex items-center justify-center border-0 rounded cursor-pointer font-sans transition-colors",
-                sizeClasses[size],
+                icon ? iconOnlySizeClasses[size] : sizeClasses[size],
                 disabled
                     ? merge([
                           "not-allowed pointer-events-none text-black-40 dark:text-black-60",
@@ -86,7 +100,7 @@ export default function Button({
             onClick={onClick}
             data-test-id="button"
         >
-            {icon && cloneElement(icon, { size: iconSizes[size] })}
+            {icon && wrap(cloneElement(icon, { size: iconSizes[size] }))}
             {children}
         </button>
     );
