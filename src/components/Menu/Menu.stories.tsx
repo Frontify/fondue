@@ -1,38 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MenuItemStyle } from "@components/Menu/MenuItem/MenuItem";
+import { MenuItemStyle, SelectionIndicatorIcon } from "@components/Menu/MenuItem/MenuItem";
 import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
 import IconAudio from "@elements/Icon/Generated/IconAudio";
+import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
-import React, { useEffect, useState } from "react";
-import { Dropdown, DropdownProps, DropdownSize } from "./Dropdown";
+import { ActionMenu as ActionMenuComponent, ActionMenuProps } from "./ActionMenu/ActionMenu";
 
 export default {
-    title: "Components/Dropdown",
-    component: Dropdown,
-    args: {
-        placeholder: "select item",
-        disabled: false,
-        clearable: false,
-    },
+    title: "Components/Menu",
+    component: ActionMenuComponent,
     argTypes: {
-        size: {
-            table: { disable: true },
-        },
-        activeItemId: { type: "string" },
+        onClick: { action: "onClick" },
     },
 } as Meta;
 
-const DropdownTemplate: Story<DropdownProps> = (args: DropdownProps) => {
-    const [active, setActive] = useState(args.activeItemId);
-    useEffect(() => setActive(args.activeItemId), [args.activeItemId]);
+export const ActionMenu: Story<ActionMenuProps & { onClick: () => void }> = (args) => <ActionMenuComponent {...args} />;
 
-    return <Dropdown {...args} activeItemId={active} onChange={(id) => setActive(id)} />;
-};
-
-export const SmallSelect = DropdownTemplate.bind({});
-SmallSelect.args = {
-    size: DropdownSize.Small,
+ActionMenu.args = {
     menuBlocks: [
         {
             id: "block1",
@@ -40,31 +25,37 @@ SmallSelect.args = {
             menuItems: [
                 {
                     id: "1",
-                    title: "Small icon",
+                    title: "Small item with icon",
                     size: MenuItemContentSize.Small,
                     decorator: <IconAudio />,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: action("click"),
                 },
                 {
                     id: "2",
-                    title: "Small icon warning",
+                    title: "Small item with icon warning",
                     size: MenuItemContentSize.Small,
                     decorator: <IconAudio />,
                     style: MenuItemStyle.Danger,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: action("click"),
                 },
                 {
                     id: "3",
-                    title: "Small icon disabled",
+                    title: "Small item with icon disabled",
                     size: MenuItemContentSize.Small,
                     decorator: <IconAudio />,
                     disabled: true,
+                    onClick: action("click"),
                 },
                 {
                     id: "4",
-                    title: "Small icon warning disabled",
+                    title: "Small item with icon warning disabled",
                     size: MenuItemContentSize.Small,
                     decorator: <IconAudio />,
                     style: MenuItemStyle.Danger,
                     disabled: true,
+                    onClick: action("click"),
                 },
             ],
         },
@@ -74,107 +65,117 @@ SmallSelect.args = {
             menuItems: [
                 {
                     id: "9",
-                    title: "Small",
+                    title: "Small item",
                     size: MenuItemContentSize.Small,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: action("click"),
                 },
                 {
                     id: "10",
-                    title: "Small warning",
+                    title: "Small item warning",
                     size: MenuItemContentSize.Small,
                     style: MenuItemStyle.Danger,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: action("click"),
                 },
                 {
                     id: "11",
-                    title: "Small disabled",
+                    title: "Small item disabled",
                     size: MenuItemContentSize.Small,
                     disabled: true,
+                    onClick: action("click"),
                 },
                 {
                     id: "12",
-                    title: "Small warning disabled",
+                    title: "Small item warning disabled",
                     style: MenuItemStyle.Danger,
                     size: MenuItemContentSize.Small,
                     disabled: true,
+                    onClick: action("click"),
                 },
             ],
         },
-    ],
-};
-
-export const LargeSelect = DropdownTemplate.bind({});
-
-LargeSelect.args = {
-    size: DropdownSize.Large,
-    menuBlocks: [
         {
-            id: "block1",
-            ariaLabel: "First section",
+            id: "block3",
+            ariaLabel: "Third section",
             menuItems: [
                 {
                     id: "5",
-                    title: "Large icon",
+                    title: "Large item with icon",
                     subtitle: "Subtitle",
                     decorator: <IconAudio />,
                     size: MenuItemContentSize.Large,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: action("click"),
                 },
                 {
                     id: "6",
-                    title: "Large icon warning",
+                    title: "Large item with icon warning",
                     subtitle: "Subtitle",
                     decorator: <IconAudio />,
                     size: MenuItemContentSize.Large,
                     style: MenuItemStyle.Danger,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: action("click"),
                 },
                 {
                     id: "7",
-                    title: "Large icon disabled",
+                    title: "Large item with icon disabled",
                     subtitle: "Subtitle",
                     decorator: <IconAudio />,
                     size: MenuItemContentSize.Large,
                     disabled: true,
+                    onClick: action("click"),
                 },
                 {
                     id: "8",
-                    title: "Large icon warning disabled",
+                    title: "Large item with icon warning disabled",
                     subtitle: "Subtitle",
                     decorator: <IconAudio />,
                     size: MenuItemContentSize.Large,
                     style: MenuItemStyle.Danger,
                     disabled: true,
+                    onClick: action("click"),
                 },
             ],
         },
         {
-            id: "block2",
-            ariaLabel: "Second section",
+            id: "block4",
+            ariaLabel: "Fourth section",
             menuItems: [
                 {
                     id: "13",
-                    title: "Large",
+                    title: "Large item",
                     subtitle: "Subtitle",
                     size: MenuItemContentSize.Large,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: action("click"),
                 },
                 {
                     id: "14",
-                    title: "Large warning",
+                    title: "Large item warning",
                     subtitle: "Subtitle",
                     size: MenuItemContentSize.Large,
                     style: MenuItemStyle.Danger,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: action("click"),
                 },
                 {
                     id: "15",
-                    title: "Large disabled",
+                    title: "Large item disabled",
                     subtitle: "Subtitle",
                     size: MenuItemContentSize.Large,
                     disabled: true,
+                    onClick: action("click"),
                 },
                 {
                     id: "16",
-                    title: "Large warning disabled",
+                    title: "Large item warning disabled",
                     subtitle: "Subtitle",
                     size: MenuItemContentSize.Large,
                     style: MenuItemStyle.Danger,
                     disabled: true,
+                    onClick: action("click"),
                 },
             ],
         },
