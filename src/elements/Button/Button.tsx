@@ -87,14 +87,17 @@ export default function Button({
             className={merge([
                 "outline-none relative flex items-center justify-center border-0 rounded cursor-pointer font-sans transition-colors",
                 icon ? iconOnlySizeClasses[size] : sizeClasses[size],
-                disabled
-                    ? merge([
-                          "not-allowed pointer-events-none text-black-40 dark:text-black-60",
-                          solid ? "bg-black-5 dark:bg-black-90" : "bg-transparent",
-                      ])
-                    : `focus:outline-none focus:ring-4 focus:border-violet-70 ${
-                          styles[solid ? "solid" : "translucent"][style]
-                      }`,
+                merge(
+                    disabled
+                        ? [
+                              "not-allowed pointer-events-none text-black-40 dark:text-black-60",
+                              solid ? "bg-black-5 dark:bg-black-90" : "bg-transparent",
+                          ]
+                        : [
+                              "focus:outline-none focus:ring-4 focus:border-violet-70",
+                              styles[solid ? "solid" : "translucent"][style],
+                          ],
+                ),
             ])}
             disabled={disabled}
             onClick={onClick}
