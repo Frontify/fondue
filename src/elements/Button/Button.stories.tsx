@@ -39,6 +39,7 @@ withIcon.args = {
     disabled: false,
     size: Size.Medium,
     style: Style.Primary,
+    solid: true,
     icon: <Icons />,
 };
 
@@ -50,6 +51,7 @@ withIconAndLabel.args = {
     disabled: false,
     size: Size.Medium,
     style: Style.Primary,
+    solid: true,
     icon: <Icons />,
     children: "Button Text",
 };
