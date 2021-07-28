@@ -21,7 +21,7 @@ describe("Badge component", () => {
         cy.get(BADGE_ID).contains(BADGE_TEXT);
     });
 
-    it(`renders the stauts dot`, () => {
+    it(`renders the status dot`, () => {
         mount(<Badge status={Style.Success}>{BADGE_TEXT}</Badge>);
 
         cy.get(BADGE_STATUS_ID).should("exist");
