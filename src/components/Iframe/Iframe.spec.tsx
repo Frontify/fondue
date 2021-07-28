@@ -5,23 +5,28 @@ import Iframe, { IframeBorder, IframeHeight, IframePointerEvents } from "./Ifram
 import css from "./Iframe.module.css";
 
 const src = "https://www.external-url.com";
+const title = "External URL";
 
 describe("Iframe component", () => {
     it("renders", () => {
-        mount(<Iframe src={src} />);
+        mount(<Iframe title={title} src={src} />);
         cy.get("iframe").should("have.class", css.iframe);
         cy.get("iframe").should("have.attr", "src").and("eq", src);
+        cy.get("iframe").should("eq", "attr.title", title);
     });
     it("has borders", () => {
-        mount(<Iframe src={src} border={IframeBorder.Default} />);
+        mount(<Iframe title={title} src={src} border={IframeBorder.Default} />);
         cy.get("iframe").should("have.class", css.borderDefault);
+        cy.get("iframe").should("eq", "attr.title", title);
     });
     it("has a small height", () => {
-        mount(<Iframe src={src} height={IframeHeight.Small} />);
+        mount(<Iframe title={title} src={src} height={IframeHeight.Small} />);
         cy.get("iframe").should("have.class", css.heightSmall);
+        cy.get("iframe").should("eq", "attr.title", title);
     });
     it("has pointerEvents", () => {
-        mount(<Iframe src={src} pointerEvents={IframePointerEvents.None} />);
+        mount(<Iframe title={title} src={src} pointerEvents={IframePointerEvents.None} />);
         cy.get("iframe").should("have.class", css.pointerEventsNone);
+        cy.get("iframe").should("eq", "attr.title", title);
     });
 });
