@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import Button, { Size, Style } from "./Button";
 import { ReactComponent as Icons } from "@elements/Icon/Svg/Icons.svg";
+import Button, { Size, Style } from "./Button";
 
 const BUTTON_TEXT = "Frontify";
 const BUTTON_ID = "[data-test-id=button]";
@@ -12,9 +12,9 @@ const sizes = Object.values(Size);
 const solids = [true, false];
 
 describe("Button component", () => {
-    styles.map((style) => {
-        sizes.map((size) => {
-            solids.map((solid) => {
+    styles.forEach((style) => {
+        sizes.forEach((size) => {
+            solids.forEach((solid) => {
                 it(`renders in ${style} ${size} and ${solid ? "solid" : "translucent"} with only text.`, () => {
                     mount(
                         <Button style={style} size={size} solid={solid}>
