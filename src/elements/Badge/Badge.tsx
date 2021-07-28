@@ -1,22 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconProps, IconSize } from "@elements/Icon/Icon";
-import { Style } from "@utilities/enum";
 import { merge } from "@utilities/merge";
 import { cloneElement, FC, PropsWithChildren, ReactElement } from "react";
 
-type StatusStyle = Style.Success | Style.Progress | Style.Warning | Style.Danger;
+export enum BadgeStatus {
+    Positive = "Positive",
+    Progress = "Progress",
+    Warning = "Warning",
+    Danger = "Danger",
+}
 
-const statusClasses: Record<StatusStyle, string> = {
-    [Style.Success]: "bg-green-60",
-    [Style.Progress]: "bg-violet-60",
-    [Style.Warning]: "bg-yellow-60",
-    [Style.Danger]: "bg-red-60",
+const statusClasses: Record<BadgeStatus, string> = {
+    [BadgeStatus.Positive]: "bg-green-60",
+    [BadgeStatus.Progress]: "bg-violet-60",
+    [BadgeStatus.Warning]: "bg-yellow-60",
+    [BadgeStatus.Danger]: "bg-red-60",
 };
 
 export type BadgeProps = PropsWithChildren<{
     icon?: ReactElement<IconProps>;
-    status?: StatusStyle;
+    status?: BadgeStatus;
 }>;
 
 const Badge: FC<BadgeProps> = ({ children, status, icon }: BadgeProps) => {
@@ -25,22 +29,23 @@ const Badge: FC<BadgeProps> = ({ children, status, icon }: BadgeProps) => {
     }
 
     return (
-        <div
-            className={merge([
-                "h-6 bg-black-10 box-border text-black-80 dark:bg-black-100 dark:text-white inline-flex flex-auto gap-1 items-center justify-center rounded-full font-sans text-xxs font-normal text-center",
-                (status && !icon && !children) || (!status && icon && !children) ? "w-6" : "px-2 py-1",
-            ])}
-            data-test-id="badge"
-        >
-            {status && (
-                <i
-                    data-test-id="badge-status"
-                    className={`inline-block w-2 h-2 rounded-full ${statusClasses[status]}`}
-                />
-            )}
-            {icon && <span data-test-id="badge-icon">{cloneElement(icon, { size: IconSize.Size12 })}</span>}
-            {children}
-        </div>
+        // This `inline-block` and the `float-left` on the child `<span>` was added, to remove
+        // a 1px space before this component when using without the `icon`-prop
+        <span className="inline-block">
+            <span
+                className={merge([
+                    "float-left h-6 bg-black-10 text-black-80 dark:bg-black-100 dark:text-white inline-flex items-center justify-center rounded-full",
+                    !children && (!status || !icon) ? "w-6" : "gap-x-1 pl-2 pr-[0.625rem]",
+                ])}
+                data-test-id="badge"
+            >
+                {status && (
+                    <span data-test-id="badge-status" className={`w-2 h-2 rounded-full ${statusClasses[status]}`} />
+                )}
+                {icon && <span data-test-id="badge-icon">{cloneElement(icon, { size: IconSize.Size12 })}</span>}
+                <span className="text-center text-xxs font-sans font-normal">{children}</span>
+            </span>
+        </span>
     );
 };
 

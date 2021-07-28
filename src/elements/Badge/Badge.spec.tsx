@@ -3,8 +3,7 @@
 import { mount } from "@cypress/react";
 import { IconSize } from "@elements/Icon/Icon";
 import { ReactComponent as IconDocument } from "@elements/Icon/Svg/Document.svg";
-import { Style } from "@utilities/enum";
-import Badge from "./Badge";
+import Badge, { BadgeStatus } from "./Badge";
 
 const BADGE_TEXT = "Frontify";
 const BADGE_ID = "[data-test-id=badge]";
@@ -22,7 +21,7 @@ describe("Badge component", () => {
     });
 
     it(`renders the status dot`, () => {
-        mount(<Badge status={Style.Success}>{BADGE_TEXT}</Badge>);
+        mount(<Badge status={BadgeStatus.Positive}>{BADGE_TEXT}</Badge>);
 
         cy.get(BADGE_STATUS_ID).should("exist");
     });
