@@ -18,9 +18,9 @@ export enum Size {
 }
 
 const sizeClasses: Record<Size, string> = {
-    [Size.Small]: "px-3 py-1 text-xs",
-    [Size.Medium]: "px-4 py-2 text-s",
-    [Size.Large]: "px-6 py-3 text-m",
+    [Size.Small]: "px-3 h-6 text-xs",
+    [Size.Medium]: "px-4 h-8 text-s",
+    [Size.Large]: "px-6 h-11 text-m",
 };
 
 const iconOnlySizeClasses: Record<Size, string> = {
@@ -73,7 +73,7 @@ export type ButtonProps = {
 
 export default function Button({
     style = Style.Primary,
-    size = Size.Small,
+    size = Size.Medium,
     solid = true,
     disabled = false,
     icon,
@@ -86,7 +86,7 @@ export default function Button({
         <button
             className={merge([
                 "outline-none relative flex items-center justify-center border-0 rounded cursor-pointer font-sans transition-colors",
-                icon ? iconOnlySizeClasses[size] : sizeClasses[size],
+                icon && !children ? iconOnlySizeClasses[size] : sizeClasses[size],
                 merge(
                     disabled
                         ? [
