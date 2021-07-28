@@ -78,6 +78,7 @@
         "cypress": "^7.7.0",
         "esbuild": "^0.12.15",
         "eslint": "^7.30.0",
+        "eslint-plugin-jsx-a11y": "^6.4.1",
         "fast-glob": "^3.2.7",
         "husky": "^7.0.1",
         "is-ci": "^3.0.0",
