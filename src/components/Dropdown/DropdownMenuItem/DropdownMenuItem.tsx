@@ -20,6 +20,7 @@ export default function DropdownMenuItem({
     active = false,
     selectionIndicator = SelectionIndicatorIcon.Check,
 }: DropdownMenuItemProps): ReactElement<DropdownMenuItemProps> {
+    /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/role-supports-aria-props,jsx-a11y/no-noninteractive-tabindex */
     return (
         <li
             data-test-id="dropdown-menu-item"
@@ -40,4 +41,5 @@ export default function DropdownMenuItem({
             />
         </li>
     );
+    /* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/role-supports-aria-props,jsx-a11y/no-noninteractive-tabindex */
 }

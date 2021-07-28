@@ -33,6 +33,7 @@ export default function TreeNode({
     const [showNodes, setShowNodes] = useState(false);
     const selected = id === activeNodeId;
 
+    /* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
     return (
         <li data-test-id="node">
             <a
@@ -97,4 +98,5 @@ export default function TreeNode({
             )}
         </li>
     );
+    /* eslint-enable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 }

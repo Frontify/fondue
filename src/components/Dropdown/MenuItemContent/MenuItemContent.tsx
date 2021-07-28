@@ -46,6 +46,7 @@ export default function MenuItemContent({
     selectionIndicator = SelectionIndicatorIcon.Check,
 }: MenuItemContentProps): ReactElement<MenuItemContentProps> {
     const isDanger = style === Style.Danger;
+    /* eslint-disable jsx-a11y/no-noninteractive-tabindex,jsx-a11y/tabindex-no-positive */
     return (
         <div
             data-test-id={icon !== undefined ? "dropdown-menu-item-icon" : "dropdown-menu-item-text"}
@@ -82,4 +83,5 @@ export default function MenuItemContent({
                 ))}
         </div>
     );
+    /* eslint-enable jsx-a11y/no-noninteractive-tabindex,jsx-a11y/tabindex-no-positive */
 }
