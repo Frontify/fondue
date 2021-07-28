@@ -2,6 +2,12 @@ module.exports = {
     mode: "jit",
     purge: ["./src/**/*.tsx", "./src/**/*.js"],
     darkMode: "class",
+    variants: {
+        extend: {
+            backgroundColor: ["active"],
+            textColor: ["active"],
+        },
+    },
     theme: {
         extend: {
             outline: {
@@ -62,6 +68,7 @@ module.exports = {
             },
             green: {
                 90: "#006452",
+                75: "#00866E",
                 70: "#00a084",
                 60: "#00c8a5",
                 50: "#80dbb7",
@@ -81,6 +88,7 @@ module.exports = {
             red: {
                 90: "#992136",
                 70: "#cc2c48",
+                65: "#E52144",
                 60: "#ff375a",
                 50: "#ff8066",
                 40: "#e1c4be",

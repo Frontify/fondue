@@ -1,6 +1,6 @@
-import { addons } from '@storybook/addons';
-import frontifyTheme from './frontifyTheme';
+import { addons } from "@storybook/addons";
+import { light } from "./frontifyTheme";
 
 addons.setConfig({
-    theme: frontifyTheme,
+    theme: light,
 });

@@ -1,25 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactComponent as IconCaretLeft } from "@elements/Icon/Svg/CaretLeft.svg";
+import { ReactComponent as Icons } from "@elements/Icon/Svg/Icons.svg";
 import { Meta, Story } from "@storybook/react";
-import { Size, Style } from "@utilities/enum";
-import Button, { ButtonProps } from "./Button";
+import Button, { ButtonProps, Size, Style } from "./Button";
 
 export default {
     title: "Elements/Button",
     component: Button,
-    args: {
-        disabled: false,
-        size: Size.Small,
-        style: Style.Primary,
-    },
     argTypes: {
         size: {
-            options: [Size.Small, Size.Large],
+            options: [Size.Small, Size.Medium, Size.Large],
             control: { type: "radio" },
         },
-        variant: {
-            options: [Style.Primary, Style.Secondary, Style.Danger],
+        style: {
+            options: [Style.Primary, Style.Secondary, Style.Danger, Style.Positive],
             control: { type: "select" },
         },
         onClick: { action: "onClick" },
@@ -30,15 +24,36 @@ const ButtonTemplate: Story<ButtonProps> = (args) => <Button {...args} />;
 
 export const Default = ButtonTemplate.bind({});
 Default.args = {
-    children: "Button",
+    children: "Button Text",
+    disabled: false,
+    size: Size.Medium,
+    solid: true,
+    style: Style.Primary,
 };
 
+Default.storyName = "Text Label Only";
+
 export const withIcon = ButtonTemplate.bind({});
+
 withIcon.args = {
-    children: (
-        <>
-            <IconCaretLeft />
-            Ok
-        </>
-    ),
+    disabled: false,
+    size: Size.Medium,
+    style: Style.Primary,
+    solid: true,
+    icon: <Icons />,
 };
+
+withIcon.storyName = "Icon Only";
+
+export const withIconAndLabel = ButtonTemplate.bind({});
+
+withIconAndLabel.args = {
+    disabled: false,
+    size: Size.Medium,
+    style: Style.Primary,
+    solid: true,
+    icon: <Icons />,
+    children: "Button Text",
+};
+
+withIconAndLabel.storyName = "Icon and Text Label";
