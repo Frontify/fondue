@@ -72,7 +72,7 @@ export type ButtonProps = {
 };
 
 export default function Button({
-    style = Style.Secondary,
+    style = Style.Primary,
     size = Size.Small,
     solid = true,
     disabled = false,
