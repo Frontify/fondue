@@ -2,7 +2,7 @@
 
 import { Size } from "@elements/Button/Button";
 import { merge } from "@utilities/merge";
-import { Children, isValidElement, ReactElement, ReactNode, useMemo } from "react";
+import { Children, cloneElement, isValidElement, ReactElement, ReactNode, useMemo } from "react";
 
 export type ButtonGroupProps = { children: ReactNode };
 
@@ -43,9 +43,13 @@ export default function ButtonGroup({ children }: ButtonGroupProps): ReactElemen
 
     return (
         <div data-test-id="button-group" className="display inline-flex flex-row">
-            {Children.map(children, (child) => (
-                <span className={merge(["last:mr-0", spacing[size]])}>{child}</span>
-            ))}
+            {Children.map(children, (child) => {
+                if (!isValidElement(child)) {
+                    return null;
+                }
+
+                return <span className={merge(["last:mr-0", spacing[size]])}>{cloneElement(child, { size })}</span>;
+            })}
         </div>
     );
 }
