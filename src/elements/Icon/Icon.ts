@@ -8,3 +8,7 @@ export enum IconSize {
     Size24 = "Size24",
     Size32 = "Size32",
 }
+
+export type IconProps = {
+    size?: IconSize;
+};
