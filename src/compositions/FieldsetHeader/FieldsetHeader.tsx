@@ -81,6 +81,7 @@ export default function FieldsetHeader({
 
     return (
         <header
+            data-test-id="fieldset-header"
             role="button"
             onClick={onClick}
             onKeyPress={onClick}
