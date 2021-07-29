@@ -3,6 +3,7 @@ import Badge from "./elements/Badge/Badge";
 import BaseActions from "./components/Modal/Actions/BaseActions";
 import Breadcrumb from "./components/Breadcrumb/Breadcrumb";
 import Button from "./elements/Button/Button";
+import ButtonGroup from "./compositions/ButtonGroup/ButtonGroup";
 import Card from "./components/Card/Card";
 import Checkbox from "./elements/Checkbox/Checkbox";
 import Divider from "./elements/Divider/Divider";
@@ -11,9 +12,234 @@ import DropdownMenu from "./components/Dropdown/DropdownMenu/DropdownMenu";
 import DropdownMenuItem from "./components/Dropdown/DropdownMenuItem/DropdownMenuItem";
 import FormControl from "./compositions/FormControl/FormControl";
 import FrontifyImage from "./components/Image/FrontifyImage";
+import IconAcademy from "./elements/Icon/Generated/IconAcademy";
+import IconActions from "./elements/Icon/Generated/IconActions";
+import IconActivities from "./elements/Icon/Generated/IconActivities";
+import IconActivity from "./elements/Icon/Generated/IconActivity";
+import IconAdd from "./elements/Icon/Generated/IconAdd";
+import IconAddSimple from "./elements/Icon/Generated/IconAddSimple";
+import IconAddToCollection from "./elements/Icon/Generated/IconAddToCollection";
+import IconAdobeCreativeCloud from "./elements/Icon/Generated/IconAdobeCreativeCloud";
+import IconAlignBottom from "./elements/Icon/Generated/IconAlignBottom";
+import IconAlignCenter from "./elements/Icon/Generated/IconAlignCenter";
+import IconAlignLeft from "./elements/Icon/Generated/IconAlignLeft";
+import IconAlignMiddle from "./elements/Icon/Generated/IconAlignMiddle";
+import IconAlignRight from "./elements/Icon/Generated/IconAlignRight";
+import IconAlignTop from "./elements/Icon/Generated/IconAlignTop";
+import IconAnalytics from "./elements/Icon/Generated/IconAnalytics";
+import IconAngleDown from "./elements/Icon/Generated/IconAngleDown";
+import IconAnimalsNature from "./elements/Icon/Generated/IconAnimalsNature";
+import IconAnnotations from "./elements/Icon/Generated/IconAnnotations";
+import IconAppearance from "./elements/Icon/Generated/IconAppearance";
+import IconApprove from "./elements/Icon/Generated/IconApprove";
+import IconArrowDown from "./elements/Icon/Generated/IconArrowDown";
+import IconArrowLeft from "./elements/Icon/Generated/IconArrowLeft";
+import IconArrowRight from "./elements/Icon/Generated/IconArrowRight";
+import IconArrowUp from "./elements/Icon/Generated/IconArrowUp";
+import IconAssets from "./elements/Icon/Generated/IconAssets";
+import IconAttachment from "./elements/Icon/Generated/IconAttachment";
+import IconAttentionFilled from "./elements/Icon/Generated/IconAttentionFilled";
+import IconAttributes from "./elements/Icon/Generated/IconAttributes";
+import IconAudio from "./elements/Icon/Generated/IconAudio";
+import IconBackward5Seconds from "./elements/Icon/Generated/IconBackward5Seconds";
+import IconBold from "./elements/Icon/Generated/IconBold";
+import IconBookmark from "./elements/Icon/Generated/IconBookmark";
+import IconBrand from "./elements/Icon/Generated/IconBrand";
+import IconBriefing from "./elements/Icon/Generated/IconBriefing";
+import IconBuilder from "./elements/Icon/Generated/IconBuilder";
+import IconCalendar from "./elements/Icon/Generated/IconCalendar";
+import IconCallout from "./elements/Icon/Generated/IconCallout";
+import IconCampaign from "./elements/Icon/Generated/IconCampaign";
+import IconCampaignActivity from "./elements/Icon/Generated/IconCampaignActivity";
+import IconCards from "./elements/Icon/Generated/IconCards";
+import IconCaretDown from "./elements/Icon/Generated/IconCaretDown";
+import IconCaretLeft from "./elements/Icon/Generated/IconCaretLeft";
+import IconCaretRight from "./elements/Icon/Generated/IconCaretRight";
+import IconCaretUp from "./elements/Icon/Generated/IconCaretUp";
+import IconCenter from "./elements/Icon/Generated/IconCenter";
+import IconCheck from "./elements/Icon/Generated/IconCheck";
+import IconCheckFilled from "./elements/Icon/Generated/IconCheckFilled";
+import IconCircle from "./elements/Icon/Generated/IconCircle";
+import IconCollapse from "./elements/Icon/Generated/IconCollapse";
+import IconCollectionLarge from "./elements/Icon/Generated/IconCollectionLarge";
+import IconCollectionMedium from "./elements/Icon/Generated/IconCollectionMedium";
+import IconCollectionSmall from "./elements/Icon/Generated/IconCollectionSmall";
+import IconColors from "./elements/Icon/Generated/IconColors";
+import IconColorScale from "./elements/Icon/Generated/IconColorScale";
+import IconColorScaleSmall from "./elements/Icon/Generated/IconColorScaleSmall";
+import IconColorScaleTall from "./elements/Icon/Generated/IconColorScaleTall";
+import IconColorSwatch from "./elements/Icon/Generated/IconColorSwatch";
+import IconColumnBreak from "./elements/Icon/Generated/IconColumnBreak";
+import IconCopyToClipboard from "./elements/Icon/Generated/IconCopyToClipboard";
+import IconCrop from "./elements/Icon/Generated/IconCrop";
+import IconCut from "./elements/Icon/Generated/IconCut";
+import IconDivider from "./elements/Icon/Generated/IconDivider";
+import IconDocument from "./elements/Icon/Generated/IconDocument";
+import IconDocumentLibrary from "./elements/Icon/Generated/IconDocumentLibrary";
+import IconDoDontsStrikethrough from "./elements/Icon/Generated/IconDoDontsStrikethrough";
+import IconDoDontsUnderline from "./elements/Icon/Generated/IconDoDontsUnderline";
+import IconDosImages from "./elements/Icon/Generated/IconDosImages";
+import IconDosText from "./elements/Icon/Generated/IconDosText";
+import IconDownload from "./elements/Icon/Generated/IconDownload";
+import IconDownloadAlternative from "./elements/Icon/Generated/IconDownloadAlternative";
+import IconDrops from "./elements/Icon/Generated/IconDrops";
+import IconDuplicate from "./elements/Icon/Generated/IconDuplicate";
+import IconEmojiHappy from "./elements/Icon/Generated/IconEmojiHappy";
+import IconEmojiHappyFilled from "./elements/Icon/Generated/IconEmojiHappyFilled";
+import IconEmojiNeutral from "./elements/Icon/Generated/IconEmojiNeutral";
+import IconEmojiNeutralFilled from "./elements/Icon/Generated/IconEmojiNeutralFilled";
+import IconEmojiUnhappy from "./elements/Icon/Generated/IconEmojiUnhappy";
+import IconEmojiUnhappyFilled from "./elements/Icon/Generated/IconEmojiUnhappyFilled";
+import IconExpand from "./elements/Icon/Generated/IconExpand";
+import IconExternalAsset from "./elements/Icon/Generated/IconExternalAsset";
+import IconExternalLink from "./elements/Icon/Generated/IconExternalLink";
+import IconFeedback from "./elements/Icon/Generated/IconFeedback";
+import IconFigureTextBottom from "./elements/Icon/Generated/IconFigureTextBottom";
+import IconFigureTextLeft from "./elements/Icon/Generated/IconFigureTextLeft";
+import IconFigureTextRight from "./elements/Icon/Generated/IconFigureTextRight";
+import IconFigureTextTop from "./elements/Icon/Generated/IconFigureTextTop";
+import IconFile from "./elements/Icon/Generated/IconFile";
+import IconFiletype from "./elements/Icon/Generated/IconFiletype";
+import IconFilter from "./elements/Icon/Generated/IconFilter";
+import IconFitToScreen from "./elements/Icon/Generated/IconFitToScreen";
+import IconFlags from "./elements/Icon/Generated/IconFlags";
+import IconFocalPoint from "./elements/Icon/Generated/IconFocalPoint";
+import IconFolder from "./elements/Icon/Generated/IconFolder";
+import IconFolderUp from "./elements/Icon/Generated/IconFolderUp";
+import IconFont from "./elements/Icon/Generated/IconFont";
+import IconFontKit from "./elements/Icon/Generated/IconFontKit";
+import IconFoodDrink from "./elements/Icon/Generated/IconFoodDrink";
+import IconForward5Seconds from "./elements/Icon/Generated/IconForward5Seconds";
+import IconFrequentlyUsed from "./elements/Icon/Generated/IconFrequentlyUsed";
+import IconFullwidth from "./elements/Icon/Generated/IconFullwidth";
+import IconGeneral from "./elements/Icon/Generated/IconGeneral";
+import IconGenericPost from "./elements/Icon/Generated/IconGenericPost";
+import IconGuidelines from "./elements/Icon/Generated/IconGuidelines";
+import IconHeader from "./elements/Icon/Generated/IconHeader";
+import IconIcons from "./elements/Icon/Generated/IconIcons";
+import IconIframe from "./elements/Icon/Generated/IconIframe";
+import IconImage from "./elements/Icon/Generated/IconImage";
+import IconImageFigure from "./elements/Icon/Generated/IconImageFigure";
+import IconImageGrid2 from "./elements/Icon/Generated/IconImageGrid2";
+import IconImageGrid3 from "./elements/Icon/Generated/IconImageGrid3";
+import IconImageGrid4 from "./elements/Icon/Generated/IconImageGrid4";
+import IconImageLibrary from "./elements/Icon/Generated/IconImageLibrary";
+import IconImageTextRatio25 from "./elements/Icon/Generated/IconImageTextRatio25";
+import IconImageTextRatio50 from "./elements/Icon/Generated/IconImageTextRatio50";
+import IconImageTextRatio75 from "./elements/Icon/Generated/IconImageTextRatio75";
+import IconIndesign from "./elements/Icon/Generated/IconIndesign";
+import IconInfo from "./elements/Icon/Generated/IconInfo";
+import IconIntegration from "./elements/Icon/Generated/IconIntegration";
+import IconIntegrations from "./elements/Icon/Generated/IconIntegrations";
+import IconInteractions from "./elements/Icon/Generated/IconInteractions";
+import IconItalic from "./elements/Icon/Generated/IconItalic";
+import IconLightning from "./elements/Icon/Generated/IconLightning";
+import IconLightningFilled from "./elements/Icon/Generated/IconLightningFilled";
+import IconLink from "./elements/Icon/Generated/IconLink";
+import IconLock from "./elements/Icon/Generated/IconLock";
+import IconLogo from "./elements/Icon/Generated/IconLogo";
+import IconLogoGrid from "./elements/Icon/Generated/IconLogoGrid";
+import IconLogout from "./elements/Icon/Generated/IconLogout";
+import IconMarkArea from "./elements/Icon/Generated/IconMarkArea";
+import IconMeasurements from "./elements/Icon/Generated/IconMeasurements";
+import IconMedia from "./elements/Icon/Generated/IconMedia";
+import IconMegamenu from "./elements/Icon/Generated/IconMegamenu";
+import IconMetadata from "./elements/Icon/Generated/IconMetadata";
+import IconMinus from "./elements/Icon/Generated/IconMinus";
+import IconModules from "./elements/Icon/Generated/IconModules";
+import IconMore from "./elements/Icon/Generated/IconMore";
+import IconMove from "./elements/Icon/Generated/IconMove";
+import IconMovePage from "./elements/Icon/Generated/IconMovePage";
+import IconNotifications from "./elements/Icon/Generated/IconNotifications";
+import IconObjects from "./elements/Icon/Generated/IconObjects";
+import IconOpenLock from "./elements/Icon/Generated/IconOpenLock";
+import IconOpenLockFilled from "./elements/Icon/Generated/IconOpenLockFilled";
+import IconOrderedList from "./elements/Icon/Generated/IconOrderedList";
+import IconOrientation from "./elements/Icon/Generated/IconOrientation";
+import IconPatternLibrary from "./elements/Icon/Generated/IconPatternLibrary";
+import IconPause from "./elements/Icon/Generated/IconPause";
+import IconPen from "./elements/Icon/Generated/IconPen";
+import IconPills from "./elements/Icon/Generated/IconPills";
+import IconPlanning from "./elements/Icon/Generated/IconPlanning";
+import IconPlay from "./elements/Icon/Generated/IconPlay";
+import IconPlus from "./elements/Icon/Generated/IconPlus";
+import IconPointOut from "./elements/Icon/Generated/IconPointOut";
+import IconPolygon from "./elements/Icon/Generated/IconPolygon";
+import IconProcessing from "./elements/Icon/Generated/IconProcessing";
+import IconProjects from "./elements/Icon/Generated/IconProjects";
+import IconPublication from "./elements/Icon/Generated/IconPublication";
+import IconQuestion from "./elements/Icon/Generated/IconQuestion";
+import IconQuote from "./elements/Icon/Generated/IconQuote";
+import IconRectangle from "./elements/Icon/Generated/IconRectangle";
+import IconRefresh from "./elements/Icon/Generated/IconRefresh";
+import IconReject from "./elements/Icon/Generated/IconReject";
+import IconRejectCircle from "./elements/Icon/Generated/IconRejectCircle";
+import IconRejectFilled from "./elements/Icon/Generated/IconRejectFilled";
+import IconRevert from "./elements/Icon/Generated/IconRevert";
+import IconRevisions from "./elements/Icon/Generated/IconRevisions";
+import IconRocket from "./elements/Icon/Generated/IconRocket";
+import IconSearch from "./elements/Icon/Generated/IconSearch";
+import IconSection from "./elements/Icon/Generated/IconSection";
+import IconSettings from "./elements/Icon/Generated/IconSettings";
+import IconShare from "./elements/Icon/Generated/IconShare";
+import IconSide from "./elements/Icon/Generated/IconSide";
+import IconSketch from "./elements/Icon/Generated/IconSketch";
+import IconSmileysPeople from "./elements/Icon/Generated/IconSmileysPeople";
+import IconSnippet from "./elements/Icon/Generated/IconSnippet";
+import IconSpinner from "./elements/Icon/Generated/IconSpinner";
+import IconStar from "./elements/Icon/Generated/IconStar";
+import IconStarFilled from "./elements/Icon/Generated/IconStarFilled";
+import IconStorybook from "./elements/Icon/Generated/IconStorybook";
+import IconSubmit from "./elements/Icon/Generated/IconSubmit";
+import IconSymbols from "./elements/Icon/Generated/IconSymbols";
+import IconTable from "./elements/Icon/Generated/IconTable";
+import IconTag from "./elements/Icon/Generated/IconTag";
+import IconTarget from "./elements/Icon/Generated/IconTarget";
+import IconTeam from "./elements/Icon/Generated/IconTeam";
+import IconTeamO from "./elements/Icon/Generated/IconTeamO";
+import IconTemplate from "./elements/Icon/Generated/IconTemplate";
+import IconTemplates from "./elements/Icon/Generated/IconTemplates";
+import IconText from "./elements/Icon/Generated/IconText";
+import IconTextAlignCenter from "./elements/Icon/Generated/IconTextAlignCenter";
+import IconTextAlignJustify from "./elements/Icon/Generated/IconTextAlignJustify";
+import IconTextAlignLeft from "./elements/Icon/Generated/IconTextAlignLeft";
+import IconTextAlignRight from "./elements/Icon/Generated/IconTextAlignRight";
+import IconTextLibrary from "./elements/Icon/Generated/IconTextLibrary";
+import IconTextMultiColumn from "./elements/Icon/Generated/IconTextMultiColumn";
+import IconTextSnippet from "./elements/Icon/Generated/IconTextSnippet";
+import IconTimeline from "./elements/Icon/Generated/IconTimeline";
+import IconTransfer from "./elements/Icon/Generated/IconTransfer";
+import IconTrash from "./elements/Icon/Generated/IconTrash";
+import IconTrashOpen from "./elements/Icon/Generated/IconTrashOpen";
+import IconTravelPlaces from "./elements/Icon/Generated/IconTravelPlaces";
+import IconTriangle from "./elements/Icon/Generated/IconTriangle";
+import IconTruck from "./elements/Icon/Generated/IconTruck";
+import IconTypography from "./elements/Icon/Generated/IconTypography";
+import IconTypostyles from "./elements/Icon/Generated/IconTypostyles";
+import IconUiPattern from "./elements/Icon/Generated/IconUiPattern";
+import IconUnderline from "./elements/Icon/Generated/IconUnderline";
+import IconUnknown from "./elements/Icon/Generated/IconUnknown";
+import IconUnknownSimple from "./elements/Icon/Generated/IconUnknownSimple";
+import IconUnorderedList from "./elements/Icon/Generated/IconUnorderedList";
+import IconUpload from "./elements/Icon/Generated/IconUpload";
+import IconUploadAlternative from "./elements/Icon/Generated/IconUploadAlternative";
+import IconUploadDoImages from "./elements/Icon/Generated/IconUploadDoImages";
+import IconUploadDontImages from "./elements/Icon/Generated/IconUploadDontImages";
+import IconUser from "./elements/Icon/Generated/IconUser";
+import IconUserO from "./elements/Icon/Generated/IconUserO";
+import IconVideo from "./elements/Icon/Generated/IconVideo";
+import IconVideoFullscreen from "./elements/Icon/Generated/IconVideoFullscreen";
+import IconView from "./elements/Icon/Generated/IconView";
+import IconViewSlash from "./elements/Icon/Generated/IconViewSlash";
+import IconVimeo from "./elements/Icon/Generated/IconVimeo";
+import IconVolumeOff from "./elements/Icon/Generated/IconVolumeOff";
+import IconVolumeOn from "./elements/Icon/Generated/IconVolumeOn";
+import IconWorkflow from "./elements/Icon/Generated/IconWorkflow";
+import IconZoom from "./elements/Icon/Generated/IconZoom";
 import Iframe from "./components/Iframe/Iframe";
 import Image from "./components/Image/Image";
 import InputLabel from "./elements/InputLabel/InputLabel";
+import MenuItemContent from "./components/Dropdown/MenuItemContent/MenuItemContent";
 import Modal from "./components/Modal/Modal";
 import ModalPortal from "./components/Modal/ModalPortal";
 import Node from "./components/Tree/Node";
@@ -32,230 +258,6 @@ import Textarea from "./elements/Textarea/Textarea";
 import TextInput from "./elements/TextInput/TextInput";
 import Tooltip from "./components/Tooltip/Tooltip";
 import Tree from "./components/Tree/Tree";
-import { ReactComponent as IconAcademy } from "./elements/Icon/Svg/Academy.svg";
-import { ReactComponent as IconActions } from "./elements/Icon/Svg/Actions.svg";
-import { ReactComponent as IconActivities } from "./elements/Icon/Svg/Activities.svg";
-import { ReactComponent as IconActivity } from "./elements/Icon/Svg/Activity.svg";
-import { ReactComponent as IconAdd } from "./elements/Icon/Svg/Add.svg";
-import { ReactComponent as IconAddSimple } from "./elements/Icon/Svg/AddSimple.svg";
-import { ReactComponent as IconAddToCollection } from "./elements/Icon/Svg/AddToCollection.svg";
-import { ReactComponent as IconAdobeCreativeCloud } from "./elements/Icon/Svg/AdobeCreativeCloud.svg";
-import { ReactComponent as IconAlignBottom } from "./elements/Icon/Svg/AlignBottom.svg";
-import { ReactComponent as IconAlignCenter } from "./elements/Icon/Svg/AlignCenter.svg";
-import { ReactComponent as IconAlignLeft } from "./elements/Icon/Svg/AlignLeft.svg";
-import { ReactComponent as IconAlignMiddle } from "./elements/Icon/Svg/AlignMiddle.svg";
-import { ReactComponent as IconAlignRight } from "./elements/Icon/Svg/AlignRight.svg";
-import { ReactComponent as IconAlignTop } from "./elements/Icon/Svg/AlignTop.svg";
-import { ReactComponent as IconAnalytics } from "./elements/Icon/Svg/Analytics.svg";
-import { ReactComponent as IconAngleDown } from "./elements/Icon/Svg/AngleDown.svg";
-import { ReactComponent as IconAnimalsNature } from "./elements/Icon/Svg/AnimalsNature.svg";
-import { ReactComponent as IconAnnotations } from "./elements/Icon/Svg/Annotations.svg";
-import { ReactComponent as IconAppearance } from "./elements/Icon/Svg/Appearance.svg";
-import { ReactComponent as IconApprove } from "./elements/Icon/Svg/Approve.svg";
-import { ReactComponent as IconArrowDown } from "./elements/Icon/Svg/ArrowDown.svg";
-import { ReactComponent as IconArrowLeft } from "./elements/Icon/Svg/ArrowLeft.svg";
-import { ReactComponent as IconArrowRight } from "./elements/Icon/Svg/ArrowRight.svg";
-import { ReactComponent as IconArrowUp } from "./elements/Icon/Svg/ArrowUp.svg";
-import { ReactComponent as IconAssets } from "./elements/Icon/Svg/Assets.svg";
-import { ReactComponent as IconAttachment } from "./elements/Icon/Svg/Attachment.svg";
-import { ReactComponent as IconAttentionFilled } from "./elements/Icon/Svg/AttentionFilled.svg";
-import { ReactComponent as IconAttributes } from "./elements/Icon/Svg/Attributes.svg";
-import { ReactComponent as IconAudio } from "./elements/Icon/Svg/Audio.svg";
-import { ReactComponent as IconBackward5Seconds } from "./elements/Icon/Svg/Backward5Seconds.svg";
-import { ReactComponent as IconBold } from "./elements/Icon/Svg/Bold.svg";
-import { ReactComponent as IconBookmark } from "./elements/Icon/Svg/Bookmark.svg";
-import { ReactComponent as IconBrand } from "./elements/Icon/Svg/Brand.svg";
-import { ReactComponent as IconBriefing } from "./elements/Icon/Svg/Briefing.svg";
-import { ReactComponent as IconBuilder } from "./elements/Icon/Svg/Builder.svg";
-import { ReactComponent as IconCalendar } from "./elements/Icon/Svg/Calendar.svg";
-import { ReactComponent as IconCallout } from "./elements/Icon/Svg/Callout.svg";
-import { ReactComponent as IconCampaign } from "./elements/Icon/Svg/Campaign.svg";
-import { ReactComponent as IconCampaignActivity } from "./elements/Icon/Svg/CampaignActivity.svg";
-import { ReactComponent as IconCards } from "./elements/Icon/Svg/Cards.svg";
-import { ReactComponent as IconCaretDown } from "./elements/Icon/Svg/CaretDown.svg";
-import { ReactComponent as IconCaretLeft } from "./elements/Icon/Svg/CaretLeft.svg";
-import { ReactComponent as IconCaretRight } from "./elements/Icon/Svg/CaretRight.svg";
-import { ReactComponent as IconCaretUp } from "./elements/Icon/Svg/CaretUp.svg";
-import { ReactComponent as IconCenter } from "./elements/Icon/Svg/Center.svg";
-import { ReactComponent as IconCheck } from "./elements/Icon/Svg/Check.svg";
-import { ReactComponent as IconCheckFilled } from "./elements/Icon/Svg/CheckFilled.svg";
-import { ReactComponent as IconCircle } from "./elements/Icon/Svg/Circle.svg";
-import { ReactComponent as IconCollapse } from "./elements/Icon/Svg/Collapse.svg";
-import { ReactComponent as IconCollectionLarge } from "./elements/Icon/Svg/CollectionLarge.svg";
-import { ReactComponent as IconCollectionMedium } from "./elements/Icon/Svg/CollectionMedium.svg";
-import { ReactComponent as IconCollectionSmall } from "./elements/Icon/Svg/CollectionSmall.svg";
-import { ReactComponent as IconColors } from "./elements/Icon/Svg/Colors.svg";
-import { ReactComponent as IconColorScale } from "./elements/Icon/Svg/ColorScale.svg";
-import { ReactComponent as IconColorScaleSmall } from "./elements/Icon/Svg/ColorScaleSmall.svg";
-import { ReactComponent as IconColorScaleTall } from "./elements/Icon/Svg/ColorScaleTall.svg";
-import { ReactComponent as IconColorSwatch } from "./elements/Icon/Svg/ColorSwatch.svg";
-import { ReactComponent as IconColumnBreak } from "./elements/Icon/Svg/ColumnBreak.svg";
-import { ReactComponent as IconCopyToClipboard } from "./elements/Icon/Svg/CopyToClipboard.svg";
-import { ReactComponent as IconCrop } from "./elements/Icon/Svg/Crop.svg";
-import { ReactComponent as IconCut } from "./elements/Icon/Svg/Cut.svg";
-import { ReactComponent as IconDivider } from "./elements/Icon/Svg/Divider.svg";
-import { ReactComponent as IconDocument } from "./elements/Icon/Svg/Document.svg";
-import { ReactComponent as IconDocumentLibrary } from "./elements/Icon/Svg/DocumentLibrary.svg";
-import { ReactComponent as IconDoDontsStrikethrough } from "./elements/Icon/Svg/DoDontsStrikethrough.svg";
-import { ReactComponent as IconDoDontsUnderline } from "./elements/Icon/Svg/DoDontsUnderline.svg";
-import { ReactComponent as IconDosImages } from "./elements/Icon/Svg/DosImages.svg";
-import { ReactComponent as IconDosText } from "./elements/Icon/Svg/DosText.svg";
-import { ReactComponent as IconDownload } from "./elements/Icon/Svg/Download.svg";
-import { ReactComponent as IconDownloadAlternative } from "./elements/Icon/Svg/DownloadAlternative.svg";
-import { ReactComponent as IconDrops } from "./elements/Icon/Svg/Drops.svg";
-import { ReactComponent as IconDuplicate } from "./elements/Icon/Svg/Duplicate.svg";
-import { ReactComponent as IconEmojiHappy } from "./elements/Icon/Svg/EmojiHappy.svg";
-import { ReactComponent as IconEmojiHappyFilled } from "./elements/Icon/Svg/EmojiHappyFilled.svg";
-import { ReactComponent as IconEmojiNeutral } from "./elements/Icon/Svg/EmojiNeutral.svg";
-import { ReactComponent as IconEmojiNeutralFilled } from "./elements/Icon/Svg/EmojiNeutralFilled.svg";
-import { ReactComponent as IconEmojiUnhappy } from "./elements/Icon/Svg/EmojiUnhappy.svg";
-import { ReactComponent as IconEmojiUnhappyFilled } from "./elements/Icon/Svg/EmojiUnhappyFilled.svg";
-import { ReactComponent as IconExpand } from "./elements/Icon/Svg/Expand.svg";
-import { ReactComponent as IconExternalAsset } from "./elements/Icon/Svg/ExternalAsset.svg";
-import { ReactComponent as IconExternalLink } from "./elements/Icon/Svg/ExternalLink.svg";
-import { ReactComponent as IconFeedback } from "./elements/Icon/Svg/Feedback.svg";
-import { ReactComponent as IconFigureTextBottom } from "./elements/Icon/Svg/FigureTextBottom.svg";
-import { ReactComponent as IconFigureTextLeft } from "./elements/Icon/Svg/FigureTextLeft.svg";
-import { ReactComponent as IconFigureTextRight } from "./elements/Icon/Svg/FigureTextRight.svg";
-import { ReactComponent as IconFigureTextTop } from "./elements/Icon/Svg/FigureTextTop.svg";
-import { ReactComponent as IconFile } from "./elements/Icon/Svg/File.svg";
-import { ReactComponent as IconFiletype } from "./elements/Icon/Svg/Filetype.svg";
-import { ReactComponent as IconFilter } from "./elements/Icon/Svg/Filter.svg";
-import { ReactComponent as IconFitToScreen } from "./elements/Icon/Svg/FitToScreen.svg";
-import { ReactComponent as IconFlags } from "./elements/Icon/Svg/Flags.svg";
-import { ReactComponent as IconFocalPoint } from "./elements/Icon/Svg/FocalPoint.svg";
-import { ReactComponent as IconFolder } from "./elements/Icon/Svg/Folder.svg";
-import { ReactComponent as IconFolderUp } from "./elements/Icon/Svg/FolderUp.svg";
-import { ReactComponent as IconFont } from "./elements/Icon/Svg/Font.svg";
-import { ReactComponent as IconFontKit } from "./elements/Icon/Svg/FontKit.svg";
-import { ReactComponent as IconFoodDrink } from "./elements/Icon/Svg/FoodDrink.svg";
-import { ReactComponent as IconForward5Seconds } from "./elements/Icon/Svg/Forward5Seconds.svg";
-import { ReactComponent as IconFrequentlyUsed } from "./elements/Icon/Svg/FrequentlyUsed.svg";
-import { ReactComponent as IconFullwidth } from "./elements/Icon/Svg/Fullwidth.svg";
-import { ReactComponent as IconGeneral } from "./elements/Icon/Svg/General.svg";
-import { ReactComponent as IconGenericPost } from "./elements/Icon/Svg/GenericPost.svg";
-import { ReactComponent as IconGuidelines } from "./elements/Icon/Svg/Guidelines.svg";
-import { ReactComponent as IconHeader } from "./elements/Icon/Svg/Header.svg";
-import { ReactComponent as IconIcons } from "./elements/Icon/Svg/Icons.svg";
-import { ReactComponent as IconIframe } from "./elements/Icon/Svg/Iframe.svg";
-import { ReactComponent as IconImage } from "./elements/Icon/Svg/Image.svg";
-import { ReactComponent as IconImageFigure } from "./elements/Icon/Svg/ImageFigure.svg";
-import { ReactComponent as IconImageGrid2 } from "./elements/Icon/Svg/ImageGrid2.svg";
-import { ReactComponent as IconImageGrid3 } from "./elements/Icon/Svg/ImageGrid3.svg";
-import { ReactComponent as IconImageGrid4 } from "./elements/Icon/Svg/ImageGrid4.svg";
-import { ReactComponent as IconImageLibrary } from "./elements/Icon/Svg/ImageLibrary.svg";
-import { ReactComponent as IconImageTextRatio25 } from "./elements/Icon/Svg/ImageTextRatio25.svg";
-import { ReactComponent as IconImageTextRatio50 } from "./elements/Icon/Svg/ImageTextRatio50.svg";
-import { ReactComponent as IconImageTextRatio75 } from "./elements/Icon/Svg/ImageTextRatio75.svg";
-import { ReactComponent as IconIndesign } from "./elements/Icon/Svg/Indesign.svg";
-import { ReactComponent as IconInfo } from "./elements/Icon/Svg/Info.svg";
-import { ReactComponent as IconIntegration } from "./elements/Icon/Svg/Integration.svg";
-import { ReactComponent as IconIntegrations } from "./elements/Icon/Svg/Integrations.svg";
-import { ReactComponent as IconInteractions } from "./elements/Icon/Svg/Interactions.svg";
-import { ReactComponent as IconItalic } from "./elements/Icon/Svg/Italic.svg";
-import { ReactComponent as IconLightning } from "./elements/Icon/Svg/Lightning.svg";
-import { ReactComponent as IconLightningFilled } from "./elements/Icon/Svg/LightningFilled.svg";
-import { ReactComponent as IconLink } from "./elements/Icon/Svg/Link.svg";
-import { ReactComponent as IconLock } from "./elements/Icon/Svg/Lock.svg";
-import { ReactComponent as IconLogo } from "./elements/Icon/Svg/Logo.svg";
-import { ReactComponent as IconLogoGrid } from "./elements/Icon/Svg/LogoGrid.svg";
-import { ReactComponent as IconLogout } from "./elements/Icon/Svg/Logout.svg";
-import { ReactComponent as IconMarkArea } from "./elements/Icon/Svg/MarkArea.svg";
-import { ReactComponent as IconMeasurements } from "./elements/Icon/Svg/Measurements.svg";
-import { ReactComponent as IconMedia } from "./elements/Icon/Svg/Media.svg";
-import { ReactComponent as IconMegamenu } from "./elements/Icon/Svg/Megamenu.svg";
-import { ReactComponent as IconMetadata } from "./elements/Icon/Svg/Metadata.svg";
-import { ReactComponent as IconMinus } from "./elements/Icon/Svg/Minus.svg";
-import { ReactComponent as IconModules } from "./elements/Icon/Svg/Modules.svg";
-import { ReactComponent as IconMore } from "./elements/Icon/Svg/More.svg";
-import { ReactComponent as IconMove } from "./elements/Icon/Svg/Move.svg";
-import { ReactComponent as IconMovePage } from "./elements/Icon/Svg/MovePage.svg";
-import { ReactComponent as IconNotifications } from "./elements/Icon/Svg/Notifications.svg";
-import { ReactComponent as IconObjects } from "./elements/Icon/Svg/Objects.svg";
-import { ReactComponent as IconOpenLock } from "./elements/Icon/Svg/OpenLock.svg";
-import { ReactComponent as IconOpenLockFilled } from "./elements/Icon/Svg/OpenLockFilled.svg";
-import { ReactComponent as IconOrderedList } from "./elements/Icon/Svg/OrderedList.svg";
-import { ReactComponent as IconOrientation } from "./elements/Icon/Svg/Orientation.svg";
-import { ReactComponent as IconPatternLibrary } from "./elements/Icon/Svg/PatternLibrary.svg";
-import { ReactComponent as IconPause } from "./elements/Icon/Svg/Pause.svg";
-import { ReactComponent as IconPen } from "./elements/Icon/Svg/Pen.svg";
-import { ReactComponent as IconPills } from "./elements/Icon/Svg/Pills.svg";
-import { ReactComponent as IconPlanning } from "./elements/Icon/Svg/Planning.svg";
-import { ReactComponent as IconPlay } from "./elements/Icon/Svg/Play.svg";
-import { ReactComponent as IconPlus } from "./elements/Icon/Svg/Plus.svg";
-import { ReactComponent as IconPointOut } from "./elements/Icon/Svg/PointOut.svg";
-import { ReactComponent as IconPolygon } from "./elements/Icon/Svg/Polygon.svg";
-import { ReactComponent as IconProcessing } from "./elements/Icon/Svg/Processing.svg";
-import { ReactComponent as IconProjects } from "./elements/Icon/Svg/Projects.svg";
-import { ReactComponent as IconPublication } from "./elements/Icon/Svg/Publication.svg";
-import { ReactComponent as IconQuestion } from "./elements/Icon/Svg/Question.svg";
-import { ReactComponent as IconQuote } from "./elements/Icon/Svg/Quote.svg";
-import { ReactComponent as IconRectangle } from "./elements/Icon/Svg/Rectangle.svg";
-import { ReactComponent as IconRefresh } from "./elements/Icon/Svg/Refresh.svg";
-import { ReactComponent as IconReject } from "./elements/Icon/Svg/Reject.svg";
-import { ReactComponent as IconRejectCircle } from "./elements/Icon/Svg/RejectCircle.svg";
-import { ReactComponent as IconRejectFilled } from "./elements/Icon/Svg/RejectFilled.svg";
-import { ReactComponent as IconRevert } from "./elements/Icon/Svg/Revert.svg";
-import { ReactComponent as IconRevisions } from "./elements/Icon/Svg/Revisions.svg";
-import { ReactComponent as IconRocket } from "./elements/Icon/Svg/Rocket.svg";
-import { ReactComponent as IconSearch } from "./elements/Icon/Svg/Search.svg";
-import { ReactComponent as IconSection } from "./elements/Icon/Svg/Section.svg";
-import { ReactComponent as IconSettings } from "./elements/Icon/Svg/Settings.svg";
-import { ReactComponent as IconShare } from "./elements/Icon/Svg/Share.svg";
-import { ReactComponent as IconSide } from "./elements/Icon/Svg/Side.svg";
-import { ReactComponent as IconSketch } from "./elements/Icon/Svg/Sketch.svg";
-import { ReactComponent as IconSmileysPeople } from "./elements/Icon/Svg/SmileysPeople.svg";
-import { ReactComponent as IconSnippet } from "./elements/Icon/Svg/Snippet.svg";
-import { ReactComponent as IconSpinner } from "./elements/Icon/Svg/Spinner.svg";
-import { ReactComponent as IconStar } from "./elements/Icon/Svg/Star.svg";
-import { ReactComponent as IconStarFilled } from "./elements/Icon/Svg/StarFilled.svg";
-import { ReactComponent as IconStorybook } from "./elements/Icon/Svg/Storybook.svg";
-import { ReactComponent as IconSubmit } from "./elements/Icon/Svg/Submit.svg";
-import { ReactComponent as IconSymbols } from "./elements/Icon/Svg/Symbols.svg";
-import { ReactComponent as IconTable } from "./elements/Icon/Svg/Table.svg";
-import { ReactComponent as IconTag } from "./elements/Icon/Svg/Tag.svg";
-import { ReactComponent as IconTarget } from "./elements/Icon/Svg/Target.svg";
-import { ReactComponent as IconTeam } from "./elements/Icon/Svg/Team.svg";
-import { ReactComponent as IconTeamO } from "./elements/Icon/Svg/TeamO.svg";
-import { ReactComponent as IconTemplate } from "./elements/Icon/Svg/Template.svg";
-import { ReactComponent as IconTemplates } from "./elements/Icon/Svg/Templates.svg";
-import { ReactComponent as IconText } from "./elements/Icon/Svg/Text.svg";
-import { ReactComponent as IconTextAlignCenter } from "./elements/Icon/Svg/TextAlignCenter.svg";
-import { ReactComponent as IconTextAlignJustify } from "./elements/Icon/Svg/TextAlignJustify.svg";
-import { ReactComponent as IconTextAlignLeft } from "./elements/Icon/Svg/TextAlignLeft.svg";
-import { ReactComponent as IconTextAlignRight } from "./elements/Icon/Svg/TextAlignRight.svg";
-import { ReactComponent as IconTextLibrary } from "./elements/Icon/Svg/TextLibrary.svg";
-import { ReactComponent as IconTextMultiColumn } from "./elements/Icon/Svg/TextMultiColumn.svg";
-import { ReactComponent as IconTextSnippet } from "./elements/Icon/Svg/TextSnippet.svg";
-import { ReactComponent as IconTimeline } from "./elements/Icon/Svg/Timeline.svg";
-import { ReactComponent as IconTransfer } from "./elements/Icon/Svg/Transfer.svg";
-import { ReactComponent as IconTrash } from "./elements/Icon/Svg/Trash.svg";
-import { ReactComponent as IconTrashOpen } from "./elements/Icon/Svg/TrashOpen.svg";
-import { ReactComponent as IconTravelPlaces } from "./elements/Icon/Svg/TravelPlaces.svg";
-import { ReactComponent as IconTriangle } from "./elements/Icon/Svg/Triangle.svg";
-import { ReactComponent as IconTruck } from "./elements/Icon/Svg/Truck.svg";
-import { ReactComponent as IconTypography } from "./elements/Icon/Svg/Typography.svg";
-import { ReactComponent as IconTypostyles } from "./elements/Icon/Svg/Typostyles.svg";
-import { ReactComponent as IconUiPattern } from "./elements/Icon/Svg/UiPattern.svg";
-import { ReactComponent as IconUnderline } from "./elements/Icon/Svg/Underline.svg";
-import { ReactComponent as IconUnknown } from "./elements/Icon/Svg/Unknown.svg";
-import { ReactComponent as IconUnknownSimple } from "./elements/Icon/Svg/UnknownSimple.svg";
-import { ReactComponent as IconUnorderedList } from "./elements/Icon/Svg/UnorderedList.svg";
-import { ReactComponent as IconUpload } from "./elements/Icon/Svg/Upload.svg";
-import { ReactComponent as IconUploadAlternative } from "./elements/Icon/Svg/UploadAlternative.svg";
-import { ReactComponent as IconUploadDoImages } from "./elements/Icon/Svg/UploadDoImages.svg";
-import { ReactComponent as IconUploadDontImages } from "./elements/Icon/Svg/UploadDontImages.svg";
-import { ReactComponent as IconUser } from "./elements/Icon/Svg/User.svg";
-import { ReactComponent as IconUserO } from "./elements/Icon/Svg/UserO.svg";
-import { ReactComponent as IconVideo } from "./elements/Icon/Svg/Video.svg";
-import { ReactComponent as IconVideoFullscreen } from "./elements/Icon/Svg/VideoFullscreen.svg";
-import { ReactComponent as IconView } from "./elements/Icon/Svg/View.svg";
-import { ReactComponent as IconViewSlash } from "./elements/Icon/Svg/ViewSlash.svg";
-import { ReactComponent as IconVimeo } from "./elements/Icon/Svg/Vimeo.svg";
-import { ReactComponent as IconVolumeOff } from "./elements/Icon/Svg/VolumeOff.svg";
-import { ReactComponent as IconVolumeOn } from "./elements/Icon/Svg/VolumeOn.svg";
-import { ReactComponent as IconWorkflow } from "./elements/Icon/Svg/Workflow.svg";
-import { ReactComponent as IconZoom } from "./elements/Icon/Svg/Zoom.svg";
 
 export {
     AddBlockButton,
@@ -263,6 +265,7 @@ export {
     BaseActions,
     Breadcrumb,
     Button,
+    ButtonGroup,
     Card,
     Checkbox,
     Divider,
@@ -271,27 +274,6 @@ export {
     DropdownMenuItem,
     FormControl,
     FrontifyImage,
-    Iframe,
-    Image,
-    InputLabel,
-    Modal,
-    ModalPortal,
-    Node,
-    Sidebar,
-    SidebarItemCheckbox,
-    SidebarItemDefault,
-    SidebarItemLink,
-    SidebarItemSearch,
-    Slider,
-    Stepper,
-    Switch,
-    Tab,
-    Tabs,
-    TabTitle,
-    Textarea,
-    TextInput,
-    Tooltip,
-    Tree,
     IconAcademy,
     IconActions,
     IconActivities,
@@ -516,4 +498,26 @@ export {
     IconVolumeOn,
     IconWorkflow,
     IconZoom,
+    Iframe,
+    Image,
+    InputLabel,
+    MenuItemContent,
+    Modal,
+    ModalPortal,
+    Node,
+    Sidebar,
+    SidebarItemCheckbox,
+    SidebarItemDefault,
+    SidebarItemLink,
+    SidebarItemSearch,
+    Slider,
+    Stepper,
+    Switch,
+    Tab,
+    Tabs,
+    TabTitle,
+    Textarea,
+    TextInput,
+    Tooltip,
+    Tree,
 };
