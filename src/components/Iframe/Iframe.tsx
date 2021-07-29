@@ -16,12 +16,19 @@ export enum IframePointerEvents {
 
 export type IframeProps = {
     src: string;
+    title: string;
     border?: IframeBorder;
     height?: IframeHeight;
     pointerEvents?: IframePointerEvents;
 };
 
-export default function Iframe({ src, border, height, pointerEvents }: IframeProps): React.ReactElement<IframeProps> {
+export default function Iframe({
+    src,
+    title,
+    border,
+    height,
+    pointerEvents,
+}: IframeProps): React.ReactElement<IframeProps> {
     const classNames = [
         css.iframe,
         ...(border ? [css[`border${border}`]] : []),
@@ -29,5 +36,5 @@ export default function Iframe({ src, border, height, pointerEvents }: IframePro
         ...(pointerEvents ? [css[`pointerEvents${pointerEvents}`]] : []),
     ].join(" ");
 
-    return <iframe src={src} className={classNames} />;
+    return <iframe title={title} src={src} className={classNames} />;
 }

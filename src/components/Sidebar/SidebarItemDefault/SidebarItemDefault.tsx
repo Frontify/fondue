@@ -36,6 +36,7 @@ export default function SidebarItemDefault({
 
     const sidebarRowItemClasses = [css.groupRow, ...(selected ? [css.groupRowSelected] : [])].join(" ");
 
+    /* eslint-disable jsx-a11y/no-static-element-interactions,jsx-a11y/no-noninteractive-tabindex */
     return (
         <span
             className={sidebarRowItemClasses}
@@ -48,4 +49,5 @@ export default function SidebarItemDefault({
             {label}
         </span>
     );
+    /* eslint-enable jsx-a11y/no-static-element-interactions,jsx-a11y/no-noninteractive-tabindex */
 }

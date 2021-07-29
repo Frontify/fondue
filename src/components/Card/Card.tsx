@@ -46,6 +46,7 @@ export default function Card({ children, icon, link, dropdown, cover }: CardProp
 
     const dropdownIconClasses = [css.dropdownIcon, ...(showDropdown ? [css.selected] : [])].join(" ");
 
+    /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/no-noninteractive-tabindex */
     return (
         <>
             <Link className={css.card} to={link}>
@@ -81,4 +82,5 @@ export default function Card({ children, icon, link, dropdown, cover }: CardProp
             )}
         </>
     );
+    /* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/no-noninteractive-tabindex */
 }
