@@ -37,20 +37,20 @@ describe("Slider Component", () => {
 
         cy.get(SLIDER_ID).should("be.visible");
         cy.get(TEXT_ITEM_ID).should("have.length", 3);
-        cy.get(TEXT_ITEM_ID).first().should("have.attr", "aria-selected", "true");
+        cy.get(TEXT_ITEM_ID).first().should("have.attr", "aria-checked", "true");
         cy.get(TEXT_ITEM_ID).first().contains(TEXT_ITEMS[0].name);
     });
     it("renders icon items", () => {
         mount(<Component items={ICON_ITEMS} />);
 
         cy.get(ICON_ITEM_ID).should("have.length", 3);
-        cy.get(ICON_ITEM_ID).first().should("have.attr", "aria-selected", "true");
+        cy.get(ICON_ITEM_ID).first().should("have.attr", "aria-checked", "true");
     });
     it("changes active item on click", () => {
         mount(<Component items={TEXT_ITEMS} />);
 
         cy.get(TEXT_ITEM_ID).last().click();
-        cy.get(TEXT_ITEM_ID).last().should("have.attr", "aria-selected", "true");
-        cy.get(TEXT_ITEM_ID).first().should("have.attr", "aria-selected", "false");
+        cy.get(TEXT_ITEM_ID).last().should("have.attr", "aria-checked", "true");
+        cy.get(TEXT_ITEM_ID).first().should("have.attr", "aria-checked", "false");
     });
 });
