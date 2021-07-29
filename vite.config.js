@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const defineConfig = require("vite").defineConfig;
-const IconTemplate = require("./src/elements/Icon/IconTemplate");
 const resolve = require("path").resolve;
-const svgr = require("@svgr/rollup").default;
 const reactJsx = require("vite-react-jsx").default;
 
 const viteConfig = defineConfig({
@@ -15,19 +13,7 @@ const viteConfig = defineConfig({
             "@hooks": resolve(__dirname, "./src/hooks"),
         },
     },
-    plugins: [
-        reactJsx(),
-        svgr({
-            memo: true,
-            icon: true,
-            template: IconTemplate,
-            svgProps: {
-                width: "100%",
-                height: "100%",
-                className: "{customClassName}",
-            },
-        }),
-    ],
+    plugins: [reactJsx()],
 });
 
 module.exports = viteConfig;

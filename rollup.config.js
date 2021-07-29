@@ -8,9 +8,7 @@ const commonJs = require("@rollup/plugin-commonjs");
 const peerDepsExternal = require("rollup-plugin-peer-deps-external");
 const pkg = require("./package.json");
 const postcss = require("rollup-plugin-postcss");
-const svgr = require("@svgr/rollup").default;
 const resolve = require("path").resolve;
-const url = require("@rollup/plugin-url");
 
 const name = pkg.main.replace(/\.js$/, "");
 
@@ -31,18 +29,6 @@ const bundle = (config) => ({
                 { find: "@hooks", replacement: resolve(__dirname, "./src/hooks") },
             ],
         }),
-        url(),
-        svgr({
-            memo: true,
-            icon: true,
-            template: IconTemplate,
-            svgProps: {
-                width: "100%",
-                height: "100%",
-                className: "{customClassName}",
-            },
-        }),
-        postcss(),
         ...config.plugins,
     ],
 });
@@ -64,6 +50,7 @@ const rollupConfig = [
                     ".json": "json",
                 },
             }),
+            postcss(),
             peerDepsExternal(),
         ],
         output: [
