@@ -6,19 +6,15 @@ export default function IconTemplate(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     { template }: { template: any },
     _opts: TemplateOptions,
-    { interfaces, componentName, jsx, exports }: TemplateData,
+    { interfaces, componentName, jsx, imports, exports }: TemplateData,
 ): string {
     const typeScriptTpl = template.smart({ plugins: ["typescript"] });
 
     return typeScriptTpl.ast`
-      import { ReactElement, SVGProps } from "react";
-      import { IconSize } from "@elements/Icon/IconSize";
+      ${imports}
+      import { IconProps, IconSize } from "@elements/Icon/Icon";
 
       ${interfaces}
-
-      export type IconProps = {
-          size?: IconSize;
-      } & SVGProps<SVGSVGElement>;
 
       const iconSizeMap = {
           [IconSize.Size8]: "h-2 w-2",
@@ -29,8 +25,9 @@ export default function IconTemplate(
           [IconSize.Size32]: "h-8 w-8",
       };
 
-      function ${componentName}(props: IconProps): ReactElement<IconProps> {
+      function ${componentName}(props: IconProps): React.ReactElement<IconProps> {
         const customClassName = ["flex items-center justify-center fill-current", iconSizeMap[props.size || IconSize.Size16]].join(' ');
+
         return ${jsx};
       }
 
