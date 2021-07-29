@@ -7,7 +7,7 @@ import { FC, PropsWithChildren, ReactElement, ReactNode } from "react";
 type HelperTextProps = {
     text: string;
     disabled?: boolean;
-    style?: Style.Primary | Style.Success | Style.Error;
+    style?: Style.Primary | Style.Success | Style.Danger;
     fullWidth?: boolean;
 };
 const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = false }: HelperTextProps) => (
@@ -16,7 +16,7 @@ const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = fa
         className={`text-s font-sans ${fullWidth ? "w-full" : ""} ${
             disabled
                 ? "text-black-40"
-                : style === Style.Error
+                : style === Style.Danger
                 ? "text-red-60"
                 : style === Style.Success
                 ? "text-green-60"

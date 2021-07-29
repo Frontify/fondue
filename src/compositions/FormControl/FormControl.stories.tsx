@@ -20,7 +20,7 @@ export default {
         },
         extra: "Extra Text or Element",
         helper: {
-            text: "Helper Text (before/after) and variant (Primary/Success/Error)",
+            text: "Helper Text (before/after) and variant (Primary/Success/Danger)",
             position: HelperPosition.After,
             style: Style.Primary,
         },
