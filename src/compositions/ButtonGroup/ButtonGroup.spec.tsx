@@ -9,10 +9,10 @@ describe("ButtonGroup Composition", () => {
     it("should render a button group with correct spacing for small buttons", () => {
         mount(
             <ButtonGroup size={Size.Small}>
-                <Button>The First</Button>
-                <Button style={Style.Secondary}>The Second</Button>
+                <Button>First, Small Button</Button>
+                <Button style={Style.Secondary}>The Second, Small Button</Button>
                 <Button icon={<Reject />} style={Style.Danger}>
-                    The Third
+                    And The Third, Small Button
                 </Button>
             </ButtonGroup>,
         );
@@ -25,10 +25,10 @@ describe("ButtonGroup Composition", () => {
     it("should render a button group with correct spacing for medium buttons", () => {
         mount(
             <ButtonGroup size={Size.Medium}>
-                <Button>The First</Button>
-                <Button style={Style.Secondary}>The Second</Button>
+                <Button>First, Medium Button</Button>
+                <Button style={Style.Secondary}>The Second, Medium Button</Button>
                 <Button icon={<Reject />} style={Style.Danger}>
-                    The Third
+                    And The Third, Medium Button
                 </Button>
             </ButtonGroup>,
         );
@@ -41,10 +41,10 @@ describe("ButtonGroup Composition", () => {
     it("should render a button group with correct spacing for large buttons", () => {
         mount(
             <ButtonGroup size={Size.Large}>
-                <Button>The First</Button>
-                <Button style={Style.Secondary}>The Second</Button>
+                <Button>First, Large Button</Button>
+                <Button style={Style.Secondary}>The Second, Large Button</Button>
                 <Button icon={<Reject />} style={Style.Danger}>
-                    The Third
+                    And The Third, Large Button
                 </Button>
             </ButtonGroup>,
         );
