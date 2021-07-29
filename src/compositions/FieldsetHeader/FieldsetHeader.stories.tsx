@@ -25,7 +25,7 @@ export default {
         type: Type.Default,
         disabled: false,
         bold: true,
-        heading: "Heading",
+        children: "Heading",
     },
 } as Meta<FieldsetHeaderProps>;
 
@@ -47,7 +47,7 @@ withIcon.args = {
     type: Type.Default,
     disabled: false,
     bold: true,
-    heading: "Heading",
+    children: "Heading",
     decorator: <Icons />,
 };
 

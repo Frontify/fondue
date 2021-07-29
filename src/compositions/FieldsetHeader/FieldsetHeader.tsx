@@ -30,37 +30,31 @@ export type FieldsetHeaderProps = {
     type?: Type;
     disabled?: boolean;
     bold?: boolean;
-    heading: string;
+    children: string;
     onClick?: () => void;
     as?: keyof JSX.IntrinsicElements;
 };
 
 const renderType = (type: Type, id: string, size: Size, active: boolean, disabled: boolean) => {
-    if (type === Type.Switch) {
-        return (
-            <Switch
-                aria-labelledby={id}
-                size={size === Size.Large ? SwitchSize.Large : SwitchSize.Small}
-                on={active}
-                disabled={disabled}
-            />
-        );
-    }
+    const props = {
+        "aria-labelledby": id,
+        size: size === Size.Large ? IconSize.Size20 : IconSize.Size12,
+    };
 
-    if (type === Type.Accordion && active) {
-        return <CaretDown aria-labelledby={id} size={size === Size.Large ? IconSize.Size20 : IconSize.Size16} />;
-    }
-
-    if (type === Type.Accordion && !active) {
-        return <CaretUp aria-labelledby={id} size={size === Size.Large ? IconSize.Size20 : IconSize.Size16} />;
-    }
-
-    if (type === Type.AddRemove && active) {
-        return <Minus aria-labelledby={id} size={size === Size.Large ? IconSize.Size20 : IconSize.Size16} />;
-    }
-
-    if (type === Type.AddRemove && !active) {
-        return <AddSimple aria-labelledby={id} size={size === Size.Large ? IconSize.Size20 : IconSize.Size16} />;
+    switch (type) {
+        case Type.Switch:
+            return (
+                <Switch
+                    {...props}
+                    size={size === Size.Large ? SwitchSize.Large : SwitchSize.Small}
+                    on={active}
+                    disabled={disabled}
+                />
+            );
+        case Type.Accordion:
+            return active ? <CaretDown {...props} /> : <CaretUp {...props} />;
+        case Type.AddRemove:
+            return active ? <Minus {...props} /> : <AddSimple {...props} />;
     }
 
     return null;
@@ -73,7 +67,7 @@ export default function FieldsetHeader({
     type = Type.Default,
     disabled = false,
     bold = true,
-    heading,
+    children,
     onClick,
     as: Heading = "label",
 }: FieldsetHeaderProps): ReactElement<FieldsetHeaderProps> {
@@ -97,9 +91,9 @@ export default function FieldsetHeader({
                 id={id}
                 className={merge([size === Size.Large ? "text-l" : "text-m", bold ? "font-bold" : "font-normal"])}
             >
-                {heading}
+                {children}
             </Heading>
-            <span className="ml-auto">{renderType(type, id, size, active, disabled)}</span>
+            {type !== Type.Default && <span className="ml-auto">{renderType(type, id, size, active, disabled)}</span>}
         </header>
     );
 }
