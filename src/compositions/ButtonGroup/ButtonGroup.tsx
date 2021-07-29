@@ -2,53 +2,25 @@
 
 import { Size } from "@elements/Button/Button";
 import { merge } from "@utilities/merge";
-import { Children, cloneElement, isValidElement, ReactElement, ReactNode, useMemo } from "react";
+import { Children, cloneElement, isValidElement, PropsWithChildren, ReactElement } from "react";
 
-export type ButtonGroupProps = { children: ReactNode };
-
-const sizeOrder = Object.values(Size);
+export type ButtonGroupProps = PropsWithChildren<{ size: Size }>;
 
 const spacing: Record<Size, string> = {
-    [Size.Small]: "mr-1",
-    [Size.Medium]: "mr-2",
-    [Size.Large]: "mr-3",
+    [Size.Small]: "gap-x-1",
+    [Size.Medium]: "gap-x-2",
+    [Size.Large]: "gap-x-3",
 };
 
-export default function ButtonGroup({ children }: ButtonGroupProps): ReactElement<ButtonGroupProps> {
-    const size: Size = useMemo(() => {
-        const sizes: Size[] = [];
-
-        Children.forEach(children, (child) => {
-            if (!isValidElement(child)) {
-                return;
-            }
-
-            const { size } = child.props;
-
-            if (Object.values(Size).includes(size)) {
-                sizes.push(size);
-            }
-
-            return;
-        });
-
-        return sizes.reduce((acc, cur) => {
-            if (sizeOrder.indexOf(cur) > sizeOrder.indexOf(acc)) {
-                return cur;
-            }
-
-            return acc;
-        }, sizes[0] || Size.Medium);
-    }, [children]);
-
+export default function ButtonGroup({ children, size }: ButtonGroupProps): ReactElement<ButtonGroupProps> {
     return (
-        <div data-test-id="button-group" className="display inline-flex flex-row">
+        <div data-test-id="button-group" className={merge(["display inline-flex flex-row", spacing[size]])}>
             {Children.map(children, (child) => {
                 if (!isValidElement(child)) {
                     return null;
                 }
 
-                return <span className={merge(["last:mr-0", spacing[size]])}>{cloneElement(child, { size })}</span>;
+                return cloneElement(child, { size });
             })}
         </div>
     );

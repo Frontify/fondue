@@ -1,11 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import Button, { Size, Style } from "@elements/Button/Button";
-import { Story, Meta } from "@storybook/react";
 import { ReactComponent as Reject } from "@elements/Icon/Svg/Reject.svg";
-
+import { Meta, Story } from "@storybook/react";
 import ButtonGroupComponent, { ButtonGroupProps } from "./ButtonGroup";
-import { FC } from "react";
 
 export default {
     title: "Compositions/ButtonGroup",
@@ -22,23 +20,11 @@ export default {
 } as Meta<ButtonGroupProps>;
 
 export const ButtonGroup: Story<ButtonGroupProps & { size: Size }> = (args) => (
-    <ButtonGroupComponent>
-        <Button size={args.size}>The First</Button>
-        <Button size={args.size} style={Style.Secondary}>
-            The Second
-        </Button>
-        <Button size={args.size} icon={<Reject />} style={Style.Danger}>
+    <ButtonGroupComponent size={args.size}>
+        <Button>The First</Button>
+        <Button style={Style.Secondary}>The Second</Button>
+        <Button icon={<Reject />} style={Style.Danger}>
             The Third
         </Button>
     </ButtonGroupComponent>
-);
-
-const Foo: FC = () => (
-    <div>
-        <ButtonGroup>
-            <Button size={Size.Medium}>A Button</Button>
-            <Button size={Size.Medium}>Another Button</Button>
-            <Button size={Size.Medium}>And Another</Button>
-        </ButtonGroup>
-    </div>
 );

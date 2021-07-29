@@ -8,12 +8,10 @@ import ButtonGroup from "./ButtonGroup";
 describe("ButtonGroup Composition", () => {
     it("should render a button group with correct spacing for small buttons", () => {
         mount(
-            <ButtonGroup>
-                <Button size={Size.Small}>The First</Button>
-                <Button size={Size.Small} style={Style.Secondary}>
-                    The Second
-                </Button>
-                <Button size={Size.Small} icon={<Reject />} style={Style.Danger}>
+            <ButtonGroup size={Size.Small}>
+                <Button>The First</Button>
+                <Button style={Style.Secondary}>The Second</Button>
+                <Button icon={<Reject />} style={Style.Danger}>
                     The Third
                 </Button>
             </ButtonGroup>,
@@ -21,17 +19,15 @@ describe("ButtonGroup Composition", () => {
 
         cy.get("[data-test-id=button-group]").as("ButtonGroup");
 
-        cy.get("@ButtonGroup").children().first().should("have.class", "mr-1");
+        cy.get("@ButtonGroup").should("have.class", "gap-x-1");
     });
 
     it("should render a button group with correct spacing for medium buttons", () => {
         mount(
-            <ButtonGroup>
-                <Button size={Size.Medium}>The First</Button>
-                <Button size={Size.Medium} style={Style.Secondary}>
-                    The Second
-                </Button>
-                <Button size={Size.Medium} icon={<Reject />} style={Style.Danger}>
+            <ButtonGroup size={Size.Medium}>
+                <Button>The First</Button>
+                <Button style={Style.Secondary}>The Second</Button>
+                <Button icon={<Reject />} style={Style.Danger}>
                     The Third
                 </Button>
             </ButtonGroup>,
@@ -39,14 +35,30 @@ describe("ButtonGroup Composition", () => {
 
         cy.get("[data-test-id=button-group]").as("ButtonGroup");
 
-        cy.get("@ButtonGroup").children().first().should("have.class", "mr-2");
+        cy.get("@ButtonGroup").should("have.class", "gap-x-2");
     });
 
     it("should render a button group with correct spacing for large buttons", () => {
         mount(
-            <ButtonGroup>
-                <Button size={Size.Large}>The First</Button>
-                <Button size={Size.Large} style={Style.Secondary}>
+            <ButtonGroup size={Size.Large}>
+                <Button>The First</Button>
+                <Button style={Style.Secondary}>The Second</Button>
+                <Button icon={<Reject />} style={Style.Danger}>
+                    The Third
+                </Button>
+            </ButtonGroup>,
+        );
+
+        cy.get("[data-test-id=button-group]").as("ButtonGroup");
+
+        cy.get("@ButtonGroup").should("have.class", "gap-x-3");
+    });
+
+    it("enforces the same size for all buttons according to the group's size", () => {
+        mount(
+            <ButtonGroup size={Size.Large}>
+                <Button size={Size.Small}>The First</Button>
+                <Button size={Size.Medium} style={Style.Secondary}>
                     The Second
                 </Button>
                 <Button size={Size.Large} icon={<Reject />} style={Style.Danger}>
@@ -57,6 +69,6 @@ describe("ButtonGroup Composition", () => {
 
         cy.get("[data-test-id=button-group]").as("ButtonGroup");
 
-        cy.get("@ButtonGroup").children().first().should("have.class", "mr-3");
+        cy.get("@ButtonGroup").children().should("have.class", "h-11");
     });
 });
