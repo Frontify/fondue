@@ -1,0 +1,34 @@
+import * as React from "react";
+import { IconProps, IconSize } from "@elements/Icon/Icon";
+const iconSizeMap = {
+    [IconSize.Size8]: "h-2 w-2",
+    [IconSize.Size12]: "h-3 w-3",
+    [IconSize.Size16]: "h-4 w-4",
+    [IconSize.Size20]: "h-5 w-5",
+    [IconSize.Size24]: "h-6 w-6",
+    [IconSize.Size32]: "h-8 w-8",
+};
+
+function IconDocumentLibrary(props: IconProps): React.ReactElement<IconProps> {
+    const customClassName = [
+        "flex items-center justify-center fill-current",
+        iconSizeMap[props.size || IconSize.Size16],
+    ].join(" ");
+    return (
+        <svg
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+            width="100%"
+            height="100%"
+            className={customClassName}
+            {...props}
+        >
+            <path d="M5.846 4.498A3.292 3.292 0 0 1 9.13 1.485h5.465c.451 0 1.079.247 1.41.559l4.56 4.292c.328.308.594.922.594 1.376v8.52a3.283 3.283 0 0 1-3.006 3.27 3.284 3.284 0 0 1-3.276 3.013h-8.75a3.29 3.29 0 0 1-3.288-3.286V7.77a3.29 3.29 0 0 1 3.006-3.273zm1.382-.013h4.374c.451 0 1.078.247 1.41.559l.485.456V2.872H8.88c-.91 0-1.64.72-1.651 1.613zm7.662 2.326l.972.915h3.904v-.16L14.89 3.002v3.81zm2.446 2.302l.236.223c.328.308.594.922.594 1.376v7.415c.884-.02 1.6-.746 1.6-1.638V9.113h-2.43zm-.564 3h-5.576a.692.692 0 0 1-.693-.693V5.872H5.885a1.64 1.64 0 0 0-1.651 1.633v11.99a1.64 1.64 0 0 0 1.639 1.633h9.26c.902 0 1.64-.734 1.64-1.639v-7.376zm0-1.387v-.16l-4.876-4.564v4.724h4.876z" />
+        </svg>
+    );
+}
+
+const MemoIconDocumentLibrary = React.memo(IconDocumentLibrary);
+export default MemoIconDocumentLibrary;
