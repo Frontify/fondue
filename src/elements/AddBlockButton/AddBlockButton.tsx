@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from "@elements/Icon/Icon";
-import { ReactComponent as AddSimple } from "@elements/Icon/Svg/AddSimple.svg";
+import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
 import { Orientation } from "@utilities/enum";
 import { MouseEvent, ReactElement } from "react";
 
@@ -30,7 +30,7 @@ export default function AddBlockButton({
             onClick={onClick}
             title={title}
         >
-            <AddSimple size={IconSize.Size16} />
+            <IconAddSimple size={IconSize.Size16} />
         </button>
     );
 }

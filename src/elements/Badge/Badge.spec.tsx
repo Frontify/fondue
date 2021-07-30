@@ -2,7 +2,7 @@
 
 import { mount } from "@cypress/react";
 import { IconSize } from "@elements/Icon/Icon";
-import { ReactComponent as IconDocument } from "@elements/Icon/Svg/Document.svg";
+import IconDocument from "@elements/Icon/Generated/IconDocument";
 import Badge, { BadgeStatus } from "./Badge";
 
 const BADGE_TEXT = "Frontify";

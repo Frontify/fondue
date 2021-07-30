@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactComponent as IconCheck } from "@elements/Icon/Svg/Check.svg";
-import { ReactComponent as IconMinus } from "@elements/Icon/Svg/Minus.svg";
+import IconCheck from "@elements/Icon/Generated/IconCheck";
+import IconMinus from "@elements/Icon/Generated/IconMinus";
 import InputLabel from "@elements/InputLabel/InputLabel";
 import { Style } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";

@@ -2,7 +2,7 @@
 
 import { mount } from "@cypress/react";
 import { IconSize } from "@elements/Icon/Icon";
-import { ReactComponent as Audio } from "@elements/Icon/Svg/Audio.svg";
+import IconAudio from "@elements/Icon/Generated/IconAudio";
 import { Size } from "@utilities/enum";
 import { MenuItem } from "../MenuItemContent/MenuItemContent";
 import DropdownMenuItem from "./DropdownMenuItem";
@@ -19,7 +19,7 @@ const ITEMS: MenuItem[] = [
         id: "1",
         title: "Small",
         size: Size.Small,
-        icon: <Audio size={IconSize.Size16} />,
+        icon: <IconAudio size={IconSize.Size16} />,
     },
     {
         id: "2",
@@ -30,7 +30,7 @@ const ITEMS: MenuItem[] = [
         id: "3",
         title: "Large icon",
         subtitle: "Large icon subtitle",
-        icon: <Audio size={IconSize.Size16} />,
+        icon: <IconAudio size={IconSize.Size16} />,
         size: Size.Large,
     },
     {

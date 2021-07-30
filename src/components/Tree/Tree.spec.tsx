@@ -2,8 +2,8 @@
 
 import { mount } from "@cypress/react";
 import { IconSize } from "@elements/Icon/Icon";
-import { ReactComponent as IconDocument } from "@elements/Icon/Svg/Document.svg";
-import { ReactComponent as IconGuidelines } from "@elements/Icon/Svg/Guidelines.svg";
+import IconDocument from "@elements/Icon/Generated/IconDocument";
+import IconGuidelines from "@elements/Icon/Generated/IconGuidelines";
 import { FC, useState } from "react";
 import { TreeNodeProps } from "./Node";
 import Tree from "./Tree";

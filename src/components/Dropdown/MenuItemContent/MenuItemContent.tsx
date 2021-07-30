@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconProps, IconSize } from "@elements/Icon/Icon";
-import { ReactComponent as CaretRightIcon } from "@elements/Icon/Svg/CaretRight.svg";
-import { ReactComponent as CheckIcon } from "@elements/Icon/Svg/Check.svg";
+import IconCaretRight from "@elements/Icon/Generated/IconCaretRight";
+import IconCheck from "@elements/Icon/Generated/IconCheck";
 import { Size, Style } from "@utilities/enum";
 import { ReactElement } from "react";
 
@@ -77,9 +77,9 @@ export default function MenuItemContent({
             </div>
             {active &&
                 (selectionIndicator === SelectionIndicatorIcon.Check ? (
-                    <CheckIcon data-test-id="dropdown-menu-item-active" size={IconSize.Size20} />
+                    <IconCheck data-test-id="dropdown-menu-item-active" size={IconSize.Size20} />
                 ) : (
-                    <CaretRightIcon data-test-id="dropdown-menu-item-active" size={IconSize.Size20} />
+                    <IconCaretRight data-test-id="dropdown-menu-item-active" size={IconSize.Size20} />
                 ))}
         </div>
     );

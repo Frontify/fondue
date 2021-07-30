@@ -1,4 +1,4 @@
-import { ReactComponent as Icons } from "@elements/Icon/Svg/Icons.svg";
+import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
 import Badge, { BadgeProps, BadgeStatus } from "./Badge";
 
@@ -41,7 +41,7 @@ WithIcon.argTypes = {
 };
 
 WithIcon.args = {
-    icon: <Icons />,
+    icon: <IconIcons />,
     children: "Label",
 };
 
@@ -61,7 +61,7 @@ WithStatusAndIcon.argTypes = {
 
 WithStatusAndIcon.args = {
     status: BadgeStatus.Positive,
-    icon: <Icons />,
+    icon: <IconIcons />,
     children: "Label",
 };
 
@@ -89,7 +89,7 @@ IconOnly.argTypes = {
 };
 
 IconOnly.args = {
-    icon: <Icons />,
+    icon: <IconIcons />,
 };
 
 export const BetweenElements: Story<BadgeProps> = (args) => (
@@ -112,6 +112,6 @@ BetweenElements.argTypes = {
 
 BetweenElements.args = {
     status: BadgeStatus.Positive,
-    icon: <Icons />,
+    icon: <IconIcons />,
     children: "Label",
 };
