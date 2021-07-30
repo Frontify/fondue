@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import Button, { Size, Style } from "@elements/Button/Button";
-import { ReactComponent as Reject } from "@elements/Icon/Svg/Reject.svg";
+import IconReject from "@elements/Icon/Generated/IconReject";
 import { Meta, Story } from "@storybook/react";
 import ButtonGroupComponent, { ButtonGroupProps } from "./ButtonGroup";
 
@@ -23,7 +23,7 @@ export const ButtonGroup: Story<ButtonGroupProps & { size: Size }> = (args) => (
     <ButtonGroupComponent size={args.size}>
         <Button>The First</Button>
         <Button style={Style.Secondary}>The Second</Button>
-        <Button icon={<Reject />} style={Style.Danger}>
+        <Button icon={<IconReject />} style={Style.Danger}>
             The Third
         </Button>
     </ButtonGroupComponent>

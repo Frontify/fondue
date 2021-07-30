@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from "@elements/Icon/Icon";
-import { ReactComponent as Audio } from "@elements/Icon/Svg/Audio.svg";
+import IconAudio from "@elements/Icon/Generated/IconAudio";
 import { Meta, Story } from "@storybook/react";
 import { Size, Style } from "@utilities/enum";
 import { useEffect, useState } from "react";
@@ -42,27 +42,27 @@ SmallSelect.args = {
                     id: "1",
                     title: "Small icon",
                     size: Size.Small,
-                    icon: <Audio size={IconSize.Size16} />,
+                    icon: <IconAudio size={IconSize.Size16} />,
                 },
                 {
                     id: "2",
                     title: "Small icon warning",
                     size: Size.Small,
-                    icon: <Audio size={IconSize.Size16} />,
+                    icon: <IconAudio size={IconSize.Size16} />,
                     style: Style.Danger,
                 },
                 {
                     id: "3",
                     title: "Small icon disabled",
                     size: Size.Small,
-                    icon: <Audio size={IconSize.Size16} />,
+                    icon: <IconAudio size={IconSize.Size16} />,
                     disabled: true,
                 },
                 {
                     id: "4",
                     title: "Small icon warning disabled",
                     size: Size.Small,
-                    icon: <Audio size={IconSize.Size16} />,
+                    icon: <IconAudio size={IconSize.Size16} />,
                     style: Style.Danger,
                     disabled: true,
                 },
@@ -112,14 +112,14 @@ LargeSelect.args = {
                     id: "5",
                     title: "Large icon",
                     subtitle: "Subtitle",
-                    icon: <Audio size={IconSize.Size16} />,
+                    icon: <IconAudio size={IconSize.Size16} />,
                     size: Size.Large,
                 },
                 {
                     id: "6",
                     title: "Large icon warning",
                     subtitle: "Subtitle",
-                    icon: <Audio size={IconSize.Size16} />,
+                    icon: <IconAudio size={IconSize.Size16} />,
                     size: Size.Large,
                     style: Style.Danger,
                 },
@@ -127,7 +127,7 @@ LargeSelect.args = {
                     id: "7",
                     title: "Large icon disabled",
                     subtitle: "Subtitle",
-                    icon: <Audio size={IconSize.Size16} />,
+                    icon: <IconAudio size={IconSize.Size16} />,
                     size: Size.Large,
                     disabled: true,
                 },
@@ -135,7 +135,7 @@ LargeSelect.args = {
                     id: "8",
                     title: "Large icon warning disabled",
                     subtitle: "Subtitle",
-                    icon: <Audio size={IconSize.Size16} />,
+                    icon: <IconAudio size={IconSize.Size16} />,
                     size: Size.Large,
                     style: Style.Danger,
                     disabled: true,

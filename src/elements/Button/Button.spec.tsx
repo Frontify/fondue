@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import { ReactComponent as Icons } from "@elements/Icon/Svg/Icons.svg";
+import IconIcons from "@elements/Icon/Generated/IconIcons";
 import Button, { Size, Style } from "./Button";
 
 const BUTTON_TEXT = "Frontify";
@@ -27,7 +27,7 @@ describe("Button component", () => {
                 });
 
                 it(`renders in ${style} ${size} and ${solid ? "solid" : "translucent"} with only an icon.`, () => {
-                    mount(<Button style={style} size={size} solid={solid} icon={<Icons />} />);
+                    mount(<Button style={style} size={size} solid={solid} icon={<IconIcons />} />);
 
                     cy.get(BUTTON_ID).children("svg").should("be.visible");
                     cy.get(BUTTON_ID).should("not.contain", BUTTON_TEXT);
@@ -35,7 +35,7 @@ describe("Button component", () => {
 
                 it(`renders in ${style} ${size} and ${solid ? "solid" : "translucent"} with an icon and text.`, () => {
                     mount(
-                        <Button style={style} size={size} solid={solid} icon={<Icons />}>
+                        <Button style={style} size={size} solid={solid} icon={<IconIcons />}>
                             {BUTTON_TEXT}
                         </Button>,
                     );

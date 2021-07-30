@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactComponent as IconSearch } from "@elements/Icon/Svg/Search.svg";
+import IconSearch from "@elements/Icon/Generated/IconSearch";
 import TextInput from "@elements/TextInput/TextInput";
 import { ReactElement } from "react";
 

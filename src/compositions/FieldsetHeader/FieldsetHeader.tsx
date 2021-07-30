@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from "@elements/Icon/Icon";
-import { ReactComponent as AddSimple } from "@elements/Icon/Svg/AddSimple.svg";
-import { ReactComponent as CaretDown } from "@elements/Icon/Svg/CaretDown.svg";
-import { ReactComponent as CaretUp } from "@elements/Icon/Svg/CaretUp.svg";
-import { ReactComponent as Minus } from "@elements/Icon/Svg/Minus.svg";
+import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
+import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
+import IconCaretUp from "@elements/Icon/Generated/IconCaretUp";
+import IconMinus from "@elements/Icon/Generated/IconMinus";
 import Switch from "@elements/Switch/Switch";
 import { Size as SwitchSize } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
@@ -52,9 +52,9 @@ const renderType = (type: Type, id: string, size: Size, active: boolean, disable
                 />
             );
         case Type.Accordion:
-            return active ? <CaretDown {...props} /> : <CaretUp {...props} />;
+            return active ? <IconCaretDown {...props} /> : <IconCaretUp {...props} />;
         case Type.AddRemove:
-            return active ? <Minus {...props} /> : <AddSimple {...props} />;
+            return active ? <IconMinus {...props} /> : <IconAddSimple {...props} />;
     }
 
     return null;

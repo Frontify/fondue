@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-function IconTemplate({ template }, opts, { imports, interfaces, componentName, props, jsx, exports }) {
-    const plugins = ["jsx"];
+import { TemplateData, TemplateOptions } from "@svgr/core";
 
-    if (opts.typescript) {
-        plugins.push("typescript");
-    }
-
-    const typeScriptTpl = template.smart({ plugins });
+export default function IconTemplate(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    { template }: { template: any },
+    _opts: TemplateOptions,
+    { interfaces, componentName, jsx, imports, exports }: TemplateData,
+): string {
+    const typeScriptTpl = template.smart({ plugins: ["typescript"] });
 
     return typeScriptTpl.ast`
       ${imports}
-
-      import { IconSize } from '@elements/Icon/Icon';
+      import { IconProps, IconSize } from "@elements/Icon/Icon";
 
       ${interfaces}
 
@@ -25,13 +25,12 @@ function IconTemplate({ template }, opts, { imports, interfaces, componentName, 
           [IconSize.Size32]: "h-8 w-8",
       };
 
-      function ${componentName}(${props}) {
+      function ${componentName}(props: IconProps): React.ReactElement<IconProps> {
         const customClassName = ["flex items-center justify-center fill-current", iconSizeMap[props.size || IconSize.Size16]].join(' ');
+
         return ${jsx};
       }
 
       ${exports}
     `;
 }
-
-module.exports = IconTemplate;

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from "@elements/Icon/Icon";
-import { ReactComponent as TextAlignCenter } from "@elements/Icon/Svg/TextAlignCenter.svg";
+import IconTextAlignCenter from "@elements/Icon/Generated/IconTextAlignCenter";
 import { Meta, Story } from "@storybook/react";
 import { useState } from "react";
 import Slider, { SliderProps } from "./Slider";
@@ -28,8 +28,8 @@ Text.args = {
 export const Icon = SliderTemplate.bind({});
 Icon.args = {
     items: [
-        { id: "a", icon: <TextAlignCenter size={IconSize.Size16} /> },
-        { id: "b", icon: <TextAlignCenter size={IconSize.Size16} /> },
-        { id: "c", icon: <TextAlignCenter size={IconSize.Size16} /> },
+        { id: "a", icon: <IconTextAlignCenter size={IconSize.Size16} /> },
+        { id: "b", icon: <IconTextAlignCenter size={IconSize.Size16} /> },
+        { id: "c", icon: <IconTextAlignCenter size={IconSize.Size16} /> },
     ],
 };

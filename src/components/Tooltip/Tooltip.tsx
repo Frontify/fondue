@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from "@elements/Icon/Icon";
-import { ReactComponent as IconQuestion } from "@elements/Icon/Svg/Question.svg";
+import IconQuestion from "@elements/Icon/Generated/IconQuestion";
 import { ReactElement, ReactNode, useState } from "react";
 import { usePopper } from "react-popper";
 

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from "@elements/Icon/Icon";
-import { ReactComponent as IconCaretDown } from "@elements/Icon/Svg/CaretDown.svg";
-import { ReactComponent as IconReject } from "@elements/Icon/Svg/Reject.svg";
+import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
+import IconReject from "@elements/Icon/Generated/IconReject";
 import useClickOutside from "@hooks/useClickOutside";
 import { Size } from "@utilities/enum";
 import { merge } from "@utilities/merge";

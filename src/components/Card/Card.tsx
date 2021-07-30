@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from "@elements/Icon/Icon";
-import { ReactComponent as IconActions } from "@elements/Icon/Svg/Actions.svg";
+import IconActions from "@elements/Icon/Generated/IconActions";
 import useClickOutside from "@hooks/useClickOutside";
 import { PropsWithChildren, ReactElement, useState } from "react";
 import { usePopper } from "react-popper";

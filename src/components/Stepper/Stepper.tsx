@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from "@elements/Icon/Icon";
-import { ReactComponent as IconCaretDown } from "@elements/Icon/Svg/CaretDown.svg";
-import { ReactComponent as IconCaretLeft } from "@elements/Icon/Svg/CaretLeft.svg";
-import { ReactComponent as IconCaretRight } from "@elements/Icon/Svg/CaretRight.svg";
-import { ReactComponent as IconCaretUp } from "@elements/Icon/Svg/CaretUp.svg";
+import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
+import IconCaretLeft from "@elements/Icon/Generated/IconCaretLeft";
+import IconCaretRight from "@elements/Icon/Generated/IconCaretRight";
+import IconCaretUp from "@elements/Icon/Generated/IconCaretUp";
 import { Theme } from "@utilities/enum";
 import { useEffect, useState } from "react";
 import stepperStyle from "./Stepper.module.css";

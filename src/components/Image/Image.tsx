@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import Button, { Size } from "@elements/Button/Button";
-import { ReactComponent as IconSettings } from "@elements/Icon/Svg/Settings.svg";
-import { ReactComponent as IconTrash } from "@elements/Icon/Svg/Trash.svg";
+import IconSettings from "@elements/Icon/Generated/IconSettings";
+import IconTrash from "@elements/Icon/Generated/IconTrash";
 import { PropsWithChildren, ReactElement } from "react";
 import css from "./Image.module.css";
 

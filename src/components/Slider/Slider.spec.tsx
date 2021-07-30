@@ -2,7 +2,7 @@
 
 import { mount } from "@cypress/react";
 import { IconSize } from "@elements/Icon/Icon";
-import { ReactComponent as TextAlignCenter } from "@elements/Icon/Svg/TextAlignCenter.svg";
+import IconTextAlignCenter from "@elements/Icon/Generated/IconTextAlignCenter";
 import { FC, useState } from "react";
 import Slider, { IconItem, TextItem } from "./Slider";
 
@@ -17,9 +17,9 @@ const TEXT_ITEMS = [
 ];
 
 const ICON_ITEMS = [
-    { id: "a", icon: <TextAlignCenter size={IconSize.Size16} /> },
-    { id: "b", icon: <TextAlignCenter size={IconSize.Size16} /> },
-    { id: "c", icon: <TextAlignCenter size={IconSize.Size16} /> },
+    { id: "a", icon: <IconTextAlignCenter size={IconSize.Size16} /> },
+    { id: "b", icon: <IconTextAlignCenter size={IconSize.Size16} /> },
+    { id: "c", icon: <IconTextAlignCenter size={IconSize.Size16} /> },
 ];
 
 type Props = {

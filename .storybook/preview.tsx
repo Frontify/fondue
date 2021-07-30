@@ -1,6 +1,5 @@
 import "../src/styles/index.css";
 
-import { themes } from "@storybook/theming";
 import { addDecorator, Story } from "@storybook/react";
 import { MemoryRouter } from "react-router";
 import { light, dark } from "./frontifyTheme";
