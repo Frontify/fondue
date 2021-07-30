@@ -1,99 +1,125 @@
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
-import Badge, { BadgeProps, BadgeStatus } from "./Badge";
+import Badge, { BadgeProps, Status, Style } from "./Badge";
 
 export default {
     title: "Elements/Badge",
     component: Badge,
+    argTypes: {
+        style: {
+            options: Object.values(Style),
+            control: { type: "select" },
+        },
+        onClick: { table: { disable: true } },
+        onDismiss: { table: { disable: true } },
+    },
+    args: {
+        style: Style.Primary,
+        children: "Text",
+    },
 } as Meta<BadgeProps>;
 
 const BadgeTemplate: Story<BadgeProps> = (args) => <Badge {...args} />;
 
-export const Default = BadgeTemplate.bind({});
-Default.args = {
-    children: "Label",
+export const LabelOnly = BadgeTemplate.bind({});
+
+export const WithOnClick = BadgeTemplate.bind({});
+
+WithOnClick.argTypes = {
+    onClick: { action: "Click" },
 };
 
-Default.storyName = "Text Label Only";
+export const WithDismiss = BadgeTemplate.bind({});
+
+WithDismiss.argTypes = {
+    onDismiss: { action: "Dismiss" },
+};
+
+export const WithOnClickAndDismiss = BadgeTemplate.bind({});
+
+WithOnClickAndDismiss.argTypes = {
+    onDismiss: { action: "Dismiss" },
+    onClick: { action: "Click" },
+};
 
 export const WithStatus = BadgeTemplate.bind({});
 
 WithStatus.argTypes = {
     status: {
-        options: Object.values(BadgeStatus),
+        options: Object.values(Status),
         control: { type: "select" },
     },
 };
 
 WithStatus.args = {
-    status: BadgeStatus.Positive,
-    children: "Label",
+    status: Status.Positive,
 };
-
-WithStatus.storyName = "Status and Text Label";
 
 export const WithIcon = BadgeTemplate.bind({});
 
 WithIcon.argTypes = {
-    icon: {
-        table: { disable: true },
-    },
+    icon: { table: { disable: true } },
 };
 
 WithIcon.args = {
     icon: <IconIcons />,
-    children: "Label",
 };
 
-WithIcon.storyName = "Icon and Text Label";
+export const WithOnClickAndIcon = BadgeTemplate.bind({});
+
+WithOnClickAndIcon.argTypes = {
+    onClick: { action: "Click" },
+    icon: { table: { disable: true } },
+};
+
+WithOnClickAndIcon.args = {
+    icon: <IconIcons />,
+};
 
 export const WithStatusAndIcon = BadgeTemplate.bind({});
 
 WithStatusAndIcon.argTypes = {
     status: {
-        options: Object.values(BadgeStatus),
+        options: Object.values(Status),
         control: { type: "select" },
     },
-    icon: {
-        table: { disable: true },
-    },
+    icon: { table: { disable: true } },
 };
 
 WithStatusAndIcon.args = {
-    status: BadgeStatus.Positive,
+    status: Status.Positive,
     icon: <IconIcons />,
-    children: "Label",
 };
-
-WithStatusAndIcon.storyName = "Staus, Icon and Text Label";
 
 export const StatusOnly = BadgeTemplate.bind({});
 
 StatusOnly.argTypes = {
     status: {
-        options: Object.values(BadgeStatus),
+        options: Object.values(Status),
         control: { type: "select" },
     },
+    children: { table: { disable: true } },
 };
 
 StatusOnly.args = {
-    status: BadgeStatus.Positive,
+    status: Status.Positive,
+    children: "",
 };
 
 export const IconOnly = BadgeTemplate.bind({});
 
 IconOnly.argTypes = {
-    icon: {
-        table: { disable: true },
-    },
+    icon: { table: { disable: true } },
+    children: { table: { disable: true } },
 };
 
 IconOnly.args = {
     icon: <IconIcons />,
+    children: "",
 };
 
 export const BetweenElements: Story<BadgeProps> = (args) => (
-    <div>
+    <div className="flex items-center gap-1">
         <span>before </span>
         <Badge {...args} />
         <span> after</span>
@@ -102,16 +128,13 @@ export const BetweenElements: Story<BadgeProps> = (args) => (
 
 BetweenElements.argTypes = {
     status: {
-        options: Object.values(BadgeStatus),
+        options: Object.values(Status),
         control: { type: "select" },
     },
-    icon: {
-        table: { disable: true },
-    },
+    icon: { table: { disable: true } },
 };
 
 BetweenElements.args = {
-    status: BadgeStatus.Positive,
+    status: Status.Positive,
     icon: <IconIcons />,
-    children: "Label",
 };
