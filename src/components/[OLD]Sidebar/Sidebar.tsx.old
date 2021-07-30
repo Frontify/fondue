@@ -4,9 +4,9 @@ import { CheckboxSelectionState } from "@elements/Checkbox/Checkbox";
 import { ReactElement } from "react";
 import css from "./Sidebar.module.css";
 import SidebarItemCheckbox from "./SidebarItemCheckbox/SidebarItemCheckbox";
-import SidebarItemDefault from "./SidebarItemDefault/SidebarItemDefault";
-import SidebarItemLink from "./SidebarItemLink/SidebarItemLink";
-import SidebarItemSearch from "./SidebarItemSearch/SidebarItemSearch";
+import SidebarItemDefault from "./SidebarItemDefault/SidebarItemDefault.tsx.old";
+import SidebarItemLink from "./SidebarItemLink/SidebarItemLink.tsx.old";
+import SidebarItemSearch from "./SidebarItemSearch/SidebarItemSearch.tsx.old";
 
 export enum SidebarItemType {
     Default,

@@ -2,7 +2,8 @@
 
 import { ReactElement } from "react";
 import { NavLink } from "react-router-dom";
-import css from "./SidebarItemLink.module.css";
+// import css from "./SidebarItemLink.module.css";
+const css = {};
 
 export type SidebarItemLinkProps = {
     label: string;

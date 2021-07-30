@@ -2,7 +2,7 @@
 
 import { mount } from "@cypress/react";
 import Tabs from "./Tabs";
-import Tab from "./Tab/Tab";
+import Tab from "./Tab/Tab.tsx.old";
 import tabTitleCss from "./TabTitle/TabTitle.module.css";
 
 const TABS = [

@@ -2,7 +2,7 @@
 
 import { MemoryRouter } from "react-router-dom";
 import { mount } from "@cypress/react";
-import SidebarItemLink from "./SidebarItemLink";
+import SidebarItemLink from "./SidebarItemLink.tsx.old";
 import css from "./SidebarItemLink.module.css";
 
 const SIDEBAR_ITEM_LABEL = "Frontify";

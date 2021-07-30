@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import css from "./Iframe.module.css";
+// import css from "./Iframe.module.css";
+const css = {};
 
 export enum IframeHeight {
     Small = "Small",

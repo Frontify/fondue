@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, Story } from "@storybook/react";
-import Tab from "./Tab/Tab";
+import Tab from "./Tab/Tab.tsx.old";
 import TabsComponent, { TabsProps } from "./Tabs";
 
 const TABS = [

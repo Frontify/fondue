@@ -2,7 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import { Theme } from "@utilities/enum";
-import StepperComponent, { StepperIconStyle, StepperProps } from "./Stepper";
+import StepperComponent, { StepperIconStyle, StepperProps } from "./Stepper.tsx.old";
 
 export default {
     title: "Components/Stepper",
