@@ -17,9 +17,10 @@ import IconTemplate from "../src/elements/Icon/IconTemplate";
             svgFileContent,
             {
                 icon: true,
-                plugins: ["@svgr/plugin-jsx", "@svgr/plugin-prettier"],
+                plugins: ["@svgr/plugin-svgo", "@svgr/plugin-jsx", "@svgr/plugin-prettier"],
                 memo: true,
                 template: IconTemplate,
+                dimensions: false,
                 svgProps: {
                     width: "100%",
                     height: "100%",
