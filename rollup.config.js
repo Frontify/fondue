@@ -2,7 +2,6 @@
 const alias = require("@rollup/plugin-alias");
 const dts = require("rollup-plugin-dts").default;
 const esbuild = require("rollup-plugin-esbuild");
-const IconTemplate = require("./src/elements/Icon/IconTemplate");
 const nodeResolve = require("@rollup/plugin-node-resolve").nodeResolve;
 const commonJs = require("@rollup/plugin-commonjs");
 const peerDepsExternal = require("rollup-plugin-peer-deps-external");
