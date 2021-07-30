@@ -23,6 +23,6 @@
         "typeRoots": ["./types"],
         "types": ["cypress"]
     },
-    "include": ["src/**/*", "cypress/**/*", ".storybook/**/*"],
+    "include": ["types", "src/**/*", "cypress/**/*", ".storybook/**/*"],
     "exclude": ["node_modules", "dist"]
 }
