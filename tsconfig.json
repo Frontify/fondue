@@ -20,8 +20,9 @@
             "@utilities/*": ["./src/utilities/*"],
             "@hooks/*": ["./src/hooks/*"]
         },
-        "typeRoots": ["./types"]
+        "typeRoots": ["./types"],
+        "types": ["cypress"]
     },
-    "include": ["src/**/*", "types"],
+    "include": ["src/**/*", "cypress/**/*", ".storybook/**/*"],
     "exclude": ["node_modules", "dist"]
 }
