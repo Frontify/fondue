@@ -1,5 +1,5 @@
 import { BadgeStatus } from "@elements/Badge/Badge";
-import { ReactComponent as Icons } from "@elements/Icon/Svg/Icons.svg";
+import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
 import BreadcrumbComponent, { BreadcrumbsProps } from "./Breadcrumbs";
 
@@ -35,7 +35,7 @@ WithDecorator.args = {
         {
             bold: true,
             link: "/",
-            decorator: <Icons />,
+            decorator: <IconIcons />,
             label: "Active",
         },
     ],
@@ -59,7 +59,7 @@ WithBadges.args = {
                     children: "Badge 2",
                 },
                 {
-                    icon: <Icons />,
+                    icon: <IconIcons />,
                     children: "Badge 3",
                 },
             ],
@@ -75,7 +75,7 @@ WithDecoratorAndBadge.args = {
         {
             bold: true,
             link: "/",
-            decorator: <Icons />,
+            decorator: <IconIcons />,
             label: "Active",
             badges: [
                 {
