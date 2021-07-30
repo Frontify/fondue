@@ -24,7 +24,7 @@ function IconItalic(props: IconProps): React.ReactElement<IconProps> {
             className={customClassName}
             {...props}
         >
-            <path d="M14.5 4H11.5L9 20H12L14.5 4Z" />
+            <path d="M14.5 4h-3L9 20h3l2.5-16z" />
         </svg>
     );
 }

@@ -19,16 +19,12 @@ function IconStarFilled(props: IconProps): React.ReactElement<IconProps> {
             fill="currentColor"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
-            xmlnsXlink="http://www.w3.org/1999/xlink"
             width="100%"
             height="100%"
             className={customClassName}
             {...props}
         >
-            <polygon
-                id="Icon_Star_filled"
-                points="5.81966011 21.0211303 7 14.1392207 2 9.26542528 8.90983006 8.2613682 12 2 15.0901699 8.2613682 22 9.26542528 17 14.1392207 18.1803399 21.0211303 12 17.7719334"
-            />
+            <path d="M5.82 21.021L7 14.14 2 9.265l6.91-1.004L12 2l3.09 6.261L22 9.265l-5 4.874 1.18 6.882-6.18-3.25z" />
         </svg>
     );
 }

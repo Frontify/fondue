@@ -19,13 +19,12 @@ function IconTypography(props: IconProps): React.ReactElement<IconProps> {
             fill="currentColor"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
-            xmlnsXlink="http://www.w3.org/1999/xlink"
             width="100%"
             height="100%"
             className={customClassName}
             {...props}
         >
-            <polygon points="12.8181818 19.4355469 16.0909091 19.4355469 16.0909091 21 7.90909091 21 7.90909091 19.4355469 11.1818182 19.4355469 11.1818182 4.56445312 4.63636364 4.56445312 4.63636364 6.91992188 3 6.91992188 3 3 21 3 21 6.91992188 19.3636364 6.91992188 19.3636364 4.56445312 12.8181818 4.56445312" />
+            <path d="M12.818 19.436h3.273V21H7.909v-1.564h3.273V4.564H4.636V6.92H3V3h18v3.92h-1.636V4.564h-6.546z" />
         </svg>
     );
 }

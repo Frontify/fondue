@@ -19,16 +19,12 @@ function IconGeneral(props: IconProps): React.ReactElement<IconProps> {
             fill="currentColor"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
-            xmlnsXlink="http://www.w3.org/1999/xlink"
             width="100%"
             height="100%"
             className={customClassName}
             {...props}
         >
-            <path
-                d="M5,5 C4.44771525,5 4,5.44771525 4,6 L4,18 C4,18.5522847 4.44771525,19 5,19 L19,19 C19.5522847,19 20,18.5522847 20,18 L20,6 C20,5.44771525 19.5522847,5 19,5 L5,5 Z M5,3 L19,3 C20.6568542,3 22,4.34314575 22,6 L22,18 C22,19.6568542 20.6568542,21 19,21 L5,21 C3.34314575,21 2,19.6568542 2,18 L2,6 C2,4.34314575 3.34314575,3 5,3 Z"
-                id="Icon_ImageOriginal"
-            />
+            <path d="M5 5a1 1 0 00-1 1v12a1 1 0 001 1h14a1 1 0 001-1V6a1 1 0 00-1-1H5zm0-2h14a3 3 0 013 3v12a3 3 0 01-3 3H5a3 3 0 01-3-3V6a3 3 0 013-3z" />
         </svg>
     );
 }
