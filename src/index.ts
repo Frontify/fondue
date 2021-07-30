@@ -1,7 +1,7 @@
 import AddBlockButton from "./elements/AddBlockButton/AddBlockButton";
 import Badge from "./elements/Badge/Badge";
 import BaseActions from "./components/Modal/Actions/BaseActions";
-import Breadcrumb from "./components/Breadcrumb/Breadcrumb";
+import Breadcrumbs from "./components/Breadcrumbs/Breadcrumbs";
 import Button from "./elements/Button/Button";
 import ButtonGroup from "./compositions/ButtonGroup/ButtonGroup";
 import Card from "./components/Card/Card";
@@ -10,6 +10,7 @@ import Divider from "./elements/Divider/Divider";
 import Dropdown from "./components/Dropdown/Dropdown";
 import DropdownMenu from "./components/Dropdown/DropdownMenu/DropdownMenu";
 import DropdownMenuItem from "./components/Dropdown/DropdownMenuItem/DropdownMenuItem";
+import FieldsetHeader from "./compositions/FieldsetHeader/FieldsetHeader";
 import FormControl from "./compositions/FormControl/FormControl";
 import FrontifyImage from "./components/Image/FrontifyImage";
 import IconAcademy from "./elements/Icon/Generated/IconAcademy";
@@ -263,7 +264,7 @@ export {
     AddBlockButton,
     Badge,
     BaseActions,
-    Breadcrumb,
+    Breadcrumbs,
     Button,
     ButtonGroup,
     Card,
@@ -272,6 +273,7 @@ export {
     Dropdown,
     DropdownMenu,
     DropdownMenuItem,
+    FieldsetHeader,
     FormControl,
     FrontifyImage,
     IconAcademy,
