@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconReject from "@elements/Icon/Generated/Reject";
-import IconView from "@elements/Icon/Generated/View";
-import IconViewSlash from "@elements/Icon/Generated/ViewSlash";
+import IconReject from "@elements/Icon/Generated/IconReject";
+import IconView from "@elements/Icon/Generated/IconView";
+import IconViewSlash from "@elements/Icon/Generated/IconViewSlash";
 import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 
 export enum TextInputType {
