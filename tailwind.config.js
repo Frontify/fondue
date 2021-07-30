@@ -54,6 +54,7 @@ module.exports = {
             },
             violet: {
                 // Solids
+                90: "#443185",
                 70: "#6449c4",
                 60: "#825fff",
                 50: "#9088ff",
