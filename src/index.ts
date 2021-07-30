@@ -1,8 +1,9 @@
 import AddBlockButton from "./elements/AddBlockButton/AddBlockButton";
 import Badge from "./elements/Badge/Badge";
 import BaseActions from "./components/Modal/Actions/BaseActions";
-import Breadcrumb from "./components/Breadcrumb/Breadcrumb";
+import Breadcrumbs from "./components/Breadcrumbs/Breadcrumbs";
 import Button from "./elements/Button/Button";
+import ButtonGroup from "./compositions/ButtonGroup/ButtonGroup";
 import Card from "./components/Card/Card";
 import Checkbox from "./elements/Checkbox/Checkbox";
 import Divider from "./elements/Divider/Divider";
@@ -14,6 +15,7 @@ import FrontifyImage from "./components/Image/FrontifyImage";
 import Iframe from "./components/Iframe/Iframe";
 import Image from "./components/Image/Image";
 import InputLabel from "./elements/InputLabel/InputLabel";
+import MenuItemContent from "./components/Dropdown/MenuItemContent/MenuItemContent";
 import Modal from "./components/Modal/Modal";
 import ModalPortal from "./components/Modal/ModalPortal";
 import Node from "./components/Tree/Node";
@@ -261,8 +263,9 @@ export {
     AddBlockButton,
     Badge,
     BaseActions,
-    Breadcrumb,
+    Breadcrumbs,
     Button,
+    ButtonGroup,
     Card,
     Checkbox,
     Divider,
@@ -274,6 +277,7 @@ export {
     Iframe,
     Image,
     InputLabel,
+    MenuItemContent,
     Modal,
     ModalPortal,
     Node,
