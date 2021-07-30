@@ -1,4 +1,5 @@
 declare module "@svgr/core" {
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
     export interface TemplateOptions extends SvgrOpts {}
 
     export interface TemplateData {
@@ -93,7 +94,7 @@ declare module "@svgr/core" {
         sync: (svgCode: string, opts?: SvgrOpts, state?: TemplateData) => void;
     };
 
-    declare const convert: ConvertT;
+    const convert: ConvertT;
 
     export default convert;
 }
