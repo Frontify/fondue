@@ -10,6 +10,12 @@ export default {
             options: Object.values(Style),
             control: { type: "select" },
         },
+        onClick: { table: { disable: true } },
+        onDismiss: { table: { disable: true } },
+    },
+    args: {
+        style: Style.Primary,
+        children: "Text",
     },
 } as Meta<BadgeProps>;
 
@@ -17,47 +23,23 @@ const BadgeTemplate: Story<BadgeProps> = (args) => <Badge {...args} />;
 
 export const LabelOnly = BadgeTemplate.bind({});
 
-LabelOnly.args = {
-    children: "Label",
-};
-
 export const WithOnClick = BadgeTemplate.bind({});
 
 WithOnClick.argTypes = {
-    onClick: {
-        action: "Click",
-    },
+    onClick: { action: "Click" },
 };
 
-WithOnClick.args = {
-    children: "Label",
-};
+export const WithDismiss = BadgeTemplate.bind({});
 
-export const WithOnDismiss = BadgeTemplate.bind({});
-
-WithOnDismiss.argTypes = {
-    onDismiss: {
-        action: "Dismiss",
-    },
-};
-
-WithOnDismiss.args = {
-    children: "Label",
+WithDismiss.argTypes = {
+    onDismiss: { action: "Dismiss" },
 };
 
 export const WithOnClickAndDismiss = BadgeTemplate.bind({});
 
 WithOnClickAndDismiss.argTypes = {
-    onDismiss: {
-        action: "Dismiss",
-    },
-    onClick: {
-        action: "Click",
-    },
-};
-
-WithOnClickAndDismiss.args = {
-    children: "Label",
+    onDismiss: { action: "Dismiss" },
+    onClick: { action: "Click" },
 };
 
 export const WithStatus = BadgeTemplate.bind({});
@@ -71,36 +53,27 @@ WithStatus.argTypes = {
 
 WithStatus.args = {
     status: Status.Positive,
-    children: "Label",
 };
 
 export const WithIcon = BadgeTemplate.bind({});
 
 WithIcon.argTypes = {
-    icon: {
-        table: { disable: true },
-    },
+    icon: { table: { disable: true } },
 };
 
 WithIcon.args = {
     icon: <IconIcons />,
-    children: "Label",
 };
 
 export const WithOnClickAndIcon = BadgeTemplate.bind({});
 
 WithOnClickAndIcon.argTypes = {
-    onClick: {
-        action: "Click",
-    },
-    icon: {
-        table: { disable: true },
-    },
+    onClick: { action: "Click" },
+    icon: { table: { disable: true } },
 };
 
 WithOnClickAndIcon.args = {
     icon: <IconIcons />,
-    children: "Label",
 };
 
 export const WithStatusAndIcon = BadgeTemplate.bind({});
@@ -110,15 +83,12 @@ WithStatusAndIcon.argTypes = {
         options: Object.values(Status),
         control: { type: "select" },
     },
-    icon: {
-        table: { disable: true },
-    },
+    icon: { table: { disable: true } },
 };
 
 WithStatusAndIcon.args = {
     status: Status.Positive,
     icon: <IconIcons />,
-    children: "Label",
 };
 
 export const StatusOnly = BadgeTemplate.bind({});
@@ -128,26 +98,28 @@ StatusOnly.argTypes = {
         options: Object.values(Status),
         control: { type: "select" },
     },
+    children: { table: { disable: true } },
 };
 
 StatusOnly.args = {
     status: Status.Positive,
+    children: "",
 };
 
 export const IconOnly = BadgeTemplate.bind({});
 
 IconOnly.argTypes = {
-    icon: {
-        table: { disable: true },
-    },
+    icon: { table: { disable: true } },
+    children: { table: { disable: true } },
 };
 
 IconOnly.args = {
     icon: <IconIcons />,
+    children: "",
 };
 
 export const BetweenElements: Story<BadgeProps> = (args) => (
-    <div>
+    <div className="flex items-center gap-1">
         <span>before </span>
         <Badge {...args} />
         <span> after</span>
@@ -159,13 +131,10 @@ BetweenElements.argTypes = {
         options: Object.values(Status),
         control: { type: "select" },
     },
-    icon: {
-        table: { disable: true },
-    },
+    icon: { table: { disable: true } },
 };
 
 BetweenElements.args = {
     status: Status.Positive,
     icon: <IconIcons />,
-    children: "Label",
 };

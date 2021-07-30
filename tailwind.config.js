@@ -58,7 +58,7 @@ module.exports = {
                 60: "#825fff",
                 50: "#9088ff",
                 40: "#c8d1ed",
-                20: "#e3d4f6",
+                20: "#e3e8f6",
 
                 // Translucents
                 "opacity-80": "rgba(110, 95, 255, 0.8)",
@@ -112,7 +112,7 @@ module.exports = {
             mono: ["Menlo", "Courier", "monospace"],
         },
         fontSize: {
-            xxs: ["0.75rem", "1rem"],
+            xxs: ["0.75rem", { letterSpacing: "0.02rem", lineHeight: "1rem" }],
             xs: ["0.813rem", "1rem"],
             s: ["0.875rem", "1rem"],
             m: ["1rem", "1.25rem"],
