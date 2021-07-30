@@ -69,7 +69,9 @@ WithBadges.args = {
     ],
 };
 
-export const WithDecoratorAndBadge: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <BreadcrumbComponent {...args} />;
+export const WithDecoratorAndBadge: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => (
+    <BreadcrumbComponent {...args} />
+);
 
 WithDecoratorAndBadge.args = {
     items: [
