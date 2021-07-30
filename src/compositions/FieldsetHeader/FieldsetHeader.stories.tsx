@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Story, Meta } from "@storybook/react";
-import { ReactComponent as Icons } from "@elements/Icon/Svg/Icons.svg";
+import IconIcons from "@elements/Icon/Generated/IconIcons";
 
 import FieldsetHeaderComponent, { FieldsetHeaderProps, Size, Type } from "./FieldsetHeader";
 import { useEffect, useState } from "react";
@@ -48,7 +48,7 @@ withIcon.args = {
     disabled: false,
     bold: true,
     children: "Heading",
-    decorator: <Icons />,
+    decorator: <IconIcons />,
 };
 
 withIcon.storyName = "Heading with Decorator";
