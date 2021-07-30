@@ -14,11 +14,7 @@ const name = pkg.main.replace(/\.js$/, "");
 const bundle = (config) => ({
     input: "src/index.ts",
     ...config,
-    external: (id) => !/^([./]|@elements|@components|@compositions|@utilities|@hooks)/.test(id),
     plugins: [
-        nodeResolve({
-            extensions: [".js", ".ts", ".tsx", ".json"],
-        }),
         alias({
             entries: [
                 { find: "@elements", replacement: resolve(__dirname, "./src/elements") },
@@ -49,7 +45,10 @@ const rollupConfig = [
                     ".json": "json",
                 },
             }),
-            postcss(),
+            postcss({
+                minimize: process.env.NODE_ENV === "production",
+                extract: "index.css",
+            }),
             peerDepsExternal(),
         ],
         output: [
@@ -90,6 +89,11 @@ const rollupConfig = [
             {
                 file: "dist/config.js",
                 format: "cjs",
+                sourcemap: true,
+            },
+            {
+                file: "dist/config.mjs",
+                format: "es",
                 sourcemap: true,
             },
         ],
