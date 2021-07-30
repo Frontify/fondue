@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const alias = require("@rollup/plugin-alias");
-const dts = require("rollup-plugin-dts").default;
-const esbuild = require("rollup-plugin-esbuild");
-const nodeResolve = require("@rollup/plugin-node-resolve").nodeResolve;
-const commonJs = require("@rollup/plugin-commonjs");
-const peerDepsExternal = require("rollup-plugin-peer-deps-external");
-const pkg = require("./package.json");
-const postcss = require("rollup-plugin-postcss");
-const resolve = require("path").resolve;
+import alias from "@rollup/plugin-alias";
+import dts from "rollup-plugin-dts";
+import esbuild from "rollup-plugin-esbuild";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
+import commonJs from "@rollup/plugin-commonjs";
+import peerDepsExternal from "rollup-plugin-peer-deps-external";
+import postcss from "rollup-plugin-postcss";
+import { resolve } from "path";
 
-const name = pkg.main.replace(/\.js$/, "");
+import { main } from "./package.json";
+
+const name = main.replace(/\.js$/, "");
 
 const bundle = (config) => ({
     input: "src/index.ts",

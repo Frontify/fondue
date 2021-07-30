@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-const viteConfig = require("../vite.config");
+//@ts-ignore
+import { alias, plugins } from "../vite.config";
 
-module.exports = {
+export default {
     core: {
         builder: "storybook-builder-vite",
     },
@@ -24,13 +25,13 @@ module.exports = {
             },
         },
     ],
-    async viteFinal(config) {
+    async viteFinal(config: any) {
         config.resolve.alias = {
             ...config.resolve.alias,
-            ...viteConfig.resolve.alias,
+            ...alias,
         };
 
-        config.plugins = [...config.plugins, ...viteConfig.plugins];
+        config.plugins = [...config.plugins, ...plugins];
 
         return config;
     },
