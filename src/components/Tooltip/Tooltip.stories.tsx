@@ -11,7 +11,7 @@ export default {
     },
 } as Meta;
 
-export const Tooltip: Story<TooltipProps> = (args) => (
+export const Tooltip: Story<TooltipProps> = (args: TooltipProps) => (
     <div>
         <TooltipComponent {...args} />
         <p>Some other text.</p>

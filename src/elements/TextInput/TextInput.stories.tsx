@@ -25,4 +25,4 @@ export default {
     },
 } as Meta<TextInputProps>;
 
-export const TextInput: Story<TextInputProps> = (args) => <TextInputComponent {...args} />;
+export const TextInput: Story<TextInputProps> = (args: TextInputProps) => <TextInputComponent {...args} />;

@@ -85,7 +85,7 @@ export default {
     },
 } as Meta<TreeProps>;
 
-export const Tree: Story<TreeProps> = (args) => (
+export const Tree: Story<TreeProps> = (args: TreeProps) => (
     <div style={{ maxWidth: "800px" }}>
         <TreeComponent {...args} />
     </div>

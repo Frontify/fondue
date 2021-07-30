@@ -14,7 +14,7 @@ export default {
     component: BreadcrumbComponent,
 } as Meta<BreadcrumbsProps>;
 
-export const Default: Story<BreadcrumbsProps> = (args) => <BreadcrumbComponent {...args} />;
+export const Default: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <BreadcrumbComponent {...args} />;
 
 Default.args = {
     items: [
@@ -27,7 +27,7 @@ Default.args = {
     ],
 };
 
-export const WithDecorator: Story<BreadcrumbsProps> = (args) => <BreadcrumbComponent {...args} />;
+export const WithDecorator: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <BreadcrumbComponent {...args} />;
 
 WithDecorator.args = {
     items: [
@@ -41,7 +41,7 @@ WithDecorator.args = {
     ],
 };
 
-export const WithBadges: Story<BreadcrumbsProps> = (args) => <BreadcrumbComponent {...args} />;
+export const WithBadges: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <BreadcrumbComponent {...args} />;
 
 WithBadges.args = {
     items: [
@@ -69,7 +69,7 @@ WithBadges.args = {
     ],
 };
 
-export const WithDecoratorAndBadge: Story<BreadcrumbsProps> = (args) => <BreadcrumbComponent {...args} />;
+export const WithDecoratorAndBadge: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <BreadcrumbComponent {...args} />;
 
 WithDecoratorAndBadge.args = {
     items: [

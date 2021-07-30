@@ -17,4 +17,4 @@ export default {
     },
 } as Meta<TextareaProps>;
 
-export const Textarea: Story<TextareaProps> = (args) => <TextareaComponent {...args} />;
+export const Textarea: Story<TextareaProps> = (args: TextareaProps) => <TextareaComponent {...args} />;

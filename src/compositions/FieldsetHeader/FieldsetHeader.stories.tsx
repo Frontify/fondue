@@ -29,7 +29,7 @@ export default {
     },
 } as Meta<FieldsetHeaderProps>;
 
-export const FieldsetHeader: Story<FieldsetHeaderProps> = (args) => {
+export const FieldsetHeader: Story<FieldsetHeaderProps> = (args: FieldsetHeaderProps) => {
     const [active, setActive] = useState(args.active);
 
     useEffect(() => {

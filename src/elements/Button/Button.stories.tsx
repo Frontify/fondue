@@ -20,7 +20,7 @@ export default {
     },
 } as Meta<ButtonProps>;
 
-const ButtonTemplate: Story<ButtonProps> = (args) => <Button {...args} />;
+const ButtonTemplate: Story<ButtonProps> = (args: ButtonProps) => <Button {...args} />;
 
 export const Default = ButtonTemplate.bind({});
 Default.args = {

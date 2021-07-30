@@ -16,4 +16,4 @@ export default {
     },
 } as Meta;
 
-export const InputLabel: Story<InputLabelProps> = (args) => <InputLabelComponent {...args} />;
+export const InputLabel: Story<InputLabelProps> = (args: InputLabelProps) => <InputLabelComponent {...args} />;

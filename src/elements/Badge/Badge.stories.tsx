@@ -19,7 +19,7 @@ export default {
     },
 } as Meta<BadgeProps>;
 
-const BadgeTemplate: Story<BadgeProps> = (args) => <Badge {...args} />;
+const BadgeTemplate: Story<BadgeProps> = (args: BadgeProps) => <Badge {...args} />;
 
 export const LabelOnly = BadgeTemplate.bind({});
 
@@ -118,7 +118,7 @@ IconOnly.args = {
     children: "",
 };
 
-export const BetweenElements: Story<BadgeProps> = (args) => (
+export const BetweenElements: Story<BadgeProps> = (args: BadgeProps) => (
     <div className="flex items-center gap-1">
         <span>before </span>
         <Badge {...args} />

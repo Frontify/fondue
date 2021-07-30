@@ -19,7 +19,7 @@ export default {
     },
 } as Meta<ButtonGroupProps>;
 
-export const ButtonGroup: Story<ButtonGroupProps & { size: Size }> = (args) => (
+export const ButtonGroup: Story<ButtonGroupProps> = (args: ButtonGroupProps) => (
     <ButtonGroupComponent size={args.size}>
         <Button>The First</Button>
         <Button style={Style.Secondary}>The Second</Button>

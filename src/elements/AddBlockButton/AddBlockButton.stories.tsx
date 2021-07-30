@@ -22,4 +22,6 @@ export default {
     },
 } as Meta<AddBlockButtonProps>;
 
-export const AddBlockButton: Story<AddBlockButtonProps> = (args) => <AddBlockButtonComponent {...args} />;
+export const AddBlockButton: Story<AddBlockButtonProps> = (args: AddBlockButtonProps) => (
+    <AddBlockButtonComponent {...args} />
+);

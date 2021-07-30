@@ -31,7 +31,7 @@ export default {
     },
 } as Meta<CheckboxProps>;
 
-export const Checkbox: Story<CheckboxProps> = (args) => {
+export const Checkbox: Story<CheckboxProps> = (args: CheckboxProps) => {
     const [selectionState, setSelectionState] = useState(args.value);
     useEffect(() => setSelectionState(args.value), [args.value]);
 

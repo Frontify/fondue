@@ -11,7 +11,7 @@ export default {
     component: Slider,
 } as Meta<SliderProps>;
 
-const SliderTemplate: Story<SliderProps> = (args) => {
+const SliderTemplate: Story<SliderProps> = (args: SliderProps) => {
     const [activeItemId, setActiveItemId] = useState(args.items[0].id);
     return <Slider {...args} activeItemId={activeItemId} onChange={setActiveItemId} />;
 };

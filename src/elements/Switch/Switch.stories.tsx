@@ -23,7 +23,7 @@ export default {
     },
 } as Meta<SwitchProps>;
 
-export const Switch: Story<SwitchProps> = (args) => {
+export const Switch: Story<SwitchProps> = (args: SwitchProps) => {
     const [on, setOn] = useState(args.on);
     const toggle = () => setOn(!on);
 

@@ -36,4 +36,4 @@ export default {
     },
 } as Meta;
 
-export const Divider: Story<DividerProps> = (args) => <DividerComponent {...args} />;
+export const Divider: Story<DividerProps> = (args: DividerProps) => <DividerComponent {...args} />;

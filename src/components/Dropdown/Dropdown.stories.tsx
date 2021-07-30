@@ -23,7 +23,7 @@ export default {
     },
 } as Meta;
 
-const DropdownTemplate: Story<DropdownProps> = (args) => {
+const DropdownTemplate: Story<DropdownProps> = (args: DropdownProps) => {
     const [active, setActive] = useState(args.activeItemId);
     useEffect(() => setActive(args.activeItemId), [args.activeItemId]);
 

@@ -240,7 +240,7 @@ export default {
     },
 } as Meta<IconProps>;
 
-export const Icon: Story<IconProps> = (args) => (
+export const Icon: Story<IconProps> = (args: IconProps) => (
     <ul className="grid grid-cols-4 gap-4">
         <li className="flex flex-col items-center">
             <IconAcademyComponent {...args} />
