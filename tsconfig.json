@@ -13,6 +13,7 @@
         "strict": true,
         "target": "esnext",
         "jsx": "react-jsx",
+        "skipLibCheck": true,
         "paths": {
             "@elements/*": ["./src/elements/*"],
             "@components/*": ["./src/components/*"],
