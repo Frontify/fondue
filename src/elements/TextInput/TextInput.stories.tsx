@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import IconIcons from "@elements/Icon/Generated/IconIcons";
+import { IconSize } from "@elements/Icon/Icon";
 import { Meta, Story } from "@storybook/react";
-import TextInputComponent, { TextInputProps, TextInputType } from "./TextInput";
+import TextInput, { TextInputProps, TextInputType, Validation } from "./TextInput";
 
 export default {
     title: "Elements/Text Input",
-    component: TextInputComponent,
+    component: TextInput,
     args: {
         clearable: false,
         disabled: false,
@@ -13,16 +15,84 @@ export default {
         type: TextInputType.Text,
     },
     argTypes: {
-        type: {
-            options: Object.values(TextInputType),
+        validation: {
+            options: Object.values(Validation),
             type: "select",
         },
-        decorator: { type: "string" },
         placeholder: { type: "string" },
-        onInput: { action: "onInput" },
-        onBlur: { action: "onBlur" },
-        onClear: { action: "onClear" },
+        obfuscated: { table: { disable: true } },
+        type: { table: { disable: true } },
+        decorator: { table: { disable: true } },
+        onInput: { table: { disable: true }, action: "onInput" },
+        onBlur: { table: { disable: true }, action: "onBlur" },
+        onClear: { table: { disable: true }, action: "onClear" },
     },
 } as Meta<TextInputProps>;
 
-export const TextInput: Story<TextInputProps> = (args: TextInputProps) => <TextInputComponent {...args} />;
+const TextInputTemplate: Story<TextInputProps> = (args) => <TextInput {...args} />;
+
+export const Text = TextInputTemplate.bind({});
+
+export const Prefilled = TextInputTemplate.bind({});
+
+Prefilled.argTypes = {
+    defaultValue: { table: { disable: true } },
+};
+
+Prefilled.args = {
+    defaultValue: "Value text",
+};
+
+export const WithPlaceholder = TextInputTemplate.bind({});
+
+WithPlaceholder.args = {
+    placeholder: "Placeholder text",
+};
+
+export const WithIconDecorator = TextInputTemplate.bind({});
+
+WithIconDecorator.args = {
+    defaultValue: "Value text",
+    decorator: <IconIcons size={IconSize.Size16} />,
+};
+
+export const WithCharacterDecorator = TextInputTemplate.bind({});
+
+WithCharacterDecorator.args = {
+    decorator: "X",
+};
+
+export const Password = TextInputTemplate.bind({});
+
+Password.args = {
+    type: TextInputType.Password,
+    defaultValue: "Secret",
+};
+
+export const PasswordWithIconDecorator = TextInputTemplate.bind({});
+
+PasswordWithIconDecorator.args = {
+    type: TextInputType.Password,
+    defaultValue: "Secret",
+    decorator: <IconIcons size={IconSize.Size16} />,
+};
+
+export const PasswordWithCharacterDecorator = TextInputTemplate.bind({});
+
+PasswordWithCharacterDecorator.args = {
+    type: TextInputType.Password,
+    defaultValue: "Secret",
+    decorator: "P",
+};
+
+export const PasswordVisible = TextInputTemplate.bind({});
+
+PasswordVisible.argTypes = {
+    obfuscated: { table: { disable: false } },
+};
+
+PasswordVisible.args = {
+    type: TextInputType.Password,
+    obfuscated: false,
+    defaultValue: "Secret",
+};
