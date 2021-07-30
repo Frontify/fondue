@@ -38,7 +38,7 @@ const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }: BreadcrumbsProps) => {
                 {items.map((item, index) =>
                     index < items.length - 1 ? (
                         <li
-                            className="flex items-center text-black-80 text-xs"
+                            className="flex items-center text-black-80 text-xs dark:text-black-10"
                             key={`breadcrumb-${index}`}
                             data-test-id="breadcrumb-item"
                         >
@@ -47,7 +47,7 @@ const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }: BreadcrumbsProps) => {
                         </li>
                     ) : (
                         <li
-                            className="w-full h-6 flex gap-x-1 items-center text-m text-black"
+                            className="w-full h-6 flex gap-x-1 items-center text-m text-black dark:text-white"
                             key={`breadcrumb-${index}`}
                             data-test-id="breadcrumb-item"
                         >
