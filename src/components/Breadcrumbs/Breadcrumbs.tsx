@@ -56,8 +56,8 @@ const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }: BreadcrumbsProps) => {
                                 <Link to={item.link} aria-current="page" className={item.bold ? "font-bold" : ""}>
                                     {item.label}
                                 </Link>
-                                {item.badges?.map(({ status, icon, children }, index) => (
-                                    <Badge key={`breadcrumb-badge-${index}`} status={status} icon={icon}>
+                                {item.badges?.map(({ children, ...props }, index) => (
+                                    <Badge {...props} key={`breadcrumb-badge-${index}`}>
                                         {children}
                                     </Badge>
                                 ))}

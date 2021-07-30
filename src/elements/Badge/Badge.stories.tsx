@@ -1,36 +1,78 @@
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
-import Badge, { BadgeProps, BadgeStatus } from "./Badge";
+import Badge, { BadgeProps, Status, Style } from "./Badge";
 
 export default {
     title: "Elements/Badge",
     component: Badge,
+    argTypes: {
+        style: {
+            options: Object.values(Style),
+            control: { type: "select" },
+        },
+    },
 } as Meta<BadgeProps>;
 
 const BadgeTemplate: Story<BadgeProps> = (args) => <Badge {...args} />;
 
-export const Default = BadgeTemplate.bind({});
-Default.args = {
+export const LabelOnly = BadgeTemplate.bind({});
+
+LabelOnly.args = {
     children: "Label",
 };
 
-Default.storyName = "Text Label Only";
+export const WithOnClick = BadgeTemplate.bind({});
+
+WithOnClick.argTypes = {
+    onClick: {
+        action: "Click",
+    },
+};
+
+WithOnClick.args = {
+    children: "Label",
+};
+
+export const WithOnDismiss = BadgeTemplate.bind({});
+
+WithOnDismiss.argTypes = {
+    onDismiss: {
+        action: "Dismiss",
+    },
+};
+
+WithOnDismiss.args = {
+    children: "Label",
+};
+
+export const WithOnClickAndDismiss = BadgeTemplate.bind({});
+
+WithOnClickAndDismiss.argTypes = {
+    onDismiss: {
+        action: "Dismiss",
+    },
+    onClick: {
+        action: "Click",
+    },
+};
+
+WithOnClickAndDismiss.args = {
+    children: "Label",
+};
 
 export const WithStatus = BadgeTemplate.bind({});
 
 WithStatus.argTypes = {
     status: {
-        options: Object.values(BadgeStatus),
+        options: Object.values(Status),
         control: { type: "select" },
     },
 };
 
 WithStatus.args = {
-    status: BadgeStatus.Positive,
+    status: Status.Positive,
     children: "Label",
 };
-
-WithStatus.storyName = "Status and Text Label";
 
 export const WithIcon = BadgeTemplate.bind({});
 
@@ -45,13 +87,27 @@ WithIcon.args = {
     children: "Label",
 };
 
-WithIcon.storyName = "Icon and Text Label";
+export const WithOnClickAndIcon = BadgeTemplate.bind({});
+
+WithOnClickAndIcon.argTypes = {
+    onClick: {
+        action: "Click",
+    },
+    icon: {
+        table: { disable: true },
+    },
+};
+
+WithOnClickAndIcon.args = {
+    icon: <IconIcons />,
+    children: "Label",
+};
 
 export const WithStatusAndIcon = BadgeTemplate.bind({});
 
 WithStatusAndIcon.argTypes = {
     status: {
-        options: Object.values(BadgeStatus),
+        options: Object.values(Status),
         control: { type: "select" },
     },
     icon: {
@@ -60,24 +116,22 @@ WithStatusAndIcon.argTypes = {
 };
 
 WithStatusAndIcon.args = {
-    status: BadgeStatus.Positive,
+    status: Status.Positive,
     icon: <IconIcons />,
     children: "Label",
 };
-
-WithStatusAndIcon.storyName = "Staus, Icon and Text Label";
 
 export const StatusOnly = BadgeTemplate.bind({});
 
 StatusOnly.argTypes = {
     status: {
-        options: Object.values(BadgeStatus),
+        options: Object.values(Status),
         control: { type: "select" },
     },
 };
 
 StatusOnly.args = {
-    status: BadgeStatus.Positive,
+    status: Status.Positive,
 };
 
 export const IconOnly = BadgeTemplate.bind({});
@@ -102,7 +156,7 @@ export const BetweenElements: Story<BadgeProps> = (args) => (
 
 BetweenElements.argTypes = {
     status: {
-        options: Object.values(BadgeStatus),
+        options: Object.values(Status),
         control: { type: "select" },
     },
     icon: {
@@ -111,7 +165,7 @@ BetweenElements.argTypes = {
 };
 
 BetweenElements.args = {
-    status: BadgeStatus.Positive,
+    status: Status.Positive,
     icon: <IconIcons />,
     children: "Label",
 };
