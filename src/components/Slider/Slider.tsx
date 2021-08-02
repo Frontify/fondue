@@ -50,11 +50,14 @@ export default function Slider({
             >
                 {items.map((item) => {
                     const isActive = item.id === activeItemId;
-                    const radioProps = {
-                        value: item.id,
-                        "aria-label": isIconItem(item) ? item.ariaLabel : item.name,
-                    };
-                    const { inputProps } = useRadio(radioProps, radioGroupState, ref);
+                    const { inputProps } = useRadio(
+                        {
+                            value: item.id,
+                            "aria-label": isIconItem(item) ? item.ariaLabel : item.name,
+                        },
+                        radioGroupState,
+                        ref,
+                    );
 
                     return (
                         <li key={item.id} className="relative">
