@@ -22,7 +22,7 @@ export default {
             type: "select",
         },
         placeholder: { type: "string" },
-        defaultValue: { type: "string" },
+        defaultValue: { table: { disable: true } },
         obfuscated: { table: { disable: true } },
         type: { table: { disable: true } },
         decorator: { table: { disable: true } },
@@ -35,6 +35,10 @@ export default {
 const TextInputTemplate: Story<TextInputProps> = (args) => <TextInput {...args} />;
 
 export const Text = TextInputTemplate.bind({});
+
+Text.argTypes = {
+    defaultValue: { table: { disable: false }, type: "string" },
+};
 
 export const Prefilled = TextInputTemplate.bind({});
 
@@ -59,6 +63,7 @@ export const WithCharacterDecorator = TextInputTemplate.bind({});
 
 WithCharacterDecorator.args = {
     decorator: "X",
+    placeholder: "Placeholder text",
 };
 
 export const Password = TextInputTemplate.bind({});
