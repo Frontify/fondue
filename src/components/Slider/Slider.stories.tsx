@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@elements/Icon/Icon";
+import IconSize from "@elements/Icon/IconSize";
 import IconTextAlignCenter from "@elements/Icon/Generated/IconTextAlignCenter";
 import { Meta, Story } from "@storybook/react";
 import { useState } from "react";

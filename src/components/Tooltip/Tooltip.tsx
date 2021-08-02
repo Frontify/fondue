@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@elements/Icon/Icon";
+import IconSize from "@elements/Icon/IconSize";
 import IconQuestion from "@elements/Icon/Generated/IconQuestion";
 import { ReactElement, ReactNode, useState } from "react";
 import { usePopper } from "react-popper";

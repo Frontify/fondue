@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@elements/Icon/Icon";
+import IconSize from "@elements/Icon/IconSize";
 import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
 import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import IconCaretUp from "@elements/Icon/Generated/IconCaretUp";

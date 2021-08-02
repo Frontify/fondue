@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@elements/Icon/Icon";
+import IconSize from "@elements/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import { cloneElement, MouseEvent, ReactElement, ReactNode } from "react";
 

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@elements/Icon/Icon";
+import IconSize from "@elements/Icon/IconSize";
 import IconAudio from "@elements/Icon/Generated/IconAudio";
 import { Meta, Story } from "@storybook/react";
 import { Size, Style } from "@utilities/enum";

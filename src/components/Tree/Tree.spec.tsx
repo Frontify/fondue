@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import { IconSize } from "@elements/Icon/Icon";
+import IconSize from "@elements/Icon/IconSize";
 import IconDocument from "@elements/Icon/Generated/IconDocument";
 import IconGuidelines from "@elements/Icon/Generated/IconGuidelines";
 import { FC, useState } from "react";

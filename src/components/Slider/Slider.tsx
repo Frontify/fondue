@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconProps } from "@elements/Icon/Icon";
+import IconProps from "@elements/Icon/IconProps";
 import { merge } from "@utilities/merge";
 import { ReactElement } from "react";
 import { AnimateSharedLayout, motion } from "framer-motion";

@@ -225,7 +225,8 @@ import IconVolumeOnComponent from "@elements/Icon/Generated/IconVolumeOn";
 import IconWorkflowComponent from "@elements/Icon/Generated/IconWorkflow";
 import IconZoomComponent from "@elements/Icon/Generated/IconZoom";
 import { Meta, Story } from "@storybook/react";
-import { IconProps, IconSize } from "./Icon";
+import IconProps from "./IconProps";
+import IconSize from "./IconSize";
 
 export default {
     title: "Elements/Icon",
