@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Size } from "@elements/Button/Button";
+import { ButtonSize } from "@elements/Button/Button";
 import { merge } from "@utilities/merge";
 import { Children, cloneElement, isValidElement, PropsWithChildren, ReactElement } from "react";
 
-export type ButtonGroupProps = PropsWithChildren<{ size: Size }>;
+export type ButtonGroupProps = PropsWithChildren<{ size: ButtonSize }>;
 
-const spacing: Record<Size, string> = {
-    [Size.Small]: "gap-x-1",
-    [Size.Medium]: "gap-x-2",
-    [Size.Large]: "gap-x-3",
+const spacing: Record<ButtonSize, string> = {
+    [ButtonSize.Small]: "gap-x-1",
+    [ButtonSize.Medium]: "gap-x-2",
+    [ButtonSize.Large]: "gap-x-3",
 };
 
 export default function ButtonGroup({ children, size }: ButtonGroupProps): ReactElement<ButtonGroupProps> {

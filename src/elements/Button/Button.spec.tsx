@@ -2,13 +2,13 @@
 
 import { mount } from "@cypress/react";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
-import Button, { Size, Style } from "./Button";
+import Button, { ButtonSize, ButtonStyle } from "./Button";
 
 const BUTTON_TEXT = "Frontify";
 const BUTTON_ID = "[data-test-id=button]";
 
-const styles = Object.values(Style);
-const sizes = Object.values(Size);
+const styles = Object.values(ButtonStyle);
+const sizes = Object.values(ButtonSize);
 const solids = [true, false];
 
 describe("Button component", () => {

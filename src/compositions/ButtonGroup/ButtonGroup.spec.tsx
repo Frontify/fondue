@@ -1,17 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import Button, { Size, Style } from "@elements/Button/Button";
+import Button, { ButtonSize, ButtonStyle } from "@elements/Button/Button";
 import IconReject from "@elements/Icon/Generated/IconReject";
 import ButtonGroup from "./ButtonGroup";
 
 describe("ButtonGroup Composition", () => {
     it("should render a button group with correct spacing for small buttons", () => {
         mount(
-            <ButtonGroup size={Size.Small}>
+            <ButtonGroup size={ButtonSize.Small}>
                 <Button>First, Small Button</Button>
-                <Button style={Style.Secondary}>The Second, Small Button</Button>
-                <Button icon={<IconReject />} style={Style.Danger}>
+                <Button style={ButtonStyle.Secondary}>The Second, Small Button</Button>
+                <Button icon={<IconReject />} style={ButtonStyle.Danger}>
                     And The Third, Small Button
                 </Button>
             </ButtonGroup>,
@@ -24,10 +24,10 @@ describe("ButtonGroup Composition", () => {
 
     it("should render a button group with correct spacing for medium buttons", () => {
         mount(
-            <ButtonGroup size={Size.Medium}>
+            <ButtonGroup size={ButtonSize.Medium}>
                 <Button>First, Medium Button</Button>
-                <Button style={Style.Secondary}>The Second, Medium Button</Button>
-                <Button icon={<IconReject />} style={Style.Danger}>
+                <Button style={ButtonStyle.Secondary}>The Second, Medium Button</Button>
+                <Button icon={<IconReject />} style={ButtonStyle.Danger}>
                     And The Third, Medium Button
                 </Button>
             </ButtonGroup>,
@@ -40,10 +40,10 @@ describe("ButtonGroup Composition", () => {
 
     it("should render a button group with correct spacing for large buttons", () => {
         mount(
-            <ButtonGroup size={Size.Large}>
+            <ButtonGroup size={ButtonSize.Large}>
                 <Button>First, Large Button</Button>
-                <Button style={Style.Secondary}>The Second, Large Button</Button>
-                <Button icon={<IconReject />} style={Style.Danger}>
+                <Button style={ButtonStyle.Secondary}>The Second, Large Button</Button>
+                <Button icon={<IconReject />} style={ButtonStyle.Danger}>
                     And The Third, Large Button
                 </Button>
             </ButtonGroup>,
@@ -56,12 +56,12 @@ describe("ButtonGroup Composition", () => {
 
     it("enforces the same size for all buttons according to the group's size", () => {
         mount(
-            <ButtonGroup size={Size.Large}>
-                <Button size={Size.Small}>The First</Button>
-                <Button size={Size.Medium} style={Style.Secondary}>
+            <ButtonGroup size={ButtonSize.Large}>
+                <Button size={ButtonSize.Small}>The First</Button>
+                <Button size={ButtonSize.Medium} style={ButtonStyle.Secondary}>
                     The Second
                 </Button>
-                <Button size={Size.Large} icon={<IconReject />} style={Style.Danger}>
+                <Button size={ButtonSize.Large} icon={<IconReject />} style={ButtonStyle.Danger}>
                     The Third
                 </Button>
             </ButtonGroup>,

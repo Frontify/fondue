@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import Button, { Size, Style } from "@elements/Button/Button";
+import Button, { ButtonSize, ButtonStyle } from "@elements/Button/Button";
 import IconReject from "@elements/Icon/Generated/IconReject";
 import { Meta, Story } from "@storybook/react";
 import ButtonGroupComponent, { ButtonGroupProps } from "./ButtonGroup";
@@ -10,20 +10,20 @@ export default {
     component: ButtonGroupComponent,
     argTypes: {
         size: {
-            options: [Size.Small, Size.Medium, Size.Large],
+            options: [ButtonSize.Small, ButtonSize.Medium, ButtonSize.Large],
             control: { type: "radio" },
         },
     },
     args: {
-        size: Size.Medium,
+        size: ButtonSize.Medium,
     },
 } as Meta<ButtonGroupProps>;
 
 export const ButtonGroup: Story<ButtonGroupProps> = (args: ButtonGroupProps) => (
     <ButtonGroupComponent size={args.size}>
         <Button>The First</Button>
-        <Button style={Style.Secondary}>The Second</Button>
-        <Button icon={<IconReject />} style={Style.Danger}>
+        <Button style={ButtonStyle.Secondary}>The Second</Button>
+        <Button icon={<IconReject />} style={ButtonStyle.Danger}>
             The Third
         </Button>
     </ButtonGroupComponent>

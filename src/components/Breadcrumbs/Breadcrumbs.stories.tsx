@@ -1,7 +1,7 @@
-import { Status, Style } from "@elements/Badge/Badge";
+import { BadgeStatus, BadgeStyle } from "@elements/Badge/Badge";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
-import BreadcrumbComponent, { BreadcrumbsProps } from "./Breadcrumbs";
+import { Breadcrumbs, BreadcrumbsProps } from "./Breadcrumbs";
 
 const ITEMS = [
     { label: "Item 1", link: "/" },
@@ -11,10 +11,10 @@ const ITEMS = [
 
 export default {
     title: "Components/Breadcrumbs",
-    component: BreadcrumbComponent,
+    component: Breadcrumbs,
 } as Meta<BreadcrumbsProps>;
 
-export const Default: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <BreadcrumbComponent {...args} />;
+export const Default: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
 
 Default.args = {
     items: [
@@ -27,7 +27,7 @@ Default.args = {
     ],
 };
 
-export const WithDecorator: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <BreadcrumbComponent {...args} />;
+export const WithDecorator: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
 
 WithDecorator.args = {
     items: [
@@ -41,7 +41,7 @@ WithDecorator.args = {
     ],
 };
 
-export const WithBadges: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <BreadcrumbComponent {...args} />;
+export const WithBadges: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
 
 WithBadges.args = {
     items: [
@@ -52,15 +52,15 @@ WithBadges.args = {
             label: "Active",
             badges: [
                 {
-                    style: Style.Positive,
+                    style: BadgeStyle.Positive,
                     children: "Badge 1",
                 },
                 {
-                    status: Status.Danger,
+                    status: BadgeStatus.Danger,
                     children: "Badge 2",
                 },
                 {
-                    style: Style.Danger,
+                    style: BadgeStyle.Danger,
                     icon: <IconIcons />,
                     children: "Badge 3",
                 },
@@ -69,9 +69,7 @@ WithBadges.args = {
     ],
 };
 
-export const WithDecoratorAndBadge: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => (
-    <BreadcrumbComponent {...args} />
-);
+export const WithDecoratorAndBadge: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
 
 WithDecoratorAndBadge.args = {
     items: [
@@ -83,7 +81,7 @@ WithDecoratorAndBadge.args = {
             label: "Active",
             badges: [
                 {
-                    status: Status.Positive,
+                    status: BadgeStatus.Positive,
                     children: "Badge",
                 },
             ],

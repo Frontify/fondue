@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MemoryRouter } from "react-router-dom";
 import { mount } from "@cypress/react";
-import Breadcrumbs from "./Breadcrumbs";
+import { MemoryRouter } from "react-router-dom";
+import { Breadcrumbs } from "./Breadcrumbs";
 
 beforeEach("Getting the seperator", () => {
     cy.intercept("GET", "/img/diagonal-line.svg", "/public/img/diagonal-line.svg");

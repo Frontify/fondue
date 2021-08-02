@@ -1,20 +1,20 @@
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
-import Badge, { BadgeProps, Status, Style } from "./Badge";
+import Badge, { BadgeProps, BadgeStatus, BadgeStyle } from "./Badge";
 
 export default {
     title: "Elements/Badge",
     component: Badge,
     argTypes: {
         style: {
-            options: Object.values(Style),
+            options: Object.values(BadgeStyle),
             control: { type: "select" },
         },
         onClick: { table: { disable: true } },
         onDismiss: { table: { disable: true } },
     },
     args: {
-        style: Style.Primary,
+        style: BadgeStyle.Primary,
         children: "Text",
     },
 } as Meta<BadgeProps>;
@@ -46,13 +46,13 @@ export const WithStatus = BadgeTemplate.bind({});
 
 WithStatus.argTypes = {
     status: {
-        options: Object.values(Status),
+        options: Object.values(BadgeStatus),
         control: { type: "select" },
     },
 };
 
 WithStatus.args = {
-    status: Status.Positive,
+    status: BadgeStatus.Positive,
 };
 
 export const WithIcon = BadgeTemplate.bind({});
@@ -80,14 +80,14 @@ export const WithStatusAndIcon = BadgeTemplate.bind({});
 
 WithStatusAndIcon.argTypes = {
     status: {
-        options: Object.values(Status),
+        options: Object.values(BadgeStatus),
         control: { type: "select" },
     },
     icon: { table: { disable: true } },
 };
 
 WithStatusAndIcon.args = {
-    status: Status.Positive,
+    status: BadgeStatus.Positive,
     icon: <IconIcons />,
 };
 
@@ -95,14 +95,14 @@ export const StatusOnly = BadgeTemplate.bind({});
 
 StatusOnly.argTypes = {
     status: {
-        options: Object.values(Status),
+        options: Object.values(BadgeStatus),
         control: { type: "select" },
     },
     children: { table: { disable: true } },
 };
 
 StatusOnly.args = {
-    status: Status.Positive,
+    status: BadgeStatus.Positive,
     children: "",
 };
 
@@ -128,13 +128,13 @@ export const BetweenElements: Story<BadgeProps> = (args: BadgeProps) => (
 
 BetweenElements.argTypes = {
     status: {
-        options: Object.values(Status),
+        options: Object.values(BadgeStatus),
         control: { type: "select" },
     },
     icon: { table: { disable: true } },
 };
 
 BetweenElements.args = {
-    status: Status.Positive,
+    status: BadgeStatus.Positive,
     icon: <IconIcons />,
 };

@@ -5,7 +5,7 @@ import IconProps from "@elements/Icon/IconProps";
 import { FC, ReactElement } from "react";
 import { Link } from "react-router-dom";
 
-type Breadcrumb = {
+export type Breadcrumb = {
     link: string;
     label: string;
     decorator?: ReactElement<IconProps>;
@@ -31,7 +31,7 @@ const Seperator: FC = (props) => (
     </svg>
 );
 
-const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }: BreadcrumbsProps) => {
+export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }: BreadcrumbsProps) => {
     return (
         <nav className="font-sans" aria-label="Breadcrumb">
             <ol className="list-none flex flex-wrap gap-y-1">
@@ -69,5 +69,3 @@ const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }: BreadcrumbsProps) => {
         </nav>
     );
 };
-
-export default Breadcrumbs;

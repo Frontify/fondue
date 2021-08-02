@@ -3,7 +3,7 @@
 import { mount } from "@cypress/react";
 import IconDocument from "@elements/Icon/Generated/IconDocument";
 import IconSize from "@elements/Icon/IconSize";
-import Badge, { Status } from "./Badge";
+import Badge, { BadgeStatus } from "./Badge";
 
 const BADGE_TEXT = "Frontify";
 const BADGE_ID = "[data-test-id=badge]";
@@ -21,7 +21,7 @@ describe("Badge component", () => {
     });
 
     it(`renders the status dot`, () => {
-        mount(<Badge status={Status.Positive}>{BADGE_TEXT}</Badge>);
+        mount(<Badge status={BadgeStatus.Positive}>{BADGE_TEXT}</Badge>);
 
         cy.get(BADGE_STATUS_ID).should("exist");
     });
