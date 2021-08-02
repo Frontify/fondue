@@ -6,7 +6,7 @@ import { FieldsetHeader, FieldsetHeaderProps, Size, Type } from "./FieldsetHeade
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 
 export default {
-    title: "Compositions/FieldsetHeader",
+    title: "Compositions/Fieldset Header",
     component: FieldsetHeader,
     argTypes: {
         size: {
@@ -28,7 +28,7 @@ export default {
     },
 } as Meta<FieldsetHeaderProps>;
 
-export const Template: Story<FieldsetHeaderProps> = (args: FieldsetHeaderProps) => {
+export const Heading: Story<FieldsetHeaderProps> = (args: FieldsetHeaderProps) => {
     const [active, setActive] = useState(args.active);
 
     useEffect(() => {
@@ -38,9 +38,9 @@ export const Template: Story<FieldsetHeaderProps> = (args: FieldsetHeaderProps) 
     return <FieldsetHeader {...args} active={active} onClick={() => setActive(!active)} />;
 };
 
-export const withIcon = Template.bind({});
+export const withDecorator = Heading.bind({});
 
-withIcon.args = {
+withDecorator.args = {
     size: Size.Large,
     active: true,
     type: Type.Default,
@@ -50,4 +50,4 @@ withIcon.args = {
     decorator: <IconIcons />,
 };
 
-withIcon.storyName = "Heading with Decorator";
+withDecorator.storyName = "Heading with Decorator";
