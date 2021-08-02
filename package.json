@@ -107,6 +107,10 @@
         "react-router-dom": "^5.2.0"
     },
     "dependencies": {
+        "@react-aria/focus": "^3.4.0",
+        "@react-aria/radio": "^3.1.4",
+        "@react-aria/visually-hidden": "^3.2.2",
+        "@react-stately/radio": "^3.3.1",
         "deepmerge": "^4.2.2",
         "framer-motion": "^4.1.17"
     }
