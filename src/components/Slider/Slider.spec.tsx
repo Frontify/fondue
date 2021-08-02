@@ -1,14 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import IconSize from "@elements/Icon/IconSize";
 import IconTextAlignCenter from "@elements/Icon/Generated/IconTextAlignCenter";
+import IconTextAlignLeft from "@elements/Icon/Generated/IconTextAlignLeft";
+import IconTextAlignRight from "@elements/Icon/Generated/IconTextAlignRight";
+import IconSize from "@elements/Icon/IconSize";
 import { FC, useState } from "react";
 import Slider, { IconItem, TextItem } from "./Slider";
 
 const SLIDER_ID = "[data-test-id=slider]";
 const ICON_ITEM_ID = "[data-test-id=slider-item-icon]";
 const TEXT_ITEM_ID = "[data-test-id=slider-item-text]";
+const INPUT_ID = "[data-test-id=slider-input]";
 
 const TEXT_ITEMS = [
     { id: "a", name: "abc" },
@@ -17,9 +20,9 @@ const TEXT_ITEMS = [
 ];
 
 const ICON_ITEMS = [
-    { id: "a", icon: <IconTextAlignCenter size={IconSize.Size16} /> },
-    { id: "b", icon: <IconTextAlignCenter size={IconSize.Size16} /> },
-    { id: "c", icon: <IconTextAlignCenter size={IconSize.Size16} /> },
+    { id: "a", icon: <IconTextAlignLeft size={IconSize.Size16} />, ariaLabel: "Text Align Left" },
+    { id: "b", icon: <IconTextAlignCenter size={IconSize.Size16} />, ariaLabel: "Text Align Center" },
+    { id: "c", icon: <IconTextAlignRight size={IconSize.Size16} />, ariaLabel: "Text Align Right" },
 ];
 
 type Props = {
@@ -37,20 +40,33 @@ describe("Slider Component", () => {
 
         cy.get(SLIDER_ID).should("be.visible");
         cy.get(TEXT_ITEM_ID).should("have.length", 3);
-        cy.get(TEXT_ITEM_ID).first().should("have.attr", "aria-selected", "true");
+        cy.get(INPUT_ID).first().should("be.checked");
+        cy.get(INPUT_ID).first().should("have.attr", "aria-label", "abc");
         cy.get(TEXT_ITEM_ID).first().contains(TEXT_ITEMS[0].name);
     });
     it("renders icon items", () => {
         mount(<Component items={ICON_ITEMS} />);
 
         cy.get(ICON_ITEM_ID).should("have.length", 3);
-        cy.get(ICON_ITEM_ID).first().should("have.attr", "aria-selected", "true");
+        cy.get(INPUT_ID).first().should("be.checked");
+        cy.get(INPUT_ID).first().should("have.attr", "aria-label", "Text Align Left");
     });
     it("changes active item on click", () => {
         mount(<Component items={TEXT_ITEMS} />);
 
         cy.get(TEXT_ITEM_ID).last().click();
-        cy.get(TEXT_ITEM_ID).last().should("have.attr", "aria-selected", "true");
-        cy.get(TEXT_ITEM_ID).first().should("have.attr", "aria-selected", "false");
+        cy.get(INPUT_ID).last().should("be.checked");
+        cy.get(INPUT_ID).first().should("not.be.checked");
+    });
+    it("changes active item via keyboard", () => {
+        mount(<Component items={TEXT_ITEMS} />);
+
+        cy.get("body").tab();
+        cy.get(INPUT_ID).first().should("be.focused");
+        cy.get("body").type("{rightarrow}{rightarrow}");
+        cy.get(INPUT_ID).last().should("be.focused");
+        cy.get(INPUT_ID).last().should("be.checked");
+        cy.get("body").type("{rightarrow}");
+        cy.get(INPUT_ID).first().should("be.checked");
     });
 });

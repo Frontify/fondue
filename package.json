@@ -76,6 +76,7 @@
         "chalk": "^4.1.2",
         "cross-env": "^7.0.3",
         "cypress": "^8.1.0",
+        "cypress-plugin-tab": "^1.0.5",
         "esbuild": "^0.12.17",
         "eslint": "^7.31.0",
         "eslint-plugin-jsx-a11y": "^6.4.1",
@@ -108,6 +109,8 @@
     },
     "dependencies": {
         "deepmerge": "^4.2.2",
-        "framer-motion": "^4.1.17"
+        "framer-motion": "^4.1.17",
+        "react-aria": "^3.8.0",
+        "react-stately": "^3.7.0"
     }
 }
