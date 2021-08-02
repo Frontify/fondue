@@ -58,4 +58,15 @@ describe("Slider Component", () => {
         cy.get(INPUT_ID).last().should("be.checked");
         cy.get(INPUT_ID).first().should("not.be.checked");
     });
+    it("changes active item via keyboard", () => {
+        mount(<Component items={TEXT_ITEMS} />);
+
+        cy.get("body").tab();
+        cy.get(INPUT_ID).first().should("be.focused");
+        cy.get("body").type("{rightarrow}{rightarrow}");
+        cy.get(INPUT_ID).last().should("be.focused");
+        cy.get(INPUT_ID).last().should("be.checked");
+        cy.get("body").type("{rightarrow}");
+        cy.get(INPUT_ID).first().should("be.checked");
+    });
 });

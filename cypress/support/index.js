@@ -13,8 +13,7 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-// Import commands.js using ES2015 syntax:
-import './commands'
-
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+// cypress-plugin-tab is used to test accessibility via tabbing: https://github.com/Bkucera/cypress-plugin-tab
+// Can be removed as soon as cypress supports cy.tab() functionality: https://github.com/cypress-io/cypress/issues/299
+import "cypress-plugin-tab";
+import "./commands";

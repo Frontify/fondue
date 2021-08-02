@@ -76,6 +76,7 @@
         "chalk": "^4.1.2",
         "cross-env": "^7.0.3",
         "cypress": "^8.1.0",
+        "cypress-plugin-tab": "^1.0.5",
         "esbuild": "^0.12.17",
         "eslint": "^7.31.0",
         "eslint-plugin-jsx-a11y": "^6.4.1",
@@ -107,11 +108,9 @@
         "react-router-dom": "^5.2.0"
     },
     "dependencies": {
-        "@react-aria/focus": "^3.4.0",
-        "@react-aria/radio": "^3.1.4",
-        "@react-aria/visually-hidden": "^3.2.2",
         "@react-stately/radio": "^3.3.1",
         "deepmerge": "^4.2.2",
-        "framer-motion": "^4.1.17"
+        "framer-motion": "^4.1.17",
+        "react-aria": "^3.8.0"
     }
 }
