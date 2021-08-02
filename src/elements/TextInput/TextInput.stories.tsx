@@ -66,37 +66,44 @@ WithCharacterDecorator.args = {
     placeholder: "Placeholder text",
 };
 
-export const Password = TextInputTemplate.bind({});
+const PasswordArgTypes = {
+    obfuscated: { type: "boolean", table: { disable: false } },
+};
 
-Password.args = {
+const PasswordArgs = {
     type: TextInputType.Password,
     defaultValue: "Secret",
 };
 
+export const Password = TextInputTemplate.bind({});
+
+Password.argTypes = PasswordArgTypes;
+
+Password.args = { ...PasswordArgs };
+
 export const PasswordWithIconDecorator = TextInputTemplate.bind({});
 
+PasswordWithIconDecorator.argTypes = PasswordArgTypes;
+
 PasswordWithIconDecorator.args = {
-    type: TextInputType.Password,
-    defaultValue: "Secret",
+    ...PasswordArgs,
     decorator: <IconIcons size={IconSize.Size16} />,
 };
 
 export const PasswordWithCharacterDecorator = TextInputTemplate.bind({});
 
+PasswordWithCharacterDecorator.argTypes = PasswordArgTypes;
+
 PasswordWithCharacterDecorator.args = {
-    type: TextInputType.Password,
-    defaultValue: "Secret",
+    ...PasswordArgs,
     decorator: "P",
 };
 
 export const PasswordVisible = TextInputTemplate.bind({});
 
-PasswordVisible.argTypes = {
-    obfuscated: { table: { disable: false } },
-};
+PasswordVisible.argTypes = PasswordArgTypes;
 
 PasswordVisible.args = {
-    type: TextInputType.Password,
+    ...PasswordArgs,
     obfuscated: false,
-    defaultValue: "Secret",
 };
