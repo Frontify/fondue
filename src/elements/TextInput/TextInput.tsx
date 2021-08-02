@@ -4,7 +4,7 @@ import IconReject from "@elements/Icon/Generated/IconReject";
 import IconView from "@elements/Icon/Generated/IconView";
 import IconViewSlash from "@elements/Icon/Generated/IconViewSlash";
 import { merge } from "@utilities/merge";
-import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import { FC, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 
 export enum TextInputType {
     Text = "text",
@@ -13,20 +13,34 @@ export enum TextInputType {
 
 export enum Validation {
     Default = "Default",
+    Loading = "Loading",
     Success = "Success",
     Error = "Error",
 }
 
 const validationStyle: Record<Validation, string> = {
     [Validation.Default]: "border-black-10",
+    [Validation.Loading]: "border-black-10",
     [Validation.Success]: "border-green-50",
     [Validation.Error]: "border-red-50",
 };
+
+const Spinner: FC = () => (
+    <svg className="animate-spin" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="7.5" fill="white" stroke="#EAEBEB" />
+        <path
+            fill="white"
+            d="M16.3302 9.5C17.7109 11.8915 16.8915 14.9494 14.5 16.3301C12.1086 17.7108 9.05063 16.8915 7.66992 14.5"
+            stroke="#9088FF"
+        />
+    </svg>
+);
 
 type TextInputBaseProps = {
     id?: string;
     type?: TextInputType;
     decorator?: ReactNode;
+    dotted?: boolean;
     clearable?: boolean;
     defaultValue?: string;
     placeholder?: string;
@@ -59,6 +73,7 @@ export default function TextInput({
     required,
     obfuscated,
     disabled = false,
+    dotted = false,
     onInput,
     onBlur,
     onClear,
@@ -76,7 +91,8 @@ export default function TextInput({
     return (
         <div
             className={merge([
-                "flex items-center py-2 gap-2 px-3 border rounded font-sans",
+                "flex items-center py-2 gap-2 px-3 border rounded font-sans relative",
+                dotted ? "border-dashed" : "border-solid",
                 disabled
                     ? "border-black-5 bg-black-5 dark:bg-black-90 dark:border-black-90 cursor-not-allowed"
                     : `${validationStyle[validation]} focus-within:border-black-90`,
@@ -97,10 +113,10 @@ export default function TextInput({
                 id={id}
                 ref={inputElement}
                 className={merge([
-                    "flex-grow border-none outline-none placeholder-black-60",
+                    "flex-grow border-none outline-none bg-transparent",
                     disabled
-                        ? "text-black-40 bg-black-5 dark:bg-transparent cursor-not-allowed"
-                        : "text-black dark:text-white dark:bg-transparent",
+                        ? "text-black-40 placeholder-black-30 dark:text-black-30 dark:placeholder-black-40 cursor-not-allowed"
+                        : "text-black placeholder-black-60 dark:text-white",
                 ])}
                 onInput={(event) => onInput && onInput((event.target as HTMLInputElement).value)}
                 onBlur={(event) => onBlur && onBlur(event.target.value)}
@@ -143,6 +159,11 @@ export default function TextInput({
                 >
                     {isObfuscated ? <IconView /> : <IconViewSlash />}
                 </button>
+            )}
+            {validation === Validation.Loading && (
+                <span className="absolute top-[-0.75rem] right-[-0.75rem]">
+                    <Spinner />
+                </span>
             )}
         </div>
     );

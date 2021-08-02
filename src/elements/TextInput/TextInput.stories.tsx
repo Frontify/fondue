@@ -12,7 +12,9 @@ export default {
         clearable: false,
         disabled: false,
         required: false,
+        dotted: false,
         type: TextInputType.Text,
+        validation: Validation.Default,
     },
     argTypes: {
         validation: {
@@ -20,6 +22,7 @@ export default {
             type: "select",
         },
         placeholder: { type: "string" },
+        defaultValue: { type: "string" },
         obfuscated: { table: { disable: true } },
         type: { table: { disable: true } },
         decorator: { table: { disable: true } },
@@ -34,10 +37,6 @@ const TextInputTemplate: Story<TextInputProps> = (args) => <TextInput {...args} 
 export const Text = TextInputTemplate.bind({});
 
 export const Prefilled = TextInputTemplate.bind({});
-
-Prefilled.argTypes = {
-    defaultValue: { table: { disable: true } },
-};
 
 Prefilled.args = {
     defaultValue: "Value text",
