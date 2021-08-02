@@ -7,9 +7,9 @@ import { Checkbox, CheckboxProps, CheckboxSelectionState } from "./Checkbox";
 const CHECKBOX_LABEL = "Holà";
 
 const Component: FC<CheckboxProps> = (props) => {
-    const [checkboxValue, setCheckboxValue] = useState(props.value);
+    const [checkboxValue, setCheckboxValue] = useState(props.checked);
 
-    return <Checkbox {...props} value={checkboxValue} onChange={(value) => setCheckboxValue(value)} />;
+    return <Checkbox {...props} checked={checkboxValue} onChange={(value) => setCheckboxValue(value)} />;
 };
 
 describe("Checkbox component", () => {
@@ -21,21 +21,21 @@ describe("Checkbox component", () => {
     });
 
     it("has the unselected state", () => {
-        mount(<Component value={CheckboxSelectionState.Unselected} />);
+        mount(<Component checked={CheckboxSelectionState.Unselected} />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
         cy.get("@checkbox").should("have.attr", "aria-checked", "false");
     });
 
     it("has the selected state", () => {
-        mount(<Component value={CheckboxSelectionState.Selected} />);
+        mount(<Component checked={CheckboxSelectionState.Selected} />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
         cy.get("@checkbox").should("have.attr", "aria-checked", "true");
     });
 
     it("has the default state of indeterminate", () => {
-        mount(<Component value={CheckboxSelectionState.Indeterminate} />);
+        mount(<Component checked={CheckboxSelectionState.Indeterminate} />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
         cy.get("@checkbox").should("have.attr", "aria-checked", "mixed");
