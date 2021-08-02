@@ -4,7 +4,7 @@ import IconReject from "@elements/Icon/Generated/IconReject";
 import IconView from "@elements/Icon/Generated/IconView";
 import IconViewSlash from "@elements/Icon/Generated/IconViewSlash";
 import { merge } from "@utilities/merge";
-import { FC, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 
 export enum TextInputType {
     Text = "text",
@@ -25,7 +25,7 @@ const validationStyle: Record<Validation, string> = {
     [Validation.Error]: "border-red-50",
 };
 
-const Spinner: FC = () => (
+const Spinner = (): ReactElement => (
     <svg className="animate-spin" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="7.5" fill="white" stroke="#EAEBEB" />
         <path
@@ -142,6 +142,7 @@ export default function TextInput({
                     }}
                     data-test-id="clear-icon"
                     title="clear input"
+                    aria-label="clear input"
                     disabled={disabled}
                 >
                     <IconReject />
@@ -156,6 +157,7 @@ export default function TextInput({
                     onClick={() => setIsObfuscated(!isObfuscated)}
                     data-test-id="visibility-icon"
                     title="toggle text visibility"
+                    aria-label={`${isObfuscated ? "unveil" : "obfuscate"} text input`}
                 >
                     {isObfuscated ? <IconView /> : <IconViewSlash />}
                 </button>
