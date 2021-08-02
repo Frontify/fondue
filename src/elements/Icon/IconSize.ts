@@ -9,6 +9,4 @@ export enum IconSize {
     Size32 = "Size32",
 }
 
-export type IconProps = {
-    size?: IconSize;
-};
+export default IconSize;
