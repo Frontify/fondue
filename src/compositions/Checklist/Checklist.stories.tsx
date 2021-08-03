@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Checkbox } from "@elements/Checkbox/Checkbox";
+import { Checkbox, Style } from "@elements/Checkbox/Checkbox";
 import { Story, Meta } from "@storybook/react";
 
 import { Checklist, ChecklistProps, Direction } from "./Checklist";
@@ -18,7 +18,9 @@ export default {
 
 const Template: Story<ChecklistProps> = (args) => (
     <Checklist {...args}>
-        <Checkbox label="Yolo" />
+        <Checkbox checked="unchecked" style={Style.Primary} label="Checkbox label" />
+        <Checkbox checked="checked" label="Checkbox label" note="Note about this input" disabled />
+        <Checkbox checked="mixed" label="Checkbox label" />
     </Checklist>
 );
 

@@ -14,7 +14,10 @@ export type ChecklistProps = PropsWithChildren<{
 
 export const Checklist: FC<ChecklistProps> = ({ direction = Direction.Horizontal, children }) => {
     return (
-        <ul data-test-id="checklist" className={merge([direction === Direction.Horizontal ? "" : ""])}>
+        <ul
+            data-test-id="checklist"
+            className={merge(["flex", direction === Direction.Horizontal ? "flex-row gap-12" : "flex-col gap-4"])}
+        >
             {Children.map(children, (child) => (
                 <li>{child}</li>
             ))}
