@@ -62,7 +62,6 @@ import IconTemplate from "../src/elements/Icon/IconTemplate";
 
     const fileContent = `import "tailwindcss/tailwind.css";
 ${components.map((c) => componentNameToImport(c.path)).join("\n")}
-
 `;
 
     writeFile(join(__dirname, "..", "src", "index.ts"), fileContent, { encoding: "utf8" });
