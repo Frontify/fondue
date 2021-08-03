@@ -1,4 +1,5 @@
 import ComponentFileBuilderResponse from "./ComponentFileBuilderResponse";
+import { toKebabCase } from "./transforms";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default (componentName: string, componentType: string): ComponentFileBuilderResponse => ({
@@ -11,7 +12,7 @@ export type ${componentName}Props = {
 };
 
 export const ${componentName}: FC<${componentName}Props> = ({ foo }) => {
-    return <div data-test-id="foobar">{foo}</div>;
+    return <div data-test-id="${toKebabCase(componentName)}">{foo}</div>;
 };
 `,
     extension: `.tsx`,

@@ -18,9 +18,7 @@ const Template: Story<${componentName}Props> = (args) => <${componentName} {...a
 export const Default = Template.bind({});
 
 Default.args = {
-    args: {
-        foo: "bar",
-    },
+    foo: "bar",
 };
 `,
     extension: `.stories.tsx`,
