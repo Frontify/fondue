@@ -23,6 +23,7 @@ function IconViewSlash(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
+            name="IconViewSlash"
             {...props}
         >
             <path

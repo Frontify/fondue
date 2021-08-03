@@ -23,6 +23,7 @@ function IconMove(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
+            name="IconMove"
             {...props}
         >
             <path d="M3 8a1 1 0 110-2h18a1 1 0 010 2H3zm0 5a1 1 0 010-2h18a1 1 0 010 2H3zm0 5a1 1 0 010-2h18a1 1 0 010 2H3z" />

@@ -23,6 +23,7 @@ function IconItalic(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
+            name="IconItalic"
             {...props}
         >
             <path d="M14.5 4h-3L9 20h3l2.5-16z" />

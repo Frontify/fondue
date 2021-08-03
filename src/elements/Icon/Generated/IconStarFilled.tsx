@@ -23,6 +23,7 @@ function IconStarFilled(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
+            name="IconStarFilled"
             {...props}
         >
             <path d="M5.82 21.021L7 14.14 2 9.265l6.91-1.004L12 2l3.09 6.261L22 9.265l-5 4.874 1.18 6.882-6.18-3.25z" />

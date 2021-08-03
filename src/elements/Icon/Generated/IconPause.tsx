@@ -23,6 +23,7 @@ function IconPause(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
+            name="IconPause"
             {...props}
         >
             <g transform="translate(5 4)">
