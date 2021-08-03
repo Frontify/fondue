@@ -6,4 +6,7 @@ module.exports = {
         },
     },
     plugins: ["jsx-a11y"],
+    rules: {
+        "react/prop-types": "off",
+    },
 };
