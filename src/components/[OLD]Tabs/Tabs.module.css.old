@@ -1,7 +1,0 @@
-/* (c) Copyright Frontify Ltd., all rights reserved. */
-
-.tabNames {
-    display: grid;
-    border-bottom: 1px solid var(--f-black-10);
-    grid-template-columns: repeat(auto-fill, minmax(auto, 150px));
-}

@@ -1,9 +1,0 @@
-/* (c) Copyright Frontify Ltd., all rights reserved. */
-
-.groupRow {
-    composes: groupRow from "../Sidebar.module.css";
-}
-
-.groupRow > div + span {
-    padding-left: var(--f-spacing-3x);
-}

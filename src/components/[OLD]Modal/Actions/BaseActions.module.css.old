@@ -1,9 +1,0 @@
-/* (c) Copyright Frontify Ltd., all rights reserved. */
-
-.actions {
-    display: flex;
-}
-
-.actions > * + * {
-    padding-left: var(--f-spacing-2x);
-}
