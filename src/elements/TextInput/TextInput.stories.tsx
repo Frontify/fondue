@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, Story } from "@storybook/react";
-import TextInputComponent, { TextInputProps, TextInputType } from "./TextInput";
+import { TextInput, TextInputProps, TextInputType } from "./TextInput";
 
 export default {
     title: "Elements/Text Input",
-    component: TextInputComponent,
+    component: TextInput,
     args: {
         clearable: false,
         disabled: false,
@@ -25,4 +25,4 @@ export default {
     },
 } as Meta<TextInputProps>;
 
-export const TextInput: Story<TextInputProps> = (args: TextInputProps) => <TextInputComponent {...args} />;
+export const Template: Story<TextInputProps> = (args: TextInputProps) => <TextInput {...args} />;

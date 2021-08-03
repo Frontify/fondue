@@ -5,7 +5,7 @@ import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
 import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import IconCaretUp from "@elements/Icon/Generated/IconCaretUp";
 import IconMinus from "@elements/Icon/Generated/IconMinus";
-import Switch from "@elements/Switch/Switch";
+import { Switch } from "@elements/Switch/Switch";
 import { Size as SwitchSize } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
@@ -60,7 +60,7 @@ const renderType = (type: Type, id: string, size: Size, active: boolean, disable
     return null;
 };
 
-export default function FieldsetHeader({
+export const FieldsetHeader = ({
     size = Size.Large,
     active = true,
     decorator,
@@ -70,7 +70,7 @@ export default function FieldsetHeader({
     children,
     onClick,
     as: Heading = "label",
-}: FieldsetHeaderProps): ReactElement<FieldsetHeaderProps> {
+}: FieldsetHeaderProps): ReactElement<FieldsetHeaderProps> => {
     const id = generateRandomId();
 
     return (
@@ -96,4 +96,4 @@ export default function FieldsetHeader({
             {type !== Type.Default && <span className="ml-auto">{renderType(type, id, size, active, disabled)}</span>}
         </header>
     );
-}
+};

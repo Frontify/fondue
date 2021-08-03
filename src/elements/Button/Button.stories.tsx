@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
-import Button, { ButtonProps, ButtonSize, ButtonStyle } from "./Button";
+import { Button, ButtonProps, ButtonSize, ButtonStyle } from "./Button";
+import IconIcons from "@elements/Icon/Generated/IconIcons";
 
 export default {
     title: "Elements/Button",

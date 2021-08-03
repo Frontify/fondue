@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { DropdownMenuItem } from "./DropdownMenuItem";
 import { mount } from "@cypress/react";
+import { MenuItem } from "@components/Dropdown/MenuItemContent/MenuItemContent";
 import IconSize from "@elements/Icon/IconSize";
 import IconAudio from "@elements/Icon/Generated/IconAudio";
 import { Size } from "@utilities/enum";
-import { MenuItem } from "../MenuItemContent/MenuItemContent";
-import DropdownMenuItem from "./DropdownMenuItem";
 
 export const MENU_ITEM_ID = "[data-test-id=dropdown-menu-item]";
 export const MENU_ITEM_ACTIVE_ID = "[data-test-id=dropdown-menu-item-active]";

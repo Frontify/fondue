@@ -1,6 +1,8 @@
-import IconIcons from "@elements/Icon/Generated/IconIcons";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { Meta, Story } from "@storybook/react";
-import Badge, { BadgeProps, BadgeStatus, BadgeStyle } from "./Badge";
+import { Badge, BadgeProps, BadgeStatus, BadgeStyle } from "./Badge";
+import IconIcons from "@elements/Icon/Generated/IconIcons";
 
 export default {
     title: "Elements/Badge",

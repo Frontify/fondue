@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { cloneElement, MouseEvent, ReactElement, ReactNode } from "react";
 import IconSize from "@elements/Icon/IconSize";
 import { merge } from "@utilities/merge";
-import { cloneElement, MouseEvent, ReactElement, ReactNode } from "react";
 
 export enum ButtonStyle {
     Secondary = "Secondary",
@@ -71,7 +71,7 @@ export type ButtonProps = {
     onClick?: (event: MouseEvent) => void;
 };
 
-export default function Button({
+export const Button = ({
     style = ButtonStyle.Primary,
     size = ButtonSize.Medium,
     solid = true,
@@ -79,7 +79,7 @@ export default function Button({
     icon,
     children,
     onClick,
-}: ButtonProps): ReactElement<ButtonProps> {
+}: ButtonProps): ReactElement<ButtonProps> => {
     const wrap = (child: ReactNode) => (children ? <span className={iconSpacing[size]}>{child}</span> : child);
 
     return (
@@ -107,4 +107,4 @@ export default function Button({
             {children}
         </button>
     );
-}
+};

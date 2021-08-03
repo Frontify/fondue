@@ -2,7 +2,7 @@
 
 import { mount } from "@cypress/react";
 
-import Tooltip from "./Tooltip";
+import { Tooltip } from "./Tooltip";
 
 const TOOLTIP_TEXT = "This is a tooltip";
 const TOOLTIP_ICON_ID = "[data-test-id=tooltip-icon]";

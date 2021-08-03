@@ -1,19 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, Story } from "@storybook/react";
-import TooltipComponent, { TooltipProps } from "./Tooltip";
+import { Tooltip, TooltipProps } from "./Tooltip";
 
 export default {
     title: "Components/Tooltip",
-    component: TooltipComponent,
+    component: Tooltip,
     args: {
         tooltip: "Tooltip Content (Reactnode)",
     },
 } as Meta;
 
-export const Tooltip: Story<TooltipProps> = (args: TooltipProps) => (
+export const Template: Story<TooltipProps> = (args: TooltipProps) => (
     <div>
-        <TooltipComponent {...args} />
+        <Tooltip {...args} />
         <p>Some other text.</p>
     </div>
 );

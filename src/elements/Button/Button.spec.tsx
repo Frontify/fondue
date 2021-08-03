@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
+import { Button, ButtonSize, ButtonStyle } from "./Button";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
-import Button, { ButtonSize, ButtonStyle } from "./Button";
 
 const BUTTON_TEXT = "Frontify";
 const BUTTON_ID = "[data-test-id=button]";

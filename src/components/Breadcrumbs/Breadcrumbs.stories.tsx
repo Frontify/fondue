@@ -14,9 +14,9 @@ export default {
     component: Breadcrumbs,
 } as Meta<BreadcrumbsProps>;
 
-export const Default: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
+export const Template: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
 
-Default.args = {
+Template.args = {
     items: [
         ...ITEMS,
         {

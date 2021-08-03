@@ -1,9 +1,9 @@
 import { Meta, Story } from "@storybook/react";
-import TextareaComponent, { TextareaProps } from "./Textarea";
+import { Textarea, TextareaProps } from "./Textarea";
 
 export default {
     title: "Elements/Textarea",
-    component: TextareaComponent,
+    component: Textarea,
     args: {
         disabled: false,
         required: false,
@@ -17,4 +17,4 @@ export default {
     },
 } as Meta<TextareaProps>;
 
-export const Textarea: Story<TextareaProps> = (args: TextareaProps) => <TextareaComponent {...args} />;
+export const Template: Story<TextareaProps> = (args: TextareaProps) => <Textarea {...args} />;

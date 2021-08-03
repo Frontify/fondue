@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from "@cypress/react";
 import { FC, useState } from "react";
-import Switch, { SwitchProps } from "./Switch";
+import { mount } from "@cypress/react";
+import { Switch, SwitchProps } from "./Switch";
 
 const Component: FC<SwitchProps> = ({ on = false, ...props }: SwitchProps) => {
     const [active, setActive] = useState(on);

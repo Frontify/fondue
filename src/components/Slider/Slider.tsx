@@ -23,7 +23,7 @@ export type SliderProps = {
 
 const isIconItem = (item: TextItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
 
-export default function Slider({ items, activeItemId, onChange }: SliderProps): ReactElement<SliderProps> {
+export const Slider = ({ items, activeItemId, onChange }: SliderProps): ReactElement<SliderProps> => {
     /*eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/role-supports-aria-props */
     return (
         <AnimateSharedLayout>
@@ -64,4 +64,4 @@ export default function Slider({ items, activeItemId, onChange }: SliderProps): 
         </AnimateSharedLayout>
     );
     /*eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/role-supports-aria-props */
-}
+};

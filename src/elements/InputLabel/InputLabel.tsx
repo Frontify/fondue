@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import Tooltip from "@components/Tooltip/Tooltip";
 import { PropsWithChildren, ReactElement, ReactNode } from "react";
+import { Tooltip } from "@components/Tooltip/Tooltip";
 
 export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;
@@ -10,13 +10,13 @@ export type InputLabelProps = PropsWithChildren<{
     tooltip?: ReactNode;
 }>;
 
-export default function InputLabel({
+export const InputLabel = ({
     children,
     htmlFor,
     required = false,
     disabled = false,
     tooltip,
-}: InputLabelProps): ReactElement<InputLabelProps> {
+}: InputLabelProps): ReactElement<InputLabelProps> => {
     return (
         <div
             className={`inline-flex items-center gap-1 font-sans text-s ${
@@ -44,4 +44,4 @@ export default function InputLabel({
             {tooltip && <Tooltip tooltip={tooltip} />}
         </div>
     );
-}
+};

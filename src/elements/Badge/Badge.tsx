@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { cloneElement, FC, PropsWithChildren, ReactElement } from "react";
 import RejectIcon from "@elements/Icon/Generated/IconReject";
 import IconProps from "@elements/Icon/IconProps";
 import IconSize from "@elements/Icon/IconSize";
 import { merge } from "@utilities/merge";
-import { cloneElement, FC, PropsWithChildren, ReactElement } from "react";
 
 export enum BadgeStatus {
     Positive = "Positive",
@@ -52,7 +52,7 @@ export type BadgeProps = PropsWithChildren<{
     onDismiss?: () => void;
 }>;
 
-const Badge: FC<BadgeProps> = ({
+export const Badge: FC<BadgeProps> = ({
     children,
     status,
     icon,
@@ -105,5 +105,3 @@ const Badge: FC<BadgeProps> = ({
         </span>
     );
 };
-
-export default Badge;

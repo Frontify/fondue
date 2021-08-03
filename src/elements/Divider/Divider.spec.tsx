@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import Divider from "./Divider";
+import { Divider } from "./Divider";
 
 const DEFAULT_COLOR = "rgb(204, 204, 204)";
 const COLOR_RGB = "rgb(64, 101, 174)";

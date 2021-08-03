@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
+import { FieldsetHeader, Type } from "./FieldsetHeader";
 
-import FieldsetHeader, { Type } from "./FieldsetHeader";
-
-const heading = "bar";
+const HEADING = "bar";
 
 describe("FieldsetHeader Composition", () => {
     it("should no fire click handler if disabled", () => {
@@ -12,7 +11,7 @@ describe("FieldsetHeader Composition", () => {
 
         mount(
             <FieldsetHeader type={Type.Switch} onClick={onClick} disabled>
-                {heading}
+                {HEADING}
             </FieldsetHeader>,
         );
 

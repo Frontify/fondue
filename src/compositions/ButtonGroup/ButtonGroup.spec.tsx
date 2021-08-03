@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import Button, { ButtonSize, ButtonStyle } from "@elements/Button/Button";
+import { ButtonGroup } from "./ButtonGroup";
+import { Button, ButtonSize, ButtonStyle } from "@elements/Button/Button";
 import IconReject from "@elements/Icon/Generated/IconReject";
-import ButtonGroup from "./ButtonGroup";
 
 describe("ButtonGroup Composition", () => {
     it("should render a button group with correct spacing for small buttons", () => {

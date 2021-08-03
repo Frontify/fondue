@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { KeyboardEvent, MouseEvent, ReactElement, ReactNode } from "react";
+import { InputLabel } from "@elements/InputLabel/InputLabel";
 import IconCheck from "@elements/Icon/Generated/IconCheck";
 import IconMinus from "@elements/Icon/Generated/IconMinus";
-import InputLabel from "@elements/InputLabel/InputLabel";
 import { Style } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
-import { KeyboardEvent, MouseEvent, ReactElement, ReactNode } from "react";
 
 export enum CheckboxSelectionState {
     Unselected = "Unselected",
@@ -33,7 +33,7 @@ export type CheckboxProps = {
     onChange?: (newValue: CheckboxSelectionState) => void;
 };
 
-export default function Checkbox({
+export const Checkbox = ({
     style = Style.Primary,
     value: checkboxState = CheckboxSelectionState.Unselected,
     disabled = false,
@@ -41,7 +41,7 @@ export default function Checkbox({
     label,
     tooltip,
     onChange,
-}: CheckboxProps): ReactElement<CheckboxProps> {
+}: CheckboxProps): ReactElement<CheckboxProps> => {
     const onClick = (event: MouseEvent | KeyboardEvent): void => {
         event.preventDefault();
 
@@ -117,4 +117,4 @@ export default function Checkbox({
             )}
         </div>
     );
-}
+};

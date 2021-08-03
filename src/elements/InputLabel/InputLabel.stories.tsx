@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, Story } from "@storybook/react";
-import InputLabelComponent, { InputLabelProps } from "./InputLabel";
+import { InputLabel, InputLabelProps } from "./InputLabel";
 
 export default {
     title: "Elements/Input Label",
-    component: InputLabelComponent,
+    component: InputLabel,
     args: {
         children: "Input Label",
         disabled: false,
@@ -16,4 +16,4 @@ export default {
     },
 } as Meta;
 
-export const InputLabel: Story<InputLabelProps> = (args: InputLabelProps) => <InputLabelComponent {...args} />;
+export const Template: Story<InputLabelProps> = (args: InputLabelProps) => <InputLabel {...args} />;

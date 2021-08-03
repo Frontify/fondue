@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Meta, Story } from "@storybook/react";
+import { Tree, TreeProps } from "./Tree";
+import { TreeNodeProps } from "./Node";
 import IconSize from "@elements/Icon/IconSize";
 import IconDocument from "@elements/Icon/Generated/IconDocument";
 import IconGuidelines from "@elements/Icon/Generated/IconGuidelines";
-import { Meta, Story } from "@storybook/react";
-import { TreeNodeProps } from "./Node";
-import TreeComponent, { TreeProps } from "./Tree";
 
 export default {
     title: "Components/Tree",
-    component: TreeComponent,
+    component: Tree,
     args: {
         nodes: [
             {
@@ -85,8 +85,8 @@ export default {
     },
 } as Meta<TreeProps>;
 
-export const Tree: Story<TreeProps> = (args: TreeProps) => (
+export const Template: Story<TreeProps> = (args: TreeProps) => (
     <div style={{ maxWidth: "800px" }}>
-        <TreeComponent {...args} />
+        <Tree {...args} />
     </div>
 );

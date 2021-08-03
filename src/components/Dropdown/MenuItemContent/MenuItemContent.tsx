@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ReactElement } from "react";
 import IconProps from "@elements/Icon/IconProps";
 import IconSize from "@elements/Icon/IconSize";
 import IconCaretRight from "@elements/Icon/Generated/IconCaretRight";
 import IconCheck from "@elements/Icon/Generated/IconCheck";
 import { Size, Style } from "@utilities/enum";
-import { ReactElement } from "react";
 
 export enum SelectionIndicatorIcon {
     Check = "Check",
@@ -36,7 +36,7 @@ export type MenuItem =
 
 export type MenuItemContentProps = Omit<MenuItem, "id">;
 
-export default function MenuItemContent({
+export const MenuItemContent = ({
     title,
     icon,
     subtitle,
@@ -45,7 +45,7 @@ export default function MenuItemContent({
     disabled = false,
     active = false,
     selectionIndicator = SelectionIndicatorIcon.Check,
-}: MenuItemContentProps): ReactElement<MenuItemContentProps> {
+}: MenuItemContentProps): ReactElement<MenuItemContentProps> => {
     const isDanger = style === Style.Danger;
     /* eslint-disable jsx-a11y/no-noninteractive-tabindex,jsx-a11y/tabindex-no-positive */
     return (
@@ -85,4 +85,4 @@ export default function MenuItemContent({
         </div>
     );
     /* eslint-enable jsx-a11y/no-noninteractive-tabindex,jsx-a11y/tabindex-no-positive */
-}
+};

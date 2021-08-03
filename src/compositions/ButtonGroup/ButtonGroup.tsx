@@ -12,7 +12,7 @@ const spacing: Record<ButtonSize, string> = {
     [ButtonSize.Large]: "gap-x-3",
 };
 
-export default function ButtonGroup({ children, size }: ButtonGroupProps): ReactElement<ButtonGroupProps> {
+export const ButtonGroup = ({ children, size }: ButtonGroupProps): ReactElement<ButtonGroupProps> => {
     return (
         <div data-test-id="button-group" className={merge(["display inline-flex flex-row", spacing[size]])}>
             {Children.map(children, (child) => {
@@ -24,4 +24,4 @@ export default function ButtonGroup({ children, size }: ButtonGroupProps): React
             })}
         </div>
     );
-}
+};

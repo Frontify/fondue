@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import InputLabel from "@elements/InputLabel/InputLabel";
+import { MouseEvent, ReactElement } from "react";
+import { InputLabel } from "@elements/InputLabel/InputLabel";
 import { Size } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
-import { MouseEvent, ReactElement } from "react";
 
 export type SwitchProps = {
     on?: boolean;
@@ -15,14 +15,14 @@ export type SwitchProps = {
     onChange?: (e: MouseEvent) => void;
 };
 
-export default function Switch({
+export const Switch = ({
     name,
     label,
     disabled,
     onChange,
     size = Size.Small,
     on = false,
-}: SwitchProps): ReactElement<SwitchProps> {
+}: SwitchProps): ReactElement<SwitchProps> => {
     const id = label && generateRandomId();
 
     return (
@@ -59,4 +59,4 @@ export default function Switch({
             </button>
         </div>
     );
-}
+};

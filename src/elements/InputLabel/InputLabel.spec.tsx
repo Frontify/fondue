@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import InputLabel from "./InputLabel";
+import { InputLabel } from "./InputLabel";
 
 const LABEL_TEXT = "This is a fancy label.";
 

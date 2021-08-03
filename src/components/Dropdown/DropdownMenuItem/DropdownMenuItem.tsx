@@ -1,15 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ReactElement } from "react";
+import {
+    MenuItemContent,
+    MenuItemContentProps,
+    SelectionIndicatorIcon,
+} from "@components/Dropdown/MenuItemContent/MenuItemContent";
 import { Size, Style } from "@utilities/enum";
 import { merge } from "@utilities/merge";
-import { ReactElement } from "react";
-import MenuItemContent, { MenuItemContentProps, SelectionIndicatorIcon } from "../MenuItemContent/MenuItemContent";
 
 export type DropdownMenuItemProps = {
     onClick?: () => void;
 } & MenuItemContentProps;
 
-export default function DropdownMenuItem({
+export const DropdownMenuItem = ({
     title,
     icon,
     onClick,
@@ -19,7 +23,7 @@ export default function DropdownMenuItem({
     disabled = false,
     active = false,
     selectionIndicator = SelectionIndicatorIcon.Check,
-}: DropdownMenuItemProps): ReactElement<DropdownMenuItemProps> {
+}: DropdownMenuItemProps): ReactElement<DropdownMenuItemProps> => {
     /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/role-supports-aria-props,jsx-a11y/no-noninteractive-tabindex */
     return (
         <li
@@ -42,4 +46,4 @@ export default function DropdownMenuItem({
         </li>
     );
     /* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/role-supports-aria-props,jsx-a11y/no-noninteractive-tabindex */
-}
+};

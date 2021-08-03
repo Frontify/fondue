@@ -1,11 +1,11 @@
 import { Meta, Story } from "@storybook/react";
 import { Style } from "@utilities/enum";
 import { useEffect, useState } from "react";
-import CheckboxComponent, { CheckboxProps, CheckboxSelectionState } from "./Checkbox";
+import { Checkbox, CheckboxProps, CheckboxSelectionState } from "./Checkbox";
 
 export default {
     title: "Elements/Checkbox",
-    component: CheckboxComponent,
+    component: Checkbox,
     args: {
         style: Style.Primary,
         value: CheckboxSelectionState.Unselected,
@@ -31,12 +31,12 @@ export default {
     },
 } as Meta<CheckboxProps>;
 
-export const Checkbox: Story<CheckboxProps> = (args: CheckboxProps) => {
+export const Template: Story<CheckboxProps> = (args: CheckboxProps) => {
     const [selectionState, setSelectionState] = useState(args.value);
     useEffect(() => setSelectionState(args.value), [args.value]);
 
     return (
-        <CheckboxComponent
+        <Checkbox
             {...args}
             value={selectionState}
             onChange={(state: CheckboxSelectionState) => setSelectionState(state)}

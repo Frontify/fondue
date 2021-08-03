@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { motion } from "framer-motion";
 import { ReactElement } from "react";
-import DropdownMenuItem from "../DropdownMenuItem/DropdownMenuItem";
-import { MenuItem } from "../MenuItemContent/MenuItemContent";
+import { motion } from "framer-motion";
+import { DropdownMenuItem } from "@components/Dropdown/DropdownMenuItem/DropdownMenuItem";
+import { MenuItem } from "@components/Dropdown/MenuItemContent/MenuItemContent";
 
 export type MenuBlock = {
     id: string;
@@ -16,11 +16,11 @@ export type DropdownMenuProps = {
     activeItemId?: string;
 };
 
-export default function DropdownMenu({
+export const DropdownMenu = ({
     menuBlocks,
     onChange,
     activeItemId = "",
-}: DropdownMenuProps): ReactElement<DropdownMenuProps> {
+}: DropdownMenuProps): ReactElement<DropdownMenuProps> => {
     return (
         <motion.ul
             className="absolute left-0 w-full overflow-hidden box-border p-0 border border-black-10 rounded shadow-mid list-none m-0 mt-2"
@@ -55,4 +55,4 @@ export default function DropdownMenu({
             ))}
         </motion.ul>
     );
-}
+};

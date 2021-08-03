@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useState } from "react";
+import { Meta, Story } from "@storybook/react";
+import { Slider, SliderProps } from "./Slider";
 import IconSize from "@elements/Icon/IconSize";
 import IconTextAlignCenter from "@elements/Icon/Generated/IconTextAlignCenter";
-import { Meta, Story } from "@storybook/react";
-import { useState } from "react";
-import Slider, { SliderProps } from "./Slider";
 
 export default {
     title: "Components/Slider",

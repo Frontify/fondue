@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import IconReject from "@elements/Icon/Generated/IconReject";
 import IconView from "@elements/Icon/Generated/IconView";
 import IconViewSlash from "@elements/Icon/Generated/IconViewSlash";
-import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 
 export enum TextInputType {
     Text = "text",
@@ -24,7 +24,7 @@ export type TextInputProps = {
     onClear?: () => void;
 };
 
-export default function TextInput({
+export const TextInput = ({
     id,
     type = TextInputType.Text,
     decorator,
@@ -36,7 +36,7 @@ export default function TextInput({
     onInput,
     onBlur,
     onClear,
-}: TextInputProps): ReactElement<TextInputProps> {
+}: TextInputProps): ReactElement<TextInputProps> => {
     const isTextInput = type === TextInputType.Text;
     const inputElement = useRef<HTMLInputElement | null>(null);
     const [inputValueVisible, setInputValueVisible] = useState(isTextInput);
@@ -99,4 +99,4 @@ export default function TextInput({
             )}
         </div>
     );
-}
+};
