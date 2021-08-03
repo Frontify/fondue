@@ -57,6 +57,7 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
             isIndeterminate: checked === "mixed",
             isDisabled: disabled,
             isRequired: required,
+            "aria-label": label,
         },
         state,
         ref,
