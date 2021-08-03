@@ -62,7 +62,7 @@ export type TextInputProps =
           obfuscated?: boolean;
       } & TextInputBaseProps);
 
-export const TextInput({
+export const TextInput = ({
     id,
     type = TextInputType.Text,
     decorator,
