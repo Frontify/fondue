@@ -21,6 +21,8 @@ export default {
         disabled: false,
         required: false,
         value: "whatever-you'd-like",
+        label: "",
+        note: "",
     },
 } as Meta<CheckboxProps>;
 

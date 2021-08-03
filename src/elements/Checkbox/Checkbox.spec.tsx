@@ -41,13 +41,6 @@ describe("Checkbox component", () => {
         cy.get("@checkbox").should("have.attr", "aria-checked", "mixed");
     });
 
-    it("has a label", () => {
-        mount(<Component label={CHECKBOX_LABEL} />);
-
-        cy.get("[data-test-id=checkbox-wrapper]").contains(CHECKBOX_LABEL);
-        cy.get("[data-test-id=input-label]").should("have.length", 1);
-    });
-
     it("has a disabled state", () => {
         mount(<Component disabled={true} />);
 

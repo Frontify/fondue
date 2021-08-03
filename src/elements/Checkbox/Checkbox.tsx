@@ -6,14 +6,14 @@ import { useCheckbox } from "@react-aria/checkbox";
 import { useFocusRing } from "@react-aria/focus";
 import { useToggleState } from "@react-stately/toggle";
 import { merge } from "@utilities/merge";
-import { FC, PropsWithChildren, useRef } from "react";
+import { FC, useRef } from "react";
 
 export enum Style {
     Default = "Default",
     Primary = "Primary",
 }
 
-export type CheckboxProps = PropsWithChildren<{
+export type CheckboxProps = {
     style?: Style;
     checked?: "checked" | "unchecked" | "mixed";
     disabled?: boolean;
@@ -21,7 +21,9 @@ export type CheckboxProps = PropsWithChildren<{
     name?: string;
     value?: string;
     onChange?: (isChecked: boolean) => void;
-}>;
+    label?: string;
+    note?: string;
+};
 
 const styles = {
     unchecked: {
@@ -45,7 +47,7 @@ const isCheckedOrMixed = (checked: CheckedOrMixed): boolean => {
 };
 
 export const Checkbox: FC<CheckboxProps> = (props) => {
-    const { checked = "unchecked", children, disabled, required, style = Style.Default } = props;
+    const { checked = "unchecked", disabled, required, label, note, style = Style.Default } = props;
     const state = useToggleState({ ...props, isSelected: checked === "checked" });
     const ref = useRef<HTMLInputElement>(null);
     const { inputProps } = useCheckbox(
@@ -84,8 +86,10 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
             >
                 {checked === "checked" && <IconCheck />}
                 {checked === "mixed" && <IconMinus />}
+                {label && <span>{label}</span>}
             </span>
-            {children}
+            {label}
+            {note && <span>{note}</span>}
         </label>
     );
 };
