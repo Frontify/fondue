@@ -48,6 +48,7 @@ import IconTemplate from "../src/elements/Icon/IconTemplate";
                     width: "100%",
                     height: "100%",
                     className: "{customClassName}",
+                    name: `Icon${svgFileName}`,
                 },
             },
             { componentName: `Icon${svgFileName}` },

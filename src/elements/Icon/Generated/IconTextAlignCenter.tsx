@@ -23,6 +23,7 @@ function IconTextAlignCenter(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
+            name="IconTextAlignCenter"
             {...props}
         >
             <path d="M5 7a1 1 0 110-2h14a1 1 0 010 2H5zm-2.09 4c-.503 0-.91-.448-.91-1s.407-1 .91-1h18.18c.503 0 .91.448.91 1s-.407 1-.91 1H2.91zM5 15a1 1 0 110-2h14a1 1 0 010 2H5zm-2.09 4c-.503 0-.91-.448-.91-1s.407-1 .91-1h18.18c.503 0 .91.448.91 1s-.407 1-.91 1H2.91z" />

@@ -23,6 +23,7 @@ function IconTextAlignJustify(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
+            name="IconTextAlignJustify"
             {...props}
         >
             <path d="M3 7a1 1 0 110-2h18a1 1 0 010 2H3zm-.09 4c-.503 0-.91-.448-.91-1s.407-1 .91-1h18.18c.503 0 .91.448.91 1s-.407 1-.91 1H2.91zM3 15a1 1 0 110-2h18a1 1 0 010 2H3zm-.09 4c-.503 0-.91-.448-.91-1s.407-1 .91-1h18.18c.503 0 .91.448.91 1s-.407 1-.91 1H2.91z" />
