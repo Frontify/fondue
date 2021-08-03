@@ -58,6 +58,7 @@ import IconBookmark from "./elements/Icon/Generated/IconBookmark";
 import IconBrand from "./elements/Icon/Generated/IconBrand";
 import IconBriefing from "./elements/Icon/Generated/IconBriefing";
 import IconBuilder from "./elements/Icon/Generated/IconBuilder";
+import IconButton from "./elements/Icon/Generated/IconButton";
 import IconCalendar from "./elements/Icon/Generated/IconCalendar";
 import IconCallout from "./elements/Icon/Generated/IconCallout";
 import IconCampaign from "./elements/Icon/Generated/IconCampaign";
@@ -284,6 +285,7 @@ export {
     IconBrand,
     IconBriefing,
     IconBuilder,
+    IconButton,
     IconCalendar,
     IconCallout,
     IconCampaign,
