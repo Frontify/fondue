@@ -3,7 +3,7 @@
 import { FC, ReactElement } from "react";
 import { Link } from "react-router-dom";
 import { Badge, BadgeProps } from "@elements/Badge/Badge";
-import IconProps from "@elements/Icon/IconProps";
+import { IconProps } from "@elements/Icon/IconProps";
 
 export type Breadcrumb = {
     link: string;

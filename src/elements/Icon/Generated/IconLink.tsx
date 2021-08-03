@@ -1,6 +1,6 @@
 import * as React from "react";
-import IconProps from "@elements/Icon/IconProps";
-import IconSize from "@elements/Icon/IconSize";
+import { IconProps } from "@elements/Icon/IconProps";
+import { IconSize } from "@elements/Icon/IconSize";
 const iconSizeMap = {
     [IconSize.Size8]: "h-2 w-2",
     [IconSize.Size12]: "h-3 w-3",

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconSize from "@elements/Icon/IconSize";
+import { IconSize } from "@elements/Icon/IconSize";
 import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
 import { Orientation } from "@utilities/enum";
 import { MouseEvent, ReactElement } from "react";

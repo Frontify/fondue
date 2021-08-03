@@ -3,7 +3,7 @@
 import { mount } from "@cypress/react";
 import { Badge, BadgeStatus } from "./Badge";
 import IconDocument from "@elements/Icon/Generated/IconDocument";
-import IconSize from "@elements/Icon/IconSize";
+import { IconSize } from "@elements/Icon/IconSize";
 
 const BADGE_TEXT = "Frontify";
 const BADGE_ID = "[data-test-id=badge]";

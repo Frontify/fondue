@@ -2,7 +2,7 @@
 
 import { ReactElement, ReactNode, useState } from "react";
 import { usePopper } from "react-popper";
-import IconSize from "@elements/Icon/IconSize";
+import { IconSize } from "@elements/Icon/IconSize";
 import IconQuestion from "@elements/Icon/Generated/IconQuestion";
 
 export type TooltipProps = {

@@ -8,10 +8,33 @@ import { Entry } from "fast-glob/out/types";
 import IconTemplate from "../src/elements/Icon/IconTemplate";
 
 (async () => {
-    const iconsFilePath = await fastGlob("src/elements/Icon/Svg/**/*.svg", { objectMode: true });
-    iconsFilePath.forEach(async (svgFilePath: Entry) => {
-        const svgFileContent = await readFile(svgFilePath.path, { encoding: "utf-8" });
-        const svgFileName = svgFilePath.name.replace(".svg", "");
+    const componentsFilePath = await fastGlob(
+        [
+            "src/elements/**/*.ts",
+            "src/elements/**/[a-zA-Z]*.tsx",
+            "src/components/**/[a-zA-Z]*.tsx",
+            "src/compositions/**/[a-zA-Z]*.tsx",
+        ],
+        { objectMode: true, ignore: ["src/elements/Icon/Generated/**/*"] },
+    );
+
+    const components = componentsFilePath
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((filePath) => {
+            const filename = filePath.name;
+            return {
+                name: filename.replace(/\.tsx?/, ""),
+                path: filePath.path.replace(/\.tsx?/, ""),
+            };
+        })
+        .filter((filePath) => filePath.name.indexOf(".") === -1);
+
+    const componentNameToImport = (path: string) => `export * from "./${path.replace("src/", "")}";`;
+
+    const iconsSvgPath = await fastGlob("src/elements/Icon/Svg/**/*.svg", { objectMode: true });
+    iconsSvgPath.forEach(async (svgPath: Entry) => {
+        const svgFileContent = await readFile(svgPath.path, { encoding: "utf-8" });
+        const svgFileName = svgPath.name.replace(".svg", "");
 
         await svgr(
             svgFileContent,
@@ -42,11 +65,9 @@ import IconTemplate from "../src/elements/Icon/IconTemplate";
         });
     });
 
-    const componentsFilePath = await fastGlob(
-        ["src/elements/**/[a-zA-Z]*.tsx", "src/components/**/[a-zA-Z]*.tsx", "src/compositions/**/[a-zA-Z]*.tsx"],
-        { objectMode: true },
-    );
-    const components = componentsFilePath
+    const iconComponentsFilePath = await fastGlob(["src/elements/Icon/Generated/**/*.tsx"], { objectMode: true });
+
+    const iconComponents = iconComponentsFilePath
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((filePath) => {
             const filename = filePath.name;
@@ -58,10 +79,16 @@ import IconTemplate from "../src/elements/Icon/IconTemplate";
         .filter((filePath) => filePath.name.indexOf(".") === -1)
         .filter((component) => component.name !== "Icon");
 
-    const componentNameToImport = (path: string) => `export * from "./${path.replace("src/", "")}";`;
+    const iconComponentNameToImport = (name: string, path: string) =>
+        `import ${name} from "./${path.replace("src/", "")}";`;
 
     const fileContent = `import "tailwindcss/tailwind.css";
 ${components.map((c) => componentNameToImport(c.path)).join("\n")}
+${iconComponents.map((ic) => iconComponentNameToImport(ic.name, ic.path)).join("\n")}
+
+export {
+    ${iconComponents.map((ic) => `${ic.name},`).join("\n    ")}
+};
 `;
 
     writeFile(join(__dirname, "..", "src", "index.ts"), fileContent, { encoding: "utf8" });

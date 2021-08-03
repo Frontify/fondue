@@ -6,7 +6,7 @@ import { mount } from "@cypress/react";
 import IconTextAlignCenter from "@elements/Icon/Generated/IconTextAlignCenter";
 import IconTextAlignLeft from "@elements/Icon/Generated/IconTextAlignLeft";
 import IconTextAlignRight from "@elements/Icon/Generated/IconTextAlignRight";
-import IconSize from "@elements/Icon/IconSize";
+import { IconSize } from "@elements/Icon/IconSize";
 
 const SLIDER_ID = "[data-test-id=slider]";
 const ICON_ITEM_ID = "[data-test-id=slider-item-icon]";

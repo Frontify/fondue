@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import IconIcons from "@elements/Icon/Generated/IconIcons";
-import IconSize from "@elements/Icon/IconSize";
+import { IconSize } from "@elements/Icon/IconSize";
 import { Meta, Story } from "@storybook/react";
 import { TextInput, TextInputProps, TextInputType, Validation } from "./TextInput";
 

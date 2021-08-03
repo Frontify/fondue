@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { cloneElement, MouseEvent, ReactElement, ReactNode } from "react";
-import IconSize from "@elements/Icon/IconSize";
+import { IconSize } from "@elements/Icon/IconSize";
 import { merge } from "@utilities/merge";
 
 export enum ButtonStyle {

@@ -2,8 +2,8 @@
 
 import { cloneElement, FC, PropsWithChildren, ReactElement } from "react";
 import RejectIcon from "@elements/Icon/Generated/IconReject";
-import IconProps from "@elements/Icon/IconProps";
-import IconSize from "@elements/Icon/IconSize";
+import { IconProps } from "@elements/Icon/IconProps";
+import { IconSize } from "@elements/Icon/IconSize";
 import { merge } from "@utilities/merge";
 
 export enum BadgeStatus {

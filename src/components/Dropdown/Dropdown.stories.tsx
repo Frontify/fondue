@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Dropdown, DropdownProps } from "./Dropdown";
 import { Meta, Story } from "@storybook/react";
-import IconSize from "@elements/Icon/IconSize";
+import { IconSize } from "@elements/Icon/IconSize";
 import IconAudio from "@elements/Icon/Generated/IconAudio";
 import { Size, Style } from "@utilities/enum";
 

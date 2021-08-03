@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Meta, Story } from "@storybook/react";
 import { Slider, SliderProps } from "./Slider";
-import IconSize from "@elements/Icon/IconSize";
+import { IconSize } from "@elements/Icon/IconSize";
 import IconTextAlignCenter from "@elements/Icon/Generated/IconTextAlignCenter";
 import IconTextAlignLeft from "@elements/Icon/Generated/IconTextAlignLeft";
 import IconTextAlignRight from "@elements/Icon/Generated/IconTextAlignRight";

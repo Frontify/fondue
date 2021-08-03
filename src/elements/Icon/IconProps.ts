@@ -1,9 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconSize from "./IconSize";
+import { IconSize } from "./IconSize";
 
-export type IconProps = {
+export interface IconProps {
     size?: IconSize;
-};
-
-export default IconProps;
+}

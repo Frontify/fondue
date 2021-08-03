@@ -12,8 +12,8 @@ export default function IconTemplate(
 
     return typeScriptTpl.ast`
       ${imports}
-      import IconProps from "@elements/Icon/IconProps";
-      import IconSize from "@elements/Icon/IconSize";
+      import { IconProps } from "@elements/Icon/IconProps";
+      import { IconSize } from "@elements/Icon/IconSize";
 
       ${interfaces}
 

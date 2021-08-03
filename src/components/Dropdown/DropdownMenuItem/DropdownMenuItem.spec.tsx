@@ -3,7 +3,7 @@
 import { DropdownMenuItem } from "./DropdownMenuItem";
 import { mount } from "@cypress/react";
 import { MenuItem } from "@components/Dropdown/MenuItemContent/MenuItemContent";
-import IconSize from "@elements/Icon/IconSize";
+import { IconSize } from "@elements/Icon/IconSize";
 import IconAudio from "@elements/Icon/Generated/IconAudio";
 import { Size } from "@utilities/enum";
 

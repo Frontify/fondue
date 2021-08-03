@@ -3,7 +3,7 @@
 import { Meta, Story } from "@storybook/react";
 import { Tree, TreeProps } from "./Tree";
 import { TreeNodeProps } from "./Node";
-import IconSize from "@elements/Icon/IconSize";
+import { IconSize } from "@elements/Icon/IconSize";
 import IconDocument from "@elements/Icon/Generated/IconDocument";
 import IconGuidelines from "@elements/Icon/Generated/IconGuidelines";
 

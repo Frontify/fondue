@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement, useState } from "react";
-import IconProps from "@elements/Icon/IconProps";
-import IconSize from "@elements/Icon/IconSize";
+import { IconProps } from "@elements/Icon/IconProps";
+import { IconSize } from "@elements/Icon/IconSize";
 import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import IconCaretRight from "@elements/Icon/Generated/IconCaretRight";
 import { merge } from "@utilities/merge";
