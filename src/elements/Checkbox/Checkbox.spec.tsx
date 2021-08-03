@@ -1,71 +1,60 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FC, useState } from "react";
 import { mount } from "@cypress/react";
-import { Checkbox, CheckboxProps, CheckboxSelectionState } from "./Checkbox";
+import { FC, useState } from "react";
+import { Checkbox, CheckboxProps } from "./Checkbox";
 
-const CHECKBOX_LABEL = "Holà";
+const CHECKBOX_LABEL = "Checkbox label";
 
 const Component: FC<CheckboxProps> = (props) => {
-    const [checkboxValue, setCheckboxValue] = useState(props.checked);
+    const [checked, setChecked] = useState<"checked" | "unchecked" | "mixed" | undefined>(props.checked);
 
-    return <Checkbox {...props} checked={checkboxValue} onChange={(value) => setCheckboxValue(value)} />;
+    return (
+        <Checkbox
+            {...props}
+            checked={checked}
+            onChange={(isChecked: boolean) => setChecked(isChecked ? "checked" : "unchecked")}
+        />
+    );
 };
 
 describe("Checkbox component", () => {
-    it("renders", () => {
-        mount(<Component label={CHECKBOX_LABEL} />);
+    it("renders with a checkbox icon if checked", () => {
+        mount(<Component checked="checked" />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
-        cy.get("[data-test-id=checkbox-wrapper]").contains(CHECKBOX_LABEL);
+        cy.get("@checkbox").get("svg").invoke("attr", "name").should("eq", "IconCheck");
+        cy.get("@checkbox").get("input").invoke("attr", "aria-checked").should("eq", "true");
     });
 
-    it("has the unselected state", () => {
-        mount(<Component checked={CheckboxSelectionState.Unselected} />);
+    it("renders with a minus icon if indeterminate", () => {
+        mount(<Component checked="mixed" />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
-        cy.get("@checkbox").should("have.attr", "aria-checked", "false");
+        cy.get("@checkbox").get("svg").invoke("attr", "name").should("eq", "IconMinus");
+        cy.get("@checkbox").get("input").invoke("attr", "aria-checked").should("eq", "mixed");
     });
 
-    it("has the selected state", () => {
-        mount(<Component checked={CheckboxSelectionState.Selected} />);
+    it("renders without an icon if unchecked", () => {
+        mount(<Component checked="unchecked" />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
-        cy.get("@checkbox").should("have.attr", "aria-checked", "true");
+        cy.get("@checkbox").get("svg").should("not.exist");
+        cy.get("@checkbox").get("input").invoke("attr", "aria-checked").should("eq", "false");
     });
 
-    it("has the default state of indeterminate", () => {
-        mount(<Component checked={CheckboxSelectionState.Indeterminate} />);
+    it("renders with a label", () => {
+        mount(<Component label={CHECKBOX_LABEL} checked="checked" />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
-        cy.get("@checkbox").should("have.attr", "aria-checked", "mixed");
+        cy.get("@checkbox").contains(CHECKBOX_LABEL);
     });
 
-    it("has a disabled state", () => {
-        mount(<Component disabled={true} />);
+    it("renders as disabled if disabled", () => {
+        mount(<Component label={CHECKBOX_LABEL} disabled checked="mixed" />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
-
-        cy.get("@checkbox").should("have.attr", "aria-disabled", "true");
-
-        cy.get("@checkbox").click({ force: true });
-
-        cy.get("@checkbox").should("have.attr", "aria-checked", "false");
-    });
-
-    it("cycle in the selection state on click", () => {
-        mount(<Component />);
-
-        cy.get("[data-test-id=checkbox]").as("checkbox");
-
-        cy.get("@checkbox").should("have.attr", "aria-checked", "false");
-
-        cy.get("@checkbox").click({ force: true });
-
-        cy.get("@checkbox").should("have.attr", "aria-checked", "true");
-
-        cy.get("@checkbox").click({ force: true });
-
-        cy.get("@checkbox").should("have.attr", "aria-checked", "false");
+        cy.get("@checkbox").get("input").invoke("attr", "aria-checked").should("eq", "mixed");
+        cy.get("@checkbox").get("input").invoke("attr", "disabled").should("eq", "disabled");
     });
 });
