@@ -4,15 +4,15 @@ import ComponentFileBuilderResponse from "./ComponentFileBuilderResponse";
 export default (componentName: string, componentType: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from "react";
+import { FC } from "react";
 
-export interface ${componentName}Props {
+export type ${componentName}Props = {
     foo: string;
-}
+};
 
-export default function ${componentName}({ foo }: ${componentName}Props): ReactElement<${componentName}Props> {
+export const ${componentName}: FC<${componentName}Props> = ({ foo }) => {
     return <div data-test-id="foobar">{foo}</div>;
-}
+};
 `,
     extension: `.tsx`,
 });
