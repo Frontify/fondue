@@ -23,6 +23,7 @@ function IconDoDontsUnderline(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
+            name="IconDoDontsUnderline"
             {...props}
         >
             <path d="M7.26 12.722h1.242v1.428H4.589v-1.428H5.83V7.629H4.013v.931H2.584V6.2H10.506v2.36H9.078V7.63H7.26v5.093zm-4.35 5.115a.91.91 0 110-1.818h18.18a.91.91 0 010 1.818H2.91z" />

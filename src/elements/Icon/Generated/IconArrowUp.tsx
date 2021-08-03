@@ -23,6 +23,7 @@ function IconArrowUp(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
+            name="IconArrowUp"
             {...props}
         >
             <path d="M10.98 6.002L5.55 11.43A1.026 1.026 0 114.1 9.98l7.18-7.18c.4-.4 1.05-.4 1.45 0l7.18 7.18a1.026 1.026 0 01-1.45 1.45l-5.43-5.428v15.472a1.026 1.026 0 11-2.05 0V6.002z" />

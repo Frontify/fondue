@@ -23,6 +23,7 @@ function IconImageTextRatio75(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
+            name="IconImageTextRatio75"
             {...props}
         >
             <path d="M5.572 3.005a2.514 2.514 0 012.514 2.514V18.48a2.514 2.514 0 11-5.028 0V5.52a2.514 2.514 0 012.514-2.514zm0 1.5c-.56 0-1.014.454-1.014 1.014V18.48a1.014 1.014 0 102.028 0V5.52c0-.56-.454-1.014-1.014-1.014zm4.624.927a.75.75 0 010-1.5h9.996a.75.75 0 010 1.5h-9.996zm0 3.03a.75.75 0 010-1.5h9.996a.75.75 0 010 1.5h-9.996zm.01 3.034a.75.75 0 010-1.5h5.87a.75.75 0 010 1.5h-5.87z" />

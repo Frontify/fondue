@@ -23,6 +23,7 @@ function IconLightningFilled(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
+            name="IconLightningFilled"
             {...props}
         >
             <path

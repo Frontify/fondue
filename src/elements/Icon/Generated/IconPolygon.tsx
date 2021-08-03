@@ -23,6 +23,7 @@ function IconPolygon(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
+            name="IconPolygon"
             {...props}
         >
             <path d="M0 0h24v24H0z" />

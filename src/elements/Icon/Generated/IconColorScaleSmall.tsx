@@ -23,6 +23,7 @@ function IconColorScaleSmall(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
+            name="IconColorScaleSmall"
             {...props}
         >
             <path d="M4.344 11.167a.82.82 0 00-.806.833c0 .46.361.833.806.833h15.312a.82.82 0 00.806-.833.82.82 0 00-.806-.833H4.344zM4.4 9.5h15.2c1.325 0 2.4 1.12 2.4 2.5s-1.075 2.5-2.4 2.5H4.4C3.075 14.5 2 13.38 2 12s1.075-2.5 2.4-2.5z" />

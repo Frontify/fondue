@@ -23,6 +23,7 @@ function IconTriangle(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
+            name="IconTriangle"
             {...props}
         >
             <path d="M5.772 19.287h12.456L12 6.83 5.772 19.287zM21 21H3l9-18 9 18z" />
