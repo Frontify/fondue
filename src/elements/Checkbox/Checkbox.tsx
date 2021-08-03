@@ -61,89 +61,43 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
         state,
         ref,
     );
-    const { /*isFocusVisible,*/ focusProps } = useFocusRing();
+    const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
-        <label data-test-id="checkbox">
-            <input {...inputProps} {...focusProps} ref={ref} className="sr-only" />
-            <span
-                aria-hidden="true"
-                className={merge([
-                    "relative flex w-4 h-4 items-center justify-center rounded transition-colors border",
-                    disabled
-                        ? merge([
-                              "text-white pointer-events-none",
-                              !isCheckedOrMixed(checked) &&
-                                  "border-black-20 bg-white dark:border-black-80 dark:bg-black-90",
-                              isCheckedOrMixed(checked) &&
-                                  "border-black-40 bg-black-40 dark:border-black-60 dark:bg-black-60",
-                          ])
-                        : merge([
-                              !isCheckedOrMixed(checked) && styles.unchecked[style],
-                              isCheckedOrMixed(checked) && styles.checked[style],
-                          ]),
-                ])}
-            >
-                {checked === "checked" && <IconCheck />}
-                {checked === "mixed" && <IconMinus />}
-                {label && <span>{label}</span>}
-            </span>
-            {label}
-            {note && <span>{note}</span>}
-        </label>
+        <div className="flex flex-col gap-1 transition-colors" data-test-id="checkbox">
+            <label className="flex items-center gap-2">
+                <input {...inputProps} {...focusProps} ref={ref} className="sr-only" />
+                <span
+                    aria-hidden="true"
+                    className={merge([
+                        "relative flex w-4 h-4 items-center justify-center rounded border",
+                        isFocusVisible && "outline-violet",
+                        disabled
+                            ? merge([
+                                  "text-white pointer-events-none",
+                                  !isCheckedOrMixed(checked) &&
+                                      "border-black-20 bg-white dark:border-black-80 dark:bg-black-90",
+                                  isCheckedOrMixed(checked) &&
+                                      "border-black-40 bg-black-40 dark:border-black-60 dark:bg-black-60",
+                              ])
+                            : merge([
+                                  !isCheckedOrMixed(checked) && styles.unchecked[style],
+                                  isCheckedOrMixed(checked) && styles.checked[style],
+                              ]),
+                    ])}
+                >
+                    {checked === "checked" && <IconCheck />}
+                    {checked === "mixed" && <IconMinus />}
+                </span>
+                {label && (
+                    <span
+                        className={merge([disabled ? "text-black-40" : "text-black", "font-sans text-s font-medium"])}
+                    >
+                        {label}
+                    </span>
+                )}
+            </label>
+            {note && <span className="text-black-60 font-sans text-xs font-normal">{note}</span>}
+        </div>
     );
 };
-
-// export default function Checkbox({
-//     style = Style.Primary,
-//     value: checkboxState = CheckboxSelectionState.Unselected,
-//     disabled = false,
-//     required = false,
-//     label,
-//     tooltip,
-//     onChange,
-// }: CheckboxProps): ReactElement<CheckboxProps> {
-
-//     const id = generateRandomId();
-
-//     return (
-//         <div className="flex" {...checkboxConditionalAttributes} data-test-id="checkbox-wrapper">
-//             <input
-//                 id={id}
-//                 className="hidden"
-//                 type="checkbox"
-//                 disabled={disabled}
-//                 defaultChecked={checkboxState === CheckboxSelectionState.Selected}
-//                 onClick={onClick}
-//             />
-//             <span
-//                 className={`relative flex w-4 h-4 items-center justify-center rounded cursor-pointer transition-colors border ${
-//                     label ? "mr-2" : ""
-//                 } ${
-//                     disabled
-//                         ? `cursor-not-allowed border-black-40 text-black-20 dark:border-black-60 dark:bg-black-60 dark:text-black-80
-//                             ${checkboxState === CheckboxSelectionState.Unselected ? "bg-transparent" : "bg-black-40"}`
-//                         : checkboxState === CheckboxSelectionState.Unselected
-//                         ? `hover:bg-black-5 dark:hover:bg-black-90 focus-visible:outline-violet ${unselectedStyleClasses[style]}`
-//                         : `focus-visible:outline-violet ${unselectedStyleClasses[style]} ${selectedStyleClasses[style]}`
-//                 }`}
-//                 tabIndex={disabled ? -1 : 0}
-//                 data-test-id="checkbox"
-//                 aria-disabled={disabled}
-//                 aria-checked={
-//                     checkboxState === CheckboxSelectionState.Indeterminate
-//                         ? "mixed"
-//                         : checkboxState === CheckboxSelectionState.Selected
-//                 }
-//             >
-//                 {checkboxState === CheckboxSelectionState.Selected && <IconCheck />}
-//                 {checkboxState === CheckboxSelectionState.Indeterminate && <IconMinus />}
-//             </span>
-//             {label && (
-//                 <InputLabel htmlFor={id} required={required} disabled={disabled} tooltip={tooltip}>
-//                     {label}
-//                 </InputLabel>
-//             )}
-//         </div>
-//     );
-// }
