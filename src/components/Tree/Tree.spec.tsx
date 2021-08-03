@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { FC, useState } from "react";
+import { Tree } from "./Tree";
+import { TreeNodeProps } from "./Node";
 import { mount } from "@cypress/react";
 import IconSize from "@elements/Icon/IconSize";
 import IconDocument from "@elements/Icon/Generated/IconDocument";
 import IconGuidelines from "@elements/Icon/Generated/IconGuidelines";
-import { FC, useState } from "react";
-import { TreeNodeProps } from "./Node";
-import Tree from "./Tree";
 
 type ComponentProps = {
     nodes: TreeNodeProps[];

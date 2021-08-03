@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
+import { Badge, BadgeStatus } from "./Badge";
 import IconDocument from "@elements/Icon/Generated/IconDocument";
 import IconSize from "@elements/Icon/IconSize";
-import Badge, { Status } from "./Badge";
 
 const BADGE_TEXT = "Frontify";
 const BADGE_ID = "[data-test-id=badge]";
@@ -21,7 +21,7 @@ describe("Badge component", () => {
     });
 
     it(`renders the status dot`, () => {
-        mount(<Badge status={Status.Positive}>{BADGE_TEXT}</Badge>);
+        mount(<Badge status={BadgeStatus.Positive}>{BADGE_TEXT}</Badge>);
 
         cy.get(BADGE_STATUS_ID).should("exist");
     });

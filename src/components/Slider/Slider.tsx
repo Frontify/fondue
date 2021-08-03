@@ -29,12 +29,12 @@ export type SliderProps = {
 
 const isIconItem = (item: TextItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
 
-export default function Slider({
+export const Slider = ({
     items,
     activeItemId,
     onChange,
     ariaLabel = "Slider",
-}: SliderProps): ReactElement<SliderProps> {
+}: SliderProps): ReactElement<SliderProps> => {
     const groupProps = { onChange, value: activeItemId, label: ariaLabel };
     const radioGroupState = useRadioGroupState(groupProps);
     const { radioGroupProps } = useRadioGroup(groupProps, radioGroupState);
@@ -97,4 +97,4 @@ export default function Slider({
             </ul>
         </AnimateSharedLayout>
     );
-}
+};

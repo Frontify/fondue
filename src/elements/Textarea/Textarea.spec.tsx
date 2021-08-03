@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import Textarea from "./Textarea";
+import { Textarea } from "./Textarea";
 
 const DEFAULT_TEXT = "A new text area";
 const PLACEHOLDER = "This is the placeholder";

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { merge } from "@utilities/merge";
 import { PropsWithChildren, ReactElement } from "react";
+import { merge } from "@utilities/merge";
 
 export type TextareaProps = PropsWithChildren<{
     required?: boolean;
@@ -12,7 +12,7 @@ export type TextareaProps = PropsWithChildren<{
     onBlur?: (value: string) => void;
 }>;
 
-export default function Textarea({
+export const Textarea = ({
     children,
     required = false,
     decorator,
@@ -20,7 +20,7 @@ export default function Textarea({
     disabled = false,
     onInput,
     onBlur,
-}: TextareaProps): ReactElement<TextareaProps> {
+}: TextareaProps): ReactElement<TextareaProps> => {
     return (
         <div className="relative">
             {decorator && (
@@ -46,4 +46,4 @@ export default function Textarea({
             </textarea>
         </div>
     );
-}
+};

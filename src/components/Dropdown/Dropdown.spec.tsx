@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { FC, useState } from "react";
+import { Dropdown, DropdownProps } from "./Dropdown";
 import { mount } from "@cypress/react";
 import { Size } from "@utilities/enum";
-import { FC, useState } from "react";
-import Dropdown, { DropdownProps } from "./Dropdown";
 import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_ID, MENU_ITEM_TITLE_ID } from "./DropdownMenuItem/DropdownMenuItem.spec";
 
 const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";

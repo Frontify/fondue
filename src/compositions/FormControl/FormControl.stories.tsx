@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import TextInput from "@elements/TextInput/TextInput";
 import { Meta, Story } from "@storybook/react";
+import { FormControl, FormControlProps, HelperPosition } from "./FormControl";
+import { TextInput } from "@elements/TextInput/TextInput";
 import { Orientation, Style, Theme } from "@utilities/enum";
-import FormControlComponent, { FormControlProps, HelperPosition } from "./FormControl";
 
 export default {
     title: "Compositions/Form Control",
-    component: FormControlComponent,
+    component: FormControl,
     args: {
         disabled: false,
         orientation: Orientation.Vertical,
@@ -37,8 +37,8 @@ export default {
     },
 } as Meta<FormControlProps>;
 
-export const FormControl: Story<FormControlProps> = (args) => (
-    <FormControlComponent {...args}>
+export const Template: Story<FormControlProps> = (args) => (
+    <FormControl {...args}>
         <TextInput id="input" disabled={args.disabled} />
-    </FormControlComponent>
+    </FormControl>
 );

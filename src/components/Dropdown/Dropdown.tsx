@@ -8,8 +8,8 @@ import { Size } from "@utilities/enum";
 import { merge } from "@utilities/merge";
 import { AnimatePresence } from "framer-motion";
 import { ReactElement, useRef, useState } from "react";
-import DropdownMenu, { MenuBlock } from "./DropdownMenu/DropdownMenu";
-import MenuItemContent from "./MenuItemContent/MenuItemContent";
+import { DropdownMenu, MenuBlock } from "@components/Dropdown/DropdownMenu/DropdownMenu";
+import { MenuItemContent } from "@components/Dropdown/MenuItemContent/MenuItemContent";
 
 export type DropdownProps = {
     menuBlocks: MenuBlock[];
@@ -27,7 +27,7 @@ const getActiveItem = (menuBlocks: MenuBlock[], id: string) =>
         .flat()
         .find((item) => item.id === id) || null;
 
-export default function Dropdown({
+export const Dropdown = ({
     menuBlocks,
     onChange,
     activeItemId = "",
@@ -35,7 +35,7 @@ export default function Dropdown({
     size = Size.Small,
     disabled = false,
     clearable = false,
-}: DropdownProps): ReactElement<DropdownProps> {
+}: DropdownProps): ReactElement<DropdownProps> => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownElement = useRef<HTMLDivElement | null>(null);
     useClickOutside(dropdownElement.current, () => setIsOpen(false));
@@ -106,4 +106,4 @@ export default function Dropdown({
             </AnimatePresence>
         </div>
     );
-}
+};

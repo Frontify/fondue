@@ -3,7 +3,7 @@
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import IconSize from "@elements/Icon/IconSize";
 import { Meta, Story } from "@storybook/react";
-import TextInput, { TextInputProps, TextInputType, Validation } from "./TextInput";
+import { TextInput, TextInputProps, TextInputType, Validation } from "./TextInput";
 
 export default {
     title: "Elements/Text Input",

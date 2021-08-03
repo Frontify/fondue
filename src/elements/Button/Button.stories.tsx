@@ -1,19 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
-import Button, { ButtonProps, Size, Style } from "./Button";
+import { Button, ButtonProps, ButtonSize, ButtonStyle } from "./Button";
+import IconIcons from "@elements/Icon/Generated/IconIcons";
 
 export default {
     title: "Elements/Button",
     component: Button,
     argTypes: {
         size: {
-            options: [Size.Small, Size.Medium, Size.Large],
+            options: [ButtonSize.Small, ButtonSize.Medium, ButtonSize.Large],
             control: { type: "radio" },
         },
         style: {
-            options: [Style.Primary, Style.Secondary, Style.Danger, Style.Positive],
+            options: [ButtonStyle.Primary, ButtonStyle.Secondary, ButtonStyle.Danger, ButtonStyle.Positive],
             control: { type: "select" },
         },
         onClick: { action: "onClick" },
@@ -26,9 +26,9 @@ export const Default = ButtonTemplate.bind({});
 Default.args = {
     children: "Button Text",
     disabled: false,
-    size: Size.Medium,
+    size: ButtonSize.Medium,
     solid: true,
-    style: Style.Primary,
+    style: ButtonStyle.Primary,
 };
 
 Default.storyName = "Text Label Only";
@@ -37,8 +37,8 @@ export const withIcon = ButtonTemplate.bind({});
 
 withIcon.args = {
     disabled: false,
-    size: Size.Medium,
-    style: Style.Primary,
+    size: ButtonSize.Medium,
+    style: ButtonStyle.Primary,
     solid: true,
     icon: <IconIcons />,
 };
@@ -49,8 +49,8 @@ export const withIconAndLabel = ButtonTemplate.bind({});
 
 withIconAndLabel.args = {
     disabled: false,
-    size: Size.Medium,
-    style: Style.Primary,
+    size: ButtonSize.Medium,
+    style: ButtonStyle.Primary,
     solid: true,
     icon: <IconIcons />,
     children: "Button Text",

@@ -58,15 +58,10 @@ import IconTemplate from "../src/elements/Icon/IconTemplate";
         .filter((filePath) => filePath.name.indexOf(".") === -1)
         .filter((component) => component.name !== "Icon");
 
-    const componentNameToImport = (name: string, path: string) =>
-        `import ${name} from "./${path.replace("src/", "")}";`;
+    const componentNameToImport = (path: string) => `export * from "./${path.replace("src/", "")}";`;
 
     const fileContent = `import "tailwindcss/tailwind.css";
-${components.map((c) => componentNameToImport(c.name, c.path)).join("\n")}
-
-export {
-    ${components.map((c) => c.name).join(",\n    ")},
-};
+${components.map((c) => componentNameToImport(c.path)).join("\n")}
 `;
 
     writeFile(join(__dirname, "..", "src", "index.ts"), fileContent, { encoding: "utf8" });

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import InputLabel, { InputLabelProps } from "@elements/InputLabel/InputLabel";
-import { Orientation, Style } from "@utilities/enum";
 import { FC, PropsWithChildren, ReactElement, ReactNode } from "react";
+import { InputLabel, InputLabelProps } from "@elements/InputLabel/InputLabel";
+import { Orientation, Style } from "@utilities/enum";
 
 type HelperTextProps = {
     text: string;
@@ -10,6 +10,7 @@ type HelperTextProps = {
     style?: Style.Primary | Style.Success | Style.Danger;
     fullWidth?: boolean;
 };
+
 const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = false }: HelperTextProps) => (
     <span
         data-test-id="form-control-helper-text"
@@ -40,14 +41,14 @@ export type FormControlProps = PropsWithChildren<{
     helper?: Omit<HelperTextProps, "disabled"> & { position?: HelperPosition };
 }>;
 
-export default function FormControl({
+export const FormControl = ({
     label,
     children,
     extra,
     helper,
     disabled,
     orientation = Orientation.Vertical,
-}: FormControlProps): ReactElement<FormControlProps> {
+}: FormControlProps): ReactElement<FormControlProps> => {
     const isHelperBefore = helper?.position === HelperPosition.Before;
 
     return (
@@ -93,4 +94,4 @@ export default function FormControl({
             )}
         </div>
     );
-}
+};

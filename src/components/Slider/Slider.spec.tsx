@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { FC, useState } from "react";
+import { Slider, IconItem, TextItem } from "./Slider";
 import { mount } from "@cypress/react";
 import IconTextAlignCenter from "@elements/Icon/Generated/IconTextAlignCenter";
 import IconTextAlignLeft from "@elements/Icon/Generated/IconTextAlignLeft";
 import IconTextAlignRight from "@elements/Icon/Generated/IconTextAlignRight";
 import IconSize from "@elements/Icon/IconSize";
-import { FC, useState } from "react";
-import Slider, { IconItem, TextItem } from "./Slider";
 
 const SLIDER_ID = "[data-test-id=slider]";
 const ICON_ITEM_ID = "[data-test-id=slider-item-icon]";

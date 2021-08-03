@@ -21,14 +21,14 @@ export type DividerProps = {
     color?: string;
 };
 
-export default function Divider({
+export const Divider = ({
     style = DividerStyle.Solid,
     height = DividerHeight.Height50,
     color: borderTopColor = "#CCC",
-}: DividerProps): React.ReactElement<DividerProps> {
+}: DividerProps): React.ReactElement<DividerProps> => {
     return (
         <div className={`flex items-center ${height}`} data-test-id="divider">
             <hr className={`border-t m-0 w-full ${style}`} style={{ borderTopColor }} data-test-id="divider-hr" />
         </div>
     );
-}
+};

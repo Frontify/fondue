@@ -2,7 +2,7 @@
 
 import { mount } from "@cypress/react";
 import { Orientation } from "@utilities/enum";
-import FormControl, { HelperPosition } from "./FormControl";
+import { FormControl, HelperPosition } from "./FormControl";
 
 const FORM_CONTROL_ID = "[data-test-id=form-control]";
 const FORM_CONTROL_EXTRA_ID = "[data-test-id=form-control-extra]";

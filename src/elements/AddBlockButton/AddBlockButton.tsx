@@ -6,16 +6,16 @@ import { Orientation } from "@utilities/enum";
 import { MouseEvent, ReactElement } from "react";
 
 export type AddBlockButtonProps = {
-    onClick: (e: MouseEvent) => void;
+    onClick: (event: MouseEvent) => void;
     title?: string;
     orientation?: Orientation;
 };
 
-export default function AddBlockButton({
+export const AddBlockButton = ({
     onClick,
     title,
     orientation = Orientation.Horizontal,
-}: AddBlockButtonProps): ReactElement {
+}: AddBlockButtonProps): ReactElement<AddBlockButtonProps> => {
     return (
         <button
             data-test-id="add-block-button"
@@ -33,4 +33,4 @@ export default function AddBlockButton({
             <IconAddSimple size={IconSize.Size16} />
         </button>
     );
-}
+};

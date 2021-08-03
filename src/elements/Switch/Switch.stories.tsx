@@ -3,11 +3,11 @@
 import { Meta, Story } from "@storybook/react";
 import { Size } from "@utilities/enum";
 import { useEffect, useState } from "react";
-import SwitchComponent, { SwitchProps } from "./Switch";
+import { Switch, SwitchProps } from "./Switch";
 
 export default {
     title: "Elements/Switch",
-    component: SwitchComponent,
+    component: Switch,
     argTypes: {
         size: {
             options: [Size.Small, Size.Large],
@@ -23,7 +23,7 @@ export default {
     },
 } as Meta<SwitchProps>;
 
-export const Switch: Story<SwitchProps> = (args: SwitchProps) => {
+export const Template: Story<SwitchProps> = (args: SwitchProps) => {
     const [on, setOn] = useState(args.on);
     const toggle = () => setOn(!on);
 
@@ -31,5 +31,5 @@ export const Switch: Story<SwitchProps> = (args: SwitchProps) => {
         setOn(args.on);
     }, [args.on]);
 
-    return <SwitchComponent {...args} onChange={toggle} on={on} />;
+    return <Switch {...args} onChange={toggle} on={on} />;
 };

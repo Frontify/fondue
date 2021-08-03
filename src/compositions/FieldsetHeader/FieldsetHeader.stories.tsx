@@ -1,14 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Story, Meta } from "@storybook/react";
-import IconIcons from "@elements/Icon/Generated/IconIcons";
-
-import FieldsetHeaderComponent, { FieldsetHeaderProps, Size, Type } from "./FieldsetHeader";
 import { useEffect, useState } from "react";
+import { Story, Meta } from "@storybook/react";
+import { FieldsetHeader, FieldsetHeaderProps, Size, Type } from "./FieldsetHeader";
+import IconIcons from "@elements/Icon/Generated/IconIcons";
 
 export default {
     title: "Compositions/FieldsetHeader",
-    component: FieldsetHeaderComponent,
+    component: FieldsetHeader,
     argTypes: {
         size: {
             options: [Size.Small, Size.Large],
@@ -29,17 +28,17 @@ export default {
     },
 } as Meta<FieldsetHeaderProps>;
 
-export const FieldsetHeader: Story<FieldsetHeaderProps> = (args: FieldsetHeaderProps) => {
+export const Template: Story<FieldsetHeaderProps> = (args: FieldsetHeaderProps) => {
     const [active, setActive] = useState(args.active);
 
     useEffect(() => {
         setActive(args.active);
     }, [args.active]);
 
-    return <FieldsetHeaderComponent {...args} active={active} onClick={() => setActive(!active)} />;
+    return <FieldsetHeader {...args} active={active} onClick={() => setActive(!active)} />;
 };
 
-export const withIcon = FieldsetHeader.bind({});
+export const withIcon = Template.bind({});
 
 withIcon.args = {
     size: Size.Large,

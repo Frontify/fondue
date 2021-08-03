@@ -1,26 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { cloneElement, FC, PropsWithChildren, ReactElement } from "react";
+import RejectIcon from "@elements/Icon/Generated/IconReject";
 import IconProps from "@elements/Icon/IconProps";
 import IconSize from "@elements/Icon/IconSize";
-import RejectIcon from "@elements/Icon/Generated/IconReject";
 import { merge } from "@utilities/merge";
-import { cloneElement, FC, PropsWithChildren, ReactElement } from "react";
 
-export enum Status {
+export enum BadgeStatus {
     Positive = "Positive",
     Progress = "Progress",
     Warning = "Warning",
     Danger = "Danger",
 }
 
-const statusClasses: Record<Status, string> = {
-    [Status.Positive]: "bg-green-60",
-    [Status.Progress]: "bg-violet-60",
-    [Status.Warning]: "bg-yellow-60",
-    [Status.Danger]: "bg-red-60",
+const statusClasses: Record<BadgeStatus, string> = {
+    [BadgeStatus.Positive]: "bg-green-60",
+    [BadgeStatus.Progress]: "bg-violet-60",
+    [BadgeStatus.Warning]: "bg-yellow-60",
+    [BadgeStatus.Danger]: "bg-red-60",
 };
 
-export enum Style {
+export enum BadgeStyle {
     Primary = "Primary",
     Positive = "Positive",
     Progress = "Progress",
@@ -28,31 +28,38 @@ export enum Style {
     Danger = "Danger",
 }
 
-const styleClasses: Record<Style, string> = {
-    [Style.Primary]: "bg-black-5 text-black-90 hover:bg-black-10 dark:text-black-10",
-    [Style.Positive]: "bg-green-20 text-green-90 hover:bg-green-40 dark:text-green-50",
-    [Style.Progress]: "bg-violet-20 text-violet-90 hover:bg-violet-40 dark:text-violet-40",
-    [Style.Warning]: "bg-yellow-20 text-yellow-90 hover:bg-yellow-40 dark:text-yellow-50",
-    [Style.Danger]: "bg-red-20 text-red-90 hover:bg-red-40 dark:text-red-50",
+const styleClasses: Record<BadgeStyle, string> = {
+    [BadgeStyle.Primary]: "bg-black-5 text-black-90 hover:bg-black-10 dark:text-black-10",
+    [BadgeStyle.Positive]: "bg-green-20 text-green-90 hover:bg-green-40 dark:text-green-50",
+    [BadgeStyle.Progress]: "bg-violet-20 text-violet-90 hover:bg-violet-40 dark:text-violet-40",
+    [BadgeStyle.Warning]: "bg-yellow-20 text-yellow-90 hover:bg-yellow-40 dark:text-yellow-50",
+    [BadgeStyle.Danger]: "bg-red-20 text-red-90 hover:bg-red-40 dark:text-red-50",
 };
 
-const dismissClasses: Record<Style, string> = {
-    [Style.Primary]: "text-black-60 dark:text-black-40 dark:hover:text-white",
-    [Style.Positive]: "text-green-90 dark:text-black-40 dark:hover:text-white",
-    [Style.Progress]: "text-violet-90 dark:text-black-40 dark:hover:text-white",
-    [Style.Warning]: "text-yellow-90 dark:text-black-40 dark:hover:text-white",
-    [Style.Danger]: "text-red-90 dark:text-black-40 dark:hover:text-white",
+const dismissClasses: Record<BadgeStyle, string> = {
+    [BadgeStyle.Primary]: "text-black-60 dark:text-black-40 dark:hover:text-white",
+    [BadgeStyle.Positive]: "text-green-90 dark:text-black-40 dark:hover:text-white",
+    [BadgeStyle.Progress]: "text-violet-90 dark:text-black-40 dark:hover:text-white",
+    [BadgeStyle.Warning]: "text-yellow-90 dark:text-black-40 dark:hover:text-white",
+    [BadgeStyle.Danger]: "text-red-90 dark:text-black-40 dark:hover:text-white",
 };
 
 export type BadgeProps = PropsWithChildren<{
-    style?: Style;
+    style?: BadgeStyle;
     icon?: ReactElement<IconProps>;
-    status?: Status;
+    status?: BadgeStatus;
     onClick?: () => void;
     onDismiss?: () => void;
 }>;
 
-const Badge: FC<BadgeProps> = ({ children, status, icon, style = Style.Primary, onClick, onDismiss }: BadgeProps) => {
+export const Badge: FC<BadgeProps> = ({
+    children,
+    status,
+    icon,
+    style = BadgeStyle.Primary,
+    onClick,
+    onDismiss,
+}: BadgeProps) => {
     if (!children && !icon && !status) {
         return null;
     }
@@ -98,5 +105,3 @@ const Badge: FC<BadgeProps> = ({ children, status, icon, style = Style.Primary, 
         </span>
     );
 };
-
-export default Badge;

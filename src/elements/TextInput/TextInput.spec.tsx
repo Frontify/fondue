@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import TextInput, { TextInputType } from "./TextInput";
+import { TextInput, TextInputType } from "./TextInput";
 
 const DECORATOR_TEXT = "decorator text";
 const DECORATOR = <span>{DECORATOR_TEXT}</span>;

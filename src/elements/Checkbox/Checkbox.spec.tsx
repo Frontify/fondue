@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from "@cypress/react";
 import { FC, useState } from "react";
-import Checkbox, { CheckboxProps, CheckboxSelectionState } from "./Checkbox";
+import { mount } from "@cypress/react";
+import { Checkbox, CheckboxProps, CheckboxSelectionState } from "./Checkbox";
 
 const CHECKBOX_LABEL = "Holà";
 

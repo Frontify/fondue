@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ReactElement, useState } from "react";
 import IconProps from "@elements/Icon/IconProps";
 import IconSize from "@elements/Icon/IconSize";
 import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import IconCaretRight from "@elements/Icon/Generated/IconCaretRight";
 import { merge } from "@utilities/merge";
-import { ReactElement, useState } from "react";
 
 export type TreeNodeProps = {
     id: string;
@@ -24,13 +24,13 @@ type NodeProps = {
     onClick: (id: string | null) => void;
 };
 
-export default function TreeNode({
+export const TreeNode = ({
     node: { id, value, name, label, icon, nodes },
     strong = false,
     activeNodeId = null,
     onClick,
     parentIds = [],
-}: NodeProps): ReactElement<NodeProps> {
+}: NodeProps): ReactElement<NodeProps> => {
     const [showNodes, setShowNodes] = useState(false);
     const selected = id === activeNodeId;
 
@@ -100,4 +100,4 @@ export default function TreeNode({
         </li>
     );
     /* eslint-enable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-}
+};

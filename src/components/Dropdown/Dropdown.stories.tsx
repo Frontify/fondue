@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useEffect, useState } from "react";
+import { Dropdown, DropdownProps } from "./Dropdown";
+import { Meta, Story } from "@storybook/react";
 import IconSize from "@elements/Icon/IconSize";
 import IconAudio from "@elements/Icon/Generated/IconAudio";
-import { Meta, Story } from "@storybook/react";
 import { Size, Style } from "@utilities/enum";
-import { useEffect, useState } from "react";
-import Dropdown, { DropdownProps } from "./Dropdown";
 
 export default {
     title: "Components/Dropdown",
