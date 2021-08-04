@@ -52,14 +52,7 @@ export type BadgeProps = PropsWithChildren<{
     onDismiss?: () => void;
 }>;
 
-export const Badge: FC<BadgeProps> = ({
-    children,
-    status,
-    icon,
-    style = BadgeStyle.Primary,
-    onClick,
-    onDismiss,
-}: BadgeProps) => {
+export const Badge: FC<BadgeProps> = ({ children, status, icon, style = BadgeStyle.Primary, onClick, onDismiss }) => {
     if (!children && !icon && !status) {
         return null;
     }

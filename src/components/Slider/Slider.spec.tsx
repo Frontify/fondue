@@ -29,7 +29,7 @@ type Props = {
     items: TextItem[] | IconItem[];
 };
 
-const Component: FC<Props> = ({ items }: Props) => {
+const Component: FC<Props> = ({ items }) => {
     const [active, setActive] = useState(items[0].id);
     return <Slider items={items} activeItemId={active} onChange={setActive} />;
 };
