@@ -15,7 +15,6 @@ describe("Accordion Component", () => {
             <Accordion>
                 <div data-test-id="invalid-item">Invalid Item</div>
             </Accordion>,
-            { cssFile: "./dist/styles.css" },
         );
 
         cy.get(ACCORDION_ITEM_CONTENT_ID).should("not.exist");
@@ -28,7 +27,6 @@ describe("Accordion Component", () => {
                 <AccordionItem header={{ children: "2" }}>2</AccordionItem>
                 <AccordionItem header={{ children: "3" }}>2</AccordionItem>
             </Accordion>,
-            { cssFile: "./dist/styles.css" },
         );
 
         cy.get(ACCORDION_ITEM_CONTENT_ID).should("have.length", 3);
@@ -41,7 +39,6 @@ describe("Accordion Component", () => {
                 <AccordionItem header={{ children: "2" }}>2</AccordionItem>
                 <AccordionItem header={{ children: "3" }}>3</AccordionItem>
             </Accordion>,
-            { cssFile: "./dist/styles.css" },
         );
 
         cy.get(ACCORDION_ITEM_CONTENT_ID).eq(1).should("not.be.visible");
@@ -59,7 +56,6 @@ describe("Accordion Component", () => {
                 <AccordionItem header={{ children: "2" }}>2</AccordionItem>
                 <AccordionItem header={{ children: "3", type: Type.AddRemove, onClick: onClickStub }} />
             </Accordion>,
-            { cssFile: "./dist/styles.css" },
         );
 
         cy.get("@onClickStub").should("not.be.called");
@@ -76,7 +72,6 @@ describe("Accordion Component", () => {
                 <AccordionItem header={{ children: "2" }}>2</AccordionItem>
                 <AccordionItem header={{ children: "3" }}>3</AccordionItem>
             </Accordion>,
-            { cssFile: "./dist/styles.css" },
         );
 
         cy.get("body").tab();

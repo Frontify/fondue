@@ -70,7 +70,11 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                     variants={ACCORDION_CONTENT_VARIANTS}
                     data-test-id="accordion-item-content"
                 >
-                    <div {...regionProps} className={merge(["px-8 pb-7 mt--1", isOpen ? "visible" : "invisible"])}>
+                    <div
+                        {...regionProps}
+                        className="px-8 pb-7 mt--1"
+                        style={{ visibility: isOpen ? "visible" : "hidden" }}
+                    >
                         {item.props.children()}
                     </div>
                 </motion.div>
