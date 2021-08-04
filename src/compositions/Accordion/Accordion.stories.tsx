@@ -17,7 +17,7 @@ export const Accordion: Story<AccordionProps> = () => (
     <AccordionComponent>
         <AccordionItem
             header={{
-                children: "Item with decorator, type Accoridon and a FormControl child",
+                children: "Item with decorator, type Accordion and a FormControl child",
                 decorator: <IconIcons />,
                 type: Type.Accordion,
             }}

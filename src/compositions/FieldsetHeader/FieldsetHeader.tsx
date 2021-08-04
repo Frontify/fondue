@@ -9,7 +9,7 @@ import { Switch } from "@elements/Switch/Switch";
 import { Size as SwitchSize } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
-import { cloneElement, isValidElement, ReactElement, ReactNode } from "react";
+import { cloneElement, FC, isValidElement, ReactNode } from "react";
 
 export enum Size {
     Small = "Small",
@@ -61,7 +61,7 @@ const renderType = (type: Type, id: string, size: Size, active: boolean, disable
     return null;
 };
 
-export function FieldsetHeader({
+export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
     size = Size.Large,
     active = true,
     decorator,
@@ -72,7 +72,7 @@ export function FieldsetHeader({
     onClick,
     as: Heading = "label",
     tabIndex = -1,
-}: FieldsetHeaderProps): ReactElement<FieldsetHeaderProps> {
+}) => {
     const id = generateRandomId();
 
     return (
@@ -103,4 +103,4 @@ export function FieldsetHeader({
             {type !== Type.Default && <span className="ml-auto">{renderType(type, id, size, active, disabled)}</span>}
         </header>
     );
-}
+};
