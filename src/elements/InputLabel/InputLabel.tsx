@@ -2,12 +2,14 @@
 
 import { PropsWithChildren, ReactElement, ReactNode } from "react";
 import { Tooltip } from "@components/Tooltip/Tooltip";
+import { merge } from "@utilities/merge";
 
 export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;
     required?: boolean;
     disabled?: boolean;
     tooltip?: ReactNode;
+    bold?: boolean;
 }>;
 
 export const InputLabel = ({
@@ -16,14 +18,17 @@ export const InputLabel = ({
     required = false,
     disabled = false,
     tooltip,
+    bold,
 }: InputLabelProps): ReactElement<InputLabelProps> => {
     return (
         <div
-            className={`inline-flex items-center gap-1 font-sans text-s ${
+            className={merge([
+                "inline-flex items-center gap-1 font-sans text-s",
+                bold && "font-medium",
                 disabled
                     ? "text-black-40 hover:text-black-40 dark:text-black-60 dark:hover:text-black-60"
-                    : "text-black-90 dark:text-white"
-            }`}
+                    : "text-black-90 dark:text-white",
+            ])}
         >
             <label
                 htmlFor={htmlFor}

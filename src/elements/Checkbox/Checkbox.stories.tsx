@@ -1,6 +1,6 @@
 import { Meta, Story } from "@storybook/react";
 import { useEffect, useState } from "react";
-import { Checkbox, CheckboxProps, CheckboxState, CheckboxStyle } from "./Checkbox";
+import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState, CheckboxStyle } from "./Checkbox";
 
 export default {
     title: "Elements/Checkbox",
@@ -18,32 +18,30 @@ export default {
             action: "Change",
         },
     },
+    args: {
+        style: CheckboxStyle.Primary,
+        state: CheckboxState.Unchecked,
+        disabled: false,
+        required: false,
+        value: "whatever-you'd-like",
+        label: "Checkbox label",
+        note: "Note about this input",
+        tooltip: "Some random Tooltip",
+    },
 } as Meta<CheckboxProps>;
 
-const Template: Story<CheckboxProps> = (args: CheckboxProps) => {
-    const [checked, setChecked] = useState<CheckboxState>(args.checked || CheckboxState.Unchecked);
-    useEffect(() => setChecked(args.checked || CheckboxState.Unchecked), [args.checked]);
+export const Checkbox: Story<CheckboxProps> = (args: CheckboxProps) => {
+    const [checked, setChecked] = useState<CheckboxState>(args.state || CheckboxState.Unchecked);
+    useEffect(() => setChecked(args.state || CheckboxState.Unchecked), [args.state]);
 
     return (
-        <Checkbox
+        <CheckboxComponent
             {...args}
-            checked={checked}
+            state={checked}
             onChange={(isChecked) => {
                 setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked);
                 args.onChange && args.onChange(isChecked);
             }}
         />
     );
-};
-
-export const Default = Template.bind({});
-Default.args = {
-    style: CheckboxStyle.Primary,
-    checked: CheckboxState.Unchecked,
-    disabled: false,
-    required: false,
-    value: "whatever-you'd-like",
-    label: "Checkbox label",
-    note: "Note about this input",
-    tooltip: "Some random Tooltip",
 };

@@ -23,7 +23,7 @@ export enum CheckboxState {
 
 export type CheckboxProps = {
     style?: CheckboxStyle;
-    checked?: CheckboxState;
+    state?: CheckboxState;
     disabled?: boolean;
     required?: boolean;
     name?: string;
@@ -56,7 +56,7 @@ const isCheckedOrMixed = (checked: CheckboxState): boolean => {
 export const Checkbox: FC<CheckboxProps> = (props) => {
     const id = generateRandomId();
     const {
-        checked = CheckboxState.Unchecked,
+        state = CheckboxState.Unchecked,
         disabled,
         required,
         label,
@@ -64,54 +64,60 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
         note,
         style = CheckboxStyle.Default,
     } = props;
-    const state = useToggleState({ ...props, isSelected: checked === CheckboxState.Checked });
+    const toggleState = useToggleState({ ...props, isSelected: state === CheckboxState.Checked });
     const ref = useRef<HTMLInputElement>(null);
     const { inputProps } = useCheckbox(
         {
             ...props,
-            isSelected: checked === CheckboxState.Checked,
-            isIndeterminate: checked === CheckboxState.Mixed,
+            isSelected: state === CheckboxState.Checked,
+            isIndeterminate: state === CheckboxState.Mixed,
             isDisabled: disabled,
             isRequired: required,
             "aria-label": label,
         },
-        state,
+        toggleState,
         ref,
     );
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
         <div className="flex flex-col gap-1 transition-colors" data-test-id="checkbox">
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2 select-none">
                 <input {...inputProps} {...focusProps} id={id} ref={ref} className="sr-only" />
                 <span
                     aria-hidden="true"
                     className={merge([
                         "relative flex w-4 h-4 items-center justify-center rounded border",
+
                         isFocusVisible && "outline-violet",
                         disabled
                             ? merge([
                                   "text-white pointer-events-none",
-                                  !isCheckedOrMixed(checked) &&
+                                  !isCheckedOrMixed(state) &&
                                       "border-black-20 bg-white dark:border-black-80 dark:bg-black-90",
-                                  isCheckedOrMixed(checked) &&
+                                  isCheckedOrMixed(state) &&
                                       "border-black-40 bg-black-40 dark:border-black-60 dark:bg-black-60",
                               ])
                             : merge([
-                                  !isCheckedOrMixed(checked) && styles.unchecked[style],
-                                  isCheckedOrMixed(checked) && styles.checked[style],
+                                  !isCheckedOrMixed(state) && styles.unchecked[style],
+                                  isCheckedOrMixed(state) && styles.checked[style],
+                                  "hover:cursor-pointer",
                               ]),
                     ])}
                 >
-                    {checked === CheckboxState.Checked && <IconCheck />}
-                    {checked === CheckboxState.Mixed && <IconMinus />}
+                    {state === CheckboxState.Checked && <IconCheck />}
+                    {state === CheckboxState.Mixed && <IconMinus />}
                 </span>
                 {label && (
-                    <span className={isCheckedOrMixed(checked) ? "font-medium" : ""}>
-                        <InputLabel disabled={disabled} htmlFor={id} tooltip={tooltip} required={required}>
-                            {label}
-                        </InputLabel>
-                    </span>
+                    <InputLabel
+                        disabled={disabled}
+                        htmlFor={id}
+                        tooltip={tooltip}
+                        required={required}
+                        bold={isCheckedOrMixed(state)}
+                    >
+                        {label}
+                    </InputLabel>
                 )}
             </label>
             {note && <span className="text-black-60 font-sans text-xs font-normal">{note}</span>}

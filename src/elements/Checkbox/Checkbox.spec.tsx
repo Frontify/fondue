@@ -7,12 +7,12 @@ import { Checkbox, CheckboxProps, CheckboxState } from "./Checkbox";
 const CHECKBOX_LABEL = "Checkbox label";
 
 const Component: FC<CheckboxProps> = (props) => {
-    const [checked, setChecked] = useState<CheckboxState | undefined>(props.checked);
+    const [checked, setChecked] = useState<CheckboxState | undefined>(props.state);
 
     return (
         <Checkbox
             {...props}
-            checked={checked}
+            state={checked}
             onChange={(isChecked: boolean) => setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked)}
         />
     );
@@ -20,7 +20,7 @@ const Component: FC<CheckboxProps> = (props) => {
 
 describe("Checkbox component", () => {
     it("renders with a checkbox icon if checked", () => {
-        mount(<Component checked={CheckboxState.Checked} />);
+        mount(<Component state={CheckboxState.Checked} />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
         cy.get("@checkbox").get("svg").invoke("attr", "name").should("eq", "IconCheck");
@@ -28,7 +28,7 @@ describe("Checkbox component", () => {
     });
 
     it("renders with a minus icon if indeterminate", () => {
-        mount(<Component checked={CheckboxState.Mixed} />);
+        mount(<Component state={CheckboxState.Mixed} />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
         cy.get("@checkbox").get("svg").invoke("attr", "name").should("eq", "IconMinus");
@@ -36,7 +36,7 @@ describe("Checkbox component", () => {
     });
 
     it("renders without an icon if unchecked", () => {
-        mount(<Component checked={CheckboxState.Unchecked} />);
+        mount(<Component state={CheckboxState.Unchecked} />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
         cy.get("@checkbox").get("svg").should("not.exist");
@@ -44,14 +44,14 @@ describe("Checkbox component", () => {
     });
 
     it("renders with a label", () => {
-        mount(<Component label={CHECKBOX_LABEL} checked={CheckboxState.Checked} />);
+        mount(<Component label={CHECKBOX_LABEL} state={CheckboxState.Checked} />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
         cy.get("@checkbox").contains(CHECKBOX_LABEL);
     });
 
     it("renders as disabled", () => {
-        mount(<Component label={CHECKBOX_LABEL} disabled checked={CheckboxState.Mixed} />);
+        mount(<Component label={CHECKBOX_LABEL} disabled state={CheckboxState.Mixed} />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
         cy.get("@checkbox").get("input").invoke("attr", "aria-checked").should("eq", "mixed");

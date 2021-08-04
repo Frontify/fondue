@@ -3,20 +3,23 @@
 import { Checkbox, CheckboxState, CheckboxStyle } from "@elements/Checkbox/Checkbox";
 import { Meta, Story } from "@storybook/react";
 import { useState } from "react";
-import { Checklist, ChecklistProps, Direction } from "./Checklist";
+import { Checklist as ChecklistComponent, ChecklistProps, Direction } from "./Checklist";
 
 export default {
     title: "Components/Checklist",
-    component: Checklist,
+    component: ChecklistComponent,
     argTypes: {
         direction: {
             options: [Direction.Horizontal, Direction.Vertical],
             control: { type: "radio" },
         },
     },
+    args: {
+        direction: Direction.Horizontal,
+    },
 } as Meta<ChecklistProps>;
 
-const Template: Story<ChecklistProps> = (args) => {
+export const Checklist: Story<ChecklistProps> = (args) => {
     const [checked, setChecked] = useState<CheckboxState[]>([
         CheckboxState.Unchecked,
         CheckboxState.Checked,
@@ -29,28 +32,22 @@ const Template: Story<ChecklistProps> = (args) => {
     };
 
     return (
-        <Checklist {...args}>
+        <ChecklistComponent {...args}>
             <Checkbox
-                checked={checked[0]}
+                state={checked[0]}
                 onChange={updateCheckState(0)}
                 style={CheckboxStyle.Primary}
                 label="Checkbox label"
                 tooltip="Random Tooltip"
             />
             <Checkbox
-                checked={checked[1]}
+                state={checked[1]}
                 onChange={updateCheckState(1)}
                 label="Checkbox label"
                 note="Note about this input"
                 disabled
             />
-            <Checkbox checked={checked[2]} onChange={updateCheckState(2)} label="Checkbox label" />
-        </Checklist>
+            <Checkbox state={checked[2]} onChange={updateCheckState(2)} label="Checkbox label" />
+        </ChecklistComponent>
     );
-};
-
-export const Default = Template.bind({});
-
-Default.args = {
-    direction: Direction.Horizontal,
 };
