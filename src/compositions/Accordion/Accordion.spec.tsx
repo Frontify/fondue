@@ -3,6 +3,7 @@
 import { Type } from "@compositions/FieldsetHeader/FieldsetHeader";
 import { mount } from "@cypress/react";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
+import { TextInput } from "@elements/TextInput/TextInput";
 import { Accordion, AccordionItem } from "./Accordion";
 
 const ACCORDION_ITEM_ID = "[data-test-id=accordion-item]";
@@ -38,7 +39,7 @@ describe("Accordion Component", () => {
             <Accordion>
                 <AccordionItem header={{ children: "1" }}>1</AccordionItem>
                 <AccordionItem header={{ children: "2" }}>2</AccordionItem>
-                <AccordionItem header={{ children: "3" }}>2</AccordionItem>
+                <AccordionItem header={{ children: "3" }}>3</AccordionItem>
             </Accordion>,
             { cssFile: "./dist/styles.css" },
         );
@@ -64,5 +65,28 @@ describe("Accordion Component", () => {
         cy.get("@onClickStub").should("not.be.called");
         cy.get(ACCORDION_ITEM_ID).eq(2).click();
         cy.get("@onClickStub").should("be.calledOnce");
+    });
+
+    it("should jump to next accordion header and skip input", () => {
+        mount(
+            <Accordion>
+                <AccordionItem header={{ children: "1" }}>
+                    <TextInput />
+                </AccordionItem>
+                <AccordionItem header={{ children: "2" }}>2</AccordionItem>
+                <AccordionItem header={{ children: "3" }}>3</AccordionItem>
+            </Accordion>,
+            { cssFile: "./dist/styles.css" },
+        );
+
+        cy.get("body").tab();
+        cy.get(ACCORDION_ITEM_ID).first().should("have.class", "border-violet-60");
+        cy.get(ACCORDION_ITEM_ID).first().tab();
+        cy.get("[data-test-id=text-input]").first().should("not.be.focused");
+        cy.get(ACCORDION_ITEM_ID).first().should("not.have.class", "border-violet-60");
+        cy.get(ACCORDION_ITEM_ID).eq(1).should("have.class", "border-violet-60");
+        cy.get(ACCORDION_ITEM_ID).eq(1).tab();
+        cy.get(ACCORDION_ITEM_ID).eq(1).should("not.have.class", "border-violet-60");
+        cy.get(ACCORDION_ITEM_ID).eq(2).should("have.class", "border-violet-60");
     });
 });

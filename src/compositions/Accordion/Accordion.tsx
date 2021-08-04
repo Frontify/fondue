@@ -8,7 +8,7 @@ import { TreeState, useTreeState } from "@react-stately/tree";
 import { Node } from "@react-types/shared";
 import { merge } from "@utilities/merge";
 import { motion } from "framer-motion";
-import { Children, isValidElement, PropsWithChildren, ReactElement, useRef } from "react";
+import { Children, FC, isValidElement, PropsWithChildren, ReactElement, useRef } from "react";
 
 export type AccordionItemProps = PropsWithChildren<{ header: FieldsetHeaderProps }>;
 
@@ -16,7 +16,6 @@ type AriaAccordionItemProps = {
     item: Node<AccordionItemProps>;
     state: TreeState<AccordionItemProps>;
     header: FieldsetHeaderProps;
-    isOpen?: boolean;
 };
 
 const ACCORDION_CONTENT_VARIANTS = {
@@ -24,21 +23,18 @@ const ACCORDION_CONTENT_VARIANTS = {
     collapsed: { height: 0 },
 };
 
-function AriaAccordionItem({
-    item,
-    state,
-    header,
-    isOpen,
-}: AriaAccordionItemProps): ReactElement<AriaAccordionItemProps> {
+const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) => {
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
     const { isFocusVisible, focusProps } = useFocusRing();
+    const isOpen = state.expandedKeys.has(item.key) && item.props.children;
 
     return (
-        <div key={item.key} data-test-id="accordion-item">
+        <div key={item.key}>
             <button
                 {...buttonProps}
                 {...focusProps}
+                data-test-id="accordion-item"
                 ref={triggerRef}
                 onClick={(event) => {
                     if (header.onClick) {
@@ -81,7 +77,7 @@ function AriaAccordionItem({
             )}
         </div>
     );
-}
+};
 
 export type AccordionProps = {
     children: ReactElement<AccordionItemProps> | ReactElement<AccordionItemProps>[];
@@ -99,7 +95,7 @@ const mapToAriaProps = ({ children }: AccordionProps) => ({
     }),
 });
 
-const filterValidChildten = ({ children }: AccordionProps) =>
+const filterValidChildren = ({ children }: AccordionProps) =>
     Children.map(children, (child) => {
         if (!isValidElement(child)) {
             return null;
@@ -115,8 +111,8 @@ const filterValidChildten = ({ children }: AccordionProps) =>
 
 export const AccordionItem = ({ children }: AccordionItemProps): ReactElement => <>{children}</>;
 
-export function Accordion(props: AccordionProps): ReactElement<AccordionProps> {
-    const children = filterValidChildten(props);
+export const Accordion: FC<AccordionProps> = (props) => {
+    const children = filterValidChildren(props);
     const ariaProps = mapToAriaProps({ children });
     const ref = useRef<HTMLDivElement | null>(null);
     const state = useTreeState<AccordionItemProps>(ariaProps);
@@ -130,11 +126,10 @@ export function Accordion(props: AccordionProps): ReactElement<AccordionProps> {
             className="divide-y divide-black-10 border-t border-b border-black-10"
         >
             {[...state.collection].map((item, index) => {
-                const { header } = (Children.toArray(props.children)[index] as ReactElement<AccordionItemProps>).props;
-                const isOpen = state.expandedKeys.has(item.key) && item.props.children;
+                const { header } = children[index].props;
 
-                return <AriaAccordionItem key={item.key} item={item} state={state} header={header} isOpen={isOpen} />;
+                return <AriaAccordionItem key={item.key} item={item} state={state} header={header} />;
             })}
         </div>
     );
-}
+};
