@@ -50,7 +50,7 @@ describe("Checkbox component", () => {
         cy.get("@checkbox").contains(CHECKBOX_LABEL);
     });
 
-    it("renders as disabled if disabled", () => {
+    it("renders as disabled", () => {
         mount(<Component label={CHECKBOX_LABEL} disabled checked={CheckboxState.Mixed} />);
 
         cy.get("[data-test-id=checkbox]").as("checkbox");
