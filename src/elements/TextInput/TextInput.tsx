@@ -118,6 +118,9 @@ export const TextInput = ({
                         ? "text-black-40 placeholder-black-30 dark:text-black-30 dark:placeholder-black-40 cursor-not-allowed"
                         : "text-black placeholder-black-60 dark:text-white",
                 ])}
+                onClick={() => {
+                    inputElement.current?.focus();
+                }}
                 onInput={(event) => onInput && onInput((event.target as HTMLInputElement).value)}
                 onBlur={(event) => onBlur && onBlur(event.target.value)}
                 placeholder={placeholder}
