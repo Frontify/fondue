@@ -11,7 +11,7 @@ type HelperTextProps = {
     fullWidth?: boolean;
 };
 
-const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = false }: HelperTextProps) => (
+const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = false }) => (
     <span
         data-test-id="form-control-helper-text"
         className={`text-s font-sans ${fullWidth ? "w-full" : ""} ${

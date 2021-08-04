@@ -6,7 +6,7 @@ import { Checkbox, CheckboxProps, CheckboxSelectionState } from "./Checkbox";
 
 const CHECKBOX_LABEL = "Holà";
 
-const Component: FC<CheckboxProps> = (props: CheckboxProps) => {
+const Component: FC<CheckboxProps> = (props) => {
     const [checkboxValue, setCheckboxValue] = useState(props.value);
 
     return <Checkbox {...props} value={checkboxValue} onChange={(value) => setCheckboxValue(value)} />;
