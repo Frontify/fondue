@@ -24,7 +24,7 @@ const Template: Story<CheckboxProps> = (args: CheckboxProps) => {
         <Checkbox
             {...args}
             checked={checked}
-            onChange={(checked) => setChecked(checked ? CheckboxState.Checked : CheckboxState.Unchecked)}
+            onChange={(isChecked) => setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked)}
         />
     );
 };
