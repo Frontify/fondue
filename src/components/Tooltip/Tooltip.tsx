@@ -4,6 +4,7 @@ import { ReactElement, ReactNode, useState } from "react";
 import { usePopper } from "react-popper";
 import { IconSize } from "@elements/Icon/IconSize";
 import IconQuestion from "@elements/Icon/Generated/IconQuestion";
+import { merge } from "@utilities/merge";
 
 export type TooltipProps = {
     tooltip: ReactNode;
@@ -44,9 +45,10 @@ export const Tooltip = ({ tooltip }: TooltipProps): ReactElement<TooltipProps> =
                 ref={setTooltipElement}
                 style={styles.popper}
                 {...attributes.popper}
-                className={`p-4 border border-black-10 bg-white rounded-md shadow-mid ${
-                    showTooltip ? "visible" : "invisible"
-                }`}
+                className={merge([
+                    "p-4 border border-black-10 bg-white rounded-md shadow-mid dark:bg-black-90 dark:text-white",
+                    showTooltip ? "visible" : "invisible",
+                ])}
             >
                 {tooltip}
             </div>
