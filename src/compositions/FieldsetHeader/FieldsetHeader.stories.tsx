@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { Story, Meta } from "@storybook/react";
-import { FieldsetHeader as FieldsetHeaderComponent, FieldsetHeaderProps, Size, Type } from "./FieldsetHeader";
+import {
+    FieldsetHeader as FieldsetHeaderComponent,
+    FieldsetHeaderProps,
+    FieldsetHeaderSize,
+    FieldsetHeaderType,
+} from "./FieldsetHeader";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 
 export default {
@@ -10,18 +15,18 @@ export default {
     component: FieldsetHeaderComponent,
     argTypes: {
         size: {
-            options: [Size.Small, Size.Large],
+            options: [FieldsetHeaderSize.Small, FieldsetHeaderSize.Large],
             control: { type: "radio" },
         },
         type: {
-            options: [Type.Default, Type.Switch, Type.Accordion, Type.AddRemove],
+            options: Object.values(FieldsetHeaderType),
             control: { type: "radio" },
         },
     },
     args: {
-        size: Size.Large,
+        size: FieldsetHeaderSize.Large,
         active: true,
-        type: Type.Default,
+        type: FieldsetHeaderType.Default,
         disabled: false,
         bold: true,
         children: "Heading",

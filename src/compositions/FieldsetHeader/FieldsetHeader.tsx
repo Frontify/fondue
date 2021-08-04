@@ -11,12 +11,12 @@ import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import { cloneElement, FC, isValidElement, ReactNode } from "react";
 
-export enum Size {
+export enum FieldsetHeaderSize {
     Small = "Small",
     Large = "Large",
 }
 
-export enum Type {
+export enum FieldsetHeaderType {
     Default = "Default",
     Switch = "Switch",
     Accordion = "Accordion",
@@ -24,10 +24,10 @@ export enum Type {
 }
 
 export type FieldsetHeaderProps = {
-    size?: Size;
+    size?: FieldsetHeaderSize;
     active?: boolean;
     decorator?: ReactNode;
-    type?: Type;
+    type?: FieldsetHeaderType;
     disabled?: boolean;
     bold?: boolean;
     children: string;
@@ -36,25 +36,31 @@ export type FieldsetHeaderProps = {
     tabIndex?: number;
 };
 
-const renderType = (type: Type, id: string, size: Size, active: boolean, disabled: boolean) => {
+const renderType = (
+    type: FieldsetHeaderType,
+    id: string,
+    size: FieldsetHeaderSize,
+    active: boolean,
+    disabled: boolean,
+) => {
     const props = {
         "aria-labelledby": id,
-        size: size === Size.Large ? IconSize.Size20 : IconSize.Size12,
+        size: size === FieldsetHeaderSize.Large ? IconSize.Size20 : IconSize.Size12,
     };
 
     switch (type) {
-        case Type.Switch:
+        case FieldsetHeaderType.Switch:
             return (
                 <Switch
                     {...props}
-                    size={size === Size.Large ? SwitchSize.Large : SwitchSize.Small}
+                    size={size === FieldsetHeaderSize.Large ? SwitchSize.Large : SwitchSize.Small}
                     on={active}
                     disabled={disabled}
                 />
             );
-        case Type.Accordion:
+        case FieldsetHeaderType.Accordion:
             return active ? <IconCaretDown {...props} /> : <IconCaretUp {...props} />;
-        case Type.AddRemove:
+        case FieldsetHeaderType.AddRemove:
             return active ? <IconMinus {...props} /> : <IconAddSimple {...props} />;
     }
 
@@ -62,10 +68,10 @@ const renderType = (type: Type, id: string, size: Size, active: boolean, disable
 };
 
 export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
-    size = Size.Large,
+    size = FieldsetHeaderSize.Large,
     active = true,
     decorator,
-    type = Type.Default,
+    type = FieldsetHeaderType.Default,
     disabled = false,
     bold = true,
     children,
@@ -89,18 +95,22 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
             tabIndex={tabIndex}
         >
             {isValidElement(decorator) &&
-                cloneElement(decorator, { size: size === Size.Large ? IconSize.Size20 : IconSize.Size16 })}
+                cloneElement(decorator, {
+                    size: size === FieldsetHeaderSize.Large ? IconSize.Size20 : IconSize.Size16,
+                })}
             <Heading
                 id={id}
                 className={merge([
-                    size === Size.Large ? "text-l" : "text-m",
+                    size === FieldsetHeaderSize.Large ? "text-l" : "text-m",
                     bold ? "font-bold" : "font-normal",
                     onClick && "hover:cursor-pointer",
                 ])}
             >
                 {children}
             </Heading>
-            {type !== Type.Default && <span className="ml-auto">{renderType(type, id, size, active, disabled)}</span>}
+            {type !== FieldsetHeaderType.Default && (
+                <span className="ml-auto">{renderType(type, id, size, active, disabled)}</span>
+            )}
         </header>
     );
 };

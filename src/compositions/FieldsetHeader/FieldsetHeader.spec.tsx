@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import { FieldsetHeader, Type } from "./FieldsetHeader";
+import { FieldsetHeader, FieldsetHeaderType } from "./FieldsetHeader";
 
 const HEADING = "bar";
 
@@ -10,7 +10,7 @@ describe("FieldsetHeader Composition", () => {
         const onClick = cy.stub().as("onClickStub");
 
         mount(
-            <FieldsetHeader type={Type.Switch} onClick={onClick} disabled>
+            <FieldsetHeader type={FieldsetHeaderType.Switch} onClick={onClick} disabled>
                 {HEADING}
             </FieldsetHeader>,
         );
