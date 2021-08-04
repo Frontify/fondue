@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Story, Meta } from "@storybook/react";
-import { FieldsetHeader, FieldsetHeaderProps, Size, Type } from "./FieldsetHeader";
+import { FieldsetHeader, FieldsetHeaderProps, FieldsetHeaderSize, FieldsetHeaderType } from "./FieldsetHeader";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 
 export default {
@@ -10,18 +10,23 @@ export default {
     component: FieldsetHeader,
     argTypes: {
         size: {
-            options: [Size.Small, Size.Large],
+            options: [FieldsetHeaderSize.Small, FieldsetHeaderSize.Large],
             control: { type: "radio" },
         },
         type: {
-            options: [Type.Default, Type.Switch, Type.Accordion, Type.AddRemove],
+            options: [
+                FieldsetHeaderType.Default,
+                FieldsetHeaderType.Switch,
+                FieldsetHeaderType.Accordion,
+                FieldsetHeaderType.AddRemove,
+            ],
             control: { type: "radio" },
         },
     },
     args: {
-        size: Size.Large,
+        size: FieldsetHeaderSize.Large,
         active: true,
-        type: Type.Default,
+        type: FieldsetHeaderType.Default,
         disabled: false,
         bold: true,
         children: "Heading",
@@ -41,9 +46,9 @@ export const Template: Story<FieldsetHeaderProps> = (args: FieldsetHeaderProps) 
 export const withIcon = Template.bind({});
 
 withIcon.args = {
-    size: Size.Large,
+    size: FieldsetHeaderSize.Large,
     active: true,
-    type: Type.Default,
+    type: FieldsetHeaderType.Default,
     disabled: false,
     bold: true,
     children: "Heading",
