@@ -2,9 +2,11 @@
 
 import IconCheck from "@elements/Icon/Generated/IconCheck";
 import IconMinus from "@elements/Icon/Generated/IconMinus";
+import { InputLabel } from "@elements/InputLabel/InputLabel";
 import { useCheckbox } from "@react-aria/checkbox";
 import { useFocusRing } from "@react-aria/focus";
 import { useToggleState } from "@react-stately/toggle";
+import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import { FC, useRef } from "react";
 
@@ -28,6 +30,7 @@ export type CheckboxProps = {
     value?: string;
     onChange?: (isChecked: boolean) => void;
     label?: string;
+    tooltip?: string;
     note?: string;
 };
 
@@ -51,7 +54,16 @@ const isCheckedOrMixed = (checked: CheckboxState): boolean => {
 };
 
 export const Checkbox: FC<CheckboxProps> = (props) => {
-    const { checked = CheckboxState.Unchecked, disabled, required, label, note, style = CheckboxStyle.Default } = props;
+    const id = generateRandomId();
+    const {
+        checked = CheckboxState.Unchecked,
+        disabled,
+        required,
+        label,
+        tooltip,
+        note,
+        style = CheckboxStyle.Default,
+    } = props;
     const state = useToggleState({ ...props, isSelected: checked === CheckboxState.Checked });
     const ref = useRef<HTMLInputElement>(null);
     const { inputProps } = useCheckbox(
@@ -71,7 +83,7 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
     return (
         <div className="flex flex-col gap-1 transition-colors" data-test-id="checkbox">
             <label className="flex items-center gap-2">
-                <input {...inputProps} {...focusProps} ref={ref} className="sr-only" />
+                <input {...inputProps} {...focusProps} id={id} ref={ref} className="sr-only" />
                 <span
                     aria-hidden="true"
                     className={merge([
@@ -95,10 +107,10 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
                     {checked === CheckboxState.Mixed && <IconMinus />}
                 </span>
                 {label && (
-                    <span
-                        className={merge([disabled ? "text-black-40" : "text-black", "font-sans text-s font-medium"])}
-                    >
-                        {label}
+                    <span className={isCheckedOrMixed(checked) ? "font-medium" : ""}>
+                        <InputLabel disabled={disabled} htmlFor={id} tooltip={tooltip} required={required}>
+                            {label}
+                        </InputLabel>
                     </span>
                 )}
             </label>

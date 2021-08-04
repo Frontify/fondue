@@ -13,6 +13,10 @@ export default {
             options: Object.values(CheckboxState),
             control: { type: "radio" },
         },
+        onChange: {
+            table: { disable: true },
+            action: "Change",
+        },
     },
 } as Meta<CheckboxProps>;
 
@@ -24,7 +28,10 @@ const Template: Story<CheckboxProps> = (args: CheckboxProps) => {
         <Checkbox
             {...args}
             checked={checked}
-            onChange={(isChecked) => setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked)}
+            onChange={(isChecked) => {
+                setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked);
+                args.onChange && args.onChange(isChecked);
+            }}
         />
     );
 };
@@ -38,4 +45,5 @@ Default.args = {
     value: "whatever-you'd-like",
     label: "Checkbox label",
     note: "Note about this input",
+    tooltip: "Some random Tooltip",
 };

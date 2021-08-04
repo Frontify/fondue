@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Checkbox, CheckboxState, CheckboxStyle } from "@elements/Checkbox/Checkbox";
-import { Story, Meta } from "@storybook/react";
-
+import { Meta, Story } from "@storybook/react";
+import { useState } from "react";
 import { Checklist, ChecklistProps, Direction } from "./Checklist";
 
 export default {
@@ -16,13 +16,38 @@ export default {
     },
 } as Meta<ChecklistProps>;
 
-const Template: Story<ChecklistProps> = (args) => (
-    <Checklist {...args}>
-        <Checkbox checked={CheckboxState.Unchecked} style={CheckboxStyle.Primary} label="Checkbox label" />
-        <Checkbox checked={CheckboxState.Checked} label="Checkbox label" note="Note about this input" disabled />
-        <Checkbox checked={CheckboxState.Mixed} label="Checkbox label" />
-    </Checklist>
-);
+const Template: Story<ChecklistProps> = (args) => {
+    const [checked, setChecked] = useState<CheckboxState[]>([
+        CheckboxState.Unchecked,
+        CheckboxState.Checked,
+        CheckboxState.Mixed,
+    ]);
+
+    const updateCheckState = (index: number) => (isChecked: boolean) => {
+        checked[index] = isChecked ? CheckboxState.Checked : CheckboxState.Unchecked;
+        setChecked([...checked]);
+    };
+
+    return (
+        <Checklist {...args}>
+            <Checkbox
+                checked={checked[0]}
+                onChange={updateCheckState(0)}
+                style={CheckboxStyle.Primary}
+                label="Checkbox label"
+                tooltip="Random Tooltip"
+            />
+            <Checkbox
+                checked={checked[1]}
+                onChange={updateCheckState(1)}
+                label="Checkbox label"
+                note="Note about this input"
+                disabled
+            />
+            <Checkbox checked={checked[2]} onChange={updateCheckState(2)} label="Checkbox label" />
+        </Checklist>
+    );
+};
 
 export const Default = Template.bind({});
 
