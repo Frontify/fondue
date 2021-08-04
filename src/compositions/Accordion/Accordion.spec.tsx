@@ -18,6 +18,7 @@ describe("Accordion Component", () => {
         );
 
         cy.get(ACCORDION_ITEM_CONTENT_ID).should("not.exist");
+        cy.get("[data-test-id=invalid-item]").should("not.exist");
     });
 
     it("should render 3 items", () => {

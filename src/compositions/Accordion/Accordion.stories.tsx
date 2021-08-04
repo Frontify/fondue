@@ -15,7 +15,13 @@ export default {
 
 export const Accordion: Story<AccordionProps> = () => (
     <AccordionComponent>
-        <AccordionItem header={{ children: "Foo", decorator: <IconIcons />, type: Type.Accordion }}>
+        <AccordionItem
+            header={{
+                children: "Item with decorator, type Accoridon and a FormControl child",
+                decorator: <IconIcons />,
+                type: Type.Accordion,
+            }}
+        >
             <FormControl
                 label={{ children: "Width", htmlFor: "width", tooltip: "Width of the future" }}
                 extra="Some extra text."
@@ -24,7 +30,9 @@ export const Accordion: Story<AccordionProps> = () => (
                 <TextInput id="width" />
             </FormControl>
         </AccordionItem>
-        <AccordionItem header={{ children: "Bar" }}>bar</AccordionItem>
-        <AccordionItem header={{ children: "Empty", type: Type.AddRemove, onClick: action("click") }} />
+        <AccordionItem header={{ children: "Item with plain text child" }}>bar</AccordionItem>
+        <AccordionItem
+            header={{ children: "Empty item with an onClick callback", type: Type.AddRemove, onClick: action("click") }}
+        />
     </AccordionComponent>
 );
