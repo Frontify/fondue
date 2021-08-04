@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Type } from "@compositions/FieldsetHeader/FieldsetHeader";
+import { FieldsetHeaderType } from "@compositions/FieldsetHeader/FieldsetHeader";
 import { mount } from "@cypress/react";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { TextInput } from "@elements/TextInput/TextInput";
@@ -51,11 +51,11 @@ describe("Accordion Component", () => {
         const onClickStub = cy.stub().as("onClickStub");
         mount(
             <Accordion>
-                <AccordionItem header={{ children: "1", decorator: <IconIcons />, type: Type.Accordion }}>
+                <AccordionItem header={{ children: "1", decorator: <IconIcons />, type: FieldsetHeaderType.Accordion }}>
                     1
                 </AccordionItem>
                 <AccordionItem header={{ children: "2" }}>2</AccordionItem>
-                <AccordionItem header={{ children: "3", type: Type.AddRemove, onClick: onClickStub }} />
+                <AccordionItem header={{ children: "3", type: FieldsetHeaderType.AddRemove, onClick: onClickStub }} />
             </Accordion>,
         );
 
