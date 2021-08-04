@@ -14,12 +14,7 @@ export default {
             control: { type: "radio" },
         },
         type: {
-            options: [
-                FieldsetHeaderType.Default,
-                FieldsetHeaderType.Switch,
-                FieldsetHeaderType.Accordion,
-                FieldsetHeaderType.AddRemove,
-            ],
+            options: Object.values(FieldsetHeaderType),
             control: { type: "radio" },
         },
     },
