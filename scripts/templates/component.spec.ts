@@ -7,7 +7,7 @@ export default (componentName: string, componentType: string): ComponentFileBuil
 
 import { mount } from "@cypress/react";
 
-import ${componentName} from "./${componentName}";
+import { ${componentName} } from "./${componentName}";
 
 const ${componentName}_FOO = "bar";
 

@@ -4,7 +4,7 @@ import { FC, useState } from "react";
 import { mount } from "@cypress/react";
 import { Switch, SwitchProps } from "./Switch";
 
-const Component: FC<SwitchProps> = ({ on = false, ...props }: SwitchProps) => {
+const Component: FC<SwitchProps> = ({ on = false, ...props }) => {
     const [active, setActive] = useState(on);
 
     return (

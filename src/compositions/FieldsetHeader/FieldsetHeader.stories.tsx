@@ -2,12 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { Story, Meta } from "@storybook/react";
-import { FieldsetHeader, FieldsetHeaderProps, FieldsetHeaderSize, FieldsetHeaderType } from "./FieldsetHeader";
+import {
+    FieldsetHeader as FieldsetHeaderComponent,
+    FieldsetHeaderProps,
+    FieldsetHeaderSize,
+    FieldsetHeaderType,
+} from "./FieldsetHeader";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 
 export default {
-    title: "Compositions/FieldsetHeader",
-    component: FieldsetHeader,
+    title: "Compositions/Fieldset Header",
+    component: FieldsetHeaderComponent,
     argTypes: {
         size: {
             options: [FieldsetHeaderSize.Small, FieldsetHeaderSize.Large],
@@ -25,29 +30,23 @@ export default {
         disabled: false,
         bold: true,
         children: "Heading",
+        decorator: true,
     },
 } as Meta<FieldsetHeaderProps>;
 
-export const Template: Story<FieldsetHeaderProps> = (args: FieldsetHeaderProps) => {
+export const FieldsetHeader: Story<FieldsetHeaderProps> = (args: FieldsetHeaderProps) => {
     const [active, setActive] = useState(args.active);
 
     useEffect(() => {
         setActive(args.active);
     }, [args.active]);
 
-    return <FieldsetHeader {...args} active={active} onClick={() => setActive(!active)} />;
+    return (
+        <FieldsetHeaderComponent
+            {...args}
+            decorator={args.decorator && <IconIcons />}
+            active={active}
+            onClick={() => setActive(!active)}
+        />
+    );
 };
-
-export const withIcon = Template.bind({});
-
-withIcon.args = {
-    size: FieldsetHeaderSize.Large,
-    active: true,
-    type: FieldsetHeaderType.Default,
-    disabled: false,
-    bold: true,
-    children: "Heading",
-    decorator: <IconIcons />,
-};
-
-withIcon.storyName = "Heading with Decorator";

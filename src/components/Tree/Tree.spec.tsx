@@ -11,7 +11,7 @@ import IconGuidelines from "@elements/Icon/Generated/IconGuidelines";
 type ComponentProps = {
     nodes: TreeNodeProps[];
 };
-const Component: FC<ComponentProps> = ({ nodes }: ComponentProps) => {
+const Component: FC<ComponentProps> = ({ nodes }) => {
     const [selectedId, setSelectedId] = useState<string | null>();
     return <Tree nodes={nodes} activeNodeId={selectedId} onSelect={(id: string | null) => setSelectedId(id)} />;
 };

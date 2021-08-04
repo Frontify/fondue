@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@elements/Icon/IconSize";
 import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
 import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import IconCaretUp from "@elements/Icon/Generated/IconCaretUp";
 import IconMinus from "@elements/Icon/Generated/IconMinus";
+import { IconSize } from "@elements/Icon/IconSize";
 import { Switch } from "@elements/Switch/Switch";
 import { Size as SwitchSize } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
-import { cloneElement, isValidElement, ReactElement, ReactNode } from "react";
+import { cloneElement, FC, isValidElement, ReactNode } from "react";
 
 export enum FieldsetHeaderSize {
     Small = "Small",
@@ -33,6 +33,7 @@ export type FieldsetHeaderProps = {
     children: string;
     onClick?: () => void;
     as?: keyof JSX.IntrinsicElements;
+    tabIndex?: number;
 };
 
 const renderType = (
@@ -66,7 +67,7 @@ const renderType = (
     return null;
 };
 
-export const FieldsetHeader = ({
+export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
     size = FieldsetHeaderSize.Large,
     active = true,
     decorator,
@@ -76,20 +77,22 @@ export const FieldsetHeader = ({
     children,
     onClick,
     as: Heading = "label",
-}: FieldsetHeaderProps): ReactElement<FieldsetHeaderProps> => {
+    tabIndex = -1,
+}) => {
     const id = generateRandomId();
 
     return (
         <header
             data-test-id="fieldset-header"
-            role="button"
+            role={onClick ? "button" : undefined}
             onClick={onClick}
             onKeyPress={onClick}
             className={merge([
-                "flex items-center gap-x-1.5 w-full flex-row pointer-events-none",
-                disabled ? "text-black-40" : "text-black",
+                "flex items-center gap-x-1.5 w-full flex-row",
+                disabled ? "text-black-40" : "text-black dark:text-white",
+                onClick ? "hover:cursor-pointer" : "pointer-events-none",
             ])}
-            tabIndex={0}
+            tabIndex={tabIndex}
         >
             {isValidElement(decorator) &&
                 cloneElement(decorator, {
@@ -100,6 +103,7 @@ export const FieldsetHeader = ({
                 className={merge([
                     size === FieldsetHeaderSize.Large ? "text-l" : "text-m",
                     bold ? "font-bold" : "font-normal",
+                    onClick && "hover:cursor-pointer",
                 ])}
             >
                 {children}

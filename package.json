@@ -1,6 +1,6 @@
 {
     "name": "@frontify/arcade",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "Design system of Frontify",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
@@ -108,6 +108,7 @@
         "react-router-dom": "^5.2.0"
     },
     "dependencies": {
+        "@react-aria/accordion": "^3.0.0-alpha.1",
         "deepmerge": "^4.2.2",
         "framer-motion": "^4.1.17",
         "react-aria": "^3.8.0",

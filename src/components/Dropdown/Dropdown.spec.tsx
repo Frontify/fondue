@@ -81,13 +81,7 @@ type Props = {
     clearable?: boolean;
 };
 
-const Component: FC<Props> = ({
-    menuBlocks,
-    placeholder,
-    initialActiveId,
-    size = Size.Small,
-    clearable = false,
-}: Props) => {
+const Component: FC<Props> = ({ menuBlocks, placeholder, initialActiveId, size = Size.Small, clearable = false }) => {
     const [activeItemId, setActiveItemId] = useState(initialActiveId);
     return (
         <Dropdown
