@@ -108,9 +108,6 @@
         "react-router-dom": "^5.2.0"
     },
     "dependencies": {
-        "@react-aria/checkbox": "^3.2.2",
-        "@react-aria/focus": "^3.4.0",
-        "@react-stately/toggle": "^3.2.2",
         "deepmerge": "^4.2.2",
         "framer-motion": "^4.1.17",
         "react-aria": "^3.8.0",
