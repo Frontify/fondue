@@ -1,6 +1,6 @@
 module.exports = {
     mode: "jit",
-    purge: ["./src/**/*.tsx", "./src/**/*.js"],
+    purge: ["./src/**/*.{js,ts,tsx}"],
     darkMode: "class",
     variants: {
         extend: {
