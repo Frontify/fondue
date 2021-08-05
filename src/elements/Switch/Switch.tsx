@@ -7,8 +7,21 @@ import { merge } from "@utilities/merge";
 
 export enum SwitchSize {
     Small = "Small",
+    Medium = "Medium",
     Large = "Large",
 }
+
+const lineSizeClasses: Record<SwitchSize, string> = {
+    [SwitchSize.Small]: "w-5 h-2",
+    [SwitchSize.Medium]: "w-9 h-5",
+    [SwitchSize.Large]: "w-11 h-6",
+};
+
+const dotSizeClasses: Record<SwitchSize, string> = {
+    [SwitchSize.Small]: "w-3 h-3",
+    [SwitchSize.Medium]: "w-4 h-4",
+    [SwitchSize.Large]: "w-5 h-5",
+};
 
 export type SwitchProps = {
     id?: string;
@@ -26,7 +39,7 @@ export const Switch: FC<SwitchProps> = ({
     label,
     disabled,
     onChange,
-    size = SwitchSize.Small,
+    size = SwitchSize.Medium,
     on = false,
 }) => {
     const id = propId || generateRandomId();
@@ -44,13 +57,14 @@ export const Switch: FC<SwitchProps> = ({
                 name={name}
                 data-test-id="switch"
                 className={merge([
-                    "inline-flex py-0 px-[0.125rem] border-0 rounded-full transition-colors",
+                    "inline-flex border-0 rounded-full transition-colors",
+                    size !== SwitchSize.Small ? "py-0 px-[0.125rem]" : "p-0",
                     disabled
                         ? "bg-black-10 pointer-events-none"
                         : on
                         ? "bg-black-90 hover:bg-black"
                         : "bg-black-30 hover:bg-black-60",
-                    size === SwitchSize.Small ? "w-9 h-5" : "w-11 h-6",
+                    lineSizeClasses[size],
                 ])}
                 value={on.toString()}
                 onClick={onChange}
@@ -58,8 +72,9 @@ export const Switch: FC<SwitchProps> = ({
                 <div
                     className={merge([
                         "block self-center bg-white rounded-full transition-transform",
-                        size === SwitchSize.Small ? "w-4 h-4" : "w-5 h-5",
-                        on ? "translate-x-full" : "translate-x-0",
+                        size === SwitchSize.Small ? (disabled ? "border border-black-30" : "border border-black") : "",
+                        dotSizeClasses[size],
+                        on ? (size === SwitchSize.Small ? "translate-x-2" : "translate-x-full") : "translate-x-0",
                     ])}
                 />
             </button>
