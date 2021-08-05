@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactElement, useRef } from "react";
 import { IconProps } from "@elements/Icon/IconProps";
 import { useFocusRing } from "@react-aria/focus";
 import { useRadio, useRadioGroup } from "@react-aria/radio";
@@ -8,6 +7,7 @@ import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { useRadioGroupState } from "@react-stately/radio";
 import { merge } from "@utilities/merge";
 import { AnimateSharedLayout, motion } from "framer-motion";
+import React, { ReactElement, useRef } from "react";
 
 export type IconItem = {
     id: string;
@@ -25,30 +25,41 @@ export type SliderProps = {
     activeItemId: string;
     onChange: (id: string) => void;
     ariaLabel?: string;
+    id?: string;
+    disabled?: boolean;
 };
 
 const isIconItem = (item: TextItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
 
-export const Slider: FC<SliderProps> = ({ items, activeItemId, onChange, ariaLabel = "Slider" }) => {
-    const groupProps = { onChange, value: activeItemId, label: ariaLabel };
+export const Slider = ({
+    items,
+    activeItemId,
+    onChange,
+    ariaLabel = "Slider",
+    id = "slider",
+    disabled = false,
+}: SliderProps): ReactElement<SliderProps> => {
+    const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
     const radioGroupState = useRadioGroupState(groupProps);
     const { radioGroupProps } = useRadioGroup(groupProps, radioGroupState);
     const { isFocusVisible, focusProps } = useFocusRing();
-    const ref = useRef(null);
 
     return (
         <AnimateSharedLayout>
             <ul
+                {...radioGroupProps}
+                id={id}
                 data-test-id="slider"
                 className="w-full grid grid-flow-col auto-cols-fr justify-evenly p-0 border border-black-20 m-0 bg-black-0 rounded font-sans text-s list-none"
-                {...radioGroupProps}
             >
                 {items.map((item) => {
+                    const ref = useRef(null);
                     const isActive = item.id === activeItemId;
                     const { inputProps } = useRadio(
                         {
                             value: item.id,
                             "aria-label": isIconItem(item) ? item.ariaLabel : item.name,
+                            isDisabled: disabled,
                         },
                         radioGroupState,
                         ref,
@@ -60,16 +71,22 @@ export const Slider: FC<SliderProps> = ({ items, activeItemId, onChange, ariaLab
                                 <motion.div
                                     layoutId="border"
                                     className={merge([
-                                        "absolute -inset-px border rounded bg-white",
-                                        isFocusVisible ? "border-violet-60" : "border-black",
+                                        "absolute -inset-px border rounded",
+                                        isFocusVisible
+                                            ? "border-violet-60"
+                                            : disabled
+                                            ? "border-black-20"
+                                            : "border-black",
+                                        disabled ? "bg-black-0" : "bg-white",
                                     ])}
                                 />
                             )}
                             <label
                                 data-test-id={isIconItem(item) ? "slider-item-icon" : "slider-item-text"}
                                 className={merge([
-                                    "relative w-full z-10 inline-flex justify-center items-center font-sans font-normal p-2.5 text-center hover:text-black hover:cursor-pointer",
-                                    isActive ? "text-black" : "text-black-80",
+                                    "relative w-full z-10 inline-flex justify-center items-center font-sans font-normal p-2.5 text-center",
+                                    isActive && !disabled ? "text-black" : "text-black-80",
+                                    !disabled ? "hover:text-black hover:cursor-pointer" : "",
                                 ])}
                                 aria-hidden="true"
                             >

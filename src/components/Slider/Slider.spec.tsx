@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useState } from "react";
-import { Slider, IconItem, TextItem } from "./Slider";
 import { mount } from "@cypress/react";
 import IconTextAlignCenter from "@elements/Icon/Generated/IconTextAlignCenter";
 import IconTextAlignLeft from "@elements/Icon/Generated/IconTextAlignLeft";
 import IconTextAlignRight from "@elements/Icon/Generated/IconTextAlignRight";
 import { IconSize } from "@elements/Icon/IconSize";
+import React, { FC, useState } from "react";
+import { IconItem, Slider, TextItem } from "./Slider";
 
 const SLIDER_ID = "[data-test-id=slider]";
 const ICON_ITEM_ID = "[data-test-id=slider-item-icon]";
@@ -27,11 +27,12 @@ const ICON_ITEMS = [
 
 type Props = {
     items: TextItem[] | IconItem[];
+    disabled?: boolean;
 };
 
-const Component: FC<Props> = ({ items }) => {
+const Component: FC<Props> = ({ items, disabled = false }) => {
     const [active, setActive] = useState(items[0].id);
-    return <Slider items={items} activeItemId={active} onChange={setActive} />;
+    return <Slider items={items} activeItemId={active} onChange={setActive} disabled={disabled} />;
 };
 
 describe("Slider Component", () => {
@@ -68,5 +69,13 @@ describe("Slider Component", () => {
         cy.get(INPUT_ID).last().should("be.checked");
         cy.get("body").type("{rightarrow}");
         cy.get(INPUT_ID).first().should("be.checked");
+    });
+    it("renders disabled slider", () => {
+        mount(<Component items={TEXT_ITEMS} disabled />);
+
+        cy.get(SLIDER_ID).should("have.attr", "aria-disabled", "true");
+        cy.get(INPUT_ID).first().should("be.be.disabled");
+        cy.get(TEXT_ITEM_ID).last().click();
+        cy.get(INPUT_ID).last().should("not.be.checked");
     });
 });
