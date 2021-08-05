@@ -21,10 +21,11 @@ jobs:
               id: npm_cache
               uses: actions/cache@v2
               with:
-                  path: ~/.npm
+                  path: '**/node_modules'
                   key: node${{ secrets.NODE_VERSION }}-${{ hashFiles('package-lock.json') }}
 
             - name: Install dependencies
+              if: steps.npm_cache.outputs.cache-hit != 'true'
               run: npm ci
 
             - name: Lint and fix code
@@ -59,10 +60,11 @@ jobs:
               id: npm_cache
               uses: actions/cache@v2
               with:
-                  path: ~/.npm
+                  path: '**/node_modules'
                   key: node${{ secrets.NODE_VERSION }}-${{ hashFiles('package-lock.json') }}
 
             - name: Install dependencies
+              if: steps.npm_cache.outputs.cache-hit != 'true'
               run: npm ci
 
             - name: Build the CLI
