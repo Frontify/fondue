@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { TreeNode, TreeNodeProps } from "./Node";
 
 export type TreeProps = {
@@ -9,11 +9,7 @@ export type TreeProps = {
     activeNodeId?: string | null;
 };
 
-export const Tree = ({
-    nodes,
-    onSelect,
-    activeNodeId: initialActiveNodeId = null,
-}: TreeProps): ReactElement<TreeProps> => {
+export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActiveNodeId = null }) => {
     const [activeNodeId, setActiveNodeId] = useState<string | null>(initialActiveNodeId);
     useEffect(() => setActiveNodeId(initialActiveNodeId), [initialActiveNodeId]);
 

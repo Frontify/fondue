@@ -2,15 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import { Meta, Story } from "@storybook/react";
-import { Size } from "@utilities/enum";
-import { Switch, SwitchProps } from "./Switch";
+import { Switch, SwitchProps, SwitchSize } from "./Switch";
 
 export default {
     title: "Elements/Switch",
     component: Switch,
     argTypes: {
         size: {
-            options: [Size.Small, Size.Large],
+            options: Object.values(SwitchSize),
             control: { type: "radio" },
         },
     },
@@ -19,7 +18,7 @@ export default {
         disabled: false,
         name: "switch-name",
         label: "Switch",
-        size: Size.Small,
+        size: SwitchSize.Small,
     },
 } as Meta<SwitchProps>;
 

@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, ReactNode, useState } from "react";
-import { usePopper } from "react-popper";
-import { IconSize } from "@elements/Icon/IconSize";
+import React, { FC, ReactNode, useState } from "react";
 import IconQuestion from "@elements/Icon/Generated/IconQuestion";
+import { IconSize } from "@elements/Icon/IconSize";
 import { merge } from "@utilities/merge";
+import { usePopper } from "react-popper";
 
 export type TooltipProps = {
     tooltip: ReactNode;
@@ -13,7 +13,7 @@ export type TooltipProps = {
 const TOOLTIP_DISTANCE = 9;
 const TOOLTIP_SKIDDING = 0;
 
-export const Tooltip = ({ tooltip }: TooltipProps): ReactElement<TooltipProps> => {
+export const Tooltip: FC<TooltipProps> = ({ tooltip }) => {
     const [tooltipTriggerElement, setTooltipTriggerElement] = useState<HTMLElement | null>(null);
     const [tooltipElement, setTooltipElement] = useState<HTMLDivElement | null>(null);
     const [showTooltip, setShowTooltip] = useState(false);

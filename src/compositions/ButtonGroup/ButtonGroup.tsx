@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, cloneElement, isValidElement, PropsWithChildren, ReactElement } from "react";
+import React, { Children, cloneElement, isValidElement, PropsWithChildren, FC } from "react";
 import { ButtonSize } from "@elements/Button/Button";
 import { merge } from "@utilities/merge";
 
@@ -12,7 +12,7 @@ const spacing: Record<ButtonSize, string> = {
     [ButtonSize.Large]: "gap-x-3",
 };
 
-export const ButtonGroup = ({ children, size }: ButtonGroupProps): ReactElement<ButtonGroupProps> => {
+export const ButtonGroup: FC<ButtonGroupProps> = ({ children, size }) => {
     return (
         <div data-test-id="button-group" className={merge(["display inline-flex flex-row", spacing[size]])}>
             {Children.map(children, (child) => {

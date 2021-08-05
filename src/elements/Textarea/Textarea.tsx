@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { PropsWithChildren, ReactElement } from "react";
+import React, { FC, PropsWithChildren, ReactNode } from "react";
 import { merge } from "@utilities/merge";
 
 export type TextareaProps = PropsWithChildren<{
     required?: boolean;
-    decorator?: ReactElement;
+    decorator?: ReactNode;
     placeholder?: string;
     disabled?: boolean;
     onInput?: (value: string) => void;
     onBlur?: (value: string) => void;
 }>;
 
-export const Textarea = ({
+export const Textarea: FC<TextareaProps> = ({
     children,
     required = false,
     decorator,
@@ -20,7 +20,7 @@ export const Textarea = ({
     disabled = false,
     onInput,
     onBlur,
-}: TextareaProps): ReactElement<TextareaProps> => {
+}) => {
     return (
         <div className="relative">
             {decorator && (
@@ -33,7 +33,7 @@ export const Textarea = ({
                 required={required}
                 className={merge([
                     "p-2 border rounded text-s outline-none transition placeholder-black-60",
-                    decorator && "pl-7 ",
+                    !!decorator && "pl-7 ",
                     disabled
                         ? "border-black-5 bg-black-5 text-black-40"
                         : "text-black border-black-40 hover:border-black-90",

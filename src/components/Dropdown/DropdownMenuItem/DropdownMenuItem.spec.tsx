@@ -2,11 +2,10 @@
 
 import React from "react";
 import { DropdownMenuItem } from "./DropdownMenuItem";
+import { MenuItem, MenuItemContentSize } from "@components/Dropdown/MenuItemContent/MenuItemContent";
 import { mount } from "@cypress/react";
-import { MenuItem } from "@components/Dropdown/MenuItemContent/MenuItemContent";
-import { IconSize } from "@elements/Icon/IconSize";
 import IconAudio from "@elements/Icon/Generated/IconAudio";
-import { Size } from "@utilities/enum";
+import { IconSize } from "@elements/Icon/IconSize";
 
 export const MENU_ITEM_ID = "[data-test-id=dropdown-menu-item]";
 export const MENU_ITEM_ACTIVE_ID = "[data-test-id=dropdown-menu-item-active]";
@@ -19,26 +18,26 @@ const ITEMS: MenuItem[] = [
     {
         id: "1",
         title: "Small",
-        size: Size.Small,
+        size: MenuItemContentSize.Small,
         icon: <IconAudio size={IconSize.Size16} />,
     },
     {
         id: "2",
         title: "Small",
-        size: Size.Small,
+        size: MenuItemContentSize.Small,
     },
     {
         id: "3",
         title: "Large icon",
         subtitle: "Large icon subtitle",
         icon: <IconAudio size={IconSize.Size16} />,
-        size: Size.Large,
+        size: MenuItemContentSize.Large,
     },
     {
         id: "4",
         title: "Large icon",
         subtitle: "Large icon subtitle",
-        size: Size.Large,
+        size: MenuItemContentSize.Large,
     },
 ];
 

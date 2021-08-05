@@ -1,13 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, PropsWithChildren, ReactElement, ReactNode } from "react";
+import React, { FC, PropsWithChildren, ReactNode } from "react";
 import { InputLabel, InputLabelProps } from "@elements/InputLabel/InputLabel";
-import { Orientation, Style } from "@utilities/enum";
+
+export enum HelperTextStyle {
+    Primary = "Primary",
+    Positive = "Positive",
+    Danger = "Danger",
+}
 
 type HelperTextProps = {
     text: string;
     disabled?: boolean;
-    style?: Style.Primary | Style.Success | Style.Danger;
+    style?: HelperTextStyle;
     fullWidth?: boolean;
 };
 
@@ -17,9 +22,9 @@ const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = fa
         className={`text-s font-sans ${fullWidth ? "w-full" : ""} ${
             disabled
                 ? "text-black-40"
-                : style === Style.Danger
+                : style === HelperTextStyle.Danger
                 ? "text-red-60"
-                : style === Style.Success
+                : style === HelperTextStyle.Positive
                 ? "text-green-60"
                 : "text-black-80"
         }`}
@@ -33,35 +38,40 @@ export enum HelperPosition {
     After = "After",
 }
 
+export enum FormControlDirection {
+    Horizontal = "Horizontal",
+    Vertical = "Vertical",
+}
+
 export type FormControlProps = PropsWithChildren<{
-    orientation?: Orientation;
+    direction?: FormControlDirection;
     disabled?: boolean;
     label?: Omit<InputLabelProps, "disabled">;
     extra?: ReactNode;
     helper?: Omit<HelperTextProps, "disabled"> & { position?: HelperPosition };
 }>;
 
-export const FormControl = ({
+export const FormControl: FC<FormControlProps> = ({
     label,
     children,
     extra,
     helper,
     disabled,
-    orientation = Orientation.Vertical,
-}: FormControlProps): ReactElement<FormControlProps> => {
+    direction = FormControlDirection.Vertical,
+}) => {
     const isHelperBefore = helper?.position === HelperPosition.Before;
 
     return (
         <div
             data-test-id="form-control"
             className={`flex items-center gap-2 ${
-                orientation === Orientation.Horizontal ? "flex-row" : "w-full flex-col"
+                direction === FormControlDirection.Horizontal ? "flex-row" : "w-full flex-col"
             }`}
         >
             {(label || extra) && (
                 <div
                     className={`flex flew-row items-center justify-between ${
-                        orientation === Orientation.Vertical ? "w-full" : ""
+                        direction === FormControlDirection.Vertical ? "w-full" : ""
                     }`}
                 >
                     {label && <InputLabel {...label} disabled={disabled} />}
@@ -77,16 +87,16 @@ export const FormControl = ({
             )}
             {helper?.text && isHelperBefore && (
                 <HelperText
-                    fullWidth={orientation === Orientation.Vertical}
+                    fullWidth={direction === FormControlDirection.Vertical}
                     text={helper.text}
                     disabled={disabled}
                     style={helper.style}
                 />
             )}
-            <div className={orientation === Orientation.Vertical ? "w-full" : ""}>{children}</div>
+            <div className={direction === FormControlDirection.Vertical ? "w-full" : ""}>{children}</div>
             {helper?.text && !isHelperBefore && (
                 <HelperText
-                    fullWidth={orientation === Orientation.Vertical}
+                    fullWidth={direction === FormControlDirection.Vertical}
                     text={helper.text}
                     disabled={disabled}
                     style={helper.style}

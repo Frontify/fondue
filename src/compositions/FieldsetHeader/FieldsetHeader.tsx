@@ -6,8 +6,7 @@ import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import IconCaretUp from "@elements/Icon/Generated/IconCaretUp";
 import IconMinus from "@elements/Icon/Generated/IconMinus";
 import { IconSize } from "@elements/Icon/IconSize";
-import { Switch } from "@elements/Switch/Switch";
-import { Size as SwitchSize } from "@utilities/enum";
+import { Switch, SwitchSize } from "@elements/Switch/Switch";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 

@@ -2,22 +2,21 @@
 
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { Orientation } from "@utilities/enum";
-import { AddBlockButton, AddBlockButtonProps } from "./AddBlockButton";
+import { AddBlockButton, AddBlockButtonDirection, AddBlockButtonProps } from "./AddBlockButton";
 
 export default {
     title: "Elements/Add Block Button",
     component: AddBlockButton,
     args: {
         title: "Add Block Button",
-        orientation: Orientation.Horizontal,
+        orientation: AddBlockButtonDirection.Horizontal,
     },
     argTypes: {
         onClick: {
             action: "Click",
         },
         orientation: {
-            options: [Orientation.Vertical, Orientation.Horizontal],
+            options: Object.values(AddBlockButtonDirection),
             control: "radio",
         },
     },

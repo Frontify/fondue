@@ -1,22 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useRef, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 import { IconSize } from "@elements/Icon/IconSize";
+import { DropdownMenu, MenuBlock } from "@components/Dropdown/DropdownMenu/DropdownMenu";
+import { MenuItemContent, MenuItemContentSize } from "@components/Dropdown/MenuItemContent/MenuItemContent";
 import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import IconReject from "@elements/Icon/Generated/IconReject";
 import useClickOutside from "@hooks/useClickOutside";
-import { Size } from "@utilities/enum";
 import { merge } from "@utilities/merge";
 import { AnimatePresence } from "framer-motion";
-import { DropdownMenu, MenuBlock } from "@components/Dropdown/DropdownMenu/DropdownMenu";
-import { MenuItemContent } from "@components/Dropdown/MenuItemContent/MenuItemContent";
 
 export type DropdownProps = {
     menuBlocks: MenuBlock[];
     onChange: (id?: string) => void;
     activeItemId?: string;
     placeholder?: string;
-    size?: Size.Small | Size.Large;
+    size?: MenuItemContentSize;
     disabled?: boolean;
     clearable?: boolean;
 };
@@ -27,15 +26,15 @@ const getActiveItem = (menuBlocks: MenuBlock[], id: string) =>
         .flat()
         .find((item) => item.id === id) || null;
 
-export const Dropdown = ({
+export const Dropdown: FC<DropdownProps> = ({
     menuBlocks,
     onChange,
     activeItemId = "",
     placeholder = "Select item",
-    size = Size.Small,
+    size = MenuItemContentSize.Small,
     disabled = false,
     clearable = false,
-}: DropdownProps): ReactElement<DropdownProps> => {
+}) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownElement = useRef<HTMLDivElement | null>(null);
     useClickOutside(dropdownElement.current, () => setIsOpen(false));
@@ -47,7 +46,7 @@ export const Dropdown = ({
             <div
                 data-test-id="dropdown"
                 className={`group relative flex w-full box-border items-center justify-between border border-black-40 rounded gap-2 transition-colors
-                ${size === Size.Large ? "pr-5" : "pr-2"}
+                ${size === MenuItemContentSize.Large ? "pr-5" : "pr-2"}
                 ${
                     disabled
                         ? "border-black-5 bg-black-5 pointer-events-none"

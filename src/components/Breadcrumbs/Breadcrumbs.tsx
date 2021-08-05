@@ -30,41 +30,39 @@ const Seperator: FC = (props) => (
     </svg>
 );
 
-export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }: BreadcrumbsProps) => {
-    return (
-        <nav className="font-sans" aria-label="Breadcrumb">
-            <ol className="list-none flex flex-wrap gap-y-1">
-                {items.map((item, index) =>
-                    index < items.length - 1 ? (
-                        <li
-                            className="flex items-center text-black-80 text-xs dark:text-black-10"
-                            key={`breadcrumb-${index}`}
-                            data-test-id="breadcrumb-item"
-                        >
-                            <a href={item.link}>{item.label}</a>
-                            {index < items.length - 2 && <Seperator aria-hidden="true" />}
-                        </li>
-                    ) : (
-                        <li
-                            className="w-full h-6 flex gap-x-1 items-center text-m text-black dark:text-white"
-                            key={`breadcrumb-${index}`}
-                            data-test-id="breadcrumb-item"
-                        >
-                            {item.decorator}
-                            <span className="inline-flex gap-x-2 items-center">
-                                <a href={item.link} aria-current="page" className={item.bold ? "font-bold" : ""}>
-                                    {item.label}
-                                </a>
-                                {item.badges?.map(({ children, ...props }, index) => (
-                                    <Badge {...props} key={`breadcrumb-badge-${index}`}>
-                                        {children}
-                                    </Badge>
-                                ))}
-                            </span>
-                        </li>
-                    ),
-                )}
-            </ol>
-        </nav>
-    );
-};
+export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => (
+    <nav className="font-sans" aria-label="Breadcrumb">
+        <ol className="list-none flex flex-wrap gap-y-1">
+            {items.map((item, index) =>
+                index < items.length - 1 ? (
+                    <li
+                        className="flex items-center text-black-80 text-xs dark:text-black-10"
+                        key={`breadcrumb-${index}`}
+                        data-test-id="breadcrumb-item"
+                    >
+                        <a href={item.link}>{item.label}</a>
+                        {index < items.length - 2 && <Seperator aria-hidden="true" />}
+                    </li>
+                ) : (
+                    <li
+                        className="w-full h-6 flex gap-x-1 items-center text-m text-black dark:text-white"
+                        key={`breadcrumb-${index}`}
+                        data-test-id="breadcrumb-item"
+                    >
+                        {item.decorator}
+                        <span className="inline-flex gap-x-2 items-center">
+                            <a href={item.link} aria-current="page" className={item.bold ? "font-bold" : ""}>
+                                {item.label}
+                            </a>
+                            {item.badges?.map(({ children, ...props }, index) => (
+                                <Badge {...props} key={`breadcrumb-badge-${index}`}>
+                                    {children}
+                                </Badge>
+                            ))}
+                        </span>
+                    </li>
+                ),
+            )}
+        </ol>
+    </nav>
+);

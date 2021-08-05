@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { useEffect, useState } from "react";
-import { Dropdown, DropdownProps } from "./Dropdown";
-import { Meta, Story } from "@storybook/react";
-import { IconSize } from "@elements/Icon/IconSize";
 import IconAudio from "@elements/Icon/Generated/IconAudio";
-import { Size, Style } from "@utilities/enum";
+import { IconSize } from "@elements/Icon/IconSize";
+import { Meta, Story } from "@storybook/react";
+import { Dropdown, DropdownProps } from "./Dropdown";
+import { MenuItemContentSize, MenuItemContentStyle } from "./MenuItemContent/MenuItemContent";
 
 export default {
     title: "Components/Dropdown",
@@ -33,7 +33,7 @@ const DropdownTemplate: Story<DropdownProps> = (args: DropdownProps) => {
 export const SmallSelect = DropdownTemplate.bind({});
 
 SmallSelect.args = {
-    size: Size.Small,
+    size: MenuItemContentSize.Small,
     menuBlocks: [
         {
             id: "block1",
@@ -41,29 +41,29 @@ SmallSelect.args = {
                 {
                     id: "1",
                     title: "Small icon",
-                    size: Size.Small,
+                    size: MenuItemContentSize.Small,
                     icon: <IconAudio size={IconSize.Size16} />,
                 },
                 {
                     id: "2",
                     title: "Small icon warning",
-                    size: Size.Small,
+                    size: MenuItemContentSize.Small,
                     icon: <IconAudio size={IconSize.Size16} />,
-                    style: Style.Danger,
+                    style: MenuItemContentStyle.Danger,
                 },
                 {
                     id: "3",
                     title: "Small icon disabled",
-                    size: Size.Small,
+                    size: MenuItemContentSize.Small,
                     icon: <IconAudio size={IconSize.Size16} />,
                     disabled: true,
                 },
                 {
                     id: "4",
                     title: "Small icon warning disabled",
-                    size: Size.Small,
+                    size: MenuItemContentSize.Small,
                     icon: <IconAudio size={IconSize.Size16} />,
-                    style: Style.Danger,
+                    style: MenuItemContentStyle.Danger,
                     disabled: true,
                 },
             ],
@@ -74,25 +74,25 @@ SmallSelect.args = {
                 {
                     id: "9",
                     title: "Small",
-                    size: Size.Small,
+                    size: MenuItemContentSize.Small,
                 },
                 {
                     id: "10",
                     title: "Small warning",
-                    size: Size.Small,
-                    style: Style.Danger,
+                    size: MenuItemContentSize.Small,
+                    style: MenuItemContentStyle.Danger,
                 },
                 {
                     id: "11",
                     title: "Small disabled",
-                    size: Size.Small,
+                    size: MenuItemContentSize.Small,
                     disabled: true,
                 },
                 {
                     id: "12",
                     title: "Small warning disabled",
-                    style: Style.Danger,
-                    size: Size.Small,
+                    style: MenuItemContentStyle.Danger,
+                    size: MenuItemContentSize.Small,
                     disabled: true,
                 },
             ],
@@ -103,7 +103,7 @@ SmallSelect.args = {
 export const LargeSelect = DropdownTemplate.bind({});
 
 LargeSelect.args = {
-    size: Size.Large,
+    size: MenuItemContentSize.Large,
     menuBlocks: [
         {
             id: "block3",
@@ -113,22 +113,22 @@ LargeSelect.args = {
                     title: "Large icon",
                     subtitle: "Subtitle",
                     icon: <IconAudio size={IconSize.Size16} />,
-                    size: Size.Large,
+                    size: MenuItemContentSize.Large,
                 },
                 {
                     id: "6",
                     title: "Large icon warning",
                     subtitle: "Subtitle",
                     icon: <IconAudio size={IconSize.Size16} />,
-                    size: Size.Large,
-                    style: Style.Danger,
+                    size: MenuItemContentSize.Large,
+                    style: MenuItemContentStyle.Danger,
                 },
                 {
                     id: "7",
                     title: "Large icon disabled",
                     subtitle: "Subtitle",
                     icon: <IconAudio size={IconSize.Size16} />,
-                    size: Size.Large,
+                    size: MenuItemContentSize.Large,
                     disabled: true,
                 },
                 {
@@ -136,8 +136,8 @@ LargeSelect.args = {
                     title: "Large icon warning disabled",
                     subtitle: "Subtitle",
                     icon: <IconAudio size={IconSize.Size16} />,
-                    size: Size.Large,
-                    style: Style.Danger,
+                    size: MenuItemContentSize.Large,
+                    style: MenuItemContentStyle.Danger,
                     disabled: true,
                 },
             ],
@@ -149,28 +149,28 @@ LargeSelect.args = {
                     id: "13",
                     title: "Large",
                     subtitle: "Subtitle",
-                    size: Size.Large,
+                    size: MenuItemContentSize.Large,
                 },
                 {
                     id: "14",
                     title: "Large warning",
                     subtitle: "Subtitle",
-                    size: Size.Large,
-                    style: Style.Danger,
+                    size: MenuItemContentSize.Large,
+                    style: MenuItemContentStyle.Danger,
                 },
                 {
                     id: "15",
                     title: "Large disabled",
                     subtitle: "Subtitle",
-                    size: Size.Large,
+                    size: MenuItemContentSize.Large,
                     disabled: true,
                 },
                 {
                     id: "16",
                     title: "Large warning disabled",
                     subtitle: "Subtitle",
-                    size: Size.Large,
-                    style: Style.Danger,
+                    size: MenuItemContentSize.Large,
+                    style: MenuItemContentStyle.Danger,
                     disabled: true,
                 },
             ],
