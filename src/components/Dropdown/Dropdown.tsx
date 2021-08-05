@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { ReactElement, useRef, useState } from "react";
 import { IconSize } from "@elements/Icon/IconSize";
 import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import IconReject from "@elements/Icon/Generated/IconReject";
@@ -7,7 +8,6 @@ import useClickOutside from "@hooks/useClickOutside";
 import { Size } from "@utilities/enum";
 import { merge } from "@utilities/merge";
 import { AnimatePresence } from "framer-motion";
-import { ReactElement, useRef, useState } from "react";
 import { DropdownMenu, MenuBlock } from "@components/Dropdown/DropdownMenu/DropdownMenu";
 import { MenuItemContent } from "@components/Dropdown/MenuItemContent/MenuItemContent";
 

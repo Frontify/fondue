@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FC, ReactElement } from "react";
-import { Link } from "react-router-dom";
+import React, { FC, ReactElement } from "react";
 import { Badge, BadgeProps } from "@elements/Badge/Badge";
 import { IconProps } from "@elements/Icon/IconProps";
 
@@ -42,7 +41,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }: BreadcrumbsProps) =
                             key={`breadcrumb-${index}`}
                             data-test-id="breadcrumb-item"
                         >
-                            <Link to={item.link}>{item.label}</Link>
+                            <a href={item.link}>{item.label}</a>
                             {index < items.length - 2 && <Seperator aria-hidden="true" />}
                         </li>
                     ) : (
@@ -53,9 +52,9 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }: BreadcrumbsProps) =
                         >
                             {item.decorator}
                             <span className="inline-flex gap-x-2 items-center">
-                                <Link to={item.link} aria-current="page" className={item.bold ? "font-bold" : ""}>
+                                <a href={item.link} aria-current="page" className={item.bold ? "font-bold" : ""}>
                                     {item.label}
-                                </Link>
+                                </a>
                                 {item.badges?.map(({ children, ...props }, index) => (
                                     <Badge {...props} key={`breadcrumb-badge-${index}`}>
                                         {children}

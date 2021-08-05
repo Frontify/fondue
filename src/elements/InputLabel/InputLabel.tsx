@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PropsWithChildren, ReactElement, ReactNode } from "react";
+import React, { PropsWithChildren, ReactElement, ReactNode } from "react";
 import { Tooltip } from "@components/Tooltip/Tooltip";
 import { merge } from "@utilities/merge";
 

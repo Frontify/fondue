@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FC, PropsWithChildren, ReactElement, ReactNode } from "react";
+import React, { FC, PropsWithChildren, ReactElement, ReactNode } from "react";
 import { InputLabel, InputLabelProps } from "@elements/InputLabel/InputLabel";
 import { Orientation, Style } from "@utilities/enum";
 

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { Children, FC, PropsWithChildren } from "react";
 import { merge } from "@utilities/merge";
-import { Children, FC, PropsWithChildren } from "react";
 
 export enum Direction {
     Horizontal = "Horizontal",

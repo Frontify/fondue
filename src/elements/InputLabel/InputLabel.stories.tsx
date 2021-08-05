@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { InputLabel, InputLabelProps } from "./InputLabel";
 

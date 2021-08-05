@@ -1,5 +1,7 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import React, { useEffect, useState } from "react";
 import { Meta, Story } from "@storybook/react";
-import { useEffect, useState } from "react";
 import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState, CheckboxStyle } from "./Checkbox";
 
 export default {

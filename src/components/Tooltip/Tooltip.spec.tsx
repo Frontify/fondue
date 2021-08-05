@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from "react";
 import { mount } from "@cypress/react";
-
 import { Tooltip } from "./Tooltip";
 
 const TOOLTIP_TEXT = "This is a tooltip";

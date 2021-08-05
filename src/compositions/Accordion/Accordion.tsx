@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { Children, FC, isValidElement, PropsWithChildren, ReactElement, useRef } from "react";
 import { FieldsetHeader, FieldsetHeaderProps } from "@compositions/FieldsetHeader/FieldsetHeader";
 import { useAccordion, useAccordionItem } from "@react-aria/accordion";
 import { useFocusRing } from "@react-aria/focus";
@@ -8,7 +9,6 @@ import { TreeState, useTreeState } from "@react-stately/tree";
 import { Node } from "@react-types/shared";
 import { merge } from "@utilities/merge";
 import { motion } from "framer-motion";
-import { Children, FC, isValidElement, PropsWithChildren, ReactElement, useRef } from "react";
 
 export type AccordionItemProps = PropsWithChildren<{ header: FieldsetHeaderProps }>;
 

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown, DropdownProps } from "./Dropdown";
 import { Meta, Story } from "@storybook/react";
 import { IconSize } from "@elements/Icon/IconSize";

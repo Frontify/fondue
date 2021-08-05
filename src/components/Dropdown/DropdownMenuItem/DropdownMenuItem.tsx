@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from "react";
+import React, { ReactElement } from "react";
 import {
     MenuItemContent,
     MenuItemContentProps,

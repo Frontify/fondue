@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { cloneElement, FC, isValidElement, ReactNode } from "react";
 import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
 import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import IconCaretUp from "@elements/Icon/Generated/IconCaretUp";
@@ -9,7 +10,6 @@ import { Switch } from "@elements/Switch/Switch";
 import { Size as SwitchSize } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
-import { cloneElement, FC, isValidElement, ReactNode } from "react";
 
 export enum FieldsetHeaderSize {
     Small = "Small",

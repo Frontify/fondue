@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from "react";
 import { FieldsetHeaderType } from "@compositions/FieldsetHeader/FieldsetHeader";
 import { mount } from "@cypress/react";
 import IconIcons from "@elements/Icon/Generated/IconIcons";

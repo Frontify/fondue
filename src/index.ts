@@ -1,10 +1,12 @@
 import "tailwindcss/tailwind.css";
+export * from "./compositions/Accordion/Accordion";
 export * from "./elements/AddBlockButton/AddBlockButton";
 export * from "./elements/Badge/Badge";
 export * from "./components/Breadcrumbs/Breadcrumbs";
 export * from "./elements/Button/Button";
 export * from "./compositions/ButtonGroup/ButtonGroup";
 export * from "./elements/Checkbox/Checkbox";
+export * from "./compositions/Checklist/Checklist";
 export * from "./elements/Divider/Divider";
 export * from "./components/Dropdown/Dropdown";
 export * from "./components/Dropdown/DropdownMenu/DropdownMenu";

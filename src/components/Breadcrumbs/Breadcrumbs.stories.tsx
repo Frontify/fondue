@@ -1,3 +1,6 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import React from "react";
 import { BadgeStatus, BadgeStyle } from "@elements/Badge/Badge";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";

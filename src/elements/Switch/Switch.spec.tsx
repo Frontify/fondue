@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FC, useState } from "react";
+import React, { FC, useState } from "react";
 import { mount } from "@cypress/react";
 import { Switch, SwitchProps } from "./Switch";
 

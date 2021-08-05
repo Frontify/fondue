@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { ReactElement, useRef } from "react";
 import { IconProps } from "@elements/Icon/IconProps";
 import { useFocusRing } from "@react-aria/focus";
 import { useRadio, useRadioGroup } from "@react-aria/radio";
@@ -7,7 +8,6 @@ import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { useRadioGroupState } from "@react-stately/radio";
 import { merge } from "@utilities/merge";
 import { AnimateSharedLayout, motion } from "framer-motion";
-import { ReactElement, useRef } from "react";
 
 export type IconItem = {
     id: string;

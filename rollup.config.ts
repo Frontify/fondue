@@ -42,9 +42,6 @@ const rollupConfig = [
                 jsxFactory: "React.createElement",
                 jsxFragment: "React.Fragment",
                 minify: process.env.NODE_ENV === "production",
-                loaders: {
-                    ".json": "json",
-                },
             }),
             postcss({
                 minimize: process.env.NODE_ENV === "production",

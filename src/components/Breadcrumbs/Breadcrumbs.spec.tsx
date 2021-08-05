@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from "react";
 import { mount } from "@cypress/react";
 import { MemoryRouter } from "react-router-dom";
 import { Breadcrumbs } from "./Breadcrumbs";

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MouseEvent, ReactElement } from "react";
+import React, { MouseEvent, ReactElement } from "react";
 import { InputLabel } from "@elements/InputLabel/InputLabel";
 import { Size } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";

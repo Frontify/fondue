@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { FC, useState } from "react";
 import { mount } from "@cypress/react";
-import { FC, useState } from "react";
 import { Checkbox, CheckboxProps, CheckboxState } from "./Checkbox";
 
 const CHECKBOX_LABEL = "Checkbox label";

@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { MouseEvent, ReactElement } from "react";
 import { IconSize } from "@elements/Icon/IconSize";
 import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
 import { Orientation } from "@utilities/enum";
-import { MouseEvent, ReactElement } from "react";
 
 export type AddBlockButtonProps = {
     onClick: (event: MouseEvent) => void;

@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from "react";
+
 export enum DividerStyle {
     NoLine = "border-none",
     Dashed = "border-dashed",

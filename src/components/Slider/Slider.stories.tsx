@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { Meta, Story } from "@storybook/react";
 import { Slider, SliderProps } from "./Slider";
 import { IconSize } from "@elements/Icon/IconSize";

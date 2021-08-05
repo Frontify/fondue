@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Button, ButtonProps, ButtonSize, ButtonStyle } from "./Button";
 import IconIcons from "@elements/Icon/Generated/IconIcons";

@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from "react";
 import { DropdownMenuItem } from "./DropdownMenuItem";
 import { mount } from "@cypress/react";
 import { MenuItem } from "@components/Dropdown/MenuItemContent/MenuItemContent";

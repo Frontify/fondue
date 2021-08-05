@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from "react";
+import React, { ReactElement } from "react";
 import { motion } from "framer-motion";
 import { DropdownMenuItem } from "@components/Dropdown/DropdownMenuItem/DropdownMenuItem";
 import { MenuItem } from "@components/Dropdown/MenuItemContent/MenuItemContent";
