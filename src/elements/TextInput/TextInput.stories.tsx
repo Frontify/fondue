@@ -108,3 +108,13 @@ PasswordVisible.args = {
     ...PasswordArgs,
     obfuscated: false,
 };
+
+export const TypeNumber = TextInputTemplate.bind({});
+
+TypeNumber.argTypes = {
+    defaultValue: { table: { disable: false }, type: "number" },
+};
+
+TypeNumber.args = {
+    type: TextInputType.Number,
+};
