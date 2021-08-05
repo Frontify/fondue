@@ -11,6 +11,7 @@ export enum SwitchSize {
 }
 
 export type SwitchProps = {
+    id?: string;
     on?: boolean;
     disabled?: boolean;
     label?: string;
@@ -19,8 +20,16 @@ export type SwitchProps = {
     onChange?: (e: MouseEvent) => void;
 };
 
-export const Switch: FC<SwitchProps> = ({ name, label, disabled, onChange, size = SwitchSize.Small, on = false }) => {
-    const id = label && generateRandomId();
+export const Switch: FC<SwitchProps> = ({
+    id: propId,
+    name,
+    label,
+    disabled,
+    onChange,
+    size = SwitchSize.Small,
+    on = false,
+}) => {
+    const id = propId || generateRandomId();
 
     return (
         <div className="flex w-full items-center justify-between">

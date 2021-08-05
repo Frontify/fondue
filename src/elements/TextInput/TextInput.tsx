@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import IconReject from "@elements/Icon/Generated/IconReject";
 import IconView from "@elements/Icon/Generated/IconView";
 import IconViewSlash from "@elements/Icon/Generated/IconViewSlash";
+import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
+import React, { FC, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 
 export enum TextInputType {
     Text = "text",
@@ -110,7 +111,7 @@ export const TextInput: FC<TextInputProps> = ({
                 </div>
             )}
             <input
-                id={id}
+                id={id || generateRandomId()}
                 ref={inputElement}
                 className={merge([
                     "flex-grow border-none outline-none bg-transparent",
