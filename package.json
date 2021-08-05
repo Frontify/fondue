@@ -1,6 +1,6 @@
 {
     "name": "@frontify/arcade",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "Design system of Frontify",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
@@ -105,7 +105,6 @@
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-popper": "^2.2.5"
-
     },
     "dependencies": {
         "@react-aria/accordion": "^3.0.0-alpha.1",
