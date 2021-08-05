@@ -5,8 +5,8 @@ import { toKebabCase } from "./transforms";
 export default (componentName: string, componentType: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from "react";
 import { mount } from "@cypress/react";
-
 import { ${componentName} } from "./${componentName}";
 
 const ${componentName}_FOO = "bar";

@@ -5,7 +5,7 @@ import { toKebabCase } from "./transforms";
 export default (componentName: string, componentType: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FC } from "react";
+import React, { FC } from "react";
 
 export type ${componentName}Props = {
     foo: string;
