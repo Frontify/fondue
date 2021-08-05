@@ -53,8 +53,6 @@ export const Slider = ({
                 className="w-full grid grid-flow-col auto-cols-fr justify-evenly p-0 border border-black-20 m-0 bg-black-0 rounded font-sans text-s list-none"
             >
                 {items.map((item) => {
-                    console.log(radioGroupState.selectedValue);
-
                     const ref = useRef(null);
                     const isActive = item.id === activeItemId;
                     const { inputProps } = useRadio(
