@@ -3,19 +3,19 @@
 import { Checkbox, CheckboxState, CheckboxStyle } from "@elements/Checkbox/Checkbox";
 import { Meta, Story } from "@storybook/react";
 import { useState } from "react";
-import { Checklist as ChecklistComponent, ChecklistProps, Direction } from "./Checklist";
+import { Checklist as ChecklistComponent, ChecklistProps, ChecklistDirection } from "./Checklist";
 
 export default {
     title: "Components/Checklist",
     component: ChecklistComponent,
     argTypes: {
         direction: {
-            options: [Direction.Horizontal, Direction.Vertical],
+            options: [ChecklistDirection.Horizontal, ChecklistDirection.Vertical],
             control: { type: "radio" },
         },
     },
     args: {
-        direction: Direction.Horizontal,
+        direction: ChecklistDirection.Horizontal,
     },
 } as Meta<ChecklistProps>;
 

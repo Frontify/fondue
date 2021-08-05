@@ -1,20 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@elements/Icon/IconSize";
 import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
-import { Orientation } from "@utilities/enum";
+import { IconSize } from "@elements/Icon/IconSize";
 import { MouseEvent, ReactElement } from "react";
+
+export enum AddBlockButtonDirection {
+    Horizontal = "Horizontal",
+    Vertical = "Vertical",
+}
 
 export type AddBlockButtonProps = {
     onClick: (event: MouseEvent) => void;
     title?: string;
-    orientation?: Orientation;
+    orientation?: AddBlockButtonDirection;
 };
 
 export const AddBlockButton = ({
     onClick,
     title,
-    orientation = Orientation.Horizontal,
+    orientation = AddBlockButtonDirection.Horizontal,
 }: AddBlockButtonProps): ReactElement<AddBlockButtonProps> => {
     return (
         <button
@@ -25,7 +29,7 @@ export const AddBlockButton = ({
                 )`,
             }}
             className={`text-white bg-violet-60 rounded inline-flex items-center w-7 h-6 relative p-1 transition-colors hover:bg-violet-70 active:bg-violet-70 ${
-                orientation === Orientation.Vertical ? "rotate-90" : ""
+                orientation === AddBlockButtonDirection.Vertical ? "rotate-90" : ""
             }`}
             onClick={onClick}
             title={title}

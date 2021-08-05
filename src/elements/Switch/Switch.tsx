@@ -1,17 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MouseEvent, ReactElement } from "react";
 import { InputLabel } from "@elements/InputLabel/InputLabel";
-import { Size } from "@utilities/enum";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
+import { MouseEvent, ReactElement } from "react";
+
+export enum SwitchSize {
+    Small = "Small",
+    Large = "Large",
+}
 
 export type SwitchProps = {
     on?: boolean;
     disabled?: boolean;
     label?: string;
     name?: string;
-    size?: Size.Large | Size.Small;
+    size?: SwitchSize;
     onChange?: (e: MouseEvent) => void;
 };
 
@@ -20,7 +24,7 @@ export const Switch = ({
     label,
     disabled,
     onChange,
-    size = Size.Small,
+    size = SwitchSize.Small,
     on = false,
 }: SwitchProps): ReactElement<SwitchProps> => {
     const id = label && generateRandomId();
@@ -44,7 +48,7 @@ export const Switch = ({
                         : on
                         ? "bg-black-90 hover:bg-black"
                         : "bg-black-30 hover:bg-black-60",
-                    size === Size.Small ? "w-9 h-5" : "w-11 h-6",
+                    size === SwitchSize.Small ? "w-9 h-5" : "w-11 h-6",
                 ])}
                 value={on.toString()}
                 onClick={onChange}
@@ -52,7 +56,7 @@ export const Switch = ({
                 <div
                     className={merge([
                         "block self-center bg-white rounded-full transition-transform",
-                        size === Size.Small ? "w-4 h-4" : "w-5 h-5",
+                        size === SwitchSize.Small ? "w-4 h-4" : "w-5 h-5",
                         on ? "translate-x-full" : "translate-x-0",
                     ])}
                 />

@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from "react";
 import {
     MenuItemContent,
     MenuItemContentProps,
+    MenuItemContentSize,
+    MenuItemContentStyle,
     SelectionIndicatorIcon,
 } from "@components/Dropdown/MenuItemContent/MenuItemContent";
-import { Size, Style } from "@utilities/enum";
 import { merge } from "@utilities/merge";
+import { ReactElement } from "react";
 
 export type DropdownMenuItemProps = {
     onClick?: () => void;
@@ -18,8 +19,8 @@ export const DropdownMenuItem = ({
     icon,
     onClick,
     subtitle = "",
-    size = Size.Small,
-    style = Style.Primary,
+    size = MenuItemContentSize.Small,
+    style = MenuItemContentStyle.Primary,
     disabled = false,
     active = false,
     selectionIndicator = SelectionIndicatorIcon.Check,

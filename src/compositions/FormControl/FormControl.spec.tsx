@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import { Orientation } from "@utilities/enum";
-import { FormControl, HelperPosition } from "./FormControl";
+import { FormControl, FormControlDirection, HelperPosition } from "./FormControl";
 
 const FORM_CONTROL_ID = "[data-test-id=form-control]";
 const FORM_CONTROL_EXTRA_ID = "[data-test-id=form-control-extra]";
@@ -17,7 +16,7 @@ describe("FormControl Component", () => {
     });
 
     it("should render a horizontal form control", () => {
-        mount(<FormControl orientation={Orientation.Horizontal}>{FORM_CONTROL_CONTENT}</FormControl>);
+        mount(<FormControl direction={FormControlDirection.Horizontal}>{FORM_CONTROL_CONTENT}</FormControl>);
 
         cy.get(FORM_CONTROL_ID).should("have.css", "flex-direction", "row");
     });

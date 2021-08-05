@@ -3,8 +3,8 @@
 import { FC, useState } from "react";
 import { Dropdown, DropdownProps } from "./Dropdown";
 import { mount } from "@cypress/react";
-import { Size } from "@utilities/enum";
 import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_ID, MENU_ITEM_TITLE_ID } from "./DropdownMenuItem/DropdownMenuItem.spec";
+import { MenuItemContentSize } from "./MenuItemContent/MenuItemContent";
 
 const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
 const DROPDOWN_ITEM_LIST_ID = "[data-test-id=dropdown-item-list]";
@@ -18,17 +18,17 @@ const SMALL_ITEMS: DropdownProps["menuBlocks"] = [
             {
                 id: "1",
                 title: "Small",
-                size: Size.Small,
+                size: MenuItemContentSize.Small,
             },
             {
                 id: "2",
                 title: "Small second",
-                size: Size.Small,
+                size: MenuItemContentSize.Small,
             },
             {
                 id: "3",
                 title: "Small third",
-                size: Size.Small,
+                size: MenuItemContentSize.Small,
             },
         ],
     },
@@ -44,13 +44,13 @@ const LARGE_ITEMS: DropdownProps["menuBlocks"] = [
                 id: "4",
                 title: "Large",
                 subtitle: "Subtitle",
-                size: Size.Large,
+                size: MenuItemContentSize.Large,
             },
             {
                 id: "5",
                 title: "Large second",
                 subtitle: "Subtitle",
-                size: Size.Large,
+                size: MenuItemContentSize.Large,
             },
         ],
     },
@@ -61,13 +61,13 @@ const LARGE_ITEMS: DropdownProps["menuBlocks"] = [
                 id: "6",
                 title: "Large third",
                 subtitle: "Subtitle",
-                size: Size.Large,
+                size: MenuItemContentSize.Large,
             },
             {
                 id: "7",
                 title: "Large fourth",
                 subtitle: "Subtitle",
-                size: Size.Large,
+                size: MenuItemContentSize.Large,
             },
         ],
     },
@@ -81,7 +81,13 @@ type Props = {
     clearable?: boolean;
 };
 
-const Component: FC<Props> = ({ menuBlocks, placeholder, initialActiveId, size = Size.Small, clearable = false }) => {
+const Component: FC<Props> = ({
+    menuBlocks,
+    placeholder,
+    initialActiveId,
+    size = MenuItemContentSize.Small,
+    clearable = false,
+}) => {
     const [activeItemId, setActiveItemId] = useState(initialActiveId);
     return (
         <Dropdown
@@ -142,7 +148,11 @@ describe("Dropdown Component", () => {
     });
     it("renders large items", () => {
         mount(
-            <Component menuBlocks={LARGE_ITEMS} size={Size.Large} initialActiveId={LARGE_ITEMS[0].menuItems[0].id} />,
+            <Component
+                menuBlocks={LARGE_ITEMS}
+                size={MenuItemContentSize.Large}
+                initialActiveId={LARGE_ITEMS[0].menuItems[0].id}
+            />,
         );
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_ITEM_LIST_ID).should("have.length", 2);
