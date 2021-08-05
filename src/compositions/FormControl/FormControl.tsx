@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { InputLabel, InputLabelProps } from "@elements/InputLabel/InputLabel";
-import { FC, PropsWithChildren, ReactElement, ReactNode } from "react";
+import { FC, PropsWithChildren, ReactNode } from "react";
 
 export enum HelperTextStyle {
     Primary = "Primary",
@@ -51,14 +51,14 @@ export type FormControlProps = PropsWithChildren<{
     helper?: Omit<HelperTextProps, "disabled"> & { position?: HelperPosition };
 }>;
 
-export const FormControl = ({
+export const FormControl: FC<FormControlProps> = ({
     label,
     children,
     extra,
     helper,
     disabled,
     direction = FormControlDirection.Vertical,
-}: FormControlProps): ReactElement<FormControlProps> => {
+}) => {
     const isHelperBefore = helper?.position === HelperPosition.Before;
 
     return (

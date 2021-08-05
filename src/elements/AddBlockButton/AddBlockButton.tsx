@@ -2,7 +2,7 @@
 
 import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
 import { IconSize } from "@elements/Icon/IconSize";
-import { MouseEvent, ReactElement } from "react";
+import { FC, MouseEvent } from "react";
 
 export enum AddBlockButtonDirection {
     Horizontal = "Horizontal",
@@ -15,11 +15,11 @@ export type AddBlockButtonProps = {
     orientation?: AddBlockButtonDirection;
 };
 
-export const AddBlockButton = ({
+export const AddBlockButton: FC<AddBlockButtonProps> = ({
     onClick,
     title,
     orientation = AddBlockButtonDirection.Horizontal,
-}: AddBlockButtonProps): ReactElement<AddBlockButtonProps> => {
+}) => {
     return (
         <button
             data-test-id="add-block-button"

@@ -3,7 +3,7 @@
 import { InputLabel } from "@elements/InputLabel/InputLabel";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
-import { MouseEvent, ReactElement } from "react";
+import { FC, MouseEvent } from "react";
 
 export enum SwitchSize {
     Small = "Small",
@@ -19,14 +19,7 @@ export type SwitchProps = {
     onChange?: (e: MouseEvent) => void;
 };
 
-export const Switch = ({
-    name,
-    label,
-    disabled,
-    onChange,
-    size = SwitchSize.Small,
-    on = false,
-}: SwitchProps): ReactElement<SwitchProps> => {
+export const Switch: FC<SwitchProps> = ({ name, label, disabled, onChange, size = SwitchSize.Small, on = false }) => {
     const id = label && generateRandomId();
 
     return (
