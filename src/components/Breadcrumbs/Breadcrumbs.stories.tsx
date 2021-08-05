@@ -6,10 +6,11 @@ import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
 import { Breadcrumbs, BreadcrumbsProps } from "./Breadcrumbs";
 
+const link = document.referrer;
 const ITEMS = [
-    { label: "Item 1", link: "/" },
-    { label: "Item 2", link: "/" },
-    { label: "Item 3", link: "/" },
+    { label: "Item 1", link },
+    { label: "Item 2", link },
+    { label: "Item 3", link },
 ];
 
 export default {
@@ -20,53 +21,28 @@ export default {
 export const Template: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
 
 Template.args = {
-    items: [
-        ...ITEMS,
-        {
-            bold: true,
-            link: "/",
-            label: "Active",
-        },
-    ],
+    items: [...ITEMS, { link, bold: true, label: "Active" }],
 };
 
-export const WithDecorator: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
+export const WithDecorator = Template.bind({});
 
 WithDecorator.args = {
-    items: [
-        ...ITEMS,
-        {
-            bold: true,
-            link: "/",
-            decorator: <IconIcons />,
-            label: "Active",
-        },
-    ],
+    items: [...ITEMS, { link, bold: true, decorator: <IconIcons />, label: "Active" }],
 };
 
-export const WithBadges: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
+export const WithBadges = Template.bind({});
 
 WithBadges.args = {
     items: [
         ...ITEMS,
         {
+            link,
             bold: true,
-            link: "/",
             label: "Active",
             badges: [
-                {
-                    style: BadgeStyle.Positive,
-                    children: "Badge 1",
-                },
-                {
-                    status: BadgeStatus.Danger,
-                    children: "Badge 2",
-                },
-                {
-                    style: BadgeStyle.Danger,
-                    icon: <IconIcons />,
-                    children: "Badge 3",
-                },
+                { style: BadgeStyle.Positive, children: "Badge 1" },
+                { status: BadgeStatus.Danger, children: "Badge 2" },
+                { style: BadgeStyle.Danger, icon: <IconIcons />, children: "Badge 3" },
             ],
         },
     ],
@@ -78,16 +54,11 @@ WithDecoratorAndBadge.args = {
     items: [
         ...ITEMS,
         {
+            link,
             bold: true,
-            link: "/",
             decorator: <IconIcons />,
             label: "Active",
-            badges: [
-                {
-                    status: BadgeStatus.Positive,
-                    children: "Badge",
-                },
-            ],
+            badges: [{ status: BadgeStatus.Positive, children: "Badge" }],
         },
     ],
 };
