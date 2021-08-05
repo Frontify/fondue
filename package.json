@@ -109,8 +109,8 @@
         "@react-aria/accordion": "^3.0.0-alpha.1",
         "deepmerge": "^4.2.2",
         "framer-motion": "^4.1.17",
-        "react-aria": "^3.8.0",
+        "react-aria": "^3.9.0",
         "react-popper": "^2.2.5",
-        "react-stately": "^3.7.0"
+        "react-stately": "^3.8.0"
     }
 }
