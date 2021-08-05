@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
+import React, { MouseEvent, FC } from "react";
 import { IconSize } from "@elements/Icon/IconSize";
-import { FC, MouseEvent } from "react";
+import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
 
 export enum AddBlockButtonDirection {
     Horizontal = "Horizontal",

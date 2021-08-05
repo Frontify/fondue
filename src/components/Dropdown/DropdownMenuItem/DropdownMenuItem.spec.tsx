@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from "react";
+import { DropdownMenuItem } from "./DropdownMenuItem";
 import { MenuItem, MenuItemContentSize } from "@components/Dropdown/MenuItemContent/MenuItemContent";
 import { mount } from "@cypress/react";
 import IconAudio from "@elements/Icon/Generated/IconAudio";
 import { IconSize } from "@elements/Icon/IconSize";
-import { DropdownMenuItem } from "./DropdownMenuItem";
 
 export const MENU_ITEM_ID = "[data-test-id=dropdown-menu-item]";
 export const MENU_ITEM_ACTIVE_ID = "[data-test-id=dropdown-menu-item-active]";

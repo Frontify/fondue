@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TextInput } from "@elements/TextInput/TextInput";
+import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { FormControl, FormControlDirection, FormControlProps, HelperPosition, HelperTextStyle } from "./FormControl";
+import { TextInput } from "@elements/TextInput/TextInput";
 
 export default {
     title: "Compositions/Form Control",

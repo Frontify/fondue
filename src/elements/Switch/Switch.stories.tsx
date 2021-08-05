@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { useEffect, useState } from "react";
 import { Meta, Story } from "@storybook/react";
-import { useEffect, useState } from "react";
 import { Switch, SwitchProps, SwitchSize } from "./Switch";
 
 export default {

@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { FC, useRef, useState } from "react";
+import { IconSize } from "@elements/Icon/IconSize";
 import { DropdownMenu, MenuBlock } from "@components/Dropdown/DropdownMenu/DropdownMenu";
 import { MenuItemContent, MenuItemContentSize } from "@components/Dropdown/MenuItemContent/MenuItemContent";
 import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import IconReject from "@elements/Icon/Generated/IconReject";
-import { IconSize } from "@elements/Icon/IconSize";
 import useClickOutside from "@hooks/useClickOutside";
 import { merge } from "@utilities/merge";
 import { AnimatePresence } from "framer-motion";
-import { FC, useRef, useState } from "react";
 
 export type DropdownProps = {
     menuBlocks: MenuBlock[];

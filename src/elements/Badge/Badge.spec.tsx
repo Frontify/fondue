@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from "react";
 import { mount } from "@cypress/react";
 import { Badge, BadgeStatus } from "./Badge";
 import IconDocument from "@elements/Icon/Generated/IconDocument";

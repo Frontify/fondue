@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Story, Meta } from "@storybook/react";
 import {
     FieldsetHeader as FieldsetHeaderComponent,

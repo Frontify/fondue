@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { FC } from "react";
 import {
     MenuItemContent,
     MenuItemContentProps,
@@ -8,7 +9,6 @@ import {
     SelectionIndicatorIcon,
 } from "@components/Dropdown/MenuItemContent/MenuItemContent";
 import { merge } from "@utilities/merge";
-import { FC } from "react";
 
 export type DropdownMenuItemProps = {
     onClick?: () => void;

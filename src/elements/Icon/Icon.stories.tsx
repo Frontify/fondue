@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from "react";
+
 import IconAcademyComponent from "@elements/Icon/Generated/IconAcademy";
 import IconActionsComponent from "@elements/Icon/Generated/IconActions";
 import IconActivitiesComponent from "@elements/Icon/Generated/IconActivities";

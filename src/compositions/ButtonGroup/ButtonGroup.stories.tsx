@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from "react";
 import { ButtonGroup, ButtonGroupProps } from "./ButtonGroup";
 import { Button, ButtonSize, ButtonStyle } from "@elements/Button/Button";
 import IconReject from "@elements/Icon/Generated/IconReject";

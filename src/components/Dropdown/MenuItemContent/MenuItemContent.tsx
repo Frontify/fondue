@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconCaretRight from "@elements/Icon/Generated/IconCaretRight";
-import IconCheck from "@elements/Icon/Generated/IconCheck";
+import React, { FC, ReactElement } from "react";
 import { IconProps } from "@elements/Icon/IconProps";
 import { IconSize } from "@elements/Icon/IconSize";
-import { FC, ReactElement } from "react";
+import IconCaretRight from "@elements/Icon/Generated/IconCaretRight";
+import IconCheck from "@elements/Icon/Generated/IconCheck";
 
 export enum SelectionIndicatorIcon {
     Check = "Check",

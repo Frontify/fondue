@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { FC, PropsWithChildren, ReactNode } from "react";
 import { InputLabel, InputLabelProps } from "@elements/InputLabel/InputLabel";
-import { FC, PropsWithChildren, ReactNode } from "react";
 
 export enum HelperTextStyle {
     Primary = "Primary",

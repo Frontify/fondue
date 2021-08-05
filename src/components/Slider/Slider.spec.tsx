@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FC, useState } from "react";
+import React, { FC, useState } from "react";
 import { Slider, IconItem, TextItem } from "./Slider";
 import { mount } from "@cypress/react";
 import IconTextAlignCenter from "@elements/Icon/Generated/IconTextAlignCenter";

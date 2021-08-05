@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { cloneElement, FC, PropsWithChildren, ReactElement } from "react";
+import React, { cloneElement, FC, PropsWithChildren, ReactElement } from "react";
 import RejectIcon from "@elements/Icon/Generated/IconReject";
 import { IconProps } from "@elements/Icon/IconProps";
 import { IconSize } from "@elements/Icon/IconSize";

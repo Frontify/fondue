@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { MouseEvent, FC } from "react";
 import { InputLabel } from "@elements/InputLabel/InputLabel";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
-import { FC, MouseEvent } from "react";
 
 export enum SwitchSize {
     Small = "Small",

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { PropsWithChildren, FC, ReactNode } from "react";
 import { Tooltip } from "@components/Tooltip/Tooltip";
 import { merge } from "@utilities/merge";
-import { FC, PropsWithChildren, ReactNode } from "react";
 
 export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;

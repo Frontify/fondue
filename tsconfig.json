@@ -12,7 +12,7 @@
         "noEmit": true,
         "strict": true,
         "target": "esnext",
-        "jsx": "react-jsx",
+        "jsx": "react",
         "skipLibCheck": true,
         "paths": {
             "@elements/*": ["./src/elements/*"],

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FC, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import React, { FC, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import IconReject from "@elements/Icon/Generated/IconReject";
 import IconView from "@elements/Icon/Generated/IconView";
 import IconViewSlash from "@elements/Icon/Generated/IconViewSlash";

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { FC, PropsWithChildren, ReactNode } from "react";
 import { merge } from "@utilities/merge";
-import { FC, PropsWithChildren, ReactNode } from "react";
 
 export type TextareaProps = PropsWithChildren<{
     required?: boolean;

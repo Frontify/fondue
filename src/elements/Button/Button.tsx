@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { FC, cloneElement, MouseEvent, ReactElement, ReactNode } from "react";
 import { IconSize } from "@elements/Icon/IconSize";
 import { merge } from "@utilities/merge";
-import { cloneElement, FC, MouseEvent, ReactElement, ReactNode } from "react";
 
 export enum ButtonStyle {
     Secondary = "Secondary",

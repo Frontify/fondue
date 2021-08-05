@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { FC } from "react";
+import { motion } from "framer-motion";
 import { DropdownMenuItem } from "@components/Dropdown/DropdownMenuItem/DropdownMenuItem";
 import { MenuItem } from "@components/Dropdown/MenuItemContent/MenuItemContent";
-import { motion } from "framer-motion";
-import { FC } from "react";
 
 export type MenuBlock = {
     id: string;

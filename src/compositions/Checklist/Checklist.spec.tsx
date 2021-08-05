@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from "react";
 import { mount } from "@cypress/react";
 import { Checkbox, CheckboxState, CheckboxStyle } from "@elements/Checkbox/Checkbox";
 import { Checklist, ChecklistDirection } from "./Checklist";

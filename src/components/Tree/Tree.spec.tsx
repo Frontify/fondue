@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FC, useState } from "react";
+import React, { FC, useState } from "react";
 import { Tree } from "./Tree";
 import { TreeNodeProps } from "./Node";
 import { mount } from "@cypress/react";

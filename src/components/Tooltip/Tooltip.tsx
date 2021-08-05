@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { FC, ReactNode, useState } from "react";
 import IconQuestion from "@elements/Icon/Generated/IconQuestion";
 import { IconSize } from "@elements/Icon/IconSize";
 import { merge } from "@utilities/merge";
-import { FC, ReactNode, useState } from "react";
 import { usePopper } from "react-popper";
 
 export type TooltipProps = {
