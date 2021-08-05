@@ -36,9 +36,6 @@ const rollupConfig = [
                 extensions: [".js", ".ts", ".tsx", ".json"],
             }),
             esbuild({
-                include: /\.[jt]sx?$/,
-                exclude: /node_modules/,
-                jsx: "transform",
                 minify: process.env.NODE_ENV === "production",
             }),
             postcss({
