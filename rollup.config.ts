@@ -39,8 +39,6 @@ const rollupConfig = [
                 include: /\.[jt]sx?$/,
                 exclude: /node_modules/,
                 jsx: "transform",
-                jsxFactory: "React.createElement",
-                jsxFragment: "React.Fragment",
                 minify: process.env.NODE_ENV === "production",
             }),
             postcss({
