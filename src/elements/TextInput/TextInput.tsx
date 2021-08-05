@@ -9,6 +9,7 @@ import { merge } from "@utilities/merge";
 export enum TextInputType {
     Text = "text",
     Password = "password",
+    Number = "number",
 }
 
 export enum Validation {
@@ -54,7 +55,7 @@ type TextInputBaseProps = {
 
 export type TextInputProps =
     | ({
-          type?: TextInputType.Text;
+          type?: TextInputType.Text | TextInputType.Number;
           obfuscated?: false;
       } & TextInputBaseProps)
     | ({
@@ -125,7 +126,13 @@ export const TextInput: FC<TextInputProps> = ({
                 onBlur={(event) => onBlur && onBlur(event.target.value)}
                 placeholder={placeholder}
                 defaultValue={defaultValue}
-                type={isObfuscated ? TextInputType.Password : TextInputType.Text}
+                type={
+                    type === TextInputType.Password
+                        ? isObfuscated
+                            ? TextInputType.Password
+                            : TextInputType.Text
+                        : type
+                }
                 required={required}
                 disabled={disabled}
                 data-test-id="text-input"
