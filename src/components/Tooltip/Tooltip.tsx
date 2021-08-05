@@ -46,7 +46,7 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip }) => {
                 style={styles.popper}
                 {...attributes.popper}
                 className={merge([
-                    "p-4 border border-black-10 bg-white rounded-md shadow-mid dark:bg-black-90 dark:text-white",
+                    "p-4 border border-black-10 bg-white rounded-md shadow-mid dark:bg-black-90 dark:text-white z-20",
                     showTooltip ? "visible" : "invisible",
                 ])}
             >
