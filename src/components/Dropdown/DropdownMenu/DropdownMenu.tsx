@@ -18,7 +18,7 @@ export type DropdownMenuProps = {
 
 export const DropdownMenu: FC<DropdownMenuProps> = ({ menuBlocks, onChange, activeItemId = "" }) => (
     <motion.ul
-        className="absolute left-0 w-full overflow-hidden box-border p-0 border border-black-10 rounded shadow-mid list-none m-0 mt-2"
+        className="absolute z-20 bg-white left-0 w-full overflow-hidden box-border p-0 border border-black-10 rounded shadow-mid list-none m-0 mt-2"
         key="content"
         initial={{ height: 0 }}
         animate={{ height: "auto" }}
