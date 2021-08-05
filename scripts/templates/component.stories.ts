@@ -4,8 +4,8 @@ import ComponentFileBuilderResponse from "./ComponentFileBuilderResponse";
 export default (componentName: string, componentType: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from "react";
 import { Story, Meta } from "@storybook/react";
-
 import { ${componentName}, ${componentName}Props } from "./${componentName}";
 
 export default {
