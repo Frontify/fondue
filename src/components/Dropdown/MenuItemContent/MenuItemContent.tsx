@@ -4,7 +4,7 @@ import IconCaretRight from "@elements/Icon/Generated/IconCaretRight";
 import IconCheck from "@elements/Icon/Generated/IconCheck";
 import { IconProps } from "@elements/Icon/IconProps";
 import { IconSize } from "@elements/Icon/IconSize";
-import { ReactElement } from "react";
+import { FC, ReactElement } from "react";
 
 export enum SelectionIndicatorIcon {
     Check = "Check",
@@ -45,7 +45,7 @@ export type MenuItem =
 
 export type MenuItemContentProps = Omit<MenuItem, "id">;
 
-export const MenuItemContent = ({
+export const MenuItemContent: FC<MenuItemContentProps> = ({
     title,
     icon,
     subtitle,
@@ -54,7 +54,7 @@ export const MenuItemContent = ({
     disabled = false,
     active = false,
     selectionIndicator = SelectionIndicatorIcon.Check,
-}: MenuItemContentProps): ReactElement<MenuItemContentProps> => {
+}) => {
     const isDanger = style === MenuItemContentStyle.Danger;
     /* eslint-disable jsx-a11y/no-noninteractive-tabindex,jsx-a11y/tabindex-no-positive */
     return (

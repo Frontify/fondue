@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import { FC, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import IconReject from "@elements/Icon/Generated/IconReject";
 import IconView from "@elements/Icon/Generated/IconView";
 import IconViewSlash from "@elements/Icon/Generated/IconViewSlash";
@@ -62,7 +62,7 @@ export type TextInputProps =
           obfuscated?: boolean;
       } & TextInputBaseProps);
 
-export const TextInput = ({
+export const TextInput: FC<TextInputProps> = ({
     id,
     type = TextInputType.Text,
     decorator,
@@ -77,7 +77,7 @@ export const TextInput = ({
     onInput,
     onBlur,
     onClear,
-}: TextInputProps): ReactElement<TextInputProps> => {
+}) => {
     const inputElement = useRef<HTMLInputElement | null>(null);
     const [isObfuscated, setIsObfuscated] = useState(
         typeof obfuscated === "boolean" ? obfuscated : type === TextInputType.Password,

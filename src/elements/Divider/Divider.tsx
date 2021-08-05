@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { FC } from "react";
+
 export enum DividerStyle {
     NoLine = "border-none",
     Dashed = "border-dashed",
@@ -21,14 +23,12 @@ export type DividerProps = {
     color?: string;
 };
 
-export const Divider = ({
+export const Divider: FC<DividerProps> = ({
     style = DividerStyle.Solid,
     height = DividerHeight.Height50,
     color: borderTopColor = "#CCC",
-}: DividerProps): React.ReactElement<DividerProps> => {
-    return (
-        <div className={`flex items-center ${height}`} data-test-id="divider">
-            <hr className={`border-t m-0 w-full ${style}`} style={{ borderTopColor }} data-test-id="divider-hr" />
-        </div>
-    );
-};
+}) => (
+    <div className={`flex items-center ${height}`} data-test-id="divider">
+        <hr className={`border-t m-0 w-full ${style}`} style={{ borderTopColor }} data-test-id="divider-hr" />
+    </div>
+);

@@ -8,7 +8,7 @@ import { IconSize } from "@elements/Icon/IconSize";
 import useClickOutside from "@hooks/useClickOutside";
 import { merge } from "@utilities/merge";
 import { AnimatePresence } from "framer-motion";
-import { ReactElement, useRef, useState } from "react";
+import { FC, useRef, useState } from "react";
 
 export type DropdownProps = {
     menuBlocks: MenuBlock[];
@@ -26,7 +26,7 @@ const getActiveItem = (menuBlocks: MenuBlock[], id: string) =>
         .flat()
         .find((item) => item.id === id) || null;
 
-export const Dropdown = ({
+export const Dropdown: FC<DropdownProps> = ({
     menuBlocks,
     onChange,
     activeItemId = "",
@@ -34,7 +34,7 @@ export const Dropdown = ({
     size = MenuItemContentSize.Small,
     disabled = false,
     clearable = false,
-}: DropdownProps): ReactElement<DropdownProps> => {
+}) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownElement = useRef<HTMLDivElement | null>(null);
     useClickOutside(dropdownElement.current, () => setIsOpen(false));

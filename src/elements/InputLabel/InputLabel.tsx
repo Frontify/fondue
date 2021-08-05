@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PropsWithChildren, ReactElement, ReactNode } from "react";
 import { Tooltip } from "@components/Tooltip/Tooltip";
 import { merge } from "@utilities/merge";
+import { FC, PropsWithChildren, ReactNode } from "react";
 
 export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;
@@ -12,14 +12,14 @@ export type InputLabelProps = PropsWithChildren<{
     bold?: boolean;
 }>;
 
-export const InputLabel = ({
+export const InputLabel: FC<InputLabelProps> = ({
     children,
     htmlFor,
     required = false,
     disabled = false,
     tooltip,
     bold,
-}: InputLabelProps): ReactElement<InputLabelProps> => {
+}) => {
     return (
         <div
             className={merge([
