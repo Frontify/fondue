@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement } from "react";
+import React, { FC, ReactElement } from "react";
 import { IconProps } from "@elements/Icon/IconProps";
 import { IconSize } from "@elements/Icon/IconSize";
 import IconCaretRight from "@elements/Icon/Generated/IconCaretRight";

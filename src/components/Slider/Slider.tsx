@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useRef } from "react";
+import React, { FC, ReactElement, useRef } from "react";
 import { IconProps } from "@elements/Icon/IconProps";
 import { useFocusRing } from "@react-aria/focus";
 import { useRadio, useRadioGroup } from "@react-aria/radio";
