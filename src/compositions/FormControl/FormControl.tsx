@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, PropsWithChildren, ReactNode } from "react";
 import { InputLabel, InputLabelProps } from "@elements/InputLabel/InputLabel";
+import React, { cloneElement, FC, isValidElement, PropsWithChildren, ReactNode } from "react";
 
 export enum HelperTextStyle {
     Primary = "Primary",
@@ -93,7 +93,9 @@ export const FormControl: FC<FormControlProps> = ({
                     style={helper.style}
                 />
             )}
-            <div className={direction === FormControlDirection.Vertical ? "w-full" : ""}>{children}</div>
+            <div className={direction === FormControlDirection.Vertical ? "w-full" : ""}>
+                {isValidElement(children) ? cloneElement(children, { id: label?.htmlFor, disabled }) : children}
+            </div>
             {helper?.text && !isHelperBefore && (
                 <HelperText
                     fullWidth={direction === FormControlDirection.Vertical}

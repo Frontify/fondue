@@ -11,6 +11,7 @@ import { merge } from "@utilities/merge";
 import { AnimatePresence } from "framer-motion";
 
 export type DropdownProps = {
+    id?: string;
     menuBlocks: MenuBlock[];
     onChange: (id?: string) => void;
     activeItemId?: string;
@@ -27,6 +28,7 @@ const getActiveItem = (menuBlocks: MenuBlock[], id: string) =>
         .find((item) => item.id === id) || null;
 
 export const Dropdown: FC<DropdownProps> = ({
+    id,
     menuBlocks,
     onChange,
     activeItemId = "",
@@ -54,6 +56,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 }`}
             >
                 <button
+                    id={id}
                     data-test-id="dropdown-trigger"
                     onClick={() => setIsOpen(!isOpen)}
                     className="overflow-hidden flex-auto rounded text-left p-0"
@@ -96,8 +99,8 @@ export const Dropdown: FC<DropdownProps> = ({
                     <DropdownMenu
                         menuBlocks={menuBlocks}
                         activeItemId={activeItemId}
-                        onChange={(id) => {
-                            onChange(id);
+                        onChange={(itemId) => {
+                            onChange(itemId);
                             setIsOpen(!isOpen);
                         }}
                     />

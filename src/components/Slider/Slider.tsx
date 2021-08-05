@@ -7,7 +7,7 @@ import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { useRadioGroupState } from "@react-stately/radio";
 import { merge } from "@utilities/merge";
 import { AnimateSharedLayout, motion } from "framer-motion";
-import React, { ReactElement, useRef } from "react";
+import React, { FC, ReactElement, useRef } from "react";
 
 export type IconItem = {
     id: string;
@@ -21,24 +21,24 @@ export type TextItem = {
 };
 
 export type SliderProps = {
+    id?: string;
     items: TextItem[] | IconItem[];
     activeItemId: string;
     onChange: (id: string) => void;
     ariaLabel?: string;
-    id?: string;
     disabled?: boolean;
 };
 
 const isIconItem = (item: TextItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
 
-export const Slider = ({
+export const Slider: FC<SliderProps> = ({
+    id,
     items,
     activeItemId,
     onChange,
     ariaLabel = "Slider",
-    id = "slider",
     disabled = false,
-}: SliderProps): ReactElement<SliderProps> => {
+}) => {
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
     const radioGroupState = useRadioGroupState(groupProps);
     const { radioGroupProps } = useRadioGroup(groupProps, radioGroupState);
@@ -48,11 +48,10 @@ export const Slider = ({
         <AnimateSharedLayout>
             <ul
                 {...radioGroupProps}
-                id={id}
                 data-test-id="slider"
                 className="w-full grid grid-flow-col auto-cols-fr justify-evenly p-0 border border-black-20 m-0 bg-black-0 rounded font-sans text-s list-none"
             >
-                {items.map((item) => {
+                {items.map((item, index) => {
                     const ref = useRef(null);
                     const isActive = item.id === activeItemId;
                     const { inputProps } = useRadio(
@@ -92,11 +91,12 @@ export const Slider = ({
                             >
                                 <VisuallyHidden>
                                     <input
-                                        data-test-id="slider-input"
                                         {...inputProps}
                                         {...focusProps}
+                                        data-test-id="slider-input"
                                         value={item.id}
                                         ref={ref}
+                                        id={index === 0 ? id : undefined}
                                     />
                                 </VisuallyHidden>
                                 <span className="overflow-hidden overflow-ellipsis whitespace-nowrap">

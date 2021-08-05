@@ -22,6 +22,7 @@ export enum CheckboxState {
 }
 
 export type CheckboxProps = {
+    id?: string;
     style?: CheckboxStyle;
     state?: CheckboxState;
     disabled?: boolean;
@@ -54,7 +55,7 @@ const isCheckedOrMixed = (checked: CheckboxState): boolean => {
 };
 
 export const Checkbox: FC<CheckboxProps> = (props) => {
-    const id = generateRandomId();
+    const id = props.id || generateRandomId();
     const {
         state = CheckboxState.Unchecked,
         disabled,
