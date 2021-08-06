@@ -72,7 +72,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                 >
                     <div
                         {...regionProps}
-                        className={`tw-px-8 tw-pb-7 tw-mt-1 ${isOpen ? "tw-visible" : "tw-invisible"}`}
+                        className={`tw-px-8 tw-pb-7 tw--mt-1 ${isOpen ? "tw-visible" : "tw-invisible"}`}
                     >
                         {item.props.children()}
                     </div>
