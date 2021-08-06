@@ -4,7 +4,7 @@ import { IconSize, IconSizeMap } from "@elements/Icon/IconSize";
 
 function IconFitToScreen(props: IconProps): React.ReactElement<IconProps> {
     const customClassName = [
-        "flex items-center justify-center fill-current",
+        "tw-flex tw-items-center tw-justify-center tw-fill-current",
         IconSizeMap[props.size || IconSize.Size16],
     ].join(" ");
     return (

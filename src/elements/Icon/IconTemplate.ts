@@ -19,7 +19,7 @@ export default function IconTemplate(
       ${interfaces}
 
       function ${componentName}(props: IconProps): React.ReactElement<IconProps> {
-        const customClassName = ["flex items-center justify-center fill-current", IconSizeMap[props.size || IconSize.Size16]].join(' ');
+        const customClassName = ["tw-flex tw-items-center tw-justify-center tw-fill-current", IconSizeMap[props.size || IconSize.Size16]].join(' ');
 
         return ${jsx};
       }

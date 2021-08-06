@@ -10,10 +10,10 @@ export enum IconSize {
 }
 
 export const IconSizeMap = {
-    [IconSize.Size8]: "h-2 w-2",
-    [IconSize.Size12]: "h-3 w-3",
-    [IconSize.Size16]: "h-4 w-4",
-    [IconSize.Size20]: "h-5 w-5",
-    [IconSize.Size24]: "h-6 w-6",
-    [IconSize.Size32]: "h-8 w-8",
+    [IconSize.Size8]: "tw-h-2 tw-w-2",
+    [IconSize.Size12]: "tw-h-3 tw-w-3",
+    [IconSize.Size16]: "tw-h-4 tw-w-4",
+    [IconSize.Size20]: "tw-h-5 tw-w-5",
+    [IconSize.Size24]: "tw-h-6 tw-w-6",
+    [IconSize.Size32]: "tw-h-8 tw-w-8",
 };
