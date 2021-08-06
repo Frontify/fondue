@@ -45,7 +45,7 @@ export const Switch: FC<SwitchProps> = ({
     const id = propId || generateRandomId();
 
     return (
-        <div className="tw-flex tw-w-full tw-items-center tw-justify-between">
+        <div className="tw-flex tw-w-full tw-items-center tw-justify-between tw-gap-1">
             {label && id && (
                 <InputLabel htmlFor={id} disabled={disabled}>
                     {label}
