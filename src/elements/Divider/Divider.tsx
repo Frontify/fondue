@@ -10,11 +10,11 @@ export enum DividerStyle {
 }
 
 export enum DividerHeight {
-    Height10 = "h-[10px]",
-    Height25 = "h-[25px]",
-    Height50 = "h-[50px]",
-    Height75 = "h-[75px]",
-    Height100 = "h-[100px]",
+    Height10 = "tw-h-[10px]",
+    Height25 = "tw-h-[25px]",
+    Height50 = "tw-h-[50px]",
+    Height75 = "tw-h-[75px]",
+    Height100 = "tw-h-[100px]",
 }
 
 export type DividerProps = {

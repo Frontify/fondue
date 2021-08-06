@@ -48,11 +48,11 @@ const styles: Record<"solid" | "translucent", Record<ButtonStyle, string>> = {
     translucent: {
         [ButtonStyle.Primary]: "tw-text-white tw-bg-black-90 hover:tw-bg-black-100 active:tw-bg-black-superdark",
         [ButtonStyle.Secondary]:
-            "tw-text-black-80 tw-bg-transparent hover:bg-black-10 hover:tw-text-black active:tw-bg-black-20 active:tw-text-black dark:tw-text-white dark:hover:tw-bg-black-95 dark:active:bg-black-superdark dark:hover:tw-text-white",
+            "tw-text-black-80 tw-bg-transparent hover:tw-bg-black-10 hover:tw-text-black active:tw-bg-black-20 active:tw-text-black dark:tw-text-white dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark dark:hover:tw-text-white",
         [ButtonStyle.Danger]:
-            "tw-text-red-65 tw-bg-transparent hover:bg-black-10 active:bg-black-20 dark:tw-text-red-50 dark:hover:tw-bg-black-95 dark:active:bg-black-superdark",
+            "tw-text-red-65 tw-bg-transparent hover:tw-bg-black-10 active:tw-bg-black-20 dark:tw-text-red-50 dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark",
         [ButtonStyle.Positive]:
-            "tw-text-green-75 tw-bg-transparent hover:bg-black-10 active:bg-black-20 dark:tw-text-green-60 dark:hover:bg-black-95 dark:active:bg-black-superdark",
+            "tw-text-green-75 tw-bg-transparent hover:tw-bg-black-10 active:tw-bg-black-20 dark:tw-text-green-60 dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark",
     },
 };
 
@@ -91,7 +91,7 @@ export const Button: FC<ButtonProps> = ({
                 merge(
                     disabled
                         ? [
-                              "not-allowed tw-pointer-events-none tw-text-black-40 dark:tw-text-black-60",
+                              "tw-not-allowed tw-pointer-events-none tw-text-black-40 dark:tw-text-black-60",
                               solid ? "tw-bg-black-5 dark:tw-bg-black-90" : "tw-bg-transparent",
                           ]
                         : [

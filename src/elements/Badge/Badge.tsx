@@ -40,8 +40,8 @@ const dismissClasses: Record<BadgeStyle, string> = {
     [BadgeStyle.Primary]: "tw-text-black-60 dark:tw-text-black-40 dark:hover:tw-text-white",
     [BadgeStyle.Positive]: "tw-text-green-90 dark:tw-text-black-40 dark:hover:tw-text-white",
     [BadgeStyle.Progress]: "tw-text-violet-90 dark:tw-text-black-40 dark:hover:tw-text-white",
-    [BadgeStyle.Warning]: "tw-text-yellow-90 dark:text-black-40 dark:hover:tw-text-white",
-    [BadgeStyle.Danger]: "tw-text-red-90 dark:text-black-40 dark:hover:tw-text-white",
+    [BadgeStyle.Warning]: "tw-text-yellow-90 dark:tw-text-black-40 dark:hover:tw-text-white",
+    [BadgeStyle.Danger]: "tw-text-red-90 dark:tw-text-black-40 dark:hover:tw-text-white",
 };
 
 export type BadgeProps = PropsWithChildren<{
@@ -66,14 +66,14 @@ export const Badge: FC<BadgeProps> = ({ children, status, icon, style = BadgeSty
             <Container
                 onClick={() => onClick && onClick()}
                 className={merge([
-                    "tw-float-left tw-h-6 tw-inline-flex tw-items-center tw-justify-center tw-rounded-full transition-color dark:tw-bg-black-95 dark:hover:tw-bg-black-superdark",
+                    "tw-float-left tw-h-6 tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-transition-color dark:tw-bg-black-95 dark:hover:tw-bg-black-superdark",
                     styleClasses[style],
                     onClick && "hover:tw-cursor-pointer",
                     !children && (!status || !icon)
                         ? "tw-w-6"
                         : children && !icon && !status
                         ? "tw-gap-x-1 tw-px-2"
-                        : "tw-gap-x-1 tw-pl-2 pr-[0.625rem]",
+                        : "tw-gap-x-1 tw-pl-2 tw-pr-[0.625rem]",
                 ])}
                 data-test-id="badge"
             >

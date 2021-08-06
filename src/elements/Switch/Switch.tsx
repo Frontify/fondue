@@ -58,7 +58,7 @@ export const Switch: FC<SwitchProps> = ({
                 data-test-id="switch"
                 className={merge([
                     "tw-inline-flex tw-border-0 tw-rounded-full tw-transition-colors",
-                    size !== SwitchSize.Small ? "tw-py-0 px-[0.125rem]" : "tw-p-0",
+                    size !== SwitchSize.Small ? "tw-py-0 tw-px-[0.125rem]" : "tw-p-0",
                     disabled
                         ? "tw-bg-black-10 tw-pointer-events-none"
                         : on

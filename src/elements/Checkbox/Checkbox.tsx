@@ -46,7 +46,7 @@ const styles = {
         [CheckboxStyle.Default]:
             "tw-border-black tw-bg-black tw-text-white hover:tw-border-black-superdark hover:tw-bg-black-superdark dark:tw-border-white dark:tw-bg-white dark:hover:tw-border-black-20 dark:hover:tw-bg-black-20 dark:tw-text-black",
         [CheckboxStyle.Primary]:
-            "tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:border-violet-60 dark:hover:tw-bg-violet-60",
+            "tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60",
     },
 };
 

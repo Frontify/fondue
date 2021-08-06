@@ -75,7 +75,7 @@ export const WithDropdown: Story<FormControlProps> = (args) => {
                 size={MenuItemContentSize.Small}
                 menuBlocks={[
                     {
-                        id: "tw-block1",
+                        id: "block1",
                         menuItems: [
                             { id: "1", title: "Small 1", size: MenuItemContentSize.Small },
                             { id: "2", title: "Small 2", size: MenuItemContentSize.Small },

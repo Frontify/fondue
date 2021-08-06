@@ -70,7 +70,7 @@ export const FormControl: FC<FormControlProps> = ({
         >
             {(label || extra) && (
                 <div
-                    className={`flex flew-row tw-items-center tw-justify-between ${
+                    className={`tw-flex tw-flew-row tw-items-center tw-justify-between ${
                         direction === FormControlDirection.Vertical ? "tw-w-full" : ""
                     }`}
                 >

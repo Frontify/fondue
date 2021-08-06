@@ -162,7 +162,7 @@ export const TextInput: FC<TextInputProps> = ({
             {type === TextInputType.Password && (
                 <button
                     className={merge([
-                        "flex items-center tw-justify-center",
+                        "tw-flex tw-items-center tw-justify-center",
                         disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-60",
                     ])}
                     onClick={() => setIsObfuscated(!isObfuscated)}
@@ -174,7 +174,7 @@ export const TextInput: FC<TextInputProps> = ({
                 </button>
             )}
             {validation === Validation.Loading && (
-                <span className="tw-absolute top-[-0.75rem] right-[-0.75rem]">
+                <span className="tw-absolute tw-top-[-0.75rem] tw-right-[-0.75rem]">
                     <Spinner />
                 </span>
             )}
