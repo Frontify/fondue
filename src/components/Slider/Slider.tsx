@@ -5,9 +5,10 @@ import { useFocusRing } from "@react-aria/focus";
 import { useRadio, useRadioGroup } from "@react-aria/radio";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { useRadioGroupState } from "@react-stately/radio";
+import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import { AnimateSharedLayout, motion } from "framer-motion";
-import React, { FC, ReactElement, useRef } from "react";
+import React, { FC, ReactElement, useMemo, useRef } from "react";
 
 export type IconItem = {
     id: string;
@@ -31,8 +32,8 @@ export type SliderProps = {
 
 const isIconItem = (item: TextItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
 
-export const Slider: FC<SliderProps> = ({
-    id,
+const BaseSlider: FC<SliderProps> = ({
+    id = generateRandomId(),
     items,
     activeItemId,
     onChange,
@@ -45,12 +46,12 @@ export const Slider: FC<SliderProps> = ({
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
-        <AnimateSharedLayout>
-            <ul
-                {...radioGroupProps}
-                data-test-id="slider"
-                className="w-full grid grid-flow-col auto-cols-fr justify-evenly p-0 border border-black-20 m-0 bg-black-0 rounded font-sans text-s list-none"
-            >
+        <ul
+            {...radioGroupProps}
+            data-test-id="slider"
+            className="relative w-full grid grid-flow-col auto-cols-fr justify-evenly p-0 border border-black-20 m-0 bg-black-0 rounded font-sans text-s list-none"
+        >
+            <AnimateSharedLayout>
                 {items.map((item, index) => {
                     const ref = useRef(null);
                     const isActive = item.id === activeItemId;
@@ -68,16 +69,20 @@ export const Slider: FC<SliderProps> = ({
                         <li key={item.id} className="relative">
                             {isActive && (
                                 <motion.div
-                                    layoutId="border"
+                                    layoutId={id}
                                     className={merge([
                                         "absolute -inset-px border rounded",
-                                        isFocusVisible
-                                            ? "border-violet-60"
-                                            : disabled
-                                            ? "border-black-20"
-                                            : "border-black",
-                                        disabled ? "bg-black-0" : "bg-white",
+                                        disabled
+                                            ? "border-black-20 bg-black-0"
+                                            : isFocusVisible
+                                            ? "border-violet-60 bg-white"
+                                            : "border-black bg-white",
                                     ])}
+                                    // Since framer-motion sets `visibility` to `visible` which leads
+                                    // to undesired side effects for example when this component is
+                                    // used inside an `AccordionItem` that's why we explicitly
+                                    // set the prop to `inherit` so framer leave it as is.
+                                    animate={{ visibility: "inherit" }}
                                 />
                             )}
                             <label
@@ -106,7 +111,14 @@ export const Slider: FC<SliderProps> = ({
                         </li>
                     );
                 })}
-            </ul>
-        </AnimateSharedLayout>
+            </AnimateSharedLayout>
+        </ul>
     );
 };
+
+export const Slider: FC<SliderProps> = (props) =>
+    // Because of a framer-motion bug (see https://github.com/framer/motion/issues/940) we need
+    // to memoize the Slider, because otherwise the currently active element jumps when there
+    // are multiple sliders on a page and a height change occurs before a slider e.g. when
+    // opening and closing an `AccordionItem`.
+    useMemo(() => <BaseSlider {...props} />, [props.activeItemId, props.disabled]);
