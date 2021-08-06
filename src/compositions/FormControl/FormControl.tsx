@@ -93,7 +93,7 @@ export const FormControl: FC<FormControlProps> = ({
                     style={helper.style}
                 />
             )}
-            <div className={direction === FormControlDirection.Vertical ? "w-full" : ""}>
+            <div className={direction === FormControlDirection.Vertical ? "tw-w-full" : ""}>
                 {isValidElement(children) ? cloneElement(children, { id: label?.htmlFor, disabled }) : children}
             </div>
             {helper?.text && !isHelperBefore && (
