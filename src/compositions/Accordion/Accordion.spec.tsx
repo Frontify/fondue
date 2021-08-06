@@ -83,7 +83,7 @@ describe("Accordion Component", () => {
         cy.get(ACCORDION_ITEM_ID).first().should("not.have.class", "tw-border-violet-60");
         cy.get(ACCORDION_ITEM_ID).eq(1).should("have.class", "tw-border-violet-60");
         cy.get(ACCORDION_ITEM_ID).eq(1).tab();
-        cy.get(ACCORDION_ITEM_ID).eq(1).should("not.have.class", "border-violet-60");
-        cy.get(ACCORDION_ITEM_ID).eq(2).should("have.class", "border-violet-60");
+        cy.get(ACCORDION_ITEM_ID).eq(1).should("not.have.class", "tw-border-violet-60");
+        cy.get(ACCORDION_ITEM_ID).eq(2).should("have.class", "tw-border-violet-60");
     });
 });
