@@ -18,7 +18,7 @@ function IconPause(props: IconProps): React.ReactElement<IconProps> {
             name="IconPause"
             {...props}
         >
-            <g transform="translate(5 4)">
+            <g tw-transform="translate(5 4)">
                 <rect width={6} height={16} rx={1} />
                 <rect x={8} width={6} height={16} rx={1} />
             </g>

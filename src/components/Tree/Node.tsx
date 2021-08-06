@@ -40,12 +40,12 @@ export const TreeNode = ({
             <a
                 data-test-id="node-link"
                 className={merge([
-                    "flex items-center justify-center py-1 px-2 rounded cursor-pointer no-underline",
-                    strong && "font-bold",
-                    value && !selected && "hover:bg-black-5",
-                    selected ? "bg-violet-60 text-white" : "text-black",
-                    parentIds.length === 1 && "pl-8",
-                    parentIds.length > 1 && "pl-16",
+                    "tw-flex tw-items-center tw-justify-center tw-py-1 tw-px-2 tw-rounded tw-cursor-pointer tw-no-underline",
+                    strong && "tw-font-bold",
+                    value && !selected && "hover:tw-bg-black-5",
+                    selected ? "tw-bg-violet-60 tw-text-white" : "tw-text-black",
+                    parentIds.length === 1 && "tw-pl-8",
+                    parentIds.length > 1 && "tw-pl-16",
                 ])}
                 aria-selected={selected}
                 onClick={() => {
@@ -73,17 +73,25 @@ export const TreeNode = ({
                             <IconCaretRight size={IconSize.Size16} />
                         ))}
                 </span>
-                {icon && <span className="pl-2">{icon}</span>}
-                <span className="pl-2" data-test-id="node-link-name">
+                {icon && <span className="tw-pl-2">{icon}</span>}
+                <span className="tw-pl-2" data-test-id="node-link-name">
                     {name}
                 </span>
-                <span className={merge(["ml-auto text-black-opacity-40 font-normal", selected && "text-black-50"])}>
+                <span
+                    className={merge([
+                        "tw-ml-auto tw-text-black-opacity-40 tw-font-normal",
+                        selected && "tw-text-black-50",
+                    ])}
+                >
                     {label}
                 </span>
             </a>
 
             {nodes && showNodes && (
-                <ul className="p-0 m-0 font-sans font-normal list-none text-left" data-test-id="sub-tree">
+                <ul
+                    className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left"
+                    data-test-id="sub-tree"
+                >
                     {nodes.map((node) => {
                         return (
                             <TreeNode

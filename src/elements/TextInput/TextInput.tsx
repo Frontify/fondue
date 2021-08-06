@@ -21,14 +21,14 @@ export enum Validation {
 }
 
 const validationStyle: Record<Validation, string> = {
-    [Validation.Default]: "border-black-10",
-    [Validation.Loading]: "border-black-10",
-    [Validation.Success]: "border-green-50",
-    [Validation.Error]: "border-red-50",
+    [Validation.Default]: "tw-border-black-10",
+    [Validation.Loading]: "tw-border-black-10",
+    [Validation.Success]: "tw-border-green-50",
+    [Validation.Error]: "tw-border-red-50",
 };
 
 const Spinner = (): ReactElement => (
-    <svg className="animate-spin" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <svg className="tw-animate-spin" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="7.5" fill="white" stroke="#EAEBEB" />
         <path
             fill="white"
@@ -93,18 +93,18 @@ export const TextInput: FC<TextInputProps> = ({
     return (
         <div
             className={merge([
-                "flex items-center py-2 gap-2 px-3 border rounded font-sans relative",
-                dotted ? "border-dashed" : "border-solid",
+                "tw-flex tw-items-center tw-py-2 tw-gap-2 tw-px-3 tw-border tw-rounded tw-font-sans tw-relative",
+                dotted ? "tw-border-dashed" : "tw-border-solid",
                 disabled
-                    ? "border-black-5 bg-black-5 dark:bg-black-90 dark:border-black-90 cursor-not-allowed"
-                    : `${validationStyle[validation]} focus-within:border-black-90`,
+                    ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90 tw-cursor-not-allowed"
+                    : `${validationStyle[validation]} focus-within:tw-border-black-90`,
             ])}
         >
             {decorator && (
                 <div
                     className={merge([
-                        "flex items-center justify-center pl-1",
-                        disabled ? "text-black-60" : "text-black-80",
+                        "tw-flex tw-items-center tw-justify-center tw-pl-1",
+                        disabled ? "tw-text-black-60" : "tw-text-black-80",
                     ])}
                     data-test-id="decorator"
                 >
@@ -115,10 +115,10 @@ export const TextInput: FC<TextInputProps> = ({
                 id={id || generateRandomId()}
                 ref={inputElement}
                 className={merge([
-                    "flex-grow border-none outline-none bg-transparent",
+                    "tw-flex-grow tw-border-none tw-outline-none tw-bg-transparent",
                     disabled
-                        ? "text-black-40 placeholder-black-30 dark:text-black-30 dark:placeholder-black-40 cursor-not-allowed"
-                        : "text-black placeholder-black-60 dark:text-white",
+                        ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40 tw-cursor-not-allowed"
+                        : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
                 ])}
                 onClick={() => {
                     inputElement.current?.focus();
@@ -141,8 +141,8 @@ export const TextInput: FC<TextInputProps> = ({
             {clearable && (
                 <button
                     className={merge([
-                        "flex items-center justify-center",
-                        disabled ? "pointer-events-none text-black-40" : "text-black-60",
+                        "tw-flex tw-items-center tw-justify-center",
+                        disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-60",
                     ])}
                     onClick={() => {
                         if (inputElement.current) {
@@ -162,8 +162,8 @@ export const TextInput: FC<TextInputProps> = ({
             {type === TextInputType.Password && (
                 <button
                     className={merge([
-                        "flex items-center justify-center",
-                        disabled ? "pointer-events-none text-black-40" : "text-black-60",
+                        "flex items-center tw-justify-center",
+                        disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-60",
                     ])}
                     onClick={() => setIsObfuscated(!isObfuscated)}
                     data-test-id="visibility-icon"
@@ -174,7 +174,7 @@ export const TextInput: FC<TextInputProps> = ({
                 </button>
             )}
             {validation === Validation.Loading && (
-                <span className="absolute top-[-0.75rem] right-[-0.75rem]">
+                <span className="tw-absolute top-[-0.75rem] right-[-0.75rem]">
                     <Spinner />
                 </span>
             )}

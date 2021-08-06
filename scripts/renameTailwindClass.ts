@@ -36,7 +36,7 @@ const addPrefixToClasses = (fileContent: string) => {
 
     (tailwindClassList as string[]).forEach((className) => {
         fileContentWithClassPrefix = fileContentWithClassPrefix.replace(
-            new RegExp(`(["':\\s])(?!${tailwindPrefix})(-?${escapeRegExp(className)})(?![-/])`),
+            new RegExp(`([\`"':\\s])(?!${tailwindPrefix})(-?${escapeRegExp(className)})(?![-/])`),
             `$1${tailwindPrefix}$2`,
         );
     });

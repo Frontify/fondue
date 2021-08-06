@@ -49,7 +49,7 @@ export const Slider: FC<SliderProps> = ({
             <ul
                 {...radioGroupProps}
                 data-test-id="slider"
-                className="w-full grid grid-flow-col auto-cols-fr justify-evenly p-0 border border-black-20 m-0 bg-black-0 rounded font-sans text-s list-none"
+                className="tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none"
             >
                 {items.map((item, index) => {
                     const ref = useRef(null);
@@ -65,27 +65,27 @@ export const Slider: FC<SliderProps> = ({
                     );
 
                     return (
-                        <li key={item.id} className="relative">
+                        <li key={item.id} className="tw-relative">
                             {isActive && (
                                 <motion.div
-                                    layoutId="border"
+                                    layoutId="tw-border"
                                     className={merge([
-                                        "absolute -inset-px border rounded",
+                                        "tw-absolute tw--inset-px tw-border tw-rounded",
                                         isFocusVisible
-                                            ? "border-violet-60"
+                                            ? "tw-border-violet-60"
                                             : disabled
-                                            ? "border-black-20"
-                                            : "border-black",
-                                        disabled ? "bg-black-0" : "bg-white",
+                                            ? "tw-border-black-20"
+                                            : "tw-border-black",
+                                        disabled ? "tw-bg-black-0" : "tw-bg-white",
                                     ])}
                                 />
                             )}
                             <label
                                 data-test-id={isIconItem(item) ? "slider-item-icon" : "slider-item-text"}
                                 className={merge([
-                                    "relative w-full z-10 inline-flex justify-center items-center font-sans font-normal p-2.5 text-center",
-                                    isActive && !disabled ? "text-black" : "text-black-80",
-                                    !disabled ? "hover:text-black hover:cursor-pointer" : "",
+                                    "tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-p-2.5 tw-text-center",
+                                    isActive && !disabled ? "tw-text-black" : "tw-text-black-80",
+                                    !disabled ? "hover:tw-text-black hover:tw-cursor-pointer" : "",
                                 ])}
                                 aria-hidden="true"
                             >
@@ -99,7 +99,7 @@ export const Slider: FC<SliderProps> = ({
                                         id={index === 0 ? id : undefined}
                                     />
                                 </VisuallyHidden>
-                                <span className="overflow-hidden overflow-ellipsis whitespace-nowrap">
+                                <span className="tw-overflow-hidden tw-overflow-ellipsis tw-whitespace-nowrap">
                                     {isIconItem(item) ? item.icon : item.name}
                                 </span>
                             </label>

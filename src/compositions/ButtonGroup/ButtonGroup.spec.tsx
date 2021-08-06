@@ -20,7 +20,7 @@ describe("ButtonGroup Composition", () => {
 
         cy.get("[data-test-id=button-group]").as("ButtonGroup");
 
-        cy.get("@ButtonGroup").should("have.class", "gap-x-1");
+        cy.get("@ButtonGroup").should("have.class", "tw-gap-x-1");
     });
 
     it("should render a button group with correct spacing for medium buttons", () => {
@@ -36,7 +36,7 @@ describe("ButtonGroup Composition", () => {
 
         cy.get("[data-test-id=button-group]").as("ButtonGroup");
 
-        cy.get("@ButtonGroup").should("have.class", "gap-x-2");
+        cy.get("@ButtonGroup").should("have.class", "tw-gap-x-2");
     });
 
     it("should render a button group with correct spacing for large buttons", () => {
@@ -52,7 +52,7 @@ describe("ButtonGroup Composition", () => {
 
         cy.get("[data-test-id=button-group]").as("ButtonGroup");
 
-        cy.get("@ButtonGroup").should("have.class", "gap-x-3");
+        cy.get("@ButtonGroup").should("have.class", "tw-gap-x-3");
     });
 
     it("enforces the same size for all buttons according to the group's size", () => {
@@ -70,6 +70,6 @@ describe("ButtonGroup Composition", () => {
 
         cy.get("[data-test-id=button-group]").as("ButtonGroup");
 
-        cy.get("@ButtonGroup").children().should("have.class", "h-11");
+        cy.get("@ButtonGroup").children().should("have.class", "tw-h-11");
     });
 });

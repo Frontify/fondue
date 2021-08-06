@@ -3,10 +3,10 @@
 import React, { FC } from "react";
 
 export enum DividerStyle {
-    NoLine = "border-none",
-    Dashed = "border-dashed",
-    Solid = "border-solid",
-    Dotted = "border-dotted",
+    NoLine = "tw-border-none",
+    Dashed = "tw-border-dashed",
+    Solid = "tw-border-solid",
+    Dotted = "tw-border-dotted",
 }
 
 export enum DividerHeight {
@@ -26,9 +26,9 @@ export type DividerProps = {
 export const Divider: FC<DividerProps> = ({
     style = DividerStyle.Solid,
     height = DividerHeight.Height50,
-    color: borderTopColor = "#CCC",
+    color: tw-borderTopColor = "#CCC",
 }) => (
-    <div className={`flex items-center ${height}`} data-test-id="divider">
-        <hr className={`border-t m-0 w-full ${style}`} style={{ borderTopColor }} data-test-id="divider-hr" />
+    <div className={`tw-flex tw-items-center ${height}`} data-test-id="divider">
+        <hr className={`tw-border-t tw-m-0 tw-w-full ${style}`} style={{ tw-borderTopColor }} data-test-id="divider-hr" />
     </div>
 );

@@ -16,7 +16,7 @@ export default {
             control: { type: "radio" },
         },
         onChange: {
-            table: { disable: true },
+            tw-table: { disable: true },
             action: "Change",
         },
     },

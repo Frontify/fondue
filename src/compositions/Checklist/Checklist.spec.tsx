@@ -15,7 +15,7 @@ describe("Checklist Component", () => {
             </Checklist>,
         );
 
-        cy.get("[data-test-id=checklist]").as("Checklist").should("have.class", "flex-row");
+        cy.get("[data-test-id=checklist]").as("Checklist").should("have.class", "tw-flex-row");
     });
 
     it("should render the Checklist vertically", () => {
@@ -27,6 +27,6 @@ describe("Checklist Component", () => {
             </Checklist>,
         );
 
-        cy.get("[data-test-id=checklist]").as("Checklist").should("have.class", "flex-col");
+        cy.get("[data-test-id=checklist]").as("Checklist").should("have.class", "tw-flex-col");
     });
 });

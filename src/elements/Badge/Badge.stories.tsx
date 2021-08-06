@@ -13,8 +13,8 @@ export default {
             options: Object.values(BadgeStyle),
             control: { type: "select" },
         },
-        onClick: { table: { disable: true } },
-        onDismiss: { table: { disable: true } },
+        onClick: { tw-table: { disable: true } },
+        onDismiss: { tw-table: { disable: true } },
     },
     args: {
         style: BadgeStyle.Primary,
@@ -61,7 +61,7 @@ WithStatus.args = {
 export const WithIcon = BadgeTemplate.bind({});
 
 WithIcon.argTypes = {
-    icon: { table: { disable: true } },
+    icon: { tw-table: { disable: true } },
 };
 
 WithIcon.args = {
@@ -122,7 +122,7 @@ IconOnly.args = {
 };
 
 export const BetweenElements: Story<BadgeProps> = (args: BadgeProps) => (
-    <div className="flex items-center gap-1">
+    <div className="tw-flex tw-items-center tw-gap-1">
         <span>before </span>
         <Badge {...args} />
         <span> after</span>

@@ -13,12 +13,12 @@ describe("Divider component", () => {
         mount(<Divider />);
 
         cy.get("[data-test-id=divider]").should("exist");
-        cy.get("[data-test-id=divider-hr]").should("exist").and("have.css", "border-top-color", DEFAULT_COLOR);
+        cy.get("[data-test-id=divider-hr]").should("exist").and("have.css", "tw-border-top-color", DEFAULT_COLOR);
     });
 
     it("has the correct color code", () => {
         mount(<Divider color={COLOR_HEX} />);
 
-        cy.get("[data-test-id=divider-hr]").should("exist").and("have.css", "border-top-color", COLOR_RGB);
+        cy.get("[data-test-id=divider-hr]").should("exist").and("have.css", "tw-border-top-color", COLOR_RGB);
     });
 });

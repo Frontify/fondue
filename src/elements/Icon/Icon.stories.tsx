@@ -244,7 +244,7 @@ export default {
 } as Meta<IconProps>;
 
 export const Icon: Story<IconProps> = (args: IconProps) => (
-    <ul className="grid grid-cols-4 gap-4">
+    <ul className="tw-grid tw-grid-cols-4 tw-gap-4">
         <li className="tw-flex tw-flex-col tw-items-center">
             <IconAcademyComponent {...args} />
             Academy

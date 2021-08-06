@@ -5022,7 +5022,7 @@ export default [
     "z-auto",
 
     // Custom colors
-    ...["bg", "border", "divide", "from", "placeholder", "ring", "ring-offset", "text", "to", "via"]
+    ...["bg", "border", "border-b", "divide", "from", "placeholder", "ring", "ring-offset", "text", "to", "via"]
         .map((prefix) => {
             return Object.keys(customColors).map((colorName) => {
                 if (typeof customColors[colorName] === "string") {
