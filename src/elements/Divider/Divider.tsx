@@ -26,9 +26,9 @@ export type DividerProps = {
 export const Divider: FC<DividerProps> = ({
     style = DividerStyle.Solid,
     height = DividerHeight.Height50,
-    color: tw-borderTopColor = "#CCC",
+    color: borderTopColor = "#CCC",
 }) => (
     <div className={`tw-flex tw-items-center ${height}`} data-test-id="divider">
-        <hr className={`tw-border-t tw-m-0 tw-w-full ${style}`} style={{ tw-borderTopColor }} data-test-id="divider-hr" />
+        <hr className={`tw-border-t tw-m-0 tw-w-full ${style}`} style={{ borderTopColor }} data-test-id="divider-hr" />
     </div>
 );

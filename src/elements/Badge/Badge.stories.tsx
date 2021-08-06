@@ -13,8 +13,8 @@ export default {
             options: Object.values(BadgeStyle),
             control: { type: "select" },
         },
-        onClick: { tw-table: { disable: true } },
-        onDismiss: { tw-table: { disable: true } },
+        onClick: { table: { disable: true } },
+        onDismiss: { table: { disable: true } },
     },
     args: {
         style: BadgeStyle.Primary,
@@ -61,7 +61,7 @@ WithStatus.args = {
 export const WithIcon = BadgeTemplate.bind({});
 
 WithIcon.argTypes = {
-    icon: { tw-table: { disable: true } },
+    icon: { table: { disable: true } },
 };
 
 WithIcon.args = {

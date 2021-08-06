@@ -35,7 +35,7 @@ export default {
             control: "select",
         },
         children: {
-            tw-table: { disable: true },
+            table: { disable: true },
         },
     },
 } as Meta<FormControlProps>;
