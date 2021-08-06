@@ -70,7 +70,10 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                     variants={ACCORDION_CONTENT_VARIANTS}
                     data-test-id="accordion-item-content"
                 >
-                    <div {...regionProps} className={`tw-px-8 tw-pb-7 mt--1 ${isOpen ? "tw-visible" : "tw-hidden"}`}>
+                    <div
+                        {...regionProps}
+                        className={`tw-px-8 tw-pb-7 tw-mt-1 ${isOpen ? "tw-visible" : "tw-invisible"}`}
+                    >
                         {item.props.children()}
                     </div>
                 </motion.div>
