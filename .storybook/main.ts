@@ -2,6 +2,19 @@
 
 //@ts-ignore
 import { alias, plugins } from "../vite.config";
+import { peerDependencies, dependencies } from "../package.json";
+import { resolve } from "path";
+
+const reactAria = [
+    "@react-aria/checkbox",
+    "@react-aria/focus",
+    "@react-aria/radio",
+    "@react-aria/visually-hidden",
+    "@react-stately/collections",
+    "@react-stately/radio",
+    "@react-stately/toggle",
+    "@react-stately/tree",
+];
 
 export default {
     core: {
@@ -26,13 +39,22 @@ export default {
         },
     ],
     async viteFinal(config: any) {
-        config.resolve.alias = {
-            ...config.resolve.alias,
-            ...alias,
+        return {
+            ...config,
+            resolve: { alias },
+            cacheDir: resolve(__dirname, "../node_modules/.cache/vite"),
+            plugins: [...config.plugins, ...plugins],
+            optimizeDeps: {
+                ...config.optimizeDeps,
+                include: [
+                    "@storybook/addon-actions",
+                    "@storybook/theming/create",
+                    ...Object.keys(peerDependencies),
+                    ...Object.keys(dependencies),
+                    ...reactAria,
+                    ...config.optimizeDeps.include,
+                ],
+            },
         };
-
-        config.plugins = [...config.plugins, ...plugins];
-
-        return config;
     },
 };
