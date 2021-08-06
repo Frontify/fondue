@@ -26,7 +26,10 @@ export const Textarea: FC<TextareaProps> = ({
 }) => (
     <div className="tw-relative">
         {decorator && (
-            <div className="tw-absolute tw-top-2 tw-left-2 tw-inline-flex tw-items-end tw-text-black-80" data-test-id="decorator">
+            <div
+                className="tw-absolute tw-top-2 tw-left-2 tw-inline-flex tw-items-end tw-text-black-80"
+                data-test-id="decorator"
+            >
                 {decorator}
             </div>
         )}

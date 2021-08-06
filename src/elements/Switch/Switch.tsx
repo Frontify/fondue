@@ -72,9 +72,17 @@ export const Switch: FC<SwitchProps> = ({
                 <div
                     className={merge([
                         "tw-block tw-self-center tw-bg-white tw-rounded-full tw-transition-transform",
-                        size === SwitchSize.Small ? (disabled ? "tw-border tw-border-black-30" : "tw-border tw-border-black") : "",
+                        size === SwitchSize.Small
+                            ? disabled
+                                ? "tw-border tw-border-black-30"
+                                : "tw-border tw-border-black"
+                            : "",
                         dotSizeClasses[size],
-                        on ? (size === SwitchSize.Small ? "tw-translate-x-2" : "tw-translate-x-full") : "tw-translate-x-0",
+                        on
+                            ? size === SwitchSize.Small
+                                ? "tw-translate-x-2"
+                                : "tw-translate-x-full"
+                            : "tw-translate-x-0",
                     ])}
                 />
             </button>

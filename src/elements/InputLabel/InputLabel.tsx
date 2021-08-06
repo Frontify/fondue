@@ -42,7 +42,10 @@ export const InputLabel: FC<InputLabelProps> = ({
                 {children}
             </label>
             {required && (
-                <span data-test-id="input-label-required" className="tw-h-4 tw-text-m tw-text-red-60 dark:tw-text-red-50">
+                <span
+                    data-test-id="input-label-required"
+                    className="tw-h-4 tw-text-m tw-text-red-60 dark:tw-text-red-50"
+                >
                     *
                 </span>
             )}

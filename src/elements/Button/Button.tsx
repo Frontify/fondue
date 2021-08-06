@@ -42,7 +42,8 @@ const styles: Record<"solid" | "translucent", Record<ButtonStyle, string>> = {
         [ButtonStyle.Secondary]:
             "tw-text-black tw-bg-black-10 hover:tw-bg-black-20 active:tw-bg-black-30 dark:tw-text-white dark:tw-bg-black-80 dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark",
         [ButtonStyle.Danger]: "tw-text-black tw-bg-red-50 hover:tw-bg-red-65 active:tw-bg-red-70",
-        [ButtonStyle.Positive]: "tw-text-black tw-bg-green-60 hover:tw-bg-green-70 active:tw-bg-green-75 dark:active:tw-bg-green-90",
+        [ButtonStyle.Positive]:
+            "tw-text-black tw-bg-green-60 hover:tw-bg-green-70 active:tw-bg-green-75 dark:active:tw-bg-green-90",
     },
     translucent: {
         [ButtonStyle.Primary]: "tw-text-white tw-bg-black-90 hover:tw-bg-black-100 active:tw-bg-black-superdark",

@@ -78,7 +78,10 @@ export const Badge: FC<BadgeProps> = ({ children, status, icon, style = BadgeSty
                 data-test-id="badge"
             >
                 {status && (
-                    <span data-test-id="badge-status" className={`tw-w-2 tw-h-2 tw-rounded-full ${statusClasses[status]}`} />
+                    <span
+                        data-test-id="badge-status"
+                        className={`tw-w-2 tw-h-2 tw-rounded-full ${statusClasses[status]}`}
+                    />
                 )}
                 {icon && <span data-test-id="badge-icon">{cloneElement(icon, { size: IconSize.Size12 })}</span>}
                 <span className="tw-text-center tw-text-xxs tw-font-sans tw-font-normal">{children}</span>
