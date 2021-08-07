@@ -17,3 +17,4 @@
 // Can be removed as soon as cypress supports cy.tab() functionality: https://github.com/cypress-io/cypress/issues/299
 import "cypress-plugin-tab";
 import "./commands";
+import "../../dist/index.css";
