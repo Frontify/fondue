@@ -7,6 +7,7 @@ import commonJs from "@rollup/plugin-commonjs";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import postcss from "rollup-plugin-postcss";
 import { resolve } from "path";
+import commonjs from "@rollup/plugin-commonjs";
 
 import { main } from "./package.json";
 
@@ -32,9 +33,7 @@ const bundle = (config) => ({
 const rollupConfig = [
     bundle({
         plugins: [
-            nodeResolve({
-                extensions: [".js", ".ts", ".tsx", ".json"],
-            }),
+            peerDepsExternal(),
             esbuild({
                 minify: process.env.NODE_ENV === "production",
             }),
@@ -42,7 +41,12 @@ const rollupConfig = [
                 minimize: process.env.NODE_ENV === "production",
                 extract: "index.css",
             }),
-            peerDepsExternal(),
+            nodeResolve({
+                extensions: [".js", ".ts", ".tsx", ".json"],
+            }),
+            commonjs({
+                extensions: [".js", ".ts", ".tsx", ".json"],
+            }),
         ],
         output: [
             {
@@ -58,7 +62,12 @@ const rollupConfig = [
         ],
     }),
     bundle({
-        plugins: [dts()],
+        plugins: [
+            dts(),
+            postcss({
+                extensions: [".css"],
+            }),
+        ],
         output: {
             file: `${name}.d.ts`,
             format: "es",

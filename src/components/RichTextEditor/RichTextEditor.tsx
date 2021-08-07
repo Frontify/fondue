@@ -1,3 +1,4 @@
+//TODO: accessibility for the rich text + toolbar
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { ReactElement, useRef, useState, KeyboardEvent, useEffect } from "react";
@@ -30,7 +31,7 @@ import { decorators } from "./decorators";
 import { getSelectionEntity } from "./utilities/getSelectionEntity";
 import useClickOutside from "@hooks/useClickOutside";
 import "draft-js/dist/Draft.css";
-import "./popper-arrow.css";
+import "./popperArrow.css";
 
 export type RichTextEditorProps = {
     placeholder?: string;
