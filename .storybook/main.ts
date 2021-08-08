@@ -50,7 +50,7 @@ export default {
                     ...Object.keys(peerDependencies),
                     ...Object.keys(dependencies),
                     ...reactAria,
-                    ...(config.optimizeDeps?.include || {}),
+                    ...(config?.optimizeDeps?.include || []),
                 ],
             },
         };
