@@ -47,7 +47,7 @@ export const Dropdown: FC<DropdownProps> = ({
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s" ref={dropdownElement}>
             <div
                 data-test-id="dropdown"
-                className={`group tw-relative tw-flex tw-w-full tw-box-border tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors
+                className={`tw-group tw-relative tw-flex tw-w-full tw-box-border tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors
                 ${size === MenuItemContentSize.Large ? "tw-pr-5" : "tw-pr-2"}
                 ${
                     disabled
