@@ -61,7 +61,7 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
         <div
             data-test-id={icon !== undefined ? "dropdown-menu-item-icon" : "dropdown-menu-item-text"}
             className={`tw-relative tw-flex tw-box-border tw-items-center tw-rounded tw-cursor-pointer tw-font-sans tw-text-s tw-gap-3 tw-transition-colors tw-py-3 tw-px-5
-            ${size === MenuItemContentSize.Small ? "min-h-[36px]" : "min-h-[62px]"}
+            ${size === MenuItemContentSize.Small ? "tw-min-h-[36px]" : "tw-min-h-[62px]"}
             ${
                 disabled
                     ? `tw-bg-black-0 tw-pointer-events-none ${isDanger ? "tw-text-red-40" : "tw-text-black-40"}`
