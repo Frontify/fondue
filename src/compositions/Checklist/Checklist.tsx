@@ -17,8 +17,8 @@ export const Checklist: FC<ChecklistProps> = ({ direction = ChecklistDirection.H
         <ul
             data-test-id="checklist"
             className={merge([
-                "flex",
-                direction === ChecklistDirection.Horizontal ? "flex-row gap-12" : "flex-col gap-4",
+                "tw-flex",
+                direction === ChecklistDirection.Horizontal ? "tw-flex-row tw-gap-12" : "tw-flex-col tw-gap-4",
             ])}
         >
             {Children.map(children, (child) => (

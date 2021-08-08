@@ -44,22 +44,22 @@ export const Dropdown: FC<DropdownProps> = ({
     const activeItem = getActiveItem(menuBlocks, activeItemId);
 
     return (
-        <div className="relative w-full font-sans text-s" ref={dropdownElement}>
+        <div className="tw-relative tw-w-full tw-font-sans tw-text-s" ref={dropdownElement}>
             <div
                 data-test-id="dropdown"
-                className={`group relative flex w-full box-border items-center justify-between border border-black-40 rounded gap-2 transition-colors
-                ${size === MenuItemContentSize.Large ? "pr-5" : "pr-2"}
+                className={`tw-group tw-relative tw-flex tw-w-full tw-box-border tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors
+                ${size === MenuItemContentSize.Large ? "tw-pr-5" : "tw-pr-2"}
                 ${
                     disabled
-                        ? "border-black-5 bg-black-5 pointer-events-none"
-                        : `bg-white hover:border-black-90 ${isOpen ? "border-black-90" : "border-black-20"}`
+                        ? "tw-border-black-5 tw-bg-black-5 tw-pointer-events-none"
+                        : `tw-bg-white hover:tw-border-black-90 ${isOpen ? "tw-border-black-90" : "tw-border-black-20"}`
                 }`}
             >
                 <button
                     id={id}
                     data-test-id="dropdown-trigger"
                     onClick={() => setIsOpen(!isOpen)}
-                    className="overflow-hidden flex-auto rounded text-left p-0"
+                    className="tw-overflow-hidden tw-flex-auto tw-rounded tw-text-left tw-p-0"
                     disabled={disabled}
                 >
                     <MenuItemContent
@@ -75,7 +75,9 @@ export const Dropdown: FC<DropdownProps> = ({
                 {clearable && activeItem && (
                     <button
                         data-test-id="dropdown-clear-button"
-                        className={`p-0 ${disabled ? "pointer-events-none text-black-40" : "text-black-80"}`}
+                        className={`tw-p-0 ${
+                            disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80"
+                        }`}
                         onClick={() => onChange("")}
                         disabled={disabled}
                     >
@@ -84,12 +86,14 @@ export const Dropdown: FC<DropdownProps> = ({
                 )}
                 <button
                     className={`p-0 ${
-                        disabled ? "pointer-events-none text-black-40" : "text-black-80 group-hover:text-black"
+                        disabled
+                            ? "tw-pointer-events-none tw-text-black-40"
+                            : "tw-text-black-80 group-hover:tw-text-black"
                     }`}
                     onClick={() => setIsOpen(!isOpen)}
                     disabled={disabled}
                 >
-                    <div className={merge(["transition-transform", isOpen && "rotate-180"])}>
+                    <div className={merge(["tw-transition-transform", isOpen && "tw-rotate-180"])}>
                         <IconCaretDown size={IconSize.Size16} />
                     </div>
                 </button>

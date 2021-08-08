@@ -8,6 +8,7 @@ module.exports = {
             textColor: ["active"],
         },
     },
+    prefix: "tw-",
     theme: {
         extend: {
             outline: {

@@ -60,27 +60,31 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
     return (
         <div
             data-test-id={icon !== undefined ? "dropdown-menu-item-icon" : "dropdown-menu-item-text"}
-            className={`relative flex box-border items-center rounded cursor-pointer font-sans text-s gap-3 transition-colors py-3 px-5
-            ${size === MenuItemContentSize.Small ? "min-h-[36px]" : "min-h-[62px]"}
+            className={`tw-relative tw-flex tw-box-border tw-items-center tw-rounded tw-cursor-pointer tw-font-sans tw-text-s tw-gap-3 tw-transition-colors tw-py-3 tw-px-5
+            ${size === MenuItemContentSize.Small ? "tw-min-h-[36px]" : "tw-min-h-[62px]"}
             ${
                 disabled
-                    ? `bg-black-0 pointer-events-none ${isDanger ? "text-red-40" : "text-black-40"}`
+                    ? `tw-bg-black-0 tw-pointer-events-none ${isDanger ? "tw-text-red-40" : "tw-text-black-40"}`
                     : active
-                    ? `font-medium ${isDanger ? "text-red-70" : "text-black"}`
+                    ? `tw-font-medium ${isDanger ? "tw-text-red-70" : "tw-text-black"}`
                     : isDanger
-                    ? "text-red-60"
-                    : "text-black-80"
+                    ? "tw-text-red-60"
+                    : "tw-text-black-80"
             }
-            ${isDanger ? "hover:text-red-70" : "hover:text-black"}`}
+            ${isDanger ? "hover:tw-text-red-70" : "hover:tw-text-black"}`}
             tabIndex={1}
         >
-            {icon && <span className="flex-shrink-0">{icon}</span>}
-            <div className="flex-1 overflow-hidden overflow-ellipsis whitespace-nowrap">
-                <div data-test-id="dropdown-menu-item-title" className="select-none" title={title}>
+            {icon && <span className="tw-flex-shrink-0">{icon}</span>}
+            <div className="tw-flex-1 tw-overflow-hidden tw-overflow-ellipsis tw-whitespace-nowrap">
+                <div data-test-id="dropdown-menu-item-title" className="tw-select-none" title={title}>
                     {title}
                 </div>
                 {subtitle && (
-                    <div data-test-id="dropdown-menu-item-subtitle" className="select-none text-xxs" title={subtitle}>
+                    <div
+                        data-test-id="dropdown-menu-item-subtitle"
+                        className="tw-select-none tw-text-xxs"
+                        title={subtitle}
+                    >
                         {subtitle}
                     </div>
                 )}

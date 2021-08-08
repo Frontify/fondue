@@ -23,26 +23,29 @@ export const InputLabel: FC<InputLabelProps> = ({
     return (
         <div
             className={merge([
-                "inline-flex items-center gap-1 font-sans text-s",
-                bold && "font-medium",
+                "tw-inline-flex tw-items-center tw-gap-1 tw-font-sans tw-text-s",
+                bold && "tw-font-medium",
                 disabled
-                    ? "text-black-40 hover:text-black-40 dark:text-black-60 dark:hover:text-black-60"
-                    : "text-black-90 dark:text-white",
+                    ? "tw-text-black-40 hover:tw-text-black-40 dark:tw-text-black-60 dark:hover:tw-text-black-60"
+                    : "tw-text-black-90 dark:tw-text-white",
             ])}
         >
             <label
                 htmlFor={htmlFor}
                 className={
                     disabled
-                        ? "hover:cursor-not-allowed pointer-events-none"
-                        : "hover:cursor-pointer hover:text-black dark:hover:text-white"
+                        ? "hover:tw-cursor-not-allowed tw-pointer-events-none"
+                        : "hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white"
                 }
                 data-test-id="input-label"
             >
                 {children}
             </label>
             {required && (
-                <span data-test-id="input-label-required" className="h-4 text-m text-red-60 dark:text-red-50">
+                <span
+                    data-test-id="input-label-required"
+                    className="tw-h-4 tw-text-m tw-text-red-60 dark:tw-text-red-50"
+                >
                     *
                 </span>
             )}

@@ -19,14 +19,14 @@ type HelperTextProps = {
 const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = false }) => (
     <span
         data-test-id="form-control-helper-text"
-        className={`text-s font-sans ${fullWidth ? "w-full" : ""} ${
+        className={`tw-text-s tw-font-sans ${fullWidth ? "tw-w-full" : ""} ${
             disabled
-                ? "text-black-40"
+                ? "tw-text-black-40"
                 : style === HelperTextStyle.Danger
-                ? "text-red-60"
+                ? "tw-text-red-60"
                 : style === HelperTextStyle.Positive
-                ? "text-green-60"
-                : "text-black-80"
+                ? "tw-text-green-60"
+                : "tw-text-black-80"
         }`}
     >
         {text}
@@ -64,21 +64,21 @@ export const FormControl: FC<FormControlProps> = ({
     return (
         <div
             data-test-id="form-control"
-            className={`flex items-center gap-2 ${
-                direction === FormControlDirection.Horizontal ? "flex-row" : "w-full flex-col"
+            className={`tw-flex tw-items-center tw-gap-2 ${
+                direction === FormControlDirection.Horizontal ? "tw-flex-row" : "tw-w-full tw-flex-col"
             }`}
         >
             {(label || extra) && (
                 <div
-                    className={`flex flew-row items-center justify-between ${
-                        direction === FormControlDirection.Vertical ? "w-full" : ""
+                    className={`tw-flex tw-flew-row tw-items-center tw-justify-between ${
+                        direction === FormControlDirection.Vertical ? "tw-w-full" : ""
                     }`}
                 >
                     {label && <InputLabel {...label} disabled={disabled} />}
                     {extra && (
                         <span
                             data-test-id="form-control-extra"
-                            className="pl-2 text-black-80 font-sans text-s whitespace-nowrap"
+                            className="tw-pl-2 tw-text-black-80 tw-font-sans tw-text-s tw-whitespace-nowrap"
                         >
                             {extra}
                         </span>
@@ -93,7 +93,7 @@ export const FormControl: FC<FormControlProps> = ({
                     style={helper.style}
                 />
             )}
-            <div className={direction === FormControlDirection.Vertical ? "w-full" : ""}>
+            <div className={direction === FormControlDirection.Vertical ? "tw-w-full" : ""}>
                 {isValidElement(children) ? cloneElement(children, { id: label?.htmlFor, disabled }) : children}
             </div>
             {helper?.text && !isHelperBefore && (

@@ -18,7 +18,7 @@ export type DropdownMenuProps = {
 
 export const DropdownMenu: FC<DropdownMenuProps> = ({ menuBlocks, onChange, activeItemId = "" }) => (
     <motion.ul
-        className="absolute z-20 bg-white left-0 w-full overflow-hidden box-border p-0 border border-black-10 rounded shadow-mid list-none m-0 mt-2"
+        className="tw-absolute tw-z-20 tw-bg-white tw-left-0 tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-border tw-border-black-10 tw-rounded tw-shadow-mid tw-list-none tw-m-0 tw-mt-2"
         key="content"
         initial={{ height: 0 }}
         animate={{ height: "auto" }}
@@ -28,10 +28,10 @@ export const DropdownMenu: FC<DropdownMenuProps> = ({ menuBlocks, onChange, acti
         {menuBlocks.map(({ id, menuItems }) => (
             <li
                 key={id}
-                className="pb-2 border-b border-b-black-40 mb-2 last:pb-0 last:border-0 last:mb-0"
+                className="tw-pb-2 tw-border-b tw-border-b-black-40 tw-mb-2 last:tw-pb-0 last:tw-border-0 last:tw-mb-0"
                 data-test-id="dropdown-divider"
             >
-                <ul className="py-2 px-0 m-0 list-none" data-test-id="dropdown-item-list">
+                <ul className="tw-py-2 tw-px-0 tw-m-0 tw-list-none" data-test-id="dropdown-item-list">
                     {menuItems.map((menuItem) => (
                         <DropdownMenuItem
                             key={menuItem.id}

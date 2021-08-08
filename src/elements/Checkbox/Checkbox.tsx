@@ -38,15 +38,15 @@ export type CheckboxProps = {
 const styles = {
     unchecked: {
         [CheckboxStyle.Default]:
-            "border-black-80 bg-white hover:border-black dark:border-white dark:bg-black dark:hover:border-black-20 dark:hover:bg-black-90",
+            "tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90",
         [CheckboxStyle.Primary]:
-            "border-violet-60 bg-white hover:border-violet-70 dark:border-violet-50 dark:bg-black dark:hover:border-violet-60 dark:hover:bg-black-90",
+            "tw-border-violet-60 tw-bg-white hover:tw-border-violet-70 dark:tw-border-violet-50 dark:tw-bg-black dark:hover:tw-border-violet-60 dark:hover:tw-bg-black-90",
     },
     checked: {
         [CheckboxStyle.Default]:
-            "border-black bg-black text-white hover:border-black-superdark hover:bg-black-superdark dark:border-white dark:bg-white dark:hover:border-black-20 dark:hover:bg-black-20 dark:text-black",
+            "tw-border-black tw-bg-black tw-text-white hover:tw-border-black-superdark hover:tw-bg-black-superdark dark:tw-border-white dark:tw-bg-white dark:hover:tw-border-black-20 dark:hover:tw-bg-black-20 dark:tw-text-black",
         [CheckboxStyle.Primary]:
-            "border-violet-60 bg-violet-60 text-white hover:border-violet-70 hover:bg-violet-70 dark:border-violet-50 dark:bg-violet-50 dark:hover:border-violet-60 dark:hover:bg-violet-60",
+            "tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60",
     },
 };
 
@@ -82,27 +82,27 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
-        <div className="flex flex-col gap-1 transition-colors" data-test-id="checkbox">
-            <label className="flex items-center gap-2 select-none">
-                <input {...inputProps} {...focusProps} id={id} ref={ref} className="sr-only" />
+        <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">
+            <label className="tw-flex tw-items-center tw-gap-2 tw-select-none">
+                <input {...inputProps} {...focusProps} id={id} ref={ref} className="tw-sr-only" />
                 <span
                     aria-hidden="true"
                     className={merge([
-                        "relative flex w-4 h-4 items-center justify-center rounded border",
+                        "tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border",
 
-                        isFocusVisible && "outline-violet",
+                        isFocusVisible && "tw-outline-violet",
                         disabled
                             ? merge([
-                                  "text-white pointer-events-none",
+                                  "tw-text-white tw-pointer-events-none",
                                   !isCheckedOrMixed(state) &&
-                                      "border-black-20 bg-white dark:border-black-80 dark:bg-black-90",
+                                      "tw-border-black-20 tw-bg-white dark:tw-border-black-80 dark:tw-bg-black-90",
                                   isCheckedOrMixed(state) &&
-                                      "border-black-40 bg-black-40 dark:border-black-60 dark:bg-black-60",
+                                      "tw-border-black-40 tw-bg-black-40 dark:tw-border-black-60 dark:tw-bg-black-60",
                               ])
                             : merge([
                                   !isCheckedOrMixed(state) && styles.unchecked[style],
                                   isCheckedOrMixed(state) && styles.checked[style],
-                                  "hover:cursor-pointer",
+                                  "hover:tw-cursor-pointer",
                               ]),
                     ])}
                 >
@@ -121,7 +121,7 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
                     </InputLabel>
                 )}
             </label>
-            {note && <span className="text-black-60 font-sans text-xs font-normal">{note}</span>}
+            {note && <span className="tw-text-black-60 tw-font-sans tw-text-xs tw-font-normal">{note}</span>}
         </div>
     );
 };

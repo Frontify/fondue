@@ -87,9 +87,9 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
             onClick={onClick}
             onKeyPress={onClick}
             className={merge([
-                "flex items-center gap-x-1.5 w-full flex-row",
-                disabled ? "text-black-40" : "text-black dark:text-white",
-                onClick ? "hover:cursor-pointer" : "pointer-events-none",
+                "tw-flex tw-items-center tw-gap-x-1.5 tw-w-full tw-flex-row",
+                disabled ? "tw-text-black-40" : "tw-text-black dark:tw-text-white",
+                onClick ? "hover:tw-cursor-pointer" : "tw-pointer-events-none",
             ])}
             tabIndex={tabIndex}
         >
@@ -100,15 +100,15 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
             <Heading
                 id={id}
                 className={merge([
-                    size === FieldsetHeaderSize.Large ? "text-l" : "text-m",
-                    bold ? "font-bold" : "font-normal",
-                    onClick && "hover:cursor-pointer",
+                    size === FieldsetHeaderSize.Large ? "tw-text-l" : "tw-text-m",
+                    bold ? "tw-font-bold" : "tw-font-normal",
+                    onClick && "hover:tw-cursor-pointer",
                 ])}
             >
                 {children}
             </Heading>
             {type !== FieldsetHeaderType.Default && (
-                <span className="ml-auto">{renderType(type, id, size, active, disabled)}</span>
+                <span className="tw-ml-auto">{renderType(type, id, size, active, disabled)}</span>
             )}
         </header>
     );

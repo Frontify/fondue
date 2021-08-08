@@ -24,9 +24,12 @@ export const Textarea: FC<TextareaProps> = ({
     onInput,
     onBlur,
 }) => (
-    <div className="relative">
+    <div className="tw-relative">
         {decorator && (
-            <div className="absolute top-2 left-2 inline-flex items-end text-black-80" data-test-id="decorator">
+            <div
+                className="tw-absolute tw-top-2 tw-left-2 tw-inline-flex tw-items-end tw-text-black-80"
+                data-test-id="decorator"
+            >
                 {decorator}
             </div>
         )}
@@ -35,11 +38,11 @@ export const Textarea: FC<TextareaProps> = ({
             placeholder={placeholder}
             required={required}
             className={merge([
-                "p-2 border rounded text-s outline-none transition placeholder-black-60",
-                !!decorator && "pl-7 ",
+                "tw-p-2 tw-border tw-rounded tw-text-s tw-outline-none tw-transition tw-placeholder-black-60",
+                !!decorator && "tw-pl-7 ",
                 disabled
-                    ? "border-black-5 bg-black-5 text-black-40"
-                    : "text-black border-black-40 hover:border-black-90",
+                    ? "tw-border-black-5 tw-bg-black-5 tw-text-black-40"
+                    : "tw-text-black tw-border-black-40 hover:tw-border-black-90",
             ])}
             disabled={disabled}
             onBlur={(event) => onBlur && onBlur(event.target.value)}

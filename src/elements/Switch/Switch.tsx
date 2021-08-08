@@ -12,15 +12,15 @@ export enum SwitchSize {
 }
 
 const lineSizeClasses: Record<SwitchSize, string> = {
-    [SwitchSize.Small]: "w-5 h-2",
-    [SwitchSize.Medium]: "w-9 h-5",
-    [SwitchSize.Large]: "w-11 h-6",
+    [SwitchSize.Small]: "tw-w-5 tw-h-2",
+    [SwitchSize.Medium]: "tw-w-9 tw-h-5",
+    [SwitchSize.Large]: "tw-w-11 tw-h-6",
 };
 
 const dotSizeClasses: Record<SwitchSize, string> = {
-    [SwitchSize.Small]: "w-3 h-3",
-    [SwitchSize.Medium]: "w-4 h-4",
-    [SwitchSize.Large]: "w-5 h-5",
+    [SwitchSize.Small]: "tw-w-3 tw-h-3",
+    [SwitchSize.Medium]: "tw-w-4 tw-h-4",
+    [SwitchSize.Large]: "tw-w-5 tw-h-5",
 };
 
 export type SwitchProps = {
@@ -45,7 +45,7 @@ export const Switch: FC<SwitchProps> = ({
     const id = propId || generateRandomId();
 
     return (
-        <div className="flex w-full items-center justify-between gap-1">
+        <div className="tw-flex tw-w-full tw-items-center tw-justify-between tw-gap-1">
             {label && id && (
                 <InputLabel htmlFor={id} disabled={disabled}>
                     {label}
@@ -57,13 +57,13 @@ export const Switch: FC<SwitchProps> = ({
                 name={name}
                 data-test-id="switch"
                 className={merge([
-                    "inline-flex border-0 rounded-full transition-colors",
-                    size !== SwitchSize.Small ? "py-0 px-[0.125rem]" : "p-0",
+                    "tw-inline-flex tw-border-0 tw-rounded-full tw-transition-colors",
+                    size !== SwitchSize.Small ? "tw-py-0 tw-px-[0.125rem]" : "tw-p-0",
                     disabled
-                        ? "bg-black-10 pointer-events-none"
+                        ? "tw-bg-black-10 tw-pointer-events-none"
                         : on
-                        ? "bg-black-90 hover:bg-black"
-                        : "bg-black-30 hover:bg-black-60",
+                        ? "tw-bg-black-90 hover:tw-bg-black"
+                        : "tw-bg-black-30 hover:tw-bg-black-60",
                     lineSizeClasses[size],
                 ])}
                 value={on.toString()}
@@ -71,10 +71,18 @@ export const Switch: FC<SwitchProps> = ({
             >
                 <div
                     className={merge([
-                        "block self-center bg-white rounded-full transition-transform",
-                        size === SwitchSize.Small ? (disabled ? "border border-black-30" : "border border-black") : "",
+                        "tw-block tw-self-center tw-bg-white tw-rounded-full tw-transition-transform",
+                        size === SwitchSize.Small
+                            ? disabled
+                                ? "tw-border tw-border-black-30"
+                                : "tw-border tw-border-black"
+                            : "",
                         dotSizeClasses[size],
-                        on ? (size === SwitchSize.Small ? "translate-x-2" : "translate-x-full") : "translate-x-0",
+                        on
+                            ? size === SwitchSize.Small
+                                ? "tw-translate-x-2"
+                                : "tw-translate-x-full"
+                            : "tw-translate-x-0",
                     ])}
                 />
             </button>

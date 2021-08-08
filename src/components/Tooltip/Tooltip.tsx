@@ -36,7 +36,7 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip }) => {
                 ref={setTooltipTriggerElement}
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
-                className="inline-flex items-center justify-center text-black-60 hover:text-black dark:text-black-40 dark:hover:white"
+                className="tw-inline-flex tw-items-center tw-justify-center tw-text-black-60 hover:tw-text-black dark:tw-text-black-40 dark:hover:white"
             >
                 <IconQuestion size={IconSize.Size16} />
             </i>
@@ -46,8 +46,8 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip }) => {
                 style={styles.popper}
                 {...attributes.popper}
                 className={merge([
-                    "p-4 border border-black-10 bg-white rounded-md shadow-mid dark:bg-black-90 dark:text-white z-20",
-                    showTooltip ? "visible" : "invisible",
+                    "tw-p-4 tw-border tw-border-black-10 tw-bg-white tw-rounded-md tw-shadow-mid dark:tw-bg-black-90 dark:tw-text-white tw-z-20",
+                    showTooltip ? "tw-visible" : "tw-invisible",
                 ])}
             >
                 {tooltip}

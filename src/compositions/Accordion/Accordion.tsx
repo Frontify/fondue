@@ -55,8 +55,8 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                     }
                 }}
                 className={merge([
-                    "w-full px-8 outline-none py-7 border",
-                    isFocusVisible ? "border-violet-60" : "border-transparent",
+                    "tw-w-full tw-px-8 tw-outline-none tw-py-7 tw-border",
+                    isFocusVisible ? "tw-border-violet-60" : "tw-border-transparent",
                 ])}
             >
                 <FieldsetHeader {...header} active={isOpen} onClick={undefined} />
@@ -72,8 +72,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                 >
                     <div
                         {...regionProps}
-                        className="px-8 pb-7 mt--1"
-                        style={{ visibility: isOpen ? "visible" : "hidden" }}
+                        className={`tw-px-8 tw-pb-7 tw--mt-1 ${isOpen ? "tw-visible" : "tw-invisible"}`}
                     >
                         {item.props.children()}
                     </div>
@@ -127,7 +126,7 @@ export const Accordion: FC<AccordionProps> = (props) => {
             {...accordionProps}
             ref={ref}
             data-test-id="accordion"
-            className="divide-y divide-black-10 border-t border-b border-black-10"
+            className="tw-divide-y tw-divide-black-10 tw-border-t tw-border-b tw-border-black-10"
         >
             {[...state.collection].map((item, index) => {
                 const { header } = children[index].props;

@@ -18,40 +18,41 @@ export enum ButtonSize {
 }
 
 const sizeClasses: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: "px-3 h-6 text-xs",
-    [ButtonSize.Medium]: "px-4 h-8 text-s",
-    [ButtonSize.Large]: "px-6 h-11 text-m",
+    [ButtonSize.Small]: "tw-px-3 tw-h-6 tw-text-xs",
+    [ButtonSize.Medium]: "tw-px-4 tw-h-8 tw-text-s",
+    [ButtonSize.Large]: "tw-px-6 tw-h-11 tw-text-m",
 };
 
 const iconOnlySizeClasses: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: "p-1",
-    [ButtonSize.Medium]: "p-2",
-    [ButtonSize.Large]: "p-3",
+    [ButtonSize.Small]: "tw-p-1",
+    [ButtonSize.Medium]: "tw-p-2",
+    [ButtonSize.Large]: "tw-p-3",
 };
 
 const iconSpacing: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: "mr-1",
-    [ButtonSize.Medium]: "mr-1.5",
-    [ButtonSize.Large]: "mr-2",
+    [ButtonSize.Small]: "tw-mr-1",
+    [ButtonSize.Medium]: "tw-mr-1.5",
+    [ButtonSize.Large]: "tw-mr-2",
 };
 
 const styles: Record<"solid" | "translucent", Record<ButtonStyle, string>> = {
     solid: {
         [ButtonStyle.Primary]:
-            "text-white bg-black-90 hover:bg-black-100 active:bg-black-superdark dark:text-black dark:bg-white dark:hover:bg-black-10 dark:active:bg-black-20",
+            "tw-text-white tw-bg-black-90 hover:tw-bg-black-100 active:tw-bg-black-superdark dark:tw-text-black dark:tw-bg-white dark:hover:tw-bg-black-10 dark:active:tw-bg-black-20",
         [ButtonStyle.Secondary]:
-            "text-black bg-black-10 hover:bg-black-20 active:bg-black-30 dark:text-white dark:bg-black-80 dark:hover:bg-black-95 dark:active:bg-black-superdark",
-        [ButtonStyle.Danger]: "text-black bg-red-50 hover:bg-red-65 active:bg-red-70",
-        [ButtonStyle.Positive]: "text-black bg-green-60 hover:bg-green-70 active:bg-green-75 dark:active:bg-green-90",
+            "tw-text-black tw-bg-black-10 hover:tw-bg-black-20 active:tw-bg-black-30 dark:tw-text-white dark:tw-bg-black-80 dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark",
+        [ButtonStyle.Danger]: "tw-text-black tw-bg-red-50 hover:tw-bg-red-65 active:tw-bg-red-70",
+        [ButtonStyle.Positive]:
+            "tw-text-black tw-bg-green-60 hover:tw-bg-green-70 active:tw-bg-green-75 dark:active:tw-bg-green-90",
     },
     translucent: {
-        [ButtonStyle.Primary]: "text-white bg-black-90 hover:bg-black-100 active:bg-black-superdark",
+        [ButtonStyle.Primary]: "tw-text-white tw-bg-black-90 hover:tw-bg-black-100 active:tw-bg-black-superdark",
         [ButtonStyle.Secondary]:
-            "text-black-80 bg-transparent hover:bg-black-10 hover:text-black active:bg-black-20 active:text-black dark:text-white dark:hover:bg-black-95 dark:active:bg-black-superdark dark:hover:text-white",
+            "tw-text-black-80 tw-bg-transparent hover:tw-bg-black-10 hover:tw-text-black active:tw-bg-black-20 active:tw-text-black dark:tw-text-white dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark dark:hover:tw-text-white",
         [ButtonStyle.Danger]:
-            "text-red-65 bg-transparent hover:bg-black-10 active:bg-black-20 dark:text-red-50 dark:hover:bg-black-95 dark:active:bg-black-superdark",
+            "tw-text-red-65 tw-bg-transparent hover:tw-bg-black-10 active:tw-bg-black-20 dark:tw-text-red-50 dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark",
         [ButtonStyle.Positive]:
-            "text-green-75 bg-transparent hover:bg-black-10 active:bg-black-20 dark:text-green-60 dark:hover:bg-black-95 dark:active:bg-black-superdark",
+            "tw-text-green-75 tw-bg-transparent hover:tw-bg-black-10 active:tw-bg-black-20 dark:tw-text-green-60 dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark",
     },
 };
 
@@ -85,16 +86,16 @@ export const Button: FC<ButtonProps> = ({
     return (
         <button
             className={merge([
-                "outline-none relative flex items-center justify-center border-0 rounded cursor-pointer font-sans transition-colors",
+                "tw-outline-none tw-relative tw-flex tw-items-center tw-justify-center tw-border-0 tw-rounded tw-cursor-pointer tw-font-sans tw-transition-colors",
                 icon && !children ? iconOnlySizeClasses[size] : sizeClasses[size],
                 merge(
                     disabled
                         ? [
-                              "not-allowed pointer-events-none text-black-40 dark:text-black-60",
-                              solid ? "bg-black-5 dark:bg-black-90" : "bg-transparent",
+                              "tw-not-allowed tw-pointer-events-none tw-text-black-40 dark:tw-text-black-60",
+                              solid ? "tw-bg-black-5 dark:tw-bg-black-90" : "tw-bg-transparent",
                           ]
                         : [
-                              "focus:outline-none focus:ring-4 focus:border-violet-70",
+                              "focus:tw-outline-none focus:tw-ring-4 focus:tw-border-violet-70",
                               styles[solid ? "solid" : "translucent"][style],
                           ],
                 ),

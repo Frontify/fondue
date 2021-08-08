@@ -122,7 +122,7 @@ IconOnly.args = {
 };
 
 export const BetweenElements: Story<BadgeProps> = (args: BadgeProps) => (
-    <div className="flex items-center gap-1">
+    <div className="tw-flex tw-items-center tw-gap-1">
         <span>before </span>
         <Badge {...args} />
         <span> after</span>
