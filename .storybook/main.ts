@@ -45,14 +45,12 @@ export default {
             cacheDir: resolve(__dirname, "../node_modules/.cache/vite"),
             plugins: [...config.plugins, ...plugins],
             optimizeDeps: {
-                ...config.optimizeDeps,
                 include: [
                     "@storybook/addon-actions",
                     "@storybook/theming/create",
                     ...Object.keys(peerDependencies),
                     ...Object.keys(dependencies),
                     ...reactAria,
-                    ...config.optimizeDeps.include,
                 ],
             },
         };
