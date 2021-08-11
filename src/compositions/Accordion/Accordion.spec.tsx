@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
 import { FieldsetHeaderType } from "@compositions/FieldsetHeader/FieldsetHeader";
 import { mount } from "@cypress/react";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { TextInput } from "@elements/TextInput/TextInput";
+import { TEXT_INPUT_ID } from "@elements/TextInput/TextInput.spec";
+import React from "react";
 import { Accordion, AccordionItem } from "./Accordion";
 
 const ACCORDION_ITEM_ID = "[data-test-id=accordion-item]";
@@ -31,7 +32,7 @@ describe("Accordion Component", () => {
             </Accordion>,
         );
 
-        cy.get(ACCORDION_ITEM_CONTENT_ID).should("have.length", 3);
+        cy.get(ACCORDION_ITEM_ID).should("have.length", 3);
     });
 
     it("should open item 2", () => {
@@ -43,9 +44,9 @@ describe("Accordion Component", () => {
             </Accordion>,
         );
 
-        cy.get(ACCORDION_ITEM_CONTENT_ID).eq(1).should("not.be.visible");
+        cy.get(ACCORDION_ITEM_CONTENT_ID).should("not.exist");
         cy.get(ACCORDION_ITEM_ID).eq(1).click();
-        cy.get(ACCORDION_ITEM_CONTENT_ID).eq(1).should("be.visible");
+        cy.get(ACCORDION_ITEM_CONTENT_ID).should("exist");
     });
 
     it("should call header action", () => {
@@ -65,7 +66,7 @@ describe("Accordion Component", () => {
         cy.get("@onClickStub").should("be.calledOnce");
     });
 
-    it("should jump to next accordion header and skip input", () => {
+    it("should correctly navigate with keyboard", () => {
         mount(
             <Accordion>
                 <AccordionItem header={{ children: "1" }}>
@@ -77,13 +78,17 @@ describe("Accordion Component", () => {
         );
 
         cy.get("body").tab();
-        cy.get(ACCORDION_ITEM_ID).first().should("have.class", "tw-border-violet-60");
+        cy.get(ACCORDION_ITEM_ID).first().should("be.focused");
+        cy.get(TEXT_INPUT_ID).should("not.exist");
+        cy.get(ACCORDION_ITEM_ID).first().type("{enter}");
+        cy.get(TEXT_INPUT_ID).should("not.be.focused");
         cy.get(ACCORDION_ITEM_ID).first().tab();
-        cy.get("[data-test-id=text-input]").first().should("not.be.focused");
-        cy.get(ACCORDION_ITEM_ID).first().should("not.have.class", "tw-border-violet-60");
-        cy.get(ACCORDION_ITEM_ID).eq(1).should("have.class", "tw-border-violet-60");
+        cy.get(TEXT_INPUT_ID).should("be.focused");
+        cy.get(TEXT_INPUT_ID).tab();
+        cy.get(TEXT_INPUT_ID).should("not.be.focused");
+        cy.get(ACCORDION_ITEM_ID).eq(1).should("be.focused");
         cy.get(ACCORDION_ITEM_ID).eq(1).tab();
-        cy.get(ACCORDION_ITEM_ID).eq(1).should("not.have.class", "tw-border-violet-60");
-        cy.get(ACCORDION_ITEM_ID).eq(2).should("have.class", "tw-border-violet-60");
+        cy.get(ACCORDION_ITEM_ID).eq(1).should("not.be.focused");
+        cy.get(ACCORDION_ITEM_ID).eq(2).should("be.focused");
     });
 });

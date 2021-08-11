@@ -8,7 +8,7 @@ import { useRadioGroupState } from "@react-stately/radio";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import { AnimateSharedLayout, motion } from "framer-motion";
-import React, { FC, ReactElement, useMemo, useRef } from "react";
+import React, { FC, ReactElement, useRef, useState } from "react";
 
 export type IconItem = {
     id: string;
@@ -32,14 +32,16 @@ export type SliderProps = {
 
 const isIconItem = (item: TextItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
 
-const BaseSlider: FC<SliderProps> = ({
-    id = generateRandomId(),
+export const Slider: FC<SliderProps> = ({
+    id,
     items,
     activeItemId,
     onChange,
     ariaLabel = "Slider",
     disabled = false,
 }) => {
+    const [generatedId] = useState(generateRandomId());
+    const randomId = id || generatedId;
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
     const radioGroupState = useRadioGroupState(groupProps);
     const { radioGroupProps } = useRadioGroup(groupProps, radioGroupState);
@@ -69,7 +71,8 @@ const BaseSlider: FC<SliderProps> = ({
                         <li key={item.id} className="tw-relative">
                             {isActive && (
                                 <motion.div
-                                    layoutId={id}
+                                    key={randomId}
+                                    layoutId={randomId}
                                     className={merge([
                                         "tw-absolute tw--inset-px tw-border tw-rounded",
                                         disabled
@@ -88,7 +91,7 @@ const BaseSlider: FC<SliderProps> = ({
                             <label
                                 data-test-id={isIconItem(item) ? "slider-item-icon" : "slider-item-text"}
                                 className={merge([
-                                    "tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-p-2.5 tw-text-center",
+                                    "tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-p-3 tw-text-center",
                                     isActive && !disabled ? "tw-text-black" : "tw-text-black-80",
                                     !disabled ? "hover:tw-text-black hover:tw-cursor-pointer" : "",
                                 ])}
@@ -115,10 +118,3 @@ const BaseSlider: FC<SliderProps> = ({
         </ul>
     );
 };
-
-export const Slider: FC<SliderProps> = (props) =>
-    // Because of a framer-motion bug (see https://github.com/framer/motion/issues/940) we need
-    // to memoize the Slider, because otherwise the currently active element jumps when there
-    // are multiple sliders on a page and a height change occurs before a slider e.g. when
-    // opening and closing an `AccordionItem`.
-    useMemo(() => <BaseSlider {...props} />, [props.activeItemId, props.disabled]);

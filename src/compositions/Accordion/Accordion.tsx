@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, FC, isValidElement, PropsWithChildren, ReactElement, useRef } from "react";
 import { FieldsetHeader, FieldsetHeaderProps } from "@compositions/FieldsetHeader/FieldsetHeader";
 import { useAccordion, useAccordionItem } from "@react-aria/accordion";
 import { useFocusRing } from "@react-aria/focus";
@@ -8,7 +7,8 @@ import { Item as StatelyItem } from "@react-stately/collections";
 import { TreeState, useTreeState } from "@react-stately/tree";
 import { Node } from "@react-types/shared";
 import { merge } from "@utilities/merge";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import React, { Children, FC, isValidElement, PropsWithChildren, ReactElement, useRef } from "react";
 
 export type AccordionItemProps = PropsWithChildren<{ header: FieldsetHeaderProps }>;
 
@@ -18,16 +18,11 @@ type AriaAccordionItemProps = {
     header: FieldsetHeaderProps;
 };
 
-const ACCORDION_CONTENT_VARIANTS = {
-    open: { height: "auto" },
-    collapsed: { height: 0 },
-};
-
 const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) => {
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
-    const { isFocusVisible, focusProps } = useFocusRing();
     const isOpen = state.expandedKeys.has(item.key) && item.props.children;
+    const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
         <div key={item.key}>
@@ -55,29 +50,40 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                     }
                 }}
                 className={merge([
-                    "tw-w-full tw-px-8 tw-outline-none tw-py-7 tw-border",
-                    isFocusVisible ? "tw-border-violet-60" : "tw-border-transparent",
+                    "tw-w-full tw-px-8 tw-py-7",
+                    isFocusVisible ? "tw-outline-violet" : "tw-outline-none",
                 ])}
             >
                 <FieldsetHeader {...header} active={isOpen} onClick={undefined} />
             </button>
 
-            {item.props.children && (
-                <motion.div
-                    layout
-                    initial={isOpen ? "open" : "collapsed"}
-                    animate={isOpen ? "open" : "collapsed"}
-                    variants={ACCORDION_CONTENT_VARIANTS}
-                    data-test-id="accordion-item-content"
-                >
-                    <div
-                        {...regionProps}
-                        className={`tw-px-8 tw-pb-7 tw--mt-1 ${isOpen ? "tw-visible" : "tw-invisible"}`}
+            <AnimatePresence>
+                {item.props.children && isOpen && (
+                    <motion.div
+                        key={item.key}
+                        layout
+                        initial={"collapsed"}
+                        animate={"open"}
+                        exit={"collapsed"}
+                        variants={{
+                            open: { height: "auto" },
+                            collapsed: { height: 0 },
+                        }}
+                        data-test-id="accordion-item-content"
                     >
-                        {item.props.children()}
-                    </div>
-                </motion.div>
-            )}
+                        <div {...regionProps} className="tw-px-8 tw-pb-7 tw--mt-1">
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                {item.props.children()}
+                            </motion.div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
