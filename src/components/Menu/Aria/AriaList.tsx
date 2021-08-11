@@ -1,5 +1,5 @@
 import { merge } from "@utilities/merge";
-import { forwardRef, HTMLAttributes, ReactNode } from "react";
+import React, { forwardRef, HTMLAttributes, ReactNode } from "react";
 
 export type AriaListProps = {
     ariaProps: HTMLAttributes<HTMLElement>;

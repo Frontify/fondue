@@ -2,6 +2,7 @@
 
 import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
 import { mount } from "@cypress/react";
+import React from "react";
 import { MenuBlock } from "../SelectMenu";
 import { ActionMenu } from "./ActionMenu";
 

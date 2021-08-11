@@ -1,6 +1,6 @@
 import { useFocusRing } from "@react-aria/focus";
 import { merge } from "@utilities/merge";
-import { forwardRef, HTMLAttributes } from "react";
+import React, { forwardRef, HTMLAttributes } from "react";
 import { ActionMenuItemType } from "../ActionMenu/ActionMenu";
 import { MenuItem } from "../MenuItem/MenuItem";
 import { MenuItemType } from "../SelectMenu";

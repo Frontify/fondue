@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import IconAudio from "@elements/Icon/Generated/IconAudio";
-import { Meta, Story } from "@storybook/react";
+import React, { Meta, Story } from "@storybook/react";
 import { MenuItem as MenuItemComponent, MenuItemProps, MenuItemStyle, SelectionIndicatorIcon } from "./MenuItem";
 import { MenuItemContentSize } from "./MenuItemContent";
 

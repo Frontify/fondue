@@ -1,5 +1,5 @@
 import { Item, Section } from "@react-stately/collections";
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { ActionMenuBlock, ActionMenuItemType } from "../ActionMenu/ActionMenu";
 import { MenuBlock, MenuItemType } from "../SelectMenu";
 

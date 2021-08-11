@@ -2,7 +2,7 @@
 
 import { useMenu, useMenuItem, useMenuSection } from "@react-aria/menu";
 import { useTreeState } from "@react-stately/tree";
-import { ReactElement, useRef } from "react";
+import React, { ReactElement, useRef } from "react";
 import { AriaList } from "../Aria/AriaList";
 import { AriaMenuItem } from "../Aria/AriaMenuItem";
 import { AriaSection } from "../Aria/AriaSection";

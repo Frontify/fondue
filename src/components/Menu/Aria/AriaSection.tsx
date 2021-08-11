@@ -1,4 +1,4 @@
-import { FC, HTMLAttributes } from "react";
+import React, { FC, HTMLAttributes } from "react";
 
 export type AriaSectionProps = {
     sectionProps: HTMLAttributes<HTMLElement>;
