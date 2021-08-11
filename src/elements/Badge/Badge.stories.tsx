@@ -13,6 +13,10 @@ export default {
             options: Object.values(BadgeStyle),
             control: { type: "select" },
         },
+        status: {
+            options: Object.values(BadgeStatus),
+            control: { type: "select" },
+        },
         onClick: { table: { disable: true } },
         onDismiss: { table: { disable: true } },
     },
@@ -58,7 +62,7 @@ WithStatus.args = {
     status: BadgeStatus.Positive,
 };
 
-export const WithHexColorStatus = BadgeTemplate.bind({});
+export const WithHexStatusColor = BadgeTemplate.bind({});
 
 WithStatus.argTypes = {
     status: {
@@ -66,7 +70,7 @@ WithStatus.argTypes = {
     },
 };
 
-WithHexColorStatus.args = {
+WithHexStatusColor.args = {
     status: "#FFC0CB",
 };
 
