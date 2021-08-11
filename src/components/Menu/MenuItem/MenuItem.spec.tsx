@@ -4,8 +4,8 @@ import { mount } from "@cypress/react";
 import IconAudio from "@elements/Icon/Generated/IconAudio";
 import { IconSize } from "@elements/Icon/IconSize";
 import React from "react";
-import { MenuItem, MenuItemProps } from "./MenuItem";
-import { MenuItemContentSize, SelectionIndicatorIcon } from "./MenuItemContent";
+import { MenuItem, MenuItemProps, SelectionIndicatorIcon } from "./MenuItem";
+import { MenuItemContentSize } from "./MenuItemContent";
 
 export const MENU_ITEM_ID = "[data-test-id=menu-item]";
 export const MENU_ITEM_ACTIVE_ID = "[data-test-id=menu-item-active]";
