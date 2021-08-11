@@ -81,6 +81,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 <HiddenSelect state={state} triggerRef={ref} />
                 <button
                     {...buttonProps}
+                    id={id}
                     ref={ref}
                     data-test-id="dropdown-trigger"
                     className={merge([
