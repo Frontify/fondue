@@ -1,9 +1,9 @@
 import fastGlob from "fast-glob";
 import fs from "fs";
+import tailwindClassList from "./tailwindClassList";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import tailwindConfig from "../tailwind.config";
-import tailwindClassList from "./tailwindClassList";
 
 const tailwindPrefix = tailwindConfig.prefix;
 

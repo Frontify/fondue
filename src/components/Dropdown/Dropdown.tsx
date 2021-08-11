@@ -8,6 +8,7 @@ import IconReject from "@elements/Icon/Generated/IconReject";
 import { IconSize } from "@elements/Icon/IconSize";
 import useClickOutside from "@hooks/useClickOutside";
 import { useButton } from "@react-aria/button";
+import { useFocusRing } from "@react-aria/focus";
 import { HiddenSelect, useSelect } from "@react-aria/select";
 import { useSelectState } from "@react-stately/select";
 import { merge } from "@utilities/merge";
@@ -61,6 +62,7 @@ export const Dropdown: FC<DropdownProps> = ({
     const { triggerProps, valueProps, menuProps } = useSelect(props, state, ref);
     const { buttonProps } = useButton(triggerProps, ref);
     const { isOpen } = state;
+    const { isFocusVisible, focusProps } = useFocusRing();
 
     useClickOutside(dropdownElement.current, () => state.close());
 
@@ -81,12 +83,14 @@ export const Dropdown: FC<DropdownProps> = ({
                 <HiddenSelect state={state} triggerRef={ref} />
                 <button
                     {...buttonProps}
+                    {...focusProps}
                     id={id}
                     ref={ref}
                     data-test-id="dropdown-trigger"
                     className={merge([
-                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none focus:tw-outline-violet",
+                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left",
                         size === DropdownSize.Small ? "tw-p-3 tw-min-h-[36px]" : "tw-p-5 tw-min-h-[60px]",
+                        isFocusVisible ? "tw-outline-violet" : "tw-outline-none",
                         !activeItem && "tw-text-black-60",
                         disabled && "tw-text-black-40",
                     ])}

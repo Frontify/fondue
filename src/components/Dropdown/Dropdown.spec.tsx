@@ -49,7 +49,7 @@ const Component: FC<Props> = ({
     initialActiveId,
     size = DropdownSize.Small,
     clearable = false,
-}: Props) => {
+}) => {
     const [activeItemId, setActiveItemId] = useState(initialActiveId);
     return (
         <Dropdown
