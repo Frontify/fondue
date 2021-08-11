@@ -95,7 +95,7 @@ export const Badge: FC<BadgeProps> = ({ children, status, icon, style = BadgeSty
                 className={merge([
                     "tw-float-left tw-h-6 tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-transition-color tw-select-none dark:tw-bg-black-95 dark:hover:tw-bg-black-superdark",
                     getStyleClasses(style, badgeEffect),
-                    onClick && "hover:tw-cursor-pointer",
+                    onClick ? "hover:tw-cursor-pointer" : "tw-cursor-default",
                     !children && (!status || !icon)
                         ? "tw-w-6"
                         : children && !icon && !status
