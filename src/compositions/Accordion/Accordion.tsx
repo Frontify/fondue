@@ -2,9 +2,11 @@
 
 import { FieldsetHeader, FieldsetHeaderProps } from "@compositions/FieldsetHeader/FieldsetHeader";
 import { useAccordion, useAccordionItem } from "@react-aria/accordion";
+import { useFocusRing } from "@react-aria/focus";
 import { Item as StatelyItem } from "@react-stately/collections";
 import { TreeState, useTreeState } from "@react-stately/tree";
 import { Node } from "@react-types/shared";
+import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { Children, FC, isValidElement, PropsWithChildren, ReactElement, useRef } from "react";
 
@@ -20,11 +22,13 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
     const isOpen = state.expandedKeys.has(item.key) && item.props.children;
+    const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
         <div key={item.key}>
             <button
                 {...buttonProps}
+                {...focusProps}
                 data-test-id="accordion-item"
                 ref={triggerRef}
                 onClick={(event) => {
@@ -45,7 +49,10 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                         buttonProps.onKeyUp(event);
                     }
                 }}
-                className="tw-w-full tw-px-8 tw-py-7 tw-outline-none focus:tw-outline-violet"
+                className={merge([
+                    "tw-w-full tw-px-8 tw-py-7",
+                    isFocusVisible ? "tw-outline-violet" : "tw-outline-none",
+                ])}
             >
                 <FieldsetHeader {...header} active={isOpen} onClick={undefined} />
             </button>
