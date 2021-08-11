@@ -58,6 +58,18 @@ WithStatus.args = {
     status: BadgeStatus.Positive,
 };
 
+export const WithHexColorStatus = BadgeTemplate.bind({});
+
+WithStatus.argTypes = {
+    status: {
+        control: { type: "text" },
+    },
+};
+
+WithHexColorStatus.args = {
+    status: "#FFC0CB",
+};
+
 export const WithIcon = BadgeTemplate.bind({});
 
 WithIcon.argTypes = {

@@ -13,7 +13,7 @@ export enum BadgeStatus {
     Danger = "Danger",
 }
 
-const statusClasses: Record<BadgeStatus, string> = {
+const statusClasses: Record<BadgeStatus | string, string | undefined> = {
     [BadgeStatus.Positive]: "tw-bg-green-60",
     [BadgeStatus.Progress]: "tw-bg-violet-60",
     [BadgeStatus.Warning]: "tw-bg-yellow-60",
@@ -28,37 +28,32 @@ export enum BadgeStyle {
     Danger = "Danger",
 }
 
-enum BadgeEffect {
-    Default = "default",
-    Hoverable = "hoverable",
-}
-
-const getStyleClasses = (style: BadgeStyle, effect: BadgeEffect): string =>
+const getStyleClasses = (style: BadgeStyle, hasHover: boolean): string =>
     ({
         [BadgeStyle.Primary]: merge([
             "tw-bg-black-5 tw-text-black-90 dark:tw-text-black-10",
-            effect === BadgeEffect.Hoverable && "hover:tw-bg-black-10",
+            hasHover && "hover:tw-bg-black-10",
         ]),
         [BadgeStyle.Positive]: merge([
             "tw-bg-green-20 tw-text-green-90 dark:tw-text-green-50",
-            effect === BadgeEffect.Hoverable && "hover:tw-bg-green-40",
+            hasHover && "hover:tw-bg-green-40",
         ]),
         [BadgeStyle.Progress]: merge([
             "tw-bg-violet-20 tw-text-violet-90 dark:tw-text-violet-40",
-            effect === BadgeEffect.Hoverable && "hover:tw-bg-violet-40",
+            hasHover && "hover:tw-bg-violet-40",
         ]),
         [BadgeStyle.Warning]: merge([
             "tw-bg-yellow-20 tw-text-yellow-90 dark:tw-text-yellow-50",
-            effect === BadgeEffect.Hoverable && "hover:tw-bg-yellow-40",
+            hasHover && "hover:tw-bg-yellow-40",
         ]),
         [BadgeStyle.Danger]: merge([
             "tw-bg-red-20 tw-text-red-90 dark:tw-text-red-50",
-            effect === BadgeEffect.Hoverable && "hover:tw-bg-red-40",
+            hasHover && "hover:tw-bg-red-40",
         ]),
     }[style] ?? "");
 
-const getDismissClasses = (style: BadgeStyle, effect: BadgeEffect): string => {
-    const hoverClass = effect === BadgeEffect.Hoverable && "dark:hover:tw-text-white";
+const getDismissClasses = (style: BadgeStyle, hasHover: boolean): string => {
+    const hoverClass = hasHover && "dark:hover:tw-text-white";
     return (
         {
             [BadgeStyle.Primary]: merge(["tw-text-black-60 dark:tw-text-black-40", hoverClass]),
@@ -73,7 +68,7 @@ const getDismissClasses = (style: BadgeStyle, effect: BadgeEffect): string => {
 export type BadgeProps = PropsWithChildren<{
     style?: BadgeStyle;
     icon?: ReactElement<IconProps>;
-    status?: BadgeStatus;
+    status?: BadgeStatus | string;
     onClick?: () => void;
     onDismiss?: () => void;
 }>;
@@ -84,7 +79,6 @@ export const Badge: FC<BadgeProps> = ({ children, status, icon, style = BadgeSty
     }
 
     const Container = onClick ? "a" : "span";
-    const badgeEffect = onClick ? BadgeEffect.Hoverable : BadgeEffect.Default;
 
     return (
         // This `tw-inline-block` and the `tw-float-left` on the first child was added, to remove
@@ -94,7 +88,7 @@ export const Badge: FC<BadgeProps> = ({ children, status, icon, style = BadgeSty
                 onClick={() => onClick && onClick()}
                 className={merge([
                     "tw-float-left tw-h-6 tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-transition-color tw-select-none dark:tw-bg-black-95 dark:hover:tw-bg-black-superdark",
-                    getStyleClasses(style, badgeEffect),
+                    getStyleClasses(style, !!onClick),
                     onClick ? "hover:tw-cursor-pointer" : "tw-cursor-default",
                     !children && (!status || !icon)
                         ? "tw-w-6"
@@ -107,7 +101,8 @@ export const Badge: FC<BadgeProps> = ({ children, status, icon, style = BadgeSty
                 {status && (
                     <span
                         data-test-id="badge-status"
-                        className={`tw-w-2 tw-h-2 tw-rounded-full ${statusClasses[status]}`}
+                        className={merge(["tw-w-2 tw-h-2 tw-rounded-full", statusClasses[status]])}
+                        style={status.indexOf("#") === 0 ? { backgroundColor: status } : {}}
                     />
                 )}
                 {icon && <span data-test-id="badge-icon">{cloneElement(icon, { size: IconSize.Size12 })}</span>}
@@ -115,7 +110,7 @@ export const Badge: FC<BadgeProps> = ({ children, status, icon, style = BadgeSty
                 {onDismiss && (
                     <button
                         data-test-id="badge-icon"
-                        className={getDismissClasses(style, badgeEffect)}
+                        className={getDismissClasses(style, !!onClick)}
                         onClick={(event) => {
                             event.stopPropagation();
                             onDismiss();
