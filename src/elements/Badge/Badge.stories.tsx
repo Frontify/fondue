@@ -60,12 +60,6 @@ WithStatus.args = {
 
 export const WithHexStatusColor = BadgeTemplate.bind({});
 
-WithStatus.argTypes = {
-    status: {
-        control: { type: "text" },
-    },
-};
-
 WithHexStatusColor.args = {
     status: "#FFC0CB",
 };
