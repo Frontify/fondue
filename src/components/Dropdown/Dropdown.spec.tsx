@@ -4,7 +4,7 @@ import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_ID, MENU_ITEM_TITLE_ID } from "@componen
 import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
 import { mount } from "@cypress/react";
 import React, { FC, useState } from "react";
-import { Dropdown, DropdownProps, DropdownSize } from "./Dropdown";
+import { Dropdown, DropdownProps } from "./Dropdown";
 
 const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
 const DROPDOWN_CLEAR_BUTTON_ID = "[data-test-id=dropdown-clear-button]";
@@ -37,19 +37,12 @@ const FIRST_ITEM_ID = SMALL_ITEMS[0].menuItems[0].id;
 
 type Props = {
     menuBlocks: DropdownProps["menuBlocks"];
-    size?: DropdownProps["size"];
     placeholder?: string;
     initialActiveId?: string;
     clearable?: boolean;
 };
 
-const Component: FC<Props> = ({
-    menuBlocks,
-    placeholder,
-    initialActiveId,
-    size = DropdownSize.Small,
-    clearable = false,
-}) => {
+const Component: FC<Props> = ({ menuBlocks, placeholder, initialActiveId, clearable = false }) => {
     const [activeItemId, setActiveItemId] = useState(initialActiveId);
     return (
         <Dropdown
@@ -57,7 +50,6 @@ const Component: FC<Props> = ({
             onChange={setActiveItemId}
             menuBlocks={menuBlocks}
             placeholder={placeholder}
-            size={size}
             clearable={clearable}
         />
     );
