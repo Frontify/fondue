@@ -13,23 +13,13 @@ export enum MenuItemContentStyle {
     Danger = "Danger",
 }
 
-type MenuItemContentBase = {
+export type MenuItemContentProps = {
     title: string;
     decorator?: ReactElement;
     subtitle?: string;
     size?: MenuItemContentSize;
     ariaProps?: HTMLAttributes<HTMLElement>;
 };
-
-export type MenuItemContentProps =
-    | (MenuItemContentBase & {
-          size: MenuItemContentSize.Small;
-          subtitle?: undefined;
-      })
-    | (MenuItemContentBase & {
-          size: MenuItemContentSize.Large;
-          subtitle?: string;
-      });
 
 export const MenuItemContent: FC<MenuItemContentProps> = ({ title, decorator, subtitle, size, ariaProps }) => {
     return (
@@ -49,7 +39,7 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({ title, decorator, su
                 <div data-test-id="menu-item-title" className="tw-select-none" title={title}>
                     {title}
                 </div>
-                {subtitle && (
+                {subtitle && size === MenuItemContentSize.Large && (
                     <div data-test-id="menu-item-subtitle" className="tw-select-none tw-text-xxs" title={subtitle}>
                         {subtitle}
                     </div>
