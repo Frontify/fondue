@@ -4,7 +4,6 @@ on:
     push:
         branches:
             - "main"
-            - "fix/tests"
 
 env:
     CI: true
