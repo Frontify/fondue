@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import alias from "@rollup/plugin-alias";
+import commonJs from "@rollup/plugin-commonjs";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
+import { resolve } from "path";
 import dts from "rollup-plugin-dts";
 import esbuild from "rollup-plugin-esbuild";
-import { nodeResolve } from "@rollup/plugin-node-resolve";
-import commonJs from "@rollup/plugin-commonjs";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import postcss from "rollup-plugin-postcss";
-import { resolve } from "path";
-
 import { main } from "./package.json";
 
 const name = main.replace(/\.js$/, "");
@@ -43,6 +42,7 @@ const rollupConfig = [
                 extract: "index.css",
             }),
             peerDepsExternal(),
+            commonJs(),
         ],
         output: [
             {
