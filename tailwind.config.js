@@ -12,7 +12,7 @@ module.exports = {
     theme: {
         extend: {
             outline: {
-                violet: "2px solid #825fff",
+                violet: "1px solid #825fff",
             },
         },
         boxShadow: {

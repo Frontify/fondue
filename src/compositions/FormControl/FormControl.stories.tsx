@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Dropdown } from "@components/Dropdown/Dropdown";
-import { MenuItemContentSize } from "@components/Dropdown/MenuItemContent/MenuItemContent";
+import { Dropdown, DropdownSize } from "@components/Dropdown/Dropdown";
+import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
 import { Slider } from "@components/Slider/Slider";
 import { TextInput } from "@elements/TextInput/TextInput";
 import { Meta, Story } from "@storybook/react";
@@ -72,7 +72,7 @@ export const WithDropdown: Story<FormControlProps> = (args) => {
             <Dropdown
                 onChange={(id) => setActiveItemId(id)}
                 activeItemId={activeItemId}
-                size={MenuItemContentSize.Small}
+                size={DropdownSize.Small}
                 menuBlocks={[
                     {
                         id: "block1",
