@@ -3,13 +3,13 @@
 import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
 import { mount } from "@cypress/react";
 import React from "react";
-import { ActionMenu, ActionMenuBlock } from "./ActionMenu";
+import { ActionMenu } from "./ActionMenu";
 
 const MENU_ITEM_ID = "[data-test-id=menu-item]";
 const MENU_BLOCK_DIVIDER = "[data-test-id=menu-block-divider]";
 const MENU_ITEM_LIST_ID = "[data-test-id=menu-item-list]";
 
-const MENU_BLOCKS: ActionMenuBlock[] = [
+const MENU_BLOCKS = [
     {
         id: "small-block-1",
         menuItems: [

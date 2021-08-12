@@ -2,15 +2,16 @@
 
 import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_ID, MENU_ITEM_TITLE_ID } from "@components/Menu/MenuItem/MenuItem.spec";
 import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
+import { MenuBlock } from "@components/Menu/SelectMenu";
 import { mount } from "@cypress/react";
 import React, { FC, useState } from "react";
-import { Dropdown, DropdownProps } from "./Dropdown";
+import { Dropdown } from "./Dropdown";
 
 const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
 const DROPDOWN_CLEAR_BUTTON_ID = "[data-test-id=dropdown-clear-button]";
 const MENU_ITEM_LIST_ID = "[data-test-id=menu-item-list]";
 
-const SMALL_ITEMS: DropdownProps["menuBlocks"] = [
+const SMALL_ITEMS = [
     {
         id: "small-block",
         menuItems: [
@@ -36,7 +37,7 @@ const SMALL_ITEMS: DropdownProps["menuBlocks"] = [
 const FIRST_ITEM_ID = SMALL_ITEMS[0].menuItems[0].id;
 
 type Props = {
-    menuBlocks: DropdownProps["menuBlocks"];
+    menuBlocks: MenuBlock[];
     placeholder?: string;
     initialActiveId?: string;
     clearable?: boolean;
