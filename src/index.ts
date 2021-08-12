@@ -237,6 +237,7 @@ export * from "./components/Slider/Slider";
 export * from "./components/Tooltip/Tooltip";
 export * from "./components/Tree/Node";
 export * from "./components/Tree/Tree";
+export * from "./compositions/Accordion/Accordion";
 export * from "./compositions/ButtonGroup/ButtonGroup";
 export * from "./compositions/FieldsetHeader/FieldsetHeader";
 export * from "./compositions/FormControl/FormControl";

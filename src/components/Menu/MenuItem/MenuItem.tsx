@@ -25,20 +25,6 @@ export type MenuItemProps = {
     selectionIndicator?: SelectionIndicatorIcon;
 } & Omit<MenuItemContentProps, "iconSize">;
 
-export const getStyle = (isDangerStyle: boolean, disabled: boolean, active: boolean): string => {
-    const classNames = [];
-
-    if (disabled) {
-        classNames.push("tw-bg-black-0 tw-pointer-events-none", isDangerStyle ? "tw-text-red-40" : "tw-text-black-40");
-    } else if (active) {
-        classNames.push("tw-font-medium", isDangerStyle ? "tw-text-red-70" : "tw-text-black");
-    } else {
-        classNames.push(isDangerStyle ? "tw-text-red-60" : "tw-text-black-80");
-    }
-
-    return merge(classNames);
-};
-
 export const MenuItem: FC<MenuItemProps> = ({
     title,
     decorator,
@@ -59,7 +45,10 @@ export const MenuItem: FC<MenuItemProps> = ({
                 size === MenuItemContentSize.Small
                     ? "tw-px-5 tw-py-2.5 tw-min-h-[36px]"
                     : "tw-px-5 tw-py-3 tw-min-h-[60px]",
-                getStyle(style === MenuItemStyle.Danger, disabled, active),
+                disabled &&
+                    `tw-bg-black-0 tw-pointer-events-none ${isDangerStyle ? "tw-text-red-40" : "tw-text-black-40"}`,
+                active && `tw-font-medium ${isDangerStyle ? "tw-text-red-70" : "tw-text-black"}`,
+                !disabled && !active && (isDangerStyle ? "tw-text-red-60" : "tw-text-black-80"),
             ])}
         >
             {size === MenuItemContentSize.Small ? (
