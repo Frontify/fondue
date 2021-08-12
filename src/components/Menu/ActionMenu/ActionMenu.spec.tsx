@@ -47,7 +47,7 @@ const MENU_BLOCKS: ActionMenuBlock[] = [
 ];
 
 describe("ActionMenu Component", () => {
-    it("renders action menu with divider", () => {
+    it.skip("renders action menu with divider", () => {
         const onClickStub = cy.stub().as("onClickStub");
         const menuBlocks = MENU_BLOCKS.map((block) => ({
             ...block,
