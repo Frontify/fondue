@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, FC, PropsWithChildren, ReactElement } from "react";
 import RejectIcon from "@elements/Icon/Generated/IconReject";
 import { IconProps } from "@elements/Icon/IconProps";
 import { IconSize } from "@elements/Icon/IconSize";
 import { merge } from "@utilities/merge";
+import React, { cloneElement, FC, PropsWithChildren, ReactElement } from "react";
 
 export enum BadgeStatus {
     Positive = "Positive",
@@ -13,7 +13,7 @@ export enum BadgeStatus {
     Danger = "Danger",
 }
 
-const statusClasses: Record<BadgeStatus | string, string | undefined> = {
+const statusClasses: Record<BadgeStatus, string> = {
     [BadgeStatus.Positive]: "tw-bg-green-60",
     [BadgeStatus.Progress]: "tw-bg-violet-60",
     [BadgeStatus.Warning]: "tw-bg-yellow-60",
@@ -65,6 +65,9 @@ const getDismissClasses = (style: BadgeStyle, hasHover: boolean): string => {
     );
 };
 
+const isBadgeStatus = (style: BadgeStatus | string): style is BadgeStatus =>
+    Object.values(BadgeStatus).includes(style as BadgeStatus);
+
 export type BadgeProps = PropsWithChildren<{
     style?: BadgeStyle;
     icon?: ReactElement<IconProps>;
@@ -101,8 +104,11 @@ export const Badge: FC<BadgeProps> = ({ children, status, icon, style = BadgeSty
                 {status && (
                     <span
                         data-test-id="badge-status"
-                        className={merge(["tw-w-2 tw-h-2 tw-rounded-full", statusClasses[status]])}
-                        style={status.indexOf("#") === 0 ? { backgroundColor: status } : {}}
+                        className={merge([
+                            "tw-w-2 tw-h-2 tw-rounded-full",
+                            isBadgeStatus(status) && statusClasses[status],
+                        ])}
+                        style={isBadgeStatus(status) ? {} : { backgroundColor: status }}
                     />
                 )}
                 {icon && <span data-test-id="badge-icon">{cloneElement(icon, { size: IconSize.Size12 })}</span>}
