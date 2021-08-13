@@ -69,14 +69,15 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                             open: { height: "auto" },
                             collapsed: { height: 0 },
                         }}
+                        transition={{ type: "tween" }}
                         data-test-id="accordion-item-content"
                     >
-                        <div {...regionProps} className="tw-px-8 tw-pb-7 tw--mt-1">
+                        <div {...regionProps} className="tw-px-8 tw-pb-7">
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2 }}
+                                transition={{ duration: 0.3 }}
                             >
                                 {item.props.children()}
                             </motion.div>
