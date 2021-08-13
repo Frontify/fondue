@@ -65,7 +65,7 @@ export type TextInputProps =
       } & TextInputBaseProps);
 
 export const TextInput: FC<TextInputProps> = ({
-    id,
+    id: propsId,
     type = TextInputType.Text,
     decorator,
     validation = Validation.Default,
@@ -80,6 +80,7 @@ export const TextInput: FC<TextInputProps> = ({
     onBlur,
     onClear,
 }) => {
+    const [id] = useState(propsId || generateRandomId());
     const inputElement = useRef<HTMLInputElement | null>(null);
     const [isObfuscated, setIsObfuscated] = useState(
         typeof obfuscated === "boolean" ? obfuscated : type === TextInputType.Password,
@@ -112,7 +113,7 @@ export const TextInput: FC<TextInputProps> = ({
                 </div>
             )}
             <input
-                id={id || generateRandomId()}
+                id={id}
                 ref={inputElement}
                 className={merge([
                     "tw-flex-grow tw-border-none tw-outline-none tw-bg-transparent",

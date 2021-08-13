@@ -11,9 +11,10 @@ import { useButton } from "@react-aria/button";
 import { useFocusRing } from "@react-aria/focus";
 import { HiddenSelect, useSelect } from "@react-aria/select";
 import { useSelectState } from "@react-stately/select";
+import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, useRef } from "react";
+import React, { FC, useRef, useState } from "react";
 
 export enum DropdownSize {
     Small = "Small",
@@ -39,7 +40,7 @@ const getActiveItem = (menuBlocks: MenuBlock[], id: string) =>
         .find((item) => item.id === id) || null;
 
 export const Dropdown: FC<DropdownProps> = ({
-    id,
+    id: propId,
     menuBlocks,
     onChange,
     activeItemId = "",
@@ -49,6 +50,7 @@ export const Dropdown: FC<DropdownProps> = ({
     clearable = false,
     ariaLabel = "Dropdown",
 }) => {
+    const [id] = useState(propId || generateRandomId());
     const dropdownElement = useRef<HTMLDivElement | null>(null);
     const activeItem = getActiveItem(menuBlocks, activeItemId);
     const props = mapToAriaProps(ariaLabel, menuBlocks);

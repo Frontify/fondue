@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from "react";
 import { Meta, Story } from "@storybook/react";
-import { Switch, SwitchProps, SwitchSize } from "./Switch";
+import React, { useEffect, useState } from "react";
+import { Switch, SwitchLabelLayout, SwitchProps, SwitchSize } from "./Switch";
 
 export default {
     title: "Elements/Switch",
@@ -12,6 +12,10 @@ export default {
             options: Object.values(SwitchSize),
             control: { type: "radio" },
         },
+        labelLayout: {
+            options: Object.values(SwitchLabelLayout),
+            control: { type: "radio" },
+        },
     },
     args: {
         on: true,
@@ -19,6 +23,7 @@ export default {
         name: "switch-name",
         label: "Switch",
         size: SwitchSize.Small,
+        labelLayout: SwitchLabelLayout.Fill,
     },
 } as Meta<SwitchProps>;
 
