@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useRef } from "react";
 import IconCheck from "@elements/Icon/Generated/IconCheck";
 import IconMinus from "@elements/Icon/Generated/IconMinus";
 import { InputLabel } from "@elements/InputLabel/InputLabel";
@@ -9,6 +8,7 @@ import { useFocusRing } from "@react-aria/focus";
 import { useToggleState } from "@react-stately/toggle";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
+import React, { FC, useRef, useState } from "react";
 
 export enum CheckboxStyle {
     Default = "Default",
@@ -55,7 +55,7 @@ const isCheckedOrMixed = (checked: CheckboxState): boolean => {
 };
 
 export const Checkbox: FC<CheckboxProps> = (props) => {
-    const id = props.id || generateRandomId();
+    const [id] = useState(props.id || generateRandomId());
     const {
         state = CheckboxState.Unchecked,
         disabled,
@@ -84,12 +84,18 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
     return (
         <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">
             <label className="tw-flex tw-items-center tw-gap-2 tw-select-none">
-                <input {...inputProps} {...focusProps} id={id} ref={ref} className="tw-sr-only" />
+                <input
+                    {...inputProps}
+                    {...focusProps}
+                    id={id}
+                    ref={ref}
+                    className="tw-sr-only"
+                    data-test-id="checkbox-input"
+                />
                 <span
                     aria-hidden="true"
                     className={merge([
-                        "tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border",
-
+                        "tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-flex-shrink-0",
                         isFocusVisible && "tw-outline-violet",
                         disabled
                             ? merge([

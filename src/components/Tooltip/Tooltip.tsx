@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactNode, useState } from "react";
 import IconQuestion from "@elements/Icon/Generated/IconQuestion";
 import { IconSize } from "@elements/Icon/IconSize";
-import { merge } from "@utilities/merge";
+import { useTooltip, useTooltipTrigger } from "@react-aria/tooltip";
+import { useTooltipTriggerState } from "@react-stately/tooltip";
+import React, { FC, ReactNode, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 
 export type TooltipProps = {
@@ -16,7 +17,10 @@ const TOOLTIP_SKIDDING = 0;
 export const Tooltip: FC<TooltipProps> = ({ tooltip }) => {
     const [tooltipTriggerElement, setTooltipTriggerElement] = useState<HTMLElement | null>(null);
     const [tooltipElement, setTooltipElement] = useState<HTMLDivElement | null>(null);
-    const [showTooltip, setShowTooltip] = useState(false);
+    const state = useTooltipTriggerState();
+    const { triggerProps, tooltipProps } = useTooltipTrigger({}, state, useRef(tooltipTriggerElement));
+    const { tooltipProps: tooltipAriaProps } = useTooltip(tooltipProps, state);
+    const { isOpen } = state;
     const { styles, attributes } = usePopper(tooltipTriggerElement, tooltipElement, {
         placement: "auto-end",
         modifiers: [
@@ -31,27 +35,28 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip }) => {
 
     return (
         <>
-            <i
+            <button
+                {...triggerProps}
                 data-test-id="tooltip-icon"
                 ref={setTooltipTriggerElement}
-                onMouseEnter={() => setShowTooltip(true)}
-                onMouseLeave={() => setShowTooltip(false)}
-                className="tw-inline-flex tw-items-center tw-justify-center tw-text-black-60 hover:tw-text-black dark:tw-text-black-40 dark:hover:white"
+                onMouseEnter={() => state.open()}
+                onMouseLeave={() => state.close(true)}
+                className="tw-inline-flex tw-items-center tw-justify-center tw-text-black-60 hover:tw-text-black dark:tw-text-black-40 dark:hover:white tw-cursor-default"
             >
                 <IconQuestion size={IconSize.Size16} />
-            </i>
-            <div
-                data-test-id="tooltip"
-                ref={setTooltipElement}
-                style={styles.popper}
-                {...attributes.popper}
-                className={merge([
-                    "tw-p-4 tw-border tw-border-black-10 tw-bg-white tw-rounded-md tw-shadow-mid dark:tw-bg-black-90 dark:tw-text-white tw-z-20",
-                    showTooltip ? "tw-visible" : "tw-invisible",
-                ])}
-            >
-                {tooltip}
-            </div>
+            </button>
+            {isOpen && (
+                <div
+                    {...tooltipAriaProps}
+                    data-test-id="tooltip"
+                    ref={setTooltipElement}
+                    style={styles.popper}
+                    {...attributes.popper}
+                    className="tw-p-4 tw-border tw-border-black-10 tw-bg-white tw-rounded-md tw-shadow-mid dark:tw-bg-black-90 dark:tw-text-white tw-z-20"
+                >
+                    {tooltip}
+                </div>
+            )}
         </>
     );
 };
