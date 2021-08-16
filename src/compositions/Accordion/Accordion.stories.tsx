@@ -40,11 +40,12 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => (
                 <TextInput />
             </FormControl>
         </AccordionItem>
-        <AccordionItem header={{ children: "Item with plain text child" }}>bar</AccordionItem>
+        <AccordionItem header={{ children: "Item with plain text child", type: FieldsetHeaderType.AddRemove }}>
+            bar
+        </AccordionItem>
         <AccordionItem
             header={{
                 children: "Empty item with an onClick callback",
-                type: FieldsetHeaderType.AddRemove,
                 onClick: action("click"),
             }}
         />
