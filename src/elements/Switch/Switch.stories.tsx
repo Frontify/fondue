@@ -2,7 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import React, { useEffect, useState } from "react";
-import { Switch, SwitchLabelLayout, SwitchProps, SwitchSize } from "./Switch";
+import { Switch, SwitchProps, SwitchSize } from "./Switch";
 
 export default {
     title: "Elements/Switch",
@@ -12,10 +12,6 @@ export default {
             options: Object.values(SwitchSize),
             control: { type: "radio" },
         },
-        labelLayout: {
-            options: Object.values(SwitchLabelLayout),
-            control: { type: "radio" },
-        },
     },
     args: {
         on: true,
@@ -23,11 +19,12 @@ export default {
         name: "switch-name",
         label: "Switch",
         size: SwitchSize.Small,
-        labelLayout: SwitchLabelLayout.Fill,
     },
 } as Meta<SwitchProps>;
 
-export const Template: Story<SwitchProps> = (args: SwitchProps) => {
+type Props = SwitchProps & { hug?: boolean };
+
+export const Default: Story<Props> = (args: Props) => {
     const [on, setOn] = useState(args.on);
     const toggle = () => setOn(!on);
 
@@ -35,5 +32,13 @@ export const Template: Story<SwitchProps> = (args: SwitchProps) => {
         setOn(args.on);
     }, [args.on]);
 
-    return <Switch {...args} onChange={toggle} on={on} />;
+    return args.hug ? (
+        <span className="tw-inline-block">
+            <Switch {...args} onChange={toggle} on={on} />
+        </span>
+    ) : (
+        <Switch {...args} onChange={toggle} on={on} />
+    );
 };
+
+export const HugLabel: Story<Props> = (args) => <Default {...args} hug={true} />;
