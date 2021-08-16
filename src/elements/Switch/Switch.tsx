@@ -11,11 +11,6 @@ export enum SwitchSize {
     Large = "Large",
 }
 
-export enum SwitchLabelLayout {
-    Fill = "Fill",
-    Hug = "Hug",
-}
-
 const lineSizeClasses: Record<SwitchSize, string> = {
     [SwitchSize.Small]: "tw-w-5 tw-h-2",
     [SwitchSize.Medium]: "tw-w-9 tw-h-5",
