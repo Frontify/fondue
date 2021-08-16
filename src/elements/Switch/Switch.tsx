@@ -35,7 +35,6 @@ export type SwitchProps = {
     label?: string;
     name?: string;
     size?: SwitchSize;
-    labelLayout?: SwitchLabelLayout;
     onChange?: (e: MouseEvent) => void;
 };
 
@@ -47,17 +46,11 @@ export const Switch: FC<SwitchProps> = ({
     onChange,
     size = SwitchSize.Medium,
     on = false,
-    labelLayout = SwitchLabelLayout.Fill,
 }) => {
     const [id] = useState(propId || generateRandomId());
 
     return (
-        <div
-            className={merge([
-                "tw-flex tw-w-full tw-items-center tw-gap-2",
-                labelLayout === SwitchLabelLayout.Fill && "tw-justify-between",
-            ])}
-        >
+        <div className="tw-flex tw-w-full tw-items-center tw-justify-between tw-gap-2">
             {label && id && (
                 <InputLabel htmlFor={id} disabled={disabled}>
                     {label}
