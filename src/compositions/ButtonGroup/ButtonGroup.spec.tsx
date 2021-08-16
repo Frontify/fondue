@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
 import { mount } from "@cypress/react";
-import { ButtonGroup } from "./ButtonGroup";
 import { Button, ButtonSize, ButtonStyle } from "@elements/Button/Button";
 import IconReject from "@elements/Icon/Generated/IconReject";
+import React from "react";
+import { ButtonGroup } from "./ButtonGroup";
 
 describe("ButtonGroup Composition", () => {
     it("should render a button group with correct spacing for small buttons", () => {
@@ -70,6 +70,6 @@ describe("ButtonGroup Composition", () => {
 
         cy.get("[data-test-id=button-group]").as("ButtonGroup");
 
-        cy.get("@ButtonGroup").children().should("have.class", "tw-h-11");
+        cy.get("@ButtonGroup").children().should("have.class", "tw-h-12");
     });
 });

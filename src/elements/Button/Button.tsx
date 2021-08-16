@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, cloneElement, MouseEvent, ReactElement, ReactNode } from "react";
 import { IconSize } from "@elements/Icon/IconSize";
 import { merge } from "@utilities/merge";
+import React, { cloneElement, FC, MouseEvent, ReactElement, ReactNode } from "react";
 
 export enum ButtonStyle {
     Secondary = "Secondary",
@@ -19,8 +19,8 @@ export enum ButtonSize {
 
 const sizeClasses: Record<ButtonSize, string> = {
     [ButtonSize.Small]: "tw-px-3 tw-h-6 tw-text-xs",
-    [ButtonSize.Medium]: "tw-px-4 tw-h-8 tw-text-s",
-    [ButtonSize.Large]: "tw-px-6 tw-h-11 tw-text-m",
+    [ButtonSize.Medium]: "tw-px-4 tw-h-9 tw-text-s",
+    [ButtonSize.Large]: "tw-px-6 tw-h-12 tw-text-m",
 };
 
 const iconOnlySizeClasses: Record<ButtonSize, string> = {
@@ -30,9 +30,9 @@ const iconOnlySizeClasses: Record<ButtonSize, string> = {
 };
 
 const iconSpacing: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: "tw-mr-1",
-    [ButtonSize.Medium]: "tw-mr-1.5",
-    [ButtonSize.Large]: "tw-mr-2",
+    [ButtonSize.Small]: "tw--ml-0.5 tw-mr-1",
+    [ButtonSize.Medium]: "tw--ml-1 tw-mr-1.5",
+    [ButtonSize.Large]: "tw--ml-1 tw-mr-2",
 };
 
 const styles: Record<"solid" | "translucent", Record<ButtonStyle, string>> = {
