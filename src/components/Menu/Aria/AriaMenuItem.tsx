@@ -1,7 +1,7 @@
-import { useFocus } from "@react-aria/interactions";
-import { getFocusStyle } from "@utilities/focusStyle";
+import { useFocusRing } from "@react-aria/focus";
+import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { forwardRef, HTMLAttributes, useState } from "react";
+import React, { forwardRef, HTMLAttributes } from "react";
 import { ActionMenuItemType } from "../ActionMenu/ActionMenu";
 import { MenuItem } from "../MenuItem/MenuItem";
 import { MenuItemType } from "../SelectMenu";
@@ -15,8 +15,7 @@ export type AriaOptionProps = {
 export const AriaMenuItem = forwardRef<HTMLLIElement | null, AriaOptionProps>(
     ({ menuItem, ariaProps, isSelected }, ref) => {
         const { title, decorator, subtitle, size, style, disabled, selectionIndicator } = menuItem;
-        const [isFocused, setFocused] = useState(false);
-        const { focusProps } = useFocus({ onFocusChange: setFocused });
+        const { isFocusVisible, focusProps } = useFocusRing();
         return (
             <li
                 {...ariaProps}
@@ -25,7 +24,7 @@ export const AriaMenuItem = forwardRef<HTMLLIElement | null, AriaOptionProps>(
                 className={merge([
                     "tw-relative hover:tw-bg-black-0 tw-list-none tw-outline-none",
                     disabled && "tw-pointer-events-none tw-top-px",
-                    isFocused && getFocusStyle(false, true),
+                    isFocusVisible && FOCUS_STYLE_INSET,
                 ])}
                 ref={ref}
             >

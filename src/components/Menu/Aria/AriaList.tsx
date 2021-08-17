@@ -1,5 +1,5 @@
 import { useFocusRing } from "@react-aria/focus";
-import { getFocusStyle } from "@utilities/focusStyle";
+import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { forwardRef, HTMLAttributes, ReactNode } from "react";
 
@@ -18,7 +18,7 @@ export const AriaList = forwardRef<HTMLUListElement | null, AriaListProps>(({ ar
             ref={ref}
             className={merge([
                 "tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-border tw-border-black-10 tw-rounded tw-z-20",
-                isFocusVisible && getFocusStyle(false, true),
+                isFocusVisible && FOCUS_STYLE_INSET,
             ])}
         >
             {children}

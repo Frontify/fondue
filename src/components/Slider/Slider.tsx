@@ -5,7 +5,7 @@ import { useFocusRing } from "@react-aria/focus";
 import { useRadio, useRadioGroup } from "@react-aria/radio";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { useRadioGroupState } from "@react-stately/radio";
-import { getFocusStyle } from "@utilities/focusStyle";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import { AnimateSharedLayout, motion } from "framer-motion";
@@ -54,7 +54,7 @@ export const Slider: FC<SliderProps> = ({
             data-test-id="slider"
             className={merge([
                 "tw-relative tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none",
-                isFocusVisible && getFocusStyle(),
+                isFocusVisible && FOCUS_STYLE,
             ])}
         >
             <AnimateSharedLayout>

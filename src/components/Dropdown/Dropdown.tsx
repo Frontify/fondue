@@ -13,7 +13,7 @@ import { useFocus } from "@react-aria/interactions";
 import { DismissButton } from "@react-aria/overlays";
 import { HiddenSelect, useSelect } from "@react-aria/select";
 import { useSelectState } from "@react-stately/select";
-import { getFocusStyle } from "@utilities/focusStyle";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
@@ -87,7 +87,7 @@ export const Dropdown: FC<DropdownProps> = ({
                         : `tw-bg-white hover:tw-border-black-90 ${
                               isOpen ? "tw-border-black-90" : "tw-border-black-20"
                           }`,
-                    isFocusVisible && getFocusStyle(),
+                    isFocusVisible && FOCUS_STYLE,
                 ])}
             >
                 <HiddenSelect state={state} triggerRef={ref} />
@@ -118,7 +118,7 @@ export const Dropdown: FC<DropdownProps> = ({
                         aria-label="Clear selection"
                         className={merge([
                             "tw-p-0",
-                            isFocused && getFocusStyle(),
+                            isFocused && FOCUS_STYLE,
                             disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
                         ])}
                         onClick={() => {

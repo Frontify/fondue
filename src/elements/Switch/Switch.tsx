@@ -2,7 +2,7 @@
 
 import { InputLabel } from "@elements/InputLabel/InputLabel";
 import { useFocusRing } from "@react-aria/focus";
-import { getFocusStyle } from "@utilities/focusStyle";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import React, { FC, MouseEvent, useState } from "react";
@@ -69,7 +69,7 @@ export const Switch: FC<SwitchProps> = ({
                         ? "tw-bg-black-90 hover:tw-bg-black"
                         : "tw-bg-black-30 hover:tw-bg-black-60",
                     lineSizeClasses[size],
-                    isFocusVisible && getFocusStyle(),
+                    isFocusVisible && FOCUS_STYLE,
                 ])}
                 value={on.toString()}
                 onClick={onChange}

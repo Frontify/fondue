@@ -2,7 +2,7 @@
 
 import { IconSize } from "@elements/Icon/IconSize";
 import { useFocusRing } from "@react-aria/focus";
-import { getFocusStyle } from "@utilities/focusStyle";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, MouseEvent, ReactElement, ReactNode } from "react";
 
@@ -98,7 +98,7 @@ export const Button: FC<ButtonProps> = ({
                               "tw-not-allowed tw-pointer-events-none tw-text-black-40 dark:tw-text-black-60",
                               solid ? "tw-bg-black-5 dark:tw-bg-black-90" : "tw-bg-transparent",
                           ]
-                        : [isFocusVisible && getFocusStyle(), styles[solid ? "solid" : "translucent"][style]],
+                        : [isFocusVisible && FOCUS_STYLE, styles[solid ? "solid" : "translucent"][style]],
                 ),
             ])}
             disabled={disabled}

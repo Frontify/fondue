@@ -4,7 +4,7 @@ import IconReject from "@elements/Icon/Generated/IconReject";
 import IconView from "@elements/Icon/Generated/IconView";
 import IconViewSlash from "@elements/Icon/Generated/IconViewSlash";
 import { useFocusRing } from "@react-aria/focus";
-import { getFocusStyle } from "@utilities/focusStyle";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import React, { FC, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
@@ -102,7 +102,7 @@ export const TextInput: FC<TextInputProps> = ({
                 dotted ? "tw-border-dashed" : "tw-border-solid",
                 disabled
                     ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90 tw-cursor-not-allowed"
-                    : `${validationStyle[validation]} ${isFocusVisible && getFocusStyle()}`,
+                    : merge([validationStyle[validation], isFocusVisible && FOCUS_STYLE]),
             ])}
         >
             {decorator && (

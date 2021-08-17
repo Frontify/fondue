@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useFocusRing } from "@react-aria/focus";
-import { getFocusStyle } from "@utilities/focusStyle";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import React, { FC, PropsWithChildren, ReactNode, useState } from "react";
@@ -50,7 +50,7 @@ export const Textarea: FC<TextareaProps> = ({
                     disabled
                         ? "tw-border-black-5 tw-bg-black-5 tw-text-black-40"
                         : "tw-text-black tw-border-black-40 hover:tw-border-black-90",
-                    isFocusVisible && getFocusStyle(),
+                    isFocusVisible && FOCUS_STYLE,
                 ])}
                 disabled={disabled}
                 onBlur={(event) => onBlur && onBlur(event.target.value)}
