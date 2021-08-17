@@ -1,4 +1,5 @@
 import { useFocusRing } from "@react-aria/focus";
+import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { forwardRef, HTMLAttributes } from "react";
 import { ActionMenuItemType } from "../ActionMenu/ActionMenu";
@@ -15,16 +16,15 @@ export const AriaMenuItem = forwardRef<HTMLLIElement | null, AriaOptionProps>(
     ({ menuItem, ariaProps, isSelected }, ref) => {
         const { title, decorator, subtitle, size, style, disabled, selectionIndicator } = menuItem;
         const { isFocusVisible, focusProps } = useFocusRing();
-
         return (
             <li
                 {...ariaProps}
                 {...focusProps}
                 data-test-id="menu-item"
                 className={merge([
-                    "tw-relative hover:tw-bg-black-0 tw-list-none hover:tw-outline-none",
+                    "tw-relative hover:tw-bg-black-0 tw-list-none tw-outline-none",
                     disabled && "tw-pointer-events-none tw-top-px",
-                    isFocusVisible ? "tw-outline-violet" : "tw-outline-none",
+                    isFocusVisible && FOCUS_STYLE_INSET,
                 ])}
                 ref={ref}
             >

@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { InputLabel } from "@elements/InputLabel/InputLabel";
+import { useFocusRing } from "@react-aria/focus";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import React, { FC, MouseEvent, useState } from "react";
@@ -43,6 +45,7 @@ export const Switch: FC<SwitchProps> = ({
     on = false,
 }) => {
     const [id] = useState(propId || generateRandomId());
+    const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
         <div className="tw-flex tw-w-full tw-items-center tw-justify-between tw-gap-2">
@@ -52,6 +55,7 @@ export const Switch: FC<SwitchProps> = ({
                 </InputLabel>
             )}
             <button
+                {...focusProps}
                 id={id}
                 disabled={disabled}
                 name={name}
@@ -65,6 +69,7 @@ export const Switch: FC<SwitchProps> = ({
                         ? "tw-bg-black-90 hover:tw-bg-black"
                         : "tw-bg-black-30 hover:tw-bg-black-60",
                     lineSizeClasses[size],
+                    isFocusVisible && FOCUS_STYLE,
                 ])}
                 value={on.toString()}
                 onClick={onChange}

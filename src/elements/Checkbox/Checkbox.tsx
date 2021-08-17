@@ -1,14 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useRef } from "react";
 import IconCheck from "@elements/Icon/Generated/IconCheck";
 import IconMinus from "@elements/Icon/Generated/IconMinus";
 import { InputLabel } from "@elements/InputLabel/InputLabel";
 import { useCheckbox } from "@react-aria/checkbox";
 import { useFocusRing } from "@react-aria/focus";
 import { useToggleState } from "@react-stately/toggle";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
+import React, { FC, useRef } from "react";
 
 export enum CheckboxStyle {
     Default = "Default",
@@ -96,7 +97,7 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
                     aria-hidden="true"
                     className={merge([
                         "tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-flex-shrink-0",
-                        isFocusVisible && "tw-outline-violet",
+                        isFocusVisible && FOCUS_STYLE,
                         disabled
                             ? merge([
                                   "tw-text-white tw-pointer-events-none",

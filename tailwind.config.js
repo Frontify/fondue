@@ -22,6 +22,9 @@ module.exports = {
             "mid-bottom": "0 10px 10px -5px rgba(45, 50, 50, 0.1)",
             none: "none",
         },
+        ringColor: {
+            blue: "#5e9ed6",
+        },
         colors: {
             transparent: "transparent",
             current: "currentColor",

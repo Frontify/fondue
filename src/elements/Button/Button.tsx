@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from "@elements/Icon/IconSize";
+import { useFocusRing } from "@react-aria/focus";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, MouseEvent, ReactElement, ReactNode } from "react";
 
@@ -82,9 +84,11 @@ export const Button: FC<ButtonProps> = ({
     onClick,
 }) => {
     const wrap = (child: ReactNode) => (children ? <span className={iconSpacing[size]}>{child}</span> : child);
+    const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
         <button
+            {...focusProps}
             className={merge([
                 "tw-outline-none tw-relative tw-flex tw-items-center tw-justify-center tw-border-0 tw-rounded tw-cursor-pointer tw-font-sans tw-transition-colors",
                 icon && !children ? iconOnlySizeClasses[size] : sizeClasses[size],
@@ -94,10 +98,7 @@ export const Button: FC<ButtonProps> = ({
                               "tw-not-allowed tw-pointer-events-none tw-text-black-40 dark:tw-text-black-60",
                               solid ? "tw-bg-black-5 dark:tw-bg-black-90" : "tw-bg-transparent",
                           ]
-                        : [
-                              "focus:tw-outline-none focus:tw-ring-4 focus:tw-border-violet-70",
-                              styles[solid ? "solid" : "translucent"][style],
-                          ],
+                        : [isFocusVisible && FOCUS_STYLE, styles[solid ? "solid" : "translucent"][style]],
                 ),
             ])}
             disabled={disabled}

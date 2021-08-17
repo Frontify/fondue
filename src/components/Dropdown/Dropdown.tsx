@@ -8,9 +8,12 @@ import IconReject from "@elements/Icon/Generated/IconReject";
 import { IconSize } from "@elements/Icon/IconSize";
 import useClickOutside from "@hooks/useClickOutside";
 import { useButton } from "@react-aria/button";
-import { useFocusRing } from "@react-aria/focus";
+import { FocusScope, useFocusRing } from "@react-aria/focus";
+import { useFocus } from "@react-aria/interactions";
+import { DismissButton } from "@react-aria/overlays";
 import { HiddenSelect, useSelect } from "@react-aria/select";
 import { useSelectState } from "@react-stately/select";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
@@ -63,10 +66,14 @@ export const Dropdown: FC<DropdownProps> = ({
     const ref = useRef<HTMLButtonElement | null>(null);
     const { triggerProps, valueProps, menuProps } = useSelect(props, state, ref);
     const { buttonProps } = useButton(triggerProps, ref);
-    const { isOpen } = state;
+    const { isOpen, setSelectedKey, selectionManager, close } = state;
     const { isFocusVisible, focusProps } = useFocusRing();
+    const [isFocused, setFocused] = useState(false);
+    const { focusProps: clearableFocusProps } = useFocus({
+        onFocusChange: setFocused,
+    });
 
-    useClickOutside(dropdownElement.current, () => state.close());
+    useClickOutside(dropdownElement.current, () => close());
 
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s" ref={dropdownElement}>
@@ -80,6 +87,7 @@ export const Dropdown: FC<DropdownProps> = ({
                         : `tw-bg-white hover:tw-border-black-90 ${
                               isOpen ? "tw-border-black-90" : "tw-border-black-20"
                           }`,
+                    isFocusVisible && FOCUS_STYLE,
                 ])}
             >
                 <HiddenSelect state={state} triggerRef={ref} />
@@ -90,9 +98,8 @@ export const Dropdown: FC<DropdownProps> = ({
                     ref={ref}
                     data-test-id="dropdown-trigger"
                     className={merge([
-                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left",
+                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none",
                         size === DropdownSize.Small ? "tw-p-3 tw-min-h-[36px]" : "tw-p-5 tw-min-h-[60px]",
-                        isFocusVisible ? "tw-outline-violet" : "tw-outline-none",
                         !activeItem && "tw-text-black-60",
                         disabled && "tw-text-black-40",
                     ])}
@@ -106,15 +113,18 @@ export const Dropdown: FC<DropdownProps> = ({
                 </button>
                 {clearable && activeItem && (
                     <button
+                        {...clearableFocusProps}
                         data-test-id="dropdown-clear-button"
                         aria-label="Clear selection"
                         className={merge([
-                            "tw-p-0 focus:tw-outline-violet",
+                            "tw-p-0",
+                            isFocused && FOCUS_STYLE,
                             disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
                         ])}
                         onClick={() => {
-                            state.setSelectedKey("");
-                            state.selectionManager.setFocusedKey(state.collection.getFirstKey() || "");
+                            setFocused(false);
+                            setSelectedKey("");
+                            selectionManager.setFocusedKey(state.collection.getFirstKey() || "");
                         }}
                     >
                         <IconReject size={IconSize.Size12} />
@@ -146,7 +156,11 @@ export const Dropdown: FC<DropdownProps> = ({
                         exit={{ height: 0 }}
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
-                        <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} />
+                        <FocusScope restoreFocus>
+                            <DismissButton onDismiss={() => close()} />
+                            <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} />
+                            <DismissButton onDismiss={() => close()} />
+                        </FocusScope>
                     </motion.div>
                 )}
             </AnimatePresence>

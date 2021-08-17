@@ -4,6 +4,8 @@ import IconQuestion from "@elements/Icon/Generated/IconQuestion";
 import { IconSize } from "@elements/Icon/IconSize";
 import { useTooltip, useTooltipTrigger } from "@react-aria/tooltip";
 import { useTooltipTriggerState } from "@react-stately/tooltip";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { merge } from "@utilities/merge";
 import React, { FC, ReactNode, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 
@@ -41,7 +43,10 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip }) => {
                 ref={setTooltipTriggerElement}
                 onMouseEnter={() => state.open()}
                 onMouseLeave={() => state.close(true)}
-                className="tw-inline-flex tw-items-center tw-justify-center tw-text-black-60 hover:tw-text-black dark:tw-text-black-40 dark:hover:white tw-cursor-default"
+                className={merge([
+                    "tw-inline-flex tw-items-center tw-justify-center tw-text-black-60 hover:tw-text-black dark:tw-text-black-40 dark:hover:white tw-cursor-default tw-outline-none",
+                    isOpen && FOCUS_STYLE,
+                ])}
             >
                 <IconQuestion size={IconSize.Size16} />
             </button>
