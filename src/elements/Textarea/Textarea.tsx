@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
-import React, { FC, PropsWithChildren, ReactNode, useState } from "react";
+import React, { FC, PropsWithChildren, ReactNode } from "react";
 
 export type TextareaProps = PropsWithChildren<{
     id?: string;
@@ -17,7 +17,7 @@ export type TextareaProps = PropsWithChildren<{
 }>;
 
 export const Textarea: FC<TextareaProps> = ({
-    id: propsId,
+    id: propId,
     children,
     required = false,
     decorator,
@@ -26,7 +26,6 @@ export const Textarea: FC<TextareaProps> = ({
     onInput,
     onBlur,
 }) => {
-    const [id] = useState(propsId || generateRandomId());
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
@@ -41,7 +40,7 @@ export const Textarea: FC<TextareaProps> = ({
             )}
             <textarea
                 {...focusProps}
-                id={id}
+                id={useMemoizedId(propId)}
                 placeholder={placeholder}
                 required={required}
                 className={merge([

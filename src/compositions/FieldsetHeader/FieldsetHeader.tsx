@@ -5,9 +5,9 @@ import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import IconMinus from "@elements/Icon/Generated/IconMinus";
 import { IconSize } from "@elements/Icon/IconSize";
 import { Switch, SwitchSize } from "@elements/Switch/Switch";
-import generateRandomId from "@utilities/generateRandomId";
+import { useMemoizedId } from "@hooks/useMemoizedId";
 import { merge } from "@utilities/merge";
-import React, { cloneElement, FC, isValidElement, ReactNode, useState } from "react";
+import React, { cloneElement, FC, isValidElement, ReactNode } from "react";
 
 export enum FieldsetHeaderSize {
     Small = "Small",
@@ -81,7 +81,7 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
     as: Heading = "label",
     tabIndex = -1,
 }) => {
-    const [id] = useState(generateRandomId());
+    const id = useMemoizedId();
 
     return (
         <header

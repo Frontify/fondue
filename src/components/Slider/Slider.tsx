@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconProps } from "@elements/Icon/IconProps";
+import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { useRadio, useRadioGroup } from "@react-aria/radio";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { useRadioGroupState } from "@react-stately/radio";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import { AnimateSharedLayout, motion } from "framer-motion";
-import React, { FC, ReactElement, useRef, useState } from "react";
+import React, { FC, ReactElement, useRef } from "react";
 
 export type IconItem = {
     id: string;
@@ -41,7 +41,7 @@ export const Slider: FC<SliderProps> = ({
     ariaLabel = "Slider",
     disabled = false,
 }) => {
-    const [id] = useState(propId || generateRandomId());
+    const id = useMemoizedId(propId);
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
     const radioGroupState = useRadioGroupState(groupProps);
     const { radioGroupProps } = useRadioGroup(groupProps, radioGroupState);

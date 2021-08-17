@@ -3,11 +3,11 @@
 import IconCheck from "@elements/Icon/Generated/IconCheck";
 import IconMinus from "@elements/Icon/Generated/IconMinus";
 import { InputLabel } from "@elements/InputLabel/InputLabel";
+import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useCheckbox } from "@react-aria/checkbox";
 import { useFocusRing } from "@react-aria/focus";
 import { useToggleState } from "@react-stately/toggle";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import React, { FC, useRef } from "react";
 
@@ -56,7 +56,7 @@ const isCheckedOrMixed = (checked: CheckboxState): boolean => {
 };
 
 export const Checkbox: FC<CheckboxProps> = (props) => {
-    const id = props.id || generateRandomId();
+    const id = useMemoizedId(props.id);
     const {
         state = CheckboxState.Unchecked,
         disabled,
