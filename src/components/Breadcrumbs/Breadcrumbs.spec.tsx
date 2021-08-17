@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
 import { mount } from "@cypress/react";
+import React from "react";
 import { Breadcrumbs } from "./Breadcrumbs";
 
 beforeEach("Getting the seperator", () => {
@@ -9,6 +9,7 @@ beforeEach("Getting the seperator", () => {
 });
 
 const BREADCRUMB_ITEM_ID = "[data-test-id=breadcrumb-item]";
+
 describe("Breadcrumb component", () => {
     it("should render single item as current", () => {
         const breadcrumbItems = [{ label: "Some label", link: "/some-link" }];
@@ -30,5 +31,19 @@ describe("Breadcrumb component", () => {
 
         cy.get(BREADCRUMB_ITEM_ID).should("have.length", 3);
         cy.get(BREADCRUMB_ITEM_ID).eq(2).find("a").should("have.attr", "aria-current", "page");
+    });
+
+    it("should render item with onClick action", () => {
+        const onClickStub = cy.stub().as("onClickStub");
+        const breadcrumbItems = [
+            { label: "Some first label", link: "/some-first-link" },
+            { label: "Some second label", onClick: onClickStub },
+        ];
+
+        mount(<Breadcrumbs items={breadcrumbItems} />);
+
+        cy.get("@onClickStub").should("not.be.called");
+        cy.get(BREADCRUMB_ITEM_ID).last().get("button").click();
+        cy.get("@onClickStub").should("be.calledOnce");
     });
 });
