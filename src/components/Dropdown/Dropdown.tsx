@@ -66,12 +66,7 @@ export const Dropdown: FC<DropdownProps> = ({
     const ref = useRef<HTMLButtonElement | null>(null);
     const { triggerProps, valueProps, menuProps } = useSelect(props, state, ref);
     const { buttonProps } = useButton(triggerProps, ref);
-    const {
-        isOpen,
-        setSelectedKey,
-        selectionManager: { setFocusedKey },
-        close,
-    } = state;
+    const { isOpen, setSelectedKey, selectionManager, close } = state;
     const { isFocusVisible, focusProps } = useFocusRing();
     const [isFocused, setFocused] = useState(false);
     const { focusProps: clearableFocusProps } = useFocus({
@@ -129,7 +124,7 @@ export const Dropdown: FC<DropdownProps> = ({
                         onClick={() => {
                             setFocused(false);
                             setSelectedKey("");
-                            setFocusedKey(state.collection.getFirstKey() || "");
+                            selectionManager.setFocusedKey(state.collection.getFirstKey() || "");
                         }}
                     >
                         <IconReject size={IconSize.Size12} />
