@@ -42,6 +42,7 @@ const rollupConfig = [
                 extract: "index.css",
             }),
             peerDepsExternal(),
+            commonJs(),
         ],
         output: [
             {
