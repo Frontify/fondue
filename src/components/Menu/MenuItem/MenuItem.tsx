@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { MenuItemContent, MenuItemContentProps, MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
 import IconCaretRight from "@elements/Icon/Generated/IconCaretRight";
 import IconCheck from "@elements/Icon/Generated/IconCheck";
 import { IconSize } from "@elements/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { FC } from "react";
-import { MenuItemContent, MenuItemContentProps, MenuItemContentSize } from "./MenuItemContent";
 
 export enum MenuItemStyle {
     Primary = "Primary",

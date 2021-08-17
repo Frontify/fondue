@@ -11,6 +11,7 @@ export * from "./elements/Button/Button";
 export * from "./compositions/ButtonGroup/ButtonGroup";
 export * from "./elements/Checkbox/Checkbox";
 export * from "./compositions/Checklist/Checklist";
+export * from "./components/Breadcrumbs/CurrentBreadcrumbItem";
 export * from "./elements/Divider/Divider";
 export * from "./components/Dropdown/Dropdown";
 export * from "./compositions/FieldsetHeader/FieldsetHeader";

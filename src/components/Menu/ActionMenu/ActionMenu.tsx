@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { AriaList } from "@components/Menu/Aria/AriaList";
+import { AriaMenuItem } from "@components/Menu/Aria/AriaMenuItem";
+import { AriaSection } from "@components/Menu/Aria/AriaSection";
+import { getDisabledItemIds, getKeyItemRecord, getMenuItems, mapToAriaProps } from "@components/Menu/Aria/helper";
+import { MenuItemType } from "@components/Menu/SelectMenu";
 import { useMenu, useMenuItem, useMenuSection } from "@react-aria/menu";
 import { useTreeState } from "@react-stately/tree";
 import React, { ReactElement, useRef } from "react";
-import { AriaList } from "../Aria/AriaList";
-import { AriaMenuItem } from "../Aria/AriaMenuItem";
-import { AriaSection } from "../Aria/AriaSection";
-import { getDisabledItemIds, getKeyItemRecord, getMenuItems, mapToAriaProps } from "../Aria/helper";
-import { MenuItemType } from "../SelectMenu";
 
 export type ActionMenuItemType = MenuItemType & { onClick: () => void };
 
