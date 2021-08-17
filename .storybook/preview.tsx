@@ -8,7 +8,7 @@ export const parameters = {
         },
     },
     darkMode: {
-        darkClass: "dark",
+        darkClass: "tw-dark",
         classTarget: "html",
         stylePreview: true,
         dark: { ...dark },
