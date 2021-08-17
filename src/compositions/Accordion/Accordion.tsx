@@ -6,6 +6,7 @@ import { useFocusRing } from "@react-aria/focus";
 import { Item as StatelyItem } from "@react-stately/collections";
 import { TreeState, useTreeState } from "@react-stately/tree";
 import { Node } from "@react-types/shared";
+import { getFocusStyle } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { Children, FC, isValidElement, PropsWithChildren, ReactElement, useRef } from "react";
@@ -49,10 +50,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                         buttonProps.onKeyUp(event);
                     }
                 }}
-                className={merge([
-                    "tw-w-full tw-px-8 tw-py-7",
-                    isFocusVisible ? "tw-outline-violet" : "tw-outline-none",
-                ])}
+                className={merge(["tw-w-full tw-px-8 tw-py-7", isFocusVisible && getFocusStyle()])}
             >
                 <FieldsetHeader {...header} active={isOpen} onClick={undefined} />
             </button>

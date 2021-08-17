@@ -3,6 +3,8 @@
 import IconReject from "@elements/Icon/Generated/IconReject";
 import IconView from "@elements/Icon/Generated/IconView";
 import IconViewSlash from "@elements/Icon/Generated/IconViewSlash";
+import { useFocusRing } from "@react-aria/focus";
+import { getFocusStyle } from "@utilities/focusStyle";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import React, { FC, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
@@ -81,6 +83,7 @@ export const TextInput: FC<TextInputProps> = ({
     onClear,
 }) => {
     const [id] = useState(propsId || generateRandomId());
+    const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const inputElement = useRef<HTMLInputElement | null>(null);
     const [isObfuscated, setIsObfuscated] = useState(
         typeof obfuscated === "boolean" ? obfuscated : type === TextInputType.Password,
@@ -93,12 +96,13 @@ export const TextInput: FC<TextInputProps> = ({
 
     return (
         <div
+            {...focusProps}
             className={merge([
                 "tw-flex tw-items-center tw-py-2 tw-gap-2 tw-px-3 tw-border tw-rounded tw-font-sans tw-relative",
                 dotted ? "tw-border-dashed" : "tw-border-solid",
                 disabled
                     ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90 tw-cursor-not-allowed"
-                    : `${validationStyle[validation]} focus-within:tw-border-black-90`,
+                    : `${validationStyle[validation]} ${isFocusVisible && getFocusStyle()}`,
             ])}
         >
             {decorator && (

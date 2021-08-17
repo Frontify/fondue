@@ -5,6 +5,7 @@ import { useFocusRing } from "@react-aria/focus";
 import { useRadio, useRadioGroup } from "@react-aria/radio";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { useRadioGroupState } from "@react-stately/radio";
+import { getFocusStyle } from "@utilities/focusStyle";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import { AnimateSharedLayout, motion } from "framer-motion";
@@ -44,13 +45,17 @@ export const Slider: FC<SliderProps> = ({
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
     const radioGroupState = useRadioGroupState(groupProps);
     const { radioGroupProps } = useRadioGroup(groupProps, radioGroupState);
-    const { isFocusVisible, focusProps } = useFocusRing();
+    const { isFocusVisible, focusProps } = useFocusRing({ within: true });
 
     return (
         <ul
             {...radioGroupProps}
+            {...focusProps}
             data-test-id="slider"
-            className="tw-relative tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none"
+            className={merge([
+                "tw-relative tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none",
+                isFocusVisible && getFocusStyle(),
+            ])}
         >
             <AnimateSharedLayout>
                 {items.map((item, index) => {
@@ -74,11 +79,7 @@ export const Slider: FC<SliderProps> = ({
                                     layoutId={id}
                                     className={merge([
                                         "tw-absolute tw--inset-px tw-border tw-rounded",
-                                        disabled
-                                            ? "tw-border-black-20 tw-bg-black-0"
-                                            : isFocusVisible
-                                            ? "tw-border-violet-60 tw-bg-white"
-                                            : "tw-border-black tw-bg-white",
+                                        disabled ? "tw-border-black-20 tw-bg-black-0" : "tw-border-black tw-bg-white",
                                     ])}
                                     // Since framer-motion sets `visibility` to `visible` which leads
                                     // to undesired side effects for example when this component is
@@ -99,7 +100,6 @@ export const Slider: FC<SliderProps> = ({
                                 <VisuallyHidden>
                                     <input
                                         {...inputProps}
-                                        {...focusProps}
                                         data-test-id="slider-input"
                                         value={item.id}
                                         ref={ref}
