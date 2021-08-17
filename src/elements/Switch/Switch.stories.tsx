@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from "react";
 import { Meta, Story } from "@storybook/react";
+import React, { useEffect, useState } from "react";
 import { Switch, SwitchProps, SwitchSize } from "./Switch";
 
 export default {
@@ -22,7 +22,9 @@ export default {
     },
 } as Meta<SwitchProps>;
 
-export const Template: Story<SwitchProps> = (args: SwitchProps) => {
+type Props = SwitchProps & { hug?: boolean };
+
+export const Default: Story<Props> = (args: Props) => {
     const [on, setOn] = useState(args.on);
     const toggle = () => setOn(!on);
 
@@ -30,5 +32,13 @@ export const Template: Story<SwitchProps> = (args: SwitchProps) => {
         setOn(args.on);
     }, [args.on]);
 
-    return <Switch {...args} onChange={toggle} on={on} />;
+    return args.hug ? (
+        <span className="tw-inline-block">
+            <Switch {...args} onChange={toggle} on={on} />
+        </span>
+    ) : (
+        <Switch {...args} onChange={toggle} on={on} />
+    );
 };
+
+export const HugLabel: Story<Props> = (args) => <Default {...args} hug={true} />;

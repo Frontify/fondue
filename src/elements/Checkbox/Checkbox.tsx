@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { FC, useRef } from "react";
 import IconCheck from "@elements/Icon/Generated/IconCheck";
 import IconMinus from "@elements/Icon/Generated/IconMinus";
 import { InputLabel } from "@elements/InputLabel/InputLabel";
@@ -8,7 +9,6 @@ import { useFocusRing } from "@react-aria/focus";
 import { useToggleState } from "@react-stately/toggle";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
-import React, { FC, useRef, useState } from "react";
 
 export enum CheckboxStyle {
     Default = "Default",
@@ -55,7 +55,7 @@ const isCheckedOrMixed = (checked: CheckboxState): boolean => {
 };
 
 export const Checkbox: FC<CheckboxProps> = (props) => {
-    const [id] = useState(props.id || generateRandomId());
+    const id = props.id || generateRandomId();
     const {
         state = CheckboxState.Unchecked,
         disabled,

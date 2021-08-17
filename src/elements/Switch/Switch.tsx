@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { MouseEvent, FC } from "react";
 import { InputLabel } from "@elements/InputLabel/InputLabel";
 import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
+import React, { FC, MouseEvent, useState } from "react";
 
 export enum SwitchSize {
     Small = "Small",
@@ -42,10 +42,10 @@ export const Switch: FC<SwitchProps> = ({
     size = SwitchSize.Medium,
     on = false,
 }) => {
-    const id = propId || generateRandomId();
+    const [id] = useState(propId || generateRandomId());
 
     return (
-        <div className="tw-flex tw-w-full tw-items-center tw-justify-between tw-gap-1">
+        <div className="tw-flex tw-w-full tw-items-center tw-justify-between tw-gap-2">
             {label && id && (
                 <InputLabel htmlFor={id} disabled={disabled}>
                     {label}
@@ -57,7 +57,7 @@ export const Switch: FC<SwitchProps> = ({
                 name={name}
                 data-test-id="switch"
                 className={merge([
-                    "tw-inline-flex tw-border-0 tw-rounded-full tw-transition-colors",
+                    "tw-inline-flex tw-border-0 tw-rounded-full tw-transition-colors tw-flex-shrink-0",
                     size !== SwitchSize.Small ? "tw-py-0 tw-px-[0.125rem]" : "tw-p-0",
                     disabled
                         ? "tw-bg-black-10 tw-pointer-events-none"

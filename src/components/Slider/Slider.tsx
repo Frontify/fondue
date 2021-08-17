@@ -33,15 +33,14 @@ export type SliderProps = {
 const isIconItem = (item: TextItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
 
 export const Slider: FC<SliderProps> = ({
-    id,
+    id: propId,
     items,
     activeItemId,
     onChange,
     ariaLabel = "Slider",
     disabled = false,
 }) => {
-    const [generatedId] = useState(generateRandomId());
-    const randomId = id || generatedId;
+    const [id] = useState(propId || generateRandomId());
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
     const radioGroupState = useRadioGroupState(groupProps);
     const { radioGroupProps } = useRadioGroup(groupProps, radioGroupState);
@@ -71,8 +70,8 @@ export const Slider: FC<SliderProps> = ({
                         <li key={item.id} className="tw-relative">
                             {isActive && (
                                 <motion.div
-                                    key={randomId}
-                                    layoutId={randomId}
+                                    key={id}
+                                    layoutId={id}
                                     className={merge([
                                         "tw-absolute tw--inset-px tw-border tw-rounded",
                                         disabled
