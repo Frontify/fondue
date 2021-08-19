@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { InputLabel } from "@elements/InputLabel/InputLabel";
+import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
-import React, { FC, MouseEvent, useState } from "react";
+import React, { FC, MouseEvent } from "react";
 
 export enum SwitchSize {
     Small = "Small",
@@ -44,7 +44,7 @@ export const Switch: FC<SwitchProps> = ({
     size = SwitchSize.Medium,
     on = false,
 }) => {
-    const [id] = useState(propId || generateRandomId());
+    const id = useMemoizedId(propId);
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (

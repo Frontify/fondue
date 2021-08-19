@@ -3,9 +3,9 @@
 import IconReject from "@elements/Icon/Generated/IconReject";
 import IconView from "@elements/Icon/Generated/IconView";
 import IconViewSlash from "@elements/Icon/Generated/IconViewSlash";
+import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import React, { FC, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 
@@ -67,7 +67,7 @@ export type TextInputProps =
       } & TextInputBaseProps);
 
 export const TextInput: FC<TextInputProps> = ({
-    id: propsId,
+    id: propId,
     type = TextInputType.Text,
     decorator,
     validation = Validation.Default,
@@ -82,7 +82,6 @@ export const TextInput: FC<TextInputProps> = ({
     onBlur,
     onClear,
 }) => {
-    const [id] = useState(propsId || generateRandomId());
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const inputElement = useRef<HTMLInputElement | null>(null);
     const [isObfuscated, setIsObfuscated] = useState(
@@ -117,7 +116,7 @@ export const TextInput: FC<TextInputProps> = ({
                 </div>
             )}
             <input
-                id={id}
+                id={useMemoizedId(propId)}
                 ref={inputElement}
                 className={merge([
                     "tw-flex-grow tw-border-none tw-outline-none tw-bg-transparent",

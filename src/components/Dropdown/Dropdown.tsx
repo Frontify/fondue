@@ -7,6 +7,7 @@ import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import IconReject from "@elements/Icon/Generated/IconReject";
 import { IconSize } from "@elements/Icon/IconSize";
 import useClickOutside from "@hooks/useClickOutside";
+import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
 import { useFocus } from "@react-aria/interactions";
@@ -14,7 +15,6 @@ import { DismissButton } from "@react-aria/overlays";
 import { HiddenSelect, useSelect } from "@react-aria/select";
 import { useSelectState } from "@react-stately/select";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import generateRandomId from "@utilities/generateRandomId";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, useRef, useState } from "react";
@@ -53,7 +53,6 @@ export const Dropdown: FC<DropdownProps> = ({
     clearable = false,
     ariaLabel = "Dropdown",
 }) => {
-    const [id] = useState(propId || generateRandomId());
     const dropdownElement = useRef<HTMLDivElement | null>(null);
     const activeItem = getActiveItem(menuBlocks, activeItemId);
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -94,7 +93,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 <button
                     {...buttonProps}
                     {...focusProps}
-                    id={id}
+                    id={useMemoizedId(propId)}
                     ref={ref}
                     data-test-id="dropdown-trigger"
                     className={merge([
