@@ -59,6 +59,7 @@ const rollupConfig = [
     }),
     bundle({
         plugins: [dts()],
+        external: ["tailwindcss/tailwind.css"],
         output: {
             file: `${name}.d.ts`,
             format: "es",

@@ -5,7 +5,7 @@ import { resolve } from "path";
 //@ts-ignore
 import { startDevServer } from "@cypress/vite-dev-server";
 
-export default (on: any): any => {
+export default (on: any, config: any): any => {
     on("dev-server:start", (options: any) => {
         return startDevServer({
             options,
@@ -14,4 +14,6 @@ export default (on: any): any => {
             },
         });
     });
+
+    return config;
 };

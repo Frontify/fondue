@@ -2,14 +2,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { AriaList } from "@components/Menu/Aria/AriaList";
+import { AriaMenuItem } from "@components/Menu/Aria/AriaMenuItem";
+import { AriaSection } from "@components/Menu/Aria/AriaSection";
+import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
+import { MenuItemProps } from "@components/Menu/MenuItem/MenuItem";
 import { AriaListBoxOptions, useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
 import { SelectState } from "@react-stately/select";
 import React, { ReactElement, useRef } from "react";
-import { AriaList } from "./Aria/AriaList";
-import { AriaMenuItem } from "./Aria/AriaMenuItem";
-import { AriaSection } from "./Aria/AriaSection";
-import { getKeyItemRecord, getMenuItems } from "./Aria/helper";
-import { MenuItemProps } from "./MenuItem/MenuItem";
 
 export type MenuItemType = MenuItemProps & { id: string };
 
