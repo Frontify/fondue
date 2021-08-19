@@ -9,7 +9,7 @@ import { Node } from "@react-types/shared";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { Children, FC, isValidElement, PropsWithChildren, ReactElement, useRef } from "react";
+import React, { Children, FC, isValidElement, PropsWithChildren, ReactElement, ReactNode, useRef } from "react";
 
 export type AccordionItemProps = PropsWithChildren<{ header: FieldsetHeaderProps }>;
 
@@ -88,10 +88,10 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
 };
 
 export type AccordionProps = {
-    children: ReactElement<AccordionItemProps> | ReactElement<AccordionItemProps>[];
+    children?: ReactNode;
 };
 
-const mapToAriaProps = ({ children }: AccordionProps) => ({
+const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => ({
     children: Children.map(children, (child, index) => {
         const { header, children } = child.props;
 
@@ -104,24 +104,24 @@ const mapToAriaProps = ({ children }: AccordionProps) => ({
 });
 
 const filterValidChildren = ({ children }: AccordionProps) =>
-    Children.map(children, (child) => {
-        if (!isValidElement(child)) {
-            return null;
-        }
-
-        if (!child.props.header) {
+    Children.toArray(children).reduce<ReactElement<AccordionItemProps>[]>((validChildren, child) => {
+        if (isValidElement(child) && !child.props.header) {
             console.warn("Use `AccordionItem` as children of `Accordion` and set the `header` prop accordingly.");
-            return null;
+            return validChildren;
         }
 
-        return child;
-    }).filter(Boolean);
+        if (isValidElement(child)) {
+            validChildren.push(child);
+        }
+
+        return validChildren;
+    }, []);
 
 export const AccordionItem = ({ children }: AccordionItemProps): ReactElement => <>{children}</>;
 
 export const Accordion: FC<AccordionProps> = (props) => {
     const children = filterValidChildren(props);
-    const ariaProps = mapToAriaProps({ children });
+    const ariaProps = mapToAriaProps(children);
     const ref = useRef<HTMLDivElement | null>(null);
     const state = useTreeState<AccordionItemProps>(ariaProps);
     const { accordionProps } = useAccordion(ariaProps, state, ref);
