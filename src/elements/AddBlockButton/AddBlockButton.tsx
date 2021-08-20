@@ -43,8 +43,8 @@ export const AddBlockButton: FC<AddBlockButtonProps> = ({
                     clipPath: `path(
                         "M27.3333 10.9369L21.7246 2C20.5 0.5 19.5 0 18 0H4C1.79086 0 0 1.79086 0 4V20C0 22.2091 1.79086 24 4 24H18C19.5 24 20.5 23.5 21.7246 22L27.3333 13.0631C27.7412 12.4131 27.7412 11.5869 27.3333 10.9369Z"
                     )`,
-                }}>
-
+                }}
+            >
                 <IconAddSimple size={IconSize.Size16} />
             </span>
         </button>
