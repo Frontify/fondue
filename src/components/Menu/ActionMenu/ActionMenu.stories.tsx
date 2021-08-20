@@ -6,7 +6,7 @@ import IconAudio from "@elements/Icon/Generated/IconAudio";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
-import { ActionMenu as ActionMenuComponent, ActionMenuProps } from "./ActionMenu/ActionMenu";
+import { ActionMenu as ActionMenuComponent, ActionMenuProps } from "./ActionMenu";
 
 export default {
     title: "Components/Menu",

@@ -6,12 +6,11 @@ import { MenuBlock, SelectMenu } from "@components/Menu/SelectMenu";
 import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import IconReject from "@elements/Icon/Generated/IconReject";
 import { IconSize } from "@elements/Icon/IconSize";
-import useClickOutside from "@hooks/useClickOutside";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
 import { useFocus } from "@react-aria/interactions";
-import { DismissButton } from "@react-aria/overlays";
+import { DismissButton, useOverlay } from "@react-aria/overlays";
 import { HiddenSelect, useSelect } from "@react-aria/select";
 import { useSelectState } from "@react-stately/select";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
@@ -36,24 +35,23 @@ export type DropdownProps = {
     ariaLabel?: string;
 };
 
-const getActiveItem = (menuBlocks: MenuBlock[], id: string) =>
-    menuBlocks
-        .map((block) => block.menuItems)
+const getActiveItem = (blocks: MenuBlock[], active?: string) =>
+    blocks
+        .map(({ menuItems }) => menuItems)
         .flat()
-        .find((item) => item.id === id) || null;
+        .find(({ id }) => id === active) || null;
 
 export const Dropdown: FC<DropdownProps> = ({
     id: propId,
     menuBlocks,
     onChange,
-    activeItemId = "",
+    activeItemId,
     placeholder = "Select item",
     size = DropdownSize.Small,
     disabled = false,
     clearable = false,
     ariaLabel = "Dropdown",
 }) => {
-    const dropdownElement = useRef<HTMLDivElement | null>(null);
     const activeItem = getActiveItem(menuBlocks, activeItemId);
     const props = mapToAriaProps(ariaLabel, menuBlocks);
     const state = useSelectState({
@@ -65,28 +63,32 @@ export const Dropdown: FC<DropdownProps> = ({
     const ref = useRef<HTMLButtonElement | null>(null);
     const { triggerProps, valueProps, menuProps } = useSelect(props, state, ref);
     const { buttonProps } = useButton(triggerProps, ref);
-    const { isOpen, setSelectedKey, selectionManager, close } = state;
+    const { isOpen } = state;
     const { isFocusVisible, focusProps } = useFocusRing();
     const [isFocused, setFocused] = useState(false);
     const { focusProps: clearableFocusProps } = useFocus({
         onFocusChange: setFocused,
     });
-
-    useClickOutside(dropdownElement.current, () => close());
+    const overlayRef = useRef<HTMLDivElement | null>(null);
+    const { overlayProps } = useOverlay(
+        { isOpen, onClose: () => state.close(), shouldCloseOnBlur: true, isDismissable: true },
+        overlayRef,
+    );
 
     return (
-        <div className="tw-relative tw-w-full tw-font-sans tw-text-s" ref={dropdownElement}>
+        <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
             <div
                 data-test-id="dropdown"
                 className={merge([
                     "tw-group tw-relative tw-flex tw-w-full tw-box-border tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors",
                     size === DropdownSize.Small ? "tw-pr-3 tw-min-h-[36px]" : "tw-pr-5 tw-min-h-[60px]",
+                    isFocusVisible && FOCUS_STYLE,
                     disabled
                         ? "tw-border-black-5 tw-bg-black-5 tw-pointer-events-none"
-                        : `tw-bg-white hover:tw-border-black-90 ${
-                              isOpen ? "tw-border-black-90" : "tw-border-black-20"
-                          }`,
-                    isFocusVisible && FOCUS_STYLE,
+                        : merge([
+                              "tw-bg-white hover:tw-border-black-90",
+                              isOpen ? "tw-border-black-90" : "tw-border-black-20",
+                          ]),
                 ])}
             >
                 <HiddenSelect state={state} triggerRef={ref} />
@@ -122,8 +124,11 @@ export const Dropdown: FC<DropdownProps> = ({
                         ])}
                         onClick={() => {
                             setFocused(false);
-                            setSelectedKey("");
-                            selectionManager.setFocusedKey(state.collection.getFirstKey() || "");
+                            state.setSelectedKey("");
+                            const first = state.collection.getFirstKey();
+                            if (first) {
+                                state.selectionManager.setFocusedKey(first);
+                            }
                         }}
                     >
                         <IconReject size={IconSize.Size12} />
@@ -156,9 +161,11 @@ export const Dropdown: FC<DropdownProps> = ({
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
                         <FocusScope restoreFocus>
-                            <DismissButton onDismiss={() => close()} />
-                            <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} />
-                            <DismissButton onDismiss={() => close()} />
+                            <div {...overlayProps} ref={overlayRef}>
+                                <DismissButton onDismiss={() => close()} />
+                                <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} />
+                                <DismissButton onDismiss={() => close()} />
+                            </div>
                         </FocusScope>
                     </motion.div>
                 )}
