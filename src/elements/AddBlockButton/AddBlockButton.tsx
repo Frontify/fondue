@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { MouseEvent, FC } from "react";
-import { IconSize } from "@elements/Icon/IconSize";
 import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
+import { IconSize } from "@elements/Icon/IconSize";
+import { useButton } from "@react-aria/button";
 import { useFocusRing } from "@react-aria/focus";
+import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
+import React, { FC, useRef } from "react";
 
 export enum AddBlockButtonDirection {
     Horizontal = "Horizontal",
@@ -13,7 +15,7 @@ export enum AddBlockButtonDirection {
 }
 
 export type AddBlockButtonProps = {
-    onClick: (event: MouseEvent) => void;
+    onClick: () => void;
     title?: string;
     orientation?: AddBlockButtonDirection;
 };
@@ -24,12 +26,13 @@ export const AddBlockButton: FC<AddBlockButtonProps> = ({
     orientation = AddBlockButtonDirection.Horizontal,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing();
+    const ref = useRef<HTMLButtonElement | null>(null);
+    const { buttonProps } = useButton({ onPress: () => onClick() }, ref);
 
     return (
         <button
-            {...focusProps}
+            {...mergeProps(buttonProps, focusProps)}
             title={title}
-            onClick={onClick}
             data-test-id="add-block-button"
             className={merge([
                 `tw-group tw-leading-none tw-rounded-sm tw-outline-none`,

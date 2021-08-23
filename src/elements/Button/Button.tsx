@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from "@elements/Icon/IconSize";
+import { useButton } from "@react-aria/button";
 import { useFocusRing } from "@react-aria/focus";
+import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { cloneElement, FC, MouseEvent, ReactElement, ReactNode } from "react";
+import React, { cloneElement, FC, ReactElement, ReactNode, useRef } from "react";
 
 export enum ButtonStyle {
     Secondary = "Secondary",
@@ -71,7 +73,7 @@ export type ButtonProps = {
     disabled?: boolean;
     icon?: ReactElement;
     children?: string;
-    onClick?: (event: MouseEvent) => void;
+    onClick?: () => void;
 };
 
 export const Button: FC<ButtonProps> = ({
@@ -85,10 +87,13 @@ export const Button: FC<ButtonProps> = ({
 }) => {
     const wrap = (child: ReactNode) => (children ? <span className={iconSpacing[size]}>{child}</span> : child);
     const { isFocusVisible, focusProps } = useFocusRing();
+    const ref = useRef<HTMLButtonElement | null>(null);
+    const { buttonProps } = useButton({ onPress: () => onClick && onClick(), isDisabled: disabled }, ref);
 
     return (
         <button
-            {...focusProps}
+            {...mergeProps(buttonProps, focusProps)}
+            ref={ref}
             className={merge([
                 "tw-outline-none tw-relative tw-flex tw-items-center tw-justify-center tw-border-0 tw-rounded tw-cursor-pointer tw-font-sans tw-transition-colors",
                 icon && !children ? iconOnlySizeClasses[size] : sizeClasses[size],
@@ -102,7 +107,6 @@ export const Button: FC<ButtonProps> = ({
                 ),
             ])}
             disabled={disabled}
-            onClick={onClick}
             data-test-id="button"
         >
             {icon && wrap(cloneElement(icon, { size: iconSizes[size] }))}
