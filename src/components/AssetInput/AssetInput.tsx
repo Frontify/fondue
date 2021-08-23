@@ -79,7 +79,27 @@ export type AssetInputProps =
           onLibraryClick?: () => void;
       };
 
-const AssetSubline: FC<Pick<AssetProps["asset"], "source" | "sourceName" | "extension" | "size">> = (asset) => (
+const AssetThumbnail: FC<Pick<AssetProps, "asset" | "size"> & { isActive?: boolean }> = ({ asset, size, isActive }) => (
+    <span
+        className={merge([
+            size === "large"
+                ? "tw-w-full tw-h-32"
+                : "tw-w-14 tw-h-full tw-border-r tw-border-black-opacity-25 tw-rounded-l",
+            "tw-flex tw-flex-col tw-items-center tw-justify-center tw-bg-black-5 group-hover:tw-text-black-100",
+            isActive ? "tw-text-black-100" : "tw-text-black-80",
+        ])}
+    >
+        {asset.type === "icon" ? (
+            cloneElement(asset.icon, { size: IconSize.Size24 })
+        ) : asset.type === "audio" ? (
+            <IconAudio size={IconSize.Size24} />
+        ) : (
+            <img src={asset.src} alt={asset.alt || ""} className="tw-max-h-full" />
+        )}
+    </span>
+);
+
+const AssetSubline: FC<Pick<AssetProps, "asset">> = ({ asset }) => (
     <span className="tw-flex tw-flex-row tw-items-center tw-gap-1 tw-text-black-80 tw-text-xxs">
         {asset.source === "library" ? (
             <>
@@ -108,18 +128,18 @@ const AssetSubline: FC<Pick<AssetProps["asset"], "source" | "sourceName" | "exte
 );
 
 const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
-    const menu = useMenuTriggerState({ closeOnSelect: true });
+    const menuId = useMemoizedId();
     const buttonRef = useRef<HTMLButtonElement | null>(null);
-    const { menuTriggerProps } = useMenuTrigger({}, menu, buttonRef);
+    const menuState = useMenuTriggerState({ closeOnSelect: true });
+    const { isOpen, focusStrategy } = menuState;
+    const { menuTriggerProps } = useMenuTrigger({}, menuState, buttonRef);
     const { buttonProps } = useButton(menuTriggerProps, buttonRef);
     const { isFocusVisible, focusProps } = useFocusRing();
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const { overlayProps } = useOverlay(
-        { onClose: () => menu.close(), shouldCloseOnBlur: true, isOpen: menu.isOpen, isDismissable: true },
+        { onClose: () => menuState.close(), shouldCloseOnBlur: true, isOpen, isDismissable: true },
         overlayRef,
     );
-    const { isOpen } = menu;
-    const id = useMemoizedId();
 
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
@@ -133,23 +153,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                     isFocusVisible && FOCUS_STYLE,
                 ])}
             >
-                <span
-                    className={merge([
-                        size === "large"
-                            ? "tw-w-full tw-h-32"
-                            : "tw-w-14 tw-h-full tw-border-r tw-border-black-opacity-25 tw-rounded-l",
-                        "tw-flex tw-flex-col tw-items-center tw-justify-center tw-bg-black-5 group-hover:tw-text-black-100",
-                        isOpen || isFocusVisible ? "tw-text-black-100" : "tw-text-black-80",
-                    ])}
-                >
-                    {asset.type === "icon" ? (
-                        cloneElement(asset.icon, { size: IconSize.Size24 })
-                    ) : asset.type === "audio" ? (
-                        <IconAudio size={IconSize.Size24} />
-                    ) : (
-                        <img src={asset.src} alt={asset.alt || ""} className="tw-max-h-full" />
-                    )}
-                </span>
+                <AssetThumbnail asset={asset} size={size} isActive={isOpen || isFocusVisible} />
                 <span
                     className={merge([
                         size === "large" ? "tw-h-14" : "tw-h-full",
@@ -164,12 +168,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                     >
                         {asset.name}
                     </span>
-                    <AssetSubline
-                        source={asset.source}
-                        sourceName={asset.sourceName}
-                        extension={asset.extension}
-                        size={asset.size}
-                    />
+                    <AssetSubline asset={asset} />
                 </span>
                 <span className={merge([size === "large" ? "tw-h-14" : "tw-h-full", "tw-p-3 tw-flex tw-items-center"])}>
                     <span className={merge(["tw-transition-transform", isOpen && "tw-rotate-180"])}>
@@ -182,7 +181,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                 {isOpen && (
                     <motion.div
                         className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2"
-                        key={`asset-input-menu-${id}`}
+                        key={`asset-input-menu-${menuId}`}
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
                         exit={{ height: 0 }}
@@ -190,9 +189,9 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                     >
                         <FocusScope restoreFocus>
                             <div {...overlayProps} ref={overlayRef}>
-                                <DismissButton onDismiss={() => close()} />
-                                <ActionMenu menuBlocks={actions} focus={menu.focusStrategy} />
-                                <DismissButton onDismiss={() => close()} />
+                                <DismissButton onDismiss={() => menuState.close()} />
+                                <ActionMenu menuBlocks={actions} focus={focusStrategy} />
+                                <DismissButton onDismiss={() => menuState.close()} />
                             </div>
                         </FocusScope>
                     </motion.div>
