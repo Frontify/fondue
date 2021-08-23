@@ -6,6 +6,7 @@ import IconCrop from "@elements/Icon/Generated/IconCrop";
 import IconExternalLink from "@elements/Icon/Generated/IconExternalLink";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import IconImageLibrary from "@elements/Icon/Generated/IconImageLibrary";
+import IconReject from "@elements/Icon/Generated/IconReject";
 import IconUploadAlternative from "@elements/Icon/Generated/IconUploadAlternative";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
@@ -52,7 +53,7 @@ const actions = [
                 id: "20",
                 title: "Remove",
                 style: MenuItemStyle.Danger,
-                decorator: <IconUploadAlternative />,
+                decorator: <IconReject />,
             },
         ],
     },
