@@ -8,6 +8,7 @@ import IconImageLibrary from "@elements/Icon/Generated/IconImageLibrary";
 import IconUploadAlternative from "@elements/Icon/Generated/IconUploadAlternative";
 import { IconProps } from "@elements/Icon/IconProps";
 import { IconSize } from "@elements/Icon/IconSize";
+import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
 import { useMenuTrigger } from "@react-aria/menu";
@@ -27,6 +28,7 @@ type OtherAsset = BaseAsset & {
     type: "audio";
     extension: string;
     src?: undefined;
+    alt?: undefined;
     icon?: undefined;
     size: number;
 };
@@ -35,6 +37,7 @@ type ImageAsset = BaseAsset & {
     type: "image" | "logo";
     extension: string;
     src: string;
+    alt?: string;
     icon?: undefined;
     size: number;
 };
@@ -43,6 +46,7 @@ type IconAsset = BaseAsset & {
     type: "icon";
     extension?: undefined;
     src?: undefined;
+    alt?: undefined;
     icon: ReactElement<IconProps>;
     size?: undefined;
 };
@@ -115,6 +119,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
         overlayRef,
     );
     const { isOpen } = menu;
+    const id = useMemoizedId();
 
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
@@ -142,7 +147,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                     ) : asset.type === "audio" ? (
                         <IconAudio size={IconSize.Size24} />
                     ) : (
-                        <img src={asset.src} alt="" className="tw-max-h-full" />
+                        <img src={asset.src} alt={asset.alt || ""} className="tw-max-h-full" />
                     )}
                 </span>
                 <span
@@ -177,7 +182,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                 {isOpen && (
                     <motion.div
                         className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2"
-                        key="content"
+                        key={`asset-input-menu-${id}`}
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
                         exit={{ height: 0 }}
