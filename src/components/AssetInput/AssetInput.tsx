@@ -85,8 +85,8 @@ const AssetThumbnail: FC<Pick<AssetProps, "asset" | "size"> & { isActive?: boole
             size === "large"
                 ? "tw-w-full tw-h-32"
                 : "tw-w-14 tw-h-full tw-border-r tw-border-black-opacity-25 tw-rounded-l",
-            "tw-flex tw-flex-col tw-items-center tw-justify-center tw-bg-black-5 group-hover:tw-text-black-100",
-            isActive ? "tw-text-black-100" : "tw-text-black-80",
+            "tw-flex tw-flex-col tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95 group-hover:tw-text-black-100 dark:group-hover:tw-text-white",
+            isActive ? "tw-text-black-100 dark:tw-text-white" : "tw-text-black-80 dark:tw-text-black-20",
         ])}
     >
         {asset.type === "icon" ? (
@@ -142,14 +142,16 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
     );
 
     return (
-        <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
+        <div className="tw-relative tw-w-full tw-font-sans tw-text-s tw-bg-transparent">
             <button
                 {...mergeProps(buttonProps, focusProps)}
                 ref={buttonRef}
                 className={merge([
-                    "tw-w-full tw-flex tw-flex-row tw-flex-wrap tw-border tw-rounded hover:tw-border-black-90 tw-group focus-visible:tw-outline-none",
+                    "tw-w-full tw-flex tw-flex-row tw-flex-wrap tw-border tw-rounded hover:tw-border-black-90 dark:hover:tw-border-black-40 tw-group focus-visible:tw-outline-none",
                     size === "large" ? "tw-h-[11.5rem]" : "tw-h-14",
-                    isOpen || isFocusVisible ? "tw-border-black-90" : "tw-border-black-20",
+                    isOpen || isFocusVisible
+                        ? "tw-border-black-90 dark:tw-border-black-10"
+                        : "tw-border-black-20 dark:tw-border-black-80",
                     isFocusVisible && FOCUS_STYLE,
                 ])}
             >
@@ -162,7 +164,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                 >
                     <span
                         className={merge([
-                            "tw-text-black-100 tw-text-s group-hover:tw-font-medium",
+                            "tw-text-black-100 tw-text-s group-hover:tw-font-medium dark:tw-text-white",
                             (isOpen || isFocusVisible) && "tw-font-medium",
                         ])}
                     >
