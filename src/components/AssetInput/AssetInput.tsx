@@ -54,6 +54,11 @@ type IconAsset = BaseAsset & {
 type UploadSource = { source: "upload"; sourceName?: undefined };
 type LibrarySource = { source: "library"; sourceName: string };
 
+export enum AssetInputSize {
+    Small = "Small",
+    Large = "Large",
+}
+
 type AssetProps = {
     asset:
         | (ImageAsset & UploadSource)
@@ -62,7 +67,7 @@ type AssetProps = {
         | (IconAsset & LibrarySource)
         | (OtherAsset & UploadSource)
         | (OtherAsset & LibrarySource);
-    size: "small" | "large";
+    size: AssetInputSize;
     actions: ActionMenuProps["menuBlocks"];
 };
 
@@ -82,7 +87,9 @@ export type AssetInputProps =
 const AssetThumbnail: FC<Pick<AssetProps, "asset" | "size"> & { isActive?: boolean }> = ({ asset, size, isActive }) => (
     <span
         className={merge([
-            size === "large" ? "tw-w-full tw-h-32" : "tw-w-14 tw-h-full tw-border-r tw-border-black-opacity-25",
+            size === AssetInputSize.Large
+                ? "tw-w-full tw-h-32"
+                : "tw-w-14 tw-h-full tw-border-r tw-border-black-opacity-25",
             "tw-flex tw-flex-col tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95 group-hover:tw-text-black-100 dark:group-hover:tw-text-white",
             isActive ? "tw-text-black-100 dark:tw-text-white" : "tw-text-black-80 dark:tw-text-black-20",
         ])}
@@ -146,7 +153,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                 ref={buttonRef}
                 className={merge([
                     "tw-w-full tw-flex tw-flex-row tw-flex-wrap tw-border tw-rounded tw-overflow-hidden hover:tw-border-black-90 dark:hover:tw-border-black-40 tw-group focus-visible:tw-outline-none",
-                    size === "large" ? "tw-h-[11.5rem]" : "tw-h-14",
+                    size === AssetInputSize.Large ? "tw-h-[11.5rem]" : "tw-h-14",
                     isOpen || isFocusVisible
                         ? "tw-border-black-90 dark:tw-border-black-10"
                         : "tw-border-black-20 dark:tw-border-black-80",
@@ -156,7 +163,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                 <AssetThumbnail asset={asset} size={size} isActive={isOpen || isFocusVisible} />
                 <span
                     className={merge([
-                        size === "large" ? "tw-h-14" : "tw-h-full",
+                        size === AssetInputSize.Large ? "tw-h-14" : "tw-h-full",
                         "tw-py-3 tw-pr-3 tw-pl-4 tw-flex tw-flex-col tw-items-start tw-font-normal tw-flex-1",
                     ])}
                 >
@@ -170,7 +177,12 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                     </span>
                     <AssetSubline asset={asset} />
                 </span>
-                <span className={merge([size === "large" ? "tw-h-14" : "tw-h-full", "tw-p-3 tw-flex tw-items-center"])}>
+                <span
+                    className={merge([
+                        size === AssetInputSize.Large ? "tw-h-14" : "tw-h-full",
+                        "tw-p-3 tw-flex tw-items-center",
+                    ])}
+                >
                     <span className={merge(["tw-transition-transform", isOpen && "tw-rotate-180"])}>
                         <IconCaretDown size={IconSize.Size16} />
                     </span>
@@ -204,7 +216,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
 export const AssetInput: FC<AssetInputProps> = ({
     asset,
     actions = [],
-    size = "small",
+    size = AssetInputSize.Small,
     onLibraryClick,
     onUploadClick,
 }) => {

@@ -10,7 +10,7 @@ import IconReject from "@elements/Icon/Generated/IconReject";
 import IconUploadAlternative from "@elements/Icon/Generated/IconUploadAlternative";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
-import { AssetInput, AssetInputProps } from "./AssetInput";
+import { AssetInput, AssetInputProps, AssetInputSize } from "./AssetInput";
 
 const actions = [
     {
@@ -65,13 +65,13 @@ export default {
     argTypes: {
         onUploadClick: { action: "onUploadClick", table: { disable: true } },
         size: {
-            options: ["small", "large"],
+            options: Object.values(AssetInputSize),
             control: { type: "radio" },
         },
         onItemClick: { action: "onItemClick", table: { disable: true } },
     },
     args: {
-        size: "small",
+        size: AssetInputSize.Small,
     },
 } as Meta<AssetInputProps>;
 
