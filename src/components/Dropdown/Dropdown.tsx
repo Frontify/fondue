@@ -36,11 +36,11 @@ export type DropdownProps = {
     ariaLabel?: string;
 };
 
-const getActiveItem = (blocks: MenuBlock[], active?: string) =>
+const getActiveItem = (blocks: MenuBlock[], activeId?: string) =>
     blocks
         .map(({ menuItems }) => menuItems)
         .flat()
-        .find(({ id }) => id === active) || null;
+        .find(({ id }) => id === activeId) || null;
 
 export const Dropdown: FC<DropdownProps> = ({
     id: propId,
