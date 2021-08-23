@@ -18,8 +18,11 @@ import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { cloneElement, FC, ReactElement, useRef } from "react";
 
-type OtherAsset = {
+type BaseAsset = {
     name: string;
+};
+
+type OtherAsset = BaseAsset & {
     type: "audio";
     extension: string;
     src?: undefined;
@@ -27,8 +30,7 @@ type OtherAsset = {
     size: number;
 };
 
-type ImageAsset = {
-    name: string;
+type ImageAsset = BaseAsset & {
     type: "image" | "logo";
     extension: string;
     src: string;
@@ -36,8 +38,7 @@ type ImageAsset = {
     size: number;
 };
 
-type IconAsset = {
-    name: string;
+type IconAsset = BaseAsset & {
     type: "icon";
     extension?: undefined;
     src?: undefined;
@@ -45,14 +46,17 @@ type IconAsset = {
     size?: undefined;
 };
 
+type UploadSource = { source: "upload"; sourceName?: undefined };
+type LibrarySource = { source: "library"; sourceName: string };
+
 type AssetProps = {
     asset:
-        | (ImageAsset & { source: "upload" })
-        | (ImageAsset & { source: "library"; sourceName: string })
-        | (IconAsset & { source: "upload" })
-        | (IconAsset & { source: "library"; sourceName: string })
-        | (OtherAsset & { source: "upload" })
-        | (OtherAsset & { source: "library"; sourceName: string });
+        | (ImageAsset & UploadSource)
+        | (ImageAsset & LibrarySource)
+        | (IconAsset & UploadSource)
+        | (IconAsset & LibrarySource)
+        | (OtherAsset & UploadSource)
+        | (OtherAsset & LibrarySource);
     size: "small" | "large";
     actions: ActionMenuProps["menuBlocks"];
 };
@@ -69,6 +73,34 @@ export type AssetInputProps =
           onUploadClick: () => void;
           onLibraryClick?: () => void;
       };
+
+const AssetSubline: FC<Pick<AssetProps["asset"], "source" | "sourceName" | "extension" | "size">> = (asset) => (
+    <span className="tw-flex tw-flex-row tw-items-center tw-gap-1 tw-text-black-80 tw-text-xxs">
+        {asset.source === "library" ? (
+            <>
+                <IconImageLibrary />
+                <span>{asset.sourceName}</span>
+            </>
+        ) : (
+            <>
+                <IconUploadAlternative />
+                <span>Uploaded</span>
+            </>
+        )}
+        {asset.extension && (
+            <>
+                <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
+                <span>{asset.extension}</span>
+            </>
+        )}
+        {asset.size && (
+            <>
+                <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
+                <span>{asset.size}</span>
+            </>
+        )}
+    </span>
+);
 
 const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
     const menu = useMenuTriggerState({ closeOnSelect: true });
@@ -127,31 +159,12 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                     >
                         {asset.name}
                     </span>
-                    <span className="tw-flex tw-flex-row tw-items-center tw-gap-1 tw-text-black-80 tw-text-xxs">
-                        {asset.source === "library" ? (
-                            <>
-                                <IconImageLibrary />
-                                <span>{asset.sourceName}</span>
-                            </>
-                        ) : (
-                            <>
-                                <IconUploadAlternative />
-                                <span>Uploaded</span>
-                            </>
-                        )}
-                        {asset.extension && (
-                            <>
-                                <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
-                                <span>{asset.extension}</span>
-                            </>
-                        )}
-                        {asset.size && (
-                            <>
-                                <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
-                                <span>{asset.size}</span>
-                            </>
-                        )}
-                    </span>
+                    <AssetSubline
+                        source={asset.source}
+                        sourceName={asset.sourceName}
+                        extension={asset.extension}
+                        size={asset.size}
+                    />
                 </span>
                 <span className={merge([size === "large" ? "tw-h-14" : "tw-h-full", "tw-p-3 tw-flex tw-items-center"])}>
                     <span className={merge(["tw-transition-transform", isOpen && "tw-rotate-180"])}>
