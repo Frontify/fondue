@@ -12,6 +12,7 @@ import { FocusScope, useFocusRing } from "@react-aria/focus";
 import { useFocus } from "@react-aria/interactions";
 import { DismissButton, useOverlay } from "@react-aria/overlays";
 import { HiddenSelect, useSelect } from "@react-aria/select";
+import { mergeProps } from "@react-aria/utils";
 import { useSelectState } from "@react-stately/select";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
@@ -93,8 +94,7 @@ export const Dropdown: FC<DropdownProps> = ({
             >
                 <HiddenSelect state={state} triggerRef={ref} />
                 <button
-                    {...buttonProps}
-                    {...focusProps}
+                    {...mergeProps(buttonProps, focusProps)}
                     id={useMemoizedId(propId)}
                     ref={ref}
                     data-test-id="dropdown-trigger"

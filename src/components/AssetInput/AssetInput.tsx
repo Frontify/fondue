@@ -12,6 +12,7 @@ import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
 import { useMenuTrigger } from "@react-aria/menu";
 import { DismissButton, useOverlay } from "@react-aria/overlays";
+import { mergeProps } from "@react-aria/utils";
 import { useMenuTriggerState } from "@react-stately/menu";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
@@ -118,8 +119,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
             <button
-                {...buttonProps}
-                {...focusProps}
+                {...mergeProps(buttonProps, focusProps)}
                 ref={buttonRef}
                 className={merge([
                     "tw-w-full tw-flex tw-flex-row tw-flex-wrap tw-border tw-rounded hover:tw-border-black-90 tw-group focus-visible:tw-outline-none",
