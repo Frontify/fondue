@@ -7,6 +7,7 @@ import { getDisabledItemIds, getKeyItemRecord, getMenuItems, mapToAriaProps } fr
 import { MenuItemType } from "@components/Menu/SelectMenu";
 import { useMenu, useMenuItem, useMenuSection } from "@react-aria/menu";
 import { useTreeState } from "@react-stately/tree";
+import { FocusStrategy } from "@react-types/shared";
 import React, { ReactElement, useRef } from "react";
 
 export type ActionMenuItemType = MenuItemType & { onClick: () => void };
@@ -20,11 +21,13 @@ export type ActionMenuBlock = {
 export type ActionMenuProps = {
     ariaLabel?: string;
     menuBlocks: ActionMenuBlock[];
+    focus?: FocusStrategy;
 };
 
 export const ActionMenu = ({
     menuBlocks,
     ariaLabel = "Action Menu",
+    focus,
 }: ActionMenuProps): ReactElement<ActionMenuProps> => {
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
@@ -35,10 +38,10 @@ export const ActionMenu = ({
         disabledKeys: getDisabledItemIds(items),
     });
     const menuRef = useRef<HTMLUListElement | null>(null);
-    const { menuProps } = useMenu(props, state, menuRef);
+    const { menuProps } = useMenu({ ...props, autoFocus: focus }, state, menuRef);
 
     return (
-        <AriaList ariaProps={menuProps} ref={menuRef}>
+        <AriaList ariaProps={{ ...menuProps }} ref={menuRef}>
             {[...state.collection].map((section) => {
                 const { key: sectionKey, "aria-label": sectionAriaLabel } = section;
                 const { itemProps, groupProps } = useMenuSection({ "aria-label": sectionAriaLabel });

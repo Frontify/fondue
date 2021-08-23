@@ -4,6 +4,7 @@ import { IconProps } from "@elements/Icon/IconProps";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { useRadio, useRadioGroup } from "@react-aria/radio";
+import { mergeProps } from "@react-aria/utils";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { useRadioGroupState } from "@react-stately/radio";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
@@ -49,8 +50,7 @@ export const Slider: FC<SliderProps> = ({
 
     return (
         <ul
-            {...radioGroupProps}
-            {...focusProps}
+            {...mergeProps(radioGroupProps, focusProps)}
             data-test-id="slider"
             className={merge([
                 "tw-relative tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none",

@@ -1,4 +1,5 @@
 import { useFocusRing } from "@react-aria/focus";
+import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { forwardRef, HTMLAttributes } from "react";
@@ -18,8 +19,7 @@ export const AriaMenuItem = forwardRef<HTMLLIElement | null, AriaOptionProps>(
         const { isFocusVisible, focusProps } = useFocusRing();
         return (
             <li
-                {...ariaProps}
-                {...focusProps}
+                {...mergeProps(ariaProps, focusProps)}
                 data-test-id="menu-item"
                 className={merge([
                     "tw-relative hover:tw-bg-black-0 tw-list-none tw-outline-none",

@@ -3,6 +3,7 @@
 import { FieldsetHeader, FieldsetHeaderProps } from "@compositions/FieldsetHeader/FieldsetHeader";
 import { useAccordion, useAccordionItem } from "@react-aria/accordion";
 import { useFocusRing } from "@react-aria/focus";
+import { mergeProps } from "@react-aria/utils";
 import { Item as StatelyItem } from "@react-stately/collections";
 import { TreeState, useTreeState } from "@react-stately/tree";
 import { Node } from "@react-types/shared";
@@ -28,8 +29,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
     return (
         <div key={item.key}>
             <button
-                {...buttonProps}
-                {...focusProps}
+                {...mergeProps(buttonProps, focusProps)}
                 data-test-id="accordion-item"
                 ref={triggerRef}
                 onClick={(event) => {

@@ -34,18 +34,18 @@ export const SelectMenu = ({
 }: SelectMenuProps): ReactElement<SelectMenuProps> => {
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
-    const menuRef = useRef<HTMLUListElement | null>(null);
+    const listRef = useRef<HTMLUListElement | null>(null);
     const { listBoxProps } = useListBox(
         {
             ...ariaProps,
             "aria-label": ariaLabel,
         },
         state,
-        menuRef,
+        listRef,
     );
 
     return (
-        <AriaList ariaProps={listBoxProps} ref={menuRef}>
+        <AriaList ariaProps={listBoxProps} ref={listRef}>
             {[...state.collection].map((section) => {
                 const { key: sectionKey, "aria-label": sectionAriaLabel } = section;
                 const { itemProps, groupProps } = useListBoxSection({ "aria-label": sectionAriaLabel });

@@ -10,6 +10,7 @@ import { useToggleState } from "@react-stately/toggle";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, useRef } from "react";
+import { mergeProps } from "@react-aria/utils";
 
 export enum CheckboxStyle {
     Default = "Default",
@@ -86,8 +87,7 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
         <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">
             <label className="tw-flex tw-items-center tw-gap-2 tw-select-none">
                 <input
-                    {...inputProps}
-                    {...focusProps}
+                    {...mergeProps(inputProps, focusProps)}
                     id={id}
                     ref={ref}
                     className="tw-sr-only"
