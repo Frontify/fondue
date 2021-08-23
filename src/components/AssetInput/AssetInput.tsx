@@ -82,9 +82,7 @@ export type AssetInputProps =
 const AssetThumbnail: FC<Pick<AssetProps, "asset" | "size"> & { isActive?: boolean }> = ({ asset, size, isActive }) => (
     <span
         className={merge([
-            size === "large"
-                ? "tw-w-full tw-h-32"
-                : "tw-w-14 tw-h-full tw-border-r tw-border-black-opacity-25 tw-rounded-l",
+            size === "large" ? "tw-w-full tw-h-32" : "tw-w-14 tw-h-full tw-border-r tw-border-black-opacity-25",
             "tw-flex tw-flex-col tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95 group-hover:tw-text-black-100 dark:group-hover:tw-text-white",
             isActive ? "tw-text-black-100 dark:tw-text-white" : "tw-text-black-80 dark:tw-text-black-20",
         ])}
@@ -147,7 +145,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                 {...mergeProps(buttonProps, focusProps)}
                 ref={buttonRef}
                 className={merge([
-                    "tw-w-full tw-flex tw-flex-row tw-flex-wrap tw-border tw-rounded hover:tw-border-black-90 dark:hover:tw-border-black-40 tw-group focus-visible:tw-outline-none",
+                    "tw-w-full tw-flex tw-flex-row tw-flex-wrap tw-border tw-rounded tw-overflow-hidden hover:tw-border-black-90 dark:hover:tw-border-black-40 tw-group focus-visible:tw-outline-none",
                     size === "large" ? "tw-h-[11.5rem]" : "tw-h-14",
                     isOpen || isFocusVisible
                         ? "tw-border-black-90 dark:tw-border-black-10"
