@@ -136,6 +136,9 @@ module.exports = {
                 "::before": { boxSizing: "content-box" },
                 "::after": { boxSizing: "content-box" },
                 '[class^="tw-"]': { boxSizing: "border-box" },
+                '[class*=" tw-"]': { boxSizing: "border-box" },
+                '[class^="tw-"]::before': { boxSizing: "border-box" },
+                '[class*=" tw-"]::after': { boxSizing: "border-box" },
             });
         }),
     ],
