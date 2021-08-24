@@ -1,3 +1,5 @@
+const plugin = require("tailwindcss/plugin");
+
 module.exports = {
     mode: "jit",
     purge: ["./src/**/*.{js,ts,tsx}"],
@@ -127,4 +129,15 @@ module.exports = {
             xxxl: ["3rem", "3.5rem"],
         },
     },
+    plugins: [
+        plugin(function ({ addBase }) {
+            addBase({
+                "*": { boxSizing: "content-box" },
+                "::before": { boxSizing: "content-box" },
+                "::after": { boxSizing: "content-box" },
+                '[class^="tw-"]': { boxSizing: "border-box" },
+            });
+        }),
+    ],
 };
+("[class=");
