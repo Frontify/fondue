@@ -13,7 +13,6 @@ import { Switch, SwitchSize } from "@elements/Switch/Switch";
 import { TextInput, TextInputType } from "@elements/TextInput/TextInput";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
-import { merge } from "@utilities/merge";
 import React, { useState } from "react";
 import { Accordion as AccordionComponent, AccordionItem, AccordionProps } from "./Accordion";
 
@@ -54,7 +53,7 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
                 }}
             />
             <AccordionItem header={{ children: "Item with resizable content", type: FieldsetHeaderType.AddRemove }}>
-                <div className={merge([!showContent && "tw-hidden"])}>
+                <div className={!showContent ? "tw-hidden" : ""}>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 </div>
                 <Button onClick={() => setShowContent(!showContent)}>Toggle Content</Button>
