@@ -6,7 +6,7 @@ import { Meta, Story } from "@storybook/react";
 import { Checklist as ChecklistComponent, ChecklistProps, ChecklistDirection } from "./Checklist";
 
 export default {
-    title: "Components/Checklist",
+    title: "Compositions/Checklist",
     component: ChecklistComponent,
     argTypes: {
         direction: {

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { Tree, TreeProps } from "./Tree";
+import { Tree as TreeComponent, TreeProps } from "./Tree";
 import { TreeNodeProps } from "./Node";
 import { IconSize } from "@elements/Icon/IconSize";
 import IconDocument from "@elements/Icon/Generated/IconDocument";
@@ -10,7 +10,7 @@ import IconGuidelines from "@elements/Icon/Generated/IconGuidelines";
 
 export default {
     title: "Components/Tree",
-    component: Tree,
+    component: TreeComponent,
     args: {
         nodes: [
             {
@@ -86,8 +86,8 @@ export default {
     },
 } as Meta<TreeProps>;
 
-export const Template: Story<TreeProps> = (args: TreeProps) => (
+export const Tree: Story<TreeProps> = (args: TreeProps) => (
     <div style={{ maxWidth: "800px" }}>
-        <Tree {...args} />
+        <TreeComponent {...args} />
     </div>
 );
