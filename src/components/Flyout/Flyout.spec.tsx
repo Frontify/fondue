@@ -9,12 +9,15 @@ import { TEXT_INPUT_ID } from "@elements/TextInput/TextInput.spec";
 import React from "react";
 import { Flyout } from "./Flyout";
 
+const FLYOUT_TRIGGER_ID = "[data-test-id=flyout-trigger]";
+
 describe("Flyout Component", () => {
     it("should render with header and badges", () => {
         const onCloseStub = cy.stub().as("onCloseStub");
 
         mount(
             <Flyout
+                trigger="foobar"
                 title="Header title"
                 badges={[{ children: "Badge 1" }, { children: "Badge 2" }]}
                 onClose={onCloseStub}
@@ -23,6 +26,7 @@ describe("Flyout Component", () => {
             </Flyout>,
         );
 
+        cy.get(FLYOUT_TRIGGER_ID).click();
         cy.get(FIELDSET_HEADER_ID).should("contain", "Header title");
         cy.get(BADGE_ID).should("have.length", 2);
         cy.get(TEXT_INPUT_ID).should("have.attr", "placeholder").and("eq", "placeholder");
@@ -34,11 +38,12 @@ describe("Flyout Component", () => {
         const onClickStub = cy.stub().as("onClickStub");
 
         mount(
-            <Flyout title="Header title" onClick={onClickStub} onClose={onCloseStub}>
+            <Flyout trigger="foobar" title="Header title" onClick={onClickStub} onClose={onCloseStub}>
                 <TextInput placeholder="placeholder" />
             </Flyout>,
         );
 
+        cy.get(FLYOUT_TRIGGER_ID).click();
         cy.get(BUTTON_ID).should("have.length", 2);
         cy.get(BUTTON_ID).eq(1).click();
         cy.get("@onClickStub").should("be.calledOnce");

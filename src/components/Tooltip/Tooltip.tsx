@@ -46,7 +46,7 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip }) => {
                 onMouseEnter={() => state.open()}
                 onMouseLeave={() => state.close(true)}
                 className={merge([
-                    "tw-inline-flex tw-items-center tw-justify-center tw-text-black-60 hover:tw-text-black dark:tw-text-black-40 dark:hover:white tw-cursor-default tw-outline-none",
+                    "tw-inline-flex tw-items-center tw-justify-center tw-text-black-60 hover:tw-text-black dark:tw-text-black-40 dark:hover:white tw-cursor-default tw-outline-none tw-rounded-full",
                     isOpen && isFocusVisible && FOCUS_STYLE,
                 ])}
             >

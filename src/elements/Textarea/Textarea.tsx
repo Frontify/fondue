@@ -2,9 +2,10 @@
 
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
+import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, PropsWithChildren, ReactNode } from "react";
+import React, { FC, FocusEvent, FormEvent, PropsWithChildren, ReactNode } from "react";
 
 export type TextareaProps = PropsWithChildren<{
     id?: string;
@@ -26,7 +27,7 @@ export const Textarea: FC<TextareaProps> = ({
     onInput,
     onBlur,
 }) => {
-    const { isFocusVisible, focusProps } = useFocusRing();
+    const { isFocusVisible, focusProps } = useFocusRing({ isTextInput: true });
 
     return (
         <div className="tw-relative">
@@ -39,7 +40,11 @@ export const Textarea: FC<TextareaProps> = ({
                 </div>
             )}
             <textarea
-                {...focusProps}
+                {...mergeProps(focusProps, {
+                    onBlur: (event: FocusEvent<HTMLTextAreaElement>) => onBlur && onBlur(event.target.value),
+                    onInput: (event: FormEvent<HTMLTextAreaElement>) =>
+                        onInput && onInput((event.target as HTMLTextAreaElement).value),
+                })}
                 id={useMemoizedId(propId)}
                 placeholder={placeholder}
                 required={required}
@@ -52,8 +57,6 @@ export const Textarea: FC<TextareaProps> = ({
                     isFocusVisible && FOCUS_STYLE,
                 ])}
                 disabled={disabled}
-                onBlur={(event) => onBlur && onBlur(event.target.value)}
-                onInput={(event) => onInput && onInput((event.target as HTMLTextAreaElement).value)}
             >
                 {children}
             </textarea>

@@ -4,6 +4,7 @@ import { Slider } from "@components/Slider/Slider";
 import { FormControl } from "@compositions/FormControl/FormControl";
 import { BadgeStatus, BadgeStyle } from "@elements/Badge/Badge";
 import { Divider, DividerHeight } from "@elements/Divider/Divider";
+import IconActions from "@elements/Icon/Generated/IconActions";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { Textarea } from "@elements/Textarea/Textarea";
 import { TextInput } from "@elements/TextInput/TextInput";
@@ -16,10 +17,14 @@ export default {
     title: "Components/Flyout",
     component: Flyout,
     argTypes: {
-        onClose: { action: "onClose" },
+        onClose: { action: "onClose", table: { disable: true } },
     },
     args: {
-        onClose: action("close"),
+        trigger: (
+            <span className="tw-flex tw-h-full tw-items-center tw-p-1 tw-rounded tw-bg-black-20 hover:tw-bg-black-30 dark:tw-bg-black-80 dark:hover:tw-bg-black-70">
+                <IconActions />
+            </span>
+        ),
     },
 } as Meta<FlyoutProps>;
 
@@ -27,50 +32,56 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState("a");
 
     return (
-        <Flyout {...args}>
-            <div className="tw-flex tw-flex-col tw-gap-y-8">
-                <FormControl
-                    label={{ children: "Input Label", htmlFor: "input-id", tooltip: "Input Tooltip" }}
-                    extra="Extra Text"
-                >
-                    <TextInput />
-                </FormControl>
-                <Divider color={FLYOUT_DIVIDER_COLOR} height={DividerHeight.Height10} />
-                <FormControl
-                    label={{
-                        children: "Slider Label",
-                        htmlFor: "slider-id",
-                    }}
-                >
-                    <Slider
-                        activeItemId={activeItemId}
-                        onChange={setActiveItemId}
-                        items={[
-                            { id: "a", name: "abc" },
-                            { id: "b", name: "def" },
-                            { id: "c", name: "ghi" },
-                        ]}
-                    />
-                </FormControl>
-            </div>
+        <div className="dark:tw-text-white">
+            <div className="tw-flex tw-items-cente">
+                Some text
+                <Flyout {...args}>
+                    <div className="tw-flex tw-flex-col tw-gap-y-8">
+                        <FormControl
+                            label={{ children: "Input Label", htmlFor: "input-id", tooltip: "Input Tooltip" }}
+                            extra="Extra Text"
+                        >
+                            <TextInput />
+                        </FormControl>
+                        <Divider color={FLYOUT_DIVIDER_COLOR} height={DividerHeight.Height10} />
+                        <FormControl
+                            label={{
+                                children: "Slider Label",
+                                htmlFor: "slider-id",
+                            }}
+                        >
+                            <Slider
+                                activeItemId={activeItemId}
+                                onChange={setActiveItemId}
+                                items={[
+                                    { id: "a", name: "abc" },
+                                    { id: "b", name: "def" },
+                                    { id: "c", name: "ghi" },
+                                ]}
+                            />
+                        </FormControl>
+                    </div>
 
-            <FormControl
-                label={{
-                    children: "Textarea Label",
-                    htmlFor: "textarea-id",
-                }}
-            >
-                <Textarea placeholder="This is a placeholder" />
-            </FormControl>
-        </Flyout>
+                    <FormControl
+                        label={{
+                            children: "Textarea Label",
+                            htmlFor: "textarea-id",
+                        }}
+                    >
+                        <Textarea placeholder="This is a placeholder" />
+                    </FormControl>
+                </Flyout>
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+        </div>
     );
 };
 
 export const WithoutHeader = FlyoutTemplate.bind({});
-
-WithoutHeader.args = {
-    onClose: action("close"),
-};
 
 export const WithOnclick = FlyoutTemplate.bind({});
 
