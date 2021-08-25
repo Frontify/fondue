@@ -2,9 +2,10 @@
 
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
+import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, PropsWithChildren, ReactNode } from "react";
+import React, { FC, FocusEvent, FormEvent, PropsWithChildren, ReactNode } from "react";
 
 export type TextareaProps = PropsWithChildren<{
     id?: string;
@@ -26,7 +27,7 @@ export const Textarea: FC<TextareaProps> = ({
     onInput,
     onBlur,
 }) => {
-    const { isFocusVisible, focusProps } = useFocusRing();
+    const { isFocusVisible, focusProps } = useFocusRing({ isTextInput: true });
 
     return (
         <div className="tw-relative">
@@ -39,21 +40,23 @@ export const Textarea: FC<TextareaProps> = ({
                 </div>
             )}
             <textarea
-                {...focusProps}
+                {...mergeProps(focusProps, {
+                    onBlur: (event: FocusEvent<HTMLTextAreaElement>) => onBlur && onBlur(event.target.value),
+                    onInput: (event: FormEvent<HTMLTextAreaElement>) =>
+                        onInput && onInput((event.target as HTMLTextAreaElement).value),
+                })}
                 id={useMemoizedId(propId)}
                 placeholder={placeholder}
                 required={required}
                 className={merge([
-                    "tw-p-2 tw-border tw-rounded tw-text-s tw-outline-none tw-transition tw-placeholder-black-60",
+                    "tw-w-full tw-p-2 tw-border tw-rounded tw-text-s tw-outline-none tw-transition tw-placeholder-black-60",
                     !!decorator && "tw-pl-7 ",
                     disabled
                         ? "tw-border-black-5 tw-bg-black-5 tw-text-black-40"
-                        : "tw-text-black tw-border-black-40 hover:tw-border-black-90",
+                        : "tw-text-black tw-border-black-20 hover:tw-border-black-90",
                     isFocusVisible && FOCUS_STYLE,
                 ])}
                 disabled={disabled}
-                onBlur={(event) => onBlur && onBlur(event.target.value)}
-                onInput={(event) => onInput && onInput((event.target as HTMLTextAreaElement).value)}
             >
                 {children}
             </textarea>

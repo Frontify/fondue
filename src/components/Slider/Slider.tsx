@@ -4,7 +4,6 @@ import { IconProps } from "@elements/Icon/IconProps";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { useRadio, useRadioGroup } from "@react-aria/radio";
-import { mergeProps } from "@react-aria/utils";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { useRadioGroupState } from "@react-stately/radio";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
@@ -46,30 +45,28 @@ export const Slider: FC<SliderProps> = ({
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
     const radioGroupState = useRadioGroupState(groupProps);
     const { radioGroupProps } = useRadioGroup(groupProps, radioGroupState);
-    const { isFocusVisible, focusProps } = useFocusRing({ within: true });
 
     return (
         <ul
-            {...mergeProps(radioGroupProps, focusProps)}
+            {...radioGroupProps}
             data-test-id="slider"
-            className={merge([
-                "tw-relative tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none",
-                isFocusVisible && FOCUS_STYLE,
-            ])}
+            className="tw-relative tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none"
         >
             <AnimateSharedLayout>
-                {items.map((item, index) => {
-                    const ref = useRef(null);
-                    const isActive = item.id === activeItemId;
+                {items.map((item) => {
+                    const ref = useRef<HTMLInputElement | null>(null);
+                    const isActive = item.id === radioGroupState.selectedValue;
                     const { inputProps } = useRadio(
                         {
                             value: item.id,
                             "aria-label": isIconItem(item) ? item.ariaLabel : item.name,
                             isDisabled: disabled,
+                            id: isActive ? id : undefined,
                         },
                         radioGroupState,
                         ref,
                     );
+                    const { isFocusVisible, focusProps } = useFocusRing();
 
                     return (
                         <li key={item.id} className="tw-relative">
@@ -78,36 +75,36 @@ export const Slider: FC<SliderProps> = ({
                                     key={id}
                                     layoutId={id}
                                     className={merge([
-                                        "tw-absolute tw--inset-px tw-border tw-rounded",
+                                        "tw-absolute tw--inset-px tw-border tw-rounded tw-pointer-events-none",
                                         disabled ? "tw-border-black-20 tw-bg-black-0" : "tw-border-black tw-bg-white",
+                                        isFocusVisible && FOCUS_STYLE,
                                     ])}
                                     // Since framer-motion sets `visibility` to `visible` which leads
                                     // to undesired side effects for example when this component is
                                     // used inside an `AccordionItem` that's why we explicitly
                                     // set the prop to `inherit` so framer leave it as is.
                                     animate={{ visibility: "inherit" }}
+                                    aria-hidden="true"
                                 />
                             )}
                             <label
+                                htmlFor={isActive ? id : undefined}
                                 data-test-id={isIconItem(item) ? "slider-item-icon" : "slider-item-text"}
                                 className={merge([
                                     "tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-p-3 tw-text-center",
                                     isActive && !disabled ? "tw-text-black" : "tw-text-black-80",
                                     !disabled ? "hover:tw-text-black hover:tw-cursor-pointer" : "",
                                 ])}
-                                aria-hidden="true"
                             >
                                 <VisuallyHidden>
-                                    <input
-                                        {...inputProps}
-                                        data-test-id="slider-input"
-                                        value={item.id}
-                                        ref={ref}
-                                        id={index === 0 ? id : undefined}
-                                    />
+                                    <input {...inputProps} {...focusProps} data-test-id="slider-input" ref={ref} />
                                 </VisuallyHidden>
                                 <span className="tw-overflow-hidden tw-overflow-ellipsis tw-whitespace-nowrap">
-                                    {isIconItem(item) ? item.icon : item.name}
+                                    {isIconItem(item) ? (
+                                        <span aria-label={item.ariaLabel}>{item.icon}</span>
+                                    ) : (
+                                        item.name
+                                    )}
                                 </span>
                             </label>
                         </li>

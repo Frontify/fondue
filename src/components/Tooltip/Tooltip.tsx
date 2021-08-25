@@ -2,6 +2,7 @@
 
 import IconQuestion from "@elements/Icon/Generated/IconQuestion";
 import { IconSize } from "@elements/Icon/IconSize";
+import { useFocusVisible } from "@react-aria/interactions";
 import { useTooltip, useTooltipTrigger } from "@react-aria/tooltip";
 import { useTooltipTriggerState } from "@react-stately/tooltip";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
@@ -23,6 +24,7 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip }) => {
     const { triggerProps, tooltipProps } = useTooltipTrigger({}, state, useRef(tooltipTriggerElement));
     const { tooltipProps: tooltipAriaProps } = useTooltip(tooltipProps, state);
     const { isOpen } = state;
+    const { isFocusVisible } = useFocusVisible();
     const { styles, attributes } = usePopper(tooltipTriggerElement, tooltipElement, {
         placement: "auto-end",
         modifiers: [
@@ -44,8 +46,8 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip }) => {
                 onMouseEnter={() => state.open()}
                 onMouseLeave={() => state.close(true)}
                 className={merge([
-                    "tw-inline-flex tw-items-center tw-justify-center tw-text-black-60 hover:tw-text-black dark:tw-text-black-40 dark:hover:white tw-cursor-default tw-outline-none",
-                    isOpen && FOCUS_STYLE,
+                    "tw-inline-flex tw-items-center tw-justify-center tw-text-black-60 hover:tw-text-black dark:tw-text-black-40 dark:hover:white tw-cursor-default tw-outline-none tw-rounded-full",
+                    isOpen && isFocusVisible && FOCUS_STYLE,
                 ])}
             >
                 <IconQuestion size={IconSize.Size16} />
