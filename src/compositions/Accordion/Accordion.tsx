@@ -59,7 +59,6 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                 {item.props.children && isOpen && (
                     <motion.div
                         key={item.key}
-                        layout
                         initial={"collapsed"}
                         animate={"open"}
                         exit={"collapsed"}
