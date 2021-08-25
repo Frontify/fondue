@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { Divider, DividerHeight, DividerProps, DividerStyle } from "./Divider";
+import React from "react";
+import { Divider as DividerComponent, DividerHeight, DividerProps, DividerStyle } from "./Divider";
 
 export default {
     title: "Elements/Divider",
-    component: Divider,
+    component: DividerComponent,
     args: {
         color: "red",
     },
@@ -37,4 +37,4 @@ export default {
     },
 } as Meta;
 
-export const Template: Story<DividerProps> = (args: DividerProps) => <Divider {...args} />;
+export const Divider: Story<DividerProps> = (args: DividerProps) => <DividerComponent {...args} />;

@@ -2,11 +2,15 @@
 
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { AddBlockButton, AddBlockButtonDirection, AddBlockButtonProps } from "./AddBlockButton";
+import {
+    AddBlockButton as AddBlockButtonComponent,
+    AddBlockButtonDirection,
+    AddBlockButtonProps,
+} from "./AddBlockButton";
 
 export default {
     title: "Elements/Add Block Button",
-    component: AddBlockButton,
+    component: AddBlockButtonComponent,
     args: {
         title: "Add Block Button",
         orientation: AddBlockButtonDirection.Horizontal,
@@ -22,4 +26,6 @@ export default {
     },
 } as Meta<AddBlockButtonProps>;
 
-export const Template: Story<AddBlockButtonProps> = (args: AddBlockButtonProps) => <AddBlockButton {...args} />;
+export const AddBlockButton: Story<AddBlockButtonProps> = (args: AddBlockButtonProps) => (
+    <AddBlockButtonComponent {...args} />
+);

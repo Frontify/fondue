@@ -2,19 +2,19 @@
 
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { Tooltip, TooltipProps } from "./Tooltip";
+import { Tooltip as TooltipComponent, TooltipProps } from "./Tooltip";
 
 export default {
     title: "Components/Tooltip",
-    component: Tooltip,
+    component: TooltipComponent,
     args: {
         tooltip: "Tooltip Content (Reactnode)",
     },
 } as Meta;
 
-export const Template: Story<TooltipProps> = (args: TooltipProps) => (
+export const Tooltip: Story<TooltipProps> = (args: TooltipProps) => (
     <div>
-        <Tooltip {...args} />
+        <TooltipComponent {...args} />
         <p>Some other text.</p>
     </div>
 );
