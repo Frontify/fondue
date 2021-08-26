@@ -8,6 +8,7 @@ import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
 // ARIA
 import { useButton } from "@react-aria/button";
 import { useHover } from "@react-aria/interactions";
+import { usePress } from "@react-aria/interactions";
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
 // Utilities
@@ -32,12 +33,13 @@ export const AddBlockButton: FC<AddBlockButtonProps> = ({
 }) => {
     const ref = useRef<HTMLButtonElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
-    const { buttonProps, isPressed } = useButton({ onPress: () => onClick() }, ref);
+    const { buttonProps } = useButton({ onPress: () => onClick() }, ref);
     const { hoverProps, isHovered } = useHover({});
+    const { pressProps, isPressed } = usePress({});
 
     return (
         <button
-            {...mergeProps(buttonProps, focusProps, hoverProps)}
+            {...mergeProps(buttonProps, focusProps, hoverProps, pressProps)}
             title={title}
             data-test-id="add-block-button"
             className={merge([
@@ -49,7 +51,7 @@ export const AddBlockButton: FC<AddBlockButtonProps> = ({
             <span
                 className={merge([
                     "tw-text-white tw-bg-violet-60 tw-rounded tw-inline-flex tw-items-center tw-w-7 tw-h-6 tw-relative tw-p-1 tw-transition-color",
-                    isHovered && !isPressed && "tw-bg-violet-70",
+                    isHovered && "tw-bg-violet-70",
                     isPressed && "tw-bg-violet-90",
                     orientation === AddBlockButtonDirection.Vertical ? "tw-rotate-90" : "",
                 ])}
