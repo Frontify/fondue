@@ -59,12 +59,22 @@ type TextInputBaseProps = {
 
 export type TextInputProps =
     | ({
-          type?: TextInputType.Text | TextInputType.Number;
+          type?: TextInputType.Text;
           obfuscated?: false;
+          min?: undefined;
+          max?: undefined;
+      } & TextInputBaseProps)
+    | ({
+          type?: TextInputType.Number;
+          obfuscated?: false;
+          min?: number;
+          max?: number;
       } & TextInputBaseProps)
     | ({
           type: TextInputType.Password;
           obfuscated?: boolean;
+          min?: undefined;
+          max?: undefined;
       } & TextInputBaseProps);
 
 export const TextInput: FC<TextInputProps> = ({
@@ -83,6 +93,8 @@ export const TextInput: FC<TextInputProps> = ({
     onEnterPressed,
     onBlur,
     onClear,
+    min,
+    max,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const inputElement = useRef<HTMLInputElement | null>(null);
@@ -103,6 +115,11 @@ export const TextInput: FC<TextInputProps> = ({
             setIsObfuscated(obfuscated);
         }
     }, [obfuscated]);
+    useEffect(() => {
+        if (inputElement.current && defaultValue) {
+            inputElement.current.value = defaultValue;
+        }
+    }, [defaultValue]);
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
@@ -157,6 +174,8 @@ export const TextInput: FC<TextInputProps> = ({
                             : TextInputType.Text
                         : type
                 }
+                min={min}
+                max={max}
                 required={required}
                 disabled={disabled}
                 data-test-id="text-input"

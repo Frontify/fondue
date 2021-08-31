@@ -38,7 +38,7 @@ export const FLYOUT_DIVIDER_HEIGHT = "10px";
 
 export type FlyoutProps = PropsWithChildren<{
     trigger: ReactNode;
-    onClose: () => void;
+    onClose?: () => void;
     onClick?: () => void;
     title?: string;
     decorator?: ReactNode;
@@ -49,10 +49,22 @@ type OverlayProps = Omit<FlyoutProps, "trigger"> & {
     isOpen?: boolean;
     positionProps: HTMLAttributes<Element>;
     overlayTriggerProps: HTMLAttributes<Element>;
+    scrollRef: RefObject<HTMLDivElement>;
 };
 const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
     (
-        { title, decorator, badges = [], onClick, onClose, children, isOpen, positionProps, overlayTriggerProps },
+        {
+            title,
+            decorator,
+            badges = [],
+            onClick,
+            onClose,
+            children,
+            isOpen,
+            positionProps,
+            overlayTriggerProps,
+            scrollRef,
+        },
         ref,
     ) => {
         const { overlayProps } = useOverlay({ onClose, isOpen, isDismissable: true }, ref as RefObject<HTMLDivElement>);
@@ -63,42 +75,45 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
             <div
                 {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
                 ref={ref}
-                className="tw-flex tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95 tw-shadow-mid tw-outline-none"
+                className="tw-max-h-full tw-overflow-y-scroll tw-shadow-mid tw-min-w-[400px] tw-outline-none"
             >
-                {title && (
-                    <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8">
-                        <div {...titleProps} className="tw-inline-flex">
-                            <FieldsetHeader decorator={decorator}>{title}</FieldsetHeader>
+                <div
+                    ref={scrollRef}
+                    className="tw-flex tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95"
+                >
+                    {title && (
+                        <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8">
+                            <div {...titleProps} className="tw-inline-flex">
+                                <FieldsetHeader decorator={decorator}>{title}</FieldsetHeader>
+                            </div>
+                            <div className="tw-inline-flex tw-gap-2 tw-flex-wrap">
+                                {badges.map((badgeProps, index) => (
+                                    <Badge {...badgeProps} key={`flyout-badge-${index}`} />
+                                ))}
+                            </div>
                         </div>
-                        <div className="tw-inline-flex tw-gap-2 tw-flex-wrap">
-                            {badges.map((badgeProps, index) => (
-                                <Badge {...badgeProps} key={`flyout-badge-${index}`} />
-                            ))}
-                        </div>
-                    </div>
-                )}
-                {Children.map(children, (child, index) => (
-                    <div key={index} className="tw-p-8">
-                        {child}
-                    </div>
-                ))}
-                <div className="tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8">
-                    {onClick ? (
-                        <>
-                            <Button onClick={onClose} style={ButtonStyle.Secondary}>
-                                Cancel
-                            </Button>
-                            <Button onClick={onClick} icon={<IconCheck />}>
-                                Confirm
-                            </Button>
-                        </>
-                    ) : (
-                        <Button onClick={onClose} style={ButtonStyle.Secondary}>
-                            Close
-                        </Button>
                     )}
+                    {Children.map(children, (child, index) => (
+                        <div key={index}>{child}</div>
+                    ))}
+                    <div className="tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-sticky tw-bottom-0 tw-bg-white dark:tw-bg-black-95">
+                        {onClick ? (
+                            <>
+                                <Button onClick={onClose} style={ButtonStyle.Secondary}>
+                                    Cancel
+                                </Button>
+                                <Button onClick={onClick} icon={<IconCheck />}>
+                                    Confirm
+                                </Button>
+                            </>
+                        ) : (
+                            <Button onClick={onClose} style={ButtonStyle.Secondary}>
+                                Close
+                            </Button>
+                        )}
+                    </div>
+                    <DismissButton onDismiss={onClose} />
                 </div>
-                <DismissButton onDismiss={onClose} />
             </div>
         );
     },
@@ -109,6 +124,7 @@ export const Flyout: FC<FlyoutProps> = (props) => {
     const { isOpen } = state;
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const overlayRef = useRef<HTMLDivElement | null>(null);
+    const scrollRef = useRef<HTMLDivElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
     const { triggerProps, overlayProps: overlayTriggerProps } = useOverlayTrigger(
         { type: "dialog" },
@@ -120,6 +136,7 @@ export const Flyout: FC<FlyoutProps> = (props) => {
         overlayRef,
         placement: "bottom left",
         offset: 5,
+        scrollRef: scrollRef,
         isOpen,
     });
     const { buttonProps } = useButton({ onPress: () => state.toggle() }, triggerRef);
@@ -149,12 +166,20 @@ export const Flyout: FC<FlyoutProps> = (props) => {
                             isOpen={isOpen}
                             overlayTriggerProps={overlayTriggerProps}
                             positionProps={positionProps}
-                            onClick={props.onClick}
+                            onClick={
+                                props.onClick
+                                    ? () => {
+                                          props.onClick && props.onClick();
+                                          state.close();
+                                      }
+                                    : undefined
+                            }
                             onClose={() => {
-                                props.onClose();
+                                props.onClose && props.onClose();
                                 state.close();
                             }}
                             ref={overlayRef}
+                            scrollRef={scrollRef}
                         >
                             {props.children}
                         </Overlay>

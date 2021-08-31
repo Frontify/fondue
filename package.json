@@ -113,6 +113,7 @@
         "deepmerge": "^4.2.2",
         "framer-motion": "^4.1.17",
         "react-aria": "^3.9.0",
+        "react-color": "^2.19.3",
         "react-stately": "^3.8.0"
     }
 }
