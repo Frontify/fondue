@@ -19,7 +19,7 @@ export enum DividerHeight {
 
 export type DividerProps = {
     style?: DividerStyle;
-    height?: DividerHeight;
+    height?: DividerHeight | string;
     color?: string;
 };
 
@@ -30,20 +30,12 @@ const styleMap = {
     [DividerStyle.Dotted]: "tw-border-dotted",
 };
 
-const heightMap = {
-    [DividerHeight.Height10]: "tw-h-[10px]",
-    [DividerHeight.Height25]: "tw-h-[25px]",
-    [DividerHeight.Height50]: "tw-h-[50px]",
-    [DividerHeight.Height75]: "tw-h-[75px]",
-    [DividerHeight.Height100]: "tw-h-[100px]",
-};
-
 export const Divider: FC<DividerProps> = ({
     style = DividerStyle.Solid,
     height = DividerHeight.Height50,
     color: borderTopColor = "#CCC",
 }) => (
-    <div className={`tw-flex tw-items-center ${heightMap[height]}`} data-test-id="divider">
+    <div className="tw-flex tw-items-center" style={{ height }} data-test-id="divider">
         <hr
             className={`tw-border-t tw-m-0 tw-w-full ${styleMap[style]}`}
             style={{ borderTopColor }}
