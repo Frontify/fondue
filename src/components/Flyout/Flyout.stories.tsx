@@ -3,7 +3,7 @@
 import { Slider } from "@components/Slider/Slider";
 import { FormControl } from "@compositions/FormControl/FormControl";
 import { BadgeStatus, BadgeStyle } from "@elements/Badge/Badge";
-import { Divider, DividerHeight } from "@elements/Divider/Divider";
+import { Divider } from "@elements/Divider/Divider";
 import IconActions from "@elements/Icon/Generated/IconActions";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { Textarea } from "@elements/Textarea/Textarea";
@@ -11,7 +11,7 @@ import { TextInput } from "@elements/TextInput/TextInput";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
-import { Flyout, FlyoutProps, FLYOUT_DIVIDER_COLOR } from "./Flyout";
+import { Flyout, FlyoutProps, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT } from "./Flyout";
 
 export default {
     title: "Components/Flyout",
@@ -43,7 +43,7 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
                         >
                             <TextInput />
                         </FormControl>
-                        <Divider color={FLYOUT_DIVIDER_COLOR} height={DividerHeight.Height10} />
+                        <Divider color={FLYOUT_DIVIDER_COLOR} height={FLYOUT_DIVIDER_HEIGHT} />
                         <FormControl
                             label={{
                                 children: "Slider Label",

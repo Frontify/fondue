@@ -34,6 +34,7 @@ import React, {
 } from "react";
 
 export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
+export const FLYOUT_DIVIDER_HEIGHT = "10px";
 
 export type FlyoutProps = PropsWithChildren<{
     trigger: ReactNode;
