@@ -3,18 +3,18 @@
 import React, { FC } from "react";
 
 export enum DividerStyle {
-    NoLine = "tw-border-none",
-    Dashed = "tw-border-dashed",
-    Solid = "tw-border-solid",
-    Dotted = "tw-border-dotted",
+    NoLine = "noLine",
+    Dashed = "dashed",
+    Solid = "solid",
+    Dotted = "dotted",
 }
 
 export enum DividerHeight {
-    Height10 = "tw-h-[10px]",
-    Height25 = "tw-h-[25px]",
-    Height50 = "tw-h-[50px]",
-    Height75 = "tw-h-[75px]",
-    Height100 = "tw-h-[100px]",
+    Height10 = "10",
+    Height25 = "25",
+    Height50 = "50",
+    Height75 = "75",
+    Height100 = "100",
 }
 
 export type DividerProps = {
@@ -23,12 +23,31 @@ export type DividerProps = {
     color?: string;
 };
 
+const styleMap = {
+    [DividerStyle.NoLine]: "tw-border-none",
+    [DividerStyle.Dashed]: "tw-border-dashed",
+    [DividerStyle.Solid]: "tw-border-solid",
+    [DividerStyle.Dotted]: "tw-border-dotted",
+};
+
+const heightMap = {
+    [DividerHeight.Height10]: "tw-h-[10px]",
+    [DividerHeight.Height25]: "tw-h-[25px]",
+    [DividerHeight.Height50]: "tw-h-[50px]",
+    [DividerHeight.Height75]: "tw-h-[75px]",
+    [DividerHeight.Height100]: "tw-h-[100px]",
+};
+
 export const Divider: FC<DividerProps> = ({
     style = DividerStyle.Solid,
     height = DividerHeight.Height50,
     color: borderTopColor = "#CCC",
 }) => (
-    <div className={`tw-flex tw-items-center ${height}`} data-test-id="divider">
-        <hr className={`tw-border-t tw-m-0 tw-w-full ${style}`} style={{ borderTopColor }} data-test-id="divider-hr" />
+    <div className={`tw-flex tw-items-center ${heightMap[height]}`} data-test-id="divider">
+        <hr
+            className={`tw-border-t tw-m-0 tw-w-full ${styleMap[style]}`}
+            style={{ borderTopColor }}
+            data-test-id="divider-hr"
+        />
     </div>
 );
