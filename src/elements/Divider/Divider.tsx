@@ -10,11 +10,9 @@ export enum DividerStyle {
 }
 
 export enum DividerHeight {
-    Height10 = "10px",
-    Height25 = "25px",
-    Height50 = "50px",
-    Height75 = "75px",
-    Height100 = "100px",
+    Small = "36px",
+    Medium = "60px",
+    Large = "96px",
 }
 
 export type DividerProps = {
@@ -32,7 +30,7 @@ const styleMap = {
 
 export const Divider: FC<DividerProps> = ({
     style = DividerStyle.Solid,
-    height = DividerHeight.Height50,
+    height = DividerHeight.Small,
     color: borderTopColor = "#CCC",
 }) => (
     <div className="tw-flex tw-items-center" style={{ height }} data-test-id="divider">
