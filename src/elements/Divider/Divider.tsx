@@ -3,7 +3,7 @@
 import React, { FC } from "react";
 
 export enum DividerStyle {
-    NoLine = "noLine",
+    NoLine = "noline",
     Dashed = "dashed",
     Solid = "solid",
     Dotted = "dotted",
