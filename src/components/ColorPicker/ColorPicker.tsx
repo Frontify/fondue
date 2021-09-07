@@ -89,9 +89,9 @@ enum ColorFormat {
 const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ currentColor, onSelect }) => {
     const colorFormats = Object.values(ColorFormat).map((id) => ({ id, title: id.toLocaleUpperCase() }));
     const [colorFormat, setColorFormat] = useState(ColorFormat.Hex);
-    const [{ hsl, hsv, rgb, hex }, setColor] = useState(tranfsormColor(currentColor));
+    const [{ hsl, hsv, rgb, hex }, setColor] = useState(transformColor(currentColor));
     useEffect(() => {
-        setColor(tranfsormColor(currentColor));
+        setColor(transformColor(currentColor));
     }, [currentColor]);
 
     return (
@@ -137,15 +137,15 @@ const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ currentColor
                     />
                 </div>
             </div>
-            <div className="tw-flex tw-gap-2 tw-max-w-full">
-                <div>
+            <div className="tw-grid tw-grid-cols-3 tw-gap-2 tw-max-w-full">
+                <div className="">
                     <Dropdown
                         menuBlocks={[{ id: "1", menuItems: colorFormats }]}
                         activeItemId={colorFormat}
                         onChange={(id) => id && setColorFormat(id as ColorFormat)}
                     />
                 </div>
-                <div className="tw-flex-1 tw-flex tw-gap-2">
+                <div className="tw-col-span-2 tw-flex tw-gap-2">
                     <div
                         className={merge([
                             "tw-flex-1 tw-grid tw-gap-2 tw-justify-items-stretch",
