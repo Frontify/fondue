@@ -53,7 +53,7 @@ export type ColorPickerProps = {
     onSelect: (color: Color) => void;
 };
 
-const tranfsormColor = (color: Color) => toState({ ...toState(color).rgb, a: color.alpha });
+const transformColor = (color: Color) => toState({ ...toState(color).rgb, a: color.alpha });
 
 const getValidRgbColorValue = (input: string): number => {
     const value = parseInt(input || "0", 10);
