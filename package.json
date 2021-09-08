@@ -33,7 +33,6 @@
         "lint:fix": "npm run lint:ts:fix",
         "lint:ts": "eslint 'src/**/*.{ts,tsx}'",
         "lint:ts:fix": "eslint --fix 'src/**/*.{ts,tsx}'",
-        "tailwind:view-config": "tailwind-config-viewer -o",
         "test": "npm run build:css && cypress run-ct",
         "test:browser": "npm run build:css && cypress open-ct",
         "test:file": "npm run build:css && cypress run-ct --spec",
