@@ -7,7 +7,7 @@ import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import React, { FC, ReactElement, ReactNode, useEffect, useRef, useState, FormEvent } from "react";
 
 export enum TextInputType {
     Text = "text",
@@ -87,6 +87,15 @@ export const TextInput: FC<TextInputProps> = ({
     const [isObfuscated, setIsObfuscated] = useState(
         typeof obfuscated === "boolean" ? obfuscated : type === TextInputType.Password,
     );
+
+    const [inputContent, setInputContent] = useState<string>("");
+
+    const onTextInput = (event: FormEvent<HTMLInputElement>) => {
+        const value = (event.target as HTMLInputElement).value;
+        setInputContent(value);
+        onInput && onInput(value);
+    };
+
     useEffect(() => {
         if (typeof obfuscated === "boolean") {
             setIsObfuscated(obfuscated);
@@ -127,7 +136,7 @@ export const TextInput: FC<TextInputProps> = ({
                 onClick={() => {
                     inputElement.current?.focus();
                 }}
-                onInput={(event) => onInput && onInput((event.target as HTMLInputElement).value)}
+                onInput={(event) => onTextInput(event)}
                 onBlur={(event) => onBlur && onBlur(event.target.value)}
                 placeholder={placeholder}
                 defaultValue={defaultValue}
@@ -142,7 +151,7 @@ export const TextInput: FC<TextInputProps> = ({
                 disabled={disabled}
                 data-test-id="text-input"
             />
-            {clearable && (
+            {inputContent.length !== 0 && clearable && (
                 <button
                     className={merge([
                         "tw-flex tw-items-center tw-justify-center",
