@@ -19,7 +19,11 @@ export type DiffColor = {
 export const getValidRgbColorValue = (input: string): number => {
     const value = parseInt(input || "0", 10);
 
-    return value > 255 ? 255 : value < 0 ? 0 : value;
+    if (value > 255) {
+        return 255;
+    }
+
+    return value < 0 ? 0 : value;
 };
 
 export const transformColor = (color: Color) => toState({ ...toState(color).rgb, a: color.alpha });

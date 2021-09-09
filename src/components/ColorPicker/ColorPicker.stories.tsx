@@ -19,41 +19,47 @@ export default {
     },
 } as Meta<ColorPickerProps>;
 
+const color = {
+    hex: "",
+    alpha: 1,
+    name: "",
+};
+
 const palettes = [
     {
         title: "Red",
         colors: [
-            { hex: "#992136", alpha: 1, name: "90 (Foobar)" },
-            { hex: "#cc2c48", alpha: 1, name: "70" },
-            { hex: "#e52144", alpha: 1, name: "65" },
-            { hex: "#ff375a", alpha: 1, name: "60" },
-            { hex: "#ff8066", alpha: 1, name: "50 (This is orange?)" },
-            { hex: "#e1c4be", alpha: 1, name: "40" },
-            { hex: "#f0e1de", alpha: 1, name: "20" },
-        ],
+            { hex: "#992136", name: "90 (Foobar)" },
+            { hex: "#cc2c48", name: "70" },
+            { hex: "#e52144", name: "65" },
+            { hex: "#ff375a", name: "60" },
+            { hex: "#ff8066", name: "50 (This is orange?)" },
+            { hex: "#e1c4be", name: "40" },
+            { hex: "#f0e1de", name: "20" },
+        ].map((def) => ({ ...def, alpha: 1 })),
     },
     {
         title: "Green",
         colors: [
-            { hex: "#006452", alpha: 1, name: "90" },
-            { hex: "#00866e", alpha: 1, name: "75" },
-            { hex: "#00a084", alpha: 1, name: "70 (Green Berlin)" },
-            { hex: "#00c8a5", alpha: 1, name: "60" },
-            { hex: "#80dbb7", alpha: 1, name: "50" },
-            { hex: "#bee1d4", alpha: 1, name: "40" },
-            { hex: "#def0e9", alpha: 1, name: "20" },
-        ],
+            { hex: "#006452", name: "90" },
+            { hex: "#00866e", name: "75" },
+            { hex: "#00a084", name: "70 (Green Berlin)" },
+            { hex: "#00c8a5", name: "60" },
+            { hex: "#80dbb7", name: "50" },
+            { hex: "#bee1d4", name: "40" },
+            { hex: "#def0e9", name: "20" },
+        ].map((def) => ({ ...def, alpha: 1 })),
     },
     {
         title: "Yellow",
         colors: [
-            { hex: "#cc9000", alpha: 1, name: "90" },
-            { hex: "#e6a200", alpha: 1, name: "70" },
-            { hex: "#ffb400", alpha: 1, name: "60" },
-            { hex: "#eec779", alpha: 1, name: "50" },
-            { hex: "#e1d4be", alpha: 1, name: "40" },
-            { hex: "#f0e9de", alpha: 1, name: "20" },
-        ],
+            { hex: "#cc9000", name: "90" },
+            { hex: "#e6a200", name: "70" },
+            { hex: "#ffb400", name: "60" },
+            { hex: "#eec779", name: "50" },
+            { hex: "#e1d4be", name: "40" },
+            { hex: "#f0e9de", name: "20" },
+        ].map((def) => ({ ...def, alpha: 1 })),
     },
 ];
 
