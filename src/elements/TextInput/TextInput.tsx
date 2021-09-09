@@ -7,7 +7,7 @@ import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, ReactElement, ReactNode, useEffect, useRef, useState, KeyboardEvent } from "react";
+import React, { FC, ReactElement, ReactNode, useEffect, useRef, useState, FormEvent, KeyboardEvent } from "react";
 
 export enum TextInputType {
     Text = "text",
@@ -89,6 +89,15 @@ export const TextInput: FC<TextInputProps> = ({
     const [isObfuscated, setIsObfuscated] = useState(
         typeof obfuscated === "boolean" ? obfuscated : type === TextInputType.Password,
     );
+
+    const [inputContent, setInputContent] = useState<string>(defaultValue || "");
+
+    const onTextInput = (event: FormEvent<HTMLInputElement>) => {
+        const value = (event.target as HTMLInputElement).value;
+        setInputContent(value);
+        onInput && onInput(value);
+    };
+
     useEffect(() => {
         if (typeof obfuscated === "boolean") {
             setIsObfuscated(obfuscated);
@@ -135,11 +144,11 @@ export const TextInput: FC<TextInputProps> = ({
                 onClick={() => {
                     inputElement.current?.focus();
                 }}
-                onInput={(event) => onInput && onInput((event.target as HTMLInputElement).value)}
+                onInput={onTextInput}
                 onBlur={(event) => onBlur && onBlur(event.target.value)}
                 onKeyDown={onKeyDown}
                 placeholder={placeholder}
-                defaultValue={defaultValue}
+                value={inputContent}
                 type={
                     type === TextInputType.Password
                         ? isObfuscated
@@ -151,22 +160,20 @@ export const TextInput: FC<TextInputProps> = ({
                 disabled={disabled}
                 data-test-id="text-input"
             />
-            {clearable && (
+            {inputContent.length !== 0 && clearable && (
                 <button
                     className={merge([
                         "tw-flex tw-items-center tw-justify-center",
                         disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-60",
                     ])}
                     onClick={() => {
-                        if (inputElement.current) {
-                            inputElement.current.value = "";
-                            inputElement.current.focus();
-                            onClear && onClear();
-                        }
+                        inputElement.current?.focus();
+                        setInputContent("");
+                        onClear && onClear();
                     }}
                     data-test-id="clear-icon"
-                    title="clear input"
-                    aria-label="clear input"
+                    title="Clear text input"
+                    aria-label="clear text input"
                     disabled={disabled}
                 >
                     <IconReject />
@@ -180,8 +187,9 @@ export const TextInput: FC<TextInputProps> = ({
                     ])}
                     onClick={() => setIsObfuscated(!isObfuscated)}
                     data-test-id="visibility-icon"
-                    title="toggle text visibility"
+                    title="Toggle text visibility"
                     aria-label={`${isObfuscated ? "unveil" : "obfuscate"} text input`}
+                    disabled={disabled}
                 >
                     {isObfuscated ? <IconView /> : <IconViewSlash />}
                 </button>

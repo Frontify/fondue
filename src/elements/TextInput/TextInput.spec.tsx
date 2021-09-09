@@ -49,11 +49,26 @@ describe("Text Input component", () => {
         cy.get(DECORATOR_ID).should("be.visible").contains(DECORATOR_TEXT);
     });
 
+    it("hides the clear icon when there is no text in the field", () => {
+        mount(<TextInput clearable />);
+        cy.get(CLEAR_ICON_ID).should("not.exist");
+        cy.get(TEXT_INPUT_ID).type(INPUT_TEXT).should("have.value", INPUT_TEXT);
+        cy.get(CLEAR_ICON_ID).should("exist");
+    });
+
     it("clears the field when clicked on the clear icon", () => {
         mount(<TextInput clearable />);
         cy.get(TEXT_INPUT_ID).type(INPUT_TEXT).should("have.value", INPUT_TEXT);
         cy.get(CLEAR_ICON_ID).click();
         cy.get(TEXT_INPUT_ID).should("have.value", "").should("not.have.value", INPUT_TEXT);
+    });
+
+    it("remove the clean icon when pressing it", () => {
+        mount(<TextInput clearable />);
+        cy.get(TEXT_INPUT_ID).type(INPUT_TEXT).should("have.value", INPUT_TEXT);
+        cy.get(CLEAR_ICON_ID).should("exist");
+        cy.get(CLEAR_ICON_ID).click();
+        cy.get(CLEAR_ICON_ID).should("not.exist");
     });
 
     it("calls the onInput event", () => {

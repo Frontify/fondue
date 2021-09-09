@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 //@ts-ignore
-import { alias, plugins } from "../vite.config";
+const { alias, plugins } = require("../vite.config");
 
-export default {
+module.exports = {
     core: {
         builder: "storybook-builder-vite",
     },
