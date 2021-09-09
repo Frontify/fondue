@@ -27,7 +27,7 @@ export const CurrentBreadcrumbItem: FC<Breadcrumb> = ({ label, badges, bold, dec
                 <ItemWithBadges badges={badges}>
                     <a href={link} aria-current="page" className={classNames}>
                         {decorator}
-                        {label}
+                        <span className={bold ? "tw-font-bold" : ""}>{label}</span>
                     </a>
                 </ItemWithBadges>
             ) : onClick ? (
