@@ -19,12 +19,6 @@ export default {
     },
 } as Meta<ColorPickerProps>;
 
-const color = {
-    hex: "",
-    alpha: 1,
-    name: "",
-};
-
 const palettes = [
     {
         title: "Red",
