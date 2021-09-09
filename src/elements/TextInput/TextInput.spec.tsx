@@ -63,6 +63,14 @@ describe("Text Input component", () => {
         cy.get(TEXT_INPUT_ID).should("have.value", "").should("not.have.value", INPUT_TEXT);
     });
 
+    it("remove the clean icon when pressing it", () => {
+        mount(<TextInput clearable />);
+        cy.get(TEXT_INPUT_ID).type(INPUT_TEXT).should("have.value", INPUT_TEXT);
+        cy.get(CLEAR_ICON_ID).should("exist");
+        cy.get(CLEAR_ICON_ID).click();
+        cy.get(CLEAR_ICON_ID).should("not.exist");
+    });
+
     it("calls the onInput event", () => {
         const onInputStub = cy.stub().as("onInputStub");
         mount(<TextInput onInput={onInputStub} />);
