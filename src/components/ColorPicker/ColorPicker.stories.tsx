@@ -19,6 +19,8 @@ export default {
     },
 } as Meta<ColorPickerProps>;
 
+const addAlpha = ([hex, name]: string[]) => ({ hex, name, alpha: 1 });
+
 const palettes = [
     {
         title: "Red",
@@ -30,7 +32,7 @@ const palettes = [
             ["#ff8066", "50 (This is orange?)"],
             ["#e1c4be", "40"],
             ["#f0e1de", "20"],
-        ].map(([hex, name]) => ({ hex, name, alpha: 1 })),
+        ],
     },
     {
         title: "Green",
@@ -42,7 +44,7 @@ const palettes = [
             ["#80dbb7", "50"],
             ["#bee1d4", "40"],
             ["#def0e9", "20"],
-        ].map(([hex, name]) => ({ hex, name, alpha: 1 })),
+        ],
     },
     {
         title: "Yellow",
@@ -53,9 +55,9 @@ const palettes = [
             ["#eec779", "50"],
             ["#e1d4be", "40"],
             ["#f0e9de", "20"],
-        ].map(([hex, name]) => ({ hex, name, alpha: 1 })),
+        ],
     },
-];
+].map((palette) => ({ ...palette, colors: palette.colors.map(addAlpha) }));
 
 const Template: Story<ColorPickerProps> = (args) => {
     const [selectedColor, setSelectedColor] = useState(args.currentColor);
