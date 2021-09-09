@@ -7,7 +7,7 @@ import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import React, { FC, ReactElement, ReactNode, useEffect, useRef, useState, KeyboardEvent } from "react";
 
 export enum TextInputType {
     Text = "text",
@@ -52,6 +52,7 @@ type TextInputBaseProps = {
     disabled?: boolean;
     validation?: Validation;
     onInput?: (value: string) => void;
+    onEnterPressed?: (value: string) => void;
     onBlur?: (value: string) => void;
     onClear?: () => void;
 };
@@ -79,6 +80,7 @@ export const TextInput: FC<TextInputProps> = ({
     disabled = false,
     dotted = false,
     onInput,
+    onEnterPressed,
     onBlur,
     onClear,
 }) => {
@@ -92,6 +94,12 @@ export const TextInput: FC<TextInputProps> = ({
             setIsObfuscated(obfuscated);
         }
     }, [obfuscated]);
+
+    const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            onEnterPressed && onEnterPressed((event.target as HTMLInputElement).value);
+        }
+    };
 
     return (
         <div
@@ -129,6 +137,7 @@ export const TextInput: FC<TextInputProps> = ({
                 }}
                 onInput={(event) => onInput && onInput((event.target as HTMLInputElement).value)}
                 onBlur={(event) => onBlur && onBlur(event.target.value)}
+                onKeyDown={onKeyDown}
                 placeholder={placeholder}
                 defaultValue={defaultValue}
                 type={
