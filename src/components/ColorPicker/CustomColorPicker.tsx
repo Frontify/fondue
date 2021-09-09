@@ -4,17 +4,17 @@
 
 import { Dropdown } from "@components/Dropdown/Dropdown";
 import { TextInput, TextInputType } from "@elements/TextInput/TextInput";
+import { toColor, transformColor } from "@utilities/colors";
 import { debounce } from "@utilities/debounce";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useState } from "react";
-
 // @ts-ignore
 import { HuePicker } from "react-color";
 // @ts-ignore
 import { Alpha, Saturation } from "react-color/lib/components/common";
 // @ts-ignore
 import { isValidHex, toState } from "react-color/lib/helpers/color";
-import { ColorFormat, ColorPickerProps, toColor, transformColor } from "./ColorPicker";
+import { ColorFormat, ColorPickerProps } from "./ColorPicker";
 
 const ColorPointer: FC = () => <div className="tw-w-4 tw-h-4 tw-rounded-full tw-border-2 tw-border-white" />;
 

@@ -5,10 +5,11 @@ import IconSearch from "@elements/Icon/Generated/IconSearch";
 import IconUnorderedList from "@elements/Icon/Generated/IconUnorderedList";
 import { IconSize } from "@elements/Icon/IconSize";
 import { TextInput } from "@elements/TextInput/TextInput";
+import { toColor } from "@utilities/colors";
 import { debounce } from "@utilities/debounce";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useState } from "react";
-import { ColorPickerProps, toColor } from "./ColorPicker";
+import { ColorPickerProps } from "./ColorPicker";
 
 const find = (haystack?: string, needle = "") =>
     haystack?.toLocaleLowerCase().includes(needle.toLocaleLowerCase().trim());
