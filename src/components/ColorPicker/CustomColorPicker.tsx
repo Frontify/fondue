@@ -80,7 +80,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                 <div className="md:tw-col-span-2 tw-flex tw-flex-col md:tw-flex-row tw-gap-2">
                     <div
                         className={merge([
-                            "tw-flex-1 tw-grid tw-gap-2 tw-justify-items-stretch",
+                            "tw-flex-1 tw-grid tw-gap-2",
                             colorFormat === ColorFormat.Hex ? "tw-grid-flow-col" : "tw-grid-flow-row",
                         ])}
                     >

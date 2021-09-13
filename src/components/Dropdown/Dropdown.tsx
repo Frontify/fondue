@@ -77,11 +77,11 @@ export const Dropdown: FC<DropdownProps> = ({
     );
 
     return (
-        <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
+        <div className="tw-relative tw-w-full tw-font-sans tw-text-s ">
             <div
                 data-test-id="dropdown"
                 className={merge([
-                    "tw-group tw-relative tw-flex tw-w-full tw-box-border tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors",
+                    "tw-group tw-relative tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors",
                     size === DropdownSize.Small ? "tw-pr-3 tw-min-h-[36px]" : "tw-pr-5 tw-min-h-[60px]",
                     isFocusVisible && FOCUS_STYLE,
                     disabled
@@ -100,7 +100,7 @@ export const Dropdown: FC<DropdownProps> = ({
                     data-test-id="dropdown-trigger"
                     className={merge([
                         "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none",
-                        size === DropdownSize.Small ? "tw-p-3 tw-min-h-[36px]" : "tw-p-5 tw-min-h-[60px]",
+                        size === DropdownSize.Small ? "tw-py-1 tw-px-3" : "tw-p-5 tw-min-h-[60px]",
                         !activeItem && "tw-text-black-60",
                         disabled && "tw-text-black-40",
                     ])}
@@ -153,7 +153,7 @@ export const Dropdown: FC<DropdownProps> = ({
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
+                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
                         key="content"
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
