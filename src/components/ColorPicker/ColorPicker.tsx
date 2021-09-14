@@ -36,7 +36,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({ currentColor, palettes, onSe
     const { hex, value, name } = currentColor;
 
     return (
-        <div data-test-id="color-picker" className="tw-max-w-[400px]">
+        <div data-test-id="color-picker" className="tw-w-[400px]">
             <div
                 className="tw-flex tw-justify-center tw-p-7 tw-text-white tw-text-m tw-gap-2"
                 style={{ background: value || hex }}
