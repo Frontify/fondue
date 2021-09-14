@@ -50,7 +50,9 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip, header }) => {
                     </div>
                 )}
                 {/* Content */}
-                <div className="tw-p-4">{tooltip}</div>
+                <div data-test-id="tooltip" className="tw-p-4">
+                    {tooltip}
+                </div>
             </div>
         </>
     );
