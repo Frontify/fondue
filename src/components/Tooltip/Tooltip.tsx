@@ -34,9 +34,10 @@ export type TooltipProps = {
     tooltip: ReactNode;
     brightHeader?: BrightHeaderVariants;
     buttons?: boolean;
+    heading?: ReactNode;
 };
 
-export const Tooltip: FC<TooltipProps> = ({ tooltip, brightHeader, buttons }) => {
+export const Tooltip: FC<TooltipProps> = ({ tooltip, brightHeader, buttons, heading }) => {
     return (
         <>
             {/* Bright Header */}
@@ -51,10 +52,13 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip, brightHeader, buttons }) =>
                         {cloneElement(brightHeaderIcon[brightHeader], { size: IconSize.Size20 })}
                     </div>
                 )}
-                {/* Content */}
+                {/* Tooltip body */}
                 <div data-test-id="tooltip" className="tw-p-4">
-                    {tooltip}
-                    {/* Controls */}
+                    {/* Heading */}
+                    {heading && <h4 className="tw-text-m tw-font-bold">{heading}</h4>}
+                    {/* Tooltip message */}
+                    <p>{tooltip}</p>
+                    {/* Controls (buttons) */}
                     {buttons && (
                         <div className="tw-grid tw-grid-cols-2 tw-gap-1 tw-mt-4">
                             <Button style={ButtonStyle.Secondary} size={ButtonSize.Small}>

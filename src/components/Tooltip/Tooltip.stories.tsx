@@ -10,6 +10,7 @@ export default {
     args: {
         tooltip: "Your text here",
         buttons: false,
+        heading: "",
     },
     argTypes: {
         brightHeader: {
@@ -74,4 +75,10 @@ WithWarningHeaderAndButtons.args = {
     tooltip: loremIpsum,
     brightHeader: BrightHeaderVariants.Warning,
     buttons: true,
+};
+
+export const WithHeading = TooltipTemplate.bind({});
+WithHeading.args = {
+    tooltip: loremIpsum,
+    heading: "I'm a heading",
 };
