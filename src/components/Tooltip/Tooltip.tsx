@@ -30,23 +30,23 @@ const brightHeaderIcon: Record<BrightHeaderVariants, ReactElement> = {
 };
 
 export type TooltipProps = {
-    header?: BrightHeaderVariants;
+    brightHeader?: BrightHeaderVariants;
     tooltip: ReactNode;
 };
 
-export const Tooltip: FC<TooltipProps> = ({ tooltip, header }) => {
+export const Tooltip: FC<TooltipProps> = ({ tooltip, brightHeader }) => {
     return (
         <>
             {/* Bright Header */}
             <div className="tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20">
-                {header && (
+                {brightHeader && (
                     <div
                         className={merge([
                             "tw-h-9 tw-flex tw-justify-center tw-items-center tw-rounded-t-md tw-text-white",
-                            brightHeaderBackgroundColors[header],
+                            brightHeaderBackgroundColors[brightHeader],
                         ])}
                     >
-                        {cloneElement(brightHeaderIcon[header], { size: IconSize.Size20 })}
+                        {cloneElement(brightHeaderIcon[brightHeader], { size: IconSize.Size20 })}
                     </div>
                 )}
                 {/* Content */}

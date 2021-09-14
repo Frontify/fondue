@@ -11,7 +11,7 @@ export default {
         tooltip: "Your text here",
     },
     argTypes: {
-        header: {
+        brightHeader: {
             options: [
                 BrightHeaderVariants.Information,
                 BrightHeaderVariants.Warning,
@@ -23,32 +23,41 @@ export default {
     },
 } as Meta;
 
+const loremIpsum = "Cupcake ipsum dolor sit amet ice cream.";
+
 export const TooltipTemplate: Story<TooltipProps> = (args: TooltipProps) => <TooltipComponent {...args} />;
 
 export const Default = TooltipTemplate.bind({});
-Default.args = { header: undefined };
+Default.args = {
+    brightHeader: undefined,
+    tooltip: loremIpsum,
+};
 Default.storyName = "Base Tooltip";
 
 export const WithInfoHeader = TooltipTemplate.bind({});
 WithInfoHeader.args = {
-    header: BrightHeaderVariants.Information,
+    brightHeader: BrightHeaderVariants.Information,
+    tooltip: loremIpsum,
 };
 WithInfoHeader.storyName = "With Info Bright Header";
 
 export const WithWarningHeader = TooltipTemplate.bind({});
 WithWarningHeader.args = {
-    header: BrightHeaderVariants.Warning,
+    brightHeader: BrightHeaderVariants.Warning,
+    tooltip: loremIpsum,
 };
 WithWarningHeader.storyName = "With Warning Bright Header";
 
 export const WithTipHeader = TooltipTemplate.bind({});
 WithTipHeader.args = {
-    header: BrightHeaderVariants.Tip,
+    brightHeader: BrightHeaderVariants.Tip,
+    tooltip: loremIpsum,
 };
 WithTipHeader.storyName = "With Tip Bright Header";
 
 export const WithNoteHeader = TooltipTemplate.bind({});
 WithNoteHeader.args = {
-    header: BrightHeaderVariants.Note,
+    brightHeader: BrightHeaderVariants.Note,
+    tooltip: loremIpsum,
 };
 WithNoteHeader.storyName = "With Note Bright Header";
