@@ -9,6 +9,7 @@ export default {
     component: TooltipComponent,
     args: {
         tooltip: "Your text here",
+        buttons: false,
     },
     argTypes: {
         brightHeader: {
@@ -61,3 +62,16 @@ WithNoteHeader.args = {
     tooltip: loremIpsum,
 };
 WithNoteHeader.storyName = "With Note Bright Header";
+
+export const WithButtons = TooltipTemplate.bind({});
+WithButtons.args = {
+    tooltip: loremIpsum,
+    buttons: true,
+};
+
+export const WithWarningHeaderAndButtons = TooltipTemplate.bind({});
+WithWarningHeaderAndButtons.args = {
+    tooltip: loremIpsum,
+    brightHeader: BrightHeaderVariants.Warning,
+    buttons: true,
+};

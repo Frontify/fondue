@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { cloneElement, FC, ReactElement, ReactNode } from "react";
-import IconInfo from "@elements/Icon/Generated/IconInfo";
-import IconCallout from "@elements/Icon/Generated/IconCallout";
-import IconCheck from "@elements/Icon/Generated/IconCheck";
-import IconDocument from "@elements/Icon/Generated/IconDocument";
-import { IconSize } from "@elements/Icon/IconSize";
 import { merge } from "@utilities/merge";
+import { Button, ButtonStyle, ButtonSize } from "@elements/Button/Button";
+import { IconSize } from "@elements/Icon/IconSize";
+import IconInfo from "@elements/Icon/Generated/IconInfo";
+import IconCheck from "@elements/Icon/Generated/IconCheck";
+import IconCallout from "@elements/Icon/Generated/IconCallout";
+import IconDocument from "@elements/Icon/Generated/IconDocument";
 
 export enum BrightHeaderVariants {
     Information = "information",
@@ -30,11 +31,12 @@ const brightHeaderIcon: Record<BrightHeaderVariants, ReactElement> = {
 };
 
 export type TooltipProps = {
-    brightHeader?: BrightHeaderVariants;
     tooltip: ReactNode;
+    brightHeader?: BrightHeaderVariants;
+    buttons?: boolean;
 };
 
-export const Tooltip: FC<TooltipProps> = ({ tooltip, brightHeader }) => {
+export const Tooltip: FC<TooltipProps> = ({ tooltip, brightHeader, buttons }) => {
     return (
         <>
             {/* Bright Header */}
@@ -52,6 +54,17 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip, brightHeader }) => {
                 {/* Content */}
                 <div data-test-id="tooltip" className="tw-p-4">
                     {tooltip}
+                    {/* Controls */}
+                    {buttons && (
+                        <div className="tw-grid tw-grid-cols-2 tw-gap-1 tw-mt-4">
+                            <Button style={ButtonStyle.Secondary} size={ButtonSize.Small}>
+                                Secondary
+                            </Button>
+                            <Button style={ButtonStyle.Primary} size={ButtonSize.Small}>
+                                Primary
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
         </>
