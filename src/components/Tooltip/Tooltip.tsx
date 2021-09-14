@@ -35,7 +35,7 @@ export type TooltipProps = {
     brightHeader?: BrightHeaderVariants;
     heading?: ReactNode;
     headingIcon?: ReactElement;
-    buttons: [TooltipButton, TooltipButton];
+    buttons?: [TooltipButton, TooltipButton];
 };
 
 export type TooltipButton = {
