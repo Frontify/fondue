@@ -7,7 +7,7 @@ import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, ReactElement, ReactNode, useEffect, useRef, useState, FormEvent, KeyboardEvent } from "react";
+import React, { FC, FormEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 
 export enum TextInputType {
     Text = "text",
@@ -141,9 +141,6 @@ export const TextInput: FC<TextInputProps> = ({
                         ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40 tw-cursor-not-allowed"
                         : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
                 ])}
-                onClick={() => {
-                    inputElement.current?.focus();
-                }}
                 onInput={onTextInput}
                 onBlur={(event) => onBlur && onBlur(event.target.value)}
                 onKeyDown={onKeyDown}
