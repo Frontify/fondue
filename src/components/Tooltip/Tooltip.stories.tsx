@@ -12,12 +12,13 @@ export default {
         heading: "",
         buttons: [
             { label: "Secondary", action: () => null },
-            { label: "Secondary", action: () => null },
+            { label: "Primary", action: () => null },
         ],
     },
     argTypes: {
         brightHeader: {
             options: [
+                null,
                 BrightHeaderVariants.Information,
                 BrightHeaderVariants.Warning,
                 BrightHeaderVariants.Tip,
@@ -76,8 +77,8 @@ export const WithButtons = TooltipTemplate.bind({});
 WithButtons.args = {
     tooltip: loremIpsum,
     buttons: [
-        { label: "Secondary", action: () => null },
-        { label: "Secondary", action: () => null },
+        { label: "Whatever", action: () => null },
+        { label: "Hello", action: () => null },
     ],
 };
 
@@ -86,8 +87,8 @@ WithWarningHeaderAndButtons.args = {
     tooltip: loremIpsum,
     brightHeader: BrightHeaderVariants.Warning,
     buttons: [
-        { label: "Secondary", action: () => null },
-        { label: "Secondary", action: () => null },
+        { label: "Whatever", action: () => null },
+        { label: "Hello", action: () => null },
     ],
 };
 

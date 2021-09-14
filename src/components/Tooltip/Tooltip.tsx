@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, FC, ReactElement, ReactNode } from "react";
+import React, { FC, ReactElement, ReactNode } from "react";
 import { merge } from "@utilities/merge";
 import { Button, ButtonStyle, ButtonSize } from "@elements/Button/Button";
 import { IconSize } from "@elements/Icon/IconSize";
@@ -24,10 +24,10 @@ const brightHeaderBackgroundColors: Record<BrightHeaderVariants, string> = {
 };
 
 const brightHeaderIcon: Record<BrightHeaderVariants, ReactElement> = {
-    [BrightHeaderVariants.Information]: <IconInfo />,
-    [BrightHeaderVariants.Warning]: <IconCallout />,
-    [BrightHeaderVariants.Tip]: <IconCheck />,
-    [BrightHeaderVariants.Note]: <IconDocument />,
+    [BrightHeaderVariants.Information]: <IconInfo size={IconSize.Size20} />,
+    [BrightHeaderVariants.Warning]: <IconCallout size={IconSize.Size20} />,
+    [BrightHeaderVariants.Tip]: <IconCheck size={IconSize.Size20} />,
+    [BrightHeaderVariants.Note]: <IconDocument size={IconSize.Size20} />,
 };
 
 export type TooltipProps = {
@@ -51,6 +51,8 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip, brightHeader, buttons, head
         headingAndIconArePresent = true;
     }
 
+    const showButtons = buttons !== undefined && Object.keys(buttons).length === 2;
+
     return (
         <>
             <div className="tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20">
@@ -61,7 +63,7 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip, brightHeader, buttons, head
                             brightHeaderBackgroundColors[brightHeader],
                         ])}
                     >
-                        {cloneElement(brightHeaderIcon[brightHeader], { size: IconSize.Size20 })}
+                        {brightHeaderIcon[brightHeader]}
                     </div>
                 )}
                 <div data-test-id="tooltip" className="tw-p-4">
@@ -72,7 +74,7 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip, brightHeader, buttons, head
                         </h4>
                     )}
                     <p>{tooltip}</p>
-                    {buttons && (
+                    {showButtons && (
                         <div className="tw-grid tw-grid-cols-2 tw-gap-1 tw-mt-4">
                             <Button style={ButtonStyle.Secondary} size={ButtonSize.Small} onClick={buttons[0].action}>
                                 {buttons[0].label}
