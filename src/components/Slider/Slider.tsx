@@ -91,7 +91,7 @@ export const Slider: FC<SliderProps> = ({
                                 htmlFor={isActive ? id : undefined}
                                 data-test-id={isIconItem(item) ? "slider-item-icon" : "slider-item-text"}
                                 className={merge([
-                                    "tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-p-3 tw-text-center",
+                                    "tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-9 tw-text-center",
                                     isActive && !disabled ? "tw-text-black" : "tw-text-black-80",
                                     !disabled ? "hover:tw-text-black hover:tw-cursor-pointer" : "",
                                 ])}
