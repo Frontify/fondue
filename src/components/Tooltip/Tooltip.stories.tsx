@@ -9,8 +9,11 @@ export default {
     component: TooltipComponent,
     args: {
         tooltip: "Your text here",
-        buttons: false,
         heading: "",
+        buttons: [
+            { label: "Secondary", action: () => null },
+            { label: "Secondary", action: () => null },
+        ],
     },
     argTypes: {
         brightHeader: {
@@ -33,6 +36,7 @@ export const Default = TooltipTemplate.bind({});
 Default.args = {
     brightHeader: undefined,
     tooltip: loremIpsum,
+    buttons: undefined,
 };
 Default.storyName = "Base Tooltip";
 
@@ -40,6 +44,7 @@ export const WithInfoHeader = TooltipTemplate.bind({});
 WithInfoHeader.args = {
     brightHeader: BrightHeaderVariants.Information,
     tooltip: loremIpsum,
+    buttons: undefined,
 };
 WithInfoHeader.storyName = "With Info Bright Header";
 
@@ -47,6 +52,7 @@ export const WithWarningHeader = TooltipTemplate.bind({});
 WithWarningHeader.args = {
     brightHeader: BrightHeaderVariants.Warning,
     tooltip: loremIpsum,
+    buttons: undefined,
 };
 WithWarningHeader.storyName = "With Warning Bright Header";
 
@@ -54,6 +60,7 @@ export const WithTipHeader = TooltipTemplate.bind({});
 WithTipHeader.args = {
     brightHeader: BrightHeaderVariants.Tip,
     tooltip: loremIpsum,
+    buttons: undefined,
 };
 WithTipHeader.storyName = "With Tip Bright Header";
 
@@ -61,24 +68,32 @@ export const WithNoteHeader = TooltipTemplate.bind({});
 WithNoteHeader.args = {
     brightHeader: BrightHeaderVariants.Note,
     tooltip: loremIpsum,
+    buttons: undefined,
 };
 WithNoteHeader.storyName = "With Note Bright Header";
 
 export const WithButtons = TooltipTemplate.bind({});
 WithButtons.args = {
     tooltip: loremIpsum,
-    buttons: true,
+    buttons: [
+        { label: "Secondary", action: () => null },
+        { label: "Secondary", action: () => null },
+    ],
 };
 
 export const WithWarningHeaderAndButtons = TooltipTemplate.bind({});
 WithWarningHeaderAndButtons.args = {
     tooltip: loremIpsum,
     brightHeader: BrightHeaderVariants.Warning,
-    buttons: true,
+    buttons: [
+        { label: "Secondary", action: () => null },
+        { label: "Secondary", action: () => null },
+    ],
 };
 
 export const WithHeading = TooltipTemplate.bind({});
 WithHeading.args = {
     tooltip: loremIpsum,
     heading: "I'm a heading",
+    buttons: undefined,
 };
