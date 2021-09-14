@@ -1,69 +1,57 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconQuestion from "@elements/Icon/Generated/IconQuestion";
+import React, { cloneElement, FC, ReactElement, ReactNode } from "react";
+import IconInfo from "@elements/Icon/Generated/IconInfo";
+import IconCallout from "@elements/Icon/Generated/IconCallout";
+import IconCheck from "@elements/Icon/Generated/IconCheck";
+import IconDocument from "@elements/Icon/Generated/IconDocument";
 import { IconSize } from "@elements/Icon/IconSize";
-import { useFocusVisible } from "@react-aria/interactions";
-import { useTooltip, useTooltipTrigger } from "@react-aria/tooltip";
-import { useTooltipTriggerState } from "@react-stately/tooltip";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, ReactNode, useRef, useState } from "react";
-import { usePopper } from "react-popper";
+
+export enum BrightHeaderVariants {
+    Information = "information",
+    Warning = "warning",
+    Tip = "tip",
+    Note = "note",
+}
+
+const brightHeaderBackgroundColors: Record<BrightHeaderVariants, string> = {
+    [BrightHeaderVariants.Information]: "tw-bg-violet-60",
+    [BrightHeaderVariants.Warning]: "tw-bg-red-60",
+    [BrightHeaderVariants.Tip]: "tw-bg-green-60",
+    [BrightHeaderVariants.Note]: "tw-bg-yellow-60",
+};
+
+const brightHeaderIcon: Record<BrightHeaderVariants, ReactElement> = {
+    [BrightHeaderVariants.Information]: <IconInfo />,
+    [BrightHeaderVariants.Warning]: <IconCallout />,
+    [BrightHeaderVariants.Tip]: <IconCheck />,
+    [BrightHeaderVariants.Note]: <IconDocument />,
+};
 
 export type TooltipProps = {
+    header?: BrightHeaderVariants;
     tooltip: ReactNode;
 };
 
-const TOOLTIP_DISTANCE = 9;
-const TOOLTIP_SKIDDING = 0;
-
-export const Tooltip: FC<TooltipProps> = ({ tooltip }) => {
-    const [tooltipTriggerElement, setTooltipTriggerElement] = useState<HTMLElement | null>(null);
-    const [tooltipElement, setTooltipElement] = useState<HTMLDivElement | null>(null);
-    const state = useTooltipTriggerState();
-    const { triggerProps, tooltipProps } = useTooltipTrigger({}, state, useRef(tooltipTriggerElement));
-    const { tooltipProps: tooltipAriaProps } = useTooltip(tooltipProps, state);
-    const { isOpen } = state;
-    const { isFocusVisible } = useFocusVisible();
-    const { styles, attributes } = usePopper(tooltipTriggerElement, tooltipElement, {
-        placement: "auto-end",
-        modifiers: [
-            {
-                name: "offset",
-                options: {
-                    offset: [TOOLTIP_SKIDDING, TOOLTIP_DISTANCE],
-                },
-            },
-        ],
-    });
-
+export const Tooltip: FC<TooltipProps> = ({ tooltip, header }) => {
     return (
         <>
-            <button
-                {...triggerProps}
-                data-test-id="tooltip-icon"
-                ref={setTooltipTriggerElement}
-                onMouseEnter={() => state.open()}
-                onMouseLeave={() => state.close(true)}
-                className={merge([
-                    "tw-inline-flex tw-items-center tw-justify-center tw-text-black-60 hover:tw-text-black dark:tw-text-black-40 dark:hover:white tw-cursor-default tw-outline-none tw-rounded-full",
-                    isOpen && isFocusVisible && FOCUS_STYLE,
-                ])}
-            >
-                <IconQuestion size={IconSize.Size16} />
-            </button>
-            {isOpen && (
-                <div
-                    {...tooltipAriaProps}
-                    data-test-id="tooltip"
-                    ref={setTooltipElement}
-                    style={styles.popper}
-                    {...attributes.popper}
-                    className="tw-p-4 tw-border tw-border-black-10 tw-bg-white tw-rounded-md tw-shadow-mid dark:tw-bg-black-90 dark:tw-text-white tw-z-20"
-                >
-                    {tooltip}
-                </div>
-            )}
+            {/* Bright Header */}
+            <div className="tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20">
+                {header && (
+                    <div
+                        className={merge([
+                            "tw-h-9 tw-flex tw-justify-center tw-items-center tw-rounded-t-md tw-text-white",
+                            brightHeaderBackgroundColors[header],
+                        ])}
+                    >
+                        {cloneElement(brightHeaderIcon[header], { size: IconSize.Size20 })}
+                    </div>
+                )}
+                {/* Content */}
+                <div className="tw-p-4">{tooltip}</div>
+            </div>
         </>
     );
 };
