@@ -110,3 +110,32 @@ TooltipWithIcon.args = {
     tooltip: loremIpsum,
     tooltipIcon: <IconIcons />,
 };
+
+export const WithLinkWithDefaultLabel = TooltipTemplate.bind({});
+WithLinkWithDefaultLabel.args = {
+    tooltip: loremIpsum,
+    linkUrl: "#",
+    buttons: undefined,
+};
+
+export const WithLinkWithCustomLabel = TooltipTemplate.bind({});
+WithLinkWithCustomLabel.args = {
+    tooltip: loremIpsum,
+    linkUrl: "#",
+    linkLabel: "Upgrade your plan",
+    buttons: undefined,
+};
+
+export const WithEverythingDisplayed = TooltipTemplate.bind({});
+WithEverythingDisplayed.args = {
+    tooltip: loremIpsum,
+    tooltipIcon: <IconIcons />,
+    heading: "I'm a heading",
+    headingIcon: <IconIcons />,
+    linkUrl: "#",
+    brightHeader: BrightHeaderVariants.Warning,
+    buttons: [
+        { label: "Whatever", action: () => null },
+        { label: "Hello", action: () => null },
+    ],
+};
