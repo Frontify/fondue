@@ -2,7 +2,8 @@
 
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { Tooltip as TooltipComponent, TooltipProps, BrightHeaderVariants } from "./Tooltip";
+import { Tooltip as TooltipComponent, TooltipProps } from "./Tooltip";
+import { BrightHeaderVariants } from "./partials/BrightHeader";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 
 export default {
@@ -11,10 +12,7 @@ export default {
     args: {
         tooltip: "Your text here",
         heading: "",
-        buttons: [
-            { label: "Secondary", action: () => null },
-            { label: "Primary", action: () => null },
-        ],
+        buttons: [],
     },
     argTypes: {
         brightHeader: {
