@@ -50,7 +50,10 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                         buttonProps.onKeyUp(event);
                     }
                 }}
-                className={merge(["tw-w-full tw-px-8 tw-py-7", isFocusVisible && FOCUS_STYLE])}
+                className={merge([
+                    "tw-w-full tw-px-8 tw-py-7 focus-visible:tw-outline-none",
+                    isFocusVisible && FOCUS_STYLE,
+                ])}
             >
                 <FieldsetHeader {...header} active={isOpen} onClick={undefined} />
             </button>
@@ -123,7 +126,12 @@ export const Accordion: FC<AccordionProps> = (props) => {
     const ariaProps = mapToAriaProps(children);
     const ref = useRef<HTMLDivElement | null>(null);
     const state = useTreeState<AccordionItemProps>(ariaProps);
-    const { accordionProps } = useAccordion(ariaProps, state, ref);
+    const {
+        // @react-aria prevents default action for onMouseDown as implemented here: https://github.com/adobe/react-spectrum/blob/e14523fedd93ac1a4ede355aed70988af572ae74/packages/%40react-aria/selection/src/useSelectableCollection.ts#L370
+        // This makes it impossible to edit or select text in input fields inside the accordion
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        accordionProps: { onMouseDown, ...accordionProps },
+    } = useAccordion(ariaProps, state, ref);
 
     return (
         <div

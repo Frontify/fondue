@@ -7,7 +7,7 @@ import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, ReactElement, ReactNode, useEffect, useRef, useState, FormEvent, KeyboardEvent } from "react";
+import React, { FC, FormEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 
 export enum TextInputType {
     Text = "text",
@@ -114,7 +114,7 @@ export const TextInput: FC<TextInputProps> = ({
         <div
             {...focusProps}
             className={merge([
-                "tw-flex tw-items-center tw-py-2 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative",
+                "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative",
                 dotted ? "tw-border-dashed" : "tw-border-solid",
                 disabled
                     ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90 tw-cursor-not-allowed"
@@ -141,9 +141,6 @@ export const TextInput: FC<TextInputProps> = ({
                         ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40 tw-cursor-not-allowed"
                         : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
                 ])}
-                onClick={() => {
-                    inputElement.current?.focus();
-                }}
                 onInput={onTextInput}
                 onBlur={(event) => onBlur && onBlur(event.target.value)}
                 onKeyDown={onKeyDown}
