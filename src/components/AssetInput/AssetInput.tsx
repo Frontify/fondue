@@ -87,10 +87,10 @@ export type AssetInputProps =
 const AssetThumbnail: FC<Pick<AssetProps, "asset" | "size"> & { isActive?: boolean }> = ({ asset, size, isActive }) => (
     <span
         className={merge([
+            "tw-flex tw-flex-col tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95 group-hover:tw-text-black-100 dark:group-hover:tw-text-white",
             size === AssetInputSize.Large
                 ? "tw-w-full tw-h-32"
                 : "tw-w-14 tw-h-full tw-border-r tw-border-black-opacity-25",
-            "tw-flex tw-flex-col tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95 group-hover:tw-text-black-100 dark:group-hover:tw-text-white",
             isActive ? "tw-text-black-100 dark:tw-text-white" : "tw-text-black-80 dark:tw-text-black-20",
         ])}
     >
@@ -163,8 +163,8 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                 <AssetThumbnail asset={asset} size={size} isActive={isOpen || isFocusVisible} />
                 <span
                     className={merge([
-                        size === AssetInputSize.Large ? "tw-h-14" : "tw-h-full",
                         "tw-py-3 tw-pr-3 tw-pl-4 tw-flex tw-flex-col tw-items-start tw-font-normal tw-flex-1",
+                        size === AssetInputSize.Large ? "tw-h-14" : "tw-h-full",
                     ])}
                 >
                     <span
@@ -179,8 +179,8 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                 </span>
                 <span
                     className={merge([
-                        size === AssetInputSize.Large ? "tw-h-14" : "tw-h-full",
                         "tw-p-3 tw-flex tw-items-center",
+                        size === AssetInputSize.Large ? "tw-h-14" : "tw-h-full",
                     ])}
                 >
                     <span className={merge(["tw-transition-transform", isOpen && "tw-rotate-180"])}>

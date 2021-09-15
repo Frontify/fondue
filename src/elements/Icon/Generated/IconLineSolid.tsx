@@ -2,7 +2,7 @@ import * as React from "react";
 import { IconProps } from "@elements/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@elements/Icon/IconSize";
 
-function IconTextAlignLeft(props: IconProps): React.ReactElement<IconProps> {
+function IconLineSolid(props: IconProps): React.ReactElement<IconProps> {
     const customClassName = [
         "tw-flex tw-items-center tw-justify-center tw-fill-current",
         IconSizeMap[props.size || IconSize.Size16],
@@ -15,17 +15,17 @@ function IconTextAlignLeft(props: IconProps): React.ReactElement<IconProps> {
             width="100%"
             height="100%"
             className={customClassName}
-            name="IconTextAlignLeft"
+            name="IconLineSolid"
             {...props}
         >
             <path
                 fillRule="evenodd"
                 clipRule="evenodd"
-                d="M20.662 6a1 1 0 01-1 1h-16a1 1 0 010-2h16a1 1 0 011 1zM2.662 18a1 1 0 011-1h13a1 1 0 110 2h-13a1 1 0 01-1-1zM17.662 10a1 1 0 01-1 1h-13a1 1 0 110-2h13a1 1 0 011 1zM20.662 14a1 1 0 01-1 1h-16a1 1 0 110-2h16a1 1 0 011 1z"
+                d="M18 20.75a.25.25 0 00.25-.25v-4a.75.75 0 011.5 0v4A1.75 1.75 0 0118 22.25H6a1.75 1.75 0 01-1.75-1.75v-4a.75.75 0 011.5 0v4c0 .138.112.25.25.25h12zM18 4.25a.25.25 0 01.25.25v4a.75.75 0 001.5 0v-4A1.75 1.75 0 0018 2.75H6A1.75 1.75 0 004.25 4.5v4a.75.75 0 001.5 0v-4A.25.25 0 016 4.25h12zM20 12.483a.75.75 0 01-.75.75H4.75a.75.75 0 010-1.5h14.5a.75.75 0 01.75.75z"
             />
         </svg>
     );
 }
 
-const MemoIconTextAlignLeft = React.memo(IconTextAlignLeft);
-export default MemoIconTextAlignLeft;
+const MemoIconLineSolid = React.memo(IconLineSolid);
+export default MemoIconLineSolid;

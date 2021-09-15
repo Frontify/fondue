@@ -9,8 +9,8 @@ function IconImageTextRatio75(props: IconProps): React.ReactElement<IconProps> {
     ].join(" ");
     return (
         <svg
-            fill="currentColor"
             viewBox="0 0 24 24"
+            fill="currentColor"
             xmlns="http://www.w3.org/2000/svg"
             width="100%"
             height="100%"
@@ -18,7 +18,11 @@ function IconImageTextRatio75(props: IconProps): React.ReactElement<IconProps> {
             name="IconImageTextRatio75"
             {...props}
         >
-            <path d="M5.572 3.005a2.514 2.514 0 012.514 2.514V18.48a2.514 2.514 0 11-5.028 0V5.52a2.514 2.514 0 012.514-2.514zm0 1.5c-.56 0-1.014.454-1.014 1.014V18.48a1.014 1.014 0 102.028 0V5.52c0-.56-.454-1.014-1.014-1.014zm4.624.927a.75.75 0 010-1.5h9.996a.75.75 0 010 1.5h-9.996zm0 3.03a.75.75 0 010-1.5h9.996a.75.75 0 010 1.5h-9.996zm.01 3.034a.75.75 0 010-1.5h5.87a.75.75 0 010 1.5h-5.87z" />
+            <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M5.4 5.5H3.6a.1.1 0 00-.1.1v12.8a.1.1 0 00.1.1h1.8a.1.1 0 00.1-.1V5.6a.1.1 0 00-.1-.1zM3.6 4A1.6 1.6 0 002 5.6v12.8A1.6 1.6 0 003.6 20h1.8A1.6 1.6 0 007 18.4V5.6A1.6 1.6 0 005.4 4H3.6zM22 5.75a.75.75 0 01-.75.75H9.75a.75.75 0 010-1.5h11.5a.75.75 0 01.75.75zM22 11.75a.75.75 0 01-.75.75H9.75a.75.75 0 010-1.5h11.5a.75.75 0 01.75.75zM19 8.75a.75.75 0 01-.75.75h-8.5a.75.75 0 010-1.5h8.5a.75.75 0 01.75.75zM19 14.75a.75.75 0 01-.75.75h-8.5a.75.75 0 010-1.5h8.5a.75.75 0 01.75.75z"
+            />
         </svg>
     );
 }
