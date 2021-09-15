@@ -25,6 +25,14 @@ export default {
             ],
             control: { type: "select" },
         },
+        tooltipIcon: {
+            options: ["Nothing", "Icon"],
+            mapping: {
+                Nothing: null,
+                Icon: <IconIcons key="1" />,
+            },
+            control: { type: "select" },
+        },
         headingIcon: {
             options: ["Nothing", "Icon"],
             mapping: {
@@ -95,4 +103,10 @@ WithHeading.args = {
     heading: "I'm a heading",
     headingIcon: <IconIcons />,
     buttons: undefined,
+};
+
+export const TooltipWithIcon = TooltipTemplate.bind({});
+TooltipWithIcon.args = {
+    tooltip: loremIpsum,
+    tooltipIcon: <IconIcons />,
 };

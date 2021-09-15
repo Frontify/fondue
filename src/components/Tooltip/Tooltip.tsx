@@ -12,13 +12,14 @@ export type TooltipButton = {
 
 export type TooltipProps = {
     tooltip: ReactNode;
+    tooltipIcon?: ReactElement;
     brightHeader?: BrightHeaderVariants;
     heading?: ReactNode;
     headingIcon?: ReactElement;
     buttons?: [TooltipButton, TooltipButton];
 };
 
-export const Tooltip: FC<TooltipProps> = ({ tooltip, brightHeader, buttons, heading, headingIcon }) => {
+export const Tooltip: FC<TooltipProps> = ({ tooltip, tooltipIcon, brightHeader, buttons, heading, headingIcon }) => {
     const showButtons = buttons !== undefined && Object.keys(buttons).length === 2;
 
     return (
@@ -34,7 +35,14 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip, brightHeader, buttons, head
                             {heading}
                         </h4>
                     )}
-                    <p className="tw-text-s">{tooltip}</p>
+                    <div className="tw-flex">
+                        {tooltipIcon && (
+                            <span className="tw-flex-shrink-0 tw-mr-1">
+                                {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
+                            </span>
+                        )}
+                        <p className="tw-text-s">{tooltip}</p>
+                    </div>
                     {showButtons && (
                         <div className="tw-grid tw-grid-cols-2 tw-gap-x-1 tw-mt-4">
                             <Button style={ButtonStyle.Secondary} size={ButtonSize.Small} onClick={buttons[0].action}>
