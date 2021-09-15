@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactElement, ReactNode } from "react";
+import React, { cloneElement, FC, ReactElement, ReactNode } from "react";
 import { merge } from "@utilities/merge";
 import { Button, ButtonStyle, ButtonSize } from "@elements/Button/Button";
 import { IconSize } from "@elements/Icon/IconSize";
@@ -44,13 +44,6 @@ export type TooltipButton = {
 };
 
 export const Tooltip: FC<TooltipProps> = ({ tooltip, brightHeader, buttons, heading, headingIcon }) => {
-    // to refactor using union types
-    let headingAndIconArePresent = false;
-
-    if (heading !== null || ("undefined" && headingIcon !== null) || "undefined") {
-        headingAndIconArePresent = true;
-    }
-
     const showButtons = buttons !== undefined && Object.keys(buttons).length === 2;
 
     return (
@@ -67,15 +60,17 @@ export const Tooltip: FC<TooltipProps> = ({ tooltip, brightHeader, buttons, head
                     </div>
                 )}
                 <div data-test-id="tooltip" className="tw-p-4">
-                    {headingAndIconArePresent && (
-                        <h4 className="tw-text-m tw-font-bold">
-                            {/* {cloneElement(headingIcon, { size: IconSize.Size20 })} */}
+                    {heading && headingIcon && (
+                        <h4 className="tw-flex tw-text-m tw-font-bold tw-mb-1">
+                            <span className="tw-mr-1.5">
+                                {headingIcon && cloneElement(headingIcon, { size: IconSize.Size20 })}
+                            </span>
                             {heading}
                         </h4>
                     )}
-                    <p>{tooltip}</p>
+                    <p className="tw-text-s">{tooltip}</p>
                     {showButtons && (
-                        <div className="tw-grid tw-grid-cols-2 tw-gap-1 tw-mt-4">
+                        <div className="tw-grid tw-grid-cols-2 tw-gap-x-1 tw-mt-4">
                             <Button style={ButtonStyle.Secondary} size={ButtonSize.Small} onClick={buttons[0].action}>
                                 {buttons[0].label}
                             </Button>

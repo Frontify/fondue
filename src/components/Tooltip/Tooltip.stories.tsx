@@ -3,6 +3,8 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Tooltip as TooltipComponent, TooltipProps, BrightHeaderVariants } from "./Tooltip";
+import IconIcons from "@elements/Icon/Generated/IconIcons";
+// import { IconSize } from "@elements/Icon/IconSize";
 
 export default {
     title: "Components/Tooltip",
@@ -10,6 +12,7 @@ export default {
     args: {
         tooltip: "Your text here",
         heading: "",
+        // headingIcon: <IconIcons key="1" />,
         buttons: [
             { label: "Secondary", action: () => null },
             { label: "Primary", action: () => null },
@@ -24,6 +27,14 @@ export default {
                 BrightHeaderVariants.Tip,
                 BrightHeaderVariants.Note,
             ],
+            control: { type: "select" },
+        },
+        headingIcon: {
+            options: ["Nothing", "Icon"],
+            mapping: {
+                Nothing: null,
+                Icon: <IconIcons key="1" />,
+            },
             control: { type: "select" },
         },
     },
