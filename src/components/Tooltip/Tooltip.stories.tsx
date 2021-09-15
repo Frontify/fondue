@@ -4,7 +4,6 @@ import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Tooltip as TooltipComponent, TooltipProps, BrightHeaderVariants } from "./Tooltip";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
-// import { IconSize } from "@elements/Icon/IconSize";
 
 export default {
     title: "Components/Tooltip",
@@ -12,7 +11,6 @@ export default {
     args: {
         tooltip: "Your text here",
         heading: "",
-        // headingIcon: <IconIcons key="1" />,
         buttons: [
             { label: "Secondary", action: () => null },
             { label: "Primary", action: () => null },
@@ -93,19 +91,10 @@ WithButtons.args = {
     ],
 };
 
-export const WithWarningHeaderAndButtons = TooltipTemplate.bind({});
-WithWarningHeaderAndButtons.args = {
-    tooltip: loremIpsum,
-    brightHeader: BrightHeaderVariants.Warning,
-    buttons: [
-        { label: "Whatever", action: () => null },
-        { label: "Hello", action: () => null },
-    ],
-};
-
 export const WithHeading = TooltipTemplate.bind({});
 WithHeading.args = {
     tooltip: loremIpsum,
     heading: "I'm a heading",
+    headingIcon: <IconIcons />,
     buttons: undefined,
 };
