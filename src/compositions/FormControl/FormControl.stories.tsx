@@ -7,12 +7,13 @@ import { TextInput } from "@elements/TextInput/TextInput";
 import { Meta, Story } from "@storybook/react";
 import generateRandomId from "@utilities/generateRandomId";
 import React, { useState } from "react";
-import { FormControl, FormControlDirection, FormControlProps, HelperPosition, HelperTextStyle } from "./FormControl";
+import { FormControl, FormControlDirection, FormControlProps, HelperPosition, FormControlStyle } from "./FormControl";
 
 export default {
     title: "Compositions/Form Control",
     component: FormControl,
     args: {
+        style: FormControlStyle.Primary,
         disabled: false,
         direction: FormControlDirection.Vertical,
         label: {
@@ -25,7 +26,6 @@ export default {
         helper: {
             text: "Helper Text (before/after) and variant (Primary/Success/Danger)",
             position: HelperPosition.After,
-            style: HelperTextStyle.Primary,
         },
         children: "",
     },
@@ -36,6 +36,10 @@ export default {
         },
         children: {
             table: { disable: true },
+        },
+        style: {
+            options: Object.values(FormControlStyle),
+            control: "radio",
         },
     },
 } as Meta<FormControlProps>;
