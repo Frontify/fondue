@@ -10,7 +10,7 @@ export default {
     title: "Components/Tooltip",
     component: TooltipComponent,
     args: {
-        tooltip: "Your text here",
+        tooltip: "Cupcake ipsum dolor sit amet ice cream.",
         heading: "",
     },
     argTypes: {
@@ -47,47 +47,38 @@ export default {
     },
 } as Meta;
 
-const loremIpsum = "Cupcake ipsum dolor sit amet ice cream.";
-
 export const TooltipTemplate: Story<TooltipProps> = (args: TooltipProps) => <TooltipComponent {...args} />;
 
 export const Default = TooltipTemplate.bind({});
-Default.args = {
-    tooltip: loremIpsum,
-};
+Default.args = {};
 Default.storyName = "Base Tooltip";
 
 export const WithInfoHeader = TooltipTemplate.bind({});
 WithInfoHeader.args = {
     brightHeader: BrightHeaderStyle.Information,
-    tooltip: loremIpsum,
 };
 WithInfoHeader.storyName = "With Info Bright Header";
 
 export const WithWarningHeader = TooltipTemplate.bind({});
 WithWarningHeader.args = {
     brightHeader: BrightHeaderStyle.Warning,
-    tooltip: loremIpsum,
 };
 WithWarningHeader.storyName = "With Warning Bright Header";
 
 export const WithTipHeader = TooltipTemplate.bind({});
 WithTipHeader.args = {
     brightHeader: BrightHeaderStyle.Tip,
-    tooltip: loremIpsum,
 };
 WithTipHeader.storyName = "With Tip Bright Header";
 
 export const WithNoteHeader = TooltipTemplate.bind({});
 WithNoteHeader.args = {
     brightHeader: BrightHeaderStyle.Note,
-    tooltip: loremIpsum,
 };
 WithNoteHeader.storyName = "With Note Bright Header";
 
 export const WithButtons = TooltipTemplate.bind({});
 WithButtons.args = {
-    tooltip: loremIpsum,
     buttons: [
         { label: "Whatever", action: () => null },
         { label: "Hello", action: () => null },
@@ -96,33 +87,28 @@ WithButtons.args = {
 
 export const WithHeading = TooltipTemplate.bind({});
 WithHeading.args = {
-    tooltip: loremIpsum,
     heading: "I'm a heading",
     headingIcon: <IconIcons />,
 };
 
 export const TooltipWithIcon = TooltipTemplate.bind({});
 TooltipWithIcon.args = {
-    tooltip: loremIpsum,
     tooltipIcon: <IconIcons />,
 };
 
 export const WithLinkWithDefaultLabel = TooltipTemplate.bind({});
 WithLinkWithDefaultLabel.args = {
-    tooltip: loremIpsum,
     linkUrl: "#",
 };
 
 export const WithLinkWithCustomLabel = TooltipTemplate.bind({});
 WithLinkWithCustomLabel.args = {
-    tooltip: loremIpsum,
     linkUrl: "#",
     linkLabel: "Upgrade your plan",
 };
 
 export const WithEverythingDisplayed = TooltipTemplate.bind({});
 WithEverythingDisplayed.args = {
-    tooltip: loremIpsum,
     tooltipIcon: <IconIcons />,
     heading: "I'm a heading",
     headingIcon: <IconIcons />,
