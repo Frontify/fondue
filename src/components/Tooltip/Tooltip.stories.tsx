@@ -3,7 +3,7 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Tooltip as TooltipComponent, TooltipProps } from "./Tooltip";
-import { BrightHeaderVariants } from "./partials/BrightHeader";
+import { BrightHeaderVariants } from "./BrightHeader";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 
 export default {

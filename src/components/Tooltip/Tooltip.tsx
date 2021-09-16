@@ -3,7 +3,7 @@
 import React, { cloneElement, FC, ReactElement, ReactNode } from "react";
 import { Button, ButtonStyle, ButtonSize } from "@elements/Button/Button";
 import { IconSize } from "@elements/Icon/IconSize";
-import { BrightHeader, BrightHeaderVariants } from "./partials/BrightHeader";
+import { BrightHeader, BrightHeaderVariants } from "./BrightHeader";
 
 export type TooltipButton = {
     label: string;
