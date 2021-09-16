@@ -54,6 +54,7 @@ export const Tooltip: FC<TooltipProps> = ({
                     </div>
                     {linkUrl && (
                         <a
+                            data-test-id="tooltip-link"
                             href={linkUrl}
                             target="_blank"
                             rel="noopener noreferrer"
