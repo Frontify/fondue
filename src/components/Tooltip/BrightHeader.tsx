@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactElement } from "react";
+import React, { cloneElement, FC, ReactElement } from "react";
 import { merge } from "@utilities/merge";
 import { IconSize } from "@elements/Icon/IconSize";
 import IconInfo from "@elements/Icon/Generated/IconInfo";
@@ -23,10 +23,10 @@ const brightHeaderBackgroundColors: Record<BrightHeaderVariants, string> = {
 };
 
 const brightHeaderIcon: Record<BrightHeaderVariants, ReactElement> = {
-    [BrightHeaderVariants.Information]: <IconInfo size={IconSize.Size20} />,
-    [BrightHeaderVariants.Warning]: <IconCallout size={IconSize.Size20} />,
-    [BrightHeaderVariants.Tip]: <IconCheck size={IconSize.Size20} />,
-    [BrightHeaderVariants.Note]: <IconDocument size={IconSize.Size20} />,
+    [BrightHeaderVariants.Information]: <IconInfo />,
+    [BrightHeaderVariants.Warning]: <IconCallout />,
+    [BrightHeaderVariants.Tip]: <IconCheck />,
+    [BrightHeaderVariants.Note]: <IconDocument />,
 };
 
 type BrightHeaderProps = {
@@ -41,7 +41,7 @@ export const BrightHeader: FC<BrightHeaderProps> = ({ variant }) => {
                 brightHeaderBackgroundColors[variant],
             ])}
         >
-            {brightHeaderIcon[variant]}
+            {cloneElement(brightHeaderIcon[variant], { size: IconSize.Size20 })}
         </div>
     );
 };
