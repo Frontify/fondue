@@ -10,7 +10,7 @@ const TOOLTIP_TEXT = "This is a tooltip";
 const TOOLTIP_ICON_ID = "[data-test-id=tooltip-icon]";
 const TOOLTIP_ID = "[data-test-id=tooltip]";
 const TOOLTIP_LINK_ID = "[data-test-id=tooltip-link]";
-const TOOLTIP_LINK_URL = "http://www.frontify.com";
+const TOOLTIP_LINK_URL = "https://www.frontify.com";
 const TOOLTIP_HEADING_TEXT = "I'm a heading";
 const GENERIC_ICON = <IconIcons />;
 const BRIGHT_HEADER_ID = "[data-test-id=bright-header]";
@@ -67,28 +67,12 @@ describe("Tooltip Component", () => {
         cy.get(BRIGHT_HEADER_ID).should("not.exist");
     });
 
-    it("should renders a bright header (information)", () => {
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} brightHeader={BrightHeaderStyle.Information} />);
+    Object.values(BrightHeaderStyle).forEach((brightHeaderStyle) => {
+        it(`should render a bright header (${brightHeaderStyle})`, () => {
+            mount(<Tooltip tooltip={TOOLTIP_TEXT} brightHeader={brightHeaderStyle} />);
 
-        cy.get(BRIGHT_HEADER_ID).should("exist");
-    });
-
-    it("should renders a bright header (warning)", () => {
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} brightHeader={BrightHeaderStyle.Warning} />);
-
-        cy.get(BRIGHT_HEADER_ID).should("exist");
-    });
-
-    it("should renders a bright header (tip)", () => {
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} brightHeader={BrightHeaderStyle.Tip} />);
-
-        cy.get(BRIGHT_HEADER_ID).should("exist");
-    });
-
-    it("should renders a bright header (note)", () => {
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} brightHeader={BrightHeaderStyle.Note} />);
-
-        cy.get(BRIGHT_HEADER_ID).should("exist");
+            cy.get(BRIGHT_HEADER_ID).should("exist");
+        });
     });
 
     it("should not render buttons by default", () => {
