@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { cloneElement, FC, ReactElement, ReactNode } from "react";
-import { Button, ButtonStyle, ButtonSize } from "@elements/Button/Button";
 import { IconSize } from "@elements/Icon/IconSize";
 import { BrightHeader, BrightHeaderStyle } from "./BrightHeader";
+import { Button, ButtonStyle, ButtonSize } from "@elements/Button/Button";
 
 export type TooltipButton = {
     label: string;
