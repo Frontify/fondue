@@ -31,8 +31,6 @@ export const Tooltip: FC<TooltipProps> = ({
     brightHeader,
     buttons,
 }) => {
-    const showButtons = buttons !== undefined && Object.keys(buttons).length === 2;
-
     return (
         <>
             <div className="tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20">
@@ -64,7 +62,7 @@ export const Tooltip: FC<TooltipProps> = ({
                             {linkLabel ?? "Click here to learn more."}
                         </a>
                     )}
-                    {showButtons && (
+                    {buttons && buttons.length > 0 && (
                         <div className="tw-grid tw-grid-cols-2 tw-gap-x-1 tw-mt-4">
                             <Button style={ButtonStyle.Secondary} size={ButtonSize.Small} onClick={buttons[0].action}>
                                 {buttons[0].label}
