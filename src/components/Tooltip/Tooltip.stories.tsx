@@ -3,7 +3,7 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Tooltip as TooltipComponent, TooltipProps } from "./Tooltip";
-import { BrightHeaderVariants } from "./BrightHeader";
+import { BrightHeaderStyle } from "./BrightHeader";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 
 export default {
@@ -19,10 +19,10 @@ export default {
             options: ["None", "Information", "Warning", "Tip", "Note"],
             mapping: {
                 None: null,
-                Information: BrightHeaderVariants.Information,
-                Warning: BrightHeaderVariants.Warning,
-                Tip: BrightHeaderVariants.Tip,
-                Note: BrightHeaderVariants.Note,
+                Information: BrightHeaderStyle.Information,
+                Warning: BrightHeaderStyle.Warning,
+                Tip: BrightHeaderStyle.Tip,
+                Note: BrightHeaderStyle.Note,
             },
             defaultValue: "None",
             control: { type: "select" },
@@ -60,28 +60,28 @@ Default.storyName = "Base Tooltip";
 
 export const WithInfoHeader = TooltipTemplate.bind({});
 WithInfoHeader.args = {
-    brightHeader: BrightHeaderVariants.Information,
+    brightHeader: BrightHeaderStyle.Information,
     tooltip: loremIpsum,
 };
 WithInfoHeader.storyName = "With Info Bright Header";
 
 export const WithWarningHeader = TooltipTemplate.bind({});
 WithWarningHeader.args = {
-    brightHeader: BrightHeaderVariants.Warning,
+    brightHeader: BrightHeaderStyle.Warning,
     tooltip: loremIpsum,
 };
 WithWarningHeader.storyName = "With Warning Bright Header";
 
 export const WithTipHeader = TooltipTemplate.bind({});
 WithTipHeader.args = {
-    brightHeader: BrightHeaderVariants.Tip,
+    brightHeader: BrightHeaderStyle.Tip,
     tooltip: loremIpsum,
 };
 WithTipHeader.storyName = "With Tip Bright Header";
 
 export const WithNoteHeader = TooltipTemplate.bind({});
 WithNoteHeader.args = {
-    brightHeader: BrightHeaderVariants.Note,
+    brightHeader: BrightHeaderStyle.Note,
     tooltip: loremIpsum,
 };
 WithNoteHeader.storyName = "With Note Bright Header";
@@ -128,7 +128,7 @@ WithEverythingDisplayed.args = {
     heading: "I'm a heading",
     headingIcon: <IconIcons />,
     linkUrl: "#",
-    brightHeader: BrightHeaderVariants.Warning,
+    brightHeader: BrightHeaderStyle.Warning,
     buttons: [
         { label: "Whatever", action: () => null },
         { label: "Hello", action: () => null },

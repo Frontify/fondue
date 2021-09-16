@@ -8,40 +8,40 @@ import IconCheck from "@elements/Icon/Generated/IconCheck";
 import IconCallout from "@elements/Icon/Generated/IconCallout";
 import IconDocument from "@elements/Icon/Generated/IconDocument";
 
-export enum BrightHeaderVariants {
+export enum BrightHeaderStyle {
     Information = "information",
     Warning = "warning",
     Tip = "tip",
     Note = "note",
 }
 
-const brightHeaderBackgroundColors: Record<BrightHeaderVariants, string> = {
-    [BrightHeaderVariants.Information]: "tw-bg-violet-60",
-    [BrightHeaderVariants.Warning]: "tw-bg-red-60",
-    [BrightHeaderVariants.Tip]: "tw-bg-green-60",
-    [BrightHeaderVariants.Note]: "tw-bg-yellow-60",
+const brightHeaderBackgroundColors: Record<BrightHeaderStyle, string> = {
+    [BrightHeaderStyle.Information]: "tw-bg-violet-60",
+    [BrightHeaderStyle.Warning]: "tw-bg-red-60",
+    [BrightHeaderStyle.Tip]: "tw-bg-green-60",
+    [BrightHeaderStyle.Note]: "tw-bg-yellow-60",
 };
 
-const brightHeaderIcon: Record<BrightHeaderVariants, ReactElement> = {
-    [BrightHeaderVariants.Information]: <IconInfo />,
-    [BrightHeaderVariants.Warning]: <IconCallout />,
-    [BrightHeaderVariants.Tip]: <IconCheck />,
-    [BrightHeaderVariants.Note]: <IconDocument />,
+const brightHeaderIcon: Record<BrightHeaderStyle, ReactElement> = {
+    [BrightHeaderStyle.Information]: <IconInfo />,
+    [BrightHeaderStyle.Warning]: <IconCallout />,
+    [BrightHeaderStyle.Tip]: <IconCheck />,
+    [BrightHeaderStyle.Note]: <IconDocument />,
 };
 
 type BrightHeaderProps = {
-    variant: BrightHeaderVariants;
+    headerStyle: BrightHeaderStyle;
 };
 
-export const BrightHeader: FC<BrightHeaderProps> = ({ variant }) => {
+export const BrightHeader: FC<BrightHeaderProps> = ({ headerStyle }) => {
     return (
         <div
             className={merge([
                 "tw-h-9 tw-flex tw-justify-center tw-items-center tw-rounded-t-md tw-text-white",
-                brightHeaderBackgroundColors[variant],
+                brightHeaderBackgroundColors[headerStyle],
             ])}
         >
-            {cloneElement(brightHeaderIcon[variant], { size: IconSize.Size20 })}
+            {cloneElement(brightHeaderIcon[headerStyle], { size: IconSize.Size20 })}
         </div>
     );
 };

@@ -3,7 +3,7 @@
 import React, { cloneElement, FC, ReactElement, ReactNode } from "react";
 import { Button, ButtonStyle, ButtonSize } from "@elements/Button/Button";
 import { IconSize } from "@elements/Icon/IconSize";
-import { BrightHeader, BrightHeaderVariants } from "./BrightHeader";
+import { BrightHeader, BrightHeaderStyle } from "./BrightHeader";
 
 export type TooltipButton = {
     label: string;
@@ -17,7 +17,7 @@ export type TooltipProps = {
     headingIcon?: ReactElement;
     linkUrl?: string;
     linkLabel?: string;
-    brightHeader?: BrightHeaderVariants;
+    brightHeader?: BrightHeaderStyle;
     buttons?: [TooltipButton, TooltipButton];
 };
 
@@ -34,7 +34,7 @@ export const Tooltip: FC<TooltipProps> = ({
     return (
         <>
             <div className="tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20">
-                {brightHeader && <BrightHeader variant={brightHeader} />}
+                {brightHeader && <BrightHeader headerStyle={brightHeader} />}
                 <div data-test-id="tooltip" className="tw-p-4">
                     {heading && headingIcon && (
                         <h4 className="tw-flex tw-text-m tw-font-bold tw-mb-1">
