@@ -12,7 +12,6 @@ export default {
     args: {
         tooltip: "Your text here",
         heading: "",
-        buttons: [],
     },
     argTypes: {
         brightHeader: {
