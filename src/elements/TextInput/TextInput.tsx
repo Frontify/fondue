@@ -12,7 +12,7 @@ import React, { FC, FormEvent, KeyboardEvent, ReactElement, ReactNode, useEffect
 export enum TextInputType {
     Text = "text",
     Password = "password",
-    Number = "number",
+    Number = "numeric",
 }
 
 export enum Validation {
@@ -114,11 +114,15 @@ export const TextInput: FC<TextInputProps> = ({
         <div
             {...focusProps}
             className={merge([
-                "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative",
+                "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent",
                 dotted ? "tw-border-dashed" : "tw-border-solid",
                 disabled
                     ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90 tw-cursor-not-allowed"
-                    : merge([validationStyle[validation], isFocusVisible && FOCUS_STYLE]),
+                    : merge([
+                          "focus-within:tw-border-black-90",
+                          validationStyle[validation],
+                          isFocusVisible && FOCUS_STYLE,
+                      ]),
             ])}
         >
             {decorator && (
