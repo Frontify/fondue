@@ -16,29 +16,33 @@ export default {
     },
     argTypes: {
         brightHeader: {
-            options: [
-                null,
-                BrightHeaderVariants.Information,
-                BrightHeaderVariants.Warning,
-                BrightHeaderVariants.Tip,
-                BrightHeaderVariants.Note,
-            ],
+            options: ["None", "Information", "Warning", "Tip", "Note"],
+            mapping: {
+                None: null,
+                Information: BrightHeaderVariants.Information,
+                Warning: BrightHeaderVariants.Warning,
+                Tip: BrightHeaderVariants.Tip,
+                Note: BrightHeaderVariants.Note,
+            },
+            defaultValue: "None",
             control: { type: "select" },
         },
         tooltipIcon: {
-            options: ["Nothing", "Icon"],
+            options: ["None", "Icon"],
             mapping: {
-                Nothing: null,
+                None: null,
                 Icon: <IconIcons key="1" />,
             },
+            defaultValue: "None",
             control: { type: "select" },
         },
         headingIcon: {
-            options: ["Nothing", "Icon"],
+            options: ["None", "Icon"],
             mapping: {
-                Nothing: null,
+                None: null,
                 Icon: <IconIcons key="1" />,
             },
+            defaultValue: "None",
             control: { type: "select" },
         },
     },
