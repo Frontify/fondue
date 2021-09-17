@@ -2,7 +2,7 @@
 
 import { mount } from "@cypress/react";
 import React from "react";
-import { Tooltip, TooltipButton } from "./Tooltip";
+import { Tooltip } from "./Tooltip";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { BrightHeaderStyle } from "./BrightHeader";
 
