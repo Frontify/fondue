@@ -67,7 +67,7 @@ export const Tooltip: FC<TooltipProps> = ({
                         <div className="tw-flex tw-flex-row-reverse tw-gap-x-1 tw-mt-4">
                             {buttons.length > 0 && (
                                 <Button
-                                    style={ButtonStyle.Secondary}
+                                    style={ButtonStyle.Primary}
                                     size={ButtonSize.Small}
                                     inverted
                                     onClick={buttons[0].action}
@@ -77,7 +77,7 @@ export const Tooltip: FC<TooltipProps> = ({
                             )}
                             {buttons.length === 2 && (
                                 <Button
-                                    style={ButtonStyle.Primary}
+                                    style={ButtonStyle.Secondary}
                                     size={ButtonSize.Small}
                                     inverted
                                     onClick={buttons[1].action}
