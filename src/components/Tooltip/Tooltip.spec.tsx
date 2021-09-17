@@ -76,12 +76,15 @@ describe("Tooltip Component", () => {
     });
 
     it("should render two buttons", () => {
-        const buttonsActions: [TooltipButton, TooltipButton] = [
-            { label: "Secondary", action: () => null },
-            { label: "Primary", action: () => null },
-        ];
-
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} buttons={buttonsActions} />);
+        mount(
+            <Tooltip
+                tooltip={TOOLTIP_TEXT}
+                buttons={[
+                    { label: "Secondary", action: () => null },
+                    { label: "Primary", action: () => null },
+                ]}
+            />,
+        );
 
         cy.get("button").should("exist");
     });
