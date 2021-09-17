@@ -17,6 +17,11 @@ export default {
             options: [ButtonStyle.Primary, ButtonStyle.Secondary, ButtonStyle.Danger, ButtonStyle.Positive],
             control: { type: "select" },
         },
+        inverted: {
+            options: [false, true],
+            defaultValue: false,
+            control: { type: "boolean" },
+        },
         onClick: { action: "onClick" },
     },
 } as Meta<ButtonProps>;
@@ -31,11 +36,9 @@ Default.args = {
     solid: true,
     style: ButtonStyle.Primary,
 };
-
 Default.storyName = "Text Label Only";
 
 export const withIcon = ButtonTemplate.bind({});
-
 withIcon.args = {
     disabled: false,
     size: ButtonSize.Medium,
@@ -43,11 +46,9 @@ withIcon.args = {
     solid: true,
     icon: <IconIcons />,
 };
-
 withIcon.storyName = "Icon Only";
 
 export const withIconAndLabel = ButtonTemplate.bind({});
-
 withIconAndLabel.args = {
     disabled: false,
     size: ButtonSize.Medium,
@@ -56,5 +57,4 @@ withIconAndLabel.args = {
     icon: <IconIcons />,
     children: "Button Text",
 };
-
 withIconAndLabel.storyName = "Icon and Text Label";

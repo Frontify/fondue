@@ -51,6 +51,28 @@ describe("Button component", () => {
         });
     });
 
+    it(`renders in solid Primary inverted with only text.`, () => {
+        mount(
+            <Button style={ButtonStyle.Primary} inverted>
+                {BUTTON_TEXT}
+            </Button>,
+        );
+
+        cy.get(BUTTON_ID).should("be.visible");
+        cy.get(BUTTON_ID).contains(BUTTON_TEXT);
+    });
+
+    it(`renders in solid Secondary inverted with only text.`, () => {
+        mount(
+            <Button style={ButtonStyle.Secondary} inverted>
+                {BUTTON_TEXT}
+            </Button>,
+        );
+
+        cy.get(BUTTON_ID).should("be.visible");
+        cy.get(BUTTON_ID).contains(BUTTON_TEXT);
+    });
+
     it("reacts on click", () => {
         const onClickStub = cy.stub().as("onClickStub");
 
