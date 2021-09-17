@@ -88,6 +88,11 @@ WithButtons.args = {
 export const WithHeading = TooltipTemplate.bind({});
 WithHeading.args = {
     heading: "I'm a heading",
+};
+
+export const WithHeadingAndIcon = TooltipTemplate.bind({});
+WithHeadingAndIcon.args = {
+    heading: "I'm a heading",
     headingIcon: <IconIcons />,
 };
 

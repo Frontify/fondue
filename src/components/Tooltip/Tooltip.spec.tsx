@@ -42,12 +42,6 @@ describe("Tooltip Component", () => {
         cy.get(TOOLTIP_LINK_ID).should("be.visible").and("contain", linkLabel);
     });
 
-    it("should not render the heading if the heading icon is missing", () => {
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} heading={TOOLTIP_HEADING_TEXT} />);
-
-        cy.get(TOOLTIP_ID).should("not.contain", TOOLTIP_HEADING_TEXT);
-    });
-
     it("should not render the heading icon if the heading is missing", () => {
         mount(<Tooltip tooltip={TOOLTIP_TEXT} headingIcon={GENERIC_ICON} />);
 
