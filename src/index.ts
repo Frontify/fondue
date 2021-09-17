@@ -53,6 +53,7 @@ import IconAnimalsNature from "./elements/Icon/Generated/IconAnimalsNature";
 import IconAnnotations from "./elements/Icon/Generated/IconAnnotations";
 import IconAppearance from "./elements/Icon/Generated/IconAppearance";
 import IconApprove from "./elements/Icon/Generated/IconApprove";
+import IconArrow from "./elements/Icon/Generated/IconArrow";
 import IconArrowDown from "./elements/Icon/Generated/IconArrowDown";
 import IconArrowLeft from "./elements/Icon/Generated/IconArrowLeft";
 import IconArrowRight from "./elements/Icon/Generated/IconArrowRight";
@@ -94,6 +95,7 @@ import IconColorSwatch from "./elements/Icon/Generated/IconColorSwatch";
 import IconColumnBreak from "./elements/Icon/Generated/IconColumnBreak";
 import IconCopyToClipboard from "./elements/Icon/Generated/IconCopyToClipboard";
 import IconCrop from "./elements/Icon/Generated/IconCrop";
+import IconCursorClick from "./elements/Icon/Generated/IconCursorClick";
 import IconCut from "./elements/Icon/Generated/IconCut";
 import IconDivider from "./elements/Icon/Generated/IconDivider";
 import IconDocument from "./elements/Icon/Generated/IconDocument";
@@ -138,9 +140,11 @@ import IconGeneral from "./elements/Icon/Generated/IconGeneral";
 import IconGenericPost from "./elements/Icon/Generated/IconGenericPost";
 import IconGuidelines from "./elements/Icon/Generated/IconGuidelines";
 import IconHeader from "./elements/Icon/Generated/IconHeader";
+import IconIconAndText from "./elements/Icon/Generated/IconIconAndText";
 import IconIcons from "./elements/Icon/Generated/IconIcons";
 import IconIframe from "./elements/Icon/Generated/IconIframe";
 import IconImage from "./elements/Icon/Generated/IconImage";
+import IconImageAndText from "./elements/Icon/Generated/IconImageAndText";
 import IconImageFigure from "./elements/Icon/Generated/IconImageFigure";
 import IconImageGrid2 from "./elements/Icon/Generated/IconImageGrid2";
 import IconImageGrid3 from "./elements/Icon/Generated/IconImageGrid3";
@@ -155,9 +159,20 @@ import IconIntegration from "./elements/Icon/Generated/IconIntegration";
 import IconIntegrations from "./elements/Icon/Generated/IconIntegrations";
 import IconInteractions from "./elements/Icon/Generated/IconInteractions";
 import IconItalic from "./elements/Icon/Generated/IconItalic";
+import IconLayoutGrid from "./elements/Icon/Generated/IconLayoutGrid";
+import IconLayoutHorizontal from "./elements/Icon/Generated/IconLayoutHorizontal";
+import IconLayoutVertical from "./elements/Icon/Generated/IconLayoutVertical";
 import IconLightning from "./elements/Icon/Generated/IconLightning";
 import IconLightningFilled from "./elements/Icon/Generated/IconLightningFilled";
+import IconLineDashes from "./elements/Icon/Generated/IconLineDashes";
+import IconLineDotted from "./elements/Icon/Generated/IconLineDotted";
+import IconLineSolid from "./elements/Icon/Generated/IconLineSolid";
+import IconLineSpacer from "./elements/Icon/Generated/IconLineSpacer";
 import IconLink from "./elements/Icon/Generated/IconLink";
+import IconListBullet from "./elements/Icon/Generated/IconListBullet";
+import IconListBullets from "./elements/Icon/Generated/IconListBullets";
+import IconListChecklist from "./elements/Icon/Generated/IconListChecklist";
+import IconListNumbers from "./elements/Icon/Generated/IconListNumbers";
 import IconLock from "./elements/Icon/Generated/IconLock";
 import IconLogo from "./elements/Icon/Generated/IconLogo";
 import IconLogoGrid from "./elements/Icon/Generated/IconLogoGrid";
@@ -228,6 +243,7 @@ import IconTextAlignLeft from "./elements/Icon/Generated/IconTextAlignLeft";
 import IconTextAlignRight from "./elements/Icon/Generated/IconTextAlignRight";
 import IconTextLibrary from "./elements/Icon/Generated/IconTextLibrary";
 import IconTextMultiColumn from "./elements/Icon/Generated/IconTextMultiColumn";
+import IconTextOnImage from "./elements/Icon/Generated/IconTextOnImage";
 import IconTextSnippet from "./elements/Icon/Generated/IconTextSnippet";
 import IconTimeline from "./elements/Icon/Generated/IconTimeline";
 import IconTransfer from "./elements/Icon/Generated/IconTransfer";
@@ -250,6 +266,7 @@ import IconUploadDontImages from "./elements/Icon/Generated/IconUploadDontImages
 import IconUser from "./elements/Icon/Generated/IconUser";
 import IconUserO from "./elements/Icon/Generated/IconUserO";
 import IconVideo from "./elements/Icon/Generated/IconVideo";
+import IconVideoAndText from "./elements/Icon/Generated/IconVideoAndText";
 import IconVideoFullscreen from "./elements/Icon/Generated/IconVideoFullscreen";
 import IconView from "./elements/Icon/Generated/IconView";
 import IconViewSlash from "./elements/Icon/Generated/IconViewSlash";
@@ -280,6 +297,7 @@ export {
     IconAnnotations,
     IconAppearance,
     IconApprove,
+    IconArrow,
     IconArrowDown,
     IconArrowLeft,
     IconArrowRight,
@@ -321,6 +339,7 @@ export {
     IconColumnBreak,
     IconCopyToClipboard,
     IconCrop,
+    IconCursorClick,
     IconCut,
     IconDivider,
     IconDocument,
@@ -365,9 +384,11 @@ export {
     IconGenericPost,
     IconGuidelines,
     IconHeader,
+    IconIconAndText,
     IconIcons,
     IconIframe,
     IconImage,
+    IconImageAndText,
     IconImageFigure,
     IconImageGrid2,
     IconImageGrid3,
@@ -382,9 +403,20 @@ export {
     IconIntegrations,
     IconInteractions,
     IconItalic,
+    IconLayoutGrid,
+    IconLayoutHorizontal,
+    IconLayoutVertical,
     IconLightning,
     IconLightningFilled,
+    IconLineDashes,
+    IconLineDotted,
+    IconLineSolid,
+    IconLineSpacer,
     IconLink,
+    IconListBullet,
+    IconListBullets,
+    IconListChecklist,
+    IconListNumbers,
     IconLock,
     IconLogo,
     IconLogoGrid,
@@ -455,6 +487,7 @@ export {
     IconTextAlignRight,
     IconTextLibrary,
     IconTextMultiColumn,
+    IconTextOnImage,
     IconTextSnippet,
     IconTimeline,
     IconTransfer,
@@ -477,6 +510,7 @@ export {
     IconUser,
     IconUserO,
     IconVideo,
+    IconVideoAndText,
     IconVideoFullscreen,
     IconView,
     IconViewSlash,
