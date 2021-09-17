@@ -18,7 +18,7 @@ export type TooltipProps = {
     linkUrl?: string;
     linkLabel?: string;
     brightHeader?: BrightHeaderStyle;
-    buttons?: [TooltipButton, TooltipButton];
+    buttons?: [TooltipButton, TooltipButton] | [TooltipButton];
 };
 
 export const Tooltip: FC<TooltipProps> = ({
@@ -63,14 +63,28 @@ export const Tooltip: FC<TooltipProps> = ({
                             {linkLabel ?? "Click here to learn more."}
                         </a>
                     )}
-                    {buttons && buttons.length > 0 && (
-                        <div className="tw-grid tw-grid-cols-2 tw-gap-x-1 tw-mt-4">
-                            <Button style={ButtonStyle.Secondary} size={ButtonSize.Small} onClick={buttons[0].action}>
-                                {buttons[0].label}
-                            </Button>
-                            <Button style={ButtonStyle.Primary} size={ButtonSize.Small} onClick={buttons[1].action}>
-                                {buttons[1].label}
-                            </Button>
+                    {buttons && (
+                        <div className="tw-flex tw-flex-row-reverse tw-gap-x-1 tw-mt-4">
+                            {buttons.length > 0 && (
+                                <Button
+                                    style={ButtonStyle.Secondary}
+                                    size={ButtonSize.Small}
+                                    inverted
+                                    onClick={buttons[0].action}
+                                >
+                                    {buttons[0].label}
+                                </Button>
+                            )}
+                            {buttons.length === 2 && (
+                                <Button
+                                    style={ButtonStyle.Primary}
+                                    size={ButtonSize.Small}
+                                    inverted
+                                    onClick={buttons[1].action}
+                                >
+                                    {buttons[1].label}
+                                </Button>
+                            )}
                         </div>
                     )}
                 </div>

@@ -77,11 +77,16 @@ WithNoteHeader.args = {
 };
 WithNoteHeader.storyName = "With Note Bright Header";
 
-export const WithButtons = TooltipTemplate.bind({});
-WithButtons.args = {
+export const WithOneButton = TooltipTemplate.bind({});
+WithOneButton.args = {
+    buttons: [{ label: "Primary", action: () => null }],
+};
+
+export const WithTwoButtons = TooltipTemplate.bind({});
+WithTwoButtons.args = {
     buttons: [
-        { label: "Whatever", action: () => null },
-        { label: "Hello", action: () => null },
+        { label: "Primary", action: () => null },
+        { label: "Secondary", action: () => null },
     ],
 };
 
@@ -120,7 +125,7 @@ WithEverythingDisplayed.args = {
     linkUrl: "#",
     brightHeader: BrightHeaderStyle.Warning,
     buttons: [
-        { label: "Whatever", action: () => null },
-        { label: "Hello", action: () => null },
+        { label: "Primary", action: () => null },
+        { label: "Secondary", action: () => null },
     ],
 };
