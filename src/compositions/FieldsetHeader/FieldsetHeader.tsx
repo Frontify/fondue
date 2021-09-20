@@ -69,7 +69,7 @@ const renderType = (
             );
         case FieldsetHeaderType.AddRemove:
             return (
-                <div className={active ? "tw-text-black-80" : "tw-text-black"}>
+                <div className={active ? "tw-text-black" : "tw-text-black-80"}>
                     {active ? <IconMinus {...props} /> : <IconAddSimple {...props} />}
                 </div>
             );
