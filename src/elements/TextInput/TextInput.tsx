@@ -12,7 +12,7 @@ import React, { FC, FormEvent, KeyboardEvent, ReactElement, ReactNode, useEffect
 export enum TextInputType {
     Text = "text",
     Password = "password",
-    Number = "numeric",
+    Number = "number",
 }
 
 export enum Validation {
@@ -140,7 +140,7 @@ export const TextInput: FC<TextInputProps> = ({
                 id={useMemoizedId(propId)}
                 ref={inputElement}
                 className={merge([
-                    "tw-flex-grow tw-border-none tw-outline-none tw-bg-transparent",
+                    "tw-flex-grow tw-border-none tw-outline-none tw-bg-transparent hide-input-arrows",
                     disabled
                         ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40 tw-cursor-not-allowed"
                         : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",

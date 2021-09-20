@@ -1,4 +1,4 @@
-import "tailwindcss/tailwind.css";
+import "../src/styles.css";
 import { dark, light } from "./frontifyTheme";
 
 export const parameters = {

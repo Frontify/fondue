@@ -1,4 +1,4 @@
-import "tailwindcss/tailwind.css";
+import "./styles.css";
 export * from "./compositions/Accordion/Accordion";
 export * from "./components/Menu/ActionMenu/ActionMenu";
 export * from "./elements/AddBlockButton/AddBlockButton";
@@ -151,7 +151,9 @@ import IconImageGrid3 from "./elements/Icon/Generated/IconImageGrid3";
 import IconImageGrid4 from "./elements/Icon/Generated/IconImageGrid4";
 import IconImageLibrary from "./elements/Icon/Generated/IconImageLibrary";
 import IconImageTextRatio25 from "./elements/Icon/Generated/IconImageTextRatio25";
+import IconImageTextRatio33 from "./elements/Icon/Generated/IconImageTextRatio33";
 import IconImageTextRatio50 from "./elements/Icon/Generated/IconImageTextRatio50";
+import IconImageTextRatio66 from "./elements/Icon/Generated/IconImageTextRatio66";
 import IconImageTextRatio75 from "./elements/Icon/Generated/IconImageTextRatio75";
 import IconIndesign from "./elements/Icon/Generated/IconIndesign";
 import IconInfo from "./elements/Icon/Generated/IconInfo";
@@ -172,6 +174,7 @@ import IconLink from "./elements/Icon/Generated/IconLink";
 import IconListBullet from "./elements/Icon/Generated/IconListBullet";
 import IconListBullets from "./elements/Icon/Generated/IconListBullets";
 import IconListChecklist from "./elements/Icon/Generated/IconListChecklist";
+import IconListIndented from "./elements/Icon/Generated/IconListIndented";
 import IconListNumbers from "./elements/Icon/Generated/IconListNumbers";
 import IconLock from "./elements/Icon/Generated/IconLock";
 import IconLogo from "./elements/Icon/Generated/IconLogo";
@@ -395,7 +398,9 @@ export {
     IconImageGrid4,
     IconImageLibrary,
     IconImageTextRatio25,
+    IconImageTextRatio33,
     IconImageTextRatio50,
+    IconImageTextRatio66,
     IconImageTextRatio75,
     IconIndesign,
     IconInfo,
@@ -416,6 +421,7 @@ export {
     IconListBullet,
     IconListBullets,
     IconListChecklist,
+    IconListIndented,
     IconListNumbers,
     IconLock,
     IconLogo,
