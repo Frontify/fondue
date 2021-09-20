@@ -7,7 +7,7 @@ import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, FormEvent, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import React, { FC, FormEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 
 export enum TextInputType {
     Text = "text",
@@ -52,28 +52,19 @@ type TextInputBaseProps = {
     disabled?: boolean;
     validation?: Validation;
     onInput?: (value: string) => void;
+    onEnterPressed?: (value: string) => void;
     onBlur?: (value: string) => void;
     onClear?: () => void;
 };
 
 export type TextInputProps =
     | ({
-          type?: TextInputType.Text;
+          type?: TextInputType.Text | TextInputType.Number;
           obfuscated?: false;
-          min?: undefined;
-          max?: undefined;
-      } & TextInputBaseProps)
-    | ({
-          type?: TextInputType.Number;
-          obfuscated?: false;
-          min?: number;
-          max?: number;
       } & TextInputBaseProps)
     | ({
           type: TextInputType.Password;
           obfuscated?: boolean;
-          min?: undefined;
-          max?: undefined;
       } & TextInputBaseProps);
 
 export const TextInput: FC<TextInputProps> = ({
@@ -89,10 +80,9 @@ export const TextInput: FC<TextInputProps> = ({
     disabled = false,
     dotted = false,
     onInput,
+    onEnterPressed,
     onBlur,
     onClear,
-    min,
-    max,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const inputElement = useRef<HTMLInputElement | null>(null);
@@ -113,11 +103,12 @@ export const TextInput: FC<TextInputProps> = ({
             setIsObfuscated(obfuscated);
         }
     }, [obfuscated]);
-    useEffect(() => {
-        if (inputElement.current && defaultValue) {
-            inputElement.current.value = defaultValue;
+
+    const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            onEnterPressed && onEnterPressed((event.target as HTMLInputElement).value);
         }
-    }, [defaultValue]);
+    };
 
     return (
         <div
@@ -156,6 +147,7 @@ export const TextInput: FC<TextInputProps> = ({
                 ])}
                 onInput={onTextInput}
                 onBlur={(event) => onBlur && onBlur(event.target.value)}
+                onKeyDown={onKeyDown}
                 placeholder={placeholder}
                 value={inputContent}
                 type={
@@ -165,8 +157,6 @@ export const TextInput: FC<TextInputProps> = ({
                             : TextInputType.Text
                         : type
                 }
-                min={min}
-                max={max}
                 required={required}
                 disabled={disabled}
                 data-test-id="text-input"
