@@ -1,7 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, FC, ReactElement, ReactNode } from "react";
+import React, { cloneElement, FC, ReactElement, ReactNode, useRef } from "react";
+import { merge } from "@utilities/merge";
+import { useLink } from "@react-aria/link";
+import { mergeProps } from "@react-aria/utils";
+import { useFocusRing } from "@react-aria/focus";
 import { IconSize } from "@elements/Icon/IconSize";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { BrightHeader, BrightHeaderStyle } from "./BrightHeader";
 import { Button, ButtonStyle, ButtonSize } from "@elements/Button/Button";
 
@@ -31,11 +36,19 @@ export const Tooltip: FC<TooltipProps> = ({
     brightHeader,
     buttons,
 }) => {
+    const linkRef = useRef<HTMLAnchorElement | null>(null);
+    const { linkProps } = useLink({}, linkRef);
+
+    const { isFocusVisible, focusProps } = useFocusRing();
+
     return (
         <>
-            <div className="tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20">
+            <div
+                className="tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20"
+                data-test-id="tooltip"
+            >
                 {brightHeader && <BrightHeader headerStyle={brightHeader} />}
-                <div data-test-id="tooltip" className="tw-p-4">
+                <div className="tw-p-4">
                     {heading && (
                         <h4 className="tw-flex tw-text-m tw-font-bold tw-mb-1">
                             <span className="tw-mr-1.5">
@@ -54,11 +67,16 @@ export const Tooltip: FC<TooltipProps> = ({
                     </div>
                     {linkUrl && (
                         <a
+                            {...mergeProps(linkProps, focusProps)}
                             data-test-id="tooltip-link"
+                            ref={linkRef}
                             href={linkUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="tw-text-xs tw-text-black-40 dark:tw-text-black-80 tw-underline tw-mt-1"
+                            className={merge([
+                                "tw-text-xs tw-text-black-40 dark:tw-text-black-80 tw-underline tw-mt-1",
+                                isFocusVisible && FOCUS_STYLE,
+                            ])}
                         >
                             {linkLabel ?? "Click here to learn more."}
                         </a>

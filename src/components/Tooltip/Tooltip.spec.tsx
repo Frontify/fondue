@@ -7,7 +7,6 @@ import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { BrightHeaderStyle } from "./BrightHeader";
 
 const TOOLTIP_TEXT = "This is a tooltip";
-const TOOLTIP_ICON_ID = "[data-test-id=tooltip-icon]";
 const TOOLTIP_ID = "[data-test-id=tooltip]";
 const TOOLTIP_LINK_ID = "[data-test-id=tooltip-link]";
 const TOOLTIP_LINK_URL = "https://www.frontify.com";
@@ -86,8 +85,8 @@ describe("Tooltip Component", () => {
             <Tooltip
                 tooltip={TOOLTIP_TEXT}
                 buttons={[
-                    { label: "Secondary", action: () => null },
                     { label: "Primary", action: () => null },
+                    { label: "Secondary", action: () => null },
                 ]}
             />,
         );
@@ -95,13 +94,54 @@ describe("Tooltip Component", () => {
         cy.get("button").should("exist");
     });
 
-    it.skip("should focus with keyboard", () => {
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} />);
+    it("should focus the link using a keyboard", () => {
+        mount(<Tooltip tooltip={TOOLTIP_ID} linkUrl={TOOLTIP_LINK_URL} />);
 
-        cy.get(TOOLTIP_ICON_ID).should("not.be.focused");
-        cy.get(TOOLTIP_ID).should("not.exist");
+        cy.get(TOOLTIP_LINK_ID).should("be.visible");
+
         cy.get("body").tab();
-        cy.get(TOOLTIP_ICON_ID).should("be.focused");
-        cy.get(TOOLTIP_ID).should("exist");
+        cy.get(TOOLTIP_LINK_ID).should("be.focused");
+    });
+
+    it("should focus the buttons using a keyboard", () => {
+        mount(
+            <Tooltip
+                tooltip={TOOLTIP_ID}
+                buttons={[
+                    { label: "Primary", action: () => null },
+                    { label: "Secondary", action: () => null },
+                ]}
+            />,
+        );
+
+        cy.get("body").tab();
+        cy.get("button").should("be.focused").and("contain", "Primary");
+
+        cy.get("button").tab();
+        cy.get("button").should("be.focused").and("contain", "Secondary");
+    });
+
+    it("should focus the link and then the buttons using a keyboard", () => {
+        mount(
+            <Tooltip
+                tooltip={TOOLTIP_ID}
+                linkUrl={TOOLTIP_LINK_URL}
+                buttons={[
+                    { label: "Primary", action: () => null },
+                    { label: "Secondary", action: () => null },
+                ]}
+            />,
+        );
+
+        cy.get(TOOLTIP_LINK_ID).should("be.visible");
+
+        cy.get("body").tab();
+        cy.get(TOOLTIP_LINK_ID).should("be.focused");
+
+        cy.get(TOOLTIP_LINK_ID).tab();
+        cy.get("button").should("be.focused").and("contain", "Primary");
+
+        cy.get("button").tab();
+        cy.get("button").should("be.focused").and("contain", "Secondary");
     });
 });
