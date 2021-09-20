@@ -54,9 +54,11 @@ export const Tooltip: FC<TooltipProps> = ({
                 <div className="tw-p-4">
                     {heading && (
                         <h4 className="tw-flex tw-text-m tw-font-bold tw-mb-1">
-                            <span className="tw-mr-1.5">
-                                {headingIcon && cloneElement(headingIcon, { size: IconSize.Size20 })}
-                            </span>
+                            {headingIcon && (
+                                <span className="tw-mr-1.5">
+                                    {cloneElement(headingIcon, { size: IconSize.Size20 })}
+                                </span>
+                            )}
                             {heading}
                         </h4>
                     )}
