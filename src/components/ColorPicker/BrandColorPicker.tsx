@@ -50,7 +50,7 @@ export const BrandColorPicker: FC<ColorPickerProps> = ({ palettes: defaultPalett
                         onInput={debounce((value) => setQuery(value), 200)}
                     />
                 </div>
-                <div>
+                <div className="tw-w-[72px]">
                     <Slider
                         items={views}
                         activeItemId={view}
