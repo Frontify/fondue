@@ -72,7 +72,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
             <div className="tw-flex tw-flex-col md:tw-grid md:tw-grid-cols-3 md:tw-flex-none tw-gap-2 tw-max-w-full">
                 <div>
                     <Dropdown
-                        menuBlocks={[{ id: "1", menuItems: colorFormats }]}
+                        menuBlocks={[{ id: "color-picker-format-dropdown-block", menuItems: colorFormats }]}
                         activeItemId={colorFormat}
                         onChange={(id) => id && setColorFormat(id as ColorFormat)}
                     />
