@@ -29,8 +29,8 @@ enum ColorType {
 
 export const ColorPicker: FC<ColorPickerProps> = ({ currentColor, palettes, onSelect }) => {
     const colorTypes = [
-        { id: ColorType.Brand, name: "Brand Colors" },
-        { id: ColorType.Custom, name: "Custom Color" },
+        { id: ColorType.Brand, value: "Brand Colors" },
+        { id: ColorType.Custom, value: "Custom Color" },
     ];
     const [colorType, setColorType] = useState(ColorType.Brand);
     const { hex, value, name } = currentColor;
