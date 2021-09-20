@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 @layer utilities {
-    input.hide-input-arrows::-webkit-outer-spin-button,
-    input.hide-input-arrows::-webkit-inner-spin-button {
+    input.tw-hide-input-arrows::-webkit-outer-spin-button,
+    input.tw-hide-input-arrows::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
     }
 
-    input[type="number"].hide-input-arrows {
+    input[type="number"].tw-hide-input-arrows {
         -moz-appearance: textfield;
     }
 }
