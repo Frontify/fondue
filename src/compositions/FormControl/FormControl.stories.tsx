@@ -58,9 +58,9 @@ export const WithSlider: Story<FormControlProps> = (args) => {
         <FormControl {...args}>
             <Slider
                 items={[
-                    { id: "1", name: "abc" },
-                    { id: "2", name: "def" },
-                    { id: "3", name: "ghi" },
+                    { id: "1", value: "abc" },
+                    { id: "2", value: "def" },
+                    { id: "3", value: "ghi" },
                 ]}
                 activeItemId={activeItemId}
                 onChange={setActiveItemId}

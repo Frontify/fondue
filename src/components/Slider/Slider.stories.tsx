@@ -27,9 +27,18 @@ const SliderTemplate: Story<SliderProps> = (args: SliderProps) => {
 export const Text = SliderTemplate.bind({});
 Text.args = {
     items: [
-        { id: "a", name: "abc" },
-        { id: "b", name: "def" },
-        { id: "c", name: "ghi" },
+        { id: "a", value: "abc" },
+        { id: "b", value: "def" },
+        { id: "c", value: "ghi" },
+    ],
+};
+
+export const Number = SliderTemplate.bind({});
+Number.args = {
+    items: [
+        { id: "a", value: 10 },
+        { id: "b", value: 20 },
+        { id: "c", value: 30 },
     ],
 };
 

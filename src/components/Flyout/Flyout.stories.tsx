@@ -54,9 +54,9 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
                                 activeItemId={activeItemId}
                                 onChange={setActiveItemId}
                                 items={[
-                                    { id: "a", name: "abc" },
-                                    { id: "b", name: "def" },
-                                    { id: "c", name: "ghi" },
+                                    { id: "a", value: "abc" },
+                                    { id: "b", value: "def" },
+                                    { id: "c", value: "ghi" },
                                 ]}
                             />
                         </FormControl>

@@ -96,9 +96,9 @@ export const WithAdvancedFormControls: Story<AccordionProps & { onChange: (id: s
                                 }}
                                 activeItemId={spacing}
                                 items={[
-                                    { id: "1", name: "S" },
-                                    { id: "2", name: "M" },
-                                    { id: "3", name: "L" },
+                                    { id: "1", value: "S" },
+                                    { id: "2", value: "M" },
+                                    { id: "3", value: "L" },
                                 ]}
                             />
                         )}
