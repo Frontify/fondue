@@ -6,17 +6,24 @@ import IconTextAlignLeft from "@elements/Icon/Generated/IconTextAlignLeft";
 import IconTextAlignRight from "@elements/Icon/Generated/IconTextAlignRight";
 import { IconSize } from "@elements/Icon/IconSize";
 import React, { FC, useState } from "react";
-import { IconItem, Slider, TextItem } from "./Slider";
+import { IconItem, Slider, TextOrNumberItem } from "./Slider";
 
 const SLIDER_ID = "[data-test-id=slider]";
 const ICON_ITEM_ID = "[data-test-id=slider-item-icon]";
 const TEXT_ITEM_ID = "[data-test-id=slider-item-text]";
+const NUMBER_ITEM_ID = "[data-test-id=slider-item-number]";
 const INPUT_ID = "[data-test-id=slider-input]";
 
 const TEXT_ITEMS = [
-    { id: "a", name: "abc" },
-    { id: "b", name: "def" },
-    { id: "c", name: "ghi" },
+    { id: "a", value: "abc" },
+    { id: "b", value: "def" },
+    { id: "c", value: "ghi" },
+];
+
+const NUMBER_ITEMS = [
+    { id: "a", value: 12 },
+    { id: "b", value: 34 },
+    { id: "c", value: 56 },
 ];
 
 const ICON_ITEMS = [
@@ -26,7 +33,7 @@ const ICON_ITEMS = [
 ];
 
 type Props = {
-    items: TextItem[] | IconItem[];
+    items: TextOrNumberItem[] | IconItem[];
     disabled?: boolean;
 };
 
@@ -43,7 +50,14 @@ describe("Slider Component", () => {
         cy.get(TEXT_ITEM_ID).should("have.length", 3);
         cy.get(INPUT_ID).first().should("be.checked");
         cy.get(INPUT_ID).first().should("have.attr", "aria-label", "abc");
-        cy.get(TEXT_ITEM_ID).first().contains(TEXT_ITEMS[0].name);
+        cy.get(TEXT_ITEM_ID).first().contains(TEXT_ITEMS[0].value);
+    });
+    it("renders number items", () => {
+        mount(<Component items={NUMBER_ITEMS} />);
+
+        cy.get(NUMBER_ITEM_ID).should("have.length", 3);
+        cy.get(INPUT_ID).first().should("have.attr", "aria-label", "12");
+        cy.get(NUMBER_ITEM_ID).first().contains(NUMBER_ITEMS[0].value);
     });
     it("renders icon items", () => {
         mount(<Component items={ICON_ITEMS} />);

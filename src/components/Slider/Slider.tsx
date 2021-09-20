@@ -17,21 +17,21 @@ export type IconItem = {
     ariaLabel: string;
 };
 
-export type TextItem = {
+export type TextOrNumberItem = {
     id: string;
-    name: string;
+    value: string | number;
 };
 
 export type SliderProps = {
     id?: string;
-    items: TextItem[] | IconItem[];
+    items: TextOrNumberItem[] | IconItem[];
     activeItemId: string;
     onChange: (id: string) => void;
     ariaLabel?: string;
     disabled?: boolean;
 };
 
-const isIconItem = (item: TextItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
+const isIconItem = (item: TextOrNumberItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
 
 export const Slider: FC<SliderProps> = ({
     id: propId,
@@ -50,7 +50,7 @@ export const Slider: FC<SliderProps> = ({
         <ul
             {...radioGroupProps}
             data-test-id="slider"
-            className="tw-relative tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw--m tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none tw-select-none"
+            className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw--m tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none tw-select-none"
         >
             <AnimateSharedLayout>
                 {items.map((item) => {
@@ -59,7 +59,7 @@ export const Slider: FC<SliderProps> = ({
                     const { inputProps } = useRadio(
                         {
                             value: item.id,
-                            "aria-label": isIconItem(item) ? item.ariaLabel : item.name,
+                            "aria-label": isIconItem(item) ? item.ariaLabel : item.value.toString(),
                             isDisabled: disabled,
                             id: isActive ? id : undefined,
                         },
@@ -75,7 +75,7 @@ export const Slider: FC<SliderProps> = ({
                                     key={id}
                                     layoutId={id}
                                     className={merge([
-                                        "tw-absolute tw--inset-px tw-border tw-rounded tw-pointer-events-none",
+                                        "tw-absolute tw--inset-px tw-h-9 tw-border tw-rounded tw-pointer-events-none",
                                         disabled ? "tw-border-black-20 tw-bg-black-0" : "tw-border-black tw-bg-white",
                                         isFocusVisible && FOCUS_STYLE,
                                     ])}
@@ -89,7 +89,13 @@ export const Slider: FC<SliderProps> = ({
                             )}
                             <label
                                 htmlFor={isActive ? id : undefined}
-                                data-test-id={isIconItem(item) ? "slider-item-icon" : "slider-item-text"}
+                                data-test-id={
+                                    isIconItem(item)
+                                        ? "slider-item-icon"
+                                        : typeof item.value === "string"
+                                        ? "slider-item-text"
+                                        : "slider-item-number"
+                                }
                                 className={merge([
                                     "tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-9 tw-text-center",
                                     isActive && !disabled ? "tw-text-black" : "tw-text-black-80",
@@ -103,7 +109,7 @@ export const Slider: FC<SliderProps> = ({
                                     {isIconItem(item) ? (
                                         <span aria-label={item.ariaLabel}>{item.icon}</span>
                                     ) : (
-                                        item.name
+                                        item.value.toString()
                                     )}
                                 </span>
                             </label>
