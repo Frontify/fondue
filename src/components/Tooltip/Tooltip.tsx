@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, FC, ReactElement, ReactNode, useRef } from "react";
+import React, { cloneElement, FC, HTMLAttributes, ReactElement, ReactNode, useRef } from "react";
 import { merge } from "@utilities/merge";
 import { useLink } from "@react-aria/link";
 import { mergeProps } from "@react-aria/utils";
@@ -24,6 +24,7 @@ export type TooltipProps = {
     linkLabel?: string;
     brightHeader?: BrightHeaderStyle;
     buttons?: [TooltipButton, TooltipButton] | [TooltipButton];
+    ariaProps?: HTMLAttributes<HTMLElement>;
 };
 
 export const Tooltip: FC<TooltipProps> = ({
@@ -35,6 +36,7 @@ export const Tooltip: FC<TooltipProps> = ({
     linkLabel,
     brightHeader,
     buttons,
+    ariaProps,
 }) => {
     const linkRef = useRef<HTMLAnchorElement | null>(null);
     const { linkProps } = useLink({}, linkRef);
@@ -44,6 +46,7 @@ export const Tooltip: FC<TooltipProps> = ({
     return (
         <>
             <div
+                {...ariaProps}
                 className="tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20"
                 data-test-id="tooltip"
             >
