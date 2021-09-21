@@ -24,7 +24,7 @@
     "scripts": {
         "build": "npm run clean && npm run generate && cross-env NODE_ENV=production npm run build:library",
         "build:library": "rollup -c",
-        "build:css": "tailwindcss -o dist/index.css",
+        "build:css": "tailwindcss -i ./src/styles.css -o dist/index.css",
         "build:storybook": "build-storybook -s .storybook/assets",
         "clean": "rimraf dist",
         "component:create": "ts-node scripts/createNewComponent.ts",

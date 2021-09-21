@@ -1,4 +1,4 @@
-import "tailwindcss/tailwind.css";
+import "./styles.css";
 export * from "./compositions/Accordion/Accordion";
 export * from "./components/Menu/ActionMenu/ActionMenu";
 export * from "./elements/AddBlockButton/AddBlockButton";
