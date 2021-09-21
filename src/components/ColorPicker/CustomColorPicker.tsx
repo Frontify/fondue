@@ -88,6 +88,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                             <TextInput
                                 defaultValue={hex.substring(1)}
                                 decorator="#"
+                                size={6}
                                 onInput={(hex) => isValidHex(hex) && onSelect(toColor(currentColor, { hex }))}
                             />
                         ) : (
@@ -123,6 +124,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                         <TextInput
                             min={0}
                             max={100}
+                            size={3}
                             type={TextInputType.Number}
                             defaultValue={`${rgb.a * 100}`}
                             decorator="%"

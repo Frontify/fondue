@@ -55,6 +55,7 @@ type TextInputBaseProps = {
     onEnterPressed?: (value: string) => void;
     onBlur?: (value: string) => void;
     onClear?: () => void;
+    size?: number;
 };
 
 export type TextInputProps =
@@ -89,6 +90,7 @@ export const TextInput: FC<TextInputProps> = ({
     onEnterPressed,
     onBlur,
     onClear,
+    size,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const inputElement = useRef<HTMLInputElement | null>(null);
@@ -165,6 +167,7 @@ export const TextInput: FC<TextInputProps> = ({
                 }
                 required={required}
                 disabled={disabled}
+                size={size}
                 data-test-id="text-input"
             />
             {inputContent.length !== 0 && clearable && (
