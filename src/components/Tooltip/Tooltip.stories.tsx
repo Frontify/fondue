@@ -48,6 +48,7 @@ export default {
 } as Meta;
 
 export const TooltipTemplate: Story<TooltipProps> = (args: TooltipProps) => <TooltipComponent {...args} />;
+TooltipTemplate.storyName = "Tooltip";
 
 export const Default = TooltipTemplate.bind({});
 Default.args = {};
