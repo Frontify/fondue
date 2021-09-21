@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, FC, HTMLAttributes, ReactElement, ReactNode, useRef } from "react";
+import React, { cloneElement, FC, ReactElement, ReactNode, useRef } from "react";
 import { merge } from "@utilities/merge";
 import { useLink } from "@react-aria/link";
 import { mergeProps } from "@react-aria/utils";
+import { useTooltip } from "@react-aria/tooltip";
 import { useFocusRing } from "@react-aria/focus";
 import { IconSize } from "@elements/Icon/IconSize";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { AriaTooltipProps } from "@react-types/tooltip";
 import { BrightHeader, BrightHeaderStyle } from "./BrightHeader";
 import { Button, ButtonStyle, ButtonSize } from "@elements/Button/Button";
 
@@ -24,7 +26,7 @@ export type TooltipProps = {
     linkLabel?: string;
     brightHeader?: BrightHeaderStyle;
     buttons?: [TooltipButton, TooltipButton] | [TooltipButton];
-    ariaProps?: HTMLAttributes<HTMLElement>;
+    tooltipAriaProps?: AriaTooltipProps;
 };
 
 export const Tooltip: FC<TooltipProps> = ({
@@ -36,17 +38,19 @@ export const Tooltip: FC<TooltipProps> = ({
     linkLabel,
     brightHeader,
     buttons,
-    ariaProps,
+    tooltipAriaProps,
 }) => {
     const linkRef = useRef<HTMLAnchorElement | null>(null);
     const { linkProps } = useLink({}, linkRef);
 
     const { isFocusVisible, focusProps } = useFocusRing();
 
+    const { tooltipProps } = useTooltip(tooltipAriaProps ?? {});
+
     return (
         <>
             <div
-                {...ariaProps}
+                {...tooltipProps}
                 className="tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20"
                 data-test-id="tooltip"
             >
