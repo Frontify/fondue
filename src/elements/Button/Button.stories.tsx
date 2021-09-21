@@ -8,6 +8,9 @@ import IconIcons from "@elements/Icon/Generated/IconIcons";
 export default {
     title: "Elements/Button",
     component: Button,
+    args: {
+        inverted: false,
+    },
     argTypes: {
         size: {
             options: [ButtonSize.Small, ButtonSize.Medium, ButtonSize.Large],
@@ -16,11 +19,6 @@ export default {
         style: {
             options: [ButtonStyle.Primary, ButtonStyle.Secondary, ButtonStyle.Danger, ButtonStyle.Positive],
             control: { type: "select" },
-        },
-        inverted: {
-            options: [false, true],
-            defaultValue: false,
-            control: { type: "boolean" },
         },
         onClick: { action: "onClick" },
     },
