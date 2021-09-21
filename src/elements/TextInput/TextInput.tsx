@@ -59,8 +59,14 @@ type TextInputBaseProps = {
 
 export type TextInputProps =
     | ({
-          type?: TextInputType.Text | TextInputType.Number;
+          type?: TextInputType.Text;
           obfuscated?: false;
+      } & TextInputBaseProps)
+    | ({
+          type?: TextInputType.Number;
+          obfuscated?: false;
+          min?: number;
+          max?: number;
       } & TextInputBaseProps)
     | ({
           type: TextInputType.Password;
