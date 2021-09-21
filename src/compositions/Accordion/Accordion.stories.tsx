@@ -36,7 +36,7 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
                 }}
             >
                 <FormControl
-                    label={{ children: "Width", htmlFor: "width", tooltip: "Width of the future" }}
+                    label={{ children: "Width", htmlFor: "width", tooltip: { tooltip: "Width of the future" } }}
                     extra="Some extra text."
                     helper={{ text: "This input should always equal to 42." }}
                 >
