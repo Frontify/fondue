@@ -38,7 +38,11 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
                 <Flyout {...args}>
                     <div className="tw-flex tw-flex-col tw-gap-y-8">
                         <FormControl
-                            label={{ children: "Input Label", htmlFor: "input-id", tooltip: "Input Tooltip" }}
+                            label={{
+                                children: "Input Label",
+                                htmlFor: "input-id",
+                                tooltip: { tooltip: "Input tooltip" },
+                            }}
                             extra="Extra Text"
                         >
                             <TextInput />
