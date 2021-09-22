@@ -3,11 +3,13 @@
 import { Dropdown, DropdownSize } from "@components/Dropdown/Dropdown";
 import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
 import { Slider } from "@components/Slider/Slider";
+import { Checklist, ChecklistDirection } from "@compositions/Checklist/Checklist";
+import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
 import { TextInput } from "@elements/TextInput/TextInput";
 import { Meta, Story } from "@storybook/react";
 import generateRandomId from "@utilities/generateRandomId";
 import React, { useState } from "react";
-import { FormControl, FormControlDirection, FormControlProps, HelperPosition, FormControlStyle } from "./FormControl";
+import { FormControl, FormControlDirection, FormControlProps, FormControlStyle, HelperPosition } from "./FormControl";
 
 export default {
     title: "Compositions/Form Control",
@@ -88,6 +90,33 @@ export const WithDropdown: Story<FormControlProps> = (args) => {
                     },
                 ]}
             />
+        </FormControl>
+    );
+};
+
+export const WithVerticalChecklist: Story<FormControlProps> = (args) => {
+    const allIds: number[] = [1, 2, 3, 4, 5];
+    const [checkedIds, setCheckedIds] = useState<number[]>([]);
+
+    const getCheckboxState = (id: number) =>
+        checkedIds.includes(id) ? CheckboxState.Checked : CheckboxState.Unchecked;
+
+    const toggleCheckbox = (id: number, isChecked: boolean) =>
+        setCheckedIds(isChecked ? checkedIds.concat(id) : checkedIds.filter((checkedId) => checkedId !== id));
+
+    return (
+        <FormControl {...args}>
+            <Checklist direction={ChecklistDirection.Vertical}>
+                {allIds.map((id) => (
+                    <Checkbox
+                        key={`checkbox-${id}`}
+                        id={`checkbox-${id}`}
+                        label={`Checkbox ${id}`}
+                        onChange={(isChecked) => toggleCheckbox(id, isChecked)}
+                        state={getCheckboxState(id)}
+                    />
+                ))}
+            </Checklist>
         </FormControl>
     );
 };
