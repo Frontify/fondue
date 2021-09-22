@@ -12,6 +12,7 @@ const TOOLTIP_LINK_ID = "[data-test-id=tooltip-link]";
 const TOOLTIP_LINK_URL = "https://www.frontify.com";
 const TOOLTIP_HEADING_TEXT = "I'm a heading";
 const GENERIC_ICON = <IconIcons />;
+const GENERIC_ICON_CODE = "svg[name=IconIcons]";
 const BRIGHT_HEADER_ID = "[data-test-id=bright-header]";
 
 describe("Tooltip Component", () => {
@@ -19,12 +20,14 @@ describe("Tooltip Component", () => {
         mount(<Tooltip tooltip={TOOLTIP_TEXT} />);
 
         cy.get(TOOLTIP_ID).should("contain", TOOLTIP_TEXT);
+        cy.get(BRIGHT_HEADER_ID).should("not.exist");
+        cy.get("button").should("not.exist");
     });
 
     it("should render an icon next to the tooltip", () => {
         mount(<Tooltip tooltip={TOOLTIP_TEXT} tooltipIcon={GENERIC_ICON} />);
 
-        cy.get("svg[name=IconIcons]").should("be.visible");
+        cy.get(GENERIC_ICON_CODE).should("be.visible");
     });
 
     it("should render a link", () => {
@@ -51,13 +54,7 @@ describe("Tooltip Component", () => {
         mount(<Tooltip tooltip={TOOLTIP_TEXT} heading={TOOLTIP_HEADING_TEXT} headingIcon={GENERIC_ICON} />);
 
         cy.get(TOOLTIP_ID).should("contain.text", TOOLTIP_HEADING_TEXT);
-        cy.get("svg[name=IconIcons]").should("be.visible");
-    });
-
-    it("should not render a bright header by default", () => {
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} />);
-
-        cy.get(BRIGHT_HEADER_ID).should("not.exist");
+        cy.get(GENERIC_ICON_CODE).should("be.visible");
     });
 
     Object.values(BrightHeaderStyle).forEach((brightHeaderStyle) => {
@@ -68,16 +65,10 @@ describe("Tooltip Component", () => {
         });
     });
 
-    it("should not render buttons by default", () => {
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} />);
-
-        cy.get("button").should("not.exist");
-    });
-
     it("should render one button", () => {
         mount(<Tooltip tooltip={TOOLTIP_TEXT} buttons={[{ label: "Primary", action: () => null }]} />);
 
-        cy.get("button").should("exist");
+        cy.get("button").should("have.length", 1);
     });
 
     it("should render two buttons", () => {
@@ -91,34 +82,7 @@ describe("Tooltip Component", () => {
             />,
         );
 
-        cy.get("button").should("exist");
-    });
-
-    it("should focus the link using a keyboard", () => {
-        mount(<Tooltip tooltip={TOOLTIP_ID} linkUrl={TOOLTIP_LINK_URL} />);
-
-        cy.get(TOOLTIP_LINK_ID).should("be.visible");
-
-        cy.get("body").tab();
-        cy.get(TOOLTIP_LINK_ID).should("be.focused");
-    });
-
-    it("should focus the buttons using a keyboard", () => {
-        mount(
-            <Tooltip
-                tooltip={TOOLTIP_ID}
-                buttons={[
-                    { label: "Primary", action: () => null },
-                    { label: "Secondary", action: () => null },
-                ]}
-            />,
-        );
-
-        cy.get("body").tab();
-        cy.get("button").should("be.focused").and("contain", "Primary");
-
-        cy.get("button").tab();
-        cy.get("button").should("be.focused").and("contain", "Secondary");
+        cy.get("button").should("have.length", 2);
     });
 
     it("should focus the link and then the buttons using a keyboard", () => {
