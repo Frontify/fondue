@@ -27,8 +27,8 @@ export enum DropdownSize {
 export type DropdownProps = {
     id?: string;
     menuBlocks: MenuBlock[];
-    onChange: (id?: string) => void;
-    activeItemId?: string;
+    onChange: (id?: string | number) => void;
+    activeItemId?: string | number;
     placeholder?: string;
     size?: DropdownSize;
     disabled?: boolean;
@@ -36,11 +36,11 @@ export type DropdownProps = {
     ariaLabel?: string;
 };
 
-const getActiveItem = (blocks: MenuBlock[], activeId?: string) =>
+const getActiveItem = (blocks: MenuBlock[], activeId?: string | number) =>
     blocks
         .map(({ menuItems }) => menuItems)
         .flat()
-        .find(({ id }) => id === activeId) || null;
+        .find(({ id }) => id.toString() === activeId?.toString()) || null;
 
 export const Dropdown: FC<DropdownProps> = ({
     id: propId,
@@ -58,7 +58,7 @@ export const Dropdown: FC<DropdownProps> = ({
     const state = useSelectState({
         ...props,
         defaultSelectedKey: activeItemId,
-        onSelectionChange: (key) => onChange(`${key}`),
+        onSelectionChange: (key) => onChange(key),
         disabledKeys: getDisabledItemIds(getMenuItems(menuBlocks)),
     });
     const ref = useRef<HTMLButtonElement | null>(null);
