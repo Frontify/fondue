@@ -49,8 +49,6 @@ export const InputLabel: FC<InputLabelProps> = ({
         ],
     });
 
-    state.open();
-
     return (
         <div
             className={merge([
