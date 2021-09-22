@@ -2,6 +2,7 @@
 
 import React, { PropsWithChildren, FC, useRef, useState } from "react";
 import { merge } from "@utilities/merge";
+import { usePopper } from "react-popper";
 import { IconSize } from "@elements/Icon/IconSize";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { useTooltipTrigger } from "@react-aria/tooltip";
@@ -18,6 +19,9 @@ export type InputLabelProps = PropsWithChildren<{
     bold?: boolean;
 }>;
 
+const TOOLTIP_DISTANCE = 9;
+const TOOLTIP_SKIDDING = 0;
+
 export const InputLabel: FC<InputLabelProps> = ({
     children,
     htmlFor,
@@ -26,12 +30,18 @@ export const InputLabel: FC<InputLabelProps> = ({
     tooltip,
     bold,
 }) => {
+    const [tooltipElement, setTooltipElement] = useState<HTMLElement | null>(null);
     const [tooltipTriggerElement, setTooltipTriggerElement] = useState<HTMLElement | null>(null);
     const state = useTooltipTriggerState();
     const { triggerProps, tooltipProps } = useTooltipTrigger({}, state, useRef(tooltipTriggerElement));
     const { isOpen } = state;
 
     const { isFocusVisible } = useFocusVisible();
+
+    const { styles, attributes } = usePopper(tooltipTriggerElement, tooltipElement, {
+        placement: "auto-end",
+        modifiers: [{ name: "offset", options: { offset: [TOOLTIP_SKIDDING, TOOLTIP_DISTANCE] } }],
+    });
 
     return (
         <div
@@ -77,7 +87,15 @@ export const InputLabel: FC<InputLabelProps> = ({
                     >
                         <IconQuestion size={IconSize.Size16} />
                     </button>
-                    {isOpen && <Tooltip tooltip={tooltip} tooltipAriaProps={tooltipProps} />}
+                    {isOpen && (
+                        <Tooltip
+                            {...attributes.popper}
+                            ref={setTooltipElement}
+                            style={styles.popper}
+                            tooltip={tooltip}
+                            tooltipAriaProps={tooltipProps}
+                        />
+                    )}
                 </>
             )}
         </div>
