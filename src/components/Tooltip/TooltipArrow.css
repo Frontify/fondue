@@ -1,0 +1,15 @@
+.arcade-tooltip[data-popper-placement^="top"] > .arcade-tooltip-arrow {
+    bottom: -4px;
+}
+
+.arcade-tooltip[data-popper-placement^="bottom"] > .arcade-tooltip-arrow {
+    top: -4px;
+}
+
+.arcade-tooltip[data-popper-placement^="left"] > .arcade-tooltip-arrow {
+    right: -4px;
+}
+
+.arcade-tooltip[data-popper-placement^="right"] > .arcade-tooltip-arrow {
+    left: -4px;
+}

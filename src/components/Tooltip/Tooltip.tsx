@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, CSSProperties, forwardRef, ReactElement, ReactNode, useRef } from "react";
+import React, { cloneElement, CSSProperties, forwardRef, ReactChild, ReactElement, ReactNode, useRef } from "react";
 import { merge } from "@utilities/merge";
 import { useLink } from "@react-aria/link";
 import { mergeProps } from "@react-aria/utils";
@@ -28,6 +28,8 @@ export type TooltipProps = {
     buttons?: [TooltipButton, TooltipButton] | [TooltipButton];
     tooltipAriaProps?: AriaTooltipProps;
     style?: CSSProperties;
+    children?: ReactChild;
+    popperAttributes?: { [key: string]: string };
 };
 
 export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
@@ -43,6 +45,8 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             buttons,
             tooltipAriaProps,
             style,
+            children,
+            popperAttributes,
         },
         tooltipContainerRef,
     ) => {
@@ -57,8 +61,9 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             <>
                 <div
                     {...tooltipProps}
+                    {...popperAttributes}
                     ref={tooltipContainerRef}
-                    className="tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20"
+                    className="arcade-tooltip tw-relative tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20"
                     style={style}
                     data-test-id="tooltip"
                 >
@@ -123,6 +128,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
                             </div>
                         )}
                     </div>
+                    {children}
                 </div>
             </>
         );

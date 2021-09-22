@@ -8,6 +8,7 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { useTooltipTrigger } from "@react-aria/tooltip";
 import { useFocusVisible } from "@react-aria/interactions";
 import { useTooltipTriggerState } from "@react-stately/tooltip";
+import { TooltipArrow } from "@components/Tooltip/TooltipArrow";
 import IconQuestion from "@elements/Icon/Generated/IconQuestion";
 import { Tooltip, TooltipProps } from "@components/Tooltip/Tooltip";
 
@@ -19,8 +20,9 @@ export type InputLabelProps = PropsWithChildren<{
     bold?: boolean;
 }>;
 
-const TOOLTIP_DISTANCE = 9;
+const TOOLTIP_DISTANCE = 20;
 const TOOLTIP_SKIDDING = 0;
+const TOOLTIP_PADDING = 15;
 
 export const InputLabel: FC<InputLabelProps> = ({
     children,
@@ -31,6 +33,7 @@ export const InputLabel: FC<InputLabelProps> = ({
     bold,
 }) => {
     const [tooltipElement, setTooltipElement] = useState<HTMLElement | null>(null);
+    const [tooltipArrowElement, setTooltipArrowElement] = useState<HTMLElement | null>(null);
     const [tooltipTriggerElement, setTooltipTriggerElement] = useState<HTMLElement | null>(null);
     const state = useTooltipTriggerState();
     const { triggerProps, tooltipProps } = useTooltipTrigger({}, state, useRef(tooltipTriggerElement));
@@ -39,9 +42,14 @@ export const InputLabel: FC<InputLabelProps> = ({
     const { isFocusVisible } = useFocusVisible();
 
     const { styles, attributes } = usePopper(tooltipTriggerElement, tooltipElement, {
-        placement: "auto-end",
-        modifiers: [{ name: "offset", options: { offset: [TOOLTIP_SKIDDING, TOOLTIP_DISTANCE] } }],
+        placement: "auto",
+        modifiers: [
+            { name: "offset", options: { offset: [TOOLTIP_SKIDDING, TOOLTIP_DISTANCE] } },
+            { name: "arrow", options: { element: tooltipArrowElement, padding: TOOLTIP_PADDING } },
+        ],
     });
+
+    state.open();
 
     return (
         <div
@@ -89,12 +97,14 @@ export const InputLabel: FC<InputLabelProps> = ({
                     </button>
                     {isOpen && (
                         <Tooltip
-                            {...attributes.popper}
+                            popperAttributes={attributes.popper}
                             ref={setTooltipElement}
                             style={styles.popper}
                             tooltip={tooltip}
                             tooltipAriaProps={tooltipProps}
-                        />
+                        >
+                            <TooltipArrow ref={setTooltipArrowElement} style={styles.arrow} />
+                        </Tooltip>
                     )}
                 </>
             )}
