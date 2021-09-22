@@ -7,7 +7,7 @@ import React, { FC, ReactElement, useRef } from "react";
 import { BreadcrumbItem } from "./BreadcrumbItem";
 import { CurrentBreadcrumbItem } from "./CurrentBreadcrumbItem";
 
-export const mapToAriaProps = (items: Breadcrumb[]) => ({
+const mapBreadcrumbsToAriaProps = (items: Breadcrumb[]) => ({
     children: items.map(({ label }, index) => (
         <li key={`breadcrumb-${index}`} aria-label={label}>
             {label}
@@ -29,7 +29,7 @@ export type BreadcrumbsProps = {
 };
 
 export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => {
-    const props = mapToAriaProps(items);
+    const props = mapBreadcrumbsToAriaProps(items);
     const { navProps } = useBreadcrumbs(props);
 
     return (
