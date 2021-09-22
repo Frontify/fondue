@@ -63,7 +63,6 @@ export default {
     title: "Components/Asset Input",
     component: AssetInput,
     argTypes: {
-        onUploadClick: { action: "onUploadClick", table: { disable: true } },
         size: {
             options: Object.values(AssetInputSize),
             control: { type: "radio" },
@@ -87,6 +86,7 @@ const Template: Story<AssetInputProps & { onItemClick: () => void }> = (args) =>
 export const Placeholder = Template.bind({});
 
 Placeholder.argTypes = {
+    onUploadClick: { action: "onUploadClick", table: { disable: true } },
     onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
     size: { table: { disable: true } },
 };
@@ -94,6 +94,14 @@ Placeholder.argTypes = {
 export const PlaceholderUploadOnly = Template.bind({});
 
 PlaceholderUploadOnly.argTypes = {
+    onUploadClick: { action: "onUploadClick", table: { disable: true } },
+    size: { table: { disable: true } },
+};
+
+export const PlaceholderLibraryOnly = Template.bind({});
+
+PlaceholderLibraryOnly.argTypes = {
+    onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
     size: { table: { disable: true } },
 };
 
