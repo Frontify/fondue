@@ -70,7 +70,7 @@ export const WithSlider: Story<FormControlProps> = (args) => {
 };
 
 export const WithDropdown: Story<FormControlProps> = (args) => {
-    const [activeItemId, setActiveItemId] = useState<string | undefined>();
+    const [activeItemId, setActiveItemId] = useState<string | number | undefined>();
     return (
         <FormControl {...args}>
             <Dropdown
