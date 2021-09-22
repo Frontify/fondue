@@ -1,6 +1,9 @@
 import { Badge, BadgeProps } from "@elements/Badge/Badge";
+import { useFocusRing } from "@react-aria/focus";
+import { mergeProps } from "@react-aria/utils";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC } from "react";
+import React, { FC, forwardRef, HTMLAttributes, RefObject } from "react";
 import { Breadcrumb } from "./Breadcrumbs";
 
 const ItemWithBadges: FC<{ badges?: BadgeProps[] }> = ({ badges, children }) => (
@@ -15,8 +18,17 @@ const ItemWithBadges: FC<{ badges?: BadgeProps[] }> = ({ badges, children }) => 
     </span>
 );
 
-export const CurrentBreadcrumbItem: FC<Breadcrumb> = ({ label, badges, bold, decorator, link, onClick }) => {
+type CurrentBreadcrumbItemProps = Breadcrumb & {
+    ariaProps: HTMLAttributes<HTMLElement>;
+};
+
+export const CurrentBreadcrumbItem = forwardRef<
+    HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null,
+    CurrentBreadcrumbItemProps
+>(({ label, badges, bold, decorator, link, onClick, ariaProps }, ref) => {
     const classNames = merge([decorator && "tw-flex tw-gap-x-1 tw-items-center", bold && "tw-font-bold"]);
+    const { isFocusVisible, focusProps } = useFocusRing();
+    const props = mergeProps(ariaProps, focusProps);
 
     return (
         <li
@@ -25,14 +37,24 @@ export const CurrentBreadcrumbItem: FC<Breadcrumb> = ({ label, badges, bold, dec
         >
             {link ? (
                 <ItemWithBadges badges={badges}>
-                    <a href={link} aria-current="page" className={classNames}>
+                    <a
+                        ref={ref as RefObject<HTMLAnchorElement>}
+                        {...props}
+                        href={link}
+                        className={merge([classNames, isFocusVisible ? FOCUS_STYLE : ""])}
+                    >
                         {decorator}
                         <span className={bold ? "tw-font-bold" : ""}>{label}</span>
                     </a>
                 </ItemWithBadges>
             ) : onClick ? (
                 <ItemWithBadges badges={badges}>
-                    <button onClick={onClick} aria-current="page" className={classNames}>
+                    <button
+                        ref={ref as RefObject<HTMLButtonElement>}
+                        {...props}
+                        onClick={onClick}
+                        className={merge([classNames, isFocusVisible ? FOCUS_STYLE : ""])}
+                    >
                         {decorator}
                         {label}
                     </button>
@@ -41,10 +63,18 @@ export const CurrentBreadcrumbItem: FC<Breadcrumb> = ({ label, badges, bold, dec
                 <>
                     {decorator}
                     <ItemWithBadges badges={badges}>
-                        <span className={bold ? "tw-font-bold" : ""}>{label}</span>
+                        <span
+                            ref={ref as RefObject<HTMLSpanElement>}
+                            {...props}
+                            className={merge([bold && "tw-font-bold", isFocusVisible && FOCUS_STYLE])}
+                        >
+                            {label}
+                        </span>
                     </ItemWithBadges>
                 </>
             )}
         </li>
     );
-};
+});
+
+CurrentBreadcrumbItem.displayName = "CurrentBreadcrumbItem";
