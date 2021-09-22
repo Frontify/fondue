@@ -6,16 +6,11 @@ import { InputLabel } from "@elements/InputLabel/InputLabel";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useCheckbox } from "@react-aria/checkbox";
 import { useFocusRing } from "@react-aria/focus";
+import { mergeProps } from "@react-aria/utils";
 import { useToggleState } from "@react-stately/toggle";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, useRef } from "react";
-import { mergeProps } from "@react-aria/utils";
-
-export enum CheckboxStyle {
-    Default = "Default",
-    Primary = "Primary",
-}
 
 export enum CheckboxState {
     Checked = "Checked",
@@ -25,7 +20,6 @@ export enum CheckboxState {
 
 export type CheckboxProps = {
     id?: string;
-    style?: CheckboxStyle;
     state?: CheckboxState;
     disabled?: boolean;
     required?: boolean;
@@ -37,36 +31,13 @@ export type CheckboxProps = {
     note?: string;
 };
 
-const styles = {
-    unchecked: {
-        [CheckboxStyle.Default]:
-            "tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90",
-        [CheckboxStyle.Primary]:
-            "tw-border-violet-60 tw-bg-white hover:tw-border-violet-70 dark:tw-border-violet-50 dark:tw-bg-black dark:hover:tw-border-violet-60 dark:hover:tw-bg-black-90",
-    },
-    checked: {
-        [CheckboxStyle.Default]:
-            "tw-border-black tw-bg-black tw-text-white hover:tw-border-black-superdark hover:tw-bg-black-superdark dark:tw-border-white dark:tw-bg-white dark:hover:tw-border-black-20 dark:hover:tw-bg-black-20 dark:tw-text-black",
-        [CheckboxStyle.Primary]:
-            "tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60",
-    },
-};
-
 const isCheckedOrMixed = (checked: CheckboxState): boolean => {
     return checked === CheckboxState.Checked || checked === CheckboxState.Mixed;
 };
 
 export const Checkbox: FC<CheckboxProps> = (props) => {
     const id = useMemoizedId(props.id);
-    const {
-        state = CheckboxState.Unchecked,
-        disabled,
-        required,
-        label,
-        tooltip,
-        note,
-        style = CheckboxStyle.Default,
-    } = props;
+    const { state = CheckboxState.Unchecked, disabled, required, label, tooltip, note } = props;
     const toggleState = useToggleState({ ...props, isSelected: state === CheckboxState.Checked });
     const ref = useRef<HTMLInputElement>(null);
     const { inputProps } = useCheckbox(
@@ -107,8 +78,10 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
                                       "tw-border-black-40 tw-bg-black-40 dark:tw-border-black-60 dark:tw-bg-black-60",
                               ])
                             : merge([
-                                  !isCheckedOrMixed(state) && styles.unchecked[style],
-                                  isCheckedOrMixed(state) && styles.checked[style],
+                                  !isCheckedOrMixed(state) &&
+                                      "tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90",
+                                  isCheckedOrMixed(state) &&
+                                      "tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60",
                                   "hover:tw-cursor-pointer",
                               ]),
                     ])}
