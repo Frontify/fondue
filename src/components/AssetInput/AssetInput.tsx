@@ -179,7 +179,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                 </span>
                 <span
                     className={merge([
-                        "tw-p-3 tw-flex tw-items-center",
+                        "tw-p-4 tw-flex tw-items-center",
                         size === AssetInputSize.Large ? "tw-h-14" : "tw-h-full",
                     ])}
                 >
