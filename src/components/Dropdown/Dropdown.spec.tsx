@@ -39,7 +39,7 @@ const FIRST_ITEM_ID = ITEMS[0].menuItems[0].id;
 type Props = {
     menuBlocks: MenuBlock[];
     placeholder?: string;
-    initialActiveId?: string;
+    initialActiveId?: string | number;
     clearable?: boolean;
 };
 
