@@ -87,7 +87,7 @@ export type AssetInputProps =
 const AssetThumbnail: FC<Pick<AssetProps, "asset" | "size"> & { isActive?: boolean }> = ({ asset, size, isActive }) => (
     <span
         className={merge([
-            "tw-flex tw-flex-col tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95 group-hover:tw-text-black-100 dark:group-hover:tw-text-white",
+            "tw-flex tw-flex-col tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95",
             size === AssetInputSize.Large
                 ? "tw-w-full tw-h-32"
                 : "tw-w-14 tw-h-full tw-border-r tw-border-black-opacity-25",
