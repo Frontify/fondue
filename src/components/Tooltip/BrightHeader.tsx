@@ -38,7 +38,7 @@ export const BrightHeader: FC<BrightHeaderProps> = ({ headerStyle }) => {
         <div
             data-test-id="bright-header"
             className={merge([
-                "tw-h-9 tw-flex tw-justify-center tw-items-center tw-rounded-t-md tw-text-white",
+                "tw-h-9 tw-relative tw-z-10 tw-flex tw-justify-center tw-items-center tw-rounded-t-md tw-text-white",
                 brightHeaderBackgroundColors[headerStyle],
             ])}
         >
