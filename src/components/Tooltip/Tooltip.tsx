@@ -17,6 +17,8 @@ export type TooltipButton = {
     action: () => void;
 };
 
+type PopperAttributes = { [key: string]: string };
+
 export type TooltipProps = {
     tooltip: ReactNode;
     tooltipIcon?: ReactElement;
@@ -29,7 +31,7 @@ export type TooltipProps = {
     tooltipAriaProps?: AriaTooltipProps;
     style?: CSSProperties;
     children?: ReactChild;
-    popperAttributes?: { [key: string]: string };
+    popperAttributes?: PopperAttributes;
 };
 
 export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(

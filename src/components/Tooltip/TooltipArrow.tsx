@@ -13,7 +13,7 @@ export const TooltipArrow = forwardRef<HTMLDivElement, TooltipArrowProps>(({ sty
             ref={ref}
             className="arcade-tooltip-arrow tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw--z-1 before:tw-w-3 before:tw-h-3 before:tw-bg-black-100 dark:before:tw-bg-white before:tw-rotate-45"
             style={style}
-        ></div>
+        />
     );
 });
 TooltipArrow.displayName = "TooltipArrow";
