@@ -73,6 +73,7 @@ export const Slider: FC<SliderProps> = ({
                             {isActive && (
                                 <motion.div
                                     key={id}
+                                    initial={false}
                                     layoutId={id}
                                     className={merge([
                                         "tw-absolute tw--inset-px tw-h-9 tw-border tw-rounded tw-pointer-events-none",

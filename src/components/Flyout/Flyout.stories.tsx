@@ -33,10 +33,10 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
 
     return (
         <div className="dark:tw-text-white">
-            <div className="tw-flex tw-items-cente">
+            <div className="tw-flex tw-items-center">
                 Some text
                 <Flyout {...args}>
-                    <div className="tw-flex tw-flex-col tw-gap-y-8">
+                    <div className="tw-flex tw-flex-col tw-gap-y-8 tw-p-8">
                         <FormControl
                             label={{ children: "Input Label", htmlFor: "input-id", tooltip: "Input Tooltip" }}
                             extra="Extra Text"
@@ -62,14 +62,16 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
                         </FormControl>
                     </div>
 
-                    <FormControl
-                        label={{
-                            children: "Textarea Label",
-                            htmlFor: "textarea-id",
-                        }}
-                    >
-                        <Textarea placeholder="This is a placeholder" />
-                    </FormControl>
+                    <div className="tw-p-8">
+                        <FormControl
+                            label={{
+                                children: "Textarea Label",
+                                htmlFor: "textarea-id",
+                            }}
+                        >
+                            <Textarea placeholder="This is a placeholder" />
+                        </FormControl>
+                    </div>
                 </Flyout>
             </div>
             <div>

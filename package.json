@@ -33,6 +33,7 @@
         "lint:fix": "npm run lint:ts:fix",
         "lint:ts": "eslint 'src/**/*.{ts,tsx}'",
         "lint:ts:fix": "eslint --fix 'src/**/*.{ts,tsx}'",
+        "lint:prettier": "prettier --check src",
         "test": "npm run build:css && cypress run-ct",
         "test:browser": "npm run build:css && cypress open-ct",
         "test:file": "npm run build:css && cypress run-ct --spec",
@@ -113,6 +114,7 @@
         "deepmerge": "^4.2.2",
         "framer-motion": "^4.1.17",
         "react-aria": "^3.9.0",
+        "react-color": "^2.19.3",
         "react-stately": "^3.8.0"
     }
 }
