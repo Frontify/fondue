@@ -234,21 +234,23 @@ export const AssetInput: FC<AssetInputProps> = ({
             data-test-id="asset-input-placeholder"
             className={merge([
                 "tw-grid tw-p-3 tw-border tw-border-dashed tw-border-black-10 tw-rounded",
-                onLibraryClick ? "tw-grid-cols-2 tw-divide-x tw-divide-black-10" : "tw-grid-cols-1",
+                onUploadClick && onLibraryClick ? "tw-grid-cols-2 tw-divide-x tw-divide-black-10" : "tw-grid-cols-1",
             ])}
         >
-            <div className={merge(["tw-flex tw-flex-col tw-h-8", onLibraryClick && "tw-pr-3"])}>
-                <Button
-                    onClick={onUploadClick}
-                    style={ButtonStyle.Secondary}
-                    solid={false}
-                    icon={<IconUploadAlternative />}
-                >
-                    Upload
-                </Button>
-            </div>
+            {onUploadClick && (
+                <div className={merge(["tw-flex tw-flex-col tw-h-8", onLibraryClick && "tw-pr-3"])}>
+                    <Button
+                        onClick={onUploadClick}
+                        style={ButtonStyle.Secondary}
+                        solid={false}
+                        icon={<IconUploadAlternative />}
+                    >
+                        Upload
+                    </Button>
+                </div>
+            )}
             {onLibraryClick && (
-                <div className="tw-flex tw-flex-col tw-h-8 tw-pl-3">
+                <div className={merge(["tw-flex tw-flex-col tw-h-8", onUploadClick && "tw-pl-3"])}>
                     <Button
                         onClick={onLibraryClick}
                         style={ButtonStyle.Secondary}
