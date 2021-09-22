@@ -181,7 +181,7 @@ export const Flyout: FC<FlyoutProps> = (props) => {
                             ref={overlayRef}
                             scrollRef={scrollRef}
                         >
-                            {props.children}
+                            {overlayRef?.current && props.children}
                         </Overlay>
                     </FocusScope>
                 </OverlayContainer>
