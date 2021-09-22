@@ -66,7 +66,7 @@ export const CurrentBreadcrumbItem = forwardRef<
                         <span
                             ref={ref as RefObject<HTMLSpanElement>}
                             {...props}
-                            className={bold ? "tw-font-bold" : isFocusVisible ? FOCUS_STYLE : ""}
+                            className={merge([bold && "tw-font-bold", isFocusVisible && FOCUS_STYLE])}
                         >
                             {label}
                         </span>
