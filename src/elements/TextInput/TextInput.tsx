@@ -114,11 +114,15 @@ export const TextInput: FC<TextInputProps> = ({
         <div
             {...focusProps}
             className={merge([
-                "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative",
+                "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent",
                 dotted ? "tw-border-dashed" : "tw-border-solid",
                 disabled
                     ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90 tw-cursor-not-allowed"
-                    : merge([validationStyle[validation], isFocusVisible && FOCUS_STYLE]),
+                    : merge([
+                          "focus-within:tw-border-black-90",
+                          validationStyle[validation],
+                          isFocusVisible && FOCUS_STYLE,
+                      ]),
             ])}
         >
             {decorator && (
@@ -136,7 +140,7 @@ export const TextInput: FC<TextInputProps> = ({
                 id={useMemoizedId(propId)}
                 ref={inputElement}
                 className={merge([
-                    "tw-flex-grow tw-border-none tw-outline-none tw-bg-transparent",
+                    "tw-flex-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows",
                     disabled
                         ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40 tw-cursor-not-allowed"
                         : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",

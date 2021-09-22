@@ -83,7 +83,7 @@ import IconTemplate from "../src/elements/Icon/IconTemplate";
     const iconComponentNameToImport = (name: string, path: string) =>
         `import ${name} from "./${path.replace("src/", "")}";`;
 
-    const fileContent = `import "tailwindcss/tailwind.css";
+    const fileContent = `import "./styles.css";
 ${components.map((c) => componentNameToImport(c.path)).join("\n")}
 ${iconComponents.map((ic) => iconComponentNameToImport(ic.name, ic.path)).join("\n")}
 

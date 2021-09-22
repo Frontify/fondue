@@ -39,27 +39,27 @@ SmallSelect.args = {
             ariaLabel: "First section",
             menuItems: [
                 {
-                    id: "1",
+                    id: 1,
                     title: "Small icon",
                     size: MenuItemContentSize.Small,
                     decorator: <IconAudio />,
                 },
                 {
-                    id: "2",
+                    id: 2,
                     title: "Small icon warning",
                     size: MenuItemContentSize.Small,
                     decorator: <IconAudio />,
                     style: MenuItemStyle.Danger,
                 },
                 {
-                    id: "3",
+                    id: 3,
                     title: "Small icon disabled",
                     size: MenuItemContentSize.Small,
                     decorator: <IconAudio />,
                     disabled: true,
                 },
                 {
-                    id: "4",
+                    id: 4,
                     title: "Small icon warning disabled",
                     size: MenuItemContentSize.Small,
                     decorator: <IconAudio />,

@@ -2,7 +2,7 @@
 import alias from "@rollup/plugin-alias";
 import commonJs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-import { resolve } from "path";
+import { join, resolve } from "path";
 import dts from "rollup-plugin-dts";
 import esbuild from "rollup-plugin-esbuild";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
@@ -59,7 +59,7 @@ const rollupConfig = [
     }),
     bundle({
         plugins: [dts()],
-        external: ["tailwindcss/tailwind.css"],
+        external: [join(__dirname, "src", "styles.css")],
         output: {
             file: `${name}.d.ts`,
             format: "es",

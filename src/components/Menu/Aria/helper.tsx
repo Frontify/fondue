@@ -28,5 +28,7 @@ export const getKeyItemRecord = <T extends MenuItemType | ActionMenuItemType = M
     items: T[],
 ): Record<string, T> => items.reduce<Record<string, T>>((previous, item) => ({ ...previous, [item.id]: item }), {});
 
-export const getDisabledItemIds = <T extends MenuItemType | ActionMenuItemType = MenuItemType>(items: T[]): string[] =>
-    items.reduce((acc: string[], curr: MenuItemType) => [...acc, curr.disabled ? curr.id : ""], []);
+export const getDisabledItemIds = <T extends MenuItemType | ActionMenuItemType = MenuItemType>(
+    items: T[],
+): (string | number)[] =>
+    items.reduce((acc: (string | number)[], curr: MenuItemType) => [...acc, curr.disabled ? curr.id : ""], []);
