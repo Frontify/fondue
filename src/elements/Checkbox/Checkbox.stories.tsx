@@ -1,17 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from "react";
 import { Meta, Story } from "@storybook/react";
-import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState, CheckboxStyle } from "./Checkbox";
+import React, { useEffect, useState } from "react";
+import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState } from "./Checkbox";
 
 export default {
     title: "Elements/Checkbox",
     argTypes: {
-        style: {
-            options: Object.values(CheckboxStyle),
-            control: { type: "radio" },
-        },
-        checked: {
+        state: {
             options: Object.values(CheckboxState),
             control: { type: "radio" },
         },
@@ -21,7 +17,6 @@ export default {
         },
     },
     args: {
-        style: CheckboxStyle.Primary,
         state: CheckboxState.Unchecked,
         disabled: false,
         required: false,

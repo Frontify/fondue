@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from "react";
-import { Checkbox, CheckboxState, CheckboxStyle } from "@elements/Checkbox/Checkbox";
+import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
 import { Meta, Story } from "@storybook/react";
-import { Checklist as ChecklistComponent, ChecklistProps, ChecklistDirection } from "./Checklist";
+import React, { useState } from "react";
+import { Checklist as ChecklistComponent, ChecklistDirection, ChecklistProps } from "./Checklist";
 
 export default {
     title: "Compositions/Checklist",
@@ -36,7 +36,6 @@ export const Checklist: Story<ChecklistProps> = (args) => {
             <Checkbox
                 state={checked[0]}
                 onChange={updateCheckState(0)}
-                style={CheckboxStyle.Primary}
                 label="Checkbox label"
                 tooltip="Random Tooltip"
             />
