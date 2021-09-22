@@ -98,10 +98,10 @@ export const WithVerticalChecklist: Story<FormControlProps> = (args) => {
     const allIds: number[] = [1, 2, 3, 4, 5];
     const [checkedIds, setCheckedIds] = useState<number[]>([]);
 
-    const getCheckboxState = (id: number): CheckboxState =>
+    const getCheckboxState = (id: number) =>
         checkedIds.includes(id) ? CheckboxState.Checked : CheckboxState.Unchecked;
 
-    const toggleCheckbox = (id: number, isChecked: boolean): void =>
+    const toggleCheckbox = (id: number, isChecked: boolean) =>
         setCheckedIds(isChecked ? checkedIds.concat(id) : checkedIds.filter((checkedId) => checkedId !== id));
 
     return (
