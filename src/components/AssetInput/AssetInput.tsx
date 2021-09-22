@@ -250,7 +250,7 @@ export const AssetInput: FC<AssetInputProps> = ({
                 </div>
             )}
             {onLibraryClick && (
-                <div className={merge(["tw-flex tw-flex-col tw-h-8", onUploadClick && "tw-pl-3 tw-pr-3"])}>
+                <div className={merge(["tw-flex tw-flex-col tw-h-8", onUploadClick && "tw-pl-3"])}>
                     <Button
                         onClick={onLibraryClick}
                         style={ButtonStyle.Secondary}
