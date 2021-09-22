@@ -183,7 +183,12 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                         size === AssetInputSize.Large ? "tw-h-14" : "tw-h-full",
                     ])}
                 >
-                    <span className={merge(["tw-transition-transform", isOpen && "tw-rotate-180"])}>
+                    <span
+                        className={merge([
+                            "tw-transition-transform",
+                            isOpen ? "tw-rotate-180 tw-text-black-90" : "tw-text-black-60",
+                        ])}
+                    >
                         <IconCaretDown size={IconSize.Size16} />
                     </span>
                 </span>
