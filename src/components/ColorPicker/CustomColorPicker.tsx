@@ -16,7 +16,15 @@ import { Alpha, Saturation } from "react-color/lib/components/common";
 import { isValidHex, toState } from "react-color/lib/helpers/color";
 import { ColorFormat, ColorPickerProps } from "./ColorPicker";
 
-const ColorPointer: FC = () => <div className="tw-w-4 tw-h-4 tw-rounded-full tw-border-2 tw-border-white" />;
+const ColorPointer: FC<{ offsetX?: boolean; offsetY?: boolean }> = ({ offsetX = true, offsetY = true }) => (
+    <div
+        className={merge([
+            "tw-w-4 tw-h-4 tw-rounded-full tw-border-2 tw-border-white",
+            offsetX && "tw--translate-x-2",
+            offsetY && "tw--translate-y-2",
+        ])}
+    />
+);
 
 export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ currentColor, onSelect }) => {
     const colorFormats = Object.values(ColorFormat).map((id) => ({ id, title: id.toLocaleUpperCase() }));
@@ -41,7 +49,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                     <HuePicker
                         pointer={() => (
                             <div className="tw-w-6 tw-flex tw-justify-center">
-                                <ColorPointer />
+                                <ColorPointer offsetX={false} />
                             </div>
                         )}
                         color={rgb}
@@ -61,7 +69,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                         height="200px"
                         pointer={() => (
                             <div className="tw-w-[18px] tw-flex tw-justify-center">
-                                <ColorPointer />
+                                <ColorPointer offsetX={false} />
                             </div>
                         )}
                         style={{ pointer: { top: `${rgb.a * 100}%` } }}
