@@ -7,7 +7,17 @@ import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, FormEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import React, {
+    FC,
+    FocusEvent,
+    FormEvent,
+    KeyboardEvent,
+    ReactElement,
+    ReactNode,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 
 export enum TextInputType {
     Text = "text",
@@ -46,14 +56,13 @@ type TextInputBaseProps = {
     decorator?: ReactNode;
     dotted?: boolean;
     clearable?: boolean;
-    defaultValue?: string;
     placeholder?: string;
     required?: boolean;
     disabled?: boolean;
     validation?: Validation;
-    onInput?: (value: string) => void;
-    onEnterPressed?: (value: string) => void;
-    onBlur?: (value: string) => void;
+    onChange?: (e: FormEvent<HTMLInputElement>) => void;
+    onEnterPressed?: (e: KeyboardEvent<HTMLInputElement>) => void;
+    onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
     onClear?: () => void;
     size?: number;
 };
@@ -62,16 +71,19 @@ export type TextInputProps =
     | ({
           type?: TextInputType.Text;
           obfuscated?: false;
+          value?: string;
       } & TextInputBaseProps)
     | ({
           type?: TextInputType.Number;
           obfuscated?: false;
           min?: number;
           max?: number;
+          value?: number;
       } & TextInputBaseProps)
     | ({
           type: TextInputType.Password;
           obfuscated?: boolean;
+          value?: string;
       } & TextInputBaseProps);
 
 export const TextInput: FC<TextInputProps> = ({
@@ -80,13 +92,13 @@ export const TextInput: FC<TextInputProps> = ({
     decorator,
     validation = Validation.Default,
     clearable = false,
-    defaultValue,
     placeholder,
     required,
     obfuscated,
     disabled = false,
     dotted = false,
-    onInput,
+    value = "",
+    onChange,
     onEnterPressed,
     onBlur,
     onClear,
@@ -98,20 +110,6 @@ export const TextInput: FC<TextInputProps> = ({
         typeof obfuscated === "boolean" ? obfuscated : type === TextInputType.Password,
     );
 
-    const [inputContent, setInputContent] = useState<string>(defaultValue || "");
-
-    useEffect(() => {
-        if (defaultValue) {
-            setInputContent(defaultValue);
-        }
-    }, [defaultValue]);
-
-    const onTextInput = (event: FormEvent<HTMLInputElement>) => {
-        const value = (event.target as HTMLInputElement).value;
-        setInputContent(value);
-        onInput && onInput(value);
-    };
-
     useEffect(() => {
         if (typeof obfuscated === "boolean") {
             setIsObfuscated(obfuscated);
@@ -120,7 +118,7 @@ export const TextInput: FC<TextInputProps> = ({
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
-            onEnterPressed && onEnterPressed((event.target as HTMLInputElement).value);
+            onEnterPressed && onEnterPressed(event);
         }
     };
 
@@ -159,11 +157,11 @@ export const TextInput: FC<TextInputProps> = ({
                         ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40 tw-cursor-not-allowed"
                         : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
                 ])}
-                onInput={onTextInput}
-                onBlur={(event) => onBlur && onBlur(event.target.value)}
+                onChange={onChange}
+                onBlur={onBlur}
                 onKeyDown={onKeyDown}
                 placeholder={placeholder}
-                value={inputContent}
+                value={value}
                 type={
                     type === TextInputType.Password
                         ? isObfuscated
@@ -176,7 +174,7 @@ export const TextInput: FC<TextInputProps> = ({
                 size={size}
                 data-test-id="text-input"
             />
-            {inputContent.length !== 0 && clearable && (
+            {`${value}`.length !== 0 && clearable && (
                 <button
                     className={merge([
                         "tw-flex tw-items-center tw-justify-center",
@@ -184,7 +182,8 @@ export const TextInput: FC<TextInputProps> = ({
                     ])}
                     onClick={() => {
                         inputElement.current?.focus();
-                        setInputContent("");
+                        // setInputContent("");
+                        inputElement.current?.setAttribute("value", "");
                         onClear && onClear();
                     }}
                     data-test-id="clear-icon"

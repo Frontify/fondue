@@ -8,7 +8,7 @@ import { TextInput } from "@elements/TextInput/TextInput";
 import { toColor } from "@utilities/colors";
 import { debounce } from "@utilities/debounce";
 import { merge } from "@utilities/merge";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, FormEvent, useEffect, useState } from "react";
 import { ColorPickerProps } from "./ColorPicker";
 
 const find = (haystack?: string, needle = "") =>
@@ -45,9 +45,13 @@ export const BrandColorPicker: FC<ColorPickerProps> = ({ palettes: defaultPalett
             <div className="tw-flex tw-gap-3">
                 <div className="tw-flex-1">
                     <TextInput
+                        value=""
                         decorator={<IconSearch />}
                         placeholder="Search"
-                        onInput={debounce((value) => setQuery(value), 200)}
+                        onChange={debounce(
+                            (event: FormEvent<HTMLInputElement>) => setQuery(event.currentTarget.value),
+                            200,
+                        )}
                     />
                 </div>
                 <div className="tw-w-[72px]">

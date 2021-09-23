@@ -24,7 +24,7 @@ describe("Text Input component", () => {
     });
 
     it("set and get the value", () => {
-        mount(<TextInput defaultValue={INPUT_TEXT} />);
+        mount(<TextInput value={INPUT_TEXT} />);
         cy.get(TEXT_INPUT_ID).should("have.value", INPUT_TEXT);
     });
 
@@ -73,7 +73,7 @@ describe("Text Input component", () => {
 
     it("calls the onInput event", () => {
         const onInputStub = cy.stub().as("onInputStub");
-        mount(<TextInput onInput={onInputStub} />);
+        mount(<TextInput onChange={onInputStub} />);
         cy.get(TEXT_INPUT_ID).type(INPUT_TEXT);
         cy.get("@onInputStub").should("to.have.always.been.callCount", INPUT_TEXT.length);
     });

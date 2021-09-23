@@ -38,13 +38,13 @@ const TextInputTemplate: Story<TextInputProps> = (args) => <TextInput {...args} 
 export const Text = TextInputTemplate.bind({});
 
 Text.argTypes = {
-    defaultValue: { table: { disable: false }, type: "string" },
+    value: { table: { disable: false }, type: "string" },
 };
 
 export const Prefilled = TextInputTemplate.bind({});
 
 Prefilled.args = {
-    defaultValue: "Value text",
+    value: "Value text",
 };
 
 export const WithPlaceholder = TextInputTemplate.bind({});
@@ -56,7 +56,7 @@ WithPlaceholder.args = {
 export const WithIconDecorator = TextInputTemplate.bind({});
 
 WithIconDecorator.args = {
-    defaultValue: "Value text",
+    value: "Value text",
     decorator: <IconIcons size={IconSize.Size16} />,
 };
 
