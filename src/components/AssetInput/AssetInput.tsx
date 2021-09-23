@@ -87,7 +87,7 @@ export type AssetInputProps =
 const AssetThumbnail: FC<Pick<AssetProps, "asset" | "size"> & { isActive?: boolean }> = ({ asset, size, isActive }) => (
     <span
         className={merge([
-            "tw-flex tw-flex-col tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95 group-hover:tw-text-black-100 dark:group-hover:tw-text-white",
+            "tw-flex tw-flex-col tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95",
             size === AssetInputSize.Large
                 ? "tw-w-full tw-h-32"
                 : "tw-w-14 tw-h-full tw-border-r tw-border-black-opacity-25",
@@ -169,7 +169,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                 >
                     <span
                         className={merge([
-                            "tw-text-black-100 tw-text-s group-hover:tw-font-medium dark:tw-text-white",
+                            "tw-text-black-100 tw-text-s dark:tw-text-white",
                             (isOpen || isFocusVisible) && "tw-font-medium",
                         ])}
                     >
@@ -234,21 +234,23 @@ export const AssetInput: FC<AssetInputProps> = ({
             data-test-id="asset-input-placeholder"
             className={merge([
                 "tw-grid tw-p-3 tw-border tw-border-dashed tw-border-black-10 tw-rounded",
-                onLibraryClick ? "tw-grid-cols-2 tw-divide-x tw-divide-black-10" : "tw-grid-cols-1",
+                onUploadClick && onLibraryClick ? "tw-grid-cols-2 tw-divide-x tw-divide-black-10" : "tw-grid-cols-1",
             ])}
         >
-            <div className={merge(["tw-flex tw-flex-col tw-h-8", onLibraryClick && "tw-pr-3"])}>
-                <Button
-                    onClick={onUploadClick}
-                    style={ButtonStyle.Secondary}
-                    solid={false}
-                    icon={<IconUploadAlternative />}
-                >
-                    Upload
-                </Button>
-            </div>
+            {onUploadClick && (
+                <div className={merge(["tw-flex tw-flex-col tw-h-8", onLibraryClick && "tw-pr-3"])}>
+                    <Button
+                        onClick={onUploadClick}
+                        style={ButtonStyle.Secondary}
+                        solid={false}
+                        icon={<IconUploadAlternative />}
+                    >
+                        Upload
+                    </Button>
+                </div>
+            )}
             {onLibraryClick && (
-                <div className="tw-flex tw-flex-col tw-h-8 tw-pl-3">
+                <div className={merge(["tw-flex tw-flex-col tw-h-8", onUploadClick && "tw-pl-3"])}>
                     <Button
                         onClick={onLibraryClick}
                         style={ButtonStyle.Secondary}

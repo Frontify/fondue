@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FieldsetHeader, FieldsetHeaderProps } from "@compositions/FieldsetHeader/FieldsetHeader";
+import { FieldsetHeader, FieldsetHeaderProps, FieldsetHeaderSize } from "@compositions/FieldsetHeader/FieldsetHeader";
 import { useAccordion, useAccordionItem } from "@react-aria/accordion";
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
@@ -55,7 +55,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                     isFocusVisible && FOCUS_STYLE,
                 ])}
             >
-                <FieldsetHeader {...header} active={isOpen} onClick={undefined} />
+                <FieldsetHeader {...header} size={FieldsetHeaderSize.Small} active={isOpen} onClick={undefined} />
             </button>
 
             <AnimatePresence>
@@ -71,8 +71,9 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                         }}
                         transition={{ type: "tween" }}
                         data-test-id="accordion-item-content"
+                        className="tw-overflow-hidden"
                     >
-                        <div {...regionProps} className="tw-px-8 tw-pb-7">
+                        <div {...regionProps} className="tw-px-8 tw-pb-6">
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}

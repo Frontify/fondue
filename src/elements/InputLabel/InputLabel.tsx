@@ -58,7 +58,6 @@ export const InputLabel: FC<InputLabelProps> = ({
         <div
             className={merge([
                 "tw-inline-flex tw-items-center tw-gap-1 tw-font-sans tw-text-s",
-                bold && "tw-font-medium",
                 disabled
                     ? "tw-text-black-40 hover:tw-text-black-40 dark:tw-text-black-60 dark:hover:tw-text-black-60"
                     : "tw-text-black-90 dark:tw-text-white",
@@ -66,11 +65,12 @@ export const InputLabel: FC<InputLabelProps> = ({
         >
             <label
                 htmlFor={htmlFor}
-                className={
+                className={merge([
+                    bold && "tw-font-medium",
                     disabled
                         ? "hover:tw-cursor-not-allowed tw-pointer-events-none"
-                        : "hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white"
-                }
+                        : "hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white",
+                ])}
                 data-test-id="input-label"
             >
                 {children}
