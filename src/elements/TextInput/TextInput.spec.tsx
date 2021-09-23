@@ -22,15 +22,7 @@ const StatefulInput: FC<TextInputProps> = (props) => {
         setInput(props.value || "");
     }, [props.value]);
 
-    return (
-        <TextInput
-            {...props}
-            value={input}
-            onChange={(event) => {
-                setInput(event.currentTarget.value);
-            }}
-        />
-    );
+    return <TextInput {...props} value={input} onChange={setInput} />;
 };
 
 describe("Text Input component", () => {

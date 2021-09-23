@@ -37,7 +37,7 @@ const TextInputTemplate: Story<TextInputProps> = (args) => {
     const [input, setInput] = useState("");
     useEffect(() => setInput(`${args.value || ""}`), [args.value]);
 
-    return <TextInput {...args} value={input} onChange={(event) => setInput(`${event.currentTarget.value}`)} />;
+    return <TextInput {...args} value={input} onChange={setInput} />;
 };
 
 export const Text = TextInputTemplate.bind({});

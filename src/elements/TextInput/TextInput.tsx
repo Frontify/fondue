@@ -7,17 +7,7 @@ import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, {
-    FC,
-    FocusEvent,
-    FormEvent,
-    KeyboardEvent,
-    ReactElement,
-    ReactNode,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import React, { FC, FocusEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 
 export enum TextInputType {
     Text = "text",
@@ -61,7 +51,7 @@ type TextInputBaseProps = {
     disabled?: boolean;
     validation?: Validation;
     value?: string;
-    onChange?: (e: FormEvent<HTMLInputElement>) => void;
+    onChange?: (value: string) => void;
     onEnterPressed?: (e: KeyboardEvent<HTMLInputElement>) => void;
     onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
     onClear?: () => void;
@@ -155,7 +145,7 @@ export const TextInput: FC<TextInputProps> = ({
                         ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40 tw-cursor-not-allowed"
                         : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
                 ])}
-                onChange={onChange}
+                onChange={(event) => onChange && onChange(event.currentTarget.value)}
                 onBlur={onBlur}
                 onKeyDown={onKeyDown}
                 placeholder={placeholder}
@@ -180,8 +170,9 @@ export const TextInput: FC<TextInputProps> = ({
                     ])}
                     onClick={() => {
                         inputElement.current?.focus();
-                        // setInputContent("");
                         inputElement.current?.setAttribute("value", "");
+
+                        onChange && onChange("");
                         onClear && onClear();
                     }}
                     data-test-id="clear-icon"

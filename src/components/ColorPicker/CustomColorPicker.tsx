@@ -89,10 +89,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                                 value={hex.substring(1)}
                                 decorator="#"
                                 size={6}
-                                onChange={(event) => {
-                                    const hex = event.currentTarget.value;
-                                    isValidHex(hex) && onSelect(toColor(currentColor, { hex }));
-                                }}
+                                onChange={(hex) => isValidHex(hex) && onSelect(toColor(currentColor, { hex }))}
                             />
                         ) : (
                             <>
@@ -102,10 +99,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                                     type={TextInputType.Number}
                                     value={rgb.r}
                                     decorator="R"
-                                    onChange={(event) => {
-                                        const r = event.currentTarget.value;
-                                        onSelect(toColor(currentColor, { rgba: { r } }));
-                                    }}
+                                    onChange={(r) => onSelect(toColor(currentColor, { rgba: { r } }))}
                                 />
                                 <TextInput
                                     min={0}
@@ -113,10 +107,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                                     type={TextInputType.Number}
                                     value={rgb.g}
                                     decorator="G"
-                                    onChange={(event) => {
-                                        const g = event.currentTarget.value;
-                                        onSelect(toColor(currentColor, { rgba: { g } }));
-                                    }}
+                                    onChange={(g) => onSelect(toColor(currentColor, { rgba: { g } }))}
                                 />
                                 <TextInput
                                     min={0}
@@ -124,10 +115,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                                     type={TextInputType.Number}
                                     value={rgb.b}
                                     decorator="B"
-                                    onChange={(event) => {
-                                        const b = event.currentTarget.value;
-                                        onSelect(toColor(currentColor, { rgba: { b } }));
-                                    }}
+                                    onChange={(b) => onSelect(toColor(currentColor, { rgba: { b } }))}
                                 />
                             </>
                         )}
@@ -140,8 +128,8 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                             type={TextInputType.Number}
                             value={`${Math.round(rgb.a * 100)}`}
                             decorator="%"
-                            onChange={(event) => {
-                                const a = parseInt(event.currentTarget.value || "0", 10) / 100;
+                            onChange={(value) => {
+                                const a = parseInt(value || "0", 10) / 100;
                                 onSelect(toColor(currentColor, { rgba: { a } }));
                             }}
                         />
