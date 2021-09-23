@@ -41,7 +41,7 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
                             label={{
                                 children: "Input Label",
                                 htmlFor: "input-id",
-                                tooltip: { tooltip: "Input tooltip" },
+                                tooltip: { content: "Input tooltip" },
                             }}
                             extra="Extra Text"
                         >
