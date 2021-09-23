@@ -91,17 +91,18 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
     tabIndex = -1,
 }) => {
     const id = useMemoizedId();
+    const clickOnNotDisabled = () => !disabled && onClick && onClick();
 
     return (
         <header
             data-test-id="fieldset-header"
             role={onClick ? "button" : undefined}
-            onClick={onClick}
-            onKeyPress={onClick}
+            onClick={clickOnNotDisabled}
+            onKeyPress={clickOnNotDisabled}
             className={merge([
                 "tw-flex tw-items-center tw-gap-x-1.5 tw-w-full tw-flex-row",
                 disabled ? "tw-text-black-40" : "tw-text-black dark:tw-text-white",
-                onClick ? "hover:tw-cursor-pointer" : "tw-pointer-events-none",
+                !disabled && onClick ? "hover:tw-cursor-pointer" : "tw-pointer-events-none",
             ])}
             tabIndex={tabIndex}
         >
