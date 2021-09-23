@@ -105,7 +105,12 @@ export const InputLabel: FC<InputLabelProps> = ({
                                 style={styles.popper}
                                 tooltipAriaProps={tooltipProps}
                             >
-                                <TooltipArrow ref={setTooltipArrowElement} style={styles.arrow} />
+                                <TooltipArrow
+                                    ref={setTooltipArrowElement}
+                                    style={styles.arrow}
+                                    placement={attributes.popper?.["data-popper-placement"]}
+                                    headerColor={tooltip.brightHeader}
+                                />
                             </Tooltip>
                         )}
                     </div>
