@@ -22,7 +22,7 @@ describe("Flyout Component", () => {
                 badges={[{ children: "Badge 1" }, { children: "Badge 2" }]}
                 onClose={onCloseStub}
             >
-                <TextInput value="" placeholder="placeholder" />
+                <TextInput placeholder="placeholder" />
             </Flyout>,
         );
 

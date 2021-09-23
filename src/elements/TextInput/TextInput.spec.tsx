@@ -82,11 +82,11 @@ describe("Text Input component", () => {
         cy.get(CLEAR_ICON_ID).should("not.exist");
     });
 
-    it("calls the onInput event", () => {
-        const onInputStub = cy.stub().as("onInputStub");
-        mount(<StatefulInput onChange={onInputStub} />);
+    it("calls the onChange event", () => {
+        const onChangeStub = cy.stub().as("onChangeStub");
+        mount(<TextInput value="" onChange={onChangeStub} />);
         cy.get(TEXT_INPUT_ID).type(INPUT_TEXT);
-        cy.get("@onInputStub").should("to.have.always.been.callCount", INPUT_TEXT.length);
+        cy.get("@onChangeStub").should("to.have.always.been.callCount", INPUT_TEXT.length);
     });
 
     it("calls the onBlur event", () => {
