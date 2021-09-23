@@ -169,7 +169,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                 >
                     <span
                         className={merge([
-                            "tw-text-black-100 tw-text-s group-hover:tw-font-medium dark:tw-text-white",
+                            "tw-text-black-100 tw-text-s dark:tw-text-white",
                             (isOpen || isFocusVisible) && "tw-font-medium",
                         ])}
                     >
