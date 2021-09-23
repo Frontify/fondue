@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { IconSize } from "@elements/Icon/IconSize";
 import { Meta, Story } from "@storybook/react";
@@ -23,7 +23,7 @@ export default {
             type: "select",
         },
         placeholder: { type: "string" },
-        defaultValue: { table: { disable: true } },
+        value: { table: { disable: true } },
         obfuscated: { table: { disable: true } },
         type: { table: { disable: true } },
         decorator: { table: { disable: true } },
@@ -33,7 +33,12 @@ export default {
     },
 } as Meta<TextInputProps>;
 
-const TextInputTemplate: Story<TextInputProps> = (args) => <TextInput {...args} />;
+const TextInputTemplate: Story<TextInputProps> = (args) => {
+    const [input, setInput] = useState("");
+    useEffect(() => setInput(`${args.value || ""}`), [args.value]);
+
+    return <TextInput {...args} value={input} onChange={(event) => setInput(`${event.currentTarget.value}`)} />;
+};
 
 export const Text = TextInputTemplate.bind({});
 
@@ -73,7 +78,7 @@ const PasswordArgTypes = {
 
 const PasswordArgs = {
     type: TextInputType.Password,
-    defaultValue: "Secret",
+    value: "Secret",
 };
 
 export const Password = TextInputTemplate.bind({});
@@ -112,7 +117,7 @@ PasswordVisible.args = {
 export const TypeNumber = TextInputTemplate.bind({});
 
 TypeNumber.argTypes = {
-    defaultValue: { table: { disable: false }, type: "number" },
+    value: { table: { disable: false }, type: "number" },
 };
 
 TypeNumber.args = {

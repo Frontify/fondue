@@ -138,7 +138,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                             max={100}
                             size={3}
                             type={TextInputType.Number}
-                            value={Math.round(rgb.a * 100)}
+                            value={`${Math.round(rgb.a * 100)}`}
                             decorator="%"
                             onChange={(event) => {
                                 const a = parseInt(event.currentTarget.value || "0", 10) / 100;

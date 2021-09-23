@@ -60,6 +60,7 @@ type TextInputBaseProps = {
     required?: boolean;
     disabled?: boolean;
     validation?: Validation;
+    value?: string;
     onChange?: (e: FormEvent<HTMLInputElement>) => void;
     onEnterPressed?: (e: KeyboardEvent<HTMLInputElement>) => void;
     onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
@@ -71,19 +72,16 @@ export type TextInputProps =
     | ({
           type?: TextInputType.Text;
           obfuscated?: false;
-          value?: string;
       } & TextInputBaseProps)
     | ({
           type?: TextInputType.Number;
           obfuscated?: false;
           min?: number;
           max?: number;
-          value?: number;
       } & TextInputBaseProps)
     | ({
           type: TextInputType.Password;
           obfuscated?: boolean;
-          value?: string;
       } & TextInputBaseProps);
 
 export const TextInput: FC<TextInputProps> = ({
