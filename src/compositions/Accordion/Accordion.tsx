@@ -71,6 +71,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                         }}
                         transition={{ type: "tween" }}
                         data-test-id="accordion-item-content"
+                        className="tw-overflow-hidden"
                     >
                         <div {...regionProps} className="tw-px-8 tw-pb-7">
                             <motion.div
