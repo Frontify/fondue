@@ -126,7 +126,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                             max={100}
                             size={3}
                             type={TextInputType.Number}
-                            defaultValue={`${rgb.a * 100}`}
+                            defaultValue={`${Math.round(rgb.a * 100)}`}
                             decorator="%"
                             onInput={(a) =>
                                 onSelect(toColor(currentColor, { rgba: { a: parseInt(a || "0", 10) / 100 } }))

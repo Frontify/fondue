@@ -100,6 +100,12 @@ export const TextInput: FC<TextInputProps> = ({
 
     const [inputContent, setInputContent] = useState<string>(defaultValue || "");
 
+    useEffect(() => {
+        if (defaultValue) {
+            setInputContent(defaultValue);
+        }
+    }, [defaultValue]);
+
     const onTextInput = (event: FormEvent<HTMLInputElement>) => {
         const value = (event.target as HTMLInputElement).value;
         setInputContent(value);
