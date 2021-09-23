@@ -73,7 +73,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                         data-test-id="accordion-item-content"
                         className="tw-overflow-hidden"
                     >
-                        <div {...regionProps} className="tw-px-8 tw-pb-7">
+                        <div {...regionProps} className="tw-px-8 tw-pb-6">
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
