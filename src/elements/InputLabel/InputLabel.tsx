@@ -6,7 +6,7 @@ import { usePopper } from "react-popper";
 import { IconSize } from "@elements/Icon/IconSize";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { useTooltipTrigger } from "@react-aria/tooltip";
-import { useFocusVisible } from "@react-aria/interactions";
+import { useFocusVisible, useHover } from "@react-aria/interactions";
 import { useTooltipTriggerState } from "@react-stately/tooltip";
 import { TooltipArrow } from "@components/Tooltip/TooltipArrow";
 import IconQuestion from "@elements/Icon/Generated/IconQuestion";
@@ -20,7 +20,7 @@ export type InputLabelProps = PropsWithChildren<{
     bold?: boolean;
 }>;
 
-const TOOLTIP_DISTANCE = 20;
+const TOOLTIP_DISTANCE = 15;
 const TOOLTIP_SKIDDING = 0;
 const TOOLTIP_PADDING = 15;
 
@@ -47,6 +47,11 @@ export const InputLabel: FC<InputLabelProps> = ({
             { name: "offset", options: { offset: [TOOLTIP_SKIDDING, TOOLTIP_DISTANCE] } },
             { name: "arrow", options: { element: tooltipArrowElement, padding: TOOLTIP_PADDING } },
         ],
+    });
+
+    const { hoverProps } = useHover({
+        onHoverStart: () => state.open(),
+        onHoverEnd: () => state.close(),
     });
 
     return (
@@ -80,30 +85,30 @@ export const InputLabel: FC<InputLabelProps> = ({
             )}
             {tooltip && (
                 <>
-                    <button
-                        data-test-id="tooltip-icon"
-                        ref={tooltipTriggerElement}
-                        onMouseEnter={() => state.open()}
-                        onMouseLeave={() => state.close(true)}
-                        className={merge([
-                            "tw-inline-flex tw-justify-center tw-items-center tw-text-black-60 hover:tw-text-black-60 dark:tw-text-black-40 dark:hover:tw-text-white tw-cursor-default tw-outline-none tw-rounded-full",
-                            isOpen && isFocusVisible && FOCUS_STYLE,
-                        ])}
-                        {...triggerProps}
-                    >
-                        <IconQuestion size={IconSize.Size16} />
-                    </button>
-                    {isOpen && (
-                        <Tooltip
-                            {...tooltip}
-                            popperAttributes={attributes.popper}
-                            ref={tooltipElement}
-                            style={styles.popper}
-                            tooltipAriaProps={tooltipProps}
+                    <div {...hoverProps}>
+                        <button
+                            data-test-id="tooltip-icon"
+                            ref={tooltipTriggerElement}
+                            className={merge([
+                                "tw-inline-flex tw-justify-center tw-items-center tw-text-black-60 hover:tw-text-black-60 dark:tw-text-black-40 dark:hover:tw-text-white tw-cursor-default tw-outline-none tw-rounded-full",
+                                isOpen && isFocusVisible && FOCUS_STYLE,
+                            ])}
+                            {...triggerProps}
                         >
-                            <TooltipArrow ref={setTooltipArrowElement} style={styles.arrow} />
-                        </Tooltip>
-                    )}
+                            <IconQuestion size={IconSize.Size16} />
+                        </button>
+                        {isOpen && (
+                            <Tooltip
+                                {...tooltip}
+                                popperAttributes={attributes.popper}
+                                ref={tooltipElement}
+                                style={styles.popper}
+                                tooltipAriaProps={tooltipProps}
+                            >
+                                <TooltipArrow ref={setTooltipArrowElement} style={styles.arrow} />
+                            </Tooltip>
+                        )}
+                    </div>
                 </>
             )}
         </div>
