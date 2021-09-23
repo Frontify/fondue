@@ -7,7 +7,7 @@ import { mergeProps } from "@react-aria/utils";
 import { Item as StatelyItem } from "@react-stately/collections";
 import { TreeState, useTreeState } from "@react-stately/tree";
 import { Node } from "@react-types/shared";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { Children, FC, isValidElement, PropsWithChildren, ReactElement, ReactNode, useRef } from "react";
@@ -27,9 +27,8 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
-        <div key={item.key}>
+        <div key={item.key} className={isFocusVisible ? FOCUS_STYLE_INSET : ""}>
             <button
-                {...mergeProps(buttonProps, focusProps)}
                 data-test-id="accordion-item"
                 ref={triggerRef}
                 onClick={(event) => {
@@ -50,10 +49,8 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                         buttonProps.onKeyUp(event);
                     }
                 }}
-                className={merge([
-                    "tw-w-full tw-px-8 tw-py-7 focus-visible:tw-outline-none",
-                    isFocusVisible && FOCUS_STYLE,
-                ])}
+                {...mergeProps(buttonProps, focusProps)}
+                className={merge(["tw-w-full tw-px-8 tw-py-7 focus-visible:tw-outline-none"])}
             >
                 <FieldsetHeader {...header} size={FieldsetHeaderSize.Small} active={isOpen} onClick={undefined} />
             </button>
