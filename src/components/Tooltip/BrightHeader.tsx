@@ -15,7 +15,7 @@ export enum BrightHeaderStyle {
     Note = "note",
 }
 
-const brightHeaderBackgroundColors: Record<BrightHeaderStyle, string> = {
+export const brightHeaderBackgroundColors: Record<BrightHeaderStyle, string> = {
     [BrightHeaderStyle.Information]: "tw-bg-violet-60",
     [BrightHeaderStyle.Warning]: "tw-bg-red-60",
     [BrightHeaderStyle.Tip]: "tw-bg-green-60",
