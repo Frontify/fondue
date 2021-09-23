@@ -29,6 +29,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
     return (
         <div key={item.key} className={isFocusVisible ? FOCUS_STYLE_INSET : ""}>
             <button
+                {...mergeProps(buttonProps, focusProps)}
                 data-test-id="accordion-item"
                 ref={triggerRef}
                 onClick={(event) => {
@@ -49,7 +50,6 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                         buttonProps.onKeyUp(event);
                     }
                 }}
-                {...mergeProps(buttonProps, focusProps)}
                 className={merge(["tw-w-full tw-px-8 tw-py-7 focus-visible:tw-outline-none"])}
             >
                 <FieldsetHeader {...header} size={FieldsetHeaderSize.Small} active={isOpen} onClick={undefined} />
