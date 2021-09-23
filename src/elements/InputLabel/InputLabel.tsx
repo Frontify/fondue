@@ -16,7 +16,7 @@ export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;
     required?: boolean;
     disabled?: boolean;
-    tooltip?: Omit<TooltipProps, "tooltipAriaProps" | "tooltipState">;
+    tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
     bold?: boolean;
 }>;
 
@@ -32,16 +32,16 @@ export const InputLabel: FC<InputLabelProps> = ({
     tooltip,
     bold,
 }) => {
-    const [tooltipElement, setTooltipElement] = useState<HTMLElement | null>(null);
+    const tooltipElement = useRef<HTMLDivElement | null>(null);
     const [tooltipArrowElement, setTooltipArrowElement] = useState<HTMLElement | null>(null);
-    const [tooltipTriggerElement, setTooltipTriggerElement] = useState<HTMLElement | null>(null);
+    const tooltipTriggerElement = useRef<HTMLButtonElement | null>(null);
     const state = useTooltipTriggerState();
-    const { triggerProps, tooltipProps } = useTooltipTrigger({}, state, useRef(tooltipTriggerElement));
+    const { triggerProps, tooltipProps } = useTooltipTrigger({}, state, tooltipTriggerElement);
     const { isOpen } = state;
 
     const { isFocusVisible } = useFocusVisible();
 
-    const { styles, attributes } = usePopper(tooltipTriggerElement, tooltipElement, {
+    const { styles, attributes } = usePopper(tooltipTriggerElement.current, tooltipElement.current, {
         placement: "auto",
         modifiers: [
             { name: "offset", options: { offset: [TOOLTIP_SKIDDING, TOOLTIP_DISTANCE] } },
@@ -81,24 +81,24 @@ export const InputLabel: FC<InputLabelProps> = ({
             {tooltip && (
                 <>
                     <button
-                        {...triggerProps}
                         data-test-id="tooltip-icon"
-                        ref={setTooltipTriggerElement}
+                        ref={tooltipTriggerElement}
                         onMouseEnter={() => state.open()}
                         onMouseLeave={() => state.close(true)}
                         className={merge([
                             "tw-inline-flex tw-justify-center tw-items-center tw-text-black-60 hover:tw-text-black-60 dark:tw-text-black-40 dark:hover:tw-text-white tw-cursor-default tw-outline-none tw-rounded-full",
                             isOpen && isFocusVisible && FOCUS_STYLE,
                         ])}
+                        {...triggerProps}
                     >
                         <IconQuestion size={IconSize.Size16} />
                     </button>
                     {isOpen && (
                         <Tooltip
+                            {...tooltip}
                             popperAttributes={attributes.popper}
-                            ref={setTooltipElement}
+                            ref={tooltipElement}
                             style={styles.popper}
-                            tooltip={tooltip}
                             tooltipAriaProps={tooltipProps}
                         >
                             <TooltipArrow ref={setTooltipArrowElement} style={styles.arrow} />

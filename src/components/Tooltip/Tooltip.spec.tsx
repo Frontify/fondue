@@ -4,7 +4,7 @@ import { mount } from "@cypress/react";
 import React from "react";
 import { Tooltip } from "./Tooltip";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
-import { BrightHeaderStyle } from "./BrightHeader";
+import { brightHeaderBackgroundColors, BrightHeaderStyle } from "./BrightHeader";
 
 const TOOLTIP_TEXT = "This is a tooltip";
 const TOOLTIP_ID = "[data-test-id=tooltip]";
@@ -17,7 +17,7 @@ const BRIGHT_HEADER_ID = "[data-test-id=bright-header]";
 
 describe("Tooltip Component", () => {
     it("should render a tooltip", () => {
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} />);
+        mount(<Tooltip content={TOOLTIP_TEXT} />);
 
         cy.get(TOOLTIP_ID).should("contain", TOOLTIP_TEXT);
         cy.get(BRIGHT_HEADER_ID).should("not.exist");
@@ -25,13 +25,13 @@ describe("Tooltip Component", () => {
     });
 
     it("should render an icon next to the tooltip", () => {
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} tooltipIcon={GENERIC_ICON} />);
+        mount(<Tooltip content={TOOLTIP_TEXT} tooltipIcon={GENERIC_ICON} />);
 
         cy.get(GENERIC_ICON_CODE).should("be.visible");
     });
 
     it("should render a link", () => {
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} linkUrl={TOOLTIP_LINK_URL} />);
+        mount(<Tooltip content={TOOLTIP_TEXT} linkUrl={TOOLTIP_LINK_URL} />);
 
         cy.get(TOOLTIP_LINK_ID).should("be.visible").and("have.attr", "href").and("include", TOOLTIP_LINK_URL);
     });
@@ -39,19 +39,19 @@ describe("Tooltip Component", () => {
     it("should render a link with custom text", () => {
         const linkLabel = "Upgrade your plan.";
 
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} linkUrl={TOOLTIP_LINK_URL} linkLabel={linkLabel} />);
+        mount(<Tooltip content={TOOLTIP_TEXT} linkUrl={TOOLTIP_LINK_URL} linkLabel={linkLabel} />);
 
         cy.get(TOOLTIP_LINK_ID).should("be.visible").and("contain", linkLabel);
     });
 
     it("should not render the heading icon if the heading is missing", () => {
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} headingIcon={GENERIC_ICON} />);
+        mount(<Tooltip content={TOOLTIP_TEXT} headingIcon={GENERIC_ICON} />);
 
         cy.get(TOOLTIP_ID).should("not.contain", GENERIC_ICON);
     });
 
     it("should render the heading and the heading icon when both are present", () => {
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} heading={TOOLTIP_HEADING_TEXT} headingIcon={GENERIC_ICON} />);
+        mount(<Tooltip content={TOOLTIP_TEXT} heading={TOOLTIP_HEADING_TEXT} headingIcon={GENERIC_ICON} />);
 
         cy.get(TOOLTIP_ID).should("contain.text", TOOLTIP_HEADING_TEXT);
         cy.get(GENERIC_ICON_CODE).should("be.visible");
@@ -59,14 +59,14 @@ describe("Tooltip Component", () => {
 
     Object.values(BrightHeaderStyle).forEach((brightHeaderStyle) => {
         it(`should render a bright header (${brightHeaderStyle})`, () => {
-            mount(<Tooltip tooltip={TOOLTIP_TEXT} brightHeader={brightHeaderStyle} />);
+            mount(<Tooltip content={TOOLTIP_TEXT} brightHeader={brightHeaderStyle} />);
 
-            cy.get(BRIGHT_HEADER_ID).should("exist");
+            cy.get(BRIGHT_HEADER_ID).should("have.class", brightHeaderBackgroundColors[brightHeaderStyle]);
         });
     });
 
     it("should render one button", () => {
-        mount(<Tooltip tooltip={TOOLTIP_TEXT} buttons={[{ label: "Primary", action: () => null }]} />);
+        mount(<Tooltip content={TOOLTIP_TEXT} buttons={[{ label: "Primary", action: () => null }]} />);
 
         cy.get("button").should("have.length", 1);
     });
@@ -74,7 +74,7 @@ describe("Tooltip Component", () => {
     it("should render two buttons", () => {
         mount(
             <Tooltip
-                tooltip={TOOLTIP_TEXT}
+                content={TOOLTIP_TEXT}
                 buttons={[
                     { label: "Primary", action: () => null },
                     { label: "Secondary", action: () => null },
@@ -88,7 +88,7 @@ describe("Tooltip Component", () => {
     it("should focus the link and then the buttons using a keyboard", () => {
         mount(
             <Tooltip
-                tooltip={TOOLTIP_ID}
+                content={TOOLTIP_ID}
                 linkUrl={TOOLTIP_LINK_URL}
                 buttons={[
                     { label: "Primary", action: () => null },

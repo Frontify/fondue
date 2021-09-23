@@ -20,7 +20,7 @@ export type TooltipButton = {
 type PopperAttributes = { [key: string]: string };
 
 export type TooltipProps = {
-    tooltip: ReactNode;
+    content: ReactNode;
     tooltipIcon?: ReactElement;
     heading?: ReactNode;
     headingIcon?: ReactElement;
@@ -37,7 +37,7 @@ export type TooltipProps = {
 export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
     (
         {
-            tooltip,
+            content,
             tooltipIcon,
             heading,
             headingIcon,
@@ -45,7 +45,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             linkLabel,
             brightHeader,
             buttons,
-            tooltipAriaProps,
+            tooltipAriaProps = {},
             style,
             children,
             popperAttributes,
@@ -57,17 +57,17 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
 
         const { isFocusVisible, focusProps } = useFocusRing();
 
-        const { tooltipProps } = useTooltip(tooltipAriaProps ?? {});
+        const { tooltipProps } = useTooltip(tooltipAriaProps);
 
         return (
             <>
                 <div
-                    {...tooltipProps}
-                    {...popperAttributes}
                     ref={tooltipContainerRef}
                     className="arcade-tooltip tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20"
                     style={style}
                     data-test-id="tooltip"
+                    {...popperAttributes}
+                    {...tooltipProps}
                 >
                     {brightHeader && <BrightHeader headerStyle={brightHeader} />}
                     <div className="tw-p-4">
@@ -87,7 +87,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
                                     {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
                                 </span>
                             )}
-                            <p className="tw-text-s">{tooltip}</p>
+                            <p className="tw-text-s">{content}</p>
                         </div>
                         {linkUrl && (
                             <a
