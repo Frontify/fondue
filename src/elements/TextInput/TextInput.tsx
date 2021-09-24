@@ -110,6 +110,15 @@ export const TextInput: FC<TextInputProps> = ({
         }
     };
 
+    const getInputType = () => {
+        if (type === TextInputType.Password && isObfuscated) {
+            return TextInputType.Password;
+        } else if (type === TextInputType.Password) {
+            return TextInputType.Text;
+        }
+        return type;
+    };
+
     return (
         <div
             {...focusProps}
@@ -150,13 +159,7 @@ export const TextInput: FC<TextInputProps> = ({
                 onKeyDown={onKeyDown}
                 placeholder={placeholder}
                 value={value}
-                type={
-                    type === TextInputType.Password
-                        ? isObfuscated
-                            ? TextInputType.Password
-                            : TextInputType.Text
-                        : type
-                }
+                type={getInputType()}
                 required={required}
                 disabled={disabled}
                 size={size}
