@@ -52,8 +52,8 @@ type TextInputBaseProps = {
     validation?: Validation;
     value?: string;
     onChange?: (value: string) => void;
-    onEnterPressed?: (e: KeyboardEvent<HTMLInputElement>) => void;
-    onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
+    onEnterPressed?: (event: KeyboardEvent<HTMLInputElement>) => void;
+    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     onClear?: () => void;
     size?: number;
 };
