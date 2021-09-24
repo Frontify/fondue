@@ -7,7 +7,7 @@ import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, FormEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import React, { FC, FocusEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 
 export enum TextInputType {
     Text = "text",
@@ -46,14 +46,14 @@ type TextInputBaseProps = {
     decorator?: ReactNode;
     dotted?: boolean;
     clearable?: boolean;
-    defaultValue?: string;
     placeholder?: string;
     required?: boolean;
     disabled?: boolean;
     validation?: Validation;
-    onInput?: (value: string) => void;
-    onEnterPressed?: (value: string) => void;
-    onBlur?: (value: string) => void;
+    value?: string;
+    onChange?: (value: string) => void;
+    onEnterPressed?: (event: KeyboardEvent<HTMLInputElement>) => void;
+    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     onClear?: () => void;
     size?: number;
 };
@@ -80,13 +80,13 @@ export const TextInput: FC<TextInputProps> = ({
     decorator,
     validation = Validation.Default,
     clearable = false,
-    defaultValue,
     placeholder,
     required,
     obfuscated,
     disabled = false,
     dotted = false,
-    onInput,
+    value = "",
+    onChange,
     onEnterPressed,
     onBlur,
     onClear,
@@ -98,14 +98,6 @@ export const TextInput: FC<TextInputProps> = ({
         typeof obfuscated === "boolean" ? obfuscated : type === TextInputType.Password,
     );
 
-    const [inputContent, setInputContent] = useState<string>(defaultValue || "");
-
-    const onTextInput = (event: FormEvent<HTMLInputElement>) => {
-        const value = (event.target as HTMLInputElement).value;
-        setInputContent(value);
-        onInput && onInput(value);
-    };
-
     useEffect(() => {
         if (typeof obfuscated === "boolean") {
             setIsObfuscated(obfuscated);
@@ -114,7 +106,7 @@ export const TextInput: FC<TextInputProps> = ({
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
-            onEnterPressed && onEnterPressed((event.target as HTMLInputElement).value);
+            onEnterPressed && onEnterPressed(event);
         }
     };
 
@@ -153,11 +145,11 @@ export const TextInput: FC<TextInputProps> = ({
                         ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40 tw-cursor-not-allowed"
                         : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
                 ])}
-                onInput={onTextInput}
-                onBlur={(event) => onBlur && onBlur(event.target.value)}
+                onChange={(event) => onChange && onChange(event.currentTarget.value)}
+                onBlur={onBlur}
                 onKeyDown={onKeyDown}
                 placeholder={placeholder}
-                value={inputContent}
+                value={value}
                 type={
                     type === TextInputType.Password
                         ? isObfuscated
@@ -170,7 +162,7 @@ export const TextInput: FC<TextInputProps> = ({
                 size={size}
                 data-test-id="text-input"
             />
-            {inputContent.length !== 0 && clearable && (
+            {`${value}`.length !== 0 && clearable && (
                 <button
                     className={merge([
                         "tw-flex tw-items-center tw-justify-center",
@@ -178,7 +170,9 @@ export const TextInput: FC<TextInputProps> = ({
                     ])}
                     onClick={() => {
                         inputElement.current?.focus();
-                        setInputContent("");
+                        inputElement.current?.setAttribute("value", "");
+
+                        onChange && onChange("");
                         onClear && onClear();
                     }}
                     data-test-id="clear-icon"

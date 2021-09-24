@@ -45,9 +45,10 @@ export const BrandColorPicker: FC<ColorPickerProps> = ({ palettes: defaultPalett
             <div className="tw-flex tw-gap-3">
                 <div className="tw-flex-1">
                     <TextInput
+                        value=""
                         decorator={<IconSearch />}
                         placeholder="Search"
-                        onInput={debounce((value) => setQuery(value), 200)}
+                        onChange={debounce((value) => setQuery(value), 200)}
                     />
                 </div>
                 <div className="tw-w-[72px]">
