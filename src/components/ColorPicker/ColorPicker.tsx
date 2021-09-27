@@ -2,7 +2,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Slider } from "@components/Slider/Slider";
 import { Color } from "@utilities/colors";
+import { merge } from "@utilities/merge";
 import React, { FC, useMemo, useState } from "react";
+// @ts-ignore
+import { getContrastingColor } from "react-color/lib/helpers/color";
 import { BrandColorPicker } from "./BrandColorPicker";
 import { CustomColorPicker } from "./CustomColorPicker";
 
@@ -33,24 +36,24 @@ export const ColorPicker: FC<ColorPickerProps> = ({ currentColor, palettes, onSe
         { id: ColorType.Custom, value: "Custom Color" },
     ];
     const [colorType, setColorType] = useState(ColorType.Brand);
-    const { hex, value, name } = currentColor;
+    const { hex, value, name, alpha } = currentColor;
 
-    const displayColor = useMemo(() => {
+    const [labelColor, colorValue] = useMemo((): [string, string] => {
         if (hex !== value && !!value) {
-            return value;
+            return [alpha && alpha < 0.3 ? "#000" : getContrastingColor(value), value];
         }
 
-        return hex;
-    }, [hex, value]);
+        return [getContrastingColor(hex), hex];
+    }, [hex, value, alpha]);
 
     return (
         <div data-test-id="color-picker" className="tw-w-[400px]">
             <div
-                className="tw-flex tw-justify-center tw-p-7 tw-text-white tw-text-m tw-gap-2"
-                style={{ background: value || hex }}
+                className={merge(["tw-flex tw-justify-center tw-p-7 tw-text-m tw-gap-2"])}
+                style={{ background: value || hex, color: labelColor }}
             >
                 {name && <span className="tw-font-bold">{name}</span>}
-                <span className={name ? "" : "tw-font-bold"}>{displayColor}</span>
+                <span className={name ? "" : "tw-font-bold"}>{colorValue}</span>
             </div>
             <div className="tw-p-6 tw-flex tw-flex-col tw-gap-5">
                 {palettes && (

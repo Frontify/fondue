@@ -28,7 +28,7 @@ export const getValidRgbColorValue = (input: string): number => {
 
 export const transformColor = (color: Color) => toState({ ...toState(color).rgb, a: color.alpha });
 
-export const toColor = (current: Color, { name, ...diff }: DiffColor, mode?: "hex" | "rgba"): Color => {
+export const toColor = (current: Color, { name, ...diff }: DiffColor): Color => {
     const a = diff.rgba?.a || current.rgba?.a || current.alpha || 0;
     const alpha = a > 1 ? 1 : a;
     const rgb = { ...current.rgba, ...toState({ hex: diff.hex || current.hex }).rgb, ...diff.rgba };
@@ -36,7 +36,7 @@ export const toColor = (current: Color, { name, ...diff }: DiffColor, mode?: "he
     const rgba = { r, g, b, a: alpha };
     const hex = toState(rgba).hex;
 
-    const value = alpha === 1 && mode === "hex" ? hex : `rgba(${Object.values(rgba).join(", ")})`;
+    const value = alpha === 1 ? hex : `rgba(${Object.values(rgba).join(", ")})`;
 
     return { name, rgba, alpha, hex, value };
 };
