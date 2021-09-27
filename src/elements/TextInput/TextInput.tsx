@@ -93,6 +93,8 @@ export const TextInput: FC<TextInputProps> = ({
     size,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
+    const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
+    const { isFocusVisible: passwordButtonIsFocusVisible, focusProps: passwordButtonFocusProps } = useFocusRing();
     const inputElement = useRef<HTMLInputElement | null>(null);
     const [isObfuscated, setIsObfuscated] = useState(
         typeof obfuscated === "boolean" ? obfuscated : type === TextInputType.Password,
@@ -168,8 +170,9 @@ export const TextInput: FC<TextInputProps> = ({
             {`${value}`.length !== 0 && clearable && (
                 <button
                     className={merge([
-                        "tw-flex tw-items-center tw-justify-center hover:tw-text-black-100 tw-transition-colors",
+                        "tw-flex tw-items-center tw-justify-center hover:tw-text-black-100 tw-transition-colors tw-rounded",
                         disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-60",
+                        clearButtonIsFocusVisible && FOCUS_STYLE,
                     ])}
                     onClick={() => {
                         inputElement.current?.focus();
@@ -182,6 +185,7 @@ export const TextInput: FC<TextInputProps> = ({
                     title="Clear text input"
                     aria-label="clear text input"
                     disabled={disabled}
+                    {...clearButtonFocusProps}
                 >
                     <IconReject />
                 </button>
@@ -189,14 +193,16 @@ export const TextInput: FC<TextInputProps> = ({
             {type === TextInputType.Password && (
                 <button
                     className={merge([
-                        "tw-flex tw-items-center tw-justify-center hover:tw-text-black-100 tw-transition-colors",
+                        "tw-flex tw-items-center tw-justify-center hover:tw-text-black-100 tw-transition-colors tw-rounded",
                         disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-60",
+                        passwordButtonIsFocusVisible && FOCUS_STYLE,
                     ])}
                     onClick={() => setIsObfuscated(!isObfuscated)}
                     data-test-id="visibility-icon"
                     title="Toggle text visibility"
                     aria-label={`${isObfuscated ? "unveil" : "obfuscate"} text input`}
                     disabled={disabled}
+                    {...passwordButtonFocusProps}
                 >
                     {isObfuscated ? <IconView /> : <IconViewSlash />}
                 </button>
