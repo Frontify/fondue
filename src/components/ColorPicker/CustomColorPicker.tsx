@@ -18,7 +18,10 @@ import { ColorFormat, ColorPickerProps } from "./ColorPicker";
 
 const ColorPointer: FC<{ offset?: boolean }> = ({ offset = true }) => (
     <div
-        className={merge(["tw-w-4 tw-h-4 tw-rounded-full tw-border-2 tw-border-white", offset && "tw--translate-x-2"])}
+        className={merge([
+            "tw-w-4 tw-h-4 tw-rounded-full tw-border-2 tw-border-white tw--translate-y-2",
+            offset && "tw--translate-x-2",
+        ])}
     />
 );
 

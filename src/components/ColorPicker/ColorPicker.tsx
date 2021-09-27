@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Slider } from "@components/Slider/Slider";
 import { Color } from "@utilities/colors";
-import React, { FC, useState } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { BrandColorPicker } from "./BrandColorPicker";
 import { CustomColorPicker } from "./CustomColorPicker";
 
@@ -35,6 +35,14 @@ export const ColorPicker: FC<ColorPickerProps> = ({ currentColor, palettes, onSe
     const [colorType, setColorType] = useState(ColorType.Brand);
     const { hex, value, name } = currentColor;
 
+    const displayColor = useMemo(() => {
+        if (hex !== value) {
+            return value;
+        }
+
+        return hex;
+    }, [hex, value]);
+
     return (
         <div data-test-id="color-picker" className="tw-w-[400px]">
             <div
@@ -42,9 +50,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({ currentColor, palettes, onSe
                 style={{ background: value || hex }}
             >
                 {name && <span className="tw-font-bold">{name}</span>}
-                <span className={name ? "" : "tw-font-bold"}>
-                    {[hex, value !== hex && value].filter(Boolean).join(" / ")}
-                </span>
+                <span className={name ? "" : "tw-font-bold"}>{displayColor}</span>
             </div>
             <div className="tw-p-6 tw-flex tw-flex-col tw-gap-5">
                 {palettes && (
