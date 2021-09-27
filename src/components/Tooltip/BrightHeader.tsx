@@ -9,10 +9,10 @@ import IconCallout from "@elements/Icon/Generated/IconCallout";
 import IconDocument from "@elements/Icon/Generated/IconDocument";
 
 export enum BrightHeaderStyle {
-    Information = "information",
-    Warning = "warning",
-    Tip = "tip",
-    Note = "note",
+    Information = "Information",
+    Warning = "Warning",
+    Tip = "Tip",
+    Note = "Note",
 }
 
 export const brightHeaderBackgroundColors: Record<BrightHeaderStyle, string> = {
