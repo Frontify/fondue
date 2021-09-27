@@ -113,10 +113,8 @@ export const TextInput: FC<TextInputProps> = ({
     };
 
     const getInputType = () => {
-        if (type === TextInputType.Password && isObfuscated) {
-            return TextInputType.Password;
-        } else if (type === TextInputType.Password) {
-            return TextInputType.Text;
+        if (type === TextInputType.Password) {
+            return isObfuscated ? TextInputType.Password : TextInputType.Text;
         }
         return type;
     };
