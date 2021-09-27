@@ -63,7 +63,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             <>
                 <div
                     ref={tooltipContainerRef}
-                    className="arcade-tooltip tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20"
+                    className="tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20"
                     style={style}
                     data-test-id="tooltip"
                     {...popperAttributes}

@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { CSSProperties, forwardRef } from "react";
-import "./TooltipArrow.css";
 import { brightHeaderBackgroundColors, BrightHeaderStyle } from "./BrightHeader";
 import { merge } from "@utilities/merge";
 
@@ -21,7 +20,7 @@ export const TooltipArrow = forwardRef<HTMLDivElement, TooltipArrowProps>(({ sty
         <div
             ref={ref}
             className={merge([
-                "arcade-tooltip-arrow tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45",
+                "tw-popper-arrow tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45",
                 arrowFill,
             ])}
             style={style}

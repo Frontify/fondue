@@ -12,4 +12,20 @@
     input[type="number"].tw-hide-input-arrows {
         -moz-appearance: textfield;
     }
+
+    .tw-popper-container[data-popper-placement^="top"] > .tw-popper-arrow {
+        bottom: -4px;
+    }
+
+    .tw-popper-container[data-popper-placement^="bottom"] > .tw-popper-arrow {
+        top: -4px;
+    }
+
+    .tw-popper-container[data-popper-placement^="left"] > .tw-popper-arrow {
+        right: -4px;
+    }
+
+    .tw-popper-container[data-popper-placement^="right"] > .tw-popper-arrow {
+        left: -4px;
+    }
 }
