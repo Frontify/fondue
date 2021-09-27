@@ -95,7 +95,7 @@
         "rollup-plugin-esbuild": "^4.5.0",
         "rollup-plugin-peer-deps-external": "^2.2.4",
         "rollup-plugin-postcss": "^4.0.0",
-        "storybook-builder-vite": "^0.0.12",
+        "storybook-builder-vite": "^0.1.0",
         "storybook-dark-mode": "^1.0.8",
         "tailwindcss": "^2.2.7",
         "ts-node": "^10.1.0",
