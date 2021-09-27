@@ -90,7 +90,7 @@ const AssetThumbnail: FC<Pick<AssetProps, "asset" | "size"> & { isActive?: boole
             "tw-flex tw-flex-col tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95",
             size === AssetInputSize.Large
                 ? "tw-w-full tw-h-32"
-                : "tw-w-14 tw-h-full tw-border-r tw-border-black-opacity-25",
+                : "tw-w-14 tw-h-full tw-border-r tw-border-black-100 tw-border-opacity-25",
             isActive ? "tw-text-black-100 dark:tw-text-white" : "tw-text-black-80 dark:tw-text-black-20",
         ])}
     >
@@ -162,34 +162,36 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
             >
                 <AssetThumbnail asset={asset} size={size} isActive={isOpen || isFocusVisible} />
                 <span
-                    className={merge([
-                        "tw-py-3 tw-pr-3 tw-pl-4 tw-flex tw-flex-col tw-items-start tw-font-normal tw-flex-1",
-                        size === AssetInputSize.Large ? "tw-h-14" : "tw-h-full",
-                    ])}
+                    className={
+                        size === AssetInputSize.Large
+                            ? "tw-h-14 tw-w-full tw-border-t tw-border-black-100 tw-border-opacity-10"
+                            : "tw-h-full "
+                    }
                 >
                     <span
                         className={merge([
-                            "tw-text-black-100 tw-text-s dark:tw-text-white",
-                            (isOpen || isFocusVisible) && "tw-font-medium",
+                            "tw-py-3 tw-pr-3 tw-pl-4 tw-flex tw-flex-col tw-items-start tw-font-normal tw-flex-1",
                         ])}
                     >
-                        {asset.name}
+                        <span
+                            className={merge([
+                                "tw-text-black-100 tw-text-s dark:tw-text-white",
+                                (isOpen || isFocusVisible) && "tw-font-medium",
+                            ])}
+                        >
+                            {asset.name}
+                        </span>
+                        <AssetSubline asset={asset} />
                     </span>
-                    <AssetSubline asset={asset} />
-                </span>
-                <span
-                    className={merge([
-                        "tw-p-4 tw-flex tw-items-center",
-                        size === AssetInputSize.Large ? "tw-h-14" : "tw-h-full",
-                    ])}
-                >
-                    <span
-                        className={merge([
-                            "tw-transition-transform",
-                            isOpen ? "tw-rotate-180 tw-text-black-90" : "tw-text-black-60",
-                        ])}
-                    >
-                        <IconCaretDown size={IconSize.Size16} />
+                    <span className={merge(["tw-p-4 tw-flex tw-items-center"])}>
+                        <span
+                            className={merge([
+                                "tw-transition-transform",
+                                isOpen ? "tw-rotate-180 tw-text-black-90" : "tw-text-black-60",
+                            ])}
+                        >
+                            <IconCaretDown size={IconSize.Size16} />
+                        </span>
                     </span>
                 </span>
             </button>
