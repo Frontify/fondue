@@ -18,7 +18,10 @@ import { ColorFormat, ColorPickerProps } from "./ColorPicker";
 
 const ColorPointer: FC<{ offset?: boolean }> = ({ offset = true }) => (
     <div
-        className={merge(["tw-w-4 tw-h-4 tw-rounded-full tw-border-2 tw-border-white", offset && "tw--translate-x-2"])}
+        className={merge([
+            "tw-w-4 tw-h-4 tw-rounded-full tw-border-2 tw-border-white tw--translate-y-2",
+            offset && "tw--translate-x-2",
+        ])}
     />
 );
 
@@ -26,9 +29,16 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
     const colorFormats = Object.values(ColorFormat).map((id) => ({ id, title: id.toLocaleUpperCase() }));
     const [colorFormat, setColorFormat] = useState(ColorFormat.Hex);
     const [{ hsl, hsv, rgb, hex }, setColor] = useState(transformColor(currentColor));
+
     useEffect(() => {
         setColor(transformColor(currentColor));
     }, [currentColor]);
+
+    const [hexInput, setHexInput] = useState(hex.substring(1));
+
+    useEffect(() => {
+        setHexInput(hex.substring(1));
+    }, [hex]);
 
     return (
         <div className="tw-flex tw-flex-col tw-gap-5">
@@ -90,10 +100,17 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                     >
                         {colorFormat === ColorFormat.Hex ? (
                             <TextInput
-                                value={hex.substring(1)}
+                                value={hexInput}
                                 decorator="#"
                                 size={6}
-                                onChange={(hex) => isValidHex(hex) && onSelect(toColor(currentColor, { hex }))}
+                                onChange={(hex) => {
+                                    setHexInput(hex);
+                                }}
+                                onBlur={() => {
+                                    if (isValidHex(hexInput)) {
+                                        onSelect(toColor(currentColor, { hex: hexInput }));
+                                    }
+                                }}
                             />
                         ) : (
                             <>
