@@ -51,12 +51,6 @@ module.exports = {
                 5: "#f7f7f7",
                 0: "#fafafa",
                 warm: "#e6dcdc",
-
-                // Translucents
-                "opacity-70": "rgba(45, 50, 50, 0.7)",
-                "opacity-40": "rgba(45, 50, 50, 0.4)",
-                "opacity-25": "rgba(45, 50, 50, 0.25)",
-                "opacity-10": "rgba(45, 50, 50, 0.1)",
             },
             violet: {
                 // Solids
