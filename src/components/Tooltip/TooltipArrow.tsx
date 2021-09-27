@@ -12,8 +12,6 @@ export type TooltipArrowProps = {
 };
 
 export const TooltipArrow = forwardRef<HTMLDivElement, TooltipArrowProps>(({ style, headerColor, placement }, ref) => {
-    // We want the arrow to be the same color as the header
-    // when tooltip is positionned at the bottom
     const arrowFill =
         headerColor && placement === "bottom"
             ? `before:${brightHeaderBackgroundColors[headerColor]}`
