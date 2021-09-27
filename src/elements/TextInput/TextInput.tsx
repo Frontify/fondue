@@ -168,7 +168,7 @@ export const TextInput: FC<TextInputProps> = ({
             {`${value}`.length !== 0 && clearable && (
                 <button
                     className={merge([
-                        "tw-flex tw-items-center tw-justify-center",
+                        "tw-flex tw-items-center tw-justify-center hover:tw-text-black-100 tw-transition-colors",
                         disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-60",
                     ])}
                     onClick={() => {
@@ -189,7 +189,7 @@ export const TextInput: FC<TextInputProps> = ({
             {type === TextInputType.Password && (
                 <button
                     className={merge([
-                        "tw-flex tw-items-center tw-justify-center",
+                        "tw-flex tw-items-center tw-justify-center hover:tw-text-black-100 tw-transition-colors",
                         disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-60",
                     ])}
                     onClick={() => setIsObfuscated(!isObfuscated)}
