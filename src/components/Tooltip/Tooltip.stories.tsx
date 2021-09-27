@@ -30,7 +30,7 @@ export default {
             options: ["None", "Icon"],
             mapping: {
                 None: null,
-                Icon: <IconIcons key="1" />,
+                Icon: <IconIcons />,
             },
             defaultValue: "None",
             control: { type: "select" },
@@ -39,7 +39,7 @@ export default {
             options: ["None", "Icon"],
             mapping: {
                 None: null,
-                Icon: <IconIcons key="1" />,
+                Icon: <IconIcons />,
             },
             defaultValue: "None",
             control: { type: "select" },
