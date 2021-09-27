@@ -3,18 +3,126 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Tooltip as TooltipComponent, TooltipProps } from "./Tooltip";
+import { BrightHeaderStyle } from "./BrightHeader";
+import IconIcons from "@elements/Icon/Generated/IconIcons";
 
 export default {
     title: "Components/Tooltip",
     component: TooltipComponent,
     args: {
-        tooltip: "Tooltip Content (Reactnode)",
+        content: "Cupcake ipsum dolor sit amet ice cream.",
+        heading: "",
+    },
+    argTypes: {
+        brightHeader: {
+            options: ["None", "Information", "Warning", "Tip", "Note"],
+            mapping: {
+                None: null,
+                Information: BrightHeaderStyle.Information,
+                Warning: BrightHeaderStyle.Warning,
+                Tip: BrightHeaderStyle.Tip,
+                Note: BrightHeaderStyle.Note,
+            },
+            defaultValue: "None",
+            control: { type: "select" },
+        },
+        tooltipIcon: {
+            options: ["None", "Icon"],
+            mapping: {
+                None: null,
+                Icon: <IconIcons />,
+            },
+            defaultValue: "None",
+            control: { type: "select" },
+        },
+        headingIcon: {
+            options: ["None", "Icon"],
+            mapping: {
+                None: null,
+                Icon: <IconIcons />,
+            },
+            defaultValue: "None",
+            control: { type: "select" },
+        },
     },
 } as Meta;
 
-export const Tooltip: Story<TooltipProps> = (args: TooltipProps) => (
-    <div>
-        <TooltipComponent {...args} />
-        <p>Some other text.</p>
-    </div>
-);
+export const TooltipTemplate: Story<TooltipProps> = (args: TooltipProps) => <TooltipComponent {...args} />;
+TooltipTemplate.storyName = "Tooltip";
+
+export const WithInfoHeader = TooltipTemplate.bind({});
+WithInfoHeader.args = {
+    brightHeader: BrightHeaderStyle.Information,
+};
+WithInfoHeader.storyName = "With Info Bright Header";
+
+export const WithWarningHeader = TooltipTemplate.bind({});
+WithWarningHeader.args = {
+    brightHeader: BrightHeaderStyle.Warning,
+};
+WithWarningHeader.storyName = "With Warning Bright Header";
+
+export const WithTipHeader = TooltipTemplate.bind({});
+WithTipHeader.args = {
+    brightHeader: BrightHeaderStyle.Tip,
+};
+WithTipHeader.storyName = "With Tip Bright Header";
+
+export const WithNoteHeader = TooltipTemplate.bind({});
+WithNoteHeader.args = {
+    brightHeader: BrightHeaderStyle.Note,
+};
+WithNoteHeader.storyName = "With Note Bright Header";
+
+export const WithOneButton = TooltipTemplate.bind({});
+WithOneButton.args = {
+    buttons: [{ label: "Primary", action: () => null }],
+};
+
+export const WithTwoButtons = TooltipTemplate.bind({});
+WithTwoButtons.args = {
+    buttons: [
+        { label: "Primary", action: () => null },
+        { label: "Secondary", action: () => null },
+    ],
+};
+
+export const WithHeading = TooltipTemplate.bind({});
+WithHeading.args = {
+    heading: "I'm a heading",
+};
+
+export const WithHeadingAndIcon = TooltipTemplate.bind({});
+WithHeadingAndIcon.args = {
+    heading: "I'm a heading",
+    headingIcon: <IconIcons />,
+};
+
+export const TooltipWithIcon = TooltipTemplate.bind({});
+TooltipWithIcon.args = {
+    tooltipIcon: <IconIcons />,
+};
+
+export const WithLinkWithDefaultLabel = TooltipTemplate.bind({});
+WithLinkWithDefaultLabel.args = {
+    linkUrl: "#",
+};
+
+export const WithLinkWithCustomLabel = TooltipTemplate.bind({});
+WithLinkWithCustomLabel.args = {
+    linkUrl: "#",
+    linkLabel: "Upgrade your plan",
+};
+
+export const WithEverythingDisplayed = TooltipTemplate.bind({});
+WithEverythingDisplayed.args = {
+    tooltipIcon: <IconIcons />,
+    heading: "I'm a heading",
+    headingIcon: <IconIcons />,
+    linkUrl: "#",
+    brightHeader: BrightHeaderStyle.Warning,
+    buttons: [
+        { label: "Primary", action: () => null },
+        { label: "Secondary", action: () => null },
+    ],
+};

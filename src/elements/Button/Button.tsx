@@ -6,7 +6,7 @@ import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { cloneElement, FC, ReactElement, ReactNode, useRef } from "react";
+import React, { cloneElement, FC, ReactElement, ReactNode, useCallback, useRef } from "react";
 
 export enum ButtonStyle {
     Secondary = "Secondary",
@@ -39,12 +39,21 @@ const iconSpacing: Record<ButtonSize, string> = {
     [ButtonSize.Large]: "tw--ml-1 tw-mr-2",
 };
 
-const styles: Record<"solid" | "translucent", Record<ButtonStyle, string>> = {
+const styles: Record<"solid" | "translucent" | "inverted", Record<ButtonStyle, string>> = {
     solid: {
         [ButtonStyle.Primary]:
             "tw-text-white tw-bg-black-90 hover:tw-bg-black-100 active:tw-bg-black-superdark dark:tw-text-black dark:tw-bg-white dark:hover:tw-bg-black-10 dark:active:tw-bg-black-20",
         [ButtonStyle.Secondary]:
             "tw-text-black tw-bg-black-10 hover:tw-bg-black-20 active:tw-bg-black-30 dark:tw-text-white dark:tw-bg-black-80 dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark",
+        [ButtonStyle.Danger]: "tw-text-black tw-bg-red-50 hover:tw-bg-red-65 active:tw-bg-red-70",
+        [ButtonStyle.Positive]:
+            "tw-text-black tw-bg-green-60 hover:tw-bg-green-70 active:tw-bg-green-75 dark:active:tw-bg-green-90",
+    },
+    inverted: {
+        [ButtonStyle.Primary]:
+            "tw-text-black tw-bg-white hover:tw-bg-black-10 active:tw-bg-black-20 dark:tw-text-white dark:tw-bg-black-90 dark:hover:tw-bg-black-100 dark:active:tw-bg-black-superdark",
+        [ButtonStyle.Secondary]:
+            "tw-text-white tw-bg-black-80 hover:tw-bg-black-95 active:tw-bg-black-superdark dark:tw-text-black dark:tw-bg-black-10 dark:hover:tw-bg-black-20 dark:active:tw-bg-black-30",
         [ButtonStyle.Danger]: "tw-text-black tw-bg-red-50 hover:tw-bg-red-65 active:tw-bg-red-70",
         [ButtonStyle.Positive]:
             "tw-text-black tw-bg-green-60 hover:tw-bg-green-70 active:tw-bg-green-75 dark:active:tw-bg-green-90",
@@ -70,6 +79,7 @@ export type ButtonProps = {
     style?: ButtonStyle;
     size?: ButtonSize;
     solid?: boolean;
+    inverted?: boolean;
     disabled?: boolean;
     icon?: ReactElement;
     children?: string;
@@ -80,6 +90,7 @@ export const Button: FC<ButtonProps> = ({
     style = ButtonStyle.Primary,
     size = ButtonSize.Medium,
     solid = true,
+    inverted = false,
     disabled = false,
     icon,
     children,
@@ -89,6 +100,14 @@ export const Button: FC<ButtonProps> = ({
     const { isFocusVisible, focusProps } = useFocusRing();
     const ref = useRef<HTMLButtonElement | null>(null);
     const { buttonProps } = useButton({ onPress: () => onClick && onClick(), isDisabled: disabled }, ref);
+
+    const getButtonTheme = useCallback(() => {
+        if (inverted) {
+            return "inverted";
+        }
+
+        return solid ? "solid" : "translucent";
+    }, [solid, inverted]);
 
     return (
         <button
@@ -103,7 +122,7 @@ export const Button: FC<ButtonProps> = ({
                               "tw-not-allowed tw-pointer-events-none tw-text-black-40 dark:tw-text-black-60",
                               solid ? "tw-bg-black-5 dark:tw-bg-black-90" : "tw-bg-transparent",
                           ]
-                        : [isFocusVisible && FOCUS_STYLE, styles[solid ? "solid" : "translucent"][style]],
+                        : [isFocusVisible && FOCUS_STYLE, styles[getButtonTheme()][style]],
                 ),
             ])}
             disabled={disabled}

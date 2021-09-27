@@ -22,7 +22,7 @@ export default {
             children: "Input Label",
             required: false,
             htmlFor: generateRandomId(),
-            tooltip: "Tooltip Text",
+            tooltip: { content: "Tooltip Text" },
         },
         extra: "Extra Text or Element",
         helper: {

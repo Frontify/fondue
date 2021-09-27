@@ -93,7 +93,7 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
                     <InputLabel
                         disabled={disabled}
                         htmlFor={id}
-                        tooltip={tooltip}
+                        tooltip={{ content: tooltip }}
                         required={required}
                         bold={isCheckedOrMixed(state)}
                     >

@@ -11,9 +11,9 @@ export default {
         children: "Input Label",
         disabled: false,
         required: false,
-    },
-    argTypes: {
-        tooltip: { type: "string" },
+        tooltip: {
+            content: "Lorem ipsum dolor sit amet.",
+        },
     },
 } as Meta;
 
