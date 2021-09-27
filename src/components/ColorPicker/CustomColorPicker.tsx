@@ -72,7 +72,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                             </div>
                         )}
                         style={{ pointer: { top: `${rgb.a * 100}%` } }}
-                        onChange={debounce(({ a }) => onSelect(toColor(currentColor, { rgba: { a } })))}
+                        onChange={debounce(({ a }) => onSelect(toColor(currentColor, { rgba: { a } }, "rgba")))}
                     />
                 </div>
             </div>
@@ -106,7 +106,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                                     type={TextInputType.Number}
                                     value={rgb.r}
                                     decorator="R"
-                                    onChange={(r) => onSelect(toColor(currentColor, { rgba: { r } }))}
+                                    onChange={(r) => onSelect(toColor(currentColor, { rgba: { r } }, "rgba"))}
                                 />
                                 <TextInput
                                     min={0}
@@ -114,7 +114,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                                     type={TextInputType.Number}
                                     value={rgb.g}
                                     decorator="G"
-                                    onChange={(g) => onSelect(toColor(currentColor, { rgba: { g } }))}
+                                    onChange={(g) => onSelect(toColor(currentColor, { rgba: { g } }, "rgba"))}
                                 />
                                 <TextInput
                                     min={0}
@@ -122,7 +122,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                                     type={TextInputType.Number}
                                     value={rgb.b}
                                     decorator="B"
-                                    onChange={(b) => onSelect(toColor(currentColor, { rgba: { b } }))}
+                                    onChange={(b) => onSelect(toColor(currentColor, { rgba: { b } }, "rgba"))}
                                 />
                             </>
                         )}
@@ -137,7 +137,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                             decorator="%"
                             onChange={(value) => {
                                 const a = parseInt(value || "0", 10) / 100;
-                                onSelect(toColor(currentColor, { rgba: { a } }));
+                                onSelect(toColor(currentColor, { rgba: { a } }, "rgba"));
                             }}
                         />
                     </div>
