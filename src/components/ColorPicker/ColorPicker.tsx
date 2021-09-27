@@ -36,7 +36,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({ currentColor, palettes, onSe
     const { hex, value, name } = currentColor;
 
     const displayColor = useMemo(() => {
-        if (hex !== value) {
+        if (hex !== value && !!value) {
             return value;
         }
 
