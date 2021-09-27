@@ -46,12 +46,14 @@ export default {
     },
 } as Meta<FormControlProps>;
 
-const Template: Story<FormControlProps> = (args) => <FormControl {...args} />;
+export const WithTextInput: Story<FormControlProps> = (args) => {
+    const [input, setInput] = useState("");
 
-export const WithTextInput = Template.bind({});
-
-WithTextInput.args = {
-    children: <TextInput />,
+    return (
+        <FormControl {...args}>
+            <TextInput value={input} onChange={setInput} />
+        </FormControl>
+    );
 };
 
 export const WithSlider: Story<FormControlProps> = (args) => {

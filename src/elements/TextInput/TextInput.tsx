@@ -154,6 +154,7 @@ export const TextInput: FC<TextInputProps> = ({
                         ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40"
                         : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
                 ])}
+                onClick={() => inputElement.current?.focus()}
                 onChange={(event) => onChange && onChange(event.currentTarget.value)}
                 onBlur={onBlur}
                 onKeyDown={onKeyDown}

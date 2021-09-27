@@ -26,6 +26,8 @@ export default {
 
 export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
     const [showContent, setShowContent] = useState(true);
+    const [input, setInput] = useState("");
+
     return (
         <AccordionComponent>
             <AccordionItem
@@ -40,7 +42,7 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
                     extra="Some extra text."
                     helper={{ text: "This input should always equal to 42." }}
                 >
-                    <TextInput />
+                    <TextInput value={input} onChange={setInput} />
                 </FormControl>
             </AccordionItem>
             <AccordionItem header={{ children: "Item with plain text child", type: FieldsetHeaderType.AddRemove }}>

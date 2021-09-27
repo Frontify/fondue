@@ -30,6 +30,7 @@ export default {
 
 const FlyoutTemplate: Story<FlyoutProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState("a");
+    const [input, setInput] = useState("");
 
     return (
         <div className="dark:tw-text-white">
@@ -45,7 +46,7 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
                             }}
                             extra="Extra Text"
                         >
-                            <TextInput />
+                            <TextInput value={input} onChange={setInput} />
                         </FormControl>
                         <Divider color={FLYOUT_DIVIDER_COLOR} height={FLYOUT_DIVIDER_HEIGHT} />
                         <FormControl
