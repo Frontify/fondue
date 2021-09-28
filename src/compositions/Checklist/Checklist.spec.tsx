@@ -15,7 +15,7 @@ describe("Checklist Component", () => {
             </Checklist>,
         );
 
-        cy.get("[data-test-id=checklist]").as("Checklist").should("have.class", "tw-flex-row");
+        cy.get("[data-test-id=checklist]").as("Checklist").should("have.class", "tw-flex");
     });
 
     it("should render the Checklist vertically", () => {
@@ -27,6 +27,21 @@ describe("Checklist Component", () => {
             </Checklist>,
         );
 
-        cy.get("[data-test-id=checklist]").as("Checklist").should("have.class", "tw-flex-col");
+        cy.get("[data-test-id=checklist]").as("Checklist").should("have.class", "tw-grid");
+    });
+
+    it("should render the Checklist in two columns", () => {
+        mount(
+            <Checklist direction={ChecklistDirection.Vertical} columns={2}>
+                <Checkbox state={CheckboxState.Unchecked} label="Checkbox label" />
+                <Checkbox state={CheckboxState.Mixed} label="Checkbox label" />
+                <Checkbox state={CheckboxState.Checked} label="Checkbox label" note="Note about this input" disabled />
+            </Checklist>,
+        );
+
+        cy.get("[data-test-id=checklist]")
+            .as("Checklist")
+            .should("have.class", "tw-grid")
+            .and("have.class", "tw-grid-cols-2");
     });
 });
