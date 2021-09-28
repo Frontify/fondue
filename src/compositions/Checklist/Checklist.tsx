@@ -17,10 +17,17 @@ const columnsStyle: Record<Columns, string> = {
     4: "tw-grid-cols-4",
 };
 
-export type ChecklistProps = PropsWithChildren<{
-    direction?: ChecklistDirection;
+type ChecklistVertical = {
+    direction: ChecklistDirection.Vertical;
     columns?: Columns;
-}>;
+};
+
+type ChecklistHorizontal = {
+    direction: ChecklistDirection.Horizontal;
+    columns: undefined;
+};
+
+export type ChecklistProps = PropsWithChildren<ChecklistVertical | ChecklistHorizontal>;
 
 export const Checklist: FC<ChecklistProps> = ({ direction = ChecklistDirection.Horizontal, columns = 1, children }) => {
     return (
