@@ -1,6 +1,6 @@
 {
     "name": "@frontify/arcade",
-    "version": "0.7.1",
+    "version": "0.7.2",
     "description": "Design system of Frontify",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
