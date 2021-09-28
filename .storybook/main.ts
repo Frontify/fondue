@@ -31,8 +31,6 @@ module.exports = {
             ...alias,
         };
 
-        config.plugins = [...config.plugins, ...plugins];
-
         return config;
     },
 };
