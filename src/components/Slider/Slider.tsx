@@ -76,7 +76,7 @@ export const Slider: FC<SliderProps> = ({
                                     initial={false}
                                     layoutId={id}
                                     className={merge([
-                                        "tw-absolute tw--inset-px tw-h-9 tw-border tw-rounded tw-pointer-events-none",
+                                        "tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none",
                                         disabled ? "tw-border-black-20 tw-bg-black-0" : "tw-border-black tw-bg-white",
                                         isFocusVisible && FOCUS_STYLE,
                                     ])}
@@ -98,7 +98,7 @@ export const Slider: FC<SliderProps> = ({
                                         : "slider-item-number"
                                 }
                                 className={merge([
-                                    "tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-9 tw-text-center",
+                                    "tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center",
                                     isActive && !disabled ? "tw-text-black" : "tw-text-black-80",
                                     !disabled ? "hover:tw-text-black hover:tw-cursor-pointer" : "",
                                 ])}
