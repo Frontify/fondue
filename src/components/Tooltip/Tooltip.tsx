@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, CSSProperties, forwardRef, ReactChild, ReactElement, ReactNode, useRef } from "react";
-import { merge } from "@utilities/merge";
-import { useLink } from "@react-aria/link";
-import { mergeProps } from "@react-aria/utils";
-import { useTooltip } from "@react-aria/tooltip";
-import { useFocusRing } from "@react-aria/focus";
+import { Button, ButtonSize, ButtonStyle } from "@elements/Button/Button";
 import { IconSize } from "@elements/Icon/IconSize";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { useFocusRing } from "@react-aria/focus";
+import { useLink } from "@react-aria/link";
+import { useTooltip } from "@react-aria/tooltip";
+import { mergeProps } from "@react-aria/utils";
 import { AriaTooltipProps } from "@react-types/tooltip";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { merge } from "@utilities/merge";
+import React, { cloneElement, CSSProperties, forwardRef, ReactChild, ReactElement, ReactNode, useRef } from "react";
 import { BrightHeader, BrightHeaderStyle } from "./BrightHeader";
-import { Button, ButtonStyle, ButtonSize } from "@elements/Button/Button";
 
 export type TooltipButton = {
     label: string;
@@ -70,7 +70,13 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
                     {...tooltipProps}
                 >
                     {brightHeader && <BrightHeader headerStyle={brightHeader} />}
-                    <div className="tw-p-4">
+                    <div
+                        className={merge([
+                            "tw-px-4",
+                            linkUrl || brightHeader || buttons || heading || headingIcon ? "tw-pt-3.5" : "tw-pt-4",
+                            linkUrl ? "tw-pb-3.5" : "tw-pb-4",
+                        ])}
+                    >
                         {heading && (
                             <h4 className="tw-flex tw-text-m tw-font-bold tw-mb-1">
                                 {headingIcon && (
