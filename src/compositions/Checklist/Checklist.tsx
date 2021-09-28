@@ -10,15 +10,17 @@ export enum ChecklistDirection {
 
 export type ChecklistProps = PropsWithChildren<{
     direction?: ChecklistDirection;
+    columns?: 1 | 2 | 3 | 4;
 }>;
 
-export const Checklist: FC<ChecklistProps> = ({ direction = ChecklistDirection.Horizontal, children }) => {
+export const Checklist: FC<ChecklistProps> = ({ direction = ChecklistDirection.Horizontal, columns = 1, children }) => {
     return (
         <ul
             data-test-id="checklist"
             className={merge([
-                "tw-flex",
-                direction === ChecklistDirection.Horizontal ? "tw-flex-row tw-gap-12" : "tw-flex-col tw-gap-4",
+                direction === ChecklistDirection.Horizontal
+                    ? "tw-flex tw-flex-row tw-gap-12"
+                    : `tw-grid tw-grid-cols-${columns} tw-gap-4`,
             ])}
         >
             {Children.map(children, (child) => (
