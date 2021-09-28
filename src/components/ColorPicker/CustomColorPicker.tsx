@@ -118,7 +118,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                                     min={0}
                                     max={255}
                                     type={TextInputType.Number}
-                                    value={rgb.r}
+                                    value={rgb.r.toString()}
                                     decorator="R"
                                     onChange={(r) => onSelect(toColor(currentColor, { rgba: { r } }))}
                                 />
@@ -126,7 +126,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                                     min={0}
                                     max={255}
                                     type={TextInputType.Number}
-                                    value={rgb.g}
+                                    value={rgb.g.toString()}
                                     decorator="G"
                                     onChange={(g) => onSelect(toColor(currentColor, { rgba: { g } }))}
                                 />
@@ -134,7 +134,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                                     min={0}
                                     max={255}
                                     type={TextInputType.Number}
-                                    value={rgb.b}
+                                    value={rgb.b.toString()}
                                     decorator="B"
                                     onChange={(b) => onSelect(toColor(currentColor, { rgba: { b } }))}
                                 />

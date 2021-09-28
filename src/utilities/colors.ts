@@ -2,6 +2,13 @@
 // @ts-ignore
 import { toState } from "react-color/lib/helpers/color";
 
+type ColorState = {
+    rgb: { r: number; g: number; b: number; a: number };
+    hsl: { h: number; s: number; l: number; a: number };
+    hsv: { h: number; s: number; v: number; a: number };
+    hex: string;
+};
+
 export type Color = {
     value?: string;
     rgba?: { r: number; g: number; b: number; a: number };
@@ -26,7 +33,7 @@ export const getValidRgbColorValue = (input: string): number => {
     return value < 0 ? 0 : value;
 };
 
-export const transformColor = (color: Color) => toState({ ...toState(color).rgb, a: color.alpha });
+export const transformColor = (color: Color): ColorState => toState({ ...toState(color).rgb, a: color.alpha });
 
 export const toColor = (current: Color, { name, ...diff }: DiffColor): Color => {
     const a = diff.rgba?.a || current.rgba?.a || current.alpha || 0;
