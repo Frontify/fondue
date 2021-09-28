@@ -62,6 +62,7 @@ export const InputLabel: FC<InputLabelProps> = ({
                     ? "tw-text-black-40 hover:tw-text-black-40 dark:tw-text-black-60 dark:hover:tw-text-black-60"
                     : "tw-text-black-90 dark:tw-text-white",
             ])}
+            data-test-id="input-label-container"
         >
             <label
                 htmlFor={htmlFor}
@@ -87,7 +88,7 @@ export const InputLabel: FC<InputLabelProps> = ({
                 <>
                     <div {...hoverProps}>
                         <button
-                            data-test-id="tooltip-icon"
+                            data-test-id="input-label-tooltip-icon"
                             ref={tooltipTriggerElement}
                             className={merge([
                                 "tw-inline-flex tw-justify-center tw-items-center tw-text-black-60 hover:tw-text-black-60 dark:tw-text-black-40 dark:hover:tw-text-white tw-cursor-default tw-outline-none tw-rounded-full",

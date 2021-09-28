@@ -5,8 +5,12 @@ import { mount } from "@cypress/react";
 import { InputLabel } from "./InputLabel";
 
 const LABEL_TEXT = "This is a fancy label.";
+const LABEL_TOOLTIP = "This is a fancy tooltip.";
 
 const INPUT_LABEL_ID = "[data-test-id=input-label]";
+const INPUT_LABEL_CONTAINER_ID = "[data-test-id=input-label-container]";
+const INPUT_LABEL_TOOLTIP_ICON_ID = "[data-test-id=input-label-tooltip-icon]";
+const TOOLTIP_ID = "[data-test-id=tooltip]";
 const INPUT_LABEL_REQUIRED_ID = "[data-test-id=input-label-required]";
 
 describe("InputLabel Component", () => {
@@ -24,5 +28,16 @@ describe("InputLabel Component", () => {
         );
 
         cy.get(INPUT_LABEL_REQUIRED_ID).should("be.visible").and("contain", "*");
+    });
+
+    it("renders with a tooltip", () => {
+        mount(
+            <InputLabel htmlFor="input" tooltip={{ content: LABEL_TOOLTIP }}>
+                {LABEL_TEXT}
+            </InputLabel>,
+        );
+
+        cy.get(INPUT_LABEL_TOOLTIP_ICON_ID).realHover({ position: "top" });
+        cy.get(INPUT_LABEL_CONTAINER_ID).find(TOOLTIP_ID).should("exist");
     });
 });
