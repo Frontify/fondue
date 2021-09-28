@@ -61,7 +61,7 @@ const renderType = (
                 <div
                     className={merge([
                         "tw-transition-transform",
-                        active && "tw-text-black tw-rotate-180 tw-duration-300",
+                        active ? "tw-text-black tw-rotate-180 tw-duration-300" : "tw-text-black-80",
                         disabled ? "tw-text-black-40" : "tw-text-black-80",
                     ])}
                 >
