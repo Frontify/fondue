@@ -37,7 +37,7 @@ export const Checklist: Story<ChecklistProps> = (args) => {
                 state={checked[0]}
                 onChange={updateCheckState(0)}
                 label="Checkbox label"
-                tooltip="Random Tooltip"
+                tooltip={{ content: "Random Tooltip" }}
             />
             <Checkbox
                 state={checked[1]}

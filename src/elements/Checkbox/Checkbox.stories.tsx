@@ -23,7 +23,9 @@ export default {
         value: "whatever-you'd-like",
         label: "Checkbox label",
         note: "Note about this input",
-        tooltip: "Some random Tooltip",
+        tooltip: {
+            content: "Lorem ipsum dolor sit amet.",
+        },
     },
 } as Meta<CheckboxProps>;
 

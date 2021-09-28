@@ -10,6 +10,7 @@ import { mergeProps } from "@react-aria/utils";
 import { useToggleState } from "@react-stately/toggle";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
+import { TooltipProps } from "@components/Tooltip/Tooltip";
 import React, { FC, useRef } from "react";
 
 export enum CheckboxState {
@@ -27,7 +28,7 @@ export type CheckboxProps = {
     value?: string;
     onChange?: (isChecked: boolean) => void;
     label?: string;
-    tooltip?: string;
+    tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
     note?: string;
 };
 
@@ -93,7 +94,7 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
                     <InputLabel
                         disabled={disabled}
                         htmlFor={id}
-                        tooltip={tooltip ? { content: tooltip } : undefined}
+                        tooltip={tooltip ?? undefined}
                         required={required}
                         bold={isCheckedOrMixed(state)}
                     >
