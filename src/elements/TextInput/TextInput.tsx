@@ -126,7 +126,7 @@ export const TextInput: FC<TextInputProps> = ({
                 "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent",
                 dotted ? "tw-border-dashed" : "tw-border-solid",
                 disabled
-                    ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90 tw-cursor-not-allowed"
+                    ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90"
                     : merge([
                           "focus-within:tw-border-black-90",
                           validationStyle[validation],
@@ -169,8 +169,8 @@ export const TextInput: FC<TextInputProps> = ({
             {`${value}`.length !== 0 && clearable && (
                 <button
                     className={merge([
-                        "tw-flex tw-items-center tw-justify-center hover:tw-text-black-100 tw-transition-colors tw-rounded",
-                        disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-60",
+                        "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
+                        disabled ? "tw-cursor-default tw-text-black-40" : "tw-text-black-60  hover:tw-text-black-100",
                         clearButtonIsFocusVisible && FOCUS_STYLE,
                     ])}
                     onClick={() => {
@@ -192,8 +192,8 @@ export const TextInput: FC<TextInputProps> = ({
             {type === TextInputType.Password && (
                 <button
                     className={merge([
-                        "tw-flex tw-items-center tw-justify-center hover:tw-text-black-100 tw-transition-colors tw-rounded",
-                        disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-60",
+                        "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
+                        disabled ? "tw-cursor-default tw-text-black-40" : "tw-text-black-60 hover:tw-text-black-100",
                         passwordButtonIsFocusVisible && FOCUS_STYLE,
                     ])}
                     onClick={() => setIsObfuscated(!isObfuscated)}
