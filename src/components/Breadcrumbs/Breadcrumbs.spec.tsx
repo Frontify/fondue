@@ -51,11 +51,12 @@ describe("Breadcrumb component", () => {
         cy.get(BREADCRUMB_ITEM_ID).eq(1).find("a").as("secondItem");
 
         cy.get(BREADCRUMB_ITEM_ID).first().should("not.be.focused");
-        cy.get("body").tab();
+        cy.window().focus();
+        cy.get("body").realPress("Tab");
         cy.get("@firstItem").should("be.focused");
-        cy.get("@firstItem").tab();
+        cy.get("@firstItem").realPress("Tab");
         cy.get("@secondItem").should("be.focused");
-        cy.get("@secondItem").tab();
+        cy.get("@secondItem").realPress("Tab");
         cy.get(BREADCRUMB_ITEM_ID).last().find("button").type("{enter}");
         cy.get("@onClickStub").should("be.calledOnce");
     });

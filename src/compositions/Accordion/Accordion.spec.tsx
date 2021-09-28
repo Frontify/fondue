@@ -77,17 +77,18 @@ describe("Accordion Component", () => {
             </Accordion>,
         );
 
-        cy.get("body").tab();
+        cy.window().focus();
+        cy.get("body").realPress("Tab");
         cy.get(ACCORDION_ITEM_ID).first().should("be.focused");
         cy.get(TEXT_INPUT_ID).should("not.exist");
         cy.get(ACCORDION_ITEM_ID).first().type("{enter}");
         cy.get(TEXT_INPUT_ID).should("not.be.focused");
-        cy.get(ACCORDION_ITEM_ID).first().tab();
+        cy.get(ACCORDION_ITEM_ID).first().realPress("Tab");
         cy.get(TEXT_INPUT_ID).should("be.focused");
-        cy.get(TEXT_INPUT_ID).tab();
+        cy.get(TEXT_INPUT_ID).realPress("Tab");
         cy.get(TEXT_INPUT_ID).should("not.be.focused");
         cy.get(ACCORDION_ITEM_ID).eq(1).should("be.focused");
-        cy.get(ACCORDION_ITEM_ID).eq(1).tab();
+        cy.get(ACCORDION_ITEM_ID).eq(1).realPress("Tab");
         cy.get(ACCORDION_ITEM_ID).eq(1).should("not.be.focused");
         cy.get(ACCORDION_ITEM_ID).eq(2).should("be.focused");
     });
