@@ -15,11 +15,9 @@ export default {
         },
         direction: {
             options: [ChecklistDirection.Horizontal, ChecklistDirection.Vertical],
+            defaultValue: ChecklistDirection.Horizontal,
             control: { type: "radio" },
         },
-    },
-    args: {
-        direction: ChecklistDirection.Horizontal,
     },
 } as Meta<ChecklistProps>;
 
@@ -65,4 +63,8 @@ export const MultipleColumns: Story<ChecklistProps> = (args) => {
             ))}
         </ChecklistComponent>
     );
+};
+MultipleColumns.args = {
+    direction: ChecklistDirection.Vertical,
+    columns: 2,
 };
