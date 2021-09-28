@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { PropsWithChildren, FC, useRef, useState } from "react";
-import { merge } from "@utilities/merge";
-import { usePopper } from "react-popper";
-import { IconSize } from "@elements/Icon/IconSize";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { useTooltipTrigger } from "@react-aria/tooltip";
-import { useFocusVisible, useHover } from "@react-aria/interactions";
-import { useTooltipTriggerState } from "@react-stately/tooltip";
+import { Tooltip, TooltipProps } from "@components/Tooltip/Tooltip";
 import { TooltipArrow } from "@components/Tooltip/TooltipArrow";
 import IconQuestion from "@elements/Icon/Generated/IconQuestion";
-import { Tooltip, TooltipProps } from "@components/Tooltip/Tooltip";
+import { IconSize } from "@elements/Icon/IconSize";
+import { useFocusVisible, useHover } from "@react-aria/interactions";
+import { useTooltipTrigger } from "@react-aria/tooltip";
+import { useTooltipTriggerState } from "@react-stately/tooltip";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { merge } from "@utilities/merge";
+import React, { FC, PropsWithChildren, useRef, useState } from "react";
+import { usePopper } from "react-popper";
 
 export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;
@@ -51,7 +51,7 @@ export const InputLabel: FC<InputLabelProps> = ({
 
     const { hoverProps } = useHover({
         onHoverStart: () => state.open(),
-        onHoverEnd: () => state.close(),
+        onHoverEnd: () => state.close(true),
     });
 
     return (
