@@ -9,6 +9,10 @@ export default {
     title: "Compositions/Checklist",
     component: ChecklistComponent,
     argTypes: {
+        columns: {
+            options: [1, 2, 3, 4],
+            control: { type: "select" },
+        },
         direction: {
             options: [ChecklistDirection.Horizontal, ChecklistDirection.Vertical],
             control: { type: "radio" },
@@ -47,6 +51,18 @@ export const Checklist: Story<ChecklistProps> = (args) => {
                 disabled
             />
             <Checkbox state={checked[2]} onChange={updateCheckState(2)} label="Checkbox label" />
+        </ChecklistComponent>
+    );
+};
+
+export const MultipleColumns: Story<ChecklistProps> = (args) => {
+    const [checked] = useState<CheckboxState[]>(new Array(8).fill(CheckboxState.Unchecked));
+
+    return (
+        <ChecklistComponent {...args}>
+            {checked.map((_, index) => (
+                <Checkbox key={index} label={`Checkbox label n°${index + 1}`} />
+            ))}
         </ChecklistComponent>
     );
 };
