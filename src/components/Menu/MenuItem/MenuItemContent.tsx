@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from "@elements/Icon/IconSize";
+import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, HTMLAttributes, ReactElement } from "react";
 
 export enum MenuItemContentSize {
@@ -26,7 +27,10 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({ title, decorator, su
         <div
             {...ariaProps}
             data-test-id="menu-item-content"
-            className="tw-flex tw-gap-3 tw-box-border tw-items-center tw-font-sans tw-text-s"
+            className={merge([
+                "tw-flex tw-box-border tw-items-center tw-font-sans tw-text-s",
+                size === MenuItemContentSize.Large ? "tw-gap-3" : "tw-gap-2",
+            ])}
         >
             {decorator && (
                 <span className="tw-flex-shrink-0" data-test-id="menu-item-decorator">
