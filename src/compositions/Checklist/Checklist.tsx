@@ -24,7 +24,7 @@ type ChecklistVertical = {
 
 type ChecklistHorizontal = {
     direction: ChecklistDirection.Horizontal;
-    columns: undefined;
+    columns?: undefined;
 };
 
 export type ChecklistProps = PropsWithChildren<ChecklistVertical | ChecklistHorizontal>;
