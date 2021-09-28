@@ -76,7 +76,8 @@ describe("Slider Component", () => {
     it("changes active item via keyboard", () => {
         mount(<Component items={TEXT_ITEMS} />);
 
-        cy.get("body").tab();
+        cy.window().focus();
+        cy.get("body").realPress("Tab");
         cy.get(INPUT_ID).first().should("be.focused");
         cy.get("body").type("{rightarrow}{rightarrow}");
         cy.get(INPUT_ID).last().should("be.focused");

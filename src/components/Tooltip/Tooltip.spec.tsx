@@ -99,13 +99,14 @@ describe("Tooltip Component", () => {
 
         cy.get(TOOLTIP_LINK_ID).should("be.visible");
 
-        cy.get("body").tab();
+        cy.window().focus();
+        cy.get("body").realPress("Tab");
         cy.get(TOOLTIP_LINK_ID).should("be.focused");
 
-        cy.get(TOOLTIP_LINK_ID).tab();
+        cy.get(TOOLTIP_LINK_ID).realPress("Tab");
         cy.get("button").should("be.focused").and("contain", "Primary");
 
-        cy.get("button").tab();
+        cy.get("button").realPress("Tab");
         cy.get("button").should("be.focused").and("contain", "Secondary");
     });
 });
