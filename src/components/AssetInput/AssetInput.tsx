@@ -162,11 +162,12 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
             >
                 <AssetThumbnail asset={asset} size={size} isActive={isOpen || isFocusVisible} />
                 <span
-                    className={
+                    className={merge([
+                        "tw-flex tw-flex-1",
                         size === AssetInputSize.Large
                             ? "tw-h-14 tw-w-full tw-border-t tw-border-black-100 tw-border-opacity-10"
-                            : "tw-h-full "
-                    }
+                            : "tw-h-full",
+                    ])}
                 >
                     <span
                         className={merge([
