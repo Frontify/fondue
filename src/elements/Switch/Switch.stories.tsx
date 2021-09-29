@@ -12,19 +12,26 @@ export default {
             options: Object.values(SwitchSize),
             control: { type: "radio" },
         },
+        label: {
+            placeholder: "Switch label",
+            type: { name: "string", required: false },
+            control: {
+                type: "text",
+            },
+        },
     },
     args: {
         on: true,
         disabled: false,
+        hug: false,
         name: "switch-name",
-        label: "Switch",
         size: SwitchSize.Small,
     },
 } as Meta<SwitchProps>;
 
 type Props = SwitchProps & { hug?: boolean };
 
-export const Default: Story<Props> = (args: Props) => {
+const Default: Story<Props> = (args: Props) => {
     const [on, setOn] = useState(args.on);
     const toggle = () => setOn(!on);
 
@@ -32,13 +39,23 @@ export const Default: Story<Props> = (args: Props) => {
         setOn(args.on);
     }, [args.on]);
 
-    return args.hug ? (
-        <span className="tw-inline-block">
-            <Switch {...args} onChange={toggle} on={on} />
-        </span>
-    ) : (
-        <Switch {...args} onChange={toggle} on={on} />
-    );
+    return <Switch {...args} onChange={toggle} on={on} />;
 };
 
-export const HugLabel: Story<Props> = (args) => <Default {...args} hug={true} />;
+export const Small: Story<Props> = Default.bind({});
+Small.args = { size: SwitchSize.Small };
+
+export const Medium: Story<Props> = Default.bind({});
+Medium.args = { size: SwitchSize.Medium };
+
+export const Large: Story<Props> = Default.bind({});
+Large.args = { size: SwitchSize.Large };
+
+export const WithLabel: Story<Props> = Default.bind({});
+WithLabel.args = { label: "Switch label" };
+
+export const WithLabelAndTooltip: Story<Props> = Default.bind({});
+WithLabelAndTooltip.args = { label: "Switch label", tooltip: { content: "Switch tooltip" } };
+
+export const HugLabel: Story<Props> = Default.bind({});
+HugLabel.args = { hug: true, label: "Switch label" };
