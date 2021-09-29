@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, MouseEvent } from "react";
+import React, { FC, MouseEvent, useCallback } from "react";
 import { merge } from "@utilities/merge";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
@@ -47,16 +47,16 @@ export const Switch: FC<SwitchProps> = ({
     const id = useMemoizedId(propId);
     const { isFocusVisible, focusProps } = useFocusRing();
 
-    const getLineClasses = () => {
+    const getLineClasses = useCallback(() => {
         const baseClasses = "tw-inline-flex tw-border-0 tw-rounded-full tw-transition-colors tw-flex-shrink-0";
         const sizeClasses = size !== SwitchSize.Small ? "tw-py-0 tw-px-[0.125rem]" : "tw-p-0";
         const activatedClasses = on ? "tw-bg-black-90 hover:tw-bg-black" : "tw-bg-black-30 hover:tw-bg-black-60";
         const disabledClasses = disabled ? "tw-bg-black-10 tw-pointer-events-none" : activatedClasses;
 
         return merge([baseClasses, sizeClasses, disabledClasses, lineSizeClasses[size], isFocusVisible && FOCUS_STYLE]);
-    };
+    }, [on, disabled, size]);
 
-    const getDotClasses = () => {
+    const getDotClasses = useCallback(() => {
         const baseClasses = "tw-block tw-self-center tw-bg-white tw-rounded-full tw-transition-transform";
         const disabledClasses = disabled ? "tw-border tw-border-black-30" : "tw-border tw-border-black";
         const sizeClasses = size === SwitchSize.Small ? disabledClasses : "";
@@ -64,7 +64,7 @@ export const Switch: FC<SwitchProps> = ({
         const animationClasses = on ? activatedClasses : "tw-translate-x-0";
 
         return merge([baseClasses, sizeClasses, dotSizeClasses[size], animationClasses]);
-    };
+    }, [on, disabled, size]);
 
     return (
         <div className="tw-flex tw-w-full tw-items-center tw-justify-between tw-gap-2">
