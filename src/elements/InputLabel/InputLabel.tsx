@@ -67,6 +67,7 @@ export const InputLabel: FC<InputLabelProps> = ({
             <label
                 htmlFor={htmlFor}
                 className={merge([
+                    "tw-select-none",
                     bold && "tw-font-medium",
                     disabled
                         ? "hover:tw-cursor-not-allowed tw-pointer-events-none"
