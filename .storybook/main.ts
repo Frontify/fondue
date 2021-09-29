@@ -36,7 +36,7 @@ module.exports = {
         config.cacheDir = resolve(__dirname, "../node_modules/.cache/vite");
 
         config.optimizeDeps = {
-            ...config.optimizeDeps,
+            ...(config.optimizeDeps || {}),
             include: [
                 "@storybook/addon-actions",
                 "@storybook/theming/create",
@@ -44,7 +44,7 @@ module.exports = {
                 "react-color/lib/components/common",
                 ...Object.keys(dependencies),
                 ...Object.keys(peerDependencies),
-                ...config.optimizeDeps.include,
+                ...(config.optimizeDeps?.include || []),
             ],
         };
 
