@@ -108,7 +108,7 @@
         "react-popper": "^2.2.5"
     },
     "dependencies": {
-        "@react-aria/accordion": "3.0.0-alpha.2",
+        "@react-aria/accordion": "^3.0.0-alpha.2",
         "@react-aria/aria-modal-polyfill": "^3.4.0",
         "@react-aria/breadcrumbs": "^3.1.5",
         "@react-aria/button": "^3.3.4",
