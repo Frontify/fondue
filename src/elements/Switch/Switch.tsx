@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { InputLabel } from "@elements/InputLabel/InputLabel";
-import { useMemoizedId } from "@hooks/useMemoizedId";
+import React, { FC, MouseEvent, useCallback } from "react";
+import { merge } from "@utilities/merge";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import React, { FC, MouseEvent } from "react";
+import { useMemoizedId } from "@hooks/useMemoizedId";
+import { InputLabel } from "@elements/InputLabel/InputLabel";
 
 export enum SwitchSize {
     Small = "Small",
@@ -47,6 +47,25 @@ export const Switch: FC<SwitchProps> = ({
     const id = useMemoizedId(propId);
     const { isFocusVisible, focusProps } = useFocusRing();
 
+    const getLineClasses = useCallback(() => {
+        const baseClasses = "tw-inline-flex tw-border-0 tw-rounded-full tw-transition-colors tw-flex-shrink-0";
+        const sizeClasses = size !== SwitchSize.Small ? "tw-py-0 tw-px-[0.125rem]" : "tw-p-0";
+        const activatedClasses = on ? "tw-bg-black-90 hover:tw-bg-black" : "tw-bg-black-30 hover:tw-bg-black-60";
+        const disabledClasses = disabled ? "tw-bg-black-10 tw-pointer-events-none" : activatedClasses;
+
+        return merge([baseClasses, sizeClasses, disabledClasses, lineSizeClasses[size], isFocusVisible && FOCUS_STYLE]);
+    }, [on, disabled, size]);
+
+    const getDotClasses = useCallback(() => {
+        const baseClasses = "tw-block tw-self-center tw-bg-white tw-rounded-full tw-transition-transform";
+        const disabledClasses = disabled ? "tw-border tw-border-black-30" : "tw-border tw-border-black";
+        const sizeClasses = size === SwitchSize.Small ? disabledClasses : "";
+        const activatedClasses = size === SwitchSize.Small ? "tw-translate-x-2" : "tw-translate-x-full";
+        const animationClasses = on ? activatedClasses : "tw-translate-x-0";
+
+        return merge([baseClasses, sizeClasses, dotSizeClasses[size], animationClasses]);
+    }, [on, disabled, size]);
+
     return (
         <div className="tw-flex tw-w-full tw-items-center tw-justify-between tw-gap-2">
             {label && id && (
@@ -60,36 +79,11 @@ export const Switch: FC<SwitchProps> = ({
                 disabled={disabled}
                 name={name}
                 data-test-id="switch"
-                className={merge([
-                    "tw-inline-flex tw-border-0 tw-rounded-full tw-transition-colors tw-flex-shrink-0",
-                    size !== SwitchSize.Small ? "tw-py-0 tw-px-[0.125rem]" : "tw-p-0",
-                    disabled
-                        ? "tw-bg-black-10 tw-pointer-events-none"
-                        : on
-                        ? "tw-bg-black-90 hover:tw-bg-black"
-                        : "tw-bg-black-30 hover:tw-bg-black-60",
-                    lineSizeClasses[size],
-                    isFocusVisible && FOCUS_STYLE,
-                ])}
+                className={getLineClasses()}
                 value={on.toString()}
                 onClick={onChange}
             >
-                <div
-                    className={merge([
-                        "tw-block tw-self-center tw-bg-white tw-rounded-full tw-transition-transform",
-                        size === SwitchSize.Small
-                            ? disabled
-                                ? "tw-border tw-border-black-30"
-                                : "tw-border tw-border-black"
-                            : "",
-                        dotSizeClasses[size],
-                        on
-                            ? size === SwitchSize.Small
-                                ? "tw-translate-x-2"
-                                : "tw-translate-x-full"
-                            : "tw-translate-x-0",
-                    ])}
-                />
+                <div className={getDotClasses()} />
             </button>
         </div>
     );
