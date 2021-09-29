@@ -61,8 +61,9 @@ const renderType = (
                 <div
                     className={merge([
                         "tw-transition-transform",
-                        active ? "tw-text-black tw-rotate-180 tw-duration-300" : "tw-text-black-80",
-                        disabled ? "tw-text-black-40" : "tw-text-black-80",
+                        active && "tw-rotate-190 tw-duration-300",
+                        active ? "tw-rotate-180 " : "tw-text-black-80",
+                        disabled && !active && "tw-text-black-40",
                     ])}
                 >
                     <IconCaretDown {...props} />
@@ -72,8 +73,9 @@ const renderType = (
             return (
                 <div
                     className={merge([
-                        active ? "tw-text-black" : "tw-text-black-80",
-                        disabled ? "tw-text-black-40" : "tw-text-black",
+                        active && disabled && "tw-text-black-40",
+                        active && !disabled && "tw-text-black",
+                        !active && !disabled && "tw-text-black-80",
                     ])}
                 >
                     {active ? <IconMinus {...props} /> : <IconAddSimple {...props} />}
