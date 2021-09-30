@@ -64,6 +64,7 @@ const renderType = (
                         active && "tw-rotate-190 tw-duration-300",
                         active ? "tw-rotate-180 " : "tw-text-black-80",
                         disabled && !active && "tw-text-black-40",
+                        !disabled && active && "tw-text-black",
                     ])}
                 >
                     <IconCaretDown {...props} />
