@@ -40,7 +40,7 @@ const Spinner = (): ReactElement => (
     </svg>
 );
 
-type TextInputBaseProps = {
+export type TextInputBaseProps = {
     id?: string;
     type?: TextInputType;
     decorator?: ReactNode;
