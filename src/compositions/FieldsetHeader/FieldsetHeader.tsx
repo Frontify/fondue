@@ -61,10 +61,10 @@ const renderType = (
                 <div
                     className={merge([
                         "tw-transition-transform",
-                        active && "tw-rotate-190 tw-duration-300",
-                        active ? "tw-rotate-180 " : "tw-text-black-80",
+                        active && "tw-rotate-180 tw-duration-300",
                         disabled && !active && "tw-text-black-40",
                         !disabled && active && "tw-text-black",
+                        !disabled && !active && "tw-text-black-80",
                     ])}
                 >
                     <IconCaretDown {...props} />
