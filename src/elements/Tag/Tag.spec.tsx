@@ -2,16 +2,15 @@
 
 import React from "react";
 import { mount } from "@cypress/react";
-import { Tag } from "./Tag";
+import { Tag, TagType } from "./Tag";
 
-const Tag_FOO = "bar";
+const TAG_ID = "[data-test-id=tag]";
+const TAG_LABEL = "My awesome tag";
 
 describe("Tag Component", () => {
-    it("should render foo text correctly", () => {
-        mount(<Tag label={Tag_FOO} />);
+    it("should render a label", () => {
+        mount(<Tag type={TagType.Suggested} label={TAG_LABEL} />);
 
-        cy.get("[data-test-id=tag]").as("Tag");
-
-        cy.get("@Tag").contains(Tag_FOO);
+        cy.get(TAG_ID).contains(TAG_LABEL);
     });
 });
