@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { IconProps } from "@elements/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@elements/Icon/IconSize";
 

@@ -60,8 +60,11 @@ const renderType = (
             return (
                 <div
                     className={merge([
-                        "tw-text-black-80 tw-transition-transform",
-                        active && "tw-text-black tw-rotate-180 tw-duration-300",
+                        "tw-transition-transform",
+                        active && "tw-rotate-180 tw-duration-300",
+                        disabled && !active && "tw-text-black-40",
+                        !disabled && active && "tw-text-black",
+                        !disabled && !active && "tw-text-black-80",
                     ])}
                 >
                     <IconCaretDown {...props} />
@@ -69,7 +72,13 @@ const renderType = (
             );
         case FieldsetHeaderType.AddRemove:
             return (
-                <div className={active ? "tw-text-black" : "tw-text-black-80"}>
+                <div
+                    className={merge([
+                        active && disabled && "tw-text-black-40",
+                        active && !disabled && "tw-text-black",
+                        !active && !disabled && "tw-text-black-80",
+                    ])}
+                >
                     {active ? <IconMinus {...props} /> : <IconAddSimple {...props} />}
                 </div>
             );
