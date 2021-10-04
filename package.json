@@ -2,33 +2,35 @@
     "name": "@frontify/arcade",
     "version": "0.7.3",
     "description": "Design system of Frontify",
-    "main": "dist/index.js",
-    "module": "dist/index.mjs",
+    "main": "dist/index.umd.js",
+    "module": "dist/index.es.js",
     "files": [
         "dist"
     ],
     "exports": {
         ".": {
-            "require": "./dist/index.js",
-            "import": "./dist/index.mjs",
-            "default": "./dist/index.js"
+            "import": "./dist/index.es.js",
+            "require": "./dist/index.umd.js"
         },
         "./config": {
-            "require": "./dist/config.js",
-            "import": "./dist/config.mjs",
-            "default": "./dist/config.js"
+            "import": "./dist/config.es.js",
+            "require": "./dist/config.umd.js"
         },
         "./style": "./dist/index.css"
     },
     "types": "dist/index.d.ts",
     "scripts": {
-        "build": "npm run clean && npm run generate && cross-env NODE_ENV=production npm run build:library",
-        "build:library": "rollup -c",
+        "build": "npm run clean && npm run generate && cross-env NODE_ENV=production npm run build:library && cross-env NODE_ENV=production npm run build:config",
+        "build:config": "rollup -c",
         "build:css": "tailwindcss -i ./src/styles.css -o dist/index.css",
+        "build:library": "vite build",
         "build:storybook": "build-storybook -s .storybook/assets",
+        "dev": "cross-env NODE_ENV=development npm run dev:library & cross-env NODE_ENV=development npm run dev:config",
+        "dev:config": "rollup -c -w",
+        "dev:library": "vite build --watch",
         "clean": "rimraf dist",
-        "component:create": "ts-node scripts/createNewComponent.ts",
-        "generate": "ts-node scripts/generateExports.ts",
+        "component:create": "esno scripts/createNewComponent.ts",
+        "generate": "esno scripts/generateExports.ts",
         "lint": "npm run lint:ts",
         "lint:fix": "npm run lint:ts:fix",
         "lint:ts": "eslint 'src/**/*.{ts,tsx}'",
@@ -82,6 +84,7 @@
         "esbuild": "^0.13.2",
         "eslint": "^7.32.0",
         "eslint-plugin-jsx-a11y": "^6.4.1",
+        "esno": "^0.10.1",
         "fast-glob": "^3.2.7",
         "husky": "^7.0.2",
         "is-ci": "^3.0.0",
@@ -93,19 +96,15 @@
         "rollup": "^2.57.0",
         "rollup-plugin-dts": "^4.0.0",
         "rollup-plugin-esbuild": "^4.5.0",
-        "rollup-plugin-peer-deps-external": "^2.2.4",
-        "rollup-plugin-postcss": "^4.0.1",
         "storybook-builder-vite": "^0.1.0",
         "storybook-dark-mode": "^1.0.8",
         "tailwindcss": "^2.2.16",
-        "ts-node": "^10.2.1",
         "typescript": "^4.4.3",
         "vite": "^2.5.10"
     },
     "peerDependencies": {
         "react": "^17.0.2",
-        "react-dom": "^17.0.2",
-        "react-popper": "^2.2.5"
+        "react-dom": "^17.0.2"
     },
     "dependencies": {
         "@react-aria/accordion": "^3.0.0-alpha.2",
@@ -135,6 +134,7 @@
         "@react-stately/tree": "^3.2.0",
         "deepmerge": "^4.2.2",
         "framer-motion": "^4.1.17",
-        "react-color": "^2.19.3"
+        "react-color": "^2.19.3",
+        "react-popper": "^2.2.5"
     }
 }

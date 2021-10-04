@@ -15,6 +15,7 @@ export * from "./elements/Button/Button";
 export * from "./compositions/ButtonGroup/ButtonGroup";
 export * from "./elements/Checkbox/Checkbox";
 export * from "./compositions/Checklist/Checklist";
+export * from "./components/ColorPicker/ColorInput";
 export * from "./components/ColorPicker/ColorPicker";
 export * from "./components/Breadcrumbs/CurrentBreadcrumbItem";
 export * from "./components/ColorPicker/CustomColorPicker";
