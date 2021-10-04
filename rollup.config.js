@@ -6,7 +6,6 @@ import dts from "rollup-plugin-dts";
 import esbuild from "rollup-plugin-esbuild";
 
 const rollupConfig = [
-    // .d.ts
     {
         input: "src/index.ts",
         plugins: [
@@ -27,8 +26,6 @@ const rollupConfig = [
             format: "es",
         },
     },
-
-    // Tailwind config
     {
         input: "src/tailwind-config.ts",
         external: ["react", "react-dom"],
