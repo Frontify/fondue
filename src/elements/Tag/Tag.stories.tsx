@@ -17,12 +17,11 @@ export default {
             defaultValue: TagType.Suggested,
             control: { type: "select" },
         },
+        onClick: { action: "onClick" },
     },
 } as Meta<TagProps>;
 
 const TagTemplate: Story<TagProps> = (args) => <Tag {...args} />;
-
-const clickEventHandler = () => alert("Click!");
 
 export const Suggested = TagTemplate.bind({});
 Suggested.args = {
@@ -32,13 +31,11 @@ Suggested.args = {
 export const Selected = TagTemplate.bind({});
 Selected.args = {
     type: TagType.Selected,
-    onClick: clickEventHandler,
 };
 
 export const SelectedWithFocus = TagTemplate.bind({});
 SelectedWithFocus.args = {
     type: TagType.SelectedWithFocus,
-    onClick: clickEventHandler,
 };
 
 export const PreviouslySelected = TagTemplate.bind({});
