@@ -13,11 +13,6 @@ export default defineConfig({
     resolve: {
         alias,
     },
-    css: {
-        postcss: {
-            to: resolve(__dirname, "./dist/index.css"),
-        },
-    },
     build: {
         sourcemap: true,
         minify: false,
@@ -32,6 +27,12 @@ export default defineConfig({
                 globals: {
                     react: "React",
                     "react-dom": "ReactDOM",
+                },
+                assetFileNames: (assetInfo) => {
+                    if (assetInfo.name == "style.css") {
+                        return "index.css";
+                    }
+                    return assetInfo.name;
                 },
             },
         },

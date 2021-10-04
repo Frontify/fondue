@@ -25,7 +25,7 @@
         "build:css": "tailwindcss -i ./src/styles.css -o dist/index.css",
         "build:library": "vite build",
         "build:storybook": "build-storybook -s .storybook/assets",
-        "dev": "cross-env NODE_ENV=development npm run dev:config & cross-env NODE_ENV=development npm run dev:library",
+        "dev": "cross-env NODE_ENV=development npm run dev:library & cross-env NODE_ENV=development npm run dev:config",
         "dev:config": "rollup -c -w",
         "dev:library": "vite build --watch",
         "clean": "rimraf dist",
