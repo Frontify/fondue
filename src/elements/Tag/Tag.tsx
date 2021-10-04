@@ -30,7 +30,7 @@ export type TagProps = {
 };
 
 export const Tag: FC<TagProps> = ({ type, label, onClick }) => {
-    const isASelectedType = type === TagType.Selected || type === TagType.SelectedWithFocus;
+    const isSelectedType = type === TagType.Selected || type === TagType.SelectedWithFocus;
 
     return (
         <button
@@ -42,7 +42,7 @@ export const Tag: FC<TagProps> = ({ type, label, onClick }) => {
             onClick={onClick}
         >
             {label}
-            {isASelectedType && (
+            {isSelectedType && (
                 <span data-test-id="tag-reject-icon" className="tw-ml-1">
                     <IconReject size={IconSize.Size12} />
                 </span>
