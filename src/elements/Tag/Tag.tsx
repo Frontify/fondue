@@ -2,6 +2,8 @@
 
 import React, { FC } from "react";
 import { merge } from "@utilities/merge";
+import { IconSize } from "@elements/Icon/IconSize";
+import IconReject from "@elements/Icon/Generated/IconReject";
 
 export enum TagType {
     Suggested = "Suggested",
@@ -31,11 +33,16 @@ export const Tag: FC<TagProps> = ({ type, label }) => {
         <span
             data-test-id="tag"
             className={merge([
-                "tw-inline-flex tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-cursor-pointer tw-px-2.5 tw-py-1",
+                "tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-cursor-pointer tw-px-2.5 tw-py-1",
                 tagStyles[type],
             ])}
         >
             {label}
+            {(type === TagType.Selected || type === TagType.SelectedWithFocus) && (
+                <span data-test-id="tag-reject-icon" className="tw-ml-1">
+                    <IconReject size={IconSize.Size12} />
+                </span>
+            )}
         </span>
     );
 };
