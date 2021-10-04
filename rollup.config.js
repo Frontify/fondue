@@ -31,7 +31,7 @@ const rollupConfig = [
     // Tailwind config
     {
         input: "src/tailwind-config.ts",
-        externals: ["react", "react-dom"],
+        external: ["react", "react-dom"],
         plugins: [
             nodeResolve({
                 extensions: [".js", ".ts"],
