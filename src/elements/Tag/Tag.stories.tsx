@@ -12,7 +12,7 @@ export default {
     },
     argTypes: {
         type: {
-            options: [TagType.Suggested, TagType.Selected, TagType.PreviouslySelected],
+            options: [...Object.keys(TagType)],
             mappings: [...Object.values(TagType)],
             defaultValue: TagType.Suggested,
             control: { type: "select" },
@@ -22,11 +22,6 @@ export default {
 
 const TagTemplate: Story<TagProps> = (args) => <Tag {...args} />;
 
-export const Default = TagTemplate.bind({});
-Default.args = {
-    type: TagType.Suggested,
-};
-
 export const Suggested = TagTemplate.bind({});
 Suggested.args = {
     type: TagType.Suggested,
@@ -35,6 +30,11 @@ Suggested.args = {
 export const Selected = TagTemplate.bind({});
 Selected.args = {
     type: TagType.Selected,
+};
+
+export const SelectedWithFocus = TagTemplate.bind({});
+SelectedWithFocus.args = {
+    type: TagType.SelectedWithFocus,
 };
 
 export const PreviouslySelected = TagTemplate.bind({});
