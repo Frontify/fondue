@@ -24,7 +24,7 @@ export default defineConfig({
         lib: {
             entry: resolve(__dirname, "src/index.ts"),
             name: "Arcade",
-            fileName: (format) => `index.${format}.js`,
+            fileName: (format: string): string => `index.${format}.js`,
         },
         rollupOptions: {
             external: ["react", "react-dom"],
