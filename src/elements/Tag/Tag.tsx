@@ -30,19 +30,20 @@ export type TagProps = {
 };
 
 export const Tag: FC<TagProps> = ({ type, label, onClick }) => {
-    const isSelectedType = type === TagType.Selected || type === TagType.SelectedWithFocus;
+    const isClickable = (type === TagType.Selected || type === TagType.SelectedWithFocus) && onClick;
 
     return (
         <button
             data-test-id="tag"
             className={merge([
-                "tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-cursor-pointer tw-px-2.5 tw-py-1",
+                "tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-cursor-default tw-px-2.5 tw-py-1",
                 tagStyles[type],
+                isClickable && "!tw-cursor-pointer",
             ])}
             onClick={onClick}
         >
             {label}
-            {isSelectedType && (
+            {isClickable && (
                 <span data-test-id="tag-reject-icon" className="tw-ml-1">
                     <IconReject size={IconSize.Size12} />
                 </span>
