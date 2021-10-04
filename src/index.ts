@@ -7,12 +7,17 @@ export * from "./components/Menu/Aria/AriaMenuItem";
 export * from "./components/Menu/Aria/AriaSection";
 export * from "./components/AssetInput/AssetInput";
 export * from "./elements/Badge/Badge";
+export * from "./components/ColorPicker/BrandColorPicker";
+export * from "./components/Breadcrumbs/BreadcrumbItem";
 export * from "./components/Breadcrumbs/Breadcrumbs";
+export * from "./components/Tooltip/BrightHeader";
 export * from "./elements/Button/Button";
 export * from "./compositions/ButtonGroup/ButtonGroup";
 export * from "./elements/Checkbox/Checkbox";
 export * from "./compositions/Checklist/Checklist";
+export * from "./components/ColorPicker/ColorPicker";
 export * from "./components/Breadcrumbs/CurrentBreadcrumbItem";
+export * from "./components/ColorPicker/CustomColorPicker";
 export * from "./elements/Divider/Divider";
 export * from "./components/Dropdown/Dropdown";
 export * from "./compositions/FieldsetHeader/FieldsetHeader";
@@ -32,6 +37,7 @@ export * from "./elements/Switch/Switch";
 export * from "./elements/Textarea/Textarea";
 export * from "./elements/TextInput/TextInput";
 export * from "./components/Tooltip/Tooltip";
+export * from "./components/Tooltip/TooltipArrow";
 export * from "./components/Tree/Tree";
 import IconAcademy from "./elements/Icon/Generated/IconAcademy";
 import IconActions from "./elements/Icon/Generated/IconActions";
@@ -171,7 +177,6 @@ import IconLineDotted from "./elements/Icon/Generated/IconLineDotted";
 import IconLineSolid from "./elements/Icon/Generated/IconLineSolid";
 import IconLineSpacer from "./elements/Icon/Generated/IconLineSpacer";
 import IconLink from "./elements/Icon/Generated/IconLink";
-import IconListBullet from "./elements/Icon/Generated/IconListBullet";
 import IconListBullets from "./elements/Icon/Generated/IconListBullets";
 import IconListChecklist from "./elements/Icon/Generated/IconListChecklist";
 import IconListIndented from "./elements/Icon/Generated/IconListIndented";
@@ -194,7 +199,6 @@ import IconNotifications from "./elements/Icon/Generated/IconNotifications";
 import IconObjects from "./elements/Icon/Generated/IconObjects";
 import IconOpenLock from "./elements/Icon/Generated/IconOpenLock";
 import IconOpenLockFilled from "./elements/Icon/Generated/IconOpenLockFilled";
-import IconOrderedList from "./elements/Icon/Generated/IconOrderedList";
 import IconOrientation from "./elements/Icon/Generated/IconOrientation";
 import IconPatternLibrary from "./elements/Icon/Generated/IconPatternLibrary";
 import IconPause from "./elements/Icon/Generated/IconPause";
@@ -261,7 +265,6 @@ import IconUiPattern from "./elements/Icon/Generated/IconUiPattern";
 import IconUnderline from "./elements/Icon/Generated/IconUnderline";
 import IconUnknown from "./elements/Icon/Generated/IconUnknown";
 import IconUnknownSimple from "./elements/Icon/Generated/IconUnknownSimple";
-import IconUnorderedList from "./elements/Icon/Generated/IconUnorderedList";
 import IconUpload from "./elements/Icon/Generated/IconUpload";
 import IconUploadAlternative from "./elements/Icon/Generated/IconUploadAlternative";
 import IconUploadDoImages from "./elements/Icon/Generated/IconUploadDoImages";
@@ -418,7 +421,6 @@ export {
     IconLineSolid,
     IconLineSpacer,
     IconLink,
-    IconListBullet,
     IconListBullets,
     IconListChecklist,
     IconListIndented,
@@ -441,7 +443,6 @@ export {
     IconObjects,
     IconOpenLock,
     IconOpenLockFilled,
-    IconOrderedList,
     IconOrientation,
     IconPatternLibrary,
     IconPause,
@@ -508,7 +509,6 @@ export {
     IconUnderline,
     IconUnknown,
     IconUnknownSimple,
-    IconUnorderedList,
     IconUpload,
     IconUploadAlternative,
     IconUploadDoImages,
