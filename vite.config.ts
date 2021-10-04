@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
+import { PreRenderedAsset } from "rollup";
 
 export const alias = {
     "@elements": resolve(__dirname, "./src/elements"),
@@ -28,11 +29,11 @@ export default defineConfig({
                     react: "React",
                     "react-dom": "ReactDOM",
                 },
-                assetFileNames: (assetInfo) => {
+                assetFileNames: (assetInfo: PreRenderedAsset): string => {
                     if (assetInfo.name == "style.css") {
                         return "index.css";
                     }
-                    return assetInfo.name;
+                    return assetInfo.name ?? "unknown";
                 },
             },
         },
