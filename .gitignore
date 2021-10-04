@@ -3,3 +3,4 @@ dist
 cypress/videos
 cypress/screenshots
 storybook-static
+!.src/elements/Icon/Generated/.gitkeep
