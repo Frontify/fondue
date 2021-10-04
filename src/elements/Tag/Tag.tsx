@@ -26,23 +26,27 @@ export const tagStyles: Record<TagType, string> = {
 export type TagProps = {
     type: TagType;
     label: string;
+    onClick?: () => void;
 };
 
-export const Tag: FC<TagProps> = ({ type, label }) => {
+export const Tag: FC<TagProps> = ({ type, label, onClick }) => {
+    const isASelectedType = type === TagType.Selected || type === TagType.SelectedWithFocus;
+
     return (
-        <span
+        <button
             data-test-id="tag"
             className={merge([
                 "tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-cursor-pointer tw-px-2.5 tw-py-1",
                 tagStyles[type],
             ])}
+            onClick={onClick}
         >
             {label}
-            {(type === TagType.Selected || type === TagType.SelectedWithFocus) && (
+            {isASelectedType && (
                 <span data-test-id="tag-reject-icon" className="tw-ml-1">
                     <IconReject size={IconSize.Size12} />
                 </span>
             )}
-        </span>
+        </button>
     );
 };
