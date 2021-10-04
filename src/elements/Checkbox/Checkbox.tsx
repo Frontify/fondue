@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { TooltipProps } from "@components/Tooltip/Tooltip";
 import IconCheck from "@elements/Icon/Generated/IconCheck";
 import IconMinus from "@elements/Icon/Generated/IconMinus";
 import { InputLabel } from "@elements/InputLabel/InputLabel";
@@ -10,7 +11,6 @@ import { mergeProps } from "@react-aria/utils";
 import { useToggleState } from "@react-stately/toggle";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import { TooltipProps } from "@components/Tooltip/Tooltip";
 import React, { FC, useRef } from "react";
 
 export enum CheckboxState {
@@ -57,7 +57,7 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
 
     return (
         <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">
-            <label className="tw-flex tw-items-center tw-gap-2 tw-select-none">
+            <label className="tw-group tw-flex tw-items-center tw-gap-2 tw-select-none">
                 <input
                     {...mergeProps(inputProps, focusProps)}
                     id={id}
@@ -80,9 +80,9 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
                               ])
                             : merge([
                                   !isCheckedOrMixed(state) &&
-                                      "tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90",
+                                      "tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90 group-hover:tw-bg-white group-hover:tw-border-black dark:group-hover:tw-border-black-20 dark:group-hover:tw-bg-black-90",
                                   isCheckedOrMixed(state) &&
-                                      "tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60",
+                                      "tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60 group-hover:tw-text-white group-hover:tw-border-violet-70 group-hover:tw-bg-violet-70 dark:group-hover:tw-border-violet-60 dark:group-hover:tw-bg-violet-60",
                                   "hover:tw-cursor-pointer",
                               ]),
                     ])}
