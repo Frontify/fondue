@@ -12,8 +12,8 @@ export default {
     },
     argTypes: {
         type: {
-            options: [...Object.keys(TagType)],
-            mappings: [...Object.values(TagType)],
+            options: Object.keys(TagType),
+            mappings: Object.values(TagType),
             defaultValue: TagType.Suggested,
             control: { type: "select" },
         },
