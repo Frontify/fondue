@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { PropsWithChildren, FC, useRef, useState } from "react";
-import { merge } from "@utilities/merge";
-import { usePopper } from "react-popper";
-import { IconSize } from "@elements/Icon/IconSize";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { useTooltipTrigger } from "@react-aria/tooltip";
-import { useFocusVisible, useHover } from "@react-aria/interactions";
-import { useTooltipTriggerState } from "@react-stately/tooltip";
+import { Tooltip, TooltipProps } from "@components/Tooltip/Tooltip";
 import { TooltipArrow } from "@components/Tooltip/TooltipArrow";
 import IconQuestion from "@elements/Icon/Generated/IconQuestion";
-import { Tooltip, TooltipProps } from "@components/Tooltip/Tooltip";
+import { IconSize } from "@elements/Icon/IconSize";
+import { useFocusVisible, useHover } from "@react-aria/interactions";
+import { useTooltipTrigger } from "@react-aria/tooltip";
+import { useTooltipTriggerState } from "@react-stately/tooltip";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { merge } from "@utilities/merge";
+import React, { FC, PropsWithChildren, useRef, useState } from "react";
+import { usePopper } from "react-popper";
 
 export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;
@@ -18,6 +18,7 @@ export type InputLabelProps = PropsWithChildren<{
     disabled?: boolean;
     tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
     bold?: boolean;
+    isHovered?: boolean;
 }>;
 
 const TOOLTIP_DISTANCE = 15;
@@ -27,10 +28,11 @@ const TOOLTIP_PADDING = 15;
 export const InputLabel: FC<InputLabelProps> = ({
     children,
     htmlFor,
+    tooltip,
     required = false,
     disabled = false,
-    tooltip,
-    bold,
+    bold = false,
+    isHovered = false,
 }) => {
     const tooltipElement = useRef<HTMLDivElement | null>(null);
     const [tooltipArrowElement, setTooltipArrowElement] = useState<HTMLElement | null>(null);
@@ -69,9 +71,9 @@ export const InputLabel: FC<InputLabelProps> = ({
                 className={merge([
                     "tw-select-none",
                     bold && "tw-font-medium",
-                    disabled
-                        ? "hover:tw-cursor-not-allowed tw-pointer-events-none"
-                        : "hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white",
+                    disabled && "hover:tw-cursor-not-allowed tw-pointer-events-none",
+                    !disabled && "hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white",
+                    !disabled && isHovered && "tw-text-black dark:tw-text-white",
                 ])}
                 data-test-id="input-label"
             >
