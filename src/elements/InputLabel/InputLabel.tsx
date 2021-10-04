@@ -18,7 +18,6 @@ export type InputLabelProps = PropsWithChildren<{
     disabled?: boolean;
     tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
     bold?: boolean;
-    isHovered?: boolean;
 }>;
 
 const TOOLTIP_DISTANCE = 15;
@@ -28,11 +27,10 @@ const TOOLTIP_PADDING = 15;
 export const InputLabel: FC<InputLabelProps> = ({
     children,
     htmlFor,
-    tooltip,
     required = false,
     disabled = false,
-    bold = false,
-    isHovered = false,
+    tooltip,
+    bold,
 }) => {
     const tooltipElement = useRef<HTMLDivElement | null>(null);
     const [tooltipArrowElement, setTooltipArrowElement] = useState<HTMLElement | null>(null);
@@ -71,9 +69,9 @@ export const InputLabel: FC<InputLabelProps> = ({
                 className={merge([
                     "tw-select-none",
                     bold && "tw-font-medium",
-                    disabled && "hover:tw-cursor-not-allowed tw-pointer-events-none",
-                    !disabled && "hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white",
-                    !disabled && isHovered && "tw-text-black dark:tw-text-white",
+                    disabled
+                        ? "hover:tw-cursor-not-allowed tw-pointer-events-none"
+                        : "hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white",
                 ])}
                 data-test-id="input-label"
             >

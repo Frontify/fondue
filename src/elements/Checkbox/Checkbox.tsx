@@ -11,7 +11,7 @@ import { mergeProps } from "@react-aria/utils";
 import { useToggleState } from "@react-stately/toggle";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, useRef, useState } from "react";
+import React, { FC, useRef } from "react";
 
 export enum CheckboxState {
     Checked = "Checked",
@@ -38,7 +38,6 @@ const isCheckedOrMixed = (checked: CheckboxState): boolean => {
 
 export const Checkbox: FC<CheckboxProps> = (props) => {
     const id = useMemoizedId(props.id);
-    const [isHovered, setIsHovered] = useState(false);
     const { state = CheckboxState.Unchecked, disabled, required, label, tooltip, note } = props;
     const toggleState = useToggleState({ ...props, isSelected: state === CheckboxState.Checked });
     const ref = useRef<HTMLInputElement>(null);
@@ -58,7 +57,7 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
 
     return (
         <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">
-            <label className="tw-flex tw-items-center tw-gap-2 tw-select-none">
+            <label className="tw-group tw-flex tw-items-center tw-gap-2 tw-select-none">
                 <input
                     {...mergeProps(inputProps, focusProps)}
                     id={id}
@@ -68,8 +67,6 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
                 />
                 <span
                     aria-hidden="true"
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
                     className={merge([
                         "tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-flex-shrink-0",
                         isFocusVisible && FOCUS_STYLE,
@@ -83,17 +80,9 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
                               ])
                             : merge([
                                   !isCheckedOrMixed(state) &&
-                                      isHovered &&
-                                      "tw-bg-white tw-border-black dark:tw-border-black-20 dark:tw-bg-black-90",
-                                  !isCheckedOrMixed(state) &&
-                                      !isHovered &&
-                                      "tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90",
+                                      "tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90 group-hover:tw-bg-white group-hover:tw-border-black dark:group-hover:tw-border-black-20 dark:group-hover:tw-bg-black-90",
                                   isCheckedOrMixed(state) &&
-                                      isHovered &&
-                                      "tw-text-white tw-border-violet-70 tw-bg-violet-70 dark:tw-border-violet-60 dark:tw-bg-violet-60",
-                                  isCheckedOrMixed(state) &&
-                                      !isHovered &&
-                                      "tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60",
+                                      "tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60 group-hover:tw-text-white group-hover:tw-border-violet-70 group-hover:tw-bg-violet-70 dark:group-hover:tw-border-violet-60 dark:group-hover:tw-bg-violet-60",
                                   "hover:tw-cursor-pointer",
                               ]),
                     ])}
@@ -102,18 +91,15 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
                     {state === CheckboxState.Mixed && <IconMinus />}
                 </span>
                 {label && (
-                    <div onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-                        <InputLabel
-                            disabled={disabled}
-                            htmlFor={id}
-                            tooltip={tooltip ?? undefined}
-                            required={required}
-                            bold={isCheckedOrMixed(state)}
-                            isHovered={isHovered}
-                        >
-                            {label}
-                        </InputLabel>
-                    </div>
+                    <InputLabel
+                        disabled={disabled}
+                        htmlFor={id}
+                        tooltip={tooltip ?? undefined}
+                        required={required}
+                        bold={isCheckedOrMixed(state)}
+                    >
+                        {label}
+                    </InputLabel>
                 )}
             </label>
             {note && <span className="tw-text-black-60 tw-font-sans tw-text-xs tw-font-normal">{note}</span>}
