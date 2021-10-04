@@ -2,7 +2,7 @@ import { Slider } from "@components/Slider/Slider";
 import IconCheck from "@elements/Icon/Generated/IconCheck";
 import IconImageGrid2 from "@elements/Icon/Generated/IconImageGrid2";
 import IconSearch from "@elements/Icon/Generated/IconSearch";
-import IconUnorderedList from "@elements/Icon/Generated/IconUnorderedList";
+import IconListBullets from "@elements/Icon/Generated/IconListBullets";
 import { IconSize } from "@elements/Icon/IconSize";
 import { TextInput } from "@elements/TextInput/TextInput";
 import { toColor } from "@utilities/colors";
@@ -21,7 +21,7 @@ enum BrandColorView {
 
 export const BrandColorPicker: FC<ColorPickerProps> = ({ palettes: defaultPalettes = [], currentColor, onSelect }) => {
     const views = [
-        { id: BrandColorView.List, icon: <IconUnorderedList />, ariaLabel: "List" },
+        { id: BrandColorView.List, icon: <IconListBullets />, ariaLabel: "List" },
         { id: BrandColorView.Grid, icon: <IconImageGrid2 />, ariaLabel: "Grid" },
     ];
     const [view, setView] = useState(views[0].id);
