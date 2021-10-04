@@ -38,4 +38,22 @@ describe("Tag Component", () => {
         cy.get(TAG_ID).should("have.class", "tw-bg-white").and("have.class", "tw-text-violet-60");
         cy.get(TAG_REJECT_ICON_ATTRIBUTE).should("not.exist");
     });
+    it("should trigger a click event on click when type is selected", () => {
+        const onClickStub = cy.stub().as("onClickStub");
+
+        mount(<Tag type={TagType.Selected} label={TAG_LABEL} onClick={onClickStub} />);
+
+        cy.get("@onClickStub").should("not.be.called");
+        cy.get(TAG_ID).click();
+        cy.get("@onClickStub").should("be.calledOnce");
+    });
+    it("should trigger a click event on click when type is selected with focus", () => {
+        const onClickStub = cy.stub().as("onClickStub");
+
+        mount(<Tag type={TagType.SelectedWithFocus} label={TAG_LABEL} onClick={onClickStub} />);
+
+        cy.get("@onClickStub").should("not.be.called");
+        cy.get(TAG_ID).click();
+        cy.get("@onClickStub").should("be.calledOnce");
+    });
 });
