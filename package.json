@@ -42,7 +42,8 @@
         "test:file": "npm run build:css && cypress run-ct --spec",
         "typecheck": "tsc",
         "storybook": "start-storybook -p 6006 -s .storybook/assets",
-        "prepublishOnly": "npm run build"
+        "prepublishOnly": "npm run build",
+        "prepare": "is-ci || husky install"
     },
     "keywords": [
         "frontify",
