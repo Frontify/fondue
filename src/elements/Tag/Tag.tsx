@@ -36,9 +36,9 @@ export const Tag: FC<TagProps> = ({ type, label, onClick }) => {
         <button
             data-test-id="tag"
             className={merge([
-                "tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-cursor-default tw-px-2.5 tw-py-1",
+                "tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-px-2.5 tw-py-1",
                 tagStyles[type],
-                isClickable && "!tw-cursor-pointer",
+                isClickable ? "tw-cursor-pointer" : "tw-cursor-default",
             ])}
             onClick={onClick}
         >
