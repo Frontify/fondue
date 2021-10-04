@@ -1,8 +1,5 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-ignore
-import peerDepsExternal from "rollup-plugin-peer-deps-external";
 
 export const alias = {
     "@elements": resolve(__dirname, "./src/elements"),
@@ -16,9 +13,27 @@ export default defineConfig({
     resolve: {
         alias,
     },
+    css: {
+        postcss: {
+            to: resolve(__dirname, "./dist/index.css"),
+        },
+    },
     build: {
+        sourcemap: true,
+        minify: false,
+        lib: {
+            entry: resolve(__dirname, "src/index.ts"),
+            name: "Arcade",
+            fileName: (format) => `index.${format}.js`,
+        },
         rollupOptions: {
-            plugins: [peerDepsExternal()],
+            external: ["react", "react-dom"],
+            output: {
+                globals: {
+                    react: "React",
+                    "react-dom": "ReactDOM",
+                },
+            },
         },
     },
 });
