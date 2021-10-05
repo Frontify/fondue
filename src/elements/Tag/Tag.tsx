@@ -2,7 +2,9 @@
 
 import React, { FC } from "react";
 import { merge } from "@utilities/merge";
+import { useFocusRing } from "@react-aria/focus";
 import { IconSize } from "@elements/Icon/IconSize";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import IconReject from "@elements/Icon/Generated/IconReject";
 
 export enum TagType {
@@ -30,18 +32,19 @@ export type TagProps = {
 };
 
 export const Tag: FC<TagProps> = ({ type, label, onClick }) => {
+    const { isFocusVisible, focusProps } = useFocusRing();
+
     const isClickable = (type === TagType.Selected || type === TagType.SelectedWithFocus) && onClick;
 
+    const buttonClasses = merge([
+        "tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-group tw-px-2.5 tw-py-1",
+        tagStyles[type],
+        isClickable ? "tw-cursor-pointer" : "tw-cursor-default",
+        isFocusVisible && FOCUS_STYLE,
+    ]);
+
     return (
-        <button
-            data-test-id="tag"
-            className={merge([
-                "tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-group tw-px-2.5 tw-py-1",
-                tagStyles[type],
-                isClickable ? "tw-cursor-pointer" : "tw-cursor-default",
-            ])}
-            onClick={onClick}
-        >
+        <button data-test-id="tag" className={buttonClasses} onClick={onClick} {...focusProps}>
             {label}
             {isClickable && (
                 <span
