@@ -40,7 +40,7 @@ export const Checklist: FC<ChecklistProps> = ({ direction = ChecklistDirection.H
             ])}
         >
             {Children.map(children, (child) => (
-                <li>{child}</li>
+                <li className="tw-overflow-hidden">{child}</li>
             ))}
         </ul>
     );
