@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
 import { useCheckbox } from "@react-aria/checkbox";
 import { useTableColumnHeader, useTableSelectAllCheckbox } from "@react-aria/table";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
@@ -29,14 +30,27 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
     if (type === TableColumnHeaderType.SelectAll) {
         const { checkboxProps } = useTableSelectAllCheckbox(state);
         const inputRef = useRef(null);
-        const { inputProps } = useCheckbox(checkboxProps, useToggleState(checkboxProps), inputRef);
+        const toggleState = useToggleState(checkboxProps);
+        const { inputProps } = useCheckbox(checkboxProps, toggleState, inputRef);
+        const headerProps = { ...columnHeaderProps, onClick: () => state.selectionManager.toggleSelectAll() };
+        const { selectionManager } = state;
+
+        const getCheckboxState = () => {
+            if (selectionManager.isSelectAll) {
+                return CheckboxState.Checked;
+            }
+            if (selectionManager.selectedKeys.size > 0) {
+                return CheckboxState.Mixed;
+            }
+            return CheckboxState.Unchecked;
+        };
 
         return (
-            <th {...columnHeaderProps} ref={ref}>
-                {state.selectionManager.selectionMode === "single" ? (
+            <th {...headerProps} ref={ref}>
+                {selectionManager.selectionMode === "single" ? (
                     <VisuallyHidden>{inputProps["aria-label"]}</VisuallyHidden>
                 ) : (
-                    <input {...inputProps} ref={inputRef} />
+                    <Checkbox state={getCheckboxState()} />
                 )}
             </th>
         );

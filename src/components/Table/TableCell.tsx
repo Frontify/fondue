@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
 import { useCheckbox } from "@react-aria/checkbox";
 import { useTableCell, useTableSelectionCheckbox } from "@react-aria/table";
 import { TableState } from "@react-stately/table";
@@ -23,11 +24,13 @@ export const TableCell: FC<TableCellProps> = ({ cell, state, type = TableCellTyp
     if (type === TableCellType.Checkbox) {
         const { checkboxProps } = useTableSelectionCheckbox({ key: cell.parentKey }, state);
         const inputRef = useRef(null);
-        const { inputProps } = useCheckbox(checkboxProps, useToggleState(checkboxProps), inputRef);
+        const {
+            inputProps: { checked },
+        } = useCheckbox(checkboxProps, useToggleState(checkboxProps), inputRef);
 
         return (
             <td {...gridCellProps} ref={ref}>
-                <input {...inputProps} />
+                <Checkbox state={checked ? CheckboxState.Checked : CheckboxState.Unchecked} />
             </td>
         );
     }

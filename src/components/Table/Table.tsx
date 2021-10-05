@@ -1,12 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Item } from "@react-stately/collections";
-import { Cell, Column, Row, TableBody, TableHeader, useTableState } from "@react-stately/table";
-import React, { FC, ReactNode } from "react";
+import { useTable } from "@react-aria/table";
+import {
+    Cell,
+    Column as AriaColumn,
+    Row as AriaRow,
+    TableBody,
+    TableHeader,
+    TableStateProps,
+    useTableState,
+} from "@react-stately/table";
+import React, { FC, ReactNode, useRef } from "react";
 import { TableCell, TableCellType } from "./TableCell";
 import { TableColumnHeader, TableColumnHeaderType } from "./TableColumnHeader";
 import { TableHeaderRow } from "./TableHeaderRow";
 import { TableRow } from "./TableRow";
+
+export enum TableType {
+    Default = "Default",
+    SingleSelect = "SingleSelect",
+    MultiSelect = "MultiSelect",
+}
 
 export type Column = {
     name: string;
@@ -21,36 +35,46 @@ export type Row = {
 export type TableProps = {
     columns: Column[];
     rows: Row[];
+    type?: TableType;
 };
 
-const mapToTableAriaProps = (columns: Column[], rows: Row[]) => ({
+const mapToTableAriaProps = (columns: Column[], rows: Row[]): TableStateProps<any> => ({
     children: [
-        <Item key="table-header">
-            <TableHeader columns={columns}>
-                {columns.map(({ name, key }) => (
-                    <Column key={key}>{name}</Column>
-                ))}
-            </TableHeader>
-        </Item>,
-        <Item key="table-body">
-            <TableBody items={rows}>
-                {rows.map(({ id, value }) => (
-                    <Row key={id}>
-                        <Cell>{value}</Cell>
-                    </Row>
-                ))}
-            </TableBody>
-        </Item>,
+        <TableHeader key="table-header" columns={columns}>
+            {(column) => <AriaColumn>{column.name}</AriaColumn>}
+        </TableHeader>,
+        <TableBody key="table-body" items={rows}>
+            {(item) => (
+                <AriaRow>{(columnKey) => <Cell key={`${item.id}-${columnKey}`}>{item[columnKey]}</Cell>}</AriaRow>
+            )}
+        </TableBody>,
     ],
 });
 
-export const Table: FC<TableProps> = ({ columns, rows }) => {
+const getSelectionMode = (type: TableType) => {
+    switch (type) {
+        case TableType.SingleSelect:
+            return "single";
+        case TableType.MultiSelect:
+            return "multiple";
+        default:
+            return "none";
+    }
+};
+
+export const Table: FC<TableProps> = ({ columns, rows, type = TableType.Default }) => {
+    const ref = useRef<HTMLTableElement | null>(null);
     const props = mapToTableAriaProps(columns, rows);
-    const state = useTableState(props);
+    const state = useTableState({
+        ...props,
+        selectionMode: getSelectionMode(type),
+        showSelectionCheckboxes: type === TableType.SingleSelect || type === TableType.MultiSelect,
+    });
     const { collection } = state;
+    const { gridProps } = useTable({}, state, ref);
 
     return (
-        <table>
+        <table {...gridProps} ref={ref}>
             <thead>
                 {collection.headerRows.map((headerRow) => (
                     <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
