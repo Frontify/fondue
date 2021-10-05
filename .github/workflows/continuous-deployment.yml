@@ -15,7 +15,7 @@ jobs:
             - name: Use Node.js 16
               uses: actions/setup-node@v2
               with:
-                  node-version: 16
+                  node-version: '16'
 
             - name: Cache dependencies
               id: npm_cache
@@ -53,7 +53,7 @@ jobs:
             - name: Use Node.js 16 (npm repository)
               uses: actions/setup-node@v2
               with:
-                  node-version: 16
+                  node-version: '16'
                   registry-url: "https://registry.npmjs.org"
 
             - name: Cache dependencies
@@ -79,7 +79,7 @@ jobs:
               uses: actions/setup-node@v2
               with:
                   registry-url: "https://npm.pkg.github.com"
-                  node-version: 16
+                  node-version: '16'
 
             - name: Publish to GitHub Packages
               run: npm publish --access public
