@@ -62,4 +62,12 @@ describe("Tag Component", () => {
         cy.get(TAG_ID).click();
         cy.get("@onClickStub").should("be.calledOnce");
     });
+
+    it("should be able to gain focus on keyboard tab press", () => {
+        mount(<Tag type={TagType.SelectedWithFocus} label={TAG_LABEL} />);
+
+        cy.window().focus();
+        cy.get("body").realPress("Tab");
+        cy.get(TAG_ID).should("be.focused");
+    });
 });
