@@ -36,7 +36,7 @@ export const Tag: FC<TagProps> = ({ type, label, onClick }) => {
         <button
             data-test-id="tag"
             className={merge([
-                "tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-px-2.5 tw-py-1",
+                "tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-group tw-px-2.5 tw-py-1",
                 tagStyles[type],
                 isClickable ? "tw-cursor-pointer" : "tw-cursor-default",
             ])}
@@ -44,7 +44,10 @@ export const Tag: FC<TagProps> = ({ type, label, onClick }) => {
         >
             {label}
             {isClickable && (
-                <span data-test-id="tag-reject-icon" className="tw-ml-1">
+                <span
+                    data-test-id="tag-reject-icon"
+                    className="tw-opacity-80 group-hover:tw-opacity-100 tw-transition-opacity tw-ml-1"
+                >
                     <IconReject size={IconSize.Size12} />
                 </span>
             )}
