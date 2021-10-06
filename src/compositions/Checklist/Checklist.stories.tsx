@@ -54,12 +54,22 @@ export const Checklist: Story<ChecklistProps> = (args) => {
 };
 
 export const MultipleColumns: Story<ChecklistProps> = (args) => {
-    const [checked] = useState<CheckboxState[]>(new Array(8).fill(CheckboxState.Unchecked));
+    const [checked, setChecked] = useState<CheckboxState[]>(new Array(8).fill(CheckboxState.Unchecked));
+
+    const updateCheckState = (index: number) => (isChecked: boolean) => {
+        checked[index] = isChecked ? CheckboxState.Checked : CheckboxState.Unchecked;
+        setChecked([...checked]);
+    };
 
     return (
         <ChecklistComponent {...args}>
             {checked.map((_, index) => (
-                <Checkbox key={index} label={`Checkbox label n°${index + 1}`} />
+                <Checkbox
+                    key={index}
+                    state={checked[index]}
+                    onChange={updateCheckState(index)}
+                    label={`Checkbox label n°${index + 1}`}
+                />
             ))}
         </ChecklistComponent>
     );
