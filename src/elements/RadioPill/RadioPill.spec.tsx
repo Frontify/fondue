@@ -16,7 +16,8 @@ describe("RadioPill Component", () => {
 
         cy.get(RADIOPILL_TEST_ID).contains(RADIOPILL_LABEL);
         cy.get(RADIOPILL_TEST_ID).get(RADIOPILL_ICON_CODE).should("not.exist");
-        cy.get(RADIOPILL_TEST_ID).should("not.have.class", "tw-bg-black-5");
+        cy.get(RADIOPILL_TEST_ID).should("not.have.class", "tw-bg-black-100");
+        cy.get(RADIOPILL_TEST_ID).should("not.have.class", "tw-text-white");
         cy.get(RADIOPILL_TEST_ID).should("have.class", "tw-text-black-80");
     });
 
@@ -24,7 +25,8 @@ describe("RadioPill Component", () => {
         mount(<RadioPill label={RADIOPILL_LABEL} active={true} />);
 
         cy.get(RADIOPILL_TEST_ID).contains(RADIOPILL_LABEL);
-        cy.get(RADIOPILL_TEST_ID).should("have.class", "tw-bg-black-5");
+        cy.get(RADIOPILL_TEST_ID).should("have.class", "tw-bg-black-100");
+        cy.get(RADIOPILL_TEST_ID).should("have.class", "tw-text-white");
         cy.get(RADIOPILL_TEST_ID).should("not.have.class", "tw-text-black-80");
     });
 
@@ -33,7 +35,8 @@ describe("RadioPill Component", () => {
 
         cy.get(RADIOPILL_TEST_ID).contains(RADIOPILL_LABEL);
         cy.get(RADIOPILL_TEST_ID).get(RADIOPILL_ICON_CODE).should("exist");
-        cy.get(RADIOPILL_TEST_ID).should("have.class", "tw-bg-black-5");
+        cy.get(RADIOPILL_TEST_ID).should("have.class", "tw-bg-black-100");
+        cy.get(RADIOPILL_TEST_ID).should("have.class", "tw-text-white");
         cy.get(RADIOPILL_TEST_ID).should("not.have.class", "tw-text-black-80");
     });
 
@@ -41,7 +44,8 @@ describe("RadioPill Component", () => {
         mount(<RadioPill label={RADIOPILL_LABEL} active={false} icon={RADIOPILL_ICON} />);
 
         cy.get(RADIOPILL_TEST_ID).contains(RADIOPILL_LABEL);
-        cy.get(RADIOPILL_TEST_ID).should("not.have.class", "tw-bg-black-5");
+        cy.get(RADIOPILL_TEST_ID).should("not.have.class", "tw-bg-black-100");
+        cy.get(RADIOPILL_TEST_ID).should("not.have.class", "tw-text-white");
         cy.get(RADIOPILL_TEST_ID).should("have.class", "tw-text-black-80");
     });
 });
