@@ -13,7 +13,11 @@ export const TableRow: FC<TableRowProps> = ({ item, state, children }) => {
     const { rowProps } = useTableRow({ node: item }, state, ref);
 
     return (
-        <tr {...rowProps} ref={ref}>
+        <tr
+            {...rowProps}
+            ref={ref}
+            className="tw-border-t tw-border-black-10 hover:tw-bg-black-0 dark:tw-border-black-95 dark:hover:tw-bg-black-95"
+        >
             {children}
         </tr>
     );

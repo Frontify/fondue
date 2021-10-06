@@ -4,6 +4,7 @@ import { useCheckbox } from "@react-aria/checkbox";
 import { useTableCell, useTableSelectionCheckbox } from "@react-aria/table";
 import { TableState } from "@react-stately/table";
 import { useToggleState } from "@react-stately/toggle";
+import { merge } from "@utilities/merge";
 import React, { FC, useRef } from "react";
 
 export enum TableCellType {
@@ -29,14 +30,21 @@ export const TableCell: FC<TableCellProps> = ({ cell, state, type = TableCellTyp
         } = useCheckbox(checkboxProps, useToggleState(checkboxProps), inputRef);
 
         return (
-            <td {...gridCellProps} ref={ref}>
+            <td
+                {...gridCellProps}
+                ref={ref}
+                className={merge([
+                    "tw-pl-8 tw-py-4 tw-pr-4 tw-border-l-4",
+                    checked ? "tw-border-violet-60" : "tw-border-transparent",
+                ])}
+            >
                 <Checkbox state={checked ? CheckboxState.Checked : CheckboxState.Unchecked} />
             </td>
         );
     }
 
     return (
-        <td {...gridCellProps} ref={ref}>
+        <td {...gridCellProps} ref={ref} className="tw-p-4 tw-outline-none tw-font-normal">
             {cell.rendered}
         </td>
     );

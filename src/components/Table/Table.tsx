@@ -74,7 +74,11 @@ export const Table: FC<TableProps> = ({ columns, rows, type = TableType.Default 
     const { gridProps } = useTable({}, state, ref);
 
     return (
-        <table {...gridProps} ref={ref}>
+        <table
+            {...gridProps}
+            ref={ref}
+            className="tw-border-collapse tw-table-auto tw-w-full tw-text-left dark:tw-bg-black-100 dark:tw-text-black-20"
+        >
             <thead>
                 {collection.headerRows.map((headerRow) => (
                     <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>

@@ -25,7 +25,6 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
 }) => {
     const ref = useRef<HTMLTableCellElement | null>(null);
     const { columnHeaderProps } = useTableColumnHeader({ node: column }, state, ref);
-    const arrowIcon = state.sortDescriptor?.direction === "ascending" ? "up" : "down";
 
     if (type === TableColumnHeaderType.SelectAll) {
         const { checkboxProps } = useTableSelectAllCheckbox(state);
@@ -46,7 +45,11 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
         };
 
         return (
-            <th {...headerProps} ref={ref}>
+            <th
+                {...headerProps}
+                ref={ref}
+                className="tw-pl-8 tw-py-3 tw-pr-4 tw-w-16 tw-border-l-4 tw-border-transparent"
+            >
                 {selectionManager.selectionMode === "single" ? (
                     <VisuallyHidden>{inputProps["aria-label"]}</VisuallyHidden>
                 ) : (
@@ -57,19 +60,12 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
     }
 
     return (
-        <th {...columnHeaderProps} ref={ref}>
+        <th
+            {...columnHeaderProps}
+            ref={ref}
+            className="tw-font-medium tw-px-4 tw-py-3 tw-border-r tw-border-black-10 dark:tw-border-black-95 tw-outline-none"
+        >
             {column.rendered}
-            {column.props.allowsSorting && (
-                <span
-                    aria-hidden="true"
-                    style={{
-                        padding: "0 2px",
-                        visibility: state.sortDescriptor?.column === column.key ? "visible" : "hidden",
-                    }}
-                >
-                    {arrowIcon}
-                </span>
-            )}
         </th>
     );
 };
