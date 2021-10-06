@@ -23,14 +23,18 @@ describe("Tag Component", () => {
     });
 
     it("should render a selected tag", () => {
-        mount(<Tag type={TagType.Selected} label={TAG_LABEL} />);
+        const onClickStub = cy.stub().as("onClickStub");
+
+        mount(<Tag type={TagType.Selected} label={TAG_LABEL} onClick={onClickStub} />);
 
         cy.get(TAG_ID).should("have.class", "tw-bg-black-5");
         cy.get(TAG_ID).should("be.visible", TAG_REJECT_ICON_ATTRIBUTE);
     });
 
     it("should render a selected with focus tag", () => {
-        mount(<Tag type={TagType.SelectedWithFocus} label={TAG_LABEL} />);
+        const onClickStub = cy.stub().as("onClickStub");
+
+        mount(<Tag type={TagType.SelectedWithFocus} label={TAG_LABEL} onClick={onClickStub} />);
 
         cy.get(TAG_ID).should("have.class", "tw-bg-violet-60");
         cy.get(TAG_ID).should("be.visible", TAG_REJECT_ICON_ATTRIBUTE);
@@ -64,7 +68,9 @@ describe("Tag Component", () => {
     });
 
     it("should be able to gain focus on keyboard tab press", () => {
-        mount(<Tag type={TagType.SelectedWithFocus} label={TAG_LABEL} />);
+        const onClickStub = cy.stub().as("onClickStub");
+
+        mount(<Tag type={TagType.SelectedWithFocus} label={TAG_LABEL} onClick={onClickStub} />);
 
         cy.window().focus();
         cy.get("body").realPress("Tab");
