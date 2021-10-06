@@ -25,16 +25,30 @@ export const tagStyles: Record<TagType, string> = {
         "tw-bg-white dark:tw-bg-black-100 hover:tw-bg-black-0 dark:hover:tw-bg-black-superdark tw-text-violet-60 dark:tw-text-violet-50 hover:tw-text-violet-70 dark:hover:tw-text-violet-60",
 };
 
-export type TagProps = {
-    type: TagType;
+export type TagProps = TagPropsUnselected | TagPropsSelected;
+
+type TagPropsSelected = {
+    type: TagType.Selected | TagType.SelectedWithFocus;
     label: string;
-    onClick?: () => void;
+    onClick: () => void;
 };
 
-export const Tag: FC<TagProps> = ({ type, label, onClick }) => {
+type TagPropsUnselected = {
+    type: TagType.Suggested | TagType.PreviouslySelected;
+    label: string;
+    onClick?: null;
+};
+
+export const Tag: FC<TagProps> = (props) => {
+    const { type, label } = props;
+
     const { isFocusVisible, focusProps } = useFocusRing();
 
-    const isClickable = (type === TagType.Selected || type === TagType.SelectedWithFocus) && onClick;
+    const isClickable = (type === TagType.Selected || type === TagType.SelectedWithFocus) && props.onClick;
+
+    const buttonProps = {
+        ...(isClickable ? { onClick: props.onClick } : {}),
+    };
 
     return (
         <button
@@ -45,7 +59,7 @@ export const Tag: FC<TagProps> = ({ type, label, onClick }) => {
                 isClickable ? "tw-cursor-pointer" : "tw-cursor-default",
                 isFocusVisible && FOCUS_STYLE,
             ])}
-            onClick={onClick}
+            {...buttonProps}
             {...focusProps}
         >
             {label}
