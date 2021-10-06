@@ -24,7 +24,7 @@ type ChecklistVertical = {
 
 type ChecklistHorizontal = {
     direction: ChecklistDirection.Horizontal;
-    columns?: undefined;
+    columns?: null;
 };
 
 export type ChecklistProps = PropsWithChildren<ChecklistVertical | ChecklistHorizontal>;
@@ -36,7 +36,7 @@ export const Checklist: FC<ChecklistProps> = ({ direction = ChecklistDirection.H
             className={merge([
                 direction === ChecklistDirection.Horizontal
                     ? "tw-flex tw-flex-row tw-gap-12"
-                    : `tw-grid tw-gap-4 ${columnsStyle[columns]}`,
+                    : `tw-grid tw-gap-4 ${columns && columnsStyle[columns]}`,
             ])}
         >
             {Children.map(children, (child) => (
