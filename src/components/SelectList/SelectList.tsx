@@ -1,4 +1,6 @@
-import { Checkbox } from "@elements/Checkbox/Checkbox";
+import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
+import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
+import { IconSize } from "@elements/Icon/IconSize";
 import { Tag, TagType } from "@elements/Tag/Tag";
 import { FocusScope } from "@react-aria/focus";
 import { useListBox, useOption } from "@react-aria/listbox";
@@ -15,13 +17,15 @@ type SelectableListItemProps = {
     isSelected?: boolean;
 };
 
-const SelectableListItem = forwardRef<HTMLLIElement | null, SelectableListItemProps>(({ item }, ref) => {
-    return (
-        <li ref={ref}>
-            <Checkbox label={item.name} />
-        </li>
-    );
-});
+const SelectableListItem = forwardRef<HTMLLIElement | null, SelectableListItemProps>(
+    ({ item, isSelected, ariaProps }, ref) => {
+        return (
+            <li ref={ref} {...ariaProps}>
+                <Checkbox label={item.name} state={isSelected ? CheckboxState.Checked : undefined} />
+            </li>
+        );
+    },
+);
 
 SelectableListItem.displayName = "SelectableListItem";
 
@@ -69,15 +73,36 @@ export const SelectList: FC<SelectListProps> = (props) => {
                           ]),
                 ])}
             >
-                <div className="tw-flex-1">
-                    <Tag
-                        type={TagType.SelectedWithFocus}
-                        label="Example"
-                        onClick={() => {
-                            console.log("click");
-                        }}
-                    />
+                <div className="tw-flex-1 tw-flex tw-flex-wrap tw-gap-1">
+                    {[...state.selectionManager.selectedKeys].map((key) => {
+                        const item = keyItemRecord[key];
+                        return (
+                            <Tag
+                                key={item.name}
+                                type={TagType.SelectedWithFocus}
+                                label={item.name}
+                                onClick={() => {
+                                    console.log("click");
+                                }}
+                            />
+                        );
+                    })}
                 </div>
+
+                <button
+                    aria-hidden="true"
+                    tabIndex={-1}
+                    className={merge([
+                        "tw-p-0",
+                        disabled
+                            ? "tw-pointer-events-none tw-text-black-40"
+                            : "tw-text-black-80 group-hover:tw-text-black",
+                    ])}
+                >
+                    <div className={merge(["tw-transition-transform", open && "tw-rotate-180"])}>
+                        <IconCaretDown size={IconSize.Size16} />
+                    </div>
+                </button>
             </div>
             <FocusScope restoreFocus>
                 <div {...overlayProps} ref={overlayRef} className="tw-mt-3">

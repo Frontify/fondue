@@ -10,13 +10,25 @@ export default {
 export const SelectList: Story<SelectListProps> = (args) => <SelectListComponent {...args} />;
 
 SelectList.args = {
-    activeItemNames: ["Tag"],
+    activeItemNames: ["Short tag", "Tag 74"],
     items: [
         {
-            name: "Tag",
+            name: "Checkbox label 1",
         },
         {
-            name: "Another Tag",
+            name: "Short tag",
+        },
+        {
+            name: "Checkbox label 2",
+        },
+        {
+            name: "Checkbox label 3",
+        },
+        {
+            name: "Tag 74",
+        },
+        {
+            name: "This is a long tag",
         },
     ],
 };
