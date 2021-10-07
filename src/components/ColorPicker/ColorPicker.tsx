@@ -17,6 +17,8 @@ type Palette = {
 export type ColorPickerProps = {
     palettes?: Palette[];
     currentColor: Color;
+    currentFormat?: ColorFormat;
+    setFormat?: (id: ColorFormat) => void;
     onSelect: (color: Color) => void;
 };
 
@@ -73,7 +75,7 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
      * The contrast color is calculated by 'react-colors' or ist just black if alpha drops below 0.3.
      */
 
-    const labelColor = useMemo((): [string] => {
+    const labelColor = useMemo(() => {
         const value = hexa ? hexa : hex;
         return alpha && alpha < 0.3 ? "#000" : getContrastingColor(value);
     }, [hex, hexa, rgba, alpha]);
@@ -82,7 +84,7 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
      * Return value for background color. Prefer rgba, because 8-digit hex isn't working correctly.
      */
 
-    const backgroundColor = useMemo((): [string] => {
+    const backgroundColor = useMemo(() => {
         if (rgba) {
             return `rgba(${Object.values(rgba).join(", ")})`;
         }
@@ -93,7 +95,7 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
      * Return color value to display, based on the selected color format (hex or rgba).
      */
 
-    const displayValue = useMemo((): [string] => {
+    const displayValue = useMemo(() => {
         if (colorFormat === ColorFormat.Hex) {
             return hexa ? hexa : hex;
         }

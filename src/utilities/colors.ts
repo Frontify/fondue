@@ -10,9 +10,9 @@ type ColorState = {
 };
 
 export type Color = {
-    value?: string;
     rgba?: { r: number; g: number; b: number; a: number };
     hex: string;
+    hexa: string;
     alpha?: number;
     name?: string;
 };

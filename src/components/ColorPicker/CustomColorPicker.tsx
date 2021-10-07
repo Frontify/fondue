@@ -94,7 +94,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                         menuBlocks={[{ id: "color-picker-format-dropdown-block", menuItems: colorFormats }]}
                         activeItemId={currentFormat}
                         onChange={(id) => {
-                            id && setFormat(id as ColorFormat);
+                            id && setFormat && setFormat(id as ColorFormat);
                         }}
                     />
                 </div>
