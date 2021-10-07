@@ -63,7 +63,7 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
         <th
             {...columnHeaderProps}
             ref={ref}
-            className="tw-font-medium tw-px-4 tw-py-3 tw-border-r tw-border-black-10 dark:tw-border-black-95 tw-outline-none"
+            className="tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-border-r tw-border-black-10 dark:tw-border-black-95 tw-outline-none"
         >
             {column.rendered}
         </th>

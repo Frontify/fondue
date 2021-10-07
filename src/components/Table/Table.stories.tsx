@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconIcons from "@elements/Icon/Generated/IconIcons";
+import { Badge } from "@elements/Badge/Badge";
+import IconEmojiHappy from "@elements/Icon/Generated/IconEmojiHappy";
+import { IconSize } from "@elements/Icon/IconSize";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { Column, Row, SelectionMode, Table, TableProps } from "./Table";
@@ -19,16 +21,64 @@ export default {
     },
 } as Meta<TableProps>;
 
+const User = () => (
+    <div className="tw-flex tw-gap-x-2 tw-items-center">
+        <IconEmojiHappy size={IconSize.Size32} />
+        <div>
+            <p>Michael Bolton</p>
+            <p>mb@gmail.com</p>
+        </div>
+    </div>
+);
+
 const columns: Column[] = [
-    { name: "Name", key: "name" },
-    { name: "Icon", key: "icon" },
-    { name: "Date", key: "date" },
+    { name: "User", key: "user" },
+    { name: "Active Sessions", key: "activeSessions" },
+    { name: "Last Active", key: "lastActive" },
+    { name: "Regions", key: "regions" },
+    { name: "Countries", key: "countries" },
 ];
 
 const rows: Row[] = [
-    { id: 1, name: "test.pdf", date: "6/7/2020", icon: <IconIcons /> },
-    { id: "2", name: "docs", date: "11/20/2010", icon: <IconIcons /> },
-    { id: 3, name: "log", date: "1/18/2016", icon: <IconIcons /> },
+    {
+        id: 1,
+        user: <User />,
+        activeSessions: <Badge>112</Badge>,
+        lastActive: "12 days ago",
+        regions: <Badge>Europe</Badge>,
+        countries: (
+            <div className="tw-flex tw-gap-x-2">
+                <Badge>Switzerland</Badge>
+                <Badge>France</Badge>
+            </div>
+        ),
+    },
+    {
+        id: "2",
+        user: <User />,
+        activeSessions: <Badge>112</Badge>,
+        lastActive: "12 days ago",
+        regions: <Badge>Europe</Badge>,
+        countries: (
+            <div className="tw-flex tw-gap-x-2">
+                <Badge>Switzerland</Badge>
+                <Badge>France</Badge>
+            </div>
+        ),
+    },
+    {
+        id: 3,
+        user: <User />,
+        activeSessions: <Badge>112</Badge>,
+        lastActive: "12 days ago",
+        regions: <Badge>Europe</Badge>,
+        countries: (
+            <div className="tw-flex tw-flex-wrap tw-gap-x-2">
+                <Badge>Switzerland</Badge>
+                <Badge>France</Badge>
+            </div>
+        ),
+    },
 ];
 
 const Template: Story<TableProps> = (args) => {
