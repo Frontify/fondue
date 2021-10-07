@@ -94,18 +94,18 @@ export const WithinFlyout: Story<ColorPickerProps> = ({ currentColor }) => {
                         <MenuItem
                             title={
                                 selectedColor
-                                    ? [selectedColor.name || "", selectedColor.value].join(" ")
+                                    ? [selectedColor.name || "", selectedColor.hex].join(" ")
                                     : "Selected Color"
                             }
                             decorator={
-                                !selectedColor?.value ? (
+                                !selectedColor?.hex ? (
                                     <span className="tw-text-black-70">
                                         <IconColors size={IconSize.Size12} />
                                     </span>
                                 ) : (
                                     <span
                                         className="tw-h-4 tw-w-4 tw-rounded tw-flex tw-items-center tw-justify-center"
-                                        style={{ background: selectedColor?.value }}
+                                        style={{ background: selectedColor?.hex }}
                                     />
                                 )
                             }
