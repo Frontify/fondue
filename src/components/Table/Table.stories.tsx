@@ -2,18 +2,18 @@
 
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
-import React from "react";
-import { Column, Row, Table, TableProps, TableType } from "./Table";
+import React, { useState } from "react";
+import { Column, Row, SelectionMode, Table, TableProps } from "./Table";
 
 export default {
     title: "Compositions/Table",
     component: Table,
     args: {
-        type: TableType.Default,
+        selectionMode: SelectionMode.NoSelect,
     },
     argTypes: {
         type: {
-            options: Object.keys(TableType),
+            options: Object.keys(SelectionMode),
             control: { type: "select" },
         },
     },
@@ -27,20 +27,32 @@ const columns: Column[] = [
 
 const rows: Row[] = [
     { id: 1, name: "test.pdf", date: "6/7/2020", icon: <IconIcons /> },
-    { id: 2, name: "docs", date: "11/20/2010", icon: <IconIcons /> },
+    { id: "2", name: "docs", date: "11/20/2010", icon: <IconIcons /> },
     { id: 3, name: "log", date: "1/18/2016", icon: <IconIcons /> },
 ];
 
-const Template: Story<TableProps> = (args) => <Table {...args} columns={columns} rows={rows} />;
+const Template: Story<TableProps> = (args) => {
+    const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
+
+    return (
+        <Table
+            {...args}
+            columns={columns}
+            rows={rows}
+            selectedRowIds={selectedRows}
+            onSelectionChange={(ids) => setSelectedRows(ids || [])}
+        />
+    );
+};
 
 export const ReadOnly = Template.bind({});
 
 export const SingleSelect = Template.bind({});
 SingleSelect.args = {
-    type: TableType.SingleSelect,
+    selectionMode: SelectionMode.SingleSelect,
 };
 
 export const MultiSelect = Template.bind({});
 MultiSelect.args = {
-    type: TableType.MultiSelect,
+    selectionMode: SelectionMode.MultiSelect,
 };

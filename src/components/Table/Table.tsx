@@ -16,10 +16,10 @@ import { TableColumnHeader, TableColumnHeaderType } from "./TableColumnHeader";
 import { TableHeaderRow } from "./TableHeaderRow";
 import { TableRow } from "./TableRow";
 
-export enum TableType {
-    Default = "Default",
-    SingleSelect = "SingleSelect",
-    MultiSelect = "MultiSelect",
+export enum SelectionMode {
+    NoSelect = "none",
+    SingleSelect = "single",
+    MultiSelect = "multiple",
 }
 
 export type Column = {
@@ -28,16 +28,20 @@ export type Column = {
 };
 
 export type Row = {
-    id: number;
+    id: string | number;
     [key: string]: ReactNode;
 };
 
 export type TableProps = {
     columns: Column[];
     rows: Row[];
-    type?: TableType;
+    onSelectionChange: (ids?: (string | number)[]) => void;
+    selectionMode?: SelectionMode;
+    selectedRowIds?: (string | number)[];
 };
 
+/* react-aria hook props types are inexplicitly typed */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapToTableAriaProps = (columns: Column[], rows: Row[]): TableStateProps<any> => ({
     children: [
         <TableHeader key="table-header" columns={columns}>
@@ -51,24 +55,24 @@ const mapToTableAriaProps = (columns: Column[], rows: Row[]): TableStateProps<an
     ],
 });
 
-const getSelectionMode = (type: TableType) => {
-    switch (type) {
-        case TableType.SingleSelect:
-            return "single";
-        case TableType.MultiSelect:
-            return "multiple";
-        default:
-            return "none";
-    }
-};
+const getAllRowIds = (rows: Row[]): (string | number)[] => rows.map(({ id }) => id);
 
-export const Table: FC<TableProps> = ({ columns, rows, type = TableType.Default }) => {
+export const Table: FC<TableProps> = ({
+    columns,
+    rows,
+    onSelectionChange,
+    selectionMode = SelectionMode.NoSelect,
+    selectedRowIds = [],
+}) => {
+    const isSelectTable = selectionMode === SelectionMode.SingleSelect || selectionMode === SelectionMode.MultiSelect;
     const ref = useRef<HTMLTableElement | null>(null);
     const props = mapToTableAriaProps(columns, rows);
     const state = useTableState({
         ...props,
-        selectionMode: getSelectionMode(type),
-        showSelectionCheckboxes: type === TableType.SingleSelect || type === TableType.MultiSelect,
+        selectionMode,
+        onSelectionChange: (keys) => onSelectionChange(keys === "all" ? getAllRowIds(rows) : Array.from(keys)),
+        defaultSelectedKeys: isSelectTable ? selectedRowIds : undefined,
+        showSelectionCheckboxes: isSelectTable,
     });
     const { collection } = state;
     const { gridProps } = useTable({}, state, ref);
