@@ -93,9 +93,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                     <Dropdown
                         menuBlocks={[{ id: "color-picker-format-dropdown-block", menuItems: colorFormats }]}
                         activeItemId={currentFormat}
-                        onChange={(id) => {
-                            id && setFormat && setFormat(id as ColorFormat);
-                        }}
+                        onChange={(id) => id && setFormat && setFormat(id as ColorFormat)}
                     />
                 </div>
                 {currentFormat === ColorFormat.Hex ? (

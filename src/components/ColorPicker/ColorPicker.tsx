@@ -68,11 +68,10 @@ export const ColorPicker: FC<ColorPickerProps> = ({ currentColor, palettes, onSe
 
 const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format }) => {
     const { hex, hexa, rgba, name, alpha } = color;
-    const colorFormat = format;
 
     /**
      * Return contrast color for the label.
-     * The contrast color is calculated by 'react-colors' or ist just black if alpha drops below 0.3.
+     * The contrast color is calculated by 'react-colors' or is just black if alpha drops below 0.3.
      */
 
     const labelColor = useMemo(() => {
@@ -96,10 +95,10 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
      */
 
     const displayValue = useMemo(() => {
-        if (colorFormat === ColorFormat.Hex) {
-            return hexa ? hexa : hex;
+        if (format === ColorFormat.Hex) {
+            return hexa || hex;
         }
-        if (colorFormat === ColorFormat.Rgba) {
+        if (format === ColorFormat.Rgba) {
             return backgroundColor;
         }
     }, [hex, hexa, rgba, alpha, format]);
