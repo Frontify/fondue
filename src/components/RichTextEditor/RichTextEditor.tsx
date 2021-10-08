@@ -1,7 +1,7 @@
 //TODO: accessibility for the rich text + toolbar
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { ReactElement, useRef, useState, KeyboardEvent, useEffect } from "react";
+import React, { FC, useRef, useState, KeyboardEvent, useEffect } from "react";
 import {
     Editor,
     DraftHandleValue,
@@ -63,24 +63,21 @@ const styleMap = {
     },
 };
 
-export const RichTextEditor = ({
+export const RichTextEditor: FC<RichTextEditorProps> = ({
     value,
     placeholder,
     onTextChange,
     readonly = false,
-}: RichTextEditorProps): ReactElement<RichTextEditorProps> => {
+}: RichTextEditorProps) => {
     const editor = useRef<Editor | null>(null);
     const selectionRectRef = useRef<HTMLDivElement | null>(null);
     const inlineToolbarRef = useRef<HTMLDivElement | null>(null);
     const inlineToolbarArrowRef = useRef<HTMLDivElement | null>(null);
-
     const [editorState, setEditorState] = useState<EditorState>(() => {
         return value ? EditorState.createWithContent(value, decorators) : EditorState.createEmpty(decorators);
     });
-
     const [editorArea, setEditorArea] = useState(RichTextEditorArea.Normal);
     const [showInlineToolbar, setShowInlineToolbar] = useState(false);
-
     const [savedSelection, setSavedSelection] = useState<SelectionState | null>(null);
 
     useEffect(() => {
