@@ -6,13 +6,12 @@ export default function IconTemplate(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     { template }: { template: any },
     _opts: TemplateOptions,
-    { interfaces, componentName, jsx, imports, exports }: TemplateData,
+    { interfaces, componentName, jsx, exports }: TemplateData,
 ): string {
     const typeScriptTpl = template.smart({ plugins: ["typescript"] });
 
     return typeScriptTpl.ast`
-      ${imports}
-
+      import React from "react";
       import { IconProps } from "@elements/Icon/IconProps";
       import { IconSize, IconSizeMap } from "@elements/Icon/IconSize";
 

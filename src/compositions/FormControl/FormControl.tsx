@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { InputLabel, InputLabelProps } from "@elements/InputLabel/InputLabel";
+import { Validation } from "@elements/TextInput/TextInput";
 import React, { cloneElement, FC, isValidElement, PropsWithChildren, ReactNode } from "react";
 
-export enum HelperTextStyle {
+export enum FormControlStyle {
     Primary = "Primary",
     Positive = "Positive",
     Danger = "Danger",
@@ -11,9 +12,15 @@ export enum HelperTextStyle {
 
 type HelperTextProps = {
     text: string;
+    style: FormControlStyle;
     disabled?: boolean;
-    style?: HelperTextStyle;
     fullWidth?: boolean;
+};
+
+const inputValidation: Record<FormControlStyle, Validation> = {
+    [FormControlStyle.Primary]: Validation.Default,
+    [FormControlStyle.Positive]: Validation.Success,
+    [FormControlStyle.Danger]: Validation.Error,
 };
 
 const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = false }) => (
@@ -22,9 +29,9 @@ const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = fa
         className={`tw-text-s tw-font-sans ${fullWidth ? "tw-w-full" : ""} ${
             disabled
                 ? "tw-text-black-40"
-                : style === HelperTextStyle.Danger
+                : style === FormControlStyle.Danger
                 ? "tw-text-red-60"
-                : style === HelperTextStyle.Positive
+                : style === FormControlStyle.Positive
                 ? "tw-text-green-60"
                 : "tw-text-black-80"
         }`}
@@ -48,7 +55,8 @@ export type FormControlProps = PropsWithChildren<{
     disabled?: boolean;
     label?: Omit<InputLabelProps, "disabled">;
     extra?: ReactNode;
-    helper?: Omit<HelperTextProps, "disabled"> & { position?: HelperPosition };
+    helper?: Omit<HelperTextProps, "disabled" | "style"> & { position?: HelperPosition };
+    style?: FormControlStyle;
 }>;
 
 export const FormControl: FC<FormControlProps> = ({
@@ -58,6 +66,7 @@ export const FormControl: FC<FormControlProps> = ({
     helper,
     disabled,
     direction = FormControlDirection.Vertical,
+    style = FormControlStyle.Primary,
 }) => {
     const isHelperBefore = helper?.position === HelperPosition.Before;
 
@@ -87,21 +96,23 @@ export const FormControl: FC<FormControlProps> = ({
             )}
             {helper?.text && isHelperBefore && (
                 <HelperText
+                    style={style}
                     fullWidth={direction === FormControlDirection.Vertical}
                     text={helper.text}
                     disabled={disabled}
-                    style={helper.style}
                 />
             )}
             <div className={direction === FormControlDirection.Vertical ? "tw-w-full" : ""}>
-                {isValidElement(children) ? cloneElement(children, { id: label?.htmlFor, disabled }) : children}
+                {isValidElement(children)
+                    ? cloneElement(children, { id: label?.htmlFor, disabled, validation: inputValidation[style] })
+                    : children}
             </div>
             {helper?.text && !isHelperBefore && (
                 <HelperText
                     fullWidth={direction === FormControlDirection.Vertical}
                     text={helper.text}
                     disabled={disabled}
-                    style={helper.style}
+                    style={style}
                 />
             )}
         </div>

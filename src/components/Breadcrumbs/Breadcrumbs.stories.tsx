@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
 import { BadgeStatus, BadgeStyle } from "@elements/Badge/Badge";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
+import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
+import React from "react";
 import { Breadcrumbs, BreadcrumbsProps } from "./Breadcrumbs";
 
 const link = document.referrer;
@@ -18,15 +19,27 @@ export default {
     component: Breadcrumbs,
 } as Meta<BreadcrumbsProps>;
 
-export const Template: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
+const Template: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
 
-Template.args = {
-    items: [...ITEMS, { link, bold: true, label: "Active" }],
+export const WithoutLinkOrAction = Template.bind({});
+
+WithoutLinkOrAction.args = {
+    items: [...ITEMS, { bold: true, label: "Active" }],
 };
 
-export const WithDecorator = Template.bind({});
+export const WithDecoratorAndAction = Template.bind({});
 
-WithDecorator.args = {
+WithDecoratorAndAction.argTypes = {
+    onClick: { action: "onClick" },
+};
+
+WithDecoratorAndAction.args = {
+    items: [...ITEMS, { onClick: action("click"), bold: true, decorator: <IconIcons />, label: "Active" }],
+};
+
+export const WithDecoratorAndLink = Template.bind({});
+
+WithDecoratorAndLink.args = {
     items: [...ITEMS, { link, bold: true, decorator: <IconIcons />, label: "Active" }],
 };
 

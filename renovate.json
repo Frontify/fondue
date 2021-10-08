@@ -1,0 +1,21 @@
+{
+  "$schema": "http://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base"],
+  "labels": ["dependencies"],
+  "gitAuthor": "Frontify Developers <developers@frontify.com>",
+  "vulnerabilityAlerts": {
+    "labels": ["security"]
+  },
+  "dependencyDashboard": false,
+  "automerge": true,
+  "lockFileMaintenance": { "enabled": true },
+  "timezone": "Europe/Zurich",
+  "schedule": ["after 9pm", "before 6am"],
+  "packageRules": [
+    {
+      "updateTypes": ["major"],
+      "automerge": false,
+      "labels": ["dependencies", "dependencies-major"]
+    }
+  ]
+}

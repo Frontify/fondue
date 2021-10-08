@@ -1,19 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useRef } from "react";
+import { TooltipProps } from "@components/Tooltip/Tooltip";
 import IconCheck from "@elements/Icon/Generated/IconCheck";
 import IconMinus from "@elements/Icon/Generated/IconMinus";
 import { InputLabel } from "@elements/InputLabel/InputLabel";
+import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useCheckbox } from "@react-aria/checkbox";
 import { useFocusRing } from "@react-aria/focus";
+import { mergeProps } from "@react-aria/utils";
 import { useToggleState } from "@react-stately/toggle";
-import generateRandomId from "@utilities/generateRandomId";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-
-export enum CheckboxStyle {
-    Default = "Default",
-    Primary = "Primary",
-}
+import React, { FC, useRef } from "react";
 
 export enum CheckboxState {
     Checked = "Checked",
@@ -23,7 +21,6 @@ export enum CheckboxState {
 
 export type CheckboxProps = {
     id?: string;
-    style?: CheckboxStyle;
     state?: CheckboxState;
     disabled?: boolean;
     required?: boolean;
@@ -31,23 +28,8 @@ export type CheckboxProps = {
     value?: string;
     onChange?: (isChecked: boolean) => void;
     label?: string;
-    tooltip?: string;
+    tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
     note?: string;
-};
-
-const styles = {
-    unchecked: {
-        [CheckboxStyle.Default]:
-            "tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90",
-        [CheckboxStyle.Primary]:
-            "tw-border-violet-60 tw-bg-white hover:tw-border-violet-70 dark:tw-border-violet-50 dark:tw-bg-black dark:hover:tw-border-violet-60 dark:hover:tw-bg-black-90",
-    },
-    checked: {
-        [CheckboxStyle.Default]:
-            "tw-border-black tw-bg-black tw-text-white hover:tw-border-black-superdark hover:tw-bg-black-superdark dark:tw-border-white dark:tw-bg-white dark:hover:tw-border-black-20 dark:hover:tw-bg-black-20 dark:tw-text-black",
-        [CheckboxStyle.Primary]:
-            "tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60",
-    },
 };
 
 const isCheckedOrMixed = (checked: CheckboxState): boolean => {
@@ -55,16 +37,8 @@ const isCheckedOrMixed = (checked: CheckboxState): boolean => {
 };
 
 export const Checkbox: FC<CheckboxProps> = (props) => {
-    const id = props.id || generateRandomId();
-    const {
-        state = CheckboxState.Unchecked,
-        disabled,
-        required,
-        label,
-        tooltip,
-        note,
-        style = CheckboxStyle.Default,
-    } = props;
+    const id = useMemoizedId(props.id);
+    const { state = CheckboxState.Unchecked, disabled, required, label, tooltip, note } = props;
     const toggleState = useToggleState({ ...props, isSelected: state === CheckboxState.Checked });
     const ref = useRef<HTMLInputElement>(null);
     const { inputProps } = useCheckbox(
@@ -83,14 +57,19 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
 
     return (
         <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">
-            <label className="tw-flex tw-items-center tw-gap-2 tw-select-none">
-                <input {...inputProps} {...focusProps} id={id} ref={ref} className="tw-sr-only" />
+            <label className="tw-group tw-flex tw-items-center tw-gap-2 tw-select-none">
+                <input
+                    {...mergeProps(inputProps, focusProps)}
+                    id={id}
+                    ref={ref}
+                    className="tw-sr-only"
+                    data-test-id="checkbox-input"
+                />
                 <span
                     aria-hidden="true"
                     className={merge([
-                        "tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border",
-
-                        isFocusVisible && "tw-outline-violet",
+                        "tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-flex-shrink-0",
+                        isFocusVisible && FOCUS_STYLE,
                         disabled
                             ? merge([
                                   "tw-text-white tw-pointer-events-none",
@@ -100,8 +79,10 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
                                       "tw-border-black-40 tw-bg-black-40 dark:tw-border-black-60 dark:tw-bg-black-60",
                               ])
                             : merge([
-                                  !isCheckedOrMixed(state) && styles.unchecked[style],
-                                  isCheckedOrMixed(state) && styles.checked[style],
+                                  !isCheckedOrMixed(state) &&
+                                      "tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90 group-hover:tw-bg-white group-hover:tw-border-black dark:group-hover:tw-border-black-20 dark:group-hover:tw-bg-black-90",
+                                  isCheckedOrMixed(state) &&
+                                      "tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60 group-hover:tw-text-white group-hover:tw-border-violet-70 group-hover:tw-bg-violet-70 dark:group-hover:tw-border-violet-60 dark:group-hover:tw-bg-violet-60",
                                   "hover:tw-cursor-pointer",
                               ]),
                     ])}
@@ -113,7 +94,7 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
                     <InputLabel
                         disabled={disabled}
                         htmlFor={id}
-                        tooltip={tooltip}
+                        tooltip={tooltip ?? undefined}
                         required={required}
                         bold={isCheckedOrMixed(state)}
                     >

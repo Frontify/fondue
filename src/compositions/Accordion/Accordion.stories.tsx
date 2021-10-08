@@ -3,6 +3,7 @@
 import { Slider } from "@components/Slider/Slider";
 import { FieldsetHeaderType } from "@compositions/FieldsetHeader/FieldsetHeader";
 import { FormControl } from "@compositions/FormControl/FormControl";
+import { Button } from "@elements/Button/Button";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import IconTextAlignCenter from "@elements/Icon/Generated/IconTextAlignCenter";
 import IconTextAlignLeft from "@elements/Icon/Generated/IconTextAlignLeft";
@@ -23,33 +24,45 @@ export default {
     },
 } as Meta<AccordionProps>;
 
-export const WithDifferentAccordionItems: Story<AccordionProps> = () => (
-    <AccordionComponent>
-        <AccordionItem
-            header={{
-                children: "Item with decorator, type Accordion and a FormControl child",
-                decorator: <IconIcons />,
-                type: FieldsetHeaderType.Accordion,
-            }}
-        >
-            <FormControl
-                label={{ children: "Width", htmlFor: "width", tooltip: "Width of the future" }}
-                extra="Some extra text."
-                helper={{ text: "This input should always equal to 42." }}
+export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
+    const [showContent, setShowContent] = useState(true);
+    const [input, setInput] = useState("");
+
+    return (
+        <AccordionComponent>
+            <AccordionItem
+                header={{
+                    children: "Item with decorator, type Accordion and a FormControl child",
+                    decorator: <IconIcons />,
+                    type: FieldsetHeaderType.Accordion,
+                }}
             >
-                <TextInput />
-            </FormControl>
-        </AccordionItem>
-        <AccordionItem header={{ children: "Item with plain text child" }}>bar</AccordionItem>
-        <AccordionItem
-            header={{
-                children: "Empty item with an onClick callback",
-                type: FieldsetHeaderType.AddRemove,
-                onClick: action("click"),
-            }}
-        />
-    </AccordionComponent>
-);
+                <FormControl
+                    label={{ children: "Width", htmlFor: "width", tooltip: { content: "Width of the future" } }}
+                    extra="Some extra text."
+                    helper={{ text: "This input should always equal to 42." }}
+                >
+                    <TextInput value={input} onChange={setInput} />
+                </FormControl>
+            </AccordionItem>
+            <AccordionItem header={{ children: "Item with plain text child", type: FieldsetHeaderType.AddRemove }}>
+                bar
+            </AccordionItem>
+            <AccordionItem
+                header={{
+                    children: "Empty item with an onClick callback",
+                    onClick: action("click"),
+                }}
+            />
+            <AccordionItem header={{ children: "Item with resizable content", type: FieldsetHeaderType.AddRemove }}>
+                <div className={!showContent ? "tw-hidden" : ""}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                </div>
+                <Button onClick={() => setShowContent(!showContent)}>Toggle Content</Button>
+            </AccordionItem>
+        </AccordionComponent>
+    );
+};
 
 export const WithAdvancedFormControls: Story<AccordionProps & { onChange: (id: string) => void }> = (args) => {
     const [spacing, setSpacing] = useState("1");
@@ -85,9 +98,9 @@ export const WithAdvancedFormControls: Story<AccordionProps & { onChange: (id: s
                                 }}
                                 activeItemId={spacing}
                                 items={[
-                                    { id: "1", name: "S" },
-                                    { id: "2", name: "M" },
-                                    { id: "3", name: "L" },
+                                    { id: "1", value: "S" },
+                                    { id: "2", value: "M" },
+                                    { id: "3", value: "L" },
                                 ]}
                             />
                         )}

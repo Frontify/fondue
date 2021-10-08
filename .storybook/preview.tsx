@@ -1,4 +1,4 @@
-import "tailwindcss/tailwind.css";
+import "../src/styles.css";
 import { dark, light } from "./frontifyTheme";
 
 export const parameters = {
@@ -8,7 +8,7 @@ export const parameters = {
         },
     },
     darkMode: {
-        darkClass: "dark",
+        darkClass: "tw-dark",
         classTarget: "html",
         stylePreview: true,
         dark: { ...dark },

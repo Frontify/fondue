@@ -20,6 +20,10 @@ const Component: FC<SwitchProps> = ({ on = false, ...props }) => {
 };
 
 const SWITCH_ID = "[data-test-id=switch]";
+const SWITCH_CONTAINER_ID = "[data-test-id=switch-container]";
+const INPUT_LABEL_ID = "[data-test-id=input-label-container]";
+
+const SWITCH_LABEL = "Switch Label";
 
 describe("Switch Component", () => {
     it("should render the value correctly", () => {
@@ -50,5 +54,18 @@ describe("Switch Component", () => {
         cy.get(SWITCH_ID).as("Switch");
         cy.get("@Switch").invoke("attr", "name").should("eq", "switch-test-disabled");
         cy.get("@Switch").invoke("attr", "disabled").should("eq", "disabled");
+    });
+
+    it("should have a label", () => {
+        mount(<Component label={SWITCH_LABEL} />);
+
+        cy.get(SWITCH_CONTAINER_ID).find(INPUT_LABEL_ID).should("exist");
+        cy.get(INPUT_LABEL_ID).contains(SWITCH_LABEL);
+    });
+
+    it("should hug the switch and label", () => {
+        mount(<Component label={SWITCH_LABEL} hug={true} />);
+
+        cy.get(SWITCH_CONTAINER_ID).should("have.css", "display", "inline-flex");
     });
 });

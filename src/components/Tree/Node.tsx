@@ -79,7 +79,7 @@ export const TreeNode = ({
                 </span>
                 <span
                     className={merge([
-                        "tw-ml-auto tw-text-black-opacity-40 tw-font-normal",
+                        "tw-ml-auto tw-text-black-100 tw-text-opacity-40 tw-font-normal",
                         selected && "tw-text-black-50",
                     ])}
                 >

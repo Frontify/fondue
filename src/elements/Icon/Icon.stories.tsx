@@ -144,7 +144,7 @@ import IconNotificationsComponent from "@elements/Icon/Generated/IconNotificatio
 import IconObjectsComponent from "@elements/Icon/Generated/IconObjects";
 import IconOpenLockComponent from "@elements/Icon/Generated/IconOpenLock";
 import IconOpenLockFilledComponent from "@elements/Icon/Generated/IconOpenLockFilled";
-import IconOrderedListComponent from "@elements/Icon/Generated/IconOrderedList";
+import IconListNumbersComponent from "@elements/Icon/Generated/IconListNumbers";
 import IconOrientationComponent from "@elements/Icon/Generated/IconOrientation";
 import IconPatternLibraryComponent from "@elements/Icon/Generated/IconPatternLibrary";
 import IconPauseComponent from "@elements/Icon/Generated/IconPause";
@@ -210,7 +210,7 @@ import IconUiPatternComponent from "@elements/Icon/Generated/IconUiPattern";
 import IconUnderlineComponent from "@elements/Icon/Generated/IconUnderline";
 import IconUnknownComponent from "@elements/Icon/Generated/IconUnknown";
 import IconUnknownSimpleComponent from "@elements/Icon/Generated/IconUnknownSimple";
-import IconUnorderedListComponent from "@elements/Icon/Generated/IconUnorderedList";
+import IconListBulletsComponent from "@elements/Icon/Generated/IconListBullets";
 import IconUploadComponent from "@elements/Icon/Generated/IconUpload";
 import IconUploadAlternativeComponent from "@elements/Icon/Generated/IconUploadAlternative";
 import IconUploadDoImagesComponent from "@elements/Icon/Generated/IconUploadDoImages";
@@ -814,8 +814,8 @@ export const Icon: Story<IconProps> = (args: IconProps) => (
             OpenLockFilled
         </li>
         <li className="tw-flex tw-flex-col tw-items-center">
-            <IconOrderedListComponent {...args} />
-            OrderedList
+            <IconListNumbersComponent {...args} />
+            ListNumbers
         </li>
         <li className="tw-flex tw-flex-col tw-items-center">
             <IconOrientationComponent {...args} />
@@ -1078,8 +1078,8 @@ export const Icon: Story<IconProps> = (args: IconProps) => (
             UnknownSimple
         </li>
         <li className="tw-flex tw-flex-col tw-items-center">
-            <IconUnorderedListComponent {...args} />
-            UnorderedList
+            <IconListBulletsComponent {...args} />
+            ListBullets
         </li>
         <li className="tw-flex tw-flex-col tw-items-center">
             <IconUploadComponent {...args} />

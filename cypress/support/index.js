@@ -13,8 +13,5 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-// cypress-plugin-tab is used to test accessibility via tabbing: https://github.com/Bkucera/cypress-plugin-tab
-// Can be removed as soon as cypress supports cy.tab() functionality: https://github.com/cypress-io/cypress/issues/299
-import "cypress-plugin-tab";
-import "./commands";
+import "cypress-real-events/support";
 import "../../dist/index.css";

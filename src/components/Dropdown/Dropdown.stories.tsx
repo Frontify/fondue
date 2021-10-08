@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { MenuItemStyle } from "@components/Menu/MenuItem/MenuItem";
+import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
 import IconAudio from "@elements/Icon/Generated/IconAudio";
-import { IconSize } from "@elements/Icon/IconSize";
 import { Meta, Story } from "@storybook/react";
 import React, { useEffect, useState } from "react";
-import { Dropdown, DropdownProps } from "./Dropdown";
-import { MenuItemContentSize, MenuItemContentStyle } from "./MenuItemContent/MenuItemContent";
+import { Dropdown, DropdownProps, DropdownSize } from "./Dropdown";
 
 export default {
     title: "Components/Dropdown",
@@ -32,43 +32,45 @@ const DropdownTemplate: Story<DropdownProps> = (args: DropdownProps) => {
 
 export const SmallSelect = DropdownTemplate.bind({});
 SmallSelect.args = {
-    size: MenuItemContentSize.Small,
+    size: DropdownSize.Small,
     menuBlocks: [
         {
             id: "block1",
+            ariaLabel: "First section",
             menuItems: [
                 {
-                    id: "1",
+                    id: 1,
                     title: "Small icon",
                     size: MenuItemContentSize.Small,
-                    icon: <IconAudio size={IconSize.Size16} />,
+                    decorator: <IconAudio />,
                 },
                 {
-                    id: "2",
+                    id: 2,
                     title: "Small icon warning",
                     size: MenuItemContentSize.Small,
-                    icon: <IconAudio size={IconSize.Size16} />,
-                    style: MenuItemContentStyle.Danger,
+                    decorator: <IconAudio />,
+                    style: MenuItemStyle.Danger,
                 },
                 {
-                    id: "3",
+                    id: 3,
                     title: "Small icon disabled",
                     size: MenuItemContentSize.Small,
-                    icon: <IconAudio size={IconSize.Size16} />,
+                    decorator: <IconAudio />,
                     disabled: true,
                 },
                 {
-                    id: "4",
+                    id: 4,
                     title: "Small icon warning disabled",
                     size: MenuItemContentSize.Small,
-                    icon: <IconAudio size={IconSize.Size16} />,
-                    style: MenuItemContentStyle.Danger,
+                    decorator: <IconAudio />,
+                    style: MenuItemStyle.Danger,
                     disabled: true,
                 },
             ],
         },
         {
             id: "block2",
+            ariaLabel: "Second section",
             menuItems: [
                 {
                     id: "9",
@@ -79,7 +81,7 @@ SmallSelect.args = {
                     id: "10",
                     title: "Small warning",
                     size: MenuItemContentSize.Small,
-                    style: MenuItemContentStyle.Danger,
+                    style: MenuItemStyle.Danger,
                 },
                 {
                     id: "11",
@@ -90,7 +92,7 @@ SmallSelect.args = {
                 {
                     id: "12",
                     title: "Small warning disabled",
-                    style: MenuItemContentStyle.Danger,
+                    style: MenuItemStyle.Danger,
                     size: MenuItemContentSize.Small,
                     disabled: true,
                 },
@@ -102,31 +104,32 @@ SmallSelect.args = {
 export const LargeSelect = DropdownTemplate.bind({});
 
 LargeSelect.args = {
-    size: MenuItemContentSize.Large,
+    size: DropdownSize.Large,
     menuBlocks: [
         {
-            id: "block3",
+            id: "block1",
+            ariaLabel: "First section",
             menuItems: [
                 {
                     id: "5",
                     title: "Large icon",
                     subtitle: "Subtitle",
-                    icon: <IconAudio size={IconSize.Size16} />,
+                    decorator: <IconAudio />,
                     size: MenuItemContentSize.Large,
                 },
                 {
                     id: "6",
                     title: "Large icon warning",
                     subtitle: "Subtitle",
-                    icon: <IconAudio size={IconSize.Size16} />,
+                    decorator: <IconAudio />,
                     size: MenuItemContentSize.Large,
-                    style: MenuItemContentStyle.Danger,
+                    style: MenuItemStyle.Danger,
                 },
                 {
                     id: "7",
                     title: "Large icon disabled",
                     subtitle: "Subtitle",
-                    icon: <IconAudio size={IconSize.Size16} />,
+                    decorator: <IconAudio />,
                     size: MenuItemContentSize.Large,
                     disabled: true,
                 },
@@ -134,15 +137,16 @@ LargeSelect.args = {
                     id: "8",
                     title: "Large icon warning disabled",
                     subtitle: "Subtitle",
-                    icon: <IconAudio size={IconSize.Size16} />,
+                    decorator: <IconAudio />,
                     size: MenuItemContentSize.Large,
-                    style: MenuItemContentStyle.Danger,
+                    style: MenuItemStyle.Danger,
                     disabled: true,
                 },
             ],
         },
         {
-            id: "block4",
+            id: "block2",
+            ariaLabel: "Second section",
             menuItems: [
                 {
                     id: "13",
@@ -155,7 +159,7 @@ LargeSelect.args = {
                     title: "Large warning",
                     subtitle: "Subtitle",
                     size: MenuItemContentSize.Large,
-                    style: MenuItemContentStyle.Danger,
+                    style: MenuItemStyle.Danger,
                 },
                 {
                     id: "15",
@@ -169,7 +173,7 @@ LargeSelect.args = {
                     title: "Large warning disabled",
                     subtitle: "Subtitle",
                     size: MenuItemContentSize.Large,
-                    style: MenuItemContentStyle.Danger,
+                    style: MenuItemStyle.Danger,
                     disabled: true,
                 },
             ],

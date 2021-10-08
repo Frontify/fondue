@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from "react";
 import { Meta, Story } from "@storybook/react";
+import React, { useEffect, useState } from "react";
 import { Switch, SwitchProps, SwitchSize } from "./Switch";
 
 export default {
@@ -12,17 +12,26 @@ export default {
             options: Object.values(SwitchSize),
             control: { type: "radio" },
         },
+        label: {
+            placeholder: "Switch label",
+            type: { name: "string", required: false },
+            control: {
+                type: "text",
+            },
+        },
     },
     args: {
         on: true,
         disabled: false,
+        hug: false,
         name: "switch-name",
-        label: "Switch",
         size: SwitchSize.Small,
     },
 } as Meta<SwitchProps>;
 
-export const Template: Story<SwitchProps> = (args: SwitchProps) => {
+type Props = SwitchProps & { hug?: boolean };
+
+const Default: Story<Props> = (args: Props) => {
     const [on, setOn] = useState(args.on);
     const toggle = () => setOn(!on);
 
@@ -32,3 +41,21 @@ export const Template: Story<SwitchProps> = (args: SwitchProps) => {
 
     return <Switch {...args} onChange={toggle} on={on} />;
 };
+
+export const Small: Story<Props> = Default.bind({});
+Small.args = { size: SwitchSize.Small };
+
+export const Medium: Story<Props> = Default.bind({});
+Medium.args = { size: SwitchSize.Medium };
+
+export const Large: Story<Props> = Default.bind({});
+Large.args = { size: SwitchSize.Large };
+
+export const WithLabel: Story<Props> = Default.bind({});
+WithLabel.args = { label: "Switch label" };
+
+export const WithLabelAndTooltip: Story<Props> = Default.bind({});
+WithLabelAndTooltip.args = { label: "Switch label", tooltip: { content: "Switch tooltip" } };
+
+export const HugLabel: Story<Props> = Default.bind({});
+HugLabel.args = { hug: true, label: "Switch label" };

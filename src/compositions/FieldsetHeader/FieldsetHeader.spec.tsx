@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
 import { mount } from "@cypress/react";
+import React from "react";
 import { FieldsetHeader, FieldsetHeaderType } from "./FieldsetHeader";
 
 const HEADING = "bar";
+export const FIELDSET_HEADER_ID = "[data-test-id=fieldset-header]";
 
 describe("FieldsetHeader Composition", () => {
-    it("should no fire click handler if disabled", () => {
+    it("should not fire click handler if disabled", () => {
         const onClick = cy.stub().as("onClickStub");
 
         mount(
@@ -16,7 +17,7 @@ describe("FieldsetHeader Composition", () => {
             </FieldsetHeader>,
         );
 
-        cy.get("[data-test-id=fieldset-header]").as("FieldsetHeader");
+        cy.get(FIELDSET_HEADER_ID).as("FieldsetHeader");
 
         cy.get("@onClickStub").should("not.be.called");
     });

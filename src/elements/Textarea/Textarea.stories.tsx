@@ -2,11 +2,11 @@
 
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { Textarea, TextareaProps } from "./Textarea";
+import { Textarea as TextareaComponent, TextareaProps } from "./Textarea";
 
 export default {
     title: "Elements/Textarea",
-    component: Textarea,
+    component: TextareaComponent,
     args: {
         disabled: false,
         required: false,
@@ -20,4 +20,4 @@ export default {
     },
 } as Meta<TextareaProps>;
 
-export const Template: Story<TextareaProps> = (args: TextareaProps) => <Textarea {...args} />;
+export const Textarea: Story<TextareaProps> = (args: TextareaProps) => <TextareaComponent {...args} />;

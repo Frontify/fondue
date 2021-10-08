@@ -1,11 +1,7 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
-import reactJsx from "vite-react-jsx";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-ignore
-import peerDepsExternal from "rollup-plugin-peer-deps-external";
+import { PreRenderedAsset } from "rollup";
 
-export const plugins = [reactJsx()];
 export const alias = {
     "@elements": resolve(__dirname, "./src/elements"),
     "@components": resolve(__dirname, "./src/components"),
@@ -18,10 +14,28 @@ export default defineConfig({
     resolve: {
         alias,
     },
-    plugins,
     build: {
+        sourcemap: true,
+        minify: false,
+        lib: {
+            entry: resolve(__dirname, "src/index.ts"),
+            name: "Arcade",
+            fileName: (format: string): string => `index.${format}.js`,
+        },
         rollupOptions: {
-            plugins: [peerDepsExternal()],
+            external: ["react", "react-dom"],
+            output: {
+                globals: {
+                    react: "React",
+                    "react-dom": "ReactDOM",
+                },
+                assetFileNames: (assetInfo: PreRenderedAsset): string => {
+                    if (assetInfo.name == "style.css") {
+                        return "index.css";
+                    }
+                    return assetInfo.name ?? "unknown";
+                },
+            },
         },
     },
 });

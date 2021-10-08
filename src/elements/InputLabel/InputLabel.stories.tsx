@@ -1,20 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { InputLabel, InputLabelProps } from "./InputLabel";
+import React from "react";
+import { InputLabel as InputLabelComponent, InputLabelProps } from "./InputLabel";
 
 export default {
     title: "Elements/Input Label",
-    component: InputLabel,
+    component: InputLabelComponent,
     args: {
         children: "Input Label",
         disabled: false,
         required: false,
-    },
-    argTypes: {
-        tooltip: { type: "string" },
+        tooltip: {
+            content: "Lorem ipsum dolor sit amet.",
+        },
     },
 } as Meta;
 
-export const Template: Story<InputLabelProps> = (args: InputLabelProps) => <InputLabel {...args} />;
+export const InputLabel: Story<InputLabelProps> = (args: InputLabelProps) => <InputLabelComponent {...args} />;

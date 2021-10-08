@@ -2,7 +2,7 @@ name: Continuous Deployment
 
 on:
     release:
-        types: [created]
+        types: [published]
 
 jobs:
     tests:
@@ -12,17 +12,17 @@ jobs:
             - name: Checkout default branch
               uses: actions/checkout@v2
 
-            - name: Use Node.js ${{ secrets.NODE_VERSION }}
+            - name: Use Node.js 16
               uses: actions/setup-node@v2
               with:
-                  node-version: ${{ secrets.NODE_VERSION }}
+                  node-version: '16'
 
             - name: Cache dependencies
               id: npm_cache
               uses: actions/cache@v2
               with:
                   path: '**/node_modules'
-                  key: node${{ secrets.NODE_VERSION }}-${{ hashFiles('package-lock.json') }}
+                  key: node16-${{ hashFiles('package-lock.json') }}
 
             - name: Install dependencies
               if: steps.npm_cache.outputs.cache-hit != 'true'
@@ -50,10 +50,10 @@ jobs:
             - name: Checkout default branch
               uses: actions/checkout@v2
 
-            - name: Use Node.js ${{ secrets.NODE_VERSION }} (npm repository)
+            - name: Use Node.js 16 (npm repository)
               uses: actions/setup-node@v2
               with:
-                  node-version: ${{ secrets.NODE_VERSION }}
+                  node-version: '16'
                   registry-url: "https://registry.npmjs.org"
 
             - name: Cache dependencies
@@ -61,7 +61,7 @@ jobs:
               uses: actions/cache@v2
               with:
                   path: '**/node_modules'
-                  key: node${{ secrets.NODE_VERSION }}-${{ hashFiles('package-lock.json') }}
+                  key: node16-${{ hashFiles('package-lock.json') }}
 
             - name: Install dependencies
               if: steps.npm_cache.outputs.cache-hit != 'true'
@@ -75,11 +75,11 @@ jobs:
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-            - name: Use Node.js ${{ secrets.NODE_VERSION }} (GitHub repository)
+            - name: Use Node.js 16 (GitHub repository)
               uses: actions/setup-node@v2
               with:
                   registry-url: "https://npm.pkg.github.com"
-                  node-version: ${{ secrets.NODE_VERSION }}
+                  node-version: '16'
 
             - name: Publish to GitHub Packages
               run: npm publish --access public

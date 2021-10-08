@@ -1,8 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, cloneElement, MouseEvent, ReactElement, ReactNode } from "react";
 import { IconSize } from "@elements/Icon/IconSize";
+import { useButton } from "@react-aria/button";
+import { useFocusRing } from "@react-aria/focus";
+import { mergeProps } from "@react-aria/utils";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
+import React, { cloneElement, FC, ReactElement, ReactNode, useCallback, useRef } from "react";
 
 export enum ButtonStyle {
     Secondary = "Secondary",
@@ -19,8 +23,8 @@ export enum ButtonSize {
 
 const sizeClasses: Record<ButtonSize, string> = {
     [ButtonSize.Small]: "tw-px-3 tw-h-6 tw-text-xs",
-    [ButtonSize.Medium]: "tw-px-4 tw-h-8 tw-text-s",
-    [ButtonSize.Large]: "tw-px-6 tw-h-11 tw-text-m",
+    [ButtonSize.Medium]: "tw-px-4 tw-h-9 tw-text-s",
+    [ButtonSize.Large]: "tw-px-6 tw-h-12 tw-text-m",
 };
 
 const iconOnlySizeClasses: Record<ButtonSize, string> = {
@@ -30,17 +34,26 @@ const iconOnlySizeClasses: Record<ButtonSize, string> = {
 };
 
 const iconSpacing: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: "tw-mr-1",
-    [ButtonSize.Medium]: "tw-mr-1.5",
-    [ButtonSize.Large]: "tw-mr-2",
+    [ButtonSize.Small]: "tw--ml-0.5 tw-mr-1",
+    [ButtonSize.Medium]: "tw--ml-1 tw-mr-1.5",
+    [ButtonSize.Large]: "tw--ml-1 tw-mr-2",
 };
 
-const styles: Record<"solid" | "translucent", Record<ButtonStyle, string>> = {
+const styles: Record<"solid" | "translucent" | "inverted", Record<ButtonStyle, string>> = {
     solid: {
         [ButtonStyle.Primary]:
             "tw-text-white tw-bg-black-90 hover:tw-bg-black-100 active:tw-bg-black-superdark dark:tw-text-black dark:tw-bg-white dark:hover:tw-bg-black-10 dark:active:tw-bg-black-20",
         [ButtonStyle.Secondary]:
             "tw-text-black tw-bg-black-10 hover:tw-bg-black-20 active:tw-bg-black-30 dark:tw-text-white dark:tw-bg-black-80 dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark",
+        [ButtonStyle.Danger]: "tw-text-black tw-bg-red-50 hover:tw-bg-red-65 active:tw-bg-red-70",
+        [ButtonStyle.Positive]:
+            "tw-text-black tw-bg-green-60 hover:tw-bg-green-70 active:tw-bg-green-75 dark:active:tw-bg-green-90",
+    },
+    inverted: {
+        [ButtonStyle.Primary]:
+            "tw-text-black tw-bg-white hover:tw-bg-black-10 active:tw-bg-black-20 dark:tw-text-white dark:tw-bg-black-90 dark:hover:tw-bg-black-100 dark:active:tw-bg-black-superdark",
+        [ButtonStyle.Secondary]:
+            "tw-text-white tw-bg-black-80 hover:tw-bg-black-95 active:tw-bg-black-superdark dark:tw-text-black dark:tw-bg-black-10 dark:hover:tw-bg-black-20 dark:active:tw-bg-black-30",
         [ButtonStyle.Danger]: "tw-text-black tw-bg-red-50 hover:tw-bg-red-65 active:tw-bg-red-70",
         [ButtonStyle.Positive]:
             "tw-text-black tw-bg-green-60 hover:tw-bg-green-70 active:tw-bg-green-75 dark:active:tw-bg-green-90",
@@ -66,25 +79,40 @@ export type ButtonProps = {
     style?: ButtonStyle;
     size?: ButtonSize;
     solid?: boolean;
+    inverted?: boolean;
     disabled?: boolean;
     icon?: ReactElement;
     children?: string;
-    onClick?: (event: MouseEvent) => void;
+    onClick?: () => void;
 };
 
 export const Button: FC<ButtonProps> = ({
     style = ButtonStyle.Primary,
     size = ButtonSize.Medium,
     solid = true,
+    inverted = false,
     disabled = false,
     icon,
     children,
     onClick,
 }) => {
     const wrap = (child: ReactNode) => (children ? <span className={iconSpacing[size]}>{child}</span> : child);
+    const { isFocusVisible, focusProps } = useFocusRing();
+    const ref = useRef<HTMLButtonElement | null>(null);
+    const { buttonProps } = useButton({ onPress: () => onClick && onClick(), isDisabled: disabled }, ref);
+
+    const getButtonTheme = useCallback(() => {
+        if (inverted) {
+            return "inverted";
+        }
+
+        return solid ? "solid" : "translucent";
+    }, [solid, inverted]);
 
     return (
         <button
+            {...mergeProps(buttonProps, focusProps)}
+            ref={ref}
             className={merge([
                 "tw-outline-none tw-relative tw-flex tw-items-center tw-justify-center tw-border-0 tw-rounded tw-cursor-pointer tw-font-sans tw-transition-colors",
                 icon && !children ? iconOnlySizeClasses[size] : sizeClasses[size],
@@ -94,14 +122,10 @@ export const Button: FC<ButtonProps> = ({
                               "tw-not-allowed tw-pointer-events-none tw-text-black-40 dark:tw-text-black-60",
                               solid ? "tw-bg-black-5 dark:tw-bg-black-90" : "tw-bg-transparent",
                           ]
-                        : [
-                              "focus:tw-outline-none focus:tw-ring-4 focus:tw-border-violet-70",
-                              styles[solid ? "solid" : "translucent"][style],
-                          ],
+                        : [isFocusVisible && FOCUS_STYLE, styles[getButtonTheme()][style]],
                 ),
             ])}
             disabled={disabled}
-            onClick={onClick}
             data-test-id="button"
         >
             {icon && wrap(cloneElement(icon, { size: iconSizes[size] }))}

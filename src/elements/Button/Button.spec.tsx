@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
 import { mount } from "@cypress/react";
-import { Button, ButtonSize, ButtonStyle } from "./Button";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
+import React from "react";
+import { Button, ButtonSize, ButtonStyle } from "./Button";
 
 const BUTTON_TEXT = "Frontify";
-const BUTTON_ID = "[data-test-id=button]";
+export const BUTTON_ID = "[data-test-id=button]";
 
 const styles = Object.values(ButtonStyle);
 const sizes = Object.values(ButtonSize);
@@ -19,6 +19,19 @@ describe("Button component", () => {
                 it(`renders in ${style} ${size} and ${solid ? "solid" : "translucent"} with only text.`, () => {
                     mount(
                         <Button style={style} size={size} solid={solid}>
+                            {BUTTON_TEXT}
+                        </Button>,
+                    );
+
+                    cy.get(BUTTON_ID).should("be.visible");
+                    cy.get(BUTTON_ID).contains(BUTTON_TEXT);
+                });
+
+                it(`renders in ${style} ${size} and ${
+                    solid ? "solid" : "translucent"
+                } and inverted with only text.`, () => {
+                    mount(
+                        <Button style={style} size={size} solid={solid} inverted>
                             {BUTTON_TEXT}
                         </Button>,
                     );

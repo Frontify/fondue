@@ -25,7 +25,7 @@
             "@hooks/*": ["./src/hooks/*"]
         },
         "typeRoots": ["./types"],
-        "types": ["cypress", "vite/client"]
+        "types": ["cypress", "cypress-real-events", "vite/client"]
     },
     "include": ["types", "src/**/*", "cypress/**/*", ".storybook/**/*", "scripts/**/*"],
     "exclude": ["node_modules", "dist"]

@@ -1,3 +1,5 @@
+const plugin = require("tailwindcss/plugin");
+
 module.exports = {
     mode: "jit",
     purge: ["./src/**/*.{js,ts,tsx}"],
@@ -12,7 +14,7 @@ module.exports = {
     theme: {
         extend: {
             outline: {
-                violet: "2px solid #825fff",
+                violet: "1px solid #825fff",
             },
         },
         boxShadow: {
@@ -21,6 +23,9 @@ module.exports = {
             "mid-top": "0 -10px 10px -5px rgba(45, 50, 50, 0.1)",
             "mid-bottom": "0 10px 10px -5px rgba(45, 50, 50, 0.1)",
             none: "none",
+        },
+        ringColor: {
+            blue: "#5e9ed6",
         },
         colors: {
             transparent: "transparent",
@@ -46,12 +51,6 @@ module.exports = {
                 5: "#f7f7f7",
                 0: "#fafafa",
                 warm: "#e6dcdc",
-
-                // Translucents
-                "opacity-70": "rgba(45, 50, 50, 0.7)",
-                "opacity-40": "rgba(45, 50, 50, 0.4)",
-                "opacity-25": "rgba(45, 50, 50, 0.25)",
-                "opacity-10": "rgba(45, 50, 50, 0.1)",
             },
             violet: {
                 // Solids
@@ -61,12 +60,6 @@ module.exports = {
                 50: "#9088ff",
                 40: "#c8d1ed",
                 20: "#e3e8f6",
-
-                // Translucents
-                "opacity-80": "rgba(110, 95, 255, 0.8)",
-                "opacity-40": "rgba(60, 100, 237, 0.4)",
-                "opacity-20": "rgba(40, 80, 220, 0.2)",
-                "opacity-10": "rgba(50, 85, 200, 0.1)",
             },
             green: {
                 90: "#006452",
@@ -124,4 +117,21 @@ module.exports = {
             xxxl: ["3rem", "3.5rem"],
         },
     },
+    plugins: [
+        plugin(function ({ addBase }) {
+            addBase({
+                "*": { boxSizing: "content-box" },
+                "::before": { boxSizing: "content-box" },
+                "::after": { boxSizing: "content-box" },
+
+                '[class^="tw-"]': { boxSizing: "border-box" },
+                '[class^="tw-"]::before': { boxSizing: "border-box" },
+                '[class^="tw-"]::after': { boxSizing: "border-box" },
+
+                '[class*=" tw-"]': { boxSizing: "border-box" },
+                '[class*=" tw-"]::before': { boxSizing: "border-box" },
+                '[class*=" tw-"]::after': { boxSizing: "border-box" },
+            });
+        }),
+    ],
 };

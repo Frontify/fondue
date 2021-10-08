@@ -8,6 +8,9 @@ import IconIcons from "@elements/Icon/Generated/IconIcons";
 export default {
     title: "Elements/Button",
     component: Button,
+    args: {
+        inverted: false,
+    },
     argTypes: {
         size: {
             options: [ButtonSize.Small, ButtonSize.Medium, ButtonSize.Large],
@@ -31,11 +34,9 @@ Default.args = {
     solid: true,
     style: ButtonStyle.Primary,
 };
-
 Default.storyName = "Text Label Only";
 
 export const withIcon = ButtonTemplate.bind({});
-
 withIcon.args = {
     disabled: false,
     size: ButtonSize.Medium,
@@ -43,11 +44,9 @@ withIcon.args = {
     solid: true,
     icon: <IconIcons />,
 };
-
 withIcon.storyName = "Icon Only";
 
 export const withIconAndLabel = ButtonTemplate.bind({});
-
 withIconAndLabel.args = {
     disabled: false,
     size: ButtonSize.Medium,
@@ -56,5 +55,4 @@ withIconAndLabel.args = {
     icon: <IconIcons />,
     children: "Button Text",
 };
-
 withIconAndLabel.storyName = "Icon and Text Label";

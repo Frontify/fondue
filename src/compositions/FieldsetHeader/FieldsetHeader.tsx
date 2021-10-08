@@ -1,14 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, FC, isValidElement, ReactNode } from "react";
 import IconAddSimple from "@elements/Icon/Generated/IconAddSimple";
 import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
-import IconCaretUp from "@elements/Icon/Generated/IconCaretUp";
 import IconMinus from "@elements/Icon/Generated/IconMinus";
 import { IconSize } from "@elements/Icon/IconSize";
 import { Switch, SwitchSize } from "@elements/Switch/Switch";
-import generateRandomId from "@utilities/generateRandomId";
+import { useMemoizedId } from "@hooks/useMemoizedId";
 import { merge } from "@utilities/merge";
+import React, { cloneElement, FC, isValidElement, ReactNode } from "react";
 
 export enum FieldsetHeaderSize {
     Small = "Small",
@@ -58,9 +57,31 @@ const renderType = (
                 />
             );
         case FieldsetHeaderType.Accordion:
-            return active ? <IconCaretDown {...props} /> : <IconCaretUp {...props} />;
+            return (
+                <div
+                    className={merge([
+                        "tw-transition-transform",
+                        active && "tw-rotate-180 tw-duration-300",
+                        disabled && !active && "tw-text-black-40",
+                        !disabled && active && "tw-text-black",
+                        !disabled && !active && "tw-text-black-80",
+                    ])}
+                >
+                    <IconCaretDown {...props} />
+                </div>
+            );
         case FieldsetHeaderType.AddRemove:
-            return active ? <IconMinus {...props} /> : <IconAddSimple {...props} />;
+            return (
+                <div
+                    className={merge([
+                        active && disabled && "tw-text-black-40",
+                        active && !disabled && "tw-text-black",
+                        !active && !disabled && "tw-text-black-80",
+                    ])}
+                >
+                    {active ? <IconMinus {...props} /> : <IconAddSimple {...props} />}
+                </div>
+            );
     }
 
     return null;
@@ -78,28 +99,33 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
     as: Heading = "label",
     tabIndex = -1,
 }) => {
-    const id = generateRandomId();
+    const id = useMemoizedId();
+    const clickOnNotDisabled = () => !disabled && onClick && onClick();
 
     return (
         <header
             data-test-id="fieldset-header"
             role={onClick ? "button" : undefined}
-            onClick={onClick}
-            onKeyPress={onClick}
+            onClick={clickOnNotDisabled}
+            onKeyPress={clickOnNotDisabled}
             className={merge([
                 "tw-flex tw-items-center tw-gap-x-1.5 tw-w-full tw-flex-row",
                 disabled ? "tw-text-black-40" : "tw-text-black dark:tw-text-white",
-                onClick ? "hover:tw-cursor-pointer" : "tw-pointer-events-none",
+                !disabled && onClick ? "hover:tw-cursor-pointer" : "tw-pointer-events-none",
             ])}
             tabIndex={tabIndex}
         >
-            {isValidElement(decorator) &&
-                cloneElement(decorator, {
-                    size: size === FieldsetHeaderSize.Large ? IconSize.Size20 : IconSize.Size16,
-                })}
+            {isValidElement(decorator) && (
+                <span className="tw-flex-shrink-0">
+                    {cloneElement(decorator, {
+                        size: size === FieldsetHeaderSize.Large ? IconSize.Size20 : IconSize.Size16,
+                    })}
+                </span>
+            )}
             <Heading
                 id={id}
                 className={merge([
+                    "tw-text-left",
                     size === FieldsetHeaderSize.Large ? "tw-text-l" : "tw-text-m",
                     bold ? "tw-font-bold" : "tw-font-normal",
                     onClick && "hover:tw-cursor-pointer",
@@ -108,7 +134,7 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
                 {children}
             </Heading>
             {type !== FieldsetHeaderType.Default && (
-                <span className="tw-ml-auto">{renderType(type, id, size, active, disabled)}</span>
+                <span className="tw-ml-auto tw-flex-shrink-0">{renderType(type, id, size, active, disabled)}</span>
             )}
         </header>
     );
