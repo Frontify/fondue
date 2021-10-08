@@ -42,7 +42,6 @@ export const toColor = (current: Color, { name, ...diff }: DiffColor): Color => 
     const [r, g, b] = [rgb.r, rgb.g, rgb.b].map(getValidRgbColorValue);
     const rgba = { r, g, b, a: alpha };
     const hex = toState(rgba).hex;
-    const hexa = alpha < 1 ? hex + Math.round(alpha * 100) : hex;
 
-    return { name, rgba, alpha, hex, hexa };
+    return { name, rgba, alpha, hex };
 };

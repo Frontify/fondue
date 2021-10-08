@@ -67,7 +67,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({ currentColor, palettes, onSe
 };
 
 const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format }) => {
-    const { hex, hexa, rgba, name, alpha } = color;
+    const { hex, rgba, name, alpha } = color;
 
     /**
      * Return contrast color for the label.
@@ -75,9 +75,8 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
      */
 
     const labelColor = useMemo(() => {
-        const value = hexa ? hexa : hex;
-        return alpha && alpha < 0.3 ? "#000" : getContrastingColor(value);
-    }, [hex, hexa, rgba, alpha]);
+        return alpha && alpha < 0.3 ? "#000" : getContrastingColor(hex);
+    }, [hex, rgba, alpha]);
 
     /**
      * Return value for background color. Prefer rgba, because 8-digit hex isn't working correctly.
@@ -88,7 +87,7 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
             return `rgba(${Object.values(rgba).join(", ")})`;
         }
         return hex;
-    }, [hex, hexa, rgba, alpha]);
+    }, [hex, rgba, alpha]);
 
     /**
      * Return color value to display, based on the selected color format (hex or rgba).
@@ -104,7 +103,7 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
         if (format === ColorFormat.Rgba) {
             return backgroundColor;
         }
-    }, [hex, hexa, rgba, alpha, format]);
+    }, [hex, rgba, alpha, format]);
 
     return (
         <div
