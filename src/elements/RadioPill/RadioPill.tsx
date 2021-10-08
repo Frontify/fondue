@@ -19,10 +19,10 @@ export const RadioPill: FC<RadioPillProps> = ({ label, active, icon }) => {
         <button
             data-test-id="radio-pill"
             className={merge([
-                "tw-text-xs tw-px-2 tw-py-1 tw-inline-flex tw-items-center",
+                "tw-inline-flex tw-items-center tw-rounded-full tw-text-xs tw-px-2 tw-py-1",
                 active
-                    ? "dark:tw-bg-black-5 dark:tw-text-black-100 tw-bg-black-100 tw-text-white tw-rounded-full"
-                    : "tw-text-black-80 dark:tw-bg-black-100 dark:tw-text-black-40",
+                    ? "dark:tw-bg-black-5 dark:tw-text-black-100 tw-bg-black-100 tw-text-white"
+                    : "tw-text-black-80 dark:tw-text-black-40",
                 isFocusVisible && FOCUS_STYLE,
             ])}
             {...focusProps}
