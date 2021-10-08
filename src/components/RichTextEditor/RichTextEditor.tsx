@@ -31,7 +31,6 @@ import { decorators } from "./decorators";
 import { getSelectionEntity } from "./utilities/getSelectionEntity";
 import useClickOutside from "@hooks/useClickOutside";
 import "draft-js/dist/Draft.css";
-import "./popperArrow.css";
 import { merge } from "@utilities/merge";
 
 export type RichTextEditorProps = {
@@ -235,7 +234,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
             <div
                 ref={inlineToolbarRef}
                 className={merge([
-                    "arcade-toolbar tw-z-10 tw-drop-shadow-md",
+                    "tw-popper-container tw-z-10 tw-drop-shadow-md",
                     !showInlineToolbar && "tw-invisible tw-pointer-events-none",
                 ])}
                 style={styles.popper}
@@ -283,7 +282,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 <div
                     ref={inlineToolbarArrowRef}
                     style={styles.arrow}
-                    className="arcade-richtexteditor-arrow tw-absolute tw-w-2 tw-h-2 tw-pointer-events-none before:tw-absolute before:tw--z-1 before:tw-w-2 before:tw-h-2 before:tw-bg-white before:tw-rotate-45"
+                    className="tw-popper-arrow tw-absolute tw-w-2 tw-h-2 tw-pointer-events-none before:tw-absolute before:tw--z-1 before:tw-w-2 before:tw-h-2 before:tw-bg-white before:tw-rotate-45"
                 ></div>
             </div>
         </div>
