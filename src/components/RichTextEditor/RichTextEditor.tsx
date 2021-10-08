@@ -81,9 +81,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const [savedSelection, setSavedSelection] = useState<SelectionState | null>(null);
 
     useEffect(() => {
-        if (!readonly && showInlineToolbar) {
-            setShowInlineToolbar(false);
-        }
+        setShowInlineToolbar(!readonly && showInlineToolbar);
     }, [readonly]);
 
     const {
