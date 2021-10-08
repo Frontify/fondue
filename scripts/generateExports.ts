@@ -19,7 +19,7 @@ import IconTemplate from "../src/elements/Icon/IconTemplate";
     );
 
     const components = componentsFilePath
-        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a, b) => a.path.localeCompare(b.path))
         .map((filePath) => {
             const filename = filePath.name;
             return {
@@ -69,7 +69,7 @@ import IconTemplate from "../src/elements/Icon/IconTemplate";
     const iconComponentsFilePath = await fastGlob(["src/elements/Icon/Generated/**/*.tsx"], { objectMode: true });
 
     const iconComponents = iconComponentsFilePath
-        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a, b) => a.path.localeCompare(b.path))
         .map((filePath) => {
             const filename = filePath.name;
             return {
