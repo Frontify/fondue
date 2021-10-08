@@ -96,7 +96,10 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
 
     const displayValue = useMemo(() => {
         if (format === ColorFormat.Hex) {
-            return hexa || hex;
+            if (alpha && alpha < 1) {
+                return `${hex} ${Math.round(alpha * 100)}%`;
+            }
+            return hex;
         }
         if (format === ColorFormat.Rgba) {
             return backgroundColor;
