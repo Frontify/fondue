@@ -130,6 +130,64 @@ const rows: Row[] = [
             },
         },
     },
+    {
+        key: "row-4",
+        cells: {
+            user: {
+                sortId: "david",
+                value: <User name="David" />,
+            },
+            activeSessions: {
+                sortId: 42,
+                value: <Badge>42</Badge>,
+            },
+            lastActive: {
+                sortId: 6,
+                value: "6 days ago",
+            },
+            regions: {
+                sortId: "europe",
+                value: <Badge>Europe</Badge>,
+            },
+            countries: {
+                sortId: "germany",
+                value: (
+                    <div className="tw-flex tw-gap-x-2">
+                        <Badge>Germany</Badge>
+                    </div>
+                ),
+            },
+        },
+    },
+    {
+        key: "row-5",
+        cells: {
+            user: {
+                sortId: "emily",
+                value: <User name="Emily" />,
+            },
+            activeSessions: {
+                sortId: 67,
+                value: <Badge>67</Badge>,
+            },
+            lastActive: {
+                sortId: 10,
+                value: "10 days ago",
+            },
+            regions: {
+                sortId: "asia",
+                value: <Badge>Asia</Badge>,
+            },
+            countries: {
+                sortId: "thailand",
+                value: (
+                    <div className="tw-flex tw-gap-x-2">
+                        <Badge>Thailand</Badge>
+                    </div>
+                ),
+            },
+        },
+    },
 ];
 
 const Template: Story<TableProps> = (args) => {
