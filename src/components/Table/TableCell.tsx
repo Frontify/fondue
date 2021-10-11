@@ -37,7 +37,10 @@ export const TableCell: FC<TableCellProps> = ({ cell, state, type = TableCellTyp
                     checked ? "tw-border-violet-60" : "tw-border-transparent",
                 ])}
             >
-                <Checkbox state={checked ? CheckboxState.Checked : CheckboxState.Unchecked} />
+                <Checkbox
+                    ariaLabel={cell["aria-label"] || cell.key}
+                    state={checked ? CheckboxState.Checked : CheckboxState.Unchecked}
+                />
             </td>
         );
     }

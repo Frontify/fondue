@@ -4,7 +4,7 @@ import { Badge } from "@elements/Badge/Badge";
 import IconEmojiHappy from "@elements/Icon/Generated/IconEmojiHappy";
 import { IconSize } from "@elements/Icon/IconSize";
 import { Meta, Story } from "@storybook/react";
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import { Column, Row, SelectionMode, Table, TableProps } from "./Table";
 
 export default {
@@ -21,11 +21,11 @@ export default {
     },
 } as Meta<TableProps>;
 
-const User = () => (
+const User: FC<{ name: string }> = ({ name }) => (
     <div className="tw-flex tw-gap-x-2 tw-items-center">
         <IconEmojiHappy size={IconSize.Size32} />
         <div>
-            <p>Michael Bolton</p>
+            <p>{name}</p>
             <p>mb@gmail.com</p>
         </div>
     </div>
@@ -41,43 +41,94 @@ const columns: Column[] = [
 
 const rows: Row[] = [
     {
-        id: 1,
-        user: <User />,
-        activeSessions: <Badge>112</Badge>,
-        lastActive: "12 days ago",
-        regions: <Badge>Europe</Badge>,
-        countries: (
-            <div className="tw-flex tw-gap-x-2">
-                <Badge>Switzerland</Badge>
-                <Badge>France</Badge>
-            </div>
-        ),
+        key: "row-1",
+        cells: {
+            user: {
+                sortId: "anna",
+                value: <User name="Anna" />,
+            },
+            activeSessions: {
+                sortId: 108,
+                value: <Badge>108</Badge>,
+            },
+            lastActive: {
+                sortId: 12,
+                value: "12 days ago",
+            },
+            regions: {
+                sortId: "europe",
+                value: <Badge>Europe</Badge>,
+            },
+            countries: {
+                sortId: "france-spain",
+                value: (
+                    <div className="tw-flex tw-gap-x-2">
+                        <Badge>France</Badge>
+                        <Badge>Spain</Badge>
+                    </div>
+                ),
+            },
+        },
     },
     {
-        id: "2",
-        user: <User />,
-        activeSessions: <Badge>112</Badge>,
-        lastActive: "12 days ago",
-        regions: <Badge>Europe</Badge>,
-        countries: (
-            <div className="tw-flex tw-gap-x-2">
-                <Badge>Switzerland</Badge>
-                <Badge>France</Badge>
-            </div>
-        ),
+        key: "row-2",
+        cells: {
+            user: {
+                sortId: "bobby",
+                value: <User name="Bobby" />,
+            },
+            activeSessions: {
+                sortId: 125,
+                value: <Badge>125</Badge>,
+            },
+            lastActive: {
+                sortId: 14,
+                value: "14 days ago",
+            },
+            regions: {
+                sortId: "south-america",
+                value: <Badge>South America</Badge>,
+            },
+            countries: {
+                sortId: "brazil-chile",
+                value: (
+                    <div className="tw-flex tw-gap-x-2">
+                        <Badge>Brazil</Badge>
+                        <Badge>Chile</Badge>
+                    </div>
+                ),
+            },
+        },
     },
     {
-        id: 3,
-        user: <User />,
-        activeSessions: <Badge>112</Badge>,
-        lastActive: "12 days ago",
-        regions: <Badge>Europe</Badge>,
-        countries: (
-            <div className="tw-flex tw-flex-wrap tw-gap-x-2">
-                <Badge>Switzerland</Badge>
-                <Badge>France</Badge>
-            </div>
-        ),
+        key: "row-3",
+        cells: {
+            user: {
+                sortId: "chris",
+                value: <User name="Chris" />,
+            },
+            activeSessions: {
+                sortId: 112,
+                value: <Badge>112</Badge>,
+            },
+            lastActive: {
+                sortId: 8,
+                value: "8 days ago",
+            },
+            regions: {
+                sortId: "africa",
+                value: <Badge>Africa</Badge>,
+            },
+            countries: {
+                sortId: "marocco-egypt",
+                value: (
+                    <div className="tw-flex tw-gap-x-2">
+                        <Badge>Marocco</Badge>
+                        <Badge>Egypt</Badge>
+                    </div>
+                ),
+            },
+        },
     },
 ];
 

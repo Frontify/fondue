@@ -18,6 +18,11 @@ export * from "./components/Menu/MenuItem/MenuItem";
 export * from "./components/Menu/MenuItem/MenuItemContent";
 export * from "./components/Menu/SelectMenu";
 export * from "./components/Slider/Slider";
+export * from "./components/Table/Table";
+export * from "./components/Table/TableCell";
+export * from "./components/Table/TableColumnHeader";
+export * from "./components/Table/TableHeaderRow";
+export * from "./components/Table/TableRow";
 export * from "./components/Tooltip/BrightHeader";
 export * from "./components/Tooltip/Tooltip";
 export * from "./components/Tooltip/TooltipArrow";
@@ -67,6 +72,7 @@ import IconArrowDown from "./elements/Icon/Generated/IconArrowDown";
 import IconArrowLeft from "./elements/Icon/Generated/IconArrowLeft";
 import IconArrowRight from "./elements/Icon/Generated/IconArrowRight";
 import IconArrowUp from "./elements/Icon/Generated/IconArrowUp";
+import IconArrowUpAndDown from "./elements/Icon/Generated/IconArrowUpAndDown";
 import IconAssets from "./elements/Icon/Generated/IconAssets";
 import IconAttachment from "./elements/Icon/Generated/IconAttachment";
 import IconAttentionFilled from "./elements/Icon/Generated/IconAttentionFilled";
@@ -311,6 +317,7 @@ export {
     IconArrowLeft,
     IconArrowRight,
     IconArrowUp,
+    IconArrowUpAndDown,
     IconAssets,
     IconAttachment,
     IconAttentionFilled,
