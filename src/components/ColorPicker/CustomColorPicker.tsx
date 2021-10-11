@@ -26,9 +26,13 @@ const ColorPointer: FC<{ offset?: boolean }> = ({ offset = true }) => (
     />
 );
 
-export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ currentColor, onSelect }) => {
+export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
+    currentColor,
+    currentFormat,
+    setFormat,
+    onSelect,
+}) => {
     const colorFormats = Object.values(ColorFormat).map((id) => ({ id, title: id.toLocaleUpperCase() }));
-    const [colorFormat, setColorFormat] = useState(ColorFormat.Hex);
     const [{ hsl, hsv, rgb, hex }, setColor] = useState(transformColor(currentColor));
 
     useEffect(() => {
@@ -88,11 +92,11 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                 <div className="tw-min-w-[100px]">
                     <Dropdown
                         menuBlocks={[{ id: "color-picker-format-dropdown-block", menuItems: colorFormats }]}
-                        activeItemId={colorFormat}
-                        onChange={(id) => id && setColorFormat(id as ColorFormat)}
+                        activeItemId={currentFormat}
+                        onChange={(id) => id && setFormat && setFormat(id as ColorFormat)}
                     />
                 </div>
-                {colorFormat === ColorFormat.Hex ? (
+                {currentFormat === ColorFormat.Hex ? (
                     <div className="tw-flex-1">
                         <ColorInput
                             value={hexInput}
