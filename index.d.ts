@@ -226,7 +226,6 @@ declare type Color = {
         a: number;
     };
     hex: string;
-    hexa?: string;
     alpha?: number;
     name?: string;
 };
