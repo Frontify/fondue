@@ -3,7 +3,7 @@
 import { BadgeProps } from "@elements/Badge/Badge";
 import { IconProps } from "@elements/Icon/IconProps";
 import { useBreadcrumbItem, useBreadcrumbs } from "@react-aria/breadcrumbs";
-import React, { FC, ReactElement, useRef } from "react";
+import React, { FC, MouseEvent, ReactElement, useRef } from "react";
 import { BreadcrumbItem } from "./BreadcrumbItem";
 import { CurrentBreadcrumbItem } from "./CurrentBreadcrumbItem";
 
@@ -18,7 +18,7 @@ const mapBreadcrumbsToAriaProps = (items: Breadcrumb[]) => ({
 export type Breadcrumb = {
     label: string;
     link?: string;
-    onClick?: () => void;
+    onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     decorator?: ReactElement<IconProps>;
     bold?: boolean;
     badges?: BadgeProps[];

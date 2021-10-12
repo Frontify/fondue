@@ -4,12 +4,12 @@ import { IconSize } from "@elements/Icon/IconSize";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { cloneElement, FC } from "react";
+import React, { cloneElement, FC, MouseEvent } from "react";
 
 export type RadioPillProps = {
     label: string;
     active: boolean;
-    onClick?: () => void;
+    onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     icon?: React.ReactElement;
 };
 

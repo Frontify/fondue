@@ -26,6 +26,7 @@ import React, {
     FC,
     forwardRef,
     HTMLAttributes,
+    MouseEvent,
     PropsWithChildren,
     ReactNode,
     RefObject,
@@ -39,7 +40,7 @@ export const FLYOUT_DIVIDER_HEIGHT = "10px";
 export type FlyoutProps = PropsWithChildren<{
     trigger: ReactNode;
     onClose?: () => void;
-    onClick?: () => void;
+    onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     title?: string;
     decorator?: ReactNode;
     badges?: BadgeProps[];
