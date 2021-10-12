@@ -71,7 +71,7 @@ export const SelectList: FC<SelectListProps> = (props) => {
                 data-test-id="dropdown"
                 className={merge([
                     "tw-group tw-relative tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors",
-                    "tw-px-[19px] tw-py-[11px] tw-min-h-[36px]",
+                    "tw-px-[19px] tw-py-[11px] tw-min-h-[50px]",
                     disabled
                         ? "tw-border-black-5 tw-bg-black-5 tw-pointer-events-none"
                         : merge([
