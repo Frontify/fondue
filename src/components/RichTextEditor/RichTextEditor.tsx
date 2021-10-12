@@ -1,4 +1,3 @@
-//TODO: accessibility for the rich text + toolbar
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { FC, useRef, useState, KeyboardEvent, useEffect } from "react";
@@ -60,6 +59,14 @@ const styleMap = {
     },
     STRIKETHROUGH: {
         textDecoration: "line-through",
+    },
+    SUBSCRIPT: {
+        verticalAlign: "sub",
+        fontSize: "0.83em",
+    },
+    SUPERSCRIPT: {
+        verticalAlign: "super",
+        fontSize: "0.83em",
     },
 };
 
