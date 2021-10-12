@@ -51,9 +51,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                         hsl={hsl}
                         hsv={hsv}
                         pointer={() => <ColorPointer />}
-                        onChange={debounce((color) => {
-                            onSelect(toColor(currentColor, { hex: toState(color).hex }));
-                        })}
+                        onChange={debounce((color) => onSelect(toColor(currentColor, { hex: toState(color).hex })))}
                     />
                 </div>
                 <div className="tw-relative tw-w-6 tw-overflow-hidden tw-rounded">
