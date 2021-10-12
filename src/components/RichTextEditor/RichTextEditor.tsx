@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { FC, useRef, useState, KeyboardEvent, useEffect } from "react";
+import "draft-js/dist/Draft.css";
 import {
     Editor,
     DraftHandleValue,
@@ -10,27 +11,29 @@ import {
     getDefaultKeyBinding,
     SelectionState,
 } from "draft-js";
+import {
+    BlockquoteButton,
+    BoldButton,
+    CodeButton,
+    H3Button,
+    H4Button,
+    InlineToolbar,
+    ItalicButton,
+    LinkButton,
+    LinkChooser,
+    OrderedListButton,
+    StrikethroughButton,
+    SubButton,
+    SupButton,
+    UnderlineButton,
+    UnorderedListButton,
+} from "./components";
 import { usePopper } from "react-popper";
-import { InlineToolbar, InlineToolbarChildrenProps } from "./components/InlineToolbar";
-import { BoldButton } from "./components/BoldButton";
-import { H3Button } from "./components/H3Button";
-import { H4Button } from "./components/H4Button";
-import { ItalicButton } from "./components/ItalicButton";
-import { UnderlineButton } from "./components/UnderlineButton";
-import { StrikethroughButton } from "./components/StrikethroughButton";
-import { CodeButton } from "./components/CodeButton";
-import { SubButton } from "./components/SubButton";
-import { SupButton } from "./components/SupButton";
-import { OrderedListButton } from "./components/OrderedListButton";
-import { UnorderedListButton } from "./components/UnorderedListButton";
-import { BlockquoteButton } from "./components/BlockquoteButton";
-import { LinkButton } from "./components/LinkButton";
-import { LinkChooser } from "./components/LinkChooser";
 import { decorators } from "./decorators";
 import { getSelectionEntity } from "./utilities/getSelectionEntity";
 import useClickOutside from "@hooks/useClickOutside";
-import "draft-js/dist/Draft.css";
 import { merge } from "@utilities/merge";
+import { styleMap } from "./styleMap";
 
 export type RichTextEditorProps = {
     placeholder?: string;
@@ -46,29 +49,6 @@ export enum RichTextEditorArea {
     ButtonPreview,
     ButtonChooser,
 }
-
-const styleMap = {
-    CODE: {
-        borderRadius: "var(--f-border-4x)",
-        fontFamily: "var(--f-font-mono)",
-        fontSize: "85%",
-        background: "var(--f-black-05)",
-        color: "var(--f-violet-90)",
-        margin: "0",
-        padding: "0 0.2em",
-    },
-    STRIKETHROUGH: {
-        textDecoration: "line-through",
-    },
-    SUBSCRIPT: {
-        verticalAlign: "sub",
-        fontSize: "0.83em",
-    },
-    SUPERSCRIPT: {
-        verticalAlign: "super",
-        fontSize: "0.83em",
-    },
-};
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
     value,
@@ -115,12 +95,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     });
 
     useClickOutside(inlineToolbarRef.current, () => {
-        if (showInlineToolbar) {
-            setSavedSelection(null);
+        setSavedSelection(null);
 
-            if (editorArea !== RichTextEditorArea.Normal) {
-                setEditorArea(RichTextEditorArea.Normal);
-            }
+        if (editorArea !== RichTextEditorArea.Normal) {
+            setEditorArea(RichTextEditorArea.Normal);
         }
     });
 
@@ -128,7 +106,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         const currentContent = editorState.getCurrentContent();
         const newContent = value.getCurrentContent();
 
-        // New character added to the editor
+        // Is there a change in the content of the Rich Text Editor
         if (currentContent !== newContent) {
             emitContentChanged();
         }
@@ -138,17 +116,17 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         const hasSelectedText = hasFocus && !documentSelection?.isCollapsed;
         const selectionLinkEntity = getSelectionEntity(value, "LINK");
         const selectionButtonEntity = getSelectionEntity(value, "BUTTON");
-        const isLinkOrButton = !!(selectionLinkEntity || selectionButtonEntity);
-        const shouldShowInlineToolbar =
-            !readonly && (hasSelectedText || !!savedSelection || (hasFocus && isLinkOrButton));
+        const shouldShowInlineToolbar = !readonly && (hasSelectedText || !!savedSelection);
 
         if (selectionLinkEntity) {
             setEditorArea(RichTextEditorArea.LinkPreview);
         } else if (selectionButtonEntity) {
             setEditorArea(RichTextEditorArea.ButtonPreview);
+        } else {
+            setEditorArea(RichTextEditorArea.Normal);
         }
 
-        if (shouldShowInlineToolbar) {
+        if (shouldShowInlineToolbar && !savedSelection) {
             const rangeRect = documentSelection?.getRangeAt(0).getBoundingClientRect();
 
             if (rangeRect && selectionRectRef.current) {
@@ -234,7 +212,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 readOnly={readonly}
             />
 
-            <div ref={selectionRectRef} className="tw-absolute tw-pointer-events-none"></div>
+            <div
+                ref={selectionRectRef}
+                className="tw-absolute tw-pointer-events-none tw-bg-violet-60 tw-opacity-50"
+            ></div>
 
             <div
                 ref={inlineToolbarRef}
@@ -253,7 +234,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                         savedSelection,
                     }}
                 >
-                    {(externalProps: InlineToolbarChildrenProps) => (
+                    {(externalProps) => (
                         <>
                             {editorArea === RichTextEditorArea.Normal && (
                                 <>

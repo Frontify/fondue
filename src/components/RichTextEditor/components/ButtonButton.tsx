@@ -6,7 +6,7 @@ type ButtonButtonProps = {
     onClick: () => void;
 };
 
-export default function ButtonButton({ onClick }: ButtonButtonProps): ReactElement<ButtonButtonProps> {
+export function ButtonButton({ onClick }: ButtonButtonProps): ReactElement<ButtonButtonProps> {
     const showButtonChooser = (event: MouseEvent): void => {
         event.preventDefault();
         onClick();
