@@ -21,18 +21,22 @@ const SelectableListItem = forwardRef<HTMLLIElement | null, SelectableListItemPr
     ({ item, isSelected, ariaProps }, ref) => {
         return (
             <li ref={ref} {...ariaProps}>
-                <Checkbox label={item.name} state={isSelected ? CheckboxState.Checked : undefined} />
+                <Checkbox label={item.name} state={isSelected ? CheckboxState.Checked : CheckboxState.Unchecked} />
             </li>
         );
     },
 );
 
+const getAllItemIds = (items: SelectListItem[]) => items.map(({ name }) => name);
+
 SelectableListItem.displayName = "SelectableListItem";
 
 export type SelectListProps = {
     items: SelectListItem[];
-    activeItemNames: string[];
+    activeItemKeys: string[];
     disabled?: boolean;
+    onSelectionChange: (keys: string[]) => void;
+    "aria-label"?: string;
 };
 
 export type SelectListItem = {
@@ -40,18 +44,21 @@ export type SelectListItem = {
 };
 
 export const SelectList: FC<SelectListProps> = (props) => {
-    const { items, activeItemNames, disabled } = props;
+    const { items, activeItemKeys, disabled, "aria-label": ariaLabel = "Select list" } = props;
     const keyItemRecord = getKeyItemRecord(items);
 
     const state = useListState<SelectListItem>({
         children: items.map((item) => <Item key={item.name}>{item.name}</Item>),
-        selectedKeys: activeItemNames,
+        defaultSelectedKeys: activeItemKeys,
+        onSelectionChange: (keys) => {
+            keys === "all" ? getAllItemIds(items) : Array.from(keys);
+        },
         selectionMode: "multiple",
     });
     const [open, setOpen] = useState(false);
 
     const ref = useRef<HTMLUListElement | null>(null);
-    const { listBoxProps } = useListBox<SelectListItem>(props, state, ref);
+    const { listBoxProps } = useListBox<SelectListItem>({ "aria-label": ariaLabel }, state, ref);
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const { overlayProps } = useOverlay(
         { isOpen: open, onClose: () => setOpen(false), shouldCloseOnBlur: true, isDismissable: true },
@@ -82,7 +89,7 @@ export const SelectList: FC<SelectListProps> = (props) => {
                                 type={TagType.SelectedWithFocus}
                                 label={item.name}
                                 onClick={() => {
-                                    console.log("click");
+                                    state.selectionManager.toggleSelection(item.name);
                                 }}
                             />
                         );

@@ -1,5 +1,5 @@
 import { Meta, Story } from "@storybook/react";
-import React from "react";
+import React, { useState } from "react";
 import { SelectList as SelectListComponent, SelectListProps } from "./SelectList";
 
 export default {
@@ -7,10 +7,19 @@ export default {
     component: SelectListComponent,
 } as Meta;
 
-export const SelectList: Story<SelectListProps> = (args) => <SelectListComponent {...args} />;
+export const SelectList: Story<SelectListProps> = (args) => {
+    const [activeItemKeys, setActiveItemKeys] = useState(args.activeItemKeys);
+    return (
+        <SelectListComponent
+            {...args}
+            activeItemKeys={activeItemKeys}
+            onSelectionChange={(keys) => setActiveItemKeys(keys)}
+        />
+    );
+};
 
 SelectList.args = {
-    activeItemNames: ["Short tag", "Tag 74"],
+    activeItemKeys: ["Short tag", "Tag 74"],
     items: [
         {
             name: "Checkbox label 1",
