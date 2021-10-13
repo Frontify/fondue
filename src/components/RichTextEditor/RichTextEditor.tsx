@@ -9,7 +9,6 @@ import {
     ContentState,
     getDefaultKeyBinding,
     SelectionState,
-    KeyBindingUtil,
 } from "draft-js";
 import {
     BlockquoteButton,
@@ -35,8 +34,7 @@ import useClickOutside from "@hooks/useClickOutside";
 import { merge } from "@utilities/merge";
 import { styleMap } from "./styleMap";
 import "draft-js/dist/Draft.css";
-
-const { hasCommandModifier } = KeyBindingUtil;
+import { getParentWithPositionRelative } from "./utilities/getParentWithPositionRelative";
 
 export type RichTextEditorProps = {
     placeholder?: string;
@@ -125,14 +123,25 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
         if (shouldShowInlineToolbar && !savedSelection) {
             const rangeRect = documentSelection?.getRangeAt(0).getBoundingClientRect();
+            const parentWithPositionRelative =
+                selectionRectRef.current && getParentWithPositionRelative(selectionRectRef.current);
 
             if (rangeRect && selectionRectRef.current) {
                 selectionRectRef.current.style.width = `${rangeRect.width}px`;
                 selectionRectRef.current.style.height = `${rangeRect.height}px`;
-                selectionRectRef.current.style.top = `${rangeRect.y + window.scrollY}px`;
-                selectionRectRef.current.style.right = `${rangeRect.x}px`;
-                selectionRectRef.current.style.bottom = `${rangeRect.y}px`;
-                selectionRectRef.current.style.left = `${rangeRect.x + window.scrollX}px`;
+
+                if (parentWithPositionRelative instanceof HTMLElement) {
+                    const parentRect = parentWithPositionRelative.getBoundingClientRect();
+                    selectionRectRef.current.style.top = `${rangeRect.y + window.scrollY - parentRect.top}px`;
+                    selectionRectRef.current.style.right = `${rangeRect.x - parentRect.left}px`;
+                    selectionRectRef.current.style.bottom = `${rangeRect.y - parentRect.top}px`;
+                    selectionRectRef.current.style.left = `${rangeRect.x + window.scrollX - parentRect.left}px`;
+                } else {
+                    selectionRectRef.current.style.top = `${rangeRect.y + window.scrollY}px`;
+                    selectionRectRef.current.style.right = `${rangeRect.x}px`;
+                    selectionRectRef.current.style.bottom = `${rangeRect.y}px`;
+                    selectionRectRef.current.style.left = `${rangeRect.x + window.scrollX}px`;
+                }
             }
         }
 

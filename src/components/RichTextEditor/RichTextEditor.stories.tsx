@@ -15,7 +15,9 @@ export default {
 } as Meta;
 
 export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
-    <RichTextEditorComponent {...args} />
+    <>
+        <RichTextEditorComponent {...args} />
+    </>
 );
 
 export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
