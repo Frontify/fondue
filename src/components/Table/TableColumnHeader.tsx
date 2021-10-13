@@ -5,12 +5,15 @@ import IconArrowUp from "@elements/Icon/Generated/IconArrowUp";
 import IconArrowUpAndDown from "@elements/Icon/Generated/IconArrowUpAndDown";
 import { IconSize } from "@elements/Icon/IconSize";
 import { useCheckbox } from "@react-aria/checkbox";
+import { useFocusRing } from "@react-aria/focus";
 import { useHover } from "@react-aria/interactions";
 import { useTableColumnHeader, useTableSelectAllCheckbox } from "@react-aria/table";
 import { mergeProps } from "@react-aria/utils";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { TableState } from "@react-stately/table";
 import { useToggleState } from "@react-stately/toggle";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, useEffect, useRef, useState } from "react";
 
 export enum TableColumnHeaderType {
@@ -34,6 +37,7 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
     const { columnHeaderProps } = useTableColumnHeader({ node: column }, state, ref);
     const isSortedColumn = state.sortDescriptor?.column === column.key;
     const isAscending = state.sortDescriptor?.direction === "ascending";
+    const { isFocusVisible, focusProps } = useFocusRing();
 
     const { hoverProps } = useHover({
         onHoverStart: () => {
@@ -93,9 +97,12 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
 
     return (
         <th
-            {...mergeProps(columnHeaderProps, hoverProps)}
+            {...mergeProps(columnHeaderProps, hoverProps, focusProps)}
             ref={ref}
-            className="tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-border-r tw-border-black-10 dark:tw-border-black-95 tw-outline-none tw-cursor-pointer tw-group"
+            className={merge([
+                "tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-border-r tw-border-black-10 dark:tw-border-black-95 tw-outline-none tw-cursor-pointer tw-group",
+                isFocusVisible && FOCUS_STYLE,
+            ])}
         >
             <div className="tw-flex tw-gap-x-1 tw-items-center">
                 {column.rendered}

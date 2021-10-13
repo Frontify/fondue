@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
 import { useCheckbox } from "@react-aria/checkbox";
+import { useFocusRing } from "@react-aria/focus";
 import { useTableCell, useTableSelectionCheckbox } from "@react-aria/table";
+import { mergeProps } from "@react-aria/utils";
 import { TableState } from "@react-stately/table";
 import { useToggleState } from "@react-stately/toggle";
+import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, useRef } from "react";
 
@@ -26,6 +29,7 @@ export const TableCell: FC<TableCellProps> = ({ cell, state, type = TableCellTyp
     const {
         inputProps: { checked },
     } = useCheckbox(checkboxProps, useToggleState(checkboxProps), inputRef);
+    const { isFocusVisible, focusProps } = useFocusRing();
 
     if (type === TableCellType.Checkbox) {
         return (
@@ -47,11 +51,12 @@ export const TableCell: FC<TableCellProps> = ({ cell, state, type = TableCellTyp
 
     return (
         <td
-            {...gridCellProps}
+            {...mergeProps(gridCellProps, focusProps)}
             ref={ref}
             className={merge([
-                "tw-p-4 tw-outline-none tw-font-normal tw-text-xs",
+                "tw-p-4 tw-font-normal tw-text-xs",
                 checked ? "tw-text-black-100 dark:tw-text-white" : "tw-text-black-80 dark:tw-text-black-20",
+                isFocusVisible && FOCUS_STYLE_INSET,
             ])}
         >
             {cell.rendered}
