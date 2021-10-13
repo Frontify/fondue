@@ -19,9 +19,8 @@ export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorP
 );
 
 export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
-    <RichTextEditorComponent {...args} />
+    <RichTextEditorComponent {...args} value={ContentState.createFromText("This is some text that you can not edit")} />
 );
 WithReadonlyState.args = {
     readonly: true,
-    value: ContentState.createFromText("This is some text"),
 };
