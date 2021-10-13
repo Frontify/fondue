@@ -142,53 +142,60 @@ export const Table: FC<TableProps> = ({
     }, [sortedColumnKey, sortOrder]);
 
     return (
-        <table
-            {...gridProps}
-            ref={ref}
-            className="tw-border-collapse tw-table-auto tw-w-full tw-text-left dark:tw-bg-black-100 dark:tw-text-black-20"
-        >
-            <thead>
-                {collection.headerRows.map((headerRow) => (
-                    <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
-                        {[...headerRow.childNodes].map((column) =>
-                            column.props.isSelectionCell ? (
-                                <TableColumnHeader
-                                    key={column.key}
-                                    column={column}
-                                    state={state}
-                                    type={TableColumnHeaderType.SelectAll}
-                                />
-                            ) : (
-                                <TableColumnHeader key={column.key} column={column} state={state} />
-                            ),
-                        )}
-                    </TableHeaderRow>
-                ))}
-            </thead>
-            <tbody>
-                {[...collection.body.childNodes].map((ariaRow) => {
-                    const row = getRowFromId(rows, ariaRow.key);
-
-                    return (
-                        <TableRow key={ariaRow.key} item={ariaRow} state={state}>
-                            {[...ariaRow.childNodes].map((cell) =>
-                                cell.props.isSelectionCell ? (
-                                    <TableCell key={cell.key} cell={cell} state={state} type={TableCellType.Checkbox} />
+        <div className="tw-overflow-scroll tw-w-full tw-max-h-96 sm:tw-max-h-full">
+            <table
+                {...gridProps}
+                ref={ref}
+                className="tw-border-collapse tw-table-auto tw-w-full tw-min-w-max tw-text-left dark:tw-bg-black-100 dark:tw-text-black-20"
+            >
+                <thead>
+                    {collection.headerRows.map((headerRow) => (
+                        <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
+                            {[...headerRow.childNodes].map((column) =>
+                                column.props.isSelectionCell ? (
+                                    <TableColumnHeader
+                                        key={column.key}
+                                        column={column}
+                                        state={state}
+                                        type={TableColumnHeaderType.SelectAll}
+                                    />
                                 ) : (
-                                    <TableCell key={cell.key} cell={cell} state={state} />
+                                    <TableColumnHeader key={column.key} column={column} state={state} />
                                 ),
                             )}
-                            {row?.actions && (
-                                <div className="tw-absolute tw-right-0 tw--top-px tw-h-full tw-flex tw-items-center">
-                                    <div className="hover:tw-bg-gradient-to-r hover:tw-from-transparent hover:tw-to-black-0 dark:hover:tw-to-black-95 tw-py-4 tw-pr-8 tw-pl-4">
-                                        {row.actions}
-                                    </div>
-                                </div>
-                            )}
-                        </TableRow>
-                    );
-                })}
-            </tbody>
-        </table>
+                        </TableHeaderRow>
+                    ))}
+                </thead>
+                <tbody>
+                    {[...collection.body.childNodes].map((ariaRow) => {
+                        const row = getRowFromId(rows, ariaRow.key);
+
+                        return (
+                            <TableRow key={ariaRow.key} item={ariaRow} state={state}>
+                                {[...ariaRow.childNodes].map((cell) =>
+                                    cell.props.isSelectionCell ? (
+                                        <TableCell
+                                            key={cell.key}
+                                            cell={cell}
+                                            state={state}
+                                            type={TableCellType.Checkbox}
+                                        />
+                                    ) : (
+                                        <TableCell key={cell.key} cell={cell} state={state} />
+                                    ),
+                                )}
+                                {row?.actions && (
+                                    <td className="tw-absolute tw-right-0 tw--top-px tw-h-full tw-flex tw-items-center">
+                                        <div className="hover:tw-bg-gradient-to-r hover:tw-from-transparent hover:tw-to-black-0 dark:hover:tw-to-black-95 tw-py-4 tw-pr-8 tw-pl-4">
+                                            {row.actions}
+                                        </div>
+                                    </td>
+                                )}
+                            </TableRow>
+                        );
+                    })}
+                </tbody>
+            </table>
+        </div>
     );
 };
