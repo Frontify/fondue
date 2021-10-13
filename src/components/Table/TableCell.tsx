@@ -54,7 +54,7 @@ export const TableCell: FC<TableCellProps> = ({ cell, state, type = TableCellTyp
             {...mergeProps(gridCellProps, focusProps)}
             ref={ref}
             className={merge([
-                "tw-p-4 tw-font-normal tw-text-xs",
+                "tw-p-4 tw-font-normal tw-text-xs focus:tw-outline-none",
                 checked ? "tw-text-black-100 dark:tw-text-white" : "tw-text-black-80 dark:tw-text-black-20",
                 isFocusVisible && FOCUS_STYLE_INSET,
             ])}
