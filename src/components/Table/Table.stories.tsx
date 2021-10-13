@@ -1,8 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Badge } from "@elements/Badge/Badge";
+import { Button, ButtonSize, ButtonStyle } from "@elements/Button/Button";
+import IconActions from "@elements/Icon/Generated/IconActions";
 import IconEmojiHappy from "@elements/Icon/Generated/IconEmojiHappy";
 import { IconSize } from "@elements/Icon/IconSize";
+import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React, { FC, useState } from "react";
 import { Column, Row, SelectionMode, Table, TableProps } from "./Table";
@@ -31,6 +34,10 @@ const User: FC<{ name: string }> = ({ name }) => (
     </div>
 );
 
+const ActionButton: FC = () => (
+    <Button onClick={action("click")} size={ButtonSize.Small} style={ButtonStyle.Secondary} icon={<IconActions />} />
+);
+
 const columns: Column[] = [
     { name: "User", key: "user" },
     { name: "Active Sessions", key: "activeSessions" },
@@ -42,6 +49,7 @@ const columns: Column[] = [
 const rows: Row[] = [
     {
         key: "row-1",
+        actions: <ActionButton />,
         cells: {
             user: {
                 sortId: "anna",
@@ -72,6 +80,7 @@ const rows: Row[] = [
     },
     {
         key: "row-2",
+        actions: <ActionButton />,
         cells: {
             user: {
                 sortId: "bobby",
@@ -102,6 +111,7 @@ const rows: Row[] = [
     },
     {
         key: "row-3",
+        actions: <ActionButton />,
         cells: {
             user: {
                 sortId: "chris",
@@ -132,6 +142,7 @@ const rows: Row[] = [
     },
     {
         key: "row-4",
+        actions: <ActionButton />,
         cells: {
             user: {
                 sortId: "david",
@@ -161,6 +172,7 @@ const rows: Row[] = [
     },
     {
         key: "row-5",
+        actions: <ActionButton />,
         cells: {
             user: {
                 sortId: "emily",

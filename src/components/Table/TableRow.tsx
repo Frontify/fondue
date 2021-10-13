@@ -16,7 +16,7 @@ export const TableRow: FC<TableRowProps> = ({ item, state, children }) => {
         <tr
             {...rowProps}
             ref={ref}
-            className="tw-border-t tw-border-black-10 hover:tw-bg-black-0 dark:tw-border-black-95 dark:hover:tw-bg-black-95"
+            className="tw-relative tw-border-t tw-border-black-10 hover:tw-bg-black-0 dark:tw-border-black-95 dark:hover:tw-bg-black-95"
         >
             {children}
         </tr>

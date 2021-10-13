@@ -38,6 +38,7 @@ export type Row = {
     // cell keys have to correspond to column key values
     // e.g. Column { name: 'User', key: 'user' } ==> Row Cell { user: { id: 'anna', value: 'Anna' } }
     cells: Record<string, Cell>;
+    actions?: ReactNode;
 };
 
 export type TableProps = {
@@ -75,6 +76,7 @@ const mapToTableAriaProps = (columns: Column[], rows: Row[]): TableStateProps<an
     ],
 });
 
+const getRowFromId = (rows: Row[], id: string | number) => rows.find(({ key }) => key === id) || null;
 const getAllRowIds = (rows: Row[]): (string | number)[] => rows.map(({ key: id }) => id);
 const sortRows = (rows: Row[], columnKey: string | number, isDescending: boolean) => {
     const sort = (a: Row, b: Row) => {
@@ -100,7 +102,7 @@ export const Table: FC<TableProps> = ({
     onSelectionChange,
     selectionMode = SelectionMode.NoSelect,
     selectedRowIds = [],
-    ariaLabel = "table",
+    ariaLabel = "Table",
 }) => {
     const isSelectTable = selectionMode === SelectionMode.SingleSelect || selectionMode === SelectionMode.MultiSelect;
     const [sortedRows, setSortedRows] = useState(rows);
@@ -164,17 +166,28 @@ export const Table: FC<TableProps> = ({
                 ))}
             </thead>
             <tbody>
-                {[...collection.body.childNodes].map((row) => (
-                    <TableRow key={row.key} item={row} state={state}>
-                        {[...row.childNodes].map((cell) =>
-                            cell.props.isSelectionCell ? (
-                                <TableCell key={cell.key} cell={cell} state={state} type={TableCellType.Checkbox} />
-                            ) : (
-                                <TableCell key={cell.key} cell={cell} state={state} />
-                            ),
-                        )}
-                    </TableRow>
-                ))}
+                {[...collection.body.childNodes].map((ariaRow) => {
+                    const row = getRowFromId(rows, ariaRow.key);
+
+                    return (
+                        <TableRow key={ariaRow.key} item={ariaRow} state={state}>
+                            {[...ariaRow.childNodes].map((cell) =>
+                                cell.props.isSelectionCell ? (
+                                    <TableCell key={cell.key} cell={cell} state={state} type={TableCellType.Checkbox} />
+                                ) : (
+                                    <TableCell key={cell.key} cell={cell} state={state} />
+                                ),
+                            )}
+                            {row?.actions && (
+                                <div className="tw-absolute tw-right-0 tw--top-px tw-h-full tw-flex tw-items-center">
+                                    <div className="hover:tw-bg-gradient-to-r hover:tw-from-transparent hover:tw-to-black-0 dark:hover:tw-to-black-95 tw-py-4 tw-pr-8 tw-pl-4">
+                                        {row.actions}
+                                    </div>
+                                </div>
+                            )}
+                        </TableRow>
+                    );
+                })}
             </tbody>
         </table>
     );
