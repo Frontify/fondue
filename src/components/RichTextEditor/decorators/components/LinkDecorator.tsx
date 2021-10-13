@@ -19,7 +19,7 @@ export default function LinkDecorator({
         // eslint-disable-next-line react/jsx-no-target-blank
         <a
             href={url}
-            style={{ color: "red" }}
+            className="tw-underline"
             target={newTab ? "_blank" : "_self"}
             rel={newTab ? "noreferrer" : ""}
             aria-label={url}
