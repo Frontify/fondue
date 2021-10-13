@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { FC, useRef, useState, KeyboardEvent, useEffect } from "react";
-import "draft-js/dist/Draft.css";
 import {
     Editor,
     DraftHandleValue,
@@ -10,6 +9,7 @@ import {
     ContentState,
     getDefaultKeyBinding,
     SelectionState,
+    KeyBindingUtil,
 } from "draft-js";
 import {
     BlockquoteButton,
@@ -34,6 +34,9 @@ import { getSelectionEntity } from "./utilities/getSelectionEntity";
 import useClickOutside from "@hooks/useClickOutside";
 import { merge } from "@utilities/merge";
 import { styleMap } from "./styleMap";
+import "draft-js/dist/Draft.css";
+
+const { hasCommandModifier } = KeyBindingUtil;
 
 export type RichTextEditorProps = {
     placeholder?: string;
@@ -116,15 +119,9 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         const hasSelectedText = hasFocus && !documentSelection?.isCollapsed;
         const selectionLinkEntity = getSelectionEntity(value, "LINK");
         const selectionButtonEntity = getSelectionEntity(value, "BUTTON");
-        const shouldShowInlineToolbar = !readonly && (hasSelectedText || !!savedSelection);
-
-        if (selectionLinkEntity) {
-            setEditorArea(RichTextEditorArea.LinkPreview);
-        } else if (selectionButtonEntity) {
-            setEditorArea(RichTextEditorArea.ButtonPreview);
-        } else {
-            setEditorArea(RichTextEditorArea.Normal);
-        }
+        const isLinkOrButton = !!(selectionLinkEntity || selectionButtonEntity);
+        const shouldShowInlineToolbar =
+            !readonly && (hasSelectedText || !!savedSelection || (hasFocus && isLinkOrButton));
 
         if (shouldShowInlineToolbar && !savedSelection) {
             const rangeRect = documentSelection?.getRangeAt(0).getBoundingClientRect();
@@ -141,6 +138,14 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
         popperUpdate && (await popperUpdate());
         setShowInlineToolbar(shouldShowInlineToolbar);
+
+        if (selectionLinkEntity) {
+            setEditorArea(RichTextEditorArea.LinkPreview);
+        } else if (selectionButtonEntity) {
+            setEditorArea(RichTextEditorArea.ButtonPreview);
+        } else {
+            setEditorArea(RichTextEditorArea.Normal);
+        }
 
         setEditorState(value);
     };
