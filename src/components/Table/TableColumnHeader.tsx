@@ -14,7 +14,7 @@ import { TableState } from "@react-stately/table";
 import { useToggleState } from "@react-stately/toggle";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { cloneElement, FC, useEffect, useRef, useState } from "react";
+import React, { cloneElement, FC, useCallback, useEffect, useRef, useState } from "react";
 
 export enum TableColumnHeaderType {
     Default = "Default",
@@ -69,16 +69,17 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
         const toggleState = useToggleState(checkboxProps);
         const { inputProps } = useCheckbox(checkboxProps, toggleState, inputRef);
         const headerProps = { ...columnHeaderProps, onClick: () => selectionManager.toggleSelectAll() };
+        const selectedKeyCount = selectionManager.selectedKeys.size;
 
-        const getCheckboxState = () => {
-            if (selectionManager.isSelectAll) {
+        const getCheckboxState = useCallback(() => {
+            if (selectedKeyCount === state.collection.size) {
                 return CheckboxState.Checked;
             }
-            if (selectionManager.selectedKeys.size > 0) {
+            if (selectedKeyCount > 0) {
                 return CheckboxState.Mixed;
             }
             return CheckboxState.Unchecked;
-        };
+        }, [selectedKeyCount]);
 
         return (
             <th

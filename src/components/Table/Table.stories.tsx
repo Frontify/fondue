@@ -49,7 +49,7 @@ const columns: Column[] = [
 const rows: Row[] = [
     {
         key: "row-1",
-        actions: <ActionButton />,
+        actionElements: <ActionButton />,
         cells: {
             user: {
                 sortId: "anna",
@@ -80,7 +80,7 @@ const rows: Row[] = [
     },
     {
         key: "row-2",
-        actions: <ActionButton />,
+        actionElements: <ActionButton />,
         cells: {
             user: {
                 sortId: "bobby",
@@ -111,7 +111,7 @@ const rows: Row[] = [
     },
     {
         key: "row-3",
-        actions: <ActionButton />,
+        actionElements: <ActionButton />,
         cells: {
             user: {
                 sortId: "chris",
@@ -142,7 +142,7 @@ const rows: Row[] = [
     },
     {
         key: "row-4",
-        actions: <ActionButton />,
+        actionElements: <ActionButton />,
         cells: {
             user: {
                 sortId: "david",
@@ -172,7 +172,7 @@ const rows: Row[] = [
     },
     {
         key: "row-5",
-        actions: <ActionButton />,
+        actionElements: <ActionButton />,
         cells: {
             user: {
                 sortId: "emily",
