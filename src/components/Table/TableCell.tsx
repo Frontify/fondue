@@ -40,6 +40,7 @@ export const TableCell: FC<TableCellProps> = ({ cell, state, type = TableCellTyp
                     "tw-pl-8 tw-py-4 tw-pr-4 tw-border-l-4",
                     checked ? "tw-border-violet-60" : "tw-border-transparent",
                 ])}
+                data-test-id="table-select-cell"
             >
                 <Checkbox
                     ariaLabel={cell["aria-label"] || cell.key}

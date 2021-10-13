@@ -25,6 +25,7 @@ export const TableRow: FC<TableRowProps> = ({ item, state, children }) => {
                 "tw-relative tw-border-t tw-border-black-10 hover:tw-bg-black-0 dark:tw-border-black-95 dark:hover:tw-bg-black-95",
                 isFocusVisible && FOCUS_STYLE,
             ])}
+            data-test-id="table-row"
         >
             {children}
         </tr>

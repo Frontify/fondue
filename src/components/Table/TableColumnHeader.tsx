@@ -85,6 +85,7 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
                 {...headerProps}
                 ref={ref}
                 className="tw-pl-8 tw-py-3 tw-pr-4 tw-w-16 tw-border-l-4 tw-border-transparent tw-cursor-pointer tw-group"
+                data-test-id="table-select-cell"
             >
                 {selectionManager.selectionMode === "single" ? (
                     <VisuallyHidden>{inputProps["aria-label"]}</VisuallyHidden>
@@ -103,6 +104,7 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
                 "tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-border-r tw-border-black-10 dark:tw-border-black-95 tw-outline-none tw-cursor-pointer tw-group",
                 isFocusVisible && FOCUS_STYLE,
             ])}
+            data-test-id="table-column"
         >
             <div className="tw-flex tw-gap-x-1 tw-items-center">
                 {column.rendered}
