@@ -9,9 +9,7 @@ import { debounce } from "@utilities/debounce";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useState } from "react";
 // @ts-ignore
-import { HuePicker } from "react-color";
-// @ts-ignore
-import { Alpha, Saturation } from "react-color/lib/components/common";
+import { Alpha, Saturation, Hue } from "react-color/lib/components/common";
 // @ts-ignore
 import { isValidHex, toState } from "react-color/lib/helpers/color";
 import { ColorInput } from "./ColorInput";
@@ -47,7 +45,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
 
     return (
         <div className="tw-flex tw-flex-col tw-gap-5">
-            <div className="tw-flex tw-gap-2 tw-w-full">
+            <div className="tw-flex tw-gap-2 tw-w-full tw-h-[200px]">
                 <div className="tw-relative tw-flex-grow tw-overflow-hidden tw-rounded">
                     <Saturation
                         hsl={hsl}
@@ -57,17 +55,15 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                     />
                 </div>
                 <div className="tw-relative tw-w-6 tw-overflow-hidden tw-rounded">
-                    <HuePicker
+                    <Hue
                         pointer={() => (
                             <div className="tw-w-6 tw-flex tw-justify-center">
                                 <ColorPointer offset={false} />
                             </div>
                         )}
-                        color={rgb}
+                        hsl={hsl}
                         direction="vertical"
-                        width="24px"
-                        height="200px"
-                        onChange={debounce(({ hex }) => onSelect(toColor(currentColor, { hex })))}
+                        onChange={debounce((color) => onSelect(toColor(currentColor, { hex: toState(color).hex })))}
                     />
                 </div>
                 <div className="tw-relative tw-w-6 tw-overflow-hidden tw-rounded">
@@ -76,8 +72,6 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                         hsl={hsl}
                         hsv={hsv}
                         direction="vertical"
-                        width="24px"
-                        height="200px"
                         pointer={() => (
                             <div className="tw-w-[18px] tw-flex tw-justify-center">
                                 <ColorPointer offset={false} />
