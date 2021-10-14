@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC } from "react";
-import { merge } from "@utilities/merge";
-import { useFocusRing } from "@react-aria/focus";
-import { IconSize } from "@elements/Icon/IconSize";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
 import IconReject from "@elements/Icon/Generated/IconReject";
+import { IconSize } from "@elements/Icon/IconSize";
+import { useFocusRing } from "@react-aria/focus";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { merge } from "@utilities/merge";
+import React, { FC, MouseEvent } from "react";
 
 export enum TagType {
     Suggested = "Suggested",
@@ -30,7 +30,7 @@ export type TagProps = TagPropsUnselected | TagPropsSelected;
 type TagPropsSelected = {
     type: TagType.Selected | TagType.SelectedWithFocus;
     label: string;
-    onClick: () => void;
+    onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
 };
 
 type TagPropsUnselected = {

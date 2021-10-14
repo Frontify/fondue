@@ -6,9 +6,9 @@ import { Checkbox, CheckboxProps, CheckboxState } from "./Checkbox";
 
 const CHECKBOX_LABEL = "Checkbox label";
 const CHECKBOX_TOOLTIP = "Checkbox tooltip";
-const CHECKBOX_ID = "[data-test-id=checkbox]";
+export const CHECKBOX_ID = "[data-test-id=checkbox]";
 const TOOLTIP_ID = "[data-test-id=tooltip]";
-const CHECKBOX_INPUT_ID = "[data-test-id=checkbox-input]";
+export const CHECKBOX_INPUT_ID = "[data-test-id=checkbox-input]";
 const INPUT_LABEL_TOOLTIP_ICON_ID = "[data-test-id=input-label-tooltip-icon]";
 
 const CheckboxComponent: FC<CheckboxProps> = (props) => {

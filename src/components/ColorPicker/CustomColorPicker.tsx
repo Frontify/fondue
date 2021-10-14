@@ -9,9 +9,7 @@ import { debounce } from "@utilities/debounce";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useState } from "react";
 // @ts-ignore
-import { HuePicker } from "react-color";
-// @ts-ignore
-import { Alpha, Saturation } from "react-color/lib/components/common";
+import { Alpha, Saturation, Hue } from "react-color/lib/components/common";
 // @ts-ignore
 import { isValidHex, toState } from "react-color/lib/helpers/color";
 import { ColorInput } from "./ColorInput";
@@ -26,9 +24,13 @@ const ColorPointer: FC<{ offset?: boolean }> = ({ offset = true }) => (
     />
 );
 
-export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ currentColor, onSelect }) => {
+export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
+    currentColor,
+    currentFormat,
+    setFormat,
+    onSelect,
+}) => {
     const colorFormats = Object.values(ColorFormat).map((id) => ({ id, title: id.toLocaleUpperCase() }));
-    const [colorFormat, setColorFormat] = useState(ColorFormat.Hex);
     const [{ hsl, hsv, rgb, hex }, setColor] = useState(transformColor(currentColor));
 
     useEffect(() => {
@@ -43,7 +45,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
 
     return (
         <div className="tw-flex tw-flex-col tw-gap-5">
-            <div className="tw-flex tw-gap-2 tw-w-full">
+            <div className="tw-flex tw-gap-2 tw-w-full tw-h-[200px]">
                 <div className="tw-relative tw-flex-grow tw-overflow-hidden tw-rounded">
                     <Saturation
                         hsl={hsl}
@@ -53,17 +55,15 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                     />
                 </div>
                 <div className="tw-relative tw-w-6 tw-overflow-hidden tw-rounded">
-                    <HuePicker
+                    <Hue
                         pointer={() => (
                             <div className="tw-w-6 tw-flex tw-justify-center">
                                 <ColorPointer offset={false} />
                             </div>
                         )}
-                        color={rgb}
+                        hsl={hsl}
                         direction="vertical"
-                        width="24px"
-                        height="200px"
-                        onChange={debounce(({ hex }) => onSelect(toColor(currentColor, { hex })))}
+                        onChange={debounce((color) => onSelect(toColor(currentColor, { hex: toState(color).hex })))}
                     />
                 </div>
                 <div className="tw-relative tw-w-6 tw-overflow-hidden tw-rounded">
@@ -72,8 +72,6 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                         hsl={hsl}
                         hsv={hsv}
                         direction="vertical"
-                        width="24px"
-                        height="200px"
                         pointer={() => (
                             <div className="tw-w-[18px] tw-flex tw-justify-center">
                                 <ColorPointer offset={false} />
@@ -88,11 +86,11 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({ curre
                 <div className="tw-min-w-[100px]">
                     <Dropdown
                         menuBlocks={[{ id: "color-picker-format-dropdown-block", menuItems: colorFormats }]}
-                        activeItemId={colorFormat}
-                        onChange={(id) => id && setColorFormat(id as ColorFormat)}
+                        activeItemId={currentFormat}
+                        onChange={(id) => id && setFormat && setFormat(id as ColorFormat)}
                     />
                 </div>
-                {colorFormat === ColorFormat.Hex ? (
+                {currentFormat === ColorFormat.Hex ? (
                     <div className="tw-flex-1">
                         <ColorInput
                             value={hexInput}

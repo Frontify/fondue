@@ -6,7 +6,7 @@ import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { cloneElement, FC, ReactElement, ReactNode, useCallback, useRef } from "react";
+import React, { cloneElement, FC, MouseEvent, ReactElement, ReactNode, useCallback, useRef } from "react";
 
 export enum ButtonStyle {
     Secondary = "Secondary",
@@ -83,7 +83,7 @@ export type ButtonProps = {
     disabled?: boolean;
     icon?: ReactElement;
     children?: string;
-    onClick?: () => void;
+    onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
 };
 
 export const Button: FC<ButtonProps> = ({

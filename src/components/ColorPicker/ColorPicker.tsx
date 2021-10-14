@@ -17,6 +17,8 @@ type Palette = {
 export type ColorPickerProps = {
     palettes?: Palette[];
     currentColor: Color;
+    currentFormat?: ColorFormat;
+    setFormat?: (id: ColorFormat) => void;
     onSelect: (color: Color) => void;
 };
 
@@ -36,10 +38,11 @@ export const ColorPicker: FC<ColorPickerProps> = ({ currentColor, palettes, onSe
         { id: ColorType.Custom, value: "Custom Color" },
     ];
     const [colorType, setColorType] = useState(ColorType.Brand);
+    const [colorFormat, setColorFormat] = useState(ColorFormat.Hex);
 
     return (
         <div data-test-id="color-picker" className="tw-w-[400px]">
-            <ColorPreview color={currentColor} />
+            <ColorPreview color={currentColor} format={colorFormat} />
             <div className="tw-p-6 tw-flex tw-flex-col tw-gap-5">
                 {palettes && (
                     <Slider
@@ -51,37 +54,64 @@ export const ColorPicker: FC<ColorPickerProps> = ({ currentColor, palettes, onSe
                 {palettes && colorType === ColorType.Brand ? (
                     <BrandColorPicker currentColor={currentColor} palettes={palettes} onSelect={onSelect} />
                 ) : (
-                    <CustomColorPicker currentColor={currentColor} onSelect={onSelect} />
+                    <CustomColorPicker
+                        currentColor={currentColor}
+                        currentFormat={colorFormat}
+                        setFormat={setColorFormat}
+                        onSelect={onSelect}
+                    />
                 )}
             </div>
         </div>
     );
 };
 
-const ColorPreview: FC<{ color: Color }> = ({ color }) => {
-    const { hex, value, name, alpha } = color;
+const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format }) => {
+    const { hex, rgba, name, alpha } = color;
 
     /**
-     * Returns a tuple of [contrast color, display name].
-     * The contrast color is calculated by `react-colors` or is just black if alpha drops below 0.3.
-     *
-     * The display name is either an RGBA value (if provided) or the HEX value.
+     * Return contrast color for the label.
+     * The contrast color is calculated by 'react-colors' or is just black if alpha drops below 0.3.
      */
-    const [labelColor, colorValue] = useMemo((): [string, string] => {
-        if (hex !== value && !!value) {
-            return [alpha && alpha < 0.3 ? "#000" : getContrastingColor(value), value];
-        }
 
-        return [getContrastingColor(hex), hex];
-    }, [hex, value, alpha]);
+    const labelColor = useMemo(() => {
+        return alpha && alpha < 0.3 ? "#000" : getContrastingColor(hex);
+    }, [hex, rgba, alpha]);
+
+    /**
+     * Return value for background color. Prefer rgba, because 8-digit hex isn't working correctly.
+     */
+
+    const backgroundColor = useMemo(() => {
+        if (rgba) {
+            return `rgba(${Object.values(rgba).join(", ")})`;
+        }
+        return hex;
+    }, [hex, rgba, alpha]);
+
+    /**
+     * Return color value to display, based on the selected color format (hex or rgba).
+     */
+
+    const displayValue = useMemo(() => {
+        if (format === ColorFormat.Hex) {
+            if (alpha && alpha < 1) {
+                return `${hex} ${Math.round(alpha * 100)}%`;
+            }
+            return hex;
+        }
+        if (format === ColorFormat.Rgba) {
+            return backgroundColor;
+        }
+    }, [hex, rgba, alpha, format]);
 
     return (
         <div
             className={merge(["tw-flex tw-justify-center tw-p-7 tw-text-m tw-gap-2"])}
-            style={{ background: value || hex, color: labelColor }}
+            style={{ background: backgroundColor, color: labelColor }}
         >
             {name && <span className="tw-font-bold">{name}</span>}
-            <span className={name ? "" : "tw-font-bold"}>{colorValue}</span>
+            <span className={name ? "" : "tw-font-bold"}>{displayValue}</span>
         </div>
     );
 };

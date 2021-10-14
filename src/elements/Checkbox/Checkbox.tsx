@@ -30,6 +30,7 @@ export type CheckboxProps = {
     label?: string;
     tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
     note?: string;
+    ariaLabel?: string;
 };
 
 const isCheckedOrMixed = (checked: CheckboxState): boolean => {
@@ -38,7 +39,7 @@ const isCheckedOrMixed = (checked: CheckboxState): boolean => {
 
 export const Checkbox: FC<CheckboxProps> = (props) => {
     const id = useMemoizedId(props.id);
-    const { state = CheckboxState.Unchecked, disabled, required, label, tooltip, note } = props;
+    const { state = CheckboxState.Unchecked, disabled, required, label, tooltip, note, ariaLabel } = props;
     const toggleState = useToggleState({ ...props, isSelected: state === CheckboxState.Checked });
     const ref = useRef<HTMLInputElement>(null);
     const { inputProps } = useCheckbox(
@@ -48,7 +49,7 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
             isIndeterminate: state === CheckboxState.Mixed,
             isDisabled: disabled,
             isRequired: required,
-            "aria-label": label,
+            "aria-label": ariaLabel || label,
         },
         toggleState,
         ref,
