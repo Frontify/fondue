@@ -118,7 +118,7 @@ module.exports = {
         },
     },
     plugins: [
-        plugin(function ({ addBase }) {
+        plugin(({ addBase }) => {
             addBase({
                 "*": { boxSizing: "content-box" },
                 "::before": { boxSizing: "content-box" },
