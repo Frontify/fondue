@@ -1,3 +1,4 @@
+//TODO: use tailwind classes: https://app.clickup.com/t/1mjnru0
 export const styleMap = {
     CODE: {
         borderRadius: "var(--f-border-4x)",
