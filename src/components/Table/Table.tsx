@@ -189,11 +189,8 @@ export const Table: FC<TableProps> = ({
                                     ),
                                 )}
                                 {row?.actionElements && (
-                                    <td
-                                        className="tw-absolute tw-right-0 tw--top-px tw-h-full tw-flex tw-items-center"
-                                        data-test-id="table-actions"
-                                    >
-                                        <div className="hover:tw-bg-gradient-to-r hover:tw-from-transparent hover:tw-to-black-0 dark:hover:tw-to-black-95 tw-py-4 tw-pr-8 tw-pl-4">
+                                    <td className="tw-sticky tw-right-0" data-test-id="table-actions">
+                                        <div className="tw-float-right hover:tw-bg-gradient-to-r hover:tw-from-transparent hover:tw-to-black-0 dark:hover:tw-to-black-95 tw-py-4 tw-pr-8 tw-pl-4">
                                             {row.actionElements}
                                         </div>
                                     </td>

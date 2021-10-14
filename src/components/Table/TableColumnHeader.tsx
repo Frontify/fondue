@@ -6,7 +6,6 @@ import IconArrowUpAndDown from "@elements/Icon/Generated/IconArrowUpAndDown";
 import { IconSize } from "@elements/Icon/IconSize";
 import { useCheckbox } from "@react-aria/checkbox";
 import { useFocusRing } from "@react-aria/focus";
-import { useHover } from "@react-aria/interactions";
 import { useTableColumnHeader, useTableSelectAllCheckbox } from "@react-aria/table";
 import { mergeProps } from "@react-aria/utils";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
@@ -36,40 +35,27 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
     const ref = useRef<HTMLTableCellElement | null>(null);
     const { columnHeaderProps } = useTableColumnHeader({ node: column }, state, ref);
     const isSortedColumn = state.sortDescriptor?.column === column.key;
-    const isAscending = state.sortDescriptor?.direction === "ascending";
+    const sortDirection = state.sortDescriptor?.direction;
     const { isFocusVisible, focusProps } = useFocusRing();
 
-    const { hoverProps } = useHover({
-        onHoverStart: () => {
-            if (isSortedColumn) {
-                setIcon(isAscending ? <IconArrowDown /> : <IconArrowUp />);
-            } else {
-                setIcon(<IconArrowDown />);
-            }
-        },
-        onHoverEnd: () => {
-            if (isSortedColumn) {
-                setIcon(isAscending ? <IconArrowUp /> : <IconArrowDown />);
-            } else {
-                setIcon(<IconArrowUpAndDown />);
-            }
-        },
-    });
-
     useEffect(() => {
-        if (!isSortedColumn) {
+        if (isSortedColumn) {
+            setIcon(sortDirection === "descending" ? <IconArrowDown /> : <IconArrowUp />);
+        } else {
             setIcon(<IconArrowUpAndDown />);
         }
-    }, [isSortedColumn]);
+    }, [isSortedColumn, sortDirection]);
 
     if (type === TableColumnHeaderType.SelectAll) {
         const { checkboxProps } = useTableSelectAllCheckbox(state);
-        const { selectionManager } = state;
+        const {
+            selectionManager: { toggleSelectAll, selectedKeys, selectionMode },
+        } = state;
         const inputRef = useRef(null);
         const toggleState = useToggleState(checkboxProps);
         const { inputProps } = useCheckbox(checkboxProps, toggleState, inputRef);
-        const headerProps = { ...columnHeaderProps, onClick: () => selectionManager.toggleSelectAll() };
-        const selectedKeyCount = selectionManager.selectedKeys.size;
+        const headerProps = { ...columnHeaderProps, onClick: () => toggleSelectAll() };
+        const selectedKeyCount = selectedKeys.size;
 
         const getCheckboxState = useCallback(() => {
             if (selectedKeyCount === state.collection.size) {
@@ -85,10 +71,13 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
             <th
                 {...headerProps}
                 ref={ref}
-                className="tw-pl-8 tw-py-3 tw-pr-4 tw-w-16 tw-border-l-4 tw-border-transparent tw-cursor-pointer tw-group"
+                className={merge([
+                    "tw-pl-8 tw-py-3 tw-pr-4 tw-w-16 tw-border-l-4 tw-border-transparent tw-group tw-outline-none",
+                    selectionMode === "multiple" && "tw-cursor-pointer",
+                ])}
                 data-test-id="table-select-cell"
             >
-                {selectionManager.selectionMode === "single" ? (
+                {selectionMode === "single" ? (
                     <VisuallyHidden>{inputProps["aria-label"]}</VisuallyHidden>
                 ) : (
                     <Checkbox ariaLabel={column.key} state={getCheckboxState()} />
@@ -99,10 +88,10 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
 
     return (
         <th
-            {...mergeProps(columnHeaderProps, hoverProps, focusProps)}
+            {...mergeProps(columnHeaderProps, focusProps)}
             ref={ref}
             className={merge([
-                "tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-border-r tw-border-black-10 dark:tw-border-black-95 tw-outline-none tw-cursor-pointer tw-group",
+                "tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-outline-none tw-cursor-pointer tw-group",
                 isFocusVisible && FOCUS_STYLE,
             ])}
             data-test-id="table-column"
