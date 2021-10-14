@@ -6,11 +6,8 @@ import "draft-js/dist/Draft.css";
 import React, { FC, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import {
-    BlockquoteButton,
     BoldButton,
     CodeButton,
-    H3Button,
-    H4Button,
     InlineToolbar,
     ItalicButton,
     OrderedListButton,
@@ -21,8 +18,8 @@ import {
     UnorderedListButton,
 } from "./components";
 import { decorators } from "./decorators";
+import { useToolbar } from "./hooks/useToolbar";
 import { styleMap } from "./styleMap";
-import { getParentWithPositionRelative } from "./utilities/getParentWithPositionRelative";
 
 export type RichTextEditorProps = {
     placeholder?: string;
@@ -46,9 +43,17 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     });
     const [showInlineToolbar, setShowInlineToolbar] = useState(false);
 
+    const { selectionRect, show } = useToolbar(selectionRectRef, editorState.getSelection().getHasFocus(), readonly);
+
     useEffect(() => {
-        setShowInlineToolbar(!readonly && showInlineToolbar);
-    }, [readonly]);
+        (async () => {
+            popperUpdate && (await popperUpdate());
+        })();
+    }, [selectionRect]);
+
+    useEffect(() => {
+        setShowInlineToolbar(show);
+    }, [show]);
 
     const {
         styles,
@@ -81,39 +86,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         if (currentContent !== newContent) {
             emitContentChanged();
         }
-
-        const documentSelection = document.getSelection();
-        const hasFocus = value.getSelection().getHasFocus();
-        const hasSelectedText = hasFocus && !documentSelection?.isCollapsed;
-        const shouldShowInlineToolbar = !readonly && hasSelectedText;
-
-        if (shouldShowInlineToolbar) {
-            //TODO: Make hook
-            const rangeRect = documentSelection?.getRangeAt(0).getBoundingClientRect();
-            const parentWithPositionRelative =
-                selectionRectRef.current && getParentWithPositionRelative(selectionRectRef.current);
-
-            if (rangeRect && selectionRectRef.current) {
-                selectionRectRef.current.style.width = `${rangeRect.width}px`;
-                selectionRectRef.current.style.height = `${rangeRect.height}px`;
-
-                if (parentWithPositionRelative instanceof HTMLElement) {
-                    const parentRect = parentWithPositionRelative.getBoundingClientRect();
-                    selectionRectRef.current.style.top = `${rangeRect.y + window.scrollY - parentRect.top}px`;
-                    selectionRectRef.current.style.right = `${rangeRect.x - parentRect.left}px`;
-                    selectionRectRef.current.style.bottom = `${rangeRect.y - parentRect.top}px`;
-                    selectionRectRef.current.style.left = `${rangeRect.x + window.scrollX - parentRect.left}px`;
-                } else {
-                    selectionRectRef.current.style.top = `${rangeRect.y + window.scrollY}px`;
-                    selectionRectRef.current.style.right = `${rangeRect.x}px`;
-                    selectionRectRef.current.style.bottom = `${rangeRect.y}px`;
-                    selectionRectRef.current.style.left = `${rangeRect.x + window.scrollX}px`;
-                }
-            }
-        }
-
-        popperUpdate && (await popperUpdate());
-        setShowInlineToolbar(shouldShowInlineToolbar);
 
         setEditorState(value);
     };
@@ -167,6 +139,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
             <div
                 ref={selectionRectRef}
+                style={selectionRect}
                 className="tw-absolute tw-pointer-events-none tw-bg-violet-60 tw-opacity-50"
             ></div>
 
@@ -188,8 +161,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 >
                     {(externalProps) => (
                         <>
-                            <H3Button {...externalProps} />
-                            <H4Button {...externalProps} />
                             <BoldButton {...externalProps} />
                             <ItalicButton {...externalProps} />
                             <UnderlineButton {...externalProps} />
@@ -199,7 +170,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                             <SupButton {...externalProps} />
                             <OrderedListButton {...externalProps} />
                             <UnorderedListButton {...externalProps} />
-                            <BlockquoteButton {...externalProps} />
                         </>
                     )}
                 </InlineToolbar>

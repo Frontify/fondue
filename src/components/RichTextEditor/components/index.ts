@@ -1,8 +1,5 @@
-export { BlockquoteButton } from "./BlockquoteButton";
 export { BoldButton } from "./BoldButton";
 export { CodeButton } from "./CodeButton";
-export { H3Button } from "./H3Button";
-export { H4Button } from "./H4Button";
 export { InlineToolbar } from "./InlineToolbar";
 export { ItalicButton } from "./ItalicButton";
 export { OrderedListButton } from "./OrderedListButton";
