@@ -3,7 +3,7 @@ import { useFocusRing } from "@react-aria/focus";
 import { useTableRow } from "@react-aria/table";
 import { mergeProps } from "@react-aria/utils";
 import { TableState } from "@react-stately/table";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, useRef } from "react";
 
@@ -23,7 +23,7 @@ export const TableRow: FC<TableRowProps> = ({ item, state, children }) => {
             ref={ref}
             className={merge([
                 "tw-relative tw-border-t tw-border-black-10 hover:tw-bg-black-0 dark:tw-border-black-95 dark:hover:tw-bg-black-95",
-                isFocusVisible && FOCUS_STYLE,
+                isFocusVisible && FOCUS_STYLE_INSET,
             ])}
             data-test-id="table-row"
         >
