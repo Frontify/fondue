@@ -1,5 +1,5 @@
 import React, { ReactElement, ReactNode } from "react";
-import { EditorState, SelectionState } from "draft-js";
+import { EditorState } from "draft-js";
 
 export type InlineToolbarProps = {
     store: StoreItems;
@@ -10,21 +10,18 @@ export type InlineToolbarProps = {
 export type InlineToolbarChildrenProps = {
     editorState: EditorState;
     setEditorState: (editorState: EditorState) => void;
-    savedSelection: SelectionState | null;
     onClick: () => void;
 };
 
 export type StoreItems = {
     editorState: EditorState;
     setEditorState: (state: EditorState) => void;
-    savedSelection: SelectionState | null;
 };
 
 export const InlineToolbar = ({ store, children, onClick }: InlineToolbarProps): ReactElement<InlineToolbarProps> => {
     const childrenProps: InlineToolbarChildrenProps = {
         editorState: store.editorState,
         setEditorState: store.setEditorState,
-        savedSelection: store.savedSelection,
         onClick,
     };
 

@@ -1,15 +1,10 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { FC, useRef, useState, KeyboardEvent, useEffect } from "react";
-import {
-    Editor,
-    DraftHandleValue,
-    EditorState,
-    RichUtils,
-    ContentState,
-    getDefaultKeyBinding,
-    SelectionState,
-} from "draft-js";
+import { merge } from "@utilities/merge";
+import { ContentState, DraftHandleValue, Editor, EditorState, getDefaultKeyBinding, RichUtils } from "draft-js";
+import "draft-js/dist/Draft.css";
+import React, { FC, KeyboardEvent, useEffect, useRef, useState } from "react";
+import { usePopper } from "react-popper";
 import {
     BlockquoteButton,
     BoldButton,
@@ -18,8 +13,6 @@ import {
     H4Button,
     InlineToolbar,
     ItalicButton,
-    LinkButton,
-    LinkChooser,
     OrderedListButton,
     StrikethroughButton,
     SubButton,
@@ -27,13 +20,8 @@ import {
     UnderlineButton,
     UnorderedListButton,
 } from "./components";
-import { usePopper } from "react-popper";
 import { decorators } from "./decorators";
-import { getSelectionEntity } from "./utilities/getSelectionEntity";
-import useClickOutside from "@hooks/useClickOutside";
-import { merge } from "@utilities/merge";
 import { styleMap } from "./styleMap";
-import "draft-js/dist/Draft.css";
 import { getParentWithPositionRelative } from "./utilities/getParentWithPositionRelative";
 
 export type RichTextEditorProps = {
@@ -42,14 +30,6 @@ export type RichTextEditorProps = {
     onTextChange?: (value: EditorState) => void;
     readonly?: boolean;
 };
-
-export enum RichTextEditorArea {
-    Normal,
-    LinkPreview,
-    LinkChooser,
-    ButtonPreview,
-    ButtonChooser,
-}
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
     value,
@@ -64,9 +44,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const [editorState, setEditorState] = useState<EditorState>(() => {
         return value ? EditorState.createWithContent(value, decorators) : EditorState.createEmpty(decorators);
     });
-    const [editorArea, setEditorArea] = useState(RichTextEditorArea.Normal);
     const [showInlineToolbar, setShowInlineToolbar] = useState(false);
-    const [savedSelection, setSavedSelection] = useState<SelectionState | null>(null);
 
     useEffect(() => {
         setShowInlineToolbar(!readonly && showInlineToolbar);
@@ -95,14 +73,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         ],
     });
 
-    useClickOutside(inlineToolbarRef.current, () => {
-        setSavedSelection(null);
-
-        if (editorArea !== RichTextEditorArea.Normal) {
-            setEditorArea(RichTextEditorArea.Normal);
-        }
-    });
-
     const onEditorChange = async (value: EditorState): Promise<void> => {
         const currentContent = editorState.getCurrentContent();
         const newContent = value.getCurrentContent();
@@ -115,13 +85,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         const documentSelection = document.getSelection();
         const hasFocus = value.getSelection().getHasFocus();
         const hasSelectedText = hasFocus && !documentSelection?.isCollapsed;
-        const selectionLinkEntity = getSelectionEntity(value, "LINK");
-        const selectionButtonEntity = getSelectionEntity(value, "BUTTON");
-        const isLinkOrButton = !!(selectionLinkEntity || selectionButtonEntity);
-        const shouldShowInlineToolbar =
-            !readonly && (hasSelectedText || !!savedSelection || (hasFocus && isLinkOrButton));
+        const shouldShowInlineToolbar = !readonly && hasSelectedText;
 
-        if (shouldShowInlineToolbar && !savedSelection) {
+        if (shouldShowInlineToolbar) {
+            //TODO: Make hook
             const rangeRect = documentSelection?.getRangeAt(0).getBoundingClientRect();
             const parentWithPositionRelative =
                 selectionRectRef.current && getParentWithPositionRelative(selectionRectRef.current);
@@ -148,14 +115,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         popperUpdate && (await popperUpdate());
         setShowInlineToolbar(shouldShowInlineToolbar);
 
-        if (selectionLinkEntity) {
-            setEditorArea(RichTextEditorArea.LinkPreview);
-        } else if (selectionButtonEntity) {
-            setEditorArea(RichTextEditorArea.ButtonPreview);
-        } else {
-            setEditorArea(RichTextEditorArea.Normal);
-        }
-
         setEditorState(value);
     };
 
@@ -179,32 +138,12 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         return "not-handled";
     };
 
-    const saveSelection = () => {
-        const currentSelection = editorState.getSelection();
-        setSavedSelection(currentSelection);
-        window.getSelection()?.removeAllRanges();
-    };
-
-    const onShowLinkChooser = () => {
-        saveSelection();
-        setEditorArea(RichTextEditorArea.LinkChooser);
-    };
-
     const emitContentChanged = () => {
         onTextChange && onTextChange(editorState);
     };
 
-    const onLinkChooserConfirm = () => {
-        setSavedSelection(null);
-        setShowInlineToolbar(false);
-        setEditorArea(RichTextEditorArea.Normal);
-        emitContentChanged();
-    };
-
     const onEditorBlur = () => {
-        setSavedSelection(null);
         setShowInlineToolbar(false);
-        setEditorArea(RichTextEditorArea.Normal);
         editor.current?.blur();
     };
 
@@ -245,36 +184,22 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     store={{
                         editorState,
                         setEditorState,
-                        savedSelection,
                     }}
                 >
                     {(externalProps) => (
                         <>
-                            {editorArea === RichTextEditorArea.Normal && (
-                                <>
-                                    <H3Button {...externalProps} />
-                                    <H4Button {...externalProps} />
-                                    <BoldButton {...externalProps} />
-                                    <ItalicButton {...externalProps} />
-                                    <UnderlineButton {...externalProps} />
-                                    <StrikethroughButton {...externalProps} />
-                                    <CodeButton {...externalProps} />
-                                    <SubButton {...externalProps} />
-                                    <SupButton {...externalProps} />
-                                    <OrderedListButton {...externalProps} />
-                                    <UnorderedListButton {...externalProps} />
-                                    <BlockquoteButton {...externalProps} />
-                                    <LinkButton onClick={onShowLinkChooser}></LinkButton>
-                                </>
-                            )}
-
-                            {editorArea === RichTextEditorArea.LinkChooser && (
-                                <LinkChooser {...externalProps} onConfirm={onLinkChooserConfirm} />
-                            )}
-
-                            {editorArea === RichTextEditorArea.LinkPreview && <span>This is the link preview</span>}
-
-                            {editorArea === RichTextEditorArea.ButtonPreview && <span>This is the button preview</span>}
+                            <H3Button {...externalProps} />
+                            <H4Button {...externalProps} />
+                            <BoldButton {...externalProps} />
+                            <ItalicButton {...externalProps} />
+                            <UnderlineButton {...externalProps} />
+                            <StrikethroughButton {...externalProps} />
+                            <CodeButton {...externalProps} />
+                            <SubButton {...externalProps} />
+                            <SupButton {...externalProps} />
+                            <OrderedListButton {...externalProps} />
+                            <UnorderedListButton {...externalProps} />
+                            <BlockquoteButton {...externalProps} />
                         </>
                     )}
                 </InlineToolbar>

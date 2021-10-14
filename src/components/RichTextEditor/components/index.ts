@@ -1,13 +1,10 @@
 export { BlockquoteButton } from "./BlockquoteButton";
 export { BoldButton } from "./BoldButton";
-export { ButtonButton } from "./ButtonButton";
 export { CodeButton } from "./CodeButton";
 export { H3Button } from "./H3Button";
 export { H4Button } from "./H4Button";
 export { InlineToolbar } from "./InlineToolbar";
 export { ItalicButton } from "./ItalicButton";
-export { LinkButton } from "./LinkButton";
-export { LinkChooser } from "./LinkChooser";
 export { OrderedListButton } from "./OrderedListButton";
 export { StrikethroughButton } from "./StrikethroughButton";
 export { SubButton } from "./SubButton";
