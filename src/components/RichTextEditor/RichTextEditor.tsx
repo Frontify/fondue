@@ -137,11 +137,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 readOnly={readonly}
             />
 
-            <div
-                ref={selectionRectRef}
-                style={selectionRect}
-                className="tw-absolute tw-pointer-events-none tw-bg-violet-60 tw-opacity-50"
-            ></div>
+            <div ref={selectionRectRef} style={selectionRect} className="tw-absolute tw-pointer-events-none"></div>
 
             <div
                 ref={inlineToolbarRef}
