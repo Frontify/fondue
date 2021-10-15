@@ -47,6 +47,7 @@ export * from "./compositions/ButtonGroup/ButtonGroup";
 export * from "./compositions/Checklist/Checklist";
 export * from "./compositions/FieldsetHeader/FieldsetHeader";
 export * from "./compositions/FormControl/FormControl";
+export * from "./compositions/MultiInput/MultiInput";
 export * from "./elements/AddBlockButton/AddBlockButton";
 export * from "./elements/Badge/Badge";
 export * from "./elements/Button/Button";
