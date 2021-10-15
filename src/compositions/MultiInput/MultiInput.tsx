@@ -13,5 +13,9 @@ export type MultiInputProps = {
 
 export const MultiInput: FC<MultiInputProps> = ({ layout, children }) => {
     console.log({ layout });
-    return <div>{children}</div>;
+    return (
+        <div data-test-id="multi-input" className="tw-flex">
+            {children}
+        </div>
+    );
 };
