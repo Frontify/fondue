@@ -62,13 +62,32 @@ export const SelectList: FC<SelectListProps> = (props) => {
 
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const { overlayProps } = useOverlay(
-        { isOpen: open, onClose: () => setOpen(false), shouldCloseOnBlur: true, isDismissable: true },
+        {
+            isOpen: open,
+            onClose: () => setOpen(false),
+            shouldCloseOnBlur: true,
+            isDismissable: true,
+            shouldCloseOnInteractOutside: (element) => {
+                if (element && element.tagName !== "BUTTON" && element.tagName !== "svg") {
+                    return true;
+                }
+                return false;
+            },
+        },
         overlayRef,
     );
 
     const triggerRef = useRef<HTMLDivElement | null>(null);
 
-    const { buttonProps } = useButton({ onPress: () => setOpen(true) }, triggerRef);
+    const { buttonProps } = useButton(
+        {
+            onPress: () => {
+                setOpen(true);
+            },
+            elementType: "div",
+        },
+        triggerRef,
+    );
 
     return (
         <div className="tw-relative">
