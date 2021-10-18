@@ -1,12 +1,16 @@
+import { useActor } from "@xstate/react";
 import React, { FC } from "react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
-import { EditorContext, EditorStateData } from "./state/editor/machine";
+import { ToolbarContext, ToolbarStateData } from "./state/toolbar/machine";
 
 type ToolbarProps = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    machineRef: Interpreter<EditorContext, any, DoneInvokeEvent<EditorStateData>>;
+    machineRef: Interpreter<ToolbarContext, any, DoneInvokeEvent<ToolbarStateData>>;
 };
 
-export const Toolbar: FC<ToolbarProps> = ({}) => {
+export const Toolbar: FC<ToolbarProps> = ({ machineRef }) => {
+    const [state, send] = useActor(machineRef);
+    console.log(state, send);
+
     return <>Toolbar</>;
 };

@@ -48,7 +48,10 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                 },
             },
             [States.Styling]: {
-                invoke: toolbarMachine,
+                invoke: {
+                    id: "toolbar",
+                    src: "toolbarMachine",
+                },
             },
         },
     },
@@ -62,6 +65,9 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
         },
         actions: {
             updateEditorState,
+        },
+        services: {
+            toolbarMachine,
         },
     },
 );

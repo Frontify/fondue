@@ -3,8 +3,10 @@ import { useMachine } from "@xstate/react";
 import { convertFromRaw, convertToRaw, Editor, EditorState, RawDraftContentState } from "draft-js";
 import "draft-js/dist/Draft.css";
 import React, { FC, useMemo, useRef } from "react";
+import { DoneInvokeEvent, Interpreter } from "xstate";
 import { decorators } from "./decorators";
 import { editorMachine, States } from "./state/editor/machine";
+import { ToolbarContext, ToolbarStateData } from "./state/toolbar/machine";
 import { styleMap } from "./styleMap";
 import { Toolbar } from "./Toolbar";
 
@@ -22,7 +24,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     readonly = false,
 }: RichTextEditorProps) => {
     const editor = useRef<Editor | null>(null);
-    const [{ context, matches }, send, machineRef] = useMachine(
+    const [{ context, matches, children }, send] = useMachine(
         editorMachine.withContext({
             locked: readonly,
             editorState: value
@@ -50,7 +52,12 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 ),
                 [context.editorState],
             )}
-            {matches(States.Styling) && <Toolbar machineRef={machineRef} />}
+            {matches(States.Styling) && (
+                <Toolbar
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    machineRef={children.toolbar as Interpreter<ToolbarContext, any, DoneInvokeEvent<ToolbarStateData>>}
+                />
+            )}
         </div>
     );
 };
