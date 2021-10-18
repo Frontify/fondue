@@ -31,18 +31,18 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
 
     return (
-        <div onFocus={() => send("FOCUS")}>
+        <div onFocus={() => send("FOCUSED")}>
             <Editor
                 ref={editor}
                 customStyleMap={styleMap}
                 editorState={context.editorState}
                 placeholder={placeholder}
                 onChange={(editorState) => {
-                    send("CONTENT_CHANGED", { data: { editorState } });
+                    send("CHANGED", { data: { editorState } });
                     onTextChange && onTextChange(convertToRaw(context.editorState.getCurrentContent()));
                 }}
                 onBlur={() => editor.current?.blur()}
-                readOnly={matches(States.Readonly)}
+                readOnly={readonly}
             />
             {matches(States.Styling) && <Toolbar machineRef={machineRef} />}
         </div>

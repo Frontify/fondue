@@ -8,5 +8,5 @@ type ToolbarProps = {
 };
 
 export const Toolbar: FC<ToolbarProps> = ({}) => {
-    return <></>;
+    return <>Toolbar</>;
 };

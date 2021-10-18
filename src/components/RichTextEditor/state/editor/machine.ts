@@ -2,6 +2,7 @@ import { EditorState } from "draft-js";
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { toolbarMachine } from "../toolbar/machine";
 import { updateEditorState } from "./actions";
+import { hasEditorState } from "./typeguards";
 
 export type EditorContext = {
     locked: boolean;
@@ -23,21 +24,27 @@ export enum States {
 export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<EditorEventDataTypes>>(
     {
         id: "editor",
-        initial: "readonly",
+        initial: States.Readonly,
         states: {
             [States.Readonly]: {
                 on: {
-                    FOCUS: {
-                        target: "editing",
+                    FOCUSED: {
+                        target: States.Editing,
                         cond: "canEdit",
                     },
                 },
             },
             [States.Editing]: {
                 on: {
-                    CONTENT_CHANGED: {
-                        actions: "updateEditorState",
-                    },
+                    CHANGED: [
+                        {
+                            target: States.Styling,
+                            cond: "hasSelection",
+                        },
+                        {
+                            actions: "updateEditorState",
+                        },
+                    ],
                 },
             },
             [States.Styling]: {
@@ -48,6 +55,10 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
     {
         guards: {
             canEdit: ({ locked }) => !locked,
+            hasSelection: (_, { data }) => {
+                const selection = data.editorState.getSelection();
+                return hasEditorState(data) && selection.getHasFocus() && !selection.isCollapsed();
+            },
         },
         actions: {
             updateEditorState,
