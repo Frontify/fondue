@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { InputLabel, InputLabelProps } from "@elements/InputLabel/InputLabel";
-import React, { FC } from "react";
+import React, { FC, ReactNode, Children } from "react";
 
 export enum MultiInputLayout {
     Columns = "Columns",
@@ -11,10 +11,12 @@ export enum MultiInputLayout {
 export type MultiInputProps = {
     layout: MultiInputLayout;
     label?: Omit<InputLabelProps, "disabled">;
-    helper?: string;
+    helper?: ReactNode;
+    extra?: ReactNode;
 };
 
 export const MultiInput: FC<MultiInputProps> = ({ layout, label, extra, helper, children }) => {
+    const childrenArray = Children.toArray(children);
     return (
         <div data-test-id="multi-input" className="tw-flex tw-gap-2 tw-w-full tw-flex-col">
             {(label || extra) && (
@@ -31,12 +33,12 @@ export const MultiInput: FC<MultiInputProps> = ({ layout, label, extra, helper, 
                 </div>
             )}
             {layout === MultiInputLayout.Columns && <div className="tw-grid tw-grid-cols-2 tw-gap-2">{children}</div>}
-            {layout === MultiInputLayout.Spider && children.length === 4 && (
+            {layout === MultiInputLayout.Spider && (
                 <div className="tw-grid tw-grid-cols-8 tw-gap-2">
-                    <div className="tw-col-start-3 tw-col-span-4">{children[0]}</div>
-                    <div className="tw-col-start-1 tw-col-span-4">{children[1]}</div>
-                    <div className="tw-col-start-5 tw-col-span-4">{children[2]}</div>
-                    <div className="tw-col-start-3 tw-col-span-4">{children[3]}</div>
+                    {childrenArray[0] && <div className="tw-col-start-3 tw-col-span-4">{childrenArray[0]}</div>}
+                    {childrenArray[1] && <div className="tw-col-start-1 tw-col-span-4">{childrenArray[1]}</div>}
+                    {childrenArray[2] && <div className="tw-col-start-5 tw-col-span-4">{childrenArray[2]}</div>}
+                    {childrenArray[3] && <div className="tw-col-start-3 tw-col-span-4">{childrenArray[3]}</div>}
                 </div>
             )}
             {helper && <div className="tw-text-s tw-font-sans tw-text-black-80">{helper}</div>}
