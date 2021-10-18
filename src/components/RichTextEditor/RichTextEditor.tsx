@@ -2,7 +2,7 @@ import { debounce } from "@utilities/debounce";
 import { useMachine } from "@xstate/react";
 import { convertFromRaw, convertToRaw, Editor, EditorState, RawDraftContentState } from "draft-js";
 import "draft-js/dist/Draft.css";
-import React, { FC, useRef } from "react";
+import React, { FC, useMemo, useRef } from "react";
 import { decorators } from "./decorators";
 import { editorMachine, States } from "./state/editor/machine";
 import { styleMap } from "./styleMap";
@@ -33,18 +33,23 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     return (
         <div onFocus={() => send("FOCUSED")}>
-            <Editor
-                ref={editor}
-                customStyleMap={styleMap}
-                editorState={context.editorState}
-                placeholder={placeholder}
-                onChange={debounce((editorState) => {
-                    send("CHANGED", { data: { editorState } });
-                    onTextChange && onTextChange(convertToRaw(context.editorState.getCurrentContent()));
-                }, 50)}
-                onBlur={() => editor.current?.blur()}
-                readOnly={readonly}
-            />
+            {useMemo(
+                () => (
+                    <Editor
+                        ref={editor}
+                        customStyleMap={styleMap}
+                        editorState={context.editorState}
+                        placeholder={placeholder}
+                        onChange={debounce((editorState) => {
+                            send("CHANGED", { data: { editorState } });
+                            onTextChange && onTextChange(convertToRaw(context.editorState.getCurrentContent()));
+                        }, 50)}
+                        onBlur={() => editor.current?.blur()}
+                        readOnly={readonly}
+                    />
+                ),
+                [context.editorState],
+            )}
             {matches(States.Styling) && <Toolbar machineRef={machineRef} />}
         </div>
     );
