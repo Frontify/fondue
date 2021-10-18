@@ -35,7 +35,7 @@ export const MultiInput: FC<MultiInputProps> = ({ layout, spanLastItem, label, e
                 </div>
             )}
             {layout === MultiInputLayout.Columns && (
-                <div className="tw-grid tw-grid-cols-2 tw-gap-2">
+                <div data-test-id="multi-input-grid-columns" className="tw-grid tw-grid-cols-2 tw-gap-2">
                     {Children.map(children, (child, index) => {
                         return (
                             <div
@@ -51,7 +51,7 @@ export const MultiInput: FC<MultiInputProps> = ({ layout, spanLastItem, label, e
                 </div>
             )}
             {layout === MultiInputLayout.Spider && (
-                <div className="tw-grid tw-grid-cols-8 tw-gap-2">
+                <div data-test-id="multi-input-grid-spider" className="tw-grid tw-grid-cols-8 tw-gap-2">
                     {childrenArray[0] && <div className="tw-col-start-3 tw-col-span-4">{childrenArray[0]}</div>}
                     {childrenArray[1] && <div className="tw-col-start-1 tw-col-span-4">{childrenArray[1]}</div>}
                     {childrenArray[2] && <div className="tw-col-start-5 tw-col-span-4">{childrenArray[2]}</div>}
