@@ -14,12 +14,18 @@ export type EditorStateData = {
 
 export type EditorEventDataTypes = EditorStateData;
 
+export enum States {
+    Readonly = "readonly",
+    Editing = "editing",
+    Styling = "styling",
+}
+
 export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<EditorEventDataTypes>>(
     {
         id: "editor",
         initial: "readonly",
         states: {
-            readonly: {
+            [States.Readonly]: {
                 on: {
                     FOCUS: {
                         target: "editing",
@@ -27,14 +33,14 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                     },
                 },
             },
-            editing: {
+            [States.Editing]: {
                 on: {
                     CONTENT_CHANGED: {
                         actions: "updateEditorState",
                     },
                 },
             },
-            styling: {
+            [States.Styling]: {
                 invoke: toolbarMachine,
             },
         },

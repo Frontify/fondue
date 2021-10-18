@@ -3,8 +3,9 @@ import { convertFromRaw, convertToRaw, Editor, EditorState, RawDraftContentState
 import "draft-js/dist/Draft.css";
 import React, { FC, useRef } from "react";
 import { decorators } from "./decorators";
-import { editorMachine } from "./state/editor/machine";
+import { editorMachine, States } from "./state/editor/machine";
 import { styleMap } from "./styleMap";
+import { Toolbar } from "./Toolbar";
 
 export type RichTextEditorProps = {
     placeholder?: string;
@@ -20,7 +21,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     readonly = false,
 }: RichTextEditorProps) => {
     const editor = useRef<Editor | null>(null);
-    const [{ context }, send, machineRef] = useMachine(
+    const [{ context, matches }, send, machineRef] = useMachine(
         editorMachine.withContext({
             locked: readonly,
             editorState: value
@@ -41,8 +42,9 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     onTextChange && onTextChange(convertToRaw(context.editorState.getCurrentContent()));
                 }}
                 onBlur={() => editor.current?.blur()}
-                readOnly={readonly}
+                readOnly={matches(States.Readonly)}
             />
+            {matches(States.Styling) && <Toolbar machineRef={machineRef} />}
         </div>
     );
 };
