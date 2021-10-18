@@ -1,3 +1,4 @@
+import { debounce } from "@utilities/debounce";
 import { useMachine } from "@xstate/react";
 import { convertFromRaw, convertToRaw, Editor, EditorState, RawDraftContentState } from "draft-js";
 import "draft-js/dist/Draft.css";
@@ -37,10 +38,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 customStyleMap={styleMap}
                 editorState={context.editorState}
                 placeholder={placeholder}
-                onChange={(editorState) => {
+                onChange={debounce((editorState) => {
                     send("CHANGED", { data: { editorState } });
                     onTextChange && onTextChange(convertToRaw(context.editorState.getCurrentContent()));
-                }}
+                }, 50)}
                 onBlur={() => editor.current?.blur()}
                 readOnly={readonly}
             />
