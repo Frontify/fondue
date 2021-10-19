@@ -41,6 +41,7 @@ export const SelectList: FC<SelectListProps> = ({ state, ariaLabel }) => {
                         ref={optionRef}
                         {...mergeProps(optionProps, focusProps)}
                         className={isFocusVisible ? FOCUS_STYLE : ""}
+                        data-test-id="select-item"
                     >
                         <Checkbox
                             label={key.toString()}

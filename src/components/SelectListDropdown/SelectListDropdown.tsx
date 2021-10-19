@@ -13,7 +13,7 @@ import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import React, { FC, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { SelectList } from "./SelectList";
+import { SelectList, SelectListItem } from "./SelectList";
 
 const getAllItemNames = (items: SelectListItem[]) => items.map(({ name }) => name);
 
@@ -23,10 +23,6 @@ export type SelectListDropdownProps = {
     disabled?: boolean;
     onSelectionChange: (keys: string[]) => void;
     ariaLabel?: string;
-};
-
-export type SelectListItem = {
-    name: string;
 };
 
 export const SelectListDropdown: FC<SelectListDropdownProps> = ({

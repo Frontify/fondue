@@ -3,10 +3,12 @@
 import { mount } from "@cypress/react";
 import React, { FC, useState } from "react";
 import { SelectListDropdown } from "./SelectListDropdown";
+import { SelectListItem } from "./SelectList";
 
 const DROPDOWN_TRIGGER_ID = "[data-test-id=select-list-dropdown-trigger]";
 const SELECTED_LIST_ID = "[data-test-id=select-list-selected]";
 const SELECT_LIST_ID = "[data-test-id=select-list]";
+const SELECT_ITEM_ID = "[data-test-id=select-item]";
 
 const ITEMS = {
     activeItemKeys: ["Short tag", "Tag 74"],
@@ -57,5 +59,24 @@ describe("Dropdown Component", () => {
         mount(<Component items={ITEMS.items} activeItemKeys={ITEMS.activeItemKeys} />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(SELECT_LIST_ID).should("be.visible");
+    });
+    it("changes selection on click", () => {
+        mount(<Component items={ITEMS.items} activeItemKeys={ITEMS.activeItemKeys} />);
+        cy.get(DROPDOWN_TRIGGER_ID).click();
+        cy.get(SELECT_ITEM_ID).first().as("firstListItem");
+        cy.get(SELECT_ITEM_ID).eq(1).as("secondListItem");
+        cy.get(SELECT_ITEM_ID).eq(2).as("thirdListItem");
+
+        cy.get("@firstListItem").click();
+        cy.get("@firstListItem").should("have.attr", "aria-selected", "true");
+        cy.get(SELECTED_LIST_ID).contains("Checkbox label 1");
+
+        cy.get("@secondListItem").click();
+        cy.get("@secondListItem").should("have.attr", "aria-selected", "false");
+        cy.get(SELECTED_LIST_ID).contains("Short tag").should("not.exist");
+
+        cy.get("@thirdListItem").click();
+        cy.get("@thirdListItem").should("have.attr", "aria-selected", "true");
+        cy.get(SELECTED_LIST_ID).contains("Checkbox label 2");
     });
 });
