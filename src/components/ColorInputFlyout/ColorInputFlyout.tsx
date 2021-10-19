@@ -20,7 +20,7 @@ export const ColorInputFlyout: FC<ColorInputFlyoutProps> = ({
     onClose,
     onSelect,
     currentColor,
-    palettes = [],
+    palettes,
     disabled = false,
 }) => {
     const [open, setOpen] = useState(false);
