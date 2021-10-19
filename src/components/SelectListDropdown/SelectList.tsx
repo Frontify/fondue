@@ -13,7 +13,6 @@ import React, { FC, useRef } from "react";
 
 export type SelectListProps = {
     state: ListState<any>;
-    activeItemKeys: string[];
     ariaLabel?: string;
 };
 

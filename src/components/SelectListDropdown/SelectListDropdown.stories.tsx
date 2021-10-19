@@ -7,6 +7,29 @@ import { SelectListDropdown as SelectListDropdownComponent, SelectListDropdownPr
 export default {
     title: "Components/Select List Dropdown",
     component: SelectListDropdownComponent,
+    args: {
+        activeItemKeys: ["Short tag", "Tag 74"],
+        items: [
+            {
+                name: "Checkbox label 1",
+            },
+            {
+                name: "Short tag",
+            },
+            {
+                name: "Checkbox label 2",
+            },
+            {
+                name: "Checkbox label 3",
+            },
+            {
+                name: "Tag 74",
+            },
+            {
+                name: "This is a long tag",
+            },
+        ],
+    },
 } as Meta;
 
 export const SelectListDropdown: Story<SelectListDropdownProps> = (args) => {
@@ -18,28 +41,4 @@ export const SelectListDropdown: Story<SelectListDropdownProps> = (args) => {
             onSelectionChange={(keys) => setActiveItemKeys(keys)}
         />
     );
-};
-
-SelectListDropdown.args = {
-    activeItemKeys: ["Short tag", "Tag 74"],
-    items: [
-        {
-            name: "Checkbox label 1",
-        },
-        {
-            name: "Short tag",
-        },
-        {
-            name: "Checkbox label 2",
-        },
-        {
-            name: "Checkbox label 3",
-        },
-        {
-            name: "Tag 74",
-        },
-        {
-            name: "This is a long tag",
-        },
-    ],
 };

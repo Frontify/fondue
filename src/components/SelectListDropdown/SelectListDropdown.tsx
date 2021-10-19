@@ -9,6 +9,7 @@ import { useButton } from "@react-aria/button";
 import { Item } from "@react-stately/collections";
 import { useListState } from "@react-stately/list";
 import { merge } from "@utilities/merge";
+import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import React, { FC, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -28,8 +29,12 @@ export type SelectListItem = {
     name: string;
 };
 
-export const SelectListDropdown: FC<SelectListDropdownProps> = (props) => {
-    const { items, activeItemKeys, ariaLabel = "Select list", disabled } = props;
+export const SelectListDropdown: FC<SelectListDropdownProps> = ({
+    items,
+    activeItemKeys,
+    ariaLabel = "Select list",
+    disabled = false,
+}) => {
     const [open, setOpen] = useState(false);
 
     const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -49,12 +54,8 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = (props) => {
             onClose: () => setOpen(false),
             shouldCloseOnBlur: true,
             isDismissable: true,
-            shouldCloseOnInteractOutside: (element) => {
-                if (element && element.tagName !== "BUTTON" && element.tagName !== "svg") {
-                    return true;
-                }
-                return false;
-            },
+            shouldCloseOnInteractOutside: (element) =>
+                element && element.tagName !== "BUTTON" && element.tagName !== "svg",
         },
         overlayRef,
     );
@@ -72,13 +73,11 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = (props) => {
     return (
         <div className="tw-relative">
             <div
-                {...buttonProps}
-                {...focusProps}
+                {...mergeProps(buttonProps, focusProps)}
                 ref={triggerRef}
-                data-test-id="select-list"
+                data-test-id="select-list-dropdown"
                 className={merge([
-                    "tw-group tw-relative tw-cursor-pointer tw-outline-none tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors",
-                    "tw-px-[19px] tw-py-[11px] tw-min-h-[50px]",
+                    "tw-group tw-relative tw-cursor-pointer tw-outline-none tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors tw-px-[19px] tw-py-[11px] tw-min-h-[50px]",
                     isFocusVisible && FOCUS_STYLE,
                     disabled
                         ? "tw-border-black-5 tw-bg-black-5 tw-pointer-events-none"
@@ -127,7 +126,7 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = (props) => {
                     >
                         <FocusScope restoreFocus>
                             <div {...overlayProps} ref={overlayRef}>
-                                <SelectList state={state} ariaLabel={ariaLabel} activeItemKeys={activeItemKeys} />
+                                <SelectList state={state} ariaLabel={ariaLabel} />
                             </div>
                         </FocusScope>
                     </motion.div>
