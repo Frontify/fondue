@@ -44,10 +44,12 @@ export type FlyoutProps = PropsWithChildren<{
     title?: string;
     decorator?: ReactNode;
     badges?: BadgeProps[];
+    hug?: boolean;
+    isOpen?: boolean;
+    onOpenChange: (isOpen: boolean) => void;
 }>;
 
-type OverlayProps = Omit<FlyoutProps, "trigger"> & {
-    isOpen?: boolean;
+type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange"> & {
     positionProps: HTMLAttributes<Element>;
     overlayTriggerProps: HTMLAttributes<Element>;
     scrollRef: RefObject<HTMLDivElement>;
@@ -120,9 +122,20 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
     },
 );
 
-export const Flyout: FC<FlyoutProps> = (props) => {
-    const state = useOverlayTriggerState({});
-    const { isOpen } = state;
+export const Flyout: FC<FlyoutProps> = ({
+    trigger,
+    decorator,
+    onClick,
+    onClose,
+    children,
+    onOpenChange,
+    isOpen = false,
+    title = "",
+    badges = [],
+    hug = true,
+}) => {
+    const state = useOverlayTriggerState({ isOpen, onOpenChange });
+    const { toggle, close } = state;
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -140,7 +153,7 @@ export const Flyout: FC<FlyoutProps> = (props) => {
         scrollRef: scrollRef,
         isOpen,
     });
-    const { buttonProps } = useButton({ onPress: () => state.toggle() }, triggerRef);
+    const { buttonProps } = useButton({ onPress: () => toggle() }, triggerRef);
     useEffect(() => {
         const revert = watchModals();
 
@@ -152,37 +165,41 @@ export const Flyout: FC<FlyoutProps> = (props) => {
             <button
                 {...mergeProps(buttonProps, triggerProps, focusProps)}
                 ref={triggerRef}
-                className={merge(["tw-outline-none tw-mx-3 tw-rounded", isFocusVisible && FOCUS_STYLE])}
+                className={merge([
+                    "tw-outline-none tw-rounded",
+                    hug ? "tw-mx-3" : "tw-w-full",
+                    isFocusVisible && FOCUS_STYLE,
+                ])}
                 data-test-id="flyout-trigger"
             >
-                {props.trigger}
+                {trigger}
             </button>
             {isOpen && (
                 <OverlayContainer>
                     <FocusScope restoreFocus>
                         <Overlay
-                            title={props.title}
-                            badges={props.badges}
-                            decorator={props.decorator}
+                            title={title}
+                            badges={badges}
+                            decorator={decorator}
                             isOpen={isOpen}
                             overlayTriggerProps={overlayTriggerProps}
                             positionProps={positionProps}
                             onClick={
-                                props.onClick
+                                onClick
                                     ? () => {
-                                          props.onClick && props.onClick();
-                                          state.close();
+                                          onClick();
+                                          close();
                                       }
                                     : undefined
                             }
                             onClose={() => {
-                                props.onClose && props.onClose();
-                                state.close();
+                                onClose && onClose();
+                                close();
                             }}
                             ref={overlayRef}
                             scrollRef={scrollRef}
                         >
-                            {overlayRef?.current && props.children}
+                            {overlayRef?.current && children}
                         </Overlay>
                     </FocusScope>
                 </OverlayContainer>
