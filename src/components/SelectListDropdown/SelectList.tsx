@@ -25,7 +25,12 @@ export const SelectList: FC<SelectListProps> = ({ state, ariaLabel }) => {
     const { listBoxProps } = useListBox<SelectListItem>({ "aria-label": ariaLabel }, state, ref);
 
     return (
-        <ul {...listBoxProps} ref={ref} className="tw-border-black-10 tw-rounded tw-shadow-mid tw-p-4 tw-space-y-4">
+        <ul
+            {...listBoxProps}
+            ref={ref}
+            className="tw-border-black-10 tw-rounded tw-shadow-mid tw-p-4 tw-space-y-4"
+            data-test-id="select-list"
+        >
             {[...state.collection].map(({ key }) => {
                 const optionRef = useRef<HTMLLIElement | null>(null);
                 const { optionProps, isSelected } = useOption({ key, shouldFocusOnHover: false }, state, optionRef);

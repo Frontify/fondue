@@ -75,7 +75,7 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = ({
             <div
                 {...mergeProps(buttonProps, focusProps)}
                 ref={triggerRef}
-                data-test-id="select-list-dropdown"
+                data-test-id="select-list-dropdown-trigger"
                 className={merge([
                     "tw-group tw-relative tw-cursor-pointer tw-outline-none tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors tw-px-[19px] tw-py-[11px] tw-min-h-[50px]",
                     isFocusVisible && FOCUS_STYLE,
@@ -87,7 +87,7 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = ({
                           ]),
                 ])}
             >
-                <div className="tw-flex-1 tw-flex tw-flex-wrap tw-gap-1">
+                <div className="tw-flex-1 tw-flex tw-flex-wrap tw-gap-1" data-test-id="select-list-selected">
                     {[...state.selectionManager.selectedKeys].map((key) => (
                         <Tag
                             key={key}
