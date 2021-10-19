@@ -1,12 +1,11 @@
 import { Slider } from "@components/Slider/Slider";
 import IconCheck from "@elements/Icon/Generated/IconCheck";
 import IconImageGrid2 from "@elements/Icon/Generated/IconImageGrid2";
-import IconSearch from "@elements/Icon/Generated/IconSearch";
 import IconListBullets from "@elements/Icon/Generated/IconListBullets";
+import IconSearch from "@elements/Icon/Generated/IconSearch";
 import { IconSize } from "@elements/Icon/IconSize";
 import { TextInput } from "@elements/TextInput/TextInput";
 import { toColor } from "@utilities/colors";
-import { debounce } from "@utilities/debounce";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useState } from "react";
 import { ColorPickerProps } from "./ColorPicker";
@@ -27,28 +26,33 @@ export const BrandColorPicker: FC<ColorPickerProps> = ({ palettes: defaultPalett
     const [view, setView] = useState(views[0].id);
     const [query, setQuery] = useState("");
     const [palettes, setPalettes] = useState(defaultPalettes);
+
     useEffect(() => {
-        setPalettes(
-            defaultPalettes
-                .filter(({ title, colors }) => find(title, query) || colors.some(({ name }) => find(name, query)))
-                .map(({ title, colors }) => ({
-                    title,
-                    colors: colors.some(({ name }) => find(name, query))
-                        ? colors.filter(({ name }) => find(name, query))
-                        : colors,
-                })),
-        );
+        const timer = setTimeout(() => {
+            setPalettes(
+                defaultPalettes
+                    .filter(({ title, colors }) => find(title, query) || colors.some(({ name }) => find(name, query)))
+                    .map(({ title, colors }) => ({
+                        title,
+                        colors: colors.some(({ name }) => find(name, query))
+                            ? colors.filter(({ name }) => find(name, query))
+                            : colors,
+                    })),
+            );
+        }, 200);
+
+        return () => clearTimeout(timer);
     }, [query]);
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-5">
+        <div className="tw-flex tw-flex-col tw-gap-5" data-test-id="brand-color-picker">
             <div className="tw-flex tw-gap-3">
                 <div className="tw-flex-1">
                     <TextInput
-                        value=""
+                        value={query}
                         decorator={<IconSearch />}
                         placeholder="Search"
-                        onChange={debounce((value) => setQuery(value), 200)}
+                        onChange={(value) => setQuery(value)}
                     />
                 </div>
                 <div className="tw-w-[72px]">
@@ -71,7 +75,7 @@ export const BrandColorPicker: FC<ColorPickerProps> = ({ palettes: defaultPalett
                                   ])}
                               >
                                   {colors.map((color) => (
-                                      <li key={color.hex}>
+                                      <li key={color.hex} data-test-id="brand-color">
                                           <button
                                               className="tw-flex tw-overflow-hidden tw-w-full"
                                               onClick={() => onSelect(toColor(color, color))}

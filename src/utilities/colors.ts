@@ -44,3 +44,48 @@ export const toColor = (current: Color, { name, ...diff }: DiffColor): Color => 
 
     return { name, rgba, alpha, hex };
 };
+
+export const EXAMPLE_PALETTES = [
+    {
+        title: "Red",
+        colors: ["#992136", "#cc2c48", "#ff375a", "#ff8066", "#e1c4be", "#f0e1de"],
+    },
+    {
+        title: "Green",
+        colors: ["#006452", "#00866e", "#00c8a5", "#80dbb7", "#bee1d4", "#def0e9"],
+    },
+    {
+        title: "Yellow",
+        colors: ["#cc9000", "#e6a200", "#ffb400", "#eec779", "#e1d4be", "#f0e9de"],
+    },
+].map((palette) => ({
+    ...palette,
+    colors: palette.colors.map((hex, index) => {
+        let name = "";
+
+        switch (index) {
+            case 0:
+                name = "90";
+                break;
+            case 1:
+                name = "70";
+                break;
+            case 2:
+                name = "60";
+                break;
+            case 3:
+                name = "50";
+                break;
+            case 4:
+                name = "40";
+                break;
+            case 5:
+                name = "20";
+                break;
+            default:
+                break;
+        }
+
+        return { hex, name, alpha: 1 };
+    }),
+}));

@@ -7,7 +7,7 @@ import { mount } from "@cypress/react";
 import React, { FC, useState } from "react";
 import { Dropdown } from "./Dropdown";
 
-const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
+export const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
 const DROPDOWN_CLEAR_BUTTON_ID = "[data-test-id=dropdown-clear-button]";
 const MENU_ITEM_LIST_ID = "[data-test-id=menu-item-list]";
 

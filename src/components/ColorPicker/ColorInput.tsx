@@ -32,6 +32,7 @@ export const ColorInput: FC<ColorInputProps> = ({
                 "tw-flex tw-items-center tw-h-9 tw-gap-1 tw-px-3 md:tw-px-1 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent focus-within:tw-border-black-90 tw-border-black-20",
                 isFocusVisible && FOCUS_STYLE,
             ])}
+            data-test-id="color-input"
         >
             {decorator && (
                 <div className="tw-flex tw-items-center tw-justify-center md:tw-pl-0.5 tw-text-black-80">

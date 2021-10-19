@@ -9,7 +9,7 @@ import { getContrastingColor } from "react-color/lib/helpers/color";
 import { BrandColorPicker } from "./BrandColorPicker";
 import { CustomColorPicker } from "./CustomColorPicker";
 
-type Palette = {
+export type Palette = {
     title: string;
     colors: Color[];
 };
@@ -41,7 +41,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({ currentColor, palettes, onSe
     const [colorFormat, setColorFormat] = useState(ColorFormat.Hex);
 
     return (
-        <div data-test-id="color-picker" className="tw-w-[400px]">
+        <div className="tw-w-[400px]">
             <ColorPreview color={currentColor} format={colorFormat} />
             <div className="tw-p-6 tw-flex tw-flex-col tw-gap-5">
                 {palettes && (
@@ -109,6 +109,7 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
         <div
             className={merge(["tw-flex tw-justify-center tw-p-7 tw-text-m tw-gap-2"])}
             style={{ background: backgroundColor, color: labelColor }}
+            data-test-id="color-preview"
         >
             {name && <span className="tw-font-bold">{name}</span>}
             <span className={name ? "" : "tw-font-bold"}>{displayValue}</span>
