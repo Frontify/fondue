@@ -29,7 +29,7 @@ const SelectableListItem = forwardRef<HTMLLIElement | null, SelectableListItemPr
     },
 );
 
-const getAllItemIds = (items: SelectListItem[]) => items.map(({ name }) => name);
+const getAllItemNames = (items: SelectListItem[]) => items.map(({ name }) => name);
 
 SelectableListItem.displayName = "SelectableListItem";
 
@@ -38,7 +38,7 @@ export type SelectListProps = {
     activeItemKeys: string[];
     disabled?: boolean;
     onSelectionChange: (keys: string[]) => void;
-    "aria-label"?: string;
+    ariaLabel?: string;
 };
 
 export type SelectListItem = {
@@ -46,14 +46,14 @@ export type SelectListItem = {
 };
 
 export const SelectList: FC<SelectListProps> = (props) => {
-    const { items, activeItemKeys, disabled } = props;
+    const { items, activeItemKeys, ariaLabel = "Select list", disabled } = props;
     const keyItemRecord = getKeyItemRecord(items);
 
     const state = useListState<SelectListItem>({
         children: items.map((item) => <Item key={item.name}>{item.name}</Item>),
         defaultSelectedKeys: activeItemKeys,
         onSelectionChange: (keys) => {
-            keys === "all" ? getAllItemIds(items) : Array.from(keys);
+            keys === "all" ? getAllItemNames(items) : Array.from(keys);
         },
         selectionMode: "multiple",
     });
@@ -150,7 +150,12 @@ export const SelectList: FC<SelectListProps> = (props) => {
                     >
                         <FocusScope restoreFocus>
                             <div {...overlayProps} ref={overlayRef}>
-                                <SelectListDropdown state={state} items={items} activeItemKeys={activeItemKeys} />
+                                <SelectListDropdown
+                                    state={state}
+                                    items={items}
+                                    ariaLabel={ariaLabel}
+                                    activeItemKeys={activeItemKeys}
+                                />
                             </div>
                         </FocusScope>
                     </motion.div>

@@ -28,7 +28,7 @@ export type SelectListDropdownProps = {
     state: ListState<any>;
     items: SelectListItem[];
     activeItemKeys: string[];
-    "aria-label"?: string;
+    ariaLabel?: string;
 };
 
 export type SelectListItem = {
@@ -36,7 +36,7 @@ export type SelectListItem = {
 };
 
 export const SelectListDropdown: FC<SelectListDropdownProps> = (props) => {
-    const { state, items, "aria-label": ariaLabel = "Select list" } = props;
+    const { state, items, ariaLabel } = props;
     const keyItemRecord = getKeyItemRecord(items);
 
     const ref = useRef<HTMLUListElement | null>(null);

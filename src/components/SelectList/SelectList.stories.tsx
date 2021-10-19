@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { SelectList as SelectListComponent, SelectListProps } from "./SelectList";
 
 export default {
-    title: "Components/SelectList",
+    title: "Components/Select List",
     component: SelectListComponent,
 } as Meta;
 
