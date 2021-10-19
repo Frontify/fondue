@@ -3,11 +3,11 @@
 import { MenuItemContent } from "@components/Menu/MenuItem/MenuItemContent";
 import IconColors from "@elements/Icon/Generated/IconColors";
 import { IconSize } from "@elements/Icon/IconSize";
+import { Trigger } from "@elements/Trigger/Trigger";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { merge } from "@utilities/merge";
 import React, { FC } from "react";
-import { Trigger } from "../../elements/Trigger/Trigger";
 import { ColorInputFlyoutProps } from "./ColorInputFlyout";
 
 type ColorInputTriggerProps = Pick<ColorInputFlyoutProps, "id" | "currentColor" | "disabled"> & {
