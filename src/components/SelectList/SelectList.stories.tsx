@@ -1,6 +1,8 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
-import { SelectList as SelectListComponent, SelectListProps } from "./SelectList";
+import { SelectList as SelectListComponent, SelectListProps } from "./SelectListDropdown";
 
 export default {
     title: "Components/Select List",
