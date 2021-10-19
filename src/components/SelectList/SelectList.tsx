@@ -2,12 +2,13 @@ import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
 import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import { IconSize } from "@elements/Icon/IconSize";
 import { Tag, TagType } from "@elements/Tag/Tag";
-import { FocusScope } from "@react-aria/focus";
+import { FocusScope, useFocusRing } from "@react-aria/focus";
 import { useOverlay } from "@react-aria/overlays";
 import { useButton } from "@react-aria/button";
 import { Item } from "@react-stately/collections";
 import { useListState } from "@react-stately/list";
 import { merge } from "@utilities/merge";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import React, { FC, forwardRef, HTMLAttributes, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { SelectListDropdown } from "./SelectListDropdown";
@@ -83,16 +84,19 @@ export const SelectList: FC<SelectListProps> = (props) => {
         },
         triggerRef,
     );
+    const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
         <div className="tw-relative">
             <div
                 {...buttonProps}
+                {...focusProps}
                 ref={triggerRef}
                 data-test-id="select-list"
                 className={merge([
-                    "tw-group tw-relative tw-cursor-pointer tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors",
+                    "tw-group tw-relative tw-cursor-pointer tw-outline-none tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors",
                     "tw-px-[19px] tw-py-[11px] tw-min-h-[50px]",
+                    isFocusVisible && FOCUS_STYLE,
                     disabled
                         ? "tw-border-black-5 tw-bg-black-5 tw-pointer-events-none"
                         : merge([
