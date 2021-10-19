@@ -1,4 +1,3 @@
-import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
 import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import { IconSize } from "@elements/Icon/IconSize";
 import { Tag, TagType } from "@elements/Tag/Tag";
@@ -9,29 +8,11 @@ import { Item } from "@react-stately/collections";
 import { useListState } from "@react-stately/list";
 import { merge } from "@utilities/merge";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import React, { FC, forwardRef, HTMLAttributes, useRef, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { SelectListDropdown } from "./SelectListDropdown";
 
-type SelectableListItemProps = {
-    item: SelectListItem;
-    ariaProps: HTMLAttributes<HTMLElement>;
-    isSelected?: boolean;
-};
-
-const SelectableListItem = forwardRef<HTMLLIElement | null, SelectableListItemProps>(
-    ({ item, isSelected, ariaProps }, ref) => {
-        return (
-            <li ref={ref} {...ariaProps}>
-                <Checkbox label={item.name} state={isSelected ? CheckboxState.Checked : CheckboxState.Unchecked} />
-            </li>
-        );
-    },
-);
-
 const getAllItemNames = (items: SelectListItem[]) => items.map(({ name }) => name);
-
-SelectableListItem.displayName = "SelectableListItem";
 
 export type SelectListProps = {
     items: SelectListItem[];
@@ -146,7 +127,6 @@ export const SelectList: FC<SelectListProps> = (props) => {
                             <div {...overlayProps} ref={overlayRef}>
                                 <SelectListDropdown
                                     state={state}
-                                    items={items}
                                     ariaLabel={ariaLabel}
                                     activeItemKeys={activeItemKeys}
                                 />

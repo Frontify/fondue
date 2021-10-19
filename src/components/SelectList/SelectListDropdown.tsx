@@ -3,30 +3,10 @@
 import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
 import { useListBox, useOption } from "@react-aria/listbox";
 import { ListState } from "@react-stately/list";
-import React, { FC, forwardRef, HTMLAttributes, useRef } from "react";
-import { getKeyItemRecord } from "./helper";
-
-type SelectableListItemProps = {
-    item: SelectListItem;
-    ariaProps: HTMLAttributes<HTMLElement>;
-    isSelected?: boolean;
-};
-
-const SelectableListItem = forwardRef<HTMLLIElement | null, SelectableListItemProps>(
-    ({ item, isSelected, ariaProps }, ref) => {
-        return (
-            <li ref={ref} {...ariaProps}>
-                <Checkbox label={item.name} state={isSelected ? CheckboxState.Checked : CheckboxState.Unchecked} />
-            </li>
-        );
-    },
-);
-
-SelectableListItem.displayName = "SelectableListItem";
+import React, { FC, useRef } from "react";
 
 export type SelectListDropdownProps = {
     state: ListState<any>;
-    items: SelectListItem[];
     activeItemKeys: string[];
     ariaLabel?: string;
 };
@@ -36,8 +16,7 @@ export type SelectListItem = {
 };
 
 export const SelectListDropdown: FC<SelectListDropdownProps> = (props) => {
-    const { state, items, ariaLabel } = props;
-    const keyItemRecord = getKeyItemRecord(items);
+    const { state, ariaLabel } = props;
 
     const ref = useRef<HTMLUListElement | null>(null);
     const { listBoxProps } = useListBox<SelectListItem>({ "aria-label": ariaLabel }, state, ref);
@@ -53,13 +32,12 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = (props) => {
                 );
 
                 return (
-                    <SelectableListItem
-                        ref={optionRef}
-                        key={item.key}
-                        item={keyItemRecord[item.key]}
-                        ariaProps={optionProps}
-                        isSelected={isSelected}
-                    />
+                    <li ref={optionRef} key={item.key} {...optionProps}>
+                        <Checkbox
+                            label={item.textValue}
+                            state={isSelected ? CheckboxState.Checked : CheckboxState.Unchecked}
+                        />
+                    </li>
                 );
             })}
         </ul>
