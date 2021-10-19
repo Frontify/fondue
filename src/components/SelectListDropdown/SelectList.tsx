@@ -11,7 +11,7 @@ import { ListState } from "@react-stately/list";
 import { mergeProps } from "@react-aria/utils";
 import React, { FC, useRef } from "react";
 
-export type SelectListDropdownProps = {
+export type SelectListProps = {
     state: ListState<any>;
     activeItemKeys: string[];
     ariaLabel?: string;
@@ -21,7 +21,7 @@ export type SelectListItem = {
     name: string;
 };
 
-export const SelectListDropdown: FC<SelectListDropdownProps> = ({ state, ariaLabel }) => {
+export const SelectList: FC<SelectListProps> = ({ state, ariaLabel }) => {
     const ref = useRef<HTMLUListElement | null>(null);
     const { listBoxProps } = useListBox<SelectListItem>({ "aria-label": ariaLabel }, state, ref);
 

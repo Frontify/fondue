@@ -12,11 +12,11 @@ import { merge } from "@utilities/merge";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import React, { FC, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { SelectListDropdown } from "./SelectList";
+import { SelectList } from "./SelectList";
 
 const getAllItemNames = (items: SelectListItem[]) => items.map(({ name }) => name);
 
-export type SelectListProps = {
+export type SelectListDropdownProps = {
     items: SelectListItem[];
     activeItemKeys: string[];
     disabled?: boolean;
@@ -28,7 +28,7 @@ export type SelectListItem = {
     name: string;
 };
 
-export const SelectList: FC<SelectListProps> = (props) => {
+export const SelectListDropdown: FC<SelectListDropdownProps> = (props) => {
     const { items, activeItemKeys, ariaLabel = "Select list", disabled } = props;
     const [open, setOpen] = useState(false);
 
@@ -127,11 +127,7 @@ export const SelectList: FC<SelectListProps> = (props) => {
                     >
                         <FocusScope restoreFocus>
                             <div {...overlayProps} ref={overlayRef}>
-                                <SelectListDropdown
-                                    state={state}
-                                    ariaLabel={ariaLabel}
-                                    activeItemKeys={activeItemKeys}
-                                />
+                                <SelectList state={state} ariaLabel={ariaLabel} activeItemKeys={activeItemKeys} />
                             </div>
                         </FocusScope>
                     </motion.div>

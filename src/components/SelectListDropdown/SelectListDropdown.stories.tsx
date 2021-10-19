@@ -2,17 +2,17 @@
 
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
-import { SelectList as SelectListComponent, SelectListProps } from "./SelectListDropdown";
+import { SelectListDropdown as SelectListDropdownComponent, SelectListDropdownProps } from "./SelectListDropdown";
 
 export default {
-    title: "Components/Select List",
-    component: SelectListComponent,
+    title: "Components/Select List Dropdown",
+    component: SelectListDropdownComponent,
 } as Meta;
 
-export const SelectList: Story<SelectListProps> = (args) => {
+export const SelectListDropdown: Story<SelectListDropdownProps> = (args) => {
     const [activeItemKeys, setActiveItemKeys] = useState(args.activeItemKeys);
     return (
-        <SelectListComponent
+        <SelectListDropdownComponent
             {...args}
             activeItemKeys={activeItemKeys}
             onSelectionChange={(keys) => setActiveItemKeys(keys)}
@@ -20,7 +20,7 @@ export const SelectList: Story<SelectListProps> = (args) => {
     );
 };
 
-SelectList.args = {
+SelectListDropdown.args = {
     activeItemKeys: ["Short tag", "Tag 74"],
     items: [
         {
