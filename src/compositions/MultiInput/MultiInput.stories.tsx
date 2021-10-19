@@ -2,6 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
+import { FormControl } from "@compositions/FormControl/FormControl";
 import { TextInput } from "@elements/TextInput/TextInput";
 import { Dropdown, DropdownSize } from "@components/Dropdown/Dropdown";
 import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
@@ -40,12 +41,18 @@ export const MultiInputColumns: Story<MultiInputProps> = (args: MultiInputProps)
     const [input4, setInput4] = useState("Some value");
 
     return (
-        <MultiInputComponent {...args}>
-            <TextInput value={input1} onChange={(value) => setInput1(value)} />
-            <TextInput value={input2} onChange={(value) => setInput2(value)} />
-            <TextInput value={input3} onChange={(value) => setInput3(value)} />
-            <TextInput value={input4} onChange={(value) => setInput4(value)} />
-        </MultiInputComponent>
+        <FormControl
+            label={{ children: "Input Label", htmlFor: "input-id", tooltip: { content: "Tooltip text" } }}
+            extra="Some extra text."
+            helper={{ text: "Input the thing to make it gooo." }}
+        >
+            <MultiInputComponent {...args}>
+                <TextInput value={input1} onChange={(value) => setInput1(value)} />
+                <TextInput value={input2} onChange={(value) => setInput2(value)} />
+                <TextInput value={input3} onChange={(value) => setInput3(value)} />
+                <TextInput value={input4} onChange={(value) => setInput4(value)} />
+            </MultiInputComponent>
+        </FormControl>
     );
 };
 
@@ -54,10 +61,16 @@ export const MultiInputTwoInputs: Story<MultiInputProps> = (args: MultiInputProp
     const [input2, setInput2] = useState("And here's another one");
 
     return (
-        <MultiInputComponent {...args}>
-            <TextInput value={input1} onChange={(value) => setInput1(value)} />
-            <TextInput value={input2} onChange={(value) => setInput2(value)} />
-        </MultiInputComponent>
+        <FormControl
+            label={{ children: "Input Label", htmlFor: "input-id", tooltip: { content: "Tooltip text" } }}
+            extra="Some extra text."
+            helper={{ text: "Input the thing to make it gooo." }}
+        >
+            <MultiInputComponent {...args}>
+                <TextInput value={input1} onChange={(value) => setInput1(value)} />
+                <TextInput value={input2} onChange={(value) => setInput2(value)} />
+            </MultiInputComponent>
+        </FormControl>
     );
 };
 
@@ -67,25 +80,31 @@ export const MultiInputThreeInputs: Story<MultiInputProps> = (args: MultiInputPr
     const [activeItemId, setActiveItemId] = useState<string | number | undefined>();
 
     return (
-        <MultiInputComponent {...args}>
-            <TextInput value={input1} onChange={(value) => setInput1(value)} />
-            <TextInput value={input2} onChange={(value) => setInput2(value)} />
-            <Dropdown
-                onChange={(id) => setActiveItemId(id)}
-                activeItemId={activeItemId}
-                size={DropdownSize.Small}
-                menuBlocks={[
-                    {
-                        id: "block1",
-                        menuItems: [
-                            { id: "1", title: "This is an option", size: MenuItemContentSize.Small },
-                            { id: "2", title: "Another option", size: MenuItemContentSize.Small },
-                            { id: "3", title: "Third option", size: MenuItemContentSize.Small },
-                        ],
-                    },
-                ]}
-            />
-        </MultiInputComponent>
+        <FormControl
+            label={{ children: "Input Label", htmlFor: "input-id", tooltip: { content: "Tooltip text" } }}
+            extra="Some extra text."
+            helper={{ text: "Input the thing to make it gooo." }}
+        >
+            <MultiInputComponent {...args}>
+                <TextInput value={input1} onChange={(value) => setInput1(value)} />
+                <TextInput value={input2} onChange={(value) => setInput2(value)} />
+                <Dropdown
+                    onChange={(id) => setActiveItemId(id)}
+                    activeItemId={activeItemId}
+                    size={DropdownSize.Small}
+                    menuBlocks={[
+                        {
+                            id: "block1",
+                            menuItems: [
+                                { id: "1", title: "This is an option", size: MenuItemContentSize.Small },
+                                { id: "2", title: "Another option", size: MenuItemContentSize.Small },
+                                { id: "3", title: "Third option", size: MenuItemContentSize.Small },
+                            ],
+                        },
+                    ]}
+                />
+            </MultiInputComponent>
+        </FormControl>
     );
 };
 
@@ -100,28 +119,34 @@ export const MultiInputSpider: Story<MultiInputProps> = (args: MultiInputProps) 
     const [input4, setInput4] = useState("8px");
 
     return (
-        <MultiInputComponent {...args}>
-            <TextInput
-                decorator={<IconIcons size={IconSize.Size16} />}
-                value={input1}
-                onChange={(value) => setInput1(value)}
-            />
-            <TextInput
-                decorator={<IconIcons size={IconSize.Size16} />}
-                value={input2}
-                onChange={(value) => setInput2(value)}
-            />
-            <TextInput
-                decorator={<IconIcons size={IconSize.Size16} />}
-                value={input3}
-                onChange={(value) => setInput3(value)}
-            />
-            <TextInput
-                decorator={<IconIcons size={IconSize.Size16} />}
-                value={input4}
-                onChange={(value) => setInput4(value)}
-            />
-        </MultiInputComponent>
+        <FormControl
+            label={{ children: "Input Label", htmlFor: "input-id", tooltip: { content: "Tooltip text" } }}
+            extra="Some extra text."
+            helper={{ text: "Input the thing to make it gooo." }}
+        >
+            <MultiInputComponent {...args}>
+                <TextInput
+                    decorator={<IconIcons size={IconSize.Size16} />}
+                    value={input1}
+                    onChange={(value) => setInput1(value)}
+                />
+                <TextInput
+                    decorator={<IconIcons size={IconSize.Size16} />}
+                    value={input2}
+                    onChange={(value) => setInput2(value)}
+                />
+                <TextInput
+                    decorator={<IconIcons size={IconSize.Size16} />}
+                    value={input3}
+                    onChange={(value) => setInput3(value)}
+                />
+                <TextInput
+                    decorator={<IconIcons size={IconSize.Size16} />}
+                    value={input4}
+                    onChange={(value) => setInput4(value)}
+                />
+            </MultiInputComponent>
+        </FormControl>
     );
 };
 
