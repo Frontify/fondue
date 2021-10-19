@@ -10,7 +10,6 @@ import { useListState } from "@react-stately/list";
 import { merge } from "@utilities/merge";
 import React, { FC, forwardRef, HTMLAttributes, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { getKeyItemRecord } from "./helper";
 import { SelectListDropdown } from "./SelectListDropdown";
 
 type SelectableListItemProps = {
@@ -47,7 +46,10 @@ export type SelectListItem = {
 
 export const SelectList: FC<SelectListProps> = (props) => {
     const { items, activeItemKeys, ariaLabel = "Select list", disabled } = props;
-    const keyItemRecord = getKeyItemRecord(items);
+    const [open, setOpen] = useState(false);
+
+    const overlayRef = useRef<HTMLDivElement | null>(null);
+    const triggerRef = useRef<HTMLDivElement | null>(null);
 
     const state = useListState<SelectListItem>({
         children: items.map((item) => <Item key={item.name}>{item.name}</Item>),
@@ -57,10 +59,6 @@ export const SelectList: FC<SelectListProps> = (props) => {
         },
         selectionMode: "multiple",
     });
-
-    const [open, setOpen] = useState(false);
-
-    const overlayRef = useRef<HTMLDivElement | null>(null);
     const { overlayProps } = useOverlay(
         {
             isOpen: open,
@@ -76,9 +74,6 @@ export const SelectList: FC<SelectListProps> = (props) => {
         },
         overlayRef,
     );
-
-    const triggerRef = useRef<HTMLDivElement | null>(null);
-
     const { buttonProps } = useButton(
         {
             onPress: () => {
@@ -94,7 +89,7 @@ export const SelectList: FC<SelectListProps> = (props) => {
             <div
                 {...buttonProps}
                 ref={triggerRef}
-                data-test-id="dropdown"
+                data-test-id="select-list"
                 className={merge([
                     "tw-group tw-relative tw-cursor-pointer tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors",
                     "tw-px-[19px] tw-py-[11px] tw-min-h-[50px]",
@@ -107,19 +102,14 @@ export const SelectList: FC<SelectListProps> = (props) => {
                 ])}
             >
                 <div className="tw-flex-1 tw-flex tw-flex-wrap tw-gap-1">
-                    {[...state.selectionManager.selectedKeys].map((key) => {
-                        const item = keyItemRecord[key];
-                        return (
-                            <Tag
-                                key={item.name}
-                                type={TagType.SelectedWithFocus}
-                                label={item.name}
-                                onClick={() => {
-                                    state.selectionManager.toggleSelection(item.name);
-                                }}
-                            />
-                        );
-                    })}
+                    {[...state.selectionManager.selectedKeys].map((key) => (
+                        <Tag
+                            key={key}
+                            type={TagType.SelectedWithFocus}
+                            label={key.toString()}
+                            onClick={() => state.selectionManager.toggleSelection(key)}
+                        />
+                    ))}
                 </div>
 
                 <button
