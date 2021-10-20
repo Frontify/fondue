@@ -1,6 +1,5 @@
 export { BoldButton } from "./BoldButton";
 export { CodeButton } from "./CodeButton";
-export { InlineToolbar } from "./InlineToolbar";
 export { ItalicButton } from "./ItalicButton";
 export { OrderedListButton } from "./OrderedListButton";
 export { StrikethroughButton } from "./StrikethroughButton";

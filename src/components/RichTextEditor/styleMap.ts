@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 //TODO: use tailwind classes: https://app.clickup.com/t/1mjnru0
 export const styleMap = {
     CODE: {

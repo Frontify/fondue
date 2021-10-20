@@ -1,4 +1,4 @@
-import { EditorState } from "draft-js";
+import { EditorState, RawDraftContentState } from "draft-js";
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { toolbarMachine } from "../toolbar/machine";
 import { updateEditorState } from "./actions";
@@ -7,6 +7,7 @@ import { hasEditorState } from "./typeguards";
 export type EditorContext = {
     locked: boolean;
     editorState: EditorState;
+    onContentChanged?: (content: RawDraftContentState) => void;
 };
 
 export type EditorStateData = {
@@ -51,6 +52,14 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                 invoke: {
                     id: "toolbar",
                     src: "toolbarMachine",
+                    data: ({ editorState }) => ({
+                        editorState,
+                    }),
+                },
+                on: {
+                    CHANGED: {
+                        actions: "updateEditorState",
+                    },
                 },
             },
         },

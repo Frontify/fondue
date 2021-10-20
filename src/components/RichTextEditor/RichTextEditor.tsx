@@ -1,12 +1,15 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { debounce } from "@utilities/debounce";
 import { useMachine } from "@xstate/react";
-import { convertFromRaw, convertToRaw, Editor, EditorState, RawDraftContentState } from "draft-js";
+import { convertFromRaw, Editor, EditorState, RawDraftContentState } from "draft-js";
 import "draft-js/dist/Draft.css";
 import React, { FC, useMemo, useRef } from "react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
+import { ToolbarContext } from "./context/toolbar";
 import { decorators } from "./decorators";
 import { editorMachine, States } from "./state/editor/machine";
-import { ToolbarContext, ToolbarStateData } from "./state/toolbar/machine";
+import { ToolbarContext as ToolbarFSMContext, ToolbarStateData } from "./state/toolbar/machine";
 import { styleMap } from "./styleMap";
 import { Toolbar } from "./Toolbar";
 
@@ -30,6 +33,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
             editorState: value
                 ? EditorState.createWithContent(convertFromRaw(value), decorators)
                 : EditorState.createEmpty(decorators),
+            onContentChanged: onTextChange,
         }),
     );
 
@@ -42,10 +46,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                         customStyleMap={styleMap}
                         editorState={context.editorState}
                         placeholder={placeholder}
-                        onChange={debounce((editorState) => {
-                            send("CHANGED", { data: { editorState } });
-                            onTextChange && onTextChange(convertToRaw(context.editorState.getCurrentContent()));
-                        }, 50)}
+                        onChange={debounce((editorState) => send("CHANGED", { data: { editorState } }), 50)}
                         onBlur={() => editor.current?.blur()}
                         readOnly={readonly}
                     />
@@ -53,10 +54,18 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 [context.editorState],
             )}
             {matches(States.Styling) && (
-                <Toolbar
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    machineRef={children.toolbar as Interpreter<ToolbarContext, any, DoneInvokeEvent<ToolbarStateData>>}
-                />
+                <ToolbarContext.Provider
+                    value={{
+                        machineRef: children.toolbar as Interpreter<
+                            ToolbarFSMContext,
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            any,
+                            DoneInvokeEvent<ToolbarStateData>
+                        >,
+                    }}
+                >
+                    <Toolbar />
+                </ToolbarContext.Provider>
             )}
         </div>
     );

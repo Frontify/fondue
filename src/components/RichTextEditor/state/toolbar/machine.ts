@@ -1,22 +1,27 @@
-import { createMachine, DoneInvokeEvent } from "xstate";
+import { EditorState } from "draft-js";
+import { createMachine, DoneInvokeEvent, sendParent } from "xstate";
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type ToolbarContext = {};
+export type ToolbarContext = {
+    editorState: EditorState;
+};
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type ToolbarStateData = {};
 
 export enum States {
-    Overview = "overview",
+    Initial = "initial",
     LinkChooser = "link_chooser",
 }
 
 export const toolbarMachine = createMachine<ToolbarContext, DoneInvokeEvent<ToolbarStateData>>({
     id: "toolbar",
-    initial: States.Overview,
+    initial: States.Initial,
     states: {
-        [States.Overview]: {
+        [States.Initial]: {
             on: {
+                STYLE_SELECTED: {
+                    actions: sendParent("CHANGED"),
+                },
                 SELECT_LINK_CHOOSER: States.LinkChooser,
             },
         },
