@@ -69,9 +69,6 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                             actions: ["updateEditorState", () => console.log("styling: go to editing")],
                         },
                     ],
-                    BLUR: {
-                        target: States.Readonly,
-                    },
                 },
             },
         },
