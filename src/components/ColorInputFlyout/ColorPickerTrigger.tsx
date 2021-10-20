@@ -8,9 +8,9 @@ import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { merge } from "@utilities/merge";
 import React, { FC } from "react";
-import { ColorInputFlyoutProps } from "./ColorInputFlyout";
+import { ColorPickerFlyoutProps } from "./ColorPickerFlyout";
 
-type ColorInputTriggerProps = Pick<ColorInputFlyoutProps, "id" | "currentColor" | "disabled"> & {
+type ColorInputTriggerProps = Pick<ColorPickerFlyoutProps, "id" | "currentColor" | "disabled"> & {
     isOpen?: boolean;
 };
 

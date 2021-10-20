@@ -4,9 +4,9 @@ import { ColorPicker, ColorPickerProps } from "@components/ColorPicker/ColorPick
 import { Flyout } from "@components/Flyout/Flyout";
 import { Color } from "@utilities/colors";
 import React, { FC, useState } from "react";
-import { ColorInputTrigger } from "./ColorInputTrigger";
+import { ColorInputTrigger } from "./ColorPickerTrigger";
 
-export type ColorInputFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSelect"> & {
+export type ColorPickerFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSelect"> & {
     id?: string;
     disabled?: boolean;
     onClick?: () => void;
@@ -14,7 +14,7 @@ export type ColorInputFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSelec
     currentColor: Color | null;
 };
 
-export const ColorInputFlyout: FC<ColorInputFlyoutProps> = ({
+export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
     id,
     onClick,
     onClose,

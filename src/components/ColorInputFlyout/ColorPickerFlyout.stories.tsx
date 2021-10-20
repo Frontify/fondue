@@ -3,23 +3,23 @@
 import { Meta, Story } from "@storybook/react";
 import { Color, EXAMPLE_PALETTES } from "@utilities/colors";
 import React, { useState } from "react";
-import { ColorInputFlyout as ColorInputFlyoutComponent, ColorInputFlyoutProps } from "./ColorInputFlyout";
+import { ColorPickerFlyout as ColorPickerFlyoutComponent, ColorPickerFlyoutProps } from "./ColorPickerFlyout";
 
 export default {
-    title: "Components/Color Input Trigger",
-    component: ColorInputFlyoutComponent,
+    title: "Components/Color Picker",
+    component: ColorPickerFlyoutComponent,
     args: {
         disabled: false,
         currentColor: null,
     },
-} as Meta<ColorInputFlyoutProps>;
+} as Meta<ColorPickerFlyoutProps>;
 
-export const ColorInputTrigger: Story<ColorInputFlyoutProps> = ({ disabled, currentColor }) => {
+export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor }) => {
     const [temporaryColor, setTemporaryColor] = useState<Color | null>(currentColor);
     const [selectedColor, setSelectedColor] = useState<Color | null>(null);
 
     return (
-        <ColorInputFlyoutComponent
+        <ColorPickerFlyoutComponent
             disabled={disabled}
             currentColor={temporaryColor}
             onClick={() => setSelectedColor(temporaryColor)}

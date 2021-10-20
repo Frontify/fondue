@@ -7,7 +7,7 @@ import { mount } from "@cypress/react";
 import { BUTTON_ID } from "@elements/Button/Button.spec";
 import { Color, EXAMPLE_PALETTES } from "@utilities/colors";
 import React, { FC, useState } from "react";
-import { ColorInputFlyout } from "./ColorInputFlyout";
+import { ColorPickerFlyout } from "./ColorPickerFlyout";
 
 const TRIGGER_ID = "[data-test-id=trigger]";
 const TEST_COLOR = { hex: "#0085ff", rgb: "rgb(0, 133, 255)" };
@@ -22,7 +22,7 @@ const Component: FC<Props> = ({ palettes, currentColor = null }) => {
     const [selectedColor, setSelectedColor] = useState<Color | null>(null);
 
     return (
-        <ColorInputFlyout
+        <ColorPickerFlyout
             currentColor={temporaryColor}
             onClick={() => setSelectedColor(temporaryColor)}
             onClose={() => setTemporaryColor(selectedColor)}
