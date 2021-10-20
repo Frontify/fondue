@@ -37,7 +37,10 @@ export const BlockStyleButton: FC<BlockStyleButtonProps> = ({ blockType, childre
             ])}
             onClick={(event) => {
                 event.preventDefault();
-                send("STYLE_SELECTED", { data: { editorState: RichUtils.toggleBlockType(editorState, blockType) } });
+                send({
+                    type: "STYLE_SELECTED",
+                    data: { editorState: RichUtils.toggleBlockType(editorState, blockType) },
+                });
             }}
             onMouseDown={(event) => event.preventDefault()}
         >

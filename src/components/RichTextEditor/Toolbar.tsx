@@ -42,7 +42,8 @@ export const Toolbar: FC = () => {
     }, [selectionRect]);
 
     return (
-        <div ref={selectionRectRef} style={selectionRect} className="tw-absolute tw-pointer-events-none">
+        <>
+            <div ref={selectionRectRef} style={selectionRect} className="tw-absolute tw-pointer-events-none"></div>
             <div
                 ref={inlineToolbarRef}
                 className={"tw-popper-container tw-z-10 tw-drop-shadow-md"}
@@ -67,6 +68,6 @@ export const Toolbar: FC = () => {
                     className="tw-popper-arrow tw-absolute tw-w-2 tw-h-2 tw-pointer-events-none before:tw-absolute before:tw-z-10 before:tw-w-2 before:tw-h-2 before:tw-bg-white before:tw-rotate-45"
                 ></div>
             </div>
-        </div>
+        </>
     );
 };

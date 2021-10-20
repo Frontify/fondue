@@ -46,7 +46,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                         customStyleMap={styleMap}
                         editorState={context.editorState}
                         placeholder={placeholder}
-                        onChange={debounce((editorState) => send("CHANGED", { data: { editorState } }), 50)}
+                        onChange={debounce((editorState) => send({ type: "CHANGED", data: { editorState } }), 50)}
                         onBlur={() => editor.current?.blur()}
                         readOnly={readonly}
                     />

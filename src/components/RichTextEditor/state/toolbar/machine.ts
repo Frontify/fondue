@@ -5,8 +5,9 @@ export type ToolbarContext = {
     editorState: EditorState;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type ToolbarStateData = {};
+export type ToolbarStateData = {
+    editorState: EditorState;
+};
 
 export enum States {
     Initial = "initial",
@@ -20,7 +21,10 @@ export const toolbarMachine = createMachine<ToolbarContext, DoneInvokeEvent<Tool
         [States.Initial]: {
             on: {
                 STYLE_SELECTED: {
-                    actions: sendParent("CHANGED"),
+                    actions: sendParent((_, { data }) => ({
+                        type: "CHANGED",
+                        data: data,
+                    })),
                 },
                 SELECT_LINK_CHOOSER: States.LinkChooser,
             },

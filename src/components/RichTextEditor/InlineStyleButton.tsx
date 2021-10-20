@@ -32,7 +32,10 @@ export const InlineStyleButton: FC<InlineStyleButtonProps> = ({ style, children 
             ])}
             onClick={(event) => {
                 event.preventDefault();
-                send("STYLE_SELECTED", { data: { editorState: RichUtils.toggleInlineStyle(editorState, style) } });
+                send({
+                    type: "STYLE_SELECTED",
+                    data: { editorState: RichUtils.toggleInlineStyle(editorState, style) },
+                });
             }}
             onMouseDown={(event) => event.preventDefault()}
         >
