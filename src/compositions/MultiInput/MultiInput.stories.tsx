@@ -8,7 +8,7 @@ import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { IconSize } from "@elements/Icon/IconSize";
 import { MultiInput as MultiInputComponent, MultiInputLayout, MultiInputProps } from "./MultiInput";
-import { FormControlDirection, FormControlStyle, HelperPosition } from "@compositions/FormControl/FormControl";
+import { FormControlStyle, HelperPosition } from "@compositions/FormControl/FormControl";
 import generateRandomId from "@utilities/generateRandomId";
 
 export default {
@@ -20,7 +20,6 @@ export default {
         formControl: {
             style: FormControlStyle.Primary,
             disabled: false,
-            direction: FormControlDirection.Vertical,
             label: {
                 children: "Input Label",
                 required: false,
@@ -32,7 +31,6 @@ export default {
                 text: "Input the thing to make it gooo.",
                 position: HelperPosition.After,
             },
-            children: "",
         },
     },
     argTypes: {

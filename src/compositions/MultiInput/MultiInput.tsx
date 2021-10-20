@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactNode, Children } from "react";
+import React, { FC, Children } from "react";
 import { FormControl, FormControlProps } from "@compositions/FormControl/FormControl";
 
 export enum MultiInputLayout {
@@ -10,9 +10,8 @@ export enum MultiInputLayout {
 
 export type MultiInputProps = {
     layout: MultiInputLayout;
-    children: ReactNode[];
     spanLastItem?: boolean;
-    formControl?: FormControlProps;
+    formControl?: Omit<FormControlProps, "direction">;
 };
 
 export const MultiInput: FC<MultiInputProps> = ({ layout, spanLastItem, children, formControl }) => {
