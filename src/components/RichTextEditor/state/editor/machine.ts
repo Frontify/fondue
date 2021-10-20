@@ -42,7 +42,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                         {
                             target: States.Styling,
                             cond: "hasSelection",
-                            actions: ["updateEditorState", () => console.log("editing: go to styling")],
+                            actions: "updateEditorState",
                         },
                         {
                             actions: "updateEditorState",
