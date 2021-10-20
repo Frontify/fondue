@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useRef } from "react";
 import { usePopper } from "react-popper";
 import { useEditorSelection } from "./hooks/useEditorSelection";
@@ -43,10 +44,17 @@ export const Toolbar: FC = () => {
 
     return (
         <>
-            <div ref={selectionRectRef} style={selectionRect} className="tw-absolute tw-pointer-events-none"></div>
+            <div
+                ref={selectionRectRef}
+                style={selectionRect ?? undefined}
+                className="tw-absolute tw-pointer-events-none"
+            ></div>
             <div
                 ref={inlineToolbarRef}
-                className={"tw-popper-container tw-z-10 tw-drop-shadow-md"}
+                className={merge([
+                    "tw-popper-container tw-z-10 tw-drop-shadow-md",
+                    !selectionRect && "tw-invisible tw-pointer-events-none",
+                ])}
                 style={styles.popper}
                 {...attributes.popper}
             >

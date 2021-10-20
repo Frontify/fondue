@@ -5,7 +5,6 @@ import { EditorContext, EditorEventDataTypes } from "./machine";
 import { hasEditorState } from "./typeguards";
 
 export const updateEditorState = assign<EditorContext, DoneInvokeEvent<EditorEventDataTypes>>((context, { data }) => {
-    console.log("editor has changed", data);
     if (hasEditorState(data)) {
         context.editorState = data.editorState;
         context.onContentChanged && context.onContentChanged(convertToRaw(context.editorState.getCurrentContent()));

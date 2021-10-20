@@ -37,10 +37,11 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
             },
             [States.Editing]: {
                 on: {
-                    CHANGED: [
+                    CHANGE: [
                         {
                             target: States.Styling,
                             cond: "hasSelection",
+                            actions: ["updateEditorState", () => console.log("editing: go to styling")],
                         },
                         {
                             actions: "updateEditorState",
@@ -57,8 +58,19 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                     }),
                 },
                 on: {
-                    CHANGED: {
-                        actions: "updateEditorState",
+                    CHANGE: [
+                        {
+                            target: States.Styling,
+                            cond: "hasSelection",
+                            actions: "updateEditorState",
+                        },
+                        {
+                            target: States.Editing,
+                            actions: ["updateEditorState", () => console.log("styling: go to editing")],
+                        },
+                    ],
+                    BLUR: {
+                        target: States.Readonly,
                     },
                 },
             },
@@ -67,9 +79,10 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
     {
         guards: {
             canEdit: ({ locked }) => !locked,
-            hasSelection: (_, { data }) => {
+            hasSelection: ({ locked }, { data }) => {
                 const selection = data.editorState.getSelection();
-                return hasEditorState(data) && selection.getHasFocus() && !selection.isCollapsed();
+                console.log(selection.isCollapsed());
+                return !locked && hasEditorState(data) && selection.getHasFocus() && !selection.isCollapsed();
             },
         },
         actions: {

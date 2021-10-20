@@ -22,7 +22,7 @@ export const toolbarMachine = createMachine<ToolbarContext, DoneInvokeEvent<Tool
             on: {
                 STYLE_SELECTED: {
                     actions: sendParent((_, { data }) => ({
-                        type: "CHANGED",
+                        type: "CHANGE",
                         data: data,
                     })),
                 },

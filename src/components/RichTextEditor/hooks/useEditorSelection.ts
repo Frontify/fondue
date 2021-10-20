@@ -3,9 +3,9 @@
 import { useEffect, RefObject, useState, CSSProperties } from "react";
 import { getParentWithPositionRelative } from "../utils/getParentWithPositionRelative";
 
-export const useEditorSelection = (element: RefObject<HTMLElement>): { selectionRect: CSSProperties } => {
+export const useEditorSelection = (element: RefObject<HTMLElement>): { selectionRect: CSSProperties | null } => {
     const documentSelection = document.getSelection();
-    const [selectionRect, setSelectionRect] = useState<CSSProperties>({});
+    const [selectionRect, setSelectionRect] = useState<CSSProperties | null>(null);
 
     useEffect(() => {
         if (!element.current || !documentSelection) {
