@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import React, { FC } from "react";
 import IconBold from "@elements/Icon/Generated/IconBold";
 import { IconSize } from "@elements/Icon/IconSize";

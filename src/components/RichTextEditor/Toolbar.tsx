@@ -1,19 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useActor } from "@xstate/react";
-import React, { FC, useContext, useEffect, useRef } from "react";
+import React, { FC, useEffect, useRef } from "react";
 import { usePopper } from "react-popper";
-import { ToolbarContext } from "./context/toolbar";
 import { useEditorSelection } from "./hooks/useEditorSelection";
+import {
+    BoldButton,
+    CodeButton,
+    ItalicButton,
+    OrderedListButton,
+    StrikethroughButton,
+    SubButton,
+    SupButton,
+    UnderlineButton,
+    UnorderedListButton,
+} from "./styling-controls";
 
 export const Toolbar: FC = () => {
-    const { machineRef } = useContext(ToolbarContext);
-
-    if (!machineRef) {
-        return null;
-    }
-
-    const [state, send] = useActor(machineRef);
     const selectionRectRef = useRef<HTMLDivElement | null>(null);
     const inlineToolbarRef = useRef<HTMLDivElement | null>(null);
     const inlineToolbarArrowRef = useRef<HTMLDivElement | null>(null);
@@ -48,15 +50,15 @@ export const Toolbar: FC = () => {
                 {...attributes.popper}
             >
                 <div className="tw-flex tw-items-center tw-px-3 tw-py-2 tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5">
-                    {/* <BoldButton {...externalProps} />
-                    <ItalicButton {...externalProps} />
-                    <UnderlineButton {...externalProps} />
-                    <StrikethroughButton {...externalProps} />
-                    <CodeButton {...externalProps} />
-                    <SubButton {...externalProps} />
-                    <SupButton {...externalProps} />
-                    <OrderedListButton {...externalProps} />
-                    <UnorderedListButton {...externalProps} /> */}
+                    <BoldButton />
+                    <ItalicButton />
+                    <UnderlineButton />
+                    <StrikethroughButton />
+                    <CodeButton />
+                    <SubButton />
+                    <SupButton />
+                    <OrderedListButton />
+                    <UnorderedListButton />
                 </div>
 
                 <div

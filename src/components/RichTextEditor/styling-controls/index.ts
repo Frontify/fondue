@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 export { BoldButton } from "./BoldButton";
 export { CodeButton } from "./CodeButton";
 export { ItalicButton } from "./ItalicButton";

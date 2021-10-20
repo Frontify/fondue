@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import IconListNumbers from "@elements/Icon/Generated/IconListNumbers";
 import { IconSize } from "@elements/Icon/IconSize";
 import React, { FC } from "react";

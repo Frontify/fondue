@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import IconListBullets from "@elements/Icon/Generated/IconListBullets";
 import { IconSize } from "@elements/Icon/IconSize";
 import React, { FC } from "react";

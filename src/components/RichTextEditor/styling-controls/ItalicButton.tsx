@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import IconItalic from "@elements/Icon/Generated/IconItalic";
 import { IconSize } from "@elements/Icon/IconSize";
 import React, { FC } from "react";

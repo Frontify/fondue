@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { useEffect, RefObject, useState, CSSProperties } from "react";
 import { getParentWithPositionRelative } from "../utils/getParentWithPositionRelative";
 

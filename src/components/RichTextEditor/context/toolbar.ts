@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { createContext } from "react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
 import { ToolbarContext as ToolbarFSMContext, ToolbarStateData } from "../state/toolbar/machine";

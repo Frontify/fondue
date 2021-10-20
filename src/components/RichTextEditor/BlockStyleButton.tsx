@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
 import { RichUtils } from "draft-js";
