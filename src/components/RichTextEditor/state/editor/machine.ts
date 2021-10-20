@@ -1,4 +1,5 @@
-import { EditorState, RawDraftContentState } from "draft-js";
+import { assign } from "@xstate/immer";
+import { EditorState, RawDraftContentState, SelectionState } from "draft-js";
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { toolbarMachine } from "../toolbar/machine";
 import { updateEditorState } from "./actions";
@@ -66,10 +67,13 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                         },
                         {
                             target: States.Editing,
-                            actions: ["updateEditorState", () => console.log("styling: go to editing")],
+                            actions: ["updateEditorState"],
                         },
                     ],
                 },
+                exit: assign<EditorContext, DoneInvokeEvent<EditorEventDataTypes>>((context) => {
+                    context.editorState = EditorState.forceSelection(context.editorState, new SelectionState());
+                }),
             },
         },
     },
@@ -78,7 +82,6 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
             canEdit: ({ locked }) => !locked,
             hasSelection: ({ locked }, { data }) => {
                 const selection = data.editorState.getSelection();
-                console.log(selection.isCollapsed());
                 return !locked && hasEditorState(data) && selection.getHasFocus() && !selection.isCollapsed();
             },
         },

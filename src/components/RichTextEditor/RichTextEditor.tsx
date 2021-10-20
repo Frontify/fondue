@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { debounce } from "@utilities/debounce";
 import { useMachine } from "@xstate/react";
 import { convertFromRaw, Editor, EditorState, RawDraftContentState } from "draft-js";
 import "draft-js/dist/Draft.css";
@@ -46,7 +45,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                         customStyleMap={styleMap}
                         editorState={context.editorState}
                         placeholder={placeholder}
-                        onChange={debounce((editorState) => send({ type: "CHANGE", data: { editorState } }), 50)}
+                        onChange={(editorState) => send({ type: "CHANGE", data: { editorState } })}
                         onBlur={() => editor.current?.blur()}
                         readOnly={readonly}
                     />
