@@ -33,7 +33,7 @@ export default {
 } as Meta;
 
 export const SelectListDropdown: Story<SelectListDropdownProps> = (args) => {
-    const [activeItemKeys, setActiveItemKeys] = useState(args.activeItemKeys);
+    const [activeItemKeys, setActiveItemKeys] = useState<(string | number)[]>(args.activeItemKeys);
     return (
         <SelectListDropdownComponent
             {...args}

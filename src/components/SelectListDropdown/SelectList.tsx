@@ -4,30 +4,39 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
-import { useListBox, useOption } from "@react-aria/listbox";
 import { useFocusRing } from "@react-aria/focus";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { ListState } from "@react-stately/list";
+import { useListBox, useOption } from "@react-aria/listbox";
 import { mergeProps } from "@react-aria/utils";
-import React, { FC, useRef, HTMLAttributes } from "react";
+import { ListState } from "@react-stately/list";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
+import React, { FC, KeyboardEvent, useRef } from "react";
 
 export type SelectListProps = {
     state: ListState<any>;
     ariaLabel?: string;
-    keyboardProps?: HTMLAttributes<HTMLElement>;
 };
 
 export type SelectListItem = {
     name: string;
 };
 
-export const SelectList: FC<SelectListProps> = ({ state, ariaLabel, keyboardProps }) => {
+export const SelectList: FC<SelectListProps> = ({ state, ariaLabel }) => {
     const ref = useRef<HTMLUListElement | null>(null);
     const { listBoxProps } = useListBox<SelectListItem>({ "aria-label": ariaLabel }, state, ref);
+    const modifiedListProps = {
+        ...listBoxProps,
+        onKeyDown: (e: KeyboardEvent<HTMLElement>) => {
+            if (e.key === "Escape") {
+                e.preventDefault();
+            } else {
+                listBoxProps.onKeyDown && listBoxProps.onKeyDown(e);
+            }
+        },
+    };
 
     return (
         <ul
-            {...listBoxProps}
+            {...modifiedListProps}
             ref={ref}
             className="tw-border-black-10 tw-rounded tw-shadow-mid tw-p-4 tw-space-y-4"
             data-test-id="select-list"
@@ -41,7 +50,6 @@ export const SelectList: FC<SelectListProps> = ({ state, ariaLabel, keyboardProp
                         key={key}
                         ref={optionRef}
                         {...mergeProps(optionProps, focusProps)}
-                        {...keyboardProps}
                         className={isFocusVisible ? FOCUS_STYLE : ""}
                         data-test-id="select-item"
                     >

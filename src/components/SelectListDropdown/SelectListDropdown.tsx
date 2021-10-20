@@ -3,32 +3,32 @@
 import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
 import { IconSize } from "@elements/Icon/IconSize";
 import { Tag, TagType } from "@elements/Tag/Tag";
+import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
 import { useOverlay } from "@react-aria/overlays";
-import { useButton } from "@react-aria/button";
+import { mergeProps } from "@react-aria/utils";
 import { Item } from "@react-stately/collections";
 import { useListState } from "@react-stately/list";
-import { merge } from "@utilities/merge";
-import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { useKeyboard } from "@react-aria/interactions";
-import React, { FC, useRef, useState } from "react";
+import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
+import React, { FC, useRef, useState } from "react";
 import { SelectList, SelectListItem } from "./SelectList";
 
 const getAllItemNames = (items: SelectListItem[]) => items.map(({ name }) => name);
 
 export type SelectListDropdownProps = {
     items: SelectListItem[];
-    activeItemKeys: string[];
+    activeItemKeys: (string | number)[];
     disabled?: boolean;
-    onSelectionChange: (keys: string[]) => void;
+    onSelectionChange: (keys: (string | number)[]) => void;
     ariaLabel?: string;
 };
 
 export const SelectListDropdown: FC<SelectListDropdownProps> = ({
     items,
     activeItemKeys,
+    onSelectionChange,
     ariaLabel = "Select list",
     disabled = false,
 }) => {
@@ -40,9 +40,7 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = ({
     const state = useListState<SelectListItem>({
         children: items.map((item) => <Item key={item.name}>{item.name}</Item>),
         defaultSelectedKeys: activeItemKeys,
-        onSelectionChange: (keys) => {
-            keys === "all" ? getAllItemNames(items) : Array.from(keys);
-        },
+        onSelectionChange: (keys) => onSelectionChange(keys === "all" ? getAllItemNames(items) : Array.from(keys)),
         selectionMode: "multiple",
     });
     const { overlayProps } = useOverlay(
@@ -66,17 +64,6 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = ({
         triggerRef,
     );
     const { isFocusVisible, focusProps } = useFocusRing();
-
-    const { keyboardProps } = useKeyboard({
-        onKeyDown(e) {
-            if (e.key === "Escape") {
-                setOpen(false);
-                e.preventDefault();
-            } else {
-                e.continuePropagation();
-            }
-        },
-    });
 
     return (
         <div className="tw-relative">
@@ -133,8 +120,8 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = ({
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
                         <FocusScope restoreFocus>
-                            <div {...mergeProps(overlayProps, keyboardProps)} ref={overlayRef}>
-                                <SelectList state={state} ariaLabel={ariaLabel} keyboardProps={keyboardProps} />
+                            <div {...overlayProps} ref={overlayRef}>
+                                <SelectList state={state} ariaLabel={ariaLabel} />
                             </div>
                         </FocusScope>
                     </motion.div>

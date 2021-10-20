@@ -2,8 +2,8 @@
 
 import { mount } from "@cypress/react";
 import React, { FC, useState } from "react";
-import { SelectListDropdown } from "./SelectListDropdown";
 import { SelectListItem } from "./SelectList";
+import { SelectListDropdown } from "./SelectListDropdown";
 
 const DROPDOWN_TRIGGER_ID = "[data-test-id=select-list-dropdown-trigger]";
 const SELECTED_LIST_ID = "[data-test-id=select-list-selected]";
@@ -40,7 +40,7 @@ type Props = {
 };
 
 const Component: FC<Props> = ({ activeItemKeys, items }) => {
-    const [activeItems, setActiveItems] = useState(activeItemKeys);
+    const [activeItems, setActiveItems] = useState<(string | number)[]>(activeItemKeys);
     return (
         <SelectListDropdown
             items={items}
