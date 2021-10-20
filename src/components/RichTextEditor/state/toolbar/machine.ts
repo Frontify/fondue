@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { EditorState } from "draft-js";
 import { createMachine, DoneInvokeEvent, sendParent } from "xstate";
 

@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { assign } from "@xstate/immer";
 import { EditorState, RawDraftContentState, SelectionState } from "draft-js";
 import { createMachine, DoneInvokeEvent } from "xstate";

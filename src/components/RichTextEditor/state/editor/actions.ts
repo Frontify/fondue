@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { assign } from "@xstate/immer";
 import { convertToRaw } from "draft-js";
 import { DoneInvokeEvent } from "xstate";

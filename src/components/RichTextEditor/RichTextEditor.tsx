@@ -37,7 +37,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
 
     return (
-        <div onFocus={() => send("FOCUSED")}>
+        <div onFocus={() => send("FOCUSED")} data-test-id="rich-text-editor">
             {useMemo(
                 () => (
                     <Editor
