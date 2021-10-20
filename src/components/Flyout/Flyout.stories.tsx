@@ -117,60 +117,17 @@ WithBadges.args = {
 };
 
 const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
-    const [activeItemId, setActiveItemId] = useState("a");
-    const [input, setInput] = useState("");
     const [open, setOpen] = useState(false);
 
     return (
-        <div className="dark:tw-text-white">
-            <Flyout
-                {...args}
-                trigger={<Button onClick={() => setOpen((open) => !open)}>Button</Button>}
-                isOpen={open}
-                onOpenChange={(isOpen) => setOpen(isOpen)}
-            >
-                <div className="tw-flex tw-flex-col tw-gap-y-8 tw-p-8">
-                    <FormControl
-                        label={{
-                            children: "Input Label",
-                            htmlFor: "input-id",
-                            tooltip: { content: "Input tooltip" },
-                        }}
-                        extra="Extra Text"
-                    >
-                        <TextInput value={input} onChange={setInput} />
-                    </FormControl>
-                    <Divider color={FLYOUT_DIVIDER_COLOR} height={FLYOUT_DIVIDER_HEIGHT} />
-                    <FormControl
-                        label={{
-                            children: "Slider Label",
-                            htmlFor: "slider-id",
-                        }}
-                    >
-                        <Slider
-                            activeItemId={activeItemId}
-                            onChange={setActiveItemId}
-                            items={[
-                                { id: "a", value: "abc" },
-                                { id: "b", value: "def" },
-                                { id: "c", value: "ghi" },
-                            ]}
-                        />
-                    </FormControl>
-                </div>
-
-                <div className="tw-p-8">
-                    <FormControl
-                        label={{
-                            children: "Textarea Label",
-                            htmlFor: "textarea-id",
-                        }}
-                    >
-                        <Textarea placeholder="This is a placeholder" />
-                    </FormControl>
-                </div>
-            </Flyout>
-        </div>
+        <Flyout
+            {...args}
+            trigger={<Button onClick={() => setOpen((open) => !open)}>Button</Button>}
+            isOpen={open}
+            onOpenChange={(isOpen) => setOpen(isOpen)}
+        >
+            <p className="tw-text-center tw-py-8">Fun with Flyouts and Buttons!</p>
+        </Flyout>
     );
 };
 export const WithButtonTrigger = WithButtonFlyoutTemplate.bind({});
