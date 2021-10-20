@@ -136,7 +136,7 @@ export const Flyout: FC<FlyoutProps> = ({
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
     const { toggle, close } = state;
-    const triggerRef = useRef<HTMLButtonElement | null>(null);
+    const triggerRef = useRef<HTMLDivElement | null>(null);
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
@@ -162,7 +162,7 @@ export const Flyout: FC<FlyoutProps> = ({
 
     return (
         <OverlayProvider className="tw-flex tw-h-full tw-items-center">
-            <button
+            <div
                 {...mergeProps(buttonProps, triggerProps, focusProps)}
                 ref={triggerRef}
                 className={merge([
@@ -173,7 +173,7 @@ export const Flyout: FC<FlyoutProps> = ({
                 data-test-id="flyout-trigger"
             >
                 {trigger}
-            </button>
+            </div>
             {isOpen && (
                 <OverlayContainer>
                     <FocusScope restoreFocus>
