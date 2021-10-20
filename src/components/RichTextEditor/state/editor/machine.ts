@@ -3,7 +3,7 @@
 import { EditorState, RawDraftContentState } from "draft-js";
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { toolbarMachine } from "../toolbar/machine";
-import { resetSelection, updateEditorState } from "./actions";
+import { notifyContentChanged, resetSelection, updateEditorState } from "./actions";
 import { hasEditorState } from "./typeguards";
 
 export type EditorContext = {
@@ -48,11 +48,11 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                         {
                             target: States.Styling,
                             cond: "hasSelection",
-                            actions: "updateEditorState",
+                            actions: ["updateEditorState", "notifyContentChanged"],
                         },
                         {
                             target: States.Editing,
-                            actions: "updateEditorState",
+                            actions: ["updateEditorState", "notifyContentChanged"],
                         },
                     ],
                 },
@@ -67,12 +67,12 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                     CHANGE: [
                         {
                             target: States.Styling,
-                            actions: "updateEditorState",
+                            actions: ["updateEditorState", "notifyContentChanged"],
                             cond: "hasSelection",
                         },
                         {
                             target: States.Editing,
-                            actions: ["updateEditorState", "resetSelection"],
+                            actions: ["updateEditorState", "notifyContentChanged", "resetSelection"],
                         },
                     ],
                 },
@@ -90,6 +90,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
         actions: {
             updateEditorState,
             resetSelection,
+            notifyContentChanged,
         },
     },
 );

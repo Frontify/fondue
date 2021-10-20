@@ -16,7 +16,7 @@ export default {
 
 export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <>
-        <RichTextEditorComponent {...args} />
+        <RichTextEditorComponent {...args} onTextChange={(value) => console.log(value)} />
     </>
 );
 
