@@ -11,6 +11,7 @@ import { useListState } from "@react-stately/list";
 import { merge } from "@utilities/merge";
 import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { useKeyboard } from "@react-aria/interactions";
 import React, { FC, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { SelectList, SelectListItem } from "./SelectList";
@@ -65,6 +66,17 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = ({
         triggerRef,
     );
     const { isFocusVisible, focusProps } = useFocusRing();
+
+    const { keyboardProps } = useKeyboard({
+        onKeyDown(e) {
+            if (e.key === "Escape") {
+                setOpen(false);
+                e.preventDefault;
+            } else {
+                e.continuePropagation();
+            }
+        },
+    });
 
     return (
         <div className="tw-relative">
@@ -121,8 +133,8 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = ({
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
                         <FocusScope restoreFocus>
-                            <div {...overlayProps} ref={overlayRef}>
-                                <SelectList state={state} ariaLabel={ariaLabel} />
+                            <div {...mergeProps(overlayProps, keyboardProps)} ref={overlayRef}>
+                                <SelectList state={state} ariaLabel={ariaLabel} keyboardProps={keyboardProps} />
                             </div>
                         </FocusScope>
                     </motion.div>

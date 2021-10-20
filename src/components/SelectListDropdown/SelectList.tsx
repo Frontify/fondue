@@ -9,18 +9,19 @@ import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { ListState } from "@react-stately/list";
 import { mergeProps } from "@react-aria/utils";
-import React, { FC, useRef } from "react";
+import React, { FC, useRef, HTMLAttributes } from "react";
 
 export type SelectListProps = {
     state: ListState<any>;
     ariaLabel?: string;
+    keyboardProps?: HTMLAttributes<HTMLElement>;
 };
 
 export type SelectListItem = {
     name: string;
 };
 
-export const SelectList: FC<SelectListProps> = ({ state, ariaLabel }) => {
+export const SelectList: FC<SelectListProps> = ({ state, ariaLabel, keyboardProps }) => {
     const ref = useRef<HTMLUListElement | null>(null);
     const { listBoxProps } = useListBox<SelectListItem>({ "aria-label": ariaLabel }, state, ref);
 
@@ -40,6 +41,7 @@ export const SelectList: FC<SelectListProps> = ({ state, ariaLabel }) => {
                         key={key}
                         ref={optionRef}
                         {...mergeProps(optionProps, focusProps)}
+                        {...keyboardProps}
                         className={isFocusVisible ? FOCUS_STYLE : ""}
                         data-test-id="select-item"
                     >
