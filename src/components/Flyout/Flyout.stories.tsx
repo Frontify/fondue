@@ -31,12 +31,13 @@ export default {
 const FlyoutTemplate: Story<FlyoutProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState("a");
     const [input, setInput] = useState("");
+    const [open, setOpen] = useState(false);
 
     return (
         <div className="dark:tw-text-white">
             <div className="tw-flex tw-items-center">
                 Some text
-                <Flyout {...args}>
+                <Flyout {...args} isOpen={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
                     <div className="tw-flex tw-flex-col tw-gap-y-8 tw-p-8">
                         <FormControl
                             label={{

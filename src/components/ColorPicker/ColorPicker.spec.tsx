@@ -8,10 +8,10 @@ import { Color, EXAMPLE_PALETTES } from "@utilities/colors";
 import React, { FC, useState } from "react";
 import { ColorPicker, Palette } from "./ColorPicker";
 
+export const BRAND_COLOR_ID = "[data-test-id=brand-color]";
+export const COLOR_PREVIEW_ID = "[data-test-id=color-preview]";
 const BRAND_COLOR_PICKER_ID = "[data-test-id=brand-color-picker]";
-const BRAND_COLOR_ID = "[data-test-id=brand-color]";
 const CUSTOM_COLOR_PICKER_ID = "[data-test-id=custom-color-picker]";
-const COLOR_PREVIEW_ID = "[data-test-id=color-preview]";
 const COLOR_INPUT_ID = "[data-test-id=color-input]";
 const TEXT_INPUT_ID = "[data-test-id=text-input]";
 
