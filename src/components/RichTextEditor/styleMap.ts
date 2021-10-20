@@ -8,8 +8,8 @@ export const styleMap = {
         fontSize: "85%",
         background: "var(--f-black-05)",
         color: "var(--f-violet-90)",
-        margin: "0",
-        padding: "0 0.2em",
+        margin: "0px",
+        padding: "0px 0.2em",
     },
     STRIKETHROUGH: {
         textDecoration: "line-through",

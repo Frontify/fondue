@@ -21,7 +21,6 @@ export * from "./components/Menu/MenuItem/MenuItemContent";
 export * from "./components/Menu/SelectMenu";
 export * from "./components/RichTextEditor/BlockStyleButton";
 export * from "./components/RichTextEditor/decorators/components/LinkDecorator";
-export * from "./components/RichTextEditor/Deprecated";
 export * from "./components/RichTextEditor/InlineStyleButton";
 export * from "./components/RichTextEditor/RichTextEditor";
 export * from "./components/RichTextEditor/styling-controls/BoldButton";

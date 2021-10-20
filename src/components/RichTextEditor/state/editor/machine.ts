@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { assign } from "@xstate/immer";
-import { EditorState, RawDraftContentState, SelectionState } from "draft-js";
+import { EditorState, RawDraftContentState } from "draft-js";
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { toolbarMachine } from "../toolbar/machine";
-import { updateEditorState } from "./actions";
+import { resetSelection, updateEditorState } from "./actions";
 import { hasEditorState } from "./typeguards";
 
 export type EditorContext = {
@@ -36,6 +35,11 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                         target: States.Editing,
                         cond: "canEdit",
                     },
+                    // The CHANGE needs to be handled in readonly to initialize the editor
+                    CHANGE: {
+                        actions: "updateEditorState",
+                        cond: "canEdit",
+                    },
                 },
             },
             [States.Editing]: {
@@ -47,6 +51,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                             actions: "updateEditorState",
                         },
                         {
+                            target: States.Editing,
                             actions: "updateEditorState",
                         },
                     ],
@@ -56,26 +61,21 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                 invoke: {
                     id: "toolbar",
                     src: toolbarMachine,
-                    data: ({ editorState }) => ({
-                        editorState,
-                    }),
+                    data: (_, { data }) => ({ editorState: data.editorState }),
                 },
                 on: {
                     CHANGE: [
                         {
                             target: States.Styling,
-                            cond: "hasSelection",
                             actions: "updateEditorState",
+                            cond: "hasSelection",
                         },
                         {
                             target: States.Editing,
-                            actions: ["updateEditorState"],
+                            actions: ["updateEditorState", "resetSelection"],
                         },
                     ],
                 },
-                exit: assign<EditorContext, DoneInvokeEvent<EditorEventDataTypes>>((context) => {
-                    context.editorState = EditorState.forceSelection(context.editorState, new SelectionState());
-                }),
             },
         },
     },
@@ -89,6 +89,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
         },
         actions: {
             updateEditorState,
+            resetSelection,
         },
     },
 );

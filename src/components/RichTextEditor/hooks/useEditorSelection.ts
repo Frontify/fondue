@@ -8,7 +8,7 @@ export const useEditorSelection = (element: RefObject<HTMLElement>): { selection
     const [selectionRect, setSelectionRect] = useState<CSSProperties | null>(null);
 
     useEffect(() => {
-        if (!element.current || !documentSelection) {
+        if (!element.current || !documentSelection || documentSelection.rangeCount === 0) {
             return;
         }
 

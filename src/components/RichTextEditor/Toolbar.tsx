@@ -51,6 +51,7 @@ export const Toolbar: FC = () => {
             ></div>
             <div
                 ref={inlineToolbarRef}
+                data-test-id="toolbar"
                 className={merge([
                     "tw-popper-container tw-z-10 tw-drop-shadow-md",
                     !selectionRect && "tw-invisible tw-pointer-events-none",

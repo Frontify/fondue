@@ -3,7 +3,7 @@
 import { useMachine } from "@xstate/react";
 import { convertFromRaw, Editor, EditorState, RawDraftContentState } from "draft-js";
 import "draft-js/dist/Draft.css";
-import React, { FC, useMemo, useRef } from "react";
+import React, { FC, useRef } from "react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
 import { ToolbarContext } from "./context/toolbar";
 import { decorators } from "./decorators";
@@ -38,20 +38,15 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     return (
         <div onFocus={() => send("FOCUSED")} data-test-id="rich-text-editor">
-            {useMemo(
-                () => (
-                    <Editor
-                        ref={editor}
-                        customStyleMap={styleMap}
-                        editorState={context.editorState}
-                        placeholder={placeholder}
-                        onChange={(editorState) => send({ type: "CHANGE", data: { editorState } })}
-                        onBlur={() => editor.current?.blur()}
-                        readOnly={readonly}
-                    />
-                ),
-                [context.editorState],
-            )}
+            <Editor
+                ref={editor}
+                customStyleMap={styleMap}
+                editorState={context.editorState}
+                placeholder={placeholder}
+                onChange={(editorState) => send({ type: "CHANGE", data: { editorState } })}
+                onBlur={() => editor.current?.blur()}
+                readOnly={readonly}
+            />
             {matches(States.Styling) && (
                 <ToolbarContext.Provider
                     value={{

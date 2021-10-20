@@ -31,6 +31,7 @@ export const BlockStyleButton: FC<BlockStyleButtonProps> = ({ blockType, childre
 
     return (
         <button
+            data-test-id={`block-style-button-${blockType}`}
             className={merge([
                 "tw-flex tw-w-6 tw-h-6 tw-items-center tw-justify-center tw-border-0 tw-bg-white tw-rounded tw-text-black-95 tw-cursor-pointer",
                 blockTypeIsActive() && "tw-bg-black-10",
