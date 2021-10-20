@@ -71,7 +71,7 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = ({
         onKeyDown(e) {
             if (e.key === "Escape") {
                 setOpen(false);
-                e.preventDefault;
+                e.preventDefault();
             } else {
                 e.continuePropagation();
             }
