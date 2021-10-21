@@ -2,10 +2,12 @@
 
 import IconReject from "@elements/Icon/Generated/IconReject";
 import { IconSize } from "@elements/Icon/IconSize";
+import { useButton } from "@react-aria/button";
 import { useFocusRing } from "@react-aria/focus";
+import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, MouseEvent } from "react";
+import React, { FC, MouseEvent, useRef } from "react";
 
 export enum TagType {
     Suggested = "Suggested",
@@ -39,16 +41,16 @@ type TagPropsUnselected = {
     onClick?: null;
 };
 
-export const Tag: FC<TagProps> = (props) => {
-    const { type, label } = props;
-
+export const Tag: FC<TagProps> = ({ type, label, onClick }) => {
+    const ref = useRef<HTMLButtonElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
-
-    const isClickable = (type === TagType.Selected || type === TagType.SelectedWithFocus) && props.onClick;
-
-    const buttonProps = {
-        ...(isClickable ? { onClick: props.onClick } : {}),
-    };
+    const isClickable = (type === TagType.Selected || type === TagType.SelectedWithFocus) && onClick;
+    const { buttonProps } = useButton(
+        {
+            onPress: () => isClickable && onClick(),
+        },
+        ref,
+    );
 
     return (
         <button
@@ -59,8 +61,7 @@ export const Tag: FC<TagProps> = (props) => {
                 isClickable ? "tw-cursor-pointer" : "tw-cursor-default",
                 isFocusVisible && FOCUS_STYLE,
             ])}
-            {...buttonProps}
-            {...focusProps}
+            {...mergeProps(buttonProps, focusProps)}
         >
             {label}
             {isClickable && (

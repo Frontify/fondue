@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { action } from "@storybook/addon-actions";
+import { Meta, Story } from "@storybook/react";
 import React from "react";
-import { Story, Meta } from "@storybook/react";
 import { Tag, TagProps, TagType } from "./Tag";
 
 export default {
@@ -13,16 +14,12 @@ export default {
     argTypes: {
         type: {
             options: Object.keys(TagType),
-            mappings: Object.values(TagType),
-            defaultValue: TagType.Suggested,
             control: { type: "select" },
         },
     },
 } as Meta<TagProps>;
 
 const TagTemplate: Story<TagProps> = (args) => <Tag {...args} />;
-
-const clickEventHandler = () => alert("Click!");
 
 export const Suggested = TagTemplate.bind({});
 Suggested.args = {
@@ -32,13 +29,13 @@ Suggested.args = {
 export const Selected = TagTemplate.bind({});
 Selected.args = {
     type: TagType.Selected,
-    onClick: clickEventHandler,
+    onClick: action("onClick"),
 };
 
 export const SelectedWithFocus = TagTemplate.bind({});
 SelectedWithFocus.args = {
     type: TagType.SelectedWithFocus,
-    onClick: clickEventHandler,
+    onClick: action("onClick"),
 };
 
 export const PreviouslySelected = TagTemplate.bind({});

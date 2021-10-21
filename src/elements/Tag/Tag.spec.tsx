@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
 import { mount } from "@cypress/react";
+import React from "react";
 import { Tag, TagType } from "./Tag";
 
 const TAG_ID = "[data-test-id=tag]";
@@ -67,7 +67,7 @@ describe("Tag Component", () => {
         cy.get("@onClickStub").should("be.calledOnce");
     });
 
-    it("should be able to gain focus on keyboard tab press", () => {
+    it("should be focusable and selectable with keyboard", () => {
         const onClickStub = cy.stub().as("onClickStub");
 
         mount(<Tag type={TagType.SelectedWithFocus} label={TAG_LABEL} onClick={onClickStub} />);
@@ -75,5 +75,7 @@ describe("Tag Component", () => {
         cy.window().focus();
         cy.get("body").realPress("Tab");
         cy.get(TAG_ID).should("be.focused");
+        cy.get("body").type("{enter}");
+        cy.get("@onClickStub").should("be.calledOnce");
     });
 });
