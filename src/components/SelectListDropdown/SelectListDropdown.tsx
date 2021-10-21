@@ -59,6 +59,11 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = ({
             onPress: () => {
                 setOpen(true);
             },
+            onKeyDown: (e) => {
+                if (e.key === "Escape") {
+                    setOpen(false);
+                }
+            },
             elementType: "div",
         },
         triggerRef,
