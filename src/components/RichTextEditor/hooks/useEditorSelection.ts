@@ -22,7 +22,7 @@ export const useEditorSelection = (element: RefObject<HTMLElement>): { selection
             top: `${rangeRect.y + window.scrollY - (parentRect?.top ? parentRect?.top : 0)}px`,
             left: `${rangeRect.x + window.scrollX - (parentRect?.left ? parentRect?.left : 0)}px`,
         });
-    }, [element, documentSelection]);
+    }, [element, documentSelection?.anchorOffset]);
 
     return { selectionRect };
 };
