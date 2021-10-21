@@ -3,7 +3,7 @@
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
 import { RichUtils } from "draft-js";
-import React, { FC, useCallback, useContext } from "react";
+import React, { FC, useContext, useMemo } from "react";
 import { ToolbarContext } from "./context/toolbar";
 
 interface BlockStyleButtonProps {
@@ -20,7 +20,7 @@ export const BlockStyleButton: FC<BlockStyleButtonProps> = ({ blockType, childre
     const [{ context }, send] = useActor(machineRef);
     const { editorState } = context;
 
-    const blockTypeIsActive = useCallback((): boolean => {
+    const blockTypeIsActive = useMemo((): boolean => {
         if (!editorState) {
             return false;
         }
@@ -34,7 +34,7 @@ export const BlockStyleButton: FC<BlockStyleButtonProps> = ({ blockType, childre
             data-test-id={`block-style-button-${blockType}`}
             className={merge([
                 "tw-flex tw-w-6 tw-h-6 tw-items-center tw-justify-center tw-border-0 tw-bg-white tw-rounded tw-text-black-95 tw-cursor-pointer",
-                blockTypeIsActive() && "tw-bg-black-10",
+                blockTypeIsActive && "tw-bg-black-10",
             ])}
             onClick={(event) => {
                 event.preventDefault();
