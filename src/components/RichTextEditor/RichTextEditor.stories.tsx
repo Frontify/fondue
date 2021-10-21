@@ -12,11 +12,14 @@ export default {
         placeholder: "Some placeholder",
         readonly: false,
     },
+    argTypes: {
+        onTextChange: { action: "onTextChange" },
+    },
 } as Meta;
 
 export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <>
-        <RichTextEditorComponent {...args} onTextChange={(value) => console.log(value)} />
+        <RichTextEditorComponent {...args} />
     </>
 );
 
