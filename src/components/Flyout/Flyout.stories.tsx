@@ -3,6 +3,7 @@
 import { Slider } from "@components/Slider/Slider";
 import { FormControl } from "@compositions/FormControl/FormControl";
 import { BadgeStatus, BadgeStyle } from "@elements/Badge/Badge";
+import { Button } from "@elements/Button/Button";
 import { Divider } from "@elements/Divider/Divider";
 import IconActions from "@elements/Icon/Generated/IconActions";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
@@ -113,4 +114,30 @@ WithBadges.args = {
         { status: BadgeStatus.Danger, children: "Badge 2" },
         { style: BadgeStyle.Danger, icon: <IconIcons />, children: "Badge 3" },
     ],
+};
+
+const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <Flyout
+            {...args}
+            trigger={<Button onClick={() => setOpen((open) => !open)}>Button</Button>}
+            isOpen={open}
+            onOpenChange={(isOpen) => setOpen(isOpen)}
+        >
+            <p className="tw-text-center tw-py-8">Fun with Flyouts and Buttons!</p>
+        </Flyout>
+    );
+};
+export const WithButtonTrigger = WithButtonFlyoutTemplate.bind({});
+
+WithButtonTrigger.args = {
+    title: "Header title",
+    decorator: <IconIcons />,
+};
+
+WithButtonTrigger.argTypes = {
+    trigger: { table: { disable: true } },
+    decorator: { table: { disable: true } },
 };
