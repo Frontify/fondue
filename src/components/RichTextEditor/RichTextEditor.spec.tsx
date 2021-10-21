@@ -33,11 +33,25 @@ describe("RichTextEditor Component", () => {
         cy.get(RICH_TEXT_EDITOR).should("be.visible");
     });
 
-    it("should render a rich text editor with some predefined text", () => {
+    it("should render a raw content state", () => {
         const text = "This is some text that you can not edit";
         mount(<RichTextEditor value={convertToRaw(ContentState.createFromText(text))} />);
 
         cy.get(RICH_TEXT_EDITOR).should("contain.text", text);
+    });
+
+    it("should render a raw html content state", () => {
+        mount(
+            <RichTextEditor
+                value={{
+                    content: "<b>this is bold</b> and <i>this italic</i>",
+                }}
+            />,
+        );
+
+        cy.get(RICH_TEXT_EDITOR).should("contain.text", "this is bold and this italic");
+        cy.get("[contenteditable=true]").should("include.html", "font-weight: bold");
+        cy.get("[contenteditable=true]").should("include.html", "font-style: italic");
     });
 
     it("should be editable by default ", () => {

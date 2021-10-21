@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useMachine } from "@xstate/react";
-import { convertFromRaw, Editor, EditorState, getDefaultKeyBinding, RawDraftContentState, RichUtils } from "draft-js";
+import { Editor, EditorState, getDefaultKeyBinding, RawDraftContentState, RichUtils } from "draft-js";
 import "draft-js/dist/Draft.css";
 import React, { FC, useRef } from "react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
@@ -11,10 +11,11 @@ import { editorMachine, States } from "./state/editor/machine";
 import { ToolbarContext as ToolbarFSMContext, ToolbarStateData } from "./state/toolbar/machine";
 import { styleMap } from "./styleMap";
 import { Toolbar } from "./Toolbar";
+import { parseRawContentState, RawContentState } from "./utils/parseRawContentState";
 
 export type RichTextEditorProps = {
     placeholder?: string;
-    value?: RawDraftContentState;
+    value?: RawContentState;
     onTextChange?: (value: RawDraftContentState) => void;
     readonly?: boolean;
 };
@@ -26,11 +27,12 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     readonly = false,
 }: RichTextEditorProps) => {
     const editor = useRef<Editor | null>(null);
+    const parsedContentState = value ? parseRawContentState(value) : null;
     const [{ context, matches, children }, send] = useMachine(
         editorMachine.withContext({
             locked: readonly,
-            editorState: value
-                ? EditorState.createWithContent(convertFromRaw(value), decorators)
+            editorState: parsedContentState
+                ? EditorState.createWithContent(parsedContentState, decorators)
                 : EditorState.createEmpty(decorators),
             onContentChanged: onTextChange,
         }),
