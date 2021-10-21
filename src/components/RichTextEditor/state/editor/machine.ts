@@ -61,7 +61,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                 invoke: {
                     id: "toolbar",
                     src: toolbarMachine,
-                    data: (_, { data }) => ({ editorState: data.editorState }),
+                    data: ({ editorState }) => ({ editorState }),
                 },
                 on: {
                     CHANGE: [
