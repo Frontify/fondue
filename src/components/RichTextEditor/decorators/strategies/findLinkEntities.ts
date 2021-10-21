@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { ContentBlock, ContentState } from "draft-js";
 
 export default function findLinkEntities(

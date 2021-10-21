@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { CompositeDecorator } from "draft-js";
 import findLinkEntities from "./strategies/findLinkEntities";
 import LinkDecorator from "./components/LinkDecorator";

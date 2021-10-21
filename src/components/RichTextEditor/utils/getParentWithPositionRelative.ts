@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 export const getParentWithPositionRelative = (elementToCheck: HTMLElement): HTMLElement | null => {
     const parentToCheck = elementToCheck.offsetParent;
     if (!parentToCheck || parentToCheck?.tagName === "HTML") {

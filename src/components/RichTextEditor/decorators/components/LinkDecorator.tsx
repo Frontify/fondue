@@ -1,5 +1,7 @@
-import React, { ReactElement, ReactNode } from "react";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { ContentState } from "draft-js";
+import React, { ReactElement, ReactNode } from "react";
 
 type LinkDecoratorProps = {
     children: ReactNode;

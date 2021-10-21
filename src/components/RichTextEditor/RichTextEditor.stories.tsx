@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
 import { Meta, Story } from "@storybook/react";
+import { ContentState, convertToRaw } from "draft-js";
+import React from "react";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
-import { ContentState } from "draft-js";
 
 export default {
     title: "Components/Rich Text Editor",
@@ -11,6 +11,9 @@ export default {
     args: {
         placeholder: "Some placeholder",
         readonly: false,
+    },
+    argTypes: {
+        onTextChange: { action: "onTextChange" },
     },
 } as Meta;
 
@@ -21,7 +24,10 @@ export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorP
 );
 
 export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
-    <RichTextEditorComponent {...args} value={ContentState.createFromText("This is some text that you can not edit")} />
+    <RichTextEditorComponent
+        {...args}
+        value={convertToRaw(ContentState.createFromText("This is some text that you can not edit"))}
+    />
 );
 WithReadonlyState.args = {
     readonly: true,
