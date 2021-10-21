@@ -2,11 +2,11 @@
 
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
-import { SelectListDropdown as SelectListDropdownComponent, SelectListDropdownProps } from "./SelectListDropdown";
+import { MultiSelect as MultiSelectComponent, MultiSelectProps } from "./MultiSelect";
 
 export default {
-    title: "Components/Select List Dropdown",
-    component: SelectListDropdownComponent,
+    title: "Components/Multi Select",
+    component: MultiSelectComponent,
     args: {
         activeItemKeys: ["Short tag", "Tag 74"],
         items: [
@@ -32,10 +32,10 @@ export default {
     },
 } as Meta;
 
-export const SelectListDropdown: Story<SelectListDropdownProps> = (args) => {
+export const MultiSelect: Story<MultiSelectProps> = (args) => {
     const [activeItemKeys, setActiveItemKeys] = useState<(string | number)[]>(args.activeItemKeys);
     return (
-        <SelectListDropdownComponent
+        <MultiSelectComponent
             {...args}
             activeItemKeys={activeItemKeys}
             onSelectionChange={(keys) => setActiveItemKeys(keys)}

@@ -14,7 +14,7 @@ import { SelectList, SelectListItem } from "./SelectList";
 
 const getAllItemNames = (items: SelectListItem[]) => items.map(({ name }) => name);
 
-export type SelectListDropdownProps = {
+export type MultiSelectProps = {
     items: SelectListItem[];
     activeItemKeys: (string | number)[];
     disabled?: boolean;
@@ -22,7 +22,7 @@ export type SelectListDropdownProps = {
     ariaLabel?: string;
 };
 
-export const SelectListDropdown: FC<SelectListDropdownProps> = ({
+export const MultiSelect: FC<MultiSelectProps> = ({
     items,
     activeItemKeys,
     onSelectionChange,
@@ -69,13 +69,7 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = ({
 
     return (
         <div className="tw-relative">
-            <Trigger
-                {...focusProps}
-                disabled={disabled}
-                buttonProps={buttonProps}
-                isFocusVisible={isFocusVisible}
-                isOpen={open}
-            >
+            <Trigger disabled={disabled} buttonProps={buttonProps} isFocusVisible={isFocusVisible} isOpen={open}>
                 <div
                     {...mergeProps(buttonProps, focusProps)}
                     ref={triggerRef}
