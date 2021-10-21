@@ -8,6 +8,7 @@ import { useFocusRing } from "@react-aria/focus";
 import { useListBox, useOption } from "@react-aria/listbox";
 import { mergeProps } from "@react-aria/utils";
 import { ListState } from "@react-stately/list";
+import { merge } from "@utilities/merge";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import React, { FC, KeyboardEvent, useRef } from "react";
 
@@ -50,7 +51,7 @@ export const SelectList: FC<SelectListProps> = ({ state, ariaLabel }) => {
                         key={key}
                         ref={optionRef}
                         {...mergeProps(optionProps, focusProps)}
-                        className={isFocusVisible ? FOCUS_STYLE : ""}
+                        className={merge(["tw-outline-none", isFocusVisible && FOCUS_STYLE])}
                         data-test-id="select-item"
                     >
                         <Checkbox

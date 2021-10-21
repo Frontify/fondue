@@ -5,7 +5,7 @@ import React, { FC, useState } from "react";
 import { SelectListItem } from "./SelectList";
 import { SelectListDropdown } from "./SelectListDropdown";
 
-const DROPDOWN_TRIGGER_ID = "[data-test-id=select-list-dropdown-trigger]";
+const DROPDOWN_TRIGGER_ID = "[data-test-id=trigger]";
 const SELECTED_LIST_ID = "[data-test-id=select-list-selected]";
 const SELECT_LIST_ID = "[data-test-id=select-list]";
 const SELECT_ITEM_ID = "[data-test-id=select-item]";

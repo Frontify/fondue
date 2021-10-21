@@ -1,16 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
-import { IconSize } from "@elements/Icon/IconSize";
 import { Tag, TagType } from "@elements/Tag/Tag";
+import { Trigger } from "@elements/Trigger/Trigger";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
 import { useOverlay } from "@react-aria/overlays";
 import { mergeProps } from "@react-aria/utils";
 import { Item } from "@react-stately/collections";
 import { useListState } from "@react-stately/list";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, useRef, useState } from "react";
 import { SelectList, SelectListItem } from "./SelectList";
@@ -72,22 +69,19 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = ({
 
     return (
         <div className="tw-relative">
-            <div
-                {...mergeProps(buttonProps, focusProps)}
-                ref={triggerRef}
-                data-test-id="select-list-dropdown-trigger"
-                className={merge([
-                    "tw-group tw-relative tw-cursor-pointer tw-outline-none tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors tw-px-[19px] tw-py-[11px] tw-min-h-[50px]",
-                    isFocusVisible && FOCUS_STYLE,
-                    disabled
-                        ? "tw-border-black-5 tw-bg-black-5 tw-pointer-events-none"
-                        : merge([
-                              "tw-bg-white hover:tw-border-black-90",
-                              open ? "tw-border-black-90" : "tw-border-black-20",
-                          ]),
-                ])}
+            <Trigger
+                {...focusProps}
+                disabled={disabled}
+                buttonProps={buttonProps}
+                isFocusVisible={isFocusVisible}
+                isOpen={open}
             >
-                <div className="tw-flex-1 tw-flex tw-flex-wrap tw-gap-1" data-test-id="select-list-selected">
+                <div
+                    {...mergeProps(buttonProps, focusProps)}
+                    ref={triggerRef}
+                    className="tw-flex-1 tw-flex tw-flex-wrap tw-gap-1 tw-px-[19px] tw-py-[11px] tw-min-h-[50px] tw-outline-none"
+                    data-test-id="select-list-selected"
+                >
                     {[...state.selectionManager.selectedKeys].map((key) => (
                         <Tag
                             key={key}
@@ -97,23 +91,7 @@ export const SelectListDropdown: FC<SelectListDropdownProps> = ({
                         />
                     ))}
                 </div>
-
-                <button
-                    aria-hidden="true"
-                    tabIndex={-1}
-                    className={merge([
-                        "tw-p-0",
-                        disabled
-                            ? "tw-pointer-events-none tw-text-black-40"
-                            : "tw-text-black-80 group-hover:tw-text-black",
-                    ])}
-                >
-                    <div className={merge(["tw-transition-transform", open && "tw-rotate-180"])}>
-                        <IconCaretDown size={IconSize.Size16} />
-                    </div>
-                </button>
-            </div>
-
+            </Trigger>
             <AnimatePresence>
                 {open && (
                     <motion.div
