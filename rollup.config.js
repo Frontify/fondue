@@ -22,7 +22,7 @@ const rollupConfig = [
         ],
         external: [join(__dirname, "src", "styles.css")],
         output: {
-            file: "index.d.ts",
+            file: "dist/index.d.ts",
             format: "es",
         },
     },
