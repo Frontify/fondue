@@ -41,13 +41,7 @@ describe("RichTextEditor Component", () => {
     });
 
     it("should render a raw html content state", () => {
-        mount(
-            <RichTextEditor
-                value={{
-                    content: "<b>this is bold</b> and <i>this italic</i>",
-                }}
-            />,
-        );
+        mount(<RichTextEditor value={"<b>this is bold</b> and <i>this italic</i>"} />);
 
         cy.get(RICH_TEXT_EDITOR).should("contain.text", "this is bold and this italic");
         cy.get("[contenteditable=true]").should("include.html", "font-weight: bold");
