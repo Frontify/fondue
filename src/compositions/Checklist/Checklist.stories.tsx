@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { CheckboxState } from "@elements/Checkbox/Checkbox";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { Checklist as ChecklistComponent, ChecklistDirection, ChecklistProps } from "./Checklist";
@@ -35,6 +36,7 @@ const CHECKBOXES = [
     {
         value: "box-3",
         label: "Checkbox label",
+        state: CheckboxState.Mixed,
     },
 ];
 

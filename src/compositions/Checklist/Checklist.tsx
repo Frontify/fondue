@@ -4,7 +4,7 @@ import { Checkbox, CheckboxProps, CheckboxState } from "@elements/Checkbox/Check
 import { useCheckboxGroup, useCheckboxGroupItem } from "@react-aria/checkbox";
 import { useCheckboxGroupState } from "@react-stately/checkbox";
 import { merge } from "@utilities/merge";
-import React, { FC, useRef } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 
 export enum ChecklistDirection {
     Horizontal = "Horizontal",
@@ -71,20 +71,21 @@ export const Checklist: FC<ChecklistProps> = ({
             {checkboxes.map((checkbox) => {
                 const { value, disabled, label, ariaLabel: checkboxAriaLabel, state: checkboxState } = checkbox;
                 const ref = useRef<HTMLInputElement | null>(null);
+                const [checkState, setCheckState] = useState(checkboxState);
+                const isSelected = state.isSelected(value);
                 const { inputProps } = useCheckboxGroupItem(
                     { value, isDisabled: disabled, "aria-label": checkboxAriaLabel || label },
                     state,
                     ref,
                 );
 
-                let checkState;
-                if (checkboxState === CheckboxState.Unchecked) {
-                    checkState = CheckboxState.Unchecked;
-                } else if (state.isSelected(value)) {
-                    checkState = CheckboxState.Checked;
-                } else {
-                    checkState = CheckboxState.Unchecked;
-                }
+                useEffect(() => {
+                    if (checkState === CheckboxState.Mixed && !isSelected) {
+                        setCheckState(CheckboxState.Mixed);
+                    } else {
+                        setCheckState(isSelected ? CheckboxState.Checked : CheckboxState.Unchecked);
+                    }
+                }, [isSelected]);
 
                 return (
                     <li key={value}>
