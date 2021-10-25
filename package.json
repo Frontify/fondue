@@ -95,7 +95,7 @@
         "postcss-nested": "5.0.6",
         "prettier": "2.4.1",
         "rimraf": "3.0.2",
-        "rollup": "2.58.0",
+        "rollup": "2.58.3",
         "rollup-plugin-dts": "4.0.0",
         "rollup-plugin-esbuild": "4.6.0",
         "storybook-builder-vite": "0.1.2",
