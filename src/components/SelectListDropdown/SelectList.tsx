@@ -8,8 +8,8 @@ import { useFocusRing } from "@react-aria/focus";
 import { useListBox, useOption } from "@react-aria/listbox";
 import { mergeProps } from "@react-aria/utils";
 import { ListState } from "@react-stately/list";
-import { merge } from "@utilities/merge";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { merge } from "@utilities/merge";
 import React, { FC, KeyboardEvent, useRef } from "react";
 
 export type SelectListProps = {
@@ -46,6 +46,8 @@ export const SelectList: FC<SelectListProps> = ({ state, ariaLabel }) => {
                 const optionRef = useRef<HTMLLIElement | null>(null);
                 const { optionProps, isSelected } = useOption({ key, shouldFocusOnHover: false }, state, optionRef);
                 const { isFocusVisible, focusProps } = useFocusRing();
+                const keyString = key.toString();
+
                 return (
                     <li
                         key={key}
@@ -55,7 +57,8 @@ export const SelectList: FC<SelectListProps> = ({ state, ariaLabel }) => {
                         data-test-id="select-item"
                     >
                         <Checkbox
-                            label={key.toString()}
+                            value={keyString}
+                            label={keyString}
                             state={isSelected ? CheckboxState.Checked : CheckboxState.Unchecked}
                         />
                     </li>
