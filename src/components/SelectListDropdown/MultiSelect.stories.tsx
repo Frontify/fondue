@@ -11,22 +11,22 @@ export default {
         activeItemKeys: ["Short tag", "Tag 74"],
         items: [
             {
-                name: "Checkbox label 1",
+                value: "Checkbox label 1",
             },
             {
-                name: "Short tag",
+                value: "Short tag",
             },
             {
-                name: "Checkbox label 2",
+                value: "Checkbox label 2",
             },
             {
-                name: "Checkbox label 3",
+                value: "Checkbox label 3",
             },
             {
-                name: "Tag 74",
+                value: "Tag 74",
             },
             {
-                name: "This is a long tag",
+                value: "This is a long tag",
             },
         ],
     },

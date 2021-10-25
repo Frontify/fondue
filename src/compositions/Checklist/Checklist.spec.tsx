@@ -23,6 +23,8 @@ const CHECKBOXES = [
     },
 ];
 
+export const CHECKLIST_ID = "[data-test-id=checklist]";
+
 const Component: FC<{ direction: ChecklistDirection; columns?: Columns }> = ({ direction, columns }) => {
     const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
 
@@ -48,21 +50,18 @@ describe("Checklist Component", () => {
     it("should render the Checklist horizontally", () => {
         mount(<Component direction={ChecklistDirection.Horizontal} />);
 
-        cy.get("[data-test-id=checklist]").as("Checklist").should("have.class", "tw-flex");
+        cy.get(CHECKLIST_ID).should("have.class", "tw-flex");
     });
 
     it("should render the Checklist vertically", () => {
         mount(<Component direction={ChecklistDirection.Vertical} />);
 
-        cy.get("[data-test-id=checklist]").as("Checklist").should("have.class", "tw-grid");
+        cy.get(CHECKLIST_ID).should("have.class", "tw-grid");
     });
 
     it("should render the Checklist in two columns", () => {
         mount(<Component direction={ChecklistDirection.Vertical} columns={2} />);
 
-        cy.get("[data-test-id=checklist]")
-            .as("Checklist")
-            .should("have.class", "tw-grid")
-            .and("have.class", "tw-grid-cols-2");
+        cy.get(CHECKLIST_ID).should("have.class", "tw-grid").and("have.class", "tw-grid-cols-2");
     });
 });
