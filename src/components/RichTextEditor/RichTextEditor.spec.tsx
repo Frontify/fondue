@@ -41,13 +41,7 @@ describe("RichTextEditor Component", () => {
     });
 
     it("should render a raw html content state", () => {
-        mount(
-            <RichTextEditor
-                value={{
-                    content: "<b>this is bold</b> and <i>this italic</i>",
-                }}
-            />,
-        );
+        mount(<RichTextEditor value={"<b>this is bold</b> and <i>this italic</i>"} />);
 
         cy.get(RICH_TEXT_EDITOR).should("contain.text", "this is bold and this italic");
         cy.get("[contenteditable=true]").should("include.html", "font-weight: bold");
@@ -117,22 +111,6 @@ describe("RichTextEditor Component", () => {
         insertTextAndOpenToolbar();
         cy.get(getInlineStyleControl("UNDERLINE")).click();
         cy.get("[contenteditable=true]").should("include.html", "text-decoration: underline");
-    });
-
-    it("renders subscript", () => {
-        mount(<RichTextEditor />);
-
-        insertTextAndOpenToolbar();
-        cy.get(getInlineStyleControl("SUBSCRIPT")).click();
-        cy.get("[contenteditable=true]").should("include.html", getStringifiedStyles(styleMap.SUBSCRIPT));
-    });
-
-    it("renders superscript", () => {
-        mount(<RichTextEditor />);
-
-        insertTextAndOpenToolbar();
-        cy.get(getInlineStyleControl("SUPERSCRIPT")).click();
-        cy.get("[contenteditable=true]").should("include.html", getStringifiedStyles(styleMap.SUPERSCRIPT));
     });
 
     it("renders strikethrough", () => {

@@ -10,8 +10,6 @@ import {
     ItalicButton,
     OrderedListButton,
     StrikethroughButton,
-    SubButton,
-    SupButton,
     UnderlineButton,
     UnorderedListButton,
 } from "./styling-controls";
@@ -65,8 +63,6 @@ export const Toolbar: FC = () => {
                     <UnderlineButton />
                     <StrikethroughButton />
                     <CodeButton />
-                    <SubButton />
-                    <SupButton />
                     <OrderedListButton />
                     <UnorderedListButton />
                 </div>

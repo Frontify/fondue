@@ -1,14 +1,14 @@
 import { convertFromHTML } from "draft-convert";
 import { ContentState, convertFromRaw, RawDraftContentState } from "draft-js";
 
-type RawHTMLLegacyContentState = { content: string };
+type RawHTMLLegacyContentState = string;
 export type RawContentState = RawHTMLLegacyContentState | RawDraftContentState;
 
 const isRawDraftContentState = (raw: RawContentState): raw is RawDraftContentState =>
     (raw as RawDraftContentState).blocks !== undefined && (raw as RawDraftContentState).entityMap !== undefined;
 
 const isRawHTMLLegacyContent = (raw: RawContentState): raw is RawHTMLLegacyContentState =>
-    (raw as RawHTMLLegacyContentState).content !== undefined;
+    typeof (raw as RawHTMLLegacyContentState) === "string" || raw instanceof String;
 
 export const parseRawContentState = (raw: RawContentState): ContentState | null => {
     if (isRawDraftContentState(raw)) {
@@ -26,6 +26,6 @@ export const parseRawContentState = (raw: RawContentState): ContentState | null 
                       });
                   }
               },
-          })(raw.content)
+          })(raw)
         : null;
 };

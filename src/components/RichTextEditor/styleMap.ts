@@ -14,12 +14,4 @@ export const styleMap = {
     STRIKETHROUGH: {
         textDecoration: "line-through",
     },
-    SUBSCRIPT: {
-        verticalAlign: "sub",
-        fontSize: "0.83em",
-    },
-    SUPERSCRIPT: {
-        verticalAlign: "super",
-        fontSize: "0.83em",
-    },
 };
