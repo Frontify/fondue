@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
+import { CheckboxState } from "@elements/Checkbox/Checkbox";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { Checklist as ChecklistComponent, ChecklistDirection, ChecklistProps } from "./Checklist";
@@ -21,57 +21,54 @@ export default {
     },
 } as Meta<ChecklistProps>;
 
-export const Checklist: Story<ChecklistProps> = (args) => {
-    const [checked, setChecked] = useState<CheckboxState[]>([
-        CheckboxState.Unchecked,
-        CheckboxState.Checked,
-        CheckboxState.Mixed,
-    ]);
+const CHECKBOXES = [
+    {
+        value: "box-1",
+        label: "Checkbox label",
+        tooltip: { content: "Random Tooltip" },
+    },
+    {
+        value: "box-2",
+        label: "Checkbox label",
+        note: "Note about this input",
+        disabled: true,
+    },
+    {
+        value: "box-3",
+        label: "Checkbox label",
+        state: CheckboxState.Mixed,
+    },
+];
 
-    const updateCheckState = (index: number, isChecked: boolean) => {
-        checked[index] = isChecked ? CheckboxState.Checked : CheckboxState.Unchecked;
-        setChecked([...checked]);
-    };
+const COLUMN_CHECKBOXES = new Array(8).fill({}).map((_, index) => ({
+    value: `box-${index}`,
+    label: `Checkbox Nr. ${index}`,
+    tooltip: { content: `Random Tooltip ${index}` },
+}));
+
+export const Checklist: Story<ChecklistProps> = (args) => {
+    const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
 
     return (
-        <ChecklistComponent {...args}>
-            <Checkbox
-                state={checked[0]}
-                onChange={(value) => updateCheckState(0, value)}
-                label="Checkbox label"
-                tooltip={{ content: "Random Tooltip" }}
-            />
-            <Checkbox
-                state={checked[1]}
-                onChange={(value) => updateCheckState(1, value)}
-                label="Checkbox label"
-                note="Note about this input"
-                disabled
-            />
-            <Checkbox state={checked[2]} onChange={(value) => updateCheckState(2, value)} label="Checkbox label" />
-        </ChecklistComponent>
+        <ChecklistComponent
+            {...args}
+            checkboxes={CHECKBOXES}
+            activeValues={activeBoxes}
+            setActiveValues={setActiveBoxes}
+        />
     );
 };
 
 export const MultipleColumns: Story<ChecklistProps> = (args) => {
-    const [checked, setChecked] = useState<CheckboxState[]>(new Array(8).fill(CheckboxState.Unchecked));
-
-    const updateCheckState = (index: number, isChecked: boolean) => {
-        checked[index] = isChecked ? CheckboxState.Checked : CheckboxState.Unchecked;
-        setChecked([...checked]);
-    };
+    const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
 
     return (
-        <ChecklistComponent {...args}>
-            {checked.map((_, index) => (
-                <Checkbox
-                    key={index}
-                    state={checked[index]}
-                    onChange={(value) => updateCheckState(index, value)}
-                    label={`Checkbox label n°${index + 1}`}
-                />
-            ))}
-        </ChecklistComponent>
+        <ChecklistComponent
+            {...args}
+            checkboxes={COLUMN_CHECKBOXES}
+            activeValues={activeBoxes}
+            setActiveValues={setActiveBoxes}
+        />
     );
 };
 MultipleColumns.args = {

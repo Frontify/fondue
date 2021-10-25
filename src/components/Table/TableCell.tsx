@@ -32,6 +32,8 @@ export const TableCell: FC<TableCellProps> = ({ cell, state, type = TableCellTyp
     const { isFocusVisible, focusProps } = useFocusRing();
 
     if (type === TableCellType.Checkbox) {
+        const { key } = cell;
+
         return (
             <td
                 {...gridCellProps}
@@ -43,7 +45,8 @@ export const TableCell: FC<TableCellProps> = ({ cell, state, type = TableCellTyp
                 data-test-id="table-select-cell"
             >
                 <Checkbox
-                    ariaLabel={cell["aria-label"] || cell.key}
+                    value={key}
+                    ariaLabel={cell["aria-label"] || key}
                     state={checked ? CheckboxState.Checked : CheckboxState.Unchecked}
                 />
             </td>

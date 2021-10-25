@@ -1,43 +1,64 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
-import React from "react";
-import { Checklist, ChecklistDirection } from "./Checklist";
+import { CheckboxState } from "@elements/Checkbox/Checkbox";
+import React, { FC, useState } from "react";
+import { Checklist, ChecklistDirection, Columns } from "./Checklist";
+
+const CHECKBOXES = [
+    {
+        value: "checkbox-1",
+        label: "Checkbox label",
+    },
+    {
+        value: "checkbox-2",
+        label: "Checkbox label",
+        state: CheckboxState.Mixed,
+    },
+    {
+        value: "checkbox-3",
+        label: "Checkbox label",
+        note: "Note about this input",
+        disabled: true,
+    },
+];
+
+const Component: FC<{ direction: ChecklistDirection; columns?: Columns }> = ({ direction, columns }) => {
+    const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
+
+    return direction === ChecklistDirection.Horizontal ? (
+        <Checklist
+            activeValues={activeBoxes}
+            setActiveValues={setActiveBoxes}
+            direction={direction}
+            checkboxes={CHECKBOXES}
+        />
+    ) : (
+        <Checklist
+            activeValues={activeBoxes}
+            setActiveValues={setActiveBoxes}
+            direction={direction}
+            checkboxes={CHECKBOXES}
+            columns={columns}
+        />
+    );
+};
 
 describe("Checklist Component", () => {
     it("should render the Checklist horizontally", () => {
-        mount(
-            <Checklist direction={ChecklistDirection.Horizontal}>
-                <Checkbox state={CheckboxState.Unchecked} label="Checkbox label" />
-                <Checkbox state={CheckboxState.Mixed} label="Checkbox label" />
-                <Checkbox state={CheckboxState.Checked} label="Checkbox label" note="Note about this input" disabled />
-            </Checklist>,
-        );
+        mount(<Component direction={ChecklistDirection.Horizontal} />);
 
         cy.get("[data-test-id=checklist]").as("Checklist").should("have.class", "tw-flex");
     });
 
     it("should render the Checklist vertically", () => {
-        mount(
-            <Checklist direction={ChecklistDirection.Vertical}>
-                <Checkbox state={CheckboxState.Unchecked} label="Checkbox label" />
-                <Checkbox state={CheckboxState.Mixed} label="Checkbox label" />
-                <Checkbox state={CheckboxState.Checked} label="Checkbox label" note="Note about this input" disabled />
-            </Checklist>,
-        );
+        mount(<Component direction={ChecklistDirection.Vertical} />);
 
         cy.get("[data-test-id=checklist]").as("Checklist").should("have.class", "tw-grid");
     });
 
     it("should render the Checklist in two columns", () => {
-        mount(
-            <Checklist direction={ChecklistDirection.Vertical} columns={2}>
-                <Checkbox state={CheckboxState.Unchecked} label="Checkbox label" />
-                <Checkbox state={CheckboxState.Mixed} label="Checkbox label" />
-                <Checkbox state={CheckboxState.Checked} label="Checkbox label" note="Note about this input" disabled />
-            </Checklist>,
-        );
+        mount(<Component direction={ChecklistDirection.Vertical} columns={2} />);
 
         cy.get("[data-test-id=checklist]")
             .as("Checklist")

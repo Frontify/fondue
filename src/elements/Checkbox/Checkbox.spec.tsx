@@ -5,18 +5,18 @@ import React, { FC, useState } from "react";
 import { Checkbox, CheckboxProps, CheckboxState } from "./Checkbox";
 
 const CHECKBOX_LABEL = "Checkbox label";
-const CHECKBOX_TOOLTIP = "Checkbox tooltip";
 export const CHECKBOX_ID = "[data-test-id=checkbox]";
 const TOOLTIP_ID = "[data-test-id=tooltip]";
 export const CHECKBOX_INPUT_ID = "[data-test-id=checkbox-input]";
 const INPUT_LABEL_TOOLTIP_ICON_ID = "[data-test-id=input-label-tooltip-icon]";
 
-const CheckboxComponent: FC<CheckboxProps> = (props) => {
-    const [checked, setChecked] = useState<CheckboxState | undefined>(props.state);
+const CheckboxComponent: FC<Omit<CheckboxProps, "value">> = (props) => {
+    const [checked, setChecked] = useState(props.state);
 
     return (
         <Checkbox
             {...props}
+            value="checkbox"
             state={checked}
             onChange={(isChecked: boolean) => setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked)}
         />
@@ -52,7 +52,7 @@ describe("Checkbox component", () => {
     });
 
     it("renders with a tooltip", () => {
-        mount(<CheckboxComponent label={CHECKBOX_LABEL} tooltip={{ content: CHECKBOX_TOOLTIP }} />);
+        mount(<CheckboxComponent label={CHECKBOX_LABEL} tooltip={{ content: "Checkbox tooltip" }} />);
 
         cy.get(INPUT_LABEL_TOOLTIP_ICON_ID).realHover({ position: "top" });
         cy.get(CHECKBOX_ID).find(TOOLTIP_ID).should("exist");

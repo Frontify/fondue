@@ -31,10 +31,15 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
     state,
     type = TableColumnHeaderType.Default,
 }) => {
+    const {
+        key,
+        rendered,
+        props: { allowsSorting },
+    } = column;
     const [icon, setIcon] = useState(<IconArrowUpAndDown />);
     const ref = useRef<HTMLTableCellElement | null>(null);
     const { columnHeaderProps } = useTableColumnHeader({ node: column }, state, ref);
-    const isSortedColumn = state.sortDescriptor?.column === column.key;
+    const isSortedColumn = state.sortDescriptor?.column === key;
     const sortDirection = state.sortDescriptor?.direction;
     const { isFocusVisible, focusProps } = useFocusRing();
 
@@ -80,7 +85,7 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
                 {selectionMode === "single" ? (
                     <VisuallyHidden>{inputProps["aria-label"]}</VisuallyHidden>
                 ) : (
-                    <Checkbox ariaLabel={column.key} state={getCheckboxState()} />
+                    <Checkbox value={key} ariaLabel={key} state={getCheckboxState()} />
                 )}
             </th>
         );
@@ -97,8 +102,8 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
             data-test-id="table-column"
         >
             <div className="tw-flex tw-gap-x-1 tw-items-center">
-                {column.rendered}
-                {column.props.allowsSorting && (
+                {rendered}
+                {allowsSorting && (
                     <span
                         aria-hidden="true"
                         className={
