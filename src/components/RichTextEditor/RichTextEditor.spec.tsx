@@ -113,22 +113,6 @@ describe("RichTextEditor Component", () => {
         cy.get("[contenteditable=true]").should("include.html", "text-decoration: underline");
     });
 
-    it("renders subscript", () => {
-        mount(<RichTextEditor />);
-
-        insertTextAndOpenToolbar();
-        cy.get(getInlineStyleControl("SUBSCRIPT")).click();
-        cy.get("[contenteditable=true]").should("include.html", getStringifiedStyles(styleMap.SUBSCRIPT));
-    });
-
-    it("renders superscript", () => {
-        mount(<RichTextEditor />);
-
-        insertTextAndOpenToolbar();
-        cy.get(getInlineStyleControl("SUPERSCRIPT")).click();
-        cy.get("[contenteditable=true]").should("include.html", getStringifiedStyles(styleMap.SUPERSCRIPT));
-    });
-
     it("renders strikethrough", () => {
         mount(<RichTextEditor />);
 
