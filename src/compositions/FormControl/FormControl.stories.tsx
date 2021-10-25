@@ -4,7 +4,6 @@ import { Dropdown, DropdownSize } from "@components/Dropdown/Dropdown";
 import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
 import { Slider } from "@components/Slider/Slider";
 import { Checklist, ChecklistDirection } from "@compositions/Checklist/Checklist";
-import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
 import { TextInput } from "@elements/TextInput/TextInput";
 import { Meta, Story } from "@storybook/react";
 import generateRandomId from "@utilities/generateRandomId";
@@ -97,28 +96,22 @@ export const WithDropdown: Story<FormControlProps> = (args) => {
 };
 
 export const WithVerticalChecklist: Story<FormControlProps> = (args) => {
-    const allIds: number[] = [1, 2, 3, 4, 5];
-    const [checkedIds, setCheckedIds] = useState<number[]>([]);
-
-    const getCheckboxState = (id: number) =>
-        checkedIds.includes(id) ? CheckboxState.Checked : CheckboxState.Unchecked;
-
-    const toggleCheckbox = (id: number, isChecked: boolean) =>
-        setCheckedIds(isChecked ? checkedIds.concat(id) : checkedIds.filter((checkedId) => checkedId !== id));
+    const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
+    const checkboxes = new Array(5).fill({}).map((_, index) => ({
+        id: `checkbox-${index}`,
+        value: `checkbox-${index}`,
+        label: `Checkbox Nr. ${index}`,
+        tooltip: { content: `Random Tooltip ${index}` },
+    }));
 
     return (
         <FormControl {...args}>
-            <Checklist direction={ChecklistDirection.Vertical}>
-                {allIds.map((id) => (
-                    <Checkbox
-                        key={`checkbox-${id}`}
-                        id={`checkbox-${id}`}
-                        label={`Checkbox ${id}`}
-                        onChange={(isChecked) => toggleCheckbox(id, isChecked)}
-                        state={getCheckboxState(id)}
-                    />
-                ))}
-            </Checklist>
+            <Checklist
+                activeValues={activeBoxes}
+                setActiveValues={setActiveBoxes}
+                direction={ChecklistDirection.Vertical}
+                checkboxes={checkboxes}
+            />
         </FormControl>
     );
 };

@@ -1,14 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, FC, PropsWithChildren } from "react";
+import { Checkbox, CheckboxProps, CheckboxState } from "@elements/Checkbox/Checkbox";
+import { useCheckboxGroup, useCheckboxGroupItem } from "@react-aria/checkbox";
+import { useCheckboxGroupState } from "@react-stately/checkbox";
 import { merge } from "@utilities/merge";
+import React, { FC, useRef } from "react";
 
 export enum ChecklistDirection {
     Horizontal = "Horizontal",
     Vertical = "Vertical",
 }
 
-type Columns = 1 | 2 | 3 | 4;
+export type Columns = 1 | 2 | 3 | 4;
 
 const columnsStyle: Record<Columns, string> = {
     1: "tw-grid-cols-1",
@@ -17,21 +20,47 @@ const columnsStyle: Record<Columns, string> = {
     4: "tw-grid-cols-4",
 };
 
-type ChecklistVertical = {
+type ChecklistBase = {
+    checkboxes: Omit<CheckboxProps, "onChange" | "groupInputProps">[];
+    setActiveValues: (value: string[]) => void;
+    activeValues?: string[];
+    ariaLabel?: string;
+};
+
+type ChecklistVertical = ChecklistBase & {
     direction: ChecklistDirection.Vertical;
     columns?: Columns;
 };
 
-type ChecklistHorizontal = {
+type ChecklistHorizontal = ChecklistBase & {
     direction: ChecklistDirection.Horizontal;
     columns?: null;
 };
 
-export type ChecklistProps = PropsWithChildren<ChecklistVertical | ChecklistHorizontal>;
+export type ChecklistProps = ChecklistVertical | ChecklistHorizontal;
 
-export const Checklist: FC<ChecklistProps> = ({ direction = ChecklistDirection.Horizontal, columns = 1, children }) => {
+export const Checklist: FC<ChecklistProps> = ({
+    checkboxes,
+    setActiveValues,
+    ariaLabel = "Checklist",
+    activeValues = [],
+    direction = ChecklistDirection.Horizontal,
+    columns = 1,
+}) => {
+    const state = useCheckboxGroupState({
+        value: activeValues,
+        onChange: setActiveValues,
+    });
+    const { groupProps } = useCheckboxGroup(
+        {
+            "aria-label": ariaLabel,
+        },
+        state,
+    );
+
     return (
         <ul
+            {...groupProps}
             data-test-id="checklist"
             className={merge([
                 direction === ChecklistDirection.Horizontal
@@ -39,9 +68,30 @@ export const Checklist: FC<ChecklistProps> = ({ direction = ChecklistDirection.H
                     : `tw-grid tw-gap-4 ${columns && columnsStyle[columns]}`,
             ])}
         >
-            {Children.map(children, (child) => (
-                <li className="tw-overflow-hidden">{child}</li>
-            ))}
+            {checkboxes.map((checkbox) => {
+                const { value, disabled, label, ariaLabel: checkboxAriaLabel, state: checkboxState } = checkbox;
+                const ref = useRef<HTMLInputElement | null>(null);
+                const { inputProps } = useCheckboxGroupItem(
+                    { value, isDisabled: disabled, "aria-label": checkboxAriaLabel || label },
+                    state,
+                    ref,
+                );
+
+                let checkState;
+                if (checkboxState === CheckboxState.Unchecked) {
+                    checkState = CheckboxState.Unchecked;
+                } else if (state.isSelected(value)) {
+                    checkState = CheckboxState.Checked;
+                } else {
+                    checkState = CheckboxState.Unchecked;
+                }
+
+                return (
+                    <li key={value}>
+                        <Checkbox {...checkbox} state={checkState} groupInputProps={inputProps} ref={ref} />
+                    </li>
+                );
+            })}
         </ul>
     );
 };
