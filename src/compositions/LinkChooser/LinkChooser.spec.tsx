@@ -10,7 +10,7 @@ import IconDocumentLibrary from "@elements/Icon/Generated/IconDocumentLibrary";
 import IconLink from "@elements/Icon/Generated/IconLink";
 import IconExternalLink from "@elements/Icon/Generated/IconExternalLink";
 
-const menuBlocks = [
+const selectMenuBlocks = [
     {
         id: "Suggestions",
         menuItems: [
@@ -54,6 +54,9 @@ const menuBlocks = [
             },
         ],
     },
+];
+
+const actionMenuBlocks = [
     {
         id: "Actions",
         menuItems: [
@@ -62,12 +65,14 @@ const menuBlocks = [
                 title: "Guidelines",
                 size: MenuItemContentSize.Small,
                 selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                onClick: () => console.log("Guidelines clicked"),
             },
             {
                 id: "7",
                 title: "Templates",
                 size: MenuItemContentSize.Small,
                 selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                onClick: () => console.log("Template clicked"),
             },
         ],
     },
@@ -75,7 +80,7 @@ const menuBlocks = [
 
 describe("LinkChooser Component", () => {
     it("should render correctly", () => {
-        mount(<LinkChooser menuBlocks={menuBlocks} />);
+        mount(<LinkChooser selectMenuBlocks={selectMenuBlocks} actionMenuBlocks={actionMenuBlocks} />);
 
         cy.get("[data-test-id=link-chooser]").as("LinkChooser");
 

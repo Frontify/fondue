@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, useEffect } from "react";
+import React, { FC, useRef } from "react";
 import { useComboBoxState } from "@react-stately/combobox";
 import { useComboBox } from "@react-aria/combobox";
 import { ListBox } from "./ListBox/ListBox";
@@ -9,50 +9,37 @@ import { TextInput } from "./TextInput/TextInput";
 import IconLink from "@elements/Icon/Generated/IconLink";
 import { AnimatePresence, motion } from "framer-motion";
 import { DismissButton } from "@react-aria/overlays";
+import { ActionMenu, ActionMenuBlock } from "@components/Menu/ActionMenu/ActionMenu";
 
 export { Item, Section } from "@react-stately/collections";
 
 export type LinkChooserProps = {
-    menuBlocks: MenuBlock[];
+    selectMenuBlocks: MenuBlock[];
+    actionMenuBlocks?: ActionMenuBlock[];
     ariaLabel?: string;
     label?: string;
 };
 
 export type LinkChooserState = { [key: string]: string | number };
 
-export const LinkChooser: FC<LinkChooserProps> = ({ menuBlocks, ariaLabel = "Menu", label }) => {
-    const [excludedItems, setExcludedItems] = useState<LinkChooserState>({});
-
-    const filterItems = (value: string, query: string) => {
-        if (excludedItems.hasOwnProperty(value)) return true;
-        if (value.toLowerCase().includes(query.toLowerCase())) return true;
-        return false;
-    };
-
-    const excludeMenuItems = () => {
-        setExcludedItems(menuBlocks[1].menuItems.reduce((obj, key) => ({ ...obj, [key.title]: key.id }), {}));
-    };
+export const LinkChooser: FC<LinkChooserProps> = ({
+    selectMenuBlocks,
+    actionMenuBlocks,
+    ariaLabel = "Menu",
+    label,
+}) => {
+    const filterItems = (value: string, query: string) => value.toLowerCase().includes(query.toLowerCase());
 
     const clearInput = () => {
         state.setInputValue("");
         state.setSelectedKey("");
     };
 
-    const handleSelectionChange = (id: string | number) => {
-        const excludedTitles = Object.keys(excludedItems);
-        for (const title of excludedTitles) {
-            if (excludedItems[title] === id) {
-                console.log("should open a modal and leave the state as is");
-            }
-        }
-    };
-
-    const props = mapToAriaProps(ariaLabel, menuBlocks);
+    const props = mapToAriaProps(ariaLabel, selectMenuBlocks);
 
     const state = useComboBoxState({
         ...props,
         defaultFilter: filterItems,
-        onSelectionChange: handleSelectionChange,
         menuTrigger: "focus",
     });
 
@@ -69,11 +56,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({ menuBlocks, ariaLabel = "Men
         },
         state,
     );
-
-    // exclude the actions section of the menu
-    useEffect(() => {
-        excludeMenuItems();
-    }, []);
 
     return (
         <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
@@ -108,7 +90,13 @@ export const LinkChooser: FC<LinkChooserProps> = ({ menuBlocks, ariaLabel = "Men
                     >
                         <DismissButton onDismiss={() => close()} />
                         <Popover popoverRef={popoverRef} isOpen={state.isOpen} onClose={state.close}>
-                            <ListBox {...listBoxProps} listBoxRef={listBoxRef} state={state} menuBlocks={menuBlocks} />
+                            <ListBox
+                                {...listBoxProps}
+                                listBoxRef={listBoxRef}
+                                state={state}
+                                menuBlocks={selectMenuBlocks}
+                            />
+                            {actionMenuBlocks && <ActionMenu menuBlocks={actionMenuBlocks} />}
                         </Popover>
                         <DismissButton onDismiss={() => close()} />
                     </motion.div>

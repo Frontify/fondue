@@ -28,7 +28,7 @@ const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) =>
 export const Default = LinkChooserTemplate.bind({});
 
 Default.args = {
-    menuBlocks: [
+    selectMenuBlocks: [
         {
             id: "Suggestions",
             menuItems: [
@@ -72,6 +72,8 @@ Default.args = {
                 },
             ],
         },
+    ],
+    actionMenuBlocks: [
         {
             id: "Actions",
             menuItems: [
@@ -80,12 +82,14 @@ Default.args = {
                     title: "Guidelines",
                     size: MenuItemContentSize.Small,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: () => console.log("Guidelines clicked"),
                 },
                 {
                     id: "7",
                     title: "Templates",
                     size: MenuItemContentSize.Small,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: () => console.log("Template clicked"),
                 },
             ],
         },
