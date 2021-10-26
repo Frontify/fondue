@@ -73,7 +73,7 @@ export const Dropdown: FC<DropdownProps> = ({
             <Trigger
                 disabled={disabled}
                 buttonProps={buttonProps}
-                isFocusVisible={isFocusVisible}
+                isFocusVisible={!disabled && isFocusVisible}
                 isOpen={isOpen}
                 clearable={!!activeItem}
                 onClear={

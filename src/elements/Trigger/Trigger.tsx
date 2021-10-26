@@ -36,7 +36,7 @@ export const Trigger: FC<TriggerProps> = ({
             data-test-id="trigger"
             className={merge([
                 "tw-group tw-relative tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-border-black-40 tw-rounded tw-gap-2 tw-transition-colors tw-pr-3 tw-min-h-[36px]",
-                !disabled && isFocusVisible && FOCUS_STYLE,
+                isFocusVisible && FOCUS_STYLE,
                 disabled
                     ? "tw-border-black-5 tw-bg-black-5 tw-pointer-events-none"
                     : merge([
