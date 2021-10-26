@@ -146,7 +146,11 @@
         "draft-js": "^0.11.7",
         "framer-motion": "^4.1.17",
         "react-color": "^2.19.3",
+        "react-element-to-jsx-string": "^14.3.2",
         "react-popper": "^2.2.5",
         "xstate": "^4.25.0"
+    },
+    "resolutions": {
+        "**/react-element-to-jsx-string": "14.3.2"
     }
 }
