@@ -73,7 +73,7 @@ export const Dropdown: FC<DropdownProps> = ({
             <Trigger
                 disabled={disabled}
                 buttonProps={buttonProps}
-                isFocusVisible={isFocusVisible}
+                isFocusVisible={!disabled && isFocusVisible}
                 isOpen={isOpen}
                 clearable={!!activeItem}
                 onClear={
@@ -110,7 +110,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 </button>
             </Trigger>
             <AnimatePresence>
-                {isOpen && (
+                {!disabled && isOpen && (
                     <motion.div
                         className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20"
                         key="content"

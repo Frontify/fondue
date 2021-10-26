@@ -55,7 +55,7 @@ describe("Checkbox component", () => {
         mount(<CheckboxComponent label={CHECKBOX_LABEL} tooltip={{ content: "Checkbox tooltip" }} />);
 
         cy.get(INPUT_LABEL_TOOLTIP_ICON_ID).realHover({ position: "top" });
-        cy.get(CHECKBOX_ID).find(TOOLTIP_ID).should("exist");
+        cy.get(TOOLTIP_ID).should("exist");
     });
 
     it("renders as disabled", () => {
