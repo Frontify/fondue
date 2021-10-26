@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FieldsetHeader } from "@compositions/FieldsetHeader/FieldsetHeader";
-import { Badge, BadgeProps } from "@elements/Badge/Badge";
-import { Button, ButtonStyle } from "@elements/Button/Button";
-import IconCheck from "@elements/Icon/Generated/IconCheck";
+import { FieldsetHeader } from "@components/FieldsetHeader/FieldsetHeader";
+import { Badge, BadgeProps } from "@components/Badge/Badge";
+import { Button, ButtonStyle } from "@components/Button/Button";
+import IconCheck from "src/foundation/Icon/Generated/IconCheck";
 import { watchModals } from "@react-aria/aria-modal-polyfill";
 import { useButton } from "@react-aria/button";
 import { useDialog } from "@react-aria/dialog";

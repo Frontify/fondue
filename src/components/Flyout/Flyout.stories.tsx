@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Slider } from "@components/Slider/Slider";
-import { FormControl } from "@compositions/FormControl/FormControl";
-import { BadgeStatus, BadgeStyle } from "@elements/Badge/Badge";
-import { Button } from "@elements/Button/Button";
-import { Divider } from "@elements/Divider/Divider";
-import IconActions from "@elements/Icon/Generated/IconActions";
-import IconIcons from "@elements/Icon/Generated/IconIcons";
-import { Textarea } from "@elements/Textarea/Textarea";
-import { TextInput } from "@elements/TextInput/TextInput";
+import { FormControl } from "@components/FormControl/FormControl";
+import { BadgeStatus, BadgeStyle } from "@components/Badge/Badge";
+import { Button } from "@components/Button/Button";
+import { Divider } from "@components/Divider/Divider";
+import IconActions from "src/foundation/Icon/Generated/IconActions";
+import IconIcons from "src/foundation/Icon/Generated/IconIcons";
+import { Textarea } from "@components/Textarea/Textarea";
+import { TextInput } from "@components/TextInput/TextInput";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";

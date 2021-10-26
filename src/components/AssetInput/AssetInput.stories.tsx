@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ActionMenuBlock } from "@components/Menu/ActionMenu/ActionMenu";
-import IconCrop from "@elements/Icon/Generated/IconCrop";
-import IconExternalLink from "@elements/Icon/Generated/IconExternalLink";
-import IconIcons from "@elements/Icon/Generated/IconIcons";
-import IconImageLibrary from "@elements/Icon/Generated/IconImageLibrary";
-import IconReject from "@elements/Icon/Generated/IconReject";
-import IconUploadAlternative from "@elements/Icon/Generated/IconUploadAlternative";
-import { MenuItemStyle } from "@elements/MenuItem/MenuItem";
+import { MenuItemStyle } from "@components/Menu/MenuItem/MenuItem";
+import IconCrop from "src/foundation/Icon/Generated/IconCrop";
+import IconExternalLink from "src/foundation/Icon/Generated/IconExternalLink";
+import IconIcons from "src/foundation/Icon/Generated/IconIcons";
+import IconImageLibrary from "src/foundation/Icon/Generated/IconImageLibrary";
+import IconReject from "src/foundation/Icon/Generated/IconReject";
+import IconUploadAlternative from "src/foundation/Icon/Generated/IconUploadAlternative";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { AssetInput, AssetInputProps, AssetInputSize } from "./AssetInput";

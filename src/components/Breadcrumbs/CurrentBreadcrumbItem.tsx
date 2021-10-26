@@ -1,4 +1,4 @@
-import { Badge, BadgeProps } from "@elements/Badge/Badge";
+import { Badge, BadgeProps } from "@components/Badge/Badge";
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";

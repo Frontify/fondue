@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CHECKLIST_ID } from "@compositions/Checklist/Checklist.spec";
+import { CHECKLIST_ID } from "@components/Checklist/Checklist.spec";
 import { mount } from "@cypress/react";
-import { CHECKBOX_ID, CHECKBOX_INPUT_ID } from "@elements/Checkbox/Checkbox.spec";
-import { TAG_ID } from "@elements/Tag/Tag.spec";
+import { CHECKBOX_ID, CHECKBOX_INPUT_ID } from "@components/Checkbox/Checkbox.spec";
+import { TAG_ID } from "@components/Tag/Tag.spec";
 import React, { FC, useState } from "react";
 import { MultiSelect } from "./MultiSelect";
 

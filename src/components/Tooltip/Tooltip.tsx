@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonSize, ButtonStyle } from "@elements/Button/Button";
-import { IconSize } from "@elements/Icon/IconSize";
+import { Button, ButtonSize, ButtonStyle } from "@components/Button/Button";
+import { IconSize } from "src/foundation/Icon/IconSize";
 import { useFocusRing } from "@react-aria/focus";
 import { useLink } from "@react-aria/link";
 import { useTooltip } from "@react-aria/tooltip";

@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FIELDSET_HEADER_ID } from "@compositions/FieldsetHeader/FieldsetHeader.spec";
+import { FIELDSET_HEADER_ID } from "@components/FieldsetHeader/FieldsetHeader.spec";
 import { mount } from "@cypress/react";
-import { BADGE_ID } from "@elements/Badge/Badge.spec";
-import { BUTTON_ID } from "@elements/Button/Button.spec";
-import { TextInput } from "@elements/TextInput/TextInput";
-import { TEXT_INPUT_ID } from "@elements/TextInput/TextInput.spec";
+import { BADGE_ID } from "@components/Badge/Badge.spec";
+import { BUTTON_ID } from "@components/Button/Button.spec";
+import { TextInput } from "@components/TextInput/TextInput";
+import { TEXT_INPUT_ID } from "@components/TextInput/TextInput.spec";
 import React, { FC, useState } from "react";
 import { Flyout, FlyoutProps } from "./Flyout";
 

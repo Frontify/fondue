@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Checklist, ChecklistDirection } from "@compositions/Checklist/Checklist";
-import { Tag, TagType } from "@elements/Tag/Tag";
-import { Trigger } from "@elements/Trigger/Trigger";
+import { Checklist, ChecklistDirection } from "@components/Checklist/Checklist";
+import { Tag, TagType } from "@components/Tag/Tag";
+import { Trigger } from "@components/Trigger/Trigger";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
 import { useOverlay } from "@react-aria/overlays";

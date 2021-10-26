@@ -3,8 +3,7 @@
 import { Palette } from "@components/ColorPicker/ColorPicker";
 import { BRAND_COLOR_ID, COLOR_PREVIEW_ID } from "@components/ColorPicker/ColorPicker.spec";
 import { mount } from "@cypress/react";
-import { BUTTON_ID } from "@elements/Button/Button.spec";
-import { MENU_ITEM_DECORATOR_ID } from "@elements/MenuItem/MenuItem.spec";
+import { BUTTON_ID } from "@components/Button/Button.spec";
 import { Color, EXAMPLE_PALETTES } from "@utilities/colors";
 import React, { FC, useState } from "react";
 import { ColorPickerFlyout } from "./ColorPickerFlyout";

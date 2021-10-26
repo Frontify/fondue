@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconProps } from "@elements/Icon/IconProps";
+import { IconProps } from "src/foundation/Icon/IconProps";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { useRadio, useRadioGroup } from "@react-aria/radio";

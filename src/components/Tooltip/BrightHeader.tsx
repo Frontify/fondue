@@ -2,11 +2,11 @@
 
 import React, { cloneElement, FC, ReactElement } from "react";
 import { merge } from "@utilities/merge";
-import { IconSize } from "@elements/Icon/IconSize";
-import IconInfo from "@elements/Icon/Generated/IconInfo";
-import IconCheck from "@elements/Icon/Generated/IconCheck";
-import IconCallout from "@elements/Icon/Generated/IconCallout";
-import IconDocument from "@elements/Icon/Generated/IconDocument";
+import { IconSize } from "src/foundation/Icon/IconSize";
+import IconInfo from "src/foundation/Icon/Generated/IconInfo";
+import IconCheck from "src/foundation/Icon/Generated/IconCheck";
+import IconCallout from "src/foundation/Icon/Generated/IconCallout";
+import IconDocument from "src/foundation/Icon/Generated/IconDocument";
 
 export enum BrightHeaderStyle {
     Information = "Information",
