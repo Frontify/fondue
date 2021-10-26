@@ -15,6 +15,7 @@ export enum MenuItemStyle {
 export enum SelectionIndicatorIcon {
     Check = "Check",
     CaretRight = "CaretRight",
+    None = "None",
 }
 
 export type MenuItemProps = {
@@ -56,11 +57,17 @@ export const MenuItem: FC<MenuItemProps> = ({
             ) : (
                 <MenuItemContent title={title} decorator={decorator} subtitle={subtitle} size={size} />
             )}
-            {selectionIndicator === SelectionIndicatorIcon.CaretRight ? (
-                <IconCaretRight data-test-id="menu-item-caret" size={IconSize.Size20} />
-            ) : (
-                active && <IconCheck data-test-id="menu-item-active" size={IconSize.Size20} />
-            )}
+            {
+                {
+                    [SelectionIndicatorIcon.CaretRight]: (
+                        <IconCaretRight data-test-id="menu-item-caret" size={IconSize.Size20} />
+                    ),
+                    [SelectionIndicatorIcon.Check]: active && (
+                        <IconCheck data-test-id="menu-item-active" size={IconSize.Size20} />
+                    ),
+                    [SelectionIndicatorIcon.None]: null,
+                }[selectionIndicator]
+            }
         </div>
     );
 };
