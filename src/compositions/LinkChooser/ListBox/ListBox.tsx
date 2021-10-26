@@ -14,6 +14,7 @@ interface ListBoxProps extends AriaListBoxOptions<unknown> {
     listBoxRef?: RefObject<HTMLUListElement>;
     state: ListState<unknown>;
     menuBlocks: MenuBlock[];
+    noBottomBorder?: boolean;
 }
 
 interface SectionProps {
@@ -29,7 +30,7 @@ interface OptionProps {
 }
 export const ListBox: FC<ListBoxProps> = (props: ListBoxProps) => {
     const ref = useRef<HTMLUListElement>(null);
-    const { listBoxRef = ref, state, menuBlocks } = props;
+    const { listBoxRef = ref, state, menuBlocks, noBottomBorder } = props;
     const { listBoxProps } = useListBox(props, state, listBoxRef);
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
@@ -38,7 +39,10 @@ export const ListBox: FC<ListBoxProps> = (props: ListBoxProps) => {
         <ul
             {...listBoxProps}
             ref={listBoxRef}
-            className="tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-border tw-border-black-10 tw-rounded tw-z-20 focus-visible:tw-outline-none"
+            className={merge([
+                "tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-border tw-border-black-10 tw-rounded tw-z-20 focus-visible:tw-outline-none",
+                noBottomBorder && "tw-rounded-b-none",
+            ])}
         >
             {[...state.collection].map((item) => (
                 <ListBoxSection key={item.key} section={item} state={state} keyItemRecord={keyItemRecord} />

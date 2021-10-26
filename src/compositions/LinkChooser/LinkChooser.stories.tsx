@@ -89,7 +89,7 @@ Default.args = {
                     title: "Templates",
                     size: MenuItemContentSize.Small,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
-                    onClick: () => console.log("Template clicked"),
+                    onClick: () => console.log("Templates clicked"),
                 },
             ],
         },

@@ -95,8 +95,9 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                 listBoxRef={listBoxRef}
                                 state={state}
                                 menuBlocks={selectMenuBlocks}
+                                noBottomBorder={true}
                             />
-                            {actionMenuBlocks && <ActionMenu menuBlocks={actionMenuBlocks} />}
+                            {actionMenuBlocks && <ActionMenu menuBlocks={actionMenuBlocks} noTopBorder={true} />}
                         </Popover>
                         <DismissButton onDismiss={() => close()} />
                     </motion.div>
