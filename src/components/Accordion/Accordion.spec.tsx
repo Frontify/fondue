@@ -2,7 +2,7 @@
 
 import { FieldsetHeaderType } from "@components/FieldsetHeader/FieldsetHeader";
 import { mount } from "@cypress/react";
-import IconIcons from "src/foundation/Icon/Generated/IconIcons";
+import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import { TextInput } from "@components/TextInput/TextInput";
 import { TEXT_INPUT_ID } from "@components/TextInput/TextInput.spec";
 import React from "react";

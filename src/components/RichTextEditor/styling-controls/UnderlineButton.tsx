@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconUnderline from "src/foundation/Icon/Generated/IconUnderline";
-import { IconSize } from "src/foundation/Icon/IconSize";
+import IconUnderline from "@foundation/Icon/Generated/IconUnderline";
+import { IconSize } from "@foundation/Icon/IconSize";
 import React, { FC } from "react";
 import { InlineStyleButton } from "../InlineStyleButton";
 

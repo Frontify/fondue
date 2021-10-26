@@ -5,7 +5,7 @@ import React from "react";
 import { Divider as DividerComponent, DividerHeight, DividerProps, DividerStyle } from "./Divider";
 
 export default {
-    title: "Elements/Divider",
+    title: "Components/Divider",
     component: DividerComponent,
     args: {
         color: "red",

@@ -2,7 +2,7 @@
 
 import { mount } from "@cypress/react";
 import { Button, ButtonSize, ButtonStyle } from "@components/Button/Button";
-import IconReject from "src/foundation/Icon/Generated/IconReject";
+import IconReject from "@foundation/Icon/Generated/IconReject";
 import React from "react";
 import { ButtonGroup } from "./ButtonGroup";
 

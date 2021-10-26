@@ -3,10 +3,10 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Badge, BadgeProps, BadgeStatus, BadgeStyle } from "./Badge";
-import IconIcons from "src/foundation/Icon/Generated/IconIcons";
+import IconIcons from "@foundation/Icon/Generated/IconIcons";
 
 export default {
-    title: "Elements/Badge",
+    title: "Components/Badge",
     component: Badge,
     argTypes: {
         style: {

@@ -5,7 +5,7 @@ import React from "react";
 import { InputLabel as InputLabelComponent, InputLabelProps } from "./InputLabel";
 
 export default {
-    title: "Elements/Input Label",
+    title: "Components/Input Label",
     component: InputLabelComponent,
     args: {
         children: "Input Label",

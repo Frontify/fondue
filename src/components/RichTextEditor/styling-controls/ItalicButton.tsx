@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconItalic from "src/foundation/Icon/Generated/IconItalic";
-import { IconSize } from "src/foundation/Icon/IconSize";
+import IconItalic from "@foundation/Icon/Generated/IconItalic";
+import { IconSize } from "@foundation/Icon/IconSize";
 import React, { FC } from "react";
 import { InlineStyleButton } from "../InlineStyleButton";
 

@@ -1,9 +1,9 @@
 import { Slider } from "@components/Slider/Slider";
-import IconCheck from "src/foundation/Icon/Generated/IconCheck";
-import IconImageGrid2 from "src/foundation/Icon/Generated/IconImageGrid2";
-import IconListBullets from "src/foundation/Icon/Generated/IconListBullets";
-import IconSearch from "src/foundation/Icon/Generated/IconSearch";
-import { IconSize } from "src/foundation/Icon/IconSize";
+import IconCheck from "@foundation/Icon/Generated/IconCheck";
+import IconImageGrid2 from "@foundation/Icon/Generated/IconImageGrid2";
+import IconListBullets from "@foundation/Icon/Generated/IconListBullets";
+import IconSearch from "@foundation/Icon/Generated/IconSearch";
+import { IconSize } from "@foundation/Icon/IconSize";
 import { TextInput } from "@components/TextInput/TextInput";
 import { toColor } from "@utilities/colors";
 import { merge } from "@utilities/merge";

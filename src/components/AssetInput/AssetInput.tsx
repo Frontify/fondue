@@ -2,12 +2,12 @@
 
 import { ActionMenu, ActionMenuProps } from "@components/Menu/ActionMenu/ActionMenu";
 import { Button, ButtonStyle } from "@components/Button/Button";
-import IconAudio from "src/foundation/Icon/Generated/IconAudio";
-import IconCaretDown from "src/foundation/Icon/Generated/IconCaretDown";
-import IconImageLibrary from "src/foundation/Icon/Generated/IconImageLibrary";
-import IconUploadAlternative from "src/foundation/Icon/Generated/IconUploadAlternative";
-import { IconProps } from "src/foundation/Icon/IconProps";
-import { IconSize } from "src/foundation/Icon/IconSize";
+import IconAudio from "@foundation/Icon/Generated/IconAudio";
+import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
+import IconImageLibrary from "@foundation/Icon/Generated/IconImageLibrary";
+import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternative";
+import { IconProps } from "@foundation/Icon/IconProps";
+import { IconSize } from "@foundation/Icon/IconSize";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";

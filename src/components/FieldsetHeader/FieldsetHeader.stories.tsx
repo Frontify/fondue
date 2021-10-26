@@ -8,7 +8,7 @@ import {
     FieldsetHeaderSize,
     FieldsetHeaderType,
 } from "./FieldsetHeader";
-import IconIcons from "src/foundation/Icon/Generated/IconIcons";
+import IconIcons from "@foundation/Icon/Generated/IconIcons";
 
 export default {
     title: "Components/Fieldset Header",

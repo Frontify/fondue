@@ -4,9 +4,9 @@ import React, { FC, useState } from "react";
 import { Tree } from "./Tree";
 import { TreeNodeProps } from "./Node";
 import { mount } from "@cypress/react";
-import { IconSize } from "src/foundation/Icon/IconSize";
-import IconDocument from "src/foundation/Icon/Generated/IconDocument";
-import IconGuidelines from "src/foundation/Icon/Generated/IconGuidelines";
+import { IconSize } from "@foundation/Icon/IconSize";
+import IconDocument from "@foundation/Icon/Generated/IconDocument";
+import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
 
 type ComponentProps = {
     nodes: TreeNodeProps[];

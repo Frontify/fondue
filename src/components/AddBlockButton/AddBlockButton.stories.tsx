@@ -9,7 +9,7 @@ import {
 } from "./AddBlockButton";
 
 export default {
-    title: "Elements/Add Block Button",
+    title: "Components/Add Block Button",
     component: AddBlockButtonComponent,
     args: {
         title: "Add Block Button",

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconCaretDown from "src/foundation/Icon/Generated/IconCaretDown";
-import IconReject from "src/foundation/Icon/Generated/IconReject";
-import { IconSize } from "src/foundation/Icon/IconSize";
+import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
+import IconReject from "@foundation/Icon/Generated/IconReject";
+import { IconSize } from "@foundation/Icon/IconSize";
 import { useFocus } from "@react-aria/interactions";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";

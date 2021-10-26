@@ -3,10 +3,10 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Button, ButtonProps, ButtonSize, ButtonStyle } from "./Button";
-import IconIcons from "src/foundation/Icon/Generated/IconIcons";
+import IconIcons from "@foundation/Icon/Generated/IconIcons";
 
 export default {
-    title: "Elements/Button",
+    title: "Components/Button",
     component: Button,
     args: {
         inverted: false,

@@ -2,7 +2,7 @@
 
 import { MenuItemStyle } from "@components/Menu/MenuItem/MenuItem";
 import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
-import IconAudio from "src/foundation/Icon/Generated/IconAudio";
+import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import { Meta, Story } from "@storybook/react";
 import React, { useEffect, useState } from "react";
 import { Dropdown, DropdownProps, DropdownSize } from "./Dropdown";

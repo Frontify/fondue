@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Switch, SwitchProps, SwitchSize } from "./Switch";
 
 export default {
-    title: "Elements/Switch",
+    title: "Components/Switch",
     component: Switch,
     argTypes: {
         size: {

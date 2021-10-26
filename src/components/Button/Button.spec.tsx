@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import IconIcons from "src/foundation/Icon/Generated/IconIcons";
+import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import React from "react";
 import { Button, ButtonSize, ButtonStyle } from "./Button";
 

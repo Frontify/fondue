@@ -2,12 +2,12 @@
 
 import { ActionMenuBlock } from "@components/Menu/ActionMenu/ActionMenu";
 import { MenuItemStyle } from "@components/Menu/MenuItem/MenuItem";
-import IconCrop from "src/foundation/Icon/Generated/IconCrop";
-import IconExternalLink from "src/foundation/Icon/Generated/IconExternalLink";
-import IconIcons from "src/foundation/Icon/Generated/IconIcons";
-import IconImageLibrary from "src/foundation/Icon/Generated/IconImageLibrary";
-import IconReject from "src/foundation/Icon/Generated/IconReject";
-import IconUploadAlternative from "src/foundation/Icon/Generated/IconUploadAlternative";
+import IconCrop from "@foundation/Icon/Generated/IconCrop";
+import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
+import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import IconImageLibrary from "@foundation/Icon/Generated/IconImageLibrary";
+import IconReject from "@foundation/Icon/Generated/IconReject";
+import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternative";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { AssetInput, AssetInputProps, AssetInputSize } from "./AssetInput";

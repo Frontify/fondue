@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { useEffect, useState } from "react";
-import IconIcons from "src/foundation/Icon/Generated/IconIcons";
-import { IconSize } from "src/foundation/Icon/IconSize";
+import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import { IconSize } from "@foundation/Icon/IconSize";
 import { Meta, Story } from "@storybook/react";
 import { TextInput, TextInputProps, TextInputType, Validation } from "./TextInput";
 
 export default {
-    title: "Elements/Text Input",
+    title: "Components/Text Input",
     component: TextInput,
     args: {
         clearable: false,

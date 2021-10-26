@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MenuItemContent } from "@components/Menu/MenuItem/MenuItemContent";
-import IconColors from "src/foundation/Icon/Generated/IconColors";
-import { IconSize } from "src/foundation/Icon/IconSize";
+import IconColors from "@foundation/Icon/Generated/IconColors";
+import { IconSize } from "@foundation/Icon/IconSize";
 import { Trigger } from "@components/Trigger/Trigger";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";

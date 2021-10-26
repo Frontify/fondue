@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState } from "./Checkbox";
 
 export default {
-    title: "Elements/Checkbox",
+    title: "Components/Checkbox",
     argTypes: {
         state: {
             options: Object.values(CheckboxState),

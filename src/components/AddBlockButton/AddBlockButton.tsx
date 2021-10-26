@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconAddSimple from "src/foundation/Icon/Generated/IconAddSimple";
-import { IconSize } from "src/foundation/Icon/IconSize";
+import IconAddSimple from "@foundation/Icon/Generated/IconAddSimple";
+import { IconSize } from "@foundation/Icon/IconSize";
 import { useButton } from "@react-aria/button";
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";

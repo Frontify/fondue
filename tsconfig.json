@@ -16,9 +16,8 @@
         "skipLibCheck": true,
         "resolveJsonModule": true,
         "paths": {
-            "@elements/*": ["./src/elements/*"],
+            "@foundation/*": ["./src/foundation/*"],
             "@components/*": ["./src/components/*"],
-            "@compositions/*": ["./src/compositions/*"],
             "@utilities/*": ["./src/utilities/*"],
             "@hooks/*": ["./src/hooks/*"]
         },

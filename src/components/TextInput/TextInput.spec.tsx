@@ -2,8 +2,7 @@
 
 import { mount } from "@cypress/react";
 import React, { FC, useEffect, useState } from "react";
-import { TextInputProps } from "src";
-import { TextInput, TextInputType } from "./TextInput";
+import { TextInput, TextInputProps, TextInputType } from "./TextInput";
 
 export const TEXT_INPUT_ID = "[data-test-id=text-input]";
 const DECORATOR_TEXT = "decorator text";

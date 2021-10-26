@@ -3,7 +3,7 @@
 import React from "react";
 import { ButtonGroup as ButtonGroupComponent, ButtonGroupProps } from "./ButtonGroup";
 import { Button, ButtonSize, ButtonStyle } from "@components/Button/Button";
-import IconReject from "src/foundation/Icon/Generated/IconReject";
+import IconReject from "@foundation/Icon/Generated/IconReject";
 import { Meta, Story } from "@storybook/react";
 
 export default {

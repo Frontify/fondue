@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import IconTextAlignCenter from "src/foundation/Icon/Generated/IconTextAlignCenter";
-import IconTextAlignLeft from "src/foundation/Icon/Generated/IconTextAlignLeft";
-import IconTextAlignRight from "src/foundation/Icon/Generated/IconTextAlignRight";
-import { IconSize } from "src/foundation/Icon/IconSize";
+import IconTextAlignCenter from "@foundation/Icon/Generated/IconTextAlignCenter";
+import IconTextAlignLeft from "@foundation/Icon/Generated/IconTextAlignLeft";
+import IconTextAlignRight from "@foundation/Icon/Generated/IconTextAlignRight";
+import { IconSize } from "@foundation/Icon/IconSize";
 import React, { FC, useState } from "react";
 import { IconItem, Slider, TextOrNumberItem } from "./Slider";
 

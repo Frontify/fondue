@@ -2,7 +2,7 @@
 
 import { MenuItemStyle, SelectionIndicatorIcon } from "@components/Menu/MenuItem/MenuItem";
 import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
-import IconAudio from "src/foundation/Icon/Generated/IconAudio";
+import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React from "react";

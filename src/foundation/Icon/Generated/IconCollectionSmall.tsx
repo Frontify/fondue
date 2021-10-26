@@ -1,6 +1,6 @@
 import React from "react";
-import { IconProps } from "src/foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "src/foundation/Icon/IconSize";
+import { IconProps } from "@foundation/Icon/IconProps";
+import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
 function IconCollectionSmall(props: IconProps): React.ReactElement<IconProps> {
     const customClassName = [

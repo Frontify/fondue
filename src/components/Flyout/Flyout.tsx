@@ -3,7 +3,7 @@
 import { FieldsetHeader } from "@components/FieldsetHeader/FieldsetHeader";
 import { Badge, BadgeProps } from "@components/Badge/Badge";
 import { Button, ButtonStyle } from "@components/Button/Button";
-import IconCheck from "src/foundation/Icon/Generated/IconCheck";
+import IconCheck from "@foundation/Icon/Generated/IconCheck";
 import { watchModals } from "@react-aria/aria-modal-polyfill";
 import { useButton } from "@react-aria/button";
 import { useDialog } from "@react-aria/dialog";

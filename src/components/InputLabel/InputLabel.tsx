@@ -2,8 +2,8 @@
 
 import { Tooltip, TooltipProps } from "@components/Tooltip/Tooltip";
 import { TooltipArrow } from "@components/Tooltip/TooltipArrow";
-import IconQuestion from "src/foundation/Icon/Generated/IconQuestion";
-import { IconSize } from "src/foundation/Icon/IconSize";
+import IconQuestion from "@foundation/Icon/Generated/IconQuestion";
+import { IconSize } from "@foundation/Icon/IconSize";
 import { useFocusVisible, useHover } from "@react-aria/interactions";
 import { useTooltipTrigger } from "@react-aria/tooltip";
 import { useTooltipTriggerState } from "@react-stately/tooltip";

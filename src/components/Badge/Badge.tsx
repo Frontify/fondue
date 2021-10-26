@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import RejectIcon from "src/foundation/Icon/Generated/IconReject";
-import { IconProps } from "src/foundation/Icon/IconProps";
-import { IconSize } from "src/foundation/Icon/IconSize";
+import RejectIcon from "@foundation/Icon/Generated/IconReject";
+import { IconProps } from "@foundation/Icon/IconProps";
+import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, PropsWithChildren, ReactElement } from "react";
 

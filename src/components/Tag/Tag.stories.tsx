@@ -6,7 +6,7 @@ import React from "react";
 import { Tag, TagProps, TagType } from "./Tag";
 
 export default {
-    title: "Elements/Tag",
+    title: "Components/Tag",
     component: Tag,
     args: {
         label: "Label",

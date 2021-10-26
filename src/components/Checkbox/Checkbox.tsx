@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TooltipProps } from "@components/Tooltip/Tooltip";
-import IconCheck from "src/foundation/Icon/Generated/IconCheck";
-import IconMinus from "src/foundation/Icon/Generated/IconMinus";
+import IconCheck from "@foundation/Icon/Generated/IconCheck";
+import IconMinus from "@foundation/Icon/Generated/IconMinus";
 import { InputLabel } from "@components/InputLabel/InputLabel";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useCheckbox } from "@react-aria/checkbox";

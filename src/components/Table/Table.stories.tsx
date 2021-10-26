@@ -2,9 +2,9 @@
 
 import { Badge } from "@components/Badge/Badge";
 import { Button, ButtonSize, ButtonStyle } from "@components/Button/Button";
-import IconActions from "src/foundation/Icon/Generated/IconActions";
-import IconEmojiHappy from "src/foundation/Icon/Generated/IconEmojiHappy";
-import { IconSize } from "src/foundation/Icon/IconSize";
+import IconActions from "@foundation/Icon/Generated/IconActions";
+import IconEmojiHappy from "@foundation/Icon/Generated/IconEmojiHappy";
+import { IconSize } from "@foundation/Icon/IconSize";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React, { FC, useState } from "react";

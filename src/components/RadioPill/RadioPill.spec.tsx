@@ -3,7 +3,7 @@
 import React from "react";
 import { mount } from "@cypress/react";
 import { RadioPill } from "./RadioPill";
-import IconIcons from "src/foundation/Icon/Generated/IconIcons";
+import IconIcons from "@foundation/Icon/Generated/IconIcons";
 
 const RADIOPILL_TEST_ID = "[data-test-id=radio-pill]";
 const RADIOPILL_LABEL = "Label";

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import IconDocument from "src/foundation/Icon/Generated/IconDocument";
-import { IconSize } from "src/foundation/Icon/IconSize";
+import IconDocument from "@foundation/Icon/Generated/IconDocument";
+import { IconSize } from "@foundation/Icon/IconSize";
 import React from "react";
 import { Badge, BadgeStatus } from "./Badge";
 
