@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from "@storybook/react";
-import React, { useState } from "react";
-import { TextInput } from "@elements/TextInput/TextInput";
 import { Dropdown, DropdownSize } from "@components/Dropdown/Dropdown";
-import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
+import { FormControlStyle, HelperPosition } from "@compositions/FormControl/FormControl";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { IconSize } from "@elements/Icon/IconSize";
-import { MultiInput as MultiInputComponent, MultiInputLayout, MultiInputProps } from "./MultiInput";
-import { FormControlStyle, HelperPosition } from "@compositions/FormControl/FormControl";
+import { MenuItemContentSize } from "@elements/MenuItem/MenuItemContent";
+import { TextInput } from "@elements/TextInput/TextInput";
+import { Meta, Story } from "@storybook/react";
 import generateRandomId from "@utilities/generateRandomId";
+import React, { useState } from "react";
+import { MultiInput as MultiInputComponent, MultiInputLayout, MultiInputProps } from "./MultiInput";
 
 export default {
     title: "Compositions/Multi Input",

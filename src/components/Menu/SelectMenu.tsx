@@ -6,7 +6,7 @@ import { AriaList } from "@components/Menu/Aria/AriaList";
 import { AriaMenuItem } from "@components/Menu/Aria/AriaMenuItem";
 import { AriaSection } from "@components/Menu/Aria/AriaSection";
 import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
-import { MenuItemProps } from "@components/Menu/MenuItem/MenuItem";
+import { MenuItemProps } from "@elements/MenuItem/MenuItem";
 import { AriaListBoxOptions, useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
 import { ListState } from "@react-stately/list";
 import React, { ReactElement, useRef } from "react";

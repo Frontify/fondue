@@ -15,7 +15,6 @@ export default {
         },
         direction: {
             options: [ChecklistDirection.Horizontal, ChecklistDirection.Vertical],
-            defaultValue: ChecklistDirection.Horizontal,
             control: { type: "radio" },
         },
     },

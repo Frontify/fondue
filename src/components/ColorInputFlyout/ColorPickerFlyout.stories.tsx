@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { ColorPickerFlyout as ColorPickerFlyoutComponent, ColorPickerFlyoutProps } from "./ColorPickerFlyout";
 
 export default {
-    title: "Components/Color Picker",
+    title: "Components/Color Picker/Flyout",
     component: ColorPickerFlyoutComponent,
     args: {
         disabled: false,

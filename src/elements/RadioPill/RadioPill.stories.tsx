@@ -21,7 +21,6 @@ export default {
                 None: null,
                 Icon: <IconIcons />,
             },
-            defaultValue: "None",
             control: { type: "select" },
         },
     },

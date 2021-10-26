@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getDisabledItemIds, getMenuItems, mapToAriaProps } from "@components/Menu/Aria/helper";
-import { MenuItemContent, MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
 import { MenuBlock, SelectMenu } from "@components/Menu/SelectMenu";
+import { MenuItemContent, MenuItemContentSize } from "@elements/MenuItem/MenuItemContent";
 import { Trigger } from "@elements/Trigger/Trigger";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useButton } from "@react-aria/button";
