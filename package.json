@@ -89,7 +89,7 @@
         "esno": "0.10.1",
         "fast-glob": "3.2.7",
         "husky": "7.0.4",
-        "is-ci": "3.0.0",
+        "is-ci": "3.0.1",
         "postcss": "8.3.11",
         "postcss-cli": "9.0.1",
         "postcss-nested": "5.0.6",
@@ -98,7 +98,7 @@
         "rollup": "2.58.3",
         "rollup-plugin-dts": "4.0.0",
         "rollup-plugin-esbuild": "4.6.0",
-        "storybook-builder-vite": "0.1.2",
+        "storybook-builder-vite": "0.1.3",
         "storybook-dark-mode": "1.0.8",
         "tailwindcss": "2.2.17",
         "ts-node": "10.4.0",
@@ -146,11 +146,7 @@
         "draft-js": "^0.11.7",
         "framer-motion": "^4.1.17",
         "react-color": "^2.19.3",
-        "react-element-to-jsx-string": "^14.3.2",
         "react-popper": "^2.2.5",
         "xstate": "^4.25.0"
-    },
-    "resolutions": {
-        "**/react-element-to-jsx-string": "14.3.2"
     }
 }
