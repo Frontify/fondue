@@ -1,34 +1,34 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { CHECKLIST_ID } from "@compositions/Checklist/Checklist.spec";
 import { mount } from "@cypress/react";
+import { CHECKBOX_ID, CHECKBOX_INPUT_ID } from "@elements/Checkbox/Checkbox.spec";
+import { TAG_ID } from "@elements/Tag/Tag.spec";
 import React, { FC, useState } from "react";
 import { MultiSelect } from "./MultiSelect";
 
 const TRIGGER_ID = "[data-test-id=trigger]";
-const SELECTED_LIST_ID = "[data-test-id=select-list-selected]";
-const SELECT_LIST_ID = "[data-test-id=select-list]";
-const SELECT_ITEM_ID = "[data-test-id=select-item]";
 
 const ITEMS = {
     activeItemKeys: ["Short tag", "Tag 74"],
     items: [
         {
-            name: "Checkbox label 1",
+            value: "Checkbox label 1",
         },
         {
-            name: "Short tag",
+            value: "Short tag",
         },
         {
-            name: "Checkbox label 2",
+            value: "Checkbox label 2",
         },
         {
-            name: "Checkbox label 3",
+            value: "Checkbox label 3",
         },
         {
-            name: "Tag 74",
+            value: "Tag 74",
         },
         {
-            name: "This is a long tag",
+            value: "This is a long tag",
         },
     ],
 };
@@ -47,30 +47,32 @@ const Component: FC = () => {
 describe("MultiSelect Component", () => {
     it("renders with initial active items", () => {
         mount(<Component />);
-        cy.get(SELECTED_LIST_ID).should("contain", "Short tag").and("contain", "Tag 74");
+
+        cy.get(TAG_ID).should("have.length", 2);
+        cy.get(TAG_ID).should("contain", "Short tag").and("contain", "Tag 74");
     });
     it("opens dropdown select list on click", () => {
         mount(<Component />);
+
         cy.get(TRIGGER_ID).click();
-        cy.get(SELECT_LIST_ID).should("be.visible");
+        cy.get(CHECKLIST_ID).should("be.visible");
     });
     it("changes selection on click", () => {
         mount(<Component />);
         cy.get(TRIGGER_ID).click();
-        cy.get(SELECT_ITEM_ID).first().as("firstListItem");
-        cy.get(SELECT_ITEM_ID).eq(1).as("secondListItem");
-        cy.get(SELECT_ITEM_ID).eq(2).as("thirdListItem");
 
-        cy.get("@firstListItem").click();
-        cy.get("@firstListItem").should("have.attr", "aria-selected", "true");
-        cy.get(SELECTED_LIST_ID).contains("Checkbox label 1");
+        cy.get(CHECKBOX_ID).first().click();
+        cy.get(CHECKBOX_INPUT_ID).first().should("have.attr", "aria-checked", "true");
+        cy.get(TAG_ID).contains("Checkbox label 1");
 
-        cy.get("@secondListItem").click();
-        cy.get("@secondListItem").should("have.attr", "aria-selected", "false");
-        cy.get(SELECTED_LIST_ID).contains("Short tag").should("not.exist");
+        cy.get(CHECKBOX_ID).eq(1).click();
+        cy.get(CHECKBOX_INPUT_ID).eq(1).should("have.attr", "aria-checked", "false");
+        cy.get(TRIGGER_ID).contains("Short tag").should("not.exist");
+        cy.get(TAG_ID).first().click();
+        cy.get(CHECKBOX_INPUT_ID).eq(1).should("have.attr", "aria-checked", "false");
 
-        cy.get("@thirdListItem").click();
-        cy.get("@thirdListItem").should("have.attr", "aria-selected", "true");
-        cy.get(SELECTED_LIST_ID).contains("Checkbox label 2");
+        cy.get(CHECKBOX_ID).eq(2).click();
+        cy.get(CHECKBOX_INPUT_ID).eq(2).should("have.attr", "aria-checked", "true");
+        cy.get(TAG_ID).contains("Checkbox label 2");
     });
 });

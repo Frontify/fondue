@@ -32,7 +32,6 @@ export * from "./components/RichTextEditor/styling-controls/UnderlineButton";
 export * from "./components/RichTextEditor/styling-controls/UnorderedListButton";
 export * from "./components/RichTextEditor/Toolbar";
 export * from "./components/SelectListDropdown/MultiSelect";
-export * from "./components/SelectListDropdown/SelectList";
 export * from "./components/Slider/Slider";
 export * from "./components/Table/Table";
 export * from "./components/Table/TableCell";

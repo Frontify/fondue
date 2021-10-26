@@ -1,21 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Checklist, ChecklistDirection } from "@compositions/Checklist/Checklist";
 import { Tag, TagType } from "@elements/Tag/Tag";
 import { Trigger } from "@elements/Trigger/Trigger";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
 import { useOverlay } from "@react-aria/overlays";
 import { mergeProps } from "@react-aria/utils";
-import { Item } from "@react-stately/collections";
-import { useListState } from "@react-stately/list";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, useRef, useState } from "react";
-import { SelectList, SelectListItem } from "./SelectList";
 
-const getAllItemNames = (items: SelectListItem[]) => items.map(({ name }) => name);
+export type MultiSelectItem = {
+    value: string;
+    ariaLabel?: string;
+};
 
 export type MultiSelectProps = {
-    items: SelectListItem[];
+    items: MultiSelectItem[];
     activeItemKeys: (string | number)[];
     disabled?: boolean;
     onSelectionChange: (keys: (string | number)[]) => void;
@@ -30,16 +31,11 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     disabled = false,
 }) => {
     const [open, setOpen] = useState(false);
-
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const triggerRef = useRef<HTMLDivElement | null>(null);
+    const { isFocusVisible, focusProps } = useFocusRing();
+    const checkboxes = items.map((item) => ({ ...item, label: item.value }));
 
-    const state = useListState<SelectListItem>({
-        children: items.map((item) => <Item key={item.name}>{item.name}</Item>),
-        defaultSelectedKeys: activeItemKeys,
-        onSelectionChange: (keys) => onSelectionChange(keys === "all" ? getAllItemNames(items) : Array.from(keys)),
-        selectionMode: "multiple",
-    });
     const { overlayProps } = useOverlay(
         {
             isOpen: open,
@@ -51,6 +47,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
         },
         overlayRef,
     );
+
     const { buttonProps } = useButton(
         {
             onPress: () => {
@@ -65,7 +62,18 @@ export const MultiSelect: FC<MultiSelectProps> = ({
         },
         triggerRef,
     );
-    const { isFocusVisible, focusProps } = useFocusRing();
+
+    const toggleSelection = (key: string | number) => {
+        const keySet = new Set(activeItemKeys);
+
+        if (keySet.has(key)) {
+            keySet.delete(key);
+        } else {
+            keySet.add(key);
+        }
+
+        onSelectionChange(Array.from(keySet));
+    };
 
     return (
         <div className="tw-relative">
@@ -74,14 +82,13 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                     {...mergeProps(buttonProps, focusProps)}
                     ref={triggerRef}
                     className="tw-flex-1 tw-flex tw-flex-wrap tw-gap-1 tw-px-[19px] tw-py-[11px] tw-min-h-[50px] tw-outline-none"
-                    data-test-id="select-list-selected"
                 >
-                    {[...state.selectionManager.selectedKeys].map((key) => (
+                    {activeItemKeys.map((key) => (
                         <Tag
                             key={key}
                             type={TagType.SelectedWithFocus}
                             label={key.toString()}
-                            onClick={() => state.selectionManager.toggleSelection(key)}
+                            onClick={() => toggleSelection(key)}
                         />
                     ))}
                 </div>
@@ -97,8 +104,14 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
                         <FocusScope restoreFocus>
-                            <div {...overlayProps} ref={overlayRef}>
-                                <SelectList state={state} ariaLabel={ariaLabel} />
+                            <div {...overlayProps} ref={overlayRef} className="tw-p-4">
+                                <Checklist
+                                    activeValues={activeItemKeys.map((key) => key.toString())}
+                                    setActiveValues={onSelectionChange}
+                                    checkboxes={checkboxes}
+                                    direction={ChecklistDirection.Vertical}
+                                    ariaLabel={ariaLabel}
+                                />
                             </div>
                         </FocusScope>
                     </motion.div>
