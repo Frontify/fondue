@@ -7,7 +7,7 @@ import { MenuItem as MenuItemComponent, MenuItemProps, MenuItemStyle, SelectionI
 import { MenuItemContentSize } from "./MenuItemContent";
 
 export default {
-    title: "Components/Menu",
+    title: "Elements/Menu Item",
     component: MenuItemComponent,
     args: {
         id: "abc",

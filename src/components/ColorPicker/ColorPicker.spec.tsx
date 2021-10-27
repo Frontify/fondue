@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { DROPDOWN_TRIGGER_ID } from "@components/Dropdown/Dropdown.spec";
-import { MENU_ITEM_ID } from "@components/Menu/MenuItem/MenuItem.spec";
 import { ICON_ITEM_ID, TEXT_ITEM_ID } from "@components/Slider/Slider.spec";
 import { mount } from "@cypress/react";
+import { MENU_ITEM_ID } from "@elements/MenuItem/MenuItem.spec";
 import { Color, EXAMPLE_PALETTES } from "@utilities/colors";
 import React, { FC, useState } from "react";
 import { ColorPicker, Palette } from "./ColorPicker";

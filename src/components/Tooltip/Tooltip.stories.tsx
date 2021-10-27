@@ -24,7 +24,6 @@ export default {
                 Tip: BrightHeaderStyle.Tip,
                 Note: BrightHeaderStyle.Note,
             },
-            defaultValue: "None",
             control: { type: "select" },
         },
         tooltipIcon: {
@@ -33,7 +32,6 @@ export default {
                 None: null,
                 Icon: <IconIcons />,
             },
-            defaultValue: "None",
             control: { type: "select" },
         },
         headingIcon: {
@@ -42,7 +40,6 @@ export default {
                 None: null,
                 Icon: <IconIcons />,
             },
-            defaultValue: "None",
             control: { type: "select" },
         },
     },

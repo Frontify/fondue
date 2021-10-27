@@ -3,8 +3,8 @@ import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { forwardRef, HTMLAttributes } from "react";
+import { MenuItem } from "../../../elements/MenuItem/MenuItem";
 import { ActionMenuItemType } from "../ActionMenu/ActionMenu";
-import { MenuItem } from "../MenuItem/MenuItem";
 import { MenuItemType } from "../SelectMenu";
 
 export type AriaOptionProps = {
