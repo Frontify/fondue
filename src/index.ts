@@ -28,6 +28,8 @@ export * from "./components/Menu/Aria/AriaMenuItem";
 export * from "./components/Menu/Aria/AriaSection";
 export * from "./components/Menu/Aria/helper";
 export * from "./components/Menu/SelectMenu";
+export * from "./components/MenuItem/MenuItem";
+export * from "./components/MenuItem/MenuItemContent";
 export * from "./components/MultiInput/MultiInput";
 export * from "./components/RadioPill/RadioPill";
 export * from "./components/RichTextEditor/BlockStyleButton";

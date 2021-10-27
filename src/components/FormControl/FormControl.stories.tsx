@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Dropdown, DropdownSize } from "@components/Dropdown/Dropdown";
-import { Slider } from "@components/Slider/Slider";
 import { Checklist, ChecklistDirection } from "@components/Checklist/Checklist";
+import { Dropdown, DropdownSize } from "@components/Dropdown/Dropdown";
+import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
+import { Slider } from "@components/Slider/Slider";
 import { TextInput } from "@components/TextInput/TextInput";
 import { Meta, Story } from "@storybook/react";
 import generateRandomId from "@utilities/generateRandomId";

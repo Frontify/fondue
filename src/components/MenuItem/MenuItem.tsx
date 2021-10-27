@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MenuItemContent, MenuItemContentProps, MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
+import { MenuItemContent, MenuItemContentProps, MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import IconCaretRight from "@foundation/Icon/Generated/IconCaretRight";
 import IconCheck from "@foundation/Icon/Generated/IconCheck";
 import { IconSize } from "@foundation/Icon/IconSize";
