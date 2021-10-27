@@ -11,7 +11,7 @@ import { AriaListBoxOptions, useListBox, useListBoxSection, useOption } from "@r
 import { SelectState } from "@react-stately/select";
 import React, { ReactElement, useRef } from "react";
 
-export type MenuItemType = MenuItemProps & { id: string | number };
+export type MenuItemType = MenuItemProps & { id: string | number; link?: string };
 
 export type MenuBlock = {
     id: string;

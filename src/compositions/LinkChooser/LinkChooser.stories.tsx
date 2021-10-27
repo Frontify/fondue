@@ -39,6 +39,7 @@ Default.args = {
                     size: MenuItemContentSize.Large,
                     selectionIndicator: SelectionIndicatorIcon.None,
                     decorator: <IconDocument />,
+                    link: "https://www.frontify.com",
                 },
                 {
                     id: "2",
@@ -47,6 +48,7 @@ Default.args = {
                     size: MenuItemContentSize.Large,
                     selectionIndicator: SelectionIndicatorIcon.None,
                     decorator: <IconDocumentLibrary />,
+                    link: "https://www.frontify.com/en/brand-guidelines/",
                 },
                 {
                     id: "3",
@@ -55,6 +57,7 @@ Default.args = {
                     size: MenuItemContentSize.Large,
                     selectionIndicator: SelectionIndicatorIcon.None,
                     decorator: <IconDocument />,
+                    link: "https://www.frontify.com/en/digital-asset-management/",
                 },
                 {
                     id: "4",
@@ -62,6 +65,7 @@ Default.args = {
                     size: MenuItemContentSize.Large,
                     selectionIndicator: SelectionIndicatorIcon.None,
                     decorator: <IconLink />,
+                    link: "https://www.frontify.com/en/creative-collaboration/",
                 },
                 {
                     id: "5",
@@ -69,6 +73,7 @@ Default.args = {
                     size: MenuItemContentSize.Large,
                     selectionIndicator: SelectionIndicatorIcon.None,
                     decorator: <IconExternalLink />,
+                    link: "https://www.frontify.com/en/digital-and-print-templates/",
                 },
             ],
         },

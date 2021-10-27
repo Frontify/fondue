@@ -15,8 +15,12 @@ import React, {
     ReactNode,
     forwardRef,
     HTMLInputTypeAttribute,
+    useEffect,
+    useRef,
 } from "react";
 import { Node } from "@react-types/shared";
+import { useClipboard } from "@hooks/useClipboard";
+import { MenuBlock } from "@components/Menu/SelectMenu";
 
 export enum Validation {
     Default = "Default",
@@ -45,7 +49,8 @@ const Spinner = (): ReactElement => (
 
 export type TextInputProps = {
     id?: string;
-    selectedItem?: Node<unknown>;
+    selectedItem: Node<unknown>;
+    menuBlocks: MenuBlock[];
     type?: HTMLInputTypeAttribute;
     decorator?: ReactNode;
     dotted?: boolean;
@@ -70,6 +75,7 @@ export const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(
         {
             id: propId,
             selectedItem,
+            menuBlocks,
             type,
             decorator,
             validation = Validation.Default,
@@ -95,11 +101,30 @@ export const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(
         const { isFocusVisible: copyButtonIsFocusVisible, focusProps: copyButtonFocusProps } = useFocusRing();
         const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
 
+        const selectedLink = useRef<string>("");
+
+        useClipboard({ selector: "[data-clipboard-id='copy-button']", target: selectedLink.current });
+
         const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
             if (event.key === "Enter") {
                 onEnterPressed && onEnterPressed(event);
             }
         };
+
+        const openExternalLink = () => {
+            window.open(selectedLink.current, "_blank");
+        };
+
+        const retrieveActiveLink = () => {
+            const foundItem = selectedItem
+                ? menuBlocks[0].menuItems.find((item) => item.id === selectedItem.key)
+                : null;
+            return foundItem && foundItem.link ? foundItem.link : "";
+        };
+
+        useEffect(() => {
+            selectedLink.current = retrieveActiveLink();
+        }, [selectedItem]);
 
         return (
             <div
@@ -161,6 +186,7 @@ export const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(
                         title="Preview link"
                         aria-label=""
                         disabled={disabled}
+                        onClick={openExternalLink}
                         {...previewButtonFocusProps}
                     >
                         <IconExternalLink />
@@ -176,6 +202,7 @@ export const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(
                                 : "tw-text-black-60 hover:tw-text-black-100",
                         ])}
                         data-test-id="copy-icon"
+                        data-clipboard-id="copy-button"
                         title="Copy text to clipboard"
                         aria-label=""
                         disabled={disabled}

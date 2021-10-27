@@ -21,6 +21,7 @@ const selectMenuBlocks = [
                 size: MenuItemContentSize.Large,
                 selectionIndicator: SelectionIndicatorIcon.None,
                 decorator: <IconDocument />,
+                link: "https://www.frontify.com",
             },
             {
                 id: "2",
@@ -29,6 +30,7 @@ const selectMenuBlocks = [
                 size: MenuItemContentSize.Large,
                 selectionIndicator: SelectionIndicatorIcon.None,
                 decorator: <IconDocumentLibrary />,
+                link: "https://www.frontify.com/en/brand-guidelines/",
             },
             {
                 id: "3",
@@ -37,6 +39,7 @@ const selectMenuBlocks = [
                 size: MenuItemContentSize.Large,
                 selectionIndicator: SelectionIndicatorIcon.None,
                 decorator: <IconDocument />,
+                link: "https://www.frontify.com/en/digital-asset-management/",
             },
             {
                 id: "4",
@@ -44,6 +47,7 @@ const selectMenuBlocks = [
                 size: MenuItemContentSize.Large,
                 selectionIndicator: SelectionIndicatorIcon.None,
                 decorator: <IconLink />,
+                link: "https://www.frontify.com/en/creative-collaboration/",
             },
             {
                 id: "5",
@@ -51,6 +55,7 @@ const selectMenuBlocks = [
                 size: MenuItemContentSize.Large,
                 selectionIndicator: SelectionIndicatorIcon.None,
                 decorator: <IconExternalLink />,
+                link: "https://www.frontify.com/en/digital-and-print-templates/",
             },
         ],
     },

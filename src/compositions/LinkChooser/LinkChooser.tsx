@@ -69,6 +69,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             >
                 <TextInput
                     {...inputProps}
+                    menuBlocks={selectMenuBlocks}
                     selectedItem={state.selectedItem}
                     ref={inputRef}
                     decorator={<IconLink />}
