@@ -54,8 +54,7 @@ describe("Checkbox component", () => {
     it("renders with a tooltip", () => {
         mount(<CheckboxComponent label={CHECKBOX_LABEL} tooltip={{ content: "Checkbox tooltip" }} />);
 
-        cy.get(INPUT_LABEL_TOOLTIP_ICON_ID).realHover({ position: "top" });
-        cy.get(TOOLTIP_ID).should("exist");
+        cy.get(INPUT_LABEL_TOOLTIP_ICON_ID).should("exist");
     });
 
     it("renders as disabled", () => {
@@ -73,5 +72,15 @@ describe("Checkbox component", () => {
         cy.get(CHECKBOX_INPUT_ID).should("be.focused");
         cy.get(CHECKBOX_ID).realPress("Space");
         cy.get(CHECKBOX_INPUT_ID).invoke("attr", "aria-checked").should("eq", "true");
+    });
+
+    it("should focus the tooltip using the keyboard", () => {
+        mount(<CheckboxComponent label={CHECKBOX_LABEL} tooltip={{ content: "Checkbox tooltip" }} />);
+
+        cy.window().focus();
+        cy.get("body").realPress("Tab");
+        cy.get("body").realPress("Tab");
+        cy.get(INPUT_LABEL_TOOLTIP_ICON_ID).should("be.focused");
+        cy.get(TOOLTIP_ID).should("contain", "Checkbox tooltip");
     });
 });
