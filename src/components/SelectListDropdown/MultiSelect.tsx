@@ -94,7 +94,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                         />
                     ))}
                     {activeItemKeys.length === 0 && placeholder && (
-                        <div className="tw-flex tw-items-center tw-text-black-60 tw-text-s">{placeholder}</div>
+                        <div className="tw-text-black-60 tw-text-s">{placeholder}</div>
                     )}
                 </div>
             </Trigger>
