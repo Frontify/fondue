@@ -9,7 +9,7 @@ import { BlockStyles } from "./BlockStyles";
 import { ToolbarContext } from "./context/toolbar";
 import { InlineStyles } from "./InlineStyles";
 import { editorMachine, States } from "./state/editor/machine";
-import { ToolbarContext as ToolbarFSMContext, ToolbarStateData } from "./state/toolbar/machine";
+import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
 import { Toolbar } from "./Toolbar";
 
 export type RichTextEditorProps = {
@@ -77,7 +77,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                                 ToolbarFSMContext,
                                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 any,
-                                DoneInvokeEvent<ToolbarStateData>
+                                DoneInvokeEvent<ToolbarData>
                             >,
                         }}
                     >

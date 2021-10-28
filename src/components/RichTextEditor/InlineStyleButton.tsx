@@ -37,7 +37,7 @@ export const InlineStyleButton: FC<InlineStyleButtonProps> = ({ style, children 
                 event.preventDefault();
                 send({
                     type: "INLINE_STYLE_SELECTED",
-                    data: { type: style, editor },
+                    data: { style, editor },
                 });
             }}
             onMouseDown={(event) => event.preventDefault()}
