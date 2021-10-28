@@ -1,13 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Dropdown, DropdownSize } from "@components/Dropdown/Dropdown";
-import { FormControlStyle, HelperPosition } from "@components/FormControl/FormControl";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { TextInput } from "@components/TextInput/TextInput";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { Meta, Story } from "@storybook/react";
-import generateRandomId from "@utilities/generateRandomId";
 import React, { useState } from "react";
 import { MultiInput as MultiInputComponent, MultiInputLayout, MultiInputProps } from "./MultiInput";
 
@@ -17,21 +15,6 @@ export default {
     args: {
         layout: MultiInputLayout.Columns,
         spanLastItem: false,
-        formControl: {
-            style: FormControlStyle.Primary,
-            disabled: false,
-            label: {
-                children: "Input Label",
-                required: false,
-                htmlFor: generateRandomId(),
-                tooltip: { content: "Tooltip Text" },
-            },
-            extra: "Extra Text or Element",
-            helper: {
-                text: "Input the thing to make it gooo.",
-                position: HelperPosition.After,
-            },
-        },
     },
     argTypes: {
         layout: {
