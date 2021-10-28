@@ -2,8 +2,8 @@
 
 import { MenuBlock } from "@components/Menu/SelectMenu";
 import { mount } from "@cypress/react";
-import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_ID, MENU_ITEM_TITLE_ID } from "@elements/MenuItem/MenuItem.spec";
-import { MenuItemContentSize } from "@elements/MenuItem/MenuItemContent";
+import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_ID, MENU_ITEM_TITLE_ID } from "@components/MenuItem/MenuItem.spec";
+import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import React, { FC, useState } from "react";
 import { Dropdown } from "./Dropdown";

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconAudio from "@elements/Icon/Generated/IconAudio";
-import { MenuItemStyle } from "@elements/MenuItem/MenuItem";
-import { MenuItemContentSize } from "@elements/MenuItem/MenuItemContent";
+import { MenuItemStyle } from "@components/MenuItem/MenuItem";
+import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
+import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import { Meta, Story } from "@storybook/react";
 import React, { useEffect, useState } from "react";
 import { Dropdown, DropdownProps, DropdownSize } from "./Dropdown";

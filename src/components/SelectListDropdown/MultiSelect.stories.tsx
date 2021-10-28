@@ -32,7 +32,7 @@ export default {
     },
 } as Meta;
 
-export const MultiSelect: Story<MultiSelectProps> = (args) => {
+const MultiSelectTemplate: Story<MultiSelectProps> = (args) => {
     const [activeItemKeys, setActiveItemKeys] = useState<(string | number)[]>(args.activeItemKeys);
     return (
         <MultiSelectComponent
@@ -41,4 +41,13 @@ export const MultiSelect: Story<MultiSelectProps> = (args) => {
             onSelectionChange={(keys) => setActiveItemKeys(keys)}
         />
     );
+};
+
+export const MultiSelect = MultiSelectTemplate.bind({});
+
+export const WithPlaceholder = MultiSelectTemplate.bind({});
+
+WithPlaceholder.args = {
+    activeItemKeys: [],
+    placeholder: "Placeholder text",
 };

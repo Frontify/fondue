@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ActionMenu, ActionMenuProps } from "@components/Menu/ActionMenu/ActionMenu";
-import { Button, ButtonStyle } from "@elements/Button/Button";
-import IconAudio from "@elements/Icon/Generated/IconAudio";
-import IconCaretDown from "@elements/Icon/Generated/IconCaretDown";
-import IconImageLibrary from "@elements/Icon/Generated/IconImageLibrary";
-import IconUploadAlternative from "@elements/Icon/Generated/IconUploadAlternative";
-import { IconProps } from "@elements/Icon/IconProps";
-import { IconSize } from "@elements/Icon/IconSize";
+import { Button, ButtonStyle } from "@components/Button/Button";
+import IconAudio from "@foundation/Icon/Generated/IconAudio";
+import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
+import IconImageLibrary from "@foundation/Icon/Generated/IconImageLibrary";
+import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternative";
+import { IconProps } from "@foundation/Icon/IconProps";
+import { IconSize } from "@foundation/Icon/IconSize";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TextInputBaseProps, TextInputType } from "@elements/TextInput/TextInput";
+import { TextInputBaseProps, TextInputType } from "@components/TextInput/TextInput";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";

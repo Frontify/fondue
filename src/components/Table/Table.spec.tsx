@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { mount } from "@cypress/react";
-import { Button } from "@elements/Button/Button";
-import { CHECKBOX_ID, CHECKBOX_INPUT_ID } from "@elements/Checkbox/Checkbox.spec";
+import { Button } from "@components/Button/Button";
+import { CHECKBOX_ID, CHECKBOX_INPUT_ID } from "@components/Checkbox/Checkbox.spec";
 import React from "react";
 import { Column, Row, SelectionMode, Table } from "./Table";
 

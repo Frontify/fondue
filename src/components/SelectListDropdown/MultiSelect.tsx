@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Checklist, ChecklistDirection } from "@compositions/Checklist/Checklist";
-import { Tag, TagType } from "@elements/Tag/Tag";
-import { Trigger } from "@elements/Trigger/Trigger";
+import { Checklist, ChecklistDirection } from "@components/Checklist/Checklist";
+import { Tag, TagType } from "@components/Tag/Tag";
+import { Trigger } from "@components/Trigger/Trigger";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
 import { useOverlay } from "@react-aria/overlays";
@@ -21,6 +21,7 @@ export type MultiSelectProps = {
     disabled?: boolean;
     onSelectionChange: (keys: (string | number)[]) => void;
     ariaLabel?: string;
+    placeholder?: string;
 };
 
 export const MultiSelect: FC<MultiSelectProps> = ({
@@ -29,6 +30,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     onSelectionChange,
     ariaLabel = "Select list",
     disabled = false,
+    placeholder,
 }) => {
     const [open, setOpen] = useState(false);
     const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -81,16 +83,19 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                 <div
                     {...mergeProps(buttonProps, focusProps)}
                     ref={triggerRef}
-                    className="tw-flex-1 tw-flex tw-flex-wrap tw-gap-1 tw-px-[19px] tw-py-[11px] tw-min-h-[50px] tw-outline-none"
+                    className="tw-flex-1 tw-flex tw-flex-wrap tw-gap-1 tw-px-[19px] tw-py-[11px] tw-min-h-[34px] tw-outline-none"
                 >
                     {activeItemKeys.map((key) => (
                         <Tag
                             key={key}
-                            type={TagType.SelectedWithFocus}
+                            type={open ? TagType.SelectedWithFocus : TagType.Selected}
                             label={key.toString()}
                             onClick={() => toggleSelection(key)}
                         />
                     ))}
+                    {activeItemKeys.length === 0 && placeholder && (
+                        <div className="tw-text-black-60 tw-text-s">{placeholder}</div>
+                    )}
                 </div>
             </Trigger>
             <AnimatePresence>

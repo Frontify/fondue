@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconListNumbers from "@elements/Icon/Generated/IconListNumbers";
-import { IconSize } from "@elements/Icon/IconSize";
+import IconListNumbers from "@foundation/Icon/Generated/IconListNumbers";
+import { IconSize } from "@foundation/Icon/IconSize";
 import React, { FC } from "react";
 import { BlockStyleButton } from "../BlockStyleButton";
 
