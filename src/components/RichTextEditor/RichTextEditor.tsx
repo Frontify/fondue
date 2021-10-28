@@ -2,7 +2,7 @@
 
 import { useMachine } from "@xstate/react";
 import React, { FC, useCallback, useMemo, useState } from "react";
-import { BaseEditor, createEditor, Descendant, Editor } from "slate";
+import { BaseEditor, createEditor, Descendant, Editor, Transforms } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
@@ -48,27 +48,37 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         initialValue ?? [
             {
                 type: "paragraph",
-                children: [{ text: placeholder }],
+                children: [{ text: "" }],
             },
         ],
     );
     const editor = useMemo(() => withReact(withHistory(createEditor())), []);
     const [{ matches, children }, send] = useMachine(editorMachine);
 
+    const onTextSelected = useCallback(
+        () =>
+            editor.selection &&
+            send("TEXT_SELECTED", {
+                data: { selectedText: Editor.string(editor, editor.selection) },
+            }),
+        [editor],
+    );
+
     return (
         <div data-test-id="rich-text-editor">
             <Slate editor={editor} value={value} onChange={(value) => setValue(value)}>
                 <Editable
+                    placeholder={placeholder}
                     onFocus={() => send("FOCUSED")}
                     readOnly={readonly}
-                    onSelect={() =>
-                        editor.selection &&
-                        send("TEXT_SELECTED", { data: { selectedText: Editor.string(editor, editor.selection) } })
-                    }
-                    onKeyUp={() =>
-                        editor.selection &&
-                        send("TEXT_SELECTED", { data: { selectedText: Editor.string(editor, editor.selection) } })
-                    }
+                    onKeyUp={onTextSelected}
+                    onKeyDown={() => send("TEXT_DESELECTED")}
+                    onMouseUp={onTextSelected}
+                    onMouseDown={() => {
+                        // force deselection, since the editor will return the last selection onMouseUp
+                        Transforms.deselect(editor);
+                        send("TEXT_DESELECTED");
+                    }}
                     renderLeaf={useCallback(
                         (props) => (
                             <InlineStyles {...props} />

@@ -53,14 +53,14 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                 },
                 on: {
                     TEXT_SELECTED: [
-                        // select multiple words not possible -> do not change state untwil selection isnt over editor
                         {
-                            // target: States.Styling,
+                            target: States.Styling,
                             cond: "hasTextSelection",
-                            actions: ["updateLastSelectedText"],
+                            actions: "updateLastSelectedText",
                         },
                         States.Editing,
                     ],
+                    TEXT_DESELECTED: States.Editing,
                     BLUR: States.Readonly,
                 },
             },
