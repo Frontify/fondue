@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useMachine } from "@xstate/react";
-import React, { FC, useCallback, useState } from "react";
+import React, { FC, useCallback, useMemo, useState } from "react";
 import { BaseEditor, createEditor, Descendant, Editor } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
@@ -52,7 +52,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
             },
         ],
     );
-    const [editor] = useState(() => withReact(withHistory(createEditor())));
+    const editor = useMemo(() => withReact(withHistory(createEditor())), []);
     const [{ matches, children }, send] = useMachine(editorMachine);
 
     return (
