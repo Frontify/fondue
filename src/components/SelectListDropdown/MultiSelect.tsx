@@ -21,6 +21,7 @@ export type MultiSelectProps = {
     disabled?: boolean;
     onSelectionChange: (keys: (string | number)[]) => void;
     ariaLabel?: string;
+    placeholder?: string;
 };
 
 export const MultiSelect: FC<MultiSelectProps> = ({
@@ -29,6 +30,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     onSelectionChange,
     ariaLabel = "Select list",
     disabled = false,
+    placeholder,
 }) => {
     const [open, setOpen] = useState(false);
     const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -91,6 +93,9 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             onClick={() => toggleSelection(key)}
                         />
                     ))}
+                    {activeItemKeys.length === 0 && placeholder && (
+                        <div className="tw-text-black-60 tw-text-s">{placeholder}</div>
+                    )}
                 </div>
             </Trigger>
             <AnimatePresence>
