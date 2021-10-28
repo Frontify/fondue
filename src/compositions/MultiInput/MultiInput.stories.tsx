@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Dropdown, DropdownSize } from "@components/Dropdown/Dropdown";
-import { FormControlStyle } from "@compositions/FormControl/FormControl";
 import IconIcons from "@elements/Icon/Generated/IconIcons";
 import { IconSize } from "@elements/Icon/IconSize";
 import { MenuItemContentSize } from "@elements/MenuItem/MenuItemContent";
@@ -16,9 +15,6 @@ export default {
     args: {
         layout: MultiInputLayout.Columns,
         spanLastItem: false,
-        formControl: {
-            style: FormControlStyle.Primary,
-        },
     },
     argTypes: {
         layout: {
