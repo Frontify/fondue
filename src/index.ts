@@ -44,7 +44,7 @@ export * from "./components/RichTextEditor/styling-controls/StrikethroughButton"
 export * from "./components/RichTextEditor/styling-controls/UnderlineButton";
 export * from "./components/RichTextEditor/styling-controls/UnorderedListButton";
 export * from "./components/RichTextEditor/Toolbar";
-export * from "./components/SelectListDropdown/MultiSelect";
+export * from "./components/MultiSelect/MultiSelect";
 export * from "./components/Slider/Slider";
 export * from "./components/Switch/Switch";
 export * from "./components/Table/Table";
