@@ -16,6 +16,7 @@ export type BlockTypeData = {
 
 export type InlineStyleData = {
     style: Omit<keyof FormattedText, "text">;
+    value: boolean;
     editor: Editor;
 };
 

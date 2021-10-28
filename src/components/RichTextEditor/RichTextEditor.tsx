@@ -19,7 +19,10 @@ export type RichTextEditorProps = {
     readonly?: boolean;
 };
 
-export type BlockElement = { type: "paragraph" | "code"; children: FormattedText[] };
+export type BlockElement = {
+    type: "paragraph" | "code" | "unordered-list-item" | "ordered-list-item";
+    children: FormattedText[];
+};
 export type FormattedText = { text: string; bold?: true; italic?: true; strikethrough?: true };
 declare module "slate" {
     interface CustomTypes {
@@ -32,7 +35,6 @@ declare module "slate" {
 export const RichTextEditor: FC<RichTextEditorProps> = ({
     value: initialValue,
     placeholder = "",
-    onTextChange,
     readonly = false,
 }) => {
     const [value, setValue] = useState<Descendant[]>(

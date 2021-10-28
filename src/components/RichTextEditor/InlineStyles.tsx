@@ -15,22 +15,22 @@ const classMap = {
 };
 
 const getClasses = (text: FormattedText) => {
-    let classes = "";
+    const classes = [];
     if (text.bold) {
-        classes += classMap[Styles.Bold];
+        classes.push(classMap[Styles.Bold]);
     }
     if (text.italic) {
-        classes += classMap[Styles.Italic];
+        classes.push(classMap[Styles.Italic]);
     }
     if (text.strikethrough) {
-        classes += classMap[Styles.Strikethrough];
+        classes.push(classMap[Styles.Strikethrough]);
     }
     return classes;
 };
 
 export const InlineStyles: FC<RenderLeafProps> = (props) => {
     return (
-        <span {...props.attributes} className={`${getClasses(props.leaf)}`}>
+        <span {...props.attributes} className={`${getClasses(props.leaf).join(" ")}`}>
             {props.children}
         </span>
     );

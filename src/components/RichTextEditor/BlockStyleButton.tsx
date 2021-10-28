@@ -6,9 +6,10 @@ import React, { FC, useContext } from "react";
 import { Editor } from "slate";
 import { useSlate } from "slate-react";
 import { ToolbarContext } from "./context/toolbar";
+import { BlockElement } from "./RichTextEditor";
 
 interface BlockStyleButtonProps {
-    blockType: string;
+    blockType: BlockElement["type"];
 }
 
 export const BlockStyleButton: FC<BlockStyleButtonProps> = ({ blockType, children }) => {
