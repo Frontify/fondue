@@ -60,11 +60,14 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 <Editable
                     onFocus={() => send("FOCUSED")}
                     readOnly={readonly}
-                    onSelect={() => {
-                        if (editor.selection) {
-                            send("TEXT_SELECTED", { data: { selectedText: Editor.string(editor, editor.selection) } });
-                        }
-                    }}
+                    onSelect={() =>
+                        editor.selection &&
+                        send("TEXT_SELECTED", { data: { selectedText: Editor.string(editor, editor.selection) } })
+                    }
+                    onKeyUp={() =>
+                        editor.selection &&
+                        send("TEXT_SELECTED", { data: { selectedText: Editor.string(editor, editor.selection) } })
+                    }
                     renderLeaf={useCallback(
                         (props) => (
                             <InlineStyles {...props} />
