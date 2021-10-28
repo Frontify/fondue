@@ -86,7 +86,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                     {activeItemKeys.map((key) => (
                         <Tag
                             key={key}
-                            type={TagType.SelectedWithFocus}
+                            type={open ? TagType.SelectedWithFocus : TagType.Selected}
                             label={key.toString()}
                             onClick={() => toggleSelection(key)}
                         />
