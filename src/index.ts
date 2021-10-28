@@ -35,7 +35,6 @@ export * from "./components/MultiInput/MultiInput";
 export * from "./components/MultiSelect/MultiSelect";
 export * from "./components/RadioPill/RadioPill";
 export * from "./components/RichTextEditor/BlockStyleButton";
-export * from "./components/RichTextEditor/decorators/components/LinkDecorator";
 export * from "./components/RichTextEditor/InlineStyleButton";
 export * from "./components/RichTextEditor/RichTextEditor";
 export * from "./components/RichTextEditor/styling-controls/BoldButton";
