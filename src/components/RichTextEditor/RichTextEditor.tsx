@@ -3,6 +3,7 @@
 import { useMachine } from "@xstate/react";
 import React, { FC, useCallback, useState } from "react";
 import { BaseEditor, createEditor, Descendant, Editor } from "slate";
+import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
 import { BlockStyles } from "./BlockStyles";
@@ -51,7 +52,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
             },
         ],
     );
-    const [editor] = useState(() => withReact(createEditor()));
+    const [editor] = useState(() => withReact(withHistory(createEditor())));
     const [{ matches, children }, send] = useMachine(editorMachine);
 
     return (
