@@ -97,7 +97,13 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             />
                         ))}
 
-                    {summarized && <Tag type={TagType.Suggested} label={`${activeItemKeys.length} options selected`} />}
+                    {summarized && activeItemKeys.length !== 0 && (
+                        <Tag
+                            type={open ? TagType.SelectedWithFocus : TagType.Selected}
+                            label={`${activeItemKeys.length} option${activeItemKeys.length > 1 ? "s" : ""} selected`}
+                            onClick={() => onSelectionChange([])}
+                        />
+                    )}
 
                     {activeItemKeys.length === 0 && placeholder && (
                         <div className="tw-text-black-60 tw-text-s">{placeholder}</div>
