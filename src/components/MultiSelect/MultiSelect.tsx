@@ -10,6 +10,11 @@ import { mergeProps } from "@react-aria/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, useRef, useState } from "react";
 
+export enum MultiSelectType {
+    Default = "Default",
+    Summarized = "Summarized",
+}
+
 export type MultiSelectItem = {
     value: string;
     ariaLabel?: string;
@@ -22,6 +27,7 @@ export type MultiSelectProps = {
     onSelectionChange: (keys: (string | number)[]) => void;
     ariaLabel?: string;
     placeholder?: string;
+    type?: MultiSelectType;
 };
 
 export const MultiSelect: FC<MultiSelectProps> = ({
@@ -31,6 +37,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     ariaLabel = "Select list",
     disabled = false,
     placeholder,
+    type = MultiSelectType.Default,
 }) => {
     const [open, setOpen] = useState(false);
     const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -77,6 +84,10 @@ export const MultiSelect: FC<MultiSelectProps> = ({
         onSelectionChange(Array.from(keySet));
     };
 
+    const summarizedLabel = [activeItemKeys.length, `option${activeItemKeys.length > 1 ? "s" : ""}`, "selected"].join(
+        " ",
+    );
+
     return (
         <div className="tw-relative">
             <Trigger disabled={disabled} buttonProps={buttonProps} isFocusVisible={isFocusVisible} isOpen={open}>
@@ -85,14 +96,24 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                     ref={triggerRef}
                     className="tw-flex-1 tw-flex tw-flex-wrap tw-gap-1 tw-px-[19px] tw-py-[11px] tw-min-h-[34px] tw-outline-none"
                 >
-                    {activeItemKeys.map((key) => (
+                    {type === MultiSelectType.Default &&
+                        activeItemKeys.map((key) => (
+                            <Tag
+                                key={key}
+                                type={open ? TagType.SelectedWithFocus : TagType.Selected}
+                                label={key.toString()}
+                                onClick={() => toggleSelection(key)}
+                            />
+                        ))}
+
+                    {type === MultiSelectType.Summarized && activeItemKeys.length !== 0 && (
                         <Tag
-                            key={key}
                             type={open ? TagType.SelectedWithFocus : TagType.Selected}
-                            label={key.toString()}
-                            onClick={() => toggleSelection(key)}
+                            label={summarizedLabel}
+                            onClick={() => onSelectionChange([])}
                         />
-                    ))}
+                    )}
+
                     {activeItemKeys.length === 0 && placeholder && (
                         <div className="tw-text-black-60 tw-text-s">{placeholder}</div>
                     )}

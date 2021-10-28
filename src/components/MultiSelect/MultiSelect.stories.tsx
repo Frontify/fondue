@@ -2,12 +2,13 @@
 
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
-import { MultiSelect as MultiSelectComponent, MultiSelectProps } from "./MultiSelect";
+import { MultiSelect as MultiSelectComponent, MultiSelectProps, MultiSelectType } from "./MultiSelect";
 
 export default {
     title: "Components/Multi Select",
     component: MultiSelectComponent,
     args: {
+        type: MultiSelectType.Default,
         activeItemKeys: ["Short tag", "Tag 74"],
         items: [
             {
@@ -30,6 +31,12 @@ export default {
             },
         ],
     },
+    argTypes: {
+        type: {
+            options: Object.keys(MultiSelectType),
+            control: { type: "select" },
+        },
+    },
 } as Meta;
 
 const MultiSelectTemplate: Story<MultiSelectProps> = (args) => {
@@ -50,4 +57,10 @@ export const WithPlaceholder = MultiSelectTemplate.bind({});
 WithPlaceholder.args = {
     activeItemKeys: [],
     placeholder: "Placeholder text",
+};
+
+export const WithOptionsSummarized = MultiSelectTemplate.bind({});
+
+WithOptionsSummarized.args = {
+    type: MultiSelectType.Summarized,
 };
