@@ -22,6 +22,16 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
 }) => {
     const selectedColor = currentColor?.hex;
     const { isFocusVisible, focusProps } = useFocusRing();
+    const getTitle = () => {
+        if (!currentColor) {
+            return "Select color";
+        }
+
+        const { name, hex, alpha } = currentColor;
+        const opacity = alpha && alpha < 1 ? `${Math.round(alpha * 100)}%` : "";
+
+        return [name || hex, opacity].join(" ");
+    };
 
     return (
         <Trigger isOpen={isOpen} disabled={disabled} isFocusVisible={isFocusVisible}>
@@ -35,7 +45,7 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
                 ])}
             >
                 <MenuItemContent
-                    title={currentColor ? currentColor.name || currentColor.hex : "Select color"}
+                    title={getTitle()}
                     decorator={
                         selectedColor ? (
                             <span
