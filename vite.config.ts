@@ -3,9 +3,8 @@ import { resolve } from "path";
 import { PreRenderedAsset } from "rollup";
 
 export const alias = {
-    "@elements": resolve(__dirname, "./src/elements"),
+    "@foundation": resolve(__dirname, "./src/foundation"),
     "@components": resolve(__dirname, "./src/components"),
-    "@compositions": resolve(__dirname, "./src/compositions"),
     "@utilities": resolve(__dirname, "./src/utilities"),
     "@hooks": resolve(__dirname, "./src/hooks"),
 };

@@ -11,9 +11,8 @@ const rollupConfig = [
         plugins: [
             alias({
                 entries: [
-                    { find: "@elements", replacement: resolve(__dirname, "./src/elements") },
+                    { find: "@foundation", replacement: resolve(__dirname, "./src/foundation") },
                     { find: "@components", replacement: resolve(__dirname, "./src/components") },
-                    { find: "@compositions", replacement: resolve(__dirname, "./src/compositions") },
                     { find: "@utilities", replacement: resolve(__dirname, "./src/utilities") },
                     { find: "@hooks", replacement: resolve(__dirname, "./src/hooks") },
                 ],

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
-import IconArrowDown from "@elements/Icon/Generated/IconArrowDown";
-import IconArrowUp from "@elements/Icon/Generated/IconArrowUp";
-import IconArrowUpAndDown from "@elements/Icon/Generated/IconArrowUpAndDown";
-import { IconSize } from "@elements/Icon/IconSize";
+import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
+import IconArrowDown from "@foundation/Icon/Generated/IconArrowDown";
+import IconArrowUp from "@foundation/Icon/Generated/IconArrowUp";
+import IconArrowUpAndDown from "@foundation/Icon/Generated/IconArrowUpAndDown";
+import { IconSize } from "@foundation/Icon/IconSize";
 import { useCheckbox } from "@react-aria/checkbox";
 import { useFocusRing } from "@react-aria/focus";
 import { useTableColumnHeader, useTableSelectAllCheckbox } from "@react-aria/table";

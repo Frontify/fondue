@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
+import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
 import { useCheckbox } from "@react-aria/checkbox";
 import { useFocusRing } from "@react-aria/focus";
 import { useTableCell, useTableSelectionCheckbox } from "@react-aria/table";

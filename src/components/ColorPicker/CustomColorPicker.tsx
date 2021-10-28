@@ -3,7 +3,7 @@
 // Since there are no correct typings atm we need to ignore these imports
 
 import { Dropdown } from "@components/Dropdown/Dropdown";
-import { TextInputType } from "@elements/TextInput/TextInput";
+import { TextInputType } from "@components/TextInput/TextInput";
 import { toColor, transformColor } from "@utilities/colors";
 import { debounce } from "@utilities/debounce";
 import { merge } from "@utilities/merge";

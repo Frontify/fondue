@@ -9,11 +9,7 @@ module.exports = {
     core: {
         builder: "storybook-builder-vite",
     },
-    stories: [
-        "../src/elements/**/*.stories.tsx",
-        "../src/components/**/*.stories.tsx",
-        "../src/compositions/**/*.stories.tsx",
-    ],
+    stories: ["../src/**/*.stories.tsx"],
     addons: [
         "storybook-dark-mode",
         "@storybook/addon-links",
