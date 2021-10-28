@@ -51,3 +51,9 @@ WithPlaceholder.args = {
     activeItemKeys: [],
     placeholder: "Placeholder text",
 };
+
+export const WithOptionsSummarized = MultiSelectTemplate.bind({});
+
+WithOptionsSummarized.args = {
+    summarized: true,
+};

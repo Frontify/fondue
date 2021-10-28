@@ -22,6 +22,7 @@ export type MultiSelectProps = {
     onSelectionChange: (keys: (string | number)[]) => void;
     ariaLabel?: string;
     placeholder?: string;
+    summarized?: boolean;
 };
 
 export const MultiSelect: FC<MultiSelectProps> = ({
@@ -31,6 +32,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     ariaLabel = "Select list",
     disabled = false,
     placeholder,
+    summarized = false,
 }) => {
     const [open, setOpen] = useState(false);
     const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -85,14 +87,18 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                     ref={triggerRef}
                     className="tw-flex-1 tw-flex tw-flex-wrap tw-gap-1 tw-px-[19px] tw-py-[11px] tw-min-h-[34px] tw-outline-none"
                 >
-                    {activeItemKeys.map((key) => (
-                        <Tag
-                            key={key}
-                            type={open ? TagType.SelectedWithFocus : TagType.Selected}
-                            label={key.toString()}
-                            onClick={() => toggleSelection(key)}
-                        />
-                    ))}
+                    {!summarized &&
+                        activeItemKeys.map((key) => (
+                            <Tag
+                                key={key}
+                                type={open ? TagType.SelectedWithFocus : TagType.Selected}
+                                label={key.toString()}
+                                onClick={() => toggleSelection(key)}
+                            />
+                        ))}
+
+                    {summarized && <Tag type={TagType.Suggested} label={`${activeItemKeys.length} options selected`} />}
+
                     {activeItemKeys.length === 0 && placeholder && (
                         <div className="tw-text-black-60 tw-text-s">{placeholder}</div>
                     )}
