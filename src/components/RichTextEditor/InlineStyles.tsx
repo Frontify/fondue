@@ -6,27 +6,23 @@ export enum Styles {
     Bold = "bold",
     Italic = "italic",
     Strikethrough = "strikethrough",
+    Underline = "underline",
 }
 
 const classMap = {
     [Styles.Bold]: "tw-font-bold",
     [Styles.Italic]: "tw-italic",
     [Styles.Strikethrough]: "tw-line-through",
+    [Styles.Underline]: "tw-underline",
 };
 
-const getClasses = (text: FormattedText) => {
-    const classes = [];
-    if (text.bold) {
-        classes.push(classMap[Styles.Bold]);
-    }
-    if (text.italic) {
-        classes.push(classMap[Styles.Italic]);
-    }
-    if (text.strikethrough) {
-        classes.push(classMap[Styles.Strikethrough]);
-    }
-    return classes;
-};
+const getClasses = (text: FormattedText) =>
+    Object.entries(classMap).reduce<string[]>((classes, [style, className]) => {
+        if (text[style as Styles]) {
+            classes.push(className);
+        }
+        return classes;
+    }, []);
 
 export const InlineStyles: FC<RenderLeafProps> = (props) => {
     return (

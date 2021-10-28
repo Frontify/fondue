@@ -42,6 +42,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                             actions: ["updateLastSelectedText"],
                         },
                     ],
+                    BLUR: States.Readonly,
                 },
             },
             [States.Styling]: {
@@ -56,6 +57,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                             actions: ["updateLastSelectedText"],
                         },
                     ],
+                    BLUR: States.Readonly,
                 },
             },
         },

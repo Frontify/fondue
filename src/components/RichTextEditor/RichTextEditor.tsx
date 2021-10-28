@@ -7,7 +7,7 @@ import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
 import { BlockStyles } from "./BlockStyles";
 import { ToolbarContext } from "./context/toolbar";
-import { InlineStyles } from "./InlineStyles";
+import { InlineStyles, Styles as InlineStyleTypes } from "./InlineStyles";
 import { editorMachine, States } from "./state/editor/machine";
 import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
 import { Toolbar } from "./Toolbar";
@@ -23,7 +23,13 @@ export type BlockElement = {
     type: "paragraph" | "code" | "unordered-list-item" | "ordered-list-item";
     children: FormattedText[];
 };
-export type FormattedText = { text: string; bold?: true; italic?: true; strikethrough?: true };
+export type FormattedText = {
+    text: string;
+    [InlineStyleTypes.Bold]?: true;
+    [InlineStyleTypes.Italic]?: true;
+    [InlineStyleTypes.Strikethrough]?: true;
+    [InlineStyleTypes.Underline]?: true;
+};
 declare module "slate" {
     interface CustomTypes {
         Editor: BaseEditor & ReactEditor;
@@ -71,6 +77,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                         ),
                         [],
                     )}
+                    onBlur={() => send("BLUR")}
                 />
                 {matches(States.Styling) && (
                     <ToolbarContext.Provider

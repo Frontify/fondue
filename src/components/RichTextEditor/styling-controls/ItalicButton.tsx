@@ -4,9 +4,10 @@ import IconItalic from "@foundation/Icon/Generated/IconItalic";
 import { IconSize } from "@foundation/Icon/IconSize";
 import React, { FC } from "react";
 import { InlineStyleButton } from "../InlineStyleButton";
+import { Styles } from "../InlineStyles";
 
 export const ItalicButton: FC = () => (
-    <InlineStyleButton style="italic">
+    <InlineStyleButton style={Styles.Italic}>
         <IconItalic size={IconSize.Size16} />
     </InlineStyleButton>
 );
