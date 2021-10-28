@@ -5,7 +5,9 @@ import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
+import { BreadcrumbItem } from "./BreadcrumbItem";
 import { Breadcrumbs, BreadcrumbsProps } from "./Breadcrumbs";
+import { CurrentBreadcrumbItem } from "./CurrentBreadcrumbItem";
 
 const link = document.referrer;
 const ITEMS = [
@@ -17,6 +19,7 @@ const ITEMS = [
 export default {
     title: "Components/Breadcrumbs",
     component: Breadcrumbs,
+    subcomponents: { BreadcrumbItem, CurrentBreadcrumbItem },
 } as Meta<BreadcrumbsProps>;
 
 const Template: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;

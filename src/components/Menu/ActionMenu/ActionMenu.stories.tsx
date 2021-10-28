@@ -1,6 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MenuItemStyle, SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
+import {
+    MenuItem as MenuItemComponent,
+    MenuItemProps,
+    MenuItemStyle,
+    SelectionIndicatorIcon,
+} from "@components/MenuItem/MenuItem";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import { action } from "@storybook/addon-actions";
@@ -181,4 +186,42 @@ ActionMenu.args = {
             ],
         },
     ],
+};
+
+export const MenuItem: Story<MenuItemProps> = (args) => (
+    <MenuItemComponent
+        {...args}
+        decorator={args.decorator && <IconAudio />}
+        subtitle={args.size === MenuItemContentSize.Large && args.subtitle ? args.subtitle : ""}
+    />
+);
+
+MenuItem.args = {
+    title: "Item Title",
+    subtitle: "Subtitle",
+    size: MenuItemContentSize.Small,
+    style: MenuItemStyle.Primary,
+    disabled: false,
+    decorator: <IconAudio />,
+    active: false,
+    selectionIndicator: SelectionIndicatorIcon.Check,
+};
+
+MenuItem.argTypes = {
+    size: {
+        options: Object.values(MenuItemContentSize),
+        control: { type: "radio" },
+    },
+    style: {
+        options: Object.values(MenuItemStyle),
+        control: { type: "radio" },
+    },
+    decorator: {
+        control: { type: "boolean" },
+    },
+    selectionIndicator: {
+        options: Object.values(SelectionIndicatorIcon),
+        control: { type: "radio" },
+    },
+    onClick: { action: "onClick" },
 };

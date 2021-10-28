@@ -130,3 +130,5 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         );
     },
 );
+
+Checkbox.displayName = "YoloBear";
