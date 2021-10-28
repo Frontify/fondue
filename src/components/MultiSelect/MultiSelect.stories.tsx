@@ -33,7 +33,7 @@ export default {
     },
     argTypes: {
         type: {
-            options: [MultiSelectType.Default, MultiSelectType.Summarized],
+            options: Object.keys(MultiSelectType),
             control: { type: "select" },
         },
     },
