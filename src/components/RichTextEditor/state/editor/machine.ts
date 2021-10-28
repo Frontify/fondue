@@ -39,6 +39,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                     TEXT_SELECTED: [
                         {
                             target: States.Styling,
+                            cond: "hasTextSelection",
                             actions: ["updateLastSelectedText"],
                         },
                     ],
@@ -54,8 +55,10 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                     TEXT_SELECTED: [
                         {
                             target: States.Styling,
+                            cond: "hasTextSelection",
                             actions: ["updateLastSelectedText"],
                         },
+                        States.Editing,
                     ],
                     BLUR: States.Readonly,
                 },
@@ -65,6 +68,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
     {
         guards: {
             canEdit: ({ locked }) => !locked,
+            hasTextSelection: (_, event) => event.data.selectedText.trim().length > 0,
         },
         actions: {
             updateLastSelectedText,
