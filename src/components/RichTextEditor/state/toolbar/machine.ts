@@ -1,14 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { EditorState } from "draft-js";
-import { createMachine, DoneInvokeEvent, sendParent } from "xstate";
+import { Editor, Text, Transforms } from "slate";
+import { createMachine, DoneInvokeEvent } from "xstate";
+import { BlockElement, FormattedText } from "../../RichTextEditor";
 
 export type ToolbarContext = {
-    editorState: EditorState;
+    selectedText: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type ToolbarStateData = {
-    editorState: EditorState;
+    type: FormattedText | BlockElement;
+    editor: Editor;
 };
 
 export enum States {
@@ -22,13 +25,19 @@ export const toolbarMachine = createMachine<ToolbarContext, DoneInvokeEvent<Tool
     states: {
         [States.Initial]: {
             on: {
-                STYLE_SELECTED: {
-                    actions: sendParent((_, { data }) => ({
-                        type: "CHANGE",
-                        data: data,
-                    })),
+                BLOCK_TYPE_SELECTED: {
+                    actions: (_, { data }) => {
+                        const { editor, type } = data;
+                        Transforms.setNodes(editor, { type }, { match: (n) => Editor.isBlock(editor, n) });
+                    },
                 },
-                SELECT_LINK_CHOOSER: States.LinkChooser,
+                INLINE_STYLE_SELECTED: {
+                    actions: (_, { data }) => {
+                        const { editor, type } = data;
+                        Transforms.setNodes(editor, { [type]: true }, { match: (n) => Text.isText(n), split: true });
+                    },
+                },
+                LINK_CHOOSER_SELECTED: States.LinkChooser,
             },
         },
         [States.LinkChooser]: {

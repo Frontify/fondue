@@ -6,7 +6,7 @@ import React, { FC } from "react";
 import { InlineStyleButton } from "../InlineStyleButton";
 
 export const ItalicButton: FC = () => (
-    <InlineStyleButton style="ITALIC">
+    <InlineStyleButton style="italic">
         <IconItalic size={IconSize.Size16} />
     </InlineStyleButton>
 );

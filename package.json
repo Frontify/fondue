@@ -147,6 +147,8 @@
         "framer-motion": "^5.0.0",
         "react-color": "^2.19.3",
         "react-popper": "^2.2.5",
+        "slate": "^0.66.5",
+        "slate-react": "^0.69.0",
         "xstate": "^4.25.0"
     }
 }

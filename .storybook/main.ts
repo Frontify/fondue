@@ -31,6 +31,8 @@ module.exports = {
                 "@storybook/theming/create",
                 "react-color/lib/helpers/color",
                 "react-color/lib/components/common",
+                "react-is",
+                "@base2/pretty-print-object",
                 ...Object.keys(dependencies),
                 ...Object.keys(peerDependencies),
                 ...(config.optimizeDeps?.include || []),

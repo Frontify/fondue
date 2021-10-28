@@ -1,19 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { EditorState, RawDraftContentState } from "draft-js";
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { toolbarMachine } from "../toolbar/machine";
-import { notifyContentChanged, resetSelection, updateEditorState } from "./actions";
-import { hasEditorState } from "./typeguards";
+import { updateLastSelectedText } from "./actions";
 
 export type EditorContext = {
     locked: boolean;
-    editorState: EditorState;
-    onContentChanged?: (content: RawDraftContentState) => void;
+    lastSelectedText: string | null;
 };
 
 export type EditorStateData = {
-    editorState: EditorState;
+    selectedText: string;
 };
 
 export type EditorEventDataTypes = EditorStateData;
@@ -35,24 +32,14 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                         target: States.Editing,
                         cond: "canEdit",
                     },
-                    // The CHANGE needs to be handled in readonly to initialize the editor
-                    CHANGE: {
-                        actions: "updateEditorState",
-                        cond: "canEdit",
-                    },
                 },
             },
             [States.Editing]: {
                 on: {
-                    CHANGE: [
+                    TEXT_SELECTED: [
                         {
                             target: States.Styling,
-                            cond: "hasSelection",
-                            actions: ["updateEditorState", "notifyContentChanged"],
-                        },
-                        {
-                            target: States.Editing,
-                            actions: ["updateEditorState", "notifyContentChanged"],
+                            actions: ["updateLastSelectedText"],
                         },
                     ],
                 },
@@ -61,18 +48,12 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                 invoke: {
                     id: "toolbar",
                     src: toolbarMachine,
-                    data: ({ editorState }) => ({ editorState }),
                 },
                 on: {
-                    CHANGE: [
+                    TEXT_SELECTED: [
                         {
                             target: States.Styling,
-                            actions: ["updateEditorState", "notifyContentChanged"],
-                            cond: "hasSelection",
-                        },
-                        {
-                            target: States.Editing,
-                            actions: ["updateEditorState", "notifyContentChanged", "resetSelection"],
+                            actions: ["updateLastSelectedText"],
                         },
                     ],
                 },
@@ -82,15 +63,9 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
     {
         guards: {
             canEdit: ({ locked }) => !locked,
-            hasSelection: ({ locked }, { data }) => {
-                const selection = data.editorState.getSelection();
-                return !locked && hasEditorState(data) && selection.getHasFocus() && !selection.isCollapsed();
-            },
         },
         actions: {
-            updateEditorState,
-            resetSelection,
-            notifyContentChanged,
+            updateLastSelectedText,
         },
     },
 );

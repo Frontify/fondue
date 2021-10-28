@@ -29,7 +29,7 @@ export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEdit
 );
 WithReadonlyState.args = {
     readonly: true,
-    value: convertToRaw(ContentState.createFromText("This is some text that you can not edit")),
+    value: [{ type: "paragraph", children: [{ text: "This is some text that you can not edit" }] }],
 };
 WithReadonlyState.argTypes = { value: { type: "object" } };
 

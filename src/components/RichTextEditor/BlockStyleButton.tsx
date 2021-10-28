@@ -2,8 +2,9 @@
 
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
-import { RichUtils } from "draft-js";
-import React, { FC, useContext, useMemo } from "react";
+import React, { FC, useContext } from "react";
+import { Editor } from "slate";
+import { useSlate } from "slate-react";
 import { ToolbarContext } from "./context/toolbar";
 
 interface BlockStyleButtonProps {
@@ -17,17 +18,13 @@ export const BlockStyleButton: FC<BlockStyleButtonProps> = ({ blockType, childre
         return null;
     }
 
-    const [{ context }, send] = useActor(machineRef);
-    const { editorState } = context;
+    const editor = useSlate();
+    const [blockTypeIsActive] = Editor.nodes(editor, {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        match: (n: any) => n.type === blockType,
+    });
 
-    const blockTypeIsActive = useMemo((): boolean => {
-        if (!editorState) {
-            return false;
-        }
-
-        const type = editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getType();
-        return type === blockType;
-    }, [editorState, blockType]);
+    const [, send] = useActor(machineRef);
 
     return (
         <button
@@ -39,8 +36,8 @@ export const BlockStyleButton: FC<BlockStyleButtonProps> = ({ blockType, childre
             onClick={(event) => {
                 event.preventDefault();
                 send({
-                    type: "STYLE_SELECTED",
-                    data: { editorState: RichUtils.toggleBlockType(editorState, blockType) },
+                    type: "BLOCK_TYPE_SELECTED",
+                    data: { type: blockType, editor },
                 });
             }}
             onMouseDown={(event) => event.preventDefault()}
