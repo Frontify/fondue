@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { debounce } from "@utilities/debounce";
 import { useMachine } from "@xstate/react";
 import React, { FC, useCallback, useMemo, useState } from "react";
 import { BaseEditor, createEditor, Descendant, Editor, Transforms } from "slate";
@@ -39,6 +40,8 @@ declare module "slate" {
     }
 }
 
+const isModifyingKey = (key: string) => !["Alt", "Control", "Meta", "Shift"].includes(key);
+
 export const RichTextEditor: FC<RichTextEditorProps> = ({
     value: initialValue,
     placeholder = "",
@@ -56,11 +59,14 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const [{ matches, children }, send] = useMachine(editorMachine);
 
     const onTextSelected = useCallback(
-        () =>
-            editor.selection &&
-            send("TEXT_SELECTED", {
-                data: { selectedText: Editor.string(editor, editor.selection) },
-            }),
+        debounce(
+            () =>
+                editor.selection &&
+                send("TEXT_SELECTED", {
+                    data: { selectedText: Editor.string(editor, editor.selection) },
+                }),
+            250,
+        ),
         [editor],
     );
 
@@ -72,7 +78,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     onFocus={() => send("FOCUSED")}
                     readOnly={readonly}
                     onKeyUp={onTextSelected}
-                    onKeyDown={() => send("TEXT_DESELECTED")}
+                    onKeyDown={(e) => isModifyingKey(e.key) && send("TEXT_DESELECTED")}
                     onMouseUp={onTextSelected}
                     onMouseDown={() => {
                         // force deselection, since the editor will return the last selection onMouseUp
