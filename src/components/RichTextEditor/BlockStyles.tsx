@@ -1,17 +1,24 @@
 import React, { FC } from "react";
 import { DefaultElement, RenderElementProps } from "slate-react";
 
-export enum Styles {
+export enum BlockStyleTypes {
+    Paragraph = "paragraph",
     Code = "code",
+    UnorderedList = "unordered-list",
+    OrderedList = "ordered-list",
+    UnorderedListItem = "unordered-list-item",
+    OrderedListItem = "ordered-list-item",
 }
 
 export const BlockStyles: FC<RenderElementProps> = (props) => {
     switch (props.element.type) {
-        case "code":
+        case BlockStyleTypes.Paragraph:
+            return <p {...props.attributes}>{props.children}</p>;
+        case BlockStyleTypes.Code:
             return (
-                <span {...props.attributes} className="tw-font-bold">
-                    {props.children}
-                </span>
+                <pre className="tw-border tw-rounded tw-text-sm tw-bg-black-5 tw-text-violet-90 tw-m-0 tw-px-2 tw-py-1">
+                    <code {...props.attributes}>{props.children}</code>
+                </pre>
             );
         default:
             return <DefaultElement {...props} />;

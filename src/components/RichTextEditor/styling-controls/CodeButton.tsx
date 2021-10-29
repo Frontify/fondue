@@ -3,11 +3,11 @@
 import IconSnippet from "@foundation/Icon/Generated/IconSnippet";
 import { IconSize } from "@foundation/Icon/IconSize";
 import React, { FC } from "react";
-import { Styles } from "../BlockStyles";
-import { InlineStyleButton } from "../InlineStyleButton";
+import { BlockStyleButton } from "../BlockStyleButton";
+import { BlockStyleTypes } from "../BlockStyles";
 
 export const CodeButton: FC = () => (
-    <InlineStyleButton style={Styles.Code}>
+    <BlockStyleButton blockType={BlockStyleTypes.Code}>
         <IconSnippet size={IconSize.Size16} />
-    </InlineStyleButton>
+    </BlockStyleButton>
 );

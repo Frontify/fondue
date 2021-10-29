@@ -7,7 +7,7 @@ import { BaseEditor, createEditor, Descendant, Editor, Transforms } from "slate"
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
-import { BlockStyles } from "./BlockStyles";
+import { BlockStyles, BlockStyleTypes } from "./BlockStyles";
 import { ToolbarContext } from "./context/toolbar";
 import { InlineStyles, Styles as InlineStyleTypes } from "./InlineStyles";
 import { editorMachine, States } from "./state/editor/machine";
@@ -22,16 +22,16 @@ export type RichTextEditorProps = {
 };
 
 export type BlockElement = {
-    type: "paragraph" | "code" | "unordered-list-item" | "ordered-list-item";
+    type: BlockStyleTypes;
     children: FormattedText[];
 };
+
 export type FormattedText = {
     text: string;
-    [InlineStyleTypes.Bold]?: true;
-    [InlineStyleTypes.Italic]?: true;
-    [InlineStyleTypes.Strikethrough]?: true;
-    [InlineStyleTypes.Underline]?: true;
+} & {
+    [key in InlineStyleTypes]?: true;
 };
+
 declare module "slate" {
     interface CustomTypes {
         Editor: BaseEditor & ReactEditor;
@@ -40,6 +40,7 @@ declare module "slate" {
     }
 }
 
+const TOOLBAR_DELAY_IN_MS = 200;
 const isModifyingKey = (key: string) => !["Alt", "Control", "Meta", "Shift"].includes(key);
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
@@ -50,7 +51,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const [value, setValue] = useState<Descendant[]>(
         initialValue ?? [
             {
-                type: "paragraph",
+                type: BlockStyleTypes.Paragraph,
                 children: [{ text: "" }],
             },
         ],
@@ -65,7 +66,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 send("TEXT_SELECTED", {
                     data: { selectedText: Editor.string(editor, editor.selection) },
                 }),
-            250,
+            TOOLBAR_DELAY_IN_MS,
         ),
         [editor],
     );
