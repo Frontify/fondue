@@ -38,6 +38,12 @@ export const MenuItem: FC<MenuItemProps> = ({
 }) => {
     const isDangerStyle = style === MenuItemStyle.Danger;
 
+    const currentIcon = {
+        [SelectionIndicatorIcon.CaretRight]: <IconCaretRight data-test-id="menu-item-caret" size={IconSize.Size20} />,
+        [SelectionIndicatorIcon.Check]: active && <IconCheck data-test-id="menu-item-active" size={IconSize.Size20} />,
+        [SelectionIndicatorIcon.None]: null,
+    }[selectionIndicator];
+
     return (
         <div
             className={merge([
@@ -57,17 +63,7 @@ export const MenuItem: FC<MenuItemProps> = ({
             ) : (
                 <MenuItemContent title={title} decorator={decorator} subtitle={subtitle} size={size} />
             )}
-            {
-                {
-                    [SelectionIndicatorIcon.CaretRight]: (
-                        <IconCaretRight data-test-id="menu-item-caret" size={IconSize.Size20} />
-                    ),
-                    [SelectionIndicatorIcon.Check]: active && (
-                        <IconCheck data-test-id="menu-item-active" size={IconSize.Size20} />
-                    ),
-                    [SelectionIndicatorIcon.None]: null,
-                }[selectionIndicator]
-            }
+            {currentIcon}
         </div>
     );
 };

@@ -9,7 +9,7 @@ interface PopoverProps {
     isOpen?: boolean;
     onClose: () => void;
 }
-export const Popover: FC<PopoverProps> = (props: PopoverProps) => {
+export const Popover: FC<PopoverProps> = (props) => {
     const ref = React.useRef<HTMLDivElement>(null);
     const { popoverRef = ref, isOpen, onClose, children } = props;
 
@@ -28,7 +28,7 @@ export const Popover: FC<PopoverProps> = (props: PopoverProps) => {
             <div
                 {...overlayProps}
                 ref={popoverRef}
-                className="tw-border-black-10 tw-border tw-rounded tw-overflow-hidden tw-shadow-mid"
+                className="tw-bg-white tw-border-black-10 tw-border tw-rounded tw-overflow-hidden tw-shadow-mid"
             >
                 {children}
                 <DismissButton onDismiss={onClose} />

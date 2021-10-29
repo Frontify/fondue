@@ -1,4 +1,4 @@
-import React, { FC, Key, ReactNode, useRef, useState, useEffect } from "react";
+import React, { FC, Key, ReactNode, useRef, useState, useEffect, useCallback } from "react";
 import { useComboBoxState } from "@react-stately/combobox";
 import { useComboBox } from "@react-aria/combobox";
 import { ListBox } from "./ListBox/ListBox";
@@ -11,25 +11,58 @@ import { AnimatePresence, motion } from "framer-motion";
 import { DismissButton } from "@react-aria/overlays";
 import { ActionMenu, ActionMenuBlock } from "@components/Menu/ActionMenu/ActionMenu";
 import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
+import { Templates } from "./Templates/Templates";
 
 export { Item, Section } from "@react-stately/collections";
 
 const MAX_STORED_ITEMS = 5;
+
+const TEMPLATES = [
+    {
+        preview:
+            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcLzhmXC83XC85MWU4MzdjZDk2YWQzN2EwYWY4OTZhYzA5OWRlNzIyNi0xNjM0MzAxNDUxLmpwZyJ9:msiric:Li3v_e6ogrxBoH-kli3whbqekW1K4ar5Dshif80q2o0?width=2400&height={height}",
+        title: "Aerial City View",
+        subtitle: "Corporate Library",
+    },
+    {
+        preview:
+            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcL2M5XC84XC9lYjI2YWQzZWIwMGMxYWE4MDQ3MGQ4Y2U4YjVhZjcwNS0xNjM0MzAxNDUxLmpwZyJ9:msiric:GjhRABJhT0SYjJr9ANQ5QpwdrPCRiEcImzRZXOC_XHo?width=2400&height={height}",
+        title: "Brooklyn",
+        subtitle: "Template Library Old Brand",
+    },
+    {
+        preview:
+            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcL2QzXC8xMFwvOTY1ZjU0YzFiYzcxMzJjYTZlNzgwYTBhNWU2ZTgyYTctMTYzNDMwMTQ1MS5qcGcifQ:msiric:_Vs4FXozFK81i3I6J69aAG8FOq_8ld1fV8oWsWYSF2Y?width=2400&height={height}",
+        title: "City",
+        subtitle: "SRF Kultur On Screen",
+    },
+];
+
+export enum OpenWindowType {
+    None = "None",
+    Guidelines = "Guidelines",
+    Projects = "Projects",
+    Templates = "Templates",
+}
 
 export type LinkChooserProps = {
     selectMenuBlocks: MenuBlock[];
     actionMenuBlocks?: ActionMenuBlock[];
     ariaLabel?: string;
     label?: string;
+    placeholder?: string;
 };
 
 export type SelectedOption = { title: string; id: Key; link: string; icon: ReactNode };
+
+export type OpenWindow = OpenWindowType;
 
 export const LinkChooser: FC<LinkChooserProps> = ({
     selectMenuBlocks,
     actionMenuBlocks,
     ariaLabel = "Menu",
     label,
+    placeholder,
 }) => {
     const [displayedOptions, setDisplayedOptions] = useState<MenuBlock[]>(selectMenuBlocks);
     const [selectedOption, setSelectedOption] = useState<SelectedOption>({
@@ -39,28 +72,34 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         icon: <IconLink />,
     });
     const [newTab, setNewTab] = useState<CheckboxState>(CheckboxState.Unchecked);
+    const [openWindow, setOpenWindow] = useState<OpenWindow>(OpenWindowType.Templates);
 
-    const handleClearClick = () => {
+    const handleClearClick = useCallback(() => {
         state.setInputValue("");
         state.setSelectedKey("");
-    };
+    }, []);
 
-    const handleSelectionChange = (key: Key) => {
-        const foundItem = selectMenuBlocks[0].menuItems.find((item) => item.id === key);
-        storeNewSelection(foundItem);
-        setSelectedOption({
-            title: foundItem?.title || "",
-            link: foundItem?.link || "",
-            id: foundItem?.id || "",
-            icon: foundItem?.decorator || <IconLink />,
-        });
-    };
+    const handleSelectionChange = useCallback(
+        (key: Key) => {
+            const foundItem = selectMenuBlocks[0].menuItems.find((item) => item.id === key);
+            storeNewSelection(foundItem);
+            setSelectedOption({
+                title: foundItem?.title || "",
+                link: foundItem?.link || "",
+                id: foundItem?.id || "",
+                icon: foundItem?.decorator || <IconLink />,
+            });
+        },
+        [selectMenuBlocks],
+    );
 
-    const handlePreviewClick = () => {
+    const handlePreviewClick = useCallback(() => {
         newTab === CheckboxState.Checked
             ? window.open(selectedOption.link, "_blank")
             : (window.location.href = selectedOption.link);
-    };
+    }, [newTab, selectedOption.link]);
+
+    const handleWindowChange = (window: OpenWindowType) => setOpenWindow(window);
 
     const updateVisibleItems = () => {
         const storedQueries = retrieveStoredQueries();
@@ -70,9 +109,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         setDisplayedOptions(newSelectedOptions);
     };
 
-    const updateCheckState = (value: boolean) => {
-        setNewTab(value ? CheckboxState.Checked : CheckboxState.Unchecked);
-    };
+    const updateCheckState = (value: boolean) => setNewTab(value ? CheckboxState.Checked : CheckboxState.Unchecked);
 
     const retrieveStoredQueries = () => {
         const recentQueries = JSON.parse(localStorage.getItem("queries") || "null");
@@ -118,6 +155,29 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         state,
     );
 
+    const currentWindow = {
+        [OpenWindowType.None]: (
+            <div>
+                <ListBox
+                    {...listBoxProps}
+                    listBoxRef={listBoxRef}
+                    state={state}
+                    menuBlocks={selectMenuBlocks}
+                    noBorder={true}
+                    hasItems={!!displayedOptions[0].menuItems.length}
+                />
+                {actionMenuBlocks && (
+                    <div className="tw-border-t tw-border-black-10">
+                        <ActionMenu menuBlocks={actionMenuBlocks} noBorder={true} />
+                    </div>
+                )}
+            </div>
+        ),
+        [OpenWindowType.Templates]: <Templates templates={TEMPLATES} onClick={handleWindowChange} />,
+        [OpenWindowType.Guidelines]: null,
+        [OpenWindowType.Projects]: null,
+    }[openWindow];
+
     useEffect(() => {
         updateVisibleItems();
     }, [state.selectedKey]);
@@ -140,6 +200,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     previewable={true}
                     copyable={true}
                     clearable={true}
+                    placeholder={placeholder}
                     onClear={handleClearClick}
                     onPreview={handlePreviewClick}
                 />
@@ -156,19 +217,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     >
                         <DismissButton onDismiss={() => close()} />
                         <Popover popoverRef={popoverRef} isOpen={state.isOpen} onClose={state.close}>
-                            <ListBox
-                                {...listBoxProps}
-                                listBoxRef={listBoxRef}
-                                state={state}
-                                menuBlocks={selectMenuBlocks}
-                                noBorder={true}
-                                hasItems={!!displayedOptions[0].menuItems.length}
-                            />
-                            {actionMenuBlocks && (
-                                <div className="tw-border-t tw-border-black-10">
-                                    <ActionMenu menuBlocks={actionMenuBlocks} noBorder={true} />
-                                </div>
-                            )}
+                            {currentWindow}
                         </Popover>
                         <DismissButton onDismiss={() => close()} />
                     </motion.div>

@@ -3,6 +3,7 @@
 import IconExternalLink from "@elements/Icon/Generated/IconExternalLink";
 import IconCopyToClipboard from "@elements/Icon/Generated/IconCopyToClipboard";
 import IconReject from "@elements/Icon/Generated/IconReject";
+import IconSpinner from "@elements/Icon/Generated/IconSpinner";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
@@ -11,7 +12,6 @@ import React, {
     ChangeEventHandler,
     FocusEvent,
     KeyboardEvent,
-    ReactElement,
     ReactNode,
     forwardRef,
     HTMLInputTypeAttribute,
@@ -26,17 +26,6 @@ const validationStyle: Record<Validation, string> = {
     [Validation.Success]: "tw-border-green-50",
     [Validation.Error]: "tw-border-red-60",
 };
-
-const Spinner = (): ReactElement => (
-    <svg className="tw-animate-spin" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="7.5" fill="white" stroke="#EAEBEB" />
-        <path
-            fill="white"
-            d="M16.3302 9.5C17.7109 11.8915 16.8915 14.9494 14.5 16.3301C12.1086 17.7108 9.05063 16.8915 7.66992 14.5"
-            stroke="#9088FF"
-        />
-    </svg>
-);
 
 export type SearchInputProps = {
     id?: string;
@@ -207,7 +196,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                 )}
                 {validation === Validation.Loading && (
                     <span className="tw-absolute tw-top-[-0.75rem] tw-right-[-0.75rem]">
-                        <Spinner />
+                        <IconSpinner />
                     </span>
                 )}
             </div>

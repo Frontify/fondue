@@ -11,12 +11,12 @@ import IconLink from "@elements/Icon/Generated/IconLink";
 import IconExternalLink from "@elements/Icon/Generated/IconExternalLink";
 
 const LINK_CHOOSER_ID = "[data-test-id=link-chooser]";
-const SEARCH_WRAPPER_ID = "[data-test-id=search-wrapper]";
+/* const SEARCH_WRAPPER_ID = "[data-test-id=search-wrapper]";
 const SEARCH_INPUT_ID = "[data-test-id=search-input]";
 const PREVIEW_ICON_ID = "[data-test-id=preview-icon]";
 const COPY_ICON_ID = "[data-test-id=copy-icon]";
 const DISCARD_ICON_ID = "[data-test-id=discard-icon]";
-const SELECT_SECTION_ID = "[data-test-id=select-section]";
+const SELECT_SECTION_ID = "[data-test-id=select-section]"; */
 
 const selectMenuBlocks = [
     {
@@ -97,7 +97,8 @@ describe("LinkChooser Component", () => {
 
         cy.get(LINK_CHOOSER_ID).should("be.visible");
     });
-    it("displays children on click", () => {
+    // TODO - No longer valid because of localStorage
+    /*     it("displays children on click", () => {
         mount(<LinkChooser selectMenuBlocks={selectMenuBlocks} actionMenuBlocks={actionMenuBlocks} />);
 
         cy.get(SEARCH_WRAPPER_ID).click();
@@ -161,5 +162,5 @@ describe("LinkChooser Component", () => {
 
         cy.get(PREVIEW_ICON_ID).click();
         cy.get("@Open").should("have.been.calledWithMatch", selectMenuBlocks[0].menuItems[2].link);
-    });
+    }); */
 });
