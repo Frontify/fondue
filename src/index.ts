@@ -1,5 +1,5 @@
 import "./styles.css";
-import "./types";
+export * from "./types";
 export * from "./components/Accordion/Accordion";
 export * from "./components/AddBlockButton/AddBlockButton";
 export * from "./components/AssetInput/AssetInput";

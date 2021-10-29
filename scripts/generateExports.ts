@@ -79,7 +79,7 @@ import IconTemplate from "../src/foundation/Icon/IconTemplate";
         `import ${name} from "./${path.replace("src/", "")}";`;
 
     const fileContent = `import "./styles.css";
-import "./types";
+export * from "./types";
 ${components.map((c) => componentNameToImport(c.path)).join("\n")}
 ${iconComponents.map((ic) => iconComponentNameToImport(ic.name, ic.path)).join("\n")}
 
