@@ -4,9 +4,10 @@ import IconListNumbers from "@foundation/Icon/Generated/IconListNumbers";
 import { IconSize } from "@foundation/Icon/IconSize";
 import React, { FC } from "react";
 import { BlockStyleButton } from "../BlockStyleButton";
+import { BlockStyleTypes } from "../BlockStyles";
 
 export const OrderedListButton: FC = () => (
-    <BlockStyleButton blockType="ordered-list-item">
+    <BlockStyleButton blockType={BlockStyleTypes.OrderedList}>
         <IconListNumbers size={IconSize.Size12} />
     </BlockStyleButton>
 );

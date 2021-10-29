@@ -2,6 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import React from "react";
+import { BlockStyleTypes } from "./BlockStyles";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
 
 export default {
@@ -28,7 +29,7 @@ export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEdit
 );
 WithReadonlyState.args = {
     readonly: true,
-    value: [{ type: "paragraph", children: [{ text: "This is some text that you can not edit" }] }],
+    value: [{ type: BlockStyleTypes.Paragraph, children: [{ text: "This is some text that you can not edit" }] }],
 };
 WithReadonlyState.argTypes = { value: { type: "object" } };
 
