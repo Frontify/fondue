@@ -70,7 +70,9 @@ export const Trigger: FC<TriggerProps> = ({
                 tabIndex={-1}
                 className={merge([
                     "tw-p-0",
-                    disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80 group-hover:tw-text-black",
+                    disabled
+                        ? "tw-pointer-events-none tw-text-black-40"
+                        : merge(["group-hover:tw-text-black", isOpen ? "tw-text-black-100" : "tw-text-black-80"]),
                 ])}
             >
                 <div className={merge(["tw-transition-transform", isOpen && "tw-rotate-180"])}>
