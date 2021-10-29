@@ -59,7 +59,7 @@ export const Switch: FC<SwitchProps> = ({
         const disabledClasses = disabled ? "tw-bg-black-10 tw-pointer-events-none" : activatedClasses;
 
         return merge([baseClasses, sizeClasses, disabledClasses, lineSizeClasses[size], isFocusVisible && FOCUS_STYLE]);
-    }, [on, disabled, size]);
+    }, [on, disabled, size, isFocusVisible]);
 
     const dotClasses = useMemo(() => {
         const baseClasses = "tw-block tw-self-center tw-bg-white tw-rounded-full tw-transition-transform";
