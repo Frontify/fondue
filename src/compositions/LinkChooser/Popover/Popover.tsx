@@ -25,7 +25,11 @@ export const Popover: FC<PopoverProps> = (props: PopoverProps) => {
 
     return (
         <FocusScope restoreFocus>
-            <div {...overlayProps} ref={popoverRef}>
+            <div
+                {...overlayProps}
+                ref={popoverRef}
+                className="tw-border-black-10 tw-border tw-rounded tw-overflow-hidden tw-shadow-mid"
+            >
                 {children}
                 <DismissButton onDismiss={onClose} />
             </div>

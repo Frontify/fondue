@@ -9,12 +9,14 @@ import { merge } from "@utilities/merge";
 import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
 import { MenuItem } from "@components/Menu/MenuItem/MenuItem";
 import { MenuBlock, MenuItemType } from "@components/Menu/SelectMenu";
+import IconReject from "@elements/Icon/Generated/IconReject";
 
 interface ListBoxProps extends AriaListBoxOptions<unknown> {
     listBoxRef?: RefObject<HTMLUListElement>;
     state: ListState<unknown>;
     menuBlocks: MenuBlock[];
-    noBottomBorder?: boolean;
+    noBorder?: boolean;
+    hasItems?: boolean;
 }
 
 interface SectionProps {
@@ -30,7 +32,7 @@ interface OptionProps {
 }
 export const ListBox: FC<ListBoxProps> = (props: ListBoxProps) => {
     const ref = useRef<HTMLUListElement>(null);
-    const { listBoxRef = ref, state, menuBlocks, noBottomBorder } = props;
+    const { listBoxRef = ref, state, menuBlocks, noBorder, hasItems } = props;
     const { listBoxProps } = useListBox(props, state, listBoxRef);
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
@@ -38,15 +40,20 @@ export const ListBox: FC<ListBoxProps> = (props: ListBoxProps) => {
     return (
         <ul
             {...listBoxProps}
+            data-test-id="list-box"
             ref={listBoxRef}
             className={merge([
-                "tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-border tw-border-black-10 tw-rounded tw-z-20 focus-visible:tw-outline-none",
-                noBottomBorder && "tw-rounded-b-none",
+                "tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-z-20 focus-visible:tw-outline-none",
+                !noBorder && "tw-border tw-border-black-10 tw-rounded",
             ])}
         >
-            {[...state.collection].map((item) => (
-                <ListBoxSection key={item.key} section={item} state={state} keyItemRecord={keyItemRecord} />
-            ))}
+            {hasItems ? (
+                [...state.collection].map((item) => (
+                    <ListBoxSection key={item.key} section={item} state={state} keyItemRecord={keyItemRecord} />
+                ))
+            ) : (
+                <EmptyList />
+            )}
         </ul>
     );
 };
@@ -60,7 +67,7 @@ const ListBoxSection = ({ section, state, keyItemRecord }: SectionProps) => {
     return (
         <>
             <li {...itemProps} className="tw-border-b tw-border-b-black-10 last:tw-border-0">
-                <ul {...groupProps} className="tw-py-2 tw-px-0 tw-m-0 tw-list-none">
+                <ul {...groupProps} data-test-id="select-section" className="tw-py-2 tw-px-0 tw-m-0 tw-list-none">
                     {[...section.childNodes].map((node) => (
                         <Option key={node.key} item={node} state={state} keyItemRecord={keyItemRecord} />
                     ))}
@@ -94,4 +101,8 @@ const Option = ({ item, state, keyItemRecord }: OptionProps) => {
             <MenuItem {...menuItem} active={isSelected} />
         </li>
     );
+};
+
+const EmptyList = ({ title = "No recent queries found", decorator = <IconReject />, disabled = true }) => {
+    return <MenuItem title={title} decorator={decorator} disabled={disabled} />;
 };

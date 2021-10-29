@@ -9,9 +9,10 @@ import IconDocument from "@elements/Icon/Generated/IconDocument";
 import IconLink from "@elements/Icon/Generated/IconLink";
 import IconExternalLink from "@elements/Icon/Generated/IconExternalLink";
 import IconDocumentLibrary from "@elements/Icon/Generated/IconDocumentLibrary";
+import { action } from "@storybook/addon-actions";
 
 export default {
-    title: "Components/LinkChooser",
+    title: "Components/Link Chooser",
     component: LinkChooser,
     args: {
         placeholder: "https://example.com",
@@ -87,14 +88,14 @@ Default.args = {
                     title: "Guidelines",
                     size: MenuItemContentSize.Small,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
-                    onClick: () => console.log("Guidelines clicked"),
+                    onClick: action("onGuidelineClicked"),
                 },
                 {
                     id: "7",
                     title: "Templates",
                     size: MenuItemContentSize.Small,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
-                    onClick: () => console.log("Templates clicked"),
+                    onClick: action("onTemplateClicked"),
                 },
             ],
         },

@@ -10,6 +10,14 @@ import IconDocumentLibrary from "@elements/Icon/Generated/IconDocumentLibrary";
 import IconLink from "@elements/Icon/Generated/IconLink";
 import IconExternalLink from "@elements/Icon/Generated/IconExternalLink";
 
+const LINK_CHOOSER_ID = "[data-test-id=link-chooser]";
+const SEARCH_WRAPPER_ID = "[data-test-id=search-wrapper]";
+const SEARCH_INPUT_ID = "[data-test-id=search-input]";
+const PREVIEW_ICON_ID = "[data-test-id=preview-icon]";
+const COPY_ICON_ID = "[data-test-id=copy-icon]";
+const DISCARD_ICON_ID = "[data-test-id=discard-icon]";
+const SELECT_SECTION_ID = "[data-test-id=select-section]";
+
 const selectMenuBlocks = [
     {
         id: "Suggestions",
@@ -84,11 +92,74 @@ const actionMenuBlocks = [
 ];
 
 describe("LinkChooser Component", () => {
-    it("should render correctly", () => {
+    it("renders correctly", () => {
         mount(<LinkChooser selectMenuBlocks={selectMenuBlocks} actionMenuBlocks={actionMenuBlocks} />);
 
-        cy.get("[data-test-id=link-chooser]").as("LinkChooser");
+        cy.get(LINK_CHOOSER_ID).should("be.visible");
+    });
+    it("displays children on click", () => {
+        mount(<LinkChooser selectMenuBlocks={selectMenuBlocks} actionMenuBlocks={actionMenuBlocks} />);
 
-        cy.get("@LinkChooser").should("be.visible");
+        cy.get(SEARCH_WRAPPER_ID).click();
+        cy.get(SELECT_SECTION_ID).children().should("have.length", selectMenuBlocks[0].menuItems.length);
+        cy.get(PREVIEW_ICON_ID).should("not.exist");
+        cy.get(COPY_ICON_ID).should("not.exist");
+        cy.get(DISCARD_ICON_ID).should("not.exist");
+    });
+    it("changes selection on click", () => {
+        mount(<LinkChooser selectMenuBlocks={selectMenuBlocks} actionMenuBlocks={actionMenuBlocks} />);
+
+        cy.get(SEARCH_INPUT_ID).click();
+        cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
+        cy.get(`${SELECT_SECTION_ID} > li`).eq(2).as("thirdSelectItem");
+
+        cy.get("@firstSelectItem").click();
+        cy.get(SEARCH_INPUT_ID).should("have.value", selectMenuBlocks[0].menuItems[0].title);
+
+        cy.get(PREVIEW_ICON_ID).should("be.visible");
+        cy.get(COPY_ICON_ID).should("be.visible");
+        cy.get(DISCARD_ICON_ID).should("be.visible");
+
+        cy.get(DISCARD_ICON_ID).click();
+
+        cy.get(PREVIEW_ICON_ID).should("not.exist");
+        cy.get(COPY_ICON_ID).should("not.exist");
+        cy.get(DISCARD_ICON_ID).should("not.exist");
+
+        cy.get(SEARCH_INPUT_ID).click();
+
+        cy.get("@thirdSelectItem").click();
+        cy.get(SEARCH_INPUT_ID).should("have.value", selectMenuBlocks[0].menuItems[2].title);
+
+        cy.get(PREVIEW_ICON_ID).should("be.visible");
+        cy.get(COPY_ICON_ID).should("be.visible");
+        cy.get(DISCARD_ICON_ID).should("be.visible");
+    });
+    it("filters results on input change", () => {
+        mount(<LinkChooser selectMenuBlocks={selectMenuBlocks} actionMenuBlocks={actionMenuBlocks} />);
+
+        cy.get(SEARCH_INPUT_ID).click();
+        cy.get(SELECT_SECTION_ID).children().should("have.length", selectMenuBlocks[0].menuItems.length);
+
+        cy.get(SEARCH_INPUT_ID).type(selectMenuBlocks[0].menuItems[0].title);
+        cy.get(SELECT_SECTION_ID).children().should("have.length", 1);
+
+        cy.get(DISCARD_ICON_ID).click();
+        cy.get(SELECT_SECTION_ID).children().should("have.length", selectMenuBlocks[0].menuItems.length);
+    });
+    it("opens the selected preview link on click", () => {
+        mount(<LinkChooser selectMenuBlocks={selectMenuBlocks} actionMenuBlocks={actionMenuBlocks} />);
+
+        cy.window().then((win) => {
+            cy.stub(win, "open").as("Open");
+        });
+
+        cy.get(SEARCH_INPUT_ID).click();
+
+        cy.get(`${SELECT_SECTION_ID} > li`).eq(2).as("thirdSelectItem");
+        cy.get("@thirdSelectItem").click();
+
+        cy.get(PREVIEW_ICON_ID).click();
+        cy.get("@Open").should("have.been.calledWithMatch", selectMenuBlocks[0].menuItems[2].link);
     });
 });

@@ -1,5 +1,5 @@
 import ClipboardJS from "clipboard";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export type ClipboardArgs = {
     selector: string;
@@ -7,14 +7,20 @@ export type ClipboardArgs = {
     type?: "text" | "target" | "container";
 };
 
-export const useClipboard = ({ selector, target, type = "text" }: ClipboardArgs): ClipboardJS => {
-    const clipboard = new ClipboardJS(selector, {
-        [type]: () => target,
-    });
+export const useClipboard = ({ selector, target, type = "text" }: ClipboardArgs): ClipboardJS | null => {
+    const [clipboard, setClipboard] = useState<ClipboardJS | null>(null);
 
     useEffect(() => {
-        return () => clipboard.destroy();
-    });
+        setClipboard(
+            new ClipboardJS(selector, {
+                [type]: () => target,
+            }),
+        );
+
+        return () => {
+            if (clipboard) clipboard.destroy();
+        };
+    }, [target]);
 
     return clipboard;
 };

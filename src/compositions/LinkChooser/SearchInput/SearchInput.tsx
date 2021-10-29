@@ -15,19 +15,10 @@ import React, {
     ReactNode,
     forwardRef,
     HTMLInputTypeAttribute,
-    useEffect,
-    useRef,
 } from "react";
-import { Node } from "@react-types/shared";
 import { useClipboard } from "@hooks/useClipboard";
-import { MenuBlock } from "@components/Menu/SelectMenu";
-
-export enum Validation {
-    Default = "Default",
-    Loading = "Loading",
-    Success = "Success",
-    Error = "Error",
-}
+import { Validation } from "@elements/TextInput/TextInput";
+import { SelectedOption } from "../LinkChooser";
 
 const validationStyle: Record<Validation, string> = {
     [Validation.Default]: "tw-border-black-20",
@@ -47,10 +38,9 @@ const Spinner = (): ReactElement => (
     </svg>
 );
 
-export type TextInputProps = {
+export type SearchInputProps = {
     id?: string;
-    selectedItem: Node<unknown>;
-    menuBlocks: MenuBlock[];
+    selectedOption: SelectedOption;
     type?: HTMLInputTypeAttribute;
     decorator?: ReactNode;
     dotted?: boolean;
@@ -67,15 +57,15 @@ export type TextInputProps = {
     onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     onClear?: () => void;
+    onPreview?: () => void;
     size?: number;
 };
 
-export const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(
+export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>(
     (
         {
             id: propId,
-            selectedItem,
-            menuBlocks,
+            selectedOption,
             type,
             decorator,
             validation = Validation.Default,
@@ -92,6 +82,7 @@ export const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(
             onFocus,
             onBlur,
             onClear,
+            onPreview,
             size,
         },
         inputElement,
@@ -101,9 +92,7 @@ export const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(
         const { isFocusVisible: copyButtonIsFocusVisible, focusProps: copyButtonFocusProps } = useFocusRing();
         const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
 
-        const selectedLink = useRef<string>("");
-
-        useClipboard({ selector: "[data-clipboard-id='copy-button']", target: selectedLink.current });
+        useClipboard({ selector: "[data-clipboard-id='copy-button']", target: selectedOption.link });
 
         const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
             if (event.key === "Enter") {
@@ -111,24 +100,10 @@ export const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(
             }
         };
 
-        const openExternalLink = () => {
-            window.open(selectedLink.current, "_blank");
-        };
-
-        const retrieveActiveLink = () => {
-            const foundItem = selectedItem
-                ? menuBlocks[0].menuItems.find((item) => item.id === selectedItem.key)
-                : null;
-            return foundItem && foundItem.link ? foundItem.link : "";
-        };
-
-        useEffect(() => {
-            selectedLink.current = retrieveActiveLink();
-        }, [selectedItem]);
-
         return (
             <div
                 {...focusProps}
+                data-test-id="search-wrapper"
                 className={merge([
                     "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent",
                     dotted ? "tw-border-dashed" : "tw-border-solid",
@@ -171,9 +146,9 @@ export const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(
                     required={required}
                     disabled={disabled}
                     size={size}
-                    data-test-id="text-input"
+                    data-test-id="search-input"
                 />
-                {selectedItem && previewable && (
+                {selectedOption.id && previewable && (
                     <button
                         className={merge([
                             "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
@@ -186,13 +161,13 @@ export const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(
                         title="Preview link"
                         aria-label=""
                         disabled={disabled}
-                        onClick={openExternalLink}
+                        onClick={onPreview}
                         {...previewButtonFocusProps}
                     >
                         <IconExternalLink />
                     </button>
                 )}
-                {selectedItem && copyable && (
+                {selectedOption.id && copyable && (
                     <button
                         className={merge([
                             "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
@@ -220,7 +195,7 @@ export const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(
                                 : "tw-text-black-60  hover:tw-text-black-100",
                             clearButtonIsFocusVisible && FOCUS_STYLE,
                         ])}
-                        data-test-id="clear-icon"
+                        data-test-id="discard-icon"
                         title="Clear text input"
                         aria-label="clear text input"
                         disabled={disabled}
