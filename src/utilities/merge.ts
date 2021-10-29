@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 /**
  * Cleans and joins an array of inputs with possible undefined or boolean values.
  *

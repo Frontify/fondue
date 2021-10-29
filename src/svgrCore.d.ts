@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 declare module "@svgr/core" {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
     export interface TemplateOptions extends SvgrOpts {}
