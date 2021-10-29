@@ -1,3 +1,6 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const plugin = require("tailwindcss/plugin");
 
 module.exports = {

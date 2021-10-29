@@ -16,14 +16,13 @@
         "skipLibCheck": true,
         "resolveJsonModule": true,
         "paths": {
-            "@foundation/*": ["./src/foundation/*"],
             "@components/*": ["./src/components/*"],
-            "@utilities/*": ["./src/utilities/*"],
-            "@hooks/*": ["./src/hooks/*"]
+            "@foundation/*": ["./src/foundation/*"],
+            "@hooks/*": ["./src/hooks/*"],
+            "@utilities/*": ["./src/utilities/*"]
         },
-        "typeRoots": ["./types"],
         "types": ["cypress", "cypress-real-events", "vite/client"]
     },
-    "include": ["types", "src/**/*", "cypress/**/*", ".storybook/**/*", "scripts/**/*"],
+    "include": ["src/types", "src/**/*", "cypress/**/*", ".storybook/**/*", "scripts/**/*", "src/svgrCore.d.ts"],
     "exclude": ["node_modules", "dist"]
 }

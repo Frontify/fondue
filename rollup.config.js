@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import alias from "@rollup/plugin-alias";
 import commonJs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
@@ -11,10 +13,10 @@ const rollupConfig = [
         plugins: [
             alias({
                 entries: [
-                    { find: "@foundation", replacement: resolve(__dirname, "./src/foundation") },
                     { find: "@components", replacement: resolve(__dirname, "./src/components") },
-                    { find: "@utilities", replacement: resolve(__dirname, "./src/utilities") },
+                    { find: "@foundation", replacement: resolve(__dirname, "./src/foundation") },
                     { find: "@hooks", replacement: resolve(__dirname, "./src/hooks") },
+                    { find: "@utilities", replacement: resolve(__dirname, "./src/utilities") },
                 ],
             }),
             dts(),
