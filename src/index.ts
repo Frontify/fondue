@@ -1,4 +1,5 @@
 import "./styles.css";
+import "./types";
 export * from "./components/Accordion/Accordion";
 export * from "./components/AddBlockButton/AddBlockButton";
 export * from "./components/AssetInput/AssetInput";
@@ -31,6 +32,7 @@ export * from "./components/Menu/SelectMenu";
 export * from "./components/MenuItem/MenuItem";
 export * from "./components/MenuItem/MenuItemContent";
 export * from "./components/MultiInput/MultiInput";
+export * from "./components/MultiSelect/MultiSelect";
 export * from "./components/RadioPill/RadioPill";
 export * from "./components/RichTextEditor/BlockStyleButton";
 export * from "./components/RichTextEditor/decorators/components/LinkDecorator";
@@ -44,7 +46,6 @@ export * from "./components/RichTextEditor/styling-controls/StrikethroughButton"
 export * from "./components/RichTextEditor/styling-controls/UnderlineButton";
 export * from "./components/RichTextEditor/styling-controls/UnorderedListButton";
 export * from "./components/RichTextEditor/Toolbar";
-export * from "./components/MultiSelect/MultiSelect";
 export * from "./components/Slider/Slider";
 export * from "./components/Switch/Switch";
 export * from "./components/Table/Table";

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Slider } from "@components/Slider/Slider";
-import { Color } from "@utilities/colors";
+import { Color } from "../../types/colors";
 import { merge } from "@utilities/merge";
 import React, { FC, useMemo, useState } from "react";
 // @ts-ignore

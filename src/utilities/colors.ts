@@ -1,26 +1,9 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
 import { toState } from "react-color/lib/helpers/color";
-
-type ColorState = {
-    rgb: { r: number; g: number; b: number; a: number };
-    hsl: { h: number; s: number; l: number; a: number };
-    hsv: { h: number; s: number; v: number; a: number };
-    hex: string;
-};
-
-export type Color = {
-    rgba?: { r: number; g: number; b: number; a: number };
-    hex: string;
-    alpha?: number;
-    name?: string;
-};
-
-export type DiffColor = {
-    hex?: string;
-    rgba?: { r?: number | string; g?: number | string; b?: number | string; a?: number };
-    name?: string;
-};
+import { Color, ColorState, DiffColor } from "../types/colors";
 
 export const getValidRgbColorValue = (input: string): number => {
     const value = parseInt(input || "0", 10);

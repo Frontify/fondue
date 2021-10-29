@@ -5,7 +5,8 @@ import { Palette } from "@components/ColorPicker/ColorPicker";
 import { BRAND_COLOR_ID, COLOR_PREVIEW_ID } from "@components/ColorPicker/ColorPicker.spec";
 import { MENU_ITEM_DECORATOR_ID } from "@components/MenuItem/MenuItem.spec";
 import { mount } from "@cypress/react";
-import { Color, EXAMPLE_PALETTES } from "@utilities/colors";
+import { EXAMPLE_PALETTES } from "@utilities/colors";
+import { Color } from "../../types/colors";
 import React, { FC, useState } from "react";
 import { ColorPickerFlyout } from "./ColorPickerFlyout";
 
