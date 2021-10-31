@@ -10,7 +10,7 @@ export enum BlockStyleTypes {
     OrderedListItem = "ordered-list-item",
 }
 
-export const renderBlockStyles = (props: RenderElementProps) => {
+export const renderBlockStyles = (props: RenderElementProps): JSX.Element => {
     switch (props.element.type) {
         case BlockStyleTypes.Paragraph:
             return <p {...props.attributes}>{props.children}</p>;

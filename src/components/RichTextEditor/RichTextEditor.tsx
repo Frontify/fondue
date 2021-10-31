@@ -3,11 +3,12 @@
 import { debounce } from "@utilities/debounce";
 import { useMachine } from "@xstate/react";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { BaseEditor, createEditor, Descendant, Editor, Transforms } from "slate";
+import { BaseEditor, createEditor, Descendant, Editor } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
 import { ToolbarContext } from "./context/toolbar";
+import { useSoftBreak } from "./hooks/useSoftBreak";
 import { BlockStyleTypes, renderBlockStyles } from "./renderer/renderBlockStyles";
 import { renderInlineStyles, Styles as InlineStyleTypes } from "./renderer/renderInlineStyles";
 import { editorMachine, States } from "./state/editor/machine";
@@ -57,6 +58,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         ],
     );
     const editor = useMemo(() => withReact(withHistory(createEditor())), []);
+    const softBreakHandler = useSoftBreak(editor);
     const [{ matches, children }, send] = useMachine(editorMachine);
 
     const onTextSelected = useCallback(
@@ -86,6 +88,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     onKeyUp={onTextSelected}
                     onKeyDown={(e) => isModifyingKey(e.key) && send("TEXT_DESELECTED")}
                     onMouseDown={() => send("TEXT_DESELECTED")}
+                    onKeyPress={softBreakHandler}
                     renderLeaf={renderInlineStyles}
                     renderElement={renderBlockStyles}
                     onBlur={() => send("BLUR")}

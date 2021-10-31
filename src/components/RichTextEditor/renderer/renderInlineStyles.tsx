@@ -24,7 +24,7 @@ const getClasses = (text: FormattedText) =>
         return classes;
     }, []);
 
-export const renderInlineStyles = (props: RenderLeafProps) => {
+export const renderInlineStyles = (props: RenderLeafProps): JSX.Element => {
     return (
         <span {...props.attributes} className={`${getClasses(props.leaf).join(" ")}`}>
             {props.children}
