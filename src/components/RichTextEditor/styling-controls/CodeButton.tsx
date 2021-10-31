@@ -4,7 +4,7 @@ import IconSnippet from "@foundation/Icon/Generated/IconSnippet";
 import { IconSize } from "@foundation/Icon/IconSize";
 import React, { FC } from "react";
 import { BlockStyleButton } from "../BlockStyleButton";
-import { BlockStyleTypes } from "../BlockStyles";
+import { BlockStyleTypes } from "../renderer/renderBlockStyles";
 
 export const CodeButton: FC = () => (
     <BlockStyleButton blockType={BlockStyleTypes.Code}>

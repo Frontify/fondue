@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React from "react";
 import { DefaultElement, RenderElementProps } from "slate-react";
 
 export enum BlockStyleTypes {
@@ -10,7 +10,7 @@ export enum BlockStyleTypes {
     OrderedListItem = "ordered-list-item",
 }
 
-export const BlockStyles: FC<RenderElementProps> = (props) => {
+export const renderBlockStyles = (props: RenderElementProps) => {
     switch (props.element.type) {
         case BlockStyleTypes.Paragraph:
             return <p {...props.attributes}>{props.children}</p>;

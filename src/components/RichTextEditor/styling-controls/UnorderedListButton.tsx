@@ -4,7 +4,7 @@ import IconListBullets from "@foundation/Icon/Generated/IconListBullets";
 import { IconSize } from "@foundation/Icon/IconSize";
 import React, { FC } from "react";
 import { BlockStyleButton } from "../BlockStyleButton";
-import { BlockStyleTypes } from "../BlockStyles";
+import { BlockStyleTypes } from "../renderer/renderBlockStyles";
 
 export const UnorderedListButton: FC = () => (
     <BlockStyleButton blockType={BlockStyleTypes.UnorderedList}>

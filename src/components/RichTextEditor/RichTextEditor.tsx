@@ -7,9 +7,9 @@ import { BaseEditor, createEditor, Descendant, Editor, Transforms } from "slate"
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
-import { BlockStyles, BlockStyleTypes } from "./BlockStyles";
 import { ToolbarContext } from "./context/toolbar";
-import { InlineStyles, Styles as InlineStyleTypes } from "./InlineStyles";
+import { BlockStyleTypes, renderBlockStyles } from "./renderer/renderBlockStyles";
+import { renderInlineStyles, Styles as InlineStyleTypes } from "./renderer/renderInlineStyles";
 import { editorMachine, States } from "./state/editor/machine";
 import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
 import { Toolbar } from "./Toolbar";
@@ -86,18 +86,8 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                         Transforms.deselect(editor);
                         send("TEXT_DESELECTED");
                     }}
-                    renderLeaf={useCallback(
-                        (props) => (
-                            <InlineStyles {...props} />
-                        ),
-                        [],
-                    )}
-                    renderElement={useCallback(
-                        (props) => (
-                            <BlockStyles {...props} />
-                        ),
-                        [],
-                    )}
+                    renderLeaf={renderInlineStyles}
+                    renderElement={renderBlockStyles}
                     onBlur={() => send("BLUR")}
                 />
                 {matches(States.Styling) && (

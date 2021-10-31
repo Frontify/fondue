@@ -2,7 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import React from "react";
-import { BlockStyleTypes } from "./BlockStyles";
+import { BlockStyleTypes } from "./renderer/renderBlockStyles";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
 
 export default {

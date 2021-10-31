@@ -5,8 +5,8 @@ import { useActor } from "@xstate/react";
 import React, { FC, useContext } from "react";
 import { Editor } from "slate";
 import { useSlate } from "slate-react";
-import { BlockStyleTypes } from "./BlockStyles";
 import { ToolbarContext } from "./context/toolbar";
+import { BlockStyleTypes } from "./renderer/renderBlockStyles";
 import { BlockElement } from "./RichTextEditor";
 
 interface BlockStyleButtonProps {

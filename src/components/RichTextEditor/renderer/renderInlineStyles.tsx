@@ -1,6 +1,6 @@
-import React, { FC } from "react";
+import React from "react";
 import { RenderLeafProps } from "slate-react";
-import { FormattedText } from "./RichTextEditor";
+import { FormattedText } from "../RichTextEditor";
 
 export enum Styles {
     Bold = "bold",
@@ -24,7 +24,7 @@ const getClasses = (text: FormattedText) =>
         return classes;
     }, []);
 
-export const InlineStyles: FC<RenderLeafProps> = (props) => {
+export const renderInlineStyles = (props: RenderLeafProps) => {
     return (
         <span {...props.attributes} className={`${getClasses(props.leaf).join(" ")}`}>
             {props.children}
