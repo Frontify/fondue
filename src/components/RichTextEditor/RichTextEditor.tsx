@@ -2,7 +2,7 @@
 
 import { debounce } from "@utilities/debounce";
 import { useMachine } from "@xstate/react";
-import React, { FC, useCallback, useMemo, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { BaseEditor, createEditor, Descendant, Editor, Transforms } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
@@ -71,6 +71,11 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         [editor],
     );
 
+    useEffect(() => {
+        window.addEventListener("mouseup", onTextSelected);
+        return () => window.removeEventListener("mouseup", onTextSelected);
+    }, []);
+
     return (
         <div data-test-id="rich-text-editor">
             <Slate editor={editor} value={value} onChange={(value) => setValue(value)}>
@@ -80,12 +85,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     readOnly={readonly}
                     onKeyUp={onTextSelected}
                     onKeyDown={(e) => isModifyingKey(e.key) && send("TEXT_DESELECTED")}
-                    onMouseUp={onTextSelected}
-                    onMouseDown={() => {
-                        // force deselection, since the editor will return the last selection onMouseUp
-                        Transforms.deselect(editor);
-                        send("TEXT_DESELECTED");
-                    }}
+                    onMouseDown={() => send("TEXT_DESELECTED")}
                     renderLeaf={renderInlineStyles}
                     renderElement={renderBlockStyles}
                     onBlur={() => send("BLUR")}
