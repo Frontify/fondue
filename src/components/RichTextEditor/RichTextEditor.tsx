@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { compose } from "@utilities/compose";
 import { debounce } from "@utilities/debounce";
-import useDebounce from "@utilities/useDebounce";
+import { useDebounce } from "@utilities/useDebounce";
 import { useMachine } from "@xstate/react";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { BaseEditor, createEditor, Descendant } from "slate";
@@ -63,7 +64,8 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
     const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
 
-    const editor = useMemo(() => withReact(withHistory(withLists(createEditor()))), []);
+    const withPlugins = compose(withReact, withHistory, withLists);
+    const editor = useMemo(() => withPlugins(createEditor()), []);
     const softBreakHandler = useSoftBreak(editor);
     const [{ matches, children }, send] = useMachine(editorMachine.withContext({ locked: readonly, onSave }));
 
