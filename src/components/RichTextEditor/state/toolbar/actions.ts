@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { Editor, Text, Transforms } from "slate";
 import { DoneInvokeEvent } from "xstate";
 import { BlockTypeData, InlineStyleData, ToolbarContext, ToolbarData } from "./machine";

@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const compose = <T extends any[], R>(
     fn1: (...args: T) => R,

@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { Editor, Element, Node, NodeEntry, Transforms } from "slate";
 import { BlockStyleTypes } from "../renderer/renderBlockStyles";
 

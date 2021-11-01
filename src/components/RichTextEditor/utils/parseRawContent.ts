@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { Descendant } from "slate";
 import { jsx } from "slate-hyperscript";
 import { BlockStyleTypes } from "../renderer/renderBlockStyles";
