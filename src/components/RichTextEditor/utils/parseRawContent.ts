@@ -3,7 +3,8 @@ import { jsx } from "slate-hyperscript";
 import { BlockStyleTypes } from "../renderer/renderBlockStyles";
 import { Styles } from "../renderer/renderInlineStyles";
 
-const BLOCK_MAP: { [key: string]: () => { type: string } } = {
+const BLOCK_MAP: { [key: string]: (el: HTMLElement) => { type: string } } = {
+    A: (el) => ({ type: BlockStyleTypes.Link, url: el.getAttribute("href") }),
     P: () => ({ type: BlockStyleTypes.Paragraph }),
     PRE: () => ({ type: BlockStyleTypes.Code }),
     UL: () => ({ type: BlockStyleTypes.UnorderedList }),
@@ -66,7 +67,7 @@ const deserializeHTML = (el: HTMLElement | ChildNode): Descendant | Descendant[]
     }
 
     if (BLOCK_MAP[el.nodeName]) {
-        return jsx("element", BLOCK_MAP[el.nodeName](), children);
+        return jsx("element", BLOCK_MAP[el.nodeName](el as HTMLElement), children);
     }
 
     return el.textContent?.trim() ?? null;

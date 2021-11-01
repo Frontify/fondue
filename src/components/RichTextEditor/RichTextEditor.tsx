@@ -28,6 +28,7 @@ export type RichTextEditorProps = {
 
 export type BlockElement = {
     type: BlockStyleTypes;
+    url?: string;
     children: (FormattedText | BlockElement)[];
 };
 

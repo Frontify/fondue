@@ -17,54 +17,57 @@ export default {
     },
 } as Meta;
 
+const value = JSON.stringify([
+    { type: BlockStyleTypes.Paragraph, children: [{ text: "bold", bold: true }] },
+    { type: BlockStyleTypes.Paragraph, children: [{ text: "italic", italic: true }] },
+    { type: BlockStyleTypes.Paragraph, children: [{ text: "underline", underline: true }] },
+    { type: BlockStyleTypes.Paragraph, children: [{ text: "strikethrough", strikethrough: true }] },
+    { type: BlockStyleTypes.Code, children: [{ text: "code" }] },
+    {
+        type: BlockStyleTypes.UnorderedList,
+        children: [
+            { type: BlockStyleTypes.ListItem, children: [{ text: "red" }] },
+            { type: BlockStyleTypes.ListItem, children: [{ text: "blue" }] },
+            { type: BlockStyleTypes.ListItem, children: [{ text: "yellow" }] },
+        ],
+    },
+    {
+        type: BlockStyleTypes.OrderedList,
+        children: [
+            {
+                type: BlockStyleTypes.ListItem,
+                children: [{ text: "Mix flour, baking powder, sugar, and salt." }],
+            },
+            {
+                type: BlockStyleTypes.ListItem,
+                children: [{ text: "In another bowl, mix eggs, milk, and oil." }],
+            },
+            { type: BlockStyleTypes.ListItem, children: [{ text: "Stir both mixtures together." }] },
+            { type: BlockStyleTypes.ListItem, children: [{ text: "Fill muffin tray 3/4 full." }] },
+            { type: BlockStyleTypes.ListItem, children: [{ text: "Bake for 20 minutes." }] },
+        ],
+    },
+    {
+        type: BlockStyleTypes.Link,
+        url: "https://git-scm.com/downloads",
+        children: [{ text: "Link" }],
+    },
+]);
+
 export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <>
-        <RichTextEditorComponent
-            {...args}
-            value={JSON.stringify([
-                { type: BlockStyleTypes.Paragraph, children: [{ text: "bold", bold: true }] },
-                { type: BlockStyleTypes.Paragraph, children: [{ text: "italic", italic: true }] },
-                { type: BlockStyleTypes.Paragraph, children: [{ text: "underline", underline: true }] },
-                { type: BlockStyleTypes.Paragraph, children: [{ text: "strikethrough", strikethrough: true }] },
-                { type: BlockStyleTypes.Code, children: [{ text: "code" }] },
-                {
-                    type: BlockStyleTypes.UnorderedList,
-                    children: [
-                        { type: BlockStyleTypes.ListItem, children: [{ text: "red" }] },
-                        { type: BlockStyleTypes.ListItem, children: [{ text: "blue" }] },
-                        { type: BlockStyleTypes.ListItem, children: [{ text: "yellow" }] },
-                    ],
-                },
-                {
-                    type: BlockStyleTypes.OrderedList,
-                    children: [
-                        {
-                            type: BlockStyleTypes.ListItem,
-                            children: [{ text: "Mix flour, baking powder, sugar, and salt." }],
-                        },
-                        {
-                            type: BlockStyleTypes.ListItem,
-                            children: [{ text: "In another bowl, mix eggs, milk, and oil." }],
-                        },
-                        { type: BlockStyleTypes.ListItem, children: [{ text: "Stir both mixtures together." }] },
-                        { type: BlockStyleTypes.ListItem, children: [{ text: "Fill muffin tray 3/4 full." }] },
-                        { type: BlockStyleTypes.ListItem, children: [{ text: "Bake for 20 minutes." }] },
-                    ],
-                },
-            ])}
-        />
+        <RichTextEditorComponent {...args} />
     </>
 );
 RichTextEditor.argTypes = { value: { type: "object" } };
+RichTextEditor.args = { value };
 
 export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
 WithReadonlyState.args = {
     readonly: true,
-    value: JSON.stringify([
-        { type: BlockStyleTypes.Paragraph, children: [{ text: "This is some text that you can not edit" }] },
-    ]),
+    value,
 };
 WithReadonlyState.argTypes = { value: { type: "object" } };
 
@@ -90,7 +93,7 @@ RichTextWithHTML.args = {
             <li>Fill muffin tray 3/4 full.</li>
             <li>Bake for 20 minutes.</li>
         </ol>
-        <a href="https://git-scm.com/downloads" class="link" target="_blank">Link</a>
+        <a href="https://git-scm.com/downloads" target="_blank">Link</a>
     `,
 };
 RichTextWithHTML.argTypes = { value: { type: "string" } };
