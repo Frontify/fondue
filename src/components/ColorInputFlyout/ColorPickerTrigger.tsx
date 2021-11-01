@@ -7,11 +7,24 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { merge } from "@utilities/merge";
-import React, { FC, useMemo } from "react";
+import React, { FC } from "react";
+import { Color } from "../../types/colors";
 import { ColorPickerFlyoutProps } from "./ColorPickerFlyout";
 
 type ColorInputTriggerProps = Pick<ColorPickerFlyoutProps, "id" | "currentColor" | "disabled"> & {
     isOpen?: boolean;
+};
+
+const ColorInputTitle: FC<{ currentColor: Color }> = ({ currentColor }) => {
+    const { name, hex, alpha } = currentColor;
+    const opacity = alpha && alpha < 1 ? `${Math.round(alpha * 100)}%` : "";
+
+    return (
+        <div className="tw-text-black-100">
+            {name || hex}
+            <span className="tw-text-black-60"> {opacity}</span>
+        </div>
+    );
 };
 
 export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
@@ -22,16 +35,6 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
 }) => {
     const selectedColor = currentColor?.hex;
     const { isFocusVisible, focusProps } = useFocusRing();
-    const title = useMemo(() => {
-        if (!currentColor) {
-            return "Select color";
-        }
-
-        const { name, hex, alpha } = currentColor;
-        const opacity = alpha && alpha < 1 ? `${Math.round(alpha * 100)}%` : "";
-
-        return [name || hex, opacity].join(" ");
-    }, [currentColor]);
 
     return (
         <Trigger isOpen={isOpen} disabled={disabled} isFocusVisible={isFocusVisible}>
@@ -45,7 +48,7 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
                 ])}
             >
                 <MenuItemContent
-                    title={title}
+                    title={currentColor ? <ColorInputTitle currentColor={currentColor} /> : "Select color"}
                     decorator={
                         selectedColor ? (
                             <span

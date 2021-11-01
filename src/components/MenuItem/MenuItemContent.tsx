@@ -2,7 +2,7 @@
 
 import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
-import React, { cloneElement, FC, HTMLAttributes, ReactElement } from "react";
+import React, { cloneElement, FC, HTMLAttributes, ReactElement, ReactNode } from "react";
 
 export enum MenuItemContentSize {
     Small = "Small",
@@ -15,7 +15,7 @@ export enum MenuItemContentStyle {
 }
 
 export type MenuItemContentProps = {
-    title: string;
+    title: ReactNode;
     decorator?: ReactElement;
     subtitle?: string;
     size?: MenuItemContentSize;
@@ -45,7 +45,11 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
             </span>
         )}
         <div className="tw-flex-1 tw-overflow-hidden tw-overflow-ellipsis tw-whitespace-nowrap">
-            <div data-test-id="menu-item-title" className="tw-select-none" title={title}>
+            <div
+                data-test-id="menu-item-title"
+                className="tw-select-none"
+                title={typeof title === "string" ? title : ""}
+            >
                 {title}
             </div>
             {subtitle && size === MenuItemContentSize.Large && (
