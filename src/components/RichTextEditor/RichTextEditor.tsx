@@ -17,10 +17,11 @@ import { renderInlineStyles, Styles as InlineStyleTypes } from "./renderer/rende
 import { editorMachine, States } from "./state/editor/machine";
 import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
 import { Toolbar } from "./Toolbar";
+import { parseRawValue } from "./utils/parseRawContent";
 
 export type RichTextEditorProps = {
     placeholder?: string;
-    value?: BlockElement[];
+    value?: string;
     onTextChange?: (value: string) => void;
     readonly?: boolean;
 };
@@ -54,14 +55,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     readonly = false,
     onTextChange: onSave,
 }) => {
-    const [value, setValue] = useState<Descendant[]>(
-        initialValue ?? [
-            {
-                type: BlockStyleTypes.Paragraph,
-                children: [{ text: "" }],
-            },
-        ],
-    );
+    const [value, setValue] = useState<Descendant[]>(() => parseRawValue(initialValue));
     const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
 
     const withPlugins = compose(withReact, withHistory, withLists);
