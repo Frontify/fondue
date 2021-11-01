@@ -55,6 +55,21 @@ module.exports = {
                 0: "#fafafa",
                 warm: "#e6dcdc",
             },
+            neutral: {
+                superdark: "var(--color-neutral-superdark)",
+                100: "var(--color-neutral-100)",
+                50: "var(--color-neutral-50)",
+                20: "var(--color-neutral-20)",
+                10: "var(--color-neutral-10)",
+            },
+            ambient: {
+                90: "var(--color-ambient-90)",
+                70: "var(--color-ambient-70)",
+                60: "var(--color-ambient-60)",
+                50: "var(--color-ambient-50)",
+                40: "var(--color-ambient-40)",
+                20: "var(--color-ambient-20)",
+            },
             violet: {
                 // Solids
                 90: "#443185",
