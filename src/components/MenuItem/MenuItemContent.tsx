@@ -2,7 +2,7 @@
 
 import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
-import React, { cloneElement, FC, HTMLAttributes, ReactElement } from "react";
+import React, { cloneElement, FC, HTMLAttributes, ReactElement, ReactNode } from "react";
 
 export enum MenuItemContentSize {
     Small = "Small",
@@ -15,7 +15,7 @@ export enum MenuItemContentStyle {
 }
 
 export type MenuItemContentProps = {
-    title: string | ReactElement;
+    title: ReactNode;
     decorator?: ReactElement;
     subtitle?: string;
     size?: MenuItemContentSize;
