@@ -54,12 +54,12 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
     if (type === TableColumnHeaderType.SelectAll) {
         const { checkboxProps } = useTableSelectAllCheckbox(state);
         const {
-            selectionManager: { toggleSelectAll, selectedKeys, selectionMode },
+            selectionManager: { selectedKeys, selectionMode },
         } = state;
         const inputRef = useRef(null);
         const toggleState = useToggleState(checkboxProps);
         const { inputProps } = useCheckbox(checkboxProps, toggleState, inputRef);
-        const headerProps = { ...columnHeaderProps, onClick: () => toggleSelectAll() };
+        const headerProps = { ...columnHeaderProps, onClick: () => state.selectionManager.toggleSelectAll() };
         const selectedKeyCount = selectedKeys.size;
 
         const getCheckboxState = useCallback(() => {
