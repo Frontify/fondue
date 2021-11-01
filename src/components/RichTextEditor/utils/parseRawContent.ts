@@ -66,8 +66,8 @@ const deserializeHTML = (el: HTMLElement | ChildNode): Descendant | Descendant[]
         return jsx("text", STYLE_MAP[el.nodeName](), children);
     }
 
-    if (BLOCK_MAP[el.nodeName]) {
-        return jsx("element", BLOCK_MAP[el.nodeName](el as HTMLElement), children);
+    if (el instanceof HTMLElement && BLOCK_MAP[el.nodeName]) {
+        return jsx("element", BLOCK_MAP[el.nodeName](el), children);
     }
 
     return el.textContent?.trim() ?? null;
