@@ -1,8 +1,10 @@
-name: Continuous Deployment
+name: Release
 
 on:
-    release:
-        types: [published]
+    push:
+        branches:
+            - "next"
+    worfklow_dispatch: []
 
 jobs:
     tests:
