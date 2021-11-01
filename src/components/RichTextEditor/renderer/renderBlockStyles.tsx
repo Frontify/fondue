@@ -15,14 +15,25 @@ export const renderBlockStyles = (props: RenderElementProps): JSX.Element => {
             return <p {...props.attributes}>{props.children}</p>;
         case BlockStyleTypes.Code:
             return (
-                <pre className="tw-border tw-rounded tw-text-sm tw-bg-black-5 tw-text-violet-90 tw-m-0 tw-px-2 tw-py-1">
-                    <code {...props.attributes}>{props.children}</code>
+                <pre
+                    {...props.attributes}
+                    className="tw-border tw-rounded tw-text-sm tw-bg-black-5 tw-text-violet-90 tw-m-0 tw-px-2 tw-py-1"
+                >
+                    <code>{props.children}</code>
                 </pre>
             );
         case BlockStyleTypes.OrderedList:
-            return <ol {...props.attributes}>{props.children}</ol>;
+            return (
+                <ol {...props.attributes} className="tw-list-decimal tw-list-inside">
+                    {props.children}
+                </ol>
+            );
         case BlockStyleTypes.UnorderedList:
-            return <ul {...props.attributes}>{props.children}</ul>;
+            return (
+                <ul {...props.attributes} className="tw-list-disc tw-list-inside">
+                    {props.children}
+                </ul>
+            );
         case BlockStyleTypes.ListItem:
             return <li {...props.attributes}>{props.children}</li>;
         default:

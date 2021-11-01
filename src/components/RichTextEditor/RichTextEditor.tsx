@@ -8,6 +8,7 @@ import { BaseEditor, createEditor, Descendant } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
+import { withLists } from "./constraints/withLists";
 import { ToolbarContext } from "./context/toolbar";
 import { useSoftBreak } from "./hooks/useSoftBreak";
 import { BlockStyleTypes, renderBlockStyles } from "./renderer/renderBlockStyles";
@@ -25,7 +26,7 @@ export type RichTextEditorProps = {
 
 export type BlockElement = {
     type: BlockStyleTypes;
-    children: FormattedText[];
+    children: (FormattedText | BlockElement)[];
 };
 
 export type FormattedText = {
@@ -62,7 +63,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
     const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
 
-    const editor = useMemo(() => withReact(withHistory(createEditor())), []);
+    const editor = useMemo(() => withReact(withHistory(withLists(createEditor()))), []);
     const softBreakHandler = useSoftBreak(editor);
     const [{ matches, children }, send] = useMachine(editorMachine.withContext({ locked: readonly, onSave }));
 
