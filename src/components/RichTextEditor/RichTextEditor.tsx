@@ -86,7 +86,11 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     onFocus={() => send("FOCUSED")}
                     readOnly={readonly}
                     onKeyUp={onTextSelected}
-                    onKeyDown={(e) => isModifyingKey(e.key) && send("TEXT_DESELECTED")}
+                    onKeyDown={(e) => {
+                        if (isModifyingKey(e.key)) {
+                            send("TEXT_DESELECTED");
+                        }
+                    }}
                     onMouseDown={() => send("TEXT_DESELECTED")}
                     onKeyPress={softBreakHandler}
                     renderLeaf={renderInlineStyles}
