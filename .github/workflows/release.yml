@@ -1,10 +1,10 @@
 name: Release
 
 on:
+    workflow_dispatch: []
     push:
         branches:
             - "next"
-    worfklow_dispatch: []
 
 jobs:
     tests:
