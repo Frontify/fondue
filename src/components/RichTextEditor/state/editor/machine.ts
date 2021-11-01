@@ -1,16 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Descendant, Editor } from "slate";
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { toolbarMachine } from "../toolbar/machine";
-import { updateLastSelectedText } from "./actions";
+import { callOnSave } from "./actions";
 
 export type EditorContext = {
     locked: boolean;
-    lastSelectedText: string | null;
+    onSave?: (value: string) => void;
 };
 
 export type EditorStateData = {
-    selectedText: string;
+    editor?: Editor;
+    value?: Descendant[];
 };
 
 export type EditorEventDataTypes = EditorStateData;
@@ -36,14 +38,18 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
             },
             [States.Editing]: {
                 on: {
-                    TEXT_SELECTED: [
-                        {
-                            target: States.Styling,
-                            cond: "hasTextSelection",
-                            actions: ["updateLastSelectedText"],
-                        },
-                    ],
-                    BLUR: States.Readonly,
+                    TEXT_UPDATED: {
+                        actions: "callOnSave",
+                    },
+                    TEXT_SELECTED: {
+                        target: States.Styling,
+                        cond: "hasTextSelection",
+                    },
+
+                    BLUR: {
+                        target: States.Readonly,
+                        actions: "callOnSave",
+                    },
                 },
             },
             [States.Styling]: {
@@ -56,12 +62,14 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                         {
                             target: States.Styling,
                             cond: "hasTextSelection",
-                            actions: "updateLastSelectedText",
                         },
                         States.Editing,
                     ],
                     TEXT_DESELECTED: States.Editing,
-                    BLUR: States.Readonly,
+                    BLUR: {
+                        target: States.Readonly,
+                        actions: "callOnSave",
+                    },
                 },
             },
         },
@@ -69,10 +77,16 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
     {
         guards: {
             canEdit: ({ locked }) => !locked,
-            hasTextSelection: (_, event) => event.data.selectedText.trim().length > 0,
+            hasTextSelection: (_, { data }) => {
+                const { editor } = data;
+                if (!editor?.selection) {
+                    return false;
+                }
+                return Editor.string(editor, editor.selection).trim().length > 0;
+            },
         },
         actions: {
-            updateLastSelectedText,
+            callOnSave,
         },
     },
 );

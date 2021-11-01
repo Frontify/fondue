@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { debounce } from "@utilities/debounce";
+import useDebounce from "@utilities/useDebounce";
 import { useMachine } from "@xstate/react";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { BaseEditor, createEditor, Descendant, Editor } from "slate";
+import { BaseEditor, createEditor, Descendant } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
@@ -42,12 +43,14 @@ declare module "slate" {
 }
 
 const TOOLBAR_DELAY_IN_MS = 200;
+const ON_SAVE_DELAY_IN_MS = 200;
 const isModifyingKey = (key: string) => !["Alt", "Control", "Meta", "Shift"].includes(key);
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
     value: initialValue,
     placeholder = "",
     readonly = false,
+    onTextChange: onSave,
 }) => {
     const [value, setValue] = useState<Descendant[]>(
         initialValue ?? [
@@ -57,19 +60,18 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
             },
         ],
     );
+    const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
+
     const editor = useMemo(() => withReact(withHistory(createEditor())), []);
     const softBreakHandler = useSoftBreak(editor);
-    const [{ matches, children }, send] = useMachine(editorMachine);
+    const [{ matches, children }, send] = useMachine(editorMachine.withContext({ locked: readonly, onSave }));
+
+    useEffect(() => {
+        send("TEXT_UPDATED", { data: { value } });
+    }, [debouncedValue]);
 
     const onTextSelected = useCallback(
-        debounce(
-            () =>
-                editor.selection &&
-                send("TEXT_SELECTED", {
-                    data: { selectedText: Editor.string(editor, editor.selection) },
-                }),
-            TOOLBAR_DELAY_IN_MS,
-        ),
+        debounce(() => send("TEXT_SELECTED", { data: { editor } }), TOOLBAR_DELAY_IN_MS),
         [editor],
     );
 
@@ -91,7 +93,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     onKeyPress={softBreakHandler}
                     renderLeaf={renderInlineStyles}
                     renderElement={renderBlockStyles}
-                    onBlur={() => send("BLUR")}
+                    onBlur={() => send("BLUR", { data: { value } })}
                 />
                 {matches(States.Styling) && (
                     <ToolbarContext.Provider

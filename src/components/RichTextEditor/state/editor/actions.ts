@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { assign } from "@xstate/immer";
 import { DoneInvokeEvent } from "xstate";
 import { EditorContext, EditorEventDataTypes } from "./machine";
 
-export const updateLastSelectedText = assign<EditorContext, DoneInvokeEvent<EditorEventDataTypes>>(
-    (context, { data }) => {
-        context.lastSelectedText = data.selectedText;
-    },
-);
+export const callOnSave = ({ onSave }: EditorContext, { data }: DoneInvokeEvent<EditorEventDataTypes>): void => {
+    if (onSave && data.value) {
+        onSave(JSON.stringify(data.value));
+    }
+};
