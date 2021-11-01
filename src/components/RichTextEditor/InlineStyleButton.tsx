@@ -4,7 +4,7 @@ import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
 import React, { FC, useContext } from "react";
 import { Editor } from "slate";
-import { useSlate } from "slate-react";
+import { useSlateStatic } from "slate-react";
 import { ToolbarContext } from "./context/toolbar";
 
 interface InlineStyleButtonProps {
@@ -18,7 +18,7 @@ export const InlineStyleButton: FC<InlineStyleButtonProps> = ({ style, children 
         return null;
     }
 
-    const editor = useSlate();
+    const editor = useSlateStatic();
     const [styleIsActive] = Editor.nodes(editor, {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         match: (n: any) => n[style] === true,
