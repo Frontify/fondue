@@ -6,8 +6,7 @@ export enum BlockStyleTypes {
     Code = "code",
     UnorderedList = "unordered-list",
     OrderedList = "ordered-list",
-    UnorderedListItem = "unordered-list-item",
-    OrderedListItem = "ordered-list-item",
+    ListItem = "list-item",
 }
 
 export const renderBlockStyles = (props: RenderElementProps): JSX.Element => {
@@ -20,6 +19,12 @@ export const renderBlockStyles = (props: RenderElementProps): JSX.Element => {
                     <code {...props.attributes}>{props.children}</code>
                 </pre>
             );
+        case BlockStyleTypes.OrderedList:
+            return <ol {...props.attributes}>{props.children}</ol>;
+        case BlockStyleTypes.UnorderedList:
+            return <ul {...props.attributes}>{props.children}</ul>;
+        case BlockStyleTypes.ListItem:
+            return <li {...props.attributes}>{props.children}</li>;
         default:
             return <DefaultElement {...props} />;
     }
