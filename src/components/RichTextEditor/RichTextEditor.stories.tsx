@@ -26,10 +26,7 @@ export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorP
                 { type: BlockStyleTypes.Paragraph, children: [{ text: "italic", italic: true }] },
                 { type: BlockStyleTypes.Paragraph, children: [{ text: "underline", underline: true }] },
                 { type: BlockStyleTypes.Paragraph, children: [{ text: "strikethrough", strikethrough: true }] },
-                {
-                    type: BlockStyleTypes.Paragraph,
-                    children: [{ type: BlockStyleTypes.Code, children: [{ text: "code" }] }],
-                },
+                { type: BlockStyleTypes.Code, children: [{ text: "code" }] },
                 {
                     type: BlockStyleTypes.UnorderedList,
                     children: [
@@ -80,7 +77,7 @@ RichTextWithHTML.args = {
         <p><i>italic</i></p>
         <p><u>underline</u></p>
         <p><s>strikethrough</s></p>
-        <p><pre><code>code</code></pre></p>
+        <pre><code>code</code></pre>
         <ul>
             <li>red</li>
             <li>blue</li>
