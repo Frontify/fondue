@@ -19,6 +19,7 @@ const STYLE_MAP: { [key: string]: () => { [key: string]: boolean } } = {
     S: () => ({ [Styles.Strikethrough]: true }),
     STRONG: () => ({ [Styles.Bold]: true }),
     BOLD: () => ({ [Styles.Bold]: true }),
+    B: () => ({ [Styles.Bold]: true }),
     U: () => ({ [Styles.Underline]: true }),
 };
 

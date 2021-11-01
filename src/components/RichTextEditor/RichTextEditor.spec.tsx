@@ -1,139 +1,125 @@
-// /* (c) Copyright Frontify Ltd., all rights reserved. */
+/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// import { mount } from "@cypress/react";
-// import { ContentState, convertToRaw } from "draft-js";
-// import React from "react";
-// import { RichTextEditor } from "./RichTextEditor";
-// import { styleMap } from "./styleMap";
+import { mount } from "@cypress/react";
+import React from "react";
+import { BlockStyleTypes } from "./renderer/renderBlockStyles";
+import { RichTextEditor } from "./RichTextEditor";
 
-// const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
-// const TOOLBAR = "[data-test-id=toolbar]";
+const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
+const TOOLBAR = "[data-test-id=toolbar]";
 
-// const getBlockStyleControl = (blockType: string) => `[data-test-id=block-style-button-${blockType}]`;
-// const getInlineStyleControl = (style: string) => `[data-test-id=inline-style-button-${style}]`;
-// const insertTextAndOpenToolbar = () => cy.get("[contenteditable=true]").click().type("hello{selectall}");
+const getBlockStyleControl = (blockType: string) => `[data-test-id=block-style-button-${blockType}]`;
+const getInlineStyleControl = (style: string) => `[data-test-id=inline-style-button-${style}]`;
+const insertTextAndOpenToolbar = () => cy.get("[contenteditable=true]").click().type("hello{selectall}");
 
-// const camelToUnderscore = (key: string) => {
-//     const result = key.replace(/([A-Z])/g, " $1");
-//     return result.split(" ").join("-").toLowerCase();
-// };
+describe("RichTextEditor Component", () => {
+    it("should render an empty rich text editor", () => {
+        mount(<RichTextEditor />);
 
-// const getStringifiedStyles = (styleObject: { [key: string]: string }) =>
-//     Object.entries(styleObject)
-//         .reduce<string[]>((acc, [key, value]) => {
-//             acc.push(`${camelToUnderscore(key)}: ${value}`);
-//             return acc;
-//         }, [])
-//         .join("; ");
+        cy.get(RICH_TEXT_EDITOR).should("be.visible");
+    });
 
-// describe("RichTextEditor Component", () => {
-//     it("should render an empty rich text editor", () => {
-//         mount(<RichTextEditor />);
+    it("should render a raw content state", () => {
+        const text = "This is some text that you can not edit";
+        mount(<RichTextEditor value={JSON.stringify([{ type: BlockStyleTypes.Paragraph, children: [{ text }] }])} />);
 
-//         cy.get(RICH_TEXT_EDITOR).should("be.visible");
-//     });
+        cy.get(RICH_TEXT_EDITOR).should("contain.text", text);
+    });
 
-//     it("should render a raw content state", () => {
-//         const text = "This is some text that you can not edit";
-//         mount(<RichTextEditor value={convertToRaw(ContentState.createFromText(text))} />);
+    it("should render a raw html content state", () => {
+        mount(<RichTextEditor value={"<b>this is bold</b> and <i>this italic</i>"} />);
 
-//         cy.get(RICH_TEXT_EDITOR).should("contain.text", text);
-//     });
+        cy.get(RICH_TEXT_EDITOR).should("contain.text", "this is bold and this italic");
+        cy.get("[contenteditable=true]").should("include.html", "tw-font-bold");
+        cy.get("[contenteditable=true]").should("include.html", "tw-italic");
+    });
 
-//     it("should render a raw html content state", () => {
-//         mount(<RichTextEditor value={"<b>this is bold</b> and <i>this italic</i>"} />);
+    it("should be editable by default ", () => {
+        mount(<RichTextEditor />);
 
-//         cy.get(RICH_TEXT_EDITOR).should("contain.text", "this is bold and this italic");
-//         cy.get("[contenteditable=true]").should("include.html", "font-weight: bold");
-//         cy.get("[contenteditable=true]").should("include.html", "font-style: italic");
-//     });
+        cy.get("[contenteditable=true]").should("exist");
+    });
 
-//     it("should be editable by default ", () => {
-//         mount(<RichTextEditor />);
+    it("should not the able to edit when readonly ", () => {
+        mount(<RichTextEditor readonly />);
 
-//         cy.get("[contenteditable=true]").should("exist");
-//     });
+        cy.get("[contenteditable=false]").should("exist");
+    });
 
-//     it("should not the able to edit when readonly ", () => {
-//         mount(<RichTextEditor readonly />);
+    it("should type and insert text", () => {
+        mount(<RichTextEditor />);
 
-//         cy.get("[contenteditable=false]").should("exist");
-//     });
+        cy.get("[contenteditable=true]").click().type("hello");
+    });
 
-//     it("should type and insert text", () => {
-//         mount(<RichTextEditor />);
+    it("should display toolbar when selecting inserted text", () => {
+        mount(<RichTextEditor />);
 
-//         cy.get("[contenteditable=true]").click().type("hello");
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR).should("exist");
+    });
 
-//     it("should display toolbar when selecting inserted text", () => {
-//         mount(<RichTextEditor />);
+    it("should close toolbar on blur", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(TOOLBAR).should("exist");
-//     });
+        insertTextAndOpenToolbar();
+        cy.get("[contenteditable=true]").blur();
+        cy.get(TOOLBAR).should("not.exist");
+    });
 
-//     it("should close toolbar on blur", () => {
-//         mount(<RichTextEditor />);
+    it("renders a bold text", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get("[contenteditable=true]").blur();
-//         cy.get(TOOLBAR).should("not.exist");
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(getInlineStyleControl("bold")).click();
+        cy.get("[contenteditable=true]").should("include.html", "tw-font-bold");
+    });
 
-//     it("renders a bold text", () => {
-//         mount(<RichTextEditor />);
+    it("renders italic", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getInlineStyleControl("BOLD")).click();
-//         cy.get("[contenteditable=true]").should("include.html", "font-weight: bold");
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(getInlineStyleControl("italic")).click();
+        cy.get("[contenteditable=true]").should("include.html", "tw-italic");
+    });
 
-//     it("renders code", () => {
-//         mount(<RichTextEditor />);
+    it("renders underline", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getInlineStyleControl("CODE")).click();
-//         cy.get("[contenteditable=true]").should("include.html", getStringifiedStyles(styleMap.CODE));
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(getInlineStyleControl("underline")).click();
+        cy.get("[contenteditable=true]").should("include.html", "tw-underline");
+    });
 
-//     it("renders italic", () => {
-//         mount(<RichTextEditor />);
+    it("renders strikethrough", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getInlineStyleControl("ITALIC")).click();
-//         cy.get("[contenteditable=true]").should("include.html", "font-style: italic");
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(getInlineStyleControl("strikethrough")).click();
+        cy.get("[contenteditable=true]").should("include.html", "tw-line-through");
+    });
 
-//     it("renders underline", () => {
-//         mount(<RichTextEditor />);
+    it("renders code", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getInlineStyleControl("UNDERLINE")).click();
-//         cy.get("[contenteditable=true]").should("include.html", "text-decoration: underline");
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(getBlockStyleControl("code")).click();
+        cy.get("[contenteditable=true]").should("include.html", "<code>");
+    });
 
-//     it("renders strikethrough", () => {
-//         mount(<RichTextEditor />);
+    it("renders an ordered list", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getInlineStyleControl("STRIKETHROUGH")).click();
-//         cy.get("[contenteditable=true]").should("include.html", getStringifiedStyles(styleMap.STRIKETHROUGH));
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(getBlockStyleControl("ordered-list")).click();
+        cy.get("[contenteditable=true]").should("include.html", "<ol");
+    });
 
-//     it("renders an ordered list", () => {
-//         mount(<RichTextEditor />);
+    it("renders an unordered list", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getBlockStyleControl("ordered-list-item")).click();
-//         cy.get("[contenteditable=true]").should("include.html", "<ol");
-//     });
-
-//     it("renders an unordered list", () => {
-//         mount(<RichTextEditor />);
-
-//         cy.get("[contenteditable=true]").click().type("hello{selectall}");
-//         cy.get(getBlockStyleControl("unordered-list-item")).click();
-//         cy.get("[contenteditable=true]").should("include.html", "<ul");
-//     });
-// });
+        cy.get("[contenteditable=true]").click().type("hello{selectall}");
+        cy.get(getBlockStyleControl("unordered-list")).click();
+        cy.get("[contenteditable=true]").should("include.html", "<ul");
+    });
+});
