@@ -15,7 +15,7 @@ export enum MenuItemContentStyle {
 }
 
 export type MenuItemContentProps = {
-    title: string;
+    title: string | ReactElement;
     decorator?: ReactElement;
     subtitle?: string;
     size?: MenuItemContentSize;
@@ -45,7 +45,11 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
             </span>
         )}
         <div className="tw-flex-1 tw-overflow-hidden tw-overflow-ellipsis tw-whitespace-nowrap">
-            <div data-test-id="menu-item-title" className="tw-select-none" title={title}>
+            <div
+                data-test-id="menu-item-title"
+                className="tw-select-none"
+                title={typeof title === "string" ? title : ""}
+            >
                 {title}
             </div>
             {subtitle && size === MenuItemContentSize.Large && (

@@ -56,7 +56,7 @@ export const ActionMenu = ({
                                     ...item,
                                     onAction: () => menuItem?.onClick(),
                                     isDisabled: menuItem?.disabled || false,
-                                    "aria-label": menuItem?.title || "Menu item",
+                                    "aria-label": typeof menuItem?.title === "string" ? menuItem?.title : "Menu item",
                                 },
                                 state,
                                 itemRef,
