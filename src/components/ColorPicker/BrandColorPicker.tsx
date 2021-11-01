@@ -1,10 +1,10 @@
 import { Slider } from "@components/Slider/Slider";
+import { TextInput } from "@components/TextInput/TextInput";
 import IconCheck from "@foundation/Icon/Generated/IconCheck";
 import IconImageGrid2 from "@foundation/Icon/Generated/IconImageGrid2";
 import IconListBullets from "@foundation/Icon/Generated/IconListBullets";
 import IconSearch from "@foundation/Icon/Generated/IconSearch";
 import { IconSize } from "@foundation/Icon/IconSize";
-import { TextInput } from "@components/TextInput/TextInput";
 import { toColor } from "@utilities/colors";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useState } from "react";
@@ -20,8 +20,8 @@ enum BrandColorView {
 
 export const BrandColorPicker: FC<ColorPickerProps> = ({ palettes: defaultPalettes = [], currentColor, onSelect }) => {
     const views = [
-        { id: BrandColorView.List, icon: <IconListBullets />, ariaLabel: "List" },
         { id: BrandColorView.Grid, icon: <IconImageGrid2 />, ariaLabel: "Grid" },
+        { id: BrandColorView.List, icon: <IconListBullets />, ariaLabel: "List" },
     ];
     const [view, setView] = useState(views[0].id);
     const [query, setQuery] = useState("");
