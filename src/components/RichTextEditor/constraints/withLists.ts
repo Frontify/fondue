@@ -13,9 +13,12 @@ export const withLists = (editor: Editor): Editor => {
     return editor;
 };
 
+const isList = (nodeType: BlockStyleTypes) =>
+    [BlockStyleTypes.UnorderedList, BlockStyleTypes.OrderedList].includes(nodeType);
+
 const ensureListItems = (entry: NodeEntry, editor: Editor) => {
     const [node, path] = entry;
-    if (Element.isElement(node) && [BlockStyleTypes.UnorderedList, BlockStyleTypes.OrderedList].includes(node.type)) {
+    if (Element.isElement(node) && isList(node.type)) {
         for (const [child, childPath] of Node.children(editor, path)) {
             if (!(Element.isElement(child) && child.type === BlockStyleTypes.ListItem)) {
                 Transforms.wrapNodes(editor, { type: BlockStyleTypes.ListItem, children: [child] }, { at: childPath });

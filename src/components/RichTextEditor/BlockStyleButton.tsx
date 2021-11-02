@@ -6,7 +6,6 @@ import React, { FC, useContext } from "react";
 import { Editor } from "slate";
 import { useSlateStatic } from "slate-react";
 import { ToolbarContext } from "./context/toolbar";
-import { BlockStyleTypes } from "./renderer/renderBlockStyles";
 import { BlockElement } from "./RichTextEditor";
 
 interface BlockStyleButtonProps {
@@ -39,7 +38,7 @@ export const BlockStyleButton: FC<BlockStyleButtonProps> = ({ blockType, childre
                 event.preventDefault();
                 send({
                     type: "BLOCK_TYPE_SELECTED",
-                    data: { type: blockTypeIsActive ? BlockStyleTypes.Paragraph : blockType, editor },
+                    data: { type: blockType, active: !!blockTypeIsActive, editor },
                 });
             }}
             onMouseDown={(event) => event.preventDefault()}

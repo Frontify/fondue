@@ -10,6 +10,7 @@ export type ToolbarContext = {
 };
 
 export type BlockTypeData = {
+    active: boolean;
     type: BlockElement["type"];
     editor: Editor;
 };
