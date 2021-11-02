@@ -6,8 +6,8 @@ import { ICON_ITEM_ID, TEXT_ITEM_ID } from "@components/Slider/Slider.spec";
 import { mount } from "@cypress/react";
 import { EXAMPLE_PALETTES } from "@utilities/colors";
 import React, { FC, useState } from "react";
-import { Color } from "../../types/colors";
-import { ColorPicker, Palette } from "./ColorPicker";
+import { Color, Palette } from "../../types/colors";
+import { ColorPicker } from "./ColorPicker";
 
 export const BRAND_COLOR_ID = "[data-test-id=brand-color]";
 export const COLOR_PREVIEW_ID = "[data-test-id=color-preview]";

@@ -32,7 +32,8 @@ export const BrandColorPicker: FC<ColorPickerProps> = ({ palettes: defaultPalett
             setPalettes(
                 defaultPalettes
                     .filter(({ title, colors }) => find(title, query) || colors.some(({ name }) => find(name, query)))
-                    .map(({ title, colors }) => ({
+                    .map(({ id, title, colors }) => ({
+                        id,
                         title,
                         colors: colors.some(({ name }) => find(name, query))
                             ? colors.filter(({ name }) => find(name, query))
@@ -65,8 +66,8 @@ export const BrandColorPicker: FC<ColorPickerProps> = ({ palettes: defaultPalett
             </div>
             <ul className="tw-flex tw-flex-col tw-gap-5">
                 {palettes.length
-                    ? palettes.map(({ title, colors }) => (
-                          <li key={title} className="tw-flex tw-flex-col tw-gap-3">
+                    ? palettes.map(({ id, title, colors }) => (
+                          <li key={id} className="tw-flex tw-flex-col tw-gap-3">
                               <p className="tw-text-black dark:tw-text-white">{title}</p>
                               <ul
                                   className={merge([

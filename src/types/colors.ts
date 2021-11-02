@@ -19,3 +19,9 @@ export type DiffColor = {
     rgba?: { r?: number | string; g?: number | string; b?: number | string; a?: number };
     name?: string;
 };
+
+export type Palette = {
+    id: number | string;
+    title: string;
+    colors: Color[];
+};

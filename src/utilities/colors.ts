@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
 import { toState } from "react-color/lib/helpers/color";
-import { Color, ColorState, DiffColor } from "../types/colors";
+import { Color, ColorState, DiffColor, Palette } from "../types/colors";
 
 export const getValidRgbColorValue = (input: string): number => {
     const value = parseInt(input || "0", 10);
@@ -28,16 +28,19 @@ export const toColor = (current: Color, { name, ...diff }: DiffColor): Color => 
     return { name, rgba, alpha, hex };
 };
 
-export const EXAMPLE_PALETTES = [
+export const EXAMPLE_PALETTES: Palette[] = [
     {
+        id: "red",
         title: "Red",
         colors: ["#992136", "#cc2c48", "#ff375a", "#ff8066", "#e1c4be", "#f0e1de"],
     },
     {
+        id: "green",
         title: "Green",
         colors: ["#006452", "#00866e", "#00c8a5", "#80dbb7", "#bee1d4", "#def0e9"],
     },
     {
+        id: "yellow",
         title: "Yellow",
         colors: ["#cc9000", "#e6a200", "#ffb400", "#eec779", "#e1d4be", "#f0e9de"],
     },
