@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { BUTTON_ID } from "@components/Button/Button.spec";
-import { Palette } from "@components/ColorPicker/ColorPicker";
 import { BRAND_COLOR_ID, COLOR_PREVIEW_ID } from "@components/ColorPicker/ColorPicker.spec";
 import { MENU_ITEM_DECORATOR_ID } from "@components/MenuItem/MenuItem.spec";
 import { mount } from "@cypress/react";
 import { EXAMPLE_PALETTES } from "@utilities/colors";
-import { Color } from "../../types/colors";
+import { Color, Palette } from "../../types/colors";
 import React, { FC, useState } from "react";
 import { ColorPickerFlyout } from "./ColorPickerFlyout";
 
