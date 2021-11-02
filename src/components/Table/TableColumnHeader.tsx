@@ -11,7 +11,7 @@ import { mergeProps } from "@react-aria/utils";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { TableState } from "@react-stately/table";
 import { useToggleState } from "@react-stately/toggle";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, useCallback, useEffect, useRef, useState } from "react";
 
@@ -97,7 +97,7 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
             ref={ref}
             className={merge([
                 "tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-outline-none tw-cursor-pointer tw-group",
-                isFocusVisible && FOCUS_STYLE,
+                isFocusVisible && FOCUS_STYLE_INSET,
             ])}
             data-test-id="table-column"
         >
