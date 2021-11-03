@@ -1,4 +1,6 @@
-import { FormattedText } from "src";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { FormattedText } from "../RichTextEditor";
 import { BlockStyleTypes } from "../renderer/renderBlockStyles";
 
 type ListItemNode = {
