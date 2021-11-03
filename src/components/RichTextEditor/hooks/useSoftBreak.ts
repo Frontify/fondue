@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { KeyboardEvent } from "react";
 import { Editor } from "slate";
 
