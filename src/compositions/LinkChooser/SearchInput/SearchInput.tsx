@@ -18,7 +18,7 @@ import React, {
 } from "react";
 import { useClipboard } from "@hooks/useClipboard";
 import { Validation } from "@elements/TextInput/TextInput";
-import { SelectedOption } from "../LinkChooser";
+import { SelectedOption } from "../LinkChooser.stories";
 
 const validationStyle: Record<Validation, string> = {
     [Validation.Default]: "tw-border-black-20",

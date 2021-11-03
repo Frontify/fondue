@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Key, ReactNode, useCallback, useState } from "react";
+import React, { Key, useCallback, useState } from "react";
 import { Story, Meta } from "@storybook/react";
 import { IconLabel, LinkChooser } from "./LinkChooser";
 import { SelectionIndicatorIcon } from "@components/Menu/MenuItem/MenuItem";
@@ -35,7 +35,7 @@ export type LinkChooserProps = {
     placeholder?: string;
 };
 
-export type SelectedOption = { title: string; id: Key; link: string; icon: ReactNode };
+export type SelectedOption = { title: string; id: Key; link: string; icon: string };
 
 export type OpenWindow = OpenWindowType;
 

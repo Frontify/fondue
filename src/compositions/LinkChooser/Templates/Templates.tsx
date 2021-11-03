@@ -1,7 +1,7 @@
 import React, { Key } from "react";
 import { FC } from "react";
 import IconArrowLeft from "@elements/Icon/Generated/IconArrowLeft";
-import { OpenWindowType } from "../LinkChooser";
+import { OpenWindowType } from "../LinkChooser.stories";
 
 export type Template = {
     id: Key;

@@ -1,4 +1,4 @@
-import React, { FC, Key, ReactNode, useRef, useState, useEffect, useCallback, ReactElement } from "react";
+import React, { FC, Key, useRef, useState, useEffect, useCallback, ReactElement } from "react";
 import { useComboBoxState } from "@react-stately/combobox";
 import { useComboBox } from "@react-aria/combobox";
 import { ListBox } from "./ListBox/ListBox";
@@ -16,16 +16,10 @@ import IconLink from "@elements/Icon/Generated/IconLink";
 import IconExternalLink from "@elements/Icon/Generated/IconExternalLink";
 import IconDocumentLibrary from "@elements/Icon/Generated/IconDocumentLibrary";
 import IconReject from "@elements/Icon/Generated/IconReject";
+import { OpenWindow, OpenWindowType, SelectedOption } from "./LinkChooser.stories";
 export { Item, Section } from "@react-stately/collections";
 
 const MAX_STORED_ITEMS = 5;
-
-export enum OpenWindowType {
-    None = "None",
-    Guidelines = "Guidelines",
-    Projects = "Projects",
-    Templates = "Templates",
-}
 
 export enum IconLabel {
     Document = "DOCUMENT",
@@ -72,14 +66,9 @@ export type LinkChooserProps = {
     onTabChange: (value: boolean) => void;
 };
 
-export type SelectedOption = { title: string; id: Key; link: string; icon: ReactNode };
-
-export type OpenWindow = OpenWindowType;
-
 export const LinkChooser: FC<LinkChooserProps> = ({
     selectMenuBlocks,
     actionMenuBlocks,
-    templateMenuBlocks,
     selectedOption,
     newTab,
     openWindow,
