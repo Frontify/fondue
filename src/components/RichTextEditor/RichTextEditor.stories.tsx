@@ -4,6 +4,8 @@ import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { BlockStyleTypes } from "./renderer/renderBlockStyles";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
+import { createLinkNode } from "./utils/link";
+import { createListItemNode } from "./utils/listItem";
 
 export default {
     title: "Components/Rich Text Editor",
@@ -25,32 +27,21 @@ const value = JSON.stringify([
     { type: BlockStyleTypes.Code, children: [{ text: "code" }] },
     {
         type: BlockStyleTypes.UnorderedList,
-        children: [
-            { type: BlockStyleTypes.ListItem, children: [{ text: "red" }] },
-            { type: BlockStyleTypes.ListItem, children: [{ text: "blue" }] },
-            { type: BlockStyleTypes.ListItem, children: [{ text: "yellow" }] },
-        ],
+        children: [createListItemNode("red"), createListItemNode("blue"), createListItemNode("yellow")],
     },
     {
         type: BlockStyleTypes.OrderedList,
         children: [
-            {
-                type: BlockStyleTypes.ListItem,
-                children: [{ text: "Mix flour, baking powder, sugar, and salt." }],
-            },
-            {
-                type: BlockStyleTypes.ListItem,
-                children: [{ text: "In another bowl, mix eggs, milk, and oil." }],
-            },
-            { type: BlockStyleTypes.ListItem, children: [{ text: "Stir both mixtures together." }] },
-            { type: BlockStyleTypes.ListItem, children: [{ text: "Fill muffin tray 3/4 full." }] },
-            { type: BlockStyleTypes.ListItem, children: [{ text: "Bake for 20 minutes." }] },
+            createListItemNode("Mix flour, baking powder, sugar, and salt."),
+            createListItemNode("In another bowl, mix eggs, milk, and oil."),
+            createListItemNode("Stir both mixtures together."),
+            createListItemNode("Fill muffin tray 3/4 full."),
+            createListItemNode("Bake for 20 minutes."),
         ],
     },
     {
-        type: BlockStyleTypes.Link,
-        url: "https://git-scm.com/downloads",
-        children: [{ text: "Link" }],
+        type: BlockStyleTypes.Paragraph,
+        children: [createLinkNode("https://git-scm.com/downloads", "Link")],
     },
 ]);
 
@@ -93,7 +84,7 @@ RichTextWithHTML.args = {
             <li>Fill muffin tray 3/4 full.</li>
             <li>Bake for 20 minutes.</li>
         </ol>
-        <a href="https://git-scm.com/downloads" target="_blank">Link</a>
+        <p><a href="https://git-scm.com/downloads" target="_blank">Link</a></p>
     `,
 };
 RichTextWithHTML.argTypes = { value: { type: "string" } };
