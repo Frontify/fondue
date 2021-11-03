@@ -86,7 +86,7 @@
         "esbuild": "0.13.12",
         "eslint": "7.32.0",
         "eslint-plugin-jsx-a11y": "6.4.1",
-        "esno": "0.10.1",
+        "esno": "0.11.0",
         "fast-glob": "3.2.7",
         "husky": "7.0.4",
         "is-ci": "3.0.1",
