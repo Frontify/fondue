@@ -1,5 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-
+/* 
 import React from "react";
 import { mount } from "@cypress/react";
 import { LinkChooser } from "./LinkChooser";
@@ -8,9 +8,9 @@ import { SelectionIndicatorIcon } from "@components/Menu/MenuItem/MenuItem";
 import IconDocument from "@elements/Icon/Generated/IconDocument";
 import IconDocumentLibrary from "@elements/Icon/Generated/IconDocumentLibrary";
 import IconLink from "@elements/Icon/Generated/IconLink";
-import IconExternalLink from "@elements/Icon/Generated/IconExternalLink";
+import IconExternalLink from "@elements/Icon/Generated/IconExternalLink"; */
 
-const LINK_CHOOSER_ID = "[data-test-id=link-chooser]";
+/* const LINK_CHOOSER_ID = "[data-test-id=link-chooser]"; */
 /* const SEARCH_WRAPPER_ID = "[data-test-id=search-wrapper]";
 const SEARCH_INPUT_ID = "[data-test-id=search-input]";
 const PREVIEW_ICON_ID = "[data-test-id=preview-icon]";
@@ -18,7 +18,7 @@ const COPY_ICON_ID = "[data-test-id=copy-icon]";
 const DISCARD_ICON_ID = "[data-test-id=discard-icon]";
 const SELECT_SECTION_ID = "[data-test-id=select-section]"; */
 
-const selectMenuBlocks = [
+/* const selectMenuBlocks = [
     {
         id: "Suggestions",
         menuItems: [
@@ -89,14 +89,14 @@ const actionMenuBlocks = [
             },
         ],
     },
-];
+]; */
 
 describe("LinkChooser Component", () => {
-    it("renders correctly", () => {
+    /*     it("renders correctly", () => {
         mount(<LinkChooser selectMenuBlocks={selectMenuBlocks} actionMenuBlocks={actionMenuBlocks} />);
 
         cy.get(LINK_CHOOSER_ID).should("be.visible");
-    });
+    }); */
     // TODO - No longer valid because of localStorage
     /*     it("displays children on click", () => {
         mount(<LinkChooser selectMenuBlocks={selectMenuBlocks} actionMenuBlocks={actionMenuBlocks} />);
