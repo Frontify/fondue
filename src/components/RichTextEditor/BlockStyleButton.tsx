@@ -22,7 +22,7 @@ export const BlockStyleButton: FC<BlockStyleButtonProps> = ({ blockType, childre
     const editor = useSlateStatic();
     const [blockTypeIsActive] = Editor.nodes(editor, {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        match: (n) => Element.isElement(n) && n.type === blockType,
+        match: (node) => Element.isElement(node) && node.type === blockType,
     });
 
     const [, send] = useActor(machineRef);

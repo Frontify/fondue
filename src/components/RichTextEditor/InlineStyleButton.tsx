@@ -21,7 +21,7 @@ export const InlineStyleButton: FC<InlineStyleButtonProps> = ({ style, children 
     const editor = useSlateStatic();
     const [styleIsActive] = Editor.nodes(editor, {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        match: (n: any) => n[style] === true,
+        match: (node: any) => node[style] === true,
     });
 
     const [, send] = useActor(machineRef);

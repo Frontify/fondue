@@ -19,7 +19,7 @@ const ensureLinkHasAncestorParagraph = (entry: NodeEntry, editor: Editor) => {
     const [node] = entry;
     if (Element.isElement(node) && node.type === BlockStyleTypes.Link) {
         const ancestorParagraph = Editor.above(editor, {
-            match: (n) => Element.isElement(n) && n.type === BlockStyleTypes.Paragraph,
+            match: (node) => Element.isElement(node) && node.type === BlockStyleTypes.Paragraph,
         });
         if (!ancestorParagraph) {
             Transforms.wrapNodes(editor, createParagraphNode([node]));

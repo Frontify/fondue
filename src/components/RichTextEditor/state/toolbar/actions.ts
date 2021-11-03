@@ -19,7 +19,11 @@ export const updateBlockType = (_: ToolbarContext, { data }: DoneInvokeEvent<Too
 export const updateInlineStyle = (_: ToolbarContext, { data }: DoneInvokeEvent<ToolbarData>): void => {
     if (isInlineStyleData(data)) {
         const { editor, style } = data;
-        Transforms.setNodes(editor, { [style as string]: data.value }, { match: (n) => Text.isText(n), split: true });
+        Transforms.setNodes(
+            editor,
+            { [style as string]: data.value },
+            { match: (node) => Text.isText(node), split: true },
+        );
     }
 };
 
@@ -27,8 +31,8 @@ const toggleBlock = (active: boolean, editor: Editor, type: BlockStyleTypes) => 
     const isList = [BlockStyleTypes.OrderedList, BlockStyleTypes.UnorderedList].includes(type);
 
     Transforms.unwrapNodes(editor, {
-        match: (n) =>
-            Element.isElement(n) && [BlockStyleTypes.OrderedList, BlockStyleTypes.UnorderedList].includes(n.type),
+        match: (node) =>
+            Element.isElement(node) && [BlockStyleTypes.OrderedList, BlockStyleTypes.UnorderedList].includes(node.type),
         split: true,
     });
 
@@ -38,7 +42,7 @@ const toggleBlock = (active: boolean, editor: Editor, type: BlockStyleTypes) => 
 
     // ensure all selected child nodes are converted
     for (const [, path] of Editor.nodes(editor, {
-        match: (n) => Element.isElement(n) && BlockStyleTypes.ListItem === n.type,
+        match: (node) => Element.isElement(node) && BlockStyleTypes.ListItem === node.type,
     })) {
         Transforms.setNodes(editor, newListItem, { at: path });
     }
