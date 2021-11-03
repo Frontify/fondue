@@ -11,6 +11,7 @@ import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
 import { ToolbarContext } from "./context/toolbar";
 import { useSoftBreak } from "./hooks/useSoftBreak";
+import { withCode } from "./plugins/withCode";
 import { withLinks } from "./plugins/withLinks";
 import { withLists } from "./plugins/withLists";
 import { BlockStyleTypes, renderBlockStyles } from "./renderer/renderBlockStyles";
@@ -60,7 +61,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const [value, setValue] = useState<Descendant[]>(() => parseRawValue(initialValue));
     const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
 
-    const withPlugins = compose(withReact, withHistory, withLists, withLinks);
+    const withPlugins = compose(withReact, withHistory, withLists, withLinks, withCode);
     const editor = useMemo(() => withPlugins(createEditor()), []);
     const softBreakHandler = useSoftBreak(editor);
     const [{ matches, children }, send] = useMachine(editorMachine.withContext({ locked: readonly, onSave }));
