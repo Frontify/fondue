@@ -1,4 +1,4 @@
-import React, { FC, Key, ReactNode, useRef, useState, useEffect, useCallback } from "react";
+import React, { FC, Key, ReactNode, useRef, useState, useEffect, useCallback, ReactElement } from "react";
 import { useComboBoxState } from "@react-stately/combobox";
 import { useComboBox } from "@react-aria/combobox";
 import { ListBox } from "./ListBox/ListBox";
@@ -6,37 +6,19 @@ import { Popover } from "./Popover/Popover";
 import { mapToAriaProps } from "@components/Menu/Aria/helper";
 import { MenuBlock, MenuItemType } from "@components/Menu/SelectMenu";
 import { SearchInput } from "./SearchInput/SearchInput";
-import IconLink from "@elements/Icon/Generated/IconLink";
 import { AnimatePresence, motion } from "framer-motion";
 import { DismissButton } from "@react-aria/overlays";
 import { ActionMenu, ActionMenuBlock } from "@components/Menu/ActionMenu/ActionMenu";
 import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
 import { Templates } from "./Templates/Templates";
-
+import IconDocument from "@elements/Icon/Generated/IconDocument";
+import IconLink from "@elements/Icon/Generated/IconLink";
+import IconExternalLink from "@elements/Icon/Generated/IconExternalLink";
+import IconDocumentLibrary from "@elements/Icon/Generated/IconDocumentLibrary";
+import IconReject from "@elements/Icon/Generated/IconReject";
 export { Item, Section } from "@react-stately/collections";
 
 const MAX_STORED_ITEMS = 5;
-
-const TEMPLATES = [
-    {
-        preview:
-            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcLzhmXC83XC85MWU4MzdjZDk2YWQzN2EwYWY4OTZhYzA5OWRlNzIyNi0xNjM0MzAxNDUxLmpwZyJ9:msiric:Li3v_e6ogrxBoH-kli3whbqekW1K4ar5Dshif80q2o0?width=2400&height={height}",
-        title: "Aerial City View",
-        subtitle: "Corporate Library",
-    },
-    {
-        preview:
-            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcL2M5XC84XC9lYjI2YWQzZWIwMGMxYWE4MDQ3MGQ4Y2U4YjVhZjcwNS0xNjM0MzAxNDUxLmpwZyJ9:msiric:GjhRABJhT0SYjJr9ANQ5QpwdrPCRiEcImzRZXOC_XHo?width=2400&height={height}",
-        title: "Brooklyn",
-        subtitle: "Template Library Old Brand",
-    },
-    {
-        preview:
-            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcL2QzXC8xMFwvOTY1ZjU0YzFiYzcxMzJjYTZlNzgwYTBhNWU2ZTgyYTctMTYzNDMwMTQ1MS5qcGcifQ:msiric:_Vs4FXozFK81i3I6J69aAG8FOq_8ld1fV8oWsWYSF2Y?width=2400&height={height}",
-        title: "City",
-        subtitle: "SRF Kultur On Screen",
-    },
-];
 
 export enum OpenWindowType {
     None = "None",
@@ -45,12 +27,49 @@ export enum OpenWindowType {
     Templates = "Templates",
 }
 
+export enum IconLabel {
+    Document = "DOCUMENT",
+    Library = "LIBRARY",
+    Link = "LINK",
+    External = "EXTERNAL",
+    Reject = "REJECT",
+}
+
+export const ICON_OPTIONS: Record<IconLabel | string, ReactElement> = {
+    [IconLabel.Document]: <IconDocument />,
+    [IconLabel.Library]: <IconDocumentLibrary />,
+    [IconLabel.Link]: <IconLink />,
+    [IconLabel.External]: <IconExternalLink />,
+    [IconLabel.Reject]: <IconReject />,
+};
+
+export type TemplateMenuItemType = {
+    id: Key;
+    preview: string;
+    title: string;
+    subtitle?: string;
+    link?: string;
+};
+
+export type TemplateMenuBlock = {
+    id: string;
+    menuItems: TemplateMenuItemType[];
+    ariaLabel?: string;
+};
+
 export type LinkChooserProps = {
     selectMenuBlocks: MenuBlock[];
     actionMenuBlocks?: ActionMenuBlock[];
+    templateMenuBlocks?: TemplateMenuBlock[];
+    selectedOption: SelectedOption;
+    newTab: CheckboxState;
+    openWindow: OpenWindow;
     ariaLabel?: string;
     label?: string;
     placeholder?: string;
+    onOptionChange: (item: MenuItemType | undefined) => void;
+    onWindowChange: (window: OpenWindowType) => void;
+    onTabChange: (value: boolean) => void;
 };
 
 export type SelectedOption = { title: string; id: Key; link: string; icon: ReactNode };
@@ -60,46 +79,29 @@ export type OpenWindow = OpenWindowType;
 export const LinkChooser: FC<LinkChooserProps> = ({
     selectMenuBlocks,
     actionMenuBlocks,
+    templateMenuBlocks,
+    selectedOption,
+    newTab,
+    openWindow,
     ariaLabel = "Menu",
     label,
     placeholder,
+    onOptionChange,
+    onWindowChange,
+    onTabChange,
 }) => {
     const [displayedOptions, setDisplayedOptions] = useState<MenuBlock[]>(selectMenuBlocks);
-    const [selectedOption, setSelectedOption] = useState<SelectedOption>({
-        title: "",
-        id: "",
-        link: "",
-        icon: <IconLink />,
-    });
-    const [newTab, setNewTab] = useState<CheckboxState>(CheckboxState.Unchecked);
-    const [openWindow, setOpenWindow] = useState<OpenWindow>(OpenWindowType.Templates);
 
     const handleClearClick = useCallback(() => {
         state.setInputValue("");
         state.setSelectedKey("");
     }, []);
 
-    const handleSelectionChange = useCallback(
-        (key: Key) => {
-            const foundItem = selectMenuBlocks[0].menuItems.find((item) => item.id === key);
-            storeNewSelection(foundItem);
-            setSelectedOption({
-                title: foundItem?.title || "",
-                link: foundItem?.link || "",
-                id: foundItem?.id || "",
-                icon: foundItem?.decorator || <IconLink />,
-            });
-        },
-        [selectMenuBlocks],
-    );
-
     const handlePreviewClick = useCallback(() => {
         newTab === CheckboxState.Checked
             ? window.open(selectedOption.link, "_blank")
             : (window.location.href = selectedOption.link);
     }, [newTab, selectedOption.link]);
-
-    const handleWindowChange = (window: OpenWindowType) => setOpenWindow(window);
 
     const updateVisibleItems = () => {
         const storedQueries = retrieveStoredQueries();
@@ -109,7 +111,13 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         setDisplayedOptions(newSelectedOptions);
     };
 
-    const updateCheckState = (value: boolean) => setNewTab(value ? CheckboxState.Checked : CheckboxState.Unchecked);
+    const handleSelectionChange = (key: Key) => {
+        const foundItem = selectMenuBlocks[0].menuItems.find((item) => item.id === key);
+        storeNewSelection(foundItem);
+        onOptionChange(foundItem);
+    };
+
+    const filterItems = (value: string, query: string) => value.toLowerCase().includes(query.toLowerCase());
 
     const retrieveStoredQueries = () => {
         const recentQueries = JSON.parse(localStorage.getItem("queries") || "null");
@@ -128,8 +136,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             localStorage.setItem("queries", JSON.stringify(updatedQueries));
         }
     };
-
-    const filterItems = (value: string, query: string) => value.toLowerCase().includes(query.toLowerCase());
 
     const props = mapToAriaProps(ariaLabel, displayedOptions);
 
@@ -173,10 +179,14 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 )}
             </div>
         ),
-        [OpenWindowType.Templates]: <Templates templates={TEMPLATES} onClick={handleWindowChange} />,
+        [OpenWindowType.Templates]: (
+            <Templates templates={[]} onClick={onWindowChange} onSelect={handleSelectionChange} />
+        ),
         [OpenWindowType.Guidelines]: null,
         [OpenWindowType.Projects]: null,
     }[openWindow];
+
+    const formattedIcon = selectedOption && selectedOption.icon ? ICON_OPTIONS[selectedOption.icon] : undefined;
 
     useEffect(() => {
         updateVisibleItems();
@@ -196,7 +206,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     {...inputProps}
                     selectedOption={selectedOption}
                     ref={inputRef}
-                    decorator={selectedOption.icon}
+                    decorator={formattedIcon}
                     previewable={true}
                     copyable={true}
                     clearable={true}
@@ -224,7 +234,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 )}
             </AnimatePresence>
             <div className="tw-my-2">
-                <Checkbox state={newTab} onChange={updateCheckState} label="Open in New Tab" />
+                <Checkbox state={newTab} onChange={onTabChange} label="Open in New Tab" />
             </div>
         </div>
     );

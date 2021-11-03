@@ -12,9 +12,9 @@ import React, {
     ChangeEventHandler,
     FocusEvent,
     KeyboardEvent,
-    ReactNode,
     forwardRef,
     HTMLInputTypeAttribute,
+    ReactElement,
 } from "react";
 import { useClipboard } from "@hooks/useClipboard";
 import { Validation } from "@elements/TextInput/TextInput";
@@ -31,7 +31,7 @@ export type SearchInputProps = {
     id?: string;
     selectedOption: SelectedOption;
     type?: HTMLInputTypeAttribute;
-    decorator?: ReactNode;
+    decorator?: ReactElement;
     dotted?: boolean;
     previewable?: boolean;
     copyable?: boolean;

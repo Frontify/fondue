@@ -9,7 +9,7 @@ import { merge } from "@utilities/merge";
 import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
 import { MenuItem } from "@components/Menu/MenuItem/MenuItem";
 import { MenuBlock, MenuItemType } from "@components/Menu/SelectMenu";
-import IconReject from "@elements/Icon/Generated/IconReject";
+import { IconLabel, ICON_OPTIONS } from "../LinkChooser";
 
 interface ListBoxProps extends AriaListBoxOptions<unknown> {
     listBoxRef?: RefObject<HTMLUListElement>;
@@ -88,6 +88,7 @@ const Option = ({ item, state, keyItemRecord }: OptionProps) => {
     );
 
     const menuItem = keyItemRecord[item.key];
+    const decorator = menuItem.iconLabel ? ICON_OPTIONS[menuItem.iconLabel] : undefined;
 
     return (
         <li
@@ -98,11 +99,11 @@ const Option = ({ item, state, keyItemRecord }: OptionProps) => {
                 isDisabled && "tw-pointer-events-none tw-top-px",
             ])}
         >
-            <MenuItem {...menuItem} active={isSelected} />
+            <MenuItem {...menuItem} active={isSelected} decorator={decorator} />
         </li>
     );
 };
 
-const EmptyList = ({ title = "No recent queries found", decorator = <IconReject />, disabled = true }) => {
-    return <MenuItem title={title} decorator={decorator} disabled={disabled} />;
+const EmptyList = ({ title = "No recent queries found", label = IconLabel.Reject, disabled = true }) => {
+    return <MenuItem title={title} decorator={ICON_OPTIONS[label]} disabled={disabled} />;
 };
