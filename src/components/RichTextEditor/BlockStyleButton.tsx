@@ -3,7 +3,7 @@
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
 import React, { FC, useContext } from "react";
-import { Editor } from "slate";
+import { Editor, Element } from "slate";
 import { useSlateStatic } from "slate-react";
 import { ToolbarContext } from "./context/toolbar";
 import { BlockElement } from "./RichTextEditor";
@@ -22,7 +22,7 @@ export const BlockStyleButton: FC<BlockStyleButtonProps> = ({ blockType, childre
     const editor = useSlateStatic();
     const [blockTypeIsActive] = Editor.nodes(editor, {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        match: (n: any) => n.type === blockType,
+        match: (n) => Element.isElement(n) && n.type === blockType,
     });
 
     const [, send] = useActor(machineRef);
