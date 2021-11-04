@@ -73,6 +73,16 @@ export type LinkChooserProps = {
     onTabChange: (value: boolean) => void;
 };
 
+export enum OptionsType {
+    Client = "CLIENT",
+    Server = "SERVER",
+}
+
+type LinkChooserState = {
+    options: MenuBlock[];
+    type: OptionsType;
+};
+
 export const LinkChooser: FC<LinkChooserProps> = ({
     selectMenuBlocks,
     actionMenuBlocks,
@@ -87,7 +97,11 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     onWindowChange,
     onTabChange,
 }) => {
-    const [displayedOptions, setDisplayedOptions] = useState<MenuBlock[]>(selectMenuBlocks);
+    // TODO should add loading and error state?
+    const [displayedOptions, setDisplayedOptions] = useState<LinkChooserState>({
+        options: selectMenuBlocks,
+        type: OptionsType.Server,
+    });
 
     const handleClearClick = useCallback(() => {
         state.setInputValue("");
@@ -102,10 +116,28 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const updateVisibleItems = () => {
         const storedQueries = retrieveStoredQueries();
+        // TODO refactor this (temp)
         const currentWindowMenu = (() => {
             switch (openWindow) {
                 case OpenWindowType.None:
-                    return selectMenuBlocks;
+                    return state.inputValue
+                        ? [
+                              {
+                                  ...selectMenuBlocks[0],
+                                  menuItems: [
+                                      ...selectMenuBlocks[0].menuItems,
+                                      {
+                                          id: "12",
+                                          title: `"${state.inputValue}"`, //TODO: remove the " when selecting
+                                          link: state.inputValue,
+                                          size: MenuItemContentSize.Large,
+                                          selectionIndicator: SelectionIndicatorIcon.None,
+                                          iconLabel: IconLabel.Link,
+                                      },
+                                  ],
+                              },
+                          ]
+                        : selectMenuBlocks;
                 case OpenWindowType.Templates:
                     return templateMenuBlocks;
                 case OpenWindowType.Guidelines:
@@ -119,22 +151,15 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         // TODO refactor this (temp)
         const newSelectedOptions =
             state.inputValue || state.selectedKey || openWindow !== OpenWindowType.None
-                ? currentWindowMenu
-                : [{ ...currentWindowMenu[0], menuItems: storedQueries }];
+                ? { options: currentWindowMenu, type: OptionsType.Server }
+                : { options: [{ ...currentWindowMenu[0], menuItems: storedQueries }], type: OptionsType.Client };
         setDisplayedOptions(newSelectedOptions);
     };
 
     const handleSelectionChange = (key: Key) => {
-        const foundItem = displayedOptions[0].menuItems.find((item) => item.id === key);
+        const foundItem = displayedOptions.options[0].menuItems.find((item) => item.id === key);
         storeNewSelection(foundItem);
         onOptionChange(foundItem);
-    };
-
-    const handleInputChange = (value: string) => {
-        console.log(value);
-        if (!state.isOpen) {
-            state.open();
-        }
     };
 
     const filterItems = (value: string, query: string) => value.toLowerCase().includes(query.toLowerCase());
@@ -161,15 +186,15 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const handleMenuClose = () => state.close();
 
-    const props = mapToAriaProps(ariaLabel, displayedOptions);
+    const props = mapToAriaProps(ariaLabel, displayedOptions.options);
 
     const state = useComboBoxState({
         ...props,
         defaultFilter: filterItems,
         shouldCloseOnBlur: false,
         onSelectionChange: handleSelectionChange,
-        onInputChange: handleInputChange,
         menuTrigger: "manual",
+        allowsEmptyCollection: true,
     });
 
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -259,9 +284,10 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                     {...listBoxProps}
                                     listBoxRef={listBoxRef}
                                     state={state}
-                                    menuBlocks={displayedOptions}
+                                    menuBlocks={displayedOptions.options}
                                     noBorder={true}
-                                    hasItems={!!displayedOptions[0].menuItems.length}
+                                    hasItems={!!displayedOptions.options[0].menuItems.length}
+                                    optionsType={displayedOptions.type}
                                     openWindow={openWindow}
                                     onClick={onWindowChange}
                                 />
@@ -277,7 +303,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 )}
             </AnimatePresence>
             <div className="tw-my-2">
-                <Checkbox value={newTab} onChange={onTabChange} label="Open in New Tab" />
+                <Checkbox value="new-tab" state={newTab} onChange={onTabChange} label="Open in New Tab" />
             </div>
         </div>
     );

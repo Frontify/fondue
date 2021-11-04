@@ -9,7 +9,7 @@ import { merge } from "@utilities/merge";
 import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
 import { MenuItem } from "@components/MenuItem/MenuItem";
 import { MenuBlock, MenuItemType } from "@components/Menu/SelectMenu";
-import { IconLabel, ICON_OPTIONS, TemplateMenuItemType } from "../LinkChooser";
+import { IconLabel, ICON_OPTIONS, OptionsType, TemplateMenuItemType } from "../LinkChooser";
 import IconArrowLeft from "@foundation/Icon/Generated/IconArrowLeft";
 import { OpenWindowType } from "../LinkChooser.stories";
 
@@ -19,6 +19,7 @@ interface ListBoxProps extends AriaListBoxOptions<unknown> {
     menuBlocks: MenuBlock[];
     noBorder?: boolean;
     hasItems?: boolean;
+    optionsType?: OptionsType;
     openWindow: OpenWindowType;
     onClick: (window: OpenWindowType) => void;
 }
@@ -45,7 +46,7 @@ interface TemplateProps {
 
 export const ListBox: FC<ListBoxProps> = (props: ListBoxProps) => {
     const ref = useRef<HTMLUListElement>(null);
-    const { listBoxRef = ref, state, menuBlocks, noBorder, hasItems, openWindow, onClick } = props;
+    const { listBoxRef = ref, state, menuBlocks, noBorder, hasItems, optionsType, openWindow, onClick } = props;
     const { listBoxProps } = useListBox(props, state, listBoxRef);
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
@@ -77,8 +78,10 @@ export const ListBox: FC<ListBoxProps> = (props: ListBoxProps) => {
                             openWindow={openWindow}
                         />
                     ))
-                ) : (
+                ) : optionsType === OptionsType.Server ? (
                     <EmptyList />
+                ) : (
+                    <EmptyRecent />
                 )}
             </ul>
         </div>
@@ -141,7 +144,11 @@ const Option = ({ item, state, keyItemRecord, openWindow }: OptionProps) => {
     );
 };
 
-const EmptyList = ({ title = "No recent queries found", label = IconLabel.Reject, disabled = true }) => {
+const EmptyList = ({ title = "No search results matched your query", label = IconLabel.Reject, disabled = true }) => {
+    return <MenuItem title={title} decorator={ICON_OPTIONS[label]} disabled={disabled} />;
+};
+
+const EmptyRecent = ({ title = "No recent queries found", label = IconLabel.Reject, disabled = true }) => {
     return <MenuItem title={title} decorator={ICON_OPTIONS[label]} disabled={disabled} />;
 };
 
