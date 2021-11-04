@@ -19,6 +19,8 @@ import { OpenWindow, OpenWindowType, SelectedOption } from "./LinkChooser.storie
 import IconTemplate from "@foundation/Icon/Generated/IconTemplate";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
+import { useMachine } from "@xstate/react";
+import { linkChooserMachine, LinkChooserState } from "./state/link-chooser/machine";
 export { Item, Section } from "@react-stately/collections";
 
 const MAX_STORED_ITEMS = 5;
@@ -78,14 +80,14 @@ export enum OptionsType {
     Server = "SERVER",
 }
 
-type LinkChooserState = {
+type LinkChooserState2 = {
     options: MenuBlock[];
     type: OptionsType;
 };
 
 export const LinkChooser: FC<LinkChooserProps> = ({
     selectMenuBlocks,
-    actionMenuBlocks,
+
     templateMenuBlocks,
     selectedOption,
     newTab,
@@ -97,8 +99,53 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     onWindowChange,
     onTabChange,
 }) => {
+    const [
+        {
+            // context,
+            matches,
+            // children
+        },
+        send,
+    ] = useMachine(
+        linkChooserMachine.withContext({
+            selectMenuBlocks,
+            templateMenuBlocks,
+            selectedMenuBlock: selectedOption,
+            newTab,
+            onOpenInNewTabChange: onTabChange,
+        }),
+        { devTools: true },
+    );
+    const actionMenuBlocks = [
+        {
+            id: "Actions",
+            menuItems: [
+                {
+                    id: "guidelines",
+                    title: "Guidelines",
+                    size: MenuItemContentSize.Small,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: () => send("GO_TO_GUIDELINES"),
+                },
+                {
+                    id: "projects",
+                    title: "Projects",
+                    size: MenuItemContentSize.Small,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: () => send("GO_TO_PROJECTS"),
+                },
+                {
+                    id: "templates",
+                    title: "Templates",
+                    size: MenuItemContentSize.Small,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: () => send("GO_TO_TEMPLATES"),
+                },
+            ],
+        },
+    ];
     // TODO should add loading and error state?
-    const [displayedOptions, setDisplayedOptions] = useState<LinkChooserState>({
+    const [displayedOptions, setDisplayedOptions] = useState<LinkChooserState2>({
         options: selectMenuBlocks,
         type: OptionsType.Server,
     });
@@ -182,9 +229,9 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }
     };
 
-    const handleMenuOpen = () => state.open();
+    /*     const handleMenuOpen = () => state.open(); */
 
-    const handleMenuClose = () => state.close();
+    /*     const handleMenuClose = () => state.close(); */
 
     const props = mapToAriaProps(ariaLabel, displayedOptions.options);
 
@@ -195,6 +242,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         onSelectionChange: handleSelectionChange,
         menuTrigger: "manual",
         allowsEmptyCollection: true,
+        onBlur: () => send("CLOSE_DROPDOWN"),
     });
 
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -244,7 +292,11 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     }, [state.inputValue, openWindow, state.selectedKey]);
 
     return (
-        <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
+        <div
+            data-test-id="link-chooser"
+            className="tw-relative tw-w-full tw-font-sans tw-text-s"
+            //onBlur={() => send("CLOSE_DROPDOWN")}
+        >
             <label {...labelProps} className="block text-sm font-medium text-gray-700 text-left">
                 {label}
             </label>
@@ -264,11 +316,11 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     placeholder={placeholder}
                     onClear={handleClearClick}
                     onPreview={handlePreviewClick}
-                    onClick={handleMenuOpen}
+                    onClick={() => send("OPEN_DROPDOWN")}
                 />
             </div>
             <AnimatePresence>
-                {state.isOpen && (
+                {matches(LinkChooserState.Focused) && (
                     <motion.div
                         className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
                         key="content"
@@ -277,8 +329,12 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                         exit={{ height: 0 }}
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
-                        <DismissButton onDismiss={() => close()} />
-                        <Popover popoverRef={popoverRef} isOpen={state.isOpen} onClose={handleMenuClose}>
+                        <DismissButton onDismiss={() => send("CLOSE_DROPDOWN")} />
+                        <Popover
+                            popoverRef={popoverRef}
+                            isOpen={matches(LinkChooserState.Focused)}
+                            onClose={() => send("CLOSE_DROPDOWN")}
+                        >
                             <div>
                                 <ListBox
                                     {...listBoxProps}
@@ -298,7 +354,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                 )}
                             </div>
                         </Popover>
-                        <DismissButton onDismiss={() => close()} />
+                        <DismissButton onDismiss={() => send("CLOSE_DROPDOWN")} />
                     </motion.div>
                 )}
             </AnimatePresence>

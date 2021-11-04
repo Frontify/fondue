@@ -182,25 +182,6 @@ Default.args = {
             ],
         },
     ],
-    actionMenuBlocks: [
-        {
-            id: "Actions",
-            menuItems: [
-                {
-                    id: "5",
-                    title: "Guidelines",
-                    size: MenuItemContentSize.Small,
-                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
-                },
-                {
-                    id: "6",
-                    title: "Templates",
-                    size: MenuItemContentSize.Small,
-                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
-                },
-            ],
-        },
-    ],
     templateMenuBlocks: [
         {
             id: "Templates",
