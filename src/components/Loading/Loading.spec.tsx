@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
+/* import React from "react";
 import { mount } from "@cypress/react";
 import { Logo } from "./Logo";
 
@@ -15,3 +15,4 @@ describe("Logo Component", () => {
         cy.get("@Logo").contains(Logo_FOO);
     });
 });
+ */

@@ -28,7 +28,7 @@ export * from "./components/LinkChooser/ListBox/ListBox";
 export * from "./components/LinkChooser/Popover/Popover";
 export * from "./components/LinkChooser/SearchInput/SearchInput";
 export * from "./components/LinkChooser/Templates/Templates";
-export * from "./components/Logo/Logo";
+export * from "./components/Loading/Loading";
 export * from "./components/Menu/ActionMenu/ActionMenu";
 export * from "./components/Menu/Aria/AriaList";
 export * from "./components/Menu/Aria/AriaMenuItem";
