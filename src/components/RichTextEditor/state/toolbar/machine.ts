@@ -26,7 +26,6 @@ export type ToolbarData = InlineStyleData | BlockTypeData;
 
 export enum States {
     Initial = "initial",
-    LinkChooser = "link_chooser",
 }
 
 export const toolbarMachine = createMachine<ToolbarContext, DoneInvokeEvent<ToolbarData>>(
