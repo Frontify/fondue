@@ -29,7 +29,7 @@ export enum OpenWindowType {
 export type LinkChooserProps = {
     selectMenuBlocks: MenuBlock[];
     actionMenuBlocks?: MenuBlock[];
-    templateMenuBlocks?: TemplateMenuBlock[];
+    templateMenuBlocks: TemplateMenuBlock[];
     ariaLabel?: string;
     label?: string;
     placeholder?: string;
@@ -142,6 +142,51 @@ Default.args = {
                     iconLabel: IconLabel.External,
                     link: "https://www.frontify.com/en/digital-and-print-templates/",
                 },
+                {
+                    id: "8",
+                    title: "Aerial City View",
+                    subtitle: "Corporate Library",
+                    size: MenuItemContentSize.Large,
+                    selectionIndicator: SelectionIndicatorIcon.None,
+                    iconLabel: IconLabel.Template,
+                    link: "",
+                },
+                {
+                    id: "9",
+                    title: "Brooklyn",
+                    subtitle: "Template Library Old Brand",
+                    size: MenuItemContentSize.Large,
+                    selectionIndicator: SelectionIndicatorIcon.None,
+                    iconLabel: IconLabel.Template,
+                    link: "",
+                },
+                {
+                    id: "10",
+                    title: "City",
+                    subtitle: "SRF Kultur On Screen",
+                    size: MenuItemContentSize.Large,
+                    selectionIndicator: SelectionIndicatorIcon.None,
+                    iconLabel: IconLabel.Template,
+                    link: "",
+                },
+                {
+                    id: "11",
+                    title: "Malaya Poster",
+                    subtitle: "UNICEF Social Campaign",
+                    link: "",
+                    size: MenuItemContentSize.Large,
+                    selectionIndicator: SelectionIndicatorIcon.None,
+                    iconLabel: IconLabel.Template,
+                },
+                {
+                    id: "12",
+                    title: "Brand Business Card",
+                    subtitle: "Corporate Library",
+                    link: "",
+                    size: MenuItemContentSize.Large,
+                    selectionIndicator: SelectionIndicatorIcon.None,
+                    iconLabel: IconLabel.Template,
+                },
             ],
         },
     ],
@@ -175,6 +220,9 @@ Default.args = {
                     title: "Aerial City View",
                     subtitle: "Corporate Library",
                     link: "",
+                    size: MenuItemContentSize.Large,
+                    selectionIndicator: SelectionIndicatorIcon.None,
+                    iconLabel: IconLabel.Template,
                 },
                 {
                     id: "9",
@@ -183,6 +231,9 @@ Default.args = {
                     title: "Brooklyn",
                     subtitle: "Template Library Old Brand",
                     link: "",
+                    size: MenuItemContentSize.Large,
+                    selectionIndicator: SelectionIndicatorIcon.None,
+                    iconLabel: IconLabel.Template,
                 },
                 {
                     id: "10",
@@ -191,6 +242,31 @@ Default.args = {
                     title: "City",
                     subtitle: "SRF Kultur On Screen",
                     link: "",
+                    size: MenuItemContentSize.Large,
+                    selectionIndicator: SelectionIndicatorIcon.None,
+                    iconLabel: IconLabel.Template,
+                },
+                {
+                    id: "11",
+                    preview:
+                        "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcLzY1XC8xMVwvYTA0NmQ0YTNiNTk1MGZkODc3NWI3Y2IzYWUwZTVlMDAtMTYzNDMwMTQ1MS5qcGcifQ:msiric:ZBtHCtUwKM6dDiuJALxz5Z6ZfJLk68cEgd6_jNJbuWc?width=2400&height={height}",
+                    title: "Malaya Poster",
+                    subtitle: "UNICEF Social Campaign",
+                    link: "",
+                    size: MenuItemContentSize.Large,
+                    selectionIndicator: SelectionIndicatorIcon.None,
+                    iconLabel: IconLabel.Template,
+                },
+                {
+                    id: "12",
+                    preview:
+                        "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcL2MyXC8xMlwvYTFkYzA0YTJkYmQwZTkxMTRlOGM2ODQzMWVmMjU5OTMtMTYzNDMwMTQ1MS5qcGcifQ:msiric:MLRtZYQCaEyWpPqgpGbA6P20PDgvagyoowNOllXgoCk?width=2400&height={height}",
+                    title: "Brand Business Card",
+                    subtitle: "Corporate Library",
+                    link: "",
+                    size: MenuItemContentSize.Large,
+                    selectionIndicator: SelectionIndicatorIcon.None,
+                    iconLabel: IconLabel.Template,
                 },
             ],
         },

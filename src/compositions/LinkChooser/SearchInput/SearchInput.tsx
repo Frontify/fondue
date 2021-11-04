@@ -47,6 +47,7 @@ export type SearchInputProps = {
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     onClear?: () => void;
     onPreview?: () => void;
+    onClick?: () => void;
     size?: number;
 };
 
@@ -72,6 +73,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
             onBlur,
             onClear,
             onPreview,
+            onClick,
             size,
         },
         inputElement,
@@ -129,6 +131,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                     onFocus={onFocus}
                     onBlur={onBlur}
                     onKeyDown={onKeyDown}
+                    onClick={onClick}
                     placeholder={placeholder}
                     value={value}
                     type={type}

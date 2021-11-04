@@ -10,13 +10,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import { DismissButton } from "@react-aria/overlays";
 import { ActionMenu, ActionMenuBlock } from "@components/Menu/ActionMenu/ActionMenu";
 import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
-import { Templates } from "./Templates/Templates";
 import IconDocument from "@elements/Icon/Generated/IconDocument";
 import IconLink from "@elements/Icon/Generated/IconLink";
 import IconExternalLink from "@elements/Icon/Generated/IconExternalLink";
 import IconDocumentLibrary from "@elements/Icon/Generated/IconDocumentLibrary";
 import IconReject from "@elements/Icon/Generated/IconReject";
 import { OpenWindow, OpenWindowType, SelectedOption } from "./LinkChooser.stories";
+import IconTemplate from "@elements/Icon/Generated/IconTemplate";
+import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
+import { SelectionIndicatorIcon } from "@components/Menu/MenuItem/MenuItem";
 export { Item, Section } from "@react-stately/collections";
 
 const MAX_STORED_ITEMS = 5;
@@ -27,6 +29,7 @@ export enum IconLabel {
     Link = "LINK",
     External = "EXTERNAL",
     Reject = "REJECT",
+    Template = "TEMPLATE",
 }
 
 export const ICON_OPTIONS: Record<IconLabel | string, ReactElement> = {
@@ -35,6 +38,7 @@ export const ICON_OPTIONS: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Link]: <IconLink />,
     [IconLabel.External]: <IconExternalLink />,
     [IconLabel.Reject]: <IconReject />,
+    [IconLabel.Template]: <IconTemplate />,
 };
 
 export type TemplateMenuItemType = {
@@ -43,6 +47,9 @@ export type TemplateMenuItemType = {
     title: string;
     subtitle?: string;
     link?: string;
+    size?: MenuItemContentSize;
+    selectionIndicator?: SelectionIndicatorIcon;
+    iconLabel?: string;
 };
 
 export type TemplateMenuBlock = {
@@ -54,7 +61,7 @@ export type TemplateMenuBlock = {
 export type LinkChooserProps = {
     selectMenuBlocks: MenuBlock[];
     actionMenuBlocks?: ActionMenuBlock[];
-    templateMenuBlocks?: TemplateMenuBlock[];
+    templateMenuBlocks: TemplateMenuBlock[];
     selectedOption: SelectedOption;
     newTab: CheckboxState;
     openWindow: OpenWindow;
@@ -69,6 +76,7 @@ export type LinkChooserProps = {
 export const LinkChooser: FC<LinkChooserProps> = ({
     selectMenuBlocks,
     actionMenuBlocks,
+    templateMenuBlocks,
     selectedOption,
     newTab,
     openWindow,
@@ -94,16 +102,39 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const updateVisibleItems = () => {
         const storedQueries = retrieveStoredQueries();
-        const newSelectedOptions = state.selectedKey
-            ? selectMenuBlocks
-            : [{ ...selectMenuBlocks[0], menuItems: storedQueries }];
+        const currentWindowMenu = (() => {
+            switch (openWindow) {
+                case OpenWindowType.None:
+                    return selectMenuBlocks;
+                case OpenWindowType.Templates:
+                    return templateMenuBlocks;
+                case OpenWindowType.Guidelines:
+                    return [];
+                case OpenWindowType.Projects:
+                    return [];
+                default:
+                    return [];
+            }
+        })();
+        // TODO refactor this (temp)
+        const newSelectedOptions =
+            state.inputValue || state.selectedKey || openWindow !== OpenWindowType.None
+                ? currentWindowMenu
+                : [{ ...currentWindowMenu[0], menuItems: storedQueries }];
         setDisplayedOptions(newSelectedOptions);
     };
 
     const handleSelectionChange = (key: Key) => {
-        const foundItem = selectMenuBlocks[0].menuItems.find((item) => item.id === key);
+        const foundItem = displayedOptions[0].menuItems.find((item) => item.id === key);
         storeNewSelection(foundItem);
         onOptionChange(foundItem);
+    };
+
+    const handleInputChange = (value: string) => {
+        console.log(value);
+        if (!state.isOpen) {
+            state.open();
+        }
     };
 
     const filterItems = (value: string, query: string) => value.toLowerCase().includes(query.toLowerCase());
@@ -121,10 +152,14 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 ? [{ ...option }, ...recentQueries.filter((item: MenuItemType) => item.id !== option.id)]
                 : recentQueries.length < MAX_STORED_ITEMS
                 ? [{ ...option }, ...recentQueries]
-                : [...recentQueries];
+                : [{ ...option }, ...recentQueries.slice(0, -1)];
             localStorage.setItem("queries", JSON.stringify(updatedQueries));
         }
     };
+
+    const handleMenuOpen = () => state.open();
+
+    const handleMenuClose = () => state.close();
 
     const props = mapToAriaProps(ariaLabel, displayedOptions);
 
@@ -133,7 +168,8 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         defaultFilter: filterItems,
         shouldCloseOnBlur: false,
         onSelectionChange: handleSelectionChange,
-        menuTrigger: "focus",
+        onInputChange: handleInputChange,
+        menuTrigger: "manual",
     });
 
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -150,7 +186,8 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         state,
     );
 
-    const currentWindow = {
+    // TODO remove (temp)
+    /*     const currentWindow = {
         [OpenWindowType.None]: (
             <div>
                 <ListBox
@@ -173,13 +210,13 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         ),
         [OpenWindowType.Guidelines]: null,
         [OpenWindowType.Projects]: null,
-    }[openWindow];
+    }[openWindow]; */
 
     const formattedIcon = selectedOption && selectedOption.icon ? ICON_OPTIONS[selectedOption.icon] : undefined;
 
     useEffect(() => {
         updateVisibleItems();
-    }, [state.selectedKey]);
+    }, [state.inputValue, openWindow, state.selectedKey]);
 
     return (
         <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
@@ -202,6 +239,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     placeholder={placeholder}
                     onClear={handleClearClick}
                     onPreview={handlePreviewClick}
+                    onClick={handleMenuOpen}
                 />
             </div>
             <AnimatePresence>
@@ -215,8 +253,24 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
                         <DismissButton onDismiss={() => close()} />
-                        <Popover popoverRef={popoverRef} isOpen={state.isOpen} onClose={state.close}>
-                            {currentWindow}
+                        <Popover popoverRef={popoverRef} isOpen={state.isOpen} onClose={handleMenuClose}>
+                            <div>
+                                <ListBox
+                                    {...listBoxProps}
+                                    listBoxRef={listBoxRef}
+                                    state={state}
+                                    menuBlocks={displayedOptions}
+                                    noBorder={true}
+                                    hasItems={!!displayedOptions[0].menuItems.length}
+                                    openWindow={openWindow}
+                                    onClick={onWindowChange}
+                                />
+                                {openWindow === OpenWindowType.None && actionMenuBlocks && (
+                                    <div className="tw-border-t tw-border-black-10">
+                                        <ActionMenu menuBlocks={actionMenuBlocks} noBorder={true} />
+                                    </div>
+                                )}
+                            </div>
                         </Popover>
                         <DismissButton onDismiss={() => close()} />
                     </motion.div>
