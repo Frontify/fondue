@@ -86,7 +86,6 @@ RichTextWithHTML.args = {
             <li>Fill muffin tray 3/4 full.</li>
             <li>Bake for 20 minutes.</li>
         </ol>
-        <p><a href="https://git-scm.com/downloads" target="_blank">Link</a></p>
     `,
 };
 RichTextWithHTML.argTypes = { value: { type: "string" } };
