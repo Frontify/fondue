@@ -2,7 +2,7 @@
 
 import { ColorPicker, ColorPickerProps } from "@components/ColorPicker/ColorPicker";
 import { Flyout } from "@components/Flyout/Flyout";
-import { Color } from "@utilities/colors";
+import { Color } from "../../types/colors";
 import React, { FC, useState } from "react";
 import { ColorInputTrigger } from "./ColorPickerTrigger";
 

@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, Story } from "@storybook/react";
-import { Color, EXAMPLE_PALETTES } from "@utilities/colors";
+import { EXAMPLE_PALETTES } from "@utilities/colors";
+import { Color } from "../../types/colors";
 import React, { useState } from "react";
 import { ColorPickerFlyout as ColorPickerFlyoutComponent, ColorPickerFlyoutProps } from "./ColorPickerFlyout";
 
 export default {
-    title: "Components/Color Picker",
+    title: "Components/Color Picker/Flyout",
     component: ColorPickerFlyoutComponent,
     args: {
         disabled: false,

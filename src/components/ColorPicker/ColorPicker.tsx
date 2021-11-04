@@ -1,18 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Slider } from "@components/Slider/Slider";
-import { Color } from "@utilities/colors";
+import { Color, Palette } from "../../types/colors";
 import { merge } from "@utilities/merge";
 import React, { FC, useMemo, useState } from "react";
 // @ts-ignore
 import { getContrastingColor } from "react-color/lib/helpers/color";
 import { BrandColorPicker } from "./BrandColorPicker";
 import { CustomColorPicker } from "./CustomColorPicker";
-
-export type Palette = {
-    title: string;
-    colors: Color[];
-};
 
 export type ColorPickerProps = {
     palettes?: Palette[];

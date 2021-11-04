@@ -1,30 +1,22 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-import { merge } from "@utilities/merge";
-import { ContentState, DraftHandleValue, Editor, EditorState, getDefaultKeyBinding, RichUtils } from "draft-js";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { useMachine } from "@xstate/react";
+import { Editor, EditorState, getDefaultKeyBinding, RawDraftContentState, RichUtils } from "draft-js";
 import "draft-js/dist/Draft.css";
-import React, { FC, KeyboardEvent, useEffect, useRef, useState } from "react";
-import { usePopper } from "react-popper";
-import {
-    BoldButton,
-    CodeButton,
-    InlineToolbar,
-    ItalicButton,
-    OrderedListButton,
-    StrikethroughButton,
-    SubButton,
-    SupButton,
-    UnderlineButton,
-    UnorderedListButton,
-} from "./components";
+import React, { FC, useRef } from "react";
+import { DoneInvokeEvent, Interpreter } from "xstate";
+import { ToolbarContext } from "./context/toolbar";
 import { decorators } from "./decorators";
-import { useToolbar } from "./hooks/useToolbar";
+import { editorMachine, States } from "./state/editor/machine";
+import { ToolbarContext as ToolbarFSMContext, ToolbarStateData } from "./state/toolbar/machine";
 import { styleMap } from "./styleMap";
+import { Toolbar } from "./Toolbar";
+import { parseRawContentState, RawContentState } from "./utils/parseRawContentState";
 
 export type RichTextEditorProps = {
     placeholder?: string;
-    value?: ContentState;
-    onTextChange?: (value: EditorState) => void;
+    value?: RawContentState;
+    onTextChange?: (value: RawDraftContentState) => void;
     readonly?: boolean;
 };
 
@@ -35,147 +27,57 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     readonly = false,
 }: RichTextEditorProps) => {
     const editor = useRef<Editor | null>(null);
-    const selectionRectRef = useRef<HTMLDivElement | null>(null);
-    const inlineToolbarRef = useRef<HTMLDivElement | null>(null);
-    const inlineToolbarArrowRef = useRef<HTMLDivElement | null>(null);
-    const [editorState, setEditorState] = useState<EditorState>(() => {
-        return value ? EditorState.createWithContent(value, decorators) : EditorState.createEmpty(decorators);
-    });
-    const [showInlineToolbar, setShowInlineToolbar] = useState(false);
-
-    const { selectionRect, show } = useToolbar(selectionRectRef, editorState.getSelection().getHasFocus(), readonly);
-
-    useEffect(() => {
-        (async () => {
-            popperUpdate && (await popperUpdate());
-        })();
-    }, [selectionRect]);
-
-    useEffect(() => {
-        setShowInlineToolbar(show);
-    }, [show]);
-
-    const {
-        styles,
-        attributes,
-        update: popperUpdate,
-    } = usePopper(selectionRectRef.current, inlineToolbarRef.current, {
-        placement: "top",
-        modifiers: [
-            { name: "arrow", options: { element: inlineToolbarArrowRef.current, padding: 10 } },
-            {
-                name: "offset",
-                options: {
-                    offset: [0, 8],
-                },
-            },
-            {
-                name: "flip",
-                options: {
-                    fallbackPlacements: ["bottom", "right"],
-                },
-            },
-        ],
-    });
-
-    const onEditorChange = async (value: EditorState): Promise<void> => {
-        const currentContent = editorState.getCurrentContent();
-        const newContent = value.getCurrentContent();
-
-        // Is there a change in the content of the Rich Text Editor
-        if (currentContent !== newContent) {
-            emitContentChanged();
-        }
-
-        setEditorState(value);
-    };
-
-    const keyBindingFn = (event: KeyboardEvent): string | null => {
-        if (event.code === "Tab") {
-            onEditorChange(RichUtils.onTab(event, editorState, 4));
-            return "tab";
-        }
-
-        return getDefaultKeyBinding(event);
-    };
-
-    const handleKeyCommand = (command: string, editorState: EditorState): DraftHandleValue => {
-        const newState = RichUtils.handleKeyCommand(editorState, command);
-
-        if (newState) {
-            onEditorChange(newState);
-            return "handled";
-        }
-
-        return "not-handled";
-    };
-
-    const emitContentChanged = () => {
-        onTextChange && onTextChange(editorState);
-    };
-
-    const onEditorBlur = () => {
-        setShowInlineToolbar(false);
-        editor.current?.blur();
-    };
-
-    const onEditorClick = () => {
-        !showInlineToolbar && editor.current?.focus();
-    };
+    const parsedContentState = value ? parseRawContentState(value) : null;
+    const [{ context, matches, children }, send] = useMachine(
+        editorMachine.withContext({
+            locked: readonly,
+            editorState: parsedContentState
+                ? EditorState.createWithContent(parsedContentState, decorators)
+                : EditorState.createEmpty(decorators),
+            onContentChanged: onTextChange,
+        }),
+    );
 
     return (
-        <div onClick={onEditorClick}>
+        <div onFocus={() => send("FOCUSED")} data-test-id="rich-text-editor">
             <Editor
                 ref={editor}
                 customStyleMap={styleMap}
-                editorState={editorState}
+                editorState={context.editorState}
                 placeholder={placeholder}
-                onChange={onEditorChange}
-                onBlur={onEditorBlur}
-                handleKeyCommand={handleKeyCommand}
-                keyBindingFn={keyBindingFn}
+                onChange={(editorState) => send({ type: "CHANGE", data: { editorState } })}
+                keyBindingFn={(event) => {
+                    if (event.code === "Tab") {
+                        send({ type: "CHANGE", data: { editorState: RichUtils.onTab(event, context.editorState, 4) } });
+                        return "tab";
+                    }
+                    return getDefaultKeyBinding(event);
+                }}
+                handleKeyCommand={(command: string, editorState: EditorState) => {
+                    const newState = RichUtils.handleKeyCommand(editorState, command);
+                    if (newState) {
+                        send({ type: "CHANGE", data: { editorState: newState } });
+                        return "handled";
+                    }
+                    return "not-handled";
+                }}
+                onBlur={() => editor.current?.blur()}
                 readOnly={readonly}
             />
-
-            <div ref={selectionRectRef} style={selectionRect} className="tw-absolute tw-pointer-events-none"></div>
-
-            <div
-                ref={inlineToolbarRef}
-                className={merge([
-                    "tw-popper-container tw-z-10 tw-drop-shadow-md",
-                    !showInlineToolbar && "tw-invisible tw-pointer-events-none",
-                ])}
-                style={styles.popper}
-                {...attributes.popper}
-            >
-                <InlineToolbar
-                    onClick={emitContentChanged}
-                    store={{
-                        editorState,
-                        setEditorState,
+            {matches(States.Styling) && (
+                <ToolbarContext.Provider
+                    value={{
+                        machineRef: children.toolbar as Interpreter<
+                            ToolbarFSMContext,
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            any,
+                            DoneInvokeEvent<ToolbarStateData>
+                        >,
                     }}
                 >
-                    {(externalProps) => (
-                        <>
-                            <BoldButton {...externalProps} />
-                            <ItalicButton {...externalProps} />
-                            <UnderlineButton {...externalProps} />
-                            <StrikethroughButton {...externalProps} />
-                            <CodeButton {...externalProps} />
-                            <SubButton {...externalProps} />
-                            <SupButton {...externalProps} />
-                            <OrderedListButton {...externalProps} />
-                            <UnorderedListButton {...externalProps} />
-                        </>
-                    )}
-                </InlineToolbar>
-
-                <div
-                    ref={inlineToolbarArrowRef}
-                    style={styles.arrow}
-                    className="tw-popper-arrow tw-absolute tw-w-2 tw-h-2 tw-pointer-events-none before:tw-absolute before:tw--z-1 before:tw-w-2 before:tw-h-2 before:tw-bg-white before:tw-rotate-45"
-                ></div>
-            </div>
+                    <Toolbar />
+                </ToolbarContext.Provider>
+            )}
         </div>
     );
 };

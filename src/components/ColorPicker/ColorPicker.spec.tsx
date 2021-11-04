@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { DROPDOWN_TRIGGER_ID } from "@components/Dropdown/Dropdown.spec";
-import { MENU_ITEM_ID } from "@components/Menu/MenuItem/MenuItem.spec";
+import { MENU_ITEM_ID } from "@components/MenuItem/MenuItem.spec";
 import { ICON_ITEM_ID, TEXT_ITEM_ID } from "@components/Slider/Slider.spec";
 import { mount } from "@cypress/react";
-import { Color, EXAMPLE_PALETTES } from "@utilities/colors";
+import { EXAMPLE_PALETTES } from "@utilities/colors";
 import React, { FC, useState } from "react";
-import { ColorPicker, Palette } from "./ColorPicker";
+import { Color, Palette } from "../../types/colors";
+import { ColorPicker } from "./ColorPicker";
 
 export const BRAND_COLOR_ID = "[data-test-id=brand-color]";
 export const COLOR_PREVIEW_ID = "[data-test-id=color-preview]";
@@ -53,9 +54,9 @@ describe("ColorPicker Component", () => {
     it("should change palette display", () => {
         mount(<Component palettes={EXAMPLE_PALETTES} />);
 
-        cy.get(BRAND_COLOR_ID).parent("ul").should("have.class", "tw-flex-col");
-        cy.get(ICON_ITEM_ID).last().click();
         cy.get(BRAND_COLOR_ID).parent("ul").should("not.have.class", "tw-flex-col");
+        cy.get(ICON_ITEM_ID).last().click();
+        cy.get(BRAND_COLOR_ID).parent("ul").should("have.class", "tw-flex-col");
     });
 
     it("should display correct search results", () => {

@@ -4,9 +4,9 @@ import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Tree as TreeComponent, TreeProps } from "./Tree";
 import { TreeNodeProps } from "./Node";
-import { IconSize } from "@elements/Icon/IconSize";
-import IconDocument from "@elements/Icon/Generated/IconDocument";
-import IconGuidelines from "@elements/Icon/Generated/IconGuidelines";
+import { IconSize } from "@foundation/Icon/IconSize";
+import IconDocument from "@foundation/Icon/Generated/IconDocument";
+import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
 
 export default {
     title: "Components/Tree",

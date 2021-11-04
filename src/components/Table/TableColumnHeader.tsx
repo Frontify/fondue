@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Checkbox, CheckboxState } from "@elements/Checkbox/Checkbox";
-import IconArrowDown from "@elements/Icon/Generated/IconArrowDown";
-import IconArrowUp from "@elements/Icon/Generated/IconArrowUp";
-import IconArrowUpAndDown from "@elements/Icon/Generated/IconArrowUpAndDown";
-import { IconSize } from "@elements/Icon/IconSize";
+import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
+import IconArrowDown from "@foundation/Icon/Generated/IconArrowDown";
+import IconArrowUp from "@foundation/Icon/Generated/IconArrowUp";
+import IconArrowUpAndDown from "@foundation/Icon/Generated/IconArrowUpAndDown";
+import { IconSize } from "@foundation/Icon/IconSize";
 import { useCheckbox } from "@react-aria/checkbox";
 import { useFocusRing } from "@react-aria/focus";
 import { useTableColumnHeader, useTableSelectAllCheckbox } from "@react-aria/table";
@@ -11,7 +11,7 @@ import { mergeProps } from "@react-aria/utils";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { TableState } from "@react-stately/table";
 import { useToggleState } from "@react-stately/toggle";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, useCallback, useEffect, useRef, useState } from "react";
 
@@ -31,10 +31,15 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
     state,
     type = TableColumnHeaderType.Default,
 }) => {
+    const {
+        key,
+        rendered,
+        props: { allowsSorting },
+    } = column;
     const [icon, setIcon] = useState(<IconArrowUpAndDown />);
     const ref = useRef<HTMLTableCellElement | null>(null);
     const { columnHeaderProps } = useTableColumnHeader({ node: column }, state, ref);
-    const isSortedColumn = state.sortDescriptor?.column === column.key;
+    const isSortedColumn = state.sortDescriptor?.column === key;
     const sortDirection = state.sortDescriptor?.direction;
     const { isFocusVisible, focusProps } = useFocusRing();
 
@@ -49,12 +54,12 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
     if (type === TableColumnHeaderType.SelectAll) {
         const { checkboxProps } = useTableSelectAllCheckbox(state);
         const {
-            selectionManager: { toggleSelectAll, selectedKeys, selectionMode },
+            selectionManager: { selectedKeys, selectionMode },
         } = state;
         const inputRef = useRef(null);
         const toggleState = useToggleState(checkboxProps);
         const { inputProps } = useCheckbox(checkboxProps, toggleState, inputRef);
-        const headerProps = { ...columnHeaderProps, onClick: () => toggleSelectAll() };
+        const headerProps = { ...columnHeaderProps, onClick: () => state.selectionManager.toggleSelectAll() };
         const selectedKeyCount = selectedKeys.size;
 
         const getCheckboxState = useCallback(() => {
@@ -80,7 +85,7 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
                 {selectionMode === "single" ? (
                     <VisuallyHidden>{inputProps["aria-label"]}</VisuallyHidden>
                 ) : (
-                    <Checkbox ariaLabel={column.key} state={getCheckboxState()} />
+                    <Checkbox value={key} ariaLabel={key} state={getCheckboxState()} />
                 )}
             </th>
         );
@@ -92,13 +97,13 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
             ref={ref}
             className={merge([
                 "tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-outline-none tw-cursor-pointer tw-group",
-                isFocusVisible && FOCUS_STYLE,
+                isFocusVisible && FOCUS_STYLE_INSET,
             ])}
             data-test-id="table-column"
         >
             <div className="tw-flex tw-gap-x-1 tw-items-center">
-                {column.rendered}
-                {column.props.allowsSorting && (
+                {rendered}
+                {allowsSorting && (
                     <span
                         aria-hidden="true"
                         className={

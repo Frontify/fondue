@@ -1,15 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_ID, MENU_ITEM_TITLE_ID } from "@components/Menu/MenuItem/MenuItem.spec";
-import { MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
 import { MenuBlock } from "@components/Menu/SelectMenu";
 import { mount } from "@cypress/react";
+import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_ID, MENU_ITEM_TITLE_ID } from "@components/MenuItem/MenuItem.spec";
+import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import React, { FC, useState } from "react";
 import { Dropdown } from "./Dropdown";
 
 export const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
 const DROPDOWN_CLEAR_BUTTON_ID = "[data-test-id=dropdown-clear-button]";
 const MENU_ITEM_LIST_ID = "[data-test-id=menu-item-list]";
+const TRIGGER_ID = "[data-test-id=trigger]";
 
 const ITEMS = [
     {
@@ -41,9 +43,10 @@ type Props = {
     placeholder?: string;
     initialActiveId?: string | number;
     clearable?: boolean;
+    disabled?: boolean;
 };
 
-const Component: FC<Props> = ({ menuBlocks, placeholder, initialActiveId, clearable = false }) => {
+const Component: FC<Props> = ({ menuBlocks, placeholder, initialActiveId, clearable = false, disabled = false }) => {
     const [activeItemId, setActiveItemId] = useState(initialActiveId);
     return (
         <Dropdown
@@ -52,6 +55,7 @@ const Component: FC<Props> = ({ menuBlocks, placeholder, initialActiveId, cleara
             menuBlocks={menuBlocks}
             placeholder={placeholder}
             clearable={clearable}
+            disabled={disabled}
         />
     );
 };
@@ -63,12 +67,14 @@ describe("Dropdown Component", () => {
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(MENU_ITEM_LIST_ID).children().should("have.length", 3);
     });
+
     it("renders with initial active item", () => {
         mount(<Component menuBlocks={ITEMS} initialActiveId={FIRST_ITEM_ID} />);
         cy.get(MENU_ITEM_TITLE_ID).contains("Small");
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(MENU_ITEM_ACTIVE_ID).should("exist").and("have.length", 1);
     });
+
     it("changes selection on click", () => {
         mount(<Component menuBlocks={ITEMS} initialActiveId={FIRST_ITEM_ID} />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
@@ -88,6 +94,7 @@ describe("Dropdown Component", () => {
         cy.get("@thirdListItem").should("have.attr", "aria-selected", "true");
         cy.get("@secondListItem").should("have.attr", "aria-selected", "false");
     });
+
     it("renders with clearable option", () => {
         mount(<Component menuBlocks={ITEMS} placeholder="Select item" clearable />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
@@ -101,5 +108,15 @@ describe("Dropdown Component", () => {
         cy.get(MENU_ITEM_TITLE_ID).contains("Select item");
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get("@firstListItem").should("have.attr", "aria-selected", "false");
+    });
+
+    it("should not focus the dropdown when disabled", () => {
+        mount(<Component menuBlocks={ITEMS} disabled={true} />);
+
+        cy.window().focus();
+        cy.get("body").realPress("Tab");
+        FOCUS_STYLE.split(" ").forEach((style) => {
+            cy.get(TRIGGER_ID).should("not.have.class", style);
+        });
     });
 });

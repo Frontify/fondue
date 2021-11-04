@@ -1,17 +1,30 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MenuItemContent } from "@components/Menu/MenuItem/MenuItemContent";
-import IconColors from "@elements/Icon/Generated/IconColors";
-import { IconSize } from "@elements/Icon/IconSize";
-import { Trigger } from "@elements/Trigger/Trigger";
+import { MenuItemContent } from "@components/MenuItem/MenuItemContent";
+import { Trigger } from "@components/Trigger/Trigger";
+import IconColors from "@foundation/Icon/Generated/IconColors";
+import { IconSize } from "@foundation/Icon/IconSize";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { merge } from "@utilities/merge";
 import React, { FC } from "react";
+import { Color } from "../../types/colors";
 import { ColorPickerFlyoutProps } from "./ColorPickerFlyout";
 
 type ColorInputTriggerProps = Pick<ColorPickerFlyoutProps, "id" | "currentColor" | "disabled"> & {
     isOpen?: boolean;
+};
+
+const ColorInputTitle: FC<{ currentColor: Color }> = ({ currentColor }) => {
+    const { name, hex, alpha } = currentColor;
+    const opacity = alpha && alpha < 1 ? `${Math.round(alpha * 100)}%` : "";
+
+    return (
+        <div className="tw-text-black-100">
+            {name || hex}
+            <span className="tw-text-black-60"> {opacity}</span>
+        </div>
+    );
 };
 
 export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
@@ -35,7 +48,7 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
                 ])}
             >
                 <MenuItemContent
-                    title={currentColor ? currentColor.name || currentColor.hex : "Select color"}
+                    title={currentColor ? <ColorInputTitle currentColor={currentColor} /> : "Select color"}
                     decorator={
                         selectedColor ? (
                             <span

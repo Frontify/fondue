@@ -5,17 +5,12 @@ import { writeFile, readFile } from "fs/promises";
 // @ts-ignore
 import svgr from "@svgr/core";
 import { Entry } from "fast-glob/out/types";
-import IconTemplate from "../src/elements/Icon/IconTemplate";
+import IconTemplate from "../src/foundation/Icon/IconTemplate";
 
 (async () => {
     const componentsFilePath = await fastGlob(
-        [
-            "src/elements/**/*.ts",
-            "src/elements/**/[a-zA-Z]*.tsx",
-            "src/components/**/[a-zA-Z]*.tsx",
-            "src/compositions/**/[a-zA-Z]*.tsx",
-        ],
-        { objectMode: true, ignore: ["src/elements/Icon/Generated/**/*"] },
+        ["src/foundation/**/*.ts", "src/foundation/**/[a-zA-Z]*.tsx", "src/components/**/[a-zA-Z]*.tsx"],
+        { objectMode: true, ignore: ["src/foundation/Icon/Generated/**/*"] },
     );
 
     const components = componentsFilePath
@@ -31,7 +26,7 @@ import IconTemplate from "../src/elements/Icon/IconTemplate";
 
     const componentNameToImport = (path: string) => `export * from "./${path.replace("src/", "")}";`;
 
-    const iconsSvgPath = await fastGlob("src/elements/Icon/Svg/**/*.svg", { objectMode: true });
+    const iconsSvgPath = await fastGlob("src/foundation/Icon/Svg/**/*.svg", { objectMode: true });
     iconsSvgPath.forEach(async (svgPath: Entry) => {
         const svgFileContent = await readFile(svgPath.path, { encoding: "utf-8" });
         const svgFileName = svgPath.name.replace(".svg", "");
@@ -57,7 +52,7 @@ import IconTemplate from "../src/elements/Icon/IconTemplate";
                 __dirname,
                 "..",
                 "src",
-                "elements",
+                "foundation",
                 "Icon",
                 "Generated",
                 `Icon${svgFileName}.tsx`,
@@ -66,7 +61,7 @@ import IconTemplate from "../src/elements/Icon/IconTemplate";
         });
     });
 
-    const iconComponentsFilePath = await fastGlob(["src/elements/Icon/Generated/**/*.tsx"], { objectMode: true });
+    const iconComponentsFilePath = await fastGlob(["src/foundation/Icon/Generated/**/*.tsx"], { objectMode: true });
 
     const iconComponents = iconComponentsFilePath
         .sort((a, b) => a.path.localeCompare(b.path))
@@ -84,6 +79,7 @@ import IconTemplate from "../src/elements/Icon/IconTemplate";
         `import ${name} from "./${path.replace("src/", "")}";`;
 
     const fileContent = `import "./styles.css";
+export * from "./types";
 ${components.map((c) => componentNameToImport(c.path)).join("\n")}
 ${iconComponents.map((ic) => iconComponentNameToImport(ic.name, ic.path)).join("\n")}
 

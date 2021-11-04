@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconIcons from "@elements/Icon/Generated/IconIcons";
+import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { BrightHeaderStyle } from "./BrightHeader";
@@ -24,7 +24,6 @@ export default {
                 Tip: BrightHeaderStyle.Tip,
                 Note: BrightHeaderStyle.Note,
             },
-            defaultValue: "None",
             control: { type: "select" },
         },
         tooltipIcon: {
@@ -33,7 +32,6 @@ export default {
                 None: null,
                 Icon: <IconIcons />,
             },
-            defaultValue: "None",
             control: { type: "select" },
         },
         headingIcon: {
@@ -42,7 +40,6 @@ export default {
                 None: null,
                 Icon: <IconIcons />,
             },
-            defaultValue: "None",
             control: { type: "select" },
         },
     },

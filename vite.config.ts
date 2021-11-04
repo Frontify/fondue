@@ -1,13 +1,14 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { defineConfig } from "vite";
 import { resolve } from "path";
 import { PreRenderedAsset } from "rollup";
 
 export const alias = {
-    "@elements": resolve(__dirname, "./src/elements"),
     "@components": resolve(__dirname, "./src/components"),
-    "@compositions": resolve(__dirname, "./src/compositions"),
-    "@utilities": resolve(__dirname, "./src/utilities"),
+    "@foundation": resolve(__dirname, "./src/foundation"),
     "@hooks": resolve(__dirname, "./src/hooks"),
+    "@utilities": resolve(__dirname, "./src/utilities"),
 };
 
 export default defineConfig({

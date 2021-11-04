@@ -1,0 +1,49 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { mount } from "@cypress/react";
+import React from "react";
+import { MultiInput, MultiInputLayout } from "./MultiInput";
+import { TextInput } from "@components/TextInput/TextInput";
+
+const MULTI_INPUT_COLUMNS_ID = "[data-test-id=multi-input-grid-columns]";
+const MULTI_INPUT_SPIDER_ID = "[data-test-id=multi-input-grid-spider]";
+
+describe("Multi Input Component", () => {
+    it("should render the Multi Input with columns", () => {
+        mount(
+            <MultiInput layout={MultiInputLayout.Columns}>
+                <TextInput />
+                <TextInput />
+                <TextInput />
+                <TextInput />
+            </MultiInput>,
+        );
+
+        cy.get(MULTI_INPUT_COLUMNS_ID).should("have.class", "tw-grid").and("have.class", "tw-grid-cols-2");
+    });
+
+    it("should render the Multi Input with spider layout", () => {
+        mount(
+            <MultiInput layout={MultiInputLayout.Spider}>
+                <TextInput />
+                <TextInput />
+                <TextInput />
+                <TextInput />
+            </MultiInput>,
+        );
+
+        cy.get(MULTI_INPUT_SPIDER_ID).should("have.class", "tw-grid").and("have.class", "tw-grid-cols-4");
+    });
+
+    it("should render the Multi Input with the last child spanning two columns", () => {
+        mount(
+            <MultiInput layout={MultiInputLayout.Columns} spanLastItem={true}>
+                <TextInput />
+                <TextInput />
+                <TextInput />
+            </MultiInput>,
+        );
+
+        cy.get(MULTI_INPUT_COLUMNS_ID).children().last().should("have.class", "tw-col-span-2");
+    });
+});

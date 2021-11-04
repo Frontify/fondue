@@ -6,9 +6,9 @@ import { AriaList } from "@components/Menu/Aria/AriaList";
 import { AriaMenuItem } from "@components/Menu/Aria/AriaMenuItem";
 import { AriaSection } from "@components/Menu/Aria/AriaSection";
 import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
-import { MenuItemProps } from "@components/Menu/MenuItem/MenuItem";
+import { MenuItemProps } from "@components/MenuItem/MenuItem";
 import { AriaListBoxOptions, useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
-import { SelectState } from "@react-stately/select";
+import { ListState } from "@react-stately/list";
 import React, { ReactElement, useRef } from "react";
 
 export type MenuItemType = MenuItemProps & { id: string | number; link?: string };
@@ -22,7 +22,7 @@ export type MenuBlock = {
 export type SelectMenuProps = {
     menuBlocks: MenuBlock[];
     ariaProps: AriaListBoxOptions<any>;
-    state: SelectState<any>;
+    state: ListState<any>;
     ariaLabel?: string;
 };
 

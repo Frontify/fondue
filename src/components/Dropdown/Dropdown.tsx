@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getDisabledItemIds, getMenuItems, mapToAriaProps } from "@components/Menu/Aria/helper";
-import { MenuItemContent, MenuItemContentSize } from "@components/Menu/MenuItem/MenuItemContent";
 import { MenuBlock, SelectMenu } from "@components/Menu/SelectMenu";
-import { Trigger } from "@elements/Trigger/Trigger";
+import { MenuItemContent, MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
+import { Trigger } from "@components/Trigger/Trigger";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
@@ -73,7 +73,7 @@ export const Dropdown: FC<DropdownProps> = ({
             <Trigger
                 disabled={disabled}
                 buttonProps={buttonProps}
-                isFocusVisible={isFocusVisible}
+                isFocusVisible={!disabled && isFocusVisible}
                 isOpen={isOpen}
                 clearable={!!activeItem}
                 onClear={
@@ -110,9 +110,9 @@ export const Dropdown: FC<DropdownProps> = ({
                 </button>
             </Trigger>
             <AnimatePresence>
-                {isOpen && (
+                {!disabled && isOpen && (
                     <motion.div
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
+                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20"
                         key="content"
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
