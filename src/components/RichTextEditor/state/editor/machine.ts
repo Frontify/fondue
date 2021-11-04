@@ -82,7 +82,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                 if (!editor?.selection) {
                     return false;
                 }
-                return Editor.string(editor, editor.selection).trim().length > 0;
+                return editor?.selection ? Editor.string(editor, editor.selection).trim().length > 0 : false;
             },
         },
         actions: {
