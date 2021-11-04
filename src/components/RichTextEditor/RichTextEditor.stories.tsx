@@ -19,7 +19,7 @@ export default {
     },
 } as Meta;
 
-const value = JSON.stringify([
+const value = [
     { type: BlockStyleTypes.Paragraph, children: [{ text: "bold", bold: true }] },
     { type: BlockStyleTypes.Paragraph, children: [{ text: "italic", italic: true }] },
     { type: BlockStyleTypes.Paragraph, children: [{ text: "underline", underline: true }] },
@@ -39,11 +39,7 @@ const value = JSON.stringify([
             createListItemNode("Bake for 20 minutes."),
         ],
     },
-    {
-        type: BlockStyleTypes.Paragraph,
-        children: [createLinkNode("https://git-scm.com/downloads", "Link")],
-    },
-]);
+];
 
 export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <>
@@ -51,14 +47,20 @@ export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorP
     </>
 );
 RichTextEditor.argTypes = { value: { type: "object" } };
-RichTextEditor.args = { value };
+RichTextEditor.args = { value: JSON.stringify(value) };
 
 export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
 WithReadonlyState.args = {
     readonly: true,
-    value,
+    value: JSON.stringify([
+        ...value,
+        {
+            type: BlockStyleTypes.Paragraph,
+            children: [createLinkNode("https://git-scm.com/downloads", "Link")],
+        },
+    ]),
 };
 WithReadonlyState.argTypes = { value: { type: "object" } };
 
