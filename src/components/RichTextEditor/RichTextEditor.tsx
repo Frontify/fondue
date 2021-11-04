@@ -15,7 +15,7 @@ import { withCode } from "./plugins/withCode";
 import { withLinks } from "./plugins/withLinks";
 import { withLists } from "./plugins/withLists";
 import { BlockStyleTypes, renderBlockStyles } from "./renderer/renderBlockStyles";
-import { renderInlineStyles, Styles as InlineStyleTypes } from "./renderer/renderInlineStyles";
+import { InlineStyles as InlineStyleTypes, renderInlineStyles } from "./renderer/renderInlineStyles";
 import { editorMachine, States } from "./state/editor/machine";
 import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
 import { Toolbar } from "./Toolbar";

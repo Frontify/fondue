@@ -4,7 +4,7 @@ import React from "react";
 import { RenderLeafProps } from "slate-react";
 import { FormattedText } from "../RichTextEditor";
 
-export enum Styles {
+export enum InlineStyles {
     Bold = "bold",
     Italic = "italic",
     Strikethrough = "strikethrough",
@@ -12,15 +12,15 @@ export enum Styles {
 }
 
 const classMap = {
-    [Styles.Bold]: "tw-font-bold",
-    [Styles.Italic]: "tw-italic",
-    [Styles.Strikethrough]: "tw-line-through",
-    [Styles.Underline]: "tw-underline",
+    [InlineStyles.Bold]: "tw-font-bold",
+    [InlineStyles.Italic]: "tw-italic",
+    [InlineStyles.Strikethrough]: "tw-line-through",
+    [InlineStyles.Underline]: "tw-underline",
 };
 
 const getClasses = (text: FormattedText) =>
     Object.entries(classMap).reduce<string[]>((classes, [style, className]) => {
-        if (text[style as Styles]) {
+        if (text[style as InlineStyles]) {
             classes.push(className);
         }
         return classes;

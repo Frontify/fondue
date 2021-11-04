@@ -3,7 +3,7 @@
 import { Descendant } from "slate";
 import { jsx } from "slate-hyperscript";
 import { BlockStyleTypes } from "../renderer/renderBlockStyles";
-import { Styles } from "../renderer/renderInlineStyles";
+import { InlineStyles } from "../renderer/renderInlineStyles";
 
 const BLOCK_MAP: { [key: string]: (el: HTMLElement) => { type: string } } = {
     A: (el) => ({ type: BlockStyleTypes.Link, url: el.getAttribute("href") }),
@@ -15,12 +15,12 @@ const BLOCK_MAP: { [key: string]: (el: HTMLElement) => { type: string } } = {
 };
 
 const STYLE_MAP: { [key: string]: () => { [key: string]: boolean } } = {
-    I: () => ({ [Styles.Italic]: true }),
-    S: () => ({ [Styles.Strikethrough]: true }),
-    STRONG: () => ({ [Styles.Bold]: true }),
-    BOLD: () => ({ [Styles.Bold]: true }),
-    B: () => ({ [Styles.Bold]: true }),
-    U: () => ({ [Styles.Underline]: true }),
+    I: () => ({ [InlineStyles.Italic]: true }),
+    S: () => ({ [InlineStyles.Strikethrough]: true }),
+    STRONG: () => ({ [InlineStyles.Bold]: true }),
+    BOLD: () => ({ [InlineStyles.Bold]: true }),
+    B: () => ({ [InlineStyles.Bold]: true }),
+    U: () => ({ [InlineStyles.Underline]: true }),
 };
 
 export const parseRawValue = (raw?: string): Descendant[] => {
