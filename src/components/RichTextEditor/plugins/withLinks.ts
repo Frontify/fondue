@@ -6,7 +6,7 @@ import { createParagraphNode } from "../utils/paragraph";
 
 export const withLinks = (editor: Editor): Editor => {
     const { isInline, normalizeNode } = editor;
-    editor.isInline = (element) => (element.type === BlockStyleTypes.Link ? true : isInline(element));
+    editor.isInline = (element) => element.type === BlockStyleTypes.Link ?? isInline(element);
     editor.normalizeNode = (entry) => {
         ensureLinkHasAncestorParagraph(entry, editor);
         normalizeNode(entry);
