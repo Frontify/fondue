@@ -1,41 +1,40 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import React, { useRef, RefObject, ReactNode } from "react";
+import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
+import { MenuBlock, MenuItemType } from "@components/Menu/SelectMenu";
+import { MenuItem } from "@components/MenuItem/MenuItem";
+import IconArrowLeft from "@foundation/Icon/Generated/IconArrowLeft";
 import type { AriaListBoxOptions } from "@react-aria/listbox";
+import { useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
 import type { ListState } from "@react-stately/list";
 import type { Node } from "@react-types/shared";
-import { useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
-import { FC } from "react";
 import { merge } from "@utilities/merge";
-import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
-import { MenuItem } from "@components/MenuItem/MenuItem";
-import { MenuBlock, MenuItemType } from "@components/Menu/SelectMenu";
-import { IconLabel, ICON_OPTIONS, OptionsType, TemplateMenuItemType } from "../LinkChooser";
-import IconArrowLeft from "@foundation/Icon/Generated/IconArrowLeft";
-import { OpenWindowType } from "../LinkChooser.stories";
+import { useActor } from "@xstate/react";
+import React, { FC, ReactNode, RefObject, useContext, useRef } from "react";
+import { DropdownContext } from "../context/dropdownContext";
+import { IconLabel, ICON_OPTIONS, TemplateMenuItemType } from "../LinkChooser";
+import { State } from "../state/dropdown/machine";
 
-interface ListBoxProps extends AriaListBoxOptions<unknown> {
+interface SearchResultListProps extends AriaListBoxOptions<unknown> {
     listBoxRef?: RefObject<HTMLUListElement>;
     state: ListState<unknown>;
     menuBlocks: MenuBlock[];
     noBorder?: boolean;
     hasItems?: boolean;
-    optionsType?: OptionsType;
-    openWindow?: OpenWindowType;
-    onClick?: (window: OpenWindowType) => void;
+    query: string;
 }
 
-interface SectionProps {
-    section: Node<unknown>;
+interface SearchResultSectionProps {
+    heading: Node<unknown>;
     state: ListState<unknown>;
     keyItemRecord: Record<string, MenuItemType>;
-    openWindow: OpenWindowType;
+    section: State;
 }
 
-interface OptionProps {
+interface SearchResultOptionProps {
     item: Node<unknown>;
     state: ListState<unknown>;
     keyItemRecord: Record<string, MenuItemType | TemplateMenuItemType>;
-    openWindow: OpenWindowType;
+    section: State;
 }
 
 interface TemplateProps {
@@ -44,23 +43,28 @@ interface TemplateProps {
     preview?: string;
 }
 
-export const ListBox: FC<ListBoxProps> = (props: ListBoxProps) => {
+export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResultListProps) => {
+    const { dropdownMachineRef } = useContext(DropdownContext);
+
+    if (!dropdownMachineRef) return null;
+
+    const [{ matches, value }, send] = useActor(dropdownMachineRef);
+
     const ref = useRef<HTMLUListElement>(null);
-    const { listBoxRef = ref, state, menuBlocks, noBorder, hasItems, optionsType, openWindow, onClick } = props;
+    const { listBoxRef = ref, state, menuBlocks, noBorder, hasItems, query } = props;
     const { listBoxProps } = useListBox(props, state, listBoxRef);
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
 
     return (
         <div>
-            {openWindow !== OpenWindowType.None && (
-                <button
-                    className="tw-flex tw-px-5 tw-mt-4 tw-mb-5"
-                    onClick={() => onClick && onClick(OpenWindowType.None)}
-                >
-                    <IconArrowLeft />
-                    <p className="tw-ml-2 tw-text-black-80">Templates</p>
-                </button>
+            {!matches(State.Default) && (
+                <div className="tw-flex tw-px-5 tw-mt-4 tw-mb-5">
+                    <button onClick={() => send("GO_TO_DEFAULT")}>
+                        <IconArrowLeft />
+                    </button>
+                    <p className="tw-ml-2 tw-text-black-80 tw-capitalize">{value}</p>
+                </div>
             )}
             <ul
                 {...listBoxProps}
@@ -73,16 +77,16 @@ export const ListBox: FC<ListBoxProps> = (props: ListBoxProps) => {
             >
                 {hasItems ? (
                     [...state.collection].map((item) => (
-                        <ListBoxSection
+                        <SearchResultSection
                             key={item.key}
-                            section={item}
+                            heading={item}
                             state={state}
                             keyItemRecord={keyItemRecord}
-                            openWindow={OpenWindowType.None}
+                            section={value as State}
                         />
                     ))
-                ) : optionsType === OptionsType.Server ? (
-                    <EmptyList />
+                ) : query ? (
+                    <EmptyList query={query} />
                 ) : (
                     <EmptyRecent />
                 )}
@@ -91,23 +95,23 @@ export const ListBox: FC<ListBoxProps> = (props: ListBoxProps) => {
     );
 };
 
-const ListBoxSection = ({ section, state, keyItemRecord, openWindow }: SectionProps) => {
+const SearchResultSection = ({ heading, state, keyItemRecord, section }: SearchResultSectionProps) => {
     const { itemProps, groupProps } = useListBoxSection({
-        heading: section.rendered,
-        "aria-label": section["aria-label"],
+        heading: heading.rendered,
+        "aria-label": heading["aria-label"],
     });
 
     return (
         <>
             <li {...itemProps} className="tw-border-b tw-border-b-black-10 last:tw-border-0">
                 <ul {...groupProps} data-test-id="select-section" className="tw-py-2 tw-px-0 tw-m-0 tw-list-none">
-                    {[...section.childNodes].map((node) => (
-                        <Option
+                    {[...heading.childNodes].map((node) => (
+                        <SearchResultOption
                             key={node.key}
                             item={node}
                             state={state}
                             keyItemRecord={keyItemRecord}
-                            openWindow={openWindow}
+                            section={section}
                         />
                     ))}
                 </ul>
@@ -116,7 +120,7 @@ const ListBoxSection = ({ section, state, keyItemRecord, openWindow }: SectionPr
     );
 };
 
-const Option = ({ item, state, keyItemRecord, openWindow }: OptionProps) => {
+const SearchResultOption = ({ item, state, keyItemRecord, section }: SearchResultOptionProps) => {
     const ref = useRef<HTMLLIElement>(null);
     const { optionProps, isDisabled, isSelected } = useOption(
         {
@@ -129,6 +133,17 @@ const Option = ({ item, state, keyItemRecord, openWindow }: OptionProps) => {
     const menuItem = keyItemRecord[item.key];
     const decorator = menuItem.iconLabel ? ICON_OPTIONS[menuItem.iconLabel] : undefined;
 
+    const renderOptionItem = () => {
+        switch (section) {
+            case State.Default:
+                return <MenuItem {...menuItem} active={isSelected} decorator={decorator} />;
+            case State.Templates:
+                return <TemplateItem {...menuItem} />;
+            default:
+                return <span>State not handled</span>;
+        }
+    };
+
     return (
         <li
             {...optionProps}
@@ -138,17 +153,13 @@ const Option = ({ item, state, keyItemRecord, openWindow }: OptionProps) => {
                 isDisabled && "tw-pointer-events-none tw-top-px",
             ])}
         >
-            {openWindow === OpenWindowType.None ? (
-                <MenuItem {...menuItem} active={isSelected} decorator={decorator} />
-            ) : (
-                <TemplateItem {...menuItem} />
-            )}
+            {renderOptionItem()}
         </li>
     );
 };
 
-const EmptyList = ({ title = "No search results matched your query", label = IconLabel.Reject, disabled = true }) => {
-    return <MenuItem title={title} decorator={ICON_OPTIONS[label]} disabled={disabled} />;
+const EmptyList = ({ query }: { query: string }) => {
+    return <div>no result for {query}</div>;
 };
 
 const EmptyRecent = ({ title = "No recent queries found", label = IconLabel.Reject, disabled = true }) => {

@@ -18,7 +18,7 @@ import React, {
 } from "react";
 import { useClipboard } from "@hooks/useClipboard";
 import { Validation } from "@components/TextInput/TextInput";
-import { SelectedOption } from "../LinkChooser.stories";
+import { SearchResult } from "../LinkChooser";
 
 const validationStyle: Record<Validation, string> = {
     [Validation.Default]: "tw-border-black-20",
@@ -29,7 +29,7 @@ const validationStyle: Record<Validation, string> = {
 
 export type SearchInputProps = {
     id?: string;
-    selectedOption: SelectedOption;
+    selectedResult: SearchResult | null;
     type?: HTMLInputTypeAttribute;
     decorator?: ReactElement;
     dotted?: boolean;
@@ -55,7 +55,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
     (
         {
             id: propId,
-            selectedOption,
+            selectedResult,
             type,
             decorator,
             validation = Validation.Default,
@@ -83,7 +83,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
         const { isFocusVisible: copyButtonIsFocusVisible, focusProps: copyButtonFocusProps } = useFocusRing();
         const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
 
-        useClipboard({ selector: "[data-clipboard-id='copy-button']", target: selectedOption.link });
+        useClipboard({ selector: "[data-clipboard-id='copy-button']", target: selectedResult?.link ?? "" });
 
         const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
             if (event.key === "Enter") {
@@ -140,7 +140,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                     size={size}
                     data-test-id="search-input"
                 />
-                {selectedOption.id && previewable && (
+                {selectedResult && previewable && (
                     <button
                         className={merge([
                             "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
@@ -159,7 +159,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         <IconExternalLink />
                     </button>
                 )}
-                {selectedOption.id && copyable && (
+                {selectedResult && copyable && (
                     <button
                         className={merge([
                             "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",

@@ -1,35 +1,32 @@
-import React, { FC, Key, useRef, useState, useEffect, useCallback, ReactElement, Children } from "react";
-import { useComboBoxState } from "@react-stately/combobox";
-import { useComboBox } from "@react-aria/combobox";
-import { ListBox } from "./ListBox/ListBox";
-import { Popover } from "./Popover/Popover";
-import { mapToAriaProps } from "@components/Menu/Aria/helper";
-import { MenuBlock, MenuItemType } from "@components/Menu/SelectMenu";
-import { SearchInput } from "./SearchInput/SearchInput";
-import { AnimatePresence, motion } from "framer-motion";
-import { DismissButton } from "@react-aria/overlays";
-import { ActionMenu, ActionMenuBlock } from "@components/Menu/ActionMenu/ActionMenu";
 import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
-import IconDocument from "@foundation/Icon/Generated/IconDocument";
-import IconLink from "@foundation/Icon/Generated/IconLink";
-import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
-import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
-import IconReject from "@foundation/Icon/Generated/IconReject";
-import { OpenWindow, OpenWindowType, SelectedOption } from "./LinkChooser.stories";
-import IconTemplate from "@foundation/Icon/Generated/IconTemplate";
-import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
+import { mapToAriaProps } from "@components/Menu/Aria/helper";
+import { MenuItemType } from "@components/Menu/SelectMenu";
 import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
+import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
+import IconDocument from "@foundation/Icon/Generated/IconDocument";
+import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
+import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
+import IconLink from "@foundation/Icon/Generated/IconLink";
+import IconReject from "@foundation/Icon/Generated/IconReject";
+import IconTemplate from "@foundation/Icon/Generated/IconTemplate";
+import { useComboBox } from "@react-aria/combobox";
+import { DismissButton } from "@react-aria/overlays";
+import { useComboBoxState } from "@react-stately/combobox";
 import { useMachine } from "@xstate/react";
-import { linkChooserMachine, LinkChooserState } from "./state/link-chooser/machine";
-import { DropdownContext } from "./context/dropdownContext";
+import { AnimatePresence, motion } from "framer-motion";
+import React, { FC, Key, ReactElement, useCallback, useMemo, useRef } from "react";
 import { Interpreter } from "xstate";
-import { DropdownContext as DropdownFSMContext } from "./state/dropdown/machine";
 import { SectionActionMenu } from "./components/SectionActionMenu";
+import { DropdownContext } from "./context/dropdownContext";
+import { useQueriesStorage } from "./hooks/useQueriesStorage";
+import { SearchResultsList } from "./ListBox/ListBox";
+import { Popover } from "./Popover/Popover";
+import { SearchInput } from "./SearchInput/SearchInput";
+import { DropdownContext as DropdownFSMContext } from "./state/dropdown/machine";
+import { linkChooserMachine, LinkChooserState } from "./state/link-chooser/machine";
 export { Item, Section } from "@react-stately/collections";
 
-const MAX_STORED_ITEMS = 5;
-
-export type SearchResult = MenuItemType;
+export type SearchResult = MenuItemType & { icon: string };
 
 export enum IconLabel {
     Document = "DOCUMENT",
@@ -67,178 +64,115 @@ export type TemplateMenuBlock = {
 };
 
 export type LinkChooserProps = {
-    selectMenuBlocks: MenuBlock[];
-    actionMenuBlocks?: ActionMenuBlock[];
-    templateMenuBlocks: TemplateMenuBlock[];
-    selectedOption: SelectedOption;
-    newTab: CheckboxState;
-    openWindow: OpenWindow;
+    // selectMenuBlocks: MenuBlock[];
+    // actionMenuBlocks?: ActionMenuBlock[];
+    // templateMenuBlocks: TemplateMenuBlock[];
+    // selectedOption: SelectedOption;
+    openInNewTab: CheckboxState;
+    // openWindow: OpenWindow;
     ariaLabel?: string;
     label?: string;
     placeholder?: string;
-    onOptionChange: (item: MenuItemType | undefined) => void;
-    onWindowChange: (window: OpenWindowType) => void;
-    onTabChange: (value: boolean) => void;
+    // onOptionChange: (item: MenuItemType | undefined) => void;
+    // onWindowChange: (window: OpenWindowType) => void;
+    onOpenInNewTabChange: (value: boolean) => void;
 };
 
-export enum OptionsType {
-    Client = "CLIENT",
-    Server = "SERVER",
-}
-
-type LinkChooserState2 = {
-    options: MenuBlock[];
-    type: OptionsType;
-};
-
-const getRecentSearchFromLocalStorage = (): SearchResult[] => {
-    const recentQueries = JSON.parse(localStorage.getItem("queries") || "null");
-    return recentQueries || [];
-};
+const getTemplateByQuery = (query: string): SearchResult[] => {};
 
 export const LinkChooser: FC<LinkChooserProps> = ({
-    selectMenuBlocks = getRecentSearchFromLocalStorage(),
-    templateMenuBlocks,
-    selectedOption,
-    newTab,
-    openWindow,
+    // selectMenuBlocks: searchResults = getRecentSearchFromLocalStorage(),
+    // templateMenuBlocks,
+    // selectedOption,
+    openInNewTab,
     ariaLabel = "Menu",
     label,
     placeholder,
-    onOptionChange,
+    //onOptionChange,
     //onWindowChange,
-    onTabChange,
+    onOpenInNewTabChange,
 }) => {
-    const [
-        {
-            //context,
-            matches,
-            children,
-        },
-        send,
-    ] = useMachine(
+    const [storedQueries, storeNewQuery] = useQueriesStorage();
+
+    const [{ context, matches, children }, send] = useMachine(
         linkChooserMachine.withContext({
-            selectMenuBlocks,
-            templateMenuBlocks,
-            selectedMenuBlock: selectedOption,
-            newTab,
-            onOpenInNewTabChange: onTabChange,
+            searchResults: storedQueries,
+            openInNewTab,
+            onOpenInNewTabChange,
+            selectedResult: null,
+            query: "",
         }),
         { devTools: true },
     );
-    const actionMenuBlocks = [
-        {
-            id: "Actions",
-            menuItems: [
-                {
-                    id: "guidelines",
-                    title: "Guidelines",
-                    size: MenuItemContentSize.Small,
-                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
-                    onClick: () => send("GO_TO_GUIDELINES"),
-                },
-                {
-                    id: "projects",
-                    title: "Projects",
-                    size: MenuItemContentSize.Small,
-                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
-                    onClick: () => send("GO_TO_PROJECTS"),
-                },
-                {
-                    id: "templates",
-                    title: "Templates",
-                    size: MenuItemContentSize.Small,
-                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
-                    onClick: () => send("GO_TO_TEMPLATES"),
-                },
-            ],
-        },
-    ];
-    // TODO should add loading and error state?
-    const [displayedOptions, setDisplayedOptions] = useState<LinkChooserState2>({
-        options: selectMenuBlocks,
-        type: OptionsType.Server,
-    });
 
     const handleClearClick = useCallback(() => {
         state.setInputValue("");
         state.setSelectedKey("");
     }, []);
 
-    const handlePreviewClick = useCallback(() => {
-        newTab === CheckboxState.Checked
-            ? window.open(selectedOption.link, "_blank")
-            : (window.location.href = selectedOption.link);
-    }, [newTab, selectedOption.link]);
-
-    const updateVisibleItems = () => {
-        const storedQueries = getRecentSearchFromLocalStorage();
-        // TODO refactor this (temp)
-        const currentWindowMenu = (() => {
-            switch (openWindow) {
-                case OpenWindowType.None:
-                    return state.inputValue
-                        ? [
-                              {
-                                  ...selectMenuBlocks[0],
-                                  menuItems: [
-                                      ...selectMenuBlocks[0].menuItems,
-                                      {
-                                          id: "12",
-                                          title: `"${state.inputValue}"`, //TODO: remove the " when selecting
-                                          link: state.inputValue,
-                                          size: MenuItemContentSize.Large,
-                                          selectionIndicator: SelectionIndicatorIcon.None,
-                                          iconLabel: IconLabel.Link,
-                                      },
-                                  ],
-                              },
-                          ]
-                        : selectMenuBlocks;
-                case OpenWindowType.Templates:
-                    return templateMenuBlocks;
-                case OpenWindowType.Guidelines:
-                    return [];
-                case OpenWindowType.Projects:
-                    return [];
-                default:
-                    return [];
-            }
-        })();
-        // TODO refactor this (temp)
-        const newSelectedOptions =
-            state.inputValue || state.selectedKey || openWindow !== OpenWindowType.None
-                ? { options: currentWindowMenu, type: OptionsType.Server }
-                : { options: [{ ...currentWindowMenu[0], menuItems: storedQueries }], type: OptionsType.Client };
-        setDisplayedOptions(newSelectedOptions);
-    };
+    // const updateVisibleItems = () => {
+    //     const storedQueries = getRecentSearchFromLocalStorage();
+    //     // TODO refactor this (temp)
+    //     const currentWindowMenu = (() => {
+    //         switch (openWindow) {
+    //             case OpenWindowType.None:
+    //                 return state.inputValue
+    //                     ? [
+    //                           {
+    //                               ...searchResults[0],
+    //                               menuItems: [
+    //                                   ...searchResults[0].menuItems,
+    //                                   {
+    //                                       id: "12",
+    //                                       title: `"${state.inputValue}"`, //TODO: remove the " when selecting
+    //                                       link: state.inputValue,
+    //                                       size: MenuItemContentSize.Large,
+    //                                       selectionIndicator: SelectionIndicatorIcon.None,
+    //                                       iconLabel: IconLabel.Link,
+    //                                   },
+    //                               ],
+    //                           },
+    //                       ]
+    //                     : searchResults;
+    //             case OpenWindowType.Templates:
+    //                 return templateMenuBlocks;
+    //             case OpenWindowType.Guidelines:
+    //                 return [];
+    //             case OpenWindowType.Projects:
+    //                 return [];
+    //             default:
+    //                 return [];
+    //         }
+    //     })();
+    //     // TODO refactor this (temp)
+    //     const newSelectedOptions =
+    //         state.inputValue || state.selectedKey || openWindow !== OpenWindowType.None
+    //             ? { options: currentWindowMenu, type: OptionsType.Server }
+    //             : { options: [{ ...currentWindowMenu[0], menuItems: storedQueries }], type: OptionsType.Client };
+    //     setDisplayedOptions(newSelectedOptions);
+    // };
 
     const handleSelectionChange = (key: Key) => {
-        const foundItem = displayedOptions.options[0].menuItems.find((item) => item.id === key);
-        storeNewSelection(foundItem);
-        onOptionChange(foundItem);
+        const foundItem = context.searchResults.find((item) => item.id === key);
+        if (foundItem) {
+            storeNewQuery(foundItem);
+            send("SET_SELECTED_RESULT", { data: { selectedResult: foundItem } });
+        }
     };
 
     const filterItems = (value: string, query: string) => value.toLowerCase().includes(query.toLowerCase());
 
-    const storeNewSelection = (option: MenuItemType | undefined) => {
-        if (option) {
-            const recentQueries = getRecentSearchFromLocalStorage();
-            const retrievedItem = recentQueries.find((item: MenuItemType) => item.id === option.id);
-            const updatedQueries = retrievedItem
-                ? [{ ...option }, ...recentQueries.filter((item: MenuItemType) => item.id !== option.id)]
-                : recentQueries.length < MAX_STORED_ITEMS
-                ? [{ ...option }, ...recentQueries]
-                : [{ ...option }, ...recentQueries.slice(0, -1)];
-            localStorage.setItem("queries", JSON.stringify(updatedQueries));
-        }
-    };
+    const searchResultMenuBlock = useMemo(
+        () => [
+            {
+                id: "search",
+                menuItems: context.searchResults,
+            },
+        ],
+        [context.searchResults],
+    );
 
-    /*     const handleMenuOpen = () => state.open(); */
-
-    /*     const handleMenuClose = () => state.close(); */
-
-    const props = mapToAriaProps(ariaLabel, displayedOptions.options);
+    const props = mapToAriaProps(ariaLabel, searchResultMenuBlock);
 
     const state = useComboBoxState({
         ...props,
@@ -264,37 +198,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         state,
     );
 
-    // TODO remove (temp)
-    /*     const currentWindow = {
-        [OpenWindowType.None]: (
-            <div>
-                <ListBox
-                    {...listBoxProps}
-                    listBoxRef={listBoxRef}
-                    state={state}
-                    menuBlocks={selectMenuBlocks}
-                    noBorder={true}
-                    hasItems={!!displayedOptions[0].menuItems.length}
-                />
-                {actionMenuBlocks && (
-                    <div className="tw-border-t tw-border-black-10">
-                        <ActionMenu menuBlocks={actionMenuBlocks} noBorder={true} />
-                    </div>
-                )}
-            </div>
-        ),
-        [OpenWindowType.Templates]: (
-            <Templates templates={[]} onClick={onWindowChange} onSelect={handleSelectionChange} />
-        ),
-        [OpenWindowType.Guidelines]: null,
-        [OpenWindowType.Projects]: null,
-    }[openWindow]; */
-
-    const formattedIcon = selectedOption && selectedOption.icon ? ICON_OPTIONS[selectedOption.icon] : undefined;
-
-    useEffect(() => {
-        updateVisibleItems();
-    }, [state.inputValue, openWindow, state.selectedKey]);
+    const formattedIcon = context.selectedResult?.icon ? ICON_OPTIONS[context.selectedResult.icon] : undefined;
 
     return (
         <div
@@ -312,7 +216,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             >
                 <SearchInput
                     {...inputProps}
-                    selectedOption={selectedOption}
+                    selectedResult={context.selectedResult}
                     ref={inputRef}
                     decorator={formattedIcon}
                     previewable={true}
@@ -320,7 +224,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     clearable={true}
                     placeholder={placeholder}
                     onClear={handleClearClick}
-                    onPreview={handlePreviewClick}
+                    onPreview={() => send("OPEN_PREVIEW")}
                     onClick={() => send("OPEN_DROPDOWN")}
                 />
             </div>
@@ -341,22 +245,23 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                             onClose={() => send("CLOSE_DROPDOWN")}
                         >
                             <div>
-                                <ListBox
-                                    {...listBoxProps}
-                                    listBoxRef={listBoxRef}
-                                    state={state}
-                                    menuBlocks={displayedOptions.options}
-                                    noBorder={true}
-                                    hasItems={!!displayedOptions.options[0].menuItems.length}
-                                    optionsType={displayedOptions.type}
-                                    //openWindow={openWindow}
-                                    //onClick={onWindowChange}
-                                />
                                 <DropdownContext.Provider
                                     value={{
                                         dropdownMachineRef: children.dropdown as Interpreter<DropdownFSMContext>,
                                     }}
                                 >
+                                    <SearchResultsList
+                                        {...listBoxProps}
+                                        listBoxRef={listBoxRef}
+                                        state={state}
+                                        menuBlocks={searchResultMenuBlock}
+                                        query={context.query}
+                                        noBorder={true}
+                                        hasItems={!!context.searchResults.length}
+                                        //optionsType={displayedOptions.type}
+                                        //openWindow={openWindow}
+                                    />
+
                                     <div className="tw-border-t tw-border-black-10">
                                         <SectionActionMenu />
                                     </div>
@@ -368,7 +273,12 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 )}
             </AnimatePresence>
             <div className="tw-my-2">
-                <Checkbox value="new-tab" state={newTab} onChange={onTabChange} label="Open in New Tab" />
+                <Checkbox
+                    value="new-tab"
+                    state={context.openInNewTab ? CheckboxState.Checked : CheckboxState.Unchecked}
+                    onChange={(isChecked) => send("SET_NEW_TAB", { data: { openInNewTab: isChecked } })}
+                    label="Open in New Tab"
+                />
             </div>
         </div>
     );
