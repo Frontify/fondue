@@ -9,13 +9,15 @@ export enum InlineStyles {
     Italic = "italic",
     Strikethrough = "strikethrough",
     Underline = "underline",
+    Code = "code",
 }
 
-const classMap = {
+export const classMap = {
     [InlineStyles.Bold]: "tw-font-bold",
     [InlineStyles.Italic]: "tw-italic",
     [InlineStyles.Strikethrough]: "tw-line-through",
     [InlineStyles.Underline]: "tw-underline",
+    [InlineStyles.Code]: "tw-table-cell tw-rounded tw-text-xs tw-bg-black-5 tw-text-violet-90 tw-m-0 tw-px-2 tw-py-0.5",
 };
 
 const getClasses = (text: FormattedText) =>

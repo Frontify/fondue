@@ -8,7 +8,6 @@ import { InlineStyles } from "../renderer/renderInlineStyles";
 const BLOCK_MAP: { [key: string]: (el: HTMLElement) => { type: string } } = {
     A: (el) => ({ type: BlockStyleTypes.Link, url: el.getAttribute("href") }),
     P: () => ({ type: BlockStyleTypes.Paragraph }),
-    PRE: () => ({ type: BlockStyleTypes.Code }),
     UL: () => ({ type: BlockStyleTypes.UnorderedList }),
     OL: () => ({ type: BlockStyleTypes.OrderedList }),
     LI: () => ({ type: BlockStyleTypes.ListItem }),
@@ -21,6 +20,7 @@ const STYLE_MAP: { [key: string]: () => { [key: string]: boolean } } = {
     BOLD: () => ({ [InlineStyles.Bold]: true }),
     B: () => ({ [InlineStyles.Bold]: true }),
     U: () => ({ [InlineStyles.Underline]: true }),
+    CODE: () => ({ [InlineStyles.Code]: true }),
 };
 
 export const parseRawValue = (raw?: string): Descendant[] => {
@@ -43,13 +43,13 @@ export const parseRawValue = (raw?: string): Descendant[] => {
     return parsedValue;
 };
 
-const deserializeHTML = (el: HTMLElement | ChildNode): Descendant | Descendant[] | string | null => {
-    if (el.nodeType === 3) {
-        return el.textContent;
-    } else if (el.nodeType !== 1) {
+const deserializeHTML = (element: HTMLElement | ChildNode): Descendant | Descendant[] | string | null => {
+    if (element.nodeType === 3) {
+        return element.textContent;
+    } else if (element.nodeType !== 1) {
         return null;
     }
-    let children = Array.from(el.childNodes)
+    let children = Array.from(element.childNodes)
         .filter((el) => (el.textContent ? el.textContent.trim().length > 0 : false))
         .map(deserializeHTML);
 
@@ -57,21 +57,21 @@ const deserializeHTML = (el: HTMLElement | ChildNode): Descendant | Descendant[]
         children = [{ text: "" }];
     }
 
-    if (el.nodeName === "BODY") {
+    if (element.nodeName === "BODY") {
         return jsx("fragment", {}, children);
     }
 
-    if (el.nodeName === "BR") {
+    if (element.nodeName === "BR") {
         return "\n";
     }
 
-    if (STYLE_MAP[el.nodeName]) {
-        return jsx("text", STYLE_MAP[el.nodeName](), children);
+    if (STYLE_MAP[element.nodeName]) {
+        return jsx("text", STYLE_MAP[element.nodeName](), children);
     }
 
-    if (el instanceof HTMLElement && BLOCK_MAP[el.nodeName]) {
-        return jsx("element", BLOCK_MAP[el.nodeName](el), children);
+    if (element instanceof HTMLElement && BLOCK_MAP[element.nodeName]) {
+        return jsx("element", BLOCK_MAP[element.nodeName](element), children);
     }
 
-    return el.textContent?.trim() ?? null;
+    return element.textContent?.trim() ?? null;
 };

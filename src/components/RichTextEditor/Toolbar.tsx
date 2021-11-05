@@ -74,9 +74,9 @@ export const Toolbar: FC = () => {
 
                     <InlineStyleButton style={InlineStyles.Strikethrough}>s</InlineStyleButton>
 
-                    <BlockStyleButton blockType={BlockStyleTypes.Code}>
+                    <InlineStyleButton style={InlineStyles.Code}>
                         <IconSnippet size={IconSize.Size16} />
-                    </BlockStyleButton>
+                    </InlineStyleButton>
 
                     <BlockStyleButton blockType={BlockStyleTypes.OrderedList}>
                         <IconListNumbers size={IconSize.Size12} />

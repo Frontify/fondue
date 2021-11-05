@@ -3,6 +3,7 @@
 import { mount } from "@cypress/react";
 import React from "react";
 import { BlockStyleTypes } from "./renderer/renderBlockStyles";
+import { classMap, InlineStyles } from "./renderer/renderInlineStyles";
 import { RichTextEditor } from "./RichTextEditor";
 
 const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
@@ -30,8 +31,8 @@ describe("RichTextEditor Component", () => {
         mount(<RichTextEditor value={"<b>this is bold</b> and <i>this italic</i>"} />);
 
         cy.get(RICH_TEXT_EDITOR).should("contain.text", "this is bold and this italic");
-        cy.get("[contenteditable=true]").should("include.html", "tw-font-bold");
-        cy.get("[contenteditable=true]").should("include.html", "tw-italic");
+        cy.get("[contenteditable=true]").should("include.html", classMap[InlineStyles.Bold]);
+        cy.get("[contenteditable=true]").should("include.html", classMap[InlineStyles.Italic]);
     });
 
     it("should be editable by default ", () => {
@@ -71,40 +72,40 @@ describe("RichTextEditor Component", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(getInlineStyleControl("bold")).click();
-        cy.get("[contenteditable=true]").should("include.html", "tw-font-bold");
+        cy.get(getInlineStyleControl(InlineStyles.Bold)).click();
+        cy.get("[contenteditable=true]").should("include.html", classMap[InlineStyles.Bold]);
     });
 
     it("renders italic", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(getInlineStyleControl("italic")).click();
-        cy.get("[contenteditable=true]").should("include.html", "tw-italic");
+        cy.get(getInlineStyleControl(InlineStyles.Italic)).click();
+        cy.get("[contenteditable=true]").should("include.html", classMap[InlineStyles.Italic]);
     });
 
     it("renders underline", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(getInlineStyleControl("underline")).click();
-        cy.get("[contenteditable=true]").should("include.html", "tw-underline");
+        cy.get(getInlineStyleControl(InlineStyles.Underline)).click();
+        cy.get("[contenteditable=true]").should("include.html", classMap[InlineStyles.Underline]);
     });
 
     it("renders strikethrough", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(getInlineStyleControl("strikethrough")).click();
-        cy.get("[contenteditable=true]").should("include.html", "tw-line-through");
+        cy.get(getInlineStyleControl(InlineStyles.Strikethrough)).click();
+        cy.get("[contenteditable=true]").should("include.html", classMap[InlineStyles.Strikethrough]);
     });
 
     it("renders code", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(getBlockStyleControl("code")).click();
-        cy.get("[contenteditable=true]").should("include.html", "<code>");
+        cy.get(getInlineStyleControl(InlineStyles.Code)).click();
+        cy.get("[contenteditable=true]").should("include.html", classMap[InlineStyles.Code]);
     });
 
     it("renders an ordered list", () => {

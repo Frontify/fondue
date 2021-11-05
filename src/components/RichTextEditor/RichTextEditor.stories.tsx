@@ -24,7 +24,7 @@ const value = [
     { type: BlockStyleTypes.Paragraph, children: [{ text: "italic", italic: true }] },
     { type: BlockStyleTypes.Paragraph, children: [{ text: "underline", underline: true }] },
     { type: BlockStyleTypes.Paragraph, children: [{ text: "strikethrough", strikethrough: true }] },
-    { type: BlockStyleTypes.Code, children: [{ text: "code" }] },
+    { type: BlockStyleTypes.Paragraph, children: [{ text: "code", code: true }] },
     {
         type: BlockStyleTypes.UnorderedList,
         children: [createListItemNode("red"), createListItemNode("blue"), createListItemNode("yellow")],
@@ -73,7 +73,7 @@ RichTextWithHTML.args = {
         <p><i>italic</i></p>
         <p><u>underline</u></p>
         <p><s>strikethrough</s></p>
-        <pre><code>code</code></pre>
+        <p><code>code</code></p>
         <ul>
             <li>red</li>
             <li>blue</li>
