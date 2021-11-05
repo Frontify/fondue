@@ -8,7 +8,7 @@ export enum State {
     Templates = "templates",
 }
 
-type DropdownContext = {
+export type DropdownContext = {
     selectMenuBlocks: any;
     templateMenuBlocks: any;
     selectedMenuBlock: any;

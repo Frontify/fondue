@@ -1,4 +1,4 @@
-import React, { FC, Key, useRef, useState, useEffect, useCallback, ReactElement } from "react";
+import React, { FC, Key, useRef, useState, useEffect, useCallback, ReactElement, Children } from "react";
 import { useComboBoxState } from "@react-stately/combobox";
 import { useComboBox } from "@react-aria/combobox";
 import { ListBox } from "./ListBox/ListBox";
@@ -21,9 +21,15 @@ import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
 import { useMachine } from "@xstate/react";
 import { linkChooserMachine, LinkChooserState } from "./state/link-chooser/machine";
+import { DropdownContext } from "./context/dropdownContext";
+import { Interpreter } from "xstate";
+import { DropdownContext as DropdownFSMContext } from "./state/dropdown/machine";
+import { SectionActionMenu } from "./components/SectionActionMenu";
 export { Item, Section } from "@react-stately/collections";
 
 const MAX_STORED_ITEMS = 5;
+
+export type SearchResult = MenuItemType;
 
 export enum IconLabel {
     Document = "DOCUMENT",
@@ -85,9 +91,13 @@ type LinkChooserState2 = {
     type: OptionsType;
 };
 
-export const LinkChooser: FC<LinkChooserProps> = ({
-    selectMenuBlocks,
+const getRecentSearchFromLocalStorage = (): SearchResult[] => {
+    const recentQueries = JSON.parse(localStorage.getItem("queries") || "null");
+    return recentQueries || [];
+};
 
+export const LinkChooser: FC<LinkChooserProps> = ({
+    selectMenuBlocks = getRecentSearchFromLocalStorage(),
     templateMenuBlocks,
     selectedOption,
     newTab,
@@ -96,14 +106,14 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     label,
     placeholder,
     onOptionChange,
-    onWindowChange,
+    //onWindowChange,
     onTabChange,
 }) => {
     const [
         {
-            // context,
+            //context,
             matches,
-            // children
+            children,
         },
         send,
     ] = useMachine(
@@ -162,7 +172,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     }, [newTab, selectedOption.link]);
 
     const updateVisibleItems = () => {
-        const storedQueries = retrieveStoredQueries();
+        const storedQueries = getRecentSearchFromLocalStorage();
         // TODO refactor this (temp)
         const currentWindowMenu = (() => {
             switch (openWindow) {
@@ -211,14 +221,9 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const filterItems = (value: string, query: string) => value.toLowerCase().includes(query.toLowerCase());
 
-    const retrieveStoredQueries = () => {
-        const recentQueries = JSON.parse(localStorage.getItem("queries") || "null");
-        return recentQueries || [];
-    };
-
     const storeNewSelection = (option: MenuItemType | undefined) => {
         if (option) {
-            const recentQueries = retrieveStoredQueries();
+            const recentQueries = getRecentSearchFromLocalStorage();
             const retrievedItem = recentQueries.find((item: MenuItemType) => item.id === option.id);
             const updatedQueries = retrievedItem
                 ? [{ ...option }, ...recentQueries.filter((item: MenuItemType) => item.id !== option.id)]
@@ -344,14 +349,18 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                     noBorder={true}
                                     hasItems={!!displayedOptions.options[0].menuItems.length}
                                     optionsType={displayedOptions.type}
-                                    openWindow={openWindow}
-                                    onClick={onWindowChange}
+                                    //openWindow={openWindow}
+                                    //onClick={onWindowChange}
                                 />
-                                {openWindow === OpenWindowType.None && actionMenuBlocks && (
+                                <DropdownContext.Provider
+                                    value={{
+                                        dropdownMachineRef: children.dropdown as Interpreter<DropdownFSMContext>,
+                                    }}
+                                >
                                     <div className="tw-border-t tw-border-black-10">
-                                        <ActionMenu menuBlocks={actionMenuBlocks} noBorder={true} />
+                                        <SectionActionMenu />
                                     </div>
-                                )}
+                                </DropdownContext.Provider>
                             </div>
                         </Popover>
                         <DismissButton onDismiss={() => send("CLOSE_DROPDOWN")} />

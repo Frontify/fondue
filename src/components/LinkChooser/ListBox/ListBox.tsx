@@ -20,8 +20,8 @@ interface ListBoxProps extends AriaListBoxOptions<unknown> {
     noBorder?: boolean;
     hasItems?: boolean;
     optionsType?: OptionsType;
-    openWindow: OpenWindowType;
-    onClick: (window: OpenWindowType) => void;
+    openWindow?: OpenWindowType;
+    onClick?: (window: OpenWindowType) => void;
 }
 
 interface SectionProps {
@@ -54,7 +54,10 @@ export const ListBox: FC<ListBoxProps> = (props: ListBoxProps) => {
     return (
         <div>
             {openWindow !== OpenWindowType.None && (
-                <button className="tw-flex tw-px-5 tw-mt-4 tw-mb-5" onClick={() => onClick(OpenWindowType.None)}>
+                <button
+                    className="tw-flex tw-px-5 tw-mt-4 tw-mb-5"
+                    onClick={() => onClick && onClick(OpenWindowType.None)}
+                >
                     <IconArrowLeft />
                     <p className="tw-ml-2 tw-text-black-80">Templates</p>
                 </button>
@@ -75,7 +78,7 @@ export const ListBox: FC<ListBoxProps> = (props: ListBoxProps) => {
                             section={item}
                             state={state}
                             keyItemRecord={keyItemRecord}
-                            openWindow={openWindow}
+                            openWindow={OpenWindowType.None}
                         />
                     ))
                 ) : optionsType === OptionsType.Server ? (
