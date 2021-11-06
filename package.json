@@ -84,7 +84,7 @@
         "cypress": "8.7.0",
         "cypress-real-events": "1.5.1",
         "esbuild": "0.13.12",
-        "eslint": "7.32.0",
+        "eslint": "8.2.0",
         "eslint-plugin-jsx-a11y": "6.4.1",
         "esno": "0.11.0",
         "fast-glob": "3.2.7",
