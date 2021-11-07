@@ -126,7 +126,7 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
                 id={id}
                 className={merge([
                     "tw-text-left",
-                    size === FieldsetHeaderSize.Large ? "tw-text-l" : "tw-text-m",
+                    size === FieldsetHeaderSize.Large ? "tw-text-m" : "tw-text-s",
                     bold ? "tw-font-bold" : "tw-font-normal",
                     onClick && "hover:tw-cursor-pointer",
                 ])}
