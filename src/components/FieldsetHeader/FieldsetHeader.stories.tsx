@@ -15,7 +15,7 @@ export default {
     component: FieldsetHeaderComponent,
     argTypes: {
         size: {
-            options: [FieldsetHeaderSize.Small, FieldsetHeaderSize.Large],
+            options: [FieldsetHeaderSize.Small, FieldsetHeaderSize.Medium, FieldsetHeaderSize.Large],
             control: { type: "radio" },
         },
         type: {
