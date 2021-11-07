@@ -9,9 +9,9 @@ import { InputLabel } from "@components/InputLabel/InputLabel";
 import { TooltipProps } from "@components/Tooltip/Tooltip";
 
 export enum SwitchSize {
-    Small = "Small",
-    Medium = "Medium",
-    Large = "Large",
+    Small = "small",
+    Medium = "medium",
+    Large = "large",
 }
 
 const lineSizeClasses: Record<SwitchSize, string> = {
