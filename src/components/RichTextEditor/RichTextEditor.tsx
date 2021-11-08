@@ -24,6 +24,7 @@ export type RichTextEditorProps = {
     placeholder?: string;
     value?: string;
     onTextChange?: (value: string) => void;
+    onBlur?: (value: string) => void;
     readonly?: boolean;
 };
 
@@ -55,7 +56,8 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     value: initialValue,
     placeholder = "",
     readonly = false,
-    onTextChange: onSave,
+    onTextChange,
+    onBlur,
 }) => {
     const [value, setValue] = useState<Descendant[]>(() => parseRawValue(initialValue));
     const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
@@ -63,7 +65,9 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const withPlugins = compose(withReact, withHistory, withLists, withLinks);
     const editor = useMemo(() => withPlugins(createEditor()), []);
     const softBreakHandler = useSoftBreak(editor);
-    const [{ matches, children }, send] = useMachine(editorMachine.withContext({ locked: readonly, onSave }));
+    const [{ matches, children }, send] = useMachine(
+        editorMachine.withContext({ locked: readonly, onTextChange, onBlur }),
+    );
 
     useEffect(() => {
         send("TEXT_UPDATED", { data: { value } });

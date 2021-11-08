@@ -3,11 +3,12 @@
 import { Descendant, Editor } from "slate";
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { toolbarMachine } from "../toolbar/machine";
-import { callOnSave } from "./actions";
+import { callOnBlur, callOnTextChange } from "./actions";
 
 export type EditorContext = {
     locked: boolean;
-    onSave?: (value: string) => void;
+    onTextChange?: (value: string) => void;
+    onBlur?: (value: string) => void;
 };
 
 export type EditorStateData = {
@@ -39,7 +40,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
             [States.Editing]: {
                 on: {
                     TEXT_UPDATED: {
-                        actions: "callOnSave",
+                        actions: "callOnTextChange",
                     },
                     TEXT_SELECTED: {
                         target: States.Styling,
@@ -48,7 +49,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
 
                     BLUR: {
                         target: States.Readonly,
-                        actions: "callOnSave",
+                        actions: "callOnBlur",
                     },
                 },
             },
@@ -68,7 +69,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                     TEXT_DESELECTED: States.Editing,
                     BLUR: {
                         target: States.Readonly,
-                        actions: "callOnSave",
+                        actions: "callOnBlur",
                     },
                 },
             },
@@ -83,7 +84,8 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
             },
         },
         actions: {
-            callOnSave,
+            callOnTextChange,
+            callOnBlur,
         },
     },
 );

@@ -16,6 +16,7 @@ export default {
     },
     argTypes: {
         onTextChange: { action: "onTextChange" },
+        onBlur: { action: "onBlur" },
     },
 } as Meta;
 

@@ -34,7 +34,7 @@ export const parseRawValue = (raw?: string): Descendant[] => {
         parsedValue = JSON.parse(raw);
     } catch {
         const parsedDoc = new DOMParser().parseFromString(raw, "text/html");
-        const parsedHtml = deserializeHTML(parsedDoc.body) as Descendant[];
+        const parsedHtml = deserializeHtml(parsedDoc.body) as Descendant[];
         if (parsedHtml) {
             parsedValue = parsedHtml;
         }
@@ -43,7 +43,7 @@ export const parseRawValue = (raw?: string): Descendant[] => {
     return parsedValue;
 };
 
-const deserializeHTML = (element: HTMLElement | ChildNode): Descendant | Descendant[] | string | null => {
+const deserializeHtml = (element: HTMLElement | ChildNode): Descendant | Descendant[] | string | null => {
     if (element.nodeType === 3) {
         return element.textContent;
     } else if (element.nodeType !== 1) {
@@ -51,7 +51,7 @@ const deserializeHTML = (element: HTMLElement | ChildNode): Descendant | Descend
     }
     let children = Array.from(element.childNodes)
         .filter((el) => (el.textContent ? el.textContent.trim().length > 0 : false))
-        .map(deserializeHTML);
+        .map(deserializeHtml);
 
     if (children.length === 0) {
         children = [{ text: "" }];

@@ -3,8 +3,17 @@
 import { DoneInvokeEvent } from "xstate";
 import { EditorContext, EditorEventDataTypes } from "./machine";
 
-export const callOnSave = ({ onSave }: EditorContext, { data }: DoneInvokeEvent<EditorEventDataTypes>): void => {
-    if (onSave && data.value) {
-        onSave(JSON.stringify(data.value));
+export const callOnTextChange = (
+    { onTextChange }: EditorContext,
+    { data }: DoneInvokeEvent<EditorEventDataTypes>,
+): void => {
+    if (onTextChange && data.value) {
+        onTextChange(JSON.stringify(data.value));
+    }
+};
+
+export const callOnBlur = ({ onBlur }: EditorContext, { data }: DoneInvokeEvent<EditorEventDataTypes>): void => {
+    if (onBlur && data.value) {
+        onBlur(JSON.stringify(data.value));
     }
 };
