@@ -79,10 +79,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
             canEdit: ({ locked }) => !locked,
             hasTextSelection: (_, { data }) => {
                 const { editor } = data;
-                if (!editor?.selection) {
-                    return false;
-                }
-                return Editor.string(editor, editor.selection).trim().length > 0;
+                return editor?.selection ? Editor.string(editor, editor.selection).trim().length > 0 : false;
             },
         },
         actions: {
