@@ -10,9 +10,9 @@ import type { Node } from "@react-types/shared";
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
 import React, { FC, ReactNode, RefObject, useContext, useRef } from "react";
-import { DropdownContext } from "../context/dropdownContext";
-import { IconLabel, ICON_OPTIONS, TemplateMenuItemType } from "../LinkChooser";
-import { State } from "../state/dropdown/machine";
+import { DropdownContext } from "./context/dropdownContext";
+import { IconLabel, ICON_OPTIONS, TemplateMenuItemType } from "./LinkChooser";
+import { State } from "./state/dropdown/machine";
 
 interface SearchResultListProps extends AriaListBoxOptions<unknown> {
     listBoxRef?: RefObject<HTMLUListElement>;

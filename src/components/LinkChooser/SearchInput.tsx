@@ -18,7 +18,7 @@ import React, {
 } from "react";
 import { useClipboard } from "@hooks/useClipboard";
 import { Validation } from "@components/TextInput/TextInput";
-import { SearchResult } from "../LinkChooser";
+import { SearchResult } from "./LinkChooser";
 
 const validationStyle: Record<Validation, string> = {
     [Validation.Default]: "tw-border-black-20",

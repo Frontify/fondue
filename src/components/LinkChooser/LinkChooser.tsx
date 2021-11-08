@@ -16,12 +16,12 @@ import { useMachine } from "@xstate/react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, Key, ReactElement, useCallback, useMemo, useRef } from "react";
 import { Interpreter } from "xstate";
-import { SectionActionMenu } from "./components/SectionActionMenu";
+import { SectionActionMenu } from "./SectionActionMenu";
 import { DropdownContext } from "./context/dropdownContext";
 import { useQueriesStorage } from "./hooks/useQueriesStorage";
-import { SearchResultsList } from "./ListBox/ListBox";
-import { Popover } from "./Popover/Popover";
-import { SearchInput } from "./SearchInput/SearchInput";
+import { SearchResultsList } from "./SearchResultSection";
+import { Popover } from "./Popover";
+import { SearchInput } from "./SearchInput";
 import { DropdownContext as DropdownFSMContext } from "./state/dropdown/machine";
 import { linkChooserMachine, LinkChooserState } from "./state/link-chooser/machine";
 export { Item, Section } from "@react-stately/collections";
@@ -45,6 +45,8 @@ export const ICON_OPTIONS: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Reject]: <IconReject />,
     [IconLabel.Template]: <IconTemplate />,
 };
+
+const DEFAULT_ICON = ICON_OPTIONS[IconLabel.Link];
 
 export type TemplateMenuItemType = {
     id: Key;
@@ -94,6 +96,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 }) => {
     const [storedQueries, storeNewQuery] = useQueriesStorage();
 
+    // doesn't update on storedQueries change
     const [{ context, matches, children }, send] = useMachine(
         linkChooserMachine.withContext({
             searchResults: storedQueries,
@@ -108,6 +111,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const handleClearClick = useCallback(() => {
         state.setInputValue("");
         state.setSelectedKey("");
+        send("CLEARING");
     }, []);
 
     // const updateVisibleItems = () => {
@@ -160,6 +164,13 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }
     };
 
+    // setting -> allowsEmptyCollection: true keeps dropdown open on custom value but introduces a discrepancy
+    // between textinput and dropdown (if an item is selected and then textinput is modified, textinput contains one value
+    // while the dropdown contains a different one)
+    const handleInputChange = (value: string) => {
+        send("TYPING", { data: { query: value } });
+    };
+
     const filterItems = (value: string, query: string) => value.toLowerCase().includes(query.toLowerCase());
 
     const searchResultMenuBlock = useMemo(
@@ -179,6 +190,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         defaultFilter: filterItems,
         shouldCloseOnBlur: false,
         onSelectionChange: handleSelectionChange,
+        onInputChange: handleInputChange,
         menuTrigger: "manual",
         allowsEmptyCollection: true,
         onBlur: () => send("CLOSE_DROPDOWN"),
@@ -198,7 +210,9 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         state,
     );
 
-    const formattedIcon = context.selectedResult?.icon ? ICON_OPTIONS[context.selectedResult.icon] : undefined;
+    const formattedIcon = context.selectedResult?.iconLabel
+        ? ICON_OPTIONS[context.selectedResult.iconLabel]
+        : DEFAULT_ICON;
 
     return (
         <div

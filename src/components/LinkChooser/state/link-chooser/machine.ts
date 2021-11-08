@@ -4,7 +4,7 @@ import { CheckboxState } from "@components/Checkbox/Checkbox";
 import { SearchResult } from "src";
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { dropdownMachine } from "../dropdown/machine";
-import { openPreview, setOpenInNewTab, setSelectedResult } from "./actions";
+import { openPreview, updateQuery, setOpenInNewTab, setSelectedResult, clearSelectedResult } from "./actions";
 
 export enum LinkChooserState {
     Idle = "idle",
@@ -32,6 +32,16 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     SET_NEW_TAB: {
                         actions: ["setOpenInNewTab"],
                     },
+                    // share actions with both states?
+                    CLEARING: {
+                        target: LinkChooserState.Idle,
+                        actions: ["clearSelectedResult"],
+                    },
+                    // share actions with both states?
+                    OPEN_PREVIEW: {
+                        target: LinkChooserState.Idle,
+                        actions: ["openPreview"],
+                    },
                 },
             },
             [LinkChooserState.Focused]: {
@@ -45,21 +55,22 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                         target: LinkChooserState.Idle,
                     },
                     TYPING: {
-                        //
+                        target: LinkChooserState.Focused,
+                        actions: ["updateQuery"],
                     },
                     SET_SELECTED_RESULT: {
                         target: LinkChooserState.Idle,
                         actions: ["setSelectedResult"],
                     },
+                    // share actions with both states?
                     CLEARING: {
-                        //
+                        target: LinkChooserState.Focused,
+                        actions: ["clearSelectedResult"],
                     },
+                    // share actions with both states?
                     OPEN_PREVIEW: {
                         target: LinkChooserState.Focused,
                         actions: ["openPreview"],
-                    },
-                    COPY_TO_CLIPBOARD: {
-                        //
                     },
                 },
             },
@@ -68,7 +79,9 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
     {
         actions: {
             setOpenInNewTab,
+            updateQuery,
             setSelectedResult,
+            clearSelectedResult,
             openPreview,
         },
     },

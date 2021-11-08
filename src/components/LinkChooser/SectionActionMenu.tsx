@@ -2,12 +2,12 @@
 
 import { useActor } from "@xstate/react";
 import React, { FC, useContext } from "react";
-import { DropdownContext } from "../context/dropdownContext";
-import { sections } from "../sections";
+import { DropdownContext } from "./context/dropdownContext";
+import { sections } from "./sections";
 import { ActionMenu, ActionMenuBlock } from "@components/Menu/ActionMenu/ActionMenu";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
-import { State } from "../state/dropdown/machine";
+import { State } from "./state/dropdown/machine";
 
 export const SectionActionMenu: FC = () => {
     const { dropdownMachineRef } = useContext(DropdownContext);
