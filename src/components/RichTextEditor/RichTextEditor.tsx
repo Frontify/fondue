@@ -65,7 +65,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const withPlugins = compose(withReact, withHistory, withLists, withLinks);
     const editor = useMemo(() => withPlugins(createEditor()), []);
     const softBreakHandler = useSoftBreak(editor);
-    const [{ matches, children }, send] = useMachine(
+    const [{ matches, children }, send] = useMachine(() =>
         editorMachine.withContext({ locked: readonly, onTextChange, onBlur }),
     );
 
