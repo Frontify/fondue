@@ -14,7 +14,7 @@ import { useSoftBreak } from "./hooks/useSoftBreak";
 import { withLinks } from "./plugins/withLinks";
 import { withLists } from "./plugins/withLists";
 import { BlockStyleTypes, renderBlockStyles } from "./renderer/renderBlockStyles";
-import { InlineStyles as InlineStyleTypes, renderInlineStyles } from "./renderer/renderInlineStyles";
+import { InlineStyles, renderInlineStyles } from "./renderer/renderInlineStyles";
 import { editorMachine, States } from "./state/editor/machine";
 import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
 import { Toolbar } from "./Toolbar";
@@ -37,7 +37,7 @@ export type BlockElement = {
 export type FormattedText = {
     text: string;
 } & {
-    [key in InlineStyleTypes]?: true;
+    [key in InlineStyles]?: true;
 };
 
 declare module "slate" {
