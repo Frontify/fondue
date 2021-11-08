@@ -1,19 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { EditorState, RawDraftContentState } from "draft-js";
+import { Descendant, Editor } from "slate";
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { toolbarMachine } from "../toolbar/machine";
-import { notifyContentChanged, resetSelection, updateEditorState } from "./actions";
-import { hasEditorState } from "./typeguards";
+import { callOnBlur, callOnTextChange } from "./actions";
 
 export type EditorContext = {
     locked: boolean;
-    editorState: EditorState;
-    onContentChanged?: (content: RawDraftContentState) => void;
+    onTextChange?: (value: string) => void;
+    onBlur?: (value: string) => void;
 };
 
 export type EditorStateData = {
-    editorState: EditorState;
+    editor?: Editor;
+    value?: Descendant[];
 };
 
 export type EditorEventDataTypes = EditorStateData;
@@ -35,46 +35,42 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                         target: States.Editing,
                         cond: "canEdit",
                     },
-                    // The CHANGE needs to be handled in readonly to initialize the editor
-                    CHANGE: {
-                        actions: "updateEditorState",
-                        cond: "canEdit",
-                    },
                 },
             },
             [States.Editing]: {
                 on: {
-                    CHANGE: [
-                        {
-                            target: States.Styling,
-                            cond: "hasSelection",
-                            actions: ["updateEditorState", "notifyContentChanged"],
-                        },
-                        {
-                            target: States.Editing,
-                            actions: ["updateEditorState", "notifyContentChanged"],
-                        },
-                    ],
+                    TEXT_UPDATED: {
+                        actions: "callOnTextChange",
+                    },
+                    TEXT_SELECTED: {
+                        target: States.Styling,
+                        cond: "hasTextSelection",
+                    },
+
+                    BLUR: {
+                        target: States.Readonly,
+                        actions: "callOnBlur",
+                    },
                 },
             },
             [States.Styling]: {
                 invoke: {
                     id: "toolbar",
                     src: toolbarMachine,
-                    data: ({ editorState }) => ({ editorState }),
                 },
                 on: {
-                    CHANGE: [
+                    TEXT_SELECTED: [
                         {
                             target: States.Styling,
-                            actions: ["updateEditorState", "notifyContentChanged"],
-                            cond: "hasSelection",
+                            cond: "hasTextSelection",
                         },
-                        {
-                            target: States.Editing,
-                            actions: ["updateEditorState", "notifyContentChanged", "resetSelection"],
-                        },
+                        States.Editing,
                     ],
+                    TEXT_DESELECTED: States.Editing,
+                    BLUR: {
+                        target: States.Readonly,
+                        actions: "callOnBlur",
+                    },
                 },
             },
         },
@@ -82,15 +78,14 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
     {
         guards: {
             canEdit: ({ locked }) => !locked,
-            hasSelection: ({ locked }, { data }) => {
-                const selection = data.editorState.getSelection();
-                return !locked && hasEditorState(data) && selection.getHasFocus() && !selection.isCollapsed();
+            hasTextSelection: (_, { data }) => {
+                const { editor } = data;
+                return editor?.selection ? Editor.string(editor, editor.selection).trim().length > 0 : false;
             },
         },
         actions: {
-            updateEditorState,
-            resetSelection,
-            notifyContentChanged,
+            callOnTextChange,
+            callOnBlur,
         },
     },
 );

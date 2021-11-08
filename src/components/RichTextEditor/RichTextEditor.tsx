@@ -1,83 +1,122 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { compose } from "@utilities/compose";
+import { debounce } from "@utilities/debounce";
+import { useDebounce } from "@utilities/useDebounce";
 import { useMachine } from "@xstate/react";
-import { Editor, EditorState, getDefaultKeyBinding, RawDraftContentState, RichUtils } from "draft-js";
-import "draft-js/dist/Draft.css";
-import React, { FC, useRef } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { BaseEditor, createEditor, Descendant } from "slate";
+import { withHistory } from "slate-history";
+import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
 import { ToolbarContext } from "./context/toolbar";
-import { decorators } from "./decorators";
+import { useSoftBreak } from "./hooks/useSoftBreak";
+import { withLinks } from "./plugins/withLinks";
+import { withLists } from "./plugins/withLists";
+import { BlockStyleTypes, renderBlockStyles } from "./renderer/renderBlockStyles";
+import { InlineStyles, renderInlineStyles } from "./renderer/renderInlineStyles";
 import { editorMachine, States } from "./state/editor/machine";
-import { ToolbarContext as ToolbarFSMContext, ToolbarStateData } from "./state/toolbar/machine";
-import { styleMap } from "./styleMap";
+import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
 import { Toolbar } from "./Toolbar";
-import { parseRawContentState, RawContentState } from "./utils/parseRawContentState";
+import { parseRawValue } from "./utils/parseRawContent";
 
 export type RichTextEditorProps = {
     placeholder?: string;
-    value?: RawContentState;
-    onTextChange?: (value: RawDraftContentState) => void;
+    value?: string;
+    onTextChange?: (value: string) => void;
+    onBlur?: (value: string) => void;
     readonly?: boolean;
 };
 
+export type BlockElement = {
+    type: BlockStyleTypes;
+    url?: string;
+    children: (FormattedText | BlockElement)[];
+};
+
+export type FormattedText = {
+    text: string;
+} & {
+    [key in InlineStyles]?: true;
+};
+
+declare module "slate" {
+    interface CustomTypes {
+        Editor: BaseEditor & ReactEditor;
+        Element: BlockElement;
+        Text: FormattedText;
+    }
+}
+
+const TOOLBAR_DELAY_IN_MS = 200;
+const ON_SAVE_DELAY_IN_MS = 200;
+const isModifyingKey = (key: string) => !["Alt", "Control", "Meta", "Shift"].includes(key);
+
 export const RichTextEditor: FC<RichTextEditorProps> = ({
-    value,
-    placeholder,
-    onTextChange,
+    value: initialValue,
+    placeholder = "",
     readonly = false,
-}: RichTextEditorProps) => {
-    const editor = useRef<Editor | null>(null);
-    const parsedContentState = value ? parseRawContentState(value) : null;
-    const [{ context, matches, children }, send] = useMachine(
-        editorMachine.withContext({
-            locked: readonly,
-            editorState: parsedContentState
-                ? EditorState.createWithContent(parsedContentState, decorators)
-                : EditorState.createEmpty(decorators),
-            onContentChanged: onTextChange,
-        }),
+    onTextChange,
+    onBlur,
+}) => {
+    const [value, setValue] = useState<Descendant[]>(() => parseRawValue(initialValue));
+    const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
+
+    const withPlugins = compose(withReact, withHistory, withLists, withLinks);
+    const editor = useMemo(() => withPlugins(createEditor()), []);
+    const softBreakHandler = useSoftBreak(editor);
+    const [{ matches, children }, send] = useMachine(() =>
+        editorMachine.withContext({ locked: readonly, onTextChange, onBlur }),
     );
 
+    useEffect(() => {
+        send("TEXT_UPDATED", { data: { value } });
+    }, [debouncedValue]);
+
+    const onTextSelected = useCallback(
+        debounce(() => send("TEXT_SELECTED", { data: { editor } }), TOOLBAR_DELAY_IN_MS),
+        [editor],
+    );
+
+    useEffect(() => {
+        window.addEventListener("mouseup", onTextSelected);
+        return () => window.removeEventListener("mouseup", onTextSelected);
+    }, []);
+
     return (
-        <div onFocus={() => send("FOCUSED")} data-test-id="rich-text-editor">
-            <Editor
-                ref={editor}
-                customStyleMap={styleMap}
-                editorState={context.editorState}
-                placeholder={placeholder}
-                onChange={(editorState) => send({ type: "CHANGE", data: { editorState } })}
-                keyBindingFn={(event) => {
-                    if (event.code === "Tab") {
-                        send({ type: "CHANGE", data: { editorState: RichUtils.onTab(event, context.editorState, 4) } });
-                        return "tab";
-                    }
-                    return getDefaultKeyBinding(event);
-                }}
-                handleKeyCommand={(command: string, editorState: EditorState) => {
-                    const newState = RichUtils.handleKeyCommand(editorState, command);
-                    if (newState) {
-                        send({ type: "CHANGE", data: { editorState: newState } });
-                        return "handled";
-                    }
-                    return "not-handled";
-                }}
-                onBlur={() => editor.current?.blur()}
-                readOnly={readonly}
-            />
-            {matches(States.Styling) && (
-                <ToolbarContext.Provider
-                    value={{
-                        machineRef: children.toolbar as Interpreter<
-                            ToolbarFSMContext,
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            any,
-                            DoneInvokeEvent<ToolbarStateData>
-                        >,
+        <div data-test-id="rich-text-editor">
+            <Slate editor={editor} value={value} onChange={(value) => setValue(value)}>
+                <Editable
+                    placeholder={placeholder}
+                    onFocus={() => send("FOCUSED")}
+                    readOnly={readonly}
+                    onKeyUp={onTextSelected}
+                    onKeyDown={(e) => {
+                        if (isModifyingKey(e.key)) {
+                            send("TEXT_DESELECTED");
+                        }
                     }}
-                >
-                    <Toolbar />
-                </ToolbarContext.Provider>
-            )}
+                    onMouseDown={() => send("TEXT_DESELECTED")}
+                    onKeyPress={softBreakHandler}
+                    renderLeaf={renderInlineStyles}
+                    renderElement={renderBlockStyles}
+                    onBlur={() => send("BLUR", { data: { value } })}
+                />
+                {matches(States.Styling) && (
+                    <ToolbarContext.Provider
+                        value={{
+                            machineRef: children.toolbar as Interpreter<
+                                ToolbarFSMContext,
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                any,
+                                DoneInvokeEvent<ToolbarData>
+                            >,
+                        }}
+                    >
+                        <Toolbar />
+                    </ToolbarContext.Provider>
+                )}
+            </Slate>
         </div>
     );
 };
