@@ -73,6 +73,10 @@ export enum IconEnum {
     DocumentLibrary = "DocumentLibrary",
     DosImages = "DosImages",
     DosText = "DosText",
+    DoubleChevronLeft = "DoubleChevronLeft",
+    DoubleChevronRight = "DoubleChevronRight",
+    DoubleQuotesDown = "DoubleQuotesDown",
+    DoubleQuotesUp = "DoubleQuotesUp",
     Download = "Download",
     DownloadAlternative = "DownloadAlternative",
     Drops = "Drops",
@@ -109,6 +113,8 @@ export enum IconEnum {
     GenericPost = "GenericPost",
     Guidelines = "Guidelines",
     Header = "Header",
+    HookBracketLeft = "HookBracketLeft",
+    HookBracketRight = "HookBracketRight",
     IconAndText = "IconAndText",
     Icons = "Icons",
     Iframe = "Iframe",
@@ -158,6 +164,7 @@ export enum IconEnum {
     More = "More",
     Move = "Move",
     MovePage = "MovePage",
+    None = "None",
     Notifications = "Notifications",
     Objects = "Objects",
     OpenLock = "OpenLock",
@@ -190,6 +197,10 @@ export enum IconEnum {
     Settings = "Settings",
     Share = "Share",
     Side = "Side",
+    SingleChevronLeft = "SingleChevronLeft",
+    SingleChevronRight = "SingleChevronRight",
+    SingleQuoteDown = "SingleQuoteDown",
+    SingleQuoteUp = "SingleQuoteUp",
     Sketch = "Sketch",
     SmileysPeople = "SmileysPeople",
     Snippet = "Snippet",
@@ -318,6 +329,10 @@ import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
 import IconDosImages from "@foundation/Icon/Generated/IconDosImages";
 import IconDosText from "@foundation/Icon/Generated/IconDosText";
+import IconDoubleChevronLeft from "@foundation/Icon/Generated/IconDoubleChevronLeft";
+import IconDoubleChevronRight from "@foundation/Icon/Generated/IconDoubleChevronRight";
+import IconDoubleQuotesDown from "@foundation/Icon/Generated/IconDoubleQuotesDown";
+import IconDoubleQuotesUp from "@foundation/Icon/Generated/IconDoubleQuotesUp";
 import IconDownload from "@foundation/Icon/Generated/IconDownload";
 import IconDownloadAlternative from "@foundation/Icon/Generated/IconDownloadAlternative";
 import IconDrops from "@foundation/Icon/Generated/IconDrops";
@@ -354,6 +369,8 @@ import IconGeneral from "@foundation/Icon/Generated/IconGeneral";
 import IconGenericPost from "@foundation/Icon/Generated/IconGenericPost";
 import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
 import IconHeader from "@foundation/Icon/Generated/IconHeader";
+import IconHookBracketLeft from "@foundation/Icon/Generated/IconHookBracketLeft";
+import IconHookBracketRight from "@foundation/Icon/Generated/IconHookBracketRight";
 import IconIconAndText from "@foundation/Icon/Generated/IconIconAndText";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import IconIframe from "@foundation/Icon/Generated/IconIframe";
@@ -403,6 +420,7 @@ import IconModules from "@foundation/Icon/Generated/IconModules";
 import IconMore from "@foundation/Icon/Generated/IconMore";
 import IconMove from "@foundation/Icon/Generated/IconMove";
 import IconMovePage from "@foundation/Icon/Generated/IconMovePage";
+import IconNone from "@foundation/Icon/Generated/IconNone";
 import IconNotifications from "@foundation/Icon/Generated/IconNotifications";
 import IconObjects from "@foundation/Icon/Generated/IconObjects";
 import IconOpenLock from "@foundation/Icon/Generated/IconOpenLock";
@@ -435,6 +453,10 @@ import IconSection from "@foundation/Icon/Generated/IconSection";
 import IconSettings from "@foundation/Icon/Generated/IconSettings";
 import IconShare from "@foundation/Icon/Generated/IconShare";
 import IconSide from "@foundation/Icon/Generated/IconSide";
+import IconSingleChevronLeft from "@foundation/Icon/Generated/IconSingleChevronLeft";
+import IconSingleChevronRight from "@foundation/Icon/Generated/IconSingleChevronRight";
+import IconSingleQuoteDown from "@foundation/Icon/Generated/IconSingleQuoteDown";
+import IconSingleQuoteUp from "@foundation/Icon/Generated/IconSingleQuoteUp";
 import IconSketch from "@foundation/Icon/Generated/IconSketch";
 import IconSmileysPeople from "@foundation/Icon/Generated/IconSmileysPeople";
 import IconSnippet from "@foundation/Icon/Generated/IconSnippet";
@@ -563,6 +585,10 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.DocumentLibrary]: <IconDocumentLibrary />,
     [IconEnum.DosImages]: <IconDosImages />,
     [IconEnum.DosText]: <IconDosText />,
+    [IconEnum.DoubleChevronLeft]: <IconDoubleChevronLeft />,
+    [IconEnum.DoubleChevronRight]: <IconDoubleChevronRight />,
+    [IconEnum.DoubleQuotesDown]: <IconDoubleQuotesDown />,
+    [IconEnum.DoubleQuotesUp]: <IconDoubleQuotesUp />,
     [IconEnum.Download]: <IconDownload />,
     [IconEnum.DownloadAlternative]: <IconDownloadAlternative />,
     [IconEnum.Drops]: <IconDrops />,
@@ -599,6 +625,8 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.GenericPost]: <IconGenericPost />,
     [IconEnum.Guidelines]: <IconGuidelines />,
     [IconEnum.Header]: <IconHeader />,
+    [IconEnum.HookBracketLeft]: <IconHookBracketLeft />,
+    [IconEnum.HookBracketRight]: <IconHookBracketRight />,
     [IconEnum.IconAndText]: <IconIconAndText />,
     [IconEnum.Icons]: <IconIcons />,
     [IconEnum.Iframe]: <IconIframe />,
@@ -648,6 +676,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.More]: <IconMore />,
     [IconEnum.Move]: <IconMove />,
     [IconEnum.MovePage]: <IconMovePage />,
+    [IconEnum.None]: <IconNone />,
     [IconEnum.Notifications]: <IconNotifications />,
     [IconEnum.Objects]: <IconObjects />,
     [IconEnum.OpenLock]: <IconOpenLock />,
@@ -680,6 +709,10 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Settings]: <IconSettings />,
     [IconEnum.Share]: <IconShare />,
     [IconEnum.Side]: <IconSide />,
+    [IconEnum.SingleChevronLeft]: <IconSingleChevronLeft />,
+    [IconEnum.SingleChevronRight]: <IconSingleChevronRight />,
+    [IconEnum.SingleQuoteDown]: <IconSingleQuoteDown />,
+    [IconEnum.SingleQuoteUp]: <IconSingleQuoteUp />,
     [IconEnum.Sketch]: <IconSketch />,
     [IconEnum.SmileysPeople]: <IconSmileysPeople />,
     [IconEnum.Snippet]: <IconSnippet />,
