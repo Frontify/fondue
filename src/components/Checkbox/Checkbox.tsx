@@ -120,6 +120,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
                             tooltip={tooltip ?? undefined}
                             required={required}
                             bold={isCheckedOrMixed(state)}
+                            clickable
                         >
                             {label}
                         </InputLabel>

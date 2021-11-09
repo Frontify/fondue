@@ -9,6 +9,7 @@ export default {
     component: InputLabelComponent,
     args: {
         children: "Input Label",
+        clickable: false,
         disabled: false,
         required: false,
         tooltip: {

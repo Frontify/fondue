@@ -14,6 +14,7 @@ import { usePopper } from "react-popper";
 
 export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;
+    clickable?: boolean;
     required?: boolean;
     disabled?: boolean;
     tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
@@ -27,6 +28,7 @@ const TOOLTIP_PADDING = 15;
 export const InputLabel: FC<InputLabelProps> = ({
     children,
     htmlFor,
+    clickable = false,
     required = false,
     disabled = false,
     tooltip,
@@ -71,8 +73,10 @@ export const InputLabel: FC<InputLabelProps> = ({
                         "tw-select-none",
                         bold && "tw-font-medium",
                         disabled
-                            ? "hover:tw-cursor-not-allowed tw-pointer-events-none"
-                            : "hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white",
+                            ? `${clickable && "hover:tw-cursor-not-allowed"} tw-pointer-events-none`
+                            : `${
+                                  clickable && "hover:tw-cursor-pointer"
+                              } hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white`,
                     ])}
                     data-test-id="input-label"
                 >
