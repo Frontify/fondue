@@ -31,6 +31,7 @@
         "clean": "rimraf dist",
         "component:create": "esno scripts/createNewComponent.ts",
         "generate": "esno scripts/generateExports.ts && esno ./scripts/generateIconMap.ts",
+        "generate:iconsMap": "esno ./scripts/generateIconMap.ts && eslint --fix ./src/foundation/Icon/IconsMap.tsx",
         "lint": "npm run lint:ts",
         "lint:fix": "npm run lint:ts:fix",
         "lint:ts": "eslint 'src/**/*.{ts,tsx}'",
