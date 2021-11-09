@@ -4,7 +4,18 @@ import { CheckboxState } from "@components/Checkbox/Checkbox";
 import { SearchResult } from "src";
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { dropdownMachine } from "../dropdown/machine";
-import { openPreview, updateQuery, setOpenInNewTab, setSelectedResult, clearSelectedResult } from "./actions";
+import {
+    openPreview,
+    updateQuery,
+    setOpenInNewTab,
+    setSelectedSearchResult,
+    retrieveRecentQueries,
+    storeNewSelectedResult,
+    emitSelectSearchResult,
+    clearSelectedResult,
+    updateDropdownSearchResults,
+    updateCustomLink,
+} from "./actions";
 
 export enum LinkChooserState {
     Idle = "idle",
@@ -17,6 +28,15 @@ export type LinkChooserContext = {
     query: string;
     openInNewTab: CheckboxState;
     onOpenInNewTabChange: (value: boolean) => void;
+};
+
+const sharedActions = {
+    CLEARING: {
+        actions: ["clearSelectedResult", "updateQuery"], // clearSelectedResult, updateQuery, emitSelectSearchResult
+    },
+    OPEN_PREVIEW: {
+        actions: ["openPreview"],
+    },
 };
 
 export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEvent<LinkChooserContext>>(
@@ -32,16 +52,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     SET_NEW_TAB: {
                         actions: ["setOpenInNewTab"],
                     },
-                    // share actions with both states?
-                    CLEARING: {
-                        target: LinkChooserState.Idle,
-                        actions: ["clearSelectedResult"],
-                    },
-                    // share actions with both states?
-                    OPEN_PREVIEW: {
-                        target: LinkChooserState.Idle,
-                        actions: ["openPreview"],
-                    },
+                    ...sharedActions,
                 },
             },
             [LinkChooserState.Focused]: {
@@ -54,35 +65,48 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     CLOSE_DROPDOWN: {
                         target: LinkChooserState.Idle,
                     },
-                    TYPING: {
-                        target: LinkChooserState.Focused,
-                        actions: ["updateQuery"],
+                    TYPING: [
+                        {
+                            actions: ["updateQuery", "updateCustomLink"],
+                            cond: "isDefaultSection",
+                        },
+                        {
+                            actions: ["updateQuery"],
+                        },
+                    ],
+                    RETRIEVE_RECENT_QUERIES: {
+                        actions: ["retrieveRecentQueries"],
                     },
-                    SET_SELECTED_RESULT: {
+                    SET_SELECTED_SEARCH_RESULT: {
                         target: LinkChooserState.Idle,
-                        actions: ["setSelectedResult"],
+                        actions: ["storeNewSelectedResult", "", "setSelectedSearchResult", ""], // storeNewSelectedResult, updateDropdownSearchResults, setSelectedSearchResult, emitSelectSearchResult
                     },
-                    // share actions with both states?
-                    CLEARING: {
-                        target: LinkChooserState.Focused,
-                        actions: ["clearSelectedResult"],
+                    UPDATE_DROPDOWN_SEARCH_RESULTS: {
+                        actions: ["updateDropdownSearchResults"],
                     },
-                    // share actions with both states?
-                    OPEN_PREVIEW: {
-                        target: LinkChooserState.Focused,
-                        actions: ["openPreview"],
-                    },
+                    ...sharedActions,
                 },
             },
         },
     },
     {
+        guards: {
+            isDefaultSection: (context, event) => {
+                // check if child state value is equal to the default zone/section
+                return true;
+            },
+        },
         actions: {
             setOpenInNewTab,
             updateQuery,
-            setSelectedResult,
+            updateCustomLink,
+            setSelectedSearchResult,
+            retrieveRecentQueries,
+            storeNewSelectedResult,
+            emitSelectSearchResult,
             clearSelectedResult,
             openPreview,
+            updateDropdownSearchResults,
         },
     },
 );

@@ -17,7 +17,7 @@ export type DropdownContext = {
 };
 
 export const dropdownMachine = createMachine<DropdownContext, any>({
-    id: "link-chooser",
+    id: "dropdown",
     initial: State.Default,
     states: {
         [State.Default]: {

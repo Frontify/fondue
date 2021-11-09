@@ -1,3 +1,11 @@
+import {
+    CUSTOM_LINK_ID,
+    DEFAULT_ICON,
+    MAX_STORED_ITEMS,
+    QUERIES_STORAGE_KEY,
+    SearchResult,
+} from "@components/LinkChooser/LinkChooser";
+import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { assign } from "@xstate/immer";
 import { DoneInvokeEvent } from "xstate";
 import { LinkChooserContext } from "./machine";
@@ -10,22 +18,62 @@ export const updateQuery = assign<LinkChooserContext, DoneInvokeEvent<LinkChoose
     context.query = data.query;
 });
 
-export const setSelectedResult = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserContext>>(
+export const updateCustomLink = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserContext>>((context, { data }) => {
+    const strippedSearchResults = context.searchResults.filter((result) => result.id !== CUSTOM_LINK_ID);
+    context.searchResults = [
+        ...strippedSearchResults,
+        ...(data.query && [
+            {
+                id: CUSTOM_LINK_ID,
+                title: data.query,
+                link: data.query,
+                iconLabel: DEFAULT_ICON,
+                size: MenuItemContentSize.Large,
+            },
+        ]),
+    ];
+});
+
+export const setSelectedSearchResult = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserContext>>(
     (context, { data }) => {
         //TODO: Ask Marco why
         context.selectedResult = data.selectedResult;
-        // should query be mutated here?
-        context.query = data.selectedResult?.title;
+        context.query = data.selectedResult.title;
     },
+);
+
+export const retrieveRecentQueries = (): SearchResult[] => {
+    const recentQueries = JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || "null");
+    return recentQueries || [];
+};
+
+export const storeNewSelectedResult = (query: SearchResult): SearchResult[] => {
+    const retrievedQueries = retrieveRecentQueries();
+    const retrievedItem = retrievedQueries.find((item: SearchResult) => item.id === query.id);
+    const updatedQueries = retrievedItem
+        ? [{ ...query }, ...retrievedQueries.filter((item: SearchResult) => item.id !== query.id)]
+        : retrievedQueries.length < MAX_STORED_ITEMS
+        ? [{ ...query }, ...retrievedQueries]
+        : [{ ...query }, ...retrievedQueries.slice(0, -1)];
+    localStorage.setItem(QUERIES_STORAGE_KEY, JSON.stringify(updatedQueries));
+    return updatedQueries;
+};
+
+export const emitSelectSearchResult = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserContext>>(
+    (context, { data }) => {},
 );
 
 export const clearSelectedResult = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserContext>>((context) => {
     //TODO: Ask Marco why
     context.selectedResult = null;
-    // should query be mutated here?
-    context.query = "";
 });
 
 export const openPreview = ({ selectedResult }: LinkChooserContext): void => {
     selectedResult?.link && window.open(selectedResult.link, "_blank");
 };
+
+export const updateDropdownSearchResults = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserContext>>(
+    (context, { data }) => {
+        context.searchResults = data.searchResults;
+    },
+);

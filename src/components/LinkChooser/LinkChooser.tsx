@@ -12,18 +12,17 @@ import IconTemplate from "@foundation/Icon/Generated/IconTemplate";
 import { useComboBox } from "@react-aria/combobox";
 import { DismissButton } from "@react-aria/overlays";
 import { useComboBoxState } from "@react-stately/combobox";
-import { useMachine } from "@xstate/react";
+import { useActor, useMachine } from "@xstate/react";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, Key, ReactElement, useCallback, useMemo, useRef } from "react";
+import React, { FC, Key, ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
 import { Interpreter } from "xstate";
 import { SectionActionMenu } from "./SectionActionMenu";
 import { DropdownContext } from "./context/dropdownContext";
-import { useQueriesStorage } from "./hooks/useQueriesStorage";
 import { SearchResultsList } from "./SearchResultSection";
 import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
-import { DropdownContext as DropdownFSMContext } from "./state/dropdown/machine";
-import { linkChooserMachine, LinkChooserState } from "./state/link-chooser/machine";
+import { DropdownContext as DropdownFSMContext, State } from "./state/dropdown/machine";
+import { DropdownState, linkChooserMachine, LinkChooserState } from "./state/link-chooser/machine";
 export { Item, Section } from "@react-stately/collections";
 
 export type SearchResult = MenuItemType & { icon: string };
@@ -46,7 +45,10 @@ export const ICON_OPTIONS: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Template]: <IconTemplate />,
 };
 
-const DEFAULT_ICON = ICON_OPTIONS[IconLabel.Link];
+export const DEFAULT_ICON = IconLabel.Link;
+export const CUSTOM_LINK_ID = "custom-link";
+export const MAX_STORED_ITEMS = 5;
+export const QUERIES_STORAGE_KEY = "queries";
 
 export type TemplateMenuItemType = {
     id: Key;
@@ -57,6 +59,8 @@ export type TemplateMenuItemType = {
     size?: MenuItemContentSize;
     selectionIndicator?: SelectionIndicatorIcon;
     iconLabel?: string;
+
+    getTemplateByQuery?: (query: string) => SearchResult[];
 };
 
 export type TemplateMenuBlock = {
@@ -66,40 +70,33 @@ export type TemplateMenuBlock = {
 };
 
 export type LinkChooserProps = {
-    // selectMenuBlocks: MenuBlock[];
-    // actionMenuBlocks?: ActionMenuBlock[];
-    // templateMenuBlocks: TemplateMenuBlock[];
-    // selectedOption: SelectedOption;
+    getGlobalByQuery: (query: string) => Promise<SearchResult[]>;
+    getGuidelinesByQuery: (query: string) => Promise<SearchResult[]>;
+    getTemplatesByQuery: (query: string) => Promise<SearchResult[]>;
     openInNewTab: CheckboxState;
-    // openWindow: OpenWindow;
     ariaLabel?: string;
     label?: string;
     placeholder?: string;
-    // onOptionChange: (item: MenuItemType | undefined) => void;
-    // onWindowChange: (window: OpenWindowType) => void;
     onOpenInNewTabChange: (value: boolean) => void;
 };
 
-const getTemplateByQuery = (query: string): SearchResult[] => {};
+// const mockAsyncFetch = (timeout) => new Promise((resolve) => setTimeout(resolve, timeout));
 
 export const LinkChooser: FC<LinkChooserProps> = ({
-    // selectMenuBlocks: searchResults = getRecentSearchFromLocalStorage(),
-    // templateMenuBlocks,
-    // selectedOption,
+    getGlobalByQuery,
+    getTemplatesByQuery,
     openInNewTab,
     ariaLabel = "Menu",
     label,
     placeholder,
-    //onOptionChange,
-    //onWindowChange,
     onOpenInNewTabChange,
 }) => {
-    const [storedQueries, storeNewQuery] = useQueriesStorage();
+    /* const [storedQueries, storeNewQuery] = useQueriesStorage(); */
 
     // doesn't update on storedQueries change
-    const [{ context, matches, children }, send] = useMachine(
+    const [{ context, matches, children, value }, send] = useMachine(
         linkChooserMachine.withContext({
-            searchResults: storedQueries,
+            searchResults: [],
             openInNewTab,
             onOpenInNewTabChange,
             selectedResult: null,
@@ -108,60 +105,21 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         { devTools: true },
     );
 
+    /* const [{ context: contextChild, matches: matchesChild }, sendChild] = useActor(children.dropdown); */
+
     const handleClearClick = useCallback(() => {
         state.setInputValue("");
         state.setSelectedKey("");
-        send("CLEARING");
+        send("CLEARING", { data: { query: "" } });
     }, []);
 
-    // const updateVisibleItems = () => {
-    //     const storedQueries = getRecentSearchFromLocalStorage();
-    //     // TODO refactor this (temp)
-    //     const currentWindowMenu = (() => {
-    //         switch (openWindow) {
-    //             case OpenWindowType.None:
-    //                 return state.inputValue
-    //                     ? [
-    //                           {
-    //                               ...searchResults[0],
-    //                               menuItems: [
-    //                                   ...searchResults[0].menuItems,
-    //                                   {
-    //                                       id: "12",
-    //                                       title: `"${state.inputValue}"`, //TODO: remove the " when selecting
-    //                                       link: state.inputValue,
-    //                                       size: MenuItemContentSize.Large,
-    //                                       selectionIndicator: SelectionIndicatorIcon.None,
-    //                                       iconLabel: IconLabel.Link,
-    //                                   },
-    //                               ],
-    //                           },
-    //                       ]
-    //                     : searchResults;
-    //             case OpenWindowType.Templates:
-    //                 return templateMenuBlocks;
-    //             case OpenWindowType.Guidelines:
-    //                 return [];
-    //             case OpenWindowType.Projects:
-    //                 return [];
-    //             default:
-    //                 return [];
-    //         }
-    //     })();
-    //     // TODO refactor this (temp)
-    //     const newSelectedOptions =
-    //         state.inputValue || state.selectedKey || openWindow !== OpenWindowType.None
-    //             ? { options: currentWindowMenu, type: OptionsType.Server }
-    //             : { options: [{ ...currentWindowMenu[0], menuItems: storedQueries }], type: OptionsType.Client };
-    //     setDisplayedOptions(newSelectedOptions);
-    // };
-
+    // should search be triggered even when a user selects one of the options from the local storage?
+    // open dropdown -> select one of the items from recent queries -> open the dropdown again (this time an option
+    // is selected) -> should this trigger the search with the query of the currently selected item?
     const handleSelectionChange = (key: Key) => {
         const foundItem = context.searchResults.find((item) => item.id === key);
-        if (foundItem) {
-            storeNewQuery(foundItem);
-            send("SET_SELECTED_RESULT", { data: { selectedResult: foundItem } });
-        }
+        if (foundItem)
+            send("SET_SELECTED_SEARCH_RESULT", { data: { selectedResult: foundItem, query: foundItem.title } });
     };
 
     // setting -> allowsEmptyCollection: true keeps dropdown open on custom value but introduces a discrepancy
@@ -169,6 +127,16 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     // while the dropdown contains a different one)
     const handleInputChange = (value: string) => {
         send("TYPING", { data: { query: value } });
+    };
+
+    const getResultsByQuery = async (query: string, section: State): Promise<SearchResult[]> => {
+        switch (section) {
+            case State.Templates:
+                return getTemplatesByQuery(query);
+            case State.Default:
+            default:
+                return getGlobalByQuery(query);
+        }
     };
 
     const filterItems = (value: string, query: string) => value.toLowerCase().includes(query.toLowerCase());
@@ -212,7 +180,46 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const formattedIcon = context.selectedResult?.iconLabel
         ? ICON_OPTIONS[context.selectedResult.iconLabel]
-        : DEFAULT_ICON;
+        : ICON_OPTIONS[DEFAULT_ICON];
+
+    const fetchResults = async () => {
+        const childContextValue = ""; // get dropdown context value
+        const results =
+            childContextValue !== "Default" || state.inputValue
+                ? await getResultsByQuery(state.inputValue, childContextValue)
+                : send("RETRIEVE_RECENT_QUERIES");
+        send("UPDATE_DROPDOWN_SEARCH_RESULTS", { data: { searchResults: results } });
+    };
+
+    useEffect(() => {
+        /*
+        // if current window/section !== default
+            // if query/state.inputValue 
+                // set loading state
+                // hit the search endpoint with the query value (for the current window/section)
+                // if successful
+                    // return search results
+                // else
+                    // show error
+                // finally
+                    // stop loading state
+            // else
+                // get all results from A to Z
+        // else
+            // if current window/section "supports" recent queries and !query/state.inputValue
+                // display recent queries (from local storage)
+            // else 
+                // display whatever current window/section needs to show (all results)
+                    // set loading state
+                    // hit the search endpoint with the query value (for the current window/section)
+                    // if successful
+                        // return search results
+                    // else
+                        // show error
+                    // finally
+                        // stop loading state
+        */
+    }, [state.inputValue, value]);
 
     return (
         <div
