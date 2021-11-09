@@ -30,7 +30,7 @@
         "dev:library": "vite build --watch",
         "clean": "rimraf dist",
         "component:create": "esno scripts/createNewComponent.ts",
-        "generate": "esno scripts/generateExports.ts",
+        "generate": "esno scripts/generateExports.ts && esno ./scripts/generateIconMap.ts",
         "lint": "npm run lint:ts",
         "lint:fix": "npm run lint:ts:fix",
         "lint:ts": "eslint 'src/**/*.{ts,tsx}'",
