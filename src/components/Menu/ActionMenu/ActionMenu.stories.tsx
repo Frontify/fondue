@@ -9,7 +9,7 @@ import React from "react";
 import { ActionMenu as ActionMenuComponent, ActionMenuProps } from "./ActionMenu";
 
 export default {
-    title: "Components/Menu",
+    title: "Components/Action Menu",
     component: ActionMenuComponent,
     argTypes: {
         onClick: { action: "onClick" },
