@@ -25,3 +25,8 @@ export type Palette = {
     title: string;
     colors: Color[];
 };
+
+export enum ColorFormat {
+    Hex = "Hex",
+    Rgba = "Rgba",
+}

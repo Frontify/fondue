@@ -3,6 +3,7 @@
 import { Meta, Story } from "@storybook/react";
 import { EXAMPLE_PALETTES } from "@utilities/colors";
 import React, { useState } from "react";
+import { ColorFormat } from "../../types/colors";
 import { ColorPicker, ColorPickerProps } from "./ColorPicker";
 
 export default {
@@ -18,10 +19,14 @@ export default {
 
 const Template: Story<ColorPickerProps> = (args) => {
     const [selectedColor, setSelectedColor] = useState(args.currentColor);
+    const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
+
     return (
         <ColorPicker
             {...args}
             currentColor={selectedColor}
+            currentFormat={currentFormat}
+            setFormat={setCurrentFormat}
             onSelect={(color) => {
                 args.onSelect(color);
                 setSelectedColor(color);

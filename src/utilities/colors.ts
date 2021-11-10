@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
 import { toState } from "react-color/lib/helpers/color";
-import { Color, ColorState, DiffColor, Palette } from "../types/colors";
+import { Color, ColorFormat, ColorState, DiffColor, Palette } from "../types/colors";
 
 export const getValidRgbColorValue = (input: string): number => {
     const value = parseInt(input || "0", 10);
@@ -26,6 +26,29 @@ export const toColor = (current: Color, { name, ...diff }: DiffColor): Color => 
     const hex = toState(rgba).hex;
 
     return { name, rgba, alpha, hex };
+};
+
+export const getBackgroundColor = (color: Color): string => {
+    const { rgba, hex } = color;
+    if (rgba) {
+        return `rgba(${Object.values(rgba).join(", ")})`;
+    }
+    return hex;
+};
+
+export const getAlphaPercent = (alpha: number): string => `${Math.round(alpha * 100)}%`;
+
+export const getColorDisplayValue = (color: Color, format: ColorFormat, showAlpha = true): string => {
+    const { hex, rgba, alpha } = color;
+
+    switch (format) {
+        case ColorFormat.Rgba:
+            return rgba ? `rgba(${Object.values(rgba).join(", ")})` : hex;
+        case ColorFormat.Hex:
+            return showAlpha && alpha && alpha < 1 ? `${hex} ${getAlphaPercent(alpha)}` : hex;
+        default:
+            return hex;
+    }
 };
 
 export const EXAMPLE_PALETTES: Palette[] = [
