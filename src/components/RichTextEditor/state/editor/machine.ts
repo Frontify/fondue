@@ -3,7 +3,7 @@
 import { Descendant, Editor } from "slate";
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { toolbarMachine } from "../toolbar/machine";
-import { callOnBlur, callOnTextChange } from "./actions";
+import { callOnBlur, callOnTextChange, setLocked } from "./actions";
 
 export type EditorContext = {
     locked: boolean;
@@ -14,6 +14,7 @@ export type EditorContext = {
 export type EditorStateData = {
     editor?: Editor;
     value?: Descendant[];
+    locked?: boolean;
 };
 
 export type EditorEventDataTypes = EditorStateData;
@@ -35,6 +36,9 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                         target: States.Editing,
                         cond: "canEdit",
                     },
+                    SET_LOCKED: {
+                        actions: "setLocked",
+                    },
                 },
             },
             [States.Editing]: {
@@ -46,7 +50,6 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                         target: States.Styling,
                         cond: "hasTextSelection",
                     },
-
                     BLUR: {
                         target: States.Readonly,
                         actions: "callOnBlur",
@@ -86,6 +89,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
         actions: {
             callOnTextChange,
             callOnBlur,
+            setLocked,
         },
     },
 );

@@ -70,6 +70,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
 
     useEffect(() => {
+        send("SET_LOCKED", { data: { locked: readonly } });
+    }, [readonly]);
+
+    useEffect(() => {
         send("TEXT_UPDATED", { data: { value } });
     }, [debouncedValue]);
 
