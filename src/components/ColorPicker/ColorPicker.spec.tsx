@@ -6,7 +6,7 @@ import { ICON_ITEM_ID, TEXT_ITEM_ID } from "@components/Slider/Slider.spec";
 import { mount } from "@cypress/react";
 import { EXAMPLE_PALETTES } from "@utilities/colors";
 import React, { FC, useState } from "react";
-import { Color, Palette } from "../../types/colors";
+import { Color, ColorFormat, Palette } from "../../types/colors";
 import { ColorPicker } from "./ColorPicker";
 
 export const BRAND_COLOR_ID = "[data-test-id=brand-color]";
@@ -23,9 +23,16 @@ type Props = {
 
 const Component: FC<Props> = ({ palettes, currentColor = { hex: "#FF0000", alpha: 1 } }) => {
     const [selectedColor, setSelectedColor] = useState<Color>(currentColor);
+    const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
 
     return (
-        <ColorPicker currentColor={selectedColor} onSelect={(color) => setSelectedColor(color)} palettes={palettes} />
+        <ColorPicker
+            currentColor={selectedColor}
+            currentFormat={currentFormat}
+            setFormat={setCurrentFormat}
+            onSelect={(color) => setSelectedColor(color)}
+            palettes={palettes}
+        />
     );
 };
 

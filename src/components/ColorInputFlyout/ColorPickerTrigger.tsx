@@ -6,34 +6,25 @@ import IconColors from "@foundation/Icon/Generated/IconColors";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
+import { getBackgroundColor } from "@utilities/colors";
 import { merge } from "@utilities/merge";
 import React, { FC } from "react";
-import { Color } from "../../types/colors";
+import { ColorFormat } from "../../types/colors";
+import { ColorInputTitle } from "./ColorInputTitle";
 import { ColorPickerFlyoutProps } from "./ColorPickerFlyout";
 
 type ColorInputTriggerProps = Pick<ColorPickerFlyoutProps, "id" | "currentColor" | "disabled"> & {
     isOpen?: boolean;
-};
-
-const ColorInputTitle: FC<{ currentColor: Color }> = ({ currentColor }) => {
-    const { name, hex, alpha } = currentColor;
-    const opacity = alpha && alpha < 1 ? `${Math.round(alpha * 100)}%` : "";
-
-    return (
-        <div className="tw-text-black-100">
-            {name || hex}
-            <span className="tw-text-black-60"> {opacity}</span>
-        </div>
-    );
+    format: ColorFormat;
 };
 
 export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
     id,
     currentColor,
+    format,
     isOpen = false,
     disabled = false,
 }) => {
-    const selectedColor = currentColor?.hex;
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
@@ -48,15 +39,17 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
                 ])}
             >
                 <MenuItemContent
-                    title={currentColor ? <ColorInputTitle currentColor={currentColor} /> : "Select color"}
+                    title={
+                        currentColor ? <ColorInputTitle format={format} currentColor={currentColor} /> : "Select color"
+                    }
                     decorator={
-                        selectedColor ? (
+                        currentColor ? (
                             <span
                                 className={merge([
                                     "tw-h-4 tw-w-4 tw-rounded tw-flex tw-items-center tw-justify-center",
                                     disabled && "tw-opacity-50",
                                 ])}
-                                style={{ background: selectedColor }}
+                                style={{ background: getBackgroundColor(currentColor) }}
                             />
                         ) : (
                             <span className="tw-text-black-70">

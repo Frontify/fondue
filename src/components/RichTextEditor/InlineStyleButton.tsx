@@ -2,8 +2,9 @@
 
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
-import { RichUtils } from "draft-js";
-import React, { FC, useCallback, useContext } from "react";
+import React, { FC, useContext } from "react";
+import { Editor } from "slate";
+import { useSlateStatic } from "slate-react";
 import { ToolbarContext } from "./context/toolbar";
 
 interface InlineStyleButtonProps {
@@ -17,25 +18,26 @@ export const InlineStyleButton: FC<InlineStyleButtonProps> = ({ style, children 
         return null;
     }
 
-    const [{ context }, send] = useActor(machineRef);
-    const { editorState } = context;
-    const styleIsActive = useCallback(
-        (): boolean => editorState && editorState.getCurrentInlineStyle().has(style),
-        [editorState],
-    );
+    const editor = useSlateStatic();
+    const [styleIsActive] = Editor.nodes(editor, {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        match: (node: any) => node[style] === true,
+    });
+
+    const [, send] = useActor(machineRef);
 
     return (
         <button
             data-test-id={`inline-style-button-${style}`}
             className={merge([
-                "tw-flex tw-w-6 tw-h-6 tw-items-center tw-justify-center tw-border-0 tw-bg-white tw-rounded tw-text-black-95 tw-cursor-pointer",
-                styleIsActive() && "tw-bg-black-10",
+                "tw-flex tw-w-6 tw-h-6 tw-items-center tw-justify-center tw-border-0  tw-rounded tw-text-black-95 tw-cursor-pointer",
+                styleIsActive ? "tw-bg-black-10" : "tw-bg-white",
             ])}
             onClick={(event) => {
                 event.preventDefault();
                 send({
-                    type: "STYLE_SELECTED",
-                    data: { editorState: RichUtils.toggleInlineStyle(editorState, style) },
+                    type: "INLINE_STYLE_SELECTED",
+                    data: { style, editor, value: !styleIsActive },
                 });
             }}
             onMouseDown={(event) => event.preventDefault()}

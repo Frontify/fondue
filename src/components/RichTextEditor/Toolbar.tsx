@@ -1,18 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import IconBold from "@foundation/Icon/Generated/IconBold";
+import IconItalic from "@foundation/Icon/Generated/IconItalic";
+import IconListBullets from "@foundation/Icon/Generated/IconListBullets";
+import IconListNumbers from "@foundation/Icon/Generated/IconListNumbers";
+import IconSnippet from "@foundation/Icon/Generated/IconSnippet";
+import IconUnderline from "@foundation/Icon/Generated/IconUnderline";
+import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useRef } from "react";
 import { usePopper } from "react-popper";
+import { BlockStyleButton } from "./BlockStyleButton";
 import { useEditorSelection } from "./hooks/useEditorSelection";
-import {
-    BoldButton,
-    CodeButton,
-    ItalicButton,
-    OrderedListButton,
-    StrikethroughButton,
-    UnderlineButton,
-    UnorderedListButton,
-} from "./styling-controls";
+import { InlineStyleButton } from "./InlineStyleButton";
+import { BlockStyleTypes } from "./renderer/renderBlockStyles";
+import { InlineStyles } from "./renderer/renderInlineStyles";
 
 export const Toolbar: FC = () => {
     const selectionRectRef = useRef<HTMLDivElement | null>(null);
@@ -58,13 +60,31 @@ export const Toolbar: FC = () => {
                 {...attributes.popper}
             >
                 <div className="tw-flex tw-items-center tw-px-3 tw-py-2 tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5">
-                    <BoldButton />
-                    <ItalicButton />
-                    <UnderlineButton />
-                    <StrikethroughButton />
-                    <CodeButton />
-                    <OrderedListButton />
-                    <UnorderedListButton />
+                    <InlineStyleButton style={InlineStyles.Bold}>
+                        <IconBold size={IconSize.Size16} />
+                    </InlineStyleButton>
+
+                    <InlineStyleButton style={InlineStyles.Italic}>
+                        <IconItalic size={IconSize.Size16} />
+                    </InlineStyleButton>
+
+                    <InlineStyleButton style={InlineStyles.Underline}>
+                        <IconUnderline size={IconSize.Size12} />
+                    </InlineStyleButton>
+
+                    <InlineStyleButton style={InlineStyles.Strikethrough}>s</InlineStyleButton>
+
+                    <InlineStyleButton style={InlineStyles.Code}>
+                        <IconSnippet size={IconSize.Size16} />
+                    </InlineStyleButton>
+
+                    <BlockStyleButton blockType={BlockStyleTypes.OrderedList}>
+                        <IconListNumbers size={IconSize.Size12} />
+                    </BlockStyleButton>
+
+                    <BlockStyleButton blockType={BlockStyleTypes.UnorderedList}>
+                        <IconListBullets size={IconSize.Size16} />
+                    </BlockStyleButton>
                 </div>
 
                 <div

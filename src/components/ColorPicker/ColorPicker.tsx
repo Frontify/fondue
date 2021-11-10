@@ -1,43 +1,50 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Slider } from "@components/Slider/Slider";
-import { Color, Palette } from "../../types/colors";
+import { getBackgroundColor, getColorDisplayValue } from "@utilities/colors";
 import { merge } from "@utilities/merge";
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 // @ts-ignore
 import { getContrastingColor } from "react-color/lib/helpers/color";
+import { Color, ColorFormat, Palette } from "../../types/colors";
 import { BrandColorPicker } from "./BrandColorPicker";
 import { CustomColorPicker } from "./CustomColorPicker";
 
 export type ColorPickerProps = {
     palettes?: Palette[];
     currentColor: Color;
-    currentFormat?: ColorFormat;
-    setFormat?: (id: ColorFormat) => void;
+    currentFormat: ColorFormat;
+    setFormat: (id: ColorFormat) => void;
     onSelect: (color: Color) => void;
 };
-
-export enum ColorFormat {
-    Hex = "Hex",
-    Rgba = "Rgba",
-}
 
 enum ColorType {
     Brand = "Brand",
     Custom = "Custom",
 }
 
-export const ColorPicker: FC<ColorPickerProps> = ({ currentColor, palettes, onSelect }) => {
-    const colorTypes = [
-        { id: ColorType.Brand, value: "Brand Colors" },
-        { id: ColorType.Custom, value: "Custom Color" },
-    ];
+const colorTypes = [
+    { id: ColorType.Brand, value: "Brand Colors" },
+    { id: ColorType.Custom, value: "Custom Color" },
+];
+
+export const ColorPicker: FC<ColorPickerProps> = ({
+    currentColor,
+    palettes,
+    onSelect,
+    setFormat,
+    currentFormat = ColorFormat.Hex,
+}) => {
     const [colorType, setColorType] = useState(ColorType.Brand);
-    const [colorFormat, setColorFormat] = useState(ColorFormat.Hex);
+    const [color, setColor] = useState(currentColor);
+
+    useEffect(() => {
+        setColor({ ...currentColor, alpha: currentColor.alpha || 1 });
+    }, [currentColor]);
 
     return (
         <div className="tw-w-[400px]">
-            <ColorPreview color={currentColor} format={colorFormat} />
+            <ColorPreview color={color} format={currentFormat} />
             <div className="tw-p-6 tw-flex tw-flex-col tw-gap-5">
                 {palettes && (
                     <Slider
@@ -47,12 +54,12 @@ export const ColorPicker: FC<ColorPickerProps> = ({ currentColor, palettes, onSe
                     />
                 )}
                 {palettes && colorType === ColorType.Brand ? (
-                    <BrandColorPicker currentColor={currentColor} palettes={palettes} onSelect={onSelect} />
+                    <BrandColorPicker currentColor={color} palettes={palettes} onSelect={onSelect} />
                 ) : (
                     <CustomColorPicker
-                        currentColor={currentColor}
-                        currentFormat={colorFormat}
-                        setFormat={setColorFormat}
+                        currentColor={color}
+                        currentFormat={currentFormat}
+                        setFormat={setFormat}
                         onSelect={onSelect}
                     />
                 )}
@@ -63,42 +70,11 @@ export const ColorPicker: FC<ColorPickerProps> = ({ currentColor, palettes, onSe
 
 const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format }) => {
     const { hex, rgba, name, alpha } = color;
-
-    /**
-     * Return contrast color for the label.
-     * The contrast color is calculated by 'react-colors' or is just black if alpha drops below 0.3.
-     */
-
+    const backgroundColor = getBackgroundColor(color);
+    const displayValue = getColorDisplayValue(color, format);
     const labelColor = useMemo(() => {
-        return alpha && alpha < 0.3 ? "#000" : getContrastingColor(hex);
+        return alpha && alpha < 0.3 ? "#000000" : getContrastingColor(hex);
     }, [hex, rgba, alpha]);
-
-    /**
-     * Return value for background color. Prefer rgba, because 8-digit hex isn't working correctly.
-     */
-
-    const backgroundColor = useMemo(() => {
-        if (rgba) {
-            return `rgba(${Object.values(rgba).join(", ")})`;
-        }
-        return hex;
-    }, [hex, rgba, alpha]);
-
-    /**
-     * Return color value to display, based on the selected color format (hex or rgba).
-     */
-
-    const displayValue = useMemo(() => {
-        if (format === ColorFormat.Hex) {
-            if (alpha && alpha < 1) {
-                return `${hex} ${Math.round(alpha * 100)}%`;
-            }
-            return hex;
-        }
-        if (format === ColorFormat.Rgba) {
-            return backgroundColor;
-        }
-    }, [hex, rgba, alpha, format]);
 
     return (
         <div
