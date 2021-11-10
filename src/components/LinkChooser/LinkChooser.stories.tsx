@@ -2,11 +2,13 @@
 
 import { CheckboxState } from "@components/Checkbox/Checkbox";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
+import { IconEnum } from "@foundation/Icon/IconsMap";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
-import { LinkChooser, LinkChooserProps, SearchResult } from "./LinkChooser";
+import { LinkChooser } from "./LinkChooser";
 import { data } from "./mock/data";
 import { templates } from "./mock/templates";
+import { LinkChooserProps, SearchResult } from "./types";
 
 export default {
     title: "Components/Link Chooser",
@@ -43,7 +45,11 @@ const LinkChooserTemplate: Story<LinkChooserProps> = () => {
     const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> => {
         return new Promise((resolve) =>
             setTimeout(() => {
-                resolve(templates.filter((template) => doesContainSubstring(template.title, query)));
+                resolve(
+                    templates
+                        .filter((template) => doesContainSubstring(template.title, query))
+                        .map((item) => ({ ...item, icon: IconEnum.Template })),
+                );
             }, 2000),
         );
     };
@@ -53,8 +59,8 @@ const LinkChooserTemplate: Story<LinkChooserProps> = () => {
             getGlobalByQuery={getGlobalByQuery}
             /*  getGuidelinesByQuery={getGuidelinesByQuery} */
             getTemplatesByQuery={getTemplatesByQueryMock}
-            onLinkChange={(value: SearchResult) => console.log(value)}
-            newTab={newTab}
+            onLinkChange={(value: SearchResult) => console.log("selected search result callback", value)}
+            openInNewTab={newTab}
             onOpenInNewTabChange={handleTabChange}
         />
     );

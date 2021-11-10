@@ -1,23 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CheckboxState } from "@components/Checkbox/Checkbox";
-import { SearchResult, Section } from "src";
 import { createMachine, DoneInvokeEvent } from "xstate";
+import { LinkChooserContext, LinkChooserEventData } from "../types";
 import {
-    openPreview,
-    setOpenInNewTab,
-    setSelectedSearchResult,
-    retrieveRecentQueries,
-    storeNewSelectedResult,
-    emitSelectSearchResult,
     clearSelectedResult,
-    updateDropdownSearchResults,
-    updateCustomLink,
-    updateQueryFromString,
-    updateQueryFromObject,
+    emitSelectSearchResult,
     fetchGlobalSearchResults,
     fetchTemplateSearchResults,
+    openPreview,
     populateDropdownSearchResultsWithRecentQueries,
+    retrieveRecentQueries,
+    setOpenInNewTab,
+    setSelectedSearchResult,
+    storeNewSelectedResult,
+    updateCustomLink,
+    updateDropdownSearchResults,
+    updateQueryFromObject,
+    updateQueryFromString,
 } from "./actions";
 
 export enum LinkChooserState {
@@ -38,24 +37,9 @@ export enum SectionState {
     Error = "error",
 }
 
-export type LinkChooserContext = {
-    searchResults: SearchResult[];
-    selectedResult: SearchResult | null;
-    query: string;
-    openInNewTab: CheckboxState;
-    onOpenInNewTabChange: (value: boolean) => void;
-    readonly getGlobalByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
-    readonly getTemplatesByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
-};
-
-type LinkChooserEventData = {
-    searchResults?: SearchResult[];
-    selectedResult?: SearchResult | null;
-};
-
 const sharedActions = {
     CLEARING: {
-        actions: ["clearSelectedResult", "updateQueryFromString"], // clearSelectedResult, updateQueryFromString, emitSelectSearchResult
+        actions: ["clearSelectedResult", "updateQueryFromString", "emitSelectSearchResult"], // clearSelectedResult, updateQueryFromString, emitSelectSearchResult
     },
     OPEN_PREVIEW: {
         actions: ["openPreview"],
@@ -71,7 +55,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                 on: {
                     OPEN_DROPDOWN: {
                         target: LinkChooserState.Focused,
-                        actions: ["populateDropdownSearchResultsWithRecentQueries"],
+                        actions: ["populateDropdownSearchResultsWithRecentQueries", (context) => console.log(context)],
                     },
                     SET_NEW_TAB: {
                         actions: ["setOpenInNewTab"],
@@ -154,7 +138,13 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     ],
                     SET_SELECTED_SEARCH_RESULT: {
                         target: LinkChooserState.Idle,
-                        actions: ["storeNewSelectedResult", "updateQueryFromObject", "", "setSelectedSearchResult", ""], // storeNewSelectedResult, updateQueryFromObject, updateDropdownSearchResults, setSelectedSearchResult, emitSelectSearchResult
+                        actions: [
+                            "storeNewSelectedResult",
+                            "updateQueryFromObject",
+                            "",
+                            "setSelectedSearchResult",
+                            "emitSelectSearchResult",
+                        ], // storeNewSelectedResult, updateQueryFromObject, updateDropdownSearchResults, setSelectedSearchResult, emitSelectSearchResult
                     },
                     UPDATE_DROPDOWN_SEARCH_RESULTS: {
                         actions: ["updateDropdownSearchResults"],
@@ -168,7 +158,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
         guards: {
             isTextInputEmpty: (context) => !context.query,
             isDefaultSection: (context, event, meta) =>
-                meta.state.value[LinkChooserState.Focused] === DropdownState.Default,
+                meta.state.matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Loaded}`),
         },
         actions: {
             setOpenInNewTab,

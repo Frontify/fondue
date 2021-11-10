@@ -17,7 +17,6 @@ export enum MenuItemContentStyle {
 export type MenuItemContentProps = {
     title: ReactNode;
     decorator?: ReactElement;
-    iconLabel?: string;
     subtitle?: string;
     size?: MenuItemContentSize;
     ariaProps?: HTMLAttributes<HTMLElement>;

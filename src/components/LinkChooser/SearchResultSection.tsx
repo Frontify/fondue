@@ -1,75 +1,41 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
-import { MenuBlock, MenuItemType } from "@components/Menu/SelectMenu";
 import { MenuItem } from "@components/MenuItem/MenuItem";
 import IconArrowLeft from "@foundation/Icon/Generated/IconArrowLeft";
-import type { AriaListBoxOptions } from "@react-aria/listbox";
 import { useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
-import type { ListState } from "@react-stately/list";
-import type { Node } from "@react-types/shared";
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
-import React, { FC, ReactNode, RefObject, useRef } from "react";
-import { DoneInvokeEvent, Interpreter, Typestate } from "xstate";
-import { IconLabel, ICON_OPTIONS, TemplateMenuItemType } from "./LinkChooser";
-import { DropdownState, LinkChooserContext, LinkChooserState, SectionState } from "./state/link-chooser/machine";
-
-interface SearchResultListProps extends AriaListBoxOptions<unknown> {
-    listBoxRef?: RefObject<HTMLUListElement>;
-    state: ListState<unknown>;
-    menuBlocks: MenuBlock[];
-    noBorder?: boolean;
-    hasItems?: boolean;
-    query: string;
-    machineService: Interpreter<
-        LinkChooserContext,
-        any,
-        DoneInvokeEvent<LinkChooserContext>,
-        Typestate<LinkChooserContext>
-    >;
-}
-
-interface SearchResultSectionProps {
-    heading: Node<unknown>;
-    state: ListState<unknown>;
-    keyItemRecord: Record<string, MenuItemType>;
-    section: DropdownState;
-}
-
-interface SearchResultOptionProps {
-    item: Node<unknown>;
-    state: ListState<unknown>;
-    keyItemRecord: Record<string, MenuItemType | TemplateMenuItemType>;
-    section: DropdownState;
-}
-
-interface TemplateProps {
-    title: ReactNode;
-    subtitle?: string;
-    preview?: string;
-}
+import React, { FC, useMemo, useRef } from "react";
+import { IconLabel, ICON_OPTIONS } from "./LinkChooser";
+import { DropdownState, LinkChooserState, SectionState } from "./state/machine";
+import { SearchResultListProps, SearchResultSectionProps, SearchResultOptionProps, TemplateProps } from "./types";
 
 export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResultListProps) => {
-    // ask marco the difference between useactor and usemachine
-
     const ref = useRef<HTMLUListElement>(null);
     const { listBoxRef = ref, state, menuBlocks, noBorder, machineService } = props;
     const { listBoxProps } = useListBox(props, state, listBoxRef);
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
 
-    const [{ context, matches, value }, send] = useActor(machineService);
+    const [machineState, send] = useActor(machineService);
+    const { context, matches, value } = machineState;
 
-    const isFetching =
-        matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Fetching}`) ||
-        matches(`${LinkChooserState.Focused}.${DropdownState.Templates}.${SectionState.Fetching}`);
+    const isFetching = Object.values(DropdownState).some((state) =>
+        matches(`${LinkChooserState.Focused}.${state}.${SectionState.Fetching}`),
+    );
+
+    const title = useMemo(() => {
+        if (machineState.toStrings()[1]) {
+            return machineState.toStrings()[1].split(".")[1];
+        }
+    }, [value]);
 
     const isUnsuccessful =
         matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Error}`) ||
         matches(`${LinkChooserState.Focused}.${DropdownState.Templates}.${SectionState.Error}`);
 
-    if (isFetching) return "Fetching results";
-    if (isUnsuccessful) return "Error";
+    if (isFetching) return <span>Fetching results</span>;
+    if (isUnsuccessful) return <span>Error</span>;
 
     return (
         <div>
@@ -78,7 +44,7 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
                     <button onClick={() => send("GO_TO_DEFAULT")}>
                         <IconArrowLeft />
                     </button>
-                    <p className="tw-ml-2 tw-text-black-80 tw-capitalize">{value[LinkChooserState.Focused]}</p>
+                    <p className="tw-ml-2 tw-text-black-80 tw-capitalize">{title}</p>
                 </div>
             )}
             <ul
@@ -147,7 +113,7 @@ const SearchResultOption = ({ item, state, keyItemRecord, machineService }: Sear
     const [{ matches }] = useActor(machineService);
 
     const menuItem = keyItemRecord[item.key];
-    const decorator = menuItem.iconLabel ? ICON_OPTIONS[menuItem.iconLabel] : undefined;
+    const decorator = menuItem.icon ? ICON_OPTIONS[menuItem.icon] : undefined;
 
     const renderOptionItem = () => {
         if (matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Loaded}`))
@@ -175,7 +141,7 @@ const EmptyList = ({ query }: { query: string }) => {
     return <div>no result for {query}</div>;
 };
 
-const EmptyRecent = ({ title = "No recent queries found", label = IconLabel.Reject, disabled = true }) => {
+const EmptyRecent = ({ title = "No recent queries found", label = IconLabel.Document, disabled = true }) => {
     return <MenuItem title={title} decorator={ICON_OPTIONS[label]} disabled={disabled} />;
 };
 

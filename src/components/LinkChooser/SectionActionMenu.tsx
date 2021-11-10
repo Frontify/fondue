@@ -5,18 +5,9 @@ import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { useActor } from "@xstate/react";
 import React, { FC } from "react";
-import { Interpreter, DoneInvokeEvent, Typestate } from "xstate";
 import { sections } from "./sections";
-import { DropdownState, LinkChooserContext, LinkChooserState } from "./state/link-chooser/machine";
-
-interface SectionActionMenuProps {
-    machineService: Interpreter<
-        LinkChooserContext,
-        any,
-        DoneInvokeEvent<LinkChooserContext>,
-        Typestate<LinkChooserContext>
-    >;
-}
+import { DropdownState, LinkChooserState } from "./state/machine";
+import { SectionActionMenuProps } from "./types";
 
 export const SectionActionMenu: FC<SectionActionMenuProps> = (props: SectionActionMenuProps) => {
     const { machineService } = props;

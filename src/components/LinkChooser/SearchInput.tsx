@@ -1,54 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
+import { Validation } from "@components/TextInput/TextInput";
 import IconCopyToClipboard from "@foundation/Icon/Generated/IconCopyToClipboard";
+import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
 import IconReject from "@foundation/Icon/Generated/IconReject";
 import IconSpinner from "@foundation/Icon/Generated/IconSpinner";
+import { useClipboard } from "@hooks/useClipboard";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, {
-    ChangeEventHandler,
-    FocusEvent,
-    KeyboardEvent,
-    forwardRef,
-    HTMLInputTypeAttribute,
-    ReactElement,
-} from "react";
-import { useClipboard } from "@hooks/useClipboard";
-import { Validation } from "@components/TextInput/TextInput";
-import { SearchResult } from "./LinkChooser";
+import React, { forwardRef, KeyboardEvent } from "react";
+import { SearchInputProps } from "./types";
 
 const validationStyle: Record<Validation, string> = {
     [Validation.Default]: "tw-border-black-20",
     [Validation.Loading]: "tw-border-black-10",
     [Validation.Success]: "tw-border-green-50",
     [Validation.Error]: "tw-border-red-60",
-};
-
-export type SearchInputProps = {
-    id?: string;
-    selectedResult: SearchResult | null;
-    type?: HTMLInputTypeAttribute;
-    decorator?: ReactElement;
-    dotted?: boolean;
-    previewable?: boolean;
-    copyable?: boolean;
-    clearable?: boolean;
-    placeholder?: string;
-    required?: boolean;
-    disabled?: boolean;
-    validation?: Validation;
-    value?: string | number | readonly string[];
-    onChange?: ChangeEventHandler<HTMLInputElement> | undefined;
-    onEnterPressed?: (event: KeyboardEvent<HTMLInputElement>) => void;
-    onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
-    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
-    onClear?: () => void;
-    onPreview?: () => void;
-    onClick?: () => void;
-    size?: number;
 };
 
 export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>(

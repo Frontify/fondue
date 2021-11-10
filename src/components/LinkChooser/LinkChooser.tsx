@@ -1,13 +1,9 @@
 import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
 import { mapToAriaProps } from "@components/Menu/Aria/helper";
-import { MenuItemType } from "@components/Menu/SelectMenu";
-import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
-import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
 import IconLink from "@foundation/Icon/Generated/IconLink";
-import IconReject from "@foundation/Icon/Generated/IconReject";
 import IconTemplate from "@foundation/Icon/Generated/IconTemplate";
 import { useDebounce } from "@hooks/useDebounce";
 import { useComboBox } from "@react-aria/combobox";
@@ -20,17 +16,15 @@ import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultSection";
 import { SectionActionMenu } from "./SectionActionMenu";
-import { linkChooserMachine, LinkChooserState } from "./state/link-chooser/machine";
-export { Item, Section } from "@react-stately/collections";
-
-export type SearchResult = MenuItemType & { icon: string };
+import { linkChooserMachine, LinkChooserState } from "./state/machine";
+import { LinkChooserProps } from "./types";
+import * as SearchRepository from "./repositories";
 
 export enum IconLabel {
     Document = "DOCUMENT",
     Library = "LIBRARY",
     Link = "LINK",
     External = "EXTERNAL",
-    Reject = "REJECT",
     Template = "TEMPLATE",
 }
 
@@ -39,7 +33,6 @@ export const ICON_OPTIONS: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Library]: <IconDocumentLibrary />,
     [IconLabel.Link]: <IconLink />,
     [IconLabel.External]: <IconExternalLink />,
-    [IconLabel.Reject]: <IconReject />,
     [IconLabel.Template]: <IconTemplate />,
 };
 
@@ -48,51 +41,17 @@ export const CUSTOM_LINK_ID = "custom-link";
 export const MAX_STORED_ITEMS = 5;
 export const QUERIES_STORAGE_KEY = "queries";
 
-export type TemplateMenuItemType = {
-    id: Key;
-    preview: string;
-    title: string;
-    subtitle?: string;
-    link?: string;
-    size?: MenuItemContentSize;
-    selectionIndicator?: SelectionIndicatorIcon;
-    iconLabel?: string;
-
-    getTemplateByQuery?: (query: string) => SearchResult[];
-};
-
-export type TemplateMenuBlock = {
-    id: string;
-    menuItems: TemplateMenuItemType[];
-    ariaLabel?: string;
-};
-
-export type LinkChooserProps = {
-    getGlobalByQuery: (query: string) => Promise<SearchResult[]>;
-    getGuidelinesByQuery: (query: string) => Promise<SearchResult[]>;
-    getTemplatesByQuery: (query: string) => Promise<SearchResult[]>;
-    openInNewTab: CheckboxState;
-    ariaLabel?: string;
-    label?: string;
-    placeholder?: string;
-    onOpenInNewTabChange: (value: boolean) => void;
-};
-
-// const mockAsyncFetch = (timeout) => new Promise((resolve) => setTimeout(resolve, timeout));
-
 export const LinkChooser: FC<LinkChooserProps> = ({
-    getGlobalByQuery,
-    getTemplatesByQuery,
+    getGlobalByQuery = SearchRepository.getGlobalByQuery,
+    getTemplatesByQuery = SearchRepository.getTemplatesByQuery,
     openInNewTab,
     ariaLabel = "Menu",
     label,
     placeholder,
     onOpenInNewTabChange,
+    onLinkChange,
 }) => {
-    /* const [storedQueries, storeNewQuery] = useQueriesStorage(); */
-
-    // doesn't update on storedQueries change
-    const [{ context, matches, children, value }, send, service] = useMachine(
+    const [{ context, matches }, send, service] = useMachine(
         linkChooserMachine.withContext({
             searchResults: [],
             openInNewTab,
@@ -101,6 +60,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             query: "",
             getGlobalByQuery,
             getTemplatesByQuery,
+            onLinkChange,
         }),
         { devTools: true },
     );
@@ -169,43 +129,13 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         state,
     );
 
-    const formattedIcon = context.selectedResult?.iconLabel
-        ? ICON_OPTIONS[context.selectedResult.iconLabel]
+    const formattedIcon = context.selectedResult?.icon
+        ? ICON_OPTIONS[context.selectedResult.icon]
         : ICON_OPTIONS[DEFAULT_ICON];
 
     useEffect(() => {
         send("SEARCHING");
     }, [debouncedQuery]);
-
-    useEffect(() => {
-        /*
-        // if current window/section !== default
-            // if query/state.inputValue 
-                // set loading state
-                // hit the search endpoint with the query value (for the current window/section)
-                // if successful
-                    // return search results
-                // else
-                    // show error
-                // finally
-                    // stop loading state
-            // else
-                // get all results from A to Z
-        // else
-            // if current window/section "supports" recent queries and !query/state.inputValue
-                // display recent queries (from local storage)
-            // else 
-                // display whatever current window/section needs to show (all results)
-                    // set loading state
-                    // hit the search endpoint with the query value (for the current window/section)
-                    // if successful
-                        // return search results
-                    // else
-                        // show error
-                    // finally
-                        // stop loading state
-        */
-    }, [state.inputValue, value]);
 
     return (
         <div
@@ -251,7 +181,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                             isOpen={matches(LinkChooserState.Focused)}
                             onClose={() => send("CLOSE_DROPDOWN")}
                         >
-                            <div>
+                            <>
                                 <SearchResultsList
                                     {...listBoxProps}
                                     listBoxRef={listBoxRef}
@@ -260,13 +190,11 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                     query={context.query}
                                     noBorder={true}
                                     machineService={service}
-                                    //optionsType={displayedOptions.type}
-                                    //openWindow={openWindow}
                                 />
                                 <div className="tw-border-t tw-border-black-10">
                                     <SectionActionMenu machineService={service} />
                                 </div>
-                            </div>
+                            </>
                         </Popover>
                         <DismissButton onDismiss={() => send("CLOSE_DROPDOWN")} />
                     </motion.div>
