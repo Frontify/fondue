@@ -9,11 +9,12 @@ import { debounce } from "@utilities/debounce";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useState } from "react";
 // @ts-ignore
-import { Alpha, Saturation, Hue } from "react-color/lib/components/common";
+import { Alpha, Hue, Saturation } from "react-color/lib/components/common";
 // @ts-ignore
 import { isValidHex, toState } from "react-color/lib/helpers/color";
+import { ColorFormat } from "../../types/colors";
 import { ColorInput } from "./ColorInput";
-import { ColorFormat, ColorPickerProps } from "./ColorPicker";
+import { ColorPickerProps } from "./ColorPicker";
 
 const ColorPointer: FC<{ offset?: boolean }> = ({ offset = true }) => (
     <div
