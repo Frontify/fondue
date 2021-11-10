@@ -9,20 +9,18 @@ import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
 import IconLink from "@foundation/Icon/Generated/IconLink";
 import IconReject from "@foundation/Icon/Generated/IconReject";
 import IconTemplate from "@foundation/Icon/Generated/IconTemplate";
+import { useDebounce } from "@hooks/useDebounce";
 import { useComboBox } from "@react-aria/combobox";
 import { DismissButton } from "@react-aria/overlays";
 import { useComboBoxState } from "@react-stately/combobox";
-import { useActor, useMachine } from "@xstate/react";
+import { useMachine } from "@xstate/react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, Key, ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
-import { Interpreter } from "xstate";
-import { SectionActionMenu } from "./SectionActionMenu";
-import { DropdownContext } from "./context/dropdownContext";
-import { SearchResultsList } from "./SearchResultSection";
 import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
-import { DropdownContext as DropdownFSMContext, State } from "./state/dropdown/machine";
-import { DropdownState, linkChooserMachine, LinkChooserState } from "./state/link-chooser/machine";
+import { SearchResultsList } from "./SearchResultSection";
+import { SectionActionMenu } from "./SectionActionMenu";
+import { linkChooserMachine, LinkChooserState } from "./state/link-chooser/machine";
 export { Item, Section } from "@react-stately/collections";
 
 export type SearchResult = MenuItemType & { icon: string };
@@ -94,16 +92,20 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     /* const [storedQueries, storeNewQuery] = useQueriesStorage(); */
 
     // doesn't update on storedQueries change
-    const [{ context, matches, children, value }, send] = useMachine(
+    const [{ context, matches, children, value }, send, service] = useMachine(
         linkChooserMachine.withContext({
             searchResults: [],
             openInNewTab,
             onOpenInNewTabChange,
             selectedResult: null,
             query: "",
+            getGlobalByQuery,
+            getTemplatesByQuery,
         }),
         { devTools: true },
     );
+
+    const debouncedQuery = useDebounce({ value: context.query, delay: 500 });
 
     /* const [{ context: contextChild, matches: matchesChild }, sendChild] = useActor(children.dropdown); */
 
@@ -118,8 +120,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     // is selected) -> should this trigger the search with the query of the currently selected item?
     const handleSelectionChange = (key: Key) => {
         const foundItem = context.searchResults.find((item) => item.id === key);
-        if (foundItem)
-            send("SET_SELECTED_SEARCH_RESULT", { data: { selectedResult: foundItem, query: foundItem.title } });
+        if (foundItem) send("SET_SELECTED_SEARCH_RESULT", { data: { selectedResult: foundItem } });
     };
 
     // setting -> allowsEmptyCollection: true keeps dropdown open on custom value but introduces a discrepancy
@@ -127,16 +128,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     // while the dropdown contains a different one)
     const handleInputChange = (value: string) => {
         send("TYPING", { data: { query: value } });
-    };
-
-    const getResultsByQuery = async (query: string, section: State): Promise<SearchResult[]> => {
-        switch (section) {
-            case State.Templates:
-                return getTemplatesByQuery(query);
-            case State.Default:
-            default:
-                return getGlobalByQuery(query);
-        }
     };
 
     const filterItems = (value: string, query: string) => value.toLowerCase().includes(query.toLowerCase());
@@ -182,14 +173,9 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         ? ICON_OPTIONS[context.selectedResult.iconLabel]
         : ICON_OPTIONS[DEFAULT_ICON];
 
-    const fetchResults = async () => {
-        const childContextValue = ""; // get dropdown context value
-        const results =
-            childContextValue !== "Default" || state.inputValue
-                ? await getResultsByQuery(state.inputValue, childContextValue)
-                : send("RETRIEVE_RECENT_QUERIES");
-        send("UPDATE_DROPDOWN_SEARCH_RESULTS", { data: { searchResults: results } });
-    };
+    useEffect(() => {
+        send("SEARCHING");
+    }, [debouncedQuery]);
 
     useEffect(() => {
         /*
@@ -266,27 +252,20 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                             onClose={() => send("CLOSE_DROPDOWN")}
                         >
                             <div>
-                                <DropdownContext.Provider
-                                    value={{
-                                        dropdownMachineRef: children.dropdown as Interpreter<DropdownFSMContext>,
-                                    }}
-                                >
-                                    <SearchResultsList
-                                        {...listBoxProps}
-                                        listBoxRef={listBoxRef}
-                                        state={state}
-                                        menuBlocks={searchResultMenuBlock}
-                                        query={context.query}
-                                        noBorder={true}
-                                        hasItems={!!context.searchResults.length}
-                                        //optionsType={displayedOptions.type}
-                                        //openWindow={openWindow}
-                                    />
-
-                                    <div className="tw-border-t tw-border-black-10">
-                                        <SectionActionMenu />
-                                    </div>
-                                </DropdownContext.Provider>
+                                <SearchResultsList
+                                    {...listBoxProps}
+                                    listBoxRef={listBoxRef}
+                                    state={state}
+                                    menuBlocks={searchResultMenuBlock}
+                                    query={context.query}
+                                    noBorder={true}
+                                    machineService={service}
+                                    //optionsType={displayedOptions.type}
+                                    //openWindow={openWindow}
+                                />
+                                <div className="tw-border-t tw-border-black-10">
+                                    <SectionActionMenu machineService={service} />
+                                </div>
                             </div>
                         </Popover>
                         <DismissButton onDismiss={() => send("CLOSE_DROPDOWN")} />

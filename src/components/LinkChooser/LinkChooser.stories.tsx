@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from "@components/Checkbox/Checkbox";
+import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
-import { SearchResult } from "src";
-import { LinkChooser, LinkChooserProps } from "./LinkChooser";
+import { LinkChooser, LinkChooserProps, SearchResult } from "./LinkChooser";
 import { data } from "./mock/data";
 import { templates } from "./mock/templates";
 
@@ -29,7 +29,11 @@ const LinkChooserTemplate: Story<LinkChooserProps> = () => {
     const getGlobalByQuery = (query: string): Promise<SearchResult[]> => {
         return new Promise((resolve) =>
             setTimeout(() => {
-                resolve(data.filter((item) => doesContainSubstring(item.title, query)));
+                resolve(
+                    data
+                        .filter((item) => doesContainSubstring(item.title, query))
+                        .map((item) => ({ ...item, size: MenuItemContentSize.Large })),
+                );
             }, 2000),
         );
     };

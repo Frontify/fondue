@@ -1,12 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from "@components/Checkbox/Checkbox";
-import { SearchResult } from "src";
+import { SearchResult, Section } from "src";
 import { createMachine, DoneInvokeEvent } from "xstate";
-import { dropdownMachine } from "../dropdown/machine";
 import {
     openPreview,
-    updateQuery,
     setOpenInNewTab,
     setSelectedSearchResult,
     retrieveRecentQueries,
@@ -15,11 +13,29 @@ import {
     clearSelectedResult,
     updateDropdownSearchResults,
     updateCustomLink,
+    updateQueryFromString,
+    updateQueryFromObject,
+    fetchGlobalSearchResults,
+    fetchTemplateSearchResults,
+    populateDropdownSearchResultsWithRecentQueries,
 } from "./actions";
 
 export enum LinkChooserState {
     Idle = "idle",
     Focused = "focused",
+}
+
+export enum DropdownState {
+    Default = "default",
+    Guidelines = "guidelines",
+    Projects = "projects",
+    Templates = "templates",
+}
+
+export enum SectionState {
+    Loaded = "loaded",
+    Fetching = "fetching",
+    Error = "error",
 }
 
 export type LinkChooserContext = {
@@ -28,18 +44,25 @@ export type LinkChooserContext = {
     query: string;
     openInNewTab: CheckboxState;
     onOpenInNewTabChange: (value: boolean) => void;
+    readonly getGlobalByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
+    readonly getTemplatesByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
+};
+
+type LinkChooserEventData = {
+    searchResults?: SearchResult[];
+    selectedResult?: SearchResult | null;
 };
 
 const sharedActions = {
     CLEARING: {
-        actions: ["clearSelectedResult", "updateQuery"], // clearSelectedResult, updateQuery, emitSelectSearchResult
+        actions: ["clearSelectedResult", "updateQueryFromString"], // clearSelectedResult, updateQueryFromString, emitSelectSearchResult
     },
     OPEN_PREVIEW: {
         actions: ["openPreview"],
     },
 };
 
-export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEvent<LinkChooserContext>>(
+export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>(
     {
         id: "link-chooser",
         initial: LinkChooserState.Idle,
@@ -48,6 +71,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                 on: {
                     OPEN_DROPDOWN: {
                         target: LinkChooserState.Focused,
+                        actions: ["populateDropdownSearchResultsWithRecentQueries"],
                     },
                     SET_NEW_TAB: {
                         actions: ["setOpenInNewTab"],
@@ -56,10 +80,64 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                 },
             },
             [LinkChooserState.Focused]: {
-                invoke: {
-                    id: "dropdown",
-                    src: dropdownMachine,
-                    data: (context) => context,
+                initial: DropdownState.Default,
+                states: {
+                    [DropdownState.Default]: {
+                        initial: SectionState.Loaded,
+                        states: {
+                            [SectionState.Loaded]: {
+                                on: {
+                                    SEARCHING: {
+                                        target: SectionState.Fetching,
+                                    },
+                                },
+                            },
+                            [SectionState.Fetching]: {
+                                invoke: {
+                                    id: "fetchGlobal",
+                                    src: fetchGlobalSearchResults,
+                                    onDone: {
+                                        target: SectionState.Loaded,
+                                        actions: ["updateDropdownSearchResults"],
+                                    },
+                                    onError: SectionState.Error,
+                                },
+                            },
+                            [SectionState.Error]: {},
+                        },
+                        on: {
+                            GO_TO_GUIDELINES: {
+                                target: DropdownState.Guidelines,
+                            },
+                            GO_TO_PROJECTS: {
+                                target: DropdownState.Projects,
+                            },
+                            GO_TO_TEMPLATES: {
+                                target: DropdownState.Templates,
+                            },
+                        },
+                    },
+                    [DropdownState.Guidelines]: {
+                        on: {
+                            GO_TO_DEFAULT: {
+                                target: DropdownState.Default,
+                            },
+                        },
+                    },
+                    [DropdownState.Projects]: {
+                        on: {
+                            GO_TO_DEFAULT: {
+                                target: DropdownState.Default,
+                            },
+                        },
+                    },
+                    [DropdownState.Templates]: {
+                        on: {
+                            GO_TO_DEFAULT: {
+                                target: DropdownState.Default,
+                            },
+                        },
+                    },
                 },
                 on: {
                     CLOSE_DROPDOWN: {
@@ -67,19 +145,16 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     },
                     TYPING: [
                         {
-                            actions: ["updateQuery", "updateCustomLink"],
+                            actions: ["updateQueryFromString", "updateCustomLink"],
                             cond: "isDefaultSection",
                         },
                         {
-                            actions: ["updateQuery"],
+                            actions: ["updateQueryFromString"],
                         },
                     ],
-                    RETRIEVE_RECENT_QUERIES: {
-                        actions: ["retrieveRecentQueries"],
-                    },
                     SET_SELECTED_SEARCH_RESULT: {
                         target: LinkChooserState.Idle,
-                        actions: ["storeNewSelectedResult", "", "setSelectedSearchResult", ""], // storeNewSelectedResult, updateDropdownSearchResults, setSelectedSearchResult, emitSelectSearchResult
+                        actions: ["storeNewSelectedResult", "updateQueryFromObject", "", "setSelectedSearchResult", ""], // storeNewSelectedResult, updateQueryFromObject, updateDropdownSearchResults, setSelectedSearchResult, emitSelectSearchResult
                     },
                     UPDATE_DROPDOWN_SEARCH_RESULTS: {
                         actions: ["updateDropdownSearchResults"],
@@ -91,14 +166,14 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
     },
     {
         guards: {
-            isDefaultSection: (context, event) => {
-                // check if child state value is equal to the default zone/section
-                return true;
-            },
+            isTextInputEmpty: (context) => !context.query,
+            isDefaultSection: (context, event, meta) =>
+                meta.state.value[LinkChooserState.Focused] === DropdownState.Default,
         },
         actions: {
             setOpenInNewTab,
-            updateQuery,
+            updateQueryFromString,
+            updateQueryFromObject,
             updateCustomLink,
             setSelectedSearchResult,
             retrieveRecentQueries,
@@ -107,6 +182,9 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
             clearSelectedResult,
             openPreview,
             updateDropdownSearchResults,
+            fetchGlobalSearchResults,
+            fetchTemplateSearchResults,
+            populateDropdownSearchResultsWithRecentQueries,
         },
     },
 );

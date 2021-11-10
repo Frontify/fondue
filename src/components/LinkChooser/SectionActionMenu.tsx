@@ -1,20 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useActor } from "@xstate/react";
-import React, { FC, useContext } from "react";
-import { DropdownContext } from "./context/dropdownContext";
-import { sections } from "./sections";
 import { ActionMenu, ActionMenuBlock } from "@components/Menu/ActionMenu/ActionMenu";
-import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
-import { State } from "./state/dropdown/machine";
+import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
+import { useActor } from "@xstate/react";
+import React, { FC } from "react";
+import { Interpreter, DoneInvokeEvent, Typestate } from "xstate";
+import { sections } from "./sections";
+import { DropdownState, LinkChooserContext, LinkChooserState } from "./state/link-chooser/machine";
 
-export const SectionActionMenu: FC = () => {
-    const { dropdownMachineRef } = useContext(DropdownContext);
+interface SectionActionMenuProps {
+    machineService: Interpreter<
+        LinkChooserContext,
+        any,
+        DoneInvokeEvent<LinkChooserContext>,
+        Typestate<LinkChooserContext>
+    >;
+}
 
-    if (!dropdownMachineRef) return null;
-
-    const [{ matches }, send] = useActor(dropdownMachineRef);
+export const SectionActionMenu: FC<SectionActionMenuProps> = (props: SectionActionMenuProps) => {
+    const { machineService } = props;
+    const [{ matches }, send] = useActor(machineService);
 
     const sectionMenuBlocks: ActionMenuBlock[] = [
         {
@@ -28,5 +34,11 @@ export const SectionActionMenu: FC = () => {
         },
     ];
 
-    return <>{matches(State.Default) && <ActionMenu menuBlocks={sectionMenuBlocks} noBorder={true} />}</>;
+    return (
+        <>
+            {matches(`${LinkChooserState.Focused}.${DropdownState.Default}`) && (
+                <ActionMenu menuBlocks={sectionMenuBlocks} noBorder={true} />
+            )}
+        </>
+    );
 };

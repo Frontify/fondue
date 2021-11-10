@@ -9,10 +9,10 @@ import type { ListState } from "@react-stately/list";
 import type { Node } from "@react-types/shared";
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
-import React, { FC, ReactNode, RefObject, useContext, useRef } from "react";
-import { DropdownContext } from "./context/dropdownContext";
+import React, { FC, ReactNode, RefObject, useRef } from "react";
+import { DoneInvokeEvent, Interpreter, Typestate } from "xstate";
 import { IconLabel, ICON_OPTIONS, TemplateMenuItemType } from "./LinkChooser";
-import { State } from "./state/dropdown/machine";
+import { DropdownState, LinkChooserContext, LinkChooserState, SectionState } from "./state/link-chooser/machine";
 
 interface SearchResultListProps extends AriaListBoxOptions<unknown> {
     listBoxRef?: RefObject<HTMLUListElement>;
@@ -21,20 +21,26 @@ interface SearchResultListProps extends AriaListBoxOptions<unknown> {
     noBorder?: boolean;
     hasItems?: boolean;
     query: string;
+    machineService: Interpreter<
+        LinkChooserContext,
+        any,
+        DoneInvokeEvent<LinkChooserContext>,
+        Typestate<LinkChooserContext>
+    >;
 }
 
 interface SearchResultSectionProps {
     heading: Node<unknown>;
     state: ListState<unknown>;
     keyItemRecord: Record<string, MenuItemType>;
-    section: State;
+    section: DropdownState;
 }
 
 interface SearchResultOptionProps {
     item: Node<unknown>;
     state: ListState<unknown>;
     keyItemRecord: Record<string, MenuItemType | TemplateMenuItemType>;
-    section: State;
+    section: DropdownState;
 }
 
 interface TemplateProps {
@@ -44,26 +50,35 @@ interface TemplateProps {
 }
 
 export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResultListProps) => {
-    const { dropdownMachineRef } = useContext(DropdownContext);
-
-    if (!dropdownMachineRef) return null;
-
-    const [{ matches, value }, send] = useActor(dropdownMachineRef);
+    // ask marco the difference between useactor and usemachine
 
     const ref = useRef<HTMLUListElement>(null);
-    const { listBoxRef = ref, state, menuBlocks, noBorder, hasItems, query } = props;
+    const { listBoxRef = ref, state, menuBlocks, noBorder, machineService } = props;
     const { listBoxProps } = useListBox(props, state, listBoxRef);
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
 
+    const [{ context, matches, value }, send] = useActor(machineService);
+
+    const isFetching =
+        matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Fetching}`) ||
+        matches(`${LinkChooserState.Focused}.${DropdownState.Templates}.${SectionState.Fetching}`);
+
+    const isUnsuccessful =
+        matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Error}`) ||
+        matches(`${LinkChooserState.Focused}.${DropdownState.Templates}.${SectionState.Error}`);
+
+    if (isFetching) return "Fetching results";
+    if (isUnsuccessful) return "Error";
+
     return (
         <div>
-            {!matches(State.Default) && (
+            {!matches(`${LinkChooserState.Focused}.${DropdownState.Default}`) && (
                 <div className="tw-flex tw-px-5 tw-mt-4 tw-mb-5">
                     <button onClick={() => send("GO_TO_DEFAULT")}>
                         <IconArrowLeft />
                     </button>
-                    <p className="tw-ml-2 tw-text-black-80 tw-capitalize">{value}</p>
+                    <p className="tw-ml-2 tw-text-black-80 tw-capitalize">{value[LinkChooserState.Focused]}</p>
                 </div>
             )}
             <ul
@@ -75,18 +90,18 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
                     !noBorder && "tw-border tw-border-black-10 tw-rounded",
                 ])}
             >
-                {hasItems ? (
+                {context.searchResults.length ? (
                     [...state.collection].map((item) => (
                         <SearchResultSection
                             key={item.key}
                             heading={item}
                             state={state}
                             keyItemRecord={keyItemRecord}
-                            section={value as State}
+                            machineService={machineService}
                         />
                     ))
-                ) : query ? (
-                    <EmptyList query={query} />
+                ) : context.query ? (
+                    <EmptyList query={context.query} />
                 ) : (
                     <EmptyRecent />
                 )}
@@ -95,7 +110,7 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
     );
 };
 
-const SearchResultSection = ({ heading, state, keyItemRecord, section }: SearchResultSectionProps) => {
+const SearchResultSection = ({ heading, state, keyItemRecord, machineService }: SearchResultSectionProps) => {
     const { itemProps, groupProps } = useListBoxSection({
         heading: heading.rendered,
         "aria-label": heading["aria-label"],
@@ -111,7 +126,7 @@ const SearchResultSection = ({ heading, state, keyItemRecord, section }: SearchR
                             item={node}
                             state={state}
                             keyItemRecord={keyItemRecord}
-                            section={section}
+                            machineService={machineService}
                         />
                     ))}
                 </ul>
@@ -120,7 +135,7 @@ const SearchResultSection = ({ heading, state, keyItemRecord, section }: SearchR
     );
 };
 
-const SearchResultOption = ({ item, state, keyItemRecord, section }: SearchResultOptionProps) => {
+const SearchResultOption = ({ item, state, keyItemRecord, machineService }: SearchResultOptionProps) => {
     const ref = useRef<HTMLLIElement>(null);
     const { optionProps, isDisabled, isSelected } = useOption(
         {
@@ -129,19 +144,17 @@ const SearchResultOption = ({ item, state, keyItemRecord, section }: SearchResul
         state,
         ref,
     );
+    const [{ matches }] = useActor(machineService);
 
     const menuItem = keyItemRecord[item.key];
     const decorator = menuItem.iconLabel ? ICON_OPTIONS[menuItem.iconLabel] : undefined;
 
     const renderOptionItem = () => {
-        switch (section) {
-            case State.Default:
-                return <MenuItem {...menuItem} active={isSelected} decorator={decorator} />;
-            case State.Templates:
-                return <TemplateItem {...menuItem} />;
-            default:
-                return <span>State not handled</span>;
-        }
+        if (matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Loaded}`))
+            return <MenuItem {...menuItem} active={isSelected} decorator={decorator} />;
+        else if (matches(`${LinkChooserState.Focused}.${DropdownState.Templates}.${SectionState.Loaded}`))
+            return <TemplateItem {...menuItem} />;
+        return <span>State not handled</span>;
     };
 
     return (

@@ -14,9 +14,17 @@ export const setOpenInNewTab = assign<LinkChooserContext, DoneInvokeEvent<LinkCh
     context.openInNewTab = data.openInNewTab;
 });
 
-export const updateQuery = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserContext>>((context, { data }) => {
-    context.query = data.query;
-});
+export const updateQueryFromString = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserContext>>(
+    (context, { data }) => {
+        context.query = data.query;
+    },
+);
+
+export const updateQueryFromObject = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserContext>>(
+    (context, { data }) => {
+        context.query = data.selectedResult?.title ?? "";
+    },
+);
 
 export const updateCustomLink = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserContext>>((context, { data }) => {
     const strippedSearchResults = context.searchResults.filter((result) => result.id !== CUSTOM_LINK_ID);
@@ -38,7 +46,6 @@ export const setSelectedSearchResult = assign<LinkChooserContext, DoneInvokeEven
     (context, { data }) => {
         //TODO: Ask Marco why
         context.selectedResult = data.selectedResult;
-        context.query = data.selectedResult.title;
     },
 );
 
@@ -47,17 +54,28 @@ export const retrieveRecentQueries = (): SearchResult[] => {
     return recentQueries || [];
 };
 
-export const storeNewSelectedResult = (query: SearchResult): SearchResult[] => {
-    const retrievedQueries = retrieveRecentQueries();
-    const retrievedItem = retrievedQueries.find((item: SearchResult) => item.id === query.id);
-    const updatedQueries = retrievedItem
-        ? [{ ...query }, ...retrievedQueries.filter((item: SearchResult) => item.id !== query.id)]
-        : retrievedQueries.length < MAX_STORED_ITEMS
-        ? [{ ...query }, ...retrievedQueries]
-        : [{ ...query }, ...retrievedQueries.slice(0, -1)];
-    localStorage.setItem(QUERIES_STORAGE_KEY, JSON.stringify(updatedQueries));
-    return updatedQueries;
-};
+export const populateDropdownSearchResultsWithRecentQueries = assign<
+    LinkChooserContext,
+    DoneInvokeEvent<LinkChooserContext>
+>((context) => {
+    const recentQueries = retrieveRecentQueries();
+    context.searchResults = recentQueries;
+});
+
+export const storeNewSelectedResult = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserContext>>(
+    (context, { data }) => {
+        const { selectedResult } = data;
+        const retrievedQueries = retrieveRecentQueries();
+        const retrievedItem = retrievedQueries.find((item: SearchResult) => item.id === selectedResult.id);
+        const updatedQueries = retrievedItem
+            ? [{ ...selectedResult }, ...retrievedQueries.filter((item: SearchResult) => item.id !== selectedResult.id)]
+            : retrievedQueries.length < MAX_STORED_ITEMS
+            ? [{ ...selectedResult }, ...retrievedQueries]
+            : [{ ...selectedResult }, ...retrievedQueries.slice(0, -1)];
+        localStorage.setItem(QUERIES_STORAGE_KEY, JSON.stringify(updatedQueries));
+        return updatedQueries;
+    },
+);
 
 export const emitSelectSearchResult = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserContext>>(
     (context, { data }) => {},
@@ -77,3 +95,13 @@ export const updateDropdownSearchResults = assign<LinkChooserContext, DoneInvoke
         context.searchResults = data.searchResults;
     },
 );
+
+export const fetchGlobalSearchResults = async (context) => {
+    const results = await context.getGlobalByQuery(context.query);
+    return { searchResults: results };
+};
+
+export const fetchTemplateSearchResults = async (context) => {
+    const results = await context.getTemplatesByQuery(context.query);
+    return { searchResults: results };
+};
