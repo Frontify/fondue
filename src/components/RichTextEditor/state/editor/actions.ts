@@ -17,3 +17,7 @@ export const callOnBlur = ({ onBlur }: EditorContext, { data }: DoneInvokeEvent<
         onBlur(JSON.stringify(data.value));
     }
 };
+
+export const setLocked = (context: EditorContext, { data }: DoneInvokeEvent<EditorEventDataTypes>): void => {
+    context.locked = data.locked ?? context.locked;
+};
