@@ -41,12 +41,20 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
         matches(`${LinkChooserState.Focused}.${state}.${SectionState.Error}`),
     );
 
+    const shouldGoBack = Object.values(DropdownState)
+        .filter((state) => state !== DropdownState.Default)
+        .some((dropdown) =>
+            Object.values(SectionState).some((section) =>
+                matches(`${LinkChooserState.Focused}.${dropdown}.${section}`),
+            ),
+        );
+
     if (isFetching) return <FetchingAnimation />;
     if (isUnsuccessful) return <FetchingError />;
 
     return (
         <div>
-            {!matches(`${LinkChooserState.Focused}.${DropdownState.Default}`) && (
+            {shouldGoBack && (
                 <div className="tw-flex tw-px-5 tw-mt-4 tw-mb-5">
                     <button onClick={() => send("GO_TO_DEFAULT")}>
                         <IconArrowLeft />

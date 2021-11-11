@@ -105,10 +105,16 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
         states: {
             [LinkChooserState.Idle]: {
                 on: {
-                    OPEN_DROPDOWN: {
-                        target: LinkChooserState.Focused,
-                        actions: ["populateDropdownSearchResultsWithRecentQueries"],
-                    },
+                    OPEN_DROPDOWN: [
+                        {
+                            target: LinkChooserState.Focused,
+                            actions: ["populateDropdownSearchResultsWithRecentQueries"],
+                            cond: "isQueryEmpty",
+                        },
+                        {
+                            target: LinkChooserState.Focused,
+                        },
+                    ],
                     SET_NEW_TAB: {
                         actions: ["setOpenInNewTab"],
                     },
@@ -183,6 +189,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                 Object.values(SectionState).some((state) =>
                     meta.state.matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${state}`),
                 ),
+            isQueryEmpty: (context) => !context.query,
         },
         actions: {
             setOpenInNewTab,

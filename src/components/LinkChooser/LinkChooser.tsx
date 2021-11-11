@@ -171,20 +171,18 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                             isOpen={matches(LinkChooserState.Focused)}
                             onClose={() => send("CLOSE_DROPDOWN")}
                         >
-                            <>
-                                <SearchResultsList
-                                    {...listBoxProps}
-                                    listBoxRef={listBoxRef}
-                                    state={state}
-                                    menuBlocks={searchResultMenuBlock}
-                                    query={context.query}
-                                    noBorder={true}
-                                    machineService={service}
-                                />
-                                <div className="tw-border-t tw-border-black-10">
-                                    <SectionActionMenu machineService={service} />
-                                </div>
-                            </>
+                            <SearchResultsList
+                                {...listBoxProps}
+                                listBoxRef={listBoxRef}
+                                state={state}
+                                menuBlocks={searchResultMenuBlock}
+                                query={context.query}
+                                noBorder={true}
+                                machineService={service}
+                            />
+                            <div className="tw-border-t tw-border-black-10">
+                                <SectionActionMenu machineService={service} />
+                            </div>
                         </Popover>
                         <DismissButton onDismiss={() => send("CLOSE_DROPDOWN")} />
                     </motion.div>
