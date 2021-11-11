@@ -97,7 +97,7 @@
         "rollup": "2.59.0",
         "rollup-plugin-dts": "4.0.1",
         "rollup-plugin-esbuild": "4.6.0",
-        "storybook-builder-vite": "0.1.5",
+        "storybook-builder-vite": "0.1.6",
         "storybook-dark-mode": "1.0.8",
         "tailwindcss": "2.2.19",
         "ts-node": "10.4.0",
