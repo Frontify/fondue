@@ -4,7 +4,7 @@ import { IconEnum } from "./IconsMap";
 import { IconSize } from "./IconSize";
 
 export type GeneratedIconProps = {
-    size?: IconSize;
+    size?: IconSize | string;
 };
 
 export type IconProps = GeneratedIconProps & {

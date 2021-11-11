@@ -43,6 +43,7 @@ import IconTemplate from "../src/foundation/Icon/IconTemplate";
                     width: "100%",
                     height: "100%",
                     className: "{customClassName}",
+                    style: "{style}",
                     name: `Icon${svgFileName}`,
                 },
             },
