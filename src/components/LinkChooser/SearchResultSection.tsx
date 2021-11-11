@@ -25,8 +25,10 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
     const [machineState, send] = useActor(machineService);
     const { context, matches, value } = machineState;
 
-    const isFetching = Object.values(DropdownState).some((state) =>
-        matches(`${LinkChooserState.Focused}.${state}.${SectionState.Fetching}`),
+    const isFetching = Object.values(DropdownState).some((dropdown) =>
+        [SectionState.Fetching, SectionState.Typing].some((section) =>
+            matches(`${LinkChooserState.Focused}.${dropdown}.${section}`),
+        ),
     );
 
     const title = useMemo(() => {
@@ -35,9 +37,9 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
         }
     }, [value]);
 
-    const isUnsuccessful =
-        matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Error}`) ||
-        matches(`${LinkChooserState.Focused}.${DropdownState.Templates}.${SectionState.Error}`);
+    const isUnsuccessful = Object.values(DropdownState).some((state) =>
+        matches(`${LinkChooserState.Focused}.${state}.${SectionState.Error}`),
+    );
 
     if (isFetching) return <FetchingAnimation />;
     if (isUnsuccessful) return <FetchingError />;

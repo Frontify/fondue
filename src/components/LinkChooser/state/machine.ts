@@ -33,13 +33,21 @@ export enum DropdownState {
 
 export enum SectionState {
     Loaded = "loaded",
+    Typing = "typing",
     Fetching = "fetching",
     Error = "error",
 }
 
+const typingAction = (target?: string) => ({
+    TYPING: {
+        ...(target ? { target } : {}),
+        actions: ["updateQueryFromString"],
+    },
+});
+
 const sharedActions = {
     CLEARING: {
-        actions: ["clearSelectedResult", "updateQueryFromString", "emitSelectSearchResult"], // clearSelectedResult, updateQueryFromString, emitSelectSearchResult
+        actions: ["clearSelectedResult", "updateQueryFromString", "emitSelectSearchResult"],
     },
     OPEN_PREVIEW: {
         actions: ["openPreview"],
@@ -54,6 +62,11 @@ const initializeSectionState = (
     initial,
     states: {
         [SectionState.Loaded]: {
+            on: {
+                ...typingAction(SectionState.Fetching),
+            },
+        },
+        [SectionState.Typing]: {
             on: {
                 SEARCHING: {
                     target: SectionState.Fetching,
@@ -76,6 +89,9 @@ const initializeSectionState = (
                     },
                 ],
                 onError: SectionState.Error,
+            },
+            on: {
+                ...typingAction(SectionState.Typing),
             },
         },
         [SectionState.Error]: {},
@@ -143,15 +159,6 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     CLOSE_DROPDOWN: {
                         target: LinkChooserState.Idle,
                     },
-                    TYPING: [
-                        {
-                            actions: ["updateQueryFromString", "updateCustomLink"],
-                            cond: "isDefaultSection",
-                        },
-                        {
-                            actions: ["updateQueryFromString"],
-                        },
-                    ],
                     SET_SELECTED_SEARCH_RESULT: {
                         target: LinkChooserState.Idle,
                         actions: [
@@ -159,19 +166,19 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                             "updateQueryFromObject",
                             "setSelectedSearchResult",
                             "emitSelectSearchResult",
-                        ], // storeNewSelectedResult, updateQueryFromObject, setSelectedSearchResult, emitSelectSearchResult
+                        ],
                     },
                     UPDATE_DROPDOWN_SEARCH_RESULTS: {
                         actions: ["updateDropdownSearchResults"],
                     },
                     ...sharedActions,
+                    ...typingAction(),
                 },
             },
         },
     },
     {
         guards: {
-            isTextInputEmpty: (context) => !context.query,
             isDefaultSection: (context, event, meta) =>
                 Object.values(SectionState).some((state) =>
                     meta.state.matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${state}`),
