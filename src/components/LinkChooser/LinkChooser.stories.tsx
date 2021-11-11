@@ -5,8 +5,7 @@ import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
-import { IconLabel } from "../..";
-import { LinkChooser } from "./LinkChooser";
+import { IconLabel, LinkChooser } from "./LinkChooser";
 import { data } from "./mock/data";
 import { templates } from "./mock/templates";
 import { LinkChooserProps, SearchResult } from "./types";
@@ -44,11 +43,13 @@ const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) =>
                             selectionIndicator: SelectionIndicatorIcon.None,
                         })),
                 );
-            }, 500),
+            }, Math.floor(Math.random() * 2000)),
         );
     };
 
     /* const getGuidelinesByQuery = (query: string): Promise<SearchResult[]> => {}; */
+
+    /* const getProjectsByQuery = (query: string): Promise<SearchResult[]> => {}; */
 
     const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> => {
         return new Promise((resolve) =>
@@ -63,7 +64,7 @@ const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) =>
                             selectionIndicator: SelectionIndicatorIcon.None,
                         })),
                 );
-            }, 500),
+            }, Math.floor(Math.random() * 2000)),
         );
     };
 
@@ -71,7 +72,6 @@ const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) =>
         <LinkChooser
             {...args}
             getGlobalByQuery={getGlobalByQuery}
-            /*  getGuidelinesByQuery={getGuidelinesByQuery} */
             getTemplatesByQuery={getTemplatesByQueryMock}
             openInNewTab={newTab}
             onOpenInNewTabChange={handleTabChange}

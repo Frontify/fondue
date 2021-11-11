@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { SearchResult } from "../types";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

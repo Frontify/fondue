@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { IconLabel } from "../LinkChooser";
 
 export const data = [

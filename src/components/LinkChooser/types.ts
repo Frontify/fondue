@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { CheckboxState } from "@components/Checkbox/Checkbox";
 import { MenuItemType, MenuBlock } from "@components/Menu/SelectMenu";
 import { Validation } from "@components/TextInput/TextInput";

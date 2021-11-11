@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
 import { MenuItem } from "@components/MenuItem/MenuItem";
@@ -6,9 +8,12 @@ import { useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
 import React, { FC, useMemo, useRef } from "react";
-import { IconLabel, ICON_OPTIONS } from "./LinkChooser";
+import { ICON_OPTIONS } from "./LinkChooser";
 import { DropdownState, LinkChooserState, SectionState } from "./state/machine";
 import { SearchResultListProps, SearchResultSectionProps, SearchResultOptionProps, TemplateProps } from "./types";
+import NoResultsIcon from "./assets/no-results.svg";
+import BackgroundIcon from "./assets/background.svg";
+import FetchingIcon from "./assets/nook-animated.png";
 
 export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResultListProps) => {
     const ref = useRef<HTMLUListElement>(null);
@@ -34,8 +39,8 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
         matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Error}`) ||
         matches(`${LinkChooserState.Focused}.${DropdownState.Templates}.${SectionState.Error}`);
 
-    if (isFetching) return <span>Fetching results</span>;
-    if (isUnsuccessful) return <span>Error</span>;
+    if (isFetching) return <FetchingAnimation />;
+    if (isUnsuccessful) return <FetchingError />;
 
     return (
         <div>
@@ -66,10 +71,15 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
                             machineService={machineService}
                         />
                     ))
-                ) : context.query ? (
-                    <EmptyList query={context.query} />
                 ) : (
-                    <EmptyRecent />
+                    <EmptyResults
+                        prompt={
+                            context.query
+                                ? `We could not find any results for "${context.query}".`
+                                : "Use the search above to discover your brand assets"
+                        }
+                        icon={context.query ? NoResultsIcon : BackgroundIcon}
+                    />
                 )}
             </ul>
         </div>
@@ -120,7 +130,6 @@ const SearchResultOption = ({ item, state, keyItemRecord, machineService }: Sear
             return <MenuItem {...menuItem} active={isSelected} decorator={decorator} />;
         else if (matches(`${LinkChooserState.Focused}.${DropdownState.Templates}.${SectionState.Loaded}`))
             return <TemplateItem {...menuItem} />;
-        return <span>State not handled</span>;
     };
 
     return (
@@ -137,21 +146,37 @@ const SearchResultOption = ({ item, state, keyItemRecord, machineService }: Sear
     );
 };
 
-const EmptyList = ({ query }: { query: string }) => {
-    return <div>no result for {query}</div>;
+const EmptyResults = ({ prompt, icon }: { prompt: string; icon: string }) => {
+    return (
+        <div className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]">
+            <img className="tw-w-[75px] tw-mb-5" src={icon} alt="Icon" />
+            <p className="tw-text-black-60">{prompt}</p>
+        </div>
+    );
 };
 
-const EmptyRecent = ({ title = "No recent queries found", label = IconLabel.Document, disabled = true }) => {
-    return <MenuItem title={title} decorator={ICON_OPTIONS[label]} disabled={disabled} />;
+const FetchingError = ({ error = "An error occurred while fetching the results" }: { error?: string }) => {
+    return (
+        <div className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]">
+            <img className="tw-w-[75px] tw-mb-5" src={NoResultsIcon} alt="Error" />
+            <p className="tw-text-black-60">{error}</p>
+        </div>
+    );
+};
+
+const FetchingAnimation = () => {
+    return (
+        <div className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]">
+            <img className="tw-w-[50px]" src={FetchingIcon} alt="Fetching" />
+        </div>
+    );
 };
 
 const TemplateItem = ({ title, subtitle, preview }: TemplateProps) => {
     return (
         <div className="tw-flex tw-px-5 tw-py-1.5 tw-cursor-pointer">
             <div className="tw-flex tw-flex-shrink-0 tw-w-[75px] tw-h-[75px] tw-max-w-xs tw-bg-black-0 tw-border-black-10 tw-border tw-rounded">
-                {preview && (
-                    <img className="tw-w-full tw-object-contain" src={preview} alt="Man looking at item at a store" />
-                )}
+                {preview && <img className="tw-w-full tw-object-contain" src={preview} alt={title as string} />}
             </div>
             <div className="tw-flex tw-flex-col tw-justify-center tw-ml-4">
                 <p className="tw-block tw-text-lg tw-leading-tight tw-hover:underline tw-text-black-80">{title}</p>

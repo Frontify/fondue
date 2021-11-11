@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { CheckboxState } from "@components/Checkbox/Checkbox";
 import {
     CUSTOM_LINK_ID,

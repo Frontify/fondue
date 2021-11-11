@@ -11,6 +11,7 @@ export * from "./components/Button/Button";
 export * from "./components/ButtonGroup/ButtonGroup";
 export * from "./components/Checkbox/Checkbox";
 export * from "./components/Checklist/Checklist";
+export * from "./components/ColorInputFlyout/ColorInputTitle";
 export * from "./components/ColorInputFlyout/ColorPickerFlyout";
 export * from "./components/ColorInputFlyout/ColorPickerTrigger";
 export * from "./components/ColorPicker/BrandColorPicker";
@@ -24,10 +25,10 @@ export * from "./components/Flyout/Flyout";
 export * from "./components/FormControl/FormControl";
 export * from "./components/InputLabel/InputLabel";
 export * from "./components/LinkChooser/LinkChooser";
-export * from "./components/LinkChooser/SearchResultSection";
 export * from "./components/LinkChooser/Popover";
 export * from "./components/LinkChooser/SearchInput";
-export * from "./components/Loading/Loading";
+export * from "./components/LinkChooser/SearchResultSection";
+export * from "./components/LinkChooser/SectionActionMenu";
 export * from "./components/Menu/ActionMenu/ActionMenu";
 export * from "./components/Menu/Aria/AriaList";
 export * from "./components/Menu/Aria/AriaMenuItem";
@@ -138,6 +139,10 @@ import IconDoDontsStrikethrough from "./foundation/Icon/Generated/IconDoDontsStr
 import IconDoDontsUnderline from "./foundation/Icon/Generated/IconDoDontsUnderline";
 import IconDosImages from "./foundation/Icon/Generated/IconDosImages";
 import IconDosText from "./foundation/Icon/Generated/IconDosText";
+import IconDoubleChevronLeft from "./foundation/Icon/Generated/IconDoubleChevronLeft";
+import IconDoubleChevronRight from "./foundation/Icon/Generated/IconDoubleChevronRight";
+import IconDoubleQuotesDown from "./foundation/Icon/Generated/IconDoubleQuotesDown";
+import IconDoubleQuotesUp from "./foundation/Icon/Generated/IconDoubleQuotesUp";
 import IconDownload from "./foundation/Icon/Generated/IconDownload";
 import IconDownloadAlternative from "./foundation/Icon/Generated/IconDownloadAlternative";
 import IconDrops from "./foundation/Icon/Generated/IconDrops";
@@ -174,6 +179,8 @@ import IconGeneral from "./foundation/Icon/Generated/IconGeneral";
 import IconGenericPost from "./foundation/Icon/Generated/IconGenericPost";
 import IconGuidelines from "./foundation/Icon/Generated/IconGuidelines";
 import IconHeader from "./foundation/Icon/Generated/IconHeader";
+import IconHookBracketLeft from "./foundation/Icon/Generated/IconHookBracketLeft";
+import IconHookBracketRight from "./foundation/Icon/Generated/IconHookBracketRight";
 import IconIconAndText from "./foundation/Icon/Generated/IconIconAndText";
 import IconIcons from "./foundation/Icon/Generated/IconIcons";
 import IconIframe from "./foundation/Icon/Generated/IconIframe";
@@ -223,6 +230,7 @@ import IconModules from "./foundation/Icon/Generated/IconModules";
 import IconMore from "./foundation/Icon/Generated/IconMore";
 import IconMove from "./foundation/Icon/Generated/IconMove";
 import IconMovePage from "./foundation/Icon/Generated/IconMovePage";
+import IconNone from "./foundation/Icon/Generated/IconNone";
 import IconNotifications from "./foundation/Icon/Generated/IconNotifications";
 import IconObjects from "./foundation/Icon/Generated/IconObjects";
 import IconOpenLock from "./foundation/Icon/Generated/IconOpenLock";
@@ -255,6 +263,10 @@ import IconSection from "./foundation/Icon/Generated/IconSection";
 import IconSettings from "./foundation/Icon/Generated/IconSettings";
 import IconShare from "./foundation/Icon/Generated/IconShare";
 import IconSide from "./foundation/Icon/Generated/IconSide";
+import IconSingleChevronLeft from "./foundation/Icon/Generated/IconSingleChevronLeft";
+import IconSingleChevronRight from "./foundation/Icon/Generated/IconSingleChevronRight";
+import IconSingleQuoteDown from "./foundation/Icon/Generated/IconSingleQuoteDown";
+import IconSingleQuoteUp from "./foundation/Icon/Generated/IconSingleQuoteUp";
 import IconSketch from "./foundation/Icon/Generated/IconSketch";
 import IconSmileysPeople from "./foundation/Icon/Generated/IconSmileysPeople";
 import IconSnippet from "./foundation/Icon/Generated/IconSnippet";
@@ -383,6 +395,10 @@ export {
     IconDoDontsUnderline,
     IconDosImages,
     IconDosText,
+    IconDoubleChevronLeft,
+    IconDoubleChevronRight,
+    IconDoubleQuotesDown,
+    IconDoubleQuotesUp,
     IconDownload,
     IconDownloadAlternative,
     IconDrops,
@@ -419,6 +435,8 @@ export {
     IconGenericPost,
     IconGuidelines,
     IconHeader,
+    IconHookBracketLeft,
+    IconHookBracketRight,
     IconIconAndText,
     IconIcons,
     IconIframe,
@@ -468,6 +486,7 @@ export {
     IconMore,
     IconMove,
     IconMovePage,
+    IconNone,
     IconNotifications,
     IconObjects,
     IconOpenLock,
@@ -500,6 +519,10 @@ export {
     IconSettings,
     IconShare,
     IconSide,
+    IconSingleChevronLeft,
+    IconSingleChevronRight,
+    IconSingleQuoteDown,
+    IconSingleQuoteUp,
     IconSketch,
     IconSmileysPeople,
     IconSnippet,

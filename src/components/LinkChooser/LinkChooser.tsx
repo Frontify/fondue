@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
 import { mapToAriaProps } from "@components/Menu/Aria/helper";
 import IconDocument from "@foundation/Icon/Generated/IconDocument";
@@ -78,9 +80,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         if (foundItem) send("SET_SELECTED_SEARCH_RESULT", { data: { selectedResult: foundItem } });
     };
 
-    // setting -> allowsEmptyCollection: true keeps dropdown open on custom value but introduces a discrepancy
-    // between textinput and dropdown (if an item is selected and then textinput is modified, textinput contains one value
-    // while the dropdown contains a different one)
     const handleInputChange = (value: string) => {
         send("TYPING", { data: { query: value } });
     };
@@ -133,11 +132,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     }, [debouncedQuery]);
 
     return (
-        <div
-            data-test-id="link-chooser"
-            className="tw-relative tw-w-full tw-font-sans tw-text-s"
-            //onBlur={() => send("CLOSE_DROPDOWN")}
-        >
+        <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
             <label {...labelProps} className="block text-sm font-medium text-gray-700 text-left">
                 {label}
             </label>
