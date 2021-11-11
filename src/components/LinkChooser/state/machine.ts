@@ -46,6 +46,42 @@ const sharedActions = {
     },
 };
 
+const initializeSectionState = (
+    initial: string,
+    id: string,
+    src: (context: LinkChooserContext) => Promise<LinkChooserEventData>,
+) => ({
+    initial,
+    states: {
+        [SectionState.Loaded]: {
+            on: {
+                SEARCHING: {
+                    target: SectionState.Fetching,
+                },
+            },
+        },
+        [SectionState.Fetching]: {
+            invoke: {
+                id,
+                src,
+                onDone: [
+                    {
+                        target: SectionState.Loaded,
+                        actions: ["updateDropdownSearchResults", "updateCustomLink"],
+                        cond: "isDefaultSection",
+                    },
+                    {
+                        target: SectionState.Loaded,
+                        actions: ["updateDropdownSearchResults"],
+                    },
+                ],
+                onError: SectionState.Error,
+            },
+        },
+        [SectionState.Error]: {},
+    },
+});
+
 export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>(
     {
         id: "link-chooser",
@@ -55,7 +91,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                 on: {
                     OPEN_DROPDOWN: {
                         target: LinkChooserState.Focused,
-                        actions: ["populateDropdownSearchResultsWithRecentQueries", (context) => console.log(context)],
+                        actions: ["populateDropdownSearchResultsWithRecentQueries"],
                     },
                     SET_NEW_TAB: {
                         actions: ["setOpenInNewTab"],
@@ -67,28 +103,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                 initial: DropdownState.Default,
                 states: {
                     [DropdownState.Default]: {
-                        initial: SectionState.Loaded,
-                        states: {
-                            [SectionState.Loaded]: {
-                                on: {
-                                    SEARCHING: {
-                                        target: SectionState.Fetching,
-                                    },
-                                },
-                            },
-                            [SectionState.Fetching]: {
-                                invoke: {
-                                    id: "fetchGlobal",
-                                    src: fetchGlobalSearchResults,
-                                    onDone: {
-                                        target: SectionState.Loaded,
-                                        actions: ["updateDropdownSearchResults"],
-                                    },
-                                    onError: SectionState.Error,
-                                },
-                            },
-                            [SectionState.Error]: {},
-                        },
+                        ...initializeSectionState(SectionState.Loaded, "fetchGlobal", fetchGlobalSearchResults),
                         on: {
                             GO_TO_GUIDELINES: {
                                 target: DropdownState.Guidelines,
@@ -104,21 +119,22 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     [DropdownState.Guidelines]: {
                         on: {
                             GO_TO_DEFAULT: {
-                                target: DropdownState.Default,
+                                target: `${DropdownState.Default}.${SectionState.Fetching}`,
                             },
                         },
                     },
                     [DropdownState.Projects]: {
                         on: {
                             GO_TO_DEFAULT: {
-                                target: DropdownState.Default,
+                                target: `${DropdownState.Default}.${SectionState.Fetching}`,
                             },
                         },
                     },
                     [DropdownState.Templates]: {
+                        ...initializeSectionState(SectionState.Fetching, "fetchTemplates", fetchTemplateSearchResults),
                         on: {
                             GO_TO_DEFAULT: {
-                                target: DropdownState.Default,
+                                target: `${DropdownState.Default}.${SectionState.Fetching}`,
                             },
                         },
                     },
@@ -141,10 +157,9 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                         actions: [
                             "storeNewSelectedResult",
                             "updateQueryFromObject",
-                            "",
                             "setSelectedSearchResult",
                             "emitSelectSearchResult",
-                        ], // storeNewSelectedResult, updateQueryFromObject, updateDropdownSearchResults, setSelectedSearchResult, emitSelectSearchResult
+                        ], // storeNewSelectedResult, updateQueryFromObject, setSelectedSearchResult, emitSelectSearchResult
                     },
                     UPDATE_DROPDOWN_SEARCH_RESULTS: {
                         actions: ["updateDropdownSearchResults"],
@@ -158,7 +173,9 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
         guards: {
             isTextInputEmpty: (context) => !context.query,
             isDefaultSection: (context, event, meta) =>
-                meta.state.matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Loaded}`),
+                Object.values(SectionState).some((state) =>
+                    meta.state.matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${state}`),
+                ),
         },
         actions: {
             setOpenInNewTab,

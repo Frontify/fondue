@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from "@components/Checkbox/Checkbox";
+import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
-import { IconEnum } from "@foundation/Icon/IconsMap";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
+import { IconLabel } from "../..";
 import { LinkChooser } from "./LinkChooser";
 import { data } from "./mock/data";
 import { templates } from "./mock/templates";
@@ -37,9 +38,13 @@ const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) =>
                 resolve(
                     data
                         .filter((item) => doesContainSubstring(item.title, query))
-                        .map((item) => ({ ...item, size: MenuItemContentSize.Large })),
+                        .map((item) => ({
+                            ...item,
+                            size: MenuItemContentSize.Large,
+                            selectionIndicator: SelectionIndicatorIcon.None,
+                        })),
                 );
-            }, 2000),
+            }, 500),
         );
     };
 
@@ -51,9 +56,14 @@ const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) =>
                 resolve(
                     templates
                         .filter((template) => doesContainSubstring(template.title, query))
-                        .map((item) => ({ ...item, icon: IconEnum.Template })),
+                        .map((item) => ({
+                            ...item,
+                            size: MenuItemContentSize.Large,
+                            icon: IconLabel.Template,
+                            selectionIndicator: SelectionIndicatorIcon.None,
+                        })),
                 );
-            }, 2000),
+            }, 500),
         );
     };
 

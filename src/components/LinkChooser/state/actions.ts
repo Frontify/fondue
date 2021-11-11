@@ -5,6 +5,7 @@ import {
     MAX_STORED_ITEMS,
     QUERIES_STORAGE_KEY,
 } from "@components/LinkChooser/LinkChooser";
+import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { assign, DoneInvokeEvent } from "xstate";
 import { LinkChooserContext, LinkChooserEventData, SearchResult } from "../types";
@@ -22,20 +23,22 @@ export const updateQueryFromObject = assign<LinkChooserContext, DoneInvokeEvent<
 });
 
 export const updateCustomLink = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
-    searchResults: (context, { data }) => [
-        ...context.searchResults.filter((result) => result.id !== CUSTOM_LINK_ID),
-        ...(data.query
+    searchResults: (context) =>
+        context.query
             ? [
-                  {
-                      id: CUSTOM_LINK_ID,
-                      title: data.query,
-                      link: data.query,
-                      icon: DEFAULT_ICON,
-                      size: MenuItemContentSize.Large,
-                  } as SearchResult,
+                  ...context.searchResults.filter((result) => result.id !== CUSTOM_LINK_ID),
+                  ...[
+                      {
+                          id: CUSTOM_LINK_ID,
+                          title: context.query,
+                          link: context.query,
+                          icon: DEFAULT_ICON,
+                          size: MenuItemContentSize.Large,
+                          selectionIndicator: SelectionIndicatorIcon.None,
+                      } as SearchResult,
+                  ],
               ]
-            : []),
-    ],
+            : context.searchResults,
 });
 
 export const setSelectedSearchResult = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
@@ -91,6 +94,6 @@ export const fetchGlobalSearchResults = async (context: LinkChooserContext): Pro
 };
 
 export const fetchTemplateSearchResults = async (context: LinkChooserContext): Promise<LinkChooserEventData> => {
-    const results = context.query ? await context.getTemplatesByQuery(context.query) : retrieveRecentQueries();
+    const results = await context.getTemplatesByQuery(context.query);
     return { searchResults: results };
 };

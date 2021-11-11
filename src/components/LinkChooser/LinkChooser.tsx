@@ -65,9 +65,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         { devTools: true },
     );
 
-    const debouncedQuery = useDebounce({ value: context.query, delay: 500 });
-
-    /* const [{ context: contextChild, matches: matchesChild }, sendChild] = useActor(children.dropdown); */
+    const debouncedQuery = useDebounce({ value: context.query, delay: 300 });
 
     const handleClearClick = useCallback(() => {
         state.setInputValue("");
@@ -75,9 +73,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         send("CLEARING", { data: { query: "" } });
     }, []);
 
-    // should search be triggered even when a user selects one of the options from the local storage?
-    // open dropdown -> select one of the items from recent queries -> open the dropdown again (this time an option
-    // is selected) -> should this trigger the search with the query of the currently selected item?
     const handleSelectionChange = (key: Key) => {
         const foundItem = context.searchResults.find((item) => item.id === key);
         if (foundItem) send("SET_SELECTED_SEARCH_RESULT", { data: { selectedResult: foundItem } });
