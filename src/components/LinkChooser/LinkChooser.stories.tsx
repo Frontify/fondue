@@ -18,9 +18,12 @@ export default {
         disabled: false,
         clearable: false,
     },
+    argTypes: {
+        onLinkChange: { action: "onClick" },
+    },
 } as Meta<LinkChooserProps>;
 
-const LinkChooserTemplate: Story<LinkChooserProps> = () => {
+const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) => {
     const [newTab, setNewTab] = useState<CheckboxState>(CheckboxState.Unchecked);
 
     const handleTabChange = (value: boolean) => setNewTab(value ? CheckboxState.Checked : CheckboxState.Unchecked);
@@ -56,10 +59,10 @@ const LinkChooserTemplate: Story<LinkChooserProps> = () => {
 
     return (
         <LinkChooser
+            {...args}
             getGlobalByQuery={getGlobalByQuery}
             /*  getGuidelinesByQuery={getGuidelinesByQuery} */
             getTemplatesByQuery={getTemplatesByQueryMock}
-            onLinkChange={(value: SearchResult) => console.log("selected search result callback", value)}
             openInNewTab={newTab}
             onOpenInNewTabChange={handleTabChange}
         />

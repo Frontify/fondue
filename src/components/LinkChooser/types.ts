@@ -35,7 +35,7 @@ export type LinkChooserProps = {
     label?: string;
     placeholder?: string;
     onOpenInNewTabChange: (value: boolean) => void;
-    onLinkChange: (value: SearchResult) => void;
+    onLinkChange: (value: SearchResult | null) => void;
 };
 
 export type SearchResult = Omit<MenuItemType, "title"> & { icon: string; title: string };
@@ -113,7 +113,7 @@ export type LinkChooserContext = {
     onOpenInNewTabChange: (value: boolean) => void;
     readonly getGlobalByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
     readonly getTemplatesByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
-    readonly onLinkChange: (value: SearchResult) => void;
+    readonly onLinkChange: (value: SearchResult | null) => void;
 };
 
 export type LinkChooserEventData = {

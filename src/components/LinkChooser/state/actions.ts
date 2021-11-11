@@ -70,7 +70,7 @@ export const storeNewSelectedResult = (
 };
 
 export const emitSelectSearchResult = (context: LinkChooserContext): void => {
-    context.selectedResult && context.onLinkChange(context.selectedResult);
+    context.onLinkChange(context.selectedResult);
 };
 
 export const clearSelectedResult = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
