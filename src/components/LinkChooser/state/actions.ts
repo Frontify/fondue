@@ -64,14 +64,19 @@ export const storeNewSelectedResult = (
     { data }: DoneInvokeEvent<LinkChooserEventData>,
 ): void => {
     const { selectedResult } = data;
-    const retrievedQueries = retrieveRecentQueries();
-    const retrievedItem = retrievedQueries.find((item: SearchResult) => item.id === selectedResult?.id);
-    const updatedQueries = retrievedItem
-        ? [{ ...selectedResult }, ...retrievedQueries.filter((item: SearchResult) => item.id !== selectedResult?.id)]
-        : retrievedQueries.length < MAX_STORED_ITEMS
-        ? [{ ...selectedResult }, ...retrievedQueries]
-        : [{ ...selectedResult }, ...retrievedQueries.slice(0, -1)];
-    localStorage.setItem(QUERIES_STORAGE_KEY, JSON.stringify(updatedQueries));
+    if (selectedResult) {
+        const retrievedQueries = retrieveRecentQueries();
+        const retrievedItem = retrievedQueries.find((item: SearchResult) => item.id === selectedResult?.id);
+        const updatedQueries = retrievedItem
+            ? [
+                  { ...selectedResult },
+                  ...retrievedQueries.filter((item: SearchResult) => item.id !== selectedResult?.id),
+              ]
+            : retrievedQueries.length < MAX_STORED_ITEMS
+            ? [{ ...selectedResult }, ...retrievedQueries]
+            : [{ ...selectedResult }, ...retrievedQueries.slice(0, -1)];
+        localStorage.setItem(QUERIES_STORAGE_KEY, JSON.stringify(updatedQueries));
+    }
 };
 
 export const emitSelectSearchResult = (context: LinkChooserContext): void => {

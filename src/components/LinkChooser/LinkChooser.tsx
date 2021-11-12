@@ -17,7 +17,7 @@ import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultSection";
 import { SectionActionMenu } from "./SectionActionMenu";
-import { linkChooserMachine, LinkChooserState } from "./state/machine";
+import { DropdownState, linkChooserMachine, LinkChooserState, SectionState } from "./state/machine";
 import { LinkChooserProps } from "./types";
 import * as SearchRepository from "./repositories";
 
@@ -66,6 +66,12 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         { devTools: true },
     );
 
+    const isFetching = Object.values(DropdownState).some((dropdown) =>
+        [SectionState.Fetching, SectionState.Typing].some((section) =>
+            matches(`${LinkChooserState.Focused}.${dropdown}.${section}`),
+        ),
+    );
+
     const handleClearClick = useCallback(() => {
         state.setInputValue("");
         state.setSelectedKey("");
@@ -79,6 +85,21 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const handleInputChange = (value: string) => {
         send("TYPING", { data: { query: value } });
+    };
+
+    const handleDropdownClose = () => {
+        if (isFetching || !context.query) {
+            send("CLOSE_DROPDOWN", { data: { selectedResult: null } });
+            state.setSelectedKey("");
+            state.setInputValue("");
+        } else if (context.selectedResult && context.query === context.selectedResult.title) {
+            send("CLOSE_DROPDOWN", { data: { selectedResult: context.selectedResult } });
+            state.setSelectedKey(context.selectedResult.id);
+        } else {
+            const customLink = context.searchResults.find((item) => item.id === CUSTOM_LINK_ID);
+            send("CLOSE_DROPDOWN", { data: { selectedResult: customLink || null } });
+            state.setSelectedKey(customLink?.id || "");
+        }
     };
 
     const filterItems = (value: string, query: string) => value.toLowerCase().includes(query.toLowerCase());
@@ -99,11 +120,11 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         ...props,
         defaultFilter: filterItems,
         shouldCloseOnBlur: false,
-        onSelectionChange: handleSelectionChange,
         onInputChange: handleInputChange,
+        onSelectionChange: handleSelectionChange,
         menuTrigger: "manual",
         allowsEmptyCollection: true,
-        onBlur: () => send("CLOSE_DROPDOWN"),
+        onBlur: handleDropdownClose,
     });
 
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -158,11 +179,11 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                         exit={{ height: 0 }}
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
-                        <DismissButton onDismiss={() => send("CLOSE_DROPDOWN")} />
+                        <DismissButton onDismiss={handleDropdownClose} />
                         <Popover
                             popoverRef={popoverRef}
                             isOpen={matches(LinkChooserState.Focused)}
-                            onClose={() => send("CLOSE_DROPDOWN")}
+                            onClose={handleDropdownClose}
                         >
                             <SearchResultsList
                                 {...listBoxProps}
@@ -177,7 +198,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                 <SectionActionMenu machineService={service} />
                             </div>
                         </Popover>
-                        <DismissButton onDismiss={() => send("CLOSE_DROPDOWN")} />
+                        <DismissButton onDismiss={handleDropdownClose} />
                     </motion.div>
                 )}
             </AnimatePresence>

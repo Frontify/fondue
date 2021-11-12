@@ -25,17 +25,17 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
     const [machineState, send] = useActor(machineService);
     const { context, matches, value } = machineState;
 
-    const isFetching = Object.values(DropdownState).some((dropdown) =>
-        [SectionState.Fetching, SectionState.Typing].some((section) =>
-            matches(`${LinkChooserState.Focused}.${dropdown}.${section}`),
-        ),
-    );
-
     const title = useMemo(() => {
         if (machineState.toStrings()[1]) {
             return machineState.toStrings()[1].split(".")[1];
         }
     }, [value]);
+
+    const isFetching = Object.values(DropdownState).some((dropdown) =>
+        [SectionState.Fetching, SectionState.Typing].some((section) =>
+            matches(`${LinkChooserState.Focused}.${dropdown}.${section}`),
+        ),
+    );
 
     const isUnsuccessful = Object.values(DropdownState).some((state) =>
         matches(`${LinkChooserState.Focused}.${state}.${SectionState.Error}`),

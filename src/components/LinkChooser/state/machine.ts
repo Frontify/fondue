@@ -48,6 +48,10 @@ const typingAction = {
     },
 };
 
+const selectionActions = {
+    actions: ["storeNewSelectedResult", "updateQueryFromObject", "setSelectedSearchResult", "emitSelectSearchResult"],
+};
+
 const sharedActions = {
     CLEARING: {
         actions: ["clearSelectedResult", "updateQueryFromString", "emitSelectSearchResult"],
@@ -117,6 +121,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                         },
                         {
                             target: LinkChooserState.Focused,
+                            actions: ["updateCustomLink"],
                         },
                     ],
                     SET_NEW_TAB: {
@@ -168,18 +173,11 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                 on: {
                     CLOSE_DROPDOWN: {
                         target: LinkChooserState.Idle,
+                        ...selectionActions,
                     },
                     SET_SELECTED_SEARCH_RESULT: {
                         target: LinkChooserState.Idle,
-                        actions: [
-                            "storeNewSelectedResult",
-                            "updateQueryFromObject",
-                            "setSelectedSearchResult",
-                            "emitSelectSearchResult",
-                        ],
-                    },
-                    UPDATE_DROPDOWN_SEARCH_RESULTS: {
-                        actions: ["updateDropdownSearchResults"],
+                        ...selectionActions,
                     },
                     ...sharedActions,
                 },
