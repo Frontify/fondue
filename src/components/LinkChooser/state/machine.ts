@@ -4,13 +4,13 @@ import { createMachine, DoneInvokeEvent } from "xstate";
 import { LinkChooserContext, LinkChooserEventData } from "../types";
 import {
     clearSelectedResult,
+    copyToClipboard,
     emitSelectSearchResult,
     fetchGlobalSearchResults,
     fetchTemplateSearchResults,
     openPreview,
     populateDropdownSearchResultsWithRecentQueries,
     retrieveRecentQueries,
-    setOpenInNewTab,
     setSelectedSearchResult,
     storeNewSelectedResult,
     updateCustomLink,
@@ -58,6 +58,9 @@ const sharedActions = {
     },
     OPEN_PREVIEW: {
         actions: ["openPreview"],
+    },
+    COPY_TO_CLIPBOARD: {
+        actions: ["copyToClipboard"],
     },
 };
 
@@ -124,9 +127,6 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                             actions: ["updateCustomLink"],
                         },
                     ],
-                    SET_NEW_TAB: {
-                        actions: ["setOpenInNewTab"],
-                    },
                     ...sharedActions,
                 },
             },
@@ -193,20 +193,20 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
             isQueryEmpty: (context) => !context.query,
         },
         actions: {
-            setOpenInNewTab,
-            updateQueryFromString,
-            updateQueryFromObject,
-            updateCustomLink,
-            setSelectedSearchResult,
-            retrieveRecentQueries,
-            storeNewSelectedResult,
-            emitSelectSearchResult,
             clearSelectedResult,
-            openPreview,
-            updateDropdownSearchResults,
+            copyToClipboard,
+            emitSelectSearchResult,
             fetchGlobalSearchResults,
             fetchTemplateSearchResults,
+            openPreview,
             populateDropdownSearchResultsWithRecentQueries,
+            retrieveRecentQueries,
+            setSelectedSearchResult,
+            storeNewSelectedResult,
+            updateCustomLink,
+            updateDropdownSearchResults,
+            updateQueryFromObject,
+            updateQueryFromString,
         },
     },
 );

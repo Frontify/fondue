@@ -64,7 +64,7 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
             )}
             <ul
                 {...listBoxProps}
-                data-test-id="list-box"
+                data-test-id="link-chooser-results-list"
                 ref={listBoxRef}
                 className={merge([
                     "tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-z-20 focus-visible:tw-outline-none",
@@ -105,7 +105,11 @@ const SearchResultSection = ({ heading, state, keyItemRecord, machineService }: 
     return (
         <>
             <li {...itemProps} className="tw-border-b tw-border-b-black-10 last:tw-border-0">
-                <ul {...groupProps} data-test-id="select-section" className="tw-py-2 tw-px-0 tw-m-0 tw-list-none">
+                <ul
+                    {...groupProps}
+                    data-test-id="link-chooser-select-section"
+                    className="tw-py-2 tw-px-0 tw-m-0 tw-list-none"
+                >
                     {[...heading.childNodes].map((node) => (
                         <SearchResultOption
                             key={node.key}
@@ -158,7 +162,10 @@ const SearchResultOption = ({ item, state, keyItemRecord, machineService }: Sear
 
 const EmptyResults = ({ prompt, icon }: { prompt: string; icon: string }) => {
     return (
-        <div className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]">
+        <div
+            data-test-id="link-chooser-empty-results"
+            className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]"
+        >
             <img className="tw-w-[75px] tw-mb-5" src={icon} alt="Icon" />
             <p className="tw-text-black-60">{prompt}</p>
         </div>
@@ -167,7 +174,10 @@ const EmptyResults = ({ prompt, icon }: { prompt: string; icon: string }) => {
 
 const FetchingError = ({ error = "An error occurred while fetching the results" }: { error?: string }) => {
     return (
-        <div className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]">
+        <div
+            data-test-id="link-chooser-error"
+            className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]"
+        >
             <img className="tw-w-[75px] tw-mb-5" src={NoResultsIcon} alt="Error" />
             <p className="tw-text-black-60">{error}</p>
         </div>
@@ -176,7 +186,10 @@ const FetchingError = ({ error = "An error occurred while fetching the results" 
 
 const FetchingAnimation = () => {
     return (
-        <div className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]">
+        <div
+            data-test-id="link-chooser-loader"
+            className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]"
+        >
             <img className="tw-w-[50px]" src={FetchingIcon} alt="Fetching" />
         </div>
     );

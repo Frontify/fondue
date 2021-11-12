@@ -45,6 +45,8 @@ export const QUERIES_STORAGE_KEY = "queries";
 export const LinkChooser: FC<LinkChooserProps> = ({
     getGlobalByQuery = SearchRepository.getGlobalByQuery,
     getTemplatesByQuery = SearchRepository.getTemplatesByQuery,
+    openPreview = window.open,
+    copyToClipboard = navigator.clipboard.writeText,
     openInNewTab,
     ariaLabel = "Menu",
     label,
@@ -55,15 +57,14 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const [{ context, matches }, send, service] = useMachine(
         linkChooserMachine.withContext({
             searchResults: [],
-            openInNewTab,
-            onOpenInNewTabChange,
             selectedResult: null,
             query: "",
+            copyToClipboard,
+            openPreview,
             getGlobalByQuery,
             getTemplatesByQuery,
             onLinkChange,
         }),
-        { devTools: true },
     );
 
     const isFetching = Object.values(DropdownState).some((dropdown) =>
@@ -119,7 +120,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const state = useComboBoxState({
         ...props,
         defaultFilter: filterItems,
-        shouldCloseOnBlur: false,
         onInputChange: handleInputChange,
         onSelectionChange: handleSelectionChange,
         menuTrigger: "manual",
@@ -137,6 +137,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             inputRef,
             listBoxRef,
             popoverRef,
+            onBlur: handleDropdownClose,
         },
         state,
     );
@@ -165,8 +166,8 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     clearable={true}
                     placeholder={placeholder}
                     onClear={handleClearClick}
-                    onPreview={() => send("OPEN_PREVIEW")}
                     onClick={() => send("OPEN_DROPDOWN")}
+                    machineService={service}
                 />
             </div>
             <AnimatePresence>
@@ -178,6 +179,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                         animate={{ height: "auto" }}
                         exit={{ height: 0 }}
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
+                        data-test-id="link-chooser-dropdown"
                     >
                         <DismissButton onDismiss={handleDropdownClose} />
                         <Popover
@@ -202,11 +204,11 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     </motion.div>
                 )}
             </AnimatePresence>
-            <div className="tw-my-2">
+            <div className="tw-my-2" data-test-id="link-chooser-new-tab">
                 <Checkbox
                     value="new-tab"
-                    state={context.openInNewTab ? CheckboxState.Checked : CheckboxState.Unchecked}
-                    onChange={(isChecked) => send("SET_NEW_TAB", { data: { openInNewTab: isChecked } })}
+                    state={openInNewTab ? CheckboxState.Checked : CheckboxState.Unchecked}
+                    onChange={onOpenInNewTabChange}
                     label="Open in New Tab"
                 />
             </div>

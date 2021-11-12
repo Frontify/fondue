@@ -5,11 +5,11 @@ import IconCopyToClipboard from "@foundation/Icon/Generated/IconCopyToClipboard"
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
 import IconReject from "@foundation/Icon/Generated/IconReject";
 import IconSpinner from "@foundation/Icon/Generated/IconSpinner";
-import { useClipboard } from "@hooks/useClipboard";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
+import { useActor } from "@xstate/react";
 import React, { forwardRef, KeyboardEvent } from "react";
 import { SearchInputProps } from "./types";
 
@@ -41,9 +41,9 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
             onFocus,
             onBlur,
             onClear,
-            onPreview,
             onClick,
             size,
+            machineService,
         },
         inputElement,
     ) => {
@@ -52,7 +52,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
         const { isFocusVisible: copyButtonIsFocusVisible, focusProps: copyButtonFocusProps } = useFocusRing();
         const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
 
-        useClipboard({ selector: "[data-clipboard-id='copy-button']", target: selectedResult?.link ?? "" });
+        const [, send] = useActor(machineService);
 
         const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
             if (event.key === "Enter") {
@@ -63,7 +63,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
         return (
             <div
                 {...focusProps}
-                data-test-id="search-wrapper"
+                data-test-id="link-chooser-search-wrapper"
                 className={merge([
                     "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent",
                     dotted ? "tw-border-dashed" : "tw-border-solid",
@@ -107,7 +107,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                     required={required}
                     disabled={disabled}
                     size={size}
-                    data-test-id="search-input"
+                    data-test-id="link-chooser-search-input"
                 />
                 {selectedResult && previewable && (
                     <button
@@ -118,11 +118,11 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                                 ? "tw-cursor-default tw-text-black-40"
                                 : "tw-text-black-60 hover:tw-text-black-100",
                         ])}
-                        data-test-id="preview-icon"
+                        data-test-id="link-chooser-preview-icon"
                         title="Preview link"
                         aria-label=""
                         disabled={disabled}
-                        onClick={onPreview}
+                        onClick={() => send("OPEN_PREVIEW")}
                         {...previewButtonFocusProps}
                     >
                         <IconExternalLink />
@@ -137,11 +137,12 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                                 ? "tw-cursor-default tw-text-black-40"
                                 : "tw-text-black-60 hover:tw-text-black-100",
                         ])}
-                        data-test-id="copy-icon"
+                        data-test-id="link-chooser-copy-icon"
                         data-clipboard-id="copy-button"
                         title="Copy text to clipboard"
                         aria-label=""
                         disabled={disabled}
+                        onClick={() => send("COPY_TO_CLIPBOARD")}
                         {...copyButtonFocusProps}
                     >
                         <IconCopyToClipboard />
@@ -156,7 +157,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                                 : "tw-text-black-60  hover:tw-text-black-100",
                             clearButtonIsFocusVisible && FOCUS_STYLE,
                         ])}
-                        data-test-id="discard-icon"
+                        data-test-id="link-chooser-clear-icon"
                         title="Clear text input"
                         aria-label="clear text input"
                         disabled={disabled}

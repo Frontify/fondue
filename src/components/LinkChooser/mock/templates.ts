@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconLabel } from "../LinkChooser";
+
 export const templates = [
     {
         id: "7",
@@ -8,6 +10,7 @@ export const templates = [
         title: "Aerial City View",
         subtitle: "Corporate Library",
         link: "#",
+        icon: IconLabel.Template,
     },
     {
         id: "8",
@@ -16,6 +19,7 @@ export const templates = [
         title: "Brooklyn",
         subtitle: "Template Library Old Brand",
         link: "#",
+        icon: IconLabel.Template,
     },
     {
         id: "9",
@@ -24,6 +28,7 @@ export const templates = [
         title: "City",
         subtitle: "SRF Kultur On Screen",
         link: "#",
+        icon: IconLabel.Template,
     },
     {
         id: "10",
@@ -32,6 +37,7 @@ export const templates = [
         title: "Malaya Poster",
         subtitle: "UNICEF Social Campaign",
         link: "#",
+        icon: IconLabel.Template,
     },
     {
         id: "11",
@@ -40,5 +46,6 @@ export const templates = [
         title: "Brand Business Card",
         subtitle: "Corporate Library",
         link: "#",
+        icon: IconLabel.Template,
     },
 ];

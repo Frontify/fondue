@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CheckboxState } from "@components/Checkbox/Checkbox";
 import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
-import { IconLabel, LinkChooser } from "./LinkChooser";
+import { LinkChooser } from "./LinkChooser";
 import { data } from "./mock/data";
 import { templates } from "./mock/templates";
 import { LinkChooserProps, SearchResult } from "./types";
@@ -24,9 +23,7 @@ export default {
 } as Meta<LinkChooserProps>;
 
 const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) => {
-    const [newTab, setNewTab] = useState<CheckboxState>(CheckboxState.Unchecked);
-
-    const handleTabChange = (value: boolean) => setNewTab(value ? CheckboxState.Checked : CheckboxState.Unchecked);
+    const [newTab, setNewTab] = useState<boolean>(false);
 
     const doesContainSubstring = (source: string, target: string) =>
         source.toLowerCase().includes(target.toLowerCase());
@@ -60,7 +57,6 @@ const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) =>
                         .map((item) => ({
                             ...item,
                             size: MenuItemContentSize.Large,
-                            icon: IconLabel.Template,
                             selectionIndicator: SelectionIndicatorIcon.None,
                         })),
                 );
@@ -74,7 +70,7 @@ const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) =>
             getGlobalByQuery={getGlobalByQuery}
             getTemplatesByQuery={getTemplatesByQueryMock}
             openInNewTab={newTab}
-            onOpenInNewTabChange={handleTabChange}
+            onOpenInNewTabChange={setNewTab}
         />
     );
 };

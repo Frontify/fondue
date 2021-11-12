@@ -29,15 +29,17 @@ export type TemplateMenuBlock = {
 };
 
 export type LinkChooserProps = {
-    getGlobalByQuery?: (query: string) => Promise<SearchResult[]>;
-    getGuidelinesByQuery?: (query: string) => Promise<SearchResult[]>;
-    getTemplatesByQuery?: (query: string) => Promise<SearchResult[]>;
-    openInNewTab: CheckboxState;
+    openInNewTab: boolean;
     ariaLabel?: string;
     label?: string;
     placeholder?: string;
     onOpenInNewTabChange: (value: boolean) => void;
     onLinkChange: (value: SearchResult | null) => void;
+    readonly copyToClipboard: (value: string) => void;
+    readonly getGlobalByQuery?: (query: string) => Promise<SearchResult[]>;
+    readonly getGuidelinesByQuery?: (query: string) => Promise<SearchResult[]>;
+    readonly getTemplatesByQuery?: (query: string) => Promise<SearchResult[]>;
+    readonly openPreview: (value: string, target: string) => void;
 };
 
 export type SearchResult = Omit<MenuItemType, "title"> & { icon: string; title: string };
@@ -98,6 +100,7 @@ export type SearchInputProps = {
     onPreview?: () => void;
     onClick?: () => void;
     size?: number;
+    machineService: MachineService;
 };
 
 export type PopoverProps = {
@@ -111,11 +114,11 @@ export type LinkChooserContext = {
     searchResults: SearchResult[];
     selectedResult: SearchResult | null;
     query: string;
-    openInNewTab: CheckboxState;
-    onOpenInNewTabChange: (value: boolean) => void;
+    readonly copyToClipboard: (value: string) => void;
     readonly getGlobalByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
     readonly getTemplatesByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
     readonly onLinkChange: (value: SearchResult | null) => void;
+    readonly openPreview: (value: string, target: string) => void;
 };
 
 export type LinkChooserEventData = {
