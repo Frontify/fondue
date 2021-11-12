@@ -7,13 +7,12 @@ import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary"
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
 import IconLink from "@foundation/Icon/Generated/IconLink";
 import IconTemplate from "@foundation/Icon/Generated/IconTemplate";
-import { useDebounce } from "@hooks/useDebounce";
 import { useComboBox } from "@react-aria/combobox";
 import { DismissButton } from "@react-aria/overlays";
 import { useComboBoxState } from "@react-stately/combobox";
 import { useMachine } from "@xstate/react";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, Key, ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { FC, Key, ReactElement, useCallback, useMemo, useRef } from "react";
 import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultSection";
@@ -66,8 +65,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }),
         { devTools: true },
     );
-
-    const debouncedQuery = useDebounce({ value: context.query, delay: 300 });
 
     const handleClearClick = useCallback(() => {
         state.setInputValue("");
@@ -126,10 +123,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const formattedIcon = context.selectedResult?.icon
         ? ICON_OPTIONS[context.selectedResult.icon]
         : ICON_OPTIONS[DEFAULT_ICON];
-
-    useEffect(() => {
-        send("SEARCHING");
-    }, [debouncedQuery]);
 
     return (
         <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">

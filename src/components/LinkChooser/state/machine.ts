@@ -38,12 +38,15 @@ export enum SectionState {
     Error = "error",
 }
 
-const typingAction = (target?: string) => ({
+const DEBOUNCE_TIMEOUT = 500;
+
+const typingAction = {
     TYPING: {
-        ...(target ? { target } : {}),
+        target: SectionState.Typing,
+        internal: false,
         actions: ["updateQueryFromString"],
     },
-});
+};
 
 const sharedActions = {
     CLEARING: {
@@ -63,14 +66,15 @@ const initializeSectionState = (
     states: {
         [SectionState.Loaded]: {
             on: {
-                ...typingAction(SectionState.Fetching),
+                ...typingAction,
             },
         },
         [SectionState.Typing]: {
+            after: {
+                [DEBOUNCE_TIMEOUT]: { target: SectionState.Fetching },
+            },
             on: {
-                SEARCHING: {
-                    target: SectionState.Fetching,
-                },
+                ...typingAction,
             },
         },
         [SectionState.Fetching]: {
@@ -91,7 +95,7 @@ const initializeSectionState = (
                 onError: SectionState.Error,
             },
             on: {
-                ...typingAction(SectionState.Typing),
+                ...typingAction,
             },
         },
         [SectionState.Error]: {},
@@ -178,7 +182,6 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                         actions: ["updateDropdownSearchResults"],
                     },
                     ...sharedActions,
-                    ...typingAction(),
                 },
             },
         },
