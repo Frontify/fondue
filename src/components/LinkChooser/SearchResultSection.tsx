@@ -56,7 +56,7 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
         <div>
             {shouldGoBack && (
                 <div className="tw-flex tw-px-5 tw-mt-4 tw-mb-5">
-                    <button onClick={() => send("GO_TO_DEFAULT")}>
+                    <button data-test-id="link-chooser-back-button" onClick={() => send("GO_TO_DEFAULT")}>
                         <IconArrowLeft />
                     </button>
                     <p className="tw-ml-2 tw-text-black-80 tw-capitalize">{title}</p>

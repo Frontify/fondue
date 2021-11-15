@@ -20,6 +20,7 @@ import { SectionActionMenu } from "./SectionActionMenu";
 import { DropdownState, linkChooserMachine, LinkChooserState, SectionState } from "./state/machine";
 import { LinkChooserProps } from "./types";
 import * as SearchRepository from "./repositories";
+import { createCustomLink } from "./utils/createCustomLink";
 
 export enum IconLabel {
     Document = "DOCUMENT",
@@ -89,7 +90,14 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     };
 
     const handleDropdownClose = () => {
-        if (isFetching || !context.query) {
+        if (isFetching) {
+            const selectedResult =
+                context.selectedResult && context.query === context.selectedResult.title
+                    ? context.selectedResult
+                    : createCustomLink(state.inputValue);
+            send("CLOSE_DROPDOWN", { data: { selectedResult: selectedResult } });
+            state.setSelectedKey(selectedResult.id);
+        } else if (!context.query) {
             send("CLOSE_DROPDOWN", { data: { selectedResult: null } });
             state.setSelectedKey("");
             state.setInputValue("");
@@ -196,7 +204,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                 noBorder={true}
                                 machineService={service}
                             />
-                            <div className="tw-border-t tw-border-black-10">
+                            <div data-test-id="link-chooser-action-menu" className="tw-border-t tw-border-black-10">
                                 <SectionActionMenu machineService={service} />
                             </div>
                         </Popover>

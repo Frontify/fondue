@@ -2,11 +2,11 @@
 
 import { FocusScope } from "@react-aria/focus";
 import { DismissButton, useOverlay } from "@react-aria/overlays";
-import React, { FC } from "react";
+import React, { FC, useRef } from "react";
 import { PopoverProps } from "./types";
 
 export const Popover: FC<PopoverProps> = (props) => {
-    const ref = React.useRef<HTMLDivElement>(null);
+    const ref = useRef<HTMLDivElement>(null);
     const { popoverRef = ref, isOpen, onClose, children } = props;
 
     const { overlayProps } = useOverlay(

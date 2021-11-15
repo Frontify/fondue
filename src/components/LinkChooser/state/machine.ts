@@ -49,7 +49,13 @@ const typingAction = {
 };
 
 const selectionActions = {
-    actions: ["storeNewSelectedResult", "updateQueryFromObject", "setSelectedSearchResult", "emitSelectSearchResult"],
+    actions: [
+        "storeNewSelectedResult",
+        "updateQueryFromObject",
+        "updateCustomLink",
+        "setSelectedSearchResult",
+        "emitSelectSearchResult",
+    ],
 };
 
 const sharedActions = {

@@ -1,15 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    CUSTOM_LINK_ID,
-    DEFAULT_ICON,
-    MAX_STORED_ITEMS,
-    QUERIES_STORAGE_KEY,
-} from "@components/LinkChooser/LinkChooser";
-import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
-import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
+import { CUSTOM_LINK_ID, MAX_STORED_ITEMS, QUERIES_STORAGE_KEY } from "@components/LinkChooser/LinkChooser";
 import { assign, DoneInvokeEvent } from "xstate";
 import { LinkChooserContext, LinkChooserEventData, SearchResult } from "../types";
+import { createCustomLink } from "../utils/createCustomLink";
 
 export const updateQueryFromString = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
     query: (_context, { data }) => data.query ?? "",
@@ -24,16 +18,7 @@ export const updateCustomLink = assign<LinkChooserContext, DoneInvokeEvent<LinkC
         context.query
             ? [
                   ...context.searchResults.filter((result) => result.id !== CUSTOM_LINK_ID),
-                  ...[
-                      {
-                          id: CUSTOM_LINK_ID,
-                          title: context.query,
-                          link: context.query,
-                          icon: DEFAULT_ICON,
-                          size: MenuItemContentSize.Large,
-                          selectionIndicator: SelectionIndicatorIcon.None,
-                      } as SearchResult,
-                  ],
+                  ...[createCustomLink(context.query)],
               ]
             : context.searchResults,
 });
