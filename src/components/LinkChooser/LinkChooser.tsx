@@ -17,10 +17,10 @@ import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultSection";
 import { SectionActionMenu } from "./SectionActionMenu";
-import { DropdownState, linkChooserMachine, LinkChooserState, SectionState } from "./state/machine";
+import { linkChooserMachine, LinkChooserState } from "./state/machine";
 import { LinkChooserProps } from "./types";
 import * as SearchRepository from "./repositories";
-import { createCustomLink } from "./utils/createCustomLink";
+import { createCustomLink, queryMatchesSelection } from "./utils/helpers";
 
 export enum IconLabel {
     Document = "DOCUMENT",
@@ -47,7 +47,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     getGlobalByQuery = SearchRepository.getGlobalByQuery,
     getTemplatesByQuery = SearchRepository.getTemplatesByQuery,
     openPreview = window.open,
-    copyToClipboard = navigator.clipboard.writeText,
+    copyToClipboard = navigator.clipboard,
     openInNewTab,
     ariaLabel = "Menu",
     label,
@@ -68,12 +68,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }),
     );
 
-    const isFetching = Object.values(DropdownState).some((dropdown) =>
-        [SectionState.Fetching, SectionState.Typing].some((section) =>
-            matches(`${LinkChooserState.Focused}.${dropdown}.${section}`),
-        ),
-    );
-
     const handleClearClick = useCallback(() => {
         state.setInputValue("");
         state.setSelectedKey("");
@@ -90,25 +84,13 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     };
 
     const handleDropdownClose = () => {
-        if (isFetching) {
-            const selectedResult =
-                context.selectedResult && context.query === context.selectedResult.title
-                    ? context.selectedResult
-                    : createCustomLink(state.inputValue);
-            send("CLOSE_DROPDOWN", { data: { selectedResult: selectedResult } });
-            state.setSelectedKey(selectedResult.id);
-        } else if (!context.query) {
-            send("CLOSE_DROPDOWN", { data: { selectedResult: null } });
-            state.setSelectedKey("");
-            state.setInputValue("");
-        } else if (context.selectedResult && context.query === context.selectedResult.title) {
-            send("CLOSE_DROPDOWN", { data: { selectedResult: context.selectedResult } });
-            state.setSelectedKey(context.selectedResult.id);
-        } else {
-            const customLink = context.searchResults.find((item) => item.id === CUSTOM_LINK_ID);
-            send("CLOSE_DROPDOWN", { data: { selectedResult: customLink || null } });
-            state.setSelectedKey(customLink?.id || "");
-        }
+        const selectedResult = context.query
+            ? queryMatchesSelection(context.selectedResult, context.query)
+                ? context.selectedResult
+                : createCustomLink(state.inputValue)
+            : null;
+        send("CLOSE_DROPDOWN", { data: { selectedResult } });
+        state.setSelectedKey(selectedResult?.id || "");
     };
 
     const filterItems = (value: string, query: string) => value.toLowerCase().includes(query.toLowerCase());

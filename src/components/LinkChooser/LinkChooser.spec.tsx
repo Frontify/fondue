@@ -13,7 +13,7 @@ const LINK_CHOOSER_ID = "[data-test-id=link-chooser]";
 const SEARCH_WRAPPER_ID = "[data-test-id=link-chooser-search-wrapper]";
 const EMPTY_RESULTS_ID = "[data-test-id=link-chooser-empty-results]";
 const LOADER_ID = "[data-test-id=link-chooser-loader]";
-// const ERROR_ID = "[data-test-id=link-chooser-error]";
+const ERROR_ID = "[data-test-id=link-chooser-error]";
 const SEARCH_INPUT_ID = "[data-test-id=link-chooser-search-input]";
 const PREVIEW_ICON_ID = "[data-test-id=link-chooser-preview-icon]";
 const COPY_ICON_ID = "[data-test-id=link-chooser-copy-icon]";
@@ -24,7 +24,8 @@ const ACTION_MENU_ID = "[data-test-id=link-chooser-action-menu]";
 const BACK_BUTTON_ID = "[data-test-id=link-chooser-back-button]";
 const NEW_TAB_ID = "[data-test-id=link-chooser-new-tab]";
 const CHECKBOX_LABEL_ID = "[data-test-id=input-label]";
-const LINK_CHOOSER_DROPDOWN_ID = "[data-test-id=link-chooser-dropdown]";
+const DROPDOWN_WRAPPER_ID = "[data-test-id=link-chooser-dropdown]";
+const DECORATOR_ICON_ID = "[data-test-id=link-chooser-decorator-icon]";
 
 const DEFAULT_TIMEOUT = 100;
 const CUSTOM_QUERY = "Custom link";
@@ -81,17 +82,19 @@ const doesContainSubstring = (source: string, target: string) => source.toLowerC
 const filterItems = (query: string, results: SearchResult[]): SearchResult[] =>
     results.filter((item) => doesContainSubstring(item.title, query));
 
-const getLinkChooserComponent = (openInNewTab = false) => {
+const getLinkChooserComponent = (openInNewTab = false, returnError = false) => {
     const getGlobalByQuery = (query: string): Promise<SearchResult[]> => {
-        return new Promise((resolve) =>
+        return new Promise((resolve, reject) =>
             setTimeout(() => {
-                resolve(
-                    filterItems(query, data).map((item) => ({
-                        ...item,
-                        size: MenuItemContentSize.Large,
-                        selectionIndicator: SelectionIndicatorIcon.None,
-                    })),
-                );
+                returnError
+                    ? reject()
+                    : resolve(
+                          filterItems(query, data).map((item) => ({
+                              ...item,
+                              size: MenuItemContentSize.Large,
+                              selectionIndicator: SelectionIndicatorIcon.None,
+                          })),
+                      );
             }, DEFAULT_TIMEOUT),
         );
     };
@@ -101,22 +104,24 @@ const getLinkChooserComponent = (openInNewTab = false) => {
     /* const getProjectsByQuery = (query: string): Promise<SearchResult[]> => {}; */
 
     const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> => {
-        return new Promise((resolve) =>
+        return new Promise((resolve, reject) =>
             setTimeout(() => {
-                resolve(
-                    filterItems(query, templates).map((item) => ({
-                        ...item,
-                        size: MenuItemContentSize.Large,
-                        selectionIndicator: SelectionIndicatorIcon.None,
-                    })),
-                );
+                returnError
+                    ? reject()
+                    : resolve(
+                          filterItems(query, templates).map((item) => ({
+                              ...item,
+                              size: MenuItemContentSize.Large,
+                              selectionIndicator: SelectionIndicatorIcon.None,
+                          })),
+                      );
             }, DEFAULT_TIMEOUT),
         );
     };
 
     const onLinkChange = cy.stub().as("onLinkChange");
     const onOpenInNewTabChange = cy.stub().as("onOpenInNewTabChange");
-    const copyToClipboard = cy.stub().as("copyToClipboard");
+    const copyToClipboard = { writeText: cy.stub().as("copyToClipboard") };
     const openPreview = cy.stub().as("openPreview");
 
     return (
@@ -234,9 +239,9 @@ describe("LinkChooser Component", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
-            cy.get(LINK_CHOOSER_DROPDOWN_ID).should("exist");
+            cy.get(DROPDOWN_WRAPPER_ID).should("exist");
             cy.get("body").click();
-            cy.get(LINK_CHOOSER_DROPDOWN_ID).should("not.exist");
+            cy.get(DROPDOWN_WRAPPER_ID).should("not.exist");
         });
 
         it("adds selected item to local storage", () => {
@@ -249,6 +254,60 @@ describe("LinkChooser Component", () => {
             cy.get(CLEAR_ICON_ID).click();
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SELECT_SECTION_ID).children().should("have.length", 1);
+        });
+
+        it("interrupts the fetching phase and selects the query as custom link", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SEARCH_INPUT_ID).type(data[0].title);
+            cy.get("body").click();
+            cy.get(SEARCH_INPUT_ID).should("have.value", data[0].title);
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(`${SELECT_SECTION_ID} > li > div`)
+                .eq(0)
+                .should(($container) => {
+                    expect($container).to.have.css("font-weight", "500");
+                });
+        });
+
+        it("selects existing document and reselects it on interrupt if the titles match", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SEARCH_INPUT_ID).type(data[0].title);
+            cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
+            cy.get("@firstSelectItem").click();
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SEARCH_INPUT_ID).clear();
+            cy.get(SEARCH_INPUT_ID).type(data[0].title);
+            cy.get("body").click();
+            cy.get(SEARCH_INPUT_ID).should("have.value", data[0].title);
+            cy.get(`${DECORATOR_ICON_ID} > svg`).invoke("attr", "name").should("eq", "IconDocument");
+        });
+
+        it("selects existing document and does not reselect it on interrupt if the titles do not match", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SEARCH_INPUT_ID).type(data[0].title);
+            cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
+            cy.get("@firstSelectItem").click();
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SEARCH_INPUT_ID).clear();
+            cy.get(SEARCH_INPUT_ID).type(CUSTOM_QUERY);
+            cy.get("body").click();
+            cy.get(SEARCH_INPUT_ID).should("have.value", CUSTOM_QUERY);
+            cy.get(`${DECORATOR_ICON_ID} > svg`).invoke("attr", "name").should("eq", "IconLink");
+        });
+
+        it("displays error message when fetching fails", () => {
+            mount(getLinkChooserComponent(false, true));
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SEARCH_INPUT_ID).type(data[0].title);
+            cy.get(SELECT_SECTION_ID).should("not.exist");
+            cy.get(ERROR_ID).should("exist");
         });
     });
 
@@ -308,7 +367,8 @@ describe("LinkChooser Component", () => {
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(BACK_BUTTON_ID).should("not.exist");
-            cy.get(ACTION_MENU_ID).contains("Templates").click();
+            cy.wait(500);
+            cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
             cy.get(BACK_BUTTON_ID).should("exist");
             cy.get(SELECT_SECTION_ID).children().should("have.length", templates.length);
         });
@@ -317,7 +377,8 @@ describe("LinkChooser Component", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
-            cy.get(ACTION_MENU_ID).contains("Templates").click();
+            cy.wait(500);
+            cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
             cy.get(SEARCH_INPUT_ID).type(templates[0].title);
             cy.get(LOADER_ID).should("exist");
             cy.get(RESULTS_LIST_ID).children().should("have.length", filterItems(templates[0].title, data).length);
@@ -328,7 +389,8 @@ describe("LinkChooser Component", () => {
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(templates[0].title);
-            cy.get(ACTION_MENU_ID).contains("Templates").click();
+            cy.wait(500);
+            cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
             cy.get(LOADER_ID).should("exist");
             cy.get(RESULTS_LIST_ID).children().should("have.length", filterItems(templates[0].title, data).length);
         });
@@ -337,7 +399,8 @@ describe("LinkChooser Component", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
-            cy.get(ACTION_MENU_ID).contains("Templates").click();
+            cy.wait(500);
+            cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
             cy.get(LOADER_ID).should("exist");
             cy.get(SEARCH_INPUT_ID).type(templates[0].title);
             cy.get(BACK_BUTTON_ID).click();
@@ -349,7 +412,8 @@ describe("LinkChooser Component", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
-            cy.get(ACTION_MENU_ID).contains("Templates").click();
+            cy.wait(500);
+            cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
             cy.get(SEARCH_INPUT_ID).type(templates[0].title);
             cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
             cy.get("@firstSelectItem").click();
@@ -362,7 +426,8 @@ describe("LinkChooser Component", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
-            cy.get(ACTION_MENU_ID).contains("Templates").click();
+            cy.wait(500);
+            cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
             cy.get(SEARCH_INPUT_ID).type(CUSTOM_QUERY);
             cy.get(EMPTY_RESULTS_ID).should("exist");
         });

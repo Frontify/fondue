@@ -82,7 +82,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                             "tw-flex tw-items-center tw-justify-center tw-pl-1",
                             disabled ? "tw-text-black-60" : "tw-text-black-80",
                         ])}
-                        data-test-id="decorator"
+                        data-test-id="link-chooser-decorator-icon"
                     >
                         {decorator}
                     </div>

@@ -14,3 +14,6 @@ export const createCustomLink = (query: string): SearchResult =>
         size: MenuItemContentSize.Large,
         selectionIndicator: SelectionIndicatorIcon.None,
     } as SearchResult);
+
+export const queryMatchesSelection = (selectedResult: SearchResult | null, query: string): boolean =>
+    !!(selectedResult && query === selectedResult.title);

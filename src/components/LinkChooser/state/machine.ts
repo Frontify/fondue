@@ -4,7 +4,7 @@ import { createMachine, DoneInvokeEvent } from "xstate";
 import { LinkChooserContext, LinkChooserEventData } from "../types";
 import {
     clearSelectedResult,
-    copyToClipboard,
+    copyLinkToClipboard,
     emitSelectSearchResult,
     fetchGlobalSearchResults,
     fetchTemplateSearchResults,
@@ -66,7 +66,7 @@ const sharedActions = {
         actions: ["openPreview"],
     },
     COPY_TO_CLIPBOARD: {
-        actions: ["copyToClipboard"],
+        actions: ["copyLinkToClipboard"],
     },
 };
 
@@ -111,7 +111,11 @@ const initializeSectionState = (
                 ...typingAction,
             },
         },
-        [SectionState.Error]: {},
+        [SectionState.Error]: {
+            on: {
+                ...typingAction,
+            },
+        },
     },
 });
 
@@ -200,7 +204,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
         },
         actions: {
             clearSelectedResult,
-            copyToClipboard,
+            copyLinkToClipboard,
             emitSelectSearchResult,
             fetchGlobalSearchResults,
             fetchTemplateSearchResults,

@@ -3,7 +3,7 @@
 import { CUSTOM_LINK_ID, MAX_STORED_ITEMS, QUERIES_STORAGE_KEY } from "@components/LinkChooser/LinkChooser";
 import { assign, DoneInvokeEvent } from "xstate";
 import { LinkChooserContext, LinkChooserEventData, SearchResult } from "../types";
-import { createCustomLink } from "../utils/createCustomLink";
+import { createCustomLink } from "../utils/helpers";
 
 export const updateQueryFromString = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
     query: (_context, { data }) => data.query ?? "",
@@ -67,8 +67,8 @@ export const clearSelectedResult = assign<LinkChooserContext, DoneInvokeEvent<Li
     selectedResult: null,
 });
 
-export const copyToClipboard = ({ copyToClipboard, selectedResult }: LinkChooserContext): void => {
-    selectedResult?.link && copyToClipboard(selectedResult.link);
+export const copyLinkToClipboard = ({ copyToClipboard, selectedResult }: LinkChooserContext): void => {
+    selectedResult?.link && copyToClipboard.writeText(selectedResult.link);
 };
 
 export const openPreview = ({ openPreview, selectedResult }: LinkChooserContext): void => {

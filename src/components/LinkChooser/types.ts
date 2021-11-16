@@ -35,7 +35,7 @@ export type LinkChooserProps = {
     placeholder?: string;
     onOpenInNewTabChange: (value: boolean) => void;
     onLinkChange: (value: SearchResult | null) => void;
-    readonly copyToClipboard: (value: string) => void;
+    readonly copyToClipboard: Clipboard;
     readonly getGlobalByQuery?: (query: string) => Promise<SearchResult[]>;
     readonly getGuidelinesByQuery?: (query: string) => Promise<SearchResult[]>;
     readonly getTemplatesByQuery?: (query: string) => Promise<SearchResult[]>;
@@ -114,7 +114,7 @@ export type LinkChooserContext = {
     searchResults: SearchResult[];
     selectedResult: SearchResult | null;
     query: string;
-    readonly copyToClipboard: (value: string) => void;
+    readonly copyToClipboard: Clipboard;
     readonly getGlobalByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
     readonly getTemplatesByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
     readonly onLinkChange: (value: SearchResult | null) => void;
@@ -126,4 +126,8 @@ export type LinkChooserEventData = {
     selectedResult?: SearchResult | null;
     query?: string;
     openInNewTab?: CheckboxState;
+};
+
+export type Clipboard = {
+    writeText(newClipText: string): Promise<void>;
 };
