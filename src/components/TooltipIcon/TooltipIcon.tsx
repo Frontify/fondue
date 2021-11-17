@@ -12,12 +12,12 @@ export type TooltipIconProps = {
 
 export const TooltipIcon: FC<TooltipIconProps> = ({ tooltip }: TooltipIconProps) => {
     const { hoverProps, isHovered } = useHover({
-        onHoverStart: () => console.log('hover start'),
-        onHoverEnd: () => console.log('hover end'),
+        onHoverStart: () => console.log("hover start"),
+        onHoverEnd: () => console.log("hover end"),
     });
 
-    console.log('hoverProps:', hoverProps, isHovered);
-    
+    console.log("hoverProps:", hoverProps, isHovered);
+
     return (
         <div data-test-id="tooltip-icon" {...hoverProps}>
             <span className="tw-text-black-80">
