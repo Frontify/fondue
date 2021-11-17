@@ -88,3 +88,11 @@ export const fetchTemplateSearchResults = async (context: LinkChooserContext): P
     const results = await context.getTemplatesByQuery(context.query);
     return { searchResults: results };
 };
+
+export const interruptFetching = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
+    interruptedFetch: () => true,
+});
+
+export const resolveFetching = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
+    interruptedFetch: () => false,
+});

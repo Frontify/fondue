@@ -14,6 +14,7 @@ import { SearchResultListProps, SearchResultSectionProps, SearchResultOptionProp
 import NoResultsIcon from "./assets/no-results.svg";
 import BackgroundIcon from "./assets/background.svg";
 import FetchingIcon from "./assets/nook-animated.png";
+import { isFetching, isUnsuccessful, shouldGoBack } from "./utils/helpers";
 
 export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResultListProps) => {
     const ref = useRef<HTMLUListElement>(null);
@@ -31,30 +32,12 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
         }
     }, [value]);
 
-    const isFetching = Object.values(DropdownState).some((dropdown) =>
-        [SectionState.Fetching, SectionState.Typing].some((section) =>
-            matches(`${LinkChooserState.Focused}.${dropdown}.${section}`),
-        ),
-    );
-
-    const isUnsuccessful = Object.values(DropdownState).some((state) =>
-        matches(`${LinkChooserState.Focused}.${state}.${SectionState.Error}`),
-    );
-
-    const shouldGoBack = Object.values(DropdownState)
-        .filter((state) => state !== DropdownState.Default)
-        .some((dropdown) =>
-            Object.values(SectionState).some((section) =>
-                matches(`${LinkChooserState.Focused}.${dropdown}.${section}`),
-            ),
-        );
-
-    if (isFetching) return <FetchingAnimation />;
-    if (isUnsuccessful) return <FetchingError />;
+    if (isFetching(matches)) return <FetchingAnimation />;
+    if (isUnsuccessful(matches)) return <FetchingError />;
 
     return (
         <div>
-            {shouldGoBack && (
+            {shouldGoBack(matches) && (
                 <div className="tw-flex tw-px-5 tw-mt-4 tw-mb-5">
                     <button data-test-id="link-chooser-back-button" onClick={() => send("GO_TO_DEFAULT")}>
                         <IconArrowLeft />

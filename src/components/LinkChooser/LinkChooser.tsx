@@ -12,7 +12,7 @@ import { DismissButton } from "@react-aria/overlays";
 import { useComboBoxState } from "@react-stately/combobox";
 import { useMachine } from "@xstate/react";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, Key, ReactElement, useCallback, useMemo, useRef } from "react";
+import React, { FC, Key, ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
 import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultSection";
@@ -20,7 +20,7 @@ import { SectionActionMenu } from "./SectionActionMenu";
 import { linkChooserMachine, LinkChooserState } from "./state/machine";
 import { LinkChooserProps } from "./types";
 import * as SearchRepository from "./repositories";
-import { createCustomLink, queryMatchesSelection } from "./utils/helpers";
+import { createCustomLink, isLoaded, queryMatchesSelection } from "./utils/helpers";
 
 export enum IconLabel {
     Document = "DOCUMENT",
@@ -55,11 +55,12 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     onOpenInNewTabChange,
     onLinkChange,
 }) => {
-    const [{ context, matches }, send, service] = useMachine(
+    const [{ context, matches, value }, send, service] = useMachine(
         linkChooserMachine.withContext({
             searchResults: [],
             selectedResult: null,
             query: "",
+            interruptedFetch: false,
             copyToClipboard,
             openPreview,
             getGlobalByQuery,
@@ -81,6 +82,10 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const handleInputChange = (value: string) => {
         send("TYPING", { data: { query: value } });
+    };
+
+    const handleDropdownOpen = () => {
+        send("OPEN_DROPDOWN");
     };
 
     const handleDropdownClose = () => {
@@ -136,6 +141,12 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         ? ICON_OPTIONS[context.selectedResult.icon]
         : ICON_OPTIONS[DEFAULT_ICON];
 
+    useEffect(() => {
+        if (isLoaded(matches) && context.interruptedFetch) {
+            send("TYPING", { data: { query: context.query } });
+        }
+    }, [context.interruptedFetch, value]);
+
     return (
         <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
             <label {...labelProps} className="block text-sm font-medium text-gray-700 text-left">
@@ -156,7 +167,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     clearable={true}
                     placeholder={placeholder}
                     onClear={handleClearClick}
-                    onClick={() => send("OPEN_DROPDOWN")}
+                    onClick={handleDropdownOpen}
                     machineService={service}
                 />
             </div>

@@ -114,6 +114,7 @@ export type LinkChooserContext = {
     searchResults: SearchResult[];
     selectedResult: SearchResult | null;
     query: string;
+    interruptedFetch: boolean;
     readonly copyToClipboard: Clipboard;
     readonly getGlobalByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
     readonly getTemplatesByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery

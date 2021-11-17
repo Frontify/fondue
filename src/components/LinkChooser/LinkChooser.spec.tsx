@@ -260,15 +260,41 @@ describe("LinkChooser Component", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
-            cy.get(SEARCH_INPUT_ID).type(data[0].title);
+            cy.get(SEARCH_INPUT_ID).type(CUSTOM_QUERY);
             cy.get("body").click();
-            cy.get(SEARCH_INPUT_ID).should("have.value", data[0].title);
+            cy.get(SEARCH_INPUT_ID).should("have.value", CUSTOM_QUERY);
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(`${SELECT_SECTION_ID} > li > div`)
                 .eq(0)
                 .should(($container) => {
                     expect($container).to.have.css("font-weight", "500");
                 });
+        });
+
+        it("resumes fetching when dropdown opens if the fetching phase was previously interrupted", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SEARCH_INPUT_ID).type(data[0].title);
+            cy.get("body").click();
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(LOADER_ID).should("exist");
+            cy.get(SELECT_SECTION_ID)
+                .children()
+                .should("have.length", filterItems(data[0].title, data).length + 1);
+        });
+
+        it("does not resume fetching when dropdown opens if the fetching phase was previously resolved", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SEARCH_INPUT_ID).type(data[0].title);
+            cy.get("body").click();
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
+            cy.get("@firstSelectItem").click();
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(LOADER_ID).should("not.exist");
         });
 
         it("selects existing document and reselects it on interrupt if the titles match", () => {

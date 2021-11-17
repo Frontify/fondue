@@ -2,6 +2,7 @@
 
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { LinkChooserContext, LinkChooserEventData } from "../types";
+import { isFetching } from "../utils/helpers";
 import {
     clearSelectedResult,
     copyLinkToClipboard,
@@ -17,6 +18,8 @@ import {
     updateDropdownSearchResults,
     updateQueryFromObject,
     updateQueryFromString,
+    interruptFetching,
+    resolveFetching,
 } from "./actions";
 
 export enum LinkChooserState {
@@ -48,15 +51,13 @@ const typingAction = {
     },
 };
 
-const selectionActions = {
-    actions: [
-        "storeNewSelectedResult",
-        "updateQueryFromObject",
-        "updateCustomLink",
-        "setSelectedSearchResult",
-        "emitSelectSearchResult",
-    ],
-};
+const selectionActions = [
+    "storeNewSelectedResult",
+    "updateQueryFromObject",
+    "updateCustomLink",
+    "setSelectedSearchResult",
+    "emitSelectSearchResult",
+];
 
 const sharedActions = {
     CLEARING: {
@@ -97,7 +98,7 @@ const initializeSectionState = (
                 onDone: [
                     {
                         target: SectionState.Loaded,
-                        actions: ["updateDropdownSearchResults", "updateCustomLink"],
+                        actions: ["updateDropdownSearchResults", "updateCustomLink", "resolveFetching"],
                         cond: "isDefaultSection",
                     },
                     {
@@ -181,13 +182,20 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     },
                 },
                 on: {
-                    CLOSE_DROPDOWN: {
-                        target: LinkChooserState.Idle,
-                        ...selectionActions,
-                    },
+                    CLOSE_DROPDOWN: [
+                        {
+                            target: LinkChooserState.Idle,
+                            actions: [...selectionActions, "interruptFetching"],
+                            cond: "shouldRefetch",
+                        },
+                        {
+                            target: LinkChooserState.Idle,
+                            actions: [...selectionActions],
+                        },
+                    ],
                     SET_SELECTED_SEARCH_RESULT: {
                         target: LinkChooserState.Idle,
-                        ...selectionActions,
+                        actions: [...selectionActions],
                     },
                     ...sharedActions,
                 },
@@ -200,6 +208,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                 Object.values(SectionState).some((state) =>
                     meta.state.matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${state}`),
                 ),
+            shouldRefetch: (context, event, meta) => isFetching(meta.state.matches) && !!context.query,
             isQueryEmpty: (context) => !context.query,
         },
         actions: {
@@ -217,6 +226,8 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
             updateDropdownSearchResults,
             updateQueryFromObject,
             updateQueryFromString,
+            interruptFetching,
+            resolveFetching,
         },
     },
 );

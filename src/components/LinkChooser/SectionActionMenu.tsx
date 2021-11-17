@@ -28,6 +28,7 @@ export const SectionActionMenu: FC<SectionActionMenuProps> = (props: SectionActi
     return (
         <>
             {matches(`${LinkChooserState.Focused}.${DropdownState.Default}`) && (
+                // TODO fix focus issues with ActionMenu (blurs SearchInput on hover)
                 <ActionMenu menuBlocks={sectionMenuBlocks} noBorder={true} />
             )}
         </>
