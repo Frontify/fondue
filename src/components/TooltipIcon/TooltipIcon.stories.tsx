@@ -3,7 +3,6 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { TooltipIcon, TooltipIconProps } from "./TooltipIcon";
-import { Tooltip } from "@components/Tooltip/Tooltip";
 
 export default {
     title: "Components/TooltipIcon",
@@ -20,5 +19,7 @@ export const WithDefaultContent = TooltipIconTemplate.bind({});
 
 export const WithCustomContent = TooltipIconTemplate.bind({});
 WithCustomContent.args = {
-    tooltip: <Tooltip content="Cupcake ipsum dolor sit amet ice cream." />,
+    tooltip: {
+        content: "Lorem ipsum dolor sit amet.",
+    },
 };
