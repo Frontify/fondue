@@ -44,37 +44,35 @@ export const TooltipIcon: FC<TooltipIconProps> = ({ tooltip, iconSize = IconSize
     return (
         <div data-test-id="tooltip-icon">
             {tooltip && (
-                <>
-                    <div {...hoverProps}>
-                        <button
-                            data-test-id="input-label-tooltip-icon"
-                            ref={tooltipTriggerElement}
-                            className={merge([
-                                "tw-inline-flex tw-justify-center tw-items-center tw-text-black-60 hover:tw-text-black-60 dark:tw-text-black-40 dark:hover:tw-text-white tw-cursor-default tw-outline-none tw-rounded-full",
-                                isOpen && isFocusVisible && FOCUS_STYLE,
-                            ])}
-                            {...triggerProps}
+                <div {...hoverProps}>
+                    <button
+                        data-test-id="input-label-tooltip-icon"
+                        ref={tooltipTriggerElement}
+                        className={merge([
+                            "tw-inline-flex tw-justify-center tw-items-center tw-text-black-60 hover:tw-text-black-60 dark:tw-text-black-40 dark:hover:tw-text-white tw-cursor-default tw-outline-none tw-rounded-full",
+                            isOpen && isFocusVisible && FOCUS_STYLE,
+                        ])}
+                        {...triggerProps}
+                    >
+                        <IconQuestion size={iconSize} />
+                    </button>
+                    {isOpen && (
+                        <Tooltip
+                            {...tooltip}
+                            popperAttributes={attributes.popper}
+                            ref={tooltipElement}
+                            style={styles.popper}
+                            tooltipAriaProps={tooltipProps}
                         >
-                            <IconQuestion size={iconSize} />
-                        </button>
-                        {isOpen && (
-                            <Tooltip
-                                {...tooltip}
-                                popperAttributes={attributes.popper}
-                                ref={tooltipElement}
-                                style={styles.popper}
-                                tooltipAriaProps={tooltipProps}
-                            >
-                                <TooltipArrow
-                                    ref={setTooltipArrowElement}
-                                    style={styles.arrow}
-                                    placement={attributes.popper?.["data-popper-placement"]}
-                                    headerColor={tooltip.brightHeader}
-                                />
-                            </Tooltip>
-                        )}
-                    </div>
-                </>
+                            <TooltipArrow
+                                ref={setTooltipArrowElement}
+                                style={styles.arrow}
+                                placement={attributes.popper?.["data-popper-placement"]}
+                                headerColor={tooltip.brightHeader}
+                            />
+                        </Tooltip>
+                    )}
+                </div>
             )}
         </div>
     );
