@@ -9,7 +9,11 @@ export default {
     title: "Components/TooltipIcon",
     component: TooltipIcon,
     argTypes: {},
-    args: {},
+    args: {
+        tooltip: {
+            content: "Lorem ipsum dolor sit amet.",
+        },
+    },
 } as Meta<TooltipIconProps>;
 
 const TooltipIconTemplate: Story<TooltipIconProps> = (args: TooltipIconProps) => {
@@ -17,16 +21,8 @@ const TooltipIconTemplate: Story<TooltipIconProps> = (args: TooltipIconProps) =>
 };
 
 export const WithDefaultIconSize = TooltipIconTemplate.bind({});
-WithDefaultIconSize.args = {
-    tooltip: {
-        content: "Lorem ipsum dolor sit amet.",
-    },
-};
 
 export const WithCustomIconSize = TooltipIconTemplate.bind({});
 WithCustomIconSize.args = {
-    tooltip: {
-        content: "Lorem ipsum dolor sit amet.",
-    },
     iconSize: IconSize.Size20,
 };
