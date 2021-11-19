@@ -131,7 +131,7 @@ describe("Dropdown Component", () => {
         });
     });
 
-    it.only("should display persisted icon if provided", () => {
+    it("should display persisted icon if provided", () => {
         mount(<Component menuBlocks={ITEMS} persistedIcon={<IconIcons />} />);
 
         cy.get(`${MENU_ITEM_DECORATOR_ID} > svg`).invoke("attr", "name").should("eq", "IconIcons");
