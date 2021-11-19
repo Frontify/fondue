@@ -4,7 +4,7 @@ import { compose } from "@utilities/compose";
 import { debounce } from "@utilities/debounce";
 import { useDebounce } from "@utilities/useDebounce";
 import { useMachine } from "@xstate/react";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, { createRef, FC, useCallback, useEffect, useMemo, useState } from "react";
 import { BaseEditor, createEditor, Descendant } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
@@ -19,6 +19,7 @@ import { editorMachine, States } from "./state/editor/machine";
 import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
 import { Toolbar } from "./Toolbar";
 import { parseRawValue } from "./utils/parseRawContent";
+import { getCanvasFontSize, getTextWidth } from "@components/RichTextEditor/utils/getTextWidth";
 
 export type RichTextEditorProps = {
     placeholder?: string;
@@ -61,6 +62,8 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 }) => {
     const [value, setValue] = useState<Descendant[]>(() => parseRawValue(initialValue));
     const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
+    const wrapperRef = createRef<HTMLDivElement>();
+    const [placeholderElement, setPlaceholderElement] = useState<Element | null>();
 
     const withPlugins = compose(withReact, withHistory, withLists, withLinks);
     const editor = useMemo(() => withPlugins(createEditor()), []);
@@ -75,7 +78,17 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     useEffect(() => {
         send("TEXT_UPDATED", { data: { value } });
+
+        setPlaceholderElement(wrapperRef.current?.querySelector('[data-slate-placeholder="true"]'));
     }, [debouncedValue]);
+
+    const wrapperStyle = useMemo(() => {
+        if (placeholderElement) {
+            return { minWidth: `${getTextWidth(placeholder, getCanvasFontSize(placeholderElement))}px` };
+        }
+
+        return undefined;
+    }, [placeholderElement, placeholder]);
 
     const onTextSelected = useCallback(
         debounce(() => send("TEXT_SELECTED", { data: { editor } }), TOOLBAR_DELAY_IN_MS),
@@ -88,7 +101,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     }, []);
 
     return (
-        <div data-test-id="rich-text-editor">
+        <div data-test-id="rich-text-editor" ref={wrapperRef} style={wrapperStyle}>
             <Slate editor={editor} value={value} onChange={(value) => setValue(value)}>
                 <Editable
                     placeholder={placeholder}
