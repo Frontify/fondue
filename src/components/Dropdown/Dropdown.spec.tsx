@@ -5,12 +5,14 @@ import { mount } from "@cypress/react";
 import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_ID, MENU_ITEM_TITLE_ID } from "@components/MenuItem/MenuItem.spec";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import React, { FC, useState } from "react";
+import React, { FC, ReactElement, useState } from "react";
 import { Dropdown } from "./Dropdown";
+import IconIcons from "@foundation/Icon/Generated/IconIcons";
 
 export const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
 const DROPDOWN_CLEAR_BUTTON_ID = "[data-test-id=dropdown-clear-button]";
 const MENU_ITEM_LIST_ID = "[data-test-id=menu-item-list]";
+const MENU_ITEM_DECORATOR_ID = "[data-test-id=menu-item-decorator]";
 const TRIGGER_ID = "[data-test-id=trigger]";
 
 const ITEMS = [
@@ -44,9 +46,17 @@ type Props = {
     initialActiveId?: string | number;
     clearable?: boolean;
     disabled?: boolean;
+    persistedIcon?: ReactElement;
 };
 
-const Component: FC<Props> = ({ menuBlocks, placeholder, initialActiveId, clearable = false, disabled = false }) => {
+const Component: FC<Props> = ({
+    menuBlocks,
+    placeholder,
+    initialActiveId,
+    clearable = false,
+    disabled = false,
+    persistedIcon,
+}) => {
     const [activeItemId, setActiveItemId] = useState(initialActiveId);
     return (
         <Dropdown
@@ -56,6 +66,7 @@ const Component: FC<Props> = ({ menuBlocks, placeholder, initialActiveId, cleara
             placeholder={placeholder}
             clearable={clearable}
             disabled={disabled}
+            persistedIcon={persistedIcon}
         />
     );
 };
@@ -118,5 +129,11 @@ describe("Dropdown Component", () => {
         FOCUS_STYLE.split(" ").forEach((style) => {
             cy.get(TRIGGER_ID).should("not.have.class", style);
         });
+    });
+
+    it.only("should display persisted icon if provided", () => {
+        mount(<Component menuBlocks={ITEMS} persistedIcon={<IconIcons />} />);
+
+        cy.get(`${MENU_ITEM_DECORATOR_ID} > svg`).invoke("attr", "name").should("eq", "IconIcons");
     });
 });
