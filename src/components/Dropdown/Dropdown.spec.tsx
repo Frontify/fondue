@@ -131,6 +131,12 @@ describe("Dropdown Component", () => {
         });
     });
 
+    it("should not display persisted icon if omitted", () => {
+        mount(<Component menuBlocks={ITEMS} />);
+
+        cy.get(`${MENU_ITEM_DECORATOR_ID} > svg`).should("not.exist");
+    });
+
     it("should display persisted icon if provided", () => {
         mount(<Component menuBlocks={ITEMS} persistedIcon={<IconIcons />} />);
 
