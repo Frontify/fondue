@@ -4,7 +4,7 @@ import { compose } from "@utilities/compose";
 import { debounce } from "@utilities/debounce";
 import { useDebounce } from "@utilities/useDebounce";
 import { useMachine } from "@xstate/react";
-import React, { createRef, FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, { createRef, CSSProperties, FC, useCallback, useEffect, useMemo, useState } from "react";
 import { BaseEditor, createEditor, Descendant } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
@@ -63,7 +63,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const [value, setValue] = useState<Descendant[]>(() => parseRawValue(initialValue));
     const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
     const wrapperRef = createRef<HTMLDivElement>();
-    const [placeholderElement, setPlaceholderElement] = useState<Element | null>();
+    const [wrapperStyle, setWrapperStyle] = useState<CSSProperties>();
 
     const withPlugins = compose(withReact, withHistory, withLists, withLinks);
     const editor = useMemo(() => withPlugins(createEditor()), []);
@@ -78,17 +78,16 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     useEffect(() => {
         send("TEXT_UPDATED", { data: { value } });
-
-        setPlaceholderElement(wrapperRef.current?.querySelector('[data-slate-placeholder="true"]'));
     }, [debouncedValue]);
 
-    const wrapperStyle = useMemo(() => {
+    useEffect(() => {
+        const placeholderElement = wrapperRef.current?.querySelector('[data-slate-placeholder="true"]');
         if (placeholderElement) {
-            return { minWidth: `${getTextWidth(placeholder, getCanvasFontSize(placeholderElement))}px` };
+            setWrapperStyle({ minWidth: `${getTextWidth(placeholder, getCanvasFontSize(placeholderElement))}px` });
+        } else {
+            setWrapperStyle(undefined);
         }
-
-        return undefined;
-    }, [placeholderElement, placeholder]);
+    }, [debouncedValue, placeholder]);
 
     const onTextSelected = useCallback(
         debounce(() => send("TEXT_SELECTED", { data: { editor } }), TOOLBAR_DELAY_IN_MS),
