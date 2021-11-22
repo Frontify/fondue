@@ -83,7 +83,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     useEffect(() => {
         const placeholderElement = wrapperRef.current?.querySelector('[data-slate-placeholder="true"]');
         if (placeholderElement) {
-            setWrapperStyle({ minWidth: `${getTextWidth(placeholder, getCanvasFontSize(placeholderElement))}px` });
+            setWrapperStyle(placeholderElement ? { minWidth: `${getTextWidth(placeholder, getCanvasFontSize(placeholderElement))}px` } : undefined);
         } else {
             setWrapperStyle(undefined);
         }
