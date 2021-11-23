@@ -53,6 +53,7 @@ export * from "./components/TextInput/TextInput";
 export * from "./components/Tooltip/BrightHeader";
 export * from "./components/Tooltip/Tooltip";
 export * from "./components/Tooltip/TooltipArrow";
+export * from "./components/TooltipIcon/TooltipIcon";
 export * from "./components/Tree/Node";
 export * from "./components/Tree/Tree";
 export * from "./components/Trigger/Trigger";
