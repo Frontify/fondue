@@ -28,7 +28,7 @@ describe("TooltipIcon Component", () => {
     it("should render a tooltip when the icon is hovered", () => {
         mount(<TooltipIcon tooltip={TOOLTIP_PROPS} />);
 
-        cy.get(TOOLTIP_ICON_ID).realHover({ position: "top" });
+        cy.get(TOOLTIP_ICON_TRIGGER_ID).realHover({ position: "top" });
         cy.get(TOOLTIP_ICON_ID).find(TOOLTIP_ID).should("exist");
     });
 });
