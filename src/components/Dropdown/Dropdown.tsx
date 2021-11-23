@@ -69,7 +69,7 @@ export const Dropdown: FC<DropdownProps> = ({
     );
 
     return (
-        <div className="tw-relative tw-w-full tw-font-sans tw-text-s ">
+        <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
             <Trigger
                 disabled={disabled}
                 buttonProps={buttonProps}
@@ -96,7 +96,7 @@ export const Dropdown: FC<DropdownProps> = ({
                     data-test-id="dropdown-trigger"
                     className={merge([
                         "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none",
-                        size === DropdownSize.Small ? "tw-py-1 tw-px-3" : "tw-p-5 tw-min-h-[60px]",
+                        size === DropdownSize.Small ? "tw-py-2 tw-px-3 tw-min-h-[34px]" : "tw-p-5 tw-min-h-[60px]",
                         !activeItem && "tw-text-black-60",
                         disabled && "tw-text-black-40",
                     ])}
