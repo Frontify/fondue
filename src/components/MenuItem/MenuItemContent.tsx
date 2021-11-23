@@ -32,7 +32,7 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
     <div
         {...ariaProps}
         data-test-id="menu-item-content"
-        className={merge(["tw-flex tw-box-border tw-items-center tw-font-sans tw-text-s"])}
+        className="tw-flex tw-box-border tw-items-center tw-font-sans tw-text-s"
     >
         {decorator && (
             <span
