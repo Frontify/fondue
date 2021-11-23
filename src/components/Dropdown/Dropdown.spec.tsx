@@ -46,7 +46,7 @@ type Props = {
     initialActiveId?: string | number;
     clearable?: boolean;
     disabled?: boolean;
-    persistedIcon?: ReactElement;
+    decorator?: ReactElement;
 };
 
 const Component: FC<Props> = ({
@@ -55,7 +55,7 @@ const Component: FC<Props> = ({
     initialActiveId,
     clearable = false,
     disabled = false,
-    persistedIcon,
+    decorator,
 }) => {
     const [activeItemId, setActiveItemId] = useState(initialActiveId);
     return (
@@ -66,7 +66,7 @@ const Component: FC<Props> = ({
             placeholder={placeholder}
             clearable={clearable}
             disabled={disabled}
-            persistedIcon={persistedIcon}
+            decorator={decorator}
         />
     );
 };
@@ -138,7 +138,7 @@ describe("Dropdown Component", () => {
     });
 
     it("should display persisted icon if provided", () => {
-        mount(<Component menuBlocks={ITEMS} persistedIcon={<IconIcons />} />);
+        mount(<Component menuBlocks={ITEMS} decorator={<IconIcons />} />);
 
         cy.get(`${MENU_ITEM_DECORATOR_ID} > svg`).invoke("attr", "name").should("eq", "IconIcons");
     });

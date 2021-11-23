@@ -30,7 +30,7 @@ export type DropdownProps = {
     disabled?: boolean;
     clearable?: boolean;
     ariaLabel?: string;
-    persistedIcon?: ReactElement;
+    decorator?: ReactElement;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId?: string | number) =>
@@ -49,7 +49,7 @@ export const Dropdown: FC<DropdownProps> = ({
     disabled = false,
     clearable = false,
     ariaLabel = "Dropdown",
-    persistedIcon,
+    decorator,
 }) => {
     const activeItem = getActiveItem(menuBlocks, activeItemId);
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -106,7 +106,7 @@ export const Dropdown: FC<DropdownProps> = ({
                     <MenuItemContent
                         ariaProps={valueProps}
                         title={activeItem?.title || placeholder}
-                        decorator={persistedIcon ?? activeItem?.decorator}
+                        decorator={decorator ?? activeItem?.decorator}
                         size={size === DropdownSize.Small ? MenuItemContentSize.Small : MenuItemContentSize.Large}
                     />
                 </button>
