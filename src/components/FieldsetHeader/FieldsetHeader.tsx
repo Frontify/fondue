@@ -10,9 +10,9 @@ import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, isValidElement, ReactNode } from "react";
 
 export enum FieldsetHeaderSize {
-    Small = "small",
-    Medium = "medium",
-    Large = "large",
+    Small = "Small",
+    Medium = "Medium",
+    Large = "Large",
 }
 
 const sizeMap: Record<FieldsetHeaderSize, { icon: IconSize; text: string; switch: SwitchSize }> = {
@@ -34,10 +34,10 @@ const sizeMap: Record<FieldsetHeaderSize, { icon: IconSize; text: string; switch
 };
 
 export enum FieldsetHeaderType {
-    Default = "default",
-    Switch = "switch",
-    Accordion = "accordion",
-    AddRemove = "add-remove",
+    Default = "Default",
+    Switch = "Switch",
+    Accordion = "Accordion",
+    AddRemove = "AddRemove",
 }
 
 export type FieldsetHeaderProps = {
