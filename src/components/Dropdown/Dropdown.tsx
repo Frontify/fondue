@@ -13,7 +13,7 @@ import { mergeProps } from "@react-aria/utils";
 import { useSelectState } from "@react-stately/select";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, useRef } from "react";
+import React, { FC, ReactElement, useRef } from "react";
 
 export enum DropdownSize {
     Small = "Small",
@@ -30,6 +30,7 @@ export type DropdownProps = {
     disabled?: boolean;
     clearable?: boolean;
     ariaLabel?: string;
+    decorator?: ReactElement;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId?: string | number) =>
@@ -48,6 +49,7 @@ export const Dropdown: FC<DropdownProps> = ({
     disabled = false,
     clearable = false,
     ariaLabel = "Dropdown",
+    decorator,
 }) => {
     const activeItem = getActiveItem(menuBlocks, activeItemId);
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -104,7 +106,7 @@ export const Dropdown: FC<DropdownProps> = ({
                     <MenuItemContent
                         ariaProps={valueProps}
                         title={activeItem?.title || placeholder}
-                        decorator={activeItem?.decorator}
+                        decorator={decorator ?? activeItem?.decorator}
                         size={size === DropdownSize.Small ? MenuItemContentSize.Small : MenuItemContentSize.Large}
                     />
                 </button>
