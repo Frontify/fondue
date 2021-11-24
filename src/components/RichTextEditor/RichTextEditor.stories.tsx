@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, Story } from "@storybook/react";
-import { ContentState, convertToRaw } from "draft-js";
 import React from "react";
+import { BlockStyleTypes } from "./renderer/renderBlockStyles";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
+import { createLinkNode } from "./utils/link";
+import { createListItemNode } from "./utils/listItem";
 
 export default {
     title: "Components/Rich Text Editor",
@@ -14,8 +16,31 @@ export default {
     },
     argTypes: {
         onTextChange: { action: "onTextChange" },
+        onBlur: { action: "onBlur" },
     },
 } as Meta;
+
+const value = [
+    { type: BlockStyleTypes.Paragraph, children: [{ text: "bold", bold: true }] },
+    { type: BlockStyleTypes.Paragraph, children: [{ text: "italic", italic: true }] },
+    { type: BlockStyleTypes.Paragraph, children: [{ text: "underline", underline: true }] },
+    { type: BlockStyleTypes.Paragraph, children: [{ text: "strikethrough", strikethrough: true }] },
+    { type: BlockStyleTypes.Paragraph, children: [{ text: "code", code: true }] },
+    {
+        type: BlockStyleTypes.UnorderedList,
+        children: [createListItemNode("red"), createListItemNode("blue"), createListItemNode("yellow")],
+    },
+    {
+        type: BlockStyleTypes.OrderedList,
+        children: [
+            createListItemNode("Mix flour, baking powder, sugar, and salt."),
+            createListItemNode("In another bowl, mix eggs, milk, and oil."),
+            createListItemNode("Stir both mixtures together."),
+            createListItemNode("Fill muffin tray 3/4 full."),
+            createListItemNode("Bake for 20 minutes."),
+        ],
+    },
+];
 
 export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <>
@@ -23,13 +48,20 @@ export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorP
     </>
 );
 RichTextEditor.argTypes = { value: { type: "object" } };
+RichTextEditor.args = { value: JSON.stringify(value) };
 
 export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
 WithReadonlyState.args = {
     readonly: true,
-    value: convertToRaw(ContentState.createFromText("This is some text that you can not edit")),
+    value: JSON.stringify([
+        ...value,
+        {
+            type: BlockStyleTypes.Paragraph,
+            children: [createLinkNode("https://git-scm.com/downloads", "Link")],
+        },
+    ]),
 };
 WithReadonlyState.argTypes = { value: { type: "object" } };
 
@@ -38,7 +70,7 @@ export const RichTextWithHTML: Story<RichTextEditorProps> = (args: RichTextEdito
 );
 RichTextWithHTML.args = {
     value: `
-        <p><bold>bold</bold></p>
+        <p><strong>bold</strong></p>
         <p><i>italic</i></p>
         <p><u>underline</u></p>
         <p><s>strikethrough</s></p>
@@ -55,7 +87,6 @@ RichTextWithHTML.args = {
             <li>Fill muffin tray 3/4 full.</li>
             <li>Bake for 20 minutes.</li>
         </ol>
-        <a href="https://git-scm.com/downloads" class="link" target="_blank">Link</a>
     `,
 };
 RichTextWithHTML.argTypes = { value: { type: "string" } };

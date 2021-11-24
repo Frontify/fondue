@@ -18,7 +18,9 @@ enum BrandColorView {
     Grid = "Grid",
 }
 
-export const BrandColorPicker: FC<ColorPickerProps> = ({ palettes: defaultPalettes = [], currentColor, onSelect }) => {
+type Props = Omit<ColorPickerProps, "currentFormat" | "setFormat">;
+
+export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], currentColor, onSelect }) => {
     const views = [
         { id: BrandColorView.Grid, icon: <IconImageGrid2 />, ariaLabel: "Grid" },
         { id: BrandColorView.List, icon: <IconListBullets />, ariaLabel: "List" },

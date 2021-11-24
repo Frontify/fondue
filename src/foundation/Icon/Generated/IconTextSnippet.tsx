@@ -1,8 +1,8 @@
 import React from "react";
-import { IconProps } from "@foundation/Icon/IconProps";
+import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
-function IconTextSnippet(props: IconProps): React.ReactElement<IconProps> {
+function IconTextSnippet(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = [
         "tw-flex tw-items-center tw-justify-center tw-fill-current",
         IconSizeMap[props.size || IconSize.Size16],
