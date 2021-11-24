@@ -46,10 +46,13 @@ Default.args = {
 
 const ChildComponent = () => {
     const items = data.map((item) => ({ id: item.id, value: item.title }));
-    const texts: Texts = {};
-    data.forEach((item) => {
-        texts[item.id] = item.content;
-    });
+    const texts: Texts = data.reduce((previousValue, item) => {
+        return {
+            ...previousValue,
+            [item.id]: item.content,
+        };
+    }, {});
+
     const [activeItemId, setActiveItemId] = useState(items[0].id);
 
     return (
