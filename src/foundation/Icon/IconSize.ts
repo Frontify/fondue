@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export enum IconSize {
-    Size8 = 8,
-    Size12 = 12,
-    Size16 = 16,
-    Size20 = 20,
-    Size24 = 24,
-    Size32 = 32,
+    Size8 = "Size8",
+    Size12 = "Size12",
+    Size16 = "Size16",
+    Size20 = "Size20",
+    Size24 = "Size24",
+    Size32 = "Size32",
 }
 
 export const IconSizeMap = {
