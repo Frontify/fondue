@@ -4,7 +4,7 @@ import { compose } from "@utilities/compose";
 import { debounce } from "@utilities/debounce";
 import { useDebounce } from "@utilities/useDebounce";
 import { useMachine } from "@xstate/react";
-import React, { createRef, CSSProperties, FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BaseEditor, createEditor, Descendant } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
@@ -19,7 +19,7 @@ import { editorMachine, States } from "./state/editor/machine";
 import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
 import { Toolbar } from "./Toolbar";
 import { parseRawValue } from "./utils/parseRawContent";
-import { getCanvasFontSize, getTextWidth } from "@components/RichTextEditor/utils/getTextWidth";
+import { isEditorEmpty } from "@components/RichTextEditor/utils/isEditorEmpty";
 
 export type RichTextEditorProps = {
     placeholder?: string;
@@ -62,8 +62,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 }) => {
     const [value, setValue] = useState<Descendant[]>(() => parseRawValue(initialValue));
     const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
-    const wrapperRef = createRef<HTMLDivElement>();
-    const [wrapperStyle, setWrapperStyle] = useState<CSSProperties>();
+    const placeholderRef = useRef<HTMLDivElement | null>(null);
 
     const withPlugins = compose(withReact, withHistory, withLists, withLinks);
     const editor = useMemo(() => withPlugins(createEditor()), []);
@@ -81,17 +80,11 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     }, [debouncedValue]);
 
     useEffect(() => {
-        const placeholderElement = wrapperRef.current?.querySelector('[data-slate-placeholder="true"]');
-        if (placeholderElement) {
-            setWrapperStyle(
-                placeholderElement
-                    ? { minWidth: `${getTextWidth(placeholder, getCanvasFontSize(placeholderElement))}px` }
-                    : undefined,
-            );
-        } else {
-            setWrapperStyle(undefined);
+        if (placeholderRef.current?.style.position) {
+            const isEmpty = isEditorEmpty(editor);
+            placeholderRef.current.style.position = isEmpty ? "relative" : "absolute";
         }
-    }, [debouncedValue, placeholder]);
+    }, [matches, placeholderRef]);
 
     const onTextSelected = useCallback(
         debounce(() => send("TEXT_SELECTED", { data: { editor } }), TOOLBAR_DELAY_IN_MS),
@@ -104,7 +97,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     }, []);
 
     return (
-        <div data-test-id="rich-text-editor" ref={wrapperRef} style={wrapperStyle}>
+        <div data-test-id="rich-text-editor" className="tw-min-w-[20px]">
             <Slate editor={editor} value={value} onChange={(value) => setValue(value)}>
                 <Editable
                     placeholder={placeholder}
@@ -121,6 +114,16 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     renderLeaf={renderInlineStyles}
                     renderElement={renderBlockStyles}
                     onBlur={() => send("BLUR", { data: { value } })}
+                    renderPlaceholder={({ children, attributes }) => {
+                        attributes.style.position = "relative";
+                        attributes.style.float = "right";
+                        attributes.style.display = "inline-block";
+                        return (
+                            <span {...attributes} ref={placeholderRef}>
+                                {children}
+                            </span>
+                        );
+                    }}
                 />
                 {matches(States.Styling) && (
                     <ToolbarContext.Provider
