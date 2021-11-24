@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Story, Meta } from "@storybook/react";
 import { Card, CardProps } from "./Card";
 import { Slider } from "@components/Slider/Slider";
+import { Divider } from "@components/Divider/Divider";
 
 export default {
     title: "Components/Card",
@@ -53,19 +54,20 @@ const ChildComponent = () => {
 
     return (
         <>
-            <div className="tw-border-b tw-border-black-10 tw-p-4">
+            <div className="tw-px-4 tw-pt-4">
                 <div className="tw-w-64">
                     <Slider activeItemId={activeItemId} items={items} onChange={setActiveItemId} />
                 </div>
             </div>
-            <div className="tw-p-4 tw-text-s tw-text-black-80">{texts[activeItemId]}</div>
+            <Divider color="#EAEBEB" />
+            <div className="tw-px-4 tw-pb-4 tw-text-s tw-text-black-80">{texts[activeItemId]}</div>
         </>
     );
 };
 
-export const WithHeaderAndBody = Template.bind({});
+export const WithSeparator = Template.bind({});
 
-WithHeaderAndBody.args = {
+WithSeparator.args = {
     children: <ChildComponent />,
 };
 
