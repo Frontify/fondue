@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC } from "react";
+import React, { FC, ReactChild } from "react";
 
 export type CardProps = {
-    children?: string;
+    children?: ReactChild;
 };
 
 export const Card: FC<CardProps> = ({ children }) => {
