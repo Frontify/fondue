@@ -52,7 +52,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                 }}
                 className={merge(["tw-w-full tw-px-8 tw-py-7 focus-visible:tw-outline-none"])}
             >
-                <FieldsetHeader {...header} size={FieldsetHeaderSize.Small} active={isOpen} onClick={undefined} />
+                <FieldsetHeader {...header} size={FieldsetHeaderSize.Medium} active={isOpen} onClick={undefined} />
             </button>
 
             <AnimatePresence>
