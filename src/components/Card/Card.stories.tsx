@@ -16,19 +16,19 @@ type Texts = {
 
 const data = [
     {
-        id: 1,
+        id: "1",
         title: "First",
         content:
             "Macaroon liquorice pie pastry topping muffin carrot cake donut. Cotton candy jujubes candy chocolate pie marshmallow toffee marzipan. Gingerbread tiramisu gingerbread danish jujubes. Tiramisu cupcake chocolate cake biscuit pastry candy canes. Bonbon biscuit liquorice danish pastry lollipop.",
     },
     {
-        id: 2,
+        id: "2",
         title: "Second",
         content:
             "Danish bonbon cookie sweet lemon drops candy canes pastry. Cake ice cream soufflé ice cream gummi bears. Jelly shortbread cake croissant sweet roll tart biscuit wafer dessert. Jujubes tart gummi bears apple pie marshmallow candy. Pie tootsie roll pudding lollipop cake oat cake apple pie.",
     },
     {
-        id: 3,
+        id: "3",
         title: "Third",
         content:
             "Sugar plum chocolate cake danish donut jelly beans pastry chocolate cake cookie chupa chups. Sweet roll sugar plum danish cake cotton candy sweet roll tootsie roll. Sweet roll cake chocolate cake muffin jujubes. Macaroon carrot cake marshmallow apple pie oat cake icing. Dragée candy canes biscuit pastry muffin.",
