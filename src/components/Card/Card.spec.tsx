@@ -4,14 +4,13 @@ import React from "react";
 import { mount } from "@cypress/react";
 import { Card } from "./Card";
 
-const Card_FOO = "bar";
+const CARD_CHILDREN = <div>child</div>;
 
 describe("Card Component", () => {
-    it("should render foo text correctly", () => {
-        mount(<Card foo={Card_FOO} />);
+    it("should render children correctly", () => {
+        mount(<Card>{CARD_CHILDREN}</Card>);
 
         cy.get("[data-test-id=card]").as("Card");
-
-        cy.get("@Card").contains(Card_FOO);
+        cy.get("@Card").contains("child");
     });
 });
