@@ -12,7 +12,7 @@ export const getMinWidthIfEmpty = (
     placeholder: string,
     wrapperEl: HTMLDivElement | null,
 ): CSSProperties | undefined => {
-    if (wrapperEl && isEditorEmpty(editor)) {
+    if (wrapperEl && isEditorEmpty(editor) && placeholder) {
         return { minWidth: `${getTextWidth(placeholder, getCanvasFontSize(wrapperEl))}px` };
     }
     return undefined;
