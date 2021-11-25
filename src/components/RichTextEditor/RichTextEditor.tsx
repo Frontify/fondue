@@ -4,7 +4,7 @@ import { compose } from "@utilities/compose";
 import { debounce } from "@utilities/debounce";
 import { useDebounce } from "@utilities/useDebounce";
 import { useMachine } from "@xstate/react";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, { CSSProperties, FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BaseEditor, createEditor, Descendant } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
@@ -19,6 +19,7 @@ import { editorMachine, States } from "./state/editor/machine";
 import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
 import { Toolbar } from "./Toolbar";
 import { parseRawValue } from "./utils/parseRawContent";
+import { getMinWidthIfEmpty } from "@components/RichTextEditor/utils/getMinWidthIfEmpty";
 
 export type RichTextEditorProps = {
     placeholder?: string;
@@ -61,6 +62,8 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 }) => {
     const [value, setValue] = useState<Descendant[]>(() => parseRawValue(initialValue));
     const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
+    const [wrapperStyle, setWrapperStyle] = useState<CSSProperties>();
 
     const withPlugins = compose(withReact, withHistory, withLists, withLinks);
     const editor = useMemo(() => withPlugins(createEditor()), []);
@@ -70,12 +73,24 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
 
     useEffect(() => {
+        setWrapperStyle(getMinWidthIfEmpty(editor, placeholder, wrapperRef.current));
+    }, []);
+
+    useEffect(() => {
         send("SET_LOCKED", { data: { locked: readonly } });
     }, [readonly]);
 
     useEffect(() => {
         send("TEXT_UPDATED", { data: { value } });
     }, [debouncedValue]);
+
+    const onValueChanged = useCallback(
+        (value: Descendant[]): void => {
+            setValue(value);
+            setWrapperStyle(getMinWidthIfEmpty(editor, placeholder, wrapperRef.current));
+        },
+        [editor, placeholder, wrapperRef.current],
+    );
 
     const onTextSelected = useCallback(
         debounce(() => send("TEXT_SELECTED", { data: { editor } }), TOOLBAR_DELAY_IN_MS),
@@ -88,8 +103,8 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     }, []);
 
     return (
-        <div data-test-id="rich-text-editor">
-            <Slate editor={editor} value={value} onChange={(value) => setValue(value)}>
+        <div data-test-id="rich-text-editor" ref={wrapperRef} style={wrapperStyle}>
+            <Slate editor={editor} value={value} onChange={onValueChanged}>
                 <Editable
                     placeholder={placeholder}
                     onFocus={() => send("FOCUSED")}
