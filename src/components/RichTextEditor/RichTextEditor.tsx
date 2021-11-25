@@ -84,10 +84,13 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         send("TEXT_UPDATED", { data: { value } });
     }, [debouncedValue]);
 
-    const onValueChanged = (value: Descendant[]): void => {
-        setValue(value);
-        setWrapperStyle(getMinWidthIfEmpty(editor, placeholder, wrapperRef.current));
-    };
+    const onValueChanged = useCallback(
+        (value: Descendant[]): void => {
+            setValue(value);
+            setWrapperStyle(getMinWidthIfEmpty(editor, placeholder, wrapperRef.current));
+        },
+        [editor, placeholder, wrapperRef.current],
+    );
 
     const onTextSelected = useCallback(
         debounce(() => send("TEXT_SELECTED", { data: { editor } }), TOOLBAR_DELAY_IN_MS),
