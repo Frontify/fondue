@@ -35,7 +35,7 @@ export const Trigger: FC<TriggerProps> = ({
         <div
             data-test-id="trigger"
             className={merge([
-                "tw-group tw-relative tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-rounded tw-gap-2 tw-transition-colors tw-pr-3 tw-min-h-[36px]",
+                "tw-group tw-relative tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-rounded tw-transition-colors tw-min-h-[36px]",
                 isFocusVisible && FOCUS_STYLE,
                 disabled
                     ? "tw-border-black-5 tw-bg-black-5 tw-pointer-events-none"
@@ -69,7 +69,7 @@ export const Trigger: FC<TriggerProps> = ({
                 aria-hidden="true"
                 tabIndex={-1}
                 className={merge([
-                    "tw-p-0",
+                    "tw-p-0 tw-absolute tw-right-3",
                     disabled
                         ? "tw-pointer-events-none tw-text-black-40"
                         : merge(["group-hover:tw-text-black", isOpen ? "tw-text-black-100" : "tw-text-black-80"]),
