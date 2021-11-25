@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { Editor, Path, Text } from "slate";
 
 export const isEditorEmpty = (editor: Editor): boolean => {

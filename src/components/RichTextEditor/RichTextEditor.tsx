@@ -19,7 +19,7 @@ import { editorMachine, States } from "./state/editor/machine";
 import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
 import { Toolbar } from "./Toolbar";
 import { parseRawValue } from "./utils/parseRawContent";
-import { setMinWidthIfEmpty } from "@components/RichTextEditor/utils/setMinWidthIfEmpty";
+import { getMinWidthIfEmpty } from "@components/RichTextEditor/utils/getMinWidthIfEmpty";
 
 export type RichTextEditorProps = {
     placeholder?: string;
@@ -73,7 +73,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
 
     useEffect(() => {
-        setMinWidthIfEmpty(editor, placeholder, setWrapperStyle, wrapperRef.current);
+        setWrapperStyle(getMinWidthIfEmpty(editor, placeholder, wrapperRef.current));
     }, []);
 
     useEffect(() => {
@@ -86,7 +86,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     const onValueChanged = (value: Descendant[]): void => {
         setValue(value);
-        setMinWidthIfEmpty(editor, placeholder, setWrapperStyle, wrapperRef.current);
+        setWrapperStyle(getMinWidthIfEmpty(editor, placeholder, wrapperRef.current));
     };
 
     const onTextSelected = useCallback(
