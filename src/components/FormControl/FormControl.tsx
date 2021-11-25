@@ -70,6 +70,8 @@ export const FormControl: FC<FormControlProps> = ({
 }) => {
     const isHelperBefore = helper?.position === HelperPosition.Before;
 
+    const directionVerticalClasses = "tw-w-full tw-grid tw-gap-5";
+
     return (
         <div
             data-test-id="form-control"
@@ -80,7 +82,7 @@ export const FormControl: FC<FormControlProps> = ({
             {(label || extra) && (
                 <div
                     className={`tw-flex tw-flew-row tw-items-center tw-justify-between ${
-                        direction === FormControlDirection.Vertical ? "tw-w-full" : ""
+                        direction === FormControlDirection.Vertical ? directionVerticalClasses : ""
                     }`}
                 >
                     {label && <InputLabel {...label} disabled={disabled} />}
@@ -102,7 +104,7 @@ export const FormControl: FC<FormControlProps> = ({
                     disabled={disabled}
                 />
             )}
-            <div className={direction === FormControlDirection.Vertical ? "tw-w-full tw-grid tw-gap-5" : ""}>
+            <div className={direction === FormControlDirection.Vertical ? directionVerticalClasses : ""}>
                 {isValidElement(children)
                     ? cloneElement(children, { id: label?.htmlFor, disabled, validation: inputValidation[style] })
                     : children}
