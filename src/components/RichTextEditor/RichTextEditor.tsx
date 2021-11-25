@@ -4,7 +4,7 @@ import { compose } from "@utilities/compose";
 import { debounce } from "@utilities/debounce";
 import { useDebounce } from "@utilities/useDebounce";
 import { useMachine } from "@xstate/react";
-import React, { createRef, CSSProperties, FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, { CSSProperties, FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BaseEditor, createEditor, Descendant } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
@@ -62,7 +62,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 }) => {
     const [value, setValue] = useState<Descendant[]>(() => parseRawValue(initialValue));
     const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
-    const wrapperRef = createRef<HTMLDivElement>();
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
     const [wrapperStyle, setWrapperStyle] = useState<CSSProperties>();
 
     const withPlugins = compose(withReact, withHistory, withLists, withLinks);
