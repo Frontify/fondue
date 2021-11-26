@@ -8,7 +8,10 @@
     ],
     "exports": {
         ".": "./dist/index.js",
-        "./config": "./dist/config.js",
+        "./config": {
+            "import": "./dist/config.es.js",
+            "require": "./dist/config.umd.js"
+        },
         "./style": "./dist/index.css"
     },
     "types": "dist/index.d.ts",
