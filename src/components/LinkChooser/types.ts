@@ -48,7 +48,7 @@ export type SearchResultListProps = AriaListBoxOptions<unknown> & {
     listBoxRef?: RefObject<HTMLUListElement>;
     state: ListState<unknown>;
     menuBlocks: (Omit<MenuBlock, "menuItems"> & { menuItems: SearchResult[] })[];
-    border: boolean;
+    border?: boolean;
     hasItems?: boolean;
     query: string;
     machineService: MachineService;

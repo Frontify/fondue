@@ -22,7 +22,7 @@ export type ActionMenuProps = {
     ariaLabel?: string;
     menuBlocks: ActionMenuBlock[];
     focus?: FocusStrategy;
-    border: boolean;
+    border?: boolean;
 };
 
 export const ActionMenu = ({

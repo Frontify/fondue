@@ -3,7 +3,7 @@ import React, { forwardRef, HTMLAttributes, ReactNode } from "react";
 
 export type AriaListProps = {
     ariaProps: HTMLAttributes<HTMLElement>;
-    border: boolean;
+    border?: boolean;
     children: ReactNode;
 };
 
