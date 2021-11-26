@@ -2,20 +2,13 @@
     "name": "@frontify/arcade",
     "version": "0.13.0",
     "description": "Design system of Frontify",
-    "main": "dist/index.umd.js",
-    "module": "dist/index.es.js",
+    "module": "dist/index.js",
     "files": [
         "dist"
     ],
     "exports": {
-        ".": {
-            "import": "./dist/index.es.js",
-            "require": "./dist/index.umd.js"
-        },
-        "./config": {
-            "import": "./dist/config.es.js",
-            "require": "./dist/config.umd.js"
-        },
+        ".": "./dist/index.js",
+        "./config": "./dist/config.js",
         "./style": "./dist/index.css"
     },
     "types": "dist/index.d.ts",
