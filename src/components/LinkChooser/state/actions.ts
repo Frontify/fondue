@@ -3,7 +3,7 @@
 import { CUSTOM_LINK_ID, MAX_STORED_ITEMS, QUERIES_STORAGE_KEY } from "@components/LinkChooser/LinkChooser";
 import { assign, DoneInvokeEvent } from "xstate";
 import { LinkChooserContext, LinkChooserEventData, SearchResult } from "../types";
-import { createCustomLink } from "../utils/helpers";
+import { createCustomLink, retrieveRecentQueries } from "../utils/transformers";
 
 export const updateQueryFromString = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
     query: (_context, { data }) => data.query ?? "",
@@ -26,11 +26,6 @@ export const updateCustomLink = assign<LinkChooserContext, DoneInvokeEvent<LinkC
 export const setSelectedSearchResult = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
     selectedResult: (_, { data }) => data.selectedResult ?? null,
 });
-
-export const retrieveRecentQueries = (): SearchResult[] => {
-    const recentQueries = JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || "null");
-    return recentQueries || [];
-};
 
 export const populateDropdownSearchResultsWithRecentQueries = assign<
     LinkChooserContext,
@@ -67,8 +62,8 @@ export const clearSelectedResult = assign<LinkChooserContext, DoneInvokeEvent<Li
     selectedResult: null,
 });
 
-export const copyLinkToClipboard = ({ copyToClipboard, selectedResult }: LinkChooserContext): void => {
-    selectedResult?.link && copyToClipboard.writeText(selectedResult.link);
+export const copyLinkToClipboard = ({ clipboardOptions, selectedResult }: LinkChooserContext): void => {
+    selectedResult?.link && clipboardOptions.writeText(selectedResult.link);
 };
 
 export const openPreview = ({ openPreview, selectedResult }: LinkChooserContext): void => {

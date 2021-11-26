@@ -10,8 +10,8 @@ import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
-import React, { forwardRef, KeyboardEvent } from "react";
-import { SearchInputProps } from "./types";
+import React, { FC, forwardRef, KeyboardEvent } from "react";
+import { ButtonProps, SearchInputProps } from "./types";
 
 const validationStyle: Record<Validation, string> = {
     [Validation.Default]: "tw-border-black-20",
@@ -28,9 +28,9 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
             type,
             decorator,
             validation = Validation.Default,
-            previewable = false,
-            copyable = false,
-            clearable = false,
+            previewable = true,
+            copyable = true,
+            clearable = true,
             placeholder,
             required,
             disabled = false,
@@ -110,62 +110,41 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                     data-test-id="link-chooser-search-input"
                 />
                 {selectedResult && previewable && (
-                    <button
-                        className={merge([
-                            "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
-                            previewButtonIsFocusVisible && FOCUS_STYLE,
-                            disabled
-                                ? "tw-cursor-default tw-text-black-40"
-                                : "tw-text-black-60 hover:tw-text-black-100",
-                        ])}
-                        data-test-id="link-chooser-preview-icon"
-                        title="Preview link"
-                        aria-label=""
+                    <Button
                         disabled={disabled}
+                        isFocused={previewButtonIsFocusVisible}
+                        testId="link-chooser-preview-icon"
+                        title="Preview link"
+                        ariaLabel="preview link"
+                        buttonProps={previewButtonFocusProps}
+                        icon={<IconExternalLink />}
                         onClick={() => send("OPEN_PREVIEW")}
-                        {...previewButtonFocusProps}
-                    >
-                        <IconExternalLink />
-                    </button>
+                    />
                 )}
                 {selectedResult && copyable && (
-                    <button
-                        className={merge([
-                            "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
-                            copyButtonIsFocusVisible && FOCUS_STYLE,
-                            disabled
-                                ? "tw-cursor-default tw-text-black-40"
-                                : "tw-text-black-60 hover:tw-text-black-100",
-                        ])}
-                        data-test-id="link-chooser-copy-icon"
-                        data-clipboard-id="copy-button"
-                        title="Copy text to clipboard"
-                        aria-label=""
+                    <Button
                         disabled={disabled}
+                        isFocused={copyButtonIsFocusVisible}
+                        testId="link-chooser-copy-icon"
+                        copyId="copy-button"
+                        title="Copy text to clipboard"
+                        ariaLabel="copy text to clipboard"
+                        buttonProps={copyButtonFocusProps}
+                        icon={<IconCopyToClipboard />}
                         onClick={() => send("COPY_TO_CLIPBOARD")}
-                        {...copyButtonFocusProps}
-                    >
-                        <IconCopyToClipboard />
-                    </button>
+                    />
                 )}
                 {`${value}`.length !== 0 && clearable && (
-                    <button
-                        className={merge([
-                            "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
-                            disabled
-                                ? "tw-cursor-default tw-text-black-40"
-                                : "tw-text-black-60  hover:tw-text-black-100",
-                            clearButtonIsFocusVisible && FOCUS_STYLE,
-                        ])}
-                        data-test-id="link-chooser-clear-icon"
-                        title="Clear text input"
-                        aria-label="clear text input"
+                    <Button
                         disabled={disabled}
+                        isFocused={clearButtonIsFocusVisible}
+                        testId="link-chooser-clear-icon"
+                        title="Clear text input"
+                        ariaLabel="clear text input"
+                        buttonProps={clearButtonFocusProps}
+                        icon={<IconReject />}
                         onClick={onClear}
-                        {...clearButtonFocusProps}
-                    >
-                        <IconReject />
-                    </button>
+                    />
                 )}
                 {validation === Validation.Loading && (
                     <span className="tw-absolute tw-top-[-0.75rem] tw-right-[-0.75rem]">
@@ -176,3 +155,34 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
         );
     },
 );
+
+const Button: FC<ButtonProps> = ({
+    disabled,
+    title,
+    ariaLabel,
+    testId,
+    isFocused,
+    buttonProps,
+    copyId,
+    icon,
+    onClick,
+}) => {
+    return (
+        <button
+            className={merge([
+                "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
+                disabled ? "tw-cursor-default tw-text-black-40" : "tw-text-black-60  hover:tw-text-black-100",
+                isFocused && FOCUS_STYLE,
+            ])}
+            data-test-id={testId}
+            title={title}
+            aria-label={ariaLabel}
+            data-clipboard-id={copyId}
+            disabled={disabled}
+            onClick={onClick}
+            {...buttonProps}
+        >
+            {icon}
+        </button>
+    );
+};

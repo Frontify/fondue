@@ -14,7 +14,7 @@ import { SearchResultListProps, SearchResultSectionProps, SearchResultOptionProp
 import NoResultsIcon from "./assets/no-results.svg";
 import BackgroundIcon from "./assets/background.svg";
 import FetchingIcon from "./assets/nook-animated.png";
-import { isFetching, isUnsuccessful, shouldGoBack } from "./utils/helpers";
+import { isFetching, isUnsuccessful, shouldGoBack } from "./utils/state";
 
 export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResultListProps) => {
     const ref = useRef<HTMLUListElement>(null);
@@ -32,8 +32,13 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
         }
     }, [value]);
 
-    if (isFetching(matches)) return <FetchingAnimation />;
-    if (isUnsuccessful(matches)) return <FetchingError />;
+    if (isFetching(matches)) {
+        return <FetchingAnimation />;
+    }
+
+    if (isUnsuccessful(matches)) {
+        return <FetchingError />;
+    }
 
     return (
         <div>

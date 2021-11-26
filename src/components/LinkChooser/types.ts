@@ -35,7 +35,7 @@ export type LinkChooserProps = {
     placeholder?: string;
     onOpenInNewTabChange: (value: boolean) => void;
     onLinkChange: (value: SearchResult | null) => void;
-    readonly copyToClipboard: Clipboard;
+    readonly clipboardOptions: Clipboard;
     readonly getGlobalByQuery?: (query: string) => Promise<SearchResult[]>;
     readonly getGuidelinesByQuery?: (query: string) => Promise<SearchResult[]>;
     readonly getTemplatesByQuery?: (query: string) => Promise<SearchResult[]>;
@@ -115,7 +115,7 @@ export type LinkChooserContext = {
     selectedResult: SearchResult | null;
     query: string;
     interruptedFetch: boolean;
-    readonly copyToClipboard: Clipboard;
+    readonly clipboardOptions: Clipboard;
     readonly getGlobalByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
     readonly getTemplatesByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
     readonly onLinkChange: (value: SearchResult | null) => void;
@@ -131,4 +131,16 @@ export type LinkChooserEventData = {
 
 export type Clipboard = {
     writeText(newClipText: string): Promise<void>;
+};
+
+export type ButtonProps = {
+    disabled: boolean;
+    title: string;
+    ariaLabel: string;
+    testId: string;
+    copyId?: string;
+    isFocused: boolean;
+    buttonProps: React.HTMLAttributes<HTMLElement>;
+    icon: ReactElement;
+    onClick?: () => void;
 };

@@ -2,7 +2,7 @@
 
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { LinkChooserContext, LinkChooserEventData } from "../types";
-import { isFetching } from "../utils/helpers";
+import { isFetching } from "../utils/state";
 import {
     clearSelectedResult,
     copyLinkToClipboard,
@@ -11,7 +11,6 @@ import {
     fetchTemplateSearchResults,
     openPreview,
     populateDropdownSearchResultsWithRecentQueries,
-    retrieveRecentQueries,
     setSelectedSearchResult,
     storeNewSelectedResult,
     updateCustomLink,
@@ -85,7 +84,7 @@ const initializeSectionState = (
         },
         [SectionState.Typing]: {
             after: {
-                [DEBOUNCE_TIMEOUT]: { target: SectionState.Fetching },
+                [DEBOUNCE_TIMEOUT]: SectionState.Fetching,
             },
             on: {
                 ...typingAction,
@@ -147,37 +146,25 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     [DropdownState.Default]: {
                         ...initializeSectionState(SectionState.Loaded, "fetchGlobal", fetchGlobalSearchResults),
                         on: {
-                            GO_TO_GUIDELINES: {
-                                target: DropdownState.Guidelines,
-                            },
-                            GO_TO_PROJECTS: {
-                                target: DropdownState.Projects,
-                            },
-                            GO_TO_TEMPLATES: {
-                                target: DropdownState.Templates,
-                            },
+                            GO_TO_GUIDELINES: DropdownState.Guidelines,
+                            GO_TO_PROJECTS: DropdownState.Projects,
+                            GO_TO_TEMPLATES: DropdownState.Templates,
                         },
                     },
                     [DropdownState.Guidelines]: {
                         on: {
-                            GO_TO_DEFAULT: {
-                                target: `${DropdownState.Default}.${SectionState.Fetching}`,
-                            },
+                            GO_TO_DEFAULT: `${DropdownState.Default}.${SectionState.Fetching}`,
                         },
                     },
                     [DropdownState.Projects]: {
                         on: {
-                            GO_TO_DEFAULT: {
-                                target: `${DropdownState.Default}.${SectionState.Fetching}`,
-                            },
+                            GO_TO_DEFAULT: `${DropdownState.Default}.${SectionState.Fetching}`,
                         },
                     },
                     [DropdownState.Templates]: {
                         ...initializeSectionState(SectionState.Fetching, "fetchTemplates", fetchTemplateSearchResults),
                         on: {
-                            GO_TO_DEFAULT: {
-                                target: `${DropdownState.Default}.${SectionState.Fetching}`,
-                            },
+                            GO_TO_DEFAULT: `${DropdownState.Default}.${SectionState.Fetching}`,
                         },
                     },
                 },
@@ -219,7 +206,6 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
             fetchTemplateSearchResults,
             openPreview,
             populateDropdownSearchResultsWithRecentQueries,
-            retrieveRecentQueries,
             setSelectedSearchResult,
             storeNewSelectedResult,
             updateCustomLink,

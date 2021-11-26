@@ -8,6 +8,7 @@ import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
 import { SearchResult } from "./types";
 import { data } from "./mock/data";
 import { templates } from "./mock/templates";
+import { doesContainSubstring } from "./utils/helpers";
 
 const LINK_CHOOSER_ID = "[data-test-id=link-chooser]";
 const SEARCH_WRAPPER_ID = "[data-test-id=link-chooser-search-wrapper]";
@@ -77,7 +78,6 @@ const PREFILLED_LOCAL_STORAGE = [
         selectionIndicator: "None",
     },
 ];
-const doesContainSubstring = (source: string, target: string) => source.toLowerCase().includes(target.toLowerCase());
 
 const filterItems = (query: string, results: SearchResult[]): SearchResult[] =>
     results.filter((item) => doesContainSubstring(item.title, query));
@@ -121,14 +121,14 @@ const getLinkChooserComponent = (openInNewTab = false, returnError = false) => {
 
     const onLinkChange = cy.stub().as("onLinkChange");
     const onOpenInNewTabChange = cy.stub().as("onOpenInNewTabChange");
-    const copyToClipboard = { writeText: cy.stub().as("copyToClipboard") };
+    const clipboardOptions = { writeText: cy.stub().as("clipboardOptions") };
     const openPreview = cy.stub().as("openPreview");
 
     return (
         <LinkChooser
             getGlobalByQuery={getGlobalByQuery}
             getTemplatesByQuery={getTemplatesByQueryMock}
-            copyToClipboard={copyToClipboard}
+            clipboardOptions={clipboardOptions}
             openPreview={openPreview}
             onLinkChange={onLinkChange}
             openInNewTab={openInNewTab}
@@ -209,7 +209,7 @@ describe("LinkChooser Component", () => {
             cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
             cy.get("@firstSelectItem").click();
             cy.get(COPY_ICON_ID).click();
-            cy.get("@copyToClipboard").should("be.calledOnce");
+            cy.get("@clipboardOptions").should("be.calledOnce");
         });
 
         it("clears the search input", () => {

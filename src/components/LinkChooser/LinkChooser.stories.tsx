@@ -8,6 +8,7 @@ import { LinkChooser } from "./LinkChooser";
 import { data } from "./mock/data";
 import { templates } from "./mock/templates";
 import { LinkChooserProps, SearchResult } from "./types";
+import { doesContainSubstring } from "./utils/helpers";
 
 export default {
     title: "Components/Link Chooser",
@@ -22,55 +23,52 @@ export default {
     },
 } as Meta<LinkChooserProps>;
 
+const getGlobalByQueryMock = (query: string): Promise<SearchResult[]> => {
+    return new Promise((resolve) =>
+        setTimeout(() => {
+            resolve(
+                data
+                    .filter((item) => doesContainSubstring(item.title, query))
+                    .map((item) => ({
+                        ...item,
+                        size: MenuItemContentSize.Large,
+                        selectionIndicator: SelectionIndicatorIcon.None,
+                    })),
+            );
+        }, Math.floor(Math.random() * 2000)),
+    );
+};
+
+/* const getGuidelinesByQuery = (query: string): Promise<SearchResult[]> => {}; */
+
+/* const getProjectsByQuery = (query: string): Promise<SearchResult[]> => {}; */
+
+const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> => {
+    return new Promise((resolve) =>
+        setTimeout(() => {
+            resolve(
+                templates
+                    .filter((template) => doesContainSubstring(template.title, query))
+                    .map((item) => ({
+                        ...item,
+                        size: MenuItemContentSize.Large,
+                        selectionIndicator: SelectionIndicatorIcon.None,
+                    })),
+            );
+        }, Math.floor(Math.random() * 2000)),
+    );
+};
+
 const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) => {
-    const [newTab, setNewTab] = useState<boolean>(false);
-
-    const doesContainSubstring = (source: string, target: string) =>
-        source.toLowerCase().includes(target.toLowerCase());
-
-    const getGlobalByQuery = (query: string): Promise<SearchResult[]> => {
-        return new Promise((resolve) =>
-            setTimeout(() => {
-                resolve(
-                    data
-                        .filter((item) => doesContainSubstring(item.title, query))
-                        .map((item) => ({
-                            ...item,
-                            size: MenuItemContentSize.Large,
-                            selectionIndicator: SelectionIndicatorIcon.None,
-                        })),
-                );
-            }, Math.floor(Math.random() * 2000)),
-        );
-    };
-
-    /* const getGuidelinesByQuery = (query: string): Promise<SearchResult[]> => {}; */
-
-    /* const getProjectsByQuery = (query: string): Promise<SearchResult[]> => {}; */
-
-    const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> => {
-        return new Promise((resolve) =>
-            setTimeout(() => {
-                resolve(
-                    templates
-                        .filter((template) => doesContainSubstring(template.title, query))
-                        .map((item) => ({
-                            ...item,
-                            size: MenuItemContentSize.Large,
-                            selectionIndicator: SelectionIndicatorIcon.None,
-                        })),
-                );
-            }, Math.floor(Math.random() * 2000)),
-        );
-    };
+    const [openInNewTab, setOpenInNewTab] = useState<boolean>(false);
 
     return (
         <LinkChooser
             {...args}
-            getGlobalByQuery={getGlobalByQuery}
+            getGlobalByQuery={getGlobalByQueryMock}
             getTemplatesByQuery={getTemplatesByQueryMock}
-            openInNewTab={newTab}
-            onOpenInNewTabChange={setNewTab}
+            openInNewTab={openInNewTab}
+            onOpenInNewTabChange={setOpenInNewTab}
         />
     );
 };

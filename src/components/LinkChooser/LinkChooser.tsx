@@ -20,7 +20,9 @@ import { SectionActionMenu } from "./SectionActionMenu";
 import { linkChooserMachine, LinkChooserState } from "./state/machine";
 import { LinkChooserProps } from "./types";
 import * as SearchRepository from "./repositories";
-import { createCustomLink, isLoaded, queryMatchesSelection } from "./utils/helpers";
+import { doesContainSubstring } from "./utils/helpers";
+import { isLoaded, queryMatchesSelection } from "./utils/state";
+import { createCustomLink } from "./utils/transformers";
 
 export enum IconLabel {
     Document = "DOCUMENT",
@@ -47,7 +49,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     getGlobalByQuery = SearchRepository.getGlobalByQuery,
     getTemplatesByQuery = SearchRepository.getTemplatesByQuery,
     openPreview = window.open,
-    copyToClipboard = navigator.clipboard,
+    clipboardOptions = navigator.clipboard,
     openInNewTab,
     ariaLabel = "Menu",
     label,
@@ -61,7 +63,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             selectedResult: null,
             query: "",
             interruptedFetch: false,
-            copyToClipboard,
+            clipboardOptions,
             openPreview,
             getGlobalByQuery,
             getTemplatesByQuery,
@@ -77,16 +79,19 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const handleSelectionChange = (key: Key) => {
         const foundItem = context.searchResults.find((item) => item.id === key);
-        if (foundItem) send("SET_SELECTED_SEARCH_RESULT", { data: { selectedResult: foundItem } });
+        if (foundItem) {
+            send("SET_SELECTED_SEARCH_RESULT", { data: { selectedResult: foundItem } });
+        }
     };
 
-    const handleInputChange = (value: string) => {
-        send("TYPING", { data: { query: value } });
-    };
+    const handleInputChange = useCallback(
+        (value: string) => {
+            send("TYPING", { data: { query: value } });
+        },
+        [value],
+    );
 
-    const handleDropdownOpen = () => {
-        send("OPEN_DROPDOWN");
-    };
+    const handleDropdownOpen = () => send("OPEN_DROPDOWN");
 
     const handleDropdownClose = () => {
         const selectedResult = context.query
@@ -97,8 +102,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         send("CLOSE_DROPDOWN", { data: { selectedResult } });
         state.setSelectedKey(selectedResult?.id || "");
     };
-
-    const filterItems = (value: string, query: string) => value.toLowerCase().includes(query.toLowerCase());
 
     const searchResultMenuBlock = useMemo(
         () => [
@@ -114,7 +117,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const state = useComboBoxState({
         ...props,
-        defaultFilter: filterItems,
+        defaultFilter: doesContainSubstring,
         onInputChange: handleInputChange,
         onSelectionChange: handleSelectionChange,
         menuTrigger: "manual",
@@ -162,9 +165,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     selectedResult={context.selectedResult}
                     ref={inputRef}
                     decorator={formattedIcon}
-                    previewable={true}
-                    copyable={true}
-                    clearable={true}
                     placeholder={placeholder}
                     onClear={handleClearClick}
                     onClick={handleDropdownOpen}
