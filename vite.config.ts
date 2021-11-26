@@ -26,6 +26,11 @@ export const alias = {
     "@utilities": resolve(__dirname, "./src/utilities"),
 };
 
+export const globals = {
+    react: "React",
+    "react-dom": "ReactDOM",
+};
+
 const componentsPath = [
     fastGlob.sync(["src/foundation/**/*.ts", "src/foundation/**/[a-zA-Z]*.tsx", "src/components/**/[a-zA-Z]*.tsx"], {
         ignore: ["src/**/*.spec.ts", "src/**/*.spec.tsx", "src/**/*.stories.tsx"],
@@ -62,6 +67,7 @@ export default defineConfig({
                 },
                 entryFileNames: "[name].js",
                 chunkFileNames: "vendors/[name].js",
+                exports: "named",
             },
             preserveEntrySignatures: "strict",
         },
