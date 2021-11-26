@@ -18,7 +18,7 @@ import { isFetching, isUnsuccessful, shouldGoBack } from "./utils/state";
 
 export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResultListProps) => {
     const ref = useRef<HTMLUListElement>(null);
-    const { listBoxRef = ref, state, menuBlocks, noBorder, machineService } = props;
+    const { listBoxRef = ref, state, menuBlocks, border = true, machineService } = props;
     const { listBoxProps } = useListBox(props, state, listBoxRef);
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
@@ -56,7 +56,7 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
                 ref={listBoxRef}
                 className={merge([
                     "tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-z-20 focus-visible:tw-outline-none",
-                    !noBorder && "tw-border tw-border-black-10 tw-rounded",
+                    border && "tw-border tw-border-black-10 tw-rounded",
                 ])}
             >
                 {context.searchResults.length ? (

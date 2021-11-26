@@ -22,14 +22,14 @@ export type ActionMenuProps = {
     ariaLabel?: string;
     menuBlocks: ActionMenuBlock[];
     focus?: FocusStrategy;
-    noBorder?: boolean;
+    border: boolean;
 };
 
 export const ActionMenu = ({
     menuBlocks,
     ariaLabel = "Action Menu",
     focus,
-    noBorder,
+    border = true,
 }: ActionMenuProps): ReactElement<ActionMenuProps> => {
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
@@ -43,7 +43,7 @@ export const ActionMenu = ({
     const { menuProps } = useMenu({ ...props, autoFocus: focus }, state, menuRef);
 
     return (
-        <AriaList ariaProps={{ ...menuProps }} ref={menuRef} noBorder={noBorder}>
+        <AriaList ariaProps={{ ...menuProps }} ref={menuRef} border={border}>
             {[...state.collection].map((section) => {
                 const { key: sectionKey, "aria-label": sectionAriaLabel } = section;
                 const { itemProps, groupProps } = useMenuSection({ "aria-label": sectionAriaLabel });

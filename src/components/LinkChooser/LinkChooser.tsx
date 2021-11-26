@@ -194,7 +194,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                 state={state}
                                 menuBlocks={searchResultMenuBlock}
                                 query={context.query}
-                                noBorder={true}
+                                border={false}
                                 machineService={service}
                             />
                             <div data-test-id="link-chooser-action-menu" className="tw-border-t tw-border-black-10">
