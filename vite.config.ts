@@ -44,6 +44,8 @@ export default defineConfig({
             input: componentsPath,
             external: peerDependencies,
             output: {
+                dir: "dist",
+                format: "es",
                 globals: {
                     react: "React",
                     "react-dom": "ReactDOM",
@@ -61,6 +63,7 @@ export default defineConfig({
                 entryFileNames: "[name].js",
                 chunkFileNames: "vendors/[name].js",
             },
+            preserveEntrySignatures: "strict",
         },
     },
 });
