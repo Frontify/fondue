@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 //@ts-ignore
-const { alias } = require("../vite.storybook.config");
+const { alias } = require("../vite.config");
 const { dependencies, peerDependencies } = require("../package.json");
 const { resolve } = require("path");
 
