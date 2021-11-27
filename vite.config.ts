@@ -1,23 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { defineConfig } from "vite";
-import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from "./package.json";
+import { peerDependencies as peerDependenciesMap } from "./package.json";
 import { resolve } from "path";
 import fastGlob from "fast-glob";
 import dts from "vite-plugin-dts";
 
-const dependencies = Object.keys(dependenciesMap);
 const peerDependencies = Object.keys(peerDependenciesMap);
-
-const renderVendorChunks = (dependencies: string[]): Record<string, string[]> => {
-    return dependencies.reduce((stack: Record<string, string[]>, key: string) => {
-        if (!peerDependencies.includes(key)) {
-            stack[key] = [key];
-        }
-
-        return stack;
-    }, {});
-};
 
 export const alias = {
     "@components": resolve(__dirname, "./src/components"),
@@ -31,10 +20,10 @@ export const globals = {
     "react-dom": "ReactDOM",
 };
 
-export const componentsPath = fastGlob.sync(
-    ["src/foundation/**/*.ts", "src/foundation/**/[a-zA-Z]*.tsx", "src/components/**/[a-zA-Z]*.tsx"],
-    { ignore: ["src/**/*.spec.ts", "src/**/*.spec.tsx", "src/**/*.stories.tsx"] },
-);
+export const componentsPath = fastGlob.sync(["src/foundation/**/index.ts", "src/components/**/index.ts"], {
+    objectMode: true,
+    ignore: ["src/**/*.spec.ts", "src/**/*.spec.tsx", "src/**/*.stories.tsx"],
+});
 
 export default defineConfig({
     resolve: {
@@ -45,23 +34,17 @@ export default defineConfig({
         sourcemap: true,
         minify: true,
         rollupOptions: {
-            input: [...componentsPath, "src/styles.css"],
+            input: [...componentsPath.map((element) => element.path), "src/styles.css"],
             external: peerDependencies,
             output: {
                 dir: "dist",
                 format: "es",
-                globals: {
-                    react: "React",
-                    "react-dom": "ReactDOM",
-                },
-                manualChunks: {
-                    vendor: peerDependencies, // Externals
-                    ...renderVendorChunks(dependencies),
-                },
+                globals,
+                manualChunks: undefined,
                 assetFileNames: "[name].[ext]",
                 entryFileNames: "[name].js",
-                chunkFileNames: "vendors/[name].js",
                 exports: "named",
+                preserveModules: true,
             },
             preserveEntrySignatures: "strict",
         },

@@ -8,11 +8,23 @@
     ],
     "exports": {
         ".": "./dist/index.js",
+        "./style": "./dist/styles.css",
         "./config": {
             "import": "./dist/config.es.js",
             "require": "./dist/config.umd.js"
         },
-        "./style": "./dist/styles.css"
+        "./components/*": {
+            "default": "./dist/src/components/*/index.js",
+            "types": "./dist/src/components/*/index.d.ts"
+        },
+        "./icons": {
+            "default": "./dist/src/foundation/Icon/index.js",
+            "types": "./dist/src/foundation/Icon/index.d.ts"
+        },
+        "./icons/*": {
+            "default": "./dist/src/foundation/Icon/*.js",
+            "types": "./dist/src/foundation/Icon/*.d.ts"
+        }
     },
     "types": "dist/index.d.ts",
     "scripts": {
@@ -29,7 +41,7 @@
         "generate": "npm run generate:reactIcons && npm run generate:iconsMap",
         "generate:barrelExport": "esno ./scripts/generateBarrelExport.ts",
         "generate:reactIcons": "esno ./scripts/generateReactIcons.ts",
-        "generate:iconsMap": "esno ./scripts/generateIconMap.ts && eslint --fix ./src/foundation/Icon/IconsMap.tsx",
+        "generate:iconsMap": "esno ./scripts/generateIconMap.ts && eslint --fix ./src/foundation/Icon/IconEnum.ts ./src/foundation/Icon/IconsMap.tsx",
         "lint": "npm run lint:ts",
         "lint:fix": "npm run lint:ts:fix",
         "lint:ts": "eslint 'src/**/*.{ts,tsx}'",
