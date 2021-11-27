@@ -6,7 +6,7 @@ import { Meta, Story } from "@storybook/react";
 import { IconSize } from "./IconSize";
 import { IconProps } from "./IconProps";
 import { Icon as IconComponent } from "./Icon";
-import { IconEnum } from "./IconsMap";
+import { IconEnum } from "./IconEnum";
 
 export default {
     title: "Foundation/Icon",
