@@ -63,7 +63,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const [value, setValue] = useState<Descendant[]>(() => parseRawValue(initialValue));
     const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
     const wrapperRef = useRef<HTMLDivElement | null>(null);
-    const [wrapperStyle, setWrapperStyle] = useState<CSSProperties>();
+    const [wrapperStyle, setWrapperStyle] = useState<CSSProperties | undefined>({ minWidth: "100%" });
 
     const withPlugins = compose(withReact, withHistory, withLists, withLinks);
     const editor = useMemo(() => withPlugins(createEditor()), []);
