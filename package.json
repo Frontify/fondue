@@ -8,22 +8,19 @@
     ],
     "exports": {
         ".": "./dist/index.js",
+        "./config": "./dist/config.js",
         "./style": "./dist/styles.css",
-        "./config": {
-            "import": "./dist/config.es.js",
-            "require": "./dist/config.umd.js"
-        },
         "./components/*": {
-            "default": "./dist/src/components/*/index.js",
-            "types": "./dist/src/components/*/index.d.ts"
+            "types": "./dist/src/components/*/index.d.ts",
+            "import": "./dist/src/components/*/index.js"
         },
         "./icons": {
-            "default": "./dist/src/foundation/Icon/index.js",
-            "types": "./dist/src/foundation/Icon/index.d.ts"
+            "types": "./dist/src/foundation/Icon/index.d.ts",
+            "import": "./dist/src/foundation/Icon/index.js"
         },
         "./icons/*": {
-            "default": "./dist/src/foundation/Icon/*.js",
-            "types": "./dist/src/foundation/Icon/*.d.ts"
+            "types": "./dist/src/foundation/Icon/*.d.ts",
+            "import": "./dist/src/foundation/Icon/*.js"
         }
     },
     "types": "dist/index.d.ts",

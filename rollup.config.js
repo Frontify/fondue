@@ -19,19 +19,12 @@ const rollupConfig = [
                 minify: process.env.NODE_ENV === "production",
             }),
         ],
-        output: [
-            {
-                file: "dist/config.umd.js",
-                format: "umd",
-                name: "ArcadeConfig",
-                sourcemap: true,
-            },
-            {
-                file: "dist/config.es.js",
-                format: "es",
-                sourcemap: true,
-            },
-        ],
+        output: {
+            file: "dist/config.js",
+            format: "umd",
+            name: "ArcadeConfig",
+            sourcemap: true,
+        },
     },
 ];
 
