@@ -20,10 +20,19 @@ export const globals = {
     "react-dom": "ReactDOM",
 };
 
-export const componentsPath = fastGlob.sync(["src/foundation/**/index.ts", "src/components/**/index.ts"], {
-    objectMode: true,
-    ignore: ["src/**/*.spec.ts", "src/**/*.spec.tsx", "src/**/*.stories.tsx"],
-});
+export const componentsPath = fastGlob.sync(
+    [
+        "src/foundation/**/index.ts",
+        "src/components/**/index.ts",
+        "src/hooks/index.ts",
+        "src/types/index.ts",
+        "src/utilities/index.ts",
+    ],
+    {
+        objectMode: true,
+        ignore: ["src/**/*.spec.ts", "src/**/*.spec.tsx", "src/**/*.stories.tsx"],
+    },
+);
 
 export default defineConfig({
     resolve: {
