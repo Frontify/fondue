@@ -1,5 +1,5 @@
 import { access, mkdir, writeFile } from "fs/promises";
-import { green, red } from "chalk";
+import chalk from "chalk";
 import templates from "./templates";
 
 (async () => {
@@ -7,7 +7,7 @@ import templates from "./templates";
     const componentName = process.argv[3] || process.argv[2];
 
     if (!componentName) {
-        console.error(red("You need to supply a component name."));
+        console.error(chalk.red("You need to supply a component name."));
         process.exit(1);
     }
 
@@ -24,7 +24,7 @@ import templates from "./templates";
     }
 
     if (directoryExists) {
-        console.error(red(`Component ${componentName} already exists.`));
+        console.error(chalk.red(`Component ${componentName} already exists.`));
         process.exit(1);
     }
 
@@ -36,5 +36,5 @@ import templates from "./templates";
         await writeFile(`${componentDirectory}/${componentName}${template.extension}`, template.content);
     });
 
-    console.log(green(`Component created in ${componentDirectory}`));
+    console.log(chalk.green(`Component created in ${componentDirectory}`));
 })();
