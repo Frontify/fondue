@@ -50,7 +50,7 @@ declare module "slate" {
 }
 
 const TOOLBAR_DELAY_IN_MS = 200;
-const ON_SAVE_DELAY_IN_MS = 200;
+const ON_SAVE_DELAY_IN_MS = 500;
 const isModifyingKey = (key: string) => !["Alt", "Control", "Meta", "Shift"].includes(key);
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
