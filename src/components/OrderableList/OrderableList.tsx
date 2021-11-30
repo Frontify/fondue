@@ -20,6 +20,8 @@ import React, { FC, ReactElement, useMemo, useRef, Key, RefObject, Fragment } fr
 import { GridNode } from "@react-types/grid";
 import { useDraggableItem } from "./useDraggableItem";
 import { merge } from "@utilities/merge";
+import { isTypeable } from "./isTypeable";
+import { DEFAULT_CELL_NAVIGATION_KEYS } from "./constants";
 
 export type AcceptedItem<T = Record<string, unknown>> = T & {
     id: string;
@@ -36,6 +38,7 @@ type OrderableListProps = {
     items: AcceptedItem[];
     showFocusRing: boolean;
     dragDisabled: boolean;
+    disableTypeAhead?: boolean;
     onMove: (selectedGridItemKeys: Key[], gridItemLocation: ItemDropTarget) => void;
     renderContent: (items: GridNode<AcceptedItem>, dragProperties: DragProperties) => ReactElement;
 };
@@ -44,6 +47,7 @@ type OrderableListContainerProps = {
     items: AcceptedItem[];
     showFocusRing: boolean;
     dragDisabled: boolean;
+    disableTypeAhead?: boolean;
     children: (item: AcceptedItem) => JSX.Element;
     onMove: (selectedGridItemKeys: Key[], gridItemLocation: ItemDropTarget) => void;
     renderContent: (items: GridNode<AcceptedItem>, isDragging: DragProperties) => ReactElement;
@@ -66,6 +70,7 @@ export const OrderableList: FC<OrderableListProps> = ({
     items,
     renderContent,
     dragDisabled,
+    disableTypeAhead,
     showFocusRing,
 }) => {
     return (
@@ -74,6 +79,7 @@ export const OrderableList: FC<OrderableListProps> = ({
             showFocusRing={showFocusRing}
             renderContent={renderContent}
             items={items}
+            disableTypeAhead={disableTypeAhead}
             dragDisabled={dragDisabled}
         >
             {(item) => (
@@ -262,7 +268,10 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
         gridRef,
     );
 
-    delete gridProps.onKeyDownCapture;
+    //Typeahead must be disabled if list item contains a contenteditable or text input element.
+    if (props.disableTypeAhead) {
+        delete gridProps.onKeyDownCapture;
+    }
 
     return (
         <div {...mergeProps(collectionProps, gridProps)} ref={gridRef} style={{ outline: "none" }}>
@@ -351,7 +360,20 @@ const CollectionItem: FC<CollectionItemProps> = ({
 
     if (!dragDisabled) {
         gridRowProps = mergeProps(rowProps);
-        gridCellProps = mergeProps(cellProps, dragProps, buttonProps, focusProps);
+        const { onKeyDownCapture, ...restOfCellProps } = cellProps;
+
+        const keydownCaptureInputCheck = (event: React.KeyboardEvent<HTMLElement>) => {
+            if (isTypeable(event.target) && DEFAULT_CELL_NAVIGATION_KEYS.includes(event.code) && !event.shiftKey) {
+                event.stopPropagation();
+            } else if (onKeyDownCapture) {
+                onKeyDownCapture(event);
+            }
+        };
+        const cellPropsWithTypeableCheck = {
+            ...restOfCellProps,
+            onKeyDownCapture: keydownCaptureInputCheck,
+        };
+        gridCellProps = mergeProps(cellPropsWithTypeableCheck, dragProps, buttonProps, focusProps);
     }
 
     return (
