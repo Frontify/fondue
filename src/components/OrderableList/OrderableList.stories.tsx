@@ -49,6 +49,8 @@ const List = (props): ReactElement => {
                     return (
                         <div className="tw-break-all tw-bg-black">
                             {value.content}
+                            <div contentEditable>TEXTEDITABLE</div>
+                            <textarea>TEXTAREA</textarea>
                             <Button>hello</Button>
                         </div>
                     );
