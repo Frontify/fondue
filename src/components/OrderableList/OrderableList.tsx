@@ -16,7 +16,7 @@ import { GridCollection, useGridState, GridState } from "@react-stately/grid";
 import { useListState } from "@react-stately/list";
 import { Collection, DropTarget, ItemDropTarget } from "@react-types/shared";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import React, { FC, ReactElement, useMemo, useRef, Key, RefObject, Fragment } from "react";
+import React, { FC, ReactElement, useMemo, useRef, Key, RefObject } from "react";
 import { GridNode } from "@react-types/grid";
 import { useDraggableItem } from "./useDraggableItem";
 import { merge } from "@utilities/merge";
@@ -274,7 +274,7 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
     return (
         <div {...mergeProps(collectionProps, gridProps)} ref={gridRef} style={{ outline: "none" }}>
             {[...gridState.collection].map((item) => (
-                <Fragment key={item.key}>
+                <>
                     <InsertionIndicator
                         key={`${item.key}-before`}
                         collectionRef={gridRef}
@@ -298,7 +298,7 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
                             dropState={dropState}
                         />
                     )}
-                </Fragment>
+                </>
             ))}
         </div>
     );
@@ -364,12 +364,7 @@ const CollectionItem: FC<CollectionItemProps> = ({
     }
 
     return (
-        <div
-            {...gridRowProps}
-            ref={rowRef}
-            style={{ outline: "none", zIndex: 1, position: "relative" }}
-            aria-labelledby={id}
-        >
+        <div {...gridRowProps} ref={rowRef} style={{ zIndex: 1, position: "relative" }} aria-labelledby={id}>
             <div
                 {...gridCellProps}
                 className={merge([isFocusVisible && showFocusRing && FOCUS_STYLE])}
