@@ -20,8 +20,6 @@ import React, { FC, ReactElement, useMemo, useRef, Key, RefObject, Fragment } fr
 import { GridNode } from "@react-types/grid";
 import { useDraggableItem } from "./useDraggableItem";
 import { merge } from "@utilities/merge";
-import { isTypeable } from "./isTypeable";
-import { DEFAULT_CELL_NAVIGATION_KEYS } from "./constants";
 
 export type AcceptedItem<T = Record<string, unknown>> = T & {
     id: string;
@@ -361,19 +359,8 @@ const CollectionItem: FC<CollectionItemProps> = ({
     if (!dragDisabled) {
         gridRowProps = mergeProps(rowProps);
         const { onKeyDownCapture, ...restOfCellProps } = cellProps;
-
-        const keydownCaptureInputCheck = (event: React.KeyboardEvent<HTMLElement>) => {
-            if (isTypeable(event.target) && DEFAULT_CELL_NAVIGATION_KEYS.includes(event.code) && !event.shiftKey) {
-                event.stopPropagation();
-            } else if (onKeyDownCapture) {
-                onKeyDownCapture(event);
-            }
-        };
-        const cellPropsWithTypeableCheck = {
-            ...restOfCellProps,
-            onKeyDownCapture: keydownCaptureInputCheck,
-        };
-        gridCellProps = mergeProps(cellPropsWithTypeableCheck, dragProps, buttonProps, focusProps);
+        const cellPropsWithKeyDown = { ...restOfCellProps, onKeyDown: onKeyDownCapture };
+        gridCellProps = mergeProps(cellPropsWithKeyDown, dragProps, buttonProps, focusProps);
     }
 
     return (
