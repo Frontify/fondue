@@ -90,3 +90,10 @@ RichTextWithHTML.args = {
     `,
 };
 RichTextWithHTML.argTypes = { value: { type: "string" } };
+
+export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <div className="tw-flex">
+        <RichTextEditorComponent {...args} />
+    </div>
+);
+RichTextEditorFlex.argTypes = { value: { type: "object" } };

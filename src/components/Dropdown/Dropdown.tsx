@@ -13,7 +13,7 @@ import { mergeProps } from "@react-aria/utils";
 import { useSelectState } from "@react-stately/select";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, useRef } from "react";
+import React, { FC, ReactElement, useRef } from "react";
 
 export enum DropdownSize {
     Small = "Small",
@@ -30,6 +30,7 @@ export type DropdownProps = {
     disabled?: boolean;
     clearable?: boolean;
     ariaLabel?: string;
+    decorator?: ReactElement;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId?: string | number) =>
@@ -48,6 +49,7 @@ export const Dropdown: FC<DropdownProps> = ({
     disabled = false,
     clearable = false,
     ariaLabel = "Dropdown",
+    decorator,
 }) => {
     const activeItem = getActiveItem(menuBlocks, activeItemId);
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -69,7 +71,7 @@ export const Dropdown: FC<DropdownProps> = ({
     );
 
     return (
-        <div className="tw-relative tw-w-full tw-font-sans tw-text-s ">
+        <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
             <Trigger
                 disabled={disabled}
                 buttonProps={buttonProps}
@@ -96,7 +98,7 @@ export const Dropdown: FC<DropdownProps> = ({
                     data-test-id="dropdown-trigger"
                     className={merge([
                         "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none",
-                        size === DropdownSize.Small ? "tw-py-1 tw-px-3" : "tw-p-5 tw-min-h-[60px]",
+                        size === DropdownSize.Small ? "tw-py-2 tw-px-3 tw-min-h-[34px]" : "tw-p-5 tw-min-h-[60px]",
                         !activeItem && "tw-text-black-60",
                         disabled && "tw-text-black-40",
                     ])}
@@ -104,7 +106,7 @@ export const Dropdown: FC<DropdownProps> = ({
                     <MenuItemContent
                         ariaProps={valueProps}
                         title={activeItem?.title || placeholder}
-                        decorator={activeItem?.decorator}
+                        decorator={decorator ?? activeItem?.decorator}
                         size={size === DropdownSize.Small ? MenuItemContentSize.Small : MenuItemContentSize.Large}
                     />
                 </button>
