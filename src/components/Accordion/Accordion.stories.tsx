@@ -25,34 +25,10 @@ export default {
     },
 } as Meta<AccordionProps>;
 
-const menuBlocks = [
-    {
-        id: "example",
-        menuItems: [
-            {
-                id: "1",
-                title: "This is an item",
-            },
-            {
-                id: "2",
-                title: "Another item",
-            },
-            {
-                id: "3",
-                title: "Third item",
-            },
-            {
-                id: "4",
-                title: "Fourth item",
-            },
-        ],
-    },
-];
-
 export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
     const [showContent, setShowContent] = useState(true);
     const [input, setInput] = useState("");
-    const [activeDropdown, setActiveDropdown] = useState("");
+    const [activeItemId, setActiveItemId] = useState<string | number | undefined>();
 
     return (
         <AccordionComponent>
@@ -73,12 +49,23 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
             </AccordionItem>
             <AccordionItem header={{ children: "Item with plain text child", type: FieldsetHeaderType.AddRemove }}>
                 bar
-            </AccordionItem>{" "}
+            </AccordionItem>
             <AccordionItem header={{ children: "Item with dropdown child", type: FieldsetHeaderType.AddRemove }}>
                 <Dropdown
-                    menuBlocks={menuBlocks}
-                    activeItemId={activeDropdown}
-                    onChange={(id) => setActiveDropdown(id)}
+                    onChange={(id) => setActiveItemId(id)}
+                    activeItemId={activeItemId}
+                    menuBlocks={[
+                        {
+                            id: "block1",
+                            menuItems: [
+                                { id: "1", title: "Item 1" },
+                                { id: "2", title: "Item 2" },
+                                { id: "3", title: "Item 3" },
+                                { id: "4", title: "Item 4" },
+                                { id: "5", title: "Item 5" },
+                            ],
+                        },
+                    ]}
                 />
             </AccordionItem>
             <AccordionItem
