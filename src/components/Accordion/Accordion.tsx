@@ -63,12 +63,11 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                         animate={"open"}
                         exit={"collapsed"}
                         variants={{
-                            open: { height: "auto" },
-                            collapsed: { height: 0 },
+                            open: { height: "auto", overflow: "visible" },
+                            collapsed: { height: 0, overflow: "hidden" },
                         }}
                         transition={{ type: "tween" }}
                         data-test-id="accordion-item-content"
-                        className="tw-overflow-hidden"
                     >
                         <div {...regionProps} className="tw-px-8 tw-pb-6">
                             <motion.div
