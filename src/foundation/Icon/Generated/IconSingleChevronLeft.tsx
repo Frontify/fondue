@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconSingleChevronLeft(props: GeneratedIconProps): React.ReactElement<Ge
             name="IconSingleChevronLeft"
             {...props}
         >
-            <path d="M9.506 12L.62 7.264V4.763L9.506 0h.16v2.235L2.695 5.854v.319l6.97 3.619V12h-.159z" />
+            <path d="M9.506 12 .62 7.264V4.763L9.506 0h.16v2.235L2.695 5.854v.319l6.97 3.619V12h-.159Z" />
         </svg>
     );
 }
 
-const MemoIconSingleChevronLeft = React.memo(IconSingleChevronLeft);
-export default MemoIconSingleChevronLeft;
+const Memo = memo(IconSingleChevronLeft);
+export default Memo;

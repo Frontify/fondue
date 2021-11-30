@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -23,5 +23,5 @@ function IconAttentionFilled(props: GeneratedIconProps): React.ReactElement<Gene
     );
 }
 
-const MemoIconAttentionFilled = React.memo(IconAttentionFilled);
-export default MemoIconAttentionFilled;
+const Memo = memo(IconAttentionFilled);
+export default Memo;

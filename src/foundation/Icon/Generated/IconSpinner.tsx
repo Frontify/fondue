@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -23,5 +23,5 @@ function IconSpinner(props: GeneratedIconProps): React.ReactElement<GeneratedIco
     );
 }
 
-const MemoIconSpinner = React.memo(IconSpinner);
-export default MemoIconSpinner;
+const Memo = memo(IconSpinner);
+export default Memo;

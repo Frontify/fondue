@@ -3,7 +3,7 @@ import fastGlob from "fast-glob";
 import { join } from "path";
 import { writeFile, readFile } from "fs/promises";
 // @ts-ignore
-import svgr from "@svgr/core";
+import { transform } from "@svgr/core";
 import { Entry } from "fast-glob/out/types";
 import IconTemplate from "../src/foundation/Icon/IconTemplate";
 
@@ -15,7 +15,7 @@ export const GENERATED_ICONS_INDEX_PATH = "src/foundation/Icon/Generated/index.t
         const svgFileContent = await readFile(svgPath.path, { encoding: "utf-8" });
         const svgFileName = svgPath.name.replace(".svg", "");
 
-        await svgr(
+        await transform(
             svgFileContent,
             {
                 icon: true,
@@ -23,6 +23,7 @@ export const GENERATED_ICONS_INDEX_PATH = "src/foundation/Icon/Generated/index.t
                 memo: true,
                 template: IconTemplate,
                 dimensions: false,
+                typescript: true,
                 svgProps: {
                     width: "100%",
                     height: "100%",

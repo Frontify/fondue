@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconCaretUp(props: GeneratedIconProps): React.ReactElement<GeneratedIco
             name="IconCaretUp"
             {...props}
         >
-            <path d="M18.862 15.52L11.98 8.946 5.09 15.52a.84.84 0 01-1.102-.041.75.75 0 01-.043-1.053L11.98 6.75l8.034 7.677a.751.751 0 010 1.094.83.83 0 01-.576.229.83.83 0 01-.576-.23z" />
+            <path d="M18.862 15.52 11.98 8.946 5.09 15.52a.84.84 0 0 1-1.102-.041.75.75 0 0 1-.043-1.053L11.98 6.75l8.034 7.677a.751.751 0 0 1 0 1.094.83.83 0 0 1-.576.229.83.83 0 0 1-.576-.23Z" />
         </svg>
     );
 }
 
-const MemoIconCaretUp = React.memo(IconCaretUp);
-export default MemoIconCaretUp;
+const Memo = memo(IconCaretUp);
+export default Memo;

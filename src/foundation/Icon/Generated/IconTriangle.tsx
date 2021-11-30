@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconTriangle(props: GeneratedIconProps): React.ReactElement<GeneratedIc
             name="IconTriangle"
             {...props}
         >
-            <path d="M5.772 19.287h12.456L12 6.83 5.772 19.287zM21 21H3l9-18 9 18z" />
+            <path d="M5.772 19.287h12.456L12 6.83 5.772 19.287ZM21 21H3l9-18 9 18Z" />
         </svg>
     );
 }
 
-const MemoIconTriangle = React.memo(IconTriangle);
-export default MemoIconTriangle;
+const Memo = memo(IconTriangle);
+export default Memo;

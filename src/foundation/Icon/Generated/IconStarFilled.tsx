@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconStarFilled(props: GeneratedIconProps): React.ReactElement<Generated
             name="IconStarFilled"
             {...props}
         >
-            <path d="M5.82 21.021L7 14.14 2 9.265l6.91-1.004L12 2l3.09 6.261L22 9.265l-5 4.874 1.18 6.882-6.18-3.25z" />
+            <path d="M5.82 21.021 7 14.14 2 9.265l6.91-1.004L12 2l3.09 6.261L22 9.265l-5 4.874 1.18 6.882-6.18-3.25z" />
         </svg>
     );
 }
 
-const MemoIconStarFilled = React.memo(IconStarFilled);
-export default MemoIconStarFilled;
+const Memo = memo(IconStarFilled);
+export default Memo;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconAttachment(props: GeneratedIconProps): React.ReactElement<Generated
             name="IconAttachment"
             {...props}
         >
-            <path d="M3.5 5.5v8.25a2.5 2.5 0 105 0V4.5a4.25 4.25 0 10-8.5 0v9.25a6 6 0 1012 0V5.5a.75.75 0 10-1.5 0v8.25a4.5 4.5 0 11-9 0V4.5a2.75 2.75 0 015.5 0v9.25a1 1 0 01-2 0V5.5a.75.75 0 00-1.5 0z" />
+            <path d="M3.5 5.5v8.25a2.5 2.5 0 1 0 5 0V4.5a4.25 4.25 0 1 0-8.5 0v9.25a6 6 0 1 0 12 0V5.5a.75.75 0 1 0-1.5 0v8.25a4.5 4.5 0 1 1-9 0V4.5a2.75 2.75 0 0 1 5.5 0v9.25a1 1 0 0 1-2 0V5.5a.75.75 0 0 0-1.5 0Z" />
         </svg>
     );
 }
 
-const MemoIconAttachment = React.memo(IconAttachment);
-export default MemoIconAttachment;
+const Memo = memo(IconAttachment);
+export default Memo;

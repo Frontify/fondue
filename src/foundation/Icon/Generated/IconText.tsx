@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconText(props: GeneratedIconProps): React.ReactElement<GeneratedIconPr
             name="IconText"
             {...props}
         >
-            <path d="M3 7a1 1 0 110-2h14a1 1 0 010 2H3zm-.09 4c-.503 0-.91-.448-.91-1s.407-1 .91-1h18.18c.503 0 .91.448.91 1s-.407 1-.91 1H2.91zM3 15a1 1 0 010-2h14a1 1 0 010 2H3zm-.09 4c-.503 0-.91-.448-.91-1s.407-1 .91-1h18.18c.503 0 .91.448.91 1s-.407 1-.91 1H2.91z" />
+            <path d="M3 7a1 1 0 1 1 0-2h14a1 1 0 0 1 0 2H3Zm-.09 4c-.503 0-.91-.448-.91-1s.407-1 .91-1h18.18c.503 0 .91.448.91 1s-.407 1-.91 1H2.91ZM3 15a1 1 0 0 1 0-2h14a1 1 0 0 1 0 2H3Zm-.09 4c-.503 0-.91-.448-.91-1s.407-1 .91-1h18.18c.503 0 .91.448.91 1s-.407 1-.91 1H2.91Z" />
         </svg>
     );
 }
 
-const MemoIconText = React.memo(IconText);
-export default MemoIconText;
+const Memo = memo(IconText);
+export default Memo;
