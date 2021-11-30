@@ -1,16 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Slider } from "@components/Slider/Slider";
+import { Button } from "@components/Button/Button";
+import { Dropdown } from "@components/Dropdown";
 import { FieldsetHeaderType } from "@components/FieldsetHeader/FieldsetHeader";
 import { FormControl } from "@components/FormControl/FormControl";
-import { Button } from "@components/Button/Button";
+import { Slider } from "@components/Slider/Slider";
+import { Switch, SwitchSize } from "@components/Switch/Switch";
+import { TextInput, TextInputType } from "@components/TextInput/TextInput";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import IconTextAlignCenter from "@foundation/Icon/Generated/IconTextAlignCenter";
 import IconTextAlignLeft from "@foundation/Icon/Generated/IconTextAlignLeft";
 import IconTextAlignRight from "@foundation/Icon/Generated/IconTextAlignRight";
 import { IconSize } from "@foundation/Icon/IconSize";
-import { Switch, SwitchSize } from "@components/Switch/Switch";
-import { TextInput, TextInputType } from "@components/TextInput/TextInput";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
@@ -24,9 +25,34 @@ export default {
     },
 } as Meta<AccordionProps>;
 
+const menuBlocks = [
+    {
+        id: "example",
+        menuItems: [
+            {
+                id: "1",
+                title: "This is an item",
+            },
+            {
+                id: "2",
+                title: "Another item",
+            },
+            {
+                id: "3",
+                title: "Third item",
+            },
+            {
+                id: "4",
+                title: "Fourth item",
+            },
+        ],
+    },
+];
+
 export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
     const [showContent, setShowContent] = useState(true);
     const [input, setInput] = useState("");
+    const [activeDropdown, setActiveDropdown] = useState("");
 
     return (
         <AccordionComponent>
@@ -47,6 +73,13 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
             </AccordionItem>
             <AccordionItem header={{ children: "Item with plain text child", type: FieldsetHeaderType.AddRemove }}>
                 bar
+            </AccordionItem>{" "}
+            <AccordionItem header={{ children: "Item with dropdown child", type: FieldsetHeaderType.AddRemove }}>
+                <Dropdown
+                    menuBlocks={menuBlocks}
+                    activeItemId={activeDropdown}
+                    onChange={(id) => setActiveDropdown(id)}
+                />
             </AccordionItem>
             <AccordionItem
                 header={{
