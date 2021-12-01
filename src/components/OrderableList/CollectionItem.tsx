@@ -9,7 +9,7 @@ import React, { FC, ReactElement, useRef } from "react";
 import { GridNode } from "@react-types/grid";
 import { useDraggableItem } from "./useDraggableItem";
 import { merge } from "@utilities/merge";
-import { DragProperties, ItemDragState, OrderableListItem } from "src";
+import { DragProperties, ItemDragState, OrderableListItem } from "./OrderableList";
 
 type CollectionItemProps = {
     item: GridNode<OrderableListItem>;
