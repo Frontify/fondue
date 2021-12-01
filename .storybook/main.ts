@@ -16,6 +16,7 @@ module.exports = {
         "@storybook/addon-essentials",
         "@storybook/addon-postcss",
     ],
+    staticDirs: ["assets"],
     async viteFinal(config: any) {
         config.resolve.alias = {
             ...config.resolve.alias,
