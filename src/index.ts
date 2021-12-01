@@ -35,6 +35,7 @@ export * from "./components/MenuItem/MenuItemContent";
 export * from "./components/MultiInput/MultiInput";
 export * from "./components/MultiSelect/MultiSelect";
 export * from "./components/OrderableList/OrderableList";
+export * from "./components/OrderableList/useDraggableItem";
 export * from "./components/RadioPill/RadioPill";
 export * from "./components/RichTextEditor/BlockStyleButton";
 export * from "./components/RichTextEditor/InlineStyleButton";
