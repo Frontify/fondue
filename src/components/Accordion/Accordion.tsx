@@ -128,7 +128,10 @@ export const Accordion: FC<AccordionProps> = (props) => {
         // This makes it impossible to edit or select text in input fields inside the accordion
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         accordionProps: { onMouseDown, ...accordionProps },
-    } = useAccordion(ariaProps, state, ref);
+        // @react-aria enable by default typeahead which result in an event fired up on keypress and select the section
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+    } = useAccordion({ ...ariaProps, disallowTypeAhead: true }, state, ref);
 
     return (
         <div
