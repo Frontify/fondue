@@ -6,7 +6,7 @@ import { clearEditor } from "../utils/editor/clear";
 import { parseRawValue } from "../utils/editor/parseRawContent";
 
 /**
- * Updates the editor value when the initival value changes
+ * Updates the editor value when the initial value changes
  */
 export const useEditorValueUpdates = (editor: Editor, initialValue?: string): void => {
     const rawValue = useRef<string | null>(null);
