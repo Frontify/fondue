@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FormattedText } from "../RichTextEditor";
-import { BlockStyleTypes } from "../renderer/renderBlockStyles";
+import { BlockStyleTypes } from "../../renderer/renderBlockStyles";
+import { FormattedText } from "../../RichTextEditor";
 
 type ListItemNode = {
     type: BlockStyleTypes.ListItem;

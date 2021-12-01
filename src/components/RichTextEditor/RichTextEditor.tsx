@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { getMinWidthIfEmpty } from "@components/RichTextEditor/utils/getMinWidthIfEmpty";
 import { compose } from "@utilities/compose";
 import { debounce } from "@utilities/debounce";
 import { useDebounce } from "@utilities/useDebounce";
@@ -10,6 +11,7 @@ import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
 import { ToolbarContext } from "./context/toolbar";
+import { useEditorValueUpdates } from "./hooks/useEditorValueUpdates";
 import { useSoftBreak } from "./hooks/useSoftBreak";
 import { withLinks } from "./plugins/withLinks";
 import { withLists } from "./plugins/withLists";
@@ -18,8 +20,7 @@ import { InlineStyles, renderInlineStyles } from "./renderer/renderInlineStyles"
 import { editorMachine, States } from "./state/editor/machine";
 import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
 import { Toolbar } from "./Toolbar";
-import { parseRawValue } from "./utils/parseRawContent";
-import { getMinWidthIfEmpty } from "@components/RichTextEditor/utils/getMinWidthIfEmpty";
+import { parseRawValue } from "./utils/editor/parseRawContent";
 
 export type RichTextEditorProps = {
     placeholder?: string;
@@ -71,6 +72,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const [{ matches, children }, send] = useMachine(() =>
         editorMachine.withContext({ locked: readonly, onTextChange, onBlur }),
     );
+    useEditorValueUpdates(editor, initialValue);
 
     useEffect(() => {
         setWrapperStyle(getMinWidthIfEmpty(editor, placeholder, wrapperRef.current));
