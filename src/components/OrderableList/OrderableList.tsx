@@ -6,7 +6,7 @@ import { Item } from "@react-stately/collections";
 import { useDraggableCollectionState, useDroppableCollectionState } from "@react-stately/dnd";
 import { GridCollection, useGridState } from "@react-stately/grid";
 import { useListState } from "@react-stately/list";
-import { Collection, DropTarget, ItemDropTarget } from "@react-types/shared";
+import { DropTarget, ItemDropTarget } from "@react-types/shared";
 import React, { FC, ReactElement, useMemo, useRef, Key } from "react";
 import { GridNode } from "@react-types/grid";
 import { InsertionIndicator } from "./InsertionIndicator";
@@ -144,7 +144,10 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
         collection: gridState.collection,
         selectionManager: gridState.selectionManager,
         getDropOperation(target) {
-            const inCurrentPosition = (target: ItemDropTarget, collection: Collection<any>): boolean => {
+            const inCurrentPosition = (
+                target: ItemDropTarget,
+                collection: GridCollection<GridNode<OrderableListItem>>,
+            ): boolean => {
                 const { key, dropPosition } = target;
                 let flagged = false;
                 for (const item of collection) {
@@ -168,7 +171,7 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
             if (
                 target.type === "root" ||
                 target.dropPosition === "on" ||
-                inCurrentPosition(target, dragState.collection)
+                inCurrentPosition(target, dragState.collection as GridCollection<GridNode<OrderableListItem>>)
             ) {
                 return "cancel";
             }
