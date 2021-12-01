@@ -18,6 +18,7 @@ export const useEditorValueUpdates = (editor: Editor, initialValue?: string): vo
         if (rawValue.current !== initialValue) {
             clearEditor(editor);
             Transforms.insertNodes(editor, parseRawValue(initialValue));
+            rawValue.current = initialValue ?? null;
         }
     }, [initialValue]);
 };
