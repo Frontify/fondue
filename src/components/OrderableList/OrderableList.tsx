@@ -1,3 +1,4 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
 import { useDroppableCollection } from "@react-aria/dnd";
 import { useGrid } from "@react-aria/grid";
 import { ListKeyboardDelegate } from "@react-aria/selection";
