@@ -4,8 +4,8 @@ import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { BlockStyleTypes } from "./renderer/renderBlockStyles";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
-import { createLinkNode } from "./utils/link";
-import { createListItemNode } from "./utils/listItem";
+import { createLinkNode } from "./utils/editor/link";
+import { createListItemNode } from "./utils/editor/listItem";
 
 export default {
     title: "Components/Rich Text Editor",
