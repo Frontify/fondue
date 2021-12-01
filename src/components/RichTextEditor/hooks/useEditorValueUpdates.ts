@@ -12,12 +12,14 @@ export const useEditorValueUpdates = (editor: Editor, initialValue?: string): vo
     const rawValue = useRef<string | null>(null);
 
     useEffect(() => {
-        if (null === rawValue.current) {
-            rawValue.current = initialValue ?? null;
-        }
-        if (rawValue.current !== initialValue) {
+        const hasRawValueChanged = rawValue.current !== initialValue;
+
+        if (null !== rawValue.current && hasRawValueChanged) {
             clearEditor(editor);
             Transforms.insertNodes(editor, parseRawValue(initialValue));
+        }
+
+        if (null === rawValue.current || hasRawValueChanged) {
             rawValue.current = initialValue ?? null;
         }
     }, [initialValue]);
