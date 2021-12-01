@@ -1,63 +1,47 @@
-import { useButton } from "@react-aria/button";
-import { useDropIndicator, useDroppableCollection } from "@react-aria/dnd";
-import { useFocusRing } from "@react-aria/focus";
-import { useGrid, useGridRow, useGridCell } from "@react-aria/grid";
+import { useDroppableCollection } from "@react-aria/dnd";
+import { useGrid } from "@react-aria/grid";
 import { ListKeyboardDelegate } from "@react-aria/selection";
-import { mergeProps, useId } from "@react-aria/utils";
-import { useVisuallyHidden } from "@react-aria/visually-hidden";
+import { mergeProps } from "@react-aria/utils";
 import { Item } from "@react-stately/collections";
-import {
-    DraggableCollectionState,
-    DroppableCollectionState,
-    useDraggableCollectionState,
-    useDroppableCollectionState,
-} from "@react-stately/dnd";
-import { GridCollection, useGridState, GridState } from "@react-stately/grid";
+import { useDraggableCollectionState, useDroppableCollectionState } from "@react-stately/dnd";
+import { GridCollection, useGridState } from "@react-stately/grid";
 import { useListState } from "@react-stately/list";
 import { Collection, DropTarget, ItemDropTarget } from "@react-types/shared";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import React, { FC, ReactElement, useMemo, useRef, Key, RefObject } from "react";
+import React, { FC, ReactElement, useMemo, useRef, Key } from "react";
 import { GridNode } from "@react-types/grid";
-import { useDraggableItem } from "./useDraggableItem";
-import { merge } from "@utilities/merge";
+import { InsertionIndicator } from "./InsertionIndicator";
+import { CollectionItem } from "./CollectionItem";
 
-export type AcceptedItem<T = Record<string, unknown>> = T & {
+export type OrderableListItem<T = Record<string, unknown>> = T & {
     id: string;
     alt: string;
 };
 
 export type DragProperties = {
-    componentDragState: DragState;
+    componentDragState: ItemDragState;
     isFocusVisible: boolean;
-    isFocused: boolean;
 };
 
 type OrderableListProps = {
-    items: AcceptedItem[];
+    items: OrderableListItem[];
     showFocusRing: boolean;
     dragDisabled: boolean;
     disableTypeAhead?: boolean;
     onMove: (selectedGridItemKeys: Key[], gridItemLocation: ItemDropTarget) => void;
-    renderContent: (items: GridNode<AcceptedItem>, dragProperties: DragProperties) => ReactElement;
+    renderContent: (items: GridNode<OrderableListItem>, dragProperties: DragProperties) => ReactElement;
 };
 
 type OrderableListContainerProps = {
-    items: AcceptedItem[];
+    items: OrderableListItem[];
     showFocusRing: boolean;
     dragDisabled: boolean;
     disableTypeAhead?: boolean;
-    children: (item: AcceptedItem) => JSX.Element;
+    children: (item: OrderableListItem) => JSX.Element;
     onMove: (selectedGridItemKeys: Key[], gridItemLocation: ItemDropTarget) => void;
-    renderContent: (items: GridNode<AcceptedItem>, isDragging: DragProperties) => ReactElement;
+    renderContent: (items: GridNode<OrderableListItem>, isDragging: DragProperties) => ReactElement;
 };
 
-export const DragEventType = {
-    keyboard: "keyboard",
-    pointer: "mouse",
-    virtual: "mouse",
-};
-
-export enum DragState {
+export enum ItemDragState {
     Dragging = "Dragging",
     Idle = "Idle",
     Preview = "Preview",
@@ -97,7 +81,7 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
 
     const gridState = useGridState({
         selectionMode: "single",
-        collection: new GridCollection<AcceptedItem>({
+        collection: new GridCollection<OrderableListItem>({
             columnCount: 1,
             items: [...state.collection].map((item) => ({
                 ...item,
@@ -145,9 +129,8 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
             return (
                 <div style={{ width: `${refWidth}px` || "100%" }}>
                     {props.renderContent(item, {
-                        componentDragState: DragState.Preview,
+                        componentDragState: ItemDragState.Preview,
                         isFocusVisible: false,
-                        isFocused: false,
                     })}
                 </div>
             );
@@ -300,118 +283,6 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
                     )}
                 </>
             ))}
-        </div>
-    );
-};
-
-type CollectionItemProps = {
-    item: GridNode<AcceptedItem>;
-    dragDisabled: boolean;
-    gridState: GridState<Record<string, unknown>, GridCollection<AcceptedItem>>;
-    showFocusRing: boolean;
-    dragState: DraggableCollectionState;
-    renderContent: (items: GridNode<AcceptedItem>, isDragging: DragProperties) => ReactElement;
-};
-
-const CollectionItem: FC<CollectionItemProps> = ({
-    item,
-    gridState,
-    dragState,
-    renderContent,
-    dragDisabled,
-    showFocusRing,
-}) => {
-    const rowRef = useRef<HTMLDivElement>(null);
-
-    const { isFocusVisible, focusProps } = useFocusRing();
-
-    const isFocused = gridState.selectionManager.isFocused && gridState.selectionManager.focusedKey === item.key;
-
-    const cellRef = React.useRef(null);
-    const cellNode = [...item.childNodes][0];
-    const { gridCellProps: cellProps } = useGridCell(
-        {
-            node: cellNode,
-            focusMode: "cell",
-        },
-        gridState,
-        cellRef,
-    );
-
-    const { rowProps } = useGridRow({ node: item }, gridState, rowRef);
-    const { dragProps, dragButtonProps } = useDraggableItem({ key: item.key }, dragState);
-
-    const dragButtonRef = useRef<HTMLButtonElement>(null);
-    const { buttonProps } = useButton(
-        {
-            ...dragButtonProps,
-            elementType: "div",
-        },
-        dragButtonRef,
-    );
-    const id = useId();
-
-    const componentDragState = dragState.isDragging(item.key) ? DragState.Dragging : DragState.Idle;
-
-    let gridRowProps = {};
-    let gridCellProps: unknown = {};
-
-    if (!dragDisabled) {
-        gridRowProps = mergeProps(rowProps);
-        const { onKeyDownCapture, ...restOfCellProps } = cellProps;
-        const cellPropsWithKeyDown = { ...restOfCellProps, onKeyDown: onKeyDownCapture };
-        gridCellProps = mergeProps(cellPropsWithKeyDown, dragProps, buttonProps, focusProps);
-    }
-
-    return (
-        <div {...gridRowProps} ref={rowRef} style={{ zIndex: 1, position: "relative" }} aria-labelledby={id}>
-            <div
-                {...gridCellProps}
-                className={merge([isFocusVisible && showFocusRing && FOCUS_STYLE])}
-                ref={cellRef}
-                style={{ outline: "none" }}
-            >
-                {renderContent(item, { componentDragState, isFocusVisible, isFocused })}
-            </div>
-        </div>
-    );
-};
-
-type InsertionIndicatorProps = {
-    key: string;
-    collectionRef: RefObject<HTMLDivElement>;
-    target: ItemDropTarget;
-    dropState: DroppableCollectionState;
-};
-
-const InsertionIndicator: FC<InsertionIndicatorProps> = (props) => {
-    const ref = useRef<HTMLDivElement>(null);
-    const { dropIndicatorProps } = useDropIndicator(props, props.dropState, ref);
-    const { visuallyHiddenProps } = useVisuallyHidden();
-
-    // If aria-hidden, we are either not in a drag session or the drop target is invalid.
-    // In that case, there's no need to render anything at all unless we need to show the indicator visually.
-    // This can happen when dragging using the native DnD API as opposed to keyboard dragging.
-    if (!props.dropState.isDropTarget(props.target) && dropIndicatorProps["aria-hidden"]) {
-        return null;
-    }
-
-    return (
-        <div role="row" aria-hidden={dropIndicatorProps["aria-hidden"]} style={{ zIndex: 2, position: "relative" }}>
-            <div
-                role="gridcell"
-                aria-selected="false"
-                style={{
-                    width: "100%",
-                    marginLeft: 0,
-                    height: 2,
-                    marginBottom: -2,
-                    outline: "none",
-                }}
-                className={props.dropState.isDropTarget(props.target) ? "tw-bg-violet-60" : ""}
-            >
-                <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
-            </div>
         </div>
     );
 };
