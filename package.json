@@ -37,7 +37,7 @@
         "build:config": "rollup -c",
         "build:css": "tailwindcss -i ./src/styles.css -o dist/index.css",
         "build:library": "vite build",
-        "build:storybook": "build-storybook -s .storybook/assets",
+        "build:storybook": "build-storybook",
         "dev": "cross-env NODE_ENV=development npm run dev:library & cross-env NODE_ENV=development npm run dev:config",
         "dev:config": "rollup -c -w",
         "dev:library": "vite build --watch",
@@ -56,7 +56,7 @@
         "test:browser": "npm run build:css && cypress open-ct",
         "test:file": "npm run build:css && cypress run-ct --spec",
         "typecheck": "tsc",
-        "storybook": "start-storybook -p 6006 -s .storybook/assets",
+        "storybook": "start-storybook -p 6006",
         "prepublishOnly": "npm run build",
         "prepare": "is-ci || husky install"
     },
