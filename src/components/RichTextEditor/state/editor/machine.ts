@@ -69,6 +69,9 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                         },
                         States.Editing,
                     ],
+                    TEXT_UPDATED: {
+                        actions: "callOnTextChange",
+                    },
                     TEXT_DESELECTED: States.Editing,
                     BLUR: {
                         target: States.Readonly,
