@@ -1,3 +1,4 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
 import { useDropIndicator } from "@react-aria/dnd";
 import { useVisuallyHidden } from "@react-aria/visually-hidden";
 import { DroppableCollectionState } from "@react-stately/dnd";
