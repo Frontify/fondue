@@ -47,7 +47,7 @@ export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorP
         <RichTextEditorComponent {...args} />
     </>
 );
-RichTextEditor.argTypes = { value: { type: "object" } };
+RichTextEditor.argTypes = { value: { type: "string" } };
 RichTextEditor.args = { value: JSON.stringify(value) };
 
 export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
@@ -63,7 +63,7 @@ WithReadonlyState.args = {
         },
     ]),
 };
-WithReadonlyState.argTypes = { value: { type: "object" } };
+WithReadonlyState.argTypes = { value: { type: "string" } };
 
 export const RichTextWithHTML: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
@@ -96,4 +96,4 @@ export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEdi
         <RichTextEditorComponent {...args} />
     </div>
 );
-RichTextEditorFlex.argTypes = { value: { type: "object" } };
+RichTextEditorFlex.argTypes = { value: { type: "string" } };
