@@ -2,13 +2,12 @@
 
 import React from "react";
 import { mount } from "@cypress/react";
-import { OrderableList } from "./OrderableList";
 
 const OrderableList_FOO = "bar";
 
 describe("OrderableList Component", () => {
     it("should render foo text correctly", () => {
-        mount(<OrderableList foo={OrderableList_FOO} />);
+        mount(<div>{OrderableList_FOO}</div>);
 
         cy.get("[data-test-id=test-drag]").as("OrderableList");
 
