@@ -7,7 +7,7 @@ const OrderableList_FOO = "bar";
 
 describe("OrderableList Component", () => {
     it("should render foo text correctly", () => {
-        mount(<div>{OrderableList_FOO}</div>);
+        mount(<div data-test-id="test-drag">{OrderableList_FOO}</div>);
 
         cy.get("[data-test-id=test-drag]").as("OrderableList");
 
