@@ -20,7 +20,7 @@ export default {
     argTypes: {
         validation: {
             options: Object.values(Validation),
-            type: "select",
+            control: { type: "select" },
         },
         placeholder: { type: "string" },
         value: { table: { disable: true } },
@@ -73,7 +73,7 @@ WithCharacterDecorator.args = {
 };
 
 const PasswordArgTypes = {
-    obfuscated: { type: "boolean", table: { disable: false } },
+    obfuscated: { control: { type: "boolean" }, table: { disable: false } },
 };
 
 const PasswordArgs = {

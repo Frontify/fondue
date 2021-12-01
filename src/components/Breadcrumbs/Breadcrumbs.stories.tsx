@@ -17,6 +17,9 @@ const ITEMS = [
 export default {
     title: "Components/Breadcrumbs",
     component: Breadcrumbs,
+    argTypes: {
+        onBlur: { action: "onBlur" },
+    },
 } as Meta<BreadcrumbsProps>;
 
 const Template: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
@@ -28,10 +31,6 @@ WithoutLinkOrAction.args = {
 };
 
 export const WithDecoratorAndAction = Template.bind({});
-
-WithDecoratorAndAction.argTypes = {
-    onClick: { action: "onClick" },
-};
 
 WithDecoratorAndAction.args = {
     items: [...ITEMS, { onClick: action("click"), bold: true, decorator: <IconIcons />, label: "Active" }],
