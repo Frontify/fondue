@@ -149,7 +149,7 @@ export const TextInput: FC<TextInputProps> = ({
                 id={useMemoizedId(propId)}
                 ref={inputElement}
                 className={merge([
-                    "tw-flex-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows",
+                    "tw-w-full tw-flex-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows",
                     disabled
                         ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40"
                         : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
