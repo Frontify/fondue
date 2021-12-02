@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getDisabledItemIds, getMenuItems, mapToAriaProps } from "@components/Menu/Aria/helper";
-import { MenuBlock, SelectMenu } from "@components/Menu/SelectMenu";
+import { MenuBlock, MenuItemType, SelectMenu } from "@components/Menu/SelectMenu";
 import { MenuItemContent, MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { Trigger } from "@components/Trigger/Trigger";
 import { useMemoizedId } from "@hooks/useMemoizedId";
@@ -13,7 +13,7 @@ import { mergeProps } from "@react-aria/utils";
 import { useSelectState } from "@react-stately/select";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, ReactElement, useRef } from "react";
+import React, { FC, ReactElement, useEffect, useRef } from "react";
 
 export enum DropdownSize {
     Small = "Small",
@@ -33,11 +33,19 @@ export type DropdownProps = {
     decorator?: ReactElement;
 };
 
-const getActiveItem = (blocks: MenuBlock[], activeId?: string | number) =>
-    blocks
-        .map(({ menuItems }) => menuItems)
-        .flat()
-        .find(({ id }) => id.toString() === activeId?.toString()) || null;
+const getActiveItem = (blocks: MenuBlock[], activeId?: string | number): MenuItemType | null => {
+    const disabledItems = getDisabledItemIds(getMenuItems(blocks));
+    if (disabledItems.has(activeId as string)) {
+        return null;
+    }
+
+    return (
+        blocks
+            .map(({ menuItems }) => menuItems)
+            .flat()
+            .find(({ id }) => id.toString() === activeId?.toString()) || null
+    );
+};
 
 export const Dropdown: FC<DropdownProps> = ({
     id: propId,
@@ -69,6 +77,14 @@ export const Dropdown: FC<DropdownProps> = ({
         { isOpen, onClose: () => state.close(), shouldCloseOnBlur: true, isDismissable: true },
         overlayRef,
     );
+
+    useEffect(() => {
+        if (state.disabledKeys.has(activeItemId as string)) {
+            return;
+        }
+
+        state.setSelectedKey(activeItemId as string);
+    }, [activeItemId]);
 
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">

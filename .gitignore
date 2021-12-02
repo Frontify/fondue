@@ -4,3 +4,6 @@ cypress/videos
 cypress/screenshots
 storybook-static
 !.src/foundation/Icon/Generated/.gitkeep
+
+# IntelliJ
+.idea
