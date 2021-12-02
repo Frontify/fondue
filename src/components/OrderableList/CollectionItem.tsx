@@ -4,7 +4,7 @@ import { useFocusRing } from "@react-aria/focus";
 import { useGridRow, useGridCell } from "@react-aria/grid";
 import { mergeProps, useId } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import React, { FC, useRef } from "react";
+import React, { FC, HTMLAttributes, useRef } from "react";
 import { useDraggableItem } from "./useDraggableItem";
 import { merge } from "@utilities/merge";
 import { CollectionItemProps, ItemDragState } from "./types";
@@ -47,11 +47,12 @@ export const CollectionItem: FC<CollectionItemProps> = ({
 
     const componentDragState = dragState.isDragging(item.key) ? ItemDragState.Dragging : ItemDragState.Idle;
 
-    let gridRowProps: unknown = {};
-    let gridCellProps: unknown = {};
+    const gridRowProps: HTMLAttributes<HTMLDivElement> = {
+        ...(!dragDisabled && rowProps),
+    };
 
+    let gridCellProps: HTMLAttributes<HTMLDivElement> = {};
     if (!dragDisabled) {
-        gridRowProps = mergeProps(rowProps);
         const { onKeyDownCapture, ...restOfCellProps } = cellProps;
         const cellPropsWithKeyDown = { ...restOfCellProps, onKeyDown: onKeyDownCapture };
         gridCellProps = mergeProps(cellPropsWithKeyDown, dragProps, buttonProps, focusProps);
