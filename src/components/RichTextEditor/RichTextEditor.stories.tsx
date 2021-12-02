@@ -4,8 +4,8 @@ import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { BlockStyleTypes } from "./renderer/renderBlockStyles";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
-import { createLinkNode } from "./utils/link";
-import { createListItemNode } from "./utils/listItem";
+import { createLinkNode } from "./utils/editor/link";
+import { createListItemNode } from "./utils/editor/listItem";
 
 export default {
     title: "Components/Rich Text Editor",
@@ -47,7 +47,7 @@ export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorP
         <RichTextEditorComponent {...args} />
     </>
 );
-RichTextEditor.argTypes = { value: { type: "object" } };
+RichTextEditor.argTypes = { value: { type: "string" } };
 RichTextEditor.args = { value: JSON.stringify(value) };
 
 export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
@@ -63,7 +63,7 @@ WithReadonlyState.args = {
         },
     ]),
 };
-WithReadonlyState.argTypes = { value: { type: "object" } };
+WithReadonlyState.argTypes = { value: { type: "string" } };
 
 export const RichTextWithHTML: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
@@ -90,3 +90,10 @@ RichTextWithHTML.args = {
     `,
 };
 RichTextWithHTML.argTypes = { value: { type: "string" } };
+
+export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <div className="tw-flex">
+        <RichTextEditorComponent {...args} />
+    </div>
+);
+RichTextEditorFlex.argTypes = { value: { type: "string" } };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -26,5 +26,5 @@ function IconPause(props: GeneratedIconProps): React.ReactElement<GeneratedIconP
     );
 }
 
-const MemoIconPause = React.memo(IconPause);
-export default MemoIconPause;
+const Memo = memo(IconPause);
+export default Memo;

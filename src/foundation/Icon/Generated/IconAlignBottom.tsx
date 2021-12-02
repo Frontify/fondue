@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconAlignBottom(props: GeneratedIconProps): React.ReactElement<Generate
             name="IconAlignBottom"
             {...props}
         >
-            <path d="M3.865 22.04A.867.867 0 013 21.17c0-.48.387-.87.865-.87h16.27c.478 0 .865.39.865.87s-.387.87-.865.87H3.865zm7.32-6.04V2.87c0-.522.346-.87.865-.87s.865.348.865.87V16l4.584-4.609a.833.833 0 011.211 0 .844.844 0 010 1.218l-6.055 6.087a.833.833 0 01-1.21 0l-6.056-6.087a.844.844 0 010-1.218.833.833 0 011.211 0L11.185 16z" />
+            <path d="M3.865 22.04A.867.867 0 0 1 3 21.17c0-.48.387-.87.865-.87h16.27c.478 0 .865.39.865.87s-.387.87-.865.87H3.865Zm7.32-6.04V2.87c0-.522.346-.87.865-.87s.865.348.865.87V16l4.584-4.609a.833.833 0 0 1 1.211 0 .844.844 0 0 1 0 1.218l-6.055 6.087a.833.833 0 0 1-1.21 0l-6.056-6.087a.844.844 0 0 1 0-1.218.833.833 0 0 1 1.211 0L11.185 16Z" />
         </svg>
     );
 }
 
-const MemoIconAlignBottom = React.memo(IconAlignBottom);
-export default MemoIconAlignBottom;
+const Memo = memo(IconAlignBottom);
+export default Memo;

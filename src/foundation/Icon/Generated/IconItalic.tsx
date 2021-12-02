@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconItalic(props: GeneratedIconProps): React.ReactElement<GeneratedIcon
             name="IconItalic"
             {...props}
         >
-            <path d="M14.5 4h-3L9 20h3l2.5-16z" />
+            <path d="M14.5 4h-3L9 20h3l2.5-16Z" />
         </svg>
     );
 }
 
-const MemoIconItalic = React.memo(IconItalic);
-export default MemoIconItalic;
+const Memo = memo(IconItalic);
+export default Memo;

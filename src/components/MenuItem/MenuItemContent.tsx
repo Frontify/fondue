@@ -32,19 +32,24 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
     <div
         {...ariaProps}
         data-test-id="menu-item-content"
-        className={merge([
-            "tw-flex tw-box-border tw-items-center tw-font-sans tw-text-s",
-            size === MenuItemContentSize.Large ? "tw-gap-3" : "tw-gap-2",
-        ])}
+        className="tw-flex tw-box-border tw-items-center tw-font-sans tw-text-s"
     >
         {decorator && (
-            <span className="tw-flex-shrink-0" data-test-id="menu-item-decorator">
+            <span
+                className={merge(["tw-flex-shrink-0", size === MenuItemContentSize.Large ? "tw-pr-3" : "tw-pr-2"])}
+                data-test-id="menu-item-decorator"
+            >
                 {cloneElement(decorator, {
                     size: size === MenuItemContentSize.Small ? IconSize.Size16 : IconSize.Size20,
                 })}
             </span>
         )}
-        <div className="tw-flex-1 tw-overflow-hidden tw-overflow-ellipsis tw-whitespace-nowrap">
+        <div
+            className={merge([
+                "tw-flex-1 tw-overflow-hidden tw-overflow-ellipsis tw-whitespace-nowrap",
+                size === MenuItemContentSize.Large ? "tw-pr-3" : "tw-pr-2",
+            ])}
+        >
             <div
                 data-test-id="menu-item-title"
                 className="tw-select-none"

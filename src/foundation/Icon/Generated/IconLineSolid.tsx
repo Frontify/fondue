@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -21,11 +21,11 @@ function IconLineSolid(props: GeneratedIconProps): React.ReactElement<GeneratedI
             <path
                 fillRule="evenodd"
                 clipRule="evenodd"
-                d="M18 20.75a.25.25 0 00.25-.25v-4a.75.75 0 011.5 0v4A1.75 1.75 0 0118 22.25H6a1.75 1.75 0 01-1.75-1.75v-4a.75.75 0 011.5 0v4c0 .138.112.25.25.25h12zM18 4.25a.25.25 0 01.25.25v4a.75.75 0 001.5 0v-4A1.75 1.75 0 0018 2.75H6A1.75 1.75 0 004.25 4.5v4a.75.75 0 001.5 0v-4A.25.25 0 016 4.25h12zM20 12.483a.75.75 0 01-.75.75H4.75a.75.75 0 010-1.5h14.5a.75.75 0 01.75.75z"
+                d="M18 20.75a.25.25 0 0 0 .25-.25v-4a.75.75 0 0 1 1.5 0v4A1.75 1.75 0 0 1 18 22.25H6a1.75 1.75 0 0 1-1.75-1.75v-4a.75.75 0 0 1 1.5 0v4c0 .138.112.25.25.25h12ZM18 4.25a.25.25 0 0 1 .25.25v4a.75.75 0 0 0 1.5 0v-4A1.75 1.75 0 0 0 18 2.75H6A1.75 1.75 0 0 0 4.25 4.5v4a.75.75 0 0 0 1.5 0v-4A.25.25 0 0 1 6 4.25h12ZM20 12.483a.75.75 0 0 1-.75.75H4.75a.75.75 0 0 1 0-1.5h14.5a.75.75 0 0 1 .75.75Z"
             />
         </svg>
     );
 }
 
-const MemoIconLineSolid = React.memo(IconLineSolid);
-export default MemoIconLineSolid;
+const Memo = memo(IconLineSolid);
+export default Memo;

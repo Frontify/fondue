@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -23,5 +23,5 @@ function IconHeader(props: GeneratedIconProps): React.ReactElement<GeneratedIcon
     );
 }
 
-const MemoIconHeader = React.memo(IconHeader);
-export default MemoIconHeader;
+const Memo = memo(IconHeader);
+export default Memo;

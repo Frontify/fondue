@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconFoodDrink(props: GeneratedIconProps): React.ReactElement<GeneratedI
             name="IconFoodDrink"
             {...props}
         >
-            <path d="M14.5 18.552v.948a2.5 2.5 0 11-5 0v-.948H8a3 3 0 01-3-3V9a7 7 0 1114 0v6.552a3 3 0 01-3 3h-1.5zm-1.5 0h-2v.948a1 1 0 002 0v-.948zM12 3.5A5.5 5.5 0 006.5 9v6.552a1.5 1.5 0 001.5 1.5h8a1.5 1.5 0 001.5-1.5V9A5.5 5.5 0 0012 3.5zM9.25 8a.75.75 0 011.5 0v7a.75.75 0 11-1.5 0V8zm4 0a.75.75 0 011.5 0v7a.75.75 0 11-1.5 0V8z" />
+            <path d="M14.5 18.552v.948a2.5 2.5 0 1 1-5 0v-.948H8a3 3 0 0 1-3-3V9a7 7 0 1 1 14 0v6.552a3 3 0 0 1-3 3h-1.5zm-1.5 0h-2v.948a1 1 0 0 0 2 0v-.948zM12 3.5A5.5 5.5 0 0 0 6.5 9v6.552a1.5 1.5 0 0 0 1.5 1.5h8a1.5 1.5 0 0 0 1.5-1.5V9A5.5 5.5 0 0 0 12 3.5zM9.25 8a.75.75 0 0 1 1.5 0v7a.75.75 0 1 1-1.5 0V8zm4 0a.75.75 0 0 1 1.5 0v7a.75.75 0 1 1-1.5 0V8z" />
         </svg>
     );
 }
 
-const MemoIconFoodDrink = React.memo(IconFoodDrink);
-export default MemoIconFoodDrink;
+const Memo = memo(IconFoodDrink);
+export default Memo;

@@ -1,37 +1,52 @@
 {
     "name": "@frontify/arcade",
-    "version": "0.12.1",
+    "version": "0.14.0-beta.7",
     "description": "Design system of Frontify",
-    "main": "dist/index.umd.js",
-    "module": "dist/index.es.js",
+    "module": "dist/index.js",
     "files": [
         "dist"
     ],
     "exports": {
-        ".": {
-            "import": "./dist/index.es.js",
-            "require": "./dist/index.umd.js"
+        ".": "./dist/index.js",
+        "./config": "./dist/config.js",
+        "./style": "./dist/styles.css",
+        "./components/*": {
+            "types": "./dist/src/components/*/index.d.ts",
+            "import": "./dist/src/components/*/index.js"
         },
-        "./config": {
-            "import": "./dist/config.es.js",
-            "require": "./dist/config.umd.js"
+        "./types": {
+            "types": "./dist/src/types/index.d.ts",
+            "import": "./dist/src/types/index.js"
         },
-        "./style": "./dist/index.css"
+        "./types/*": {
+            "types": "./dist/src/types/*.d.ts",
+            "import": "./dist/src/types/*.js"
+        },
+        "./icons": {
+            "types": "./dist/src/foundation/Icon/index.d.ts",
+            "import": "./dist/src/foundation/Icon/index.js"
+        },
+        "./icons/*": {
+            "types": "./dist/src/foundation/Icon/*.d.ts",
+            "import": "./dist/src/foundation/Icon/*.js"
+        }
     },
     "types": "dist/index.d.ts",
     "scripts": {
-        "build": "npm run clean && npm run generate && cross-env NODE_ENV=production npm run build:library && cross-env NODE_ENV=production npm run build:config",
+        "build": "npm run clean && npm run generate && cross-env NODE_ENV=production npm run build:library && cross-env NODE_ENV=production npm run build:config && npm run generate:barrelExport",
         "build:config": "rollup -c",
         "build:css": "tailwindcss -i ./src/styles.css -o dist/index.css",
         "build:library": "vite build",
-        "build:storybook": "build-storybook -s .storybook/assets",
+        "build:storybook": "build-storybook",
         "dev": "cross-env NODE_ENV=development npm run dev:library & cross-env NODE_ENV=development npm run dev:config",
         "dev:config": "rollup -c -w",
         "dev:library": "vite build --watch",
         "clean": "rimraf dist",
         "component:create": "esno scripts/createNewComponent.ts",
-        "generate": "esno scripts/generateExports.ts && esno ./scripts/generateIconMap.ts",
-        "generate:iconsMap": "esno ./scripts/generateIconMap.ts && eslint --fix ./src/foundation/Icon/IconsMap.tsx",
+        "generate": "npm run generate:reactIcons && npm run generate:iconsMap",
+        "generate:barrelExport": "esno ./scripts/generateBarrelExport.ts",
+        "generate:reactIcons": "esno ./scripts/generateReactIcons.ts",
+        "generate:iconsMap": "esno ./scripts/generateIconMap.ts && eslint --fix ./src/foundation/Icon/IconEnum.ts ./src/foundation/Icon/IconsMap.tsx",
         "lint": "npm run lint:ts",
         "lint:fix": "npm run lint:ts:fix",
         "lint:ts": "eslint 'src/**/*.{ts,tsx}'",
@@ -41,7 +56,7 @@
         "test:browser": "npm run build:css && cypress open-ct",
         "test:file": "npm run build:css && cypress run-ct --spec",
         "typecheck": "tsc",
-        "storybook": "start-storybook -p 6006 -s .storybook/assets",
+        "storybook": "start-storybook -p 6006",
         "prepublishOnly": "npm run build",
         "prepare": "is-ci || husky install"
     },
@@ -61,48 +76,54 @@
     "devDependencies": {
         "@cypress/react": "5.10.3",
         "@cypress/vite-dev-server": "2.2.1",
-        "@frontify/eslint-config-react": "0.11.0",
+        "@frontify/eslint-config-react": "0.12.0",
         "@rollup/plugin-alias": "3.1.8",
         "@rollup/plugin-commonjs": "21.0.1",
         "@rollup/plugin-node-resolve": "13.0.6",
-        "@storybook/addon-actions": "6.3.12",
-        "@storybook/addon-essentials": "6.3.12",
-        "@storybook/addon-links": "6.3.12",
+        "@storybook/addon-actions": "6.4.4",
+        "@storybook/addon-essentials": "6.4.4",
+        "@storybook/addon-links": "6.4.4",
         "@storybook/addon-postcss": "2.0.0",
-        "@storybook/react": "6.3.12",
-        "@svgr/core": "5.5.0",
-        "@svgr/plugin-jsx": "5.5.0",
-        "@svgr/plugin-prettier": "5.5.0",
-        "@svgr/plugin-svgo": "5.5.0",
-        "@types/react": "17.0.36",
+        "@storybook/react": "6.4.4",
+        "@svgr/core": "6.1.0",
+        "@svgr/plugin-jsx": "6.1.0",
+        "@svgr/plugin-prettier": "6.0.0",
+        "@svgr/plugin-svgo": "6.1.0",
+        "@types/react": "17.0.37",
         "@types/react-dom": "17.0.11",
         "@vitejs/plugin-react-refresh": "1.3.6",
         "autoprefixer": "10.4.0",
-        "chalk": "4.1.2",
+        "chalk": "5.0.0",
         "cross-env": "7.0.3",
         "cypress": "8.7.0",
         "cypress-real-events": "1.5.1",
-        "esbuild": "0.13.15",
-        "eslint": "7.32.0",
+        "esbuild": "0.14.1",
+        "eslint": "8.3.0",
         "eslint-plugin-jsx-a11y": "6.5.1",
         "esno": "0.12.1",
         "fast-glob": "3.2.7",
         "husky": "7.0.4",
         "is-ci": "3.0.1",
-        "postcss": "8.3.11",
+        "postcss": "8.4.4",
         "postcss-cli": "9.0.2",
         "postcss-nested": "5.0.6",
-        "prettier": "2.4.1",
+        "prettier": "2.5.0",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
         "rimraf": "3.0.2",
-        "rollup": "2.60.0",
-        "rollup-plugin-dts": "4.0.1",
+        "rollup": "2.60.2",
         "rollup-plugin-esbuild": "4.7.2",
+<<<<<<< HEAD
         "storybook-builder-vite": "0.1.7",
+=======
+        "storybook-builder-vite": "0.1.10",
+>>>>>>> main
         "storybook-dark-mode": "1.0.8",
         "tailwindcss": "2.2.19",
         "ts-node": "10.4.0",
         "typescript": "4.5.2",
-        "vite": "2.6.14"
+        "vite": "2.6.14",
+        "vite-plugin-dts": "0.9.6"
     },
     "peerDependencies": {
         "react": "^17.0.2",
@@ -147,10 +168,10 @@
         "framer-motion": "^5.0.0",
         "react-color": "^2.19.3",
         "react-popper": "^2.2.5",
-        "slate": "^0.70.0",
+        "slate": "^0.71.0",
         "slate-history": "^0.66.0",
         "slate-hyperscript": "^0.67.0",
-        "slate-react": "^0.70.0",
+        "slate-react": "^0.71.0",
         "xstate": "^4.25.0"
     }
 }

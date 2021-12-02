@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconColorScale(props: GeneratedIconProps): React.ReactElement<Generated
             name="IconColorScale"
             {...props}
         >
-            <path d="M16.615 9.338H12v5.385h4.615V9.338zm1.539 0v5.385h2.308V9.338h-2.308zm-7.692 0H3.538v5.385h6.924V9.338zM3.538 7.8h16.924c.85 0 1.538.689 1.538 1.538v5.385c0 .85-.689 1.539-1.538 1.539H3.538c-.85 0-1.538-.69-1.538-1.539V9.338c0-.85.689-1.538 1.538-1.538z" />
+            <path d="M16.615 9.338H12v5.385h4.615V9.338Zm1.539 0v5.385h2.308V9.338h-2.308Zm-7.692 0H3.538v5.385h6.924V9.338ZM3.538 7.8h16.924c.85 0 1.538.689 1.538 1.538v5.385c0 .85-.689 1.539-1.538 1.539H3.538c-.85 0-1.538-.69-1.538-1.539V9.338c0-.85.689-1.538 1.538-1.538Z" />
         </svg>
     );
 }
 
-const MemoIconColorScale = React.memo(IconColorScale);
-export default MemoIconColorScale;
+const Memo = memo(IconColorScale);
+export default Memo;

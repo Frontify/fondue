@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconAddSimple(props: GeneratedIconProps): React.ReactElement<GeneratedI
             name="IconAddSimple"
             {...props}
         >
-            <path d="M13.065 13.065l.002 4.739c0 .588-.476 1.067-1.064 1.069a1.061 1.061 0 01-1.066-1.062l-.002-4.746-4.746-.002a1.061 1.061 0 01-1.062-1.066 1.069 1.069 0 011.069-1.064l4.739.002-.002-4.739c0-.588.476-1.067 1.064-1.069a1.061 1.061 0 011.066 1.062l.002 4.746 4.746.002c.588 0 1.063.477 1.062 1.066a1.069 1.069 0 01-1.069 1.064l-4.739-.002z" />
+            <path d="m13.065 13.065.002 4.739c0 .588-.476 1.067-1.064 1.069a1.061 1.061 0 0 1-1.066-1.062l-.002-4.746-4.746-.002a1.061 1.061 0 0 1-1.062-1.066 1.069 1.069 0 0 1 1.069-1.064l4.739.002-.002-4.739c0-.588.476-1.067 1.064-1.069a1.061 1.061 0 0 1 1.066 1.062l.002 4.746 4.746.002c.588 0 1.063.477 1.062 1.066a1.069 1.069 0 0 1-1.069 1.064l-4.739-.002Z" />
         </svg>
     );
 }
 
-const MemoIconAddSimple = React.memo(IconAddSimple);
-export default MemoIconAddSimple;
+const Memo = memo(IconAddSimple);
+export default Memo;

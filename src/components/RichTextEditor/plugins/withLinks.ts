@@ -2,7 +2,7 @@
 
 import { Editor, Element, NodeEntry, Transforms } from "slate";
 import { BlockStyleTypes } from "../renderer/renderBlockStyles";
-import { createParagraphNode } from "../utils/paragraph";
+import { createParagraphNode } from "../utils/editor/paragraph";
 
 export const withLinks = (editor: Editor): Editor => {
     const { isInline, normalizeNode } = editor;

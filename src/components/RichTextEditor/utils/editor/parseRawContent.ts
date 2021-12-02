@@ -2,8 +2,8 @@
 
 import { Descendant } from "slate";
 import { jsx } from "slate-hyperscript";
-import { BlockStyleTypes } from "../renderer/renderBlockStyles";
-import { InlineStyles } from "../renderer/renderInlineStyles";
+import { BlockStyleTypes } from "../../renderer/renderBlockStyles";
+import { InlineStyles } from "../../renderer/renderInlineStyles";
 
 const BLOCK_MAP: { [key: string]: (el: HTMLElement) => { type: string } } = {
     A: (el) => ({ type: BlockStyleTypes.Link, url: el.getAttribute("href") }),

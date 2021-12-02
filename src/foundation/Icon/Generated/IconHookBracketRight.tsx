@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconHookBracketRight(props: GeneratedIconProps): React.ReactElement<Gen
             name="IconHookBracketRight"
             {...props}
         >
-            <path d="M.212 12h5.86V0H4.7v10.72H.212V12z" />
+            <path d="M.212 12h5.86V0H4.7v10.72H.212V12Z" />
         </svg>
     );
 }
 
-const MemoIconHookBracketRight = React.memo(IconHookBracketRight);
-export default MemoIconHookBracketRight;
+const Memo = memo(IconHookBracketRight);
+export default Memo;

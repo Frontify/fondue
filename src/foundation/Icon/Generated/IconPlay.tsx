@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconPlay(props: GeneratedIconProps): React.ReactElement<GeneratedIconPr
             name="IconPlay"
             {...props}
         >
-            <path d="M19.356 12.743L6.62 20.02a1 1 0 01-1.496-.868V4.598a1 1 0 011.496-.868l12.735 7.277a1 1 0 010 1.736z" />
+            <path d="M19.356 12.743 6.62 20.02a1 1 0 0 1-1.496-.868V4.598a1 1 0 0 1 1.496-.868l12.735 7.277a1 1 0 0 1 0 1.736Z" />
         </svg>
     );
 }
 
-const MemoIconPlay = React.memo(IconPlay);
-export default MemoIconPlay;
+const Memo = memo(IconPlay);
+export default Memo;

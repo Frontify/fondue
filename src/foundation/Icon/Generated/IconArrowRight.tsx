@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconArrowRight(props: GeneratedIconProps): React.ReactElement<Generated
             name="IconArrowRight"
             {...props}
         >
-            <path d="M18.498 13.03H3.026a1.026 1.026 0 110-2.05h15.472L13.07 5.55a1.026 1.026 0 111.45-1.45l7.18 7.18c.4.4.4 1.05 0 1.45l-7.18 7.18a1.026 1.026 0 01-1.45-1.45l5.428-5.43z" />
+            <path d="M18.498 13.03H3.026a1.026 1.026 0 1 1 0-2.05h15.472L13.07 5.55a1.026 1.026 0 1 1 1.45-1.45l7.18 7.18c.4.4.4 1.05 0 1.45l-7.18 7.18a1.026 1.026 0 0 1-1.45-1.45l5.428-5.43Z" />
         </svg>
     );
 }
 
-const MemoIconArrowRight = React.memo(IconArrowRight);
-export default MemoIconArrowRight;
+const Memo = memo(IconArrowRight);
+export default Memo;

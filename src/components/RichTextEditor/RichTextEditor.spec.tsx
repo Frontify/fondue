@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { getCanvasFontSize, getTextWidth } from "@components/RichTextEditor/utils/getTextWidth";
 import { mount } from "@cypress/react";
 import React from "react";
 import { BlockStyleTypes } from "./renderer/renderBlockStyles";
 import { classMap, InlineStyles } from "./renderer/renderInlineStyles";
-import { RichTextEditor } from "./RichTextEditor";
+import { ON_SAVE_DELAY_IN_MS, RichTextEditor } from "./RichTextEditor";
 
 const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
 const TOOLBAR = "[data-test-id=toolbar]";
+const PLACEHOLDER = "My placeholder";
 
 const getBlockStyleControl = (blockType: string) => `[data-test-id=block-style-button-${blockType}]`;
 const getInlineStyleControl = (style: string) => `[data-test-id=inline-style-button-${style}]`;
@@ -122,5 +124,44 @@ describe("RichTextEditor Component", () => {
         cy.get("[contenteditable=true]").click().type("hello{selectall}");
         cy.get(getBlockStyleControl("unordered-list")).click();
         cy.get("[contenteditable=true]").should("include.html", "<ul");
+    });
+
+    it("render the placeholder with correct width", () => {
+        mount(
+            <div style={{ display: "inline-flex" }}>
+                <RichTextEditor placeholder={PLACEHOLDER} />
+            </div>,
+        );
+
+        cy.get(RICH_TEXT_EDITOR).then(($element) => {
+            const expectedWidth = getTextWidth(PLACEHOLDER, getCanvasFontSize($element.get(0)));
+            expect(expectedWidth).to.be.equal($element.width());
+        });
+    });
+
+    it("emits onTextChange when choosing an inline style", () => {
+        const onTextChange = cy.stub();
+        mount(<RichTextEditor onTextChange={onTextChange} />);
+
+        insertTextAndOpenToolbar();
+        cy.get(getInlineStyleControl(InlineStyles.Bold))
+            .click()
+            .wait(ON_SAVE_DELAY_IN_MS)
+            .then(() => {
+                expect(onTextChange).to.be.called; // succeeds
+            });
+    });
+
+    it("emits onTextChange when choosing a block style", () => {
+        const onTextChange = cy.stub();
+        mount(<RichTextEditor onTextChange={onTextChange} />);
+
+        insertTextAndOpenToolbar();
+        cy.get(getBlockStyleControl("ordered-list"))
+            .click()
+            .wait(ON_SAVE_DELAY_IN_MS)
+            .then(() => {
+                expect(onTextChange).to.be.called; // succeeds
+            });
     });
 });

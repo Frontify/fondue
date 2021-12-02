@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconMinus(props: GeneratedIconProps): React.ReactElement<GeneratedIconP
             name="IconMinus"
             {...props}
         >
-            <path d="M4.126 8.708a.707.707 0 01-.708-.71.713.713 0 01.712-.71l7.744.003c.392 0 .709.318.707.71a.713.713 0 01-.712.71l-7.743-.003z" />
+            <path d="M4.126 8.708a.707.707 0 0 1-.708-.71.713.713 0 0 1 .712-.71l7.744.003c.392 0 .709.318.707.71a.713.713 0 0 1-.712.71l-7.743-.003Z" />
         </svg>
     );
 }
 
-const MemoIconMinus = React.memo(IconMinus);
-export default MemoIconMinus;
+const Memo = memo(IconMinus);
+export default Memo;
