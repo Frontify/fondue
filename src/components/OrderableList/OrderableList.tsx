@@ -8,11 +8,12 @@ import { useDraggableCollectionState, useDroppableCollectionState } from "@react
 import { GridCollection, useGridState } from "@react-stately/grid";
 import { useListState } from "@react-stately/list";
 import { DropTarget, ItemDropTarget } from "@react-types/shared";
-import React, { FC, useMemo, useRef } from "react";
+import React, { FC, useRef } from "react";
 import { GridNode } from "@react-types/grid";
 import { InsertionIndicator } from "./InsertionIndicator";
 import { CollectionItem } from "./CollectionItem";
 import { ItemDragState, OrderableListContainerProps, OrderableListItem, OrderableListProps } from "./types";
+import { useMemoizedId } from "@hooks/useMemoizedId";
 
 export const OrderableList: FC<OrderableListProps> = ({
     onMove,
@@ -79,7 +80,7 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
     );
 
     // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
-    const dragType = useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+    const dragType = useMemoizedId();
     const dragState = useDraggableCollectionState({
         collection: gridState.collection,
         selectionManager: gridState.selectionManager,
@@ -225,7 +226,7 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
     }
 
     return (
-        <div {...mergeProps(collectionProps, gridProps)} ref={gridRef} style={{ outline: "none" }}>
+        <div {...mergeProps(collectionProps, gridProps)} ref={gridRef} className="tw-outline-none">
             {[...gridState.collection].map((item) => (
                 <>
                     <InsertionIndicator
@@ -243,7 +244,7 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
                         dragState={dragState}
                         renderContent={props.renderContent}
                     />
-                    {gridState.collection.getKeyAfter(item.key) == null && (
+                    {gridState.collection.getKeyAfter(item.key) === null && (
                         <InsertionIndicator
                             key={`${item.key}-after`}
                             target={{ type: "item", key: item.key, dropPosition: "after" }}

@@ -59,12 +59,11 @@ export const CollectionItem: FC<CollectionItemProps> = ({
     }
 
     return (
-        <div {...gridRowProps} ref={rowRef} style={{ zIndex: 1, position: "relative" }} aria-labelledby={id}>
+        <div {...gridRowProps} ref={rowRef} className="tw-z-10 tw-relative" aria-labelledby={id}>
             <div
                 {...gridCellProps}
-                className={merge([isFocusVisible && showFocusRing && FOCUS_STYLE])}
+                className={merge(["tw-outline-none", isFocusVisible && showFocusRing && FOCUS_STYLE])}
                 ref={cellRef}
-                style={{ outline: "none" }}
             >
                 {renderContent(item, { componentDragState, isFocusVisible })}
             </div>
