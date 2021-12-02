@@ -3,23 +3,11 @@ import { useButton } from "@react-aria/button";
 import { useFocusRing } from "@react-aria/focus";
 import { useGridRow, useGridCell } from "@react-aria/grid";
 import { mergeProps, useId } from "@react-aria/utils";
-import { DraggableCollectionState } from "@react-stately/dnd";
-import { GridCollection, GridState } from "@react-stately/grid";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import React, { FC, ReactElement, useRef } from "react";
-import { GridNode } from "@react-types/grid";
+import React, { FC, useRef } from "react";
 import { useDraggableItem } from "./useDraggableItem";
 import { merge } from "@utilities/merge";
-import { DragProperties, ItemDragState, OrderableListItem } from "./OrderableList";
-
-type CollectionItemProps = {
-    item: GridNode<OrderableListItem>;
-    dragDisabled: boolean;
-    gridState: GridState<Record<string, unknown>, GridCollection<OrderableListItem>>;
-    showFocusRing: boolean;
-    dragState: DraggableCollectionState;
-    renderContent: (items: GridNode<OrderableListItem>, isDragging: DragProperties) => ReactElement;
-};
+import { CollectionItemProps, ItemDragState } from "./types";
 
 export const CollectionItem: FC<CollectionItemProps> = ({
     item,

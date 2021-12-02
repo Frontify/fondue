@@ -6,8 +6,9 @@ import { ItemDropTarget } from "@react-types/shared";
 import { Meta, Story } from "@storybook/react";
 import React, { ReactElement, useState } from "react";
 import { Button } from "@components/Button/Button";
-import { OrderableList, ItemDragState } from "./OrderableList";
+import { OrderableList } from "./OrderableList";
 import { merge } from "@utilities/merge";
+import { ItemDragState } from "./types";
 
 const List = (): ReactElement => {
     const [dragDisabled, setDragDisabled] = useState(false);
