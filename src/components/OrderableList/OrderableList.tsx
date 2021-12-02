@@ -8,45 +8,11 @@ import { useDraggableCollectionState, useDroppableCollectionState } from "@react
 import { GridCollection, useGridState } from "@react-stately/grid";
 import { useListState } from "@react-stately/list";
 import { DropTarget, ItemDropTarget } from "@react-types/shared";
-import React, { FC, ReactElement, useMemo, useRef, Key } from "react";
+import React, { FC, useMemo, useRef } from "react";
 import { GridNode } from "@react-types/grid";
 import { InsertionIndicator } from "./InsertionIndicator";
 import { CollectionItem } from "./CollectionItem";
-
-export type OrderableListItem<T = Record<string, unknown>> = T & {
-    id: string;
-    alt: string;
-};
-
-export type DragProperties = {
-    componentDragState: ItemDragState;
-    isFocusVisible: boolean;
-};
-
-type OrderableListProps = {
-    items: OrderableListItem[];
-    showFocusRing: boolean;
-    dragDisabled: boolean;
-    disableTypeAhead?: boolean;
-    onMove: (selectedGridItemKeys: Key[], gridItemLocation: ItemDropTarget) => void;
-    renderContent: (items: GridNode<OrderableListItem>, dragProperties: DragProperties) => ReactElement;
-};
-
-type OrderableListContainerProps = {
-    items: OrderableListItem[];
-    showFocusRing: boolean;
-    dragDisabled: boolean;
-    disableTypeAhead?: boolean;
-    children: (item: OrderableListItem) => JSX.Element;
-    onMove: (selectedGridItemKeys: Key[], gridItemLocation: ItemDropTarget) => void;
-    renderContent: (items: GridNode<OrderableListItem>, isDragging: DragProperties) => ReactElement;
-};
-
-export enum ItemDragState {
-    Dragging = "Dragging",
-    Idle = "Idle",
-    Preview = "Preview",
-}
+import { ItemDragState, OrderableListContainerProps, OrderableListItem, OrderableListProps } from "./types";
 
 export const OrderableList: FC<OrderableListProps> = ({
     onMove,

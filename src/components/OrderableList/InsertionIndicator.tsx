@@ -1,16 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { useDropIndicator } from "@react-aria/dnd";
 import { useVisuallyHidden } from "@react-aria/visually-hidden";
-import { DroppableCollectionState } from "@react-stately/dnd";
-import { ItemDropTarget } from "@react-types/shared";
-import React, { FC, useRef, RefObject } from "react";
-
-type InsertionIndicatorProps = {
-    key: string;
-    collectionRef: RefObject<HTMLDivElement>;
-    target: ItemDropTarget;
-    dropState: DroppableCollectionState;
-};
+import React, { FC, useRef } from "react";
+import { InsertionIndicatorProps } from "./types";
 
 export const InsertionIndicator: FC<InsertionIndicatorProps> = (props) => {
     const ref = useRef<HTMLDivElement>(null);
