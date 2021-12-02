@@ -8,7 +8,33 @@ import React, { ReactElement, useState } from "react";
 import { Button } from "@components/Button/Button";
 import { OrderableList } from "./OrderableList";
 import { merge } from "@utilities/merge";
-import { ItemDragState } from "./types";
+import { GridNode } from "@react-types/grid";
+import { DragProperties, ItemDragState, OrderableListItem } from "./types";
+
+const renderContent = (
+    { value, prevKey, nextKey }: GridNode<OrderableListItem>,
+    { componentDragState, isFocusVisible }: DragProperties,
+) => {
+    return (
+        <div
+            className={merge([
+                "tw-break-word tw-border tw-border-solid tw-rounded tw-p-3",
+                componentDragState === ItemDragState.Dragging && "tw-bg-black-10 tw-border-black-20 tw-opacity-75",
+                componentDragState === ItemDragState.Preview && "tw-bg-white tw-border-violet-70 tw-border-4",
+                componentDragState === ItemDragState.Idle && "tw-border-black-20",
+                isFocusVisible && "tw-bg-violet-20",
+                (nextKey === null || prevKey === null) && "tw-bg-green-20",
+            ])}
+        >
+            {value.content}
+            <hr className="tw-mt-3 tw-mb-2 tw-border-black-20 tw-bg-black-20" />
+            <div className="tw-flex tw-justify-between">
+                <span className="tw-bold">{isFocusVisible && "Im in keyboard focus"}</span>
+                <span>Drag State: {componentDragState}</span>
+            </div>
+        </div>
+    );
+};
 
 const List = (): ReactElement => {
     const [dragDisabled, setDragDisabled] = useState(false);
@@ -84,35 +110,13 @@ const List = (): ReactElement => {
     };
 
     return (
-        <div style={{ width: "600px" }} className="tw-m-auto">
+        <div className="tw-m-auto  tw-w-[600px]">
             <OrderableList
                 items={list.items}
                 onMove={onMove}
                 showFocusRing
                 dragDisabled={dragDisabled}
-                renderContent={({ value, prevKey, nextKey }, { componentDragState, isFocusVisible }) => {
-                    return (
-                        <div
-                            className={merge([
-                                "tw-break-word tw-border tw-border-solid tw-rounded tw-p-3",
-                                componentDragState === ItemDragState.Dragging &&
-                                    "tw-bg-black-10 tw-border-black-20 tw-opacity-75",
-                                componentDragState === ItemDragState.Preview &&
-                                    "tw-bg-white tw-border-violet-70 tw-border-4",
-                                componentDragState === ItemDragState.Idle && "tw-border-black-20",
-                                isFocusVisible && "tw-bg-violet-90",
-                                (nextKey === null || prevKey === null) && "tw-bg-green-20",
-                            ])}
-                        >
-                            {value.content}
-                            <hr className="tw-mt-3 tw-mb-2 tw-border-black-20 tw-bg-black-20" />
-                            <div className="tw-flex tw-justify-between">
-                                <span className="tw-bold">{isFocusVisible && "Im in keyboard focus"}</span>
-                                <span>Drag State: {componentDragState}</span>
-                            </div>
-                        </div>
-                    );
-                }}
+                renderContent={renderContent}
             ></OrderableList>
             <div className="tw-flex tw-justify-center tw-mt-3">
                 <Button onClick={() => setDragDisabled((prev) => !prev)}>

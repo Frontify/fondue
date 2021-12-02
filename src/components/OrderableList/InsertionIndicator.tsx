@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { useDropIndicator } from "@react-aria/dnd";
 import { useVisuallyHidden } from "@react-aria/visually-hidden";
+import { merge } from "@utilities/merge";
 import React, { FC, useRef } from "react";
 import { InsertionIndicatorProps } from "./types";
 
@@ -17,18 +18,14 @@ export const InsertionIndicator: FC<InsertionIndicatorProps> = (props) => {
     }
 
     return (
-        <div role="row" aria-hidden={dropIndicatorProps["aria-hidden"]} style={{ zIndex: 2, position: "relative" }}>
+        <div role="row" aria-hidden={dropIndicatorProps["aria-hidden"]} className="tw-z-20 tw-relative">
             <div
                 role="gridcell"
                 aria-selected="false"
-                style={{
-                    width: "100%",
-                    marginLeft: 0,
-                    height: 2,
-                    marginBottom: -2,
-                    outline: "none",
-                }}
-                className={props.dropState.isDropTarget(props.target) ? "tw-bg-violet-60" : ""}
+                className={merge([
+                    "tw-w-100 tw-ml-0 tw-h-[2px] tw-mb-[-2px] tw-outline-none",
+                    props.dropState.isDropTarget(props.target) && "tw-bg-violet-60",
+                ])}
             >
                 <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
             </div>
