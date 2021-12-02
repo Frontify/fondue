@@ -97,7 +97,7 @@ export const Dropdown: FC<DropdownProps> = ({
                     ref={ref}
                     data-test-id="dropdown-trigger"
                     className={merge([
-                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none",
+                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-pr-10",
                         size === DropdownSize.Small ? "tw-py-2 tw-px-3 tw-min-h-[34px]" : "tw-p-5 tw-min-h-[60px]",
                         !activeItem && "tw-text-black-60",
                         disabled && "tw-text-black-40",
