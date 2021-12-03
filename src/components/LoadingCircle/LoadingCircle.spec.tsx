@@ -13,7 +13,7 @@ describe("LoadingCircle Component", () => {
         cy.get(LOADING_CIRCLE_ID).should("exist");
     });
 
-    Object.values(LoadingCircleStyle).map((style) => {
+    Object.values(LoadingCircleStyle).forEach((style) => {
         it(`should render in ${style} style`, () => {
             mount(<LoadingCircle style={LoadingCircleStyle[style]} />);
 
@@ -21,7 +21,7 @@ describe("LoadingCircle Component", () => {
         });
     });
 
-    Object.values(LoadingCircleSize).map((size) => {
+    Object.values(LoadingCircleSize).forEach((size) => {
         it(`should render in ${size} size`, () => {
             mount(<LoadingCircle size={LoadingCircleSize[size]} />);
 
