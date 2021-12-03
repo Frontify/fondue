@@ -59,7 +59,12 @@ export const CollectionItem: FC<CollectionItemProps> = ({
     }
 
     return (
-        <div {...gridRowProps} ref={rowRef} className="tw-z-10 tw-relative" aria-labelledby={id}>
+        <div
+            {...gridRowProps}
+            ref={rowRef}
+            className={merge(["tw-relative", isFocusVisible ? "tw-z-30" : "tw-z-0"])}
+            aria-labelledby={id}
+        >
             <div
                 {...gridCellProps}
                 className={merge(["tw-outline-none", isFocusVisible && showFocusRing && FOCUS_STYLE])}
