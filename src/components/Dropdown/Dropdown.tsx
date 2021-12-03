@@ -33,9 +33,9 @@ export type DropdownProps = {
     decorator?: ReactElement;
 };
 
-const getActiveItem = (blocks: MenuBlock[], activeId?: string | number): MenuItemType | null => {
+const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
     const disabledItems = getDisabledItemIds(getMenuItems(blocks));
-    if (disabledItems.has(activeId as string)) {
+    if (disabledItems.has(activeId)) {
         return null;
     }
 
@@ -59,7 +59,7 @@ export const Dropdown: FC<DropdownProps> = ({
     ariaLabel = "Dropdown",
     decorator,
 }) => {
-    const activeItem = getActiveItem(menuBlocks, activeItemId);
+    const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
     const state = useSelectState({
         ...props,
