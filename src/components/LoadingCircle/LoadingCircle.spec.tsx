@@ -13,45 +13,19 @@ describe("LoadingCircle Component", () => {
         cy.get(LOADING_CIRCLE_ID).should("exist");
     });
 
-    it("should render in progress style", () => {
-        mount(<LoadingCircle style={LoadingCircleStyle.Progress} />);
+    Object.values(LoadingCircleStyle).map((style) => {
+        it(`should render in ${style} style`, () => {
+            mount(<LoadingCircle style={LoadingCircleStyle[style]} />);
 
-        cy.get(LOADING_CIRCLE_ID).should("have.class", statusClasses[LoadingCircleStyle.Progress]);
+            cy.get(LOADING_CIRCLE_ID).should("have.class", statusClasses[LoadingCircleStyle[style]]);
+        });
     });
 
-    it("should render in positive style", () => {
-        mount(<LoadingCircle style={LoadingCircleStyle.Positive} />);
+    Object.values(LoadingCircleSize).map((size) => {
+        it(`should render in ${size} size`, () => {
+            mount(<LoadingCircle size={LoadingCircleSize[size]} />);
 
-        cy.get(LOADING_CIRCLE_ID).should("have.class", statusClasses[LoadingCircleStyle.Positive]);
-    });
-
-    it("should render in warning style", () => {
-        mount(<LoadingCircle style={LoadingCircleStyle.Danger} />);
-
-        cy.get(LOADING_CIRCLE_ID).should("have.class", statusClasses[LoadingCircleStyle.Danger]);
-    });
-
-    it("should render in extra small size", () => {
-        mount(<LoadingCircle size={LoadingCircleSize.ExtraSmall} />);
-
-        cy.get(LOADING_CIRCLE_ID).should("have.class", sizeClasses[LoadingCircleSize.ExtraSmall]);
-    });
-
-    it("should render in small size", () => {
-        mount(<LoadingCircle size={LoadingCircleSize.Small} />);
-
-        cy.get(LOADING_CIRCLE_ID).should("have.class", sizeClasses[LoadingCircleSize.Small]);
-    });
-
-    it("should render in medium size", () => {
-        mount(<LoadingCircle size={LoadingCircleSize.Medium} />);
-
-        cy.get(LOADING_CIRCLE_ID).should("have.class", sizeClasses[LoadingCircleSize.Medium]);
-    });
-
-    it("should render in large size", () => {
-        mount(<LoadingCircle size={LoadingCircleSize.Large} />);
-
-        cy.get(LOADING_CIRCLE_ID).should("have.class", sizeClasses[LoadingCircleSize.Large]);
+            cy.get(LOADING_CIRCLE_ID).should("have.class", sizeClasses[LoadingCircleSize[size]]);
+        });
     });
 });

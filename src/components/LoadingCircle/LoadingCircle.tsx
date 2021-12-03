@@ -28,10 +28,10 @@ export const statusClasses: Record<LoadingCircleStyle, string> = {
 };
 
 export const sizeClasses: Record<LoadingCircleSize, string> = {
-    [LoadingCircleSize.ExtraSmall]: "tw-w-[16px] tw-h-[16px]",
-    [LoadingCircleSize.Small]: "tw-w-[20px] tw-h-[20px]",
-    [LoadingCircleSize.Medium]: "tw-w-[32px] tw-h-[32px]",
-    [LoadingCircleSize.Large]: "tw-w-[64px] tw-h-[64px]",
+    [LoadingCircleSize.ExtraSmall]: "tw-w-4 tw-h-4",
+    [LoadingCircleSize.Small]: "tw-w-5 tw-h-5",
+    [LoadingCircleSize.Medium]: "tw-w-8 tw-h-8",
+    [LoadingCircleSize.Large]: "tw-w-16 tw-h-16",
 };
 
 export const LoadingCircle: FC<LoadingCircleProps> = ({
@@ -41,9 +41,8 @@ export const LoadingCircle: FC<LoadingCircleProps> = ({
     return (
         <div
             data-test-id="loading-circle"
-            style={{ borderTopColor: "transparent" }}
             className={merge([
-                "tw-border-2 tw-border-solid tw-rounded-full tw-animate-spin",
+                "tw-border-2 tw-border-solid tw-rounded-full tw-border-t-transparent tw-animate-spin",
                 statusClasses[style],
                 sizeClasses[size],
             ])}
