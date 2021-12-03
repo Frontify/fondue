@@ -103,8 +103,8 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
                 </div>
             );
         },
-        onDragStart: (e) => {
-            const [key] = e.keys;
+        onDragStart: (event) => {
+            const [key] = event.keys;
             gridState.selectionManager.replaceSelection(key);
         },
     });
