@@ -27,7 +27,13 @@ export const InsertionIndicator: FC<InsertionIndicatorProps> = (props) => {
                     props.dropState.isDropTarget(props.target) && "tw-bg-violet-60",
                 ])}
             >
-                <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
+                <div
+                    {...visuallyHiddenProps}
+                    role="button"
+                    {...dropIndicatorProps}
+                    ref={ref}
+                    data-test-id="insertion-indicator"
+                />
             </div>
         </div>
     );

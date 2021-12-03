@@ -21,12 +21,10 @@ export const OrderableList: FC<OrderableListProps> = ({
     renderContent,
     dragDisabled,
     disableTypeAhead,
-    showFocusRing,
 }) => {
     return (
         <OrderableListContainer
             onMove={onMove}
-            showFocusRing={showFocusRing}
             renderContent={renderContent}
             items={items}
             disableTypeAhead={disableTypeAhead}
@@ -226,7 +224,12 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
     }
 
     return (
-        <div {...mergeProps(collectionProps, gridProps)} ref={gridRef} className="tw-outline-none">
+        <div
+            {...mergeProps(collectionProps, gridProps)}
+            ref={gridRef}
+            className="tw-outline-none"
+            data-test-id="orderable-list"
+        >
             {[...gridState.collection].map((item) => (
                 <>
                     <InsertionIndicator
@@ -239,7 +242,6 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
                         key={item.key}
                         dragDisabled={props.dragDisabled}
                         item={item}
-                        showFocusRing={props.showFocusRing}
                         gridState={gridState}
                         dragState={dragState}
                         renderContent={props.renderContent}

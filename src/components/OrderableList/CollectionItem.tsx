@@ -15,7 +15,6 @@ export const CollectionItem: FC<CollectionItemProps> = ({
     dragState,
     renderContent,
     dragDisabled,
-    showFocusRing,
 }) => {
     const rowRef = useRef<HTMLDivElement>(null);
 
@@ -64,11 +63,13 @@ export const CollectionItem: FC<CollectionItemProps> = ({
             ref={rowRef}
             className={merge(["tw-relative", isFocusVisible ? "tw-z-30" : "tw-z-0"])}
             aria-labelledby={id}
+            data-test-id={`orderable-list-item-${item.key}`}
         >
             <div
                 {...gridCellProps}
-                className={merge(["tw-outline-none", isFocusVisible && showFocusRing && FOCUS_STYLE])}
+                className={merge(["tw-outline-none", isFocusVisible && FOCUS_STYLE])}
                 ref={cellRef}
+                data-test-id="draggable-item"
             >
                 {renderContent(item, { componentDragState, isFocusVisible })}
             </div>

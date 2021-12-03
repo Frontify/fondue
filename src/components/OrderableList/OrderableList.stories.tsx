@@ -114,7 +114,6 @@ const List = (): ReactElement => {
             <OrderableList
                 items={list.items}
                 onMove={onMove}
-                showFocusRing
                 dragDisabled={dragDisabled}
                 renderContent={renderContent}
             ></OrderableList>
