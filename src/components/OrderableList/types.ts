@@ -8,7 +8,6 @@ export type CollectionItemProps = {
     item: GridNode<OrderableListItem>;
     dragDisabled: boolean;
     gridState: GridState<Record<string, unknown>, GridCollection<OrderableListItem>>;
-    showFocusRing: boolean;
     dragState: DraggableCollectionState;
     renderContent: (items: GridNode<OrderableListItem>, isDragging: DragProperties) => ReactElement;
 };
@@ -25,7 +24,6 @@ export type DragProperties = {
 
 export type OrderableListProps = {
     items: OrderableListItem[];
-    showFocusRing: boolean;
     dragDisabled: boolean;
     disableTypeAhead?: boolean;
     onMove: (selectedGridItemKeys: Key[], gridItemLocation: ItemDropTarget) => void;
@@ -34,7 +32,6 @@ export type OrderableListProps = {
 
 export type OrderableListContainerProps = {
     items: OrderableListItem[];
-    showFocusRing: boolean;
     dragDisabled: boolean;
     disableTypeAhead?: boolean;
     children: (item: OrderableListItem) => JSX.Element;
