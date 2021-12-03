@@ -113,7 +113,7 @@ export const Dropdown: FC<DropdownProps> = ({
                     ref={ref}
                     data-test-id="dropdown-trigger"
                     className={merge([
-                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-pr-10",
+                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-pr-8",
                         size === DropdownSize.Small ? "tw-py-2 tw-px-3 tw-min-h-[34px]" : "tw-p-5 tw-min-h-[60px]",
                         !activeItem && "tw-text-black-60",
                         disabled && "tw-text-black-40",
@@ -130,7 +130,7 @@ export const Dropdown: FC<DropdownProps> = ({
             <AnimatePresence>
                 {!disabled && isOpen && (
                     <motion.div
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20"
+                        className="tw-absolute tw-left-0 tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20 tw-min-w-full tw-overflow-hidden"
                         key="content"
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
