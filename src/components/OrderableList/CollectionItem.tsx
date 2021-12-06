@@ -47,13 +47,15 @@ export const CollectionItem: FC<CollectionItemProps> = ({
     const componentDragState = dragState.isDragging(item.key) ? ItemDragState.Dragging : ItemDragState.Idle;
 
     const gridRowProps: HTMLAttributes<HTMLDivElement> = {
-        ...(!dragDisabled && rowProps),
+        ...rowProps,
     };
 
     let gridCellProps: HTMLAttributes<HTMLDivElement> = {};
-    if (!dragDisabled) {
-        const { onKeyDownCapture, ...restOfCellProps } = cellProps;
-        const cellPropsWithKeyDown = { ...restOfCellProps, onKeyDown: onKeyDownCapture };
+    const { onKeyDownCapture, ...restOfCellProps } = cellProps;
+    const cellPropsWithKeyDown = { ...restOfCellProps, onKeyDown: onKeyDownCapture };
+    if (dragDisabled) {
+        gridCellProps = mergeProps(cellPropsWithKeyDown, focusProps);
+    } else {
         gridCellProps = mergeProps(cellPropsWithKeyDown, dragProps, buttonProps, focusProps);
     }
 
@@ -61,12 +63,13 @@ export const CollectionItem: FC<CollectionItemProps> = ({
         <div
             {...gridRowProps}
             ref={rowRef}
-            className={merge(["tw-relative", isFocusVisible ? "tw-z-30" : "tw-z-0"])}
+            className={merge(["tw-relative tw-outline-none", isFocusVisible ? "tw-z-30" : "tw-z-0"])}
             aria-labelledby={id}
-            data-test-id={`orderable-list-item-${item.key}`}
+            data-test-id={`orderable-list-item`}
         >
             <div
                 {...gridCellProps}
+                aria-disabled={dragDisabled}
                 className={merge(["tw-outline-none", isFocusVisible && FOCUS_STYLE])}
                 ref={cellRef}
                 data-test-id="draggable-item"

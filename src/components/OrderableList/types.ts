@@ -36,7 +36,7 @@ export type OrderableListContainerProps = {
     disableTypeAhead?: boolean;
     children: (item: OrderableListItem) => JSX.Element;
     onMove: (selectedGridItemKeys: Key[], gridItemLocation: ItemDropTarget) => void;
-    renderContent: (items: GridNode<OrderableListItem>, isDragging: DragProperties) => ReactElement;
+    renderContent: (items: GridNode<OrderableListItem>, isDragging?: DragProperties) => ReactElement;
 };
 
 export enum ItemDragState {
