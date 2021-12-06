@@ -4,7 +4,7 @@ import { useFocusRing } from "@react-aria/focus";
 import { useGridRow, useGridCell } from "@react-aria/grid";
 import { mergeProps, useId } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import React, { FC, HTMLAttributes, useRef } from "react";
+import React, { HTMLAttributes, useRef } from "react";
 import { useDraggableItem } from "./useDraggableItem";
 import { merge } from "@utilities/merge";
 import { CollectionItemProps, ItemDragState } from "./types";
