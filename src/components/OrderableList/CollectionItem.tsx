@@ -9,13 +9,13 @@ import { useDraggableItem } from "./useDraggableItem";
 import { merge } from "@utilities/merge";
 import { CollectionItemProps, ItemDragState } from "./types";
 
-export const CollectionItem: FC<CollectionItemProps> = ({
+export const CollectionItem = <T extends object>({
     item,
     gridState,
     dragState,
     renderContent,
     dragDisabled,
-}) => {
+}: CollectionItemProps<T>) => {
     const rowRef = useRef<HTMLDivElement>(null);
 
     const { isFocusVisible, focusProps } = useFocusRing();

@@ -8,20 +8,20 @@ import { useDraggableCollectionState, useDroppableCollectionState } from "@react
 import { GridCollection, useGridState } from "@react-stately/grid";
 import { useListState } from "@react-stately/list";
 import { DropTarget, ItemDropTarget } from "@react-types/shared";
-import React, { FC, useRef } from "react";
+import React, { useRef } from "react";
 import { GridNode } from "@react-types/grid";
 import { InsertionIndicator } from "./InsertionIndicator";
 import { CollectionItem } from "./CollectionItem";
 import { ItemDragState, OrderableListContainerProps, OrderableListItem, OrderableListProps } from "./types";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 
-export const OrderableList: FC<OrderableListProps> = ({
+export const OrderableList = <T extends object>({
     onMove,
     items,
     renderContent,
     dragDisabled,
     disableTypeAhead,
-}) => {
+}: OrderableListProps<T>) => {
     return (
         <OrderableListContainer
             onMove={onMove}
@@ -30,7 +30,7 @@ export const OrderableList: FC<OrderableListProps> = ({
             disableTypeAhead={disableTypeAhead}
             dragDisabled={dragDisabled}
         >
-            {(item) => (
+            {(item: OrderableListItem<T>) => (
                 <Item textValue={item.alt}>
                     <></>
                 </Item>
@@ -39,7 +39,7 @@ export const OrderableList: FC<OrderableListProps> = ({
     );
 };
 
-export const OrderableListContainer: FC<OrderableListContainerProps> = (props) => {
+export const OrderableListContainer = <T extends object>(props: OrderableListContainerProps<T>) => {
     const gridRef = useRef<HTMLDivElement>(null);
 
     const state = useListState(props);
@@ -47,7 +47,7 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
 
     const gridState = useGridState({
         selectionMode: "single",
-        collection: new GridCollection<OrderableListItem>({
+        collection: new GridCollection<OrderableListItem<T>>({
             columnCount: 1,
             items: [...state.collection].map((item) => ({
                 ...item,
@@ -112,7 +112,7 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
         getDropOperation(target) {
             const inCurrentPosition = (
                 target: ItemDropTarget,
-                collection: GridCollection<GridNode<OrderableListItem>>,
+                collection: GridCollection<GridNode<OrderableListItem<T>>>,
             ): boolean => {
                 const { key, dropPosition } = target;
                 let flagged = false;
@@ -137,7 +137,7 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
             if (
                 target.type === "root" ||
                 target.dropPosition === "on" ||
-                inCurrentPosition(target, dragState.collection as GridCollection<GridNode<OrderableListItem>>)
+                inCurrentPosition(target, dragState.collection as GridCollection<GridNode<OrderableListItem<T>>>)
             ) {
                 return "cancel";
             }

@@ -4,12 +4,14 @@ import { GridNode } from "@react-types/grid";
 import { GridCollection, GridState } from "@react-stately/grid";
 import { ItemDropTarget } from "@react-types/shared";
 
-export type CollectionItemProps = {
-    item: GridNode<OrderableListItem>;
+export type RenderListItem<T> = (items: GridNode<OrderableListItem<T>>, dragProps: DragProperties) => ReactElement;
+
+export type CollectionItemProps<T> = {
+    item: GridNode<OrderableListItem<T>>;
     dragDisabled: boolean;
-    gridState: GridState<Record<string, unknown>, GridCollection<OrderableListItem>>;
+    gridState: GridState<T, GridCollection<OrderableListItem<T>>>;
     dragState: DraggableCollectionState;
-    renderContent: (items: GridNode<OrderableListItem>, isDragging: DragProperties) => ReactElement;
+    renderContent: RenderListItem<T>;
 };
 
 export type OrderableListItem<T = Record<string, unknown>> = T & {
@@ -22,21 +24,21 @@ export type DragProperties = {
     isFocusVisible: boolean;
 };
 
-export type OrderableListProps = {
-    items: OrderableListItem[];
+export type OrderableListProps<T> = {
+    items: OrderableListItem<T>[];
     dragDisabled: boolean;
     disableTypeAhead?: boolean;
     onMove: (selectedGridItemKeys: Key[], gridItemLocation: ItemDropTarget) => void;
-    renderContent: (items: GridNode<OrderableListItem>, dragProperties: DragProperties) => ReactElement;
+    renderContent: RenderListItem<T>;
 };
 
-export type OrderableListContainerProps = {
-    items: OrderableListItem[];
+export type OrderableListContainerProps<T> = {
+    items: OrderableListItem<T>[];
     dragDisabled: boolean;
     disableTypeAhead?: boolean;
-    children: (item: OrderableListItem) => JSX.Element;
+    children: (item: OrderableListItem<T>) => JSX.Element;
     onMove: (selectedGridItemKeys: Key[], gridItemLocation: ItemDropTarget) => void;
-    renderContent: (items: GridNode<OrderableListItem>, isDragging?: DragProperties) => ReactElement;
+    renderContent: RenderListItem<T>;
 };
 
 export enum ItemDragState {
