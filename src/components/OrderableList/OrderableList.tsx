@@ -93,7 +93,7 @@ export const OrderableListContainer: FC<OrderableListContainerProps> = (props) =
             const refWidth = document.querySelector(`[id="${dragContainerId}"] [data-key="${key}"]`)?.clientWidth;
 
             return (
-                <div style={{ width: `${refWidth}px` || "100%" }}>
+                <div style={{ width: `${refWidth}px` || "100%" }} data-test-id="drag-preview">
                     {props.renderContent(item, {
                         componentDragState: ItemDragState.Preview,
                         isFocusVisible: false,

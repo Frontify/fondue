@@ -79,7 +79,7 @@ const List = (): ReactElement => {
                 id: "3",
                 type: "item",
                 content: <Button>List Item With Button</Button>,
-                alt: "List Item With Checkbo",
+                alt: "List Item With Checkbox",
             },
             {
                 id: "4",

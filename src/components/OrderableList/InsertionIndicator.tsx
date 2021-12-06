@@ -26,6 +26,8 @@ export const InsertionIndicator: FC<InsertionIndicatorProps> = (props) => {
                     "tw-w-100 tw-ml-0 tw-h-[2px] tw-mb-[-2px] tw-outline-none",
                     props.dropState.isDropTarget(props.target) && "tw-bg-violet-60",
                 ])}
+                data-test-id="visual-insertion-indicator"
+                data-drop-target={props.dropState.isDropTarget(props.target)}
             >
                 <div
                     {...visuallyHiddenProps}
