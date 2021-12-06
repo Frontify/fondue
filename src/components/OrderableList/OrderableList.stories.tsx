@@ -125,6 +125,4 @@ export default {
     component: List,
 } as Meta;
 
-const Template: Story = (args) => <List {...args} />;
-
-export const Default = Template.bind({});
+export const Default: Story = () => <List />;
