@@ -129,7 +129,7 @@ describe("OrderableList Component", () => {
         });
     });
 
-    it.only("Has keyboard accessibility", () => {
+    it("Has keyboard accessibility", () => {
         const stubbedOnMove = cy.stub().as("onMove");
 
         mount(<OrderableListWithDefaultProps renderContent={renderWithFocusableItems} onMove={stubbedOnMove} />);
