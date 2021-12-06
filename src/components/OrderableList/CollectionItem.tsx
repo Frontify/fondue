@@ -46,22 +46,18 @@ export const CollectionItem = <T extends object>({
 
     const componentDragState = dragState.isDragging(item.key) ? ItemDragState.Dragging : ItemDragState.Idle;
 
-    const gridRowProps: HTMLAttributes<HTMLDivElement> = {
-        ...rowProps,
-    };
-
-    let gridCellProps: HTMLAttributes<HTMLDivElement> = {};
     const { onKeyDownCapture, ...restOfCellProps } = cellProps;
     const cellPropsWithKeyDown = { ...restOfCellProps, onKeyDown: onKeyDownCapture };
-    if (dragDisabled) {
-        gridCellProps = mergeProps(cellPropsWithKeyDown, focusProps);
-    } else {
+
+    let gridCellProps: HTMLAttributes<HTMLDivElement> = mergeProps(cellPropsWithKeyDown, focusProps);
+
+    if (!dragDisabled) {
         gridCellProps = mergeProps(cellPropsWithKeyDown, dragProps, buttonProps, focusProps);
     }
 
     return (
         <div
-            {...gridRowProps}
+            {...rowProps}
             ref={rowRef}
             className={merge(["tw-relative tw-outline-none", isFocusVisible ? "tw-z-30" : "tw-z-0"])}
             aria-labelledby={id}
