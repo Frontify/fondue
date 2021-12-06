@@ -10,7 +10,7 @@ const LIST_ITEM_ID = "[data-test-id=orderable-list-item]";
 const DRAGGABLE_ITEM = "[data-test-id=draggable-item]";
 const INSERTION_INDICATOR = "[data-test-id=insertion-indicator]";
 const VISUAL_INSERTION_INDICATOR = "[data-test-id=visual-insertion-indicator]";
-const DROP_TARGET = "[data-drop-target=true]";
+const IS_DROP_TARGET = "[data-drop-target=true]";
 
 const FOCUSABLE_ITEM = "[data-test-id=focusable-item]";
 const ITEM_HEIGHT = 20;
@@ -32,7 +32,7 @@ const renderDefaultTestItems = ({ value }: GridNode<OrderableListItem<TestItem>>
     <div style={{ height: `${ITEM_HEIGHT}px` }}>{value.text}</div>
 );
 
-const renderWithFocusableItems = (_item: GridNode<TestItem>, { isFocusVisible }: DragProperties) => (
+const renderWithFocusableItems = (_item: GridNode<OrderableListItem<TestItem>>, { isFocusVisible }: DragProperties) => (
     <div
         style={{ height: `${ITEM_HEIGHT}px`, display: "flex", justifyContent: "space-around" }}
         data-focus-visible={isFocusVisible}
@@ -57,7 +57,7 @@ const OrderableListWithDefaultProps = ({
     items = testItems,
     dragDisabled = false,
     onMove = cy.stub(),
-}: Partial<OrderableListContainerProps>) => (
+}: Partial<OrderableListContainerProps<TestItem>>) => (
     <OrderableList renderContent={renderContent} dragDisabled={dragDisabled} items={items} onMove={onMove} />
 );
 
@@ -168,7 +168,7 @@ describe("OrderableList Component", () => {
         cy.get(DRAGGABLE_ITEM).eq(1).realPress("Space");
         cy.get(VISUAL_INSERTION_INDICATOR)
             .should("have.length", testItems.length - 1)
-            .filter(DROP_TARGET)
+            .filter(IS_DROP_TARGET)
             .should("have.length", 1)
             .children(INSERTION_INDICATOR)
             .realPress("Enter");
