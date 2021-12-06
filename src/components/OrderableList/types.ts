@@ -48,3 +48,9 @@ export type InsertionIndicatorProps = {
     target: ItemDropTarget;
     dropState: DroppableCollectionState;
 };
+
+export const dragStoryStyles: Record<ItemDragState, string> = {
+    [ItemDragState.Dragging]: "tw-bg-black-10 tw-border-black-20 tw-opacity-75",
+    [ItemDragState.Idle]: "tw-border-black-20",
+    [ItemDragState.Preview]: "tw-bg-white tw-border-violet-70 tw-border-4",
+};
