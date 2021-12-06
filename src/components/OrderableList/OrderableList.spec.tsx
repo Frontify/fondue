@@ -34,7 +34,8 @@ const renderDefaultTestItems = ({ value }: GridNode<OrderableListItem<TestItem>>
 
 const renderWithFocusableItems = (_item: GridNode<OrderableListItem<TestItem>>, { isFocusVisible }: DragProperties) => (
     <div
-        style={{ height: `${ITEM_HEIGHT}px`, display: "flex", justifyContent: "space-around" }}
+        style={{ height: `${ITEM_HEIGHT}px` }}
+        className="tw-flex tw-justify-around"
         data-focus-visible={isFocusVisible}
     >
         <button data-test-id="focusable-item">Button</button>
@@ -71,10 +72,12 @@ describe("OrderableList Component", () => {
                 cy.wrap($el).should("have.text", testItems[index].text);
             });
     });
+
     it("Does not crash if item list is empty", () => {
         mount(<OrderableListWithDefaultProps items={[]} />);
         cy.get(LIST_ID).should("exist");
     });
+
     it("Fires a move event when item is dropped over an insertion indicator", () => {
         const stubbedOnMove = cy.stub().as("onMove");
         const dataTransfer = new DataTransfer();

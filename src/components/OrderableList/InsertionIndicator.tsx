@@ -6,14 +6,15 @@ import React, { FC, useRef } from "react";
 import { InsertionIndicatorProps } from "./types";
 
 export const InsertionIndicator: FC<InsertionIndicatorProps> = (props) => {
-    const ref = useRef<HTMLDivElement>(null);
-    const { dropIndicatorProps } = useDropIndicator(props, props.dropState, ref);
+    const { dropState, target } = props;
+    const ref = useRef<HTMLDivElement | null>(null);
+    const { dropIndicatorProps } = useDropIndicator(props, dropState, ref);
     const { visuallyHiddenProps } = useVisuallyHidden();
 
     // If aria-hidden, we are either not in a drag session or the drop target is invalid.
     // In that case, there's no need to render anything at all unless we need to show the indicator visually.
     // This can happen when dragging using the native DnD API as opposed to keyboard dragging.
-    if (!props.dropState.isDropTarget(props.target) && dropIndicatorProps["aria-hidden"]) {
+    if (!dropState.isDropTarget(target) && dropIndicatorProps["aria-hidden"]) {
         return null;
     }
 
@@ -24,10 +25,10 @@ export const InsertionIndicator: FC<InsertionIndicatorProps> = (props) => {
                 aria-selected="false"
                 className={merge([
                     "tw-w-100 tw-ml-0 tw-h-[2px] tw-mb-[-2px] tw-outline-none",
-                    props.dropState.isDropTarget(props.target) && "tw-bg-violet-60",
+                    dropState.isDropTarget(target) && "tw-bg-violet-60",
                 ])}
                 data-test-id="visual-insertion-indicator"
-                data-drop-target={props.dropState.isDropTarget(props.target)}
+                data-drop-target={dropState.isDropTarget(target)}
             >
                 <div
                     {...visuallyHiddenProps}

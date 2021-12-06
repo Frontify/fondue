@@ -16,11 +16,11 @@ export const CollectionItem = <T extends object>({
     renderContent,
     dragDisabled,
 }: CollectionItemProps<T>) => {
-    const rowRef = useRef<HTMLDivElement>(null);
+    const rowRef = useRef<HTMLDivElement | null>(null);
 
     const { isFocusVisible, focusProps } = useFocusRing();
 
-    const cellRef = React.useRef(null);
+    const cellRef = useRef<HTMLDivElement | null>(null);
     const cellNode = [...item.childNodes][0];
     const { gridCellProps: cellProps } = useGridCell(
         {
@@ -34,7 +34,7 @@ export const CollectionItem = <T extends object>({
     const { rowProps } = useGridRow({ node: item }, gridState, rowRef);
     const { dragProps, dragButtonProps } = useDraggableItem({ key: item.key }, dragState);
 
-    const dragButtonRef = useRef<HTMLButtonElement>(null);
+    const dragButtonRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps } = useButton(
         {
             ...dragButtonProps,
@@ -49,11 +49,9 @@ export const CollectionItem = <T extends object>({
     const { onKeyDownCapture, ...restOfCellProps } = cellProps;
     const cellPropsWithKeyDown = { ...restOfCellProps, onKeyDown: onKeyDownCapture };
 
-    let gridCellProps: HTMLAttributes<HTMLDivElement> = mergeProps(cellPropsWithKeyDown, focusProps);
-
-    if (!dragDisabled) {
-        gridCellProps = mergeProps(cellPropsWithKeyDown, dragProps, buttonProps, focusProps);
-    }
+    const gridCellProps: HTMLAttributes<HTMLDivElement> = dragDisabled
+        ? mergeProps(cellPropsWithKeyDown, focusProps)
+        : mergeProps(cellPropsWithKeyDown, dragProps, buttonProps, focusProps);
 
     return (
         <div
@@ -61,7 +59,7 @@ export const CollectionItem = <T extends object>({
             ref={rowRef}
             className={merge(["tw-relative tw-outline-none", isFocusVisible ? "tw-z-30" : "tw-z-0"])}
             aria-labelledby={id}
-            data-test-id={`orderable-list-item`}
+            data-test-id="orderable-list-item"
         >
             <div
                 {...gridCellProps}
