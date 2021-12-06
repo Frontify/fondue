@@ -21,26 +21,24 @@ export const OrderableList = <T extends object>({
     renderContent,
     dragDisabled,
     disableTypeAhead,
-}: OrderableListProps<T>) => {
-    return (
-        <OrderableListContainer
-            onMove={onMove}
-            renderContent={renderContent}
-            items={items}
-            disableTypeAhead={disableTypeAhead}
-            dragDisabled={dragDisabled}
-        >
-            {(item: OrderableListItem<T>) => (
-                <Item textValue={item.alt}>
-                    <></>
-                </Item>
-            )}
-        </OrderableListContainer>
-    );
-};
+}: OrderableListProps<T>) => (
+    <OrderableListContainer
+        onMove={onMove}
+        renderContent={renderContent}
+        items={items}
+        disableTypeAhead={disableTypeAhead}
+        dragDisabled={dragDisabled}
+    >
+        {(item: OrderableListItem<T>) => (
+            <Item textValue={item.alt}>
+                <></>
+            </Item>
+        )}
+    </OrderableListContainer>
+);
 
 export const OrderableListContainer = <T extends object>(props: OrderableListContainerProps<T>) => {
-    const gridRef = useRef<HTMLDivElement>(null);
+    const gridRef = useRef<HTMLDivElement | null>(null);
 
     const state = useListState(props);
     const keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), gridRef);
@@ -78,13 +76,13 @@ export const OrderableListContainer = <T extends object>(props: OrderableListCon
     );
 
     // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
-    const dragType = useMemoizedId();
+    const dragTypeId = useMemoizedId();
     const dragState = useDraggableCollectionState({
         collection: gridState.collection,
         selectionManager: gridState.selectionManager,
         getItems(keys) {
             return [...keys].map((key) => ({
-                [dragType]: JSON.stringify(key),
+                [dragTypeId]: JSON.stringify(key),
             }));
         },
         renderPreview: ([key]) => {
@@ -153,8 +151,8 @@ export const OrderableListContainer = <T extends object>(props: OrderableListCon
                 if (event.target.type !== "root" && event.target.dropPosition !== "on" && props.onMove) {
                     const keys = [];
                     for (const item of event.items) {
-                        if (item.kind === "text" && item.types.has(dragType)) {
-                            const key = JSON.parse(await item.getText(dragType));
+                        if (item.kind === "text" && item.types.has(dragTypeId)) {
+                            const key = JSON.parse(await item.getText(dragTypeId));
                             keys.push(key);
                         }
                     }
