@@ -19,7 +19,6 @@ export type CollectionItemProps<T> = {
 export type OrderableListItem<T = Record<string, unknown>> = T & {
     id: string;
     alt: string;
-    type: "item";
 };
 
 export type DragProperties = {

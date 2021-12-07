@@ -99,7 +99,6 @@ const Highlight: FC<HighlightProps> = ({ color, children }) => (
 const storyItems: OrderableListItem<StoryListItem>[] = [
     {
         id: "0",
-        type: "item",
         content: (
             <p>
                 The list rendering is completely customizable through the &nbsp;
@@ -111,7 +110,6 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
 
     {
         id: "1",
-        type: "item",
         content: (
             <>
                 <p>
@@ -132,7 +130,6 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
     },
     {
         id: "2",
-        type: "item",
         content: (
             <p>
                 Use the <Highlight color={HighlightColor.Green}>prevKey</Highlight> and &nbsp;
@@ -146,7 +143,6 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
 
     {
         id: "3",
-        type: "item",
         content: (
             <div>
                 <p>Items can contain multiple focusable elements.</p>
@@ -158,7 +154,6 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
     },
     {
         id: "4",
-        type: "item",
         content: (
             <div>
                 <p>
@@ -175,7 +170,6 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
     },
     {
         id: "5",
-        type: "item",
         content: (
             <ButtonGroup size={ButtonSize.Small}>
                 <Button>List Item With Buttons</Button>
