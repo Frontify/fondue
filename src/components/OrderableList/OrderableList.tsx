@@ -1,4 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { useDroppableCollection } from "@react-aria/dnd";
 import { useGrid } from "@react-aria/grid";
 import { ListKeyboardDelegate } from "@react-aria/selection";
@@ -12,35 +13,26 @@ import React, { useRef } from "react";
 import { GridNode } from "@react-types/grid";
 import { InsertionIndicator } from "./InsertionIndicator";
 import { CollectionItem } from "./CollectionItem";
-import { ItemDragState, OrderableListContainerProps, OrderableListItem, OrderableListProps } from "./types";
+import { ItemDragState, OrderableListItem, OrderableListProps } from "./types";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 
 export const OrderableList = <T extends object>({
     onMove,
-    items,
-    renderContent,
     dragDisabled,
+    renderContent,
+    items,
     disableTypeAhead,
-}: OrderableListProps<T>) => (
-    <OrderableListContainer
-        onMove={onMove}
-        renderContent={renderContent}
-        items={items}
-        disableTypeAhead={disableTypeAhead}
-        dragDisabled={dragDisabled}
-    >
-        {(item: OrderableListItem<T>) => (
+}: OrderableListProps<T>) => {
+    const gridRef = useRef<HTMLDivElement | null>(null);
+
+    const state = useListState({
+        children: (item: OrderableListItem<T>) => (
             <Item textValue={item.alt}>
                 <></>
             </Item>
-        )}
-    </OrderableListContainer>
-);
-
-export const OrderableListContainer = <T extends object>(props: OrderableListContainerProps<T>) => {
-    const gridRef = useRef<HTMLDivElement | null>(null);
-
-    const state = useListState(props);
+        ),
+        items,
+    });
     const keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), gridRef);
 
     const gridState = useGridState({
@@ -92,7 +84,7 @@ export const OrderableListContainer = <T extends object>(props: OrderableListCon
 
             return (
                 <div style={{ width: `${refWidth}px` || "100%" }} data-test-id="drag-preview">
-                    {props.renderContent(item, {
+                    {renderContent(item, {
                         componentDragState: ItemDragState.Preview,
                         isFocusVisible: false,
                     })}
@@ -148,7 +140,7 @@ export const OrderableListContainer = <T extends object>(props: OrderableListCon
         {
             keyboardDelegate,
             onDrop: async (event) => {
-                if (event.target.type !== "root" && event.target.dropPosition !== "on" && props.onMove) {
+                if (event.target.type !== "root" && event.target.dropPosition !== "on" && onMove) {
                     const keys = [];
                     for (const item of event.items) {
                         if (item.kind === "text" && item.types.has(dragTypeId)) {
@@ -157,7 +149,7 @@ export const OrderableListContainer = <T extends object>(props: OrderableListCon
                         }
                     }
 
-                    props.onMove(keys, event.target);
+                    onMove(keys, event.target);
                 }
             },
             getDropTargetFromPoint(x, y) {
@@ -217,7 +209,7 @@ export const OrderableListContainer = <T extends object>(props: OrderableListCon
     );
 
     //Typeahead must be disabled if list item contains a contenteditable or text input element.
-    if (props.disableTypeAhead) {
+    if (disableTypeAhead) {
         delete gridProps.onKeyDownCapture;
     }
 
@@ -238,11 +230,11 @@ export const OrderableListContainer = <T extends object>(props: OrderableListCon
                     />
                     <CollectionItem
                         key={item.key}
-                        dragDisabled={props.dragDisabled}
+                        dragDisabled={dragDisabled}
                         item={item}
                         gridState={gridState}
                         dragState={dragState}
-                        renderContent={props.renderContent}
+                        renderContent={renderContent}
                     />
                     {gridState.collection.getKeyAfter(item.key) === null && (
                         <InsertionIndicator

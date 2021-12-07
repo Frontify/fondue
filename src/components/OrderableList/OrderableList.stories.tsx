@@ -1,128 +1,211 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-
-import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
 import { useListData } from "@react-stately/data";
 import { ItemDropTarget } from "@react-types/shared";
 import { Meta, Story } from "@storybook/react";
 import React, { FC, useState } from "react";
-import { Button } from "@components/Button/Button";
-import { OrderableList } from "./OrderableList";
+import { Button, ButtonSize } from "@components/Button";
+import { OrderableList as OrderableListComponent } from "./OrderableList";
 import { merge } from "@utilities/merge";
 import { GridNode } from "@react-types/grid";
 import { DragProperties, OrderableListItem } from "./types";
-import { dragStoryStyles } from ".";
+import {
+    dragStoryStyles,
+    HighlightClasses,
+    HighlightColor,
+    HighlightProps,
+    OrderableListProps,
+    StoryListItem,
+} from ".";
+import { chain } from "@react-aria/utils";
+import { Checklist, ChecklistDirection } from "@components/Checklist";
+import { Textarea } from "@components/Textarea";
+import { ButtonGroup } from "@components/ButtonGroup";
+
+export default {
+    title: "Components/Orderable List",
+    component: OrderableListComponent,
+    args: {
+        dragDisabled: false,
+        disableTypeAhead: true,
+    },
+    argTypes: {
+        onMove: { action: "onMove" },
+    },
+} as Meta<OrderableListProps<StoryListItem>>;
 
 const renderContent = (
-    { value, prevKey, nextKey }: GridNode<OrderableListItem>,
+    { value, prevKey, nextKey }: GridNode<OrderableListItem<StoryListItem>>,
     { componentDragState, isFocusVisible }: DragProperties,
-) => (
-    <div
-        className={merge([
-            "tw-break-word tw-border tw-border-solid tw-rounded tw-p-3",
-            dragStoryStyles[componentDragState],
-            isFocusVisible && "tw-bg-violet-20",
-            (nextKey === null || prevKey === null) && "tw-bg-green-20",
-        ])}
-    >
-        {value.content}
-        <hr className="tw-mt-3 tw-mb-2 tw-border-black-20 tw-bg-black-20" />
-        <div className="tw-flex tw-justify-between">
-            <span className="tw-bold">{isFocusVisible && "Im in keyboard focus"}</span>
-            <span>Drag State: {componentDragState}</span>
-        </div>
-    </div>
-);
-
-const List: FC = () => {
-    const [dragDisabled, setDragDisabled] = useState(false);
-
-    const list = useListData({
-        initialItems: [
-            {
-                id: "0",
-                type: "item",
-                content: (
-                    <ul>
-                        <li>The List rendering is completely customizable through the renderContent prop</li>
-                        <hr className="tw-my-2 tw-border-black-20 tw-bg-black-20" />
-                        <li>Use the up and down arrow keys to traverse the list</li>
-                        <hr className="tw-my-2 tw-border-black-20 tw-bg-black-20" />
-                        <li>Use the left and right arrow keys to switch focus to the prev/next element</li>
-                    </ul>
-                ),
-                alt: "Six",
-            },
-            {
-                id: "1",
-                type: "item",
-                content: (
-                    <div>
-                        <p>Use the prevKey and nextKey props to determine the position of items in the list</p>
-                    </div>
-                ),
-                alt: "Four",
-            },
-            {
-                id: "2",
-                type: "item",
-                content: (
-                    <>
-                        <Checkbox value={CheckboxState.Checked} label="List Item With Checkbox" />
-                    </>
-                ),
-                alt: "Checkbox Item",
-            },
-            {
-                id: "3",
-                type: "item",
-                content: <Button>List Item With Button</Button>,
-                alt: "List Item With Checkbox",
-            },
-            {
-                id: "4",
-                type: "item",
-                content: (
-                    <div>
-                        <p>List Item With multiple focusable elements</p>
-                        <div className="tw-flex tw-justify-around tw-mt-2">
-                            <Checkbox value={CheckboxState.Unchecked} label="First Input" />
-                            <Checkbox value={CheckboxState.Unchecked} label="Second Input" />
-                            <Checkbox value={CheckboxState.Unchecked} label="Third Input" />
-                            <Checkbox value={CheckboxState.Unchecked} label="Fourth Input" />
-                        </div>
-                    </div>
-                ),
-                alt: "text",
-            },
-            { id: "5", type: "item", content: "Five", alt: "Five" },
-        ],
-    });
-
-    const onMove = (selectedGridItemKeys: React.Key[], gridItemLocation: ItemDropTarget) =>
-        gridItemLocation.dropPosition === "before"
-            ? list.moveBefore(gridItemLocation.key, selectedGridItemKeys)
-            : list.moveAfter(gridItemLocation.key, selectedGridItemKeys);
-
+) => {
+    let position = "Middle";
+    if (!prevKey) {
+        position = "First";
+    } else if (!nextKey) {
+        position = "Last";
+    }
     return (
-        <div className="tw-m-auto  tw-w-[600px]">
-            <OrderableList
-                items={list.items}
-                onMove={onMove}
-                dragDisabled={dragDisabled}
-                renderContent={renderContent}
-            />
-            <div className="tw-flex tw-justify-center tw-mt-3">
-                <Button onClick={() => setDragDisabled((prev) => !prev)}>
-                    {`${dragDisabled ? "Enable" : "Disable"} Drag`}
-                </Button>
+        <div
+            className={merge([
+                "tw-break-word tw-border tw-border-black-40 tw-border-solid tw-p-3",
+                dragStoryStyles[componentDragState],
+                isFocusVisible && "tw-bg-violet-20",
+            ])}
+        >
+            <div className="tw-text-xs tw-text-black-60">Position: {position}</div>
+            <hr className="tw-mt-2 tw-mb-2 tw-border-black-20 tw-bg-black-20" />
+            {value.content}
+            <hr className="tw-mt-3 tw-mb-2 tw-border-black-20 tw-bg-black-20" />
+            <div className="tw-flex tw-justify-between tw-text-s">
+                <span className="tw-font-medium">{isFocusVisible && "Im in keyboard focus"}</span>
+                <span>Drag State: {componentDragState}</span>
             </div>
         </div>
     );
 };
 
-export default {
-    title: "Components/OrderableList",
-    component: List,
-} as Meta;
+const ToggleableChecklist = () => {
+    const [checked, setChecked] = useState<string[]>([]);
+    return (
+        <Checklist
+            direction={ChecklistDirection.Horizontal}
+            setActiveValues={setChecked}
+            activeValues={checked}
+            checkboxes={[
+                {
+                    label: "First Input",
+                    value: "input 1",
+                },
+                {
+                    label: "Second Input",
+                    value: "input 2",
+                },
+                {
+                    label: "Third Input",
+                    value: "input 3",
+                },
+                {
+                    label: "Fourth Input",
+                    value: "input 4",
+                },
+            ]}
+        />
+    );
+};
 
-export const Default: Story = () => <List />;
+const Highlight: FC<HighlightProps> = ({ color, children }) => (
+    <span className={merge(["tw-font-medium", HighlightClasses[color]])}>{children}</span>
+);
+
+const storyItems: OrderableListItem<StoryListItem>[] = [
+    {
+        id: "0",
+        type: "item",
+        content: (
+            <p>
+                The list rendering is completely customizable through the &nbsp;
+                <Highlight color={HighlightColor.Green}>renderContent</Highlight> callback prop.
+            </p>
+        ),
+        alt: "item 0",
+    },
+
+    {
+        id: "1",
+        type: "item",
+        content: (
+            <>
+                <p>
+                    To navigate through the list use the <Highlight color={HighlightColor.Red}>up</Highlight>
+                    ,&nbsp;
+                    <Highlight color={HighlightColor.Red}>down</Highlight>,&nbsp;
+                    <Highlight color={HighlightColor.Red}>left</Highlight> and &nbsp;
+                    <Highlight color={HighlightColor.Red}>right</Highlight> arrow keys.
+                </p>
+                <p>
+                    Press <Highlight color={HighlightColor.Red}>Space</Highlight> or&nbsp;
+                    <Highlight color={HighlightColor.Red}>Enter</Highlight> to select an item to drag, and&nbsp;
+                    <Highlight color={HighlightColor.Red}>Escape</Highlight> to exit the drag.
+                </p>
+            </>
+        ),
+        alt: "item 1",
+    },
+    {
+        id: "2",
+        type: "item",
+        content: (
+            <p>
+                Use the <Highlight color={HighlightColor.Green}>prevKey</Highlight> and &nbsp;
+                <Highlight color={HighlightColor.Green}>nextKey</Highlight> properties in the &nbsp;
+                <Highlight color={HighlightColor.Green}>renderContent</Highlight> function to determine the position of
+                items in the list.
+            </p>
+        ),
+        alt: "item two",
+    },
+
+    {
+        id: "3",
+        type: "item",
+        content: (
+            <div>
+                <p>Items can contain multiple focusable elements.</p>
+                <div className="tw-flex tw-justify-around tw-mt-2"></div>
+                <ToggleableChecklist />
+            </div>
+        ),
+        alt: "item three",
+    },
+    {
+        id: "4",
+        type: "item",
+        content: (
+            <div>
+                <p>
+                    Important: If your list item contains typable elements, make sure the &nbsp;
+                    <Highlight color={HighlightColor.Green}>disableTypeAhead</Highlight> prop is set to &nbsp;
+                    <Highlight color={HighlightColor.Violet}>true</Highlight>, otherwise typing will shift focus to a
+                    new element based on the items&nbsp;
+                    <Highlight color={HighlightColor.Green}>alt</Highlight> text
+                </p>
+                <Textarea placeholder="Type 'test' to see the effect of the typeahead"></Textarea>
+            </div>
+        ),
+        alt: "item four",
+    },
+    {
+        id: "5",
+        type: "item",
+        content: (
+            <ButtonGroup size={ButtonSize.Small}>
+                <Button>List Item With Buttons</Button>
+                <Button>List Item With Buttons</Button>
+                <Button>List Item With Buttons</Button>
+            </ButtonGroup>
+        ),
+        alt: "test",
+    },
+];
+
+export const OrderableList: Story<OrderableListProps<StoryListItem>> = ({ disableTypeAhead, onMove, dragDisabled }) => {
+    const list = useListData({
+        initialItems: storyItems,
+    });
+
+    const moveItems = (selectedGridItemKeys: React.Key[], gridItemLocation: ItemDropTarget) =>
+        gridItemLocation.dropPosition === "before"
+            ? list.moveBefore(gridItemLocation.key, selectedGridItemKeys)
+            : list.moveAfter(gridItemLocation.key, selectedGridItemKeys);
+
+    return (
+        <div className="tw-m-auto tw-w-[600px]">
+            <OrderableListComponent
+                items={list.items}
+                onMove={chain(moveItems, onMove)}
+                dragDisabled={dragDisabled}
+                renderContent={renderContent}
+                disableTypeAhead={disableTypeAhead}
+            />
+        </div>
+    );
+};
