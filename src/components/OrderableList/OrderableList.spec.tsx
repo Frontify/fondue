@@ -3,7 +3,7 @@
 import React from "react";
 import { mount } from "@cypress/react";
 import { GridNode } from "@react-types/grid";
-import { DragProperties, ItemDragState, OrderableList, OrderableListContainerProps, OrderableListItem } from ".";
+import { DragProperties, ItemDragState, OrderableList, OrderableListItem, OrderableListProps } from ".";
 
 const LIST_ID = "[data-test-id=orderable-list]";
 const LIST_ITEM_ID = "[data-test-id=orderable-list-item]";
@@ -58,7 +58,7 @@ const OrderableListWithDefaultProps = ({
     items = testItems,
     dragDisabled = false,
     onMove = cy.stub(),
-}: Partial<OrderableListContainerProps<TestItem>>) => (
+}: Partial<OrderableListProps<TestItem>>) => (
     <OrderableList renderContent={renderContent} dragDisabled={dragDisabled} items={items} onMove={onMove} />
 );
 
