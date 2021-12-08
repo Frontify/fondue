@@ -5,6 +5,7 @@ import { Meta, Story } from "@storybook/react";
 import { Badge, BadgeProps, BadgeStatus, BadgeStyle } from "./Badge";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Badge",
     component: Badge,

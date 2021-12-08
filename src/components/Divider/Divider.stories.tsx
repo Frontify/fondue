@@ -4,6 +4,7 @@ import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { Divider as DividerComponent, DividerHeight, DividerProps, DividerStyle } from "./Divider";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Divider",
     component: DividerComponent,

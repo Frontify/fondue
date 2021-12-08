@@ -7,6 +7,7 @@ import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "
 import { createLinkNode } from "./utils/editor/link";
 import { createListItemNode } from "./utils/editor/listItem";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Rich Text Editor",
     component: RichTextEditorComponent,

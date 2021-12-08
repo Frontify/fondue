@@ -6,10 +6,11 @@ import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { Slider } from "@components/Slider/Slider";
 import { TextInput } from "@components/TextInput/TextInput";
 import { Meta, Story } from "@storybook/react";
-import generateRandomId from "@utilities/generateRandomId";
+import { generateRandomId } from "@utilities/generateRandomId";
 import React, { useState } from "react";
 import { FormControl, FormControlDirection, FormControlProps, FormControlStyle, HelperPosition } from "./FormControl";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Form Control",
     component: FormControl,

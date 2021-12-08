@@ -6,6 +6,7 @@ import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { RadioPill as RadioPillComponent, RadioPillProps } from "./RadioPill";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Radio Pill",
     component: RadioPillComponent,
