@@ -119,7 +119,7 @@
         "tailwindcss": "2.2.19",
         "ts-node": "10.4.0",
         "typescript": "4.5.2",
-        "vite": "2.6.14",
+        "vite": "2.7.1",
         "vite-plugin-dts": "0.9.6"
     },
     "peerDependencies": {
