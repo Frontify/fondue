@@ -80,7 +80,7 @@ export type AssetInputProps =
           asset?: undefined;
           actions?: undefined;
           size?: undefined;
-          onUploadClick: () => void;
+          onUploadClick?: () => void;
           onLibraryClick?: () => void;
       };
 
