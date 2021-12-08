@@ -59,6 +59,7 @@ const actions = [
     },
 ] as ActionMenuBlock[];
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Asset Input",
     component: AssetInput,

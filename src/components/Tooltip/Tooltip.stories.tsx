@@ -7,6 +7,7 @@ import { BrightHeaderStyle } from "./BrightHeader";
 import { Tooltip as TooltipComponent, TooltipProps } from "./Tooltip";
 import { TooltipArrow } from "./TooltipArrow";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Tooltip",
     component: TooltipComponent,

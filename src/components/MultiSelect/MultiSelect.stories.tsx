@@ -4,6 +4,7 @@ import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { MultiSelect as MultiSelectComponent, MultiSelectProps, MultiSelectType } from "./MultiSelect";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Multi Select",
     component: MultiSelectComponent,

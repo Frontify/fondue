@@ -8,6 +8,7 @@ import {
     AddBlockButtonProps,
 } from "./AddBlockButton";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Add Block Button",
     component: AddBlockButtonComponent,

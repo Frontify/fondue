@@ -4,6 +4,7 @@ import React from "react";
 import { Story, Meta } from "@storybook/react";
 import { LoadingCircle, LoadingCircleProps, LoadingCircleSize, LoadingCircleStyle } from "./LoadingCircle";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/LoadingCircle",
     component: LoadingCircle,

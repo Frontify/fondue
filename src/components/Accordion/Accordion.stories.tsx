@@ -17,6 +17,7 @@ import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { Accordion as AccordionComponent, AccordionItem, AccordionProps } from "./Accordion";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Accordion",
     component: AccordionComponent,

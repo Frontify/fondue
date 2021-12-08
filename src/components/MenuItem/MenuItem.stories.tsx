@@ -6,6 +6,7 @@ import React from "react";
 import { MenuItem as MenuItemComponent, MenuItemProps, MenuItemStyle, SelectionIndicatorIcon } from "./MenuItem";
 import { MenuItemContentSize } from "./MenuItemContent";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Menu Item",
     component: MenuItemComponent,

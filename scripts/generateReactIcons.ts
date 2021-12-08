@@ -5,7 +5,7 @@ import { writeFile, readFile } from "fs/promises";
 // @ts-ignore
 import { transform } from "@svgr/core";
 import { Entry } from "fast-glob/out/types";
-import IconTemplate from "../src/foundation/Icon/IconTemplate";
+import { IconTemplate } from "../src/foundation/Icon/IconTemplate";
 
 export const GENERATED_ICONS_INDEX_PATH = "src/foundation/Icon/Generated/index.ts";
 
