@@ -3,6 +3,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import tokens from "@frontify/arcade-tokens";
+
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 
@@ -19,6 +20,12 @@ export const AliasTokens: Story = () => {
 
     return (
         <div className="tw-grid tw-grid-cols-1 tw-gap-16">
+            <div className="">
+                <p>
+                    The name of the colors are targetted for the use as tailwind classes and are not a one-to-one match
+                    to the Arcade Tokens.
+                </p>
+            </div>
             {categories.map((category: string) => {
                 const palette = getPalette(tokens[category]);
 
