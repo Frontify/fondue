@@ -47,6 +47,24 @@ export type InsertionIndicatorProps = {
     dropState: DroppableCollectionState;
 };
 
+//Focus Controller
+export type FocusControllerProps = {
+    children: ReactElement;
+    width?: FocusControllerWidth;
+};
+
+export enum FocusControllerWidth {
+    Full = "Full",
+    Max = "Max",
+    Min = "Min",
+}
+
+export const FocusControllerWidthClass: Record<FocusControllerWidth, string> = {
+    [FocusControllerWidth.Full]: "tw-w-full",
+    [FocusControllerWidth.Max]: "tw-w-max",
+    [FocusControllerWidth.Min]: "tw-w-min",
+};
+
 //Storybook types
 
 export const dragStoryStyles: Record<ItemDragState, string> = {
