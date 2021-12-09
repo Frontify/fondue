@@ -14,6 +14,7 @@ const ITEMS = [
     { label: "Item 3", link },
 ];
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Breadcrumbs",
     component: Breadcrumbs,

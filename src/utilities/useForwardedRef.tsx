@@ -6,7 +6,9 @@ export function useForwardedRef<T>(ref: ForwardedRef<T>): MutableRefObject<T | n
     const innerRef = useRef(null);
 
     useEffect(() => {
-        if (!ref) return;
+        if (!ref) {
+            return;
+        }
 
         if (typeof ref === "function") {
             ref(innerRef.current);

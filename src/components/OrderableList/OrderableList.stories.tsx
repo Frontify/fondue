@@ -14,6 +14,7 @@ import { Checklist, ChecklistDirection } from "@components/Checklist";
 import { Textarea } from "@components/Textarea";
 import { ButtonGroup } from "@components/ButtonGroup";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Orderable List",
     component: OrderableListComponent,

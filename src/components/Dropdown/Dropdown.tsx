@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getDisabledItemIds, getMenuItems, mapToAriaProps } from "@components/Menu/Aria/helper";
-import { MenuBlock, SelectMenu } from "@components/Menu/SelectMenu";
+import { MenuBlock, MenuItemType, SelectMenu } from "@components/Menu/SelectMenu";
 import { MenuItemContent, MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { Trigger } from "@components/Trigger/Trigger";
 import { useMemoizedId } from "@hooks/useMemoizedId";
@@ -13,7 +13,7 @@ import { mergeProps } from "@react-aria/utils";
 import { useSelectState } from "@react-stately/select";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, ReactElement, useRef } from "react";
+import React, { FC, ReactElement, useEffect, useRef } from "react";
 
 export enum DropdownSize {
     Small = "Small",
@@ -33,11 +33,19 @@ export type DropdownProps = {
     decorator?: ReactElement;
 };
 
-const getActiveItem = (blocks: MenuBlock[], activeId?: string | number) =>
-    blocks
-        .map(({ menuItems }) => menuItems)
-        .flat()
-        .find(({ id }) => id.toString() === activeId?.toString()) || null;
+const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
+    const disabledItems = getDisabledItemIds(getMenuItems(blocks));
+    if (disabledItems.has(activeId)) {
+        return null;
+    }
+
+    return (
+        blocks
+            .map(({ menuItems }) => menuItems)
+            .flat()
+            .find(({ id }) => id.toString() === activeId?.toString()) || null
+    );
+};
 
 export const Dropdown: FC<DropdownProps> = ({
     id: propId,
@@ -51,7 +59,7 @@ export const Dropdown: FC<DropdownProps> = ({
     ariaLabel = "Dropdown",
     decorator,
 }) => {
-    const activeItem = getActiveItem(menuBlocks, activeItemId);
+    const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
     const state = useSelectState({
         ...props,
@@ -69,6 +77,14 @@ export const Dropdown: FC<DropdownProps> = ({
         { isOpen, onClose: () => state.close(), shouldCloseOnBlur: true, isDismissable: true },
         overlayRef,
     );
+
+    useEffect(() => {
+        if (state.disabledKeys.has(activeItemId as string)) {
+            return;
+        }
+
+        state.setSelectedKey(activeItemId as string);
+    }, [activeItemId]);
 
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
@@ -97,7 +113,7 @@ export const Dropdown: FC<DropdownProps> = ({
                     ref={ref}
                     data-test-id="dropdown-trigger"
                     className={merge([
-                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none",
+                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-pr-8",
                         size === DropdownSize.Small ? "tw-py-2 tw-px-3 tw-min-h-[34px]" : "tw-p-5 tw-min-h-[60px]",
                         !activeItem && "tw-text-black-60",
                         disabled && "tw-text-black-40",
@@ -114,7 +130,7 @@ export const Dropdown: FC<DropdownProps> = ({
             <AnimatePresence>
                 {!disabled && isOpen && (
                     <motion.div
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20"
+                        className="tw-absolute tw-left-0 tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20 tw-min-w-full tw-overflow-hidden"
                         key="content"
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}

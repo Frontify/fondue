@@ -10,6 +10,7 @@ import {
 } from "./FieldsetHeader";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Fieldset Header",
     component: FieldsetHeaderComponent,

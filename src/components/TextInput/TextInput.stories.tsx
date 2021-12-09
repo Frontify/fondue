@@ -6,6 +6,7 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { Meta, Story } from "@storybook/react";
 import { TextInput, TextInputProps, TextInputType, Validation } from "./TextInput";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Text Input",
     component: TextInput,

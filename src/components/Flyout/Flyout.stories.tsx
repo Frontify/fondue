@@ -14,6 +14,7 @@ import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { Flyout, FlyoutProps, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT } from "./Flyout";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Flyout",
     component: Flyout,
