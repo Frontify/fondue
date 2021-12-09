@@ -2,7 +2,7 @@
 import { useListData } from "@react-stately/data";
 import { ItemDropTarget } from "@react-types/shared";
 import { Meta, Story } from "@storybook/react";
-import React, { FC, forwardRef, ReactChild, useState } from "react";
+import React, { FC, forwardRef, ReactChild } from "react";
 import { Button, ButtonSize } from "@components/Button";
 import { OrderableList as OrderableListComponent } from "./OrderableList";
 import { merge } from "@utilities/merge";
@@ -10,7 +10,6 @@ import { GridNode } from "@react-types/grid";
 import { DragProperties, OrderableListItem } from "./types";
 import { FocusController, FocusControllerWidth, ItemDragState, OrderableListProps } from ".";
 import { chain } from "@react-aria/utils";
-import { Checklist, ChecklistDirection } from "@components/Checklist";
 import { Textarea } from "@components/Textarea";
 import { ButtonGroup } from "@components/ButtonGroup";
 
@@ -27,30 +26,30 @@ export default {
     },
 } as Meta<OrderableListProps<StoryListItem>>;
 
-export const dragStoryStyles: Record<ItemDragState, string> = {
+const dragStoryStyles: Record<ItemDragState, string> = {
     [ItemDragState.Dragging]: "tw-bg-black-10 tw-border-black-20 tw-opacity-75",
     [ItemDragState.Idle]: "tw-border-black-20",
     [ItemDragState.Preview]: "tw-bg-white tw-border-violet-70 tw-border-4",
 };
 
-export enum HighlightColor {
+enum HighlightColor {
     Violet = "Violet",
     Green = "Green",
     Red = "Red",
 }
 
-export const HighlightClasses: Record<HighlightColor, string> = {
+const HighlightClasses: Record<HighlightColor, string> = {
     [HighlightColor.Violet]: "tw-text-violet-60",
     [HighlightColor.Green]: "tw-text-green-60",
     [HighlightColor.Red]: "tw-text-red-60",
 };
 
-export type HighlightProps = {
+type HighlightProps = {
     color: HighlightColor;
     children: ReactChild;
 };
 
-export type StoryListItem = {
+type StoryListItem = {
     content: JSX.Element;
 };
 
@@ -84,35 +83,6 @@ const renderContent = (
     );
 };
 
-const ToggleableChecklist = () => {
-    const [checked, setChecked] = useState<string[]>([]);
-    return (
-        <Checklist
-            direction={ChecklistDirection.Horizontal}
-            setActiveValues={setChecked}
-            activeValues={checked}
-            checkboxes={[
-                {
-                    label: "First Input",
-                    value: "input 1",
-                },
-                {
-                    label: "Second Input",
-                    value: "input 2",
-                },
-                {
-                    label: "Third Input",
-                    value: "input 3",
-                },
-                {
-                    label: "Fourth Input",
-                    value: "input 4",
-                },
-            ]}
-        />
-    );
-};
-
 const TextAreaWithRef = forwardRef<HTMLTextAreaElement>((_, ref) => (
     <textarea ref={ref} className="tw-w-full tw-block tw-border" />
 ));
@@ -131,7 +101,7 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
                 <Highlight color={HighlightColor.Green}>renderContent</Highlight> callback prop.
             </p>
         ),
-        alt: "item 0",
+        alt: "one",
     },
 
     {
@@ -152,7 +122,7 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
                 </p>
             </>
         ),
-        alt: "item 1",
+        alt: "two",
     },
     {
         id: "2",
@@ -172,11 +142,16 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
         content: (
             <div>
                 <p>Items can contain multiple focusable elements.</p>
-                <div className="tw-flex tw-justify-around tw-mt-2"></div>
-                <ToggleableChecklist />
+                <div className="tw-flex tw-justify-around tw-mt-2">
+                    <ButtonGroup size={ButtonSize.Small}>
+                        <Button>List Item With Buttons</Button>
+                        <Button>List Item With Buttons</Button>
+                        <Button>List Item With Buttons</Button>
+                    </ButtonGroup>
+                </div>
             </div>
         ),
-        alt: "item three",
+        alt: "three",
     },
     {
         id: "4",
@@ -189,10 +164,10 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
                     new element based on the items&nbsp;
                     <Highlight color={HighlightColor.Green}>alt</Highlight> text
                 </p>
-                <Textarea placeholder="Type 'test' to see the effect of the typeahead"></Textarea>
+                <Textarea placeholder="Type 'one' to see the effect of the typeahead"></Textarea>
             </div>
         ),
-        alt: "item four",
+        alt: "four",
     },
     {
         id: "5",
@@ -211,18 +186,7 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
                 </FocusController>
             </div>
         ),
-        alt: "item five",
-    },
-    {
-        id: "6",
-        content: (
-            <ButtonGroup size={ButtonSize.Small}>
-                <Button>List Item With Buttons</Button>
-                <Button>List Item With Buttons</Button>
-                <Button>List Item With Buttons</Button>
-            </ButtonGroup>
-        ),
-        alt: "test",
+        alt: "five",
     },
 ];
 
