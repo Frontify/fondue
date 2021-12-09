@@ -2,22 +2,13 @@
 import { useListData } from "@react-stately/data";
 import { ItemDropTarget } from "@react-types/shared";
 import { Meta, Story } from "@storybook/react";
-import React, { FC, forwardRef, useState } from "react";
+import React, { FC, forwardRef, ReactChild, useState } from "react";
 import { Button, ButtonSize } from "@components/Button";
 import { OrderableList as OrderableListComponent } from "./OrderableList";
 import { merge } from "@utilities/merge";
 import { GridNode } from "@react-types/grid";
 import { DragProperties, OrderableListItem } from "./types";
-import {
-    dragStoryStyles,
-    FocusController,
-    FocusControllerWidth,
-    HighlightClasses,
-    HighlightColor,
-    HighlightProps,
-    OrderableListProps,
-    StoryListItem,
-} from ".";
+import { FocusController, FocusControllerWidth, ItemDragState, OrderableListProps } from ".";
 import { chain } from "@react-aria/utils";
 import { Checklist, ChecklistDirection } from "@components/Checklist";
 import { Textarea } from "@components/Textarea";
@@ -34,6 +25,33 @@ export default {
         onMove: { action: "onMove" },
     },
 } as Meta<OrderableListProps<StoryListItem>>;
+
+export const dragStoryStyles: Record<ItemDragState, string> = {
+    [ItemDragState.Dragging]: "tw-bg-black-10 tw-border-black-20 tw-opacity-75",
+    [ItemDragState.Idle]: "tw-border-black-20",
+    [ItemDragState.Preview]: "tw-bg-white tw-border-violet-70 tw-border-4",
+};
+
+export enum HighlightColor {
+    Violet = "Violet",
+    Green = "Green",
+    Red = "Red",
+}
+
+export const HighlightClasses: Record<HighlightColor, string> = {
+    [HighlightColor.Violet]: "tw-text-violet-60",
+    [HighlightColor.Green]: "tw-text-green-60",
+    [HighlightColor.Red]: "tw-text-red-60",
+};
+
+export type HighlightProps = {
+    color: HighlightColor;
+    children: ReactChild;
+};
+
+export type StoryListItem = {
+    content: JSX.Element;
+};
 
 const renderContent = (
     { value, prevKey, nextKey }: GridNode<OrderableListItem<StoryListItem>>,

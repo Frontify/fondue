@@ -208,7 +208,7 @@ export const OrderableList = <T extends object>({
         gridRef,
     );
 
-    //Typeahead must be disabled if list item contains a contenteditable or text input element.
+    // Typeahead must be disabled if list item contains a contenteditable or text input element.
     if (disableTypeAhead) {
         delete gridProps.onKeyDownCapture;
     }
