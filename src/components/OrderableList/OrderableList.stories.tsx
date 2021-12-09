@@ -2,7 +2,7 @@
 import { useListData } from "@react-stately/data";
 import { ItemDropTarget } from "@react-types/shared";
 import { Meta, Story } from "@storybook/react";
-import React, { FC, useState } from "react";
+import React, { FC, forwardRef, useState } from "react";
 import { Button, ButtonSize } from "@components/Button";
 import { OrderableList as OrderableListComponent } from "./OrderableList";
 import { merge } from "@utilities/merge";
@@ -10,6 +10,8 @@ import { GridNode } from "@react-types/grid";
 import { DragProperties, OrderableListItem } from "./types";
 import {
     dragStoryStyles,
+    FocusController,
+    FocusControllerWidth,
     HighlightClasses,
     HighlightColor,
     HighlightProps,
@@ -92,6 +94,11 @@ const ToggleableChecklist = () => {
     );
 };
 
+const TextAreaWithRef = forwardRef<HTMLTextAreaElement>((_, ref) => (
+    <textarea ref={ref} className="tw-w-full tw-block tw-border" />
+));
+TextAreaWithRef.displayName = "TextareaWithRef";
+
 const Highlight: FC<HighlightProps> = ({ color, children }) => (
     <span className={merge(["tw-font-medium", HighlightClasses[color]])}>{children}</span>
 );
@@ -157,8 +164,8 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
         content: (
             <div>
                 <p>
-                    Important: If your list item contains typable elements, make sure the &nbsp;
-                    <Highlight color={HighlightColor.Green}>disableTypeAhead</Highlight> prop is set to &nbsp;
+                    Important: If your list item contains typable elements, make sure the&nbsp;
+                    <Highlight color={HighlightColor.Green}>disableTypeAhead</Highlight> prop is set to&nbsp;
                     <Highlight color={HighlightColor.Violet}>true</Highlight>, otherwise typing will shift focus to a
                     new element based on the items&nbsp;
                     <Highlight color={HighlightColor.Green}>alt</Highlight> text
@@ -170,6 +177,25 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
     },
     {
         id: "5",
+        content: (
+            <div>
+                <p>
+                    Wrap your typable component in a&nbsp;
+                    <Highlight color={HighlightColor.Green}>Focus Controller</Highlight> to enable navigation by
+                    keyboard. Press <Highlight color={HighlightColor.Red}>Space</Highlight> to enter the textarea
+                    and&nbsp;
+                    <Highlight color={HighlightColor.Red}>Escape</Highlight> to exit.
+                </p>
+                <p>Note: The child component must expose a ref for the focus controller to work</p>
+                <FocusController width={FocusControllerWidth.Full}>
+                    <TextAreaWithRef />
+                </FocusController>
+            </div>
+        ),
+        alt: "item five",
+    },
+    {
+        id: "6",
         content: (
             <ButtonGroup size={ButtonSize.Small}>
                 <Button>List Item With Buttons</Button>
