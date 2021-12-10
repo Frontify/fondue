@@ -181,10 +181,10 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
         id: "7",
         textContent: (
             <p>
-                The drag-preview is created as a new element, using dragged item&apos;s&nbsp;
-                <Highlight color={HighlightColor.Green}>Key</Highlight> prop to render its content. The state of any
-                interactive items must be managed outside of the list to achieve consistent rendering in the drag
-                preview
+                The drag-preview is created as a new element, using the
+                <Highlight color={HighlightColor.Green}>renderContent</Highlight> callback with the dragged item key to
+                render its content. The state of any interactive items must be managed outside of the list to achieve
+                consistent rendering in the drag preview.
             </p>
         ),
         actionContentType: ActionContentTypes.Checklist,
