@@ -96,7 +96,7 @@ const Highlight: FC<HighlightProps> = ({ color, children }) => (
 
 const storyItems: OrderableListItem<StoryListItem>[] = [
     {
-        id: "0",
+        id: "1",
         textContent: (
             <p>
                 The list rendering is completely customizable through the &nbsp;
@@ -106,7 +106,7 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
         alt: "one",
     },
     {
-        id: "1",
+        id: "2",
         textContent: (
             <>
                 <p>
@@ -126,7 +126,7 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
         alt: "two",
     },
     {
-        id: "2",
+        id: "3",
         textContent: (
             <p>
                 Use the <Highlight color={HighlightColor.Green}>prevKey</Highlight> and &nbsp;
@@ -135,33 +135,30 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
                 items in the list.
             </p>
         ),
-        alt: "item two",
-    },
-    {
-        id: "3",
-        textContent: <p>Items can contain multiple focusable elements.</p>,
-        actionContentType: ActionContentTypes.ButtonGroup,
         alt: "three",
     },
     {
         id: "4",
-        textContent: (
-            <>
-                <p>
-                    Important: If your list item contains typable elements, make sure the&nbsp;
-                    <Highlight color={HighlightColor.Green}>disableTypeAhead</Highlight> prop is set to&nbsp;
-                    <Highlight color={HighlightColor.Violet}>true</Highlight>, otherwise typing will shift focus to a
-                    new element based on the items&nbsp;
-                    <Highlight color={HighlightColor.Green}>alt</Highlight> text (Type &quot;one&quot; to see the
-                    effect).
-                </p>
-            </>
-        ),
-        actionContentType: ActionContentTypes.Input,
+        textContent: <p>Items can contain multiple focusable elements.</p>,
+        actionContentType: ActionContentTypes.ButtonGroup,
         alt: "four",
     },
     {
         id: "5",
+        textContent: (
+            <p>
+                Important: If your list item contains typable elements, make sure the&nbsp;
+                <Highlight color={HighlightColor.Green}>disableTypeAhead</Highlight> prop is set to&nbsp;
+                <Highlight color={HighlightColor.Violet}>true</Highlight>, otherwise typing will shift focus to a new
+                element based on the items&nbsp;
+                <Highlight color={HighlightColor.Green}>alt</Highlight> text (Type &quot;one&quot; to see the effect).
+            </p>
+        ),
+        actionContentType: ActionContentTypes.Input,
+        alt: "five",
+    },
+    {
+        id: "6",
         textContent: (
             <>
                 <p>
@@ -178,10 +175,10 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
             </>
         ),
         actionContentType: ActionContentTypes.Textarea,
-        alt: "five",
+        alt: "six",
     },
     {
-        id: "6",
+        id: "7",
         textContent: (
             <p>
                 The drag-preview is created as a new element, using dragged item&apos;s&nbsp;
@@ -191,7 +188,7 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
             </p>
         ),
         actionContentType: ActionContentTypes.Checklist,
-        alt: "six",
+        alt: "seven",
     },
 ];
 
@@ -283,9 +280,9 @@ export const OrderableList: Story<OrderableListProps<StoryListItem>> = ({ disabl
             ? list.moveBefore(gridItemLocation.key, selectedGridItemKeys)
             : list.moveAfter(gridItemLocation.key, selectedGridItemKeys);
 
-    const updateActionState = (content: unknown, key: Key) =>
+    const updateActionState = (value: ValueOf<ActionStateValueTypes>, key: Key) =>
         setActionState((prev) => {
-            const newContent = { ...prev, [key]: content };
+            const newContent = { ...prev, [key]: value };
             return newContent;
         });
 
