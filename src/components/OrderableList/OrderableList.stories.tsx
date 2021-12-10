@@ -27,10 +27,16 @@ export default {
     },
 } as Meta<OrderableListProps<StoryListItem>>;
 
-const dragStoryStyles: Record<ItemDragState, string> = {
-    [ItemDragState.Dragging]: "tw-bg-black-10 tw-border-black-20 tw-opacity-75",
-    [ItemDragState.Idle]: "tw-border-black-20",
-    [ItemDragState.Preview]: "tw-bg-white tw-border-violet-70 tw-border-2",
+type ValueOf<T> = T[keyof T];
+
+type ControlledTextAreaProps = {
+    value: string;
+    onChange: (value: string) => void;
+};
+
+type HighlightProps = {
+    color: HighlightColor;
+    children: ReactChild;
 };
 
 enum HighlightColor {
@@ -43,16 +49,6 @@ const HighlightClasses: Record<HighlightColor, string> = {
     [HighlightColor.Violet]: "tw-text-violet-60",
     [HighlightColor.Green]: "tw-text-green-60",
     [HighlightColor.Red]: "tw-text-red-60",
-};
-
-type ControlledTextAreaProps = {
-    value: string;
-    onChange: (value: string) => void;
-};
-
-type HighlightProps = {
-    color: HighlightColor;
-    children: ReactChild;
 };
 
 type StoryListItem = {
@@ -78,7 +74,11 @@ type ActionState = {
     actionState: Record<Key, ValueOf<ActionStateValueTypes>>;
 };
 
-type ValueOf<T> = T[keyof T];
+const dragStoryStyles: Record<ItemDragState, string> = {
+    [ItemDragState.Dragging]: "tw-bg-black-10 tw-border-black-20 tw-opacity-75",
+    [ItemDragState.Idle]: "tw-border-black-20",
+    [ItemDragState.Preview]: "tw-bg-white tw-border-violet-70 tw-border-2",
+};
 
 const ControlledTextArea = forwardRef<HTMLTextAreaElement, ControlledTextAreaProps>(({ value, onChange }, ref) => (
     <textarea
@@ -192,7 +192,10 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
     },
 ];
 
-const getActionContentItemMap = ({ updateActionState, actionState }: ActionState, key: Key) => ({
+const getActionContentItemMap = (
+    { updateActionState, actionState }: ActionState,
+    key: Key,
+): Record<ActionContentTypes, JSX.Element> => ({
     [ActionContentTypes.Input]: (
         <TextInput
             value={actionState[key] as ActionStateValueTypes[ActionContentTypes.Input]}
