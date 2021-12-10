@@ -192,7 +192,7 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
     },
 ];
 
-const getActionContentItems = ({ updateActionState, actionState }: ActionState, key: Key) => ({
+const getActionContentItemMap = ({ updateActionState, actionState }: ActionState, key: Key) => ({
     [ActionContentTypes.Input]: (
         <TextInput
             value={actionState[key] as ActionStateValueTypes[ActionContentTypes.Input]}
@@ -244,7 +244,7 @@ const renderContent = (
     const { actionContentType } = value;
 
     const actionContent = actionContentType
-        ? getActionContentItems({ updateActionState, actionState }, key)[actionContentType]
+        ? getActionContentItemMap({ updateActionState, actionState }, key)[actionContentType]
         : null;
 
     return (
