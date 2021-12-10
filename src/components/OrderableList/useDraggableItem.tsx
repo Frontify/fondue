@@ -25,10 +25,15 @@ export const useDraggableItem = (props: DraggableItemProps, state: DraggableColl
         },
     });
 
+    const item = state.collection.getItem(props.key);
+
+    const ariaLabel = `Drag ${item.textValue}`;
+
     return {
         dragProps,
         dragButtonProps: {
             ...dragButtonProps,
+            "aria-label": ariaLabel,
         },
     };
 };
