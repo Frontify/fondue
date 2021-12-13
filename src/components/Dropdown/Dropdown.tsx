@@ -11,9 +11,10 @@ import { DismissButton, useOverlay } from "@react-aria/overlays";
 import { HiddenSelect, useSelect } from "@react-aria/select";
 import { mergeProps } from "@react-aria/utils";
 import { useSelectState } from "@react-stately/select";
+import { debounce } from "@utilities/debounce";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, ReactElement, useEffect, useRef } from "react";
+import React, { FC, ReactElement, useEffect, useRef, useCallback, useState, MutableRefObject } from "react";
 
 export enum DropdownSize {
     Small = "Small",
@@ -68,6 +69,7 @@ export const Dropdown: FC<DropdownProps> = ({
         disabledKeys: getDisabledItemIds(getMenuItems(menuBlocks)),
     });
     const ref = useRef<HTMLButtonElement | null>(null);
+
     const { triggerProps, valueProps, menuProps } = useSelect(props, state, ref);
     const { buttonProps } = useButton(triggerProps, ref);
     const { isOpen } = state;
@@ -78,6 +80,18 @@ export const Dropdown: FC<DropdownProps> = ({
         overlayRef,
     );
 
+    const getInnerOverlayHeight = useCallback((ref: MutableRefObject<HTMLElement | null>) => {
+        let maxHeight = "auto";
+        if (ref.current) {
+            const { innerHeight } = window;
+            const { bottom } = ref?.current?.getBoundingClientRect();
+            maxHeight = `${Math.max(innerHeight - bottom - 40, 130)}px`;
+        }
+        return maxHeight;
+    }, []);
+
+    const [maximumOverlayHeight, setMaximumOverlayHeight] = useState("auto");
+
     useEffect(() => {
         if (state.disabledKeys.has(activeItemId as string)) {
             return;
@@ -85,6 +99,15 @@ export const Dropdown: FC<DropdownProps> = ({
 
         state.setSelectedKey(activeItemId as string);
     }, [activeItemId]);
+
+    useEffect(() => {
+        setMaximumOverlayHeight(getInnerOverlayHeight(ref));
+        const resizeEvent = debounce(() => setMaximumOverlayHeight(getInnerOverlayHeight(ref)), 50);
+        window.addEventListener("resize", resizeEvent);
+        return () => {
+            window.removeEventListener("resize", resizeEvent);
+        };
+    }, [ref, getInnerOverlayHeight, setMaximumOverlayHeight]);
 
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
@@ -138,7 +161,12 @@ export const Dropdown: FC<DropdownProps> = ({
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
                         <FocusScope restoreFocus>
-                            <div {...overlayProps} ref={overlayRef}>
+                            <div
+                                {...overlayProps}
+                                ref={overlayRef}
+                                style={{ maxHeight: maximumOverlayHeight }}
+                                className="tw-min-h-[130px] tw-overflow-auto"
+                            >
                                 <DismissButton onDismiss={() => close()} />
                                 <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} />
                                 <DismissButton onDismiss={() => close()} />
