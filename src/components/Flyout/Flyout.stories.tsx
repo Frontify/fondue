@@ -3,7 +3,7 @@
 import { Slider } from "@components/Slider/Slider";
 import { FormControl } from "@components/FormControl/FormControl";
 import { BadgeStatus, BadgeStyle } from "@components/Badge/Badge";
-import { Button } from "@components/Button/Button";
+import { Button, ButtonStyle } from "@components/Button/Button";
 import { Divider } from "@components/Divider/Divider";
 import IconActions from "@foundation/Icon/Generated/IconActions";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
@@ -12,7 +12,8 @@ import { TextInput } from "@components/TextInput/TextInput";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
-import { Flyout, FlyoutProps, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT } from "./Flyout";
+import { Flyout, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, FlyoutProps } from "./Flyout";
+import { FlyoutFooter } from "@components/Flyout/FlyoutFooter";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -139,6 +140,55 @@ WithButtonTrigger.args = {
 };
 
 WithButtonTrigger.argTypes = {
+    trigger: { table: { disable: true } },
+    decorator: { table: { disable: true } },
+};
+
+const WithCustomFooterFlyoutTemplate: Story<FlyoutProps> = (args) => {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <div className="dark:tw-text-white">
+            <div className="tw-flex tw-items-center">
+                Some text
+                <Flyout {...args} isOpen={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
+                    <p className="tw-text-center tw-py-8">Your flyout content with custom footer buttons!</p>
+                    <FlyoutFooter
+                        primaryButton={
+                            <Button key="add" style={ButtonStyle.Primary} onClick={action("onClick")}>
+                                Add
+                            </Button>
+                        }
+                        secondaryButton={
+                            <Button key="cancel" style={ButtonStyle.Secondary} onClick={action("onClose")}>
+                                Cancel
+                            </Button>
+                        }
+                    />
+                </Flyout>
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+        </div>
+    );
+};
+export const WithCustomFooter = WithCustomFooterFlyoutTemplate.bind({});
+
+WithCustomFooter.args = {
+    title: "Header title",
+    decorator: <IconIcons />,
+    trigger: (
+        <span className="tw-flex tw-h-full tw-items-center tw-p-1 tw-rounded tw-bg-black-20 hover:tw-bg-black-30 dark:tw-bg-black-80 dark:hover:tw-bg-black-70">
+            <IconActions />
+        </span>
+    ),
+    legacyFooter: false,
+};
+
+WithCustomFooter.argTypes = {
     trigger: { table: { disable: true } },
     decorator: { table: { disable: true } },
 };

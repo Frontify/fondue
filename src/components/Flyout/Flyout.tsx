@@ -48,6 +48,11 @@ export type FlyoutProps = PropsWithChildren<{
     hug?: boolean;
     isOpen?: boolean;
     onOpenChange: (isOpen: boolean) => void;
+    /**
+     * The legacy footer buttons section inside of the flyout will be deleted in the future.
+     * @deprecated Pass the FlyoutFooter component with buttons to the Flyout component.
+     */
+    legacyFooter?: boolean;
 }>;
 
 type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange"> & {
@@ -68,6 +73,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         positionProps,
         overlayTriggerProps,
         scrollRef,
+        legacyFooter,
     },
     ref,
 ) => {
@@ -100,22 +106,24 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                 {Children.map(children, (child, index) => (
                     <div key={index}>{child}</div>
                 ))}
-                <div className="tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-sticky tw-bottom-0 tw-bg-white dark:tw-bg-black-95">
-                    {onClick ? (
-                        <>
+                {legacyFooter && (
+                    <div className="tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-sticky tw-bottom-0 tw-bg-white dark:tw-bg-black-95">
+                        {onClick ? (
+                            <>
+                                <Button onClick={onClose} style={ButtonStyle.Secondary}>
+                                    Cancel
+                                </Button>
+                                <Button onClick={onClick} icon={<IconCheck />}>
+                                    Confirm
+                                </Button>
+                            </>
+                        ) : (
                             <Button onClick={onClose} style={ButtonStyle.Secondary}>
-                                Cancel
+                                Close
                             </Button>
-                            <Button onClick={onClick} icon={<IconCheck />}>
-                                Confirm
-                            </Button>
-                        </>
-                    ) : (
-                        <Button onClick={onClose} style={ButtonStyle.Secondary}>
-                            Close
-                        </Button>
-                    )}
-                </div>
+                        )}
+                    </div>
+                )}
                 <DismissButton onDismiss={onClose} />
             </div>
         </div>
@@ -135,6 +143,7 @@ export const Flyout: FC<FlyoutProps> = ({
     title = "",
     badges = [],
     hug = true,
+    legacyFooter = true,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
     const { toggle, close } = state;
@@ -200,6 +209,7 @@ export const Flyout: FC<FlyoutProps> = ({
                             }}
                             ref={overlayRef}
                             scrollRef={scrollRef}
+                            legacyFooter={legacyFooter}
                         >
                             {overlayRef?.current && children}
                         </Overlay>
