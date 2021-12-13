@@ -26,6 +26,7 @@ export const OrderableList = <T extends object>({
     const gridRef = useRef<HTMLDivElement | null>(null);
 
     const state = useListState({
+        // Item requires at least an empty child element for its typing to be correct.
         children: (item: OrderableListItem<T>) => (
             <Item textValue={item.alt}>
                 <></>

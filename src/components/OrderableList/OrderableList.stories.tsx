@@ -284,10 +284,7 @@ export const OrderableList: Story<OrderableListProps<StoryListItem>> = ({ disabl
             : list.moveAfter(gridItemLocation.key, selectedGridItemKeys);
 
     const updateActionState = (value: ValueOf<ActionStateValueTypes>, key: Key) =>
-        setActionState((prev) => {
-            const newContent = { ...prev, [key]: value };
-            return newContent;
-        });
+        setActionState((prev) => ({ ...prev, [key]: value }));
 
     return (
         <div className="tw-m-auto tw-w-[600px]">
