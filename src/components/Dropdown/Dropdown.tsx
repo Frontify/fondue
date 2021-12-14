@@ -11,10 +11,9 @@ import { DismissButton, useOverlay } from "@react-aria/overlays";
 import { HiddenSelect, useSelect } from "@react-aria/select";
 import { mergeProps } from "@react-aria/utils";
 import { useSelectState } from "@react-stately/select";
-import { debounce } from "@utilities/debounce";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, ReactElement, useEffect, useRef, useState, MutableRefObject } from "react";
+import React, { FC, ReactElement, useEffect, useRef, MutableRefObject } from "react";
 
 export enum DropdownSize {
     Small = "Small",
@@ -92,8 +91,6 @@ export const Dropdown: FC<DropdownProps> = ({
         overlayRef,
     );
 
-    const [maximumOverlayHeight, setMaximumOverlayHeight] = useState("auto");
-
     useEffect(() => {
         if (state.disabledKeys.has(activeItemId as string)) {
             return;
@@ -101,18 +98,6 @@ export const Dropdown: FC<DropdownProps> = ({
 
         state.setSelectedKey(activeItemId as string);
     }, [activeItemId]);
-
-    useEffect(() => {
-        const resizeEvent = () => setMaximumOverlayHeight(getInnerOverlayHeight(triggerRef));
-        const debouncedEvent = debounce(resizeEvent, 50);
-        resizeEvent();
-        window.addEventListener("resize", debouncedEvent);
-        document.addEventListener("scroll", debouncedEvent, true);
-        return () => {
-            window.removeEventListener("resize", debouncedEvent);
-            document.removeEventListener("scroll", debouncedEvent, true);
-        };
-    }, [setMaximumOverlayHeight]);
 
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
@@ -169,7 +154,7 @@ export const Dropdown: FC<DropdownProps> = ({
                             <div
                                 {...overlayProps}
                                 ref={overlayRef}
-                                style={{ maxHeight: maximumOverlayHeight }}
+                                style={{ maxHeight: getInnerOverlayHeight(triggerRef) }}
                                 className="tw-flex tw-flex-col"
                                 data-test-id="dropdown-menu"
                             >
