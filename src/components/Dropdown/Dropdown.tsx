@@ -52,7 +52,7 @@ const getInnerOverlayHeight = (ref: MutableRefObject<HTMLElement | null>) => {
     let maxHeight = "auto";
     if (ref.current) {
         const { innerHeight } = window;
-        const { bottom } = ref?.current?.getBoundingClientRect();
+        const { bottom } = ref.current.getBoundingClientRect();
         const viewportPadding = 33;
         const triggerMargin = 8;
         maxHeight = `${Math.max(innerHeight - (bottom + viewportPadding + triggerMargin), 130)}px`;
@@ -167,7 +167,7 @@ export const Dropdown: FC<DropdownProps> = ({
                                 {...overlayProps}
                                 ref={overlayRef}
                                 style={{ maxHeight: maximumOverlayHeight }}
-                                className="tw-min-h-[130px] tw-flex tw-flex-col"
+                                className="tw-flex tw-flex-col"
                                 data-test-id="dropdown-menu"
                             >
                                 <DismissButton onDismiss={() => close()} />
