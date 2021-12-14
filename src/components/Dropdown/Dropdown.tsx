@@ -48,11 +48,11 @@ const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItem
     );
 };
 
-const getInnerOverlayHeight = (ref: MutableRefObject<HTMLElement | null>) => {
+const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>) => {
     let maxHeight = "auto";
-    if (ref.current) {
+    if (triggerRef.current) {
         const { innerHeight } = window;
-        const { bottom } = ref.current.getBoundingClientRect();
+        const { bottom } = triggerRef.current.getBoundingClientRect();
         const viewportPadding = 33;
         const triggerMargin = 8;
         maxHeight = `${Math.max(innerHeight - (bottom + viewportPadding + triggerMargin), 130)}px`;
@@ -80,10 +80,10 @@ export const Dropdown: FC<DropdownProps> = ({
         onSelectionChange: (key) => onChange(key),
         disabledKeys: getDisabledItemIds(getMenuItems(menuBlocks)),
     });
-    const ref = useRef<HTMLButtonElement | null>(null);
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
 
-    const { triggerProps, valueProps, menuProps } = useSelect(props, state, ref);
-    const { buttonProps } = useButton(triggerProps, ref);
+    const { triggerProps, valueProps, menuProps } = useSelect(props, state, triggerRef);
+    const { buttonProps } = useButton(triggerProps, triggerRef);
     const { isOpen } = state;
     const { isFocusVisible, focusProps } = useFocusRing();
     const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -103,8 +103,8 @@ export const Dropdown: FC<DropdownProps> = ({
     }, [activeItemId]);
 
     useEffect(() => {
-        setMaximumOverlayHeight(getInnerOverlayHeight(ref));
-        const resizeEvent = debounce(() => setMaximumOverlayHeight(getInnerOverlayHeight(ref)), 50);
+        setMaximumOverlayHeight(getInnerOverlayHeight(triggerRef));
+        const resizeEvent = debounce(() => setMaximumOverlayHeight(getInnerOverlayHeight(triggerRef)), 50);
         window.addEventListener("resize", resizeEvent);
         return () => {
             window.removeEventListener("resize", resizeEvent);
@@ -131,11 +131,11 @@ export const Dropdown: FC<DropdownProps> = ({
                         : undefined
                 }
             >
-                <HiddenSelect state={state} triggerRef={ref} />
+                <HiddenSelect state={state} triggerRef={triggerRef} />
                 <button
                     {...mergeProps(buttonProps, focusProps)}
                     id={useMemoizedId(propId)}
-                    ref={ref}
+                    ref={triggerRef}
                     data-test-id="dropdown-trigger"
                     className={merge([
                         "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-pr-8",
