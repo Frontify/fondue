@@ -103,11 +103,14 @@ export const Dropdown: FC<DropdownProps> = ({
     }, [activeItemId]);
 
     useEffect(() => {
-        setMaximumOverlayHeight(getInnerOverlayHeight(triggerRef));
-        const resizeEvent = debounce(() => setMaximumOverlayHeight(getInnerOverlayHeight(triggerRef)), 50);
-        window.addEventListener("resize", resizeEvent);
+        const resizeEvent = () => setMaximumOverlayHeight(getInnerOverlayHeight(triggerRef));
+        const debouncedEvent = debounce(resizeEvent, 50);
+        resizeEvent();
+        window.addEventListener("resize", debouncedEvent);
+        document.addEventListener("scroll", debouncedEvent, true);
         return () => {
-            window.removeEventListener("resize", resizeEvent);
+            window.removeEventListener("resize", debouncedEvent);
+            document.removeEventListener("scroll", debouncedEvent, true);
         };
     }, [setMaximumOverlayHeight]);
 
