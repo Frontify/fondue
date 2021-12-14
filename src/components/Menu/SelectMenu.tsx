@@ -24,7 +24,7 @@ export type SelectMenuProps = {
     ariaProps: AriaListBoxOptions<any>;
     state: ListState<any>;
     ariaLabel?: string;
-    scrollable: boolean;
+    scrollable?: boolean;
 };
 
 export const SelectMenu = ({

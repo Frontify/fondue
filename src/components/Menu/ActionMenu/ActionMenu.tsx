@@ -22,12 +22,14 @@ export type ActionMenuProps = {
     ariaLabel?: string;
     menuBlocks: ActionMenuBlock[];
     focus?: FocusStrategy;
+    scrollable?: boolean;
 };
 
 export const ActionMenu = ({
     menuBlocks,
     ariaLabel = "Action Menu",
     focus,
+    scrollable = false,
 }: ActionMenuProps): ReactElement<ActionMenuProps> => {
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
@@ -41,7 +43,7 @@ export const ActionMenu = ({
     const { menuProps } = useMenu({ ...props, autoFocus: focus }, state, menuRef);
 
     return (
-        <AriaList ariaProps={{ ...menuProps }} ref={menuRef}>
+        <AriaList ariaProps={{ ...menuProps }} ref={menuRef} scrollable={scrollable}>
             {[...state.collection].map((section) => {
                 const { key: sectionKey, "aria-label": sectionAriaLabel } = section;
                 const { itemProps, groupProps } = useMenuSection({ "aria-label": sectionAriaLabel });

@@ -4,7 +4,7 @@ import React, { forwardRef, HTMLAttributes, ReactNode } from "react";
 export type AriaListProps = {
     ariaProps: HTMLAttributes<HTMLElement>;
     children: ReactNode;
-    scrollable: boolean;
+    scrollable?: boolean;
 };
 
 export const AriaList = forwardRef<HTMLUListElement | null, AriaListProps>(
