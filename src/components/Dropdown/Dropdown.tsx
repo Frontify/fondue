@@ -13,7 +13,7 @@ import { mergeProps } from "@react-aria/utils";
 import { useSelectState } from "@react-stately/select";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, ReactElement, useEffect, useRef } from "react";
+import React, { FC, ReactElement, useEffect, useRef, MutableRefObject } from "react";
 
 export enum DropdownSize {
     Small = "Small",
@@ -47,6 +47,18 @@ const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItem
     );
 };
 
+const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>) => {
+    let maxHeight = "auto";
+    if (triggerRef.current) {
+        const { innerHeight } = window;
+        const { bottom } = triggerRef.current.getBoundingClientRect();
+        const viewportPadding = 33;
+        const triggerMargin = 8;
+        maxHeight = `${Math.max(innerHeight - (bottom + viewportPadding + triggerMargin), 130)}px`;
+    }
+    return maxHeight;
+};
+
 export const Dropdown: FC<DropdownProps> = ({
     id: propId,
     menuBlocks,
@@ -67,9 +79,10 @@ export const Dropdown: FC<DropdownProps> = ({
         onSelectionChange: (key) => onChange(key),
         disabledKeys: getDisabledItemIds(getMenuItems(menuBlocks)),
     });
-    const ref = useRef<HTMLButtonElement | null>(null);
-    const { triggerProps, valueProps, menuProps } = useSelect(props, state, ref);
-    const { buttonProps } = useButton(triggerProps, ref);
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+    const { triggerProps, valueProps, menuProps } = useSelect(props, state, triggerRef);
+    const { buttonProps } = useButton(triggerProps, triggerRef);
     const { isOpen } = state;
     const { isFocusVisible, focusProps } = useFocusRing();
     const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -106,11 +119,11 @@ export const Dropdown: FC<DropdownProps> = ({
                         : undefined
                 }
             >
-                <HiddenSelect state={state} triggerRef={ref} />
+                <HiddenSelect state={state} triggerRef={triggerRef} />
                 <button
                     {...mergeProps(buttonProps, focusProps)}
                     id={useMemoizedId(propId)}
-                    ref={ref}
+                    ref={triggerRef}
                     data-test-id="dropdown-trigger"
                     className={merge([
                         "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-pr-8",
@@ -138,9 +151,15 @@ export const Dropdown: FC<DropdownProps> = ({
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
                         <FocusScope restoreFocus>
-                            <div {...overlayProps} ref={overlayRef}>
+                            <div
+                                {...overlayProps}
+                                ref={overlayRef}
+                                style={{ maxHeight: getInnerOverlayHeight(triggerRef) }}
+                                className="tw-flex tw-flex-col"
+                                data-test-id="dropdown-menu"
+                            >
                                 <DismissButton onDismiss={() => close()} />
-                                <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} />
+                                <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} scrollable />
                                 <DismissButton onDismiss={() => close()} />
                             </div>
                         </FocusScope>

@@ -10,6 +10,7 @@ import { Dropdown } from "./Dropdown";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 
 export const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
+const DROPDOWN_MENU_ID = "[data-test-id=dropdown-menu]";
 const DROPDOWN_CLEAR_BUTTON_ID = "[data-test-id=dropdown-clear-button]";
 const MENU_ITEM_LIST_ID = "[data-test-id=menu-item-list]";
 const MENU_ITEM_DECORATOR_ID = "[data-test-id=menu-item-decorator]";
@@ -32,6 +33,16 @@ const ITEMS = [
             {
                 id: "3",
                 title: "Small third",
+                size: MenuItemContentSize.Small,
+            },
+            {
+                id: "4",
+                title: "Small fourth",
+                size: MenuItemContentSize.Small,
+            },
+            {
+                id: "5",
+                title: "Small fifth",
                 size: MenuItemContentSize.Small,
             },
         ],
@@ -76,7 +87,7 @@ describe("Dropdown Component", () => {
         mount(<Component menuBlocks={ITEMS} placeholder="Select item" />);
         cy.get(MENU_ITEM_TITLE_ID).contains("Select item");
         cy.get(DROPDOWN_TRIGGER_ID).click();
-        cy.get(MENU_ITEM_LIST_ID).children().should("have.length", 3);
+        cy.get(MENU_ITEM_LIST_ID).children().should("have.length", 5);
     });
 
     it("renders with initial active item", () => {
@@ -141,5 +152,24 @@ describe("Dropdown Component", () => {
         mount(<Component menuBlocks={ITEMS} decorator={<IconIcons />} />);
 
         cy.get(`${MENU_ITEM_DECORATOR_ID} > svg`).invoke("attr", "name").should("eq", "IconIcons");
+    });
+
+    it("should have a maximum height calculated based on viewport and dropdown position", () => {
+        cy.viewport(550, 220);
+        mount(<Component menuBlocks={ITEMS} decorator={<IconIcons />} />);
+        cy.get(DROPDOWN_TRIGGER_ID).click();
+        cy.get(DROPDOWN_MENU_ID).then(($el) => {
+            const { bottom } = $el[0].getBoundingClientRect();
+            expect(bottom).to.equal(220 - 32);
+        });
+    });
+    it("should have a minimum height of 130px", () => {
+        cy.viewport(550, 160);
+        mount(<Component menuBlocks={ITEMS} decorator={<IconIcons />} />);
+        cy.get(DROPDOWN_TRIGGER_ID).click();
+        cy.get(DROPDOWN_MENU_ID).then(($el) => {
+            const height = $el[0].clientHeight;
+            expect(height).to.equal(130);
+        });
     });
 });
