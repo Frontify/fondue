@@ -173,12 +173,11 @@ describe("Dropdown Component", () => {
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_MENU_ID).then(($el) => {
             const { bottom } = $el[0].getBoundingClientRect();
-            expect(bottom).to.equal(220 - 32);
-        });
-        cy.viewport(550, 250);
-        cy.get(DROPDOWN_MENU_ID).then(($el) => {
-            const { bottom } = $el[0].getBoundingClientRect();
-            expect(bottom).to.equal(220 - 32);
+            cy.viewport(550, 250);
+            cy.get(DROPDOWN_MENU_ID).then(($updatedEl) => {
+                const { bottom: newBottom } = $updatedEl[0].getBoundingClientRect();
+                expect(bottom).to.equal(newBottom);
+            });
         });
     });
 
