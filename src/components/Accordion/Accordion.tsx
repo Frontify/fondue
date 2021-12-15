@@ -23,8 +23,8 @@ import React, {
 
 export type AccordionItemProps = PropsWithChildren<{ header: FieldsetHeaderProps }>;
 
-export const ACCORDION_ID = "accordion";
-export const ACCORDION_ITEM_ID = "accordion-item";
+const ACCORDION_ID = "accordion";
+const ACCORDION_ITEM_ID = "accordion-item";
 
 type AriaAccordionItemProps = {
     item: Node<AccordionItemProps>;
