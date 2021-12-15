@@ -66,7 +66,7 @@ describe("Accordion Component", () => {
         cy.get("@onClickStub").should("be.calledOnce");
     });
 
-    it.only("should correctly navigate with keyboard", () => {
+    it("should correctly navigate with keyboard", () => {
         mount(
             <Accordion>
                 <AccordionItem header={{ children: "1" }}>
@@ -84,11 +84,11 @@ describe("Accordion Component", () => {
         cy.get(ACCORDION_ITEM_ID).first().should("be.focused");
         cy.get(TEXT_INPUT_ID).should("not.exist");
         cy.get(ACCORDION_ITEM_ID).first().type("{enter}");
-        cy.get(TEXT_INPUT_ID).first().should("not.be.focused");
+        cy.get(TEXT_INPUT_ID).should("not.be.focused");
         cy.get(ACCORDION_ITEM_ID).first().realPress("Tab");
-        cy.get(TEXT_INPUT_ID).first().should("be.focused");
-        cy.get(TEXT_INPUT_ID).first().realPress("Tab");
-        cy.get(TEXT_INPUT_ID).first().should("not.be.focused");
+        cy.get(TEXT_INPUT_ID).should("be.focused");
+        cy.get(TEXT_INPUT_ID).realPress("Tab");
+        cy.get(TEXT_INPUT_ID).should("not.be.focused");
         cy.get(ACCORDION_ITEM_ID).eq(1).should("be.focused");
         cy.get(ACCORDION_ITEM_ID).eq(1).type("{enter}");
         cy.get(ACCORDION_ITEM_ID).eq(1).realPress("Tab");
