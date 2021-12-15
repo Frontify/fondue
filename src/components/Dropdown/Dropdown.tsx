@@ -107,20 +107,21 @@ export const Dropdown: FC<DropdownProps> = ({
 
     useEffect(() => {
         const updateMaxHeight = () => setMaxHeight(getInnerOverlayHeight(triggerRef));
-        if (isOpen) {
+        if (autoResize && isOpen) {
             updateMaxHeight();
-            if (autoResize) {
-                window.addEventListener("resize", updateMaxHeight);
-            }
-        } else {
+            window.addEventListener("resize", updateMaxHeight);
+        } else if (autoResize && !isOpen) {
             setMaxHeight(DEFAULT_DROPDOWN_MAX_HEIGHT);
         }
+
         return () => {
             if (isOpen && autoResize) {
                 window.removeEventListener("resize", updateMaxHeight);
             }
         };
     }, [isOpen, autoResize]);
+
+    const heightIsReady = !autoResize || maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
 
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
@@ -164,7 +165,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 </button>
             </Trigger>
             <AnimatePresence>
-                {!disabled && isOpen && maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT && (
+                {!disabled && isOpen && heightIsReady && (
                     <motion.div
                         className="tw-absolute tw-left-0 tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20 tw-min-w-full tw-overflow-hidden"
                         key="content"
@@ -177,7 +178,7 @@ export const Dropdown: FC<DropdownProps> = ({
                             <div
                                 {...overlayProps}
                                 ref={overlayRef}
-                                style={{ maxHeight }}
+                                style={autoResize ? { maxHeight } : {}}
                                 className="tw-flex tw-flex-col"
                                 data-test-id="dropdown-menu"
                                 role="dialog"
