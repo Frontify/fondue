@@ -13,7 +13,7 @@ import { mergeProps } from "@react-aria/utils";
 import { useSelectState } from "@react-stately/select";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, ReactElement, useEffect, useRef, MutableRefObject } from "react";
+import React, { FC, ReactElement, useEffect, useRef, MutableRefObject, useState } from "react";
 
 export enum DropdownSize {
     Small = "Small",
@@ -99,6 +99,17 @@ export const Dropdown: FC<DropdownProps> = ({
         state.setSelectedKey(activeItemId as string);
     }, [activeItemId]);
 
+    const [maxHeight, setMaxHeight] = useState("auto");
+
+    useEffect(() => {
+        const updateMaxHeight = () => setMaxHeight(getInnerOverlayHeight(triggerRef));
+        updateMaxHeight();
+        window.addEventListener("resize", updateMaxHeight);
+        return () => {
+            window.removeEventListener("resize", updateMaxHeight);
+        };
+    }, []);
+
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
             <Trigger
@@ -154,7 +165,7 @@ export const Dropdown: FC<DropdownProps> = ({
                             <div
                                 {...overlayProps}
                                 ref={overlayRef}
-                                style={{ maxHeight: getInnerOverlayHeight(triggerRef) }}
+                                style={{ maxHeight }}
                                 className="tw-flex tw-flex-col"
                                 data-test-id="dropdown-menu"
                             >
