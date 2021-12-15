@@ -105,6 +105,7 @@ export const Dropdown: FC<DropdownProps> = ({
         const updateMaxHeight = () => setMaxHeight(getInnerOverlayHeight(triggerRef));
         updateMaxHeight();
         window.addEventListener("resize", updateMaxHeight);
+
         return () => {
             window.removeEventListener("resize", updateMaxHeight);
         };
@@ -161,13 +162,14 @@ export const Dropdown: FC<DropdownProps> = ({
                         exit={{ height: 0 }}
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
-                        <FocusScope restoreFocus>
+                        <FocusScope restoreFocus contain>
                             <div
                                 {...overlayProps}
                                 ref={overlayRef}
                                 style={{ maxHeight }}
                                 className="tw-flex tw-flex-col"
                                 data-test-id="dropdown-menu"
+                                role="dialog"
                             >
                                 <DismissButton onDismiss={() => close()} />
                                 <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} scrollable />
