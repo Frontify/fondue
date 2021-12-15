@@ -31,6 +31,7 @@ export type DropdownProps = {
     clearable?: boolean;
     ariaLabel?: string;
     decorator?: ReactElement;
+    autoResize?: boolean;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
@@ -59,6 +60,8 @@ const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>)
     return maxHeight;
 };
 
+const DEFAULT_DROPDOWN_MAX_HEIGHT = "auto";
+
 export const Dropdown: FC<DropdownProps> = ({
     id: propId,
     menuBlocks,
@@ -70,6 +73,7 @@ export const Dropdown: FC<DropdownProps> = ({
     clearable = false,
     ariaLabel = "Dropdown",
     decorator,
+    autoResize = true,
 }) => {
     const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -99,17 +103,24 @@ export const Dropdown: FC<DropdownProps> = ({
         state.setSelectedKey(activeItemId as string);
     }, [activeItemId]);
 
-    const [maxHeight, setMaxHeight] = useState("auto");
+    const [maxHeight, setMaxHeight] = useState(DEFAULT_DROPDOWN_MAX_HEIGHT);
 
     useEffect(() => {
         const updateMaxHeight = () => setMaxHeight(getInnerOverlayHeight(triggerRef));
-        updateMaxHeight();
-        window.addEventListener("resize", updateMaxHeight);
-
+        if (isOpen) {
+            updateMaxHeight();
+            if (autoResize) {
+                window.addEventListener("resize", updateMaxHeight);
+            }
+        } else {
+            setMaxHeight(DEFAULT_DROPDOWN_MAX_HEIGHT);
+        }
         return () => {
-            window.removeEventListener("resize", updateMaxHeight);
+            if (isOpen && autoResize) {
+                window.removeEventListener("resize", updateMaxHeight);
+            }
         };
-    }, []);
+    }, [isOpen, autoResize]);
 
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
@@ -153,7 +164,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 </button>
             </Trigger>
             <AnimatePresence>
-                {!disabled && isOpen && (
+                {!disabled && isOpen && maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT && (
                     <motion.div
                         className="tw-absolute tw-left-0 tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20 tw-min-w-full tw-overflow-hidden"
                         key="content"
