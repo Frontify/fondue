@@ -10,9 +10,21 @@ import { Node } from "@react-types/shared";
 import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { Children, FC, isValidElement, PropsWithChildren, ReactElement, ReactNode, useRef } from "react";
+import React, {
+    Children,
+    FC,
+    isValidElement,
+    KeyboardEvent,
+    PropsWithChildren,
+    ReactElement,
+    ReactNode,
+    useRef,
+} from "react";
 
 export type AccordionItemProps = PropsWithChildren<{ header: FieldsetHeaderProps }>;
+
+export const ACCORDION_ID = "accordion";
+export const ACCORDION_ITEM_ID = "accordion-item";
 
 type AriaAccordionItemProps = {
     item: Node<AccordionItemProps>;
@@ -30,7 +42,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
         <div key={item.key} className={isFocusVisible ? FOCUS_STYLE_INSET : ""}>
             <button
                 {...mergeProps(buttonProps, focusProps)}
-                data-test-id="accordion-item"
+                data-test-id={ACCORDION_ITEM_ID}
                 ref={triggerRef}
                 onClick={(event) => {
                     if (header.onClick) {
@@ -126,18 +138,30 @@ export const Accordion: FC<AccordionProps> = (props) => {
     const {
         // @react-aria prevents default action for onMouseDown as implemented here: https://github.com/adobe/react-spectrum/blob/e14523fedd93ac1a4ede355aed70988af572ae74/packages/%40react-aria/selection/src/useSelectableCollection.ts#L370
         // This makes it impossible to edit or select text in input fields inside the accordion
+        // onKeydown automatically navigates away from child elements, including dropdown menus etc.
+        // Focus should only be passed if the accordian item itself is focused
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        accordionProps: { onMouseDown, ...accordionProps },
+        accordionProps: { onMouseDown, onKeyDown, ...accordionProps },
         // @react-aria enable by default typeahead which result in an event fired up on keypress and select the section
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
     } = useAccordion({ ...ariaProps, disallowTypeAhead: true }, state, ref);
 
+    const accordionItemCheck = (event: KeyboardEvent<HTMLDivElement>) => {
+        const validItemIds = [ACCORDION_ID, ACCORDION_ITEM_ID];
+        const id = (event.target as HTMLButtonElement).dataset?.testId;
+        if (id && validItemIds.includes(id)) {
+            onKeyDown && onKeyDown(event);
+        }
+    };
+
+    const propsWithModifiedKeyDown = { ...accordionProps, onKeyDown: accordionItemCheck };
+
     return (
         <div
-            {...accordionProps}
+            {...propsWithModifiedKeyDown}
             ref={ref}
-            data-test-id="accordion"
+            data-test-id={ACCORDION_ID}
             className="tw-divide-y tw-divide-black-10 tw-border-t tw-border-b tw-border-black-10"
         >
             {[...state.collection].map((item, index) => {
