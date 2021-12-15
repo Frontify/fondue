@@ -173,7 +173,7 @@ export const Dropdown: FC<DropdownProps> = ({
                         exit={{ height: 0 }}
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
-                        <FocusScope restoreFocus contain>
+                        <FocusScope restoreFocus>
                             <div
                                 {...overlayProps}
                                 ref={overlayRef}
