@@ -26,6 +26,19 @@ export type AccordionItemProps = PropsWithChildren<{ header: FieldsetHeaderProps
 const ACCORDION_ID = "accordion";
 const ACCORDION_ITEM_ID = "accordion-item";
 
+const ACCORDION_CONTROL_KEYS = [
+    "ArrowDown",
+    "ArrowUp",
+    "ArrowRight",
+    "ArrowLeft",
+    "Home",
+    "End",
+    "PageDown",
+    "PageUp",
+    "a",
+    "Escape",
+];
+
 type AriaAccordionItemProps = {
     item: Node<AccordionItemProps>;
     state: TreeState<AccordionItemProps>;
@@ -150,6 +163,10 @@ export const Accordion: FC<AccordionProps> = (props) => {
     const accordionItemCheck = (event: KeyboardEvent<HTMLDivElement>) => {
         const validItemIds = [ACCORDION_ID, ACCORDION_ITEM_ID];
         const id = (event.target as HTMLButtonElement).dataset?.testId;
+        if (ACCORDION_CONTROL_KEYS.includes(event.key)) {
+            // Match the behaviour of accordion without firing the event
+            event.preventDefault();
+        }
         if (id && validItemIds.includes(id)) {
             onKeyDown && onKeyDown(event);
         }
