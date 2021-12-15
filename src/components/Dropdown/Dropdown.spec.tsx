@@ -165,11 +165,6 @@ describe("Dropdown Component", () => {
             const { bottom } = $el[0].getBoundingClientRect();
             expect(bottom).to.equal(220 - 32);
         });
-        cy.viewport(550, 250);
-        cy.get(DROPDOWN_MENU_ID).then(($el) => {
-            const { bottom } = $el[0].getBoundingClientRect();
-            expect(bottom).to.equal(250 - 32);
-        });
     });
 
     it("should prevent height adjusting if autoResize is false", () => {
