@@ -13,7 +13,7 @@ import { mergeProps } from "@react-aria/utils";
 import { useSelectState } from "@react-stately/select";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, ReactElement, useEffect, useRef } from "react";
+import React, { FC, ReactElement, useEffect, useRef, MutableRefObject, useState } from "react";
 
 export enum DropdownSize {
     Small = "Small",
@@ -31,6 +31,7 @@ export type DropdownProps = {
     clearable?: boolean;
     ariaLabel?: string;
     decorator?: ReactElement;
+    autoResize?: boolean;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
@@ -47,6 +48,20 @@ const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItem
     );
 };
 
+const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>) => {
+    let maxHeight = "auto";
+    if (triggerRef.current) {
+        const { innerHeight } = window;
+        const { bottom } = triggerRef.current.getBoundingClientRect();
+        const viewportPadding = 33;
+        const triggerMargin = 8;
+        maxHeight = `${Math.max(innerHeight - (bottom + viewportPadding + triggerMargin), 130)}px`;
+    }
+    return maxHeight;
+};
+
+const DEFAULT_DROPDOWN_MAX_HEIGHT = "auto";
+
 export const Dropdown: FC<DropdownProps> = ({
     id: propId,
     menuBlocks,
@@ -58,6 +73,7 @@ export const Dropdown: FC<DropdownProps> = ({
     clearable = false,
     ariaLabel = "Dropdown",
     decorator,
+    autoResize = true,
 }) => {
     const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -67,9 +83,10 @@ export const Dropdown: FC<DropdownProps> = ({
         onSelectionChange: (key) => onChange(key),
         disabledKeys: getDisabledItemIds(getMenuItems(menuBlocks)),
     });
-    const ref = useRef<HTMLButtonElement | null>(null);
-    const { triggerProps, valueProps, menuProps } = useSelect(props, state, ref);
-    const { buttonProps } = useButton(triggerProps, ref);
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+    const { triggerProps, valueProps, menuProps } = useSelect(props, state, triggerRef);
+    const { buttonProps } = useButton(triggerProps, triggerRef);
     const { isOpen } = state;
     const { isFocusVisible, focusProps } = useFocusRing();
     const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -85,6 +102,26 @@ export const Dropdown: FC<DropdownProps> = ({
 
         state.setSelectedKey(activeItemId as string);
     }, [activeItemId]);
+
+    const [maxHeight, setMaxHeight] = useState(DEFAULT_DROPDOWN_MAX_HEIGHT);
+
+    useEffect(() => {
+        const updateMaxHeight = () => setMaxHeight(getInnerOverlayHeight(triggerRef));
+        if (autoResize && isOpen) {
+            updateMaxHeight();
+            window.addEventListener("resize", updateMaxHeight);
+        } else if (autoResize && !isOpen) {
+            setMaxHeight(DEFAULT_DROPDOWN_MAX_HEIGHT);
+        }
+
+        return () => {
+            if (isOpen && autoResize) {
+                window.removeEventListener("resize", updateMaxHeight);
+            }
+        };
+    }, [isOpen, autoResize]);
+
+    const heightIsReady = !autoResize || maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
 
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
@@ -106,11 +143,11 @@ export const Dropdown: FC<DropdownProps> = ({
                         : undefined
                 }
             >
-                <HiddenSelect state={state} triggerRef={ref} />
+                <HiddenSelect state={state} triggerRef={triggerRef} />
                 <button
                     {...mergeProps(buttonProps, focusProps)}
                     id={useMemoizedId(propId)}
-                    ref={ref}
+                    ref={triggerRef}
                     data-test-id="dropdown-trigger"
                     className={merge([
                         "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-pr-8",
@@ -128,7 +165,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 </button>
             </Trigger>
             <AnimatePresence>
-                {!disabled && isOpen && (
+                {!disabled && isOpen && heightIsReady && (
                     <motion.div
                         className="tw-absolute tw-left-0 tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20 tw-min-w-full tw-overflow-hidden"
                         key="content"
@@ -138,9 +175,16 @@ export const Dropdown: FC<DropdownProps> = ({
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
                         <FocusScope restoreFocus>
-                            <div {...overlayProps} ref={overlayRef}>
+                            <div
+                                {...overlayProps}
+                                ref={overlayRef}
+                                style={autoResize ? { maxHeight } : {}}
+                                className="tw-flex tw-flex-col"
+                                data-test-id="dropdown-menu"
+                                role="dialog"
+                            >
                                 <DismissButton onDismiss={() => close()} />
-                                <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} />
+                                <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} scrollable />
                                 <DismissButton onDismiss={() => close()} />
                             </div>
                         </FocusScope>
