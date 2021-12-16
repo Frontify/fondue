@@ -28,7 +28,7 @@ export type RichTextEditorProps = {
     onTextChange?: (value: string) => void;
     onBlur?: (value: string) => void;
     readonly?: boolean;
-    clear?: () => void;
+    clear?: boolean;
 };
 
 export type BlockElement = {
@@ -76,12 +76,12 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
 
     useEffect(() => {
-        if (clear !== undefined) {
-            clear();
-            clearEditor(editor);
-        }
         setWrapperStyle(getMinWidthIfEmpty(editor, placeholder, wrapperRef.current));
     }, []);
+
+    useEffect(() => {
+        clear && clearEditor(editor);
+    }, [clear]);
 
     useEffect(() => {
         send("SET_LOCKED", { data: { locked: readonly } });
