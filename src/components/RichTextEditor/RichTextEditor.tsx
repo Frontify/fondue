@@ -81,8 +81,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     useEffect(() => {
         if (clear) {
+            const emptyValue = parseRawValue();
             clearEditor(editor);
-            Transforms.insertNodes(editor, parseRawValue());
+            Transforms.insertNodes(editor, emptyValue);
+            send("RESET_TEXT");
         }
     }, [clear]);
 
