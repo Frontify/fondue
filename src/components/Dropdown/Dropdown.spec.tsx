@@ -58,6 +58,7 @@ type Props = {
     clearable?: boolean;
     disabled?: boolean;
     decorator?: ReactElement;
+    autoResize?: boolean;
 };
 
 const Component: FC<Props> = ({
@@ -67,6 +68,7 @@ const Component: FC<Props> = ({
     clearable = false,
     disabled = false,
     decorator,
+    autoResize = true,
 }) => {
     const [activeItemId, setActiveItemId] = useState(initialActiveId);
     return (
@@ -78,6 +80,7 @@ const Component: FC<Props> = ({
             clearable={clearable}
             disabled={disabled}
             decorator={decorator}
+            autoResize={autoResize}
         />
     );
 };
@@ -163,6 +166,21 @@ describe("Dropdown Component", () => {
             expect(bottom).to.equal(220 - 32);
         });
     });
+
+    it("should prevent height adjusting if autoResize is false", () => {
+        cy.viewport(550, 220);
+        mount(<Component menuBlocks={ITEMS} decorator={<IconIcons />} autoResize={false} />);
+        cy.get(DROPDOWN_TRIGGER_ID).click();
+        cy.get(DROPDOWN_MENU_ID).then(($el) => {
+            const { bottom } = $el[0].getBoundingClientRect();
+            cy.viewport(550, 250);
+            cy.get(DROPDOWN_MENU_ID).then(($updatedEl) => {
+                const { bottom: newBottom } = $updatedEl[0].getBoundingClientRect();
+                expect(bottom).to.equal(newBottom);
+            });
+        });
+    });
+
     it("should have a minimum height of 130px", () => {
         cy.viewport(550, 160);
         mount(<Component menuBlocks={ITEMS} decorator={<IconIcons />} />);
