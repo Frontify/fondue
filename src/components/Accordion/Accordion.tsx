@@ -26,18 +26,6 @@ export type AccordionItemProps = PropsWithChildren<{ header: FieldsetHeaderProps
 const ACCORDION_ID = "accordion";
 const ACCORDION_ITEM_ID = "accordion-item";
 
-const ACCORDION_CONTROL_KEYS = [
-    "ArrowDown",
-    "ArrowUp",
-    "ArrowRight",
-    "ArrowLeft",
-    "Home",
-    "End",
-    "PageDown",
-    "PageUp",
-    "Escape",
-];
-
 type AriaAccordionItemProps = {
     item: Node<AccordionItemProps>;
     state: TreeState<AccordionItemProps>;
