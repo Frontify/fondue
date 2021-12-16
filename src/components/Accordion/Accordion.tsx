@@ -164,9 +164,6 @@ export const Accordion: FC<AccordionProps> = (props) => {
         const isFocused = state.selectionManager.focusedKey === key;
         if (key && isFocused) {
             onKeyDown && onKeyDown(event);
-        } else if (ACCORDION_CONTROL_KEYS.includes(event.key)) {
-            // Match the behaviour of accordion without firing the event
-            event.preventDefault();
         }
     };
 
