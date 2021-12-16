@@ -6,7 +6,7 @@ import { debounce } from "@utilities/debounce";
 import { useDebounce } from "@utilities/useDebounce";
 import { useMachine } from "@xstate/react";
 import React, { CSSProperties, FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BaseEditor, createEditor, Descendant } from "slate";
+import { BaseEditor, createEditor, Descendant, Transforms } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
@@ -59,9 +59,9 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     value: initialValue,
     placeholder = "",
     readonly = false,
+    clear = false,
     onTextChange,
     onBlur,
-    clear,
 }) => {
     const [value, setValue] = useState<Descendant[]>(() => parseRawValue(initialValue));
     const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
@@ -80,7 +80,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     }, []);
 
     useEffect(() => {
-        clear && clearEditor(editor);
+        if (clear) {
+            clearEditor(editor);
+            Transforms.insertNodes(editor, parseRawValue());
+        }
     }, [clear]);
 
     useEffect(() => {
