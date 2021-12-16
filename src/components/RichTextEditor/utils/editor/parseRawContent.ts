@@ -23,8 +23,10 @@ const STYLE_MAP: { [key: string]: () => { [key: string]: boolean } } = {
     CODE: () => ({ [InlineStyles.Code]: true }),
 };
 
+export const EMPTY_VALUE: Descendant[] = [{ type: BlockStyleTypes.Paragraph, children: [{ text: "" }] }];
+
 export const parseRawValue = (raw?: string): Descendant[] => {
-    let parsedValue: Descendant[] = [{ type: BlockStyleTypes.Paragraph, children: [{ text: "" }] }];
+    let parsedValue = EMPTY_VALUE;
 
     if (!raw) {
         return parsedValue;

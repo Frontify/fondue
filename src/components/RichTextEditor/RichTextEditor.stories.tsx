@@ -14,6 +14,7 @@ export default {
     args: {
         placeholder: "Some placeholder",
         readonly: false,
+        clear: false,
     },
     argTypes: {
         onTextChange: { action: "onTextChange" },
@@ -44,9 +45,7 @@ const value = [
 ];
 
 export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
-    <>
-        <RichTextEditorComponent {...args} />
-    </>
+    <RichTextEditorComponent {...args} />
 );
 RichTextEditor.argTypes = { value: { type: "string" } };
 RichTextEditor.args = { value: JSON.stringify(value) };

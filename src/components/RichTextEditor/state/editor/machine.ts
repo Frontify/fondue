@@ -3,7 +3,7 @@
 import { Descendant, Editor } from "slate";
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { toolbarMachine } from "../toolbar/machine";
-import { callOnBlur, callOnTextChange, setLocked } from "./actions";
+import { callOnBlur, callOnTextChange, resetText, setLocked } from "./actions";
 
 export type EditorContext = {
     locked: boolean;
@@ -38,6 +38,9 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
                     },
                     SET_LOCKED: {
                         actions: "setLocked",
+                    },
+                    RESET_TEXT: {
+                        actions: "resetText",
                     },
                 },
             },
@@ -93,6 +96,7 @@ export const editorMachine = createMachine<EditorContext, DoneInvokeEvent<Editor
             callOnTextChange,
             callOnBlur,
             setLocked,
+            resetText,
         },
     },
 );
