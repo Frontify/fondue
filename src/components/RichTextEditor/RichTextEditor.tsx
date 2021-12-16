@@ -11,7 +11,6 @@ import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
 import { ToolbarContext } from "./context/toolbar";
-import { useEditorValueUpdates } from "./hooks/useEditorValueUpdates";
 import { useSoftBreak } from "./hooks/useSoftBreak";
 import { withLinks } from "./plugins/withLinks";
 import { withLists } from "./plugins/withLists";
@@ -20,6 +19,7 @@ import { InlineStyles, renderInlineStyles } from "./renderer/renderInlineStyles"
 import { editorMachine, States } from "./state/editor/machine";
 import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
 import { Toolbar } from "./Toolbar";
+import { clearEditor } from "./utils/editor/clear";
 import { parseRawValue } from "./utils/editor/parseRawContent";
 
 export type RichTextEditorProps = {
@@ -28,6 +28,7 @@ export type RichTextEditorProps = {
     onTextChange?: (value: string) => void;
     onBlur?: (value: string) => void;
     readonly?: boolean;
+    clear?: () => void;
 };
 
 export type BlockElement = {
@@ -60,6 +61,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     readonly = false,
     onTextChange,
     onBlur,
+    clear,
 }) => {
     const [value, setValue] = useState<Descendant[]>(() => parseRawValue(initialValue));
     const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
@@ -72,9 +74,12 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const [{ matches, children }, send] = useMachine(() =>
         editorMachine.withContext({ locked: readonly, onTextChange, onBlur }),
     );
-    useEditorValueUpdates(editor, initialValue);
 
     useEffect(() => {
+        if (clear !== undefined) {
+            clear();
+            clearEditor(editor);
+        }
         setWrapperStyle(getMinWidthIfEmpty(editor, placeholder, wrapperRef.current));
     }, []);
 
