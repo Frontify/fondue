@@ -8,7 +8,7 @@ import { TextInput } from "@components/TextInput/TextInput";
 import { TEXT_INPUT_ID } from "@components/TextInput/TextInput.spec";
 import React, { FC, useState } from "react";
 import { Flyout, FlyoutProps } from "./Flyout";
-import { Button, ButtonStyle } from "@components/Button";
+import { ButtonStyle } from "@components/Button";
 import { FlyoutFooter } from "@components/Flyout/FlyoutFooter";
 
 const FLYOUT_TRIGGER_ID = "[data-test-id=flyout-trigger]";
@@ -34,16 +34,10 @@ const Component: FC<Pick<FlyoutProps, "onClick" | "onClose" | "badges" | "legacy
             <TextInput placeholder="placeholder" />
             {legacyFooter === false && (
                 <FlyoutFooter
-                    primaryButton={
-                        <Button key="add" style={ButtonStyle.Primary} onClick={cy.stub().as("onClickStub")}>
-                            Add
-                        </Button>
-                    }
-                    secondaryButton={
-                        <Button key="cancel" style={ButtonStyle.Secondary} onClick={cy.stub().as("onCloseStub")}>
-                            Cancel
-                        </Button>
-                    }
+                    buttons={[
+                        { children: "Cancel", style: ButtonStyle.Secondary, onClick: cy.stub().as("onCloseStub") },
+                        { children: "Add", style: ButtonStyle.Primary, onClick: cy.stub().as("onClickStub") },
+                    ]}
                 />
             )}
         </Flyout>

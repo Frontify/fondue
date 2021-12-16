@@ -154,16 +154,10 @@ const WithCustomFooterFlyoutTemplate: Story<FlyoutProps> = (args) => {
                 <Flyout {...args} isOpen={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
                     <p className="tw-text-center tw-py-8">Your flyout content with custom footer buttons!</p>
                     <FlyoutFooter
-                        primaryButton={
-                            <Button key="add" style={ButtonStyle.Primary} onClick={action("onClick")}>
-                                Add
-                            </Button>
-                        }
-                        secondaryButton={
-                            <Button key="cancel" style={ButtonStyle.Secondary} onClick={action("onClose")}>
-                                Cancel
-                            </Button>
-                        }
+                        buttons={[
+                            { children: "Cancel", style: ButtonStyle.Secondary, onClick: action("onClose") },
+                            { children: "Add", style: ButtonStyle.Primary, onClick: action("onClick") },
+                        ]}
                     />
                 </Flyout>
             </div>
