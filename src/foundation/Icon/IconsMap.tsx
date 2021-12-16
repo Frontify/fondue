@@ -112,6 +112,7 @@ import IconGeneral from "@foundation/Icon/Generated/IconGeneral";
 import IconGenericPost from "@foundation/Icon/Generated/IconGenericPost";
 import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
 import IconHeader from "@foundation/Icon/Generated/IconHeader";
+import IconHighlight from "@foundation/Icon/Generated/IconHighlight";
 import IconHookBracketLeft from "@foundation/Icon/Generated/IconHookBracketLeft";
 import IconHookBracketRight from "@foundation/Icon/Generated/IconHookBracketRight";
 import IconIconAndText from "@foundation/Icon/Generated/IconIconAndText";
@@ -207,6 +208,7 @@ import IconSpinner from "@foundation/Icon/Generated/IconSpinner";
 import IconStar from "@foundation/Icon/Generated/IconStar";
 import IconStarFilled from "@foundation/Icon/Generated/IconStarFilled";
 import IconStorybook from "@foundation/Icon/Generated/IconStorybook";
+import IconStrikethrough from "@foundation/Icon/Generated/IconStrikethrough";
 import IconSubmit from "@foundation/Icon/Generated/IconSubmit";
 import IconSymbols from "@foundation/Icon/Generated/IconSymbols";
 import IconTable from "@foundation/Icon/Generated/IconTable";
@@ -368,6 +370,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.GenericPost]: <IconGenericPost />,
     [IconEnum.Guidelines]: <IconGuidelines />,
     [IconEnum.Header]: <IconHeader />,
+    [IconEnum.Highlight]: <IconHighlight />,
     [IconEnum.HookBracketLeft]: <IconHookBracketLeft />,
     [IconEnum.HookBracketRight]: <IconHookBracketRight />,
     [IconEnum.IconAndText]: <IconIconAndText />,
@@ -463,6 +466,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Star]: <IconStar />,
     [IconEnum.StarFilled]: <IconStarFilled />,
     [IconEnum.Storybook]: <IconStorybook />,
+    [IconEnum.Strikethrough]: <IconStrikethrough />,
     [IconEnum.Submit]: <IconSubmit />,
     [IconEnum.Symbols]: <IconSymbols />,
     [IconEnum.Table]: <IconTable />,
