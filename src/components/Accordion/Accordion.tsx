@@ -161,9 +161,9 @@ export const Accordion: FC<AccordionProps> = (props) => {
     } = useAccordion({ ...ariaProps, disallowTypeAhead: true }, state, ref);
 
     const accordionItemCheck = (event: KeyboardEvent<HTMLDivElement>) => {
-        const validItemIds = [ACCORDION_ID, ACCORDION_ITEM_ID];
-        const id = (event.target as HTMLButtonElement).dataset?.testId;
-        if (id && validItemIds.includes(id)) {
+        const key = (event.target as HTMLButtonElement).dataset.key;
+        const isFocused = state.selectionManager.focusedKey === key;
+        if (key && isFocused) {
             onKeyDown && onKeyDown(event);
         } else if (ACCORDION_CONTROL_KEYS.includes(event.key)) {
             // Match the behaviour of accordion without firing the event
