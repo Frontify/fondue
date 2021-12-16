@@ -72,7 +72,9 @@ describe("Accordion Component", () => {
                 <AccordionItem header={{ children: "1" }}>
                     <TextInput />
                 </AccordionItem>
-                <AccordionItem header={{ children: "2" }}>2</AccordionItem>
+                <AccordionItem header={{ children: "2" }}>
+                    <TextInput />
+                </AccordionItem>
                 <AccordionItem header={{ children: "3" }}>3</AccordionItem>
             </Accordion>,
         );
@@ -88,8 +90,15 @@ describe("Accordion Component", () => {
         cy.get(TEXT_INPUT_ID).realPress("Tab");
         cy.get(TEXT_INPUT_ID).should("not.be.focused");
         cy.get(ACCORDION_ITEM_ID).eq(1).should("be.focused");
+        cy.get(ACCORDION_ITEM_ID).eq(1).type("{enter}");
         cy.get(ACCORDION_ITEM_ID).eq(1).realPress("Tab");
+        cy.get(TEXT_INPUT_ID).eq(1).should("be.focused");
+        cy.get(TEXT_INPUT_ID).eq(1).realPress("ArrowDown");
+        cy.get(TEXT_INPUT_ID).eq(1).should("be.focused");
+        cy.get(TEXT_INPUT_ID).eq(1).realPress("Tab");
         cy.get(ACCORDION_ITEM_ID).eq(1).should("not.be.focused");
         cy.get(ACCORDION_ITEM_ID).eq(2).should("be.focused");
+        cy.get(ACCORDION_ITEM_ID).eq(2).realPress("ArrowUp");
+        cy.get(ACCORDION_ITEM_ID).eq(1).should("be.focused");
     });
 });
