@@ -35,7 +35,6 @@ const ACCORDION_CONTROL_KEYS = [
     "End",
     "PageDown",
     "PageUp",
-    "a",
     "Escape",
 ];
 
@@ -152,7 +151,7 @@ export const Accordion: FC<AccordionProps> = (props) => {
         // @react-aria prevents default action for onMouseDown as implemented here: https://github.com/adobe/react-spectrum/blob/e14523fedd93ac1a4ede355aed70988af572ae74/packages/%40react-aria/selection/src/useSelectableCollection.ts#L370
         // This makes it impossible to edit or select text in input fields inside the accordion
         // onKeydown automatically navigates away from child elements, including dropdown menus etc.
-        // Focus should only be passed if the accordian item itself is focused
+        // Focus should only be passed if the accordion item itself is focused
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         accordionProps: { onMouseDown, onKeyDown, ...accordionProps },
         // @react-aria enable by default typeahead which result in an event fired up on keypress and select the section
@@ -160,7 +159,7 @@ export const Accordion: FC<AccordionProps> = (props) => {
         //@ts-ignore
     } = useAccordion({ ...ariaProps, disallowTypeAhead: true }, state, ref);
 
-    const accordionItemCheck = (event: KeyboardEvent<HTMLDivElement>) => {
+    const accordionKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         const key = (event.target as HTMLButtonElement).dataset.key;
         const isFocused = state.selectionManager.focusedKey === key;
         if (key && isFocused) {
@@ -171,7 +170,7 @@ export const Accordion: FC<AccordionProps> = (props) => {
         }
     };
 
-    const propsWithModifiedKeyDown = { ...accordionProps, onKeyDown: accordionItemCheck };
+    const propsWithModifiedKeyDown = { ...accordionProps, onKeyDown: accordionKeyDown };
 
     return (
         <div
