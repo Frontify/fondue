@@ -146,7 +146,7 @@ export const Table: FC<TableProps> = ({
     }, [sortedColumnKey, sortOrder]);
 
     return (
-        <div className="tw-overflow-auto tw-w-full tw-max-h-96 sm:tw-max-h-full">
+        <div className="tw-w-full tw-max-h-96 sm:tw-max-h-full">
             <table
                 {...gridProps}
                 ref={ref}
