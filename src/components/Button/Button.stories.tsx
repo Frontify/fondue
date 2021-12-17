@@ -11,6 +11,7 @@ export default {
     component: Button,
     args: {
         inverted: false,
+        hugWidth: false,
     },
     argTypes: {
         size: {
