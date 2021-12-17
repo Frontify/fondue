@@ -54,12 +54,10 @@ export type FocusControllerProps = {
 
 export enum FocusControllerWidth {
     Full = "Full",
-    Max = "Max",
-    Min = "Min",
+    HugContents = "HugContents",
 }
 
 export const FocusControllerWidthClass: Record<FocusControllerWidth, string> = {
-    [FocusControllerWidth.Full]: "tw-w-full",
-    [FocusControllerWidth.Max]: "tw-w-max",
-    [FocusControllerWidth.Min]: "tw-w-min",
+    [FocusControllerWidth.Full]: "tw-w-full tw-flex-auto",
+    [FocusControllerWidth.HugContents]: "tw-flex-initial tw-min-w-0",
 };

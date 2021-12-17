@@ -6,7 +6,7 @@ import { merge } from "@utilities/merge";
 import React, { FC, KeyboardEvent, MouseEvent, useRef } from "react";
 import { FocusControllerProps, FocusControllerWidth, FocusControllerWidthClass } from ".";
 
-export const FocusController: FC<FocusControllerProps> = ({ children, width = FocusControllerWidth.Max }) => {
+export const FocusController: FC<FocusControllerProps> = ({ children, width = FocusControllerWidth.HugContents }) => {
     if (typeof children !== "object") {
         return children;
     }
@@ -20,18 +20,20 @@ export const FocusController: FC<FocusControllerProps> = ({ children, width = Fo
 
         switch (event.code) {
             case "Space":
+                event.stopPropagation();
                 if (!isChildsEvent) {
+                    event.preventDefault();
                     childRef?.current?.focus();
                 }
                 break;
             case "Enter":
-                if (isChildsEvent) {
-                    event.stopPropagation();
-                } else {
+                event.stopPropagation();
+                if (!isChildsEvent) {
                     childRef?.current?.focus();
                 }
                 break;
             case "Escape":
+                event.stopPropagation();
                 if (isChildsEvent) {
                     focusControllerRef?.current?.focus();
                 }
