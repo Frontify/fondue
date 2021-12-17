@@ -82,6 +82,7 @@ export type ButtonProps = {
     inverted?: boolean;
     disabled?: boolean;
     icon?: ReactElement;
+    scaleIcon?: boolean;
     children?: string;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
 };
@@ -93,6 +94,7 @@ export const Button: FC<ButtonProps> = ({
     inverted = false,
     disabled = false,
     icon,
+    scaleIcon = true,
     children,
     onClick,
 }) => {
@@ -128,7 +130,7 @@ export const Button: FC<ButtonProps> = ({
             disabled={disabled}
             data-test-id="button"
         >
-            {icon && wrap(cloneElement(icon, { size: iconSizes[size] }))}
+            {icon && wrap(cloneElement(icon, scaleIcon ? { size: iconSizes[size] } : {}))}
             {children}
         </button>
     );

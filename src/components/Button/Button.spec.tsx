@@ -4,6 +4,7 @@ import { mount } from "@cypress/react";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import React from "react";
 import { Button, ButtonSize, ButtonStyle } from "./Button";
+import { IconAdd, IconSize, IconSizeMap } from "@foundation/Icon";
 
 const BUTTON_TEXT = "Frontify";
 export const BUTTON_ID = "[data-test-id=button]";
@@ -77,5 +78,13 @@ describe("Button component", () => {
     it("does not react on click when disabled", () => {
         mount(<Button disabled>{BUTTON_TEXT}</Button>);
         cy.get(BUTTON_ID).invoke("attr", "disabled").should("eq", "disabled");
+    });
+
+    it("Does not replace Icon size when autoScale is false", () => {
+        const iconSize = IconSize.Size32;
+        mount(<Button icon={<IconAdd size={iconSize} />} size={ButtonSize.Small} scaleIcon={false} />);
+        IconSizeMap[iconSize].split(" ").forEach((iconClass) => {
+            cy.get("svg").should("have.class", iconClass);
+        });
     });
 });
