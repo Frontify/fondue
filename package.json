@@ -75,7 +75,7 @@
     },
     "devDependencies": {
         "@cypress/react": "5.11.0",
-        "@cypress/vite-dev-server": "2.2.1",
+        "@cypress/vite-dev-server": "2.2.2",
         "@frontify/eslint-config-react": "0.13.2",
         "@rollup/plugin-alias": "3.1.8",
         "@rollup/plugin-commonjs": "21.0.1",
