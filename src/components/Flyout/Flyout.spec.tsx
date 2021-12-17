@@ -8,12 +8,18 @@ import { TextInput } from "@components/TextInput/TextInput";
 import { TEXT_INPUT_ID } from "@components/TextInput/TextInput.spec";
 import React, { FC, useState } from "react";
 import { Flyout, FlyoutProps } from "./Flyout";
+import { ButtonStyle } from "@components/Button";
+import { FlyoutFooter } from "@components/Flyout/FlyoutFooter";
 
 const FLYOUT_TRIGGER_ID = "[data-test-id=flyout-trigger]";
 
-const Component: FC<Pick<FlyoutProps, "onClick" | "onClose" | "badges">> = ({ onClick, onClose, badges }) => {
+const Component: FC<Pick<FlyoutProps, "onClick" | "onClose" | "badges" | "legacyFooter">> = ({
+    onClick,
+    onClose,
+    badges,
+    legacyFooter,
+}) => {
     const [open, setOpen] = useState(false);
-
     return (
         <Flyout
             isOpen={open}
@@ -23,8 +29,17 @@ const Component: FC<Pick<FlyoutProps, "onClick" | "onClose" | "badges">> = ({ on
             badges={badges}
             onClick={onClick}
             onClose={onClose}
+            legacyFooter={legacyFooter}
         >
             <TextInput placeholder="placeholder" />
+            {legacyFooter === false && (
+                <FlyoutFooter
+                    buttons={[
+                        { children: "Cancel", style: ButtonStyle.Secondary, onClick: cy.stub().as("onCloseStub") },
+                        { children: "Add", style: ButtonStyle.Primary, onClick: cy.stub().as("onClickStub") },
+                    ]}
+                />
+            )}
         </Flyout>
     );
 };
@@ -50,6 +65,16 @@ describe("Flyout Component", () => {
 
         cy.get(FLYOUT_TRIGGER_ID).click();
         cy.get(BUTTON_ID).should("have.length", 2);
+        cy.get(BUTTON_ID).eq(1).click();
+        cy.get("@onClickStub").should("be.calledOnce");
+    });
+    it("should render with custom footer buttons", () => {
+        mount(<Component legacyFooter={false} />);
+
+        cy.get(FLYOUT_TRIGGER_ID).click();
+        cy.get(BUTTON_ID).should("have.length", 2);
+        cy.get(BUTTON_ID).eq(0).click();
+        cy.get("@onCloseStub").should("be.calledOnce");
         cy.get(BUTTON_ID).eq(1).click();
         cy.get("@onClickStub").should("be.calledOnce");
     });

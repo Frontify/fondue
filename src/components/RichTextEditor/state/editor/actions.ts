@@ -1,7 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { EMPTY_VALUE } from "@components/RichTextEditor/utils/editor/parseRawContent";
 import { DoneInvokeEvent } from "xstate";
 import { EditorContext, EditorEventDataTypes } from "./machine";
+
+export const resetText = ({ onTextChange }: EditorContext): void => {
+    if (onTextChange) {
+        onTextChange(JSON.stringify(EMPTY_VALUE));
+    }
+};
 
 export const callOnTextChange = (
     { onTextChange }: EditorContext,

@@ -2,7 +2,8 @@
 
 import { getCanvasFontSize, getTextWidth } from "@components/RichTextEditor/utils/getTextWidth";
 import { mount } from "@cypress/react";
-import React from "react";
+import React, { FC, useState } from "react";
+import { RichTextEditorProps } from ".";
 import { BlockStyleTypes } from "./renderer/renderBlockStyles";
 import { classMap, InlineStyles } from "./renderer/renderInlineStyles";
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor } from "./RichTextEditor";
@@ -14,6 +15,17 @@ const PLACEHOLDER = "My placeholder";
 const getBlockStyleControl = (blockType: string) => `[data-test-id=block-style-button-${blockType}]`;
 const getInlineStyleControl = (style: string) => `[data-test-id=inline-style-button-${style}]`;
 const insertTextAndOpenToolbar = () => cy.get("[contenteditable=true]").click().type("hello{selectall}");
+
+const RichTextWithClearButton: FC<Pick<RichTextEditorProps, "value">> = ({ value }) => {
+    const [clear, setClear] = useState(false);
+
+    return (
+        <div>
+            <button onClick={() => setClear(true)}>clear</button>
+            <RichTextEditor value={value} clear={clear} />
+        </div>
+    );
+};
 
 describe("RichTextEditor Component", () => {
     it("should render an empty rich text editor", () => {
@@ -163,5 +175,18 @@ describe("RichTextEditor Component", () => {
             .then(() => {
                 expect(onTextChange).to.be.called; // succeeds
             });
+    });
+
+    it("should clear editor content", () => {
+        const text = "This is some text";
+        mount(
+            <RichTextWithClearButton
+                value={JSON.stringify([{ type: BlockStyleTypes.Paragraph, children: [{ text }] }])}
+            />,
+        );
+
+        cy.get(RICH_TEXT_EDITOR).should("contain.text", text);
+        cy.get("button").click();
+        cy.get(RICH_TEXT_EDITOR).should("contain.text", "");
     });
 });

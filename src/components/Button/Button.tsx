@@ -85,6 +85,7 @@ export type ButtonProps = {
     scaleIcon?: boolean;
     children?: string;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    hugWidth?: boolean;
 };
 
 export const Button: FC<ButtonProps> = ({
@@ -97,6 +98,7 @@ export const Button: FC<ButtonProps> = ({
     scaleIcon = true,
     children,
     onClick,
+    hugWidth = true,
 }) => {
     const wrap = (child: ReactNode) => (children ? <span className={iconSpacing[size]}>{child}</span> : child);
     const { isFocusVisible, focusProps } = useFocusRing();
@@ -126,6 +128,7 @@ export const Button: FC<ButtonProps> = ({
                           ]
                         : [isFocusVisible && FOCUS_STYLE, styles[getButtonTheme()][style]],
                 ),
+                !hugWidth && "tw-w-full",
             ])}
             disabled={disabled}
             data-test-id="button"
