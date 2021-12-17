@@ -40,6 +40,8 @@ export const FocusController: FC<FocusControllerProps> = ({ children, width = Fo
                 break;
             case "ArrowLeft":
             case "ArrowRight":
+            case "ArrowDown":
+            case "ArrowUp":
                 if (isChildsEvent) {
                     event.stopPropagation();
                 }
