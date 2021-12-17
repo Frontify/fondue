@@ -195,4 +195,23 @@ describe("OrderableList Component", () => {
             cy.wrap($el).trigger("keydown", { key: "ArrowDown" });
         });
     });
+
+    it("Should not allow drag into other orderable list", () => {
+        const dataTransfer = new DataTransfer();
+
+        mount(
+            <>
+                <OrderableListWithDefaultProps />
+                <OrderableListWithDefaultProps />
+            </>,
+        );
+
+        cy.get(LIST_ID).should("have.length", 2);
+        cy.get(LIST_ID).eq(1).find(DRAGGABLE_ITEM).first().trigger("dragstart", { dataTransfer }).trigger("drag");
+        cy.get(LIST_ID)
+            .first()
+            .trigger("dragenter", { ...getCoordinatesByIndex(2, "Before"), dataTransfer })
+            .trigger("dragover", { ...getCoordinatesByIndex(2, "Before"), dataTransfer });
+        cy.get(INSERTION_INDICATOR).should("not.exist");
+    });
 });
