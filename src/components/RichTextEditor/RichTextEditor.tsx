@@ -6,12 +6,11 @@ import { debounce } from "@utilities/debounce";
 import { useDebounce } from "@utilities/useDebounce";
 import { useMachine } from "@xstate/react";
 import React, { CSSProperties, FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BaseEditor, createEditor, Descendant } from "slate";
+import { BaseEditor, createEditor, Descendant, Transforms } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
 import { ToolbarContext } from "./context/toolbar";
-import { useEditorValueUpdates } from "./hooks/useEditorValueUpdates";
 import { useSoftBreak } from "./hooks/useSoftBreak";
 import { withLinks } from "./plugins/withLinks";
 import { withLists } from "./plugins/withLists";
@@ -20,6 +19,7 @@ import { InlineStyles, renderInlineStyles } from "./renderer/renderInlineStyles"
 import { editorMachine, States } from "./state/editor/machine";
 import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
 import { Toolbar } from "./Toolbar";
+import { clearEditor } from "./utils/editor/clear";
 import { parseRawValue } from "./utils/editor/parseRawContent";
 
 export type RichTextEditorProps = {
@@ -28,6 +28,7 @@ export type RichTextEditorProps = {
     onTextChange?: (value: string) => void;
     onBlur?: (value: string) => void;
     readonly?: boolean;
+    clear?: boolean;
 };
 
 export type BlockElement = {
@@ -58,6 +59,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     value: initialValue,
     placeholder = "",
     readonly = false,
+    clear = false,
     onTextChange,
     onBlur,
 }) => {
@@ -72,11 +74,19 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const [{ matches, children }, send] = useMachine(() =>
         editorMachine.withContext({ locked: readonly, onTextChange, onBlur }),
     );
-    useEditorValueUpdates(editor, initialValue);
 
     useEffect(() => {
         setWrapperStyle(getMinWidthIfEmpty(editor, placeholder, wrapperRef.current));
     }, []);
+
+    useEffect(() => {
+        if (clear) {
+            const emptyValue = parseRawValue();
+            clearEditor(editor);
+            Transforms.insertNodes(editor, emptyValue);
+            send("RESET_TEXT");
+        }
+    }, [clear]);
 
     useEffect(() => {
         send("SET_LOCKED", { data: { locked: readonly } });
