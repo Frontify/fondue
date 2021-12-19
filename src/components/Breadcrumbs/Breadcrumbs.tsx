@@ -18,7 +18,7 @@ const mapBreadcrumbsToAriaProps = (items: Breadcrumb[]) => ({
 export type Breadcrumb = {
     label: string;
     link?: string;
-    onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
     decorator?: ReactElement<IconProps>;
     bold?: boolean;
     badges?: BadgeProps[];

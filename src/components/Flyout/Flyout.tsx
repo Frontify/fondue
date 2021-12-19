@@ -25,6 +25,7 @@ import React, {
     Children,
     FC,
     forwardRef,
+    ForwardRefRenderFunction,
     HTMLAttributes,
     MouseEvent,
     PropsWithChildren,
@@ -47,6 +48,11 @@ export type FlyoutProps = PropsWithChildren<{
     hug?: boolean;
     isOpen?: boolean;
     onOpenChange: (isOpen: boolean) => void;
+    /**
+     * The legacy footer buttons section inside of the flyout will be deleted in the future.
+     * @deprecated Pass the FlyoutFooter component with buttons to the Flyout component.
+     */
+    legacyFooter?: boolean;
 }>;
 
 type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange"> & {
@@ -54,51 +60,53 @@ type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange"> & {
     overlayTriggerProps: HTMLAttributes<Element>;
     scrollRef: RefObject<HTMLDivElement>;
 };
-const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
-    (
-        {
-            title,
-            decorator,
-            badges = [],
-            onClick,
-            onClose,
-            children,
-            isOpen,
-            positionProps,
-            overlayTriggerProps,
-            scrollRef,
-        },
-        ref,
-    ) => {
-        const { overlayProps } = useOverlay({ onClose, isOpen, isDismissable: true }, ref as RefObject<HTMLDivElement>);
-        const { modalProps } = useModal();
-        const { dialogProps, titleProps } = useDialog({}, ref as RefObject<HTMLDivElement>);
 
-        return (
+const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> = (
+    {
+        title,
+        decorator,
+        badges = [],
+        onClick,
+        onClose,
+        children,
+        isOpen,
+        positionProps,
+        overlayTriggerProps,
+        scrollRef,
+        legacyFooter,
+    },
+    ref,
+) => {
+    const { overlayProps } = useOverlay({ onClose, isOpen, isDismissable: true }, ref as RefObject<HTMLDivElement>);
+    const { modalProps } = useModal();
+    const { dialogProps, titleProps } = useDialog({}, ref as RefObject<HTMLDivElement>);
+
+    return (
+        <div
+            {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
+            ref={ref}
+            className="tw-max-h-full tw-shadow-mid tw-min-w-[400px] tw-outline-none"
+        >
             <div
-                {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
-                ref={ref}
-                className="tw-max-h-full tw-overflow-y-scroll tw-shadow-mid tw-min-w-[400px] tw-outline-none"
+                ref={scrollRef}
+                className="tw-flex tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95"
             >
-                <div
-                    ref={scrollRef}
-                    className="tw-flex tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95"
-                >
-                    {title && (
-                        <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8">
-                            <div {...titleProps} className="tw-inline-flex">
-                                <FieldsetHeader decorator={decorator}>{title}</FieldsetHeader>
-                            </div>
-                            <div className="tw-inline-flex tw-gap-2 tw-flex-wrap">
-                                {badges.map((badgeProps, index) => (
-                                    <Badge {...badgeProps} key={`flyout-badge-${index}`} />
-                                ))}
-                            </div>
+                {title && (
+                    <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8">
+                        <div {...titleProps} className="tw-inline-flex">
+                            <FieldsetHeader decorator={decorator}>{title}</FieldsetHeader>
                         </div>
-                    )}
-                    {Children.map(children, (child, index) => (
-                        <div key={index}>{child}</div>
-                    ))}
+                        <div className="tw-inline-flex tw-gap-2 tw-flex-wrap">
+                            {badges.map((badgeProps, index) => (
+                                <Badge {...badgeProps} key={`flyout-badge-${index}`} />
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {Children.map(children, (child, index) => (
+                    <div key={index}>{child}</div>
+                ))}
+                {legacyFooter && (
                     <div className="tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-sticky tw-bottom-0 tw-bg-white dark:tw-bg-black-95">
                         {onClick ? (
                             <>
@@ -115,12 +123,14 @@ const Overlay = forwardRef<HTMLDivElement, OverlayProps>(
                             </Button>
                         )}
                     </div>
-                    <DismissButton onDismiss={onClose} />
-                </div>
+                )}
+                <DismissButton onDismiss={onClose} />
             </div>
-        );
-    },
-);
+        </div>
+    );
+};
+
+export const Overlay = forwardRef<HTMLDivElement, OverlayProps>(OverlayComponent);
 
 export const Flyout: FC<FlyoutProps> = ({
     trigger,
@@ -133,6 +143,7 @@ export const Flyout: FC<FlyoutProps> = ({
     title = "",
     badges = [],
     hug = true,
+    legacyFooter = true,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
     const { toggle, close } = state;
@@ -198,6 +209,7 @@ export const Flyout: FC<FlyoutProps> = ({
                             }}
                             ref={overlayRef}
                             scrollRef={scrollRef}
+                            legacyFooter={legacyFooter}
                         >
                             {overlayRef?.current && children}
                         </Overlay>

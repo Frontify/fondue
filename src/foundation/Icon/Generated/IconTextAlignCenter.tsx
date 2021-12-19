@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -21,11 +21,11 @@ function IconTextAlignCenter(props: GeneratedIconProps): React.ReactElement<Gene
             <path
                 fillRule="evenodd"
                 clipRule="evenodd"
-                d="M20.662 6a1 1 0 01-1 1h-16a1 1 0 010-2h16a1 1 0 011 1zM4.662 18a1 1 0 011-1h12a1 1 0 110 2h-12a1 1 0 01-1-1zM18.662 10a1 1 0 01-1 1h-12a1 1 0 110-2h12a1 1 0 011 1zM20.662 14a1 1 0 01-1 1h-16a1 1 0 110-2h16a1 1 0 011 1z"
+                d="M20.662 6a1 1 0 0 1-1 1h-16a1 1 0 0 1 0-2h16a1 1 0 0 1 1 1ZM4.662 18a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2h-12a1 1 0 0 1-1-1ZM18.662 10a1 1 0 0 1-1 1h-12a1 1 0 1 1 0-2h12a1 1 0 0 1 1 1ZM20.662 14a1 1 0 0 1-1 1h-16a1 1 0 1 1 0-2h16a1 1 0 0 1 1 1Z"
             />
         </svg>
     );
 }
 
-const MemoIconTextAlignCenter = React.memo(IconTextAlignCenter);
-export default MemoIconTextAlignCenter;
+const Memo = memo(IconTextAlignCenter);
+export default Memo;

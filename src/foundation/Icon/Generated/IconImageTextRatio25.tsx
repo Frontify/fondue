@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -21,11 +21,11 @@ function IconImageTextRatio25(props: GeneratedIconProps): React.ReactElement<Gen
             <path
                 fillRule="evenodd"
                 clipRule="evenodd"
-                d="M14 5.5H4a.5.5 0 00-.5.5v12a.5.5 0 00.5.5h10a.5.5 0 00.5-.5V6a.5.5 0 00-.5-.5zM4 4a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2H4zM22 5.75a.75.75 0 01-.75.75h-2.5a.75.75 0 010-1.5h2.5a.75.75 0 01.75.75zM22 11.75a.75.75 0 01-.75.75h-2.5a.75.75 0 010-1.5h2.5a.75.75 0 01.75.75zM21 8.75a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5a.75.75 0 01.75.75zM21 14.75a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5a.75.75 0 01.75.75z"
+                d="M14 5.5H4a.5.5 0 0 0-.5.5v12a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V6a.5.5 0 0 0-.5-.5ZM4 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4ZM22 5.75a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h2.5a.75.75 0 0 1 .75.75ZM22 11.75a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h2.5a.75.75 0 0 1 .75.75ZM21 8.75a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 .75.75ZM21 14.75a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 .75.75Z"
             />
         </svg>
     );
 }
 
-const MemoIconImageTextRatio25 = React.memo(IconImageTextRatio25);
-export default MemoIconImageTextRatio25;
+const Memo = memo(IconImageTextRatio25);
+export default Memo;

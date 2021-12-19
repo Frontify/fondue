@@ -2,8 +2,8 @@
 
 import { Descendant } from "slate";
 import { jsx } from "slate-hyperscript";
-import { BlockStyleTypes } from "../renderer/renderBlockStyles";
-import { InlineStyles } from "../renderer/renderInlineStyles";
+import { BlockStyleTypes } from "../../renderer/renderBlockStyles";
+import { InlineStyles } from "../../renderer/renderInlineStyles";
 
 const BLOCK_MAP: { [key: string]: (el: HTMLElement) => { type: string } } = {
     A: (el) => ({ type: BlockStyleTypes.Link, url: el.getAttribute("href") }),
@@ -23,8 +23,10 @@ const STYLE_MAP: { [key: string]: () => { [key: string]: boolean } } = {
     CODE: () => ({ [InlineStyles.Code]: true }),
 };
 
+export const EMPTY_VALUE: Descendant[] = [{ type: BlockStyleTypes.Paragraph, children: [{ text: "" }] }];
+
 export const parseRawValue = (raw?: string): Descendant[] => {
-    let parsedValue: Descendant[] = [{ type: BlockStyleTypes.Paragraph, children: [{ text: "" }] }];
+    let parsedValue = EMPTY_VALUE;
 
     if (!raw) {
         return parsedValue;

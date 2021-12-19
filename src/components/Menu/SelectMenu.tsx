@@ -24,6 +24,7 @@ export type SelectMenuProps = {
     ariaProps: AriaListBoxOptions<any>;
     state: ListState<any>;
     ariaLabel?: string;
+    scrollable?: boolean;
 };
 
 export const SelectMenu = ({
@@ -31,6 +32,7 @@ export const SelectMenu = ({
     ariaProps,
     state,
     ariaLabel = "Select Menu",
+    scrollable = false,
 }: SelectMenuProps): ReactElement<SelectMenuProps> => {
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
@@ -45,7 +47,7 @@ export const SelectMenu = ({
     );
 
     return (
-        <AriaList ariaProps={listBoxProps} ref={listRef}>
+        <AriaList ariaProps={listBoxProps} ref={listRef} scrollable={scrollable}>
             {[...state.collection].map((section) => {
                 const { key: sectionKey, "aria-label": sectionAriaLabel } = section;
                 const { itemProps, groupProps } = useListBoxSection({ "aria-label": sectionAriaLabel });

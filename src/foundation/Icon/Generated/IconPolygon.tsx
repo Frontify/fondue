@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -23,5 +23,5 @@ function IconPolygon(props: GeneratedIconProps): React.ReactElement<GeneratedIco
     );
 }
 
-const MemoIconPolygon = React.memo(IconPolygon);
-export default MemoIconPolygon;
+const Memo = memo(IconPolygon);
+export default Memo;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconFocalPoint(props: GeneratedIconProps): React.ReactElement<Generated
             name="IconFocalPoint"
             {...props}
         >
-            <path d="M19.468 19.442v-4.25a.75.75 0 011.5 0v5a.75.75 0 01-.75.75h-5a.75.75 0 010-1.5h4.25zm-14.913 0h4.25a.75.75 0 110 1.5h-5a.75.75 0 01-.75-.75v-5a.75.75 0 111.5 0v4.25zM19.457 4.498h-4.25a.75.75 0 010-1.5h5a.75.75 0 01.75.75v5a.75.75 0 11-1.5 0v-4.25zm-14.914 0v4.25a.75.75 0 11-1.5 0v-5a.75.75 0 01.75-.75h5a.75.75 0 110 1.5h-4.25zM12 13a1 1 0 110-2 1 1 0 010 2z" />
+            <path d="M19.468 19.442v-4.25a.75.75 0 0 1 1.5 0v5a.75.75 0 0 1-.75.75h-5a.75.75 0 0 1 0-1.5h4.25Zm-14.913 0h4.25a.75.75 0 1 1 0 1.5h-5a.75.75 0 0 1-.75-.75v-5a.75.75 0 1 1 1.5 0v4.25ZM19.457 4.498h-4.25a.75.75 0 0 1 0-1.5h5a.75.75 0 0 1 .75.75v5a.75.75 0 1 1-1.5 0v-4.25Zm-14.914 0v4.25a.75.75 0 1 1-1.5 0v-5a.75.75 0 0 1 .75-.75h5a.75.75 0 1 1 0 1.5h-4.25ZM12 13a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
         </svg>
     );
 }
 
-const MemoIconFocalPoint = React.memo(IconFocalPoint);
-export default MemoIconFocalPoint;
+const Memo = memo(IconFocalPoint);
+export default Memo;

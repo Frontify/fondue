@@ -6,6 +6,7 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { Meta, Story } from "@storybook/react";
 import { TextInput, TextInputProps, TextInputType, Validation } from "./TextInput";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Text Input",
     component: TextInput,
@@ -20,7 +21,7 @@ export default {
     argTypes: {
         validation: {
             options: Object.values(Validation),
-            type: "select",
+            control: { type: "select" },
         },
         placeholder: { type: "string" },
         value: { table: { disable: true } },
@@ -73,7 +74,7 @@ WithCharacterDecorator.args = {
 };
 
 const PasswordArgTypes = {
-    obfuscated: { type: "boolean", table: { disable: false } },
+    obfuscated: { control: { type: "boolean" }, table: { disable: false } },
 };
 
 const PasswordArgs = {

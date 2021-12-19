@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -23,5 +23,5 @@ function IconVimeo(props: GeneratedIconProps): React.ReactElement<GeneratedIconP
     );
 }
 
-const MemoIconVimeo = React.memo(IconVimeo);
-export default MemoIconVimeo;
+const Memo = memo(IconVimeo);
+export default Memo;

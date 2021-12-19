@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconEnum } from "./IconsMap";
+import { IconEnum } from "./IconEnum";
 import { IconSize } from "./IconSize";
 
 export type GeneratedIconProps = {

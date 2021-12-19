@@ -1,17 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TemplateData, TemplateOptions } from "@svgr/core";
+import { Template } from "@svgr/babel-plugin-transform-svg-component";
 
-export default function IconTemplate(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    { template }: { template: any },
-    _opts: TemplateOptions,
-    { interfaces, componentName, jsx, exports }: TemplateData,
-): string {
-    const typeScriptTpl = template.smart({ plugins: ["typescript"] });
-
-    return typeScriptTpl.ast`
-      import React from "react";
+export const IconTemplate: Template = ({ interfaces, componentName, jsx, exports }, { tpl }) => {
+    return tpl`
+      import React, { memo } from "react";
       import { GeneratedIconProps } from "@foundation/Icon/IconProps";
       import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -25,4 +18,4 @@ export default function IconTemplate(
 
       ${exports}
     `;
-}
+};

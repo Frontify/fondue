@@ -1,21 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Slider } from "@components/Slider/Slider";
+import { Button } from "@components/Button/Button";
+import { Dropdown } from "@components/Dropdown";
 import { FieldsetHeaderType } from "@components/FieldsetHeader/FieldsetHeader";
 import { FormControl } from "@components/FormControl/FormControl";
-import { Button } from "@components/Button/Button";
+import { Slider } from "@components/Slider/Slider";
+import { Switch, SwitchSize } from "@components/Switch/Switch";
+import { TextInput, TextInputType } from "@components/TextInput/TextInput";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import IconTextAlignCenter from "@foundation/Icon/Generated/IconTextAlignCenter";
 import IconTextAlignLeft from "@foundation/Icon/Generated/IconTextAlignLeft";
 import IconTextAlignRight from "@foundation/Icon/Generated/IconTextAlignRight";
 import { IconSize } from "@foundation/Icon/IconSize";
-import { Switch, SwitchSize } from "@components/Switch/Switch";
-import { TextInput, TextInputType } from "@components/TextInput/TextInput";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { Accordion as AccordionComponent, AccordionItem, AccordionProps } from "./Accordion";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Accordion",
     component: AccordionComponent,
@@ -27,6 +29,7 @@ export default {
 export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
     const [showContent, setShowContent] = useState(true);
     const [input, setInput] = useState("");
+    const [activeItemId, setActiveItemId] = useState<string | number | undefined>();
 
     return (
         <AccordionComponent>
@@ -47,6 +50,24 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
             </AccordionItem>
             <AccordionItem header={{ children: "Item with plain text child", type: FieldsetHeaderType.AddRemove }}>
                 bar
+            </AccordionItem>
+            <AccordionItem header={{ children: "Item with dropdown child", type: FieldsetHeaderType.AddRemove }}>
+                <Dropdown
+                    onChange={(id) => setActiveItemId(id)}
+                    activeItemId={activeItemId}
+                    menuBlocks={[
+                        {
+                            id: "block1",
+                            menuItems: [
+                                { id: "1", title: "Item 1" },
+                                { id: "2", title: "Item 2" },
+                                { id: "3", title: "Item 3" },
+                                { id: "4", title: "Item 4" },
+                                { id: "5", title: "Item 5" },
+                            ],
+                        },
+                    ]}
+                />
             </AccordionItem>
             <AccordionItem
                 header={{

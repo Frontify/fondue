@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BlockStyleTypes } from "../renderer/renderBlockStyles";
-import { BlockElement, FormattedText } from "../RichTextEditor";
+import { BlockStyleTypes } from "../../renderer/renderBlockStyles";
+import { BlockElement, FormattedText } from "../../RichTextEditor";
 
 type ParagraphNode = {
     type: BlockStyleTypes.Paragraph;

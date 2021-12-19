@@ -47,7 +47,7 @@ export const MenuItem: FC<MenuItemProps> = ({
     return (
         <div
             className={merge([
-                "tw-rounded tw-cursor-pointer tw-flex tw-items-center tw-justify-between tw-transition-colors",
+                "tw-rounded tw-cursor-pointer tw-flex tw-items-center tw-justify-between tw-transition-colors tw-gap-2",
                 isDangerStyle ? "hover:tw-text-red-70" : "hover:tw-text-black",
                 size === MenuItemContentSize.Small
                     ? "tw-px-5 tw-py-2.5 tw-min-h-[36px]"

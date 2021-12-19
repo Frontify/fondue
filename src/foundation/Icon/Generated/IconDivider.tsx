@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconDivider(props: GeneratedIconProps): React.ReactElement<GeneratedIco
             name="IconDivider"
             {...props}
         >
-            <path d="M5.818 3.545a.773.773 0 00-.773.773v15.455c0 .426.346.772.773.772h12.364a.773.773 0 00.773-.772V4.318a.773.773 0 00-.773-.773H5.818zm0-1.545h12.364A2.318 2.318 0 0120.5 4.318v15.455a2.318 2.318 0 01-2.318 2.318H5.818A2.318 2.318 0 013.5 19.773V4.318A2.318 2.318 0 015.818 2zm1.546 10.818a.773.773 0 010-1.545h9.272a.773.773 0 110 1.545H7.364z" />
+            <path d="M5.818 3.545a.773.773 0 0 0-.773.773v15.455c0 .426.346.772.773.772h12.364a.773.773 0 0 0 .773-.772V4.318a.773.773 0 0 0-.773-.773H5.818Zm0-1.545h12.364A2.318 2.318 0 0 1 20.5 4.318v15.455a2.318 2.318 0 0 1-2.318 2.318H5.818A2.318 2.318 0 0 1 3.5 19.773V4.318A2.318 2.318 0 0 1 5.818 2Zm1.546 10.818a.773.773 0 0 1 0-1.545h9.272a.773.773 0 1 1 0 1.545H7.364Z" />
         </svg>
     );
 }
 
-const MemoIconDivider = React.memo(IconDivider);
-export default MemoIconDivider;
+const Memo = memo(IconDivider);
+export default Memo;

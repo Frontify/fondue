@@ -8,6 +8,7 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Tree",
     component: TreeComponent,

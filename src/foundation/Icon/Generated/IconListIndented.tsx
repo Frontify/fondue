@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -21,12 +21,12 @@ function IconListIndented(props: GeneratedIconProps): React.ReactElement<Generat
             <path
                 fillRule="evenodd"
                 clipRule="evenodd"
-                d="M21 6a1 1 0 01-1 1H8a1 1 0 110-2h12a1 1 0 011 1zM7 18a1 1 0 011-1h10a1 1 0 110 2H8a1 1 0 01-1-1zM19 10a1 1 0 01-1 1H8a1 1 0 110-2h10a1 1 0 011 1zM21 14a1 1 0 01-1 1H8a1 1 0 110-2h12a1 1 0 011 1z"
+                d="M21 6a1 1 0 0 1-1 1H8a1 1 0 1 1 0-2h12a1 1 0 0 1 1 1ZM7 18a1 1 0 0 1 1-1h10a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1ZM19 10a1 1 0 0 1-1 1H8a1 1 0 1 1 0-2h10a1 1 0 0 1 1 1ZM21 14a1 1 0 0 1-1 1H8a1 1 0 1 1 0-2h12a1 1 0 0 1 1 1Z"
             />
-            <path d="M3 6a1 1 0 012 0v12a1 1 0 11-2 0V6z" />
+            <path d="M3 6a1 1 0 0 1 2 0v12a1 1 0 1 1-2 0V6Z" />
         </svg>
     );
 }
 
-const MemoIconListIndented = React.memo(IconListIndented);
-export default MemoIconListIndented;
+const Memo = memo(IconListIndented);
+export default Memo;

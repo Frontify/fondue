@@ -155,6 +155,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
         );
     },
 );
+SearchInput.displayName = "SearchInput";
 
 const Button: FC<ButtonProps> = ({
     disabled,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconArrowUpAndDown(props: GeneratedIconProps): React.ReactElement<Gener
             name="IconArrowUpAndDown"
             {...props}
         >
-            <path d="M10.975 6.002L7.525 9.45A1.026 1.026 0 016.076 8l5.2-5.2c.4-.4 1.05-.4 1.45 0l5.2 5.2a1.026 1.026 0 01-1.45 1.45l-3.449-3.448v12.496L16.523 15a1.026 1.026 0 011.45 1.45l-5.249 5.25c-.4.4-1.05.4-1.45 0l-5.25-5.25A1.026 1.026 0 017.477 15l3.498 3.498V6.002z" />
+            <path d="M10.975 6.002 7.525 9.45A1.026 1.026 0 0 1 6.076 8l5.2-5.2c.4-.4 1.05-.4 1.45 0l5.2 5.2a1.026 1.026 0 0 1-1.45 1.45l-3.449-3.448v12.496L16.523 15a1.026 1.026 0 0 1 1.45 1.45l-5.249 5.25c-.4.4-1.05.4-1.45 0l-5.25-5.25A1.026 1.026 0 0 1 7.477 15l3.498 3.498V6.002Z" />
         </svg>
     );
 }
 
-const MemoIconArrowUpAndDown = React.memo(IconArrowUpAndDown);
-export default MemoIconArrowUpAndDown;
+const Memo = memo(IconArrowUpAndDown);
+export default Memo;

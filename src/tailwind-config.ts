@@ -6,7 +6,9 @@ import arcadeConfig from "../tailwind.config";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const arrayMergeFn = (destinationArray: any[], sourceArray: any[]) => {
     return destinationArray.concat(sourceArray).reduce((acc, cur) => {
-        if (acc.includes(cur)) return acc;
+        if (acc.includes(cur)) {
+            return acc;
+        }
         return [...acc, cur];
     }, []);
 };

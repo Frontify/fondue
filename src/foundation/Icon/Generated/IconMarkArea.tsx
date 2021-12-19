@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -18,10 +18,10 @@ function IconMarkArea(props: GeneratedIconProps): React.ReactElement<GeneratedIc
             name="IconMarkArea"
             {...props}
         >
-            <path d="M5 5a1 1 0 00-1 1v12a1 1 0 001 1h14a1 1 0 001-1V6a1 1 0 00-1-1H5zm0-2h14a3 3 0 013 3v12a3 3 0 01-3 3H5a3 3 0 01-3-3V6a3 3 0 013-3zm4 6a1 1 0 00-1 1v1a1 1 0 001 1h6a1 1 0 001-1v-1a1 1 0 00-1-1H9zm0-2h6a3 3 0 013 3v1a3 3 0 01-3 3H9a3 3 0 01-3-3v-1a3 3 0 013-3z" />
+            <path d="M5 5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H5Zm0-2h14a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Zm4 6a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H9Zm0-2h6a3 3 0 0 1 3 3v1a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3v-1a3 3 0 0 1 3-3Z" />
         </svg>
     );
 }
 
-const MemoIconMarkArea = React.memo(IconMarkArea);
-export default MemoIconMarkArea;
+const Memo = memo(IconMarkArea);
+export default Memo;

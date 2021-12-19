@@ -30,7 +30,7 @@ export const getKeyItemRecord = <T extends MenuItemType | ActionMenuItemType = M
 
 export const getDisabledItemIds = <T extends MenuItemType | ActionMenuItemType = MenuItemType>(
     items: T[],
-): Set<string> =>
+): Set<T["id"]> =>
     new Set(
         items
             .reduce((acc: (string | number)[], curr: MenuItemType) => [...acc, curr.disabled ? curr.id : ""], [])

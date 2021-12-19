@@ -128,10 +128,11 @@ const SearchResultOption = ({ item, state, keyItemRecord, machineService }: Sear
     const decorator = menuItem.icon ? ICON_OPTIONS[menuItem.icon] : undefined;
 
     const renderOptionItem = () => {
-        if (matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Loaded}`))
+        if (matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Loaded}`)) {
             return <MenuItem {...menuItem} active={isSelected} decorator={decorator} />;
-        else if (matches(`${LinkChooserState.Focused}.${DropdownState.Templates}.${SectionState.Loaded}`))
+        } else if (matches(`${LinkChooserState.Focused}.${DropdownState.Templates}.${SectionState.Loaded}`)) {
             return <TemplateItem {...menuItem} />;
+        }
     };
 
     return (

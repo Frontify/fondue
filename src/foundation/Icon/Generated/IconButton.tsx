@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -17,11 +17,11 @@ function IconButton(props: GeneratedIconProps): React.ReactElement<GeneratedIcon
             name="IconButton"
             {...props}
         >
-            <path d="M25.075 15.125h1.991a3.045 3.045 0 003.045-3.045V5.99a3.045 3.045 0 00-3.045-3.045H4.228A3.045 3.045 0 001.183 5.99v6.09a3.045 3.045 0 003.045 3.045h10.919l-.58-8.221 10.508 8.221z" />
-            <path d="M23.801 21.034l2.623 4.933-2.689 1.43-2.608-4.905-3.569 3.017-1.056-14.958 11.81 9.24z" />
+            <path d="M25.075 15.125h1.991a3.045 3.045 0 0 0 3.045-3.045V5.99a3.045 3.045 0 0 0-3.045-3.045H4.228A3.045 3.045 0 0 0 1.183 5.99v6.09a3.045 3.045 0 0 0 3.045 3.045h10.919l-.58-8.221 10.508 8.221z" />
+            <path d="m23.801 21.034 2.623 4.933-2.689 1.43-2.608-4.905-3.569 3.017-1.056-14.958 11.81 9.24z" />
         </svg>
     );
 }
 
-const MemoIconButton = React.memo(IconButton);
-export default MemoIconButton;
+const Memo = memo(IconButton);
+export default Memo;

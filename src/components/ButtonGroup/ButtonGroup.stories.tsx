@@ -7,6 +7,7 @@ import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { ButtonGroup as ButtonGroupComponent, ButtonGroupProps } from "./ButtonGroup";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Button Group",
     component: ButtonGroupComponent,

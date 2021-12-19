@@ -11,8 +11,27 @@ import React, { cloneElement, FC, isValidElement, ReactNode } from "react";
 
 export enum FieldsetHeaderSize {
     Small = "Small",
+    Medium = "Medium",
     Large = "Large",
 }
+
+const sizeMap: Record<FieldsetHeaderSize, { icon: IconSize; text: string; switch: SwitchSize }> = {
+    [FieldsetHeaderSize.Small]: {
+        icon: IconSize.Size12,
+        text: "tw-text-s",
+        switch: SwitchSize.Small,
+    },
+    [FieldsetHeaderSize.Medium]: {
+        icon: IconSize.Size16,
+        text: "tw-text-m",
+        switch: SwitchSize.Medium,
+    },
+    [FieldsetHeaderSize.Large]: {
+        icon: IconSize.Size20,
+        text: "tw-text-l",
+        switch: SwitchSize.Large,
+    },
+};
 
 export enum FieldsetHeaderType {
     Default = "Default",
@@ -43,19 +62,12 @@ const renderType = (
 ) => {
     const props = {
         "aria-labelledby": id,
-        size: size === FieldsetHeaderSize.Large ? IconSize.Size20 : IconSize.Size12,
+        size: sizeMap[size].icon,
     };
 
     switch (type) {
         case FieldsetHeaderType.Switch:
-            return (
-                <Switch
-                    {...props}
-                    size={size === FieldsetHeaderSize.Large ? SwitchSize.Large : SwitchSize.Small}
-                    on={active}
-                    disabled={disabled}
-                />
-            );
+            return <Switch {...props} size={sizeMap[size].switch} on={active} disabled={disabled} />;
         case FieldsetHeaderType.Accordion:
             return (
                 <div
@@ -118,7 +130,7 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
             {isValidElement(decorator) && (
                 <span className="tw-flex-shrink-0">
                     {cloneElement(decorator, {
-                        size: size === FieldsetHeaderSize.Large ? IconSize.Size20 : IconSize.Size16,
+                        size: sizeMap[size].icon,
                     })}
                 </span>
             )}
@@ -126,7 +138,7 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
                 id={id}
                 className={merge([
                     "tw-text-left",
-                    size === FieldsetHeaderSize.Large ? "tw-text-l" : "tw-text-m",
+                    sizeMap[size].text,
                     bold ? "tw-font-bold" : "tw-font-normal",
                     onClick && "hover:tw-cursor-pointer",
                 ])}

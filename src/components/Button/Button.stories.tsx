@@ -5,11 +5,13 @@ import { Meta, Story } from "@storybook/react";
 import { Button, ButtonProps, ButtonSize, ButtonStyle } from "./Button";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Button",
     component: Button,
     args: {
         inverted: false,
+        hugWidth: true,
     },
     argTypes: {
         size: {

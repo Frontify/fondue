@@ -8,7 +8,7 @@ const CHECKBOX_LABEL = "Checkbox label";
 export const CHECKBOX_ID = "[data-test-id=checkbox]";
 const TOOLTIP_ID = "[data-test-id=tooltip]";
 export const CHECKBOX_INPUT_ID = "[data-test-id=checkbox-input]";
-const INPUT_LABEL_TOOLTIP_ICON_ID = "[data-test-id=input-label-tooltip-icon]";
+const TOOLTIP_ICON_TRIGGER_ID = "[data-test-id=tooltip-icon-trigger]";
 
 const CheckboxComponent: FC<Omit<CheckboxProps, "value">> = (props) => {
     const [checked, setChecked] = useState(props.state);
@@ -54,7 +54,7 @@ describe("Checkbox component", () => {
     it("renders with a tooltip", () => {
         mount(<CheckboxComponent label={CHECKBOX_LABEL} tooltip={{ content: "Checkbox tooltip" }} />);
 
-        cy.get(INPUT_LABEL_TOOLTIP_ICON_ID).should("exist");
+        cy.get(TOOLTIP_ICON_TRIGGER_ID).should("exist");
     });
 
     it("renders as disabled", () => {
@@ -80,7 +80,7 @@ describe("Checkbox component", () => {
         cy.window().focus();
         cy.get("body").realPress("Tab");
         cy.get("body").realPress("Tab");
-        cy.get(INPUT_LABEL_TOOLTIP_ICON_ID).should("be.focused");
+        cy.get(TOOLTIP_ICON_TRIGGER_ID).should("be.focused");
         cy.get(TOOLTIP_ID).should("contain", "Checkbox tooltip");
     });
 });

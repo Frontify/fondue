@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
@@ -23,5 +23,5 @@ function IconTypography(props: GeneratedIconProps): React.ReactElement<Generated
     );
 }
 
-const MemoIconTypography = React.memo(IconTypography);
-export default MemoIconTypography;
+const Memo = memo(IconTypography);
+export default Memo;
