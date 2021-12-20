@@ -1,4 +1,4 @@
-# Arcade Design System by Frontify
+# Arcade Design System by Frontify Test
 
 <a href="https://github.com/Frontify/react-components/actions/workflows/continuous-integration.yml">
     <img src="https://github.com/Frontify/react-components/actions/workflows/continuous-integration.yml/badge.svg" alt="CI Status" />
