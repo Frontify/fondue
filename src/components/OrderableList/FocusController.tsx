@@ -29,6 +29,7 @@ export const FocusController: FC<FocusControllerProps> = ({ children, width = Fo
             case "Enter":
                 event.stopPropagation();
                 if (!isChildsEvent) {
+                    event.preventDefault();
                     childRef?.current?.focus();
                 }
                 break;
