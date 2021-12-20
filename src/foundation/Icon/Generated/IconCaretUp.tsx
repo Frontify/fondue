@@ -9,8 +9,8 @@ function IconCaretUp(props: GeneratedIconProps): React.ReactElement<GeneratedIco
     ].join(" ");
     return (
         <svg
+            viewBox="0 0 18 10"
             fill="currentColor"
-            viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
             width="100%"
             height="100%"
@@ -18,7 +18,7 @@ function IconCaretUp(props: GeneratedIconProps): React.ReactElement<GeneratedIco
             name="IconCaretUp"
             {...props}
         >
-            <path d="M18.862 15.52 11.98 8.946 5.09 15.52a.84.84 0 0 1-1.102-.041.75.75 0 0 1-.043-1.053L11.98 6.75l8.034 7.677a.751.751 0 0 1 0 1.094.83.83 0 0 1-.576.229.83.83 0 0 1-.576-.23Z" />
+            <path d="M15.862 9.064 8.98 2.488 2.09 9.064a.84.84 0 0 1-1.102-.041.75.75 0 0 1-.043-1.053L8.98.293l8.034 7.677a.751.751 0 0 1 0 1.094.83.83 0 0 1-.576.229.83.83 0 0 1-.576-.23Z" />
         </svg>
     );
 }
