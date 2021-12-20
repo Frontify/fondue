@@ -9,7 +9,7 @@ function IconCaretDown(props: GeneratedIconProps): React.ReactElement<GeneratedI
     ].join(" ");
     return (
         <svg
-            viewBox="0 0 18 10"
+            viewBox="0.5 0 17 10"
             fill="currentColor"
             xmlns="http://www.w3.org/2000/svg"
             width="100%"
