@@ -31,6 +31,8 @@ export const FocusController: FC<FocusControllerProps> = ({ children, width = Fo
                 if (!isChildsEvent) {
                     event.preventDefault();
                     childRef?.current?.focus();
+                } else {
+                    focusControllerRef?.current?.focus();
                 }
                 break;
             case "Escape":
