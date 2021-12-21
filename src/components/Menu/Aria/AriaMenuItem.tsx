@@ -1,11 +1,10 @@
+import { MenuItem } from "@components/MenuItem/MenuItem";
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { forwardRef, HTMLAttributes } from "react";
-import { MenuItem } from "@components/MenuItem/MenuItem";
-import { ActionMenuItemType } from "../ActionMenu/ActionMenu";
-import { MenuItemType } from "../SelectMenu";
+import { ActionMenuItemType, MenuItemType } from "../../Menu/types";
 
 export type AriaOptionProps = {
     menuItem: MenuItemType | ActionMenuItemType;

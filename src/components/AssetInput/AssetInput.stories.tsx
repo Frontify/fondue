@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ActionMenuBlock } from "@components/Menu/ActionMenu/ActionMenu";
+import { ActionMenuBlock } from "@components/Menu/types";
 import { MenuItemStyle } from "@components/MenuItem/MenuItem";
 import IconCrop from "@foundation/Icon/Generated/IconCrop";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";

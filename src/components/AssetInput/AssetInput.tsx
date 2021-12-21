@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ActionMenu, ActionMenuProps } from "@components/Menu/ActionMenu/ActionMenu";
 import { Button, ButtonStyle } from "@components/Button/Button";
+import { ActionMenu } from "@components/Menu/ActionMenu/ActionMenu";
+import { ActionMenuProps } from "@components/Menu/types";
 import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
 import IconImageLibrary from "@foundation/Icon/Generated/IconImageLibrary";

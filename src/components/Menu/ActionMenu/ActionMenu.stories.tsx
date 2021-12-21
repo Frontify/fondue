@@ -6,7 +6,8 @@ import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
-import { ActionMenu as ActionMenuComponent, ActionMenuProps } from "./ActionMenu";
+import { ActionMenuProps } from "../types";
+import { ActionMenu as ActionMenuComponent } from "./ActionMenu";
 
 // eslint-disable-next-line import/no-default-export
 export default {

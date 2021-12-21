@@ -6,26 +6,9 @@ import { AriaList } from "@components/Menu/Aria/AriaList";
 import { AriaMenuItem } from "@components/Menu/Aria/AriaMenuItem";
 import { AriaSection } from "@components/Menu/Aria/AriaSection";
 import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
-import { MenuItemProps } from "@components/MenuItem/MenuItem";
-import { AriaListBoxOptions, useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
-import { ListState } from "@react-stately/list";
+import { useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
 import React, { ReactElement, useRef } from "react";
-
-export type MenuItemType = MenuItemProps & { id: string | number };
-
-export type MenuBlock = {
-    id: string;
-    menuItems: MenuItemType[];
-    ariaLabel?: string;
-};
-
-export type SelectMenuProps = {
-    menuBlocks: MenuBlock[];
-    ariaProps: AriaListBoxOptions<any>;
-    state: ListState<any>;
-    ariaLabel?: string;
-    scrollable?: boolean;
-};
+import { SelectMenuProps } from "./types";
 
 export const SelectMenu = ({
     menuBlocks,

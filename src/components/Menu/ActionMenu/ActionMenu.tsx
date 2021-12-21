@@ -4,31 +4,16 @@ import { AriaList } from "@components/Menu/Aria/AriaList";
 import { AriaMenuItem } from "@components/Menu/Aria/AriaMenuItem";
 import { AriaSection } from "@components/Menu/Aria/AriaSection";
 import { getDisabledItemIds, getKeyItemRecord, getMenuItems, mapToAriaProps } from "@components/Menu/Aria/helper";
-import { MenuItemType } from "@components/Menu/SelectMenu";
 import { useMenu, useMenuItem, useMenuSection } from "@react-aria/menu";
 import { useTreeState } from "@react-stately/tree";
-import { FocusStrategy } from "@react-types/shared";
 import React, { ReactElement, useRef } from "react";
-
-export type ActionMenuItemType = MenuItemType & { onClick: () => void };
-
-export type ActionMenuBlock = {
-    id: string;
-    menuItems: ActionMenuItemType[];
-    ariaLabel?: string;
-};
-
-export type ActionMenuProps = {
-    ariaLabel?: string;
-    menuBlocks: ActionMenuBlock[];
-    focus?: FocusStrategy;
-    scrollable?: boolean;
-};
+import { ActionMenuProps, MenuStyle } from "../types";
 
 export const ActionMenu = ({
     menuBlocks,
-    ariaLabel = "Action Menu",
     focus,
+    style = MenuStyle.WithBorder,
+    ariaLabel = "Action Menu",
     scrollable = false,
 }: ActionMenuProps): ReactElement<ActionMenuProps> => {
     const items = getMenuItems(menuBlocks);
@@ -43,7 +28,7 @@ export const ActionMenu = ({
     const { menuProps } = useMenu({ ...props, autoFocus: focus }, state, menuRef);
 
     return (
-        <AriaList ariaProps={{ ...menuProps }} ref={menuRef} scrollable={scrollable}>
+        <AriaList ariaProps={{ ...menuProps }} ref={menuRef} scrollable={scrollable} style={style}>
             {[...state.collection].map((section) => {
                 const { key: sectionKey, "aria-label": sectionAriaLabel } = section;
                 const { itemProps, groupProps } = useMenuSection({ "aria-label": sectionAriaLabel });
