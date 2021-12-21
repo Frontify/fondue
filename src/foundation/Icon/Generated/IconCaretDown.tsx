@@ -9,8 +9,8 @@ function IconCaretDown(props: GeneratedIconProps): React.ReactElement<GeneratedI
     ].join(" ");
     return (
         <svg
-            viewBox="0.5 0 17 10"
             fill="currentColor"
+            viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
             width="100%"
             height="100%"
@@ -18,7 +18,7 @@ function IconCaretDown(props: GeneratedIconProps): React.ReactElement<GeneratedI
             name="IconCaretDown"
             {...props}
         >
-            <path d="M15.862 1.022a.831.831 0 0 1 .576-.229c.216 0 .424.083.576.23a.751.751 0 0 1 0 1.093L8.98 9.793.945 2.116a.75.75 0 0 1 .043-1.053.84.84 0 0 1 1.101-.04l6.89 6.575 6.883-6.576Z" />
+            <path d="M18.862 8.48a.83.83 0 0 1 .576-.23.83.83 0 0 1 .576.23.751.751 0 0 1 0 1.093L11.98 17.25 3.945 9.573a.75.75 0 0 1 .043-1.053.84.84 0 0 1 1.101-.04l6.89 6.575 6.883-6.576Z" />
         </svg>
     );
 }
