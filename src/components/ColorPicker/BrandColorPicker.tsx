@@ -56,6 +56,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                         decorator={<IconSearch />}
                         placeholder="Search"
                         onChange={(value) => setQuery(value)}
+                        clearable
                     />
                 </div>
                 <div className="tw-w-[72px]">

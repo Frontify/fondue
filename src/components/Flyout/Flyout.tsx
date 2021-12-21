@@ -77,7 +77,9 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
 
     return (
         <div
-            {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
+            {...mergeProps(overlayProps, modalProps, positionProps, overlayTriggerProps)}
+            role={dialogProps.role}
+            aria-labelledby={dialogProps["aria-labelledby"]}
             ref={ref}
             className="tw-max-h-full tw-overflow-y-scroll tw-shadow-mid tw-min-w-[400px] tw-outline-none"
         >
