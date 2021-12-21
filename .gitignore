@@ -1,3 +1,4 @@
+**/.DS_Store
 node_modules
 dist
 cypress/videos
@@ -5,5 +6,7 @@ cypress/screenshots
 storybook-static
 !.src/foundation/Icon/Generated/.gitkeep
 
-# IntelliJ
+cypress/videos
+cypress/screenshots
+
 .idea
