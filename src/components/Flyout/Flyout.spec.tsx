@@ -9,7 +9,7 @@ import { TEXT_INPUT_ID } from "@components/TextInput/TextInput.spec";
 import React, { FC, useState } from "react";
 import { Flyout, FlyoutProps } from "./Flyout";
 import { ButtonStyle } from "@components/Button";
-import { FlyoutFooter } from "@components/Flyout/FlyoutFooter";
+import { FlyoutFooter } from "./FlyoutFooter";
 
 const FLYOUT_TRIGGER_ID = "[data-test-id=flyout-trigger]";
 
