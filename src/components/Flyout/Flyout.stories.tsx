@@ -13,7 +13,7 @@ import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { Flyout, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, FlyoutProps } from "./Flyout";
-import { FlyoutFooter } from "@components/Flyout/FlyoutFooter";
+import { FlyoutFooter } from "./FlyoutFooter";
 
 // eslint-disable-next-line import/no-default-export
 export default {
