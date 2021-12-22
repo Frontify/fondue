@@ -9,7 +9,7 @@ export const createCustomLink = (query: string): SearchResult =>
         id: CUSTOM_LINK_ID,
         title: query,
         link: query,
-        decorator: DEFAULT_ICON,
+        icon: DEFAULT_ICON,
         size: MenuItemContentSize.Large,
     } as SearchResult);
 

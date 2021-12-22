@@ -2,11 +2,32 @@
 
 import { CheckboxState } from "@components/Checkbox/Checkbox";
 import { MenuBlock, MenuItemType } from "@components/Menu/types";
+import IconDocument from "@foundation/Icon/Generated/IconDocument";
+import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
+import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
+import IconLink from "@foundation/Icon/Generated/IconLink";
+import IconTemplate from "@foundation/Icon/Generated/IconTemplate";
 import { AriaListBoxOptions } from "@react-aria/listbox";
 import { ListState } from "@react-stately/list";
 import { Node } from "@react-types/shared";
-import { HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, RefObject } from "react";
+import React, { HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, RefObject } from "react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
+
+export enum IconType {
+    Document = "Document",
+    Library = "Library",
+    Link = "Link",
+    External = "External",
+    Template = "Template",
+}
+
+export const IconOptions: Record<IconType | string, ReactElement> = {
+    [IconType.Document]: <IconDocument />,
+    [IconType.Library]: <IconDocumentLibrary />,
+    [IconType.Link]: <IconLink />,
+    [IconType.External]: <IconExternalLink />,
+    [IconType.Template]: <IconTemplate />,
+};
 
 export type MachineService = Interpreter<
     LinkChooserContext,
@@ -26,7 +47,12 @@ export type TemplateMenuBlock = {
     ariaLabel?: string;
 };
 
-export type SearchResult = Omit<MenuItemType, "title"> & { title: string; link?: string; preview?: string };
+export type SearchResult = Omit<MenuItemType, "title" | "decorator"> & {
+    title: string;
+    link?: string;
+    preview?: string;
+    icon?: IconType;
+};
 
 export type LinkChooserProps = {
     openInNewTab: boolean;
@@ -46,7 +72,7 @@ export type LinkChooserProps = {
 export type SearchResultListProps = AriaListBoxOptions<unknown> & {
     listBoxRef?: RefObject<HTMLUListElement>;
     state: ListState<unknown>;
-    menuBlocks: (MenuBlock & { menuItems: SearchResult[] })[];
+    menuBlocks: MenuBlock[];
     border?: boolean;
     hasItems?: boolean;
     query: string;
@@ -56,14 +82,14 @@ export type SearchResultListProps = AriaListBoxOptions<unknown> & {
 export type SearchResultSectionProps = {
     heading: Node<unknown>;
     state: ListState<unknown>;
-    keyItemRecord: Record<string, SearchResult>;
+    keyItemRecord: Record<string, MenuItemType>;
     machineService: MachineService;
 };
 
 export type SearchResultOptionProps = {
     item: Node<unknown>;
     state: ListState<unknown>;
-    keyItemRecord: Record<string, SearchResult>;
+    keyItemRecord: Record<string, MenuItemType>;
     machineService: MachineService;
 };
 

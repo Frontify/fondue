@@ -7,11 +7,6 @@ export const SECTIONS = [
         title: "Guidelines",
     },
     {
-        id: "projects",
-        sectionId: "PROJECTS",
-        title: "Projects",
-    },
-    {
         id: "templates",
         sectionId: "TEMPLATES",
         title: "Templates",

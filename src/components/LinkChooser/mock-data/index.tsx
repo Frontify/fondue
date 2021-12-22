@@ -1,10 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconDocument from "@foundation/Icon/Generated/IconDocument";
-import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
-import IconTemplate from "@foundation/Icon/Generated/IconTemplate";
-import React from "react";
-import { SearchResult } from "../types";
+import { IconType, SearchResult } from "../types";
 
 export const EXAMPLE_DATA: SearchResult[] = [
     {
@@ -12,62 +8,62 @@ export const EXAMPLE_DATA: SearchResult[] = [
         title: "Brand listening - A Memoir",
         subtitle: "Guideline XYZ",
         link: "https://www.frontify.com",
-        decorator: <IconDocument />,
+        icon: IconType.Document,
     },
     {
         id: "2",
         title: "Document Group",
         subtitle: "Guide ABC",
         link: "https://www.frontify.com/en/brand-guidelines/",
-        decorator: <IconDocument />,
+        icon: IconType.Document,
     },
     {
         id: "3",
         title: "Brand listening - Glossary & Docu.",
         subtitle: "Guideline XYZ",
         link: "https://www.frontify.com/en/digital-asset-management/",
-        decorator: <IconDocument />,
+        icon: IconType.Document,
     },
     {
         id: "4",
         title: '"www.website.com"',
         link: "https://www.frontify.com/en/digital-and-print-templates/",
-        decorator: <IconExternalLink />,
+        icon: IconType.External,
     },
     {
         id: "7",
         title: "Aerial City View",
         subtitle: "Corporate Library",
         link: "",
-        decorator: <IconTemplate />,
+        icon: IconType.Template,
     },
     {
         id: "8",
         title: "Brooklyn",
         subtitle: "Template Library Old Brand",
         link: "",
-        decorator: <IconTemplate />,
+        icon: IconType.Template,
     },
     {
         id: "9",
         title: "City",
         subtitle: "SRF Kultur On Screen",
         link: "",
-        decorator: <IconTemplate />,
+        icon: IconType.Template,
     },
     {
         id: "10",
         title: "Malaya Poster",
         subtitle: "UNICEF Social Campaign",
         link: "",
-        decorator: <IconTemplate />,
+        icon: IconType.Template,
     },
     {
         id: "11",
         title: "Brand Business Card",
         subtitle: "Corporate Library",
         link: "",
-        decorator: <IconTemplate />,
+        icon: IconType.Template,
     },
 ];
 
@@ -79,7 +75,7 @@ export const EXAMPLE_TEMPLATES: SearchResult[] = [
         title: "Aerial City View",
         subtitle: "Corporate Library",
         link: "#",
-        decorator: <IconTemplate />,
+        icon: IconType.Template,
     },
     {
         id: "8",
@@ -88,7 +84,7 @@ export const EXAMPLE_TEMPLATES: SearchResult[] = [
         title: "Brooklyn",
         subtitle: "Template Library Old Brand",
         link: "#",
-        decorator: <IconTemplate />,
+        icon: IconType.Template,
     },
     {
         id: "9",
@@ -97,7 +93,7 @@ export const EXAMPLE_TEMPLATES: SearchResult[] = [
         title: "City",
         subtitle: "SRF Kultur On Screen",
         link: "#",
-        decorator: <IconTemplate />,
+        icon: IconType.Template,
     },
     {
         id: "10",
@@ -106,7 +102,7 @@ export const EXAMPLE_TEMPLATES: SearchResult[] = [
         title: "Malaya Poster",
         subtitle: "UNICEF Social Campaign",
         link: "#",
-        decorator: <IconTemplate />,
+        icon: IconType.Template,
     },
     {
         id: "11",
@@ -115,6 +111,6 @@ export const EXAMPLE_TEMPLATES: SearchResult[] = [
         title: "Brand Business Card",
         subtitle: "Corporate Library",
         link: "#",
-        decorator: <IconTemplate />,
+        icon: IconType.Template,
     },
 ];

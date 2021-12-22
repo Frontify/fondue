@@ -2,24 +2,19 @@
 
 import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
 import { mapToAriaProps } from "@components/Menu/Aria/helper";
-import IconDocument from "@foundation/Icon/Generated/IconDocument";
-import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
-import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
-import IconLink from "@foundation/Icon/Generated/IconLink";
-import IconTemplate from "@foundation/Icon/Generated/IconTemplate";
 import { useComboBox } from "@react-aria/combobox";
 import { DismissButton } from "@react-aria/overlays";
 import { useComboBoxState } from "@react-stately/combobox";
 import { merge } from "@utilities/merge";
 import { useMachine } from "@xstate/react";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, Key, ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { FC, Key, useCallback, useEffect, useMemo, useRef } from "react";
 import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultSection";
 import { SectionActionMenu } from "./SectionActionMenu";
 import { linkChooserMachine, LinkChooserState } from "./state/machine";
-import { LinkChooserProps } from "./types";
+import { IconOptions, IconType, LinkChooserProps } from "./types";
 import { doesContainSubstring } from "./utils/helpers";
 import { isLoaded, queryMatchesSelection } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
@@ -32,15 +27,7 @@ export enum IconLabel {
     Template = "Template",
 }
 
-export const IconOptions: Record<IconLabel | string, ReactElement> = {
-    [IconLabel.Document]: <IconDocument />,
-    [IconLabel.Library]: <IconDocumentLibrary />,
-    [IconLabel.Link]: <IconLink />,
-    [IconLabel.External]: <IconExternalLink />,
-    [IconLabel.Template]: <IconTemplate />,
-};
-
-export const DEFAULT_ICON = <IconLink />;
+export const DEFAULT_ICON = IconType.Link;
 export const CUSTOM_LINK_ID = "custom-link";
 export const MAX_STORED_ITEMS = 5;
 export const QUERIES_STORAGE_KEY = "queries";
@@ -143,7 +130,15 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         state,
     );
 
-    const formattedIcon = context.selectedResult?.decorator || DEFAULT_ICON;
+    const formattedIcon = IconOptions[context.selectedResult?.icon || DEFAULT_ICON];
+    const menuBlocks = searchResultMenuBlock.map((block) => {
+        const itemsWithDecorator = block.menuItems.map((item) => ({
+            ...item,
+            decorator: formattedIcon,
+        }));
+
+        return { ...block, menuItems: itemsWithDecorator };
+    });
 
     useEffect(() => {
         if (isLoaded(matches) && context.interruptedFetch) {
@@ -196,7 +191,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                 {...listBoxProps}
                                 listBoxRef={listBoxRef}
                                 state={state}
-                                menuBlocks={searchResultMenuBlock}
+                                menuBlocks={menuBlocks}
                                 query={context.query}
                                 border={false}
                                 machineService={service}

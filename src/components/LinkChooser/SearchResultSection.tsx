@@ -39,8 +39,6 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
         return <FetchingError />;
     }
 
-    console.log(context.searchResults);
-
     return (
         <div>
             {shouldGoBack(matches) && (
