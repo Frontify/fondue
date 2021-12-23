@@ -1,3 +1,4 @@
+@import "@frontify/arcade-tokens/styles/all.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
