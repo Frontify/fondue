@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
 import { MenuItem, MenuItemContentSize } from "@components/MenuItem";
+import { Tree } from "@components/Tree";
 import IconArrowLeft from "@foundation/Icon/Generated/IconArrowLeft";
 import { useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
 import { merge } from "@utilities/merge";
@@ -17,19 +18,36 @@ import { isFetching, isUnsuccessful, shouldGoBack } from "./utils/state";
 
 export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResultListProps) => {
     const ref = useRef<HTMLUListElement | null>(null);
-    const { listBoxRef = ref, state, menuBlocks, border = true, machineService } = props;
-    const { listBoxProps } = useListBox(props, state, listBoxRef);
+    const { listBoxRef = ref, state, menuBlocks, border = true, machineService, onSelectionChange } = props;
+    const { listBoxProps } = useListBox(
+        {
+            ...props,
+            onSelectionChange: (id) => {
+                if (id !== "all") {
+                    props.onSelectionChange(`${id.values().next()}`);
+                }
+            },
+        },
+        state,
+        listBoxRef,
+    );
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
 
     const [machineState, send] = useActor(machineService);
-    const { context, matches, value } = machineState;
+    const {
+        context: { query, searchResults, guidelineNodes, selectedResult },
+        matches,
+        value,
+    } = machineState;
 
     const title = useMemo(() => {
         if (machineState.toStrings()[1]) {
             return machineState.toStrings()[1].split(".")[1];
         }
     }, [value]);
+
+    const isGuidelinesView = matches(`${LinkChooserState.Focused}.${DropdownState.Guidelines}`);
 
     if (isFetching(matches)) {
         return <FetchingAnimation />;
@@ -58,7 +76,14 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
                     border && "tw-border tw-border-black-10 tw-rounded",
                 ])}
             >
-                {context.searchResults.length ? (
+                {isGuidelinesView && guidelineNodes.length > 0 && (
+                    <Tree
+                        nodes={guidelineNodes}
+                        activeNodeId={`${selectedResult?.id}`}
+                        onSelect={(id) => onSelectionChange(id || "")}
+                    />
+                )}
+                {searchResults.length ? (
                     [...state.collection].map((item) => (
                         <SearchResultSection
                             key={item.key}
@@ -71,11 +96,11 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
                 ) : (
                     <EmptyResults
                         prompt={
-                            context.query
-                                ? `We could not find any results for "${context.query}".`
+                            query
+                                ? `We could not find any results for "${query}".`
                                 : "Use the search above to discover your brand assets"
                         }
-                        icon={context.query ? NoResultsIcon : BackgroundIcon}
+                        icon={query ? NoResultsIcon : BackgroundIcon}
                     />
                 )}
             </ul>

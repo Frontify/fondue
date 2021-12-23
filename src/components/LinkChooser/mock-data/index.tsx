@@ -1,5 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { TreeNodeProps } from "@components/Tree";
+import IconDocument from "@foundation/Icon/Generated/IconDocument";
+import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
+import React from "react";
 import { IconType, SearchResult } from "../types";
 
 export const EXAMPLE_DATA: SearchResult[] = [
@@ -112,5 +116,59 @@ export const EXAMPLE_TEMPLATES: SearchResult[] = [
         subtitle: "Corporate Library",
         link: "#",
         icon: IconType.Template,
+    },
+];
+
+export const EXAMPLE_GUIDELINES: TreeNodeProps[] = [
+    {
+        id: "general-id",
+        name: "General",
+        nodes: [
+            {
+                id: "1",
+                name: "Design System Testing",
+                label: "Document",
+                value: "https://weare.frontify.com/document/1",
+                icon: <IconGuidelines />,
+                nodes: [
+                    {
+                        id: "1-1",
+                        name: "Uncategorizes Pages",
+                        nodes: [
+                            {
+                                id: "1-1-1",
+                                name: "Home",
+                                label: "Page",
+                                value: "https://weare.frontify.com/page/1",
+                                icon: <IconDocument />,
+                            },
+                        ],
+                    },
+                    {
+                        id: "1-2",
+                        name: "Test Category",
+                        label: "Document",
+                        value: "https://weare.frontify.com/document/923#/test",
+                        nodes: [
+                            {
+                                id: "1-2-1",
+                                name: "Home",
+                                label: "Page",
+                                value: "https://weare.frontify.com/page/1",
+                                icon: <IconDocument />,
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                id: "resources-id",
+                name: "Resources Library",
+            },
+            {
+                id: "test-id",
+                name: "Frontify Test",
+            },
+        ],
     },
 ];

@@ -3,9 +3,9 @@
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { LinkChooser as LinkChooserComponent } from "./LinkChooser";
-import { EXAMPLE_DATA, EXAMPLE_TEMPLATES } from "./mock-data";
+import { EXAMPLE_DATA, EXAMPLE_GUIDELINES, EXAMPLE_TEMPLATES } from "./mock-data";
 import { LinkChooserProps } from "./types";
-import { getMockData } from "./utils/helpers";
+import { getMockData, getMockGuidelines } from "./utils/helpers";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -28,6 +28,7 @@ export const LinkChooser: Story<LinkChooserProps> = (args: LinkChooserProps) => 
         <LinkChooserComponent
             {...args}
             getGlobalByQuery={(query) => getMockData(query, EXAMPLE_DATA)}
+            getGuidelinesByQuery={(query) => getMockGuidelines(query, EXAMPLE_GUIDELINES)}
             getTemplatesByQuery={(query) => getMockData(query, EXAMPLE_TEMPLATES)}
             openInNewTab={openInNewTab}
             onOpenInNewTabChange={setOpenInNewTab}

@@ -39,6 +39,7 @@ export const storeNewSelectedResult = (
     { data }: DoneInvokeEvent<LinkChooserEventData>,
 ): void => {
     const { selectedResult } = data;
+
     if (selectedResult) {
         const retrievedQueries = retrieveRecentQueries();
         const retrievedItem = retrievedQueries.find((item: SearchResult) => item.id === selectedResult?.id);
@@ -50,6 +51,7 @@ export const storeNewSelectedResult = (
             : retrievedQueries.length < MAX_STORED_ITEMS
             ? [{ ...selectedResult }, ...retrievedQueries]
             : [{ ...selectedResult }, ...retrievedQueries.slice(0, -1)];
+
         localStorage.setItem(QUERIES_STORAGE_KEY, JSON.stringify(updatedQueries));
     }
 };
@@ -74,9 +76,18 @@ export const updateDropdownSearchResults = assign<LinkChooserContext, DoneInvoke
     searchResults: (_context, { data }) => data.searchResults ?? [],
 });
 
+export const updateDropdownGuidelineNodes = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
+    guidelineNodes: (_context, { data }) => data.guidelineNodes ?? [],
+});
+
 export const fetchGlobalSearchResults = async (context: LinkChooserContext): Promise<LinkChooserEventData> => {
     const results = context.query ? await context.getGlobalByQuery(context.query) : retrieveRecentQueries();
     return { searchResults: results };
+};
+
+export const fetchGuidelineSearchResults = async (context: LinkChooserContext): Promise<LinkChooserEventData> => {
+    const results = await context.getGuidelinesByQuery(context.query);
+    return { guidelineNodes: results };
 };
 
 export const fetchTemplateSearchResults = async (context: LinkChooserContext): Promise<LinkChooserEventData> => {

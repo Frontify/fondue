@@ -8,6 +8,7 @@ import {
     copyLinkToClipboard,
     emitSelectSearchResult,
     fetchGlobalSearchResults,
+    fetchGuidelineSearchResults,
     fetchTemplateSearchResults,
     interruptFetching,
     openPreview,
@@ -16,28 +17,28 @@ import {
     setSelectedSearchResult,
     storeNewSelectedResult,
     updateCustomLink,
+    updateDropdownGuidelineNodes,
     updateDropdownSearchResults,
     updateQueryFromObject,
     updateQueryFromString,
 } from "./actions";
 
 export enum LinkChooserState {
-    Idle = "idle",
-    Focused = "focused",
+    Idle = "Idle",
+    Focused = "Focused",
 }
 
 export enum DropdownState {
-    Default = "default",
-    Guidelines = "guidelines",
-    Projects = "projects",
-    Templates = "templates",
+    Default = "Default",
+    Guidelines = "Guidelines",
+    Templates = "Templates",
 }
 
 export enum SectionState {
-    Loaded = "loaded",
-    Typing = "typing",
-    Fetching = "fetching",
-    Error = "error",
+    Loaded = "Loaded",
+    Typing = "Typing",
+    Fetching = "Fetching",
+    Error = "Error",
 }
 
 const DEBOUNCE_TIMEOUT = 500;
@@ -102,6 +103,11 @@ const initializeSectionState = (
                     },
                     {
                         target: SectionState.Loaded,
+                        actions: ["updateDropdownGuidelineNodes"],
+                        cond: "isGuidelinesSection",
+                    },
+                    {
+                        target: SectionState.Loaded,
                         actions: ["updateDropdownSearchResults"],
                     },
                 ],
@@ -147,16 +153,15 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                         ...initializeSectionState(SectionState.Loaded, "fetchGlobal", fetchGlobalSearchResults),
                         on: {
                             GO_TO_GUIDELINES: DropdownState.Guidelines,
-                            GO_TO_PROJECTS: DropdownState.Projects,
                             GO_TO_TEMPLATES: DropdownState.Templates,
                         },
                     },
                     [DropdownState.Guidelines]: {
-                        on: {
-                            GO_TO_DEFAULT: `${DropdownState.Default}.${SectionState.Fetching}`,
-                        },
-                    },
-                    [DropdownState.Projects]: {
+                        ...initializeSectionState(
+                            SectionState.Fetching,
+                            "fetchGuidelines",
+                            fetchGuidelineSearchResults,
+                        ),
                         on: {
                             GO_TO_DEFAULT: `${DropdownState.Default}.${SectionState.Fetching}`,
                         },
@@ -195,6 +200,10 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                 Object.values(SectionState).some((state) =>
                     meta.state.matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${state}`),
                 ),
+            isGuidelinesSection: (context, event, meta) =>
+                Object.values(SectionState).some((state) =>
+                    meta.state.matches(`${LinkChooserState.Focused}.${DropdownState.Guidelines}.${state}`),
+                ),
             shouldRefetch: (context, event, meta) => isFetching(meta.state.matches) && !!context.query,
             isQueryEmpty: (context) => !context.query,
         },
@@ -204,12 +213,14 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
             emitSelectSearchResult,
             fetchGlobalSearchResults,
             fetchTemplateSearchResults,
+            fetchGuidelineSearchResults,
             openPreview,
             populateDropdownSearchResultsWithRecentQueries,
             setSelectedSearchResult,
             storeNewSelectedResult,
             updateCustomLink,
             updateDropdownSearchResults,
+            updateDropdownGuidelineNodes,
             updateQueryFromObject,
             updateQueryFromString,
             interruptFetching,

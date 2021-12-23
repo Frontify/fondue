@@ -13,19 +13,11 @@ import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultSection";
 import { SectionActionMenu } from "./SectionActionMenu";
-import { linkChooserMachine, LinkChooserState } from "./state/machine";
+import { DropdownState, linkChooserMachine, LinkChooserState } from "./state/machine";
 import { IconOptions, IconType, LinkChooserProps } from "./types";
-import { doesContainSubstring } from "./utils/helpers";
+import { doesContainSubstring, flatten, mapToSearchResult } from "./utils/helpers";
 import { isLoaded, queryMatchesSelection } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
-
-export enum IconLabel {
-    Document = "Document",
-    Library = "Library",
-    Link = "Link",
-    External = "External",
-    Template = "Template",
-}
 
 export const DEFAULT_ICON = IconType.Link;
 export const CUSTOM_LINK_ID = "custom-link";
@@ -33,13 +25,14 @@ export const MAX_STORED_ITEMS = 5;
 export const QUERIES_STORAGE_KEY = "queries";
 
 export const LinkChooser: FC<LinkChooserProps> = ({
-    getGlobalByQuery,
-    getTemplatesByQuery,
     openPreview = window.open,
     clipboardOptions = navigator.clipboard,
     ariaLabel = "Link chooser",
     disabled = false,
     clearable = true,
+    getGlobalByQuery,
+    getTemplatesByQuery,
+    getGuidelinesByQuery,
     openInNewTab,
     label,
     placeholder,
@@ -48,6 +41,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 }) => {
     const [{ context, matches, value }, send, service] = useMachine(
         linkChooserMachine.withContext({
+            guidelineNodes: [],
             searchResults: [],
             selectedResult: null,
             query: "",
@@ -55,6 +49,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             clipboardOptions,
             openPreview,
             getGlobalByQuery,
+            getGuidelinesByQuery,
             getTemplatesByQuery,
             onLinkChange,
         }),
@@ -66,8 +61,13 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         send("CLEARING", { data: { query: "" } });
     }, []);
 
+    const isGuidelinesView = matches(`${LinkChooserState.Focused}.${DropdownState.Guidelines}`);
+
     const onSelectionChange = (key: Key) => {
-        const foundItem = context.searchResults.find((item) => item.id === key);
+        const foundItem = isGuidelinesView
+            ? mapToSearchResult(flatten(context.guidelineNodes).find((item) => item.id === key))
+            : context.searchResults.find((item) => item.id === key);
+
         if (foundItem) {
             send("SET_SELECTED_SEARCH_RESULT", { data: { selectedResult: foundItem } });
         }
@@ -192,7 +192,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                 listBoxRef={listBoxRef}
                                 state={state}
                                 menuBlocks={menuBlocks}
-                                query={context.query}
+                                onSelectionChange={onSelectionChange}
                                 border={false}
                                 machineService={service}
                             />

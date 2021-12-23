@@ -2,6 +2,7 @@
 
 import { CheckboxState } from "@components/Checkbox/Checkbox";
 import { MenuBlock, MenuItemType } from "@components/Menu/types";
+import { TreeNodeProps } from "@components/Tree";
 import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
@@ -10,7 +11,7 @@ import IconTemplate from "@foundation/Icon/Generated/IconTemplate";
 import { AriaListBoxOptions } from "@react-aria/listbox";
 import { ListState } from "@react-stately/list";
 import { Node } from "@react-types/shared";
-import React, { HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, RefObject } from "react";
+import React, { HTMLAttributes, InputHTMLAttributes, Key, ReactElement, ReactNode, RefObject } from "react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
 
 export enum IconType {
@@ -65,17 +66,18 @@ export type LinkChooserProps = {
     onLinkChange: (value: SearchResult | null) => void;
     readonly clipboardOptions: Clipboard;
     readonly getGlobalByQuery: (query: string) => Promise<SearchResult[]>;
+    readonly getGuidelinesByQuery: (query: string) => Promise<TreeNodeProps[]>;
     readonly getTemplatesByQuery: (query: string) => Promise<SearchResult[]>;
     readonly openPreview: (value: string, target: string) => void;
 };
 
-export type SearchResultListProps = AriaListBoxOptions<unknown> & {
+export type SearchResultListProps = Omit<AriaListBoxOptions<unknown>, "onSelectionChange"> & {
     listBoxRef?: RefObject<HTMLUListElement>;
     state: ListState<unknown>;
     menuBlocks: MenuBlock[];
     border?: boolean;
     hasItems?: boolean;
-    query: string;
+    onSelectionChange: (key: Key) => void;
     machineService: MachineService;
 };
 
@@ -123,18 +125,21 @@ export type PopoverProps = {
 };
 
 export type LinkChooserContext = {
+    guidelineNodes: TreeNodeProps[];
     searchResults: SearchResult[];
     selectedResult: SearchResult | null;
     query: string;
     interruptedFetch: boolean;
     readonly clipboardOptions: Clipboard;
     readonly getGlobalByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
+    readonly getGuidelinesByQuery: (query: string) => Promise<TreeNodeProps[]>; // context.getTemplateByQuery
     readonly getTemplatesByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
     readonly onLinkChange: (value: SearchResult | null) => void;
     readonly openPreview: (value: string, target: string) => void;
 };
 
 export type LinkChooserEventData = {
+    guidelineNodes?: TreeNodeProps[];
     searchResults?: SearchResult[];
     selectedResult?: SearchResult | null;
     query?: string;
