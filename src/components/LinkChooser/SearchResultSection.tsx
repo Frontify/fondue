@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
-import { MenuItem } from "@components/MenuItem";
+import { MenuItem, MenuItemContentSize } from "@components/MenuItem";
 import IconArrowLeft from "@foundation/Icon/Generated/IconArrowLeft";
 import { useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
 import { merge } from "@utilities/merge";
@@ -134,7 +134,7 @@ const SearchResultOption: FC<SearchResultOptionProps> = ({ item, state, keyItemR
                 isDisabled && "tw-pointer-events-none tw-top-px",
             ])}
         >
-            {isMenuItem && <MenuItem {...menuItem} active={isSelected} />}
+            {isMenuItem && <MenuItem {...menuItem} size={MenuItemContentSize.Large} active={isSelected} />}
             {isTemplateItem && <TemplateItem {...menuItem} />}
         </li>
     );

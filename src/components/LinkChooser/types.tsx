@@ -47,7 +47,7 @@ export type TemplateMenuBlock = {
     ariaLabel?: string;
 };
 
-export type SearchResult = Omit<MenuItemType, "title" | "decorator"> & {
+export type SearchResult = Omit<MenuItemType, "title" | "decorator" | "size"> & {
     title: string;
     link?: string;
     preview?: string;
