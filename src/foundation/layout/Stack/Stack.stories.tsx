@@ -20,29 +20,17 @@ export default {
             },
         },
         padding: {
-            options: ["none", "xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large"],
+            options: ["none", "xx-small", "small", "medium", "large", "xx-large"],
             control: { type: "select" },
         },
         spacing: {
-            options: ["none", "xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large"],
+            options: ["none", "xx-small", "small", "medium", "large", "xx-large"],
             control: { type: "select" },
         },
         direction: {
             options: ["row", "column"],
             control: { type: "radio" },
         },
-    },
-    args: {
-        direction: "row",
-        padding: "medium",
-        spacing: "x-small",
-        children: (
-            <>
-                <Placeholder />
-                <Placeholder />
-                <Placeholder />
-            </>
-        ),
     },
 } as Meta<StackProps>;
 
@@ -53,12 +41,24 @@ const Template: Story<StackProps> = (args) => (
 );
 
 export const Default = Template.bind({});
+Default.args = {
+    direction: "row",
+    padding: "medium",
+    spacing: "small",
+    children: (
+        <>
+            <Placeholder />
+            <Placeholder />
+            <Placeholder />
+        </>
+    ),
+};
 
 export const Wrapped = Template.bind({});
 Wrapped.args = {
     direction: "row",
     padding: "medium",
-    spacing: "x-small",
+    spacing: "small",
     wrap: false,
     children: (
         <>
