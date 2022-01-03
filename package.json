@@ -112,7 +112,7 @@
         "rimraf": "3.0.2",
         "rollup": "2.61.1",
         "rollup-plugin-esbuild": "4.7.2",
-        "storybook-builder-vite": "0.1.11",
+        "storybook-builder-vite": "0.1.13",
         "storybook-dark-mode": "1.0.8",
         "tailwindcss": "2.2.19",
         "ts-node": "10.4.0",
