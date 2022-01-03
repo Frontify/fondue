@@ -96,7 +96,7 @@
         "cross-env": "7.0.3",
         "cypress": "9.1.1",
         "cypress-real-events": "1.6.0",
-        "esbuild": "0.14.5",
+        "esbuild": "0.14.10",
         "eslint": "8.5.0",
         "eslint-plugin-jsx-a11y": "6.5.1",
         "esno": "0.13.0",
