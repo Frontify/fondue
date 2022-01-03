@@ -1,10 +1,10 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { merge } from "@utilities/merge";
 import React, { FC, PropsWithChildren } from "react";
 
 type TextWeight = "regular" | "strong" | "x-strong";
-
 type TextSize = "x-small" | "small" | "medium" | "large";
-
 type TextColor = "default" | "weak" | "x-weak" | "disabled" | "negative" | "positive" | "warning" | "interactive";
 
 export type TextProps = PropsWithChildren<{

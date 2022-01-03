@@ -1,10 +1,10 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { merge } from "@utilities/merge";
 import React, { FC, PropsWithChildren } from "react";
 
 type HeadingWeight = "medium" | "strong";
-
 type HeadingSize = "medium" | "large" | "x-large";
-
 type HeadingColor = "default" | "weak" | "x-weak" | "disabled" | "negative" | "positive" | "warning" | "interactive";
 
 export type HeadingProps = PropsWithChildren<{
