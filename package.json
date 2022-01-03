@@ -77,7 +77,7 @@
         "@cypress/react": "5.12.0",
         "@cypress/vite-dev-server": "2.2.2",
         "@frontify/eslint-config-react": "0.13.2",
-        "@rollup/plugin-alias": "3.1.8",
+        "@rollup/plugin-alias": "3.1.9",
         "@rollup/plugin-commonjs": "21.0.1",
         "@rollup/plugin-node-resolve": "13.1.1",
         "@storybook/addon-actions": "6.4.9",
