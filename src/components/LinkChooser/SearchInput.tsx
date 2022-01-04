@@ -28,7 +28,6 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
             ariaProps,
             selectedResult,
             decorator,
-            placeholder,
             machineService,
             onClear,
             validation = Validation.Default,
@@ -80,7 +79,6 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                             ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40"
                             : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
                     ])}
-                    placeholder={placeholder}
                     value={value}
                     disabled={disabled}
                     data-test-id="link-chooser-search-input"

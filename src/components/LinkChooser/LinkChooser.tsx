@@ -24,6 +24,7 @@ import { doesContainSubstring } from "./utils/helpers";
 import { isLoaded, queryMatchesSelection } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
 import { Validation } from "@components/TextInput";
+import { mergeProps } from "@react-aria/utils";
 
 export enum IconLabel {
     Document = "DOCUMENT",
@@ -92,9 +93,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     };
 
     const handleInputChange = useCallback(
-        (value: string) => {
-            send("TYPING", { data: { query: value } });
-        },
+        (query: string) => (query ? send("TYPING", { data: { query } }) : send("CLEARING", { data: { query: "" } })),
         [value],
     );
 
@@ -107,8 +106,9 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 : createCustomLink(state.inputValue)
             : null;
         send("CLOSE_DROPDOWN", { data: { selectedResult } });
-        state.setSelectedKey(selectedResult?.id || "");
     };
+
+    const inputEventHandlers = { onClick: () => state.open(null, "focus"), onPressUp: () => state.open(null, "focus") };
 
     const searchResultMenuBlock = useMemo(
         () => [
@@ -130,7 +130,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         menuTrigger: "focus",
         onOpenChange: (isOpen: boolean) => (isOpen ? handleDropdownOpen() : handleDropdownClose()),
         allowsEmptyCollection: true,
-        onBlur: handleDropdownClose,
     });
 
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -143,8 +142,8 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             inputRef,
             listBoxRef,
             popoverRef,
-            onBlur: handleDropdownClose,
             isRequired: required,
+            placeholder,
         },
         state,
     );
@@ -182,13 +181,12 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             )}
             <div>
                 <SearchInput
-                    ariaProps={inputProps}
+                    ariaProps={mergeProps(inputProps, inputEventHandlers)}
                     selectedResult={context.selectedResult}
                     ref={inputRef}
                     disabled={disabled}
                     decorator={inputDecorator}
                     clearable={clearable}
-                    placeholder={placeholder}
                     onClear={handleClearClick}
                     machineService={service}
                     validation={validation}
