@@ -30,7 +30,6 @@ export enum LinkChooserState {
 export enum DropdownState {
     Default = "default",
     Guidelines = "guidelines",
-    Projects = "projects",
     Templates = "templates",
 }
 
@@ -148,7 +147,6 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                         ...initializeSectionState(SectionState.Loaded, "fetchGlobal", fetchGlobalSearchResults),
                         on: {
                             GO_TO_GUIDELINES: DropdownState.Guidelines,
-                            GO_TO_PROJECTS: DropdownState.Projects,
                             GO_TO_TEMPLATES: DropdownState.Templates,
                         },
                     },
