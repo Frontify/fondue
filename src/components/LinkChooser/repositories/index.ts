@@ -2,3 +2,4 @@
 
 export * from "./getGlobalByQuery";
 export * from "./getTemplatesByQuery";
+export * from "./getGuidelinesByQuery";

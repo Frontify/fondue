@@ -130,7 +130,10 @@ const SearchResultOption = ({ item, state, keyItemRecord, machineService }: Sear
     const renderOptionItem = () => {
         if (matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Loaded}`)) {
             return <MenuItem {...menuItem} active={isSelected} decorator={decorator} />;
-        } else if (matches(`${LinkChooserState.Focused}.${DropdownState.Templates}.${SectionState.Loaded}`)) {
+        } else if (
+            matches(`${LinkChooserState.Focused}.${DropdownState.Templates}.${SectionState.Loaded}`) ||
+            matches(`${LinkChooserState.Focused}.${DropdownState.Guidelines}.${SectionState.Loaded}`)
+        ) {
             return <TemplateItem {...menuItem} />;
         }
     };

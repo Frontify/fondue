@@ -60,6 +60,22 @@ const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> => {
     );
 };
 
+const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> => {
+    return new Promise((resolve) =>
+        setTimeout(() => {
+            resolve(
+                templates
+                    .filter((template) => doesContainSubstring(template.title, query))
+                    .map((item) => ({
+                        ...item,
+                        size: MenuItemContentSize.Large,
+                        selectionIndicator: SelectionIndicatorIcon.None,
+                    })),
+            );
+        }, Math.floor(Math.random() * 2000)),
+    );
+};
+
 const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) => {
     const [openInNewTab, setOpenInNewTab] = useState<boolean>(false);
 
@@ -68,6 +84,7 @@ const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) =>
             {...args}
             getGlobalByQuery={getGlobalByQueryMock}
             getTemplatesByQuery={getTemplatesByQueryMock}
+            getGuidelinesByQuery={getGuidelinesByQueryMock}
             openInNewTab={openInNewTab}
             onOpenInNewTabChange={setOpenInNewTab}
         />
