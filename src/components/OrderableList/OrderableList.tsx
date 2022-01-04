@@ -100,7 +100,7 @@ export const OrderableList = <T extends object>({
     const dropState = useDroppableCollectionState({
         collection: gridState.collection,
         selectionManager: gridState.selectionManager,
-        getDropOperation(target) {
+        getDropOperation(target, types) {
             const inCurrentPosition = (
                 target: ItemDropTarget,
                 collection: GridCollection<GridNode<OrderableListItem<T>>>,
@@ -124,10 +124,10 @@ export const OrderableList = <T extends object>({
                 }
                 return flagged;
             };
-
             if (
                 target.type === "root" ||
                 target.dropPosition === "on" ||
+                !types.has(dragTypeId) ||
                 inCurrentPosition(target, dragState.collection as GridCollection<GridNode<OrderableListItem<T>>>)
             ) {
                 return "cancel";

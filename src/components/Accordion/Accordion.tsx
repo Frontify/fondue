@@ -62,7 +62,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                         buttonProps.onKeyUp(event);
                     }
                 }}
-                className={merge(["tw-w-full tw-px-8 tw-py-7 focus-visible:tw-outline-none"])}
+                className="tw-w-full tw-px-8 tw-py-7 focus-visible:tw-outline-none"
             >
                 <FieldsetHeader {...header} size={FieldsetHeaderSize.Medium} active={isOpen} onClick={undefined} />
             </button>
