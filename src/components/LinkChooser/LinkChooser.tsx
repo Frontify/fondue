@@ -32,7 +32,7 @@ export enum IconLabel {
     Template = "TEMPLATE",
 }
 
-export const ICON_OPTIONS: Record<IconLabel | string, ReactElement> = {
+export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Document]: <IconDocument />,
     [IconLabel.Library]: <IconDocumentLibrary />,
     [IconLabel.Link]: <IconLink />,
@@ -145,9 +145,15 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         state,
     );
 
-    const formattedIcon = context.selectedResult?.icon
-        ? ICON_OPTIONS[context.selectedResult.icon]
-        : ICON_OPTIONS[DEFAULT_ICON];
+    const inputDecorator = IconOptions[context.selectedResult?.icon || DEFAULT_ICON];
+    const decoratedMenuBlocks = searchResultMenuBlock.map((block) => {
+        const itemsWithDecorator = block.menuItems.map((item) => ({
+            ...item,
+            decorator: IconOptions[item.icon || DEFAULT_ICON],
+        }));
+
+        return { ...block, menuItems: itemsWithDecorator };
+    });
 
     useEffect(() => {
         if (isLoaded(matches) && context.interruptedFetch) {
@@ -164,7 +170,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     selectedResult={context.selectedResult}
                     ref={inputRef}
                     disabled={disabled}
-                    decorator={formattedIcon}
+                    decorator={inputDecorator}
                     clearable={clearable}
                     placeholder={placeholder}
                     onClear={handleClearClick}
@@ -192,7 +198,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                 {...listBoxProps}
                                 listBoxRef={listBoxRef}
                                 state={state}
-                                menuBlocks={searchResultMenuBlock}
+                                menuBlocks={decoratedMenuBlocks}
                                 query={context.query}
                                 border={false}
                                 machineService={service}
