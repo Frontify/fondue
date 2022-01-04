@@ -115,7 +115,7 @@ const SearchResultSection = ({ heading, state, keyItemRecord, machineService }: 
 
 const SearchResultOption = ({ item, state, keyItemRecord, machineService }: SearchResultOptionProps) => {
     const ref = useRef<HTMLLIElement>(null);
-    const { optionProps, isDisabled, isSelected } = useOption(
+    const { optionProps, isDisabled, isSelected, isFocused } = useOption(
         {
             key: item.key,
         },
@@ -145,6 +145,7 @@ const SearchResultOption = ({ item, state, keyItemRecord, machineService }: Sear
             className={merge([
                 "tw-relative hover:tw-bg-black-0 tw-list-none tw-outline-none",
                 isDisabled && "tw-pointer-events-none tw-top-px",
+                isFocused && "tw-bg-black-0",
             ])}
         >
             {renderOptionItem()}
