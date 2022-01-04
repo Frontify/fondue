@@ -107,8 +107,8 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             : null;
         send("CLOSE_DROPDOWN", { data: { selectedResult } });
     };
-
-    const inputEventHandlers = { onClick: () => state.open(null, "focus"), onPressUp: () => state.open(null, "focus") };
+    const handleManualStateOpen = () => !state.isOpen && state.open(null, "manual");
+    const inputEventHandlers = { onClick: handleManualStateOpen, onPressUp: handleManualStateOpen };
 
     const searchResultMenuBlock = useMemo(
         () => [
