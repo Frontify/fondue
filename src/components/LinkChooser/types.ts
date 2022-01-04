@@ -32,6 +32,8 @@ export type LinkChooserProps = {
     ariaLabel?: string;
     label?: string;
     placeholder?: string;
+    disabled?: boolean;
+    clearable?: boolean;
     onOpenInNewTabChange: (value: boolean) => void;
     onLinkChange: (value: SearchResult | null) => void;
     readonly clipboardOptions: Clipboard;
