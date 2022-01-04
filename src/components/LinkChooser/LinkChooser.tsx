@@ -48,6 +48,7 @@ export const QUERIES_STORAGE_KEY = "queries";
 export const LinkChooser: FC<LinkChooserProps> = ({
     getGlobalByQuery = SearchRepository.getGlobalByQuery,
     getTemplatesByQuery = SearchRepository.getTemplatesByQuery,
+    getGuidelinesByQuery = SearchRepository.getGuidelinesByQuery,
     openPreview = window.open,
     clipboardOptions = navigator.clipboard,
     openInNewTab,
@@ -69,6 +70,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             openPreview,
             getGlobalByQuery,
             getTemplatesByQuery,
+            getGuidelinesByQuery,
             onLinkChange,
         }),
     );

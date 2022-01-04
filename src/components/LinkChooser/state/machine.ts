@@ -19,6 +19,7 @@ import {
     updateQueryFromString,
     interruptFetching,
     resolveFetching,
+    fetchGuidelineSearchResults,
 } from "./actions";
 
 export enum LinkChooserState {
@@ -152,11 +153,11 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                         },
                     },
                     [DropdownState.Guidelines]: {
-                        on: {
-                            GO_TO_DEFAULT: `${DropdownState.Default}.${SectionState.Fetching}`,
-                        },
-                    },
-                    [DropdownState.Projects]: {
+                        ...initializeSectionState(
+                            SectionState.Fetching,
+                            "fetchGuidelines",
+                            fetchGuidelineSearchResults,
+                        ),
                         on: {
                             GO_TO_DEFAULT: `${DropdownState.Default}.${SectionState.Fetching}`,
                         },

@@ -84,6 +84,11 @@ export const fetchTemplateSearchResults = async (context: LinkChooserContext): P
     return { searchResults: results };
 };
 
+export const fetchGuidelineSearchResults = async (context: LinkChooserContext): Promise<LinkChooserEventData> => {
+    const results = await context.getGuidelinesByQuery(context.query);
+    return { searchResults: results };
+};
+
 export const interruptFetching = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
     interruptedFetch: () => true,
 });

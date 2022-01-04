@@ -107,6 +107,7 @@ export type LinkChooserContext = {
     readonly clipboardOptions: Clipboard;
     readonly getGlobalByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
     readonly getTemplatesByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
+    readonly getGuidelinesByQuery: (query: string) => Promise<SearchResult[]>; // context.getGuidelinesByQuery
     readonly onLinkChange: (value: SearchResult | null) => void;
     readonly openPreview: (value: string, target: string) => void;
 };
