@@ -8,7 +8,7 @@ import { useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
 import React, { FC, useMemo, useRef } from "react";
-import { ICON_OPTIONS } from "./LinkChooser";
+import { IconOptions } from "./LinkChooser";
 import { DropdownState, LinkChooserState, SectionState } from "./state/machine";
 import { SearchResultListProps, SearchResultSectionProps, SearchResultOptionProps, TemplateProps } from "./types";
 import NoResultsIcon from "./assets/no-results.svg";
@@ -125,7 +125,7 @@ const SearchResultOption = ({ item, state, keyItemRecord, machineService }: Sear
     const [{ matches }] = useActor(machineService);
 
     const menuItem = keyItemRecord[item.key];
-    const decorator = menuItem.icon ? ICON_OPTIONS[menuItem.icon] : undefined;
+    const decorator = menuItem.icon ? IconOptions[menuItem.icon] : undefined;
 
     const renderOptionItem = () => {
         if (matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Loaded}`)) {
