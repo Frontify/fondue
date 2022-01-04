@@ -120,7 +120,8 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         defaultFilter: doesContainSubstring,
         onInputChange: handleInputChange,
         onSelectionChange: handleSelectionChange,
-        menuTrigger: "manual",
+        menuTrigger: "focus",
+        onOpenChange: (isOpen: boolean) => (isOpen ? handleDropdownOpen() : handleDropdownClose()),
         allowsEmptyCollection: true,
         onBlur: handleDropdownClose,
     });
@@ -161,13 +162,12 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 }`}
             >
                 <SearchInput
-                    {...inputProps}
+                    ariaProps={inputProps}
                     selectedResult={context.selectedResult}
                     ref={inputRef}
                     decorator={formattedIcon}
                     placeholder={placeholder}
                     onClear={handleClearClick}
-                    onClick={handleDropdownOpen}
                     machineService={service}
                 />
             </div>
@@ -182,11 +182,11 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                         data-test-id="link-chooser-dropdown"
                     >
-                        <DismissButton onDismiss={handleDropdownClose} />
+                        <DismissButton onDismiss={state.close} />
                         <Popover
                             popoverRef={popoverRef}
                             isOpen={matches(LinkChooserState.Focused)}
-                            onClose={handleDropdownClose}
+                            onClose={state.close}
                         >
                             <SearchResultsList
                                 {...listBoxProps}
@@ -201,7 +201,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                 <SectionActionMenu machineService={service} />
                             </div>
                         </Popover>
-                        <DismissButton onDismiss={handleDropdownClose} />
+                        <DismissButton onDismiss={state.close} />
                     </motion.div>
                 )}
             </AnimatePresence>
