@@ -93,7 +93,7 @@ const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) =>
             getTemplatesByQuery={getTemplatesByQueryMock}
             getGuidelinesByQuery={getGuidelinesByQueryMock}
             openInNewTab={openInNewTab}
-            label="LABEL"
+            label="URL"
             onOpenInNewTabChange={setOpenInNewTab}
         />
     );
