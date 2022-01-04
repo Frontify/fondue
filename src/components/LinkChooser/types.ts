@@ -88,7 +88,6 @@ export type SearchInputProps = {
     selectedResult: SearchResult | null;
     decorator?: ReactElement;
     clearable?: boolean;
-    placeholder?: string;
     required?: boolean;
     disabled?: boolean;
     machineService: MachineService;
