@@ -23,6 +23,7 @@ import * as SearchRepository from "./repositories";
 import { doesContainSubstring } from "./utils/helpers";
 import { isLoaded, queryMatchesSelection } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
+import { Validation } from "@components/TextInput";
 
 export enum IconLabel {
     Document = "DOCUMENT",
@@ -59,6 +60,8 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     onLinkChange,
     disabled,
     clearable,
+    required,
+    validation = Validation.Default,
 }) => {
     const [{ context, matches, value }, send, service] = useMachine(
         linkChooserMachine.withContext({
@@ -141,6 +144,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             listBoxRef,
             popoverRef,
             onBlur: handleDropdownClose,
+            isRequired: required,
         },
         state,
     );
@@ -163,7 +167,19 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     return (
         <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
-            <label {...labelProps}>{label}</label>
+            {!!label && (
+                <label {...labelProps} className="tw-text-black-80 tw-mb-1 tw-flex tw-align-items-center">
+                    {label}
+                    {required && (
+                        <span
+                            data-test-id="input-label-required"
+                            className="tw-h-4 tw-text-m tw-text-red-60 dark:tw-text-red-50 tw-ml-1"
+                        >
+                            *
+                        </span>
+                    )}
+                </label>
+            )}
             <div>
                 <SearchInput
                     ariaProps={inputProps}
@@ -175,6 +191,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     placeholder={placeholder}
                     onClear={handleClearClick}
                     machineService={service}
+                    validation={validation}
                 />
             </div>
             <AnimatePresence>

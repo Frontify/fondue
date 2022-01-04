@@ -1,4 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+import { Validation } from "@components/TextInput";
+import { IconSpinner } from "@foundation/Icon";
 import IconCopyToClipboard from "@foundation/Icon/Generated/IconCopyToClipboard";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
 import IconReject from "@foundation/Icon/Generated/IconReject";
@@ -11,6 +13,13 @@ import { useActor } from "@xstate/react";
 import React, { FC, forwardRef } from "react";
 import { IconButtonProps, SearchInputProps } from "./types";
 
+const validationStyle: Record<Validation, string> = {
+    [Validation.Default]: "tw-border-black-20",
+    [Validation.Loading]: "tw-border-black-10",
+    [Validation.Success]: "tw-border-green-50",
+    [Validation.Error]: "tw-border-red-60",
+};
+
 export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>(
     (
         {
@@ -22,6 +31,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
             placeholder,
             machineService,
             onClear,
+            validation = Validation.Default,
         },
         inputElement,
     ) => {
@@ -33,6 +43,8 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
 
         const [, send] = useActor(machineService);
 
+        const isLoading = validation === Validation.Loading;
+
         return (
             <div
                 data-test-id="link-chooser-search-wrapper"
@@ -40,7 +52,11 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                     "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent",
                     disabled
                         ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90"
-                        : merge(["focus-within:tw-border-black-90", isFocusVisible && FOCUS_STYLE]),
+                        : merge([
+                              "focus-within:tw-border-black-90",
+                              isFocusVisible && FOCUS_STYLE,
+                              validationStyle[validation],
+                          ]),
                 ])}
             >
                 {decorator && (
@@ -69,7 +85,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                     disabled={disabled}
                     data-test-id="link-chooser-search-input"
                 />
-                {selectedResult && (
+                {selectedResult && !isLoading && (
                     <IconButton
                         disabled={disabled}
                         isFocused={previewButtonIsFocusVisible}
@@ -81,7 +97,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         onClick={() => send("OPEN_PREVIEW")}
                     />
                 )}
-                {selectedResult && (
+                {selectedResult && !isLoading && (
                     <IconButton
                         disabled={disabled}
                         isFocused={copyButtonIsFocusVisible}
@@ -94,7 +110,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         onClick={() => send("COPY_TO_CLIPBOARD")}
                     />
                 )}
-                {`${value}`.length !== 0 && clearable && (
+                {`${value}`.length !== 0 && clearable && !isLoading && (
                     <IconButton
                         disabled={disabled}
                         isFocused={clearButtonIsFocusVisible}
@@ -105,6 +121,11 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         icon={<IconReject />}
                         onClick={onClear}
                     />
+                )}
+                {isLoading && (
+                    <span className="tw-flex tw-flex-none tw-justify-center tw-align-center">
+                        <IconSpinner />
+                    </span>
                 )}
             </div>
         );

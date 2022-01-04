@@ -2,6 +2,7 @@
 
 import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
+import { Validation } from "@components/TextInput";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { LinkChooser } from "./LinkChooser";
@@ -18,9 +19,15 @@ export default {
         placeholder: "https://example.com",
         disabled: false,
         clearable: false,
+        required: true,
+        validation: Validation.Default,
     },
     argTypes: {
         onLinkChange: { action: "onClick" },
+        validation: {
+            options: Object.values(Validation),
+            control: { type: "select" },
+        },
     },
 } as Meta<LinkChooserProps>;
 
@@ -86,6 +93,7 @@ const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) =>
             getTemplatesByQuery={getTemplatesByQueryMock}
             getGuidelinesByQuery={getGuidelinesByQueryMock}
             openInNewTab={openInNewTab}
+            label="LABEL"
             onOpenInNewTabChange={setOpenInNewTab}
         />
     );

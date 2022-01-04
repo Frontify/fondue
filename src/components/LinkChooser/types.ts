@@ -8,6 +8,7 @@ import { InputHTMLAttributes } from "react";
 import { RefObject, ReactNode, ReactElement } from "react";
 import { Interpreter, DoneInvokeEvent } from "xstate";
 import { Node } from "@react-types/shared";
+import { Validation } from "@components/TextInput";
 
 export type MachineService = Interpreter<
     LinkChooserContext,
@@ -34,6 +35,8 @@ export type LinkChooserProps = {
     placeholder?: string;
     disabled?: boolean;
     clearable?: boolean;
+    required: boolean;
+    validation?: Validation;
     onOpenInNewTabChange: (value: boolean) => void;
     onLinkChange: (value: SearchResult | null) => void;
     readonly clipboardOptions: Clipboard;
@@ -89,6 +92,7 @@ export type SearchInputProps = {
     required?: boolean;
     disabled?: boolean;
     machineService: MachineService;
+    validation: Validation;
     onClear?: () => void;
 };
 
