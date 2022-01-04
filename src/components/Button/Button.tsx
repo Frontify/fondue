@@ -82,7 +82,7 @@ export type ButtonProps = {
     inverted?: boolean;
     disabled?: boolean;
     icon?: ReactElement;
-    children?: string;
+    children?: ReactNode;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     hugWidth?: boolean;
 };
