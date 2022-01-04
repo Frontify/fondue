@@ -56,6 +56,8 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     placeholder,
     onOpenInNewTabChange,
     onLinkChange,
+    disabled,
+    clearable,
 }) => {
     const [{ context, matches, value }, send, service] = useMachine(
         linkChooserMachine.withContext({
@@ -153,19 +155,15 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     return (
         <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
-            <label {...labelProps} className="block text-sm font-medium text-gray-700 text-left">
-                {label}
-            </label>
-            <div
-                className={`relative inline-flex flex-row rounded-md overflow-hidden shadow-sm border-2 ${
-                    state.isFocused ? "border-pink-500" : "border-gray-300"
-                }`}
-            >
+            <label {...labelProps}>{label}</label>
+            <div>
                 <SearchInput
                     ariaProps={inputProps}
                     selectedResult={context.selectedResult}
                     ref={inputRef}
+                    disabled={disabled}
                     decorator={formattedIcon}
+                    clearable={clearable}
                     placeholder={placeholder}
                     onClear={handleClearClick}
                     machineService={service}
@@ -208,6 +206,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             <div className="tw-my-2" data-test-id="link-chooser-new-tab">
                 <Checkbox
                     value="new-tab"
+                    disabled={disabled}
                     state={openInNewTab ? CheckboxState.Checked : CheckboxState.Unchecked}
                     onChange={onOpenInNewTabChange}
                     label="Open in New Tab"
