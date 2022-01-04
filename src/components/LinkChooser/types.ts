@@ -2,11 +2,10 @@
 
 import { CheckboxState } from "@components/Checkbox/Checkbox";
 import { MenuItemType, MenuBlock } from "@components/Menu/SelectMenu";
-import { Validation } from "@components/TextInput/TextInput";
 import { AriaListBoxOptions } from "@react-aria/listbox";
 import { ListState } from "@react-stately/list";
-import { KeyboardEvent, FocusEvent } from "react";
-import { RefObject, ReactNode, HTMLInputTypeAttribute, ReactElement, ChangeEventHandler } from "react";
+import { InputHTMLAttributes } from "react";
+import { RefObject, ReactNode, ReactElement } from "react";
 import { Interpreter, DoneInvokeEvent } from "xstate";
 import { Node } from "@react-types/shared";
 
@@ -80,27 +79,15 @@ export type SectionActionMenuProps = {
 
 export type SearchInputProps = {
     id?: string;
+    ariaProps: InputHTMLAttributes<HTMLInputElement>;
     selectedResult: SearchResult | null;
-    type?: HTMLInputTypeAttribute;
     decorator?: ReactElement;
-    dotted?: boolean;
-    previewable?: boolean;
-    copyable?: boolean;
     clearable?: boolean;
     placeholder?: string;
     required?: boolean;
     disabled?: boolean;
-    validation?: Validation;
-    value?: string | number | readonly string[];
-    onChange?: ChangeEventHandler<HTMLInputElement> | undefined;
-    onEnterPressed?: (event: KeyboardEvent<HTMLInputElement>) => void;
-    onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
-    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
-    onClear?: () => void;
-    onPreview?: () => void;
-    onClick?: () => void;
-    size?: number;
     machineService: MachineService;
+    onClear?: () => void;
 };
 
 export type PopoverProps = {
@@ -133,7 +120,7 @@ export type Clipboard = {
     writeText(newClipText: string): Promise<void>;
 };
 
-export type ButtonProps = {
+export type IconButtonProps = {
     disabled: boolean;
     title: string;
     ariaLabel: string;
