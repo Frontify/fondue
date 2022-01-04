@@ -63,7 +63,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                     <div
                         className={merge([
                             "tw-flex tw-items-center tw-justify-center tw-pl-1",
-                            disabled ? "tw-text-black-60" : "tw-text-black-80",
+                            disabled ? "tw-text-black-60" : selectedResult ? "tw-text-violet-60" : "tw-text-black-80",
                         ])}
                         data-test-id="link-chooser-decorator-icon"
                     >
