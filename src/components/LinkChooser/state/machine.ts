@@ -70,6 +70,11 @@ const sharedActions = {
     },
 };
 
+export type SectionCondition = {
+    type: "isSection";
+    value: DropdownState[];
+};
+
 const initializeSectionState = (
     initial: string,
     id: string,
@@ -98,7 +103,10 @@ const initializeSectionState = (
                     {
                         target: SectionState.Loaded,
                         actions: ["updateDropdownSearchResults", "updateCustomLink", "resolveFetching"],
-                        cond: "isDefaultSection",
+                        cond: {
+                            type: "isSection",
+                            value: [DropdownState.Default],
+                        },
                     },
                     {
                         target: SectionState.Loaded,
@@ -179,10 +187,20 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                             actions: [...selectionActions],
                         },
                     ],
-                    SET_SELECTED_SEARCH_RESULT: {
-                        target: LinkChooserState.Idle,
-                        actions: [...selectionActions],
-                    },
+                    SET_SELECTED_SEARCH_RESULT: [
+                        {
+                            target: LinkChooserState.Idle,
+                            actions: [...selectionActions, "populateDropdownSearchResultsWithRecentQueries"],
+                            cond: {
+                                type: "isSection",
+                                value: [DropdownState.Templates, DropdownState.Guidelines],
+                            },
+                        },
+                        {
+                            target: LinkChooserState.Idle,
+                            actions: [...selectionActions],
+                        },
+                    ],
                     ...sharedActions,
                 },
             },
@@ -190,9 +208,11 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
     },
     {
         guards: {
-            isDefaultSection: (context, event, meta) =>
+            isSection: (context, event, meta) =>
                 Object.values(SectionState).some((state) =>
-                    meta.state.matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${state}`),
+                    (meta.cond as SectionCondition).value.some((value: DropdownState) =>
+                        meta.state.matches(`${LinkChooserState.Focused}.${value}.${state}`),
+                    ),
                 ),
             shouldRefetch: (context, event, meta) => isFetching(meta.state.matches) && !!context.query,
             isQueryEmpty: (context) => !context.query,
