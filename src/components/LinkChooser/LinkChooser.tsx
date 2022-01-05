@@ -105,10 +105,16 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 ? context.selectedResult
                 : createCustomLink(state.inputValue)
             : null;
-        send("CLOSE_DROPDOWN", { data: { selectedResult } });
+        if (selectedResult && state.selectedKey === null) {
+            console.log("SETTING SELECTED RESULT");
+            state.setSelectedKey(selectedResult?.id);
+        } else {
+            send("CLOSE_DROPDOWN", { data: { selectedResult } });
+        }
     };
+
     const handleManualStateOpen = () => !state.isOpen && state.open(null, "manual");
-    const inputEventHandlers = { onClick: handleManualStateOpen, onPressUp: handleManualStateOpen };
+    const inputEventHandlers = { onClick: handleManualStateOpen, onPointerUp: handleManualStateOpen };
 
     const searchResultMenuBlock = useMemo(
         () => [

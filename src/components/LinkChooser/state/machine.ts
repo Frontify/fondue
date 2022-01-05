@@ -20,6 +20,7 @@ import {
     interruptFetching,
     resolveFetching,
     fetchGuidelineSearchResults,
+    fillResultsWithNewRecentQueries,
 } from "./actions";
 
 export enum LinkChooserState {
@@ -50,7 +51,7 @@ const typingAction = {
     },
 };
 
-const selectionActions = [
+const closeActions = [
     "storeNewSelectedResult",
     "updateQueryFromObject",
     "updateCustomLink",
@@ -179,28 +180,18 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     CLOSE_DROPDOWN: [
                         {
                             target: LinkChooserState.Idle,
-                            actions: [...selectionActions, "interruptFetching"],
+                            actions: [...closeActions, "interruptFetching"],
                             cond: "shouldRefetch",
                         },
                         {
                             target: LinkChooserState.Idle,
-                            actions: [...selectionActions],
+                            actions: [...closeActions],
                         },
                     ],
-                    SET_SELECTED_SEARCH_RESULT: [
-                        {
-                            target: LinkChooserState.Idle,
-                            actions: [...selectionActions, "populateDropdownSearchResultsWithRecentQueries"],
-                            cond: {
-                                type: "isSection",
-                                value: [DropdownState.Templates, DropdownState.Guidelines],
-                            },
-                        },
-                        {
-                            target: LinkChooserState.Idle,
-                            actions: [...selectionActions],
-                        },
-                    ],
+                    SET_SELECTED_SEARCH_RESULT: {
+                        target: LinkChooserState.Idle,
+                        actions: ["fillResultsWithNewRecentQueries", ...closeActions],
+                    },
                     ...sharedActions,
                 },
             },
@@ -225,6 +216,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
             fetchTemplateSearchResults,
             openPreview,
             populateDropdownSearchResultsWithRecentQueries,
+            fillResultsWithNewRecentQueries,
             setSelectedSearchResult,
             storeNewSelectedResult,
             updateCustomLink,
