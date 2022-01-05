@@ -8,7 +8,6 @@ import { Item as StatelyItem } from "@react-stately/collections";
 import { TreeState, useTreeState } from "@react-stately/tree";
 import { Node } from "@react-types/shared";
 import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, {
     Children,
