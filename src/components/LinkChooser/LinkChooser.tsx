@@ -18,20 +18,12 @@ import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultSection";
 import { SectionActionMenu } from "./SectionActionMenu";
 import { linkChooserMachine, LinkChooserState } from "./state/machine";
-import { LinkChooserProps } from "./types";
-import * as SearchRepository from "./repositories";
+import { IconLabel, LinkChooserProps } from "./types";
+import { getDefaultData } from "./utils/helpers";
 import { doesContainSubstring, useManualComboBoxEventHandlers } from "./utils/helpers";
 import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
 import { Validation } from "@components/TextInput";
-
-export enum IconLabel {
-    Document = "DOCUMENT",
-    Library = "LIBRARY",
-    Link = "LINK",
-    External = "EXTERNAL",
-    Template = "TEMPLATE",
-}
 
 export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Document]: <IconDocument />,
@@ -47,9 +39,9 @@ export const MAX_STORED_ITEMS = 5;
 export const QUERIES_STORAGE_KEY = "queries";
 
 export const LinkChooser: FC<LinkChooserProps> = ({
-    getGlobalByQuery = SearchRepository.getGlobalByQuery,
-    getTemplatesByQuery = SearchRepository.getTemplatesByQuery,
-    getGuidelinesByQuery = SearchRepository.getGuidelinesByQuery,
+    getGlobalByQuery = getDefaultData,
+    getTemplatesByQuery = getDefaultData,
+    getGuidelinesByQuery = getDefaultData,
     openPreview = window.open,
     clipboardOptions = navigator.clipboard,
     openInNewTab,

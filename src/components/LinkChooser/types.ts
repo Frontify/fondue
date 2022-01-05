@@ -4,11 +4,12 @@ import { CheckboxState } from "@components/Checkbox/Checkbox";
 import { MenuItemType, MenuBlock } from "@components/Menu/SelectMenu";
 import { AriaListBoxOptions } from "@react-aria/listbox";
 import { ListState } from "@react-stately/list";
-import { InputHTMLAttributes } from "react";
-import { RefObject, ReactNode, ReactElement } from "react";
+import { HTMLAttributes, InputHTMLAttributes, MutableRefObject } from "react";
+import React, { RefObject, ReactNode, ReactElement } from "react";
 import { Interpreter, DoneInvokeEvent } from "xstate";
 import { Node } from "@react-types/shared";
 import { Validation } from "@components/TextInput";
+import { ComboBoxState } from "@react-stately/combobox";
 
 export type MachineService = Interpreter<
     LinkChooserContext,
@@ -27,6 +28,21 @@ export type TemplateMenuBlock = {
     menuItems: SearchResult[];
     ariaLabel?: string;
 };
+
+export const validationStyle: Record<Validation, string> = {
+    [Validation.Default]: "tw-border-black-20",
+    [Validation.Loading]: "tw-border-black-10",
+    [Validation.Success]: "tw-border-green-50",
+    [Validation.Error]: "tw-border-red-60",
+};
+
+export enum IconLabel {
+    Document = "DOCUMENT",
+    Library = "LIBRARY",
+    Link = "LINK",
+    External = "EXTERNAL",
+    Template = "TEMPLATE",
+}
 
 export type LinkChooserProps = {
     openInNewTab: boolean;
@@ -135,4 +151,16 @@ export type IconButtonProps = {
     icon: ReactElement;
     isComboBoxControl?: boolean;
     onClick?: () => void;
+};
+
+export type ManualComboBoxEventProps = {
+    inputProps: HTMLAttributes<HTMLInputElement>;
+    inputRef: MutableRefObject<HTMLInputElement | null>;
+    popoverRef: MutableRefObject<HTMLDivElement | null>;
+    state: ComboBoxState<object>;
+};
+
+export type ManualComboBoxEvents = {
+    onOpen: () => void;
+    onClose: () => void;
 };
