@@ -11,14 +11,7 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
 import React, { FC, forwardRef } from "react";
-import { IconButtonProps, SearchInputProps } from "./types";
-
-const validationStyle: Record<Validation, string> = {
-    [Validation.Default]: "tw-border-black-20",
-    [Validation.Loading]: "tw-border-black-10",
-    [Validation.Success]: "tw-border-green-50",
-    [Validation.Error]: "tw-border-red-60",
-};
+import { IconButtonProps, SearchInputProps, validationStyle } from "./types";
 
 export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>(
     (

@@ -220,13 +220,13 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
     },
     {
         guards: {
-            isSection: (context, event, meta) =>
+            isSection: (_context, _event, meta) =>
                 Object.values(SectionState).some((state) =>
                     (meta.cond as SectionCondition).value.some((value: DropdownState) =>
                         meta.state.matches(`${LinkChooserState.Focused}.${value}.${state}`),
                     ),
                 ),
-            shouldRefetch: (context, event, meta) => isFetching(meta.state.matches) && !!context.query,
+            shouldRefetch: (context, _event, meta) => isFetching(meta.state.matches) && !!context.query,
             isQueryEmpty: (context) => !context.query,
             hasNoValue: (_context, event) => !event.data.query,
         },

@@ -1,23 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mergeProps } from "@react-aria/utils";
-import { FocusEvent, HTMLAttributes, KeyboardEvent, MutableRefObject } from "react";
-import { ComboBoxState } from "@react-stately/combobox";
+import { FocusEvent, KeyboardEvent } from "react";
+import { ManualComboBoxEventProps, ManualComboBoxEvents, SearchResult } from "../types";
 
 export const doesContainSubstring = (source: string, target: string): boolean =>
     source.toLowerCase().includes(target.toLowerCase());
-
-type ManualComboBoxEventProps = {
-    inputProps: HTMLAttributes<HTMLInputElement>;
-    inputRef: MutableRefObject<HTMLInputElement | null>;
-    popoverRef: MutableRefObject<HTMLDivElement | null>;
-    state: ComboBoxState<object>;
-};
-
-type ManualComboBoxEvents = {
-    onOpen: () => void;
-    onClose: () => void;
-};
 
 export const useManualComboBoxEventHandlers = (
     { inputProps, inputRef, popoverRef, state }: ManualComboBoxEventProps,
@@ -32,9 +20,9 @@ export const useManualComboBoxEventHandlers = (
                 event?.relatedTarget?.dataset.comboBoxControl === "true"
             ) {
                 inputRef.current?.focus();
-                return;
+            } else {
+                onClose();
             }
-            onClose();
         },
         onFocus: onOpen,
         onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
@@ -47,3 +35,10 @@ export const useManualComboBoxEventHandlers = (
             }
         },
     });
+
+export const getDefaultData = async (): Promise<SearchResult[]> =>
+    new Promise((resolve) =>
+        setTimeout(() => {
+            resolve([]);
+        }, 2000),
+    );
