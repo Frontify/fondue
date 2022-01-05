@@ -61,7 +61,12 @@ const closeActions = [
 
 const sharedActions = {
     CLEARING: {
-        actions: ["clearSelectedResult", "updateQueryFromString", "emitSelectSearchResult"],
+        actions: [
+            "clearSelectedResult",
+            "updateQueryFromString",
+            "emitSelectSearchResult",
+            "populateDropdownSearchResultsWithRecentQueries",
+        ],
     },
     OPEN_PREVIEW: {
         actions: ["openPreview"],
@@ -167,12 +172,20 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                         ),
                         on: {
                             GO_TO_DEFAULT: `${DropdownState.Default}.${SectionState.Fetching}`,
+                            CLEARING: {
+                                target: DropdownState.Default,
+                                actions: [...sharedActions.CLEARING.actions],
+                            },
                         },
                     },
                     [DropdownState.Templates]: {
                         ...initializeSectionState(SectionState.Fetching, "fetchTemplates", fetchTemplateSearchResults),
                         on: {
                             GO_TO_DEFAULT: `${DropdownState.Default}.${SectionState.Fetching}`,
+                            CLEARING: {
+                                target: DropdownState.Default,
+                                actions: [...sharedActions.CLEARING.actions],
+                            },
                         },
                     },
                 },

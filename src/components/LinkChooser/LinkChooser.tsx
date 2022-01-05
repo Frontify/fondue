@@ -21,7 +21,7 @@ import { linkChooserMachine, LinkChooserState } from "./state/machine";
 import { LinkChooserProps } from "./types";
 import * as SearchRepository from "./repositories";
 import { doesContainSubstring } from "./utils/helpers";
-import { isLoaded, queryMatchesSelection } from "./utils/state";
+import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
 import { Validation } from "@components/TextInput";
 import { mergeProps } from "@react-aria/utils";
@@ -46,6 +46,32 @@ export const DEFAULT_ICON = IconLabel.Link;
 export const CUSTOM_LINK_ID = "custom-link";
 export const MAX_STORED_ITEMS = 5;
 export const QUERIES_STORAGE_KEY = "queries";
+
+const useManualComboBoxEventHandlers = ({ inputProps, inputRef, popoverRef, state }, { onOpen, onClose }) =>
+    mergeProps(inputProps, {
+        onClick: onOpen,
+        onPointerUp: onOpen,
+        onBlur: (event) => {
+            if (
+                popoverRef.current?.contains(event.relatedTarget as HTMLElement) ||
+                event.relatedTarget?.dataset.comboBoxControl === "true"
+            ) {
+                inputRef.current?.focus();
+                return;
+            }
+            onClose();
+        },
+        onFocus: onOpen,
+        onKeyDown: (event) => {
+            const NAVIGATION_KEYS = ["ArrowRight", "ArrowLeft", "Enter", "Tab"];
+            const { key } = event;
+            if (!state.isOpen && !NAVIGATION_KEYS.includes(key)) {
+                onOpen();
+            } else if (state.isOpen && key === "Enter") {
+                onClose();
+            }
+        },
+    });
 
 export const LinkChooser: FC<LinkChooserProps> = ({
     getGlobalByQuery = SearchRepository.getGlobalByQuery,
@@ -79,43 +105,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }),
     );
 
-    const handleClearClick = useCallback(() => {
-        state.setInputValue("");
-        state.setSelectedKey("");
-        send("CLEARING", { data: { query: "" } });
-    }, []);
-
-    const handleSelectionChange = (key: Key) => {
-        const foundItem = context.searchResults.find((item) => item.id === key);
-        if (foundItem) {
-            send("SET_SELECTED_SEARCH_RESULT", { data: { selectedResult: foundItem } });
-        }
-    };
-
-    const handleInputChange = useCallback(
-        (query: string) => (query ? send("TYPING", { data: { query } }) : send("CLEARING", { data: { query: "" } })),
-        [value],
-    );
-
-    const handleDropdownOpen = () => send("OPEN_DROPDOWN");
-
-    const handleDropdownClose = () => {
-        const selectedResult = context.query
-            ? queryMatchesSelection(context.selectedResult, context.query)
-                ? context.selectedResult
-                : createCustomLink(state.inputValue)
-            : null;
-        if (selectedResult && state.selectedKey === null) {
-            console.log("SETTING SELECTED RESULT");
-            state.setSelectedKey(selectedResult?.id);
-        } else {
-            send("CLOSE_DROPDOWN", { data: { selectedResult } });
-        }
-    };
-
-    const handleManualStateOpen = () => !state.isOpen && state.open(null, "manual");
-    const inputEventHandlers = { onClick: handleManualStateOpen, onPointerUp: handleManualStateOpen };
-
     const searchResultMenuBlock = useMemo(
         () => [
             {
@@ -128,19 +117,54 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const props = mapToAriaProps(ariaLabel, searchResultMenuBlock);
 
+    const inputRef = useRef<HTMLInputElement | null>(null);
+    const listBoxRef = useRef<HTMLUListElement | null>(null);
+    const popoverRef = useRef<HTMLDivElement | null>(null);
+
+    const handleSelectionChange = (key: Key) => {
+        const foundItem = context.searchResults.find((item) => item.id === key);
+        if (foundItem) {
+            send("SET_SELECTED_SEARCH_RESULT", { data: { selectedResult: foundItem } });
+        }
+        closeBoxState(state);
+    };
+    const handleInputChange = useCallback(
+        (query: string) => {
+            send("TYPING", { data: { query } });
+        },
+        [value],
+    );
+
     const state = useComboBoxState({
         ...props,
         defaultFilter: doesContainSubstring,
         onInputChange: handleInputChange,
         onSelectionChange: handleSelectionChange,
-        menuTrigger: "focus",
-        onOpenChange: (isOpen: boolean) => (isOpen ? handleDropdownOpen() : handleDropdownClose()),
+        menuTrigger: "manual",
+        shouldCloseOnBlur: false,
         allowsEmptyCollection: true,
     });
 
-    const inputRef = useRef<HTMLInputElement | null>(null);
-    const listBoxRef = useRef<HTMLUListElement | null>(null);
-    const popoverRef = useRef<HTMLDivElement | null>(null);
+    const handleClearClick = useCallback(() => {
+        state.setInputValue("");
+        state.setSelectedKey("");
+        send("CLEARING", { data: { query: "" } });
+    }, []);
+
+    const handleDropdownOpen = () => {
+        send("OPEN_DROPDOWN");
+        openBoxState(state);
+    };
+
+    const handleDropdownClose = () => {
+        const selectedResult = context.query
+            ? queryMatchesSelection(context.selectedResult, context.query)
+                ? context.selectedResult
+                : createCustomLink(state.inputValue)
+            : null;
+        send("CLOSE_DROPDOWN", { data: { selectedResult } });
+        closeBoxState(state);
+    };
 
     const { inputProps, listBoxProps, labelProps } = useComboBox(
         {
@@ -152,6 +176,11 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             placeholder,
         },
         state,
+    );
+
+    const manualInputProps = useManualComboBoxEventHandlers(
+        { inputProps, inputRef, popoverRef, state },
+        { onOpen: handleDropdownOpen, onClose: handleDropdownClose },
     );
 
     const inputDecorator = IconOptions[context.selectedResult?.icon || DEFAULT_ICON];
@@ -187,7 +216,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             )}
             <div>
                 <SearchInput
-                    ariaProps={mergeProps(inputProps, inputEventHandlers)}
+                    ariaProps={manualInputProps}
                     selectedResult={context.selectedResult}
                     ref={inputRef}
                     disabled={disabled}
@@ -209,11 +238,11 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                         data-test-id="link-chooser-dropdown"
                     >
-                        <DismissButton onDismiss={state.close} />
+                        <DismissButton onDismiss={handleDropdownClose} />
                         <Popover
                             popoverRef={popoverRef}
                             isOpen={matches(LinkChooserState.Focused)}
-                            onClose={state.close}
+                            onClose={handleDropdownClose}
                         >
                             <SearchResultsList
                                 {...listBoxProps}
@@ -228,7 +257,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                 <SectionActionMenu machineService={service} />
                             </div>
                         </Popover>
-                        <DismissButton onDismiss={state.close} />
+                        <DismissButton onDismiss={handleDropdownClose} />
                     </motion.div>
                 )}
             </AnimatePresence>

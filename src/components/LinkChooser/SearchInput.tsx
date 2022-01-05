@@ -36,9 +36,6 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
     ) => {
         const { value } = ariaProps;
         const { isFocusVisible, focusProps } = useFocusRing({ isTextInput: true });
-        const { isFocusVisible: previewButtonIsFocusVisible, focusProps: previewButtonFocusProps } = useFocusRing();
-        const { isFocusVisible: copyButtonIsFocusVisible, focusProps: copyButtonFocusProps } = useFocusRing();
-        const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
 
         const [, send] = useActor(machineService);
 
@@ -86,11 +83,9 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                 {selectedResult && !isLoading && (
                     <IconButton
                         disabled={disabled}
-                        isFocused={previewButtonIsFocusVisible}
                         testId="link-chooser-preview-icon"
                         title="Preview link"
                         ariaLabel="preview link"
-                        buttonProps={previewButtonFocusProps}
                         icon={<IconExternalLink />}
                         onClick={() => send("OPEN_PREVIEW")}
                     />
@@ -98,12 +93,10 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                 {selectedResult && !isLoading && (
                     <IconButton
                         disabled={disabled}
-                        isFocused={copyButtonIsFocusVisible}
                         testId="link-chooser-copy-icon"
                         copyId="copy-button"
                         title="Copy text to clipboard"
                         ariaLabel="copy text to clipboard"
-                        buttonProps={copyButtonFocusProps}
                         icon={<IconCopyToClipboard />}
                         onClick={() => send("COPY_TO_CLIPBOARD")}
                     />
@@ -111,12 +104,11 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                 {`${value}`.length !== 0 && clearable && !isLoading && (
                     <IconButton
                         disabled={disabled}
-                        isFocused={clearButtonIsFocusVisible}
                         testId="link-chooser-clear-icon"
                         title="Clear text input"
                         ariaLabel="clear text input"
-                        buttonProps={clearButtonFocusProps}
                         icon={<IconReject />}
+                        isComboBoxControl
                         onClick={onClear}
                     />
                 )}
@@ -136,26 +128,27 @@ const IconButton: FC<IconButtonProps> = ({
     title,
     ariaLabel,
     testId,
-    isFocused,
-    buttonProps,
     copyId,
     icon,
     onClick,
+    isComboBoxControl,
 }) => {
+    const { isFocusVisible, focusProps } = useFocusRing();
     return (
         <button
             className={merge([
                 "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
                 disabled ? "tw-cursor-default tw-text-black-40" : "tw-text-black-60  hover:tw-text-black-100",
-                isFocused && FOCUS_STYLE,
+                isFocusVisible && FOCUS_STYLE,
             ])}
             data-test-id={testId}
             title={title}
             aria-label={ariaLabel}
+            data-combo-box-control={isComboBoxControl}
             data-clipboard-id={copyId}
             disabled={disabled}
             onClick={onClick}
-            {...buttonProps}
+            {...focusProps}
         >
             {icon}
         </button>

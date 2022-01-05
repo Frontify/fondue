@@ -29,3 +29,17 @@ export const shouldGoBack = (matches: MachineMatches): boolean =>
                 matches(`${LinkChooserState.Focused}.${dropdown}.${section}`),
             ),
         );
+
+export const closeBoxState = (state) => {
+    if (state.isOpen) {
+        state.close();
+        state.setFocused(false);
+    }
+};
+
+export const openBoxState = (state) => {
+    if (!state.isOpen) {
+        state.open("first", "manual");
+        state.setFocused(true);
+    }
+};
