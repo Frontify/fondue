@@ -20,11 +20,10 @@ import { SectionActionMenu } from "./SectionActionMenu";
 import { linkChooserMachine, LinkChooserState } from "./state/machine";
 import { LinkChooserProps } from "./types";
 import * as SearchRepository from "./repositories";
-import { doesContainSubstring } from "./utils/helpers";
+import { doesContainSubstring, useManualComboBoxEventHandlers } from "./utils/helpers";
 import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
 import { Validation } from "@components/TextInput";
-import { mergeProps } from "@react-aria/utils";
 
 export enum IconLabel {
     Document = "DOCUMENT",
@@ -46,32 +45,6 @@ export const DEFAULT_ICON = IconLabel.Link;
 export const CUSTOM_LINK_ID = "custom-link";
 export const MAX_STORED_ITEMS = 5;
 export const QUERIES_STORAGE_KEY = "queries";
-
-const useManualComboBoxEventHandlers = ({ inputProps, inputRef, popoverRef, state }, { onOpen, onClose }) =>
-    mergeProps(inputProps, {
-        onClick: onOpen,
-        onPointerUp: onOpen,
-        onBlur: (event) => {
-            if (
-                popoverRef.current?.contains(event.relatedTarget as HTMLElement) ||
-                event.relatedTarget?.dataset.comboBoxControl === "true"
-            ) {
-                inputRef.current?.focus();
-                return;
-            }
-            onClose();
-        },
-        onFocus: onOpen,
-        onKeyDown: (event) => {
-            const NAVIGATION_KEYS = ["ArrowRight", "ArrowLeft", "Enter", "Tab"];
-            const { key } = event;
-            if (!state.isOpen && !NAVIGATION_KEYS.includes(key)) {
-                onOpen();
-            } else if (state.isOpen && key === "Enter") {
-                onClose();
-            }
-        },
-    });
 
 export const LinkChooser: FC<LinkChooserProps> = ({
     getGlobalByQuery = SearchRepository.getGlobalByQuery,

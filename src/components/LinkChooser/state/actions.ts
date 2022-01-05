@@ -24,10 +24,7 @@ export const updateCustomLink = assign<LinkChooserContext, DoneInvokeEvent<LinkC
 });
 
 export const setSelectedSearchResult = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
-    selectedResult: (_, { data }) => {
-        console.log(data.selectedResult);
-        return data.selectedResult ?? null;
-    },
+    selectedResult: (_, { data }) => data.selectedResult ?? null,
 });
 
 export const populateDropdownSearchResultsWithRecentQueries = assign<
@@ -79,12 +76,12 @@ export const fetchGlobalSearchResults = async (context: LinkChooserContext): Pro
 };
 
 export const fetchTemplateSearchResults = async (context: LinkChooserContext): Promise<LinkChooserEventData> => {
-    const results = await context.getTemplatesByQuery(context.query);
+    const results = context.query ? await context.getTemplatesByQuery(context.query) : [];
     return { searchResults: results };
 };
 
 export const fetchGuidelineSearchResults = async (context: LinkChooserContext): Promise<LinkChooserEventData> => {
-    const results = await context.getGuidelinesByQuery(context.query);
+    const results = context.query ? await context.getGuidelinesByQuery(context.query) : [];
     return { searchResults: results };
 };
 
