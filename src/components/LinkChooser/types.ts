@@ -72,7 +72,7 @@ export type SearchResultOptionProps = {
     machineService: MachineService;
 };
 
-export type TemplateProps = {
+export type ImageMenuItemProps = {
     title: ReactNode;
     subtitle?: string;
     preview?: string;
