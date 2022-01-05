@@ -126,6 +126,9 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         state.setInputValue("");
         state.setSelectedKey("");
         send("CLEARING", { data: { query: "" } });
+        if (state.isOpen) {
+            inputRef.current?.focus();
+        }
     }, []);
 
     const handleDropdownOpen = () => {

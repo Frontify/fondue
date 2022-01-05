@@ -15,10 +15,8 @@ export const useManualComboBoxEventHandlers = (
         onClick: onOpen,
         onPointerUp: onOpen,
         onBlur: (event: FocusEvent<HTMLInputElement, HTMLElement>) => {
-            if (
-                popoverRef.current?.contains(event.relatedTarget as HTMLElement) ||
-                (event?.relatedTarget?.dataset.comboBoxControl === "true" && state.isOpen)
-            ) {
+            console.log(event);
+            if (popoverRef.current?.contains(event.relatedTarget as HTMLElement)) {
                 inputRef.current?.focus();
             } else {
                 onClose();
