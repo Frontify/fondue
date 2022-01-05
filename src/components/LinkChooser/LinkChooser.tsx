@@ -118,6 +118,18 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         allowsEmptyCollection: true,
     });
 
+    const { inputProps, listBoxProps, labelProps } = useComboBox(
+        {
+            ...props,
+            inputRef,
+            listBoxRef,
+            popoverRef,
+            isRequired: required,
+            placeholder,
+        },
+        state,
+    );
+
     const handleClearClick = useCallback(() => {
         state.setInputValue("");
         state.setSelectedKey("");
@@ -138,18 +150,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         send("CLOSE_DROPDOWN", { data: { selectedResult } });
         closeBoxState(state);
     };
-
-    const { inputProps, listBoxProps, labelProps } = useComboBox(
-        {
-            ...props,
-            inputRef,
-            listBoxRef,
-            popoverRef,
-            isRequired: required,
-            placeholder,
-        },
-        state,
-    );
 
     const manualInputProps = useManualComboBoxEventHandlers(
         { inputProps, inputRef, popoverRef, state },
