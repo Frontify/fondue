@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { LinkChooser } from "./LinkChooser";
 import { data } from "./mock/data";
 import { templates } from "./mock/templates";
+import { guidelines } from "./mock/guidelines";
 import { LinkChooserProps, SearchResult } from "./types";
 import { doesContainSubstring } from "./utils/helpers";
 
@@ -71,7 +72,7 @@ const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> => {
     return new Promise((resolve) =>
         setTimeout(() => {
             resolve(
-                templates
+                guidelines
                     .filter((template) => doesContainSubstring(template.title, query))
                     .map((item) => ({
                         ...item,
