@@ -132,8 +132,7 @@ export type IconButtonProps = {
     ariaLabel: string;
     testId: string;
     copyId?: string;
-    isFocused: boolean;
-    buttonProps: React.HTMLAttributes<HTMLElement>;
     icon: ReactElement;
+    isComboBoxControl?: boolean;
     onClick?: () => void;
 };
