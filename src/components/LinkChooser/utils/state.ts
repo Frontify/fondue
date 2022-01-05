@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ComboBoxState } from "@react-stately/combobox";
 import { DropdownState, LinkChooserState, SectionState } from "../state/machine";
 import { SearchResult } from "../types";
 
@@ -30,14 +31,14 @@ export const shouldGoBack = (matches: MachineMatches): boolean =>
             ),
         );
 
-export const closeBoxState = (state) => {
+export const closeBoxState = (state: ComboBoxState<object>) => {
     if (state.isOpen) {
         state.close();
         state.setFocused(false);
     }
 };
 
-export const openBoxState = (state) => {
+export const openBoxState = (state: ComboBoxState<object>) => {
     if (!state.isOpen) {
         state.open("first", "manual");
         state.setFocused(true);

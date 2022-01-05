@@ -44,11 +44,19 @@ export enum SectionState {
 const DEBOUNCE_TIMEOUT = 500;
 
 const typingAction = {
-    TYPING: {
-        target: SectionState.Typing,
-        internal: false,
-        actions: ["updateQueryFromString"],
-    },
+    TYPING: [
+        {
+            target: SectionState.Typing,
+            internal: false,
+            cond: "hasNoValue",
+            actions: ["updateQueryFromString", "clearSelectedResult"],
+        },
+        {
+            target: SectionState.Typing,
+            internal: false,
+            actions: ["updateQueryFromString"],
+        },
+    ],
 };
 
 const closeActions = [
@@ -220,6 +228,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                 ),
             shouldRefetch: (context, event, meta) => isFetching(meta.state.matches) && !!context.query,
             isQueryEmpty: (context) => !context.query,
+            hasNoValue: (_context, event) => !event.data.query,
         },
         actions: {
             clearSelectedResult,
