@@ -5,6 +5,7 @@ import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, HTMLAttributes, ReactElement, ReactNode } from "react";
 
 export enum MenuItemContentSize {
+    XSmall = "XSmall",
     Small = "Small",
     Large = "Large",
 }

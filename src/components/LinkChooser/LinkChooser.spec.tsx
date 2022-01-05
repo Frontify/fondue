@@ -393,8 +393,8 @@ describe("LinkChooser Component", () => {
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(BACK_BUTTON_ID).should("not.exist");
-            cy.wait(500);
-            cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
+            cy.wait(600);
+            cy.get(ACTION_MENU_ID).contains("Templates").click();
             cy.get(BACK_BUTTON_ID).should("exist");
             cy.get(SELECT_SECTION_ID).children().should("have.length", templates.length);
         });
