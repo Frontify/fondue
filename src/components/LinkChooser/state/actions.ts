@@ -76,12 +76,12 @@ export const fetchGlobalSearchResults = async (context: LinkChooserContext): Pro
 };
 
 export const fetchTemplateSearchResults = async (context: LinkChooserContext): Promise<LinkChooserEventData> => {
-    const results = context.query ? await context.getTemplatesByQuery(context.query) : [];
+    const results = await context.getTemplatesByQuery(context.query);
     return { searchResults: results };
 };
 
 export const fetchGuidelineSearchResults = async (context: LinkChooserContext): Promise<LinkChooserEventData> => {
-    const results = context.query ? await context.getGuidelinesByQuery(context.query) : [];
+    const results = await context.getGuidelinesByQuery(context.query);
     return { searchResults: results };
 };
 
