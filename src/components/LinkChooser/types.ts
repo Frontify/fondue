@@ -35,7 +35,7 @@ export type LinkChooserProps = {
     placeholder?: string;
     disabled?: boolean;
     clearable?: boolean;
-    required: boolean;
+    required?: boolean;
     validation?: Validation;
     onOpenInNewTabChange: (value: boolean) => void;
     onLinkChange: (value: SearchResult | null) => void;
