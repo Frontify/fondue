@@ -103,10 +103,6 @@ const getLinkChooserComponent = (overwriteProps?: Partial<LinkChooserProps>, ret
         );
     };
 
-    /* const getGuidelinesByQuery = (query: string): Promise<SearchResult[]> => {}; */
-
-    /* const getProjectsByQuery = (query: string): Promise<SearchResult[]> => {}; */
-
     const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> => {
         return new Promise((resolve, reject) =>
             setTimeout(() => {
