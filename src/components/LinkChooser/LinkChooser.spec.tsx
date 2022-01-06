@@ -457,7 +457,7 @@ describe("LinkChooser Component", () => {
             cy.get(RESULTS_LIST_ID).children().should("have.length", filterItems(templates[0].title, data).length);
         });
 
-        it("searches the same query when switching from default view to templates view", () => {
+        it.only("searches the same query when switching from default view to templates view", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
@@ -468,7 +468,7 @@ describe("LinkChooser Component", () => {
             cy.get(RESULTS_LIST_ID).children().should("have.length", filterItems(templates[0].title, data).length);
         });
 
-        it("searches the same query when switching from templates view to default view", () => {
+        it.only("searches the same query when switching from templates view to default view", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
@@ -476,7 +476,7 @@ describe("LinkChooser Component", () => {
             cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
             cy.get(LOADER_ID).should("exist");
             cy.get(SEARCH_INPUT_ID).type(templates[0].title);
-            cy.get(BACK_BUTTON_ID).click();
+            cy.get(MENU_ITEM_CONTENT_ID).click();
             cy.get(LOADER_ID).should("exist");
             cy.get(RESULTS_LIST_ID).children().should("have.length", filterItems(templates[0].title, data).length);
         });
