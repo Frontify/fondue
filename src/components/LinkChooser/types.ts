@@ -103,6 +103,11 @@ export type NavigationMenuItemProps = {
     title: ReactNode;
 };
 
+export type SectionActionMenuItemProps = {
+    section: { id: string; title: string };
+    onPress: (event: KeyboardEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>) => void;
+};
+
 export type SearchInputProps = {
     id?: string;
     ariaProps: InputHTMLAttributes<HTMLInputElement>;

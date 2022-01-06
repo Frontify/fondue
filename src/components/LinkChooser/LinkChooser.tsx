@@ -99,7 +99,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }
         closeBoxState(state);
     };
-
     const handleInputChange = useCallback(
         (query: string) => {
             send("TYPING", { data: { query } });
