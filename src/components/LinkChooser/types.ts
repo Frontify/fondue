@@ -4,7 +4,7 @@ import { CheckboxState } from "@components/Checkbox/Checkbox";
 import { MenuItemType, MenuBlock } from "@components/Menu/SelectMenu";
 import { AriaListBoxOptions } from "@react-aria/listbox";
 import { ListState } from "@react-stately/list";
-import { HTMLAttributes, InputHTMLAttributes, KeyboardEvent, MouseEvent, MutableRefObject } from "react";
+import { HTMLAttributes, InputHTMLAttributes, Key, KeyboardEvent, MouseEvent, MutableRefObject } from "react";
 import React, { RefObject, ReactNode, ReactElement } from "react";
 import { Interpreter, DoneInvokeEvent } from "xstate";
 import { Node } from "@react-types/shared";
@@ -64,10 +64,12 @@ export type LinkChooserProps = {
 
 export type SearchResult = Omit<MenuItemType, "title"> & { icon: string; title: string };
 
+export type SearchMenuBlock = Omit<MenuBlock, "menuItems"> & { menuItems: SearchResult[] };
+
 export type SearchResultListProps = AriaListBoxOptions<unknown> & {
     listBoxRef?: RefObject<HTMLUListElement>;
     state: ListState<unknown>;
-    menuBlocks: (Omit<MenuBlock, "menuItems"> & { menuItems: SearchResult[] })[];
+    menuBlocks: SearchMenuBlock[];
     border?: boolean;
     hasItems?: boolean;
     query: string;
@@ -96,11 +98,13 @@ export type ImageMenuItemProps = {
 
 export type SectionActionMenuProps = {
     machineService: MachineService;
+    state: ListState<unknown>;
 };
 
 export type SectionActionMenuItemProps = {
     section: { id: string; title: string };
     onPress: (event: KeyboardEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>) => void;
+    state: ListState<unknown>;
 };
 
 export type SearchInputProps = {
@@ -114,6 +118,12 @@ export type SearchInputProps = {
     machineService: MachineService;
     validation: Validation;
     onClear?: () => void;
+};
+
+export type NavigationMenuProps = {
+    state: ListState<unknown>;
+    title?: string;
+    onClick: () => void;
 };
 
 export type PopoverProps = {
@@ -167,4 +177,5 @@ export type ManualComboBoxEventProps = {
 export type ManualComboBoxEvents = {
     onOpen: () => void;
     onClose: () => void;
+    onNavigate: (id: Key) => void;
 };

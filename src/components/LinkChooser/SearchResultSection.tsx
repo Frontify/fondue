@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
 import { MenuItem } from "@components/MenuItem/MenuItem";
 import IconArrowLeft from "@foundation/Icon/Generated/IconArrowLeft";
@@ -10,16 +9,25 @@ import { useActor } from "@xstate/react";
 import React, { FC, useMemo, useRef } from "react";
 import { IconOptions } from "./LinkChooser";
 import { DropdownState, LinkChooserState, SectionState } from "./state/machine";
-import { SearchResultListProps, SearchResultSectionProps, SearchResultOptionProps, ImageMenuItemProps } from "./types";
+import {
+    SearchResultListProps,
+    SearchResultSectionProps,
+    SearchResultOptionProps,
+    ImageMenuItemProps,
+    NavigationMenuProps,
+} from "./types";
 import NoResultsIcon from "./assets/no-results.svg";
 import BackgroundIcon from "./assets/background.svg";
 import FetchingIcon from "./assets/nook-animated.png";
 import { isFetching, isUnsuccessful, shouldGoBack } from "./utils/state";
 import { getInteractionModality } from "@react-aria/interactions";
+import { defaultSection } from "./sections";
+import { MenuItemContentSize, menuItemSizeClassMap } from "@components/MenuItem";
+import { goToSection } from "./utils/helpers";
 
-export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResultListProps) => {
+export const SearchResultsList: FC<SearchResultListProps> = (props) => {
     const ref = useRef<HTMLUListElement>(null);
-    const { listBoxRef = ref, state, menuBlocks, border = true, machineService } = props;
+    const { listBoxRef = ref, state, menuBlocks, machineService } = props;
     const { listBoxProps } = useListBox(props, state, listBoxRef);
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
@@ -44,32 +52,26 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
     return (
         <div>
             {shouldGoBack(matches) && (
-                <div className="tw-flex tw-px-5 tw-mt-4 tw-mb-5">
-                    <button data-test-id="link-chooser-back-button" onClick={() => send("GO_TO_DEFAULT")}>
-                        <IconArrowLeft />
-                    </button>
-                    <p className="tw-ml-2 tw-text-black-80 tw-capitalize">{title}</p>
-                </div>
+                <NavigationMenu state={state} title={title} onClick={() => goToSection(defaultSection.id, send)} />
             )}
             <ul
                 {...listBoxProps}
                 data-test-id="link-chooser-results-list"
                 ref={listBoxRef}
-                className={merge([
-                    "tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-z-20 focus-visible:tw-outline-none",
-                    border && "tw-border tw-border-black-10 tw-rounded",
-                ])}
+                className="tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-z-20 focus-visible:tw-outline-none"
             >
                 {context.searchResults.length ? (
-                    [...state.collection].map((item) => (
-                        <SearchResultSection
-                            key={item.key}
-                            heading={item}
-                            state={state}
-                            keyItemRecord={keyItemRecord}
-                            machineService={machineService}
-                        />
-                    ))
+                    [...state.collection]
+                        .filter((section) => section.key === "search")
+                        .map((item) => (
+                            <SearchResultSection
+                                key={item.key}
+                                heading={item}
+                                state={state}
+                                keyItemRecord={keyItemRecord}
+                                machineService={machineService}
+                            />
+                        ))
                 ) : (
                     <EmptyResults
                         prompt={
@@ -85,7 +87,38 @@ export const SearchResultsList: FC<SearchResultListProps> = (props: SearchResult
     );
 };
 
-const SearchResultSection = ({ heading, state, keyItemRecord, machineService }: SearchResultSectionProps) => {
+const NavigationMenu: FC<NavigationMenuProps> = ({ state, title, onClick }) => {
+    const ref = useRef(null);
+    const { isFocused } = useOption(
+        {
+            key: defaultSection.id,
+        },
+        state,
+        ref,
+    );
+    const isFocusVisible = getInteractionModality() !== "pointer";
+
+    return (
+        <div
+            className={merge([
+                "tw-flex tw-mt-2 tw-mb-1 tw-items-center",
+                menuItemSizeClassMap[MenuItemContentSize.XSmall],
+                isFocused && isFocusVisible && "tw-bg-black-0",
+            ])}
+        >
+            <button
+                aria-label={`Navigate to default section of search results.`}
+                data-test-id="link-chooser-back-button"
+                onClick={onClick}
+            >
+                <IconArrowLeft />
+            </button>
+            <p className="tw-ml-2 tw-text-black-80 tw-capitalize">{title}</p>
+        </div>
+    );
+};
+
+const SearchResultSection: FC<SearchResultSectionProps> = ({ heading, state, keyItemRecord, machineService }) => {
     const { itemProps, groupProps } = useListBoxSection({
         heading: heading.rendered,
         "aria-label": heading["aria-label"],
@@ -112,7 +145,7 @@ const SearchResultSection = ({ heading, state, keyItemRecord, machineService }: 
     );
 };
 
-const SearchResultOption = ({ item, state, keyItemRecord, machineService }: SearchResultOptionProps) => {
+const SearchResultOption: FC<SearchResultOptionProps> = ({ item, state, keyItemRecord, machineService }) => {
     const ref = useRef<HTMLLIElement>(null);
     const { optionProps, isDisabled, isSelected, isFocused } = useOption(
         {
@@ -137,7 +170,7 @@ const SearchResultOption = ({ item, state, keyItemRecord, machineService }: Sear
         }
     };
 
-    const isUsingKeyboard = getInteractionModality() === "keyboard";
+    const isFocusVisible = getInteractionModality() !== "pointer";
 
     return (
         <li
@@ -146,7 +179,7 @@ const SearchResultOption = ({ item, state, keyItemRecord, machineService }: Sear
             className={merge([
                 "tw-relative hover:tw-bg-black-0 tw-list-none tw-outline-none",
                 isDisabled && "tw-pointer-events-none tw-top-px",
-                isFocused && isUsingKeyboard && "tw-bg-black-0",
+                isFocused && isFocusVisible && "tw-bg-black-0",
             ])}
         >
             {renderOptionItem()}
@@ -154,7 +187,7 @@ const SearchResultOption = ({ item, state, keyItemRecord, machineService }: Sear
     );
 };
 
-const EmptyResults = ({ prompt, icon }: { prompt: string; icon: string }) => (
+const EmptyResults: FC<{ prompt: string; icon: string }> = ({ prompt, icon }) => (
     <div
         data-test-id="link-chooser-empty-results"
         className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]"
@@ -164,7 +197,7 @@ const EmptyResults = ({ prompt, icon }: { prompt: string; icon: string }) => (
     </div>
 );
 
-const FetchingError = ({ error = "An error occurred while fetching the results" }: { error?: string }) => (
+const FetchingError: FC<{ error?: string }> = ({ error = "An error occurred while fetching the results" }) => (
     <div
         data-test-id="link-chooser-error"
         className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]"
@@ -174,7 +207,7 @@ const FetchingError = ({ error = "An error occurred while fetching the results" 
     </div>
 );
 
-const FetchingAnimation = () => (
+const FetchingAnimation: FC = () => (
     <div
         data-test-id="link-chooser-loader"
         className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]"
@@ -183,7 +216,7 @@ const FetchingAnimation = () => (
     </div>
 );
 
-const ImageMenuItem = ({ title, subtitle, preview }: ImageMenuItemProps) => (
+const ImageMenuItem: FC<ImageMenuItemProps> = ({ title, subtitle, preview }) => (
     <div className="tw-flex tw-px-5 tw-py-1.5 tw-cursor-pointer">
         <div className="tw-flex tw-flex-shrink-0 tw-w-[75px] tw-h-[75px] tw-max-w-xs tw-bg-black-0 tw-border-black-10 tw-border tw-rounded">
             {preview && <img className="tw-w-full tw-object-contain" src={preview} alt={title as string} />}

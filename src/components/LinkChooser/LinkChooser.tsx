@@ -18,12 +18,14 @@ import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultSection";
 import { SectionActionMenu } from "./SectionActionMenu";
 import { linkChooserMachine, LinkChooserState } from "./state/machine";
-import { IconLabel, LinkChooserProps } from "./types";
-import { decoratedResults, getDefaultData } from "./utils/helpers";
-import { doesContainSubstring, useManualComboBoxEventHandlers } from "./utils/helpers";
-import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection } from "./utils/state";
+import { IconLabel, LinkChooserProps, SearchMenuBlock } from "./types";
+import { decoratedResults, getDefaultData, goToSection } from "./utils/helpers";
+import { doesContainSubstring } from "./utils/helpers";
+import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection, shouldGoBack } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
 import { Validation } from "@components/TextInput";
+import { defaultSection, sections } from "./sections";
+import { useManualComboBoxEventHandlers } from "./utils/useManualComboBoxHandlers";
 
 export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Document]: <IconDocument />,
@@ -70,15 +72,19 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }),
     );
 
+    const isDefault = shouldGoBack(matches);
     const searchResultMenuBlock = useMemo(
-        () => [
-            {
-                id: "search",
-                menuItems: decoratedResults(context.searchResults),
-            },
-        ],
-        [context.searchResults],
-    );
+        () =>
+            [
+                isDefault && { id: "menu-top", menuItems: [defaultSection] },
+                {
+                    id: "search",
+                    menuItems: decoratedResults(context.searchResults),
+                },
+                !isDefault && { id: "menu-bottom", menuItems: sections },
+            ].filter(Boolean),
+        [context.searchResults, isDefault],
+    ) as SearchMenuBlock[];
 
     const props = mapToAriaProps(ariaLabel, searchResultMenuBlock);
 
@@ -93,6 +99,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }
         closeBoxState(state);
     };
+
     const handleInputChange = useCallback(
         (query: string) => {
             send("TYPING", { data: { query } });
@@ -140,15 +147,17 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 : createCustomLink(state.inputValue)
             : null;
         send("CLOSE_DROPDOWN", { data: { selectedResult } });
+
         if (selectedResult && state.selectedKey !== selectedResult.id) {
             state.setSelectedKey(selectedResult.id);
         }
+
         closeBoxState(state);
     };
 
     const manualInputProps = useManualComboBoxEventHandlers(
         { inputProps, inputRef, popoverRef, state },
-        { onOpen: handleDropdownOpen, onClose: handleDropdownClose },
+        { onOpen: handleDropdownOpen, onClose: handleDropdownClose, onNavigate: (id) => goToSection(id, send) },
     );
 
     const inputDecorator = IconOptions[context.selectedResult?.icon || DEFAULT_ICON];
@@ -218,7 +227,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                 machineService={service}
                             />
                             <div data-test-id="link-chooser-action-menu" className="tw-border-t tw-border-black-10">
-                                <SectionActionMenu machineService={service} />
+                                <SectionActionMenu machineService={service} state={state} />
                             </div>
                         </Popover>
                         <DismissButton onDismiss={handleDropdownClose} />

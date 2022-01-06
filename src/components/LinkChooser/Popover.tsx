@@ -23,8 +23,8 @@ export const Popover: FC<PopoverProps> = (props) => {
     (once with a relatedTarget and once without). This way all blur events are prevented */
 
     const bubblingEventProps = {
-        onMouseDownCapture: (event: MouseEvent<HTMLDivElement>) => event.preventDefault(),
-        onTouchDownCapture: (event: TouchEvent<HTMLDivElement>) => event.preventDefault(),
+        onMouseDown: (event: MouseEvent<HTMLDivElement>) => event.preventDefault(),
+        onTouchStart: (event: TouchEvent<HTMLDivElement>) => event.preventDefault(),
     };
 
     return (
