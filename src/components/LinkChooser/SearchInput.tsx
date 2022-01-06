@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
 import { Validation } from "@components/TextInput";
-import { IconSpinner } from "@foundation/Icon";
 import IconCopyToClipboard from "@foundation/Icon/Generated/IconCopyToClipboard";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
 import IconReject from "@foundation/Icon/Generated/IconReject";
