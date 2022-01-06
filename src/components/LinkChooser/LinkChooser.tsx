@@ -15,8 +15,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, Key, ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
 import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
-import { SearchResultsList } from "./SearchResultSection";
-import { SectionActionMenu } from "./SectionActionMenu";
+import { SearchResultsList } from "./SearchResultsList";
 import { linkChooserMachine, LinkChooserState } from "./state/machine";
 import { IconLabel, LinkChooserProps, SearchMenuBlock } from "./types";
 import { decoratedResults, getDefaultData, goToSection } from "./utils/helpers";
@@ -26,6 +25,7 @@ import { createCustomLink } from "./utils/transformers";
 import { Validation } from "@components/TextInput";
 import { defaultSection, sections } from "./sections";
 import { useManualComboBoxEventHandlers } from "./utils/useManualComboBoxHandlers";
+import { NavigationMenu } from "./NavigationMenu";
 
 export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Document]: <IconDocument />,
@@ -227,7 +227,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                 machineService={service}
                             />
                             <div data-test-id="link-chooser-action-menu" className="tw-border-t tw-border-black-10">
-                                <SectionActionMenu machineService={service} state={state} />
+                                <NavigationMenu machineService={service} state={state} />
                             </div>
                         </Popover>
                         <DismissButton onDismiss={handleDropdownClose} />

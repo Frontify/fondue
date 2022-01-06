@@ -2,28 +2,21 @@
 
 import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
 import { MenuItem } from "@components/MenuItem/MenuItem";
-import IconArrowLeft from "@foundation/Icon/Generated/IconArrowLeft";
 import { useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
 import React, { FC, useMemo, useRef } from "react";
 import { IconOptions } from "./LinkChooser";
 import { DropdownState, LinkChooserState, SectionState } from "./state/machine";
-import {
-    SearchResultListProps,
-    SearchResultSectionProps,
-    SearchResultOptionProps,
-    ImageMenuItemProps,
-    NavigationMenuProps,
-} from "./types";
+import { SearchResultListProps, SearchResultSectionProps, SearchResultOptionProps, ImageMenuItemProps } from "./types";
 import NoResultsIcon from "./assets/no-results.svg";
 import BackgroundIcon from "./assets/background.svg";
 import FetchingIcon from "./assets/nook-animated.png";
 import { isFetching, isUnsuccessful, shouldGoBack } from "./utils/state";
 import { getInteractionModality } from "@react-aria/interactions";
 import { defaultSection } from "./sections";
-import { MenuItemContentSize, menuItemSizeClassMap } from "@components/MenuItem";
 import { goToSection } from "./utils/helpers";
+import { NavigationMenuItem } from "./NavigationMenu";
 
 export const SearchResultsList: FC<SearchResultListProps> = (props) => {
     const ref = useRef<HTMLUListElement>(null);
@@ -52,7 +45,15 @@ export const SearchResultsList: FC<SearchResultListProps> = (props) => {
     return (
         <div>
             {shouldGoBack(matches) && (
-                <NavigationMenu state={state} title={title} onClick={() => goToSection(defaultSection.id, send)} />
+                <div className="tw-mt-2">
+                    <NavigationMenuItem
+                        state={state}
+                        section={defaultSection}
+                        title={<p className="tw-ml-2 tw-text-black-80 tw-capitalize">{title}</p>}
+                        onPress={() => goToSection(defaultSection.id, send)}
+                        direction="left"
+                    />
+                </div>
             )}
             <ul
                 {...listBoxProps}
@@ -83,37 +84,6 @@ export const SearchResultsList: FC<SearchResultListProps> = (props) => {
                     />
                 )}
             </ul>
-        </div>
-    );
-};
-
-const NavigationMenu: FC<NavigationMenuProps> = ({ state, title, onClick }) => {
-    const ref = useRef(null);
-    const { isFocused } = useOption(
-        {
-            key: defaultSection.id,
-        },
-        state,
-        ref,
-    );
-    const isFocusVisible = getInteractionModality() !== "pointer";
-
-    return (
-        <div
-            className={merge([
-                "tw-flex tw-mt-2 tw-mb-1 tw-items-center",
-                menuItemSizeClassMap[MenuItemContentSize.XSmall],
-                isFocused && isFocusVisible && "tw-bg-black-0",
-            ])}
-        >
-            <button
-                aria-label={`Navigate to default section of search results.`}
-                data-test-id="link-chooser-back-button"
-                onClick={onClick}
-            >
-                <IconArrowLeft />
-            </button>
-            <p className="tw-ml-2 tw-text-black-80 tw-capitalize">{title}</p>
         </div>
     );
 };

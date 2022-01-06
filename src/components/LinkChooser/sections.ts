@@ -13,4 +13,4 @@ export const sections = [
     },
 ];
 
-export const defaultSection = { id: "default", sectionId: "DEFAULT" };
+export const defaultSection = { id: "default", sectionId: "DEFAULT", title: "Default" };

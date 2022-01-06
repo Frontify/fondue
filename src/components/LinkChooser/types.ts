@@ -96,15 +96,17 @@ export type ImageMenuItemProps = {
     preview?: string;
 };
 
-export type SectionActionMenuProps = {
+export type NavigationMenuProps = {
     machineService: MachineService;
     state: ListState<unknown>;
 };
 
-export type SectionActionMenuItemProps = {
+export type NavigationMenuItemProps = {
     section: { id: string; title: string };
     onPress: (event: KeyboardEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>) => void;
     state: ListState<unknown>;
+    direction?: "left" | "right";
+    title: ReactNode;
 };
 
 export type SearchInputProps = {
@@ -118,12 +120,6 @@ export type SearchInputProps = {
     machineService: MachineService;
     validation: Validation;
     onClear?: () => void;
-};
-
-export type NavigationMenuProps = {
-    state: ListState<unknown>;
-    title?: string;
-    onClick: () => void;
 };
 
 export type PopoverProps = {
