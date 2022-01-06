@@ -5,7 +5,7 @@ import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { Validation } from "@components/TextInput";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
-import { LinkChooser } from "./LinkChooser";
+import { LinkChooser as LinkChooserComponent } from "./LinkChooser";
 import { data } from "./mock/data";
 import { templates } from "./mock/templates";
 import { guidelines } from "./mock/guidelines";
@@ -15,7 +15,7 @@ import { doesContainSubstring } from "./utils/helpers";
 // eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Link Chooser",
-    component: LinkChooser,
+    component: LinkChooserComponent,
     args: {
         placeholder: "https://example.com",
         disabled: false,
@@ -32,8 +32,8 @@ export default {
     },
 } as Meta<LinkChooserProps>;
 
-const getGlobalByQueryMock = (query: string): Promise<SearchResult[]> => {
-    return new Promise((resolve) =>
+const getGlobalByQueryMock = (query: string): Promise<SearchResult[]> =>
+    new Promise((resolve) =>
         setTimeout(() => {
             resolve(
                 data
@@ -46,14 +46,9 @@ const getGlobalByQueryMock = (query: string): Promise<SearchResult[]> => {
             );
         }, Math.floor(Math.random() * 2000)),
     );
-};
 
-/* const getGuidelinesByQuery = (query: string): Promise<SearchResult[]> => {}; */
-
-/* const getProjectsByQuery = (query: string): Promise<SearchResult[]> => {}; */
-
-const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> => {
-    return new Promise((resolve) =>
+const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> =>
+    new Promise((resolve) =>
         setTimeout(() => {
             resolve(
                 templates
@@ -66,10 +61,9 @@ const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> => {
             );
         }, Math.floor(Math.random() * 2000)),
     );
-};
 
-const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> => {
-    return new Promise((resolve) =>
+const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> =>
+    new Promise((resolve) =>
         setTimeout(() => {
             resolve(
                 guidelines
@@ -82,9 +76,8 @@ const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> => {
             );
         }, Math.floor(Math.random() * 2000)),
     );
-};
 
-const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) => {
+export const LinkChooser: Story<LinkChooserProps> = (args: LinkChooserProps) => {
     const [openInNewTab, setOpenInNewTab] = useState<boolean>(false);
 
     return (
@@ -99,5 +92,3 @@ const LinkChooserTemplate: Story<LinkChooserProps> = (args: LinkChooserProps) =>
         />
     );
 };
-
-export const Default = LinkChooserTemplate.bind({});
