@@ -23,12 +23,6 @@ export type MachineService = Interpreter<
     }
 >;
 
-export type TemplateMenuBlock = {
-    id: string;
-    menuItems: SearchResult[];
-    ariaLabel?: string;
-};
-
 export const validationClassMap: Record<Validation, string> = {
     [Validation.Default]: "tw-border-black-20",
     [Validation.Loading]: "tw-border-black-10",

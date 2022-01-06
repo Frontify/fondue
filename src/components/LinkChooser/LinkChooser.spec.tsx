@@ -30,6 +30,7 @@ const DROPDOWN_WRAPPER_ID = "[data-test-id=link-chooser-dropdown]";
 const DECORATOR_ICON_ID = "[data-test-id=link-chooser-decorator-icon]";
 const LABEL_ID = "[data-test-id='link-chooser-label']";
 const REQUIRED_ID = "[data-test-id='link-chooser-label-required']";
+const MENU_ITEM_CONTENT_ID = "[data-test-id=menu-item-content]";
 
 const DEFAULT_TIMEOUT = 100;
 const CUSTOM_QUERY = "Custom link";
@@ -438,14 +439,14 @@ describe("LinkChooser Component", () => {
     });
 
     describe("Templates section", () => {
-        it("displays all templates when query is empty", () => {
+        it.only("displays all templates when query is empty", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(BACK_BUTTON_ID).should("not.exist");
             cy.wait(600);
             cy.get(ACTION_MENU_ID).contains("Templates").click();
-            cy.get(BACK_BUTTON_ID).should("exist");
+            cy.get(MENU_ITEM_CONTENT_ID).should("have.length", 1).and("have.text", "templates");
             cy.get(SELECT_SECTION_ID).children().should("have.length", templates.length);
         });
 
