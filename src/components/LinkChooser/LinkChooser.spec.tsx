@@ -457,7 +457,7 @@ describe("LinkChooser Component", () => {
             cy.get(RESULTS_LIST_ID).children().should("have.length", filterItems(templates[0].title, data).length);
         });
 
-        it.only("searches the same query when switching from default view to templates view", () => {
+        it("searches the same query when switching from default view to templates view", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
@@ -468,7 +468,7 @@ describe("LinkChooser Component", () => {
             cy.get(RESULTS_LIST_ID).children().should("have.length", filterItems(templates[0].title, data).length);
         });
 
-        it.only("searches the same query when switching from templates view to default view", () => {
+        it("searches the same query when switching from templates view to default view", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
