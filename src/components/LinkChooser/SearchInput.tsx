@@ -11,7 +11,7 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
 import React, { FC, forwardRef } from "react";
-import { IconButtonProps, SearchInputProps, validationStyle } from "./types";
+import { IconButtonProps, SearchInputProps, validationClassMap } from "./types";
 
 export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>(
     (
@@ -44,7 +44,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         : merge([
                               "focus-within:tw-border-black-90",
                               isFocusVisible && FOCUS_STYLE,
-                              validationStyle[validation],
+                              validationClassMap[validation],
                           ]),
                 ])}
             >
@@ -87,7 +87,6 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                     <IconButton
                         disabled={disabled}
                         testId="link-chooser-copy-icon"
-                        copyId="copy-button"
                         title="Copy text to clipboard"
                         ariaLabel="copy text to clipboard"
                         icon={<IconCopyToClipboard />}
@@ -116,16 +115,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
 );
 SearchInput.displayName = "SearchInput";
 
-const IconButton: FC<IconButtonProps> = ({
-    disabled,
-    title,
-    ariaLabel,
-    testId,
-    copyId,
-    icon,
-    onClick,
-    isComboBoxControl,
-}) => {
+const IconButton: FC<IconButtonProps> = ({ disabled, title, ariaLabel, testId, icon, onClick, isComboBoxControl }) => {
     const { isFocusVisible, focusProps } = useFocusRing();
     return (
         <button
@@ -138,7 +128,6 @@ const IconButton: FC<IconButtonProps> = ({
             title={title}
             aria-label={ariaLabel}
             data-combo-box-control={isComboBoxControl}
-            data-clipboard-id={copyId}
             disabled={disabled}
             onClick={onClick}
             {...focusProps}
