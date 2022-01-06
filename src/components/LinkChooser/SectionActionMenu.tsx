@@ -14,7 +14,6 @@ export const SectionActionMenu: FC<SectionActionMenuProps> = (props: SectionActi
     const [{ matches }, send] = useActor(machineService);
 
     return matches(`${LinkChooserState.Focused}.${DropdownState.Default}`) ? (
-        // TODO fix focus issues with ActionMenu (blurs SearchInput on hover)
         <ul className="tw-py-2">
             {sections.map((section) => (
                 <SectionActionMenuItem
