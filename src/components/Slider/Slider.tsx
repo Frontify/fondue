@@ -55,7 +55,6 @@ const SliderItem = (props: SliderItemProps) => {
         ref,
     );
     const { isFocusVisible, focusProps } = useFocusRing();
-    console.log(isFocusVisible);
 
     return (
         <li key={item.id} className="tw-relative">
