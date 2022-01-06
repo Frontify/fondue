@@ -2,6 +2,7 @@
 
 import { mergeProps } from "@react-aria/utils";
 import { FocusEvent, KeyboardEvent } from "react";
+import { DEFAULT_ICON, IconOptions } from "../LinkChooser";
 import { ManualComboBoxEventProps, ManualComboBoxEvents, SearchResult } from "../types";
 
 export const doesContainSubstring = (source: string, target: string): boolean =>
@@ -16,7 +17,10 @@ export const useManualComboBoxEventHandlers = (
         onPointerUp: onOpen,
         onBlur: (event: FocusEvent<HTMLInputElement, HTMLElement>) => {
             console.log(event);
-            if (popoverRef.current?.contains(event.relatedTarget as HTMLElement)) {
+            if (
+                popoverRef.current?.contains(event.relatedTarget as HTMLElement) ||
+                event.relatedTarget?.dataset.comboBoxControl === "true"
+            ) {
                 inputRef.current?.focus();
             } else {
                 onClose();
@@ -40,3 +44,9 @@ export const getDefaultData = async (): Promise<SearchResult[]> =>
             resolve([]);
         }, 2000),
     );
+
+export const decoratedResults = (results: SearchResult[]) =>
+    results.map((item) => ({
+        ...item,
+        decorator: IconOptions[item.icon || DEFAULT_ICON],
+    }));

@@ -41,24 +41,6 @@ export enum SectionState {
     Error = "error",
 }
 
-const DEBOUNCE_TIMEOUT = 500;
-
-const typingAction = {
-    TYPING: [
-        {
-            target: SectionState.Typing,
-            internal: false,
-            cond: "hasNoValue",
-            actions: ["updateQueryFromString", "clearSelectedResult"],
-        },
-        {
-            target: SectionState.Typing,
-            internal: false,
-            actions: ["updateQueryFromString"],
-        },
-    ],
-};
-
 const closeActions = [
     "storeNewSelectedResult",
     "updateQueryFromObject",
@@ -82,6 +64,24 @@ const sharedActions = {
     COPY_TO_CLIPBOARD: {
         actions: ["copyLinkToClipboard"],
     },
+};
+
+const DEBOUNCE_TIMEOUT = 500;
+
+const typingAction = {
+    TYPING: [
+        {
+            target: SectionState.Typing,
+            internal: false,
+            cond: "hasNoValue",
+            actions: [...sharedActions.CLEARING.actions],
+        },
+        {
+            target: SectionState.Typing,
+            internal: false,
+            actions: ["updateQueryFromString"],
+        },
+    ],
 };
 
 export type SectionCondition = {

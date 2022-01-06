@@ -20,10 +20,8 @@ export const SectionActionMenu: FC<SectionActionMenuProps> = (props: SectionActi
                 <SectionActionMenuItem
                     key={section.id}
                     section={section}
-                    onPress={(event: KeyboardEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>) => {
+                    onPress={() => {
                         send(`GO_TO_${section.sectionId}`);
-                        event.preventDefault();
-                        event.stopPropagation();
                     }}
                 />
             ))}

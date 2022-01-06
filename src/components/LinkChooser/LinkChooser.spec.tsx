@@ -5,10 +5,11 @@ import { mount } from "@cypress/react";
 import { LinkChooser, QUERIES_STORAGE_KEY } from "./LinkChooser";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
-import { SearchResult } from "./types";
+import { LinkChooserProps, SearchResult, validationClassMap } from "./types";
 import { data } from "./mock/data";
 import { templates } from "./mock/templates";
 import { doesContainSubstring } from "./utils/helpers";
+import { Validation } from "@components/TextInput";
 
 const LINK_CHOOSER_ID = "[data-test-id=link-chooser]";
 const SEARCH_WRAPPER_ID = "[data-test-id=link-chooser-search-wrapper]";
@@ -27,25 +28,27 @@ const NEW_TAB_ID = "[data-test-id=link-chooser-new-tab]";
 const CHECKBOX_LABEL_ID = "[data-test-id=input-label]";
 const DROPDOWN_WRAPPER_ID = "[data-test-id=link-chooser-dropdown]";
 const DECORATOR_ICON_ID = "[data-test-id=link-chooser-decorator-icon]";
+const LABEL_ID = "[data-test-id='link-chooser-label']";
+const REQUIRED_ID = "[data-test-id='link-chooser-label-required']";
 
 const DEFAULT_TIMEOUT = 100;
 const CUSTOM_QUERY = "Custom link";
 
 const PREFILLED_LOCAL_STORAGE = [
     {
-        id: "custom-link",
-        title: "www.frontify.com",
-        link: "www.frontify.com",
-        icon: "LINK",
-        size: "Large",
-        selectionIndicator: "None",
-    },
-    {
         id: "10",
         title: "Malaya Poster",
         subtitle: "UNICEF Social Campaign",
         link: "",
         icon: "TEMPLATE",
+        size: "Large",
+        selectionIndicator: "None",
+    },
+    {
+        id: "custom-link",
+        title: "www.frontify.com",
+        link: "www.frontify.com",
+        icon: "LINK",
         size: "Large",
         selectionIndicator: "None",
     },
@@ -82,7 +85,7 @@ const PREFILLED_LOCAL_STORAGE = [
 const filterItems = (query: string, results: SearchResult[]): SearchResult[] =>
     results.filter((item) => doesContainSubstring(item.title, query));
 
-const getLinkChooserComponent = (openInNewTab = false, returnError = false) => {
+const getLinkChooserComponent = (overwriteProps?: Partial<LinkChooserProps>, returnError = false) => {
     const getGlobalByQuery = (query: string): Promise<SearchResult[]> => {
         return new Promise((resolve, reject) =>
             setTimeout(() => {
@@ -131,8 +134,9 @@ const getLinkChooserComponent = (openInNewTab = false, returnError = false) => {
             clipboardOptions={clipboardOptions}
             openPreview={openPreview}
             onLinkChange={onLinkChange}
-            openInNewTab={openInNewTab}
             onOpenInNewTabChange={onOpenInNewTabChange}
+            openInNewTab={false}
+            {...overwriteProps}
         />
     );
 };
@@ -142,6 +146,26 @@ describe("LinkChooser Component", () => {
         mount(getLinkChooserComponent());
 
         cy.get(LINK_CHOOSER_ID).should("be.visible");
+    });
+
+    describe("Input", () => {
+        it("renders input props Label", () => {
+            const label = "LABEL";
+            const placeholder = "PLACEHOLDER";
+            mount(getLinkChooserComponent({ label, placeholder, required: true, validation: Validation.Error }));
+
+            cy.get(LABEL_ID).should("contain", label);
+            cy.get(REQUIRED_ID).should("have.text", "*");
+            cy.get(SEARCH_INPUT_ID).invoke("attr", "placeholder").should("equal", placeholder);
+            cy.get(SEARCH_WRAPPER_ID).should("have.class", validationClassMap[Validation.Error]);
+        });
+
+        it("disables input and checkbox", () => {
+            mount(getLinkChooserComponent({ disabled: true }));
+
+            cy.get(SEARCH_INPUT_ID).should("be.disabled");
+            cy.get("input[type='checkbox']").should("be.disabled");
+        });
     });
 
     describe("Empty localStorage", () => {
@@ -158,6 +182,14 @@ describe("LinkChooser Component", () => {
             cy.get(COPY_ICON_ID).should("not.exist");
             cy.get(CLEAR_ICON_ID).should("not.exist");
             cy.get(EMPTY_RESULTS_ID).should("exist");
+        });
+
+        it("opens dropdown on focus", () => {
+            mount(getLinkChooserComponent());
+            cy.window().focus();
+            cy.get("body").realPress("Tab");
+            cy.get(SEARCH_INPUT_ID).should("be.focused");
+            cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
         });
 
         it("shows loading animation and loads results", () => {
@@ -305,8 +337,8 @@ describe("LinkChooser Component", () => {
             cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
             cy.get("@firstSelectItem").click();
             cy.get(SEARCH_WRAPPER_ID).click();
-            cy.get(SEARCH_INPUT_ID).clear();
-            cy.get(SEARCH_INPUT_ID).type(data[0].title);
+            cy.get(SEARCH_INPUT_ID).type("{backspace}");
+            cy.get(SEARCH_INPUT_ID).type(data[0].title[data[0].title.length - 1]);
             cy.get("body").click();
             cy.get(SEARCH_INPUT_ID).should("have.value", data[0].title);
             cy.get(`${DECORATOR_ICON_ID} > svg`).invoke("attr", "name").should("eq", "IconDocument");
@@ -327,8 +359,26 @@ describe("LinkChooser Component", () => {
             cy.get(`${DECORATOR_ICON_ID} > svg`).invoke("attr", "name").should("eq", "IconLink");
         });
 
+        it("resets selection if input is empty", () => {
+            const selectedClass = "tw-text-violet-60";
+
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SEARCH_INPUT_ID).type(data[0].title);
+            cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
+            cy.get("@firstSelectItem").click();
+            cy.get(`${DECORATOR_ICON_ID} > svg`).invoke("attr", "name").should("eq", "IconDocument");
+            cy.get(DECORATOR_ICON_ID).should("have.class", selectedClass);
+            cy.get("@onLinkChange").should("be.calledOnce");
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SEARCH_INPUT_ID).clear();
+            cy.get("@onLinkChange").should("be.calledTwice");
+            cy.get(DECORATOR_ICON_ID).should("not.have.class", selectedClass);
+        });
+
         it("displays error message when fetching fails", () => {
-            mount(getLinkChooserComponent(false, true));
+            mount(getLinkChooserComponent({}, true));
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
@@ -456,6 +506,28 @@ describe("LinkChooser Component", () => {
             cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
             cy.get(SEARCH_INPUT_ID).type(CUSTOM_QUERY);
             cy.get(EMPTY_RESULTS_ID).should("exist");
+        });
+
+        it("repopulates default view with recent queries when selected", () => {
+            localStorage.setItem(QUERIES_STORAGE_KEY, JSON.stringify(PREFILLED_LOCAL_STORAGE));
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.wait(500);
+            cy.get(SELECT_SECTION_ID)
+                .first()
+                .should("contain", JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || "null")[0].title);
+            cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
+            cy.get(SEARCH_INPUT_ID).type(templates[0].title);
+            cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
+            cy.get("@firstSelectItem").click();
+            cy.get(SEARCH_INPUT_ID).should("have.value", templates[0].title);
+            cy.get(SELECT_SECTION_ID).should("not.exist");
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(`${SELECT_SECTION_ID} > li`).first().should("contain", templates[0].title);
+            cy.get(`${SELECT_SECTION_ID} > li`)
+                .eq(1)
+                .should("contain", JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || "null")[0].title);
         });
     });
 

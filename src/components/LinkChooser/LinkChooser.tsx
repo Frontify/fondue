@@ -19,7 +19,7 @@ import { SearchResultsList } from "./SearchResultSection";
 import { SectionActionMenu } from "./SectionActionMenu";
 import { linkChooserMachine, LinkChooserState } from "./state/machine";
 import { IconLabel, LinkChooserProps } from "./types";
-import { getDefaultData } from "./utils/helpers";
+import { decoratedResults, getDefaultData } from "./utils/helpers";
 import { doesContainSubstring, useManualComboBoxEventHandlers } from "./utils/helpers";
 import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
@@ -44,7 +44,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     getGuidelinesByQuery = getDefaultData,
     openPreview = window.open,
     clipboardOptions = navigator.clipboard,
-    openInNewTab,
+    openInNewTab = false,
     ariaLabel = "Menu",
     label,
     placeholder,
@@ -74,7 +74,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         () => [
             {
                 id: "search",
-                menuItems: context.searchResults,
+                menuItems: decoratedResults(context.searchResults),
             },
         ],
         [context.searchResults],
@@ -126,9 +126,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         state.setInputValue("");
         state.setSelectedKey("");
         send("CLEARING", { data: { query: "" } });
-        if (state.isOpen) {
-            inputRef.current?.focus();
-        }
     }, []);
 
     const handleDropdownOpen = () => {
@@ -143,6 +140,9 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 : createCustomLink(state.inputValue)
             : null;
         send("CLOSE_DROPDOWN", { data: { selectedResult } });
+        if (selectedResult && state.selectedKey !== selectedResult.id) {
+            state.setSelectedKey(selectedResult.id);
+        }
         closeBoxState(state);
     };
 
@@ -152,14 +152,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     );
 
     const inputDecorator = IconOptions[context.selectedResult?.icon || DEFAULT_ICON];
-    const decoratedMenuBlocks = searchResultMenuBlock.map((block) => {
-        const itemsWithDecorator = block.menuItems.map((item) => ({
-            ...item,
-            decorator: IconOptions[item.icon || DEFAULT_ICON],
-        }));
-
-        return { ...block, menuItems: itemsWithDecorator };
-    });
 
     useEffect(() => {
         if (isLoaded(matches) && context.interruptedFetch) {
@@ -170,11 +162,15 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     return (
         <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
             {!!label && (
-                <label {...labelProps} className="tw-text-black-80 tw-mb-1 tw-flex tw-align-items-center">
+                <label
+                    {...labelProps}
+                    data-test-id="link-chooser-label"
+                    className="tw-text-black-80 tw-mb-1 tw-flex tw-align-items-center"
+                >
                     {label}
                     {required && (
                         <span
-                            data-test-id="input-label-required"
+                            data-test-id="link-chooser-label-required"
                             className="tw-h-4 tw-text-m tw-text-red-60 dark:tw-text-red-50 tw-ml-1"
                         >
                             *
@@ -216,7 +212,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                 {...listBoxProps}
                                 listBoxRef={listBoxRef}
                                 state={state}
-                                menuBlocks={decoratedMenuBlocks}
+                                menuBlocks={searchResultMenuBlock}
                                 query={context.query}
                                 border={false}
                                 machineService={service}
