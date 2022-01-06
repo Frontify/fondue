@@ -49,14 +49,16 @@ const closeActions = [
     "emitSelectSearchResult",
 ];
 
+const clearingActions = [
+    "clearSelectedResult",
+    "updateQueryFromString",
+    "emitSelectSearchResult",
+    "populateDropdownSearchResultsWithRecentQueries",
+];
+
 const sharedActions = {
     CLEARING: {
-        actions: [
-            "clearSelectedResult",
-            "updateQueryFromString",
-            "emitSelectSearchResult",
-            "populateDropdownSearchResultsWithRecentQueries",
-        ],
+        actions: [...clearingActions],
     },
     OPEN_PREVIEW: {
         actions: ["openPreview"],
@@ -74,7 +76,7 @@ const typingAction = {
             target: SectionState.Typing,
             internal: false,
             cond: "hasNoValue",
-            actions: [...sharedActions.CLEARING.actions],
+            actions: [...clearingActions],
         },
         {
             target: SectionState.Typing,
@@ -182,7 +184,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                             GO_TO_DEFAULT: `${DropdownState.Default}.${SectionState.Fetching}`,
                             CLEARING: {
                                 target: DropdownState.Default,
-                                actions: [...sharedActions.CLEARING.actions],
+                                actions: [...clearingActions],
                             },
                         },
                     },
@@ -192,7 +194,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                             GO_TO_DEFAULT: `${DropdownState.Default}.${SectionState.Fetching}`,
                             CLEARING: {
                                 target: DropdownState.Default,
-                                actions: [...sharedActions.CLEARING.actions],
+                                actions: [...clearingActions],
                             },
                         },
                     },
