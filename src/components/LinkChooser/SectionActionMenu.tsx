@@ -4,10 +4,10 @@ import { MenuItem } from "@components/MenuItem";
 import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { useActor } from "@xstate/react";
-import React, { FC, KeyboardEvent, MouseEvent } from "react";
+import React, { FC, KeyboardEvent } from "react";
 import { sections } from "./sections";
 import { DropdownState, LinkChooserState } from "./state/machine";
-import { SectionActionMenuProps } from "./types";
+import { SectionActionMenuItemProps, SectionActionMenuProps } from "./types";
 
 export const SectionActionMenu: FC<SectionActionMenuProps> = (props: SectionActionMenuProps) => {
     const { machineService } = props;
@@ -29,17 +29,13 @@ export const SectionActionMenu: FC<SectionActionMenuProps> = (props: SectionActi
     ) : null;
 };
 
-type SectionActionMenuItemProps = {
-    section: { id: string; title: string };
-    onPress: (event: KeyboardEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>) => void;
-};
-
 const SectionActionMenuItem: FC<SectionActionMenuItemProps> = ({ section, onPress }) => {
     const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         if (event.key === "Space" || event.key === "Enter") {
             onPress(event);
         }
     };
+
     return (
         <div
             onMouseDown={onPress}

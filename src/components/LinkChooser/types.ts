@@ -4,7 +4,7 @@ import { CheckboxState } from "@components/Checkbox/Checkbox";
 import { MenuItemType, MenuBlock } from "@components/Menu/SelectMenu";
 import { AriaListBoxOptions } from "@react-aria/listbox";
 import { ListState } from "@react-stately/list";
-import { HTMLAttributes, InputHTMLAttributes, MutableRefObject } from "react";
+import { HTMLAttributes, InputHTMLAttributes, KeyboardEvent, MouseEvent, MutableRefObject } from "react";
 import React, { RefObject, ReactNode, ReactElement } from "react";
 import { Interpreter, DoneInvokeEvent } from "xstate";
 import { Node } from "@react-types/shared";
@@ -96,6 +96,11 @@ export type ImageMenuItemProps = {
 
 export type SectionActionMenuProps = {
     machineService: MachineService;
+};
+
+export type SectionActionMenuItemProps = {
+    section: { id: string; title: string };
+    onPress: (event: KeyboardEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>) => void;
 };
 
 export type SearchInputProps = {
