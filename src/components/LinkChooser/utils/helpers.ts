@@ -14,7 +14,7 @@ export const useManualComboBoxEventHandlers = (
 ) =>
     mergeProps(inputProps, {
         onClick: onOpen,
-        onPointerUp: onOpen,
+        onTouchEnd: onOpen,
         onBlur: (event: FocusEvent<HTMLInputElement, HTMLElement>) => {
             console.log(event);
             if (
