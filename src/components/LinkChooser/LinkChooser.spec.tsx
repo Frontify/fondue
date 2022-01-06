@@ -435,7 +435,7 @@ describe("LinkChooser Component", () => {
     });
 
     describe("Templates section", () => {
-        it.only("displays all templates when query is empty", () => {
+        it("displays all templates when query is empty", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
