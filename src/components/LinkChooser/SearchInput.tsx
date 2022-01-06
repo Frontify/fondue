@@ -1,4 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
 import { Validation } from "@components/TextInput";
 import { IconSpinner } from "@foundation/Icon";
 import IconCopyToClipboard from "@foundation/Icon/Generated/IconCopyToClipboard";
@@ -106,7 +107,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                 )}
                 {isLoading && (
                     <span className="tw-flex tw-flex-none tw-justify-center tw-align-center">
-                        <IconSpinner />
+                        <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                     </span>
                 )}
             </div>
