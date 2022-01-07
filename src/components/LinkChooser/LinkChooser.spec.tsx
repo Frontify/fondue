@@ -31,7 +31,6 @@ const DECORATOR_ICON_ID = "[data-test-id=link-chooser-decorator-icon]";
 const LABEL_ID = "[data-test-id='link-chooser-label']";
 const REQUIRED_ID = "[data-test-id='link-chooser-label-required']";
 const MENU_ITEM = "[data-test-id='link-chooser-navigation-menu-item']";
-const MENU_ITEM_CONTENT_ID = "[data-test-id=menu-item-content]";
 
 const DEFAULT_TIMEOUT = 100;
 const CUSTOM_QUERY = "Custom link";
