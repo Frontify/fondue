@@ -1,4 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 
 import { IconProps } from "@foundation/Icon/IconProps";
 import { useMemoizedId } from "@hooks/useMemoizedId";
@@ -9,7 +11,7 @@ import { RadioGroupState, useRadioGroupState } from "@react-stately/radio";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { AnimateSharedLayout, motion } from "framer-motion";
-import React, { FC, ReactElement, useMemo, useRef } from "react";
+import React, { FC, MouseEvent, ReactElement, useMemo, useRef } from "react";
 
 export type IconItem = {
     id: string;
@@ -56,6 +58,11 @@ const SliderItem = (props: SliderItemProps) => {
     );
     const { isFocusVisible, focusProps } = useFocusRing();
 
+    const handleLabelClick = (event: MouseEvent<HTMLLabelElement>) => {
+        event.preventDefault();
+        radioGroupState.setSelectedValue(item.id);
+    };
+
     return (
         <li key={item.id} className="tw-relative">
             {isActive && (
@@ -77,6 +84,7 @@ const SliderItem = (props: SliderItemProps) => {
                 />
             )}
             <label
+                onClick={handleLabelClick}
                 htmlFor={isActive ? id : undefined}
                 data-test-id={
                     isIconItem(item)
