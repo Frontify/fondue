@@ -105,7 +105,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                               </ul>
                           </li>
                       ))
-                    : "No Colors Found"}
+                    : "No colors found"}
             </ul>
         </div>
     );
