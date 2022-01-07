@@ -25,12 +25,13 @@ export const useManualComboBoxEventHandlers = (
         }),
         onFocus: chain(onFocus, onOpen),
         onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
-            const NAVIGATION_KEYS = ["ArrowRight", "ArrowLeft", "Enter", "Tab"];
+            const SUBMISSION_KEYS = ["Enter", "Tab"];
+            const NAVIGATION_KEYS = ["ArrowRight", "ArrowLeft", ...SUBMISSION_KEYS];
             const focusedKey = state.selectionManager.focusedKey;
             const item = state.collection.getItem(focusedKey);
             const { key } = event;
 
-            if (state.isOpen && key === "Enter") {
+            if (state.isOpen && SUBMISSION_KEYS.includes(key)) {
                 if (item && item.parentKey !== "search") {
                     onNavigate(item.key);
                     /* If focused key is a not part of the search results then the function must 
