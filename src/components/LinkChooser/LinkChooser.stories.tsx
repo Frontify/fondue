@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
-import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { Validation } from "@components/TextInput";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
@@ -35,45 +33,21 @@ export default {
 const getGlobalByQueryMock = (query: string): Promise<SearchResult[]> =>
     new Promise((resolve) =>
         setTimeout(() => {
-            resolve(
-                data
-                    .filter((item) => doesContainSubstring(item.title, query))
-                    .map((item) => ({
-                        ...item,
-                        size: MenuItemContentSize.Large,
-                        selectionIndicator: SelectionIndicatorIcon.None,
-                    })),
-            );
+            resolve(data.filter((item) => doesContainSubstring(item.title, query)));
         }, Math.floor(Math.random() * 2000)),
     );
 
 const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> =>
     new Promise((resolve) =>
         setTimeout(() => {
-            resolve(
-                templates
-                    .filter((template) => doesContainSubstring(template.title, query))
-                    .map((item) => ({
-                        ...item,
-                        size: MenuItemContentSize.Large,
-                        selectionIndicator: SelectionIndicatorIcon.None,
-                    })),
-            );
+            resolve(templates.filter((template) => doesContainSubstring(template.title, query)));
         }, Math.floor(Math.random() * 2000)),
     );
 
 const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> =>
     new Promise((resolve) =>
         setTimeout(() => {
-            resolve(
-                guidelines
-                    .filter((template) => doesContainSubstring(template.title, query))
-                    .map((item) => ({
-                        ...item,
-                        size: MenuItemContentSize.Large,
-                        selectionIndicator: SelectionIndicatorIcon.None,
-                    })),
-            );
+            resolve(guidelines.filter((guideline) => doesContainSubstring(guideline.title, query)));
         }, Math.floor(Math.random() * 2000)),
     );
 
