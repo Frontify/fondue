@@ -10,6 +10,7 @@ import { data } from "./mock/data";
 import { templates } from "./mock/templates";
 import { doesContainSubstring } from "./utils/helpers";
 import { Validation } from "@components/TextInput";
+import { guidelines } from "./mock/guidelines";
 
 const LINK_CHOOSER_ID = "[data-test-id=link-chooser]";
 const SEARCH_WRAPPER_ID = "[data-test-id=link-chooser-search-wrapper]";
@@ -108,15 +109,15 @@ const getLinkChooserComponent = (overwriteProps?: Partial<LinkChooserProps>, ret
     const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> => {
         return new Promise((resolve, reject) =>
             setTimeout(() => {
-                returnError
-                    ? reject()
-                    : resolve(
-                          filterItems(query, templates).map((item) => ({
-                              ...item,
-                              size: MenuItemContentSize.Large,
-                              selectionIndicator: SelectionIndicatorIcon.None,
-                          })),
-                      );
+                returnError ? reject() : resolve(filterItems(query, templates));
+            }, DEFAULT_TIMEOUT),
+        );
+    };
+
+    const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> => {
+        return new Promise((resolve, reject) =>
+            setTimeout(() => {
+                returnError ? reject() : resolve(filterItems(query, guidelines));
             }, DEFAULT_TIMEOUT),
         );
     };
@@ -130,6 +131,7 @@ const getLinkChooserComponent = (overwriteProps?: Partial<LinkChooserProps>, ret
         <LinkChooser
             getGlobalByQuery={getGlobalByQuery}
             getTemplatesByQuery={getTemplatesByQueryMock}
+            getGuidelinesByQuery={getGuidelinesByQueryMock}
             clipboardOptions={clipboardOptions}
             openPreview={openPreview}
             onLinkChange={onLinkChange}
@@ -183,11 +185,15 @@ describe("LinkChooser Component", () => {
             cy.get(EMPTY_RESULTS_ID).should("exist");
         });
 
-        it("opens dropdown on focus", () => {
+        it("opens dropdown on focus and/or typing, closes on escape", () => {
             mount(getLinkChooserComponent());
             cy.window().focus();
             cy.get("body").realPress("Tab");
             cy.get(SEARCH_INPUT_ID).should("be.focused");
+            cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
+            cy.get(SEARCH_INPUT_ID).realPress("Escape");
+            cy.get(DROPDOWN_WRAPPER_ID).should("not.exist");
+            cy.get(SEARCH_INPUT_ID).type(" ");
             cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
         });
 
@@ -559,6 +565,120 @@ describe("LinkChooser Component", () => {
             cy.get(DECORATOR_ICON_ID).should("not.have.class", SELECTED_CLASS);
             cy.get(SEARCH_INPUT_ID).realPress("Enter");
             cy.get(SEARCH_INPUT_ID).should("have.value", data[0].title);
+            cy.get(DECORATOR_ICON_ID).should("have.class", SELECTED_CLASS);
+            cy.get(DROPDOWN_WRAPPER_ID).should("not.exist");
+        });
+    });
+
+    describe("Guidelines Section", () => {
+        it("displays all guidelines when query is empty", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(BACK_BUTTON_ID).should("not.exist");
+            cy.get(ACTION_MENU_ID).contains("Guidelines").click();
+            cy.get(MENU_ITEM).should("have.length", 1).and("have.text", "guidelines");
+            cy.get(SELECT_SECTION_ID).children().should("have.length", guidelines.length);
+        });
+
+        it("shows loading animation and loads results", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(ACTION_MENU_ID).contains("Guidelines").click({ waitForAnimations: true });
+            cy.get(SEARCH_INPUT_ID).type(guidelines[0].title);
+            cy.get(LOADER_ID).should("exist");
+            cy.get(RESULTS_LIST_ID)
+                .children()
+                .should("have.length", filterItems(guidelines[0].title, guidelines).length);
+        });
+
+        it("searches the same query when switching from default view to guidelines view", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SEARCH_INPUT_ID).type(guidelines[0].title);
+            cy.get(ACTION_MENU_ID).contains("Guidelines").click({ waitForAnimations: true });
+            cy.get(LOADER_ID).should("exist");
+            cy.get(RESULTS_LIST_ID)
+                .children()
+                .should("have.length", filterItems(guidelines[0].title, guidelines).length);
+        });
+
+        it("searches the same query when switching from guidelines view to default view", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(ACTION_MENU_ID).contains("Guidelines").click({ waitForAnimations: true });
+            cy.get(LOADER_ID).should("exist");
+            cy.get(SEARCH_INPUT_ID).type(guidelines[0].title);
+            cy.get(MENU_ITEM).click();
+            cy.get(LOADER_ID).should("exist");
+            cy.get(RESULTS_LIST_ID)
+                .children()
+                .should("have.length", filterItems(guidelines[0].title, guidelines).length);
+        });
+
+        it("selects first item", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(ACTION_MENU_ID).contains("Guidelines").click({ waitForAnimations: true });
+            cy.get(SEARCH_INPUT_ID).type(guidelines[0].title);
+            cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
+            cy.get("@firstSelectItem").click();
+            cy.get(SEARCH_INPUT_ID).should("have.value", guidelines[0].title);
+            cy.get(DECORATOR_ICON_ID).should("have.class", SELECTED_CLASS);
+
+            cy.get("@onLinkChange").should("be.calledOnce");
+        });
+
+        it("does not display a custom link", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(ACTION_MENU_ID).contains("Guidelines").click({ waitForAnimations: true });
+            cy.get(SEARCH_INPUT_ID).type(CUSTOM_QUERY);
+            cy.get(EMPTY_RESULTS_ID).should("exist");
+        });
+
+        it("repopulates default view with recent queries when selected", () => {
+            localStorage.setItem(QUERIES_STORAGE_KEY, JSON.stringify(PREFILLED_LOCAL_STORAGE));
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SELECT_SECTION_ID)
+                .first()
+                .should("contain", JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || "null")[0].title);
+            cy.get(ACTION_MENU_ID).contains("Guidelines").click({ waitForAnimations: true });
+            cy.get(SEARCH_INPUT_ID).type(guidelines[0].title);
+            cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
+            cy.get("@firstSelectItem").click();
+            cy.get(SEARCH_INPUT_ID).should("have.value", guidelines[0].title);
+            cy.get(SELECT_SECTION_ID).should("not.exist");
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(`${SELECT_SECTION_ID} > li`).first().should("contain", guidelines[0].title);
+            cy.get(`${SELECT_SECTION_ID} > li`)
+                .eq(1)
+                .should("contain", JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || "null")[0].title);
+        });
+
+        it("can be navigated to by keyboard", () => {
+            mount(getLinkChooserComponent());
+            cy.window().focus();
+            cy.get("body").realPress("Tab");
+            cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
+            cy.get(MENU_ITEM).first().should("have.class", FOCUSED_OPTION_CLASS).and("have.text", "Guidelines");
+            cy.get(SEARCH_INPUT_ID).realPress("Enter");
+            cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
+            cy.get(`${SELECT_SECTION_ID} > li`).first().as("firstSelectItem");
+            cy.get("@firstSelectItem").should("contain.text", guidelines[0].title);
+            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
+            cy.get(MENU_ITEM).first().should("have.class", FOCUSED_OPTION_CLASS).and("have.text", "guidelines");
+            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
+            cy.get(`@firstSelectItem`).should("have.class", FOCUSED_OPTION_CLASS);
+            cy.get(SEARCH_INPUT_ID).realPress("Enter");
+            cy.get(SEARCH_INPUT_ID).should("have.value", guidelines[0].title);
             cy.get(DECORATOR_ICON_ID).should("have.class", SELECTED_CLASS);
             cy.get(DROPDOWN_WRAPPER_ID).should("not.exist");
         });

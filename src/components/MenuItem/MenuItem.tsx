@@ -44,9 +44,11 @@ export const MenuItem: FC<MenuItemProps> = ({
 }) => {
     const isDangerStyle = style === MenuItemStyle.Danger;
 
+    const currentIconSize = size === MenuItemContentSize.XSmall ? IconSize.Size16 : IconSize.Size20;
+
     const currentIcon = {
-        [SelectionIndicatorIcon.CaretRight]: <IconCaretRight data-test-id="menu-item-caret" size={IconSize.Size20} />,
-        [SelectionIndicatorIcon.Check]: active && <IconCheck data-test-id="menu-item-active" size={IconSize.Size20} />,
+        [SelectionIndicatorIcon.CaretRight]: <IconCaretRight data-test-id="menu-item-caret" size={currentIconSize} />,
+        [SelectionIndicatorIcon.Check]: active && <IconCheck data-test-id="menu-item-active" size={currentIconSize} />,
         [SelectionIndicatorIcon.None]: null,
     }[selectionIndicator];
 
