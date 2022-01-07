@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Slider } from "@components/Slider/Slider";
 import { getBackgroundColor, getColorDisplayValue } from "@utilities/colors";
+import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useMemo, useState } from "react";
 // @ts-ignore
 import { getContrastingColor } from "react-color/lib/helpers/color";
@@ -72,7 +73,7 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
     const backgroundColor = getBackgroundColor(color);
     const displayValue = getColorDisplayValue(color, format);
     const labelColor = useMemo(() => {
-        return alpha && alpha >= 0.3 ? getContrastingColor(hex) : null;
+        return alpha && alpha < 0.3 ? null : getContrastingColor(hex);
     }, [hex, rgba, alpha]);
 
     return (
