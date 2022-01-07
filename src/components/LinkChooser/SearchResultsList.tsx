@@ -49,7 +49,7 @@ export const SearchResultsList: FC<SearchResultListProps> = (props) => {
                     <NavigationMenuItem
                         state={state}
                         section={defaultSection}
-                        title={<p className="tw-ml-2 tw-text-black-80 tw-capitalize">{title}</p>}
+                        title={<p className="tw-ml-1 tw-text-black-80 tw-capitalize">{title}</p>}
                         onPress={() => goToSection(defaultSection.id, send)}
                         direction="left"
                     />

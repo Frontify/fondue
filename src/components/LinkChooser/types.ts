@@ -172,5 +172,6 @@ export type ManualComboBoxEventProps = {
 export type ManualComboBoxEvents = {
     onOpen: () => void;
     onClose: () => void;
-    onNavigate: (id: Key) => void;
+    onNavigate: (key: Key) => void;
+    onSelect: (key: Key) => void;
 };

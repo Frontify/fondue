@@ -38,11 +38,11 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
             <div
                 data-test-id="link-chooser-search-wrapper"
                 className={merge([
-                    "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent",
+                    "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-2.5 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent",
                     disabled
                         ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90"
                         : merge([
-                              "focus-within:tw-border-black-90",
+                              "focus-within:tw-border-black-100",
                               isFocusVisible && FOCUS_STYLE,
                               validationClassMap[validation],
                           ]),
@@ -51,8 +51,8 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                 {decorator && (
                     <div
                         className={merge([
-                            "tw-flex tw-items-center tw-justify-center tw-pl-1",
-                            disabled ? "tw-text-black-60" : selectedResult ? "tw-text-violet-60" : "tw-text-black-80",
+                            "tw-flex tw-items-center tw-justify-center",
+                            disabled || !selectedResult ? "tw-text-black-40" : "tw-text-violet-60",
                         ])}
                         data-test-id="link-chooser-decorator-icon"
                     >
@@ -121,7 +121,7 @@ const IconButton: FC<IconButtonProps> = ({ disabled, title, ariaLabel, testId, i
         <button
             className={merge([
                 "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
-                disabled ? "tw-cursor-default tw-text-black-40" : "tw-text-black-60  hover:tw-text-black-100",
+                disabled ? "tw-cursor-default tw-text-black-40" : "tw-text-black-80  hover:tw-text-black-100",
                 isFocusVisible && FOCUS_STYLE,
             ])}
             data-test-id={testId}

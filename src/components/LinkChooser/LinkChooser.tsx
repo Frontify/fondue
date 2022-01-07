@@ -146,7 +146,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 : createCustomLink(state.inputValue)
             : null;
         send("CLOSE_DROPDOWN", { data: { selectedResult } });
-
         if (selectedResult && state.selectedKey !== selectedResult.id) {
             state.setSelectedKey(selectedResult.id);
         }
@@ -156,7 +155,12 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const manualInputProps = useManualComboBoxEventHandlers(
         { inputProps, inputRef, popoverRef, state },
-        { onOpen: handleDropdownOpen, onClose: handleDropdownClose, onNavigate: (id) => goToSection(id, send) },
+        {
+            onOpen: handleDropdownOpen,
+            onClose: handleDropdownClose,
+            onNavigate: (id) => goToSection(id, send),
+            onSelect: handleSelectionChange,
+        },
     );
 
     const inputDecorator = IconOptions[context.selectedResult?.icon || DEFAULT_ICON];
