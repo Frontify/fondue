@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Slider } from "@components/Slider/Slider";
 import { getBackgroundColor, getColorDisplayValue } from "@utilities/colors";
-import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useMemo, useState } from "react";
 // @ts-ignore
 import { getContrastingColor } from "react-color/lib/helpers/color";
@@ -79,7 +78,7 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
     return (
         <div className="tw-sticky tw-top-0 tw-bg-white tw-z-20 dark:tw-bg-black-95">
             <div
-                className={"tw-flex tw-justify-center tw-p-7 tw-text-m tw-text-black dark:tw-text-white tw-gap-2"}
+                className="tw-flex tw-justify-center tw-p-7 tw-text-m tw-text-black dark:tw-text-white tw-gap-2"
                 style={{ background: backgroundColor, color: labelColor }}
                 data-test-id="color-preview"
             >
