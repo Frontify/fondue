@@ -5,6 +5,7 @@
 import { IconProps } from "@foundation/Icon/IconProps";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
+import { setInteractionModality } from "@react-aria/interactions";
 import { useRadio, useRadioGroup } from "@react-aria/radio";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { RadioGroupState, useRadioGroupState } from "@react-stately/radio";
@@ -61,6 +62,8 @@ const SliderItem = (props: SliderItemProps) => {
     const handleLabelClick = (event: MouseEvent<HTMLLabelElement>) => {
         event.preventDefault();
         radioGroupState.setSelectedValue(item.id);
+        ref.current?.focus();
+        setInteractionModality("pointer");
     };
 
     return (
