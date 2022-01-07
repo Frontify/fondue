@@ -446,7 +446,6 @@ describe("LinkChooser Component", () => {
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(BACK_BUTTON_ID).should("not.exist");
-            cy.wait(600);
             cy.get(ACTION_MENU_ID).contains("Templates").click();
             cy.get(MENU_ITEM).should("have.length", 1).and("have.text", "templates");
             cy.get(SELECT_SECTION_ID).children().should("have.length", templates.length);
@@ -456,7 +455,6 @@ describe("LinkChooser Component", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
-            cy.wait(500);
             cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
             cy.get(SEARCH_INPUT_ID).type(templates[0].title);
             cy.get(LOADER_ID).should("exist");
@@ -468,7 +466,6 @@ describe("LinkChooser Component", () => {
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(templates[0].title);
-            cy.wait(500);
             cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
             cy.get(LOADER_ID).should("exist");
             cy.get(RESULTS_LIST_ID).children().should("have.length", filterItems(templates[0].title, data).length);
@@ -478,7 +475,6 @@ describe("LinkChooser Component", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
-            cy.wait(500);
             cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
             cy.get(LOADER_ID).should("exist");
             cy.get(SEARCH_INPUT_ID).type(templates[0].title);
@@ -491,7 +487,6 @@ describe("LinkChooser Component", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
-            cy.wait(500);
             cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
             cy.get(SEARCH_INPUT_ID).type(templates[0].title);
             cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
@@ -505,7 +500,6 @@ describe("LinkChooser Component", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
-            cy.wait(500);
             cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
             cy.get(SEARCH_INPUT_ID).type(CUSTOM_QUERY);
             cy.get(EMPTY_RESULTS_ID).should("exist");
@@ -516,7 +510,6 @@ describe("LinkChooser Component", () => {
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
-            cy.wait(500);
             cy.get(SELECT_SECTION_ID)
                 .first()
                 .should("contain", JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || "null")[0].title);
