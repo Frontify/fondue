@@ -30,10 +30,13 @@ const DROPDOWN_WRAPPER_ID = "[data-test-id=link-chooser-dropdown]";
 const DECORATOR_ICON_ID = "[data-test-id=link-chooser-decorator-icon]";
 const LABEL_ID = "[data-test-id='link-chooser-label']";
 const REQUIRED_ID = "[data-test-id='link-chooser-label-required']";
+const MENU_ITEM = "[data-test-id='link-chooser-navigation-menu-item']";
 const MENU_ITEM_CONTENT_ID = "[data-test-id=menu-item-content]";
 
 const DEFAULT_TIMEOUT = 100;
 const CUSTOM_QUERY = "Custom link";
+const SELECTED_CLASS = "tw-text-violet-60";
+const FOCUSED_OPTION_CLASS = "tw-bg-black-0";
 
 const PREFILLED_LOCAL_STORAGE = [
     {
@@ -208,7 +211,7 @@ describe("LinkChooser Component", () => {
             cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
             cy.get("@firstSelectItem").click();
             cy.get(SEARCH_INPUT_ID).should("have.value", data[0].title);
-
+            cy.get(DECORATOR_ICON_ID).should("have.class", SELECTED_CLASS);
             cy.get("@onLinkChange").should("be.calledOnce");
         });
 
@@ -357,8 +360,6 @@ describe("LinkChooser Component", () => {
         });
 
         it("resets selection if input is empty", () => {
-            const selectedClass = "tw-text-violet-60";
-
             mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
@@ -366,12 +367,12 @@ describe("LinkChooser Component", () => {
             cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
             cy.get("@firstSelectItem").click();
             cy.get(`${DECORATOR_ICON_ID} > svg`).invoke("attr", "name").should("eq", "IconDocument");
-            cy.get(DECORATOR_ICON_ID).should("have.class", selectedClass);
+            cy.get(DECORATOR_ICON_ID).should("have.class", SELECTED_CLASS);
             cy.get("@onLinkChange").should("be.calledOnce");
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).clear();
             cy.get("@onLinkChange").should("be.calledTwice");
-            cy.get(DECORATOR_ICON_ID).should("not.have.class", selectedClass);
+            cy.get(DECORATOR_ICON_ID).should("not.have.class", SELECTED_CLASS);
         });
 
         it("displays error message when fetching fails", () => {
@@ -442,7 +443,7 @@ describe("LinkChooser Component", () => {
             cy.get(BACK_BUTTON_ID).should("not.exist");
             cy.wait(600);
             cy.get(ACTION_MENU_ID).contains("Templates").click();
-            cy.get(MENU_ITEM_CONTENT_ID).should("have.length", 1).and("have.text", "templates");
+            cy.get(MENU_ITEM).should("have.length", 1).and("have.text", "templates");
             cy.get(SELECT_SECTION_ID).children().should("have.length", templates.length);
         });
 
@@ -476,7 +477,7 @@ describe("LinkChooser Component", () => {
             cy.get(ACTION_MENU_ID).contains("Templates").click({ waitForAnimations: true });
             cy.get(LOADER_ID).should("exist");
             cy.get(SEARCH_INPUT_ID).type(templates[0].title);
-            cy.get(MENU_ITEM_CONTENT_ID).click();
+            cy.get(MENU_ITEM).click();
             cy.get(LOADER_ID).should("exist");
             cy.get(RESULTS_LIST_ID).children().should("have.length", filterItems(templates[0].title, data).length);
         });
@@ -526,7 +527,41 @@ describe("LinkChooser Component", () => {
                 .eq(1)
                 .should("contain", JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || "null")[0].title);
         });
-    });
 
-    // TODO - test that the proper item is selected when the fetching phase is interrupted (to be decided)
+        it("can be navigated to by keyboard", () => {
+            mount(getLinkChooserComponent());
+            cy.window().focus();
+            cy.get("body").realPress("Tab");
+            cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
+            cy.get(MENU_ITEM).first().should("have.class", FOCUSED_OPTION_CLASS);
+            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
+            cy.get(MENU_ITEM).first().should("not.have.class", FOCUSED_OPTION_CLASS);
+            cy.get(MENU_ITEM).eq(1).should("have.class", FOCUSED_OPTION_CLASS).and("have.text", "Templates");
+            cy.get(SEARCH_INPUT_ID).realPress("Enter");
+            cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
+            cy.get(`${SELECT_SECTION_ID} > li`).first().as("firstSelectItem");
+            cy.get("@firstSelectItem").should("contain.text", templates[0].title);
+            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
+            cy.get(MENU_ITEM).first().should("have.class", FOCUSED_OPTION_CLASS).and("have.text", "templates");
+            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
+            cy.get(`@firstSelectItem`).should("have.class", FOCUSED_OPTION_CLASS);
+            cy.get(SEARCH_INPUT_ID).realPress("ArrowUp");
+            cy.get(`@firstSelectItem`).should("not.have.class", FOCUSED_OPTION_CLASS);
+            cy.get(MENU_ITEM).first().should("have.class", FOCUSED_OPTION_CLASS);
+            cy.get(SEARCH_INPUT_ID).realPress("Enter");
+            cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
+            cy.get(EMPTY_RESULTS_ID).should("be.visible");
+            cy.get(SEARCH_INPUT_ID).type(data[0].title);
+            cy.get(`@firstSelectItem`)
+                .should("not.have.class", FOCUSED_OPTION_CLASS)
+                .and("contain.text", data[0].title);
+            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
+            cy.get(`@firstSelectItem`).should("have.class", FOCUSED_OPTION_CLASS);
+            cy.get(DECORATOR_ICON_ID).should("not.have.class", SELECTED_CLASS);
+            cy.get(SEARCH_INPUT_ID).realPress("Enter");
+            cy.get(SEARCH_INPUT_ID).should("have.value", data[0].title);
+            cy.get(DECORATOR_ICON_ID).should("have.class", SELECTED_CLASS);
+            cy.get(DROPDOWN_WRAPPER_ID).should("not.exist");
+        });
+    });
 });
