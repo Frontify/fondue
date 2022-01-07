@@ -74,6 +74,13 @@ describe("ColorPicker Component", () => {
         cy.get(TEXT_INPUT_ID).clear().type("red");
         cy.get(BRAND_COLOR_ID).should("have.length", 6);
         cy.get(TEXT_INPUT_ID).clear().type("foo");
-        cy.get(BRAND_COLOR_PICKER_ID).children("ul").should("contain", "No Colors found");
+        cy.get(BRAND_COLOR_PICKER_ID).children("ul").should("contain", "No Colors Found");
+    });
+
+    it("should display message if no brand colors are found in palettes", () => {
+        mount(<Component palettes={EXAMPLE_PALETTES.map((palette) => ({ ...palette, colors: [] }))} />);
+        cy.get(BRAND_COLOR_PICKER_ID).should("exist");
+        cy.get(BRAND_COLOR_ID).should("not.exist");
+        cy.get(BRAND_COLOR_PICKER_ID).children("ul").should("contain", "No Colors Found");
     });
 });
