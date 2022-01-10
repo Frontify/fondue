@@ -5,11 +5,11 @@ import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, useRef } from "react";
+import React, { FC, KeyboardEvent, useRef } from "react";
 
 export type ColorInputProps = { min?: number; max?: number } & Pick<
     TextInputBaseProps,
-    "decorator" | "value" | "onChange" | "type" | "size" | "onBlur"
+    "decorator" | "value" | "onChange" | "type" | "size" | "onBlur" | "onEnterPressed"
 >;
 
 export const ColorInput: FC<ColorInputProps> = ({
@@ -17,6 +17,7 @@ export const ColorInput: FC<ColorInputProps> = ({
     max,
     decorator,
     onChange,
+    onEnterPressed,
     size,
     onBlur,
     value = "",
@@ -24,6 +25,12 @@ export const ColorInput: FC<ColorInputProps> = ({
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const inputElement = useRef<HTMLInputElement | null>(null);
+    const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+        const { key, shiftKey } = event;
+        if (key === "Enter" && !shiftKey) {
+            onEnterPressed && onEnterPressed(event);
+        }
+    };
 
     return (
         <div
@@ -44,6 +51,7 @@ export const ColorInput: FC<ColorInputProps> = ({
                 ref={inputElement}
                 className="tw-flex-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-text-black tw-placeholder-black-60 dark:tw-text-white"
                 onClick={() => inputElement.current?.focus()}
+                onKeyDown={handleKeyDown}
                 onChange={(event) => onChange && onChange(event.currentTarget.value)}
                 onBlur={onBlur}
                 value={value}

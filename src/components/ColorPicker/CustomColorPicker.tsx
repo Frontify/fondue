@@ -44,6 +44,12 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
         setHexInput(hex.substring(1));
     }, [hex]);
 
+    const handleHexChange = () => {
+        if (isValidHex(hexInput)) {
+            onSelect(toColor(currentColor, { hex: hexInput }));
+        }
+    };
+
     return (
         <div className="tw-flex tw-flex-col tw-gap-5" data-test-id="custom-color-picker">
             <div className="tw-flex tw-gap-2 tw-w-full tw-h-[200px]">
@@ -100,11 +106,8 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                             onChange={(hex) => {
                                 setHexInput(hex);
                             }}
-                            onBlur={() => {
-                                if (isValidHex(hexInput)) {
-                                    onSelect(toColor(currentColor, { hex: hexInput }));
-                                }
-                            }}
+                            onEnterPressed={handleHexChange}
+                            onBlur={handleHexChange}
                         />
                     </div>
                 ) : (
