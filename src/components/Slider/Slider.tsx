@@ -63,6 +63,7 @@ const SliderItem = (props: SliderItemProps) => {
                     key={id}
                     initial={false}
                     layoutId={id}
+                    layoutDependency={isActive}
                     className={merge([
                         "tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none",
                         disabled ? "tw-border-black-20 tw-bg-black-0" : "tw-border-black tw-bg-white",
