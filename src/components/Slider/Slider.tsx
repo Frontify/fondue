@@ -60,9 +60,11 @@ const SliderItem = (props: SliderItemProps) => {
     const { isFocusVisible, focusProps } = useFocusRing();
 
     const handleMockLabelClick = () => {
-        radioGroupState.setSelectedValue(item.id);
-        ref.current?.focus();
-        setInteractionModality("pointer");
+        if (!disabled) {
+            radioGroupState.setSelectedValue(item.id);
+            ref.current?.focus();
+            setInteractionModality("pointer");
+        }
     };
 
     return (
