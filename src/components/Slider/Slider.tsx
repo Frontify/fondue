@@ -86,10 +86,8 @@ const SliderItem = (props: SliderItemProps) => {
                 />
             )}
             <div
-                // Since framer-motion sets `visibility` to `visible` which leads
-                // to undesired side effects for example when this component is
-                // used inside an `AccordionItem` that's why we explicitly
-                // set the prop to `inherit` so framer leave it as is.
+                // TODO: Change element back to label when bug #2380 from @react-aria is fixed
+                // https://github.com/adobe/react-spectrum/issues/2380
                 role="none"
                 onClick={handleMockLabelClick}
                 data-test-id={
