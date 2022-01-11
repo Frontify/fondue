@@ -3,6 +3,7 @@
 import { IconProps } from "@foundation/Icon/IconProps";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
+import { setInteractionModality } from "@react-aria/interactions";
 import { useRadio, useRadioGroup } from "@react-aria/radio";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { RadioGroupState, useRadioGroupState } from "@react-stately/radio";
@@ -56,6 +57,14 @@ const SliderItem = (props: SliderItemProps) => {
     );
     const { isFocusVisible, focusProps } = useFocusRing();
 
+    const handleMockLabelClick = () => {
+        if (!disabled) {
+            radioGroupState.setSelectedValue(item.id);
+            ref.current?.focus();
+            setInteractionModality("pointer");
+        }
+    };
+
     return (
         <li key={item.id} className="tw-relative">
             {isActive && (
@@ -77,8 +86,11 @@ const SliderItem = (props: SliderItemProps) => {
                     aria-hidden="true"
                 />
             )}
-            <label
-                htmlFor={isActive ? id : undefined}
+            <div
+                // TODO: Change element back to label when bug #2380 from @react-aria is fixed
+                // https://github.com/adobe/react-spectrum/issues/2380
+                role="none"
+                onClick={handleMockLabelClick}
                 data-test-id={
                     isIconItem(item)
                         ? "slider-item-icon"
@@ -98,7 +110,7 @@ const SliderItem = (props: SliderItemProps) => {
                 <span className="tw-overflow-hidden tw-overflow-ellipsis tw-whitespace-nowrap">
                     {isIconItem(item) ? <span aria-label={item.ariaLabel}>{item.icon}</span> : item.value.toString()}
                 </span>
-            </label>
+            </div>
         </li>
     );
 };
