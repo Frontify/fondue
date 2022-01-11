@@ -1,6 +1,4 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 
 import { IconProps } from "@foundation/Icon/IconProps";
 import { useMemoizedId } from "@hooks/useMemoizedId";
