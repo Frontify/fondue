@@ -12,7 +12,7 @@ import { RadioGroupState, useRadioGroupState } from "@react-stately/radio";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { AnimateSharedLayout, motion } from "framer-motion";
-import React, { FC, MouseEvent, ReactElement, useMemo, useRef } from "react";
+import React, { FC, ReactElement, useMemo, useRef } from "react";
 
 export type IconItem = {
     id: string;
@@ -59,8 +59,7 @@ const SliderItem = (props: SliderItemProps) => {
     );
     const { isFocusVisible, focusProps } = useFocusRing();
 
-    const handleLabelClick = (event: MouseEvent<HTMLLabelElement>) => {
-        event.preventDefault();
+    const handleMockLabelClick = () => {
         radioGroupState.setSelectedValue(item.id);
         ref.current?.focus();
         setInteractionModality("pointer");
@@ -86,9 +85,13 @@ const SliderItem = (props: SliderItemProps) => {
                     aria-hidden="true"
                 />
             )}
-            <label
-                onClick={handleLabelClick}
-                htmlFor={isActive ? id : undefined}
+            <div
+                // Since framer-motion sets `visibility` to `visible` which leads
+                // to undesired side effects for example when this component is
+                // used inside an `AccordionItem` that's why we explicitly
+                // set the prop to `inherit` so framer leave it as is.
+                role="none"
+                onClick={handleMockLabelClick}
                 data-test-id={
                     isIconItem(item)
                         ? "slider-item-icon"
@@ -108,7 +111,7 @@ const SliderItem = (props: SliderItemProps) => {
                 <span className="tw-overflow-hidden tw-overflow-ellipsis tw-whitespace-nowrap">
                     {isIconItem(item) ? <span aria-label={item.ariaLabel}>{item.icon}</span> : item.value.toString()}
                 </span>
-            </label>
+            </div>
         </li>
     );
 };
