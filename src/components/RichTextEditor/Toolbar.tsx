@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconBold from "@foundation/Icon/Generated/IconBold";
-import IconItalic from "@foundation/Icon/Generated/IconItalic";
-import IconListBullets from "@foundation/Icon/Generated/IconListBullets";
-import IconListNumbers from "@foundation/Icon/Generated/IconListNumbers";
-import IconSnippet from "@foundation/Icon/Generated/IconSnippet";
-import IconUnderline from "@foundation/Icon/Generated/IconUnderline";
-import { IconSize } from "@foundation/Icon/IconSize";
+import IconBold from "@components/Icon/Generated/IconBold";
+import IconItalic from "@components/Icon/Generated/IconItalic";
+import IconListBullets from "@components/Icon/Generated/IconListBullets";
+import IconListNumbers from "@components/Icon/Generated/IconListNumbers";
+import IconSnippet from "@components/Icon/Generated/IconSnippet";
+import IconUnderline from "@components/Icon/Generated/IconUnderline";
+import { IconSize } from "@components/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useRef } from "react";
 import { usePopper } from "react-popper";

@@ -2,7 +2,7 @@
 
 import { TooltipProps } from "@components/Tooltip/Tooltip";
 import { TooltipIcon } from "@components/TooltipIcon/TooltipIcon";
-import { IconSize } from "@foundation/Icon/IconSize";
+import { IconSize } from "@components/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { FC, PropsWithChildren } from "react";
 

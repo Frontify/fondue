@@ -4,9 +4,9 @@ import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Tree as TreeComponent, TreeProps } from "./Tree";
 import { TreeNodeProps } from "./Node";
-import { IconSize } from "@foundation/Icon/IconSize";
-import IconDocument from "@foundation/Icon/Generated/IconDocument";
-import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
+import { IconSize } from "@components/Icon/IconSize";
+import IconDocument from "@components/Icon/Generated/IconDocument";
+import IconGuidelines from "@components/Icon/Generated/IconGuidelines";
 
 // eslint-disable-next-line import/no-default-export
 export default {

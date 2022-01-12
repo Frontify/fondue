@@ -7,7 +7,7 @@ import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import React, { FC, ReactElement, useState } from "react";
 import { Dropdown } from "./Dropdown";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import IconIcons from "@components/Icon/Generated/IconIcons";
 
 export const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
 const DROPDOWN_MENU_ID = "[data-test-id=dropdown-menu]";

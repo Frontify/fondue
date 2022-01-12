@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import IconAudio from "@foundation/Icon/Generated/IconAudio";
-import { IconSize } from "@foundation/Icon/IconSize";
+import IconAudio from "@components/Icon/Generated/IconAudio";
+import { IconSize } from "@components/Icon/IconSize";
 import React from "react";
 import { MenuItem, MenuItemProps, SelectionIndicatorIcon } from "./MenuItem";
 import { MenuItemContentSize } from "./MenuItemContent";

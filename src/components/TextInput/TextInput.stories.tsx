@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { useEffect, useState } from "react";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
-import { IconSize } from "@foundation/Icon/IconSize";
+import IconIcons from "@components/Icon/Generated/IconIcons";
+import { IconSize } from "@components/Icon/IconSize";
 import { Meta, Story } from "@storybook/react";
 import { TextInput, TextInputProps, TextInputType, Validation } from "./TextInput";
 

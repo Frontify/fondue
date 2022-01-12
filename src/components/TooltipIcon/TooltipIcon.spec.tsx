@@ -3,7 +3,7 @@
 import React from "react";
 import { mount } from "@cypress/react";
 import { TooltipIcon } from "./TooltipIcon";
-import { IconSize } from "@foundation/Icon/IconSize";
+import { IconSize } from "@components/Icon/IconSize";
 
 const TOOLTIP_PROPS = {
     content: "Lorem ipsum dolor sit amet.",

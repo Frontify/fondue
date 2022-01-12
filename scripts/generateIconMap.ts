@@ -3,14 +3,14 @@
 import fastGlob from "fast-glob";
 import { writeFile } from "fs/promises";
 
-const GENERATED_ICON_FOLDER = "@foundation/Icon/Generated/";
-const ICON_ENUM_OUTPUT_PATH = "./src/foundation/Icon/IconEnum.ts";
-const ICON_MAP_OUTPUT_PATH = "./src/foundation/Icon/IconsMap.tsx";
+const GENERATED_ICON_FOLDER = "@components/Icon/Generated/";
+const ICON_ENUM_OUTPUT_PATH = "./src/components/Icon/IconEnum.ts";
+const ICON_MAP_OUTPUT_PATH = "./src/components/Icon/IconsMap.tsx";
 const REACT_IMPORT = 'import React, { ReactElement } from "react";';
 const ICON_ENUM_IMPORT = 'import { IconEnum } from "./IconEnum";';
 
 (async () => {
-    const iconFilePath = await fastGlob(`./src/foundation/Icon/Generated/*.tsx`, { objectMode: true });
+    const iconFilePath = await fastGlob(`./src/components/Icon/Generated/*.tsx`, { objectMode: true });
     const iconNames = iconFilePath.map((path) => path.name.replace("Icon", "").replace(".tsx", ""));
 
     const iconsEnumString = `

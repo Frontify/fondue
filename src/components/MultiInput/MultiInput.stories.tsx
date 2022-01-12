@@ -3,8 +3,8 @@
 import { Dropdown, DropdownSize } from "@components/Dropdown/Dropdown";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { TextInput } from "@components/TextInput/TextInput";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
-import { IconSize } from "@foundation/Icon/IconSize";
+import IconIcons from "@components/Icon/Generated/IconIcons";
+import { IconSize } from "@components/Icon/IconSize";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { MultiInput as MultiInputComponent, MultiInputLayout, MultiInputProps } from "./MultiInput";

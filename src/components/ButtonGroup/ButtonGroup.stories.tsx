@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, ButtonSize, ButtonStyle } from "@components/Button/Button";
-import IconReject from "@foundation/Icon/Generated/IconReject";
+import IconReject from "@components/Icon/Generated/IconReject";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React from "react";

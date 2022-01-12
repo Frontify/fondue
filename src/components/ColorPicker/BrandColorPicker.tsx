@@ -1,10 +1,10 @@
 import { Slider } from "@components/Slider/Slider";
 import { TextInput } from "@components/TextInput/TextInput";
-import IconCheck from "@foundation/Icon/Generated/IconCheck";
-import IconImageGrid2 from "@foundation/Icon/Generated/IconImageGrid2";
-import IconListBullets from "@foundation/Icon/Generated/IconListBullets";
-import IconSearch from "@foundation/Icon/Generated/IconSearch";
-import { IconSize } from "@foundation/Icon/IconSize";
+import IconCheck from "@components/Icon/Generated/IconCheck";
+import IconImageGrid2 from "@components/Icon/Generated/IconImageGrid2";
+import IconListBullets from "@components/Icon/Generated/IconListBullets";
+import IconSearch from "@components/Icon/Generated/IconSearch";
+import { IconSize } from "@components/Icon/IconSize";
 import { toColor } from "@utilities/colors";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useState } from "react";

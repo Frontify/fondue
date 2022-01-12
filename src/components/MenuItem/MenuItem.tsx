@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MenuItemContent, MenuItemContentProps, MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
-import IconCaretRight from "@foundation/Icon/Generated/IconCaretRight";
-import IconCheck from "@foundation/Icon/Generated/IconCheck";
-import { IconSize } from "@foundation/Icon/IconSize";
+import IconCaretRight from "@components/Icon/Generated/IconCaretRight";
+import IconCheck from "@components/Icon/Generated/IconCheck";
+import { IconSize } from "@components/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { FC } from "react";
 

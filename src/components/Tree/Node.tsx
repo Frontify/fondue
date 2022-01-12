@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactElement, useState } from "react";
-import { IconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
-import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
-import IconCaretRight from "@foundation/Icon/Generated/IconCaretRight";
+import { IconProps } from "@components/Icon/IconProps";
+import { IconSize } from "@components/Icon/IconSize";
+import IconCaretDown from "@components/Icon/Generated/IconCaretDown";
+import IconCaretRight from "@components/Icon/Generated/IconCaretRight";
 import { merge } from "@utilities/merge";
 
 export type TreeNodeProps = {

@@ -3,7 +3,7 @@
 import { mount } from "@cypress/react";
 import React from "react";
 import { Tooltip } from "./Tooltip";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import IconIcons from "@components/Icon/Generated/IconIcons";
 import { brightHeaderBackgroundColors, BrightHeaderStyle } from "./BrightHeader";
 
 const TOOLTIP_TEXT = "This is a tooltip";

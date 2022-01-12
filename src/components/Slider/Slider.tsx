@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconProps } from "@foundation/Icon/IconProps";
+import { IconProps } from "@components/Icon/IconProps";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { setInteractionModality } from "@react-aria/interactions";

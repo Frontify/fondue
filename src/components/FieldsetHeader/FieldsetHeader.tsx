@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconAddSimple from "@foundation/Icon/Generated/IconAddSimple";
-import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
-import IconMinus from "@foundation/Icon/Generated/IconMinus";
-import { IconSize } from "@foundation/Icon/IconSize";
+import IconAddSimple from "@components/Icon/Generated/IconAddSimple";
+import IconCaretDown from "@components/Icon/Generated/IconCaretDown";
+import IconMinus from "@components/Icon/Generated/IconMinus";
+import { IconSize } from "@components/Icon/IconSize";
 import { Switch, SwitchSize } from "@components/Switch/Switch";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { merge } from "@utilities/merge";

@@ -2,8 +2,8 @@
 
 import { MenuItemContent } from "@components/MenuItem/MenuItemContent";
 import { Trigger } from "@components/Trigger/Trigger";
-import IconColors from "@foundation/Icon/Generated/IconColors";
-import { IconSize } from "@foundation/Icon/IconSize";
+import IconColors from "@components/Icon/Generated/IconColors";
+import { IconSize } from "@components/Icon/IconSize";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { getBackgroundColor } from "@utilities/colors";

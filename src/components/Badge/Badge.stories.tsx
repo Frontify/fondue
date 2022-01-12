@@ -3,7 +3,7 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Badge, BadgeProps, BadgeStatus, BadgeStyle } from "./Badge";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import IconIcons from "@components/Icon/Generated/IconIcons";
 
 // eslint-disable-next-line import/no-default-export
 export default {

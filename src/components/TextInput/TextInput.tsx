@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconReject from "@foundation/Icon/Generated/IconReject";
-import IconView from "@foundation/Icon/Generated/IconView";
-import IconViewSlash from "@foundation/Icon/Generated/IconViewSlash";
+import IconReject from "@components/Icon/Generated/IconReject";
+import IconView from "@components/Icon/Generated/IconView";
+import IconViewSlash from "@components/Icon/Generated/IconViewSlash";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";

@@ -5,12 +5,12 @@ import { writeFile, readFile } from "fs/promises";
 // @ts-ignore
 import { transform } from "@svgr/core";
 import { Entry } from "fast-glob/out/types";
-import { IconTemplate } from "../src/foundation/Icon/IconTemplate";
+import { IconTemplate } from "../src/components/Icon/IconTemplate";
 
-export const GENERATED_ICONS_INDEX_PATH = "src/foundation/Icon/Generated/index.ts";
+export const GENERATED_ICONS_INDEX_PATH = "src/components/Icon/Generated/index.ts";
 
 (async () => {
-    const iconsSvgPath = await fastGlob("src/foundation/Icon/Svg/**/*.svg", { objectMode: true });
+    const iconsSvgPath = await fastGlob("src/components/Icon/Svg/**/*.svg", { objectMode: true });
     iconsSvgPath.forEach(async (svgPath: Entry) => {
         const svgFileContent = await readFile(svgPath.path, { encoding: "utf-8" });
         const svgFileName = svgPath.name.replace(".svg", "");
@@ -37,7 +37,7 @@ export const GENERATED_ICONS_INDEX_PATH = "src/foundation/Icon/Generated/index.t
                 __dirname,
                 "..",
                 "src",
-                "foundation",
+                "components",
                 "Icon",
                 "Generated",
                 `Icon${svgFileName}.tsx`,
@@ -46,7 +46,7 @@ export const GENERATED_ICONS_INDEX_PATH = "src/foundation/Icon/Generated/index.t
         });
     });
 
-    const iconComponentsFilePath = await fastGlob(["src/foundation/Icon/Generated/**/*.tsx"], { objectMode: true });
+    const iconComponentsFilePath = await fastGlob(["src/components/Icon/Generated/**/*.tsx"], { objectMode: true });
 
     const iconComponents = iconComponentsFilePath
         .map((filePath) => {

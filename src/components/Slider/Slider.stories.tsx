@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconTextAlignCenter from "@foundation/Icon/Generated/IconTextAlignCenter";
-import IconTextAlignLeft from "@foundation/Icon/Generated/IconTextAlignLeft";
-import IconTextAlignRight from "@foundation/Icon/Generated/IconTextAlignRight";
-import { IconSize } from "@foundation/Icon/IconSize";
+import IconTextAlignCenter from "@components/Icon/Generated/IconTextAlignCenter";
+import IconTextAlignLeft from "@components/Icon/Generated/IconTextAlignLeft";
+import IconTextAlignRight from "@components/Icon/Generated/IconTextAlignRight";
+import { IconSize } from "@components/Icon/IconSize";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { Slider, SliderProps } from "./Slider";

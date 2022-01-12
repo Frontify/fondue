@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import IconIcons from "@components/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { BrightHeaderStyle } from "./BrightHeader";
