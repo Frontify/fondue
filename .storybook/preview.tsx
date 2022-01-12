@@ -4,7 +4,7 @@ import { dark, light } from "./frontifyTheme";
 export const parameters = {
     options: {
         storySort: {
-            order: ["Foundation", "Components"],
+            order: ["Foundation", "Tokens", ["Alias", "Brand", "Component"], "Layout", "Typography", "Components"],
         },
     },
     darkMode: {

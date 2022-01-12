@@ -9,12 +9,8 @@ module.exports = {
     core: {
         builder: "storybook-builder-vite",
     },
-    stories: ["../src/**/*.stories.tsx"],
-    addons: [
-        "storybook-dark-mode",
-        "@storybook/addon-links",
-        "@storybook/addon-essentials",
-    ],
+    stories: ["../src/**/*.stories.tsx", "../stories/*.stories.mdx"],
+    addons: ["storybook-dark-mode", "@storybook/addon-links", "@storybook/addon-essentials"],
     staticDirs: ["assets"],
     async viteFinal(config: any) {
         config.resolve.alias = {
