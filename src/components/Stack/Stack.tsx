@@ -3,7 +3,7 @@
 import { merge } from "@utilities/merge";
 import React, { FC, PropsWithChildren } from "react";
 
-export type StackSpacing = "none" | "xx-small" | "small" | "medium" | "large" | "xx-large";
+export type StackSpacing = "none" | "xxs" | "xs" | "s" | "m" | "l" | "xl" | "xxl";
 
 export type StackProps = PropsWithChildren<{
     padding: StackSpacing;
@@ -14,23 +14,29 @@ export type StackProps = PropsWithChildren<{
 
 const paddingMap: Record<StackSpacing, string> = {
     none: "tw-p-0",
-    "xx-small": "tw-p-xx-small",
-    small: "tw-p-small",
-    medium: "tw-p-medium",
-    large: "tw-p-large",
-    "xx-large": "tw-p-xx-large",
+    xxs: "tw-p-xxs",
+    xs: "tw-p-xs",
+    s: "tw-p-s",
+    m: "tw-p-m",
+    l: "tw-p-l",
+    xl: "tw-p-xl",
+    xxl: "tw-p-xxl",
 };
 
 const spacingMap: Record<StackSpacing, string> = {
     none: "tw-gap-0",
-    "xx-small": "tw-gap-xx-small",
-    small: "tw-gap-small",
-    medium: "tw-gap-medium",
-    large: "tw-gap-large",
-    "xx-large": "tw-gap-xx-large",
+    xxs: "tw-gap-xxs",
+    xs: "tw-gap-xs",
+    s: "tw-gap-s",
+    m: "tw-gap-m",
+    l: "tw-gap-l",
+    xl: "tw-gap-xl",
+    xxl: "tw-gap-xxl",
 };
 
 export const Stack: FC<StackProps> = ({ children, padding, spacing, direction = "row", wrap = false }) => {
+    console.info({ padding, spacing });
+    console.info(paddingMap[padding], spacingMap[spacing]);
     return (
         <div
             data-test-id="stack"

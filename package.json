@@ -23,12 +23,12 @@
             "import": "./dist/src/types/*.js"
         },
         "./icons": {
-            "types": "./dist/src/foundation/Icon/index.d.ts",
-            "import": "./dist/src/foundation/Icon/index.js"
+            "types": "./dist/src/components/Icon/index.d.ts",
+            "import": "./dist/src/components/Icon/index.js"
         },
         "./icons/*": {
-            "types": "./dist/src/foundation/Icon/*.d.ts",
-            "import": "./dist/src/foundation/Icon/*.js"
+            "types": "./dist/src/components/Icon/*.d.ts",
+            "import": "./dist/src/components/Icon/*.js"
         }
     },
     "types": "dist/index.d.ts",
@@ -46,7 +46,7 @@
         "generate": "npm run generate:reactIcons && npm run generate:iconsMap",
         "generate:barrelExport": "esno ./scripts/generateBarrelExport.ts",
         "generate:reactIcons": "esno ./scripts/generateReactIcons.ts",
-        "generate:iconsMap": "esno ./scripts/generateIconMap.ts && eslint --fix ./src/foundation/Icon/IconEnum.ts ./src/foundation/Icon/IconsMap.tsx",
+        "generate:iconsMap": "esno ./scripts/generateIconMap.ts && eslint --fix ./src/components/Icon/IconEnum.ts ./src/components/Icon/IconsMap.tsx",
         "lint": "npm run lint:ts",
         "lint:fix": "npm run lint:ts:fix",
         "lint:ts": "eslint 'src/**/*.{ts,tsx}'",
@@ -125,7 +125,7 @@
         "react-dom": "^17.0.2"
     },
     "dependencies": {
-        "@frontify/arcade-tokens": "^1.0.0-next.24",
+        "@frontify/arcade-tokens": "^1.0.0-next.26",
         "@react-aria/accordion": "^3.0.0-alpha.2",
         "@react-aria/aria-modal-polyfill": "^3.4.0",
         "@react-aria/breadcrumbs": "^3.1.5",
