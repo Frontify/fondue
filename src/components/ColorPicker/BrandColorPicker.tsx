@@ -47,6 +47,8 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
         return () => clearTimeout(timer);
     }, [query]);
 
+    const palettesWithColors = palettes.filter((palette) => !!palette.colors.length);
+
     return (
         <div className="tw-flex tw-flex-col tw-gap-5" data-test-id="brand-color-picker">
             <div className="tw-flex tw-gap-3">
@@ -56,6 +58,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                         decorator={<IconSearch />}
                         placeholder="Search"
                         onChange={(value) => setQuery(value)}
+                        clearable
                     />
                 </div>
                 <div className="tw-w-[72px]">
@@ -67,8 +70,8 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                 </div>
             </div>
             <ul className="tw-flex tw-flex-col tw-gap-5">
-                {palettes.length
-                    ? palettes.map(({ id, title, colors }) => (
+                {palettesWithColors.length
+                    ? palettesWithColors.map(({ id, title, colors }) => (
                           <li key={id} className="tw-flex tw-flex-col tw-gap-3">
                               <p className="tw-text-black dark:tw-text-white">{title}</p>
                               <ul
@@ -102,7 +105,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                               </ul>
                           </li>
                       ))
-                    : "No Colors found"}
+                    : "No colors found"}
             </ul>
         </div>
     );

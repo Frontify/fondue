@@ -2,6 +2,7 @@
 
 import { InputLabel, InputLabelProps } from "@components/InputLabel/InputLabel";
 import { Validation } from "@components/TextInput/TextInput";
+import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, isValidElement, PropsWithChildren, ReactNode } from "react";
 
 export enum FormControlStyle {
@@ -73,17 +74,19 @@ export const FormControl: FC<FormControlProps> = ({
     return (
         <div
             data-test-id="form-control"
-            className={`tw-flex tw-items-center tw-gap-2 ${
-                direction === FormControlDirection.Horizontal ? "tw-flex-row" : "tw-w-full tw-flex-col"
-            }`}
+            className={merge([
+                "tw-flex tw-items-center tw-gap-2",
+                direction === FormControlDirection.Horizontal ? "tw-flex-row" : "tw-w-full tw-flex-col",
+            ])}
         >
-            {(label || extra) && (
+            {(label?.children || extra) && (
                 <div
-                    className={`tw-flex tw-flew-row tw-items-center tw-justify-between ${
-                        direction === FormControlDirection.Vertical ? "tw-w-full" : ""
-                    }`}
+                    className={merge([
+                        "tw-flex tw-flew-row tw-items-center tw-justify-between",
+                        direction === FormControlDirection.Vertical && "tw-w-full",
+                    ])}
                 >
-                    {label && <InputLabel {...label} disabled={disabled} />}
+                    {label?.children && <InputLabel {...label} disabled={disabled} />}
                     {extra && (
                         <span
                             data-test-id="form-control-extra"
@@ -102,11 +105,13 @@ export const FormControl: FC<FormControlProps> = ({
                     disabled={disabled}
                 />
             )}
-            <div className={direction === FormControlDirection.Vertical ? "tw-w-full tw-grid tw-gap-5" : ""}>
-                {isValidElement(children)
-                    ? cloneElement(children, { id: label?.htmlFor, disabled, validation: inputValidation[style] })
-                    : children}
-            </div>
+            {children && (
+                <div className={direction === FormControlDirection.Vertical ? "tw-w-full tw-grid tw-gap-5" : ""}>
+                    {isValidElement(children)
+                        ? cloneElement(children, { id: label?.htmlFor, disabled, validation: inputValidation[style] })
+                        : children}
+                </div>
+            )}
             {helper?.text && !isHelperBefore && (
                 <HelperText
                     fullWidth={direction === FormControlDirection.Vertical}
