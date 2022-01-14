@@ -22,6 +22,6 @@ export const decoratedResults = (results: SearchResult[]) =>
     }));
 
 export const goToSection = (id: Key, send: (data: string) => void) => {
-    const section = sections.find((section) => id === section.id) || defaultSection;
-    send(`GO_TO_${section?.sectionId}`);
+    const selectedSection = sections.find((section) => id === section.id) || defaultSection;
+    send(`GO_TO_${selectedSection?.sectionId}`);
 };
