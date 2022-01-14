@@ -18,8 +18,7 @@ import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultsList";
 import { linkChooserMachine, LinkChooserState } from "./state/machine";
 import { IconLabel, LinkChooserProps, SearchMenuBlock } from "./types";
-import { decoratedResults, getDefaultData, goToSection } from "./utils/helpers";
-import { doesContainSubstring } from "./utils/helpers";
+import { decoratedResults, getDefaultData, goToSection, doesContainSubstring } from "./utils/helpers";
 import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection, shouldGoBack } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
 import { Validation } from "@components/TextInput";
@@ -140,11 +139,15 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     };
 
     const handleDropdownClose = () => {
-        const selectedResult = context.query
-            ? queryMatchesSelection(context.selectedResult, context.query)
-                ? context.selectedResult
-                : createCustomLink(state.inputValue)
-            : null;
+        let selectedResult = null;
+        if (context.query) {
+            if (queryMatchesSelection(context.selectedResult, context.query)) {
+                selectedResult = context.selectedResult;
+            } else {
+                selectedResult = createCustomLink(state.inputValue);
+            }
+        }
+
         send("CLOSE_DROPDOWN", { data: { selectedResult } });
         if (selectedResult && state.selectedKey !== selectedResult.id) {
             state.setSelectedKey(selectedResult.id);

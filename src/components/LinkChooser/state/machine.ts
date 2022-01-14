@@ -9,7 +9,7 @@ import {
     emitSelectSearchResult,
     fetchGlobalSearchResults,
     fetchTemplateSearchResults,
-    openPreview,
+    openPreviewContext,
     populateDropdownSearchResultsWithRecentQueries,
     setSelectedSearchResult,
     storeNewSelectedResult,
@@ -61,7 +61,7 @@ const sharedActions = {
         actions: [...clearingActions],
     },
     OPEN_PREVIEW: {
-        actions: ["openPreview"],
+        actions: ["openPreviewContext"],
     },
     COPY_TO_CLIPBOARD: {
         actions: ["copyLinkToClipboard"],
@@ -238,7 +238,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
             emitSelectSearchResult,
             fetchGlobalSearchResults,
             fetchTemplateSearchResults,
-            openPreview,
+            openPreviewContext,
             populateDropdownSearchResultsWithRecentQueries,
             fillResultsWithNewRecentQueries,
             setSelectedSearchResult,

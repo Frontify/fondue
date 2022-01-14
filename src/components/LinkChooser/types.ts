@@ -67,6 +67,8 @@ export type LinkChooserProps = {
 
 export type SearchResult = Omit<MenuItemType, "title"> & { icon: string; title: string };
 
+export type ImageSearchResult = SearchResult & { preview: string };
+
 export type SearchMenuBlock = Omit<MenuBlock, "menuItems"> & { menuItems: SearchResult[] };
 
 export type SearchResultListProps = AriaListBoxOptions<unknown> & {

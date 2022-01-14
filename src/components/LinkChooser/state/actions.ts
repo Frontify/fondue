@@ -62,7 +62,7 @@ export const copyLinkToClipboard = ({ clipboardOptions, selectedResult }: LinkCh
     selectedResult?.link && clipboardOptions.writeText(selectedResult.link);
 };
 
-export const openPreview = ({ openPreview, selectedResult }: LinkChooserContext): void => {
+export const openPreviewContext = ({ openPreview, selectedResult }: LinkChooserContext): void => {
     selectedResult?.link && openPreview(selectedResult.link, "_blank");
 };
 

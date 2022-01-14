@@ -25,8 +25,8 @@ export const guidelines = [
         id: "17",
         preview:
             "https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoiZGVtb1wvYWNjb3VudHNcLzBmXC83MDAwMDQ3XC9wcm9qZWN0c1wvMzc5NFwvYXNzZXRzXC8xNlwvMTg5MDQ0XC81YTBlMmY3NDNlYzg5NmMwNWUyYmYzOTQ3ZjIzZjNiZS0xNTkxMzUwNDgyLmpwZyJ9:demo:N71e31eSauAlSP3ftzqghrfXBrfKg4j-5Fz6oepIN2w",
-        title: "Internal Project",
-        subtitle: "SRF Kultur On Screen",
+        title: "Internal Project: SRF Kultur",
+        subtitle: "",
         link: "#",
         icon: IconLabel.Library,
     },
@@ -43,8 +43,8 @@ export const guidelines = [
         id: "19",
         preview:
             "https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoiZGVtb1wvYWNjb3VudHNcLzBmXC83MDAwMDQ3XC9wcm9qZWN0c1wvMzc5NFwvYXNzZXRzXC85MFwvMTcxOTA4XC8yZWYyZTcyZjc0NmMxNGYwZWRiYzU2ZTg5NWU0OGFkMC0xNTg2MjQ2MDE4LmpwZyJ9:demo:OzFxNwODI9hPk1xTxCQBPRA3GNKhvMWM5x6d5ZeCRN4",
-        title: "Brand Business Card",
-        subtitle: "Corporate Library",
+        title: "Brand Business View",
+        subtitle: "Guideline Library",
         link: "#",
         icon: IconLabel.Template,
     },
