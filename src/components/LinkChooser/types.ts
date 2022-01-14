@@ -5,7 +5,7 @@ import { MenuItemType, MenuBlock } from "@components/Menu/SelectMenu";
 import { AriaListBoxOptions } from "@react-aria/listbox";
 import { ListState } from "@react-stately/list";
 import { HTMLAttributes, InputHTMLAttributes, Key, KeyboardEvent, MouseEvent, MutableRefObject } from "react";
-import React, { RefObject, ReactNode, ReactElement } from "react";
+import { RefObject, ReactNode, ReactElement } from "react";
 import { Interpreter, DoneInvokeEvent } from "xstate";
 import { Node } from "@react-types/shared";
 import { Validation } from "@components/TextInput";
@@ -122,8 +122,8 @@ export type SearchInputProps = {
 };
 
 export type PopoverProps = {
-    popoverRef?: React.RefObject<HTMLDivElement>;
-    children: React.ReactNode;
+    popoverRef?: RefObject<HTMLDivElement>;
+    children: ReactNode;
     isOpen?: boolean;
     onClose: () => void;
 };
