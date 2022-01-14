@@ -4,7 +4,6 @@ import { Validation } from "@components/TextInput";
 import IconCopyToClipboard from "@foundation/Icon/Generated/IconCopyToClipboard";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
 import IconReject from "@foundation/Icon/Generated/IconReject";
-import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
@@ -60,7 +59,6 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                     </div>
                 )}
                 <input
-                    id={useMemoizedId()}
                     {...mergeProps(focusProps, ariaProps)}
                     ref={inputElement}
                     className={merge([

@@ -55,7 +55,7 @@ export const NavigationMenuItem: FC<NavigationMenuItemProps> = ({
 
     return (
         <div
-            onMouseDown={onPress}
+            onClick={onPress}
             tabIndex={0}
             role="menuitem"
             aria-label={`Navigate to ${section.id} section of search results.`}

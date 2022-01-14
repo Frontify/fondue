@@ -6,7 +6,7 @@ export const guidelines = [
     {
         id: "15",
         preview:
-            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcLzhmXC83XC85MWU4MzdjZDk2YWQzN2EwYWY4OTZhYzA5OWRlNzIyNi0xNjM0MzAxNDUxLmpwZyJ9:msiric:Li3v_e6ogrxBoH-kli3whbqekW1K4ar5Dshif80q2o0?width=2400&height={height}",
+            "https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoiZGVtb1wvYWNjb3VudHNcLzBmXC83MDAwMDQ3XC9wcm9qZWN0c1wvMzc5NFwvYXNzZXRzXC84MVwvNzA2MzRcL2RmZGNiYjg0NDc2Zjg1NWZkN2NkYTZmZjVhZGQ0OWY3LTE1OTc4NDY1MDQuanBnIn0:demo:pbBQjnMpyPm-Y3VIT3PsjRvxAcgjf_Fu66NBGxhGzm4",
         title: "Brand Guideline 1",
         subtitle: "Corporate Library",
         link: "#",
@@ -15,7 +15,7 @@ export const guidelines = [
     {
         id: "16",
         preview:
-            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcL2M5XC84XC9lYjI2YWQzZWIwMGMxYWE4MDQ3MGQ4Y2U4YjVhZjcwNS0xNjM0MzAxNDUxLmpwZyJ9:msiric:GjhRABJhT0SYjJr9ANQ5QpwdrPCRiEcImzRZXOC_XHo?width=2400&height={height}",
+            "https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoiZGVtb1wvYWNjb3VudHNcLzBmXC83MDAwMDQ3XC9wcm9qZWN0c1wvMzc5NFwvYXNzZXRzXC9hMlwvMTc2ODg1XC83ODVhNDE2MGU3MmI4MmIwMjI2MWYyZmI5ZjM4MzQ3Zi0xNTg4MTcxNDU3LmpwZyJ9:demo:BdZSW_EJ9MK7tj97PJWAYoI-JQpLSCoNuem8yPsJRRU",
         title: "Brooklyn",
         subtitle: "Brand Guideline 2",
         link: "#",
@@ -24,7 +24,7 @@ export const guidelines = [
     {
         id: "17",
         preview:
-            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcL2QzXC8xMFwvOTY1ZjU0YzFiYzcxMzJjYTZlNzgwYTBhNWU2ZTgyYTctMTYzNDMwMTQ1MS5qcGcifQ:msiric:_Vs4FXozFK81i3I6J69aAG8FOq_8ld1fV8oWsWYSF2Y?width=2400&height={height}",
+            "https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoiZGVtb1wvYWNjb3VudHNcLzBmXC83MDAwMDQ3XC9wcm9qZWN0c1wvMzc5NFwvYXNzZXRzXC8xNlwvMTg5MDQ0XC81YTBlMmY3NDNlYzg5NmMwNWUyYmYzOTQ3ZjIzZjNiZS0xNTkxMzUwNDgyLmpwZyJ9:demo:N71e31eSauAlSP3ftzqghrfXBrfKg4j-5Fz6oepIN2w",
         title: "Internal Project",
         subtitle: "SRF Kultur On Screen",
         link: "#",
@@ -33,7 +33,7 @@ export const guidelines = [
     {
         id: "18",
         preview:
-            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcLzY1XC8xMVwvYTA0NmQ0YTNiNTk1MGZkODc3NWI3Y2IzYWUwZTVlMDAtMTYzNDMwMTQ1MS5qcGcifQ:msiric:ZBtHCtUwKM6dDiuJALxz5Z6ZfJLk68cEgd6_jNJbuWc?width=2400&height={height}",
+            "https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoiZGVtb1wvYWNjb3VudHNcLzBmXC83MDAwMDQ3XC9wcm9qZWN0c1wvMzc5NFwvYXNzZXRzXC9mMVwvNzA2MDlcL2E2ZjZiOTRjYTZlYWY2NDM5YzJkM2UxODA1MjllNzc1LTE1NTE2ODc1ODUuanBnIn0:demo:y-gQs4zFi04GXZs0muCnngE6IHJsHSbDuUDdVAjuXPI",
         title: "Color Block",
         subtitle: "UNICEF Social Campaign",
         link: "#",
@@ -42,7 +42,7 @@ export const guidelines = [
     {
         id: "19",
         preview:
-            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcL2MyXC8xMlwvYTFkYzA0YTJkYmQwZTkxMTRlOGM2ODQzMWVmMjU5OTMtMTYzNDMwMTQ1MS5qcGcifQ:msiric:MLRtZYQCaEyWpPqgpGbA6P20PDgvagyoowNOllXgoCk?width=2400&height={height}",
+            "https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoiZGVtb1wvYWNjb3VudHNcLzBmXC83MDAwMDQ3XC9wcm9qZWN0c1wvMzc5NFwvYXNzZXRzXC85MFwvMTcxOTA4XC8yZWYyZTcyZjc0NmMxNGYwZWRiYzU2ZTg5NWU0OGFkMC0xNTg2MjQ2MDE4LmpwZyJ9:demo:OzFxNwODI9hPk1xTxCQBPRA3GNKhvMWM5x6d5ZeCRN4",
         title: "Brand Business Card",
         subtitle: "Corporate Library",
         link: "#",

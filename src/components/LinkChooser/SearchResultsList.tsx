@@ -17,6 +17,7 @@ import { getInteractionModality } from "@react-aria/interactions";
 import { defaultSection } from "./sections";
 import { goToSection } from "./utils/helpers";
 import { NavigationMenuItem } from "./NavigationMenu";
+import { MenuItemContentSize } from "@components/MenuItem";
 
 export const SearchResultsList: FC<SearchResultListProps> = (props) => {
     const ref = useRef<HTMLUListElement>(null);
@@ -131,7 +132,9 @@ const SearchResultOption: FC<SearchResultOptionProps> = ({ item, state, keyItemR
 
     const renderOptionItem = () => {
         if (matches(`${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Loaded}`)) {
-            return <MenuItem {...menuItem} active={isSelected} decorator={decorator} />;
+            return (
+                <MenuItem {...menuItem} active={isSelected} decorator={decorator} size={MenuItemContentSize.Large} />
+            );
         } else if (
             matches(`${LinkChooserState.Focused}.${DropdownState.Templates}.${SectionState.Loaded}`) ||
             matches(`${LinkChooserState.Focused}.${DropdownState.Guidelines}.${SectionState.Loaded}`)
