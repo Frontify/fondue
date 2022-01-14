@@ -5,6 +5,7 @@ import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, HTMLAttributes, ReactElement, ReactNode } from "react";
 
 export enum MenuItemContentSize {
+    XSmall = "XSmall",
     Small = "Small",
     Large = "Large",
 }
@@ -40,7 +41,7 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
                 data-test-id="menu-item-decorator"
             >
                 {cloneElement(decorator, {
-                    size: size === MenuItemContentSize.Small ? IconSize.Size16 : IconSize.Size20,
+                    size: size === MenuItemContentSize.Large ? IconSize.Size20 : IconSize.Size16,
                 })}
             </span>
         )}
