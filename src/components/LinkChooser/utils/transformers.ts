@@ -23,10 +23,16 @@ export const retrieveRecentQueries = (): SearchResult[] => {
 export const mergeResultWithRecentQueries = (selectedResult: SearchResult): SearchResult[] => {
     const retrievedQueries = retrieveRecentQueries();
     const retrievedItem = retrievedQueries.find((item: SearchResult) => item.id === selectedResult?.id);
-    const updatedQueries = retrievedItem
-        ? [{ ...selectedResult }, ...retrievedQueries.filter((item: SearchResult) => item.id !== selectedResult?.id)]
-        : retrievedQueries.length < MAX_STORED_ITEMS
-        ? [{ ...selectedResult }, ...retrievedQueries]
-        : [{ ...selectedResult }, ...retrievedQueries.slice(0, -1)];
+    let updatedQueries;
+    if (retrievedItem) {
+        updatedQueries = [
+            { ...selectedResult },
+            ...retrievedQueries.filter((item: SearchResult) => item.id !== selectedResult?.id),
+        ];
+    } else if (retrievedQueries.length < MAX_STORED_ITEMS) {
+        updatedQueries = [{ ...selectedResult }, ...retrievedQueries];
+    } else {
+        updatedQueries = [{ ...selectedResult }, ...retrievedQueries.slice(0, -1)];
+    }
     return updatedQueries;
 };
