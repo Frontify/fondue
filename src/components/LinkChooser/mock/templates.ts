@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconLabel } from "../LinkChooser";
+import { IconLabel } from "../types";
 
 export const templates = [
     {
         id: "7",
         preview:
-            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcLzhmXC83XC85MWU4MzdjZDk2YWQzN2EwYWY4OTZhYzA5OWRlNzIyNi0xNjM0MzAxNDUxLmpwZyJ9:msiric:Li3v_e6ogrxBoH-kli3whbqekW1K4ar5Dshif80q2o0?width=2400&height={height}",
+            "https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoiZGVtb1wvYWNjb3VudHNcLzBmXC83MDAwMDQ3XC9wcm9qZWN0c1wvMzc5NFwvYXNzZXRzXC9hY1wvMTcyMDM0XC8yYzA5YTI1YjRmZDU1NTY4MDkzNjM3YzAwZDEyNWUzZC0xNTg2MjQ3Nzc5LmpwZyJ9:demo:lwxQ6B1hNWa7dUuxdWBh3x6tad8uuVooSriyYfSdVX8",
         title: "Aerial City View",
         subtitle: "Corporate Library",
         link: "#",
@@ -15,7 +15,7 @@ export const templates = [
     {
         id: "8",
         preview:
-            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcL2M5XC84XC9lYjI2YWQzZWIwMGMxYWE4MDQ3MGQ4Y2U4YjVhZjcwNS0xNjM0MzAxNDUxLmpwZyJ9:msiric:GjhRABJhT0SYjJr9ANQ5QpwdrPCRiEcImzRZXOC_XHo?width=2400&height={height}",
+            "https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoiZGVtb1wvYWNjb3VudHNcLzBmXC83MDAwMDQ3XC9wcm9qZWN0c1wvMzc5NFwvYXNzZXRzXC9jNVwvMTc2ODg4XC83MWNjYjQ1M2FhNjViZTcwZDQ1ZGJhOGMzOTg4NDcwNC0xNTg4MTcxNDU3LmpwZyJ9:demo:EJ7NNdX5vL6j9bQ_QT4fsB7FPHsyGnHM0DD4YzpXj90",
         title: "Brooklyn",
         subtitle: "Template Library Old Brand",
         link: "#",
@@ -24,7 +24,7 @@ export const templates = [
     {
         id: "9",
         preview:
-            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcL2QzXC8xMFwvOTY1ZjU0YzFiYzcxMzJjYTZlNzgwYTBhNWU2ZTgyYTctMTYzNDMwMTQ1MS5qcGcifQ:msiric:_Vs4FXozFK81i3I6J69aAG8FOq_8ld1fV8oWsWYSF2Y?width=2400&height={height}",
+            "https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoiZGVtb1wvYWNjb3VudHNcLzBmXC83MDAwMDQ3XC9wcm9qZWN0c1wvMzc5NFwvYXNzZXRzXC9lZlwvMTg1OTIxXC9mOTU2NWVjMzZkNWQyZDQ2MDYwYjBhNzAxMjA1NDA1YS0xNTkwMDUzMTU3LmpwZyJ9:demo:0W8ccsKqSqEeknGWZAwTMngnEZfMYbIojonwqXnoU14",
         title: "City",
         subtitle: "SRF Kultur On Screen",
         link: "#",
@@ -33,7 +33,7 @@ export const templates = [
     {
         id: "10",
         preview:
-            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcLzY1XC8xMVwvYTA0NmQ0YTNiNTk1MGZkODc3NWI3Y2IzYWUwZTVlMDAtMTYzNDMwMTQ1MS5qcGcifQ:msiric:ZBtHCtUwKM6dDiuJALxz5Z6ZfJLk68cEgd6_jNJbuWc?width=2400&height={height}",
+            "https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoiZGVtb1wvYWNjb3VudHNcLzBmXC83MDAwMDQ3XC9wcm9qZWN0c1wvMzc5NFwvYXNzZXRzXC80NVwvMTcyMjk3XC84NWZkOWViYzkyYTQ1MTI4MGVkMTdmMGE2NDI0ZTMyMC0xNTg2MjcwNDY3LmpwZyJ9:demo:gR7jAgdZiD97tGOBl7fyACffrjq5IplWVZWmDNDa_JE",
         title: "Malaya Poster",
         subtitle: "UNICEF Social Campaign",
         link: "#",
@@ -42,7 +42,7 @@ export const templates = [
     {
         id: "11",
         preview:
-            "https://images.frontify.test/s3/frontify-dev-files/eyJwYXRoIjoibXNpcmljXC9hY2NvdW50c1wvYzRcLzFcL3Byb2plY3RzXC8yXC9hc3NldHNcL2MyXC8xMlwvYTFkYzA0YTJkYmQwZTkxMTRlOGM2ODQzMWVmMjU5OTMtMTYzNDMwMTQ1MS5qcGcifQ:msiric:MLRtZYQCaEyWpPqgpGbA6P20PDgvagyoowNOllXgoCk?width=2400&height={height}",
+            "https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoiZGVtb1wvYWNjb3VudHNcLzBmXC83MDAwMDQ3XC9wcm9qZWN0c1wvMzc5NFwvYXNzZXRzXC84NVwvMTcyMjk4XC81NTdjMzk5YTRlYTBhM2IxZWZhNGFmYzIzZjU3ODMzNy0xNTg2MjcwNDY3LmpwZyJ9:demo:6UgRwLcJnQosciitSqFaGXpvuoFtlQAUCC3rXT7tmN8",
         title: "Brand Business Card",
         subtitle: "Corporate Library",
         link: "#",

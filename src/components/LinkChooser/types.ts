@@ -2,13 +2,23 @@
 
 import { CheckboxState } from "@components/Checkbox/Checkbox";
 import { MenuItemType, MenuBlock } from "@components/Menu/SelectMenu";
-import { Validation } from "@components/TextInput/TextInput";
 import { AriaListBoxOptions } from "@react-aria/listbox";
 import { ListState } from "@react-stately/list";
-import { KeyboardEvent, FocusEvent } from "react";
-import { RefObject, ReactNode, HTMLInputTypeAttribute, ReactElement, ChangeEventHandler } from "react";
+import {
+    HTMLAttributes,
+    InputHTMLAttributes,
+    Key,
+    KeyboardEvent,
+    MouseEvent,
+    MutableRefObject,
+    RefObject,
+    ReactNode,
+    ReactElement,
+} from "react";
 import { Interpreter, DoneInvokeEvent } from "xstate";
 import { Node } from "@react-types/shared";
+import { Validation } from "@components/TextInput";
+import { ComboBoxState } from "@react-stately/combobox";
 
 export type MachineService = Interpreter<
     LinkChooserContext,
@@ -22,17 +32,30 @@ export type MachineService = Interpreter<
     }
 >;
 
-export type TemplateMenuBlock = {
-    id: string;
-    menuItems: SearchResult[];
-    ariaLabel?: string;
+export const validationClassMap: Record<Validation, string> = {
+    [Validation.Default]: "tw-border-black-20",
+    [Validation.Loading]: "tw-border-black-10",
+    [Validation.Success]: "tw-border-green-50",
+    [Validation.Error]: "tw-border-red-60",
 };
+
+export enum IconLabel {
+    Document = "DOCUMENT",
+    Library = "LIBRARY",
+    Link = "LINK",
+    External = "EXTERNAL",
+    Template = "TEMPLATE",
+}
 
 export type LinkChooserProps = {
     openInNewTab: boolean;
     ariaLabel?: string;
     label?: string;
     placeholder?: string;
+    disabled?: boolean;
+    clearable?: boolean;
+    required?: boolean;
+    validation?: Validation;
     onOpenInNewTabChange: (value: boolean) => void;
     onLinkChange: (value: SearchResult | null) => void;
     readonly clipboardOptions: Clipboard;
@@ -44,10 +67,12 @@ export type LinkChooserProps = {
 
 export type SearchResult = Omit<MenuItemType, "title"> & { icon: string; title: string };
 
+export type SearchMenuBlock = Omit<MenuBlock, "menuItems"> & { menuItems: SearchResult[] };
+
 export type SearchResultListProps = AriaListBoxOptions<unknown> & {
     listBoxRef?: RefObject<HTMLUListElement>;
     state: ListState<unknown>;
-    menuBlocks: (Omit<MenuBlock, "menuItems"> & { menuItems: SearchResult[] })[];
+    menuBlocks: SearchMenuBlock[];
     border?: boolean;
     hasItems?: boolean;
     query: string;
@@ -68,44 +93,46 @@ export type SearchResultOptionProps = {
     machineService: MachineService;
 };
 
-export type TemplateProps = {
+export type ImageMenuItemProps = {
     title: ReactNode;
     subtitle?: string;
     preview?: string;
 };
 
-export type SectionActionMenuProps = {
+export type NavigationMenuProps = {
     machineService: MachineService;
+    state: ListState<unknown>;
+};
+
+export type NavigationMenuItemProps = {
+    section: { id: string; title: string };
+    onPress: (event: KeyboardEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>) => void;
+    state: ListState<unknown>;
+    direction?: "left" | "right";
+    title: ReactNode;
+};
+
+export type SectionActionMenuItemProps = {
+    section: { id: string; title: string };
+    onPress: (event: KeyboardEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>) => void;
 };
 
 export type SearchInputProps = {
     id?: string;
+    ariaProps: InputHTMLAttributes<HTMLInputElement>;
     selectedResult: SearchResult | null;
-    type?: HTMLInputTypeAttribute;
     decorator?: ReactElement;
-    dotted?: boolean;
-    previewable?: boolean;
-    copyable?: boolean;
     clearable?: boolean;
-    placeholder?: string;
     required?: boolean;
     disabled?: boolean;
-    validation?: Validation;
-    value?: string | number | readonly string[];
-    onChange?: ChangeEventHandler<HTMLInputElement> | undefined;
-    onEnterPressed?: (event: KeyboardEvent<HTMLInputElement>) => void;
-    onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
-    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
-    onClear?: () => void;
-    onPreview?: () => void;
-    onClick?: () => void;
-    size?: number;
     machineService: MachineService;
+    validation: Validation;
+    onClear?: () => void;
 };
 
 export type PopoverProps = {
-    popoverRef?: React.RefObject<HTMLDivElement>;
-    children: React.ReactNode;
+    popoverRef?: RefObject<HTMLDivElement>;
+    children: ReactNode;
     isOpen?: boolean;
     onClose: () => void;
 };
@@ -118,6 +145,7 @@ export type LinkChooserContext = {
     readonly clipboardOptions: Clipboard;
     readonly getGlobalByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
     readonly getTemplatesByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
+    readonly getGuidelinesByQuery: (query: string) => Promise<SearchResult[]>; // context.getGuidelinesByQuery
     readonly onLinkChange: (value: SearchResult | null) => void;
     readonly openPreview: (value: string, target: string) => void;
 };
@@ -133,14 +161,26 @@ export type Clipboard = {
     writeText(newClipText: string): Promise<void>;
 };
 
-export type ButtonProps = {
+export type IconButtonProps = {
     disabled: boolean;
     title: string;
     ariaLabel: string;
     testId: string;
-    copyId?: string;
-    isFocused: boolean;
-    buttonProps: React.HTMLAttributes<HTMLElement>;
     icon: ReactElement;
+    isComboBoxControl?: boolean;
     onClick?: () => void;
+};
+
+export type ManualComboBoxEventProps = {
+    inputProps: HTMLAttributes<HTMLInputElement>;
+    inputRef: MutableRefObject<HTMLInputElement | null>;
+    popoverRef: MutableRefObject<HTMLDivElement | null>;
+    state: ComboBoxState<object>;
+};
+
+export type ManualComboBoxEvents = {
+    onOpen: () => void;
+    onClose: () => void;
+    onNavigate: (key: Key) => void;
+    onSelect: (key: Key) => void;
 };

@@ -85,12 +85,10 @@ export type AssetInputProps =
       };
 
 const AssetThumbnail: FC<Pick<AssetProps, "asset" | "size"> & { isActive?: boolean }> = ({ asset, size, isActive }) => (
-    <span
+    <div
         className={merge([
-            "tw-flex tw-flex-col tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95",
-            size === AssetInputSize.Large
-                ? "tw-w-full tw-h-32"
-                : "tw-w-14 tw-h-full tw-border-r tw-border-black-100 tw-border-opacity-25",
+            "tw-flex tw-flex-none tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95",
+            size === AssetInputSize.Large ? "tw-w-full tw-h-32" : "tw-w-14 tw-h-full",
             isActive ? "tw-text-black-100 dark:tw-text-white" : "tw-text-black-80 dark:tw-text-black-20",
         ])}
     >
@@ -101,39 +99,27 @@ const AssetThumbnail: FC<Pick<AssetProps, "asset" | "size"> & { isActive?: boole
         ) : (
             <img src={asset.src} alt={asset.alt || ""} className="tw-max-h-full" />
         )}
-    </span>
+    </div>
 );
 
 const AssetSubline: FC<Pick<AssetProps, "asset">> = ({ asset }) => (
-    <span className="tw-flex tw-flex-row tw-items-center tw-gap-1 tw-text-black-80 tw-text-xxs">
-        {asset.source === "library" ? (
-            <>
-                <IconImageLibrary />
-                <span>{asset.sourceName}</span>
-            </>
-        ) : (
-            <>
-                <IconUploadAlternative />
-                <span>Uploaded</span>
-            </>
-        )}
-        {asset.extension && (
+    <span className="tw-max-w-full tw-flex tw-flex-row tw-items-center tw-gap-1 tw-text-black-80 tw-text-xxs tw-overflow-hidden">
+        <div className="tw-flex-none tw-inline-flex tw-items-center tw-justify-center">
+            {asset.source === "library" ? <IconImageLibrary /> : <IconUploadAlternative />}
+        </div>
+        <span>{asset.source === "library" ? asset.sourceName : "Uploaded"}</span>
+        {[asset.extension, asset.size].filter(Boolean).map((item) => (
             <>
                 <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
-                <span>{asset.extension}</span>
+                <span>{item}</span>
             </>
-        )}
-        {asset.size && (
-            <>
-                <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
-                <span>{asset.size}</span>
-            </>
-        )}
+        ))}
     </span>
 );
 
 const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
     const menuId = useMemoizedId();
+    const labelId = useMemoizedId();
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const menuState = useMenuTriggerState({ closeOnSelect: true });
     const { isOpen, focusStrategy } = menuState;
@@ -147,44 +133,43 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
     );
 
     return (
-        <div className="tw-relative tw-w-full tw-font-sans tw-text-s tw-bg-transparent">
+        <div
+            className="tw-relative tw-font-sans tw-w-full tw-text-s tw-bg-transparent tw-font-normal"
+            aria-labelledby={labelId}
+            title={asset.name}
+        >
             <button
                 {...mergeProps(buttonProps, focusProps)}
                 ref={buttonRef}
                 className={merge([
-                    "tw-w-full tw-flex tw-flex-row tw-flex-wrap tw-border tw-rounded tw-overflow-hidden hover:tw-border-black-90 dark:hover:tw-border-black-40 tw-group focus-visible:tw-outline-none",
-                    size === AssetInputSize.Large ? "tw-h-[11.5rem]" : "tw-h-14",
+                    "tw-w-full tw-flex tw-border tw-rounded hover:tw-border-black-90 dark:hover:tw-border-black-40 focus-visible:tw-outline-none",
+                    isFocusVisible && FOCUS_STYLE,
+                    size === AssetInputSize.Large ? "tw-h-[11.5rem] tw-flex-col" : "tw-h-14",
                     isOpen || isFocusVisible
                         ? "tw-border-black-90 dark:tw-border-black-10"
                         : "tw-border-black-20 dark:tw-border-black-80",
-                    isFocusVisible && FOCUS_STYLE,
                 ])}
             >
                 <AssetThumbnail asset={asset} size={size} isActive={isOpen || isFocusVisible} />
-                <span
+                <div
                     className={merge([
-                        "tw-flex tw-flex-1",
-                        size === AssetInputSize.Large
-                            ? "tw-h-14 tw-w-full tw-border-t tw-border-black-100 tw-border-opacity-10"
-                            : "tw-h-full",
+                        "tw-min-w-0 tw-max-w-full tw-flex tw-flex-auto tw-self-stretch tw-border-black-100 tw-border-opacity-25",
+                        size === AssetInputSize.Large ? "tw-h-14 tw-border-t" : "tw-h-full tw-border-l",
                     ])}
                 >
-                    <span
-                        className={merge([
-                            "tw-py-3 tw-pr-3 tw-pl-4 tw-flex tw-flex-col tw-items-start tw-font-normal tw-flex-1",
-                        ])}
-                    >
+                    <div className="tw-min-w-0 tw-pr-3 tw-pl-4 tw-flex tw-flex-auto tw-flex-col tw-items-start tw-justify-center tw-h-full">
                         <span
+                            id={labelId}
                             className={merge([
-                                "tw-text-black-100 tw-text-s dark:tw-text-white",
+                                "tw-max-w-full tw-text-black-100 tw-text-s tw-truncate dark:tw-text-white",
                                 (isOpen || isFocusVisible) && "tw-font-medium",
                             ])}
                         >
                             {asset.name}
                         </span>
                         <AssetSubline asset={asset} />
-                    </span>
-                    <span className={merge(["tw-p-4 tw-flex tw-items-center"])}>
+                    </div>
+                    <div className="tw-p-4 tw-flex tw-flex-none tw-items-center tw-justify-center">
                         <span
                             className={merge([
                                 "tw-transition-transform",
@@ -193,8 +178,8 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                         >
                             <IconCaretDown size={IconSize.Size16} />
                         </span>
-                    </span>
-                </span>
+                    </div>
+                </div>
             </button>
 
             <AnimatePresence>

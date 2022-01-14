@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CUSTOM_LINK_ID, MAX_STORED_ITEMS, QUERIES_STORAGE_KEY } from "@components/LinkChooser/LinkChooser";
+import { CUSTOM_LINK_ID, QUERIES_STORAGE_KEY } from "@components/LinkChooser/LinkChooser";
 import { assign, DoneInvokeEvent } from "xstate";
-import { LinkChooserContext, LinkChooserEventData, SearchResult } from "../types";
-import { createCustomLink, retrieveRecentQueries } from "../utils/transformers";
+import { LinkChooserContext, LinkChooserEventData } from "../types";
+import { createCustomLink, mergeResultWithRecentQueries, retrieveRecentQueries } from "../utils/transformers";
 
 export const updateQueryFromString = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
     query: (_context, { data }) => data.query ?? "",
@@ -40,19 +40,15 @@ export const storeNewSelectedResult = (
 ): void => {
     const { selectedResult } = data;
     if (selectedResult) {
-        const retrievedQueries = retrieveRecentQueries();
-        const retrievedItem = retrievedQueries.find((item: SearchResult) => item.id === selectedResult?.id);
-        const updatedQueries = retrievedItem
-            ? [
-                  { ...selectedResult },
-                  ...retrievedQueries.filter((item: SearchResult) => item.id !== selectedResult?.id),
-              ]
-            : retrievedQueries.length < MAX_STORED_ITEMS
-            ? [{ ...selectedResult }, ...retrievedQueries]
-            : [{ ...selectedResult }, ...retrievedQueries.slice(0, -1)];
+        const updatedQueries = mergeResultWithRecentQueries(selectedResult);
         localStorage.setItem(QUERIES_STORAGE_KEY, JSON.stringify(updatedQueries));
     }
 };
+
+export const fillResultsWithNewRecentQueries = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
+    searchResults: (_context: LinkChooserContext, { data }: DoneInvokeEvent<LinkChooserEventData>) =>
+        data.selectedResult ? mergeResultWithRecentQueries(data.selectedResult) : retrieveRecentQueries(),
+});
 
 export const emitSelectSearchResult = (context: LinkChooserContext): void => {
     context.onLinkChange(context.selectedResult);
@@ -81,6 +77,11 @@ export const fetchGlobalSearchResults = async (context: LinkChooserContext): Pro
 
 export const fetchTemplateSearchResults = async (context: LinkChooserContext): Promise<LinkChooserEventData> => {
     const results = await context.getTemplatesByQuery(context.query);
+    return { searchResults: results };
+};
+
+export const fetchGuidelineSearchResults = async (context: LinkChooserContext): Promise<LinkChooserEventData> => {
+    const results = await context.getGuidelinesByQuery(context.query);
     return { searchResults: results };
 };
 

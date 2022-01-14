@@ -7,13 +7,10 @@ export const sections = [
         title: "Guidelines",
     },
     {
-        id: "projects",
-        sectionId: "PROJECTS",
-        title: "Projects",
-    },
-    {
         id: "templates",
         sectionId: "TEMPLATES",
         title: "Templates",
     },
 ];
+
+export const defaultSection = { id: "default", sectionId: "DEFAULT", title: "Default" };

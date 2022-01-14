@@ -15,24 +15,19 @@ import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, Key, ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
 import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
-import { SearchResultsList } from "./SearchResultSection";
-import { SectionActionMenu } from "./SectionActionMenu";
+import { SearchResultsList } from "./SearchResultsList";
 import { linkChooserMachine, LinkChooserState } from "./state/machine";
-import { LinkChooserProps } from "./types";
-import * as SearchRepository from "./repositories";
+import { IconLabel, LinkChooserProps, SearchMenuBlock } from "./types";
+import { decoratedResults, getDefaultData, goToSection } from "./utils/helpers";
 import { doesContainSubstring } from "./utils/helpers";
-import { isLoaded, queryMatchesSelection } from "./utils/state";
+import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection, shouldGoBack } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
+import { Validation } from "@components/TextInput";
+import { defaultSection, sections } from "./sections";
+import { useManualComboBoxEventHandlers } from "./utils/useManualComboBoxHandlers";
+import { NavigationMenu } from "./NavigationMenu";
 
-export enum IconLabel {
-    Document = "DOCUMENT",
-    Library = "LIBRARY",
-    Link = "LINK",
-    External = "EXTERNAL",
-    Template = "TEMPLATE",
-}
-
-export const ICON_OPTIONS: Record<IconLabel | string, ReactElement> = {
+export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Document]: <IconDocument />,
     [IconLabel.Library]: <IconDocumentLibrary />,
     [IconLabel.Link]: <IconLink />,
@@ -46,16 +41,21 @@ export const MAX_STORED_ITEMS = 5;
 export const QUERIES_STORAGE_KEY = "queries";
 
 export const LinkChooser: FC<LinkChooserProps> = ({
-    getGlobalByQuery = SearchRepository.getGlobalByQuery,
-    getTemplatesByQuery = SearchRepository.getTemplatesByQuery,
+    getGlobalByQuery = getDefaultData,
+    getTemplatesByQuery = getDefaultData,
+    getGuidelinesByQuery = getDefaultData,
     openPreview = window.open,
     clipboardOptions = navigator.clipboard,
-    openInNewTab,
+    openInNewTab = false,
     ariaLabel = "Menu",
     label,
     placeholder,
     onOpenInNewTabChange,
     onLinkChange,
+    disabled,
+    clearable,
+    required,
+    validation = Validation.Default,
 }) => {
     const [{ context, matches, value }, send, service] = useMachine(
         linkChooserMachine.withContext({
@@ -67,8 +67,65 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             openPreview,
             getGlobalByQuery,
             getTemplatesByQuery,
+            getGuidelinesByQuery,
             onLinkChange,
         }),
+    );
+
+    const isDefault = shouldGoBack(matches);
+    const searchResultMenuBlock = useMemo(
+        () =>
+            [
+                isDefault && { id: "menu-top", menuItems: [defaultSection] },
+                {
+                    id: "search",
+                    menuItems: decoratedResults(context.searchResults),
+                },
+                !isDefault && { id: "menu-bottom", menuItems: sections },
+            ].filter(Boolean),
+        [context.searchResults, isDefault],
+    ) as SearchMenuBlock[];
+
+    const props = mapToAriaProps(ariaLabel, searchResultMenuBlock);
+
+    const inputRef = useRef<HTMLInputElement | null>(null);
+    const listBoxRef = useRef<HTMLUListElement | null>(null);
+    const popoverRef = useRef<HTMLDivElement | null>(null);
+
+    const handleSelectionChange = (key: Key) => {
+        const foundItem = context.searchResults.find((item) => item.id === key);
+        if (foundItem) {
+            send("SET_SELECTED_SEARCH_RESULT", { data: { selectedResult: foundItem } });
+        }
+        closeBoxState(state);
+    };
+    const handleInputChange = useCallback(
+        (query: string) => {
+            send("TYPING", { data: { query } });
+        },
+        [value],
+    );
+
+    const state = useComboBoxState({
+        ...props,
+        defaultFilter: doesContainSubstring,
+        onInputChange: handleInputChange,
+        onSelectionChange: handleSelectionChange,
+        menuTrigger: "manual",
+        shouldCloseOnBlur: false,
+        allowsEmptyCollection: true,
+    });
+
+    const { inputProps, listBoxProps, labelProps } = useComboBox(
+        {
+            ...props,
+            inputRef,
+            listBoxRef,
+            popoverRef,
+            isRequired: required,
+            placeholder,
+        },
+        state,
     );
 
     const handleClearClick = useCallback(() => {
@@ -77,21 +134,10 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         send("CLEARING", { data: { query: "" } });
     }, []);
 
-    const handleSelectionChange = (key: Key) => {
-        const foundItem = context.searchResults.find((item) => item.id === key);
-        if (foundItem) {
-            send("SET_SELECTED_SEARCH_RESULT", { data: { selectedResult: foundItem } });
-        }
+    const handleDropdownOpen = () => {
+        send("OPEN_DROPDOWN");
+        openBoxState(state);
     };
-
-    const handleInputChange = useCallback(
-        (value: string) => {
-            send("TYPING", { data: { query: value } });
-        },
-        [value],
-    );
-
-    const handleDropdownOpen = () => send("OPEN_DROPDOWN");
 
     const handleDropdownClose = () => {
         const selectedResult = context.query
@@ -100,49 +146,24 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 : createCustomLink(state.inputValue)
             : null;
         send("CLOSE_DROPDOWN", { data: { selectedResult } });
-        state.setSelectedKey(selectedResult?.id || "");
+        if (selectedResult && state.selectedKey !== selectedResult.id) {
+            state.setSelectedKey(selectedResult.id);
+        }
+
+        closeBoxState(state);
     };
 
-    const searchResultMenuBlock = useMemo(
-        () => [
-            {
-                id: "search",
-                menuItems: context.searchResults,
-            },
-        ],
-        [context.searchResults],
-    );
-
-    const props = mapToAriaProps(ariaLabel, searchResultMenuBlock);
-
-    const state = useComboBoxState({
-        ...props,
-        defaultFilter: doesContainSubstring,
-        onInputChange: handleInputChange,
-        onSelectionChange: handleSelectionChange,
-        menuTrigger: "manual",
-        allowsEmptyCollection: true,
-        onBlur: handleDropdownClose,
-    });
-
-    const inputRef = useRef<HTMLInputElement | null>(null);
-    const listBoxRef = useRef<HTMLUListElement | null>(null);
-    const popoverRef = useRef<HTMLDivElement | null>(null);
-
-    const { inputProps, listBoxProps, labelProps } = useComboBox(
+    const manualInputProps = useManualComboBoxEventHandlers(
+        { inputProps, inputRef, popoverRef, state },
         {
-            ...props,
-            inputRef,
-            listBoxRef,
-            popoverRef,
-            onBlur: handleDropdownClose,
+            onOpen: handleDropdownOpen,
+            onClose: handleDropdownClose,
+            onNavigate: (id) => goToSection(id, send),
+            onSelect: handleSelectionChange,
         },
-        state,
     );
 
-    const formattedIcon = context.selectedResult?.icon
-        ? ICON_OPTIONS[context.selectedResult.icon]
-        : ICON_OPTIONS[DEFAULT_ICON];
+    const inputDecorator = IconOptions[context.selectedResult?.icon || DEFAULT_ICON];
 
     useEffect(() => {
         if (isLoaded(matches) && context.interruptedFetch) {
@@ -152,23 +173,34 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     return (
         <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
-            <label {...labelProps} className="block text-sm font-medium text-gray-700 text-left">
-                {label}
-            </label>
-            <div
-                className={`relative inline-flex flex-row rounded-md overflow-hidden shadow-sm border-2 ${
-                    state.isFocused ? "border-pink-500" : "border-gray-300"
-                }`}
-            >
+            {!!label && (
+                <label
+                    {...labelProps}
+                    data-test-id="link-chooser-label"
+                    className="tw-text-black-80 tw-mb-1 tw-flex tw-align-items-center"
+                >
+                    {label}
+                    {required && (
+                        <span
+                            data-test-id="link-chooser-label-required"
+                            className="tw-h-4 tw-text-m tw-text-red-60 dark:tw-text-red-50 tw-ml-1"
+                        >
+                            *
+                        </span>
+                    )}
+                </label>
+            )}
+            <div>
                 <SearchInput
-                    {...inputProps}
+                    ariaProps={manualInputProps}
                     selectedResult={context.selectedResult}
                     ref={inputRef}
-                    decorator={formattedIcon}
-                    placeholder={placeholder}
+                    disabled={disabled}
+                    decorator={inputDecorator}
+                    clearable={clearable}
                     onClear={handleClearClick}
-                    onClick={handleDropdownOpen}
                     machineService={service}
+                    validation={validation}
                 />
             </div>
             <AnimatePresence>
@@ -198,7 +230,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                                 machineService={service}
                             />
                             <div data-test-id="link-chooser-action-menu" className="tw-border-t tw-border-black-10">
-                                <SectionActionMenu machineService={service} />
+                                <NavigationMenu machineService={service} state={state} />
                             </div>
                         </Popover>
                         <DismissButton onDismiss={handleDropdownClose} />
@@ -208,6 +240,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             <div className="tw-my-2" data-test-id="link-chooser-new-tab">
                 <Checkbox
                     value="new-tab"
+                    disabled={disabled}
                     state={openInNewTab ? CheckboxState.Checked : CheckboxState.Unchecked}
                     onChange={onOpenInNewTabChange}
                     label="Open in New Tab"
