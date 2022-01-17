@@ -28,8 +28,6 @@ export type ActionMenuProps = {
 export const ActionMenu = ({
     menuBlocks,
     ariaLabel = "Action Menu",
-    focus,
-    scrollable = false,
 }: ActionMenuProps): ReactElement<ActionMenuProps> => {
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
@@ -43,39 +41,26 @@ export const ActionMenu = ({
     const { menuProps } = useMenu({ ...props, autoFocus: focus }, state, menuRef);
 
     return (
-        <AriaList ariaProps={{ ...menuProps }} ref={menuRef} scrollable={scrollable}>
+        <ul>
             {[...state.collection].map((section) => {
                 const { key: sectionKey, "aria-label": sectionAriaLabel } = section;
                 const { itemProps, groupProps } = useMenuSection({ "aria-label": sectionAriaLabel });
 
                 return (
-                    <AriaSection key={sectionKey} sectionProps={itemProps} groupProps={groupProps}>
-                        {[...section.childNodes].map((item) => {
-                            const menuItem = keyItemRecord[item.key];
-                            const itemRef = useRef<HTMLLIElement | null>(null);
-                            const { menuItemProps } = useMenuItem(
-                                {
-                                    ...item,
-                                    onAction: () => menuItem?.onClick(),
-                                    isDisabled: menuItem?.disabled || false,
-                                    "aria-label": typeof menuItem?.title === "string" ? menuItem?.title : "Menu item",
-                                },
-                                state,
-                                itemRef,
-                            );
+                    <li key={section.key}>
+                        <ul>
+                            {[...section.childNodes].map((item) => {
+                                const menuItem = keyItemRecord[item.key];
 
-                            return (
-                                <AriaMenuItem
-                                    key={item.key}
-                                    menuItem={menuItem}
-                                    ariaProps={menuItemProps}
-                                    ref={itemRef}
-                                />
-                            );
-                        })}
-                    </AriaSection>
+                                // TODO: issue only happens when using useRef
+                                const itemRef = useRef<HTMLLIElement | null>(null);
+
+                                return <li key={item.key}>{menuItem.title}</li>;
+                            })}
+                        </ul>
+                    </li>
                 );
             })}
-        </AriaList>
+        </ul>
     );
 };
