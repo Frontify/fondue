@@ -13,11 +13,9 @@ export const useContainScroll = (overlayRef: MutableRefObject<HTMLDivElement | n
             if (overlay !== null) {
                 const deltaY = event.deltaY;
                 const up = deltaY < 0;
-                const scrollTop = overlay.scrollTop;
-                const scrollHeight = overlay.scrollHeight;
-                const height = overlay.clientHeight;
+                const { scrollTop, scrollHeight, clientHeight } = overlay;
 
-                if (!up && deltaY > scrollHeight - height - scrollTop) {
+                if (!up && deltaY > scrollHeight - clientHeight - scrollTop) {
                     // Scrolling down, but this will take us past the bottom.
                     overlay.scrollTop = scrollHeight;
                     prevent();
