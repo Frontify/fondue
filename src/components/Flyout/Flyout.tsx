@@ -153,6 +153,12 @@ export const Flyout: FC<FlyoutProps> = ({
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
 
+    const { triggerProps, overlayProps: overlayTriggerProps } = useOverlayTrigger(
+        { type: "dialog" },
+        state,
+        triggerRef,
+    );
+
     const { overlayProps: positionProps } = useOverlayPosition({
         targetRef: triggerRef,
         overlayRef,
@@ -161,12 +167,6 @@ export const Flyout: FC<FlyoutProps> = ({
         scrollRef: scrollRef,
         isOpen,
     });
-
-    const { triggerProps, overlayProps: overlayTriggerProps } = useOverlayTrigger(
-        { type: "dialog" },
-        state,
-        triggerRef,
-    );
 
     const { buttonProps } = useButton({ onPress: () => toggle() }, triggerRef);
     useEffect(() => {
