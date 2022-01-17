@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { FieldsetHeader } from "@components/FieldsetHeader/FieldsetHeader";
@@ -17,7 +18,6 @@ import {
     useOverlayPosition,
     useOverlayTrigger,
 } from "@react-aria/overlays";
-import { useOverlayScrollContain } from "./useOverlayScrollContain";
 import { mergeProps } from "@react-aria/utils";
 import { useOverlayTriggerState } from "@react-stately/overlays";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
@@ -35,6 +35,7 @@ import React, {
     useEffect,
     useRef,
 } from "react";
+import { useContainScroll } from "./useContainScroll";
 
 export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
 export const FLYOUT_DIVIDER_HEIGHT = "10px";
@@ -74,7 +75,6 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         isOpen,
         positionProps,
         overlayTriggerProps,
-        overlayScrollContainProps,
         scrollRef,
         legacyFooter,
     },
@@ -83,17 +83,9 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
     const { overlayProps } = useOverlay({ onClose, isOpen, isDismissable: true }, ref as RefObject<HTMLDivElement>);
     const { modalProps } = useModal();
     const { dialogProps, titleProps } = useDialog({}, ref as RefObject<HTMLDivElement>);
-
     return (
         <div
-            {...mergeProps(
-                overlayProps,
-                dialogProps,
-                modalProps,
-                positionProps,
-                overlayTriggerProps,
-                overlayScrollContainProps,
-            )}
+            {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
             ref={ref}
             className="tw-max-h-full tw-overflow-y-auto tw-shadow-mid tw-min-w-[400px] tw-outline-none"
         >
@@ -151,7 +143,7 @@ export const Flyout: FC<FlyoutProps> = ({
     onOpenChange,
     isOpen = false,
     title = "",
-    closeOnScroll = true,
+    closeOnScroll = false,
     badges = [],
     hug = true,
     legacyFooter = true,
@@ -176,11 +168,7 @@ export const Flyout: FC<FlyoutProps> = ({
         { type: "dialog" },
         {
             ...state,
-            close: closeOnScroll
-                ? close
-                : () => {
-                      return;
-                  },
+            close: closeOnScroll ? close : () => {},
         },
         triggerRef,
     );
@@ -192,7 +180,7 @@ export const Flyout: FC<FlyoutProps> = ({
         return () => revert();
     }, []);
 
-    const { overlayProps: overlayScrollContainProps } = useOverlayScrollContain(overlayRef);
+    useContainScroll(overlayRef, { isDisabled: !isOpen });
 
     return (
         <OverlayProvider className="tw-flex tw-h-full tw-items-center">
@@ -218,7 +206,6 @@ export const Flyout: FC<FlyoutProps> = ({
                             isOpen={isOpen}
                             overlayTriggerProps={overlayTriggerProps}
                             positionProps={positionProps}
-                            overlayScrollContainProps={overlayScrollContainProps}
                             onClick={
                                 onClick
                                     ? () => {
