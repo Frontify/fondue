@@ -5,7 +5,7 @@ import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
-import React from "react";
+import React, { useState } from "react";
 import { ActionMenu as ActionMenuComponent, ActionMenuProps } from "./ActionMenu";
 
 // eslint-disable-next-line import/no-default-export
@@ -183,3 +183,89 @@ ActionMenu.args = {
         },
     ],
 };
+
+const initialMenuBlocks = [
+    {
+        id: "block1",
+        ariaLabel: "First section",
+        menuItems: [
+            {
+                id: 1,
+                title: "Limited width icon",
+                size: MenuItemContentSize.Small,
+                decorator: <IconAudio />,
+                onClick: action("click"),
+            },
+            {
+                id: 2,
+                title: "Limited width warning",
+                style: MenuItemStyle.Danger,
+                size: MenuItemContentSize.Small,
+                decorator: <IconAudio />,
+                onClick: action("click"),
+            },
+            {
+                id: 3,
+                title: "Limited width disabled",
+                size: MenuItemContentSize.Small,
+                decorator: <IconAudio />,
+                disabled: true,
+                onClick: action("click"),
+            },
+            {
+                id: 4,
+                title: "Limited width warning disabled",
+                style: MenuItemStyle.Danger,
+                size: MenuItemContentSize.Small,
+                decorator: <IconAudio />,
+                disabled: true,
+                onClick: action("click"),
+            },
+            {
+                id: 5,
+                title: "Limited width warning with long title",
+                style: MenuItemStyle.Danger,
+                size: MenuItemContentSize.Small,
+                decorator: <IconAudio />,
+                onClick: action("click"),
+            },
+        ],
+    },
+];
+
+const newMenuBlocks = [
+    {
+        id: "block2",
+        ariaLabel: "First section",
+        menuItems: [
+            {
+                id: 1,
+                title: "Limited width icon",
+                size: MenuItemContentSize.Small,
+                decorator: <IconAudio />,
+                onClick: action("click"),
+            },
+            {
+                id: 2,
+                title: "Limited width warning",
+                style: MenuItemStyle.Danger,
+                size: MenuItemContentSize.Small,
+                decorator: <IconAudio />,
+                onClick: action("click"),
+            },
+        ],
+    },
+];
+
+export function App() {
+    const [menuBlocks, setMenuBlocks] = useState(initialMenuBlocks);
+    const addItem = () => {
+        setMenuBlocks(newMenuBlocks);
+    };
+    return (
+        <div className="App">
+            <ActionMenu menuBlocks={menuBlocks} />
+            <button onClick={addItem}>Add Item</button>
+        </div>
+    );
+}
