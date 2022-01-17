@@ -49,7 +49,6 @@ export type FlyoutProps = PropsWithChildren<{
     badges?: BadgeProps[];
     hug?: boolean;
     isOpen?: boolean;
-    closeOnScroll?: boolean;
     onOpenChange: (isOpen: boolean) => void;
     /**
      * The legacy footer buttons section inside of the flyout will be deleted in the future.
@@ -83,6 +82,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
     const { overlayProps } = useOverlay({ onClose, isOpen, isDismissable: true }, ref as RefObject<HTMLDivElement>);
     const { modalProps } = useModal();
     const { dialogProps, titleProps } = useDialog({}, ref as RefObject<HTMLDivElement>);
+
     return (
         <div
             {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
@@ -143,13 +143,12 @@ export const Flyout: FC<FlyoutProps> = ({
     onOpenChange,
     isOpen = false,
     title = "",
-    closeOnScroll = false,
     badges = [],
     hug = true,
     legacyFooter = true,
 }) => {
-    const { close, ...state } = useOverlayTriggerState({ isOpen, onOpenChange });
-    const { toggle } = state;
+    const state = useOverlayTriggerState({ isOpen, onOpenChange });
+    const { toggle, close } = state;
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -166,10 +165,7 @@ export const Flyout: FC<FlyoutProps> = ({
 
     const { triggerProps, overlayProps: overlayTriggerProps } = useOverlayTrigger(
         { type: "dialog" },
-        {
-            ...state,
-            close: closeOnScroll ? close : () => {},
-        },
+        state,
         triggerRef,
     );
 
