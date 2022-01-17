@@ -6,12 +6,12 @@ import IconColors from "@foundation/Icon/Generated/IconColors";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
-import { getBackgroundColor } from "@utilities/colors";
 import { merge } from "@utilities/merge";
 import React, { FC } from "react";
 import { ColorFormat } from "../../types/colors";
 import { ColorInputTitle } from "./ColorInputTitle";
 import { ColorPickerFlyoutProps } from "./ColorPickerFlyout";
+import { toHexString } from "@utilities/colors";
 
 type ColorInputTriggerProps = Pick<ColorPickerFlyoutProps, "id" | "currentColor" | "disabled"> & {
     isOpen?: boolean;
@@ -49,7 +49,7 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
                                     "tw-h-4 tw-w-4 tw-rounded tw-flex tw-items-center tw-justify-center",
                                     disabled && "tw-opacity-50",
                                 ])}
-                                style={{ background: getBackgroundColor(currentColor) }}
+                                style={{ background: toHexString(currentColor) }}
                             />
                         ) : (
                             <span className="tw-text-black-70">

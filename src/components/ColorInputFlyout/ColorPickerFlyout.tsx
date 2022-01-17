@@ -47,7 +47,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
                 currentFormat={currentFormat}
                 setFormat={setCurrentFormat}
                 palettes={palettes}
-                currentColor={currentColor || { hex: "#ffffff" }}
+                currentColor={currentColor || { r: 255, g: 255, b: 255 }}
                 onSelect={onSelect}
             />
         </Flyout>

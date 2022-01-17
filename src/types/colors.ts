@@ -8,15 +8,10 @@ export type ColorState = {
 };
 
 export type Color = {
-    rgba?: { r: number; g: number; b: number; a: number };
-    hex: string;
-    alpha?: number;
-    name?: string;
-};
-
-export type DiffColor = {
-    hex?: string;
-    rgba?: { r?: number | string; g?: number | string; b?: number | string; a?: number };
+    r: number;
+    g: number;
+    b: number;
+    a?: number;
     name?: string;
 };
 

@@ -3,53 +3,77 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
 import { toState } from "react-color/lib/helpers/color";
-import { Color, ColorFormat, ColorState, DiffColor, Palette } from "../types/colors";
 
-export const getValidRgbColorValue = (input: string): number => {
-    const value = parseInt(input || "0", 10);
+import { Color, ColorState, Palette } from "../types/colors";
 
-    if (value > 255) {
-        return 255;
-    }
-
-    return value < 0 ? 0 : value;
-};
-
-export const transformColor = (color: Color): ColorState => toState({ ...toState(color).rgb, a: color.alpha });
-
-export const toColor = (current: Color, { name, ...diff }: DiffColor): Color => {
-    const a = diff.rgba?.a || current.rgba?.a || current.alpha || 0;
-    const alpha = a > 1 ? 1 : a;
-    const rgb = { ...current.rgba, ...toState({ hex: diff.hex || current.hex }).rgb, ...diff.rgba };
-    const [r, g, b] = [rgb.r, rgb.g, rgb.b].map(getValidRgbColorValue);
-    const rgba = { r, g, b, a: alpha };
-    const hex = toState(rgba).hex;
-
-    return { name, rgba, alpha, hex };
-};
-
-export const getBackgroundColor = (color: Color): string => {
-    const { rgba, hex } = color;
-    if (rgba) {
-        return `rgba(${Object.values(rgba).join(", ")})`;
-    }
-    return hex;
-};
-
-export const getAlphaPercent = (alpha: number): string => `${Math.round(alpha * 100)}%`;
-
-export const getColorDisplayValue = (color: Color, format: ColorFormat, showAlpha = true): string => {
-    const { hex, rgba, alpha } = color;
-
-    switch (format) {
-        case ColorFormat.Rgba:
-            return rgba ? `rgba(${Object.values(rgba).join(", ")})` : hex;
-        case ColorFormat.Hex:
-            return showAlpha && alpha && alpha < 1 ? `${hex} ${getAlphaPercent(alpha)}` : hex;
-        default:
-            return hex;
+export const toRgbString = (color: Color): string => {
+    if (color.a) {
+        return `rgba(${color.r}, ${color.g}, ${color.g}, ${color.a})`;
+    } else {
+        return `rgb(${color.r}, ${color.g}, ${color.g})`;
     }
 };
+
+export const toHexString = (color: Color): string => {
+    debugger;
+    if (color.a) {
+        return `#${color.r.toString(16)}${color.g.toString(16)}${color.b.toString(16)}${((color.a * 255) >> 0).toString(
+            16,
+        )}`;
+    } else {
+        return `#${color.r.toString(16)}${color.g.toString(16)}${color.b.toString(16)}`;
+    }
+};
+
+export const parseColor = (input: string): Color => {
+    if (/^#([0-9a-fA-F]{3,4}){1,2}$/.test(input)) {
+        if (input.length === 4) {
+            return {
+                r: parseInt(input.slice(1, 2) + input.slice(1, 2), 16),
+                g: parseInt(input.slice(2, 3) + input.slice(2, 3), 16),
+                b: parseInt(input.slice(3, 4) + input.slice(3, 4), 16),
+            };
+        }
+        if (input.length === 5) {
+            return {
+                r: parseInt(input.slice(1, 2) + input.slice(1, 2), 16),
+                g: parseInt(input.slice(2, 3) + input.slice(2, 3), 16),
+                b: parseInt(input.slice(3, 4) + input.slice(3, 4), 16),
+                a: parseInt(input.slice(4, 5) + input.slice(4, 5), 16) / 256,
+            };
+        }
+
+        if (input.length === 7) {
+            return {
+                r: parseInt(input.slice(1, 3), 16),
+                g: parseInt(input.slice(3, 5), 16),
+                b: parseInt(input.slice(5, 7), 16),
+            };
+        }
+        if (input.length === 9) {
+            return {
+                r: parseInt(input.slice(1, 3), 16),
+                g: parseInt(input.slice(3, 5), 16),
+                b: parseInt(input.slice(5, 7), 16),
+                a: parseInt(input.slice(7, 9), 16) / 255,
+            };
+        }
+    }
+
+    const rgb = input.match(/rgb\((\d+), *(\d+), *(\d+)\)/);
+    if (rgb?.length === 4) {
+        return { r: parseInt(rgb[1]), g: parseInt(rgb[2]), b: parseInt(rgb[3]) };
+    }
+
+    const rgba = input.match(/rgba\((\d+), *(\d+), *(\d+), *(\d?.\d+)\)/);
+    if (rgba?.length === 5) {
+        return { r: parseInt(rgba[1]), g: parseInt(rgba[2]), b: parseInt(rgba[3]), a: parseFloat(rgba[4]) };
+    }
+
+    return { r: 0, g: 0, b: 0 };
+};
+
+export const transformColor = (color: Color): ColorState => toState({ ...toState(color).rgb, a: color.a });
 
 export const EXAMPLE_PALETTES: Palette[] = [
     {
@@ -95,6 +119,8 @@ export const EXAMPLE_PALETTES: Palette[] = [
                 break;
         }
 
-        return { hex, name, alpha: 1 };
+        const color = parseColor(hex);
+        color.name = name;
+        return color;
     }),
 }));

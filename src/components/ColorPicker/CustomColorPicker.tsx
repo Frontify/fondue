@@ -4,17 +4,17 @@
 
 import { Dropdown } from "@components/Dropdown/Dropdown";
 import { TextInputType } from "@components/TextInput/TextInput";
-import { toColor, transformColor } from "@utilities/colors";
 import { debounce } from "@utilities/debounce";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useState } from "react";
 // @ts-ignore
 import { Alpha, Hue, Saturation } from "react-color/lib/components/common";
 // @ts-ignore
-import { isValidHex, toState } from "react-color/lib/helpers/color";
+import { isValidHex } from "react-color/lib/helpers/color";
 import { ColorFormat } from "../../types/colors";
 import { ColorInput } from "./ColorInput";
 import { ColorPickerProps } from "./ColorPicker";
+import { transformColor } from "@utilities/colors";
 
 const ColorPointer: FC<{ offset?: boolean }> = ({ offset = true }) => (
     <div
@@ -52,7 +52,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                         hsl={hsl}
                         hsv={hsv}
                         pointer={() => <ColorPointer />}
-                        onChange={debounce((color) => onSelect(toColor(currentColor, { hex: toState(color).hex })))}
+                        onChange={debounce((color) => onSelect(color))}
                     />
                 </div>
                 <div className="tw-relative tw-w-6 tw-overflow-hidden tw-rounded">
@@ -64,7 +64,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                         )}
                         hsl={hsl}
                         direction="vertical"
-                        onChange={debounce((color) => onSelect(toColor(currentColor, { hex: toState(color).hex })))}
+                        onChange={debounce((color) => onSelect(color))}
                     />
                 </div>
                 <div className="tw-relative tw-w-6 tw-overflow-hidden tw-rounded">
@@ -79,7 +79,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                             </div>
                         )}
                         style={{ pointer: { top: `${rgb.a * 100}%` } }}
-                        onChange={debounce(({ a }) => onSelect(toColor(currentColor, { rgba: { a } })))}
+                        onChange={debounce(({ a }) => onSelect(currentColor))}
                     />
                 </div>
             </div>
@@ -102,7 +102,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                             }}
                             onBlur={() => {
                                 if (isValidHex(hexInput)) {
-                                    onSelect(toColor(currentColor, { hex: hexInput }));
+                                    onSelect(currentColor);
                                 }
                             }}
                         />
@@ -116,7 +116,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                             type={TextInputType.Number}
                             value={rgb.r.toString()}
                             decorator="R"
-                            onChange={(r) => onSelect(toColor(currentColor, { rgba: { r } }))}
+                            onChange={(r) => onSelect(currentColor)}
                         />
                         <ColorInput
                             min={0}
@@ -125,7 +125,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                             type={TextInputType.Number}
                             value={rgb.g.toString()}
                             decorator="G"
-                            onChange={(g) => onSelect(toColor(currentColor, { rgba: { g } }))}
+                            onChange={(g) => onSelect(currentColor)}
                         />
                         <ColorInput
                             min={0}
@@ -134,7 +134,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                             type={TextInputType.Number}
                             value={rgb.b.toString()}
                             decorator="B"
-                            onChange={(b) => onSelect(toColor(currentColor, { rgba: { b } }))}
+                            onChange={(b) => onSelect(currentColor)}
                         />
                     </>
                 )}
@@ -147,7 +147,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                     decorator="%"
                     onChange={(value) => {
                         const a = parseInt(value || "0", 10) / 100;
-                        onSelect(toColor(currentColor, { rgba: { a } }));
+                        onSelect(currentColor);
                     }}
                 />
             </div>

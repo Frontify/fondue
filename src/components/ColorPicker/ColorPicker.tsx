@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Slider } from "@components/Slider/Slider";
-import { getBackgroundColor, getColorDisplayValue } from "@utilities/colors";
 import React, { FC, useEffect, useMemo, useState } from "react";
 // @ts-ignore
 import { getContrastingColor } from "react-color/lib/helpers/color";
 import { Color, ColorFormat, Palette } from "../../types/colors";
 import { BrandColorPicker } from "./BrandColorPicker";
 import { CustomColorPicker } from "./CustomColorPicker";
+import { toHexString } from "@utilities/colors";
 
 export type ColorPickerProps = {
     palettes?: Palette[];
@@ -38,12 +38,12 @@ export const ColorPicker: FC<ColorPickerProps> = ({
     const [color, setColor] = useState(currentColor);
 
     useEffect(() => {
-        setColor({ ...currentColor, alpha: currentColor.alpha || 1 });
+        setColor(currentColor);
     }, [currentColor]);
 
     return (
         <div className="tw-w-[400px] tw-relative">
-            <ColorPreview color={color} format={currentFormat} />
+            <ColorPreview color={color} />
             <div className="tw-p-6 tw-flex tw-flex-col tw-gap-5">
                 {palettes && (
                     <Slider
@@ -67,13 +67,12 @@ export const ColorPicker: FC<ColorPickerProps> = ({
     );
 };
 
-const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format }) => {
-    const { hex, rgba, name, alpha } = color;
-    const backgroundColor = getBackgroundColor(color);
-    const displayValue = getColorDisplayValue(color, format);
+const ColorPreview: FC<{ color: Color }> = ({ color }) => {
+    const backgroundColor = toHexString(color);
+    const displayValue = toHexString(color);
     const labelColor = useMemo(() => {
-        return alpha && alpha < 0.3 ? null : getContrastingColor(hex);
-    }, [hex, rgba, alpha]);
+        return color.a && color.a < 0.3 ? null : getContrastingColor(color);
+    }, [color]);
 
     return (
         <div className="tw-sticky tw-top-0 tw-bg-white tw-z-20 dark:tw-bg-black-95">
@@ -82,8 +81,8 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
                 style={{ background: backgroundColor, color: labelColor }}
                 data-test-id="color-preview"
             >
-                {name && <span className="tw-font-bold">{name}</span>}
-                <span className={name ? "" : "tw-font-bold"}>{displayValue}</span>
+                {color.name && <span className="tw-font-bold">{color.name}</span>}
+                <span className={color.name ? "" : "tw-font-bold"}>{displayValue}</span>
             </div>
         </div>
     );

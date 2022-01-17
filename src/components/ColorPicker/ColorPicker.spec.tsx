@@ -4,7 +4,7 @@ import { DROPDOWN_TRIGGER_ID } from "@components/Dropdown/Dropdown.spec";
 import { MENU_ITEM_ID } from "@components/MenuItem/MenuItem.spec";
 import { ICON_ITEM_ID, TEXT_ITEM_ID } from "@components/Slider/Slider.spec";
 import { mount } from "@cypress/react";
-import { EXAMPLE_PALETTES } from "@utilities/colors";
+import { EXAMPLE_PALETTES, parseColor } from "@utilities/colors";
 import React, { FC, useState } from "react";
 import { Color, ColorFormat, Palette } from "../../types/colors";
 import { ColorPicker } from "./ColorPicker";
@@ -21,7 +21,7 @@ type Props = {
     currentColor?: Color;
 };
 
-const Component: FC<Props> = ({ palettes, currentColor = { hex: "#FF0000", alpha: 1 } }) => {
+const Component: FC<Props> = ({ palettes, currentColor = parseColor("#FF0000") }) => {
     const [selectedColor, setSelectedColor] = useState<Color>(currentColor);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
 

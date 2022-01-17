@@ -5,7 +5,7 @@ import IconImageGrid2 from "@foundation/Icon/Generated/IconImageGrid2";
 import IconListBullets from "@foundation/Icon/Generated/IconListBullets";
 import IconSearch from "@foundation/Icon/Generated/IconSearch";
 import { IconSize } from "@foundation/Icon/IconSize";
-import { toColor } from "@utilities/colors";
+import { toHexString } from "@utilities/colors";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useState } from "react";
 import { ColorPickerProps } from "./ColorPicker";
@@ -81,16 +81,16 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                                   ])}
                               >
                                   {colors.map((color) => (
-                                      <li key={color.hex} data-test-id="brand-color">
+                                      <li key={toHexString(color)} data-test-id="brand-color">
                                           <button
                                               className="tw-flex tw-overflow-hidden tw-w-full"
-                                              onClick={() => onSelect(toColor(color, color))}
+                                              onClick={() => onSelect(color)}
                                           >
                                               <span
                                                   className="tw-h-8 tw-w-8 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center tw-text-white"
-                                                  style={{ background: color.hex }}
+                                                  style={{ background: toHexString(color) }}
                                               >
-                                                  {color.hex === currentColor.hex && (
+                                                  {toHexString(color) === toHexString(currentColor) && (
                                                       <IconCheck size={IconSize.Size20} />
                                                   )}
                                               </span>
