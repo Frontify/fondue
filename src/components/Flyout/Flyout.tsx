@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { FieldsetHeader } from "@components/FieldsetHeader/FieldsetHeader";
