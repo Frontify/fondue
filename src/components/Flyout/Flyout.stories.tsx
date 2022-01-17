@@ -28,6 +28,7 @@ export default {
                 <IconActions />
             </span>
         ),
+        closeOnScroll: false,
     },
 } as Meta<FlyoutProps>;
 
@@ -37,7 +38,7 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
     const [open, setOpen] = useState(false);
 
     return (
-        <div className="dark:tw-text-white">
+        <div className="dark:tw-text-white tw-h-[1500px] tw-mt-[300px]">
             <div className="tw-flex tw-items-center">
                 Some text
                 <Flyout {...args} isOpen={open} onOpenChange={(isOpen) => setOpen(isOpen)}>

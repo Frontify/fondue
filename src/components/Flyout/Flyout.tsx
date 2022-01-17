@@ -17,6 +17,7 @@ import {
     useOverlayPosition,
     useOverlayTrigger,
 } from "@react-aria/overlays";
+import { useOverlayScrollContain } from "./useOverlayScrollContain";
 import { mergeProps } from "@react-aria/utils";
 import { useOverlayTriggerState } from "@react-stately/overlays";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
@@ -47,6 +48,7 @@ export type FlyoutProps = PropsWithChildren<{
     badges?: BadgeProps[];
     hug?: boolean;
     isOpen?: boolean;
+    closeOnScroll?: boolean;
     onOpenChange: (isOpen: boolean) => void;
     /**
      * The legacy footer buttons section inside of the flyout will be deleted in the future.
@@ -72,6 +74,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         isOpen,
         positionProps,
         overlayTriggerProps,
+        overlayScrollContainProps,
         scrollRef,
         legacyFooter,
     },
@@ -83,7 +86,14 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
 
     return (
         <div
-            {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
+            {...mergeProps(
+                overlayProps,
+                dialogProps,
+                modalProps,
+                positionProps,
+                overlayTriggerProps,
+                overlayScrollContainProps,
+            )}
             ref={ref}
             className="tw-max-h-full tw-overflow-y-auto tw-shadow-mid tw-min-w-[400px] tw-outline-none"
         >
@@ -141,21 +151,18 @@ export const Flyout: FC<FlyoutProps> = ({
     onOpenChange,
     isOpen = false,
     title = "",
+    closeOnScroll = true,
     badges = [],
     hug = true,
     legacyFooter = true,
 }) => {
-    const state = useOverlayTriggerState({ isOpen, onOpenChange });
-    const { toggle, close } = state;
+    const { close, ...state } = useOverlayTriggerState({ isOpen, onOpenChange });
+    const { toggle } = state;
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
-    const { triggerProps, overlayProps: overlayTriggerProps } = useOverlayTrigger(
-        { type: "dialog" },
-        state,
-        triggerRef,
-    );
+
     const { overlayProps: positionProps } = useOverlayPosition({
         targetRef: triggerRef,
         overlayRef,
@@ -164,12 +171,28 @@ export const Flyout: FC<FlyoutProps> = ({
         scrollRef: scrollRef,
         isOpen,
     });
+
+    const { triggerProps, overlayProps: overlayTriggerProps } = useOverlayTrigger(
+        { type: "dialog" },
+        {
+            ...state,
+            close: closeOnScroll
+                ? close
+                : () => {
+                      return;
+                  },
+        },
+        triggerRef,
+    );
+
     const { buttonProps } = useButton({ onPress: () => toggle() }, triggerRef);
     useEffect(() => {
         const revert = watchModals();
 
         return () => revert();
     }, []);
+
+    const { overlayProps: overlayScrollContainProps } = useOverlayScrollContain(overlayRef);
 
     return (
         <OverlayProvider className="tw-flex tw-h-full tw-items-center">
@@ -195,6 +218,7 @@ export const Flyout: FC<FlyoutProps> = ({
                             isOpen={isOpen}
                             overlayTriggerProps={overlayTriggerProps}
                             positionProps={positionProps}
+                            overlayScrollContainProps={overlayScrollContainProps}
                             onClick={
                                 onClick
                                     ? () => {
