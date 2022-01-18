@@ -3,10 +3,10 @@
 import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
 import IconReject from "@foundation/Icon/Generated/IconReject";
 import { IconSize } from "@foundation/Icon/IconSize";
-import { useFocus } from "@react-aria/interactions";
+import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, HTMLAttributes, useState } from "react";
+import React, { FC, HTMLAttributes } from "react";
 
 export enum TriggerSize {
     Small = "Small",
@@ -33,12 +33,9 @@ export const Trigger: FC<TriggerProps> = ({
     isFocusVisible = false,
     size = TriggerSize.Small,
 }) => {
-    const [isFocused, setFocused] = useState(false);
-    const { focusProps: clearableFocusProps } = useFocus({
-        onFocusChange: setFocused,
-    });
+    const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
 
-    const showClear = clearable && onClear;
+    const showClear = clearable && !!onClear;
 
     return (
         <div
@@ -68,13 +65,10 @@ export const Trigger: FC<TriggerProps> = ({
                         aria-label="Clear selection"
                         className={merge([
                             "tw-p-0 tw-outline-none",
-                            isFocused && FOCUS_STYLE,
+                            isClearFocusVisible && FOCUS_STYLE,
                             disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
                         ])}
-                        onClick={() => {
-                            setFocused(false);
-                            onClear();
-                        }}
+                        onClick={() => onClear()}
                     >
                         <IconReject size={IconSize.Size12} />
                     </button>
