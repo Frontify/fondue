@@ -151,10 +151,10 @@ export const Dropdown: FC<DropdownProps> = ({
                     ref={triggerRef}
                     data-test-id="dropdown-trigger"
                     className={merge([
-                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none",
+                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-pr-2",
                         size === DropdownSize.Small
-                            ? "tw-py-2 tw-px-3 tw-min-h-[34px] tw-pr-8"
-                            : "tw-pl-5 tw-py-4 tw-min-h-[60px] tw-pr-10",
+                            ? "tw-py-2 tw-pl-3 tw-min-h-[34px]"
+                            : "tw-pl-5 tw-py-4 tw-min-h-[60px]",
                         !activeItem && "tw-text-black-60",
                         disabled && "tw-text-black-40",
                     ])}

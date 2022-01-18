@@ -38,6 +38,17 @@ export const Trigger: FC<TriggerProps> = ({
         onFocusChange: setFocused,
     });
 
+    const showClear = clearable && onClear;
+
+    let paddingClass = "tw-pr-3";
+    if (size === TriggerSize.Large) {
+        if (showClear) {
+            paddingClass = "tr-pr-8";
+        } else {
+            paddingClass = "tw-pr-5";
+        }
+    }
+
     return (
         <div
             data-test-id="trigger"
@@ -53,40 +64,45 @@ export const Trigger: FC<TriggerProps> = ({
             ])}
         >
             {children}
-            {clearable && onClear && (
-                <button
-                    {...clearableFocusProps}
-                    data-test-id="dropdown-clear-button"
-                    aria-label="Clear selection"
-                    className={merge([
-                        "tw-p-0 tw-outline-none",
-                        isFocused && FOCUS_STYLE,
-                        disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
-                    ])}
-                    onClick={() => {
-                        setFocused(false);
-                        onClear();
-                    }}
-                >
-                    <IconReject size={IconSize.Size12} />
-                </button>
-            )}
-            <button
-                {...buttonProps}
-                aria-hidden="true"
-                tabIndex={-1}
+            <div
                 className={merge([
-                    "tw-p-0 tw-absolute",
-                    size === TriggerSize.Large ? "tw-right-5" : "tw-right-3",
-                    disabled
-                        ? "tw-pointer-events-none tw-text-black-40"
-                        : merge(["group-hover:tw-text-black", isOpen ? "tw-text-black-100" : "tw-text-black-80"]),
+                    "tw-flex-none tw-flex tw-items-center tw-gap-1",
+                    size === TriggerSize.Large ? "tw-pr-5" : "tw-pr-3",
                 ])}
             >
-                <div className={merge(["tw-transition-transform", isOpen && "tw-rotate-180"])}>
-                    <IconCaretDown size={IconSize.Size16} />
-                </div>
-            </button>
+                {showClear && (
+                    <button
+                        {...clearableFocusProps}
+                        data-test-id="dropdown-clear-button"
+                        aria-label="Clear selection"
+                        className={merge([
+                            "tw-p-0 tw-outline-none",
+                            isFocused && FOCUS_STYLE,
+                            disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
+                        ])}
+                        onClick={() => {
+                            setFocused(false);
+                            onClear();
+                        }}
+                    >
+                        <IconReject size={IconSize.Size12} />
+                    </button>
+                )}
+                <button
+                    {...buttonProps}
+                    aria-hidden="true"
+                    tabIndex={-1}
+                    className={merge([
+                        disabled
+                            ? "tw-pointer-events-none tw-text-black-40"
+                            : merge(["group-hover:tw-text-black", isOpen ? "tw-text-black-100" : "tw-text-black-80"]),
+                    ])}
+                >
+                    <div className={merge(["tw-transition-transform", isOpen && "tw-rotate-180"])}>
+                        <IconCaretDown size={IconSize.Size16} />
+                    </div>
+                </button>
+            </div>
         </div>
     );
 };
