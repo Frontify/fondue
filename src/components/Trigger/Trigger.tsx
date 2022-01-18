@@ -8,6 +8,11 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, HTMLAttributes, useState } from "react";
 
+export enum TriggerSize {
+    Small = "Small",
+    Large = "Large",
+}
+
 export type TriggerProps = {
     disabled?: boolean;
     isOpen?: boolean;
@@ -15,6 +20,7 @@ export type TriggerProps = {
     onClear?: () => void;
     buttonProps?: HTMLAttributes<HTMLElement>;
     isFocusVisible?: boolean;
+    size?: TriggerSize;
 };
 
 export const Trigger: FC<TriggerProps> = ({
@@ -25,6 +31,7 @@ export const Trigger: FC<TriggerProps> = ({
     clearable = false,
     isOpen = false,
     isFocusVisible = false,
+    size = TriggerSize.Small,
 }) => {
     const [isFocused, setFocused] = useState(false);
     const { focusProps: clearableFocusProps } = useFocus({
@@ -69,7 +76,8 @@ export const Trigger: FC<TriggerProps> = ({
                 aria-hidden="true"
                 tabIndex={-1}
                 className={merge([
-                    "tw-p-0 tw-absolute tw-right-3",
+                    "tw-p-0 tw-absolute",
+                    size === TriggerSize.Large ? "tw-right-5" : "tw-right-3",
                     disabled
                         ? "tw-pointer-events-none tw-text-black-40"
                         : merge(["group-hover:tw-text-black", isOpen ? "tw-text-black-100" : "tw-text-black-80"]),

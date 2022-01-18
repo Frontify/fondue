@@ -3,7 +3,7 @@
 import { getDisabledItemIds, getMenuItems, mapToAriaProps } from "@components/Menu/Aria/helper";
 import { MenuBlock, MenuItemType, SelectMenu } from "@components/Menu/SelectMenu";
 import { MenuItemContent, MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
-import { Trigger } from "@components/Trigger/Trigger";
+import { Trigger, TriggerSize } from "@components/Trigger/Trigger";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
@@ -131,6 +131,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 isFocusVisible={!disabled && isFocusVisible}
                 isOpen={isOpen}
                 clearable={!!activeItem}
+                size={size === DropdownSize.Large ? TriggerSize.Large : TriggerSize.Small}
                 onClear={
                     clearable
                         ? () => {
@@ -150,8 +151,10 @@ export const Dropdown: FC<DropdownProps> = ({
                     ref={triggerRef}
                     data-test-id="dropdown-trigger"
                     className={merge([
-                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-pr-8",
-                        size === DropdownSize.Small ? "tw-py-2 tw-px-3 tw-min-h-[34px]" : "tw-p-5 tw-min-h-[60px]",
+                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none",
+                        size === DropdownSize.Small
+                            ? "tw-py-2 tw-px-3 tw-min-h-[34px] tw-pr-8"
+                            : "tw-pl-5 tw-py-4 tw-min-h-[60px] tw-pr-10",
                         !activeItem && "tw-text-black-60",
                         disabled && "tw-text-black-40",
                     ])}
