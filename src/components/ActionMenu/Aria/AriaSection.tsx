@@ -2,8 +2,6 @@ import { useMenuSection } from "@react-aria/menu";
 import React, { FC } from "react";
 
 export type AriaSectionProps = {
-    // sectionProps: HTMLAttributes<HTMLElement>;
-    // groupProps: HTMLAttributes<HTMLElement>;
     ariaLabel?: string;
 };
 

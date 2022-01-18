@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from "@components/Checkbox/Checkbox";
-import { MenuItemType, MenuBlock } from "@components/Menu/SelectMenu";
+import { MenuItemType, MenuBlock } from "@components/SelectMenu/SelectMenu";
 import { AriaListBoxOptions } from "@react-aria/listbox";
 import { ListState } from "@react-stately/list";
 import {

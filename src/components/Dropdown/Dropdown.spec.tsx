@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MenuBlock } from "@components/Menu/SelectMenu";
+import { MenuBlock } from "@components/SelectMenu/SelectMenu";
 import { mount } from "@cypress/react";
 import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_ID, MENU_ITEM_TITLE_ID } from "@components/MenuItem/MenuItem.spec";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";

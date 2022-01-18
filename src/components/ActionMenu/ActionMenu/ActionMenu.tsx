@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AriaList } from "@components/Menu/Aria/AriaList";
-import { AriaMenuItem } from "@components/Menu/Aria/AriaMenuItem";
-import { AriaSection } from "@components/Menu/Aria/AriaSection";
-import { getDisabledItemIds, getKeyItemRecord, getMenuItems, mapToAriaProps } from "@components/Menu/Aria/helper";
-import { MenuItemType } from "@components/Menu/SelectMenu";
+import { AriaList } from "@components/ActionMenu/Aria/AriaList";
+import { AriaMenuItem } from "@components/ActionMenu/Aria/AriaMenuItem";
+import { AriaSection } from "@components/ActionMenu/Aria/AriaSection";
+import { getDisabledItemIds, getKeyItemRecord, getMenuItems, mapToAriaProps } from "@components/ActionMenu/Aria/helper";
+import { MenuItemType } from "@components/SelectMenu/SelectMenu";
 import { useMenu } from "@react-aria/menu";
 import { useTreeState } from "@react-stately/tree";
 import { FocusStrategy } from "@react-types/shared";
@@ -51,11 +51,9 @@ export const ActionMenu = ({
 
                 return (
                     <AriaSection key={sectionKey} ariaLabel={sectionAriaLabel}>
-                        {[...section.childNodes].map((item) => {
-                            const menuItem = keyItemRecord[item.key];
-
-                            return <AriaMenuItem key={item.key} menuItem={menuItem} state={state} node={item} />;
-                        })}
+                        {[...section.childNodes].map((item) => (
+                            <AriaMenuItem key={item.key} menuItem={keyItemRecord[item.key]} state={state} node={item} />
+                        ))}
                     </AriaSection>
                 );
             })}
