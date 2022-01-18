@@ -1,5 +1,3 @@
-/* (c) Copyright Frontify Ltd., all rights reserved. */
-
 import { getColorDisplayValue } from "@utilities/colors";
 import React, { FC } from "react";
 import tinycolor from "tinycolor2";
