@@ -36,7 +36,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({
 }) => {
     const [colorType, setColorType] = useState(ColorType.Brand);
     const [color, setColor] = useState(currentColor);
-    const scrollableRef = useRef(null);
+    const scrollableRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         setColor({ ...currentColor, alpha: currentColor.alpha || 1 });
@@ -79,15 +79,13 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
     }, [hex, rgba, alpha]);
 
     return (
-        <div className="tw-flex-none tw-bg-white tw-z-20 dark:tw-bg-black-95">
-            <div
-                className="tw-flex tw-justify-center tw-p-7 tw-text-m tw-text-black dark:tw-text-white tw-gap-2"
-                style={{ background: backgroundColor, color: labelColor }}
-                data-test-id="color-preview"
-            >
-                {name && <span className="tw-font-bold">{name}</span>}
-                <span className={name ? "" : "tw-font-bold"}>{displayValue}</span>
-            </div>
+        <div
+            className="tw-flex tw-flex-none tw-justify-center tw-p-7 tw-text-m tw-text-black dark:tw-text-white tw-gap-2"
+            style={{ background: backgroundColor, color: labelColor }}
+            data-test-id="color-preview"
+        >
+            {name && <span className="tw-font-bold">{name}</span>}
+            <span className={name ? "" : "tw-font-bold"}>{displayValue}</span>
         </div>
     );
 };
