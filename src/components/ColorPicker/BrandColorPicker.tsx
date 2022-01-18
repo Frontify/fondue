@@ -50,7 +50,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
     const palettesWithColors = palettes.filter((palette) => !!palette.colors.length);
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-5 tw-self-stretch" data-test-id="brand-color-picker">
+        <div className="tw-flex tw-flex-col tw-gap-5" data-test-id="brand-color-picker">
             <div className="tw-flex tw-gap-3">
                 <div className="tw-flex-1">
                     <TextInput
