@@ -34,6 +34,7 @@ import React, {
     useEffect,
     useRef,
 } from "react";
+import { useContainScroll } from "./useContainScroll";
 
 export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
 export const FLYOUT_DIVIDER_HEIGHT = "10px";
@@ -151,11 +152,13 @@ export const Flyout: FC<FlyoutProps> = ({
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
+
     const { triggerProps, overlayProps: overlayTriggerProps } = useOverlayTrigger(
         { type: "dialog" },
         state,
         triggerRef,
     );
+
     const { overlayProps: positionProps } = useOverlayPosition({
         targetRef: triggerRef,
         overlayRef,
@@ -164,12 +167,15 @@ export const Flyout: FC<FlyoutProps> = ({
         scrollRef: scrollRef,
         isOpen,
     });
+
     const { buttonProps } = useButton({ onPress: () => toggle() }, triggerRef);
     useEffect(() => {
         const revert = watchModals();
 
         return () => revert();
     }, []);
+
+    useContainScroll(overlayRef, { isDisabled: !isOpen });
 
     return (
         <OverlayProvider className="tw-flex tw-h-full tw-items-center">
