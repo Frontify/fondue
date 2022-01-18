@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useContainScroll } from "@components/Flyout/useContainScroll";
 import { Slider } from "@components/Slider/Slider";
 import { getBackgroundColor, getColorDisplayValue } from "@utilities/colors";
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";

@@ -22,7 +22,6 @@ import { useOverlayTriggerState } from "@react-stately/overlays";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, {
-    Children,
     FC,
     forwardRef,
     ForwardRefRenderFunction,
@@ -98,7 +97,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                 className="tw-flex tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95"
             >
                 {title && (
-                    <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8">
+                    <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8 tw-flex-none">
                         <div {...titleProps} className="tw-inline-flex">
                             <FieldsetHeader decorator={decorator}>{title}</FieldsetHeader>
                         </div>
