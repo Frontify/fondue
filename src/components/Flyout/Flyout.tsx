@@ -89,8 +89,8 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
             {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
             ref={ref}
             className={merge([
-                "tw-max-h-full tw-shadow-mid tw-min-w-[400px] tw-outline-none tw-flex",
-                scrollable && "tw-scrollable-y",
+                "tw-shadow-mid tw-min-w-[400px] tw-outline-none tw-flex",
+                scrollable && "tw-overflow-y-auto",
             ])}
         >
             <div
@@ -110,7 +110,9 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                     </div>
                 )}
                 {Children.map(children, (child, index) => (
-                    <div className={!scrollable ? "tw-flex-auto tw-min-h-0 tw-flex tw-flex-col" : ""} key={index}>
+                    // if the dialog itself is not scrollable, scrolling should be managed inside the child.
+                    // This means the child container div needs to not overflow and so requires these classes
+                    <div className={merge([!scrollable && "tw-flex-auto tw-min-h-0 tw-flex"])} key={index}>
                         {child}
                     </div>
                 ))}

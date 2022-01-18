@@ -45,11 +45,8 @@ export const ColorPicker: FC<ColorPickerProps> = ({
     return (
         <div className="tw-w-[400px] tw-relative tw-flex-auto tw-min-h-0 tw-flex tw-flex-col">
             <ColorPreview color={color} format={currentFormat} />
-            <div
-                className="tw-p-6 tw-flex tw-flex-col tw-gap-5 tw-flex-auto tw-min-h-0 tw-overflow-y-auto"
-                ref={scrollableRef}
-            >
-                <div className="tw-flex-none">
+            <div className="tw-p-6 tw-gap-5 tw-flex tw-flex-col tw-overflow-y-auto" ref={scrollableRef}>
+                <div>
                     {palettes && (
                         <Slider
                             items={colorTypes}

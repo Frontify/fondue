@@ -5,10 +5,12 @@ export const useContainScroll = (overlayRef: MutableRefObject<HTMLDivElement | n
         const overlay = overlayRef.current;
 
         const closestScrollableAncestor = (element: HTMLElement | null): HTMLElement | null => {
+            const SCROLL_TYPES = ["auto", "scroll"];
             if (!element || element === overlay) {
                 return null;
             }
-            if (element.scrollHeight > element.clientHeight) {
+            const hasVisibleScroll = SCROLL_TYPES.includes(window.getComputedStyle(element).overflowY);
+            if (element.scrollHeight > element.clientHeight && hasVisibleScroll) {
                 return element;
             } else {
                 return closestScrollableAncestor(element.parentElement);
@@ -24,7 +26,6 @@ export const useContainScroll = (overlayRef: MutableRefObject<HTMLDivElement | n
                 const deltaY = event.deltaY;
                 const up = deltaY < 0;
                 const scrollableAncestor = closestScrollableAncestor(event.target as HTMLElement) ?? overlay;
-                console.log(scrollableAncestor);
                 const { scrollTop, scrollHeight, clientHeight } = scrollableAncestor;
 
                 if (!up && deltaY > scrollHeight - clientHeight - scrollTop) {

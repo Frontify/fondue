@@ -21,15 +21,13 @@ export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor }
     const [selectedColor, setSelectedColor] = useState<Color | null>(null);
 
     return (
-        <div className="tw-min-h-[1000px] tw-pt-[300px]">
-            <ColorPickerFlyoutComponent
-                disabled={disabled}
-                currentColor={temporaryColor}
-                onClick={() => setSelectedColor(temporaryColor)}
-                onClose={() => setTemporaryColor(selectedColor)}
-                onSelect={(color) => setTemporaryColor(color)}
-                palettes={EXAMPLE_PALETTES}
-            />
-        </div>
+        <ColorPickerFlyoutComponent
+            disabled={disabled}
+            currentColor={temporaryColor}
+            onClick={() => setSelectedColor(temporaryColor)}
+            onClose={() => setTemporaryColor(selectedColor)}
+            onSelect={(color) => setTemporaryColor(color)}
+            palettes={EXAMPLE_PALETTES}
+        />
     );
 };
