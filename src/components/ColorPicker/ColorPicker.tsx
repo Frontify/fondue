@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Slider } from "@components/Slider/Slider";
 import { getBackgroundColor, getColorDisplayValue } from "@utilities/colors";
-import React, { FC, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 // @ts-ignore
 import { getContrastingColor } from "react-color/lib/helpers/color";
 import { Color, ColorFormat, Palette } from "../../types/colors";
@@ -36,7 +36,6 @@ export const ColorPicker: FC<ColorPickerProps> = ({
 }) => {
     const [colorType, setColorType] = useState(ColorType.Brand);
     const [color, setColor] = useState(currentColor);
-    const scrollableRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         setColor({ ...currentColor, alpha: currentColor.alpha || 1 });
@@ -45,7 +44,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({
     return (
         <div className="tw-w-[400px] tw-relative tw-flex-auto tw-min-h-0 tw-flex tw-flex-col">
             <ColorPreview color={color} format={currentFormat} />
-            <div className="tw-p-6 tw-gap-5 tw-flex tw-flex-col tw-overflow-y-auto" ref={scrollableRef}>
+            <div className="tw-p-6 tw-gap-5 tw-flex tw-flex-col tw-overflow-y-auto">
                 <div>
                     {palettes && (
                         <Slider
