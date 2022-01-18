@@ -11,7 +11,7 @@ export default {
     title: "Components/Color Picker",
     component: ColorPicker,
     args: {
-        currentColor: { hex: "#5566FF", alpha: 1 },
+        currentColor: { r: 85, g: 102, b: 255 },
     },
     argTypes: {
         onSelect: { action: "Select Color" },

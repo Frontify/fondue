@@ -6,9 +6,9 @@ import IconColors from "@foundation/Icon/Generated/IconColors";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
-import { getBackgroundColor } from "@utilities/colors";
 import { merge } from "@utilities/merge";
 import React, { FC } from "react";
+import tinycolor from "tinycolor2";
 import { ColorFormat } from "../../types/colors";
 import { ColorInputTitle } from "./ColorInputTitle";
 import { ColorPickerFlyoutProps } from "./ColorPickerFlyout";
@@ -26,6 +26,7 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
     disabled = false,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing();
+    const backgroundColor = currentColor ? tinycolor(currentColor).toRgbString() : "";
 
     return (
         <Trigger isOpen={isOpen} disabled={disabled} isFocusVisible={isFocusVisible}>
@@ -49,7 +50,7 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
                                     "tw-h-4 tw-w-4 tw-rounded tw-flex tw-items-center tw-justify-center",
                                     disabled && "tw-opacity-50",
                                 ])}
-                                style={{ background: getBackgroundColor(currentColor) }}
+                                style={{ background: backgroundColor }}
                             />
                         ) : (
                             <span className="tw-text-black-70">

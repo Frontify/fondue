@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+
 import { Slider } from "@components/Slider/Slider";
-import { getBackgroundColor, getColorDisplayValue } from "@utilities/colors";
+import { getColorDisplayValue } from "@utilities/colors";
 import React, { FC, useEffect, useMemo, useState } from "react";
-// @ts-ignore
-import { getContrastingColor } from "react-color/lib/helpers/color";
+import tinycolor from "tinycolor2";
 import { Color, ColorFormat, Palette } from "../../types/colors";
 import { BrandColorPicker } from "./BrandColorPicker";
 import { CustomColorPicker } from "./CustomColorPicker";
@@ -40,7 +39,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({
     const [color, setColor] = useState(currentColor);
 
     useEffect(() => {
-        setColor({ ...currentColor, alpha: currentColor.alpha || 1 });
+        setColor({ ...currentColor, a: currentColor.a || 1 });
     }, [currentColor]);
 
     return (
@@ -69,13 +68,13 @@ export const ColorPicker: FC<ColorPickerProps> = ({
     );
 };
 
-export const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format }) => {
-    const { hex, rgba, name, alpha } = color;
-    const backgroundColor = getBackgroundColor(color);
+const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format }) => {
+    const parsedColor = tinycolor(color);
+    const backgroundColor = parsedColor.toRgbString();
     const displayValue = getColorDisplayValue(color, format);
     const labelColor = useMemo(() => {
-        return alpha && alpha < 0.3 ? null : getContrastingColor(hex);
-    }, [hex, rgba, alpha]);
+        return parsedColor.isLight() ? "#000" : "#fff";
+    }, [parsedColor]);
 
     return (
         <div className="tw-sticky tw-top-0 tw-bg-white tw-z-20 dark:tw-bg-black-95">
