@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getDisabledItemIds, getMenuItems, mapToAriaProps } from "@components/ActionMenu/Aria/helper";
+import { MenuBlock, MenuItemType, SelectMenu } from "@components/Dropdown/SelectMenu/SelectMenu";
 import { MenuItemStyle, menuItemTextColorRecord, MenuItemTextColorState } from "@components/MenuItem";
 import { MenuItemContent, MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
-import { MenuBlock, MenuItemType, SelectMenu } from "@components/SelectMenu/SelectMenu";
 import { Trigger, TriggerSize } from "@components/Trigger/Trigger";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useButton } from "@react-aria/button";

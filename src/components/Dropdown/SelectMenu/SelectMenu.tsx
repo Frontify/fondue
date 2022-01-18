@@ -59,7 +59,12 @@ export const SelectMenu = ({
                 return (
                     <SelectMenuSection key={section.key} ariaLabel={section["aria-label"]}>
                         {[...section.childNodes].map((item) => (
-                            <SelectMenuItem key={item.key} state={state} node={item} item={keyItemRecord[item.key]} />
+                            <SelectMenuItem
+                                key={item.key}
+                                state={state}
+                                node={item}
+                                menuItem={keyItemRecord[item.key]}
+                            />
                         ))}
                     </SelectMenuSection>
                 );

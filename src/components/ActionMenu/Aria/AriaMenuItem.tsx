@@ -7,7 +7,7 @@ import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, useRef } from "react";
 import { ActionMenuItemType } from "../ActionMenu/ActionMenu";
-import { MenuItemType } from "../../SelectMenu/SelectMenu";
+import { MenuItemType } from "../../Dropdown/SelectMenu/SelectMenu";
 import { Node } from "@react-types/shared";
 
 export type AriaOptionProps = {
