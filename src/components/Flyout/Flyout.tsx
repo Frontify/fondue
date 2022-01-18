@@ -22,6 +22,7 @@ import { useOverlayTriggerState } from "@react-stately/overlays";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, {
+    Children,
     FC,
     forwardRef,
     ForwardRefRenderFunction,
@@ -88,13 +89,13 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
             {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
             ref={ref}
             className={merge([
-                "tw-shadow-mid tw-min-w-[400px] tw-outline-none tw-flex",
-                scrollable && "tw-overflow-y-auto",
+                "tw-max-h-full tw-shadow-mid tw-min-w-[400px] tw-outline-none tw-flex",
+                scrollable && "tw-scrollable-y",
             ])}
         >
             <div
                 ref={scrollRef}
-                className="tw-flex tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95"
+                className="tw-flex tw-w-full tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95"
             >
                 {title && (
                     <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8 tw-flex-none">
@@ -108,7 +109,11 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                         </div>
                     </div>
                 )}
-                <div className="tw-flex-auto tw-min-h-0 tw-flex">{children}</div>
+                {Children.map(children, (child, index) => (
+                    <div className={!scrollable ? "tw-flex-auto tw-min-h-0 tw-flex tw-flex-col" : ""} key={index}>
+                        {child}
+                    </div>
+                ))}
                 {legacyFooter && (
                     <div className="tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-sticky tw-bottom-0 tw-bg-white dark:tw-bg-black-95">
                         {onClick ? (

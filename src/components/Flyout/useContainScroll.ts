@@ -24,6 +24,7 @@ export const useContainScroll = (overlayRef: MutableRefObject<HTMLDivElement | n
                 const deltaY = event.deltaY;
                 const up = deltaY < 0;
                 const scrollableAncestor = closestScrollableAncestor(event.target as HTMLElement) ?? overlay;
+                console.log(scrollableAncestor);
                 const { scrollTop, scrollHeight, clientHeight } = scrollableAncestor;
 
                 if (!up && deltaY > scrollHeight - clientHeight - scrollTop) {
