@@ -5,7 +5,7 @@ import { AriaMenuItem } from "@components/Menu/Aria/AriaMenuItem";
 import { AriaSection } from "@components/Menu/Aria/AriaSection";
 import { getDisabledItemIds, getKeyItemRecord, getMenuItems, mapToAriaProps } from "@components/Menu/Aria/helper";
 import { MenuItemType } from "@components/Menu/SelectMenu";
-import { useMenu, useMenuItem, useMenuSection } from "@react-aria/menu";
+import { useMenu } from "@react-aria/menu";
 import { useTreeState } from "@react-stately/tree";
 import { FocusStrategy } from "@react-types/shared";
 import React, { ReactElement, useRef } from "react";
@@ -48,32 +48,13 @@ export const ActionMenu = ({
         <AriaList ariaProps={{ ...menuProps }} ref={menuRef} border={border} scrollable={scrollable}>
             {[...state.collection].map((section) => {
                 const { key: sectionKey, "aria-label": sectionAriaLabel } = section;
-                const { itemProps, groupProps } = useMenuSection({ "aria-label": sectionAriaLabel });
 
                 return (
-                    <AriaSection key={sectionKey} sectionProps={itemProps} groupProps={groupProps}>
+                    <AriaSection key={sectionKey} ariaLabel={sectionAriaLabel}>
                         {[...section.childNodes].map((item) => {
                             const menuItem = keyItemRecord[item.key];
-                            const itemRef = useRef<HTMLLIElement | null>(null);
-                            const { menuItemProps } = useMenuItem(
-                                {
-                                    ...item,
-                                    onAction: () => menuItem?.onClick(),
-                                    isDisabled: menuItem?.disabled || false,
-                                    "aria-label": typeof menuItem?.title === "string" ? menuItem?.title : "Menu item",
-                                },
-                                state,
-                                itemRef,
-                            );
 
-                            return (
-                                <AriaMenuItem
-                                    key={item.key}
-                                    menuItem={menuItem}
-                                    ariaProps={menuItemProps}
-                                    ref={itemRef}
-                                />
-                            );
+                            return <AriaMenuItem key={item.key} menuItem={menuItem} state={state} node={item} />;
                         })}
                     </AriaSection>
                 );
