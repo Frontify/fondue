@@ -40,15 +40,6 @@ export const Trigger: FC<TriggerProps> = ({
 
     const showClear = clearable && onClear;
 
-    let paddingClass = "tw-pr-3";
-    if (size === TriggerSize.Large) {
-        if (showClear) {
-            paddingClass = "tr-pr-8";
-        } else {
-            paddingClass = "tw-pr-5";
-        }
-    }
-
     return (
         <div
             data-test-id="trigger"
