@@ -4,32 +4,43 @@ export const useContainScroll = (overlayRef: MutableRefObject<HTMLDivElement | n
     useEffect(() => {
         const overlay = overlayRef.current;
 
+        const closestScrollableAncestor = (element: HTMLElement | null): HTMLElement | null => {
+            if (!element || element === overlay) {
+                return null;
+            }
+            if (element.scrollHeight > element.clientHeight) {
+                return element;
+            } else {
+                return closestScrollableAncestor(element.parentElement);
+            }
+        };
+
         const scrollHandler = (event: WheelEvent) => {
             const prevent = () => {
                 event.stopPropagation();
                 event.preventDefault();
             };
-
             if (overlay !== null) {
                 const deltaY = event.deltaY;
                 const up = deltaY < 0;
-                const { scrollTop, scrollHeight, clientHeight } = overlay;
+                const scrollableAncestor = closestScrollableAncestor(event.target as HTMLElement) ?? overlay;
+                const { scrollTop, scrollHeight, clientHeight } = scrollableAncestor;
 
                 if (!up && deltaY > scrollHeight - clientHeight - scrollTop) {
                     // Scrolling down, but this will take us past the bottom.
-                    overlay.scrollTop = scrollHeight;
+                    scrollableAncestor.scrollTop = scrollHeight;
                     prevent();
                     return false;
                 } else if (up && -deltaY > scrollTop) {
                     // Scrolling up, but this will take us past the top.
-                    overlay.scrollTop = 0;
+                    scrollableAncestor.scrollTop = 0;
                     prevent();
                     return false;
                 }
             }
         };
 
-        const eventProps = { passive: false, capture: true };
+        const eventProps = { passive: false, capture: false };
 
         if (!isDisabled && overlay !== null) {
             overlay.addEventListener("wheel", scrollHandler, eventProps);

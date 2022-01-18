@@ -49,6 +49,7 @@ export type FlyoutProps = PropsWithChildren<{
     hug?: boolean;
     isOpen?: boolean;
     onOpenChange: (isOpen: boolean) => void;
+    scrollable?: boolean;
     /**
      * The legacy footer buttons section inside of the flyout will be deleted in the future.
      * @deprecated Pass the FlyoutFooter component with buttons to the Flyout component.
@@ -75,6 +76,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         overlayTriggerProps,
         scrollRef,
         legacyFooter,
+        scrollable,
     },
     ref,
 ) => {
@@ -86,7 +88,10 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         <div
             {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
             ref={ref}
-            className="tw-max-h-full tw-overflow-y-auto tw-shadow-mid tw-min-w-[400px] tw-outline-none"
+            className={merge([
+                "tw-shadow-mid tw-min-w-[400px] tw-outline-none tw-flex",
+                scrollable && "tw-overflow-y-auto",
+            ])}
         >
             <div
                 ref={scrollRef}
@@ -104,9 +109,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                         </div>
                     </div>
                 )}
-                {Children.map(children, (child, index) => (
-                    <div key={index}>{child}</div>
-                ))}
+                <div className="tw-flex-auto tw-min-h-0 tw-flex">{children}</div>
                 {legacyFooter && (
                     <div className="tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-sticky tw-bottom-0 tw-bg-white dark:tw-bg-black-95">
                         {onClick ? (
@@ -144,6 +147,7 @@ export const Flyout: FC<FlyoutProps> = ({
     title = "",
     badges = [],
     hug = true,
+    scrollable = true,
     legacyFooter = true,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
@@ -199,6 +203,7 @@ export const Flyout: FC<FlyoutProps> = ({
                             badges={badges}
                             decorator={decorator}
                             isOpen={isOpen}
+                            scrollable={scrollable}
                             overlayTriggerProps={overlayTriggerProps}
                             positionProps={positionProps}
                             onClick={
