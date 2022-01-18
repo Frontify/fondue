@@ -60,18 +60,7 @@ export const EXAMPLE_PALETTES: Palette[] = [
     {
         id: "green",
         title: "Green",
-        colors: [
-            "#006452",
-            "#00866e",
-            "#00c8a5",
-            "#80dbb7",
-            "#bee1d4",
-            "#def0e9",
-            "#008452",
-            "#009452",
-            "#00f452",
-            "#00ff52",
-        ],
+        colors: ["#006452", "#00866e", "#00c8a5", "#80dbb7", "#bee1d4", "#def0e9"],
     },
     {
         id: "yellow",
