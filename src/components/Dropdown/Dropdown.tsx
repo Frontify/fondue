@@ -2,6 +2,7 @@
 
 import { getDisabledItemIds, getMenuItems, mapToAriaProps } from "@components/Menu/Aria/helper";
 import { MenuBlock, MenuItemType, SelectMenu } from "@components/Menu/SelectMenu";
+import { MenuItemStyle, menuItemTextColorRecord, MenuItemTextColorState } from "@components/MenuItem";
 import { MenuItemContent, MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { Trigger, TriggerSize } from "@components/Trigger/Trigger";
 import { useMemoizedId } from "@hooks/useMemoizedId";
@@ -123,6 +124,10 @@ export const Dropdown: FC<DropdownProps> = ({
 
     const heightIsReady = !autoResize || maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
 
+    const textState = disabled ? MenuItemTextColorState.Disabled : MenuItemTextColorState.Default;
+
+    const textClass = menuItemTextColorRecord[activeItem?.style || MenuItemStyle.Primary][textState];
+
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
             <Trigger
@@ -156,7 +161,7 @@ export const Dropdown: FC<DropdownProps> = ({
                             ? "tw-py-2 tw-pl-3 tw-min-h-[34px]"
                             : "tw-pl-5 tw-py-4 tw-min-h-[60px]",
                         !activeItem && "tw-text-black-60",
-                        disabled && "tw-text-black-40",
+                        textClass,
                     ])}
                 >
                     <MenuItemContent
