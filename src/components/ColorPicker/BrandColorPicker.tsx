@@ -5,9 +5,9 @@ import IconImageGrid2 from "@foundation/Icon/Generated/IconImageGrid2";
 import IconListBullets from "@foundation/Icon/Generated/IconListBullets";
 import IconSearch from "@foundation/Icon/Generated/IconSearch";
 import { IconSize } from "@foundation/Icon/IconSize";
-import { toColor } from "@utilities/colors";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useState } from "react";
+import tinycolor from "tinycolor2";
 import { ColorPickerProps } from "./ColorPicker";
 
 const find = (haystack?: string, needle = "") =>
@@ -81,18 +81,20 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                                   ])}
                               >
                                   {colors.map((color) => (
-                                      <li key={color.hex} data-test-id="brand-color">
+                                      <li key={color.name} data-test-id="brand-color">
                                           <button
                                               className="tw-flex tw-overflow-hidden tw-w-full"
-                                              onClick={() => onSelect(toColor(color, color))}
+                                              onClick={() => onSelect(color)}
                                           >
                                               <span
                                                   className="tw-h-8 tw-w-8 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center tw-text-white"
-                                                  style={{ background: color.hex }}
+                                                  style={{ background: tinycolor(color).toRgbString() }}
                                               >
-                                                  {color.hex === currentColor.hex && (
-                                                      <IconCheck size={IconSize.Size20} />
-                                                  )}
+                                                  {color.r === currentColor.r &&
+                                                      color.g === currentColor.g &&
+                                                      color.b === currentColor.b && (
+                                                          <IconCheck size={IconSize.Size20} />
+                                                      )}
                                               </span>
                                               {view === BrandColorView.List && (
                                                   <span className="tw-h-8 tw-flex-grow tw-flex tw-items-center tw-text-left">

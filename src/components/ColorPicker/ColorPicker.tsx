@@ -83,8 +83,8 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
                 style={{ background: backgroundColor, color: labelColor }}
                 data-test-id="color-preview"
             >
-                {name && <span className="tw-font-bold">{name}</span>}
-                <span className={name ? "" : "tw-font-bold"}>{displayValue}</span>
+                {color.name && <span className="tw-font-bold">{color.name}</span>}
+                <span className={color.name ? "" : "tw-font-bold"}>{displayValue}</span>
             </div>
         </div>
     );
