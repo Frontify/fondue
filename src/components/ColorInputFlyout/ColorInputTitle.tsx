@@ -17,7 +17,7 @@ export const ColorInputTitle: FC<Props> = ({ currentColor, format }) => {
         <div className="tw-text-black-100">
             {name || colorValue}
             {format === ColorFormat.Hex && a && a < 1 && (
-                <span className="tw-text-black-60"> {parsedColor.getAlpha()}</span>
+                <span className="tw-text-black-60">{` ${Math.trunc(parsedColor.getAlpha() * 100)} %`}</span>
             )}
         </div>
     );
