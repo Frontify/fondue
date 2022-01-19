@@ -48,7 +48,7 @@ export enum IconLabel {
 }
 
 export type LinkChooserProps = {
-    openInNewTab?: boolean;
+    openInNewTab: boolean;
     ariaLabel?: string;
     label?: string;
     placeholder?: string;
