@@ -78,9 +78,9 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                 </div>
                 <div className="tw-relative tw-w-6 tw-overflow-hidden tw-rounded">
                     <Alpha
-                        rgb={rgb}
-                        hsl={hsl}
-                        hsv={hsv}
+                        rgb={parsedColor.toRgb()}
+                        hsl={parsedColor.toHsl()}
+                        hsv={parsedColor.toHsv()}
                         direction="vertical"
                         pointer={() => (
                             <div className="tw-w-[18px] tw-flex tw-justify-center">
@@ -102,7 +102,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                 </div>
                 {currentFormat === ColorFormat.Hex ? (
                     <div className="tw-flex-1">
-                        <ColorInput
+                        {/* <ColorInput
                             value={hexInput}
                             decorator="#"
                             size={6}
@@ -111,7 +111,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                             }}
                             onEnterPressed={handleHexChange}
                             onBlur={handleHexChange}
-                        />
+                        /> */}
                     </div>
                 ) : (
                     <>
