@@ -49,6 +49,7 @@ export type FlyoutProps = PropsWithChildren<{
     hug?: boolean;
     isOpen?: boolean;
     onOpenChange: (isOpen: boolean) => void;
+    scrollable?: boolean;
     /**
      * The legacy footer buttons section inside of the flyout will be deleted in the future.
      * @deprecated Pass the FlyoutFooter component with buttons to the Flyout component.
@@ -75,6 +76,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         overlayTriggerProps,
         scrollRef,
         legacyFooter,
+        scrollable,
     },
     ref,
 ) => {
@@ -86,14 +88,17 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         <div
             {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
             ref={ref}
-            className="tw-max-h-full tw-overflow-y-auto tw-shadow-mid tw-min-w-[400px] tw-outline-none"
+            className={merge([
+                "tw-shadow-mid tw-min-w-[400px] tw-outline-none tw-flex",
+                scrollable && "tw-overflow-y-auto",
+            ])}
         >
             <div
                 ref={scrollRef}
-                className="tw-flex tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95"
+                className="tw-flex tw-w-full tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95"
             >
                 {title && (
-                    <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8">
+                    <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8 tw-flex-none">
                         <div {...titleProps} className="tw-inline-flex">
                             <FieldsetHeader decorator={decorator}>{title}</FieldsetHeader>
                         </div>
@@ -105,7 +110,11 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                     </div>
                 )}
                 {Children.map(children, (child, index) => (
-                    <div key={index}>{child}</div>
+                    // if the dialog itself is not scrollable, scrolling should be managed inside the child.
+                    // This means the child container div needs to not overflow and so requires these classes
+                    <div className={merge([!scrollable && "tw-flex-auto tw-min-h-0 tw-flex"])} key={index}>
+                        {child}
+                    </div>
                 ))}
                 {legacyFooter && (
                     <div className="tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-sticky tw-bottom-0 tw-bg-white dark:tw-bg-black-95">
@@ -144,6 +153,7 @@ export const Flyout: FC<FlyoutProps> = ({
     title = "",
     badges = [],
     hug = true,
+    scrollable = true,
     legacyFooter = true,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
@@ -199,6 +209,7 @@ export const Flyout: FC<FlyoutProps> = ({
                             badges={badges}
                             decorator={decorator}
                             isOpen={isOpen}
+                            scrollable={scrollable}
                             overlayTriggerProps={overlayTriggerProps}
                             positionProps={positionProps}
                             onClick={
