@@ -21,7 +21,7 @@ type Props = {
     currentColor?: Color;
 };
 
-const Component: FC<Props> = ({ palettes, currentColor = { hex: "#FF0000", alpha: 1 } }) => {
+const Component: FC<Props> = ({ palettes, currentColor = { r: 255, g: 0, b: 0 } }) => {
     const [selectedColor, setSelectedColor] = useState<Color>(currentColor);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
 
@@ -41,7 +41,7 @@ describe("ColorPicker Component", () => {
         mount(<Component />);
 
         cy.get(CUSTOM_COLOR_PICKER_ID).should("exist");
-        cy.get(COLOR_PREVIEW_ID).should("contain", "#FF0000");
+        cy.get(COLOR_PREVIEW_ID).should("contain", "#ff0000");
         cy.get(DROPDOWN_TRIGGER_ID).should("contain", "HEX");
         cy.get(COLOR_INPUT_ID).should("have.length", 2);
         cy.get(DROPDOWN_TRIGGER_ID).click().get(MENU_ITEM_ID).eq(1).click();

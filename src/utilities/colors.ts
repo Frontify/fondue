@@ -13,7 +13,7 @@ export const getColorDisplayValue = (color: Color, format: ColorFormat, showAlph
             return parsedColor.toRgbString();
         case ColorFormat.Hex:
             const hex = parsedColor.toHexString();
-            return showAlpha && color.a && color.a < 1 ? `${hex} ${parsedColor.getAlpha()}` : hex;
+            return showAlpha && color.a && color.a < 1 ? `${hex} ${Math.trunc(parsedColor.getAlpha() * 100)}%` : hex;
         default:
             return parsedColor.toHexString();
     }

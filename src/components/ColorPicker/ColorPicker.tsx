@@ -36,7 +36,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({
     currentFormat = ColorFormat.Hex,
 }) => {
     const [colorType, setColorType] = useState(ColorType.Brand);
-    const [color, setColor] = useState(currentColor);
+    const [color, setColor] = useState<Color>(currentColor);
 
     useEffect(() => {
         setColor({ ...currentColor, a: currentColor.a || 1 });

@@ -10,7 +10,8 @@ import React, { FC, useState } from "react";
 import { ColorPickerFlyout } from "./ColorPickerFlyout";
 
 const TRIGGER_ID = "[data-test-id=trigger]";
-const TEST_COLOR = { hex: "#0085ff", rgb: "rgb(0, 133, 255)" };
+const TEST_COLOR = { r: 0, g: 133, b: 255 };
+const TEST_COLOR_HEX = "#0085ff";
 
 type Props = {
     palettes?: Palette[];
@@ -41,14 +42,14 @@ describe("ColorInputFlyout Component", () => {
         cy.get(BRAND_COLOR_ID).first().click();
         cy.get(BUTTON_ID).last().click();
         cy.get(TRIGGER_ID).should("contain", "90");
-        cy.get(MENU_ITEM_DECORATOR_ID).children("span").invoke("attr", "style").should("include", "rgb(153, 33, 54)");
+        cy.get(MENU_ITEM_DECORATOR_ID).children("span").invoke("attr", "style").should("include", "rgb(174, 38, 61)");
     });
 
     it("should render with initial color", () => {
-        mount(<Component currentColor={{ hex: TEST_COLOR.hex, alpha: 1 }} />);
+        mount(<Component currentColor={TEST_COLOR} />);
 
-        cy.get(TRIGGER_ID).should("contain", TEST_COLOR.hex).click();
-        cy.get(COLOR_PREVIEW_ID).should("contain", TEST_COLOR.hex);
-        cy.get(MENU_ITEM_DECORATOR_ID).children("span").invoke("attr", "style").should("include", TEST_COLOR.rgb);
+        cy.get(TRIGGER_ID).should("contain", TEST_COLOR_HEX).click();
+        cy.get(COLOR_PREVIEW_ID).should("contain", TEST_COLOR_HEX);
+        cy.get(MENU_ITEM_DECORATOR_ID).children("span").invoke("attr", "style").should("include", "rgb(0, 133, 255)");
     });
 });
