@@ -12,7 +12,7 @@ export const createCustomLink = (query: string): SearchResult =>
         link: query,
         icon: DEFAULT_ICON,
         size: MenuItemContentSize.Large,
-        selectionIndicator: SelectionIndicatorIcon.None,
+        selectionIndicator: SelectionIndicatorIcon.Check,
     } as SearchResult);
 
 export const retrieveRecentQueries = (): SearchResult[] => {
