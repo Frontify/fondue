@@ -37,11 +37,11 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
     >
         {decorator && (
             <span
-                className={merge(["tw-flex-shrink-0", size === MenuItemContentSize.Large ? "tw-pr-3" : "tw-pr-2"])}
+                className={merge(["tw-flex-shrink-0", size === MenuItemContentSize.Large ? "tw-pr-2" : "tw-pr-1.5"])}
                 data-test-id="menu-item-decorator"
             >
                 {cloneElement(decorator, {
-                    size: size === MenuItemContentSize.Large ? IconSize.Size20 : IconSize.Size16,
+                    size: size === MenuItemContentSize.Large ? IconSize.Size24 : IconSize.Size16,
                 })}
             </span>
         )}
