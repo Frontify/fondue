@@ -102,7 +102,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                 </div>
                 {currentFormat === ColorFormat.Hex ? (
                     <div className="tw-flex-1">
-                        {/* <ColorInput
+                        <ColorInput
                             value={hexInput}
                             decorator="#"
                             size={6}
@@ -111,7 +111,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                             }}
                             onEnterPressed={handleHexChange}
                             onBlur={handleHexChange}
-                        /> */}
+                        />
                     </div>
                 ) : (
                     <>
