@@ -33,7 +33,7 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
     <div
         {...ariaProps}
         data-test-id="menu-item-content"
-        className="tw-flex tw-box-border tw-items-center tw-font-sans tw-text-s"
+        className="tw-flex tw-box-border tw-items-center tw-font-sans tw-text-s tw-flex-auto tw-min-w-0"
     >
         {decorator && (
             <span
