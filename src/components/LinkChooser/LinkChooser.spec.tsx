@@ -277,7 +277,7 @@ describe("LinkChooser Component", () => {
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(DROPDOWN_WRAPPER_ID).should("exist");
-            cy.get("body").click();
+            cy.get(SEARCH_INPUT_ID).blur();
             cy.get(DROPDOWN_WRAPPER_ID).should("not.exist");
         });
 
@@ -298,7 +298,7 @@ describe("LinkChooser Component", () => {
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(CUSTOM_QUERY);
-            cy.get("body").click();
+            cy.get(SEARCH_INPUT_ID).blur();
             cy.get(SEARCH_INPUT_ID).should("have.value", CUSTOM_QUERY);
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(`${SELECT_SECTION_ID} > li > div`)
