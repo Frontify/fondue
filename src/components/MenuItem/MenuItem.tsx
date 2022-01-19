@@ -69,7 +69,7 @@ export const MenuItem: FC<MenuItemProps> = ({
             ) : (
                 <MenuItemContent title={title} decorator={decorator} size={size} />
             )}
-            {currentIcon}
+            <div className="tw-flex-none">{currentIcon}</div>
         </div>
     );
 };
