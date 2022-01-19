@@ -130,6 +130,10 @@ export type SearchInputProps = {
     machineService: MachineService;
     validation: Validation;
     onClear?: () => void;
+    wrapperProps?: {
+        onClick?: (event: MouseEvent<HTMLDivElement>) => void;
+        onMouseDown?: (event: MouseEvent<HTMLDivElement>) => void;
+    };
 };
 
 export type PopoverProps = {

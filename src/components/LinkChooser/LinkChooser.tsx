@@ -12,7 +12,7 @@ import { DismissButton } from "@react-aria/overlays";
 import { useComboBoxState } from "@react-stately/combobox";
 import { useMachine } from "@xstate/react";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, Key, ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { FC, Key, MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
 import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultsList";
@@ -139,6 +139,24 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         openBoxState(state);
     };
 
+    const handleWrapperClick = () => {
+        if (document.activeElement !== inputRef.current) {
+            inputRef.current?.focus();
+        }
+        handleDropdownOpen();
+    };
+
+    const handleWrapperMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+        if (matches(LinkChooserState.Focused)) {
+            event.preventDefault();
+        }
+    };
+
+    const wrapperProps = {
+        onClick: handleWrapperClick,
+        onMouseDown: handleWrapperMouseDown,
+    };
+
     const handleDropdownClose = () => {
         let selectedResult = null;
         if (context.query) {
@@ -210,6 +228,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     onClear={handleClearClick}
                     machineService={service}
                     validation={validation}
+                    wrapperProps={wrapperProps}
                 />
             </div>
             <AnimatePresence>

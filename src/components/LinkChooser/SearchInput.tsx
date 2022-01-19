@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
 import { Validation } from "@components/TextInput";
@@ -9,7 +11,7 @@ import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
-import React, { FC, forwardRef } from "react";
+import React, { FC, forwardRef, MouseEvent } from "react";
 import { IconButtonProps, SearchInputProps, validationClassMap } from "./types";
 
 export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>(
@@ -23,6 +25,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
             machineService,
             onClear,
             validation = Validation.Default,
+            wrapperProps,
         },
         inputElement,
     ) => {
@@ -46,6 +49,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                               validationClassMap[validation],
                           ]),
                 ])}
+                {...wrapperProps}
             >
                 {decorator && (
                     <div
@@ -115,6 +119,12 @@ SearchInput.displayName = "SearchInput";
 
 const IconButton: FC<IconButtonProps> = ({ disabled, title, ariaLabel, testId, icon, onClick, isComboBoxControl }) => {
     const { isFocusVisible, focusProps } = useFocusRing();
+
+    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        onClick && onClick();
+    };
+
     return (
         <button
             className={merge([
@@ -127,7 +137,7 @@ const IconButton: FC<IconButtonProps> = ({ disabled, title, ariaLabel, testId, i
             aria-label={ariaLabel}
             data-combo-box-control={isComboBoxControl}
             disabled={disabled}
-            onClick={onClick}
+            onClick={handleClick}
             {...focusProps}
         >
             {icon}
