@@ -58,11 +58,11 @@ export type LinkChooserProps = {
     validation?: Validation;
     onOpenInNewTabChange: (value: boolean) => void;
     onLinkChange: (value: SearchResult | null) => void;
-    readonly clipboardOptions: Clipboard;
+    readonly clipboardOptions?: Clipboard;
     readonly getGlobalByQuery?: (query: string) => Promise<SearchResult[]>;
     readonly getGuidelinesByQuery?: (query: string) => Promise<SearchResult[]>;
     readonly getTemplatesByQuery?: (query: string) => Promise<SearchResult[]>;
-    readonly openPreview: (value: string, target: string) => void;
+    readonly openPreview?: (value: string, target: string) => void;
 };
 
 export type SearchResult = Omit<MenuItemType, "title"> & { icon: string; title: string };
