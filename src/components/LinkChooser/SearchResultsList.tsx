@@ -163,27 +163,27 @@ const SearchResultOption: FC<SearchResultOptionProps> = ({ item, state, keyItemR
 const EmptyResults: FC<{ prompt: string; icon: string }> = ({ prompt, icon }) => (
     <div
         data-test-id="link-chooser-empty-results"
-        className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]"
+        className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[300px] tw-p-3"
     >
         <img className="tw-w-[75px] tw-mb-5" src={icon} alt="Icon" />
-        <p className="tw-text-black-60">{prompt}</p>
+        <p className="tw-text-black-60 tw-text-center">{prompt}</p>
     </div>
 );
 
 const FetchingError: FC<{ error?: string }> = ({ error = "An error occurred while fetching the results" }) => (
     <div
         data-test-id="link-chooser-error"
-        className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]"
+        className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[300px] tw-p-3"
     >
         <img className="tw-w-[75px] tw-mb-5" src={NoResultsIcon} alt="Error" />
-        <p className="tw-text-black-60">{error}</p>
+        <p className="tw-text-black-60 tw-text-center">{error}</p>
     </div>
 );
 
 const FetchingAnimation: FC = () => (
     <div
         data-test-id="link-chooser-loader"
-        className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[350px]"
+        className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[300px] tw-p-3"
     >
         <img className="tw-w-[50px]" src={FetchingIcon} alt="Fetching" />
     </div>

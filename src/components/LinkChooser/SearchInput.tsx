@@ -50,7 +50,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                 {decorator && (
                     <div
                         className={merge([
-                            "tw-flex tw-items-center tw-justify-center",
+                            "tw-flex tw-items-center tw-justify-center tw-flex-none",
                             disabled || !selectedResult ? "tw-text-black-40" : "tw-text-violet-60",
                         ])}
                         data-test-id="link-chooser-decorator-icon"
@@ -62,7 +62,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                     {...mergeProps(focusProps, ariaProps)}
                     ref={inputElement}
                     className={merge([
-                        "tw-flex-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows",
+                        "tw-flex-auto tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-min-w-0 tw-text-truncate",
                         disabled
                             ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40"
                             : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
@@ -118,7 +118,7 @@ const IconButton: FC<IconButtonProps> = ({ disabled, title, ariaLabel, testId, i
     return (
         <button
             className={merge([
-                "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
+                "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-flex-none",
                 disabled ? "tw-cursor-default tw-text-black-40" : "tw-text-black-80  hover:tw-text-black-100",
                 isFocusVisible && FOCUS_STYLE,
             ])}
