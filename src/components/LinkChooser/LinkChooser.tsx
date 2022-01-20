@@ -147,7 +147,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     };
 
     const handleWrapperMouseDown = (event: MouseEvent<HTMLDivElement>) => {
-        if (matches(LinkChooserState.Focused)) {
+        if (matches(LinkChooserState.Focused) && event.target !== inputRef.current) {
             event.preventDefault();
         }
     };

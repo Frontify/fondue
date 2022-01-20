@@ -30,7 +30,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
         inputElement,
     ) => {
         const { value } = ariaProps;
-        const { isFocusVisible, focusProps } = useFocusRing({ isTextInput: true });
+        const { isFocusVisible, focusProps, isFocused } = useFocusRing({ isTextInput: true });
 
         const [, send] = useActor(machineService);
 
@@ -64,9 +64,10 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                 )}
                 <input
                     {...mergeProps(focusProps, ariaProps)}
+                    readOnly={!isFocused}
                     ref={inputElement}
                     className={merge([
-                        "tw-flex-auto tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-min-w-0 tw-text-truncate",
+                        "tw-flex-auto tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-min-w-0 tw-whitespace-nowrap tw-truncate",
                         disabled
                             ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40"
                             : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
