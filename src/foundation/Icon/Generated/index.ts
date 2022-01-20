@@ -232,6 +232,7 @@ export { default as IconTrashOpen } from "./IconTrashOpen";
 export { default as IconTravelPlaces } from "./IconTravelPlaces";
 export { default as IconTriangle } from "./IconTriangle";
 export { default as IconTruck } from "./IconTruck";
+export { default as IconTwitter } from "./IconTwitter";
 export { default as IconTypography } from "./IconTypography";
 export { default as IconTypostyles } from "./IconTypostyles";
 export { default as IconUiPattern } from "./IconUiPattern";
