@@ -57,10 +57,11 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
             <div className="tw-flex tw-gap-2 tw-w-full tw-h-[200px]">
                 <div className="tw-relative tw-flex-grow tw-overflow-hidden tw-rounded">
                     <Saturation
+                        rgb={parsedColor.toRgb()}
                         hsl={parsedColor.toHsl()}
                         hsv={parsedColor.toHsv()}
                         pointer={() => <ColorPointer />}
-                        onChange={debounce((color) => onSelect(color))}
+                        onChange={debounce((color) => onSelect(tinycolor(color).toRgb()))}
                     />
                 </div>
                 <div className="tw-relative tw-w-6 tw-overflow-hidden tw-rounded">
@@ -70,9 +71,11 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                                 <ColorPointer offset={false} />
                             </div>
                         )}
+                        rgb={parsedColor.toRgb()}
                         hsl={parsedColor.toHsl()}
+                        hsv={parsedColor.toHsv()}
                         direction="vertical"
-                        onChange={debounce((color) => onSelect(color))}
+                        onChange={debounce((color) => onSelect(tinycolor(color).toRgb()))}
                     />
                 </div>
                 <div className="tw-relative tw-w-6 tw-overflow-hidden tw-rounded">
@@ -87,7 +90,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                             </div>
                         )}
                         style={{ pointer: { top: `${a * 100}%` } }}
-                        onChange={debounce((color) => onSelect(color))}
+                        onChange={debounce((color) => onSelect(tinycolor(color).toRgb()))}
                     />
                 </div>
             </div>
