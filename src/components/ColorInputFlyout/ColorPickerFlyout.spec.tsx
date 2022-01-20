@@ -42,7 +42,7 @@ describe("ColorInputFlyout Component", () => {
         cy.get(BRAND_COLOR_ID).first().click();
         cy.get(BUTTON_ID).last().click();
         cy.get(TRIGGER_ID).should("contain", "90");
-        cy.get(MENU_ITEM_DECORATOR_ID).children("span").invoke("attr", "style").should("include", "rgb(174, 38, 61)");
+        cy.get(MENU_ITEM_DECORATOR_ID).children("span").invoke("attr", "style").should("include", "rgb(153, 33, 54)");
     });
 
     it("should render with initial color", () => {
