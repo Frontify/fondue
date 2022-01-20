@@ -30,7 +30,6 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
         <Flyout
             hug={false}
             onClick={onClick}
-            scrollable={false}
             onClose={onClose}
             isOpen={open}
             onOpenChange={(isOpen) => setOpen(isOpen)}

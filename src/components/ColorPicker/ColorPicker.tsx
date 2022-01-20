@@ -42,18 +42,16 @@ export const ColorPicker: FC<ColorPickerProps> = ({
     }, [currentColor]);
 
     return (
-        <div className="tw-w-[400px] tw-relative tw-flex-auto tw-min-h-0 tw-flex tw-flex-col">
+        <div className="tw-w-[400px] tw-relative">
             <ColorPreview color={color} format={currentFormat} />
-            <div className="tw-p-6 tw-gap-5 tw-flex tw-flex-col tw-overflow-y-auto">
-                <div>
-                    {palettes && (
-                        <Slider
-                            items={colorTypes}
-                            activeItemId={colorType}
-                            onChange={(type) => setColorType(type as ColorType)}
-                        />
-                    )}
-                </div>
+            <div className="tw-p-6 tw-flex tw-flex-col tw-gap-5">
+                {palettes && (
+                    <Slider
+                        items={colorTypes}
+                        activeItemId={colorType}
+                        onChange={(type) => setColorType(type as ColorType)}
+                    />
+                )}
                 {palettes && colorType === ColorType.Brand ? (
                     <BrandColorPicker currentColor={color} palettes={palettes} onSelect={onSelect} />
                 ) : (
@@ -78,13 +76,15 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
     }, [hex, rgba, alpha]);
 
     return (
-        <div
-            className="tw-flex tw-flex-none tw-justify-center tw-p-7 tw-text-m tw-text-black dark:tw-text-white tw-gap-2"
-            style={{ background: backgroundColor, color: labelColor }}
-            data-test-id="color-preview"
-        >
-            {name && <span className="tw-font-bold">{name}</span>}
-            <span className={name ? "" : "tw-font-bold"}>{displayValue}</span>
+        <div className="tw-sticky tw-top-0 tw-bg-white tw-z-20 dark:tw-bg-black-95">
+            <div
+                className="tw-flex tw-justify-center tw-p-7 tw-text-m tw-text-black dark:tw-text-white tw-gap-2"
+                style={{ background: backgroundColor, color: labelColor }}
+                data-test-id="color-preview"
+            >
+                {name && <span className="tw-font-bold">{name}</span>}
+                <span className={name ? "" : "tw-font-bold"}>{displayValue}</span>
+            </div>
         </div>
     );
 };
