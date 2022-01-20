@@ -49,6 +49,7 @@ export type FlyoutProps = PropsWithChildren<{
     hug?: boolean;
     isOpen?: boolean;
     onOpenChange: (isOpen: boolean) => void;
+    fixedHeader?: ReactNode;
     /**
      * The legacy footer buttons section inside of the flyout will be deleted in the future.
      * @deprecated Pass the FlyoutFooter component with buttons to the Flyout component.
@@ -75,6 +76,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         overlayTriggerProps,
         scrollRef,
         legacyFooter,
+        fixedHeader,
     },
     ref,
 ) => {
@@ -86,46 +88,49 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         <div
             {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
             ref={ref}
-            className="tw-max-h-full tw-overflow-y-auto tw-shadow-mid tw-min-w-[400px] tw-outline-none"
+            className="tw-max-h-full tw-flex tw-shadow-mid tw-min-w-[400px] tw-outline-none"
         >
-            <div
-                ref={scrollRef}
-                className="tw-flex tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95"
-            >
-                {title && (
-                    <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8">
-                        <div {...titleProps} className="tw-inline-flex">
-                            <FieldsetHeader decorator={decorator}>{title}</FieldsetHeader>
+            <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0">
+                {fixedHeader}
+                <div
+                    ref={scrollRef}
+                    className="tw-flex tw-overflow-y-auto tw-overflow-x-hidden tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95"
+                >
+                    {title && (
+                        <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8">
+                            <div {...titleProps} className="tw-inline-flex">
+                                <FieldsetHeader decorator={decorator}>{title}</FieldsetHeader>
+                            </div>
+                            <div className="tw-inline-flex tw-gap-2 tw-flex-wrap">
+                                {badges.map((badgeProps, index) => (
+                                    <Badge {...badgeProps} key={`flyout-badge-${index}`} />
+                                ))}
+                            </div>
                         </div>
-                        <div className="tw-inline-flex tw-gap-2 tw-flex-wrap">
-                            {badges.map((badgeProps, index) => (
-                                <Badge {...badgeProps} key={`flyout-badge-${index}`} />
-                            ))}
-                        </div>
-                    </div>
-                )}
-                {Children.map(children, (child, index) => (
-                    <div key={index}>{child}</div>
-                ))}
-                {legacyFooter && (
-                    <div className="tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-sticky tw-bottom-0 tw-bg-white dark:tw-bg-black-95">
-                        {onClick ? (
-                            <>
+                    )}
+                    {Children.map(children, (child, index) => (
+                        <div key={index}>{child}</div>
+                    ))}
+                    {legacyFooter && (
+                        <div className="tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-sticky tw-bottom-0 tw-bg-white dark:tw-bg-black-95 tw-z-40">
+                            {onClick ? (
+                                <>
+                                    <Button onClick={onClose} style={ButtonStyle.Secondary}>
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={onClick} icon={<IconCheck />}>
+                                        Confirm
+                                    </Button>
+                                </>
+                            ) : (
                                 <Button onClick={onClose} style={ButtonStyle.Secondary}>
-                                    Cancel
+                                    Close
                                 </Button>
-                                <Button onClick={onClick} icon={<IconCheck />}>
-                                    Confirm
-                                </Button>
-                            </>
-                        ) : (
-                            <Button onClick={onClose} style={ButtonStyle.Secondary}>
-                                Close
-                            </Button>
-                        )}
-                    </div>
-                )}
-                <DismissButton onDismiss={onClose} />
+                            )}
+                        </div>
+                    )}
+                    <DismissButton onDismiss={onClose} />
+                </div>
             </div>
         </div>
     );
@@ -145,6 +150,7 @@ export const Flyout: FC<FlyoutProps> = ({
     badges = [],
     hug = true,
     legacyFooter = true,
+    fixedHeader,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
     const { toggle, close } = state;
@@ -201,6 +207,7 @@ export const Flyout: FC<FlyoutProps> = ({
                             isOpen={isOpen}
                             overlayTriggerProps={overlayTriggerProps}
                             positionProps={positionProps}
+                            fixedHeader={fixedHeader}
                             onClick={
                                 onClick
                                     ? () => {

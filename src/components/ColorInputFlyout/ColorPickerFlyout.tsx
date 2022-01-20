@@ -5,6 +5,7 @@ import { Flyout } from "@components/Flyout/Flyout";
 import React, { FC, useState } from "react";
 import { Color, ColorFormat } from "../../types/colors";
 import { ColorInputTrigger } from "./ColorPickerTrigger";
+import { ColorPreview } from "@components/ColorPicker";
 
 export type ColorPickerFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSelect"> & {
     id?: string;
@@ -32,6 +33,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
             onClick={onClick}
             onClose={onClose}
             isOpen={open}
+            fixedHeader={<ColorPreview color={currentColor || { hex: "#ffffff" }} format={currentFormat} />}
             onOpenChange={(isOpen) => setOpen(isOpen)}
             trigger={
                 <ColorInputTrigger
@@ -47,6 +49,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
                 currentFormat={currentFormat}
                 setFormat={setCurrentFormat}
                 palettes={palettes}
+                showPreview={false}
                 currentColor={currentColor || { hex: "#ffffff" }}
                 onSelect={onSelect}
             />
