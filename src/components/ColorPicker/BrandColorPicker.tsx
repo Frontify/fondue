@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { Slider } from "@components/Slider/Slider";
 import { TextInput } from "@components/TextInput/TextInput";
 import IconCheck from "@foundation/Icon/Generated/IconCheck";

@@ -2,8 +2,8 @@
 
 import { Meta, Story } from "@storybook/react";
 import { EXAMPLE_PALETTES } from "@utilities/colors";
-import { Color } from "../../types/colors";
 import React, { useState } from "react";
+import { Color } from "../../types/colors";
 import { ColorPickerFlyout as ColorPickerFlyoutComponent, ColorPickerFlyoutProps } from "./ColorPickerFlyout";
 
 // eslint-disable-next-line import/no-default-export

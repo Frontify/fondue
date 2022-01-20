@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
 import tinycolor from "tinycolor2";
 import { Color, ColorFormat, Palette } from "../types/colors";
 
@@ -24,82 +22,41 @@ export const isColorLight = (color: Color): boolean => {
     return parsedColor.isLight() || parsedColor.getAlpha() < 0.25;
 };
 
+const generatePalette = (color: string, amount: number): Color[] => {
+    const sourceColor = tinycolor(color);
+    const palette = [...new Array(amount)].map((_, index) => {
+        const name = (90 - index * 10).toString();
+        const { r, g, b, a } = sourceColor.lighten(index * 3).toRgb();
+        return {
+            r,
+            g,
+            b,
+            a,
+            name,
+        };
+    });
+    return palette;
+};
+
 export const EXAMPLE_PALETTES: Palette[] = [
     {
         id: "red",
-        source: "#992136",
         title: "Red",
+        source: "#992136",
     },
     {
         id: "green",
-        source: "#006452",
         title: "Green",
+        source: "#006452",
     },
     {
         id: "yellow",
-        source: "#cc9000",
         title: "Yellow",
+        source: "#cc9000",
     },
 ].map((palette) => {
-    const sourceColor = tinycolor(palette.source);
     return {
         ...palette,
-        colors: [...new Array(6)].map((_, index) => {
-            const color = sourceColor.lighten(5).toRgb();
-            let name = "";
-            let r = 225,
-                g = 255,
-                b = 255,
-                a = 1;
-
-            switch (index) {
-                case 0:
-                    r = color.r;
-                    g = color.g;
-                    b = color.b;
-                    a = color.a;
-                    name = "90";
-                    break;
-                case 1:
-                    r = color.r;
-                    g = color.g;
-                    b = color.b;
-                    a = color.a;
-                    name = "80";
-                    break;
-                case 2:
-                    r = color.r;
-                    g = color.g;
-                    b = color.b;
-                    a = color.a;
-                    name = "70";
-                    break;
-                case 3:
-                    r = color.r;
-                    g = color.g;
-                    b = color.b;
-                    a = color.a;
-                    name = "60";
-                    break;
-                case 4:
-                    r = color.r;
-                    g = color.g;
-                    b = color.b;
-                    a = color.a;
-                    name = "50";
-                    break;
-                case 5:
-                    r = color.r;
-                    g = color.g;
-                    b = color.b;
-                    a = color.a;
-                    name = "40";
-                    break;
-                default:
-                    break;
-            }
-
-            return { r, g, b, a, name };
-        }),
+        colors: generatePalette(palette.source, 6),
     };
 });

@@ -5,8 +5,8 @@ import { BRAND_COLOR_ID, COLOR_PREVIEW_ID } from "@components/ColorPicker/ColorP
 import { MENU_ITEM_DECORATOR_ID } from "@components/MenuItem/MenuItem.spec";
 import { mount } from "@cypress/react";
 import { EXAMPLE_PALETTES } from "@utilities/colors";
-import { Color, Palette } from "../../types/colors";
 import React, { FC, useState } from "react";
+import { Color, Palette } from "../../types/colors";
 import { ColorPickerFlyout } from "./ColorPickerFlyout";
 
 const TRIGGER_ID = "[data-test-id=trigger]";
