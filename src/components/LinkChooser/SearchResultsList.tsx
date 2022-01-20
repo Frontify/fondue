@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getKeyItemRecord, getMenuItems } from "@components/Menu/Aria/helper";
+import { getKeyItemRecord, getMenuItems } from "@components/ActionMenu/Aria/helper";
 import { MenuItem } from "@components/MenuItem/MenuItem";
 import { useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
 import { merge } from "@utilities/merge";

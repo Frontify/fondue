@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
-import { mapToAriaProps } from "@components/Menu/Aria/helper";
+import { mapToAriaProps } from "@components/ActionMenu/Aria/helper";
 import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";

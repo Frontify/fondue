@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from "@components/Checkbox/Checkbox";
-import { MenuItemType, MenuBlock } from "@components/Menu/SelectMenu";
+import { MenuItemType, MenuBlock } from "@components/Dropdown/SelectMenu/SelectMenu";
 import { AriaListBoxOptions } from "@react-aria/listbox";
 import { ListState } from "@react-stately/list";
 import {
@@ -58,11 +58,11 @@ export type LinkChooserProps = {
     validation?: Validation;
     onOpenInNewTabChange: (value: boolean) => void;
     onLinkChange: (value: SearchResult | null) => void;
-    readonly clipboardOptions: Clipboard;
+    readonly clipboardOptions?: Clipboard;
     readonly getGlobalByQuery?: (query: string) => Promise<SearchResult[]>;
     readonly getGuidelinesByQuery?: (query: string) => Promise<SearchResult[]>;
     readonly getTemplatesByQuery?: (query: string) => Promise<SearchResult[]>;
-    readonly openPreview: (value: string, target: string) => void;
+    readonly openPreview?: (value: string, target: string) => void;
 };
 
 export type SearchResult = Omit<MenuItemType, "title"> & { icon: string; title: string };
