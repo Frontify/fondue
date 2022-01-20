@@ -2,7 +2,7 @@
 
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { mount } from "@cypress/react";
-import React from "react";
+import React, { FC, useState } from "react";
 import { ActionMenu } from "./ActionMenu";
 
 const MENU_ITEM_ID = "[data-test-id=menu-item]";
@@ -46,6 +46,41 @@ const MENU_BLOCKS = [
     },
 ];
 
+const TestComponent: FC = () => {
+    const [menuBlocks, setMenuBlocks] = useState(MENU_BLOCKS);
+
+    const addBlock = () =>
+        setMenuBlocks([
+            ...menuBlocks,
+            {
+                id: "small-block-4",
+                menuItems: [
+                    {
+                        id: "small5",
+                        title: "Small first",
+                        size: MenuItemContentSize.Small,
+                        onClick: () => console.log("click"),
+                    },
+                    {
+                        id: "small6",
+                        title: "Small second",
+                        size: MenuItemContentSize.Small,
+                        onClick: () => console.log("click"),
+                    },
+                ],
+            },
+        ]);
+
+    return (
+        <div>
+            <ActionMenu menuBlocks={menuBlocks} />
+            <button data-test-id="add-block-button" onClick={addBlock}>
+                Add Block
+            </button>
+        </div>
+    );
+};
+
 describe("ActionMenu Component", () => {
     it("renders action menu with divider", () => {
         const onClickStub = cy.stub().as("onClickStub");
@@ -64,5 +99,14 @@ describe("ActionMenu Component", () => {
         cy.get("@onClickStub").should("not.be.called");
         cy.get(MENU_ITEM_ID).first().click();
         cy.get("@onClickStub").should("be.calledOnce");
+    });
+
+    it("renders action menu with dynamic items", () => {
+        mount(<TestComponent />);
+
+        cy.get(MENU_ITEM_LIST_ID).should("have.length", 2);
+
+        cy.get('[data-test-id="add-block-button"]').first().click();
+        cy.get(MENU_ITEM_LIST_ID).should("have.length", 3);
     });
 });

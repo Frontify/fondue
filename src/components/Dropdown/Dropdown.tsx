@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getDisabledItemIds, getMenuItems, mapToAriaProps } from "@components/Menu/Aria/helper";
-import { MenuBlock, MenuItemType, SelectMenu } from "@components/Menu/SelectMenu";
+import { getDisabledItemIds, getMenuItems, mapToAriaProps } from "@components/ActionMenu/Aria/helper";
+import { MenuBlock, MenuItemType, SelectMenu } from "@components/Dropdown/SelectMenu/SelectMenu";
 import { MenuItemStyle, menuItemTextColorRecord, MenuItemTextColorState } from "@components/MenuItem";
 import { MenuItemContent, MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { Trigger, TriggerSize } from "@components/Trigger/Trigger";
@@ -14,7 +14,7 @@ import { mergeProps } from "@react-aria/utils";
 import { useSelectState } from "@react-stately/select";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, ReactElement, useEffect, useRef, MutableRefObject, useState } from "react";
+import React, { FC, MutableRefObject, ReactElement, useEffect, useRef, useState } from "react";
 
 export enum DropdownSize {
     Small = "Small",
