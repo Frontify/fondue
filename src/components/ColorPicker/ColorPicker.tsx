@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Slider } from "@components/Slider/Slider";
-import { getColorDisplayValue } from "@utilities/colors";
-import React, { FC, useEffect, useMemo, useState } from "react";
+import { getColorDisplayValue, isColorLight } from "@utilities/colors";
+import React, { FC, useEffect, useState } from "react";
 import tinycolor from "tinycolor2";
 import { Color, ColorFormat, Palette } from "../../types/colors";
 import { BrandColorPicker } from "./BrandColorPicker";
@@ -72,15 +72,14 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
     const parsedColor = tinycolor(color);
     const backgroundColor = parsedColor.toRgbString();
     const displayValue = getColorDisplayValue(color, format);
-    const labelColor = useMemo(() => {
-        return parsedColor.isLight() || parsedColor.getAlpha() < 0.25 ? "#000" : "#fff";
-    }, [parsedColor]);
-
     return (
         <div className="tw-sticky tw-top-0 tw-bg-white tw-z-20 dark:tw-bg-black-95">
             <div
-                className="tw-flex tw-justify-center tw-p-7 tw-text-m tw-text-black dark:tw-text-white tw-gap-2"
-                style={{ background: backgroundColor, color: labelColor }}
+                className={`tw-flex tw-justify-center tw-p-7 tw-text-m tw-gap-2 ${
+                    isColorLight(color) ? "tw-text-black" : "tw-text-white"
+                }
+            `}
+                style={{ background: backgroundColor }}
                 data-test-id="color-preview"
             >
                 {color.name && <span className="tw-font-bold">{color.name}</span>}

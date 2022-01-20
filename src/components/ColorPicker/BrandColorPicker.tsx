@@ -5,6 +5,7 @@ import IconImageGrid2 from "@foundation/Icon/Generated/IconImageGrid2";
 import IconListBullets from "@foundation/Icon/Generated/IconListBullets";
 import IconSearch from "@foundation/Icon/Generated/IconSearch";
 import { IconSize } from "@foundation/Icon/IconSize";
+import { isColorLight } from "@utilities/colors";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useState } from "react";
 import tinycolor from "tinycolor2";
@@ -87,7 +88,9 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                                               onClick={() => onSelect(color)}
                                           >
                                               <span
-                                                  className="tw-h-8 tw-w-8 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center tw-text-white"
+                                                  className={`tw-h-8 tw-w-8 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center ${
+                                                      isColorLight(color) ? "tw-text-black" : "tw-text-white"
+                                                  }`}
                                                   style={{ background: tinycolor(color).toRgbString() }}
                                               >
                                                   {color.r === currentColor.r &&

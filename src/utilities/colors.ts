@@ -19,6 +19,11 @@ export const getColorDisplayValue = (color: Color, format: ColorFormat, showAlph
     }
 };
 
+export const isColorLight = (color: Color): boolean => {
+    const parsedColor = tinycolor(color);
+    return parsedColor.isLight() || parsedColor.getAlpha() < 0.25;
+};
+
 export const EXAMPLE_PALETTES: Palette[] = [
     {
         id: "red",
