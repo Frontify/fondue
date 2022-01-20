@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CUSTOM_LINK_ID, QUERIES_STORAGE_KEY } from "@components/LinkChooser/LinkChooser";
+import { QUERIES_STORAGE_KEY } from "@components/LinkChooser/LinkChooser";
 import { assign, DoneInvokeEvent } from "xstate";
 import { LinkChooserContext, LinkChooserEventData } from "../types";
+import { isCustomLink } from "../utils/helpers";
 import { createCustomLink, mergeResultWithRecentQueries, retrieveRecentQueries } from "../utils/transformers";
+import { DropdownState, LinkChooserState, SectionState } from "./machine";
 
 export const updateQueryFromString = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
     query: (_context, { data }) => data.query ?? "",
@@ -13,14 +15,48 @@ export const updateQueryFromObject = assign<LinkChooserContext, DoneInvokeEvent<
     query: (_context, { data }) => data.selectedResult?.title ?? "",
 });
 
-export const updateCustomLink = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
-    searchResults: (context) =>
-        context.query
-            ? [
-                  ...context.searchResults.filter((result) => result.id !== CUSTOM_LINK_ID),
-                  ...[createCustomLink(context.query)],
-              ]
-            : context.searchResults,
+export const replaceCustomLink = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
+    searchResults: (context) => {
+        const customLinkSelected = isCustomLink(context.selectedResult);
+        const updatedCustomLink =
+            customLinkSelected && context.selectedResult?.title === context.query
+                ? context.selectedResult
+                : createCustomLink(context.query);
+
+        return context.query
+            ? [...context.searchResults.filter((results) => !isCustomLink(results)), updatedCustomLink]
+            : context.searchResults;
+    },
+});
+
+export const replaceCustomLinkWithSelected = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
+    searchResults: (context, { data }, meta) => {
+        const { selectedResult } = data;
+        if (!context.query || !selectedResult) {
+            return context.searchResults;
+        }
+
+        const isSelectedCustomLink = isCustomLink(selectedResult);
+        const resultsWithoutCustomLinks = context.searchResults.filter((result) => !isCustomLink(result));
+
+        const defaultResultsHaveLoaded = meta.state?.matches(
+            `${LinkChooserState.Focused}.${DropdownState.Default}.${SectionState.Loaded}`,
+        );
+
+        const isDisplayingLocalStorage =
+            (!context.searchResults || context.searchResults.some((results) => results.local)) &&
+            defaultResultsHaveLoaded;
+
+        if (isDisplayingLocalStorage) {
+            return context.searchResults;
+        } else {
+            if (isSelectedCustomLink) {
+                return [...resultsWithoutCustomLinks, selectedResult];
+            } else {
+                return [...resultsWithoutCustomLinks, createCustomLink(context.query)];
+            }
+        }
+    },
 });
 
 export const setSelectedSearchResult = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({

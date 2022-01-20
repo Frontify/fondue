@@ -65,7 +65,7 @@ export type LinkChooserProps = {
     readonly openPreview: (value: string, target: string) => void;
 };
 
-export type SearchResult = Omit<MenuItemType, "title"> & { icon: string; title: string };
+export type SearchResult = Omit<MenuItemType, "title"> & { icon: string; title: string; local?: boolean };
 
 export type ImageSearchResult = SearchResult & { preview: string };
 

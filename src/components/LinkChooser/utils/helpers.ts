@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Key } from "react";
-import { DEFAULT_ICON, IconOptions } from "../LinkChooser";
+import { CUSTOM_LINK_ID, DEFAULT_ICON, IconOptions } from "../LinkChooser";
 import { defaultSection, sections } from "../sections";
 import { SearchResult } from "../types";
 
@@ -25,3 +25,6 @@ export const goToSection = (id: Key, send: (data: string) => void) => {
     const selectedSection = sections.find((section) => id === section.id) || defaultSection;
     send(`GO_TO_${selectedSection?.sectionId}`);
 };
+
+export const isCustomLink = (link: SearchResult | null) =>
+    !link || (typeof link.id === "string" && link.id.includes(CUSTOM_LINK_ID));
