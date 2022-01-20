@@ -73,7 +73,7 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
     const backgroundColor = parsedColor.toRgbString();
     const displayValue = getColorDisplayValue(color, format);
     const labelColor = useMemo(() => {
-        return parsedColor.isLight() ? "#000" : "#fff";
+        return parsedColor.isLight() || parsedColor.getAlpha() < 0.25 ? "#000" : "#fff";
     }, [parsedColor]);
 
     return (
