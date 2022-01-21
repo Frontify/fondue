@@ -6,7 +6,10 @@ import { defaultSection, sections } from "../sections";
 import { SearchResult } from "../types";
 
 export const doesContainSubstring = (source: string, target: string): boolean =>
-    source.toLowerCase().includes(target.toLowerCase());
+    source.toLowerCase().includes(target.toLowerCase()) ||
+    [...sections, defaultSection].some((section) => {
+        return section.title.toLowerCase() === source.toLowerCase();
+    });
 
 export const getDefaultData = async (): Promise<SearchResult[]> =>
     new Promise((resolve) =>
