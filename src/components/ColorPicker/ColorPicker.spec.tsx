@@ -4,10 +4,10 @@ import { DROPDOWN_TRIGGER_ID } from "@components/Dropdown/Dropdown.spec";
 import { MENU_ITEM_ID } from "@components/MenuItem/MenuItem.spec";
 import { ICON_ITEM_ID, TEXT_ITEM_ID } from "@components/Slider/Slider.spec";
 import { mount } from "@cypress/react";
-import { EXAMPLE_PALETTES } from "@utilities/colors";
 import React, { FC, useState } from "react";
 import { Color, ColorFormat, Palette } from "../../types/colors";
 import { ColorPicker } from "./ColorPicker";
+import { EXAMPLE_PALETTES } from "./ColorPicker.stories";
 
 export const BRAND_COLOR_ID = "[data-test-id=brand-color]";
 export const COLOR_PREVIEW_ID = "[data-test-id=color-preview]";

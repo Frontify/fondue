@@ -4,9 +4,9 @@ import { BUTTON_ID } from "@components/Button/Button.spec";
 import { BRAND_COLOR_ID, COLOR_PREVIEW_ID } from "@components/ColorPicker/ColorPicker.spec";
 import { MENU_ITEM_DECORATOR_ID } from "@components/MenuItem/MenuItem.spec";
 import { mount } from "@cypress/react";
-import { EXAMPLE_PALETTES } from "@utilities/colors";
 import React, { FC, useState } from "react";
 import { Color, Palette } from "../../types/colors";
+import { EXAMPLE_PALETTES } from "../ColorPicker/ColorPicker.stories";
 import { ColorPickerFlyout } from "./ColorPickerFlyout";
 
 const TRIGGER_ID = "[data-test-id=trigger]";
