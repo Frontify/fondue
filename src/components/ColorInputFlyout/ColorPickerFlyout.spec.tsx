@@ -18,14 +18,14 @@ type Props = {
 };
 
 const Component: FC<Props> = ({ palettes, currentColor = null }) => {
-    const [temporaryColor, setTemporaryColor] = useState<Color | null>(currentColor);
-    const [selectedColor, setSelectedColor] = useState<Color | null>(null);
+    const [temporaryColor, setTemporaryColor] = useState<Color | null>(null);
+    const [selectedColor, setSelectedColor] = useState<Color | null>(currentColor);
 
     return (
         <ColorPickerFlyout
-            currentColor={temporaryColor}
+            currentColor={temporaryColor ?? selectedColor}
             onClick={() => setSelectedColor(temporaryColor)}
-            onClose={() => setTemporaryColor(selectedColor)}
+            onClose={() => setTemporaryColor(null)}
             onSelect={(color) => setTemporaryColor(color)}
             palettes={palettes}
         />
@@ -33,7 +33,7 @@ const Component: FC<Props> = ({ palettes, currentColor = null }) => {
 };
 
 describe("ColorInputFlyout Component", () => {
-    it("should render without initial color", () => {
+    it.only("should render without initial color", () => {
         mount(<Component palettes={EXAMPLE_PALETTES} />);
 
         cy.get(TRIGGER_ID).should("contain", "Select color");
