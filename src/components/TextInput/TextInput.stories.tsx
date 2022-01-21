@@ -14,6 +14,7 @@ export default {
         clearable: false,
         disabled: false,
         required: false,
+        autocomplete: false,
         dotted: false,
         type: TextInputType.Text,
         validation: Validation.Default,
