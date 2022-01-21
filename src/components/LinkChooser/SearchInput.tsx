@@ -25,7 +25,8 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
             machineService,
             onClear,
             validation = Validation.Default,
-            wrapperProps,
+            onClick,
+            onMouseDown,
         },
         inputElement,
     ) => {
@@ -49,7 +50,8 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                               validationClassMap[validation],
                           ]),
                 ])}
-                {...wrapperProps}
+                onClick={onClick}
+                onMouseDown={onMouseDown}
             >
                 {decorator && (
                     <div
