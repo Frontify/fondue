@@ -152,11 +152,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }
     };
 
-    const wrapperProps = {
-        onClick: handleWrapperClick,
-        onMouseDown: handleWrapperMouseDown,
-    };
-
     const handleDropdownClose = () => {
         let selectedResult = null;
         if (context.query) {
@@ -228,7 +223,8 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     onClear={handleClearClick}
                     machineService={service}
                     validation={validation}
-                    wrapperProps={wrapperProps}
+                    onClick={handleWrapperClick}
+                    onMouseDown={handleWrapperMouseDown}
                 />
             </div>
             <AnimatePresence>
