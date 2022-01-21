@@ -217,6 +217,8 @@ export const AssetInput: FC<AssetInputProps> = ({
         return <SelectedAsset asset={asset} size={size} actions={actions} />;
     }
 
+    console.log("test");
+
     return (
         <div
             data-test-id="asset-input-placeholder"
