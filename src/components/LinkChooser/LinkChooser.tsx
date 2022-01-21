@@ -25,6 +25,7 @@ import { Validation } from "@components/TextInput";
 import { defaultSection, sections } from "./sections";
 import { useManualComboBoxEventHandlers } from "./utils/useManualComboBoxHandlers";
 import { NavigationMenu } from "./NavigationMenu";
+import { useDropdownAutoHeight } from "@components/Dropdown/useDropdownAutoHeight";
 
 export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Document]: <IconDocument />,
@@ -174,6 +175,11 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }
     }, [context.interruptedFetch, value]);
 
+    const { maxHeight } = useDropdownAutoHeight(inputRef, {
+        isOpen: matches(LinkChooserState.Focused),
+        autoResize: true,
+    });
+
     return (
         <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
             {!!label && (
@@ -222,6 +228,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                             popoverRef={popoverRef}
                             isOpen={matches(LinkChooserState.Focused)}
                             onClose={handleDropdownClose}
+                            maxHeight={maxHeight}
                         >
                             <SearchResultsList
                                 {...listBoxProps}

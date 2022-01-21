@@ -134,6 +134,7 @@ export type SearchInputProps = {
 
 export type PopoverProps = {
     popoverRef?: RefObject<HTMLDivElement>;
+    maxHeight?: string;
     children: ReactNode;
     isOpen?: boolean;
     onClose: () => void;
