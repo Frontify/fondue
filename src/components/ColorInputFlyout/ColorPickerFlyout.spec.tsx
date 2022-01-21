@@ -33,7 +33,7 @@ const Component: FC<Props> = ({ palettes, currentColor = null }) => {
 };
 
 describe("ColorInputFlyout Component", () => {
-    it.only("should render without initial color", () => {
+    it("should render without initial color", () => {
         mount(<Component palettes={EXAMPLE_PALETTES} />);
 
         cy.get(TRIGGER_ID).should("contain", "Select color");
