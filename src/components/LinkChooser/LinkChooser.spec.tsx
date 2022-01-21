@@ -391,6 +391,27 @@ describe("LinkChooser Component", () => {
             cy.get(`${DECORATOR_ICON_ID} > svg`).invoke("attr", "name").should("eq", "IconLink");
         });
 
+        it("Creates and selects a custom link if enter pressed and no item is focused, even when loading", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SEARCH_INPUT_ID).type(CUSTOM_QUERY);
+            cy.get(DROPDOWN_WRAPPER_ID).should("exist");
+            cy.get(LOADER_ID).should("be.visible");
+            cy.get(DECORATOR_ICON_ID).should("not.have.class", SELECTED_CLASS);
+            cy.get(SEARCH_INPUT_ID).realPress("Enter");
+            cy.get(SEARCH_INPUT_ID).should("have.value", CUSTOM_QUERY);
+            cy.get(DECORATOR_ICON_ID).should("have.class", SELECTED_CLASS);
+            cy.get(DROPDOWN_WRAPPER_ID).should("not.exist");
+            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
+            cy.get(DROPDOWN_WRAPPER_ID).should("exist");
+            cy.get(`${SELECT_SECTION_ID} > li > div`)
+                .eq(0)
+                .should(($container) => {
+                    expect($container).to.have.css("font-weight", "500");
+                });
+        });
+
         it("resets selection if input is empty", () => {
             mount(getLinkChooserComponent());
 
