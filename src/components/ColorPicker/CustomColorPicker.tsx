@@ -78,9 +78,9 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                 </div>
                 <div className="tw-relative tw-w-6 tw-overflow-hidden tw-rounded">
                     <Alpha
-                        rgb={parsedColor.toRgb()}
-                        hsl={parsedColor.toHsl()}
-                        hsv={parsedColor.toHsv()}
+                        rgb={rgb}
+                        hsl={hsl}
+                        hsv={hsv}
                         direction="vertical"
                         pointer={() => (
                             <div className="tw-w-[18px] tw-flex tw-justify-center">
