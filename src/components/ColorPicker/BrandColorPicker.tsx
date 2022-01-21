@@ -97,7 +97,8 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                                               >
                                                   {color.r === currentColor.r &&
                                                       color.g === currentColor.g &&
-                                                      color.b === currentColor.b && (
+                                                      color.b === currentColor.b &&
+                                                      color.a === currentColor.a && (
                                                           <IconCheck size={IconSize.Size20} />
                                                       )}
                                               </span>

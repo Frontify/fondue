@@ -71,6 +71,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({
 const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format }) => {
     const parsedColor = tinycolor(color);
     const backgroundColor = parsedColor.toRgbString();
+    const colorName = color.name;
     const displayValue = getColorDisplayValue(color, format);
     return (
         <div className="tw-sticky tw-top-0 tw-bg-white tw-z-20 dark:tw-bg-black-95">
@@ -82,8 +83,8 @@ const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format
                 style={{ background: backgroundColor }}
                 data-test-id="color-preview"
             >
-                {color.name && <span className="tw-font-bold">{color.name}</span>}
-                <span className={color.name ? "" : "tw-font-bold"}>{displayValue}</span>
+                {colorName && <span className="tw-font-bold">{colorName}</span>}
+                <span className={colorName ? "" : "tw-font-bold"}>{displayValue}</span>
             </div>
         </div>
     );

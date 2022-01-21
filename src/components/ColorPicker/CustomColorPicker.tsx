@@ -32,21 +32,19 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
     const colorFormats = Object.values(ColorFormat).map((id) => ({ id, title: id.toLocaleUpperCase() }));
     const [color, setColor] = useState<Color>(currentColor);
     const parsedColor = tinycolor(color);
-    const { r, g, b, a } = parsedColor.toRgb();
-
-    useEffect(() => {
-        setColor(currentColor);
-    }, [currentColor]);
-
+    const rgb = parsedColor.toRgb();
+    const hsl = parsedColor.toHsl();
+    const hsv = parsedColor.toHsv();
+    const { r, g, b, a } = rgb;
     const [hexInput, setHexInput] = useState(parsedColor.toHex());
 
     useEffect(() => {
+        setColor(currentColor);
         setHexInput(parsedColor.toHex());
-    }, [color]);
+    }, [currentColor]);
 
     const handleHexChange = () => {
         const parsedHex = tinycolor(hexInput);
-        parsedHex.isValid();
         if (parsedHex.isValid()) {
             onSelect(parsedHex.toRgb());
         }
@@ -57,9 +55,9 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
             <div className="tw-flex tw-gap-2 tw-w-full tw-h-[200px]">
                 <div className="tw-relative tw-flex-grow tw-overflow-hidden tw-rounded">
                     <Saturation
-                        rgb={parsedColor.toRgb()}
-                        hsl={parsedColor.toHsl()}
-                        hsv={parsedColor.toHsv()}
+                        rgb={rgb}
+                        hsl={hsl}
+                        hsv={hsv}
                         pointer={() => <ColorPointer />}
                         onChange={debounce((color) => onSelect(tinycolor(color).toRgb()))}
                     />
@@ -71,18 +69,18 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                                 <ColorPointer offset={false} />
                             </div>
                         )}
-                        rgb={parsedColor.toRgb()}
-                        hsl={parsedColor.toHsl()}
-                        hsv={parsedColor.toHsv()}
+                        rgb={rgb}
+                        hsl={hsl}
+                        hsv={hsv}
                         direction="vertical"
                         onChange={debounce((color) => onSelect(tinycolor(color).toRgb()))}
                     />
                 </div>
                 <div className="tw-relative tw-w-6 tw-overflow-hidden tw-rounded">
                     <Alpha
-                        rgb={parsedColor.toRgb()}
-                        hsl={parsedColor.toHsl()}
-                        hsv={parsedColor.toHsv()}
+                        rgb={rgb}
+                        hsl={hsl}
+                        hsv={hsv}
                         direction="vertical"
                         pointer={() => (
                             <div className="tw-w-[18px] tw-flex tw-justify-center">

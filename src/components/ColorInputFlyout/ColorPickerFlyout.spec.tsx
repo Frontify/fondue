@@ -50,6 +50,9 @@ describe("ColorInputFlyout Component", () => {
 
         cy.get(TRIGGER_ID).should("contain", TEST_COLOR_HEX).click();
         cy.get(COLOR_PREVIEW_ID).should("contain", TEST_COLOR_HEX);
-        cy.get(MENU_ITEM_DECORATOR_ID).children("span").invoke("attr", "style").should("include", "rgb(0, 133, 255)");
+        cy.get(MENU_ITEM_DECORATOR_ID)
+            .children("span")
+            .invoke("attr", "style")
+            .should("include", `rgb(${Object.values(TEST_COLOR).join(", ")})`);
     });
 });
