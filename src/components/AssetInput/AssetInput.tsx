@@ -134,7 +134,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
 
     return (
         <div
-            className="tw-relative tw-font-sans tw-w-full tw-text-s tw-bg-transparent tw-font-normal"
+            className="tw-relative tw-font-sans tw-w-full tw-text-s tw-bg-transparent tw-font-normal tw-min-w-0"
             aria-labelledby={labelId}
             title={asset.name}
         >
@@ -185,7 +185,7 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2"
+                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
                         key={`asset-input-menu-${menuId}`}
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
