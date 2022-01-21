@@ -123,4 +123,19 @@ describe("Text Input component", () => {
         mount(<StatefulInput disabled={false} />);
         cy.get(TEXT_INPUT_ID).should("not.have.attr", "disabled");
     });
+
+    it("has the autoComplete turned on", () => {
+        mount(<StatefulInput autocomplete={true} />);
+        cy.get(TEXT_INPUT_ID).should("have.attr", "autoComplete", "on");
+    });
+
+    it("has the autoComplete turned off", () => {
+        mount(<StatefulInput autocomplete={false} />);
+        cy.get(TEXT_INPUT_ID).should("have.attr", "autoComplete", "off");
+    });
+
+    it("has the autoComplete turned off by default", () => {
+        mount(<StatefulInput />);
+        cy.get(TEXT_INPUT_ID).should("have.attr", "autoComplete", "off");
+    });
 });
