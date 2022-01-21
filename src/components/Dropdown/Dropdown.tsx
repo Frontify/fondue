@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getDisabledItemIds, getMenuItems, mapToAriaProps } from "@components/Menu/Aria/helper";
-import { MenuBlock, MenuItemType, SelectMenu } from "@components/Menu/SelectMenu";
+import { getDisabledItemIds, getMenuItems, mapToAriaProps } from "@components/ActionMenu/Aria/helper";
+import { MenuBlock, MenuItemType, SelectMenu } from "@components/Dropdown/SelectMenu/SelectMenu";
+import { MenuItemStyle, menuItemTextColorRecord, MenuItemTextColorState } from "@components/MenuItem";
 import { MenuItemContent, MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
-import { Trigger } from "@components/Trigger/Trigger";
+import { Trigger, TriggerSize } from "@components/Trigger/Trigger";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
@@ -94,6 +95,10 @@ export const Dropdown: FC<DropdownProps> = ({
 
     const heightIsReady = !autoResize || maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
 
+    const textState = disabled ? MenuItemTextColorState.Disabled : MenuItemTextColorState.Default;
+
+    const textClass = menuItemTextColorRecord[activeItem?.style || MenuItemStyle.Primary][textState];
+
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
             <Trigger
@@ -102,6 +107,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 isFocusVisible={!disabled && isFocusVisible}
                 isOpen={isOpen}
                 clearable={!!activeItem}
+                size={size === DropdownSize.Large ? TriggerSize.Large : TriggerSize.Small}
                 onClear={
                     clearable
                         ? () => {
@@ -121,10 +127,12 @@ export const Dropdown: FC<DropdownProps> = ({
                     ref={triggerRef}
                     data-test-id="dropdown-trigger"
                     className={merge([
-                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-pr-8",
-                        size === DropdownSize.Small ? "tw-py-2 tw-px-3 tw-min-h-[34px]" : "tw-p-5 tw-min-h-[60px]",
+                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-pr-2",
+                        size === DropdownSize.Small
+                            ? "tw-py-2 tw-pl-3 tw-min-h-[34px]"
+                            : "tw-pl-5 tw-py-4 tw-min-h-[60px]",
                         !activeItem && "tw-text-black-60",
-                        disabled && "tw-text-black-40",
+                        textClass,
                     ])}
                 >
                     <MenuItemContent

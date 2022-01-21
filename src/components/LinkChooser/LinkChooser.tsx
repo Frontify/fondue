@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
-import { mapToAriaProps } from "@components/Menu/Aria/helper";
+import { mapToAriaProps } from "@components/ActionMenu/Aria/helper";
 import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
@@ -156,11 +156,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }
     };
 
-    const wrapperProps = {
-        onClick: handleWrapperClick,
-        onMouseDown: handleWrapperMouseDown,
-    };
-
     const handleDropdownClose = () => {
         let selectedResult = null;
         if (context.query) {
@@ -230,7 +225,8 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     onClear={handleClearClick}
                     machineService={service}
                     validation={validation}
-                    wrapperProps={wrapperProps}
+                    onClick={handleWrapperClick}
+                    onMouseDown={handleWrapperMouseDown}
                 />
             </div>
             <AnimatePresence>

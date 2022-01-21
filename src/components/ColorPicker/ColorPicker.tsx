@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+
 import { Slider } from "@components/Slider/Slider";
-import { getBackgroundColor, getColorDisplayValue } from "@utilities/colors";
-import React, { FC, useEffect, useMemo, useState } from "react";
-// @ts-ignore
-import { getContrastingColor } from "react-color/lib/helpers/color";
+import { getColorDisplayValue, isColorLight } from "@utilities/colors";
+import { merge } from "@utilities/merge";
+import React, { FC, useEffect, useState } from "react";
+import tinycolor from "tinycolor2";
 import { Color, ColorFormat, Palette } from "../../types/colors";
 import { BrandColorPicker } from "./BrandColorPicker";
 import { CustomColorPicker } from "./CustomColorPicker";
@@ -15,6 +15,7 @@ export type ColorPickerProps = {
     currentFormat: ColorFormat;
     setFormat: (id: ColorFormat) => void;
     onSelect: (color: Color) => void;
+    showPreview?: boolean;
 };
 
 enum ColorType {
@@ -32,28 +33,27 @@ export const ColorPicker: FC<ColorPickerProps> = ({
     palettes,
     onSelect,
     setFormat,
+    showPreview = true,
     currentFormat = ColorFormat.Hex,
 }) => {
     const [colorType, setColorType] = useState(ColorType.Brand);
-    const [color, setColor] = useState(currentColor);
+    const [color, setColor] = useState<Color>(currentColor);
 
     useEffect(() => {
-        setColor({ ...currentColor, alpha: currentColor.alpha || 1 });
+        setColor({ ...currentColor, a: currentColor.a || 1 });
     }, [currentColor]);
 
     return (
-        <div className="tw-w-[400px] tw-relative tw-flex-auto tw-min-h-0 tw-flex tw-flex-col">
-            <ColorPreview color={color} format={currentFormat} />
-            <div className="tw-p-6 tw-gap-5 tw-flex tw-flex-col tw-overflow-y-auto">
-                <div>
-                    {palettes && (
-                        <Slider
-                            items={colorTypes}
-                            activeItemId={colorType}
-                            onChange={(type) => setColorType(type as ColorType)}
-                        />
-                    )}
-                </div>
+        <div className="tw-w-[400px] tw-relative">
+            {showPreview && <ColorPreview color={color} format={currentFormat} />}
+            <div className="tw-p-6 tw-flex tw-flex-col tw-gap-5">
+                {palettes && (
+                    <Slider
+                        items={colorTypes}
+                        activeItemId={colorType}
+                        onChange={(type) => setColorType(type as ColorType)}
+                    />
+                )}
                 {palettes && colorType === ColorType.Brand ? (
                     <BrandColorPicker currentColor={color} palettes={palettes} onSelect={onSelect} />
                 ) : (
@@ -69,22 +69,24 @@ export const ColorPicker: FC<ColorPickerProps> = ({
     );
 };
 
-const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format }) => {
-    const { hex, rgba, name, alpha } = color;
-    const backgroundColor = getBackgroundColor(color);
+export const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format }) => {
+    const parsedColor = tinycolor(color);
+    const backgroundColor = parsedColor.toRgbString();
+    const colorName = color.name;
     const displayValue = getColorDisplayValue(color, format);
-    const labelColor = useMemo(() => {
-        return alpha && alpha < 0.3 ? null : getContrastingColor(hex);
-    }, [hex, rgba, alpha]);
-
     return (
-        <div
-            className="tw-flex tw-flex-none tw-justify-center tw-p-7 tw-text-m tw-text-black dark:tw-text-white tw-gap-2"
-            style={{ background: backgroundColor, color: labelColor }}
-            data-test-id="color-preview"
-        >
-            {name && <span className="tw-font-bold">{name}</span>}
-            <span className={name ? "" : "tw-font-bold"}>{displayValue}</span>
+        <div className="tw-sticky tw-top-0 tw-bg-white tw-z-20 dark:tw-bg-black-95">
+            <div
+                className={merge([
+                    "tw-flex tw-justify-center tw-p-7 tw-text-m tw-gap-2",
+                    isColorLight(color) ? "tw-text-black" : "tw-text-white",
+                ])}
+                style={{ backgroundColor }}
+                data-test-id="color-preview"
+            >
+                {colorName && <span className="tw-font-bold">{colorName}</span>}
+                <span className={colorName ? "" : "tw-font-bold"}>{displayValue}</span>
+            </div>
         </div>
     );
 };
