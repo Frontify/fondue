@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { DismissButton, useOverlay } from "@react-aria/overlays";
+import { mergeProps } from "@react-aria/utils";
 import React, { FC, MouseEvent, TouchEvent, useRef } from "react";
 import { PopoverProps } from "./types";
 
 export const Popover: FC<PopoverProps> = (props) => {
     const ref = useRef<HTMLDivElement>(null);
-    const { popoverRef = ref, isOpen, onClose, children } = props;
+    const { popoverRef = ref, isOpen, onClose, children, maxHeight } = props;
 
     const { overlayProps } = useOverlay(
         {
@@ -29,9 +30,9 @@ export const Popover: FC<PopoverProps> = (props) => {
 
     return (
         <div
-            {...overlayProps}
+            {...mergeProps(overlayProps, { style: { maxHeight } })}
             ref={popoverRef}
-            className="tw-bg-white tw-border-black-10 tw-border tw-rounded tw-overflow-hidden tw-shadow-mid"
+            className="tw-bg-white tw-border-black-10 tw-border tw-rounded tw-overflow-x-hidden tw-shadow-mid tw-overflow-y-auto"
         >
             <div {...bubblingEventProps}>
                 {children}

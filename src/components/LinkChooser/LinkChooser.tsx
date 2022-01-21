@@ -12,7 +12,7 @@ import { DismissButton } from "@react-aria/overlays";
 import { useComboBoxState } from "@react-stately/combobox";
 import { useMachine } from "@xstate/react";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, Key, ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { FC, Key, MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
 import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultsList";
@@ -25,6 +25,7 @@ import { Validation } from "@components/TextInput";
 import { defaultSection, sections } from "./sections";
 import { useManualComboBoxEventHandlers } from "./utils/useManualComboBoxHandlers";
 import { NavigationMenu } from "./NavigationMenu";
+import { useDropdownAutoHeight } from "@components/Dropdown/useDropdownAutoHeight";
 
 export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Document]: <IconDocument />,
@@ -138,6 +139,19 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         openBoxState(state);
     };
 
+    const handleWrapperClick = () => {
+        if (document.activeElement !== inputRef.current) {
+            inputRef.current?.focus();
+        }
+        handleDropdownOpen();
+    };
+
+    const handleWrapperMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+        if (matches(LinkChooserState.Focused) && event.target !== inputRef.current) {
+            event.preventDefault();
+        }
+    };
+
     const handleDropdownClose = () => {
         let selectedResult = null;
         if (context.query) {
@@ -174,6 +188,11 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }
     }, [context.interruptedFetch, value]);
 
+    const { maxHeight } = useDropdownAutoHeight(inputRef, {
+        isOpen: matches(LinkChooserState.Focused),
+        autoResize: true,
+    });
+
     return (
         <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
             {!!label && (
@@ -204,6 +223,8 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     onClear={handleClearClick}
                     machineService={service}
                     validation={validation}
+                    onClick={handleWrapperClick}
+                    onMouseDown={handleWrapperMouseDown}
                 />
             </div>
             <AnimatePresence>
@@ -222,6 +243,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                             popoverRef={popoverRef}
                             isOpen={matches(LinkChooserState.Focused)}
                             onClose={handleDropdownClose}
+                            maxHeight={maxHeight}
                         >
                             <SearchResultsList
                                 {...listBoxProps}

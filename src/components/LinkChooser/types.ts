@@ -130,10 +130,13 @@ export type SearchInputProps = {
     machineService: MachineService;
     validation: Validation;
     onClear?: () => void;
+    onClick?: (event: MouseEvent<HTMLDivElement>) => void;
+    onMouseDown?: (event: MouseEvent<HTMLDivElement>) => void;
 };
 
 export type PopoverProps = {
     popoverRef?: RefObject<HTMLDivElement>;
+    maxHeight?: string;
     children: ReactNode;
     isOpen?: boolean;
     onClose: () => void;

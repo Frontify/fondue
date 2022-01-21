@@ -14,7 +14,8 @@ import { mergeProps } from "@react-aria/utils";
 import { useSelectState } from "@react-stately/select";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, MutableRefObject, ReactElement, useEffect, useRef, useState } from "react";
+import React, { FC, ReactElement, useEffect, useRef } from "react";
+import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from "./useDropdownAutoHeight";
 
 export enum DropdownSize {
     Small = "Small",
@@ -48,20 +49,6 @@ const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItem
             .find(({ id }) => id.toString() === activeId?.toString()) || null
     );
 };
-
-const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>) => {
-    let maxHeight = "auto";
-    if (triggerRef.current) {
-        const { innerHeight } = window;
-        const { bottom } = triggerRef.current.getBoundingClientRect();
-        const viewportPadding = 33;
-        const triggerMargin = 8;
-        maxHeight = `${Math.max(innerHeight - (bottom + viewportPadding + triggerMargin), 130)}px`;
-    }
-    return maxHeight;
-};
-
-const DEFAULT_DROPDOWN_MAX_HEIGHT = "auto";
 
 export const Dropdown: FC<DropdownProps> = ({
     id: propId,
@@ -104,23 +91,7 @@ export const Dropdown: FC<DropdownProps> = ({
         state.setSelectedKey(activeItemId as string);
     }, [activeItemId]);
 
-    const [maxHeight, setMaxHeight] = useState(DEFAULT_DROPDOWN_MAX_HEIGHT);
-
-    useEffect(() => {
-        const updateMaxHeight = () => setMaxHeight(getInnerOverlayHeight(triggerRef));
-        if (autoResize && isOpen) {
-            updateMaxHeight();
-            window.addEventListener("resize", updateMaxHeight);
-        } else if (autoResize && !isOpen) {
-            setMaxHeight(DEFAULT_DROPDOWN_MAX_HEIGHT);
-        }
-
-        return () => {
-            if (isOpen && autoResize) {
-                window.removeEventListener("resize", updateMaxHeight);
-            }
-        };
-    }, [isOpen, autoResize]);
+    const { maxHeight } = useDropdownAutoHeight(triggerRef, { isOpen, autoResize });
 
     const heightIsReady = !autoResize || maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
 

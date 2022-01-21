@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
 import { Validation } from "@components/TextInput";
@@ -9,7 +11,7 @@ import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
-import React, { FC, forwardRef } from "react";
+import React, { FC, forwardRef, MouseEvent } from "react";
 import { IconButtonProps, SearchInputProps, validationClassMap } from "./types";
 
 export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>(
@@ -23,11 +25,13 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
             machineService,
             onClear,
             validation = Validation.Default,
+            onClick,
+            onMouseDown,
         },
         inputElement,
     ) => {
         const { value } = ariaProps;
-        const { isFocusVisible, focusProps } = useFocusRing({ isTextInput: true });
+        const { isFocusVisible, focusProps, isFocused } = useFocusRing({ isTextInput: true });
 
         const [, send] = useActor(machineService);
 
@@ -46,11 +50,13 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                               validationClassMap[validation],
                           ]),
                 ])}
+                onClick={onClick}
+                onMouseDown={onMouseDown}
             >
                 {decorator && (
                     <div
                         className={merge([
-                            "tw-flex tw-items-center tw-justify-center",
+                            "tw-flex tw-items-center tw-justify-center tw-flex-none",
                             disabled || !selectedResult ? "tw-text-black-40" : "tw-text-violet-60",
                         ])}
                         data-test-id="link-chooser-decorator-icon"
@@ -60,9 +66,10 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                 )}
                 <input
                     {...mergeProps(focusProps, ariaProps)}
+                    readOnly={!isFocused}
                     ref={inputElement}
                     className={merge([
-                        "tw-flex-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows",
+                        "tw-flex-auto tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-min-w-0 tw-whitespace-nowrap tw-truncate",
                         disabled
                             ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40"
                             : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
@@ -115,10 +122,16 @@ SearchInput.displayName = "SearchInput";
 
 const IconButton: FC<IconButtonProps> = ({ disabled, title, ariaLabel, testId, icon, onClick, isComboBoxControl }) => {
     const { isFocusVisible, focusProps } = useFocusRing();
+
+    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        onClick && onClick();
+    };
+
     return (
         <button
             className={merge([
-                "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
+                "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-flex-none",
                 disabled ? "tw-cursor-default tw-text-black-40" : "tw-text-black-80  hover:tw-text-black-100",
                 isFocusVisible && FOCUS_STYLE,
             ])}
@@ -127,7 +140,7 @@ const IconButton: FC<IconButtonProps> = ({ disabled, title, ariaLabel, testId, i
             aria-label={ariaLabel}
             data-combo-box-control={isComboBoxControl}
             disabled={disabled}
-            onClick={onClick}
+            onClick={handleClick}
             {...focusProps}
         >
             {icon}
