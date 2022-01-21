@@ -3,7 +3,7 @@
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { Color } from "../../types/colors";
-import { EXAMPLE_PALETTES } from "../ColorPicker/ColorPicker.stories";
+import { EXAMPLE_PALETTES } from "../ColorPicker/example-palettes";
 import { ColorPickerFlyout as ColorPickerFlyoutComponent, ColorPickerFlyoutProps } from "./ColorPickerFlyout";
 
 // eslint-disable-next-line import/no-default-export

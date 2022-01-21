@@ -7,7 +7,7 @@ import { mount } from "@cypress/react";
 import React, { FC, useState } from "react";
 import { Color, ColorFormat, Palette } from "../../types/colors";
 import { ColorPicker } from "./ColorPicker";
-import { EXAMPLE_PALETTES } from "./ColorPicker.stories";
+import { EXAMPLE_PALETTES } from "./example-palettes";
 
 export const BRAND_COLOR_ID = "[data-test-id=brand-color]";
 export const COLOR_PREVIEW_ID = "[data-test-id=color-preview]";
