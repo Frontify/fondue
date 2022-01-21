@@ -308,6 +308,33 @@ describe("LinkChooser Component", () => {
                 });
         });
 
+        it("adds a new custom link to local storage each time, unless matching text", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SEARCH_INPUT_ID).type(CUSTOM_QUERY);
+            cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as("firstSelectItem");
+            cy.get("@firstSelectItem").click();
+            cy.get(DROPDOWN_WRAPPER_ID).should("not.exist");
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(SEARCH_INPUT_ID).type("1");
+            cy.get("@firstSelectItem").click();
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(`${SELECT_SECTION_ID} > li`).should("have.length", 2);
+            cy.get("@firstSelectItem").should("contain.text", `${CUSTOM_QUERY}1`);
+            cy.get(SEARCH_INPUT_ID).type("{Backspace}2");
+            cy.get("@firstSelectItem").click();
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(`${SELECT_SECTION_ID} > li`).should("have.length", 3);
+            cy.get("@firstSelectItem").should("contain.text", `${CUSTOM_QUERY}2`);
+            cy.get(SEARCH_INPUT_ID).type("{Backspace}1");
+            cy.get("@firstSelectItem").click();
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(`${SELECT_SECTION_ID} > li`).should("have.length", 3);
+            cy.get("@firstSelectItem").should("contain.text", `${CUSTOM_QUERY}1`);
+            cy.get(`${SELECT_SECTION_ID} > li`).eq(1).should("contain.text", `${CUSTOM_QUERY}2`);
+        });
+
         it("resumes fetching when dropdown opens if the fetching phase was previously interrupted", () => {
             mount(getLinkChooserComponent());
 
