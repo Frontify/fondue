@@ -1,17 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, Story } from "@storybook/react";
-import { EXAMPLE_PALETTES } from "@utilities/colors";
 import React, { useState } from "react";
 import { ColorFormat } from "../../types/colors";
 import { ColorPicker, ColorPickerProps } from "./ColorPicker";
+import { EXAMPLE_PALETTES } from "./example-palettes";
 
 // eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Color Picker",
     component: ColorPicker,
     args: {
-        currentColor: { hex: "#5566FF", alpha: 1 },
+        currentColor: { r: 85, g: 102, b: 255 },
     },
     argTypes: {
         onSelect: { action: "Select Color" },
