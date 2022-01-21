@@ -234,6 +234,7 @@ import IconTrashOpen from "@foundation/Icon/Generated/IconTrashOpen";
 import IconTravelPlaces from "@foundation/Icon/Generated/IconTravelPlaces";
 import IconTriangle from "@foundation/Icon/Generated/IconTriangle";
 import IconTruck from "@foundation/Icon/Generated/IconTruck";
+import IconTwitter from "@foundation/Icon/Generated/IconTwitter";
 import IconTypography from "@foundation/Icon/Generated/IconTypography";
 import IconTypostyles from "@foundation/Icon/Generated/IconTypostyles";
 import IconUiPattern from "@foundation/Icon/Generated/IconUiPattern";
@@ -492,6 +493,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.TravelPlaces]: <IconTravelPlaces />,
     [IconEnum.Triangle]: <IconTriangle />,
     [IconEnum.Truck]: <IconTruck />,
+    [IconEnum.Twitter]: <IconTwitter />,
     [IconEnum.Typography]: <IconTypography />,
     [IconEnum.Typostyles]: <IconTypostyles />,
     [IconEnum.UiPattern]: <IconUiPattern />,

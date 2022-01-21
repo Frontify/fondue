@@ -233,6 +233,7 @@ export enum IconEnum {
     TravelPlaces = "TravelPlaces",
     Triangle = "Triangle",
     Truck = "Truck",
+    Twitter = "Twitter",
     Typography = "Typography",
     Typostyles = "Typostyles",
     UiPattern = "UiPattern",
