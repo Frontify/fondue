@@ -34,10 +34,15 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
         setOpen(isOpen);
     };
 
+    const handleClick = () => {
+        setOpen(false);
+        onClick && onClick();
+    };
+
     return (
         <Flyout
             hug={false}
-            onClick={onClick}
+            onClick={handleClick}
             isOpen={open}
             onClose={() => handleOpenChange(false)}
             fixedHeader={<ColorPreview color={currentColor || { hex: "#ffffff" }} format={currentFormat} />}

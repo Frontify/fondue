@@ -208,14 +208,7 @@ export const Flyout: FC<FlyoutProps> = ({
                             overlayTriggerProps={overlayTriggerProps}
                             positionProps={positionProps}
                             fixedHeader={fixedHeader}
-                            onClick={
-                                onClick
-                                    ? () => {
-                                          onClick();
-                                          close();
-                                      }
-                                    : undefined
-                            }
+                            onClick={onClick ? onClick : undefined}
                             onClose={() => {
                                 onClose && onClose();
                                 close();
