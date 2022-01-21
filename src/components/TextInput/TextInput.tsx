@@ -49,6 +49,7 @@ export type TextInputBaseProps = {
     placeholder?: string;
     required?: boolean;
     disabled?: boolean;
+    autocomplete?: boolean;
     validation?: Validation;
     value?: string;
     onChange?: (value: string) => void;
@@ -84,6 +85,7 @@ export const TextInput: FC<TextInputProps> = ({
     required,
     obfuscated,
     disabled = false,
+    autocomplete = false,
     dotted = false,
     value = "",
     onChange,
@@ -163,6 +165,7 @@ export const TextInput: FC<TextInputProps> = ({
                 type={getInputType()}
                 required={required}
                 disabled={disabled}
+                autoComplete={autocomplete ? "on" : "off"}
                 size={size}
                 data-test-id="text-input"
             />

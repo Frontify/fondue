@@ -111,26 +111,27 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                     {Children.map(children, (child, index) => (
                         <div key={index}>{child}</div>
                     ))}
-                    {legacyFooter && (
-                        <div className="tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-sticky tw-bottom-0 tw-bg-white dark:tw-bg-black-95 tw-z-40">
-                            {onClick ? (
-                                <>
-                                    <Button onClick={onClose} style={ButtonStyle.Secondary}>
-                                        Cancel
-                                    </Button>
-                                    <Button onClick={onClick} icon={<IconCheck />}>
-                                        Confirm
-                                    </Button>
-                                </>
-                            ) : (
-                                <Button onClick={onClose} style={ButtonStyle.Secondary}>
-                                    Close
-                                </Button>
-                            )}
-                        </div>
-                    )}
+
                     <DismissButton onDismiss={onClose} />
                 </div>
+                {legacyFooter && (
+                    <div className="tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-border-t tw-border-t-black-10 tw-bg-white dark:tw-bg-black-95 tw-z-40">
+                        {onClick ? (
+                            <>
+                                <Button onClick={onClose} style={ButtonStyle.Secondary}>
+                                    Cancel
+                                </Button>
+                                <Button onClick={onClick} icon={<IconCheck />}>
+                                    Confirm
+                                </Button>
+                            </>
+                        ) : (
+                            <Button onClick={onClose} style={ButtonStyle.Secondary}>
+                                Close
+                            </Button>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );
