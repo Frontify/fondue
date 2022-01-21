@@ -68,7 +68,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({
     );
 };
 
-const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format }) => {
+export const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format }) => {
     const parsedColor = tinycolor(color);
     const backgroundColor = parsedColor.toRgbString();
     const colorName = color.name;
