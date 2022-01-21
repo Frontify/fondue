@@ -40,7 +40,6 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
 
     useEffect(() => {
         setColor(currentColor);
-        setHexInput(parsedColor.toHex());
     }, [currentColor]);
 
     const handleHexChange = () => {
@@ -49,6 +48,10 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
             onSelect(parsedHex.toRgb());
         }
     };
+
+    useEffect(() => {
+        setHexInput(parsedColor.toHex());
+    }, [color]);
 
     return (
         <div className="tw-flex tw-flex-col tw-gap-5" data-test-id="custom-color-picker">
