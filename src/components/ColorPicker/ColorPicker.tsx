@@ -2,6 +2,7 @@
 
 import { Slider } from "@components/Slider/Slider";
 import { getColorDisplayValue, isColorLight } from "@utilities/colors";
+import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useState } from "react";
 import tinycolor from "tinycolor2";
 import { Color, ColorFormat, Palette } from "../../types/colors";
@@ -76,11 +77,11 @@ export const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color,
     return (
         <div className="tw-sticky tw-top-0 tw-bg-white tw-z-20 dark:tw-bg-black-95">
             <div
-                className={`tw-flex tw-justify-center tw-p-7 tw-text-m tw-gap-2 ${
-                    isColorLight(color) ? "tw-text-black" : "tw-text-white"
-                }
-            `}
-                style={{ background: backgroundColor }}
+                className={merge([
+                    "tw-flex tw-justify-center tw-p-7 tw-text-m tw-gap-2",
+                    isColorLight(color) ? "tw-text-black" : "tw-text-white",
+                ])}
+                style={{ backgroundColor }}
                 data-test-id="color-preview"
             >
                 {colorName && <span className="tw-font-bold">{colorName}</span>}

@@ -106,9 +106,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                             value={hexInput}
                             decorator="#"
                             size={6}
-                            onChange={(input) => {
-                                setHexInput(input);
-                            }}
+                            onChange={setHexInput}
                             onEnterPressed={handleHexChange}
                             onBlur={handleHexChange}
                         />

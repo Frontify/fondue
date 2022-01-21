@@ -50,7 +50,7 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
                                     "tw-h-4 tw-w-4 tw-rounded tw-flex tw-items-center tw-justify-center",
                                     disabled && "tw-opacity-50",
                                 ])}
-                                style={{ background: backgroundColor }}
+                                style={{ backgroundColor }}
                             />
                         ) : (
                             <span className="tw-text-black-70">

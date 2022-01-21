@@ -90,9 +90,10 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                                               onClick={() => onSelect(color)}
                                           >
                                               <span
-                                                  className={`tw-h-8 tw-w-8 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center ${
-                                                      isColorLight(color) ? "tw-text-black" : "tw-text-white"
-                                                  }`}
+                                                  className={merge([
+                                                      "tw-h-8 tw-w-8 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center ",
+                                                      isColorLight(color) ? "tw-text-black" : "tw-text-white",
+                                                  ])}
                                                   style={{ background: tinycolor(color).toRgbString() }}
                                               >
                                                   {color.r === currentColor.r &&
