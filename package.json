@@ -163,7 +163,7 @@
         "@xstate/immer": "^0.3.0",
         "@xstate/react": "^1.6.1",
         "deepmerge": "^4.2.2",
-        "framer-motion": "^5.0.0",
+        "framer-motion": "^6.0.0",
         "react-color": "^2.19.3",
         "react-popper": "^2.2.5",
         "slate": "^0.72.0",
