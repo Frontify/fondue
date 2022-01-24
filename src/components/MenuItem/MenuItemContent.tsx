@@ -45,10 +45,10 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
                 })}
             </span>
         )}
-        <div className="tw-flex-1 tw-overflow-hidden tw-overflow-ellipsis tw-whitespace-nowrap">
+        <div className="tw-flex-1 tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap">
             <div
                 data-test-id="menu-item-title"
-                className="tw-select-none tw-overflow-ellipsis tw-overflow-hidden"
+                className="tw-select-none tw-text-ellipsis tw-overflow-hidden"
                 title={typeof title === "string" ? title : ""}
             >
                 {title}

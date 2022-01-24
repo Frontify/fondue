@@ -107,7 +107,7 @@ const SliderItem = (props: SliderItemProps) => {
                 <VisuallyHidden>
                     <input {...inputProps} {...focusProps} data-test-id="slider-input" ref={ref} />
                 </VisuallyHidden>
-                <span className="tw-overflow-hidden tw-overflow-ellipsis tw-whitespace-nowrap">
+                <span className="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap">
                     {isIconItem(item) ? <span aria-label={item.ariaLabel}>{item.icon}</span> : item.value.toString()}
                 </span>
             </div>
