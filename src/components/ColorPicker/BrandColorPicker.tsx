@@ -104,7 +104,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                                                       )}
                                               </span>
                                               {view === BrandColorView.List && (
-                                                  <span className="tw-h-8 tw-flex-grow tw-flex tw-items-center tw-text-left">
+                                                  <span className="tw-h-8 tw-grow tw-flex tw-items-center tw-text-left">
                                                       {color.name}
                                                   </span>
                                               )}

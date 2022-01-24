@@ -191,7 +191,7 @@ const FetchingAnimation: FC = () => (
 
 const ImageMenuItem: FC<ImageMenuItemProps> = ({ title, subtitle, preview }) => (
     <div className="tw-flex tw-px-5 tw-py-1.5 tw-cursor-pointer">
-        <div className="tw-flex tw-flex-shrink-0 tw-w-[75px] tw-h-[75px] tw-max-w-xs tw-bg-black-0 tw-rounded">
+        <div className="tw-flex tw-shrink-0 tw-w-[75px] tw-h-[75px] tw-max-w-xs tw-bg-black-0 tw-rounded">
             {preview && <img className="tw-w-full tw-object-contain" src={preview} alt={title as string} />}
         </div>
         <div className="tw-flex tw-flex-col tw-justify-center tw-ml-4">
