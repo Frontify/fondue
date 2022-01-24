@@ -36,7 +36,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
 
     const handleClick = () => {
         setOpen(false);
-        onClick && onClick();
+        onClick?.();
     };
 
     return (
