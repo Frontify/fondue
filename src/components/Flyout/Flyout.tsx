@@ -154,7 +154,7 @@ export const Flyout: FC<FlyoutProps> = ({
     fixedHeader,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
-    const { toggle, close } = state;
+    const { toggle } = state;
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -210,10 +210,7 @@ export const Flyout: FC<FlyoutProps> = ({
                             positionProps={positionProps}
                             fixedHeader={fixedHeader}
                             onClick={onClick ? onClick : undefined}
-                            onClose={() => {
-                                onClose && onClose();
-                                close();
-                            }}
+                            onClose={onClose ? onClose : undefined}
                             ref={overlayRef}
                             scrollRef={scrollRef}
                             legacyFooter={legacyFooter}
