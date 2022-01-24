@@ -31,15 +31,18 @@ export const useManualComboBoxEventHandlers = (
             const item = state.collection.getItem(focusedKey);
             const { key } = event;
 
-            if (state.isOpen && SUBMISSION_KEYS.includes(key) && item) {
-                if (item.parentKey !== "search") {
+            if (state.isOpen && SUBMISSION_KEYS.includes(key)) {
+                if (item && item.parentKey !== "search") {
                     onNavigate(item.key);
                     /* If focused key is a not part of the search results then the function must 
                     end before the react-aria event chain begins is started so that the item is not 
                     selected internally in the useComboBoxState hook */
                     return;
-                } else {
+                } else if (item) {
                     onSelect(item.key);
+                } else {
+                    onClose();
+                    return;
                 }
             } else if (state.isOpen && key === "Escape") {
                 onClose();

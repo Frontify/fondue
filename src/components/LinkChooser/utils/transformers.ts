@@ -2,12 +2,14 @@
 
 import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
+import { generateRandomId } from "@utilities/generateRandomId";
 import { CUSTOM_LINK_ID, DEFAULT_ICON, MAX_STORED_ITEMS, QUERIES_STORAGE_KEY } from "../LinkChooser";
 import { SearchResult } from "../types";
+import { isCustomLink } from "./helpers";
 
 export const createCustomLink = (query: string): SearchResult =>
     ({
-        id: CUSTOM_LINK_ID,
+        id: `${CUSTOM_LINK_ID}-${generateRandomId()}`,
         title: query,
         link: query,
         icon: DEFAULT_ICON,
@@ -21,18 +23,26 @@ export const retrieveRecentQueries = (): SearchResult[] => {
 };
 
 export const mergeResultWithRecentQueries = (selectedResult: SearchResult): SearchResult[] => {
+    const isSelectedCustomLink = isCustomLink(selectedResult);
+    const localSelectedResult = { ...selectedResult, local: true };
+
     const retrievedQueries = retrieveRecentQueries();
     const retrievedItem = retrievedQueries.find((item: SearchResult) => item.id === selectedResult?.id);
+
+    const parsedQueries = retrievedQueries.filter(
+        (query) => !isSelectedCustomLink || (isSelectedCustomLink && query.title !== selectedResult.title),
+    );
+
     let updatedQueries;
     if (retrievedItem) {
         updatedQueries = [
-            { ...selectedResult },
-            ...retrievedQueries.filter((item: SearchResult) => item.id !== selectedResult?.id),
+            localSelectedResult,
+            ...parsedQueries.filter((item: SearchResult) => item.id !== selectedResult?.id),
         ];
-    } else if (retrievedQueries.length < MAX_STORED_ITEMS) {
-        updatedQueries = [{ ...selectedResult }, ...retrievedQueries];
+    } else if (parsedQueries.length < MAX_STORED_ITEMS) {
+        updatedQueries = [localSelectedResult, ...parsedQueries];
     } else {
-        updatedQueries = [{ ...selectedResult }, ...retrievedQueries.slice(0, -1)];
+        updatedQueries = [localSelectedResult, ...parsedQueries.slice(0, -1)];
     }
     return updatedQueries;
 };

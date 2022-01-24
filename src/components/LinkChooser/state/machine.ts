@@ -13,7 +13,8 @@ import {
     populateDropdownSearchResultsWithRecentQueries,
     setSelectedSearchResult,
     storeNewSelectedResult,
-    updateCustomLink,
+    replaceCustomLinkWithSelected,
+    replaceCustomLink,
     updateDropdownSearchResults,
     updateQueryFromObject,
     updateQueryFromString,
@@ -44,7 +45,6 @@ export enum SectionState {
 const closeActions = [
     "storeNewSelectedResult",
     "updateQueryFromObject",
-    "updateCustomLink",
     "setSelectedSearchResult",
     "emitSelectSearchResult",
 ];
@@ -118,7 +118,7 @@ const initializeSectionState = (
                 onDone: [
                     {
                         target: SectionState.Loaded,
-                        actions: ["updateDropdownSearchResults", "updateCustomLink", "resolveFetching"],
+                        actions: ["updateDropdownSearchResults", "replaceCustomLink", "resolveFetching"],
                         cond: {
                             type: "isSection",
                             value: [DropdownState.Default],
@@ -158,7 +158,6 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                         },
                         {
                             target: LinkChooserState.Focused,
-                            actions: ["updateCustomLink"],
                         },
                     ],
                     ...sharedActions,
@@ -203,12 +202,12 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     CLOSE_DROPDOWN: [
                         {
                             target: LinkChooserState.Idle,
-                            actions: [...closeActions, "interruptFetching"],
+                            actions: [...closeActions, "interruptFetching", "replaceCustomLinkWithSelected"],
                             cond: "shouldRefetch",
                         },
                         {
                             target: LinkChooserState.Idle,
-                            actions: [...closeActions],
+                            actions: [...closeActions, "replaceCustomLinkWithSelected"],
                         },
                     ],
                     SET_SELECTED_SEARCH_RESULT: {
@@ -243,7 +242,8 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
             fillResultsWithNewRecentQueries,
             setSelectedSearchResult,
             storeNewSelectedResult,
-            updateCustomLink,
+            replaceCustomLink,
+            replaceCustomLinkWithSelected,
             updateDropdownSearchResults,
             updateQueryFromObject,
             updateQueryFromString,
