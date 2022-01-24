@@ -49,12 +49,11 @@ export const replaceCustomLinkWithSelected = assign<LinkChooserContext, DoneInvo
 
         if (isDisplayingLocalStorage) {
             return context.searchResults;
+        }
+        if (isSelectedCustomLink) {
+            return [...resultsWithoutCustomLinks, selectedResult];
         } else {
-            if (isSelectedCustomLink) {
-                return [...resultsWithoutCustomLinks, selectedResult];
-            } else {
-                return [...resultsWithoutCustomLinks, createCustomLink(context.query)];
-            }
+            return [...resultsWithoutCustomLinks, createCustomLink(context.query)];
         }
     },
 });

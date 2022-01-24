@@ -32,7 +32,7 @@ export const useManualComboBoxEventHandlers = (
             const { key } = event;
 
             if (state.isOpen && SUBMISSION_KEYS.includes(key)) {
-                if (item && item.parentKey !== "search") {
+                if (item?.parentKey !== "search") {
                     onNavigate(item.key);
                     /* If focused key is a not part of the search results then the function must 
                     end before the react-aria event chain begins is started so that the item is not 
