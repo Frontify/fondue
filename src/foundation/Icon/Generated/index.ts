@@ -6,6 +6,7 @@ export { default as IconAdd } from "./IconAdd";
 export { default as IconAddSimple } from "./IconAddSimple";
 export { default as IconAddToCollection } from "./IconAddToCollection";
 export { default as IconAdobeCreativeCloud } from "./IconAdobeCreativeCloud";
+export { default as IconAlert } from "./IconAlert";
 export { default as IconAlignBottom } from "./IconAlignBottom";
 export { default as IconAlignCenter } from "./IconAlignCenter";
 export { default as IconAlignLeft } from "./IconAlignLeft";
