@@ -8,6 +8,7 @@ import IconAdd from "@foundation/Icon/Generated/IconAdd";
 import IconAddSimple from "@foundation/Icon/Generated/IconAddSimple";
 import IconAddToCollection from "@foundation/Icon/Generated/IconAddToCollection";
 import IconAdobeCreativeCloud from "@foundation/Icon/Generated/IconAdobeCreativeCloud";
+import IconAlert from "@foundation/Icon/Generated/IconAlert";
 import IconAlignBottom from "@foundation/Icon/Generated/IconAlignBottom";
 import IconAlignCenter from "@foundation/Icon/Generated/IconAlignCenter";
 import IconAlignLeft from "@foundation/Icon/Generated/IconAlignLeft";
@@ -267,6 +268,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.AddSimple]: <IconAddSimple />,
     [IconEnum.AddToCollection]: <IconAddToCollection />,
     [IconEnum.AdobeCreativeCloud]: <IconAdobeCreativeCloud />,
+    [IconEnum.Alert]: <IconAlert />,
     [IconEnum.AlignBottom]: <IconAlignBottom />,
     [IconEnum.AlignCenter]: <IconAlignCenter />,
     [IconEnum.AlignLeft]: <IconAlignLeft />,
