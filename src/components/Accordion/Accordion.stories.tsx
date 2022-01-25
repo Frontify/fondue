@@ -21,9 +21,6 @@ import { Accordion as AccordionComponent, AccordionItem, AccordionProps } from "
 export default {
     title: "Components/Accordion",
     component: AccordionComponent,
-    argTypes: {
-        onChange: { table: { disable: true }, action: "onChange" },
-    },
 } as Meta<AccordionProps>;
 
 export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
@@ -85,7 +82,7 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
     );
 };
 
-export const WithAdvancedFormControls: Story<AccordionProps & { onChange: (id: string) => void }> = (args) => {
+export const WithAdvancedFormControls: Story<AccordionProps> = () => {
     const [spacing, setSpacing] = useState("1");
     const [showAdvancedSpacing, setShowAdvancedSpacing] = useState(false);
     const [alignment, setAlignmnent] = useState("l");
@@ -113,10 +110,7 @@ export const WithAdvancedFormControls: Story<AccordionProps & { onChange: (id: s
                         ) : (
                             <Slider
                                 id="spacing"
-                                onChange={(id) => {
-                                    args.onChange(id);
-                                    setSpacing(id);
-                                }}
+                                onChange={setSpacing}
                                 activeItemId={spacing}
                                 items={[
                                     { id: "1", value: "S" },
@@ -131,10 +125,7 @@ export const WithAdvancedFormControls: Story<AccordionProps & { onChange: (id: s
             <AccordionItem header={{ children: "Alignment", type: FieldsetHeaderType.Accordion }}>
                 <FormControl label={{ children: "Text", htmlFor: "text-alignment" }}>
                     <Slider
-                        onChange={(id) => {
-                            args.onChange(id);
-                            setAlignmnent(id);
-                        }}
+                        onChange={setAlignmnent}
                         activeItemId={alignment}
                         items={[
                             {

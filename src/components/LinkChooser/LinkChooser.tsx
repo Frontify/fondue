@@ -12,7 +12,7 @@ import { DismissButton } from "@react-aria/overlays";
 import { useComboBoxState } from "@react-stately/combobox";
 import { useMachine } from "@xstate/react";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, Key, MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { FC, Key, MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultsList";
@@ -98,6 +98,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             send("SET_SELECTED_SEARCH_RESULT", { data: { selectedResult: foundItem } });
         }
         closeBoxState(state);
+        setSelectedKey(key);
     };
     const handleInputChange = useCallback(
         (query: string) => {
@@ -106,11 +107,14 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         [value],
     );
 
+    const [selectedKey, setSelectedKey] = useState<Key | undefined>();
+
     const state = useComboBoxState({
         ...props,
         defaultFilter: doesContainSubstring,
         onInputChange: handleInputChange,
         onSelectionChange: handleSelectionChange,
+        selectedKey,
         menuTrigger: "manual",
         shouldCloseOnBlur: false,
         allowsEmptyCollection: true,
@@ -130,7 +134,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const handleClearClick = useCallback(() => {
         state.setInputValue("");
-        state.setSelectedKey("");
+        setSelectedKey("");
         send("CLEARING", { data: { query: "" } });
     }, []);
 
@@ -161,12 +165,10 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 selectedResult = createCustomLink(state.inputValue);
             }
         }
-
         send("CLOSE_DROPDOWN", { data: { selectedResult } });
-        if (selectedResult && state.selectedKey !== selectedResult.id) {
-            state.setSelectedKey(selectedResult.id);
+        if (selectedResult && selectedKey !== selectedResult.id) {
+            setSelectedKey(selectedResult.id);
         }
-
         closeBoxState(state);
     };
 
