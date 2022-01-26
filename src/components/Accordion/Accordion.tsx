@@ -34,7 +34,7 @@ type AriaAccordionItemProps = {
 const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) => {
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
-    const isOpen = state.expandedKeys.has(item.key) && item.props.children;
+    const isOpen = (state.expandedKeys.has(item.key) && item.props.children) || header.openByDefault;
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
@@ -101,9 +101,18 @@ export type AccordionProps = {
     children?: ReactNode;
 };
 
+const setFirstSectionOpenByDefault = (header: FieldsetHeaderProps, index: number) => {
+    if (index !== 0) {
+        return;
+    }
+    header.openByDefault = true;
+};
+
 const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => ({
     children: Children.map(children, (child, index) => {
         const { header, children } = child.props;
+
+        setFirstSectionOpenByDefault(header, index);
 
         return (
             <StatelyItem key={index} textValue={header.children}>
@@ -132,6 +141,9 @@ export const AccordionItem = ({ children }: AccordionItemProps): ReactElement =>
 export const Accordion: FC<AccordionProps> = (props) => {
     const children = filterValidChildren(props);
     const ariaProps = mapToAriaProps(children);
+
+    // console.log(ariaProps);
+
     const ref = useRef<HTMLDivElement | null>(null);
     const state = useTreeState<AccordionItemProps>(ariaProps);
     const {

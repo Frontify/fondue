@@ -44,9 +44,9 @@ describe("Accordion Component", () => {
             </Accordion>,
         );
 
-        cy.get(ACCORDION_ITEM_CONTENT_ID).should("not.exist");
+        cy.get(ACCORDION_ITEM_CONTENT_ID).eq(1).should("not.exist");
         cy.get(ACCORDION_ITEM_ID).eq(1).click();
-        cy.get(ACCORDION_ITEM_CONTENT_ID).should("exist");
+        cy.get(ACCORDION_ITEM_CONTENT_ID).eq(1).should("exist");
     });
 
     it("should call header action", () => {
@@ -66,6 +66,18 @@ describe("Accordion Component", () => {
         cy.get("@onClickStub").should("be.calledOnce");
     });
 
+    it("should open the first section by default", () => {
+        mount(
+            <Accordion>
+                <AccordionItem header={{ children: "1" }}>1</AccordionItem>
+                <AccordionItem header={{ children: "2" }}>2</AccordionItem>
+                <AccordionItem header={{ children: "3" }}>3</AccordionItem>
+            </Accordion>,
+        );
+
+        cy.get(ACCORDION_ITEM_CONTENT_ID).should("exist");
+    });
+
     it("should correctly navigate with keyboard", () => {
         mount(
             <Accordion>
@@ -82,7 +94,7 @@ describe("Accordion Component", () => {
         cy.window().focus();
         cy.get("body").realPress("Tab");
         cy.get(ACCORDION_ITEM_ID).first().should("be.focused");
-        cy.get(TEXT_INPUT_ID).should("not.exist");
+        cy.get(TEXT_INPUT_ID).should("exist");
         cy.get(ACCORDION_ITEM_ID).first().type("{enter}");
         cy.get(TEXT_INPUT_ID).should("not.be.focused");
         cy.get(ACCORDION_ITEM_ID).first().realPress("Tab");
