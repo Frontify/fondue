@@ -20,13 +20,13 @@ const arrayMergeFn = (destinationArray: any[], sourceArray: any[]) => {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
 export const tailwindConfig = (tailwindConfig: any) => {
-    let purge;
-    if (Array.isArray(tailwindConfig.purge)) {
-        purge = {
-            content: tailwindConfig.purge,
+    let config;
+    if (Array.isArray(tailwindConfig.content)) {
+        config = {
+            content: tailwindConfig.content,
         };
     } else {
-        purge = tailwindConfig.purge;
+        config = tailwindConfig.content;
     }
-    return deepmerge({ ...tailwindConfig, purge }, arcadeConfig, { arrayMerge: arrayMergeFn });
+    return deepmerge({ ...tailwindConfig, config }, arcadeConfig, { arrayMerge: arrayMergeFn });
 };
