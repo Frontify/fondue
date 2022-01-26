@@ -14,6 +14,7 @@ export type TreeNodeProps = {
     label?: string;
     value?: string;
     nodes?: TreeNodeProps[];
+    actions?: React.ReactNode[];
 };
 
 type NodeProps = {
@@ -25,13 +26,14 @@ type NodeProps = {
 };
 
 export const TreeNode = ({
-    node: { id, value, name, label, icon, nodes },
+    node: { id, value, name, label, icon, nodes, actions },
     strong = false,
     activeNodeId = null,
     onClick,
     parentIds = [],
 }: NodeProps): ReactElement<NodeProps> => {
     const [showNodes, setShowNodes] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
     const selected = id === activeNodeId;
 
     /* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
@@ -40,7 +42,7 @@ export const TreeNode = ({
             <a
                 data-test-id="node-link"
                 className={merge([
-                    "tw-flex tw-items-center tw-justify-center tw-py-1 tw-px-2 tw-rounded tw-cursor-pointer tw-no-underline",
+                    "tw-flex tw-items-center tw-justify-between tw-py-1 tw-px-2 tw-rounded tw-cursor-pointer tw-no-underline tw-leading-6",
                     strong && "tw-font-bold",
                     value && !selected && "hover:tw-bg-black-5",
                     selected ? "tw-bg-violet-60 tw-text-white" : "tw-text-black",
@@ -58,33 +60,38 @@ export const TreeNode = ({
                         onClick(activeNodeId === id ? null : id);
                     }
                 }}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
             >
-                <span
-                    data-test-id="toggle"
-                    onClick={(event) => {
-                        event.stopPropagation();
-                        setShowNodes(!showNodes);
-                    }}
-                >
-                    {nodes &&
-                        (showNodes ? (
-                            <IconCaretDown size={IconSize.Size16} />
-                        ) : (
-                            <IconCaretRight size={IconSize.Size16} />
-                        ))}
-                </span>
-                {icon && <span className="tw-pl-2">{icon}</span>}
-                <span className="tw-pl-2" data-test-id="node-link-name">
-                    {name}
-                </span>
-                <span
-                    className={merge([
-                        "tw-ml-auto tw-text-black-100 tw-text-opacity-40 tw-font-normal",
-                        selected && "tw-text-black-50",
-                    ])}
-                >
-                    {label}
-                </span>
+                <div className="tw-flex tw-space-x-2 tw-items-center">
+                    <span
+                        data-test-id="toggle"
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            setShowNodes(!showNodes);
+                        }}
+                    >
+                        {nodes &&
+                            (showNodes ? (
+                                <IconCaretDown size={IconSize.Size16} />
+                            ) : (
+                                <IconCaretRight size={IconSize.Size16} />
+                            ))}
+                    </span>
+                    {icon && <span>{icon}</span>}
+                    <span data-test-id="node-link-name">{name}</span>
+                </div>
+                <div className="tw-flex tw-space-x-1.5 tw-items-center">
+                    <span
+                        className={merge([
+                            "tw-text-black-100 tw-text-opacity-40 tw-font-normal",
+                            selected && "tw-text-black-50",
+                        ])}
+                    >
+                        {label}
+                    </span>
+                    {actions && (isHovered || activeNodeId === id) && actions.forEach((action) => action)}
+                </div>
             </a>
 
             {nodes && showNodes && (
