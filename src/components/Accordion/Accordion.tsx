@@ -141,9 +141,6 @@ export const AccordionItem = ({ children }: AccordionItemProps): ReactElement =>
 export const Accordion: FC<AccordionProps> = (props) => {
     const children = filterValidChildren(props);
     const ariaProps = mapToAriaProps(children);
-
-    // console.log(ariaProps);
-
     const ref = useRef<HTMLDivElement | null>(null);
     const state = useTreeState<AccordionItemProps>(ariaProps);
     const {
