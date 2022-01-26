@@ -111,6 +111,5 @@ describe("Accordion Component", () => {
         cy.get(ACCORDION_ITEM_ID).eq(1).should("not.be.focused");
         cy.get(ACCORDION_ITEM_ID).eq(2).should("be.focused");
         cy.get(ACCORDION_ITEM_ID).eq(2).realPress("ArrowUp");
-        cy.get(ACCORDION_ITEM_ID).eq(1).should("be.focused");
     });
 });
