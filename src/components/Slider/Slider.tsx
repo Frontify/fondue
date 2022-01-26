@@ -9,7 +9,7 @@ import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { RadioGroupState, useRadioGroupState } from "@react-stately/radio";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import { AnimateSharedLayout, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import React, { FC, ReactElement, useMemo, useRef } from "react";
 
 export type IconItem = {
@@ -66,7 +66,7 @@ const SliderItem = (props: SliderItemProps) => {
     };
 
     return (
-        <li key={item.id} className="tw-relative">
+        <motion.li layout key={item.id} className="tw-relative">
             {isActive && (
                 <motion.div
                     key={id}
@@ -111,7 +111,7 @@ const SliderItem = (props: SliderItemProps) => {
                     {isIconItem(item) ? <span aria-label={item.ariaLabel}>{item.icon}</span> : item.value.toString()}
                 </span>
             </div>
-        </li>
+        </motion.li>
     );
 };
 
@@ -145,7 +145,7 @@ export const Slider: FC<SliderProps> = ({
             data-test-id="slider"
             className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none tw-select-none"
         >
-            <AnimateSharedLayout>{itemElements}</AnimateSharedLayout>
+            {itemElements}
         </ul>
     );
 };
