@@ -51,7 +51,6 @@ export type FieldsetHeaderProps = {
     onClick?: () => void;
     as?: keyof JSX.IntrinsicElements;
     tabIndex?: number;
-    openByDefault?: boolean;
 };
 
 const renderType = (

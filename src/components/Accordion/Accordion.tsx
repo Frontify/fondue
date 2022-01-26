@@ -17,6 +17,7 @@ import React, {
     PropsWithChildren,
     ReactElement,
     ReactNode,
+    useEffect,
     useRef,
 } from "react";
 
@@ -33,9 +34,16 @@ type AriaAccordionItemProps = {
 
 const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) => {
     const triggerRef = useRef<HTMLButtonElement | null>(null);
+    const isOpenByDefault = item.index === 0;
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
-    const isOpen = (state.expandedKeys.has(item.key) && item.props.children) || header.openByDefault;
+    const isOpen = state.expandedKeys.has(item.key) && item.props.children;
     const { isFocusVisible, focusProps } = useFocusRing();
+
+    useEffect(() => {
+        if (isOpenByDefault) {
+            state.toggleKey(item.key);
+        }
+    }, []);
 
     return (
         <div key={item.key} className={isFocusVisible ? FOCUS_STYLE_INSET : ""}>
@@ -67,7 +75,32 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
             </button>
 
             <AnimatePresence>
-                {item.props.children && isOpen && (
+                {item.props.children && isOpen && isOpenByDefault && (
+                    <motion.div
+                        key={item.key}
+                        initial={"open"}
+                        animate={"open"}
+                        exit={"collapsed"}
+                        variants={{
+                            open: { height: "auto", overflow: "visible" },
+                            collapsed: { height: 0, overflow: "hidden" },
+                        }}
+                        transition={{ type: "tween" }}
+                        data-test-id="accordion-item-content"
+                    >
+                        <div {...regionProps} className="tw-px-8 tw-pb-6">
+                            <motion.div
+                                initial={{ opacity: 1 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                {item.props.children()}
+                            </motion.div>
+                        </div>
+                    </motion.div>
+                )}
+                {item.props.children && isOpen && !isOpenByDefault && (
                     <motion.div
                         key={item.key}
                         initial={"collapsed"}
@@ -101,18 +134,9 @@ export type AccordionProps = {
     children?: ReactNode;
 };
 
-const setFirstSectionOpenByDefault = (header: FieldsetHeaderProps, index: number) => {
-    if (index !== 0) {
-        return;
-    }
-    header.openByDefault = true;
-};
-
 const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => ({
     children: Children.map(children, (child, index) => {
         const { header, children } = child.props;
-
-        setFirstSectionOpenByDefault(header, index);
 
         return (
             <StatelyItem key={index} textValue={header.children}>
