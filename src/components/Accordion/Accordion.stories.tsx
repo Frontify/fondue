@@ -15,6 +15,9 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
+import { Color } from "../../types/colors";
+import { ColorPickerFlyout as ColorPickerFlyoutComponent } from "../ColorInputFlyout/ColorPickerFlyout";
+import { EXAMPLE_PALETTES } from "../ColorPicker/example-palettes";
 import { Accordion as AccordionComponent, AccordionItem, AccordionProps } from "./Accordion";
 
 // eslint-disable-next-line import/no-default-export
@@ -27,6 +30,8 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
     const [showContent, setShowContent] = useState(true);
     const [input, setInput] = useState("");
     const [activeItemId, setActiveItemId] = useState<string | number | undefined>();
+    const [temporaryColor, setTemporaryColor] = useState<Color | null>({ r: 0, g: 146, b: 120 });
+    const [selectedColor, setSelectedColor] = useState<Color | null>(null);
 
     return (
         <AccordionComponent>
@@ -64,6 +69,16 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
                             ],
                         },
                     ]}
+                />
+            </AccordionItem>
+            <AccordionItem header={{ children: "Item with color picker flyout", type: FieldsetHeaderType.Accordion }}>
+                <ColorPickerFlyoutComponent
+                    disabled={false}
+                    currentColor={temporaryColor}
+                    onClick={() => setSelectedColor(temporaryColor)}
+                    onClose={() => setTemporaryColor(selectedColor)}
+                    onSelect={(color) => setTemporaryColor(color)}
+                    palettes={EXAMPLE_PALETTES}
                 />
             </AccordionItem>
             <AccordionItem
