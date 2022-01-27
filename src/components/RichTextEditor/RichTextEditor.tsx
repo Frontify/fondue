@@ -115,7 +115,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     }, []);
 
     return (
-        <div data-test-id="rich-text-editor" ref={wrapperRef} style={wrapperStyle}>
+        <div data-test-id="rich-text-editor" ref={wrapperRef} style={wrapperStyle} className="tw-relative">
             <Slate editor={editor} value={value} onChange={onValueChanged}>
                 <Editable
                     placeholder={placeholder}
