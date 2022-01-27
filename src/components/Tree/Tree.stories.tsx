@@ -183,13 +183,14 @@ const nodesWithActions: TreeNodeProps[] = [
                         name: "Members",
                         value: "https://weare.frontify.com/page/2",
                         icon: <IconDocument size={IconSize.Size16} />,
-                        actions: [() => <ActionsFlyoutComponent key="actions" />],
+                        actions: [<ActionsFlyoutComponent key="actions" />],
                     },
                     {
                         id: "1-2-3",
                         name: "About us",
                         value: "https://weare.frontify.com/page/3",
                         icon: <IconDocument size={IconSize.Size16} />,
+                        label: "Label",
                         actions: [
                             <Button
                                 size={ButtonSize.Small}

@@ -6,6 +6,7 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
 import IconCaretRight from "@foundation/Icon/Generated/IconCaretRight";
 import { merge } from "@utilities/merge";
+import { AnimatePresence, motion } from "framer-motion";
 
 export type TreeNodeProps = {
     id: string;
@@ -90,7 +91,19 @@ export const TreeNode = ({
                     >
                         {label}
                     </span>
-                    {actions && (isHovered || activeNodeId === id) && actions.forEach((action) => action)}
+                    <AnimatePresence>
+                        {actions && (isHovered || selected) && (
+                            <motion.div
+                                className="tw-flex tw-space-x-1.5 tw-items-center"
+                                initial={{ width: 0 }}
+                                animate={{ width: "auto" }}
+                                exit={{ width: 0 }}
+                                transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
+                            >
+                                {actions.map((action) => action)}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             </a>
 
