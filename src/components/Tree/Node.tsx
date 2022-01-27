@@ -40,72 +40,76 @@ export const TreeNode = ({
     /* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
     return (
         <li data-test-id="node">
-            <a
-                data-test-id="node-link"
+            <div
                 className={merge([
-                    "tw-flex tw-items-center tw-justify-between tw-py-1 tw-px-2 tw-rounded tw-cursor-pointer tw-no-underline tw-leading-6",
+                    " tw-flex tw-py-1 tw-px-2 tw-rounded tw-no-underline tw-leading-6",
                     strong && "tw-font-bold",
                     value && !selected && "hover:tw-bg-black-5",
                     selected ? "tw-bg-violet-60 tw-text-white" : "tw-text-black",
                     parentIds.length === 1 && "tw-pl-8",
                     parentIds.length > 1 && "tw-pl-16",
                 ])}
-                aria-selected={selected}
-                onClick={() => {
-                    if (!value) {
-                        setShowNodes(!showNodes);
-                        return;
-                    }
-
-                    if (onClick) {
-                        onClick(activeNodeId === id ? null : id);
-                    }
-                }}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
-                <div className="tw-flex tw-space-x-2 tw-items-center">
-                    <span
-                        data-test-id="toggle"
-                        onClick={(event) => {
-                            event.stopPropagation();
+                <a
+                    data-test-id="node-link"
+                    className="tw-flex tw-items-center tw-flex-grow tw-justify-between tw-cursor-pointer"
+                    aria-selected={selected}
+                    onClick={() => {
+                        if (!value) {
                             setShowNodes(!showNodes);
-                        }}
-                    >
-                        {nodes &&
-                            (showNodes ? (
-                                <IconCaretDown size={IconSize.Size16} />
-                            ) : (
-                                <IconCaretRight size={IconSize.Size16} />
-                            ))}
-                    </span>
-                    {icon && <span>{icon}</span>}
-                    <span data-test-id="node-link-name">{name}</span>
-                </div>
-                <div className="tw-flex tw-space-x-1.5 tw-items-center">
-                    <span
-                        className={merge([
-                            "tw-text-black-100 tw-text-opacity-40 tw-font-normal",
-                            selected && "tw-text-black-50",
-                        ])}
-                    >
-                        {label}
-                    </span>
-                    <AnimatePresence>
-                        {actions && (isHovered || selected) && (
-                            <motion.div
-                                className="tw-flex tw-space-x-1.5 tw-items-center"
-                                initial={{ width: 0 }}
-                                animate={{ width: "auto" }}
-                                exit={{ width: 0 }}
-                                transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
-                            >
-                                {actions.map((action) => action)}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-            </a>
+                            return;
+                        }
+
+                        if (onClick) {
+                            onClick(activeNodeId === id ? null : id);
+                        }
+                    }}
+                >
+                    <div className="tw-flex tw-space-x-2 tw-items-center">
+                        <span
+                            data-test-id="toggle"
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                setShowNodes(!showNodes);
+                            }}
+                        >
+                            {nodes &&
+                                (showNodes ? (
+                                    <IconCaretDown size={IconSize.Size16} />
+                                ) : (
+                                    <IconCaretRight size={IconSize.Size16} />
+                                ))}
+                        </span>
+                        {icon && <span>{icon}</span>}
+                        <span data-test-id="node-link-name">{name}</span>
+                    </div>
+                    <div className="tw-px-1.5">
+                        <span
+                            className={merge([
+                                "tw-text-black-100 tw-text-opacity-40 tw-font-normal",
+                                selected && "tw-text-black-50",
+                            ])}
+                        >
+                            {label}
+                        </span>
+                    </div>
+                </a>
+                <AnimatePresence>
+                    {actions && (isHovered || selected) && (
+                        <motion.div
+                            className="tw-flex tw-space-x-1.5 tw-items-center"
+                            initial={{ width: 0 }}
+                            animate={{ width: "auto" }}
+                            exit={{ width: 0 }}
+                            transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
+                        >
+                            {actions.map((action) => action)}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
 
             {nodes && showNodes && (
                 <ul
