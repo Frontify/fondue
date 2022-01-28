@@ -19,14 +19,14 @@ type Props = {
 };
 
 const Component: FC<Props> = ({ palettes, currentColor = null }) => {
-    const [temporaryColor, setTemporaryColor] = useState<Color | null>(currentColor);
-    const [selectedColor, setSelectedColor] = useState<Color | null>(null);
+    const [temporaryColor, setTemporaryColor] = useState<Color | null>(null);
+    const [selectedColor, setSelectedColor] = useState<Color | null>(currentColor);
 
     return (
         <ColorPickerFlyout
-            currentColor={temporaryColor}
+            currentColor={temporaryColor ?? selectedColor}
             onClick={() => setSelectedColor(temporaryColor)}
-            onClose={() => setTemporaryColor(selectedColor)}
+            onClose={() => setTemporaryColor(null)}
             onSelect={(color) => setTemporaryColor(color)}
             palettes={palettes}
         />

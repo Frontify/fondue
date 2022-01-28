@@ -7,6 +7,7 @@ export enum IconEnum {
     AddSimple = "AddSimple",
     AddToCollection = "AddToCollection",
     AdobeCreativeCloud = "AdobeCreativeCloud",
+    Alert = "Alert",
     AlignBottom = "AlignBottom",
     AlignCenter = "AlignCenter",
     AlignLeft = "AlignLeft",

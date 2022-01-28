@@ -55,16 +55,14 @@ export const LinkChooser: Story<LinkChooserProps> = (args: LinkChooserProps) => 
     const [openInNewTab, setOpenInNewTab] = useState<boolean>(false);
 
     return (
-        <div className="tw-w-[300px]">
-            <LinkChooserComponent
-                {...args}
-                getGlobalByQuery={getGlobalByQueryMock}
-                getTemplatesByQuery={getTemplatesByQueryMock}
-                getGuidelinesByQuery={getGuidelinesByQueryMock}
-                openInNewTab={openInNewTab}
-                label="URL"
-                onOpenInNewTabChange={setOpenInNewTab}
-            />
-        </div>
+        <LinkChooserComponent
+            {...args}
+            getGlobalByQuery={getGlobalByQueryMock}
+            getTemplatesByQuery={getTemplatesByQueryMock}
+            getGuidelinesByQuery={getGuidelinesByQueryMock}
+            openInNewTab={openInNewTab}
+            label="URL"
+            onOpenInNewTabChange={setOpenInNewTab}
+        />
     );
 };
