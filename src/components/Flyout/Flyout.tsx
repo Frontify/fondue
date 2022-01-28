@@ -47,6 +47,7 @@ export type FlyoutProps = PropsWithChildren<{
     decorator?: ReactNode;
     badges?: BadgeProps[];
     hug?: boolean;
+    fitContent?: boolean;
     isOpen?: boolean;
     onOpenChange: (isOpen: boolean) => void;
     fixedHeader?: ReactNode;
@@ -77,6 +78,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         scrollRef,
         legacyFooter,
         fixedHeader,
+        fitContent,
     },
     ref,
 ) => {
@@ -88,7 +90,10 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         <div
             {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
             ref={ref}
-            className="tw-max-h-full tw-flex tw-shadow-mid tw-min-w-[400px] tw-outline-none"
+            className={merge([
+                "tw-max-h-full tw-flex tw-shadow-mid tw-outline-none",
+                fitContent ? "tw-min-w-0" : "tw-min-w-[400px]",
+            ])}
         >
             <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0">
                 {fixedHeader}
@@ -150,6 +155,7 @@ export const Flyout: FC<FlyoutProps> = ({
     title = "",
     badges = [],
     hug = true,
+    fitContent = false,
     legacyFooter = true,
     fixedHeader,
 }) => {
@@ -214,6 +220,7 @@ export const Flyout: FC<FlyoutProps> = ({
                             ref={overlayRef}
                             scrollRef={scrollRef}
                             legacyFooter={legacyFooter}
+                            fitContent={fitContent}
                         >
                             {overlayRef?.current && children}
                         </Overlay>
