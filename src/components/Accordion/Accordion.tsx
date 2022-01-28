@@ -17,6 +17,7 @@ import React, {
     PropsWithChildren,
     ReactElement,
     ReactNode,
+    useEffect,
     useRef,
 } from "react";
 
@@ -35,7 +36,14 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
     const isOpen = state.expandedKeys.has(item.key) && item.props.children;
+    const isActive = header.active;
     const { isFocusVisible, focusProps } = useFocusRing();
+
+    useEffect(() => {
+        if (isActive) {
+            state.toggleKey(item.key);
+        }
+    }, []);
 
     return (
         <div key={item.key} className={isFocusVisible ? FOCUS_STYLE_INSET : ""}>
@@ -76,6 +84,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                         variants={{
                             open: { height: "auto", overflow: "visible" },
                             collapsed: { height: 0, overflow: "hidden" },
+                            still: {},
                         }}
                         transition={{ type: "tween" }}
                         data-test-id="accordion-item-content"
