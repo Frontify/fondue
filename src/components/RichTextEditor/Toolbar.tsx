@@ -5,6 +5,9 @@ import IconItalic from "@foundation/Icon/Generated/IconItalic";
 import IconListBullets from "@foundation/Icon/Generated/IconListBullets";
 import IconListNumbers from "@foundation/Icon/Generated/IconListNumbers";
 import IconSnippet from "@foundation/Icon/Generated/IconSnippet";
+import IconTextAlignCenter from "@foundation/Icon/Generated/IconTextAlignCenter";
+import IconTextAlignLeft from "@foundation/Icon/Generated/IconTextAlignLeft";
+import IconTextAlignRight from "@foundation/Icon/Generated/IconTextAlignRight";
 import IconUnderline from "@foundation/Icon/Generated/IconUnderline";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
@@ -13,7 +16,7 @@ import { usePopper } from "react-popper";
 import { BlockStyleButton } from "./BlockStyleButton";
 import { useEditorSelection } from "./hooks/useEditorSelection";
 import { InlineStyleButton } from "./InlineStyleButton";
-import { BlockStyleTypes } from "./renderer/renderBlockStyles";
+import { BlockStyleTypes, TextAlignTypes } from "./renderer/renderBlockStyles";
 import { InlineStyles } from "./renderer/renderInlineStyles";
 
 export const Toolbar: FC = () => {
@@ -22,6 +25,10 @@ export const Toolbar: FC = () => {
     const inlineToolbarArrowRef = useRef<HTMLDivElement | null>(null);
 
     const { selectionRect } = useEditorSelection(selectionRectRef);
+
+    const ButtonGroup: FC<React.ReactNode> = ({ children }) => (
+        <div className="tw-flex tw-items-center tw-border-r tw-px-3 tw-py-2 tw-border-black-5">{children}</div>
+    );
 
     const {
         styles,
@@ -59,32 +66,48 @@ export const Toolbar: FC = () => {
                 style={styles.popper}
                 {...attributes.popper}
             >
-                <div className="tw-flex tw-items-center tw-px-3 tw-py-2 tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5">
-                    <InlineStyleButton style={InlineStyles.Bold}>
-                        <IconBold size={IconSize.Size16} />
-                    </InlineStyleButton>
+                <div className="tw-flex tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5">
+                    <ButtonGroup>
+                        <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignCenter}>
+                            <IconTextAlignCenter size={IconSize.Size16} />
+                        </BlockStyleButton>
 
-                    <InlineStyleButton style={InlineStyles.Italic}>
-                        <IconItalic size={IconSize.Size16} />
-                    </InlineStyleButton>
+                        <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignLeft}>
+                            <IconTextAlignLeft size={IconSize.Size16} />
+                        </BlockStyleButton>
 
-                    <InlineStyleButton style={InlineStyles.Underline}>
-                        <IconUnderline size={IconSize.Size12} />
-                    </InlineStyleButton>
+                        <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignRight}>
+                            <IconTextAlignRight size={IconSize.Size16} />
+                        </BlockStyleButton>
+                    </ButtonGroup>
 
-                    <InlineStyleButton style={InlineStyles.Strikethrough}>s</InlineStyleButton>
+                    <ButtonGroup>
+                        <InlineStyleButton style={InlineStyles.Bold}>
+                            <IconBold size={IconSize.Size16} />
+                        </InlineStyleButton>
 
-                    <InlineStyleButton style={InlineStyles.Code}>
-                        <IconSnippet size={IconSize.Size16} />
-                    </InlineStyleButton>
+                        <InlineStyleButton style={InlineStyles.Italic}>
+                            <IconItalic size={IconSize.Size16} />
+                        </InlineStyleButton>
 
-                    <BlockStyleButton blockType={BlockStyleTypes.OrderedList}>
-                        <IconListNumbers size={IconSize.Size12} />
-                    </BlockStyleButton>
+                        <InlineStyleButton style={InlineStyles.Underline}>
+                            <IconUnderline size={IconSize.Size12} />
+                        </InlineStyleButton>
 
-                    <BlockStyleButton blockType={BlockStyleTypes.UnorderedList}>
-                        <IconListBullets size={IconSize.Size16} />
-                    </BlockStyleButton>
+                        <InlineStyleButton style={InlineStyles.Strikethrough}>s</InlineStyleButton>
+
+                        <InlineStyleButton style={InlineStyles.Code}>
+                            <IconSnippet size={IconSize.Size16} />
+                        </InlineStyleButton>
+
+                        <BlockStyleButton blockType={BlockStyleTypes.OrderedList}>
+                            <IconListNumbers size={IconSize.Size12} />
+                        </BlockStyleButton>
+
+                        <BlockStyleButton blockType={BlockStyleTypes.UnorderedList}>
+                            <IconListBullets size={IconSize.Size16} />
+                        </BlockStyleButton>
+                    </ButtonGroup>
                 </div>
 
                 <div
