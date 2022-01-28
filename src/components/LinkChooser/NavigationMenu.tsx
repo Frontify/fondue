@@ -47,6 +47,7 @@ export const NavigationMenuItem: FC<NavigationMenuItemProps> = ({
     const { isFocused } = useOption(
         {
             key: section.id,
+            shouldFocusOnHover: false,
         },
         state,
         ref,
@@ -60,7 +61,7 @@ export const NavigationMenuItem: FC<NavigationMenuItemProps> = ({
             tabIndex={0}
             role="menuitem"
             aria-label={`Navigate to ${section.id} section of search results.`}
-            key={section.id}
+            data-key={section.id}
             data-test-id="link-chooser-navigation-menu-item"
             className={merge(["hover:tw-bg-black-0", isFocused && isFocusVisible && "tw-bg-black-0"])}
         >

@@ -121,6 +121,7 @@ const SearchResultOption: FC<SearchResultOptionProps> = ({ item, state, keyItemR
     const { optionProps, isDisabled, isSelected, isFocused } = useOption(
         {
             key: item.key,
+            shouldFocusOnHover: false,
         },
         state,
         ref,
