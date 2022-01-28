@@ -11,6 +11,12 @@ export enum BlockStyleTypes {
     Link = "link",
 }
 
+export enum TextAlignTypes {
+    AlignCenter = "align-center",
+    AlignLeft = "align-left",
+    AlignRight = "align-right",
+}
+
 export const renderBlockStyles = (props: RenderElementProps): JSX.Element => {
     switch (props.element.type) {
         case BlockStyleTypes.Paragraph:

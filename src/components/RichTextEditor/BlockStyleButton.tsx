@@ -6,13 +6,15 @@ import React, { FC, useContext } from "react";
 import { Editor, Element } from "slate";
 import { useSlateStatic } from "slate-react";
 import { ToolbarContext } from "./context/toolbar";
+import { TextAlignTypes } from "./renderer/renderBlockStyles";
 import { BlockElement } from "./RichTextEditor";
 
 interface BlockStyleButtonProps {
     blockType: BlockElement["type"];
+    textAlign?: TextAlignTypes;
 }
 
-export const BlockStyleButton: FC<BlockStyleButtonProps> = ({ blockType, children }) => {
+export const BlockStyleButton: FC<BlockStyleButtonProps> = ({ blockType, textAlign, children }) => {
     const { machineRef } = useContext(ToolbarContext);
 
     if (!machineRef) {
@@ -38,7 +40,7 @@ export const BlockStyleButton: FC<BlockStyleButtonProps> = ({ blockType, childre
                 event.preventDefault();
                 send({
                     type: "BLOCK_TYPE_SELECTED",
-                    data: { type: blockType, active: !!blockTypeIsActive, editor },
+                    data: { type: blockType, active: !!blockTypeIsActive, editor, textAlign },
                 });
             }}
             onMouseDown={(event) => event.preventDefault()}

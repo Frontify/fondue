@@ -2,7 +2,7 @@
 
 import { Editor, Element, Text, Transforms } from "slate";
 import { DoneInvokeEvent } from "xstate";
-import { BlockStyleTypes } from "../../renderer/renderBlockStyles";
+import { BlockStyleTypes, TextAlignTypes } from "../../renderer/renderBlockStyles";
 import { BlockTypeData, InlineStyleData, ToolbarContext, ToolbarData } from "./machine";
 
 const isBlockTypeData = (data: ToolbarData): data is BlockTypeData => (data as BlockTypeData).type !== undefined;
@@ -11,8 +11,8 @@ const isInlineStyleData = (data: ToolbarData): data is InlineStyleData =>
 
 export const updateBlockType = (_: ToolbarContext, { data }: DoneInvokeEvent<ToolbarData>): void => {
     if (isBlockTypeData(data)) {
-        const { editor, type, active } = data;
-        toggleBlock(active, editor, type);
+        const { editor, type, active, textAlign } = data;
+        toggleBlock(active, editor, type, textAlign);
     }
 };
 
@@ -27,7 +27,7 @@ export const updateInlineStyle = (_: ToolbarContext, { data }: DoneInvokeEvent<T
     }
 };
 
-const toggleBlock = (active: boolean, editor: Editor, type: BlockStyleTypes) => {
+const toggleBlock = (active: boolean, editor: Editor, type: BlockStyleTypes, textAlign?: TextAlignTypes) => {
     const isList = [BlockStyleTypes.OrderedList, BlockStyleTypes.UnorderedList].includes(type);
 
     Transforms.unwrapNodes(editor, {
@@ -52,5 +52,9 @@ const toggleBlock = (active: boolean, editor: Editor, type: BlockStyleTypes) => 
     if (!active && isList) {
         const block = { type: type, children: [] };
         Transforms.wrapNodes(editor, block);
+    }
+
+    if (textAlign) {
+        console.log({ textAlign });
     }
 };
