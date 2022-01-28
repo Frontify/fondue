@@ -196,15 +196,19 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         autoResize: true,
     });
 
+    const {
+        isOpen,
+        selectionManager: { focusedKey },
+    } = state;
+
     useEffect(() => {
-        const { focusedKey } = state.selectionManager;
-        if (focusedKey && popoverRef.current && state.isOpen) {
+        if (focusedKey && popoverRef.current && isOpen) {
             const dropdownItem = popoverRef.current?.querySelector(`[data-key="${focusedKey}"]`);
             if (dropdownItem) {
                 scrollIntoView(popoverRef.current, dropdownItem as HTMLElement);
             }
         }
-    }, [state.selectionManager.focusedKey, state.isOpen]);
+    }, [focusedKey, isOpen]);
 
     return (
         <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
