@@ -66,6 +66,43 @@ describe("Accordion Component", () => {
         cy.get("@onClickStub").should("be.calledOnce");
     });
 
+    it("should not have any open section by default", () => {
+        mount(
+            <Accordion>
+                <AccordionItem header={{ children: "1" }}>
+                    <TextInput />
+                </AccordionItem>
+                <AccordionItem header={{ children: "2" }}>
+                    <TextInput />
+                </AccordionItem>
+                <AccordionItem header={{ children: "3" }}>3</AccordionItem>
+            </Accordion>,
+        );
+
+        cy.get(ACCORDION_ITEM_ID).should("have.length", 3);
+        cy.get(ACCORDION_ITEM_CONTENT_ID).should("have.length", 0);
+    });
+
+    it("allows multiple sections to be open by default", () => {
+        mount(
+            <Accordion>
+                <AccordionItem header={{ children: "1" }}>
+                    <TextInput />
+                </AccordionItem>
+                <AccordionItem header={{ children: "2", active: true }}>
+                    <TextInput />
+                </AccordionItem>
+                <AccordionItem header={{ children: "3", active: true }}>3</AccordionItem>
+            </Accordion>,
+        );
+
+        cy.get(ACCORDION_ITEM_ID).should("have.length", 3);
+        cy.get(ACCORDION_ITEM_CONTENT_ID).should("have.length", 2);
+        cy.get(ACCORDION_ITEM_ID).eq(0).siblings(ACCORDION_ITEM_CONTENT_ID).should("not.exist");
+        cy.get(ACCORDION_ITEM_ID).eq(1).siblings(ACCORDION_ITEM_CONTENT_ID).should("exist");
+        cy.get(ACCORDION_ITEM_ID).eq(2).siblings(ACCORDION_ITEM_CONTENT_ID).should("exist");
+    });
+
     it("should correctly navigate with keyboard", () => {
         mount(
             <Accordion>
