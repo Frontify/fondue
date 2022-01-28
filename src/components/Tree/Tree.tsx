@@ -14,7 +14,10 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActi
     useEffect(() => setActiveNodeId(initialActiveNodeId), [initialActiveNodeId]);
 
     return (
-        <ul data-test-id="tree" className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm">
+        <ul
+            data-test-id="tree"
+            className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm"
+        >
             {nodes.map((node) => (
                 <TreeNode
                     key={node.id}
