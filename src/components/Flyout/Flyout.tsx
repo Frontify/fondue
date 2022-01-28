@@ -32,6 +32,7 @@ import React, {
     ReactNode,
     RefObject,
     useEffect,
+    useMemo,
     useRef,
 } from "react";
 import { useContainScroll } from "./useContainScroll";
@@ -62,6 +63,7 @@ type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange"> & {
     positionProps: HTMLAttributes<Element>;
     overlayTriggerProps: HTMLAttributes<Element>;
     scrollRef: RefObject<HTMLDivElement>;
+    innerOverlayRef: RefObject<HTMLDivElement>;
 };
 
 const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> = (
@@ -76,6 +78,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         positionProps,
         overlayTriggerProps,
         scrollRef,
+        innerOverlayRef,
         legacyFooter,
         fixedHeader,
         fitContent,
@@ -95,7 +98,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                 fitContent ? "tw-min-w-0" : "tw-min-w-[400px]",
             ])}
         >
-            <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0">
+            <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0" ref={innerOverlayRef}>
                 {fixedHeader}
                 <div
                     ref={scrollRef}
@@ -163,6 +166,7 @@ export const Flyout: FC<FlyoutProps> = ({
     const { toggle } = state;
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const overlayRef = useRef<HTMLDivElement | null>(null);
+    const innerOverlayRef = useRef<HTMLDivElement | null>(null);
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
 
@@ -172,12 +176,33 @@ export const Flyout: FC<FlyoutProps> = ({
         triggerRef,
     );
 
+    const ariaScrollCalculationRef = useMemo(() => {
+        if (scrollRef.current && innerOverlayRef.current) {
+            const { scrollTop, scrollHeight, scrollLeft, scrollWidth } = innerOverlayRef.current;
+            const { scrollHeight: innerScrollHeight, clientHeight } = scrollRef.current;
+            /* The scrollRef passed to useOverlayPosition is used by react-aria to determine if the height should flip.
+            Since the only properties it needs are the 4 below, and since it expects the scrollable content to be the
+            outermost container, we need to combine the scrollHeights of the innerOverlay and the scrollRef so that it
+            can properly calculate if it must flip the position */
+
+            return {
+                current: {
+                    scrollTop,
+                    scrollHeight: scrollHeight + (innerScrollHeight - clientHeight),
+                    scrollLeft,
+                    scrollWidth,
+                },
+            } as RefObject<HTMLDivElement>;
+        }
+        return scrollRef;
+    }, [innerOverlayRef.current, scrollRef.current?.scrollHeight, scrollRef.current?.clientHeight]);
+
     const { overlayProps: positionProps } = useOverlayPosition({
         targetRef: triggerRef,
         overlayRef,
         placement: "bottom left",
         offset: 5,
-        scrollRef: scrollRef,
+        scrollRef: ariaScrollCalculationRef,
         isOpen,
     });
 
@@ -219,6 +244,7 @@ export const Flyout: FC<FlyoutProps> = ({
                             onClose={onClose ? onClose : undefined}
                             ref={overlayRef}
                             scrollRef={scrollRef}
+                            innerOverlayRef={innerOverlayRef}
                             legacyFooter={legacyFooter}
                             fitContent={fitContent}
                         >
