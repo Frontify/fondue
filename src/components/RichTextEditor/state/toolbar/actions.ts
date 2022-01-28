@@ -36,25 +36,27 @@ const toggleBlock = (active: boolean, editor: Editor, type: BlockStyleTypes, tex
         split: true,
     });
 
-    const newListItem: Partial<Element> = {
+    const newItem: Partial<Element> = {
         type: active ? BlockStyleTypes.Paragraph : isList ? BlockStyleTypes.ListItem : type,
     };
+
+    if (textAlign) {
+        newItem.data = {
+            textAlign,
+        };
+    }
 
     // ensure all selected child nodes are converted
     for (const [, path] of Editor.nodes(editor, {
         match: (node) => Element.isElement(node) && BlockStyleTypes.ListItem === node.type,
     })) {
-        Transforms.setNodes(editor, newListItem, { at: path });
+        Transforms.setNodes(editor, newItem, { at: path });
     }
 
-    Transforms.setNodes(editor, newListItem);
+    Transforms.setNodes(editor, newItem);
 
     if (!active && isList) {
         const block = { type: type, children: [] };
         Transforms.wrapNodes(editor, block);
-    }
-
-    if (textAlign) {
-        console.log({ textAlign });
     }
 };

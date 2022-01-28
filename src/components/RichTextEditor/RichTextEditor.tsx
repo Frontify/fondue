@@ -14,7 +14,7 @@ import { ToolbarContext } from "./context/toolbar";
 import { useSoftBreak } from "./hooks/useSoftBreak";
 import { withLinks } from "./plugins/withLinks";
 import { withLists } from "./plugins/withLists";
-import { BlockStyleTypes, renderBlockStyles } from "./renderer/renderBlockStyles";
+import { BlockStyleTypes, renderBlockStyles, TextAlignTypes } from "./renderer/renderBlockStyles";
 import { InlineStyles, renderInlineStyles } from "./renderer/renderInlineStyles";
 import { editorMachine, States } from "./state/editor/machine";
 import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
@@ -34,6 +34,9 @@ export type RichTextEditorProps = {
 export type BlockElement = {
     type: BlockStyleTypes;
     url?: string;
+    data?: {
+        textAlign?: TextAlignTypes;
+    };
     children: (FormattedText | BlockElement)[];
 };
 

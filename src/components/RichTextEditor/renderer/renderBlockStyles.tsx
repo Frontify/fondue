@@ -17,10 +17,21 @@ export enum TextAlignTypes {
     AlignRight = "align-right",
 }
 
+export const textAlignClassMap: Record<TextAlignTypes, string> = {
+    [TextAlignTypes.AlignCenter]: "tw-text-center",
+    [TextAlignTypes.AlignLeft]: "tw-text-left",
+    [TextAlignTypes.AlignRight]: "tw-text-right",
+};
+
 export const renderBlockStyles = (props: RenderElementProps): JSX.Element => {
     switch (props.element.type) {
         case BlockStyleTypes.Paragraph:
-            return <p {...props.attributes}>{props.children}</p>;
+            const textAlign = props.element?.data?.textAlign;
+            return (
+                <p {...props.attributes} className={textAlign ? textAlignClassMap[textAlign] : ""}>
+                    {props.children}
+                </p>
+            );
         case BlockStyleTypes.OrderedList:
             return (
                 <ol {...props.attributes} className="tw-list-decimal tw-list-inside">
