@@ -66,6 +66,22 @@ describe("Accordion Component", () => {
         cy.get("@onClickStub").should("be.calledOnce");
     });
 
+    it("opens select sections initially", () => {
+        mount(
+            <Accordion>
+                <AccordionItem header={{ children: "1" }}>
+                    <TextInput />
+                </AccordionItem>
+                <AccordionItem header={{ children: "2", active: true }}>
+                    <TextInput />
+                </AccordionItem>
+                <AccordionItem header={{ children: "3" }}>3</AccordionItem>
+            </Accordion>,
+        );
+
+        cy.get(ACCORDION_ITEM_CONTENT_ID).should("exist");
+    });
+
     it("should correctly navigate with keyboard", () => {
         mount(
             <Accordion>
