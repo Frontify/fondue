@@ -15,6 +15,9 @@ import { MenuItemContentSize } from "@components/MenuItem";
 
 const ActionsFlyoutComponent = () => {
     const [open, setOpen] = useState(false);
+    const onClick = () => {
+        setOpen(true);
+    };
 
     return (
         <Flyout
@@ -24,9 +27,7 @@ const ActionsFlyoutComponent = () => {
             hug={false}
             trigger={
                 <Button
-                    onClick={() => {
-                        setOpen(true);
-                    }}
+                    onClick={onClick}
                     style={ButtonStyle.Secondary}
                     icon={<IconActions size={IconSize.Size12} />}
                     size={ButtonSize.Small}
@@ -198,7 +199,7 @@ const nodesWithActions: TreeNodeProps[] = [
                                 icon={<IconPlus size={IconSize.Size12} />}
                                 key="plusIcon"
                             />,
-                            <ActionsFlyoutComponent key={"actions"} />,
+                            <ActionsFlyoutComponent key="actions" />,
                         ],
                     },
                 ],

@@ -46,8 +46,12 @@ export const TreeNode = ({
         }
 
         if (onClick) {
-            onClick(activeNodeId === id ? null : id);
+            onClick(selected ? null : id);
         }
+    };
+    const toggleNodesVisibility = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        setShowNodes(!showNodes);
     };
 
     /* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
@@ -74,10 +78,7 @@ export const TreeNode = ({
                     <div className="tw-flex tw-space-x-2 tw-items-center">
                         <span
                             data-test-id="toggle"
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                setShowNodes(!showNodes);
-                            }}
+                            onClick={toggleNodesVisibility}
                         >
                             {nodes &&
                                 (showNodes ? (
