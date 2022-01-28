@@ -17,15 +17,15 @@ export default {
 } as Meta<ColorPickerFlyoutProps>;
 
 export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor }) => {
-    const [temporaryColor, setTemporaryColor] = useState<Color | null>(currentColor);
-    const [selectedColor, setSelectedColor] = useState<Color | null>(null);
+    const [temporaryColor, setTemporaryColor] = useState<Color | null>(null);
+    const [selectedColor, setSelectedColor] = useState<Color | null>(currentColor);
 
     return (
         <ColorPickerFlyoutComponent
             disabled={disabled}
-            currentColor={temporaryColor}
+            currentColor={temporaryColor ?? selectedColor}
             onClick={() => setSelectedColor(temporaryColor)}
-            onClose={() => setTemporaryColor(selectedColor)}
+            onClose={() => setTemporaryColor(null)}
             onSelect={(color) => setTemporaryColor(color)}
             palettes={EXAMPLE_PALETTES}
         />
