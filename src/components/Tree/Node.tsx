@@ -76,10 +76,7 @@ export const TreeNode = ({
                     onClick={onNodeClick}
                 >
                     <div className="tw-flex tw-space-x-2 tw-items-center">
-                        <span
-                            data-test-id="toggle"
-                            onClick={toggleNodesVisibility}
-                        >
+                        <span data-test-id="toggle" onClick={toggleNodesVisibility}>
                             {nodes &&
                                 (showNodes ? (
                                     <IconCaretDown size={IconSize.Size16} />
