@@ -47,6 +47,7 @@ export const NavigationMenuItem: FC<NavigationMenuItemProps> = ({
     const { isFocused } = useOption(
         {
             key: section.id,
+            shouldFocusOnHover: false,
         },
         state,
         ref,
