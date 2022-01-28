@@ -16,7 +16,7 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActi
     return (
         <ul
             data-test-id="tree"
-            className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm"
+            className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
         >
             {nodes.map((node) => (
                 <TreeNode
