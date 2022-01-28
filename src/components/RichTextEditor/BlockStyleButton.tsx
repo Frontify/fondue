@@ -24,7 +24,7 @@ export const BlockStyleButton: FC<BlockStyleButtonProps> = ({ blockType, textAli
     const editor = useSlateStatic();
     const [blockTypeIsActive] = Editor.nodes(editor, {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        match: (node) => Element.isElement(node) && node.type === blockType,
+        match: (node) => Element.isElement(node) && node.type === blockType && node.data?.textAlign === textAlign,
     });
 
     const [, send] = useActor(machineRef);

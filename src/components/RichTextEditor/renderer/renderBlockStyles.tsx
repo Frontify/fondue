@@ -26,7 +26,7 @@ export const textAlignClassMap: Record<TextAlignTypes, string> = {
 export const renderBlockStyles = (props: RenderElementProps): JSX.Element => {
     switch (props.element.type) {
         case BlockStyleTypes.Paragraph:
-            const textAlign = props.element?.data?.textAlign;
+            const textAlign = props.element.data?.textAlign;
             return (
                 <p {...props.attributes} className={textAlign ? textAlignClassMap[textAlign] : ""}>
                     {props.children}
