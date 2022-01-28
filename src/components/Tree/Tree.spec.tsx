@@ -129,7 +129,7 @@ describe("Tree Component", () => {
         mount(<Component nodes={nodes} />);
 
         cy.get(`${NODE_ID} ${TOGGLE_ID}`).click();
-        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:last > ${NODE_LINK_ID}`).as("InitiallySelectedItem");
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:last ${NODE_LINK_ID}`).as("InitiallySelectedItem");
         cy.get(`${SUB_TREE_ID} ${NODE_LINK_NAME_ID}:last`).click();
         cy.get("@InitiallySelectedItem").should("have.attr", "aria-selected", "true");
 
