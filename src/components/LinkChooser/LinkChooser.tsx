@@ -203,7 +203,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     useEffect(() => {
         if (focusedKey && popoverRef.current && isOpen) {
-            const dropdownItem = popoverRef.current?.querySelector(`[data-key="${focusedKey}"]`);
+            const dropdownItem = popoverRef.current.querySelector(`[data-key="${focusedKey}"]`);
             if (dropdownItem) {
                 scrollIntoView(popoverRef.current, dropdownItem as HTMLElement);
             }
