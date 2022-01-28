@@ -94,7 +94,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                 <div
                     {...mergeProps(buttonProps, focusProps)}
                     ref={triggerRef}
-                    className="tw-flex-1 tw-flex tw-flex-wrap tw-gap-1 tw-px-[19px] tw-py-[11px] tw-min-h-[34px] tw-outline-none"
+                    className="tw-flex-1 tw-flex tw-flex-wrap tw-gap-1 tw-pl-[19px] tw-py-[11px] tw-min-h-[34px] tw-outline-none tw-pr-7"
                 >
                     {type === MultiSelectType.Default &&
                         activeItemKeys.map((key) => (
