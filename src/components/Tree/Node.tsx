@@ -37,6 +37,19 @@ export const TreeNode = ({
     const [isHovered, setIsHovered] = useState(false);
     const selected = id === activeNodeId;
 
+    const setHoveredTrue = () => setIsHovered(true);
+    const setHoveredFalse = () => setIsHovered(false);
+    const onNodeClick = () => {
+        if (!value) {
+            setShowNodes(!showNodes);
+            return;
+        }
+
+        if (onClick) {
+            onClick(activeNodeId === id ? null : id);
+        }
+    };
+
     /* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
     return (
         <li data-test-id="node">
@@ -49,23 +62,14 @@ export const TreeNode = ({
                     parentIds.length === 1 && "tw-pl-8",
                     parentIds.length > 1 && "tw-pl-16",
                 ])}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
+                onMouseEnter={setHoveredTrue}
+                onMouseLeave={setHoveredFalse}
             >
                 <a
                     data-test-id="node-link"
                     className="tw-flex tw-items-center tw-flex-grow tw-justify-between tw-cursor-pointer"
                     aria-selected={selected}
-                    onClick={() => {
-                        if (!value) {
-                            setShowNodes(!showNodes);
-                            return;
-                        }
-
-                        if (onClick) {
-                            onClick(activeNodeId === id ? null : id);
-                        }
-                    }}
+                    onClick={onNodeClick}
                 >
                     <div className="tw-flex tw-space-x-2 tw-items-center">
                         <span
