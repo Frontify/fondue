@@ -40,6 +40,7 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
                     children: "Item with decorator, type Accordion and a FormControl child",
                     decorator: <IconIcons />,
                     type: FieldsetHeaderType.Accordion,
+                    active: true,
                 }}
             >
                 <FormControl
@@ -53,7 +54,9 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
             <AccordionItem header={{ children: "Item with plain text child", type: FieldsetHeaderType.AddRemove }}>
                 bar
             </AccordionItem>
-            <AccordionItem header={{ children: "Item with dropdown child", type: FieldsetHeaderType.AddRemove }}>
+            <AccordionItem
+                header={{ children: "Item with dropdown child", type: FieldsetHeaderType.AddRemove, active: true }}
+            >
                 <Dropdown
                     onChange={(id) => setActiveItemId(id)}
                     activeItemId={activeItemId}
