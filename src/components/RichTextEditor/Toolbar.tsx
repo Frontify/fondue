@@ -1,14 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconBold from "@foundation/Icon/Generated/IconBold";
-import IconItalic from "@foundation/Icon/Generated/IconItalic";
-import IconListBullets from "@foundation/Icon/Generated/IconListBullets";
-import IconListNumbers from "@foundation/Icon/Generated/IconListNumbers";
-import IconSnippet from "@foundation/Icon/Generated/IconSnippet";
-import IconTextAlignCenter from "@foundation/Icon/Generated/IconTextAlignCenter";
-import IconTextAlignLeft from "@foundation/Icon/Generated/IconTextAlignLeft";
-import IconTextAlignRight from "@foundation/Icon/Generated/IconTextAlignRight";
-import IconUnderline from "@foundation/Icon/Generated/IconUnderline";
+import {
+    IconBold,
+    IconItalic,
+    IconListBullets,
+    IconListNumbers,
+    IconSnippet,
+    IconTextAlignCenter,
+    IconTextAlignJustify,
+    IconTextAlignLeft,
+    IconTextAlignRight,
+    IconUnderline,
+} from "@foundation/Icon";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useRef } from "react";
@@ -68,12 +71,16 @@ export const Toolbar: FC = () => {
             >
                 <div className="tw-flex tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5">
                     <ButtonGroup>
-                        <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignCenter}>
-                            <IconTextAlignCenter size={IconSize.Size16} />
+                        <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignJustify}>
+                            <IconTextAlignJustify size={IconSize.Size16} />
                         </BlockStyleButton>
 
                         <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignLeft}>
                             <IconTextAlignLeft size={IconSize.Size16} />
+                        </BlockStyleButton>
+
+                        <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignCenter}>
+                            <IconTextAlignCenter size={IconSize.Size16} />
                         </BlockStyleButton>
 
                         <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignRight}>
