@@ -41,7 +41,7 @@ const toggleBlock = (active: boolean, editor: Editor, type: BlockStyleTypes, tex
     };
 
     if (textAlign) {
-        newItem.data = {
+        newItem.properties = {
             textAlign: !active ? textAlign : TextAlignTypes.None,
         };
     }

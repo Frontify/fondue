@@ -2,7 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import React from "react";
-import { BlockStyleTypes } from "./renderer/renderBlockStyles";
+import { BlockStyleTypes, TextAlignTypes } from "./renderer/renderBlockStyles";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
 import { createLinkNode } from "./utils/editor/link";
 import { createListItemNode } from "./utils/editor/listItem";
@@ -49,6 +49,9 @@ const value = [
                 text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
             },
         ],
+        properties: {
+            textAlign: TextAlignTypes.AlignCenter,
+        },
     },
 ];
 

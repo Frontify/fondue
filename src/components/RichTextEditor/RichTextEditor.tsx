@@ -34,7 +34,7 @@ export type RichTextEditorProps = {
 export type BlockElement = {
     type: BlockStyleTypes;
     url?: string;
-    data?: {
+    properties?: {
         textAlign?: TextAlignTypes;
     };
     children: (FormattedText | BlockElement)[];
