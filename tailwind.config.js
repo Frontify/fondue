@@ -23,7 +23,7 @@ module.exports = {
             },
             colors: {
                 transparent: "transparent",
-                current: "currentColor", // Used for tailwind 3 when using a customized color palette -->  https://tailwindcss.com/docs/upgrade-guide#fill-and-stroke-use-color-palette
+                current: "currentColor",
                 white: "#ffffff",
                 black: {
                     DEFAULT: "#2d3232",
