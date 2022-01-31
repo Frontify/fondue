@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* (c) Copyrkght Frontify Ltd., all rights reserved. */
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
