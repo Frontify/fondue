@@ -84,7 +84,6 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                         variants={{
                             open: { height: "auto", overflow: "visible" },
                             collapsed: { height: 0, overflow: "hidden" },
-                            still: {},
                         }}
                         transition={{ type: "tween" }}
                         data-test-id="accordion-item-content"
