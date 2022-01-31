@@ -17,9 +17,8 @@ export type AriaOptionProps = {
     state: TreeState<object>;
 };
 
-const isActionMenuItem = (menuItem: MenuItemType | ActionMenuItemType): menuItem is ActionMenuItemType => {
-    return typeof (menuItem as any).onClick !== "undefined";
-};
+const isActionMenuItem = (menuItem: MenuItemType | ActionMenuItemType): menuItem is ActionMenuItemType =>
+    typeof (menuItem as ActionMenuItemType).onClick !== "undefined";
 
 export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSelected }) => {
     const ref = useRef<HTMLLIElement | null>(null);
