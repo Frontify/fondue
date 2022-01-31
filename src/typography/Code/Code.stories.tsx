@@ -6,7 +6,7 @@ import { Code as CodeComponent, CodeProps } from "./Code";
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Foundation/Typography/Code",
+    title: "Typography/Code",
     component: CodeComponent,
     argTypes: {
         size: {

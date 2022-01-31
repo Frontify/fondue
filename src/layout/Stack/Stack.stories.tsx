@@ -11,7 +11,7 @@ const Placeholder: FC<{ width?: "auto" | "fixed" }> = ({ width = "auto" }) => (
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Foundation/Layout/Stack",
+    title: "Layout/Stack",
     component: Stack,
     argTypes: {
         children: {

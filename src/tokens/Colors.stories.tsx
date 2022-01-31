@@ -10,7 +10,7 @@ import React from "react";
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Foundation/Colors",
+    title: "Tokens/Colors",
 } as Meta;
 
 function getPalette(color: any) {
