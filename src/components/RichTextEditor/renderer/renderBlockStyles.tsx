@@ -12,6 +12,7 @@ export enum BlockStyleTypes {
 }
 
 export enum TextAlignTypes {
+    None = "align-none",
     AlignJustify = "align-justify",
     AlignLeft = "align-left",
     AlignCenter = "align-center",
@@ -19,6 +20,7 @@ export enum TextAlignTypes {
 }
 
 export const textAlignClassMap: Record<TextAlignTypes, string> = {
+    [TextAlignTypes.None]: "",
     [TextAlignTypes.AlignJustify]: "tw-text-justify",
     [TextAlignTypes.AlignLeft]: "tw-text-left",
     [TextAlignTypes.AlignCenter]: "tw-text-center",
