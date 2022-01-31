@@ -6,7 +6,7 @@ import { Text as TextComponent, TextProps } from "./Text";
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Foundation/Typography/Text",
+    title: "Typography/Text",
     component: TextComponent,
     argTypes: {
         size: {

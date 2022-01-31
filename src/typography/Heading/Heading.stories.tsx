@@ -6,7 +6,7 @@ import { Heading as HeadingComponent, HeadingProps } from "./Heading";
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Foundation/Typography/Heading",
+    title: "Typography/Heading",
     component: HeadingComponent,
     argTypes: {
         size: {
