@@ -66,14 +66,8 @@ export const Flyout: FC<FlyoutProps> = ({
 
     const ariaScrollCalculationRef = useMemo(() => {
         if (scrollRef.current && innerOverlayRef.current) {
-            const { scrollHeight: outerScrollHeight } = innerOverlayRef.current;
-            const {
-                scrollTop,
-                scrollHeight: innerScrollHeight,
-                clientHeight: innerClientHeight,
-                scrollLeft,
-                scrollWidth,
-            } = scrollRef.current;
+            const outerScrollHeight = innerOverlayRef.current.scrollHeight;
+            const { scrollHeight: innerScrollHeight, clientHeight: innerClientHeight } = scrollRef.current;
             /* The scrollRef passed to useOverlayPosition is used by react-aria to determine if the height should flip.
             Since the only properties it needs are the 4 below, and since it expects the scrollable content to be the
             outermost container, we need to combine the scrollHeights of the innerOverlay and the scrollRef so that it
@@ -81,13 +75,12 @@ export const Flyout: FC<FlyoutProps> = ({
 
             return {
                 current: {
-                    scrollTop,
+                    ...scrollRef.current,
                     scrollHeight: outerScrollHeight + (innerScrollHeight - innerClientHeight),
-                    scrollLeft,
-                    scrollWidth,
                 },
             } as RefObject<HTMLDivElement>;
         }
+
         return scrollRef;
     }, [innerOverlayRef.current, scrollRef.current?.scrollHeight, scrollRef.current?.clientHeight]);
 
