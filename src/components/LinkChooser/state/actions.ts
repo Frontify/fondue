@@ -3,6 +3,7 @@
 import { QUERIES_STORAGE_KEY } from "@components/LinkChooser/LinkChooser";
 import { assign, DoneInvokeEvent } from "xstate";
 import { SearchResult } from "..";
+import { defaultSection } from "../sections";
 import { LinkChooserContext, LinkChooserEventData } from "../types";
 import { isCustomLink } from "../utils/helpers";
 import { createCustomLink, mergeResultWithRecentQueries, retrieveRecentQueries } from "../utils/transformers";
@@ -60,10 +61,11 @@ export const replaceCustomLinkWithSelected = assign<LinkChooserContext, DoneInvo
 });
 
 export const setExtraResultsByQuery = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
-    getExtraResultsByQuery: (_, { data }) => {
-        console.log(data);
-        return data?.getExtraResultsByQuery ?? null;
-    },
+    getExtraResultsByQuery: (_, { data }) => data.getExtraResultsByQuery ?? null,
+});
+
+export const setCurrentSectionId = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
+    currentSectionId: (_, { data }) => data.currentSectionId ?? defaultSection.id,
 });
 
 export const setSelectedSearchResult = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({

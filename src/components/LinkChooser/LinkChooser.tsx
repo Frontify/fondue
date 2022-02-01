@@ -16,7 +16,7 @@ import { useComboBoxState } from "@react-stately/combobox";
 import { useMachine } from "@xstate/react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, Key, MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { NavigationMenu, NavigationMenuItem } from "./NavigationMenu";
+import { NavigationMenu } from "./NavigationMenu";
 import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultsList";
@@ -181,7 +181,10 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             onNavigate: (id) =>
                 send({
                     type: "SELECT_EXTRA_SECTION",
-                    data: { getExtraResultsByQuery: findSection(extraSections, id)?.getResults || null },
+                    data: {
+                        getExtraResultsByQuery: findSection(extraSections, id)?.getResults || null,
+                        currentSectionId: id.toString(),
+                    },
                 }),
             onSelect: handleSelectionChange,
         },
@@ -265,16 +268,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                             onClose={handleDropdownClose}
                             maxHeight={maxHeight}
                         >
-                            {shouldGoBack(matches) && (
-                                <div className="tw-mt-2">
-                                    <NavigationMenuItem
-                                        state={state}
-                                        section={defaultSection}
-                                        onPress={() => send("BACK_TO_DEFAULT")}
-                                        direction="left"
-                                    />
-                                </div>
-                            )}
                             <SearchResultsList
                                 {...listBoxProps}
                                 listBoxRef={listBoxRef}

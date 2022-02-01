@@ -27,7 +27,7 @@ export const NavigationMenu: FC<NavigationMenuProps> = ({ machineService, state 
                     onPress={() => {
                         send({
                             type: "SELECT_EXTRA_SECTION",
-                            data: { getExtraResultsByQuery: section.getResults },
+                            data: { getExtraResultsByQuery: section.getResults, currentSectionId: section.id },
                         });
                     }}
                 />

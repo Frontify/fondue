@@ -16,6 +16,7 @@ import {
     replaceCustomLink,
     replaceCustomLinkWithSelected,
     resolveFetching,
+    setCurrentSectionId,
     setExtraResultsByQuery,
     setSelectedSearchResult,
     storeNewSelectedResult,
@@ -170,7 +171,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                         on: {
                             SELECT_EXTRA_SECTION: {
                                 target: DropdownState.ExtraSection,
-                                actions: [setExtraResultsByQuery],
+                                actions: [setExtraResultsByQuery, setCurrentSectionId],
                             },
                         },
                     },
@@ -183,7 +184,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                         on: {
                             BACK_TO_DEFAULT: {
                                 target: `${DropdownState.Default}.${SectionState.Fetching}`,
-                                actions: [setExtraResultsByQuery],
+                                actions: [setExtraResultsByQuery, setCurrentSectionId],
                             },
                             CLEARING: {
                                 target: DropdownState.Default,
@@ -231,6 +232,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
             emitSelectSearchResult,
             fetchGlobalSearchResults,
             setExtraResultsByQuery,
+            setCurrentSectionId,
             openPreviewContext,
             populateDropdownSearchResultsWithRecentQueries,
             fillResultsWithNewRecentQueries,
