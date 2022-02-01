@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconLabel, ImageSearchResult, SearchResult } from "../types";
-import { guidelines } from "./guidelines";
-import { templates } from "./templates";
+import { guidelineSection } from "./guidelines";
+import { templateSection } from "./templates";
 
-const formatImageItemData = (array: ImageSearchResult[]): SearchResult[] =>
-    array.map(({ id, title, subtitle, link, icon }) => ({ id, title, subtitle, link, icon }));
+const formatImageItemData = (array: (ImageSearchResult | SearchResult)[]): SearchResult[] =>
+    array.map(({ id, title, subtitle, link, icon }) => ({ id, title, subtitle, link, icon })) || [];
 
 export const data = [
     {
@@ -35,6 +35,6 @@ export const data = [
         link: "https://www.frontify.com/en/digital-and-print-templates/",
         icon: IconLabel.External,
     },
-    ...formatImageItemData(templates),
-    ...formatImageItemData(guidelines),
+    ...formatImageItemData(templateSection.items),
+    ...formatImageItemData(guidelineSection.items),
 ];

@@ -1,9 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from "@components/Checkbox/Checkbox";
-import { MenuItemType, MenuBlock } from "@components/Dropdown/SelectMenu/SelectMenu";
+import { MenuBlock, MenuItemType } from "@components/Dropdown/SelectMenu/SelectMenu";
+import { Validation } from "@components/TextInput";
 import { AriaListBoxOptions } from "@react-aria/listbox";
+import { ComboBoxState } from "@react-stately/combobox";
 import { ListState } from "@react-stately/list";
+import { Node } from "@react-types/shared";
 import {
     HTMLAttributes,
     InputHTMLAttributes,
@@ -11,14 +14,11 @@ import {
     KeyboardEvent,
     MouseEvent,
     MutableRefObject,
-    RefObject,
-    ReactNode,
     ReactElement,
+    ReactNode,
+    RefObject,
 } from "react";
-import { Interpreter, DoneInvokeEvent } from "xstate";
-import { Node } from "@react-types/shared";
-import { Validation } from "@components/TextInput";
-import { ComboBoxState } from "@react-stately/combobox";
+import { DoneInvokeEvent, Interpreter } from "xstate";
 
 export type MachineService = Interpreter<
     LinkChooserContext,
@@ -47,6 +47,14 @@ export enum IconLabel {
     Template = "TEMPLATE",
 }
 
+export type ExtraSection = {
+    id: string;
+    title: string;
+    items: (SearchResult | ImageSearchResult)[];
+    getResults?: (query: string) => Promise<SearchResult[]>;
+    renderPreview?: (item: SearchResult) => ReactElement;
+};
+
 export type LinkChooserProps = {
     openInNewTab: boolean;
     ariaLabel?: string;
@@ -56,12 +64,11 @@ export type LinkChooserProps = {
     clearable?: boolean;
     required?: boolean;
     validation?: Validation;
+    extraSections?: ExtraSection[];
     onOpenInNewTabChange: (value: boolean) => void;
     onLinkChange: (value: SearchResult | null) => void;
     readonly clipboardOptions?: Clipboard;
     readonly getGlobalByQuery?: (query: string) => Promise<SearchResult[]>;
-    readonly getGuidelinesByQuery?: (query: string) => Promise<SearchResult[]>;
-    readonly getTemplatesByQuery?: (query: string) => Promise<SearchResult[]>;
     readonly openPreview?: (value: string, target: string) => void;
 };
 
@@ -77,7 +84,6 @@ export type SearchResultListProps = AriaListBoxOptions<unknown> & {
     menuBlocks: SearchMenuBlock[];
     border?: boolean;
     hasItems?: boolean;
-    query: string;
     machineService: MachineService;
 };
 
@@ -107,16 +113,10 @@ export type NavigationMenuProps = {
 };
 
 export type NavigationMenuItemProps = {
-    section: { id: string; title: string };
+    section: ExtraSection;
     onPress: (event: KeyboardEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>) => void;
     state: ListState<unknown>;
     direction?: "left" | "right";
-    title: ReactNode;
-};
-
-export type SectionActionMenuItemProps = {
-    section: { id: string; title: string };
-    onPress: (event: KeyboardEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>) => void;
 };
 
 export type SearchInputProps = {
@@ -147,10 +147,11 @@ export type LinkChooserContext = {
     selectedResult: SearchResult | null;
     query: string;
     interruptedFetch: boolean;
+    extraSections: ExtraSection[];
+    currentSectionId: string;
+    getExtraResultsByQuery: ((query: string) => Promise<SearchResult[]>) | null;
     readonly clipboardOptions: Clipboard;
-    readonly getGlobalByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
-    readonly getTemplatesByQuery: (query: string) => Promise<SearchResult[]>; // context.getTemplateByQuery
-    readonly getGuidelinesByQuery: (query: string) => Promise<SearchResult[]>; // context.getGuidelinesByQuery
+    readonly getGlobalByQuery: (query: string) => Promise<SearchResult[]>;
     readonly onLinkChange: (value: SearchResult | null) => void;
     readonly openPreview: (value: string, target: string) => void;
 };
@@ -160,6 +161,8 @@ export type LinkChooserEventData = {
     selectedResult?: SearchResult | null;
     query?: string;
     openInNewTab?: CheckboxState;
+    getExtraResultsByQuery?: ((query: string) => Promise<SearchResult[]>) | null;
+    currentSectionId?: string;
 };
 
 export type Clipboard = {
