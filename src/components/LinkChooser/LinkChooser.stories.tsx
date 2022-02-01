@@ -5,8 +5,8 @@ import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { LinkChooser as LinkChooserComponent } from "./LinkChooser";
 import { data } from "./mock/data";
-import { templates } from "./mock/templates";
-import { guidelines } from "./mock/guidelines";
+import { guidelineSection } from "./mock/guidelines";
+import { templateSection } from "./mock/templates";
 import { LinkChooserProps, SearchResult } from "./types";
 import { doesContainSubstring } from "./utils/helpers";
 
@@ -33,23 +33,34 @@ export default {
 const getGlobalByQueryMock = (query: string): Promise<SearchResult[]> =>
     new Promise((resolve) =>
         setTimeout(() => {
-            resolve(data.filter((item) => doesContainSubstring(item.title, query)));
+            resolve(data.filter((item) => doesContainSubstring(item.title, query, extraSections)));
         }, Math.floor(Math.random() * 2000)),
     );
 
 const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> =>
     new Promise((resolve) =>
         setTimeout(() => {
-            resolve(templates.filter((template) => doesContainSubstring(template.title, query)));
+            resolve(
+                templateSection.items?.filter((item) => doesContainSubstring(item.title, query, [templateSection])) ||
+                    [],
+            );
         }, Math.floor(Math.random() * 2000)),
     );
 
 const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> =>
     new Promise((resolve) =>
         setTimeout(() => {
-            resolve(guidelines.filter((guideline) => doesContainSubstring(guideline.title, query)));
+            resolve(
+                guidelineSection.items?.filter((item) => doesContainSubstring(item.title, query, [guidelineSection])) ||
+                    [],
+            );
         }, Math.floor(Math.random() * 2000)),
     );
+
+const extraSections = [
+    { ...guidelineSection, getResults: getGuidelinesByQueryMock },
+    { ...templateSection, getResults: getTemplatesByQueryMock },
+];
 
 export const LinkChooser: Story<LinkChooserProps> = (args: LinkChooserProps) => {
     const [openInNewTab, setOpenInNewTab] = useState<boolean>(false);
@@ -58,8 +69,7 @@ export const LinkChooser: Story<LinkChooserProps> = (args: LinkChooserProps) => 
         <LinkChooserComponent
             {...args}
             getGlobalByQuery={getGlobalByQueryMock}
-            getTemplatesByQuery={getTemplatesByQueryMock}
-            getGuidelinesByQuery={getGuidelinesByQueryMock}
+            extraSections={extraSections}
             openInNewTab={openInNewTab}
             label="URL"
             onOpenInNewTabChange={setOpenInNewTab}
