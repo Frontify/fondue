@@ -9,26 +9,26 @@ import { getInteractionModality } from "@react-aria/interactions";
 import { useOption } from "@react-aria/listbox";
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
-import React, { FC, useRef } from "react";
-import { sections } from "./sections";
+import React, { FC, useMemo, useRef } from "react";
+import { defaultSection } from "./sections";
 import { DropdownState, LinkChooserState } from "./state/machine";
 import { NavigationMenuItemProps, NavigationMenuProps } from "./types";
-import { goToSection } from "./utils/helpers";
 
-export const NavigationMenu: FC<NavigationMenuProps> = (props: NavigationMenuProps) => {
-    const { machineService, state } = props;
-    const [{ matches }, send] = useActor(machineService);
+export const NavigationMenu: FC<NavigationMenuProps> = ({ machineService, state }) => {
+    const [{ matches, context }, send] = useActor(machineService);
 
     return matches(`${LinkChooserState.Focused}.${DropdownState.Default}`) ? (
         <ul className="tw-py-2">
-            {sections.map((section) => (
+            {context.extraSections.map((section) => (
                 <NavigationMenuItem
                     key={section.id}
                     section={section}
-                    title={section.title}
                     state={state}
                     onPress={() => {
-                        goToSection(section.id, send);
+                        send({
+                            type: "SELECT_EXTRA_SECTION",
+                            data: { getExtraResultsByQuery: section.getResults },
+                        });
                     }}
                 />
             ))}
@@ -37,20 +37,25 @@ export const NavigationMenu: FC<NavigationMenuProps> = (props: NavigationMenuPro
 };
 
 export const NavigationMenuItem: FC<NavigationMenuItemProps> = ({
-    section,
+    section: { id, title },
     onPress,
     state,
-    title,
     direction = "right",
 }) => {
     const ref = useRef<HTMLLIElement>(null);
     const { isFocused } = useOption(
         {
-            key: section.id,
+            key: id,
             shouldFocusOnHover: false,
         },
         state,
         ref,
+    );
+
+    //TODO: access title via context.currentSectionId
+    const itemTitle = useMemo(
+        () => (id === defaultSection.id ? <p className="tw-ml-1 tw-text-black-80 tw-capitalize">{title}</p> : title),
+        [title],
     );
 
     const isFocusVisible = getInteractionModality() !== "pointer";
@@ -60,13 +65,13 @@ export const NavigationMenuItem: FC<NavigationMenuItemProps> = ({
             onClick={onPress}
             tabIndex={0}
             role="menuitem"
-            aria-label={`Navigate to ${section.id} section of search results.`}
-            data-key={section.id}
+            aria-label={`Navigate to ${id} section of search results.`}
+            data-key={id}
             data-test-id="link-chooser-navigation-menu-item"
             className={merge(["hover:tw-bg-black-0", isFocused && isFocusVisible && "tw-bg-black-0"])}
         >
             <MenuItem
-                title={title}
+                title={itemTitle}
                 selectionIndicator={direction === "right" ? SelectionIndicatorIcon.CaretRight : undefined}
                 decorator={direction === "left" ? <IconArrowLeft /> : undefined}
                 size={MenuItemContentSize.XSmall}

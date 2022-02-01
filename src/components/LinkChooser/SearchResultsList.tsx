@@ -1,23 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getKeyItemRecord, getMenuItems } from "@components/ActionMenu/Aria/helper";
+import { MenuItemContentSize } from "@components/MenuItem";
 import { MenuItem } from "@components/MenuItem/MenuItem";
+import { getInteractionModality } from "@react-aria/interactions";
 import { useListBox, useListBoxSection, useOption } from "@react-aria/listbox";
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
-import React, { FC, useMemo, useRef } from "react";
+import React, { FC, useRef } from "react";
+import BackgroundIcon from "./assets/background.svg";
+import NoResultsIcon from "./assets/no-results.svg";
+import FetchingIcon from "./assets/nook-animated.png";
 import { IconOptions } from "./LinkChooser";
 import { DropdownState, LinkChooserState, SectionState } from "./state/machine";
-import { SearchResultListProps, SearchResultSectionProps, SearchResultOptionProps, ImageMenuItemProps } from "./types";
-import NoResultsIcon from "./assets/no-results.svg";
-import BackgroundIcon from "./assets/background.svg";
-import FetchingIcon from "./assets/nook-animated.png";
-import { isFetching, isUnsuccessful, shouldGoBack } from "./utils/state";
-import { getInteractionModality } from "@react-aria/interactions";
-import { defaultSection } from "./sections";
-import { goToSection } from "./utils/helpers";
-import { NavigationMenuItem } from "./NavigationMenu";
-import { MenuItemContentSize } from "@components/MenuItem";
+import { ImageMenuItemProps, SearchResultListProps, SearchResultOptionProps, SearchResultSectionProps } from "./types";
+import { isFetching, isUnsuccessful } from "./utils/state";
 
 export const SearchResultsList: FC<SearchResultListProps> = (props) => {
     const ref = useRef<HTMLUListElement>(null);
@@ -26,14 +23,8 @@ export const SearchResultsList: FC<SearchResultListProps> = (props) => {
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
 
-    const [machineState, send] = useActor(machineService);
-    const { context, matches, value } = machineState;
-
-    const title = useMemo(() => {
-        if (machineState.toStrings()[1]) {
-            return machineState.toStrings()[1].split(".")[1];
-        }
-    }, [value]);
+    const [machineState] = useActor(machineService);
+    const { context, matches } = machineState;
 
     if (isFetching(matches)) {
         return <FetchingAnimation />;
@@ -44,48 +35,35 @@ export const SearchResultsList: FC<SearchResultListProps> = (props) => {
     }
 
     return (
-        <div>
-            {shouldGoBack(matches) && (
-                <div className="tw-mt-2">
-                    <NavigationMenuItem
-                        state={state}
-                        section={defaultSection}
-                        title={<p className="tw-ml-1 tw-text-black-80 tw-capitalize">{title}</p>}
-                        onPress={() => goToSection(defaultSection.id, send)}
-                        direction="left"
-                    />
-                </div>
+        <ul
+            {...listBoxProps}
+            data-test-id="link-chooser-results-list"
+            ref={listBoxRef}
+            className="tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-z-20 focus-visible:tw-outline-none"
+        >
+            {context.searchResults.length ? (
+                [...state.collection]
+                    .filter((section) => section.key === "search")
+                    .map((item) => (
+                        <SearchResultSection
+                            key={item.key}
+                            heading={item}
+                            state={state}
+                            keyItemRecord={keyItemRecord}
+                            machineService={machineService}
+                        />
+                    ))
+            ) : (
+                <EmptyResults
+                    prompt={
+                        context.query
+                            ? `We could not find any results for "${context.query}".`
+                            : "Use the search above to discover your brand assets"
+                    }
+                    icon={context.query ? NoResultsIcon : BackgroundIcon}
+                />
             )}
-            <ul
-                {...listBoxProps}
-                data-test-id="link-chooser-results-list"
-                ref={listBoxRef}
-                className="tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-z-20 focus-visible:tw-outline-none"
-            >
-                {context.searchResults.length ? (
-                    [...state.collection]
-                        .filter((section) => section.key === "search")
-                        .map((item) => (
-                            <SearchResultSection
-                                key={item.key}
-                                heading={item}
-                                state={state}
-                                keyItemRecord={keyItemRecord}
-                                machineService={machineService}
-                            />
-                        ))
-                ) : (
-                    <EmptyResults
-                        prompt={
-                            context.query
-                                ? `We could not find any results for "${context.query}".`
-                                : "Use the search above to discover your brand assets"
-                        }
-                        icon={context.query ? NoResultsIcon : BackgroundIcon}
-                    />
-                )}
-            </ul>
-        </div>
+        </ul>
     );
 };
 
@@ -136,10 +114,8 @@ const SearchResultOption: FC<SearchResultOptionProps> = ({ item, state, keyItemR
             return (
                 <MenuItem {...menuItem} active={isSelected} decorator={decorator} size={MenuItemContentSize.Large} />
             );
-        } else if (
-            matches(`${LinkChooserState.Focused}.${DropdownState.Templates}.${SectionState.Loaded}`) ||
-            matches(`${LinkChooserState.Focused}.${DropdownState.Guidelines}.${SectionState.Loaded}`)
-        ) {
+        } else if (matches(`${LinkChooserState.Focused}.${DropdownState.ExtraSection}.${SectionState.Loaded}`)) {
+            //TODO: renderPreview of items
             return <ImageMenuItem {...menuItem} />;
         }
     };

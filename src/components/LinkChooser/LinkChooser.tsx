@@ -1,7 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
 import { mapToAriaProps } from "@components/ActionMenu/Aria/helper";
+import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
+import { useDropdownAutoHeight } from "@components/Dropdown/useDropdownAutoHeight";
+import { Validation } from "@components/TextInput";
 import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
@@ -14,19 +16,17 @@ import { useComboBoxState } from "@react-stately/combobox";
 import { useMachine } from "@xstate/react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, Key, MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { NavigationMenu, NavigationMenuItem } from "./NavigationMenu";
 import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultsList";
+import { defaultSection } from "./sections";
 import { linkChooserMachine, LinkChooserState } from "./state/machine";
 import { IconLabel, LinkChooserProps, SearchMenuBlock } from "./types";
-import { decoratedResults, getDefaultData, goToSection, doesContainSubstring } from "./utils/helpers";
+import { decoratedResults, doesContainSubstring, findSection, getDefaultData } from "./utils/helpers";
 import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection, shouldGoBack } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
-import { Validation } from "@components/TextInput";
-import { defaultSection, sections } from "./sections";
 import { useManualComboBoxEventHandlers } from "./utils/useManualComboBoxHandlers";
-import { NavigationMenu } from "./NavigationMenu";
-import { useDropdownAutoHeight } from "@components/Dropdown/useDropdownAutoHeight";
 
 export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Document]: <IconDocument />,
@@ -43,12 +43,11 @@ export const QUERIES_STORAGE_KEY = "queries";
 
 export const LinkChooser: FC<LinkChooserProps> = ({
     getGlobalByQuery = getDefaultData,
-    getTemplatesByQuery = getDefaultData,
-    getGuidelinesByQuery = getDefaultData,
     openPreview = window.open,
     clipboardOptions = navigator.clipboard,
     openInNewTab = false,
     ariaLabel = "Menu",
+    extraSections = [],
     label,
     placeholder,
     onOpenInNewTabChange,
@@ -58,23 +57,24 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     required,
     validation = Validation.Default,
 }) => {
-    const [{ context, matches, value }, send, service] = useMachine(
+    const [{ context, matches, value }, send, service] = useMachine(() =>
         linkChooserMachine.withContext({
             searchResults: [],
             selectedResult: null,
             query: "",
             interruptedFetch: false,
+            getExtraResultsByQuery: null,
+            currentSectionId: defaultSection.id,
+            extraSections,
             clipboardOptions,
             openPreview,
             getGlobalByQuery,
-            getTemplatesByQuery,
-            getGuidelinesByQuery,
             onLinkChange,
         }),
     );
 
     const isDefault = shouldGoBack(matches);
-    const searchResultMenuBlock = useMemo(
+    const searchResultMenuBlocks = useMemo(
         () =>
             [
                 isDefault && { id: "menu-top", menuItems: [defaultSection] },
@@ -82,12 +82,12 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     id: "search",
                     menuItems: decoratedResults(context.searchResults),
                 },
-                !isDefault && { id: "menu-bottom", menuItems: sections },
+                !isDefault && { id: "menu-bottom", menuItems: extraSections.map(({ id, title }) => ({ id, title })) },
             ].filter(Boolean),
         [context.searchResults, isDefault],
     ) as SearchMenuBlock[];
 
-    const props = mapToAriaProps(ariaLabel, searchResultMenuBlock);
+    const props = mapToAriaProps(ariaLabel, searchResultMenuBlocks);
 
     const inputRef = useRef<HTMLInputElement | null>(null);
     const listBoxRef = useRef<HTMLUListElement | null>(null);
@@ -112,7 +112,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const state = useComboBoxState({
         ...props,
-        defaultFilter: doesContainSubstring,
+        defaultFilter: (textValue, inputValue) => doesContainSubstring(textValue, inputValue, extraSections),
         onInputChange: handleInputChange,
         onSelectionChange: handleSelectionChange,
         selectedKey,
@@ -178,16 +178,19 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         {
             onOpen: handleDropdownOpen,
             onClose: handleDropdownClose,
-            onNavigate: (id) => goToSection(id, send),
+            onNavigate: (id) =>
+                send({
+                    type: "SELECT_EXTRA_SECTION",
+                    data: { getExtraResultsByQuery: findSection(extraSections, id)?.getResults || null },
+                }),
             onSelect: handleSelectionChange,
         },
     );
-
     const inputDecorator = IconOptions[context.selectedResult?.icon || DEFAULT_ICON];
 
     useEffect(() => {
         if (isLoaded(matches) && context.interruptedFetch) {
-            send("TYPING", { data: { query: context.query } });
+            send({ type: "TYPING", data: { query: context.query } });
         }
     }, [context.interruptedFetch, value]);
 
@@ -262,12 +265,21 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                             onClose={handleDropdownClose}
                             maxHeight={maxHeight}
                         >
+                            {shouldGoBack(matches) && (
+                                <div className="tw-mt-2">
+                                    <NavigationMenuItem
+                                        state={state}
+                                        section={defaultSection}
+                                        onPress={() => send("BACK_TO_DEFAULT")}
+                                        direction="left"
+                                    />
+                                </div>
+                            )}
                             <SearchResultsList
                                 {...listBoxProps}
                                 listBoxRef={listBoxRef}
                                 state={state}
-                                menuBlocks={searchResultMenuBlock}
-                                query={context.query}
+                                menuBlocks={searchResultMenuBlocks}
                                 border={false}
                                 machineService={service}
                             />
