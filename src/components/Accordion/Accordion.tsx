@@ -70,16 +70,16 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                 }}
                 className="tw-w-full tw-px-8 tw-py-7 focus-visible:tw-outline-none"
             >
-                <FieldsetHeader {...header} size={FieldsetHeaderSize.Medium} active={isOpen} />
+                <FieldsetHeader {...header} size={FieldsetHeaderSize.Medium} active={isOpen} onClick={undefined} />
             </button>
 
             <AnimatePresence>
                 {item.props.children && isOpen && (
                     <motion.div
                         key={item.key}
-                        initial="collapsed"
-                        animate="open"
-                        exit="collapsed"
+                        initial={"collapsed"}
+                        animate={"open"}
+                        exit={"collapsed"}
                         variants={{
                             open: { height: "auto", overflow: "visible" },
                             collapsed: { height: 0, overflow: "hidden" },
