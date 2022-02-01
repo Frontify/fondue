@@ -36,11 +36,10 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
     const isOpen = state.expandedKeys.has(item.key) && item.props.children;
-    const isActive = header.active;
     const { isFocusVisible, focusProps } = useFocusRing();
 
     useEffect(() => {
-        if (isActive) {
+        if (header.active) {
             state.toggleKey(item.key);
         }
     }, []);
@@ -71,16 +70,16 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                 }}
                 className="tw-w-full tw-px-8 tw-py-7 focus-visible:tw-outline-none"
             >
-                <FieldsetHeader {...header} size={FieldsetHeaderSize.Medium} active={isOpen} onClick={undefined} />
+                <FieldsetHeader {...header} size={FieldsetHeaderSize.Medium} active={isOpen} />
             </button>
 
             <AnimatePresence>
                 {item.props.children && isOpen && (
                     <motion.div
                         key={item.key}
-                        initial={"collapsed"}
-                        animate={"open"}
-                        exit={"collapsed"}
+                        initial="collapsed"
+                        animate="open"
+                        exit="collapsed"
                         variants={{
                             open: { height: "auto", overflow: "visible" },
                             collapsed: { height: 0, overflow: "hidden" },
