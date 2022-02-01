@@ -96,14 +96,14 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const handleSelectionChange = (key: Key) => {
         const foundItem = context.searchResults.find((item) => item.id === key);
         if (foundItem) {
-            send("SET_SELECTED_SEARCH_RESULT", { data: { selectedResult: foundItem } });
+            send({ type: "SET_SELECTED_SEARCH_RESULT", data: { selectedResult: foundItem } });
         }
         closeBoxState(state);
         setSelectedKey(key);
     };
     const handleInputChange = useCallback(
         (query: string) => {
-            send("TYPING", { data: { query } });
+            send({ type: "TYPING", data: { query } });
         },
         [value],
     );
@@ -136,7 +136,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const handleClearClick = useCallback(() => {
         state.setInputValue("");
         setSelectedKey("");
-        send("CLEARING", { data: { query: "" } });
+        send({ type: "CLEARING", data: { query: "" } });
     }, []);
 
     const handleDropdownOpen = () => {
@@ -166,7 +166,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 selectedResult = createCustomLink(state.inputValue);
             }
         }
-        send("CLOSE_DROPDOWN", { data: { selectedResult } });
+        send({ type: "CLOSE_DROPDOWN", data: { selectedResult } });
         if (selectedResult && selectedKey !== selectedResult.id) {
             setSelectedKey(selectedResult.id);
         }

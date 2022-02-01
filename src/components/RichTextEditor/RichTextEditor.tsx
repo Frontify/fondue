@@ -92,11 +92,11 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     }, [clear]);
 
     useEffect(() => {
-        send("SET_LOCKED", { data: { locked: readonly } });
+        send({ type: "SET_LOCKED", data: { locked: readonly } });
     }, [readonly]);
 
     useEffect(() => {
-        send("TEXT_UPDATED", { data: { value } });
+        send({ type: "TEXT_UPDATED", data: { value } });
     }, [debouncedValue]);
 
     const onValueChanged = useCallback(
@@ -108,7 +108,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
 
     const onTextSelected = useCallback(
-        debounce(() => send("TEXT_SELECTED", { data: { editor } }), TOOLBAR_DELAY_IN_MS),
+        debounce(() => send({ type: "TEXT_SELECTED", data: { editor } }), TOOLBAR_DELAY_IN_MS),
         [editor],
     );
 
@@ -134,7 +134,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     onKeyPress={softBreakHandler}
                     renderLeaf={renderInlineStyles}
                     renderElement={renderBlockStyles}
-                    onBlur={() => send("BLUR", { data: { value } })}
+                    onBlur={() => send({ type: "BLUR", data: { value } })}
                 />
                 {matches(States.Styling) && (
                     <ToolbarContext.Provider
