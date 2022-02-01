@@ -7,21 +7,21 @@ import {
     clearSelectedResult,
     copyLinkToClipboard,
     emitSelectSearchResult,
+    fetchExtraSectionResults,
     fetchGlobalSearchResults,
-    fetchTemplateSearchResults,
+    fillResultsWithNewRecentQueries,
+    interruptFetching,
     openPreviewContext,
     populateDropdownSearchResultsWithRecentQueries,
+    replaceCustomLink,
+    replaceCustomLinkWithSelected,
+    resolveFetching,
+    setExtraResultsByQuery,
     setSelectedSearchResult,
     storeNewSelectedResult,
-    replaceCustomLinkWithSelected,
-    replaceCustomLink,
     updateDropdownSearchResults,
     updateQueryFromObject,
     updateQueryFromString,
-    interruptFetching,
-    resolveFetching,
-    fetchGuidelineSearchResults,
-    fillResultsWithNewRecentQueries,
 } from "./actions";
 
 export enum LinkChooserState {
@@ -31,8 +31,7 @@ export enum LinkChooserState {
 
 export enum DropdownState {
     Default = "default",
-    Guidelines = "guidelines",
-    Templates = "templates",
+    ExtraSection = "extra-section",
 }
 
 export enum SectionState {
@@ -169,28 +168,23 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     [DropdownState.Default]: {
                         ...initializeSectionState(SectionState.Loaded, "fetchGlobal", fetchGlobalSearchResults),
                         on: {
-                            GO_TO_GUIDELINES: DropdownState.Guidelines,
-                            GO_TO_TEMPLATES: DropdownState.Templates,
-                        },
-                    },
-                    [DropdownState.Guidelines]: {
-                        ...initializeSectionState(
-                            SectionState.Fetching,
-                            "fetchGuidelines",
-                            fetchGuidelineSearchResults,
-                        ),
-                        on: {
-                            GO_TO_DEFAULT: `${DropdownState.Default}.${SectionState.Fetching}`,
-                            CLEARING: {
-                                target: DropdownState.Default,
-                                actions: [...clearingActions],
+                            SELECT_EXTRA_SECTION: {
+                                target: DropdownState.ExtraSection,
+                                actions: [setExtraResultsByQuery],
                             },
                         },
                     },
-                    [DropdownState.Templates]: {
-                        ...initializeSectionState(SectionState.Fetching, "fetchTemplates", fetchTemplateSearchResults),
+                    [DropdownState.ExtraSection]: {
+                        ...initializeSectionState(
+                            SectionState.Fetching,
+                            "fetchExtraSectionResults",
+                            fetchExtraSectionResults,
+                        ),
                         on: {
-                            GO_TO_DEFAULT: `${DropdownState.Default}.${SectionState.Fetching}`,
+                            BACK_TO_DEFAULT: {
+                                target: `${DropdownState.Default}.${SectionState.Fetching}`,
+                                actions: [setExtraResultsByQuery],
+                            },
                             CLEARING: {
                                 target: DropdownState.Default,
                                 actions: [...clearingActions],
@@ -236,7 +230,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
             copyLinkToClipboard,
             emitSelectSearchResult,
             fetchGlobalSearchResults,
-            fetchTemplateSearchResults,
+            setExtraResultsByQuery,
             openPreviewContext,
             populateDropdownSearchResultsWithRecentQueries,
             fillResultsWithNewRecentQueries,
