@@ -46,7 +46,6 @@ export const Default = Template.bind({});
 
 Default.args = {
     children: "Children",
-    isHoverable: false,
 };
 
 const ChildComponent = () => {
@@ -77,7 +76,6 @@ export const WithSeparator = Template.bind({});
 
 WithSeparator.args = {
     children: <ChildComponent />,
-    isHoverable: false,
 };
 
 const childItems = data.map((item) => ({
