@@ -49,7 +49,7 @@ export const ColorInput: FC<ColorInputProps> = ({
             <input
                 id={useMemoizedId()}
                 ref={inputElement}
-                className="tw-flex-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-text-black tw-placeholder-black-60 dark:tw-text-white"
+                className="tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-text-black tw-placeholder-black-60 dark:tw-text-white"
                 onClick={() => inputElement.current?.focus()}
                 onKeyDown={handleKeyDown}
                 onChange={(event) => onChange && onChange(event.currentTarget.value)}
