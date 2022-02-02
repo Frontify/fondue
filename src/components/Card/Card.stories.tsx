@@ -10,6 +10,9 @@ import { Divider } from "@components/Divider/Divider";
 export default {
     title: "Components/Card",
     component: Card,
+    args: {
+        isHoverable: false,
+    },
 } as Meta<CardProps>;
 
 type Texts = {
@@ -43,6 +46,7 @@ export const Default = Template.bind({});
 
 Default.args = {
     children: "Children",
+    isHoverable: false,
 };
 
 const ChildComponent = () => {
@@ -73,6 +77,7 @@ export const WithSeparator = Template.bind({});
 
 WithSeparator.args = {
     children: <ChildComponent />,
+    isHoverable: false,
 };
 
 const childItems = data.map((item) => ({
