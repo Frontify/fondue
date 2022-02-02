@@ -69,10 +69,10 @@ describe("Accordion Component", () => {
     it("opens select sections initially", () => {
         mount(
             <Accordion>
-                <AccordionItem header={{ children: "1" }}>
+                <AccordionItem header={{ children: "1", active: true }}>
                     <TextInput />
                 </AccordionItem>
-                <AccordionItem header={{ children: "2", active: true }}>
+                <AccordionItem header={{ children: "2" }}>
                     <TextInput />
                 </AccordionItem>
                 <AccordionItem header={{ children: "3" }}>3</AccordionItem>
@@ -80,6 +80,20 @@ describe("Accordion Component", () => {
         );
 
         cy.get(ACCORDION_ITEM_CONTENT_ID).should("exist");
+
+        cy.get(ACCORDION_ITEM_ID)
+            .eq(1)
+            .should("exist")
+            .within(() => {
+                cy.get(ACCORDION_ITEM_CONTENT_ID).should("not.exist");
+            });
+
+        cy.get(ACCORDION_ITEM_ID)
+            .eq(2)
+            .should("exist")
+            .within(() => {
+                cy.get(ACCORDION_ITEM_CONTENT_ID).should("not.exist");
+            });
     });
 
     it("should correctly navigate with keyboard", () => {
