@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { Button, ButtonProps, ButtonSize, ButtonStyle } from "./Button";
+import { Button, ButtonProps, ButtonSize, ButtonStyle, ButtonType } from "./Button";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 
 // eslint-disable-next-line import/no-default-export
@@ -20,6 +20,10 @@ export default {
         },
         style: {
             options: [ButtonStyle.Primary, ButtonStyle.Secondary, ButtonStyle.Danger, ButtonStyle.Positive],
+            control: { type: "select" },
+        },
+        type: {
+            options: [ButtonType.Button, ButtonType.Submit, ButtonType.Reset],
             control: { type: "select" },
         },
         onClick: { action: "onClick" },
