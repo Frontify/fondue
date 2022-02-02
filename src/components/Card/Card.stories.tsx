@@ -11,7 +11,7 @@ export default {
     title: "Components/Card",
     component: Card,
     args: {
-        isHoverable: false,
+        hoverable: false,
     },
 } as Meta<CardProps>;
 

@@ -4,17 +4,17 @@ import { merge } from "@utilities/merge";
 import React, { FC, ReactChild } from "react";
 
 export type CardProps = {
-    isHoverable?: boolean;
+    hoverable?: boolean;
     children?: ReactChild;
 };
 
-export const Card: FC<CardProps> = ({ isHoverable = false, children }) => {
+export const Card: FC<CardProps> = ({ hoverable = false, children }) => {
     return (
         <div
             data-test-id="card"
             className={merge([
                 "tw-w-full tw-bg-white tw-border tw-border-black-10 tw-rounded",
-                isHoverable ? "hover:tw-border-black" : "",
+                hoverable ? "hover:tw-border-black" : "",
             ])}
         >
             {children}
