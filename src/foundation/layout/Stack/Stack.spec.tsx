@@ -33,7 +33,7 @@ describe("Stack Layout", () => {
 
     it("should render a spacing in a stack", () => {
         mount(
-            <Stack padding="medium" spacing="medium">
+            <Stack padding="m" spacing="m">
                 <div>1</div>
                 <div>2</div>
                 <div>3</div>
@@ -41,7 +41,7 @@ describe("Stack Layout", () => {
         );
 
         cy.get("[data-test-id=stack]").as("Stack");
-        cy.get("@Stack").should("have.class", "tw-p-medium");
-        cy.get("@Stack").should("have.class", "tw-gap-medium");
+        cy.get("@Stack").should("have.class", "tw-p-m");
+        cy.get("@Stack").should("have.class", "tw-gap-m");
     });
 });

@@ -20,11 +20,11 @@ export default {
             },
         },
         padding: {
-            options: ["none", "xx-small", "small", "medium", "large", "xx-large"],
+            options: ["none", "xxs", "xs", "s", "m", "l", "xl", "xxl"],
             control: { type: "select" },
         },
         spacing: {
-            options: ["none", "xx-small", "small", "medium", "large", "xx-large"],
+            options: ["none", "xxs", "xs", "s", "m", "l", "xl", "xxl"],
             control: { type: "select" },
         },
         direction: {
@@ -43,8 +43,8 @@ const Template: Story<StackProps> = (args) => (
 export const Default = Template.bind({});
 Default.args = {
     direction: "row",
-    padding: "medium",
-    spacing: "small",
+    padding: "m",
+    spacing: "s",
     children: (
         <>
             <Placeholder />
@@ -57,8 +57,8 @@ Default.args = {
 export const Wrapped = Template.bind({});
 Wrapped.args = {
     direction: "row",
-    padding: "medium",
-    spacing: "small",
+    padding: "m",
+    spacing: "s",
     wrap: false,
     children: (
         <>
