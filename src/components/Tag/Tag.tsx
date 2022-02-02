@@ -56,7 +56,7 @@ export const Tag: FC<TagProps> = ({ type, label, onClick }) => {
         <button
             data-test-id="tag"
             className={merge([
-                "tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-group tw-px-2.5 tw-py-1",
+                "tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-group tw-px-2.5 tw-py-1 tw-break-word",
                 tagStyles[type],
                 isClickable ? "tw-cursor-pointer" : "tw-cursor-default",
                 isFocusVisible && FOCUS_STYLE,

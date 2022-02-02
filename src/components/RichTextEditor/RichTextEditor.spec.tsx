@@ -4,7 +4,7 @@ import { getCanvasFontSize, getTextWidth } from "@components/RichTextEditor/util
 import { mount } from "@cypress/react";
 import React, { FC, useState } from "react";
 import { RichTextEditorProps } from ".";
-import { BlockStyleTypes } from "./renderer/renderBlockStyles";
+import { BlockStyleTypes, textAlignClassMap, TextAlignTypes } from "./renderer/renderBlockStyles";
 import { classMap, InlineStyles } from "./renderer/renderInlineStyles";
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor } from "./RichTextEditor";
 
@@ -133,9 +133,17 @@ describe("RichTextEditor Component", () => {
     it("renders an unordered list", () => {
         mount(<RichTextEditor />);
 
-        cy.get("[contenteditable=true]").click().type("hello{selectall}");
+        insertTextAndOpenToolbar();
         cy.get(getBlockStyleControl("unordered-list")).click();
         cy.get("[contenteditable=true]").should("include.html", "<ul");
+    });
+
+    it("renders a right aligned text", () => {
+        mount(<RichTextEditor />);
+
+        insertTextAndOpenToolbar();
+        cy.get(getBlockStyleControl("paragraph-align-right")).click();
+        cy.get("[contenteditable=true]").should("include.html", textAlignClassMap[TextAlignTypes.AlignRight]);
     });
 
     it("render the placeholder with correct width", () => {

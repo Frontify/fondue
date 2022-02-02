@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, RefObject, useState, CSSProperties } from "react";
+import { CSSProperties, RefObject, useEffect, useState } from "react";
 import { getParentWithPositionRelative } from "../utils/getParentWithPositionRelative";
 
 export const useEditorSelection = (element: RefObject<HTMLElement>): { selectionRect: CSSProperties | null } => {
@@ -19,8 +19,8 @@ export const useEditorSelection = (element: RefObject<HTMLElement>): { selection
         setSelectionRect({
             width: `${rangeRect.width}px`,
             height: `${rangeRect.height}px`,
-            top: `${rangeRect.y + window.scrollY - (parentRect?.top ? parentRect?.top : 0)}px`,
-            left: `${rangeRect.x + window.scrollX - (parentRect?.left ? parentRect?.left : 0)}px`,
+            top: `${rangeRect.y - (parentRect?.top ? parentRect?.top : 0)}px`,
+            left: `${rangeRect.x - (parentRect?.left ? parentRect?.left : 0)}px`,
         });
     }, [element, documentSelection?.anchorOffset]);
 

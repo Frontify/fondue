@@ -190,4 +190,15 @@ describe("Dropdown Component", () => {
             expect(height).to.equal(130);
         });
     });
+
+    it("should open dropdown on click next to the caret icon", () => {
+        const MARGIN_RIGHT = 6;
+        const MARGIN_TOP = 17;
+        mount(<Component menuBlocks={ITEMS} placeholder="Select item" />);
+        cy.get(MENU_ITEM_TITLE_ID).contains("Select item");
+        cy.get(TRIGGER_ID)
+            .invoke("css", "width")
+            .then((width) => cy.get(TRIGGER_ID).click(parseInt(width.toString()) - MARGIN_RIGHT, MARGIN_TOP));
+        cy.get(MENU_ITEM_LIST_ID).children().should("have.length", 5);
+    });
 });

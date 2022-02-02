@@ -99,6 +99,18 @@ export const Dropdown: FC<DropdownProps> = ({
 
     const textClass = menuItemTextColorRecord[activeItem?.style || MenuItemStyle.Primary][textState];
 
+    const onClear = clearable
+        ? () => {
+              state.setSelectedKey("");
+              const first = state.collection.getFirstKey();
+              if (first) {
+                  state.selectionManager.setFocusedKey(first);
+              }
+          }
+        : undefined;
+
+    const showClear = !!activeItem && !!onClear;
+
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
             <Trigger
@@ -106,19 +118,9 @@ export const Dropdown: FC<DropdownProps> = ({
                 buttonProps={buttonProps}
                 isFocusVisible={!disabled && isFocusVisible}
                 isOpen={isOpen}
-                clearable={!!activeItem}
                 size={size === DropdownSize.Large ? TriggerSize.Large : TriggerSize.Small}
-                onClear={
-                    clearable
-                        ? () => {
-                              state.setSelectedKey("");
-                              const first = state.collection.getFirstKey();
-                              if (first) {
-                                  state.selectionManager.setFocusedKey(first);
-                              }
-                          }
-                        : undefined
-                }
+                onClear={onClear}
+                showClear={showClear}
             >
                 <HiddenSelect state={state} triggerRef={triggerRef} />
                 <button
@@ -127,10 +129,11 @@ export const Dropdown: FC<DropdownProps> = ({
                     ref={triggerRef}
                     data-test-id="dropdown-trigger"
                     className={merge([
-                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-pr-2",
+                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none",
                         size === DropdownSize.Small
                             ? "tw-py-2 tw-pl-3 tw-min-h-[34px]"
                             : "tw-pl-5 tw-py-4 tw-min-h-[60px]",
+                        showClear ? "tw-pr-11" : "tw-pr-7",
                         !activeItem && "tw-text-black-60",
                         textClass,
                     ])}

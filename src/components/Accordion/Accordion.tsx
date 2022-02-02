@@ -36,11 +36,10 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
     const isOpen = state.expandedKeys.has(item.key) && item.props.children;
-    const isActive = header.active;
     const { isFocusVisible, focusProps } = useFocusRing();
 
     useEffect(() => {
-        if (isActive) {
+        if (header.active) {
             state.toggleKey(item.key);
         }
     }, []);
