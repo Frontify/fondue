@@ -128,7 +128,7 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
             tabIndex={tabIndex}
         >
             {isValidElement(decorator) && (
-                <span className="tw-flex-shrink-0">
+                <span className="tw-shrink-0">
                     {cloneElement(decorator, {
                         size: sizeMap[size].icon,
                     })}
@@ -146,7 +146,7 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
                 {children}
             </Heading>
             {type !== FieldsetHeaderType.Default && (
-                <span className="tw-ml-auto tw-flex-shrink-0">{renderType(type, id, size, active, disabled)}</span>
+                <span className="tw-ml-auto tw-shrink-0">{renderType(type, id, size, active, disabled)}</span>
             )}
         </header>
     );

@@ -5,7 +5,7 @@ const plugin = require("tailwindcss/plugin");
 
 module.exports = {
     presets: [require("@frontify/arcade-tokens/tailwind")],
-    purge: ["./src/**/*.{js,ts,tsx}"],
+    content: ["./src/**/*.{js,ts,tsx}"],
     theme: {
         extend: {
             outline: {

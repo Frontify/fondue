@@ -97,7 +97,7 @@ const TooltipComponent: ForwardRefRenderFunction<HTMLDivElement, TooltipProps> =
                     )}
                     <div className="tw-flex">
                         {tooltipIcon && (
-                            <span className="tw-flex-shrink-0 tw-mr-1">
+                            <span className="tw-shrink-0 tw-mr-1">
                                 {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
                             </span>
                         )}
