@@ -48,12 +48,12 @@ export const SearchResultsList: FC<SearchResultListProps> = (props) => {
                     <NavigationMenuItem
                         state={state}
                         section={currentSection}
-                        onPress={() =>
+                        onPress={() => {
                             send({
                                 type: "BACK_TO_DEFAULT",
                                 data: { getExtraResultsByQuery: null },
-                            })
-                        }
+                            });
+                        }}
                         direction="left"
                     />
                 </div>
