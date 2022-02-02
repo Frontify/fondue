@@ -1,13 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ExtraSection } from "..";
+import { ExtraSection, SearchResult } from "..";
 import { IconLabel } from "../types";
+import { filterItems } from "../utils/helpers";
 
 const defaultTemplateProps = { link: "#", icon: IconLabel.Template };
+
+const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> =>
+    new Promise((resolve) =>
+        setTimeout(() => {
+            resolve(filterItems(query, templateSection.items, [templateSection]) || []);
+        }, Math.floor(Math.random() * 2000)),
+    );
 
 export const templateSection: ExtraSection = {
     id: "templates",
     title: "Templates",
+    getResults: getTemplatesByQueryMock,
     items: [
         {
             id: "7",

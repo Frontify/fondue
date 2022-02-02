@@ -1,11 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ExtraSection } from "..";
+import { ExtraSection, SearchResult } from "..";
 import { IconLabel } from "../types";
+import { filterItems } from "../utils/helpers";
+
+const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> =>
+    new Promise((resolve) =>
+        setTimeout(() => {
+            resolve(filterItems(query, guidelineSection.items, [guidelineSection]) || []);
+        }, Math.floor(Math.random() * 2000)),
+    );
 
 export const guidelineSection: ExtraSection = {
     id: "guidelines",
     title: "Guidelines",
+    getResults: getGuidelinesByQueryMock,
     items: [
         {
             id: "15",

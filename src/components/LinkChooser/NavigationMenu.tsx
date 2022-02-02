@@ -52,7 +52,6 @@ export const NavigationMenuItem: FC<NavigationMenuItemProps> = ({
         ref,
     );
 
-    //TODO: access title via context.currentSectionId
     const itemTitle = useMemo(
         () => (id === defaultSection.id ? <p className="tw-ml-1 tw-text-black-80 tw-capitalize">{title}</p> : title),
         [title],
