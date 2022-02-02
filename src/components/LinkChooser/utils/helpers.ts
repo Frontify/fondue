@@ -27,3 +27,6 @@ export const findSection = (sections: ExtraSection[], id: Key) => sections.find(
 
 export const isCustomLink = (link: SearchResult | null) =>
     !link || (typeof link.id === "string" && link.id.includes(CUSTOM_LINK_ID));
+
+export const filterItems = (query: string, results: SearchResult[], section: ExtraSection[] = []): SearchResult[] =>
+    results.filter((item) => doesContainSubstring(item.title, query, section));
