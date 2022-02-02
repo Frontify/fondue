@@ -66,7 +66,12 @@ const SliderItem = (props: SliderItemProps) => {
     };
 
     return (
-        <motion.li layout key={item.id} className="tw-relative">
+        <motion.li
+            layout="position"
+            layoutDependency={radioGroupState.selectedValue}
+            key={item.id}
+            className="tw-relative"
+        >
             {isActive && (
                 <motion.div
                     key={id}

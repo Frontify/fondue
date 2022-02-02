@@ -11,10 +11,31 @@ export enum BlockStyleTypes {
     Link = "link",
 }
 
+export enum TextAlignTypes {
+    None = "align-none",
+    AlignJustify = "align-justify",
+    AlignLeft = "align-left",
+    AlignCenter = "align-center",
+    AlignRight = "align-right",
+}
+
+export const textAlignClassMap: Record<TextAlignTypes, string> = {
+    [TextAlignTypes.None]: "",
+    [TextAlignTypes.AlignJustify]: "tw-text-justify",
+    [TextAlignTypes.AlignLeft]: "tw-text-left",
+    [TextAlignTypes.AlignCenter]: "tw-text-center",
+    [TextAlignTypes.AlignRight]: "tw-text-right",
+};
+
 export const renderBlockStyles = (props: RenderElementProps): JSX.Element => {
     switch (props.element.type) {
         case BlockStyleTypes.Paragraph:
-            return <p {...props.attributes}>{props.children}</p>;
+            const textAlign = props.element.properties?.textAlign;
+            return (
+                <p {...props.attributes} className={textAlign ? textAlignClassMap[textAlign] : ""}>
+                    {props.children}
+                </p>
+            );
         case BlockStyleTypes.OrderedList:
             return (
                 <ol {...props.attributes} className="tw-list-decimal tw-list-inside">

@@ -9,6 +9,7 @@ import IconLink from "@foundation/Icon/Generated/IconLink";
 import IconTemplate from "@foundation/Icon/Generated/IconTemplate";
 import { useComboBox } from "@react-aria/combobox";
 import { DismissButton } from "@react-aria/overlays";
+import { scrollIntoView } from "@react-aria/utils";
 import { useComboBoxState } from "@react-stately/combobox";
 import { useMachine } from "@xstate/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -194,6 +195,20 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         isOpen: matches(LinkChooserState.Focused),
         autoResize: true,
     });
+
+    const {
+        isOpen,
+        selectionManager: { focusedKey },
+    } = state;
+
+    useEffect(() => {
+        if (focusedKey && popoverRef.current && isOpen) {
+            const dropdownItem = popoverRef.current.querySelector(`[data-key="${focusedKey}"]`);
+            if (dropdownItem) {
+                scrollIntoView(popoverRef.current, dropdownItem as HTMLElement);
+            }
+        }
+    }, [focusedKey, isOpen]);
 
     return (
         <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
