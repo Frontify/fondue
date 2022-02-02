@@ -8,7 +8,7 @@
     ],
     "exports": {
         ".": "./dist/index.js",
-        "./config": "./dist/config.js",
+        "./tailwind": "./dist/tailwind.config.js",
         "./style": "./dist/styles.css",
         "./components/*": {
             "types": "./dist/src/components/*/index.d.ts",

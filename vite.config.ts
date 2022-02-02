@@ -43,7 +43,7 @@ export default defineConfig({
         sourcemap: true,
         minify: true,
         rollupOptions: {
-            input: [...componentsPath.map((element) => element.path), "src/styles.css"],
+            input: [...componentsPath.map((element) => element.path), "src/styles.css", "tailwind.config.js"],
             external: peerDependencies,
             output: {
                 dir: "dist",
