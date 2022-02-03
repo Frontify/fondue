@@ -10,6 +10,9 @@ import { Divider } from "@components/Divider/Divider";
 export default {
     title: "Components/Card",
     component: Card,
+    args: {
+        hoverable: false,
+    },
 } as Meta<CardProps>;
 
 type Texts = {

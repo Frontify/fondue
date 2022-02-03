@@ -32,7 +32,7 @@ export const InputLabel: FC<InputLabelProps> = ({
             ])}
             data-test-id="input-label-container"
         >
-            <div className="tw-flex-1 tw-overflow-hidden tw-overflow-ellipsis tw-whitespace-nowrap">
+            <div className="tw-flex-1 tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap">
                 <label
                     htmlFor={htmlFor}
                     className={merge([
