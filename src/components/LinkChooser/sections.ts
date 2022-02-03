@@ -1,16 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const sections = [
-    {
-        id: "guidelines",
-        sectionId: "GUIDELINES",
-        title: "Guidelines",
-    },
-    {
-        id: "templates",
-        sectionId: "TEMPLATES",
-        title: "Templates",
-    },
-];
+import { guidelineSection } from "./mock/guidelines";
+import { templateSection } from "./mock/templates";
 
-export const defaultSection = { id: "default", sectionId: "DEFAULT", title: "Default" };
+export const defaultSection = { id: "default", title: "Default", items: [] };
+
+export const extraSections = [guidelineSection, templateSection];

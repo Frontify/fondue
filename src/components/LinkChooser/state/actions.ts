@@ -2,6 +2,8 @@
 
 import { QUERIES_STORAGE_KEY } from "@components/LinkChooser/LinkChooser";
 import { assign, DoneInvokeEvent } from "xstate";
+import { SearchResult } from "..";
+import { defaultSection } from "../sections";
 import { LinkChooserContext, LinkChooserEventData } from "../types";
 import { isCustomLink } from "../utils/helpers";
 import { createCustomLink, mergeResultWithRecentQueries, retrieveRecentQueries } from "../utils/transformers";
@@ -58,6 +60,14 @@ export const replaceCustomLinkWithSelected = assign<LinkChooserContext, DoneInvo
     },
 });
 
+export const setExtraResultsByQuery = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
+    getExtraResultsByQuery: (_, { data }) => data.getExtraResultsByQuery ?? null,
+});
+
+export const setCurrentSectionId = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
+    currentSectionId: (_, { data }) => data.currentSectionId ?? defaultSection.id,
+});
+
 export const setSelectedSearchResult = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
     selectedResult: (_, { data }) => data.selectedResult ?? null,
 });
@@ -110,13 +120,13 @@ export const fetchGlobalSearchResults = async (context: LinkChooserContext): Pro
     return { searchResults: results };
 };
 
-export const fetchTemplateSearchResults = async (context: LinkChooserContext): Promise<LinkChooserEventData> => {
-    const results = await context.getTemplatesByQuery(context.query);
-    return { searchResults: results };
-};
+export const fetchExtraSectionResults = async (context: LinkChooserContext): Promise<LinkChooserEventData> => {
+    let results: SearchResult[] = [];
 
-export const fetchGuidelineSearchResults = async (context: LinkChooserContext): Promise<LinkChooserEventData> => {
-    const results = await context.getGuidelinesByQuery(context.query);
+    if (context.getExtraResultsByQuery !== null) {
+        results = await context.getExtraResultsByQuery(context.query);
+    }
+
     return { searchResults: results };
 };
 
