@@ -2,23 +2,23 @@
 
 import { Meta, Story } from "@storybook/react";
 import React from "react";
-import { Heading as HeadingComponent, HeadingProps } from "./Heading";
+import { Text as TextComponent, TextProps } from "./Text";
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Foundation/Typography/Heading",
-    component: HeadingComponent,
+    title: "Typography/Text",
+    component: TextComponent,
     argTypes: {
         size: {
-            options: ["medium", "large", "x-large"],
+            options: ["x-small", "small", "medium", "large"],
             control: { type: "select" },
         },
         weight: {
-            options: ["medium", "strong"],
+            options: ["regular", "strong", "x-strong"],
             control: { type: "select" },
         },
         as: {
-            options: ["h1", "h2", "h3", "h4", "h5", "h6", "span", "p"],
+            options: ["a", "abbr", "address", "em", "label", "li", "span", "strong", "time", "p"],
             control: { type: "select" },
         },
         color: {
@@ -29,10 +29,10 @@ export default {
     args: {
         children: "The fox jumps over the lazy dog",
         size: "medium",
-        weight: "medium",
+        weight: "regular",
         as: "span",
         color: "default",
     },
-} as Meta<HeadingProps>;
+} as Meta<TextProps>;
 
-export const Heading: Story<HeadingProps> = (args) => <HeadingComponent {...args} />;
+export const Text: Story<TextProps> = (args) => <TextComponent {...args} />;

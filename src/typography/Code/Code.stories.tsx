@@ -2,23 +2,23 @@
 
 import { Meta, Story } from "@storybook/react";
 import React from "react";
-import { Text as TextComponent, TextProps } from "./Text";
+import { Code as CodeComponent, CodeProps } from "./Code";
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Foundation/Typography/Text",
-    component: TextComponent,
+    title: "Typography/Code",
+    component: CodeComponent,
     argTypes: {
         size: {
-            options: ["x-small", "small", "medium", "large"],
+            options: ["small", "medium", "large"],
             control: { type: "select" },
         },
         weight: {
-            options: ["regular", "strong", "x-strong"],
+            options: ["medium", "strong"],
             control: { type: "select" },
         },
         as: {
-            options: ["a", "abbr", "address", "em", "label", "li", "span", "strong", "time", "p"],
+            options: ["code", "pre", "span"],
             control: { type: "select" },
         },
         color: {
@@ -27,12 +27,12 @@ export default {
         },
     },
     args: {
-        children: "The fox jumps over the lazy dog",
+        children: "The <blink>fox</blink> jumps <marquee>over</marquee> the lazy dog",
         size: "medium",
-        weight: "regular",
+        weight: "medium",
         as: "span",
         color: "default",
     },
-} as Meta<TextProps>;
+} as Meta<CodeProps>;
 
-export const Text: Story<TextProps> = (args) => <TextComponent {...args} />;
+export const Code: Story<CodeProps> = (args) => <CodeComponent {...args} />;
