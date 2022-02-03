@@ -188,7 +188,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                             },
                             CLEARING: {
                                 target: DropdownState.Default,
-                                actions: [...clearingActions],
+                                actions: clearingActions,
                             },
                         },
                     },
