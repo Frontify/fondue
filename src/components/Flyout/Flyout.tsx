@@ -1,39 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FieldsetHeader } from "@components/FieldsetHeader/FieldsetHeader";
-import { Badge, BadgeProps } from "@components/Badge/Badge";
-import { Button, ButtonStyle } from "@components/Button/Button";
-import IconCheck from "@foundation/Icon/Generated/IconCheck";
+import { BadgeProps } from "@components/Badge/Badge";
 import { watchModals } from "@react-aria/aria-modal-polyfill";
 import { useButton } from "@react-aria/button";
-import { useDialog } from "@react-aria/dialog";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
-import {
-    DismissButton,
-    OverlayContainer,
-    OverlayProvider,
-    useModal,
-    useOverlay,
-    useOverlayPosition,
-    useOverlayTrigger,
-} from "@react-aria/overlays";
+import { OverlayContainer, OverlayProvider, useOverlayPosition, useOverlayTrigger } from "@react-aria/overlays";
 import { mergeProps } from "@react-aria/utils";
 import { useOverlayTriggerState } from "@react-stately/overlays";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, {
-    Children,
-    FC,
-    forwardRef,
-    ForwardRefRenderFunction,
-    HTMLAttributes,
-    MouseEvent,
-    PropsWithChildren,
-    ReactNode,
-    RefObject,
-    useEffect,
-    useRef,
-} from "react";
+import React, { FC, MouseEvent, PropsWithChildren, ReactNode, RefObject, useEffect, useMemo, useRef } from "react";
+import { Overlay } from "./Overlay";
 import { useContainScroll } from "./useContainScroll";
 
 export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
@@ -58,92 +35,6 @@ export type FlyoutProps = PropsWithChildren<{
     legacyFooter?: boolean;
 }>;
 
-type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange"> & {
-    positionProps: HTMLAttributes<Element>;
-    overlayTriggerProps: HTMLAttributes<Element>;
-    scrollRef: RefObject<HTMLDivElement>;
-};
-
-const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> = (
-    {
-        title,
-        decorator,
-        badges = [],
-        onClick,
-        onClose,
-        children,
-        isOpen,
-        positionProps,
-        overlayTriggerProps,
-        scrollRef,
-        legacyFooter,
-        fixedHeader,
-        fitContent,
-    },
-    ref,
-) => {
-    const { overlayProps } = useOverlay({ onClose, isOpen, isDismissable: true }, ref as RefObject<HTMLDivElement>);
-    const { modalProps } = useModal();
-    const { dialogProps, titleProps } = useDialog({}, ref as RefObject<HTMLDivElement>);
-
-    return (
-        <div
-            {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
-            ref={ref}
-            className={merge([
-                "tw-max-h-full tw-flex tw-shadow-mid tw-outline-none",
-                fitContent ? "tw-min-w-0" : "tw-min-w-[400px]",
-            ])}
-        >
-            <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0">
-                {fixedHeader}
-                <div
-                    ref={scrollRef}
-                    className="tw-flex tw-overflow-y-auto tw-overflow-x-hidden tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95"
-                >
-                    {title && (
-                        <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8">
-                            <div {...titleProps} className="tw-inline-flex">
-                                <FieldsetHeader decorator={decorator}>{title}</FieldsetHeader>
-                            </div>
-                            <div className="tw-inline-flex tw-gap-2 tw-flex-wrap">
-                                {badges.map((badgeProps, index) => (
-                                    <Badge {...badgeProps} key={`flyout-badge-${index}`} />
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                    {Children.map(children, (child, index) => (
-                        <div key={index}>{child}</div>
-                    ))}
-
-                    <DismissButton onDismiss={onClose} />
-                </div>
-                {legacyFooter && (
-                    <div className="tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-border-t tw-border-t-black-10 tw-bg-white dark:tw-bg-black-95 tw-z-40">
-                        {onClick ? (
-                            <>
-                                <Button onClick={onClose} style={ButtonStyle.Secondary}>
-                                    Cancel
-                                </Button>
-                                <Button onClick={onClick} icon={<IconCheck />}>
-                                    Confirm
-                                </Button>
-                            </>
-                        ) : (
-                            <Button onClick={onClose} style={ButtonStyle.Secondary}>
-                                Close
-                            </Button>
-                        )}
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-};
-
-export const Overlay = forwardRef<HTMLDivElement, OverlayProps>(OverlayComponent);
-
 export const Flyout: FC<FlyoutProps> = ({
     trigger,
     decorator,
@@ -163,6 +54,7 @@ export const Flyout: FC<FlyoutProps> = ({
     const { toggle } = state;
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const overlayRef = useRef<HTMLDivElement | null>(null);
+    const innerOverlayRef = useRef<HTMLDivElement | null>(null);
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
 
@@ -172,12 +64,32 @@ export const Flyout: FC<FlyoutProps> = ({
         triggerRef,
     );
 
+    const ariaScrollCalculationRef = useMemo(() => {
+        if (scrollRef.current && innerOverlayRef.current) {
+            const outerScrollHeight = innerOverlayRef.current.scrollHeight;
+            const { scrollHeight: innerScrollHeight, clientHeight: innerClientHeight } = scrollRef.current;
+            /* The scrollRef passed to useOverlayPosition is used by react-aria to determine if the height should flip.
+            Since the only properties it needs are the 4 below, and since it expects the scrollable content to be the
+            outermost container, we need to combine the scrollHeights of the innerOverlay and the scrollRef so that it
+            can properly calculate if it must flip the position */
+
+            return {
+                current: {
+                    ...scrollRef.current,
+                    scrollHeight: outerScrollHeight + (innerScrollHeight - innerClientHeight),
+                },
+            } as RefObject<HTMLDivElement>;
+        }
+
+        return scrollRef;
+    }, [innerOverlayRef.current, scrollRef.current?.scrollHeight, scrollRef.current?.clientHeight]);
+
     const { overlayProps: positionProps } = useOverlayPosition({
         targetRef: triggerRef,
         overlayRef,
         placement: "bottom left",
         offset: 5,
-        scrollRef: scrollRef,
+        scrollRef: ariaScrollCalculationRef,
         isOpen,
     });
 
@@ -219,6 +131,7 @@ export const Flyout: FC<FlyoutProps> = ({
                             onClose={onClose ? onClose : undefined}
                             ref={overlayRef}
                             scrollRef={scrollRef}
+                            innerOverlayRef={innerOverlayRef}
                             legacyFooter={legacyFooter}
                             fitContent={fitContent}
                         >
