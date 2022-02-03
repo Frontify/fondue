@@ -178,14 +178,15 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         {
             onOpen: handleDropdownOpen,
             onClose: handleDropdownClose,
-            onNavigate: (id) =>
+            onNavigate: (id) => {
                 send({
                     type: "SELECT_EXTRA_SECTION",
                     data: {
                         getExtraResultsByQuery: findSection(extraSections, id)?.getResults || null,
                         currentSectionId: id.toString(),
                     },
-                }),
+                });
+            },
             onSelect: handleSelectionChange,
         },
     );
