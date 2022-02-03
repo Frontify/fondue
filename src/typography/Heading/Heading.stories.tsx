@@ -2,15 +2,15 @@
 
 import { Meta, Story } from "@storybook/react";
 import React from "react";
-import { Code as CodeComponent, CodeProps } from "./Code";
+import { Heading as HeadingComponent, HeadingProps } from "./Heading";
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Foundation/Typography/Code",
-    component: CodeComponent,
+    title: "Typography/Heading",
+    component: HeadingComponent,
     argTypes: {
         size: {
-            options: ["small", "medium", "large"],
+            options: ["medium", "large", "x-large"],
             control: { type: "select" },
         },
         weight: {
@@ -18,7 +18,7 @@ export default {
             control: { type: "select" },
         },
         as: {
-            options: ["code", "pre", "span"],
+            options: ["h1", "h2", "h3", "h4", "h5", "h6", "span", "p"],
             control: { type: "select" },
         },
         color: {
@@ -27,12 +27,12 @@ export default {
         },
     },
     args: {
-        children: "The <blink>fox</blink> jumps <marquee>over</marquee> the lazy dog",
+        children: "The fox jumps over the lazy dog",
         size: "medium",
         weight: "medium",
         as: "span",
         color: "default",
     },
-} as Meta<CodeProps>;
+} as Meta<HeadingProps>;
 
-export const Code: Story<CodeProps> = (args) => <CodeComponent {...args} />;
+export const Heading: Story<HeadingProps> = (args) => <HeadingComponent {...args} />;
