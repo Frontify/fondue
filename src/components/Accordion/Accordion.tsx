@@ -20,7 +20,7 @@ import React, {
     useRef,
 } from "react";
 
-export type AccordionItemProps = PropsWithChildren<{ header: FieldsetHeaderProps }>;
+export type AccordionItemProps = PropsWithChildren<{ header: FieldsetHeaderProps; noPadding?: boolean }>;
 
 const ACCORDION_ID = "accordion";
 const ACCORDION_ITEM_ID = "accordion-item";
@@ -29,9 +29,10 @@ type AriaAccordionItemProps = {
     item: Node<AccordionItemProps>;
     state: TreeState<AccordionItemProps>;
     header: FieldsetHeaderProps;
+    noPadding?: boolean;
 };
 
-const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) => {
+const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header, noPadding }) => {
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
     const isOpen = state.expandedKeys.has(item.key) && item.props.children;
@@ -80,7 +81,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                         transition={{ type: "tween" }}
                         data-test-id="accordion-item-content"
                     >
-                        <div {...regionProps} className="tw-px-8 tw-pb-6">
+                        <div {...regionProps} className={`tw-pb-6 ${noPadding ? "" : "tw-px-8"}`}>
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
@@ -164,9 +165,10 @@ export const Accordion: FC<AccordionProps> = (props) => {
             className="tw-divide-y tw-divide-black-10 tw-border-t tw-border-b tw-border-black-10"
         >
             {[...state.collection].map((item, index) => {
-                const { header } = children[index].props;
-
-                return <AriaAccordionItem key={item.key} item={item} state={state} header={header} />;
+                const { header, noPadding } = children[index].props;
+                return (
+                    <AriaAccordionItem key={item.key} item={item} state={state} header={header} noPadding={noPadding} />
+                );
             })}
         </div>
     );
