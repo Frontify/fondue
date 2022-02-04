@@ -95,7 +95,7 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
             </AccordionItem>
             <AccordionItem
                 header={{ children: "Item without padding", type: FieldsetHeaderType.AddRemove }}
-                noPadding={true}
+                padding={false}
             >
                 <p>
                     Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
