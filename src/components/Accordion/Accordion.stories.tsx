@@ -93,6 +93,16 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
                 </div>
                 <Button onClick={() => setShowContent(!showContent)}>Toggle Content</Button>
             </AccordionItem>
+            <AccordionItem
+                header={{ children: "Item without padding", type: FieldsetHeaderType.AddRemove }}
+                padding={false}
+            >
+                <p>
+                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+                    et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                </p>
+            </AccordionItem>
         </AccordionComponent>
     );
 };
