@@ -8,6 +8,7 @@ import { Item as StatelyItem } from "@react-stately/collections";
 import { TreeState, useTreeState } from "@react-stately/tree";
 import { Node } from "@react-types/shared";
 import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
+import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, {
     Children,
@@ -32,7 +33,7 @@ type AriaAccordionItemProps = {
     padding?: boolean;
 };
 
-const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header, padding }) => {
+const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header, padding = true }) => {
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
     const isOpen = state.expandedKeys.has(item.key) && item.props.children;
@@ -81,7 +82,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header, pa
                         transition={{ type: "tween" }}
                         data-test-id="accordion-item-content"
                     >
-                        <div {...regionProps} className={`tw-pb-6 ${padding === false ? "" : "tw-px-8"}`}>
+                        <div {...regionProps} className={merge(["tw-pb-6", padding && "tw-px-8"])}>
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
