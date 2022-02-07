@@ -11,7 +11,7 @@ import { merge } from "@utilities/merge";
 import React, { Children, forwardRef, ForwardRefRenderFunction, HTMLAttributes, RefObject } from "react";
 import { FlyoutProps } from ".";
 
-type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange"> & {
+type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange" | "overlayPadding"> & {
     positionProps: HTMLAttributes<Element>;
     overlayTriggerProps: HTMLAttributes<Element>;
     scrollRef: RefObject<HTMLDivElement>;

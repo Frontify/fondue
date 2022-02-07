@@ -4,17 +4,25 @@ import { BadgeProps } from "@components/Badge/Badge";
 import { watchModals } from "@react-aria/aria-modal-polyfill";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
-import { OverlayContainer, OverlayProvider, useOverlayPosition, useOverlayTrigger } from "@react-aria/overlays";
+import { OverlayContainer, OverlayProvider, useOverlayTrigger, useOverlayPosition } from "@react-aria/overlays";
 import { mergeProps } from "@react-aria/utils";
 import { useOverlayTriggerState } from "@react-stately/overlays";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, MouseEvent, PropsWithChildren, ReactNode, RefObject, useEffect, useMemo, useRef } from "react";
 import { Overlay } from "./Overlay";
+import { shouldDisplayAbove } from "./shouldDisplayAbove";
 import { useContainScroll } from "./useContainScroll";
 
 export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
 export const FLYOUT_DIVIDER_HEIGHT = "10px";
+const FLYOUT_OVERLAY_OFFSET = 5;
+const DEFAULT_OVERLAY_PADDING = 12;
+
+type OverlayPadding = {
+    top?: number;
+    bottom?: number;
+};
 
 export type FlyoutProps = PropsWithChildren<{
     trigger: ReactNode;
@@ -28,6 +36,8 @@ export type FlyoutProps = PropsWithChildren<{
     isOpen?: boolean;
     onOpenChange: (isOpen: boolean) => void;
     fixedHeader?: ReactNode;
+    offsetBottom?: number;
+    overlayPadding?: OverlayPadding;
     /**
      * The legacy footer buttons section inside of the flyout will be deleted in the future.
      * @deprecated Pass the FlyoutFooter component with buttons to the Flyout component.
@@ -49,6 +59,7 @@ export const Flyout: FC<FlyoutProps> = ({
     fitContent = false,
     legacyFooter = true,
     fixedHeader,
+    overlayPadding,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
     const { toggle } = state;
@@ -84,14 +95,32 @@ export const Flyout: FC<FlyoutProps> = ({
         return scrollRef;
     }, [innerOverlayRef.current, scrollRef.current?.scrollHeight, scrollRef.current?.clientHeight]);
 
+    const padding = {
+        top: overlayPadding?.top || DEFAULT_OVERLAY_PADDING,
+        bottom: overlayPadding?.bottom || DEFAULT_OVERLAY_PADDING,
+    };
+
+    const isFlipped = shouldDisplayAbove({
+        triggerRef,
+        overlayHeight: ariaScrollCalculationRef.current?.scrollHeight,
+        padding,
+        offset: FLYOUT_OVERLAY_OFFSET,
+    });
+
     const { overlayProps: positionProps } = useOverlayPosition({
         targetRef: triggerRef,
         overlayRef,
-        placement: "bottom left",
-        offset: 5,
+        shouldFlip: false,
+        containerPadding: DEFAULT_OVERLAY_PADDING,
+        placement: isFlipped ? "top left" : "bottom left",
+        offset: FLYOUT_OVERLAY_OFFSET,
         scrollRef: ariaScrollCalculationRef,
         isOpen,
     });
+
+    if (typeof positionProps.style?.maxHeight === "number") {
+        positionProps.style.maxHeight -= (isFlipped ? padding.top : padding.bottom) - DEFAULT_OVERLAY_PADDING;
+    }
 
     const { buttonProps } = useButton({ onPress: () => toggle() }, triggerRef);
     useEffect(() => {
