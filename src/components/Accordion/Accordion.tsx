@@ -8,6 +8,7 @@ import { Item as StatelyItem } from "@react-stately/collections";
 import { TreeState, useTreeState } from "@react-stately/tree";
 import { Node } from "@react-types/shared";
 import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
+import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, {
     Children,
@@ -20,7 +21,7 @@ import React, {
     useRef,
 } from "react";
 
-export type AccordionItemProps = PropsWithChildren<{ header: FieldsetHeaderProps }>;
+export type AccordionItemProps = PropsWithChildren<{ header: FieldsetHeaderProps; padding?: boolean }>;
 
 const ACCORDION_ID = "accordion";
 const ACCORDION_ITEM_ID = "accordion-item";
@@ -29,9 +30,10 @@ type AriaAccordionItemProps = {
     item: Node<AccordionItemProps>;
     state: TreeState<AccordionItemProps>;
     header: FieldsetHeaderProps;
+    padding?: boolean;
 };
 
-const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) => {
+const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header, padding = true }) => {
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
     const isOpen = state.expandedKeys.has(item.key) && item.props.children;
@@ -80,7 +82,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                         transition={{ type: "tween" }}
                         data-test-id="accordion-item-content"
                     >
-                        <div {...regionProps} className="tw-px-8 tw-pb-6">
+                        <div {...regionProps} className={merge(["tw-pb-6", padding && "tw-px-8"])}>
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
@@ -164,9 +166,8 @@ export const Accordion: FC<AccordionProps> = (props) => {
             className="tw-divide-y tw-divide-black-10 tw-border-t tw-border-b tw-border-black-10"
         >
             {[...state.collection].map((item, index) => {
-                const { header } = children[index].props;
-
-                return <AriaAccordionItem key={item.key} item={item} state={state} header={header} />;
+                const { header, padding } = children[index].props;
+                return <AriaAccordionItem key={item.key} item={item} state={state} header={header} padding={padding} />;
             })}
         </div>
     );

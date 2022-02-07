@@ -66,7 +66,12 @@ const SliderItem = (props: SliderItemProps) => {
     };
 
     return (
-        <motion.li layout key={item.id} className="tw-relative">
+        <motion.li
+            layout="position"
+            layoutDependency={radioGroupState.selectedValue}
+            key={item.id}
+            className="tw-relative"
+        >
             {isActive && (
                 <motion.div
                     key={id}
@@ -107,7 +112,7 @@ const SliderItem = (props: SliderItemProps) => {
                 <VisuallyHidden>
                     <input {...inputProps} {...focusProps} data-test-id="slider-input" ref={ref} />
                 </VisuallyHidden>
-                <span className="tw-overflow-hidden tw-overflow-ellipsis tw-whitespace-nowrap">
+                <span className="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap">
                     {isIconItem(item) ? <span aria-label={item.ariaLabel}>{item.icon}</span> : item.value.toString()}
                 </span>
             </div>

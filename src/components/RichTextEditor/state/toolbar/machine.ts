@@ -2,6 +2,7 @@
 
 import { Editor } from "slate";
 import { createMachine, DoneInvokeEvent } from "xstate";
+import { TextAlignTypes } from "../../renderer/renderBlockStyles";
 import { BlockElement, FormattedText } from "../../RichTextEditor";
 import { updateBlockType, updateInlineStyle } from "./actions";
 
@@ -13,6 +14,7 @@ export type BlockTypeData = {
     active: boolean;
     type: BlockElement["type"];
     editor: Editor;
+    textAlign?: TextAlignTypes;
 };
 
 export type InlineStyleData = {

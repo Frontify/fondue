@@ -56,7 +56,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
     return (
         <div className="tw-flex tw-flex-col tw-gap-5" data-test-id="custom-color-picker">
             <div className="tw-flex tw-gap-2 tw-w-full tw-h-[200px]">
-                <div className="tw-relative tw-flex-grow tw-overflow-hidden tw-rounded">
+                <div className="tw-relative tw-grow tw-overflow-hidden tw-rounded">
                     <Saturation
                         rgb={rgb}
                         hsl={hsl}

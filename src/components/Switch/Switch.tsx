@@ -53,7 +53,7 @@ export const Switch: FC<SwitchProps> = ({
     const { isFocusVisible, focusProps } = useFocusRing();
 
     const lineClasses = useMemo(() => {
-        const baseClasses = "tw-inline-flex tw-border-0 tw-rounded-full tw-transition-colors tw-flex-shrink-0";
+        const baseClasses = "tw-inline-flex tw-border-0 tw-rounded-full tw-transition-colors tw-shrink-0";
         const sizeClasses = size !== SwitchSize.Small ? "tw-py-0 tw-px-[0.125rem]" : "tw-p-0";
         const activatedClasses = on ? "tw-bg-black-90 hover:tw-bg-black" : "tw-bg-black-30 hover:tw-bg-black-60";
         const disabledClasses = disabled ? "tw-bg-black-10 tw-pointer-events-none" : activatedClasses;

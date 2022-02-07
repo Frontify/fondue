@@ -21,6 +21,12 @@ export enum ButtonSize {
     Large = "Large",
 }
 
+export enum ButtonType {
+    Button = "Button",
+    Submit = "Submit",
+    Reset = "Reset",
+}
+
 const sizeClasses: Record<ButtonSize, string> = {
     [ButtonSize.Small]: "tw-px-3 tw-h-6 tw-text-xs",
     [ButtonSize.Medium]: "tw-px-4 tw-h-9 tw-text-s",
@@ -75,7 +81,14 @@ const iconSizes: Record<ButtonSize, IconSize> = {
     [ButtonSize.Large]: IconSize.Size24,
 };
 
+const typesMap: Record<ButtonType, "button" | "submit" | "reset"> = {
+    [ButtonType.Button]: "button",
+    [ButtonType.Submit]: "submit",
+    [ButtonType.Reset]: "reset",
+};
+
 export type ButtonProps = {
+    type?: ButtonType;
     style?: ButtonStyle;
     size?: ButtonSize;
     solid?: boolean;
@@ -88,6 +101,7 @@ export type ButtonProps = {
 };
 
 export const Button: FC<ButtonProps> = ({
+    type = ButtonType.Button,
     style = ButtonStyle.Primary,
     size = ButtonSize.Medium,
     solid = true,
@@ -101,7 +115,10 @@ export const Button: FC<ButtonProps> = ({
     const wrap = (child: ReactNode) => (children ? <span className={iconSpacing[size]}>{child}</span> : child);
     const { isFocusVisible, focusProps } = useFocusRing();
     const ref = useRef<HTMLButtonElement | null>(null);
-    const { buttonProps } = useButton({ onPress: () => onClick && onClick(), isDisabled: disabled }, ref);
+    const { buttonProps } = useButton(
+        { onPress: () => onClick && onClick(), isDisabled: disabled, type: typesMap[type] },
+        ref,
+    );
 
     const getButtonTheme = useCallback(() => {
         if (inverted) {

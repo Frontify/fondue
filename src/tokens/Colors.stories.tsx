@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* (c) Copyrkght Frontify Ltd., all rights reserved. */
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -9,7 +10,7 @@ import React from "react";
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Foundation/Colors",
+    title: "Tokens",
 } as Meta;
 
 function getPalette(color: any) {
@@ -33,7 +34,7 @@ export const AliasTokens: Story = () => {
                 return (
                     <div key={category}>
                         <div className="tw-flex tw-flex-col tw-space-y-3 sm:tw-flex-row tw-text-xs sm:tw-space-y-0 sm:tw-space-x-4">
-                            <div className="tw-w-32 tw-flex-shrink-0">
+                            <div className="tw-w-32 tw-shrink-0">
                                 <div className="tw-h-10 tw-flex tw-flex-col tw-justify-center">
                                     <div className="tw-text-sm tw-font-semibold tw-text-grey-90">{category}</div>
                                 </div>
@@ -75,7 +76,7 @@ export const BrandTokens: Story = () => {
                 return (
                     <div key={category}>
                         <div className="tw-flex tw-flex-col tw-space-y-3 sm:tw-flex-row tw-text-xs sm:tw-space-y-0 sm:tw-space-x-4">
-                            <div className="tw-w-32 tw-flex-shrink-0">
+                            <div className="tw-w-32 tw-shrink-0">
                                 <div className="tw-h-10 tw-flex tw-flex-col tw-justify-center">
                                     <div className="tw-text-sm tw-font-semibold tw-text-grey-90">{category}</div>
                                 </div>
