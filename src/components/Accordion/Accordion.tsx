@@ -46,6 +46,8 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header, pa
         if (isActive) {
             state.toggleKey(item.key);
         }
+        // We add a timeout to avoid isActive being set to false before
+        // the first re-render, so that the animations won't play on load
         setTimeout(() => setIsActive(false), 50);
     }, []);
 
