@@ -38,19 +38,16 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
     const isOpen = state.expandedKeys.has(item.key) && item.props.children;
     const { isFocusVisible, focusProps } = useFocusRing();
-    const [isActive, setIsActive] = useState(false);
-    const isActiveByDefault = header.active;
+    const [isActive, setIsActive] = useState(header.active);
 
     useEffect(() => {
-        if (isActiveByDefault) {
+        if (isActive) {
             state.toggleKey(item.key);
         }
         // We add a timeout to avoid isActive being set to true before
         // first re-render and play animations on load.
-        setTimeout(() => setIsActive(true), 50);
+        setTimeout(() => setIsActive(false), 50);
     }, []);
-
-    const shouldPlayAnimations = !isActive && isActiveByDefault;
 
     return (
         <div key={item.key} className={isFocusVisible ? FOCUS_STYLE_INSET : ""}>
@@ -85,7 +82,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                 {item.props.children && isOpen && (
                     <motion.div
                         key={item.key}
-                        initial={shouldPlayAnimations ? false : "collapsed"}
+                        initial={isActive ? false : "collapsed"}
                         animate={"open"}
                         exit={"collapsed"}
                         variants={{
@@ -97,7 +94,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header }) 
                     >
                         <div {...regionProps} className="tw-px-8 tw-pb-6">
                             <motion.div
-                                initial={shouldPlayAnimations ? false : { opacity: 0 }}
+                                initial={isActive ? false : { opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 0.3 }}
