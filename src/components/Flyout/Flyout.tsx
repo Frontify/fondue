@@ -36,7 +36,6 @@ export type FlyoutProps = PropsWithChildren<{
     isOpen?: boolean;
     onOpenChange: (isOpen: boolean) => void;
     fixedHeader?: ReactNode;
-    offsetBottom?: number;
     overlayPadding?: OverlayPadding;
     /**
      * The legacy footer buttons section inside of the flyout will be deleted in the future.
