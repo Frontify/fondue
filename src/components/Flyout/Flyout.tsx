@@ -9,7 +9,7 @@ import { mergeProps } from "@react-aria/utils";
 import { useOverlayTriggerState } from "@react-stately/overlays";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, MouseEvent, PropsWithChildren, ReactNode, RefObject, useEffect, useMemo, useRef } from "react";
+import React, { FC, MouseEvent, PropsWithChildren, ReactNode, useEffect, useMemo, useRef } from "react";
 import { Overlay } from "./Overlay";
 import { shouldDisplayAbove } from "./shouldDisplayAbove";
 import { useContainScroll } from "./useContainScroll";
@@ -75,24 +75,15 @@ export const Flyout: FC<FlyoutProps> = ({
         triggerRef,
     );
 
-    const ariaScrollCalculationRef = useMemo(() => {
+    const overlayHeight = useMemo(() => {
+        let height = 0;
         if (scrollRef.current && innerOverlayRef.current) {
             const outerScrollHeight = innerOverlayRef.current.scrollHeight;
             const { scrollHeight: innerScrollHeight, clientHeight: innerClientHeight } = scrollRef.current;
-            /* The scrollRef passed to useOverlayPosition is used by react-aria to determine if the height should flip.
-            Since the only properties it needs are the 4 below, and since it expects the scrollable content to be the
-            outermost container, we need to combine the scrollHeights of the innerOverlay and the scrollRef so that it
-            can properly calculate if it must flip the position */
-
-            return {
-                current: {
-                    ...scrollRef.current,
-                    scrollHeight: outerScrollHeight + (innerScrollHeight - innerClientHeight),
-                },
-            } as RefObject<HTMLDivElement>;
+            height = outerScrollHeight + (innerScrollHeight - innerClientHeight);
         }
 
-        return scrollRef;
+        return height;
     }, [innerOverlayRef.current, scrollRef.current?.scrollHeight, scrollRef.current?.clientHeight]);
 
     const padding = {
@@ -102,7 +93,7 @@ export const Flyout: FC<FlyoutProps> = ({
 
     const isFlipped = shouldDisplayAbove({
         triggerRef,
-        overlayHeight: ariaScrollCalculationRef.current?.scrollHeight,
+        overlayHeight,
         padding,
         offset: FLYOUT_OVERLAY_OFFSET,
     });
@@ -114,7 +105,7 @@ export const Flyout: FC<FlyoutProps> = ({
         containerPadding: DEFAULT_OVERLAY_PADDING,
         placement: isFlipped ? "top left" : "bottom left",
         offset: FLYOUT_OVERLAY_OFFSET,
-        scrollRef: ariaScrollCalculationRef,
+        scrollRef,
         isOpen,
     });
 
