@@ -173,6 +173,8 @@ export { default as IconPatternLibrary } from "./IconPatternLibrary";
 export { default as IconPause } from "./IconPause";
 export { default as IconPen } from "./IconPen";
 export { default as IconPills } from "./IconPills";
+export { default as IconPin } from "./IconPin";
+export { default as IconPinFilled } from "./IconPinFilled";
 export { default as IconPlanning } from "./IconPlanning";
 export { default as IconPlay } from "./IconPlay";
 export { default as IconPlus } from "./IconPlus";

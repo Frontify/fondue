@@ -95,9 +95,15 @@ export const Dropdown: FC<DropdownProps> = ({
 
     const heightIsReady = !autoResize || maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
 
-    const textState = disabled ? MenuItemTextColorState.Disabled : MenuItemTextColorState.Default;
+    const textState = disabled
+        ? MenuItemTextColorState.Disabled
+        : activeItem
+        ? MenuItemTextColorState.Active
+        : MenuItemTextColorState.Default;
 
-    const textClass = menuItemTextColorRecord[activeItem?.style || MenuItemStyle.Primary][textState];
+    const textColorClass = activeItem
+        ? menuItemTextColorRecord[activeItem.style || MenuItemStyle.Primary][textState]
+        : "tw-text-black-60";
 
     const onClear = clearable
         ? () => {
@@ -134,8 +140,7 @@ export const Dropdown: FC<DropdownProps> = ({
                             ? "tw-py-2 tw-pl-3 tw-min-h-[34px]"
                             : "tw-pl-5 tw-py-4 tw-min-h-[60px]",
                         showClear ? "tw-pr-11" : "tw-pr-7",
-                        !activeItem && "tw-text-black-60",
-                        textClass,
+                        textColorClass,
                     ])}
                 >
                     <MenuItemContent

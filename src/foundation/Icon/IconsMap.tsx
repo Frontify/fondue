@@ -175,6 +175,8 @@ import IconPatternLibrary from "@foundation/Icon/Generated/IconPatternLibrary";
 import IconPause from "@foundation/Icon/Generated/IconPause";
 import IconPen from "@foundation/Icon/Generated/IconPen";
 import IconPills from "@foundation/Icon/Generated/IconPills";
+import IconPin from "@foundation/Icon/Generated/IconPin";
+import IconPinFilled from "@foundation/Icon/Generated/IconPinFilled";
 import IconPlanning from "@foundation/Icon/Generated/IconPlanning";
 import IconPlay from "@foundation/Icon/Generated/IconPlay";
 import IconPlus from "@foundation/Icon/Generated/IconPlus";
@@ -435,6 +437,8 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Pause]: <IconPause />,
     [IconEnum.Pen]: <IconPen />,
     [IconEnum.Pills]: <IconPills />,
+    [IconEnum.Pin]: <IconPin />,
+    [IconEnum.PinFilled]: <IconPinFilled />,
     [IconEnum.Planning]: <IconPlanning />,
     [IconEnum.Play]: <IconPlay />,
     [IconEnum.Plus]: <IconPlus />,
