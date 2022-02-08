@@ -10,6 +10,7 @@ import { useOverlayTriggerState } from "@react-stately/overlays";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, MouseEvent, PropsWithChildren, ReactNode, RefObject, useEffect, useMemo, useRef } from "react";
+import { LegacyFlyoutFooter } from ".";
 import { Overlay } from "./Overlay";
 import { useContainScroll } from "./useContainScroll";
 
@@ -28,6 +29,7 @@ export type FlyoutProps = PropsWithChildren<{
     isOpen?: boolean;
     onOpenChange: (isOpen: boolean) => void;
     fixedHeader?: ReactNode;
+    fixedFooter?: ReactNode;
     /**
      * The legacy footer buttons section inside of the flyout will be deleted in the future.
      * @deprecated Pass the FlyoutFooter component with buttons to the Flyout component.
@@ -47,11 +49,12 @@ export const Flyout: FC<FlyoutProps> = ({
     badges = [],
     hug = true,
     fitContent = false,
-    legacyFooter = true,
     fixedHeader,
+    fixedFooter,
+    legacyFooter = true,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
-    const { toggle } = state;
+    const { toggle, close } = state;
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const innerOverlayRef = useRef<HTMLDivElement | null>(null);
@@ -124,15 +127,16 @@ export const Flyout: FC<FlyoutProps> = ({
                             badges={badges}
                             decorator={decorator}
                             isOpen={isOpen}
+                            onClose={close}
                             overlayTriggerProps={overlayTriggerProps}
                             positionProps={positionProps}
                             fixedHeader={fixedHeader}
-                            onClick={onClick ? onClick : undefined}
-                            onClose={onClose ? onClose : undefined}
+                            fixedFooter={
+                                legacyFooter ? <LegacyFlyoutFooter onClick={onClick} onClose={onClose} /> : fixedFooter
+                            }
                             ref={overlayRef}
                             scrollRef={scrollRef}
                             innerOverlayRef={innerOverlayRef}
-                            legacyFooter={legacyFooter}
                             fitContent={fitContent}
                         >
                             {overlayRef?.current && children}

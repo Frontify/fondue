@@ -14,6 +14,7 @@ import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { Flyout, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, FlyoutProps } from "./Flyout";
 import { FlyoutFooter } from "./FlyoutFooter";
+import { chain } from "@react-aria/utils";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -21,6 +22,7 @@ export default {
     component: Flyout,
     argTypes: {
         onClose: { action: "onClose", table: { disable: true } },
+        onOpenChange: { action: "onOpenChange", table: { disable: true } },
     },
     args: {
         trigger: (
@@ -40,7 +42,13 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
         <div className="dark:tw-text-white">
             <div className="tw-flex tw-items-center">
                 Some text
-                <Flyout {...args} isOpen={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
+                <Flyout
+                    {...args}
+                    isOpen={open}
+                    onOpenChange={chain(args.onOpenChange, setOpen)}
+                    onClose={chain(args.onClose, () => setOpen(false))}
+                    onClick={args.onClick && chain(args.onClick, setOpen)}
+                >
                     <div className="tw-flex tw-flex-col tw-gap-y-8 tw-p-8">
                         <FormControl
                             label={{
@@ -126,7 +134,8 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
             {...args}
             trigger={<Button onClick={() => setOpen((open) => !open)}>Button</Button>}
             isOpen={open}
-            onOpenChange={(isOpen) => setOpen(isOpen)}
+            onOpenChange={chain(args.onOpenChange, setOpen)}
+            onClose={chain(args.onClose, () => setOpen(false))}
         >
             <p className="tw-text-center tw-py-8">Fun with Flyouts and Buttons!</p>
         </Flyout>
@@ -151,14 +160,28 @@ const WithCustomFooterFlyoutTemplate: Story<FlyoutProps> = (args) => {
         <div className="dark:tw-text-white">
             <div className="tw-flex tw-items-center">
                 Some text
-                <Flyout {...args} isOpen={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
+                <Flyout
+                    {...args}
+                    isOpen={open}
+                    onOpenChange={(isOpen) => setOpen(isOpen)}
+                    fixedFooter={
+                        <FlyoutFooter
+                            buttons={[
+                                {
+                                    children: "Cancel",
+                                    style: ButtonStyle.Secondary,
+                                    onClick: chain(action("onClose"), () => setOpen(false)),
+                                },
+                                {
+                                    children: "Add",
+                                    style: ButtonStyle.Primary,
+                                    onClick: chain(action("onClick"), () => setOpen(false)),
+                                },
+                            ]}
+                        />
+                    }
+                >
                     <p className="tw-text-center tw-py-8">Your flyout content with custom footer buttons!</p>
-                    <FlyoutFooter
-                        buttons={[
-                            { children: "Cancel", style: ButtonStyle.Secondary, onClick: action("onClose") },
-                            { children: "Add", style: ButtonStyle.Primary, onClick: action("onClick") },
-                        ]}
-                    />
                 </Flyout>
             </div>
             <div>
