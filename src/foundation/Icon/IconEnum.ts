@@ -174,6 +174,8 @@ export enum IconEnum {
     Pause = "Pause",
     Pen = "Pen",
     Pills = "Pills",
+    Pin = "Pin",
+    PinFilled = "PinFilled",
     Planning = "Planning",
     Play = "Play",
     Plus = "Plus",
