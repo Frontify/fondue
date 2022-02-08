@@ -21,7 +21,7 @@ export default {
     title: "Components/Flyout",
     component: Flyout,
     argTypes: {
-        onClose: { action: "onClose", table: { disable: true } },
+        onOpenChange: { action: "onOpenChange", table: { disable: true } },
     },
     args: {
         trigger: (
@@ -43,9 +43,9 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
                 Some text
                 <Flyout
                     {...args}
-                    onClick={chain(args.onClick, () => setOpen(false))}
+                    onClick={args.onClick && chain(args.onClick, () => setOpen(false))}
                     isOpen={open}
-                    onOpenChange={(isOpen) => setOpen(isOpen)}
+                    onOpenChange={chain(args.onOpenChange, setOpen)}
                 >
                     <div className="tw-flex tw-flex-col tw-gap-y-8 tw-p-8">
                         <FormControl
@@ -132,7 +132,7 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
             {...args}
             trigger={<Button onClick={() => setOpen((open) => !open)}>Button</Button>}
             isOpen={open}
-            onOpenChange={(isOpen) => setOpen(isOpen)}
+            onOpenChange={chain(args.onOpenChange, setOpen)}
         >
             <p className="tw-text-center tw-py-8">Fun with Flyouts and Buttons!</p>
         </Flyout>
@@ -167,12 +167,12 @@ const WithCustomFooterFlyoutTemplate: Story<FlyoutProps> = (args) => {
                                 {
                                     children: "Cancel",
                                     style: ButtonStyle.Secondary,
-                                    onClick: chain(action("onClose"), () => setOpen(false)),
+                                    onClick: () => setOpen(false),
                                 },
                                 {
                                     children: "Add",
                                     style: ButtonStyle.Primary,
-                                    onClick: chain(action("onClick"), () => setOpen(false)),
+                                    onClick: () => setOpen(false),
                                 },
                             ]}
                         />
