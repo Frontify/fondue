@@ -10,12 +10,13 @@ import React, { FC, useState } from "react";
 import { Flyout, FlyoutProps } from "./Flyout";
 import { ButtonStyle } from "@components/Button";
 import { FlyoutFooter } from "./FlyoutFooter";
+import { chain } from "@react-aria/utils";
 
 const FLYOUT_TRIGGER_ID = "[data-test-id=flyout-trigger]";
 
-const Component: FC<Pick<FlyoutProps, "onClick" | "onClose" | "badges" | "legacyFooter">> = ({
+const Component: FC<Partial<Pick<FlyoutProps, "onClick" | "badges" | "legacyFooter" | "onOpenChange">>> = ({
     onClick,
-    onClose,
+    onOpenChange,
     badges,
     legacyFooter,
 }) => {
@@ -23,12 +24,11 @@ const Component: FC<Pick<FlyoutProps, "onClick" | "onClose" | "badges" | "legacy
     return (
         <Flyout
             isOpen={open}
-            onOpenChange={(isOpen) => setOpen(isOpen)}
+            onOpenChange={chain(onOpenChange, setOpen)}
             trigger="foobar"
             title="Header title"
             badges={badges}
             onClick={onClick}
-            onClose={onClose}
             legacyFooter={legacyFooter}
         >
             <TextInput placeholder="placeholder" />
@@ -46,22 +46,22 @@ const Component: FC<Pick<FlyoutProps, "onClick" | "onClose" | "badges" | "legacy
 
 describe("Flyout Component", () => {
     it("should render with header and badges", () => {
-        const onCloseStub = cy.stub().as("onCloseStub");
+        const onOpenChanged = cy.stub().as("onOpenChanged");
 
-        mount(<Component badges={[{ children: "Badge 1" }, { children: "Badge 2" }]} onClose={onCloseStub} />);
+        mount(<Component badges={[{ children: "Badge 1" }, { children: "Badge 2" }]} onOpenChange={onOpenChanged} />);
 
         cy.get(FLYOUT_TRIGGER_ID).click();
         cy.get(FIELDSET_HEADER_ID).should("contain", "Header title");
         cy.get(BADGE_ID).should("have.length", 2);
         cy.get(TEXT_INPUT_ID).should("have.attr", "placeholder").and("eq", "placeholder");
         cy.get(BUTTON_ID).click();
-        cy.get("@onCloseStub").should("be.calledOnce");
+        cy.get("@onOpenChanged").should("be.calledTwice");
     });
     it("should render with onClick action", () => {
-        const onCloseStub = cy.stub().as("onCloseStub");
+        const onOpenChanged = cy.stub().as("onOpenChanged");
         const onClickStub = cy.stub().as("onClickStub");
 
-        mount(<Component onClick={onClickStub} onClose={onCloseStub} />);
+        mount(<Component onClick={onClickStub} onOpenChange={onOpenChanged} />);
 
         cy.get(FLYOUT_TRIGGER_ID).click();
         cy.get(BUTTON_ID).should("have.length", 2);
