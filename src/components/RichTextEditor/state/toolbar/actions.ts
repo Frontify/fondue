@@ -29,7 +29,14 @@ export const updateInlineStyle = (_: ToolbarContext, { data }: DoneInvokeEvent<T
 
 const toggleBlock = (active: boolean, editor: Editor, type: BlockStyleTypes, textAlign?: TextAlignTypes) => {
     const isList = [BlockStyleTypes.OrderedList, BlockStyleTypes.UnorderedList].includes(type);
-
+    const isHeadingOrText = [
+        BlockStyleTypes.Paragraph,
+        BlockStyleTypes.H1,
+        BlockStyleTypes.H2,
+        BlockStyleTypes.H3,
+        BlockStyleTypes.Custom01,
+        BlockStyleTypes.Custom02,
+    ].includes(type);
     Transforms.unwrapNodes(editor, {
         match: (node) =>
             Element.isElement(node) && [BlockStyleTypes.OrderedList, BlockStyleTypes.UnorderedList].includes(node.type),
@@ -37,7 +44,7 @@ const toggleBlock = (active: boolean, editor: Editor, type: BlockStyleTypes, tex
     });
 
     const newItem: Partial<Element> = {
-        type: active ? BlockStyleTypes.Paragraph : isList ? BlockStyleTypes.ListItem : type,
+        type: active && isHeadingOrText ? type : isList ? BlockStyleTypes.ListItem : type,
     };
 
     if (textAlign) {

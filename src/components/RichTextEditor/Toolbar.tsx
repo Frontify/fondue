@@ -16,11 +16,15 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useRef } from "react";
 import { usePopper } from "react-popper";
+import { Editor, Element } from "slate";
+import { useSlateStatic } from "slate-react";
 import { BlockStyleButton } from "./BlockStyleButton";
+import { BlockStyleDropdown } from "./BlockStyleDropdown";
 import { useEditorSelection } from "./hooks/useEditorSelection";
 import { InlineStyleButton } from "./InlineStyleButton";
 import { BlockStyleTypes, TextAlignTypes } from "./renderer/renderBlockStyles";
 import { InlineStyles } from "./renderer/renderInlineStyles";
+import { BlockElement } from "./RichTextEditor";
 
 export const Toolbar: FC = () => {
     const selectionRectRef = useRef<HTMLDivElement | null>(null);
@@ -32,6 +36,17 @@ export const Toolbar: FC = () => {
     const ButtonGroup: FC<React.ReactNode> = ({ children }) => (
         <div className="tw-flex tw-items-center tw-border-r tw-px-3 tw-py-2 tw-border-black-5">{children}</div>
     );
+
+    const editor = useSlateStatic();
+    const [type] = Editor.nodes<BlockElement>(editor, {
+        match: (node) => Element.isElement(node),
+    });
+
+    const availableType = type ? type[0].type : BlockStyleTypes.Paragraph;
+    const isList = [BlockStyleTypes.UnorderedList, BlockStyleTypes.OrderedList, BlockStyleTypes.ListItem].includes(
+        availableType,
+    );
+    const currentType = isList ? BlockStyleTypes.Paragraph : availableType;
 
     const {
         styles,
@@ -69,25 +84,30 @@ export const Toolbar: FC = () => {
                 style={styles.popper}
                 {...attributes.popper}
             >
-                <div className="tw-flex tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5">
+                <div
+                    className="tw-flex tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5"
+                    data-type="toolbar"
+                >
                     <ButtonGroup>
-                        <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignJustify}>
+                        <BlockStyleDropdown />
+                    </ButtonGroup>
+                    <ButtonGroup>
+                        <BlockStyleButton blockType={currentType} textAlign={TextAlignTypes.AlignJustify}>
                             <IconTextAlignJustify size={IconSize.Size16} />
                         </BlockStyleButton>
 
-                        <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignLeft}>
+                        <BlockStyleButton blockType={currentType} textAlign={TextAlignTypes.AlignLeft}>
                             <IconTextAlignLeft size={IconSize.Size16} />
                         </BlockStyleButton>
 
-                        <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignCenter}>
+                        <BlockStyleButton blockType={currentType} textAlign={TextAlignTypes.AlignCenter}>
                             <IconTextAlignCenter size={IconSize.Size16} />
                         </BlockStyleButton>
 
-                        <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignRight}>
+                        <BlockStyleButton blockType={currentType} textAlign={TextAlignTypes.AlignRight}>
                             <IconTextAlignRight size={IconSize.Size16} />
                         </BlockStyleButton>
                     </ButtonGroup>
-
                     <ButtonGroup>
                         <InlineStyleButton style={InlineStyles.Bold}>
                             <IconBold size={IconSize.Size16} />

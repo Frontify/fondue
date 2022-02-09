@@ -9,6 +9,11 @@ export enum BlockStyleTypes {
     OrderedList = "ordered-list",
     ListItem = "list-item",
     Link = "link",
+    H1 = "h1",
+    H2 = "h2",
+    H3 = "h3",
+    Custom01 = "custom01",
+    Custom02 = "custom02",
 }
 
 export enum TextAlignTypes {
@@ -27,15 +32,25 @@ export const textAlignClassMap: Record<TextAlignTypes, string> = {
     [TextAlignTypes.AlignRight]: "tw-text-right",
 };
 
+export const headingTypeClassname = {
+    [BlockStyleTypes.H1]: "tw-font-bold tw-text-xxl",
+    [BlockStyleTypes.H2]: "tw-font-bold tw-text-xl",
+    [BlockStyleTypes.H3]: "tw-text-lg",
+    [BlockStyleTypes.Custom01]: "tw-text-sm",
+    [BlockStyleTypes.Custom02]: "tw-text-sm tw-font-sans tw-font-semibold",
+};
+const getTextAlignClass = (textAlign?: TextAlignTypes) => (textAlign ? textAlignClassMap[textAlign] : "");
+
 export const renderBlockStyles = (props: RenderElementProps): JSX.Element => {
+    const textAlign = props.element.properties?.textAlign;
     switch (props.element.type) {
         case BlockStyleTypes.Paragraph:
-            const textAlign = props.element.properties?.textAlign;
             return (
-                <p {...props.attributes} className={textAlign ? textAlignClassMap[textAlign] : ""}>
+                <p {...props.attributes} className={getTextAlignClass(textAlign)}>
                     {props.children}
                 </p>
             );
+
         case BlockStyleTypes.OrderedList:
             return (
                 <ol {...props.attributes} className="tw-list-decimal tw-list-inside">
@@ -55,6 +70,44 @@ export const renderBlockStyles = (props: RenderElementProps): JSX.Element => {
                 <a href={props.element.url} rel="noreferrer" target="_blank" {...props.attributes}>
                     {props.children}
                 </a>
+            );
+        case BlockStyleTypes.H1:
+            return (
+                <h1 {...props.attributes} className={`${headingTypeClassname.h1} ${getTextAlignClass(textAlign)}`}>
+                    {props.children}
+                </h1>
+            );
+
+        case BlockStyleTypes.H2:
+            return (
+                <h2 {...props.attributes} className={`${headingTypeClassname.h2} ${getTextAlignClass(textAlign)}`}>
+                    {props.children}
+                </h2>
+            );
+        case BlockStyleTypes.H3:
+            return (
+                <h3 {...props.attributes} className={`${headingTypeClassname.h3} ${getTextAlignClass(textAlign)}`}>
+                    {props.children}
+                </h3>
+            );
+
+        case BlockStyleTypes.Custom01:
+            return (
+                <span
+                    {...props.attributes}
+                    className={`${headingTypeClassname.custom01} ${getTextAlignClass(textAlign)}`}
+                >
+                    {props.children}
+                </span>
+            );
+        case BlockStyleTypes.Custom02:
+            return (
+                <span
+                    {...props.attributes}
+                    className={`${headingTypeClassname.custom02} ${getTextAlignClass(textAlign)}`}
+                >
+                    {props.children}
+                </span>
             );
         default:
             return <DefaultElement {...props} />;

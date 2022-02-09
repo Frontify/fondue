@@ -23,7 +23,6 @@ export type InlineStyleData = {
     editor: Editor;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export type ToolbarData = InlineStyleData | BlockTypeData;
 
 export enum States {
