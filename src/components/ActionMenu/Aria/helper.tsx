@@ -15,7 +15,7 @@ export const mapToAriaProps = (ariaLabel: string, menuBlocks: MenuBlock[] | Acti
     children: menuBlocks.map(({ id, menuItems, ariaLabel: sectionAriaLabel }) => (
         <Section title={id} key={id} aria-label={sectionAriaLabel}>
             {menuItems.map((menuItem) => (
-                <Item key={menuItem.id}>{menuItem.title}</Item>
+                <Item key={menuItem.id}>{typeof menuItem.title === "string" ? menuItem.title : "title"}</Item>
             ))}
         </Section>
     )),

@@ -42,6 +42,14 @@ const value = [
             createListItemNode("Bake for 20 minutes."),
         ],
     },
+    { type: BlockStyleTypes.H1, children: [{ text: "Heading 1" }] },
+    { type: BlockStyleTypes.H2, children: [{ text: "Heading 2" }] },
+    { type: BlockStyleTypes.H3, children: [{ text: "Heading 3" }] },
+    { type: BlockStyleTypes.H4, children: [{ text: "Heading 4" }] },
+    { type: BlockStyleTypes.Custom01, children: [{ text: "Custom 01" }] },
+    { type: BlockStyleTypes.Custom02, children: [{ text: "Custom 02" }] },
+    { type: BlockStyleTypes.Paragraph, children: [{ text: "Body Text:" }] },
+
     {
         type: BlockStyleTypes.Paragraph,
         children: [

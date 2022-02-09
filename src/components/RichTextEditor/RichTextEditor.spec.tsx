@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { DROPDOWN_TRIGGER_ID } from "@components/Dropdown/Dropdown.spec";
+import { MENU_ITEM_ID } from "@components/MenuItem/MenuItem.spec";
 import { getCanvasFontSize, getTextWidth } from "@components/RichTextEditor/utils/getTextWidth";
 import { mount } from "@cypress/react";
 import React, { FC, useState } from "react";
@@ -144,6 +146,27 @@ describe("RichTextEditor Component", () => {
         insertTextAndOpenToolbar();
         cy.get(getBlockStyleControl("paragraph-align-right")).click();
         cy.get("[contenteditable=true]").should("include.html", textAlignClassMap[TextAlignTypes.AlignRight]);
+    });
+
+    it.only("renders headings", () => {
+        mount(<RichTextEditor />);
+
+        insertTextAndOpenToolbar();
+        cy.get(DROPDOWN_TRIGGER_ID).click({ force: true });
+        cy.get(MENU_ITEM_ID).first().click();
+        cy.get("[contenteditable=true]").should("include.html", "<h1");
+
+        cy.get(DROPDOWN_TRIGGER_ID).click({ force: true });
+        cy.get(MENU_ITEM_ID).eq(1).click();
+        cy.get("[contenteditable=true]").should("include.html", "<h2");
+
+        cy.get(DROPDOWN_TRIGGER_ID).click({ force: true });
+        cy.get(MENU_ITEM_ID).eq(2).click();
+        cy.get("[contenteditable=true]").should("include.html", "<h3");
+
+        cy.get(DROPDOWN_TRIGGER_ID).click({ force: true });
+        cy.get(MENU_ITEM_ID).eq(3).click();
+        cy.get("[contenteditable=true]").should("include.html", "<h4");
     });
 
     it("render the placeholder with correct width", () => {
