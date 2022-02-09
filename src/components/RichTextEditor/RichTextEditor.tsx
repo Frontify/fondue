@@ -11,6 +11,7 @@ import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
 import { ToolbarContext } from "./context/toolbar";
+import { useOnClickOutside } from "./hooks/useOnClickOutside";
 import { useSoftBreak } from "./hooks/useSoftBreak";
 import { withLinks } from "./plugins/withLinks";
 import { withLists } from "./plugins/withLists";
@@ -134,8 +135,8 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     onKeyPress={softBreakHandler}
                     renderLeaf={renderInlineStyles}
                     renderElement={renderBlockStyles}
-                    onBlur={() => send({ type: "BLUR", data: { value } })}
                 />
+                {useOnClickOutside(wrapperRef, () => send({ type: "BLUR", data: { value } }))}
                 {matches(States.Styling) && (
                     <ToolbarContext.Provider
                         value={{
