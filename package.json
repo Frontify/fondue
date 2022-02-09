@@ -4,11 +4,12 @@
     "description": "Design system of Frontify",
     "module": "dist/index.js",
     "files": [
-        "dist"
+        "dist",
+        "tailwind.config.js"
     ],
     "exports": {
         ".": "./dist/index.js",
-        "./tailwind": "./dist/tailwind.config.js",
+        "./tailwind": "./tailwind.config.js",
         "./style": "./dist/styles.css",
         "./components/*": {
             "types": "./dist/src/components/*/index.d.ts",
