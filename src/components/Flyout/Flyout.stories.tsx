@@ -21,7 +21,7 @@ export default {
     title: "Components/Flyout",
     component: Flyout,
     argTypes: {
-        onClose: { action: "onClose", table: { disable: true } },
+        onCancel: { action: "onCancel", table: { disable: true } },
         onOpenChange: { action: "onOpenChange", table: { disable: true } },
     },
     args: {
@@ -46,8 +46,8 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
                     {...args}
                     isOpen={open}
                     onOpenChange={chain(args.onOpenChange, setOpen)}
-                    onClose={chain(args.onClose, () => setOpen(false))}
-                    onClick={args.onClick && chain(args.onClick, setOpen)}
+                    onCancel={chain(args.onCancel, () => setOpen(false))}
+                    onConfirm={args.onConfirm && chain(args.onConfirm, setOpen)}
                 >
                     <div className="tw-flex tw-flex-col tw-gap-y-8 tw-p-8">
                         <FormControl
@@ -105,13 +105,13 @@ export const WithoutHeader = FlyoutTemplate.bind({});
 export const WithOnclick = FlyoutTemplate.bind({});
 
 WithOnclick.argTypes = {
-    onClick: { action: "onClick" },
+    onConfirm: { action: "onConfirm" },
 };
 
 WithOnclick.args = {
     title: "Header title",
     decorator: <IconIcons />,
-    onClick: action("click"),
+    onConfirm: action("onConfirm"),
 };
 
 export const WithBadges = FlyoutTemplate.bind({});
@@ -135,7 +135,7 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
             trigger={<Button onClick={() => setOpen((open) => !open)}>Button</Button>}
             isOpen={open}
             onOpenChange={chain(args.onOpenChange, setOpen)}
-            onClose={chain(args.onClose, () => setOpen(false))}
+            onCancel={chain(args.onCancel, () => setOpen(false))}
         >
             <p className="tw-text-center tw-py-8">Fun with Flyouts and Buttons!</p>
         </Flyout>
@@ -170,12 +170,12 @@ const WithCustomFooterFlyoutTemplate: Story<FlyoutProps> = (args) => {
                                 {
                                     children: "Cancel",
                                     style: ButtonStyle.Secondary,
-                                    onClick: chain(action("onClose"), () => setOpen(false)),
+                                    onClick: chain(action("onCancel"), () => setOpen(false)),
                                 },
                                 {
                                     children: "Add",
                                     style: ButtonStyle.Primary,
-                                    onClick: chain(action("onClick"), () => setOpen(false)),
+                                    onClick: chain(action("onConfirm"), () => setOpen(false)),
                                 },
                             ]}
                         />

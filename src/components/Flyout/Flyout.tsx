@@ -19,8 +19,8 @@ export const FLYOUT_DIVIDER_HEIGHT = "10px";
 
 export type FlyoutProps = PropsWithChildren<{
     trigger: ReactNode;
-    onClose?: () => void;
-    onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    onCancel?: () => void;
+    onConfirm?: (event?: MouseEvent<HTMLButtonElement>) => void;
     title?: string;
     decorator?: ReactNode;
     badges?: BadgeProps[];
@@ -40,8 +40,8 @@ export type FlyoutProps = PropsWithChildren<{
 export const Flyout: FC<FlyoutProps> = ({
     trigger,
     decorator,
-    onClick,
-    onClose,
+    onConfirm,
+    onCancel,
     children,
     onOpenChange,
     isOpen = false,
@@ -132,7 +132,11 @@ export const Flyout: FC<FlyoutProps> = ({
                             positionProps={positionProps}
                             fixedHeader={fixedHeader}
                             fixedFooter={
-                                legacyFooter ? <LegacyFlyoutFooter onClick={onClick} onClose={onClose} /> : fixedFooter
+                                legacyFooter ? (
+                                    <LegacyFlyoutFooter onConfirm={onConfirm} onCancel={onCancel} />
+                                ) : (
+                                    fixedFooter
+                                )
                             }
                             ref={overlayRef}
                             scrollRef={scrollRef}

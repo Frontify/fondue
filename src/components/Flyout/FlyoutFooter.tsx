@@ -23,15 +23,15 @@ export const FlyoutFooter: FC<FlyoutFooterProps> = ({ buttons, border = true }) 
     );
 };
 
-export const LegacyFlyoutFooter = ({ onClick, onClose }: { onClick?: () => void; onClose?: () => void }) => (
+export const LegacyFlyoutFooter = ({ onConfirm, onCancel }: { onConfirm?: () => void; onCancel?: () => void }) => (
     <FlyoutFooter
         buttons={
-            onClick
+            onConfirm
                 ? [
-                      { children: "Cancel", onClick: onClose, style: ButtonStyle.Secondary },
-                      { children: "Confirm", onClick: onClick, style: ButtonStyle.Primary, icon: <IconCheck /> },
+                      { children: "Cancel", onClick: onCancel, style: ButtonStyle.Secondary },
+                      { children: "Confirm", onClick: onConfirm, style: ButtonStyle.Primary, icon: <IconCheck /> },
                   ]
-                : [{ children: "Close", onClick: onClose, style: ButtonStyle.Secondary }]
+                : [{ children: "Close", onClick: onCancel, style: ButtonStyle.Secondary }]
         }
     />
 );

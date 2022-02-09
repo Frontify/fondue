@@ -9,11 +9,12 @@ import { merge } from "@utilities/merge";
 import React, { Children, forwardRef, ForwardRefRenderFunction, HTMLAttributes, RefObject } from "react";
 import { FlyoutProps } from ".";
 
-type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange" | "onClick" | "legacyFooter"> & {
+type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange" | "onConfirm" | "legacyFooter" | "onCancel"> & {
     positionProps: HTMLAttributes<Element>;
     overlayTriggerProps: HTMLAttributes<Element>;
     scrollRef: RefObject<HTMLDivElement>;
     innerOverlayRef: RefObject<HTMLDivElement>;
+    onClose: () => void;
 };
 
 const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> = (
