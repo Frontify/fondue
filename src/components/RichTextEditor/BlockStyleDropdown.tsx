@@ -1,82 +1,86 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Dropdown } from "@components/Dropdown";
+import { MenuBlock } from "@components/Dropdown/SelectMenu/SelectMenu";
 import { MenuItemContentSize } from "@components/MenuItem";
 import { useActor } from "@xstate/react";
-import React, { FC, ReactNode, useContext, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import { Editor, Element } from "slate";
 import { useSlateStatic } from "slate-react";
 import { BlockElement } from ".";
 import { ToolbarContext } from "./context/toolbar";
-import { BlockStyleTypes, headingTypeClassname } from "./renderer/renderBlockStyles";
+import { BlockStyleTypes } from "./renderer/renderBlockStyles";
 
-const headingDropdown: { title: ReactNode; id: string; size: MenuItemContentSize }[] = [
+const headingMenuBlocks: MenuBlock[] = [
     {
-        id: BlockStyleTypes.H1,
-        title: <span className={headingTypeClassname.h1}>Heading 1</span>,
-        size: MenuItemContentSize.Small,
-    },
-    {
-        id: BlockStyleTypes.H2,
-        title: <span className={headingTypeClassname.h2}>Heading 2</span>,
-        size: MenuItemContentSize.Small,
-    },
-    {
-        id: BlockStyleTypes.H3,
-        title: <span className={headingTypeClassname.h3}>Heading 3</span>,
-        size: MenuItemContentSize.Small,
-    },
-    {
-        id: BlockStyleTypes.H4,
-        title: <span className={headingTypeClassname.h4}>Heading 4</span>,
-        size: MenuItemContentSize.Small,
-    },
-    {
-        id: BlockStyleTypes.Custom01,
-        title: <span className={headingTypeClassname.custom01}>Custom 01</span>,
-        size: MenuItemContentSize.Small,
-    },
-    {
-        id: BlockStyleTypes.Custom02,
-        title: <span className={headingTypeClassname.custom02}>Custom 02</span>,
-        size: MenuItemContentSize.Small,
-    },
-    {
-        id: BlockStyleTypes.Paragraph,
-        title: <span>Body Text</span>,
-        size: MenuItemContentSize.Small,
+        id: "toolbar-heading-menu-block",
+        menuItems: [
+            {
+                id: BlockStyleTypes.H1,
+                title: "Heading 1",
+                size: MenuItemContentSize.Small,
+            },
+            {
+                id: BlockStyleTypes.H2,
+                title: "Heading 2",
+                size: MenuItemContentSize.Small,
+            },
+            {
+                id: BlockStyleTypes.H3,
+                title: "Heading 3",
+                size: MenuItemContentSize.Small,
+            },
+            {
+                id: BlockStyleTypes.H4,
+                title: "Heading 4",
+                size: MenuItemContentSize.Small,
+            },
+            {
+                id: BlockStyleTypes.Custom01,
+                title: "Custom 01",
+                size: MenuItemContentSize.Small,
+            },
+            {
+                id: BlockStyleTypes.Custom02,
+                title: "Custom 02",
+                size: MenuItemContentSize.Small,
+            },
+            {
+                id: BlockStyleTypes.Paragraph,
+                title: "Body Text",
+                size: MenuItemContentSize.Small,
+            },
+        ],
     },
 ];
 
 export const BlockStyleDropdown: FC = () => {
     const { machineRef } = useContext(ToolbarContext);
-
-    const editor = useSlateStatic();
-    const [type] = Editor.nodes<BlockElement>(editor, {
-        match: (node) => Element.isElement(node), //&& node.type === blockType
-    });
-    const [active, setActive] = useState<string | null>(type ? type[0]?.type ?? null : null);
-
     if (!machineRef) {
         return null;
     }
+    const editor = useSlateStatic();
+    const [type] = Editor.nodes<BlockElement>(editor, {
+        match: (node) => Element.isElement(node),
+    });
+    const [blockType, setBlockType] = useState<string | null>(type[0]?.type ?? null);
 
     const [blockTypeIsActive] = Editor.nodes<BlockElement>(editor, {
-        match: (node) => Element.isElement(node) && node.type === active, //&& node.properties?.headingType === active,
+        match: (node) => Element.isElement(node) && node.type === blockType,
     });
 
     useEffect(() => {
-        setActive(type ? type[0]?.type ?? null : null);
-    }, [active]);
+        setBlockType(type[0]?.type ?? null);
+    }, [blockType]);
 
     const [, send] = useActor(machineRef);
 
     return (
         <Dropdown
-            activeItemId={active || BlockStyleTypes.Paragraph}
+            activeItemId={blockType || BlockStyleTypes.Paragraph}
             placeholder="Body Text"
             onChange={(id) => {
-                setActive(id as BlockStyleTypes);
+                setBlockType(id as BlockStyleTypes);
                 send({
                     type: "BLOCK_TYPE_SELECTED",
                     data: {
@@ -86,7 +90,7 @@ export const BlockStyleDropdown: FC = () => {
                     },
                 });
             }}
-            menuBlocks={[{ id: "heading-picker-dropdown-block", menuItems: headingDropdown }]}
+            menuBlocks={headingMenuBlocks}
         ></Dropdown>
     );
 };

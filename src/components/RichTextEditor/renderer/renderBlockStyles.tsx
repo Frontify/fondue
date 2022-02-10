@@ -43,12 +43,39 @@ export const headingTypeClassname = {
 };
 const getTextAlignClass = (textAlign?: TextAlignTypes) => (textAlign ? textAlignClassMap[textAlign] : "");
 
-export const renderBlockStyles = (props: RenderElementProps): JSX.Element => {
+export const renderBlockStyles = (
+    props: RenderElementProps,
+    textStyles?: {
+        type:
+            | BlockStyleTypes.H1
+            | BlockStyleTypes.H2
+            | BlockStyleTypes.H3
+            | BlockStyleTypes.H4
+            | BlockStyleTypes.Custom01
+            | BlockStyleTypes.Custom02
+            | BlockStyleTypes.Paragraph;
+        className: string;
+    }[],
+): JSX.Element => {
     const textAlign = props.element.properties?.textAlign;
+    const getTextStyle = (
+        identifier:
+            | BlockStyleTypes.H1
+            | BlockStyleTypes.H2
+            | BlockStyleTypes.H3
+            | BlockStyleTypes.H4
+            | BlockStyleTypes.Custom01
+            | BlockStyleTypes.Custom02
+            | BlockStyleTypes.Paragraph,
+    ) => textStyles?.find(({ type }) => type === identifier)?.className;
+    console.log(getTextStyle(BlockStyleTypes.H3), props.element.properties, props.children);
     switch (props.element.type) {
         case BlockStyleTypes.Paragraph:
             return (
-                <p {...props.attributes} className={getTextAlignClass(textAlign)}>
+                <p
+                    {...props.attributes}
+                    className={`${getTextStyle(BlockStyleTypes.Paragraph)} ${getTextAlignClass(textAlign)}`}
+                >
                     {props.children}
                 </p>
             );
@@ -75,26 +102,26 @@ export const renderBlockStyles = (props: RenderElementProps): JSX.Element => {
             );
         case BlockStyleTypes.H1:
             return (
-                <h1 {...props.attributes} className={`${headingTypeClassname.h1} ${getTextAlignClass(textAlign)}`}>
+                <h1 {...props.attributes} className={getTextStyle(BlockStyleTypes.H1) || headingTypeClassname.h1}>
                     {props.children}
                 </h1>
             );
 
         case BlockStyleTypes.H2:
             return (
-                <h2 {...props.attributes} className={`${headingTypeClassname.h2} ${getTextAlignClass(textAlign)}`}>
+                <h2 {...props.attributes} className={getTextStyle(BlockStyleTypes.H2) || headingTypeClassname.h2}>
                     {props.children}
                 </h2>
             );
         case BlockStyleTypes.H3:
             return (
-                <h3 {...props.attributes} className={`${headingTypeClassname.h3} ${getTextAlignClass(textAlign)}`}>
+                <h3 {...props.attributes} className={getTextStyle(BlockStyleTypes.H3) || headingTypeClassname.h3}>
                     {props.children}
                 </h3>
             );
         case BlockStyleTypes.H4:
             return (
-                <h4 {...props.attributes} className={`${headingTypeClassname.h4} ${getTextAlignClass(textAlign)}`}>
+                <h4 {...props.attributes} className={getTextStyle(BlockStyleTypes.H4) || headingTypeClassname.h4}>
                     {props.children}
                 </h4>
             );
@@ -103,7 +130,9 @@ export const renderBlockStyles = (props: RenderElementProps): JSX.Element => {
             return (
                 <div
                     {...props.attributes}
-                    className={`${headingTypeClassname.custom01} ${getTextAlignClass(textAlign)}`}
+                    className={`${
+                        getTextStyle(BlockStyleTypes.Custom01) || headingTypeClassname.custom01
+                    } ${getTextAlignClass(textAlign)}`}
                 >
                     {props.children}
                 </div>
@@ -112,7 +141,9 @@ export const renderBlockStyles = (props: RenderElementProps): JSX.Element => {
             return (
                 <div
                     {...props.attributes}
-                    className={`${headingTypeClassname.custom02} ${getTextAlignClass(textAlign)}`}
+                    className={`${
+                        getTextStyle(BlockStyleTypes.Custom02) || headingTypeClassname.custom02
+                    } ${getTextAlignClass(textAlign)}`}
                 >
                     {props.children}
                 </div>
