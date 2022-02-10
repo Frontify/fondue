@@ -94,7 +94,7 @@ Alignment.args = {
     direction: "row",
     padding: "m",
     spacing: "m",
-    align: "center",
+    align: "stretch",
     justify: "start",
     children: (
         <>
