@@ -30,6 +30,17 @@ export type RichTextEditorProps = {
     onBlur?: (value: string) => void;
     readonly?: boolean;
     clear?: boolean;
+    textStyles?: {
+        type:
+            | BlockStyleTypes.H1
+            | BlockStyleTypes.H2
+            | BlockStyleTypes.H3
+            | BlockStyleTypes.H4
+            | BlockStyleTypes.Custom01
+            | BlockStyleTypes.Custom02
+            | BlockStyleTypes.Paragraph;
+        className: string;
+    }[];
 };
 
 export type BlockElement = {
@@ -37,6 +48,17 @@ export type BlockElement = {
     url?: string;
     properties?: {
         textAlign?: TextAlignTypes;
+        textStyles?: {
+            type:
+                | BlockStyleTypes.H1
+                | BlockStyleTypes.H2
+                | BlockStyleTypes.H3
+                | BlockStyleTypes.H4
+                | BlockStyleTypes.Custom01
+                | BlockStyleTypes.Custom02
+                | BlockStyleTypes.Paragraph;
+            className: string;
+        }[];
     };
     children: (FormattedText | BlockElement)[];
 };
@@ -66,6 +88,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     clear = false,
     onTextChange,
     onBlur,
+    textStyles,
 }) => {
     const [value, setValue] = useState<Descendant[]>(() => parseRawValue(initialValue));
     const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
@@ -134,7 +157,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     onMouseDown={() => send("TEXT_DESELECTED")}
                     onKeyPress={softBreakHandler}
                     renderLeaf={renderInlineStyles}
-                    renderElement={renderBlockStyles}
+                    renderElement={(props) => renderBlockStyles(props, textStyles)}
                 />
                 {useOnClickOutside(wrapperRef, () => send({ type: "BLUR", data: { value } }))}
                 {matches(States.Styling) && (

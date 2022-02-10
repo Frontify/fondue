@@ -48,8 +48,6 @@ const value = [
     { type: BlockStyleTypes.H4, children: [{ text: "Heading 4" }] },
     { type: BlockStyleTypes.Custom01, children: [{ text: "Custom 01" }] },
     { type: BlockStyleTypes.Custom02, children: [{ text: "Custom 02" }] },
-    { type: BlockStyleTypes.Paragraph, children: [{ text: "Body Text:" }] },
-
     {
         type: BlockStyleTypes.Paragraph,
         children: [
@@ -82,7 +80,6 @@ WithReadonlyState.args = {
         },
     ]),
 };
-WithReadonlyState.argTypes = { value: { type: "string" } };
 
 export const RichTextWithHTML: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
@@ -116,3 +113,19 @@ export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEdi
     </div>
 );
 RichTextEditorFlex.argTypes = { value: { type: "string" } };
+
+export const WithCustomTextStyle: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <RichTextEditorComponent {...args} />
+);
+WithCustomTextStyle.args = {
+    readonly: false,
+    value: JSON.stringify([
+        ...value,
+        {
+            type: BlockStyleTypes.Paragraph,
+            children: [createLinkNode("https://git-scm.com/downloads", "Link")],
+        },
+    ]),
+    textStyles: [{ type: BlockStyleTypes.H3, className: "tw-text-xxl" }],
+};
+WithCustomTextStyle.argTypes = { value: { type: "string" } };
