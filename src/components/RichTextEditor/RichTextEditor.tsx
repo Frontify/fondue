@@ -23,6 +23,18 @@ import { Toolbar } from "./Toolbar";
 import { clearEditor } from "./utils/editor/clear";
 import { parseRawValue } from "./utils/editor/parseRawContent";
 
+export type TextStylesType = {
+    type:
+        | BlockStyleTypes.H1
+        | BlockStyleTypes.H2
+        | BlockStyleTypes.H3
+        | BlockStyleTypes.H4
+        | BlockStyleTypes.Custom01
+        | BlockStyleTypes.Custom02
+        | BlockStyleTypes.Paragraph;
+    className: string;
+};
+
 export type RichTextEditorProps = {
     placeholder?: string;
     value?: string;
@@ -30,17 +42,7 @@ export type RichTextEditorProps = {
     onBlur?: (value: string) => void;
     readonly?: boolean;
     clear?: boolean;
-    textStyles?: {
-        type:
-            | BlockStyleTypes.H1
-            | BlockStyleTypes.H2
-            | BlockStyleTypes.H3
-            | BlockStyleTypes.H4
-            | BlockStyleTypes.Custom01
-            | BlockStyleTypes.Custom02
-            | BlockStyleTypes.Paragraph;
-        className: string;
-    }[];
+    textStyles?: TextStylesType[];
 };
 
 export type BlockElement = {
@@ -48,17 +50,7 @@ export type BlockElement = {
     url?: string;
     properties?: {
         textAlign?: TextAlignTypes;
-        textStyles?: {
-            type:
-                | BlockStyleTypes.H1
-                | BlockStyleTypes.H2
-                | BlockStyleTypes.H3
-                | BlockStyleTypes.H4
-                | BlockStyleTypes.Custom01
-                | BlockStyleTypes.Custom02
-                | BlockStyleTypes.Paragraph;
-            className: string;
-        }[];
+        textStyles?: TextStylesType[];
     };
     children: (FormattedText | BlockElement)[];
 };

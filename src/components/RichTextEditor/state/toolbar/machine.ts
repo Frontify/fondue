@@ -15,17 +15,6 @@ export type BlockTypeData = {
     type: BlockElement["type"];
     editor: Editor;
     textAlign?: TextAlignTypes;
-    // textStyles?: {
-    //     type:
-    //         | BlockStyleTypes.H1
-    //         | BlockStyleTypes.H2
-    //         | BlockStyleTypes.H3
-    //         | BlockStyleTypes.H4
-    //         | BlockStyleTypes.Custom01
-    //         | BlockStyleTypes.Custom02
-    //         | BlockStyleTypes.Paragraph;
-    //     className: string;
-    // }[];
 };
 
 export type InlineStyleData = {
