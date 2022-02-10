@@ -19,15 +19,12 @@ export const GENERATED_ICONS_INDEX_PATH = "src/foundation/Icon/Generated/index.t
         await transform(
             svgFileContent,
             {
-                icon: true,
                 plugins: ["@svgr/plugin-svgo", "@svgr/plugin-jsx", "@svgr/plugin-prettier"],
                 memo: true,
                 template: IconTemplate,
-                dimensions: false,
+                dimensions: true,
                 typescript: true,
                 svgProps: {
-                    width: "100%",
-                    height: "100%",
                     className: "{customClassName}",
                     name: `Icon${svgFileName}`,
                 },
