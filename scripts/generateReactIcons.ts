@@ -2,6 +2,7 @@
 import fastGlob from "fast-glob";
 import { join } from "path";
 import { writeFile, readFile } from "fs/promises";
+import { camelCase, toUpper } from "lodash";
 // @ts-ignore
 import { transform } from "@svgr/core";
 import { Entry } from "fast-glob/out/types";
@@ -10,10 +11,10 @@ import { IconTemplate } from "../src/foundation/Icon/IconTemplate";
 export const GENERATED_ICONS_INDEX_PATH = "src/foundation/Icon/Generated/index.ts";
 
 (async () => {
-    const iconsSvgPath = await fastGlob("src/foundation/Icon/Svg/**/*.svg", { objectMode: true });
+    const iconsSvgPath = await fastGlob("node_modules/@frontify/arcade-icons/icons/**/*.svg", { objectMode: true });
     iconsSvgPath.forEach(async (svgPath: Entry) => {
         const svgFileContent = await readFile(svgPath.path, { encoding: "utf-8" });
-        const svgFileName = svgPath.name.replace(".svg", "");
+        const svgFileName = camelCase(svgPath.name.replace(".svg", "")).replace(/^(.)/, toUpper);
 
         await transform(
             svgFileContent,
