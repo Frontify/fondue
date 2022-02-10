@@ -63,15 +63,15 @@ export const BlockStyleDropdown: FC = () => {
     const [type] = Editor.nodes<BlockElement>(editor, {
         match: (node) => Element.isElement(node),
     });
-    const [blockType, setBlockType] = useState<string | null>(type[0]?.type ?? null);
+    const nodeType = type[0]?.type ?? null;
+    const [blockType, setBlockType] = useState<string | null>(nodeType);
 
     const [blockTypeIsActive] = Editor.nodes<BlockElement>(editor, {
         match: (node) => Element.isElement(node) && node.type === blockType,
     });
-
     useEffect(() => {
-        setBlockType(type[0]?.type ?? null);
-    }, [blockType]);
+        setBlockType(nodeType);
+    }, [nodeType]);
 
     const [, send] = useActor(machineRef);
 

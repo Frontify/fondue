@@ -70,6 +70,9 @@ RichTextEditor.args = { value: JSON.stringify(value) };
 export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
+
+WithReadonlyState.argTypes = { value: { type: "string" } };
+
 WithReadonlyState.args = {
     readonly: true,
     value: JSON.stringify([
