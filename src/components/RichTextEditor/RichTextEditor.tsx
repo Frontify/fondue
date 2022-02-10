@@ -1,156 +1,116 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getMinWidthIfEmpty } from "@components/RichTextEditor/utils/getMinWidthIfEmpty";
-import { compose } from "@utilities/compose";
+import {
+    BalloonToolbar,
+    createAlignPlugin,
+    createBlockquotePlugin,
+    createBoldPlugin,
+    createCodeBlockPlugin,
+    createCodePlugin,
+    createHeadingPlugin,
+    createItalicPlugin,
+    createLinkPlugin,
+    createListPlugin,
+    createParagraphPlugin,
+    createPlateUI,
+    createPlugins,
+    createSoftBreakPlugin,
+    createStrikethroughPlugin,
+    createUnderlinePlugin,
+    ELEMENT_LI,
+    ELEMENT_LIC,
+    ELEMENT_OL,
+    ELEMENT_PARAGRAPH,
+    ELEMENT_UL,
+    MARK_BOLD,
+    MARK_ITALIC,
+    MARK_STRIKETHROUGH,
+    MARK_UNDERLINE,
+    Plate,
+} from "@udecode/plate";
 import { debounce } from "@utilities/debounce";
-import { useDebounce } from "@utilities/useDebounce";
-import { useMachine } from "@xstate/react";
-import React, { CSSProperties, FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BaseEditor, createEditor, Descendant, Transforms } from "slate";
-import { withHistory } from "slate-history";
-import { Editable, ReactEditor, Slate, withReact } from "slate-react";
-import { DoneInvokeEvent, Interpreter } from "xstate";
-import { ToolbarContext } from "./context/toolbar";
-import { useSoftBreak } from "./hooks/useSoftBreak";
-import { withLinks } from "./plugins/withLinks";
-import { withLists } from "./plugins/withLists";
-import { BlockStyleTypes, renderBlockStyles, TextAlignTypes } from "./renderer/renderBlockStyles";
-import { InlineStyles, renderInlineStyles } from "./renderer/renderInlineStyles";
-import { editorMachine, States } from "./state/editor/machine";
-import { ToolbarContext as ToolbarFSMContext, ToolbarData } from "./state/toolbar/machine";
+import React, { FC } from "react";
+import { EditableProps } from "slate-react/dist/components/editable";
+import { ListItemElement } from "./components/elements/li";
+import { ListContentElement } from "./components/elements/lic";
+import { OrderedListElement } from "./components/elements/ol";
+import { ParagraphElement } from "./components/elements/paragraph";
+import { UnorderedListElement } from "./components/elements/ul";
+import { BoldMark } from "./components/marks/bold";
+import { ItalicMark } from "./components/marks/italic";
+import { StrikethroughMark } from "./components/marks/strikethrough";
+import { UnderlineMark } from "./components/marks/underline";
 import { Toolbar } from "./Toolbar";
-import { clearEditor } from "./utils/editor/clear";
-import { parseRawValue } from "./utils/editor/parseRawContent";
 
 export type RichTextEditorProps = {
     placeholder?: string;
-    value?: string;
+    value?: any;
     onTextChange?: (value: string) => void;
     onBlur?: (value: string) => void;
     readonly?: boolean;
     clear?: boolean;
 };
 
-export type BlockElement = {
-    type: BlockStyleTypes;
-    url?: string;
-    properties?: {
-        textAlign?: TextAlignTypes;
-    };
-    children: (FormattedText | BlockElement)[];
-};
-
-export type FormattedText = {
-    text: string;
-} & {
-    [key in InlineStyles]?: true;
-};
-
-declare module "slate" {
-    interface CustomTypes {
-        Editor: BaseEditor & ReactEditor;
-        Element: BlockElement;
-        Text: FormattedText;
-    }
-}
-
-const TOOLBAR_DELAY_IN_MS = 200;
 export const ON_SAVE_DELAY_IN_MS = 500;
-const isModifyingKey = (key: string) => !["Alt", "Control", "Meta", "Shift"].includes(key);
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
     value: initialValue,
     placeholder = "",
     readonly = false,
-    clear = false,
     onTextChange,
-    onBlur,
 }) => {
-    const [value, setValue] = useState<Descendant[]>(() => parseRawValue(initialValue));
-    const debouncedValue = useDebounce(value, ON_SAVE_DELAY_IN_MS);
-    const wrapperRef = useRef<HTMLDivElement | null>(null);
-    const [wrapperStyle, setWrapperStyle] = useState<CSSProperties | undefined>({ minWidth: "100%" });
+    const editableProps: EditableProps = {
+        placeholder: placeholder,
+        readOnly: readonly,
+    };
 
-    const withPlugins = compose(withReact, withHistory, withLists, withLinks);
-    const editor = useMemo(() => withPlugins(createEditor()), []);
-    const softBreakHandler = useSoftBreak(editor);
-    const [{ matches, children }, send] = useMachine(() =>
-        editorMachine.withContext({ locked: readonly, onTextChange, onBlur }),
-    );
+    const components = createPlateUI({
+        // this will override the components over the default ones
+        [ELEMENT_PARAGRAPH]: ParagraphElement,
+        [ELEMENT_UL]: UnorderedListElement,
+        [ELEMENT_OL]: OrderedListElement,
+        [ELEMENT_LI]: ListItemElement,
+        [ELEMENT_LIC]: ListContentElement,
+        // [ELEMENT_LINK]: LinkMark,
+        [MARK_BOLD]: BoldMark,
+        [MARK_ITALIC]: ItalicMark,
+        [MARK_UNDERLINE]: UnderlineMark,
+        [MARK_STRIKETHROUGH]: StrikethroughMark,
+    });
 
-    useEffect(() => {
-        setWrapperStyle(getMinWidthIfEmpty(editor, placeholder, wrapperRef.current));
-    }, []);
-
-    useEffect(() => {
-        if (clear) {
-            const emptyValue = parseRawValue();
-            clearEditor(editor);
-            Transforms.insertNodes(editor, emptyValue);
-            send("RESET_TEXT");
-        }
-    }, [clear]);
-
-    useEffect(() => {
-        send({ type: "SET_LOCKED", data: { locked: readonly } });
-    }, [readonly]);
-
-    useEffect(() => {
-        send({ type: "TEXT_UPDATED", data: { value } });
-    }, [debouncedValue]);
-
-    const onValueChanged = useCallback(
-        (value: Descendant[]): void => {
-            setValue(value);
-            setWrapperStyle(getMinWidthIfEmpty(editor, placeholder, wrapperRef.current));
+    const plugins = createPlugins(
+        [
+            createSoftBreakPlugin(),
+            createAlignPlugin(),
+            createParagraphPlugin(),
+            createBlockquotePlugin(),
+            createCodeBlockPlugin(),
+            createHeadingPlugin(),
+            createListPlugin(),
+            createLinkPlugin(),
+            createBoldPlugin(),
+            createItalicPlugin(),
+            createUnderlinePlugin(),
+            createStrikethroughPlugin(),
+            createCodePlugin(),
+        ],
+        {
+            components,
         },
-        [editor, placeholder, wrapperRef.current],
     );
-
-    const onTextSelected = useCallback(
-        debounce(() => send({ type: "TEXT_SELECTED", data: { editor } }), TOOLBAR_DELAY_IN_MS),
-        [editor],
-    );
-
-    useEffect(() => {
-        window.addEventListener("mouseup", onTextSelected);
-        return () => window.removeEventListener("mouseup", onTextSelected);
-    }, []);
 
     return (
-        <div data-test-id="rich-text-editor" ref={wrapperRef} style={wrapperStyle} className="tw-relative">
-            <Slate editor={editor} value={value} onChange={onValueChanged}>
-                <Editable
-                    placeholder={placeholder}
-                    onFocus={() => send("FOCUSED")}
-                    readOnly={readonly}
-                    onKeyUp={onTextSelected}
-                    onKeyDown={(e) => {
-                        if (isModifyingKey(e.key)) {
-                            send("TEXT_DESELECTED");
-                        }
-                    }}
-                    onMouseDown={() => send("TEXT_DESELECTED")}
-                    onKeyPress={softBreakHandler}
-                    renderLeaf={renderInlineStyles}
-                    renderElement={renderBlockStyles}
-                    onBlur={() => send({ type: "BLUR", data: { value } })}
-                />
-                {matches(States.Styling) && (
-                    <ToolbarContext.Provider
-                        value={{
-                            machineRef: children.toolbar as Interpreter<
-                                ToolbarFSMContext,
-                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                any,
-                                DoneInvokeEvent<ToolbarData>
-                            >,
-                        }}
-                    >
-                        <Toolbar />
-                    </ToolbarContext.Provider>
-                )}
-            </Slate>
+        <div data-test-id="rich-text-editor" className="tw-relative">
+            <Plate
+                initialValue={initialValue}
+                onChange={debounce((value) => onTextChange && onTextChange(value), ON_SAVE_DELAY_IN_MS)}
+                editableProps={editableProps}
+                plugins={plugins}
+            >
+                <BalloonToolbar arrow={true} theme={"light"}>
+                    <Toolbar />
+                </BalloonToolbar>
+            </Plate>
         </div>
     );
 };
