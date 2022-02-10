@@ -1,8 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const plugin = require("tailwindcss/plugin");
-
 module.exports = {
     presets: [require("@frontify/arcade-tokens/tailwind")],
     content: ["./src/**/*.{js,ts,tsx}"],
@@ -112,21 +109,4 @@ module.exports = {
             },
         },
     },
-    plugins: [
-        plugin(({ addBase }) => {
-            addBase({
-                "*": { boxSizing: "content-box" },
-                "::before": { boxSizing: "content-box" },
-                "::after": { boxSizing: "content-box" },
-
-                '[class^="tw-"]': { boxSizing: "border-box" },
-                '[class^="tw-"]::before': { boxSizing: "border-box" },
-                '[class^="tw-"]::after': { boxSizing: "border-box" },
-
-                '[class*=" tw-"]': { boxSizing: "border-box" },
-                '[class*=" tw-"]::before': { boxSizing: "border-box" },
-                '[class*=" tw-"]::after': { boxSizing: "border-box" },
-            });
-        }),
-    ],
 };
