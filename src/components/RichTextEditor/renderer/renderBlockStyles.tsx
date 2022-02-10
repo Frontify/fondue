@@ -2,6 +2,7 @@
 
 import React from "react";
 import { DefaultElement, RenderElementProps } from "slate-react";
+import { TextStylesType } from "..";
 
 export enum BlockStyleTypes {
     Paragraph = "paragraph",
@@ -43,32 +44,10 @@ export const headingTypeClassname = {
 };
 const getTextAlignClass = (textAlign?: TextAlignTypes) => (textAlign ? textAlignClassMap[textAlign] : "");
 
-export const renderBlockStyles = (
-    props: RenderElementProps,
-    textStyles?: {
-        type:
-            | BlockStyleTypes.H1
-            | BlockStyleTypes.H2
-            | BlockStyleTypes.H3
-            | BlockStyleTypes.H4
-            | BlockStyleTypes.Custom01
-            | BlockStyleTypes.Custom02
-            | BlockStyleTypes.Paragraph;
-        className: string;
-    }[],
-): JSX.Element => {
+export const renderBlockStyles = (props: RenderElementProps, textStyles?: TextStylesType[]): JSX.Element => {
     const textAlign = props.element.properties?.textAlign;
-    const getTextStyle = (
-        identifier:
-            | BlockStyleTypes.H1
-            | BlockStyleTypes.H2
-            | BlockStyleTypes.H3
-            | BlockStyleTypes.H4
-            | BlockStyleTypes.Custom01
-            | BlockStyleTypes.Custom02
-            | BlockStyleTypes.Paragraph,
-    ) => textStyles?.find(({ type }) => type === identifier)?.className;
-    console.log(getTextStyle(BlockStyleTypes.H3), props.element.properties, props.children);
+    const getTextStyle = (identifier: TextStylesType["type"]) =>
+        textStyles?.find(({ type }) => type === identifier)?.className;
     switch (props.element.type) {
         case BlockStyleTypes.Paragraph:
             return (
