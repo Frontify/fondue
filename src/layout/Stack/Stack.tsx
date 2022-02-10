@@ -5,11 +5,17 @@ import React, { FC, PropsWithChildren } from "react";
 
 export type StackSpacing = "none" | "xxs" | "xs" | "s" | "m" | "l" | "xl" | "xxl";
 
+export type StackJustify = "start" | "end" | "center" | "between" | "around" | "evenly";
+
+export type StackAlign = "start" | "end" | "stretch" | "center";
+
 export type StackProps = PropsWithChildren<{
     padding: StackSpacing;
     spacing: StackSpacing;
     direction?: "row" | "column";
     wrap?: boolean;
+    justify?: StackJustify;
+    align?: StackAlign;
 }>;
 
 const paddingMap: Record<StackSpacing, string> = {
@@ -34,7 +40,31 @@ const spacingMap: Record<StackSpacing, string> = {
     xxl: "tw-gap-xxl",
 };
 
-export const Stack: FC<StackProps> = ({ children, padding, spacing, direction = "row", wrap = false }) => {
+const justifyMap: Record<StackJustify, string> = {
+    start: "tw-justify-start",
+    end: "tw-justify-end",
+    center: "tw-justify-center",
+    between: "tw-justify-between",
+    around: "tw-justify-around",
+    evenly: "tw-justify-evenly",
+};
+
+const alignMap: Record<StackAlign, string> = {
+    start: "tw-items-start",
+    end: "tw-items-end",
+    center: "tw-items-center",
+    stretch: "tw-items-stretch",
+};
+
+export const Stack: FC<StackProps> = ({
+    children,
+    padding,
+    spacing,
+    direction = "row",
+    wrap = false,
+    justify = "start",
+    align = "stretch",
+}) => {
     return (
         <div
             data-test-id="stack"
@@ -42,6 +72,8 @@ export const Stack: FC<StackProps> = ({ children, padding, spacing, direction = 
                 "tw-flex",
                 paddingMap[padding],
                 spacingMap[spacing],
+                justifyMap[justify],
+                alignMap[align],
                 direction === "row" ? "tw-flex-row" : "tw-flex-col",
                 wrap ? "tw-flex-wrap" : "tw-flex-nowrap",
             ])}
