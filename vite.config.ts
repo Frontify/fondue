@@ -25,6 +25,8 @@ export const globals = {
 export const componentsPath = fastGlob.sync(
     [
         "src/foundation/**/index.ts",
+        "src/typography/**/index.ts",
+        "src/layout/**/index.ts",
         "src/components/**/index.ts",
         "src/hooks/index.ts",
         "src/types/index.ts",
