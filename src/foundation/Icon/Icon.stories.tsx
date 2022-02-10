@@ -24,11 +24,17 @@ export default {
 
 export const Icon: Story<IconProps> = (args: IconProps) => (
     <ul className="tw-grid tw-grid-cols-4 tw-gap-4">
-        {Object.values(IconEnum).map((iconName) => (
-            <li key={iconName} className="tw-flex tw-flex-col tw-items-center dark:tw-text-white">
-                <IconComponent {...args} icon={iconName} />
-                {iconName}
-            </li>
-        ))}
+        {Object.values(IconEnum)
+            .filter(
+                (iconName) =>
+                    iconName.includes((args.size || "16").replace("Size", "")) ||
+                    !["12", "16", "20", "24", "32"].some((item) => iconName.includes(item)),
+            )
+            .map((iconName) => (
+                <li key={iconName} className="tw-flex tw-flex-col tw-items-center tw-text-violet-50 dark:tw-text-white">
+                    <IconComponent {...args} icon={iconName} />
+                    {iconName}
+                </li>
+            ))}
     </ul>
 );
