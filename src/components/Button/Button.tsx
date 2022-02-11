@@ -6,7 +6,16 @@ import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { cloneElement, FC, MouseEvent, ReactElement, ReactNode, useCallback, useRef } from "react";
+import { useForwardedRef } from "@utilities/useForwardedRef";
+import React, {
+    cloneElement,
+    forwardRef,
+    ForwardRefRenderFunction,
+    MouseEvent,
+    ReactElement,
+    ReactNode,
+    useCallback,
+} from "react";
 
 export enum ButtonStyle {
     Secondary = "Secondary",
@@ -98,23 +107,28 @@ export type ButtonProps = {
     children?: ReactNode;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     hugWidth?: boolean;
+    "aria-label"?: string;
 };
 
-export const Button: FC<ButtonProps> = ({
-    type = ButtonType.Button,
-    style = ButtonStyle.Primary,
-    size = ButtonSize.Medium,
-    solid = true,
-    inverted = false,
-    disabled = false,
-    icon,
-    children,
-    onClick,
-    hugWidth = true,
-}) => {
+const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, ButtonProps> = (
+    {
+        type = ButtonType.Button,
+        style = ButtonStyle.Primary,
+        size = ButtonSize.Medium,
+        solid = true,
+        inverted = false,
+        disabled = false,
+        icon,
+        children,
+        onClick,
+        hugWidth = true,
+        "aria-label": ariaLabel,
+    },
+    externalRef,
+) => {
     const wrap = (child: ReactNode) => (children ? <span className={iconSpacing[size]}>{child}</span> : child);
     const { isFocusVisible, focusProps } = useFocusRing();
-    const ref = useRef<HTMLButtonElement | null>(null);
+    const ref = useForwardedRef<HTMLButtonElement | null>(externalRef);
     const { buttonProps } = useButton(
         { onPress: () => onClick && onClick(), isDisabled: disabled, type: typesMap[type] },
         ref,
@@ -131,6 +145,7 @@ export const Button: FC<ButtonProps> = ({
     return (
         <button
             {...mergeProps(buttonProps, focusProps)}
+            aria-label={ariaLabel}
             ref={ref}
             className={merge([
                 "tw-outline-none tw-relative tw-flex tw-items-center tw-justify-center tw-border-0 tw-rounded tw-cursor-pointer tw-font-sans tw-transition-colors",
@@ -153,3 +168,5 @@ export const Button: FC<ButtonProps> = ({
         </button>
     );
 };
+
+export const Button = forwardRef(ButtonComponent);

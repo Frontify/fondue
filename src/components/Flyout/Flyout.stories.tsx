@@ -11,7 +11,7 @@ import { Textarea } from "@components/Textarea/Textarea";
 import { TextInput } from "@components/TextInput/TextInput";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
-import React, { useState } from "react";
+import React, { MutableRefObject, useState } from "react";
 import { Flyout, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, FlyoutProps } from "./Flyout";
 import { FlyoutFooter } from "./FlyoutFooter";
 import { chain } from "@react-aria/utils";
@@ -132,7 +132,15 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={<Button onClick={() => setOpen((open) => !open)}>Button</Button>}
+            trigger={({ "aria-label": ariaLabel }, ref) => (
+                <Button
+                    onClick={() => setOpen((open) => !open)}
+                    ref={ref as MutableRefObject<HTMLButtonElement | null>}
+                    aria-label={ariaLabel}
+                >
+                    Button
+                </Button>
+            )}
             isOpen={open}
             onOpenChange={chain(args.onOpenChange, setOpen)}
             onCancel={chain(args.onCancel, () => setOpen(false))}

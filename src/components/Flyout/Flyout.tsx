@@ -4,12 +4,23 @@ import { BadgeProps } from "@components/Badge/Badge";
 import { watchModals } from "@react-aria/aria-modal-polyfill";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
-import { OverlayContainer, OverlayProvider, useOverlayPosition, useOverlayTrigger } from "@react-aria/overlays";
+import { OverlayContainer, useOverlayPosition, useOverlayTrigger } from "@react-aria/overlays";
 import { mergeProps } from "@react-aria/utils";
 import { useOverlayTriggerState } from "@react-stately/overlays";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, MouseEvent, PropsWithChildren, ReactNode, RefObject, useEffect, useMemo, useRef } from "react";
+import React, {
+    FC,
+    HTMLAttributes,
+    MouseEvent,
+    MutableRefObject,
+    PropsWithChildren,
+    ReactNode,
+    RefObject,
+    useEffect,
+    useMemo,
+    useRef,
+} from "react";
 import { LegacyFlyoutFooter } from ".";
 import { Overlay } from "./Overlay";
 import { useContainScroll } from "./useContainScroll";
@@ -18,7 +29,9 @@ export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
 export const FLYOUT_DIVIDER_HEIGHT = "10px";
 
 export type FlyoutProps = PropsWithChildren<{
-    trigger: ReactNode;
+    trigger:
+        | ReactNode
+        | ((triggerProps: HTMLAttributes<HTMLElement>, ref: MutableRefObject<HTMLElement | null>) => JSX.Element);
     onCancel?: () => void;
     onConfirm?: (event?: MouseEvent<HTMLButtonElement>) => void;
     title?: string;
@@ -97,6 +110,7 @@ export const Flyout: FC<FlyoutProps> = ({
     });
 
     const { buttonProps } = useButton({ onPress: () => toggle() }, triggerRef);
+
     useEffect(() => {
         const revert = watchModals();
 
@@ -105,11 +119,19 @@ export const Flyout: FC<FlyoutProps> = ({
 
     useContainScroll(overlayRef, { isDisabled: !isOpen });
 
-    return (
-        <OverlayProvider className="tw-flex tw-h-full tw-items-center">
+    const combinedTriggerProps = mergeProps(buttonProps, triggerProps, focusProps, {
+        "aria-label": "Toggle Flyout Menu",
+    });
+
+    const triggerComponent =
+        typeof trigger === "function" ? (
+            trigger(combinedTriggerProps, triggerRef)
+        ) : (
             <div
-                {...mergeProps(buttonProps, triggerProps, focusProps)}
+                {...combinedTriggerProps}
                 ref={triggerRef}
+                role="button"
+                tabIndex={0}
                 className={merge([
                     "tw-outline-none tw-rounded",
                     hug ? "tw-mx-3" : "tw-w-full",
@@ -119,6 +141,11 @@ export const Flyout: FC<FlyoutProps> = ({
             >
                 {trigger}
             </div>
+        );
+
+    return (
+        <>
+            {triggerComponent}
             {isOpen && (
                 <OverlayContainer>
                     <FocusScope restoreFocus>
@@ -143,11 +170,11 @@ export const Flyout: FC<FlyoutProps> = ({
                             innerOverlayRef={innerOverlayRef}
                             fitContent={fitContent}
                         >
-                            {overlayRef?.current && children}
+                            {children}
                         </Overlay>
                     </FocusScope>
                 </OverlayContainer>
             )}
-        </OverlayProvider>
+        </>
     );
 };
