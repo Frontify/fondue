@@ -5,6 +5,7 @@ import {
     IconItalic,
     IconListBullets,
     IconListNumbers,
+    IconSnippet,
     IconStrikethrough,
     IconTextAlignCenter,
     IconTextAlignJustify,
@@ -14,15 +15,15 @@ import {
 } from "@foundation/Icon";
 import {
     AlignToolbarButton,
-    ELEMENT_OL,
-    ELEMENT_UL,
     getPluginType,
-    ListToolbarButton,
     MarkToolbarButton,
     MARK_BOLD,
+    MARK_CODE,
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
+    toggleIndentList,
+    ToolbarButton,
     usePlateEditorRef,
 } from "@udecode/plate";
 import React, { FC } from "react";
@@ -37,7 +38,7 @@ export const Toolbar: FC = () => {
     return (
         <div
             data-test-id="toolbar"
-            className="tw-flex tw-p-1 tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5"
+            className="tw-flex tw-p-0.5 tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5"
         >
             <ButtonGroup>
                 <AlignToolbarButton value="left" icon={<IconTextAlignLeft />} />
@@ -51,11 +52,28 @@ export const Toolbar: FC = () => {
                 <MarkToolbarButton type={getPluginType(editor, MARK_ITALIC)} icon={<IconItalic />} />
                 <MarkToolbarButton type={getPluginType(editor, MARK_UNDERLINE)} icon={<IconUnderline />} />
                 <MarkToolbarButton type={getPluginType(editor, MARK_STRIKETHROUGH)} icon={<IconStrikethrough />} />
+                <MarkToolbarButton type={getPluginType(editor, MARK_CODE)} icon={<IconSnippet />} />
             </ButtonGroup>
 
             <ButtonGroup>
-                <ListToolbarButton type={getPluginType(editor, ELEMENT_UL)} icon={<IconListBullets />} />
-                <ListToolbarButton type={getPluginType(editor, ELEMENT_OL)} icon={<IconListNumbers />} />
+                <ToolbarButton
+                    onMouseDown={(e) => {
+                        e.preventDefault();
+                        toggleIndentList(editor, {
+                            listStyleType: "disc",
+                        });
+                    }}
+                    icon={<IconListBullets />}
+                />
+                <ToolbarButton
+                    onMouseDown={(e) => {
+                        e.preventDefault();
+                        toggleIndentList(editor, {
+                            listStyleType: "decimal",
+                        });
+                    }}
+                    icon={<IconListNumbers />}
+                />
             </ButtonGroup>
         </div>
     );
