@@ -31,7 +31,7 @@ export const Icon: Story<IconProps> = (args: IconProps) => (
                     !["12", "16", "20", "24", "32"].some((item) => iconName.includes(item)),
             )
             .map((iconName) => (
-                <li key={iconName} className="tw-flex tw-flex-col tw-items-center tw-text-violet-50 dark:tw-text-white">
+                <li key={iconName} className="tw-flex tw-flex-col tw-items-center tw-text-violet-80 dark:tw-text-white">
                     <IconComponent {...args} icon={iconName} />
                     {iconName}
                 </li>
