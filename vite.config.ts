@@ -14,8 +14,8 @@ export const alias = {
     "@foundation": resolve(__dirname, "./src/foundation"),
     "@hooks": resolve(__dirname, "./src/hooks"),
     "@layout": resolve(__dirname, "./src/layout"),
-    "@utilities": resolve(__dirname, "./src/utilities"),
     "@typography": resolve(__dirname, "./src/typography"),
+    "@utilities": resolve(__dirname, "./src/utilities"),
 };
 
 export const globals = {
