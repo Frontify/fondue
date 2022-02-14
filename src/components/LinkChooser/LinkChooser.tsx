@@ -73,18 +73,18 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }),
     );
 
-    const isDefault = shouldGoBack(matches);
+    const isDefault = !shouldGoBack(matches);
     const searchResultMenuBlocks = useMemo(
         () =>
             [
-                isDefault && { id: "menu-top", menuItems: [defaultSection] },
+                !isDefault && { id: "menu-top", menuItems: [findSection(extraSections, context.currentSectionId)] },
                 {
                     id: "search",
                     menuItems: decoratedResults(context.searchResults),
                 },
-                !isDefault && { id: "menu-bottom", menuItems: extraSections.map(({ id, title }) => ({ id, title })) },
+                isDefault && { id: "menu-bottom", menuItems: extraSections.map(({ id, title }) => ({ id, title })) },
             ].filter(Boolean),
-        [context.searchResults, isDefault],
+        [context.searchResults, isDefault, context.currentSectionId],
     ) as SearchMenuBlock[];
 
     const props = mapToAriaProps(ariaLabel, searchResultMenuBlocks);
@@ -179,17 +179,26 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             onOpen: handleDropdownOpen,
             onClose: handleDropdownClose,
             onNavigate: (id) => {
-                send({
-                    type: "SELECT_EXTRA_SECTION",
-                    data: {
-                        getExtraResultsByQuery: findSection(extraSections, id)?.getResults || null,
-                        currentSectionId: id.toString(),
-                    },
-                });
+                console.log(isDefault);
+                if (isDefault) {
+                    send({
+                        type: "SELECT_EXTRA_SECTION",
+                        data: {
+                            getExtraResultsByQuery: findSection(extraSections, id)?.getResults || null,
+                            currentSectionId: id.toString(),
+                        },
+                    });
+                } else {
+                    send({
+                        type: "BACK_TO_DEFAULT",
+                        data: { getExtraResultsByQuery: null },
+                    });
+                }
             },
             onSelect: handleSelectionChange,
         },
     );
+
     const inputDecorator = IconOptions[context.selectedResult?.icon || DEFAULT_ICON];
 
     useEffect(() => {
