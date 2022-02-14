@@ -14,12 +14,17 @@ export default {
             options: Object.values(BadgeStyle),
             control: { type: "select" },
         },
+        size: {
+            options: ["s", "m"],
+            control: { type: "select" },
+        },
         onClick: { table: { disable: true } },
         onDismiss: { table: { disable: true } },
     },
     args: {
         style: BadgeStyle.Primary,
         children: "Text",
+        size: "m",
     },
 } as Meta<BadgeProps>;
 
