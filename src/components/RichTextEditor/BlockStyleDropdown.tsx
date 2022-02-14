@@ -72,7 +72,6 @@ export const BlockStyleDropdown: FC = () => {
     useEffect(() => {
         setBlockType(nodeType);
     }, [nodeType]);
-
     const [, send] = useActor(machineRef);
 
     return (
