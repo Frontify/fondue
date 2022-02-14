@@ -34,7 +34,7 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
                 {...focusProps}
                 id={useMemoizedId(id)}
                 className={merge([
-                    "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-py-2 tw-pl-3 tw-min-h-[34px] tw-pr-7",
+                    "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-py-2 tw-pl-3 tw-min-h-[34px] tw-pr-8",
                     !currentColor && "tw-text-black-60",
                     disabled && "tw-text-black-40",
                 ])}

@@ -117,6 +117,11 @@ export const Dropdown: FC<DropdownProps> = ({
 
     const showClear = !!activeItem && !!onClear;
 
+    const iconPositionClass = {
+        [DropdownSize.Small]: showClear ? "tw-pr-12" : "tw-pr-8",
+        [DropdownSize.Large]: showClear ? "tw-pr-14" : "tw-pr-10",
+    }[size];
+
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
             <Trigger
@@ -139,7 +144,7 @@ export const Dropdown: FC<DropdownProps> = ({
                         size === DropdownSize.Small
                             ? "tw-py-2 tw-pl-3 tw-min-h-[34px]"
                             : "tw-pl-5 tw-py-4 tw-min-h-[60px]",
-                        showClear ? "tw-pr-11" : "tw-pr-7",
+                        iconPositionClass,
                         textColorClass,
                     ])}
                 >
