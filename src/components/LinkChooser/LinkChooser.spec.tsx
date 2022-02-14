@@ -36,7 +36,7 @@ const MENU_ITEM = "[data-test-id='link-chooser-navigation-menu-item']";
 const DEFAULT_TIMEOUT = 100;
 const CUSTOM_QUERY = "Custom link";
 const SELECTED_CLASS = "tw-text-violet-60";
-const FOCUSED_OPTION_CLASS = "tw-bg-black-0";
+const FOCUSED_OPTION_CLASS = "tw-bg-black-10";
 const TEMPLATE_TITLE = templateSection.title;
 const GUIDELINE_TITLE = guidelineSection.title;
 const FIRST_TEMPLATE_TITLE = templateSection.items[0].title;

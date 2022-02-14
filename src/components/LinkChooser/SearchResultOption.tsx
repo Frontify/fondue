@@ -40,9 +40,9 @@ export const SearchResultOption: FC<SearchResultOptionProps> = ({ item, state, k
             {...optionProps}
             ref={ref}
             className={merge([
-                "tw-relative hover:tw-bg-black-0 tw-list-none tw-outline-none",
+                "tw-relative hover:tw-bg-black-10 tw-list-none tw-outline-none",
                 isDisabled && "tw-pointer-events-none tw-top-px",
-                isFocused && isFocusVisible && "tw-bg-black-0",
+                isFocused && isFocusVisible && "tw-bg-black-10",
             ])}
         >
             {isLoaded(DropdownState.Default) ? (
