@@ -14,6 +14,10 @@ export default {
             options: Object.values(BadgeStyle),
             control: { type: "select" },
         },
+        emphasis: {
+            options: ["Strong", "None"],
+            control: { type: "select" },
+        },
         size: {
             options: ["s", "m"],
             control: { type: "select" },
@@ -25,6 +29,8 @@ export default {
         style: BadgeStyle.Primary,
         children: "Text",
         size: "m",
+        emphasis: "Strong",
+        disabled: false,
     },
 } as Meta<BadgeProps>;
 
