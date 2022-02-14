@@ -179,7 +179,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             onOpen: handleDropdownOpen,
             onClose: handleDropdownClose,
             onNavigate: (id) => {
-                console.log(isDefault);
                 if (isDefault) {
                     send({
                         type: "SELECT_EXTRA_SECTION",
