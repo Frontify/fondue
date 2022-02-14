@@ -708,7 +708,7 @@ describe("LinkChooser Component", () => {
                 .should("contain", JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || "null")[0].title);
         });
 
-        it.only("can be navigated to by keyboard", () => {
+        it("can be navigated to by keyboard", () => {
             mount(getLinkChooserComponent());
             cy.window().focus();
             cy.get("body").realPress("Tab");
@@ -718,7 +718,6 @@ describe("LinkChooser Component", () => {
             cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
             cy.get(`${SELECT_SECTION_ID} > li`).first().as("firstSelectItem");
             cy.get("@firstSelectItem").should("contain.text", FIRST_GUIDELINE_TITLE);
-            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
             cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
             cy.get(`@firstSelectItem`).should("have.class", FOCUSED_OPTION_CLASS);
             cy.get(SEARCH_INPUT_ID).realPress("Enter");
