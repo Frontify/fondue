@@ -13,10 +13,11 @@ export default {
     args: {
         disabled: false,
         currentColor: null,
+        verticalMargin: { top: 0, bottom: 0 },
     },
 } as Meta<ColorPickerFlyoutProps>;
 
-export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor }) => {
+export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor, verticalMargin }) => {
     const [temporaryColor, setTemporaryColor] = useState<Color | null>(null);
     const [selectedColor, setSelectedColor] = useState<Color | null>(currentColor);
 
@@ -29,6 +30,7 @@ export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor }
                 onClose={() => setTemporaryColor(null)}
                 onSelect={(color) => setTemporaryColor(color)}
                 palettes={EXAMPLE_PALETTES}
+                verticalMargin={verticalMargin}
             />
         </div>
     );

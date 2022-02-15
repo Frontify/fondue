@@ -12,15 +12,16 @@ import { merge } from "@utilities/merge";
 import React, { FC, MouseEvent, PropsWithChildren, ReactNode, useEffect, useMemo, useRef } from "react";
 import { LegacyFlyoutFooter } from ".";
 import { Overlay } from "./Overlay";
-import { shouldDisplayAbove } from "./shouldDisplayAbove";
+import { shouldDisplayAbove } from "./helpers/shouldDisplayAbove";
 import { useContainScroll } from "./useContainScroll";
+import { subtractVerticalMarginFromMaxHeight } from "./helpers/subtractVerticalMarginFromMaxHeight";
 
 export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
 export const FLYOUT_DIVIDER_HEIGHT = "10px";
 const FLYOUT_OVERLAY_OFFSET = 5;
 const DEFAULT_OVERLAY_PADDING = 12;
 
-type VerticalMargin = {
+export type FlyoutVerticalMargin = {
     top?: number;
     bottom?: number;
 };
@@ -38,7 +39,7 @@ export type FlyoutProps = PropsWithChildren<{
     onOpenChange: (isOpen: boolean) => void;
     fixedHeader?: ReactNode;
     fixedFooter?: ReactNode;
-    verticalMargin?: VerticalMargin;
+    verticalMargin?: FlyoutVerticalMargin;
     /**
      * The legacy footer buttons section inside of the flyout will be deleted in the future.
      * @deprecated Pass the FlyoutFooter component with buttons to the Flyout component.
@@ -88,7 +89,7 @@ export const Flyout: FC<FlyoutProps> = ({
         return height;
     }, [innerOverlayRef.current, scrollRef.current?.scrollHeight, scrollRef.current?.clientHeight]);
 
-    const padding = {
+    const margins = {
         top: verticalMargin?.top || DEFAULT_OVERLAY_PADDING,
         bottom: verticalMargin?.bottom || DEFAULT_OVERLAY_PADDING,
     };
@@ -96,7 +97,7 @@ export const Flyout: FC<FlyoutProps> = ({
     const isFlipped = shouldDisplayAbove({
         triggerRef,
         overlayHeight,
-        padding,
+        margins,
         offset: FLYOUT_OVERLAY_OFFSET,
     });
 
@@ -104,7 +105,8 @@ export const Flyout: FC<FlyoutProps> = ({
         targetRef: triggerRef,
         overlayRef,
         shouldFlip: false,
-        containerPadding: isFlipped ? padding.top : padding.bottom,
+        // Provided internally by useOverlayPosition but required for maxHeight subtraction calculation
+        containerPadding: DEFAULT_OVERLAY_PADDING,
         placement: isFlipped ? "top left" : "bottom left",
         offset: FLYOUT_OVERLAY_OFFSET,
         scrollRef,
@@ -112,6 +114,14 @@ export const Flyout: FC<FlyoutProps> = ({
     });
 
     const { buttonProps } = useButton({ onPress: () => toggle() }, triggerRef);
+
+    const positionPropsWithVerticalMargins = subtractVerticalMarginFromMaxHeight(
+        positionProps,
+        margins,
+        isFlipped,
+        DEFAULT_OVERLAY_PADDING,
+    );
+
     useEffect(() => {
         const revert = watchModals();
 
@@ -144,7 +154,7 @@ export const Flyout: FC<FlyoutProps> = ({
                             isOpen={isOpen}
                             onClose={close}
                             overlayTriggerProps={overlayTriggerProps}
-                            positionProps={positionProps}
+                            positionProps={positionPropsWithVerticalMargins}
                             fixedHeader={fixedHeader}
                             fixedFooter={
                                 legacyFooter ? (
