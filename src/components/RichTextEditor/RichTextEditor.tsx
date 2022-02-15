@@ -122,7 +122,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                         modifiers: [{ name: "offset", options: { offset: [0, 12] } }],
                     }}
                     styles={{ root: { border: "none", background: "#ffffff" } }}
-                    classNames={{ root: "tw-drop-shadow-md" }}
+                    //classNames={{ root: "tw-drop-shadow-md" }}
                 >
                     <Toolbar />
                 </BalloonToolbar>
