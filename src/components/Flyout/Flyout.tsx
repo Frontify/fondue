@@ -20,7 +20,7 @@ export const FLYOUT_DIVIDER_HEIGHT = "10px";
 const FLYOUT_OVERLAY_OFFSET = 5;
 const DEFAULT_OVERLAY_PADDING = 12;
 
-type OverlayPadding = {
+type VerticalMargin = {
     top?: number;
     bottom?: number;
 };
@@ -38,7 +38,7 @@ export type FlyoutProps = PropsWithChildren<{
     onOpenChange: (isOpen: boolean) => void;
     fixedHeader?: ReactNode;
     fixedFooter?: ReactNode;
-    overlayPadding?: OverlayPadding;
+    verticalMargin?: VerticalMargin;
     /**
      * The legacy footer buttons section inside of the flyout will be deleted in the future.
      * @deprecated Pass the FlyoutFooter component with buttons to the Flyout component.
@@ -60,7 +60,7 @@ export const Flyout: FC<FlyoutProps> = ({
     fitContent = false,
     fixedHeader,
     fixedFooter,
-    overlayPadding,
+    verticalMargin,
     legacyFooter = true,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
@@ -89,8 +89,8 @@ export const Flyout: FC<FlyoutProps> = ({
     }, [innerOverlayRef.current, scrollRef.current?.scrollHeight, scrollRef.current?.clientHeight]);
 
     const padding = {
-        top: overlayPadding?.top || DEFAULT_OVERLAY_PADDING,
-        bottom: overlayPadding?.bottom || DEFAULT_OVERLAY_PADDING,
+        top: verticalMargin?.top || DEFAULT_OVERLAY_PADDING,
+        bottom: verticalMargin?.bottom || DEFAULT_OVERLAY_PADDING,
     };
 
     const isFlipped = shouldDisplayAbove({
@@ -104,16 +104,12 @@ export const Flyout: FC<FlyoutProps> = ({
         targetRef: triggerRef,
         overlayRef,
         shouldFlip: false,
-        containerPadding: DEFAULT_OVERLAY_PADDING,
+        containerPadding: isFlipped ? padding.top : padding.bottom,
         placement: isFlipped ? "top left" : "bottom left",
         offset: FLYOUT_OVERLAY_OFFSET,
         scrollRef,
         isOpen,
     });
-
-    if (typeof positionProps.style?.maxHeight === "number") {
-        positionProps.style.maxHeight -= (isFlipped ? padding.top : padding.bottom) - DEFAULT_OVERLAY_PADDING;
-    }
 
     const { buttonProps } = useButton({ onPress: () => toggle() }, triggerRef);
     useEffect(() => {

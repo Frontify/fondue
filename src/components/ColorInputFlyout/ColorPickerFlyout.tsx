@@ -41,7 +41,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
 
     return (
         <Flyout
-            overlayPadding={{ bottom: 70 }}
+            verticalMargin={{ bottom: 70 }}
             hug={false}
             onConfirm={handleClick}
             isOpen={open}

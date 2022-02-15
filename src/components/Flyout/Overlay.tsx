@@ -11,7 +11,7 @@ import { FlyoutProps } from ".";
 
 type OverlayProps = Omit<
     FlyoutProps,
-    "trigger" | "onOpenChange" | "overlayPadding" | "onConfirm" | "legacyFooter" | "onCancel"
+    "trigger" | "onOpenChange" | "verticalMargin" | "onConfirm" | "legacyFooter" | "onCancel"
 > & {
     positionProps: HTMLAttributes<Element>;
     overlayTriggerProps: HTMLAttributes<Element>;
