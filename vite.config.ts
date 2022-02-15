@@ -32,7 +32,7 @@ export default defineConfig({
     build: {
         lib: {
             entry: resolve(__dirname, "src/index.ts"),
-            fileName: (format: string) => `arcade.${format}.js`,
+            fileName: (format: string) => `index.${format}.js`,
             formats: ["es", "umd", "cjs"],
             name: "Arcade",
         },

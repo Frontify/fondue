@@ -2,10 +2,10 @@
     "name": "@frontify/arcade",
     "version": "2.3.0",
     "description": "Design system of Frontify",
-    "main": "dist/arcade.umd.js",
-    "unpkg": "dist/arcade.umd.js",
-    "jsdelivr": "dist/arcade.umd.js",
-    "module": "dist/arcade.es.js",
+    "main": "dist/index.umd.js",
+    "unpkg": "dist/index.umd.js",
+    "jsdelivr": "dist/index.umd.js",
+    "module": "dist/index.es.js",
     "types": "dist/src/index.d.ts",
     "files": [
         "dist",
@@ -13,8 +13,8 @@
     ],
     "exports": {
         ".": {
-            "import": "./dist/arcade.es.js",
-            "require": "./dist/arcade.umd.js"
+            "import": "./dist/index.es.js",
+            "require": "./dist/index.umd.js"
         },
         "./tailwind": "./tailwind.config.js",
         "./style": "./dist/styles.css",
