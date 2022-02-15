@@ -7,7 +7,7 @@ import { useActor } from "@xstate/react";
 import React, { FC, useRef } from "react";
 import { IconOptions } from "./LinkChooser";
 import { DropdownState, LinkChooserState, SectionState } from "./state/machine";
-import { ImageMenuItemProps, SearchResultOptionProps } from "./types";
+import { ImageMenuItemProps, SearchResultOptionProps, SearchResult } from "./types";
 import { findSection } from "./utils/helpers";
 
 export const SearchResultOption: FC<SearchResultOptionProps> = ({ item, state, keyItemRecord, machineService }) => {
@@ -35,6 +35,9 @@ export const SearchResultOption: FC<SearchResultOptionProps> = ({ item, state, k
 
     const isFocusVisible = getInteractionModality() !== "pointer";
 
+    const renderExtraSection = (menuItem: SearchResult) =>
+        currentSection?.renderPreview?.(menuItem) || <ImageMenuItem {...menuItem} />;
+
     return (
         <li
             {...optionProps}
@@ -45,13 +48,10 @@ export const SearchResultOption: FC<SearchResultOptionProps> = ({ item, state, k
                 isFocused && isFocusVisible && "tw-bg-black-10",
             ])}
         >
-            {isLoaded(DropdownState.Default) ? (
+            {isLoaded(DropdownState.Default) && (
                 <MenuItem {...menuItem} active={isSelected} decorator={decorator} size={MenuItemContentSize.Large} />
-            ) : isLoaded(DropdownState.ExtraSection) && currentSection?.renderPreview ? (
-                currentSection.renderPreview(menuItem)
-            ) : (
-                <ImageMenuItem {...menuItem} />
             )}
+            {isLoaded(DropdownState.ExtraSection) && renderExtraSection(menuItem)}
         </li>
     );
 };
