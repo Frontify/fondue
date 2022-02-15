@@ -18,8 +18,7 @@
         },
         "./tailwind": "./tailwind.config.js",
         "./style": "./dist/styles.css",
-        "./dist/styles.css": "./dist/styles.css",
-        "./dist/arcade.cjs.js": "./dist/arcade.cjs.js"
+        "./dist/*": "./dist/*"
     },
     "scripts": {
         "build": "npm run clean && npm run generate:icons && npm run build:library",
