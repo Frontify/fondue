@@ -163,7 +163,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                             >,
                         }}
                     >
-                        <Toolbar />
+                        <Toolbar textStyles={textStyles} />
                     </ToolbarContext.Provider>
                 )}
             </Slate>

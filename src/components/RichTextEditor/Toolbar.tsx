@@ -16,6 +16,7 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useRef } from "react";
 import { usePopper } from "react-popper";
+import { TextStylesType } from ".";
 import { BlockStyleButton } from "./BlockStyleButton";
 import { BlockStyleDropdown } from "./BlockStyleDropdown";
 import { useEditorSelection } from "./hooks/useEditorSelection";
@@ -23,7 +24,10 @@ import { InlineStyleButton } from "./InlineStyleButton";
 import { BlockStyleTypes, TextAlignTypes } from "./renderer/renderBlockStyles";
 import { InlineStyles } from "./renderer/renderInlineStyles";
 
-export const Toolbar: FC = () => {
+type ToolbarProps = {
+    textStyles?: TextStylesType[];
+};
+export const Toolbar: FC<ToolbarProps> = ({ textStyles }) => {
     const selectionRectRef = useRef<HTMLDivElement | null>(null);
     const inlineToolbarRef = useRef<HTMLDivElement | null>(null);
     const inlineToolbarArrowRef = useRef<HTMLDivElement | null>(null);
@@ -70,12 +74,9 @@ export const Toolbar: FC = () => {
                 style={styles.popper}
                 {...attributes.popper}
             >
-                <div
-                    className="tw-flex tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5"
-                    data-type="toolbar"
-                >
+                <div className="tw-flex tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5">
                     <ButtonGroup>
-                        <BlockStyleDropdown />
+                        <BlockStyleDropdown textStyles={textStyles} />
                     </ButtonGroup>
                     <ButtonGroup>
                         <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignJustify}>

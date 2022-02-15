@@ -3,6 +3,7 @@
 import React from "react";
 import { DefaultElement, RenderElementProps } from "slate-react";
 import { TextStylesType } from "..";
+import { getTextStyles } from "../utils/editor/getTextStyles";
 
 export enum BlockStyleTypes {
     Paragraph = "paragraph",
@@ -41,19 +42,21 @@ export const headingTypeClassname = {
     [BlockStyleTypes.H4]: "tw-text-lg",
     [BlockStyleTypes.Custom01]: "tw-text-sm",
     [BlockStyleTypes.Custom02]: "tw-text-sm tw-font-sans tw-font-semibold",
+    [BlockStyleTypes.Paragraph]: "",
 };
 const getTextAlignClass = (textAlign?: TextAlignTypes) => (textAlign ? textAlignClassMap[textAlign] : "");
 
 export const renderBlockStyles = (props: RenderElementProps, textStyles?: TextStylesType[]): JSX.Element => {
     const textAlign = props.element.properties?.textAlign;
-    const getTextStyle = (identifier: TextStylesType["type"]) =>
-        textStyles?.find(({ type }) => type === identifier)?.className;
+
     switch (props.element.type) {
         case BlockStyleTypes.Paragraph:
             return (
                 <p
                     {...props.attributes}
-                    className={`${getTextStyle(BlockStyleTypes.Paragraph)} ${getTextAlignClass(textAlign)}`}
+                    className={`${getTextStyles(BlockStyleTypes.Paragraph, textStyles)} ${getTextAlignClass(
+                        textAlign,
+                    )}`}
                 >
                     {props.children}
                 </p>
@@ -81,26 +84,26 @@ export const renderBlockStyles = (props: RenderElementProps, textStyles?: TextSt
             );
         case BlockStyleTypes.H1:
             return (
-                <h1 {...props.attributes} className={getTextStyle(BlockStyleTypes.H1) || headingTypeClassname.h1}>
+                <h1 {...props.attributes} className={getTextStyles(BlockStyleTypes.H1, textStyles)}>
                     {props.children}
                 </h1>
             );
 
         case BlockStyleTypes.H2:
             return (
-                <h2 {...props.attributes} className={getTextStyle(BlockStyleTypes.H2) || headingTypeClassname.h2}>
+                <h2 {...props.attributes} className={getTextStyles(BlockStyleTypes.H2, textStyles)}>
                     {props.children}
                 </h2>
             );
         case BlockStyleTypes.H3:
             return (
-                <h3 {...props.attributes} className={getTextStyle(BlockStyleTypes.H3) || headingTypeClassname.h3}>
+                <h3 {...props.attributes} className={getTextStyles(BlockStyleTypes.H3, textStyles)}>
                     {props.children}
                 </h3>
             );
         case BlockStyleTypes.H4:
             return (
-                <h4 {...props.attributes} className={getTextStyle(BlockStyleTypes.H4) || headingTypeClassname.h4}>
+                <h4 {...props.attributes} className={getTextStyles(BlockStyleTypes.H4, textStyles)}>
                     {props.children}
                 </h4>
             );
@@ -109,9 +112,7 @@ export const renderBlockStyles = (props: RenderElementProps, textStyles?: TextSt
             return (
                 <div
                     {...props.attributes}
-                    className={`${
-                        getTextStyle(BlockStyleTypes.Custom01) || headingTypeClassname.custom01
-                    } ${getTextAlignClass(textAlign)}`}
+                    className={`${getTextStyles(BlockStyleTypes.Custom01, textStyles)} ${getTextAlignClass(textAlign)}`}
                 >
                     {props.children}
                 </div>
@@ -120,9 +121,7 @@ export const renderBlockStyles = (props: RenderElementProps, textStyles?: TextSt
             return (
                 <div
                     {...props.attributes}
-                    className={`${
-                        getTextStyle(BlockStyleTypes.Custom02) || headingTypeClassname.custom02
-                    } ${getTextAlignClass(textAlign)}`}
+                    className={`${getTextStyles(BlockStyleTypes.Custom02, textStyles)} ${getTextAlignClass(textAlign)}`}
                 >
                     {props.children}
                 </div>
