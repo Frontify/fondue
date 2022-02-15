@@ -43,9 +43,9 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
         <Flyout
             overlayPadding={{ bottom: 70 }}
             hug={false}
-            onClick={handleClick}
+            onConfirm={handleClick}
             isOpen={open}
-            onClose={() => handleOpenChange(false)}
+            onCancel={() => handleOpenChange(false)}
             fixedHeader={<ColorPreview color={currentColor || { r: 255, g: 255, b: 255 }} format={currentFormat} />}
             onOpenChange={handleOpenChange}
             trigger={

@@ -10,6 +10,7 @@ import { useOverlayTriggerState } from "@react-stately/overlays";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, MouseEvent, PropsWithChildren, ReactNode, useEffect, useMemo, useRef } from "react";
+import { LegacyFlyoutFooter } from ".";
 import { Overlay } from "./Overlay";
 import { shouldDisplayAbove } from "./shouldDisplayAbove";
 import { useContainScroll } from "./useContainScroll";
@@ -26,8 +27,8 @@ type OverlayPadding = {
 
 export type FlyoutProps = PropsWithChildren<{
     trigger: ReactNode;
-    onClose?: () => void;
-    onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    onCancel?: () => void;
+    onConfirm?: (event?: MouseEvent<HTMLButtonElement>) => void;
     title?: string;
     decorator?: ReactNode;
     badges?: BadgeProps[];
@@ -36,6 +37,7 @@ export type FlyoutProps = PropsWithChildren<{
     isOpen?: boolean;
     onOpenChange: (isOpen: boolean) => void;
     fixedHeader?: ReactNode;
+    fixedFooter?: ReactNode;
     overlayPadding?: OverlayPadding;
     /**
      * The legacy footer buttons section inside of the flyout will be deleted in the future.
@@ -47,8 +49,8 @@ export type FlyoutProps = PropsWithChildren<{
 export const Flyout: FC<FlyoutProps> = ({
     trigger,
     decorator,
-    onClick,
-    onClose,
+    onConfirm,
+    onCancel,
     children,
     onOpenChange,
     isOpen = false,
@@ -56,12 +58,13 @@ export const Flyout: FC<FlyoutProps> = ({
     badges = [],
     hug = true,
     fitContent = false,
-    legacyFooter = true,
     fixedHeader,
+    fixedFooter,
     overlayPadding,
+    legacyFooter = true,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
-    const { toggle } = state;
+    const { toggle, close } = state;
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const innerOverlayRef = useRef<HTMLDivElement | null>(null);
@@ -143,15 +146,20 @@ export const Flyout: FC<FlyoutProps> = ({
                             badges={badges}
                             decorator={decorator}
                             isOpen={isOpen}
+                            onClose={close}
                             overlayTriggerProps={overlayTriggerProps}
                             positionProps={positionProps}
                             fixedHeader={fixedHeader}
-                            onClick={onClick ? onClick : undefined}
-                            onClose={onClose ? onClose : undefined}
+                            fixedFooter={
+                                legacyFooter ? (
+                                    <LegacyFlyoutFooter onConfirm={onConfirm} onCancel={onCancel} />
+                                ) : (
+                                    fixedFooter
+                                )
+                            }
                             ref={overlayRef}
                             scrollRef={scrollRef}
                             innerOverlayRef={innerOverlayRef}
-                            legacyFooter={legacyFooter}
                             fitContent={fitContent}
                         >
                             {overlayRef?.current && children}

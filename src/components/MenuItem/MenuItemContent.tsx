@@ -23,6 +23,15 @@ export type MenuItemContentProps = {
     ariaProps?: HTMLAttributes<HTMLElement>;
 };
 
+/**
+ * This is a temporary workaround because for some yet unknown reasons `tailwindcss` in clarify purges the `tw-pr-1.5` class.
+ */
+const paddingRight: Record<MenuItemContentSize, string> = {
+    [MenuItemContentSize.XSmall]: "tw-pr-1.5",
+    [MenuItemContentSize.Small]: "tw-pr-1.5",
+    [MenuItemContentSize.Large]: "tw-pr-2",
+};
+
 export const MenuItemContent: FC<MenuItemContentProps> = ({
     title,
     decorator,
@@ -36,10 +45,7 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
         className="tw-flex tw-box-border tw-items-center tw-font-sans tw-text-s tw-flex-auto tw-min-w-0"
     >
         {decorator && (
-            <span
-                className={merge(["tw-shrink-0", size === MenuItemContentSize.Large ? "tw-pr-2" : "tw-pr-1.5"])}
-                data-test-id="menu-item-decorator"
-            >
+            <span className={merge(["tw-shrink-0", paddingRight[size]])} data-test-id="menu-item-decorator">
                 {cloneElement(decorator, {
                     size: size === MenuItemContentSize.Large ? IconSize.Size24 : IconSize.Size16,
                 })}

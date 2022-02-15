@@ -1,9 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Badge } from "@components/Badge/Badge";
-import { Button, ButtonStyle } from "@components/Button/Button";
 import { FieldsetHeader } from "@components/FieldsetHeader/FieldsetHeader";
-import IconCheck from "@foundation/Icon/Generated/IconCheck";
 import { useDialog } from "@react-aria/dialog";
 import { DismissButton, useModal, useOverlay } from "@react-aria/overlays";
 import { mergeProps } from "@react-aria/utils";
@@ -11,11 +9,15 @@ import { merge } from "@utilities/merge";
 import React, { Children, forwardRef, ForwardRefRenderFunction, HTMLAttributes, RefObject } from "react";
 import { FlyoutProps } from ".";
 
-type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange" | "overlayPadding"> & {
+type OverlayProps = Omit<
+    FlyoutProps,
+    "trigger" | "onOpenChange" | "overlayPadding" | "onConfirm" | "legacyFooter" | "onCancel"
+> & {
     positionProps: HTMLAttributes<Element>;
     overlayTriggerProps: HTMLAttributes<Element>;
     scrollRef: RefObject<HTMLDivElement>;
     innerOverlayRef: RefObject<HTMLDivElement>;
+    onClose: () => void;
 };
 
 const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> = (
@@ -23,7 +25,6 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         title,
         decorator,
         badges = [],
-        onClick,
         onClose,
         children,
         isOpen,
@@ -31,8 +32,8 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         overlayTriggerProps,
         scrollRef,
         innerOverlayRef,
-        legacyFooter,
         fixedHeader,
+        fixedFooter,
         fitContent,
     },
     ref,
@@ -74,24 +75,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
 
                     <DismissButton onDismiss={onClose} />
                 </div>
-                {legacyFooter && (
-                    <div className="tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-border-t tw-border-t-black-10 tw-bg-white dark:tw-bg-black-95 tw-z-40">
-                        {onClick ? (
-                            <>
-                                <Button onClick={onClose} style={ButtonStyle.Secondary}>
-                                    Cancel
-                                </Button>
-                                <Button onClick={onClick} icon={<IconCheck />}>
-                                    Confirm
-                                </Button>
-                            </>
-                        ) : (
-                            <Button onClick={onClose} style={ButtonStyle.Secondary}>
-                                Close
-                            </Button>
-                        )}
-                    </div>
-                )}
+                {fixedFooter}
             </div>
         </div>
     );

@@ -14,13 +14,15 @@ import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { Flyout, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, FlyoutProps } from "./Flyout";
 import { FlyoutFooter } from "./FlyoutFooter";
+import { chain } from "@react-aria/utils";
 
 // eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Flyout",
     component: Flyout,
     argTypes: {
-        onClose: { action: "onClose", table: { disable: true } },
+        onCancel: { action: "onCancel", table: { disable: true } },
+        onOpenChange: { action: "onOpenChange", table: { disable: true } },
     },
     args: {
         trigger: (
@@ -40,7 +42,13 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
         <div className="dark:tw-text-white">
             <div className="tw-flex tw-items-center">
                 Some text
-                <Flyout {...args} isOpen={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
+                <Flyout
+                    {...args}
+                    isOpen={open}
+                    onOpenChange={chain(args.onOpenChange, setOpen)}
+                    onCancel={chain(args.onCancel, () => setOpen(false))}
+                    onConfirm={args.onConfirm && chain(args.onConfirm, setOpen)}
+                >
                     <div className="tw-flex tw-flex-col tw-gap-y-8 tw-p-8">
                         <FormControl
                             label={{
@@ -97,13 +105,13 @@ export const WithoutHeader = FlyoutTemplate.bind({});
 export const WithOnclick = FlyoutTemplate.bind({});
 
 WithOnclick.argTypes = {
-    onClick: { action: "onClick" },
+    onConfirm: { action: "onConfirm" },
 };
 
 WithOnclick.args = {
     title: "Header title",
     decorator: <IconIcons />,
-    onClick: action("click"),
+    onConfirm: action("onConfirm"),
 };
 
 export const WithBadges = FlyoutTemplate.bind({});
@@ -126,7 +134,8 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
             {...args}
             trigger={<Button onClick={() => setOpen((open) => !open)}>Button</Button>}
             isOpen={open}
-            onOpenChange={(isOpen) => setOpen(isOpen)}
+            onOpenChange={chain(args.onOpenChange, setOpen)}
+            onCancel={chain(args.onCancel, () => setOpen(false))}
         >
             <p className="tw-text-center tw-py-8">Fun with Flyouts and Buttons!</p>
         </Flyout>
@@ -151,14 +160,28 @@ const WithCustomFooterFlyoutTemplate: Story<FlyoutProps> = (args) => {
         <div className="dark:tw-text-white">
             <div className="tw-flex tw-items-center">
                 Some text
-                <Flyout {...args} isOpen={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
+                <Flyout
+                    {...args}
+                    isOpen={open}
+                    onOpenChange={(isOpen) => setOpen(isOpen)}
+                    fixedFooter={
+                        <FlyoutFooter
+                            buttons={[
+                                {
+                                    children: "Cancel",
+                                    style: ButtonStyle.Secondary,
+                                    onClick: chain(action("onCancel"), () => setOpen(false)),
+                                },
+                                {
+                                    children: "Add",
+                                    style: ButtonStyle.Primary,
+                                    onClick: chain(action("onConfirm"), () => setOpen(false)),
+                                },
+                            ]}
+                        />
+                    }
+                >
                     <p className="tw-text-center tw-py-8">Your flyout content with custom footer buttons!</p>
-                    <FlyoutFooter
-                        buttons={[
-                            { children: "Cancel", style: ButtonStyle.Secondary, onClick: action("onClose") },
-                            { children: "Add", style: ButtonStyle.Primary, onClick: action("onClick") },
-                        ]}
-                    />
                 </Flyout>
             </div>
             <div>

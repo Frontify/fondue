@@ -44,4 +44,18 @@ describe("Stack Layout", () => {
         cy.get("@Stack").should("have.class", "tw-p-m");
         cy.get("@Stack").should("have.class", "tw-gap-m");
     });
+
+    it("should render alignment in a stack", () => {
+        mount(
+            <Stack align="start" justify="between" padding="none" spacing="none">
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+            </Stack>,
+        );
+
+        cy.get("[data-test-id=stack]").as("Stack");
+        cy.get("@Stack").should("have.class", "tw-justify-between");
+        cy.get("@Stack").should("have.class", "tw-items-start");
+    });
 });

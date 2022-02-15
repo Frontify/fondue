@@ -5,8 +5,20 @@ import { merge } from "@utilities/merge";
 import React, { FC } from "react";
 import { Stack, StackProps } from "./Stack";
 
-const Placeholder: FC<{ width?: "auto" | "fixed" }> = ({ width = "auto" }) => (
-    <div className={merge([width === "auto" ? "tw-w-full" : "tw-w-5/12", "tw-h-16 tw-bg-base tw-opacity-50"])}></div>
+const Placeholder: FC<{ width?: "auto" | "large" | "small"; height?: "large" | "small" }> = ({
+    width = "auto",
+    height = "large",
+}) => (
+    <div
+        className={merge([
+            width === "auto" && "tw-w-full",
+            width === "large" && "tw-w-5/12",
+            width === "small" && "tw-w-2/12",
+            height === "large" && "tw-h-16",
+            height === "small" && "tw-h-8",
+            "tw-bg-base tw-opacity-50",
+        ])}
+    ></div>
 );
 
 // eslint-disable-next-line import/no-default-export
@@ -25,6 +37,14 @@ export default {
         },
         spacing: {
             options: ["none", "xxs", "xs", "s", "m", "l", "xl", "xxl"],
+            control: { type: "select" },
+        },
+        align: {
+            options: ["stretch", "start", "end", "center"],
+            control: { type: "select" },
+        },
+        justify: {
+            options: ["start", "end", "center", "around", "evenly", "between"],
             control: { type: "select" },
         },
         direction: {
@@ -62,9 +82,25 @@ Wrapped.args = {
     wrap: false,
     children: (
         <>
-            <Placeholder width="fixed" />
-            <Placeholder width="fixed" />
-            <Placeholder width="fixed" />
+            <Placeholder width="large" />
+            <Placeholder width="large" />
+            <Placeholder width="large" />
+        </>
+    ),
+};
+
+export const Alignment = Template.bind({});
+Alignment.args = {
+    direction: "row",
+    padding: "m",
+    spacing: "m",
+    align: "stretch",
+    justify: "start",
+    children: (
+        <>
+            <Placeholder width="small" />
+            <Placeholder width="large" height="small" />
+            <Placeholder width="small" />
         </>
     ),
 };

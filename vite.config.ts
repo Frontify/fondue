@@ -25,6 +25,8 @@ export const globals = {
 export const componentsPath = fastGlob.sync(
     [
         "src/foundation/**/index.ts",
+        "src/typography/**/index.ts",
+        "src/layout/**/index.ts",
         "src/components/**/index.ts",
         "src/hooks/index.ts",
         "src/types/index.ts",
@@ -45,7 +47,7 @@ export default defineConfig({
         sourcemap: true,
         minify: true,
         rollupOptions: {
-            input: [...componentsPath.map((element) => element.path), "src/styles.css", "tailwind.config.js"],
+            input: [...componentsPath.map((element) => element.path), "src/styles.css"],
             external: peerDependencies,
             output: {
                 dir: "dist",

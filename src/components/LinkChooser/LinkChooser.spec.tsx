@@ -36,7 +36,7 @@ const MENU_ITEM = "[data-test-id='link-chooser-navigation-menu-item']";
 const DEFAULT_TIMEOUT = 100;
 const CUSTOM_QUERY = "Custom link";
 const SELECTED_CLASS = "tw-text-violet-60";
-const FOCUSED_OPTION_CLASS = "tw-bg-black-0";
+const FOCUSED_OPTION_CLASS = "tw-bg-black-10";
 const TEMPLATE_TITLE = templateSection.title;
 const GUIDELINE_TITLE = guidelineSection.title;
 const FIRST_TEMPLATE_TITLE = templateSection.items[0].title;
@@ -281,6 +281,15 @@ describe("LinkChooser Component", () => {
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(DROPDOWN_WRAPPER_ID).should("exist");
             cy.get(SEARCH_INPUT_ID).blur();
+            cy.get(DROPDOWN_WRAPPER_ID).should("not.exist");
+        });
+
+        it("hides dropdown on escape", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(DROPDOWN_WRAPPER_ID).should("exist");
+            cy.get(SEARCH_INPUT_ID).realPress("Escape");
             cy.get(DROPDOWN_WRAPPER_ID).should("not.exist");
         });
 
@@ -588,19 +597,17 @@ describe("LinkChooser Component", () => {
             cy.get(MENU_ITEM).eq(1).should("have.class", FOCUSED_OPTION_CLASS).and("have.text", TEMPLATE_TITLE);
             cy.get(SEARCH_INPUT_ID).realPress("Enter");
             cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
+            cy.get(MENU_ITEM).first().should("have.class", FOCUSED_OPTION_CLASS);
+            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
             cy.get(`${SELECT_SECTION_ID} > li`).first().as("firstSelectItem");
-            cy.get("@firstSelectItem").should("contain.text", FIRST_TEMPLATE_TITLE);
-            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
-            cy.get(MENU_ITEM).first().should("have.text", TEMPLATE_TITLE);
-            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
-            cy.get(`@firstSelectItem`).should("have.class", FOCUSED_OPTION_CLASS);
-            cy.get(SEARCH_INPUT_ID).realPress("Escape");
-            //TODO: add back button test section as soon as keyboard-navigation is fixed
-            // cy.get(SEARCH_INPUT_ID).realPress("ArrowUp");
-            // cy.get(`@firstSelectItem`).should("not.have.class", FOCUSED_OPTION_CLASS);
-            // cy.get(MENU_ITEM).first().should("have.class", FOCUSED_OPTION_CLASS);
-            // cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
-            // cy.get(EMPTY_RESULTS_ID).should("be.visible");
+            cy.get("@firstSelectItem")
+                .should("contain.text", FIRST_TEMPLATE_TITLE)
+                .and("have.class", FOCUSED_OPTION_CLASS);
+            cy.get(SEARCH_INPUT_ID).realPress("ArrowUp");
+            cy.get(MENU_ITEM).first().should("have.class", FOCUSED_OPTION_CLASS).and("have.text", TEMPLATE_TITLE);
+            cy.get(SEARCH_INPUT_ID).realPress("Enter");
+            cy.get(EMPTY_RESULTS_ID).should("be.visible");
+            cy.get(MENU_ITEM).eq(1).should("have.text", TEMPLATE_TITLE).and("have.class", FOCUSED_OPTION_CLASS);
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
             cy.get(`@firstSelectItem`)
                 .should("not.have.class", FOCUSED_OPTION_CLASS)
@@ -708,7 +715,7 @@ describe("LinkChooser Component", () => {
                 .should("contain", JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || "null")[0].title);
         });
 
-        it.only("can be navigated to by keyboard", () => {
+        it("can be navigated to by keyboard", () => {
             mount(getLinkChooserComponent());
             cy.window().focus();
             cy.get("body").realPress("Tab");
@@ -718,7 +725,6 @@ describe("LinkChooser Component", () => {
             cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
             cy.get(`${SELECT_SECTION_ID} > li`).first().as("firstSelectItem");
             cy.get("@firstSelectItem").should("contain.text", FIRST_GUIDELINE_TITLE);
-            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
             cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
             cy.get(`@firstSelectItem`).should("have.class", FOCUSED_OPTION_CLASS);
             cy.get(SEARCH_INPUT_ID).realPress("Enter");

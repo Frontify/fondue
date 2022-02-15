@@ -43,6 +43,19 @@ export type TooltipProps = {
     popperAttributes?: PopperAttributes;
 };
 
+/**
+ * This is a temporary workaround because for some yet unknown reasons `tailwindcss` in clarify purges the `tw-pb-3.5` and `tw-pt-3.5` class.
+ */
+const paddingsTop = {
+    small: "tw-pt-3.5",
+    large: "tw-pt-4",
+};
+
+const paddingsBottom = {
+    small: "tw-pb-3.5",
+    large: "tw-pb-4",
+};
+
 const TooltipComponent: ForwardRefRenderFunction<HTMLDivElement, TooltipProps> = (
     {
         content,
@@ -67,6 +80,8 @@ const TooltipComponent: ForwardRefRenderFunction<HTMLDivElement, TooltipProps> =
 
     const { tooltipProps } = useTooltip(tooltipAriaProps);
 
+    const hasLargePaddingTop = linkUrl || brightHeader || buttons || heading || headingIcon;
+
     return (
         <>
             <div
@@ -81,8 +96,8 @@ const TooltipComponent: ForwardRefRenderFunction<HTMLDivElement, TooltipProps> =
                 <div
                     className={merge([
                         "tw-px-4",
-                        linkUrl || brightHeader || buttons || heading || headingIcon ? "tw-pt-3.5" : "tw-pt-4",
-                        linkUrl ? "tw-pb-3.5" : "tw-pb-4",
+                        hasLargePaddingTop ? paddingsTop.small : paddingsTop.large,
+                        linkUrl ? paddingsBottom.small : paddingsBottom.large,
                     ])}
                 >
                     {heading && (
