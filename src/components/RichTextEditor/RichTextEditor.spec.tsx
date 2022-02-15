@@ -149,7 +149,7 @@ describe("RichTextEditor Component", () => {
         cy.get("[contenteditable=true]").should("include.html", textAlignClassMap[TextAlignTypes.AlignRight]);
     });
 
-    it.only("renders headings", () => {
+    it("renders headings", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();

@@ -44,19 +44,17 @@ export const headingTypeClassname = {
     [BlockStyleTypes.Custom02]: "tw-text-sm tw-font-sans tw-font-semibold",
     [BlockStyleTypes.Paragraph]: "",
 };
-const getTextAlignClass = (textAlign?: TextAlignTypes) => (textAlign ? textAlignClassMap[textAlign] : "");
 
 export const renderBlockStyles = (props: RenderElementProps, textStyles?: TextStylesType[]): JSX.Element => {
-    const textAlign = props.element.properties?.textAlign;
-
     switch (props.element.type) {
         case BlockStyleTypes.Paragraph:
+            const textAlign = props.element.properties?.textAlign;
             return (
                 <p
                     {...props.attributes}
-                    className={`${getTextStyles(BlockStyleTypes.Paragraph, textStyles)} ${getTextAlignClass(
-                        textAlign,
-                    )}`}
+                    className={`${getTextStyles(BlockStyleTypes.Paragraph, textStyles)} ${
+                        textAlign ? textAlignClassMap[textAlign] : ""
+                    }`}
                 >
                     {props.children}
                 </p>
@@ -110,19 +108,13 @@ export const renderBlockStyles = (props: RenderElementProps, textStyles?: TextSt
 
         case BlockStyleTypes.Custom01:
             return (
-                <div
-                    {...props.attributes}
-                    className={`${getTextStyles(BlockStyleTypes.Custom01, textStyles)} ${getTextAlignClass(textAlign)}`}
-                >
+                <div {...props.attributes} className={getTextStyles(BlockStyleTypes.Custom01, textStyles)}>
                     {props.children}
                 </div>
             );
         case BlockStyleTypes.Custom02:
             return (
-                <div
-                    {...props.attributes}
-                    className={`${getTextStyles(BlockStyleTypes.Custom02, textStyles)} ${getTextAlignClass(textAlign)}`}
-                >
+                <div {...props.attributes} className={getTextStyles(BlockStyleTypes.Custom02, textStyles)}>
                     {props.children}
                 </div>
             );

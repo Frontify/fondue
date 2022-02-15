@@ -2,6 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import React from "react";
+import { headingTitle } from "./BlockStyleDropdown";
 import { BlockStyleTypes, TextAlignTypes } from "./renderer/renderBlockStyles";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
 import { createLinkNode } from "./utils/editor/link";
@@ -42,12 +43,12 @@ const value = [
             createListItemNode("Bake for 20 minutes."),
         ],
     },
-    { type: BlockStyleTypes.H1, children: [{ text: "Heading 1" }] },
-    { type: BlockStyleTypes.H2, children: [{ text: "Heading 2" }] },
-    { type: BlockStyleTypes.H3, children: [{ text: "Heading 3" }] },
-    { type: BlockStyleTypes.H4, children: [{ text: "Heading 4" }] },
-    { type: BlockStyleTypes.Custom01, children: [{ text: "Custom 01" }] },
-    { type: BlockStyleTypes.Custom02, children: [{ text: "Custom 02" }] },
+    { type: BlockStyleTypes.H1, children: [{ text: headingTitle[BlockStyleTypes.H1] }] },
+    { type: BlockStyleTypes.H2, children: [{ text: headingTitle[BlockStyleTypes.H2] }] },
+    { type: BlockStyleTypes.H3, children: [{ text: headingTitle[BlockStyleTypes.H3] }] },
+    { type: BlockStyleTypes.H4, children: [{ text: headingTitle[BlockStyleTypes.H4] }] },
+    { type: BlockStyleTypes.Custom01, children: [{ text: headingTitle[BlockStyleTypes.Custom01] }] },
+    { type: BlockStyleTypes.Custom02, children: [{ text: headingTitle[BlockStyleTypes.Custom02] }] },
     {
         type: BlockStyleTypes.Paragraph,
         children: [
@@ -71,8 +72,6 @@ export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEdit
     <RichTextEditorComponent {...args} />
 );
 
-WithReadonlyState.argTypes = { value: { type: "string" } };
-
 WithReadonlyState.args = {
     readonly: true,
     value: JSON.stringify([
@@ -83,6 +82,8 @@ WithReadonlyState.args = {
         },
     ]),
 };
+
+WithReadonlyState.argTypes = { value: { type: "string" } };
 
 export const RichTextWithHTML: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
