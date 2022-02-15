@@ -76,6 +76,7 @@ function Option({ item, state }: OptionProps) {
             className={`tw-border-b tw-p-3 tw-border-black-30 tw-text-sm tw-outline-none tw-cursor-default tw-flex tw-items-center tw-justify-between tw-truncate ${
                 isFocused || isSelected ? "tw-bg-black-100 tw-text-white " : ""
             }`}
+            data-test-id="menu-item-dropdown"
         >
             {item.rendered}
         </li>

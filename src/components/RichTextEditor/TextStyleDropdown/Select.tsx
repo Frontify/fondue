@@ -35,6 +35,7 @@ export function Select<T extends object>(props: AriaSelectProps<T>) {
                 className={`tw-p-2 tw-pl-3 tw-py-1 tw-relative tw-inline-flex tw-flex-row tw-items-center tw-justify-between tw-rounded tw-overflow-hidden tw-w-32 tw-cursor-default tw-shadow-sm tw-border tw-outline-none hover:tw-border-black-100 ${
                     isFocusVisible ? "tw-border-black-50" : "tw-border-black-30"
                 } `}
+                data-test-id="text-select-dropdown"
             >
                 <span
                     {...valueProps}

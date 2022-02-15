@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DROPDOWN_TRIGGER_ID } from "@components/Dropdown/Dropdown.spec";
-import { MENU_ITEM_ID } from "@components/MenuItem/MenuItem.spec";
 import { getCanvasFontSize, getTextWidth } from "@components/RichTextEditor/utils/getTextWidth";
 import { mount } from "@cypress/react";
 import React, { FC, useState } from "react";
@@ -13,6 +11,9 @@ import { ON_SAVE_DELAY_IN_MS, RichTextEditor } from "./RichTextEditor";
 const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
 const TOOLBAR = "[data-test-id=toolbar]";
 const PLACEHOLDER = "My placeholder";
+
+const TEXT_STYLE_DROPDOWN_ID = "[data-test-id=text-select-dropdown]";
+const MENU_ITEM_DROPDOWN_ID = "[data-test-id=menu-item-dropdown]";
 
 const getBlockStyleControl = (blockType: string) => `[data-test-id=block-style-button-${blockType}]`;
 const getInlineStyleControl = (style: string) => `[data-test-id=inline-style-button-${style}]`;
@@ -152,20 +153,20 @@ describe("RichTextEditor Component", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(DROPDOWN_TRIGGER_ID).click({ force: true });
-        cy.get(MENU_ITEM_ID).first().click();
+        cy.get(TEXT_STYLE_DROPDOWN_ID).click({ force: true });
+        cy.get(MENU_ITEM_DROPDOWN_ID).first().click();
         cy.get("[contenteditable=true]").should("include.html", "<h1");
 
-        cy.get(DROPDOWN_TRIGGER_ID).click({ force: true });
-        cy.get(MENU_ITEM_ID).eq(1).click();
+        cy.get(TEXT_STYLE_DROPDOWN_ID).click({ force: true });
+        cy.get(MENU_ITEM_DROPDOWN_ID).eq(1).click();
         cy.get("[contenteditable=true]").should("include.html", "<h2");
 
-        cy.get(DROPDOWN_TRIGGER_ID).click({ force: true });
-        cy.get(MENU_ITEM_ID).eq(2).click();
+        cy.get(TEXT_STYLE_DROPDOWN_ID).click({ force: true });
+        cy.get(MENU_ITEM_DROPDOWN_ID).eq(2).click();
         cy.get("[contenteditable=true]").should("include.html", "<h3");
 
-        cy.get(DROPDOWN_TRIGGER_ID).click({ force: true });
-        cy.get(MENU_ITEM_ID).eq(3).click();
+        cy.get(TEXT_STYLE_DROPDOWN_ID).click({ force: true });
+        cy.get(MENU_ITEM_DROPDOWN_ID).eq(3).click();
         cy.get("[contenteditable=true]").should("include.html", "<h4");
     });
 
