@@ -129,7 +129,7 @@ export const Badge: FC<BadgeProps> = ({
                     disabled
                         ? "tw-bg-box-disabled tw-text-box-disabled-inverse"
                         : getStyleClasses(style, !!onClick, emphasis === "Strong"),
-                    onClick ? "hover:tw-cursor-pointer" : "tw-cursor-default",
+                    onClick && !disabled ? "hover:tw-cursor-pointer" : "tw-cursor-default",
                     getSizeClasses(children, Boolean(status || icon), size === "s"),
                 ])}
                 data-test-id="badge"
