@@ -5,6 +5,7 @@ import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
 import { useDropdownAutoHeight } from "@components/Dropdown/useDropdownAutoHeight";
 import { Validation } from "@components/TextInput";
 import IconDocument from "@foundation/Icon/Generated/IconDocument";
+import IconPatternLibrary from "@foundation/Icon/Generated/IconDocument";
 import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
 import IconLink from "@foundation/Icon/Generated/IconLink";
@@ -34,6 +35,7 @@ export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Link]: <IconLink />,
     [IconLabel.External]: <IconExternalLink />,
     [IconLabel.Template]: <IconTemplate />,
+    [IconLabel.Block]: <IconPatternLibrary />,
 };
 
 export const DEFAULT_ICON = IconLabel.Link;

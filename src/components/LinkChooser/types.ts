@@ -40,6 +40,7 @@ export const validationClassMap: Record<Validation, string> = {
 };
 
 export enum IconLabel {
+    Block = "BLOCK",
     Document = "DOCUMENT",
     Library = "LIBRARY",
     Link = "LINK",
