@@ -2,6 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import {
+    ELEMENT_LINK,
     ELEMENT_PARAGRAPH,
     MARK_BOLD,
     MARK_CODE,
@@ -118,6 +119,16 @@ const value = [
         ],
         indent: 1,
         listStyleType: "disc",
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [
+            {
+                type: ELEMENT_LINK,
+                children: [{ text: "This is a link." }],
+                url: "https://frontify.com",
+            },
+        ],
     },
 ];
 

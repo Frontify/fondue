@@ -3,6 +3,7 @@
 import {
     IconBold,
     IconItalic,
+    IconLink,
     IconListBullets,
     IconListNumbers,
     IconSnippet,
@@ -16,6 +17,7 @@ import {
 import {
     AlignToolbarButton,
     getPluginType,
+    LinkToolbarButton,
     MarkToolbarButton,
     MARK_BOLD,
     MARK_CODE,
@@ -56,6 +58,7 @@ export const Toolbar: FC = () => {
             </ButtonGroup>
 
             <ButtonGroup>
+                <LinkToolbarButton icon={<IconLink />} />
                 <ToolbarButton
                     onMouseDown={(e) => {
                         e.preventDefault();

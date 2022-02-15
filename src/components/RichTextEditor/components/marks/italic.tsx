@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { PlateRenderLeafProps } from "@udecode/plate";
 import React from "react";
 
