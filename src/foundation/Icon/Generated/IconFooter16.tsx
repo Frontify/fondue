@@ -3,7 +3,7 @@ import { GeneratedIconProps } from "@foundation/Icon/IconProps";
 import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
 function IconFooter16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = ["tw-flex tw-items-center tw-justify-center tw-fill-current"];
+    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
