@@ -24,10 +24,10 @@ const CheckboxComponent: FC<Omit<CheckboxProps, "value">> = (props) => {
 };
 
 describe("Checkbox component", () => {
-    it("renders with a 16px checkbox icon if checked", () => {
+    it("renders with a check icon if checked", () => {
         mount(<CheckboxComponent state={CheckboxState.Checked} />);
 
-        cy.get(CHECKBOX_ID).get("svg").invoke("attr", "name").should("eq", "IconCheck16");
+        cy.get(CHECKBOX_ID).get("svg").invoke("attr", "name").should("eq", "IconCheck");
         cy.get(CHECKBOX_INPUT_ID).invoke("attr", "aria-checked").should("eq", "true");
     });
 
