@@ -232,7 +232,7 @@ const WithRenderFunctionTriggerTemplate: Story<FlyoutProps> = (args) => {
                         state.isPressed && "tw-bg-black-10",
                     ])}
                 >
-                    {state.isPressed ? "I'm Pressed!" : " Custom trigger with no wrapping components"}
+                    {state.isPressed ? "I'm Pressed!" : " Accessible custom trigger"}
                 </div>
             )}
             isOpen={open}
