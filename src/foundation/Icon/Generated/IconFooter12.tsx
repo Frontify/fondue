@@ -16,7 +16,7 @@ function IconFooter12(props: GeneratedIconProps): React.ReactElement<GeneratedIc
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M3 2.25h6a.75.75 0 0 1 .75.75v4.75h-7.5V3A.75.75 0 0 1 3 2.25ZM2.25 8.5V9c0 .414.336.75.75.75h6A.75.75 0 0 0 9.75 9v-.5h-7.5ZM1.5 3A1.5 1.5 0 0 1 3 1.5h6A1.5 1.5 0 0 1 10.5 3v6A1.5 1.5 0 0 1 9 10.5H3A1.5 1.5 0 0 1 1.5 9V3Z"
+                d="M2.5 2h7a.5.5 0 0 1 .5.5V7H2V2.5a.5.5 0 0 1 .5-.5ZM2 8v1.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V8H2ZM1 2.5A1.5 1.5 0 0 1 2.5 1h7A1.5 1.5 0 0 1 11 2.5v7A1.5 1.5 0 0 1 9.5 11h-7A1.5 1.5 0 0 1 1 9.5v-7Z"
                 clipRule="evenodd"
             />
         </svg>

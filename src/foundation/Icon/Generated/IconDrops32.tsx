@@ -16,7 +16,7 @@ function IconDrops32(props: GeneratedIconProps): React.ReactElement<GeneratedIco
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M7 12a9 9 0 1 1 18 0 9 9 0 0 1-18 0Zm9-7a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm8 18.667a1 1 0 0 1-1 1H9a1 1 0 0 1 0-2h14a1 1 0 0 1 1 1Zm-2.667 4a1 1 0 0 1-1 1h-8.666a1 1 0 1 1 0-2h8.666a1 1 0 0 1 1 1Z"
+                d="M23 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0Zm2 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM8 24a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H9a1 1 0 0 1-1-1Zm3 4a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2h-8a1 1 0 0 1-1-1Z"
                 clipRule="evenodd"
             />
         </svg>
