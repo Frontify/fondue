@@ -90,8 +90,8 @@ export const Flyout: FC<FlyoutProps> = ({
     }, [innerOverlayRef.current, scrollRef.current?.scrollHeight, scrollRef.current?.clientHeight]);
 
     const margins = {
-        top: verticalMargin?.top || DEFAULT_OVERLAY_PADDING,
-        bottom: verticalMargin?.bottom || DEFAULT_OVERLAY_PADDING,
+        top: verticalMargin?.top ?? DEFAULT_OVERLAY_PADDING,
+        bottom: verticalMargin?.bottom ?? DEFAULT_OVERLAY_PADDING,
     };
 
     const isFlipped = shouldDisplayAbove({
