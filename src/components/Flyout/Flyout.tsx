@@ -150,7 +150,7 @@ export const Flyout: FC<FlyoutProps> = ({
             {triggerComponent}
             {isOpen && (
                 <OverlayContainer>
-                    <FocusScope restoreFocus>
+                    <FocusScope restoreFocus contain>
                         <Overlay
                             title={title}
                             badges={badges}
