@@ -10,25 +10,25 @@
         return (
             <span>
                 {size === IconSize.Size12 && props.filled && (
-                    <IconFaceNeutral12Filled/>
+                    <IconFaceNeutral12Filled {...props}/>
                 )}{size === IconSize.Size12 && !props.filled && (
-                    <IconFaceNeutral12/>
+                    <IconFaceNeutral12 {...props}/>
                 )}{size === IconSize.Size16 && props.filled && (
-                    <IconFaceNeutral16Filled/>
+                    <IconFaceNeutral16Filled {...props}/>
                 )}{size === IconSize.Size16 && !props.filled && (
-                    <IconFaceNeutral16/>
+                    <IconFaceNeutral16 {...props}/>
                 )}{size === IconSize.Size20 && props.filled && (
-                    <IconFaceNeutral20Filled/>
+                    <IconFaceNeutral20Filled {...props}/>
                 )}{size === IconSize.Size20 && !props.filled && (
-                    <IconFaceNeutral20/>
+                    <IconFaceNeutral20 {...props}/>
                 )}{size === IconSize.Size24 && props.filled && (
-                    <IconFaceNeutral24Filled/>
+                    <IconFaceNeutral24Filled {...props}/>
                 )}{size === IconSize.Size24 && !props.filled && (
-                    <IconFaceNeutral24/>
+                    <IconFaceNeutral24 {...props}/>
                 )}{size === IconSize.Size32 && props.filled && (
-                    <IconFaceNeutral32Filled/>
+                    <IconFaceNeutral32Filled {...props}/>
                 )}{size === IconSize.Size32 && !props.filled && (
-                    <IconFaceNeutral32/>
+                    <IconFaceNeutral32 {...props}/>
                 )}
             </span>
         );

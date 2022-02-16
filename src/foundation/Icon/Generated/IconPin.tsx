@@ -10,25 +10,25 @@
         return (
             <span>
                 {size === IconSize.Size12 && props.filled && (
-                    <IconPin12Filled/>
+                    <IconPin12Filled {...props}/>
                 )}{size === IconSize.Size12 && !props.filled && (
-                    <IconPin12/>
+                    <IconPin12 {...props}/>
                 )}{size === IconSize.Size16 && props.filled && (
-                    <IconPin16Filled/>
+                    <IconPin16Filled {...props}/>
                 )}{size === IconSize.Size16 && !props.filled && (
-                    <IconPin16/>
+                    <IconPin16 {...props}/>
                 )}{size === IconSize.Size20 && props.filled && (
-                    <IconPin20Filled/>
+                    <IconPin20Filled {...props}/>
                 )}{size === IconSize.Size20 && !props.filled && (
-                    <IconPin20/>
+                    <IconPin20 {...props}/>
                 )}{size === IconSize.Size24 && props.filled && (
-                    <IconPin24Filled/>
+                    <IconPin24Filled {...props}/>
                 )}{size === IconSize.Size24 && !props.filled && (
-                    <IconPin24/>
+                    <IconPin24 {...props}/>
                 )}{size === IconSize.Size32 && props.filled && (
-                    <IconPin32Filled/>
+                    <IconPin32Filled {...props}/>
                 )}{size === IconSize.Size32 && !props.filled && (
-                    <IconPin32/>
+                    <IconPin32 {...props}/>
                 )}
             </span>
         );

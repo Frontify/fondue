@@ -10,25 +10,25 @@
         return (
             <span>
                 {size === IconSize.Size12 && props.filled && (
-                    <IconFaceSad12Filled/>
+                    <IconFaceSad12Filled {...props}/>
                 )}{size === IconSize.Size12 && !props.filled && (
-                    <IconFaceSad12/>
+                    <IconFaceSad12 {...props}/>
                 )}{size === IconSize.Size16 && props.filled && (
-                    <IconFaceSad16Filled/>
+                    <IconFaceSad16Filled {...props}/>
                 )}{size === IconSize.Size16 && !props.filled && (
-                    <IconFaceSad16/>
+                    <IconFaceSad16 {...props}/>
                 )}{size === IconSize.Size20 && props.filled && (
-                    <IconFaceSad20Filled/>
+                    <IconFaceSad20Filled {...props}/>
                 )}{size === IconSize.Size20 && !props.filled && (
-                    <IconFaceSad20/>
+                    <IconFaceSad20 {...props}/>
                 )}{size === IconSize.Size24 && props.filled && (
-                    <IconFaceSad24Filled/>
+                    <IconFaceSad24Filled {...props}/>
                 )}{size === IconSize.Size24 && !props.filled && (
-                    <IconFaceSad24/>
+                    <IconFaceSad24 {...props}/>
                 )}{size === IconSize.Size32 && props.filled && (
-                    <IconFaceSad32Filled/>
+                    <IconFaceSad32Filled {...props}/>
                 )}{size === IconSize.Size32 && !props.filled && (
-                    <IconFaceSad32/>
+                    <IconFaceSad32 {...props}/>
                 )}
             </span>
         );

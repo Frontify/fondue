@@ -10,25 +10,25 @@
         return (
             <span>
                 {size === IconSize.Size12 && props.filled && (
-                    <IconFaceHappy12Filled/>
+                    <IconFaceHappy12Filled {...props}/>
                 )}{size === IconSize.Size12 && !props.filled && (
-                    <IconFaceHappy12/>
+                    <IconFaceHappy12 {...props}/>
                 )}{size === IconSize.Size16 && props.filled && (
-                    <IconFaceHappy16Filled/>
+                    <IconFaceHappy16Filled {...props}/>
                 )}{size === IconSize.Size16 && !props.filled && (
-                    <IconFaceHappy16/>
+                    <IconFaceHappy16 {...props}/>
                 )}{size === IconSize.Size20 && props.filled && (
-                    <IconFaceHappy20Filled/>
+                    <IconFaceHappy20Filled {...props}/>
                 )}{size === IconSize.Size20 && !props.filled && (
-                    <IconFaceHappy20/>
+                    <IconFaceHappy20 {...props}/>
                 )}{size === IconSize.Size24 && props.filled && (
-                    <IconFaceHappy24Filled/>
+                    <IconFaceHappy24Filled {...props}/>
                 )}{size === IconSize.Size24 && !props.filled && (
-                    <IconFaceHappy24/>
+                    <IconFaceHappy24 {...props}/>
                 )}{size === IconSize.Size32 && props.filled && (
-                    <IconFaceHappy32Filled/>
+                    <IconFaceHappy32Filled {...props}/>
                 )}{size === IconSize.Size32 && !props.filled && (
-                    <IconFaceHappy32/>
+                    <IconFaceHappy32 {...props}/>
                 )}
             </span>
         );

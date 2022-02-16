@@ -10,25 +10,25 @@
         return (
             <span>
                 {size === IconSize.Size12 && props.filled && (
-                    <IconExclamationMarkCircle12Filled/>
+                    <IconExclamationMarkCircle12Filled {...props}/>
                 )}{size === IconSize.Size12 && !props.filled && (
-                    <IconExclamationMarkCircle12/>
+                    <IconExclamationMarkCircle12 {...props}/>
                 )}{size === IconSize.Size16 && props.filled && (
-                    <IconExclamationMarkCircle16Filled/>
+                    <IconExclamationMarkCircle16Filled {...props}/>
                 )}{size === IconSize.Size16 && !props.filled && (
-                    <IconExclamationMarkCircle16/>
+                    <IconExclamationMarkCircle16 {...props}/>
                 )}{size === IconSize.Size20 && props.filled && (
-                    <IconExclamationMarkCircle20Filled/>
+                    <IconExclamationMarkCircle20Filled {...props}/>
                 )}{size === IconSize.Size20 && !props.filled && (
-                    <IconExclamationMarkCircle20/>
+                    <IconExclamationMarkCircle20 {...props}/>
                 )}{size === IconSize.Size24 && props.filled && (
-                    <IconExclamationMarkCircle24Filled/>
+                    <IconExclamationMarkCircle24Filled {...props}/>
                 )}{size === IconSize.Size24 && !props.filled && (
-                    <IconExclamationMarkCircle24/>
+                    <IconExclamationMarkCircle24 {...props}/>
                 )}{size === IconSize.Size32 && props.filled && (
-                    <IconExclamationMarkCircle32Filled/>
+                    <IconExclamationMarkCircle32Filled {...props}/>
                 )}{size === IconSize.Size32 && !props.filled && (
-                    <IconExclamationMarkCircle32/>
+                    <IconExclamationMarkCircle32 {...props}/>
                 )}
             </span>
         );

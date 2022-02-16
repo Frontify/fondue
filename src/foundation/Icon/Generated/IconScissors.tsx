@@ -10,15 +10,15 @@
         return (
             <span>
                 {size === IconSize.Size12 && !props.filled && (
-                    <IconScissors12/>
+                    <IconScissors12 {...props}/>
                 )}{size === IconSize.Size16 && !props.filled && (
-                    <IconScissors16/>
+                    <IconScissors16 {...props}/>
                 )}{size === IconSize.Size20 && !props.filled && (
-                    <IconScissors20/>
+                    <IconScissors20 {...props}/>
                 )}{size === IconSize.Size24 && !props.filled && (
-                    <IconScissors24/>
+                    <IconScissors24 {...props}/>
                 )}{size === IconSize.Size32 && !props.filled && (
-                    <IconScissors32/>
+                    <IconScissors32 {...props}/>
                 )}
             </span>
         );

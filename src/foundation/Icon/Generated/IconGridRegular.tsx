@@ -10,25 +10,25 @@
         return (
             <span>
                 {size === IconSize.Size12 && props.filled && (
-                    <IconGridRegular12Filled/>
+                    <IconGridRegular12Filled {...props}/>
                 )}{size === IconSize.Size12 && !props.filled && (
-                    <IconGridRegular12/>
+                    <IconGridRegular12 {...props}/>
                 )}{size === IconSize.Size16 && props.filled && (
-                    <IconGridRegular16Filled/>
+                    <IconGridRegular16Filled {...props}/>
                 )}{size === IconSize.Size16 && !props.filled && (
-                    <IconGridRegular16/>
+                    <IconGridRegular16 {...props}/>
                 )}{size === IconSize.Size20 && props.filled && (
-                    <IconGridRegular20Filled/>
+                    <IconGridRegular20Filled {...props}/>
                 )}{size === IconSize.Size20 && !props.filled && (
-                    <IconGridRegular20/>
+                    <IconGridRegular20 {...props}/>
                 )}{size === IconSize.Size24 && props.filled && (
-                    <IconGridRegular24Filled/>
+                    <IconGridRegular24Filled {...props}/>
                 )}{size === IconSize.Size24 && !props.filled && (
-                    <IconGridRegular24/>
+                    <IconGridRegular24 {...props}/>
                 )}{size === IconSize.Size32 && props.filled && (
-                    <IconGridRegular32Filled/>
+                    <IconGridRegular32Filled {...props}/>
                 )}{size === IconSize.Size32 && !props.filled && (
-                    <IconGridRegular32/>
+                    <IconGridRegular32 {...props}/>
                 )}
             </span>
         );

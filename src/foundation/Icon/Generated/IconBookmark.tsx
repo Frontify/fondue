@@ -10,25 +10,25 @@
         return (
             <span>
                 {size === IconSize.Size12 && props.filled && (
-                    <IconBookmark12Filled/>
+                    <IconBookmark12Filled {...props}/>
                 )}{size === IconSize.Size12 && !props.filled && (
-                    <IconBookmark12/>
+                    <IconBookmark12 {...props}/>
                 )}{size === IconSize.Size16 && props.filled && (
-                    <IconBookmark16Filled/>
+                    <IconBookmark16Filled {...props}/>
                 )}{size === IconSize.Size16 && !props.filled && (
-                    <IconBookmark16/>
+                    <IconBookmark16 {...props}/>
                 )}{size === IconSize.Size20 && props.filled && (
-                    <IconBookmark20Filled/>
+                    <IconBookmark20Filled {...props}/>
                 )}{size === IconSize.Size20 && !props.filled && (
-                    <IconBookmark20/>
+                    <IconBookmark20 {...props}/>
                 )}{size === IconSize.Size24 && props.filled && (
-                    <IconBookmark24Filled/>
+                    <IconBookmark24Filled {...props}/>
                 )}{size === IconSize.Size24 && !props.filled && (
-                    <IconBookmark24/>
+                    <IconBookmark24 {...props}/>
                 )}{size === IconSize.Size32 && props.filled && (
-                    <IconBookmark32Filled/>
+                    <IconBookmark32Filled {...props}/>
                 )}{size === IconSize.Size32 && !props.filled && (
-                    <IconBookmark32/>
+                    <IconBookmark32 {...props}/>
                 )}
             </span>
         );

@@ -10,15 +10,15 @@
         return (
             <span>
                 {size === IconSize.Size12 && !props.filled && (
-                    <IconAdobeCreativeCloud12/>
+                    <IconAdobeCreativeCloud12 {...props}/>
                 )}{size === IconSize.Size16 && !props.filled && (
-                    <IconAdobeCreativeCloud16/>
+                    <IconAdobeCreativeCloud16 {...props}/>
                 )}{size === IconSize.Size20 && !props.filled && (
-                    <IconAdobeCreativeCloud20/>
+                    <IconAdobeCreativeCloud20 {...props}/>
                 )}{size === IconSize.Size24 && !props.filled && (
-                    <IconAdobeCreativeCloud24/>
+                    <IconAdobeCreativeCloud24 {...props}/>
                 )}{size === IconSize.Size32 && !props.filled && (
-                    <IconAdobeCreativeCloud32/>
+                    <IconAdobeCreativeCloud32 {...props}/>
                 )}
             </span>
         );
