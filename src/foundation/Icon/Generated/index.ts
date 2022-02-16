@@ -1,5 +1,4 @@
-
-        export { default as IconAcademy } from "./IconAcademy";
+export { default as IconAcademy } from "./IconAcademy";
 export { default as IconActions } from "./IconActions";
 export { default as IconActivities } from "./IconActivities";
 export { default as IconActivity } from "./IconActivity";
@@ -1738,4 +1737,3 @@ export { default as IconWorkflowShapes20 } from "./IconWorkflowShapes20";
 export { default as IconWorkflowShapes24 } from "./IconWorkflowShapes24";
 export { default as IconWorkflowShapes32 } from "./IconWorkflowShapes32";
 export { default as IconZoom } from "./IconZoom";
-    
