@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 type IconShapeTemplateInputs = {
-    imports: Array<String>;
-    shapeName: String;
-    components: Array<String>;
+    imports: Array<string>;
+    shapeName: string;
+    components: Array<string>;
 };
 
 export const IconTemplateDynamic = (props: IconShapeTemplateInputs) => {
