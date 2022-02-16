@@ -6,7 +6,6 @@ export const IconTemplate: Template = ({ interfaces, componentName, jsx, exports
     return tpl`
       import React, { memo } from "react";
       import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-      import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
       ${interfaces}
 
