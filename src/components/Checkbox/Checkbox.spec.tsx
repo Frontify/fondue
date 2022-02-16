@@ -24,17 +24,17 @@ const CheckboxComponent: FC<Omit<CheckboxProps, "value">> = (props) => {
 };
 
 describe("Checkbox component", () => {
-    it("renders with a checkbox icon if checked", () => {
+    it("renders with a 16px checkbox icon if checked", () => {
         mount(<CheckboxComponent state={CheckboxState.Checked} />);
 
-        cy.get(CHECKBOX_ID).get("svg").invoke("attr", "name").should("eq", "IconCheck");
+        cy.get(CHECKBOX_ID).get("svg").invoke("attr", "name").should("eq", "IconCheck16");
         cy.get(CHECKBOX_INPUT_ID).invoke("attr", "aria-checked").should("eq", "true");
     });
 
-    it("renders with a minus icon if indeterminate", () => {
+    it("renders with a 16px minus icon if indeterminate", () => {
         mount(<CheckboxComponent state={CheckboxState.Mixed} />);
 
-        cy.get(CHECKBOX_ID).get("svg").invoke("attr", "name").should("eq", "IconMinus");
+        cy.get(CHECKBOX_ID).get("svg").invoke("attr", "name").should("eq", "IconMinus16");
         cy.get(CHECKBOX_INPUT_ID).invoke("attr", "aria-checked").should("eq", "mixed");
     });
 
