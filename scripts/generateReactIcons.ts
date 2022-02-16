@@ -95,11 +95,11 @@ const generateDynamicIcon = async (shapeFolderPath: Entry) => {
 
         if (size && !filled) {
             components.push(`{size === IconSize.Size${size} && !props.filled && (
-                    <Icon${iconName}/>
+                    <Icon${iconName} {...props}/>
                 )}`);
         } else if (size && filled) {
             components.push(`{size === IconSize.Size${size} && props.filled && (
-                    <Icon${iconName}/>
+                    <Icon${iconName} {...props}/>
                 )}`);
         }
     });
