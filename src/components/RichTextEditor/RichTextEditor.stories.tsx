@@ -124,12 +124,20 @@ export const WithCustomTextStyle: Story<RichTextEditorProps> = (args: RichTextEd
 WithCustomTextStyle.args = {
     readonly: false,
     value: JSON.stringify([
-        ...value,
-        {
-            type: BlockStyleTypes.Paragraph,
-            children: [createLinkNode("https://git-scm.com/downloads", "Link")],
-        },
+        { type: BlockStyleTypes.H1, children: [{ text: headingTitle[BlockStyleTypes.H1] }] },
+        { type: BlockStyleTypes.H2, children: [{ text: headingTitle[BlockStyleTypes.H2] }] },
+        { type: BlockStyleTypes.H3, children: [{ text: headingTitle[BlockStyleTypes.H3] }] },
+        { type: BlockStyleTypes.H4, children: [{ text: headingTitle[BlockStyleTypes.H4] }] },
+        { type: BlockStyleTypes.Custom01, children: [{ text: headingTitle[BlockStyleTypes.Custom01] }] },
+        { type: BlockStyleTypes.Custom02, children: [{ text: headingTitle[BlockStyleTypes.Custom02] }] },
     ]),
-    textStyles: [{ type: BlockStyleTypes.H3, className: "tw-text-xxl" }],
+    textStyles: [
+        { type: BlockStyleTypes.H1, className: "tw-text-7xl tw-font-bold tw-text-green-80" },
+        { type: BlockStyleTypes.H2, className: "tw-text-5xl tw-font-bold tw-text-violet-60" },
+        { type: BlockStyleTypes.H3, className: "tw-text-3xl tw-font-bold tw-text-yellow-70" },
+        { type: BlockStyleTypes.H4, className: "tw-text-xl tw-text-red-50" },
+        { type: BlockStyleTypes.Custom01, className: "tw-font-mono tw-italic tw-text-black-80" },
+        { type: BlockStyleTypes.Custom02, className: "tw-underline tw-text-black-80" },
+    ],
 };
 WithCustomTextStyle.argTypes = { value: { type: "string" } };

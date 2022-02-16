@@ -34,6 +34,7 @@ const toggleBlock = (active: boolean, editor: Editor, type: BlockStyleTypes, tex
         BlockStyleTypes.H1,
         BlockStyleTypes.H2,
         BlockStyleTypes.H3,
+        BlockStyleTypes.H4,
         BlockStyleTypes.Custom01,
         BlockStyleTypes.Custom02,
     ].includes(type);

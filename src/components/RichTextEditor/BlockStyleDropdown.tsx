@@ -5,14 +5,14 @@ import { useActor } from "@xstate/react";
 import React, { FC, useContext, useEffect, useState } from "react";
 import { Editor, Element } from "slate";
 import { useSlateStatic } from "slate-react";
-import { BlockElement, TextStylesType } from ".";
+import { BlockElement, TextStyles } from ".";
 import { ToolbarContext } from "./context/toolbar";
 import { BlockStyleTypes } from "./renderer/renderBlockStyles";
 import { Select } from "./TextStyleDropdown/Select";
 import { getTextStyles } from "./utils/editor/getTextStyles";
 
 type Props = {
-    textStyles?: TextStylesType[];
+    textStyles?: TextStyles[];
 };
 
 export const headingTitle = {
@@ -47,7 +47,7 @@ export const BlockStyleDropdown: FC<Props> = ({ textStyles }) => {
 
     const [, send] = useActor(machineRef);
 
-    const getMenuItemStyle = (identifier: TextStylesType["type"]) =>
+    const getMenuItemStyle = (identifier: TextStyles["type"]) =>
         [getTextStyles(identifier, textStyles), "tw-truncate"].join(" ");
 
     return (
@@ -64,8 +64,8 @@ export const BlockStyleDropdown: FC<Props> = ({ textStyles }) => {
                         },
                     });
                 }}
-                selectedKey={blockTypeId || "Body Text"}
-                placeholder="Body Text"
+                selectedKey={blockTypeId || headingTitle[BlockStyleTypes.Paragraph]}
+                placeholder={headingTitle[BlockStyleTypes.Paragraph]}
             >
                 <Item textValue={headingTitle[BlockStyleTypes.H1]} key={BlockStyleTypes.H1}>
                     <h1 className={getMenuItemStyle(BlockStyleTypes.H1)}>{headingTitle[BlockStyleTypes.H1]}</h1>

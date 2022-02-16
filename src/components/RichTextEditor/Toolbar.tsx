@@ -16,7 +16,7 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { FC, useEffect, useRef } from "react";
 import { usePopper } from "react-popper";
-import { TextStylesType } from ".";
+import { TextStyles } from ".";
 import { BlockStyleButton } from "./BlockStyleButton";
 import { BlockStyleDropdown } from "./BlockStyleDropdown";
 import { useEditorSelection } from "./hooks/useEditorSelection";
@@ -25,8 +25,9 @@ import { BlockStyleTypes, TextAlignTypes } from "./renderer/renderBlockStyles";
 import { InlineStyles } from "./renderer/renderInlineStyles";
 
 type ToolbarProps = {
-    textStyles?: TextStylesType[];
+    textStyles?: TextStyles[];
 };
+
 export const Toolbar: FC<ToolbarProps> = ({ textStyles }) => {
     const selectionRectRef = useRef<HTMLDivElement | null>(null);
     const inlineToolbarRef = useRef<HTMLDivElement | null>(null);

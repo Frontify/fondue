@@ -1,7 +1,7 @@
 import { Item, Section } from "@react-stately/collections";
 import React, { ReactNode } from "react";
-import { ActionMenuBlock, ActionMenuItemType } from "../ActionMenu/ActionMenu";
 import { MenuBlock, MenuItemType } from "../../Dropdown/SelectMenu/SelectMenu";
+import { ActionMenuBlock, ActionMenuItemType } from "../ActionMenu/ActionMenu";
 
 export type MenuStateType = {
     "aria-label": string;
@@ -15,7 +15,7 @@ export const mapToAriaProps = (ariaLabel: string, menuBlocks: MenuBlock[] | Acti
     children: menuBlocks.map(({ id, menuItems, ariaLabel: sectionAriaLabel }) => (
         <Section title={id} key={id} aria-label={sectionAriaLabel}>
             {menuItems.map((menuItem) => (
-                <Item key={menuItem.id}>{typeof menuItem.title === "string" ? menuItem.title : "title"}</Item>
+                <Item key={menuItem.id}>{menuItem.title}</Item>
             ))}
         </Section>
     )),

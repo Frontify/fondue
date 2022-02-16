@@ -12,14 +12,10 @@ import { Popover } from "./Popover";
 
 export function Select<T extends object>(props: AriaSelectProps<T>) {
     const state = useSelectState(props);
-
     const ref = useRef(null);
     const { labelProps, triggerProps, valueProps, menuProps } = useSelect(props, state, ref);
-
     const { buttonProps } = useButton(triggerProps, ref);
-
     const { focusProps, isFocusVisible } = useFocusRing();
-
     const { label, name, placeholder } = props;
     const { isOpen, selectedItem } = state;
 
@@ -35,13 +31,13 @@ export function Select<T extends object>(props: AriaSelectProps<T>) {
                 className={`tw-p-2 tw-pl-3 tw-py-1 tw-relative tw-inline-flex tw-flex-row tw-items-center tw-justify-between tw-rounded tw-overflow-hidden tw-w-32 tw-cursor-default tw-shadow-sm tw-border tw-outline-none hover:tw-border-black-100 ${
                     isFocusVisible ? "tw-border-black-50" : "tw-border-black-30"
                 } `}
-                data-test-id="text-select-dropdown"
+                data-test-id="select-trigger"
             >
                 <span
                     {...valueProps}
                     className={`tw-text-md ${selectedItem ? "tw-text-black-100" : "tw-text-black-70"}`}
                 >
-                    {selectedItem ? selectedItem.textValue : placeholder}
+                    {selectedItem?.textValue || placeholder}
                 </span>
                 <div className={merge(["tw-transition-transform", isOpen && "tw-rotate-180"])}>
                     <IconCaretDown />

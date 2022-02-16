@@ -12,8 +12,8 @@ const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
 const TOOLBAR = "[data-test-id=toolbar]";
 const PLACEHOLDER = "My placeholder";
 
-const TEXT_STYLE_DROPDOWN_ID = "[data-test-id=text-select-dropdown]";
-const MENU_ITEM_DROPDOWN_ID = "[data-test-id=menu-item-dropdown]";
+const TEXT_STYLE_DROPDOWN_ID = "[data-test-id=select-trigger]";
+const MENU_ITEM_DROPDOWN_ID = "[data-test-id=select-option]";
 
 const getBlockStyleControl = (blockType: string) => `[data-test-id=block-style-button-${blockType}]`;
 const getInlineStyleControl = (style: string) => `[data-test-id=inline-style-button-${style}]`;

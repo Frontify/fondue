@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { merge } from "@utilities/merge";
 import React from "react";
 import { DefaultElement, RenderElementProps } from "slate-react";
-import { TextStylesType } from "..";
+import { TextStyles } from "..";
 import { getTextStyles } from "../utils/editor/getTextStyles";
 
 export enum BlockStyleTypes {
@@ -35,7 +36,7 @@ export const textAlignClassMap: Record<TextAlignTypes, string> = {
     [TextAlignTypes.AlignRight]: "tw-text-right",
 };
 
-export const headingTypeClassname = {
+export const textStyleClassname = {
     [BlockStyleTypes.H1]: "tw-font-bold tw-text-xxxl",
     [BlockStyleTypes.H2]: "tw-font-bold tw-text-xxl",
     [BlockStyleTypes.H3]: "tw-text-xl",
@@ -45,16 +46,17 @@ export const headingTypeClassname = {
     [BlockStyleTypes.Paragraph]: "",
 };
 
-export const renderBlockStyles = (props: RenderElementProps, textStyles?: TextStylesType[]): JSX.Element => {
+export const renderBlockStyles = (props: RenderElementProps, textStyles?: TextStyles[]): JSX.Element => {
     switch (props.element.type) {
         case BlockStyleTypes.Paragraph:
             const textAlign = props.element.properties?.textAlign;
             return (
                 <p
                     {...props.attributes}
-                    className={`${getTextStyles(BlockStyleTypes.Paragraph, textStyles)} ${
-                        textAlign ? textAlignClassMap[textAlign] : ""
-                    }`}
+                    className={merge([
+                        getTextStyles(BlockStyleTypes.Paragraph, textStyles),
+                        textAlign ? textAlignClassMap[textAlign] : "",
+                    ])}
                 >
                     {props.children}
                 </p>

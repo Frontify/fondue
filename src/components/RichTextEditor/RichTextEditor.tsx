@@ -23,7 +23,7 @@ import { Toolbar } from "./Toolbar";
 import { clearEditor } from "./utils/editor/clear";
 import { parseRawValue } from "./utils/editor/parseRawContent";
 
-export type TextStylesType = {
+export type TextStyles = {
     type:
         | BlockStyleTypes.H1
         | BlockStyleTypes.H2
@@ -42,7 +42,7 @@ export type RichTextEditorProps = {
     onBlur?: (value: string) => void;
     readonly?: boolean;
     clear?: boolean;
-    textStyles?: TextStylesType[];
+    textStyles?: TextStyles[];
 };
 
 export type BlockElement = {
@@ -50,7 +50,7 @@ export type BlockElement = {
     url?: string;
     properties?: {
         textAlign?: TextAlignTypes;
-        textStyles?: TextStylesType[];
+        textStyles?: TextStyles[];
     };
     children: (FormattedText | BlockElement)[];
 };
