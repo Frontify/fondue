@@ -15,6 +15,8 @@ import React, { MutableRefObject, useState } from "react";
 import { Flyout, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, FlyoutProps } from "./Flyout";
 import { FlyoutFooter } from "./FlyoutFooter";
 import { chain } from "@react-aria/utils";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { merge } from "@utilities/merge";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -132,12 +134,8 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={({ "aria-label": ariaLabel }, ref) => (
-                <Button
-                    onClick={() => setOpen((open) => !open)}
-                    ref={ref as MutableRefObject<HTMLButtonElement | null>}
-                    aria-label={ariaLabel}
-                >
+            trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+                <Button onClick={() => setOpen((open) => !open)} ref={ref} aria-label={ariaLabel}>
                     Button
                 </Button>
             )}
@@ -214,6 +212,45 @@ WithCustomFooter.args = {
 };
 
 WithCustomFooter.argTypes = {
+    trigger: { table: { disable: true } },
+    decorator: { table: { disable: true } },
+};
+
+const WithRenderFunctionTriggerTemplate: Story<FlyoutProps> = (args) => {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <Flyout
+            {...args}
+            trigger={(props, ref: MutableRefObject<HTMLDivElement>, state) => (
+                <div
+                    {...props}
+                    ref={ref}
+                    className={merge([
+                        "tw-border tw-rounded tw-w-[200px] tw-p-2 tw-text-s tw-text-center tw-h-[60px] tw-outline-none tw-items-center tw-flex tw-justify-center",
+                        state.isFocusVisible && FOCUS_STYLE,
+                        state.isPressed && "tw-bg-black-10",
+                    ])}
+                >
+                    {state.isPressed ? "I'm Pressed!" : " Custom trigger with no wrapping components"}
+                </div>
+            )}
+            isOpen={open}
+            onOpenChange={chain(args.onOpenChange, setOpen)}
+            onCancel={chain(args.onCancel, () => setOpen(false))}
+        >
+            <p className="tw-text-center tw-py-8">Fun with Flyouts and Buttons!</p>
+        </Flyout>
+    );
+};
+export const WithRenderFunctionTrigger = WithRenderFunctionTriggerTemplate.bind({});
+
+WithRenderFunctionTrigger.args = {
+    title: "Header title",
+    decorator: <IconIcons />,
+};
+
+WithRenderFunctionTrigger.argTypes = {
     trigger: { table: { disable: true } },
     decorator: { table: { disable: true } },
 };
