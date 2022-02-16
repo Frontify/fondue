@@ -11,7 +11,7 @@ export const IconTemplate: Template = ({ interfaces, componentName, jsx, exports
       ${interfaces}
 
       function ${componentName}(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-        const customClassName = ["tw-flex tw-items-center tw-justify-center tw-fill-current"];
+        const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
 
         return ${jsx};
       }
