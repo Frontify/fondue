@@ -135,14 +135,14 @@ const value = [
 export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
-RichTextEditor.args = { value: value };
+RichTextEditor.args = { value: JSON.stringify(value) };
 
 export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
 WithReadonlyState.args = {
     readonly: true,
-    value: value,
+    value: JSON.stringify(value),
 };
 WithReadonlyState.argTypes = { value: { type: "string" } };
 

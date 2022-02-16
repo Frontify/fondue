@@ -25,7 +25,6 @@ import {
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
     Plate,
-    usePlateEditorRef,
 } from "@udecode/plate";
 import { debounce } from "@utilities/debounce";
 import React, { FC, useEffect } from "react";
@@ -37,10 +36,11 @@ import { StrikethroughMark } from "./components/marks/strikethrough";
 import { UnderlineMark } from "./components/marks/underline";
 import { Toolbar } from "./Toolbar";
 import { clearEditor } from "./utils/clearEditor";
+import { parseRawValue } from "./utils/parseRawContent";
 
 export type RichTextEditorProps = {
     placeholder?: string;
-    value?: any;
+    value?: string;
     onTextChange?: (value: string) => void;
     onBlur?: (value: string) => void;
     readonly?: boolean;
@@ -48,7 +48,6 @@ export type RichTextEditorProps = {
 };
 
 export const ON_SAVE_DELAY_IN_MS = 500;
-export const RTE_ID = "plate-rich-text-editor";
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
     value: initialValue,
@@ -57,16 +56,14 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     clear = false,
     onTextChange,
 }) => {
-    const editor = usePlateEditorRef();
-
     const editableProps: EditableProps = {
         placeholder: placeholder,
         readOnly: readonly,
     };
 
     useEffect(() => {
-        if (clear && editor) {
-            clearEditor(editor);
+        if (clear) {
+            clearEditor();
         }
     }, [clear]);
 
@@ -109,8 +106,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     return (
         <div data-test-id="rich-text-editor" className="tw-relative tw-w-full">
             <Plate
-                id={RTE_ID}
-                initialValue={initialValue}
+                initialValue={parseRawValue(initialValue)}
                 onChange={debounce((value) => onTextChange && onTextChange(value), ON_SAVE_DELAY_IN_MS)}
                 editableProps={editableProps}
                 plugins={plugins}
