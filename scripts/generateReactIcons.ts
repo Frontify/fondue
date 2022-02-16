@@ -126,9 +126,7 @@ const generateIndex = async () => {
         .filter((filePath) => filePath.name.indexOf(".") === -1)
         .filter((component) => component.name !== "Icon");
     const iconComponentNameToExport = (name: string) => `export { default as ${name} } from "./${name}";`;
-    const fileContent = `
-        ${iconComponents.map((c) => iconComponentNameToExport(c.name)).join("\n")}
-    `;
+    const fileContent = `${iconComponents.map((c) => iconComponentNameToExport(c.name)).join("\n")}`;
 
     await writeFile(join(__dirname, "..", GENERATED_ICONS_INDEX_PATH), fileContent, { encoding: "utf8" });
 };
