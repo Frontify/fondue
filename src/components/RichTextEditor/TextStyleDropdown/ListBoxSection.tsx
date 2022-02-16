@@ -4,10 +4,10 @@ import type { Node } from "@react-types/shared";
 import React, { FC } from "react";
 import { Option } from "./Option";
 
-interface SectionProps {
+type SectionProps = {
     section: Node<unknown>;
     state: ListState<unknown>;
-}
+};
 
 export const ListBoxSection: FC<SectionProps> = ({ section, state }) => {
     const { itemProps, headingProps, groupProps } = useListBoxSection({

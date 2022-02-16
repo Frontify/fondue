@@ -3,10 +3,10 @@ import { ListState } from "@react-stately/list";
 import type { Node } from "@react-types/shared";
 import React, { FC, useRef } from "react";
 
-interface OptionProps {
+type OptionProps = {
     item: Node<unknown>;
     state: ListState<unknown>;
-}
+};
 
 export const Option: FC<OptionProps> = ({ item, state }) => {
     const ref = useRef<HTMLLIElement>(null);
