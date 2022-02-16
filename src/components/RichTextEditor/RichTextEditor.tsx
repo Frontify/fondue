@@ -1,42 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    BalloonToolbar,
-    createAlignPlugin,
-    createBoldPlugin,
-    createCodeBlockPlugin,
-    createCodePlugin,
-    createHeadingPlugin,
-    createIndentListPlugin,
-    createIndentPlugin,
-    createItalicPlugin,
-    createLinkPlugin,
-    createParagraphPlugin,
-    createPlateUI,
-    createPlugins,
-    createSoftBreakPlugin,
-    createStrikethroughPlugin,
-    createUnderlinePlugin,
-    ELEMENT_H1,
-    ELEMENT_LINK,
-    ELEMENT_PARAGRAPH,
-    MARK_BOLD,
-    MARK_ITALIC,
-    MARK_STRIKETHROUGH,
-    MARK_UNDERLINE,
-    Plate,
-} from "@udecode/plate";
+import { BalloonToolbar, Plate } from "@udecode/plate";
 import { debounce } from "@utilities/debounce";
 import React, { FC, useEffect } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
-import { LinkElement } from "./components/elements/link";
-import { BoldMark } from "./components/marks/bold";
-import { ItalicMark } from "./components/marks/italic";
-import { StrikethroughMark } from "./components/marks/strikethrough";
-import { UnderlineMark } from "./components/marks/underline";
+import { plugins } from "./config";
 import { Toolbar } from "./Toolbar";
 import { clearEditor } from "./utils/clearEditor";
-import { parseRawValue } from "./utils/parseRawContent";
+import { parseRawValue } from "./utils/parseRawValue";
 
 export type RichTextEditorProps = {
     placeholder?: string;
@@ -66,42 +37,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
             clearEditor();
         }
     }, [clear]);
-
-    const components = createPlateUI({
-        // this will override the components over the default ones
-        [ELEMENT_LINK]: LinkElement,
-        [MARK_BOLD]: BoldMark,
-        [MARK_ITALIC]: ItalicMark,
-        [MARK_UNDERLINE]: UnderlineMark,
-        [MARK_STRIKETHROUGH]: StrikethroughMark,
-    });
-
-    const plugins = createPlugins(
-        [
-            createSoftBreakPlugin(),
-            createAlignPlugin(),
-            createParagraphPlugin(),
-            createCodeBlockPlugin(),
-            createHeadingPlugin(),
-            createIndentListPlugin(),
-            createIndentPlugin({
-                inject: {
-                    props: {
-                        validTypes: [ELEMENT_PARAGRAPH, ELEMENT_H1],
-                    },
-                },
-            }),
-            createLinkPlugin(),
-            createBoldPlugin(),
-            createItalicPlugin(),
-            createUnderlinePlugin(),
-            createStrikethroughPlugin(),
-            createCodePlugin(),
-        ],
-        {
-            components,
-        },
-    );
 
     return (
         <div data-test-id="rich-text-editor" className="tw-relative tw-w-full">
