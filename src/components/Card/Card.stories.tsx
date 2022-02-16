@@ -94,3 +94,13 @@ export const MultipleCards: Story<CardProps> = () => (
         ))}
     </div>
 );
+
+export const WithOnClick = Template.bind({});
+
+WithOnClick.args = {
+    children: "I'm clickable!",
+};
+
+WithOnClick.argTypes = {
+    onClick: { action: "onClick" },
+};
