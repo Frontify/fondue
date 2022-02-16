@@ -70,7 +70,7 @@ export const Tabs: FC<TabsProps> = ({ content, paddingX, size }) => {
                 <ul
                     ref={tabNavRef}
                     className={merge([
-                        "tw-overflow-hidden tw-flex-shrink-0 tw-h-12 tw-max-h-12 tw-flex tw-justify-start tw-border-b tw-border-grey-20",
+                        "tw-overflow-hidden tw-flex-shrink-0 tw-h-full tw-flex tw-justify-start tw-border-b tw-border-grey-20",
                         paddingMap[paddingX],
                         size === "Small" ? "tw-text-sm" : "tw-text-md",
                     ])}
