@@ -31,7 +31,11 @@ export const FLYOUT_DIVIDER_HEIGHT = "10px";
 export type FlyoutProps = PropsWithChildren<{
     trigger:
         | ReactNode
-        | ((triggerProps: HTMLAttributes<HTMLElement>, ref: MutableRefObject<HTMLElement | null>) => JSX.Element);
+        | ((
+              triggerProps: HTMLAttributes<HTMLElement>,
+              ref: MutableRefObject<HTMLElement | null>,
+              triggerState: { isFocusVisible: boolean; isPressed: boolean },
+          ) => JSX.Element);
     onCancel?: () => void;
     onConfirm?: (event?: MouseEvent<HTMLButtonElement>) => void;
     title?: string;
@@ -109,7 +113,7 @@ export const Flyout: FC<FlyoutProps> = ({
         isOpen,
     });
 
-    const { buttonProps } = useButton({ onPress: () => toggle() }, triggerRef);
+    const { buttonProps, isPressed } = useButton({ onPress: () => toggle() }, triggerRef);
 
     useEffect(() => {
         const revert = watchModals();
@@ -125,7 +129,7 @@ export const Flyout: FC<FlyoutProps> = ({
 
     const triggerComponent =
         typeof trigger === "function" ? (
-            trigger(combinedTriggerProps, triggerRef)
+            trigger(combinedTriggerProps, triggerRef, { isFocusVisible, isPressed })
         ) : (
             <div
                 {...combinedTriggerProps}
