@@ -12,8 +12,8 @@ const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
 const TOOLBAR = "[data-test-id=toolbar]";
 const PLACEHOLDER = "My placeholder";
 
-const TEXT_STYLE_DROPDOWN_ID = "[data-test-id=select-trigger]";
-const MENU_ITEM_DROPDOWN_ID = "[data-test-id=select-option]";
+const SELECT_TRIGGER_ID = "[data-test-id=select-trigger]";
+const SELECT_OPTION_ID = "[data-test-id=select-option]";
 
 const getBlockStyleControl = (blockType: string) => `[data-test-id=block-style-button-${blockType}]`;
 const getInlineStyleControl = (style: string) => `[data-test-id=inline-style-button-${style}]`;
@@ -153,20 +153,20 @@ describe("RichTextEditor Component", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(TEXT_STYLE_DROPDOWN_ID).click({ force: true });
-        cy.get(MENU_ITEM_DROPDOWN_ID).first().click();
+        cy.get(SELECT_TRIGGER_ID).click({ force: true });
+        cy.get(SELECT_OPTION_ID).first().click();
         cy.get("[contenteditable=true]").should("include.html", "<h1");
 
-        cy.get(TEXT_STYLE_DROPDOWN_ID).click({ force: true });
-        cy.get(MENU_ITEM_DROPDOWN_ID).eq(1).click();
+        cy.get(SELECT_TRIGGER_ID).click({ force: true });
+        cy.get(SELECT_OPTION_ID).eq(1).click();
         cy.get("[contenteditable=true]").should("include.html", "<h2");
 
-        cy.get(TEXT_STYLE_DROPDOWN_ID).click({ force: true });
-        cy.get(MENU_ITEM_DROPDOWN_ID).eq(2).click();
+        cy.get(SELECT_TRIGGER_ID).click({ force: true });
+        cy.get(SELECT_OPTION_ID).eq(2).click();
         cy.get("[contenteditable=true]").should("include.html", "<h3");
 
-        cy.get(TEXT_STYLE_DROPDOWN_ID).click({ force: true });
-        cy.get(MENU_ITEM_DROPDOWN_ID).eq(3).click();
+        cy.get(SELECT_TRIGGER_ID).click({ force: true });
+        cy.get(SELECT_OPTION_ID).eq(3).click();
         cy.get("[contenteditable=true]").should("include.html", "<h4");
     });
 

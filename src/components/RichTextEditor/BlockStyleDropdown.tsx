@@ -51,48 +51,46 @@ export const BlockStyleDropdown: FC<Props> = ({ textStyles }) => {
         [getTextStyles(identifier, textStyles), "tw-truncate"].join(" ");
 
     return (
-        <div>
-            <Select
-                onSelectionChange={(id) => {
-                    setBlockTypeId(id as BlockStyleTypes);
-                    send({
-                        type: "BLOCK_TYPE_SELECTED",
-                        data: {
-                            type: id as BlockStyleTypes,
-                            active: !!blockTypeIsActive,
-                            editor,
-                        },
-                    });
-                }}
-                selectedKey={blockTypeId || headingTitle[BlockStyleTypes.Paragraph]}
-                placeholder={headingTitle[BlockStyleTypes.Paragraph]}
-            >
-                <Item textValue={headingTitle[BlockStyleTypes.H1]} key={BlockStyleTypes.H1}>
-                    <h1 className={getMenuItemStyle(BlockStyleTypes.H1)}>{headingTitle[BlockStyleTypes.H1]}</h1>
-                </Item>
-                <Item textValue={headingTitle[BlockStyleTypes.H2]} key={BlockStyleTypes.H2}>
-                    <h2 className={getMenuItemStyle(BlockStyleTypes.H2)}>{headingTitle[BlockStyleTypes.H2]}</h2>
-                </Item>
-                <Item textValue={headingTitle[BlockStyleTypes.H3]} key={BlockStyleTypes.H3}>
-                    <h3 className={getMenuItemStyle(BlockStyleTypes.H3)}>{headingTitle[BlockStyleTypes.H3]}</h3>
-                </Item>
-                <Item textValue={headingTitle[BlockStyleTypes.H4]} key={BlockStyleTypes.H4}>
-                    <h4 className={getMenuItemStyle(BlockStyleTypes.H4)}>{headingTitle[BlockStyleTypes.H4]}</h4>
-                </Item>
-                <Item textValue={headingTitle[BlockStyleTypes.Custom01]} key={BlockStyleTypes.Custom01}>
-                    <div className={getMenuItemStyle(BlockStyleTypes.Custom01)}>
-                        {headingTitle[BlockStyleTypes.Custom01]}
-                    </div>
-                </Item>
-                <Item textValue={headingTitle[BlockStyleTypes.Custom02]} key={BlockStyleTypes.Custom02}>
-                    <div className={getMenuItemStyle(BlockStyleTypes.Custom02)}>
-                        {headingTitle[BlockStyleTypes.Custom02]}
-                    </div>
-                </Item>
-                <Item textValue={headingTitle[BlockStyleTypes.Paragraph]} key={BlockStyleTypes.Paragraph}>
-                    <div>{headingTitle[BlockStyleTypes.Paragraph]}</div>
-                </Item>
-            </Select>
-        </div>
+        <Select
+            onSelectionChange={(id) => {
+                setBlockTypeId(id as BlockStyleTypes);
+                send({
+                    type: "BLOCK_TYPE_SELECTED",
+                    data: {
+                        type: id as BlockStyleTypes,
+                        active: !!blockTypeIsActive,
+                        editor,
+                    },
+                });
+            }}
+            selectedKey={blockTypeId || headingTitle[BlockStyleTypes.Paragraph]}
+            placeholder={headingTitle[BlockStyleTypes.Paragraph]}
+        >
+            <Item textValue={headingTitle[BlockStyleTypes.H1]} key={BlockStyleTypes.H1}>
+                <h1 className={getMenuItemStyle(BlockStyleTypes.H1)}>{headingTitle[BlockStyleTypes.H1]}</h1>
+            </Item>
+            <Item textValue={headingTitle[BlockStyleTypes.H2]} key={BlockStyleTypes.H2}>
+                <h2 className={getMenuItemStyle(BlockStyleTypes.H2)}>{headingTitle[BlockStyleTypes.H2]}</h2>
+            </Item>
+            <Item textValue={headingTitle[BlockStyleTypes.H3]} key={BlockStyleTypes.H3}>
+                <h3 className={getMenuItemStyle(BlockStyleTypes.H3)}>{headingTitle[BlockStyleTypes.H3]}</h3>
+            </Item>
+            <Item textValue={headingTitle[BlockStyleTypes.H4]} key={BlockStyleTypes.H4}>
+                <h4 className={getMenuItemStyle(BlockStyleTypes.H4)}>{headingTitle[BlockStyleTypes.H4]}</h4>
+            </Item>
+            <Item textValue={headingTitle[BlockStyleTypes.Custom01]} key={BlockStyleTypes.Custom01}>
+                <div className={getMenuItemStyle(BlockStyleTypes.Custom01)}>
+                    {headingTitle[BlockStyleTypes.Custom01]}
+                </div>
+            </Item>
+            <Item textValue={headingTitle[BlockStyleTypes.Custom02]} key={BlockStyleTypes.Custom02}>
+                <div className={getMenuItemStyle(BlockStyleTypes.Custom02)}>
+                    {headingTitle[BlockStyleTypes.Custom02]}
+                </div>
+            </Item>
+            <Item textValue={headingTitle[BlockStyleTypes.Paragraph]} key={BlockStyleTypes.Paragraph}>
+                <div>{headingTitle[BlockStyleTypes.Paragraph]}</div>
+            </Item>
+        </Select>
     );
 };
