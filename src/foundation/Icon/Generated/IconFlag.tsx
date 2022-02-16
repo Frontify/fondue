@@ -1,0 +1,29 @@
+
+    import React, { memo } from "react";
+    import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+    import { IconSize } from "@foundation/Icon/IconSize";
+
+    import IconFlag12 from './IconFlag12';import IconFlag16 from './IconFlag16';import IconFlag20 from './IconFlag20';import IconFlag24 from './IconFlag24';import IconFlag32 from './IconFlag32'
+    
+    function IconFlag(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+        const size = props.size || IconSize.Size16;
+        return (
+            <span>
+                {size === IconSize.Size12 && !props.filled && (
+                    <IconFlag12/>
+                )}{size === IconSize.Size16 && !props.filled && (
+                    <IconFlag16/>
+                )}{size === IconSize.Size20 && !props.filled && (
+                    <IconFlag20/>
+                )}{size === IconSize.Size24 && !props.filled && (
+                    <IconFlag24/>
+                )}{size === IconSize.Size32 && !props.filled && (
+                    <IconFlag32/>
+                )}
+            </span>
+        );
+    }
+    
+    const Memo = memo(IconFlag);
+    export default Memo;
+    

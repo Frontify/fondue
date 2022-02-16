@@ -1,27 +1,29 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
-function IconPills(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
-    return (
-        <svg
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconPills"
-            {...props}
-        >
-            <path d="M3 10.5V12h3v-1.5H3zM3 9h3a1.5 1.5 0 0 1 1.5 1.5V12A1.5 1.5 0 0 1 6 13.5H3A1.5 1.5 0 0 1 1.5 12v-1.5A1.5 1.5 0 0 1 3 9zm7.5 1.5V12h3v-1.5h-3zm0-1.5h3a1.5 1.5 0 0 1 1.5 1.5V12a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 12v-1.5A1.5 1.5 0 0 1 10.5 9zm7.5 1.5V12h3v-1.5h-3zM18 9h3a1.5 1.5 0 0 1 1.5 1.5V12a1.5 1.5 0 0 1-1.5 1.5h-3a1.5 1.5 0 0 1-1.5-1.5v-1.5A1.5 1.5 0 0 1 18 9z" />
-        </svg>
-    );
-}
+    import React, { memo } from "react";
+    import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+    import { IconSize } from "@foundation/Icon/IconSize";
 
-const Memo = memo(IconPills);
-export default Memo;
+    import IconPills12 from './IconPills12';import IconPills16 from './IconPills16';import IconPills20 from './IconPills20';import IconPills24 from './IconPills24';import IconPills32 from './IconPills32'
+    
+    function IconPills(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+        const size = props.size || IconSize.Size16;
+        return (
+            <span>
+                {size === IconSize.Size12 && !props.filled && (
+                    <IconPills12/>
+                )}{size === IconSize.Size16 && !props.filled && (
+                    <IconPills16/>
+                )}{size === IconSize.Size20 && !props.filled && (
+                    <IconPills20/>
+                )}{size === IconSize.Size24 && !props.filled && (
+                    <IconPills24/>
+                )}{size === IconSize.Size32 && !props.filled && (
+                    <IconPills32/>
+                )}
+            </span>
+        );
+    }
+    
+    const Memo = memo(IconPills);
+    export default Memo;
+    

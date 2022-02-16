@@ -1,0 +1,29 @@
+
+    import React, { memo } from "react";
+    import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+    import { IconSize } from "@foundation/Icon/IconSize";
+
+    import IconCode12 from './IconCode12';import IconCode16 from './IconCode16';import IconCode20 from './IconCode20';import IconCode24 from './IconCode24';import IconCode32 from './IconCode32'
+    
+    function IconCode(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+        const size = props.size || IconSize.Size16;
+        return (
+            <span>
+                {size === IconSize.Size12 && !props.filled && (
+                    <IconCode12/>
+                )}{size === IconSize.Size16 && !props.filled && (
+                    <IconCode16/>
+                )}{size === IconSize.Size20 && !props.filled && (
+                    <IconCode20/>
+                )}{size === IconSize.Size24 && !props.filled && (
+                    <IconCode24/>
+                )}{size === IconSize.Size32 && !props.filled && (
+                    <IconCode32/>
+                )}
+            </span>
+        );
+    }
+    
+    const Memo = memo(IconCode);
+    export default Memo;
+    

@@ -1,27 +1,29 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
-function IconCaretUp(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
-    return (
-        <svg
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconCaretUp"
-            {...props}
-        >
-            <path d="M18.862 15.52 11.98 8.946 5.09 15.52a.84.84 0 0 1-1.102-.041.75.75 0 0 1-.043-1.053L11.98 6.75l8.034 7.677a.751.751 0 0 1 0 1.094.83.83 0 0 1-.576.229.83.83 0 0 1-.576-.23Z" />
-        </svg>
-    );
-}
+    import React, { memo } from "react";
+    import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+    import { IconSize } from "@foundation/Icon/IconSize";
 
-const Memo = memo(IconCaretUp);
-export default Memo;
+    import IconCaretUp12 from './IconCaretUp12';import IconCaretUp16 from './IconCaretUp16';import IconCaretUp20 from './IconCaretUp20';import IconCaretUp24 from './IconCaretUp24';import IconCaretUp32 from './IconCaretUp32'
+    
+    function IconCaretUp(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+        const size = props.size || IconSize.Size16;
+        return (
+            <span>
+                {size === IconSize.Size12 && !props.filled && (
+                    <IconCaretUp12/>
+                )}{size === IconSize.Size16 && !props.filled && (
+                    <IconCaretUp16/>
+                )}{size === IconSize.Size20 && !props.filled && (
+                    <IconCaretUp20/>
+                )}{size === IconSize.Size24 && !props.filled && (
+                    <IconCaretUp24/>
+                )}{size === IconSize.Size32 && !props.filled && (
+                    <IconCaretUp32/>
+                )}
+            </span>
+        );
+    }
+    
+    const Memo = memo(IconCaretUp);
+    export default Memo;
+    

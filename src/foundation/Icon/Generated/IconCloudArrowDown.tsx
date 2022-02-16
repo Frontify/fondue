@@ -1,0 +1,29 @@
+
+    import React, { memo } from "react";
+    import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+    import { IconSize } from "@foundation/Icon/IconSize";
+
+    import IconCloudArrowDown12 from './IconCloudArrowDown12';import IconCloudArrowDown16 from './IconCloudArrowDown16';import IconCloudArrowDown20 from './IconCloudArrowDown20';import IconCloudArrowDown24 from './IconCloudArrowDown24';import IconCloudArrowDown32 from './IconCloudArrowDown32'
+    
+    function IconCloudArrowDown(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+        const size = props.size || IconSize.Size16;
+        return (
+            <span>
+                {size === IconSize.Size12 && !props.filled && (
+                    <IconCloudArrowDown12/>
+                )}{size === IconSize.Size16 && !props.filled && (
+                    <IconCloudArrowDown16/>
+                )}{size === IconSize.Size20 && !props.filled && (
+                    <IconCloudArrowDown20/>
+                )}{size === IconSize.Size24 && !props.filled && (
+                    <IconCloudArrowDown24/>
+                )}{size === IconSize.Size32 && !props.filled && (
+                    <IconCloudArrowDown32/>
+                )}
+            </span>
+        );
+    }
+    
+    const Memo = memo(IconCloudArrowDown);
+    export default Memo;
+    

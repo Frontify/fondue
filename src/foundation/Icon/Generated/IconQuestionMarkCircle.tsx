@@ -1,0 +1,29 @@
+
+    import React, { memo } from "react";
+    import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+    import { IconSize } from "@foundation/Icon/IconSize";
+
+    import IconQuestionMarkCircle12 from './IconQuestionMarkCircle12';import IconQuestionMarkCircle16 from './IconQuestionMarkCircle16';import IconQuestionMarkCircle20 from './IconQuestionMarkCircle20';import IconQuestionMarkCircle24 from './IconQuestionMarkCircle24';import IconQuestionMarkCircle32 from './IconQuestionMarkCircle32'
+    
+    function IconQuestionMarkCircle(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+        const size = props.size || IconSize.Size16;
+        return (
+            <span>
+                {size === IconSize.Size12 && !props.filled && (
+                    <IconQuestionMarkCircle12/>
+                )}{size === IconSize.Size16 && !props.filled && (
+                    <IconQuestionMarkCircle16/>
+                )}{size === IconSize.Size20 && !props.filled && (
+                    <IconQuestionMarkCircle20/>
+                )}{size === IconSize.Size24 && !props.filled && (
+                    <IconQuestionMarkCircle24/>
+                )}{size === IconSize.Size32 && !props.filled && (
+                    <IconQuestionMarkCircle32/>
+                )}
+            </span>
+        );
+    }
+    
+    const Memo = memo(IconQuestionMarkCircle);
+    export default Memo;
+    

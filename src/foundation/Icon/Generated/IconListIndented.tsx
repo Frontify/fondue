@@ -1,32 +1,29 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
-function IconListIndented(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
-    return (
-        <svg
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconListIndented"
-            {...props}
-        >
-            <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M21 6a1 1 0 0 1-1 1H8a1 1 0 1 1 0-2h12a1 1 0 0 1 1 1ZM7 18a1 1 0 0 1 1-1h10a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1ZM19 10a1 1 0 0 1-1 1H8a1 1 0 1 1 0-2h10a1 1 0 0 1 1 1ZM21 14a1 1 0 0 1-1 1H8a1 1 0 1 1 0-2h12a1 1 0 0 1 1 1Z"
-            />
-            <path d="M3 6a1 1 0 0 1 2 0v12a1 1 0 1 1-2 0V6Z" />
-        </svg>
-    );
-}
+    import React, { memo } from "react";
+    import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+    import { IconSize } from "@foundation/Icon/IconSize";
 
-const Memo = memo(IconListIndented);
-export default Memo;
+    import IconListIndented12 from './IconListIndented12';import IconListIndented16 from './IconListIndented16';import IconListIndented20 from './IconListIndented20';import IconListIndented24 from './IconListIndented24';import IconListIndented32 from './IconListIndented32'
+    
+    function IconListIndented(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+        const size = props.size || IconSize.Size16;
+        return (
+            <span>
+                {size === IconSize.Size12 && !props.filled && (
+                    <IconListIndented12/>
+                )}{size === IconSize.Size16 && !props.filled && (
+                    <IconListIndented16/>
+                )}{size === IconSize.Size20 && !props.filled && (
+                    <IconListIndented20/>
+                )}{size === IconSize.Size24 && !props.filled && (
+                    <IconListIndented24/>
+                )}{size === IconSize.Size32 && !props.filled && (
+                    <IconListIndented32/>
+                )}
+            </span>
+        );
+    }
+    
+    const Memo = memo(IconListIndented);
+    export default Memo;
+    

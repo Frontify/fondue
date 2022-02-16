@@ -1,0 +1,29 @@
+
+    import React, { memo } from "react";
+    import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+    import { IconSize } from "@foundation/Icon/IconSize";
+
+    import IconCheckMark12 from './IconCheckMark12';import IconCheckMark16 from './IconCheckMark16';import IconCheckMark20 from './IconCheckMark20';import IconCheckMark24 from './IconCheckMark24';import IconCheckMark32 from './IconCheckMark32'
+    
+    function IconCheckMark(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+        const size = props.size || IconSize.Size16;
+        return (
+            <span>
+                {size === IconSize.Size12 && !props.filled && (
+                    <IconCheckMark12/>
+                )}{size === IconSize.Size16 && !props.filled && (
+                    <IconCheckMark16/>
+                )}{size === IconSize.Size20 && !props.filled && (
+                    <IconCheckMark20/>
+                )}{size === IconSize.Size24 && !props.filled && (
+                    <IconCheckMark24/>
+                )}{size === IconSize.Size32 && !props.filled && (
+                    <IconCheckMark32/>
+                )}
+            </span>
+        );
+    }
+    
+    const Memo = memo(IconCheckMark);
+    export default Memo;
+    

@@ -1,27 +1,29 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
-function IconTypography(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
-    return (
-        <svg
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconTypography"
-            {...props}
-        >
-            <path d="M12.818 19.436h3.273V21H7.909v-1.564h3.273V4.564H4.636V6.92H3V3h18v3.92h-1.636V4.564h-6.546z" />
-        </svg>
-    );
-}
+    import React, { memo } from "react";
+    import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+    import { IconSize } from "@foundation/Icon/IconSize";
 
-const Memo = memo(IconTypography);
-export default Memo;
+    import IconTypography12 from './IconTypography12';import IconTypography16 from './IconTypography16';import IconTypography20 from './IconTypography20';import IconTypography24 from './IconTypography24';import IconTypography32 from './IconTypography32'
+    
+    function IconTypography(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+        const size = props.size || IconSize.Size16;
+        return (
+            <span>
+                {size === IconSize.Size12 && !props.filled && (
+                    <IconTypography12/>
+                )}{size === IconSize.Size16 && !props.filled && (
+                    <IconTypography16/>
+                )}{size === IconSize.Size20 && !props.filled && (
+                    <IconTypography20/>
+                )}{size === IconSize.Size24 && !props.filled && (
+                    <IconTypography24/>
+                )}{size === IconSize.Size32 && !props.filled && (
+                    <IconTypography32/>
+                )}
+            </span>
+        );
+    }
+    
+    const Memo = memo(IconTypography);
+    export default Memo;
+    

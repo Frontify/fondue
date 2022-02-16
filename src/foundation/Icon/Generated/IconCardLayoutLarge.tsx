@@ -1,0 +1,29 @@
+
+    import React, { memo } from "react";
+    import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+    import { IconSize } from "@foundation/Icon/IconSize";
+
+    import IconCardLayoutLarge12 from './IconCardLayoutLarge12';import IconCardLayoutLarge16 from './IconCardLayoutLarge16';import IconCardLayoutLarge20 from './IconCardLayoutLarge20';import IconCardLayoutLarge24 from './IconCardLayoutLarge24';import IconCardLayoutLarge32 from './IconCardLayoutLarge32'
+    
+    function IconCardLayoutLarge(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+        const size = props.size || IconSize.Size16;
+        return (
+            <span>
+                {size === IconSize.Size12 && !props.filled && (
+                    <IconCardLayoutLarge12/>
+                )}{size === IconSize.Size16 && !props.filled && (
+                    <IconCardLayoutLarge16/>
+                )}{size === IconSize.Size20 && !props.filled && (
+                    <IconCardLayoutLarge20/>
+                )}{size === IconSize.Size24 && !props.filled && (
+                    <IconCardLayoutLarge24/>
+                )}{size === IconSize.Size32 && !props.filled && (
+                    <IconCardLayoutLarge32/>
+                )}
+            </span>
+        );
+    }
+    
+    const Memo = memo(IconCardLayoutLarge);
+    export default Memo;
+    

@@ -1,0 +1,29 @@
+
+    import React, { memo } from "react";
+    import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+    import { IconSize } from "@foundation/Icon/IconSize";
+
+    import IconChartBars12 from './IconChartBars12';import IconChartBars16 from './IconChartBars16';import IconChartBars20 from './IconChartBars20';import IconChartBars24 from './IconChartBars24';import IconChartBars32 from './IconChartBars32'
+    
+    function IconChartBars(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+        const size = props.size || IconSize.Size16;
+        return (
+            <span>
+                {size === IconSize.Size12 && !props.filled && (
+                    <IconChartBars12/>
+                )}{size === IconSize.Size16 && !props.filled && (
+                    <IconChartBars16/>
+                )}{size === IconSize.Size20 && !props.filled && (
+                    <IconChartBars20/>
+                )}{size === IconSize.Size24 && !props.filled && (
+                    <IconChartBars24/>
+                )}{size === IconSize.Size32 && !props.filled && (
+                    <IconChartBars32/>
+                )}
+            </span>
+        );
+    }
+    
+    const Memo = memo(IconChartBars);
+    export default Memo;
+    
