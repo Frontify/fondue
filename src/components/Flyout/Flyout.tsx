@@ -113,7 +113,7 @@ export const Flyout: FC<FlyoutProps> = ({
         isOpen,
     });
 
-    const { buttonProps, isPressed } = useButton({ onPress: () => toggle() }, triggerRef);
+    const { buttonProps, isPressed } = useButton({ onPress: () => toggle(), elementType: "div" }, triggerRef);
 
     useEffect(() => {
         const revert = watchModals();
@@ -134,8 +134,6 @@ export const Flyout: FC<FlyoutProps> = ({
             <div
                 {...combinedTriggerProps}
                 ref={triggerRef}
-                role="button"
-                tabIndex={0}
                 className={merge([
                     "tw-outline-none tw-rounded",
                     hug ? "tw-mx-3" : "tw-w-full",
