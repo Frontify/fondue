@@ -9,19 +9,19 @@ const FLYOUT_OVERLAY_OFFSET = 5;
 const DEFAULT_OVERLAY_PADDING = 12;
 const INTERCOM_BUTTON_HEIGHT = 70;
 
-type UseOverlayPositionWithBottomPaddingProps = {
+type UseOverlayPositionWithBottomMarginProps = {
     triggerRef: MutableRefObject<HTMLElement | null>;
     overlayRef: MutableRefObject<HTMLElement | null>;
     scrollRef: MutableRefObject<HTMLElement | null>;
     isOpen: boolean;
 };
 
-export const useOverlayPositionWithBottomPadding = ({
+export const useOverlayPositionWithBottomMargin = ({
     triggerRef,
     overlayRef,
     scrollRef,
     isOpen,
-}: UseOverlayPositionWithBottomPaddingProps) => {
+}: UseOverlayPositionWithBottomMarginProps) => {
     const overlayHeight = getTotalOverlayHeight(overlayRef, scrollRef);
 
     const isFlipped = shouldDisplayAbove(triggerRef, overlayHeight, FLYOUT_OVERLAY_OFFSET, INTERCOM_BUTTON_HEIGHT);

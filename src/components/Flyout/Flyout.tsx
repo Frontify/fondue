@@ -13,7 +13,7 @@ import React, { FC, MouseEvent, PropsWithChildren, ReactNode, useEffect, useRef 
 import { LegacyFlyoutFooter } from ".";
 import { Overlay } from "./Overlay";
 import { useContainScroll } from "./hooks/useContainScroll";
-import { useOverlayPositionWithBottomPadding } from "./hooks/useOverlayPositionWithBottomPadding";
+import { useOverlayPositionWithBottomMargin } from "./hooks/useOverlayPositionWithBottomMargin";
 
 export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
 export const FLYOUT_DIVIDER_HEIGHT = "10px";
@@ -67,7 +67,7 @@ export const Flyout: FC<FlyoutProps> = ({
         triggerRef,
     );
 
-    const { positionProps } = useOverlayPositionWithBottomPadding({
+    const { positionProps } = useOverlayPositionWithBottomMargin({
         triggerRef,
         overlayRef,
         scrollRef,
