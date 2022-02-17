@@ -5,7 +5,7 @@ import React from "react";
 import { FieldsetHeader, FieldsetHeaderType } from "./FieldsetHeader";
 
 const HEADING = "bar";
-export const FIELDSET_HEADER_ID = "[data-test-id=fieldset-header]";
+const FIELDSET_HEADER_ID = "[data-test-id=fieldset-header]";
 
 describe("FieldsetHeader Composition", () => {
     it("should not fire click handler if disabled", () => {

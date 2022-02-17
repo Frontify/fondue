@@ -4,7 +4,7 @@ import { mount } from "@cypress/react";
 import React from "react";
 import { Tag, TagType } from "./Tag";
 
-export const TAG_ID = "[data-test-id=tag]";
+const TAG_ID = "[data-test-id=tag]";
 const TAG_LABEL = "My awesome tag";
 const TAG_REJECT_ICON_ATTRIBUTE = "svg[name=IconReject]";
 

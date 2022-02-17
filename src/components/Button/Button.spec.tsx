@@ -6,7 +6,7 @@ import React from "react";
 import { Button, ButtonRounding, ButtonSize, ButtonStyle } from "./Button";
 
 const BUTTON_TEXT = "Frontify";
-export const BUTTON_ID = "[data-test-id=button]";
+const BUTTON_ID = "[data-test-id=button]";
 
 const styles = Object.values(ButtonStyle);
 const sizes = Object.values(ButtonSize);

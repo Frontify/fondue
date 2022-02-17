@@ -5,9 +5,9 @@ import React, { FC, useState } from "react";
 import { Checkbox, CheckboxProps, CheckboxState } from "./Checkbox";
 
 const CHECKBOX_LABEL = "Checkbox label";
-export const CHECKBOX_ID = "[data-test-id=checkbox]";
+const CHECKBOX_ID = "[data-test-id=checkbox]";
 const TOOLTIP_ID = "[data-test-id=tooltip]";
-export const CHECKBOX_INPUT_ID = "[data-test-id=checkbox-input]";
+const CHECKBOX_INPUT_ID = "[data-test-id=checkbox-input]";
 const TOOLTIP_ICON_TRIGGER_ID = "[data-test-id=tooltip-icon-trigger]";
 
 const CheckboxComponent: FC<Omit<CheckboxProps, "value">> = (props) => {
