@@ -17,23 +17,23 @@ describe("Card Component", () => {
     });
 
     it("should call onClick", () => {
-        const stubbedOnClick = cy.stub();
-        mount(<Card onClick={stubbedOnClick}>{CARD_CHILDREN}</Card>);
+        const onClickStub = cy.stub();
+        mount(<Card onClick={onClickStub}>{CARD_CHILDREN}</Card>);
 
         cy.get(CARD_ID).click();
         cy.get(CARD_ID).invoke("attr", "tabIndex").should("equal", "0");
-        cy.wrap(stubbedOnClick).should("have.been.called");
+        cy.wrap(onClickStub).should("have.been.called");
     });
 
     it("should be accessible", () => {
-        const stubbedOnClick = cy.stub();
-        mount(<Card onClick={stubbedOnClick}>{CARD_CHILDREN}</Card>);
+        const onClickStub = cy.stub();
+        mount(<Card onClick={onClickStub}>{CARD_CHILDREN}</Card>);
 
         cy.window().focus();
         cy.get("body").realPress("Tab");
         cy.get(CARD_ID).should("have.class", FOCUS_STYLE);
         cy.get(CARD_ID).realPress("Enter");
-        cy.wrap(stubbedOnClick).should("have.been.called");
+        cy.wrap(onClickStub).should("have.been.called");
     });
 
     it("should not be focusable/tabbable if no onClick supplied", () => {
