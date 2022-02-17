@@ -3,33 +3,29 @@
 import { MutableRefObject } from "react";
 
 type shouldDisplayAboveProps = {
-    triggerRef: MutableRefObject<HTMLDivElement | null>;
+    triggerRef: MutableRefObject<HTMLElement | null>;
     overlayHeight?: number;
-    margins: {
-        top: number;
-        bottom: number;
-    };
     offset?: number;
+    bottomMargin: number;
 };
 
 export const shouldDisplayAbove = ({
     triggerRef,
     overlayHeight,
-    margins,
     offset = 0,
+    bottomMargin,
 }: shouldDisplayAboveProps): boolean => {
     if (!triggerRef.current || !overlayHeight) {
         return false;
     }
 
     let displayAbove = false;
-    const { top: marginTop, bottom: marginBottom } = margins;
     const { top: triggerTop, bottom: triggerBottom } = triggerRef.current.getBoundingClientRect();
     const viewportHeight = window.visualViewport.height;
-    const spaceBelow = viewportHeight - triggerBottom - offset - marginBottom;
+    const spaceBelow = viewportHeight - triggerBottom - offset - bottomMargin;
 
     if (spaceBelow < overlayHeight) {
-        const spaceAbove = triggerTop - offset - marginTop;
+        const spaceAbove = triggerTop - offset;
         displayAbove = spaceBelow < spaceAbove;
     }
 
