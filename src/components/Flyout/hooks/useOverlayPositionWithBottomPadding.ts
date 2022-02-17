@@ -2,8 +2,8 @@
 
 import { useOverlayPosition } from "@react-aria/overlays";
 import { MutableRefObject } from "react";
-import { getTotalOverlayHeight } from "./helpers/getTotalOverlayHeight";
-import { shouldDisplayAbove } from "./helpers/shouldDisplayAbove";
+import { getTotalOverlayHeight } from "../helpers/getTotalOverlayHeight";
+import { shouldDisplayAbove } from "../helpers/shouldDisplayAbove";
 
 const FLYOUT_OVERLAY_OFFSET = 5;
 const DEFAULT_OVERLAY_PADDING = 12;

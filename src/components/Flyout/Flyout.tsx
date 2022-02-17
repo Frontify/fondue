@@ -12,8 +12,8 @@ import { merge } from "@utilities/merge";
 import React, { FC, MouseEvent, PropsWithChildren, ReactNode, useEffect, useRef } from "react";
 import { LegacyFlyoutFooter } from ".";
 import { Overlay } from "./Overlay";
-import { useContainScroll } from "./useContainScroll";
-import { useOverlayPositionWithBottomPadding } from "./useOverlayPositionWithBottomPadding";
+import { useContainScroll } from "./hooks/useContainScroll";
+import { useOverlayPositionWithBottomPadding } from "./hooks/useOverlayPositionWithBottomPadding";
 
 export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
 export const FLYOUT_DIVIDER_HEIGHT = "10px";
