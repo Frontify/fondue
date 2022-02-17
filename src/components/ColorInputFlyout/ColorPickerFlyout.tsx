@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ColorPicker, ColorPickerProps } from "@components/ColorPicker/ColorPicker";
-import { Flyout, FlyoutVerticalMargin } from "@components/Flyout/Flyout";
+import { Flyout } from "@components/Flyout/Flyout";
 import React, { FC, useState } from "react";
 import { Color, ColorFormat } from "../../types/colors";
 import { ColorInputTrigger } from "./ColorPickerTrigger";
@@ -13,7 +13,6 @@ export type ColorPickerFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSele
     onClick?: () => void;
     onClose?: () => void;
     currentColor: Color | null;
-    verticalMargin?: FlyoutVerticalMargin;
 };
 
 export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
@@ -24,7 +23,6 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
     currentColor,
     palettes,
     disabled = false,
-    verticalMargin,
 }) => {
     const [open, setOpen] = useState(false);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
@@ -43,7 +41,6 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
 
     return (
         <Flyout
-            verticalMargin={verticalMargin}
             hug={false}
             onConfirm={handleClick}
             isOpen={open}
