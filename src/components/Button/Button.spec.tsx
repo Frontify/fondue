@@ -3,7 +3,7 @@
 import { mount } from "@cypress/react";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import React from "react";
-import { Button, ButtonSize, ButtonStyle } from "./Button";
+import { Button, ButtonRounding, ButtonSize, ButtonStyle } from "./Button";
 
 const BUTTON_TEXT = "Frontify";
 export const BUTTON_ID = "[data-test-id=button]";
@@ -45,6 +45,24 @@ describe("Button component", () => {
 
                     cy.get(BUTTON_ID).children("svg").should("be.visible");
                     cy.get(BUTTON_ID).should("not.contain", BUTTON_TEXT);
+                });
+
+                it(`renders in ${style} ${size} and ${
+                    solid ? "solid" : "translucent"
+                } with only an icon and fully rounded.`, () => {
+                    mount(
+                        <Button
+                            style={style}
+                            size={size}
+                            solid={solid}
+                            icon={<IconIcons />}
+                            rounding={ButtonRounding.Full}
+                        />,
+                    );
+
+                    cy.get(BUTTON_ID).children("svg").should("be.visible");
+                    cy.get(BUTTON_ID).should("not.contain", BUTTON_TEXT);
+                    cy.get(BUTTON_ID).should("have.class", "tw-rounded-full");
                 });
 
                 it(`renders in ${style} ${size} and ${solid ? "solid" : "translucent"} with an icon and text.`, () => {
