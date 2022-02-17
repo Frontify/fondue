@@ -5,6 +5,9 @@ import { Story, Meta } from "@storybook/react";
 import { Card, CardProps } from "./Card";
 import { Slider } from "@components/Slider/Slider";
 import { Divider } from "@components/Divider/Divider";
+import { Stack } from "../../layout/Stack";
+import { Text } from "../../typography/Text";
+import { Button, ButtonStyle } from "@components/Button";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -45,7 +48,16 @@ const Template: Story<CardProps> = (args) => <Card {...args} />;
 export const Default = Template.bind({});
 
 Default.args = {
-    children: "Children",
+    children: (
+        <Stack direction="row" padding="m" spacing="l" align="center" justify="between">
+            <Text>I am a card component with some content</Text>
+            <Stack spacing="m" padding="none">
+                <Button>Button 1</Button>
+                <Button style={ButtonStyle.Secondary}>Button 2</Button>
+                <Button>Button 3</Button>
+            </Stack>
+        </Stack>
+    ),
 };
 
 const ChildComponent = () => {
@@ -98,7 +110,19 @@ export const MultipleCards: Story<CardProps> = () => (
 export const WithOnClick = Template.bind({});
 
 WithOnClick.args = {
-    children: "I'm clickable!",
+    children: (
+        <Stack direction="row" padding="m" spacing="l" align="center" justify="between">
+            <div>
+                <Text as="p">I am a card component with a clickable container</Text>
+                <Text as="p">Click anywhere to see the click action</Text>
+            </div>
+            <Stack spacing="m" padding="none">
+                <Button>Button 1</Button>
+                <Button style={ButtonStyle.Secondary}>Button 2</Button>
+                <Button>Button 3</Button>
+            </Stack>
+        </Stack>
+    ),
 };
 
 WithOnClick.argTypes = {
