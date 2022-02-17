@@ -9,12 +9,13 @@ import { mergeProps } from "@react-aria/utils";
 import { useOverlayTriggerState } from "@react-stately/overlays";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, MouseEvent, PropsWithChildren, ReactNode, useEffect, useMemo, useRef } from "react";
+import React, { FC, MouseEvent, PropsWithChildren, ReactNode, useEffect, useRef } from "react";
 import { LegacyFlyoutFooter } from ".";
 import { Overlay } from "./Overlay";
 import { shouldDisplayAbove } from "./helpers/shouldDisplayAbove";
 import { useContainScroll } from "./useContainScroll";
 import { subtractVerticalMarginFromMaxHeight } from "./helpers/subtractVerticalMarginFromMaxHeight";
+import { getTotalOverlayHeight } from "./helpers/getTotalOverlayHeight";
 
 export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
 export const FLYOUT_DIVIDER_HEIGHT = "10px";
@@ -78,16 +79,7 @@ export const Flyout: FC<FlyoutProps> = ({
         triggerRef,
     );
 
-    const overlayHeight = useMemo(() => {
-        let height = 0;
-        if (scrollRef.current && innerOverlayRef.current) {
-            const outerScrollHeight = innerOverlayRef.current.scrollHeight;
-            const { scrollHeight: innerScrollHeight, clientHeight: innerClientHeight } = scrollRef.current;
-            height = outerScrollHeight + (innerScrollHeight - innerClientHeight);
-        }
-
-        return height;
-    }, [innerOverlayRef.current, scrollRef.current?.scrollHeight, scrollRef.current?.clientHeight]);
+    const overlayHeight = getTotalOverlayHeight(innerOverlayRef, scrollRef);
 
     const margins = {
         top: verticalMargin?.top ?? DEFAULT_OVERLAY_PADDING,
