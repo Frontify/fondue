@@ -35,7 +35,7 @@ const getShapeFolderPaths = async () => {
 };
 
 /**
- * Given an icon name, returns the size of the icon. Returns false if no size found.
+ * Given an icon name, returns the size of the icon. Returns null if no size found.
  */
 const getSize = (name) => {
     let size = null;
