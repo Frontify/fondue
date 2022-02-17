@@ -10,6 +10,7 @@ import {
     createIndentPlugin,
     createItalicPlugin,
     createLinkPlugin,
+    createListPlugin,
     createParagraphPlugin,
     createPlateUI,
     createPlugins,
@@ -46,6 +47,7 @@ export const plugins = createPlugins(
         createParagraphPlugin(),
         createCodeBlockPlugin(),
         createHeadingPlugin(),
+        createListPlugin(),
         createIndentListPlugin(),
         createIndentPlugin({
             inject: {
