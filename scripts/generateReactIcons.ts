@@ -20,7 +20,7 @@ export const GENERATED_ICONS_INDEX_PATH = `${GENERATED_ICONS_DIRECTORY}index.ts`
 /**
  * Gets an array of all svg file paths from the source directory
  */
-const getSvgPaths = async () => {
+const getSvgFilePaths = async () => {
     return await fastGlob(`${ICON_SOURCE_DIRECTORY}**/*.svg`, { objectMode: true });
 };
 
@@ -135,7 +135,7 @@ const generateIndex = async () => {
  * Script
  */
 (async () => {
-    const iconSvgPaths = await getSvgPaths();
+    const iconSvgPaths = await getSvgFilePaths();
     const iconShapeFolderPaths = await getShapeFolderPaths();
 
     iconSvgPaths.forEach((svgPath: Entry) => {
