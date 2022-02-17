@@ -70,10 +70,10 @@ WithStatus.args = {
     status: BadgeStatus.Positive,
 };
 
-export const WithHexStatusColor = BadgeTemplate.bind({});
+export const WithCustomStatusColor = BadgeTemplate.bind({});
 
-WithHexStatusColor.args = {
-    status: "#FFC0CB",
+WithCustomStatusColor.args = {
+    status: { r: 40, g: 200, b: 100, a: 1 },
 };
 
 export const WithIcon = BadgeTemplate.bind({});
