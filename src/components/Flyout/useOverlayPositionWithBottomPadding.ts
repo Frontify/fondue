@@ -43,7 +43,8 @@ export const useOverlayPositionWithBottomPadding = ({
     });
 
     if (typeof positionProps?.style?.maxHeight === "number" && !isFlipped) {
-        positionProps.style.maxHeight -= INTERCOM_BUTTON_HEIGHT - DEFAULT_OVERLAY_PADDING;
+        const heightToSubtract = INTERCOM_BUTTON_HEIGHT - DEFAULT_OVERLAY_PADDING;
+        positionProps.style.maxHeight -= heightToSubtract;
     }
 
     return { positionProps };
