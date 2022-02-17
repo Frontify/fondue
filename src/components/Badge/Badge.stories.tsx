@@ -76,6 +76,12 @@ WithCustomStatusColor.args = {
     status: { r: 40, g: 200, b: 100, a: 1 },
 };
 
+export const WithCustomStatusString = BadgeTemplate.bind({});
+
+WithCustomStatusString.args = {
+    status: "#f14394",
+};
+
 export const WithIcon = BadgeTemplate.bind({});
 
 WithIcon.argTypes = {

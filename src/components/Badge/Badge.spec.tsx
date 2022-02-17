@@ -93,7 +93,7 @@ describe("Badge component", () => {
         cy.wrap(onDismissStub).should("have.been.calledOnce");
     });
 
-    it("should display custom status dot with Color input", () => {
+    it("should display custom status dot with Color value", () => {
         const r = 30;
         const g = 40;
         const b = 50;
