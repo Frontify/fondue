@@ -9,10 +9,7 @@ import { merge } from "@utilities/merge";
 import React, { Children, forwardRef, ForwardRefRenderFunction, HTMLAttributes, RefObject } from "react";
 import { FlyoutProps } from ".";
 
-type OverlayProps = Omit<
-    FlyoutProps,
-    "trigger" | "onOpenChange" | "verticalMargin" | "onConfirm" | "legacyFooter" | "onCancel"
-> & {
+type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange" | "onConfirm" | "legacyFooter" | "onCancel"> & {
     positionProps: HTMLAttributes<Element>;
     overlayTriggerProps: HTMLAttributes<Element>;
     scrollRef: RefObject<HTMLDivElement>;
@@ -70,7 +67,6 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                     {Children.map(children, (child, index) => (
                         <div key={index}>{child}</div>
                     ))}
-
                     <DismissButton onDismiss={onClose} />
                 </div>
                 {fixedFooter}

@@ -24,12 +24,7 @@ export const useOverlayPositionWithBottomPadding = ({
 }: UseOverlayPositionWithBottomPaddingProps) => {
     const overlayHeight = getTotalOverlayHeight(overlayRef, scrollRef);
 
-    const isFlipped = shouldDisplayAbove({
-        triggerRef,
-        overlayHeight,
-        offset: FLYOUT_OVERLAY_OFFSET,
-        bottomMargin: INTERCOM_BUTTON_HEIGHT,
-    });
+    const isFlipped = shouldDisplayAbove(triggerRef, overlayHeight, FLYOUT_OVERLAY_OFFSET, INTERCOM_BUTTON_HEIGHT);
 
     const { overlayProps: positionProps } = useOverlayPosition({
         targetRef: triggerRef,

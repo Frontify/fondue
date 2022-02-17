@@ -2,19 +2,12 @@
 
 import { MutableRefObject } from "react";
 
-type shouldDisplayAboveProps = {
-    triggerRef: MutableRefObject<HTMLElement | null>;
-    overlayHeight?: number;
-    offset?: number;
-    bottomMargin: number;
-};
-
-export const shouldDisplayAbove = ({
-    triggerRef,
-    overlayHeight,
-    offset = 0,
-    bottomMargin,
-}: shouldDisplayAboveProps): boolean => {
+export const shouldDisplayAbove = (
+    triggerRef: MutableRefObject<HTMLElement | null>,
+    overlayHeight: number,
+    offset: number,
+    bottomMargin: number,
+): boolean => {
     if (!triggerRef.current || !overlayHeight) {
         return false;
     }
