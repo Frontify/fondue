@@ -8,7 +8,7 @@ import { BadgeStyle } from ".";
 import { Badge, BadgeStatus } from "./Badge";
 
 const BADGE_TEXT = "Frontify";
-export const BADGE_ID = "[data-test-id=badge]";
+const BADGE_ID = "[data-test-id=badge]";
 const BADGE_STATUS_ID = "[data-test-id=badge-status]";
 const BADGE_ICON_ID = "[data-test-id=badge-icon]";
 const BADGE_DISMISS = "[data-test-id=badge-dismiss]";

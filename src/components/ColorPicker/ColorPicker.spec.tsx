@@ -1,20 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DROPDOWN_TRIGGER_ID } from "@components/Dropdown/Dropdown.spec";
-import { MENU_ITEM_ID } from "@components/MenuItem/MenuItem.spec";
-import { ICON_ITEM_ID, TEXT_ITEM_ID } from "@components/Slider/Slider.spec";
 import { mount } from "@cypress/react";
 import React, { FC, useState } from "react";
 import { Color, ColorFormat, Palette } from "../../types/colors";
 import { ColorPicker } from "./ColorPicker";
 import { EXAMPLE_PALETTES } from "./example-palettes";
 
-export const BRAND_COLOR_ID = "[data-test-id=brand-color]";
-export const COLOR_PREVIEW_ID = "[data-test-id=color-preview]";
+const BRAND_COLOR_ID = "[data-test-id=brand-color]";
+const COLOR_PREVIEW_ID = "[data-test-id=color-preview]";
 const BRAND_COLOR_PICKER_ID = "[data-test-id=brand-color-picker]";
 const CUSTOM_COLOR_PICKER_ID = "[data-test-id=custom-color-picker]";
 const COLOR_INPUT_ID = "[data-test-id=color-input]";
 const TEXT_INPUT_ID = "[data-test-id=text-input]";
+const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
+const MENU_ITEM_ID = "[data-test-id=menu-item]";
+const ICON_ITEM_ID = "[data-test-id=slider-item-icon]";
+const TEXT_ITEM_ID = "[data-test-id=slider-item-text]";
 
 type Props = {
     palettes?: Palette[];

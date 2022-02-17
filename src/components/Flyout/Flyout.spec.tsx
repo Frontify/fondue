@@ -1,17 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FIELDSET_HEADER_ID } from "@components/FieldsetHeader/FieldsetHeader.spec";
 import { mount } from "@cypress/react";
-import { BADGE_ID } from "@components/Badge/Badge.spec";
-import { BUTTON_ID } from "@components/Button/Button.spec";
 import { TextInput } from "@components/TextInput/TextInput";
-import { TEXT_INPUT_ID } from "@components/TextInput/TextInput.spec";
 import React, { FC, useState } from "react";
 import { Flyout, FlyoutProps } from "./Flyout";
 import { ButtonStyle } from "@components/Button";
 import { FlyoutFooter } from "./FlyoutFooter";
 
 const FLYOUT_TRIGGER_ID = "[data-test-id=flyout-trigger]";
+const BADGE_ID = "[data-test-id=badge]";
+const BUTTON_ID = "[data-test-id=button]";
+const FIELDSET_HEADER_ID = "[data-test-id=fieldset-header]";
+const TEXT_INPUT_ID = "[data-test-id=text-input]";
 
 const Component: FC<Pick<FlyoutProps, "onConfirm" | "onCancel" | "badges" | "legacyFooter">> = ({
     onConfirm,

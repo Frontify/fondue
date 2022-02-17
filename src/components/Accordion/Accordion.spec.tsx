@@ -4,12 +4,12 @@ import { FieldsetHeaderType } from "@components/FieldsetHeader/FieldsetHeader";
 import { mount } from "@cypress/react";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import { TextInput } from "@components/TextInput/TextInput";
-import { TEXT_INPUT_ID } from "@components/TextInput/TextInput.spec";
 import React from "react";
 import { Accordion, AccordionItem } from "./Accordion";
 
 const ACCORDION_ITEM_ID = "[data-test-id=accordion-item]";
 const ACCORDION_ITEM_CONTENT_ID = "[data-test-id=accordion-item-content]";
+const TEXT_INPUT_ID = "[data-test-id=text-input]";
 
 describe("Accordion Component", () => {
     it("should not render any item", () => {

@@ -9,8 +9,8 @@ import React, { FC, useState } from "react";
 import { IconItem, Slider, TextOrNumberItem } from "./Slider";
 
 const SLIDER_ID = "[data-test-id=slider]";
-export const ICON_ITEM_ID = "[data-test-id=slider-item-icon]";
-export const TEXT_ITEM_ID = "[data-test-id=slider-item-text]";
+const ICON_ITEM_ID = "[data-test-id=slider-item-icon]";
+const TEXT_ITEM_ID = "[data-test-id=slider-item-text]";
 const NUMBER_ITEM_ID = "[data-test-id=slider-item-number]";
 const INPUT_ID = "[data-test-id=slider-input]";
 

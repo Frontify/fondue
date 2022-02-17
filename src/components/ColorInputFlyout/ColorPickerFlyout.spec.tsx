@@ -1,8 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BUTTON_ID } from "@components/Button/Button.spec";
-import { BRAND_COLOR_ID, COLOR_PREVIEW_ID } from "@components/ColorPicker/ColorPicker.spec";
-import { MENU_ITEM_DECORATOR_ID } from "@components/MenuItem/MenuItem.spec";
 import { mount } from "@cypress/react";
 import React, { FC, useState } from "react";
 import { Color, Palette } from "../../types/colors";
@@ -12,6 +9,10 @@ import { ColorPickerFlyout } from "./ColorPickerFlyout";
 const TRIGGER_ID = "[data-test-id=trigger]";
 const TEST_COLOR = { r: 0, g: 133, b: 255 };
 const TEST_COLOR_HEX = "#0085ff";
+const BUTTON_ID = "[data-test-id=button]";
+const BRAND_COLOR_ID = "[data-test-id=brand-color]";
+const COLOR_PREVIEW_ID = "[data-test-id=color-preview]";
+const MENU_ITEM_DECORATOR_ID = "[data-test-id=menu-item-decorator]";
 
 type Props = {
     palettes?: Palette[];

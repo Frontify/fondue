@@ -4,7 +4,7 @@ import { mount } from "@cypress/react";
 import React, { FC, useEffect, useState } from "react";
 import { TextInput, TextInputProps, TextInputType } from "./TextInput";
 
-export const TEXT_INPUT_ID = "[data-test-id=text-input]";
+const TEXT_INPUT_ID = "[data-test-id=text-input]";
 const DECORATOR_TEXT = "decorator text";
 const DECORATOR = <span>{DECORATOR_TEXT}</span>;
 const INPUT_TEXT = "Hello test";
