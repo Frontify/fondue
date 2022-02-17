@@ -77,7 +77,7 @@ const getStyleClasses = (style: BadgeStyle, hasHover: boolean, strong: boolean):
               ]),
           })[style] ?? "";
 
-const isBadgeStatus = (style: BadgeStatus | Color): style is BadgeStatus =>
+const isBadgeStatus = (style: BadgeStatus | Color | string): style is BadgeStatus =>
     Object.values(BadgeStatus).includes(style as BadgeStatus);
 
 const getSizeClasses = (children: ReactNode, hasExtra: boolean, isSmall: boolean) => {
@@ -95,7 +95,7 @@ const getSizeClasses = (children: ReactNode, hasExtra: boolean, isSmall: boolean
 export type BadgeProps = PropsWithChildren<{
     style?: BadgeStyle;
     icon?: ReactElement<IconProps>;
-    status?: BadgeStatus | Color;
+    status?: BadgeStatus | Color | string;
     onClick?: () => void;
     onDismiss?: () => void;
     disabled?: boolean;
@@ -147,7 +147,12 @@ export const Badge: FC<BadgeProps> = ({
                         style={
                             isBadgeStatus(status)
                                 ? {}
-                                : { backgroundColor: getColorDisplayValue(status, ColorFormat.Rgba, true) }
+                                : {
+                                      backgroundColor:
+                                          typeof status === "string"
+                                              ? status
+                                              : getColorDisplayValue(status, ColorFormat.Rgba, true),
+                                  }
                         }
                     />
                 )}

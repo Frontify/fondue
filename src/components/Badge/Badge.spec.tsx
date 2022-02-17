@@ -93,7 +93,7 @@ describe("Badge component", () => {
         cy.wrap(onDismissStub).should("have.been.calledOnce");
     });
 
-    it("should display custom status dot", () => {
+    it("should display custom status dot with Color input", () => {
         const r = 30;
         const g = 40;
         const b = 50;
@@ -108,5 +108,17 @@ describe("Badge component", () => {
         );
 
         cy.get(BADGE_STATUS_ID).should("have.css", "backgroundColor", `rgba(${r}, ${g}, ${b}, ${a})`);
+    });
+
+    it("should display custom status dot with string value", () => {
+        const DOT_COLOR = "rgba(0, 100, 200, 0.9)";
+
+        mount(
+            <Badge icon={<IconDocument />} status={DOT_COLOR}>
+                {BADGE_TEXT}
+            </Badge>,
+        );
+
+        cy.get(BADGE_STATUS_ID).should("have.css", "backgroundColor", DOT_COLOR);
     });
 });
