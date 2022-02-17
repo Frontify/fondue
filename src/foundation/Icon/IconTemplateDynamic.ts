@@ -1,28 +1,48 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+type IconComponent = {
+    size: string;
+    filled: boolean;
+    name: string;
+};
+
 type IconShapeTemplateInputs = {
-    imports: Array<string>;
-    shapeName: string;
-    components: Array<string>;
+    name: string;
+    components: Array<IconComponent>;
+};
+
+const componentsTsx = (components: Array<IconComponent>) => {
+    return components.map((component: IconComponent) => {
+        return `{size === IconSize.Size${component.size} && ${
+            component.filled ? `props.filled` : `!props.filled`
+        } && <${component.name} {...props}/>}`;
+    }).join(`
+            `);
+};
+
+const importsTsx = (components: Array<IconComponent>) => {
+    return components
+        .map((component: IconComponent) => {
+            return `import ${component.name} from './${component.name}';`;
+        })
+        .join(";\n");
 };
 
 export const IconTemplateDynamic = (props: IconShapeTemplateInputs) => {
-    return `
-    import React, { memo } from "react";
-    import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-    import { IconSize } from "@foundation/Icon/IconSize";
+    return `import React, { memo } from "react";
+import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import { IconSize } from "@foundation/Icon/IconSize";
 
-    ${props.imports.join(";")}
-    
-    function Icon${props.shapeName}(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-        const size = props.size || IconSize.Size16;
-        return (
-            <span>
-                ${props.components.join("")}
-            </span>
-        );
-    }
-    
-    const Memo = memo(Icon${props.shapeName});
-    export default Memo;
-    `;
+${importsTsx(props.components)}
+
+function ${props.name}(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+    const size = props.size || IconSize.Size16;
+    return (
+        <span>
+            ${componentsTsx(props.components)}
+        </span>
+    );
+}
+
+const Memo = memo(${props.name});
+export default Memo;`;
 };

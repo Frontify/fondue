@@ -65,10 +65,10 @@ const generateSvgComponent = async (svgPath: Entry) => {
             typescript: true,
             svgProps: {
                 className: "{customClassName}",
-                name: `Icon${svgFileName}`,
+                name: `${ICON_COMPONENT_PREFIX}${svgFileName}`,
             },
         },
-        { componentName: `Icon${svgFileName}` },
+        { componentName: `${ICON_COMPONENT_PREFIX}${svgFileName}` },
     ).then(async (tsxCode: string) => {
         const generatedTsxFilePath = join(ICON_BUILD_DIRECTORY, `${ICON_COMPONENT_PREFIX}${svgFileName}.tsx`);
         await writeFile(generatedTsxFilePath, tsxCode);
@@ -82,8 +82,7 @@ const generateSvgComponent = async (svgPath: Entry) => {
  */
 const generateDynamicIcon = async (shapeFolderPath: Entry) => {
     const svgPaths = await fastGlob(`${shapeFolderPath.path}/**/*.svg`, { objectMode: true });
-    const shapeName = camelCase(shapeFolderPath.name).replace(/^(.)/, toUpper);
-    const imports = [];
+    const shapeName = camelCase(`${shapeFolderPath.name}`).replace(/^(.)/, toUpper);
     const components = [];
 
     svgPaths.forEach((icon) => {
@@ -91,21 +90,15 @@ const generateDynamicIcon = async (shapeFolderPath: Entry) => {
         const size = getSize(iconName);
         const filled = iconName.toUpperCase().includes("filled".toUpperCase());
 
-        imports.push(`import Icon${iconName} from './${ICON_COMPONENT_PREFIX}${iconName}'`);
-
-        if (size && !filled) {
-            components.push(`{size === IconSize.Size${size} && !props.filled && (
-                    <Icon${iconName} {...props}/>
-                )}`);
-        } else if (size && filled) {
-            components.push(`{size === IconSize.Size${size} && props.filled && (
-                    <Icon${iconName} {...props}/>
-                )}`);
-        }
+        components.push({
+            size: size,
+            filled: filled,
+            name: ICON_COMPONENT_PREFIX + iconName,
+        });
     });
 
     const filePath = join(ICON_BUILD_DIRECTORY, `${ICON_COMPONENT_PREFIX}${shapeName}.tsx`);
-    const tpl = IconTemplateDynamic({ imports, components, shapeName });
+    const tpl = IconTemplateDynamic({ components, name: `${ICON_COMPONENT_PREFIX}${shapeName}` });
 
     await writeFile(filePath, tpl);
 };
