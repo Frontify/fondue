@@ -7,6 +7,8 @@ import { Button } from "@components/Button";
 import { Text } from "../../typography/Text";
 import { Divider } from "@components/Divider";
 import { TabItem } from "@components/Tabs/TabItem";
+import { IconIcons, IconSize } from "@foundation/Icon";
+import { BadgeStyle } from "@components/Badge";
 
 const data = [
     {
@@ -103,38 +105,78 @@ const TabTemplate: Story<TabsProps> = (args) => {
 export const Default = TabTemplate.bind({});
 Default.storyName = "Label Only";
 
-/*const dataWithIcon = data.map((item) =>
-    Object.assign({ tabItem: {} }, item, {
-        tabItem: { ...item.tabItem, decorator: <IconIcons size={IconSize.Size16} /> },
-    }),
-);
-const TabWithIconTemplate: Story<TabsProps> = (args) => <Tabs {...args} content={dataWithIcon} />;
+const dataWithIcon = data.map((item) => Object.assign({}, item, { decorator: <IconIcons size={IconSize.Size16} /> }));
+const TabWithIconTemplate: Story<TabsProps> = (args) => {
+    const [activeItemId, setActiveItemId] = useState("tab-1");
+    return (
+        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+            {dataWithIcon.map((item) => (
+                <TabItem
+                    id={item.id}
+                    key={item.id}
+                    label={item.label}
+                    disabled={item.disabled ?? false}
+                    decorator={item.decorator}
+                >
+                    {item.content}
+                </TabItem>
+            ))}
+        </Tabs>
+    );
+};
 export const withIcon = TabWithIconTemplate.bind({});
 withIcon.storyName = "Icon and Label";
-withIcon.args = {
-    content: dataWithIcon,
-};
 
 const dataWithBadge = data.map((item) =>
-    Object.assign({ tabItem: {} }, item, {
-        tabItem: { ...item.tabItem, badge: { style: BadgeStyle.Positive, children: "Badge" } },
+    Object.assign({}, item, {
+        badge: {
+            style: BadgeStyle.Positive,
+            children: "Badge",
+        },
     }),
 );
-const TabWithBadgeTemplate: Story<TabsProps> = (args) => <Tabs {...args} content={dataWithBadge} />;
+const TabWithBadgeTemplate: Story<TabsProps> = (args) => {
+    const [activeItemId, setActiveItemId] = useState("tab-1");
+    return (
+        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+            {dataWithBadge.map((item) => (
+                <TabItem
+                    id={item.id}
+                    key={item.id}
+                    label={item.label}
+                    disabled={item.disabled ?? false}
+                    badge={item.badge}
+                >
+                    {item.content}
+                </TabItem>
+            ))}
+        </Tabs>
+    );
+};
 export const withBadge = TabWithBadgeTemplate.bind({});
 withBadge.storyName = "Label and Badge";
-withBadge.args = {
-    content: dataWithBadge,
-};
 
 const dataWithBadgeAndIcon = dataWithBadge.map((item) =>
-    Object.assign({ tabItem: {} }, item, {
-        tabItem: { ...item.tabItem, decorator: <IconIcons size={IconSize.Size16} /> },
-    }),
+    Object.assign({}, item, { decorator: <IconIcons size={IconSize.Size16} /> }),
 );
-const TabWithBadgeAndIconTemplate: Story<TabsProps> = (args) => <Tabs {...args} content={dataWithBadgeAndIcon} />;
+const TabWithBadgeAndIconTemplate: Story<TabsProps> = (args) => {
+    const [activeItemId, setActiveItemId] = useState("tab-1");
+    return (
+        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+            {dataWithBadgeAndIcon.map((item) => (
+                <TabItem
+                    id={item.id}
+                    key={item.id}
+                    label={item.label}
+                    disabled={item.disabled ?? false}
+                    badge={item.badge}
+                    decorator={item.decorator}
+                >
+                    {item.content}
+                </TabItem>
+            ))}
+        </Tabs>
+    );
+};
 export const withBadgeAndIcon = TabWithBadgeAndIconTemplate.bind({});
 withBadgeAndIcon.storyName = "Label, Badge and Icon";
-withBadgeAndIcon.args = {
-    content: dataWithBadgeAndIcon,
-};*/

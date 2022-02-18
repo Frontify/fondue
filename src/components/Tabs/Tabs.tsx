@@ -13,9 +13,12 @@ import React, {
 } from "react";
 import { TabItemProps } from "@components/Tabs/TabItem";
 import { merge } from "@utilities/merge";
-import { IconMore, IconSize } from "@foundation/Icon";
+import { IconMore } from "@foundation/Icon";
 import { Badge } from "@components/Badge";
 import { motion } from "framer-motion";
+import { Button, ButtonSize, ButtonStyle } from "@components/Button";
+import { Flyout } from "@components/Flyout";
+import { MenuItem, MenuItemStyle } from "@components/MenuItem";
 
 export type Content = {
     tabItem: TabItemProps;
@@ -42,27 +45,41 @@ export type TabsProps = {
 };
 
 const paddingMap: Record<TabsPaddingX, string> = {
-    Small: "tw-px-s",
-    Medium: "tw-px-m",
-    Large: "tw-px-l",
+    Small: "tw-pl-s",
+    Medium: "tw-pl-m",
+    Large: "tw-pl-l",
 };
 
 export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, onChange }) => {
     const [isOverflowing, setIsOverflowing] = useState(false);
+    const [isMenuOpened, setIsMenuOpened] = useState(false);
+
+    const tabs: TabItemProps[] =
+        Children.map(children, (child) => {
+            if (!isValidElement<TabItemProps>(child)) {
+                return null;
+            }
+            return child?.props;
+        }) ?? [];
+
+    const [tabIndexLimit, setTabIndexLimit] = useState(tabs.length);
+
     const checkIfOverflowing = () => {
-        // TODO add logic to know if tabs are overflowing
-        // WIP Overflow...
         const tabNav = tabNavRef.current;
-        console.log(tabNav);
         setIsOverflowing((tabNav && tabNav.scrollWidth > tabNav.clientWidth) || false);
+        const overFlowIndex = [];
         if (tabNav) {
             for (let i = 0; i < tabNav.children.length; i++) {
                 const item = tabNav.children[i];
                 const navPosition = tabNav.getBoundingClientRect();
                 const tabPosition = item.getBoundingClientRect();
                 if (tabPosition.right > navPosition.right) {
-                    console.log(i);
+                    overFlowIndex.push(i);
                 }
+            }
+            const newIndexLimit = overFlowIndex.length ? overFlowIndex.sort()[0] : tabs.length;
+            if (newIndexLimit < tabIndexLimit || newIndexLimit > tabIndexLimit) {
+                setTabIndexLimit(newIndexLimit);
             }
         }
     };
@@ -75,38 +92,32 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
     }, [checkIfOverflowing]);
 
     const tabNavRef = useRef<HTMLDivElement | null>(null);
-    const tabs: TabItemProps[] =
-        Children.map(children, (child) => {
-            if (!isValidElement<TabItemProps>(child)) {
-                return null;
-            }
-            return child?.props;
-        }) ?? [];
 
     return (
         <div data-test-id="tabs">
-            <div className="tw-flex">
+            <div className="tw-flex tw-relative tw-border-b tw-border-grey-20">
                 <div
                     ref={tabNavRef}
                     className={merge([
-                        "tw-relative tw-overflow-hidden tw-flex-shrink-0 tw-h-full tw-flex tw-justify-start tw-border-b tw-border-grey-20",
+                        "tw-overflow-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start",
                         paddingMap[paddingX],
                         size === TabSize.Small ? "tw-text-sm" : "tw-text-md",
                     ])}
                 >
-                    {tabs.map((tab) => {
+                    {tabs.map((tab, index) => {
                         return (
                             <button
                                 className={merge([
-                                    "tw-group tw-relative tw-pb-5 tw-pt-2 tw-px-2 tw-w-max tw-h-10 tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap tw-ml-1.5 tw-mr-1",
+                                    "tw-group tw-relative tw-mx-0 tw-pb-5 tw-pt-2 tw-px-2 tw-w-max tw-h-10 tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap",
                                     tab.disabled && "tw-text-text-disabled",
                                     tab.id === activeItemId && "tw-font-medium",
+                                    index >= tabIndexLimit && "tw-invisible",
                                 ])}
                                 key={tab.id}
                                 onClick={() => !tab.disabled && onChange(tab.id)}
                             >
                                 {tab.decorator}
-                                {tab.label}
+                                <span className="tw-mr-1 tw-ml-1.5">{tab.label}</span>
                                 {tab.badge && (
                                     <Badge disabled={tab.disabled} style={tab.badge.style}>
                                         {tab.badge.children}
@@ -127,9 +138,41 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                 </div>
                 {isOverflowing && (
                     // Remove rotate class when new Dots icon is available
-                    <button className="tw-absolute tw-rotate-90 tw-right-0 tw-top-0 tw-w-6 tw-h-6 tw-bg-grey-20 tw-rounded tw-flex tw-justify-center tw-items-center">
-                        <IconMore size={IconSize.Size16} />
-                    </button>
+                    <div className="tw-absolute tw-rotate-90 tw-right-3 tw-top-0 tw-w-6 tw-h-6 tw-bg-grey-20 tw-rounded tw-flex tw-justify-center tw-items-center">
+                        <Flyout
+                            trigger={
+                                <Button
+                                    style={ButtonStyle.Secondary}
+                                    size={ButtonSize.Small}
+                                    icon={<IconMore />}
+                                    onClick={() => setIsMenuOpened(!isMenuOpened)}
+                                />
+                            }
+                            legacyFooter={false}
+                            isOpen={isMenuOpened}
+                            onOpenChange={() => setIsMenuOpened(!isMenuOpened)}
+                            onCancel={() => setIsMenuOpened(false)}
+                            fitContent={true}
+                        >
+                            {tabs.slice(tabIndexLimit, tabs.length).map((tab) => {
+                                return (
+                                    <button
+                                        className="tw-w-full"
+                                        key={tab.id}
+                                        onClick={() => !tab.disabled && onChange(tab.id)}
+                                    >
+                                        <MenuItem
+                                            title={tab.label}
+                                            decorator={tab.decorator}
+                                            style={MenuItemStyle.Primary}
+                                            disabled={tab.disabled}
+                                            active={tab.id === activeItemId}
+                                        />
+                                    </button>
+                                );
+                            })}
+                        </Flyout>
+                    </div>
                 )}
             </div>
 
