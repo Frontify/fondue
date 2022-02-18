@@ -7,7 +7,7 @@ import { HeadingProps } from ".";
 
 const classRecord = {
     color: ["warning", "tw-text-text-warning"],
-    overflow: ["truncate", "tw-truncate"],
+    overflow: ["clip", "tw-text-clip"],
     whitespace: ["pre", "tw-whitespace-pre"],
     display: ["inline-block", "tw-inline-block"],
     wordBreak: ["break-all", "tw-break-all"],
