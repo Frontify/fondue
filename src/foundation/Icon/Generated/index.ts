@@ -1,5 +1,4 @@
-
-        export { default as IconAcademy } from "./IconAcademy";
+export { default as IconAcademy } from "./IconAcademy";
 export { default as IconActions } from "./IconActions";
 export { default as IconActivities } from "./IconActivities";
 export { default as IconActivity } from "./IconActivity";
@@ -259,4 +258,3 @@ export { default as IconVolumeOff } from "./IconVolumeOff";
 export { default as IconVolumeOn } from "./IconVolumeOn";
 export { default as IconWorkflow } from "./IconWorkflow";
 export { default as IconZoom } from "./IconZoom";
-    
