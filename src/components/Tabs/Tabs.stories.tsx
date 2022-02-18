@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
+import React, { useState } from "react";
 import { Meta, Story } from "@storybook/react";
 import { Tabs, TabSize, TabsPaddingX, TabsProps } from "./Tabs";
 import { Button } from "@components/Button";
-import { IconIcons, IconSize } from "@foundation/Icon";
-import { BadgeStyle } from "@components/Badge";
 import { Text } from "../../typography/Text";
 import { Divider } from "@components/Divider";
+import { TabItem } from "@components/Tabs/TabItem";
 
 const data = [
     {
+        id: "tab-1",
         label: "A tab",
         content: (
             <Text>
@@ -21,11 +21,13 @@ const data = [
         ),
     },
     {
+        id: "tab-2",
         label: "Disabled",
-        content: "Rib-eye",
         disabled: true,
+        content: "Rib-eye",
     },
     {
+        id: "tab-3",
         label: "A long tab name",
         content: (
             <Text>
@@ -37,6 +39,7 @@ const data = [
         ),
     },
     {
+        id: "tab-4",
         label: "An even longer tab name",
         content: (
             <div>
@@ -53,11 +56,13 @@ const data = [
         ),
     },
     {
+        id: "tab-5",
         label: "Disabled",
-        content: <Button>Sirloin</Button>,
         disabled: true,
+        content: <Button>Sirloin</Button>,
     },
     {
+        id: "tab-6",
         label: "Last tab",
         content: <Text>Meat.</Text>,
     },
@@ -83,25 +88,53 @@ export default {
     },
 } as Meta<TabsProps>;
 
-const TabTemplate: Story<TabsProps> = (args) => <Tabs {...args} content={data} />;
+const TabTemplate: Story<TabsProps> = (args) => {
+    const [activeItemId, setActiveItemId] = useState("tab-1");
+    return (
+        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+            {data.map((item) => (
+                <TabItem id={item.id} key={item.id} label={item.label} disabled={item.disabled ?? false}>
+                    {item.content}
+                </TabItem>
+            ))}
+        </Tabs>
+    );
+};
 export const Default = TabTemplate.bind({});
 Default.storyName = "Label Only";
 
-const dataWithIcon = data.map((item) => Object.assign({}, item, { decorator: <IconIcons size={IconSize.Size16} /> }));
+/*const dataWithIcon = data.map((item) =>
+    Object.assign({ tabItem: {} }, item, {
+        tabItem: { ...item.tabItem, decorator: <IconIcons size={IconSize.Size16} /> },
+    }),
+);
 const TabWithIconTemplate: Story<TabsProps> = (args) => <Tabs {...args} content={dataWithIcon} />;
 export const withIcon = TabWithIconTemplate.bind({});
 withIcon.storyName = "Icon and Label";
+withIcon.args = {
+    content: dataWithIcon,
+};
 
 const dataWithBadge = data.map((item) =>
-    Object.assign({}, item, { badge: { style: BadgeStyle.Positive, children: "Badge" } }),
+    Object.assign({ tabItem: {} }, item, {
+        tabItem: { ...item.tabItem, badge: { style: BadgeStyle.Positive, children: "Badge" } },
+    }),
 );
 const TabWithBadgeTemplate: Story<TabsProps> = (args) => <Tabs {...args} content={dataWithBadge} />;
 export const withBadge = TabWithBadgeTemplate.bind({});
 withBadge.storyName = "Label and Badge";
+withBadge.args = {
+    content: dataWithBadge,
+};
 
 const dataWithBadgeAndIcon = dataWithBadge.map((item) =>
-    Object.assign({}, item, { decorator: <IconIcons size={IconSize.Size16} /> }),
+    Object.assign({ tabItem: {} }, item, {
+        tabItem: { ...item.tabItem, decorator: <IconIcons size={IconSize.Size16} /> },
+    }),
 );
 const TabWithBadgeAndIconTemplate: Story<TabsProps> = (args) => <Tabs {...args} content={dataWithBadgeAndIcon} />;
 export const withBadgeAndIcon = TabWithBadgeAndIconTemplate.bind({});
 withBadgeAndIcon.storyName = "Label, Badge and Icon";
+withBadgeAndIcon.args = {
+    content: dataWithBadgeAndIcon,
+};*/
