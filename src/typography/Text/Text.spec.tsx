@@ -3,7 +3,6 @@
 import React from "react";
 import { mount } from "@cypress/react";
 import { Text } from "./Text";
-import { TextProps } from ".";
 
 const classRecord = {
     color: ["weak", "tw-text-text-weak"],
@@ -17,11 +16,9 @@ const classRecord = {
 };
 
 const textProps = Object.entries(classRecord).reduce((acc, [key, [value]]) => {
-    //eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
     acc[key] = value;
-    return acc as TextProps;
-}, {} as TextProps);
+    return acc;
+}, {} as Record<string, string>);
 
 describe("Text", () => {
     it("should render text as span by default", () => {

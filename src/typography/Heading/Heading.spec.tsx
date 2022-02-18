@@ -3,7 +3,6 @@
 import React from "react";
 import { mount } from "@cypress/react";
 import { Heading } from "./Heading";
-import { HeadingProps } from ".";
 
 const classRecord = {
     color: ["warning", "tw-text-text-warning"],
@@ -17,11 +16,9 @@ const classRecord = {
 };
 
 const headingProps = Object.entries(classRecord).reduce((acc, [key, [value]]) => {
-    //eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     acc[key] = value;
-    return acc as HeadingProps;
-}, {} as HeadingProps);
+    return acc;
+}, {} as Record<string, string>);
 
 describe("Heading", () => {
     it("should render headings as span by default", () => {
