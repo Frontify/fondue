@@ -50,9 +50,9 @@ export const Text: FC<TextProps> = ({
     color = "default",
     decoration = "none",
     wordBreak = "normal",
-    whitespace,
+    whitespace = "normal",
+    overflow = "visible",
     display,
-    overflow,
 }) => (
     <Tag
         data-test-id="text"
@@ -63,9 +63,9 @@ export const Text: FC<TextProps> = ({
             colorMap[color],
             decorationMap[decoration],
             wordBreakMap[wordBreak],
-            whitespace && whitespaceMap[whitespace],
+            whitespaceMap[whitespace],
+            overflowMap[overflow],
             display && displayMap[display],
-            overflow && overflowMap[overflow],
         ])}
     >
         {children}

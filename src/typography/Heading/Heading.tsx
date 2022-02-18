@@ -46,11 +46,11 @@ export const Heading: FC<HeadingProps> = ({
     weight = "medium",
     size = "medium",
     color = "default",
-    overflow = "ellipsis",
+    overflow = "visible",
     decoration = "none",
-    whitespace,
+    wordBreak = "normal",
+    whitespace = "normal",
     display,
-    wordBreak,
 }) => (
     <Tag
         data-test-id="heading"
@@ -59,11 +59,11 @@ export const Heading: FC<HeadingProps> = ({
             weightMap[weight],
             sizeMap[size],
             colorMap[color],
-            overflowMap[overflow],
             decorationMap[decoration],
-            whitespace && whitespaceMap[whitespace],
+            wordBreakMap[wordBreak],
+            whitespaceMap[whitespace],
+            overflowMap[overflow],
             display && displayMap[display],
-            wordBreak && wordBreakMap[wordBreak],
         ])}
     >
         {children}
