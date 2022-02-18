@@ -2,17 +2,21 @@
 
 import { merge } from "@utilities/merge";
 import React, { FC, PropsWithChildren } from "react";
+import { decorationMap, displayMap, overflowMap, whitespaceMap, wordBreakMap } from "../shared/records";
+import { SharedTypographyProps } from "../shared/types";
 
 type TextWeight = "regular" | "strong" | "x-strong";
 type TextSize = "x-small" | "small" | "medium" | "large";
 type TextColor = "default" | "weak" | "x-weak" | "disabled" | "negative" | "positive" | "warning" | "interactive";
 
-export type TextProps = PropsWithChildren<{
-    size?: TextSize;
-    weight?: TextWeight;
-    as?: "a" | "abbr" | "address" | "em" | "label" | "li" | "span" | "strong" | "time" | "p";
-    color?: TextColor;
-}>;
+export type TextProps = PropsWithChildren<
+    SharedTypographyProps & {
+        size?: TextSize;
+        weight?: TextWeight;
+        as?: "a" | "abbr" | "address" | "em" | "label" | "li" | "span" | "strong" | "time" | "p";
+        color?: TextColor;
+    }
+>;
 
 const weightMap: Record<TextWeight, string> = {
     regular: "tw-font-regular",
@@ -44,10 +48,26 @@ export const Text: FC<TextProps> = ({
     weight = "regular",
     size = "medium",
     color = "default",
-}) => {
-    return (
-        <Tag data-test-id="text" className={merge(["tw-font-body", weightMap[weight], sizeMap[size], colorMap[color]])}>
-            {children}
-        </Tag>
-    );
-};
+    decoration = "none",
+    wordBreak = "normal",
+    whitespace,
+    display,
+    overflow,
+}) => (
+    <Tag
+        data-test-id="text"
+        className={merge([
+            "tw-font-body tw-max-w-full",
+            weightMap[weight],
+            sizeMap[size],
+            colorMap[color],
+            decorationMap[decoration],
+            wordBreakMap[wordBreak],
+            whitespace && whitespaceMap[whitespace],
+            display && displayMap[display],
+            overflow && overflowMap[overflow],
+        ])}
+    >
+        {children}
+    </Tag>
+);

@@ -2,6 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import React from "react";
+import { SharedTypographyArgTypes } from "../shared/Shared.stories";
 import { Text as TextComponent, TextProps } from "./Text";
 
 // eslint-disable-next-line import/no-default-export
@@ -25,6 +26,7 @@ export default {
             options: ["default", "weak", "x-weak", "disabled", "negative", "positive", "warning", "interactive"],
             control: { type: "select" },
         },
+        ...SharedTypographyArgTypes,
     },
     args: {
         children: "The fox jumps over the lazy dog",
@@ -35,4 +37,13 @@ export default {
     },
 } as Meta<TextProps>;
 
-export const Text: Story<TextProps> = (args) => <TextComponent {...args} />;
+export const DefaultText: Story<TextProps> = (args) => <TextComponent {...args} />;
+
+export const LongTextWithNewLines: Story<TextProps> = (args) => (
+    <div className="tw-w-[200px] tw-p-2 tw-rounded tw-border">
+        <TextComponent {...args}>
+            {`Text with veryveryveryveryveryextremelyhugelymassivelysuperlengthygiganticwords and limited width.\nThis is to display
+            the different types of overflow control available.`}
+        </TextComponent>
+    </div>
+);

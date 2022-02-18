@@ -2,17 +2,21 @@
 
 import { merge } from "@utilities/merge";
 import React, { FC, PropsWithChildren } from "react";
+import { decorationMap, displayMap, overflowMap, whitespaceMap, wordBreakMap } from "../shared/records";
+import { SharedTypographyProps } from "../shared/types";
 
 type HeadingWeight = "medium" | "strong";
 type HeadingSize = "medium" | "large" | "x-large";
 type HeadingColor = "default" | "weak" | "x-weak" | "disabled" | "negative" | "positive" | "warning" | "interactive";
 
-export type HeadingProps = PropsWithChildren<{
-    size?: HeadingSize;
-    weight?: HeadingWeight;
-    as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "span" | "p";
-    color?: HeadingColor;
-}>;
+export type HeadingProps = PropsWithChildren<
+    SharedTypographyProps & {
+        size?: HeadingSize;
+        weight?: HeadingWeight;
+        as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "span" | "p";
+        color?: HeadingColor;
+    }
+>;
 
 const weightMap: Record<HeadingWeight, string> = {
     medium: "tw-font-medium",
@@ -42,13 +46,26 @@ export const Heading: FC<HeadingProps> = ({
     weight = "medium",
     size = "medium",
     color = "default",
-}) => {
-    return (
-        <Tag
-            data-test-id="heading"
-            className={merge(["tw-font-heading", weightMap[weight], sizeMap[size], colorMap[color]])}
-        >
-            {children}
-        </Tag>
-    );
-};
+    overflow = "ellipsis",
+    decoration = "none",
+    whitespace,
+    display,
+    wordBreak,
+}) => (
+    <Tag
+        data-test-id="heading"
+        className={merge([
+            "tw-font-heading tw-max-w-full",
+            weightMap[weight],
+            sizeMap[size],
+            colorMap[color],
+            overflowMap[overflow],
+            decorationMap[decoration],
+            whitespace && whitespaceMap[whitespace],
+            display && displayMap[display],
+            wordBreak && wordBreakMap[wordBreak],
+        ])}
+    >
+        {children}
+    </Tag>
+);
