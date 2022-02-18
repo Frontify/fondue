@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const SharedTypographyArgTypes = {
+export const sharedTypographyArgTypes = {
     overflow: {
         options: ["ellipsis", "clip", "visible", "truncate"],
         control: { type: "select" },
@@ -21,4 +21,12 @@ export const SharedTypographyArgTypes = {
         options: ["underline", "line-through", "none"],
         control: { type: "select" },
     },
+};
+
+export const sharedTypographyArgs = {
+    overflow: "visible",
+    wordBreak: "normal",
+    decoration: "none",
+    whitespace: "normal",
+    display: "block",
 };

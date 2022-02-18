@@ -2,7 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import React from "react";
-import { SharedTypographyArgTypes } from "../shared/Shared.stories";
+import { sharedTypographyArgs, sharedTypographyArgTypes } from "../shared/Shared.stories";
 import { Heading as HeadingComponent, HeadingProps } from "./Heading";
 
 // eslint-disable-next-line import/no-default-export
@@ -26,7 +26,7 @@ export default {
             options: ["default", "weak", "x-weak", "disabled", "negative", "positive", "warning", "interactive"],
             control: { type: "select" },
         },
-        ...SharedTypographyArgTypes,
+        ...sharedTypographyArgTypes,
     },
     args: {
         children: "The fox jumps over the lazy dog",
@@ -34,6 +34,7 @@ export default {
         weight: "medium",
         as: "span",
         color: "default",
+        ...sharedTypographyArgs,
     },
 } as Meta<HeadingProps>;
 
