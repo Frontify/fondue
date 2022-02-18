@@ -61,7 +61,7 @@ export const Heading: FC<HeadingProps> = ({
             colorMap[color],
             decorationMap[decoration],
             wordBreakMap[wordBreak],
-            whitespaceMap[whitespace],
+            overflow !== "truncate" && whitespaceMap[whitespace],
             overflowMap[overflow],
             display && displayMap[display],
         ])}
