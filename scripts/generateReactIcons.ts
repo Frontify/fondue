@@ -107,7 +107,7 @@ const generateDynamicIcon = async (shapeFolderPath: Entry) => {
  * Generates the index file in build directory
  */
 const generateIndex = async () => {
-    const iconComponentsFilePath = await fastGlob(["src/foundation/Icon/Generated/**/*.tsx"], { objectMode: true });
+    const iconComponentsFilePath = await fastGlob([`${GENERATED_ICONS_DIRECTORY}**/*.tsx`], { objectMode: true });
     const iconComponents = iconComponentsFilePath
         .map((filePath) => {
             const filename = filePath.name;
