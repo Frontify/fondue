@@ -15,7 +15,10 @@ import {
     createSoftBreakPlugin,
     createStrikethroughPlugin,
     createUnderlinePlugin,
+    ELEMENT_LIC,
     ELEMENT_LINK,
+    ELEMENT_OL,
+    ELEMENT_UL,
     LinkElement,
     MARK_BOLD,
     MARK_CODE,
@@ -23,6 +26,9 @@ import {
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
 } from "@udecode/plate";
+import { ListItemElement } from "./components/elements/list-item";
+import { OrderedListElement } from "./components/elements/ordered-list";
+import { UnorderedListElement } from "./components/elements/unordered-list";
 import { BoldMark } from "./components/marks/bold";
 import { CodeMark } from "./components/marks/code";
 import { ItalicMark } from "./components/marks/italic";
@@ -32,6 +38,9 @@ import { UnderlineMark } from "./components/marks/underline";
 const components = createPlateUI({
     // this will override the components over the default ones
     [ELEMENT_LINK]: LinkElement,
+    [ELEMENT_UL]: UnorderedListElement,
+    [ELEMENT_OL]: OrderedListElement,
+    [ELEMENT_LIC]: ListItemElement,
     [MARK_BOLD]: BoldMark,
     [MARK_ITALIC]: ItalicMark,
     [MARK_UNDERLINE]: UnderlineMark,

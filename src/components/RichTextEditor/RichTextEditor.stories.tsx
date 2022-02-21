@@ -173,6 +173,7 @@ RichTextWithHTML.args = {
             <li>Fill muffin tray 3/4 full.</li>
             <li>Bake for 20 minutes.</li>
         </ol>
+        <p><a href="https://frontify.com">This is a link.</a></p>
     `,
 };
 RichTextWithHTML.argTypes = { value: { type: "string" } };
