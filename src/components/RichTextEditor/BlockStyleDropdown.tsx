@@ -35,7 +35,6 @@ export const BlockStyleDropdown: FC<Props> = ({ textStyles }) => {
         match: (node) => Element.isElement(node),
     });
     const nodeType = type[0]?.type ?? null;
-
     const [blockTypeId, setBlockTypeId] = useState<string | null>(nodeType);
 
     const [blockTypeIsActive] = Editor.nodes<BlockElement>(editor, {
