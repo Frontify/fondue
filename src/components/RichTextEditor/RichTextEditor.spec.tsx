@@ -1,200 +1,188 @@
-// /* (c) Copyright Frontify Ltd., all rights reserved. */
+/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// import { getCanvasFontSize, getTextWidth } from "@components/RichTextEditor/utils/getTextWidth";
-// import { mount } from "@cypress/react";
-// import React, { FC, useState } from "react";
-// import { RichTextEditorProps } from ".";
-// import { textAlignClassMap, TextAlignTypes } from "./renderer/renderBlockStyles";
-// import { classMap } from "./renderer/renderInlineStyles";
-// import { ON_SAVE_DELAY_IN_MS, RichTextEditor, StyleElements, StyleMarks } from "./RichTextEditor";
+import { mount } from "@cypress/react";
+import { ELEMENT_PARAGRAPH } from "@udecode/plate";
+import React, { FC, useState } from "react";
+import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from "./RichTextEditor";
 
-// const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
-// const TOOLBAR = "[data-test-id=toolbar]";
-// const PLACEHOLDER = "My placeholder";
+const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
+const TOOLBAR = "[data-test-id=toolbar]";
+const TEXT_ALIGNMENT_BUTTONS = "[data-test-id=text-alignment-buttons]";
+const TEXT_MARK_BUTTONS = "[data-test-id=text-mark-buttons]";
+const TEXT_ELEMENT_BUTTONS = "[data-test-id=text-element-buttons]";
 
-// const getBlockStyleControl = (blockType: string) => `[data-test-id=block-style-button-${blockType}]`;
-// const getInlineStyleControl = (style: string) => `[data-test-id=inline-style-button-${style}]`;
-// const insertTextAndOpenToolbar = () => cy.get("[contenteditable=true]").click().type("hello{selectall}");
+const insertTextAndOpenToolbar = () => cy.get("[contenteditable=true]").click().type("hello{selectall}");
 
-// const RichTextWithClearButton: FC<Pick<RichTextEditorProps, "value">> = ({ value }) => {
-//     const [clear, setClear] = useState(false);
+const RichTextWithClearButton: FC<Pick<RichTextEditorProps, "value">> = ({ value }) => {
+    const [clear, setClear] = useState(false);
+    const onButtonClick = () => setClear(true);
 
-//     return (
-//         <div>
-//             <button onClick={() => setClear(true)}>clear</button>
-//             <RichTextEditor value={value} clear={clear} />
-//         </div>
-//     );
-// };
+    return (
+        <div>
+            <button onClick={onButtonClick}>clear</button>
+            <RichTextEditor value={value} clear={clear} />
+        </div>
+    );
+};
 
-// describe("RichTextEditor Component", () => {
-//     it("should render an empty rich text editor", () => {
-//         mount(<RichTextEditor />);
+describe("RichTextEditor Component", () => {
+    it("should render an empty rich text editor", () => {
+        mount(<RichTextEditor />);
 
-//         cy.get(RICH_TEXT_EDITOR).should("be.visible");
-//     });
+        cy.get(RICH_TEXT_EDITOR).should("be.visible");
+    });
 
-//     it("should render a raw content state", () => {
-//         const text = "This is some text that you can not edit";
-//         mount(<RichTextEditor value={JSON.stringify([{ type: StyleElements.Paragraph, children: [{ text }] }])} />);
+    it("should render a raw content state", () => {
+        const text = "This is some text that you can not edit";
+        mount(<RichTextEditor value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text }] }])} />);
 
-//         cy.get(RICH_TEXT_EDITOR).should("contain.text", text);
-//     });
+        cy.get(RICH_TEXT_EDITOR).should("contain.text", text);
+    });
 
-//     it("should render a raw html content state", () => {
-//         mount(<RichTextEditor value={"<b>this is bold</b> and <i>this italic</i>"} />);
+    it("should render a raw html content state", () => {
+        mount(<RichTextEditor value={"<b>this is bold</b> and <i>this italic</i>"} />);
 
-//         cy.get(RICH_TEXT_EDITOR).should("contain.text", "this is bold and this italic");
-//         cy.get("[contenteditable=true]").should("include.html", classMap[StyleMarks.Bold]);
-//         cy.get("[contenteditable=true]").should("include.html", classMap[StyleMarks.Italic]);
-//     });
+        cy.get(RICH_TEXT_EDITOR).should("contain.text", "this is bold and this italic");
+        cy.get("[contenteditable=true]").should("include.html", "tw-font-bold");
+        cy.get("[contenteditable=true]").should("include.html", "tw-italic");
+    });
 
-//     it("should be editable by default ", () => {
-//         mount(<RichTextEditor />);
+    it("should be editable by default ", () => {
+        mount(<RichTextEditor />);
 
-//         cy.get("[contenteditable=true]").should("exist");
-//     });
+        cy.get("[contenteditable=true]").should("exist");
+    });
 
-//     it("should not the able to edit when readonly ", () => {
-//         mount(<RichTextEditor readonly />);
+    it("should not the able to edit when readonly ", () => {
+        mount(<RichTextEditor readonly />);
 
-//         cy.get("[contenteditable=false]").should("exist");
-//     });
+        cy.get("[contenteditable=false]").should("exist");
+    });
 
-//     it("should type and insert text", () => {
-//         mount(<RichTextEditor />);
+    it("should type and insert text", () => {
+        mount(<RichTextEditor />);
 
-//         cy.get("[contenteditable=true]").click().type("hello");
-//     });
+        cy.get("[contenteditable=true]").click().type("hello");
+    });
 
-//     it("should display toolbar when selecting inserted text", () => {
-//         mount(<RichTextEditor />);
+    it("should display toolbar when selecting inserted text", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(TOOLBAR).should("exist");
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR).should("exist");
+    });
 
-//     it("should close toolbar on blur", () => {
-//         mount(<RichTextEditor />);
+    // it("should close toolbar on blur", () => {
+    //     mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get("[contenteditable=true]").blur();
-//         cy.get(TOOLBAR).should("not.exist");
-//     });
+    //     insertTextAndOpenToolbar();
+    //     cy.get("[contenteditable=true]").blur();
+    //     cy.get(TOOLBAR).should("not.exist");
+    // });
 
-//     it("renders a bold text", () => {
-//         mount(<RichTextEditor />);
+    it("renders a bold text", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getInlineStyleControl(StyleMarks.Bold)).click();
-//         cy.get("[contenteditable=true]").should("include.html", classMap[StyleMarks.Bold]);
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(TEXT_MARK_BUTTONS).children().eq(0).click();
+        cy.get("[contenteditable=true]").should("include.html", "tw-font-bold");
+    });
 
-//     it("renders italic", () => {
-//         mount(<RichTextEditor />);
+    it("renders italic", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getInlineStyleControl(StyleMarks.Italic)).click();
-//         cy.get("[contenteditable=true]").should("include.html", classMap[StyleMarks.Italic]);
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(TEXT_MARK_BUTTONS).children().eq(1).click();
+        cy.get("[contenteditable=true]").should("include.html", "tw-italic");
+    });
 
-//     it("renders underline", () => {
-//         mount(<RichTextEditor />);
+    it("renders underline", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getInlineStyleControl(StyleMarks.Underline)).click();
-//         cy.get("[contenteditable=true]").should("include.html", classMap[StyleMarks.Underline]);
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(TEXT_MARK_BUTTONS).children().eq(2).click();
+        cy.get("[contenteditable=true]").should("include.html", "tw-underline");
+    });
 
-//     it("renders strikethrough", () => {
-//         mount(<RichTextEditor />);
+    it("renders strikethrough", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getInlineStyleControl(StyleMarks.Strikethrough)).click();
-//         cy.get("[contenteditable=true]").should("include.html", classMap[StyleMarks.Strikethrough]);
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(TEXT_MARK_BUTTONS).children().eq(3).click();
+        cy.get("[contenteditable=true]").should("include.html", "tw-line-through");
+    });
 
-//     it("renders code", () => {
-//         mount(<RichTextEditor />);
+    it("renders code", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getInlineStyleControl(StyleMarks.Code)).click();
-//         cy.get("[contenteditable=true]").should("include.html", classMap[StyleMarks.Code]);
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(TEXT_MARK_BUTTONS).children().eq(4).click();
+        cy.get("[contenteditable=true]").should(
+            "include.html",
+            "tw-table-cell tw-rounded tw-text-xs tw-bg-black-5 tw-text-violet-90 tw-m-0 tw-px-2 tw-py-0.5",
+        );
+    });
 
-//     it("renders an ordered list", () => {
-//         mount(<RichTextEditor />);
+    it("renders an unordered list", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getBlockStyleControl("ordered-list")).click();
-//         cy.get("[contenteditable=true]").should("include.html", "<ol");
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(TEXT_ELEMENT_BUTTONS).children().eq(1).click();
+        cy.get("[contenteditable=true]").should("include.html", "<ul");
+    });
 
-//     it("renders an unordered list", () => {
-//         mount(<RichTextEditor />);
+    it("renders an ordered list", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getBlockStyleControl("unordered-list")).click();
-//         cy.get("[contenteditable=true]").should("include.html", "<ul");
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(TEXT_ELEMENT_BUTTONS).children().eq(2).click();
+        cy.get("[contenteditable=true]").should("include.html", "<ol");
+    });
 
-//     it("renders a right aligned text", () => {
-//         mount(<RichTextEditor />);
+    it("renders a right aligned text", () => {
+        mount(<RichTextEditor />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getBlockStyleControl("paragraph-align-right")).click();
-//         cy.get("[contenteditable=true]").should("include.html", textAlignClassMap[TextAlignTypes.AlignRight]);
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(TEXT_ALIGNMENT_BUTTONS).children().eq(2).click();
+        cy.get("[contenteditable=true]").should("include.html", "text-align: right");
+    });
 
-//     it("render the placeholder with correct width", () => {
-//         mount(
-//             <div style={{ display: "inline-flex" }}>
-//                 <RichTextEditor placeholder={PLACEHOLDER} />
-//             </div>,
-//         );
+    it("emits onTextChange when choosing an inline style", () => {
+        const onTextChange = cy.stub();
+        mount(<RichTextEditor onTextChange={onTextChange} />);
 
-//         cy.get(RICH_TEXT_EDITOR).then(($element) => {
-//             const expectedWidth = getTextWidth(PLACEHOLDER, getCanvasFontSize($element.get(0)));
-//             expect(expectedWidth).to.be.equal($element.width());
-//         });
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(TEXT_MARK_BUTTONS)
+            .children()
+            .eq(0)
+            .click()
+            .wait(ON_SAVE_DELAY_IN_MS)
+            .then(() => {
+                expect(onTextChange).to.be.called; // succeeds
+            });
+    });
 
-//     it("emits onTextChange when choosing an inline style", () => {
-//         const onTextChange = cy.stub();
-//         mount(<RichTextEditor onTextChange={onTextChange} />);
+    it("emits onTextChange when choosing a block style", () => {
+        const onTextChange = cy.stub();
+        mount(<RichTextEditor onTextChange={onTextChange} />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getInlineStyleControl(StyleMarks.Bold))
-//             .click()
-//             .wait(ON_SAVE_DELAY_IN_MS)
-//             .then(() => {
-//                 expect(onTextChange).to.be.called; // succeeds
-//             });
-//     });
+        insertTextAndOpenToolbar();
+        cy.get(TEXT_ELEMENT_BUTTONS)
+            .children()
+            .eq(1)
+            .click()
+            .wait(ON_SAVE_DELAY_IN_MS)
+            .then(() => {
+                expect(onTextChange).to.be.called; // succeeds
+            });
+    });
 
-//     it("emits onTextChange when choosing a block style", () => {
-//         const onTextChange = cy.stub();
-//         mount(<RichTextEditor onTextChange={onTextChange} />);
+    // it("should clear editor content", () => {
+    //     const text = "This is some text";
+    //     mount(<RichTextWithClearButton value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text }] }])} />);
 
-//         insertTextAndOpenToolbar();
-//         cy.get(getBlockStyleControl("ordered-list"))
-//             .click()
-//             .wait(ON_SAVE_DELAY_IN_MS)
-//             .then(() => {
-//                 expect(onTextChange).to.be.called; // succeeds
-//             });
-//     });
-
-//     it("should clear editor content", () => {
-//         const text = "This is some text";
-//         mount(
-//             <RichTextWithClearButton
-//                 value={JSON.stringify([{ type: StyleElements.Paragraph, children: [{ text }] }])}
-//             />,
-//         );
-
-//         cy.get(RICH_TEXT_EDITOR).should("contain.text", text);
-//         cy.get("button").click();
-//         cy.get(RICH_TEXT_EDITOR).should("contain.text", "");
-//     });
-// });
+    //     cy.get(RICH_TEXT_EDITOR).should("contain.text", text);
+    //     cy.get("button").click();
+    //     cy.get(RICH_TEXT_EDITOR).should("contain.text", "");
+    // });
+});

@@ -30,11 +30,18 @@ import {
 } from "@udecode/plate";
 import React, { FC } from "react";
 
+type ButtonGroupProps = {
+    testId?: string;
+    children: JSX.Element[];
+};
+
 export const Toolbar: FC = () => {
     const editor = usePlateEditorRef();
 
-    const ButtonGroup: FC<React.ReactNode> = ({ children }) => (
-        <div className="tw-flex tw-items-center tw-border-r tw-px-3 tw-py-2 tw-border-black-5">{children}</div>
+    const ButtonGroup: FC<ButtonGroupProps> = ({ testId, children }) => (
+        <div data-test-id={testId} className="tw-flex tw-items-center tw-border-r tw-px-3 tw-py-2 tw-border-black-5">
+            {children}
+        </div>
     );
 
     return (
@@ -42,14 +49,14 @@ export const Toolbar: FC = () => {
             data-test-id="toolbar"
             className="tw-flex tw-p-0.5 tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5"
         >
-            <ButtonGroup>
+            <ButtonGroup testId="text-alignment-buttons">
                 <AlignToolbarButton value="left" icon={<IconTextAlignLeft />} />
                 <AlignToolbarButton value="center" icon={<IconTextAlignCenter />} />
                 <AlignToolbarButton value="right" icon={<IconTextAlignRight />} />
                 <AlignToolbarButton value="justify" icon={<IconTextAlignJustify />} />
             </ButtonGroup>
 
-            <ButtonGroup>
+            <ButtonGroup testId="text-mark-buttons">
                 <MarkToolbarButton type={getPluginType(editor, MARK_BOLD)} icon={<IconBold />} />
                 <MarkToolbarButton type={getPluginType(editor, MARK_ITALIC)} icon={<IconItalic />} />
                 <MarkToolbarButton type={getPluginType(editor, MARK_UNDERLINE)} icon={<IconUnderline />} />
@@ -57,7 +64,7 @@ export const Toolbar: FC = () => {
                 <MarkToolbarButton type={getPluginType(editor, MARK_CODE)} icon={<IconSnippet />} />
             </ButtonGroup>
 
-            <ButtonGroup>
+            <ButtonGroup testId="text-element-buttons">
                 <LinkToolbarButton icon={<IconLink />} />
                 <ToolbarButton
                     onMouseDown={(e) => {

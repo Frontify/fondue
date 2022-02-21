@@ -13,6 +13,9 @@ import {
 import React from "react";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
 
+const IPSUM =
+    "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+
 type CreateElementProps = {
     text: string;
     element?: string;
@@ -56,7 +59,7 @@ const value = [
     createElement({ text: "This text has a strikethrough.", mark: MARK_STRIKETHROUGH }),
     createElement({ text: "This text is a code line.", mark: MARK_CODE }),
     createElement({
-        text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+        text: IPSUM,
     }),
     {
         type: ELEMENT_PARAGRAPH,
@@ -151,11 +154,12 @@ export const RichTextWithHTML: Story<RichTextEditorProps> = (args: RichTextEdito
 );
 RichTextWithHTML.args = {
     value: `
-        <p><strong>bold</strong></p>
-        <p><i>italic</i></p>
-        <p><u>underline</u></p>
-        <p><s>strikethrough</s></p>
-        <p><code>code</code></p>
+        <p><strong>This text is bold.</strong></p>
+        <p><i>This text is italic.</i></p>
+        <p><u>This text has an underline.</u></p>
+        <p><s>This text has a strikethrough.</s></p>
+        <p><code>This text is a code line.</code></p>
+        <p>${IPSUM}</p>
         <ul>
             <li>red</li>
             <li>blue</li>
