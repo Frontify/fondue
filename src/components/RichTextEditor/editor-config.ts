@@ -6,8 +6,6 @@ import {
     createCodeBlockPlugin,
     createCodePlugin,
     createHeadingPlugin,
-    createIndentListPlugin,
-    createIndentPlugin,
     createItalicPlugin,
     createLinkPlugin,
     createListPlugin,
@@ -17,9 +15,7 @@ import {
     createSoftBreakPlugin,
     createStrikethroughPlugin,
     createUnderlinePlugin,
-    ELEMENT_H1,
     ELEMENT_LINK,
-    ELEMENT_PARAGRAPH,
     LinkElement,
     MARK_BOLD,
     MARK_CODE,
@@ -51,14 +47,6 @@ export const plugins = createPlugins(
         createCodeBlockPlugin(),
         createHeadingPlugin(),
         createListPlugin(),
-        createIndentListPlugin(),
-        createIndentPlugin({
-            inject: {
-                props: {
-                    validTypes: [ELEMENT_PARAGRAPH, ELEMENT_H1],
-                },
-            },
-        }),
         createLinkPlugin(),
         createBoldPlugin(),
         createItalicPlugin(),

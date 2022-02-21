@@ -4,7 +4,7 @@ import { BalloonToolbar, Plate, usePlateEditorState } from "@udecode/plate";
 import { debounce } from "@utilities/debounce";
 import React, { FC, useEffect } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
-import { plugins } from "./config";
+import { plugins } from "./editor-config";
 import { Toolbar } from "./Toolbar";
 import { EMPTY_VALUE, parseRawValue } from "./utils/parseRawValue";
 
@@ -35,6 +35,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     useEffect(() => {
         if (clear && editor) {
+            // clear selection, history and children of editor
             const point = { path: [0, 0], offset: 0 };
             editor.selection = { anchor: point, focus: point };
             editor.history = { redos: [], undos: [] };

@@ -16,16 +16,17 @@ import {
 } from "@foundation/Icon";
 import {
     AlignToolbarButton,
+    ELEMENT_OL,
+    ELEMENT_UL,
     getPluginType,
     LinkToolbarButton,
+    ListToolbarButton,
     MarkToolbarButton,
     MARK_BOLD,
     MARK_CODE,
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
-    toggleIndentList,
-    ToolbarButton,
     usePlateEditorRef,
 } from "@udecode/plate";
 import React, { FC } from "react";
@@ -66,24 +67,8 @@ export const Toolbar: FC = () => {
 
             <ButtonGroup testId="text-element-buttons">
                 <LinkToolbarButton icon={<IconLink />} />
-                <ToolbarButton
-                    onMouseDown={(e) => {
-                        e.preventDefault();
-                        toggleIndentList(editor, {
-                            listStyleType: "disc",
-                        });
-                    }}
-                    icon={<IconListBullets />}
-                />
-                <ToolbarButton
-                    onMouseDown={(e) => {
-                        e.preventDefault();
-                        toggleIndentList(editor, {
-                            listStyleType: "decimal",
-                        });
-                    }}
-                    icon={<IconListNumbers />}
-                />
+                <ListToolbarButton type={getPluginType(editor, ELEMENT_UL)} icon={<IconListBullets />} />
+                <ListToolbarButton type={getPluginType(editor, ELEMENT_OL)} icon={<IconListNumbers />} />
             </ButtonGroup>
         </div>
     );

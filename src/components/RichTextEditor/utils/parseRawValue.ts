@@ -7,7 +7,7 @@ import {
     parseHtmlDocument,
     TDescendant,
 } from "@udecode/plate";
-import { plugins } from "../config";
+import { plugins } from "../editor-config";
 
 export const EMPTY_VALUE: TDescendant[] = [{ type: ELEMENT_PARAGRAPH, children: [{ text: "" }] }];
 

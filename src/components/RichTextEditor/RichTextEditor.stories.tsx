@@ -2,8 +2,11 @@
 
 import { Meta, Story } from "@storybook/react";
 import {
+    ELEMENT_LI,
     ELEMENT_LINK,
+    ELEMENT_OL,
     ELEMENT_PARAGRAPH,
+    ELEMENT_UL,
     MARK_BOLD,
     MARK_CODE,
     MARK_ITALIC,
@@ -62,66 +65,64 @@ const value = [
         text: IPSUM,
     }),
     {
-        type: ELEMENT_PARAGRAPH,
+        type: ELEMENT_UL,
         children: [
             {
-                text: "This is list item number one.",
+                type: ELEMENT_LI,
+                children: [{ text: "This is list item number one." }],
+            },
+            {
+                type: ELEMENT_LI,
+                children: [{ text: "This is list item number two." }],
+            },
+            {
+                type: ELEMENT_LI,
+                children: [{ text: "This is list item number three." }],
+            },
+            {
+                type: ELEMENT_UL,
+                children: [
+                    {
+                        type: ELEMENT_LI,
+                        children: [{ text: "This is child item number one." }],
+                    },
+                    {
+                        type: ELEMENT_LI,
+                        children: [{ text: "This is child item number two, with more children." }],
+                    },
+                    {
+                        type: ELEMENT_UL,
+                        children: [
+                            {
+                                type: ELEMENT_LI,
+                                children: [{ text: "This is child of child item number one." }],
+                            },
+                            {
+                                type: ELEMENT_LI,
+                                children: [{ text: "This is child of child item number two." }],
+                            },
+                        ],
+                    },
+                ],
             },
         ],
-        indent: 1,
-        listStyleType: "decimal",
     },
     {
-        type: ELEMENT_PARAGRAPH,
+        type: ELEMENT_OL,
         children: [
             {
-                text: "This is list item number two.",
+                type: ELEMENT_LI,
+                children: [{ text: "This comes first." }],
             },
-        ],
-        indent: 2,
-        listStart: 2,
-        listStyleType: "decimal",
-    },
-    {
-        type: ELEMENT_PARAGRAPH,
-        children: [
             {
-                text: "This is list item number three.",
+                type: ELEMENT_LI,
+                children: [{ text: "This comes second." }],
             },
-        ],
-        indent: 3,
-        listStart: 3,
-        listStyleType: "decimal",
-    },
-    {
-        type: ELEMENT_PARAGRAPH,
-        children: [
             {
-                text: "This is list item number one.",
+                type: ELEMENT_LI,
+                children: [{ text: "And last but not least, this comes third." }],
             },
         ],
-        indent: 1,
-        listStyleType: "disc",
-    },
-    {
-        type: ELEMENT_PARAGRAPH,
-        children: [
-            {
-                text: "This is list item number two.",
-            },
-        ],
-        indent: 1,
-        listStyleType: "disc",
-    },
-    {
-        type: ELEMENT_PARAGRAPH,
-        children: [
-            {
-                text: "This is list item number three.",
-            },
-        ],
-        indent: 1,
-        listStyleType: "disc",
     },
     {
         type: ELEMENT_PARAGRAPH,
