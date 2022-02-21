@@ -1,13 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BalloonToolbar, Plate } from "@udecode/plate";
+import { BalloonToolbar, Plate, usePlateEditorState } from "@udecode/plate";
 import { debounce } from "@utilities/debounce";
 import React, { FC, useEffect } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
 import { plugins } from "./config";
 import { Toolbar } from "./Toolbar";
-import { clearEditor } from "./utils/clearEditor";
-import { parseRawValue } from "./utils/parseRawValue";
+import { EMPTY_VALUE, parseRawValue } from "./utils/parseRawValue";
 
 export type RichTextEditorProps = {
     placeholder?: string;
@@ -32,9 +31,14 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         readOnly: readonly,
     };
 
+    const editor = usePlateEditorState();
+
     useEffect(() => {
-        if (clear) {
-            clearEditor();
+        if (clear && editor) {
+            const point = { path: [0, 0], offset: 0 };
+            editor.selection = { anchor: point, focus: point };
+            editor.history = { redos: [], undos: [] };
+            editor.children = EMPTY_VALUE;
         }
     }, [clear]);
 
