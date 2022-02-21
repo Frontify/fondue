@@ -1,16 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, {
-    Children,
-    cloneElement,
-    FC,
-    isValidElement,
-    ReactChild,
-    ReactNode,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import React, { Children, cloneElement, FC, isValidElement, ReactNode, useEffect, useRef, useState } from "react";
 import { TabItemProps } from "@components/Tabs/TabItem";
 import { merge } from "@utilities/merge";
 import { IconMore } from "@foundation/Icon";
@@ -19,11 +9,6 @@ import { motion } from "framer-motion";
 import { Button, ButtonSize, ButtonStyle } from "@components/Button";
 import { Flyout } from "@components/Flyout";
 import { MenuItem, MenuItemStyle } from "@components/MenuItem";
-
-export type Content = {
-    tabItem: TabItemProps;
-    content: ReactChild;
-};
 
 export enum TabsPaddingX {
     Small = "Small",
@@ -37,17 +22,17 @@ export enum TabSize {
 }
 
 export type TabsProps = {
-    paddingX: TabsPaddingX;
-    size: TabSize;
+    paddingX?: TabsPaddingX;
+    size?: TabSize;
     activeItemId: string;
     children: ReactNode;
-    onChange: (tabId: string) => void;
+    onChange?: (tabId: string) => void;
 };
 
 const paddingMap: Record<TabsPaddingX, string> = {
-    Small: "tw-pl-s",
-    Medium: "tw-pl-m",
-    Large: "tw-pl-l",
+    [TabsPaddingX.Small]: "tw-pl-s",
+    [TabsPaddingX.Medium]: "tw-pl-m",
+    [TabsPaddingX.Large]: "tw-pl-l",
 };
 
 export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, onChange }) => {
@@ -66,13 +51,13 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
 
     const checkIfOverflowing = () => {
         const tabNav = tabNavRef.current;
-        setIsOverflowing((tabNav && tabNav.scrollWidth > tabNav.clientWidth) || false);
+        setIsOverflowing((tabNav && tabNav.scrollWidth > tabNav.clientWidth) ?? false);
         const overFlowIndex = [];
         if (tabNav) {
-            for (let i = 0; i < tabNav.children.length; i++) {
-                const item = tabNav.children[i];
+            for (const tabItem of tabNav.children) {
+                const i = [...tabNav.children].indexOf(tabItem);
                 const navPosition = tabNav.getBoundingClientRect();
-                const tabPosition = item.getBoundingClientRect();
+                const tabPosition = tabItem.getBoundingClientRect();
                 if (tabPosition.right > navPosition.right) {
                     overFlowIndex.push(i);
                 }
@@ -100,7 +85,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     ref={tabNavRef}
                     className={merge([
                         "tw-overflow-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start",
-                        paddingMap[paddingX],
+                        paddingMap[paddingX ?? TabsPaddingX.Small],
                         size === TabSize.Small ? "tw-text-sm" : "tw-text-md",
                     ])}
                 >
@@ -115,7 +100,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                     index >= tabIndexLimit && "tw-invisible",
                                 ])}
                                 key={tab.id}
-                                onClick={() => !tab.disabled && onChange(tab.id)}
+                                onClick={() => (!tab.disabled && onChange ? onChange(tab.id) : null)}
                             >
                                 {tab.decorator}
                                 <span className="tw-mr-1 tw-ml-1.5">{tab.label}</span>
@@ -164,7 +149,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                     <button
                                         className="tw-w-full"
                                         key={tab.id}
-                                        onClick={() => !tab.disabled && onChange(tab.id)}
+                                        onClick={() => (!tab.disabled && onChange ? onChange(tab.id) : null)}
                                     >
                                         <MenuItem
                                             title={tab.label}
