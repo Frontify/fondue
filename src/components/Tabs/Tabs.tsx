@@ -8,7 +8,7 @@ import { Badge } from "@components/Badge";
 import { motion } from "framer-motion";
 import { Button, ButtonSize, ButtonStyle } from "@components/Button";
 import { Flyout } from "@components/Flyout";
-import { MenuItem, MenuItemStyle } from "@components/MenuItem";
+import { MenuItem } from "@components/MenuItem";
 
 export enum TabsPaddingX {
     Small = "Small",
@@ -154,7 +154,6 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                         <MenuItem
                                             title={tab.label}
                                             decorator={tab.decorator}
-                                            style={MenuItemStyle.Primary}
                                             disabled={tab.disabled}
                                             active={tab.id === activeItemId}
                                         />

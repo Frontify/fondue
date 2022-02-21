@@ -91,22 +91,13 @@ export default {
 const TabTemplate: Story<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <div>
-            <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
-                {data.map((item) => (
-                    <TabItem id={item.id} key={item.id} label={item.label} disabled={item.disabled ?? false}>
-                        {item.children}
-                    </TabItem>
-                ))}
-            </Tabs>
-            <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
-                {data.map((item) => (
-                    <TabItem id={item.id} key={item.id} label={item.label} disabled={item.disabled ?? false}>
-                        {item.children}
-                    </TabItem>
-                ))}
-            </Tabs>
-        </div>
+        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+            {data.map((item) => (
+                <TabItem id={item.id} key={item.id} label={item.label} disabled={item.disabled ?? false}>
+                    {item.children}
+                </TabItem>
+            ))}
+        </Tabs>
     );
 };
 export const Default = TabTemplate.bind({});
