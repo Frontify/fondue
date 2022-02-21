@@ -2,6 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import React from "react";
+import { sharedTypographyArgs, sharedTypographyArgTypes } from "../shared/Shared.stories";
 import { Heading as HeadingComponent, HeadingProps } from "./Heading";
 
 // eslint-disable-next-line import/no-default-export
@@ -25,6 +26,7 @@ export default {
             options: ["default", "weak", "x-weak", "disabled", "negative", "positive", "warning", "interactive"],
             control: { type: "select" },
         },
+        ...sharedTypographyArgTypes,
     },
     args: {
         children: "The fox jumps over the lazy dog",
@@ -32,7 +34,17 @@ export default {
         weight: "medium",
         as: "span",
         color: "default",
+        ...sharedTypographyArgs,
     },
 } as Meta<HeadingProps>;
 
-export const Heading: Story<HeadingProps> = (args) => <HeadingComponent {...args} />;
+export const DefaultHeading: Story<HeadingProps> = (args) => <HeadingComponent {...args} />;
+
+export const LongHeadingWithNewLines: Story<HeadingProps> = (args) => (
+    <div className="tw-w-[200px] tw-p-2 tw-rounded tw-border">
+        <HeadingComponent {...args}>
+            {`Heading with veryveryveryveryveryextremelyhugelymassivelysuperlengthygiganticwords and limited width.\nThis is to display
+            the different types of overflow control available.`}
+        </HeadingComponent>
+    </div>
+);

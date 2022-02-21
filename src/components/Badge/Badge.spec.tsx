@@ -8,7 +8,7 @@ import { BadgeStyle } from ".";
 import { Badge, BadgeStatus } from "./Badge";
 
 const BADGE_TEXT = "Frontify";
-export const BADGE_ID = "[data-test-id=badge]";
+const BADGE_ID = "[data-test-id=badge]";
 const BADGE_STATUS_ID = "[data-test-id=badge-status]";
 const BADGE_ICON_ID = "[data-test-id=badge-icon]";
 const BADGE_DISMISS = "[data-test-id=badge-dismiss]";
@@ -93,8 +93,25 @@ describe("Badge component", () => {
         cy.wrap(onDismissStub).should("have.been.calledOnce");
     });
 
-    it("should display custom status dot", () => {
-        const DOT_COLOR = "rgb(1, 2, 3)";
+    it("should display custom status dot with Color value", () => {
+        const r = 30;
+        const g = 40;
+        const b = 50;
+        const a = 0.2;
+
+        const DOT_COLOR = { r, g, b, a };
+
+        mount(
+            <Badge icon={<IconDocument />} status={DOT_COLOR}>
+                {BADGE_TEXT}
+            </Badge>,
+        );
+
+        cy.get(BADGE_STATUS_ID).should("have.css", "backgroundColor", `rgba(${r}, ${g}, ${b}, ${a})`);
+    });
+
+    it("should display custom status dot with string value", () => {
+        const DOT_COLOR = "rgba(0, 100, 200, 0.9)";
 
         mount(
             <Badge icon={<IconDocument />} status={DOT_COLOR}>

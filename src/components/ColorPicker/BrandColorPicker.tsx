@@ -79,7 +79,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                               <p className="tw-text-black dark:tw-text-white">{title}</p>
                               <ul
                                   className={merge([
-                                      "tw-flex tw-gap-y-2",
+                                      "tw-flex tw-gap-y-2 tw-flex-wrap",
                                       view === BrandColorView.List && "tw-flex-col",
                                   ])}
                               >

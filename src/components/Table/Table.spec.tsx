@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { mount } from "@cypress/react";
 import { Button } from "@components/Button/Button";
-import { CHECKBOX_ID, CHECKBOX_INPUT_ID } from "@components/Checkbox/Checkbox.spec";
 import React from "react";
 import { Column, Row, SelectionMode, Table } from "./Table";
 
@@ -69,6 +68,8 @@ const TABLE_ROW_ID = "[data-test-id=table-row]";
 const TABLE_COLUMN_ID = "[data-test-id=table-column";
 const TABLE_SELECT_CELL_ID = "[data-test-id=table-select-cell]";
 const TABLE_ACTIONS_ID = "[data-test-id=table-actions]";
+const CHECKBOX_ID = "[data-test-id=checkbox]";
+const CHECKBOX_INPUT_ID = "[data-test-id=checkbox-input]";
 
 describe("Table Component", () => {
     it("should render read only table", () => {

@@ -13,7 +13,6 @@ type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange" | "onConfirm" |
     positionProps: HTMLAttributes<Element>;
     overlayTriggerProps: HTMLAttributes<Element>;
     scrollRef: RefObject<HTMLDivElement>;
-    innerOverlayRef: RefObject<HTMLDivElement>;
     onClose: () => void;
 };
 
@@ -28,7 +27,6 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         positionProps,
         overlayTriggerProps,
         scrollRef,
-        innerOverlayRef,
         fixedHeader,
         fixedFooter,
         fitContent,
@@ -48,7 +46,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                 fitContent ? "tw-min-w-0" : "tw-min-w-[400px]",
             ])}
         >
-            <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0" ref={innerOverlayRef}>
+            <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0">
                 {fixedHeader}
                 <div
                     ref={scrollRef}
@@ -69,7 +67,6 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                     {Children.map(children, (child, index) => (
                         <div key={index}>{child}</div>
                     ))}
-
                     <DismissButton onDismiss={onClose} />
                 </div>
                 {fixedFooter}

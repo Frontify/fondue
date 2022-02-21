@@ -36,6 +36,11 @@ export enum ButtonType {
     Reset = "Reset",
 }
 
+export enum ButtonRounding {
+    Medium = "Medium",
+    Full = "Full",
+}
+
 const sizeClasses: Record<ButtonSize, string> = {
     [ButtonSize.Small]: "tw-px-3 tw-h-6 tw-text-xs",
     [ButtonSize.Medium]: "tw-px-4 tw-h-9 tw-text-s",
@@ -46,6 +51,12 @@ const iconOnlySizeClasses: Record<ButtonSize, string> = {
     [ButtonSize.Small]: "tw-p-1",
     [ButtonSize.Medium]: "tw-p-2",
     [ButtonSize.Large]: "tw-p-3",
+};
+
+const iconOnlyFullRoundingSizeClasses: Record<ButtonSize, string> = {
+    [ButtonSize.Small]: "tw-p-0.5",
+    [ButtonSize.Medium]: "tw-p-1",
+    [ButtonSize.Large]: "tw-p-2",
 };
 
 const iconSpacing: Record<ButtonSize, string> = {
@@ -100,6 +111,7 @@ export type ButtonProps = {
     type?: ButtonType;
     style?: ButtonStyle;
     size?: ButtonSize;
+    rounding?: ButtonRounding;
     solid?: boolean;
     inverted?: boolean;
     disabled?: boolean;
@@ -115,6 +127,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         type = ButtonType.Button,
         style = ButtonStyle.Primary,
         size = ButtonSize.Medium,
+        rounding = ButtonRounding.Medium,
         solid = true,
         inverted = false,
         disabled = false,
@@ -148,8 +161,12 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             aria-label={ariaLabel}
             ref={ref}
             className={merge([
-                "tw-outline-none tw-relative tw-flex tw-items-center tw-justify-center tw-border-0 tw-rounded tw-cursor-pointer tw-font-sans tw-transition-colors",
-                icon && !children ? iconOnlySizeClasses[size] : sizeClasses[size],
+                "tw-outline-none tw-relative tw-flex tw-items-center tw-justify-center tw-border-0 tw-cursor-pointer tw-font-sans tw-transition-colors",
+                rounding === ButtonRounding.Full
+                    ? `tw-rounded-full ${iconOnlyFullRoundingSizeClasses[size]}`
+                    : "tw-rounded",
+                rounding === ButtonRounding.Medium &&
+                    (icon && !children ? iconOnlySizeClasses[size] : sizeClasses[size]),
                 merge(
                     disabled
                         ? [

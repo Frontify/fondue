@@ -3,8 +3,10 @@
 import RejectIcon from "@foundation/Icon/Generated/IconReject";
 import { IconProps } from "@foundation/Icon/IconProps";
 import { IconSize } from "@foundation/Icon/IconSize";
+import { getColorDisplayValue } from "@utilities/colors";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, PropsWithChildren, ReactElement, ReactNode } from "react";
+import { Color, ColorFormat } from "../../types";
 
 export enum BadgeStatus {
     Positive = "Positive",
@@ -75,7 +77,7 @@ const getStyleClasses = (style: BadgeStyle, hasHover: boolean, strong: boolean):
               ]),
           })[style] ?? "";
 
-const isBadgeStatus = (style: BadgeStatus | string): style is BadgeStatus =>
+const isBadgeStatus = (style: BadgeStatus | Color | string): style is BadgeStatus =>
     Object.values(BadgeStatus).includes(style as BadgeStatus);
 
 const getSizeClasses = (children: ReactNode, hasExtra: boolean, isSmall: boolean) => {
@@ -93,7 +95,7 @@ const getSizeClasses = (children: ReactNode, hasExtra: boolean, isSmall: boolean
 export type BadgeProps = PropsWithChildren<{
     style?: BadgeStyle;
     icon?: ReactElement<IconProps>;
-    status?: BadgeStatus | string;
+    status?: BadgeStatus | Color | string;
     onClick?: () => void;
     onDismiss?: () => void;
     disabled?: boolean;
@@ -142,7 +144,16 @@ export const Badge: FC<BadgeProps> = ({
                             disabled && "tw-opacity-30",
                             isBadgeStatus(status) && statusClasses[status],
                         ])}
-                        style={isBadgeStatus(status) ? {} : { backgroundColor: status }}
+                        style={
+                            isBadgeStatus(status)
+                                ? {}
+                                : {
+                                      backgroundColor:
+                                          typeof status === "string"
+                                              ? status
+                                              : getColorDisplayValue(status, ColorFormat.Rgba, true),
+                                  }
+                        }
                     />
                 )}
                 {icon && (
