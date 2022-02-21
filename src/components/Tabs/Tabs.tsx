@@ -107,6 +107,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     {tabs.map((tab, index) => {
                         return (
                             <button
+                                data-test-id="tab-item"
                                 className={merge([
                                     "tw-group tw-relative tw-mx-0 tw-pb-5 tw-pt-2 tw-px-2 tw-w-max tw-h-10 tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap",
                                     tab.disabled && "tw-text-text-disabled",
@@ -125,6 +126,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                 )}
                                 {tab.id === activeItemId && (
                                     <motion.div
+                                        data-test-id="tab-active-highlight"
                                         layoutId="underline"
                                         className="tw-absolute tw-h-1 tw-bg-violet-60 tw-rounded-t-x-large tw-w-full tw-bottom-0"
                                     />
@@ -138,7 +140,10 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                 </div>
                 {isOverflowing && (
                     // Remove rotate class when new Dots icon is available
-                    <div className="tw-absolute tw-rotate-90 tw-right-3 tw-top-0 tw-w-6 tw-h-6 tw-bg-grey-20 tw-rounded tw-flex tw-justify-center tw-items-center">
+                    <div
+                        data-test-id="tab-overflow"
+                        className="tw-absolute tw-rotate-90 tw-right-3 tw-top-0 tw-w-6 tw-h-6 tw-bg-grey-20 tw-rounded tw-flex tw-justify-center tw-items-center"
+                    >
                         <Flyout
                             trigger={
                                 <Button
@@ -176,7 +181,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                 )}
             </div>
 
-            <div className="tw-p-3">
+            <div className="tw-p-3" data-test-id="tab-content">
                 {Children.map(children, (child) => {
                     if (!isValidElement(child)) {
                         return null;

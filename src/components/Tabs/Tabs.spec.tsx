@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import React from "react";
+import React, { useState } from "react";
 import { Tabs, TabSize, TabsPaddingX } from "@components/Tabs/Tabs";
 import { IconIcons, IconSize } from "@foundation/Icon";
 import { Card } from "@components/Card";
@@ -62,20 +62,70 @@ const content = [
     },
 ];
 
-describe("Tabs Component", () => {
-    it("should render correctly", () => {
-        mount(
-            // TODO onChange for testing
-            <Tabs activeItemId="tab-1" onChange={(value) => value} paddingX={TabsPaddingX.Small} size={TabSize.Small}>
-                {content.map((item) => (
-                    <TabItem id={item.id} key={item.id} label={item.label} disabled={item.disabled ?? false}>
-                        {item.content}
-                    </TabItem>
-                ))}
-            </Tabs>,
-        );
+const TabComponent = () => {
+    const [activeItemId, setActiveItemId] = useState("tab-1");
+    return (
+        <Tabs
+            activeItemId={activeItemId}
+            onChange={(value) => setActiveItemId(value)}
+            paddingX={TabsPaddingX.Small}
+            size={TabSize.Small}
+        >
+            {content.map((item) => (
+                <TabItem
+                    id={item.id}
+                    key={item.id}
+                    label={item.label}
+                    disabled={item.disabled ?? false}
+                    decorator={item.decorator}
+                    badge={item.badge}
+                >
+                    {item.content}
+                </TabItem>
+            ))}
+        </Tabs>
+    );
+};
 
+describe("Tabs Component", () => {
+    beforeEach("Mount Component", () => {
+        mount(<TabComponent />);
         cy.get("[data-test-id=tabs]").as("Tabs");
+    });
+
+    it("should render correctly", () => {
         cy.get("@Tabs").should("be.visible");
+    });
+
+    it("should be active on selected Tab", () => {
+        const firstTab = cy.get("[data-test-id=tab-item]").first();
+
+        firstTab.should("have.class", "tw-font-medium");
+        firstTab.children("[data-test-id=tab-active-highlight]").should("exist");
+
+        const lastTab = cy.get("[data-test-id=tab-item]").last();
+        lastTab.click({ force: true }).then(() => {
+            lastTab.should("have.class", "tw-font-medium");
+            lastTab.children("[data-test-id=tab-active-highlight]").should("exist");
+        });
+    });
+
+    it("should display correct content", () => {
+        cy.get("[data-test-id=tab-item]").first().click();
+        cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.html", content[0].content);
+        cy.get("[data-test-id=tab-item]").eq(2).click();
+        cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.html", content[2].content);
+    });
+
+    it("should have overflow on smaller screens", () => {
+        cy.viewport(480, 850);
+        cy.get("[data-test-id=tab-overflow]").as("OverflowBtn");
+        cy.get("@OverflowBtn").should("be.visible");
+        cy.get("@OverflowBtn").click();
+        cy.get("[role=dialog]").as("Menu");
+        cy.get("@Menu").should("be.visible");
+        cy.get("@Menu").children().last().should("contain.text", content[5].label);
+        cy.viewport(1280, 850);
+        cy.get("@Tabs").children("[data-test-id=tab-overflow]").should("not.exist");
     });
 });
