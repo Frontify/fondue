@@ -52,6 +52,7 @@ export const BlockStyleDropdown: FC<Props> = ({ textStyles }) => {
 
     return (
         <Select
+            aria-label="Block Style Select"
             onSelectionChange={(id) => {
                 setBlockTypeId(id as BlockStyleTypes);
                 send({
