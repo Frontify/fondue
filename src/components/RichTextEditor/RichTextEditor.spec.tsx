@@ -2,8 +2,8 @@
 
 import { mount } from "@cypress/react";
 import { ELEMENT_PARAGRAPH } from "@udecode/plate";
-import React, { FC, useState } from "react";
-import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from "./RichTextEditor";
+import React from "react";
+import { ON_SAVE_DELAY_IN_MS, RichTextEditor } from "./RichTextEditor";
 
 const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
 const TOOLBAR = "[data-test-id=toolbar]";
@@ -13,17 +13,17 @@ const TEXT_ELEMENT_BUTTONS = "[data-test-id=text-element-buttons]";
 
 const insertTextAndOpenToolbar = () => cy.get("[contenteditable=true]").click().type("hello{selectall}");
 
-const RichTextWithClearButton: FC<Pick<RichTextEditorProps, "value">> = ({ value }) => {
-    const [clear, setClear] = useState(false);
-    const onButtonClick = () => setClear(true);
+// const RichTextWithClearButton: FC<Pick<RichTextEditorProps, "value">> = ({ value }) => {
+//     const [clear, setClear] = useState(false);
+//     const onButtonClick = () => setClear(true);
 
-    return (
-        <div>
-            <button onClick={onButtonClick}>clear</button>
-            <RichTextEditor value={value} clear={clear} />
-        </div>
-    );
-};
+//     return (
+//         <div>
+//             <button onClick={onButtonClick}>clear</button>
+//             <RichTextEditor value={value} clear={clear} />
+//         </div>
+//     );
+// };
 
 describe("RichTextEditor Component", () => {
     it("should render an empty rich text editor", () => {
