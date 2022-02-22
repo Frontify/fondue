@@ -75,6 +75,13 @@ export default {
     title: "Components/Tabs",
     component: Tabs,
     argTypes: {
+        layoutGroupId: {
+            description:
+                "LayoutGroup id for the TabItems's animations (in case of multiple instances). TabItems layoutId is global so LayoutGroup can be provided an id that namespaces it",
+            control: {
+                type: "string",
+            },
+        },
         paddingX: {
             options: Object.values(TabsPaddingX),
             control: { type: "select" },
@@ -91,7 +98,12 @@ export default {
 const TabTemplate: Story<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+        <Tabs
+            {...args}
+            layoutGroupId="tabs-example-1"
+            activeItemId={activeItemId}
+            onChange={(value) => setActiveItemId(value)}
+        >
             {data.map((item) => (
                 <TabItem id={item.id} key={item.id} label={item.label} disabled={item.disabled ?? false}>
                     {item.children}
@@ -107,7 +119,12 @@ const dataWithIcon = data.map((item) => Object.assign({}, item, { decorator: <Ic
 const TabWithIconTemplate: Story<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+        <Tabs
+            {...args}
+            layoutGroupId="tabs-example-with-icons"
+            activeItemId={activeItemId}
+            onChange={(value) => setActiveItemId(value)}
+        >
             {dataWithIcon.map((item) => (
                 <TabItem
                     id={item.id}
@@ -136,7 +153,12 @@ const dataWithBadge = data.map((item) =>
 const TabWithBadgeTemplate: Story<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+        <Tabs
+            {...args}
+            layoutGroupId="tabs-example-3"
+            activeItemId={activeItemId}
+            onChange={(value) => setActiveItemId(value)}
+        >
             {dataWithBadge.map((item) => (
                 <TabItem
                     id={item.id}
@@ -160,7 +182,12 @@ const dataWithBadgeAndIcon = dataWithBadge.map((item) =>
 const TabWithBadgeAndIconTemplate: Story<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+        <Tabs
+            {...args}
+            layoutGroupId="tabs-example-4"
+            activeItemId={activeItemId}
+            onChange={(value) => setActiveItemId(value)}
+        >
             {dataWithBadgeAndIcon.map((item) => (
                 <TabItem
                     id={item.id}

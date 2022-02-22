@@ -5,7 +5,7 @@ import { TabItemProps } from "@components/Tabs/TabItem";
 import { merge } from "@utilities/merge";
 import { IconMore } from "@foundation/Icon";
 import { Badge } from "@components/Badge";
-import { motion } from "framer-motion";
+import { LayoutGroup, motion } from "framer-motion";
 import { Button, ButtonSize, ButtonStyle } from "@components/Button";
 import { Flyout } from "@components/Flyout";
 import { MenuItem } from "@components/MenuItem";
@@ -22,6 +22,7 @@ export enum TabSize {
 }
 
 export type TabsProps = {
+    layoutGroupId?: string;
     paddingX?: TabsPaddingX;
     size?: TabSize;
     activeItemId: string;
@@ -35,7 +36,7 @@ const paddingMap: Record<TabsPaddingX, string> = {
     [TabsPaddingX.Large]: "tw-pl-l",
 };
 
-export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, onChange }) => {
+export const Tabs: FC<TabsProps> = ({ layoutGroupId, paddingX, size, activeItemId, children, onChange }) => {
     const [isOverflowing, setIsOverflowing] = useState(false);
     const [isMenuOpened, setIsMenuOpened] = useState(false);
 
@@ -79,8 +80,8 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
     const tabNavRef = useRef<HTMLDivElement | null>(null);
 
     return (
-        <div data-test-id="tabs">
-            <div className="tw-flex tw-relative tw-border-b tw-border-grey-20">
+        <LayoutGroup id={layoutGroupId ?? "tabs"}>
+            <div data-test-id="tabs" className="tw-flex tw-relative tw-border-b tw-border-grey-20">
                 <div
                     ref={tabNavRef}
                     role="tablist"
@@ -183,6 +184,6 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     return cloneElement(child, { ...child.props, active: child.props.id === activeItemId });
                 })}
             </div>
-        </div>
+        </LayoutGroup>
     );
 };
