@@ -15,11 +15,9 @@ const insertTextAndOpenToolbar = () => cy.get("[contenteditable=true]").click().
 
 const RichTextWithClearButton: FC<Pick<RichTextEditorProps, "value">> = ({ value }) => {
     const [clear, setClear] = useState(false);
-    const onButtonClick = () => setClear(true);
-
     return (
         <div>
-            <button onClick={onButtonClick}>clear</button>
+            <button onClick={() => setClear(true)}>clear</button>
             <RichTextEditor value={value} clear={clear} />
         </div>
     );
