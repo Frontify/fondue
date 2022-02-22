@@ -14,6 +14,15 @@ export type TabItemProps = {
     children: ReactNode;
 };
 
-export const TabItem: FC<TabItemProps & { active?: boolean }> = ({ active, disabled, children }) => {
-    return <div className={merge([(!active || disabled) && "tw-hidden"])}>{children}</div>;
+export const TabItem: FC<TabItemProps & { active?: boolean }> = ({ active, disabled, children, id }) => {
+    return (
+        <div
+            role="tabpanel"
+            id={`${id}-content`}
+            aria-labelledby={id}
+            className={merge([(!active || disabled) && "tw-hidden"])}
+        >
+            {children}
+        </div>
+    );
 };

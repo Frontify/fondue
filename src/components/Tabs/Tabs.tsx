@@ -83,6 +83,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
             <div className="tw-flex tw-relative tw-border-b tw-border-grey-20">
                 <div
                     ref={tabNavRef}
+                    role="tablist"
                     className={merge([
                         "tw-overflow-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start",
                         paddingMap[paddingX ?? TabsPaddingX.Small],
@@ -93,6 +94,10 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                         return (
                             <button
                                 data-test-id="tab-item"
+                                role="tab"
+                                type="button"
+                                aria-selected={tab.id === activeItemId}
+                                aria-controls={`${tab.id}-content`}
                                 className={merge([
                                     "tw-group tw-relative tw-mx-0 tw-pb-5 tw-pt-2 tw-px-2 tw-w-max tw-h-10 tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap",
                                     tab.disabled && "tw-text-text-disabled",
@@ -150,6 +155,10 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                         className="tw-w-full"
                                         key={tab.id}
                                         onClick={() => (!tab.disabled && onChange ? onChange(tab.id) : null)}
+                                        role="tab"
+                                        type="button"
+                                        aria-selected={tab.id === activeItemId}
+                                        aria-controls={`${tab.id}-content`}
                                     >
                                         <MenuItem
                                             title={tab.label}
