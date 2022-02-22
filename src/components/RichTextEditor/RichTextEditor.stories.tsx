@@ -14,7 +14,7 @@ import {
     MARK_UNDERLINE,
 } from "@udecode/plate";
 import React from "react";
-import { RichTextEditor as RichTextEditorComponent, EditorProps } from "./RichTextEditor";
+import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
 
 const IPSUM =
     "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
@@ -136,17 +136,23 @@ const value = [
     },
 ];
 
-export const RichTextEditor: Story<EditorProps> = (args: EditorProps) => <RichTextEditorComponent {...args} />;
+export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <RichTextEditorComponent {...args} />
+);
 RichTextEditor.args = { value: JSON.stringify(value) };
 
-export const WithReadonlyState: Story<EditorProps> = (args: EditorProps) => <RichTextEditorComponent {...args} />;
+export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <RichTextEditorComponent {...args} />
+);
 WithReadonlyState.args = {
     readonly: true,
     value: JSON.stringify(value),
 };
 WithReadonlyState.argTypes = { value: { type: "string" } };
 
-export const RichTextWithHTML: Story<EditorProps> = (args: EditorProps) => <RichTextEditorComponent {...args} />;
+export const RichTextWithHTML: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <RichTextEditorComponent {...args} />
+);
 RichTextWithHTML.args = {
     value: `
         <p><strong>This text is bold.</strong></p>
@@ -178,7 +184,7 @@ RichTextWithHTML.args = {
 };
 RichTextWithHTML.argTypes = { value: { type: "string" } };
 
-export const RichTextEditorFlex: Story<EditorProps> = (args: EditorProps) => (
+export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <div className="tw-flex">
         <RichTextEditorComponent {...args} />
     </div>

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BalloonToolbar, Plate, usePlateEditorState, withPlateProvider } from "@udecode/plate";
+import { BalloonToolbar, Plate, usePlateEditorState } from "@udecode/plate";
 import { debounce } from "@utilities/debounce";
 import React, { FC, useEffect } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
@@ -8,7 +8,7 @@ import { plugins } from "./editor-config";
 import { Toolbar } from "./Toolbar";
 import { EMPTY_VALUE, parseRawValue } from "./utils/parseRawValue";
 
-export type EditorProps = {
+export type RichTextEditorProps = {
     placeholder?: string;
     value?: string;
     onTextChange?: (value: string) => void;
@@ -19,7 +19,7 @@ export type EditorProps = {
 
 export const ON_SAVE_DELAY_IN_MS = 500;
 
-const Editor: FC<EditorProps> = ({
+export const RichTextEditor: FC<RichTextEditorProps> = ({
     value: initialValue,
     placeholder = "",
     readonly = false,
@@ -66,5 +66,3 @@ const Editor: FC<EditorProps> = ({
         </div>
     );
 };
-
-export const RichTextEditor = withPlateProvider(Editor);
