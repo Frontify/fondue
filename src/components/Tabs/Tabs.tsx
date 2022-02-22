@@ -64,7 +64,9 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     overFlowIndex.push(i);
                 }
             }
-            const newIndexLimit = overFlowIndex.length ? overFlowIndex.sort()[0] : tabs.length;
+
+            const overFlowIndexInAscOrder = overFlowIndex.sort((a, b) => a - b);
+            const newIndexLimit = overFlowIndex.length ? overFlowIndexInAscOrder[0] : tabs.length;
             if (newIndexLimit < tabIndexLimit || newIndexLimit > tabIndexLimit) {
                 setTabIndexLimit(newIndexLimit);
             }
