@@ -3,6 +3,6 @@
 import { PlateRenderElementProps } from "@udecode/plate";
 import React from "react";
 
-export const ListItemElement = (props: PlateRenderElementProps) => {
-    return <li {...props.attributes}>{props.children}</li>;
+export const ListItemContentElement = (props: PlateRenderElementProps) => {
+    return <span {...props.attributes}>{props.children}</span>;
 };

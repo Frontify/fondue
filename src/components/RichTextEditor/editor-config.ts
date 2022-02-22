@@ -15,6 +15,7 @@ import {
     createSoftBreakPlugin,
     createStrikethroughPlugin,
     createUnderlinePlugin,
+    ELEMENT_LI,
     ELEMENT_LIC,
     ELEMENT_LINK,
     ELEMENT_OL,
@@ -27,6 +28,7 @@ import {
     MARK_UNDERLINE,
 } from "@udecode/plate";
 import { ListItemElement } from "./components/elements/list-item";
+import { ListItemContentElement } from "./components/elements/list-item-content";
 import { OrderedListElement } from "./components/elements/ordered-list";
 import { UnorderedListElement } from "./components/elements/unordered-list";
 import { BoldMark } from "./components/marks/bold";
@@ -40,7 +42,8 @@ const components = createPlateUI({
     [ELEMENT_LINK]: LinkElement,
     [ELEMENT_UL]: UnorderedListElement,
     [ELEMENT_OL]: OrderedListElement,
-    [ELEMENT_LIC]: ListItemElement,
+    [ELEMENT_LI]: ListItemElement,
+    [ELEMENT_LIC]: ListItemContentElement,
     [MARK_BOLD]: BoldMark,
     [MARK_ITALIC]: ItalicMark,
     [MARK_UNDERLINE]: UnderlineMark,

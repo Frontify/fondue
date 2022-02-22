@@ -162,16 +162,22 @@ RichTextWithHTML.args = {
         <p><code>This text is a code line.</code></p>
         <p>${IPSUM}</p>
         <ul>
-            <li>red</li>
-            <li>blue</li>
-            <li>yellow</li>
+            <li>This is list item number one.</li>
+            <li>This is list item number two.</li>
+            <li>This is list item number three.</li>
+            <ul>
+                <li>This is child item number one.</li>
+                <li>This is child item number two, with more children.</li>
+                <ul>
+                    <li>This is child of child item number one.</li>
+                    <li>This is child of child item number two.</li>
+                </ul>
+            </ul>
         </ul>
         <ol>
-            <li>Mix flour, baking powder, sugar, and salt.</li>
-            <li>In another bowl, mix eggs, milk, and oil.</li>
-            <li>Stir both mixtures together.</li>
-            <li>Fill muffin tray 3/4 full.</li>
-            <li>Bake for 20 minutes.</li>
+            <li>This comes first.</li>
+            <li>This comes second.</li>
+            <li>And last but not least, this comes third.</li>
         </ol>
         <p><a href="https://frontify.com">This is a link.</a></p>
     `,
