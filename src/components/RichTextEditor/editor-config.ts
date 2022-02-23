@@ -11,6 +11,7 @@ import {
     createListPlugin,
     createParagraphPlugin,
     createPlateUI,
+    createPluginFactory,
     createPlugins,
     createSoftBreakPlugin,
     createStrikethroughPlugin,
@@ -27,15 +28,26 @@ import {
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
 } from "@udecode/plate";
-import { ListItemElement } from "./components/elements/list-item";
-import { ListItemContentElement } from "./components/elements/list-item-content";
-import { OrderedListElement } from "./components/elements/ordered-list";
-import { UnorderedListElement } from "./components/elements/unordered-list";
-import { BoldMark } from "./components/marks/bold";
-import { CodeMark } from "./components/marks/code";
-import { ItalicMark } from "./components/marks/italic";
-import { StrikethroughMark } from "./components/marks/strikethrough";
-import { UnderlineMark } from "./components/marks/underline";
+import {
+    BoldMark,
+    CodeMark,
+    Custom1Element,
+    ItalicMark,
+    ListItemContentElement,
+    ListItemElement,
+    OrderedListElement,
+    StrikethroughMark,
+    UnderlineMark,
+    UnorderedListElement,
+} from "./components";
+
+export const ELEMENT_CUSTOM1 = "custom1";
+
+const createCustom1Plugin = createPluginFactory({
+    key: ELEMENT_CUSTOM1,
+    isElement: true,
+    component: Custom1Element,
+});
 
 const components = createPlateUI({
     // this will override the components over the default ones
@@ -65,6 +77,7 @@ export const plugins = createPlugins(
         createUnderlinePlugin(),
         createStrikethroughPlugin(),
         createCodePlugin(),
+        createCustom1Plugin(),
     ],
     {
         components,

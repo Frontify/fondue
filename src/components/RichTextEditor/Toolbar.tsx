@@ -2,6 +2,7 @@
 
 import {
     IconBold,
+    IconCallout,
     IconItalic,
     IconLink,
     IconListBullets,
@@ -16,6 +17,7 @@ import {
 } from "@foundation/Icon";
 import {
     AlignToolbarButton,
+    BlockToolbarButton,
     ELEMENT_OL,
     ELEMENT_UL,
     getPluginType,
@@ -30,10 +32,11 @@ import {
     usePlateEditorRef,
 } from "@udecode/plate";
 import React, { FC } from "react";
+import { ELEMENT_CUSTOM1 } from "./editor-config";
 
 type ButtonGroupProps = {
     testId?: string;
-    children: JSX.Element[];
+    children: JSX.Element | JSX.Element[];
 };
 
 export const Toolbar: FC = () => {
@@ -50,6 +53,9 @@ export const Toolbar: FC = () => {
             data-test-id="toolbar"
             className="tw-flex tw-p-0.5 tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5"
         >
+            <ButtonGroup testId="text-style-buttons">
+                <BlockToolbarButton type={getPluginType(editor, ELEMENT_CUSTOM1)} icon={<IconCallout />} />
+            </ButtonGroup>
             <ButtonGroup testId="text-alignment-buttons">
                 <AlignToolbarButton value="left" icon={<IconTextAlignLeft />} />
                 <AlignToolbarButton value="center" icon={<IconTextAlignCenter />} />

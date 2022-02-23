@@ -25,17 +25,18 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     readonly = false,
     clear = false,
     onTextChange,
+    onBlur,
 }) => {
     const editableProps: EditableProps = {
         placeholder: placeholder,
         readOnly: readonly,
+        onBlur: () => onBlur,
     };
 
     const editor = usePlateEditorState();
 
     useEffect(() => {
         if (clear && editor) {
-            // clear selection, history and children of editor
             const point = { path: [0, 0], offset: 0 };
             editor.selection = { anchor: point, focus: point };
             editor.history = { redos: [], undos: [] };
@@ -58,7 +59,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                         modifiers: [{ name: "offset", options: { offset: [0, 12] } }],
                     }}
                     styles={{ root: { border: "none", background: "#ffffff" } }}
-                    //classNames={{ root: "tw-drop-shadow-md" }}
                 >
                     <Toolbar />
                 </BalloonToolbar>
