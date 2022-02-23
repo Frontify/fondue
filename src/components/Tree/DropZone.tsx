@@ -9,10 +9,10 @@ export enum DropZonePosition {
     WITHIN = "within",
 }
 
-export type OnDropCallback = (targetId: string, sourceID: string, position: DropZonePosition) => void;
+export type OnDropCallback = (targetItem: TreeNodeProps, sourceItem: TreeNodeProps, position: DropZonePosition) => void;
 
 type DropZoneData = {
-    id: string;
+    targetItem: TreeNodeProps;
     position: DropZonePosition;
 };
 
@@ -25,10 +25,13 @@ export type DropZoneProps = {
 const DropZone = ({ data, onDrop, children }: DropZoneProps) => {
     const [{ isOver, canDrop }, drop] = useDrop({
         accept: "item",
-        drop: (item: TreeNodeProps, monitor) => {
-            onDrop?.(data.id, item.id, data.position);
+        drop: (item: TreeNodeProps) => {
+            // can't drop an item on itself
+            if (item.id !== data.targetItem.id) {
+                onDrop?.(data.targetItem, item, data.position);
+            }
         },
-        canDrop: (item: TreeNodeProps, monitor) => {
+        canDrop: () => {
             // anything can be dropped anywhere ATM
             return true;
         },
@@ -46,7 +49,7 @@ const DropZone = ({ data, onDrop, children }: DropZoneProps) => {
                 "tw-w-full",
                 isActive ? "tw-bg-violet-10" : "",
                 data.position !== DropZonePosition.WITHIN ? "tw-h-1" : "tw-h-auto",
-                isActive && data.position !== DropZonePosition.WITHIN ? "tw-border-violet-50 tw-border-2" : "",
+                isActive && data.position !== DropZonePosition.WITHIN ? "tw-border-violet-50 tw-border-2 tw-h-7" : "",
             ])}
             ref={drop}
         >

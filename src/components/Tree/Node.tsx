@@ -51,7 +51,7 @@ type NodeProps = {
 };
 
 export const TreeNode = ({
-    node: { id, value, name, label, icon, nodes, actions },
+    node,
     strong = false,
     activeNodeId = null,
     onClick,
@@ -59,12 +59,14 @@ export const TreeNode = ({
     isFirst,
     onDrop,
 }: NodeProps): ReactElement<NodeProps> => {
+    const { id, value, name, label, icon, nodes, actions } = node;
     const [{ opacity }, drag] = useDrag({
         item: { id, value, name, label, icon, nodes, actions },
         collect: (monitor) => ({
             opacity: monitor.isDragging() ? 0.4 : 1,
         }),
         type: "item",
+        canDrag: onDrop !== undefined,
     });
     const [showNodes, setShowNodes] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
@@ -98,7 +100,7 @@ export const TreeNode = ({
             {isFirst && (
                 <DropZone
                     data={{
-                        id,
+                        targetItem: node,
                         position: DropZonePosition.BEFORE,
                     }}
                     onDrop={onDrop}
@@ -106,7 +108,7 @@ export const TreeNode = ({
             )}
             <DropZone
                 data={{
-                    id,
+                    targetItem: node,
                     position: DropZonePosition.WITHIN,
                 }}
                 onDrop={onDrop}
@@ -176,7 +178,7 @@ export const TreeNode = ({
             )}
             <DropZone
                 data={{
-                    id,
+                    targetItem: node,
                     position: DropZonePosition.AFTER,
                 }}
                 onDrop={onDrop}
