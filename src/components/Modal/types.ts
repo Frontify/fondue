@@ -14,6 +14,11 @@ export enum ThemeColor {
     Negative = "Negative",
 }
 
+export type ModalButton = {
+    label: string;
+    action: () => void;
+};
+
 export type ModalVisualProps = {
     pattern?: ModalVisualPattern;
     foregroundColor?: ThemeColor | Color;
@@ -29,6 +34,10 @@ export type ModalHeaderProps = {
 
 export type ModalBodyProps = {
     children?: ReactElement;
+};
+
+export type ModalFooterProps = {
+    buttons?: [ModalButton] | [ModalButton, ModalButton];
 };
 
 export type ModalProps = {

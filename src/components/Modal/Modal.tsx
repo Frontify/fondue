@@ -2,9 +2,10 @@
 
 import React, { FC } from "react";
 import { ModalProps } from "./types";
+import { ModalBody as Body } from "./ModalBody";
 import { ModalVisual as Visual } from "./ModalVisual";
 import { ModalVisual as Header } from "./ModalHeader";
-import { ModalBody as Body } from "./ModalBody";
+import { ModalFooter as Footer } from "./ModalFooter";
 
 export const Modal: FC<ModalProps> = ({ visual }) => {
     return (
@@ -12,6 +13,7 @@ export const Modal: FC<ModalProps> = ({ visual }) => {
             <Visual pattern={visual} />
             <Header />
             <Body />
+            <Footer />
         </div>
     );
 };
