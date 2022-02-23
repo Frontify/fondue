@@ -27,6 +27,10 @@ export type ModalHeaderProps = {
     variant?: "Negative" | "Positive" | "Warning" | "Informative";
 };
 
+export type ModalBodyProps = {
+    children?: ReactElement;
+};
+
 export type ModalProps = {
     visual?: ModalVisualPattern;
     children?: ReactElement;
