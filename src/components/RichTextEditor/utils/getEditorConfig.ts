@@ -30,6 +30,7 @@ import {
     BoldMark,
     CodeMark,
     Custom1Element,
+    Custom2Element,
     Heading1Element,
     Heading2Element,
     Heading3Element,
@@ -96,7 +97,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
     const createCustom2Plugin = createPluginFactory({
         key: TextStyles.ELEMENT_CUSTOM2,
         isElement: true,
-        component: Custom1Element,
+        component: Custom2Element,
         props: { textStyles },
     });
 
