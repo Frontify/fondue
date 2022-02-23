@@ -2,12 +2,14 @@
 
 import React, { FC } from "react";
 import { ModalProps } from "./types";
-import { ModalVisual } from "./ModalVisual";
+import { ModalVisual as Visual } from "./ModalVisual";
+import { ModalVisual as Header } from "./ModalHeader";
 
 export const Modal: FC<ModalProps> = ({ visual }) => {
     return (
         <div data-test-id="modal" className="tw-shadow-xl">
-            <ModalVisual pattern={visual} />
+            <Visual pattern={visual} />
+            <Header />
         </div>
     );
 };

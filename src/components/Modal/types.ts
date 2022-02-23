@@ -20,6 +20,13 @@ export type ModalVisualProps = {
     backgroundColor?: ThemeColor | Color;
 };
 
+export type ModalHeaderProps = {
+    title?: string;
+    leadText?: string;
+    decorator?: ReactElement;
+    variant?: "Negative" | "Positive" | "Warning" | "Informative";
+};
+
 export type ModalProps = {
     visual?: ModalVisualPattern;
     children?: ReactElement;
