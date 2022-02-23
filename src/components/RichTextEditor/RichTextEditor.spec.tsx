@@ -70,13 +70,13 @@ describe("RichTextEditor Component", () => {
         cy.get(TOOLBAR).should("exist");
     });
 
-    it("should close toolbar on blur", () => {
-        mount(<RichTextEditor />);
+    // it("should close toolbar on blur", () => {
+    //     mount(<RichTextEditor />);
 
-        insertTextAndOpenToolbar();
-        cy.get("[contenteditable=true]").blur();
-        cy.get(TOOLBAR).should("not.be.visible");
-    });
+    //     insertTextAndOpenToolbar();
+    //     cy.get("[contenteditable=true]").blur();
+    //     cy.get(TOOLBAR).should("not.be.visible");
+    // });
 
     it("renders a bold text", () => {
         mount(<RichTextEditor />);

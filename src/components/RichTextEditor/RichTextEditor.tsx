@@ -2,7 +2,7 @@
 
 import { BalloonToolbar, Plate, usePlateEditorState } from "@udecode/plate";
 import { debounce } from "@utilities/debounce";
-import React, { FC, useEffect } from "react";
+import React, { FC, FocusEventHandler, useEffect } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
 import { getEditorConfig } from "./utils/getEditorConfig";
 import { Toolbar } from "./Toolbar";
@@ -13,7 +13,7 @@ export type RichTextEditorProps = {
     placeholder?: string;
     value?: string;
     onTextChange?: (value: string) => void;
-    onBlur?: (value: string) => void;
+    onBlur?: FocusEventHandler | undefined;
     readonly?: boolean;
     clear?: boolean;
     textStyles?: TextStyleType[];
@@ -34,7 +34,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const editableProps: EditableProps = {
         placeholder: placeholder,
         readOnly: readonly,
-        onBlur: () => onBlur,
+        onBlur,
     };
 
     useEffect(() => {
