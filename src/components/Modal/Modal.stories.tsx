@@ -1,18 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from "react";
+import { ModalProps } from "./types";
+import { Button } from "@components/Button";
 import { Story, Meta } from "@storybook/react";
-import { Modal, ModalProps } from "./Modal";
+import { Modal as ModalComponent } from "./Modal";
 
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Modal",
-    component: Modal,
+    component: ModalComponent,
 } as Meta<ModalProps>;
 
-const Template: Story<ModalProps> = (args) => <Modal {...args} />;
-
-export const Default = Template.bind({});
-
-Default.args = {
-    foo: "bar",
-};
+export const Modal: Story<ModalProps> = (args: ModalProps) => (
+    <ModalComponent {...args}>
+        <Button>Button</Button>
+    </ModalComponent>
+);
