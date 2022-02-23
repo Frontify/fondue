@@ -4,8 +4,9 @@ import { BalloonToolbar, Plate, usePlateEditorState } from "@udecode/plate";
 import { debounce } from "@utilities/debounce";
 import React, { FC, useEffect } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
-import { plugins } from "./editor-config";
+import { getEditorConfig } from "./utils/getEditorConfig";
 import { Toolbar } from "./Toolbar";
+import { TextStyleType } from "./utils/getTextStyles";
 import { EMPTY_VALUE, parseRawValue } from "./utils/parseRawValue";
 
 export type RichTextEditorProps = {
@@ -15,6 +16,7 @@ export type RichTextEditorProps = {
     onBlur?: (value: string) => void;
     readonly?: boolean;
     clear?: boolean;
+    textStyles?: TextStyleType[];
 };
 
 export const ON_SAVE_DELAY_IN_MS = 500;
@@ -24,16 +26,16 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     placeholder = "",
     readonly = false,
     clear = false,
+    textStyles,
     onTextChange,
     onBlur,
 }) => {
+    const editor = usePlateEditorState();
     const editableProps: EditableProps = {
         placeholder: placeholder,
         readOnly: readonly,
         onBlur: () => onBlur,
     };
-
-    const editor = usePlateEditorState();
 
     useEffect(() => {
         if (clear && editor) {
@@ -50,7 +52,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 initialValue={parseRawValue(initialValue)}
                 onChange={debounce((value) => onTextChange && onTextChange(value), ON_SAVE_DELAY_IN_MS)}
                 editableProps={editableProps}
-                plugins={plugins}
+                plugins={getEditorConfig(textStyles)}
             >
                 <BalloonToolbar
                     arrow={true}

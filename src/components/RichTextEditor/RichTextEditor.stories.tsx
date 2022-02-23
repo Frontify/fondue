@@ -15,6 +15,7 @@ import {
 } from "@udecode/plate";
 import React from "react";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
+import { TextStyles } from "./utils/getTextStyles";
 
 const IPSUM =
     "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
@@ -134,6 +135,12 @@ const value = [
             },
         ],
     },
+    createElement({ text: "Heading 1", element: TextStyles.ELEMENT_HEADING1 }),
+    createElement({ text: "Heading 2", element: TextStyles.ELEMENT_HEADING2 }),
+    createElement({ text: "Heading 3", element: TextStyles.ELEMENT_HEADING3 }),
+    createElement({ text: "Heading 4", element: TextStyles.ELEMENT_HEADING4 }),
+    createElement({ text: "Custom 1", element: TextStyles.ELEMENT_CUSTOM1 }),
+    createElement({ text: "Custom 2", element: TextStyles.ELEMENT_CUSTOM2 }),
 ];
 
 export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
@@ -180,6 +187,10 @@ RichTextWithHTML.args = {
             <li>And last but not least, this comes third.</li>
         </ol>
         <p><a href="https://frontify.com">This is a link.</a></p>
+        <h1>Heading 1</h1>
+        <h2>Heading 2</h2>
+        <h3>Heading 3</h3>
+        <h4>Heading 4</h4>
     `,
 };
 RichTextWithHTML.argTypes = { value: { type: "string" } };
@@ -190,3 +201,19 @@ export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEdi
     </div>
 );
 RichTextEditorFlex.argTypes = { value: { type: "string" } };
+
+export const WithCustomTextStyle: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <RichTextEditorComponent {...args} />
+);
+WithCustomTextStyle.args = {
+    value: JSON.stringify(value),
+    textStyles: [
+        { type: TextStyles.ELEMENT_HEADING1, className: "tw-text-7xl tw-font-bold tw-text-green-80" },
+        { type: TextStyles.ELEMENT_HEADING2, className: "tw-text-5xl tw-font-bold tw-text-violet-60" },
+        { type: TextStyles.ELEMENT_HEADING3, className: "tw-text-3xl tw-font-bold tw-text-yellow-70" },
+        { type: TextStyles.ELEMENT_HEADING4, className: "tw-text-xl tw-text-red-50" },
+        { type: TextStyles.ELEMENT_CUSTOM1, className: "tw-font-mono tw-italic tw-text-black-80" },
+        { type: TextStyles.ELEMENT_CUSTOM2, className: "tw-underline tw-text-black-80" },
+    ],
+};
+WithCustomTextStyle.argTypes = { value: { type: "string" } };

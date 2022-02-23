@@ -2,7 +2,6 @@
 
 import {
     IconBold,
-    IconCallout,
     IconItalic,
     IconLink,
     IconListBullets,
@@ -32,7 +31,7 @@ import {
     usePlateEditorRef,
 } from "@udecode/plate";
 import React, { FC } from "react";
-import { ELEMENT_CUSTOM1 } from "./editor-config";
+import { TextStyles } from "./utils/getTextStyles";
 
 type ButtonGroupProps = {
     testId?: string;
@@ -54,7 +53,12 @@ export const Toolbar: FC = () => {
             className="tw-flex tw-p-0.5 tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5"
         >
             <ButtonGroup testId="text-style-buttons">
-                <BlockToolbarButton type={getPluginType(editor, ELEMENT_CUSTOM1)} icon={<IconCallout />} />
+                <BlockToolbarButton type={getPluginType(editor, TextStyles.ELEMENT_HEADING1)} icon={<i>H1</i>} />
+                <BlockToolbarButton type={getPluginType(editor, TextStyles.ELEMENT_HEADING2)} icon={<i>H2</i>} />
+                <BlockToolbarButton type={getPluginType(editor, TextStyles.ELEMENT_HEADING3)} icon={<i>H3</i>} />
+                <BlockToolbarButton type={getPluginType(editor, TextStyles.ELEMENT_HEADING4)} icon={<i>H4</i>} />
+                <BlockToolbarButton type={getPluginType(editor, TextStyles.ELEMENT_CUSTOM1)} icon={<i>C1</i>} />
+                <BlockToolbarButton type={getPluginType(editor, TextStyles.ELEMENT_CUSTOM2)} icon={<i>C2</i>} />
             </ButtonGroup>
             <ButtonGroup testId="text-alignment-buttons">
                 <AlignToolbarButton value="left" icon={<IconTextAlignLeft />} />

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createPlateEditor, deserializeHtml, ELEMENT_PARAGRAPH, parseHtmlDocument, TDescendant } from "@udecode/plate";
-import { plugins } from "../editor-config";
+import { getEditorConfig } from "./getEditorConfig";
 
 export const EMPTY_VALUE: TDescendant[] = [{ type: ELEMENT_PARAGRAPH, children: [{ text: "" }] }];
 
@@ -15,7 +15,7 @@ export const parseRawValue = (raw?: string): TDescendant[] => {
     try {
         parsedValue = JSON.parse(raw);
     } catch {
-        const editor = createPlateEditor({ plugins: plugins });
+        const editor = createPlateEditor({ plugins: getEditorConfig() });
         const trimmed = raw.trim().replace(/>\s+</g, "><");
         const document = parseHtmlDocument(trimmed);
         const parsedHtml = deserializeHtml(editor, {

@@ -4,8 +4,8 @@ import { PlateRenderElementProps } from "@udecode/plate";
 import React, { FC } from "react";
 import { getTextStyles, TextStyles } from "../utils/getTextStyles";
 
-export const Custom1Element: FC<PlateRenderElementProps> = ({ attributes, children, textStyles }) => (
-    <p {...attributes} className={getTextStyles(TextStyles.ELEMENT_CUSTOM1, textStyles)}>
+export const Custom2Element: FC<PlateRenderElementProps> = ({ attributes, children, textStyles }) => (
+    <p {...attributes} className={getTextStyles(TextStyles.ELEMENT_CUSTOM2, textStyles)}>
         {children}
     </p>
 );
