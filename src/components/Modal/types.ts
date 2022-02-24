@@ -1,12 +1,6 @@
 import { Color } from "../../types";
 import { ReactElement } from "react";
-
-export enum ModalVisualPattern {
-    Typography = "Typography",
-    Assets = "Assets",
-    Imagery = "Imagery",
-    Sound = "Sound",
-}
+import { PatternType } from "@components/FrontifyPattern/FrontifyPattern";
 
 export enum ThemeColor {
     Default = "Default",
@@ -20,7 +14,7 @@ export type ModalButton = {
 };
 
 export type ModalVisualProps = {
-    pattern?: ModalVisualPattern;
+    pattern?: PatternType;
     foregroundColor?: ThemeColor | Color;
     backgroundColor?: ThemeColor | Color;
 };
@@ -41,6 +35,6 @@ export type ModalFooterProps = {
 };
 
 export type ModalProps = {
-    visual?: ModalVisualPattern;
+    visual?: PatternType;
     children?: ReactElement;
 };

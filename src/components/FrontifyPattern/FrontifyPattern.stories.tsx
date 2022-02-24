@@ -2,12 +2,20 @@
 
 import React from "react";
 import { Story, Meta } from "@storybook/react";
-import { FrontifyPattern as FrontifyPatternComponent, FrontifyPatternProps, PatternScale } from "./FrontifyPattern";
+import {
+    PatternType,
+    PatternScale,
+    FrontifyPatternProps,
+    FrontifyPattern as FrontifyPatternComponent,
+} from "./FrontifyPattern";
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Foundation/FrontifyPattern",
+    title: "Components/FrontifyPattern",
     component: FrontifyPatternComponent,
+    args: {
+        pattern: PatternType.DigitalAssets,
+    },
 } as Meta<FrontifyPatternProps>;
 
 const FrontifyPattern: Story<FrontifyPatternProps> = (args) => <FrontifyPatternComponent {...args} />;

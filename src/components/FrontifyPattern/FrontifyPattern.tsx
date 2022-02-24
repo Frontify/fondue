@@ -2,6 +2,13 @@
 
 import React, { FC } from "react";
 
+export enum PatternType {
+    Typography = "Typography",
+    DigitalAssets = "DigitalAssets",
+    Imagery = "Imagery",
+    Sound = "Sound",
+}
+
 export enum PatternScale {
     Small = "Small",
     Large = "Large",
@@ -13,6 +20,7 @@ const scaleClasses: Record<PatternScale, string> = {
 };
 
 export type FrontifyPatternProps = {
+    pattern: PatternType;
     scale?: PatternScale;
 };
 
