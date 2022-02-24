@@ -136,35 +136,55 @@ describe("Tabs Component", () => {
         cy.get("[data-test-id=tab-item]").first().type("{rightArrow}");
         cy.get("[data-test-id=tab-item]").eq(2).should("have.class", "tw-font-medium");
         cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.html", data[2].children);
-        cy.get("[data-test-id=tab-item]").eq(2).type("{rightArrow}");
+        cy.get("[data-test-id=tab-item]").eq(2).trigger("keydown", { key: "ArrowRight" });
         cy.get("[data-test-id=tab-item]").eq(3).should("have.class", "tw-font-medium");
         cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.text", "content for tab 4");
-        cy.get("[data-test-id=tab-item]").eq(3).type("{leftArrow}");
+        cy.get("[data-test-id=tab-item]").eq(3).trigger("keydown", { key: "ArrowLeft" });
         cy.get("[data-test-id=tab-item]").eq(2).should("have.class", "tw-font-medium");
         cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.text", data[2].children);
     });
 
     it("should have Keyboard navigation in overflow menu", () => {
-        // TODO and WIP find a better way to test accessibilty with cypress.
         cy.viewport(350, 850);
-        cy.get("[data-test-id=tab-overflow]").as("OverflowBtn");
-        cy.get("@OverflowBtn").type("{enter}");
-        cy.get("button#tab-4-btn").click();
-        cy.get("button#tab-4-btn").type("{rightArrow}");
+        cy.get("[data-test-id=tab-item]").eq(2).click();
+        cy.get("body").realPress("Tab");
+        cy.get("body").realPress("Enter");
+        cy.get("[role=dialog]").should("be.visible");
+        cy.get("[data-test-id=tab-overflow]").realPress("Tab");
+        cy.get("[data-test-id=tab-item]").eq(3).realPress("Enter");
+        cy.get("button#tab-4-btn").should("be.focused");
+        cy.get("body").trigger("keydown", { key: "ArrowRight" });
+        cy.get("button#tab-6-btn").should("be.focused");
         cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.text", "content for label 6");
-
-        cy.get("@OverflowBtn").type("{enter}");
-        cy.get("button#tab-6-btn").click();
-        cy.get("button#tab-6-btn").type("{leftArrow}");
+        cy.get("body").trigger("keydown", { key: "ArrowLeft" });
+        cy.get("button#tab-4-btn").should("be.focused");
         cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.text", "content for tab 4");
+        cy.get("body").trigger("keydown", { key: "ArrowLeft" });
+        cy.get("[data-test-id=tab-item]").eq(2).should("have.class", "tw-font-medium");
+        cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.text", data[2].children);
+        cy.get("body").trigger("keydown", { key: "ArrowDown" });
+        cy.get("button#tab-4-btn").should("be.focused");
+        cy.get("body").trigger("keydown", { key: "ArrowDown" });
+        cy.get("button#tab-5-btn").should("not.be.focused");
+        cy.get("button#tab-6-btn").should("be.focused");
+        cy.get("body").trigger("keydown", { key: "ArrowUp" });
+        cy.get("button#tab-4-btn").should("be.focused");
     });
 
     it("should have focus on tab and content", () => {
-        // TODO and WIP find a better way to test accessibilty with cypress.
+        cy.get("button#tab-3-btn").click();
+        cy.get("button#tab-3-btn").should("be.focused");
+        cy.get("body").realPress("Tab");
+        cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("be.focused");
+        cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.text", data[2].children);
+        cy.get("body").realPress(["Shift", "Tab"]);
+        cy.get("button#tab-3-btn").should("be.focused");
     });
 
     it("should not pass on disabled tab with keyboard", () => {
-        cy.get("[data-test-id=tab-item]").first().type("{rightArrow}");
+        cy.get("[data-test-id=tab-item]").first().trigger("keydown", { key: "ArrowRight" });
+        cy.get("[data-test-id=tab-item]").eq(1).should("not.have.class", "tw-font-medium");
+        cy.get("[data-test-id=tab-item]").eq(2).trigger("keydown", { key: "ArrowLeft" });
         cy.get("[data-test-id=tab-item]").eq(1).should("not.have.class", "tw-font-medium");
     });
 });
