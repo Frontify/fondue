@@ -21,6 +21,7 @@ export const TabItem: FC<TabItemProps & { active?: boolean }> = ({ active, disab
             id={`${id}-content`}
             aria-labelledby={id}
             className={merge([(!active || disabled) && "tw-hidden"])}
+            tabIndex={0}
         >
             {children}
         </div>

@@ -4,9 +4,7 @@ import { mount } from "@cypress/react";
 import React, { useState } from "react";
 import { Tabs, TabSize, TabsPaddingX } from "@components/Tabs/Tabs";
 import { IconIcons, IconSize } from "@foundation/Icon";
-import { Card } from "@components/Card";
 import { BadgeStyle } from "@components/Badge";
-import { Button } from "@components/Button";
 import { TabItem, TabItemProps } from "@components/Tabs/TabItem";
 
 const data: TabItemProps[] = [
@@ -34,9 +32,7 @@ const data: TabItemProps[] = [
         children: (
             <div>
                 <h2>Hello</h2>
-                <Card hoverable={false}>
-                    <p>This is content for tab 4</p>
-                </Card>
+                <p>This is content for tab 4</p>
             </div>
         ),
     },
@@ -46,14 +42,14 @@ const data: TabItemProps[] = [
         decorator: <IconIcons size={IconSize.Size12} />,
         badge: { style: BadgeStyle.Danger, children: "Badge 2" },
         disabled: true,
-        children: <Button>This is content for label 5</Button>,
+        children: <button>This is content for label 5</button>,
     },
     {
         id: "tab-6",
         label: "Last tab",
         decorator: <IconIcons size={IconSize.Size12} />,
         badge: { style: BadgeStyle.Danger, children: "Badge 2" },
-        children: <Button>This is content for label 5</Button>,
+        children: <button>This is content for label 6</button>,
     },
 ];
 
@@ -122,5 +118,53 @@ describe("Tabs Component", () => {
         cy.get("@Menu").children().last().should("contain.text", data[5].label);
         cy.viewport(1280, 850);
         cy.get("@Tabs").children("[data-test-id=tab-overflow]").should("not.exist");
+    });
+
+    it("should not be clickable if disabled", () => {
+        cy.get("[data-test-id=tab-item]").first().click();
+        cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.html", data[0].children);
+        cy.get("[data-test-id=tab-item]").eq(1).click();
+        if (data[1].disabled) {
+            cy.get("[data-test-id=tab-item]").eq(1).should("have.class", "tw-text-text-disabled");
+            cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.html", data[0].children);
+        } else {
+            cy.get("[data-test-id=tab-item]").eq(1).should("not.have.class", "tw-text-text-disabled");
+        }
+    });
+
+    it("should have Keyboard navigation", () => {
+        cy.get("[data-test-id=tab-item]").first().type("{rightArrow}");
+        cy.get("[data-test-id=tab-item]").eq(2).should("have.class", "tw-font-medium");
+        cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.html", data[2].children);
+        cy.get("[data-test-id=tab-item]").eq(2).type("{rightArrow}");
+        cy.get("[data-test-id=tab-item]").eq(3).should("have.class", "tw-font-medium");
+        cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.text", "content for tab 4");
+        cy.get("[data-test-id=tab-item]").eq(3).type("{leftArrow}");
+        cy.get("[data-test-id=tab-item]").eq(2).should("have.class", "tw-font-medium");
+        cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.text", data[2].children);
+    });
+
+    it("should have Keyboard navigation in overflow menu", () => {
+        // TODO and WIP find a better way to test accessibilty with cypress.
+        cy.viewport(350, 850);
+        cy.get("[data-test-id=tab-overflow]").as("OverflowBtn");
+        cy.get("@OverflowBtn").type("{enter}");
+        cy.get("button#tab-4-btn").click();
+        cy.get("button#tab-4-btn").type("{rightArrow}");
+        cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.text", "content for label 6");
+
+        cy.get("@OverflowBtn").type("{enter}");
+        cy.get("button#tab-6-btn").click();
+        cy.get("button#tab-6-btn").type("{leftArrow}");
+        cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.text", "content for tab 4");
+    });
+
+    it("should have focus on tab and content", () => {
+        // TODO and WIP find a better way to test accessibilty with cypress.
+    });
+
+    it("should not pass on disabled tab with keyboard", () => {
+        cy.get("[data-test-id=tab-item]").first().type("{rightArrow}");
+        cy.get("[data-test-id=tab-item]").eq(1).should("not.have.class", "tw-font-medium");
     });
 });

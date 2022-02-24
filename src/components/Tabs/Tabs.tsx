@@ -1,6 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, cloneElement, FC, isValidElement, ReactNode, useEffect, useRef, useState } from "react";
+import React, {
+    Children,
+    cloneElement,
+    FC,
+    isValidElement,
+    KeyboardEvent,
+    ReactNode,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 import { TabItemProps } from "@components/Tabs/TabItem";
 import { merge } from "@utilities/merge";
 import { IconMore } from "@foundation/Icon";
@@ -65,10 +75,42 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                 }
             }
 
-            const overFlowIndexInAscOrder = overFlowIndex.sort((a, b) => a - b);
+            const overFlowIndexInAscOrder = [...overFlowIndex].sort((a, b) => a - b);
             const newIndexLimit = overFlowIndex.length ? overFlowIndexInAscOrder[0] : tabs.length;
             if (newIndexLimit < tabIndexLimit || newIndexLimit > tabIndexLimit) {
                 setTabIndexLimit(newIndexLimit);
+            }
+        }
+    };
+
+    const handleKeyboardTabChange = (e: KeyboardEvent<HTMLButtonElement>) => {
+        const nextTabs = tabs.filter((tab) => {
+            if (tab.id > activeItemId && !tab.disabled) {
+                return tab;
+            }
+        });
+
+        const previousTabs = tabs.filter((tab) => {
+            if (tab.id < activeItemId && !tab.disabled) {
+                return tab;
+            }
+        });
+
+        if ((e.key === "ArrowRight" || e.key === "ArrowDown") && nextTabs.length) {
+            const buttonElement = document.getElementById(`${nextTabs[0].id}-btn`) as HTMLButtonElement;
+            buttonElement.focus();
+            if (onChange) {
+                onChange(nextTabs[0].id);
+            }
+        }
+
+        if ((e.key === "ArrowLeft" || e.key === "ArrowUp") && previousTabs.length) {
+            const buttonElement = document.getElementById(
+                `${previousTabs[previousTabs.length - 1].id}-btn`,
+            ) as HTMLButtonElement;
+            buttonElement.focus();
+            if (onChange) {
+                onChange(previousTabs[previousTabs.length - 1].id);
             }
         }
     };
@@ -102,6 +144,9 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                 type="button"
                                 aria-selected={tab.id === activeItemId}
                                 aria-controls={`${tab.id}-content`}
+                                aria-hidden={tab.disabled}
+                                tabIndex={tab.id === activeItemId ? 0 : -1}
+                                id={index >= tabIndexLimit ? "" : `${tab.id}-btn`}
                                 className={merge([
                                     "tw-group tw-relative tw-mx-0 tw-pb-5 tw-pt-2 tw-px-2 tw-w-max tw-h-10 tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap",
                                     tab.disabled && "tw-text-text-disabled",
@@ -110,6 +155,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                 ])}
                                 key={tab.id}
                                 onClick={() => (!tab.disabled && onChange ? onChange(tab.id) : null)}
+                                onKeyDown={(event) => handleKeyboardTabChange(event)}
                             >
                                 {tab.decorator}
                                 <span className="tw-mr-1 tw-ml-1.5">{tab.label}</span>
@@ -163,6 +209,10 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                         type="button"
                                         aria-selected={tab.id === activeItemId}
                                         aria-controls={`${tab.id}-content`}
+                                        aria-hidden={tab.disabled}
+                                        tabIndex={!tab.disabled ? 0 : -1}
+                                        id={`${tab.id}-btn`}
+                                        onKeyDown={(event) => handleKeyboardTabChange(event)}
                                     >
                                         <MenuItem
                                             title={tab.label}
