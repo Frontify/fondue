@@ -78,6 +78,7 @@ export enum IconEnum {
     DoubleQuotesUp = "DoubleQuotesUp",
     Download = "Download",
     DownloadAlternative = "DownloadAlternative",
+    Drop = "Drop",
     Drops = "Drops",
     Duplicate = "Duplicate",
     EmojiHappy = "EmojiHappy",
