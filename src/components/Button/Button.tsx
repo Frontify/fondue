@@ -1,127 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { cloneElement, forwardRef, ForwardRefRenderFunction } from "react";
+
 import { useButton } from "@react-aria/button";
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
+
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { useForwardedRef } from "@utilities/useForwardedRef";
-import React, {
-    cloneElement,
-    forwardRef,
-    ForwardRefRenderFunction,
-    MouseEvent,
-    ReactElement,
-    ReactNode,
-    useCallback,
-} from "react";
 
-export enum ButtonStyle {
-    Secondary = "Secondary",
-    Primary = "Primary",
-    Danger = "Danger",
-    Positive = "Positive",
-}
+import { IconSize } from "@foundation/Icon/IconSize";
+import { ButtonRounding, ButtonSize, ButtonType, ButtonProps, ButtonStyle, ButtonEmphasis } from "./ButtonTypes";
+import {
+    ButtonStyleClasses,
+    ButtonCommonClasses,
+    ButtonSizeClasses,
+    ButtonRoundingClasses,
+    IconSpacingClasses,
+    ButtonDisabledClasses,
+} from "./ButtonClasses";
 
-export enum ButtonSize {
-    Small = "Small",
-    Medium = "Medium",
-    Large = "Large",
-}
-
-export enum ButtonType {
-    Button = "Button",
-    Submit = "Submit",
-    Reset = "Reset",
-}
-
-export enum ButtonRounding {
-    Medium = "Medium",
-    Full = "Full",
-}
-
-export enum ButtonEmphasis {
-    Default = "Default",
-    Weak = "Weak",
-}
-
-const sizeClasses: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: "tw-px-2 tw-h-6 tw-text-body-small",
-    [ButtonSize.Medium]: "tw-px-4 tw-h-9 tw-text-body-medium",
-    [ButtonSize.Large]: "tw-px-6 tw-h-12 tw-text-body-large",
-};
-
-const iconOnlySizeClasses: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: "tw-h-6 tw-w-6",
-    [ButtonSize.Medium]: "tw-h-9 tw-w-9",
-    [ButtonSize.Large]: "tw-h-12 tw-w-12",
-};
-
-const iconSpacing: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: "tw--ml-0.5 tw-mr-1",
-    [ButtonSize.Medium]: "tw--ml-1 tw-mr-1.5",
-    [ButtonSize.Large]: "tw--ml-1 tw-mr-2",
-};
-
-const styles: Record<"solid" | "translucent" | "inverted", Record<ButtonStyle, string>> = {
-    solid: {
-        [ButtonStyle.Primary]:
-            "tw-text-button-strong-text tw-bg-button-strong-background tw-border tw-border-button-border " +
-            "hover:tw-text-button-strong-text-hover hover:tw-bg-button-strong-background-hover " +
-            "active:tw-text-button-strong-text-pressed active:tw-bg-button-strong-background-pressed ",
-        [ButtonStyle.Secondary]:
-            "tw-text-button-text tw-bg-button-background tw-border tw-border-button-border " +
-            "hover:tw-text-button-text-hover hover:tw-bg-button-background-hover " +
-            "active:tw-text-button-text-pressed active:tw-bg-button-background-pressed ",
-        [ButtonStyle.Danger]:
-            "tw-text-button-danger-text tw-bg-button-danger-background tw-border tw-border-button-border " +
-            "hover:tw-text-button-danger-text-hover hover:tw-bg-button-danger-background-hover " +
-            "active:tw-text-button-danger-text-pressed active:tw-bg-button-danger-background-pressed ",
-        [ButtonStyle.Positive]:
-            "tw-text-box-positive-strong-inverse tw-bg-box-positive-strong tw-border tw-border-button-border " +
-            "hover:tw-text-box-positive-strong-inverse-hover hover:tw-bg-box-positive-strong-hover " +
-            "active:tw-text-box-positive-strong-inverse-pressed active:tw-bg-box-positive-strong-pressed " +
-            "dark:active:tw-bg-green-90 ",
-    },
-    inverted: {
-        [ButtonStyle.Primary]:
-            "tw-text-button-text tw-bg-base tw-border-button-border " +
-            "hover:tw-text-button-text-hover hover:tw-bg-button-background-hover " +
-            "active:tw-text-button-text-pressed active:tw-bg-button-background-pressed ",
-        [ButtonStyle.Secondary]:
-            "tw-text-button-strong-text tw-bg-button-strong-background tw-border tw-border-button-border " +
-            "hover:tw-text-button-strong-text-hover hover:tw-bg-button-strong-background-hover " +
-            "active:tw-text-button-strong-text-pressed active:tw-bg-button-strong-background-pressed ",
-        [ButtonStyle.Danger]:
-            "tw-text-button-danger-text tw-bg-button-danger-background tw-border tw-border-button-border " +
-            "hover:tw-text-button-danger-text-hover hover:tw-bg-button-danger-background-hover " +
-            "active:tw-text-button-danger-text-pressed active:tw-bg-button-danger-background-pressed ",
-        [ButtonStyle.Positive]:
-            "tw-text-box-positive-strong-inverse tw-bg-box-positive-strong tw-border tw-border-button-border " +
-            "hover:tw-text-box-positive-strong-inverse-hover hover:tw-bg-box-positive-strong-hover " +
-            "active:tw-text-box-positive-strong-inverse-pressed active:tw-bg-box-positive-strong-pressed " +
-            "dark:active:tw-bg-green-90 ",
-    },
-    translucent: {
-        [ButtonStyle.Primary]:
-            "tw-text-button-text tw-border tw-border-transparent " +
-            "hover:tw-text-button-text-hover hover:tw-bg-button-background-hover hover:tw-border hover:tw-border-button-border " +
-            "active:tw-text-button-text-pressed active:tw-bg-button-background-pressed ",
-        [ButtonStyle.Secondary]:
-            "tw-text-button-text tw-border tw-border-transparent " +
-            "hover:tw-text-button-text-hover hover:tw-bg-button-background-hover hover:tw-border hover:tw-border-button-border " +
-            "active:tw-text-button-text-pressed active:tw-bg-button-background-pressed ",
-        [ButtonStyle.Danger]:
-            "tw-text-button-negative-icon tw-border tw-border-transparent " +
-            "hover:tw-bg-button-negative-background-hover hover:tw-border hover:tw-border-button-border " +
-            "active:tw-bg-button-negative-background-pressed ",
-        [ButtonStyle.Positive]:
-            "tw-text-button-positive-icon tw-border tw-border-transparent " +
-            "hover:tw-bg-button-positive-background-hover hover:tw-border hover:tw-border-button-border " +
-            "active:tw-bg-button-positive-background-pressed ",
-    },
-};
+export * from "./ButtonTypes";
 
 const iconSizes: Record<ButtonSize, IconSize> = {
     [ButtonSize.Small]: IconSize.Size16,
@@ -135,29 +35,15 @@ const typesMap: Record<ButtonType, "button" | "submit" | "reset"> = {
     [ButtonType.Reset]: "reset",
 };
 
-export type ButtonProps = {
-    type?: ButtonType;
-    style?: ButtonStyle;
-    emphasis?: ButtonStyle;
-    size?: ButtonSize;
-    rounding?: ButtonRounding;
-    solid?: boolean;
-    inverted?: boolean;
-    disabled?: boolean;
-    icon?: ReactElement;
-    children?: ReactNode;
-    onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
-    hugWidth?: boolean;
-    "aria-label"?: string;
-};
-
 const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, ButtonProps> = (
     {
         type = ButtonType.Button,
-        style = ButtonStyle.Primary,
+        style = ButtonStyle.Default,
         size = ButtonSize.Medium,
         rounding = ButtonRounding.Medium,
-        solid = true,
+        emphasis = ButtonEmphasis.Default,
+        hideLabel = false,
+        solid,
         inverted = false,
         disabled = false,
         icon,
@@ -168,44 +54,46 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     },
     externalRef,
 ) => {
-    const wrap = (child: ReactNode) => (children ? <span className={iconSpacing[size]}>{child}</span> : child);
     const { isFocusVisible, focusProps } = useFocusRing();
     const ref = useForwardedRef<HTMLButtonElement | null>(externalRef);
     const { buttonProps } = useButton(
         { onPress: () => onClick && onClick(), isDisabled: disabled, type: typesMap[type] },
         ref,
     );
+    const invertedStyleKey = inverted ? "inverted" : "default";
 
-    const getButtonTheme = useCallback(() => {
-        if (inverted) {
-            return "inverted";
-        }
+    const buttonClassName = merge([
+        ButtonCommonClasses,
+        rounding === ButtonRounding.Full ? ButtonRoundingClasses.Full : ButtonRoundingClasses.Medium,
+        icon && !children ? ButtonSizeClasses[size].iconOnly : ButtonSizeClasses[size].default,
+        !hugWidth && "tw-w-full",
+        !disabled && ButtonStyleClasses[emphasis][style][invertedStyleKey].button,
+        !disabled && isFocusVisible && FOCUS_STYLE,
+        disabled && ButtonDisabledClasses.common,
+        disabled && (!solid ? ButtonDisabledClasses.weak : ButtonDisabledClasses.default),
+    ]);
 
-        return solid ? "solid" : "translucent";
-    }, [solid, inverted]);
+    const textClassName = merge([
+        !disabled && ButtonStyleClasses[emphasis][style][invertedStyleKey].text,
+        hideLabel && "tw-sr-only",
+    ]);
 
-    const disabledClasses = [
-        "tw-not-allowed tw-pointer-events-none",
-        solid ? "tw-text-box-disabled-inverse tw-bg-box-disabled" : "tw-text-text-disabled",
-    ];
+    const iconClassName = merge([
+        children ? IconSpacingClasses[size] : "",
+        !disabled && ButtonStyleClasses[emphasis][style][invertedStyleKey].icon,
+    ]);
 
     return (
         <button
             {...mergeProps(buttonProps, focusProps)}
             aria-label={ariaLabel}
             ref={ref}
-            className={merge([
-                "tw-box-box tw-outline-none tw-relative tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-font-body tw-font-medium",
-                rounding === ButtonRounding.Full ? "tw-rounded-full" : "tw-rounded",
-                icon && !children ? iconOnlySizeClasses[size] : sizeClasses[size],
-                merge(disabled ? disabledClasses : [isFocusVisible && FOCUS_STYLE, styles[getButtonTheme()][style]]),
-                !hugWidth && "tw-w-full",
-            ])}
+            className={buttonClassName}
             disabled={disabled}
             data-test-id="button"
         >
-            {icon && wrap(cloneElement(icon, { size: iconSizes[size] }))}
-            {children}
+            {icon && <span className={iconClassName}>{cloneElement(icon, { size: iconSizes[size] })}</span>}
+            {children && <span className={textClassName}>{children}</span>}
         </button>
     );
 };
