@@ -41,22 +41,21 @@ export enum ButtonRounding {
     Full = "Full",
 }
 
+export enum ButtonEmphasis {
+    Default = "Default",
+    Weak = "Weak",
+}
+
 const sizeClasses: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: "tw-px-3 tw-h-6 tw-text-body-small",
+    [ButtonSize.Small]: "tw-px-2 tw-h-6 tw-text-body-small",
     [ButtonSize.Medium]: "tw-px-4 tw-h-9 tw-text-body-medium",
     [ButtonSize.Large]: "tw-px-6 tw-h-12 tw-text-body-large",
 };
 
 const iconOnlySizeClasses: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: "tw-p-1",
-    [ButtonSize.Medium]: "tw-p-2",
-    [ButtonSize.Large]: "tw-p-3",
-};
-
-const iconOnlyFullRoundingSizeClasses: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: "tw-p-0.5",
-    [ButtonSize.Medium]: "tw-p-1",
-    [ButtonSize.Large]: "tw-p-2",
+    [ButtonSize.Small]: "tw-h-6 tw-w-6",
+    [ButtonSize.Medium]: "tw-h-9 tw-w-9",
+    [ButtonSize.Large]: "tw-h-12 tw-w-12",
 };
 
 const iconSpacing: Record<ButtonSize, string> = {
@@ -68,58 +67,58 @@ const iconSpacing: Record<ButtonSize, string> = {
 const styles: Record<"solid" | "translucent" | "inverted", Record<ButtonStyle, string>> = {
     solid: {
         [ButtonStyle.Primary]:
-            "tw-text-button-strong-text tw-bg-button-strong-background " +
+            "tw-text-button-strong-text tw-bg-button-strong-background tw-border tw-border-button-border " +
             "hover:tw-text-button-strong-text-hover hover:tw-bg-button-strong-background-hover " +
             "active:tw-text-button-strong-text-pressed active:tw-bg-button-strong-background-pressed ",
         [ButtonStyle.Secondary]:
-            "tw-text-button-text tw-bg-button-background " +
+            "tw-text-button-text tw-bg-button-background tw-border tw-border-button-border " +
             "hover:tw-text-button-text-hover hover:tw-bg-button-background-hover " +
             "active:tw-text-button-text-pressed active:tw-bg-button-background-pressed ",
         [ButtonStyle.Danger]:
-            "tw-text-button-danger-text tw-bg-button-danger-background " +
+            "tw-text-button-danger-text tw-bg-button-danger-background tw-border tw-border-button-border " +
             "hover:tw-text-button-danger-text-hover hover:tw-bg-button-danger-background-hover " +
             "active:tw-text-button-danger-text-pressed active:tw-bg-button-danger-background-pressed ",
         [ButtonStyle.Positive]:
-            "tw-text-box-positive-strong-inverse tw-bg-box-positive-strong " +
+            "tw-text-box-positive-strong-inverse tw-bg-box-positive-strong tw-border tw-border-button-border " +
             "hover:tw-text-box-positive-strong-inverse-hover hover:tw-bg-box-positive-strong-hover " +
             "active:tw-text-box-positive-strong-inverse-pressed active:tw-bg-box-positive-strong-pressed " +
             "dark:active:tw-bg-green-90 ",
     },
     inverted: {
         [ButtonStyle.Primary]:
-            "tw-text-button-text tw-bg-base " +
+            "tw-text-button-text tw-bg-base tw-border-button-border " +
             "hover:tw-text-button-text-hover hover:tw-bg-button-background-hover " +
             "active:tw-text-button-text-pressed active:tw-bg-button-background-pressed ",
         [ButtonStyle.Secondary]:
-            "tw-text-button-strong-text tw-bg-button-strong-background " +
+            "tw-text-button-strong-text tw-bg-button-strong-background tw-border tw-border-button-border " +
             "hover:tw-text-button-strong-text-hover hover:tw-bg-button-strong-background-hover " +
             "active:tw-text-button-strong-text-pressed active:tw-bg-button-strong-background-pressed ",
         [ButtonStyle.Danger]:
-            "tw-text-button-danger-text tw-bg-button-danger-background " +
+            "tw-text-button-danger-text tw-bg-button-danger-background tw-border tw-border-button-border " +
             "hover:tw-text-button-danger-text-hover hover:tw-bg-button-danger-background-hover " +
             "active:tw-text-button-danger-text-pressed active:tw-bg-button-danger-background-pressed ",
         [ButtonStyle.Positive]:
-            "tw-text-box-positive-strong-inverse tw-bg-box-positive-strong " +
+            "tw-text-box-positive-strong-inverse tw-bg-box-positive-strong tw-border tw-border-button-border " +
             "hover:tw-text-box-positive-strong-inverse-hover hover:tw-bg-box-positive-strong-hover " +
             "active:tw-text-box-positive-strong-inverse-pressed active:tw-bg-box-positive-strong-pressed " +
             "dark:active:tw-bg-green-90 ",
     },
     translucent: {
         [ButtonStyle.Primary]:
-            "tw-text-button-text " +
-            "hover:tw-text-button-text-hover hover:tw-bg-button-background-hover " +
+            "tw-text-button-text tw-border tw-border-transparent " +
+            "hover:tw-text-button-text-hover hover:tw-bg-button-background-hover hover:tw-border hover:tw-border-button-border " +
             "active:tw-text-button-text-pressed active:tw-bg-button-background-pressed ",
         [ButtonStyle.Secondary]:
-            "tw-text-button-text " +
-            "hover:tw-text-button-text-hover hover:tw-bg-button-background-hover " +
+            "tw-text-button-text tw-border tw-border-transparent " +
+            "hover:tw-text-button-text-hover hover:tw-bg-button-background-hover hover:tw-border hover:tw-border-button-border " +
             "active:tw-text-button-text-pressed active:tw-bg-button-background-pressed ",
         [ButtonStyle.Danger]:
-            "tw-text-button-negative-icon " +
-            "hover:tw-bg-button-negative-background-hover " +
+            "tw-text-button-negative-icon tw-border tw-border-transparent " +
+            "hover:tw-bg-button-negative-background-hover hover:tw-border hover:tw-border-button-border " +
             "active:tw-bg-button-negative-background-pressed ",
         [ButtonStyle.Positive]:
-            "tw-text-button-positive-icon " +
-            "hover:tw-bg-button-positive-background-hover " +
+            "tw-text-button-positive-icon tw-border tw-border-transparent " +
+            "hover:tw-bg-button-positive-background-hover hover:tw-border hover:tw-border-button-border " +
             "active:tw-bg-button-positive-background-pressed ",
     },
 };
@@ -139,6 +138,7 @@ const typesMap: Record<ButtonType, "button" | "submit" | "reset"> = {
 export type ButtonProps = {
     type?: ButtonType;
     style?: ButtonStyle;
+    emphasis?: ButtonStyle;
     size?: ButtonSize;
     rounding?: ButtonRounding;
     solid?: boolean;
@@ -195,12 +195,9 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             aria-label={ariaLabel}
             ref={ref}
             className={merge([
-                "tw-outline-none tw-relative tw-flex tw-items-center tw-justify-center tw-border-0 tw-cursor-pointer tw-font-body tw-font-medium tw-transition-colors",
-                rounding === ButtonRounding.Full
-                    ? `tw-rounded-full ${iconOnlyFullRoundingSizeClasses[size]}`
-                    : "tw-rounded",
-                rounding === ButtonRounding.Medium &&
-                    (icon && !children ? iconOnlySizeClasses[size] : sizeClasses[size]),
+                "tw-box-box tw-outline-none tw-relative tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-font-body tw-font-medium",
+                rounding === ButtonRounding.Full ? "tw-rounded-full" : "tw-rounded",
+                icon && !children ? iconOnlySizeClasses[size] : sizeClasses[size],
                 merge(disabled ? disabledClasses : [isFocusVisible && FOCUS_STYLE, styles[getButtonTheme()][style]]),
                 !hugWidth && "tw-w-full",
             ])}
