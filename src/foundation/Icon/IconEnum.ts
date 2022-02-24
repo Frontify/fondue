@@ -72,6 +72,7 @@ export enum IconEnum {
     DocumentLibrary = "DocumentLibrary",
     DosImages = "DosImages",
     DosText = "DosText",
+    DotsVertical = "DotsVertical",
     DoubleChevronLeft = "DoubleChevronLeft",
     DoubleChevronRight = "DoubleChevronRight",
     DoubleQuotesDown = "DoubleQuotesDown",

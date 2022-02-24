@@ -73,6 +73,7 @@ import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
 import IconDosImages from "@foundation/Icon/Generated/IconDosImages";
 import IconDosText from "@foundation/Icon/Generated/IconDosText";
+import IconDotsVertical from "@foundation/Icon/Generated/IconDotsVertical";
 import IconDoubleChevronLeft from "@foundation/Icon/Generated/IconDoubleChevronLeft";
 import IconDoubleChevronRight from "@foundation/Icon/Generated/IconDoubleChevronRight";
 import IconDoubleQuotesDown from "@foundation/Icon/Generated/IconDoubleQuotesDown";
@@ -335,6 +336,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.DocumentLibrary]: <IconDocumentLibrary />,
     [IconEnum.DosImages]: <IconDosImages />,
     [IconEnum.DosText]: <IconDosText />,
+    [IconEnum.DotsVertical]: <IconDotsVertical />,
     [IconEnum.DoubleChevronLeft]: <IconDoubleChevronLeft />,
     [IconEnum.DoubleChevronRight]: <IconDoubleChevronRight />,
     [IconEnum.DoubleQuotesDown]: <IconDoubleQuotesDown />,

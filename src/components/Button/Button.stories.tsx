@@ -3,7 +3,7 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Button, ButtonProps, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from "./Button";
-import { IconIcons, IconActions } from "@foundation/Icon/Generated";
+import { IconIcons, IconDotsVertical } from "@foundation/Icon/Generated";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -61,7 +61,7 @@ withIcon.storyName = "Icon Only";
 export const withRoundedIcon = ButtonTemplate.bind({});
 withRoundedIcon.args = {
     disabled: false,
-    icon: <IconActions />,
+    icon: <IconDotsVertical />,
     size: ButtonSize.Medium,
     rounding: ButtonRounding.Full,
     solid: true,

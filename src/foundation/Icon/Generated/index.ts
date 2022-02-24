@@ -1,4 +1,5 @@
-export { default as IconAcademy } from "./IconAcademy";
+
+        export { default as IconAcademy } from "./IconAcademy";
 export { default as IconActions } from "./IconActions";
 export { default as IconActivities } from "./IconActivities";
 export { default as IconActivity } from "./IconActivity";
@@ -71,6 +72,7 @@ export { default as IconDocument } from "./IconDocument";
 export { default as IconDocumentLibrary } from "./IconDocumentLibrary";
 export { default as IconDosImages } from "./IconDosImages";
 export { default as IconDosText } from "./IconDosText";
+export { default as IconDotsVertical } from "./IconDotsVertical";
 export { default as IconDoubleChevronLeft } from "./IconDoubleChevronLeft";
 export { default as IconDoubleChevronRight } from "./IconDoubleChevronRight";
 export { default as IconDoubleQuotesDown } from "./IconDoubleQuotesDown";
@@ -258,3 +260,4 @@ export { default as IconVolumeOff } from "./IconVolumeOff";
 export { default as IconVolumeOn } from "./IconVolumeOn";
 export { default as IconWorkflow } from "./IconWorkflow";
 export { default as IconZoom } from "./IconZoom";
+    
