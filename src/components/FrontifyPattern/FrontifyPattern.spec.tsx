@@ -4,14 +4,12 @@ import React from "react";
 import { mount } from "@cypress/react";
 import { FrontifyPattern } from "./FrontifyPattern";
 
-const FrontifyPattern_FOO = "bar";
+const FRONTIFY_PATTERN = "[data-test-id=frontify-pattern]";
 
 describe("FrontifyPattern Component", () => {
-    it("should render foo text correctly", () => {
-        mount(<FrontifyPattern foo={FrontifyPattern_FOO} />);
+    it("should render a pattern", () => {
+        mount(<FrontifyPattern />);
 
-        cy.get("[data-test-id=frontify-pattern]").as("FrontifyPattern");
-
-        cy.get("@FrontifyPattern").contains(FrontifyPattern_FOO);
+        cy.get(FRONTIFY_PATTERN).should("exist");
     });
 });

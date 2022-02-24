@@ -17,5 +17,5 @@ export type FrontifyPatternProps = {
 };
 
 export const FrontifyPattern: FC<FrontifyPatternProps> = ({ scale = PatternScale.Small }) => {
-    return <div data-test-id="frontify-pattern">{scale}</div>;
+    return <div data-test-id="frontify-pattern">{scaleClasses[scale]}</div>;
 };

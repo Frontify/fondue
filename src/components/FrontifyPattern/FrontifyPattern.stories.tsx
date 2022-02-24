@@ -10,9 +10,11 @@ export default {
     component: FrontifyPatternComponent,
 } as Meta<FrontifyPatternProps>;
 
-const Template: Story<FrontifyPatternProps> = (args) => <FrontifyPatternComponent {...args} />;
+const FrontifyPattern: Story<FrontifyPatternProps> = (args) => <FrontifyPatternComponent {...args} />;
 
-export const Large = Template.bind({});
+export const Default = FrontifyPattern.bind({});
+
+export const Large = FrontifyPattern.bind({});
 Large.args = {
     scale: PatternScale.Large,
 };
