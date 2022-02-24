@@ -11,7 +11,7 @@ export default {
     component: HeadingComponent,
     argTypes: {
         size: {
-            options: ["medium", "large", "x-large"],
+            options: ["medium", "large", "x-large", "xx-large"],
             control: { type: "select" },
         },
         weight: {

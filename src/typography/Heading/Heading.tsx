@@ -6,7 +6,7 @@ import { decorationMap, displayMap, overflowMap, whitespaceMap, wordBreakMap } f
 import { SharedTypographyProps } from "../shared/types";
 
 type HeadingWeight = "medium" | "strong";
-type HeadingSize = "medium" | "large" | "x-large";
+type HeadingSize = "medium" | "large" | "x-large" | "xx-large";
 type HeadingColor = "default" | "weak" | "x-weak" | "disabled" | "negative" | "positive" | "warning" | "interactive";
 
 export type HeadingProps = PropsWithChildren<
@@ -27,6 +27,7 @@ const sizeMap: Record<HeadingSize, string> = {
     medium: "tw-text-heading-medium",
     large: "tw-text-heading-large",
     "x-large": "tw-text-heading-x-large",
+    "xx-large": "tw-text-heading-xx-large",
 };
 
 const colorMap: Record<HeadingColor, string> = {
