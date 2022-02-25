@@ -1,24 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { merge } from "@utilities/merge";
+import { chain } from "@react-aria/utils";
+import { FlyoutFooter } from "./FlyoutFooter";
+import { Meta, Story } from "@storybook/react";
+import { action } from "@storybook/addon-actions";
 import { Slider } from "@components/Slider/Slider";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { Divider } from "@components/Divider/Divider";
+import { Textarea } from "@components/Textarea/Textarea";
+import React, { MutableRefObject, useState } from "react";
+import { TextInput } from "@components/TextInput/TextInput";
+import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import IconActions from "@foundation/Icon/Generated/IconActions";
 import { FormControl } from "@components/FormControl/FormControl";
 import { BadgeStatus, BadgeStyle } from "@components/Badge/Badge";
-import { Button, ButtonStyle, ButtonSize, ButtonRounding } from "@components/Button/Button";
-import { Divider } from "@components/Divider/Divider";
-import IconActions from "@foundation/Icon/Generated/IconActions";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
-import { Textarea } from "@components/Textarea/Textarea";
-import { TextInput } from "@components/TextInput/TextInput";
-import { action } from "@storybook/addon-actions";
-import { Meta, Story } from "@storybook/react";
-import React, { MutableRefObject, useState } from "react";
-import { Flyout, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, FlyoutProps } from "./Flyout";
-import { FlyoutFooter } from "./FlyoutFooter";
-import { chain } from "@react-aria/utils";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import { IconDownload, IconRocket, IconShare, IconTrash } from "@foundation/Icon";
 import { ActionMenu, ActionMenuBlock } from "@components/ActionMenu/ActionMenu";
+import { IconDownload, IconRocket, IconShare, IconTrash } from "@foundation/Icon";
+import { Flyout, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, FlyoutProps } from "./Flyout";
+import { Button, ButtonStyle, ButtonSize, ButtonRounding } from "@components/Button/Button";
 
 // eslint-disable-next-line import/no-default-export
 export default {
