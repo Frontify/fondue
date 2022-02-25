@@ -15,7 +15,7 @@ export default {
             control: { type: "select" },
         },
         weight: {
-            options: ["medium", "strong"],
+            options: ["default", "strong"],
             control: { type: "select" },
         },
         as: {
