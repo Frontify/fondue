@@ -50,7 +50,7 @@ export const ButtonGroup = ({ ...args }) => (
                 icon={<IconReject />}
                 onClick={action("onClick")}
             >
-                The First
+                Button Text
             </Button>
             <Button
                 style={args.style}
