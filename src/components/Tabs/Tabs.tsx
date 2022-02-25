@@ -83,7 +83,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
         }
     };
 
-    const handleKeyboardTabChange = (e: KeyboardEvent<HTMLButtonElement>) => {
+    const handleKeyboardTabChange = (event: KeyboardEvent<HTMLButtonElement>) => {
         const nextTabs = tabs.filter((tab) => {
             if (tab.id > activeItemId && !tab.disabled) {
                 return tab;
@@ -96,21 +96,29 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
             }
         });
 
-        if ((e.key === "ArrowRight" || e.key === "ArrowDown") && nextTabs.length) {
+        if ((event.key === "ArrowRight" || event.key === "ArrowDown") && nextTabs.length) {
             const buttonElement = document.getElementById(`${nextTabs[0].id}-btn`) as HTMLButtonElement;
-            buttonElement.focus();
-            if (onChange) {
-                onChange(nextTabs[0].id);
+            try {
+                buttonElement.focus();
+                if (onChange) {
+                    onChange(nextTabs[0].id);
+                }
+            } catch (error) {
+                throw (error as Error).message;
             }
         }
 
-        if ((e.key === "ArrowLeft" || e.key === "ArrowUp") && previousTabs.length) {
+        if ((event.key === "ArrowLeft" || event.key === "ArrowUp") && previousTabs.length) {
             const buttonElement = document.getElementById(
                 `${previousTabs[previousTabs.length - 1].id}-btn`,
             ) as HTMLButtonElement;
-            buttonElement.focus();
-            if (onChange) {
-                onChange(previousTabs[previousTabs.length - 1].id);
+            try {
+                buttonElement.focus();
+                if (onChange) {
+                    onChange(previousTabs[previousTabs.length - 1].id);
+                }
+            } catch (error) {
+                throw (error as Error).message;
             }
         }
     };
@@ -141,7 +149,6 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                             <button
                                 data-test-id="tab-item"
                                 role="tab"
-                                type="button"
                                 aria-selected={tab.id === activeItemId}
                                 aria-controls={`${tab.id}-content`}
                                 aria-hidden={tab.disabled}
@@ -179,7 +186,6 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     })}
                 </div>
                 {isOverflowing && (
-                    // Remove rotate class when new Dots icon is available
                     <div
                         data-test-id="tab-overflow"
                         className="tw-absolute tw-rotate-90 tw-right-3 tw-top-0 tw-w-6 tw-h-6 tw-bg-grey-20 tw-rounded tw-flex tw-justify-center tw-items-center"
@@ -206,7 +212,6 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                         key={tab.id}
                                         onClick={() => (!tab.disabled && onChange ? onChange(tab.id) : null)}
                                         role="tab"
-                                        type="button"
                                         aria-selected={tab.id === activeItemId}
                                         aria-controls={`${tab.id}-content`}
                                         aria-hidden={tab.disabled}

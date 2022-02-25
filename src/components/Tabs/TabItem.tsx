@@ -2,7 +2,6 @@
 
 import React, { FC, ReactElement, ReactNode } from "react";
 import { BadgeProps } from "@components/Badge";
-import { merge } from "@utilities/merge";
 
 export type TabItemProps = {
     id: string;
@@ -20,7 +19,7 @@ export const TabItem: FC<TabItemProps & { active?: boolean }> = ({ active, disab
             role="tabpanel"
             id={`${id}-content`}
             aria-labelledby={id}
-            className={merge([(!active || disabled) && "tw-hidden"])}
+            className={!active || disabled ? "tw-hidden" : ""}
             tabIndex={0}
         >
             {children}
