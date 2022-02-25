@@ -12,7 +12,7 @@ const classRecord = {
     wordBreak: ["break-all", "tw-break-all"],
     decoration: ["underline", "tw-underline"],
     size: ["small", "tw-text-body-small"],
-    weight: ["strong", "tw-font-bold"],
+    weight: ["strong", "tw-font-medium"],
 };
 
 const textProps = Object.entries(classRecord).reduce((acc, [key, [value]]) => {
