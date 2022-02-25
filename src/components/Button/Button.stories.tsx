@@ -34,7 +34,11 @@ export default {
     },
 } as Meta<ButtonProps>;
 
-const ButtonTemplate: Story<ButtonProps> = (args: ButtonProps) => <Button {...args} />;
+const ButtonTemplate: Story<ButtonProps> = (args: ButtonProps) => (
+    <div className={args.inverted ? "tw-bg-box-neutral-strong" : ""}>
+        <Button {...args} />
+    </div>
+);
 
 export const Default = ButtonTemplate.bind({});
 Default.args = {
