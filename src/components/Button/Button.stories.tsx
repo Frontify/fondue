@@ -11,7 +11,6 @@ const defaultArgs = {
     children: "Button Text",
     size: ButtonSize.Medium,
     style: ButtonStyle.Default,
-    icon: iconsMap[IconEnum.Icons],
     emphasis: ButtonEmphasis.Default,
     disabled: false,
     hideLabel: false,
@@ -20,7 +19,6 @@ const defaultArgs = {
     inverted: false,
     type: ButtonType.Button,
 };
-
 export default {
     title: "Components/Button",
     component: Button,
@@ -30,27 +28,23 @@ export default {
             control: { type: "radio" },
         },
         style: {
-            options: [
-                ButtonStyle.Default,
-                ButtonStyle.Positive,
-                ButtonStyle.Negative,
-                ButtonStyle.Danger,
-                ButtonStyle.Primary,
-                ButtonStyle.Secondary,
-            ],
+            options: [ButtonStyle.Default, ButtonStyle.Positive, ButtonStyle.Negative, ButtonStyle.Danger],
             control: { type: "radio" },
         },
-        icon: {
-            options: [IconEnum.Icons, IconEnum.DotsVertical],
-            mapping: {
-                [IconEnum.Icons]: iconsMap[IconEnum.Icons],
-                [IconEnum.Icons]: iconsMap[IconEnum.DotsVertical],
-            },
-            control: { type: "radio" },
-        },
+
         emphasis: {
             options: [ButtonEmphasis.Default, ButtonEmphasis.Weak, ButtonEmphasis.Strong],
             control: { type: "radio" },
+        },
+        icon: {
+            options: [IconEnum.Icons, IconEnum.DotsVertical, IconEnum.ColorScale, IconEnum.Settings],
+            mapping: {
+                [IconEnum.Icons]: iconsMap[IconEnum.Icons],
+                [IconEnum.DotsVertical]: iconsMap[IconEnum.DotsVertical],
+                [IconEnum.ColorScale]: iconsMap[IconEnum.ColorScale],
+                [IconEnum.Settings]: iconsMap[IconEnum.Settings],
+            },
+            control: { type: "select" },
         },
         rounding: {
             options: [ButtonRounding.Medium, ButtonRounding.Full],
@@ -65,25 +59,13 @@ export default {
 } as Meta;
 
 const ButtonTemplate: Story<ButtonProps> = (args: ButtonProps) => (
-    <div className={args.inverted ? "tw-bg-box-neutral-strong" : ""}>
+    <div className={args.inverted ? "tw-p-6 tw-bg-box-neutral-strong" : "tw-p-6"}>
         <Button {...args} />
     </div>
 );
 
 export const Default = ButtonTemplate.bind({});
-Default.args = {
-    children: "Button Text",
-    size: ButtonSize.Medium,
-    style: ButtonStyle.Default,
-    icon: iconsMap[IconEnum.Icons],
-    emphasis: ButtonEmphasis.Default,
-    disabled: false,
-    hideLabel: false,
-    hugWidth: true,
-    rounding: ButtonRounding.Medium,
-    inverted: false,
-    type: ButtonType.Button,
-};
+Default.args = { ...defaultArgs };
 Default.storyName = "Text Label Only";
 
 export const withIcon = ButtonTemplate.bind({});
@@ -102,8 +84,6 @@ withRoundedIcon.storyName = "Icon Only rounded";
 export const withIconAndLabel = ButtonTemplate.bind({});
 withIconAndLabel.args = {
     ...defaultArgs,
-    rounding: ButtonRounding.Full,
     icon: iconsMap[IconEnum.Icons],
-    hideLabel: true,
 };
 withIconAndLabel.storyName = "Icon and Text Label";
