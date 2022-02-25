@@ -6,7 +6,6 @@ import { Button, ButtonProps, ButtonRounding, ButtonSize, ButtonStyle, ButtonTyp
 import { ButtonEmphasis } from ".";
 import { IconEnum, iconsMap } from "@foundation/Icon";
 
-// eslint-disable-next-line import/no-default-export
 const defaultArgs = {
     children: "Button Text",
     size: ButtonSize.Medium,
@@ -19,6 +18,8 @@ const defaultArgs = {
     inverted: false,
     type: ButtonType.Button,
 };
+
+// eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Button",
     component: Button,
