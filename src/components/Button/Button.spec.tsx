@@ -7,6 +7,7 @@ import { Button, ButtonRounding, ButtonSize, ButtonStyle } from "./Button";
 
 const BUTTON_TEXT = "Frontify";
 const BUTTON_ID = "[data-test-id=button]";
+const BUTTON_ICON_ID = "[data-test-id=button-icon]";
 
 const styles = Object.values(ButtonStyle);
 const sizes = Object.values(ButtonSize);
@@ -43,7 +44,7 @@ describe("Button component", () => {
                 it(`renders in ${style} ${size} and ${solid ? "solid" : "translucent"} with only an icon.`, () => {
                     mount(<Button style={style} size={size} solid={solid} icon={<IconIcons />} />);
 
-                    cy.get(BUTTON_ID).children("svg").should("be.visible");
+                    cy.get(BUTTON_ID).children(BUTTON_ICON_ID).should("be.visible");
                     cy.get(BUTTON_ID).should("not.contain", BUTTON_TEXT);
                 });
 
@@ -60,7 +61,7 @@ describe("Button component", () => {
                         />,
                     );
 
-                    cy.get(BUTTON_ID).children("svg").should("be.visible");
+                    cy.get(BUTTON_ID).children(BUTTON_ICON_ID).should("be.visible");
                     cy.get(BUTTON_ID).should("not.contain", BUTTON_TEXT);
                     cy.get(BUTTON_ID).should("have.class", "tw-rounded-full");
                 });
@@ -75,7 +76,7 @@ describe("Button component", () => {
                     cy.get(BUTTON_ID).should("be.visible");
                     cy.get(BUTTON_ID).contains(BUTTON_TEXT);
 
-                    cy.get(BUTTON_ID).children("span").children("svg").should("be.visible");
+                    cy.get(BUTTON_ID).children(BUTTON_ICON_ID).should("be.visible");
                     cy.get(BUTTON_ID).contains(BUTTON_TEXT);
                 });
             });

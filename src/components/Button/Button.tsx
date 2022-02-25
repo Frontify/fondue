@@ -92,8 +92,16 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             disabled={disabled}
             data-test-id="button"
         >
-            {icon && <span className={iconClassName}>{cloneElement(icon, { size: iconSizes[size] })}</span>}
-            {children && <span className={textClassName}>{children}</span>}
+            {icon && (
+                <span data-test-id="button-icon" className={iconClassName}>
+                    {cloneElement(icon, { size: iconSizes[size] })}
+                </span>
+            )}
+            {children && (
+                <span data-test-id="button-text" className={textClassName}>
+                    {children}
+                </span>
+            )}
         </button>
     );
 };
