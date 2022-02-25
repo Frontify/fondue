@@ -174,7 +174,7 @@ export const ButtonStyleClasses: Record<
         [ButtonStyle.Primary]: {
             default: {
                 button:
-                    "tw-bg-base-strong-background tw-border-button-strong-border " +
+                    "tw-bg-button-strong-background tw-border-button-strong-border " +
                     "hover:tw-bg-button-strong-background-hover " +
                     "active:tw-bg-button-strong-background-pressed ",
                 icon:
