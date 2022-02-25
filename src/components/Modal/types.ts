@@ -2,13 +2,7 @@
 
 import { ReactElement } from "react";
 import { Color } from "../../types";
-import { PatternDesign } from "@foundation/Pattern";
-
-export enum ThemeColor {
-    Default = "Default",
-    Positive = "Positive",
-    Negative = "Negative",
-}
+import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 
 export type ModalButton = {
     label: string;
@@ -17,8 +11,8 @@ export type ModalButton = {
 
 export type ModalVisualProps = {
     pattern?: PatternDesign;
-    foregroundColor?: ThemeColor | Color;
-    backgroundColor?: ThemeColor | Color;
+    foregroundColor?: PatternTheme | Color;
+    backgroundColor?: PatternTheme | Color;
 };
 
 export type ModalHeaderProps = {
