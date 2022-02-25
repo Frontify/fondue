@@ -1,8 +1,17 @@
-import React, { memo, ReactElement } from "react";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-function PatternSound(): ReactElement {
+import React, { memo, ReactElement } from "react";
+import { PatternProps } from ".";
+
+function PatternSound({ className }: PatternProps): ReactElement {
     return (
-        <svg width="100%" height="100%" viewBox="0 0 193 135" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+            viewBox="0 0 193 135"
+            preserveAspectRatio="none"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={className}
+        >
             <g clipPath="url(#clip0_11493_271080)">
                 <rect width="193" height="135" fill="#FAFAFA" />
                 <path

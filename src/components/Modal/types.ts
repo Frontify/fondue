@@ -1,6 +1,8 @@
-import { Color } from "../../types";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { ReactElement } from "react";
-import { PatternType } from "@components/FrontifyPattern/FrontifyPattern";
+import { Color } from "../../types";
+import { PatternDesign } from "@foundation/Pattern";
 
 export enum ThemeColor {
     Default = "Default",
@@ -14,7 +16,7 @@ export type ModalButton = {
 };
 
 export type ModalVisualProps = {
-    pattern?: PatternType;
+    pattern?: PatternDesign;
     foregroundColor?: ThemeColor | Color;
     backgroundColor?: ThemeColor | Color;
 };
@@ -35,6 +37,6 @@ export type ModalFooterProps = {
 };
 
 export type ModalProps = {
-    visual?: PatternType;
+    visual?: PatternDesign;
     children?: ReactElement;
 };
