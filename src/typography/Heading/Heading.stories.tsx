@@ -31,7 +31,7 @@ export default {
     args: {
         children: "The fox jumps over the lazy dog",
         size: "medium",
-        weight: "medium",
+        weight: "default",
         as: "span",
         color: "default",
         ...sharedTypographyArgs,
