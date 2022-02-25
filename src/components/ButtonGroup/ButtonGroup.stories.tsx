@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, ButtonSize, ButtonStyle, ButtonEmphasis } from "@components/Button/Button";
-import IconReject from "@foundation/Icon/Generated/IconReject";
+import { IconAddSimple, IconReject, IconCheck } from "@foundation/Icon/Generated";
 import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
 import React from "react";
@@ -47,7 +47,7 @@ export const ButtonGroup = ({ ...args }) => (
                 style={args.style}
                 emphasis={args.emphasis}
                 inverted={args.inverted}
-                icon={<IconReject />}
+                icon={<IconAddSimple />}
                 onClick={action("onClick")}
             >
                 Button Text
@@ -56,7 +56,7 @@ export const ButtonGroup = ({ ...args }) => (
                 style={args.style}
                 emphasis={args.emphasis}
                 inverted={args.inverted}
-                icon={<IconReject />}
+                icon={<IconCheck />}
                 onClick={action("onClick")}
             >
                 The Second
