@@ -43,7 +43,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         rounding = ButtonRounding.Medium,
         emphasis = ButtonEmphasis.Default,
         hideLabel = false,
-        solid,
+        solid = true,
         inverted = false,
         disabled = false,
         icon,
@@ -62,26 +62,27 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     );
     const invertedStyleKey = inverted ? "inverted" : "default";
 
+    const getButtonStyleClasses = () => {
+        if (!solid) {
+            emphasis = ButtonEmphasis.Weak;
+        }
+        return ButtonStyleClasses[emphasis][style][invertedStyleKey];
+    };
+
     const buttonClassName = merge([
         ButtonCommonClasses,
         rounding === ButtonRounding.Full ? ButtonRoundingClasses.Full : ButtonRoundingClasses.Medium,
         icon && !children ? ButtonSizeClasses[size].iconOnly : ButtonSizeClasses[size].default,
         !hugWidth && "tw-w-full",
-        !disabled && ButtonStyleClasses[emphasis][style][invertedStyleKey].button,
+        !disabled && getButtonStyleClasses().button,
         !disabled && isFocusVisible && FOCUS_STYLE,
         disabled && ButtonDisabledClasses.common,
         disabled && (!solid ? ButtonDisabledClasses.weak : ButtonDisabledClasses.default),
     ]);
 
-    const textClassName = merge([
-        !disabled && ButtonStyleClasses[emphasis][style][invertedStyleKey].text,
-        hideLabel && "tw-sr-only",
-    ]);
+    const textClassName = merge([getButtonStyleClasses().text, hideLabel && "tw-sr-only"]);
 
-    const iconClassName = merge([
-        children ? IconSpacingClasses[size] : "",
-        !disabled && ButtonStyleClasses[emphasis][style][invertedStyleKey].icon,
-    ]);
+    const iconClassName = merge([children ? IconSpacingClasses[size] : "", !disabled && getButtonStyleClasses().icon]);
 
     return (
         <button
