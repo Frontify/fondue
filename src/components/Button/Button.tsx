@@ -72,7 +72,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     const buttonClassName = merge([
         ButtonCommonClasses,
         rounding === ButtonRounding.Full ? ButtonRoundingClasses.Full : ButtonRoundingClasses.Medium,
-        icon && !children ? ButtonSizeClasses[size].iconOnly : ButtonSizeClasses[size].default,
+        (icon && !children) || hideLabel ? ButtonSizeClasses[size].iconOnly : ButtonSizeClasses[size].default,
         !hugWidth && "tw-w-full",
         !disabled && getButtonStyleClasses().button,
         !disabled && isFocusVisible && FOCUS_STYLE,
@@ -82,7 +82,10 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
 
     const textClassName = merge([getButtonStyleClasses().text, hideLabel && "tw-sr-only"]);
 
-    const iconClassName = merge([children ? IconSpacingClasses[size] : "", !disabled && getButtonStyleClasses().icon]);
+    const iconClassName = merge([
+        children && !hideLabel ? IconSpacingClasses[size] : "",
+        !disabled && getButtonStyleClasses().icon,
+    ]);
 
     return (
         <button
