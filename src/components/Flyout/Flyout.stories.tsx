@@ -310,9 +310,7 @@ export const FlyoutMenu: Story<FlyoutProps> = () => {
                     onOpenChange={() => setOpen(false)}
                     legacyFooter={false}
                 >
-                    <div>
-                        <ActionMenu menuBlocks={menuBlocks} />
-                    </div>
+                    <ActionMenu menuBlocks={menuBlocks} />
                 </Flyout>
             </div>
         </div>
