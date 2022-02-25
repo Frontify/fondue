@@ -80,7 +80,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         disabled && (!solid ? ButtonDisabledClasses.weak : ButtonDisabledClasses.default),
     ]);
 
-    const textClassName = merge([getButtonStyleClasses().text, hideLabel && "tw-sr-only"]);
+    const textClassName = merge([!disabled && getButtonStyleClasses().text, hideLabel && "tw-sr-only"]);
 
     const iconClassName = merge([
         children && !hideLabel ? IconSpacingClasses[size] : "",
