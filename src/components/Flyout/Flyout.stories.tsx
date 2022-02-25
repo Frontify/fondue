@@ -3,7 +3,7 @@
 import { Slider } from "@components/Slider/Slider";
 import { FormControl } from "@components/FormControl/FormControl";
 import { BadgeStatus, BadgeStyle } from "@components/Badge/Badge";
-import { Button, ButtonStyle } from "@components/Button/Button";
+import { Button, ButtonStyle, ButtonSize, ButtonRounding } from "@components/Button/Button";
 import { Divider } from "@components/Divider/Divider";
 import IconActions from "@foundation/Icon/Generated/IconActions";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
@@ -17,6 +17,8 @@ import { FlyoutFooter } from "./FlyoutFooter";
 import { chain } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
+import { IconDownload, IconRocket, IconShare, IconTrash } from "@foundation/Icon";
+import { ActionMenu, ActionMenuBlock } from "@components/ActionMenu/ActionMenu";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -253,4 +255,66 @@ WithRenderFunctionTrigger.args = {
 WithRenderFunctionTrigger.argTypes = {
     trigger: { table: { disable: true } },
     decorator: { table: { disable: true } },
+};
+
+export const FlyoutMenu: Story<FlyoutProps> = () => {
+    const [open, setOpen] = useState(false);
+
+    const menuBlocks: ActionMenuBlock[] = [
+        {
+            id: "collectionActions",
+            ariaLabel: "Whatever",
+            menuItems: [
+                {
+                    id: 1,
+                    title: "Download",
+                    decorator: <IconDownload />,
+                    onClick: () => console.log("ok"),
+                },
+                {
+                    id: 2,
+                    title: "To the Moon!",
+                    decorator: <IconRocket />,
+                    onClick: () => console.log("ok"),
+                },
+                {
+                    id: 3,
+                    title: "Share",
+                    decorator: <IconShare />,
+                    onClick: () => console.log("ok"),
+                },
+                {
+                    id: 4,
+                    title: "Bye bye",
+                    decorator: <IconTrash />,
+                    onClick: () => console.log("ok"),
+                },
+            ],
+        },
+    ];
+
+    return (
+        <div className="dark:tw-text-white">
+            <div className="tw-flex tw-items-center">
+                <Flyout
+                    trigger={
+                        <Button
+                            onClick={() => setOpen(!open)}
+                            style={ButtonStyle.Primary}
+                            size={ButtonSize.Medium}
+                            icon={<IconActions />}
+                            rounding={ButtonRounding.Full}
+                        />
+                    }
+                    isOpen={open}
+                    onOpenChange={() => setOpen(false)}
+                    legacyFooter={false}
+                >
+                    <div>
+                        <ActionMenu menuBlocks={menuBlocks} />
+                    </div>
+                </Flyout>
+            </div>
+        </div>
+    );
 };
