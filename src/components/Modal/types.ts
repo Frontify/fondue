@@ -10,7 +10,7 @@ export type ModalButton = {
 };
 
 export type ModalVisualProps = {
-    pattern?: PatternDesign;
+    pattern: PatternDesign;
     foregroundColor?: PatternTheme | Color;
     backgroundColor?: PatternTheme | Color;
 };
