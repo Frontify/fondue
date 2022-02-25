@@ -97,7 +97,7 @@ export const ButtonStyleClasses: Record<
             },
             inverted: {
                 button:
-                    "tw-bg-text-weak tw-border-button-border " +
+                    "tw-bg-text-weak tw-border-button-positive-border " +
                     "hover:tw-bg-button-strong-background-hover " +
                     "active:tw-bg-button-strong-background-pressed ",
                 icon:
@@ -127,7 +127,7 @@ export const ButtonStyleClasses: Record<
             },
             inverted: {
                 button:
-                    "tw-bg-text-weak tw-border-button-border " +
+                    "tw-bg-text-weak tw-border-button-negative-border " +
                     "hover:tw-bg-button-strong-background-hover " +
                     "active:tw-bg-button-strong-background-pressed ",
                 icon:
@@ -188,7 +188,7 @@ export const ButtonStyleClasses: Record<
             },
             inverted: {
                 button:
-                    "tw-bg-base tw-border-button-border " +
+                    "tw-bg-base tw-border-button-strong-border " +
                     "hover:tw-bg-button-background-hover " +
                     "active:tw-bg-button-background-pressed ",
                 icon:
@@ -251,7 +251,7 @@ export const ButtonStyleClasses: Record<
             },
             inverted: {
                 button:
-                    "tw-bg-base tw-border-button-border " +
+                    "tw-bg-base tw-border-button-strong-border " +
                     "hover:tw-bg-button-background-hover " +
                     "active:tw-bg-button-background-pressed ",
                 icon:
@@ -281,7 +281,7 @@ export const ButtonStyleClasses: Record<
             },
             inverted: {
                 button:
-                    "tw-bg-base tw-border-button-border " +
+                    "tw-bg-base tw-border-button-positive-border " +
                     "hover:tw-bg-button-positive-background-hover " +
                     "active:tw-bg-button-positive-background-pressed ",
                 icon:
@@ -311,7 +311,7 @@ export const ButtonStyleClasses: Record<
             },
             inverted: {
                 button:
-                    "tw-bg-base tw-border-button-border " +
+                    "tw-bg-base tw-border-button-border tw-border-button-strong-negative-border " +
                     "hover:tw-bg-button-negative-background-hover " +
                     "active:tw-bg-button-negative-background-pressed ",
                 icon:
@@ -372,7 +372,7 @@ export const ButtonStyleClasses: Record<
             },
             inverted: {
                 button:
-                    "tw-bg-base tw-border-button-border " +
+                    "tw-bg-base tw-border-button-strong-border " +
                     "hover:tw-bg-button-background-hover " +
                     "active:tw-bg-button-background-pressed ",
                 icon:
@@ -422,7 +422,7 @@ export const ButtonStyleClasses: Record<
             default: {
                 button:
                     "tw-border-transparent " +
-                    "hover:tw-bg-button-background-hover " +
+                    "hover:tw-bg-button-background-hover hover:tw-border-button-border " +
                     "active:tw-bg-button-background-pressed ",
                 icon:
                     "tw-text-button-icon " +
@@ -436,7 +436,7 @@ export const ButtonStyleClasses: Record<
             inverted: {
                 button:
                     "tw-border-transparent " +
-                    "hover:tw-bg-button-strong-background-hover " +
+                    "hover:tw-bg-button-strong-background-hover hover:tw-border-button-border " +
                     "active:tw-bg-button-strong-background-pressed ",
                 icon:
                     "tw-text-button-strong-icon " +
@@ -452,7 +452,7 @@ export const ButtonStyleClasses: Record<
             default: {
                 button:
                     "tw-border-transparent " +
-                    "hover:tw-bg-button-positive-background-hover " +
+                    "hover:tw-bg-button-positive-background-hover hover:tw-border-button-positive-border " +
                     "active:tw-bg-button-positive-background-pressed ",
                 icon:
                     "tw-text-button-positive-icon " +
@@ -466,7 +466,7 @@ export const ButtonStyleClasses: Record<
             inverted: {
                 button:
                     "tw-border-transparent " +
-                    "hover:tw-bg-button-strong-background-hover " +
+                    "hover:tw-bg-button-strong-background-hover hover:tw-border-button-positive-border " +
                     "active:tw-bg-button-strong-background-pressed ",
                 icon:
                     "tw-text-button-positive-icon " +
@@ -482,7 +482,7 @@ export const ButtonStyleClasses: Record<
             default: {
                 button:
                     "tw-border-transparent " +
-                    "hover:tw-bg-button-negative-background-hover " +
+                    "hover:tw-bg-button-negative-background-hover hover:tw-border-button-negative-border " +
                     "active:tw-bg-button-negative-background-pressed ",
                 icon:
                     "tw-text-button-negative-icon " +
@@ -496,7 +496,7 @@ export const ButtonStyleClasses: Record<
             inverted: {
                 button:
                     "tw-border-transparent " +
-                    "hover:tw-bg-button-strong-background-hover " +
+                    "hover:tw-bg-button-strong-background-hover hover:tw-border-button-negative-border " +
                     "active:tw-bg-button-strong-background-pressed ",
                 icon:
                     "tw-text-button-negative-icon " +
@@ -543,7 +543,7 @@ export const ButtonStyleClasses: Record<
             default: {
                 button:
                     "tw-border-transparent " +
-                    "hover:tw-bg-button-background-hover " +
+                    "hover:tw-bg-button-background-hover hover:tw-border-button-border " +
                     "active:tw-bg-button-background-pressed ",
                 icon:
                     "tw-text-button-icon " +
@@ -557,7 +557,7 @@ export const ButtonStyleClasses: Record<
             inverted: {
                 button:
                     "tw-bg-base tw-border-button-border " +
-                    "hover:tw-bg-button-background-hover " +
+                    "hover:tw-bg-button-background-hover hover:tw-border-button-border " +
                     "active:tw-bg-button-background-pressed ",
                 icon:
                     "tw-text-button-icon " +
@@ -574,7 +574,7 @@ export const ButtonStyleClasses: Record<
             default: {
                 button:
                     "tw-border-transparent " +
-                    "hover:tw-bg-button-background-hover " +
+                    "hover:tw-bg-button-background-hover hover:tw-border-button-border " +
                     "active:tw-bg-button-background-pressed ",
                 icon:
                     "tw-text-button-icon " +
@@ -588,7 +588,7 @@ export const ButtonStyleClasses: Record<
             inverted: {
                 button:
                     "tw-bg-text-weak tw-border-button-border " +
-                    "hover:tw-bg-button-strong-background-hover " +
+                    "hover:tw-bg-button-strong-background-hover hover:tw-border-button-border " +
                     "active:tw-bg-button-strong-background-pressed ",
                 icon:
                     "tw-text-button-strong-icon " +
