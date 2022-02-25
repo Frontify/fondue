@@ -97,29 +97,23 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
         });
 
         if ((event.key === "ArrowRight" || event.key === "ArrowDown") && nextTabs.length) {
-            const buttonElement = document.getElementById(`${nextTabs[0].id}-btn`) as HTMLButtonElement;
-            try {
-                buttonElement.focus();
-                if (onChange) {
-                    onChange(nextTabs[0].id);
-                }
-            } catch (error) {
-                throw (error as Error).message;
-            }
+            triggerTabButton(nextTabs[0].id);
         }
 
         if ((event.key === "ArrowLeft" || event.key === "ArrowUp") && previousTabs.length) {
-            const buttonElement = document.getElementById(
-                `${previousTabs[previousTabs.length - 1].id}-btn`,
-            ) as HTMLButtonElement;
-            try {
-                buttonElement.focus();
-                if (onChange) {
-                    onChange(previousTabs[previousTabs.length - 1].id);
-                }
-            } catch (error) {
-                throw (error as Error).message;
+            triggerTabButton(previousTabs[previousTabs.length - 1].id);
+        }
+    };
+
+    const triggerTabButton = (elementId: string) => {
+        const buttonElement = document.getElementById(`${elementId}-btn`) as HTMLButtonElement;
+        try {
+            buttonElement.focus();
+            if (onChange) {
+                onChange(elementId);
             }
+        } catch (error) {
+            throw (error as Error).message;
         }
     };
 
