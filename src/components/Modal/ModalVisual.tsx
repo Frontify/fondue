@@ -15,7 +15,7 @@ export const ModalVisual: FC<ModalVisualProps> = ({ pattern, foregroundColor }) 
                 foregroundColor && patternThemes[foregroundColor],
             ])}
         >
-            <FrontifyPattern pattern={pattern} scale={PatternScale.Small} foregroundColor={foregroundColor} />
+            <FrontifyPattern pattern={pattern} scale={PatternScale.LG} foregroundColor={foregroundColor} />
         </div>
     );
 };
