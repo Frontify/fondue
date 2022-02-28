@@ -28,7 +28,7 @@ export const FrontifyPattern: FC<FrontifyPatternProps> = ({
             className={merge(["tw-w-full tw-h-full", patternThemes[foregroundColor]])}
             style={{ transform: `scale(${patternScales[scale]})` }}
         >
-            {cloneElement(patternDesigns[pattern], {
+            {cloneElement(patternDesigns[pattern ?? PatternDesign.DigitalAssets], {
                 className: "tw-h-full",
             })}
         </div>
