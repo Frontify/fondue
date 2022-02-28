@@ -3,22 +3,31 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react";
 import { PatternDesign, PatternScale } from "@foundation/Pattern";
-import { FrontifyPatternProps, FrontifyPattern as FrontifyPatternComponent } from "./FrontifyPattern";
+import { FrontifyPatternProps, FrontifyPattern } from "./FrontifyPattern";
 
 // eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/FrontifyPattern",
-    component: FrontifyPatternComponent,
-    args: {
-        pattern: PatternDesign.DigitalAssets,
+    component: FrontifyPattern,
+    argTypes: {
+        pattern: {
+            options: Object.keys(PatternDesign),
+            control: { type: "select" },
+        },
+        scale: {
+            options: Object.keys(PatternScale),
+            control: { type: "select" },
+        },
     },
+    decorators: [
+        (Story) => (
+            <div className="tw-flex tw-justify-center tw-items-center tw-p-10">
+                <div className="tw-w-80 tw-h-80 tw-overflow-hidden">
+                    <Story />
+                </div>
+            </div>
+        ),
+    ],
 } as Meta<FrontifyPatternProps>;
 
-const FrontifyPattern: Story<FrontifyPatternProps> = (args) => <FrontifyPatternComponent {...args} />;
-
-export const Default = FrontifyPattern.bind({});
-
-export const Large = FrontifyPattern.bind({});
-Large.args = {
-    scale: PatternScale.LG,
-};
+export const Default: Story<FrontifyPatternProps> = (args, argTypes) => <FrontifyPattern {...args} {...argTypes} />;
