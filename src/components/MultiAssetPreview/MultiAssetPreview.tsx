@@ -20,7 +20,7 @@ export const MultiAssetPreview: FC<MultiAssetPreviewProps> = ({ assetsAmount, nu
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
-        <div>
+        <div data-test-id="multi-asset-preview">
             <span className="tw-flex tw-flex-wrap tw-gap-1 tw-text-black-80 tw-mb-2 tw-text-lg">
                 Selection
                 <TooltipIcon

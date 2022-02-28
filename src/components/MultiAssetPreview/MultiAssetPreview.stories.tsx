@@ -17,28 +17,7 @@ export default {
     args: {
         numberOfLocations: 12,
         assetsAmount: 25,
-    },
-} as Meta<MultiAssetPreviewProps>;
-
-export const WithOneImage: Story<MultiAssetPreviewProps> = (args: MultiAssetPreviewProps) => (
-    <MultiAssetPreviewComponent
-        {...args}
-        images={[
-            {
-                name: "foo1",
-                size: 2000,
-                type: "image",
-                extension: "JPG",
-                src: "https://picsum.photos/100/150",
-            },
-        ]}
-    />
-);
-
-export const WithImages: Story<MultiAssetPreviewProps> = (args: MultiAssetPreviewProps) => (
-    <MultiAssetPreviewComponent
-        {...args}
-        images={[
+        images: [
             {
                 name: "foo1",
                 size: 2000,
@@ -67,6 +46,29 @@ export const WithImages: Story<MultiAssetPreviewProps> = (args: MultiAssetPrevie
                 extension: "JPG",
                 src: "https://picsum.photos/400/200",
             },
+        ],
+    },
+} as Meta<MultiAssetPreviewProps>;
+
+export const Initial: Story<MultiAssetPreviewProps> = (args: MultiAssetPreviewProps) => (
+    <MultiAssetPreviewComponent {...args} images={[]} numberOfLocations={0} assetsAmount={0} />
+);
+
+export const WithOneImage: Story<MultiAssetPreviewProps> = (args: MultiAssetPreviewProps) => (
+    <MultiAssetPreviewComponent
+        {...args}
+        images={[
+            {
+                name: "foo1",
+                size: 2000,
+                type: "image",
+                extension: "JPG",
+                src: "https://picsum.photos/100/150",
+            },
         ]}
     />
+);
+
+export const WithImages: Story<MultiAssetPreviewProps> = (args: MultiAssetPreviewProps) => (
+    <MultiAssetPreviewComponent {...args} />
 );
