@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Story, Meta } from "@storybook/react";
-import { PatternDesign, PatternScale } from "@foundation/Pattern";
+import { PatternDesign, PatternScale, PatternTheme } from "@foundation/Pattern";
 import { FrontifyPatternProps, FrontifyPattern } from "./FrontifyPattern";
 
 // eslint-disable-next-line import/no-default-export
@@ -18,11 +18,15 @@ export default {
             options: Object.keys(PatternScale),
             control: { type: "select" },
         },
+        foregroundColor: {
+            options: Object.keys(PatternTheme),
+            control: { type: "select" },
+        },
     },
     decorators: [
         (Story) => (
             <div className="tw-flex tw-justify-center tw-items-center tw-p-10">
-                <div className="tw-w-80 tw-h-80 tw-overflow-hidden">
+                <div className="tw-w-80 tw-h-80 tw-rounded-xl tw-shadow-xl tw-overflow-hidden">
                     <Story />
                 </div>
             </div>
