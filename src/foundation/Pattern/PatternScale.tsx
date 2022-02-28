@@ -13,5 +13,5 @@ export const patternScales: Record<PatternScale, string> = {
     [PatternScale.MD]: "1.5",
     [PatternScale.LG]: "2",
     [PatternScale.XL]: "2.5",
-    [PatternScale.XXL]: " 3",
+    [PatternScale.XXL]: "3",
 };
