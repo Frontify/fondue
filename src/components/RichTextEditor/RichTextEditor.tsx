@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BalloonToolbar, Plate, usePlateEditorState } from "@udecode/plate";
+import { Plate, usePlateEditorState } from "@udecode/plate";
 import { debounce } from "@utilities/debounce";
 import React, { FC, FocusEventHandler, useEffect } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
-import { getEditorConfig } from "./utils/getEditorConfig";
 import { Toolbar } from "./Toolbar";
+import { getEditorConfig } from "./utils/getEditorConfig";
 import { TextStyleType } from "./utils/getTextStyles";
 import { EMPTY_VALUE, parseRawValue } from "./utils/parseRawValue";
 
@@ -54,16 +54,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 editableProps={editableProps}
                 plugins={getEditorConfig(textStyles)}
             >
-                <BalloonToolbar
-                    arrow={true}
-                    theme={"light"}
-                    popperOptions={{
-                        modifiers: [{ name: "offset", options: { offset: [0, 12] } }],
-                    }}
-                    styles={{ root: { border: "none", background: "#ffffff" } }}
-                >
-                    <Toolbar />
-                </BalloonToolbar>
+                <Toolbar textStyles={textStyles} />
             </Plate>
         </div>
     );
