@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement } from "react";
-import { Color } from "../../types";
 import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 
 export type ModalButton = {
@@ -12,7 +11,6 @@ export type ModalButton = {
 export type ModalVisualProps = {
     pattern: PatternDesign;
     foregroundColor?: PatternTheme;
-    backgroundColor?: PatternTheme | Color;
 };
 
 export type ModalHeaderProps = {
