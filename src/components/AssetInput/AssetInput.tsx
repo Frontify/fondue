@@ -19,6 +19,7 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { cloneElement, FC, ReactElement, useRef } from "react";
+import { SpinningCircle } from "./SpinningCircle";
 
 type BaseAsset = {
     name: string;
@@ -59,8 +60,8 @@ export enum AssetInputSize {
     Large = "Large",
 }
 
-type AssetProps = {
-    asset:
+export type AssetProps = {
+    asset?:
         | (ImageAsset & UploadSource)
         | (ImageAsset & LibrarySource)
         | (IconAsset & UploadSource)
@@ -69,6 +70,7 @@ type AssetProps = {
         | (OtherAsset & LibrarySource);
     size: AssetInputSize;
     actions: ActionMenuProps["menuBlocks"];
+    isLoading?: boolean;
 };
 
 export type AssetInputProps =
@@ -82,9 +84,14 @@ export type AssetInputProps =
           size?: undefined;
           onUploadClick?: () => void;
           onLibraryClick?: () => void;
+          isLoading?: boolean;
       };
 
-const AssetThumbnail: FC<Pick<AssetProps, "asset" | "size"> & { isActive?: boolean }> = ({ asset, size, isActive }) => (
+const AssetThumbnail: FC<Required<Pick<AssetProps, "asset" | "size">> & { isActive?: boolean }> = ({
+    asset,
+    size,
+    isActive,
+}) => (
     <div
         className={merge([
             "tw-flex tw-flex-none tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95",
@@ -102,22 +109,28 @@ const AssetThumbnail: FC<Pick<AssetProps, "asset" | "size"> & { isActive?: boole
     </div>
 );
 
-const AssetSubline: FC<Pick<AssetProps, "asset">> = ({ asset }) => (
-    <span className="tw-max-w-full tw-flex tw-flex-row tw-items-center tw-gap-1 tw-text-black-80 tw-text-xxs tw-overflow-hidden">
-        <div className="tw-flex-none tw-inline-flex tw-items-center tw-justify-center">
-            {asset.source === "library" ? <IconImageLibrary /> : <IconUploadAlternative />}
-        </div>
-        <span>{asset.source === "library" ? asset.sourceName : "Uploaded"}</span>
-        {[asset.extension, asset.size].filter(Boolean).map((item) => (
-            <>
-                <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
-                <span>{item}</span>
-            </>
-        ))}
-    </span>
-);
+const AssetSubline: FC<Pick<AssetProps, "asset" | "isLoading">> = ({ asset, isLoading = false }) => {
+    const title = isLoading ? "Uploading" : asset?.source === "library" ? asset.sourceName : "Uploaded";
 
-const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
+    return (
+        <span className="tw-max-w-full tw-flex tw-flex-row tw-items-center tw-gap-1 tw-text-black-80 tw-text-xxs tw-overflow-hidden">
+            <div className="tw-flex-none tw-inline-flex tw-items-center tw-justify-center">
+                {asset?.source === "library" ? <IconImageLibrary /> : <IconUploadAlternative />}
+            </div>
+            <span>{title}</span>
+            {asset &&
+                !isLoading &&
+                [asset.extension, asset.size].filter(Boolean).map((item) => (
+                    <>
+                        <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
+                        <span>{item}</span>
+                    </>
+                ))}
+        </span>
+    );
+};
+
+const SelectedAsset: FC<AssetProps> = ({ asset, size, actions, isLoading }) => {
     const menuId = useMemoizedId();
     const labelId = useMemoizedId();
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -131,12 +144,13 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
         { onClose: () => menuState.close(), shouldCloseOnBlur: true, isOpen, isDismissable: true },
         overlayRef,
     );
+    const title = asset?.name || "Your Asset";
 
     return (
         <div
             className="tw-relative tw-font-sans tw-w-full tw-text-s tw-bg-transparent tw-font-normal tw-min-w-0"
             aria-labelledby={labelId}
-            title={asset.name}
+            title={title}
         >
             <button
                 {...mergeProps(buttonProps, focusProps)}
@@ -150,7 +164,17 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                         : "tw-border-black-20 dark:tw-border-black-80",
                 ])}
             >
-                <AssetThumbnail asset={asset} size={size} isActive={isOpen || isFocusVisible} />
+                {isLoading && !asset && (
+                    <div
+                        className={merge([
+                            "tw-flex tw-justify-center tw-items-center",
+                            size === AssetInputSize.Large ? "tw-w-full tw-h-32" : "tw-w-14 tw-h-full",
+                        ])}
+                    >
+                        <SpinningCircle size={size} />
+                    </div>
+                )}
+                {asset && <AssetThumbnail asset={asset} size={size} isActive={isOpen || isFocusVisible} />}
                 <div
                     className={merge([
                         "tw-min-w-0 tw-max-w-full tw-flex tw-flex-auto tw-self-stretch tw-border-black-100 tw-border-opacity-25",
@@ -165,9 +189,9 @@ const SelectedAsset: FC<AssetProps> = ({ asset, size, actions }) => {
                                 (isOpen || isFocusVisible) && "tw-font-medium",
                             ])}
                         >
-                            {asset.name}
+                            {title}
                         </span>
-                        <AssetSubline asset={asset} />
+                        <AssetSubline asset={asset} isLoading={isLoading} />
                     </div>
                     <div className="tw-p-4 tw-flex tw-flex-none tw-items-center tw-justify-center">
                         <span
@@ -210,11 +234,12 @@ export const AssetInput: FC<AssetInputProps> = ({
     asset,
     actions = [],
     size = AssetInputSize.Small,
+    isLoading = false,
     onLibraryClick,
     onUploadClick,
 }) => {
-    if (asset) {
-        return <SelectedAsset asset={asset} size={size} actions={actions} />;
+    if (isLoading || asset) {
+        return <SelectedAsset asset={asset} size={size} actions={actions} isLoading={isLoading} />;
     }
 
     return (
