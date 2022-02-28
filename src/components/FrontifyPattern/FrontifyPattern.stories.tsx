@@ -12,14 +12,17 @@ export default {
     argTypes: {
         pattern: {
             options: Object.keys(PatternDesign),
+            defaultValue: PatternDesign.DigitalAssets,
             control: { type: "select" },
         },
         scale: {
             options: Object.keys(PatternScale),
+            defaultValue: PatternScale.SM,
             control: { type: "select" },
         },
         foregroundColor: {
             options: Object.keys(PatternTheme),
+            defaultValue: PatternTheme.Black,
             control: { type: "select" },
         },
     },
