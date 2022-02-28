@@ -20,5 +20,5 @@ export const Default = FrontifyPattern.bind({});
 
 export const Large = FrontifyPattern.bind({});
 Large.args = {
-    scale: PatternScale.Large,
+    scale: PatternScale.LG,
 };
