@@ -106,8 +106,8 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
     };
 
     const triggerTabButton = (elementId: string) => {
-        const buttonElement = document.getElementById(`${elementId}-btn`) as HTMLButtonElement;
         try {
+            const buttonElement = document.getElementById(`${elementId}-btn`) as HTMLButtonElement;
             buttonElement.focus();
             if (onChange) {
                 onChange(elementId);
@@ -147,7 +147,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                 aria-controls={`${tab.id}-content`}
                                 aria-hidden={tab.disabled}
                                 tabIndex={tab.id === activeItemId ? 0 : -1}
-                                id={index >= tabIndexLimit ? "" : `${tab.id}-btn`}
+                                id={`${tab.id}-btn`}
                                 className={merge([
                                     "tw-group tw-relative tw-mx-0 tw-pb-5 tw-pt-2 tw-px-2 tw-w-max tw-h-10 tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap",
                                     tab.disabled && "tw-text-text-disabled",
@@ -210,7 +210,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                         aria-controls={`${tab.id}-content`}
                                         aria-hidden={tab.disabled}
                                         tabIndex={!tab.disabled ? 0 : -1}
-                                        id={`${tab.id}-btn`}
+                                        id={`${tab.id}-btn-m`}
                                         onKeyDown={(event) => handleKeyboardTabChange(event)}
                                     >
                                         <MenuItem
