@@ -11,6 +11,7 @@ function PatternTypography({ className }: PatternProps): ReactElement {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className={className}
+            data-test-id="pattern-typography"
         >
             <g clipPath="url(#clip0_11493_270491)">
                 <rect width="193" height="135" fill="#FAFAFA" />
