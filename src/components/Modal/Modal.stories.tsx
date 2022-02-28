@@ -5,7 +5,7 @@ import { ModalProps } from "./types";
 import { Button } from "@components/Button";
 import { Story, Meta } from "@storybook/react";
 import { Modal as ModalComponent } from "./Modal";
-import { PatternDesign } from "@foundation/Pattern";
+import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 
 // eslint-disable-next-line import/no-default-export
 export default {

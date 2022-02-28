@@ -11,7 +11,7 @@ export type ModalButton = {
 
 export type ModalVisualProps = {
     pattern: PatternDesign;
-    foregroundColor?: PatternTheme | Color;
+    foregroundColor?: PatternTheme;
     backgroundColor?: PatternTheme | Color;
 };
 
@@ -32,5 +32,6 @@ export type ModalFooterProps = {
 
 export type ModalProps = {
     visual?: PatternDesign;
+    foregroundColor?: PatternTheme;
     children?: ReactElement;
 };
