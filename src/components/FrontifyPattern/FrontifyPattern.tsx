@@ -17,13 +17,15 @@ export type FrontifyPatternProps = {
     foregroundColor?: PatternTheme;
 };
 
-const DEFAULT_FOREGROUND_THEME = PatternTheme.Black;
-
-export const FrontifyPattern: FC<FrontifyPatternProps> = ({ pattern, scale = PatternScale.SM, foregroundColor }) => {
+export const FrontifyPattern: FC<FrontifyPatternProps> = ({
+    pattern,
+    scale = PatternScale.SM,
+    foregroundColor = PatternTheme.Black,
+}) => {
     return (
         <div
             data-test-id="frontify-pattern"
-            className={merge(["tw-h-full", patternThemes[foregroundColor ?? DEFAULT_FOREGROUND_THEME]])}
+            className={merge(["tw-h-full", patternThemes[foregroundColor]])}
             style={{ transform: `scale(${patternScales[scale]})` }}
         >
             {cloneElement(patternDesigns[pattern], {

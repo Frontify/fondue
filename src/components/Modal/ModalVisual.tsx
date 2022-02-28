@@ -3,10 +3,10 @@
 import React, { FC } from "react";
 import { merge } from "@utilities/merge";
 import { ModalVisualProps } from "./types";
-import { PatternScale, patternThemes } from "@foundation/Pattern";
+import { patternThemes } from "@foundation/Pattern";
 import { FrontifyPattern } from "@components/FrontifyPattern/FrontifyPattern";
 
-export const ModalVisual: FC<ModalVisualProps> = ({ pattern, foregroundColor }) => {
+export const ModalVisual: FC<ModalVisualProps> = ({ pattern, scale, foregroundColor }) => {
     return (
         <div
             data-test-id="modal-visual"
@@ -15,7 +15,7 @@ export const ModalVisual: FC<ModalVisualProps> = ({ pattern, foregroundColor }) 
                 foregroundColor && patternThemes[foregroundColor],
             ])}
         >
-            <FrontifyPattern pattern={pattern} scale={PatternScale.LG} foregroundColor={foregroundColor} />
+            <FrontifyPattern pattern={pattern} scale={scale} foregroundColor={foregroundColor} />
         </div>
     );
 };

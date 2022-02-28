@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement } from "react";
-import { PatternDesign, PatternTheme } from "@foundation/Pattern";
+import { PatternDesign, PatternScale, PatternTheme } from "@foundation/Pattern";
 
 export type ModalButton = {
     label: string;
@@ -10,6 +10,7 @@ export type ModalButton = {
 
 export type ModalVisualProps = {
     pattern: PatternDesign;
+    scale?: PatternScale;
     foregroundColor?: PatternTheme;
 };
 
@@ -30,6 +31,7 @@ export type ModalFooterProps = {
 
 export type ModalProps = {
     visual?: PatternDesign;
+    scale?: PatternScale;
     foregroundColor?: PatternTheme;
     children?: ReactElement;
 };
