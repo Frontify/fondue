@@ -34,7 +34,7 @@ type OtherAsset = BaseAsset & {
     size: number;
 };
 
-type ImageAsset = BaseAsset & {
+export type ImageAsset = BaseAsset & {
     type: "image" | "logo";
     extension: string;
     src: string;
