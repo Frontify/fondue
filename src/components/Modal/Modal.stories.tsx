@@ -11,32 +11,28 @@ import { PatternDesign } from "@foundation/Pattern";
 export default {
     title: "Components/Modal",
     component: ModalComponent,
+    argTypes: {
+        visual: {
+            options: ["None", ...Object.values(PatternDesign)],
+            mapping: {
+                None: undefined,
+                ...Object.values(PatternDesign),
+            },
+            defaultValue: PatternDesign.DigitalAssets,
+            control: { type: "select" },
+        },
+    },
 } as Meta<ModalProps>;
 
-const ModalTemplate: Story<ModalProps> = (args: ModalProps) => (
-    <ModalComponent {...args}>
+const ModalTemplate: Story<ModalProps> = (args, argTypes) => (
+    <ModalComponent {...args} {...argTypes}>
         <Button>Button</Button>
     </ModalComponent>
 );
 
 export const Default = ModalTemplate.bind({});
 
-export const WithVisualDigitalAssets = ModalTemplate.bind({});
-WithVisualDigitalAssets.args = {
+export const WithVisual = ModalTemplate.bind({});
+WithVisual.args = {
     visual: PatternDesign.DigitalAssets,
-};
-
-export const WithVisualImagery = ModalTemplate.bind({});
-WithVisualImagery.args = {
-    visual: PatternDesign.Imagery,
-};
-
-export const WithVisualSound = ModalTemplate.bind({});
-WithVisualSound.args = {
-    visual: PatternDesign.Sound,
-};
-
-export const WithVisualTypography = ModalTemplate.bind({});
-WithVisualTypography.args = {
-    visual: PatternDesign.Typography,
 };
