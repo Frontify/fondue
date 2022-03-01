@@ -12,7 +12,6 @@ export default {
         onClick: {
             action: "Click",
         },
-        images: {},
     },
     args: {
         numberOfLocations: 12,
@@ -51,23 +50,32 @@ export default {
 } as Meta<MultiAssetPreviewProps>;
 
 export const Initial: Story<MultiAssetPreviewProps> = (args: MultiAssetPreviewProps) => (
-    <MultiAssetPreviewComponent {...args} images={[]} numberOfLocations={0} assetsAmount={0} />
+    <MultiAssetPreviewComponent {...args} />
 );
 
+Initial.args = {
+    images: [],
+    numberOfLocations: 0,
+    assetsAmount: 0,
+};
+
 export const WithOneImage: Story<MultiAssetPreviewProps> = (args: MultiAssetPreviewProps) => (
-    <MultiAssetPreviewComponent
-        {...args}
-        images={[
-            {
-                name: "foo1",
-                size: 2000,
-                type: "image",
-                extension: "JPG",
-                src: "https://picsum.photos/100/150",
-            },
-        ]}
-    />
+    <MultiAssetPreviewComponent {...args} />
 );
+
+WithOneImage.args = {
+    images: [
+        {
+            name: "foo1",
+            size: 2000,
+            type: "image",
+            extension: "JPG",
+            src: "https://picsum.photos/100/150",
+        },
+    ],
+    numberOfLocations: 1,
+    assetsAmount: 1,
+};
 
 export const WithImages: Story<MultiAssetPreviewProps> = (args: MultiAssetPreviewProps) => (
     <MultiAssetPreviewComponent {...args} />

@@ -19,6 +19,7 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { cloneElement, FC, ReactElement, useRef } from "react";
+import { ImageAsset } from "../../types/assets";
 import { SpinningCircle } from "./SpinningCircle";
 
 type BaseAsset = {
@@ -30,15 +31,6 @@ type OtherAsset = BaseAsset & {
     extension: string;
     src?: undefined;
     alt?: undefined;
-    icon?: undefined;
-    size: number;
-};
-
-export type ImageAsset = BaseAsset & {
-    type: "image" | "logo";
-    extension: string;
-    src: string;
-    alt?: string;
     icon?: undefined;
     size: number;
 };
