@@ -22,6 +22,7 @@ export const DropdownItem = withPlateProvider(({ label, type, textStyles }: Drop
     const isActive = !!editor?.selection && someNode(editor, { match: { type } });
     return (
         <button
+            data-test-id="textstyle-option"
             className={merge([
                 "tw-block tw-w-full tw-text-left tw-border-b tw-px-3 tw-py-2 tw-border-black-30 tw-outline-none tw-cursor-pointer tw-truncate ",
                 isActive ? "tw-bg-black-100 tw-text-white" : "hover:tw-bg-black-0",

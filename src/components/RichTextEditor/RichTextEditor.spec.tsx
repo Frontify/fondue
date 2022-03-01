@@ -10,6 +10,8 @@ const TOOLBAR = "[data-test-id=toolbar]";
 const TEXT_ALIGNMENT_BUTTONS = "[data-test-id=text-alignment-buttons]";
 const TEXT_MARK_BUTTONS = "[data-test-id=text-mark-buttons]";
 const TEXT_ELEMENT_BUTTONS = "[data-test-id=text-element-buttons]";
+const TEXTSTYLE_DROPDOWN_TRIGGER = "[data-test-id=textstyle-dropdown-trigger]";
+const TEXTSTYLE_OPTION = "[data-test-id=textstyle-option]";
 
 const insertTextAndOpenToolbar = () => cy.get("[contenteditable=true]").click().type("hello{selectall}");
 
@@ -145,6 +147,25 @@ describe("RichTextEditor Component", () => {
         insertTextAndOpenToolbar();
         cy.get(TEXT_ALIGNMENT_BUTTONS).children().eq(2).click();
         cy.get("[contenteditable=true]").should("include.html", "text-align: right");
+    });
+
+    it("renders headings", () => {
+        mount(<RichTextEditor />);
+
+        insertTextAndOpenToolbar();
+        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+
+        cy.get(TEXTSTYLE_OPTION).first().click();
+        cy.get("[contenteditable=true]").should("include.html", "<h1");
+
+        cy.get(TEXTSTYLE_OPTION).eq(1).click();
+        cy.get("[contenteditable=true]").should("include.html", "<h2");
+
+        cy.get(TEXTSTYLE_OPTION).eq(2).click();
+        cy.get("[contenteditable=true]").should("include.html", "<h3");
+
+        cy.get(TEXTSTYLE_OPTION).eq(3).click();
+        cy.get("[contenteditable=true]").should("include.html", "<h4");
     });
 
     it("emits onTextChange when choosing an inline style", () => {
