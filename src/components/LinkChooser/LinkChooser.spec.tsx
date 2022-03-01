@@ -7,8 +7,8 @@ import { mount } from "@cypress/react";
 import React from "react";
 import { LinkChooser, QUERIES_STORAGE_KEY } from "./LinkChooser";
 import { data } from "./mock/data";
-import { guidelineSection } from "./mock/guidelines";
-import { templateSection } from "./mock/templates";
+import { guidelineSection, GUIDELINE_ITEMS } from "./mock/guidelines";
+import { templateSection, TEMPLATE_ITEMS } from "./mock/templates";
 import { LinkChooserProps, SearchResult, validationClassMap } from "./types";
 import { filterItems } from "./utils/helpers";
 
@@ -39,8 +39,8 @@ const SELECTED_CLASS = "tw-text-violet-60";
 const FOCUSED_OPTION_CLASS = "tw-bg-black-10";
 const TEMPLATE_TITLE = templateSection.title;
 const GUIDELINE_TITLE = guidelineSection.title;
-const FIRST_TEMPLATE_TITLE = templateSection.items[0].title;
-const FIRST_GUIDELINE_TITLE = guidelineSection.items[0].title;
+const FIRST_TEMPLATE_TITLE = TEMPLATE_ITEMS[0].title;
+const FIRST_GUIDELINE_TITLE = GUIDELINE_ITEMS[0].title;
 
 const PREFILLED_LOCAL_STORAGE = [
     {
@@ -110,14 +110,14 @@ const getLinkChooserComponent = (overwriteProps?: Partial<LinkChooserProps>, ret
     const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> =>
         new Promise((resolve, reject) =>
             setTimeout(() => {
-                returnError ? reject() : resolve(filterItems(query, templateSection.items));
+                returnError ? reject() : resolve(filterItems(query, TEMPLATE_ITEMS));
             }, DEFAULT_TIMEOUT),
         );
 
     const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> =>
         new Promise((resolve, reject) =>
             setTimeout(() => {
-                returnError ? reject() : resolve(filterItems(query, guidelineSection.items));
+                returnError ? reject() : resolve(filterItems(query, GUIDELINE_ITEMS));
             }, DEFAULT_TIMEOUT),
         );
 
@@ -508,7 +508,7 @@ describe("LinkChooser Component", () => {
             cy.get(BACK_BUTTON_ID).should("not.exist");
             cy.get(ACTION_MENU_ID).contains(TEMPLATE_TITLE).click();
             cy.get(MENU_ITEM).should("have.length", 1).and("have.text", TEMPLATE_TITLE);
-            cy.get(SELECT_SECTION_ID).children().should("have.length", templateSection.items.length);
+            cy.get(SELECT_SECTION_ID).children().should("have.length", TEMPLATE_ITEMS.length);
         });
 
         it("shows loading animation and loads results", () => {
@@ -630,7 +630,7 @@ describe("LinkChooser Component", () => {
             cy.get(BACK_BUTTON_ID).should("not.exist");
             cy.get(ACTION_MENU_ID).contains(GUIDELINE_TITLE).click();
             cy.get(MENU_ITEM).should("have.length", 1).and("have.text", GUIDELINE_TITLE);
-            cy.get(SELECT_SECTION_ID).children().should("have.length", guidelineSection.items.length);
+            cy.get(SELECT_SECTION_ID).children().should("have.length", GUIDELINE_ITEMS.length);
         });
 
         it("shows loading animation and loads results", () => {
@@ -642,7 +642,7 @@ describe("LinkChooser Component", () => {
             cy.get(LOADER_ID).should("exist");
             cy.get(RESULTS_LIST_ID)
                 .children()
-                .should("have.length", filterItems(FIRST_GUIDELINE_TITLE, guidelineSection.items).length);
+                .should("have.length", filterItems(FIRST_GUIDELINE_TITLE, GUIDELINE_ITEMS).length);
         });
 
         it("searches the same query when switching from default view to guidelines view", () => {
@@ -654,7 +654,7 @@ describe("LinkChooser Component", () => {
             cy.get(LOADER_ID).should("exist");
             cy.get(RESULTS_LIST_ID)
                 .children()
-                .should("have.length", filterItems(FIRST_GUIDELINE_TITLE, guidelineSection.items).length);
+                .should("have.length", filterItems(FIRST_GUIDELINE_TITLE, GUIDELINE_ITEMS).length);
         });
 
         it("searches the same query when switching from guidelines view to default view", () => {
@@ -668,7 +668,7 @@ describe("LinkChooser Component", () => {
             cy.get(LOADER_ID).should("exist");
             cy.get(RESULTS_LIST_ID)
                 .children()
-                .should("have.length", filterItems(FIRST_GUIDELINE_TITLE, guidelineSection.items).length);
+                .should("have.length", filterItems(FIRST_GUIDELINE_TITLE, GUIDELINE_ITEMS).length);
         });
 
         it("selects first item", () => {
