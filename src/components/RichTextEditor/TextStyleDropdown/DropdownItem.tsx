@@ -24,7 +24,8 @@ export const DropdownItem = withPlateProvider(({ label, type, textStyles }: Drop
         <button
             className={merge([
                 "tw-block tw-w-full tw-text-left tw-border-b tw-px-3 tw-py-2 tw-border-black-30 tw-outline-none tw-cursor-pointer tw-truncate ",
-                isActive ? "tw-bg-black-100 " : "hover:tw-bg-black-0",
+                isActive ? "tw-bg-black-100 tw-text-white" : "hover:tw-bg-black-0",
+                getTextStyles(type, textStyles),
             ])}
             onMouseDown={
                 editor &&
@@ -34,7 +35,7 @@ export const DropdownItem = withPlateProvider(({ label, type, textStyles }: Drop
                 })
             }
         >
-            <span className={getTextStyles(type, textStyles)}>{label}</span>
+            {label}
         </button>
     );
 });

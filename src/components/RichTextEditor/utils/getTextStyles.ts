@@ -9,6 +9,15 @@ export enum TextStyles {
     ELEMENT_CUSTOM2 = "custom2",
 }
 
+export const textStyleTitles: Record<TextStyles, string> = {
+    [TextStyles.ELEMENT_HEADING1]: "Heading 1",
+    [TextStyles.ELEMENT_HEADING2]: "Heading 2",
+    [TextStyles.ELEMENT_HEADING3]: "Heading 3",
+    [TextStyles.ELEMENT_HEADING4]: "Heading 4",
+    [TextStyles.ELEMENT_CUSTOM1]: "Custom 01",
+    [TextStyles.ELEMENT_CUSTOM2]: "Custom 02",
+};
+
 export type TextStyleType = {
     type: TextStyles;
     className: string;
