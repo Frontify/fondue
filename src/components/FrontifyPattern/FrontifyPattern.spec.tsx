@@ -3,13 +3,18 @@
 import React from "react";
 import { mount } from "@cypress/react";
 import { FrontifyPattern } from "./FrontifyPattern";
-import { PatternDesign, PatternTheme, patternThemes } from "@foundation/Pattern";
+import { PatternDesign, PatternScale, patternScales, PatternTheme, patternThemes } from "@foundation/Pattern";
 
 const FRONTIFY_PATTERN = "[data-test-id=frontify-pattern]";
-const PATTERN_DIGITAL_ASSETS = "[data-test-id=pattern-digital-assets]";
-const PATTERN_IMAGERY = "[data-test-id=pattern-imagery]";
-const PATTERN_SOUND = "[data-test-id=pattern-sound]";
-const PATTERN_TYPOGRAPHY = "[data-test-id=pattern-typography]";
+const PATTERN_IDS = Array.from([
+    "[data-test-id=pattern-digital-assets]",
+    "[data-test-id=pattern-imagery]",
+    "[data-test-id=pattern-sound]",
+    "[data-test-id=pattern-typography]",
+]);
+
+const designTypesToIdsMap = new Map();
+Object.values(PatternDesign).forEach((design, index) => designTypesToIdsMap.set(design, PATTERN_IDS[index]));
 
 describe("FrontifyPattern Component", () => {
     it("should render a pattern", () => {
@@ -18,35 +23,27 @@ describe("FrontifyPattern Component", () => {
         cy.get(FRONTIFY_PATTERN).should("exist");
     });
 
-    it("should render a pattern with design 'Digital Assets'", () => {
-        mount(<FrontifyPattern pattern={PatternDesign.DigitalAssets} />);
+    Object.values(PatternDesign).forEach((design) => {
+        it(`should render a pattern with the '${design}' design`, () => {
+            mount(<FrontifyPattern pattern={design} />);
 
-        cy.get(PATTERN_DIGITAL_ASSETS).should("exist");
-    });
-
-    it("should render a pattern with design 'Imagery'", () => {
-        mount(<FrontifyPattern pattern={PatternDesign.Imagery} />);
-
-        cy.get(PATTERN_IMAGERY).should("exist");
-    });
-
-    it("should render a pattern with design 'Sound'", () => {
-        mount(<FrontifyPattern pattern={PatternDesign.Sound} />);
-
-        cy.get(PATTERN_SOUND).should("exist");
-    });
-
-    it("should render a pattern with design 'Typography'", () => {
-        mount(<FrontifyPattern pattern={PatternDesign.Typography} />);
-
-        cy.get(PATTERN_TYPOGRAPHY).should("exist");
+            cy.get(designTypesToIdsMap.get(design)).should("exist");
+        });
     });
 
     Object.values(PatternTheme).forEach((theme) => {
-        it(`should render a ${theme} pattern`, () => {
+        it(`should render a ${theme.toLowerCase()} themed pattern`, () => {
             mount(<FrontifyPattern pattern={PatternDesign.DigitalAssets} foregroundColor={theme} />);
 
             cy.get(FRONTIFY_PATTERN).should("have.class", patternThemes[theme]);
+        });
+    });
+
+    Object.values(PatternScale).forEach((scale) => {
+        it(`should render a pattern scaled ${patternScales[scale]}x`, () => {
+            mount(<FrontifyPattern pattern={PatternDesign.DigitalAssets} scale={scale} />);
+
+            cy.get(FRONTIFY_PATTERN).should("have.attr", "style", `transform: scale(${patternScales[scale]});`);
         });
     });
 });
