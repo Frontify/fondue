@@ -17,7 +17,9 @@ const RichTextWithClearButton: FC<Pick<RichTextEditorProps, "value">> = ({ value
     const [clear, setClear] = useState(false);
     return (
         <div>
-            <button onClick={() => setClear(true)}>clear</button>
+            <button data-test-id="clear-button" onClick={() => setClear(true)}>
+                clear
+            </button>
             <RichTextEditor value={value} clear={clear} />
         </div>
     );
@@ -180,7 +182,7 @@ describe("RichTextEditor Component", () => {
         mount(<RichTextWithClearButton value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text }] }])} />);
 
         cy.get(RICH_TEXT_EDITOR).should("contain.text", text);
-        cy.get("button").click();
+        cy.get("[data-test-id=clear-button]").click();
         cy.get(RICH_TEXT_EDITOR).should("contain.text", "");
     });
 });
