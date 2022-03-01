@@ -18,6 +18,7 @@ export default {
         dotted: false,
         type: TextInputType.Text,
         validation: Validation.Default,
+        spellcheck: true,
     },
     argTypes: {
         validation: {
