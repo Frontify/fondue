@@ -101,6 +101,7 @@ const nodes: TreeNodeProps[] = [
 ];
 
 describe("Tree Component", () => {
+    // TODO check if DropZones are not present when no onDrop props is provided. Refactoring needed first
     it("renders tree", () => {
         mount(<Component nodes={nodes} />);
 

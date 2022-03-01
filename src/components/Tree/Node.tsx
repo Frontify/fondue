@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useDrag } from "react-dnd";
 import { DropZone, DropZonePosition, OnDropCallback } from "@components/Tree/DropZone";
 
-export const renderNodesArray = (
+export const renderNodeArray = (
     nodes: TreeNodeProps[],
     activeNodeId: NullableString,
     onClick: (id: NullableString) => void,
@@ -173,7 +173,7 @@ export const TreeNode = ({
                     className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left"
                     data-test-id="sub-tree"
                 >
-                    {renderNodesArray(nodes, activeNodeId, onClick, onDrop, [...parentIds, id])}
+                    {renderNodeArray(nodes, activeNodeId, onClick, onDrop, [...parentIds, id])}
                 </ul>
             )}
             <DropZone
