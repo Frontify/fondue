@@ -5,12 +5,12 @@ import { TreeNode, TreeNodeProps } from "./Node";
 
 export type TreeProps = {
     nodes: TreeNodeProps[];
-    onSelect: (id: string | null) => void;
-    activeNodeId?: string | null;
+    onSelect: (id: NullableString) => void;
+    activeNodeId?: NullableString;
 };
 
 export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActiveNodeId = null }) => {
-    const [activeNodeId, setActiveNodeId] = useState<string | null>(initialActiveNodeId);
+    const [activeNodeId, setActiveNodeId] = useState<NullableString>(initialActiveNodeId);
     useEffect(() => setActiveNodeId(initialActiveNodeId), [initialActiveNodeId]);
 
     return (
@@ -24,7 +24,7 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActi
                     node={node}
                     activeNodeId={activeNodeId}
                     strong
-                    onClick={(id: string | null) => {
+                    onClick={(id: NullableString) => {
                         setActiveNodeId(id);
                         onSelect(id);
                     }}

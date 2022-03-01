@@ -21,9 +21,9 @@ export type TreeNodeProps = {
 type NodeProps = {
     node: TreeNodeProps;
     strong?: boolean;
-    activeNodeId?: string | null;
+    activeNodeId?: NullableString;
     parentIds?: string[];
-    onClick: (id: string | null) => void;
+    onClick: (id: NullableString) => void;
 };
 
 export const TreeNode = ({

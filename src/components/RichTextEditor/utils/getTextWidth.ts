@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export function getTextWidth(text: string, font: string): number | null {
+export function getTextWidth(text: string, font: string): NullableNumber {
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
     if (context) {
