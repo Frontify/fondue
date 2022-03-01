@@ -10,8 +10,8 @@ export enum PatternScale {
 
 export const patternScales: Record<PatternScale, string> = {
     [PatternScale.SM]: "1",
-    [PatternScale.MD]: "1.5",
-    [PatternScale.LG]: "2",
-    [PatternScale.XL]: "2.5",
-    [PatternScale.XXL]: "3",
+    [PatternScale.MD]: "2",
+    [PatternScale.LG]: "3",
+    [PatternScale.XL]: "4",
+    [PatternScale.XXL]: "5",
 };
