@@ -17,11 +17,9 @@ import {
 import {
     AlignToolbarButton,
     BalloonToolbar,
-    BlockToolbarButton,
     ELEMENT_OL,
     ELEMENT_UL,
     getPluginType,
-    getSelectionText,
     LinkToolbarButton,
     ListToolbarButton,
     MarkToolbarButton,
@@ -33,8 +31,8 @@ import {
     usePlateEditorRef,
 } from "@udecode/plate";
 import React, { FC } from "react";
-import { TextStyleDropdown } from "./TextStyleDropdown";
-import { TextStyles, TextStyleType } from "./utils/getTextStyles";
+import { TextStyleDropdown } from "./TextStyleDropdown/TextStyleDropdown";
+import { TextStyleType } from "./utils/getTextStyles";
 
 type ToolbarProps = {
     textStyles?: TextStyleType[];
@@ -48,12 +46,6 @@ type ButtonGroupProps = {
 export const Toolbar: FC<ToolbarProps> = ({ textStyles }) => {
     const editor = usePlateEditorRef();
 
-    const selectionText = editor && getSelectionText(editor);
-
-    console.log({ selectionText });
-    console.log(editor.selection);
-    console.log({ textStyles });
-
     const ButtonGroup: FC<ButtonGroupProps> = ({ testId, children }) => (
         <div
             data-test-id={testId}
@@ -65,10 +57,12 @@ export const Toolbar: FC<ToolbarProps> = ({ textStyles }) => {
 
     return (
         <BalloonToolbar
-            arrow={true}
             theme={"light"}
             popperOptions={{
-                modifiers: [{ name: "offset", options: { offset: [0, 12] } }],
+                modifiers: [
+                    { name: "offset", options: { offset: [0, 12] } },
+                    { name: "flip", options: { fallbackPlacements: ["bottom", "right"] } },
+                ],
             }}
             styles={{ root: { border: "none", background: "#ffffff" } }}
         >
@@ -77,13 +71,7 @@ export const Toolbar: FC<ToolbarProps> = ({ textStyles }) => {
                 className="tw-flex tw-p-0.5 tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5"
             >
                 <ButtonGroup testId="text-style-buttons">
-                    <TextStyleDropdown icon={<strong>T</strong>} />
-                    <BlockToolbarButton type={getPluginType(editor, TextStyles.ELEMENT_HEADING1)} icon={<i>H1</i>} />
-                    <BlockToolbarButton type={getPluginType(editor, TextStyles.ELEMENT_HEADING2)} icon={<i>H2</i>} />
-                    <BlockToolbarButton type={getPluginType(editor, TextStyles.ELEMENT_HEADING3)} icon={<i>H3</i>} />
-                    <BlockToolbarButton type={getPluginType(editor, TextStyles.ELEMENT_HEADING4)} icon={<i>H4</i>} />
-                    <BlockToolbarButton type={getPluginType(editor, TextStyles.ELEMENT_CUSTOM1)} icon={<i>C1</i>} />
-                    <BlockToolbarButton type={getPluginType(editor, TextStyles.ELEMENT_CUSTOM2)} icon={<i>C2</i>} />
+                    <TextStyleDropdown textStyles={textStyles} />
                 </ButtonGroup>
                 <ButtonGroup testId="text-alignment-buttons">
                     <AlignToolbarButton value="left" icon={<IconTextAlignLeft />} />
