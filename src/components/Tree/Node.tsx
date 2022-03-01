@@ -8,7 +8,7 @@ import IconCaretRight from "@foundation/Icon/Generated/IconCaretRight";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDrag } from "react-dnd";
-import DropZone, { DropZonePosition, OnDropCallback } from "@components/Tree/DropZone";
+import { DropZone, DropZonePosition, OnDropCallback } from "@components/Tree/DropZone";
 
 export const renderNodesArray = (
     nodes: TreeNodeProps[],
@@ -30,7 +30,7 @@ export const renderNodesArray = (
         />
     ));
 
-export type TreeNodeProps = {
+export interface TreeNodeProps {
     id: string;
     name: string;
     icon?: ReactElement<IconProps>;
@@ -38,7 +38,7 @@ export type TreeNodeProps = {
     value?: string;
     nodes?: TreeNodeProps[];
     actions?: React.ReactNode[];
-};
+}
 
 type NodeProps = {
     node: TreeNodeProps;

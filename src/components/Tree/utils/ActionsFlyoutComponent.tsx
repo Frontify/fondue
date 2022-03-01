@@ -1,9 +1,9 @@
-import React, {useState} from "react";
-import {Flyout} from "@components/Flyout";
-import {Button, ButtonSize, ButtonStyle} from "@components/Button";
-import {IconActions, IconSize} from "@foundation/Icon";
-import {ActionMenu} from "@components/ActionMenu/ActionMenu";
-import {ACTION_MENU_BLOCKS} from "@components/Tree/utils/DUMMY_DATA";
+import React, { useState } from "react";
+import { Flyout } from "@components/Flyout";
+import { Button, ButtonSize, ButtonStyle } from "@components/Button";
+import { IconActions, IconSize } from "@foundation/Icon";
+import { ActionMenu } from "@components/ActionMenu/ActionMenu";
+import { mockActionMenuBlocks } from "@components/Tree/utils/mocks";
 
 export const ActionsFlyoutComponent = () => {
     const [open, setOpen] = useState(false);
@@ -26,9 +26,7 @@ export const ActionsFlyoutComponent = () => {
                 />
             }
         >
-            <ActionMenu
-                menuBlocks={ACTION_MENU_BLOCKS}
-            />
+            <ActionMenu menuBlocks={mockActionMenuBlocks} />
         </Flyout>
     );
 };

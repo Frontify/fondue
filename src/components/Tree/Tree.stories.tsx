@@ -5,15 +5,15 @@ import { Meta, Story } from "@storybook/react";
 import { Tree as TreeComponent, TreeProps } from "./Tree";
 import { TreeNodeProps } from "./Node";
 import { IconSize } from "@foundation/Icon/IconSize";
-import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import { DropZonePosition } from "@components/Tree/DropZone";
-import { API_NODES, NODES_WITH_ACTIONS } from "@components/Tree/utils/DUMMY_DATA";
+import { mockNodes, mockNodesWithActions } from "@components/Tree/utils/mocks";
+import { IconFile, IconFolder } from "@foundation/Icon";
 
-type TreeListItem = TreeNodeProps & {
+interface TreeListItem extends TreeNodeProps {
     name: string;
     parentId: TreeNodeProps["id"] | null;
     sort: number | null;
-};
+}
 
 const listItemsCompareFn = (itemA: TreeListItem, itemB: TreeListItem): number => {
     if (itemA.sort === null && itemB.sort === null) {
@@ -37,12 +37,12 @@ const listToTree = (items: TreeListItem[], id: string | null = null): TreeNodePr
             const nodes = listToTree(items, item.id);
             return {
                 ...item,
-                nodes: nodes.length === 0 ? undefined : nodes,
-                icon: nodes.length === 0 ? <IconDocument size={IconSize.Size12} /> : undefined,
+                nodes: nodes.length > 0 ? nodes : undefined,
+                icon: nodes.length > 0 ? <IconFolder size={IconSize.Size16} /> : <IconFile size={IconSize.Size16} />,
             };
         });
 
-let apiNodes: TreeListItem[] = API_NODES;
+let apiNodes: TreeListItem[] = mockNodes;
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -135,6 +135,6 @@ export const Tree: Story<TreeProps> = (args: TreeProps) => {
 
 export const TreeWithActions: Story<TreeProps> = (args: TreeProps) => (
     <div style={{ maxWidth: "800px" }}>
-        <TreeComponent {...args} nodes={NODES_WITH_ACTIONS} />
+        <TreeComponent {...args} nodes={mockNodesWithActions} />
     </div>
 );

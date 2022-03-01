@@ -1,13 +1,13 @@
 import { MenuItemContentSize } from "@components/MenuItem";
 import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
-import {IconPlus, IconSize} from "@foundation/Icon";
+import { IconPlus, IconSize } from "@foundation/Icon";
 import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import React from "react";
-import {TreeNodeProps} from "@components/Tree";
-import {Button, ButtonSize, ButtonStyle} from "@components/Button";
-import {ActionsFlyoutComponent} from "@components/Tree/utils/ActionsFlyoutComponent";
+import { TreeNodeProps } from "@components/Tree";
+import { Button, ButtonSize, ButtonStyle } from "@components/Button";
+import { ActionsFlyoutComponent } from "@components/Tree/utils/ActionsFlyoutComponent";
 
-export const ACTION_MENU_BLOCKS = [
+export const mockActionMenuBlocks = [
     {
         id: "dropdownBlock",
         ariaLabel: "Dropdown block",
@@ -58,7 +58,7 @@ export const ACTION_MENU_BLOCKS = [
     },
 ];
 
-export const API_NODES = [
+export const mockNodes = [
     {
         id: "1",
         name: "Design System Testing",
@@ -112,33 +112,33 @@ export const API_NODES = [
     {
         id: "1-2-1",
         parentId: "1-2",
-        name: "Home",
-        label: "Page",
-        value: "https://weare.frontify.com/page/1",
+        name: "Home Category",
+        label: "Home Page",
+        value: "https://weare.frontify.com/page/4",
         icon: <IconDocument size={IconSize.Size16} />,
         sort: null,
     },
     {
         id: "1-2-2",
         parentId: "1-2",
-        name: "Members",
-        label: "Page",
-        value: "https://weare.frontify.com/page/2",
+        name: "Members Category",
+        label: "Members Page",
+        value: "https://weare.frontify.com/page/5",
         icon: <IconDocument size={IconSize.Size16} />,
         sort: null,
     },
     {
         id: "1-2-3",
         parentId: "1-2",
-        name: "About us",
-        label: "Page",
-        value: "https://weare.frontify.com/page/3",
+        name: "About us Category",
+        label: "About Us Page",
+        value: "https://weare.frontify.com/page/6",
         icon: <IconDocument size={IconSize.Size16} />,
         sort: null,
     },
 ];
 
-export const NODES_WITH_ACTIONS: TreeNodeProps[] = [
+export const mockNodesWithActions: TreeNodeProps[] = [
     {
         id: "1",
         name: "Design System Testing",

@@ -22,7 +22,7 @@ export type DropZoneProps = {
     children?: JSX.Element;
 };
 
-const DropZone = ({ data, onDrop, children }: DropZoneProps) => {
+export const DropZone = ({ data, onDrop, children }: DropZoneProps) => {
     const [{ isOver, canDrop }, drop] = useDrop({
         accept: "item",
         drop: (item: TreeNodeProps) => {
@@ -45,6 +45,7 @@ const DropZone = ({ data, onDrop, children }: DropZoneProps) => {
 
     return (
         <div
+            data-test-id="drop-zone"
             className={merge([
                 "tw-w-full",
                 isActive ? "tw-bg-violet-10" : "",
@@ -57,4 +58,3 @@ const DropZone = ({ data, onDrop, children }: DropZoneProps) => {
         </div>
     );
 };
-export default DropZone;
