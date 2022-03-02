@@ -123,6 +123,8 @@ export const TextInput: FC<TextInputProps> = ({
         return type;
     };
 
+    const spellcheckProp = typeof spellcheck === "boolean" ? { spellCheck: spellcheck } : null;
+
     return (
         <div
             {...focusProps}
@@ -170,7 +172,7 @@ export const TextInput: FC<TextInputProps> = ({
                 autoComplete={autocomplete ? "on" : "off"}
                 size={size}
                 data-test-id="text-input"
-                spellCheck={spellcheck ?? true}
+                {...spellcheckProp}
             />
             {`${value}`.length !== 0 && clearable && (
                 <button

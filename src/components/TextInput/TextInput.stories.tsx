@@ -25,6 +25,10 @@ export default {
             options: Object.values(Validation),
             control: { type: "select" },
         },
+        spellcheck: {
+            options: { undefined: undefined, true: true, false: false },
+            control: { type: "select" },
+        },
         placeholder: { type: "string" },
         value: { table: { disable: true } },
         obfuscated: { table: { disable: true } },
