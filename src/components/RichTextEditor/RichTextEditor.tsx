@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AnyObject, Plate, PlateProvider, TNode, usePlateEditorState } from "@udecode/plate";
-import React, { FC, FocusEvent, useCallback, useEffect, useState } from "react";
+import { Plate, PlateProvider, TNode, usePlateEditorState } from "@udecode/plate";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
 import { debounce } from "../..";
 import { Toolbar } from "./Toolbar";
