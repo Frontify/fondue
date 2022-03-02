@@ -29,6 +29,7 @@ import {
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
     usePlateEditorRef,
+    withPlateProvider,
 } from "@udecode/plate";
 import React, { FC } from "react";
 import { TextStyleDropdown } from "./TextStyleDropdown/TextStyleDropdown";
@@ -43,7 +44,7 @@ type ButtonGroupProps = {
     children: JSX.Element | JSX.Element[];
 };
 
-export const Toolbar: FC<ToolbarProps> = ({ textStyles }) => {
+export const ToolbarComponent: FC<ToolbarProps> = ({ textStyles }) => {
     const editor = usePlateEditorRef();
 
     const ButtonGroup: FC<ButtonGroupProps> = ({ testId, children }) => (
@@ -97,3 +98,5 @@ export const Toolbar: FC<ToolbarProps> = ({ textStyles }) => {
         </BalloonToolbar>
     );
 };
+
+export const Toolbar = withPlateProvider(ToolbarComponent);

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Plate, usePlateEditorState } from "@udecode/plate";
+import { Plate, usePlateEditorState, withPlateProvider } from "@udecode/plate";
 import { debounce } from "@utilities/debounce";
 import React, { FC, FocusEventHandler, useEffect } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
@@ -21,7 +21,7 @@ export type RichTextEditorProps = {
 
 export const ON_SAVE_DELAY_IN_MS = 500;
 
-export const RichTextEditor: FC<RichTextEditorProps> = ({
+export const RichTextEditorComponent: FC<RichTextEditorProps> = ({
     value: initialValue,
     placeholder = "",
     readonly = false,
@@ -59,3 +59,5 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         </div>
     );
 };
+
+export const RichTextEditor = withPlateProvider(RichTextEditorComponent);
