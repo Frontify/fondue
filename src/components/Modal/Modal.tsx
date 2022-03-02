@@ -7,11 +7,15 @@ import { ModalVisual } from "./ModalVisual";
 import { ModalHeader } from "./ModalHeader";
 import { ModalFooter } from "./ModalFooter";
 
-export const Modal: FC<ModalProps> = ({ visual, scale, foregroundColor }) => {
+export const Modal: FC<ModalProps> = ({ visual, scale, foregroundColor, children }) => {
+    console.log(children);
     return (
-        <div data-test-id="modal" className="tw-max-w-[790px] tw-max-h-[6009px] tw-flex tw-shadow-xl">
+        <div
+            data-test-id="modal-container"
+            className="tw-max-w-[790px] tw-max-h-[600px] tw-h-[1000px] tw-flex tw-shadow-xl"
+        >
             {visual && (
-                <div className="tw-w-[260px] tw-relative tw-overflow-hidden">
+                <div className="tw-w-[260px] tw-relative">
                     <ModalVisual pattern={visual} scale={scale} foregroundColor={foregroundColor} />
                 </div>
             )}

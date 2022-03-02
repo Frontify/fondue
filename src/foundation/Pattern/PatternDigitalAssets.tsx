@@ -7,14 +7,14 @@ function PatternDigitalAssets({ className }: PatternProps): ReactElement {
     return (
         <svg
             viewBox="0 0 193 135"
-            preserveAspectRatio="none"
+            preserveAspectRatio="xMinYMin meet"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className={className}
             data-test-id="pattern-digital-assets"
         >
             <g clipPath="url(#clip0_11493_270764)">
-                <rect width="193" height="135" fill="#FAFAFA" />
+                <rect width="193" height="135" />
                 <path
                     d="M86.9064 18.9147L86.3088 20.6305L85.8082 22.4192L85.4609 24.2564L84.8876 26.0289L83.862 28.3032L83.3856 30.7636L82.5377 33.1836L80.753 32.4713L78.9522 32.0586L77.0707 31.4677L77.6117 29.5577L78.5162 27.9066L78.9684 26.1017L79.5821 24.3454L80.4139 21.6908L81.1326 18.9956L81.5363 17.3284L81.8916 17.126L83.4421 17.7735L85.1702 18.4291L86.9064 18.9147Z"
                     fill="currentColor"

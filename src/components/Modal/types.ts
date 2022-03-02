@@ -33,5 +33,5 @@ export type ModalProps = {
     visual?: PatternDesign;
     scale?: PatternScale;
     foregroundColor?: PatternTheme;
-    children?: ReactElement;
+    children?: ReactElement | ReactElement[];
 };

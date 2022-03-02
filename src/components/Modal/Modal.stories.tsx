@@ -4,13 +4,17 @@ import React from "react";
 import { ModalProps } from "./types";
 import { Button } from "@components/Button";
 import { Story, Meta } from "@storybook/react";
-import { Modal as ModalComponent } from "./Modal";
-import { PatternDesign, PatternScale, PatternTheme } from "@foundation/Pattern";
+import { Modal } from "./Modal";
+import { PatternDesign, patternDesignsSvg, PatternScale, PatternTheme } from "@foundation/Pattern";
+import { ModalVisual } from "./ModalVisual";
 
 // eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Modal",
-    component: ModalComponent,
+    component: Modal,
+    args: {
+        title: "Modal title",
+    },
     argTypes: {
         visual: {
             options: ["None", ...Object.values(PatternDesign)],
@@ -40,9 +44,9 @@ export default {
 } as Meta<ModalProps>;
 
 const ModalTemplate: Story<ModalProps> = (args, argTypes) => (
-    <ModalComponent {...args} {...argTypes}>
+    <Modal {...args} {...argTypes}>
         <Button>Button</Button>
-    </ModalComponent>
+    </Modal>
 );
 
 export const Default = ModalTemplate.bind({});
@@ -53,3 +57,10 @@ WithVisual.args = {
     foregroundColor: PatternTheme.Violet,
     scale: PatternScale.XXL,
 };
+
+export const ConcreteImplementation: Story<ModalProps> = () => (
+    <Modal>
+        <ModalVisual pattern={PatternDesign.Imagery} scale={PatternScale.XL} foregroundColor={PatternTheme.Violet} />
+        <Button>Button</Button>
+    </Modal>
+);
