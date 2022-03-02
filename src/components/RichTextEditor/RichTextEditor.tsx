@@ -34,7 +34,7 @@ const RichTextEditorComponent: FC<RichTextEditorProps> = ({
     const editableProps: EditableProps = {
         placeholder: placeholder,
         readOnly: readonly,
-        onBlur: (event) => onBlur && onBlur(event),
+        onBlur,
     };
 
     useEffect(() => {
