@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Plate, usePlateEditorState, withPlateProvider } from "@udecode/plate";
+import { Plate, PlateProvider, usePlateEditorState } from "@udecode/plate";
 import { debounce } from "@utilities/debounce";
-import React, { FC, FocusEventHandler, useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
 import { Toolbar } from "./Toolbar";
 import { getEditorConfig } from "./utils/getEditorConfig";
@@ -13,7 +13,7 @@ export type RichTextEditorProps = {
     placeholder?: string;
     value?: string;
     onTextChange?: (value: string) => void;
-    onBlur?: FocusEventHandler | undefined;
+    onBlur?: (value: string) => void;
     readonly?: boolean;
     clear?: boolean;
     textStyles?: TextStyleType[];
@@ -21,7 +21,7 @@ export type RichTextEditorProps = {
 
 export const ON_SAVE_DELAY_IN_MS = 500;
 
-export const RichTextEditorComponent: FC<RichTextEditorProps> = ({
+const RichTextEditorComponent: FC<RichTextEditorProps> = ({
     value: initialValue,
     placeholder = "",
     readonly = false,
@@ -34,7 +34,7 @@ export const RichTextEditorComponent: FC<RichTextEditorProps> = ({
     const editableProps: EditableProps = {
         placeholder: placeholder,
         readOnly: readonly,
-        onBlur,
+        onBlur: () => onBlur,
     };
 
     useEffect(() => {
@@ -60,4 +60,8 @@ export const RichTextEditorComponent: FC<RichTextEditorProps> = ({
     );
 };
 
-export const RichTextEditor = withPlateProvider(RichTextEditorComponent);
+export const RichTextEditor: FC<RichTextEditorProps> = (props) => (
+    <PlateProvider>
+        <RichTextEditorComponent {...props} />
+    </PlateProvider>
+);

@@ -1,12 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    getPreventDefaultHandler,
-    someNode,
-    toggleNodeType,
-    usePlateEditorState,
-    withPlateProvider,
-} from "@udecode/plate";
+import { getPreventDefaultHandler, someNode, toggleNodeType, usePlateEditorState } from "@udecode/plate";
 import { merge } from "@utilities/merge";
 import React from "react";
 import { getTextStyles, TextStyles, TextStyleType } from "../utils/getTextStyles";
@@ -17,7 +11,7 @@ type DropdownItemProps = {
     textStyles?: TextStyleType[];
 };
 
-export const DropdownItem = withPlateProvider(({ label, type, textStyles }: DropdownItemProps) => {
+export const DropdownItem = ({ label, type, textStyles }: DropdownItemProps) => {
     const editor = usePlateEditorState();
     const isActive = !!editor?.selection && someNode(editor, { match: { type } });
     return (
@@ -39,4 +33,4 @@ export const DropdownItem = withPlateProvider(({ label, type, textStyles }: Drop
             {label}
         </button>
     );
-});
+};

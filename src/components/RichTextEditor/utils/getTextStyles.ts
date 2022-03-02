@@ -7,6 +7,7 @@ export enum TextStyles {
     ELEMENT_HEADING4 = "heading4",
     ELEMENT_CUSTOM1 = "custom1",
     ELEMENT_CUSTOM2 = "custom2",
+    ELEMENT_PARAGRAPH = "p",
 }
 
 export const textStyleTitles: Record<TextStyles, string> = {
@@ -16,6 +17,7 @@ export const textStyleTitles: Record<TextStyles, string> = {
     [TextStyles.ELEMENT_HEADING4]: "Heading 4",
     [TextStyles.ELEMENT_CUSTOM1]: "Custom 01",
     [TextStyles.ELEMENT_CUSTOM2]: "Custom 02",
+    [TextStyles.ELEMENT_PARAGRAPH]: "Paragraph",
 };
 
 export type TextStyleType = {
@@ -30,6 +32,7 @@ export const textStyleClassnames: Record<TextStyles, string> = {
     [TextStyles.ELEMENT_HEADING4]: "tw-text-lg",
     [TextStyles.ELEMENT_CUSTOM1]: "tw-text-sm",
     [TextStyles.ELEMENT_CUSTOM2]: "tw-text-sm tw-font-sans tw-font-semibold",
+    [TextStyles.ELEMENT_PARAGRAPH]: "",
 };
 
 export const getTextStyles = (identifier: TextStyleType["type"], textStyles?: TextStyleType[]) =>

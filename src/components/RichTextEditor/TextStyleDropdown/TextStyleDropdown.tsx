@@ -43,10 +43,15 @@ export const TextStyleDropdown = ({ textStyles }: TextStyleDropdownProps) => {
                 label={textStyleTitles[TextStyles.ELEMENT_CUSTOM1]}
                 type={TextStyles.ELEMENT_CUSTOM1}
                 textStyles={textStyles}
-            />{" "}
+            />
             <DropdownItem
                 label={textStyleTitles[TextStyles.ELEMENT_CUSTOM2]}
                 type={TextStyles.ELEMENT_CUSTOM2}
+                textStyles={textStyles}
+            />
+            <DropdownItem
+                label={textStyleTitles[TextStyles.ELEMENT_PARAGRAPH]}
+                type={TextStyles.ELEMENT_PARAGRAPH}
                 textStyles={textStyles}
             />
         </ToolbarDropdown>

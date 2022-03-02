@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCaretDown } from "@foundation/Icon";
-import { getParent, getPreventDefaultHandler, usePlateEditorState, withPlateProvider } from "@udecode/plate";
+import { getParent, getPreventDefaultHandler, usePlateEditorState } from "@udecode/plate";
 import { merge } from "@utilities/merge";
 import React from "react";
 import { TextStyles, textStyleTitles } from "../utils/getTextStyles";
@@ -10,7 +10,7 @@ type DropdownTriggerProps = {
     open: boolean;
 };
 
-export const DropdownTrigger = withPlateProvider(({ open }: DropdownTriggerProps) => {
+export const DropdownTrigger = ({ open }: DropdownTriggerProps) => {
     const editor = usePlateEditorState();
 
     const getStyleInSelection = (): TextStyles | undefined => {
@@ -41,4 +41,4 @@ export const DropdownTrigger = withPlateProvider(({ open }: DropdownTriggerProps
             </div>
         </button>
     );
-});
+};
