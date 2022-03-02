@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Plate, PlateProvider, usePlateEditorState } from "@udecode/plate";
-import React, { FC, FocusEvent, useEffect } from "react";
+import { AnyObject, Plate, PlateProvider, TNode, usePlateEditorState } from "@udecode/plate";
+import React, { FC, FocusEvent, useCallback, useEffect, useState } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
+import { debounce } from "../..";
 import { Toolbar } from "./Toolbar";
 import { getEditorConfig } from "./utils/getEditorConfig";
 import { TextStyleType } from "./utils/getTextStyles";
@@ -12,7 +13,7 @@ export type RichTextEditorProps = {
     placeholder?: string;
     value?: string;
     onTextChange?: (value: string) => void;
-    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+    onBlur?: (value: string) => void;
     readonly?: boolean;
     clear?: boolean;
     textStyles?: TextStyleType[];
@@ -30,11 +31,16 @@ const RichTextEditorComponent: FC<RichTextEditorProps> = ({
     onBlur,
 }) => {
     const editor = usePlateEditorState();
+    const [debouncedValue, setDebouncedValue] = useState<TNode[]>([]);
     const editableProps: EditableProps = {
         placeholder: placeholder,
         readOnly: readonly,
-        onBlur,
+        onBlur: () => onBlur && onBlur(JSON.stringify(debouncedValue)),
     };
+
+    useEffect(() => {
+        onTextChange && onTextChange(JSON.stringify(debouncedValue));
+    }, [debouncedValue]);
 
     useEffect(() => {
         if (clear && editor) {
@@ -45,11 +51,16 @@ const RichTextEditorComponent: FC<RichTextEditorProps> = ({
         }
     }, [clear]);
 
+    const onChange = useCallback(
+        debounce((value: TNode[]) => setDebouncedValue(value), ON_SAVE_DELAY_IN_MS),
+        [],
+    );
+
     return (
         <div data-test-id="rich-text-editor" className="tw-relative tw-w-full">
             <Plate
                 initialValue={parseRawValue(initialValue)}
-                onChange={(value) => onTextChange && onTextChange(JSON.stringify(value))}
+                onChange={onChange}
                 editableProps={editableProps}
                 plugins={getEditorConfig(textStyles)}
             >
