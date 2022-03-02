@@ -1,6 +1,6 @@
 import { MenuItemContentSize } from "@components/MenuItem";
 import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
-import { IconPlus, IconSize } from "@foundation/Icon";
+import { IconFile, IconFolder, IconPlus, IconSize } from "@foundation/Icon";
 import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import React from "react";
 import { TreeNodeProps } from "@components/Tree";
@@ -58,19 +58,20 @@ export const mockActionMenuBlocks = [
     },
 ];
 
-export const mockNodes = [
+export const mockNodesFlat = [
     {
         id: "1",
         name: "Design System Testing",
         label: "Document",
         value: "https://weare.frontify.com/document/1",
-        icon: <IconGuidelines size={IconSize.Size16} />,
+        icon: <IconFolder size={IconSize.Size16} />,
         parentId: null,
         sort: 1,
     },
     {
         id: "1-1",
         name: "Uncategorizes Pages",
+        icon: <IconFolder size={IconSize.Size16} />,
         parentId: "1",
         sort: 1,
     },
@@ -81,7 +82,7 @@ export const mockNodes = [
         name: "Home",
         label: "Page",
         value: "https://weare.frontify.com/page/1",
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconFile size={IconSize.Size16} />,
     },
     {
         id: "1-1-2",
@@ -89,7 +90,7 @@ export const mockNodes = [
         name: "Members",
         label: "Page",
         value: "https://weare.frontify.com/page/2",
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconFile size={IconSize.Size16} />,
         sort: null,
     },
     {
@@ -98,7 +99,7 @@ export const mockNodes = [
         name: "About us",
         label: "Page",
         value: "https://weare.frontify.com/page/3",
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconFile size={IconSize.Size16} />,
         sort: null,
     },
     {
@@ -106,6 +107,7 @@ export const mockNodes = [
         parentId: "1",
         name: "Test Category",
         label: "Document",
+        icon: <IconFolder size={IconSize.Size16} />,
         value: "https://weare.frontify.com/document/923#/test",
         sort: null,
     },
@@ -115,7 +117,7 @@ export const mockNodes = [
         name: "Home Category",
         label: "Home Page",
         value: "https://weare.frontify.com/page/4",
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconFile size={IconSize.Size16} />,
         sort: null,
     },
     {
@@ -124,7 +126,7 @@ export const mockNodes = [
         name: "Members Category",
         label: "Members Page",
         value: "https://weare.frontify.com/page/5",
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconFile size={IconSize.Size16} />,
         sort: null,
     },
     {
@@ -133,12 +135,12 @@ export const mockNodes = [
         name: "About us Category",
         label: "About Us Page",
         value: "https://weare.frontify.com/page/6",
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconFile size={IconSize.Size16} />,
         sort: null,
     },
 ];
 
-export const mockNodesWithActions: TreeNodeProps[] = [
+export const mockNodesWithActionsTree: TreeNodeProps[] = [
     {
         id: "1",
         name: "Design System Testing",

@@ -4,10 +4,8 @@ import React, { useState } from "react";
 import { Meta, Story } from "@storybook/react";
 import { Tree as TreeComponent, TreeProps } from "./Tree";
 import { TreeNodeProps } from "./Node";
-import { IconSize } from "@foundation/Icon/IconSize";
 import { DropZonePosition } from "@components/Tree/DropZone";
-import { mockNodes, mockNodesWithActions } from "@components/Tree/utils/mocks";
-import { IconFile, IconFolder } from "@foundation/Icon";
+import { mockNodesFlat, mockNodesWithActionsTree } from "@components/Tree/utils/mocks";
 
 interface TreeListItem extends TreeNodeProps {
     name: string;
@@ -38,11 +36,10 @@ const listToTree = (items: TreeListItem[], id: string | null = null): TreeNodePr
             return {
                 ...item,
                 nodes: nodes.length > 0 ? nodes : undefined,
-                icon: nodes.length > 0 ? <IconFolder size={IconSize.Size16} /> : <IconFile size={IconSize.Size16} />,
             };
         });
 
-let apiNodes: TreeListItem[] = mockNodes;
+let apiNodes: TreeListItem[] = mockNodesFlat;
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -135,6 +132,6 @@ export const Tree: Story<TreeProps> = (args: TreeProps) => {
 
 export const TreeWithActions: Story<TreeProps> = (args: TreeProps) => (
     <div style={{ maxWidth: "800px" }}>
-        <TreeComponent {...args} nodes={mockNodesWithActions} />
+        <TreeComponent {...args} nodes={mockNodesWithActionsTree} />
     </div>
 );
