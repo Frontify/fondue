@@ -19,6 +19,7 @@ import {
     ELEMENT_LIC,
     ELEMENT_LINK,
     ELEMENT_OL,
+    ELEMENT_PARAGRAPH,
     ELEMENT_UL,
     MARK_BOLD,
     MARK_CODE,
@@ -118,7 +119,21 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
     return createPlugins(
         [
             createSoftBreakPlugin(),
-            createAlignPlugin(),
+            createAlignPlugin({
+                inject: {
+                    props: {
+                        validTypes: [
+                            ELEMENT_PARAGRAPH,
+                            TextStyles.ELEMENT_HEADING1,
+                            TextStyles.ELEMENT_HEADING2,
+                            TextStyles.ELEMENT_HEADING3,
+                            TextStyles.ELEMENT_HEADING4,
+                            TextStyles.ELEMENT_CUSTOM1,
+                            TextStyles.ELEMENT_CUSTOM2,
+                        ],
+                    },
+                },
+            }),
             createParagraphPlugin(),
             createCodeBlockPlugin(),
             createListPlugin(),
