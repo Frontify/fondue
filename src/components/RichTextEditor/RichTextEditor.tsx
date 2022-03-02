@@ -2,7 +2,7 @@
 
 import { Plate, PlateProvider, usePlateEditorState } from "@udecode/plate";
 import { debounce } from "@utilities/debounce";
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, FocusEvent } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
 import { Toolbar } from "./Toolbar";
 import { getEditorConfig } from "./utils/getEditorConfig";
@@ -13,7 +13,7 @@ export type RichTextEditorProps = {
     placeholder?: string;
     value?: string;
     onTextChange?: (value: string) => void;
-    onBlur?: (value: string) => void;
+    onBlur?: (event: FocusEvent<HTMLDivElement, Element>) => void;
     readonly?: boolean;
     clear?: boolean;
     textStyles?: TextStyleType[];
@@ -34,7 +34,7 @@ const RichTextEditorComponent: FC<RichTextEditorProps> = ({
     const editableProps: EditableProps = {
         placeholder: placeholder,
         readOnly: readonly,
-        onBlur: () => onBlur,
+        onBlur: (event) => onBlur && onBlur(event),
     };
 
     useEffect(() => {
