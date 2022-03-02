@@ -57,6 +57,7 @@ export type TextInputBaseProps = {
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     onClear?: () => void;
     size?: number;
+    spellcheck?: boolean;
 };
 
 export type TextInputProps =
@@ -93,6 +94,7 @@ export const TextInput: FC<TextInputProps> = ({
     onBlur,
     onClear,
     size,
+    spellcheck,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
@@ -120,6 +122,8 @@ export const TextInput: FC<TextInputProps> = ({
         }
         return type;
     };
+
+    const spellcheckProp = typeof spellcheck === "boolean" ? { spellCheck: spellcheck } : null;
 
     return (
         <div
@@ -168,6 +172,7 @@ export const TextInput: FC<TextInputProps> = ({
                 autoComplete={autocomplete ? "on" : "off"}
                 size={size}
                 data-test-id="text-input"
+                {...spellcheckProp}
             />
             {`${value}`.length !== 0 && clearable && (
                 <button

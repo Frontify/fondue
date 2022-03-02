@@ -1,4 +1,6 @@
-@import "@frontify/arcade-tokens/styles/all.css";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@import "@frontify/arcade-tokens/styles";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
