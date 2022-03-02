@@ -4,209 +4,42 @@ import React, { useState } from "react";
 import { Meta, Story } from "@storybook/react";
 import { Tree as TreeComponent, TreeProps } from "./Tree";
 import { TreeNodeProps } from "./Node";
-import { IconSize } from "@foundation/Icon/IconSize";
-import IconDocument from "@foundation/Icon/Generated/IconDocument";
-import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
-import { Button, ButtonSize, ButtonStyle } from "@components/Button";
-import { IconActions, IconPlus } from "@foundation/Icon";
-import { Flyout } from "@components/Flyout";
-import { ActionMenu } from "@components/ActionMenu/ActionMenu";
-import { MenuItemContentSize } from "@components/MenuItem";
+import { DropZonePosition } from "@components/Tree/DropZone";
+import { mockNodesFlat, mockNodesWithActionsTree } from "@components/Tree/utils/mocks";
 
-const ActionsFlyoutComponent = () => {
-    const [open, setOpen] = useState(false);
-    const onClick = () => {
-        setOpen(true);
-    };
+interface TreeListItem extends TreeNodeProps {
+    name: string;
+    parentId: TreeNodeProps["id"] | null;
+    sort: number | null;
+}
 
-    return (
-        <Flyout
-            isOpen={open}
-            onOpenChange={(isOpen) => setOpen(isOpen)}
-            legacyFooter={false}
-            hug={false}
-            trigger={
-                <Button
-                    onClick={onClick}
-                    style={ButtonStyle.Secondary}
-                    icon={<IconActions size={IconSize.Size12} />}
-                    size={ButtonSize.Small}
-                />
-            }
-        >
-            <ActionMenu
-                menuBlocks={[
-                    {
-                        id: "dropdownBlock",
-                        ariaLabel: "Dropdown block",
-                        menuItems: [
-                            {
-                                id: "dropdown",
-                                size: MenuItemContentSize.Small,
-                                title: "Dropdown",
-                                onClick: () => console.log("dropdown"),
-                            },
-                        ],
-                    },
-                    {
-                        id: "actionsBlock",
-                        ariaLabel: "Item Actions",
-                        menuItems: [
-                            {
-                                id: "rename",
-                                size: MenuItemContentSize.Small,
-                                title: "Rename",
-                                onClick: () => console.log("rename"),
-                            },
-                            {
-                                id: "duplicate",
-                                size: MenuItemContentSize.Small,
-                                title: "Duplicate",
-                                onClick: () => console.log("duplicate"),
-                            },
-                            {
-                                id: "unpublish",
-                                size: MenuItemContentSize.Small,
-                                title: "Unpublish",
-                                onClick: () => console.log("unpublish"),
-                            },
-                        ],
-                    },
-                    {
-                        id: "deleteBlock",
-                        ariaLabel: "Delete Block",
-                        menuItems: [
-                            {
-                                id: "delete",
-                                size: MenuItemContentSize.Small,
-                                title: "Delete",
-                                onClick: () => console.log("delete"),
-                            },
-                        ],
-                    },
-                ]}
-            />
-        </Flyout>
-    );
+const listItemsCompareFn = (itemA: TreeListItem, itemB: TreeListItem): number => {
+    if (itemA.sort === null && itemB.sort === null) {
+        return 1;
+    }
+    if (itemA.sort === null) {
+        return 1;
+    }
+    if (itemB.sort === null) {
+        return -1;
+    }
+
+    return itemA.sort - itemB.sort;
 };
 
-const nodes: TreeNodeProps[] = [
-    {
-        id: "1",
-        name: "Design System Testing",
-        label: "Document",
-        value: "https://weare.frontify.com/document/1",
-        icon: <IconGuidelines size={IconSize.Size16} />,
-        nodes: [
-            {
-                id: "1-1",
-                name: "Uncategorizes Pages",
-                nodes: [
-                    {
-                        id: "1-1-1",
-                        name: "Home",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/1",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                    },
-                    {
-                        id: "1-1-2",
-                        name: "Members",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/2",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                    },
-                    {
-                        id: "1-1-3",
-                        name: "About us",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/3",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                    },
-                ],
-            },
-            {
-                id: "1-2",
-                name: "Test Category",
-                label: "Document",
-                value: "https://weare.frontify.com/document/923#/test",
-                nodes: [
-                    {
-                        id: "1-2-1",
-                        name: "Home",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/1",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                    },
-                    {
-                        id: "1-2-2",
-                        name: "Members",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/2",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                    },
-                    {
-                        id: "1-2-3",
-                        name: "About us",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/3",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                    },
-                ],
-            },
-        ],
-    },
-];
-const nodesWithActions: TreeNodeProps[] = [
-    {
-        id: "1",
-        name: "Design System Testing",
-        value: "https://weare.frontify.com/document/1",
-        icon: <IconGuidelines size={IconSize.Size16} />,
-        nodes: [
-            {
-                id: "1-1",
-                name: "Uncategorizes Pages",
-            },
-            {
-                id: "1-2",
-                name: "Test Category",
-                value: "https://weare.frontify.com/document/923#/test",
-                nodes: [
-                    {
-                        id: "1-2-1",
-                        name: "Home",
-                        value: "https://weare.frontify.com/page/1",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                    },
-                    {
-                        id: "1-2-2",
-                        name: "Members",
-                        value: "https://weare.frontify.com/page/2",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                        actions: [<ActionsFlyoutComponent key="actions" />],
-                    },
-                    {
-                        id: "1-2-3",
-                        name: "About us",
-                        value: "https://weare.frontify.com/page/3",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                        label: "Label",
-                        actions: [
-                            <Button
-                                size={ButtonSize.Small}
-                                style={ButtonStyle.Secondary}
-                                icon={<IconPlus size={IconSize.Size12} />}
-                                key="plusIcon"
-                            />,
-                            <ActionsFlyoutComponent key="actions" />,
-                        ],
-                    },
-                ],
-            },
-        ],
-    },
-];
+const listToTree = (items: TreeListItem[], id: string | null = null): TreeNodeProps[] =>
+    items
+        .filter((item) => item.parentId === id)
+        .sort(listItemsCompareFn)
+        .map((item) => {
+            const nodes = listToTree(items, item.id);
+            return {
+                ...item,
+                nodes: nodes.length > 0 ? nodes : undefined,
+            };
+        });
+
+let apiNodes: TreeListItem[] = mockNodesFlat;
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -220,14 +53,85 @@ export default {
     },
 } as Meta<TreeProps>;
 
-export const Tree: Story<TreeProps> = (args: TreeProps) => (
-    <div style={{ maxWidth: "800px" }}>
-        <TreeComponent {...args} nodes={nodes} />
-    </div>
-);
+export const Tree: Story<TreeProps> = (args: TreeProps) => {
+    const [nodesState, setNodes] = useState(listToTree(apiNodes));
+
+    const updateItemsPosition = (
+        nodes: TreeListItem[], // nodes without the moved node
+        targetParentId: string | null,
+        movedItemTargetIndex: number,
+        movedItem: TreeListItem,
+    ): TreeListItem[] => {
+        nodes.splice(movedItemTargetIndex, 0, movedItem);
+        const sortedSameLevelItems = nodes.filter((node) => node.parentId === targetParentId);
+
+        const modifiedSameLevelArray: TreeListItem[] = [];
+        const changedItemsIds: string[] = [];
+
+        sortedSameLevelItems.forEach((item, index) => {
+            const previousItem = modifiedSameLevelArray[index - 1];
+            let modifiedItem = { ...item };
+
+            const shouldUpdate =
+                (index === 0 && item.sort === null) || // First item without a sort value
+                (index < movedItemTargetIndex && item.sort === null) || // Previous item without a sort value
+                index === movedItemTargetIndex || // Moved item
+                (index > movedItemTargetIndex &&
+                    item.sort !== null &&
+                    previousItem &&
+                    previousItem.sort &&
+                    item.sort < previousItem.sort); // Following item with a sort prop lower than on previousItem
+
+            if (shouldUpdate) {
+                const incrementedPreviousItemSort = previousItem && previousItem.sort ? previousItem.sort + 1 : null;
+                const updatedSortValue = index === 0 ? 0 : incrementedPreviousItemSort;
+
+                modifiedItem = { ...item, sort: updatedSortValue };
+                changedItemsIds.push(item.id);
+            }
+
+            modifiedSameLevelArray.push(modifiedItem);
+            return;
+        });
+
+        return nodes.map((node) => {
+            if (changedItemsIds.includes(node.id)) {
+                return modifiedSameLevelArray.filter((item) => item.id === node.id)[0] ?? node;
+            }
+
+            return node;
+        });
+    };
+
+    const reorderItem = (targetItem: TreeNodeProps, sourceItem: TreeNodeProps, position: DropZonePosition) => {
+        let nodesClone = [...apiNodes];
+        const sourceIndex = nodesClone.findIndex((node) => node.id === sourceItem.id);
+
+        nodesClone.splice(sourceIndex, 1);
+
+        let targetIndex = nodesClone.findIndex((node) => node.id === targetItem.id);
+        const targetTreeListItem = nodesClone[targetIndex];
+
+        targetIndex =
+            position === DropZonePosition.AFTER || position === DropZonePosition.WITHIN ? targetIndex + 1 : targetIndex;
+        const parentId = position === DropZonePosition.WITHIN ? targetItem.id : targetTreeListItem.parentId;
+
+        const movedItem = { ...sourceItem, parentId, sort: null };
+        nodesClone = updateItemsPosition(nodesClone, parentId, targetIndex, movedItem);
+
+        setNodes(listToTree(nodesClone));
+        apiNodes = nodesClone;
+    };
+
+    return (
+        <div style={{ maxWidth: "800px" }}>
+            <TreeComponent {...args} nodes={nodesState} onDrop={reorderItem} />
+        </div>
+    );
+};
 
 export const TreeWithActions: Story<TreeProps> = (args: TreeProps) => (
     <div style={{ maxWidth: "800px" }}>
-        <TreeComponent {...args} nodes={nodesWithActions} />
+        <TreeComponent {...args} nodes={mockNodesWithActionsTree} />
     </div>
 );
