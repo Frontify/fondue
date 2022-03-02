@@ -13,7 +13,7 @@ export type RichTextEditorProps = {
     placeholder?: string;
     value?: string;
     onTextChange?: (value: string) => void;
-    onBlur?: (event: FocusEvent<HTMLDivElement, Element>) => void;
+    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     readonly?: boolean;
     clear?: boolean;
     textStyles?: TextStyleType[];
