@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Plate, PlateProvider, usePlateEditorState } from "@udecode/plate";
-import { debounce } from "@utilities/debounce";
-import React, { FC, useEffect, FocusEvent } from "react";
+import React, { FC, FocusEvent, useEffect } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
 import { Toolbar } from "./Toolbar";
 import { getEditorConfig } from "./utils/getEditorConfig";
@@ -50,7 +49,7 @@ const RichTextEditorComponent: FC<RichTextEditorProps> = ({
         <div data-test-id="rich-text-editor" className="tw-relative tw-w-full">
             <Plate
                 initialValue={parseRawValue(initialValue)}
-                onChange={debounce((value) => onTextChange && onTextChange(value), ON_SAVE_DELAY_IN_MS)}
+                onChange={(value) => onTextChange && onTextChange(JSON.stringify(value))}
                 editableProps={editableProps}
                 plugins={getEditorConfig(textStyles)}
             >
