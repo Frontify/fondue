@@ -8,6 +8,7 @@ import { MultiAssetPreview } from "./MultiAssetPreview";
 const MULTI_ASSET_PREVIEW_ID = "[data-test-id=multi-asset-preview]";
 const ASSETS_AMOUNT_ID = "[data-test-id=assets-amount]";
 const NUMBER_OF_LOCATIONS_ID = "[data-test-id=number-of-locations]";
+const ASSETS_IMAGE_ID = "[data-test-id=assets-image]";
 
 const EXAMPLE_IMAGES: ImageAsset[] = [
     {
@@ -57,7 +58,25 @@ describe("MultiAssetPreview Component", () => {
             />,
         );
 
-        cy.get(MULTI_ASSET_PREVIEW_ID).should("exist");
+        cy.get(MULTI_ASSET_PREVIEW_ID);
+    });
+
+    it("image urls should exist", () => {
+        mount(<MultiAssetPreview onClick={() => alert("Multi Asset clicked")} images={EXAMPLE_IMAGES} />);
+
+        cy.get(ASSETS_IMAGE_ID).should("have.attr", "style").and("include", "background-image: url(");
+    });
+
+    it("without images, image url should not exist", () => {
+        mount(<MultiAssetPreview onClick={() => alert("Multi Asset clicked")} />);
+
+        cy.get(ASSETS_IMAGE_ID).should("not.have.attr", "style");
+    });
+
+    it("without images, background color should be set", () => {
+        mount(<MultiAssetPreview onClick={() => alert("Multi Asset clicked")} />);
+
+        cy.get(ASSETS_IMAGE_ID).should("have.css", "backgroundColor");
     });
 
     it("renders correct assets amount", () => {

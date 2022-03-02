@@ -41,7 +41,7 @@ export const MultiAssetPreview: FC<MultiAssetPreviewProps> = ({
                 <div className="tw-py-7 tw-px-5 tw-flex tw-gap-2">
                     <div className="tw-text-left">
                         <div className="tw-font-bold tw-text-lg" data-test-id="assets-amount">
-                            {assetsAmount} Assets
+                            {assetsAmount} {assetsAmount === 1 ? "Asset" : "Assets"}
                         </div>
                         <div className="tw-text-black-60" data-test-id="number-of-locations">
                             From {numberOfLocations} locations
