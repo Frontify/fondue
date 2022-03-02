@@ -45,7 +45,7 @@ export const parseRawValue = (raw?: string): Descendant[] => {
     return parsedValue;
 };
 
-const deserializeHtml = (element: HTMLElement | ChildNode): Descendant | Descendant[] | string | null => {
+const deserializeHtml = (element: HTMLElement | ChildNode): Descendant | Descendant[] | NullableString => {
     if (element.nodeType === 3) {
         return element.textContent;
     } else if (element.nodeType !== 1) {
