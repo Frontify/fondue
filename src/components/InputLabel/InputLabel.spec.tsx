@@ -61,7 +61,7 @@ describe("InputLabel Component", () => {
             .should("have.attr", "name", "IconQuestion");
         cy.get(TOOLTIP_ICON_TRIGGER_ID)
             .eq(1)
-            .should("have.class", "tw-text-weak")
+            .should("have.class", "tw-text-text-weak")
             .children("svg")
             .should("have.attr", "name", "IconActivity");
     });
