@@ -23,9 +23,9 @@ export type TooltipIconProps = {
 export type TooltipIconTriggerStyle = "Danger" | "Warning" | "Primary";
 
 export const tooltipIconTriggerStyleClassMap: Record<TooltipIconTriggerStyle, string> = {
-    Danger: "tw-text-box-negative-strong",
-    Warning: "tw-text-box-warning-strong",
-    Primary: "tw-text-black-60 hover:tw-text-black-60 dark:tw-text-black-40 dark:hover:tw-text-white",
+    Danger: "tw-text-box-negative-strong hover:tw-text-box-negative-strong-hover",
+    Warning: "tw-text-box-warning-strong hover:tw-text-box-warning-strong-hover",
+    Primary: "tw-text-text-weak hover:tw-text-text",
 };
 
 const TOOLTIP_DISTANCE = 15;
