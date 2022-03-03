@@ -72,6 +72,7 @@ export default {
     },
     args: {
         size: AssetInputSize.Small,
+        isLoading: false,
     },
 } as Meta<AssetInputProps>;
 
@@ -81,6 +82,10 @@ const Template: Story<AssetInputProps & { onItemClick: () => void }> = (args) =>
             item.onClick = args.onItemClick;
         }),
     );
+    if (args.isLoading && args.asset) {
+        args.asset = undefined;
+    }
+
     return <AssetInput {...args} />;
 };
 
@@ -90,6 +95,7 @@ Placeholder.argTypes = {
     onUploadClick: { action: "onUploadClick", table: { disable: true } },
     onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
     size: { table: { disable: true } },
+    isLoading: { table: { disable: true } },
 };
 
 export const PlaceholderUploadOnly = Template.bind({});
@@ -97,6 +103,7 @@ export const PlaceholderUploadOnly = Template.bind({});
 PlaceholderUploadOnly.argTypes = {
     onUploadClick: { action: "onUploadClick", table: { disable: true } },
     size: { table: { disable: true } },
+    isLoading: { table: { disable: true } },
 };
 
 export const PlaceholderLibraryOnly = Template.bind({});
@@ -104,6 +111,7 @@ export const PlaceholderLibraryOnly = Template.bind({});
 PlaceholderLibraryOnly.argTypes = {
     onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
     size: { table: { disable: true } },
+    isLoading: { table: { disable: true } },
 };
 
 export const Image = Template.bind({});
