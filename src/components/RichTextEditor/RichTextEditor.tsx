@@ -31,7 +31,7 @@ const RichTextEditorComponent: FC<RichTextEditorProps> = ({
     onBlur,
 }) => {
     const editor = usePlateEditorState();
-    const [debouncedValue, setDebouncedValue] = useState<TNode[]>([]);
+    const [debouncedValue, setDebouncedValue] = useState<TNode[] | null>(null);
     const editableProps: EditableProps = {
         placeholder: placeholder,
         readOnly: readonly,
@@ -39,7 +39,7 @@ const RichTextEditorComponent: FC<RichTextEditorProps> = ({
     };
 
     useEffect(() => {
-        onTextChange && onTextChange(JSON.stringify(debouncedValue));
+        debouncedValue && onTextChange && onTextChange(JSON.stringify(debouncedValue));
     }, [debouncedValue]);
 
     useEffect(() => {
