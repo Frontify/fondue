@@ -3,7 +3,7 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Textarea as TextareaComponent, TextareaProps } from "./Textarea";
-import { Validation } from "@components/TextInput";
+import { Validation } from "@utilities/validation";
 
 // eslint-disable-next-line import/no-default-export
 export default {

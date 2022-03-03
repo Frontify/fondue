@@ -8,26 +8,13 @@ import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, FocusEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import { Validation, validationClassMap } from "@utilities/validation";
 
 export enum TextInputType {
     Text = "text",
     Password = "password",
     Number = "number",
 }
-
-export enum Validation {
-    Default = "Default",
-    Loading = "Loading",
-    Success = "Success",
-    Error = "Error",
-}
-
-const validationStyle: Record<Validation, string> = {
-    [Validation.Default]: "tw-border-black-20",
-    [Validation.Loading]: "tw-border-black-10",
-    [Validation.Success]: "tw-border-green-50",
-    [Validation.Error]: "tw-border-red-60",
-};
 
 export const Spinner = (): ReactElement => (
     <svg className="tw-animate-spin" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -135,7 +122,7 @@ export const TextInput: FC<TextInputProps> = ({
                     ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90"
                     : merge([
                           "focus-within:tw-border-black-90",
-                          validationStyle[validation],
+                          validationClassMap[validation],
                           isFocusVisible && FOCUS_STYLE,
                       ]),
             ])}

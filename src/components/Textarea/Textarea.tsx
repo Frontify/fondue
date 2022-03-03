@@ -6,8 +6,8 @@ import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, FocusEvent, FormEvent, PropsWithChildren, ReactNode } from "react";
-import { Spinner, Validation } from "@components/TextInput";
-import { validationClassMap } from "@components/LinkChooser";
+import { Spinner } from "@components/TextInput";
+import { Validation, validationClassMap } from "@utilities/validation";
 
 export type TextareaProps = PropsWithChildren<{
     id?: string;
