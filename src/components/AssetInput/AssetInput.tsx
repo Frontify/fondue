@@ -60,14 +60,16 @@ export enum AssetInputSize {
     Large = "Large",
 }
 
+type AssetType =
+    | (ImageAsset & UploadSource)
+    | (ImageAsset & LibrarySource)
+    | (IconAsset & UploadSource)
+    | (IconAsset & LibrarySource)
+    | (OtherAsset & UploadSource)
+    | (OtherAsset & LibrarySource);
+
 export type AssetProps = {
-    asset?:
-        | (ImageAsset & UploadSource)
-        | (ImageAsset & LibrarySource)
-        | (IconAsset & UploadSource)
-        | (IconAsset & LibrarySource)
-        | (OtherAsset & UploadSource)
-        | (OtherAsset & LibrarySource);
+    asset?: AssetType;
     size: AssetInputSize;
     actions: ActionMenuProps["menuBlocks"];
     isLoading?: boolean;
@@ -87,11 +89,13 @@ export type AssetInputProps =
           isLoading?: boolean;
       };
 
-const AssetThumbnail: FC<Required<Pick<AssetProps, "asset" | "size">> & { isActive?: boolean }> = ({
-    asset,
-    size,
-    isActive,
-}) => (
+type AssetThumbnailProps = {
+    asset: AssetType;
+    size: AssetProps["size"];
+    isActive?: boolean;
+};
+
+const AssetThumbnail: FC<Required<AssetThumbnailProps>> = ({ asset, size, isActive }) => (
     <div
         className={merge([
             "tw-flex tw-flex-none tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95",
