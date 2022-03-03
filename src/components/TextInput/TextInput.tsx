@@ -29,7 +29,7 @@ const validationStyle: Record<Validation, string> = {
     [Validation.Error]: "tw-border-red-60",
 };
 
-const Spinner = (): ReactElement => (
+export const Spinner = (): ReactElement => (
     <svg className="tw-animate-spin" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="7.5" fill="white" stroke="#EAEBEB" />
         <path

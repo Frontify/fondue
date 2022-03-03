@@ -6,7 +6,7 @@ import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, FocusEvent, FormEvent, PropsWithChildren, ReactNode } from "react";
-import { Validation } from "@components/TextInput";
+import { Spinner, Validation } from "@components/TextInput";
 import { validationClassMap } from "@components/LinkChooser";
 
 export type TextareaProps = PropsWithChildren<{
@@ -65,6 +65,11 @@ export const Textarea: FC<TextareaProps> = ({
             >
                 {children}
             </textarea>
+            {validation === Validation.Loading && (
+                <span className="tw-absolute tw-top-[-0.75rem] tw-right-[-0.75rem]">
+                    <Spinner />
+                </span>
+            )}
         </div>
     );
 };
