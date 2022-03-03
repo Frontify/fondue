@@ -33,7 +33,13 @@ export const InputLabel: FC<InputLabelProps> = ({
     tooltip,
     bold,
 }) => {
-    const tooltips = tooltip ? (Array.isArray(tooltip) ? tooltip : [tooltip]) : [];
+    const tooltips = [];
+
+    if (Array.isArray(tooltip)) {
+        tooltips.push(...tooltip);
+    } else if (tooltip) {
+        tooltips.push(tooltip);
+    }
 
     return (
         <div
@@ -69,9 +75,9 @@ export const InputLabel: FC<InputLabelProps> = ({
                     *
                 </span>
             )}
-            {tooltips.map(({ triggerIcon, triggerStyle, ...tooltip }, index) => (
+            {tooltips.map(({ triggerIcon, triggerStyle, ...tooltipProps }, index) => (
                 <TooltipIcon
-                    tooltip={tooltip as TooltipProps}
+                    tooltip={tooltipProps as TooltipProps}
                     key={index}
                     iconSize={IconSize.Size16}
                     triggerIcon={triggerIcon}
