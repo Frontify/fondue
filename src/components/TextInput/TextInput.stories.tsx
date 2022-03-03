@@ -18,10 +18,15 @@ export default {
         dotted: false,
         type: TextInputType.Text,
         validation: Validation.Default,
+        spellcheck: true,
     },
     argTypes: {
         validation: {
             options: Object.values(Validation),
+            control: { type: "select" },
+        },
+        spellcheck: {
+            options: { undefined: undefined, true: true, false: false },
             control: { type: "select" },
         },
         placeholder: { type: "string" },

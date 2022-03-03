@@ -1,27 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getCanvasFontSize, getTextWidth } from "@components/RichTextEditor/utils/getTextWidth";
 import { mount } from "@cypress/react";
+import { ELEMENT_PARAGRAPH } from "@udecode/plate";
 import React, { FC, useState } from "react";
-import { RichTextEditorProps } from ".";
-import { BlockStyleTypes, textAlignClassMap, TextAlignTypes } from "./renderer/renderBlockStyles";
-import { classMap, InlineStyles } from "./renderer/renderInlineStyles";
-import { ON_SAVE_DELAY_IN_MS, RichTextEditor } from "./RichTextEditor";
+import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from "./RichTextEditor";
 
 const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
 const TOOLBAR = "[data-test-id=toolbar]";
-const PLACEHOLDER = "My placeholder";
+const TEXT_ALIGNMENT_BUTTONS = "[data-test-id=text-alignment-buttons]";
+const TEXT_MARK_BUTTONS = "[data-test-id=text-mark-buttons]";
+const TEXT_ELEMENT_BUTTONS = "[data-test-id=text-element-buttons]";
+const TEXTSTYLE_DROPDOWN_TRIGGER = "[data-test-id=textstyle-dropdown-trigger]";
+const TEXTSTYLE_OPTION = "[data-test-id=textstyle-option]";
 
-const getBlockStyleControl = (blockType: string) => `[data-test-id=block-style-button-${blockType}]`;
-const getInlineStyleControl = (style: string) => `[data-test-id=inline-style-button-${style}]`;
 const insertTextAndOpenToolbar = () => cy.get("[contenteditable=true]").click().type("hello{selectall}");
 
 const RichTextWithClearButton: FC<Pick<RichTextEditorProps, "value">> = ({ value }) => {
     const [clear, setClear] = useState(false);
-
     return (
         <div>
-            <button onClick={() => setClear(true)}>clear</button>
+            <button data-test-id="clear-button" onClick={() => setClear(true)}>
+                clear
+            </button>
             <RichTextEditor value={value} clear={clear} />
         </div>
     );
@@ -36,7 +36,7 @@ describe("RichTextEditor Component", () => {
 
     it("should render a raw content state", () => {
         const text = "This is some text that you can not edit";
-        mount(<RichTextEditor value={JSON.stringify([{ type: BlockStyleTypes.Paragraph, children: [{ text }] }])} />);
+        mount(<RichTextEditor value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text }] }])} />);
 
         cy.get(RICH_TEXT_EDITOR).should("contain.text", text);
     });
@@ -45,8 +45,8 @@ describe("RichTextEditor Component", () => {
         mount(<RichTextEditor value={"<b>this is bold</b> and <i>this italic</i>"} />);
 
         cy.get(RICH_TEXT_EDITOR).should("contain.text", "this is bold and this italic");
-        cy.get("[contenteditable=true]").should("include.html", classMap[InlineStyles.Bold]);
-        cy.get("[contenteditable=true]").should("include.html", classMap[InlineStyles.Italic]);
+        cy.get("[contenteditable=true]").should("include.html", "tw-font-bold");
+        cy.get("[contenteditable=true]").should("include.html", "tw-italic");
     });
 
     it("should be editable by default ", () => {
@@ -71,7 +71,7 @@ describe("RichTextEditor Component", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(TOOLBAR).should("exist");
+        cy.get(TOOLBAR).should("be.visible");
     });
 
     it("should close toolbar on blur", () => {
@@ -79,84 +79,105 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get("[contenteditable=true]").blur();
-        cy.get(TOOLBAR).should("not.exist");
+        cy.get(TOOLBAR).should("not.be.visible");
     });
 
     it("renders a bold text", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(getInlineStyleControl(InlineStyles.Bold)).click();
-        cy.get("[contenteditable=true]").should("include.html", classMap[InlineStyles.Bold]);
+        cy.get(TOOLBAR).should("be.visible");
+        cy.get(TEXT_MARK_BUTTONS).children().eq(0).click();
+        cy.get("[contenteditable=true]").should("include.html", "tw-font-bold");
     });
 
     it("renders italic", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(getInlineStyleControl(InlineStyles.Italic)).click();
-        cy.get("[contenteditable=true]").should("include.html", classMap[InlineStyles.Italic]);
+        cy.get(TOOLBAR).should("be.visible");
+        cy.get(TEXT_MARK_BUTTONS).children().eq(1).click();
+        cy.get("[contenteditable=true]").should("include.html", "tw-italic");
     });
 
     it("renders underline", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(getInlineStyleControl(InlineStyles.Underline)).click();
-        cy.get("[contenteditable=true]").should("include.html", classMap[InlineStyles.Underline]);
+        cy.get(TOOLBAR).should("be.visible");
+        cy.get(TEXT_MARK_BUTTONS).children().eq(2).click();
+        cy.get("[contenteditable=true]").should("include.html", "tw-underline");
     });
 
     it("renders strikethrough", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(getInlineStyleControl(InlineStyles.Strikethrough)).click();
-        cy.get("[contenteditable=true]").should("include.html", classMap[InlineStyles.Strikethrough]);
+        cy.get(TOOLBAR).should("be.visible");
+        cy.get(TEXT_MARK_BUTTONS).children().eq(3).click();
+        cy.get("[contenteditable=true]").should("include.html", "tw-line-through");
     });
 
     it("renders code", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(getInlineStyleControl(InlineStyles.Code)).click();
-        cy.get("[contenteditable=true]").should("include.html", classMap[InlineStyles.Code]);
-    });
-
-    it("renders an ordered list", () => {
-        mount(<RichTextEditor />);
-
-        insertTextAndOpenToolbar();
-        cy.get(getBlockStyleControl("ordered-list")).click();
-        cy.get("[contenteditable=true]").should("include.html", "<ol");
+        cy.get(TOOLBAR).should("be.visible");
+        cy.get(TEXT_MARK_BUTTONS).children().eq(4).click();
+        cy.get("[contenteditable=true]").should(
+            "include.html",
+            "tw-table-cell tw-rounded tw-text-xs tw-bg-black-5 tw-text-violet-90 tw-m-0 tw-px-2 tw-py-0.5",
+        );
     });
 
     it("renders an unordered list", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(getBlockStyleControl("unordered-list")).click();
+        cy.get(TOOLBAR).should("be.visible");
+        cy.get(TEXT_ELEMENT_BUTTONS).children().eq(1).click();
         cy.get("[contenteditable=true]").should("include.html", "<ul");
+    });
+
+    it("renders an ordered list", () => {
+        mount(<RichTextEditor />);
+
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR).should("be.visible");
+        cy.get(TEXT_ELEMENT_BUTTONS).children().eq(2).click();
+        cy.get("[contenteditable=true]").should("include.html", "<ol");
     });
 
     it("renders a right aligned text", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
-        cy.get(getBlockStyleControl("paragraph-align-right")).click();
-        cy.get("[contenteditable=true]").should("include.html", textAlignClassMap[TextAlignTypes.AlignRight]);
+        cy.get(TOOLBAR).should("be.visible");
+        cy.get(TEXT_ALIGNMENT_BUTTONS).children().eq(2).click();
+        cy.get("[contenteditable=true]").should("include.html", "text-align: right");
     });
 
-    it("render the placeholder with correct width", () => {
-        mount(
-            <div style={{ display: "inline-flex" }}>
-                <RichTextEditor placeholder={PLACEHOLDER} />
-            </div>,
-        );
+    it("renders headings", () => {
+        mount(<RichTextEditor />);
 
-        cy.get(RICH_TEXT_EDITOR).then(($element) => {
-            const expectedWidth = getTextWidth(PLACEHOLDER, getCanvasFontSize($element.get(0)));
-            expect(expectedWidth).to.be.equal($element.width());
-        });
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR).should("be.visible");
+        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+
+        cy.get(TEXTSTYLE_OPTION).first().click();
+        cy.get("[contenteditable=true]").should("include.html", "<h1");
+
+        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+        cy.get(TEXTSTYLE_OPTION).eq(1).click();
+        cy.get("[contenteditable=true]").should("include.html", "<h2");
+
+        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+        cy.get(TEXTSTYLE_OPTION).eq(2).click();
+        cy.get("[contenteditable=true]").should("include.html", "<h3");
+
+        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+        cy.get(TEXTSTYLE_OPTION).eq(3).click();
+        cy.get("[contenteditable=true]").should("include.html", "<h4");
     });
 
     it("emits onTextChange when choosing an inline style", () => {
@@ -164,7 +185,10 @@ describe("RichTextEditor Component", () => {
         mount(<RichTextEditor onTextChange={onTextChange} />);
 
         insertTextAndOpenToolbar();
-        cy.get(getInlineStyleControl(InlineStyles.Bold))
+        cy.get(TOOLBAR).should("be.visible");
+        cy.get(TEXT_MARK_BUTTONS)
+            .children()
+            .eq(0)
             .click()
             .wait(ON_SAVE_DELAY_IN_MS)
             .then(() => {
@@ -177,7 +201,10 @@ describe("RichTextEditor Component", () => {
         mount(<RichTextEditor onTextChange={onTextChange} />);
 
         insertTextAndOpenToolbar();
-        cy.get(getBlockStyleControl("ordered-list"))
+        cy.get(TOOLBAR).should("be.visible");
+        cy.get(TEXT_ELEMENT_BUTTONS)
+            .children()
+            .eq(1)
             .click()
             .wait(ON_SAVE_DELAY_IN_MS)
             .then(() => {
@@ -187,14 +214,10 @@ describe("RichTextEditor Component", () => {
 
     it("should clear editor content", () => {
         const text = "This is some text";
-        mount(
-            <RichTextWithClearButton
-                value={JSON.stringify([{ type: BlockStyleTypes.Paragraph, children: [{ text }] }])}
-            />,
-        );
+        mount(<RichTextWithClearButton value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text }] }])} />);
 
         cy.get(RICH_TEXT_EDITOR).should("contain.text", text);
-        cy.get("button").click();
+        cy.get("[data-test-id=clear-button]").click();
         cy.get(RICH_TEXT_EDITOR).should("contain.text", "");
     });
 });

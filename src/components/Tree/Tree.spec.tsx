@@ -10,10 +10,18 @@ import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
 
 type ComponentProps = {
     nodes: TreeNodeProps[];
+    onDrop?: () => void;
 };
-const Component: FC<ComponentProps> = ({ nodes }) => {
-    const [selectedId, setSelectedId] = useState<string | null>();
-    return <Tree nodes={nodes} activeNodeId={selectedId} onSelect={(id: string | null) => setSelectedId(id)} />;
+const Component: FC<ComponentProps> = ({ nodes, onDrop }) => {
+    const [selectedId, setSelectedId] = useState<NullableString>();
+    return (
+        <Tree
+            nodes={nodes}
+            activeNodeId={selectedId}
+            onSelect={(id: NullableString) => setSelectedId(id)}
+            onDrop={onDrop}
+        />
+    );
 };
 
 const TREE_ID = "[data-test-id=tree]";
@@ -22,6 +30,7 @@ const NODE_LINK_ID = "[data-test-id=node-link]";
 const NODE_LINK_NAME_ID = "[data-test-id=node-link-name]";
 const TOGGLE_ID = "[data-test-id=toggle]";
 const SUB_TREE_ID = "[data-test-id=sub-tree]";
+const DROP_ZONE_ID = "[data-test-id=drop-zone]";
 
 const nodes: TreeNodeProps[] = [
     {
@@ -92,6 +101,7 @@ const nodes: TreeNodeProps[] = [
 ];
 
 describe("Tree Component", () => {
+    // TODO check if DropZones are not present when no onDrop props is provided. Refactoring needed first
     it("renders tree", () => {
         mount(<Component nodes={nodes} />);
 
@@ -137,5 +147,38 @@ describe("Tree Component", () => {
         cy.get(`${NODE_ID}:first ${NODE_LINK_NAME_ID}:first`).click();
         cy.get("@InitiallySelectedItem").should("have.attr", "aria-selected", "false");
         cy.get(`@NextSelectedItem`).should("have.attr", "aria-selected", "true");
+    });
+});
+
+describe("Draggable Tree Component", () => {
+    it("renders correct drop zones on the top level", () => {
+        mount(
+            <Component
+                nodes={nodes}
+                onDrop={() => {
+                    console.log("drop");
+                }}
+            />,
+        );
+
+        cy.get(DROP_ZONE_ID).should("have.length", 3);
+    });
+
+    it("renders correct drop zones on the second level", () => {
+        mount(
+            <Component
+                nodes={nodes}
+                onDrop={() => {
+                    console.log("drop");
+                }}
+            />,
+        );
+
+        cy.get(`${NODE_ID} ${TOGGLE_ID}`).click();
+        cy.get(`${SUB_TREE_ID} ${DROP_ZONE_ID}`).should("have.length", 5);
+        cy.get(`${SUB_TREE_ID} ${DROP_ZONE_ID}`).each(($dropZone, index) => {
+            const expectedClass = index % 2 === 0 ? "tw-h-1" : "tw-h-auto";
+            expect($dropZone).to.have.class(expectedClass);
+        });
     });
 });
