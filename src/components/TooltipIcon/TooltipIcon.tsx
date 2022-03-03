@@ -32,7 +32,7 @@ const getTooltipTriggerStyleClass = (style: TooltipIconTriggerStyle, isOpen: boo
         : {
               Danger: "tw-text-box-negative-strong",
               Warning: "tw-text-box-warning-strong",
-              Primary: "tw-text-weak",
+              Primary: "tw-text-text-weak",
           })[style];
 
 const TOOLTIP_DISTANCE = 15;
