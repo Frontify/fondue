@@ -3,6 +3,7 @@
 import React from "react";
 import { mount } from "@cypress/react";
 import { InputLabel } from "./InputLabel";
+import { IconActivity } from "../..";
 
 const LABEL_TEXT = "This is a fancy label.";
 const LABEL_TOOLTIP = "This is a fancy tooltip.";
@@ -39,5 +40,29 @@ describe("InputLabel Component", () => {
 
         cy.get(TOOLTIP_ICON_TRIGGER_ID).realHover({ position: "top" });
         cy.get(INPUT_LABEL_CONTAINER_ID).find(TOOLTIP_ID).should("exist");
+    });
+
+    it("renders with multiple tooltip triggers", () => {
+        mount(
+            <InputLabel
+                htmlFor="input"
+                tooltip={[
+                    { content: LABEL_TOOLTIP, triggerStyle: "Danger" },
+                    { content: LABEL_TOOLTIP, triggerIcon: <IconActivity /> },
+                ]}
+            >
+                {LABEL_TEXT}
+            </InputLabel>,
+        );
+        cy.get(TOOLTIP_ICON_TRIGGER_ID)
+            .first()
+            .should("have.class", "tw-text-box-negative-strong")
+            .children("svg")
+            .should("have.attr", "name", "IconQuestion");
+        cy.get(TOOLTIP_ICON_TRIGGER_ID)
+            .eq(1)
+            .should("have.class", "tw-text-black-60")
+            .children("svg")
+            .should("have.attr", "name", "IconActivity");
     });
 });

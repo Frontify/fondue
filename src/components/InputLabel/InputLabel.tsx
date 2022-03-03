@@ -1,16 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TooltipProps } from "@components/Tooltip/Tooltip";
-import { TooltipIcon } from "@components/TooltipIcon/TooltipIcon";
+import { TooltipIcon, TooltipIconTriggerStyle } from "@components/TooltipIcon/TooltipIcon";
+import { IconProps } from "@foundation/Icon";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
-import React, { FC, PropsWithChildren } from "react";
+import React, { FC, PropsWithChildren, ReactElement } from "react";
+
+export type InputLabelTooltip =
+    | (Omit<TooltipProps, "tooltipAriaProps"> & {
+          triggerIcon?: ReactElement<IconProps>;
+          triggerStyle?: TooltipIconTriggerStyle;
+      })
+    | (Omit<TooltipProps, "tooltipAriaProps"> & {
+          triggerIcon?: ReactElement<IconProps>;
+          triggerStyle?: TooltipIconTriggerStyle;
+      })[];
 
 export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;
     required?: boolean;
     disabled?: boolean;
-    tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
+    tooltip?: InputLabelTooltip;
     bold?: boolean;
 }>;
 
@@ -22,6 +33,8 @@ export const InputLabel: FC<InputLabelProps> = ({
     tooltip,
     bold,
 }) => {
+    const tooltips = tooltip ? (Array.isArray(tooltip) ? tooltip : [tooltip]) : [];
+
     return (
         <div
             className={merge([
@@ -56,7 +69,15 @@ export const InputLabel: FC<InputLabelProps> = ({
                     *
                 </span>
             )}
-            {tooltip && <TooltipIcon tooltip={tooltip} iconSize={IconSize.Size16} />}
+            {tooltips.map(({ triggerIcon, triggerStyle, ...tooltip }, index) => (
+                <TooltipIcon
+                    tooltip={tooltip as TooltipProps}
+                    key={index}
+                    iconSize={IconSize.Size16}
+                    triggerIcon={triggerIcon}
+                    triggerStyle={triggerStyle}
+                />
+            ))}
         </div>
     );
 };

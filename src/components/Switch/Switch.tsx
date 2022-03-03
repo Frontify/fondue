@@ -5,8 +5,7 @@ import { merge } from "@utilities/merge";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { useMemoizedId } from "@hooks/useMemoizedId";
-import { InputLabel } from "@components/InputLabel/InputLabel";
-import { TooltipProps } from "@components/Tooltip/Tooltip";
+import { InputLabel, InputLabelTooltip } from "@components/InputLabel/InputLabel";
 
 export enum SwitchSize {
     Small = "Small",
@@ -34,7 +33,7 @@ export type SwitchProps = {
     name?: string;
     size?: SwitchSize;
     hug?: boolean;
-    tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
+    tooltip?: InputLabelTooltip;
     onChange?: (e: MouseEvent) => void;
 };
 

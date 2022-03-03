@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useRef, useState } from "react";
+import React, { cloneElement, FC, ReactElement, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { useFocusVisible, useHover } from "@react-aria/interactions";
 import { useTooltipTrigger } from "@react-aria/tooltip";
@@ -11,17 +11,33 @@ import { Tooltip, TooltipProps } from "@components/Tooltip/Tooltip";
 import { TooltipArrow } from "@components/Tooltip/TooltipArrow";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
+import { IconProps } from "@foundation/Icon";
 
 export type TooltipIconProps = {
     tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
     iconSize?: IconSize;
+    triggerIcon?: ReactElement<IconProps>;
+    triggerStyle?: TooltipIconTriggerStyle;
+};
+
+export type TooltipIconTriggerStyle = "Danger" | "Warning" | "Primary";
+
+export const tooltipIconTriggerStyleClassMap: Record<TooltipIconTriggerStyle, string> = {
+    Danger: "tw-text-box-negative-strong",
+    Warning: "tw-text-box-warning-strong",
+    Primary: "tw-text-black-60 hover:tw-text-black-60 dark:tw-text-black-40 dark:hover:tw-text-white",
 };
 
 const TOOLTIP_DISTANCE = 15;
 const TOOLTIP_SKIDDING = 0;
 const TOOLTIP_PADDING = 15;
 
-export const TooltipIcon: FC<TooltipIconProps> = ({ tooltip, iconSize = IconSize.Size16 }: TooltipIconProps) => {
+export const TooltipIcon: FC<TooltipIconProps> = ({
+    tooltip,
+    triggerIcon = <IconQuestion />,
+    iconSize = IconSize.Size16,
+    triggerStyle = "Primary",
+}: TooltipIconProps) => {
     const [tooltipArrowElement, setTooltipArrowElement] = useState<HTMLElement | null>(null);
     const tooltipTriggerElement = useRef<HTMLButtonElement | null>(null);
     const tooltipElement = useRef<HTMLDivElement | null>(null);
@@ -49,12 +65,13 @@ export const TooltipIcon: FC<TooltipIconProps> = ({ tooltip, iconSize = IconSize
                         data-test-id="tooltip-icon-trigger"
                         ref={tooltipTriggerElement}
                         className={merge([
-                            "tw-inline-flex tw-justify-center tw-items-center tw-text-black-60 hover:tw-text-black-60 dark:tw-text-black-40 dark:hover:tw-text-white tw-cursor-default tw-outline-none tw-rounded-full",
+                            "tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full",
                             isOpen && isFocusVisible && FOCUS_STYLE,
+                            tooltipIconTriggerStyleClassMap[triggerStyle],
                         ])}
                         {...triggerProps}
                     >
-                        <IconQuestion size={iconSize} />
+                        {cloneElement(triggerIcon, { size: iconSize })}
                     </button>
                     {isOpen && (
                         <Tooltip
