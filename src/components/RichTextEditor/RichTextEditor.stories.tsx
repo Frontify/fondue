@@ -1,11 +1,45 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, Story } from "@storybook/react";
+import {
+    ELEMENT_LI,
+    ELEMENT_LINK,
+    ELEMENT_OL,
+    ELEMENT_PARAGRAPH,
+    ELEMENT_UL,
+    MARK_BOLD,
+    MARK_CODE,
+    MARK_ITALIC,
+    MARK_STRIKETHROUGH,
+    MARK_UNDERLINE,
+} from "@udecode/plate";
 import React from "react";
-import { BlockStyleTypes, TextAlignTypes } from "./renderer/renderBlockStyles";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
-import { createLinkNode } from "./utils/editor/link";
-import { createListItemNode } from "./utils/editor/listItem";
+import { TextStyles } from "./utils/getTextStyles";
+
+const IPSUM =
+    "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+
+type CreateElementProps = {
+    text: string;
+    element?: string;
+    mark?: string;
+};
+
+type LeafType = {
+    [key: string]: any;
+};
+
+const createElement = ({ text, element = ELEMENT_PARAGRAPH, mark }: CreateElementProps) => {
+    const leaf: LeafType = { text };
+    if (mark) {
+        leaf[mark] = true;
+    }
+    return {
+        type: element,
+        children: [leaf],
+    };
+};
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -23,42 +57,95 @@ export default {
 } as Meta;
 
 const value = [
-    { type: BlockStyleTypes.Paragraph, children: [{ text: "bold", bold: true }] },
-    { type: BlockStyleTypes.Paragraph, children: [{ text: "italic", italic: true }] },
-    { type: BlockStyleTypes.Paragraph, children: [{ text: "underline", underline: true }] },
-    { type: BlockStyleTypes.Paragraph, children: [{ text: "strikethrough", strikethrough: true }] },
-    { type: BlockStyleTypes.Paragraph, children: [{ text: "code", code: true }] },
+    createElement({ text: "This text is bold.", mark: MARK_BOLD }),
+    createElement({ text: "This text is italic.", mark: MARK_ITALIC }),
+    createElement({ text: "This text has an underline.", mark: MARK_UNDERLINE }),
+    createElement({ text: "This text has a strikethrough.", mark: MARK_STRIKETHROUGH }),
+    createElement({ text: "This text is a code line.", mark: MARK_CODE }),
+    createElement({
+        text: IPSUM,
+    }),
     {
-        type: BlockStyleTypes.UnorderedList,
-        children: [createListItemNode("red"), createListItemNode("blue"), createListItemNode("yellow")],
-    },
-    {
-        type: BlockStyleTypes.OrderedList,
-        children: [
-            createListItemNode("Mix flour, baking powder, sugar, and salt."),
-            createListItemNode("In another bowl, mix eggs, milk, and oil."),
-            createListItemNode("Stir both mixtures together."),
-            createListItemNode("Fill muffin tray 3/4 full."),
-            createListItemNode("Bake for 20 minutes."),
-        ],
-    },
-    {
-        type: BlockStyleTypes.Paragraph,
+        type: ELEMENT_UL,
         children: [
             {
-                text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+                type: ELEMENT_LI,
+                children: [{ text: "This is list item number one." }],
+            },
+            {
+                type: ELEMENT_LI,
+                children: [{ text: "This is list item number two." }],
+            },
+            {
+                type: ELEMENT_LI,
+                children: [{ text: "This is list item number three." }],
+            },
+            {
+                type: ELEMENT_UL,
+                children: [
+                    {
+                        type: ELEMENT_LI,
+                        children: [{ text: "This is child item number one." }],
+                    },
+                    {
+                        type: ELEMENT_LI,
+                        children: [{ text: "This is child item number two, with more children." }],
+                    },
+                    {
+                        type: ELEMENT_UL,
+                        children: [
+                            {
+                                type: ELEMENT_LI,
+                                children: [{ text: "This is child of child item number one." }],
+                            },
+                            {
+                                type: ELEMENT_LI,
+                                children: [{ text: "This is child of child item number two." }],
+                            },
+                        ],
+                    },
+                ],
             },
         ],
-        properties: {
-            textAlign: TextAlignTypes.AlignCenter,
-        },
     },
+    {
+        type: ELEMENT_OL,
+        children: [
+            {
+                type: ELEMENT_LI,
+                children: [{ text: "This comes first." }],
+            },
+            {
+                type: ELEMENT_LI,
+                children: [{ text: "This comes second." }],
+            },
+            {
+                type: ELEMENT_LI,
+                children: [{ text: "And last but not least, this comes third." }],
+            },
+        ],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [
+            {
+                type: ELEMENT_LINK,
+                children: [{ text: "This is a link." }],
+                url: "https://frontify.com",
+            },
+        ],
+    },
+    createElement({ text: "Heading 1", element: TextStyles.ELEMENT_HEADING1 }),
+    createElement({ text: "Heading 2", element: TextStyles.ELEMENT_HEADING2 }),
+    createElement({ text: "Heading 3", element: TextStyles.ELEMENT_HEADING3 }),
+    createElement({ text: "Heading 4", element: TextStyles.ELEMENT_HEADING4 }),
+    createElement({ text: "Custom 1", element: TextStyles.ELEMENT_CUSTOM1 }),
+    createElement({ text: "Custom 2", element: TextStyles.ELEMENT_CUSTOM2 }),
 ];
 
 export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
-RichTextEditor.argTypes = { value: { type: "string" } };
 RichTextEditor.args = { value: JSON.stringify(value) };
 
 export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
@@ -66,13 +153,7 @@ export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEdit
 );
 WithReadonlyState.args = {
     readonly: true,
-    value: JSON.stringify([
-        ...value,
-        {
-            type: BlockStyleTypes.Paragraph,
-            children: [createLinkNode("https://git-scm.com/downloads", "Link")],
-        },
-    ]),
+    value: JSON.stringify(value),
 };
 WithReadonlyState.argTypes = { value: { type: "string" } };
 
@@ -81,23 +162,35 @@ export const RichTextWithHTML: Story<RichTextEditorProps> = (args: RichTextEdito
 );
 RichTextWithHTML.args = {
     value: `
-        <p><strong>bold</strong></p>
-        <p><i>italic</i></p>
-        <p><u>underline</u></p>
-        <p><s>strikethrough</s></p>
-        <p><code>code</code></p>
+        <p><strong>This text is bold.</strong></p>
+        <p><i>This text is italic.</i></p>
+        <p><u>This text has an underline.</u></p>
+        <p><s>This text has a strikethrough.</s></p>
+        <p><code>This text is a code line.</code></p>
+        <p>${IPSUM}</p>
         <ul>
-            <li>red</li>
-            <li>blue</li>
-            <li>yellow</li>
+            <li>This is list item number one.</li>
+            <li>This is list item number two.</li>
+            <li>This is list item number three.</li>
+            <ul>
+                <li>This is child item number one.</li>
+                <li>This is child item number two, with more children.</li>
+                <ul>
+                    <li>This is child of child item number one.</li>
+                    <li>This is child of child item number two.</li>
+                </ul>
+            </ul>
         </ul>
         <ol>
-            <li>Mix flour, baking powder, sugar, and salt.</li>
-            <li>In another bowl, mix eggs, milk, and oil.</li>
-            <li>Stir both mixtures together.</li>
-            <li>Fill muffin tray 3/4 full.</li>
-            <li>Bake for 20 minutes.</li>
+            <li>This comes first.</li>
+            <li>This comes second.</li>
+            <li>And last but not least, this comes third.</li>
         </ol>
+        <p><a href="https://frontify.com">This is a link.</a></p>
+        <h1>Heading 1</h1>
+        <h2>Heading 2</h2>
+        <h3>Heading 3</h3>
+        <h4>Heading 4</h4>
     `,
 };
 RichTextWithHTML.argTypes = { value: { type: "string" } };
@@ -108,3 +201,19 @@ export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEdi
     </div>
 );
 RichTextEditorFlex.argTypes = { value: { type: "string" } };
+
+export const WithCustomTextStyle: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <RichTextEditorComponent {...args} />
+);
+WithCustomTextStyle.args = {
+    value: JSON.stringify(value),
+    textStyles: [
+        { type: TextStyles.ELEMENT_HEADING1, className: "tw-text-7xl tw-font-bold tw-text-green-80" },
+        { type: TextStyles.ELEMENT_HEADING2, className: "tw-text-5xl tw-font-bold tw-text-violet-60" },
+        { type: TextStyles.ELEMENT_HEADING3, className: "tw-text-3xl tw-font-bold tw-text-yellow-70" },
+        { type: TextStyles.ELEMENT_HEADING4, className: "tw-text-xl tw-text-red-50" },
+        { type: TextStyles.ELEMENT_CUSTOM1, className: "tw-font-mono tw-italic tw-text-black-80" },
+        { type: TextStyles.ELEMENT_CUSTOM2, className: "tw-underline tw-text-black-80" },
+    ],
+};
+WithCustomTextStyle.argTypes = { value: { type: "string" } };
