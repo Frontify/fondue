@@ -48,6 +48,10 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => {
                         ref,
                     );
 
+                    if (!link && !onClick) {
+                        delete itemProps["tabIndex"];
+                    }
+
                     if (isCurrent) {
                         return (
                             <CurrentBreadcrumbItem
