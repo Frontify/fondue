@@ -2,6 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import React, { useEffect, useState } from "react";
+import { IconInfo } from "../..";
 import { Switch, SwitchProps, SwitchSize } from "./Switch";
 
 // eslint-disable-next-line import/no-default-export
@@ -57,6 +58,15 @@ WithLabel.args = { label: "Switch label" };
 
 export const WithLabelAndTooltip: Story<Props> = Default.bind({});
 WithLabelAndTooltip.args = { label: "Switch label", tooltip: { content: "Switch tooltip" } };
+
+export const WithLabelAndMultipleTooltips: Story<Props> = Default.bind({});
+WithLabelAndMultipleTooltips.args = {
+    label: "Switch label",
+    tooltip: [
+        { content: "First tooltip" },
+        { content: "Second Tooltip", triggerIcon: <IconInfo />, triggerStyle: "Warning" },
+    ],
+};
 
 export const HugLabel: Story<Props> = Default.bind({});
 HugLabel.args = { hug: true, label: "Switch label" };
