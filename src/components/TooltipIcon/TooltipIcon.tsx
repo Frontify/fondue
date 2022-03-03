@@ -22,11 +22,18 @@ export type TooltipIconProps = {
 
 export type TooltipIconTriggerStyle = "Danger" | "Warning" | "Primary";
 
-export const tooltipIconTriggerStyleClassMap: Record<TooltipIconTriggerStyle, string> = {
-    Danger: "tw-text-box-negative-strong hover:tw-text-box-negative-strong-hover",
-    Warning: "tw-text-box-warning-strong hover:tw-text-box-warning-strong-hover",
-    Primary: "tw-text-text-weak hover:tw-text-text",
-};
+const getTooltipTriggerStyleClass = (style: TooltipIconTriggerStyle, isOpen: boolean) =>
+    (isOpen
+        ? {
+              Danger: "tw-text-box-negative-strong-hover",
+              Warning: "tw-text-box-warning-strong-hover",
+              Primary: "tw-text-text",
+          }
+        : {
+              Danger: "tw-text-box-negative-strong",
+              Warning: "tw-text-box-warning-strong",
+              Primary: "tw-text-weak",
+          })[style];
 
 const TOOLTIP_DISTANCE = 15;
 const TOOLTIP_SKIDDING = 0;
@@ -57,6 +64,8 @@ export const TooltipIcon: FC<TooltipIconProps> = ({
         onHoverEnd: () => state.close(),
     });
 
+    const tooltipTriggerStyleClass = getTooltipTriggerStyleClass(triggerStyle, isOpen);
+
     return (
         <div data-test-id="tooltip-icon">
             {tooltip && (
@@ -67,7 +76,7 @@ export const TooltipIcon: FC<TooltipIconProps> = ({
                         className={merge([
                             "tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full",
                             isOpen && isFocusVisible && FOCUS_STYLE,
-                            tooltipIconTriggerStyleClassMap[triggerStyle],
+                            tooltipTriggerStyleClass,
                         ])}
                         {...triggerProps}
                     >
