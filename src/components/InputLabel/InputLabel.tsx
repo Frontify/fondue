@@ -7,7 +7,7 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { FC, PropsWithChildren, ReactElement } from "react";
 
-export type InputLabelTooltip =
+export type InputLabelTooltipProps =
     | (Omit<TooltipProps, "tooltipAriaProps"> & {
           triggerIcon?: ReactElement<IconProps>;
           triggerStyle?: TooltipIconTriggerStyle;
@@ -21,7 +21,7 @@ export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;
     required?: boolean;
     disabled?: boolean;
-    tooltip?: InputLabelTooltip;
+    tooltip?: InputLabelTooltipProps;
     bold?: boolean;
 }>;
 
