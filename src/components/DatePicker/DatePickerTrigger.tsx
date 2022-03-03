@@ -1,25 +1,20 @@
 import { TextInput } from "@components/TextInput";
 import IconCalendar from "@foundation/Icon/Generated/IconCalendar";
-import React from "react";
+import React, { forwardRef, PropsWithChildren } from "react";
 
-type DatePickerTriggerProps = {
+type DatePickerTriggerProps = PropsWithChildren<{
+    placeHolder?: string;
     value?: string;
     isClearable?: boolean;
     onClick?: () => void;
-};
+}>;
 
-// eslint-disable-next-line react/display-name
-export const DatePickerTrigger = React.forwardRef<HTMLDivElement, React.PropsWithChildren<DatePickerTriggerProps>>(
-    (props, ref) => (
-        <div onClick={props.onClick} ref={ref} aria-hidden="true">
-            <TextInput
-                data-test-id="text-input"
-                decorator={<IconCalendar />}
-                placeholder="Select a date"
-                value={props.value}
-                clearable={props.isClearable}
-                {...props}
-            />
+export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerProps>(
+    ({ value, onClick, isClearable, placeHolder }, ref) => (
+        <div onClick={onClick} ref={ref} aria-hidden="true">
+            <TextInput decorator={<IconCalendar />} placeholder={placeHolder} value={value} clearable={isClearable} />
         </div>
     ),
 );
+
+DatePickerTrigger.displayName = "DatePickerTrigger";

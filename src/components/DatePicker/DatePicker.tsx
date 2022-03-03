@@ -5,31 +5,31 @@ import IconCaretRightDouble from "@foundation/Icon/Generated/IconCaretRightDoubl
 import IconLeftCaret from "@foundation/Icon/Generated/IconLeftCaret";
 import IconRightCaret from "@foundation/Icon/Generated/IconRightCaret";
 import { IconSize } from "@foundation/Icon/IconSize";
-import { getMonth, getYear } from "date-fns";
+import { format, getYear } from "date-fns";
 import React, { FC } from "react";
-import { default as DatepickerComponent } from "react-datepicker";
+import DatepickerComponent from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.min.css";
 import "./DatePicker.css";
 import { DatePickerTrigger } from "./DatePickerTrigger";
-import { months } from "./utils/constants";
 
 export type DatePickerProps = {
+    placeHolder?: string;
     isClearable?: boolean;
     shouldCloseOnSelect?: boolean;
     onChange?: (date: Date | null) => void;
     dateFormat?: string;
+    value?: Date;
 };
 
 export const DatePicker: FC<DatePickerProps> = ({
-    onChange,
+    placeHolder = "Select a date",
     isClearable,
     shouldCloseOnSelect,
+    onChange,
     dateFormat = "MM/dd/yyyy",
+    value,
 }) => {
-    const [startDate, setStartDate] = React.useState<Date | null>();
-
     const onDateChanged = (date: Date | null) => {
-        setStartDate(date);
         if (onChange) {
             onChange(date);
         }
@@ -38,11 +38,10 @@ export const DatePicker: FC<DatePickerProps> = ({
     return (
         <div data-test-id="date-picker">
             <DatepickerComponent
-                data-test-id="date-picker"
                 calendarClassName="tw-shadow-mid tw-rounded-sm tw-border-slate-200 react-datepicker-wrap"
-                selected={startDate}
+                selected={value}
                 onChange={onDateChanged}
-                customInput={<DatePickerTrigger isClearable={isClearable} />}
+                customInput={<DatePickerTrigger isClearable={isClearable} placeHolder={placeHolder} />}
                 formatWeekDay={(day) => day.slice(0, 1)}
                 isClearable={isClearable}
                 dateFormat={dateFormat}
@@ -53,14 +52,13 @@ export const DatePicker: FC<DatePickerProps> = ({
                         <button onClick={decreaseYear}>
                             <IconCaretLeftDouble size={IconSize.Size20} />
                         </button>
-                        <button onClick={decreaseMonth}>
+                        <button onClick={decreaseMonth} className="tw-ml-4">
                             <IconLeftCaret size={IconSize.Size20} />
                         </button>
-                        <p className="tw-font-sans tw-font-semibold">
-                            {months[getMonth(date)]}
-                            {getYear(date)}
+                        <p className="tw-font-sans tw-font-semibold tw-grow">
+                            {format(date, "MMMM")} {getYear(date)}
                         </p>
-                        <button onClick={increaseMonth}>
+                        <button onClick={increaseMonth} className="tw-mr-4">
                             <IconRightCaret size={IconSize.Size20} />
                         </button>
                         <button onClick={increaseYear}>

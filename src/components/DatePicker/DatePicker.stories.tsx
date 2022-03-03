@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
+import React, { useState } from "react";
 import { Story, Meta } from "@storybook/react";
 import { DatePicker, DatePickerProps } from "./DatePicker";
 
@@ -10,10 +10,15 @@ export default {
     component: DatePicker,
 } as Meta<DatePickerProps>;
 
-const Template: Story<DatePickerProps> = (args) => <DatePicker {...args} />;
+const Template: Story<DatePickerProps> = (args) => {
+    const [selectedDate, setSelectedDate] = useState<Date | null>();
+
+    return <DatePicker {...args} value={selectedDate as Date} onChange={setSelectedDate} />;
+};
 
 export const Default = Template.bind({});
 Default.args = {
+    placeHolder: "Select a date",
     isClearable: true,
     shouldCloseOnSelect: true,
     dateFormat: "MM/dd/yyyy",

@@ -22,7 +22,7 @@ describe("DatePicker Component", () => {
     });
 
     it("should render cancel icon if isClearable prop is true", () => {
-        mount(<DatePicker isClearable={true} />);
+        mount(<DatePicker isClearable={true} value={new Date()} />);
 
         cy.get(TEXT_INPUT_ID).click();
         cy.get(".react-datepicker__day").first().click();
@@ -30,12 +30,12 @@ describe("DatePicker Component", () => {
     });
 
     it("should clear the input if cancel icon is clicked", () => {
-        mount(<DatePicker isClearable={true} />);
+        const onChangeStub = cy.stub().as("onChangeStub");
+        mount(<DatePicker isClearable={true} value={new Date()} onChange={onChangeStub} />);
 
         cy.get(TEXT_INPUT_ID).click();
-        cy.get(".react-datepicker__day").first().click();
         cy.get(".react-datepicker__close-icon").click();
-        cy.get(TEXT_INPUT_ID).should("have.value", "");
+        cy.get("@onChangeStub").should("be.calledOnce");
     });
 
     it("should close calendar if shouldCloseOnSelect is true, and date is selected", () => {
