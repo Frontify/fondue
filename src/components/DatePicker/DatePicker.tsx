@@ -6,7 +6,7 @@ import IconLeftCaret from "@foundation/Icon/Generated/IconLeftCaret";
 import IconRightCaret from "@foundation/Icon/Generated/IconRightCaret";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { format, getYear } from "date-fns";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import DatepickerComponent from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.min.css";
 import "./DatePicker.css";
@@ -29,6 +29,7 @@ export const DatePicker: FC<DatePickerProps> = ({
     dateFormat = "MM/dd/yyyy",
     value,
 }) => {
+    const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
     const onDateChanged = (date: Date | null) => {
         if (onChange) {
             onChange(date);
@@ -41,10 +42,18 @@ export const DatePicker: FC<DatePickerProps> = ({
                 calendarClassName="tw-shadow-mid tw-rounded-sm tw-border-slate-200 react-datepicker-wrap"
                 selected={value}
                 onChange={onDateChanged}
-                customInput={<DatePickerTrigger isClearable={isClearable} placeHolder={placeHolder} />}
+                customInput={
+                    <DatePickerTrigger
+                        isCalendarOpen={isCalendarOpen}
+                        isClearable={isClearable}
+                        placeHolder={placeHolder}
+                    />
+                }
                 formatWeekDay={(day) => day.slice(0, 1)}
                 isClearable={isClearable}
                 dateFormat={dateFormat}
+                onCalendarClose={() => setIsCalendarOpen(false)}
+                onCalendarOpen={() => setIsCalendarOpen(true)}
                 shouldCloseOnSelect={shouldCloseOnSelect}
                 dayClassName={(date) => (date < new Date() ? "past-date" : "future-date")}
                 renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
