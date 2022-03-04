@@ -1,18 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-import { useListData } from "@react-stately/data";
-import { ItemDropTarget } from "@react-types/shared";
+
 import { Meta, Story } from "@storybook/react";
-import React, { FC, forwardRef, Key, ReactChild, useState } from "react";
-import { Button, ButtonSize } from "@components/Button";
+import React, { FC, forwardRef, ReactChild, useState } from "react";
 import { OrderableList as OrderableListComponent } from "./OrderableList";
 import { merge } from "@utilities/merge";
-import { GridNode } from "@react-types/grid";
 import { DragProperties, OrderableListItem } from "./types";
-import { FocusController, FocusControllerWidth, ItemDragState, OrderableListProps } from ".";
+import { ItemDragState, OrderableListProps } from ".";
 import { chain } from "@react-aria/utils";
-import { ButtonGroup } from "@components/ButtonGroup";
-import { Checklist, ChecklistDirection } from "@components/Checklist";
-import { TextInput } from "@components/TextInput";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -20,14 +14,11 @@ export default {
     component: OrderableListComponent,
     args: {
         dragDisabled: false,
-        disableTypeAhead: true,
     },
     argTypes: {
         onMove: { action: "onMove" },
     },
 } as Meta<OrderableListProps<StoryListItem>>;
-
-type ValueOf<T> = T[keyof T];
 
 type ControlledTextAreaProps = {
     value: string;
@@ -53,25 +44,6 @@ const HighlightClasses: Record<HighlightColor, string> = {
 
 type StoryListItem = {
     textContent: JSX.Element;
-    actionContentType?: ActionContentTypes;
-};
-
-enum ActionContentTypes {
-    Textarea = "Textarea",
-    Input = "Input",
-    ButtonGroup = "ButtonGroup",
-    Checklist = "Checklist",
-}
-
-type ActionStateValueTypes = {
-    [ActionContentTypes.Checklist]: string[];
-    [ActionContentTypes.Input]: string;
-    [ActionContentTypes.Textarea]: string;
-};
-
-type ActionState = {
-    updateActionState: (value: ValueOf<ActionStateValueTypes>, key: Key) => void;
-    actionState: Record<Key, ValueOf<ActionStateValueTypes>>;
 };
 
 const dragStoryStyles: Record<ItemDragState, string> = {
@@ -104,78 +76,25 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
             </p>
         ),
         alt: "one",
-    },
-    {
-        id: "2",
-        textContent: (
-            <>
-                <p>
-                    To navigate through the list use the <Highlight color={HighlightColor.Red}>up</Highlight>
-                    ,&nbsp;
-                    <Highlight color={HighlightColor.Red}>down</Highlight>,&nbsp;
-                    <Highlight color={HighlightColor.Red}>left</Highlight> and &nbsp;
-                    <Highlight color={HighlightColor.Red}>right</Highlight> arrow keys.
-                </p>
-                <p>
-                    Press <Highlight color={HighlightColor.Red}>Space</Highlight> or&nbsp;
-                    <Highlight color={HighlightColor.Red}>Enter</Highlight> to select an item to drag, and&nbsp;
-                    <Highlight color={HighlightColor.Red}>Escape</Highlight> to exit the drag.
-                </p>
-            </>
-        ),
-        alt: "two",
+        sort: 1,
     },
     {
         id: "3",
         textContent: (
             <p>
-                Use the <Highlight color={HighlightColor.Green}>prevKey</Highlight> and &nbsp;
-                <Highlight color={HighlightColor.Green}>nextKey</Highlight> properties in the &nbsp;
-                <Highlight color={HighlightColor.Green}>renderContent</Highlight> function to determine the position of
+                Use the <Highlight color={HighlightColor.Green}>sort</Highlight> property in the &nbsp;
+                <Highlight color={HighlightColor.Green}>OrderableListItem</Highlight> to determine the position of items
                 items in the list.
             </p>
         ),
         alt: "three",
+        sort: 2,
     },
     {
         id: "4",
         textContent: <p>Items can contain multiple focusable elements.</p>,
-        actionContentType: ActionContentTypes.ButtonGroup,
         alt: "four",
-    },
-    {
-        id: "5",
-        textContent: (
-            <p>
-                Important: If your list item contains typable elements, make sure the&nbsp;
-                <Highlight color={HighlightColor.Green}>disableTypeAhead</Highlight> prop is set to&nbsp;
-                <Highlight color={HighlightColor.Violet}>true</Highlight>, otherwise typing will shift focus to a new
-                element based on the items&nbsp;
-                <Highlight color={HighlightColor.Green}>alt</Highlight> text (Type &quot;one&quot; to see the effect).
-            </p>
-        ),
-        actionContentType: ActionContentTypes.Input,
-        alt: "five",
-    },
-    {
-        id: "6",
-        textContent: (
-            <>
-                <p>
-                    Wrap your typable component in a&nbsp;
-                    <Highlight color={HighlightColor.Green}>Focus Controller</Highlight> to enable navigation by
-                    keyboard. Press <Highlight color={HighlightColor.Red}>Space</Highlight> to enter the textarea
-                    and&nbsp;
-                    <Highlight color={HighlightColor.Red}>Escape</Highlight> to exit.
-                </p>
-                <p>
-                    Note: The child component must expose a <Highlight color={HighlightColor.Green}>ref</Highlight> for
-                    the focus controller to work
-                </p>
-            </>
-        ),
-        actionContentType: ActionContentTypes.Textarea,
-        alt: "six",
+        sort: null,
     },
     {
         id: "7",
@@ -187,69 +106,15 @@ const storyItems: OrderableListItem<StoryListItem>[] = [
                 consistent rendering in the drag preview.
             </p>
         ),
-        actionContentType: ActionContentTypes.Checklist,
         alt: "seven",
+        sort: 3,
     },
 ];
 
-const getActionContentItemMap = (
-    { updateActionState, actionState }: ActionState,
-    key: Key,
-): Record<ActionContentTypes, JSX.Element> => ({
-    [ActionContentTypes.Input]: (
-        <TextInput
-            value={actionState[key] as ActionStateValueTypes[ActionContentTypes.Input]}
-            onChange={(value) => updateActionState(value, key)}
-        ></TextInput>
-    ),
-    [ActionContentTypes.Textarea]: (
-        <FocusController width={FocusControllerWidth.Full}>
-            <ControlledTextArea
-                onChange={(value) => updateActionState(value, key)}
-                value={actionState[key] as ActionStateValueTypes[ActionContentTypes.Textarea]}
-            />
-        </FocusController>
-    ),
-    [ActionContentTypes.ButtonGroup]: (
-        <ButtonGroup size={ButtonSize.Small}>
-            <Button>List Item With Buttons</Button>
-            <Button>List Item With Buttons</Button>
-            <Button>List Item With Buttons</Button>
-        </ButtonGroup>
-    ),
-    [ActionContentTypes.Checklist]: (
-        <Checklist
-            direction={ChecklistDirection.Horizontal}
-            setActiveValues={(values) => updateActionState(values, key)}
-            activeValues={actionState[key] as ActionStateValueTypes[ActionContentTypes.Checklist]}
-            checkboxes={[
-                { value: "Item 1", label: "Item 1" },
-                { value: "Item 2", label: "Item 2" },
-                { value: "Item 3", label: "Item 3" },
-                { value: "Item 4", label: "Item 4" },
-            ]}
-        ></Checklist>
-    ),
-});
-
 const renderContent = (
-    { value, prevKey, nextKey, key }: GridNode<OrderableListItem<StoryListItem>>,
+    { textContent }: OrderableListItem<StoryListItem>,
     { componentDragState, isFocusVisible }: DragProperties,
-    { updateActionState, actionState }: ActionState,
 ) => {
-    let position = "Middle";
-    if (!prevKey) {
-        position = "First";
-    } else if (!nextKey) {
-        position = "Last";
-    }
-
-    const { actionContentType } = value;
-
-    const actionContent = actionContentType
-        ? getActionContentItemMap({ updateActionState, actionState }, key)[actionContentType]
-        : null;
-
     return (
         <div
             className={merge([
@@ -258,43 +123,52 @@ const renderContent = (
                 isFocusVisible && "tw-bg-violet-20",
             ])}
         >
-            <div className="tw-text-xs tw-text-black-60">Position: {position}</div>
+            <div className="tw-text-xs tw-text-black-60">Position: Foo</div>
             <hr className="tw-mt-2 tw-mb-2 tw-border-black-20 tw-bg-black-20" />
-            <div>{value.textContent}</div>
-            {actionContent && <div className="tw-flex tw-justify-around tw-mt-2">{actionContent}</div>}
+            <div>{textContent}</div>
             <hr className="tw-mt-3 tw-mb-2 tw-border-black-20 tw-bg-black-20" />
             <div className="tw-flex tw-justify-between tw-text-s">
-                <span className="tw-font-medium">{isFocusVisible && "Im in keyboard focus"}</span>
+                {isFocusVisible && <span className="tw-font-medium">Im in keyboard focus</span>}
                 <span>Drag State: {componentDragState}</span>
             </div>
         </div>
     );
 };
 
-export const OrderableList: Story<OrderableListProps<StoryListItem>> = ({ disableTypeAhead, onMove, dragDisabled }) => {
-    const [actionState, setActionState] = useState({});
+export const OrderableList: Story<OrderableListProps<StoryListItem>> = ({ onMove, dragDisabled }) => {
+    const [items, setItems] = useState(storyItems);
 
-    const list = useListData({
-        initialItems: storyItems,
-    });
+    const handleMove = (modifiedItems: OrderableListItem<StoryListItem>[]) => {
+        const modifiedArray = items.map((item) => {
+            const matchingModifiedItem = modifiedItems.find((modifiedItem) => modifiedItem.id === item.id);
+            if (matchingModifiedItem) {
+                return { ...matchingModifiedItem };
+            }
 
-    const moveItems = (selectedGridItemKeys: React.Key[], gridItemLocation: ItemDropTarget) =>
-        gridItemLocation.dropPosition === "before"
-            ? list.moveBefore(gridItemLocation.key, selectedGridItemKeys)
-            : list.moveAfter(gridItemLocation.key, selectedGridItemKeys);
+            return { ...item };
+        });
 
-    const updateActionState = (value: ValueOf<ActionStateValueTypes>, key: Key) =>
-        setActionState((prev) => ({ ...prev, [key]: value }));
+        setItems(modifiedArray);
+    };
 
     return (
-        <div className="tw-m-auto tw-w-[600px]">
-            <OrderableListComponent
-                items={list.items}
-                onMove={chain(moveItems, onMove)}
-                dragDisabled={dragDisabled}
-                renderContent={(...args) => renderContent(...args, { updateActionState, actionState })}
-                disableTypeAhead={disableTypeAhead}
-            />
-        </div>
+        <>
+            <div className="tw-m-auto tw-w-[600px] tw-pb-6">
+                <OrderableListComponent
+                    items={items}
+                    onMove={chain(handleMove, onMove)}
+                    dragDisabled={dragDisabled}
+                    renderContent={(...args) => renderContent(...args)}
+                />
+            </div>
+            <div className="tw-m-auto tw-w-[600px]">
+                <OrderableListComponent
+                    items={items}
+                    onMove={chain(handleMove, onMove)}
+                    dragDisabled={dragDisabled}
+                    renderContent={(...args) => renderContent(...args)}
+                />
+            </div>
+        </>
     );
 };
