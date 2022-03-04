@@ -6,8 +6,13 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { OnDropCallback } from "@components/Tree/DropZone";
 
+export interface TreeListItem extends TreeNodeProps {
+    parentId: NullableString;
+    sort: NullableNumber;
+}
+
 export type TreeProps = {
-    nodes: TreeNodeProps[];
+    nodes: TreeListItem[];
     onSelect: (id: NullableString) => void;
     activeNodeId?: NullableString;
     onDrop?: OnDropCallback;
@@ -15,9 +20,13 @@ export type TreeProps = {
 
 export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActiveNodeId = null, onDrop }) => {
     const [activeNodeId, setActiveNodeId] = useState<NullableString>(initialActiveNodeId);
+    const [treeNodes, setTreeNodes] = useState();
     useEffect(() => setActiveNodeId(initialActiveNodeId), [initialActiveNodeId]);
+    useEffect(() => {
 
-    const onNodeClick = (id: string | null) => {
+    }, [nodes]);
+
+    const onNodeClick = (id: NullableString) => {
         setActiveNodeId(id);
         onSelect(id);
     };
