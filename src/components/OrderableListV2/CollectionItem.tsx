@@ -30,13 +30,10 @@ export const CollectionItem = <T extends object>({
             ref={drag}
             className={merge(["tw-relative tw-outline-none", isFocusVisible ? "tw-z-30" : "tw-z-0"])}
             aria-labelledby={id}
-            data-test-id="orderable-list-item"
+            data-test-id="draggable-item"
+            aria-disabled={dragDisabled}
         >
-            <div
-                aria-disabled={dragDisabled}
-                className={merge(["tw-outline-none", isFocusVisible && FOCUS_STYLE])}
-                data-test-id="draggable-item"
-            >
+            <div className={merge(["tw-outline-none", isFocusVisible && FOCUS_STYLE])}>
                 {renderContent(item, { componentDragState, isFocusVisible })}
             </div>
         </div>
