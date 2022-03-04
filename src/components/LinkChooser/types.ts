@@ -51,7 +51,6 @@ export enum IconLabel {
 export type ExtraSection = {
     id: string;
     title: string;
-    items: (SearchResult | ImageSearchResult)[];
     getResults?: (query: string) => Promise<SearchResult[]>;
     renderPreview?: (item: SearchResult) => ReactElement;
 };
