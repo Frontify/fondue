@@ -1,7 +1,7 @@
 import React from "react";
 import { useDrop } from "react-dnd";
 import { merge } from "@utilities/merge";
-import { OrderableListItem } from "@components/OrderableListV2/types";
+import { OrderableListItem } from "@components/OrderableList/types";
 import { DropZonePosition } from "@utilities/dnd";
 
 export type OnDropCallback<T> = (
