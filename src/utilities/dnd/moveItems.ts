@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DraggableItem, DropZonePosition} from "@utilities/dnd/types";
+import { DraggableItem, DropZonePosition } from "@utilities/dnd/types";
 
 const updateItemsSort = <T extends object>(
     items: DraggableItem<T>[], // nodes without the moved node
