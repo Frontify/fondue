@@ -6,8 +6,8 @@ import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, FocusEvent, FormEvent, PropsWithChildren, ReactNode } from "react";
-import { Spinner } from "@components/TextInput";
 import { Validation, validationClassMap } from "@utilities/validation";
+import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
 
 export type TextareaProps = PropsWithChildren<{
     id?: string;
@@ -66,8 +66,8 @@ export const Textarea: FC<TextareaProps> = ({
                 {children}
             </textarea>
             {validation === Validation.Loading && (
-                <span className="tw-absolute tw-top-[-0.75rem] tw-right-[-0.75rem]">
-                    <Spinner />
+                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
+                    <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
             )}
         </div>

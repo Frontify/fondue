@@ -16,8 +16,8 @@ import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, ReactElement, useEffect, useRef } from "react";
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from "./useDropdownAutoHeight";
-import { Spinner } from "@components/TextInput";
 import { Validation } from "@utilities/validation";
+import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
 
 export enum DropdownSize {
     Small = "Small",
@@ -184,8 +184,8 @@ export const Dropdown: FC<DropdownProps> = ({
                 )}
             </AnimatePresence>
             {validation === Validation.Loading && (
-                <span className="tw-absolute tw-top-[-0.75rem] tw-right-[-0.75rem]">
-                    <Spinner />
+                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
+                    <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
             )}
         </div>

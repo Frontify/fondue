@@ -7,25 +7,15 @@ import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, FocusEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import React, { FC, FocusEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Validation, validationClassMap } from "@utilities/validation";
+import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
 
 export enum TextInputType {
     Text = "text",
     Password = "password",
     Number = "number",
 }
-
-export const Spinner = (): ReactElement => (
-    <svg className="tw-animate-spin" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="7.5" fill="white" stroke="#EAEBEB" />
-        <path
-            fill="white"
-            d="M16.3302 9.5C17.7109 11.8915 16.8915 14.9494 14.5 16.3301C12.1086 17.7108 9.05063 16.8915 7.66992 14.5"
-            stroke="#9088FF"
-        />
-    </svg>
-);
 
 export type TextInputBaseProps = {
     id?: string;
@@ -202,8 +192,8 @@ export const TextInput: FC<TextInputProps> = ({
                 </button>
             )}
             {validation === Validation.Loading && (
-                <span className="tw-absolute tw-top-[-0.75rem] tw-right-[-0.75rem]">
-                    <Spinner />
+                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
+                    <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
             )}
         </div>
