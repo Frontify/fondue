@@ -27,6 +27,7 @@
     font-size: var(--body-size-medium);
     border: none;
     background: none;
+    padding: 0 0 8px 0;
 }
 
 .react-datepicker-wrap .react-datepicker__day-names {
@@ -42,6 +43,7 @@
 
 .react-datepicker-wrap .react-datepicker__day {
     color: var(--box-disabled-color-inverse);
+    font-size: 13px;
 }
 
 .react-datepicker-wrap .react-datepicker__day-name, .react-datepicker__day, .react-datepicker__time-name {

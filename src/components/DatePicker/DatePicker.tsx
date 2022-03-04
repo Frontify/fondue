@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Button, ButtonSize, ButtonStyle } from "@components/Button/Button";
 import IconCaretLeftDouble from "@foundation/Icon/Generated/IconCaretLeftDouble";
 import IconCaretRightDouble from "@foundation/Icon/Generated/IconCaretRightDouble";
 import IconLeftCaret from "@foundation/Icon/Generated/IconLeftCaret";
@@ -57,22 +58,38 @@ export const DatePicker: FC<DatePickerProps> = ({
                 shouldCloseOnSelect={shouldCloseOnSelect}
                 dayClassName={(date) => (date < new Date() ? "past-date" : "future-date")}
                 renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
-                    <div className="tw-flex tw-justify-between tw-pt-2 tw-pb-6 tw-px-3">
-                        <button onClick={decreaseYear}>
-                            <IconCaretLeftDouble size={IconSize.Size20} />
-                        </button>
-                        <button onClick={decreaseMonth} className="tw-ml-4">
-                            <IconLeftCaret size={IconSize.Size20} />
-                        </button>
-                        <p className="tw-font-sans tw-font-semibold tw-grow">
+                    <div className="tw-flex tw-justify-between tw-pb-4 tw-px-0">
+                        <Button
+                            size={ButtonSize.Medium}
+                            style={ButtonStyle.Secondary}
+                            onClick={decreaseYear}
+                            solid={false}
+                            icon={<IconCaretLeftDouble size={IconSize.Size20} />}
+                        />
+                        <Button
+                            size={ButtonSize.Medium}
+                            style={ButtonStyle.Secondary}
+                            onClick={decreaseMonth}
+                            solid={false}
+                            icon={<IconLeftCaret size={IconSize.Size20} />}
+                        />
+                        <p className="tw-font-sans tw-font-semibold tw-grow tw-self-center">
                             {format(date, "MMMM")} {getYear(date)}
                         </p>
-                        <button onClick={increaseMonth} className="tw-mr-4">
-                            <IconRightCaret size={IconSize.Size20} />
-                        </button>
-                        <button onClick={increaseYear}>
-                            <IconCaretRightDouble size={IconSize.Size20} />
-                        </button>
+                        <Button
+                            size={ButtonSize.Medium}
+                            style={ButtonStyle.Secondary}
+                            onClick={increaseMonth}
+                            solid={false}
+                            icon={<IconRightCaret size={IconSize.Size20} />}
+                        />
+                        <Button
+                            size={ButtonSize.Medium}
+                            style={ButtonStyle.Secondary}
+                            onClick={increaseYear}
+                            solid={false}
+                            icon={<IconCaretRightDouble size={IconSize.Size20} />}
+                        />
                     </div>
                 )}
             />
