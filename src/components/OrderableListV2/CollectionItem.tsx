@@ -8,14 +8,19 @@ import { merge } from "@utilities/merge";
 import { CollectionItemProps, ItemDragState } from "./types";
 import { useDrag } from "react-dnd";
 
-export const CollectionItem = <T extends object>({ item, renderContent, dragDisabled }: CollectionItemProps<T>) => {
+export const CollectionItem = <T extends object>({
+    item,
+    renderContent,
+    dragDisabled,
+    listId,
+}: CollectionItemProps<T>) => {
     const { isFocusVisible } = useFocusRing();
     const [{ componentDragState }, drag] = useDrag({
         item: { ...item },
         collect: (monitor) => ({
             componentDragState: monitor.isDragging() ? ItemDragState.Dragging : ItemDragState.Idle,
         }),
-        type: "item",
+        type: listId,
         canDrag: !dragDisabled,
     });
     const id = useId();

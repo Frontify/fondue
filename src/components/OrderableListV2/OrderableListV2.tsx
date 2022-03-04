@@ -8,6 +8,7 @@ import { DropZone } from "@components/OrderableListV2/DropZone";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { DropZonePosition, moveItems } from "@utilities/dnd";
+import {useId} from "@react-aria/utils";
 
 const listItemsCompareFn = <T extends object>(itemA: OrderableListItem<T>, itemB: OrderableListItem<T>): number => {
     if (itemA.sort === null && itemB.sort === null) {
@@ -30,6 +31,8 @@ export const OrderableListV2 = <T extends object>({
     renderContent,
 }: OrderableListProps<T>) => {
     const [itemsState, setItemsState] = useState(items);
+    const listId = useId();
+
 
     useEffect(() => {
         // sort the incoming items
@@ -59,12 +62,14 @@ export const OrderableListV2 = <T extends object>({
                                 position: DropZonePosition.Before,
                             }}
                             onDrop={handleDrop}
+                            listId={listId}
                         />
                         <CollectionItem
                             key={item.id}
                             dragDisabled={dragDisabled}
                             item={item}
                             renderContent={renderContent}
+                            listId={listId}
                         />
                         {index === items.length - 1 && (
                             <DropZone
@@ -74,6 +79,7 @@ export const OrderableListV2 = <T extends object>({
                                     position: DropZonePosition.After,
                                 }}
                                 onDrop={handleDrop}
+                                listId={listId}
                             />
                         )}
                     </>

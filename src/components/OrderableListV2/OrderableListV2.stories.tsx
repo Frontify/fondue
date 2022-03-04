@@ -128,7 +128,7 @@ const renderContent = (
             <div>{textContent}</div>
             <hr className="tw-mt-3 tw-mb-2 tw-border-black-20 tw-bg-black-20" />
             <div className="tw-flex tw-justify-between tw-text-s">
-                <span className="tw-font-medium">{isFocusVisible && "Im in keyboard focus"}</span>
+                {isFocusVisible && <span className="tw-font-medium">Im in keyboard focus</span>}
                 <span>Drag State: {componentDragState}</span>
             </div>
         </div>
@@ -152,13 +152,23 @@ export const OrderableListV2: Story<OrderableListProps<StoryListItem>> = ({ onMo
     };
 
     return (
-        <div className="tw-m-auto tw-w-[600px]">
-            <OrderableListComponent
-                items={items}
-                onMove={chain(handleMove, onMove)}
-                dragDisabled={dragDisabled}
-                renderContent={(...args) => renderContent(...args)}
-            />
-        </div>
+        <>
+            <div className="tw-m-auto tw-w-[600px] tw-pb-6">
+                <OrderableListComponent
+                    items={items}
+                    onMove={chain(handleMove, onMove)}
+                    dragDisabled={dragDisabled}
+                    renderContent={(...args) => renderContent(...args)}
+                />
+            </div>
+            <div className="tw-m-auto tw-w-[600px]">
+                <OrderableListComponent
+                    items={items}
+                    onMove={chain(handleMove, onMove)}
+                    dragDisabled={dragDisabled}
+                    renderContent={(...args) => renderContent(...args)}
+                />
+            </div>
+        </>
     );
 };

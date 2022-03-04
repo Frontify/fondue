@@ -18,12 +18,13 @@ type DropZoneData<T> = {
 export type DropZoneProps<T> = {
     data: DropZoneData<T>;
     onDrop?: OnDropCallback<T>;
+    listId: string;
     children?: JSX.Element;
 };
 
-export const DropZone = <T extends object>({ data, onDrop, children }: DropZoneProps<T>) => {
+export const DropZone = <T extends object>({ data, onDrop, children, listId }: DropZoneProps<T>) => {
     const [{ isOver, canDrop }, drop] = useDrop({
-        accept: "item",
+        accept: listId,
         drop: (item: OrderableListItem<T>) => {
             onDrop?.(data.targetItem, item, data.position);
         },
@@ -46,11 +47,11 @@ export const DropZone = <T extends object>({ data, onDrop, children }: DropZoneP
     return (
         <div
             role="row"
-            aria-hidden={isActive ? "false" : "true"}
+            aria-hidden={!isActive}
             data-test-id="drop-zone"
             className={merge([
-                "tw-w-full tw-outline-none tw-z-20 tw-relative tw-h-[2px] tw-mb-[-2px]",
-                isActive ? "tw-bg-violet-60" : "",
+                "tw-w-full tw-outline-none tw-relative tw-z-20 tw-h-[10px] tw-my-[-4px] tw-py-1",
+                isActive ? "tw-bg-violet-60 tw-bg-clip-content" : "",
             ])}
             ref={drop}
         >

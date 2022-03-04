@@ -9,6 +9,7 @@ export type CollectionItemProps<T> = {
     item: OrderableListItem<T>;
     dragDisabled: boolean;
     renderContent: RenderListItem<T>;
+    listId: string;
 };
 
 export type OrderableListItem<T = Record<string, unknown>> = DraggableItem<T> & {
