@@ -5,7 +5,6 @@ import { merge } from "@utilities/merge";
 import {
     PatternDesign,
     patternDesigns,
-    patternDesignsSvg,
     PatternScale,
     patternScales,
     PatternTheme,
@@ -24,22 +23,12 @@ export const FrontifyPattern: FC<FrontifyPatternProps> = ({
     foregroundColor = PatternTheme.Black,
 }) => {
     return (
-        // <div
-        //     data-test-id="frontify-pattern"
-        //     className={merge(["tw-w-full tw-h-full tw-bg-cover tw-bg-center", patternThemes[foregroundColor]])}
-        //     style={{
-        //         backgroundImage: `url(${patternDesignsSvg[pattern]})`,
-        //         transform: `scale(${patternScales[scale]})`,
-        //     }}
-        // />
         <div
             data-test-id="frontify-pattern"
             className={merge(["tw-h-full", patternThemes[foregroundColor]])}
             style={{ transform: `scale(${patternScales[scale]})` }}
         >
-            {cloneElement(patternDesigns[pattern ?? PatternDesign.DigitalAssets], {
-                className: "tw-h-full",
-            })}
+            {cloneElement(patternDesigns[pattern ?? PatternDesign.DigitalAssets])}
         </div>
     );
 };

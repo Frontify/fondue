@@ -7,8 +7,7 @@ import { ModalVisual } from "./ModalVisual";
 import { ModalHeader } from "./ModalHeader";
 import { ModalFooter } from "./ModalFooter";
 
-export const Modal: FC<ModalProps> = ({ visual, scale, foregroundColor, children }) => {
-    console.log(children);
+export const Modal: FC<ModalProps> = ({ visual }) => {
     return (
         <div
             data-test-id="modal-container"
@@ -16,7 +15,7 @@ export const Modal: FC<ModalProps> = ({ visual, scale, foregroundColor, children
         >
             {visual && (
                 <div className="tw-w-[260px] tw-relative">
-                    <ModalVisual pattern={visual} scale={scale} foregroundColor={foregroundColor} />
+                    <ModalVisual {...visual} />
                 </div>
             )}
             <div className="tw-flex-1">

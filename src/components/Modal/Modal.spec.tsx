@@ -5,10 +5,10 @@ import { mount } from "@cypress/react";
 import { Modal } from "./Modal";
 
 describe("Modal Component", () => {
-    it("should render foo text correctly", () => {
+    it("should exist", () => {
         mount(<Modal />);
 
-        cy.get("[data-test-id=modal]").as("Modal");
+        cy.get("[data-test-id=modal-container]").as("Modal");
 
         cy.get("@Modal").should("exist");
     });
