@@ -14,11 +14,27 @@ export type ModalVisualProps = {
     foregroundColor?: PatternTheme;
 };
 
+export enum ModalHeaderVariant {
+    Default = "Default",
+    Informative = "Informative",
+    Negative = "Negative",
+    Positive = "Positive",
+    Warning = "Warning",
+}
+
+export const modalHeaderVariants: Record<ModalHeaderVariant, string> = {
+    [ModalHeaderVariant.Default]: "tw-text-grey-80",
+    [ModalHeaderVariant.Informative]: "tw-text-violet-bright",
+    [ModalHeaderVariant.Negative]: "tw-text-red-bright",
+    [ModalHeaderVariant.Positive]: "tw-text-green-bright",
+    [ModalHeaderVariant.Warning]: "tw-text-yellow-bright",
+};
+
 export type ModalHeaderProps = {
     title?: string;
     leadText?: string;
     decorator?: ReactElement;
-    variant?: "Negative" | "Positive" | "Warning" | "Informative";
+    variant?: ModalHeaderVariant;
 };
 
 export type ModalBodyProps = {
@@ -31,7 +47,6 @@ export type ModalFooterProps = {
 
 export type ModalProps = {
     visual?: ModalVisualProps;
-    scale?: PatternScale;
-    foregroundColor?: PatternTheme;
+    header?: ReactElement;
     children?: ReactChild | ReactChild[];
 };
