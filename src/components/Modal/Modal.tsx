@@ -10,14 +10,14 @@ export const Modal: FC<ModalProps> = ({ visual, header }) => {
     return (
         <div
             data-test-id="modal-container"
-            className="tw-max-w-[790px] tw-max-h-[600px] tw-h-[1000px] tw-flex tw-shadow-xl"
+            className="tw-max-w-[790px] tw-max-h-[600px] tw-flex tw-border tw-border-solid tw-border-grey-20 tw-rounded tw-shadow-xl"
         >
             {visual && (
                 <div className="tw-w-[260px] tw-relative">
                     <ModalVisual {...visual} />
                 </div>
             )}
-            <div className="tw-flex-1">
+            <div className="tw-flex-1 tw-p-14">
                 {header}
                 <ModalBody />
                 <ModalFooter />
