@@ -15,7 +15,10 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
         <div data-test-id="modal-header" className="">
             <div className="tw-flex tw-items-center">
                 {decorator && (
-                    <span className={merge(["tw-mr-2", modalHeaderVariants[variant]])}>
+                    <span
+                        data-test-id="modal-header-decorator-container"
+                        className={merge(["tw-mr-2", modalHeaderVariants[variant]])}
+                    >
                         {cloneElement(decorator, { size: IconSize.Size24 })}
                     </span>
                 )}

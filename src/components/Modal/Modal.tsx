@@ -2,9 +2,7 @@
 
 import React, { FC } from "react";
 import { ModalProps } from "./types";
-import { ModalBody } from "./ModalBody";
 import { ModalVisual } from "./ModalVisual";
-import { ModalFooter } from "./ModalFooter";
 
 export const Modal: FC<ModalProps> = ({ visual, header }) => {
     return (
@@ -17,11 +15,7 @@ export const Modal: FC<ModalProps> = ({ visual, header }) => {
                     <ModalVisual {...visual} />
                 </div>
             )}
-            <div className="tw-flex-1 tw-p-14">
-                {header}
-                <ModalBody />
-                <ModalFooter />
-            </div>
+            <div className="tw-flex-1 tw-p-14">{header}</div>
         </div>
     );
 };
