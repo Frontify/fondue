@@ -4,8 +4,8 @@ import React from "react";
 import { Modal } from "./Modal";
 import { Button } from "@components/Button";
 import { ModalHeader } from "./ModalHeader";
+import { IconIcons } from "@foundation/Icon";
 import { Story, Meta } from "@storybook/react";
-import { IconIcons, IconSize } from "@foundation/Icon";
 import { ModalHeaderVariant, ModalProps } from "./types";
 import { PatternDesign, PatternScale, PatternTheme } from "@foundation/Pattern";
 
@@ -27,7 +27,7 @@ export const Default: Story<ModalProps> = () => {
                 <ModalHeader
                     title="Modal header"
                     leadText="The Home for Brand Management"
-                    decorator={<IconIcons size={IconSize.Size24} />}
+                    decorator={<IconIcons />}
                     variant={ModalHeaderVariant.Informative}
                 />
             }
