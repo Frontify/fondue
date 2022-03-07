@@ -1,17 +1,17 @@
 import React from "react";
-import { useDrop } from "react-dnd";
-import { merge } from "@utilities/merge";
-import { OrderableListItem } from "@components/OrderableList/types";
-import { DropZonePosition } from "@utilities/dnd";
+import {useDrop} from "react-dnd";
+import {merge} from "@utilities/merge";
+import {OrderableListItem} from "@components/OrderableList/types";
+import {DraggableItem, DropZonePosition} from "@utilities/dnd";
 
 export type OnDropCallback<T> = (
-    targetItem: OrderableListItem<T>,
-    sourceItem: OrderableListItem<T>,
+    targetItem: DraggableItem<T>,
+    sourceItem: DraggableItem<T>,
     position: DropZonePosition,
 ) => void;
 
 type DropZoneData<T> = {
-    targetItem: OrderableListItem<T>;
+    targetItem: DraggableItem<T>;
     position: DropZonePosition;
 };
 
@@ -50,8 +50,14 @@ export const DropZone = <T extends object>({ data, onDrop, children, listId }: D
             aria-hidden={!isActive}
             data-test-id="drop-zone"
             className={merge([
-                "tw-w-full tw-outline-none tw-relative tw-z-20 tw-h-[10px] tw-my-[-4px] tw-py-1",
-                isActive ? "tw-bg-violet-60 tw-bg-clip-content" : "",
+                "tw-w-full tw-transition-height",
+                data.position !== DropZonePosition.Within
+                    ? "tw-my-[-4px] tw-h-[10px] tw-py-1 tw-outline-none tw-relative tw-z-20"
+                    : "tw-h-auto",
+                isActive && data.position !== DropZonePosition.Within
+                    ? "tw-border-violet-60 tw-border-2 tw-h-7 tw-bg-clip-content"
+                    : "",
+                isActive && data.position === DropZonePosition.Within ? "tw-bg-violet-20" : "",
             ])}
             ref={drop}
         >

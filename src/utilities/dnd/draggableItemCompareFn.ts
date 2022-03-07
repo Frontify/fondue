@@ -2,7 +2,7 @@
 
 import { DraggableItem } from "@utilities/dnd/types";
 
-export const draggableItemCompareFn = (itemA: DraggableItem, itemB: DraggableItem): number => {
+export const draggableItemCompareFn = <T extends object>(itemA: DraggableItem<T>, itemB: DraggableItem<T>): number => {
     if (itemA.sort === null && itemB.sort === null) {
         return 1;
     }

@@ -1,20 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactElement, useState } from "react";
-import { IconProps } from "@foundation/Icon/IconProps";
 import { IconSize } from "@foundation/Icon/IconSize";
 import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
 import IconCaretRight from "@foundation/Icon/Generated/IconCaretRight";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDrag } from "react-dnd";
-import { DropZone, DropZonePosition, OnDropCallback } from "@components/Tree/DropZone";
+import { DropZone, OnDropCallback } from "@components/DropZone";
+import { TreeListItem } from "@components/Tree/Tree";
+import { DraggableItem, DropZonePosition } from "@utilities/dnd";
 
 export const renderNodeArray = (
-    nodes: TreeNodeProps[],
+    nodes: DraggableItem<TreeNodeProps>[],
     activeNodeId: NullableString,
+    listId: string,
     onClick: (id: NullableString) => void,
-    onDrop?: OnDropCallback,
+    onDrop?: OnDropCallback<TreeNodeProps>,
     parentIds?: string[],
 ) =>
     nodes.map((node, i) => (
@@ -27,27 +29,23 @@ export const renderNodeArray = (
             isFirst={i === 0}
             onDrop={onDrop}
             parentIds={parentIds}
+            listId={listId}
         />
     ));
 
-export interface TreeNodeProps {
-    id: string;
-    name: string;
-    icon?: ReactElement<IconProps>;
-    label?: string;
-    value?: string;
-    nodes?: TreeNodeProps[];
-    actions?: React.ReactNode[];
+export interface TreeNodeProps extends TreeListItem {
+    nodes?: DraggableItem<TreeNodeProps>[];
 }
 
 type NodeProps = {
-    node: TreeNodeProps;
+    node: DraggableItem<TreeNodeProps>;
     strong?: boolean;
     activeNodeId?: NullableString;
     parentIds?: string[];
     onClick: (id: NullableString) => void;
     isFirst: boolean;
-    onDrop?: OnDropCallback;
+    listId: string;
+    onDrop?: OnDropCallback<TreeNodeProps>;
 };
 
 export const TreeNode = ({
@@ -58,6 +56,7 @@ export const TreeNode = ({
     parentIds = [],
     isFirst,
     onDrop,
+    listId,
 }: NodeProps): ReactElement<NodeProps> => {
     const { id, value, name, label, icon, nodes, actions } = node;
     const [{ opacity }, drag] = useDrag({
@@ -65,7 +64,7 @@ export const TreeNode = ({
         collect: (monitor) => ({
             opacity: monitor.isDragging() ? 0.4 : 1,
         }),
-        type: "item",
+        type: listId,
         canDrag: onDrop !== undefined,
     });
     const [showNodes, setShowNodes] = useState(false);
@@ -101,17 +100,19 @@ export const TreeNode = ({
                 <DropZone
                     data={{
                         targetItem: node,
-                        position: DropZonePosition.BEFORE,
+                        position: DropZonePosition.Before,
                     }}
                     onDrop={onDrop}
+                    listId={listId}
                 />
             )}
             <DropZone
                 data={{
                     targetItem: node,
-                    position: DropZonePosition.WITHIN,
+                    position: DropZonePosition.Within,
                 }}
                 onDrop={onDrop}
+                listId={listId}
             >
                 <div
                     className={merge([
@@ -173,15 +174,16 @@ export const TreeNode = ({
                     className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left"
                     data-test-id="sub-tree"
                 >
-                    {renderNodeArray(nodes, activeNodeId, onClick, onDrop, [...parentIds, id])}
+                    {renderNodeArray(nodes, activeNodeId, listId, onClick, onDrop, [...parentIds, id])}
                 </ul>
             )}
             <DropZone
                 data={{
                     targetItem: node,
-                    position: DropZonePosition.AFTER,
+                    position: DropZonePosition.After,
                 }}
                 onDrop={onDrop}
+                listId={listId}
             />
         </li>
     );

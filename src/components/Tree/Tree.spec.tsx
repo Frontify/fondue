@@ -19,7 +19,7 @@ const Component: FC<ComponentProps> = ({ nodes, onDrop }) => {
             nodes={nodes}
             activeNodeId={selectedId}
             onSelect={(id: NullableString) => setSelectedId(id)}
-            onDrop={onDrop}
+            handleUpdate={onDrop}
         />
     );
 };
