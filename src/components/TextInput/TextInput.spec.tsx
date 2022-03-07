@@ -134,8 +134,18 @@ describe("Text Input component", () => {
         cy.get(TEXT_INPUT_ID).should("have.attr", "autoComplete", "off");
     });
 
+    it("has the readonly prop turned off by default", () => {
+        mount(<StatefulInput />);
+        cy.get(TEXT_INPUT_ID).should("have.attr", "readOnly", "off");
+    });
+
+    it("turns the input into readonly", () => {
+        mount(<StatefulInput readOnly />);
+        cy.get(TEXT_INPUT_ID).should("have.attr", "readOnly", "true");
+    });
+
     it("has the autoComplete turned off by default", () => {
         mount(<StatefulInput />);
-        cy.get(TEXT_INPUT_ID).should("have.attr", "autoComplete", "off");
+        cy.get(TEXT_INPUT_ID).should("have.attr", "autoComplete", "false");
     });
 });

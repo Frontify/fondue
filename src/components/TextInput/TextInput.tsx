@@ -50,6 +50,7 @@ export type TextInputBaseProps = {
     required?: boolean;
     disabled?: boolean;
     autocomplete?: boolean;
+    readOnly?: boolean;
     validation?: Validation;
     value?: string;
     onChange?: (value: string) => void;
@@ -95,6 +96,7 @@ export const TextInput: FC<TextInputProps> = ({
     onClear,
     size,
     spellcheck,
+    readOnly,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
@@ -131,7 +133,7 @@ export const TextInput: FC<TextInputProps> = ({
             className={merge([
                 "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent",
                 dotted ? "tw-border-dashed" : "tw-border-solid",
-                disabled
+                disabled || readOnly
                     ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90"
                     : merge([
                           "focus-within:tw-border-black-90",
@@ -156,7 +158,7 @@ export const TextInput: FC<TextInputProps> = ({
                 ref={inputElement}
                 className={merge([
                     "tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows",
-                    disabled
+                    disabled || readOnly
                         ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40"
                         : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
                 ])}
@@ -168,6 +170,7 @@ export const TextInput: FC<TextInputProps> = ({
                 value={value}
                 type={getInputType()}
                 required={required}
+                readOnly={readOnly}
                 disabled={disabled}
                 autoComplete={autocomplete ? "on" : "off"}
                 size={size}
