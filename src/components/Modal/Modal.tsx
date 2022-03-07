@@ -20,7 +20,7 @@ export const Modal: FC<ModalProps> = ({ visual, header, children }) => {
             )}
             <div className="tw-flex-1 tw-p-14">
                 {header}
-                <ModalBody>{children}</ModalBody>
+                {children && <ModalBody>{children}</ModalBody>}
             </div>
         </div>
     );
