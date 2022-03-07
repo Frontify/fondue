@@ -3,7 +3,6 @@
 import React from "react";
 import { Modal } from "./Modal";
 import { mount } from "@cypress/react";
-import { ModalBody } from "./ModalBody";
 import { ModalHeader } from "./ModalHeader";
 import { IconIcons } from "@foundation/Icon";
 import { ModalHeaderVariant } from "./types";
@@ -67,7 +66,11 @@ describe("Modal Component", () => {
     });
 
     it("should render the modal with a body", () => {
-        mount(<Modal body={<ModalBody />} />);
+        mount(
+            <Modal>
+                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
+            </Modal>,
+        );
 
         cy.get(MODAL_BODY).should("exist");
     });

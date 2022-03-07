@@ -2,9 +2,12 @@
 
 import React, { FC } from "react";
 import { ModalProps } from "./types";
+import { ModalBody } from "./ModalBody";
 import { ModalVisual } from "./ModalVisual";
 
-export const Modal: FC<ModalProps> = ({ visual, header, body }) => {
+export const Modal: FC<ModalProps> = ({ visual, header, children }) => {
+    console.log(children);
+
     return (
         <div
             data-test-id="modal-container"
@@ -17,7 +20,7 @@ export const Modal: FC<ModalProps> = ({ visual, header, body }) => {
             )}
             <div className="tw-flex-1 tw-p-14">
                 {header}
-                {body}
+                <ModalBody>{children}</ModalBody>
             </div>
         </div>
     );

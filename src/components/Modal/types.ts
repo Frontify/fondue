@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactChild, ReactElement } from "react";
+import { ReactElement } from "react";
 import { PatternDesign, PatternScale, PatternTheme } from "@foundation/Pattern";
 
 export type ModalButton = {
@@ -37,8 +37,10 @@ export type ModalHeaderProps = {
     variant?: ModalHeaderVariant;
 };
 
+type ModalBodyChildren = ReactElement | ReactElement[];
+
 export type ModalBodyProps = {
-    children?: ReactElement;
+    children?: ModalBodyChildren;
 };
 
 export type ModalFooterProps = {
@@ -48,6 +50,5 @@ export type ModalFooterProps = {
 export type ModalProps = {
     visual?: ModalVisualProps;
     header?: ReactElement;
-    body?: ReactElement;
-    children?: ReactChild | ReactChild[];
+    children?: ModalBodyChildren;
 };
