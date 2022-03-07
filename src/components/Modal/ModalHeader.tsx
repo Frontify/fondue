@@ -12,7 +12,7 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
     variant = ModalHeaderVariant.Default,
 }) => {
     return (
-        <div data-test-id="modal-header" className="tw-mb-6">
+        <div data-test-id="modal-header">
             <div className="tw-flex tw-items-center">
                 {decorator && (
                     <span

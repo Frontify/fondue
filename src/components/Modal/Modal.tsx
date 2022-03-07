@@ -16,7 +16,7 @@ export const Modal: FC<ModalProps> = ({ visual, header, children }) => {
                     <ModalVisual {...visual} />
                 </div>
             )}
-            <div className="tw-flex-1 tw-p-14">
+            <div className="tw-flex-1 tw-space-y-6 tw-p-14">
                 {header}
                 {children && <ModalBody>{children}</ModalBody>}
             </div>
