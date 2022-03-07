@@ -1,6 +1,6 @@
 import IconImageLibrary from "@foundation/Icon/Generated/IconImageLibrary";
 import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternative";
-import React from "react";
+import React, { FC } from "react";
 import { AssetProps } from "./AssetInput";
 
 export const AssetSubline: FC<Pick<AssetProps, "asset" | "isLoading">> = ({ asset, isLoading = false }) => {
