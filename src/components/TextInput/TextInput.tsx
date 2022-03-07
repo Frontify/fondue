@@ -5,7 +5,7 @@ import IconView from "@foundation/Icon/Generated/IconView";
 import IconViewSlash from "@foundation/Icon/Generated/IconViewSlash";
 import IconCopyToClipboard from "@foundation/Icon/Generated/IconCopyToClipboard";
 import IconCheck from "@foundation/Icon/Generated/IconCheck";
-import IconRejectCircle from "@foundation/Icon/Generated/IconCheck";
+import IconRejectCircle from "@foundation/Icon/Generated/IconRejectCircle";
 import { useCopy } from "@hooks/useCopy";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
