@@ -10,7 +10,7 @@ jobs:
 
         steps:
             - name: Checkout default branch
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
             - name: Use Node.js 16
               uses: actions/setup-node@v2
@@ -48,7 +48,7 @@ jobs:
 
         steps:
             - name: Checkout default branch
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
             - name: Use Node.js 16 (npm repository)
               uses: actions/setup-node@v2
