@@ -238,7 +238,7 @@ export const TextInput: FC<TextInputProps> = ({
                     ])}
                     onClick={() => copy(value)}
                     data-test-id="copy-icon"
-                    title="Copy"
+                    title="Copy input value"
                     disabled={disabled}
                     {...copyButtonFocusProps}
                 >
