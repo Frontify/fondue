@@ -11,6 +11,7 @@ import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternat
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { AssetInput, AssetInputProps, AssetInputSize } from "./AssetInput";
+import { MultiAssetPreview, MultiAssetPreviewProps } from "./MultiAssetPreview";
 
 const actions = [
     {
@@ -153,4 +154,113 @@ Icon.args = {
         icon: <IconIcons />,
     },
     actions,
+};
+
+const TemplateMultiInput: Story<MultiAssetPreviewProps> = (args) => {
+    return <MultiAssetPreview {...args} />;
+};
+
+export const MultiInputOneImage = TemplateMultiInput.bind({});
+
+MultiInputOneImage.args = {
+    assets: [
+        {
+            name: "foo1",
+            size: 2000,
+            type: "image",
+            extension: "JPG",
+            src: "https://picsum.photos/100/150",
+            source: "library",
+            sourceName: "",
+        },
+    ],
+    numberOfLocations: 1,
+    assetsAmount: 1,
+};
+
+export const WithImageAssets = TemplateMultiInput.bind({});
+
+WithImageAssets.args = {
+    assets: [
+        {
+            name: "foo1",
+            size: 2000,
+            type: "image",
+            extension: "JPG",
+            src: "https://picsum.photos/100/150",
+            source: "library",
+            sourceName: "",
+        },
+        {
+            name: "foo2",
+            size: 2000,
+            type: "image",
+            extension: "JPG",
+            src: "https://picsum.photos/200/200",
+            source: "library",
+            sourceName: "",
+        },
+        {
+            name: "foo3",
+            size: 2000,
+            type: "image",
+            extension: "JPG",
+            src: "https://picsum.photos/100/100",
+            source: "library",
+            sourceName: "",
+        },
+        {
+            name: "foo4",
+            size: 1000,
+            type: "image",
+            extension: "JPG",
+            src: "https://picsum.photos/400/200",
+            source: "library",
+            sourceName: "",
+        },
+    ],
+    numberOfLocations: 2,
+    assetsAmount: 4,
+};
+
+export const WithMixedAssets = TemplateMultiInput.bind({});
+
+WithMixedAssets.args = {
+    assets: [
+        {
+            name: "foo2",
+            size: 2000,
+            type: "image",
+            extension: "JPG",
+            src: "https://picsum.photos/200/200",
+            source: "library",
+            sourceName: "",
+        },
+        {
+            name: "foo3",
+            size: 2000,
+            type: "image",
+            extension: "JPG",
+            src: "https://picsum.photos/100/100",
+            source: "library",
+            sourceName: "",
+        },
+        {
+            source: "library",
+            sourceName: "Foobar",
+            name: "foo",
+            type: "icon",
+            icon: <IconIcons />,
+        },
+        {
+            source: "library",
+            sourceName: "Foobar",
+            name: "foo",
+            extension: "MP3",
+            size: 2000,
+            type: "audio",
+        },
+    ],
+    numberOfLocations: 12,
+    assetsAmount: 25,
 };
