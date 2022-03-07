@@ -19,7 +19,7 @@ export default {
         type: TextInputType.Text,
         validation: Validation.Default,
         spellcheck: true,
-        copyable: true,
+        copyable: false,
     },
     argTypes: {
         validation: {
