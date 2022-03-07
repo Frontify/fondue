@@ -2,6 +2,7 @@
 
 import { ReactElement } from "react";
 import { PatternDesign, PatternScale, PatternTheme } from "@foundation/Pattern";
+import { ScrollWrapperDirection } from "@components/ScrollWrapper/types";
 
 export type ModalButton = {
     label: string;
@@ -40,6 +41,7 @@ export type ModalHeaderProps = {
 type ModalBodyChildren = ReactElement | ReactElement[];
 
 export type ModalBodyProps = {
+    direction?: ScrollWrapperDirection;
     children?: ModalBodyChildren;
 };
 
@@ -50,6 +52,6 @@ export type ModalFooterProps = {
 export type ModalProps = {
     visual?: ModalVisualProps;
     header?: ReactElement;
-    footer?: [ModalButton] | [ModalButton, ModalButton];
+    footer?: ReactElement;
     children?: ModalBodyChildren;
 };

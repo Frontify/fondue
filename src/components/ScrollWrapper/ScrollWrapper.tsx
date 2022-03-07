@@ -1,11 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { merge } from "@utilities/merge";
 import React, { FC } from "react";
-import { ScrollWrapperProps } from "./types";
+import { ScrollWrapperDirection, scrollWrapperDirections, ScrollWrapperProps } from "./types";
 
-export const ScrollWrapper: FC<ScrollWrapperProps> = ({ children }) => {
+export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction, children }) => {
     return (
-        <div data-test-id="scroll-wrapper" className="tw-w-full tw-h-full tw-overflow-y-scroll">
+        <div
+            data-test-id="scroll-wrapper"
+            className={merge([scrollWrapperDirections[direction ?? ScrollWrapperDirection.Vertical]])}
+        >
             {children}
         </div>
     );

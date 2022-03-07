@@ -2,9 +2,7 @@
 
 import React, { FC } from "react";
 import { ModalProps } from "./types";
-import { ModalBody } from "./ModalBody";
 import { ModalVisual } from "./ModalVisual";
-import { ModalFooter } from "./ModalFooter";
 
 export const Modal: FC<ModalProps> = ({ visual, header, footer, children }) => {
     return (
@@ -13,14 +11,14 @@ export const Modal: FC<ModalProps> = ({ visual, header, footer, children }) => {
             className="tw-max-w-[790px] tw-max-h-[600px] tw-flex tw-border tw-border-solid tw-border-grey-20 tw-rounded tw-shadow-2xl"
         >
             {visual && (
-                <div className="tw-w-[260px] tw-relative">
+                <div className="tw-w-[260px] tw-relative tw-flex-shrink-0">
                     <ModalVisual {...visual} />
                 </div>
             )}
-            <div className="tw-flex tw-flex-col tw-flex-1 tw-space-y-6 tw-p-14">
+            <div className="tw-flex tw-flex-col tw-flex-1 tw-space-y-6 tw-p-14 tw-overflow-hidden">
                 {header}
-                {children && <ModalBody>{children}</ModalBody>}
-                {footer && <ModalFooter buttons={footer} />}
+                {children}
+                {footer}
             </div>
         </div>
     );

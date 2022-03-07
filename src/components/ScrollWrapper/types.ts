@@ -3,17 +3,15 @@
 import { ReactElement } from "react";
 
 export enum ScrollWrapperDirection {
-    None = "None",
     Both = "Both",
     Horizontal = "Horizontal",
     Vertical = "Vertical",
 }
 
 export const scrollWrapperDirections: Record<ScrollWrapperDirection, string> = {
-    [ScrollWrapperDirection.None]: "",
-    [ScrollWrapperDirection.Both]: "tw-",
-    [ScrollWrapperDirection.Horizontal]: "tw-",
-    [ScrollWrapperDirection.Vertical]: "tw-",
+    [ScrollWrapperDirection.Both]: "tw-w-full tw-h-full tw-overflow-scroll",
+    [ScrollWrapperDirection.Horizontal]: "tw-w-full tw-overflow-x-scroll",
+    [ScrollWrapperDirection.Vertical]: "tw-h-full tw-overflow-y-scroll",
 };
 
 export type ScrollWrapperProps = {
