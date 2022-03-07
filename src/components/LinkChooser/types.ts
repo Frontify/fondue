@@ -46,6 +46,7 @@ export enum IconLabel {
     Link = "LINK",
     External = "EXTERNAL",
     Template = "TEMPLATE",
+    Guidelines = "GUIDELINES",
 }
 
 export type ExtraSection = {

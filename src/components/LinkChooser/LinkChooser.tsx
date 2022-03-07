@@ -8,6 +8,7 @@ import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import IconPatternLibrary from "@foundation/Icon/Generated/IconDocument";
 import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
+import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
 import IconLink from "@foundation/Icon/Generated/IconLink";
 import IconTemplate from "@foundation/Icon/Generated/IconTemplate";
 import { useComboBox } from "@react-aria/combobox";
@@ -35,6 +36,7 @@ export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Link]: <IconLink />,
     [IconLabel.External]: <IconExternalLink />,
     [IconLabel.Template]: <IconTemplate />,
+    [IconLabel.Guidelines]: <IconGuidelines />,
     [IconLabel.Block]: <IconPatternLibrary />,
 };
 
