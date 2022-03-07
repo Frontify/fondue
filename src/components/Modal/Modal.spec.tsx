@@ -3,6 +3,7 @@
 import React from "react";
 import { Modal } from "./Modal";
 import { mount } from "@cypress/react";
+import { ModalBody } from "./ModalBody";
 import { ModalHeader } from "./ModalHeader";
 import { IconIcons } from "@foundation/Icon";
 import { ModalHeaderVariant } from "./types";
@@ -63,5 +64,11 @@ describe("Modal Component", () => {
         cy.get(MODAL_HEADER).should("contain.text", title).and("contain.text", leadText);
         cy.get(MODAL_HEADER_DECORATOR).should("be.visible").and("have.class", "tw-text-violet-bright");
         cy.get(GENERIC_ICON_CODE).should("be.visible").and("have.class", "tw-h-6 tw-w-6");
+    });
+
+    it("should render the modal with a body", () => {
+        mount(<Modal body={<ModalBody />} />);
+
+        cy.get(MODAL_BODY).should("exist");
     });
 });

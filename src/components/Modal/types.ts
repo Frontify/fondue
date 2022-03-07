@@ -48,5 +48,6 @@ export type ModalFooterProps = {
 export type ModalProps = {
     visual?: ModalVisualProps;
     header?: ReactElement;
+    body?: ReactElement;
     children?: ReactChild | ReactChild[];
 };

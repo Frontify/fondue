@@ -4,7 +4,7 @@ import React, { FC } from "react";
 import { ModalProps } from "./types";
 import { ModalVisual } from "./ModalVisual";
 
-export const Modal: FC<ModalProps> = ({ visual, header }) => {
+export const Modal: FC<ModalProps> = ({ visual, header, body }) => {
     return (
         <div
             data-test-id="modal-container"
@@ -15,7 +15,10 @@ export const Modal: FC<ModalProps> = ({ visual, header }) => {
                     <ModalVisual {...visual} />
                 </div>
             )}
-            <div className="tw-flex-1 tw-p-14">{header}</div>
+            <div className="tw-flex-1 tw-p-14">
+                {header}
+                {body}
+            </div>
         </div>
     );
 };

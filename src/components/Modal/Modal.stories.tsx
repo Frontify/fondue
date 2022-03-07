@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Modal } from "./Modal";
+import { ModalBody } from "./ModalBody";
 import { Button } from "@components/Button";
 import { ModalHeader } from "./ModalHeader";
 import { IconIcons } from "@foundation/Icon";
@@ -31,6 +32,7 @@ export const Default: Story<ModalProps> = () => {
                     variant={ModalHeaderVariant.Informative}
                 />
             }
+            body={<ModalBody />}
         >
             <Button>Button</Button>
         </Modal>
