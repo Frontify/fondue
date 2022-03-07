@@ -6,8 +6,6 @@ import { ModalBody } from "./ModalBody";
 import { ModalVisual } from "./ModalVisual";
 
 export const Modal: FC<ModalProps> = ({ visual, header, children }) => {
-    console.log(children);
-
     return (
         <div
             data-test-id="modal-container"
