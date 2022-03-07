@@ -50,5 +50,6 @@ export type ModalFooterProps = {
 export type ModalProps = {
     visual?: ModalVisualProps;
     header?: ReactElement;
+    footer?: [ModalButton] | [ModalButton, ModalButton];
     children?: ModalBodyChildren;
 };

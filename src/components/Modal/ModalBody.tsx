@@ -6,7 +6,7 @@ import { ScrollWrapper } from "@components/ScrollWrapper/ScrollWrapper";
 
 export const ModalBody: FC<ModalBodyProps> = ({ children }) => {
     return (
-        <div data-test-id="modal-body" className="tw-bg-grey-30">
+        <div data-test-id="modal-body" className="tw-overflow-hidden">
             <ScrollWrapper>{children}</ScrollWrapper>
         </div>
     );
