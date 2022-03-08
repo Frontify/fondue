@@ -156,7 +156,7 @@ describe("Text Input component", () => {
         cy.get(COPY_ICON_ID).realClick();
         cy.window().then((win) => {
             win.navigator.clipboard.readText().then((text) => {
-                expect(text).to.equal(INPUT_TEXT);
+                expect(text).to.equal(PASSWORD);
             });
         });
         cy.get(VISIBILITY_ICON_ID).click();
