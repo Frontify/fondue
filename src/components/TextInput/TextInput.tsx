@@ -3,6 +3,10 @@
 import IconReject from "@foundation/Icon/Generated/IconReject";
 import IconView from "@foundation/Icon/Generated/IconView";
 import IconViewSlash from "@foundation/Icon/Generated/IconViewSlash";
+import IconCopyToClipboard from "@foundation/Icon/Generated/IconCopyToClipboard";
+import IconCheck from "@foundation/Icon/Generated/IconCheck";
+import IconRejectCircle from "@foundation/Icon/Generated/IconRejectCircle";
+import { useCopy } from "@hooks/useCopy";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
@@ -50,8 +54,9 @@ export type TextInputBaseProps = {
     required?: boolean;
     disabled?: boolean;
     autocomplete?: boolean;
-    readOnly?: boolean;
+    readonly?: boolean;
     validation?: Validation;
+    copyable?: boolean;
     value?: string;
     onChange?: (value: string) => void;
     onEnterPressed?: (event: KeyboardEvent<HTMLInputElement>) => void;
@@ -90,17 +95,22 @@ export const TextInput: FC<TextInputProps> = ({
     autocomplete = false,
     dotted = false,
     value = "",
+    copyable = false,
     onChange,
     onEnterPressed,
     onBlur,
     onClear,
     size,
     spellcheck,
-    readOnly,
+    readonly,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
     const { isFocusVisible: passwordButtonIsFocusVisible, focusProps: passwordButtonFocusProps } = useFocusRing();
+    const { isFocusVisible: copyButtonIsFocusVisible, focusProps: copyButtonFocusProps } = useFocusRing();
+
+    const { copy, status } = useCopy();
+
     const inputElement = useRef<HTMLInputElement | null>(null);
     const [isObfuscated, setIsObfuscated] = useState(
         typeof obfuscated === "boolean" ? obfuscated : type === TextInputType.Password,
@@ -133,7 +143,7 @@ export const TextInput: FC<TextInputProps> = ({
             className={merge([
                 "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent",
                 dotted ? "tw-border-dashed" : "tw-border-solid",
-                disabled || readOnly
+                disabled || readonly
                     ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90"
                     : merge([
                           "focus-within:tw-border-black-90",
@@ -158,7 +168,7 @@ export const TextInput: FC<TextInputProps> = ({
                 ref={inputElement}
                 className={merge([
                     "tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows",
-                    disabled || readOnly
+                    disabled || readonly
                         ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40"
                         : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
                 ])}
@@ -170,7 +180,7 @@ export const TextInput: FC<TextInputProps> = ({
                 value={value}
                 type={getInputType()}
                 required={required}
-                readOnly={readOnly}
+                readOnly={readonly}
                 disabled={disabled}
                 autoComplete={autocomplete ? "on" : "off"}
                 size={size}
@@ -221,6 +231,32 @@ export const TextInput: FC<TextInputProps> = ({
                 <span className="tw-absolute tw-top-[-0.75rem] tw-right-[-0.75rem]">
                     <Spinner />
                 </span>
+            )}
+            {copyable && (
+                <button
+                    className={merge([
+                        "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
+                        disabled ? "tw-cursor-default tw-text-black-40" : "tw-text-black-60 hover:tw-text-black-100",
+                        copyButtonIsFocusVisible && FOCUS_STYLE,
+                    ])}
+                    onClick={() => copy(value)}
+                    data-test-id="copy-icon"
+                    title="Copy input text"
+                    disabled={disabled}
+                    {...copyButtonFocusProps}
+                >
+                    {status === "error" && (
+                        <span className="tw-text-box-negative-strong">
+                            <IconRejectCircle />
+                        </span>
+                    )}
+                    {status === "idle" && <IconCopyToClipboard />}
+                    {status === "success" && (
+                        <span className="tw-text-box-positive-strong">
+                            <IconCheck />
+                        </span>
+                    )}
+                </button>
             )}
         </div>
     );

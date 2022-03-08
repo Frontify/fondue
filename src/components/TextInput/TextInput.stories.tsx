@@ -15,11 +15,12 @@ export default {
         disabled: false,
         required: false,
         autocomplete: false,
-        readOnly: false,
+        readonly: false,
         dotted: false,
         type: TextInputType.Text,
         validation: Validation.Default,
         spellcheck: true,
+        copyable: false,
     },
     argTypes: {
         validation: {
