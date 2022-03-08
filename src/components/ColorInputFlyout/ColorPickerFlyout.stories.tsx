@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { Color } from "../../types/colors";
@@ -13,10 +14,11 @@ export default {
     args: {
         disabled: false,
         currentColor: null,
+        clearable: false,
     },
 } as Meta<ColorPickerFlyoutProps>;
 
-export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor }) => {
+export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor, clearable }) => {
     const [temporaryColor, setTemporaryColor] = useState<Color | null>(null);
     const [selectedColor, setSelectedColor] = useState<Color | null>(currentColor);
 
@@ -28,6 +30,11 @@ export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor }
             onClose={() => setTemporaryColor(null)}
             onSelect={(color) => setTemporaryColor(color)}
             palettes={EXAMPLE_PALETTES}
+            clearable={clearable}
+            onClear={() => {
+                setTemporaryColor(null);
+                setSelectedColor(null);
+            }}
         />
     );
 };
