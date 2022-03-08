@@ -145,11 +145,6 @@ describe("Text Input component", () => {
         cy.get(TEXT_INPUT_ID).should("not.have.attr", "readonly");
     });
 
-    it("turns the input readonly", () => {
-        mount(<StatefulInput readonly />);
-        cy.get(TEXT_INPUT_ID).should("have.attr", "readonly", "readonly");
-    });
-
     it("still allows buttons to be pressed if readonly", () => {
         mount(<StatefulInput readonly obfuscated copyable type={TextInputType.Password} value={PASSWORD} />);
         cy.get(TEXT_INPUT_ID).should("have.attr", "readonly", "readonly");
