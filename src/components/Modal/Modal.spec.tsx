@@ -6,7 +6,7 @@ import { mount } from "@cypress/react";
 import { ModalHeader } from "./ModalHeader";
 import { IconIcons } from "@foundation/Icon";
 import { ModalHeaderVariant } from "./types";
-import { PatternDesign, PatternScale, PatternTheme } from "@foundation/Pattern";
+import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 
 const MODAL_CONTAINER = "[data-test-id=modal-container]";
 const MODAL_VISUAL = "[data-test-id=modal-visual]";
@@ -34,7 +34,6 @@ describe("Modal Component", () => {
                 visual={{
                     pattern: PatternDesign.DigitalAssets,
                     foregroundColor: PatternTheme.Violet,
-                    scale: PatternScale.XL,
                 }}
             />,
         );
