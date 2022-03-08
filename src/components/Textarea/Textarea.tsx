@@ -48,7 +48,7 @@ export const Textarea: FC<TextareaProps> = ({
                 {...mergeProps(focusProps, {
                     onBlur: (event: FocusEvent<HTMLTextAreaElement>) => onBlur && onBlur(event.target.value),
                     onInput: (event: FormEvent<HTMLTextAreaElement>) =>
-                        onInput && onInput((event.currentTarget as HTMLTextAreaElement).value),
+                        onInput && onInput((event.target as HTMLTextAreaElement).value),
                 })}
                 id={useMemoizedId(propId)}
                 value={value}
