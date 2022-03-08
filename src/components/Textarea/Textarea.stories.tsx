@@ -15,6 +15,7 @@ export default {
         validation: Validation.Default,
     },
     argTypes: {
+        value: { type: "string" },
         placeholder: { type: "string" },
         decorator: { type: "string" },
         onInput: { action: "onInput" },
