@@ -4,7 +4,7 @@ import { merge } from "@utilities/merge";
 import React, { FC } from "react";
 import { AssetInputSize, AssetProps } from ".";
 
-export const SpinningCircle: FC<Pick<AssetProps, "asset" | "size">> = ({ size }) => (
+export const SpinningCircle: FC<Pick<AssetProps, "size">> = ({ size }) => (
     <svg
         className={merge(["tw-animate-spin", size === AssetInputSize.Large ? "tw-w-16 tw-h-16" : "tw-w-5 tw-h-5"])}
         width="100%"

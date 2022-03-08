@@ -12,12 +12,16 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, useRef } from "react";
-import { AssetInputSize, AssetProps } from "./AssetInput";
+import { AssetInputSize, AssetProps, AssetType } from "./AssetInput";
 import { AssetSubline } from "./AssetSubline";
 import { AssetThumbnail } from "./AssetThumbnail";
 import { SpinningCircle } from "./SpinningCircle";
 
-export const SelectedAsset: FC<AssetProps> = ({ asset, size, actions, isLoading }) => {
+export type SelectedAssetProps = Pick<AssetProps, "actions" | "isLoading" | "size"> & {
+    asset: AssetType;
+};
+
+export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, actions, isLoading }) => {
     const menuId = useMemoizedId();
     const labelId = useMemoizedId();
     const buttonRef = useRef<HTMLButtonElement | null>(null);

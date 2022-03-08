@@ -10,8 +10,7 @@ import IconReject from "@foundation/Icon/Generated/IconReject";
 import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternative";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
-import { AssetInput, AssetInputProps, AssetInputSize } from "./AssetInput";
-import { MultiAssetPreview, MultiAssetPreviewProps } from "./MultiAssetPreview";
+import { AssetInput, AssetInputSize, AssetProps } from "./AssetInput";
 
 const actions = [
     {
@@ -70,21 +69,25 @@ export default {
             control: { type: "radio" },
         },
         onItemClick: { action: "onItemClick", table: { disable: true } },
+        onMultiAssetClick: {
+            action: "Click",
+        },
     },
     args: {
         size: AssetInputSize.Small,
         isLoading: false,
+        numberOfLocations: 1,
     },
-} as Meta<AssetInputProps>;
+} as unknown as Meta<AssetProps>;
 
-const Template: Story<AssetInputProps & { onItemClick: () => void }> = (args) => {
+const Template: Story<AssetProps & { onItemClick: () => void }> = (args) => {
     args.actions?.forEach((block) =>
         block.menuItems.forEach((item) => {
             item.onClick = args.onItemClick;
         }),
     );
-    if (args.isLoading && args.asset) {
-        args.asset = undefined;
+    if (args.isLoading && args.assets) {
+        args.assets = undefined;
     }
 
     return <AssetInput {...args} />;
@@ -118,51 +121,57 @@ PlaceholderLibraryOnly.argTypes = {
 export const Image = Template.bind({});
 
 Image.args = {
-    asset: {
-        source: "upload",
-        name: "foo",
-        size: 2000,
-        type: "image",
-        extension: "JPG",
-        src: "https://picsum.photos/200/300",
-    },
+    assets: [
+        {
+            source: "upload",
+            name: "foo",
+            size: 2000,
+            type: "image",
+            extension: "JPG",
+            src: "https://picsum.photos/200/300",
+        },
+    ],
     actions,
 };
 
 export const Audio = Template.bind({});
 
 Audio.args = {
-    asset: {
-        source: "library",
-        sourceName: "Foobar",
-        name: "foo",
-        extension: "MP3",
-        size: 2000,
-        type: "audio",
-    },
+    assets: [
+        {
+            source: "library",
+            sourceName: "Foobar",
+            name: "foo",
+            extension: "MP3",
+            size: 2000,
+            type: "audio",
+        },
+    ],
     actions,
 };
 
 export const Icon = Template.bind({});
 
 Icon.args = {
-    asset: {
-        source: "library",
-        sourceName: "Foobar",
-        name: "foo",
-        type: "icon",
-        icon: <IconIcons />,
-    },
+    assets: [
+        {
+            source: "library",
+            sourceName: "Foobar",
+            name: "foo",
+            type: "icon",
+            icon: <IconIcons />,
+        },
+    ],
     actions,
 };
 
-const TemplateMultiInput: Story<MultiAssetPreviewProps> = (args) => {
-    return <MultiAssetPreview {...args} />;
+const TemplateMultiInput: Story<AssetProps> = (args) => {
+    return <AssetInput {...args} />;
 };
 
-export const MultiInputOneImage = TemplateMultiInput.bind({});
+export const TwoAssets = TemplateMultiInput.bind({});
 
-MultiInputOneImage.args = {
+TwoAssets.args = {
     assets: [
         {
             name: "foo1",
@@ -173,14 +182,21 @@ MultiInputOneImage.args = {
             source: "library",
             sourceName: "",
         },
+        {
+            source: "library",
+            sourceName: "Foobar",
+            name: "foo",
+            type: "icon",
+            icon: <IconIcons />,
+        },
     ],
     numberOfLocations: 1,
-    assetsAmount: 1,
+    actions,
 };
 
-export const WithImageAssets = TemplateMultiInput.bind({});
+export const OnlyImageAssets = TemplateMultiInput.bind({});
 
-WithImageAssets.args = {
+OnlyImageAssets.args = {
     assets: [
         {
             name: "foo1",
@@ -218,14 +234,22 @@ WithImageAssets.args = {
             source: "library",
             sourceName: "",
         },
+        {
+            name: "foo5",
+            size: 1000,
+            type: "image",
+            extension: "JPG",
+            src: "https://picsum.photos/400/200",
+            source: "library",
+            sourceName: "",
+        },
     ],
     numberOfLocations: 2,
-    assetsAmount: 4,
 };
 
-export const WithMixedAssets = TemplateMultiInput.bind({});
+export const MixedAssets = TemplateMultiInput.bind({});
 
-WithMixedAssets.args = {
+MixedAssets.args = {
     assets: [
         {
             name: "foo2",
@@ -261,6 +285,5 @@ WithMixedAssets.args = {
             type: "audio",
         },
     ],
-    numberOfLocations: 12,
-    assetsAmount: 25,
+    numberOfLocations: 2,
 };

@@ -7,6 +7,7 @@ import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternat
 import { IconProps } from "@foundation/Icon/IconProps";
 import { merge } from "@utilities/merge";
 import React, { FC, ReactElement } from "react";
+import { MultiAssetPreview } from "./MultiAssetPreview";
 import { SelectedAsset } from "./SelectedAsset";
 
 type BaseAsset = {
@@ -58,36 +59,42 @@ export type AssetType =
     | (OtherAsset & LibrarySource);
 
 export type AssetProps = {
-    asset?: AssetType;
+    assets?: AssetType[];
     size: AssetInputSize;
-    actions: ActionMenuProps["menuBlocks"];
+    numberOfLocations?: number;
+    actions?: ActionMenuProps["menuBlocks"];
     isLoading?: boolean;
+    onUploadClick?: () => void;
+    onLibraryClick?: () => void;
+    onMultiAssetClick?: () => void;
 };
 
-export type AssetInputProps =
-    | (AssetProps & {
-          onUploadClick?: undefined;
-          onLibraryClick?: undefined;
-      })
-    | {
-          asset?: undefined;
-          actions?: undefined;
-          size?: undefined;
-          onUploadClick?: () => void;
-          onLibraryClick?: () => void;
-          isLoading?: boolean;
-      };
-
-export const AssetInput: FC<AssetInputProps> = ({
-    asset,
+export const AssetInput: FC<AssetProps> = ({
+    assets,
+    numberOfLocations,
     actions = [],
     size = AssetInputSize.Small,
     isLoading = false,
     onLibraryClick,
     onUploadClick,
+    onMultiAssetClick,
 }) => {
-    if (isLoading || asset) {
-        return <SelectedAsset asset={asset} size={size} actions={actions} isLoading={isLoading} />;
+    const availableAssets = assets || [];
+    const lengthAssets = availableAssets?.length || 0;
+
+    if ((isLoading || lengthAssets === 1) && actions) {
+        return <SelectedAsset asset={availableAssets[0]} size={size} actions={actions} isLoading={isLoading} />;
+    }
+
+    if (lengthAssets > 1 && onMultiAssetClick) {
+        return (
+            <MultiAssetPreview
+                assets={availableAssets}
+                onClick={onMultiAssetClick}
+                assetsAmount={lengthAssets}
+                numberOfLocations={numberOfLocations}
+            />
+        );
     }
 
     return (
