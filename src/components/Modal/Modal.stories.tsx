@@ -9,7 +9,7 @@ import { Story, Meta } from "@storybook/react";
 import { TextInput } from "@components/TextInput";
 import { generateRandomId } from "@utilities/generateRandomId";
 import { ModalHeaderVariant, ModalProps } from "./types";
-import { PatternDesign, PatternScale, PatternTheme } from "@foundation/Pattern";
+import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 import { FormControl, FormControlDirection, FormControlStyle } from "@components/FormControl";
 import { ModalBody } from "./ModalBody";
 import { ScrollWrapperDirection } from "@components/ScrollWrapper/types";

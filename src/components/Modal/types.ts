@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement } from "react";
-import { PatternDesign, PatternScale, PatternTheme } from "@foundation/Pattern";
+import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 import { ScrollWrapperDirection } from "@components/ScrollWrapper/types";
 
 export type ModalButton = {

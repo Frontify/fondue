@@ -12,8 +12,9 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction, children }) =
         const [scrollHeight, setScrollHeight] = useState(Infinity);
 
         const onScroll = (event: UIEvent) => {
-            setScrollTop(event.target.scrollTop);
-            setScrollHeight(event.target.scrollHeight);
+            const target = event.target as HTMLDivElement;
+            setScrollTop(target.scrollTop);
+            setScrollHeight(target.scrollHeight);
         };
 
         const currentHeight = scrollingContainer.current?.clientHeight ?? 0;
