@@ -28,7 +28,6 @@ export const Default: Story<ModalProps> = () => {
             visual={{
                 pattern: PatternDesign.Typography,
                 foregroundColor: PatternTheme.Violet,
-                scale: PatternScale.LG,
             }}
             header={
                 <ModalHeader

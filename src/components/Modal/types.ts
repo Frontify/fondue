@@ -11,7 +11,6 @@ export type ModalButton = {
 
 export type ModalVisualProps = {
     pattern?: PatternDesign;
-    scale?: PatternScale;
     foregroundColor?: PatternTheme;
 };
 
