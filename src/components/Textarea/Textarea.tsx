@@ -6,6 +6,8 @@ import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, FocusEvent, FormEvent, PropsWithChildren, ReactNode } from "react";
+import { Validation, validationClassMap } from "@utilities/validation";
+import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
 
 export type TextareaProps = PropsWithChildren<{
     id?: string;
@@ -15,6 +17,7 @@ export type TextareaProps = PropsWithChildren<{
     disabled?: boolean;
     onInput?: (value: string) => void;
     onBlur?: (value: string) => void;
+    validation?: Validation;
 }>;
 
 export const Textarea: FC<TextareaProps> = ({
@@ -26,6 +29,7 @@ export const Textarea: FC<TextareaProps> = ({
     disabled = false,
     onInput,
     onBlur,
+    validation = Validation.Default,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing({ isTextInput: true });
 
@@ -55,11 +59,17 @@ export const Textarea: FC<TextareaProps> = ({
                         ? "tw-border-black-5 tw-bg-black-5 tw-text-black-40"
                         : "tw-text-black tw-border-black-20 hover:tw-border-black-90",
                     isFocusVisible && FOCUS_STYLE,
+                    validationClassMap[validation],
                 ])}
                 disabled={disabled}
             >
                 {children}
             </textarea>
+            {validation === Validation.Loading && (
+                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
+                    <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
+                </span>
+            )}
         </div>
     );
 };

@@ -3,6 +3,7 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Textarea as TextareaComponent, TextareaProps } from "./Textarea";
+import { Validation } from "@utilities/validation";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -11,6 +12,7 @@ export default {
     args: {
         disabled: false,
         required: false,
+        validation: Validation.Default,
     },
     argTypes: {
         placeholder: { type: "string" },
@@ -18,6 +20,10 @@ export default {
         onInput: { action: "onInput" },
         onBlur: { action: "onBlur" },
         onClear: { action: "onClear" },
+        validation: {
+            options: Object.values(Validation),
+            control: { type: "select" },
+        },
     },
 } as Meta<TextareaProps>;
 
