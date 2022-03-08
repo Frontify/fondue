@@ -142,17 +142,17 @@ describe("Text Input component", () => {
 
     it("has the readonly prop turned off by default", () => {
         mount(<StatefulInput />);
-        cy.get(TEXT_INPUT_ID).should("not.have.attr", "readOnly");
+        cy.get(TEXT_INPUT_ID).should("not.have.attr", "readonly");
     });
 
     it("turns the input readonly", () => {
         mount(<StatefulInput readonly />);
-        cy.get(TEXT_INPUT_ID).should("have.attr", "readOnly", "readonly");
+        cy.get(TEXT_INPUT_ID).should("have.attr", "readonly", "readonly");
     });
 
     it("still allows buttons to be pressed if readonly", () => {
         mount(<StatefulInput readonly obfuscated copyable type={TextInputType.Password} value={PASSWORD} />);
-        cy.get(TEXT_INPUT_ID).should("have.attr", "readOnly", "readonly");
+        cy.get(TEXT_INPUT_ID).should("have.attr", "readonly", "readonly");
         cy.get(COPY_ICON_ID).realClick();
         cy.window().then((win) => {
             win.navigator.clipboard.readText().then((text) => {
