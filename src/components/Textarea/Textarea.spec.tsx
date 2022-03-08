@@ -12,7 +12,7 @@ const INPUT_TEXT = "some text";
 
 describe("Textarea component", () => {
     it("renders", () => {
-        mount(<Textarea>{DEFAULT_TEXT}</Textarea>);
+        mount(<Textarea></Textarea>);
         cy.get("textarea").as("textarea");
         cy.get("@textarea").should("not.have.attr", "value");
         cy.get("@textarea").should("not.have.attr", "required");
