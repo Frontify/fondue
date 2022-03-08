@@ -94,7 +94,7 @@ export const TextInput: FC<TextInputProps> = ({
     autocomplete = false,
     dotted = false,
     value = "",
-    copyable,
+    copyable = false,
     onChange,
     onEnterPressed,
     onBlur,
@@ -238,7 +238,7 @@ export const TextInput: FC<TextInputProps> = ({
                     ])}
                     onClick={() => copy(value)}
                     data-test-id="copy-icon"
-                    title="Copy input value"
+                    title="Copy input text"
                     disabled={disabled}
                     {...copyButtonFocusProps}
                 >
