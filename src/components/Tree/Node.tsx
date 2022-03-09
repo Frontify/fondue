@@ -8,19 +8,19 @@ import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDrag } from "react-dnd";
 import { DropZone, OnDropCallback } from "@components/DropZone";
-import { TreeListItem } from "@components/Tree/Tree";
+import { TreeFlatListItem } from "@components/Tree";
 import { DraggableItem, DropZonePosition } from "@utilities/dnd";
 
 export const renderNodeArray = (
-    nodes: DraggableItem<TreeNodeProps>[],
+    nodes: DraggableItem<TreeNodeItem>[],
     activeNodeId: NullableString,
     listId: string,
     onClick: (id: NullableString) => void,
-    onDrop?: OnDropCallback<TreeNodeProps>,
+    onDrop?: OnDropCallback<TreeNodeItem>,
     parentIds?: string[],
 ) =>
     nodes.map((node, i) => (
-        <TreeNode
+        <Node
             key={node.id}
             node={node}
             activeNodeId={activeNodeId}
@@ -33,22 +33,22 @@ export const renderNodeArray = (
         />
     ));
 
-export interface TreeNodeProps extends TreeListItem {
-    nodes?: DraggableItem<TreeNodeProps>[];
+export interface TreeNodeItem extends TreeFlatListItem {
+    nodes?: DraggableItem<TreeNodeItem>[];
 }
 
 type NodeProps = {
-    node: DraggableItem<TreeNodeProps>;
+    node: DraggableItem<TreeNodeItem>;
     strong?: boolean;
     activeNodeId?: NullableString;
     parentIds?: string[];
     onClick: (id: NullableString) => void;
     isFirst: boolean;
     listId: string;
-    onDrop?: OnDropCallback<TreeNodeProps>;
+    onDrop?: OnDropCallback<TreeNodeItem>;
 };
 
-export const TreeNode = ({
+export const Node = ({
     node,
     strong = false,
     activeNodeId = null,

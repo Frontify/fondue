@@ -2,14 +2,14 @@
 
 import React, { FC, useState } from "react";
 import { Tree } from "./Tree";
-import { TreeNodeProps } from "./Node";
+import { TreeNodeItem } from "./Node";
 import { mount } from "@cypress/react";
 import { IconSize } from "@foundation/Icon/IconSize";
 import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
 
 type ComponentProps = {
-    nodes: TreeNodeProps[];
+    nodes: TreeNodeItem[];
     onDrop?: () => void;
 };
 const Component: FC<ComponentProps> = ({ nodes, onDrop }) => {
@@ -19,7 +19,7 @@ const Component: FC<ComponentProps> = ({ nodes, onDrop }) => {
             nodes={nodes}
             activeNodeId={selectedId}
             onSelect={(id: NullableString) => setSelectedId(id)}
-            handleUpdate={onDrop}
+            onUpdate={onDrop}
         />
     );
 };
@@ -32,7 +32,7 @@ const TOGGLE_ID = "[data-test-id=toggle]";
 const SUB_TREE_ID = "[data-test-id=sub-tree]";
 const DROP_ZONE_ID = "[data-test-id=drop-zone]";
 
-const nodes: TreeNodeProps[] = [
+const nodes: TreeNodeItem[] = [
     {
         id: "1",
         name: "Design System Testing",

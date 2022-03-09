@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TreeListItem, TreeNodeProps } from "@components/Tree";
+import { TreeFlatListItem, TreeNodeItem } from "@components/Tree";
 import { DraggableItem, draggableItemCompareFn } from "@utilities/dnd";
 
 export const listToTree = (
-    items: DraggableItem<TreeListItem>[],
+    items: DraggableItem<TreeFlatListItem>[],
     id: string | null = null,
-): DraggableItem<TreeNodeProps>[] =>
+): DraggableItem<TreeNodeItem>[] =>
     items
         .filter((item) => item.parentId === id)
         .sort(draggableItemCompareFn)

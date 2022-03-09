@@ -1,6 +1,8 @@
 import { MenuItemContentSize } from "@components/MenuItem";
 import { IconFile, IconFolder, IconSize } from "@foundation/Icon";
 import React from "react";
+import {TreeFlatListItem} from "@components/Tree";
+import {DraggableItem} from "@utilities/dnd";
 
 
 export const mockActionMenuBlocks = [
@@ -54,7 +56,7 @@ export const mockActionMenuBlocks = [
     },
 ];
 
-export const mockNodesFlat = [
+export const mockNodesFlat: DraggableItem<TreeFlatListItem>[] = [
     {
         id: "1",
         name: "Design System Testing",

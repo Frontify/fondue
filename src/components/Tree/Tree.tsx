@@ -9,7 +9,7 @@ import { DraggableItem, DropZonePosition, moveItems } from "@utilities/dnd";
 import { listToTree } from "@components/Tree/utils";
 import { IconProps } from "@foundation/Icon";
 
-export interface TreeListItem {
+export interface TreeFlatListItem {
     name: string;
     icon?: ReactElement<IconProps>;
     label?: string;
@@ -19,15 +19,15 @@ export interface TreeListItem {
 }
 
 export type TreeProps = {
-    nodes: DraggableItem<TreeListItem>[];
+    nodes: DraggableItem<TreeFlatListItem>[];
     onSelect: (id: NullableString) => void;
     activeNodeId?: NullableString;
-    handleUpdate: (modifiedItems: DraggableItem<TreeListItem>[]) => void;
+    onUpdate: (modifiedItems: DraggableItem<TreeFlatListItem>[]) => void;
 };
 
-export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActiveNodeId = null, handleUpdate }) => {
+export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActiveNodeId = null, onUpdate }) => {
     const [activeNodeId, setActiveNodeId] = useState<NullableString>(initialActiveNodeId);
-    const [treeNodes, setTreeNodes] = useState<DraggableItem<TreeListItem>[]>([]);
+    const [treeNodes, setTreeNodes] = useState<DraggableItem<TreeFlatListItem>[]>([]);
     const listId = useId();
     useEffect(() => setActiveNodeId(initialActiveNodeId), [initialActiveNodeId]);
     useEffect(() => {
@@ -42,15 +42,15 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActi
     };
 
     const handleDrop = (
-        targetItem: DraggableItem<TreeListItem>,
-        sourceItem: DraggableItem<TreeListItem>,
+        targetItem: DraggableItem<TreeFlatListItem>,
+        sourceItem: DraggableItem<TreeFlatListItem>,
         position: DropZonePosition,
     ) => {
         const parentId = position === DropZonePosition.Within ? targetItem.id : targetItem.parentId;
         const sameLevelNodes = nodes.filter((node) => node.parentId === parentId);
 
         const modifiedItems = moveItems(targetItem, { ...sourceItem, parentId, sort: null }, position, sameLevelNodes);
-        handleUpdate(modifiedItems);
+        onUpdate(modifiedItems);
     };
 
     return (

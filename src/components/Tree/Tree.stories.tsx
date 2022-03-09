@@ -2,11 +2,9 @@
 
 import React, { useState } from "react";
 import { Meta, Story } from "@storybook/react";
-import { Tree as TreeComponent, TreeListItem, TreeProps } from "./Tree";
+import { Tree as TreeComponent, TreeFlatListItem, TreeProps } from "./Tree";
 import { mockNodesFlat } from "@components/Tree/utils/mocks";
 import { DraggableItem } from "@utilities/dnd";
-
-const apiNodes: DraggableItem<TreeListItem>[] = mockNodesFlat;
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -21,9 +19,9 @@ export default {
 } as Meta<TreeProps>;
 
 export const Tree: Story<TreeProps> = (args: TreeProps) => {
-    const [nodesState, setNodes] = useState(apiNodes);
+    const [nodesState, setNodesState] = useState(mockNodesFlat);
 
-    const handleMove = (modifiedItems: DraggableItem<TreeListItem>[]) => {
+    const handleMove = (modifiedItems: DraggableItem<TreeFlatListItem>[]): void => {
         const modifiedArray = nodesState.map((item) => {
             const matchingModifiedItem = modifiedItems.find((modifiedItem) => modifiedItem.id === item.id);
             if (matchingModifiedItem) {
@@ -33,12 +31,12 @@ export const Tree: Story<TreeProps> = (args: TreeProps) => {
             return { ...item };
         });
 
-        setNodes(modifiedArray);
+        setNodesState(modifiedArray);
     };
 
     return (
         <div style={{ maxWidth: "800px" }}>
-            <TreeComponent {...args} nodes={nodesState} handleUpdate={handleMove} />
+            <TreeComponent {...args} nodes={nodesState} onUpdate={handleMove} />
         </div>
     );
 };
