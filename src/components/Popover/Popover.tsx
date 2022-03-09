@@ -84,7 +84,8 @@ export const PopoverComponent: FC<PopoverProps> = ({
 
     const popperInstance = usePopper(positioningElement, popperElement, {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        placement: placement ?? "auto",
+        // @ts-ignore
+        placement: placement,
         modifiers: [
             {
                 name: "arrow",
