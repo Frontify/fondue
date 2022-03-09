@@ -16,11 +16,12 @@ const PopoverExample = () => {
 };
 
 describe("Popover Component", () => {
-    it("should render foo text correctly", () => {
-        mount(PopoverExample);
+    it("should render correctly", () => {
+        mount(<PopoverExample />);
 
+        cy.get("[data-test-id=popover-trigger]").as("Trigger");
+        cy.get("@Trigger").click();
         cy.get("[data-test-id=popover]").as("Popover");
-
         cy.get("@Popover").should("be.visible");
     });
 });

@@ -29,8 +29,8 @@ export type PopoverProps = {
     point?: boolean;
     position?: PopoverPosition;
     alignment?: PopoverAlignment;
-    maxHeight?: number | "Viewport";
-    maxWidth?: number | "Viewport";
+    maxHeight?: number;
+    maxWidth?: number;
     trigger: ReactElement;
     flip?: boolean;
 };
@@ -38,8 +38,8 @@ export type PopoverProps = {
 export const PopoverComponent: FC<PopoverProps> = ({
     trigger,
     children,
-    maxHeight = "Viewport",
-    maxWidth = "Viewport",
+    maxHeight,
+    maxWidth,
     position = PopoverPosition.Bottom,
     alignment = PopoverAlignment.Middle,
     point,
@@ -125,11 +125,8 @@ export const PopoverComponent: FC<PopoverProps> = ({
                     style={popperInstance.styles.popper}
                     {...popperInstance.attributes.popper}
                     ref={setPopperElement}
-                    className={merge([
-                        "tw-relative tw-p-3 tw-border tw-border-line tw-rounded tw-shadow",
-                        maxHeight === "Viewport" ? "tw-max-h-full" : `tw-max-w-[${maxHeight}px]`,
-                        maxWidth === "Viewport" ? "tw-max-w-full" : `tw-max-w-[${maxWidth}px]`,
-                    ])}
+                    // Add MaxHeight and MaxWidth which is failing
+                    className={merge(["tw-relative tw-p-3 tw-border tw-border-line tw-rounded tw-shadow"])}
                 >
                     <div>{children}</div>
                     {point && (
