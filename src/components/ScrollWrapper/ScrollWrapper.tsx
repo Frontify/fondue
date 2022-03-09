@@ -36,7 +36,7 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction, children }) =
             <div
                 ref={scrollingContainer}
                 className={merge([
-                    "tw-h-full tw-py-8",
+                    "tw-h-full tw-py-6",
                     scrollWrapperDirections[direction ?? ScrollWrapperDirection.Vertical],
                 ])}
                 {...scrollDivProps}

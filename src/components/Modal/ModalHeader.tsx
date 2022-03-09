@@ -24,7 +24,7 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
                 )}
                 <h3 className="tw-text-xl tw-font-heading tw-font-medium">{title}</h3>
             </div>
-            {<p className="tw-text-grey-60 tw-mt-4">{leadText}</p>}
+            {leadText && <p className="tw-text-grey-60 tw-mt-4">{leadText}</p>}
         </div>
     );
 };
