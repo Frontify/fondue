@@ -1,63 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ActionMenuBlock } from "@components/ActionMenu/ActionMenu/ActionMenu";
-import { MenuItemStyle } from "@components/MenuItem/MenuItem";
-import IconCrop from "@foundation/Icon/Generated/IconCrop";
-import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
-import IconImageLibrary from "@foundation/Icon/Generated/IconImageLibrary";
-import IconReject from "@foundation/Icon/Generated/IconReject";
-import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternative";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
+import { actions } from "./actions";
 import { AssetInput, AssetInputSize, AssetProps } from "./AssetInput";
-
-const actions = [
-    {
-        id: "block1",
-        ariaLabel: "First section",
-        menuItems: [
-            {
-                id: "1",
-                title: "Replace with Asset",
-                decorator: <IconImageLibrary />,
-            },
-            {
-                id: "2",
-                title: "Replace with Upload",
-                decorator: <IconUploadAlternative />,
-            },
-        ],
-    },
-    {
-        id: "block2",
-        ariaLabel: "Second section",
-        menuItems: [
-            {
-                id: "10",
-                title: "Crop / Resize",
-                decorator: <IconCrop />,
-            },
-            {
-                id: "11",
-                title: "Small warning",
-                decorator: <IconExternalLink />,
-            },
-        ],
-    },
-    {
-        id: "block3",
-        ariaLabel: "Third section",
-        menuItems: [
-            {
-                id: "20",
-                title: "Remove",
-                style: MenuItemStyle.Danger,
-                decorator: <IconReject />,
-            },
-        ],
-    },
-] as ActionMenuBlock[];
 
 // eslint-disable-next-line import/no-default-export
 export default {

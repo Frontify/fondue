@@ -8,7 +8,7 @@ import { IconProps } from "@foundation/Icon/IconProps";
 import { merge } from "@utilities/merge";
 import React, { FC, ReactElement } from "react";
 import { MultiAssetPreview } from "./MultiAssetPreview";
-import { SelectedAsset } from "./SelectedAsset";
+import { SelectedAsset } from "./SingleAsset/SelectedAsset";
 
 type BaseAsset = {
     name: string;
@@ -106,7 +106,10 @@ export const AssetInput: FC<AssetProps> = ({
             ])}
         >
             {onUploadClick && (
-                <div className={merge(["tw-flex tw-flex-col tw-h-8", onLibraryClick && "tw-pr-3"])}>
+                <div
+                    className={merge(["tw-flex tw-flex-col tw-h-8", onLibraryClick && "tw-pr-3"])}
+                    data-test-id="asset-input-upload"
+                >
                     <Button
                         onClick={onUploadClick}
                         style={ButtonStyle.Secondary}
@@ -118,7 +121,10 @@ export const AssetInput: FC<AssetProps> = ({
                 </div>
             )}
             {onLibraryClick && (
-                <div className={merge(["tw-flex tw-flex-col tw-h-8", onUploadClick && "tw-pl-3"])}>
+                <div
+                    className={merge(["tw-flex tw-flex-col tw-h-8", onUploadClick && "tw-pl-3"])}
+                    data-test-id="asset-input-library"
+                >
                     <Button
                         onClick={onLibraryClick}
                         style={ButtonStyle.Secondary}

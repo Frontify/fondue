@@ -12,9 +12,9 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, useRef } from "react";
-import { AssetInputSize, AssetProps, AssetType } from "./AssetInput";
+import { AssetInputSize, AssetProps, AssetType } from "../AssetInput";
+import { AssetThumbnail } from "../AssetThumbnail";
 import { AssetSubline } from "./AssetSubline";
-import { AssetThumbnail } from "./AssetThumbnail";
 import { SpinningCircle } from "./SpinningCircle";
 
 export type SelectedAssetProps = Pick<AssetProps, "actions" | "isLoading" | "size"> & {
@@ -42,6 +42,7 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
             className="tw-relative tw-font-sans tw-w-full tw-text-s tw-bg-transparent tw-font-normal tw-min-w-0"
             aria-labelledby={labelId}
             title={title}
+            data-test-id="asset-single-input"
         >
             <button
                 {...mergeProps(buttonProps, focusProps)}

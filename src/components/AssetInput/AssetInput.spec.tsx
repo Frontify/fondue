@@ -3,13 +3,20 @@
 import { mount } from "@cypress/react";
 import { IconIcons } from "@foundation/Icon";
 import React from "react";
-import { AssetInput, AssetInputSize, AssetType } from "../AssetInput";
-import { MultiAssetPreview } from "./MultiAssetPreview";
+import { actions } from "./actions";
+import { AssetInput, AssetInputSize, AssetType } from "./AssetInput";
 
 const MULTI_ASSET_PREVIEW_ID = "[data-test-id=multi-asset-preview]";
 const ASSETS_AMOUNT_ID = "[data-test-id=assets-amount]";
 const NUMBER_OF_LOCATIONS_ID = "[data-test-id=number-of-locations]";
 const ASSETS_IMAGE_ID = "[data-test-id=assets-image]";
+const ASSET_PLACEHOLDER_ID = "[data-test-id=asset-input-placeholder]";
+const ASSET_PLACEHOLDER_UPLOAD_ID = "[data-test-id=asset-input-upload]";
+const ASSET_PLACEHOLDER_LIBRARY_ID = "[data-test-id=asset-input-library]";
+const ASSET_SINGLE_INPUT_ID = "[data-test-id=asset-single-input]";
+const ASSET_SINGLE_INPUT_THUMBNAIL_ID = "[data-test-id=asset-input-thumbnail]";
+const ASSET_SINGLE_INPUT_THUMBNAIL_IMAGE_ID = "[data-test-id=asset-input-thumbnail-image]";
+const ASSET_SINGLE_INPUT_THUMBNAIL_AUDIO_ID = "[data-test-id=asset-input-thumbnail-audio]";
 
 const EXAMPLE_IMAGES: AssetType[] = [
     {
@@ -80,45 +87,100 @@ MIXED_ASSETS.push(
 );
 
 describe("MultiAssetPreview Component", () => {
-    // it("should render asset input", () => {
-    //     mount(<MultiAssetPreview onClick={() => alert("Input Asset clicked")} />);
+    it("renders asset input placeholders", () => {
+        mount(
+            <AssetInput
+                size={AssetInputSize.Small}
+                onLibraryClick={() => alert("Library clicked")}
+                onUploadClick={() => alert("Upload clicked")}
+            />,
+        );
 
-    //     cy.get("sdf").should("exist");
-    // });
-
-    // //adapt!
-    // it("without images, image url should not exist", () => {
-    //     mount(
-    //         <AssetInput
-    //             onMultiAssetClick={() => alert("Multi Asset clicked")}
-    //             size={AssetInputSize.Small}
-    //             actions={[]}
-    //         />,
-    //     );
-
-    //     cy.get(ASSETS_IMAGE_ID).should("not.have.attr", "style");
-    // });
-
-    // //adapt!
-    // it("without images, background color should be set", () => {
-    //     mount(
-    //         <AssetInput
-    //             onMultiAssetClick={() => alert("Multi Asset clicked")}
-    //             size={AssetInputSize.Small}
-    //             actions={[]}
-    //         />,
-    //     );
-
-    //     cy.get(ASSETS_IMAGE_ID).should("have.css", "backgroundColor");
-    // });
-
-    it("should render without images", () => {
-        mount(<MultiAssetPreview onClick={() => alert("Multi Asset clicked")} />);
-
-        cy.get(MULTI_ASSET_PREVIEW_ID).should("exist");
+        cy.get(ASSET_PLACEHOLDER_ID).should("exist");
+        cy.get(ASSET_PLACEHOLDER_UPLOAD_ID).should("exist");
+        cy.get(ASSET_PLACEHOLDER_LIBRARY_ID).should("exist");
     });
 
-    it("should render with images", () => {
+    it("renders asset input with single image", () => {
+        mount(
+            <AssetInput
+                size={AssetInputSize.Small}
+                assets={[
+                    {
+                        source: "upload",
+                        name: "foo",
+                        size: 2000,
+                        type: "image",
+                        extension: "JPG",
+                        src: "https://picsum.photos/200/300",
+                    },
+                ]}
+                actions={actions}
+            />,
+        );
+
+        cy.get(ASSET_SINGLE_INPUT_ID).should("contain", "2000");
+        cy.get(ASSET_SINGLE_INPUT_ID).should("contain", "Upload");
+        cy.get(ASSET_SINGLE_INPUT_ID).should("contain", "JPG");
+        cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_ID).should("have.css", "backgroundColor");
+        cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_IMAGE_ID).should("have.attr", "src", "https://picsum.photos/200/300");
+    });
+
+    it("renders asset input with audio", () => {
+        mount(
+            <AssetInput
+                size={AssetInputSize.Small}
+                assets={[
+                    {
+                        source: "library",
+                        sourceName: "Foobar",
+                        name: "foo",
+                        extension: "MP3",
+                        size: 2000,
+                        type: "audio",
+                    },
+                ]}
+                actions={actions}
+            />,
+        );
+
+        cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_AUDIO_ID);
+        cy.get(ASSET_SINGLE_INPUT_ID).should("contain", "Foobar");
+        cy.get(ASSET_SINGLE_INPUT_ID).should("contain", "MP3");
+    });
+
+    it("without images, image url should not exist", () => {
+        mount(
+            <AssetInput
+                assets={[
+                    {
+                        source: "upload",
+                        name: "foo",
+                        size: 2000,
+                        type: "image",
+                        extension: "JPG",
+                        src: "https://picsum.photos/200/300",
+                    },
+                    {
+                        source: "upload",
+                        name: "foo",
+                        size: 2000,
+                        type: "image",
+                        extension: "JPG",
+                        src: "https://picsum.photos/200/300",
+                    },
+                ]}
+                onMultiAssetClick={() => alert("Multi Asset clicked")}
+                size={AssetInputSize.Small}
+                actions={[]}
+            />,
+        );
+
+        cy.get(ASSETS_IMAGE_ID).last().should("not.have.attr", "style");
+        cy.get(ASSETS_IMAGE_ID).last().should("have.css", "backgroundColor");
+    });
+
+    it("renders with images", () => {
         mount(
             <AssetInput
                 onMultiAssetClick={() => alert("Multi Asset clicked")}
@@ -132,7 +194,7 @@ describe("MultiAssetPreview Component", () => {
         cy.get(MULTI_ASSET_PREVIEW_ID);
     });
 
-    it("should render with mixed assets", () => {
+    it("renders with mixed assets", () => {
         mount(
             <AssetInput
                 onMultiAssetClick={() => alert("Multi Asset clicked")}
@@ -146,7 +208,7 @@ describe("MultiAssetPreview Component", () => {
         cy.get(MULTI_ASSET_PREVIEW_ID);
     });
 
-    it("should render with images", () => {
+    it("renders with images", () => {
         mount(
             <AssetInput
                 onMultiAssetClick={() => alert("Multi Asset clicked")}

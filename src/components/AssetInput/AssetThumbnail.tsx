@@ -3,7 +3,7 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC } from "react";
 import { AssetInputSize, AssetProps } from "./AssetInput";
-import { SelectedAssetProps } from "./SelectedAsset";
+import { SelectedAssetProps } from "./SingleAsset/SelectedAsset";
 
 export type AssetThumbnailProps = {
     asset: SelectedAssetProps["asset"];
@@ -17,13 +17,19 @@ export const AssetThumbnail: FC<Required<AssetThumbnailProps>> = ({ asset, size,
             size === AssetInputSize.Large ? "tw-w-full tw-h-32" : "tw-w-14 tw-h-full",
             isActive ? "tw-text-black-100 dark:tw-text-white" : "tw-text-black-80 dark:tw-text-black-20",
         ])}
+        data-test-id="asset-input-thumbnail"
     >
         {asset.type === "icon" ? (
             cloneElement(asset.icon, { size: IconSize.Size24 })
         ) : asset.type === "audio" ? (
-            <IconAudio size={IconSize.Size24} />
+            <IconAudio size={IconSize.Size24} data-test-id="asset-input-thumbnail-audio" />
         ) : (
-            <img src={asset.src} alt={asset.alt || ""} className="tw-max-h-full" />
+            <img
+                src={asset.src}
+                alt={asset.alt || ""}
+                className="tw-max-h-full"
+                data-test-id="asset-input-thumbnail-image"
+            />
         )}
     </div>
 );

@@ -2,7 +2,7 @@
 
 import { merge } from "@utilities/merge";
 import React, { FC } from "react";
-import { AssetInputSize, AssetProps } from ".";
+import { AssetInputSize, AssetProps } from "..";
 
 export const SpinningCircle: FC<Pick<AssetProps, "size">> = ({ size }) => (
     <svg

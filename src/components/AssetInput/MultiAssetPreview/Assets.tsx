@@ -22,9 +22,8 @@ export const Assets: FC<Pick<MultiAssetPreviewProps, "assets">> = ({ assets }) =
     }
     return (
         <div className="tw-border-black-20 tw-grid tw-grid-cols-2 tw-gap-0.5">
-            {assetsNew.map((asset, index) => {
-                console.log(asset);
-                return asset.type === "image" || asset.type === "logo" ? ( //what is the logo type?
+            {assetsNew.map((asset, index) =>
+                asset.type === "image" || asset.type === "logo" ? (
                     <div
                         data-test-id="assets-image"
                         key={asset.name}
@@ -38,8 +37,8 @@ export const Assets: FC<Pick<MultiAssetPreviewProps, "assets">> = ({ assets }) =
                     <div className="tw-h-14">
                         <AssetThumbnail asset={asset} size={AssetInputSize.Small} isActive={false} />
                     </div>
-                );
-            })}
+                ),
+            )}
         </div>
     );
 };
