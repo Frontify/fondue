@@ -187,10 +187,9 @@ describe("RichTextEditor Component", () => {
         );
 
         cy.get("[contenteditable=true]").first().click().type("hello editor one");
-        cy.get("[contenteditable=true]").last().click().type("hello editor two");
-
-        cy.get("[contenteditable=true]").first().should("include.html", "hello editor one");
-        cy.get("[contenteditable=true]").last().should("include.html", "hello editor two");
+        cy.get("[contenteditable=true]").first().should("contain.text", "hello editor one");
+        cy.get("[contenteditable=true]").eq(1).click().type("hello editor two");
+        cy.get("[contenteditable=true]").eq(1).should("contain.text", "hello editor two");
     });
 
     it("emits onTextChange when choosing an inline style", () => {
