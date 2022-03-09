@@ -1,34 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, RefObject, UIEvent, useRef, useState } from "react";
+import React, { FC, useRef } from "react";
 import { merge } from "@utilities/merge";
 import { ScrollWrapperDirection, scrollWrapperDirections, ScrollWrapperProps } from "./types";
+import { useScrollWrapper } from "./hooks/useScrollWrapper";
 
 export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction, children }) => {
     const scrollingContainer = useRef<HTMLDivElement>(null);
 
-    const useScrollTop = (scrollingContainer: RefObject<HTMLDivElement>) => {
-        const [scrollTop, setScrollTop] = useState(0);
-        const [scrollHeight, setScrollHeight] = useState(Infinity);
-
-        const onScroll = (event: UIEvent) => {
-            const target = event.target as HTMLDivElement;
-            setScrollTop(target.scrollTop);
-            setScrollHeight(target.scrollHeight);
-        };
-
-        const currentHeight = scrollingContainer.current?.clientHeight ?? 0;
-
-        return [
-            {
-                showTopShadow: scrollHeight > 0 && scrollTop !== 0,
-                showBottomShadow: scrollHeight !== 0 && scrollTop < scrollHeight - currentHeight,
-            },
-            { onScroll },
-        ];
-    };
-
-    const [{ showTopShadow, showBottomShadow }, scrollDivProps] = useScrollTop(scrollingContainer);
+    const [{ showTopShadow, showBottomShadow }, scrollDivProps] = useScrollWrapper(scrollingContainer);
 
     return (
         <div data-test-id="scroll-wrapper" className="tw-h-full">
