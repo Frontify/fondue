@@ -48,9 +48,9 @@ export const PopoverComponent: FC<PopoverProps> = ({
 }) => {
     const placement = position + alignementSuffix[alignment];
     const [isOpen, setIsOpen] = useState(false);
-    const [positioningElement, setPositioningElement] = useState(null);
-    const [popperElement, setPopperElement] = useState(null);
-    const [arrowElement, setArrowElement] = useState(null);
+    const [positioningElement, setPositioningElement] = useState<HTMLDivElement | null>(null);
+    const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+    const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
     const setArrowClasses = () => {
         const currentPlacement = popperInstance.state?.placement ?? position;
@@ -83,8 +83,8 @@ export const PopoverComponent: FC<PopoverProps> = ({
     }, [handleClickOutside]);
 
     const popperInstance = usePopper(positioningElement, popperElement, {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         placement: placement ?? "auto",
-        forceUpdate: true,
         modifiers: [
             {
                 name: "arrow",
