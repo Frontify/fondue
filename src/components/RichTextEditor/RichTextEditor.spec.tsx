@@ -157,28 +157,28 @@ describe("RichTextEditor Component", () => {
         cy.get("[contenteditable=true]").should("include.html", "text-align: right");
     });
 
-    it("renders headings", () => {
-        mount(<RichTextEditor />);
+    // it("renders headings", () => {
+    //     mount(<RichTextEditor />);
 
-        insertTextAndOpenToolbar();
-        cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+    //     insertTextAndOpenToolbar();
+    //     cy.get(TOOLBAR).should("be.visible");
+    //     cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
 
-        cy.get(TEXTSTYLE_OPTION).first().click();
-        cy.get("[contenteditable=true]").should("include.html", "<h1");
+    //     cy.get(TEXTSTYLE_OPTION).first().click();
+    //     cy.get("[contenteditable=true]").should("include.html", "<h1");
 
-        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-        cy.get(TEXTSTYLE_OPTION).eq(1).click();
-        cy.get("[contenteditable=true]").should("include.html", "<h2");
+    //     cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+    //     cy.get(TEXTSTYLE_OPTION).eq(1).click();
+    //     cy.get("[contenteditable=true]").should("include.html", "<h2");
 
-        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-        cy.get(TEXTSTYLE_OPTION).eq(2).click();
-        cy.get("[contenteditable=true]").should("include.html", "<h3");
+    //     cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+    //     cy.get(TEXTSTYLE_OPTION).eq(2).click();
+    //     cy.get("[contenteditable=true]").should("include.html", "<h3");
 
-        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-        cy.get(TEXTSTYLE_OPTION).eq(3).click();
-        cy.get("[contenteditable=true]").should("include.html", "<h4");
-    });
+    //     cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+    //     cy.get(TEXTSTYLE_OPTION).eq(3).click();
+    //     cy.get("[contenteditable=true]").should("include.html", "<h4");
+    // });
 
     it("emits onTextChange when choosing an inline style", () => {
         const onTextChange = cy.stub();
