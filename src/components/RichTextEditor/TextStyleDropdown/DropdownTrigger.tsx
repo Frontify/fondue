@@ -7,11 +7,12 @@ import React from "react";
 import { TextStyles, textStyleTitles } from "../utils/getTextStyles";
 
 type DropdownTriggerProps = {
+    editorId?: string;
     open: boolean;
 };
 
-export const DropdownTrigger = ({ open }: DropdownTriggerProps) => {
-    const editor = usePlateEditorState();
+export const DropdownTrigger = ({ editorId, open }: DropdownTriggerProps) => {
+    const editor = usePlateEditorState(editorId);
 
     const getStyleInSelection = (): TextStyles | undefined => {
         if (editor.selection) {

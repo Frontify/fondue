@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Plate, PlateProvider, TNode, usePlateEditorState } from "@udecode/plate";
+import { Plate, TNode, usePlateEditorState } from "@udecode/plate";
 import React, { FC, useCallback, useEffect, useState } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
 import { debounce } from "../..";
@@ -10,6 +10,7 @@ import { TextStyleType } from "./utils/getTextStyles";
 import { EMPTY_VALUE, parseRawValue } from "./utils/parseRawValue";
 
 export type RichTextEditorProps = {
+    id?: string;
     placeholder?: string;
     value?: string;
     onTextChange?: (value: string) => void;
@@ -21,7 +22,8 @@ export type RichTextEditorProps = {
 
 export const ON_SAVE_DELAY_IN_MS = 500;
 
-const RichTextEditorComponent: FC<RichTextEditorProps> = ({
+export const RichTextEditor: FC<RichTextEditorProps> = ({
+    id: editorId,
     value: initialValue,
     placeholder = "",
     readonly = false,
@@ -59,19 +61,14 @@ const RichTextEditorComponent: FC<RichTextEditorProps> = ({
     return (
         <div data-test-id="rich-text-editor" className="tw-relative tw-w-full">
             <Plate
+                id={editorId}
                 initialValue={parseRawValue(initialValue)}
                 onChange={onChange}
                 editableProps={editableProps}
                 plugins={getEditorConfig(textStyles)}
             >
-                <Toolbar textStyles={textStyles} />
+                <Toolbar editorId={editorId} textStyles={textStyles} />
             </Plate>
         </div>
     );
 };
-
-export const RichTextEditor: FC<RichTextEditorProps> = (props) => (
-    <PlateProvider>
-        <RichTextEditorComponent {...props} />
-    </PlateProvider>
-);
