@@ -181,19 +181,15 @@ describe("RichTextEditor Component", () => {
     it("renders multiple editors", () => {
         mount(
             <>
-                <div data-test-id="RTE-one">
-                    <RichTextEditor id="one" />
-                </div>
-                <div data-test-id="RTE-two">
-                    <RichTextEditor id="two" />
-                </div>
+                <RichTextEditor id="one" />
+                <RichTextEditor id="two" />
             </>,
         );
 
-        cy.get("[data-test-id=RTE-one] [contenteditable=true]").first().click().type("hello editor one").blur();
-        cy.get("[data-test-id=RTE-two] [contenteditable=true]").last().click().type("hello editor two").blur();
-        cy.get("[data-test-id=RTE-one]").first().should("contain.text", "hello editor one");
-        cy.get("[data-test-id=RTE-two]").last().should("contain.text", "hello editor two");
+        cy.get("[contenteditable=true]").first().realClick().type("hello editor one");
+        cy.get("[contenteditable=true]").last().realClick().type("hello editor two");
+        cy.get("[contenteditable=true]").first().should("contain.text", "hello editor one");
+        cy.get("[contenteditable=true]").last().should("contain.text", "hello editor two");
     });
 
     it("emits onTextChange when choosing an inline style", () => {
