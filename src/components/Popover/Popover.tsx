@@ -38,8 +38,6 @@ export type PopoverProps = {
 export const PopoverComponent: FC<PopoverProps> = ({
     trigger,
     children,
-    maxHeight,
-    maxWidth,
     position = PopoverPosition.Bottom,
     alignment = PopoverAlignment.Middle,
     point,
