@@ -7,6 +7,7 @@ import { ModalHeader } from "./ModalHeader";
 import { IconIcons } from "@foundation/Icon";
 import { ModalHeaderVariant } from "./types";
 import { PatternDesign, PatternTheme } from "@foundation/Pattern";
+import { ModalBody } from "./ModalBody";
 
 const MODAL_CONTAINER = "[data-test-id=modal-container]";
 const MODAL_VISUAL = "[data-test-id=modal-visual]";
@@ -68,7 +69,9 @@ describe("Modal Component", () => {
     it("should render the modal with a body and implement the ScrollWrapper component", () => {
         mount(
             <Modal>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
+                <ModalBody>
+                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
+                </ModalBody>
             </Modal>,
         );
 
