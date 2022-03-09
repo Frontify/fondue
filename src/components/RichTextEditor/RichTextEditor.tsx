@@ -3,7 +3,8 @@
 import { Plate, TNode, usePlateEditorState } from "@udecode/plate";
 import React, { FC, useCallback, useEffect, useState } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
-import { debounce, generateRandomId } from "../..";
+import { debounce } from "@utilities/debounce";
+import { generateRandomId } from "@utilities/generateRandomId";
 import { Toolbar } from "./Toolbar";
 import { getEditorConfig } from "./utils/getEditorConfig";
 import { TextStyleType } from "./utils/getTextStyles";
