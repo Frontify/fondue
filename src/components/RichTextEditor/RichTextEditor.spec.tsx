@@ -178,6 +178,17 @@ describe("RichTextEditor Component", () => {
         cy.get("[contenteditable=true]").should("include.html", textStyleClassnames[TextStyles.ELEMENT_CUSTOM2]);
     });
 
+    it("renders multiple editors", () => {
+        mount(
+            <>
+                <RichTextEditor id="one" />
+                <RichTextEditor id="two" />
+            </>,
+        );
+
+        cy.get(RICH_TEXT_EDITOR).should("have.length", 2);
+    });
+
     it("emits onTextChange when choosing an inline style", () => {
         const onTextChange = cy.stub();
         mount(<RichTextEditor onTextChange={onTextChange} />);
