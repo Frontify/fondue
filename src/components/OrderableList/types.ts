@@ -1,23 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DraggableCollectionState, DroppableCollectionState } from "@react-stately/dnd";
-import { Key, ReactElement, RefObject } from "react";
-import { GridNode } from "@react-types/grid";
-import { GridCollection, GridState } from "@react-stately/grid";
-import { ItemDropTarget } from "@react-types/shared";
+import { ReactElement } from "react";
+import { DraggableItem } from "@utilities/dnd";
 
-export type RenderListItem<T> = (items: GridNode<OrderableListItem<T>>, dragProps: DragProperties) => ReactElement;
+export type RenderListItem<T> = (items: OrderableListItem<T>, dragProps: DragProperties) => ReactElement;
 
 export type CollectionItemProps<T> = {
-    item: GridNode<OrderableListItem<T>>;
+    item: OrderableListItem<T>;
     dragDisabled: boolean;
-    gridState: GridState<T, GridCollection<OrderableListItem<T>>>;
-    dragState: DraggableCollectionState;
     renderContent: RenderListItem<T>;
+    listId: string;
 };
 
-export type OrderableListItem<T = Record<string, unknown>> = T & {
-    id: string;
+export type OrderableListItem<T = Record<string, unknown>> = DraggableItem<T> & {
     alt: string;
 };
 
@@ -29,8 +24,7 @@ export type DragProperties = {
 export type OrderableListProps<T> = {
     items: OrderableListItem<T>[];
     dragDisabled: boolean;
-    disableTypeAhead?: boolean;
-    onMove: (selectedGridItemKeys: Key[], gridItemLocation: ItemDropTarget) => void;
+    onMove: (modifiedItems: OrderableListItem<T>[]) => void;
     renderContent: RenderListItem<T>;
 };
 
@@ -39,25 +33,3 @@ export enum ItemDragState {
     Idle = "Idle",
     Preview = "Preview",
 }
-
-export type InsertionIndicatorProps = {
-    key: string;
-    collectionRef: RefObject<HTMLDivElement>;
-    target: ItemDropTarget;
-    dropState: DroppableCollectionState;
-};
-
-export type FocusControllerProps = {
-    children: ReactElement;
-    width?: FocusControllerWidth;
-};
-
-export enum FocusControllerWidth {
-    Full = "Full",
-    HugContents = "HugContents",
-}
-
-export const FocusControllerWidthClass: Record<FocusControllerWidth, string> = {
-    [FocusControllerWidth.Full]: "tw-w-full tw-flex-auto",
-    [FocusControllerWidth.HugContents]: "tw-flex-initial tw-min-w-0",
-};

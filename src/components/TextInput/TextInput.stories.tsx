@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { Meta, Story } from "@storybook/react";
-import { TextInput, TextInputProps, TextInputType, Validation } from "./TextInput";
+import { TextInput, TextInputProps, TextInputType } from "./TextInput";
+import { Validation } from "@utilities/validation";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -15,10 +16,12 @@ export default {
         disabled: false,
         required: false,
         autocomplete: false,
+        readonly: false,
         dotted: false,
         type: TextInputType.Text,
         validation: Validation.Default,
         spellcheck: true,
+        copyable: false,
     },
     argTypes: {
         validation: {

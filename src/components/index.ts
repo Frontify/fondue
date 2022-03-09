@@ -13,6 +13,7 @@ export * from "./Checkbox";
 export * from "./Checklist";
 export * from "./ColorInputFlyout";
 export * from "./ColorPicker";
+export * from "./DatePicker";
 export * from "./Divider";
 export * from "./Dropdown";
 export * from "./FieldsetHeader";

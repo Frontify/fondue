@@ -128,7 +128,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
 
     return (
         <LayoutGroup id={layoutGroupId}>
-            <div data-test-id="tabs" className="tw-flex tw-relative tw-border-b tw-border-grey-20">
+            <div data-test-id="tabs" className="tw-flex tw-relative tw-border-b tw-border-line">
                 <div
                     ref={tabNavRef}
                     role="tablist"
@@ -173,7 +173,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                     />
                                 )}
                                 {tab.id !== activeItemId && !tab.disabled && (
-                                    <div className="group-hover:tw-absolute group-hover:tw-h-1 group-hover:tw-bg-grey-20 group-hover:tw-rounded-t-x-large group-hover:tw-w-full group-hover:tw-bottom-0" />
+                                    <div className="group-hover:tw-absolute group-hover:tw-h-1 group-hover:tw-bg-box-neutral-hover group-hover:tw-rounded-t-x-large group-hover:tw-w-full group-hover:tw-bottom-0" />
                                 )}
                             </button>
                         );
@@ -182,7 +182,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                 {isOverflowing && (
                     <div
                         data-test-id="tab-overflow"
-                        className="tw-absolute tw-rotate-90 tw-right-3 tw-top-0 tw-w-6 tw-h-6 tw-bg-grey-20 tw-rounded tw-flex tw-justify-center tw-items-center"
+                        className="tw-absolute tw-rotate-90 tw-right-3 tw-top-0 tw-w-6 tw-h-6 tw-bg-box-neutral tw-rounded tw-flex tw-justify-center tw-items-center"
                     >
                         <Flyout
                             trigger={
