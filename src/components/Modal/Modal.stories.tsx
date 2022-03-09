@@ -47,7 +47,7 @@ export const Default: Story<ModalProps> = () => {
             }
         >
             <ModalBody direction={ScrollWrapperDirection.Vertical}>
-                <div className="tw-w-[3000px]">
+                <div>
                     <p>
                         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
                         itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,

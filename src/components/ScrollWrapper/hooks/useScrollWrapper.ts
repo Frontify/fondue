@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { RefObject, useState } from "react";
+import { RefObject, useState, UIEvent } from "react";
 
 export const useScrollWrapper = (scrollingContainer: RefObject<HTMLElement>) => {
     const [scrollTop, setScrollTop] = useState(0);
