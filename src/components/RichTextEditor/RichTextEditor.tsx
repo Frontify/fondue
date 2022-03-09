@@ -3,11 +3,13 @@
 import { Plate, TNode, usePlateEditorState } from "@udecode/plate";
 import React, { FC, useCallback, useEffect, useState } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
-import { debounce } from "../..";
+import { debounce, generateRandomId } from "../..";
 import { Toolbar } from "./Toolbar";
 import { getEditorConfig } from "./utils/getEditorConfig";
 import { TextStyleType } from "./utils/getTextStyles";
 import { EMPTY_VALUE, parseRawValue } from "./utils/parseRawValue";
+
+const defaultEditorId = generateRandomId();
 
 export type RichTextEditorProps = {
     id?: string;
@@ -23,7 +25,7 @@ export type RichTextEditorProps = {
 export const ON_SAVE_DELAY_IN_MS = 500;
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
-    id: editorId,
+    id: editorId = defaultEditorId,
     value: initialValue,
     placeholder = "",
     readonly = false,
