@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, useRef } from "react";
-import { merge } from "@utilities/merge";
-import { ScrollWrapperDirection, scrollWrapperDirections, ScrollWrapperProps } from "./types";
 import { useScrollWrapper } from "./hooks/useScrollWrapper";
+import { ScrollWrapperDirection, scrollWrapperDirections, ScrollWrapperProps } from "./types";
 
 export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction, children }) => {
     const scrollingContainer = useRef<HTMLDivElement>(null);
