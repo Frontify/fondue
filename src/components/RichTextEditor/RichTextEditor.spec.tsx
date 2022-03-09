@@ -10,8 +10,8 @@ const TOOLBAR = "[data-test-id=toolbar]";
 const TEXT_ALIGNMENT_BUTTONS = "[data-test-id=text-alignment-buttons]";
 const TEXT_MARK_BUTTONS = "[data-test-id=text-mark-buttons]";
 const TEXT_ELEMENT_BUTTONS = "[data-test-id=text-element-buttons]";
-const TEXTSTYLE_DROPDOWN_TRIGGER = "[data-test-id=textstyle-dropdown-trigger]";
-const TEXTSTYLE_OPTION = "[data-test-id=textstyle-option]";
+// const TEXTSTYLE_DROPDOWN_TRIGGER = "[data-test-id=textstyle-dropdown-trigger]";
+// const TEXTSTYLE_OPTION = "[data-test-id=textstyle-option]";
 
 const insertTextAndOpenToolbar = () => cy.get("[contenteditable=true]").click().type("hello{selectall}");
 
