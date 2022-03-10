@@ -78,9 +78,9 @@ describe("OrderableList Component", () => {
             .trigger("dragover", { dataTransfer, force: true });
         cy.get(DROP_ZONE).each(($el, i) => {
             if (i === targetDropZone) {
-                expect($el).to.have.class("tw-bg-violet-60");
+                expect($el).to.have.class("tw-border-violet-60");
             } else {
-                expect($el).not.to.have.class("tw-bg-violet-60");
+                expect($el).not.to.have.class("tw-border-violet-60");
             }
         });
         cy.get("@fourthDropZone").trigger("drop", { dataTransfer, force: true });
@@ -98,7 +98,7 @@ describe("OrderableList Component", () => {
                 .as("targetDropZone")
                 .trigger("dragenter", { dataTransfer })
                 .trigger("dragover", { dataTransfer });
-            cy.get("@targetDropZone").should("not.have.class", "tw-bg-violet-60");
+            cy.get("@targetDropZone").should("not.have.class", "tw-border-violet-60");
             cy.get("@targetDropZone").should("have.attr", "aria-hidden").and("equal", "true");
         });
     });
@@ -149,7 +149,7 @@ describe("OrderableList Component", () => {
             .first()
             .trigger("dragenter", { dataTransfer })
             .trigger("dragover", { dataTransfer });
-        cy.get("@targetDropZone").should("not.have.class", "tw-bg-violet-60");
+        cy.get("@targetDropZone").should("not.have.class", "tw-border-violet-60");
         cy.get("@targetDropZone").should("have.attr", "aria-hidden").and("equal", "true");
     });
 });
