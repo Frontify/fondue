@@ -86,11 +86,11 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         return ButtonStyleClasses[emphasis][style][invertedStyleKey];
     };
 
-    const setStylingClass = (type: string) => {
+    const setStylingClass = (kind: string) => {
         const buttonClass = getButtonStyleClasses();
 
         if (!disabled) {
-            switch (type) {
+            switch (kind) {
                 case "button":
                     if (isFocusVisible) {
                         return buttonClass.button && FOCUS_STYLE;
