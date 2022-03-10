@@ -66,6 +66,27 @@ const setDefaultClasses = (keyword: string, isWeak: boolean, isInverted = false,
     };
 };
 
+const commonStrongAndDefaultStyles = {
+    [ButtonStyle.Danger]: {
+        default: { ...setDefaultClasses("-danger", false) },
+        inverted: { ...setDefaultClasses("-danger", false) },
+    },
+    // DEPRECATING
+    [ButtonStyle.Primary]: {
+        default: { ...setDefaultClasses("-strong", false) },
+        inverted: {
+            ...setDefaultClasses("", false, true, "tw-bg-base tw-border-button-strong-border "),
+        },
+    },
+    // DEPRECATING
+    [ButtonStyle.Secondary]: {
+        default: { ...setDefaultClasses("", false) },
+        inverted: {
+            ...setDefaultClasses("-strong", false, true, "tw-bg-text-weak tw-border-button-border "),
+        },
+    },
+};
+
 /**
  * A NOTE ABOUT THIS BIG LONG LIST
  *
@@ -104,24 +125,7 @@ export const ButtonStyleClasses: Record<
                     "group-active:tw-text-button-negative-icon-pressed ",
             },
         },
-        [ButtonStyle.Danger]: {
-            default: { ...setDefaultClasses("-danger", false) },
-            inverted: { ...setDefaultClasses("-danger", false) },
-        },
-        // DEPRECATING
-        [ButtonStyle.Primary]: {
-            default: { ...setDefaultClasses("-strong", false) },
-            inverted: {
-                ...setDefaultClasses("", false, true, "tw-bg-base tw-border-button-strong-border "),
-            },
-        },
-        // DEPRECATING
-        [ButtonStyle.Secondary]: {
-            default: { ...setDefaultClasses("", false) },
-            inverted: {
-                ...setDefaultClasses("-strong", false, true, "tw-bg-text-weak tw-border-button-border "),
-            },
-        },
+        ...commonStrongAndDefaultStyles,
     },
     [ButtonEmphasis.Strong]: {
         [ButtonStyle.Default]: {
@@ -155,24 +159,7 @@ export const ButtonStyleClasses: Record<
                     "group-active:tw-text-button-negative-text-pressed ",
             },
         },
-        [ButtonStyle.Danger]: {
-            default: { ...setDefaultClasses("-danger", false) },
-            inverted: { ...setDefaultClasses("-danger", false) },
-        },
-        // DEPRECATING
-        [ButtonStyle.Primary]: {
-            default: { ...setDefaultClasses("-strong", false) },
-            inverted: {
-                ...setDefaultClasses("", false, true, "tw-bg-base tw-border-button-strong-border "),
-            },
-        },
-        // DEPRECATING
-        [ButtonStyle.Secondary]: {
-            default: { ...setDefaultClasses("", false) },
-            inverted: {
-                ...setDefaultClasses("-strong", false, true, "tw-bg-text-weak tw-border-button-border "),
-            },
-        },
+        ...commonStrongAndDefaultStyles,
     },
     [ButtonEmphasis.Weak]: {
         [ButtonStyle.Default]: {
