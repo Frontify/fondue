@@ -66,25 +66,57 @@ const setDefaultClasses = (keyword: string, isWeak: boolean, isInverted = false,
     };
 };
 
-const commonStrongAndDefaultStyles = {
-    [ButtonStyle.Danger]: {
-        default: { ...setDefaultClasses("-danger", false) },
-        inverted: { ...setDefaultClasses("-danger", false) },
-    },
-    // DEPRECATING
-    [ButtonStyle.Primary]: {
-        default: { ...setDefaultClasses("-strong", false) },
-        inverted: {
-            ...setDefaultClasses("", false, true, "tw-bg-base tw-border-button-strong-border "),
+const commonStrongAndDefaultStyles = (style: string) => {
+    return {
+        [ButtonStyle.Default]: {
+            default: { ...setDefaultClasses(style === "default" ? "" : "-strong", false) },
+            inverted: {
+                ...setDefaultClasses(
+                    style === "default" ? "-strong" : "",
+                    false,
+                    true,
+                    style === "default"
+                        ? "tw-bg-text-weak tw-border-button-border "
+                        : "tw-bg-base tw-border-button-strong-border ",
+                ),
+            },
         },
-    },
-    // DEPRECATING
-    [ButtonStyle.Secondary]: {
-        default: { ...setDefaultClasses("", false) },
-        inverted: {
-            ...setDefaultClasses("-strong", false, true, "tw-bg-text-weak tw-border-button-border "),
+        [ButtonStyle.Positive]: {
+            default: { ...setDefaultClasses(style === "default" ? "-positive" : "-strong-positive", false) },
+            inverted: {
+                ...setDefaultClasses(
+                    style === "default" ? "-strong" : "-positive",
+                    false,
+                    true,
+                    style === "default"
+                        ? "tw-bg-text-weak tw-border-button-positive-border "
+                        : "tw-bg-base tw-border-button-positive-border ",
+                ),
+                icon:
+                    style === "default"
+                        ? `tw-text-green-mid ${positiveHoverAndActiveIcon}`
+                        : `tw-text-button-positive-icon ${positiveHoverAndActiveIcon}`,
+            },
         },
-    },
+        [ButtonStyle.Danger]: {
+            default: { ...setDefaultClasses("-danger", false) },
+            inverted: { ...setDefaultClasses("-danger", false) },
+        },
+        // DEPRECATING
+        [ButtonStyle.Primary]: {
+            default: { ...setDefaultClasses("-strong", false) },
+            inverted: {
+                ...setDefaultClasses("", false, true, "tw-bg-base tw-border-button-strong-border "),
+            },
+        },
+        // DEPRECATING
+        [ButtonStyle.Secondary]: {
+            default: { ...setDefaultClasses("", false) },
+            inverted: {
+                ...setDefaultClasses("-strong", false, true, "tw-bg-text-weak tw-border-button-border "),
+            },
+        },
+    };
 };
 
 const positiveHoverAndActiveIcon =
@@ -102,19 +134,7 @@ export const ButtonStyleClasses: Record<
     Record<ButtonStyle, Record<"default" | "inverted", ButtonElements>>
 > = {
     [ButtonEmphasis.Default]: {
-        [ButtonStyle.Default]: {
-            default: { ...setDefaultClasses("", false) },
-            inverted: {
-                ...setDefaultClasses("-strong", false, true, "tw-bg-text-weak tw-border-button-border "),
-            },
-        },
-        [ButtonStyle.Positive]: {
-            default: { ...setDefaultClasses("-positive", false) },
-            inverted: {
-                ...setDefaultClasses("-strong", false, true, "tw-bg-text-weak tw-border-button-positive-border "),
-                icon: `tw-text-green-mid ${positiveHoverAndActiveIcon}`,
-            },
-        },
+        ...commonStrongAndDefaultStyles("default"),
         [ButtonStyle.Negative]: {
             default: { ...setDefaultClasses("-negative", false) },
             inverted: {
@@ -125,22 +145,9 @@ export const ButtonStyleClasses: Record<
                     "group-active:tw-text-button-negative-icon-pressed ",
             },
         },
-        ...commonStrongAndDefaultStyles,
     },
     [ButtonEmphasis.Strong]: {
-        [ButtonStyle.Default]: {
-            default: { ...setDefaultClasses("-strong", false) },
-            inverted: {
-                ...setDefaultClasses("", false, true, "tw-bg-base tw-border-button-strong-border "),
-            },
-        },
-        [ButtonStyle.Positive]: {
-            default: { ...setDefaultClasses("-strong-positive", false) },
-            inverted: {
-                ...setDefaultClasses("-positive", false, true, "tw-bg-base tw-border-button-positive-border "),
-                icon: `tw-text-button-positive-icon ${positiveHoverAndActiveIcon}`,
-            },
-        },
+        ...commonStrongAndDefaultStyles("strong"),
         [ButtonStyle.Negative]: {
             default: { ...setDefaultClasses("-strong-negative", false) },
             inverted: {
@@ -156,7 +163,6 @@ export const ButtonStyleClasses: Record<
                     "group-active:tw-text-button-negative-text-pressed ",
             },
         },
-        ...commonStrongAndDefaultStyles,
     },
     [ButtonEmphasis.Weak]: {
         [ButtonStyle.Default]: {
