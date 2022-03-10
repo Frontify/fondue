@@ -1,25 +1,28 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, useState } from "react";
-import { Tree } from "./Tree";
-import { TreeNodeItem } from "./Node";
+import { Tree, TreeFlatListItem } from "./Tree";
 import { mount } from "@cypress/react";
 import { IconSize } from "@foundation/Icon/IconSize";
-import IconDocument from "@foundation/Icon/Generated/IconDocument";
-import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
+import { DraggableItem } from "@utilities/dnd";
+import { IconFile, IconFolder } from "@foundation/Icon";
 
 type ComponentProps = {
-    nodes: TreeNodeItem[];
-    onDrop?: () => void;
+    nodes: DraggableItem<TreeFlatListItem>[];
+    onDrop?: (modifiedItems: DraggableItem<TreeFlatListItem>[]) => void;
 };
 const Component: FC<ComponentProps> = ({ nodes, onDrop }) => {
     const [selectedId, setSelectedId] = useState<NullableString>();
+    const onDropDefault = (items: DraggableItem<TreeFlatListItem>[]) => {
+        console.log(items);
+    };
+
     return (
         <Tree
             nodes={nodes}
             activeNodeId={selectedId}
             onSelect={(id: NullableString) => setSelectedId(id)}
-            onUpdate={onDrop}
+            onUpdate={onDrop || onDropDefault}
         />
     );
 };
@@ -32,71 +35,85 @@ const TOGGLE_ID = "[data-test-id=toggle]";
 const SUB_TREE_ID = "[data-test-id=sub-tree]";
 const DROP_ZONE_ID = "[data-test-id=drop-zone]";
 
-const nodes: TreeNodeItem[] = [
+export const nodes: DraggableItem<TreeFlatListItem>[] = [
     {
         id: "1",
         name: "Design System Testing",
         label: "Document",
         value: "https://weare.frontify.com/document/1",
-        icon: <IconGuidelines size={IconSize.Size16} />,
-        nodes: [
-            {
-                id: "1-1",
-                name: "Uncategorizes Pages",
-                nodes: [
-                    {
-                        id: "1-1-1",
-                        name: "Home",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/1",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                    },
-                    {
-                        id: "1-1-2",
-                        name: "Members",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/2",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                    },
-                    {
-                        id: "1-1-3",
-                        name: "About us",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/3",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                    },
-                ],
-            },
-            {
-                id: "1-2",
-                name: "Test Category",
-                label: "Document",
-                value: "https://weare.frontify.com/document/923#/test",
-                nodes: [
-                    {
-                        id: "1-2-1",
-                        name: "Home",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/1",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                    },
-                    {
-                        id: "1-2-2",
-                        name: "Members",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/2",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                    },
-                    {
-                        id: "1-2-3",
-                        name: "About us",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/3",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                    },
-                ],
-            },
-        ],
+        icon: <IconFolder size={IconSize.Size16} />,
+        parentId: null,
+        sort: 1,
+    },
+    {
+        id: "1-1",
+        name: "Uncategorizes Pages",
+        icon: <IconFolder size={IconSize.Size16} />,
+        parentId: "1",
+        sort: 1,
+    },
+    {
+        id: "1-1-1",
+        parentId: "1-1",
+        sort: 1,
+        name: "Home",
+        label: "Page",
+        value: "https://weare.frontify.com/page/1",
+        icon: <IconFile size={IconSize.Size16} />,
+    },
+    {
+        id: "1-1-2",
+        parentId: "1-1",
+        name: "Members",
+        label: "Page",
+        value: "https://weare.frontify.com/page/2",
+        icon: <IconFile size={IconSize.Size16} />,
+        sort: null,
+    },
+    {
+        id: "1-1-3",
+        parentId: "1-1",
+        name: "About us",
+        label: "Page",
+        value: "https://weare.frontify.com/page/3",
+        icon: <IconFile size={IconSize.Size16} />,
+        sort: null,
+    },
+    {
+        id: "1-2",
+        parentId: "1",
+        name: "Test Category",
+        label: "Document",
+        icon: <IconFolder size={IconSize.Size16} />,
+        value: "https://weare.frontify.com/document/923#/test",
+        sort: null,
+    },
+    {
+        id: "1-2-1",
+        parentId: "1-2",
+        name: "Home Category",
+        label: "Home Page",
+        value: "https://weare.frontify.com/page/4",
+        icon: <IconFile size={IconSize.Size16} />,
+        sort: null,
+    },
+    {
+        id: "1-2-2",
+        parentId: "1-2",
+        name: "Members Category",
+        label: "Members Page",
+        value: "https://weare.frontify.com/page/5",
+        icon: <IconFile size={IconSize.Size16} />,
+        sort: null,
+    },
+    {
+        id: "1-2-3",
+        parentId: "1-2",
+        name: "About us Category",
+        label: "About Us Page",
+        value: "https://weare.frontify.com/page/6",
+        icon: <IconFile size={IconSize.Size16} />,
+        sort: null,
     },
 ];
 
@@ -177,7 +194,7 @@ describe("Draggable Tree Component", () => {
         cy.get(`${NODE_ID} ${TOGGLE_ID}`).click();
         cy.get(`${SUB_TREE_ID} ${DROP_ZONE_ID}`).should("have.length", 5);
         cy.get(`${SUB_TREE_ID} ${DROP_ZONE_ID}`).each(($dropZone, index) => {
-            const expectedClass = index % 2 === 0 ? "tw-h-1" : "tw-h-auto";
+            const expectedClass = index % 2 === 0 ? "tw-h-[10px]" : "tw-h-auto";
             expect($dropZone).to.have.class(expectedClass);
         });
     });

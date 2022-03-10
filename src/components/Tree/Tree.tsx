@@ -5,8 +5,8 @@ import { renderNodeArray } from "./Node";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useId } from "@react-aria/utils";
-import { DraggableItem, DropZonePosition, moveItems } from "@utilities/dnd";
-import { listToTree } from "@components/Tree/utils";
+import { DraggableItem, DropZonePosition } from "@utilities/dnd";
+import { getReorderedNodes, listToTree } from "@components/Tree/utils";
 import { IconProps } from "@foundation/Icon";
 
 export interface TreeFlatListItem {
@@ -31,9 +31,8 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActi
     const listId = useId();
     useEffect(() => setActiveNodeId(initialActiveNodeId), [initialActiveNodeId]);
     useEffect(() => {
-        const lisToTreeNodes = listToTree(nodes); // TODO rename
-        console.log(lisToTreeNodes);
-        setTreeNodes(lisToTreeNodes);
+        const listToTreeNodes = listToTree(nodes);
+        setTreeNodes(listToTreeNodes);
     }, [nodes]);
 
     const onNodeClick = (id: NullableString) => {
@@ -46,10 +45,7 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActi
         sourceItem: DraggableItem<TreeFlatListItem>,
         position: DropZonePosition,
     ) => {
-        const parentId = position === DropZonePosition.Within ? targetItem.id : targetItem.parentId;
-        const sameLevelNodes = nodes.filter((node) => node.parentId === parentId);
-
-        const modifiedItems = moveItems(targetItem, { ...sourceItem, parentId, sort: null }, position, sameLevelNodes);
+        const modifiedItems = getReorderedNodes(targetItem, sourceItem, position, nodes);
         onUpdate(modifiedItems);
     };
 

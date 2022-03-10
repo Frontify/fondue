@@ -48,7 +48,7 @@ export const moveItems = <T extends object>(
     const itemsClone = [...items];
     const sourceIndex = itemsClone.findIndex((item) => item.id === sourceItem.id);
 
-    itemsClone.splice(sourceIndex, 1);
+    sourceIndex !== -1 && itemsClone.splice(sourceIndex, 1);
 
     let targetIndex = itemsClone.findIndex((item) => item.id === targetItem.id);
     targetIndex = position === DropZonePosition.After ? targetIndex + 1 : targetIndex;
