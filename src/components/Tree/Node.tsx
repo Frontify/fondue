@@ -14,7 +14,7 @@ import { DraggableItem, DropZonePosition } from "@utilities/dnd";
 export const renderNodeArray = (
     nodes: DraggableItem<TreeNodeItem>[],
     activeNodeId: NullableString,
-    listId: string,
+    treeName: string,
     onClick: (id: NullableString) => void,
     onDrop?: OnDropCallback<TreeNodeItem>,
     parentIds?: string[],
@@ -29,7 +29,7 @@ export const renderNodeArray = (
             isFirst={i === 0}
             onDrop={onDrop}
             parentIds={parentIds}
-            listId={listId}
+            treeName={treeName}
         />
     ));
 
@@ -44,7 +44,7 @@ type NodeProps = {
     parentIds?: string[];
     onClick: (id: NullableString) => void;
     isFirst: boolean;
-    listId: string;
+    treeName: string;
     onDrop?: OnDropCallback<TreeNodeItem>;
 };
 
@@ -56,7 +56,7 @@ export const Node = ({
     parentIds = [],
     isFirst,
     onDrop,
-    listId,
+    treeName,
 }: NodeProps): ReactElement<NodeProps> => {
     const { id, value, name, label, icon, nodes, actions } = node;
     const [{ opacity }, drag] = useDrag({
@@ -64,7 +64,7 @@ export const Node = ({
         collect: (monitor) => ({
             opacity: monitor.isDragging() ? 0.4 : 1,
         }),
-        type: listId,
+        type: treeName,
         canDrag: onDrop !== undefined,
     });
     const [showNodes, setShowNodes] = useState(false);
@@ -103,7 +103,7 @@ export const Node = ({
                         position: DropZonePosition.Before,
                     }}
                     onDrop={onDrop}
-                    listId={listId}
+                    treeName={treeName}
                 />
             )}
             <DropZone
@@ -112,7 +112,7 @@ export const Node = ({
                     position: DropZonePosition.Within,
                 }}
                 onDrop={onDrop}
-                listId={listId}
+                treeName={treeName}
             >
                 <div
                     className={merge([
@@ -174,7 +174,7 @@ export const Node = ({
                     className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left"
                     data-test-id="sub-tree"
                 >
-                    {renderNodeArray(nodes, activeNodeId, listId, onClick, onDrop, [...parentIds, id])}
+                    {renderNodeArray(nodes, activeNodeId, treeName, onClick, onDrop, [...parentIds, id])}
                 </ul>
             )}
             <DropZone
@@ -183,7 +183,7 @@ export const Node = ({
                     position: DropZonePosition.After,
                 }}
                 onDrop={onDrop}
-                listId={listId}
+                treeName={treeName}
             />
         </li>
     );

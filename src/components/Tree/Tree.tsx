@@ -28,7 +28,7 @@ export type TreeProps = {
 export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActiveNodeId = null, onUpdate }) => {
     const [activeNodeId, setActiveNodeId] = useState<NullableString>(initialActiveNodeId);
     const [treeNodes, setTreeNodes] = useState<DraggableItem<TreeFlatListItem>[]>([]);
-    const listId = useId();
+    const treeName = useId();
     useEffect(() => setActiveNodeId(initialActiveNodeId), [initialActiveNodeId]);
     useEffect(() => {
         const listToTreeNodes = listToTree(nodes);
@@ -55,7 +55,7 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActi
                 data-test-id="tree"
                 className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
             >
-                {renderNodeArray(treeNodes, activeNodeId, listId, onNodeClick, handleDrop)}
+                {renderNodeArray(treeNodes, activeNodeId, treeName, onNodeClick, handleDrop)}
             </ul>
         </DndProvider>
     );
