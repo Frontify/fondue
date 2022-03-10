@@ -1,16 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useMemoizedId } from "@hooks/useMemoizedId";
 import { Plate, TNode, usePlateEditorState } from "@udecode/plate";
+import { debounce } from "@utilities/debounce";
 import React, { FC, useCallback, useEffect, useState } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
-import { debounce } from "@utilities/debounce";
-import { generateRandomId } from "@utilities/generateRandomId";
 import { Toolbar } from "./Toolbar";
 import { getEditorConfig } from "./utils/getEditorConfig";
 import { TextStyleType } from "./utils/getTextStyles";
 import { EMPTY_VALUE, parseRawValue } from "./utils/parseRawValue";
-
-const defaultEditorId = generateRandomId();
 
 export type RichTextEditorProps = {
     id?: string;
@@ -26,7 +24,7 @@ export type RichTextEditorProps = {
 export const ON_SAVE_DELAY_IN_MS = 500;
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
-    id: editorId = defaultEditorId,
+    id,
     value: initialValue,
     placeholder = "",
     readonly = false,
@@ -35,7 +33,8 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     onTextChange,
     onBlur,
 }) => {
-    const editor = usePlateEditorState();
+    const editorId = id || useMemoizedId();
+    const editor = usePlateEditorState(editorId);
     const [debouncedValue, setDebouncedValue] = useState<TNode[] | null>(null);
     const editableProps: EditableProps = {
         placeholder: placeholder,
