@@ -186,9 +186,9 @@ describe("RichTextEditor Component", () => {
             </>,
         );
 
-        cy.get("[contenteditable=true]").first().realClick().type("hello editor one");
-        cy.get("[contenteditable=true]").last().realClick().type("hello editor two");
+        cy.get("[contenteditable=true]").first().click().type("hello editor one");
         cy.get("[contenteditable=true]").first().should("contain.text", "hello editor one");
+        cy.get("[contenteditable=true]").last().realClick().type("hello editor two");
         cy.get("[contenteditable=true]").last().should("contain.text", "hello editor two");
     });
 
