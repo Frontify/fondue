@@ -36,6 +36,7 @@ export { default as IconBookmark } from "./IconBookmark";
 export { default as IconBrand } from "./IconBrand";
 export { default as IconBriefing } from "./IconBriefing";
 export { default as IconBuilder } from "./IconBuilder";
+export { default as IconBuildings } from "./IconBuildings";
 export { default as IconButton } from "./IconButton";
 export { default as IconCalendar } from "./IconCalendar";
 export { default as IconCallout } from "./IconCallout";
