@@ -22,7 +22,7 @@ export type TreeProps = {
     nodes: DraggableItem<TreeFlatListItem>[];
     onSelect: (id: NullableString) => void;
     activeNodeId?: NullableString;
-    onUpdate: (modifiedItems: DraggableItem<TreeFlatListItem>[]) => void;
+    onUpdate?: (modifiedItems: DraggableItem<TreeFlatListItem>[]) => void;
 };
 
 export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActiveNodeId = null, onUpdate }) => {
@@ -40,14 +40,16 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActi
         onSelect(id);
     };
 
-    const handleDrop = (
-        targetItem: DraggableItem<TreeFlatListItem>,
-        sourceItem: DraggableItem<TreeFlatListItem>,
-        position: DropZonePosition,
-    ) => {
-        const modifiedItems = getReorderedNodes(targetItem, sourceItem, position, nodes);
-        onUpdate(modifiedItems);
-    };
+    const handleDrop = onUpdate
+        ? (
+              targetItem: DraggableItem<TreeFlatListItem>,
+              sourceItem: DraggableItem<TreeFlatListItem>,
+              position: DropZonePosition,
+          ) => {
+              const modifiedItems = getReorderedNodes(targetItem, sourceItem, position, nodes);
+              onUpdate(modifiedItems);
+          }
+        : undefined;
 
     return (
         <DndProvider backend={HTML5Backend}>
