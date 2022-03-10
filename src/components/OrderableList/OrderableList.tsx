@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 
 import { CollectionItem } from "./CollectionItem";
 import { OrderableListItem, OrderableListProps } from "./types";
-import { DropZone } from "@components/OrderableList/DropZone";
+import { DropZone } from "@components/DropZone";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { DropZonePosition, moveItems } from "@utilities/dnd";
@@ -61,7 +61,7 @@ export const OrderableList = <T extends object>({
                                 position: DropZonePosition.Before,
                             }}
                             onDrop={handleDrop}
-                            listId={listId}
+                            treeName={listId}
                         />
                         <CollectionItem
                             key={item.id}
@@ -78,7 +78,7 @@ export const OrderableList = <T extends object>({
                                     position: DropZonePosition.After,
                                 }}
                                 onDrop={handleDrop}
-                                listId={listId}
+                                treeName={listId}
                             />
                         )}
                     </>

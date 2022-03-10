@@ -1,24 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactElement, useState } from "react";
-import { IconProps } from "@foundation/Icon/IconProps";
 import { IconSize } from "@foundation/Icon/IconSize";
 import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
 import IconCaretRight from "@foundation/Icon/Generated/IconCaretRight";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDrag } from "react-dnd";
-import { DropZone, DropZonePosition, OnDropCallback } from "@components/Tree/DropZone";
+import { DropZone, OnDropCallback } from "@components/DropZone";
+import { TreeFlatListItem } from "@components/Tree";
+import { DraggableItem, DropZonePosition } from "@utilities/dnd";
 
-export const renderNodeArray = (
-    nodes: TreeNodeProps[],
-    activeNodeId: NullableString,
-    onClick: (id: NullableString) => void,
-    onDrop?: OnDropCallback,
-    parentIds?: string[],
-) =>
+export type RenderNodeArrayData = Omit<NodeProps, "isFirst" | "strong" | "node"> & {
+    nodes: DraggableItem<TreeNodeItem>[];
+};
+
+export const renderNodeArray = ({ nodes, activeNodeId, treeName, onClick, onDrop, parentIds }: RenderNodeArrayData) =>
     nodes.map((node, i) => (
-        <TreeNode
+        <Node
             key={node.id}
             node={node}
             activeNodeId={activeNodeId}
@@ -27,30 +26,26 @@ export const renderNodeArray = (
             isFirst={i === 0}
             onDrop={onDrop}
             parentIds={parentIds}
+            treeName={treeName}
         />
     ));
 
-export interface TreeNodeProps {
-    id: string;
-    name: string;
-    icon?: ReactElement<IconProps>;
-    label?: string;
-    value?: string;
-    nodes?: TreeNodeProps[];
-    actions?: React.ReactNode[];
+export interface TreeNodeItem extends TreeFlatListItem {
+    nodes?: DraggableItem<TreeNodeItem>[];
 }
 
 type NodeProps = {
-    node: TreeNodeProps;
+    node: DraggableItem<TreeNodeItem>;
     strong?: boolean;
     activeNodeId?: NullableString;
     parentIds?: string[];
     onClick: (id: NullableString) => void;
     isFirst: boolean;
-    onDrop?: OnDropCallback;
+    treeName: string;
+    onDrop?: OnDropCallback<TreeNodeItem>;
 };
 
-export const TreeNode = ({
+export const Node = ({
     node,
     strong = false,
     activeNodeId = null,
@@ -58,6 +53,7 @@ export const TreeNode = ({
     parentIds = [],
     isFirst,
     onDrop,
+    treeName,
 }: NodeProps): ReactElement<NodeProps> => {
     const { id, value, name, label, icon, nodes, actions } = node;
     const [{ opacity }, drag] = useDrag({
@@ -65,7 +61,7 @@ export const TreeNode = ({
         collect: (monitor) => ({
             opacity: monitor.isDragging() ? 0.4 : 1,
         }),
-        type: "item",
+        type: treeName,
         canDrag: onDrop !== undefined,
     });
     const [showNodes, setShowNodes] = useState(false);
@@ -101,17 +97,19 @@ export const TreeNode = ({
                 <DropZone
                     data={{
                         targetItem: node,
-                        position: DropZonePosition.BEFORE,
+                        position: DropZonePosition.Before,
                     }}
                     onDrop={onDrop}
+                    treeName={treeName}
                 />
             )}
             <DropZone
                 data={{
                     targetItem: node,
-                    position: DropZonePosition.WITHIN,
+                    position: DropZonePosition.Within,
                 }}
                 onDrop={onDrop}
+                treeName={treeName}
             >
                 <div
                     className={merge([
@@ -173,15 +171,16 @@ export const TreeNode = ({
                     className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left"
                     data-test-id="sub-tree"
                 >
-                    {renderNodeArray(nodes, activeNodeId, onClick, onDrop, [...parentIds, id])}
+                    {renderNodeArray({ nodes, activeNodeId, treeName, onClick, onDrop, parentIds: [...parentIds, id] })}
                 </ul>
             )}
             <DropZone
                 data={{
                     targetItem: node,
-                    position: DropZonePosition.AFTER,
+                    position: DropZonePosition.After,
                 }}
                 onDrop={onDrop}
+                treeName={treeName}
             />
         </li>
     );

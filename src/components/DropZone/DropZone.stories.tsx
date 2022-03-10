@@ -2,16 +2,18 @@
 
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
-import { OrderableList as OrderableListComponent } from "./OrderableList";
-import { OrderableListItem } from "./types";
-import { OrderableListProps } from ".";
+import { OrderableList as DropZoneComponent, OrderableListProps } from "../OrderableList";
+import { OrderableListItem } from "../OrderableList/types";
 import { chain } from "@react-aria/utils";
-import { renderContent, storyItems } from "@components/OrderableList/utils";
+import { Tree as TreeComponent, TreeFlatListItem, TreeProps } from "@components/Tree";
+import { DraggableItem } from "@utilities/dnd";
+import { mockNodesFlat } from "@components/Tree/utils";
+import { renderContent, storyItems, StoryListItem } from "@components/OrderableList/utils";
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Orderable List",
-    component: OrderableListComponent,
+    title: "Components/Drop Zone",
+    component: DropZoneComponent,
     args: {
         dragDisabled: false,
     },
@@ -20,11 +22,7 @@ export default {
     },
 } as Meta<OrderableListProps<StoryListItem>>;
 
-type StoryListItem = {
-    textContent: JSX.Element;
-};
-
-export const OrderableList: Story<OrderableListProps<StoryListItem>> = ({ onMove, dragDisabled }) => {
+export const DropZoneWithOrderableList: Story<OrderableListProps<StoryListItem>> = ({ onMove, dragDisabled }) => {
     const [items, setItems] = useState(storyItems);
 
     const handleMove = (modifiedItems: OrderableListItem<StoryListItem>[]) => {
@@ -43,7 +41,7 @@ export const OrderableList: Story<OrderableListProps<StoryListItem>> = ({ onMove
     return (
         <>
             <div className="tw-m-auto tw-w-[600px] tw-pb-6">
-                <OrderableListComponent
+                <DropZoneComponent
                     items={items}
                     onMove={chain(handleMove, onMove)}
                     dragDisabled={dragDisabled}
@@ -51,7 +49,7 @@ export const OrderableList: Story<OrderableListProps<StoryListItem>> = ({ onMove
                 />
             </div>
             <div className="tw-m-auto tw-w-[600px]">
-                <OrderableListComponent
+                <DropZoneComponent
                     items={items}
                     onMove={chain(handleMove, onMove)}
                     dragDisabled={dragDisabled}
@@ -59,5 +57,28 @@ export const OrderableList: Story<OrderableListProps<StoryListItem>> = ({ onMove
                 />
             </div>
         </>
+    );
+};
+
+export const DropZoneWithTree: Story<TreeProps> = (args: TreeProps) => {
+    const [nodesState, setNodes] = useState(mockNodesFlat);
+
+    const handleMove = (modifiedItems: DraggableItem<TreeFlatListItem>[]) => {
+        const modifiedArray = nodesState.map((item) => {
+            const matchingModifiedItem = modifiedItems.find((modifiedItem) => modifiedItem.id === item.id);
+            if (matchingModifiedItem) {
+                return { ...matchingModifiedItem };
+            }
+
+            return { ...item };
+        });
+
+        setNodes(modifiedArray);
+    };
+
+    return (
+        <div style={{ maxWidth: "800px" }}>
+            <TreeComponent {...args} nodes={nodesState} onUpdate={handleMove} />
+        </div>
     );
 };
