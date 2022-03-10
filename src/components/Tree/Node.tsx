@@ -11,14 +11,11 @@ import { DropZone, OnDropCallback } from "@components/DropZone";
 import { TreeFlatListItem } from "@components/Tree";
 import { DraggableItem, DropZonePosition } from "@utilities/dnd";
 
-export const renderNodeArray = (
-    nodes: DraggableItem<TreeNodeItem>[],
-    activeNodeId: NullableString,
-    treeName: string,
-    onClick: (id: NullableString) => void,
-    onDrop?: OnDropCallback<TreeNodeItem>,
-    parentIds?: string[],
-) =>
+export type RenderNodeArrayData = Omit<NodeProps, "isFirst" | "strong" | "node"> & {
+    nodes: DraggableItem<TreeNodeItem>[];
+};
+
+export const renderNodeArray = ({ nodes, activeNodeId, treeName, onClick, onDrop, parentIds }: RenderNodeArrayData) =>
     nodes.map((node, i) => (
         <Node
             key={node.id}
@@ -174,7 +171,7 @@ export const Node = ({
                     className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left"
                     data-test-id="sub-tree"
                 >
-                    {renderNodeArray(nodes, activeNodeId, treeName, onClick, onDrop, [...parentIds, id])}
+                    {renderNodeArray({ nodes, activeNodeId, treeName, onClick, onDrop, parentIds: [...parentIds, id] })}
                 </ul>
             )}
             <DropZone

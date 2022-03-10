@@ -55,7 +55,13 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActi
                 data-test-id="tree"
                 className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
             >
-                {renderNodeArray(treeNodes, activeNodeId, treeName, onNodeClick, handleDrop)}
+                {renderNodeArray({
+                    nodes: treeNodes,
+                    activeNodeId,
+                    treeName,
+                    onClick: onNodeClick,
+                    onDrop: handleDrop,
+                })}
             </ul>
         </DndProvider>
     );
