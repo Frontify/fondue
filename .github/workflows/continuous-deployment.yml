@@ -13,7 +13,7 @@ jobs:
               uses: actions/checkout@v3
 
             - name: Use Node.js 16
-              uses: actions/setup-node@v2
+              uses: actions/setup-node@v3
               with:
                   node-version: '16'
 
@@ -51,7 +51,7 @@ jobs:
               uses: actions/checkout@v3
 
             - name: Use Node.js 16 (npm repository)
-              uses: actions/setup-node@v2
+              uses: actions/setup-node@v3
               with:
                   node-version: '16'
                   registry-url: "https://registry.npmjs.org"
@@ -76,7 +76,7 @@ jobs:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
             - name: Use Node.js 16 (GitHub repository)
-              uses: actions/setup-node@v2
+              uses: actions/setup-node@v3
               with:
                   registry-url: "https://npm.pkg.github.com"
                   node-version: '16'
