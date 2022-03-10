@@ -40,13 +40,21 @@ export const IconSpacingClasses: Record<ButtonSize, string> = {
     [ButtonSize.Large]: "tw--ml-1 tw-mr-2 ",
 };
 
-const setDefaultClasses = (keyword: string, isWeak: boolean) => {
+const setDefaultClasses = (keyword: string, isWeak: boolean, isInverted = false, invertedButtonStyle = "") => {
+    let buttonStyle = `tw-bg-button${keyword}-background tw-border-button${keyword}-border `;
+
+    if (isWeak) {
+        buttonStyle = `tw-border-transparent hover:tw-border-button${keyword}-border `;
+    }
+
+    if (isInverted) {
+        buttonStyle = invertedButtonStyle;
+    }
+
     return {
-        button: isWeak
-            ? `tw-border-transparent hover:tw-border-button${keyword}-border `
-            : `tw-bg-button${keyword}-background tw-border-button${keyword}-border ` +
-              `hover:tw-bg-button${keyword}-background-hover ` +
-              `active:tw-bg-button${keyword}-background-pressed `,
+        button:
+            `${buttonStyle} hover:tw-bg-button${keyword}-background-hover ` +
+            `active:tw-bg-button${keyword}-background-pressed `,
         icon:
             `tw-text-button${keyword}-icon ` +
             `group-hover:tw-text-button${keyword}-icon-hover ` +
@@ -73,21 +81,13 @@ export const ButtonStyleClasses: Record<
         [ButtonStyle.Default]: {
             default: { ...setDefaultClasses("", false) },
             inverted: {
-                ...setDefaultClasses("-strong", false),
-                button:
-                    "tw-bg-text-weak tw-border-button-border " +
-                    "hover:tw-bg-button-strong-background-hover " +
-                    "active:tw-bg-button-strong-background-pressed ",
+                ...setDefaultClasses("-strong", false, true, "tw-bg-text-weak tw-border-button-border "),
             },
         },
         [ButtonStyle.Positive]: {
             default: { ...setDefaultClasses("-positive", false) },
             inverted: {
-                ...setDefaultClasses("-strong", false),
-                button:
-                    "tw-bg-text-weak tw-border-button-positive-border " +
-                    "hover:tw-bg-button-strong-background-hover " +
-                    "active:tw-bg-button-strong-background-pressed ",
+                ...setDefaultClasses("-strong", false, true, "tw-bg-text-weak tw-border-button-positive-border "),
                 icon:
                     "tw-text-green-mid " +
                     "group-hover:tw-text-button-positive-icon-hover " +
@@ -97,11 +97,7 @@ export const ButtonStyleClasses: Record<
         [ButtonStyle.Negative]: {
             default: { ...setDefaultClasses("-negative", false) },
             inverted: {
-                ...setDefaultClasses("-strong", false),
-                button:
-                    "tw-bg-text-weak tw-border-button-negative-border " +
-                    "hover:tw-bg-button-strong-background-hover " +
-                    "active:tw-bg-button-strong-background-pressed ",
+                ...setDefaultClasses("-strong", false, true, "tw-bg-text-weak tw-border-button-negative-border "),
                 icon:
                     "tw-text-red-mid " +
                     "group-hover:tw-text-button-negative-icon-hover " +
@@ -116,22 +112,14 @@ export const ButtonStyleClasses: Record<
         [ButtonStyle.Primary]: {
             default: { ...setDefaultClasses("-strong", false) },
             inverted: {
-                ...setDefaultClasses("", false),
-                button:
-                    "tw-bg-base tw-border-button-strong-border " +
-                    "hover:tw-bg-button-background-hover " +
-                    "active:tw-bg-button-background-pressed ",
+                ...setDefaultClasses("", false, true, "tw-bg-base tw-border-button-strong-border "),
             },
         },
         // DEPRECATING
         [ButtonStyle.Secondary]: {
             default: { ...setDefaultClasses("", false) },
             inverted: {
-                ...setDefaultClasses("-strong", false),
-                button:
-                    "tw-bg-text-weak tw-border-button-border " +
-                    "hover:tw-bg-button-strong-background-hover " +
-                    "active:tw-bg-button-strong-background-pressed ",
+                ...setDefaultClasses("-strong", false, true, "tw-bg-text-weak tw-border-button-border "),
             },
         },
     },
@@ -139,21 +127,13 @@ export const ButtonStyleClasses: Record<
         [ButtonStyle.Default]: {
             default: { ...setDefaultClasses("-strong", false) },
             inverted: {
-                ...setDefaultClasses("", false),
-                button:
-                    "tw-bg-base tw-border-button-strong-border " +
-                    "hover:tw-bg-button-background-hover " +
-                    "active:tw-bg-button-background-pressed ",
+                ...setDefaultClasses("", false, true, "tw-bg-base tw-border-button-strong-border "),
             },
         },
         [ButtonStyle.Positive]: {
             default: { ...setDefaultClasses("-strong-positive", false) },
             inverted: {
-                ...setDefaultClasses("-positive", false),
-                button:
-                    "tw-bg-base tw-border-button-positive-border " +
-                    "hover:tw-bg-button-positive-background-hover " +
-                    "active:tw-bg-button-positive-background-pressed ",
+                ...setDefaultClasses("-positive", false, true, "tw-bg-base tw-border-button-positive-border "),
                 icon:
                     "tw-text-button-positive-icon " +
                     "group-hover:tw-text-button-positive-icon-hover " +
@@ -163,11 +143,12 @@ export const ButtonStyleClasses: Record<
         [ButtonStyle.Negative]: {
             default: { ...setDefaultClasses("-strong-negative", false) },
             inverted: {
-                ...setDefaultClasses("-negative", false),
-                button:
-                    "tw-bg-base tw-border-button-border tw-border-button-strong-negative-border " +
-                    "hover:tw-bg-button-negative-background-hover " +
-                    "active:tw-bg-button-negative-background-pressed ",
+                ...setDefaultClasses(
+                    "-negative",
+                    false,
+                    true,
+                    "tw-bg-base tw-border-button-border tw-border-button-strong-negative-border ",
+                ),
                 text:
                     "tw-text-button-text " +
                     "group-hover:tw-text-button-negative-text-hover " +
@@ -182,22 +163,14 @@ export const ButtonStyleClasses: Record<
         [ButtonStyle.Primary]: {
             default: { ...setDefaultClasses("-strong", false) },
             inverted: {
-                ...setDefaultClasses("", false),
-                button:
-                    "tw-bg-base tw-border-button-strong-border " +
-                    "hover:tw-bg-button-background-hover " +
-                    "active:tw-bg-button-background-pressed ",
+                ...setDefaultClasses("", false, true, "tw-bg-base tw-border-button-strong-border "),
             },
         },
         // DEPRECATING
         [ButtonStyle.Secondary]: {
             default: { ...setDefaultClasses("", false) },
             inverted: {
-                ...setDefaultClasses("-strong", false),
-                button:
-                    "tw-bg-text-weak tw-border-button-border " +
-                    "hover:tw-bg-button-strong-background-hover " +
-                    "active:tw-bg-button-strong-background-pressed ",
+                ...setDefaultClasses("-strong", false, true, "tw-bg-text-weak tw-border-button-border "),
             },
         },
     },
@@ -255,11 +228,7 @@ export const ButtonStyleClasses: Record<
                     "group-active:tw-text-button-strong-text-pressed ",
             },
             inverted: {
-                ...setDefaultClasses("", true),
-                button:
-                    "tw-bg-base tw-border-button-border " +
-                    "hover:tw-bg-button-background-hover hover:tw-border-button-border " +
-                    "active:tw-bg-button-background-pressed ",
+                ...setDefaultClasses("", true, true, "tw-bg-base tw-border-button-border "),
             },
         },
         // DEPRECATING
