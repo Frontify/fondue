@@ -86,22 +86,37 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         return ButtonStyleClasses[emphasis][style][invertedStyleKey];
     };
 
-    const buttonClass = getButtonStyleClasses();
+    const setStylingClass = (type: string) => {
+        const buttonClass = getButtonStyleClasses();
+
+        if (!disabled) {
+            switch (type) {
+                case "button":
+                    if (isFocusVisible) {
+                        return buttonClass.button && FOCUS_STYLE;
+                    } else {
+                        return buttonClass.button;
+                    }
+                case "icon":
+                    return buttonClass.icon;
+                case "text":
+                    return buttonClass.text;
+            }
+        }
+
+        if (disabled) {
+            return (
+                ButtonDisabledClasses.common && (!solid ? ButtonDisabledClasses.weak : ButtonDisabledClasses.default)
+            );
+        }
+    };
 
     const buttonClassName = merge([
         ButtonCommonClasses,
         rounding === ButtonRounding.Full ? ButtonRoundingClasses.Full : ButtonRoundingClasses.Medium,
         (icon && !children) || hideLabel ? ButtonSizeClasses[size].iconOnly : ButtonSizeClasses[size].default,
         !hugWidth && "tw-w-full",
-        !disabled && buttonClass.button,
-        !disabled && isFocusVisible && FOCUS_STYLE,
-        disabled && ButtonDisabledClasses.common,
-        disabled && (!solid ? ButtonDisabledClasses.weak : ButtonDisabledClasses.default),
-    ]);
-
-    const iconClassName = merge([
-        children && !hideLabel ? IconSpacingClasses[size] : "",
-        !disabled && buttonClass.icon,
+        setStylingClass("button"),
     ]);
 
     return (
@@ -114,14 +129,17 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             data-test-id="button"
         >
             {icon && (
-                <span data-test-id="button-icon" className={iconClassName}>
+                <span
+                    data-test-id="button-icon"
+                    className={merge([children && !hideLabel ? IconSpacingClasses[size] : "", setStylingClass("icon")])}
+                >
                     {cloneElement(icon, { size: iconSizes[size] })}
                 </span>
             )}
             {children && (
                 <span
                     data-test-id="button-text"
-                    className={merge([!disabled && buttonClass.text, hideLabel && "tw-sr-only"])}
+                    className={merge([setStylingClass("text"), hideLabel && "tw-sr-only"])}
                 >
                     {children}
                 </span>
