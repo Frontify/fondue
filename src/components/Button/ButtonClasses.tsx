@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { ButtonRounding, ButtonSize, ButtonStyle, ButtonElements, ButtonEmphasis } from "./ButtonTypes";
 
 export const ButtonCommonClasses =

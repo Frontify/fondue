@@ -2,8 +2,7 @@
 
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { Button, ButtonProps, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from "./Button";
-import { ButtonEmphasis } from ".";
+import { Button, ButtonEmphasis, ButtonProps, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from "./Button";
 import { IconEnum, iconsMap } from "@foundation/Icon";
 
 const defaultArgs = {

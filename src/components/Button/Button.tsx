@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, forwardRef, ForwardRefRenderFunction } from "react";
+import React, { cloneElement, forwardRef, ForwardRefRenderFunction, MouseEvent, ReactElement, ReactNode } from "react";
 
 import { useButton } from "@react-aria/button";
 import { useFocusRing } from "@react-aria/focus";
@@ -11,7 +11,7 @@ import { merge } from "@utilities/merge";
 import { useForwardedRef } from "@utilities/useForwardedRef";
 
 import { IconSize } from "@foundation/Icon/IconSize";
-import { ButtonRounding, ButtonSize, ButtonType, ButtonProps, ButtonStyle, ButtonEmphasis } from "./ButtonTypes";
+import { ButtonRounding, ButtonSize, ButtonType, ButtonStyle, ButtonEmphasis } from "./ButtonTypes";
 import {
     ButtonStyleClasses,
     ButtonCommonClasses,
@@ -33,6 +33,23 @@ const typesMap: Record<ButtonType, "button" | "submit" | "reset"> = {
     [ButtonType.Button]: "button",
     [ButtonType.Submit]: "submit",
     [ButtonType.Reset]: "reset",
+};
+
+export type ButtonProps = {
+    type?: ButtonType;
+    style?: ButtonStyle;
+    emphasis?: ButtonEmphasis;
+    hideLabel?: boolean;
+    size?: ButtonSize;
+    rounding?: ButtonRounding;
+    solid?: boolean;
+    inverted?: boolean;
+    disabled?: boolean;
+    icon?: ReactElement;
+    children?: ReactNode;
+    onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    hugWidth?: boolean;
+    "aria-label"?: string;
 };
 
 const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, ButtonProps> = (
@@ -69,22 +86,22 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         return ButtonStyleClasses[emphasis][style][invertedStyleKey];
     };
 
+    const buttonClass = getButtonStyleClasses();
+
     const buttonClassName = merge([
         ButtonCommonClasses,
         rounding === ButtonRounding.Full ? ButtonRoundingClasses.Full : ButtonRoundingClasses.Medium,
         (icon && !children) || hideLabel ? ButtonSizeClasses[size].iconOnly : ButtonSizeClasses[size].default,
         !hugWidth && "tw-w-full",
-        !disabled && getButtonStyleClasses().button,
+        !disabled && buttonClass.button,
         !disabled && isFocusVisible && FOCUS_STYLE,
         disabled && ButtonDisabledClasses.common,
         disabled && (!solid ? ButtonDisabledClasses.weak : ButtonDisabledClasses.default),
     ]);
 
-    const textClassName = merge([!disabled && getButtonStyleClasses().text, hideLabel && "tw-sr-only"]);
-
     const iconClassName = merge([
         children && !hideLabel ? IconSpacingClasses[size] : "",
-        !disabled && getButtonStyleClasses().icon,
+        !disabled && buttonClass.icon,
     ]);
 
     return (
@@ -102,7 +119,10 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
                 </span>
             )}
             {children && (
-                <span data-test-id="button-text" className={textClassName}>
+                <span
+                    data-test-id="button-text"
+                    className={merge([!disabled && buttonClass.text, hideLabel && "tw-sr-only"])}
+                >
                     {children}
                 </span>
             )}

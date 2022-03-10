@@ -1,4 +1,5 @@
-import { MouseEvent, ReactElement, ReactNode } from "react";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 export enum ButtonRounding {
     Medium = "Medium",
     Full = "Full",
@@ -35,21 +36,4 @@ export type ButtonElements = {
     button: string;
     icon: string;
     text: string;
-};
-
-export type ButtonProps = {
-    type?: ButtonType;
-    style?: ButtonStyle;
-    emphasis?: ButtonEmphasis;
-    hideLabel?: boolean;
-    size?: ButtonSize;
-    rounding?: ButtonRounding;
-    solid?: boolean;
-    inverted?: boolean;
-    disabled?: boolean;
-    icon?: ReactElement;
-    children?: ReactNode;
-    onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
-    hugWidth?: boolean;
-    "aria-label"?: string;
 };
