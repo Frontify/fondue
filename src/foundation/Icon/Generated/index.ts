@@ -1,4 +1,5 @@
-export { default as IconAcademy } from "./IconAcademy";
+
+        export { default as IconAcademy } from "./IconAcademy";
 export { default as IconActions } from "./IconActions";
 export { default as IconActivities } from "./IconActivities";
 export { default as IconActivity } from "./IconActivity";
@@ -44,7 +45,9 @@ export { default as IconCampaignActivity } from "./IconCampaignActivity";
 export { default as IconCards } from "./IconCards";
 export { default as IconCaretDown } from "./IconCaretDown";
 export { default as IconCaretLeft } from "./IconCaretLeft";
+export { default as IconCaretLeftDouble } from "./IconCaretLeftDouble";
 export { default as IconCaretRight } from "./IconCaretRight";
+export { default as IconCaretRightDouble } from "./IconCaretRightDouble";
 export { default as IconCaretUp } from "./IconCaretUp";
 export { default as IconCenter } from "./IconCenter";
 export { default as IconCheck } from "./IconCheck";
@@ -138,6 +141,7 @@ export { default as IconItalic } from "./IconItalic";
 export { default as IconLayoutGrid } from "./IconLayoutGrid";
 export { default as IconLayoutHorizontal } from "./IconLayoutHorizontal";
 export { default as IconLayoutVertical } from "./IconLayoutVertical";
+export { default as IconLeftCaret } from "./IconLeftCaret";
 export { default as IconLightning } from "./IconLightning";
 export { default as IconLightningFilled } from "./IconLightningFilled";
 export { default as IconLineDashes } from "./IconLineDashes";
@@ -192,6 +196,7 @@ export { default as IconRejectCircle } from "./IconRejectCircle";
 export { default as IconRejectFilled } from "./IconRejectFilled";
 export { default as IconRevert } from "./IconRevert";
 export { default as IconRevisions } from "./IconRevisions";
+export { default as IconRightCaret } from "./IconRightCaret";
 export { default as IconRocket } from "./IconRocket";
 export { default as IconSearch } from "./IconSearch";
 export { default as IconSection } from "./IconSection";
@@ -258,3 +263,4 @@ export { default as IconVolumeOff } from "./IconVolumeOff";
 export { default as IconVolumeOn } from "./IconVolumeOn";
 export { default as IconWorkflow } from "./IconWorkflow";
 export { default as IconZoom } from "./IconZoom";
+    
