@@ -55,23 +55,7 @@ export const mockActionMenuBlocks = [
     },
 ];
 
-export const mockNodesFlat: DraggableItem<TreeFlatListItem>[] = [
-    {
-        id: "1",
-        name: "Design System Testing",
-        label: "Document",
-        value: "https://weare.frontify.com/document/1",
-        icon: <IconFolder size={IconSize.Size16} />,
-        parentId: null,
-        sort: 1,
-    },
-    {
-        id: "1-1",
-        name: "Uncategorizes Pages",
-        icon: <IconFolder size={IconSize.Size16} />,
-        parentId: "1",
-        sort: 1,
-    },
+const uncategorizedPagesNodes = [
     {
         id: "1-1-1",
         parentId: "1-1",
@@ -99,15 +83,9 @@ export const mockNodesFlat: DraggableItem<TreeFlatListItem>[] = [
         icon: <IconFile size={IconSize.Size16} />,
         sort: null,
     },
-    {
-        id: "1-2",
-        parentId: "1",
-        name: "Test Category",
-        label: "Document",
-        icon: <IconFolder size={IconSize.Size16} />,
-        value: "https://weare.frontify.com/document/923#/test",
-        sort: null,
-    },
+];
+
+const testCategoryNodes = [
     {
         id: "1-2-1",
         parentId: "1-2",
@@ -137,6 +115,36 @@ export const mockNodesFlat: DraggableItem<TreeFlatListItem>[] = [
     },
 ];
 
+export const mockNodesFlat: DraggableItem<TreeFlatListItem>[] = [
+    {
+        id: "1",
+        name: "Design System Testing",
+        label: "Document",
+        value: "https://weare.frontify.com/document/1",
+        icon: <IconFolder size={IconSize.Size16} />,
+        parentId: null,
+        sort: 1,
+    },
+    {
+        id: "1-1",
+        name: "Uncategorizes Pages",
+        icon: <IconFolder size={IconSize.Size16} />,
+        parentId: "1",
+        sort: 1,
+    },
+    ...uncategorizedPagesNodes,
+    {
+        id: "1-2",
+        parentId: "1",
+        name: "Test Category",
+        label: "Document",
+        icon: <IconFolder size={IconSize.Size16} />,
+        value: "https://weare.frontify.com/document/923#/test",
+        sort: null,
+    },
+    ...testCategoryNodes,
+];
+
 export const mockNodesTree: DraggableItem<TreeNodeItem>[] = [
     {
         id: "1",
@@ -153,35 +161,7 @@ export const mockNodesTree: DraggableItem<TreeNodeItem>[] = [
                 icon: <IconFolder size={IconSize.Size16} />,
                 parentId: "1",
                 sort: 1,
-                nodes: [
-                    {
-                        id: "1-1-1",
-                        parentId: "1-1",
-                        sort: 1,
-                        name: "Home",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/1",
-                        icon: <IconFile size={IconSize.Size16} />,
-                    },
-                    {
-                        id: "1-1-2",
-                        parentId: "1-1",
-                        name: "Members",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/2",
-                        icon: <IconFile size={IconSize.Size16} />,
-                        sort: null,
-                    },
-                    {
-                        id: "1-1-3",
-                        parentId: "1-1",
-                        name: "About us",
-                        label: "Page",
-                        value: "https://weare.frontify.com/page/3",
-                        icon: <IconFile size={IconSize.Size16} />,
-                        sort: null,
-                    },
-                ],
+                nodes: [...uncategorizedPagesNodes],
             },
             {
                 id: "1-2",
@@ -191,35 +171,7 @@ export const mockNodesTree: DraggableItem<TreeNodeItem>[] = [
                 icon: <IconFolder size={IconSize.Size16} />,
                 value: "https://weare.frontify.com/document/923#/test",
                 sort: null,
-                nodes: [
-                    {
-                        id: "1-2-1",
-                        parentId: "1-2",
-                        name: "Home Category",
-                        label: "Home Page",
-                        value: "https://weare.frontify.com/page/4",
-                        icon: <IconFile size={IconSize.Size16} />,
-                        sort: null,
-                    },
-                    {
-                        id: "1-2-2",
-                        parentId: "1-2",
-                        name: "Members Category",
-                        label: "Members Page",
-                        value: "https://weare.frontify.com/page/5",
-                        icon: <IconFile size={IconSize.Size16} />,
-                        sort: null,
-                    },
-                    {
-                        id: "1-2-3",
-                        parentId: "1-2",
-                        name: "About us Category",
-                        label: "About Us Page",
-                        value: "https://weare.frontify.com/page/6",
-                        icon: <IconFile size={IconSize.Size16} />,
-                        sort: null,
-                    },
-                ],
+                nodes: [...testCategoryNodes],
             },
         ],
     },

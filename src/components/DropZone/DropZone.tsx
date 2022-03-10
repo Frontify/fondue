@@ -1,8 +1,8 @@
 import React from "react";
-import {useDrop} from "react-dnd";
-import {merge} from "@utilities/merge";
-import {OrderableListItem} from "@components/OrderableList/types";
-import {DraggableItem, DropZonePosition} from "@utilities/dnd";
+import { useDrop } from "react-dnd";
+import { merge } from "@utilities/merge";
+import { OrderableListItem } from "@components/OrderableList/types";
+import { DraggableItem, DropZonePosition } from "@utilities/dnd";
 
 export type OnDropCallback<T> = (
     targetItem: DraggableItem<T>,
