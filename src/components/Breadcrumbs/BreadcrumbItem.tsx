@@ -1,7 +1,8 @@
+import { useBreadcrumbItem } from "@react-aria/breadcrumbs";
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
-import React, { forwardRef, HTMLAttributes, RefObject } from "react";
+import React, { FC, RefObject, useRef } from "react";
 import { Breadcrumb } from "./Breadcrumbs";
 
 const Separator = () => (
@@ -20,15 +21,20 @@ const Separator = () => (
 
 type BreadcrumbItemProps = Pick<Breadcrumb, "label" | "link" | "onClick"> & {
     showSeparator: boolean;
-    ariaProps: HTMLAttributes<HTMLElement>;
 };
 
-export const BreadcrumbItem = forwardRef<
-    HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null,
-    BreadcrumbItemProps
->(({ label, link, onClick, showSeparator, ariaProps }, ref) => {
+export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, showSeparator }) => {
+    const ref = useRef<HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null>(null);
+    const { itemProps } = useBreadcrumbItem(
+        {
+            isCurrent: false,
+            children: label,
+            elementType: link ? "a" : onClick ? "button" : "span",
+        },
+        ref,
+    );
     const { isFocusVisible, focusProps } = useFocusRing();
-    const props = mergeProps(ariaProps, focusProps);
+    const props = mergeProps(itemProps, focusProps);
 
     return (
         <li
@@ -61,6 +67,4 @@ export const BreadcrumbItem = forwardRef<
             {showSeparator && <Separator />}
         </li>
     );
-});
-
-BreadcrumbItem.displayName = "BreadcrumbItem";
+};
