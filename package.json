@@ -18,13 +18,13 @@
         },
         "./tailwind": "./tailwind.config.js",
         "./style": "./dist/styles.css",
-        "./componentsStyle": "./dist/components.css",
+        "./extractedThirdPardStyles": "./dist/extractedThirdPardStyles.css",
         "./dist/*": "./dist/*"
     },
     "scripts": {
         "build": "npm run clean && npm run generate:icons && npm run build:library && npm run build:componentCss",
         "build:css": "tailwindcss -i ./src/styles.css -o dist/index.css",
-        "build:componentCss": "postcss src/components/**/*.css --output dist/components.css",
+        "build:componentCss": "postcss src/components/**/*.css --output dist/extractedThirdPardStyles.css",
         "build:library": "vite build",
         "build:storybook": "build-storybook",
         "dev": "cross-env NODE_ENV=development npm run dev:library",
