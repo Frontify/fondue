@@ -224,6 +224,22 @@ describe("RichTextEditor Component", () => {
             });
     });
 
+    it.only("emits onBlur with the correct value", () => {
+        const onBlur = cy.spy();
+        const content = "hello world";
+        mount(<RichTextEditor onBlur={onBlur} />);
+
+        cy.get("[contenteditable=true]")
+            .click()
+            .type(content)
+            .blur()
+            .then(() => {
+                expect(onBlur).to.be.calledWith(
+                    JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: content }] }]),
+                );
+            });
+    });
+
     it("should clear editor content", () => {
         const text = "This is some text";
         mount(<RichTextWithClearButton value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text }] }])} />);

@@ -35,11 +35,12 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 }) => {
     const editorId = id || useMemoizedId();
     const editor = createPlateEditor({ plugins: getEditorConfig() });
+    const [localValue, setLocalValue] = useState<TNode[] | null>(null);
     const [debouncedValue, setDebouncedValue] = useState<TNode[] | null>(null);
     const editableProps: EditableProps = {
         placeholder: placeholder,
         readOnly: readonly,
-        onBlur: () => onBlur && onBlur(JSON.stringify(debouncedValue)),
+        onBlur: () => onBlur && onBlur(JSON.stringify(localValue)),
     };
 
     useEffect(() => {
@@ -55,10 +56,12 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         }
     }, [clear]);
 
-    const onChange = useCallback(
-        debounce((value: TNode[]) => setDebouncedValue(value), ON_SAVE_DELAY_IN_MS),
-        [],
-    );
+    const onChange = useCallback((value) => {
+        debounce((value: TNode[]) => {
+            setDebouncedValue(value);
+        }, ON_SAVE_DELAY_IN_MS);
+        setLocalValue(value);
+    }, []);
 
     return (
         <div data-test-id="rich-text-editor" className="tw-relative tw-w-full">
