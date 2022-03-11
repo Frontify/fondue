@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Meta, Story } from "@storybook/react";
 import { Textarea as TextareaComponent, TextareaProps } from "./Textarea";
 import { Validation } from "@utilities/validation";
@@ -15,6 +15,7 @@ export default {
         validation: Validation.Default,
     },
     argTypes: {
+        value: { type: "string" },
         placeholder: { type: "string" },
         decorator: { type: "string" },
         onInput: { action: "onInput" },
@@ -27,4 +28,9 @@ export default {
     },
 } as Meta<TextareaProps>;
 
-export const Textarea: Story<TextareaProps> = (args: TextareaProps) => <TextareaComponent {...args} />;
+export const Textarea: Story<TextareaProps> = (args: TextareaProps) => {
+    const [input, setInput] = useState("");
+    useEffect(() => setInput(`${args.value || ""}`), [args.value]);
+
+    return <TextareaComponent {...args} value={input} onInput={setInput} />;
+};
