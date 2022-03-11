@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { InputLabel, InputLabelProps } from "@components/InputLabel/InputLabel";
-import { Validation } from "@components/TextInput/TextInput";
+import { Validation } from "@utilities/validation";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, isValidElement, PropsWithChildren, ReactNode } from "react";
 

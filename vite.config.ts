@@ -1,20 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { defineConfig } from "vite";
-import { peerDependencies as peerDependenciesMap } from "./package.json";
+import { PreRenderedAsset } from "rollup";
+import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from "./package.json";
 import { resolve } from "path";
-import fastGlob from "fast-glob";
 import dts from "vite-plugin-dts";
 
 const peerDependencies = Object.keys(peerDependenciesMap);
+const dependencies = Object.keys(dependenciesMap);
 
 export const alias = {
     "@components": resolve(__dirname, "./src/components"),
     "@foundation": resolve(__dirname, "./src/foundation"),
     "@hooks": resolve(__dirname, "./src/hooks"),
     "@layout": resolve(__dirname, "./src/layout"),
-    "@utilities": resolve(__dirname, "./src/utilities"),
     "@typography": resolve(__dirname, "./src/typography"),
+    "@utilities": resolve(__dirname, "./src/utilities"),
 };
 
 export const globals = {
@@ -22,44 +23,32 @@ export const globals = {
     "react-dom": "ReactDOM",
 };
 
-export const componentsPath = fastGlob.sync(
-    [
-        "src/foundation/**/index.ts",
-        "src/typography/**/index.ts",
-        "src/layout/**/index.ts",
-        "src/components/**/index.ts",
-        "src/hooks/index.ts",
-        "src/types/index.ts",
-        "src/utilities/index.ts",
-    ],
-    {
-        objectMode: true,
-        ignore: ["src/**/*.spec.ts", "src/**/*.spec.tsx", "src/**/*.stories.tsx"],
-    },
-);
-
+// eslint-disable-next-line import/no-default-export
 export default defineConfig({
     resolve: {
         alias,
     },
     plugins: [dts({ insertTypesEntry: true })],
     build: {
+        lib: {
+            entry: resolve(__dirname, "src/index.ts"),
+            fileName: (format: string) => `index.${format}.js`,
+            formats: ["es", "umd", "cjs"],
+            name: "Arcade",
+        },
         sourcemap: true,
         minify: true,
         rollupOptions: {
-            input: [...componentsPath.map((element) => element.path), "src/styles.css"],
-            external: peerDependencies,
+            external: [...dependencies, ...peerDependencies, "react-color/lib/components/common"],
             output: {
-                dir: "dist",
-                format: "es",
+                assetFileNames: (chunkInfo: PreRenderedAsset): string => {
+                    if (chunkInfo.name === "style.css") {
+                        return "styles.css";
+                    }
+                    return chunkInfo.name ?? "UnknownFileName";
+                },
                 globals,
-                manualChunks: undefined,
-                assetFileNames: "[name].[ext]",
-                entryFileNames: "[name].js",
-                exports: "named",
-                preserveModules: true,
             },
-            preserveEntrySignatures: "strict",
         },
     },
 });

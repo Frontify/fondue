@@ -11,6 +11,7 @@ const INPUT_TEXT = "Hello test";
 const PLACEHOLDER = "placeholder";
 const PASSWORD = "SECRET password";
 const CLEAR_ICON_ID = "[data-test-id=clear-icon]";
+const COPY_ICON_ID = "[data-test-id=copy-icon]";
 const DECORATOR_ID = "[data-test-id=decorator]";
 const VISIBILITY_ICON_ID = "[data-test-id=visibility-icon]";
 
@@ -137,5 +138,41 @@ describe("Text Input component", () => {
     it("has the autoComplete turned off by default", () => {
         mount(<StatefulInput />);
         cy.get(TEXT_INPUT_ID).should("have.attr", "autoComplete", "off");
+    });
+
+    it("has the readonly prop turned off by default", () => {
+        mount(<StatefulInput />);
+        cy.get(TEXT_INPUT_ID).should("not.have.attr", "readonly");
+    });
+
+    it("still allows buttons to be pressed if readonly", () => {
+        mount(<StatefulInput readonly obfuscated copyable type={TextInputType.Password} value={PASSWORD} />);
+        cy.get(TEXT_INPUT_ID).should("have.attr", "readonly", "readonly");
+        cy.get(COPY_ICON_ID).realClick();
+        cy.window().then((win) => {
+            win.navigator.clipboard.readText().then((text) => {
+                expect(text).to.equal(PASSWORD);
+            });
+        });
+        cy.get(VISIBILITY_ICON_ID).click();
+        cy.get(TEXT_INPUT_ID).should("have.value", PASSWORD);
+        cy.get(TEXT_INPUT_ID).should("have.attr", "type", "text");
+    });
+
+    it("calls the copy event", () => {
+        mount(<StatefulInput copyable={true} value={INPUT_TEXT} />);
+        cy.get(COPY_ICON_ID).find("svg").should("have.attr", "name", "IconCopyToClipboard");
+        cy.get(COPY_ICON_ID).realClick();
+        cy.window().then((win) => {
+            win.navigator.clipboard.readText().then((text) => {
+                expect(text).to.equal(INPUT_TEXT);
+            });
+        });
+        cy.get(COPY_ICON_ID).find("svg").should("have.attr", "name", "IconCheck");
+    });
+
+    it("has the copy turned off by default", () => {
+        mount(<StatefulInput />);
+        cy.get(COPY_ICON_ID).should("not.exist");
     });
 });

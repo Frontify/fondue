@@ -6,6 +6,7 @@ import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import { Meta, Story } from "@storybook/react";
 import React, { useEffect, useState } from "react";
 import { Dropdown, DropdownProps, DropdownSize } from "./Dropdown";
+import { Validation } from "@utilities/validation";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -15,12 +16,17 @@ export default {
         placeholder: "select item",
         disabled: false,
         clearable: false,
+        validation: Validation.Default,
     },
     argTypes: {
         size: {
             table: { disable: true },
         },
         activeItemId: { type: "string" },
+        validation: {
+            options: Object.values(Validation),
+            control: { type: "select" },
+        },
     },
 } as Meta;
 

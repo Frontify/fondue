@@ -3,42 +3,23 @@
 import IconReject from "@foundation/Icon/Generated/IconReject";
 import IconView from "@foundation/Icon/Generated/IconView";
 import IconViewSlash from "@foundation/Icon/Generated/IconViewSlash";
+import IconCopyToClipboard from "@foundation/Icon/Generated/IconCopyToClipboard";
+import IconCheck from "@foundation/Icon/Generated/IconCheck";
+import IconRejectCircle from "@foundation/Icon/Generated/IconRejectCircle";
+import { useCopy } from "@hooks/useCopy";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, FocusEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import React, { FC, FocusEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { Validation, validationClassMap } from "@utilities/validation";
+import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
 
 export enum TextInputType {
     Text = "text",
     Password = "password",
     Number = "number",
 }
-
-export enum Validation {
-    Default = "Default",
-    Loading = "Loading",
-    Success = "Success",
-    Error = "Error",
-}
-
-const validationStyle: Record<Validation, string> = {
-    [Validation.Default]: "tw-border-black-20",
-    [Validation.Loading]: "tw-border-black-10",
-    [Validation.Success]: "tw-border-green-50",
-    [Validation.Error]: "tw-border-red-60",
-};
-
-const Spinner = (): ReactElement => (
-    <svg className="tw-animate-spin" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="7.5" fill="white" stroke="#EAEBEB" />
-        <path
-            fill="white"
-            d="M16.3302 9.5C17.7109 11.8915 16.8915 14.9494 14.5 16.3301C12.1086 17.7108 9.05063 16.8915 7.66992 14.5"
-            stroke="#9088FF"
-        />
-    </svg>
-);
 
 export type TextInputBaseProps = {
     id?: string;
@@ -50,13 +31,16 @@ export type TextInputBaseProps = {
     required?: boolean;
     disabled?: boolean;
     autocomplete?: boolean;
+    readonly?: boolean;
     validation?: Validation;
+    copyable?: boolean;
     value?: string;
     onChange?: (value: string) => void;
     onEnterPressed?: (event: KeyboardEvent<HTMLInputElement>) => void;
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     onClear?: () => void;
     size?: number;
+    spellcheck?: boolean;
 };
 
 export type TextInputProps =
@@ -88,15 +72,22 @@ export const TextInput: FC<TextInputProps> = ({
     autocomplete = false,
     dotted = false,
     value = "",
+    copyable = false,
     onChange,
     onEnterPressed,
     onBlur,
     onClear,
     size,
+    spellcheck,
+    readonly,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
     const { isFocusVisible: passwordButtonIsFocusVisible, focusProps: passwordButtonFocusProps } = useFocusRing();
+    const { isFocusVisible: copyButtonIsFocusVisible, focusProps: copyButtonFocusProps } = useFocusRing();
+
+    const { copy, status } = useCopy();
+
     const inputElement = useRef<HTMLInputElement | null>(null);
     const [isObfuscated, setIsObfuscated] = useState(
         typeof obfuscated === "boolean" ? obfuscated : type === TextInputType.Password,
@@ -121,17 +112,19 @@ export const TextInput: FC<TextInputProps> = ({
         return type;
     };
 
+    const spellcheckProp = typeof spellcheck === "boolean" ? { spellCheck: spellcheck } : null;
+
     return (
         <div
             {...focusProps}
             className={merge([
                 "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent",
                 dotted ? "tw-border-dashed" : "tw-border-solid",
-                disabled
+                disabled || readonly
                     ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90"
                     : merge([
                           "focus-within:tw-border-black-90",
-                          validationStyle[validation],
+                          validationClassMap[validation],
                           isFocusVisible && FOCUS_STYLE,
                       ]),
             ])}
@@ -152,7 +145,7 @@ export const TextInput: FC<TextInputProps> = ({
                 ref={inputElement}
                 className={merge([
                     "tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows",
-                    disabled
+                    disabled || readonly
                         ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40"
                         : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
                 ])}
@@ -164,10 +157,12 @@ export const TextInput: FC<TextInputProps> = ({
                 value={value}
                 type={getInputType()}
                 required={required}
+                readOnly={readonly}
                 disabled={disabled}
                 autoComplete={autocomplete ? "on" : "off"}
                 size={size}
                 data-test-id="text-input"
+                {...spellcheckProp}
             />
             {`${value}`.length !== 0 && clearable && (
                 <button
@@ -210,9 +205,35 @@ export const TextInput: FC<TextInputProps> = ({
                 </button>
             )}
             {validation === Validation.Loading && (
-                <span className="tw-absolute tw-top-[-0.75rem] tw-right-[-0.75rem]">
-                    <Spinner />
+                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
+                    <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
+            )}
+            {copyable && (
+                <button
+                    className={merge([
+                        "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
+                        disabled ? "tw-cursor-default tw-text-black-40" : "tw-text-black-60 hover:tw-text-black-100",
+                        copyButtonIsFocusVisible && FOCUS_STYLE,
+                    ])}
+                    onClick={() => copy(value)}
+                    data-test-id="copy-icon"
+                    title="Copy input text"
+                    disabled={disabled}
+                    {...copyButtonFocusProps}
+                >
+                    {status === "error" && (
+                        <span className="tw-text-box-negative-strong">
+                            <IconRejectCircle />
+                        </span>
+                    )}
+                    {status === "idle" && <IconCopyToClipboard />}
+                    {status === "success" && (
+                        <span className="tw-text-box-positive-strong">
+                            <IconCheck />
+                        </span>
+                    )}
+                </button>
             )}
         </div>
     );

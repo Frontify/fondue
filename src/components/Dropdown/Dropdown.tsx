@@ -16,6 +16,8 @@ import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, ReactElement, useEffect, useRef } from "react";
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from "./useDropdownAutoHeight";
+import { Validation } from "@utilities/validation";
+import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
 
 export enum DropdownSize {
     Small = "Small",
@@ -34,6 +36,7 @@ export type DropdownProps = {
     ariaLabel?: string;
     decorator?: ReactElement;
     autoResize?: boolean;
+    validation?: Validation;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
@@ -62,6 +65,7 @@ export const Dropdown: FC<DropdownProps> = ({
     ariaLabel = "Dropdown",
     decorator,
     autoResize = true,
+    validation = Validation.Default,
 }) => {
     const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -127,6 +131,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 size={size === DropdownSize.Large ? TriggerSize.Large : TriggerSize.Small}
                 onClear={onClear}
                 showClear={showClear}
+                validation={validation}
             >
                 <HiddenSelect state={state} triggerRef={triggerRef} />
                 <button
@@ -178,6 +183,11 @@ export const Dropdown: FC<DropdownProps> = ({
                     </motion.div>
                 )}
             </AnimatePresence>
+            {validation === Validation.Loading && (
+                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
+                    <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
+                </span>
+            )}
         </div>
     );
 };

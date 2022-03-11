@@ -2,8 +2,8 @@
 
 import { BadgeProps } from "@components/Badge/Badge";
 import { IconProps } from "@foundation/Icon/IconProps";
-import { useBreadcrumbItem, useBreadcrumbs } from "@react-aria/breadcrumbs";
-import React, { FC, MouseEvent, ReactElement, useRef } from "react";
+import { useBreadcrumbs } from "@react-aria/breadcrumbs";
+import React, { FC, MouseEvent, ReactElement } from "react";
 import { BreadcrumbItem } from "./BreadcrumbItem";
 import { CurrentBreadcrumbItem } from "./CurrentBreadcrumbItem";
 
@@ -38,22 +38,11 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => {
                 {items.map(({ label, badges, bold, decorator, link, onClick }, index) => {
                     const isCurrent = index === items.length - 1;
                     const key = `breadcrumb-${index}`;
-                    const ref = useRef<HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null>(null);
-                    const { itemProps } = useBreadcrumbItem(
-                        {
-                            isCurrent,
-                            children: label,
-                            elementType: link ? "a" : onClick ? "button" : "span",
-                        },
-                        ref,
-                    );
 
                     if (isCurrent) {
                         return (
                             <CurrentBreadcrumbItem
                                 key={key}
-                                ref={ref}
-                                ariaProps={itemProps}
                                 label={label}
                                 badges={badges}
                                 bold={bold}
@@ -67,8 +56,6 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => {
                     return (
                         <BreadcrumbItem
                             key={key}
-                            ref={ref}
-                            ariaProps={itemProps}
                             label={label}
                             link={link}
                             onClick={onClick}
