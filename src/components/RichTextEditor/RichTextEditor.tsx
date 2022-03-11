@@ -3,7 +3,7 @@
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { createPlateEditor, Plate, TNode } from "@udecode/plate";
 import { debounce } from "@utilities/debounce";
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
 import { Toolbar } from "./Toolbar";
 import { getEditorConfig } from "./utils/getEditorConfig";
@@ -35,12 +35,12 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 }) => {
     const editorId = id || useMemoizedId();
     const editor = createPlateEditor({ plugins: getEditorConfig() });
-    const [localValue, setLocalValue] = useState<TNode[] | null>(null);
+    const localValue = useRef<TNode[] | null>(null);
     const [debouncedValue, setDebouncedValue] = useState<TNode[] | null>(null);
     const editableProps: EditableProps = {
         placeholder: placeholder,
         readOnly: readonly,
-        onBlur: () => onBlur && onBlur(JSON.stringify(localValue)),
+        onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
     };
 
     useEffect(() => {
@@ -56,12 +56,12 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         }
     }, [clear]);
 
-    const onChange = useCallback((value) => {
+    const onChange = useCallback(
         debounce((value: TNode[]) => {
             setDebouncedValue(value);
-        }, ON_SAVE_DELAY_IN_MS);
-        setLocalValue(value);
-    }, []);
+        }, ON_SAVE_DELAY_IN_MS),
+        [],
+    );
 
     return (
         <div data-test-id="rich-text-editor" className="tw-relative tw-w-full">
@@ -69,7 +69,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 id={editorId}
                 editor={editor}
                 initialValue={parseRawValue(editor, initialValue)}
-                onChange={onChange}
+                onChange={(value) => {
+                    onChange(value);
+                    localValue.current = value;
+                }}
                 editableProps={editableProps}
                 plugins={getEditorConfig(textStyles)}
             >

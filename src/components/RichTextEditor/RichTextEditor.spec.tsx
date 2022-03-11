@@ -224,7 +224,7 @@ describe("RichTextEditor Component", () => {
             });
     });
 
-    it.only("emits onBlur with the correct value", () => {
+    it("emits onBlur with the correct value", () => {
         const onBlur = cy.spy();
         const content = "hello world";
         mount(<RichTextEditor onBlur={onBlur} />);
