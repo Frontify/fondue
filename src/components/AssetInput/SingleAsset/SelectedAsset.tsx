@@ -12,12 +12,12 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, useRef } from "react";
-import { AssetInputSize, AssetProps, AssetType } from "../AssetInput";
+import { AssetInputProps, AssetInputSize, AssetType } from "../AssetInput";
 import { AssetThumbnail } from "../AssetThumbnail";
 import { AssetSubline } from "./AssetSubline";
 import { SpinningCircle } from "./SpinningCircle";
 
-export type SelectedAssetProps = Pick<AssetProps, "actions" | "isLoading" | "size"> & {
+export type SelectedAssetProps = Pick<AssetInputProps, "actions" | "isLoading" | "size"> & {
     asset: AssetType;
 };
 

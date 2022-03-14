@@ -42,8 +42,8 @@ type IconAsset = BaseAsset & {
     size?: undefined;
 };
 
-type UploadSource = { source: "upload"; sourceName?: undefined };
-type LibrarySource = { source: "library"; sourceName: string };
+export type UploadSource = { source: "upload"; sourceName?: undefined };
+export type LibrarySource = { source: "library"; sourceName: string };
 
 export enum AssetInputSize {
     Small = "Small",
@@ -58,7 +58,7 @@ export type AssetType =
     | (OtherAsset & UploadSource)
     | (OtherAsset & LibrarySource);
 
-export type AssetProps = {
+export type AssetInputProps = {
     assets?: AssetType[];
     size: AssetInputSize;
     numberOfLocations?: number;
@@ -69,9 +69,9 @@ export type AssetProps = {
     onMultiAssetClick?: () => void;
 };
 
-export const AssetInput: FC<AssetProps> = ({
-    assets,
-    numberOfLocations,
+export const AssetInput: FC<AssetInputProps> = ({
+    assets = [],
+    numberOfLocations = 1,
     actions = [],
     size = AssetInputSize.Small,
     isLoading = false,
@@ -79,22 +79,14 @@ export const AssetInput: FC<AssetProps> = ({
     onUploadClick,
     onMultiAssetClick,
 }) => {
-    const availableAssets = assets || [];
-    const assetsLength = availableAssets?.length || 0;
+    const assetsLength = assets.length;
 
     if ((isLoading || assetsLength === 1) && actions) {
-        return <SelectedAsset asset={availableAssets[0]} size={size} actions={actions} isLoading={isLoading} />;
+        return <SelectedAsset asset={assets[0]} size={size} actions={actions} isLoading={isLoading} />;
     }
 
     if (assetsLength > 1 && onMultiAssetClick) {
-        return (
-            <MultiAssetPreview
-                assets={availableAssets}
-                onClick={onMultiAssetClick}
-                assetsAmount={assetsLength}
-                numberOfLocations={numberOfLocations}
-            />
-        );
+        return <MultiAssetPreview assets={assets} onClick={onMultiAssetClick} numberOfLocations={numberOfLocations} />;
     }
 
     return (

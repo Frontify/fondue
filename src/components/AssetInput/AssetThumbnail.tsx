@@ -2,12 +2,12 @@ import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC } from "react";
-import { AssetInputSize, AssetProps } from "./AssetInput";
+import { AssetInputProps, AssetInputSize } from "./AssetInput";
 import { SelectedAssetProps } from "./SingleAsset/SelectedAsset";
 
 export type AssetThumbnailProps = {
     asset: SelectedAssetProps["asset"];
-    size: AssetProps["size"];
+    size: AssetInputProps["size"];
     isActive?: boolean;
 };
 export const AssetThumbnail: FC<Required<AssetThumbnailProps>> = ({ asset, size, isActive }) => (

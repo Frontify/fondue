@@ -1,10 +1,10 @@
 import IconImageLibrary from "@foundation/Icon/Generated/IconImageLibrary";
 import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternative";
 import React, { FC } from "react";
-import { AssetProps } from "../AssetInput";
+import { AssetInputProps } from "../AssetInput";
 import { SelectedAssetProps } from "./SelectedAsset";
 
-type AssetSublineProps = Pick<AssetProps, "isLoading"> & Pick<SelectedAssetProps, "asset">;
+type AssetSublineProps = Pick<AssetInputProps, "isLoading"> & Pick<SelectedAssetProps, "asset">;
 
 export const AssetSubline: FC<AssetSublineProps> = ({ asset, isLoading = false }) => {
     const title = isLoading ? "Uploading" : asset?.source === "library" ? asset.sourceName : "Uploaded";

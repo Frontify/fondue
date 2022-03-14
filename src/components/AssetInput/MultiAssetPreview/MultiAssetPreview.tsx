@@ -8,21 +8,16 @@ import { AssetType } from "../AssetInput";
 import { Assets } from "./Assets";
 
 export type MultiAssetPreviewProps = {
-    assetsAmount?: number;
-    numberOfLocations?: number;
-    assets?: AssetType[];
+    numberOfLocations: number;
+    assets: AssetType[];
     onClick: () => void;
 };
 
-export const MultiAssetPreview: FC<MultiAssetPreviewProps> = ({
-    assetsAmount = 0,
-    numberOfLocations = 0,
-    assets = [],
-    onClick,
-}) => {
+export const MultiAssetPreview: FC<MultiAssetPreviewProps> = ({ numberOfLocations, assets, onClick }) => {
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps } = useButton({ onPress: onClick }, buttonRef);
     const { isFocusVisible, focusProps } = useFocusRing();
+    const assetsLength = assets.length;
 
     return (
         <div data-test-id="multi-asset-preview">
@@ -41,7 +36,7 @@ export const MultiAssetPreview: FC<MultiAssetPreviewProps> = ({
                 <div className="tw-py-7 tw-px-5 tw-flex tw-gap-2">
                     <div className="tw-text-left">
                         <div className="tw-font-bold tw-text-lg" data-test-id="assets-amount">
-                            {assetsAmount} {assetsAmount === 1 ? "Asset" : "Assets"}
+                            {assetsLength} {assetsLength === 1 ? "Asset" : "Assets"}
                         </div>
                         <div className="tw-text-black-60" data-test-id="number-of-locations">
                             {numberOfLocations} {numberOfLocations === 1 ? "location" : "locations"}

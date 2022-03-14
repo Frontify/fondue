@@ -66,4 +66,12 @@ export const MIXED_ASSETS: AssetType[] = [
         size: 2000,
         type: "audio",
     },
+    {
+        source: "library",
+        sourceName: "Foobar",
+        name: "foo",
+        extension: "MP3",
+        size: 2000,
+        type: "audio",
+    },
 ];

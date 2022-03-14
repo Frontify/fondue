@@ -3,7 +3,7 @@
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { assetInputActions } from "./asset-input-actions";
-import { AssetInput, AssetInputSize, AssetProps } from "./AssetInput";
+import { AssetInput, AssetInputProps, AssetInputSize } from "./AssetInput";
 import { EXAMPLE_IMAGES, MIXED_ASSETS } from "./example-assets";
 
 // eslint-disable-next-line import/no-default-export
@@ -25,9 +25,9 @@ export default {
         isLoading: false,
         numberOfLocations: 1,
     },
-} as Meta<AssetProps>;
+} as Meta<AssetInputProps>;
 
-const Template: Story<AssetProps & { onItemClick: () => void }> = (args) => {
+const Template: Story<AssetInputProps & { onItemClick: () => void }> = (args) => {
     args.actions?.forEach((block) =>
         block.menuItems.forEach((item) => {
             item.onClick = args.onItemClick;
@@ -99,29 +99,20 @@ const multiAssetInputargTypes = {
     isLoading: { table: { disable: true } },
 };
 
-export const TwoAssets = Template.bind({});
-
-TwoAssets.args = {
-    assets: [EXAMPLE_IMAGES[0], MIXED_ASSETS[2]],
-    numberOfLocations: 1,
-};
-
-TwoAssets.argTypes = multiAssetInputargTypes;
-
-export const OnlyImageAssets = Template.bind({});
-
-OnlyImageAssets.args = {
-    assets: EXAMPLE_IMAGES,
-    numberOfLocations: 2,
-};
-
-OnlyImageAssets.argTypes = multiAssetInputargTypes;
-
 export const MixedAssets = Template.bind({});
 
 MixedAssets.args = {
+    assets: [EXAMPLE_IMAGES[0], ...MIXED_ASSETS.slice(2, 4)],
+    numberOfLocations: 1,
+};
+
+MixedAssets.argTypes = multiAssetInputargTypes;
+
+export const ImageAssets = Template.bind({});
+
+ImageAssets.args = {
     assets: EXAMPLE_IMAGES,
     numberOfLocations: 2,
 };
 
-MixedAssets.argTypes = multiAssetInputargTypes;
+ImageAssets.argTypes = multiAssetInputargTypes;
