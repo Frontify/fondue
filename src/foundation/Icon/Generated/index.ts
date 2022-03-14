@@ -80,6 +80,7 @@ export { default as IconDoubleQuotesDown } from "./IconDoubleQuotesDown";
 export { default as IconDoubleQuotesUp } from "./IconDoubleQuotesUp";
 export { default as IconDownload } from "./IconDownload";
 export { default as IconDownloadAlternative } from "./IconDownloadAlternative";
+export { default as IconDrop } from "./IconDrop";
 export { default as IconDrops } from "./IconDrops";
 export { default as IconDuplicate } from "./IconDuplicate";
 export { default as IconEmojiHappy } from "./IconEmojiHappy";

@@ -82,6 +82,7 @@ import IconDoubleQuotesDown from "@foundation/Icon/Generated/IconDoubleQuotesDow
 import IconDoubleQuotesUp from "@foundation/Icon/Generated/IconDoubleQuotesUp";
 import IconDownload from "@foundation/Icon/Generated/IconDownload";
 import IconDownloadAlternative from "@foundation/Icon/Generated/IconDownloadAlternative";
+import IconDrop from "@foundation/Icon/Generated/IconDrop";
 import IconDrops from "@foundation/Icon/Generated/IconDrops";
 import IconDuplicate from "@foundation/Icon/Generated/IconDuplicate";
 import IconEmojiHappy from "@foundation/Icon/Generated/IconEmojiHappy";
@@ -349,6 +350,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.DoubleQuotesUp]: <IconDoubleQuotesUp />,
     [IconEnum.Download]: <IconDownload />,
     [IconEnum.DownloadAlternative]: <IconDownloadAlternative />,
+    [IconEnum.Drop]: <IconDrop />,
     [IconEnum.Drops]: <IconDrops />,
     [IconEnum.Duplicate]: <IconDuplicate />,
     [IconEnum.EmojiHappy]: <IconEmojiHappy />,
