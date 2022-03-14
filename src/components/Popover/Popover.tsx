@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, FC, ReactElement, ReactNode, useEffect, useState } from "react";
+import React, { cloneElement, FC, ReactElement, ReactNode, RefObject, useState } from "react";
 import { merge } from "@utilities/merge";
 import { usePopper } from "react-popper";
+import { DismissButton, OverlayContainer, OverlayProvider, useOverlay } from "@react-aria/overlays";
+import { FocusScope } from "@react-aria/focus";
 
 export enum PopoverPosition {
     Top = "top",
@@ -29,13 +31,13 @@ export type PopoverProps = {
     point?: boolean;
     position?: PopoverPosition;
     alignment?: PopoverAlignment;
-    maxHeight?: number;
-    maxWidth?: number;
-    trigger: ReactElement;
+    maxHeight?: number | "Viewport";
+    maxWidth?: number | "Viewport";
     flip?: boolean;
+    trigger: ReactElement;
 };
 
-export const PopoverComponent: FC<PopoverProps> = ({
+export const Popover: FC<PopoverProps> = ({
     trigger,
     children,
     position = PopoverPosition.Bottom,
@@ -43,10 +45,12 @@ export const PopoverComponent: FC<PopoverProps> = ({
     point,
     flip = true,
     transactional = false,
+    maxWidth = "Viewport",
+    maxHeight = "Viewport",
 }) => {
     const placement = position + alignementSuffix[alignment];
     const [isOpen, setIsOpen] = useState(false);
-    const [positioningElement, setPositioningElement] = useState<HTMLDivElement | null>(null);
+    const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
@@ -66,21 +70,8 @@ export const PopoverComponent: FC<PopoverProps> = ({
         }
     };
 
-    const handleClickOutside = () => {
-        if (!transactional && isOpen) {
-            setIsOpen(false);
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener("click", handleClickOutside);
-
-        return () => {
-            document.removeEventListener("click", handleClickOutside);
-        };
-    }, [handleClickOutside]);
-
-    const popperInstance = usePopper(positioningElement, popperElement, {
+    // @ts-ignore
+    const popperInstance = usePopper(referenceElement, popperElement, {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         placement: placement,
@@ -94,7 +85,7 @@ export const PopoverComponent: FC<PopoverProps> = ({
             {
                 name: "offset",
                 options: {
-                    offset: [0, 10],
+                    offset: [0, point ? 10 : 0],
                 },
             },
             {
@@ -106,41 +97,59 @@ export const PopoverComponent: FC<PopoverProps> = ({
 
     const arrowStyling = setArrowClasses();
 
+    // React-aria
+    const { overlayProps } = useOverlay({ isDismissable: true }, popperElement as unknown as RefObject<HTMLDivElement>);
+
     return (
-        <div data-test-id="popover">
+        <OverlayProvider>
             <div data-test-id="popover-trigger" role="button" tabIndex={0} aria-haspopup={true} aria-expanded={isOpen}>
                 {cloneElement(trigger, {
                     ...trigger.props,
                     onClick: () => setIsOpen(!isOpen),
-                    ref: setPositioningElement,
+                    ref: setReferenceElement,
                 })}
             </div>
             {isOpen && (
-                <div
-                    data-test-id="popover-popper"
-                    role="menu"
-                    tabIndex={0}
-                    style={popperInstance.styles.popper}
-                    {...popperInstance.attributes.popper}
-                    ref={setPopperElement}
-                    // Add MaxHeight and MaxWidth which is failing
-                    className={merge(["tw-relative tw-p-3 tw-border tw-border-line tw-rounded tw-shadow"])}
-                >
-                    <div>{children}</div>
-                    {point && (
-                        <div
-                            data-test-id="popover-arrow"
-                            data-popper-arrow
-                            ref={setArrowElement}
-                            style={popperInstance.styles.arrow}
-                            className={merge([
-                                "tw-popper-arrow tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line",
-                                arrowStyling,
-                            ])}
-                        />
-                    )}
-                </div>
+                <OverlayContainer>
+                    <div data-test-id="popover">
+                        <FocusScope restoreFocus>
+                            <div
+                                {...overlayProps}
+                                data-test-id="popover-popper"
+                                role="menu"
+                                tabIndex={0}
+                                style={popperInstance.styles.popper}
+                                {...popperInstance.attributes.popper}
+                                ref={setPopperElement}
+                                className={merge([
+                                    "tw-relative tw-p-3 tw-border tw-border-line tw-rounded tw-shadow ",
+                                    !maxHeight || maxHeight === "Viewport"
+                                        ? "tw-max-h-full"
+                                        : "tw-max-h-[" + maxHeight + "px]",
+                                    !maxWidth || maxWidth === "Viewport"
+                                        ? "tw-max-h-full"
+                                        : "tw-max-w-[" + maxWidth + "px]",
+                                ])}
+                            >
+                                <div>{children}</div>
+                                <DismissButton onDismiss={() => setIsOpen(!isOpen)} />
+                                {point && (
+                                    <div
+                                        data-test-id="popover-arrow"
+                                        data-popper-arrow
+                                        ref={setArrowElement}
+                                        style={popperInstance.styles.arrow}
+                                        className={merge([
+                                            "tw-popper-arrow tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line",
+                                            arrowStyling,
+                                        ])}
+                                    />
+                                )}
+                            </div>
+                        </FocusScope>
+                    </div>
+                </OverlayContainer>
             )}
-        </div>
+        </OverlayProvider>
     );
 };

@@ -2,18 +2,14 @@
 
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { PopoverAlignment, PopoverComponent, PopoverPosition, PopoverProps } from "./Popover";
+import { Popover, PopoverAlignment, PopoverPosition, PopoverProps } from "./Popover";
 import { Button, ButtonStyle } from "@components/Button";
 
 // eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Popover",
-    component: PopoverComponent,
+    component: Popover,
     argTypes: {
-        transactional: {
-            control: { type: "boolean" },
-            defaultValue: false,
-        },
         position: {
             options: Object.values(PopoverPosition),
             control: { type: "select" },
@@ -34,23 +30,55 @@ export default {
         },
         maxHeight: {
             control: { type: "number" },
-            defaultValue: 200,
         },
         maxWidth: {
             control: { type: "number" },
-            defaultValue: 200,
         },
     },
 } as Meta<PopoverProps>;
 
-export const Popover: Story<PopoverProps> = (args: PopoverProps) => {
+const PopoverTemplate: Story<PopoverProps> = (args: PopoverProps) => {
     const trigger = <Button style={ButtonStyle.Secondary}>Reference Element</Button>;
     return (
         <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
-            <PopoverComponent {...args} trigger={trigger}>
+            <Popover {...args} point={true} transactional={false} trigger={trigger}>
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium animi architecto cupiditate
                 dolorem saepe sapiente sint suscipit voluptas!
-            </PopoverComponent>
+                <Button style={ButtonStyle.Danger}>Some action</Button>
+            </Popover>
         </div>
     );
 };
+
+export const Default = PopoverTemplate.bind({});
+Default.storyName = "Popover as Tooltip";
+
+/*const MenuTemplate: Story<PopoverProps> = (args: PopoverProps) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(null);
+
+    return (
+        <div className="tw-w-1/2">
+            <Trigger size={TriggerSize.Small} isOpen={isOpen}>
+                <button
+                    className="tw-overflow-hidden tw-flex-auto tw-h-full tw-w-full tw-rounded tw-text-left tw-outline-none tw-py-2 tw-pl-3"
+                    onClick={() => setIsOpen(!isOpen)}
+                    ref={setReferenceElement}
+                >
+                    <MenuItemContent title="Reference Menu" size={MenuItemContentSize.Large} />
+                </button>
+            </Trigger>
+            {isOpen && (
+                <Popover {...args} maxWidth="Viewport" referenceElement={referenceElement}>
+                    <MenuItem title="One menu item" />
+                    <MenuItem title="a second menu item" />
+                    <MenuItem title="Another menu item" />
+                    <MenuItem title="One menu item" />
+                </Popover>
+            )}
+        </div>
+    );
+};
+
+export const MenuPopover = MenuTemplate.bind({});
+MenuPopover.storyName = "Popover as Menu";*/
