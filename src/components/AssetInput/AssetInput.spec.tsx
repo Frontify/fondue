@@ -17,20 +17,28 @@ const ASSET_SINGLE_INPUT_ID = "[data-test-id=asset-single-input]";
 const ASSET_SINGLE_INPUT_THUMBNAIL_ID = "[data-test-id=asset-input-thumbnail]";
 const ASSET_SINGLE_INPUT_THUMBNAIL_IMAGE_ID = "[data-test-id=asset-input-thumbnail-image]";
 const ASSET_SINGLE_INPUT_THUMBNAIL_AUDIO_ID = "[data-test-id=asset-input-thumbnail-audio]";
+const ASSET_SINGLE_INPUT_THUMBNAIL_ICON_ID = "[data-test-id=asset-input-thumbnail-icon]";
+const SPINNING_CIRCLE_ID = "[data-test-id=spinning-circle]";
 
 describe("MultiAssetPreview Component", () => {
-    it("renders asset input placeholders", () => {
+    it("renders empty asset input with placeholders", () => {
+        const onLibraryClickStub = cy.stub().as("onLibraryClickStub");
+        const onUploadClickStub = cy.stub().as("onUploadClickStub");
         mount(
             <AssetInput
                 size={AssetInputSize.Small}
-                onLibraryClick={() => alert("Library clicked")}
-                onUploadClick={() => alert("Upload clicked")}
+                onLibraryClick={onLibraryClickStub}
+                onUploadClick={onUploadClickStub}
             />,
         );
 
         cy.get(ASSET_PLACEHOLDER_ID).should("exist");
-        cy.get(ASSET_PLACEHOLDER_UPLOAD_ID).should("exist");
-        cy.get(ASSET_PLACEHOLDER_LIBRARY_ID).should("exist");
+        cy.get("@onUploadClickStub").should("not.be.called");
+        cy.get(ASSET_PLACEHOLDER_UPLOAD_ID).click();
+        cy.get("@onUploadClickStub").should("be.calledOnce");
+        cy.get("@onLibraryClickStub").should("not.be.called");
+        cy.get(ASSET_PLACEHOLDER_LIBRARY_ID).click();
+        cy.get("@onLibraryClickStub").should("be.calledOnce");
     });
 
     it("renders asset input with single image", () => {
@@ -39,7 +47,7 @@ describe("MultiAssetPreview Component", () => {
         cy.get(ASSET_SINGLE_INPUT_ID).should("contain", "2000");
         cy.get(ASSET_SINGLE_INPUT_ID).should("contain", "Upload");
         cy.get(ASSET_SINGLE_INPUT_ID).should("contain", "JPG");
-        cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_ID).should("have.css", "backgroundColor", "rgb(247, 247, 247)");
+        cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_ID).should("have.class", "tw-bg-black-5");
         cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_IMAGE_ID).should("have.attr", "src", "https://picsum.photos/100/150");
     });
 
@@ -51,48 +59,48 @@ describe("MultiAssetPreview Component", () => {
         cy.get(ASSET_SINGLE_INPUT_ID).should("contain", "MP3");
     });
 
-    it("renders with three images", () => {
+    it("renders with three image assets", () => {
+        const onMultiAssetClick = cy.stub().as("onMultiAssetClick");
         mount(
             <AssetInput
-                onMultiAssetClick={() => alert("Multi Asset clicked")}
+                onMultiAssetClick={onMultiAssetClick}
                 numberOfLocations={12}
                 assets={EXAMPLE_IMAGES.slice(0, 3)}
                 size={AssetInputSize.Small}
-                actions={[]}
             />,
         );
-        cy.get(MULTI_ASSET_PREVIEW_ID);
-        cy.get(ASSETS_IMAGE_ID).first().should("have.attr", "style").and("include", "background-image: url(");
-        cy.get(ASSETS_IMAGE_ID).eq(1).should("have.attr", "style").and("include", "background-image: url(");
-        cy.get(ASSETS_IMAGE_ID).eq(2).should("have.attr", "style").and("include", "background-image: url(");
+
+        cy.get(ASSETS_IMAGE_ID)
+            .first()
+            .should("have.attr", "style")
+            .and("include", 'background-image: url("https://picsum.photos/100/150")');
         cy.get(ASSETS_AMOUNT_ID).should("contain", "3");
-        cy.get(ASSETS_IMAGE_ID).last().should("not.have.attr", "style");
-        cy.get(ASSETS_IMAGE_ID).last().should("have.css", "backgroundColor", "rgb(247, 247, 247)");
+        cy.get(ASSETS_IMAGE_ID).last().should("have.class", "tw-bg-black-5");
+        cy.get("@onMultiAssetClick").should("not.be.called");
+        cy.get(MULTI_ASSET_PREVIEW_ID).click();
+        cy.get("@onMultiAssetClick").should("be.calledOnce");
     });
 
-    it("renders correct assets amount, if assets are more than four", () => {
+    it("renders mixed assets", () => {
+        const onMultiAssetClick = cy.stub().as("onMultiAssetClick");
         mount(
             <AssetInput
-                assets={EXAMPLE_IMAGES}
-                onMultiAssetClick={() => alert("Multi Asset clicked")}
+                assets={MIXED_ASSETS}
+                onMultiAssetClick={onMultiAssetClick}
                 size={AssetInputSize.Small}
-                actions={[]}
+                numberOfLocations={2}
             />,
         );
         cy.get(ASSETS_AMOUNT_ID).should("contain", "5");
+        cy.get(NUMBER_OF_LOCATIONS_ID).should("contain", "2");
+        cy.get(ASSETS_IMAGE_ID).should("exist");
+        cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_AUDIO_ID).should("exist");
+        cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_ICON_ID).should("exist");
     });
 
-    it("renders correct number of locations", () => {
-        mount(
-            <AssetInput
-                onMultiAssetClick={() => alert("Multi Asset clicked")}
-                assets={MIXED_ASSETS}
-                numberOfLocations={5}
-                size={AssetInputSize.Small}
-                actions={[]}
-            />,
-        );
-
-        cy.get(NUMBER_OF_LOCATIONS_ID).should("contain", "5");
+    it("displays loading animation", () => {
+        mount(<AssetInput assets={[]} size={AssetInputSize.Small} isLoading={true} />);
+        cy.get(ASSET_SINGLE_INPUT_ID).should("contain", "Uploading").and("contain", "Your Asset");
+        cy.get(SPINNING_CIRCLE_ID).should("exist");
     });
 });

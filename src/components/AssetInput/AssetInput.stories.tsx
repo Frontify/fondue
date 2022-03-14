@@ -92,7 +92,7 @@ Icon.args = {
     actions: assetInputActions,
 };
 
-const multiAssetInputargTypes = {
+const multiAssetInputArgTypes = {
     onUploadClick: { action: "onUploadClick", table: { disable: true } },
     onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
     size: { table: { disable: true } },
@@ -106,7 +106,7 @@ MixedAssets.args = {
     numberOfLocations: 1,
 };
 
-MixedAssets.argTypes = multiAssetInputargTypes;
+MixedAssets.argTypes = multiAssetInputArgTypes;
 
 export const ImageAssets = Template.bind({});
 
@@ -115,4 +115,4 @@ ImageAssets.args = {
     numberOfLocations: 2,
 };
 
-ImageAssets.argTypes = multiAssetInputargTypes;
+ImageAssets.argTypes = multiAssetInputArgTypes;

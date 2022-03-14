@@ -20,7 +20,7 @@ export const AssetThumbnail: FC<Required<AssetThumbnailProps>> = ({ asset, size,
         data-test-id="asset-input-thumbnail"
     >
         {asset.type === "icon" ? (
-            cloneElement(asset.icon, { size: IconSize.Size24 })
+            <span data-test-id="asset-input-thumbnail-icon">{cloneElement(asset.icon, { size: IconSize.Size24 })}</span>
         ) : asset.type === "audio" ? (
             <IconAudio size={IconSize.Size24} data-test-id="asset-input-thumbnail-audio" />
         ) : (

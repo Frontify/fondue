@@ -4,11 +4,12 @@ import { AssetInputSize, AssetType, ImageAsset, LibrarySource } from "../AssetIn
 import { AssetThumbnail } from "../AssetThumbnail";
 import { MultiAssetPreviewProps } from "./MultiAssetPreview";
 
+const isImageAsset = (asset: AssetType): asset is ImageAsset & LibrarySource =>
+    asset.type === "image" || asset.type === "logo";
+
 export const Assets: FC<Pick<MultiAssetPreviewProps, "assets">> = ({ assets }) => {
     const assetslength = assets?.length || 0;
     const previewAssets = assets?.slice(0, 4) || [];
-    const isImageAsset = (asset: AssetType): asset is ImageAsset & LibrarySource =>
-        (asset.type === "image" || asset.type === "logo") && (asset as ImageAsset & LibrarySource).src !== undefined;
 
     if (assetslength < 4) {
         [...Array(4 - assetslength)].forEach((_, index) =>
