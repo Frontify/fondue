@@ -21,7 +21,7 @@
     },
     "scripts": {
         "prebuild": "npm run clean",
-        "build": "tsc && tsc-alias && npm run build:types",
+        "build": "tsc && tsc-alias && npm run build:types && cp styles.css dist",
         "build:types": "tsc --declaration --allowJs --emitDeclarationOnly --outDir types",
         "build:css": "tailwindcss -i ./src/styles.css -o dist/index.css",
         "build:extractedThirdPartyStyles": "postcss src/components/**/*.css --output dist/extractedThirdPartyStyles.css",
