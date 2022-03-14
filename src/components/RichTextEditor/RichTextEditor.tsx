@@ -56,22 +56,24 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         }
     }, [clear]);
 
-    const onChange = useCallback(
+    const debouncedOnChange = useCallback(
         debounce((value: TNode[]) => {
             setDebouncedValue(value);
         }, ON_SAVE_DELAY_IN_MS),
         [],
     );
 
+    const onChange = useCallback((value) => {
+        debouncedOnChange(value);
+        localValue.current = value;
+    }, []);
+
     return (
         <div data-test-id="rich-text-editor" className="tw-relative tw-w-full">
             <Plate
                 id={editorId}
                 initialValue={parseRawValue(initialValue)}
-                onChange={(value) => {
-                    onChange(value);
-                    localValue.current = value;
-                }}
+                onChange={onChange}
                 editableProps={editableProps}
                 plugins={getEditorConfig(textStyles)}
             >
