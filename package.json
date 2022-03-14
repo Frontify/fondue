@@ -21,8 +21,10 @@
     },
     "scripts": {
         "prebuild": "npm run clean",
-        "build": "tsc && tsc-alias && npm run build:types && cp styles.css dist",
+        "build": "tsc && tsc-alias && npm run build:types && cp styles.css dist && npm run build:copy-css && npm run build:copy-svg",
         "build:types": "tsc --declaration --allowJs --emitDeclarationOnly --outDir types",
+        "build:copy-css": "cp ./src/components/DatePicker/DatePicker.css ./dist/components/DatePicker/DatePicker.css",
+        "build:copy-svg": "cp -R ./src/components/LinkChooser/assets ./dist/components/LinkChooser/assets",
         "build:css": "tailwindcss -i ./src/styles.css -o dist/index.css",
         "build:extractedThirdPartyStyles": "postcss src/components/**/*.css --output dist/extractedThirdPartyStyles.css",
         "build:library": "vite build",
