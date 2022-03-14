@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconLabel, ImageSearchResult, SearchResult } from "../types";
-import { guidelineSection } from "./guidelines";
-import { templateSection } from "./templates";
+import { GUIDELINE_ITEMS } from "./guidelines";
+import { TEMPLATE_ITEMS } from "./templates";
 
 const formatImageItemData = (array: (ImageSearchResult | SearchResult)[]): SearchResult[] =>
     array.map(({ id, title, subtitle, link, icon }) => ({ id, title, subtitle, link, icon })) || [];
@@ -35,6 +35,6 @@ export const data = [
         link: "https://www.frontify.com/en/digital-and-print-templates/",
         icon: IconLabel.External,
     },
-    ...formatImageItemData(templateSection.items),
-    ...formatImageItemData(guidelineSection.items),
+    ...formatImageItemData(TEMPLATE_ITEMS),
+    ...formatImageItemData(GUIDELINE_ITEMS),
 ];

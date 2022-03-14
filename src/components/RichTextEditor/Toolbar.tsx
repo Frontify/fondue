@@ -3,126 +3,97 @@
 import {
     IconBold,
     IconItalic,
+    IconLink,
     IconListBullets,
     IconListNumbers,
     IconSnippet,
+    IconStrikethrough,
     IconTextAlignCenter,
     IconTextAlignJustify,
     IconTextAlignLeft,
     IconTextAlignRight,
     IconUnderline,
 } from "@foundation/Icon";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { merge } from "@utilities/merge";
-import React, { FC, useEffect, useRef } from "react";
-import { usePopper } from "react-popper";
-import { BlockStyleButton } from "./BlockStyleButton";
-import { useEditorSelection } from "./hooks/useEditorSelection";
-import { InlineStyleButton } from "./InlineStyleButton";
-import { BlockStyleTypes, TextAlignTypes } from "./renderer/renderBlockStyles";
-import { InlineStyles } from "./renderer/renderInlineStyles";
+import {
+    AlignToolbarButton,
+    BalloonToolbar,
+    ELEMENT_OL,
+    ELEMENT_UL,
+    getPluginType,
+    LinkToolbarButton,
+    ListToolbarButton,
+    MarkToolbarButton,
+    MARK_BOLD,
+    MARK_CODE,
+    MARK_ITALIC,
+    MARK_STRIKETHROUGH,
+    MARK_UNDERLINE,
+    usePlateEditorRef,
+} from "@udecode/plate";
+import React, { FC } from "react";
+import { TextStyleDropdown } from "./TextStyleDropdown/TextStyleDropdown";
+import { TextStyleType } from "./utils/getTextStyles";
 
-export const Toolbar: FC = () => {
-    const selectionRectRef = useRef<HTMLDivElement | null>(null);
-    const inlineToolbarRef = useRef<HTMLDivElement | null>(null);
-    const inlineToolbarArrowRef = useRef<HTMLDivElement | null>(null);
+type ToolbarProps = {
+    textStyles?: TextStyleType[];
+};
 
-    const { selectionRect } = useEditorSelection(selectionRectRef);
+type ButtonGroupProps = {
+    testId?: string;
+    children: JSX.Element | JSX.Element[];
+};
 
-    const ButtonGroup: FC<React.ReactNode> = ({ children }) => (
-        <div className="tw-flex tw-items-center tw-border-r tw-px-3 tw-py-2 tw-border-black-5">{children}</div>
+export const Toolbar: FC<ToolbarProps> = ({ textStyles }) => {
+    const editor = usePlateEditorRef();
+
+    const ButtonGroup: FC<ButtonGroupProps> = ({ testId, children }) => (
+        <div
+            data-test-id={testId}
+            className="tw-flex tw-items-center tw-border-r last:tw-border-r-0 tw-px-3 tw-py-2 tw-border-black-5"
+        >
+            {children}
+        </div>
     );
 
-    const {
-        styles,
-        attributes,
-        update: popperUpdate,
-    } = usePopper(selectionRectRef.current, inlineToolbarRef.current, {
-        placement: "top",
-        modifiers: [
-            { name: "arrow", options: { element: inlineToolbarArrowRef.current, padding: 10 } },
-            { name: "offset", options: { offset: [0, 8] } },
-            { name: "flip", options: { fallbackPlacements: ["bottom", "right"] } },
-        ],
-    });
-
-    useEffect(() => {
-        (async () => {
-            popperUpdate && (await popperUpdate());
-        })();
-    }, [selectionRect]);
-
     return (
-        <>
+        <BalloonToolbar
+            theme={"light"}
+            popperOptions={{
+                modifiers: [
+                    { name: "offset", options: { offset: [0, 12] } },
+                    { name: "flip", options: { fallbackPlacements: ["bottom", "right"] } },
+                ],
+            }}
+            styles={{ root: { border: "none", background: "#ffffff" } }}
+        >
             <div
-                ref={selectionRectRef}
-                style={selectionRect ?? undefined}
-                className="tw-absolute tw-pointer-events-none"
-            ></div>
-            <div
-                ref={inlineToolbarRef}
                 data-test-id="toolbar"
-                className={merge([
-                    "tw-popper-container tw-z-10 tw-drop-shadow-md",
-                    !selectionRect && "tw-invisible tw-pointer-events-none",
-                ])}
-                style={styles.popper}
-                {...attributes.popper}
+                className="tw-flex tw-p-0.5 tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5"
             >
-                <div className="tw-flex tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5">
-                    <ButtonGroup>
-                        <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignJustify}>
-                            <IconTextAlignJustify size={IconSize.Size16} />
-                        </BlockStyleButton>
+                <ButtonGroup testId="text-style-buttons">
+                    <TextStyleDropdown textStyles={textStyles} />
+                </ButtonGroup>
+                <ButtonGroup testId="text-alignment-buttons">
+                    <AlignToolbarButton value="left" icon={<IconTextAlignLeft />} />
+                    <AlignToolbarButton value="center" icon={<IconTextAlignCenter />} />
+                    <AlignToolbarButton value="right" icon={<IconTextAlignRight />} />
+                    <AlignToolbarButton value="justify" icon={<IconTextAlignJustify />} />
+                </ButtonGroup>
 
-                        <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignLeft}>
-                            <IconTextAlignLeft size={IconSize.Size16} />
-                        </BlockStyleButton>
+                <ButtonGroup testId="text-mark-buttons">
+                    <MarkToolbarButton type={getPluginType(editor, MARK_BOLD)} icon={<IconBold />} />
+                    <MarkToolbarButton type={getPluginType(editor, MARK_ITALIC)} icon={<IconItalic />} />
+                    <MarkToolbarButton type={getPluginType(editor, MARK_UNDERLINE)} icon={<IconUnderline />} />
+                    <MarkToolbarButton type={getPluginType(editor, MARK_STRIKETHROUGH)} icon={<IconStrikethrough />} />
+                    <MarkToolbarButton type={getPluginType(editor, MARK_CODE)} icon={<IconSnippet />} />
+                </ButtonGroup>
 
-                        <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignCenter}>
-                            <IconTextAlignCenter size={IconSize.Size16} />
-                        </BlockStyleButton>
-
-                        <BlockStyleButton blockType={BlockStyleTypes.Paragraph} textAlign={TextAlignTypes.AlignRight}>
-                            <IconTextAlignRight size={IconSize.Size16} />
-                        </BlockStyleButton>
-                    </ButtonGroup>
-
-                    <ButtonGroup>
-                        <InlineStyleButton style={InlineStyles.Bold}>
-                            <IconBold size={IconSize.Size16} />
-                        </InlineStyleButton>
-
-                        <InlineStyleButton style={InlineStyles.Italic}>
-                            <IconItalic size={IconSize.Size16} />
-                        </InlineStyleButton>
-
-                        <InlineStyleButton style={InlineStyles.Underline}>
-                            <IconUnderline size={IconSize.Size12} />
-                        </InlineStyleButton>
-
-                        <InlineStyleButton style={InlineStyles.Strikethrough}>s</InlineStyleButton>
-
-                        <InlineStyleButton style={InlineStyles.Code}>
-                            <IconSnippet size={IconSize.Size16} />
-                        </InlineStyleButton>
-
-                        <BlockStyleButton blockType={BlockStyleTypes.OrderedList}>
-                            <IconListNumbers size={IconSize.Size12} />
-                        </BlockStyleButton>
-
-                        <BlockStyleButton blockType={BlockStyleTypes.UnorderedList}>
-                            <IconListBullets size={IconSize.Size16} />
-                        </BlockStyleButton>
-                    </ButtonGroup>
-                </div>
-
-                <div
-                    ref={inlineToolbarArrowRef}
-                    style={styles.arrow}
-                    className="tw-popper-arrow tw-absolute tw-w-2 tw-h-2 tw-pointer-events-none before:tw-absolute before:tw-z-10 before:tw-w-2 before:tw-h-2 before:tw-bg-white before:tw-rotate-45"
-                ></div>
+                <ButtonGroup testId="text-element-buttons">
+                    <LinkToolbarButton icon={<IconLink />} />
+                    <ListToolbarButton type={getPluginType(editor, ELEMENT_UL)} icon={<IconListBullets />} />
+                    <ListToolbarButton type={getPluginType(editor, ELEMENT_OL)} icon={<IconListNumbers />} />
+                </ButtonGroup>
             </div>
-        </>
+        </BalloonToolbar>
     );
 };

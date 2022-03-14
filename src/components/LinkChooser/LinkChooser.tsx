@@ -3,7 +3,6 @@
 import { mapToAriaProps } from "@components/ActionMenu/Aria/helper";
 import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
 import { useDropdownAutoHeight } from "@components/Dropdown/useDropdownAutoHeight";
-import { Validation } from "@components/TextInput";
 import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import IconPatternLibrary from "@foundation/Icon/Generated/IconDocument";
 import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
@@ -28,6 +27,7 @@ import { decoratedResults, doesContainSubstring, findSection, getDefaultData } f
 import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection, shouldGoBack } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
 import { useManualComboBoxEventHandlers } from "./utils/useManualComboBoxHandlers";
+import { Validation } from "@utilities/validation";
 
 export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Document]: <IconDocument />,
