@@ -1,6 +1,7 @@
 **/.DS_Store
 node_modules
 dist
+types
 storybook-static
 
 !.src/foundation/Icon/Generated/.gitkeep
