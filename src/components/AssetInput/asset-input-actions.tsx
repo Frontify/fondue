@@ -2,7 +2,7 @@ import React from "react";
 import { ActionMenuBlock, MenuItemStyle } from "..";
 import { IconCrop, IconExternalLink, IconImageLibrary, IconReject, IconUploadAlternative } from "../..";
 
-export const actions = [
+export const assetInputActions = [
     {
         id: "block1",
         ariaLabel: "First section",

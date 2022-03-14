@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
-import { actions } from "./actions";
+import { assetInputActions } from "./asset-input-actions";
 import { AssetInput, AssetInputSize, AssetProps } from "./AssetInput";
+import { EXAMPLE_IMAGES, MIXED_ASSETS } from "./example-assets";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -25,7 +25,7 @@ export default {
         isLoading: false,
         numberOfLocations: 1,
     },
-} as unknown as Meta<AssetProps>;
+} as Meta<AssetProps>;
 
 const Template: Story<AssetProps & { onItemClick: () => void }> = (args) => {
     args.actions?.forEach((block) =>
@@ -47,6 +47,8 @@ Placeholder.argTypes = {
     onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
     size: { table: { disable: true } },
     isLoading: { table: { disable: true } },
+    numberOfLocations: { table: { disable: true } },
+    onMultiAssetClick: { table: { disable: true } },
 };
 
 export const PlaceholderUploadOnly = Template.bind({});
@@ -55,6 +57,8 @@ PlaceholderUploadOnly.argTypes = {
     onUploadClick: { action: "onUploadClick", table: { disable: true } },
     size: { table: { disable: true } },
     isLoading: { table: { disable: true } },
+    numberOfLocations: { table: { disable: true } },
+    onMultiAssetClick: { table: { disable: true } },
 };
 
 export const PlaceholderLibraryOnly = Template.bind({});
@@ -63,174 +67,69 @@ PlaceholderLibraryOnly.argTypes = {
     onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
     size: { table: { disable: true } },
     isLoading: { table: { disable: true } },
+    numberOfLocations: { table: { disable: true } },
+    onMultiAssetClick: { table: { disable: true } },
 };
 
 export const Image = Template.bind({});
 
 Image.args = {
-    assets: [
-        {
-            source: "upload",
-            name: "foo",
-            size: 2000,
-            type: "image",
-            extension: "JPG",
-            src: "https://picsum.photos/200/300",
-        },
-    ],
-    actions,
+    assets: [EXAMPLE_IMAGES[0]],
+    actions: assetInputActions,
 };
 
 export const Audio = Template.bind({});
 
 Audio.args = {
-    assets: [
-        {
-            source: "library",
-            sourceName: "Foobar",
-            name: "foo",
-            extension: "MP3",
-            size: 2000,
-            type: "audio",
-        },
-    ],
-    actions,
+    assets: [MIXED_ASSETS[3]],
+    actions: assetInputActions,
 };
 
 export const Icon = Template.bind({});
 
 Icon.args = {
-    assets: [
-        {
-            source: "library",
-            sourceName: "Foobar",
-            name: "foo",
-            type: "icon",
-            icon: <IconIcons />,
-        },
-    ],
-    actions,
+    assets: [MIXED_ASSETS[2]],
+    actions: assetInputActions,
 };
 
-const TemplateMultiInput: Story<AssetProps> = (args) => {
-    return <AssetInput {...args} />;
-};
-
-export const TwoAssets = TemplateMultiInput.bind({});
+export const TwoAssets = Template.bind({});
 
 TwoAssets.args = {
-    assets: [
-        {
-            name: "foo1",
-            size: 2000,
-            type: "image",
-            extension: "JPG",
-            src: "https://picsum.photos/100/150",
-            source: "library",
-            sourceName: "",
-        },
-        {
-            source: "library",
-            sourceName: "Foobar",
-            name: "foo",
-            type: "icon",
-            icon: <IconIcons />,
-        },
-    ],
+    assets: [EXAMPLE_IMAGES[0], MIXED_ASSETS[2]],
     numberOfLocations: 1,
-    actions,
 };
 
-export const OnlyImageAssets = TemplateMultiInput.bind({});
+TwoAssets.argTypes = {
+    onUploadClick: { action: "onUploadClick", table: { disable: true } },
+    onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
+    size: { table: { disable: true } },
+    isLoading: { table: { disable: true } },
+};
+
+export const OnlyImageAssets = Template.bind({});
 
 OnlyImageAssets.args = {
-    assets: [
-        {
-            name: "foo1",
-            size: 2000,
-            type: "image",
-            extension: "JPG",
-            src: "https://picsum.photos/100/150",
-            source: "library",
-            sourceName: "",
-        },
-        {
-            name: "foo2",
-            size: 2000,
-            type: "image",
-            extension: "JPG",
-            src: "https://picsum.photos/200/200",
-            source: "library",
-            sourceName: "",
-        },
-        {
-            name: "foo3",
-            size: 2000,
-            type: "image",
-            extension: "JPG",
-            src: "https://picsum.photos/100/100",
-            source: "library",
-            sourceName: "",
-        },
-        {
-            name: "foo4",
-            size: 1000,
-            type: "image",
-            extension: "JPG",
-            src: "https://picsum.photos/400/200",
-            source: "library",
-            sourceName: "",
-        },
-        {
-            name: "foo5",
-            size: 1000,
-            type: "image",
-            extension: "JPG",
-            src: "https://picsum.photos/400/200",
-            source: "library",
-            sourceName: "",
-        },
-    ],
+    assets: EXAMPLE_IMAGES,
     numberOfLocations: 2,
 };
 
-export const MixedAssets = TemplateMultiInput.bind({});
+OnlyImageAssets.argTypes = {
+    onUploadClick: { action: "onUploadClick", table: { disable: true } },
+    onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
+    size: { table: { disable: true } },
+    isLoading: { table: { disable: true } },
+};
+
+export const MixedAssets = Template.bind({});
 
 MixedAssets.args = {
-    assets: [
-        {
-            name: "foo2",
-            size: 2000,
-            type: "image",
-            extension: "JPG",
-            src: "https://picsum.photos/200/200",
-            source: "library",
-            sourceName: "",
-        },
-        {
-            name: "foo3",
-            size: 2000,
-            type: "image",
-            extension: "JPG",
-            src: "https://picsum.photos/100/100",
-            source: "library",
-            sourceName: "",
-        },
-        {
-            source: "library",
-            sourceName: "Foobar",
-            name: "foo",
-            type: "icon",
-            icon: <IconIcons />,
-        },
-        {
-            source: "library",
-            sourceName: "Foobar",
-            name: "foo",
-            extension: "MP3",
-            size: 2000,
-            type: "audio",
-        },
-    ],
+    assets: EXAMPLE_IMAGES,
     numberOfLocations: 2,
+};
+
+MixedAssets.argTypes = {
+    onUploadClick: { action: "onUploadClick", table: { disable: true } },
+    onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
+    size: { table: { disable: true } },
+    isLoading: { table: { disable: true } },
 };

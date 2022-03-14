@@ -80,18 +80,18 @@ export const AssetInput: FC<AssetProps> = ({
     onMultiAssetClick,
 }) => {
     const availableAssets = assets || [];
-    const lengthAssets = availableAssets?.length || 0;
+    const assetsLength = availableAssets?.length || 0;
 
-    if ((isLoading || lengthAssets === 1) && actions) {
+    if ((isLoading || assetsLength === 1) && actions) {
         return <SelectedAsset asset={availableAssets[0]} size={size} actions={actions} isLoading={isLoading} />;
     }
 
-    if (lengthAssets > 1 && onMultiAssetClick) {
+    if (assetsLength > 1 && onMultiAssetClick) {
         return (
             <MultiAssetPreview
                 assets={availableAssets}
                 onClick={onMultiAssetClick}
-                assetsAmount={lengthAssets}
+                assetsAmount={assetsLength}
                 numberOfLocations={numberOfLocations}
             />
         );

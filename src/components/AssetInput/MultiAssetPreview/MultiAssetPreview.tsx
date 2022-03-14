@@ -21,7 +21,7 @@ export const MultiAssetPreview: FC<MultiAssetPreviewProps> = ({
     onClick,
 }) => {
     const buttonRef = useRef<HTMLButtonElement | null>(null);
-    const { buttonProps } = useButton({ onPress: () => onClick() }, buttonRef);
+    const { buttonProps } = useButton({ onPress: onClick }, buttonRef);
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (

@@ -5,12 +5,12 @@ import { AssetThumbnail } from "../AssetThumbnail";
 import { MultiAssetPreviewProps } from "./MultiAssetPreview";
 
 export const Assets: FC<Pick<MultiAssetPreviewProps, "assets">> = ({ assets }) => {
-    const length = assets?.length || 0;
-    const assetsNew = assets?.slice(0, 4) || [];
+    const assetslength = assets?.length || 0;
+    const previewAssets = assets?.slice(0, 4) || [];
 
-    if (length < 4) {
-        [...Array(4 - length)].map((item, index) =>
-            assetsNew.push({
+    if (assetslength < 4) {
+        [...Array(4 - assetslength)].forEach((_, index) =>
+            previewAssets.push({
                 name: `empty picture ${index + 1}`,
                 size: 20,
                 type: "image",
@@ -22,7 +22,7 @@ export const Assets: FC<Pick<MultiAssetPreviewProps, "assets">> = ({ assets }) =
     }
     return (
         <div className="tw-border-black-20 tw-grid tw-grid-cols-2 tw-gap-0.5">
-            {assetsNew.map((asset, index) =>
+            {previewAssets.map((asset, index) =>
                 asset.type === "image" || asset.type === "logo" ? (
                     <div
                         data-test-id="assets-image"
