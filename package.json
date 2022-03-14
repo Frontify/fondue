@@ -1,28 +1,36 @@
 {
     "name": "@frontify/arcade",
+    "sideEffects": false,
     "version": "5.0.0",
     "description": "Design system of Frontify",
-    "main": "dist/index.umd.js",
-    "unpkg": "dist/index.umd.js",
-    "jsdelivr": "dist/index.umd.js",
-    "module": "dist/index.es.js",
-    "types": "dist/src/index.d.ts",
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "types": "types/index.d.ts",
     "files": [
         "dist",
         "tailwind.config.js"
     ],
     "exports": {
         ".": {
-            "import": "./dist/index.es.js",
-            "require": "./dist/index.umd.js"
+            "import": "./dist/index.js"
         },
         "./tailwind": "./tailwind.config.js",
         "./style": "./dist/styles.css",
         "./extractedThirdPartyStyles": "./dist/extractedThirdPartyStyles.css",
         "./dist/*": "./dist/*"
+
+    },
+    "_moduleAliases": {
+        "@components": "./dist/components",
+        "@foundation": "./src/foundation",
+        "@hooks": "./src/hooks",
+        "@layout": "./src/layout",
+        "@typography": "./src/typography",
+        "@utilities": "./src/utilities"
     },
     "scripts": {
-        "build": "npm run clean && npm run generate:icons && npm run build:library && npm run build:extractedThirdPartyStyles",
+        "build": "tsc && npm run build:types",
+        "build:types": "tsc --declaration --allowJs --emitDeclarationOnly --outDir types",
         "build:css": "tailwindcss -i ./src/styles.css -o dist/index.css",
         "build:extractedThirdPartyStyles": "postcss src/components/**/*.css --output dist/extractedThirdPartyStyles.css",
         "build:library": "vite build",
@@ -144,6 +152,7 @@
         "@xstate/react": "^1.6.3",
         "date-fns": "^2.28.0",
         "framer-motion": "^6.2.1",
+        "module-alias": "^2.2.2",
         "react-color": "^2.19.3",
         "react-datepicker": "^4.6.0",
         "react-dnd": "^15.1.1",

@@ -1,5 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-
+import "module-alias/register";
 import "./styles.css";
 
 export * from "./components";

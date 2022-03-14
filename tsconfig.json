@@ -5,10 +5,9 @@
     "compilerOptions": {
         "esModuleInterop": true,
         "lib": ["dom", "dom.iterable", "esnext"],
-        "module": "commonjs",
+        "module": "es2022",
         "moduleResolution": "node",
         "noUnusedLocals": true,
-        "noEmit": true,
         "strict": true,
         "target": "esnext",
         "jsx": "react",
@@ -22,7 +21,8 @@
             "@typography/*": ["./src/typography/*"],
             "@utilities/*": ["./src/utilities/*"]
         },
-        "types": ["cypress", "cypress-real-events", "vite/client"]
+        "types": ["cypress", "cypress-real-events", "vite/client"],
+        "outDir": "dist"
     },
     "include": ["src/types", "src/**/*"],
     "exclude": ["node_modules", "dist"]
