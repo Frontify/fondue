@@ -11,7 +11,7 @@ export const Modal: FC<ModalProps> = ({ visual, header, footer, children }) => {
             className="tw-max-w-[790px] tw-max-h-[600px] tw-flex tw-border tw-border-solid tw-border-grey-20 tw-rounded tw-shadow-2xl"
         >
             {visual?.pattern && (
-                <div className="tw-w-[260px] tw-relative tw-flex-shrink-0">
+                <div className="tw-w-[260px] tw-relative tw-flex-shrink-0 tw-overflow-hidden">
                     <ModalVisual {...visual} />
                 </div>
             )}

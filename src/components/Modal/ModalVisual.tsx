@@ -10,14 +10,23 @@ export const ModalVisual: FC<ModalVisualProps> = ({ pattern = PatternDesign.Digi
     return (
         <div
             data-test-id="modal-visual"
-            className={merge(["tw-h-full tw-overflow-hidden", foregroundColor && patternThemes[foregroundColor]])}
+            className={merge([
+                "tw-h-[1802px] tw-absolute tw-bottom-0",
+                foregroundColor && patternThemes[foregroundColor],
+            ])}
             style={{
-                transform: "scaleX(-1) rotate(180deg)",
                 clipPath:
                     "path('M0 0L252 145.492C256.95 148.35 260 153.632 260 159.349V1641.98C260 1647.7 256.95 1652.98 252 1655.84L0 1801.33V1501.11V0Z')",
             }}
         >
-            <FrontifyPattern pattern={pattern} scale={PatternScale.XXL} foregroundColor={foregroundColor} />
+            <div className="tw-absolute tw-bottom-0">
+                <FrontifyPattern
+                    pattern={pattern}
+                    scaleOrigin={["left", "bottom"]}
+                    scale={PatternScale.XXL}
+                    foregroundColor={foregroundColor}
+                />
+            </div>
         </div>
     );
 };
