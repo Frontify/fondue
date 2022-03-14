@@ -53,6 +53,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
             editor.selection = { anchor: point, focus: point };
             editor.history = { redos: [], undos: [] };
             editor.children = EMPTY_VALUE;
+            localValue.current = EMPTY_VALUE;
         }
     }, [clear]);
 
