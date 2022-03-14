@@ -92,6 +92,13 @@ Icon.args = {
     actions: assetInputActions,
 };
 
+const multiAssetInputargTypes = {
+    onUploadClick: { action: "onUploadClick", table: { disable: true } },
+    onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
+    size: { table: { disable: true } },
+    isLoading: { table: { disable: true } },
+};
+
 export const TwoAssets = Template.bind({});
 
 TwoAssets.args = {
@@ -99,12 +106,7 @@ TwoAssets.args = {
     numberOfLocations: 1,
 };
 
-TwoAssets.argTypes = {
-    onUploadClick: { action: "onUploadClick", table: { disable: true } },
-    onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
-    size: { table: { disable: true } },
-    isLoading: { table: { disable: true } },
-};
+TwoAssets.argTypes = multiAssetInputargTypes;
 
 export const OnlyImageAssets = Template.bind({});
 
@@ -113,12 +115,7 @@ OnlyImageAssets.args = {
     numberOfLocations: 2,
 };
 
-OnlyImageAssets.argTypes = {
-    onUploadClick: { action: "onUploadClick", table: { disable: true } },
-    onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
-    size: { table: { disable: true } },
-    isLoading: { table: { disable: true } },
-};
+OnlyImageAssets.argTypes = multiAssetInputargTypes;
 
 export const MixedAssets = Template.bind({});
 
@@ -127,9 +124,4 @@ MixedAssets.args = {
     numberOfLocations: 2,
 };
 
-MixedAssets.argTypes = {
-    onUploadClick: { action: "onUploadClick", table: { disable: true } },
-    onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
-    size: { table: { disable: true } },
-    isLoading: { table: { disable: true } },
-};
+MixedAssets.argTypes = multiAssetInputargTypes;
