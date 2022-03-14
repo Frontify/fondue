@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useMemoizedId } from "@hooks/useMemoizedId";
-import { createPlateEditor, Plate, TNode } from "@udecode/plate";
+import { Plate, TNode, usePlateEditorState } from "@udecode/plate";
 import { debounce } from "@utilities/debounce";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
@@ -34,7 +34,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     onBlur,
 }) => {
     const editorId = id || useMemoizedId();
-    const editor = createPlateEditor({ plugins: getEditorConfig() });
+    const editor = usePlateEditorState(editorId);
     const localValue = useRef<TNode[] | null>(null);
     const [debouncedValue, setDebouncedValue] = useState<TNode[] | null>(null);
     const editableProps: EditableProps = {
@@ -67,8 +67,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         <div data-test-id="rich-text-editor" className="tw-relative tw-w-full">
             <Plate
                 id={editorId}
-                editor={editor}
-                initialValue={parseRawValue(editor, initialValue)}
+                initialValue={parseRawValue(initialValue)}
                 onChange={(value) => {
                     onChange(value);
                     localValue.current = value;

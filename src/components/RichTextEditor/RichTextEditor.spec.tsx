@@ -246,6 +246,6 @@ describe("RichTextEditor Component", () => {
 
         cy.get(RICH_TEXT_EDITOR).should("contain.text", text);
         cy.get("[data-test-id=clear-button]").click();
-        cy.get(RICH_TEXT_EDITOR).should("contain.text", "");
+        cy.get(RICH_TEXT_EDITOR).should("not.contain.text", text);
     });
 });
