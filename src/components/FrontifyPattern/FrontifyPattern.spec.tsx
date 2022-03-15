@@ -43,7 +43,15 @@ describe("FrontifyPattern Component", () => {
         it(`should render a pattern scaled ${patternScales[scale]}x`, () => {
             mount(<FrontifyPattern pattern={PatternDesign.DigitalAssets} scale={scale} />);
 
-            cy.get(FRONTIFY_PATTERN).should("have.attr", "style", `transform: scale(${patternScales[scale]});`);
+            cy.get(FRONTIFY_PATTERN)
+                .should("have.attr", "style")
+                .and("contain", `transform: scale(${patternScales[scale]});`);
         });
+    });
+
+    it("should render a pattern with an origin of top and left", () => {
+        mount(<FrontifyPattern pattern={PatternDesign.DigitalAssets} scaleOrigin={["top", "left"]} />);
+
+        cy.get(FRONTIFY_PATTERN).should("have.attr", "style").and("contain", `transform-origin: left top`);
     });
 });

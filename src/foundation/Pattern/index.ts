@@ -3,3 +3,4 @@
 export * from "./PatternScale";
 export * from "./PatternTheme";
 export * from "./PatternDesigns";
+export * from "./PatternScaleOrigin";

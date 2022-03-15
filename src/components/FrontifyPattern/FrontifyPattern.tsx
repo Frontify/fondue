@@ -3,18 +3,19 @@
 import React, { cloneElement, FC } from "react";
 import { merge } from "@utilities/merge";
 import {
-    PatternDesign,
-    patternDesigns,
     PatternScale,
-    patternScales,
     PatternTheme,
+    PatternDesign,
     patternThemes,
+    patternScales,
+    patternDesigns,
+    PatternScaleOrigin,
 } from "@foundation/Pattern";
 
 export type FrontifyPatternProps = {
     pattern: PatternDesign;
     scale?: PatternScale;
-    scaleOrigin?: Array<"top" | "left" | "bottom" | "right">;
+    scaleOrigin?: PatternScaleOrigin;
     foregroundColor?: PatternTheme;
 };
 
