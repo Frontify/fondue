@@ -8,17 +8,11 @@ import { SelectedAssetProps } from "./SingleAsset/SelectedAsset";
 type AssetThumbnailProps = {
     asset: SelectedAssetProps["asset"];
     size: AssetInputProps["size"];
-    isActive: boolean;
-};
-type isMultiAsset = {
+    isActive?: boolean;
     isMultiAsset?: boolean;
 };
-export const AssetThumbnail: FC<Required<AssetThumbnailProps> & isMultiAsset> = ({
-    asset,
-    size,
-    isActive,
-    isMultiAsset = false,
-}) => (
+
+export const AssetThumbnail: FC<AssetThumbnailProps> = ({ asset, size, isActive, isMultiAsset = false }) => (
     <div
         className={merge([
             "tw-flex tw-flex-none tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95",

@@ -2,6 +2,7 @@ import { IconCaretRight, IconSize } from "@foundation/Icon";
 import { useButton } from "@react-aria/button";
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, useRef } from "react";
 import { AssetType } from "../AssetInput";
@@ -12,6 +13,8 @@ export type MultiAssetPreviewProps = {
     assets: AssetType[];
     onClick: () => void;
 };
+
+// const FOCUS_STYLE = "tw-border-black-90 dark:tw-border-black-10";
 
 export const MultiAssetPreview: FC<MultiAssetPreviewProps> = ({ numberOfLocations, assets, onClick }) => {
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -28,7 +31,7 @@ export const MultiAssetPreview: FC<MultiAssetPreviewProps> = ({ numberOfLocation
                 className={merge([
                     "tw-flex tw-border tw-rounded hover:tw-border-black-90 dark:hover:tw-border-black-40 focus-visible:tw-outline-none dark:tw-text-white tw-mb-4 tw-w-full",
                     isFocusVisible
-                        ? "tw-border-black-90 dark:tw-border-black-10"
+                        ? `${FOCUS_STYLE} tw-border-black-90 dark:tw-border-black-10`
                         : "tw-border-black-20 dark:tw-border-black-80",
                 ])}
             >

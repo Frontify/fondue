@@ -38,12 +38,7 @@ export const Assets: FC<Pick<MultiAssetPreviewProps, "assets">> = ({ assets }) =
                     />
                 ) : (
                     <div className="tw-h-11 tw-w-11">
-                        <AssetThumbnail
-                            asset={asset}
-                            size={AssetInputSize.Small}
-                            isActive={false}
-                            isMultiAsset={true}
-                        />
+                        <AssetThumbnail asset={asset} size={AssetInputSize.Small} isMultiAsset={true} />
                     </div>
                 ),
             )}
