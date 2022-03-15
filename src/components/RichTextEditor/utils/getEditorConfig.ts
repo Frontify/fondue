@@ -29,6 +29,7 @@ import {
 } from "@udecode/plate";
 import {
     BoldMark,
+    CheckboxItemElement,
     CodeMark,
     Custom1Element,
     Custom2Element,
@@ -45,6 +46,8 @@ import {
     UnderlineMark,
     UnorderedListElement,
 } from "../components";
+import { CheckboxListElement } from "../components/checkbox-list";
+import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM, ELEMENT_CHECK_LIST } from "../plugins/checkboxListPlugin";
 import { TextStyles, TextStyleType } from "./getTextStyles";
 
 export const getEditorConfig = (textStyles?: TextStyleType[]) => {
@@ -109,6 +112,8 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
         [ELEMENT_OL]: OrderedListElement,
         [ELEMENT_LI]: ListItemElement,
         [ELEMENT_LIC]: ListItemContentElement,
+        [ELEMENT_CHECK_ITEM]: CheckboxItemElement,
+        [ELEMENT_CHECK_LIST]: CheckboxListElement,
         [MARK_BOLD]: BoldMark,
         [MARK_ITALIC]: ItalicMark,
         [MARK_UNDERLINE]: UnderlineMark,
@@ -137,6 +142,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
             createParagraphPlugin(),
             createCodeBlockPlugin(),
             createListPlugin(),
+            createCheckboxListPlugin(),
             createLinkPlugin(),
             createBoldPlugin(),
             createItalicPlugin(),

@@ -14,6 +14,7 @@ import {
     MARK_UNDERLINE,
 } from "@udecode/plate";
 import React from "react";
+import { ELEMENT_CHECK_ITEM, ELEMENT_CHECK_LIST } from "./plugins/checkboxListPlugin";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
 import { TextStyles } from "./utils/getTextStyles";
 
@@ -250,3 +251,62 @@ export const MultipleRichTextEditors: Story<RichTextEditorProps> = () => (
         </div>
     </div>
 );
+export const WithChecklist: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <RichTextEditorComponent {...args} />
+);
+const checklistValue = [
+    {
+        type: ELEMENT_CHECK_LIST,
+        children: [
+            {
+                type: ELEMENT_CHECK_ITEM,
+                checked: true,
+                children: [{ text: "This is a checked checklist item." }],
+            },
+            {
+                type: ELEMENT_CHECK_ITEM,
+                checked: false,
+                children: [{ text: "This is an unchecked checklist item." }],
+            },
+            {
+                type: ELEMENT_CHECK_ITEM,
+                checked: true,
+                children: [{ text: "This is checked again, and it also has children!" }],
+            },
+            {
+                type: ELEMENT_CHECK_LIST,
+                children: [
+                    {
+                        type: ELEMENT_CHECK_ITEM,
+                        checked: false,
+                        children: [{ text: "This is child checklist item." }],
+                    },
+                    {
+                        type: ELEMENT_CHECK_ITEM,
+                        checked: true,
+                        children: [{ text: "This is a checked child checklist item, with even more children!" }],
+                    },
+                    {
+                        type: ELEMENT_CHECK_LIST,
+                        children: [
+                            {
+                                type: ELEMENT_CHECK_ITEM,
+                                checked: false,
+                                children: [{ text: "Hello, I'm unchecked." }],
+                            },
+                            {
+                                type: ELEMENT_CHECK_ITEM,
+                                checked: true,
+                                children: [{ text: "And I'm checked!" }],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    },
+];
+WithChecklist.args = {
+    value: JSON.stringify(checklistValue),
+};
+WithChecklist.argTypes = { value: { type: "string" } };
