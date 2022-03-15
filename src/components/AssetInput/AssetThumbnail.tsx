@@ -12,7 +12,7 @@ type AssetThumbnailProps = {
     isMultiAsset?: boolean;
 };
 
-export const AssetThumbnail: FC<AssetThumbnailProps> = ({ asset, size, isActive, isMultiAsset = false }) => (
+export const AssetThumbnail: FC<AssetThumbnailProps> = ({ asset, size, isActive = false, isMultiAsset = false }) => (
     <div
         className={merge([
             "tw-flex tw-flex-none tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95",
