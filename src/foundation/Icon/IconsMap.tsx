@@ -38,6 +38,7 @@ import IconBookmark from "@foundation/Icon/Generated/IconBookmark";
 import IconBrand from "@foundation/Icon/Generated/IconBrand";
 import IconBriefing from "@foundation/Icon/Generated/IconBriefing";
 import IconBuilder from "@foundation/Icon/Generated/IconBuilder";
+import IconBuildings from "@foundation/Icon/Generated/IconBuildings";
 import IconButton from "@foundation/Icon/Generated/IconButton";
 import IconCalendar from "@foundation/Icon/Generated/IconCalendar";
 import IconCallout from "@foundation/Icon/Generated/IconCallout";
@@ -46,7 +47,9 @@ import IconCampaignActivity from "@foundation/Icon/Generated/IconCampaignActivit
 import IconCards from "@foundation/Icon/Generated/IconCards";
 import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
 import IconCaretLeft from "@foundation/Icon/Generated/IconCaretLeft";
+import IconCaretLeftDouble from "@foundation/Icon/Generated/IconCaretLeftDouble";
 import IconCaretRight from "@foundation/Icon/Generated/IconCaretRight";
+import IconCaretRightDouble from "@foundation/Icon/Generated/IconCaretRightDouble";
 import IconCaretUp from "@foundation/Icon/Generated/IconCaretUp";
 import IconCenter from "@foundation/Icon/Generated/IconCenter";
 import IconCheck from "@foundation/Icon/Generated/IconCheck";
@@ -79,6 +82,7 @@ import IconDoubleQuotesDown from "@foundation/Icon/Generated/IconDoubleQuotesDow
 import IconDoubleQuotesUp from "@foundation/Icon/Generated/IconDoubleQuotesUp";
 import IconDownload from "@foundation/Icon/Generated/IconDownload";
 import IconDownloadAlternative from "@foundation/Icon/Generated/IconDownloadAlternative";
+import IconDrop from "@foundation/Icon/Generated/IconDrop";
 import IconDrops from "@foundation/Icon/Generated/IconDrops";
 import IconDuplicate from "@foundation/Icon/Generated/IconDuplicate";
 import IconEmojiHappy from "@foundation/Icon/Generated/IconEmojiHappy";
@@ -140,6 +144,7 @@ import IconItalic from "@foundation/Icon/Generated/IconItalic";
 import IconLayoutGrid from "@foundation/Icon/Generated/IconLayoutGrid";
 import IconLayoutHorizontal from "@foundation/Icon/Generated/IconLayoutHorizontal";
 import IconLayoutVertical from "@foundation/Icon/Generated/IconLayoutVertical";
+import IconLeftCaret from "@foundation/Icon/Generated/IconLeftCaret";
 import IconLightning from "@foundation/Icon/Generated/IconLightning";
 import IconLightningFilled from "@foundation/Icon/Generated/IconLightningFilled";
 import IconLineDashes from "@foundation/Icon/Generated/IconLineDashes";
@@ -194,6 +199,7 @@ import IconRejectCircle from "@foundation/Icon/Generated/IconRejectCircle";
 import IconRejectFilled from "@foundation/Icon/Generated/IconRejectFilled";
 import IconRevert from "@foundation/Icon/Generated/IconRevert";
 import IconRevisions from "@foundation/Icon/Generated/IconRevisions";
+import IconRightCaret from "@foundation/Icon/Generated/IconRightCaret";
 import IconRocket from "@foundation/Icon/Generated/IconRocket";
 import IconSearch from "@foundation/Icon/Generated/IconSearch";
 import IconSection from "@foundation/Icon/Generated/IconSection";
@@ -300,6 +306,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Brand]: <IconBrand />,
     [IconEnum.Briefing]: <IconBriefing />,
     [IconEnum.Builder]: <IconBuilder />,
+    [IconEnum.Buildings]: <IconBuildings />,
     [IconEnum.Button]: <IconButton />,
     [IconEnum.Calendar]: <IconCalendar />,
     [IconEnum.Callout]: <IconCallout />,
@@ -308,7 +315,9 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Cards]: <IconCards />,
     [IconEnum.CaretDown]: <IconCaretDown />,
     [IconEnum.CaretLeft]: <IconCaretLeft />,
+    [IconEnum.CaretLeftDouble]: <IconCaretLeftDouble />,
     [IconEnum.CaretRight]: <IconCaretRight />,
+    [IconEnum.CaretRightDouble]: <IconCaretRightDouble />,
     [IconEnum.CaretUp]: <IconCaretUp />,
     [IconEnum.Center]: <IconCenter />,
     [IconEnum.Check]: <IconCheck />,
@@ -341,6 +350,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.DoubleQuotesUp]: <IconDoubleQuotesUp />,
     [IconEnum.Download]: <IconDownload />,
     [IconEnum.DownloadAlternative]: <IconDownloadAlternative />,
+    [IconEnum.Drop]: <IconDrop />,
     [IconEnum.Drops]: <IconDrops />,
     [IconEnum.Duplicate]: <IconDuplicate />,
     [IconEnum.EmojiHappy]: <IconEmojiHappy />,
@@ -402,6 +412,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.LayoutGrid]: <IconLayoutGrid />,
     [IconEnum.LayoutHorizontal]: <IconLayoutHorizontal />,
     [IconEnum.LayoutVertical]: <IconLayoutVertical />,
+    [IconEnum.LeftCaret]: <IconLeftCaret />,
     [IconEnum.Lightning]: <IconLightning />,
     [IconEnum.LightningFilled]: <IconLightningFilled />,
     [IconEnum.LineDashes]: <IconLineDashes />,
@@ -456,6 +467,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.RejectFilled]: <IconRejectFilled />,
     [IconEnum.Revert]: <IconRevert />,
     [IconEnum.Revisions]: <IconRevisions />,
+    [IconEnum.RightCaret]: <IconRightCaret />,
     [IconEnum.Rocket]: <IconRocket />,
     [IconEnum.Search]: <IconSearch />,
     [IconEnum.Section]: <IconSection />,

@@ -24,7 +24,8 @@ const updateItemsSort = <T extends object>(
                 item.sort <= previousItem.sort); // Following item with a sort prop lower than or equal to value on previousItem
 
         if (shouldUpdate) {
-            const incrementedPreviousItemSort = previousItem && previousItem.sort ? previousItem.sort + 1 : null;
+            const incrementedPreviousItemSort =
+                previousItem && previousItem.sort !== null ? previousItem.sort + 1 : null;
             const updatedSortValue = index === 0 ? 0 : incrementedPreviousItemSort;
 
             modifiedItem = { ...item, sort: updatedSortValue };
@@ -47,13 +48,12 @@ export const moveItems = <T extends object>(
     const itemsClone = [...items];
     const sourceIndex = itemsClone.findIndex((item) => item.id === sourceItem.id);
 
-    itemsClone.splice(sourceIndex, 1);
+    sourceIndex !== -1 && itemsClone.splice(sourceIndex, 1);
 
     let targetIndex = itemsClone.findIndex((item) => item.id === targetItem.id);
     targetIndex = position === DropZonePosition.After ? targetIndex + 1 : targetIndex;
 
     itemsClone.splice(targetIndex, 0, sourceItem);
-    const modifiedItems = updateItemsSort(itemsClone, targetIndex);
 
-    return modifiedItems;
+    return updateItemsSort(itemsClone, targetIndex);
 };

@@ -1,4 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+@import url('react-datepicker/dist/react-datepicker.min.css');
 
 .react-datepicker-wrap {
     font-family: var(--body-family);

@@ -12,13 +12,18 @@ const INPUT_TEXT = "some text";
 
 describe("Textarea component", () => {
     it("renders", () => {
-        mount(<Textarea>{DEFAULT_TEXT}</Textarea>);
+        mount(<Textarea></Textarea>);
         cy.get("textarea").as("textarea");
-        cy.get("@textarea").contains(DEFAULT_TEXT);
+        cy.get("@textarea").should("not.have.attr", "value");
         cy.get("@textarea").should("not.have.attr", "required");
         cy.get("@textarea").should("not.have.attr", "placeholder");
         cy.get("@textarea").should("not.have.attr", "disabled");
         cy.get("@textarea").find('[data-test-id="decorator"]').should("have.length", 0);
+    });
+
+    it("sets and gets the value", () => {
+        mount(<Textarea value={DEFAULT_TEXT}></Textarea>);
+        cy.get("textarea").should("have.value", DEFAULT_TEXT);
     });
 
     it("has the required attribute", () => {

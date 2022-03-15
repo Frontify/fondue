@@ -2,29 +2,29 @@ import React from "react";
 import { useDrop } from "react-dnd";
 import { merge } from "@utilities/merge";
 import { OrderableListItem } from "@components/OrderableList/types";
-import { DropZonePosition } from "@utilities/dnd";
+import { DraggableItem, DropZonePosition } from "@utilities/dnd";
 
 export type OnDropCallback<T> = (
-    targetItem: OrderableListItem<T>,
-    sourceItem: OrderableListItem<T>,
+    targetItem: DraggableItem<T>,
+    sourceItem: DraggableItem<T>,
     position: DropZonePosition,
 ) => void;
 
 type DropZoneData<T> = {
-    targetItem: OrderableListItem<T>;
+    targetItem: DraggableItem<T>;
     position: DropZonePosition;
 };
 
 export type DropZoneProps<T> = {
     data: DropZoneData<T>;
     onDrop?: OnDropCallback<T>;
-    listId: string;
+    treeName: string;
     children?: JSX.Element;
 };
 
-export const DropZone = <T extends object>({ data, onDrop, children, listId }: DropZoneProps<T>) => {
+export const DropZone = <T extends object>({ data, onDrop, children, treeName }: DropZoneProps<T>) => {
     const [{ isOver, canDrop }, drop] = useDrop({
-        accept: listId,
+        accept: treeName,
         drop: (item: OrderableListItem<T>) => {
             onDrop?.(data.targetItem, item, data.position);
         },
@@ -43,6 +43,9 @@ export const DropZone = <T extends object>({ data, onDrop, children, listId }: D
     });
 
     const isActive = isOver && canDrop;
+    const outerDropZoneClassNames = "tw-my-[-4px] tw-h-[10px] tw-py-1 tw-outline-none tw-relative tw-z-20";
+    const activeOuterDropZoneClassNames = "tw-border-violet-60 tw-border-2 tw-h-7 tw-bg-clip-content";
+    const bgColorClassName = "tw-bg-violet-20";
 
     return (
         <div
@@ -50,8 +53,10 @@ export const DropZone = <T extends object>({ data, onDrop, children, listId }: D
             aria-hidden={!isActive}
             data-test-id="drop-zone"
             className={merge([
-                "tw-w-full tw-outline-none tw-relative tw-z-20 tw-h-[10px] tw-my-[-4px] tw-py-1",
-                isActive ? "tw-bg-violet-60 tw-bg-clip-content" : "",
+                "tw-w-full tw-transition-height",
+                data.position !== DropZonePosition.Within ? outerDropZoneClassNames : "tw-h-auto",
+                isActive && data.position !== DropZonePosition.Within ? activeOuterDropZoneClassNames : "",
+                isActive && data.position === DropZonePosition.Within ? bgColorClassName : "",
             ])}
             ref={drop}
         >

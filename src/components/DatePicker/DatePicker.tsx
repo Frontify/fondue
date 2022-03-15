@@ -9,7 +9,6 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { format, getYear } from "date-fns";
 import React, { FC, useState } from "react";
 import DatepickerComponent from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.min.css";
 import "./DatePicker.css";
 import { DatePickerTrigger } from "./DatePickerTrigger";
 

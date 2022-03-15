@@ -1,11 +1,8 @@
 import { MenuItemContentSize } from "@components/MenuItem";
-import IconGuidelines from "@foundation/Icon/Generated/IconGuidelines";
-import { IconFile, IconFolder, IconPlus, IconSize } from "@foundation/Icon";
-import IconDocument from "@foundation/Icon/Generated/IconDocument";
+import { IconFile, IconFolder, IconSize } from "@foundation/Icon";
 import React from "react";
-import { TreeNodeProps } from "@components/Tree";
-import { Button, ButtonSize, ButtonStyle } from "@components/Button";
-import { ActionsFlyoutComponent } from "@components/Tree/utils/ActionsFlyoutComponent";
+import { TreeFlatListItem, TreeNodeItem } from "@components/Tree";
+import { DraggableItem } from "@utilities/dnd";
 
 export const mockActionMenuBlocks = [
     {
@@ -58,23 +55,7 @@ export const mockActionMenuBlocks = [
     },
 ];
 
-export const mockNodesFlat = [
-    {
-        id: "1",
-        name: "Design System Testing",
-        label: "Document",
-        value: "https://weare.frontify.com/document/1",
-        icon: <IconFolder size={IconSize.Size16} />,
-        parentId: null,
-        sort: 1,
-    },
-    {
-        id: "1-1",
-        name: "Uncategorizes Pages",
-        icon: <IconFolder size={IconSize.Size16} />,
-        parentId: "1",
-        sort: 1,
-    },
+const uncategorizedPagesNodes = [
     {
         id: "1-1-1",
         parentId: "1-1",
@@ -102,15 +83,9 @@ export const mockNodesFlat = [
         icon: <IconFile size={IconSize.Size16} />,
         sort: null,
     },
-    {
-        id: "1-2",
-        parentId: "1",
-        name: "Test Category",
-        label: "Document",
-        icon: <IconFolder size={IconSize.Size16} />,
-        value: "https://weare.frontify.com/document/923#/test",
-        sort: null,
-    },
+];
+
+const testCategoryNodes = [
     {
         id: "1-2-1",
         parentId: "1-2",
@@ -140,52 +115,63 @@ export const mockNodesFlat = [
     },
 ];
 
-export const mockNodesWithActionsTree: TreeNodeProps[] = [
+export const mockNodesFlat: DraggableItem<TreeFlatListItem>[] = [
     {
         id: "1",
         name: "Design System Testing",
+        label: "Document",
         value: "https://weare.frontify.com/document/1",
-        icon: <IconGuidelines size={IconSize.Size16} />,
+        icon: <IconFolder size={IconSize.Size16} />,
+        parentId: null,
+        sort: 1,
+    },
+    {
+        id: "1-1",
+        name: "Uncategorizes Pages",
+        icon: <IconFolder size={IconSize.Size16} />,
+        parentId: "1",
+        sort: 1,
+    },
+    ...uncategorizedPagesNodes,
+    {
+        id: "1-2",
+        parentId: "1",
+        name: "Test Category",
+        label: "Document",
+        icon: <IconFolder size={IconSize.Size16} />,
+        value: "https://weare.frontify.com/document/923#/test",
+        sort: null,
+    },
+    ...testCategoryNodes,
+];
+
+export const mockNodesTree: DraggableItem<TreeNodeItem>[] = [
+    {
+        id: "1",
+        name: "Design System Testing",
+        label: "Document",
+        value: "https://weare.frontify.com/document/1",
+        icon: <IconFolder size={IconSize.Size16} />,
+        parentId: null,
+        sort: 1,
         nodes: [
             {
                 id: "1-1",
                 name: "Uncategorizes Pages",
+                icon: <IconFolder size={IconSize.Size16} />,
+                parentId: "1",
+                sort: 1,
+                nodes: [...uncategorizedPagesNodes],
             },
             {
                 id: "1-2",
+                parentId: "1",
                 name: "Test Category",
+                label: "Document",
+                icon: <IconFolder size={IconSize.Size16} />,
                 value: "https://weare.frontify.com/document/923#/test",
-                nodes: [
-                    {
-                        id: "1-2-1",
-                        name: "Home",
-                        value: "https://weare.frontify.com/page/1",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                    },
-                    {
-                        id: "1-2-2",
-                        name: "Members",
-                        value: "https://weare.frontify.com/page/2",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                        actions: [<ActionsFlyoutComponent key="actions" />],
-                    },
-                    {
-                        id: "1-2-3",
-                        name: "About us",
-                        value: "https://weare.frontify.com/page/3",
-                        icon: <IconDocument size={IconSize.Size16} />,
-                        label: "Label",
-                        actions: [
-                            <Button
-                                size={ButtonSize.Small}
-                                style={ButtonStyle.Secondary}
-                                icon={<IconPlus size={IconSize.Size12} />}
-                                key="plusIcon"
-                            />,
-                            <ActionsFlyoutComponent key="actions" />,
-                        ],
-                    },
-                ],
+                sort: null,
+                nodes: [...testCategoryNodes],
             },
         ],
     },

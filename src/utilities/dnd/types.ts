@@ -3,6 +3,7 @@
 export enum DropZonePosition {
     After = "after",
     Before = "before",
+    Within = "within",
 }
 
 export type DraggableItem<T = Record<string, unknown>> = T & {
