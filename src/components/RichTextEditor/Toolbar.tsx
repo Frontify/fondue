@@ -18,6 +18,7 @@ import {
 import {
     AlignToolbarButton,
     BalloonToolbar,
+    BlockToolbarButton,
     ELEMENT_OL,
     ELEMENT_UL,
     getPluginType,
@@ -32,7 +33,7 @@ import {
     usePlateEditorRef,
 } from "@udecode/plate";
 import React, { FC } from "react";
-import { ELEMENT_CHECK_LIST } from "./plugins/checkboxListPlugin";
+import { ELEMENT_CHECK_ITEM } from "./plugins/checkboxListPlugin";
 import { TextStyleDropdown } from "./TextStyleDropdown/TextStyleDropdown";
 import { TextStyleType } from "./utils/getTextStyles";
 
@@ -89,13 +90,13 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles }) => {
                     <MarkToolbarButton type={getPluginType(editor, MARK_UNDERLINE)} icon={<IconUnderline />} />
                     <MarkToolbarButton type={getPluginType(editor, MARK_STRIKETHROUGH)} icon={<IconStrikethrough />} />
                     <MarkToolbarButton type={getPluginType(editor, MARK_CODE)} icon={<IconSnippet />} />
+                    <BlockToolbarButton type={getPluginType(editor, ELEMENT_CHECK_ITEM)} icon={<IconListChecklist />} />
                 </ButtonGroup>
 
                 <ButtonGroup testId="text-element-buttons">
                     <LinkToolbarButton icon={<IconLink />} />
                     <ListToolbarButton type={getPluginType(editor, ELEMENT_UL)} icon={<IconListBullets />} />
                     <ListToolbarButton type={getPluginType(editor, ELEMENT_OL)} icon={<IconListNumbers />} />
-                    <ListToolbarButton type={getPluginType(editor, ELEMENT_CHECK_LIST)} icon={<IconListChecklist />} />
                 </ButtonGroup>
             </div>
         </BalloonToolbar>

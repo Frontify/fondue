@@ -14,7 +14,7 @@ import {
     MARK_UNDERLINE,
 } from "@udecode/plate";
 import React from "react";
-import { ELEMENT_CHECK_ITEM, ELEMENT_CHECK_LIST } from "./plugins/checkboxListPlugin";
+import { ELEMENT_CHECK_ITEM } from "./plugins/checkboxListPlugin";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
 import { TextStyles } from "./utils/getTextStyles";
 
@@ -136,6 +136,24 @@ const value = [
             },
         ],
     },
+    {
+        type: ELEMENT_CHECK_ITEM,
+        checked: true,
+        indent: 0,
+        children: [{ text: "This is a checked checklist item." }],
+    },
+    {
+        type: ELEMENT_CHECK_ITEM,
+        checked: false,
+        indent: 0,
+        children: [{ text: "This is an unchecked checklist item." }],
+    },
+    {
+        type: ELEMENT_CHECK_ITEM,
+        checked: true,
+        indent: 0,
+        children: [{ text: "This is checked again." }],
+    },
     createElement({ text: "Heading 1", element: TextStyles.ELEMENT_HEADING1 }),
     createElement({ text: "Heading 2", element: TextStyles.ELEMENT_HEADING2 }),
     createElement({ text: "Heading 3", element: TextStyles.ELEMENT_HEADING3 }),
@@ -256,54 +274,58 @@ export const WithChecklist: Story<RichTextEditorProps> = (args: RichTextEditorPr
 );
 const checklistValue = [
     {
-        type: ELEMENT_CHECK_LIST,
-        children: [
-            {
-                type: ELEMENT_CHECK_ITEM,
-                checked: true,
-                children: [{ text: "This is a checked checklist item." }],
-            },
-            {
-                type: ELEMENT_CHECK_ITEM,
-                checked: false,
-                children: [{ text: "This is an unchecked checklist item." }],
-            },
-            {
-                type: ELEMENT_CHECK_ITEM,
-                checked: true,
-                children: [{ text: "This is checked again, and it also has children!" }],
-            },
-            {
-                type: ELEMENT_CHECK_LIST,
-                children: [
-                    {
-                        type: ELEMENT_CHECK_ITEM,
-                        checked: false,
-                        children: [{ text: "This is child checklist item." }],
-                    },
-                    {
-                        type: ELEMENT_CHECK_ITEM,
-                        checked: true,
-                        children: [{ text: "This is a checked child checklist item, with even more children!" }],
-                    },
-                    {
-                        type: ELEMENT_CHECK_LIST,
-                        children: [
-                            {
-                                type: ELEMENT_CHECK_ITEM,
-                                checked: false,
-                                children: [{ text: "Hello, I'm unchecked." }],
-                            },
-                            {
-                                type: ELEMENT_CHECK_ITEM,
-                                checked: true,
-                                children: [{ text: "And I'm checked!" }],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
+        type: ELEMENT_CHECK_ITEM,
+        checked: true,
+        indent: 0,
+        children: [{ text: "This is a checked checklist item." }],
+    },
+    {
+        type: ELEMENT_CHECK_ITEM,
+        checked: false,
+        indent: 0,
+        children: [{ text: "This is an unchecked checklist item." }],
+    },
+    {
+        type: ELEMENT_CHECK_ITEM,
+        checked: true,
+        indent: 0,
+        children: [{ text: "This is checked again, and it also has children!" }],
+    },
+    {
+        type: ELEMENT_CHECK_ITEM,
+        checked: false,
+        indent: 1,
+        children: [{ text: "This is child checklist item." }],
+    },
+    {
+        type: ELEMENT_CHECK_ITEM,
+        checked: true,
+        indent: 1,
+        children: [{ text: "This is a checked child checklist item, with even more children!" }],
+    },
+    {
+        type: ELEMENT_CHECK_ITEM,
+        checked: false,
+        indent: 2,
+        children: [{ text: "Hello, I'm unchecked." }],
+    },
+    {
+        type: ELEMENT_CHECK_ITEM,
+        checked: false,
+        indent: 2,
+        children: [{ text: "I'm also unchecked." }],
+    },
+    {
+        type: ELEMENT_CHECK_ITEM,
+        checked: false,
+        indent: 2,
+        children: [{ text: "Yep, unchecked." }],
+    },
+    {
+        type: ELEMENT_CHECK_ITEM,
+        checked: true,
+        indent: 2,
+        children: [{ text: "And I'm checked!" }],
     },
 ];
 WithChecklist.args = {

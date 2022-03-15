@@ -5,6 +5,7 @@ import {
     createBoldPlugin,
     createCodeBlockPlugin,
     createCodePlugin,
+    createIndentPlugin,
     createItalicPlugin,
     createLinkPlugin,
     createListPlugin,
@@ -29,7 +30,6 @@ import {
 } from "@udecode/plate";
 import {
     BoldMark,
-    CheckboxItemElement,
     CodeMark,
     Custom1Element,
     Custom2Element,
@@ -46,8 +46,7 @@ import {
     UnderlineMark,
     UnorderedListElement,
 } from "../components";
-import { CheckboxListElement } from "../components/checkbox-list";
-import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM, ELEMENT_CHECK_LIST } from "../plugins/checkboxListPlugin";
+import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from "../plugins/checkboxListPlugin";
 import { TextStyles, TextStyleType } from "./getTextStyles";
 
 export const getEditorConfig = (textStyles?: TextStyleType[]) => {
@@ -112,8 +111,6 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
         [ELEMENT_OL]: OrderedListElement,
         [ELEMENT_LI]: ListItemElement,
         [ELEMENT_LIC]: ListItemContentElement,
-        [ELEMENT_CHECK_ITEM]: CheckboxItemElement,
-        [ELEMENT_CHECK_LIST]: CheckboxListElement,
         [MARK_BOLD]: BoldMark,
         [MARK_ITALIC]: ItalicMark,
         [MARK_UNDERLINE]: UnderlineMark,
@@ -136,6 +133,13 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
                             TextStyles.ELEMENT_CUSTOM1,
                             TextStyles.ELEMENT_CUSTOM2,
                         ],
+                    },
+                },
+            }),
+            createIndentPlugin({
+                inject: {
+                    props: {
+                        validTypes: [ELEMENT_CHECK_ITEM],
                     },
                 },
             }),
