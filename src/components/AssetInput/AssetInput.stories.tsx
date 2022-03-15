@@ -17,7 +17,7 @@ export default {
         },
         onItemClick: { action: "onItemClick", table: { disable: true } },
         onMultiAssetClick: {
-            action: "Click",
+            action: "onMultiAssetClick",
         },
     },
     args: {

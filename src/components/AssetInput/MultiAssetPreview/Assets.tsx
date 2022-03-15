@@ -8,8 +8,8 @@ const isImageAsset = (asset: AssetType): asset is ImageAsset & LibrarySource =>
     asset.type === "image" || asset.type === "logo";
 
 export const Assets: FC<Pick<MultiAssetPreviewProps, "assets">> = ({ assets }) => {
-    const assetslength = assets?.length || 0;
-    const previewAssets = assets?.slice(0, 4) || [];
+    const assetslength = assets.length;
+    const previewAssets = assets.slice(0, 4);
 
     if (assetslength < 4) {
         [...Array(4 - assetslength)].forEach((_, index) =>
@@ -33,12 +33,17 @@ export const Assets: FC<Pick<MultiAssetPreviewProps, "assets">> = ({ assets }) =
                         style={asset.src ? { backgroundImage: `url(${asset.src})` } : {}}
                         className={merge([
                             index === 0 ? "tw-rounded-tl" : index === 2 && "tw-rounded-bl",
-                            "tw-h-14 tw-w-14 tw-bg-black-5",
+                            "tw-h-11 tw-w-11 tw-bg-black-5",
                         ])}
                     />
                 ) : (
-                    <div className="tw-h-14">
-                        <AssetThumbnail asset={asset} size={AssetInputSize.Small} isActive={false} />
+                    <div className="tw-h-11 tw-w-11">
+                        <AssetThumbnail
+                            asset={asset}
+                            size={AssetInputSize.Small}
+                            isActive={false}
+                            isMultiAsset={true}
+                        />
                     </div>
                 ),
             )}

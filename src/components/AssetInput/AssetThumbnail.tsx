@@ -5,16 +5,28 @@ import React, { cloneElement, FC } from "react";
 import { AssetInputProps, AssetInputSize } from "./AssetInput";
 import { SelectedAssetProps } from "./SingleAsset/SelectedAsset";
 
-export type AssetThumbnailProps = {
+type AssetThumbnailProps = {
     asset: SelectedAssetProps["asset"];
     size: AssetInputProps["size"];
-    isActive?: boolean;
+    isActive: boolean;
 };
-export const AssetThumbnail: FC<Required<AssetThumbnailProps>> = ({ asset, size, isActive }) => (
+type isMultiAsset = {
+    isMultiAsset?: boolean;
+};
+export const AssetThumbnail: FC<Required<AssetThumbnailProps> & isMultiAsset> = ({
+    asset,
+    size,
+    isActive,
+    isMultiAsset = false,
+}) => (
     <div
         className={merge([
             "tw-flex tw-flex-none tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95",
-            size === AssetInputSize.Large ? "tw-w-full tw-h-32" : "tw-w-14 tw-h-full",
+            size === AssetInputSize.Large
+                ? "tw-w-full tw-h-32"
+                : isMultiAsset
+                ? "tw-w-11 tw-h-11"
+                : "tw-w-14 tw-h-full",
             isActive ? "tw-text-black-100 dark:tw-text-white" : "tw-text-black-80 dark:tw-text-black-20",
         ])}
         data-test-id="asset-input-thumbnail"

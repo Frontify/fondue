@@ -91,6 +91,7 @@ describe("MultiAssetPreview Component", () => {
                 numberOfLocations={2}
             />,
         );
+
         cy.get(ASSETS_AMOUNT_ID).should("contain", "5");
         cy.get(NUMBER_OF_LOCATIONS_ID).should("contain", "2");
         cy.get(ASSETS_IMAGE_ID).should("exist");
@@ -99,7 +100,8 @@ describe("MultiAssetPreview Component", () => {
     });
 
     it("displays loading animation", () => {
-        mount(<AssetInput assets={[]} size={AssetInputSize.Small} isLoading={true} />);
+        mount(<AssetInput size={AssetInputSize.Small} isLoading={true} />);
+
         cy.get(ASSET_SINGLE_INPUT_ID).should("contain", "Uploading").and("contain", "Your Asset");
         cy.get(SPINNING_CIRCLE_ID).should("exist");
     });
