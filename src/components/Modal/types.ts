@@ -1,12 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from "react";
+import { OverlayProps } from "@react-aria/overlays";
+import { AriaDialogProps } from "@react-types/dialog";
 import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 import { ScrollWrapperDirection } from "@components/ScrollWrapper/types";
+import { ButtonHTMLAttributes, HTMLAttributes, ReactElement, RefObject } from "react";
 
 export type ModalButton = {
     label: string;
     action: () => void;
+    ref?: RefObject<HTMLButtonElement>;
+    ariaButtonProps?: ButtonHTMLAttributes<HTMLButtonElement>;
 };
 
 export type ModalVisualProps = {
@@ -35,6 +39,7 @@ export type ModalHeaderProps = {
     leadText?: string;
     decorator?: ReactElement;
     variant?: ModalHeaderVariant;
+    ariaTitleProps?: HTMLAttributes<HTMLElement>;
 };
 
 type ModalBodyChildren = ReactElement | ReactElement[];
@@ -53,4 +58,5 @@ export type ModalProps = {
     header?: ReactElement;
     footer?: ReactElement;
     children?: ModalBodyChildren;
-};
+} & OverlayProps &
+    AriaDialogProps;

@@ -1,19 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Modal } from "./Modal";
-import React, { useState } from "react";
 import { ModalBody } from "./ModalBody";
 import { ModalHeader } from "./ModalHeader";
 import { ModalFooter } from "./ModalFooter";
-import { ModalHeaderProps, ModalHeaderVariant, ModalProps, ModalVisualProps } from "./types";
 import { Story, Meta } from "@storybook/react";
+import { useButton } from "@react-aria/button";
+import React, { useRef, useState } from "react";
 import { TextInput } from "@components/TextInput";
+import { action } from "@storybook/addon-actions";
 import { generateRandomId } from "@utilities/generateRandomId";
+import { useOverlayTriggerState } from "@react-stately/overlays";
 import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 import { IconAcademy, IconAudio, IconIcons } from "@foundation/Icon";
 import { ScrollWrapperDirection } from "@components/ScrollWrapper/types";
+import { OverlayContainer, OverlayProvider } from "@react-aria/overlays";
+import { ModalHeaderProps, ModalHeaderVariant, ModalProps, ModalVisualProps } from "./types";
 import { FormControl, FormControlDirection, FormControlStyle } from "@components/FormControl";
-import { action } from "@storybook/addon-actions";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -82,112 +85,153 @@ export default {
             control: { type: "select" },
         },
     },
+    decorators: [
+        (Story) => (
+            <OverlayProvider>
+                <Story />
+            </OverlayProvider>
+        ),
+    ],
 } as Meta;
 
 export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = (args) => {
     const [input, setInput] = useState("");
 
+    const state = useOverlayTriggerState({});
+    const openButtonRef = useRef<HTMLButtonElement>(null);
+    const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+    const { buttonProps: openButtonProps } = useButton(
+        {
+            onPress: () => state.open(),
+        },
+        openButtonRef,
+    );
+
+    const { buttonProps: closeButtonProps } = useButton(
+        {
+            onPress: () => state.close(),
+        },
+        closeButtonRef,
+    );
+
     return (
-        <Modal
-            visual={{
-                pattern: args.pattern,
-                foregroundColor: args.foregroundColor,
-            }}
-            header={
-                <ModalHeader
-                    title={args.title}
-                    leadText={args.leadText}
-                    decorator={args.decorator}
-                    variant={args.variant}
-                />
-            }
-            footer={
-                <ModalFooter
-                    buttons={[
-                        { label: "Okay", action: () => action("click") },
-                        { label: "Cancel", action: () => action("click") },
-                    ]}
-                />
-            }
-        >
-            <ModalBody direction={ScrollWrapperDirection.Vertical}>
-                <div>
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
-                        fugiat perferendis consequatur.
-                    </p>
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
-                        fugiat perferendis consequatur.
-                    </p>
-                    <div className="tw-my-4">
-                        <FormControl
-                            style={FormControlStyle.Primary}
-                            direction={FormControlDirection.Vertical}
-                            label={{
-                                children: "Input Label",
-                                required: false,
-                                htmlFor: generateRandomId(),
-                                tooltip: { content: "Tooltip Text" },
-                            }}
-                        >
-                            <TextInput value={input} onChange={setInput} />
-                        </FormControl>
-                    </div>
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
-                        fugiat perferendis consequatur.
-                    </p>
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
-                        fugiat perferendis consequatur.
-                    </p>
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
-                        fugiat perferendis consequatur.
-                    </p>
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
-                        fugiat perferendis consequatur.
-                    </p>
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
-                        fugiat perferendis consequatur.
-                    </p>
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
-                        fugiat perferendis consequatur.
-                    </p>
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
-                        fugiat perferendis consequatur.
-                    </p>
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
-                        fugiat perferendis consequatur.
-                    </p>
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
-                        fugiat perferendis consequatur.
-                    </p>
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
-                        fugiat perferendis consequatur.
-                    </p>
-                </div>
-            </ModalBody>
-        </Modal>
+        <>
+            <button {...openButtonProps} ref={openButtonRef}>
+                Open Modal
+            </button>
+            {state.isOpen && (
+                <OverlayContainer>
+                    <Modal
+                        visual={{
+                            pattern: args.pattern,
+                            foregroundColor: args.foregroundColor,
+                        }}
+                        header={
+                            <ModalHeader
+                                title={args.title}
+                                leadText={args.leadText}
+                                decorator={args.decorator}
+                                variant={args.variant}
+                            />
+                        }
+                        footer={
+                            <ModalFooter
+                                buttons={[
+                                    { label: "Okay", action: () => action("click") },
+                                    {
+                                        label: "Cancel",
+                                        action: () => action("click"),
+                                        ref: closeButtonRef,
+                                        ariaButtonProps: { ...closeButtonProps },
+                                    },
+                                ]}
+                            />
+                        }
+                        isOpen
+                        isDismissable
+                    >
+                        <ModalBody direction={ScrollWrapperDirection.Vertical}>
+                            <div>
+                                <p>
+                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis
+                                    nobis assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit
+                                    excepturi iure explicabo, fugiat perferendis consequatur.
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis
+                                    nobis assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit
+                                    excepturi iure explicabo, fugiat perferendis consequatur.
+                                </p>
+                                <div className="tw-my-4">
+                                    <FormControl
+                                        style={FormControlStyle.Primary}
+                                        direction={FormControlDirection.Vertical}
+                                        label={{
+                                            children: "Input Label",
+                                            required: false,
+                                            htmlFor: generateRandomId(),
+                                            tooltip: { content: "Tooltip Text" },
+                                        }}
+                                    >
+                                        <TextInput value={input} onChange={setInput} />
+                                    </FormControl>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis
+                                    nobis assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit
+                                    excepturi iure explicabo, fugiat perferendis consequatur.
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis
+                                    nobis assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit
+                                    excepturi iure explicabo, fugiat perferendis consequatur.
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis
+                                    nobis assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit
+                                    excepturi iure explicabo, fugiat perferendis consequatur.
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis
+                                    nobis assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit
+                                    excepturi iure explicabo, fugiat perferendis consequatur.
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis
+                                    nobis assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit
+                                    excepturi iure explicabo, fugiat perferendis consequatur.
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis
+                                    nobis assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit
+                                    excepturi iure explicabo, fugiat perferendis consequatur.
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis
+                                    nobis assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit
+                                    excepturi iure explicabo, fugiat perferendis consequatur.
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis
+                                    nobis assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit
+                                    excepturi iure explicabo, fugiat perferendis consequatur.
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis
+                                    nobis assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit
+                                    excepturi iure explicabo, fugiat perferendis consequatur.
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis
+                                    nobis assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit
+                                    excepturi iure explicabo, fugiat perferendis consequatur.
+                                </p>
+                            </div>
+                        </ModalBody>
+                    </Modal>
+                </OverlayContainer>
+            )}
+        </>
     );
 };

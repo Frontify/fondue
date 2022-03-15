@@ -10,6 +10,7 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
     leadText,
     decorator,
     variant = ModalHeaderVariant.Default,
+    ariaTitleProps,
 }) => {
     return (
         <div data-test-id="modal-header">
@@ -22,7 +23,9 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
                         {cloneElement(decorator, { size: IconSize.Size24 })}
                     </span>
                 )}
-                <h3 className="tw-text-xl tw-font-heading tw-font-medium">{title}</h3>
+                <h3 {...ariaTitleProps} className="tw-text-xl tw-font-heading tw-font-medium">
+                    {title}
+                </h3>
             </div>
             {leadText && <p className="tw-text-grey-60 tw-mt-4">{leadText}</p>}
         </div>
