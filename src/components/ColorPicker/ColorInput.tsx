@@ -7,10 +7,15 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, KeyboardEvent, useRef } from "react";
 
-export type ColorInputProps = { min?: number; max?: number } & Pick<
+export type ColorInputProps = { min?: number; max?: number; decoratorPosition?: DecoratorPosition } & Pick<
     TextInputBaseProps,
     "decorator" | "value" | "onChange" | "type" | "size" | "onBlur" | "onEnterPressed"
 >;
+
+export enum DecoratorPosition {
+    Left = "Left",
+    Right = "Right",
+}
 
 export const ColorInput: FC<ColorInputProps> = ({
     min,
@@ -21,6 +26,7 @@ export const ColorInput: FC<ColorInputProps> = ({
     size,
     onBlur,
     value = "",
+    decoratorPosition = DecoratorPosition.Left,
     type = TextInputType.Text,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
@@ -36,12 +42,17 @@ export const ColorInput: FC<ColorInputProps> = ({
         <div
             {...focusProps}
             className={merge([
-                "tw-flex tw-items-center tw-h-9 tw-gap-1 tw-px-3 md:tw-pl-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent focus-within:tw-border-black-90 tw-border-black-20",
+                "tw-flex tw-items-center tw-h-9 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent focus-within:tw-border-black-90 tw-border-black-20",
                 isFocusVisible && FOCUS_STYLE,
             ])}
             data-test-id="color-input"
         >
-            <div className={`tw-flex ${decorator === "%" ? "tw-flex-row-reverse" : "tw-gap-1 md:tw-pl-0.5"}`}>
+            <div
+                className={merge([
+                    "tw-flex",
+                    decoratorPosition === DecoratorPosition.Right ? "tw-flex-row-reverse" : "tw-gap-1",
+                ])}
+            >
                 {decorator && (
                     <div className="tw-flex tw-items-center tw-justify-center tw-text-black-80">{decorator}</div>
                 )}
