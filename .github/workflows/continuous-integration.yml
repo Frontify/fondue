@@ -24,23 +24,23 @@ jobs:
               with:
                   node-version: '16'
 
-            # - name: Cache NPM dependencies
-            #   id: npm_cache
-            #   uses: actions/cache@v2
-            #   with:
-            #       path: '**/node_modules'
-            #       key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+            - name: Cache NPM dependencies
+              id: npm_cache
+              uses: actions/cache@v2
+              with:
+                  path: '**/node_modules'
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
             - name: Install NPM dependencies
-              # if: steps.npm_cache.outputs.cache-hit != 'true'
+              if: steps.npm_cache.outputs.cache-hit != 'true'
               run: npm ci
 
-            # - name: Cache Cypress binary
-            #   id: cypress_cache
-            #   uses: actions/cache@v2
-            #   with:
-            #       path: ~/.cache/Cypress
-            #       key: ${{ runner.os }}-cypress-${{ hashFiles('package-lock.json') }}
+            - name: Cache Cypress binary
+              id: cypress_cache
+              uses: actions/cache@v2
+              with:
+                  path: ~/.cache/Cypress
+                  key: ${{ runner.os }}-cypress-${{ hashFiles('package-lock.json') }}
 
             - name: Typecheck files
               run: npm run typecheck
