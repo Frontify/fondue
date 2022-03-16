@@ -10,7 +10,7 @@ export const CollapsibleWrap: FC<CollapsibleWrapProps> = ({
     preventInitialAnimation = false,
 }) => (
     <AnimatePresence initial={preventInitialAnimation ? false : undefined}>
-        {!!children && isOpen && (
+        {isOpen && children && (
             <motion.div
                 initial={"collapsed"}
                 animate={"open"}

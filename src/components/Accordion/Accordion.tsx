@@ -9,7 +9,7 @@ import { useTreeState } from "@react-stately/tree";
 import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { motion } from "framer-motion";
-import React, { Children, FC, isValidElement, KeyboardEvent, ReactElement, useEffect, useRef, useState } from "react";
+import React, { Children, FC, isValidElement, Key, KeyboardEvent, ReactElement, useRef } from "react";
 import { AccordionHeader } from "./AccordionHeader";
 import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from "./types";
 
@@ -24,20 +24,11 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
     divider = false,
     headerComponent: HeaderComponent = AccordionHeader,
 }) => {
-    const { active, size, ...headerProps } = header;
+    const { size, ...headerProps } = header;
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
     const isOpen = state.expandedKeys.has(item.key) && item.props.children;
     const { isFocusVisible, focusProps } = useFocusRing();
-    const [isActive, setIsActive] = useState(active);
-    useEffect(() => {
-        if (isActive) {
-            state.toggleKey(item.key);
-        }
-        // We add a timeout to avoid isActive being set to false before
-        // the first re-render, so that the animations won't play on load
-        setTimeout(() => setIsActive(false), 50);
-    }, []);
 
     return (
         <div
@@ -70,10 +61,10 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
             >
                 <HeaderComponent isOpen={isOpen} size={size} {...headerProps} />
             </button>
-            <CollapsibleWrap isOpen={item.props.children && isOpen} preventInitialAnimation={isActive}>
+            <CollapsibleWrap isOpen={isOpen} preventInitialAnimation={true}>
                 <div {...regionProps} className={merge([padding && "tw-px-8 tw-pb-6"])}>
                     <motion.div
-                        initial={isActive ? false : { opacity: 0 }}
+                        initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
@@ -86,8 +77,8 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
     );
 };
 
-const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => ({
-    children: Children.map(children, (child, index) => {
+const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => {
+    const ariaChildren = Children.map(children, (child, index) => {
         const { header, children } = child.props;
 
         return (
@@ -95,8 +86,14 @@ const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => ({
                 {children ? () => children : null}
             </StatelyItem>
         );
-    }),
-});
+    });
+
+    const defaultExpandedKeys = (ariaChildren
+        .map((item) => item.key)
+        .filter((key, index) => key && !!children[index]?.props.header?.active) || []) as Key[];
+
+    return { children: ariaChildren, defaultExpandedKeys };
+};
 
 const filterValidChildren = ({ children }: AccordionProps) =>
     Children.toArray(children).reduce<ReactElement<AccordionItemProps>[]>((validChildren, child) => {
@@ -118,6 +115,7 @@ export const Accordion: FC<AccordionProps> = (props) => {
     const { divider = true, border = true } = props;
     const children = filterValidChildren(props);
     const ariaProps = mapToAriaProps(children);
+
     const ref = useRef<HTMLDivElement | null>(null);
     const state = useTreeState<AccordionItemProps>(ariaProps);
     const {
