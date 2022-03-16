@@ -20,7 +20,7 @@ export const CollapsibleWrap: FC<CollapsibleWrapProps> = ({
                     collapsed: { height: 0, overflow: "hidden" },
                 }}
                 transition={{ type: "tween" }}
-                data-test-id="accordion-item-content"
+                data-test-id="collapsible-wrap"
             >
                 {children}
             </motion.div>

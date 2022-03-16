@@ -8,7 +8,7 @@ import { Accordion, AccordionItem } from "./Accordion";
 import { AccordionHeaderProps } from ".";
 
 const ACCORDION_ITEM_ID = "[data-test-id=accordion-item]";
-const ACCORDION_ITEM_CONTENT_ID = "[data-test-id=accordion-item-content]";
+const ACCORDION_ITEM_CONTENT_ID = '[data-test-id="collapsible-wrap"]';
 const TEXT_INPUT_ID = "[data-test-id=text-input]";
 const TEST_HEADER_ID = '[data-test-id="test-header"]';
 const ACCORDION_ID = "[data-test-id=accordion]";
