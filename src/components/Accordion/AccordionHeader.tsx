@@ -7,9 +7,9 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { Switch, SwitchSize } from "@components/Switch/Switch";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, isValidElement } from "react";
-import { FieldsetHeaderType } from "..";
+import { FieldsetHeaderType } from "@components/FieldsetHeader";
 import { AccordionHeaderIconProps, AccordionHeaderProps } from "./types";
-import { AccordionHeaderIconSize } from ".";
+import { AccordionHeaderIconSize } from "./types";
 
 const sizeMap: Record<AccordionHeaderIconSize, { icon: IconSize; switch: SwitchSize }> = {
     [AccordionHeaderIconSize.Small]: {

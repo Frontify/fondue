@@ -3,7 +3,7 @@
 import { TreeState } from "@react-stately/tree";
 import { FC, PropsWithChildren, ReactNode } from "react";
 import { Node } from "@react-types/shared";
-import { FieldsetHeaderType } from "..";
+import { FieldsetHeaderType } from "@components/FieldsetHeader";
 
 export type AccordionProps = {
     children?: ReactNode;
