@@ -13,6 +13,7 @@ const TEXT_MARK_BUTTONS = "[data-test-id=text-mark-buttons]";
 const TEXT_ELEMENT_BUTTONS = "[data-test-id=text-element-buttons]";
 const TEXTSTYLE_DROPDOWN_TRIGGER = "[data-test-id=textstyle-dropdown-trigger]";
 const TEXTSTYLE_OPTION = "[data-test-id=textstyle-option]";
+const CHECKBOX_INPUT = "[data-test-id=checkbox-input]";
 
 const insertTextAndOpenToolbar = () => cy.get("[contenteditable=true]").click().type("hello{selectall}");
 
@@ -190,6 +191,15 @@ describe("RichTextEditor Component", () => {
         cy.get("[contenteditable=true]").first().should("contain.text", "hello editor one");
         cy.get("[contenteditable=true]").last().realClick().type("hello editor two");
         cy.get("[contenteditable=true]").last().should("contain.text", "hello editor two");
+    });
+
+    it("renders a checkbox and checks it", () => {
+        mount(<RichTextEditor />);
+
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR).should("be.visible");
+        cy.get(TEXT_MARK_BUTTONS).children().eq(5).click();
+        cy.get(CHECKBOX_INPUT).check().should("be.checked");
     });
 
     it("emits onTextChange when choosing an inline style", () => {
