@@ -5,6 +5,7 @@ import {
     createBoldPlugin,
     createCodeBlockPlugin,
     createCodePlugin,
+    createIndentPlugin,
     createItalicPlugin,
     createLinkPlugin,
     createListPlugin,
@@ -45,6 +46,7 @@ import {
     UnderlineMark,
     UnorderedListElement,
 } from "../components";
+import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from "../plugins/checkboxListPlugin";
 import { TextStyles, TextStyleType } from "./getTextStyles";
 
 export const getEditorConfig = (textStyles?: TextStyleType[]) => {
@@ -134,9 +136,17 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
                     },
                 },
             }),
+            createIndentPlugin({
+                inject: {
+                    props: {
+                        validTypes: [ELEMENT_CHECK_ITEM],
+                    },
+                },
+            }),
             createParagraphPlugin(),
             createCodeBlockPlugin(),
             createListPlugin(),
+            createCheckboxListPlugin(),
             createLinkPlugin(),
             createBoldPlugin(),
             createItalicPlugin(),
