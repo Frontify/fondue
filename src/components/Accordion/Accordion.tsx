@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { CollapsibleWrap } from "@components/CollapsibleWrap";
 import { useAccordion, useAccordionItem } from "@react-aria/accordion";
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
@@ -7,7 +8,7 @@ import { Item as StatelyItem } from "@react-stately/collections";
 import { useTreeState } from "@react-stately/tree";
 import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import React, { Children, FC, isValidElement, KeyboardEvent, ReactElement, useEffect, useRef, useState } from "react";
 import { AccordionHeader } from "./AccordionHeader";
 import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from "./types";
@@ -69,34 +70,18 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
             >
                 <HeaderComponent isOpen={isOpen} size={size} {...headerProps} />
             </button>
-
-            <AnimatePresence>
-                {item.props.children && isOpen && (
+            <CollapsibleWrap isOpen={item.props.children && isOpen} preventInitialAnimation={isActive}>
+                <div {...regionProps} className={merge([padding && "tw-px-8 tw-pb-6"])}>
                     <motion.div
-                        key={item.key}
-                        initial={isActive ? false : "collapsed"}
-                        animate={"open"}
-                        exit={"collapsed"}
-                        variants={{
-                            open: { height: "auto", overflow: "visible" },
-                            collapsed: { height: 0, overflow: "hidden" },
-                        }}
-                        transition={{ type: "tween" }}
-                        data-test-id="accordion-item-content"
+                        initial={isActive ? false : { opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
                     >
-                        <div {...regionProps} className={merge([padding && "tw-px-8 tw-pb-6"])}>
-                            <motion.div
-                                initial={isActive ? false : { opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.3 }}
-                            >
-                                {item.props.children()}
-                            </motion.div>
-                        </div>
+                        {item.props.children?.()}
                     </motion.div>
-                )}
-            </AnimatePresence>
+                </div>
+            </CollapsibleWrap>
         </div>
     );
 };
