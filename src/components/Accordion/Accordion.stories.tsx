@@ -2,7 +2,7 @@
 
 import { Button } from "@components/Button/Button";
 import { Dropdown } from "@components/Dropdown";
-import { FieldsetHeaderType, FieldsetHeaderSize } from "@components/FieldsetHeader/FieldsetHeader";
+import { FieldsetHeaderType } from "@components/FieldsetHeader/FieldsetHeader";
 import { FormControl } from "@components/FormControl/FormControl";
 import { Slider } from "@components/Slider/Slider";
 import { Switch, SwitchSize } from "@components/Switch/Switch";
@@ -15,6 +15,7 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React, { FC, useState } from "react";
+import { AccordionHeaderIconSize } from ".";
 import { merge } from "../..";
 import { Color } from "../../types/colors";
 import { ColorPickerFlyout as ColorPickerFlyoutComponent } from "../ColorInputFlyout/ColorPickerFlyout";
@@ -121,7 +122,7 @@ const customHeader: FC<AccordionHeaderProps> = ({ isOpen, children }) => (
         ])}
     >
         {children}
-        <AccordionHeaderIcon isOpen={isOpen} type={FieldsetHeaderType.Accordion} size={FieldsetHeaderSize.Small} />
+        <AccordionHeaderIcon isOpen={isOpen} type={FieldsetHeaderType.Accordion} size={AccordionHeaderIconSize.Small} />
     </div>
 );
 

@@ -3,7 +3,7 @@
 import { TreeState } from "@react-stately/tree";
 import { FC, PropsWithChildren, ReactNode } from "react";
 import { Node } from "@react-types/shared";
-import { FieldsetHeaderSize, FieldsetHeaderType } from "..";
+import { FieldsetHeaderType } from "..";
 
 export type AccordionProps = {
     children?: ReactNode;
@@ -27,13 +27,19 @@ export type AccordionItemProps = PropsWithChildren<{
     headerComponent?: FC<AccordionHeaderProps>;
 }>;
 
+export enum AccordionHeaderIconSize {
+    Small = "Small",
+    Medium = "Medium",
+    Large = "Large",
+}
+
 export type AccordionHeaderProps = {
     decorator?: ReactNode;
     children: string;
     disabled?: boolean;
     isOpen: boolean;
     /** @deprecated use headerComponent prop for custom header styles */
-    size?: FieldsetHeaderSize;
+    size?: AccordionHeaderIconSize;
     /** @deprecated use headerComponent prop for custom header styles */
     bold?: boolean;
     /** @deprecated Icon type will be fixed to FieldsetHeaderType.Accordion.
@@ -45,7 +51,7 @@ export type AccordionHeaderProps = {
 
 export type AccordionHeaderIconProps = {
     isOpen: boolean;
-    size?: FieldsetHeaderSize;
+    size?: AccordionHeaderIconSize;
     disabled?: boolean;
     /** @deprecated Icon type will be fixed to FieldsetHeaderType.Accordion.
     Use headerComponent prop for custom header styles */

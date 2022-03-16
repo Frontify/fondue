@@ -7,19 +7,20 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { Switch, SwitchSize } from "@components/Switch/Switch";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, isValidElement } from "react";
-import { FieldsetHeaderSize, FieldsetHeaderType } from "..";
+import { FieldsetHeaderType } from "..";
 import { AccordionHeaderIconProps, AccordionHeaderProps } from "./types";
+import { AccordionHeaderIconSize } from ".";
 
-const sizeMap: Record<FieldsetHeaderSize, { icon: IconSize; switch: SwitchSize }> = {
-    [FieldsetHeaderSize.Small]: {
+const sizeMap: Record<AccordionHeaderIconSize, { icon: IconSize; switch: SwitchSize }> = {
+    [AccordionHeaderIconSize.Small]: {
         icon: IconSize.Size12,
         switch: SwitchSize.Small,
     },
-    [FieldsetHeaderSize.Medium]: {
+    [AccordionHeaderIconSize.Medium]: {
         icon: IconSize.Size16,
         switch: SwitchSize.Medium,
     },
-    [FieldsetHeaderSize.Large]: {
+    [AccordionHeaderIconSize.Large]: {
         icon: IconSize.Size20,
         switch: SwitchSize.Large,
     },
@@ -27,7 +28,7 @@ const sizeMap: Record<FieldsetHeaderSize, { icon: IconSize; switch: SwitchSize }
 
 const renderAccordionHeaderIconType = (
     type: FieldsetHeaderType,
-    size: FieldsetHeaderSize,
+    size: AccordionHeaderIconSize,
     isOpen: boolean,
     disabled?: boolean,
 ) => {
@@ -67,7 +68,7 @@ const renderAccordionHeaderIconType = (
 };
 
 export const AccordionHeaderIcon: FC<AccordionHeaderIconProps> = ({
-    size = FieldsetHeaderSize.Medium,
+    size = AccordionHeaderIconSize.Medium,
     isOpen,
     disabled,
     type = FieldsetHeaderType.Accordion,
@@ -83,7 +84,7 @@ export const AccordionHeader: FC<AccordionHeaderProps> = ({
     as: Heading = "div",
 }) => {
     const icon = (
-        <AccordionHeaderIcon isOpen={isOpen} disabled={disabled} size={FieldsetHeaderSize.Medium} type={type} />
+        <AccordionHeaderIcon isOpen={isOpen} disabled={disabled} size={AccordionHeaderIconSize.Medium} type={type} />
     );
     return (
         <div className="tw-px-8 tw-py-6">
