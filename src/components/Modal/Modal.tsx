@@ -10,13 +10,13 @@ import { useDialog } from "@react-aria/dialog";
 export const Modal: FC<ModalProps> = (props) => {
     const { visual, header, footer, children } = props;
 
-    const modalContainerRef = useRef<HTMLDivElement>(null);
-    const { overlayProps, underlayProps } = useOverlay(props, modalContainerRef);
+    const ref = useRef<HTMLDivElement>(null);
+    const { overlayProps, underlayProps } = useOverlay(props, ref);
 
     usePreventScroll();
     const { modalProps } = useModal();
 
-    const { dialogProps, titleProps } = useDialog(props, modalContainerRef);
+    const { dialogProps, titleProps } = useDialog(props, ref);
 
     return (
         <div
@@ -30,7 +30,7 @@ export const Modal: FC<ModalProps> = (props) => {
                     {...overlayProps}
                     {...dialogProps}
                     {...modalProps}
-                    ref={modalContainerRef}
+                    ref={ref}
                     data-test-id="modal-container"
                     className="tw-max-w-[790px] tw-max-h-[600px] tw-flex tw-bg-white tw-border tw-border-solid tw-border-grey-20 tw-rounded tw-shadow-2xl"
                 >
