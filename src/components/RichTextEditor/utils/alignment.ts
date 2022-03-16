@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 export const alignmentClassnames: Record<string, string> = {
     left: "tw-text-left",
     right: "tw-text-right",

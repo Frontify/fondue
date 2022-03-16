@@ -19,14 +19,7 @@ export const CheckboxItemElement: FC<PlateRenderElementProps> = (props) => {
                     checked={!!checked}
                     onChange={(e) => {
                         const path = ReactEditor.findPath(editor, element);
-
-                        setNodes<TElement<TodoListItemNodeData>>(
-                            editor,
-                            { checked: e.target.checked },
-                            {
-                                at: path,
-                            },
-                        );
+                        setNodes<TElement<TodoListItemNodeData>>(editor, { checked: e.target.checked }, { at: path });
                     }}
                     {...nodeProps}
                 />
