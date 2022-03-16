@@ -134,7 +134,7 @@ export const WithCustomAccordionItem: Story<AccordionProps> = () => {
         <AccordionComponent>
             <AccordionItem
                 header={{
-                    children: "Item with a custom headerComponent Prop",
+                    children: "Item with a custom headerComponent prop",
                     decorator: <IconIcons />,
                     active: true,
                 }}
@@ -146,10 +146,14 @@ export const WithCustomAccordionItem: Story<AccordionProps> = () => {
                     <p>
                         For maximum flexibility, you can create your own <Code>headerComponent</Code> to pass to
                         the&nbsp;
-                        <Code>Accordion Item</Code>. Import the&nbsp;
-                        <Code>AccordionHeaderProps</Code> type to assist in building it to be typesafe.
+                        <Code>Accordion Item</Code>.
                     </p>
-                    <p>The properties that are available in the headerComponent are as follows:</p>
+                    <p>
+                        Import the <Code>AccordionHeaderProps</Code> type to assist in building it to be typesafe.
+                    </p>
+                    <p>
+                        The properties that are available in the <Code>headerComponent</Code> are as follows:
+                    </p>
                     <table className="tw-table-fixed tw-border tw-border-black-10 tw-my-4">
                         <thead className="tw-bg-black-5">
                             <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
@@ -175,7 +179,9 @@ export const WithCustomAccordionItem: Story<AccordionProps> = () => {
                                     <Code>string</Code>
                                 </td>
                                 <td className="tw-p-3">
-                                    The children property that is passed in via the <Code>header</Code> prop.
+                                    The children property that is passed in via the <Code>header</Code> prop to
+                                    the&nbsp;
+                                    <Code>AccordionItem</Code>.
                                 </td>
                             </tr>
                             <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
@@ -184,7 +190,9 @@ export const WithCustomAccordionItem: Story<AccordionProps> = () => {
                                     <Code>boolean</Code>
                                 </td>
                                 <td className="tw-p-3">
-                                    The disabled property that is passed in via the <Code>header</Code> prop.
+                                    The disabled property that is passed in via the <Code>header</Code> prop to
+                                    the&nbsp;
+                                    <Code>AccordionItem</Code>.
                                 </td>
                             </tr>
                             <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
@@ -193,14 +201,17 @@ export const WithCustomAccordionItem: Story<AccordionProps> = () => {
                                     <Code>ReactNode</Code>
                                 </td>
                                 <td className="tw-p-3">
-                                    The decorator icon property that is passed in via the <Code>header</Code> prop.
+                                    The decorator icon property that is passed in via the <Code>header</Code> prop to
+                                    the&nbsp;
+                                    <Code>AccordionItem</Code>.
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                     <p>
-                        The <Code>AccordionHeaderIcon</Code> is also available for consumption inside of custom headers.
-                        Avoid using the deprecated type property on the icon. The default type is&nbsp;
+                        The <Code>AccordionHeaderIcon</Code> is also available for consumption inside of the
+                        <Code>headerComponent</Code>. Avoid using the deprecated <Code>type</Code> property on the&nbsp;
+                        <Code>AccordionHeaderIcon</Code>. The default <Code>type</Code> is&nbsp;
                         <Code>FieldsetHeaderType.Accordion</Code>.
                     </p>
                 </div>
