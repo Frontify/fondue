@@ -279,7 +279,7 @@ export const WithDividers: Story<
     return (
         <AccordionComponent divider={args["Accordion Divider"]} border={args["Accordion Border"]}>
             <AccordionItem
-                header={{ children: "Accordion Divider", type: FieldsetHeaderType.Accordion, active: true }}
+                header={{ children: "Accordion Divider & Border", type: FieldsetHeaderType.Accordion, active: true }}
                 divider={args["Item Divider"]}
             >
                 <div className="tw-p-6">
@@ -299,7 +299,7 @@ export const WithDividers: Story<
                 </div>
             </AccordionItem>
             <AccordionItem
-                header={{ children: "AccordionItem Divider", type: FieldsetHeaderType.Accordion }}
+                header={{ children: "Additional Info", type: FieldsetHeaderType.Accordion }}
                 divider={args["Item Divider"]}
             >
                 <div className="tw-p-6">
