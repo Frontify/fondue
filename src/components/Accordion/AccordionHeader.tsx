@@ -10,20 +10,17 @@ import React, { cloneElement, FC, isValidElement } from "react";
 import { FieldsetHeaderSize, FieldsetHeaderType } from "..";
 import { AccordionHeaderIconProps, AccordionHeaderProps } from "./types";
 
-const sizeMap: Record<FieldsetHeaderSize, { icon: IconSize; text: string; switch: SwitchSize }> = {
+const sizeMap: Record<FieldsetHeaderSize, { icon: IconSize; switch: SwitchSize }> = {
     [FieldsetHeaderSize.Small]: {
         icon: IconSize.Size12,
-        text: "tw-text-s",
         switch: SwitchSize.Small,
     },
     [FieldsetHeaderSize.Medium]: {
         icon: IconSize.Size16,
-        text: "tw-text-m",
         switch: SwitchSize.Medium,
     },
     [FieldsetHeaderSize.Large]: {
         icon: IconSize.Size20,
-        text: "tw-text-l",
         switch: SwitchSize.Large,
     },
 };
@@ -82,11 +79,12 @@ export const AccordionHeader: FC<AccordionHeaderProps> = ({
     disabled = false,
     children,
     bold = true,
-    size = FieldsetHeaderSize.Medium,
     type,
     as: Heading = "div",
 }) => {
-    const icon = <AccordionHeaderIcon isOpen={isOpen} disabled={disabled} size={size} type={type} />;
+    const icon = (
+        <AccordionHeaderIcon isOpen={isOpen} disabled={disabled} size={FieldsetHeaderSize.Medium} type={type} />
+    );
     return (
         <div className="tw-px-8 tw-py-6">
             <header
@@ -100,13 +98,11 @@ export const AccordionHeader: FC<AccordionHeaderProps> = ({
                 {isValidElement(decorator) && (
                     <span className="tw-shrink-0">
                         {cloneElement(decorator, {
-                            size: sizeMap[size].icon,
+                            size: IconSize.Size16,
                         })}
                     </span>
                 )}
-                <Heading
-                    className={merge(["tw-text-left", sizeMap[size].text, bold ? "tw-font-bold" : "tw-font-normal"])}
-                >
+                <Heading className={merge(["tw-text-left tw-text-m", , bold ? "tw-font-bold" : "tw-font-normal"])}>
                     {children}
                 </Heading>
                 {icon && <span className="tw-ml-auto tw-shrink-0">{icon}</span>}
