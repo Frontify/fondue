@@ -14,7 +14,7 @@ import IconTextAlignRight from "@foundation/Icon/Generated/IconTextAlignRight";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
-import React, { FC, useState } from "react";
+import React, { FC, ReactNode, useState } from "react";
 import { merge } from "@utilities/merge";
 import { Color } from "../../types/colors";
 import { ColorPickerFlyout as ColorPickerFlyoutComponent } from "@components/ColorInputFlyout/ColorPickerFlyout";
@@ -128,6 +128,28 @@ const customHeader: FC<AccordionHeaderProps> = ({ isOpen, children }) => (
 const Code: FC = ({ children }) => (
     <code className="tw-bg-black-5 tw-rounded tw-px-2 tw-text-box-negative-strong tw-text-s">{children}</code>
 );
+const PropsTable: FC<{ rows: [ReactNode, ReactNode, ReactNode][] }> = ({ rows }) => (
+    <table className="tw-table-fixed tw-border tw-border-black-10 tw-my-4">
+        <thead className="tw-bg-black-5">
+            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
+                <th className="tw-p-3 tw-w-[10%]">Property</th>
+                <th className="tw-p-3 tw-w-[10%]">Type</th>
+                <th className="tw-p-3">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {rows.map(([property, type, description]) => (
+                <tr className="tw-p-3 tw-border-b tw-border-b-black-10" key={property?.toString()}>
+                    <td className="tw-p-3 tw-font-bold">{property}</td>
+                    <td className="tw-p-3">
+                        <Code>{type}</Code>
+                    </td>
+                    <td className="tw-p-3">{description}</td>
+                </tr>
+            ))}
+        </tbody>
+    </table>
+);
 
 export const WithCustomAccordionItem: Story<AccordionProps> = () => {
     return (
@@ -154,60 +176,46 @@ export const WithCustomAccordionItem: Story<AccordionProps> = () => {
                     <p>
                         The properties that are available in the <Code>headerComponent</Code> are as follows:
                     </p>
-                    <table className="tw-table-fixed tw-border tw-border-black-10 tw-my-4">
-                        <thead className="tw-bg-black-5">
-                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
-                                <th className="tw-p-3 tw-w-[10%]">Property</th>
-                                <th className="tw-p-3 tw-w-[10%]">Type</th>
-                                <th className="tw-p-3">Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
-                                <td className="tw-p-3 tw-font-bold">isOpen</td>
-                                <td className="tw-p-3">
-                                    <Code>boolean</Code>
-                                </td>
-                                <td className="tw-p-3">
+                    <PropsTable
+                        rows={[
+                            [
+                                "isOpen",
+                                "boolean",
+                                <>
                                     The state of the <Code>AccordionItem</Code> this <Code>headerComponent</Code>
                                     belongs to.
-                                </td>
-                            </tr>
-                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
-                                <td className="tw-p-3 tw-font-bold">children</td>
-                                <td className="tw-p-3">
-                                    <Code>string</Code>
-                                </td>
-                                <td className="tw-p-3">
+                                </>,
+                            ],
+                            [
+                                "children",
+                                "string",
+                                <>
                                     The children property that is passed in via the <Code>header</Code> prop to
                                     the&nbsp;
                                     <Code>AccordionItem</Code>.
-                                </td>
-                            </tr>
-                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
-                                <td className="tw-p-3 tw-font-bold">disabled</td>
-                                <td className="tw-p-3">
-                                    <Code>boolean</Code>
-                                </td>
-                                <td className="tw-p-3">
+                                </>,
+                            ],
+
+                            [
+                                "disabled",
+                                "boolean",
+                                <>
                                     The disabled property that is passed in via the <Code>header</Code> prop to
                                     the&nbsp;
                                     <Code>AccordionItem</Code>.
-                                </td>
-                            </tr>
-                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
-                                <td className="tw-p-3 tw-font-bold">decorator</td>
-                                <td className="tw-p-3">
-                                    <Code>ReactNode</Code>
-                                </td>
-                                <td className="tw-p-3">
+                                </>,
+                            ],
+                            [
+                                "decorator",
+                                "ReactNode",
+                                <>
                                     The decorator icon property that is passed in via the <Code>header</Code> prop to
                                     the&nbsp;
                                     <Code>AccordionItem</Code>.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                </>,
+                            ],
+                        ]}
+                    />
                     <p>
                         The <Code>AccordionHeaderIcon</Code> is also available for consumption inside of the
                         <Code>headerComponent</Code>. The properties that are consumed by the&nbsp;
@@ -230,52 +238,31 @@ export const WithCustomAccordionItem: Story<AccordionProps> = () => {
                         The following table contains properties that are consumed by the&nbsp;
                         <Code>AccordionHeaderIcon</Code>.
                     </p>
-                    <table className="tw-table-fixed tw-border tw-border-black-10 tw-my-4">
-                        <thead className="tw-bg-black-5">
-                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
-                                <th className="tw-p-3 tw-w-[10%]">Property</th>
-                                <th className="tw-p-3 tw-w-[10%]">Type</th>
-                                <th className="tw-p-3">Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
-                                <td className="tw-p-3 tw-font-bold">isOpen</td>
-                                <td className="tw-p-3">
-                                    <Code>boolean</Code>
-                                </td>
-                                <td className="tw-p-3">
+                    <PropsTable
+                        rows={[
+                            [
+                                "isOpen",
+                                "boolean",
+                                <>
                                     Modifies/Animates the component based on the state of the <Code>AccordionItem</Code>
                                     &nbsp; this <Code>headerComponent</Code>
                                     belongs to.
-                                </td>
-                            </tr>
-                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
-                                <td className="tw-p-3 tw-font-bold">disabled</td>
-                                <td className="tw-p-3">
-                                    <Code>boolean</Code>
-                                </td>
-                                <td className="tw-p-3">Displays the component with disabled styles.</td>
-                            </tr>
-                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
-                                <td className="tw-p-3 tw-font-bold">size</td>
-                                <td className="tw-p-3">
-                                    <Code>AccordionHeaderIconSize</Code>
-                                </td>
-                                <td className="tw-p-3">Determines the size of the component.</td>
-                            </tr>
-                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
-                                <td className="tw-p-3 tw-font-bold tw-line-through">type (deprecated)</td>
-                                <td className="tw-p-3">
-                                    <Code>FieldsetHeaderType</Code>
-                                </td>
-                                <td className="tw-p-3">
+                                </>,
+                            ],
+                            ["disabled", "boolean", "Displays the component with disabled styles."],
+                            ["size", "AccordionHeaderIconSize", "Determines the size of the component."],
+                            [
+                                <span className="tw-line-through" key="type">
+                                    type (deprecated)
+                                </span>,
+                                "FieldsetHeaderType",
+                                <>
                                     Choose the kind of icon that should be presented. This property is deprected and
                                     will later be fixed as <Code>FieldsetHeaderType.Accordion</Code>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                </>,
+                            ],
+                        ]}
+                    />
                 </div>
             </AccordionItem>
         </AccordionComponent>
