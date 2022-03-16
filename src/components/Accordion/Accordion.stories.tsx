@@ -15,7 +15,7 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React, { FC, useState } from "react";
-import { AccordionHeaderIconSize } from ".";
+import { AccordionHeaderIconSize } from "./types";
 import { merge } from "@utilities/merge";
 import { Color } from "../../types/colors";
 import { ColorPickerFlyout as ColorPickerFlyoutComponent } from "@components/ColorInputFlyout/ColorPickerFlyout";
