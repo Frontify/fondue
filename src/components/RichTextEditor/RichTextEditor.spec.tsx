@@ -4,6 +4,7 @@ import { mount } from "@cypress/react";
 import { ELEMENT_PARAGRAPH } from "@udecode/plate";
 import React, { FC, useState } from "react";
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from "./RichTextEditor";
+import { textStyleClassnames, TextStyles } from "./utils/getTextStyles";
 
 const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
 const TOOLBAR = "[data-test-id=toolbar]";
@@ -157,27 +158,38 @@ describe("RichTextEditor Component", () => {
         cy.get("[contenteditable=true]").should("include.html", "text-align: right");
     });
 
-    it("renders headings", () => {
+    it("renders a heading", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
         cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-
         cy.get(TEXTSTYLE_OPTION).first().click();
         cy.get("[contenteditable=true]").should("include.html", "<h1");
+    });
 
-        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-        cy.get(TEXTSTYLE_OPTION).eq(1).click();
-        cy.get("[contenteditable=true]").should("include.html", "<h2");
+    it("renders a custom font", () => {
+        mount(<RichTextEditor />);
 
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR).should("be.visible");
         cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-        cy.get(TEXTSTYLE_OPTION).eq(2).click();
-        cy.get("[contenteditable=true]").should("include.html", "<h3");
+        cy.get(TEXTSTYLE_OPTION).eq(5).click();
+        cy.get("[contenteditable=true]").should("include.html", textStyleClassnames[TextStyles.ELEMENT_CUSTOM2]);
+    });
 
-        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-        cy.get(TEXTSTYLE_OPTION).eq(3).click();
-        cy.get("[contenteditable=true]").should("include.html", "<h4");
+    it("renders multiple editors", () => {
+        mount(
+            <>
+                <RichTextEditor id="one" />
+                <RichTextEditor id="two" />
+            </>,
+        );
+
+        cy.get("[contenteditable=true]").first().click().type("hello editor one");
+        cy.get("[contenteditable=true]").first().should("contain.text", "hello editor one");
+        cy.get("[contenteditable=true]").last().realClick().type("hello editor two");
+        cy.get("[contenteditable=true]").last().should("contain.text", "hello editor two");
     });
 
     it("emits onTextChange when choosing an inline style", () => {
@@ -212,12 +224,28 @@ describe("RichTextEditor Component", () => {
             });
     });
 
+    it("emits onBlur with the correct value", () => {
+        const onBlur = cy.spy();
+        const content = "hello world";
+        mount(<RichTextEditor onBlur={onBlur} />);
+
+        cy.get("[contenteditable=true]")
+            .click()
+            .type(content)
+            .blur()
+            .then(() => {
+                expect(onBlur).to.be.calledWith(
+                    JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: content }] }]),
+                );
+            });
+    });
+
     it("should clear editor content", () => {
         const text = "This is some text";
         mount(<RichTextWithClearButton value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text }] }])} />);
 
         cy.get(RICH_TEXT_EDITOR).should("contain.text", text);
         cy.get("[data-test-id=clear-button]").click();
-        cy.get(RICH_TEXT_EDITOR).should("contain.text", "");
+        cy.get(RICH_TEXT_EDITOR).should("not.contain.text", text);
     });
 });

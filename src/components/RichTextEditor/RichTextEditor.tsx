@@ -1,15 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Plate, PlateProvider, TNode, usePlateEditorState } from "@udecode/plate";
-import React, { FC, useCallback, useEffect, useState } from "react";
+import { useMemoizedId } from "@hooks/useMemoizedId";
+import { Plate, TNode, usePlateEditorState } from "@udecode/plate";
+import { debounce } from "@utilities/debounce";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
-import { debounce } from "../..";
 import { Toolbar } from "./Toolbar";
 import { getEditorConfig } from "./utils/getEditorConfig";
 import { TextStyleType } from "./utils/getTextStyles";
 import { EMPTY_VALUE, parseRawValue } from "./utils/parseRawValue";
 
 export type RichTextEditorProps = {
+    id?: string;
     placeholder?: string;
     value?: string;
     onTextChange?: (value: string) => void;
@@ -21,7 +23,8 @@ export type RichTextEditorProps = {
 
 export const ON_SAVE_DELAY_IN_MS = 500;
 
-const RichTextEditorComponent: FC<RichTextEditorProps> = ({
+export const RichTextEditor: FC<RichTextEditorProps> = ({
+    id,
     value: initialValue,
     placeholder = "",
     readonly = false,
@@ -30,12 +33,14 @@ const RichTextEditorComponent: FC<RichTextEditorProps> = ({
     onTextChange,
     onBlur,
 }) => {
-    const editor = usePlateEditorState();
+    const editorId = id || useMemoizedId();
+    const editor = usePlateEditorState(editorId);
+    const localValue = useRef<TNode[] | null>(null);
     const [debouncedValue, setDebouncedValue] = useState<TNode[] | null>(null);
     const editableProps: EditableProps = {
         placeholder: placeholder,
         readOnly: readonly,
-        onBlur: () => onBlur && onBlur(JSON.stringify(debouncedValue)),
+        onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
     };
 
     useEffect(() => {
@@ -48,30 +53,33 @@ const RichTextEditorComponent: FC<RichTextEditorProps> = ({
             editor.selection = { anchor: point, focus: point };
             editor.history = { redos: [], undos: [] };
             editor.children = EMPTY_VALUE;
+            localValue.current = EMPTY_VALUE;
         }
     }, [clear]);
 
-    const onChange = useCallback(
-        debounce((value: TNode[]) => setDebouncedValue(value), ON_SAVE_DELAY_IN_MS),
+    const debouncedOnChange = useCallback(
+        debounce((value: TNode[]) => {
+            setDebouncedValue(value);
+        }, ON_SAVE_DELAY_IN_MS),
         [],
     );
+
+    const onChange = useCallback((value) => {
+        debouncedOnChange(value);
+        localValue.current = value;
+    }, []);
 
     return (
         <div data-test-id="rich-text-editor" className="tw-relative tw-w-full">
             <Plate
+                id={editorId}
                 initialValue={parseRawValue(initialValue)}
                 onChange={onChange}
                 editableProps={editableProps}
                 plugins={getEditorConfig(textStyles)}
             >
-                <Toolbar textStyles={textStyles} />
+                <Toolbar editorId={editorId} textStyles={textStyles} />
             </Plate>
         </div>
     );
 };
-
-export const RichTextEditor: FC<RichTextEditorProps> = (props) => (
-    <PlateProvider>
-        <RichTextEditorComponent {...props} />
-    </PlateProvider>
-);

@@ -35,6 +35,7 @@ import { TextStyleDropdown } from "./TextStyleDropdown/TextStyleDropdown";
 import { TextStyleType } from "./utils/getTextStyles";
 
 type ToolbarProps = {
+    editorId?: string;
     textStyles?: TextStyleType[];
 };
 
@@ -43,8 +44,8 @@ type ButtonGroupProps = {
     children: JSX.Element | JSX.Element[];
 };
 
-export const Toolbar: FC<ToolbarProps> = ({ textStyles }) => {
-    const editor = usePlateEditorRef();
+export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles }) => {
+    const editor = usePlateEditorRef(editorId);
 
     const ButtonGroup: FC<ButtonGroupProps> = ({ testId, children }) => (
         <div
@@ -71,7 +72,7 @@ export const Toolbar: FC<ToolbarProps> = ({ textStyles }) => {
                 className="tw-flex tw-p-0.5 tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5"
             >
                 <ButtonGroup testId="text-style-buttons">
-                    <TextStyleDropdown textStyles={textStyles} />
+                    <TextStyleDropdown editorId={editorId} textStyles={textStyles} />
                 </ButtonGroup>
                 <ButtonGroup testId="text-alignment-buttons">
                     <AlignToolbarButton value="left" icon={<IconTextAlignLeft />} />

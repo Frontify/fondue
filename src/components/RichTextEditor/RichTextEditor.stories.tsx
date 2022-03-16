@@ -217,3 +217,36 @@ WithCustomTextStyle.args = {
     ],
 };
 WithCustomTextStyle.argTypes = { value: { type: "string" } };
+
+export const MultipleRichTextEditors: Story<RichTextEditorProps> = () => (
+    <div className="tw-grid tw-grid-cols-2 tw-gap-2">
+        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
+            <RichTextEditorComponent
+                placeholder="I'm placeholder one"
+                id="editor-one"
+                value="<p>I'm editor <strong>one</strong>.</p>"
+            />
+        </div>
+        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
+            <RichTextEditorComponent
+                placeholder="I'm placeholder two"
+                id="editor-two"
+                value="<p>I'm editor <strong>two</strong>.</p>"
+            />
+        </div>
+        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
+            <RichTextEditorComponent
+                placeholder="I'm placeholder three"
+                id="editor-three"
+                value="<p>I'm editor <strong>three</strong>.</p>"
+            />
+        </div>
+        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
+            <RichTextEditorComponent
+                placeholder="I'm placeholder four"
+                id="editor-four"
+                value="<p>I'm editor <strong>four</strong>.</p>"
+            />
+        </div>
+    </div>
+);

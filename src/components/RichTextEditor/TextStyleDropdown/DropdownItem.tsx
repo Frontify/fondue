@@ -6,13 +6,14 @@ import React from "react";
 import { getTextStyles, TextStyles, TextStyleType } from "../utils/getTextStyles";
 
 type DropdownItemProps = {
+    editorId?: string;
     label: string;
     type: TextStyles;
     textStyles?: TextStyleType[];
 };
 
-export const DropdownItem = ({ label, type, textStyles }: DropdownItemProps) => {
-    const editor = usePlateEditorState();
+export const DropdownItem = ({ editorId, label, type, textStyles }: DropdownItemProps) => {
+    const editor = usePlateEditorState(editorId);
     const isActive = !!editor?.selection && someNode(editor, { match: { type } });
     return (
         <button
