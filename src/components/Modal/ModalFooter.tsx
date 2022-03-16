@@ -15,12 +15,7 @@ export const ModalFooter: FC<ModalFooterProps> = ({ buttons }) => {
                         </Button>
                     )}
                     {buttons.length === 2 && (
-                        <Button
-                            {...buttons[1].ariaButtonProps}
-                            ref={buttons[1].ref}
-                            style={ButtonStyle.Secondary}
-                            onClick={buttons[1].action}
-                        >
+                        <Button style={ButtonStyle.Secondary} onClick={buttons[1].action}>
                             {buttons[1].label}
                         </Button>
                     )}

@@ -1,20 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Modal } from "./Modal";
+import React, { useState } from "react";
 import { ModalBody } from "./ModalBody";
 import { ModalHeader } from "./ModalHeader";
 import { ModalFooter } from "./ModalFooter";
+import { Button } from "@components/Button";
 import { Story, Meta } from "@storybook/react";
-import { useButton } from "@react-aria/button";
-import React, { useRef, useState } from "react";
 import { TextInput } from "@components/TextInput";
 import { action } from "@storybook/addon-actions";
-import { OverlayContainer, OverlayProvider } from "@react-aria/overlays";
 import { generateRandomId } from "@utilities/generateRandomId";
 import { useOverlayTriggerState } from "@react-stately/overlays";
 import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 import { IconAcademy, IconAudio, IconIcons } from "@foundation/Icon";
 import { ScrollWrapperDirection } from "@components/ScrollWrapper/types";
+import { OverlayContainer, OverlayProvider } from "@react-aria/overlays";
 import { ModalHeaderProps, ModalHeaderVariant, ModalProps, ModalVisualProps } from "./types";
 import { FormControl, FormControlDirection, FormControlStyle } from "@components/FormControl";
 
@@ -100,28 +100,10 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
     const [input, setInput] = useState("");
 
     const state = useOverlayTriggerState({});
-    const openButtonRef = useRef<HTMLButtonElement>(null);
-    const closeButtonRef = useRef<HTMLButtonElement>(null);
-
-    const { buttonProps: openButtonProps } = useButton(
-        {
-            onPress: () => state.open(),
-        },
-        openButtonRef,
-    );
-
-    const { buttonProps: closeButtonProps } = useButton(
-        {
-            onPress: () => state.close(),
-        },
-        closeButtonRef,
-    );
 
     return (
         <>
-            <button {...openButtonProps} ref={openButtonRef}>
-                Open Modal
-            </button>
+            <Button onClick={() => state.open()}>Open Modal</Button>
             {state.isOpen && (
                 <Modal
                     visual={{
@@ -143,8 +125,6 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
                                 {
                                     label: "Cancel",
                                     action: () => state.close(),
-                                    ref: closeButtonRef,
-                                    ariaButtonProps: { ...closeButtonProps },
                                 },
                             ]}
                         />
