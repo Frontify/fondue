@@ -15,14 +15,13 @@ import { IconSize } from "@foundation/Icon/IconSize";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
 import React, { FC, useState } from "react";
-import { AccordionHeaderIconSize } from "./types";
 import { merge } from "@utilities/merge";
 import { Color } from "../../types/colors";
 import { ColorPickerFlyout as ColorPickerFlyoutComponent } from "@components/ColorInputFlyout/ColorPickerFlyout";
 import { EXAMPLE_PALETTES } from "@components/ColorPicker/example-palettes";
 import { Accordion as AccordionComponent, AccordionItem } from "./Accordion";
 import { AccordionHeaderIcon } from "./AccordionHeader";
-import { AccordionHeaderProps, AccordionProps } from "./types";
+import { AccordionHeaderProps, AccordionProps, AccordionHeaderIconSize } from "./types";
 
 // eslint-disable-next-line import/no-default-export
 export default {
