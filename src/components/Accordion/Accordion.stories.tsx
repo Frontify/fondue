@@ -127,7 +127,7 @@ const customHeader: FC<AccordionHeaderProps> = ({ isOpen, children }) => (
 );
 
 const Code: FC = ({ children }) => (
-    <code className="tw-bg-black-5 tw-rounded tw-px-2 tw-text-box-negative-strong">{children}</code>
+    <code className="tw-bg-black-5 tw-rounded tw-px-2 tw-text-box-negative-strong tw-text-s">{children}</code>
 );
 
 export const WithCustomAccordionItem: Story<AccordionProps> = () => {
@@ -211,10 +211,72 @@ export const WithCustomAccordionItem: Story<AccordionProps> = () => {
                     </table>
                     <p>
                         The <Code>AccordionHeaderIcon</Code> is also available for consumption inside of the
-                        <Code>headerComponent</Code>. Avoid using the deprecated <Code>type</Code> property on the&nbsp;
-                        <Code>AccordionHeaderIcon</Code>. The default <Code>type</Code> is&nbsp;
-                        <Code>FieldsetHeaderType.Accordion</Code>.
+                        <Code>headerComponent</Code>. The properties that are consumed by the&nbsp;
+                        <Code>AccordionHeaderIcon</Code> are listed below.
                     </p>
+                </div>
+            </AccordionItem>
+            <AccordionItem
+                header={{
+                    children: "AccordionHeaderIcon Details",
+                    decorator: <IconIcons />,
+                    active: true,
+                }}
+                divider
+                padding={false}
+                headerComponent={customHeader}
+            >
+                <div className="tw-p-5">
+                    <p>
+                        The following table contains properties that are consumed by the&nbsp;
+                        <Code>AccordionHeaderIcon</Code>.
+                    </p>
+                    <table className="tw-table-fixed tw-border tw-border-black-10 tw-my-4">
+                        <thead className="tw-bg-black-5">
+                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
+                                <th className="tw-p-3 tw-w-[10%]">Property</th>
+                                <th className="tw-p-3 tw-w-[10%]">Type</th>
+                                <th className="tw-p-3">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
+                                <td className="tw-p-3 tw-font-bold">isOpen</td>
+                                <td className="tw-p-3">
+                                    <Code>boolean</Code>
+                                </td>
+                                <td className="tw-p-3">
+                                    Modifies/Animates the component based on the state of the <Code>AccordionItem</Code>
+                                    &nbsp; this <Code>headerComponent</Code>
+                                    belongs to.
+                                </td>
+                            </tr>
+                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
+                                <td className="tw-p-3 tw-font-bold">disabled</td>
+                                <td className="tw-p-3">
+                                    <Code>boolean</Code>
+                                </td>
+                                <td className="tw-p-3">Displays the component with disabled styles.</td>
+                            </tr>
+                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
+                                <td className="tw-p-3 tw-font-bold">size</td>
+                                <td className="tw-p-3">
+                                    <Code>AccordionHeaderIconSize</Code>
+                                </td>
+                                <td className="tw-p-3">Determines the size of the component.</td>
+                            </tr>
+                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
+                                <td className="tw-p-3 tw-font-bold tw-line-through">type (deprecated)</td>
+                                <td className="tw-p-3">
+                                    <Code>FieldsetHeaderType</Code>
+                                </td>
+                                <td className="tw-p-3">
+                                    Choose the kind of icon that should be presented. This property is deprected and
+                                    will later be fixed as <Code>FieldsetHeaderType.Accordion</Code>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </AccordionItem>
         </AccordionComponent>
