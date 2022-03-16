@@ -131,12 +131,6 @@ describe("Accordion Component", () => {
                 <AccordionItem header={{ children: "1" }} divider={true}>
                     1
                 </AccordionItem>
-                <AccordionItem header={{ children: "2", disabled: true }} divider={true}>
-                    2
-                </AccordionItem>
-                <AccordionItem header={{ children: "3", active: true }} divider={true}>
-                    3
-                </AccordionItem>
             </Accordion>,
         );
 
@@ -153,8 +147,6 @@ describe("Accordion Component", () => {
         mount(
             <Accordion border={false} divider={false}>
                 <AccordionItem header={{ children: "1" }}>1</AccordionItem>
-                <AccordionItem header={{ children: "2", disabled: true }}>2</AccordionItem>
-                <AccordionItem header={{ children: "3", active: true }}>3</AccordionItem>
             </Accordion>,
         );
 
