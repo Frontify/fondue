@@ -24,7 +24,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
     divider = false,
     headerComponent: HeaderComponent = AccordionHeader,
 }) => {
-    const { size, ...headerProps } = header;
+    const { size, active, ...headerProps } = header;
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
     const isOpen = state.expandedKeys.has(item.key) && item.props.children;
@@ -61,7 +61,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
             >
                 <HeaderComponent isOpen={isOpen} size={size} {...headerProps} />
             </button>
-            <CollapsibleWrap isOpen={isOpen} preventInitialAnimation={true}>
+            <CollapsibleWrap isOpen={isOpen} preventInitialAnimation={active}>
                 <div {...regionProps} className={merge([padding && "tw-px-8 tw-pb-6"])}>
                     <motion.div
                         initial={{ opacity: 0 }}
