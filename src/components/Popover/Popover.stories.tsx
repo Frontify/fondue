@@ -52,33 +52,3 @@ const PopoverTemplate: Story<PopoverProps> = (args: PopoverProps) => {
 
 export const Default = PopoverTemplate.bind({});
 Default.storyName = "Popover as Tooltip";
-
-/*const MenuTemplate: Story<PopoverProps> = (args: PopoverProps) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(null);
-
-    return (
-        <div className="tw-w-1/2">
-            <Trigger size={TriggerSize.Small} isOpen={isOpen}>
-                <button
-                    className="tw-overflow-hidden tw-flex-auto tw-h-full tw-w-full tw-rounded tw-text-left tw-outline-none tw-py-2 tw-pl-3"
-                    onClick={() => setIsOpen(!isOpen)}
-                    ref={setReferenceElement}
-                >
-                    <MenuItemContent title="Reference Menu" size={MenuItemContentSize.Large} />
-                </button>
-            </Trigger>
-            {isOpen && (
-                <Popover {...args} maxWidth="Viewport" referenceElement={referenceElement}>
-                    <MenuItem title="One menu item" />
-                    <MenuItem title="a second menu item" />
-                    <MenuItem title="Another menu item" />
-                    <MenuItem title="One menu item" />
-                </Popover>
-            )}
-        </div>
-    );
-};
-
-export const MenuPopover = MenuTemplate.bind({});
-MenuPopover.storyName = "Popover as Menu";*/

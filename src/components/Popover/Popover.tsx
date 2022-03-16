@@ -1,10 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, FC, ReactElement, ReactNode, RefObject, useState } from "react";
+import React, { cloneElement, FC, ReactElement, ReactNode, useRef, useState } from "react";
 import { merge } from "@utilities/merge";
 import { usePopper } from "react-popper";
-import { DismissButton, OverlayContainer, OverlayProvider, useOverlay } from "@react-aria/overlays";
-import { FocusScope } from "@react-aria/focus";
 
 export enum PopoverPosition {
     Top = "top",
@@ -50,8 +48,8 @@ export const Popover: FC<PopoverProps> = ({
 }) => {
     const placement = position + alignementSuffix[alignment];
     const [isOpen, setIsOpen] = useState(false);
-    const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(null);
-    const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+    const referenceElement = useRef<HTMLElement | null>(null);
+    const popperElement = useRef<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
     const setArrowClasses = () => {
@@ -70,8 +68,7 @@ export const Popover: FC<PopoverProps> = ({
         }
     };
 
-    // @ts-ignore
-    const popperInstance = usePopper(referenceElement, popperElement, {
+    const popperInstance = usePopper(referenceElement.current, popperElement.current, {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         placement: placement,
@@ -97,59 +94,46 @@ export const Popover: FC<PopoverProps> = ({
 
     const arrowStyling = setArrowClasses();
 
-    // React-aria
-    const { overlayProps } = useOverlay({ isDismissable: true }, popperElement as unknown as RefObject<HTMLDivElement>);
-
     return (
-        <OverlayProvider>
+        <div>
             <div data-test-id="popover-trigger" role="button" tabIndex={0} aria-haspopup={true} aria-expanded={isOpen}>
                 {cloneElement(trigger, {
                     ...trigger.props,
                     onClick: () => setIsOpen(!isOpen),
-                    ref: setReferenceElement,
+                    ref: referenceElement,
                 })}
             </div>
             {isOpen && (
-                <OverlayContainer>
-                    <div data-test-id="popover">
-                        <FocusScope restoreFocus>
+                <div data-test-id="popover">
+                    <div
+                        data-test-id="popover-popper"
+                        role="menu"
+                        style={popperInstance.styles.popper}
+                        {...popperInstance.attributes.popper}
+                        ref={popperElement}
+                        className={merge([
+                            "tw-relative tw-p-3 tw-border tw-border-line tw-rounded tw-shadow ",
+                            !maxHeight || maxHeight === "Viewport" ? "tw-max-h-full" : "tw-max-h-[" + maxHeight + "px]",
+                            !maxWidth || maxWidth === "Viewport" ? "tw-max-h-full" : "tw-max-w-[" + maxWidth + "px]",
+                        ])}
+                    >
+                        <div>{children}</div>
+
+                        {point && (
                             <div
-                                {...overlayProps}
-                                data-test-id="popover-popper"
-                                role="menu"
-                                tabIndex={0}
-                                style={popperInstance.styles.popper}
-                                {...popperInstance.attributes.popper}
-                                ref={setPopperElement}
+                                data-test-id="popover-arrow"
+                                data-popper-arrow
+                                ref={setArrowElement}
+                                style={popperInstance.styles.arrow}
                                 className={merge([
-                                    "tw-relative tw-p-3 tw-border tw-border-line tw-rounded tw-shadow ",
-                                    !maxHeight || maxHeight === "Viewport"
-                                        ? "tw-max-h-full"
-                                        : "tw-max-h-[" + maxHeight + "px]",
-                                    !maxWidth || maxWidth === "Viewport"
-                                        ? "tw-max-h-full"
-                                        : "tw-max-w-[" + maxWidth + "px]",
+                                    "tw-popper-arrow tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line",
+                                    arrowStyling,
                                 ])}
-                            >
-                                <div>{children}</div>
-                                <DismissButton onDismiss={() => setIsOpen(!isOpen)} />
-                                {point && (
-                                    <div
-                                        data-test-id="popover-arrow"
-                                        data-popper-arrow
-                                        ref={setArrowElement}
-                                        style={popperInstance.styles.arrow}
-                                        className={merge([
-                                            "tw-popper-arrow tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line",
-                                            arrowStyling,
-                                        ])}
-                                    />
-                                )}
-                            </div>
-                        </FocusScope>
+                            />
+                        )}
                     </div>
-                </OverlayContainer>
+                </div>
             )}
-        </OverlayProvider>
+        </div>
     );
 };

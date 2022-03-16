@@ -2,16 +2,16 @@
 
 import React from "react";
 import { mount } from "@cypress/react";
-import { PopoverComponent, PopoverAlignment, PopoverPosition } from "./Popover";
+import { Popover, PopoverAlignment, PopoverPosition } from "./Popover";
 import { Button, ButtonStyle } from "@components/Button";
 
 const PopoverExample = () => {
     const trigger = <Button style={ButtonStyle.Secondary}>Reference Element</Button>;
     return (
-        <PopoverComponent position={PopoverPosition.Bottom} alignment={PopoverAlignment.Start} trigger={trigger}>
+        <Popover position={PopoverPosition.Bottom} alignment={PopoverAlignment.Start} trigger={trigger}>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium animi architecto cupiditate dolorem
             saepe sapiente sint suscipit voluptas!
-        </PopoverComponent>
+        </Popover>
     );
 };
 
