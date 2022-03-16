@@ -16,7 +16,7 @@ export default {
 } as Meta<CollapsibleWrapProps>;
 
 export const CollapsibleWrap: Story<CollapsibleWrapProps> = () => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(true);
     return (
         <Card>
             <div className="tw-divide-y tw-divide-black-10">
@@ -24,6 +24,28 @@ export const CollapsibleWrap: Story<CollapsibleWrapProps> = () => {
                     <Heading>Collapsible Wrap</Heading>
                 </div>
                 <CollapsibleWrapComponent isOpen={isOpen}>
+                    <div className="tw-h-[200px] tw-p-5 tw-bg-black-5 tw-flex tw-justify-center tw-items-center tw-flex-col">
+                        <Text>I am the child content of the Collapsible Wrap Component.</Text>
+                        <Text>Click the button below to hide me.</Text>
+                    </div>
+                </CollapsibleWrapComponent>
+                <div className="tw-p-3">
+                    <Button onClick={() => setIsOpen((open) => !open)}>Click To Toggle Open</Button>
+                </div>
+            </div>
+        </Card>
+    );
+};
+
+export const CollapsibleWrapNoStartingAnimation: Story<CollapsibleWrapProps> = () => {
+    const [isOpen, setIsOpen] = useState(true);
+    return (
+        <Card>
+            <div className="tw-divide-y tw-divide-black-10">
+                <div className="tw-p-3">
+                    <Heading>Collapsible Wrap Without First Animation</Heading>
+                </div>
+                <CollapsibleWrapComponent isOpen={isOpen} preventInitialAnimation={true}>
                     <div className="tw-h-[200px] tw-p-5 tw-bg-black-5 tw-flex tw-justify-center tw-items-center tw-flex-col">
                         <Text>I am the child content of the Collapsible Wrap Component.</Text>
                         <Text>Click the button below to hide me.</Text>
