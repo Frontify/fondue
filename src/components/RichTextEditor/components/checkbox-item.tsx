@@ -3,12 +3,11 @@
 import { getRootProps, PlateRenderElementProps, setNodes, TElement, TodoListItemNodeData } from "@udecode/plate";
 import { merge } from "@utilities/merge";
 import React, { FC } from "react";
-import { ReactEditor, useReadOnly } from "slate-react";
+import { ReactEditor } from "slate-react";
 
 export const CheckboxItemElement: FC<PlateRenderElementProps> = (props) => {
     const { attributes, children, nodeProps, element, editor } = props;
     const rootProps = getRootProps(props);
-    const readOnly = useReadOnly();
     const { checked } = element;
     return (
         <div {...attributes} {...rootProps} className="tw-flex tw-flex-row tw-py-1">
@@ -32,13 +31,7 @@ export const CheckboxItemElement: FC<PlateRenderElementProps> = (props) => {
                     {...nodeProps}
                 />
             </div>
-            <span
-                className={merge(["tw-flex-1 tw-focus:outline-none", checked && "tw-line-through"])}
-                contentEditable={!readOnly}
-                suppressContentEditableWarning
-            >
-                {children}
-            </span>
+            <span className={merge(["tw-flex-1 tw-focus:outline-none", checked && "tw-line-through"])}>{children}</span>
         </div>
     );
 };
