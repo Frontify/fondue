@@ -49,8 +49,8 @@ export const ColorInput: FC<ColorInputProps> = ({
         >
             <div
                 className={merge([
-                    "tw-flex",
-                    decoratorPosition === DecoratorPosition.Right ? "tw-flex-row-reverse" : "tw-gap-1",
+                    "tw-flex tw-gap-1",
+                    decoratorPosition === DecoratorPosition.Right && "tw-flex-row-reverse",
                 ])}
             >
                 {decorator && (
@@ -59,7 +59,10 @@ export const ColorInput: FC<ColorInputProps> = ({
                 <input
                     id={useMemoizedId()}
                     ref={inputElement}
-                    className="tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-text-black tw-placeholder-black-60 dark:tw-text-white"
+                    className={merge([
+                        "tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-text-black tw-placeholder-black-60 dark:tw-text-white",
+                        decoratorPosition === DecoratorPosition.Right && "tw-text-right",
+                    ])}
                     onClick={() => inputElement.current?.focus()}
                     onKeyDown={handleKeyDown}
                     onChange={(event) => onChange && onChange(event.currentTarget.value)}
