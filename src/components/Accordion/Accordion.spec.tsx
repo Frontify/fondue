@@ -135,11 +135,11 @@ describe("Accordion Component", () => {
         );
 
         cy.get(ACCORDION_ID).should("have.length", 1);
-        cy.wrap(accordionClasses).each(($class) => {
-            cy.get(ACCORDION_ID).should("have.class", $class);
-        });
         cy.wrap(itemClasses).each(($class) => {
             cy.get(ACCORDION_ITEM_ID).parent().should("have.class", $class);
+        });
+        cy.wrap(accordionClasses).each(($class) => {
+            cy.get(ACCORDION_ID).should("have.class", $class);
         });
     });
 
@@ -151,11 +151,11 @@ describe("Accordion Component", () => {
         );
 
         cy.get(ACCORDION_ID).should("have.length", 1);
-        cy.wrap(accordionClasses).each(($class) => {
-            cy.get(ACCORDION_ID).should("not.have.class", $class);
-        });
         cy.wrap(itemClasses).each(($class) => {
             cy.get(ACCORDION_ITEM_ID).parent().should("not.have.class", $class);
+        });
+        cy.wrap(accordionClasses).each(($class) => {
+            cy.get(ACCORDION_ID).should("not.have.class", $class);
         });
     });
 
