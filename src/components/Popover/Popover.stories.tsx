@@ -28,6 +28,10 @@ export default {
             control: { type: "boolean" },
             defaultValue: true,
         },
+        transactional: {
+            control: { type: "boolean" },
+            defaultValue: false,
+        },
         maxHeight: {
             control: { type: "number" },
         },
@@ -41,7 +45,7 @@ const PopoverTemplate: Story<PopoverProps> = (args: PopoverProps) => {
     const trigger = <Button style={ButtonStyle.Secondary}>Reference Element</Button>;
     return (
         <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
-            <Popover {...args} point={true} transactional={false} trigger={trigger}>
+            <Popover {...args} trigger={trigger}>
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium animi architecto cupiditate
                 dolorem saepe sapiente sint suscipit voluptas!
                 <Button style={ButtonStyle.Danger}>Some action</Button>

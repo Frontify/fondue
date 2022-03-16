@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, FC, ReactElement, ReactNode, useRef, useState } from "react";
+import React, { cloneElement, FC, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import { merge } from "@utilities/merge";
 import { usePopper } from "react-popper";
 
@@ -68,6 +68,20 @@ export const Popover: FC<PopoverProps> = ({
         }
     };
 
+    const handleClickOutside = () => {
+        if (!transactional && isOpen) {
+            setIsOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener("click", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("click", handleClickOutside);
+        };
+    }, [handleClickOutside]);
+
     const popperInstance = usePopper(referenceElement.current, popperElement.current, {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -95,7 +109,7 @@ export const Popover: FC<PopoverProps> = ({
     const arrowStyling = setArrowClasses();
 
     return (
-        <div>
+        <div data-test-id="popover">
             <div data-test-id="popover-trigger" role="button" tabIndex={0} aria-haspopup={true} aria-expanded={isOpen}>
                 {cloneElement(trigger, {
                     ...trigger.props,
@@ -104,7 +118,7 @@ export const Popover: FC<PopoverProps> = ({
                 })}
             </div>
             {isOpen && (
-                <div data-test-id="popover">
+                <div>
                     <div
                         data-test-id="popover-popper"
                         role="menu"
@@ -113,7 +127,9 @@ export const Popover: FC<PopoverProps> = ({
                         ref={popperElement}
                         className={merge([
                             "tw-relative tw-p-3 tw-border tw-border-line tw-rounded tw-shadow ",
+                            // eslint-disable-next-line
                             !maxHeight || maxHeight === "Viewport" ? "tw-max-h-full" : "tw-max-h-[" + maxHeight + "px]",
+                            // eslint-disable-next-line
                             !maxWidth || maxWidth === "Viewport" ? "tw-max-h-full" : "tw-max-w-[" + maxWidth + "px]",
                         ])}
                     >
