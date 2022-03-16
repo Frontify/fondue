@@ -1,6 +1,7 @@
 import React from "react";
-import { ActionMenuBlock, MenuItemStyle } from "..";
-import { IconCrop, IconExternalLink, IconImageLibrary, IconReject, IconUploadAlternative } from "../..";
+import { ActionMenuBlock } from "@components/ActionMenu";
+import { MenuItemStyle } from "@components/MenuItem";
+import { IconCrop, IconExternalLink, IconImageLibrary, IconReject, IconUploadAlternative } from "@foundation/Icon";
 
 export const assetInputActions = [
     {
