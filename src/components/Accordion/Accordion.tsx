@@ -1,47 +1,34 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FieldsetHeader, FieldsetHeaderProps, FieldsetHeaderSize } from "@components/FieldsetHeader/FieldsetHeader";
 import { useAccordion, useAccordionItem } from "@react-aria/accordion";
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
 import { Item as StatelyItem } from "@react-stately/collections";
-import { TreeState, useTreeState } from "@react-stately/tree";
-import { Node } from "@react-types/shared";
+import { useTreeState } from "@react-stately/tree";
 import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, {
-    Children,
-    FC,
-    isValidElement,
-    KeyboardEvent,
-    PropsWithChildren,
-    ReactElement,
-    ReactNode,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
-
-export type AccordionItemProps = PropsWithChildren<{ header: FieldsetHeaderProps; padding?: boolean }>;
+import React, { Children, FC, isValidElement, KeyboardEvent, ReactElement, useEffect, useRef, useState } from "react";
+import { AccordionHeader } from "./AccordionHeader";
+import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from "./types";
 
 const ACCORDION_ID = "accordion";
 const ACCORDION_ITEM_ID = "accordion-item";
 
-type AriaAccordionItemProps = {
-    item: Node<AccordionItemProps>;
-    state: TreeState<AccordionItemProps>;
-    header: FieldsetHeaderProps;
-    padding?: boolean;
-};
-
-const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header, padding = true }) => {
+const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
+    item,
+    state,
+    header,
+    padding = true,
+    divider = false,
+    headerComponent: HeaderComponent = AccordionHeader,
+}) => {
+    const { active, size, ...headerProps } = header;
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
     const isOpen = state.expandedKeys.has(item.key) && item.props.children;
     const { isFocusVisible, focusProps } = useFocusRing();
-    const [isActive, setIsActive] = useState(header.active);
-
+    const [isActive, setIsActive] = useState(active);
     useEffect(() => {
         if (isActive) {
             state.toggleKey(item.key);
@@ -52,7 +39,10 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header, pa
     }, []);
 
     return (
-        <div key={item.key} className={isFocusVisible ? FOCUS_STYLE_INSET : ""}>
+        <div
+            key={item.key}
+            className={merge([isFocusVisible ? FOCUS_STYLE_INSET : "", divider && "tw-divide-y tw-divide-black-10"])}
+        >
             <button
                 {...mergeProps(buttonProps, focusProps)}
                 data-test-id={ACCORDION_ITEM_ID}
@@ -75,9 +65,9 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header, pa
                         buttonProps.onKeyUp(event);
                     }
                 }}
-                className="tw-w-full tw-px-8 tw-py-6 focus-visible:tw-outline-none"
+                className="tw-w-full focus-visible:tw-outline-none"
             >
-                <FieldsetHeader {...header} size={FieldsetHeaderSize.Medium} active={isOpen} onClick={undefined} />
+                <HeaderComponent isOpen={isOpen} size={size} {...headerProps} />
             </button>
 
             <AnimatePresence>
@@ -94,7 +84,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header, pa
                         transition={{ type: "tween" }}
                         data-test-id="accordion-item-content"
                     >
-                        <div {...regionProps} className={merge(["tw-pb-6", padding && "tw-px-8"])}>
+                        <div {...regionProps} className={merge([padding && "tw-px-8 tw-pb-6"])}>
                             <motion.div
                                 initial={isActive ? false : { opacity: 0 }}
                                 animate={{ opacity: 1 }}
@@ -109,10 +99,6 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header, pa
             </AnimatePresence>
         </div>
     );
-};
-
-export type AccordionProps = {
-    children?: ReactNode;
 };
 
 const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => ({
@@ -144,6 +130,7 @@ const filterValidChildren = ({ children }: AccordionProps) =>
 export const AccordionItem = ({ children }: AccordionItemProps): ReactElement => <>{children}</>;
 
 export const Accordion: FC<AccordionProps> = (props) => {
+    const { divider = true, border = true } = props;
     const children = filterValidChildren(props);
     const ariaProps = mapToAriaProps(children);
     const ref = useRef<HTMLDivElement | null>(null);
@@ -175,11 +162,24 @@ export const Accordion: FC<AccordionProps> = (props) => {
             {...propsWithModifiedKeyDown}
             ref={ref}
             data-test-id={ACCORDION_ID}
-            className="tw-divide-y tw-divide-black-10 tw-border-t tw-border-b tw-border-black-10"
+            className={merge([
+                divider && "tw-divide-y tw-divide-black-10",
+                border && "tw-border-t tw-border-b tw-border-black-10",
+            ])}
         >
             {[...state.collection].map((item, index) => {
-                const { header, padding } = children[index].props;
-                return <AriaAccordionItem key={item.key} item={item} state={state} header={header} padding={padding} />;
+                const { header, padding, headerComponent, divider } = children[index].props;
+                return (
+                    <AriaAccordionItem
+                        key={item.key}
+                        item={item}
+                        state={state}
+                        divider={divider}
+                        header={header}
+                        padding={padding}
+                        headerComponent={headerComponent}
+                    />
+                );
             })}
         </div>
     );

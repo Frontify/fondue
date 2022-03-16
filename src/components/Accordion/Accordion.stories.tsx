@@ -2,7 +2,7 @@
 
 import { Button } from "@components/Button/Button";
 import { Dropdown } from "@components/Dropdown";
-import { FieldsetHeaderType } from "@components/FieldsetHeader/FieldsetHeader";
+import { FieldsetHeaderType, FieldsetHeaderSize } from "@components/FieldsetHeader/FieldsetHeader";
 import { FormControl } from "@components/FormControl/FormControl";
 import { Slider } from "@components/Slider/Slider";
 import { Switch, SwitchSize } from "@components/Switch/Switch";
@@ -14,11 +14,14 @@ import IconTextAlignRight from "@foundation/Icon/Generated/IconTextAlignRight";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
+import { merge } from "../..";
 import { Color } from "../../types/colors";
 import { ColorPickerFlyout as ColorPickerFlyoutComponent } from "../ColorInputFlyout/ColorPickerFlyout";
 import { EXAMPLE_PALETTES } from "../ColorPicker/example-palettes";
-import { Accordion as AccordionComponent, AccordionItem, AccordionProps } from "./Accordion";
+import { Accordion as AccordionComponent, AccordionItem } from "./Accordion";
+import { AccordionHeaderIcon } from "./AccordionHeader";
+import { AccordionHeaderProps, AccordionProps } from "./types";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -108,6 +111,152 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
             </AccordionItem>
         </AccordionComponent>
     );
+};
+
+const customHeader: FC<AccordionHeaderProps> = ({ isOpen, children }) => (
+    <div
+        className={merge([
+            "tw-px-6 tw-py-4 tw-bg-black-5 tw-flex tw-justify-between tw-font-bold tw-items-center",
+            isOpen ? "tw-text-black" : "tw-text-black-60",
+        ])}
+    >
+        {children}
+        <AccordionHeaderIcon isOpen={isOpen} type={FieldsetHeaderType.Accordion} size={FieldsetHeaderSize.Small} />
+    </div>
+);
+
+const Code: FC = ({ children }) => (
+    <code className="tw-bg-black-5 tw-rounded tw-px-2 tw-text-box-negative-strong">{children}</code>
+);
+
+export const WithCustomAccordionItem: Story<AccordionProps> = () => {
+    return (
+        <AccordionComponent>
+            <AccordionItem
+                header={{
+                    children: "Item with a custom headerComponent Prop",
+                    decorator: <IconIcons />,
+                    active: true,
+                }}
+                divider
+                padding={false}
+                headerComponent={customHeader}
+            >
+                <div className="tw-p-5">
+                    <p>
+                        For maximum flexibility, you can create your own <Code>headerComponent</Code> to pass to
+                        the&nbsp;
+                        <Code>Accordion Item</Code>. Import the&nbsp;
+                        <Code>AccordionHeaderProps</Code> type to assist in building it to be typesafe.
+                    </p>
+                    <p>The properties that are available in the headerComponent are as follows:</p>
+                    <table className="tw-table-fixed tw-border tw-border-black-10 tw-my-4">
+                        <thead className="tw-bg-black-5">
+                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
+                                <th className="tw-p-3 tw-w-[10%]">Property</th>
+                                <th className="tw-p-3 tw-w-[10%]">Type</th>
+                                <th className="tw-p-3">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
+                                <td className="tw-p-3 tw-font-bold">isOpen</td>
+                                <td className="tw-p-3">
+                                    <Code>boolean</Code>
+                                </td>
+                                <td className="tw-p-3">
+                                    The state of the <Code>AccordionItem</Code> this <Code>headerComponent</Code>
+                                    belongs to.
+                                </td>
+                            </tr>
+                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
+                                <td className="tw-p-3 tw-font-bold">children</td>
+                                <td className="tw-p-3">
+                                    <Code>string</Code>
+                                </td>
+                                <td className="tw-p-3">
+                                    The children property that is passed in via the <Code>header</Code> prop.
+                                </td>
+                            </tr>
+                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
+                                <td className="tw-p-3 tw-font-bold">disabled</td>
+                                <td className="tw-p-3">
+                                    <Code>boolean</Code>
+                                </td>
+                                <td className="tw-p-3">
+                                    The disabled property that is passed in via the <Code>header</Code> prop.
+                                </td>
+                            </tr>
+                            <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
+                                <td className="tw-p-3 tw-font-bold">decorator</td>
+                                <td className="tw-p-3">
+                                    <Code>ReactNode</Code>
+                                </td>
+                                <td className="tw-p-3">
+                                    The decorator icon property that is passed in via the <Code>header</Code> prop.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>
+                        The <Code>AccordionHeaderIcon</Code> is also available for consumption inside of custom headers.
+                        Avoid using the deprecated type property on the icon. The default type is&nbsp;
+                        <Code>FieldsetHeaderType.Accordion</Code>.
+                    </p>
+                </div>
+            </AccordionItem>
+        </AccordionComponent>
+    );
+};
+
+export const WithDividers: Story<
+    AccordionProps & {
+        "Accordion Divider": boolean;
+        "Accordion Border": boolean;
+        "Item Divider": boolean;
+    }
+> = (args) => {
+    return (
+        <AccordionComponent divider={args["Accordion Divider"]} border={args["Accordion Border"]}>
+            <AccordionItem
+                header={{ children: "Accordion Divider", type: FieldsetHeaderType.Accordion, active: true }}
+                divider={args["Item Divider"]}
+            >
+                <div className="tw-p-6">
+                    Settings the <Code>divider</Code> prop on the <Code>Accordion</Code> will add a divider between the
+                    children of the <Code>Accordion</Code>, whereas the <Code>border</Code> prop will add a top and
+                    bottom border to the entire <Code>Accordion</Code>.
+                </div>
+            </AccordionItem>
+            <AccordionItem
+                header={{ children: "AccordionItem Divider", type: FieldsetHeaderType.Accordion }}
+                divider={args["Item Divider"]}
+            >
+                <div className="tw-p-6">
+                    Settings the <Code>divider</Code> prop on the <Code>AccordionItem</Code> will add a divider between
+                    the header and content of the <Code>AccordionItem</Code> when it is open.
+                    <Code>Accordion</Code>.
+                </div>
+            </AccordionItem>
+            <AccordionItem
+                header={{ children: "AccordionItem Divider", type: FieldsetHeaderType.Accordion }}
+                divider={args["Item Divider"]}
+            >
+                <div className="tw-p-6">
+                    Play around with the settings below to see the difference between these three properties. The&nbsp;
+                    <Code>Accordion</Code> Ccomponent has the <Code>divider</Code> and <Code>border</Code> set to true
+                    by default, whereas the&nbsp;
+                    <Code>AccordionItem</Code> has the divider set to false by default.
+                </div>
+            </AccordionItem>
+        </AccordionComponent>
+    );
+};
+
+WithDividers.args = {
+    "Accordion Divider": true,
+    "Accordion Border": true,
+    "Item Divider": false,
 };
 
 export const WithAdvancedFormControls: Story<AccordionProps> = () => {
