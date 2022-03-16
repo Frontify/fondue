@@ -8,6 +8,7 @@ import { IconIcons } from "@foundation/Icon";
 import { ModalHeaderVariant } from "./types";
 import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 import { ModalBody } from "./ModalBody";
+import { OverlayProvider } from "@react-aria/overlays";
 
 const MODAL_CONTAINER = "[data-test-id=modal-container]";
 const MODAL_VISUAL = "[data-test-id=modal-visual]";
@@ -20,7 +21,11 @@ const SCROLL_WRAPPER_CONTAINER = "[data-test-id=scroll-wrapper]";
 
 describe("Modal Component", () => {
     it("should render an empty modal", () => {
-        mount(<Modal />);
+        mount(
+            <OverlayProvider>
+                <Modal />
+            </OverlayProvider>,
+        );
 
         cy.get(MODAL_CONTAINER).should("exist");
         cy.get(MODAL_VISUAL).should("not.exist");
@@ -31,12 +36,14 @@ describe("Modal Component", () => {
 
     it("should render the modal with a visual", () => {
         mount(
-            <Modal
-                visual={{
-                    pattern: PatternDesign.DigitalAssets,
-                    foregroundColor: PatternTheme.Violet,
-                }}
-            />,
+            <OverlayProvider>
+                <Modal
+                    visual={{
+                        pattern: PatternDesign.DigitalAssets,
+                        foregroundColor: PatternTheme.Violet,
+                    }}
+                />
+            </OverlayProvider>,
         );
 
         cy.get(MODAL_VISUAL).should("exist");
@@ -48,16 +55,18 @@ describe("Modal Component", () => {
         const leadText = "The Home for Brand Management";
 
         mount(
-            <Modal
-                header={
-                    <ModalHeader
-                        title={title}
-                        leadText={leadText}
-                        decorator={<IconIcons />}
-                        variant={ModalHeaderVariant.Informative}
-                    />
-                }
-            />,
+            <OverlayProvider>
+                <Modal
+                    header={
+                        <ModalHeader
+                            title={title}
+                            leadText={leadText}
+                            decorator={<IconIcons />}
+                            variant={ModalHeaderVariant.Informative}
+                        />
+                    }
+                />
+            </OverlayProvider>,
         );
 
         cy.get(MODAL_HEADER).should("exist");
@@ -68,11 +77,13 @@ describe("Modal Component", () => {
 
     it("should render the modal with a body and implement the ScrollWrapper component", () => {
         mount(
-            <Modal>
-                <ModalBody>
-                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
-                </ModalBody>
-            </Modal>,
+            <OverlayProvider>
+                <Modal>
+                    <ModalBody>
+                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
+                    </ModalBody>
+                </Modal>
+            </OverlayProvider>,
         );
 
         cy.get(MODAL_BODY).should("exist");
