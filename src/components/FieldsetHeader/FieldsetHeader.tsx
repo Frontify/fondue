@@ -53,7 +53,7 @@ export type FieldsetHeaderProps = {
     tabIndex?: number;
 };
 
-const renderType = (
+export const renderFieldsetHeaderIconType = (
     type: FieldsetHeaderType,
     id: string,
     size: FieldsetHeaderSize,
@@ -147,7 +147,9 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
                 {children}
             </Heading>
             {type !== FieldsetHeaderType.Default && (
-                <span className="tw-ml-auto tw-shrink-0">{renderType(type, id, size, active, disabled)}</span>
+                <span className="tw-ml-auto tw-shrink-0">
+                    {renderFieldsetHeaderIconType(type, id, size, active, disabled)}
+                </span>
             )}
         </header>
     );

@@ -1,78 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconAddSimple from "@foundation/Icon/Generated/IconAddSimple";
-import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
-import IconMinus from "@foundation/Icon/Generated/IconMinus";
 import { IconSize } from "@foundation/Icon/IconSize";
-import { Switch, SwitchSize } from "@components/Switch/Switch";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, isValidElement } from "react";
-import { FieldsetHeaderType } from "@components/FieldsetHeader";
-import { AccordionHeaderIconProps, AccordionHeaderProps } from "./types";
-import { AccordionHeaderIconSize } from "./types";
-
-const sizeMap: Record<AccordionHeaderIconSize, { icon: IconSize; switch: SwitchSize }> = {
-    [AccordionHeaderIconSize.Small]: {
-        icon: IconSize.Size12,
-        switch: SwitchSize.Small,
-    },
-    [AccordionHeaderIconSize.Medium]: {
-        icon: IconSize.Size16,
-        switch: SwitchSize.Medium,
-    },
-    [AccordionHeaderIconSize.Large]: {
-        icon: IconSize.Size20,
-        switch: SwitchSize.Large,
-    },
-};
-
-const renderAccordionHeaderIconType = (
-    type: FieldsetHeaderType,
-    size: AccordionHeaderIconSize,
-    isOpen: boolean,
-    disabled?: boolean,
-) => {
-    switch (type) {
-        case FieldsetHeaderType.Switch:
-            return <Switch size={sizeMap[size].switch} on={isOpen} disabled={disabled} />;
-        case FieldsetHeaderType.Accordion:
-            return (
-                <div
-                    className={merge([
-                        "tw-transition-transform",
-                        isOpen && "tw-rotate-180 tw-duration-300",
-                        disabled && !isOpen && "tw-text-black-40",
-                        !disabled && isOpen && "tw-text-black",
-                        !disabled && !isOpen && "tw-text-black-80",
-                    ])}
-                >
-                    <IconCaretDown size={sizeMap[size].icon} />
-                </div>
-            );
-        case FieldsetHeaderType.AddRemove:
-            return (
-                <div
-                    className={merge([
-                        isOpen && disabled && "tw-text-black-40",
-                        isOpen && !disabled && "tw-text-black",
-                        !isOpen && !disabled && "tw-text-black-80",
-                    ])}
-                >
-                    {isOpen ? <IconMinus size={sizeMap[size].icon} /> : <IconAddSimple size={sizeMap[size].icon} />}
-                </div>
-            );
-        case FieldsetHeaderType.Default:
-        default:
-            return null;
-    }
-};
+import { FieldsetHeaderType, FieldsetHeaderSize, renderFieldsetHeaderIconType } from "@components/FieldsetHeader";
+import { AccordionHeaderIconProps, AccordionHeaderProps, AccordionHeaderIconSize } from "./types";
 
 export const AccordionHeaderIcon: FC<AccordionHeaderIconProps> = ({
     size = AccordionHeaderIconSize.Medium,
     isOpen,
-    disabled,
+    disabled = false,
     type = FieldsetHeaderType.Accordion,
-}) => renderAccordionHeaderIconType(type, size, isOpen, disabled);
+}) => renderFieldsetHeaderIconType(type, "", FieldsetHeaderSize[AccordionHeaderIconSize[size]], isOpen, disabled);
 
 export const AccordionHeader: FC<AccordionHeaderProps> = ({
     isOpen = false,
