@@ -103,7 +103,7 @@ export const AccordionHeader: FC<AccordionHeaderProps> = ({
                         })}
                     </span>
                 )}
-                <Heading className={merge(["tw-text-left tw-text-m", , bold ? "tw-font-bold" : "tw-font-normal"])}>
+                <Heading className={merge(["tw-text-left tw-text-m", bold ? "tw-font-medium" : "tw-font-normal"])}>
                     {children}
                 </Heading>
                 {icon && <span className="tw-ml-auto tw-shrink-0">{icon}</span>}

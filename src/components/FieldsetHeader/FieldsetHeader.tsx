@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Switch, SwitchSize } from "@components/Switch/Switch";
 import IconAddSimple from "@foundation/Icon/Generated/IconAddSimple";
 import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
 import IconMinus from "@foundation/Icon/Generated/IconMinus";
 import { IconSize } from "@foundation/Icon/IconSize";
-import { Switch, SwitchSize } from "@components/Switch/Switch";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, isValidElement, ReactNode } from "react";
@@ -140,7 +140,7 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
                 className={merge([
                     "tw-text-left",
                     sizeMap[size].text,
-                    bold ? "tw-font-bold" : "tw-font-normal",
+                    bold ? "tw-font-bold" : size === FieldsetHeaderSize.Medium ? "tw-font-medium" : "tw-font-normal",
                     onClick && "hover:tw-cursor-pointer",
                 ])}
             >
