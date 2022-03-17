@@ -78,7 +78,6 @@ export const Trigger: FC<TriggerProps> = ({
                 <button
                     {...buttonProps}
                     aria-hidden="true"
-                    tabIndex={-1}
                     className={merge([
                         disabled
                             ? "tw-pointer-events-none tw-text-black-40"

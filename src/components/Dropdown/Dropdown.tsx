@@ -78,7 +78,8 @@ export const Dropdown: FC<DropdownProps> = ({
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
     const { triggerProps, valueProps, menuProps } = useSelect({ ...props, isDisabled: disabled }, state, triggerRef);
-    const { buttonProps } = useButton(triggerProps, triggerRef);
+
+    const { buttonProps } = useButton({ ...triggerProps, isDisabled: disabled }, triggerRef);
     const { isOpen } = state;
     const { isFocusVisible, focusProps } = useFocusRing();
     const overlayRef = useRef<HTMLDivElement | null>(null);
