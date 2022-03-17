@@ -3,26 +3,27 @@
 import { RefObject, useState, UIEvent } from "react";
 
 export const useScrollWrapper = (scrollingContainer: RefObject<HTMLElement>) => {
-    const [scrollTop, setScrollTop] = useState(0);
-    const [scrollHeight, setScrollHeight] = useState(Infinity);
-    const [scrollLeft, setScrollLeft] = useState(0);
-    const [scrollWidth, setScrollWidth] = useState(Infinity);
+    const [scrollDimensions, setScrollDimensions] = useState({ top: 0, height: Infinity, width: Infinity, left: 0 });
 
     const onScroll = (event: UIEvent) => {
         const target = event.target as HTMLElement;
-        setScrollTop(target.scrollTop);
-        setScrollHeight(target.scrollHeight);
-        setScrollLeft(target.scrollLeft);
-        setScrollWidth(target.scrollWidth);
+        setScrollDimensions({
+            top: target.scrollTop,
+            height: target.scrollHeight,
+            left: target.scrollLeft,
+            width: target.scrollWidth,
+        });
     };
 
+    const { top, height, left, width } = scrollDimensions;
+
     const currentHeight = scrollingContainer.current?.clientHeight ?? 0;
-    const showTopShadow = scrollHeight > 0 && scrollTop !== 0;
-    const showBottomShadow = scrollHeight !== 0 && scrollTop < scrollHeight - currentHeight;
+    const showTopShadow = height > 0 && top !== 0;
+    const showBottomShadow = height !== 0 && top < height - currentHeight;
 
     const currentWidth = scrollingContainer.current?.clientWidth ?? 0;
-    const showLeftShadow = scrollWidth > 0 && scrollLeft !== 0;
-    const showRightShadow = scrollWidth !== 0 && scrollLeft < scrollWidth - currentWidth;
+    const showLeftShadow = width > 0 && left !== 0;
+    const showRightShadow = width !== 0 && left < width - currentWidth;
 
     return [
         {
