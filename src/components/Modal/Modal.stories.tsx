@@ -81,7 +81,7 @@ export default {
             name: "Variant",
             options: ["None", ...Object.values(ModalHeaderVariant)],
             mapping: { None: null, ...Object.values(ModalHeaderVariant) },
-            defaultValue: ModalHeaderVariant.Informative,
+            defaultValue: ModalHeaderVariant.Default,
             control: { type: "select" },
         },
     },
