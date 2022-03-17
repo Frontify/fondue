@@ -28,10 +28,10 @@ export enum ModalHeaderVariant {
 
 export const modalHeaderVariants: Record<ModalHeaderVariant, string> = {
     [ModalHeaderVariant.Default]: "tw-text-grey-80",
-    [ModalHeaderVariant.Informative]: "tw-text-violet-bright",
-    [ModalHeaderVariant.Negative]: "tw-text-red-bright",
-    [ModalHeaderVariant.Positive]: "tw-text-green-bright",
-    [ModalHeaderVariant.Warning]: "tw-text-yellow-bright",
+    [ModalHeaderVariant.Informative]: "tw-text-violet-60",
+    [ModalHeaderVariant.Negative]: "tw-text-red-60",
+    [ModalHeaderVariant.Positive]: "tw-text-green-60",
+    [ModalHeaderVariant.Warning]: "tw-text-yellow-60",
 };
 
 export type ModalHeaderProps = {

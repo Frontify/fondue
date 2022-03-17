@@ -47,7 +47,7 @@ describe("Modal Component", () => {
         );
 
         cy.get(MODAL_VISUAL).should("exist");
-        cy.get(MODAL_VISUAL).should("have.class", "tw-text-violet-bright");
+        cy.get(MODAL_VISUAL).should("have.class", "tw-text-violet-60");
     });
 
     it("should render the modal with a header", () => {
@@ -71,7 +71,7 @@ describe("Modal Component", () => {
 
         cy.get(MODAL_HEADER).should("exist");
         cy.get(MODAL_HEADER).should("contain.text", title).and("contain.text", leadText);
-        cy.get(MODAL_HEADER_DECORATOR).should("be.visible").and("have.class", "tw-text-violet-bright");
+        cy.get(MODAL_HEADER_DECORATOR).should("be.visible").and("have.class", "tw-text-violet-60");
         cy.get(GENERIC_ICON_CODE).should("be.visible").and("have.class", "tw-h-6 tw-w-6");
     });
 
