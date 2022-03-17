@@ -20,7 +20,7 @@ export type FrontifyPatternProps = {
 };
 
 export const FrontifyPattern: FC<FrontifyPatternProps> = ({
-    pattern,
+    pattern = PatternDesign.DigitalAssets,
     scale = PatternScale.SM,
     scaleOrigin = ["top", "left"],
     foregroundColor = PatternTheme.Black,
@@ -28,10 +28,10 @@ export const FrontifyPattern: FC<FrontifyPatternProps> = ({
     return (
         <div
             data-test-id="frontify-pattern"
-            className={merge(["tw-w-[260px]", patternThemes[foregroundColor ?? PatternTheme.Black]])}
+            className={merge(["tw-w-[260px]", patternThemes[foregroundColor]])}
             style={{ transformOrigin: `${scaleOrigin.join(" ")}`, transform: `scale(${patternScales[scale]})` }}
         >
-            {cloneElement(patternDesigns[pattern ?? PatternDesign.DigitalAssets])}
+            {cloneElement(patternDesigns[pattern])}
         </div>
     );
 };

@@ -32,7 +32,7 @@ export const Modal: FC<ModalProps> = (props) => {
                     {...modalProps}
                     ref={ref}
                     data-test-id="modal-container"
-                    className="tw-max-w-[790px] tw-max-h-[600px] tw-flex tw-bg-white tw-border tw-border-solid tw-border-grey-20 tw-rounded tw-shadow-2xl"
+                    className="tw-max-w-[790px] tw-max-h-[600px] tw-flex tw-bg-white tw-border tw-border-solid tw-border-line-strong tw-rounded tw-shadow-2xl"
                 >
                     {visual?.pattern && (
                         <div className="tw-w-[260px] tw-relative tw-flex-shrink-0 tw-overflow-hidden">

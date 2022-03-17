@@ -10,8 +10,8 @@ export enum PatternTheme {
 
 export const patternThemes: Record<PatternTheme, string> = {
     [PatternTheme.Black]: "tw-text-black",
-    [PatternTheme.Green]: "tw-text-green-bright",
-    [PatternTheme.Violet]: "tw-text-violet-bright",
-    [PatternTheme.Yellow]: "tw-text-yellow-bright",
-    [PatternTheme.Red]: "tw-text-red-bright",
+    [PatternTheme.Green]: "tw-text-green-60",
+    [PatternTheme.Violet]: "tw-text-violet-60",
+    [PatternTheme.Yellow]: "tw-text-yellow-60",
+    [PatternTheme.Red]: "tw-text-red-60",
 };
