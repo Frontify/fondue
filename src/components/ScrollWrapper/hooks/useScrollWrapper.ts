@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { RefObject, useState, UIEvent } from "react";
+import { RefObject, useState, UIEvent, useEffect } from "react";
 
 export const useScrollWrapper = (scrollingContainer: RefObject<HTMLElement>) => {
     const [scrollDimensions, setScrollDimensions] = useState({ top: 0, height: Infinity, width: Infinity, left: 0 });
@@ -15,8 +15,17 @@ export const useScrollWrapper = (scrollingContainer: RefObject<HTMLElement>) => 
         });
     };
 
-    const { top, height, left, width } = scrollDimensions;
+    useEffect(() => {
+        const element = scrollingContainer.current;
+        setScrollDimensions({
+            top: element?.scrollTop || 0,
+            height: element?.scrollHeight || Infinity,
+            left: element?.scrollLeft || 0,
+            width: element?.scrollWidth || Infinity,
+        });
+    }, []);
 
+    const { top, height, left, width } = scrollDimensions;
     const currentHeight = scrollingContainer.current?.clientHeight ?? 0;
     const showTopShadow = height > 0 && top !== 0;
     const showBottomShadow = height !== 0 && top < height - currentHeight;
