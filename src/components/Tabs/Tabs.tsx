@@ -94,23 +94,36 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
         });
 
         if ((event.key === "ArrowRight" || event.key === "ArrowDown") && nextTabs.length) {
-            triggerTabButton(nextTabs[0].id);
+            let fromOverflow = checkIfWithinOverflow(nextTabs[0].id);
+            triggerTabButton(nextTabs[0].id, fromOverflow);
         }
 
         if ((event.key === "ArrowLeft" || event.key === "ArrowUp") && previousTabs.length) {
-            triggerTabButton(previousTabs[previousTabs.length - 1].id);
+            let fromOverflow = checkIfWithinOverflow(previousTabs[previousTabs.length - 1].id);
+            triggerTabButton(previousTabs[previousTabs.length - 1].id, fromOverflow);
         }
     };
 
-    const triggerTabButton = (elementId: string) => {
+    const checkIfWithinOverflow = (elementId: string) => {
+        let isOverflowingTab = overflowArray.map((index) => {
+            if (tabs[index].id === elementId) {
+                return true;
+            }
+        });
+
+        return isMenuOpened && isOverflowingTab.includes(true);
+    };
+
+    const triggerTabButton = (elementId: string, fromOverflow: boolean) => {
         try {
-            setIsMenuOpened(false);
-            const buttonElement = document.getElementById(`${elementId}-btn`) as HTMLButtonElement;
+            const buttonElement = document.getElementById(
+                fromOverflow ? `${elementId}-btn-m` : `${elementId}-btn`,
+            ) as HTMLButtonElement;
             buttonElement.focus();
             if (onChange) {
                 onChange(elementId);
             }
-            buttonElement.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+            buttonElement.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
             checkIfOverflowing();
         } catch (error) {
             throw (error as Error).message;
@@ -209,7 +222,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                                 tabs[i].disabled && "tw-text-text-disabled",
                                             ])}
                                             key={tabs[i].id}
-                                            onClick={() => !tabs[i].disabled && triggerTabButton(tabs[i].id)}
+                                            onClick={() => !tabs[i].disabled && triggerTabButton(tabs[i].id, true)}
                                             role="tab"
                                             aria-selected={tabs[i].id === activeItemId}
                                             aria-controls={`${tabs[i].id}-content`}
