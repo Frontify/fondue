@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, useRef } from "react";
-import { merge } from "../..";
 import { useScrollWrapper } from "./hooks/useScrollWrapper";
 import { ScrollWrapperDirection, scrollWrapperDirections, ScrollWrapperProps } from "./types";
 
-export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrapperDirection.Vertical, children }) => {
+export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction, children }) => {
     const scrollingContainer = useRef<HTMLDivElement>(null);
 
     const [{ showTopShadow, showBottomShadow, showLeftShadow, showRightShadow }, scrollDivProps] =
@@ -16,30 +15,27 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
     const directionHorizontal =
         direction === ScrollWrapperDirection.Horizontal || direction === ScrollWrapperDirection.Both;
 
-    const scrollShadows = [];
-
-    if (directionVertical && showTopShadow) {
-        scrollShadows.push("inset 0 11px 10px -12px rgba(0,0,0,0.5)");
-    }
-    if (directionVertical && showBottomShadow) {
-        scrollShadows.push("inset 0 -11px 10px -12px rgba(0,0,0,0.5)");
-    }
-    if (directionHorizontal && showLeftShadow) {
-        scrollShadows.push("inset 11px 0 10px -12px rgba(0,0,0,0.5)");
-    }
-    if (directionHorizontal && showRightShadow) {
-        scrollShadows.push("inset -11px 0 10px -12px rgba(0,0,0,0.5)");
-    }
-
     return (
-        <div
-            data-test-id="scroll-wrapper"
-            className="tw-h-full tw-relative tw-shadow-black-10 tw-z-20"
-            style={{ boxShadow: scrollShadows.join(", ") }}
-        >
-            <div ref={scrollingContainer} className={merge([scrollWrapperDirections[direction]])} {...scrollDivProps}>
+        <div data-test-id="scroll-wrapper" className="tw-h-full tw-relative">
+            {directionVertical && showTopShadow && (
+                <div className="tw-h-10 tw-relative tw-z-10 tw-shadow-lg tw--mt-10" />
+            )}
+            {directionHorizontal && showLeftShadow && (
+                <div className="tw-w-full tw-h-10 tw-absolute tw--left-1/2 tw-top-1/2 tw-z-10 tw-bg-white tw-shadow-lg tw--rotate-90 tw--translate-x-5" />
+            )}
+            <div
+                ref={scrollingContainer}
+                className={scrollWrapperDirections[direction ?? ScrollWrapperDirection.Vertical]}
+                {...scrollDivProps}
+            >
                 {children}
             </div>
+            {directionVertical && showBottomShadow && (
+                <div className="tw-h-10 tw-shadow-lg tw-transform tw-rotate-180" />
+            )}
+            {directionHorizontal && showRightShadow && (
+                <div className="tw-w-full tw-h-10 tw-absolute tw-left-1/2 tw-top-1/2 tw-z-10 tw-bg-white tw-shadow-lg tw-rotate-90 tw-translate-x-5" />
+            )}
         </div>
     );
 };
