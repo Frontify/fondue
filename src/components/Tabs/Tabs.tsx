@@ -18,7 +18,6 @@ import { Badge } from "@components/Badge";
 import { LayoutGroup, motion } from "framer-motion";
 import { Button, ButtonSize, ButtonStyle } from "@components/Button";
 import { Flyout } from "@components/Flyout";
-import { MenuItem } from "@components/MenuItem";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 
 export enum TabsPaddingX {
@@ -47,6 +46,7 @@ const paddingMap: Record<TabsPaddingX, string> = {
 };
 
 export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, onChange }) => {
+    const tabNavRef = useRef<HTMLDivElement | null>(null);
     const [isOverflowing, setIsOverflowing] = useState(false);
     const [isMenuOpened, setIsMenuOpened] = useState(false);
     const layoutGroupId = useMemoizedId();
@@ -59,7 +59,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
             return child?.props;
         }) ?? [];
 
-    const [tabIndexLimit, setTabIndexLimit] = useState(tabs.length);
+    const [overflowArray, setOverflowArray] = useState([0]);
 
     const checkIfOverflowing = () => {
         const tabNav = tabNavRef.current;
@@ -70,16 +70,13 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                 const i = [...tabNav.children].indexOf(tabItem);
                 const navPosition = tabNav.getBoundingClientRect();
                 const tabPosition = tabItem.getBoundingClientRect();
-                if (tabPosition.right > navPosition.right) {
+                if (tabPosition.right > navPosition.right || tabPosition.left < navPosition.left) {
                     overFlowIndex.push(i);
                 }
             }
 
             const overFlowIndexInAscOrder = [...overFlowIndex].sort((a, b) => a - b);
-            const newIndexLimit = overFlowIndex.length ? overFlowIndexInAscOrder[0] : tabs.length;
-            if (newIndexLimit < tabIndexLimit || newIndexLimit > tabIndexLimit) {
-                setTabIndexLimit(newIndexLimit);
-            }
+            setOverflowArray(overFlowIndexInAscOrder);
         }
     };
 
@@ -107,15 +104,23 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
 
     const triggerTabButton = (elementId: string) => {
         try {
+            setIsMenuOpened(false);
             const buttonElement = document.getElementById(`${elementId}-btn`) as HTMLButtonElement;
             buttonElement.focus();
             if (onChange) {
                 onChange(elementId);
             }
+            buttonElement.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+            checkIfOverflowing();
         } catch (error) {
             throw (error as Error).message;
         }
     };
+
+    // First render
+    useEffect(() => {
+        checkIfOverflowing();
+    }, []);
 
     useEffect(() => {
         window.addEventListener("resize", checkIfOverflowing);
@@ -124,8 +129,6 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
         };
     }, [checkIfOverflowing]);
 
-    const tabNavRef = useRef<HTMLDivElement | null>(null);
-
     return (
         <LayoutGroup id={layoutGroupId}>
             <div data-test-id="tabs" className="tw-flex tw-relative tw-border-b tw-border-line">
@@ -133,9 +136,8 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     ref={tabNavRef}
                     role="tablist"
                     className={merge([
-                        "tw-overflow-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start",
+                        "tw-overflow-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start tw-pr-8",
                         paddingMap[paddingX ?? TabsPaddingX.Small],
-                        size === TabSize.Small ? "tw-text-sm" : "tw-text-md",
                     ])}
                 >
                     {tabs.map((tab, index) => {
@@ -152,7 +154,6 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                     "tw-group tw-relative tw-mx-0 tw-pb-5 tw-pt-2 tw-px-2 tw-w-max tw-h-10 tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap",
                                     tab.disabled && "tw-text-text-disabled",
                                     tab.id === activeItemId && "tw-font-medium",
-                                    index >= tabIndexLimit && "tw-invisible",
                                 ])}
                                 key={tab.id}
                                 onClick={() => (!tab.disabled && onChange ? onChange(tab.id) : null)}
@@ -199,29 +200,35 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                             onCancel={() => setIsMenuOpened(false)}
                             fitContent={true}
                         >
-                            {tabs.slice(tabIndexLimit, tabs.length).map((tab) => {
-                                return (
-                                    <button
-                                        className="tw-w-full"
-                                        key={tab.id}
-                                        onClick={() => (!tab.disabled && onChange ? onChange(tab.id) : null)}
-                                        role="tab"
-                                        aria-selected={tab.id === activeItemId}
-                                        aria-controls={`${tab.id}-content`}
-                                        aria-hidden={tab.disabled}
-                                        tabIndex={!tab.disabled ? 0 : -1}
-                                        id={`${tab.id}-btn-m`}
-                                        onKeyDown={(event) => handleKeyboardTabChange(event)}
-                                    >
-                                        <MenuItem
-                                            title={tab.label}
-                                            decorator={tab.decorator}
-                                            disabled={tab.disabled}
-                                            active={tab.id === activeItemId}
-                                        />
-                                    </button>
-                                );
-                            })}
+                            <div className="tw-px-3 tw-pt-3">
+                                {overflowArray.map((i) => {
+                                    return (
+                                        <button
+                                            className={merge([
+                                                "tw-flex tw-items-center tw-w-full tw-mb-3 tw-text-left tw-text-text-weak",
+                                                tabs[i].disabled && "tw-text-text-disabled",
+                                            ])}
+                                            key={tabs[i].id}
+                                            onClick={() => !tabs[i].disabled && triggerTabButton(tabs[i].id)}
+                                            role="tab"
+                                            aria-selected={tabs[i].id === activeItemId}
+                                            aria-controls={`${tabs[i].id}-content`}
+                                            aria-hidden={tabs[i].disabled}
+                                            tabIndex={!tabs[i].disabled ? 0 : -1}
+                                            id={`${tabs[i].id}-btn-m`}
+                                            onKeyDown={(event) => handleKeyboardTabChange(event)}
+                                        >
+                                            {tabs[i].decorator}
+                                            <span className="tw-mr-1 tw-ml-1.5">{tabs[i].label}</span>
+                                            {tabs[i].badge && (
+                                                <Badge disabled={tabs[i].disabled} style={tabs[i].badge?.style}>
+                                                    {tabs[i].badge?.children}
+                                                </Badge>
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </Flyout>
                     </div>
                 )}
