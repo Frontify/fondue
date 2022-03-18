@@ -94,18 +94,18 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
         });
 
         if ((event.key === "ArrowRight" || event.key === "ArrowDown") && nextTabs.length) {
-            let fromOverflow = checkIfWithinOverflow(nextTabs[0].id);
+            const fromOverflow = checkIfWithinOverflow(nextTabs[0].id);
             triggerTabButton(nextTabs[0].id, fromOverflow);
         }
 
         if ((event.key === "ArrowLeft" || event.key === "ArrowUp") && previousTabs.length) {
-            let fromOverflow = checkIfWithinOverflow(previousTabs[previousTabs.length - 1].id);
+            const fromOverflow = checkIfWithinOverflow(previousTabs[previousTabs.length - 1].id);
             triggerTabButton(previousTabs[previousTabs.length - 1].id, fromOverflow);
         }
     };
 
     const checkIfWithinOverflow = (elementId: string) => {
-        let isOverflowingTab = overflowArray.map((index) => {
+        const isOverflowingTab = overflowArray.map((index) => {
             if (tabs[index].id === elementId) {
                 return true;
             }
@@ -153,7 +153,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                         paddingMap[paddingX ?? TabsPaddingX.Small],
                     ])}
                 >
-                    {tabs.map((tab, index) => {
+                    {tabs.map((tab) => {
                         return (
                             <button
                                 data-test-id="tab-item"
@@ -167,6 +167,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                     "tw-group tw-relative tw-mx-0 tw-pb-5 tw-pt-2 tw-px-2 tw-w-max tw-h-10 tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap",
                                     tab.disabled && "tw-text-text-disabled",
                                     tab.id === activeItemId && "tw-font-medium",
+                                    size === TabSize.Small ? "tw-text-sm" : "tw-text-md",
                                 ])}
                                 key={tab.id}
                                 onClick={() => (!tab.disabled && onChange ? onChange(tab.id) : null)}
