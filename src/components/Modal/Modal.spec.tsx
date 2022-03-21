@@ -7,7 +7,6 @@ import { ModalHeader } from "./ModalHeader";
 import { IconIcons } from "@foundation/Icon";
 import { ModalHeaderVariant } from "./types";
 import { PatternDesign, PatternTheme } from "@foundation/Pattern";
-import { ModalBody } from "./ModalBody";
 import { OverlayProvider } from "@react-aria/overlays";
 
 const MODAL_CONTAINER = "[data-test-id=modal-container]";
@@ -57,17 +56,14 @@ describe("Modal Component", () => {
 
         mount(
             <OverlayProvider>
-                <Modal
-                    isOpen={true}
-                    header={
-                        <ModalHeader
-                            title={title}
-                            leadText={leadText}
-                            decorator={<IconIcons />}
-                            variant={ModalHeaderVariant.Informative}
-                        />
-                    }
-                />
+                <Modal isOpen={true}>
+                    <ModalHeader
+                        title={title}
+                        leadText={leadText}
+                        decorator={<IconIcons />}
+                        variant={ModalHeaderVariant.Informative}
+                    />
+                </Modal>
             </OverlayProvider>,
         );
 
@@ -81,9 +77,9 @@ describe("Modal Component", () => {
         mount(
             <OverlayProvider>
                 <Modal isOpen={true}>
-                    <ModalBody>
+                    <Modal.Body>
                         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
-                    </ModalBody>
+                    </Modal.Body>
                 </Modal>
             </OverlayProvider>,
         );
