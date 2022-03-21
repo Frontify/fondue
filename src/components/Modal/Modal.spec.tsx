@@ -23,7 +23,7 @@ describe("Modal Component", () => {
     it("should render an empty modal", () => {
         mount(
             <OverlayProvider>
-                <Modal />
+                <Modal isOpen={true} />
             </OverlayProvider>,
         );
 
@@ -38,6 +38,7 @@ describe("Modal Component", () => {
         mount(
             <OverlayProvider>
                 <Modal
+                    isOpen={true}
                     visual={{
                         pattern: PatternDesign.DigitalAssets,
                         foregroundColor: PatternTheme.Violet,
@@ -57,6 +58,7 @@ describe("Modal Component", () => {
         mount(
             <OverlayProvider>
                 <Modal
+                    isOpen={true}
                     header={
                         <ModalHeader
                             title={title}
@@ -78,7 +80,7 @@ describe("Modal Component", () => {
     it("should render the modal with a body and implement the ScrollWrapper component", () => {
         mount(
             <OverlayProvider>
-                <Modal>
+                <Modal isOpen={true}>
                     <ModalBody>
                         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
                     </ModalBody>

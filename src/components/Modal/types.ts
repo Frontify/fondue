@@ -58,5 +58,6 @@ export type ModalProps = {
     header?: ReactElement;
     footer?: ReactElement;
     children?: ModalBodyChildren;
-} & OverlayProps &
+    isOpen: boolean;
+} & Omit<OverlayProps, "isOpen"> &
     AriaDialogProps;
