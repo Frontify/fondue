@@ -1,6 +1,6 @@
 {
     "name": "@frontify/arcade",
-    "version": "5.0.0",
+    "version": "5.1.0",
     "description": "Design system of Frontify",
     "main": "dist/index.umd.js",
     "unpkg": "dist/index.umd.js",
@@ -139,7 +139,7 @@
         "@react-stately/toggle": "^3.2.3",
         "@react-stately/tooltip": "^3.0.5",
         "@react-stately/tree": "^3.2.0",
-        "@udecode/plate": "^10.0.0",
+        "@udecode/plate": "^10.2.3",
         "@xstate/immer": "^0.3.0",
         "@xstate/react": "^1.6.3",
         "date-fns": "^2.28.0",
@@ -149,10 +149,6 @@
         "react-dnd": "^15.1.1",
         "react-dnd-html5-backend": "^15.1.2",
         "react-popper": "^2.2.5",
-        "slate": "^0.72.3",
-        "slate-history": "^0.66.0",
-        "slate-hyperscript": "^0.67.0",
-        "slate-react": "^0.72.6",
         "tinycolor2": "^1.4.2",
         "xstate": "^4.28.1"
     },

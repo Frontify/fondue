@@ -7,10 +7,11 @@ import { DropdownItem } from "./DropdownItem";
 import { DropdownTrigger } from "./DropdownTrigger";
 
 type TextStyleDropdownProps = {
+    editorId?: string;
     textStyles?: TextStyleType[];
 };
 
-export const TextStyleDropdown = ({ textStyles }: TextStyleDropdownProps) => {
+export const TextStyleDropdown = ({ editorId, textStyles }: TextStyleDropdownProps) => {
     const [open, setOpen] = useState(false);
 
     const onToggle = useCallback(() => {
@@ -18,38 +19,50 @@ export const TextStyleDropdown = ({ textStyles }: TextStyleDropdownProps) => {
     }, [open, setOpen]);
 
     return (
-        <ToolbarDropdown control={<DropdownTrigger open={open} />} open={open} onOpen={onToggle} onClose={onToggle}>
+        <ToolbarDropdown
+            control={<DropdownTrigger editorId={editorId} open={open} />}
+            open={open}
+            onOpen={onToggle}
+            onClose={onToggle}
+        >
             <DropdownItem
+                editorId={editorId}
                 label={textStyleTitles[TextStyles.ELEMENT_HEADING1]}
                 type={TextStyles.ELEMENT_HEADING1}
                 textStyles={textStyles}
             />
             <DropdownItem
+                editorId={editorId}
                 label={textStyleTitles[TextStyles.ELEMENT_HEADING2]}
                 type={TextStyles.ELEMENT_HEADING2}
                 textStyles={textStyles}
             />
             <DropdownItem
+                editorId={editorId}
                 label={textStyleTitles[TextStyles.ELEMENT_HEADING3]}
                 type={TextStyles.ELEMENT_HEADING3}
                 textStyles={textStyles}
             />
             <DropdownItem
+                editorId={editorId}
                 label={textStyleTitles[TextStyles.ELEMENT_HEADING4]}
                 type={TextStyles.ELEMENT_HEADING4}
                 textStyles={textStyles}
             />
             <DropdownItem
+                editorId={editorId}
                 label={textStyleTitles[TextStyles.ELEMENT_CUSTOM1]}
                 type={TextStyles.ELEMENT_CUSTOM1}
                 textStyles={textStyles}
             />
             <DropdownItem
+                editorId={editorId}
                 label={textStyleTitles[TextStyles.ELEMENT_CUSTOM2]}
                 type={TextStyles.ELEMENT_CUSTOM2}
                 textStyles={textStyles}
             />
             <DropdownItem
+                editorId={editorId}
                 label={textStyleTitles[TextStyles.ELEMENT_PARAGRAPH]}
                 type={TextStyles.ELEMENT_PARAGRAPH}
                 textStyles={textStyles}

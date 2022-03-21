@@ -11,7 +11,7 @@ import React, { FC, useEffect, useState } from "react";
 import { Alpha, Hue, Saturation } from "react-color/lib/components/common";
 import tinycolor from "tinycolor2";
 import { Color, ColorFormat } from "../../types/colors";
-import { ColorInput } from "./ColorInput";
+import { ColorInput, DecoratorPosition } from "./ColorInput";
 import { ColorPickerProps } from "./ColorPicker";
 
 const ColorPointer: FC<{ offset?: boolean }> = ({ offset = true }) => (
@@ -152,6 +152,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                     type={TextInputType.Number}
                     value={Math.trunc(a * 100).toString()}
                     decorator="%"
+                    decoratorPosition={DecoratorPosition.Right}
                     onChange={(value) => {
                         const a = parseInt(value || "0", 10) / 100;
                         onSelect({ ...color, a });
