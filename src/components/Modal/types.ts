@@ -53,8 +53,6 @@ export type ModalFooterProps = {
 
 export type ModalProps = {
     visual?: ModalVisualProps;
-    header?: ReactElement;
-    footer?: ReactElement;
     children?: ModalBodyChildren;
     isOpen: boolean;
 } & Omit<OverlayProps, "isOpen"> &
