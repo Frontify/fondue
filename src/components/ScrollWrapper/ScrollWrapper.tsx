@@ -4,6 +4,13 @@ import React, { FC, useRef } from "react";
 import { useScrollWrapper } from "./hooks/useScrollWrapper";
 import { ScrollWrapperDirection, scrollWrapperDirections, ScrollWrapperProps } from "./types";
 
+const GRADIENTS = {
+    right: "linear-gradient(90deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)",
+    left: "linear-gradient(270deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)",
+    bottom: "linear-gradient(180deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)",
+    top: "linear-gradient(0deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)",
+};
+
 export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrapperDirection.Vertical, children }) => {
     const scrollingContainer = useRef<HTMLDivElement>(null);
 
@@ -16,21 +23,33 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
         direction === ScrollWrapperDirection.Horizontal || direction === ScrollWrapperDirection.Both;
 
     return (
-        <div data-test-id="scroll-wrapper" className="tw-h-full tw-relative tw-overflow-hidden">
+        <div data-test-id="scroll-wrapper" className="tw-h-full tw-relative">
             {directionVertical && showTopShadow && (
-                <div className="tw-h-10 tw-relative tw-z-10 tw-shadow-lg tw--mt-10" />
+                <div
+                    className="tw-h-3 tw-w-full tw-absolute tw-z-10 tw-top-0 tw-left-0 tw-mix-blend-darken"
+                    style={{ background: GRADIENTS.top }}
+                />
             )}
             {directionHorizontal && showLeftShadow && (
-                <div className="tw-w-full tw-h-10 tw-absolute tw--left-1/2 tw-top-1/2 tw-z-10 tw-bg-white tw-shadow-lg tw--rotate-90 tw--translate-x-5" />
+                <div
+                    className="tw-w-3 tw-top-0 tw-absolute tw-left-0 tw-bottom-0 tw-h-full tw-z-10 tw-mix-blend-darken"
+                    style={{ background: GRADIENTS.left }}
+                />
             )}
             <div ref={scrollingContainer} className={scrollWrapperDirections[direction]} {...scrollDivProps}>
                 {children}
             </div>
             {directionVertical && showBottomShadow && (
-                <div className="tw-h-10 tw-shadow-lg tw-transform tw-rotate-180" />
+                <div
+                    className="tw-h-3 tw-w-full tw-absolute tw-z-10 tw-bottom-0 tw-left-0 tw-mix-blend-darken"
+                    style={{ background: GRADIENTS.bottom }}
+                />
             )}
             {directionHorizontal && showRightShadow && (
-                <div className="tw-w-full tw-h-10 tw-absolute tw-left-1/2 tw-top-1/2 tw-z-10 tw-bg-white tw-shadow-lg tw-rotate-90 tw-translate-x-5" />
+                <div
+                    className="tw-w-3 tw-top-0 tw-absolute tw-right-0 tw-bottom-0 tw-h-full tw-z-10 tw-mix-blend-darken"
+                    style={{ background: GRADIENTS.right }}
+                />
             )}
         </div>
     );
