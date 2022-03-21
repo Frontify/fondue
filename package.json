@@ -62,7 +62,6 @@
         "@cypress/react": "5.12.1",
         "@cypress/vite-dev-server": "2.2.2",
         "@frontify/eslint-config-react": "0.13.2",
-        "@kaizen/react-deprecate-warning": "^1.2.0",
         "@storybook/addon-actions": "6.4.14",
         "@storybook/addon-essentials": "6.4.14",
         "@storybook/addon-links": "6.4.14",

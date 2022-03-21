@@ -9,7 +9,6 @@ export enum ButtonStyle {
     Positive = "Positive",
     Negative = "Negative",
     Danger = "Danger",
-    // DEPRECATING
     Primary = "Primary",
     Secondary = "Secondary",
 }

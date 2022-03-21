@@ -87,9 +87,8 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     };
 
     const setStylingClass = (kind: string) => {
-        const buttonClass = getButtonStyleClasses();
-
         if (!disabled) {
+            const buttonClass = getButtonStyleClasses();
             switch (kind) {
                 case "button":
                     if (isFocusVisible) {
@@ -105,9 +104,10 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         }
 
         if (disabled) {
-            return (
-                ButtonDisabledClasses.common && (!solid ? ButtonDisabledClasses.weak : ButtonDisabledClasses.default)
-            );
+            return merge([
+                ButtonDisabledClasses.common,
+                !solid ? ButtonDisabledClasses.weak : ButtonDisabledClasses.default,
+            ]);
         }
     };
 

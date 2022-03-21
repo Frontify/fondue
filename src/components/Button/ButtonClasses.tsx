@@ -103,9 +103,9 @@ export const ButtonStyleClasses: Record<
                     "hover:tw-bg-button-strong-background-hover " +
                     "active:tw-bg-button-strong-background-pressed ",
                 icon:
-                    "tw-text-green-mid " +
-                    "group-hover:tw-text-button-positive-icon-hover " +
-                    "group-active:tw-text-button-positive-icon-pressed ",
+                    "tw-text-button-strong-positive-icon " +
+                    "group-hover:tw-text-button-strong-positive-icon-hover" +
+                    "group-active:tw-text-button-strong-positive-icon-pressed ",
                 text:
                     "tw-text-button-strong-text " +
                     "group-hover:tw-text-button-strong-text-hover " +
@@ -133,9 +133,9 @@ export const ButtonStyleClasses: Record<
                     "hover:tw-bg-button-strong-background-hover " +
                     "active:tw-bg-button-strong-background-pressed ",
                 icon:
-                    "tw-text-red-mid " +
-                    "group-hover:tw-text-button-negative-icon-hover " +
-                    "group-active:tw-text-button-negative-icon-pressed ",
+                    "tw-text-button-strong-negative-icon " +
+                    "group-hover:tw-text-button-strong-negative-icon-hover" +
+                    "group-active:tw-text-button-strong-negative-icon-pressed ",
                 text:
                     "tw-text-button-strong-text " +
                     "group-hover:tw-text-button-strong-text-hover " +
@@ -145,34 +145,33 @@ export const ButtonStyleClasses: Record<
         [ButtonStyle.Danger]: {
             default: {
                 button:
-                    "tw-bg-button-danger-background tw-border-button-danger-border " +
-                    "hover:tw-bg-button-danger-background-hover " +
-                    "active:tw-bg-button-danger-background-pressed ",
+                    "tw-bg-button-background tw-border-button-border " +
+                    "hover:tw-bg-button-background-hover " +
+                    "active:tw-bg-button-background-pressed ",
                 icon:
-                    "tw-text-button-danger-icon " +
-                    "group-hover:tw-text-button-danger-icon-hover" +
-                    "group-active:tw-text-button-danger-icon-pressed ",
+                    "tw-text-button-negative-icon " +
+                    "group-hover:tw-text-button-negative-icon-hover" +
+                    "group-active:tw-text-button-negative-icon-pressed ",
                 text:
-                    "tw-text-button-danger-text " +
-                    "group-hover:tw-text-button-danger-text-hover" +
-                    "group-active:tw-text-button-danger-text-pressed ",
+                    "tw-text-button-negative-icon " +
+                    "group-hover:tw-text-button-negative-icon-hover" +
+                    "group-active:tw-text-button-negative-icon-pressed ",
             },
             inverted: {
                 button:
-                    "tw-bg-button-danger-background tw-border-button-danger-border " +
-                    "hover:tw-bg-button-danger-background-hover " +
-                    "active:tw-bg-button-danger-background-pressed ",
+                    "tw-bg-text-weak tw-border-button-negative-border " +
+                    "hover:tw-bg-button-strong-background-hover " +
+                    "active:tw-bg-button-strong-background-pressed ",
                 icon:
-                    "tw-text-button-danger-icon " +
-                    "group-hover:tw-text-button-danger-icon-hover" +
-                    "group-active:tw-text-button-danger-icon-pressed ",
+                    "tw-text-button-strong-negative-icon " +
+                    "group-hover:tw-text-button-strong-negative-icon-hover" +
+                    "group-active:tw-text-button-strong-negative-icon-pressed ",
                 text:
-                    "tw-text-button-danger-text " +
-                    "group-hover:tw-text-button-danger-text-hover" +
-                    "group-active:tw-text-button-danger-text-pressed ",
+                    "tw-text-button-strong-negative-icon " +
+                    "group-hover:tw-text-button-strong-negative-icon-hover" +
+                    "group-active:tw-text-button-strong-negative-icon-pressed ",
             },
         },
-        // DEPRECATING
         [ButtonStyle.Primary]: {
             default: {
                 button:
@@ -203,7 +202,6 @@ export const ButtonStyleClasses: Record<
                     "group-active:tw-text-button-text-pressed ",
             },
         },
-        // DEPRECATING
         [ButtonStyle.Secondary]: {
             default: {
                 button:
@@ -356,7 +354,6 @@ export const ButtonStyleClasses: Record<
                     "group-active:tw-text-button-danger-text-pressed ",
             },
         },
-        // DEPRECATING
         [ButtonStyle.Primary]: {
             default: {
                 button:
@@ -387,7 +384,6 @@ export const ButtonStyleClasses: Record<
                     "group-active:tw-text-button-text-pressed ",
             },
         },
-        // DEPRECATING
         [ButtonStyle.Secondary]: {
             default: {
                 button:
@@ -457,9 +453,9 @@ export const ButtonStyleClasses: Record<
                     "hover:tw-bg-button-positive-background-hover hover:tw-border-button-positive-border " +
                     "active:tw-bg-button-positive-background-pressed ",
                 icon:
-                    "tw-text-button-positive-icon " +
-                    "group-hover:tw-text-button-positive-icon-hover " +
-                    "group-active:tw-text-button-positive-icon-pressed ",
+                    "tw-text-button-strong-positive-icon " +
+                    "group-hover:tw-text-button-strong-positive-icon-hover" +
+                    "group-active:tw-text-button-strong-positive-icon-pressed ",
                 text:
                     "tw-text-button-positive-text " +
                     "group-hover:tw-text-button-positive-text-hover " +
@@ -501,9 +497,9 @@ export const ButtonStyleClasses: Record<
                     "hover:tw-bg-button-strong-background-hover hover:tw-border-button-negative-border " +
                     "active:tw-bg-button-strong-background-pressed ",
                 icon:
-                    "tw-text-button-negative-icon " +
-                    "group-hover:tw-text-button-negative-icon-hover " +
-                    "group-active:tw-text-button-negative-icon-pressed ",
+                    "tw-text-button-strong-negative-icon " +
+                    "group-hover:tw-text-button-strong-negative-icon-hover" +
+                    "group-active:tw-text-button-strong-negative-icon-pressed ",
                 text:
                     "tw-text-button-strong-negative-text " +
                     "group-hover:tw-text-button-strong-negative-text-hover " +
@@ -513,34 +509,33 @@ export const ButtonStyleClasses: Record<
         [ButtonStyle.Danger]: {
             default: {
                 button:
-                    "tw-bg-button-danger-background tw-border-button-danger-border " +
-                    "hover:tw-bg-button-danger-background-hover " +
-                    "active:tw-bg-button-danger-background-pressed ",
+                    "tw-border-transparent " +
+                    "hover:tw-bg-button-background-hover " +
+                    "active:tw-bg-button-background-pressed ",
                 icon:
-                    "tw-text-button-danger-icon " +
-                    "group-hover:tw-text-button-danger-icon-hover" +
-                    "group-active:tw-text-button-danger-icon-pressed ",
+                    "tw-text-button-negative-icon " +
+                    "group-hover:tw-text-button-negative-icon-hover" +
+                    "group-active:tw-text-button-negative-icon-pressed ",
                 text:
-                    "tw-text-button-danger-text " +
-                    "group-hover:tw-text-button-danger-text-hover" +
-                    "group-active:tw-text-button-danger-text-pressed ",
+                    "tw-text-button-negative-icon " +
+                    "group-hover:tw-text-button-negative-icon-hover" +
+                    "group-active:tw-text-button-negative-icon-pressed ",
             },
             inverted: {
                 button:
-                    "tw-bg-button-danger-background tw-border-button-danger-border " +
-                    "hover:tw-bg-button-danger-background-hover " +
-                    "active:tw-bg-button-danger-background-pressed ",
+                    "tw-border-transparent " +
+                    "hover:tw-bg-button-strong-background-hover " +
+                    "active:tw-bg-button-strong-background-pressed ",
                 icon:
-                    "tw-text-button-danger-icon " +
-                    "group-hover:tw-text-button-danger-icon-hover" +
-                    "group-active:tw-text-button-danger-icon-pressed ",
+                    "tw-text-button-strong-negative-icon " +
+                    "group-hover:tw-text-button-strong-negative-icon-hover" +
+                    "group-active:tw-text-button-strong-negative-icon-pressed ",
                 text:
-                    "tw-text-button-danger-text " +
-                    "group-hover:tw-text-button-danger-text-hover" +
-                    "group-active:tw-text-button-danger-text-pressed ",
+                    "tw-text-button-strong-negative-icon " +
+                    "group-hover:tw-text-button-strong-negative-icon-hover" +
+                    "group-active:tw-text-button-strong-negative-icon-pressed ",
             },
         },
-        // DEPRECATING
         [ButtonStyle.Primary]: {
             default: {
                 button:
@@ -571,7 +566,6 @@ export const ButtonStyleClasses: Record<
                     "group-active:tw-text-button-text-pressed ",
             },
         },
-        // DEPRECATING
         [ButtonStyle.Secondary]: {
             default: {
                 button:

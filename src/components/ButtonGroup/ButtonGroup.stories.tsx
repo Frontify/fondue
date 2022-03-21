@@ -17,14 +17,7 @@ export default {
             control: { type: "radio" },
         },
         style: {
-            options: [
-                ButtonStyle.Default,
-                ButtonStyle.Positive,
-                ButtonStyle.Negative,
-                ButtonStyle.Danger,
-                ButtonStyle.Primary,
-                ButtonStyle.Secondary,
-            ],
+            options: [ButtonStyle.Default, ButtonStyle.Positive, ButtonStyle.Negative, ButtonStyle.Danger],
             control: { type: "radio" },
         },
         emphasis: {
@@ -41,35 +34,33 @@ export default {
 } as Meta<ButtonGroupProps>;
 
 export const ButtonGroup = ({ ...args }) => (
-    <div className={args.inverted ? "tw-p-6 tw-bg-box-neutral-strong" : "tw-p-6"}>
-        <ButtonGroupComponent size={args.size}>
-            <Button
-                style={args.style}
-                emphasis={args.emphasis}
-                inverted={args.inverted}
-                icon={<IconAddSimple />}
-                onClick={action("onClick")}
-            >
-                Button Text
-            </Button>
-            <Button
-                style={args.style}
-                emphasis={args.emphasis}
-                inverted={args.inverted}
-                icon={<IconCheck />}
-                onClick={action("onClick")}
-            >
-                The Second
-            </Button>
-            <Button
-                style={args.style}
-                emphasis={args.emphasis}
-                inverted={args.inverted}
-                icon={<IconReject />}
-                onClick={action("onClick")}
-            >
-                The Third
-            </Button>
-        </ButtonGroupComponent>
-    </div>
+    <ButtonGroupComponent size={args.size}>
+        <Button
+            style={args.style}
+            emphasis={args.emphasis}
+            inverted={args.inverted}
+            icon={<IconAddSimple />}
+            onClick={action("onClick")}
+        >
+            Button Text
+        </Button>
+        <Button
+            style={args.style}
+            emphasis={args.emphasis}
+            inverted={args.inverted}
+            icon={<IconCheck />}
+            onClick={action("onClick")}
+        >
+            The Second
+        </Button>
+        <Button
+            style={args.style}
+            emphasis={args.emphasis}
+            inverted={args.inverted}
+            icon={<IconReject />}
+            onClick={action("onClick")}
+        >
+            The Third
+        </Button>
+    </ButtonGroupComponent>
 );

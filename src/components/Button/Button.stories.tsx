@@ -40,7 +40,7 @@ export default {
             options: [IconEnum.Icons, IconEnum.DotsVertical, IconEnum.ColorScale, IconEnum.Settings],
             mapping: {
                 [IconEnum.Icons]: iconsMap[IconEnum.Icons],
-                [IconEnum.DotsVertical]: iconsMap[IconEnum.DotsVertical],
+                [IconEnum.Actions]: iconsMap[IconEnum.Actions],
                 [IconEnum.ColorScale]: iconsMap[IconEnum.ColorScale],
                 [IconEnum.Settings]: iconsMap[IconEnum.Settings],
             },
@@ -58,11 +58,7 @@ export default {
     },
 } as Meta;
 
-const ButtonTemplate: Story<ButtonProps> = (args: ButtonProps) => (
-    <div className={args.inverted ? "tw-p-6 tw-bg-box-neutral-strong" : "tw-p-6"}>
-        <Button {...args} />
-    </div>
-);
+const ButtonTemplate: Story<ButtonProps> = (args: ButtonProps) => <Button {...args} />;
 
 export const Default = ButtonTemplate.bind({});
 Default.args = { ...defaultArgs };
@@ -87,3 +83,10 @@ withIconAndLabel.args = {
     icon: iconsMap[IconEnum.Icons],
 };
 withIconAndLabel.storyName = "Icon and Text Label";
+
+export const Inverted = ButtonTemplate.bind({});
+Inverted.args = { ...defaultArgs, inverted: true, icon: iconsMap[IconEnum.Icons] };
+Inverted.storyName = "Inverted";
+Inverted.parameters = {
+    backgrounds: { default: "dark" },
+};
