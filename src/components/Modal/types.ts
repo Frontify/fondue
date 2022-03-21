@@ -4,13 +4,12 @@ import { OverlayProps } from "@react-aria/overlays";
 import { AriaDialogProps } from "@react-types/dialog";
 import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 import { ScrollWrapperDirection } from "@components/ScrollWrapper/types";
-import { ButtonHTMLAttributes, HTMLAttributes, ReactElement, RefObject } from "react";
+import { HTMLAttributes, ReactElement, RefObject } from "react";
 
 export type ModalButton = {
     label: string;
-    action: () => void;
+    onClick: () => void;
     ref?: RefObject<HTMLButtonElement>;
-    ariaButtonProps?: ButtonHTMLAttributes<HTMLButtonElement>;
 };
 
 export type ModalVisualProps = {

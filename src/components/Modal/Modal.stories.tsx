@@ -120,10 +120,10 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
                 footer={
                     <ModalFooter
                         buttons={[
-                            { label: "Okay", action: () => action("click") },
+                            { label: "Okay", onClick: () => action("click") },
                             {
                                 label: "Cancel",
-                                action: () => state.close(),
+                                onClick: () => state.close(),
                             },
                         ]}
                     />

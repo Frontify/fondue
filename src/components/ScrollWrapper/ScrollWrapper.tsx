@@ -4,7 +4,7 @@ import React, { FC, useRef } from "react";
 import { useScrollWrapper } from "./hooks/useScrollWrapper";
 import { ScrollWrapperDirection, scrollWrapperDirections, ScrollWrapperProps } from "./types";
 
-export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction, children }) => {
+export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrapperDirection.Vertical, children }) => {
     const scrollingContainer = useRef<HTMLDivElement>(null);
 
     const [{ showTopShadow, showBottomShadow, showLeftShadow, showRightShadow }, scrollDivProps] =
@@ -23,11 +23,7 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction, children }) =
             {directionHorizontal && showLeftShadow && (
                 <div className="tw-w-full tw-h-10 tw-absolute tw--left-1/2 tw-top-1/2 tw-z-10 tw-bg-white tw-shadow-lg tw--rotate-90 tw--translate-x-5" />
             )}
-            <div
-                ref={scrollingContainer}
-                className={scrollWrapperDirections[direction ?? ScrollWrapperDirection.Vertical]}
-                {...scrollDivProps}
-            >
+            <div ref={scrollingContainer} className={scrollWrapperDirections[direction]} {...scrollDivProps}>
                 {children}
             </div>
             {directionVertical && showBottomShadow && (
