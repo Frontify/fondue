@@ -26,13 +26,13 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
         <div data-test-id="scroll-wrapper" className="tw-h-full tw-relative">
             {directionVertical && showTopShadow && (
                 <div
-                    className="tw-h-3 tw-w-full tw-absolute tw-z-10 tw-top-0 tw-left-0 tw-mix-blend-darken"
+                    className="tw-h-3 tw-w-full tw-absolute tw-z-10 tw-top-0 tw-left-0 tw-mix-blend-darken tw-border-t tw-border-line"
                     style={{ background: GRADIENTS.top }}
                 />
             )}
             {directionHorizontal && showLeftShadow && (
                 <div
-                    className="tw-w-3 tw-top-0 tw-absolute tw-left-0 tw-bottom-0 tw-h-full tw-z-10 tw-mix-blend-darken"
+                    className="tw-w-3 tw-top-0 tw-absolute tw-left-0 tw-bottom-0 tw-h-full tw-z-10 tw-mix-blend-darken tw-border-l tw-border-line"
                     style={{ background: GRADIENTS.left }}
                 />
             )}
@@ -41,13 +41,13 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
             </div>
             {directionVertical && showBottomShadow && (
                 <div
-                    className="tw-h-3 tw-w-full tw-absolute tw-z-10 tw-bottom-0 tw-left-0 tw-mix-blend-darken"
+                    className="tw-h-3 tw-w-full tw-absolute tw-z-10 tw-bottom-0 tw-left-0 tw-mix-blend-darken tw-border-b tw-border-line"
                     style={{ background: GRADIENTS.bottom }}
                 />
             )}
             {directionHorizontal && showRightShadow && (
                 <div
-                    className="tw-w-3 tw-top-0 tw-absolute tw-right-0 tw-bottom-0 tw-h-full tw-z-10 tw-mix-blend-darken"
+                    className="tw-w-3 tw-top-0 tw-absolute tw-right-0 tw-bottom-0 tw-h-full tw-z-10 tw-mix-blend-darken tw-border-r tw-border-line"
                     style={{ background: GRADIENTS.right }}
                 />
             )}
