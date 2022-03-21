@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, useRef } from "react";
+import { merge } from "../..";
 import { useScrollWrapper } from "./hooks/useScrollWrapper";
 import { ScrollWrapperDirection, scrollWrapperDirections, ScrollWrapperProps } from "./types";
 
@@ -23,7 +24,10 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
         direction === ScrollWrapperDirection.Horizontal || direction === ScrollWrapperDirection.Both;
 
     return (
-        <div data-test-id="scroll-wrapper" className="tw-h-full tw-relative">
+        <div
+            data-test-id="scroll-wrapper"
+            className="tw-h-full tw-relative tw-flex-auto tw-flex tw-flex-col tw-min-h-0"
+        >
             {directionVertical && showTopShadow && (
                 <div
                     className="tw-h-3 tw-w-full tw-absolute tw-z-10 tw-top-0 tw-left-0 tw-mix-blend-darken tw-border-t tw-border-line"
@@ -36,7 +40,11 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
                     style={{ background: GRADIENTS.left }}
                 />
             )}
-            <div ref={scrollingContainer} className={scrollWrapperDirections[direction]} {...scrollDivProps}>
+            <div
+                ref={scrollingContainer}
+                className={merge([scrollWrapperDirections[direction], "tw-flex-auto tw-min-h-0"])}
+                {...scrollDivProps}
+            >
                 {children}
             </div>
             {directionVertical && showBottomShadow && (

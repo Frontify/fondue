@@ -9,9 +9,9 @@ export enum ScrollWrapperDirection {
 }
 
 export const scrollWrapperDirections: Record<ScrollWrapperDirection, string> = {
-    [ScrollWrapperDirection.Both]: "tw-w-full tw-h-full tw-overflow-auto tw-p-6",
-    [ScrollWrapperDirection.Horizontal]: "tw-w-full tw-overflow-x-auto tw-overflow-y-hidden tw-px-6",
-    [ScrollWrapperDirection.Vertical]: "tw-h-full tw-overflow-y-auto tw-overflow-x-hidden tw-py-6",
+    [ScrollWrapperDirection.Both]: "tw-w-full tw-h-full tw-overflow-auto",
+    [ScrollWrapperDirection.Horizontal]: "tw-w-full tw-overflow-x-auto tw-overflow-y-hidden",
+    [ScrollWrapperDirection.Vertical]: "tw-h-full tw-overflow-y-auto tw-overflow-x-hidden",
 };
 
 export type ScrollWrapperProps = {
