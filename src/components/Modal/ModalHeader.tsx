@@ -1,17 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, FC } from "react";
+import React, { cloneElement, FC, useContext } from "react";
 import { merge } from "@utilities/merge";
 import { ModalHeaderProps, ModalHeaderVariant, modalHeaderVariants } from "./types";
 import { IconSize } from "@foundation/Icon";
+import { ModalTitle } from "./context/ModalTitle";
 
 export const ModalHeader: FC<ModalHeaderProps> = ({
     title,
     leadText,
     decorator,
     variant = ModalHeaderVariant.Default,
-    ariaTitleProps,
 }) => {
+    const ariaTitleProps = useContext(ModalTitle);
+
     return (
         <div data-test-id="modal-header">
             <div className="tw-flex tw-items-center">

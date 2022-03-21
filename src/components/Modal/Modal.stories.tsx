@@ -2,9 +2,6 @@
 
 import { Modal } from "./Modal";
 import React, { useState } from "react";
-import { ModalBody } from "./ModalBody";
-import { ModalHeader } from "./ModalHeader";
-import { ModalFooter } from "./ModalFooter";
 import { Button } from "@components/Button";
 import { Story, Meta } from "@storybook/react";
 import { TextInput } from "@components/TextInput";
@@ -109,30 +106,17 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
                     pattern: args.pattern,
                     foregroundColor: args.foregroundColor,
                 }}
-                header={
-                    <ModalHeader
-                        title={args.title}
-                        leadText={args.leadText}
-                        decorator={args.decorator}
-                        variant={args.variant}
-                    />
-                }
-                footer={
-                    <ModalFooter
-                        buttons={[
-                            { label: "Okay", onClick: () => action("click") },
-                            {
-                                label: "Cancel",
-                                onClick: () => state.close(),
-                            },
-                        ]}
-                    />
-                }
                 onClose={state.close}
                 isOpen={state.isOpen}
                 isDismissable
             >
-                <ModalBody direction={ScrollWrapperDirection.Vertical}>
+                <Modal.Header
+                    title={args.title}
+                    leadText={args.leadText}
+                    decorator={args.decorator}
+                    variant={args.variant}
+                />
+                <Modal.Body direction={ScrollWrapperDirection.Vertical}>
                     <div>
                         <p>
                             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
@@ -209,7 +193,16 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
                             explicabo, fugiat perferendis consequatur.
                         </p>
                     </div>
-                </ModalBody>
+                </Modal.Body>
+                <Modal.Footer
+                    buttons={[
+                        { label: "Okay", onClick: () => action("click") },
+                        {
+                            label: "Cancel",
+                            onClick: () => state.close(),
+                        },
+                    ]}
+                />
             </Modal>
         </>
     );

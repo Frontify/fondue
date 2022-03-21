@@ -1,13 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, FC, useRef } from "react";
+import React, { FC, memo, useRef } from "react";
 import { ModalProps } from "./types";
 import { ModalVisual } from "./ModalVisual";
 import { OverlayContainer, useModal, useOverlay, usePreventScroll } from "@react-aria/overlays";
 import { FocusScope } from "@react-aria/focus";
 import { useDialog } from "@react-aria/dialog";
-
 import { AnimatePresence, motion } from "framer-motion";
+import { ModalTitle } from "./context/ModalTitle";
+import { ModalHeader } from "./ModalHeader";
+import { ModalBody } from "./ModalBody";
+import { ModalFooter } from "./ModalFooter";
 
 const UNDERLAY_VARIANTS = {
     initial: {
@@ -33,9 +36,8 @@ const MODAL_VARIANTS = {
     exit: { y: 0 },
 };
 
-export const Modal: FC<ModalProps> = (props) => {
-    const { visual, header, footer, children, isOpen } = props;
-
+const ModalComponent: FC<ModalProps> = memo((props) => {
+    const { visual, children } = props;
     const ref = useRef<HTMLDivElement>(null);
     const {
         overlayProps,
@@ -48,44 +50,49 @@ export const Modal: FC<ModalProps> = (props) => {
     const { dialogProps, titleProps } = useDialog(props, ref);
 
     return (
-        <OverlayContainer>
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        variants={UNDERLAY_VARIANTS}
-                        initial="initial"
-                        animate="show"
-                        exit="exit"
-                        style={{ background: "rgba(0, 0, 0, .5)" }}
-                        onPointerDown={onPointerDown}
-                        className="tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0 tw-z-50 tw-flex tw-justify-center tw-items-center"
+        <motion.div
+            variants={UNDERLAY_VARIANTS}
+            initial="initial"
+            animate="show"
+            exit="exit"
+            style={{ background: "rgba(0, 0, 0, .5)" }}
+            onPointerDown={onPointerDown}
+            className="tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0 tw-z-50 tw-flex tw-justify-center tw-items-center"
+        >
+            {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
+            <FocusScope contain restoreFocus autoFocus>
+                <motion.div variants={MODAL_VARIANTS}>
+                    <div
+                        {...overlayProps}
+                        {...dialogProps}
+                        {...modalProps}
+                        ref={ref}
+                        data-test-id="modal-container"
+                        className="tw-max-w-[790px] tw-max-h-[600px] tw-flex tw-bg-white tw-border tw-border-solid tw-border-line-strong tw-rounded tw-shadow-2xl"
                     >
-                        <FocusScope contain restoreFocus>
-                            <motion.div variants={MODAL_VARIANTS}>
-                                <div
-                                    {...overlayProps}
-                                    {...dialogProps}
-                                    {...modalProps}
-                                    ref={ref}
-                                    data-test-id="modal-container"
-                                    className="tw-max-w-[790px] tw-max-h-[600px] tw-flex tw-bg-white tw-border tw-border-solid tw-border-line-strong tw-rounded tw-shadow-2xl"
-                                >
-                                    {visual?.pattern && (
-                                        <div className="tw-w-[260px] tw-relative tw-flex-shrink-0 tw-overflow-hidden">
-                                            <ModalVisual {...visual} />
-                                        </div>
-                                    )}
-                                    <div className="tw-flex tw-flex-col tw-flex-1 tw-space-y-6 tw-p-14 tw-overflow-hidden">
-                                        {header && cloneElement(header, { ariaTitleProps: titleProps })}
-                                        {children}
-                                        {footer}
-                                    </div>
-                                </div>
-                            </motion.div>
-                        </FocusScope>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </OverlayContainer>
+                        {visual?.pattern && (
+                            <div className="tw-w-[260px] tw-relative tw-flex-shrink-0 tw-overflow-hidden">
+                                <ModalVisual {...visual} />
+                            </div>
+                        )}
+                        <div className="tw-flex tw-flex-col tw-flex-1 tw-space-y-6 tw-p-14 tw-overflow-hidden">
+                            <ModalTitle.Provider value={titleProps}>{children}</ModalTitle.Provider>
+                        </div>
+                    </div>
+                </motion.div>
+            </FocusScope>
+        </motion.div>
     );
-};
+});
+
+ModalComponent.displayName = "Modal";
+
+export const Modal = ({ isOpen, ...modalProps }: ModalProps) => (
+    <OverlayContainer>
+        <AnimatePresence>{isOpen && <ModalComponent {...modalProps} isOpen />}</AnimatePresence>
+    </OverlayContainer>
+);
+
+Modal.Header = ModalHeader;
+Modal.Body = ModalBody;
+Modal.Footer = ModalFooter;

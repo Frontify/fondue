@@ -4,7 +4,7 @@ import { OverlayProps } from "@react-aria/overlays";
 import { AriaDialogProps } from "@react-types/dialog";
 import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 import { ScrollWrapperDirection } from "@components/ScrollWrapper/types";
-import { HTMLAttributes, ReactElement, RefObject } from "react";
+import { ReactElement, RefObject } from "react";
 
 export type ModalButton = {
     label: string;
@@ -38,7 +38,6 @@ export type ModalHeaderProps = {
     leadText?: string;
     decorator?: ReactElement;
     variant?: ModalHeaderVariant;
-    ariaTitleProps?: HTMLAttributes<HTMLElement>;
 };
 
 type ModalBodyChildren = ReactElement | ReactElement[];
