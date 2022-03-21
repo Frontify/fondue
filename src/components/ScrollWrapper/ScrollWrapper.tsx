@@ -16,7 +16,7 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
         direction === ScrollWrapperDirection.Horizontal || direction === ScrollWrapperDirection.Both;
 
     return (
-        <div data-test-id="scroll-wrapper" className="tw-h-full tw-relative">
+        <div data-test-id="scroll-wrapper" className="tw-h-full tw-relative tw-overflow-hidden">
             {directionVertical && showTopShadow && (
                 <div className="tw-h-10 tw-relative tw-z-10 tw-shadow-lg tw--mt-10" />
             )}

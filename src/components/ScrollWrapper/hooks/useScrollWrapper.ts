@@ -1,19 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { RefObject, useState, UIEvent } from "react";
+import { RefObject, useState, UIEvent, useEffect } from "react";
+
+const getScrollDimensions = (HTMLElement?: HTMLElement | null) => ({
+    top: HTMLElement?.scrollTop ?? 0,
+    height: HTMLElement?.scrollHeight ?? Infinity,
+    left: HTMLElement?.scrollLeft ?? 0,
+    width: HTMLElement?.scrollWidth ?? Infinity,
+});
 
 export const useScrollWrapper = (scrollingContainer: RefObject<HTMLElement>) => {
     const [scrollDimensions, setScrollDimensions] = useState({ top: 0, height: Infinity, width: Infinity, left: 0 });
 
     const onScroll = (event: UIEvent) => {
         const target = event.target as HTMLElement;
-        setScrollDimensions({
-            top: target.scrollTop,
-            height: target.scrollHeight,
-            left: target.scrollLeft,
-            width: target.scrollWidth,
-        });
+        const dimensions = getScrollDimensions(target);
+        setScrollDimensions(dimensions);
     };
+
+    useEffect(() => {
+        const dimensions = getScrollDimensions(scrollingContainer.current);
+        setScrollDimensions(dimensions);
+    }, []);
 
     const { top, height, left, width } = scrollDimensions;
 

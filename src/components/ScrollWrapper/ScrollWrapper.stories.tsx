@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@components/Button";
-import { ScrollWrapperProps } from "./types";
+import { ScrollWrapperDirection, ScrollWrapperProps } from "./types";
 import { Story, Meta } from "@storybook/react";
 import { ScrollWrapper } from "./ScrollWrapper";
 import { TextInput } from "@components/TextInput";
@@ -19,27 +19,72 @@ export const Default: Story<ScrollWrapperProps> = (args) => {
     const [input, setInput] = useState("");
 
     return (
-        <ScrollWrapper {...args}>
-            <p>
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda itaque
-                tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo, fugiat perferendis
-                consequatur.
-            </p>
-            <div className="tw-my-4">
-                <FormControl
-                    style={FormControlStyle.Primary}
-                    direction={FormControlDirection.Vertical}
-                    label={{
-                        children: "Input Label",
-                        required: false,
-                        htmlFor: generateRandomId(),
-                        tooltip: { content: "Tooltip Text" },
-                    }}
-                >
-                    <TextInput value={input} onChange={setInput} />
-                </FormControl>
-            </div>
-            <Button>Action</Button>
-        </ScrollWrapper>
+        <div className="tw-max-h-[300px] tw-flex tw-flex-col">
+            <ScrollWrapper {...args}>
+                <p className="tw-w-[200px]">
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
+                    itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo, fugiat
+                    perferendis consequatur.
+                </p>
+                <p className="tw-w-[200px] ">
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
+                    itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo, fugiat
+                    perferendis consequatur.
+                </p>
+                <p className="tw-w-[200px]">
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
+                    itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo, fugiat
+                    perferendis consequatur.
+                </p>
+                <div className="tw-my-4">
+                    <FormControl
+                        style={FormControlStyle.Primary}
+                        direction={FormControlDirection.Vertical}
+                        label={{
+                            children: "Input Label",
+                            required: false,
+                            htmlFor: generateRandomId(),
+                            tooltip: { content: "Tooltip Text" },
+                        }}
+                    >
+                        <TextInput value={input} onChange={setInput} />
+                    </FormControl>
+                </div>
+                <Button>Action</Button>
+            </ScrollWrapper>
+        </div>
+    );
+};
+
+export const Horizontal: Story<ScrollWrapperProps> = (args) => {
+    const [input, setInput] = useState("");
+
+    return (
+        <div className="tw-w-[500px]">
+            <ScrollWrapper {...args} direction={ScrollWrapperDirection.Horizontal}>
+                <div className="tw-w-[2000px]">
+                    <p>
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
+                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
+                        fugiat perferendis consequatur.
+                    </p>
+                    <div className="tw-my-4">
+                        <FormControl
+                            style={FormControlStyle.Primary}
+                            direction={FormControlDirection.Vertical}
+                            label={{
+                                children: "Input Label",
+                                required: false,
+                                htmlFor: generateRandomId(),
+                                tooltip: { content: "Tooltip Text" },
+                            }}
+                        >
+                            <TextInput value={input} onChange={setInput} />
+                        </FormControl>
+                    </div>
+                    <Button>Action</Button>
+                </div>
+            </ScrollWrapper>
+        </div>
     );
 };
