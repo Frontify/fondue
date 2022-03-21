@@ -104,115 +104,113 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
     return (
         <>
             <Button onClick={() => state.open()}>Open Modal</Button>
-            {state.isOpen && (
-                <Modal
-                    visual={{
-                        pattern: args.pattern,
-                        foregroundColor: args.foregroundColor,
-                    }}
-                    header={
-                        <ModalHeader
-                            title={args.title}
-                            leadText={args.leadText}
-                            decorator={args.decorator}
-                            variant={args.variant}
-                        />
-                    }
-                    footer={
-                        <ModalFooter
-                            buttons={[
-                                { label: "Okay", action: () => action("click") },
-                                {
-                                    label: "Cancel",
-                                    action: () => state.close(),
-                                },
-                            ]}
-                        />
-                    }
-                    onClose={state.close}
-                    isOpen
-                    isDismissable
-                >
-                    <ModalBody direction={ScrollWrapperDirection.Vertical}>
-                        <div>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                                assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi
-                                iure explicabo, fugiat perferendis consequatur.
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                                assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi
-                                iure explicabo, fugiat perferendis consequatur.
-                            </p>
-                            <div className="tw-my-4">
-                                <FormControl
-                                    style={FormControlStyle.Primary}
-                                    direction={FormControlDirection.Vertical}
-                                    label={{
-                                        children: "Input Label",
-                                        required: false,
-                                        htmlFor: generateRandomId(),
-                                        tooltip: { content: "Tooltip Text" },
-                                    }}
-                                >
-                                    <TextInput value={input} onChange={setInput} />
-                                </FormControl>
-                            </div>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                                assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi
-                                iure explicabo, fugiat perferendis consequatur.
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                                assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi
-                                iure explicabo, fugiat perferendis consequatur.
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                                assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi
-                                iure explicabo, fugiat perferendis consequatur.
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                                assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi
-                                iure explicabo, fugiat perferendis consequatur.
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                                assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi
-                                iure explicabo, fugiat perferendis consequatur.
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                                assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi
-                                iure explicabo, fugiat perferendis consequatur.
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                                assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi
-                                iure explicabo, fugiat perferendis consequatur.
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                                assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi
-                                iure explicabo, fugiat perferendis consequatur.
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                                assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi
-                                iure explicabo, fugiat perferendis consequatur.
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                                assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi
-                                iure explicabo, fugiat perferendis consequatur.
-                            </p>
+            <Modal
+                visual={{
+                    pattern: args.pattern,
+                    foregroundColor: args.foregroundColor,
+                }}
+                header={
+                    <ModalHeader
+                        title={args.title}
+                        leadText={args.leadText}
+                        decorator={args.decorator}
+                        variant={args.variant}
+                    />
+                }
+                footer={
+                    <ModalFooter
+                        buttons={[
+                            { label: "Okay", action: () => action("click") },
+                            {
+                                label: "Cancel",
+                                action: () => state.close(),
+                            },
+                        ]}
+                    />
+                }
+                onClose={state.close}
+                isOpen={state.isOpen}
+                isDismissable
+            >
+                <ModalBody direction={ScrollWrapperDirection.Vertical}>
+                    <div>
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
+                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
+                            explicabo, fugiat perferendis consequatur.
+                        </p>
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
+                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
+                            explicabo, fugiat perferendis consequatur.
+                        </p>
+                        <div className="tw-my-4">
+                            <FormControl
+                                style={FormControlStyle.Primary}
+                                direction={FormControlDirection.Vertical}
+                                label={{
+                                    children: "Input Label",
+                                    required: false,
+                                    htmlFor: generateRandomId(),
+                                    tooltip: { content: "Tooltip Text" },
+                                }}
+                            >
+                                <TextInput value={input} onChange={setInput} />
+                            </FormControl>
                         </div>
-                    </ModalBody>
-                </Modal>
-            )}
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
+                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
+                            explicabo, fugiat perferendis consequatur.
+                        </p>
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
+                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
+                            explicabo, fugiat perferendis consequatur.
+                        </p>
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
+                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
+                            explicabo, fugiat perferendis consequatur.
+                        </p>
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
+                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
+                            explicabo, fugiat perferendis consequatur.
+                        </p>
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
+                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
+                            explicabo, fugiat perferendis consequatur.
+                        </p>
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
+                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
+                            explicabo, fugiat perferendis consequatur.
+                        </p>
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
+                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
+                            explicabo, fugiat perferendis consequatur.
+                        </p>
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
+                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
+                            explicabo, fugiat perferendis consequatur.
+                        </p>
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
+                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
+                            explicabo, fugiat perferendis consequatur.
+                        </p>
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
+                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
+                            explicabo, fugiat perferendis consequatur.
+                        </p>
+                    </div>
+                </ModalBody>
+            </Modal>
         </>
     );
 };
