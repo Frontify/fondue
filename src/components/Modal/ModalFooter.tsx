@@ -7,7 +7,7 @@ import { Button, ButtonSize } from "@components/Button";
 export const ModalFooter: FC<ModalFooterProps> = ({ buttons }) => (
     <div data-test-id="modal-footer">
         {buttons && (
-            <div className="tw-flex tw-flex-row-reverse tw-gap-x-3">
+            <div className="tw-flex tw-gap-x-3">
                 {buttons.map((button, index) => (
                     <Button {...button} size={ButtonSize.Medium} key={index} />
                 ))}
