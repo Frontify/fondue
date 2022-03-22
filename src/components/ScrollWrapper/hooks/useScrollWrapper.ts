@@ -2,11 +2,11 @@
 
 import { RefObject, useState, UIEvent, useEffect } from "react";
 
-const getScrollDimensions = (HTMLElement?: HTMLElement | null) => ({
-    top: HTMLElement?.scrollTop ?? 0,
-    height: HTMLElement?.scrollHeight ?? Infinity,
-    left: HTMLElement?.scrollLeft ?? 0,
-    width: HTMLElement?.scrollWidth ?? Infinity,
+const getScrollDimensions = (HTMLElement: HTMLElement) => ({
+    top: HTMLElement.scrollTop,
+    height: HTMLElement.scrollHeight,
+    left: HTMLElement.scrollLeft,
+    width: HTMLElement.scrollWidth,
 });
 
 export const useScrollWrapper = (scrollingContainer: RefObject<HTMLElement>) => {
@@ -19,8 +19,27 @@ export const useScrollWrapper = (scrollingContainer: RefObject<HTMLElement>) => 
     };
 
     useEffect(() => {
-        const dimensions = getScrollDimensions(scrollingContainer.current);
-        setScrollDimensions(dimensions);
+        let resizeObserver: ResizeObserver;
+        const updateDimensionsFromRef = () => {
+            if (scrollingContainer.current) {
+                const dimensions = getScrollDimensions(scrollingContainer.current);
+                setScrollDimensions(dimensions);
+            }
+        };
+
+        if (scrollingContainer.current) {
+            updateDimensionsFromRef();
+            resizeObserver = new ResizeObserver(updateDimensionsFromRef);
+            resizeObserver.observe(scrollingContainer.current);
+            window.addEventListener("resize", updateDimensionsFromRef);
+        }
+
+        return () => {
+            if (scrollingContainer.current) {
+                resizeObserver.disconnect();
+                window.removeEventListener("resize", updateDimensionsFromRef);
+            }
+        };
     }, []);
 
     const { top, height, left, width } = scrollDimensions;
