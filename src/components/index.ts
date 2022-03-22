@@ -23,6 +23,7 @@ export * from "./InputLabel";
 export * from "./LinkChooser";
 export * from "./LoadingCircle";
 export * from "./MenuItem";
+export * from "./Modal";
 export * from "./MultiInput";
 export * from "./MultiSelect";
 export * from "./OrderableList";
