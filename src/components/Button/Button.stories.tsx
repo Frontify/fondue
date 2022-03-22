@@ -40,7 +40,7 @@ export default {
             options: [IconEnum.Icons, IconEnum.DotsVertical, IconEnum.ColorScale, IconEnum.Settings],
             mapping: {
                 [IconEnum.Icons]: iconsMap[IconEnum.Icons],
-                [IconEnum.Actions]: iconsMap[IconEnum.Actions],
+                [IconEnum.DotsVertical]: iconsMap[IconEnum.DotsVertical],
                 [IconEnum.ColorScale]: iconsMap[IconEnum.ColorScale],
                 [IconEnum.Settings]: iconsMap[IconEnum.Settings],
             },
