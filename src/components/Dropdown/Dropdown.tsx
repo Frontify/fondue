@@ -24,6 +24,18 @@ export enum DropdownSize {
     Large = "Large",
 }
 
+export enum DropdownAlignment {
+    Start = "Start",
+    Middle = "Middle",
+    End = "End",
+}
+
+const alignmentStyling: Record<DropdownAlignment, string> = {
+    [DropdownAlignment.Start]: "tw-left-0",
+    [DropdownAlignment.Middle]: "tw-m-auto",
+    [DropdownAlignment.End]: "tw-right-0",
+};
+
 export type DropdownProps = {
     id?: string;
     menuBlocks: MenuBlock[];
@@ -37,6 +49,7 @@ export type DropdownProps = {
     decorator?: ReactElement;
     autoResize?: boolean;
     validation?: Validation;
+    alignment?: DropdownAlignment;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
