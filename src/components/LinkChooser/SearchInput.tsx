@@ -53,6 +53,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                 onClick={onClick}
                 onMouseDown={onMouseDown}
             >
+                {JSON.stringify(selectedResult)}
                 {decorator && (
                     <div
                         className={merge([
@@ -64,6 +65,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         {decorator}
                     </div>
                 )}
+
                 <input
                     {...mergeProps(focusProps, ariaProps)}
                     readOnly={!isFocused}
@@ -74,7 +76,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                             ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40"
                             : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
                     ])}
-                    value={value}
+                    value={selectedResult?.title ?? value}
                     disabled={disabled}
                     data-test-id="link-chooser-search-input"
                 />

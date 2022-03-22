@@ -47,6 +47,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     getGlobalByQuery = getDefaultData,
     openPreview = window.open,
     clipboardOptions = navigator.clipboard,
+    selectedResult = null,
     openInNewTab = false,
     ariaLabel = "Menu",
     extraSections = [],
@@ -62,7 +63,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const [{ context, matches, value }, send, service] = useMachine(() =>
         linkChooserMachine.withContext({
             searchResults: [],
-            selectedResult: null,
+            selectedResult,
             query: "",
             interruptedFetch: false,
             getExtraResultsByQuery: null,
@@ -103,6 +104,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         closeBoxState(state);
         setSelectedKey(key);
     };
+
     const handleInputChange = useCallback(
         (query: string) => {
             send({ type: "TYPING", data: { query } });
@@ -110,17 +112,17 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         [value],
     );
 
-    const [selectedKey, setSelectedKey] = useState<Key | undefined>();
+    const [selectedKey, setSelectedKey] = useState<Key | undefined>(context.selectedResult?.id);
 
     const state = useComboBoxState({
         ...props,
         defaultFilter: (textValue, inputValue) => doesContainSubstring(textValue, inputValue, extraSections),
         onInputChange: handleInputChange,
         onSelectionChange: handleSelectionChange,
-        selectedKey,
         menuTrigger: "manual",
         shouldCloseOnBlur: false,
         allowsEmptyCollection: true,
+        selectedKey,
     });
 
     const { inputProps, listBoxProps, labelProps } = useComboBox(
@@ -200,8 +202,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         },
     );
 
-    const inputDecorator = IconOptions[context.selectedResult?.icon || DEFAULT_ICON];
-
     useEffect(() => {
         if (isLoaded(matches) && context.interruptedFetch) {
             send({ type: "TYPING", data: { query: context.query } });
@@ -252,7 +252,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     selectedResult={context.selectedResult}
                     ref={inputRef}
                     disabled={disabled}
-                    decorator={inputDecorator}
+                    decorator={IconOptions[context.selectedResult?.icon || DEFAULT_ICON]}
                     clearable={clearable}
                     onClear={handleClearClick}
                     machineService={service}

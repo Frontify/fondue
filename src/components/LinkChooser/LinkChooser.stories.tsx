@@ -21,7 +21,7 @@ export default {
         validation: Validation.Default,
     },
     argTypes: {
-        onLinkChange: { action: "onClick" },
+        onLinkChange: { action: "onLinkChange" },
         validation: {
             options: Object.values(Validation),
             control: { type: "select" },
