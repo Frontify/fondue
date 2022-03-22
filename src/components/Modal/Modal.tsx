@@ -57,18 +57,18 @@ const ModalComponent: FC<ModalProps> = memo((props) => {
             exit="exit"
             style={{ background: "rgba(0, 0, 0, .5)" }}
             onPointerDown={onPointerDown}
-            className="tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0 tw-z-50 tw-flex tw-justify-center tw-items-center"
+            className="tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0 tw-z-50 tw-flex tw-justify-center tw-items-center tw-p-3"
         >
             {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
             <FocusScope contain restoreFocus autoFocus>
-                <motion.div variants={MODAL_VARIANTS}>
+                <motion.div variants={MODAL_VARIANTS} className="tw-w-full tw-max-w-[790px] tw-max-h-[600px] tw-h-full">
                     <div
                         {...overlayProps}
                         {...dialogProps}
                         {...modalProps}
                         ref={ref}
                         data-test-id="modal-container"
-                        className="tw-max-w-[790px] tw-max-h-[600px] tw-flex tw-bg-white tw-border tw-border-solid tw-border-line-strong tw-rounded tw-shadow-2xl"
+                        className="tw-h-full tw-w-full tw-flex tw-bg-white tw-border tw-border-solid tw-border-line-strong tw-rounded tw-shadow-2xl"
                     >
                         {visual?.pattern && (
                             <div className="tw-w-[260px] tw-relative tw-flex-shrink-0 tw-overflow-hidden">
