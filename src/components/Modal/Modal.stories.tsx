@@ -2,7 +2,7 @@
 
 import { Modal } from "./Modal";
 import React, { useState } from "react";
-import { Button } from "@components/Button";
+import { Button, ButtonStyle } from "@components/Button";
 import { Story, Meta } from "@storybook/react";
 import { TextInput } from "@components/TextInput";
 import { action } from "@storybook/addon-actions";
@@ -196,10 +196,11 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
                 </Modal.Body>
                 <Modal.Footer
                     buttons={[
-                        { label: "Okay", onClick: () => action("click") },
+                        { children: "Okay", onClick: () => action("click"), style: ButtonStyle.Secondary },
                         {
-                            label: "Cancel",
+                            children: "Cancel",
                             onClick: () => state.close(),
+                            style: ButtonStyle.Primary,
                         },
                     ]}
                 />
