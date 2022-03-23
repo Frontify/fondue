@@ -5,7 +5,7 @@ import React, { FC, PropsWithChildren } from "react";
 import { decorationMap, displayMap, overflowMap, whitespaceMap, wordBreakMap } from "../shared/records";
 import { SharedTypographyProps } from "../shared/types";
 
-type HeadingWeight = "default" | "strong" | /* DEPRECATE */ "medium";
+type HeadingWeight = "default" | "strong";
 type HeadingSize = "medium" | "large" | "x-large" | "xx-large";
 type HeadingColor = "default" | "weak" | "x-weak" | "disabled" | "negative" | "positive" | "warning" | "interactive";
 
@@ -21,8 +21,6 @@ export type HeadingProps = PropsWithChildren<
 const weightMap: Record<HeadingWeight, string> = {
     default: "tw-font-medium",
     strong: "tw-font-bold",
-    /* DEPRECATE */
-    medium: "tw-font-medium",
 };
 
 const sizeMap: Record<HeadingSize, string> = {
