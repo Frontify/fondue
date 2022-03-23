@@ -5,7 +5,7 @@ import React, { FC, PropsWithChildren } from "react";
 import { decorationMap, displayMap, overflowMap, whitespaceMap, wordBreakMap } from "../shared/records";
 import { SharedTypographyProps } from "../shared/types";
 
-type TextWeight = "regular" | "strong" | "x-strong";
+type TextWeight = "default" | "strong" | "x-strong";
 type TextSize = "x-small" | "small" | "medium" | "large";
 type TextColor = "default" | "weak" | "x-weak" | "disabled" | "negative" | "positive" | "warning" | "interactive";
 
@@ -19,9 +19,9 @@ export type TextProps = PropsWithChildren<
 >;
 
 const weightMap: Record<TextWeight, string> = {
-    regular: "tw-font-regular",
-    strong: "tw-font-bold",
-    "x-strong": "tw-font-extrabold",
+    default: "tw-font-regular",
+    strong: "tw-font-medium",
+    "x-strong": "tw-font-bold",
 };
 
 const sizeMap: Record<TextSize, string> = {
@@ -45,7 +45,7 @@ const colorMap: Record<TextColor, string> = {
 export const Text: FC<TextProps> = ({
     children,
     as: Tag = "span",
-    weight = "regular",
+    weight = "default",
     size = "medium",
     color = "default",
     decoration = "none",
