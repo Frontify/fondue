@@ -5,7 +5,7 @@ import React, { FC, PropsWithChildren } from "react";
 import { decorationMap, displayMap, overflowMap, whitespaceMap, wordBreakMap } from "../shared/records";
 import { SharedTypographyProps } from "../shared/types";
 
-type TextWeight = "default" | "strong" | "x-strong" | /* DEPRECATE */ "regular";
+type TextWeight = "default" | "strong" | "x-strong";
 type TextSize = "x-small" | "small" | "medium" | "large";
 type TextColor = "default" | "weak" | "x-weak" | "disabled" | "negative" | "positive" | "warning" | "interactive";
 
@@ -22,8 +22,6 @@ const weightMap: Record<TextWeight, string> = {
     default: "tw-font-regular",
     strong: "tw-font-medium",
     "x-strong": "tw-font-bold",
-    /* DEPRECATE */
-    regular: "tw-font-regular",
 };
 
 const sizeMap: Record<TextSize, string> = {
