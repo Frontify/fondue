@@ -1,7 +1,7 @@
 import { merge } from "@utilities/merge";
 import React, { FC, PropsWithChildren } from "react";
 
-type CodeWeight = "default" | "strong" | /* DEPRECATE */ "medium";
+type CodeWeight = "default" | "strong";
 
 type CodeSize = "small" | "medium" | "large";
 
@@ -17,8 +17,6 @@ export type CodeProps = PropsWithChildren<{
 const weightMap: Record<CodeWeight, string> = {
     default: "tw-font-regular",
     strong: "tw-font-bold",
-    /* DEPRECATE */
-    medium: "tw-font-medium",
 };
 
 const sizeMap: Record<CodeSize, string> = {
