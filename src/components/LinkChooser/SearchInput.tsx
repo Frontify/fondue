@@ -53,7 +53,6 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                 onClick={onClick}
                 onMouseDown={onMouseDown}
             >
-                {JSON.stringify(selectedResult)}
                 {decorator && (
                     <div
                         className={merge([
