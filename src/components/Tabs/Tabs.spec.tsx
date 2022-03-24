@@ -150,25 +150,20 @@ describe("Tabs Component", () => {
         cy.get("body").realPress("Tab");
         cy.get("body").realPress("Enter");
         cy.get("[role=dialog]").should("be.visible");
-        cy.get("[data-test-id=tab-overflow]").realPress("Tab");
-        cy.get("[data-test-id=tab-item]").eq(2).trigger("keydown", { key: "ArrowRight" });
-        cy.get("button#tab-4-btn").should("have.attr", "aria-selected", "true");
-        cy.get("body").trigger("keydown", { key: "ArrowRight" });
-        cy.get("button#tab-6-btn").should("have.attr", "aria-selected", "true");
+        cy.get("body").realPress("Tab");
+        cy.get("button#tab-4-btn-m").should("be.focused");
+        cy.get("body").realPress("Tab");
+        cy.get("button#tab-6-btn-m").should("be.focused");
+        cy.get("body").realPress("Enter");
         cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.text", "content for label 6");
-        cy.get("body").trigger("keydown", { key: "ArrowLeft" });
-        cy.get("button#tab-4-btn").should("have.attr", "aria-selected", "true");
+        cy.get("body").realPress(["Shift", "Tab"]);
+        cy.get("body").realPress("Enter");
+        cy.get("body").realPress("Tab");
+        cy.get("button#tab-6-btn-m").should("be.focused");
+        cy.get("body").realPress(["Shift", "Tab"]);
+        cy.get("button#tab-4-btn-m").should("be.focused");
+        cy.get("body").realPress("Enter");
         cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.text", "content for tab 4");
-        cy.get("body").trigger("keydown", { key: "ArrowLeft" });
-        cy.get("[data-test-id=tab-item]").eq(2).should("have.class", "tw-font-medium");
-        cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.text", data[2].children);
-        cy.get("body").trigger("keydown", { key: "ArrowDown" });
-        cy.get("button#tab-4-btn").should("have.attr", "aria-selected", "true");
-        cy.get("body").trigger("keydown", { key: "ArrowDown" });
-        cy.get("button#tab-5-btn").should("not.have.attr", "aria-selected", "true");
-        cy.get("button#tab-6-btn").should("have.attr", "aria-selected", "true");
-        cy.get("body").trigger("keydown", { key: "ArrowUp" });
-        cy.get("button#tab-4-btn").should("have.attr", "aria-selected", "true");
     });
 
     it("should have focus on tab and content", () => {
@@ -176,10 +171,8 @@ describe("Tabs Component", () => {
         cy.get("button#tab-3-btn").should("be.focused");
         cy.get("body").realPress("Tab");
         cy.get("body").realPress("Tab");
-        cy.get("body").realPress("Tab");
         cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("be.focused");
         cy.get("[data-test-id=tab-content]").children().not(".tw-hidden").should("contain.text", data[2].children);
-        cy.get("body").realPress(["Shift", "Tab"]);
         cy.get("body").realPress(["Shift", "Tab"]);
         cy.get("body").realPress(["Shift", "Tab"]);
         cy.get("button#tab-3-btn").should("be.focused");

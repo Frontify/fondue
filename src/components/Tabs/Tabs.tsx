@@ -16,9 +16,8 @@ import { merge } from "@utilities/merge";
 import { IconMore } from "@foundation/Icon";
 import { Badge } from "@components/Badge";
 import { LayoutGroup, motion } from "framer-motion";
-import { Button, ButtonSize, ButtonStyle } from "@components/Button";
-import { Flyout } from "@components/Flyout";
 import { useMemoizedId } from "@hooks/useMemoizedId";
+import { Button, ButtonSize, ButtonStyle } from "@components/Button";
 
 export enum TabsPaddingX {
     Small = "Small",
@@ -119,12 +118,12 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
             const buttonElement = document.getElementById(
                 fromOverflow ? `${elementId}-btn-m` : `${elementId}-btn`,
             ) as HTMLButtonElement;
-            buttonElement.focus();
             if (onChange) {
                 onChange(elementId);
             }
             buttonElement.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
             checkIfOverflowing();
+            buttonElement.focus();
         } catch (error) {
             throw (error as Error).message;
         }
@@ -197,24 +196,19 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                 {isOverflowing && (
                     <div
                         data-test-id="tab-overflow"
-                        className="tw-absolute tw-rotate-90 tw-right-3 tw-top-0 tw-w-6 tw-h-6 tw-bg-box-neutral tw-rounded tw-flex tw-justify-center tw-items-center"
+                        className="tw-absolute tw-right-3 tw-top-0 tw-w-6 tw-h-6 tw-bg-box-neutral tw-rounded tw-flex tw-justify-center tw-items-center"
                     >
-                        <Flyout
-                            trigger={
-                                <Button
-                                    style={ButtonStyle.Secondary}
-                                    size={ButtonSize.Small}
-                                    icon={<IconMore />}
-                                    onClick={() => setIsMenuOpened(!isMenuOpened)}
-                                />
-                            }
-                            legacyFooter={false}
-                            isOpen={isMenuOpened}
-                            onOpenChange={() => setIsMenuOpened(!isMenuOpened)}
-                            onCancel={() => setIsMenuOpened(false)}
-                            fitContent={true}
-                        >
-                            <div className="tw-px-3 tw-pt-3">
+                        <Button
+                            style={ButtonStyle.Secondary}
+                            size={ButtonSize.Small}
+                            icon={<IconMore />}
+                            onClick={() => setIsMenuOpened(!isMenuOpened)}
+                        />
+                        {isMenuOpened && (
+                            <div
+                                className="tw-absolute tw-right-0 tw-top-8 tw-px-3 tw-pt-3 tw-bg-base tw-shadow tw-w-max"
+                                role="dialog"
+                            >
                                 {overflowArray.map((i) => {
                                     return (
                                         <button
@@ -228,7 +222,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                             aria-selected={tabs[i].id === activeItemId}
                                             aria-controls={`${tabs[i].id}-content`}
                                             aria-hidden={tabs[i].disabled}
-                                            tabIndex={!tabs[i].disabled ? 0 : -1}
+                                            tabIndex={!tabs[i].disabled && isMenuOpened ? 0 : -1}
                                             id={`${tabs[i].id}-btn-m`}
                                             onKeyDown={(event) => handleKeyboardTabChange(event)}
                                         >
@@ -243,7 +237,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                     );
                                 })}
                             </div>
-                        </Flyout>
+                        )}
                     </div>
                 )}
             </div>
