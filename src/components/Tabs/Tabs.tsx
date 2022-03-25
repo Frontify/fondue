@@ -102,9 +102,9 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
 
     const handleKeyboardTabChange = (event: KeyboardEvent<HTMLButtonElement>) => {
         const overflownTabs = getOverflownTabs();
-        // @ts-ignore
-        const fromOverflow = event.target.id.includes("-m"); // @ts-ignore
-        const currentTabId = event.target.id.replace("-btn-m", "");
+        const target = event.target as HTMLElement;
+        const fromOverflow = target.id.includes("-m");
+        const currentTabId = target.id.replace("-btn-m", "");
         const currentTabsArray = fromOverflow ? overflownTabs : tabs;
 
         const nextTabs = filterTabList(currentTabsArray, "next");
@@ -123,8 +123,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
             setIsMenuOpened(false);
         }
 
-        // @ts-ignore
-        if (!event.target.id.includes("-m")) {
+        if (!target.id.includes("-m")) {
             setIsMenuOpened(false);
         }
     };
