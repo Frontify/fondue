@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Key } from "react";
 import { createMachine, DoneInvokeEvent } from "xstate";
 import { ExtraSection, SearchResult } from "../types";
 import {
@@ -22,17 +23,17 @@ export enum LinkChooserState {
 
 export type LinkChooserContext = {
     searchResults: SearchResult[];
-    selectedResultId: string | null;
+    selectedKey: Key | null;
     searchTerm: string;
     extraSections: ExtraSection[];
     currentSectionId: string;
-    readonly onLinkChange: (value: SearchResult | null) => void;
-    readonly getGlobalByQuery: (query: string) => Promise<SearchResult[]>;
+    onLinkChange: (value: SearchResult | null) => void;
+    getGlobalByQuery: (query: string) => Promise<SearchResult[]>;
 };
 
 export type LinkChooserEventData = {
     searchResults?: SearchResult[];
-    selectedResultId?: string | null;
+    selectedKey?: Key | null;
     searchTerm?: string;
     extraSections?: ExtraSection[];
     currentSectionId?: string;

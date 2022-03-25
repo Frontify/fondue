@@ -16,7 +16,7 @@ export const setSectionId = () =>
 
 export const setSelectedResultId = () =>
     assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
-        selectedResultId: (_context, { data }) => data.selectedResultId ?? "",
+        selectedKey: (_context, { data }) => data.selectedKey ?? "",
     });
 
 export const setSearchResults = () =>
