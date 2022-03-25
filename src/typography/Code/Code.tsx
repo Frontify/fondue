@@ -1,7 +1,7 @@
 import { merge } from "@utilities/merge";
 import React, { FC, PropsWithChildren } from "react";
 
-type CodeHeight = "medium" | "strong";
+type CodeWeight = "default" | "strong";
 
 type CodeSize = "small" | "medium" | "large";
 
@@ -9,13 +9,13 @@ type CodeColor = "default" | "weak" | "x-weak" | "disabled" | "negative" | "posi
 
 export type CodeProps = PropsWithChildren<{
     size?: CodeSize;
-    weight?: CodeHeight;
+    weight?: CodeWeight;
     as?: "code" | "pre" | "span";
     color?: CodeColor;
 }>;
 
-const weightMap: Record<CodeHeight, string> = {
-    medium: "tw-font-medium",
+const weightMap: Record<CodeWeight, string> = {
+    default: "tw-font-regular",
     strong: "tw-font-bold",
 };
 
@@ -39,7 +39,7 @@ const colorMap: Record<CodeColor, string> = {
 export const Code: FC<CodeProps> = ({
     children,
     as: Tag = "span",
-    weight = "medium",
+    weight = "default",
     size = "medium",
     color = "default",
 }) => {

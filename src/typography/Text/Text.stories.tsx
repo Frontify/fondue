@@ -15,7 +15,7 @@ export default {
             control: { type: "select" },
         },
         weight: {
-            options: ["regular", "strong", "x-strong"],
+            options: ["default", "strong", "x-strong"],
             control: { type: "select" },
         },
         as: {
@@ -31,7 +31,7 @@ export default {
     args: {
         children: "The fox jumps over the lazy dog",
         size: "medium",
-        weight: "regular",
+        weight: "default",
         as: "span",
         color: "default",
         ...sharedTypographyArgs,
