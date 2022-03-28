@@ -32,7 +32,7 @@ export enum DropdownAlignment {
 
 const alignmentStyling: Record<DropdownAlignment, string> = {
     [DropdownAlignment.Start]: "tw-left-0",
-    [DropdownAlignment.Middle]: "tw-m-auto",
+    [DropdownAlignment.Middle]: "tw-left-[-50%]",
     [DropdownAlignment.End]: "tw-right-0",
 };
 
@@ -79,6 +79,7 @@ export const Dropdown: FC<DropdownProps> = ({
     decorator,
     autoResize = true,
     validation = Validation.Default,
+    alignment = DropdownAlignment.Start,
 }) => {
     const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -172,12 +173,14 @@ export const Dropdown: FC<DropdownProps> = ({
             <AnimatePresence>
                 {!disabled && isOpen && heightIsReady && (
                     <motion.div
-                        className="tw-absolute tw-left-0 tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20 tw-min-w-full tw-overflow-hidden"
+                        className={merge([
+                            "tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20 tw-min-w-full tw-overflow-hidden",
+                            alignmentStyling[alignment],
+                        ])}
                         key="content"
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
-                        exit={{ height: 0 }}
-                        transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
+                        transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                     >
                         <FocusScope restoreFocus>
                             <div
