@@ -30,6 +30,11 @@ export enum DropdownAlignment {
     End = "End",
 }
 
+export enum DropdownPosition {
+    Top = "Top",
+    Bottom = "Bottom",
+}
+
 const alignmentStyling: Record<DropdownAlignment, string> = {
     [DropdownAlignment.Start]: "tw-left-0",
     [DropdownAlignment.Middle]: "tw-left-[-50%]",
@@ -50,6 +55,7 @@ export type DropdownProps = {
     autoResize?: boolean;
     validation?: Validation;
     alignment?: DropdownAlignment;
+    position?: DropdownPosition;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
@@ -80,6 +86,7 @@ export const Dropdown: FC<DropdownProps> = ({
     autoResize = true,
     validation = Validation.Default,
     alignment = DropdownAlignment.Start,
+    position = DropdownPosition.Bottom,
 }) => {
     const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -135,6 +142,10 @@ export const Dropdown: FC<DropdownProps> = ({
 
     const showClear = !!activeItem && !!onClear;
 
+    const getDropdownBottomPosition = (dropDownSize: string) => {
+        return dropDownSize === DropdownSize.Small ? "tw-mb-2 tw-bottom-[34px]" : "tw-mb-2 tw-bottom-[60px]";
+    };
+
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
             <Trigger
@@ -174,8 +185,9 @@ export const Dropdown: FC<DropdownProps> = ({
                 {!disabled && isOpen && heightIsReady && (
                     <motion.div
                         className={merge([
-                            "tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20 tw-min-w-full tw-overflow-hidden",
+                            "tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-20 tw-min-w-full tw-overflow-hidden",
                             alignmentStyling[alignment],
+                            position === DropdownPosition.Bottom ? "tw-mt-2" : getDropdownBottomPosition(size),
                         ])}
                         key="content"
                         initial={{ height: 0 }}
