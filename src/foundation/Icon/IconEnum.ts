@@ -184,6 +184,7 @@ export enum IconEnum {
     Planning = "Planning",
     Play = "Play",
     Plus = "Plus",
+    PlusCircle = "PlusCircle",
     PointOut = "PointOut",
     Polygon = "Polygon",
     Processing = "Processing",
