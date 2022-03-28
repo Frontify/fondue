@@ -49,6 +49,7 @@ export type ExtraSection = {
 };
 
 export type LinkChooserProps = {
+    selectedResult?: SearchResult | null;
     openInNewTab: boolean;
     ariaLabel?: string;
     label?: string;
