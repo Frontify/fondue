@@ -17,6 +17,8 @@ import { IconMore } from "@foundation/Icon";
 import { Badge } from "@components/Badge";
 import { LayoutGroup, motion } from "framer-motion";
 import { useMemoizedId } from "@hooks/useMemoizedId";
+import { useFocusRing } from "@react-aria/focus";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
 
 export enum TabsPaddingX {
     Small = "Small",
@@ -119,8 +121,10 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
         }
 
         if (event.key === "Enter" && fromOverflow) {
-            triggerTabButton(currentTabId, false);
+            triggerTabButton(currentTabId, true);
             setIsMenuOpened(false);
+            const contentSection = document.getElementById(`${currentTabId}-content`) as HTMLDivElement;
+            contentSection.focus();
         }
 
         if (!target.id.includes("-m")) {
@@ -139,7 +143,6 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
             }
             tabElement.scrollIntoView({ behavior: "smooth", block: "end", inline: "end" });
             buttonElement.focus();
-            checkIfOverflowing();
         } catch (error) {
             throw (error as Error).message;
         }
@@ -148,9 +151,8 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
     const triggerOverflowMenu = (event: KeyboardEvent<HTMLButtonElement>) => {
         checkIfOverflowing();
         const overflownTabs = getOverflownTabs();
+
         if (event.key === "Enter") {
-            event.preventDefault();
-            setIsMenuOpened(!isMenuOpened);
             if (!isMenuOpened && overflownTabs.length > 0) {
                 const buttonElement = document.getElementById(`${overflownTabs[0].id}-btn-m`) as HTMLButtonElement;
                 if (buttonElement) {
@@ -176,6 +178,8 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
         };
     }, [checkIfOverflowing]);
 
+    const { isFocusVisible, focusProps } = useFocusRing();
+
     return (
         <LayoutGroup id={layoutGroupId}>
             <div data-test-id="tabs" className="tw-flex tw-relative tw-border-b tw-border-line">
@@ -183,7 +187,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     ref={tabNavRef}
                     role="tablist"
                     className={merge([
-                        "tw-overflow-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start tw-pr-8",
+                        "tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start tw-pr-8",
                         paddingMap[paddingX ?? TabsPaddingX.Small],
                     ])}
                 >
@@ -239,11 +243,13 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                         className="tw-absolute tw-right-3 tw-top-0 tw-w-6 tw-h-6 tw-bg-box-neutral tw-rounded tw-flex tw-justify-center tw-items-center"
                     >
                         <button
+                            className={isFocusVisible ? FOCUS_STYLE : ""}
                             onClick={() => {
                                 checkIfOverflowing();
                                 setIsMenuOpened(!isMenuOpened);
                             }}
                             onKeyDown={(event) => triggerOverflowMenu(event)}
+                            {...focusProps}
                         >
                             <IconMore />
                         </button>
