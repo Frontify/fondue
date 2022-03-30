@@ -26,7 +26,6 @@ export enum DropdownSize {
 
 export enum DropdownAlignment {
     Start = "Start",
-    Middle = "Middle",
     End = "End",
 }
 
@@ -37,7 +36,6 @@ export enum DropdownPosition {
 
 const alignmentStyling: Record<DropdownAlignment, string> = {
     [DropdownAlignment.Start]: "tw-left-0",
-    [DropdownAlignment.Middle]: "tw-left-[-50%]",
     [DropdownAlignment.End]: "tw-right-0",
 };
 
