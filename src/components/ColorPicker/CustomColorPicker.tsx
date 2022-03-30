@@ -1,11 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// Since there are no correct typings atm we need to ignore these imports
 
 import { Dropdown } from "@components/Dropdown/Dropdown";
 import { TextInputType } from "@components/TextInput/TextInput";
 import React, { FC, useEffect, useState } from "react";
-import { HexColorPicker, RgbaColorPicker } from "react-colorful";
+import { RgbaColorPicker } from "react-colorful";
 import tinycolor from "tinycolor2";
 import { Color, ColorFormat } from "../../types/colors";
 import { ColorInput, DecoratorPosition } from "./ColorInput";
@@ -29,8 +27,6 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
     const [hexInput, setHexInput] = useState(convertToHex(currentColor));
     const [alpha, setAlpha] = useState(a);
 
-    const onHexColorChange = (color: string) => onSelect({ ...tinycolor(color).toRgb(), a: alpha });
-
     const handleHexChange = () => {
         const parsedHex = tinycolor(hexInput);
         if (parsedHex.isValid()) {
@@ -47,11 +43,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
         <div className="tw-flex tw-flex-col tw-gap-5" data-test-id="custom-color-picker" id="custom-color-picker">
             <div className="tw-flex tw-gap-2 tw-w-full tw-h-[200px]">
                 <div className="tw-relative tw-grow tw-overflow-hidden tw-rounded">
-                    {currentFormat === ColorFormat.Rgba ? (
-                        <RgbaColorPicker color={{ ...currentColor, a }} onChange={onSelect} />
-                    ) : (
-                        <HexColorPicker color={hexInput} onChange={onHexColorChange} />
-                    )}
+                    <RgbaColorPicker color={{ ...currentColor, a }} onChange={onSelect} />
                 </div>
             </div>
             <div className="tw-flex tw-flex-col md:tw-flex-row tw-gap-2 tw-max-w-full">
