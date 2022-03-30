@@ -165,7 +165,7 @@ describe("Dropdown Component", () => {
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_MENU_ID).then(($el) => {
             const { bottom } = $el[0].getBoundingClientRect();
-            expect(bottom).to.equal(220 - 32);
+            expect(Number(bottom.toFixed(0))).to.equal(220 - 32);
         });
     });
 
