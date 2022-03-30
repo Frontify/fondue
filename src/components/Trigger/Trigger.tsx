@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
-import IconReject from "@foundation/Icon/Generated/IconReject";
+import IconTrash from "@foundation/Icon/Generated/IconReject";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
@@ -72,7 +72,7 @@ export const Trigger: FC<TriggerProps> = ({
                         ])}
                         onClick={() => !!onClear && onClear()}
                     >
-                        <IconReject size={IconSize.Size12} />
+                        <IconTrash size={IconSize.Size12} />
                     </button>
                 )}
                 <button
