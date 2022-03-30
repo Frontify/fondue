@@ -85,13 +85,10 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                               >
                                   {colors.map((color) => (
                                       <li key={color.name} data-test-id="brand-color">
-                                          <button
-                                              className="tw-flex tw-overflow-hidden tw-w-full"
-                                              onClick={() => onSelect(color)}
-                                          >
+                                          <button className="tw-flex tw-w-full" onClick={() => onSelect(color)}>
                                               <span
                                                   className={merge([
-                                                      "tw-h-8 tw-w-8 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center ",
+                                                      "tw-h-8 tw-w-8 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center tw-ring-1 tw-ring-black-10 tw-ring-offset-1",
                                                       isColorLight(color) ? "tw-text-black" : "tw-text-white",
                                                   ])}
                                                   style={{ background: tinycolor(color).toRgbString() }}
