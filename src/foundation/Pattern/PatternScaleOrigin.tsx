@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export type PatternScaleOrigin = Array<"top" | "left" | "bottom" | "right">;
+export type PatternScaleOrigin = ("top" | "left" | "bottom" | "right")[];
