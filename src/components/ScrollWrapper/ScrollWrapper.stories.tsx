@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from "react";
 import { Button } from "@components/Button";
-import { ScrollWrapperDirection, ScrollWrapperProps } from "./types";
-import { Story, Meta } from "@storybook/react";
-import { ScrollWrapper } from "./ScrollWrapper";
-import { TextInput } from "@components/TextInput";
 import { FormControl, FormControlDirection, FormControlStyle } from "@components/FormControl";
-import { generateRandomId } from "@utilities/generateRandomId";
+import { TextInput } from "@components/TextInput";
+import { useId } from "@react-aria/utils";
+import { Meta, Story } from "@storybook/react";
+import React, { useState } from "react";
 import { Card } from "..";
+import { ScrollWrapper } from "./ScrollWrapper";
+import { ScrollWrapperDirection, ScrollWrapperProps } from "./types";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -44,7 +44,7 @@ export const Default: Story<ScrollWrapperProps> = (args) => {
                         label={{
                             children: "Input Label",
                             required: false,
-                            htmlFor: generateRandomId(),
+                            htmlFor: useId(),
                             tooltip: { content: "Tooltip Text" },
                         }}
                     >
@@ -82,7 +82,7 @@ export const Horizontal: Story<ScrollWrapperProps> = (args) => {
                             label={{
                                 children: "Input Label",
                                 required: false,
-                                htmlFor: generateRandomId(),
+                                htmlFor: useId(),
                                 tooltip: { content: "Tooltip Text" },
                             }}
                         >

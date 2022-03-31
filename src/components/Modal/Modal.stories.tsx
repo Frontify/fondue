@@ -196,7 +196,14 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
                 </Modal.Body>
                 <Modal.Footer
                     buttons={[
-                        { children: "Okay", onClick: () => action("click"), style: ButtonStyle.Secondary },
+                        {
+                            children: "Okay",
+                            onClick: () => {
+                                action("click");
+                                state.close();
+                            },
+                            style: ButtonStyle.Secondary,
+                        },
                         {
                             children: "Cancel",
                             onClick: () => state.close(),
