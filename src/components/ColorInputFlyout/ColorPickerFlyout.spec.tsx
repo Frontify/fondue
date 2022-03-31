@@ -9,6 +9,7 @@ import { ColorPickerFlyout } from "./ColorPickerFlyout";
 const TRIGGER_ID = "[data-test-id=trigger]";
 const TEST_COLOR = { r: 0, g: 133, b: 255 };
 const TEST_COLOR_HEX = "#0085ff";
+const TEST_COLOR_RGB = "rgb(0, 133, 255)";
 const BUTTON_ID = "[data-test-id=button]";
 const BRAND_COLOR_ID = "[data-test-id=brand-color]";
 const COLOR_PREVIEW_ID = "[data-test-id=color-preview]";
@@ -57,7 +58,7 @@ describe("ColorInputFlyout Component", () => {
         mount(<Component currentColor={TEST_COLOR} />);
 
         cy.get(TRIGGER_ID).should("contain", TEST_COLOR_HEX).click();
-        cy.get(COLOR_PREVIEW_ID).should("contain", TEST_COLOR_HEX);
+        cy.get(COLOR_PREVIEW_ID).should("have.css", "background-color", TEST_COLOR_RGB);
         cy.get(MENU_ITEM_DECORATOR_ID)
             .children("span")
             .invoke("attr", "style")

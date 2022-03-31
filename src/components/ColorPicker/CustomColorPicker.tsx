@@ -6,7 +6,7 @@ import React, { FC, useEffect, useState } from "react";
 import { RgbaColorPicker } from "react-colorful";
 import tinycolor from "tinycolor2";
 import { Color, ColorFormat } from "../../types/colors";
-import { ColorInput } from "./ColorInput";
+import { ColorInput, DecoratorPosition } from "./ColorInput";
 import { ColorPickerProps } from "./ColorPicker";
 
 const convertToHex = (color: Color) => tinycolor(color).toHex();
@@ -40,7 +40,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
     }, [currentColor]);
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-5" data-test-id="custom-color-picker" id="custom-color-picker">
+        <div className="tw-flex tw-flex-col tw-gap-4" data-test-id="custom-color-picker" id="custom-color-picker">
             <div className="tw-flex tw-flex-col md:tw-flex-row tw-gap-2 tw-max-w-full">
                 <div className="tw-min-w-[84px]">
                     <Dropdown
@@ -62,30 +62,36 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                     </div>
                 ) : (
                     <>
-                        <ColorInput
-                            min={0}
-                            max={255}
-                            size={3}
-                            type={TextInputType.Number}
-                            value={r.toString()}
-                            onChange={(r) => onSelect({ ...currentColor, r: parseInt(r) })}
-                        />
-                        <ColorInput
-                            min={0}
-                            max={255}
-                            size={3}
-                            type={TextInputType.Number}
-                            value={g.toString()}
-                            onChange={(g) => onSelect({ ...currentColor, g: parseInt(g) })}
-                        />
-                        <ColorInput
-                            min={0}
-                            max={255}
-                            size={3}
-                            type={TextInputType.Number}
-                            value={b.toString()}
-                            onChange={(b) => onSelect({ ...currentColor, b: parseInt(b) })}
-                        />
+                        <div className="tw-flex-1">
+                            <ColorInput
+                                min={0}
+                                max={255}
+                                size={3}
+                                type={TextInputType.Number}
+                                value={r.toString()}
+                                onChange={(r) => onSelect({ ...currentColor, r: parseInt(r) })}
+                            />
+                        </div>
+                        <div className="tw-flex-1">
+                            <ColorInput
+                                min={0}
+                                max={255}
+                                size={3}
+                                type={TextInputType.Number}
+                                value={g.toString()}
+                                onChange={(g) => onSelect({ ...currentColor, g: parseInt(g) })}
+                            />
+                        </div>
+                        <div className="tw-flex-1">
+                            <ColorInput
+                                min={0}
+                                max={255}
+                                size={3}
+                                type={TextInputType.Number}
+                                value={b.toString()}
+                                onChange={(b) => onSelect({ ...currentColor, b: parseInt(b) })}
+                            />
+                        </div>
                     </>
                 )}
                 <ColorInput
@@ -94,6 +100,8 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                     size={3}
                     type={TextInputType.Number}
                     value={Math.trunc(alpha * 100).toString()}
+                    decorator="%"
+                    decoratorPosition={DecoratorPosition.Right}
                     onChange={(value) => {
                         const a = parseInt(value || "0", 10) / 100;
                         setAlpha(a);

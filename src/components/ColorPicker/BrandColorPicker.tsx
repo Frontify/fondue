@@ -52,8 +52,8 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
     const palettesWithColors = palettes.filter((palette) => !!palette.colors.length);
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-5" data-test-id="brand-color-picker">
-            <div className="tw-flex tw-gap-3">
+        <div className="tw-flex tw-flex-col tw-gap-4" data-test-id="brand-color-picker">
+            <div className="tw-flex tw-gap-2">
                 <div className="tw-flex-1">
                     <TextInput
                         value={query}
@@ -71,7 +71,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                     />
                 </div>
             </div>
-            <ul className="tw-flex tw-flex-col tw-gap-5">
+            <ul className="tw-flex tw-flex-col tw-gap-4">
                 {palettesWithColors.length
                     ? palettesWithColors.map(({ id, title, colors }) => (
                           <li key={id} className="tw-flex tw-flex-col tw-gap-2">
