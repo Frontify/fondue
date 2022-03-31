@@ -20,7 +20,7 @@ import { Color } from "../../types/colors";
 import { ColorPickerFlyout as ColorPickerFlyoutComponent } from "@components/ColorInputFlyout/ColorPickerFlyout";
 import { EXAMPLE_PALETTES } from "@components/ColorPicker/example-palettes";
 import { Accordion as AccordionComponent, AccordionItem } from "./Accordion";
-import { AccordionHeaderIcon } from "./AccordionHeader";
+import { AccordionHeaderIcon } from "./AccordionHeaderIcon";
 import { AccordionHeaderProps, AccordionProps, AccordionHeaderIconSize } from "./types";
 
 // eslint-disable-next-line import/no-default-export

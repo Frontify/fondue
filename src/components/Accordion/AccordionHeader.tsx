@@ -3,15 +3,8 @@
 import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, isValidElement } from "react";
-import { FieldsetHeaderType, FieldsetHeaderSize, renderFieldsetHeaderIconType } from "@components/FieldsetHeader";
-import { AccordionHeaderIconProps, AccordionHeaderProps, AccordionHeaderIconSize } from "./types";
-
-export const AccordionHeaderIcon: FC<AccordionHeaderIconProps> = ({
-    size = AccordionHeaderIconSize.Medium,
-    isOpen,
-    disabled = false,
-    type = FieldsetHeaderType.Accordion,
-}) => renderFieldsetHeaderIconType(type, "", FieldsetHeaderSize[AccordionHeaderIconSize[size]], isOpen, disabled);
+import { AccordionHeaderProps, AccordionHeaderIconSize } from "./types";
+import { AccordionHeaderIcon } from "./AccordionHeaderIcon";
 
 export const AccordionHeader: FC<AccordionHeaderProps> = ({
     isOpen = false,
