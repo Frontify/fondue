@@ -23,8 +23,8 @@ enum ColorType {
 }
 
 const colorTypes = [
-    { id: ColorType.Brand, value: "Brand Colors" },
-    { id: ColorType.Custom, value: "Custom Color" },
+    { id: ColorType.Brand, value: "Brand" },
+    { id: ColorType.Custom, value: "Custom" },
 ];
 
 export const ColorPicker: FC<ColorPickerProps> = ({
@@ -39,8 +39,8 @@ export const ColorPicker: FC<ColorPickerProps> = ({
 
     return (
         <div className="tw-w-[400px] tw-relative">
-            {showPreview && <ColorPreview color={currentColor} format={currentFormat} />}
-            <div className="tw-p-5 tw-flex tw-flex-col tw-gap-5">
+            {showPreview && <ColorPreview color={currentColor} />}
+            <div className="tw-p-5 tw-flex tw-flex-col tw-gap-2">
                 {palettes && (
                     <Slider
                         items={colorTypes}

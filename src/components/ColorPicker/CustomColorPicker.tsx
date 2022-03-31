@@ -40,12 +40,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
     }, [currentColor]);
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-5" data-test-id="custom-color-picker" id="custom-color-picker">
-            <div className="tw-flex tw-gap-2 tw-w-full tw-h-[200px]">
-                <div className="tw-relative tw-grow tw-overflow-hidden tw-rounded">
-                    <RgbaColorPicker color={{ ...currentColor, a }} onChange={onSelect} />
-                </div>
-            </div>
+        <div className="tw-flex tw-flex-col tw-gap-4" data-test-id="custom-color-picker" id="custom-color-picker">
             <div className="tw-flex tw-flex-col md:tw-flex-row tw-gap-2 tw-max-w-full">
                 <div className="tw-min-w-[84px]">
                     <Dropdown
@@ -67,33 +62,36 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                     </div>
                 ) : (
                     <>
-                        <ColorInput
-                            min={0}
-                            max={255}
-                            size={3}
-                            type={TextInputType.Number}
-                            value={r.toString()}
-                            decorator="R"
-                            onChange={(r) => onSelect({ ...currentColor, r: parseInt(r) })}
-                        />
-                        <ColorInput
-                            min={0}
-                            max={255}
-                            size={3}
-                            type={TextInputType.Number}
-                            value={g.toString()}
-                            decorator="G"
-                            onChange={(g) => onSelect({ ...currentColor, g: parseInt(g) })}
-                        />
-                        <ColorInput
-                            min={0}
-                            max={255}
-                            size={3}
-                            type={TextInputType.Number}
-                            value={b.toString()}
-                            decorator="B"
-                            onChange={(b) => onSelect({ ...currentColor, b: parseInt(b) })}
-                        />
+                        <div className="tw-flex-1">
+                            <ColorInput
+                                min={0}
+                                max={255}
+                                size={3}
+                                type={TextInputType.Number}
+                                value={r.toString()}
+                                onChange={(r) => onSelect({ ...currentColor, r: parseInt(r) })}
+                            />
+                        </div>
+                        <div className="tw-flex-1">
+                            <ColorInput
+                                min={0}
+                                max={255}
+                                size={3}
+                                type={TextInputType.Number}
+                                value={g.toString()}
+                                onChange={(g) => onSelect({ ...currentColor, g: parseInt(g) })}
+                            />
+                        </div>
+                        <div className="tw-flex-1">
+                            <ColorInput
+                                min={0}
+                                max={255}
+                                size={3}
+                                type={TextInputType.Number}
+                                value={b.toString()}
+                                onChange={(b) => onSelect({ ...currentColor, b: parseInt(b) })}
+                            />
+                        </div>
                     </>
                 )}
                 <ColorInput
@@ -110,6 +108,11 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                         onSelect({ ...currentColor, a });
                     }}
                 />
+            </div>
+            <div className="tw-flex tw-gap-2 tw-w-full tw-h-[200px]">
+                <div className="tw-relative tw-grow tw-overflow-hidden tw-rounded">
+                    <RgbaColorPicker color={{ ...currentColor, a }} onChange={onSelect} />
+                </div>
             </div>
         </div>
     );

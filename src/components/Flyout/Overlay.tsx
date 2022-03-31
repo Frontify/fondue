@@ -42,7 +42,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
             {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
             ref={ref}
             className={merge([
-                "tw-max-h-full tw-flex tw-shadow-mid tw-outline-none",
+                "tw-max-h-full tw-flex tw-shadow-mid tw-outline-none tw-rounded tw-overflow-hidden",
                 fitContent ? "tw-min-w-0" : "tw-min-w-[400px]",
             ])}
         >
