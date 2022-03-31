@@ -4,18 +4,25 @@ import React, { FC, useState } from "react";
 import { Button } from "@components/Button";
 import { CollapsibleWrap as CollapsibleWrapComponent } from "./CollapsibleWrap";
 import { mount } from "@cypress/react";
+import { CollapsibleWrapProps } from "./types";
 
 const CONTENT_ID = '[data-test-id="collapsible-wrap-content"]';
+const WRAP_ID = '[data-test-id="collapsible-wrap"]';
 const BUTTON_ID = '[data-test-id="button"]';
 
-const CollapsibleWrap: FC<{ preventInitialAnimation?: boolean; isOpen?: boolean }> = ({
+const CollapsibleWrap: FC<Partial<CollapsibleWrapProps>> = ({
     preventInitialAnimation = false,
     isOpen: externalIsOpen = false,
+    animateOpacity = true,
 }) => {
     const [isOpen, setIsOpen] = useState(externalIsOpen);
     return (
         <>
-            <CollapsibleWrapComponent isOpen={isOpen} preventInitialAnimation={preventInitialAnimation}>
+            <CollapsibleWrapComponent
+                isOpen={isOpen}
+                preventInitialAnimation={preventInitialAnimation}
+                animateOpacity={animateOpacity}
+            >
                 <div style={{ height: "100px" }} data-test-id="collapsible-wrap-content">
                     Content
                 </div>
@@ -27,7 +34,7 @@ const CollapsibleWrap: FC<{ preventInitialAnimation?: boolean; isOpen?: boolean 
 
 describe("CollapsibleWrap", () => {
     it("renders without crashing", () => {
-        mount(<CollapsibleWrap />);
+        mount(<CollapsibleWrap isOpen={true} />);
         cy.get(CONTENT_ID).should("exist");
     });
 
@@ -36,8 +43,15 @@ describe("CollapsibleWrap", () => {
         cy.get(CONTENT_ID).should("not.exist");
         cy.get(BUTTON_ID).click();
         cy.get(CONTENT_ID).should("be.visible");
+        cy.get(WRAP_ID).should("have.css", "opacity", "1");
         cy.get(BUTTON_ID).click();
+        cy.get(WRAP_ID).should("have.css", "opacity", "0");
         cy.get(CONTENT_ID).should("not.exist");
+    });
+
+    it("renders with no opacity transition", () => {
+        mount(<CollapsibleWrap isOpen={true} animateOpacity={false} />);
+        cy.get(WRAP_ID).should("have.css", "opacity", "1");
     });
 
     it("renders with content visible and no animation", () => {

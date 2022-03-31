@@ -3,4 +3,5 @@
 export type CollapsibleWrapProps = {
     isOpen: boolean;
     preventInitialAnimation?: boolean;
+    animateOpacity?: boolean;
 };

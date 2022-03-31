@@ -8,6 +8,7 @@ export const CollapsibleWrap: FC<CollapsibleWrapProps> = ({
     children,
     isOpen = false,
     preventInitialAnimation = false,
+    animateOpacity = true,
 }) => (
     <AnimatePresence initial={preventInitialAnimation ? false : undefined}>
         {isOpen && children && (
@@ -16,8 +17,8 @@ export const CollapsibleWrap: FC<CollapsibleWrapProps> = ({
                 animate={"open"}
                 exit={"collapsed"}
                 variants={{
-                    open: { height: "auto", overflow: "visible" },
-                    collapsed: { height: 0, overflow: "hidden" },
+                    open: { height: "auto", overflow: "hidden", opacity: 1 },
+                    collapsed: { height: 0, overflow: "hidden", opacity: animateOpacity ? 0 : 1 },
                 }}
                 transition={{ type: "tween" }}
                 data-test-id="collapsible-wrap"

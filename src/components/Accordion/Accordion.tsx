@@ -8,7 +8,6 @@ import { Item as StatelyItem } from "@react-stately/collections";
 import { useTreeState } from "@react-stately/tree";
 import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import { motion } from "framer-motion";
 import React, { Children, FC, isValidElement, Key, KeyboardEvent, ReactElement, useRef } from "react";
 import { AccordionHeader } from "./AccordionHeader";
 import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from "./types";
@@ -63,14 +62,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
             </button>
             <CollapsibleWrap isOpen={isOpen} preventInitialAnimation={active}>
                 <div {...regionProps} className={merge([padding && "tw-px-8 tw-pb-6"])}>
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        {item.props.children?.()}
-                    </motion.div>
+                    {item.props.children?.()}
                 </div>
             </CollapsibleWrap>
         </div>
