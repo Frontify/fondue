@@ -6,7 +6,6 @@ import { Color, ColorFormat, Palette } from "../../types/colors";
 import { BrandColorPicker } from "./BrandColorPicker";
 import { ColorPreview } from "./ColorPreview";
 import { CustomColorPicker } from "./CustomColorPicker";
-import "./styles.css";
 
 export type ColorPickerProps = {
     palettes?: Palette[];
