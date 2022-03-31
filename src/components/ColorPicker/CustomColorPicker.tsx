@@ -111,7 +111,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
             </div>
             <div className="tw-flex tw-gap-2 tw-w-full tw-h-[200px]">
                 <div className="tw-relative tw-grow tw-overflow-hidden tw-rounded">
-                    <RgbaColorPicker color={{ ...currentColor, a }} onChange={onSelect} />
+                    <RgbaColorPicker color={{ ...currentColor, a }} onChange={onSelect} style={{ width: "100%" }} />
                 </div>
             </div>
         </div>
