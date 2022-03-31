@@ -28,7 +28,7 @@ const CollapsibleWrap: FC<{ preventInitialAnimation?: boolean; isOpen?: boolean 
 describe("CollapsibleWrap", () => {
     it("renders without crashing", () => {
         mount(<CollapsibleWrap />);
-        cy.get("div").should("exist");
+        cy.get(CONTENT_ID).should("exist");
     });
 
     it("renders without content visible", () => {
