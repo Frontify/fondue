@@ -8,7 +8,7 @@ import { EditableProps } from "slate-react/dist/components/editable";
 import { Toolbar } from "./Toolbar";
 import { getEditorConfig } from "./utils/getEditorConfig";
 import { TextStyleType } from "./utils/getTextStyles";
-import { EMPTY_VALUE, parseRawValue } from "./utils/parseRawValue";
+import { EMPTY_RICH_TEXT_VALUE, parseRawValue } from "./utils/parseRawValue";
 
 export type RichTextEditorProps = {
     id?: string;
@@ -52,8 +52,8 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
             const point = { path: [0, 0], offset: 0 };
             editor.selection = { anchor: point, focus: point };
             editor.history = { redos: [], undos: [] };
-            editor.children = EMPTY_VALUE;
-            localValue.current = EMPTY_VALUE;
+            editor.children = EMPTY_RICH_TEXT_VALUE;
+            localValue.current = EMPTY_RICH_TEXT_VALUE;
         }
     }, [clear]);
 
