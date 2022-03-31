@@ -152,7 +152,7 @@ const PropsTable: FC<{ rows: [ReactNode, ReactNode, ReactNode][] }> = ({ rows })
     </table>
 );
 
-export const WithCustomAccordionItem: Story<AccordionProps> = () => (
+export const WithCustomAccordionHeaderComponent: Story<AccordionProps> = () => (
     <AccordionComponent>
         <AccordionItem
             header={{
