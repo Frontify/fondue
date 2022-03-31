@@ -216,6 +216,50 @@ WithCustomFooter.argTypes = {
     decorator: { table: { disable: true } },
 };
 
+const WithCustomFooterAndHeaderTemplate: Story<FlyoutProps> = (args) => {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <Flyout
+            {...args}
+            trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+                <Button onClick={() => setOpen((open) => !open)} ref={ref} aria-label={ariaLabel}>
+                    Button
+                </Button>
+            )}
+            isOpen={open}
+            onOpenChange={chain(args.onOpenChange, setOpen)}
+            onCancel={chain(args.onCancel, () => setOpen(false))}
+        >
+            <p className="tw-text-center tw-py-8">Fun with Flyouts and Buttons!</p>
+        </Flyout>
+    );
+};
+export const WithCustomFooterAndHeader = WithCustomFooterAndHeaderTemplate.bind({});
+
+WithCustomFooterAndHeader.args = {
+    legacyFooter: false,
+    fixedHeader: (
+        <div className="tw-py-5 tw-px-8 tw-bg-white dark:tw-bg-black-95 tw-border-b tw-border-b-black-10">
+            Custom Header
+        </div>
+    ),
+    fixedFooter: (
+        <FlyoutFooter
+            buttons={[
+                {
+                    children: "Button 1",
+                    style: ButtonStyle.Secondary,
+                },
+                {
+                    children: "Button 2",
+                    style: ButtonStyle.Primary,
+                },
+            ]}
+        />
+    ),
+};
+
 const WithRenderFunctionTriggerTemplate: Story<FlyoutProps> = (args) => {
     const [open, setOpen] = useState(false);
 
