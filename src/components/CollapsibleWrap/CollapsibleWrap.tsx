@@ -16,7 +16,7 @@ export const CollapsibleWrap: FC<CollapsibleWrapProps> = ({
                 animate={"open"}
                 exit={"collapsed"}
                 variants={{
-                    open: { height: "auto", overflow: "hidden" },
+                    open: { height: "auto", overflow: "visible" },
                     collapsed: { height: 0, overflow: "hidden" },
                 }}
                 transition={{ type: "tween" }}
