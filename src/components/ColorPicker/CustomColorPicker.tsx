@@ -6,7 +6,7 @@ import React, { FC, useEffect, useState } from "react";
 import { RgbaColorPicker } from "react-colorful";
 import tinycolor from "tinycolor2";
 import { Color, ColorFormat } from "../../types/colors";
-import { ColorInput, DecoratorPosition } from "./ColorInput";
+import { ColorInput } from "./ColorInput";
 import { ColorPickerProps } from "./ColorPicker";
 
 const convertToHex = (color: Color) => tinycolor(color).toHex();
@@ -41,11 +41,6 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
 
     return (
         <div className="tw-flex tw-flex-col tw-gap-5" data-test-id="custom-color-picker" id="custom-color-picker">
-            <div className="tw-flex tw-gap-2 tw-w-full tw-h-[200px]">
-                <div className="tw-relative tw-grow tw-overflow-hidden tw-rounded">
-                    <RgbaColorPicker color={{ ...currentColor, a }} onChange={onSelect} />
-                </div>
-            </div>
             <div className="tw-flex tw-flex-col md:tw-flex-row tw-gap-2 tw-max-w-full">
                 <div className="tw-min-w-[84px]">
                     <Dropdown
@@ -73,7 +68,6 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                             size={3}
                             type={TextInputType.Number}
                             value={r.toString()}
-                            decorator="R"
                             onChange={(r) => onSelect({ ...currentColor, r: parseInt(r) })}
                         />
                         <ColorInput
@@ -82,7 +76,6 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                             size={3}
                             type={TextInputType.Number}
                             value={g.toString()}
-                            decorator="G"
                             onChange={(g) => onSelect({ ...currentColor, g: parseInt(g) })}
                         />
                         <ColorInput
@@ -91,7 +84,6 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                             size={3}
                             type={TextInputType.Number}
                             value={b.toString()}
-                            decorator="B"
                             onChange={(b) => onSelect({ ...currentColor, b: parseInt(b) })}
                         />
                     </>
@@ -102,14 +94,17 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                     size={3}
                     type={TextInputType.Number}
                     value={Math.trunc(alpha * 100).toString()}
-                    decorator="%"
-                    decoratorPosition={DecoratorPosition.Right}
                     onChange={(value) => {
                         const a = parseInt(value || "0", 10) / 100;
                         setAlpha(a);
                         onSelect({ ...currentColor, a });
                     }}
                 />
+            </div>
+            <div className="tw-flex tw-gap-2 tw-w-full tw-h-[200px]">
+                <div className="tw-relative tw-grow tw-overflow-hidden tw-rounded">
+                    <RgbaColorPicker color={{ ...currentColor, a }} onChange={onSelect} />
+                </div>
             </div>
         </div>
     );
