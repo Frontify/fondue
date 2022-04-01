@@ -152,6 +152,7 @@ import IconLineDotted from "@foundation/Icon/Generated/IconLineDotted";
 import IconLineSolid from "@foundation/Icon/Generated/IconLineSolid";
 import IconLineSpacer from "@foundation/Icon/Generated/IconLineSpacer";
 import IconLink from "@foundation/Icon/Generated/IconLink";
+import IconLinkOpen from "@foundation/Icon/Generated/IconLinkOpen";
 import IconListBullets from "@foundation/Icon/Generated/IconListBullets";
 import IconListChecklist from "@foundation/Icon/Generated/IconListChecklist";
 import IconListIndented from "@foundation/Icon/Generated/IconListIndented";
@@ -421,6 +422,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.LineSolid]: <IconLineSolid />,
     [IconEnum.LineSpacer]: <IconLineSpacer />,
     [IconEnum.Link]: <IconLink />,
+    [IconEnum.LinkOpen]: <IconLinkOpen />,
     [IconEnum.ListBullets]: <IconListBullets />,
     [IconEnum.ListChecklist]: <IconListChecklist />,
     [IconEnum.ListIndented]: <IconListIndented />,
