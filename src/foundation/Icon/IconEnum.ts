@@ -151,7 +151,6 @@ export enum IconEnum {
     LineSolid = "LineSolid",
     LineSpacer = "LineSpacer",
     Link = "Link",
-    LinkOpen = "LinkOpen",
     ListBullets = "ListBullets",
     ListChecklist = "ListChecklist",
     ListIndented = "ListIndented",
