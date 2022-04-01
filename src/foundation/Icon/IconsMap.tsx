@@ -170,6 +170,7 @@ import IconModules from "@foundation/Icon/Generated/IconModules";
 import IconMore from "@foundation/Icon/Generated/IconMore";
 import IconMove from "@foundation/Icon/Generated/IconMove";
 import IconMovePage from "@foundation/Icon/Generated/IconMovePage";
+import IconNavigation from "@foundation/Icon/Generated/IconNavigation";
 import IconNone from "@foundation/Icon/Generated/IconNone";
 import IconNotifications from "@foundation/Icon/Generated/IconNotifications";
 import IconObjects from "@foundation/Icon/Generated/IconObjects";
@@ -438,6 +439,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.More]: <IconMore />,
     [IconEnum.Move]: <IconMove />,
     [IconEnum.MovePage]: <IconMovePage />,
+    [IconEnum.Navigation]: <IconNavigation />,
     [IconEnum.None]: <IconNone />,
     [IconEnum.Notifications]: <IconNotifications />,
     [IconEnum.Objects]: <IconObjects />,

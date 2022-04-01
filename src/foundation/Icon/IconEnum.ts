@@ -169,6 +169,7 @@ export enum IconEnum {
     More = "More",
     Move = "Move",
     MovePage = "MovePage",
+    Navigation = "Navigation",
     None = "None",
     Notifications = "Notifications",
     Objects = "Objects",
