@@ -30,3 +30,11 @@ export const isCustomLink = (link: SearchResult | null) =>
 
 export const filterItems = (query: string, results: SearchResult[], section: ExtraSection[] = []): SearchResult[] =>
     results.filter((item) => doesContainSubstring(item.title, query, section));
+
+export const prependHttps = (link: string) => {
+    if (link.indexOf("http://") === 0 || link.indexOf("https://") === 0) {
+        return link;
+    } else {
+        return `https://${link}`;
+    }
+};
