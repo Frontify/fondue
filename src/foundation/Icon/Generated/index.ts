@@ -169,7 +169,6 @@ export { default as IconModules } from "./IconModules";
 export { default as IconMore } from "./IconMore";
 export { default as IconMove } from "./IconMove";
 export { default as IconMovePage } from "./IconMovePage";
-export { default as IconNavigation } from "./IconNavigation";
 export { default as IconNone } from "./IconNone";
 export { default as IconNotifications } from "./IconNotifications";
 export { default as IconObjects } from "./IconObjects";
