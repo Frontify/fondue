@@ -32,9 +32,8 @@ export const filterItems = (query: string, results: SearchResult[], section: Ext
     results.filter((item) => doesContainSubstring(item.title, query, section));
 
 export const prependHttps = (link: string) => {
-    if (link.indexOf("http://") === 0 || link.indexOf("https://") === 0) {
-        return link;
-    } else {
+    if (!link.match(/https?:\/\//)) {
         return `https://${link}`;
     }
+    return link;
 };
