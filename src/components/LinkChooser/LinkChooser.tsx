@@ -76,6 +76,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }),
     );
 
+    const [searchInput, setSearchInput] = useState(selectedResult?.title);
     const isDefault = !shouldGoBack(matches);
     const searchResultMenuBlocks = useMemo(
         () =>
@@ -99,6 +100,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const handleSelectionChange = (key: Key) => {
         const foundItem = context.searchResults.find((item) => item.id === key);
         if (foundItem) {
+            setSearchInput(foundItem.title);
             send({ type: "SET_SELECTED_SEARCH_RESULT", data: { selectedResult: foundItem } });
         }
         closeBoxState(state);
@@ -107,6 +109,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const handleInputChange = useCallback(
         (query: string) => {
+            setSearchInput(query);
             send({ type: "TYPING", data: { query } });
         },
         [value],
@@ -117,6 +120,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const state = useComboBoxState({
         ...props,
         defaultFilter: (textValue, inputValue) => doesContainSubstring(textValue, inputValue, extraSections),
+        inputValue: searchInput,
         onInputChange: handleInputChange,
         onSelectionChange: handleSelectionChange,
         menuTrigger: "manual",

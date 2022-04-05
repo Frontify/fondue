@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
+import { Validation, validationClassMap } from "@utilities/validation";
 import IconCopyToClipboard from "@foundation/Icon/Generated/IconCopyToClipboard";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
 import IconReject from "@foundation/Icon/Generated/IconReject";
@@ -9,9 +10,8 @@ import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import { Validation, validationClassMap } from "@utilities/validation";
 import { useActor } from "@xstate/react";
-import React, { FC, forwardRef, MouseEvent, useEffect, useState } from "react";
+import React, { FC, forwardRef, MouseEvent } from "react";
 import { IconButtonProps, SearchInputProps } from "./types";
 
 export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>(
@@ -30,19 +30,12 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
         },
         inputElement,
     ) => {
-        const [value, setValue] = useState(ariaProps.value);
+        const { value } = ariaProps;
         const { isFocusVisible, focusProps, isFocused } = useFocusRing({ isTextInput: true });
 
         const [, send] = useActor(machineService);
 
         const isLoading = validation === Validation.Loading;
-
-        useEffect(() => {
-            const title = selectedResult?.title;
-            if (title) {
-                setValue(title);
-            }
-        }, [selectedResult]);
 
         return (
             <div
