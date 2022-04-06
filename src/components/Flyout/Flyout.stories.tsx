@@ -217,21 +217,21 @@ WithCustomFooter.argTypes = {
 };
 
 const WithCustomFooterAndHeaderTemplate: Story<FlyoutProps> = (args) => {
-    const [open, setOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     return (
         <Flyout
             {...args}
             trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
-                <Button onClick={() => setOpen((open) => !open)} ref={ref} aria-label={ariaLabel}>
-                    Button
+                <Button onClick={() => setIsOpen(!isOpen)} ref={ref} aria-label={ariaLabel}>
+                    Click me
                 </Button>
             )}
-            isOpen={open}
-            onOpenChange={chain(args.onOpenChange, setOpen)}
-            onCancel={chain(args.onCancel, () => setOpen(false))}
+            isOpen={isOpen}
+            onOpenChange={chain(args.onOpenChange, setIsOpen)}
+            onCancel={chain(args.onCancel, () => setIsOpen(false))}
         >
-            <p className="tw-text-center tw-py-8">Fun with Flyouts and Buttons!</p>
+            <p className="tw-text-center tw-py-8">Flyout Content</p>
         </Flyout>
     );
 };
@@ -248,11 +248,7 @@ WithCustomFooterAndHeader.args = {
         <FlyoutFooter
             buttons={[
                 {
-                    children: "Button 1",
-                    style: ButtonStyle.Secondary,
-                },
-                {
-                    children: "Button 2",
+                    children: "A button",
                     style: ButtonStyle.Primary,
                 },
             ]}
