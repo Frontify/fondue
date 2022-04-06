@@ -42,7 +42,7 @@ describe("ColorPicker Component", () => {
         mount(<Component />);
 
         cy.get(CUSTOM_COLOR_PICKER_ID).should("exist");
-        cy.get(COLOR_PREVIEW_ID).should("contain", "#ff0000");
+        cy.get(COLOR_PREVIEW_ID).should("have.css", "background-color", "rgb(255, 0, 0)");
         cy.get(DROPDOWN_TRIGGER_ID).should("contain", "HEX");
         cy.get(COLOR_INPUT_ID).should("have.length", 2);
         cy.get(DROPDOWN_TRIGGER_ID).click().get(MENU_ITEM_ID).eq(1).click();

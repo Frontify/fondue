@@ -180,17 +180,17 @@ describe("RichTextEditor Component", () => {
     });
 
     it("renders multiple editors", () => {
+        const text1 = "editor one content";
+        const text2 = "editor two content";
         mount(
             <>
-                <RichTextEditor id="one" />
-                <RichTextEditor id="two" />
+                <RichTextEditor id="one" value={text1} />
+                <RichTextEditor id="two" value={text2} />
             </>,
         );
 
-        cy.get("[contenteditable=true]").first().click().type("hello editor one");
-        cy.get("[contenteditable=true]").first().should("contain.text", "hello editor one");
-        cy.get("[contenteditable=true]").last().realClick().type("hello editor two");
-        cy.get("[contenteditable=true]").last().should("contain.text", "hello editor two");
+        cy.get("[contenteditable=true]").first().should("contain.text", text1);
+        cy.get("[contenteditable=true]").last().should("contain.text", text2);
     });
 
     it("renders a checkbox and checks it", () => {

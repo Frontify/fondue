@@ -42,7 +42,7 @@ export const ColorInput: FC<ColorInputProps> = ({
         <div
             {...focusProps}
             className={merge([
-                "tw-flex tw-items-center tw-h-9 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent focus-within:tw-border-black-90 tw-border-black-20",
+                "tw-flex tw-items-center tw-h-9 tw-px-2 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent focus-within:tw-border-black-90 tw-border-black-20",
                 isFocusVisible && FOCUS_STYLE,
             ])}
             data-test-id="color-input"

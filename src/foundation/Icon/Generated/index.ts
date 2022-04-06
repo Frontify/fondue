@@ -150,6 +150,7 @@ export { default as IconLineDotted } from "./IconLineDotted";
 export { default as IconLineSolid } from "./IconLineSolid";
 export { default as IconLineSpacer } from "./IconLineSpacer";
 export { default as IconLink } from "./IconLink";
+export { default as IconLinkOpen } from "./IconLinkOpen";
 export { default as IconListBullets } from "./IconListBullets";
 export { default as IconListChecklist } from "./IconListChecklist";
 export { default as IconListIndented } from "./IconListIndented";
