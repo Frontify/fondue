@@ -25,7 +25,7 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
                         {cloneElement(decorator, { size: IconSize.Size24 })}
                     </span>
                 )}
-                <h3 {...ariaTitleProps} className="tw-text-xl tw-font-heading tw-font-medium">
+                <h3 {...ariaTitleProps} className="tw-text-xl tw-font-heading tw-font-medium tw-text-text">
                     {title}
                 </h3>
             </div>
