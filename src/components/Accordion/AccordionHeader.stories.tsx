@@ -35,7 +35,7 @@ export default {
     args: {
         isOpen: false,
         disabled: false,
-        bold:true,
+        bold: true,
         children: "I am the Default Accordion Header",
     },
 } as Meta<AccordionHeaderProps>;
