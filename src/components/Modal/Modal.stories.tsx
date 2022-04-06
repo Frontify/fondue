@@ -215,3 +215,53 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
         </>
     );
 };
+
+export const WithLimitedText: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = (args) => {
+    const state = useOverlayTriggerState({});
+
+    return (
+        <>
+            <Button onClick={() => state.open()}>Open Modal</Button>
+            <Modal
+                visual={{
+                    pattern: args.pattern,
+                    foregroundColor: args.foregroundColor,
+                }}
+                onClose={state.close}
+                isOpen={state.isOpen}
+                isDismissable
+            >
+                <Modal.Header
+                    title={args.title}
+                    leadText={args.leadText}
+                    decorator={args.decorator}
+                    variant={args.variant}
+                />
+                <Modal.Body direction={ScrollWrapperDirection.Vertical}>
+                    <p>
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
+                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
+                        fugiat perferendis consequatur.
+                    </p>
+                </Modal.Body>
+                <Modal.Footer
+                    buttons={[
+                        {
+                            children: "Okay",
+                            onClick: () => {
+                                action("click");
+                                state.close();
+                            },
+                            style: ButtonStyle.Secondary,
+                        },
+                        {
+                            children: "Cancel",
+                            onClick: () => state.close(),
+                            style: ButtonStyle.Primary,
+                        },
+                    ]}
+                />
+            </Modal>
+        </>
+    );
+};
