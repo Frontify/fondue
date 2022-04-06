@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ComboBoxState } from "@react-stately/combobox";
-import { DropdownState, LinkChooserState, SectionState } from "../state/machine";
+import { DropdownState, LinkChooserState, SectionState } from "../state/types";
 import { SearchResult } from "../types";
 
 type MachineMatches = (value: string) => boolean;
