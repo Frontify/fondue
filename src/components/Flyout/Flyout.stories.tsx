@@ -18,7 +18,6 @@ import { chain } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { Dropdown } from "@components/Dropdown";
-import { DatePicker } from "@components/DatePicker";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -164,7 +163,6 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
                     ]}
                 />
                 <p className="tw-pt-3">Field 2</p>
-                <DatePicker onChange={() => {}} />
             </div>
         </Flyout>
     );
