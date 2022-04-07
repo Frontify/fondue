@@ -3,10 +3,10 @@ name: Continuous Integration
 on:
     pull_request:
         branches:
-            - 'main'
+            - "main"
     push:
         branches:
-            - 'main'
+            - "main"
 
 env:
     CI: true
@@ -22,13 +22,13 @@ jobs:
             - name: Use Node.js 16
               uses: actions/setup-node@v3
               with:
-                  node-version: '16'
+                  node-version: "16"
 
             - name: Cache NPM dependencies
               id: npm_cache
               uses: actions/cache@v3
               with:
-                  path: '**/node_modules'
+                  path: "**/node_modules"
                   key: ${{ runner.os }}-node-v1-${{ hashFiles('**/package-lock.json') }}
 
             - name: Install NPM dependencies
@@ -50,3 +50,6 @@ jobs:
 
             - name: Test Components
               run: npm test
+
+            - name: Create build
+              run: npm build
