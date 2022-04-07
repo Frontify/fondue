@@ -61,7 +61,7 @@
         "url": "https://github.com/frontify/arcade/issues"
     },
     "devDependencies": {
-        "@cypress/react": "5.12.1",
+        "@cypress/react": "5.12.4",
         "@cypress/vite-dev-server": "2.2.2",
         "@frontify/eslint-config-react": "0.13.2",
         "@storybook/addon-actions": "6.4.20",
@@ -82,8 +82,8 @@
         "chalk": "5.0.1",
         "concat": "^1.0.3",
         "cross-env": "7.0.3",
-        "cypress": "9.3.1",
-        "cypress-real-events": "1.6.0",
+        "cypress": "9.5.3",
+        "cypress-real-events": "1.7.0",
         "eslint": "8.12.0",
         "eslint-plugin-jsx-a11y": "6.5.1",
         "esno": "0.14.1",
