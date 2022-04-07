@@ -24,7 +24,7 @@
     "scripts": {
         "build": "npm run clean && npm run generate:icons && npm run build:library && npm run build:extractedThirdPartyStyles",
         "build:css": "tailwindcss -i ./src/styles.css -o dist/index.css",
-        "build:extractedThirdPartyStyles": "cat src/components/**/*.css | postcss > dist/extractedThirdPartyStyles.css",
+        "build:extractedThirdPartyStyles": "postcss src/components/**/*.css --output dist/extractedThirdPartyStyles.css",
         "build:library": "vite build",
         "build:storybook": "build-storybook",
         "dev": "cross-env NODE_ENV=development npm run dev:library",
