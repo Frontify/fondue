@@ -7,7 +7,7 @@ const { resolve } = require("path");
 
 module.exports = {
     core: {
-        builder: "storybook-builder-vite",
+        builder: "@storybook/builder-vite",
     },
     stories: ["../src/**/*.stories.tsx"],
     addons: ["storybook-dark-mode", "@storybook/addon-links", "@storybook/addon-essentials"],
