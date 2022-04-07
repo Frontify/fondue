@@ -169,6 +169,7 @@ const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = (
 };
 
 export const Default = ModalTemplate.bind({});
+
 Default.args = {
     ...ModalTemplate.args,
     children: (
