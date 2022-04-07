@@ -93,6 +93,13 @@ export default {
     ],
 } as Meta;
 
+const ExampleParagraph = () => (
+    <p>
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda itaque tenetur
+        ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo, fugiat perferendis consequatur.
+    </p>
+);
+
 export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = (args) => {
     const [input, setInput] = useState("");
 
@@ -118,16 +125,8 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
                 />
                 <Modal.Body direction={ScrollWrapperDirection.Vertical}>
                     <div>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
+                        <ExampleParagraph />
+                        <ExampleParagraph />
                         <div className="tw-my-4">
                             <FormControl
                                 style={FormControlStyle.Primary}
@@ -142,56 +141,14 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
                                 <TextInput value={input} onChange={setInput} />
                             </FormControl>
                         </div>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
+                        <ExampleParagraph />
+                        <ExampleParagraph />
+                        <ExampleParagraph />
+                        <ExampleParagraph />
+                        <ExampleParagraph />
+                        <ExampleParagraph />
+                        <ExampleParagraph />
+                        <ExampleParagraph />
                     </div>
                 </Modal.Body>
                 <Modal.Footer
@@ -238,11 +195,7 @@ export const WithLimitedText: Story<ModalProps & ModalVisualProps & ModalHeaderP
                     variant={args.variant}
                 />
                 <Modal.Body direction={ScrollWrapperDirection.Vertical}>
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-                        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo,
-                        fugiat perferendis consequatur.
-                    </p>
+                    <ExampleParagraph />
                 </Modal.Body>
                 <Modal.Footer
                     buttons={[
