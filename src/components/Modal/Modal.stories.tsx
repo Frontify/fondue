@@ -81,6 +81,11 @@ export default {
             defaultValue: ModalHeaderVariant.Default,
             control: { type: "select" },
         },
+        children: {
+            table: {
+                disable: true,
+            },
+        },
     },
     decorators: [
         (Story) => (
@@ -100,9 +105,26 @@ const ExampleParagraph = () => (
     </p>
 );
 
-export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = (args) => {
+const ControlledInput = () => {
     const [input, setInput] = useState("");
 
+    return (
+        <FormControl
+            style={FormControlStyle.Primary}
+            direction={FormControlDirection.Vertical}
+            label={{
+                children: "Input Label",
+                required: false,
+                htmlFor: generateRandomId(),
+                tooltip: { content: "Tooltip Text" },
+            }}
+        >
+            <TextInput value={input} onChange={setInput} />
+        </FormControl>
+    );
+};
+
+const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = (args) => {
     const state = useOverlayTriggerState({});
 
     return (
@@ -123,34 +145,7 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
                     decorator={args.decorator}
                     variant={args.variant}
                 />
-                <Modal.Body direction={ScrollWrapperDirection.Vertical}>
-                    <div>
-                        <ExampleParagraph />
-                        <ExampleParagraph />
-                        <div className="tw-my-4">
-                            <FormControl
-                                style={FormControlStyle.Primary}
-                                direction={FormControlDirection.Vertical}
-                                label={{
-                                    children: "Input Label",
-                                    required: false,
-                                    htmlFor: generateRandomId(),
-                                    tooltip: { content: "Tooltip Text" },
-                                }}
-                            >
-                                <TextInput value={input} onChange={setInput} />
-                            </FormControl>
-                        </div>
-                        <ExampleParagraph />
-                        <ExampleParagraph />
-                        <ExampleParagraph />
-                        <ExampleParagraph />
-                        <ExampleParagraph />
-                        <ExampleParagraph />
-                        <ExampleParagraph />
-                        <ExampleParagraph />
-                    </div>
-                </Modal.Body>
+                <Modal.Body direction={ScrollWrapperDirection.Vertical}>{args.children}</Modal.Body>
                 <Modal.Footer
                     buttons={[
                         {
@@ -173,48 +168,28 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
     );
 };
 
-export const WithLimitedText: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = (args) => {
-    const state = useOverlayTriggerState({});
-
-    return (
-        <>
-            <Button onClick={() => state.open()}>Open Modal</Button>
-            <Modal
-                visual={{
-                    pattern: args.pattern,
-                    foregroundColor: args.foregroundColor,
-                }}
-                onClose={state.close}
-                isOpen={state.isOpen}
-                isDismissable
-            >
-                <Modal.Header
-                    title={args.title}
-                    leadText={args.leadText}
-                    decorator={args.decorator}
-                    variant={args.variant}
-                />
-                <Modal.Body direction={ScrollWrapperDirection.Vertical}>
-                    <ExampleParagraph />
-                </Modal.Body>
-                <Modal.Footer
-                    buttons={[
-                        {
-                            children: "Okay",
-                            onClick: () => {
-                                action("click");
-                                state.close();
-                            },
-                            style: ButtonStyle.Secondary,
-                        },
-                        {
-                            children: "Cancel",
-                            onClick: () => state.close(),
-                            style: ButtonStyle.Primary,
-                        },
-                    ]}
-                />
-            </Modal>
-        </>
-    );
+export const Default = ModalTemplate.bind({});
+Default.args = {
+    ...ModalTemplate.args,
+    children: (
+        <div>
+            <ExampleParagraph />
+            <ExampleParagraph />
+            <div className="tw-my-4">
+                <ControlledInput />
+            </div>
+            <ExampleParagraph />
+            <ExampleParagraph />
+            <ExampleParagraph />
+            <ExampleParagraph />
+            <ExampleParagraph />
+            <ExampleParagraph />
+            <ExampleParagraph />
+            <ExampleParagraph />
+        </div>
+    ),
 };
+
+export const WithLimitedText = ModalTemplate.bind({});
+
+WithLimitedText.args = { ...ModalTemplate.args, children: <ExampleParagraph /> };
