@@ -45,7 +45,8 @@
         "typecheck": "tsc",
         "storybook": "start-storybook -p 6006",
         "prepublishOnly": "npm run build",
-        "prepare": "is-ci || husky install"
+        "prepare": "is-ci || husky install",
+        "test-storybook": "test-storybook"
     },
     "keywords": [
         "frontify",
@@ -69,6 +70,7 @@
         "@storybook/addon-links": "6.4.20",
         "@storybook/builder-vite": "^0.1.25",
         "@storybook/react": "6.4.20",
+        "@storybook/test-runner": "0.0.5",
         "@svgr/core": "6.2.1",
         "@svgr/plugin-jsx": "6.2.1",
         "@svgr/plugin-prettier": "6.1.2",
