@@ -146,7 +146,7 @@ export const Dropdown: FC<DropdownProps> = ({
     };
 
     return (
-        <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
+        <div className="tw-w-full tw-font-sans tw-text-s">
             <Trigger
                 disabled={disabled}
                 buttonProps={buttonProps}
@@ -183,8 +183,14 @@ export const Dropdown: FC<DropdownProps> = ({
             <AnimatePresence>
                 {!disabled && isOpen && heightIsReady && (
                     <motion.div
+                        style={{
+                            width: triggerRef.current?.getBoundingClientRect().width,
+                            minWidth: "fit-content",
+                            left: triggerRef.current?.getBoundingClientRect().left,
+                            right: triggerRef.current?.getBoundingClientRect().right,
+                        }}
                         className={merge([
-                            "tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-20 tw-min-w-full tw-overflow-hidden",
+                            "tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-20 tw-overflow-hidden",
                             alignmentStyling[alignment],
                             position === DropdownPosition.Bottom ? "tw-mt-2" : getDropdownBottomPosition(size),
                         ])}
