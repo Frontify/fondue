@@ -141,7 +141,7 @@
         "@react-stately/tree": "^3.2.3",
         "@udecode/plate": "^10.6.0",
         "@xstate/immer": "^0.3.1",
-        "@xstate/react": "^1.6.3",
+        "@xstate/react": "^2.0.0",
         "date-fns": "^2.28.0",
         "framer-motion": "^6.2.9",
         "react-colorful": "^5.5.1",
