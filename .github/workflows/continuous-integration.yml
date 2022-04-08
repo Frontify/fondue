@@ -48,5 +48,5 @@ jobs:
             - name: Test Components
               run: npm test
 
-            - name: Create build
+            - name: Build Arcade
               run: npm run build
