@@ -91,6 +91,7 @@ import IconEmojiNeutral from "@foundation/Icon/Generated/IconEmojiNeutral";
 import IconEmojiNeutralFilled from "@foundation/Icon/Generated/IconEmojiNeutralFilled";
 import IconEmojiUnhappy from "@foundation/Icon/Generated/IconEmojiUnhappy";
 import IconEmojiUnhappyFilled from "@foundation/Icon/Generated/IconEmojiUnhappyFilled";
+import IconEnvelope from "@foundation/Icon/Generated/IconEnvelope";
 import IconExpand from "@foundation/Icon/Generated/IconExpand";
 import IconExternalAsset from "@foundation/Icon/Generated/IconExternalAsset";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
@@ -177,6 +178,7 @@ import IconObjects from "@foundation/Icon/Generated/IconObjects";
 import IconOpenLock from "@foundation/Icon/Generated/IconOpenLock";
 import IconOpenLockFilled from "@foundation/Icon/Generated/IconOpenLockFilled";
 import IconOrientation from "@foundation/Icon/Generated/IconOrientation";
+import IconPaperplane from "@foundation/Icon/Generated/IconPaperplane";
 import IconPatternLibrary from "@foundation/Icon/Generated/IconPatternLibrary";
 import IconPause from "@foundation/Icon/Generated/IconPause";
 import IconPen from "@foundation/Icon/Generated/IconPen";
@@ -360,6 +362,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.EmojiNeutralFilled]: <IconEmojiNeutralFilled />,
     [IconEnum.EmojiUnhappy]: <IconEmojiUnhappy />,
     [IconEnum.EmojiUnhappyFilled]: <IconEmojiUnhappyFilled />,
+    [IconEnum.Envelope]: <IconEnvelope />,
     [IconEnum.Expand]: <IconExpand />,
     [IconEnum.ExternalAsset]: <IconExternalAsset />,
     [IconEnum.ExternalLink]: <IconExternalLink />,
@@ -446,6 +449,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.OpenLock]: <IconOpenLock />,
     [IconEnum.OpenLockFilled]: <IconOpenLockFilled />,
     [IconEnum.Orientation]: <IconOrientation />,
+    [IconEnum.Paperplane]: <IconPaperplane />,
     [IconEnum.PatternLibrary]: <IconPatternLibrary />,
     [IconEnum.Pause]: <IconPause />,
     [IconEnum.Pen]: <IconPen />,
