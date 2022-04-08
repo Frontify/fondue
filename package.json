@@ -1,6 +1,6 @@
 {
     "name": "@frontify/arcade",
-    "version": "6.1.4",
+    "version": "6.2.0",
     "description": "Design system of Frontify",
     "main": "dist/index.umd.js",
     "unpkg": "dist/index.umd.js",
