@@ -34,11 +34,6 @@ export enum DropdownPosition {
     Bottom = "Bottom",
 }
 
-const alignmentStyling: Record<DropdownAlignment, string> = {
-    [DropdownAlignment.Start]: "tw-left-0",
-    [DropdownAlignment.End]: "tw-right-0",
-};
-
 export type DropdownProps = {
     id?: string;
     menuBlocks: MenuBlock[];
@@ -119,11 +114,8 @@ export const Dropdown: FC<DropdownProps> = ({
 
     const heightIsReady = !autoResize || maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
 
-    const textState = disabled
-        ? MenuItemTextColorState.Disabled
-        : activeItem
-        ? MenuItemTextColorState.Active
-        : MenuItemTextColorState.Default;
+    const enabledTextColorState = activeItem ? MenuItemTextColorState.Active : MenuItemTextColorState.Default;
+    const textState = disabled ? MenuItemTextColorState.Disabled : enabledTextColorState;
 
     const textColorClass = activeItem
         ? menuItemTextColorRecord[activeItem.style || MenuItemStyle.Primary][textState]
@@ -141,9 +133,11 @@ export const Dropdown: FC<DropdownProps> = ({
 
     const showClear = !!activeItem && !!onClear;
 
-    const getDropdownBottomPosition = (dropDownSize: string) => {
-        return dropDownSize === DropdownSize.Small ? "tw-mb-2 tw-bottom-[34px]" : "tw-mb-2 tw-bottom-[60px]";
-    };
+    const leftPosition =
+        triggerRef.current && overlayRef.current
+            ? triggerRef.current?.getBoundingClientRect().right - overlayRef.current?.getBoundingClientRect().width
+            : "auto";
+    const bottomPosition = triggerRef.current ? triggerRef.current?.getBoundingClientRect().top - 8 : "auto";
 
     return (
         <div className="tw-w-full tw-font-sans tw-text-s">
@@ -186,14 +180,10 @@ export const Dropdown: FC<DropdownProps> = ({
                         style={{
                             width: triggerRef.current?.getBoundingClientRect().width,
                             minWidth: "fit-content",
-                            left: triggerRef.current?.getBoundingClientRect().left,
-                            right: triggerRef.current?.getBoundingClientRect().right,
+                            left: alignment === DropdownAlignment.Start ? "auto" : leftPosition,
+                            bottom: position === DropdownPosition.Top ? bottomPosition : "auto",
                         }}
-                        className={merge([
-                            "tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-20 tw-overflow-hidden",
-                            alignmentStyling[alignment],
-                            position === DropdownPosition.Bottom ? "tw-mt-2" : getDropdownBottomPosition(size),
-                        ])}
+                        className="tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-20 tw-overflow-hidden tw-box-content tw-mt-2"
                         key="content"
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
