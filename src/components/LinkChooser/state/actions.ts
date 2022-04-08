@@ -2,12 +2,11 @@
 
 import { QUERIES_STORAGE_KEY } from "@components/LinkChooser/LinkChooser";
 import { assign, DoneInvokeEvent } from "xstate";
-import { SearchResult } from "..";
 import { defaultSection } from "../sections";
-import { LinkChooserContext, LinkChooserEventData } from "../types";
+import { LinkChooserContext, LinkChooserEventData, SearchResult } from "../types";
 import { isCustomLink } from "../utils/helpers";
 import { createCustomLink, mergeResultWithRecentQueries, retrieveRecentQueries } from "../utils/transformers";
-import { DropdownState, LinkChooserState, SectionState } from "./machine";
+import { DropdownState, LinkChooserState, SectionState } from "./types";
 
 export const updateQueryFromString = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
     query: (_context, { data }) => data.query ?? "",
