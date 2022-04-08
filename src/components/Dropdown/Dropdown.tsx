@@ -183,7 +183,10 @@ export const Dropdown: FC<DropdownProps> = ({
                             left: alignment === DropdownAlignment.Start ? "auto" : leftPosition,
                             bottom: position === DropdownPosition.Top ? bottomPosition : "auto",
                         }}
-                        className="tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-20 tw-overflow-hidden tw-box-content tw-mt-2"
+                        className={merge([
+                            "tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-20 tw-overflow-hidden tw-box-content",
+                            position === DropdownPosition.Bottom ? "tw-mt-2" : "",
+                        ])}
                         key="content"
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
