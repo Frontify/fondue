@@ -56,7 +56,9 @@ const ModalComponent: FC<ModalProps> = memo((props) => {
     const { dialogProps, titleProps } = useDialog(props, ref);
 
     const maxWidthClass = () => {
-        if (!props.width || props.width === ModalWidth.Default) return ModalWidthClasses.Default;
+        if (!props.width || props.width === ModalWidth.Default) {
+            return ModalWidthClasses.Default;
+        }
         return ModalWidthClasses.Large;
     };
 
