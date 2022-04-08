@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { draggableItemCompareFn } from "@utilities/dnd/draggableItemCompareFn";
 import { DraggableItem } from "@utilities/dnd/types";
 
