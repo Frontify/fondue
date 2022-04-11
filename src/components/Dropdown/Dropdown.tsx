@@ -137,7 +137,7 @@ export const Dropdown: FC<DropdownProps> = ({
         triggerRef.current && overlayRef.current
             ? triggerRef.current?.getBoundingClientRect().right - overlayRef.current?.getBoundingClientRect().width
             : "auto";
-    const bottomPosition = triggerRef.current ? triggerRef.current?.getBoundingClientRect().top - 8 : "auto";
+    const bottomPosition = triggerRef.current ? triggerRef.current?.getBoundingClientRect().top - 3 : "auto";
 
     return (
         <div className="tw-w-full tw-font-sans tw-text-s">
@@ -210,9 +210,17 @@ export const Dropdown: FC<DropdownProps> = ({
                 )}
             </AnimatePresence>
             {validation === Validation.Loading && (
-                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
-                    <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
-                </span>
+                <div className="tw-relative">
+                    <span
+                        style={{
+                            top: size === DropdownSize.Small ? "-47px" : "-71px",
+                            right: "-11px",
+                        }}
+                        className="tw-absolute tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10"
+                    >
+                        <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
+                    </span>
+                </div>
             )}
         </div>
     );
