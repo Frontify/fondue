@@ -132,6 +132,7 @@ WithBadges.args = {
 
 const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
     const [open, setOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<Date | null>();
 
     return (
         <Flyout
@@ -164,7 +165,7 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
                     ]}
                 />
                 <p className="tw-pt-3">Field 2</p>
-                <DatePicker />
+                <DatePicker value={selectedDate as Date} onChange={setSelectedDate} />
             </div>
         </Flyout>
     );
