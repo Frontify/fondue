@@ -37,13 +37,13 @@ const MODAL_VARIANTS = {
     exit: { y: 0 },
 };
 
-const ModalWidthClasses: Record<ModalWidth, string> = {
+const widthMap: Record<ModalWidth, string> = {
     [ModalWidth.Default]: "tw-max-w-[800px]",
     [ModalWidth.Large]: "tw-max-w-[1200px]",
 };
 
 const ModalComponent: FC<ModalProps> = memo((props) => {
-    const { visual, children } = props;
+    const { visual, children, width = ModalWidth.Default } = props;
     const ref = useRef<HTMLDivElement>(null);
     const {
         overlayProps,
@@ -54,13 +54,6 @@ const ModalComponent: FC<ModalProps> = memo((props) => {
     const { modalProps } = useModal();
 
     const { dialogProps, titleProps } = useDialog(props, ref);
-
-    const maxWidthClass = () => {
-        if (!props.width || props.width === ModalWidth.Default) {
-            return ModalWidthClasses.Default;
-        }
-        return ModalWidthClasses.Large;
-    };
 
     return (
         <motion.div
@@ -77,7 +70,7 @@ const ModalComponent: FC<ModalProps> = memo((props) => {
             <FocusScope contain restoreFocus autoFocus>
                 <motion.div
                     variants={MODAL_VARIANTS}
-                    className={merge([maxWidthClass(), "tw-w-full tw-max-h-full tw-h-contents tw-flex tw-flex-col"])}
+                    className={merge([widthMap[width], "tw-w-full tw-max-h-full tw-h-contents tw-flex tw-flex-col"])}
                 >
                     <div
                         {...overlayProps}
