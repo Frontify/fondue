@@ -46,8 +46,7 @@ export default {
             },
             name: "Width",
             options: [ModalWidth.Default, ModalWidth.Large],
-            defaultValue: ModalWidth.Large,
-            control: { type: "radio" },
+            control: { type: "select" },
         },
         title: {
             table: {
