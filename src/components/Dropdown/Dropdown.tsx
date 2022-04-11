@@ -137,7 +137,7 @@ export const Dropdown: FC<DropdownProps> = ({
         triggerRef.current && overlayRef.current
             ? triggerRef.current?.getBoundingClientRect().right - overlayRef.current?.getBoundingClientRect().width
             : "auto";
-    const bottomPosition = triggerRef.current ? triggerRef.current?.getBoundingClientRect().top - 3 : "auto";
+    const topPosition = triggerRef.current ? triggerRef.current?.getBoundingClientRect().top - 3 : "auto";
 
     return (
         <div className="tw-w-full tw-font-sans tw-text-s">
@@ -181,7 +181,7 @@ export const Dropdown: FC<DropdownProps> = ({
                             width: triggerRef.current?.getBoundingClientRect().width,
                             minWidth: "fit-content",
                             left: alignment === DropdownAlignment.Start ? "auto" : leftPosition,
-                            bottom: position === DropdownPosition.Top ? bottomPosition : "auto",
+                            bottom: position === DropdownPosition.Top ? topPosition : "auto",
                         }}
                         className={merge([
                             "tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-20 tw-overflow-hidden tw-box-content",
