@@ -48,8 +48,14 @@ export type ModalFooterProps = {
     buttons: [ModalButton] | [ModalButton, ModalButton];
 };
 
+export enum ModalWidth {
+    Default = "Default",
+    Large = "Large",
+}
+
 export type ModalProps = {
     visual?: ModalVisualProps;
+    width?: ModalWidth;
     children?: ModalBodyChildren;
     isOpen: boolean;
 } & Omit<OverlayProps, "isOpen"> &

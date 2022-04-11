@@ -12,7 +12,7 @@ import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 import { IconAcademy, IconAudio, IconIcons } from "@foundation/Icon";
 import { ScrollWrapperDirection } from "@components/ScrollWrapper/types";
 import { OverlayContainer, OverlayProvider } from "@react-aria/overlays";
-import { ModalHeaderProps, ModalHeaderVariant, ModalProps, ModalVisualProps } from "./types";
+import { ModalHeaderProps, ModalHeaderVariant, ModalProps, ModalVisualProps, ModalWidth } from "./types";
 import { FormControl, FormControlDirection, FormControlStyle } from "@components/FormControl";
 
 // eslint-disable-next-line import/no-default-export
@@ -38,6 +38,14 @@ export default {
             options: ["None", ...Object.values(PatternTheme)],
             mapping: { None: null, ...Object.values(PatternDesign) },
             defaultValue: PatternTheme.Black,
+            control: { type: "select" },
+        },
+        width: {
+            table: {
+                category: "Layout",
+            },
+            name: "Width",
+            options: [ModalWidth.Default, ModalWidth.Large],
             control: { type: "select" },
         },
         title: {
@@ -135,6 +143,7 @@ const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = (
                     pattern: args.pattern,
                     foregroundColor: args.foregroundColor,
                 }}
+                width={args.width}
                 onClose={state.close}
                 isOpen={state.isOpen}
                 isDismissable

@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, memo, useRef } from "react";
-import { ModalProps } from "./types";
+import { merge } from "@utilities/merge";
+import { ModalProps, ModalWidth } from "./types";
 import { ModalVisual } from "./ModalVisual";
 import { OverlayContainer, useModal, useOverlay, usePreventScroll } from "@react-aria/overlays";
 import { FocusScope } from "@react-aria/focus";
@@ -36,8 +37,13 @@ const MODAL_VARIANTS = {
     exit: { y: 0 },
 };
 
+const widthMap: Record<ModalWidth, string> = {
+    [ModalWidth.Default]: "tw-max-w-[800px]",
+    [ModalWidth.Large]: "tw-max-w-[1200px]",
+};
+
 const ModalComponent: FC<ModalProps> = memo((props) => {
-    const { visual, children } = props;
+    const { visual, children, width = ModalWidth.Default } = props;
     const ref = useRef<HTMLDivElement>(null);
     const {
         overlayProps,
@@ -64,7 +70,7 @@ const ModalComponent: FC<ModalProps> = memo((props) => {
             <FocusScope contain restoreFocus autoFocus>
                 <motion.div
                     variants={MODAL_VARIANTS}
-                    className="tw-w-full tw-max-w-[790px] tw-max-h-full tw-h-contents tw-flex tw-flex-col"
+                    className={merge([widthMap[width], "tw-w-full tw-max-h-full tw-h-contents tw-flex tw-flex-col"])}
                 >
                     <div
                         {...overlayProps}
