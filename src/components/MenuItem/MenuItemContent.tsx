@@ -18,6 +18,7 @@ export enum MenuItemContentStyle {
 export type MenuItemContentProps = {
     title: ReactNode;
     decorator?: ReactElement;
+    decoratorRight?: ReactElement;
     subtitle?: string;
     size?: MenuItemContentSize;
     ariaProps?: HTMLAttributes<HTMLElement>;
@@ -35,6 +36,7 @@ const paddingRight: Record<MenuItemContentSize, string> = {
 export const MenuItemContent: FC<MenuItemContentProps> = ({
     title,
     decorator,
+    decoratorRight,
     subtitle,
     ariaProps,
     size = MenuItemContentSize.Small,
@@ -65,5 +67,10 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
                 </div>
             )}
         </div>
+        {decoratorRight && (
+            <span className={merge(["tw-shrink-0", paddingRight[size]])} data-test-id="menu-item-decorator">
+                {decoratorRight}
+            </span>
+        )}
     </div>
 );

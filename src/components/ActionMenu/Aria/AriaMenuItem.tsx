@@ -59,6 +59,7 @@ export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSel
                 disabled={disabled}
                 active={isSelected}
                 selectionIndicator={selectionIndicator}
+                decoratorRight={menuItem.decoratorRight}
             />
         </li>
     );

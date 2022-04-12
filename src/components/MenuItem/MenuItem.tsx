@@ -54,6 +54,7 @@ export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextC
 export const MenuItem: FC<MenuItemProps> = ({
     title,
     decorator,
+    decoratorRight,
     subtitle,
     size = MenuItemContentSize.Small,
     style = MenuItemStyle.Primary,
@@ -92,9 +93,15 @@ export const MenuItem: FC<MenuItemProps> = ({
             ])}
         >
             {size === MenuItemContentSize.Large ? (
-                <MenuItemContent title={title} decorator={decorator} subtitle={subtitle} size={size} />
+                <MenuItemContent
+                    title={title}
+                    decorator={decorator}
+                    subtitle={subtitle}
+                    size={size}
+                    decoratorRight={decoratorRight}
+                />
             ) : (
-                <MenuItemContent title={title} decorator={decorator} size={size} />
+                <MenuItemContent title={title} decorator={decorator} size={size} decoratorRight={decoratorRight} />
             )}
             <div className="tw-flex-none">{currentIcon}</div>
         </div>

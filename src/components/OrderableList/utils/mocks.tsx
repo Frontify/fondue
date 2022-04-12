@@ -23,7 +23,7 @@ export const storyItems: OrderableListItem<StoryListItem>[] = [
             </p>
         ),
         alt: "one",
-        sort: 1,
+        sort: 0,
     },
     {
         id: "3",
@@ -35,13 +35,13 @@ export const storyItems: OrderableListItem<StoryListItem>[] = [
             </p>
         ),
         alt: "three",
-        sort: 2,
+        sort: 1,
     },
     {
         id: "4",
         textContent: <p>Items can contain multiple focusable elements.</p>,
         alt: "four",
-        sort: null,
+        sort: 2,
     },
     {
         id: "7",
