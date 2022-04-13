@@ -22,7 +22,9 @@ export const useScrollWrapper = (scrollingContainer: RefObject<HTMLElement>) => 
         const updateDimensionsFromRef = () => {
             if (scrollingContainer.current) {
                 const dimensions = getScrollDimensions(scrollingContainer.current);
-                setScrollDimensions(dimensions);
+                /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded" 
+                from being thrown during cypress component tests */
+                setTimeout(() => setScrollDimensions(dimensions), 0);
             }
         };
 
