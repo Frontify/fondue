@@ -28,7 +28,7 @@ export type CheckboxProps = {
     value: string;
     onChange?: (isChecked: boolean) => void;
     label?: string;
-    tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
+    tooltip?: TooltipProps;
     note?: string;
     ariaLabel?: string;
     groupInputProps?: HTMLAttributes<HTMLElement>;

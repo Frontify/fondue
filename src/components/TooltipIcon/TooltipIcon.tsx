@@ -9,7 +9,7 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 
 export type TooltipIconProps = {
-    tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
+    tooltip?: TooltipProps;
     iconSize?: IconSize;
 };
 
