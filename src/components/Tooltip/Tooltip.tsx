@@ -18,7 +18,7 @@ import React, {
     useRef,
     useState,
 } from "react";
-import { BrightHeader, BrightHeaderStyle } from "./BrightHeader";
+import { BrightHeader, brightHeaderArrowBackgroundColors, BrightHeaderStyle } from "./BrightHeader";
 import { usePopper } from "react-popper";
 
 export type TooltipButton = {
@@ -75,13 +75,6 @@ const alignementSuffix: Record<TooltipAlignment, string> = {
     [TooltipAlignment.End]: "-end",
 };
 
-const brightHeaderBackgrounds: Record<BrightHeaderStyle, string> = {
-    [BrightHeaderStyle.Information]: "before:tw-bg-violet-60",
-    [BrightHeaderStyle.Warning]: "before:tw-bg-red-60",
-    [BrightHeaderStyle.Tip]: "before:tw-bg-green-60",
-    [BrightHeaderStyle.Note]: "before:tw-bg-yellow-60",
-};
-
 export const Tooltip: FC<TooltipProps> = ({
     content,
     tooltipIcon,
@@ -116,21 +109,21 @@ export const Tooltip: FC<TooltipProps> = ({
                 return merge([
                     "before:tw-border-t-0 before:tw-border-r-0 tw-left-[-6px]",
                     brightHeader && alignment === TooltipAlignment.Start
-                        ? brightHeaderBackgrounds[brightHeader]
+                        ? brightHeaderArrowBackgroundColors[brightHeader]
                         : "before:tw-bg-black-100 before:dark:tw-bg-white",
                 ]);
             case currentPlacement.toString().includes(TooltipPosition.Bottom):
                 return merge([
                     "before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px]",
                     brightHeader
-                        ? brightHeaderBackgrounds[brightHeader]
+                        ? brightHeaderArrowBackgroundColors[brightHeader]
                         : "before:tw-bg-black-100 before:dark:tw-bg-white",
                 ]);
             case currentPlacement.toString().includes(TooltipPosition.Left):
                 return merge([
                     "before:tw-border-b-0 before:tw-border-l-0 tw-right-[-6px]",
                     brightHeader && alignment === TooltipAlignment.Start
-                        ? brightHeaderBackgrounds[brightHeader]
+                        ? brightHeaderArrowBackgroundColors[brightHeader]
                         : "before:tw-bg-black-100 before:dark:tw-bg-white",
                 ]);
             default:
@@ -168,6 +161,7 @@ export const Tooltip: FC<TooltipProps> = ({
 
     useEffect(() => {
         if (triggerRefElement) {
+            triggerRefElement.current.addEventListener("click", () => setIsOpen(!isOpen));
             triggerRefElement.current.addEventListener("mouseover", () => setIsOpen(true));
             triggerRefElement.current.addEventListener("mouseleave", () => setTimeout(() => setIsOpen(false), 2000));
             triggerRefElement.current.addEventListener("focus", () => setIsOpen(true));
@@ -175,6 +169,7 @@ export const Tooltip: FC<TooltipProps> = ({
 
         return () => {
             if (triggerRefElement) {
+                triggerRefElement.current.removeEventListener("click", () => setIsOpen(!isOpen));
                 triggerRefElement.current.removeEventListener("mouseover", () => setIsOpen(true));
                 triggerRefElement.current.removeEventListener("mouseleave", () =>
                     setTimeout(() => setIsOpen(false), 2000),
@@ -192,7 +187,6 @@ export const Tooltip: FC<TooltipProps> = ({
                     className="tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20"
                     data-test-id="tooltip"
                     role="tooltip"
-                    aria-hidden={!isOpen}
                     style={popperInstance.styles.popper}
                     {...popperInstance.attributes.popper}
                 >

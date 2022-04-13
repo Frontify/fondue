@@ -31,11 +31,7 @@ export const TooltipIcon: FC<TooltipIconProps> = ({ tooltip, iconSize = IconSize
                     >
                         <IconQuestion size={iconSize} />
                     </button>
-                    <Tooltip
-                        triggerRefElement={tooltipTriggerElement}
-                        withArrow={true}
-                        content="Lorem ipsum dolor sit amet."
-                    />
+                    <Tooltip triggerRefElement={tooltipTriggerElement} withArrow={true} {...tooltip} />
                 </div>
             )}
         </div>
