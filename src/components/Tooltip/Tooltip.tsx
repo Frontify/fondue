@@ -193,7 +193,6 @@ export const Tooltip: FC<TooltipProps> = ({
                     data-test-id="tooltip"
                     role="tooltip"
                     aria-hidden={!isOpen}
-                    tabIndex={isOpen ? 0 : -1}
                     style={popperInstance.styles.popper}
                     {...popperInstance.attributes.popper}
                 >
