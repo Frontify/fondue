@@ -14,26 +14,41 @@ export default {
         disabled: false,
         currentColor: null,
         clearable: false,
+        showDelete: false,
     },
 } as Meta<ColorPickerFlyoutProps>;
 
-export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor, clearable }) => {
+export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor, clearable, showDelete }) => {
     const [temporaryColor, setTemporaryColor] = useState<Color | null>(null);
     const [selectedColor, setSelectedColor] = useState<Color | null>(currentColor);
 
+    const [isDeleted, setIsDeleted] = useState<boolean>(false);
+
+    const customDelete = () => {
+        setIsDeleted(true);
+    };
+
     return (
-        <ColorPickerFlyoutComponent
-            disabled={disabled}
-            currentColor={temporaryColor ?? selectedColor}
-            onClick={() => setSelectedColor(temporaryColor)}
-            onClose={() => setTemporaryColor(null)}
-            onSelect={(color) => setTemporaryColor(color)}
-            palettes={EXAMPLE_PALETTES}
-            clearable={clearable}
-            onClear={() => {
-                setTemporaryColor(null);
-                setSelectedColor(null);
-            }}
-        />
+        <>
+            {isDeleted ? (
+                <></>
+            ) : (
+                <ColorPickerFlyoutComponent
+                    disabled={disabled}
+                    currentColor={temporaryColor ?? selectedColor}
+                    onClick={() => setSelectedColor(temporaryColor)}
+                    onClose={() => setTemporaryColor(null)}
+                    onSelect={(color) => setTemporaryColor(color)}
+                    palettes={EXAMPLE_PALETTES}
+                    clearable={clearable}
+                    showDelete={showDelete}
+                    onClear={() => {
+                        setTemporaryColor(null);
+                        setSelectedColor(null);
+                    }}
+                    onDelete={customDelete}
+                />
+            )}
+        </>
     );
 };

@@ -17,7 +17,9 @@ type ColorInputTriggerProps = Pick<ColorPickerFlyoutProps, "id" | "currentColor"
     isOpen?: boolean;
     format: ColorFormat;
     clearable?: boolean;
+    showDelete?: boolean;
     onClear?: () => void;
+    onDelete?: () => void;
 };
 
 export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
@@ -27,7 +29,9 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
     isOpen = false,
     disabled = false,
     clearable = false,
+    showDelete = false,
     onClear,
+    onDelete,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing();
     const backgroundColor = currentColor ? tinycolor(currentColor).toRgbString() : "";
@@ -38,7 +42,9 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
             disabled={disabled}
             isFocusVisible={isFocusVisible}
             showClear={!!currentColor && clearable}
+            showDelete={showDelete}
             onClear={onClear}
+            onDelete={onDelete}
         >
             <button
                 {...focusProps}

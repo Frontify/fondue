@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
-import IconTrash from "@foundation/Icon/Generated/IconReject";
+import IconTrash from "@foundation/Icon/Generated/IconTrash";
+import IconReject from "@foundation/Icon/Generated/IconReject";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
@@ -18,22 +19,26 @@ export type TriggerProps = {
     disabled?: boolean;
     isOpen?: boolean;
     onClear?: () => void;
+    onDelete?: () => void;
     buttonProps?: HTMLAttributes<HTMLElement>;
     isFocusVisible?: boolean;
     size?: TriggerSize;
     showClear?: boolean;
+    showDelete?: boolean;
     validation?: Validation;
 };
 
 export const Trigger: FC<TriggerProps> = ({
     buttonProps,
     onClear,
+    onDelete,
     children,
     disabled = false,
     isOpen = false,
     isFocusVisible = false,
     size = TriggerSize.Small,
     showClear = false,
+    showDelete = false,
     validation = Validation.Default,
 }) => {
     const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
@@ -71,6 +76,21 @@ export const Trigger: FC<TriggerProps> = ({
                             disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
                         ])}
                         onClick={() => !!onClear && onClear()}
+                    >
+                        <IconReject size={IconSize.Size12} />
+                    </button>
+                )}
+                {showDelete && (
+                    <button
+                        {...clearableFocusProps}
+                        data-test-id="dropdown-clear-button"
+                        aria-label="Delete selection"
+                        className={merge([
+                            "tw-p-0 tw-outline-none tw-absolute tw-right-5",
+                            isClearFocusVisible && FOCUS_STYLE,
+                            disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
+                        ])}
+                        onClick={() => !!onDelete && onDelete()}
                     >
                         <IconTrash size={IconSize.Size12} />
                     </button>

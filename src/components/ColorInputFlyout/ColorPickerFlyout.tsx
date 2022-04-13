@@ -14,7 +14,9 @@ export type ColorPickerFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSele
     onClose?: () => void;
     currentColor: Color | null;
     clearable?: boolean;
+    showDelete?: boolean;
     onClear?: () => void;
+    onDelete?: () => void;
 };
 
 export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
@@ -26,7 +28,9 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
     palettes,
     disabled = false,
     clearable = false,
+    showDelete = false,
     onClear,
+    onDelete,
 }) => {
     const [open, setOpen] = useState(false);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
@@ -59,9 +63,14 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
                     disabled={disabled}
                     id={id}
                     clearable={clearable}
+                    showDelete={showDelete}
                     onClear={() => {
                         setOpen(false);
                         onClear && onClear();
+                    }}
+                    onDelete={() => {
+                        setOpen(false);
+                        onDelete && onDelete();
                     }}
                 />
             }
