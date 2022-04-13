@@ -23,7 +23,7 @@ export const useScrollWrapper = (scrollingContainer: RefObject<HTMLElement>) => 
         const updateDimensionsFromRef = () => {
             if (scrollingContainer.current) {
                 const dimensions = getScrollDimensions(scrollingContainer.current);
-                setScrollDimensions(dimensions);
+                setTimeout(() => setScrollDimensions(dimensions), 0);
             }
         };
 
