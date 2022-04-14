@@ -28,7 +28,6 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
     palettes,
     disabled = false,
     clearable = false,
-    showDelete = false,
     onClear,
     onDelete,
 }) => {
@@ -63,7 +62,6 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
                     disabled={disabled}
                     id={id}
                     clearable={clearable}
-                    showDelete={showDelete}
                     onClear={() => {
                         setOpen(false);
                         onClear && onClear();

@@ -24,7 +24,6 @@ export type TriggerProps = {
     isFocusVisible?: boolean;
     size?: TriggerSize;
     showClear?: boolean;
-    showDelete?: boolean;
     validation?: Validation;
 };
 
@@ -38,7 +37,6 @@ export const Trigger: FC<TriggerProps> = ({
     isFocusVisible = false,
     size = TriggerSize.Small,
     showClear = false,
-    showDelete = false,
     validation = Validation.Default,
 }) => {
     const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
@@ -80,7 +78,7 @@ export const Trigger: FC<TriggerProps> = ({
                         <IconReject size={IconSize.Size12} />
                     </button>
                 )}
-                {showDelete && (
+                {!!onDelete && (
                     <button
                         {...clearableFocusProps}
                         data-test-id="dropdown-clear-button"
@@ -90,7 +88,7 @@ export const Trigger: FC<TriggerProps> = ({
                             isClearFocusVisible && FOCUS_STYLE,
                             disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
                         ])}
-                        onClick={() => !!onDelete && onDelete()}
+                        onClick={() => onDelete}
                     >
                         <IconTrash size={IconSize.Size12} />
                     </button>
