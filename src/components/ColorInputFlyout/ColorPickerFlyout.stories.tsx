@@ -14,11 +14,13 @@ export default {
         disabled: false,
         currentColor: null,
         clearable: false,
-        showDelete: false,
+        onDelete: () => {
+            console.log("Example");
+        },
     },
 } as Meta<ColorPickerFlyoutProps>;
 
-export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor, clearable, showDelete }) => {
+export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor, clearable, onDelete }) => {
     const [temporaryColor, setTemporaryColor] = useState<Color | null>(null);
     const [selectedColor, setSelectedColor] = useState<Color | null>(currentColor);
 
@@ -26,6 +28,7 @@ export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor, 
 
     const customDelete = () => {
         setIsDeleted(true);
+        onDelete && onDelete();
     };
 
     return (
@@ -41,7 +44,6 @@ export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor, 
                     onSelect={(color) => setTemporaryColor(color)}
                     palettes={EXAMPLE_PALETTES}
                     clearable={clearable}
-                    showDelete={showDelete}
                     onClear={() => {
                         setTemporaryColor(null);
                         setSelectedColor(null);
