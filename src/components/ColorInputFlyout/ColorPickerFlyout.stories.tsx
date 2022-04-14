@@ -20,14 +20,15 @@ export default {
     },
 } as Meta<ColorPickerFlyoutProps>;
 
-export const Flyout: Story<ColorPickerFlyoutProps> = (args) => {
+export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor, clearable, onDelete }) => {
     const [temporaryColor, setTemporaryColor] = useState<Color | null>(null);
-    const [selectedColor, setSelectedColor] = useState<Color | null>(args.currentColor);
+    const [selectedColor, setSelectedColor] = useState<Color | null>(currentColor);
 
     return (
         <>
             <ColorPickerFlyoutComponent
-                {...args}
+                disabled={disabled}
+                clearable={clearable}
                 currentColor={temporaryColor ?? selectedColor}
                 onClick={() => setSelectedColor(temporaryColor)}
                 onClose={() => setTemporaryColor(null)}
@@ -38,7 +39,7 @@ export const Flyout: Story<ColorPickerFlyoutProps> = (args) => {
                     setSelectedColor(null);
                 }}
                 onDelete={() => {
-                    args.onDelete && args.onDelete();
+                    onDelete && onDelete();
                 }}
             />
         </>
