@@ -161,6 +161,7 @@ export enum IconEnum {
     Logo = "Logo",
     LogoGrid = "LogoGrid",
     Logout = "Logout",
+    MapPointer = "MapPointer",
     MarkArea = "MarkArea",
     Measurements = "Measurements",
     Media = "Media",
