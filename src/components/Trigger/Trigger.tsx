@@ -87,7 +87,7 @@ export const Trigger: FC<TriggerProps> = ({
                             isClearFocusVisible && FOCUS_STYLE,
                             disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
                         ])}
-                        onClick={() => onDelete()}
+                        onClick={onDelete}
                     >
                         <IconTrash size={IconSize.Size12} />
                     </button>

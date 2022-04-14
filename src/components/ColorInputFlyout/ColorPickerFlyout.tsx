@@ -65,10 +65,14 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
                         setOpen(false);
                         onClear && onClear();
                     }}
-                    onDelete={() => {
-                        setOpen(false);
-                        onDelete && onDelete();
-                    }}
+                    onDelete={
+                        onDelete
+                            ? () => {
+                                  setOpen(false);
+                                  onDelete && onDelete();
+                              }
+                            : undefined
+                    }
                 />
             }
         >
