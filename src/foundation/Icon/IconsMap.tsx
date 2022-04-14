@@ -162,6 +162,7 @@ import IconLock from "@foundation/Icon/Generated/IconLock";
 import IconLogo from "@foundation/Icon/Generated/IconLogo";
 import IconLogoGrid from "@foundation/Icon/Generated/IconLogoGrid";
 import IconLogout from "@foundation/Icon/Generated/IconLogout";
+import IconMapPointer from "@foundation/Icon/Generated/IconMapPointer";
 import IconMarkArea from "@foundation/Icon/Generated/IconMarkArea";
 import IconMeasurements from "@foundation/Icon/Generated/IconMeasurements";
 import IconMedia from "@foundation/Icon/Generated/IconMedia";
@@ -433,6 +434,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Logo]: <IconLogo />,
     [IconEnum.LogoGrid]: <IconLogoGrid />,
     [IconEnum.Logout]: <IconLogout />,
+    [IconEnum.MapPointer]: <IconMapPointer />,
     [IconEnum.MarkArea]: <IconMarkArea />,
     [IconEnum.Measurements]: <IconMeasurements />,
     [IconEnum.Media]: <IconMedia />,
