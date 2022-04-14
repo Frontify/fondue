@@ -14,7 +14,6 @@ export type ColorPickerFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSele
     onClose?: () => void;
     currentColor: Color | null;
     clearable?: boolean;
-    showDelete?: boolean;
     onClear?: () => void;
     onDelete?: () => void;
 };
