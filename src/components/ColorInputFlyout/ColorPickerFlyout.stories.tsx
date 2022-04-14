@@ -14,43 +14,33 @@ export default {
         disabled: false,
         currentColor: null,
         clearable: false,
-        onDelete: () => {
-            console.log("Example");
-        },
+    },
+    argTypes: {
+        onDelete: { action: "onDelete" },
     },
 } as Meta<ColorPickerFlyoutProps>;
 
-export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor, clearable, onDelete }) => {
+export const Flyout: Story<ColorPickerFlyoutProps> = (args) => {
     const [temporaryColor, setTemporaryColor] = useState<Color | null>(null);
-    const [selectedColor, setSelectedColor] = useState<Color | null>(currentColor);
-
-    const [isDeleted, setIsDeleted] = useState<boolean>(false);
-
-    const customDelete = () => {
-        setIsDeleted(true);
-        onDelete && onDelete();
-    };
+    const [selectedColor, setSelectedColor] = useState<Color | null>(args.currentColor);
 
     return (
         <>
-            {isDeleted ? (
-                <></>
-            ) : (
-                <ColorPickerFlyoutComponent
-                    disabled={disabled}
-                    currentColor={temporaryColor ?? selectedColor}
-                    onClick={() => setSelectedColor(temporaryColor)}
-                    onClose={() => setTemporaryColor(null)}
-                    onSelect={(color) => setTemporaryColor(color)}
-                    palettes={EXAMPLE_PALETTES}
-                    clearable={clearable}
-                    onClear={() => {
-                        setTemporaryColor(null);
-                        setSelectedColor(null);
-                    }}
-                    onDelete={customDelete}
-                />
-            )}
+            <ColorPickerFlyoutComponent
+                {...args}
+                currentColor={temporaryColor ?? selectedColor}
+                onClick={() => setSelectedColor(temporaryColor)}
+                onClose={() => setTemporaryColor(null)}
+                onSelect={(color) => setTemporaryColor(color)}
+                palettes={EXAMPLE_PALETTES}
+                onClear={() => {
+                    setTemporaryColor(null);
+                    setSelectedColor(null);
+                }}
+                onDelete={() => {
+                    args.onDelete && args.onDelete();
+                }}
+            />
         </>
     );
 };

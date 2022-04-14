@@ -69,7 +69,7 @@ export const Trigger: FC<TriggerProps> = ({
                         data-test-id="dropdown-clear-button"
                         aria-label="Clear selection"
                         className={merge([
-                            "tw-p-0 tw-outline-none tw-absolute tw-right-5",
+                            "tw-p-0 tw-outline-none tw-absolute tw-right-10",
                             isClearFocusVisible && FOCUS_STYLE,
                             disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
                         ])}
@@ -80,15 +80,14 @@ export const Trigger: FC<TriggerProps> = ({
                 )}
                 {!!onDelete && (
                     <button
-                        {...clearableFocusProps}
-                        data-test-id="dropdown-clear-button"
+                        data-test-id="dropdown-delete-button"
                         aria-label="Delete selection"
                         className={merge([
-                            "tw-p-0 tw-outline-none tw-absolute tw-right-5",
+                            "tw-p-0 tw-outline-none tw-absolute tw-right-6",
                             isClearFocusVisible && FOCUS_STYLE,
                             disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
                         ])}
-                        onClick={() => onDelete}
+                        onClick={() => onDelete()}
                     >
                         <IconTrash size={IconSize.Size12} />
                     </button>
