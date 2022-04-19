@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BadgeStatus, BadgeStyle } from "@components/Badge/Badge";
+import { BadgeStatus, BadgeStyle } from "@components/Badge";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";

@@ -2,7 +2,7 @@
 
 import { Slider } from "@components/Slider/Slider";
 import { FormControl } from "@components/FormControl/FormControl";
-import { BadgeStatus, BadgeStyle } from "@components/Badge/Badge";
+import { BadgeStatus, BadgeStyle } from "@components/Badge";
 import { Button, ButtonStyle } from "@components/Button/Button";
 import { Divider } from "@components/Divider/Divider";
 import IconActions from "@foundation/Icon/Generated/IconActions";
