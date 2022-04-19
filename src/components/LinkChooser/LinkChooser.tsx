@@ -21,13 +21,14 @@ import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultsList";
 import { defaultSection } from "./sections";
-import { linkChooserMachine, LinkChooserState } from "./state/machine";
+import { linkChooserMachine } from "./state/machine";
 import { IconLabel, LinkChooserProps, SearchMenuBlock } from "./types";
 import { decoratedResults, doesContainSubstring, findSection, getDefaultData } from "./utils/helpers";
 import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection, shouldGoBack } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
 import { useManualComboBoxEventHandlers } from "./utils/useManualComboBoxHandlers";
 import { Validation } from "@utilities/validation";
+import { LinkChooserState } from "./state/types";
 
 export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Document]: <IconDocument />,

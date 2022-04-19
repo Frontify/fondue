@@ -19,26 +19,26 @@ export const useScrollWrapper = (scrollingContainer: RefObject<HTMLElement>) => 
     };
 
     useEffect(() => {
-        let resizeObserver: ResizeObserver;
         const updateDimensionsFromRef = () => {
             if (scrollingContainer.current) {
                 const dimensions = getScrollDimensions(scrollingContainer.current);
-                setScrollDimensions(dimensions);
+                /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded" 
+                from being thrown during cypress component tests */
+                setTimeout(() => setScrollDimensions(dimensions), 0);
             }
         };
 
+        updateDimensionsFromRef();
+
+        const resizeObserver = new ResizeObserver(updateDimensionsFromRef);
         if (scrollingContainer.current) {
-            updateDimensionsFromRef();
-            resizeObserver = new ResizeObserver(updateDimensionsFromRef);
             resizeObserver.observe(scrollingContainer.current);
-            window.addEventListener("resize", updateDimensionsFromRef);
         }
+        window.addEventListener("resize", updateDimensionsFromRef);
 
         return () => {
-            if (scrollingContainer.current) {
-                resizeObserver.disconnect();
-                window.removeEventListener("resize", updateDimensionsFromRef);
-            }
+            resizeObserver.disconnect();
+            window.removeEventListener("resize", updateDimensionsFromRef);
         };
     }, []);
 
