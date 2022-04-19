@@ -7,6 +7,7 @@ import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, HTMLAttributes } from "react";
+import { Validation, validationClassMap } from "@utilities/validation";
 
 export enum TriggerSize {
     Small = "Small",
@@ -21,6 +22,7 @@ export type TriggerProps = {
     isFocusVisible?: boolean;
     size?: TriggerSize;
     showClear?: boolean;
+    validation?: Validation;
 };
 
 export const Trigger: FC<TriggerProps> = ({
@@ -32,6 +34,7 @@ export const Trigger: FC<TriggerProps> = ({
     isFocusVisible = false,
     size = TriggerSize.Small,
     showClear = false,
+    validation = Validation.Default,
 }) => {
     const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
 
@@ -46,6 +49,7 @@ export const Trigger: FC<TriggerProps> = ({
                     : merge([
                           "tw-bg-white hover:tw-border-black-90",
                           isOpen ? "tw-border-black-100" : "tw-border-black-20",
+                          validationClassMap[validation],
                       ]),
             ])}
         >
@@ -74,7 +78,6 @@ export const Trigger: FC<TriggerProps> = ({
                 <button
                     {...buttonProps}
                     aria-hidden="true"
-                    tabIndex={-1}
                     className={merge([
                         disabled
                             ? "tw-pointer-events-none tw-text-black-40"

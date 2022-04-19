@@ -14,3 +14,4 @@ export * from "./ordered-list";
 export * from "./strikethrough";
 export * from "./underline";
 export * from "./unordered-list";
+export * from "./checkbox-item";

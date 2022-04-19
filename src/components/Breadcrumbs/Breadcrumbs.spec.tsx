@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import React from "react";
+import React, { FC, useState } from "react";
+import { BreadcrumbsProps } from ".";
 import { Breadcrumbs } from "./Breadcrumbs";
 
 beforeEach("Getting the seperator", () => {
@@ -14,6 +15,24 @@ const BREADCRUMB_ITEMS = [
     { label: "Some second label", link: "/some-second-link" },
     { label: "Some third label", link: "/some-third-link" },
 ];
+
+const ChangingBreadcrumbs: FC<BreadcrumbsProps> = () => {
+    const [items, setItems] = useState(BREADCRUMB_ITEMS);
+
+    return (
+        <div>
+            <Breadcrumbs items={items} />
+            <button
+                data-test-id="add-item-button"
+                onClick={() => {
+                    setItems((items) => [...items, { label: "Some fourth label", link: "/some-fourth-link" }]);
+                }}
+            >
+                Add Block
+            </button>
+        </div>
+    );
+};
 
 describe("Breadcrumb component", () => {
     it("should render single item as current", () => {
@@ -59,5 +78,13 @@ describe("Breadcrumb component", () => {
         cy.get("@secondItem").realPress("Tab");
         cy.get(BREADCRUMB_ITEM_ID).last().find("button").type("{enter}");
         cy.get("@onClickStub").should("be.calledOnce");
+    });
+
+    it("should be able to handle a changing number of items", () => {
+        mount(<ChangingBreadcrumbs items={BREADCRUMB_ITEMS} />);
+
+        cy.get(BREADCRUMB_ITEM_ID).should("have.length", 3);
+        cy.get('[data-test-id="add-item-button"]').first().click();
+        cy.get(BREADCRUMB_ITEM_ID).should("have.length", 4);
     });
 });

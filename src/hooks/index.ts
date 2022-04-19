@@ -2,3 +2,4 @@
 
 export * from "./useClickOutside";
 export * from "./useMemoizedId";
+export * from "./useCopy";

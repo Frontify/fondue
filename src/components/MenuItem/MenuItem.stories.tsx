@@ -37,7 +37,6 @@ export default {
             options: Object.values(SelectionIndicatorIcon),
             control: { type: "radio" },
         },
-        onClick: { action: "onClick" },
     },
 } as Meta;
 

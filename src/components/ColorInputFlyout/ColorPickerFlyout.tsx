@@ -13,6 +13,8 @@ export type ColorPickerFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSele
     onClick?: () => void;
     onClose?: () => void;
     currentColor: Color | null;
+    clearable?: boolean;
+    onClear?: () => void;
 };
 
 export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
@@ -23,6 +25,8 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
     currentColor,
     palettes,
     disabled = false,
+    clearable = false,
+    onClear,
 }) => {
     const [open, setOpen] = useState(false);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
@@ -45,7 +49,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
             onConfirm={handleClick}
             isOpen={open}
             onCancel={() => handleOpenChange(false)}
-            fixedHeader={<ColorPreview color={currentColor || { r: 255, g: 255, b: 255 }} format={currentFormat} />}
+            fixedHeader={<ColorPreview color={currentColor || { r: 255, g: 255, b: 255 }} />}
             onOpenChange={handleOpenChange}
             trigger={
                 <ColorInputTrigger
@@ -54,6 +58,11 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
                     format={currentFormat}
                     disabled={disabled}
                     id={id}
+                    clearable={clearable}
+                    onClear={() => {
+                        setOpen(false);
+                        onClear && onClear();
+                    }}
                 />
             }
         >

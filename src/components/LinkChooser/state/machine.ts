@@ -24,23 +24,7 @@ import {
     updateQueryFromObject,
     updateQueryFromString,
 } from "./actions";
-
-export enum LinkChooserState {
-    Idle = "idle",
-    Focused = "focused",
-}
-
-export enum DropdownState {
-    Default = "default",
-    ExtraSection = "extra-section",
-}
-
-export enum SectionState {
-    Loaded = "loaded",
-    Typing = "typing",
-    Fetching = "fetching",
-    Error = "error",
-}
+import { DropdownState, LinkChooserState, SectionState } from "./types";
 
 const closeActions = [
     "storeNewSelectedResult",

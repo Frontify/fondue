@@ -50,7 +50,11 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                 {fixedHeader}
                 <div
                     ref={scrollRef}
-                    className="tw-flex tw-overflow-y-auto tw-overflow-x-hidden tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95"
+                    className={merge([
+                        "tw-flex tw-overflow-y-auto tw-overflow-x-hidden tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95",
+                        !fixedHeader && "tw-rounded-t",
+                        !fixedFooter && "tw-rounded-b",
+                    ])}
                 >
                     {title && (
                         <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8">

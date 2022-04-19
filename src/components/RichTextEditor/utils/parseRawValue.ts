@@ -3,10 +3,10 @@
 import { createPlateEditor, deserializeHtml, ELEMENT_PARAGRAPH, parseHtmlDocument, TDescendant } from "@udecode/plate";
 import { getEditorConfig } from "./getEditorConfig";
 
-export const EMPTY_VALUE: TDescendant[] = [{ type: ELEMENT_PARAGRAPH, children: [{ text: "" }] }];
+export const EMPTY_RICH_TEXT_VALUE: TDescendant[] = [{ type: ELEMENT_PARAGRAPH, children: [{ text: "" }] }];
 
 export const parseRawValue = (raw?: string): TDescendant[] => {
-    let parsedValue = EMPTY_VALUE;
+    let parsedValue = EMPTY_RICH_TEXT_VALUE;
 
     if (!raw) {
         return parsedValue;
