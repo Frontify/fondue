@@ -15,12 +15,21 @@ export type RenderNodeArrayData = Omit<NodeProps, "isFirst" | "strong" | "node">
     nodes: DraggableItem<TreeNodeItem>[];
 };
 
-export const renderNodeArray = ({ nodes, activeNodeId, treeName, onClick, onDrop, parentIds }: RenderNodeArrayData) =>
+export const renderNodeArray = ({
+    nodes,
+    activeNodeId,
+    selectedIds,
+    treeName,
+    onClick,
+    onDrop,
+    parentIds,
+}: RenderNodeArrayData) =>
     nodes.map((node, i) => (
         <Node
             key={node.id}
             node={node}
             activeNodeId={activeNodeId}
+            selectedIds={selectedIds}
             strong
             onClick={onClick}
             isFirst={i === 0}
@@ -38,6 +47,7 @@ type NodeProps = {
     node: DraggableItem<TreeNodeItem>;
     strong?: boolean;
     activeNodeId?: NullableString;
+    selectedIds?: NullableString[];
     parentIds?: string[];
     onClick: (id: NullableString) => void;
     isFirst: boolean;
@@ -49,6 +59,7 @@ export const Node = ({
     node,
     strong = false,
     activeNodeId = null,
+    selectedIds,
     onClick,
     parentIds = [],
     isFirst,
@@ -66,7 +77,7 @@ export const Node = ({
     });
     const [showNodes, setShowNodes] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
-    const selected = id === activeNodeId;
+    const selected = selectedIds && selectedIds.length > 0 ? selectedIds.includes(id) : id === activeNodeId;
 
     const setHoveredTrue = () => setIsHovered(true);
     const setHoveredFalse = () => setIsHovered(false);
@@ -77,7 +88,7 @@ export const Node = ({
         }
 
         if (onClick) {
-            onClick(selected ? null : id);
+            onClick(id);
         }
     };
     const toggleNodesVisibility = (event: React.MouseEvent) => {
@@ -171,7 +182,15 @@ export const Node = ({
                     className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left"
                     data-test-id="sub-tree"
                 >
-                    {renderNodeArray({ nodes, activeNodeId, treeName, onClick, onDrop, parentIds: [...parentIds, id] })}
+                    {renderNodeArray({
+                        nodes,
+                        activeNodeId,
+                        treeName,
+                        selectedIds,
+                        onClick,
+                        onDrop,
+                        parentIds: [...parentIds, id],
+                    })}
                 </ul>
             )}
             <DropZone
