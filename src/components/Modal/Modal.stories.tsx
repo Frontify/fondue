@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Modal } from "./Modal";
+import { Modal, ModalHeaderProps, ModalHeaderVariant, ModalProps, ModalVisualProps, ModalWidth } from "./Modal";
 import { Text } from "../..";
 import React, { useState } from "react";
 import { Button, ButtonStyle } from "@components/Button";
@@ -13,7 +13,6 @@ import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 import { IconAcademy, IconAudio, IconIcons } from "@foundation/Icon";
 import { ScrollWrapperDirection } from "@components/ScrollWrapper/types";
 import { OverlayContainer, OverlayProvider } from "@react-aria/overlays";
-import { ModalHeaderProps, ModalHeaderVariant, ModalProps, ModalVisualProps, ModalWidth } from "./types";
 import { FormControl, FormControlDirection, FormControlStyle } from "@components/FormControl";
 
 // eslint-disable-next-line import/no-default-export
