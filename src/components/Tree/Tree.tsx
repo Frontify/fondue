@@ -20,7 +20,7 @@ export interface TreeFlatListItem {
 
 export type TreeProps = {
     nodes: DraggableItem<TreeFlatListItem>[];
-    onSelect: (id: NullableString | NullableString[]) => void;
+    onSelect: (id: NullableString[]) => void;
     activeNodeId?: NullableString;
     onUpdate?: (modifiedItems: DraggableItem<TreeFlatListItem>[]) => void;
 };
@@ -50,7 +50,7 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActi
             onSelect(modifiedSelectedIds);
         } else {
             setSelectedIds([]);
-            onSelect(id);
+            onSelect([id]);
         }
     };
 
