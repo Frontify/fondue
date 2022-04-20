@@ -82,7 +82,7 @@ export const SearchResultsList: FC<SearchResultListProps> = (props) => {
                         prompt={
                             query
                                 ? `We could not find any results for "${query}".`
-                                : "Use the search above to discover your brand assets"
+                                : "Use the search above to discover your brand assets, or enter a URL"
                         }
                         icon={query ? NoResultsIcon : BackgroundIcon}
                     />
@@ -95,7 +95,7 @@ export const SearchResultsList: FC<SearchResultListProps> = (props) => {
 const EmptyResults: FC<{ prompt: string; icon: string }> = ({ prompt, icon }) => (
     <div
         data-test-id="link-chooser-empty-results"
-        className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[220px] tw-p-3"
+        className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[278px] tw-p-3"
     >
         <img className="tw-w-[150px] tw-mb-5" src={icon} alt="Icon" />
         <p className="tw-text-black-60 tw-text-center">{prompt}</p>
@@ -105,7 +105,7 @@ const EmptyResults: FC<{ prompt: string; icon: string }> = ({ prompt, icon }) =>
 const FetchingError: FC<{ error?: string }> = ({ error = "An error occurred while fetching the results" }) => (
     <div
         data-test-id="link-chooser-error"
-        className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[220px] tw-p-3"
+        className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[278px] tw-p-3"
     >
         <img className="tw-w-[75px] tw-mb-5" src={NoResultsIcon} alt="Error" />
         <p className="tw-text-black-60 tw-text-center">{error}</p>
@@ -115,7 +115,7 @@ const FetchingError: FC<{ error?: string }> = ({ error = "An error occurred whil
 const FetchingAnimation: FC = () => (
     <div
         data-test-id="link-chooser-loader"
-        className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[220px] tw-p-3"
+        className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[278px] tw-p-3"
     >
         <img className="tw-w-[50px]" src={FetchingIcon} alt="Fetching" />
     </div>
