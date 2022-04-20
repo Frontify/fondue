@@ -13,6 +13,8 @@ import { ModalHeader } from "./ModalHeader";
 import { ModalBody } from "./ModalBody";
 import { ModalFooter } from "./ModalFooter";
 
+export * from "./types";
+
 const UNDERLAY_VARIANTS = {
     initial: {
         opacity: 0,
