@@ -15,21 +15,12 @@ export type RenderNodeArrayData = Omit<NodeProps, "isFirst" | "strong" | "node">
     nodes: DraggableItem<TreeNodeItem>[];
 };
 
-export const renderNodeArray = ({
-    nodes,
-    activeNodeId,
-    selectedIds,
-    treeName,
-    onClick,
-    onDrop,
-    parentIds,
-}: RenderNodeArrayData) =>
+export const renderNodeArray = ({ nodes, activeIds, treeName, onClick, onDrop, parentIds }: RenderNodeArrayData) =>
     nodes.map((node, i) => (
         <Node
             key={node.id}
             node={node}
-            activeNodeId={activeNodeId}
-            selectedIds={selectedIds}
+            activeIds={activeIds}
             strong
             onClick={onClick}
             isFirst={i === 0}
@@ -46,8 +37,7 @@ export interface TreeNodeItem extends TreeFlatListItem {
 type NodeProps = {
     node: DraggableItem<TreeNodeItem>;
     strong?: boolean;
-    activeNodeId?: NullableString;
-    selectedIds?: NullableString[];
+    activeIds?: NullableString[];
     parentIds?: string[];
     onClick: (id: NullableString) => void;
     isFirst: boolean;
@@ -58,8 +48,7 @@ type NodeProps = {
 export const Node = ({
     node,
     strong = false,
-    activeNodeId = null,
-    selectedIds,
+    activeIds,
     onClick,
     parentIds = [],
     isFirst,
@@ -77,7 +66,7 @@ export const Node = ({
     });
     const [showNodes, setShowNodes] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
-    const selected = selectedIds && selectedIds.length > 0 ? selectedIds.includes(id) : id === activeNodeId;
+    const selected = activeIds && activeIds.length > 0 && activeIds.includes(id);
 
     const setHoveredTrue = () => setIsHovered(true);
     const setHoveredFalse = () => setIsHovered(false);
@@ -184,9 +173,8 @@ export const Node = ({
                 >
                     {renderNodeArray({
                         nodes,
-                        activeNodeId,
                         treeName,
-                        selectedIds,
+                        activeIds,
                         onClick,
                         onDrop,
                         parentIds: [...parentIds, id],

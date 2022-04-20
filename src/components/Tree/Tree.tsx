@@ -20,36 +20,33 @@ export interface TreeFlatListItem {
 
 export type TreeProps = {
     nodes: DraggableItem<TreeFlatListItem>[];
-    onSelect: (id: NullableString[]) => void;
-    activeNodeId?: NullableString;
+    onSelect: (ids: NullableString[]) => void;
+    activeNodeIds: NullableString[];
     onUpdate?: (modifiedItems: DraggableItem<TreeFlatListItem>[]) => void;
 };
 
-export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActiveNodeId = null, onUpdate }) => {
+export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeIds: initialActiveNodeIds, onUpdate }) => {
     const [multiSelectMode, setMultiSelectMode] = useState<boolean>(false);
-    const [selectedIds, setSelectedIds] = useState<NullableString[]>([]);
-    const [activeNodeId, setActiveNodeId] = useState<NullableString>(initialActiveNodeId);
+    const [activeIds, setActiveIds] = useState<NullableString[]>(initialActiveNodeIds);
     const [treeNodes, setTreeNodes] = useState<DraggableItem<TreeFlatListItem>[]>([]);
     const treeName = useId();
 
-    useEffect(() => setActiveNodeId(initialActiveNodeId), [initialActiveNodeId]);
+    // useEffect(() => setActiveNodeId(initialActiveNodeIds ? initialActiveNodeIds[0] : ""), [initialActiveNodeIds]);
     useEffect(() => {
         const listToTreeNodes = listToTree(nodes);
         setTreeNodes(listToTreeNodes);
     }, [nodes]);
 
     const onNodeClick = (id: NullableString) => {
-        setActiveNodeId(id);
-
         if (multiSelectMode) {
-            const modifiedSelectedIds: NullableString[] = selectedIds.includes(id)
-                ? [...selectedIds].filter((i) => i !== id)
-                : [...selectedIds, id];
+            const modifiedSelectedIds: NullableString[] = activeIds.includes(id)
+                ? [...activeIds].filter((i) => i !== id)
+                : [...activeIds, id];
 
-            setSelectedIds(modifiedSelectedIds);
+            setActiveIds(modifiedSelectedIds);
             onSelect(modifiedSelectedIds);
         } else {
-            setSelectedIds([]);
+            setActiveIds([id]);
             onSelect([id]);
         }
     };
@@ -94,9 +91,8 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActi
             >
                 {renderNodeArray({
                     nodes: treeNodes,
-                    activeNodeId,
                     treeName,
-                    selectedIds,
+                    activeIds,
                     onClick: onNodeClick,
                     onDrop: handleDrop,
                 })}
