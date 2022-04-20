@@ -189,6 +189,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     className={merge([
                         "tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start tw-pr-8",
                         paddingMap[paddingX ?? TabsPaddingX.Small],
+                        size === TabSize.Small ? "tw-gap-xxs" : "tw-gap-xs ",
                     ])}
                 >
                     {tabs.map((tab) => {
@@ -216,8 +217,10 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                 }}
                                 onKeyDown={(event) => handleKeyboardTabChange(event)}
                             >
-                                {tab.decorator}
-                                <span className="tw-mr-1 tw-ml-1.5">{tab.label}</span>
+                                {tab.decorator && <span className="tw-mr-1.5">{tab.decorator}</span>}
+
+                                <span>{tab.label}</span>
+
                                 {tab.badge && (
                                     <Badge disabled={tab.disabled} style={tab.badge.style}>
                                         {tab.badge.children}
