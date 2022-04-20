@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Modal } from "./Modal";
+import { Text } from "../..";
 import React, { useState } from "react";
 import { Button, ButtonStyle } from "@components/Button";
 import { Story, Meta } from "@storybook/react";
@@ -174,6 +175,10 @@ const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = (
                     ]}
                 />
             </Modal>
+            <Text size={"medium"} color={"weak"}>
+                Some controls will not work while the modal is open, due to how useOverlay blocks interaction outside
+                the modal.
+            </Text>
         </>
     );
 };
