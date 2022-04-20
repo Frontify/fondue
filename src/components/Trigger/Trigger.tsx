@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
-import IconTrash from "@foundation/Icon/Generated/IconTrash";
 import IconReject from "@foundation/Icon/Generated/IconReject";
+import IconTrash from "@foundation/Icon/Generated/IconTrash";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, HTMLAttributes } from "react";
 import { Validation, validationClassMap } from "@utilities/validation";
+import React, { FC, HTMLAttributes } from "react";
 
 export enum TriggerSize {
     Small = "Small",

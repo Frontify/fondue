@@ -1,22 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Slider } from "@components/Slider/Slider";
-import { FormControl } from "@components/FormControl/FormControl";
 import { BadgeStatus, BadgeStyle } from "@components/Badge";
 import { Button, ButtonStyle } from "@components/Button/Button";
 import { Divider } from "@components/Divider/Divider";
-import IconActions from "@foundation/Icon/Generated/IconActions";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import { FormControl } from "@components/FormControl/FormControl";
+import { Slider } from "@components/Slider/Slider";
 import { Textarea } from "@components/Textarea/Textarea";
 import { TextInput } from "@components/TextInput/TextInput";
+import IconActions from "@foundation/Icon/Generated/IconActions";
+import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import { chain } from "@react-aria/utils";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
-import React, { MutableRefObject, useState } from "react";
-import { Flyout, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, FlyoutProps } from "./Flyout";
-import { FlyoutFooter } from "./FlyoutFooter";
-import { chain } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
+import React, { MutableRefObject, useState } from "react";
+import { Flyout, FlyoutProps, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT } from "./Flyout";
+import { FlyoutFooter } from "./FlyoutFooter";
 
 // eslint-disable-next-line import/no-default-export
 export default {

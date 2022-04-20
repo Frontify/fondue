@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ColorPreview } from "@components/ColorPicker";
 import { ColorPicker, ColorPickerProps } from "@components/ColorPicker/ColorPicker";
 import { Flyout } from "@components/Flyout/Flyout";
 import React, { FC, useState } from "react";
 import { Color, ColorFormat } from "../../types/colors";
 import { ColorInputTrigger } from "./ColorPickerTrigger";
-import { ColorPreview } from "@components/ColorPicker";
 
 export type ColorPickerFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSelect"> & {
     id?: string;
