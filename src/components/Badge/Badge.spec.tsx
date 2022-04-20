@@ -5,7 +5,8 @@ import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import { IconSize } from "@foundation/Icon/IconSize";
 import React from "react";
 import { BadgeStyle } from ".";
-import { Badge, BadgeStatus } from "./Badge";
+import { Badge } from "./Badge";
+import { BadgeEmphasis, BadgeStatus } from "./types";
 
 const BADGE_TEXT = "Frontify";
 const BADGE_ID = "[data-test-id=badge]";
@@ -60,7 +61,7 @@ describe("Badge component", () => {
 
     it("should have emphasised style", () => {
         mount(
-            <Badge icon={<IconDocument />} style={BadgeStyle.Positive} emphasis="Strong">
+            <Badge icon={<IconDocument />} style={BadgeStyle.Positive} emphasis={BadgeEmphasis.Strong}>
                 {BADGE_TEXT}
             </Badge>,
         );

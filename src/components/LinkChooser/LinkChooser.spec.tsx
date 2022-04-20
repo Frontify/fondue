@@ -334,12 +334,14 @@ describe("LinkChooser Component", () => {
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(`${SELECT_SECTION_ID} > li`).should("have.length", 2);
             cy.get("@firstSelectItem").should("contain.text", `${CUSTOM_QUERY}1`);
-            cy.get(SEARCH_INPUT_ID).type("{Backspace}2");
+            cy.get(SEARCH_INPUT_ID).clear();
+            cy.get(SEARCH_INPUT_ID).type(`${CUSTOM_QUERY}2`);
             cy.get("@firstSelectItem").click();
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(`${SELECT_SECTION_ID} > li`).should("have.length", 3);
             cy.get("@firstSelectItem").should("contain.text", `${CUSTOM_QUERY}2`);
-            cy.get(SEARCH_INPUT_ID).type("{Backspace}1");
+            cy.get(SEARCH_INPUT_ID).clear();
+            cy.get(SEARCH_INPUT_ID).type(`${CUSTOM_QUERY}1`);
             cy.get("@firstSelectItem").click();
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(`${SELECT_SECTION_ID} > li`).should("have.length", 3);

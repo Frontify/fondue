@@ -64,6 +64,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         {decorator}
                     </div>
                 )}
+
                 <input
                     {...mergeProps(focusProps, ariaProps)}
                     readOnly={!isFocused}

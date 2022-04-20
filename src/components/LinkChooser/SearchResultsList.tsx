@@ -97,7 +97,7 @@ const EmptyResults: FC<{ prompt: string; icon: string }> = ({ prompt, icon }) =>
         data-test-id="link-chooser-empty-results"
         className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[220px] tw-p-3"
     >
-        <img className="tw-w-[75px] tw-mb-5" src={icon} alt="Icon" />
+        <img className="tw-w-[150px] tw-mb-5" src={icon} alt="Icon" />
         <p className="tw-text-black-60 tw-text-center">{prompt}</p>
     </div>
 );

@@ -60,7 +60,7 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
                         currentColor ? (
                             <span
                                 className={merge([
-                                    "tw-h-4 tw-w-4 tw-rounded tw-flex tw-items-center tw-justify-center",
+                                    "tw-h-4 tw-w-4 tw-rounded tw-flex tw-items-center tw-justify-center tw-ring-1 tw-ring-black-10 tw-ring-offset-1",
                                     disabled && "tw-opacity-50",
                                 ])}
                                 style={{ backgroundColor }}

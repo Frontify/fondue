@@ -1,6 +1,6 @@
 import IconImageLibrary from "@foundation/Icon/Generated/IconImageLibrary";
 import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternative";
-import React, { FC } from "react";
+import React, { FC, Fragment } from "react";
 import { AssetInputProps } from "../AssetInput";
 import { SelectedAssetProps } from "./SelectedAsset";
 
@@ -16,11 +16,11 @@ export const AssetSubline: FC<AssetSublineProps> = ({ asset, isLoading = false }
             <span>{title}</span>
             {asset &&
                 !isLoading &&
-                [asset.extension, asset.size].filter(Boolean).map((item) => (
-                    <>
+                [asset.extension, asset.size].filter(Boolean).map((item, i) => (
+                    <Fragment key={`${item}-${i}`}>
                         <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
                         <span>{item}</span>
-                    </>
+                    </Fragment>
                 ))}
         </span>
     );

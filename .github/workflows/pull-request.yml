@@ -1,0 +1,49 @@
+name: Pull Request
+
+on:
+    pull_request:
+        branches:
+            - "main"
+
+env:
+    CI: true
+
+jobs:
+    continuous-integration:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout current commit
+              uses: actions/checkout@v3
+
+            - name: Use Node.js 16
+              uses: actions/setup-node@v3
+              with:
+                  node-version: "16"
+
+            - name: Cache NPM dependencies
+              id: npm_cache
+              uses: actions/cache@v3
+              with:
+                  path: "**/node_modules"
+                  key: ${{ runner.os }}-node-v1-${{ hashFiles('**/package-lock.json') }}
+
+            - name: Install NPM dependencies
+              if: steps.npm_cache.outputs.cache-hit != 'true'
+              run: npm ci
+
+            - name: Cache Cypress binary
+              id: cypress_cache
+              uses: actions/cache@v3
+              with:
+                  path: ~/.cache/Cypress
+                  key: ${{ runner.os }}-cypress-v1-${{ hashFiles('package-lock.json') }}
+
+            - name: Typecheck files
+              run: npm run typecheck
+
+            - name: Lint files (JS/TS & CSS)
+              run: npm run lint
+
+            - name: Test Components
+              run: npm test

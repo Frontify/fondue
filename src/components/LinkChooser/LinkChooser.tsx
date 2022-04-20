@@ -21,13 +21,14 @@ import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultsList";
 import { defaultSection } from "./sections";
-import { linkChooserMachine, LinkChooserState } from "./state/machine";
+import { linkChooserMachine } from "./state/machine";
 import { IconLabel, LinkChooserProps, SearchMenuBlock } from "./types";
 import { decoratedResults, doesContainSubstring, findSection, getDefaultData } from "./utils/helpers";
 import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection, shouldGoBack } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
 import { useManualComboBoxEventHandlers } from "./utils/useManualComboBoxHandlers";
 import { Validation } from "@utilities/validation";
+import { LinkChooserState } from "./state/types";
 
 export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Document]: <IconDocument />,
@@ -47,6 +48,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     getGlobalByQuery = getDefaultData,
     openPreview = window.open,
     clipboardOptions = navigator.clipboard,
+    selectedResult = null,
     openInNewTab = false,
     ariaLabel = "Menu",
     extraSections = [],
@@ -62,7 +64,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const [{ context, matches, value }, send, service] = useMachine(() =>
         linkChooserMachine.withContext({
             searchResults: [],
-            selectedResult: null,
+            selectedResult,
             query: "",
             interruptedFetch: false,
             getExtraResultsByQuery: null,
@@ -75,6 +77,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }),
     );
 
+    const [searchInput, setSearchInput] = useState(selectedResult?.title);
     const isDefault = !shouldGoBack(matches);
     const searchResultMenuBlocks = useMemo(
         () =>
@@ -98,29 +101,33 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const handleSelectionChange = (key: Key) => {
         const foundItem = context.searchResults.find((item) => item.id === key);
         if (foundItem) {
+            setSearchInput(foundItem.title);
             send({ type: "SET_SELECTED_SEARCH_RESULT", data: { selectedResult: foundItem } });
         }
         closeBoxState(state);
         setSelectedKey(key);
     };
+
     const handleInputChange = useCallback(
         (query: string) => {
+            setSearchInput(query);
             send({ type: "TYPING", data: { query } });
         },
         [value],
     );
 
-    const [selectedKey, setSelectedKey] = useState<Key | undefined>();
+    const [selectedKey, setSelectedKey] = useState<Key | undefined>(context.selectedResult?.id);
 
     const state = useComboBoxState({
         ...props,
         defaultFilter: (textValue, inputValue) => doesContainSubstring(textValue, inputValue, extraSections),
+        inputValue: searchInput,
         onInputChange: handleInputChange,
         onSelectionChange: handleSelectionChange,
-        selectedKey,
         menuTrigger: "manual",
         shouldCloseOnBlur: false,
         allowsEmptyCollection: true,
+        selectedKey,
     });
 
     const { inputProps, listBoxProps, labelProps } = useComboBox(
@@ -200,8 +207,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         },
     );
 
-    const inputDecorator = IconOptions[context.selectedResult?.icon || DEFAULT_ICON];
-
     useEffect(() => {
         if (isLoaded(matches) && context.interruptedFetch) {
             send({ type: "TYPING", data: { query: context.query } });
@@ -252,7 +257,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     selectedResult={context.selectedResult}
                     ref={inputRef}
                     disabled={disabled}
-                    decorator={inputDecorator}
+                    decorator={IconOptions[context.selectedResult?.icon || DEFAULT_ICON]}
                     clearable={clearable}
                     onClear={handleClearClick}
                     machineService={service}

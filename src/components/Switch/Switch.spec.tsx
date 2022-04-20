@@ -68,4 +68,10 @@ describe("Switch Component", () => {
 
         cy.get(SWITCH_CONTAINER_ID).should("have.css", "display", "inline-flex");
     });
+
+    it("switch should have a type definition", () => {
+        mount(<Component label={SWITCH_LABEL} />);
+
+        cy.get(SWITCH_ID).should("have.attr", "type", "button");
+    });
 });
