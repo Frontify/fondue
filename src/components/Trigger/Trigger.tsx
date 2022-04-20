@@ -40,6 +40,7 @@ export const Trigger: FC<TriggerProps> = ({
     validation = Validation.Default,
 }) => {
     const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
+    const { focusProps: onDeleteFocusProps, isFocusVisible: isOnDeleteFocusVisible } = useFocusRing();
 
     return (
         <div
@@ -59,7 +60,7 @@ export const Trigger: FC<TriggerProps> = ({
             {children}
             <div
                 className={merge([
-                    "tw-flex-none tw-flex tw-items-center tw-absolute",
+                    "tw-flex-none tw-flex tw-items-center tw-absolute tw-gap-2",
                     size === TriggerSize.Large ? "tw-right-5 tw-gap-1.5" : "tw-right-3 tw-gap-1",
                 ])}
             >
@@ -69,7 +70,6 @@ export const Trigger: FC<TriggerProps> = ({
                         data-test-id="dropdown-clear-button"
                         aria-label="Clear selection"
                         className={merge([
-                            "tw-p-0 tw-outline-none tw-absolute tw-right-10",
                             isClearFocusVisible && FOCUS_STYLE,
                             disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
                         ])}
@@ -80,11 +80,11 @@ export const Trigger: FC<TriggerProps> = ({
                 )}
                 {!!onDelete && (
                     <button
+                        {...onDeleteFocusProps}
                         data-test-id="dropdown-delete-button"
                         aria-label="Delete selection"
                         className={merge([
-                            "tw-p-0 tw-outline-none tw-absolute tw-right-6",
-                            isClearFocusVisible && FOCUS_STYLE,
+                            isOnDeleteFocusVisible && FOCUS_STYLE,
                             disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
                         ])}
                         onClick={onDelete}
