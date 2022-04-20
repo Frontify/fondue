@@ -7,7 +7,6 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { InputLabel } from "@components/InputLabel/InputLabel";
 import { TooltipProps } from "@components/Tooltip/Tooltip";
-import { ButtonType } from "..";
 
 export enum SwitchSize {
     Small = "Small",
