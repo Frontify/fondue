@@ -7,6 +7,7 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { InputLabel } from "@components/InputLabel/InputLabel";
 import { TooltipProps } from "@components/Tooltip/Tooltip";
+import { ButtonType } from "..";
 
 export enum SwitchSize {
     Small = "Small",
@@ -91,6 +92,7 @@ export const Switch: FC<SwitchProps> = ({
                 className={lineClasses}
                 value={on.toString()}
                 onClick={onChange}
+                type="button"
             >
                 <div className={dotClasses} />
             </button>
