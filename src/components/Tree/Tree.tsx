@@ -31,7 +31,6 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeIds: initialAct
     const [treeNodes, setTreeNodes] = useState<DraggableItem<TreeFlatListItem>[]>([]);
     const treeName = useId();
 
-    // useEffect(() => setActiveNodeId(initialActiveNodeIds ? initialActiveNodeIds[0] : ""), [initialActiveNodeIds]);
     useEffect(() => {
         const listToTreeNodes = listToTree(nodes);
         setTreeNodes(listToTreeNodes);
