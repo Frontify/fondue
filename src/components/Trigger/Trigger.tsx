@@ -60,7 +60,7 @@ export const Trigger: FC<TriggerProps> = ({
             {children}
             <div
                 className={merge([
-                    "tw-flex-none tw-flex tw-items-center tw-absolute tw-gap-2",
+                    "tw-flex-none tw-flex tw-items-center tw-absolute",
                     size === TriggerSize.Large ? "tw-right-5 tw-gap-1.5" : "tw-right-3 tw-gap-1",
                 ])}
             >
