@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { assetInputActions } from "@components/AssetInput/asset-input-actions";
+import { AssetInput, AssetInputSize } from "@components/AssetInput/AssetInput";
 import { Button } from "@components/Button/Button";
 import { ColorPickerFlyout as ColorPickerFlyoutComponent } from "@components/ColorInputFlyout/ColorPickerFlyout";
 import { EXAMPLE_PALETTES } from "@components/ColorPicker/example-palettes";
@@ -20,6 +22,7 @@ import { Meta, Story } from "@storybook/react";
 import { merge } from "@utilities/merge";
 import React, { FC, ReactNode, useState } from "react";
 import { Color } from "../../types/colors";
+import { EXAMPLE_IMAGES } from "../AssetInput/example-assets";
 import { Accordion as AccordionComponent, AccordionItem } from "./Accordion";
 import { AccordionHeaderIcon } from "./AccordionHeaderIcon";
 import { AccordionHeaderIconSize, AccordionHeaderProps, AccordionProps } from "./types";
@@ -85,6 +88,9 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
                     openInNewTab={openInNewTab}
                     onOpenInNewTabChange={setOpenInNewTab}
                 />
+            </AccordionItem>
+            <AccordionItem header={{ children: "Item with assetinput", type: FieldsetHeaderType.AddRemove }}>
+                <AssetInput size={AssetInputSize.Large} assets={[EXAMPLE_IMAGES[0]]} actions={assetInputActions} />
             </AccordionItem>
             <AccordionItem header={{ children: "Item with color picker flyout", type: FieldsetHeaderType.Accordion }}>
                 <ColorPickerFlyoutComponent

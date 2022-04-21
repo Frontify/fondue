@@ -39,7 +39,7 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
 
     return (
         <div
-            className="tw-relative tw-font-sans tw-w-full tw-text-s tw-bg-transparent tw-font-normal tw-min-w-0"
+            className="tw-font-sans tw-w-full tw-text-s tw-bg-transparent tw-font-normal tw-min-w-0"
             aria-labelledby={labelId}
             title={title}
             data-test-id="asset-single-input"
@@ -101,12 +101,14 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
+                        style={{
+                            width: buttonRef.current?.getBoundingClientRect().width,
+                        }}
+                        className="tw-absolute tw-left-auto tw-min-w-fit tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20"
                         key={`asset-input-menu-${menuId}`}
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
-                        exit={{ height: 0 }}
-                        transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
+                        transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                     >
                         <FocusScope restoreFocus>
                             <div {...overlayProps} ref={overlayRef}>
