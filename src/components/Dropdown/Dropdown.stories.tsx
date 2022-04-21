@@ -20,7 +20,9 @@ export default {
     },
     argTypes: {
         size: {
-            table: { disable: true },
+            options: Object.values(DropdownSize),
+            control: { type: "select" },
+            defaultValue: DropdownSize.Small,
         },
         activeItemId: { type: "string" },
         validation: {
