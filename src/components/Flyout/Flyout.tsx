@@ -20,9 +20,9 @@ import React, {
     useRef,
 } from "react";
 import { LegacyFlyoutFooter } from ".";
-import { Overlay } from "./Overlay";
 import { useContainScroll } from "./hooks/useContainScroll";
 import { useOverlayPositionWithBottomMargin } from "./hooks/useOverlayPositionWithBottomMargin";
+import { Overlay } from "./Overlay";
 
 export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
 export const FLYOUT_DIVIDER_HEIGHT = "10px";

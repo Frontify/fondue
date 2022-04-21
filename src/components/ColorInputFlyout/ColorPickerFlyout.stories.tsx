@@ -15,25 +15,29 @@ export default {
         currentColor: null,
         clearable: false,
     },
+    argTypes: {
+        onDelete: { action: "onDelete" },
+    },
 } as Meta<ColorPickerFlyoutProps>;
 
-export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor, clearable }) => {
+export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor, clearable, onDelete }) => {
     const [temporaryColor, setTemporaryColor] = useState<Color | null>(null);
     const [selectedColor, setSelectedColor] = useState<Color | null>(currentColor);
 
     return (
         <ColorPickerFlyoutComponent
             disabled={disabled}
+            clearable={clearable}
             currentColor={temporaryColor ?? selectedColor}
             onClick={() => setSelectedColor(temporaryColor)}
             onClose={() => setTemporaryColor(null)}
             onSelect={(color) => setTemporaryColor(color)}
             palettes={EXAMPLE_PALETTES}
-            clearable={clearable}
             onClear={() => {
                 setTemporaryColor(null);
                 setSelectedColor(null);
             }}
+            onDelete={onDelete}
         />
     );
 };
