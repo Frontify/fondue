@@ -1,9 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button } from "@components/Button/Button";
+import { ColorPickerFlyout as ColorPickerFlyoutComponent } from "@components/ColorInputFlyout/ColorPickerFlyout";
+import { EXAMPLE_PALETTES } from "@components/ColorPicker/example-palettes";
 import { Dropdown } from "@components/Dropdown";
 import { FieldsetHeaderType } from "@components/FieldsetHeader/FieldsetHeader";
 import { FormControl } from "@components/FormControl/FormControl";
+import { LinkChooser } from "@components/LinkChooser/LinkChooser.stories";
 import { Slider } from "@components/Slider/Slider";
 import { Switch, SwitchSize } from "@components/Switch/Switch";
 import { TextInput, TextInputType } from "@components/TextInput/TextInput";
@@ -14,14 +17,12 @@ import IconTextAlignRight from "@foundation/Icon/Generated/IconTextAlignRight";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
-import React, { FC, ReactNode, useState } from "react";
 import { merge } from "@utilities/merge";
+import React, { FC, ReactNode, useState } from "react";
 import { Color } from "../../types/colors";
-import { ColorPickerFlyout as ColorPickerFlyoutComponent } from "@components/ColorInputFlyout/ColorPickerFlyout";
-import { EXAMPLE_PALETTES } from "@components/ColorPicker/example-palettes";
 import { Accordion as AccordionComponent, AccordionItem } from "./Accordion";
 import { AccordionHeaderIcon } from "./AccordionHeaderIcon";
-import { AccordionHeaderProps, AccordionProps, AccordionHeaderIconSize } from "./types";
+import { AccordionHeaderIconSize, AccordionHeaderProps, AccordionProps } from "./types";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -35,6 +36,7 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
     const [activeItemId, setActiveItemId] = useState<string | number | undefined>();
     const [temporaryColor, setTemporaryColor] = useState<Color | null>({ r: 0, g: 146, b: 120 });
     const [selectedColor, setSelectedColor] = useState<Color | null>(null);
+    const [openInNewTab, setOpenInNewTab] = useState<boolean>(false);
 
     return (
         <AccordionComponent>
@@ -75,6 +77,13 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
                             ],
                         },
                     ]}
+                />
+            </AccordionItem>
+            <AccordionItem header={{ children: "Item with linkchooser", type: FieldsetHeaderType.AddRemove }}>
+                <LinkChooser
+                    onLinkChange={action("onLinkChange")}
+                    openInNewTab={openInNewTab}
+                    onOpenInNewTabChange={setOpenInNewTab}
                 />
             </AccordionItem>
             <AccordionItem header={{ children: "Item with color picker flyout", type: FieldsetHeaderType.Accordion }}>

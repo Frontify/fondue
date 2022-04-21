@@ -94,6 +94,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const props = mapToAriaProps(ariaLabel, searchResultMenuBlocks);
 
+    const triggerRef = useRef<HTMLDivElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const listBoxRef = useRef<HTMLUListElement | null>(null);
     const popoverRef = useRef<HTMLDivElement | null>(null);
@@ -233,7 +234,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     }, [focusedKey, isOpen]);
 
     return (
-        <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
+        <div data-test-id="link-chooser" ref={triggerRef} className="tw-w-full tw-font-sans tw-text-s">
             {!!label && (
                 <label
                     {...labelProps}
@@ -251,30 +252,31 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     )}
                 </label>
             )}
-            <div>
-                <SearchInput
-                    ariaProps={manualInputProps}
-                    selectedResult={context.selectedResult}
-                    ref={inputRef}
-                    disabled={disabled}
-                    decorator={IconOptions[context.selectedResult?.icon || DEFAULT_ICON]}
-                    clearable={clearable}
-                    onClear={handleClearClick}
-                    machineService={service}
-                    validation={validation}
-                    onClick={handleWrapperClick}
-                    onMouseDown={handleWrapperMouseDown}
-                />
-            </div>
+            <SearchInput
+                ariaProps={manualInputProps}
+                selectedResult={context.selectedResult}
+                ref={inputRef}
+                disabled={disabled}
+                decorator={IconOptions[context.selectedResult?.icon || DEFAULT_ICON]}
+                clearable={clearable}
+                onClear={handleClearClick}
+                machineService={service}
+                validation={validation}
+                onClick={handleWrapperClick}
+                onMouseDown={handleWrapperMouseDown}
+            />
             <AnimatePresence>
                 {matches(LinkChooserState.Focused) && (
                     <motion.div
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
+                        style={{
+                            width: triggerRef.current?.getBoundingClientRect().width,
+                        }}
+                        className="tw-absolute tw-left-auto tw-min-w-fit tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
                         key="content"
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
                         exit={{ height: 0 }}
-                        transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
+                        transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         data-test-id="link-chooser-dropdown"
                     >
                         <DismissButton onDismiss={handleDropdownClose} />
