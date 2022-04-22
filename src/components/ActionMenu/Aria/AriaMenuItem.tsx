@@ -5,29 +5,58 @@ import { mergeProps } from "@react-aria/utils";
 import { TreeState } from "@react-stately/tree";
 import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, useRef } from "react";
-import { ActionMenuItemType } from "../ActionMenu/ActionMenu";
+import React, { FC, useRef, useState } from "react";
+import { ActionMenuItemType, ActionMenuSwitchItemType } from "../ActionMenu/ActionMenu";
 import { MenuItemType } from "../../Dropdown/SelectMenu/SelectMenu";
 import { Node } from "@react-types/shared";
+import { Switch, SwitchSize } from "@components/Switch";
 
 export type AriaOptionProps = {
-    menuItem: MenuItemType | ActionMenuItemType;
+    menuItem: MenuItemType | ActionMenuItemType | ActionMenuSwitchItemType;
     node: Node<object>;
     isSelected?: boolean;
     state: TreeState<object>;
 };
 
-const isActionMenuItem = (menuItem: MenuItemType | ActionMenuItemType): menuItem is ActionMenuItemType =>
-    typeof (menuItem as ActionMenuItemType).onClick !== "undefined";
+const isActionMenuItem = (
+    menuItem: MenuItemType | ActionMenuItemType | ActionMenuSwitchItemType,
+): menuItem is ActionMenuItemType =>
+    typeof (menuItem as ActionMenuItemType).onClick !== "undefined" && typeof menuItem.type === "undefined";
+const isActionMenuSwitchItem = (
+    menuItem: MenuItemType | ActionMenuItemType | ActionMenuSwitchItemType,
+): menuItem is ActionMenuSwitchItemType =>
+    typeof (menuItem as ActionMenuSwitchItemType).onClick !== "undefined" && menuItem.type === "switch";
+
+const useSwitch = (initialValue: boolean) => {
+    const [switchValue, setSwitchValue] = useState<boolean>(initialValue);
+    const toggleSwitch = () => setSwitchValue(!switchValue);
+    const switchComponent = <Switch size={SwitchSize.Small} on={switchValue} />;
+
+    return {
+        switchComponent,
+        switchValue,
+        toggleSwitch,
+    };
+};
 
 export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSelected }) => {
     const ref = useRef<HTMLLIElement | null>(null);
+    const {
+        switchComponent = undefined,
+        switchValue = null,
+        toggleSwitch = null,
+    } = isActionMenuSwitchItem(menuItem) ? useSwitch(menuItem.initialValue) : {};
+
     const { menuItemProps } = useMenuItem(
         {
             ...node,
             onAction: () => {
                 if (isActionMenuItem(menuItem)) {
-                    menuItem?.onClick();
+                    menuItem.onClick();
+                }
+                if (isActionMenuSwitchItem(menuItem)) {
+                    toggleSwitch?.();
+                    menuItem.onClick(Boolean(!switchValue));
                 }
             },
             isDisabled: menuItem?.disabled || false,
@@ -59,7 +88,7 @@ export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSel
                 disabled={disabled}
                 active={isSelected}
                 selectionIndicator={selectionIndicator}
-                decoratorRight={menuItem.decoratorRight}
+                switchComponent={switchComponent}
             />
         </li>
     );

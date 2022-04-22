@@ -5,9 +5,8 @@ import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
-import React, { useState } from "react";
+import React from "react";
 import { ActionMenu as ActionMenuComponent, ActionMenuProps } from "./ActionMenu";
-import { Switch, SwitchSize } from "@components/Switch";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -20,12 +19,6 @@ export default {
 
 export const ActionMenu: Story<ActionMenuProps & { onClick: () => void }> = (args) => <ActionMenuComponent {...args} />;
 
-const SwitchComponent = () => {
-    const [switchOn, setSwitchOn] = useState(false);
-
-    return <Switch size={SwitchSize.Small} on={switchOn} onChange={() => setSwitchOn(!switchOn)} />;
-};
-
 ActionMenu.args = {
     menuBlocks: [
         {
@@ -37,9 +30,13 @@ ActionMenu.args = {
                     title: "Small item with icon",
                     size: MenuItemContentSize.Small,
                     decorator: <IconAudio />,
-                    decoratorRight: <SwitchComponent />,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
-                    onClick: action("click"),
+                    onClick: (value) => {
+                        action("click")();
+                        console.log(value);
+                    },
+                    type: "switch",
+                    initialValue: false,
                 },
                 {
                     id: "2",
