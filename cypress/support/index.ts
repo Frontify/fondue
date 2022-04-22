@@ -14,4 +14,4 @@
 // ***********************************************************
 
 import "cypress-real-events/support";
-import "../../dist/index.css";
+import "../../src/styles.css";

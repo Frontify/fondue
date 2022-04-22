@@ -147,27 +147,25 @@ describe("Text Input component", () => {
 
     it("still allows buttons to be pressed if readonly", () => {
         mount(<StatefulInput readonly obfuscated copyable type={TextInputType.Password} value={PASSWORD} />);
+        cy.window().then((win) => {
+            cy.stub(win.navigator.clipboard, "writeText", () => PASSWORD).as("copy");
+        });
         cy.get(TEXT_INPUT_ID).should("have.attr", "readonly", "readonly");
         cy.get(COPY_ICON_ID).realClick();
-        cy.window().then((win) => {
-            win.navigator.clipboard.readText().then((text) => {
-                expect(text).to.equal(PASSWORD);
-            });
-        });
         cy.get(VISIBILITY_ICON_ID).click();
+        cy.get("@copy").should("be.calledWithExactly", PASSWORD);
         cy.get(TEXT_INPUT_ID).should("have.value", PASSWORD);
         cy.get(TEXT_INPUT_ID).should("have.attr", "type", "text");
     });
 
     it("calls the copy event", () => {
         mount(<StatefulInput copyable={true} value={INPUT_TEXT} />);
+        cy.window().then((win) => {
+            cy.stub(win.navigator.clipboard, "writeText", () => INPUT_TEXT).as("copy");
+        });
         cy.get(COPY_ICON_ID).find("svg").should("have.attr", "name", "IconCopyToClipboard");
         cy.get(COPY_ICON_ID).realClick();
-        cy.window().then((win) => {
-            win.navigator.clipboard.readText().then((text) => {
-                expect(text).to.equal(INPUT_TEXT);
-            });
-        });
+        cy.get("@copy").should("be.calledWithExactly", INPUT_TEXT);
         cy.get(COPY_ICON_ID).find("svg").should("have.attr", "name", "IconCheck");
     });
 
