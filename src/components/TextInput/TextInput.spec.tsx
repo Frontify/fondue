@@ -148,7 +148,9 @@ describe("Text Input component", () => {
     it("still allows buttons to be pressed if readonly", () => {
         mount(<StatefulInput readonly obfuscated copyable type={TextInputType.Password} value={PASSWORD} />);
         cy.window().then((win) => {
-            cy.stub(win.navigator.clipboard, "writeText", () => PASSWORD).as("copy");
+            cy.stub(win.navigator.clipboard, "writeText")
+                .as("copy")
+                .callsFake(() => PASSWORD);
         });
         cy.get(TEXT_INPUT_ID).should("have.attr", "readonly", "readonly");
         cy.get(COPY_ICON_ID).realClick();
@@ -161,7 +163,9 @@ describe("Text Input component", () => {
     it("calls the copy event", () => {
         mount(<StatefulInput copyable={true} value={INPUT_TEXT} />);
         cy.window().then((win) => {
-            cy.stub(win.navigator.clipboard, "writeText", () => INPUT_TEXT).as("copy");
+            cy.stub(win.navigator.clipboard, "writeText")
+                .as("copy")
+                .callsFake(() => INPUT_TEXT);
         });
         cy.get(COPY_ICON_ID).find("svg").should("have.attr", "name", "IconCopyToClipboard");
         cy.get(COPY_ICON_ID).realClick();
