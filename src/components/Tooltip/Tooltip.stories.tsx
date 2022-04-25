@@ -61,6 +61,10 @@ export default {
             control: { type: "boolean" },
             defaultValue: true,
         },
+        hoverdelay: {
+            control: { type: "number" },
+            defaultValue: 2000,
+        },
     },
 } as Meta<TooltipProps>;
 

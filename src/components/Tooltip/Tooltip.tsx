@@ -42,6 +42,7 @@ export type TooltipProps = {
     alignment?: TooltipAlignment;
     flip?: boolean;
     withArrow?: boolean;
+    hoverDelay?: number;
 };
 
 /**
@@ -91,6 +92,7 @@ export const Tooltip: FC<TooltipProps> = ({
     withArrow,
     flip = true,
     triggerRefElement,
+    hoverDelay = 2000,
 }) => {
     const linkRef = useRef<HTMLAnchorElement | null>(null);
     const { linkProps } = useLink({}, linkRef);
@@ -160,25 +162,36 @@ export const Tooltip: FC<TooltipProps> = ({
     const arrowStyling = setArrowClasses();
     const [isOpen, setIsOpen] = useState(false);
 
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+
+    const handleShowTooltipOnHover = () => {
+        setIsOpen(true);
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+    };
+
+    const handleHideTooltipOnHover = () => {
+        timeout = setTimeout(() => setIsOpen(false), hoverDelay);
+    };
+
     useEffect(() => {
-        const hoverDelay = setTimeout(() => setIsOpen(false), 2000);
         if (triggerRefElement) {
             triggerRefElement.current.addEventListener("click", () => setIsOpen(!isOpen));
-            triggerRefElement.current.addEventListener("mouseover", () => setIsOpen(true));
-            triggerRefElement.current.addEventListener("mouseleave", () => setIsOpen(false));
+            triggerRefElement.current.addEventListener("mouseover", handleShowTooltipOnHover);
             triggerRefElement.current.addEventListener("focus", () => setIsOpen(true));
+            triggerRefElement.current.addEventListener("mouseleave", handleHideTooltipOnHover);
         }
 
         return () => {
             if (triggerRefElement) {
                 triggerRefElement.current.removeEventListener("click", () => setIsOpen(!isOpen));
-                triggerRefElement.current.removeEventListener("mouseover", () => setIsOpen(true));
-                triggerRefElement.current.removeEventListener("mouseleave", () => setIsOpen(false));
+                triggerRefElement.current.removeEventListener("mouseover", handleShowTooltipOnHover);
+                triggerRefElement.current.removeEventListener("mouseleave", handleHideTooltipOnHover);
                 triggerRefElement.current.removeEventListener("focus", () => setIsOpen(true));
-                clearTimeout(hoverDelay)
             }
         };
-    }, [triggerRefElement?.current]);
+    }, []);
 
     return createPortal(
         <div>
@@ -273,6 +286,6 @@ export const Tooltip: FC<TooltipProps> = ({
                 </div>
             )}
         </div>,
-        document.body
+        document.body,
     );
 };
