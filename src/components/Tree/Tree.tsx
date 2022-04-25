@@ -62,13 +62,13 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeIds: initialAct
         : undefined;
 
     const downKeyHandler = (event: KeyboardEvent) => {
-        if (event.key === "Shift") {
+        if (event.key === "Meta" || event.ctrlKey) {
             setMultiSelectMode(true);
         }
     };
 
     const upKeyHandler = (event: KeyboardEvent) => {
-        if (event.key === "Shift") {
+        if (event.key === "Meta" || event.ctrlKey) {
             setMultiSelectMode(false);
         }
     };
