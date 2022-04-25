@@ -60,6 +60,26 @@ const DropdownWithLimitedWidthTemplate: Story<DropdownProps> = (args: DropdownPr
     );
 };
 
+const DropdownWithinOverflownContainer: Story<DropdownProps> = (args: DropdownProps) => {
+    const [active, setActive] = useState(args.activeItemId);
+    useEffect(() => setActive(args.activeItemId), [args.activeItemId]);
+
+    return (
+        <div className="tw-overflow-y-auto tw-h-[100px] tw-my-6">
+            <p className="tw-p2">Title</p>
+            <p className="tw-p2">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem consequatur culpa cum dolorem doloremque doloribus est eum,
+                fuga ipsam nesciunt nulla odit omnis quidem quisquam quod reprehenderit suscipit temporibus voluptatum?
+            </p>
+            <Dropdown {...args} activeItemId={active} onChange={(id) => setActive(id)} />
+            <p className="tw-p2">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem consequatur culpa cum dolorem doloremque doloribus est eum,
+                fuga ipsam nesciunt nulla odit omnis quidem quisquam quod reprehenderit suscipit temporibus voluptatum?
+            </p>
+        </div>
+    );
+};
+
 export const SmallSelect = DropdownTemplate.bind({});
 
 SmallSelect.args = {
@@ -215,6 +235,86 @@ export const LargeSelect = DropdownTemplate.bind({});
 
 LargeSelect.args = {
     size: DropdownSize.Large,
+    menuBlocks: [
+        {
+            id: "block1",
+            ariaLabel: "First section",
+            menuItems: [
+                {
+                    id: "5",
+                    title: "Large icon",
+                    subtitle: "Subtitle",
+                    decorator: <IconAudio />,
+                    size: MenuItemContentSize.Large,
+                },
+                {
+                    id: "6",
+                    title: "Large icon warning",
+                    subtitle: "Subtitle",
+                    decorator: <IconAudio />,
+                    size: MenuItemContentSize.Large,
+                    style: MenuItemStyle.Danger,
+                },
+                {
+                    id: "7",
+                    title: "Large icon disabled",
+                    subtitle: "Subtitle",
+                    decorator: <IconAudio />,
+                    size: MenuItemContentSize.Large,
+                    disabled: true,
+                },
+                {
+                    id: "8",
+                    title: "Large icon warning disabled",
+                    subtitle: "Subtitle",
+                    decorator: <IconAudio />,
+                    size: MenuItemContentSize.Large,
+                    style: MenuItemStyle.Danger,
+                    disabled: true,
+                },
+            ],
+        },
+        {
+            id: "block2",
+            ariaLabel: "Second section",
+            menuItems: [
+                {
+                    id: "13",
+                    title: "Large",
+                    subtitle: "Subtitle",
+                    size: MenuItemContentSize.Large,
+                },
+                {
+                    id: "14",
+                    title: "Large warning",
+                    subtitle: "Subtitle",
+                    size: MenuItemContentSize.Large,
+                    style: MenuItemStyle.Danger,
+                },
+                {
+                    id: "15",
+                    title: "Large disabled",
+                    subtitle: "Subtitle",
+                    size: MenuItemContentSize.Large,
+                    disabled: true,
+                },
+                {
+                    id: "16",
+                    title: "Large warning disabled",
+                    subtitle: "Subtitle",
+                    size: MenuItemContentSize.Large,
+                    style: MenuItemStyle.Danger,
+                    disabled: true,
+                },
+            ],
+        },
+    ],
+};
+
+export const WithinOverflow = DropdownWithinOverflownContainer.bind({});
+
+WithinOverflow.args = {
+    size: DropdownSize.Small,
     menuBlocks: [
         {
             id: "block1",
