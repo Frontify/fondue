@@ -32,8 +32,7 @@ ActionMenu.args = {
                     decorator: <IconAudio />,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
                     onClick: (value) => {
-                        action("click")();
-                        console.log(value);
+                        action("switch toggled")(value);
                     },
                     type: "switch",
                     initialValue: false,
