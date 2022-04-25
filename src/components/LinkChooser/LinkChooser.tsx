@@ -3,7 +3,6 @@
 import { mapToAriaProps } from "@components/ActionMenu/Aria/helper";
 import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
 import { useDropdownAutoHeight } from "@components/Dropdown/useDropdownAutoHeight";
-import { Validation } from "@components/TextInput";
 import IconDocument from "@foundation/Icon/Generated/IconDocument";
 import IconPatternLibrary from "@foundation/Icon/Generated/IconDocument";
 import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
@@ -22,12 +21,14 @@ import { Popover } from "./Popover";
 import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultsList";
 import { defaultSection } from "./sections";
-import { linkChooserMachine, LinkChooserState } from "./state/machine";
+import { linkChooserMachine } from "./state/machine";
 import { IconLabel, LinkChooserProps, SearchMenuBlock } from "./types";
 import { decoratedResults, doesContainSubstring, findSection, getDefaultData } from "./utils/helpers";
 import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection, shouldGoBack } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
 import { useManualComboBoxEventHandlers } from "./utils/useManualComboBoxHandlers";
+import { Validation } from "@utilities/validation";
+import { LinkChooserState } from "./state/types";
 
 export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Document]: <IconDocument />,
@@ -47,6 +48,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     getGlobalByQuery = getDefaultData,
     openPreview = window.open,
     clipboardOptions = navigator.clipboard,
+    selectedResult = null,
     openInNewTab = false,
     ariaLabel = "Menu",
     extraSections = [],
@@ -62,7 +64,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const [{ context, matches, value }, send, service] = useMachine(() =>
         linkChooserMachine.withContext({
             searchResults: [],
-            selectedResult: null,
+            selectedResult,
             query: "",
             interruptedFetch: false,
             getExtraResultsByQuery: null,
@@ -75,6 +77,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }),
     );
 
+    const [searchInput, setSearchInput] = useState(selectedResult?.title);
     const isDefault = !shouldGoBack(matches);
     const searchResultMenuBlocks = useMemo(
         () =>
@@ -91,6 +94,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const props = mapToAriaProps(ariaLabel, searchResultMenuBlocks);
 
+    const triggerRef = useRef<HTMLDivElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const listBoxRef = useRef<HTMLUListElement | null>(null);
     const popoverRef = useRef<HTMLDivElement | null>(null);
@@ -98,29 +102,33 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const handleSelectionChange = (key: Key) => {
         const foundItem = context.searchResults.find((item) => item.id === key);
         if (foundItem) {
+            setSearchInput(foundItem.title);
             send({ type: "SET_SELECTED_SEARCH_RESULT", data: { selectedResult: foundItem } });
         }
         closeBoxState(state);
         setSelectedKey(key);
     };
+
     const handleInputChange = useCallback(
         (query: string) => {
+            setSearchInput(query);
             send({ type: "TYPING", data: { query } });
         },
         [value],
     );
 
-    const [selectedKey, setSelectedKey] = useState<Key | undefined>();
+    const [selectedKey, setSelectedKey] = useState<Key | undefined>(context.selectedResult?.id);
 
     const state = useComboBoxState({
         ...props,
         defaultFilter: (textValue, inputValue) => doesContainSubstring(textValue, inputValue, extraSections),
+        inputValue: searchInput,
         onInputChange: handleInputChange,
         onSelectionChange: handleSelectionChange,
-        selectedKey,
         menuTrigger: "manual",
         shouldCloseOnBlur: false,
         allowsEmptyCollection: true,
+        selectedKey,
     });
 
     const { inputProps, listBoxProps, labelProps } = useComboBox(
@@ -200,8 +208,6 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         },
     );
 
-    const inputDecorator = IconOptions[context.selectedResult?.icon || DEFAULT_ICON];
-
     useEffect(() => {
         if (isLoaded(matches) && context.interruptedFetch) {
             send({ type: "TYPING", data: { query: context.query } });
@@ -228,7 +234,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     }, [focusedKey, isOpen]);
 
     return (
-        <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
+        <div data-test-id="link-chooser" ref={triggerRef} className="tw-w-full tw-font-sans tw-text-s">
             {!!label && (
                 <label
                     {...labelProps}
@@ -246,30 +252,31 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     )}
                 </label>
             )}
-            <div>
-                <SearchInput
-                    ariaProps={manualInputProps}
-                    selectedResult={context.selectedResult}
-                    ref={inputRef}
-                    disabled={disabled}
-                    decorator={inputDecorator}
-                    clearable={clearable}
-                    onClear={handleClearClick}
-                    machineService={service}
-                    validation={validation}
-                    onClick={handleWrapperClick}
-                    onMouseDown={handleWrapperMouseDown}
-                />
-            </div>
+            <SearchInput
+                ariaProps={manualInputProps}
+                selectedResult={context.selectedResult}
+                ref={inputRef}
+                disabled={disabled}
+                decorator={IconOptions[context.selectedResult?.icon || DEFAULT_ICON]}
+                clearable={clearable}
+                onClear={handleClearClick}
+                machineService={service}
+                validation={validation}
+                onClick={handleWrapperClick}
+                onMouseDown={handleWrapperMouseDown}
+            />
             <AnimatePresence>
                 {matches(LinkChooserState.Focused) && (
                     <motion.div
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
+                        style={{
+                            width: triggerRef.current?.getBoundingClientRect().width,
+                        }}
+                        className="tw-absolute tw-left-auto tw-min-w-fit tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
                         key="content"
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
                         exit={{ height: 0 }}
-                        transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
+                        transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         data-test-id="link-chooser-dropdown"
                     >
                         <DismissButton onDismiss={handleDropdownClose} />

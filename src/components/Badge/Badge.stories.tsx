@@ -2,8 +2,9 @@
 
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { Badge, BadgeProps, BadgeStatus, BadgeStyle } from "./Badge";
+import { Badge } from "./Badge";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import { BadgeEmphasis, BadgeProps, BadgeStatus, BadgeStyle } from "./types";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -15,7 +16,7 @@ export default {
             control: { type: "select" },
         },
         emphasis: {
-            options: ["Strong", "None"],
+            options: Object.values(BadgeEmphasis),
             control: { type: "select" },
         },
         size: {
@@ -29,7 +30,7 @@ export default {
         style: BadgeStyle.Primary,
         children: "Text",
         size: "m",
-        emphasis: "Strong",
+        emphasis: BadgeEmphasis.Strong,
         disabled: false,
     },
 } as Meta<BadgeProps>;

@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
-import { Validation } from "@components/TextInput";
+import { Validation, validationClassMap } from "@utilities/validation";
 import IconCopyToClipboard from "@foundation/Icon/Generated/IconCopyToClipboard";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
 import IconReject from "@foundation/Icon/Generated/IconReject";
@@ -12,7 +12,7 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
 import React, { FC, forwardRef, MouseEvent } from "react";
-import { IconButtonProps, SearchInputProps, validationClassMap } from "./types";
+import { IconButtonProps, SearchInputProps } from "./types";
 
 export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>(
     (
@@ -64,6 +64,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         {decorator}
                     </div>
                 )}
+
                 <input
                     {...mergeProps(focusProps, ariaProps)}
                     readOnly={!isFocused}

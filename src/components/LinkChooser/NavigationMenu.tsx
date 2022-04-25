@@ -11,7 +11,7 @@ import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
 import React, { FC, useMemo, useRef } from "react";
 import { defaultSection } from "./sections";
-import { DropdownState, LinkChooserState } from "./state/machine";
+import { DropdownState, LinkChooserState } from "./state/types";
 import { NavigationMenuItemProps, NavigationMenuProps } from "./types";
 
 export const NavigationMenu: FC<NavigationMenuProps> = ({ machineService, state }) => {

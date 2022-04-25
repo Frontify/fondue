@@ -2,14 +2,14 @@
 
 import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
-import { Validation } from "@components/TextInput";
+import { Validation, validationClassMap } from "@utilities/validation";
 import { mount } from "@cypress/react";
 import React from "react";
 import { LinkChooser, QUERIES_STORAGE_KEY } from "./LinkChooser";
 import { data } from "./mock/data";
 import { guidelineSection, GUIDELINE_ITEMS } from "./mock/guidelines";
 import { templateSection, TEMPLATE_ITEMS } from "./mock/templates";
-import { LinkChooserProps, SearchResult, validationClassMap } from "./types";
+import { LinkChooserProps, SearchResult } from "./types";
 import { filterItems } from "./utils/helpers";
 
 const LINK_CHOOSER_ID = "[data-test-id=link-chooser]";
@@ -334,12 +334,14 @@ describe("LinkChooser Component", () => {
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(`${SELECT_SECTION_ID} > li`).should("have.length", 2);
             cy.get("@firstSelectItem").should("contain.text", `${CUSTOM_QUERY}1`);
-            cy.get(SEARCH_INPUT_ID).type("{Backspace}2");
+            cy.get(SEARCH_INPUT_ID).clear();
+            cy.get(SEARCH_INPUT_ID).type(`${CUSTOM_QUERY}2`);
             cy.get("@firstSelectItem").click();
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(`${SELECT_SECTION_ID} > li`).should("have.length", 3);
             cy.get("@firstSelectItem").should("contain.text", `${CUSTOM_QUERY}2`);
-            cy.get(SEARCH_INPUT_ID).type("{Backspace}1");
+            cy.get(SEARCH_INPUT_ID).clear();
+            cy.get(SEARCH_INPUT_ID).type(`${CUSTOM_QUERY}1`);
             cy.get("@firstSelectItem").click();
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(`${SELECT_SECTION_ID} > li`).should("have.length", 3);

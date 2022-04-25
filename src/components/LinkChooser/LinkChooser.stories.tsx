@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Validation } from "@components/TextInput";
+import { Validation } from "@utilities/validation";
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
 import { LinkChooser as LinkChooserComponent } from "./LinkChooser";
@@ -21,7 +21,7 @@ export default {
         validation: Validation.Default,
     },
     argTypes: {
-        onLinkChange: { action: "onClick" },
+        onLinkChange: { action: "onLinkChange" },
         validation: {
             options: Object.values(Validation),
             control: { type: "select" },

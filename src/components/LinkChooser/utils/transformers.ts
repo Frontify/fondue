@@ -5,13 +5,13 @@ import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { generateRandomId } from "@utilities/generateRandomId";
 import { CUSTOM_LINK_ID, DEFAULT_ICON, MAX_STORED_ITEMS, QUERIES_STORAGE_KEY } from "../LinkChooser";
 import { SearchResult } from "../types";
-import { isCustomLink } from "./helpers";
+import { isCustomLink, prependHttps } from "./helpers";
 
 export const createCustomLink = (query: string): SearchResult =>
     ({
         id: `${CUSTOM_LINK_ID}-${generateRandomId()}`,
         title: query,
-        link: query,
+        link: prependHttps(query),
         icon: DEFAULT_ICON,
         size: MenuItemContentSize.Large,
         selectionIndicator: SelectionIndicatorIcon.Check,

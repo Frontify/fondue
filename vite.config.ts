@@ -39,7 +39,7 @@ export default defineConfig({
         sourcemap: true,
         minify: true,
         rollupOptions: {
-            external: [...dependencies, ...peerDependencies, "react-color/lib/components/common"],
+            external: [...dependencies, ...peerDependencies],
             output: {
                 assetFileNames: (chunkInfo: PreRenderedAsset): string => {
                     if (chunkInfo.name === "style.css") {

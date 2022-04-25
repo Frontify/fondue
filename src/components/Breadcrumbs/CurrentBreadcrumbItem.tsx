@@ -1,9 +1,10 @@
-import { Badge, BadgeProps } from "@components/Badge/Badge";
+import { Badge, BadgeProps } from "@components/Badge";
+import { useBreadcrumbItem } from "@react-aria/breadcrumbs";
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, forwardRef, HTMLAttributes, RefObject } from "react";
+import React, { FC, RefObject, useRef } from "react";
 import { Breadcrumb } from "./Breadcrumbs";
 
 const ItemWithBadges: FC<{ badges?: BadgeProps[] }> = ({ badges, children }) => (
@@ -18,17 +19,29 @@ const ItemWithBadges: FC<{ badges?: BadgeProps[] }> = ({ badges, children }) => 
     </span>
 );
 
-type CurrentBreadcrumbItemProps = Breadcrumb & {
-    ariaProps: HTMLAttributes<HTMLElement>;
-};
+type CurrentBreadcrumbItemProps = Breadcrumb;
 
-export const CurrentBreadcrumbItem = forwardRef<
-    HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null,
-    CurrentBreadcrumbItemProps
->(({ label, badges, bold, decorator, link, onClick, ariaProps }, ref) => {
+export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
+    label,
+    badges,
+    bold,
+    decorator,
+    link,
+    onClick,
+}) => {
+    const ref = useRef<HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null>(null);
+    const { itemProps } = useBreadcrumbItem(
+        {
+            isCurrent: true,
+            children: label,
+            elementType: link ? "a" : onClick ? "button" : "span",
+        },
+        ref,
+    );
+
     const classNames = merge([decorator && "tw-flex tw-gap-x-1 tw-items-center", bold && "tw-font-bold"]);
     const { isFocusVisible, focusProps } = useFocusRing();
-    const props = mergeProps(ariaProps, focusProps);
+    const props = mergeProps(itemProps, focusProps);
 
     return (
         <li
@@ -75,6 +88,4 @@ export const CurrentBreadcrumbItem = forwardRef<
             )}
         </li>
     );
-});
-
-CurrentBreadcrumbItem.displayName = "CurrentBreadcrumbItem";
+};

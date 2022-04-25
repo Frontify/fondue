@@ -16,11 +16,28 @@ import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, ReactElement, useEffect, useRef } from "react";
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from "./useDropdownAutoHeight";
+import { Validation } from "@utilities/validation";
+import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
 
 export enum DropdownSize {
     Small = "Small",
     Large = "Large",
 }
+
+export enum DropdownAlignment {
+    Start = "Start",
+    End = "End",
+}
+
+export enum DropdownPosition {
+    Top = "Top",
+    Bottom = "Bottom",
+}
+
+const alignmentStyling: Record<DropdownAlignment, string> = {
+    [DropdownAlignment.Start]: "tw-left-0",
+    [DropdownAlignment.End]: "tw-right-0",
+};
 
 export type DropdownProps = {
     id?: string;
@@ -34,6 +51,9 @@ export type DropdownProps = {
     ariaLabel?: string;
     decorator?: ReactElement;
     autoResize?: boolean;
+    validation?: Validation;
+    alignment?: DropdownAlignment;
+    position?: DropdownPosition;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
@@ -62,6 +82,9 @@ export const Dropdown: FC<DropdownProps> = ({
     ariaLabel = "Dropdown",
     decorator,
     autoResize = true,
+    validation = Validation.Default,
+    alignment = DropdownAlignment.Start,
+    position = DropdownPosition.Bottom,
 }) => {
     const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -73,8 +96,9 @@ export const Dropdown: FC<DropdownProps> = ({
     });
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
-    const { triggerProps, valueProps, menuProps } = useSelect(props, state, triggerRef);
-    const { buttonProps } = useButton(triggerProps, triggerRef);
+    const { triggerProps, valueProps, menuProps } = useSelect({ ...props, isDisabled: disabled }, state, triggerRef);
+
+    const { buttonProps } = useButton({ ...triggerProps, isDisabled: disabled }, triggerRef);
     const { isOpen } = state;
     const { isFocusVisible, focusProps } = useFocusRing();
     const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -117,6 +141,10 @@ export const Dropdown: FC<DropdownProps> = ({
 
     const showClear = !!activeItem && !!onClear;
 
+    const getDropdownBottomPosition = (dropDownSize: string) => {
+        return dropDownSize === DropdownSize.Small ? "tw-mb-2 tw-bottom-[34px]" : "tw-mb-2 tw-bottom-[60px]";
+    };
+
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
             <Trigger
@@ -127,6 +155,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 size={size === DropdownSize.Large ? TriggerSize.Large : TriggerSize.Small}
                 onClear={onClear}
                 showClear={showClear}
+                validation={validation}
             >
                 <HiddenSelect state={state} triggerRef={triggerRef} />
                 <button
@@ -154,12 +183,15 @@ export const Dropdown: FC<DropdownProps> = ({
             <AnimatePresence>
                 {!disabled && isOpen && heightIsReady && (
                     <motion.div
-                        className="tw-absolute tw-left-0 tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20 tw-min-w-full tw-overflow-hidden"
+                        className={merge([
+                            "tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-20 tw-min-w-full tw-overflow-hidden",
+                            alignmentStyling[alignment],
+                            position === DropdownPosition.Bottom ? "tw-mt-2" : getDropdownBottomPosition(size),
+                        ])}
                         key="content"
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
-                        exit={{ height: 0 }}
-                        transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
+                        transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                     >
                         <FocusScope restoreFocus>
                             <div
@@ -178,6 +210,11 @@ export const Dropdown: FC<DropdownProps> = ({
                     </motion.div>
                 )}
             </AnimatePresence>
+            {validation === Validation.Loading && (
+                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
+                    <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
+                </span>
+            )}
         </div>
     );
 };

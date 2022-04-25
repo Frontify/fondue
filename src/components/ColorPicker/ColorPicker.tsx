@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Slider } from "@components/Slider/Slider";
-import { getColorDisplayValue, isColorLight } from "@utilities/colors";
-import { merge } from "@utilities/merge";
-import React, { FC, useEffect, useState } from "react";
-import tinycolor from "tinycolor2";
+import React, { FC, useState } from "react";
 import { Color, ColorFormat, Palette } from "../../types/colors";
 import { BrandColorPicker } from "./BrandColorPicker";
+import "./ColorPicker.css";
+import { ColorPreview } from "./ColorPreview";
 import { CustomColorPicker } from "./CustomColorPicker";
 
 export type ColorPickerProps = {
@@ -24,8 +23,8 @@ enum ColorType {
 }
 
 const colorTypes = [
-    { id: ColorType.Brand, value: "Brand Colors" },
-    { id: ColorType.Custom, value: "Custom Color" },
+    { id: ColorType.Brand, value: "Brand" },
+    { id: ColorType.Custom, value: "Custom" },
 ];
 
 export const ColorPicker: FC<ColorPickerProps> = ({
@@ -37,16 +36,11 @@ export const ColorPicker: FC<ColorPickerProps> = ({
     currentFormat = ColorFormat.Hex,
 }) => {
     const [colorType, setColorType] = useState(ColorType.Brand);
-    const [color, setColor] = useState<Color>(currentColor);
-
-    useEffect(() => {
-        setColor({ ...currentColor, a: currentColor.a || 1 });
-    }, [currentColor]);
 
     return (
         <div className="tw-w-[400px] tw-relative">
-            {showPreview && <ColorPreview color={color} format={currentFormat} />}
-            <div className="tw-p-6 tw-flex tw-flex-col tw-gap-5">
+            {showPreview && <ColorPreview color={currentColor} />}
+            <div className="tw-p-5 tw-flex tw-flex-col tw-gap-2">
                 {palettes && (
                     <Slider
                         items={colorTypes}
@@ -55,37 +49,15 @@ export const ColorPicker: FC<ColorPickerProps> = ({
                     />
                 )}
                 {palettes && colorType === ColorType.Brand ? (
-                    <BrandColorPicker currentColor={color} palettes={palettes} onSelect={onSelect} />
+                    <BrandColorPicker currentColor={currentColor} palettes={palettes} onSelect={onSelect} />
                 ) : (
                     <CustomColorPicker
-                        currentColor={color}
+                        currentColor={currentColor}
                         currentFormat={currentFormat}
                         setFormat={setFormat}
                         onSelect={onSelect}
                     />
                 )}
-            </div>
-        </div>
-    );
-};
-
-export const ColorPreview: FC<{ color: Color; format: ColorFormat }> = ({ color, format }) => {
-    const parsedColor = tinycolor(color);
-    const backgroundColor = parsedColor.toRgbString();
-    const colorName = color.name;
-    const displayValue = getColorDisplayValue(color, format);
-    return (
-        <div className="tw-sticky tw-top-0 tw-bg-white tw-z-20 dark:tw-bg-black-95">
-            <div
-                className={merge([
-                    "tw-flex tw-justify-center tw-p-7 tw-text-m tw-gap-2",
-                    isColorLight(color) ? "tw-text-black" : "tw-text-white",
-                ])}
-                style={{ backgroundColor }}
-                data-test-id="color-preview"
-            >
-                {colorName && <span className="tw-font-bold">{colorName}</span>}
-                <span className={colorName ? "" : "tw-font-bold"}>{displayValue}</span>
             </div>
         </div>
     );

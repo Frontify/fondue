@@ -1,26 +1,55 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useEffect, useState } from "react";
-import { renderNodeArray, TreeNodeProps } from "./Node";
+import React, { FC, ReactElement, useEffect, useState } from "react";
+import { renderNodeArray } from "./Node";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { OnDropCallback } from "@components/Tree/DropZone";
+import { useId } from "@react-aria/utils";
+import { DraggableItem, DropZonePosition } from "@utilities/dnd";
+import { getReorderedNodes, listToTree } from "@components/Tree/utils";
+import { IconProps } from "@foundation/Icon";
+
+export interface TreeFlatListItem {
+    name: string;
+    icon?: ReactElement<IconProps>;
+    label?: string;
+    value?: string;
+    actions?: React.ReactNode[];
+    parentId: NullableString;
+}
 
 export type TreeProps = {
-    nodes: TreeNodeProps[];
+    nodes: DraggableItem<TreeFlatListItem>[];
     onSelect: (id: NullableString) => void;
     activeNodeId?: NullableString;
-    onDrop?: OnDropCallback;
+    onUpdate?: (modifiedItems: DraggableItem<TreeFlatListItem>[]) => void;
 };
 
-export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActiveNodeId = null, onDrop }) => {
+export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActiveNodeId = null, onUpdate }) => {
     const [activeNodeId, setActiveNodeId] = useState<NullableString>(initialActiveNodeId);
+    const [treeNodes, setTreeNodes] = useState<DraggableItem<TreeFlatListItem>[]>([]);
+    const treeName = useId();
     useEffect(() => setActiveNodeId(initialActiveNodeId), [initialActiveNodeId]);
+    useEffect(() => {
+        const listToTreeNodes = listToTree(nodes);
+        setTreeNodes(listToTreeNodes);
+    }, [nodes]);
 
-    const onNodeClick = (id: string | null) => {
+    const onNodeClick = (id: NullableString) => {
         setActiveNodeId(id);
         onSelect(id);
     };
+
+    const handleDrop = onUpdate
+        ? (
+              targetItem: DraggableItem<TreeFlatListItem>,
+              sourceItem: DraggableItem<TreeFlatListItem>,
+              position: DropZonePosition,
+          ) => {
+              const modifiedItems = getReorderedNodes(targetItem, sourceItem, position, nodes);
+              onUpdate(modifiedItems);
+          }
+        : undefined;
 
     return (
         <DndProvider backend={HTML5Backend}>
@@ -28,7 +57,13 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActi
                 data-test-id="tree"
                 className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
             >
-                {renderNodeArray(nodes, activeNodeId, onNodeClick, onDrop)}
+                {renderNodeArray({
+                    nodes: treeNodes,
+                    activeNodeId,
+                    treeName,
+                    onClick: onNodeClick,
+                    onDrop: handleDrop,
+                })}
             </ul>
         </DndProvider>
     );

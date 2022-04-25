@@ -90,6 +90,7 @@ export const Switch: FC<SwitchProps> = ({
                 className={lineClasses}
                 value={on.toString()}
                 onClick={onChange}
+                type="button"
             >
                 <div className={dotClasses} />
             </button>

@@ -5,7 +5,8 @@ import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import { Meta, Story } from "@storybook/react";
 import React, { useEffect, useState } from "react";
-import { Dropdown, DropdownProps, DropdownSize } from "./Dropdown";
+import { Dropdown, DropdownAlignment, DropdownPosition, DropdownProps, DropdownSize } from "./Dropdown";
+import { Validation } from "@utilities/validation";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -15,12 +16,27 @@ export default {
         placeholder: "select item",
         disabled: false,
         clearable: false,
+        validation: Validation.Default,
     },
     argTypes: {
         size: {
             table: { disable: true },
         },
         activeItemId: { type: "string" },
+        validation: {
+            options: Object.values(Validation),
+            control: { type: "select" },
+        },
+        alignment: {
+            options: Object.values(DropdownAlignment),
+            control: { type: "select" },
+            defaultValue: DropdownAlignment.Start,
+        },
+        position: {
+            options: Object.values(DropdownPosition),
+            control: { type: "select" },
+            defaultValue: DropdownPosition.Bottom,
+        },
     },
 } as Meta;
 
@@ -36,8 +52,10 @@ const DropdownWithLimitedWidthTemplate: Story<DropdownProps> = (args: DropdownPr
     useEffect(() => setActive(args.activeItemId), [args.activeItemId]);
 
     return (
-        <div className="tw-max-w-[150px]">
-            <Dropdown {...args} activeItemId={active} onChange={(id) => setActive(id)} />
+        <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
+            <div className="tw-max-w-[150px]">
+                <Dropdown {...args} activeItemId={active} onChange={(id) => setActive(id)} />
+            </div>
         </div>
     );
 };

@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Switch, SwitchSize } from "@components/Switch/Switch";
 import IconAddSimple from "@foundation/Icon/Generated/IconAddSimple";
 import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
 import IconMinus from "@foundation/Icon/Generated/IconMinus";
 import { IconSize } from "@foundation/Icon/IconSize";
-import { Switch, SwitchSize } from "@components/Switch/Switch";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, isValidElement, ReactNode } from "react";
@@ -53,7 +53,7 @@ export type FieldsetHeaderProps = {
     tabIndex?: number;
 };
 
-const renderType = (
+export const renderFieldsetHeaderIconType = (
     type: FieldsetHeaderType,
     id: string,
     size: FieldsetHeaderSize,
@@ -122,7 +122,8 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
             onKeyPress={clickOnNotDisabled}
             className={merge([
                 "tw-flex tw-items-center tw-gap-x-1.5 tw-w-full tw-flex-row",
-                disabled ? "tw-text-black-40" : "tw-text-black dark:tw-text-white",
+                disabled ? "tw-text-black-40" : "dark:tw-text-white",
+                !disabled && active ? "tw-text-black" : "tw-text-black-80",
                 !disabled && onClick ? "hover:tw-cursor-pointer" : "tw-pointer-events-none",
             ])}
             tabIndex={tabIndex}
@@ -139,14 +140,16 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
                 className={merge([
                     "tw-text-left",
                     sizeMap[size].text,
-                    bold ? "tw-font-bold" : "tw-font-normal",
+                    bold ? "tw-font-bold" : size === FieldsetHeaderSize.Medium ? "tw-font-medium" : "tw-font-normal",
                     onClick && "hover:tw-cursor-pointer",
                 ])}
             >
                 {children}
             </Heading>
             {type !== FieldsetHeaderType.Default && (
-                <span className="tw-ml-auto tw-shrink-0">{renderType(type, id, size, active, disabled)}</span>
+                <span className="tw-ml-auto tw-shrink-0">
+                    {renderFieldsetHeaderIconType(type, id, size, active, disabled)}
+                </span>
             )}
         </header>
     );

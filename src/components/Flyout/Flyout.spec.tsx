@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from "@cypress/react";
+import { ButtonStyle } from "@components/Button";
 import { TextInput } from "@components/TextInput/TextInput";
+import { mount } from "@cypress/react";
 import React, { FC, useState } from "react";
 import { Flyout, FlyoutProps } from "./Flyout";
-import { ButtonStyle } from "@components/Button";
 import { FlyoutFooter } from "./FlyoutFooter";
 
 const FLYOUT_TRIGGER_ID = "[data-test-id=flyout-trigger]";

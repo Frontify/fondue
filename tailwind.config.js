@@ -107,6 +107,9 @@ module.exports = {
                 xxl: ["2rem", "2.5rem"],
                 xxxl: ["3rem", "3.5rem"],
             },
+            transitionProperty: {
+                height: "height",
+            },
         },
     },
 };
