@@ -20,6 +20,7 @@ import React, {
 } from "react";
 import { BrightHeader, brightHeaderArrowBackgroundColors, BrightHeaderStyle } from "./BrightHeader";
 import { usePopper } from "react-popper";
+import { createPortal } from "react-dom";
 
 export type TooltipButton = {
     label: string;
@@ -160,10 +161,11 @@ export const Tooltip: FC<TooltipProps> = ({
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
+        const hoverDelay = setTimeout(() => setIsOpen(false), 2000);
         if (triggerRefElement) {
             triggerRefElement.current.addEventListener("click", () => setIsOpen(!isOpen));
             triggerRefElement.current.addEventListener("mouseover", () => setIsOpen(true));
-            triggerRefElement.current.addEventListener("mouseleave", () => setTimeout(() => setIsOpen(false), 2000));
+            triggerRefElement.current.addEventListener("mouseleave", () => setIsOpen(false));
             triggerRefElement.current.addEventListener("focus", () => setIsOpen(true));
         }
 
@@ -171,15 +173,14 @@ export const Tooltip: FC<TooltipProps> = ({
             if (triggerRefElement) {
                 triggerRefElement.current.removeEventListener("click", () => setIsOpen(!isOpen));
                 triggerRefElement.current.removeEventListener("mouseover", () => setIsOpen(true));
-                triggerRefElement.current.removeEventListener("mouseleave", () =>
-                    setTimeout(() => setIsOpen(false), 2000),
-                );
+                triggerRefElement.current.removeEventListener("mouseleave", () => setIsOpen(false));
                 triggerRefElement.current.removeEventListener("focus", () => setIsOpen(true));
+                clearTimeout(hoverDelay)
             }
         };
-    }, []);
+    }, [triggerRefElement?.current]);
 
-    return (
+    return createPortal(
         <div>
             {isOpen && (
                 <div
@@ -271,6 +272,7 @@ export const Tooltip: FC<TooltipProps> = ({
                     {children}
                 </div>
             )}
-        </div>
+        </div>,
+        document.body
     );
 };
