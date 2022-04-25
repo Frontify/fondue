@@ -1,22 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Slider } from "@components/Slider/Slider";
-import { FormControl } from "@components/FormControl/FormControl";
-import { BadgeStatus, BadgeStyle } from "@components/Badge/Badge";
+import { BadgeStatus, BadgeStyle } from "@components/Badge";
 import { Button, ButtonStyle } from "@components/Button/Button";
 import { Divider } from "@components/Divider/Divider";
-import IconActions from "@foundation/Icon/Generated/IconActions";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import { FormControl } from "@components/FormControl/FormControl";
+import { Slider } from "@components/Slider/Slider";
 import { Textarea } from "@components/Textarea/Textarea";
 import { TextInput } from "@components/TextInput/TextInput";
+import IconActions from "@foundation/Icon/Generated/IconActions";
+import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import { chain } from "@react-aria/utils";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
-import React, { MutableRefObject, useState } from "react";
-import { Flyout, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, FlyoutProps } from "./Flyout";
-import { FlyoutFooter } from "./FlyoutFooter";
-import { chain } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
+import React, { MutableRefObject, useState } from "react";
+import { Flyout, FlyoutProps, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT } from "./Flyout";
+import { FlyoutFooter } from "./FlyoutFooter";
 import { Dropdown } from "@components/Dropdown";
 import { DatePicker } from "@components/DatePicker";
 
@@ -237,6 +237,46 @@ WithCustomFooter.args = {
 WithCustomFooter.argTypes = {
     trigger: { table: { disable: true } },
     decorator: { table: { disable: true } },
+};
+
+const WithCustomFooterAndHeaderTemplate: Story<FlyoutProps> = (args) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <Flyout
+            {...args}
+            trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+                <Button onClick={() => setIsOpen(!isOpen)} ref={ref} aria-label={ariaLabel}>
+                    Click me
+                </Button>
+            )}
+            isOpen={isOpen}
+            onOpenChange={chain(args.onOpenChange, setIsOpen)}
+            onCancel={chain(args.onCancel, () => setIsOpen(false))}
+        >
+            <p className="tw-text-center tw-py-8">Flyout Content</p>
+        </Flyout>
+    );
+};
+export const WithCustomFooterAndHeader = WithCustomFooterAndHeaderTemplate.bind({});
+
+WithCustomFooterAndHeader.args = {
+    legacyFooter: false,
+    fixedHeader: (
+        <div className="tw-py-5 tw-px-8 tw-bg-white dark:tw-bg-black-95 tw-border-b tw-border-b-black-10">
+            Custom Header
+        </div>
+    ),
+    fixedFooter: (
+        <FlyoutFooter
+            buttons={[
+                {
+                    children: "A button",
+                    style: ButtonStyle.Primary,
+                },
+            ]}
+        />
+    ),
 };
 
 const WithRenderFunctionTriggerTemplate: Story<FlyoutProps> = (args) => {

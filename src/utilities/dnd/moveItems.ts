@@ -20,7 +20,7 @@ const updateItemsSort = <T extends object>(
             (index > movedItemTargetIndex &&
                 item.sort !== null &&
                 previousItem &&
-                previousItem.sort &&
+                previousItem.sort !== null &&
                 item.sort <= previousItem.sort); // Following item with a sort prop lower than or equal to value on previousItem
 
         if (shouldUpdate) {

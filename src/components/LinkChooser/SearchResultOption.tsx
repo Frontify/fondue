@@ -6,7 +6,7 @@ import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
 import React, { FC, useRef } from "react";
 import { IconOptions } from "./LinkChooser";
-import { DropdownState, LinkChooserState, SectionState } from "./state/machine";
+import { DropdownState, LinkChooserState, SectionState } from "./state/types";
 import { ImageMenuItemProps, SearchResultOptionProps, SearchResult } from "./types";
 import { findSection } from "./utils/helpers";
 

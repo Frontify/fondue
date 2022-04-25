@@ -12,7 +12,7 @@ import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 import { IconAcademy, IconAudio, IconIcons } from "@foundation/Icon";
 import { ScrollWrapperDirection } from "@components/ScrollWrapper/types";
 import { OverlayContainer, OverlayProvider } from "@react-aria/overlays";
-import { ModalHeaderProps, ModalHeaderVariant, ModalProps, ModalVisualProps } from "./types";
+import { ModalHeaderProps, ModalHeaderVariant, ModalProps, ModalVisualProps, ModalWidth } from "./types";
 import { FormControl, FormControlDirection, FormControlStyle } from "@components/FormControl";
 
 // eslint-disable-next-line import/no-default-export
@@ -38,6 +38,14 @@ export default {
             options: ["None", ...Object.values(PatternTheme)],
             mapping: { None: null, ...Object.values(PatternDesign) },
             defaultValue: PatternTheme.Black,
+            control: { type: "select" },
+        },
+        width: {
+            table: {
+                category: "Layout",
+            },
+            name: "Width",
+            options: [ModalWidth.Default, ModalWidth.Large],
             control: { type: "select" },
         },
         title: {
@@ -81,6 +89,11 @@ export default {
             defaultValue: ModalHeaderVariant.Default,
             control: { type: "select" },
         },
+        children: {
+            table: {
+                disable: true,
+            },
+        },
     },
     decorators: [
         (Story) => (
@@ -93,9 +106,33 @@ export default {
     ],
 } as Meta;
 
-export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = (args) => {
+const ExampleParagraph = () => (
+    <p>
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda itaque tenetur
+        ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo, fugiat perferendis consequatur.
+    </p>
+);
+
+const ControlledInput = () => {
     const [input, setInput] = useState("");
 
+    return (
+        <FormControl
+            style={FormControlStyle.Primary}
+            direction={FormControlDirection.Vertical}
+            label={{
+                children: "Input Label",
+                required: false,
+                htmlFor: generateRandomId(),
+                tooltip: { content: "Tooltip Text" },
+            }}
+        >
+            <TextInput value={input} onChange={setInput} />
+        </FormControl>
+    );
+};
+
+const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = (args) => {
     const state = useOverlayTriggerState({});
 
     return (
@@ -106,6 +143,7 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
                     pattern: args.pattern,
                     foregroundColor: args.foregroundColor,
                 }}
+                width={args.width}
                 onClose={state.close}
                 isOpen={state.isOpen}
                 isDismissable
@@ -116,84 +154,7 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
                     decorator={args.decorator}
                     variant={args.variant}
                 />
-                <Modal.Body direction={ScrollWrapperDirection.Vertical}>
-                    <div>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <div className="tw-my-4">
-                            <FormControl
-                                style={FormControlStyle.Primary}
-                                direction={FormControlDirection.Vertical}
-                                label={{
-                                    children: "Input Label",
-                                    required: false,
-                                    htmlFor: generateRandomId(),
-                                    tooltip: { content: "Tooltip Text" },
-                                }}
-                            >
-                                <TextInput value={input} onChange={setInput} />
-                            </FormControl>
-                        </div>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis
-                            assumenda itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure
-                            explicabo, fugiat perferendis consequatur.
-                        </p>
-                    </div>
-                </Modal.Body>
+                <Modal.Body direction={ScrollWrapperDirection.Vertical}>{args.children}</Modal.Body>
                 <Modal.Footer
                     buttons={[
                         {
@@ -215,3 +176,30 @@ export const Default: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = 
         </>
     );
 };
+
+export const Default = ModalTemplate.bind({});
+
+Default.args = {
+    ...ModalTemplate.args,
+    children: (
+        <div>
+            <ExampleParagraph />
+            <ExampleParagraph />
+            <div className="tw-my-4">
+                <ControlledInput />
+            </div>
+            <ExampleParagraph />
+            <ExampleParagraph />
+            <ExampleParagraph />
+            <ExampleParagraph />
+            <ExampleParagraph />
+            <ExampleParagraph />
+            <ExampleParagraph />
+            <ExampleParagraph />
+        </div>
+    ),
+};
+
+export const WithLimitedText = ModalTemplate.bind({});
+
+WithLimitedText.args = { ...ModalTemplate.args, children: <ExampleParagraph /> };

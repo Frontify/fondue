@@ -4,6 +4,7 @@ import { Slider } from "@components/Slider/Slider";
 import React, { FC, useState } from "react";
 import { Color, ColorFormat, Palette } from "../../types/colors";
 import { BrandColorPicker } from "./BrandColorPicker";
+import "./ColorPicker.css";
 import { ColorPreview } from "./ColorPreview";
 import { CustomColorPicker } from "./CustomColorPicker";
 

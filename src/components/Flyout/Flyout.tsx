@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BadgeProps } from "@components/Badge/Badge";
+import { BadgeProps } from "@components/Badge";
 import { watchModals } from "@react-aria/aria-modal-polyfill";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
@@ -20,9 +20,9 @@ import React, {
     useRef,
 } from "react";
 import { LegacyFlyoutFooter } from ".";
-import { Overlay } from "./Overlay";
 import { useContainScroll } from "./hooks/useContainScroll";
 import { useOverlayPositionWithBottomMargin } from "./hooks/useOverlayPositionWithBottomMargin";
+import { Overlay } from "./Overlay";
 
 export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
 export const FLYOUT_DIVIDER_HEIGHT = "10px";

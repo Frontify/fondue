@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BadgeProps } from "@components/Badge/Badge";
+import { BadgeProps } from "@components/Badge";
 import { IconProps } from "@foundation/Icon/IconProps";
 import { useBreadcrumbs } from "@react-aria/breadcrumbs";
 import React, { FC, MouseEvent, ReactElement } from "react";

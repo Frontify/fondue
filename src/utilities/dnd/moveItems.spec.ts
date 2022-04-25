@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { DraggableItem, DropZonePosition } from "@utilities/dnd/types";
 import { moveItems } from "@utilities/dnd/moveItems";
 

@@ -1,7 +1,9 @@
-import React, { FC, PropsWithChildren } from "react";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { Button, ButtonProps, ButtonSize, ButtonStyle } from "@components/Button/Button";
-import { merge } from "@utilities/merge";
 import { IconCheck } from "@foundation/Icon";
+import { merge } from "@utilities/merge";
+import React, { FC, PropsWithChildren } from "react";
 
 export type FlyoutFooterProps = PropsWithChildren<{
     buttons: [ButtonProps, ButtonProps] | [ButtonProps];

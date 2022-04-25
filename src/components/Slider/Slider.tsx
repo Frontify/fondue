@@ -130,6 +130,7 @@ export const Slider: FC<SliderProps> = ({
             <motion.div
                 aria-hidden="true"
                 animate={{ x: `${100 * selectedIndex}%` }}
+                initial={false}
                 transition={{ type: "tween", duration: 0.3 }}
                 style={{
                     width: `${100 / items.length}%`,
