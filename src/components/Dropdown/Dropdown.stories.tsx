@@ -68,13 +68,11 @@ const DropdownWithinOverflownContainer: Story<DropdownProps> = (args: DropdownPr
         <div className="tw-overflow-y-auto tw-h-[100px] tw-my-6">
             <p className="tw-p2">Title</p>
             <p className="tw-p2">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem consequatur culpa cum dolorem doloremque doloribus est eum,
-                fuga ipsam nesciunt nulla odit omnis quidem quisquam quod reprehenderit suscipit temporibus voluptatum?
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut mattis iaculis eros. Curabitur quis tortor vestibulum lacus gravida ultrices eget sed velit. Donec id interdum nibh.
             </p>
             <Dropdown {...args} activeItemId={active} onChange={(id) => setActive(id)} />
             <p className="tw-p2">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem consequatur culpa cum dolorem doloremque doloribus est eum,
-                fuga ipsam nesciunt nulla odit omnis quidem quisquam quod reprehenderit suscipit temporibus voluptatum?
+                Duis orci sapien, gravida pellentesque cursus non, cursus vitae dolor. Etiam luctus aliquam sem, non maximus risus efficitur sit amet. Nulla diam urna
             </p>
         </div>
     );

@@ -18,8 +18,8 @@ import React, { FC, ReactElement, useEffect, useRef } from "react";
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from "./useDropdownAutoHeight";
 import { Validation } from "@utilities/validation";
 import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
-import {createPortal} from "react-dom";
-import {usePopper} from "react-popper";
+import { createPortal } from "react-dom";
+import { usePopper } from "react-popper";
 
 export enum DropdownSize {
     Small = "Small",
@@ -135,12 +135,12 @@ export const Dropdown: FC<DropdownProps> = ({
 
     const showClear = !!activeItem && !!onClear;
     const dropdownRef = useRef<HTMLDivElement | null>(null);
-    const placement = (`${position}-${alignment}`).toLowerCase();
+    const placement = `${position}-${alignment}`;
 
     const popperInstance = usePopper(triggerRef?.current, dropdownRef.current, {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        placement: placement,
+        placement: placement.toLowerCase(),
         modifiers: [
             {
                 name: "offset",
@@ -186,44 +186,47 @@ export const Dropdown: FC<DropdownProps> = ({
                     />
                 </button>
             </Trigger>
-            {
-                createPortal(
-                    <AnimatePresence>
-                        {!disabled && isOpen && heightIsReady && (
-                            <motion.div
-                                ref={dropdownRef}
-                                style={{
-                                    ...popperInstance.styles.popper,
-                                    width: triggerRef.current?.getBoundingClientRect().width,
-                                    minWidth: "fit-content",
-                                }}
-                                {...popperInstance.attributes.popper}
-                                className="tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
-                                key="content"
-                                initial={{ height: 0 }}
-                                animate={{ height: "auto" }}
-                                transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
-                            >
-                                <FocusScope restoreFocus>
-                                    <div
-                                        {...overlayProps}
-                                        ref={overlayRef}
-                                        style={autoResize ? { maxHeight } : {}}
-                                        className="tw-flex tw-flex-col"
-                                        data-test-id="dropdown-menu"
-                                        role="dialog"
-                                    >
-                                        <DismissButton onDismiss={() => close()} />
-                                        <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} scrollable />
-                                        <DismissButton onDismiss={() => close()} />
-                                    </div>
-                                </FocusScope>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>,
-                    document.body
-                )
-            }
+            {createPortal(
+                <AnimatePresence>
+                    {!disabled && isOpen && heightIsReady && (
+                        <motion.div
+                            ref={dropdownRef}
+                            style={{
+                                ...popperInstance.styles.popper,
+                                width: triggerRef.current?.getBoundingClientRect().width,
+                                minWidth: "fit-content",
+                            }}
+                            {...popperInstance.attributes.popper}
+                            className="tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
+                            key="content"
+                            initial={{ height: 0 }}
+                            animate={{ height: "auto" }}
+                            transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
+                        >
+                            <FocusScope restoreFocus>
+                                <div
+                                    {...overlayProps}
+                                    ref={overlayRef}
+                                    style={autoResize ? { maxHeight } : {}}
+                                    className="tw-flex tw-flex-col"
+                                    data-test-id="dropdown-menu"
+                                    role="dialog"
+                                >
+                                    <DismissButton onDismiss={() => close()} />
+                                    <SelectMenu
+                                        ariaProps={menuProps}
+                                        state={state}
+                                        menuBlocks={menuBlocks}
+                                        scrollable
+                                    />
+                                    <DismissButton onDismiss={() => close()} />
+                                </div>
+                            </FocusScope>
+                        </motion.div>
+                    )}
+                </AnimatePresence>,
+                document.body,
+            )}
             {validation === Validation.Loading && (
                 <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
