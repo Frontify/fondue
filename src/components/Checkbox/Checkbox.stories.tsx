@@ -2,7 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import React, { useEffect, useState } from "react";
-import { IconAttentionFilled, IconInfo, IconQuestion } from "../..";
+import { IconAttentionFilled, IconInfo, IconQuestion } from "@foundation/Icon/Generated";
 import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState } from "./Checkbox";
 
 // eslint-disable-next-line import/no-default-export

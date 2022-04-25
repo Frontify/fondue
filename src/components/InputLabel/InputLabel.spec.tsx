@@ -3,7 +3,7 @@
 import React from "react";
 import { mount } from "@cypress/react";
 import { InputLabel } from "./InputLabel";
-import { IconActivity } from "../..";
+import { IconActivity } from "@foundation/Icon/Generated";
 
 const LABEL_TEXT = "This is a fancy label.";
 const LABEL_TOOLTIP = "This is a fancy tooltip.";

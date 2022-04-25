@@ -2,7 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import React, { useEffect, useState } from "react";
-import { IconInfo } from "../..";
+import { IconInfo } from "@foundation/Icon/Generated";
 import { Switch, SwitchProps, SwitchSize } from "./Switch";
 
 // eslint-disable-next-line import/no-default-export

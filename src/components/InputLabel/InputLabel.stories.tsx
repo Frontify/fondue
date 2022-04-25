@@ -2,7 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import React from "react";
-import { IconAttentionFilled, IconInfo, IconQuestion } from "../..";
+import { IconAttentionFilled, IconInfo, IconQuestion } from "@foundation/Icon/Generated";
 import { InputLabel as InputLabelComponent, InputLabelProps } from "./InputLabel";
 
 // eslint-disable-next-line import/no-default-export

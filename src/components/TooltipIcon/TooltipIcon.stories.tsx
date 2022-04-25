@@ -4,7 +4,7 @@ import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { TooltipIcon, TooltipIconProps } from "./TooltipIcon";
 import { IconSize } from "@foundation/Icon/IconSize";
-import { IconAttentionFilled } from "../..";
+import { IconAttentionFilled } from "@foundation/Icon/Generated";
 
 // eslint-disable-next-line import/no-default-export
 export default {
