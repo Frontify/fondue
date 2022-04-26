@@ -30,6 +30,6 @@ describe("TooltipIcon Component", () => {
 
         cy.get("body").realClick();
         cy.get(TOOLTIP_ICON_TRIGGER_ID).realHover({ position: "top" });
-        cy.get(TOOLTIP_ICON_ID).find(TOOLTIP_ID).should("exist");
+        cy.get(TOOLTIP_ID).should("exist");
     });
 });

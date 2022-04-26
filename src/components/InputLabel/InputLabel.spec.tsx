@@ -38,6 +38,6 @@ describe("InputLabel Component", () => {
         );
 
         cy.get(TOOLTIP_ICON_TRIGGER_ID).realHover({ position: "top" });
-        cy.get(INPUT_LABEL_CONTAINER_ID).find(TOOLTIP_ID).should("exist");
+        cy.get(TOOLTIP_ID).should("exist");
     });
 });
