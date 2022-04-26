@@ -43,6 +43,7 @@ export default {
 
 const MultiSelectTemplate: Story<MultiSelectProps> = (args) => {
     const [activeItemKeys, setActiveItemKeys] = useState<(string | number)[]>(args.activeItemKeys);
+
     return (
         <MultiSelectComponent
             {...args}
@@ -54,6 +55,7 @@ const MultiSelectTemplate: Story<MultiSelectProps> = (args) => {
 
 const MultiSelectFormControlTemplate: Story<MultiSelectProps> = (args) => {
     const [activeItemKeys, setActiveItemKeys] = useState<(string | number)[]>(args.activeItemKeys);
+
     return (
         <FormControl helper={{ text: "Helper Text" }} label={{ children: "Multi-Select", htmlFor: "" }}>
             <MultiSelectComponent
