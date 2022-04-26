@@ -115,7 +115,7 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
                         style={{
                             width: flyoutWidth,
                         }}
-                        className="tw-absolute tw-left-auto tw-min-w-fit tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20"
+                        className="tw-absolute tw-left-auto tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20"
                         key={`asset-input-menu-${menuId}`}
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}

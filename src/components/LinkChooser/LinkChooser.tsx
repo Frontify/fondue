@@ -284,7 +284,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                         style={{
                             width: flyoutWidth,
                         }}
-                        className="tw-absolute tw-left-auto tw-min-w-fit tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
+                        className="tw-absolute tw-left-auto tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
                         key="content"
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
