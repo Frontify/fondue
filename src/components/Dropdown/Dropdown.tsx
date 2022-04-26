@@ -20,6 +20,7 @@ import { Validation } from "@utilities/validation";
 import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
+import { VariationPlacement } from "@popperjs/core";
 
 export enum DropdownSize {
     Small = "Small",
@@ -135,12 +136,15 @@ export const Dropdown: FC<DropdownProps> = ({
 
     const showClear = !!activeItem && !!onClear;
     const dropdownRef = useRef<HTMLDivElement | null>(null);
-    const placement = `${position}-${alignment}`;
 
+    const placementMap: Record<string, VariationPlacement> = {
+        ["Top-Start"]: "top-start",
+        ["Top-End"]: "top-end",
+        ["Bottom-Start"]: "bottom-start",
+        ["Bottom-End"]: "bottom-end",
+    };
     const popperInstance = usePopper(triggerRef?.current, dropdownRef.current, {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        placement: placement.toLowerCase(),
+        placement: placementMap[`${position}-${alignment}`],
         modifiers: [
             {
                 name: "offset",
