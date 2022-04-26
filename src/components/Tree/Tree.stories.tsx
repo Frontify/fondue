@@ -11,7 +11,7 @@ export default {
     title: "Components/Tree",
     component: TreeComponent,
     args: {
-        activeNodeId: "1-1-3",
+        activeNodeIds: ["1-1-3"],
     },
     argTypes: {
         onSelect: { action: "onSelect" },
