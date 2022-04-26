@@ -11,7 +11,7 @@ import { useMenuTriggerState } from "@react-stately/menu";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, useRef } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { AssetInputProps, AssetInputSize, AssetType } from "../AssetInput";
 import { AssetThumbnail } from "../AssetThumbnail";
 import { AssetSubline } from "./AssetSubline";
@@ -36,6 +36,17 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
         overlayRef,
     );
     const title = asset?.name || "Your Asset";
+
+    const [flyoutWidth, setFlyoutWidth] = useState(0);
+
+    const calcFlyoutWidth = () => {
+        setFlyoutWidth(buttonRef.current?.getBoundingClientRect().width || 0);
+    };
+
+    useEffect(() => {
+        calcFlyoutWidth();
+        window.addEventListener("resize", calcFlyoutWidth, false);
+    }, []);
 
     return (
         <div
@@ -102,7 +113,7 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
                 {isOpen && (
                     <motion.div
                         style={{
-                            width: buttonRef.current?.getBoundingClientRect().width,
+                            width: flyoutWidth,
                         }}
                         className="tw-absolute tw-left-auto tw-min-w-fit tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20"
                         key={`asset-input-menu-${menuId}`}
