@@ -30,16 +30,10 @@ export const InputLabel: FC<InputLabelProps> = ({
     htmlFor,
     required = false,
     disabled = false,
-    tooltip,
+    tooltip = [],
     bold,
 }) => {
-    const tooltips = [];
-
-    if (Array.isArray(tooltip)) {
-        tooltips.push(...tooltip);
-    } else if (tooltip) {
-        tooltips.push(tooltip);
-    }
+    const tooltips = Array.isArray(tooltip) ? tooltip : [tooltip];
 
     return (
         <div
