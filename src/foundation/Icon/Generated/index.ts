@@ -160,6 +160,7 @@ export { default as IconLock } from "./IconLock";
 export { default as IconLogo } from "./IconLogo";
 export { default as IconLogoGrid } from "./IconLogoGrid";
 export { default as IconLogout } from "./IconLogout";
+export { default as IconMapPointer } from "./IconMapPointer";
 export { default as IconMarkArea } from "./IconMarkArea";
 export { default as IconMeasurements } from "./IconMeasurements";
 export { default as IconMedia } from "./IconMedia";
