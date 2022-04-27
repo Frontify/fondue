@@ -92,7 +92,7 @@ export const Tooltip: FC<TooltipProps> = ({
     withArrow,
     flip = true,
     triggerRefElement,
-    hoverDelay = 2000,
+    hoverDelay = 200,
 }) => {
     const linkRef = useRef<HTMLAnchorElement | null>(null);
     const { linkProps } = useLink({}, linkRef);
@@ -180,6 +180,7 @@ export const Tooltip: FC<TooltipProps> = ({
             triggerRefElement.current.addEventListener("click", () => setIsOpen(!isOpen));
             triggerRefElement.current.addEventListener("mouseover", handleShowTooltipOnHover);
             triggerRefElement.current.addEventListener("focus", () => setIsOpen(true));
+            triggerRefElement.current.addEventListener("blur", () => setIsOpen(false));
             triggerRefElement.current.addEventListener("mouseleave", handleHideTooltipOnHover);
         }
 
@@ -189,6 +190,7 @@ export const Tooltip: FC<TooltipProps> = ({
                 triggerRefElement.current.removeEventListener("mouseover", handleShowTooltipOnHover);
                 triggerRefElement.current.removeEventListener("mouseleave", handleHideTooltipOnHover);
                 triggerRefElement.current.removeEventListener("focus", () => setIsOpen(true));
+                triggerRefElement.current.removeEventListener("blur", () => setIsOpen(false));
             }
         };
     }, []);

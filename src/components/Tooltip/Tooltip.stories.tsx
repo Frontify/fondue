@@ -5,7 +5,7 @@ import { Meta, Story } from "@storybook/react";
 import React, { useRef } from "react";
 import { BrightHeaderStyle } from "./BrightHeader";
 import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from "./Tooltip";
-import { IconAttentionFilled, IconSize } from "@foundation/Icon";
+import { IconAlert, IconAttentionFilled, IconSize } from "@foundation/Icon";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -61,9 +61,9 @@ export default {
             control: { type: "boolean" },
             defaultValue: true,
         },
-        hoverdelay: {
+        hoverDelay: {
             control: { type: "number" },
-            defaultValue: 2000,
+            defaultValue: 200,
         },
     },
 } as Meta<TooltipProps>;
@@ -77,6 +77,29 @@ export const TooltipComponent: Story<TooltipProps> = (args: TooltipProps) => {
                 <span>Tooltip trigger</span>
             </button>
             <Tooltip {...args} triggerRefElement={triggerRef} />
+        </div>
+    );
+};
+
+export const MultipleTooltipsComponent: Story<TooltipProps> = (args: TooltipProps) => {
+    const firstTriggerRef = useRef<HTMLButtonElement>(null);
+    const secondTriggerRef = useRef<HTMLButtonElement>(null);
+    return (
+        <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
+            <p className="tw-mr-2">Label</p>
+            <button ref={firstTriggerRef} className="tw-mr-1">
+                <IconAttentionFilled size={IconSize.Size16} />
+            </button>
+            <Tooltip {...args} triggerRefElement={firstTriggerRef} withArrow={true} />
+            <button ref={secondTriggerRef}>
+                <IconAlert size={IconSize.Size16} />
+            </button>
+            <Tooltip
+                {...args}
+                content="Second tooltip"
+                triggerRefElement={secondTriggerRef}
+                brightHeader={BrightHeaderStyle.Warning}
+            />
         </div>
     );
 };
@@ -158,3 +181,5 @@ export const WithArrow = TooltipComponent.bind({});
 WithArrow.args = {
     withArrow: true,
 };
+
+export const MultipleTooltips = MultipleTooltipsComponent.bind({});
