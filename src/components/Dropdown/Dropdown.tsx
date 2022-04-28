@@ -152,6 +152,10 @@ export const Dropdown: FC<DropdownProps> = ({
                     offset: [0, 8],
                 },
             },
+            {
+                name: "flip",
+                enabled: false,
+            },
         ],
     });
 
