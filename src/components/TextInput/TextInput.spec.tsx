@@ -177,4 +177,17 @@ describe("Text Input component", () => {
         mount(<StatefulInput />);
         cy.get(COPY_ICON_ID).should("not.exist");
     });
+
+    it("copyable should have a type definition", () => {
+        mount(<StatefulInput copyable={true} />);
+
+        cy.get(COPY_ICON_ID).should("have.attr", "type", "button");
+    });
+
+    it("clearable should have a type definition", () => {
+        mount(<StatefulInput clearable={true} />);
+
+        cy.get(TEXT_INPUT_ID).type(INPUT_TEXT).should("have.value", INPUT_TEXT);
+        cy.get(CLEAR_ICON_ID).should("have.attr", "type", "button");
+    });
 });
