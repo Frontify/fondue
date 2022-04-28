@@ -17,6 +17,8 @@ import { merge } from "@utilities/merge";
 import React, { MutableRefObject, useState } from "react";
 import { Flyout, FlyoutProps, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT } from "./Flyout";
 import { FlyoutFooter } from "./FlyoutFooter";
+import { Dropdown } from "@components/Dropdown";
+import { DatePicker } from "@components/DatePicker";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -130,12 +132,13 @@ WithBadges.args = {
 
 const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
     const [open, setOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<Date | null>();
 
     return (
         <Flyout
             {...args}
             trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
-                <Button onClick={() => setOpen((open) => !open)} ref={ref} aria-label={ariaLabel}>
+                <Button onClick={() => setOpen(!open)} ref={ref} aria-label={ariaLabel}>
                     Button
                 </Button>
             )}
@@ -143,7 +146,27 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
             onOpenChange={chain(args.onOpenChange, setOpen)}
             onCancel={chain(args.onCancel, () => setOpen(false))}
         >
-            <p className="tw-text-center tw-py-8">Fun with Flyouts and Buttons!</p>
+            <div className="tw-p-4">
+                <p className="tw-pt-3">Field 1</p>
+                <Dropdown
+                    onChange={(id) => console.log(id)}
+                    activeItemId={"1"}
+                    menuBlocks={[
+                        {
+                            id: "block1",
+                            menuItems: [
+                                { id: "1", title: "Item 1" },
+                                { id: "2", title: "Item 2" },
+                                { id: "3", title: "Item 3" },
+                                { id: "4", title: "Item 4" },
+                                { id: "5", title: "Item 5" },
+                            ],
+                        },
+                    ]}
+                />
+                <p className="tw-pt-3">Field 2</p>
+                <DatePicker value={selectedDate as Date} onChange={setSelectedDate} />
+            </div>
         </Flyout>
     );
 };
