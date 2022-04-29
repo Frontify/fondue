@@ -317,3 +317,9 @@ WithRenderFunctionTrigger.argTypes = {
     trigger: { table: { disable: true } },
     decorator: { table: { disable: true } },
 };
+
+export const WithContentMinHeight = FlyoutTemplate.bind({});
+
+WithContentMinHeight.args = {
+    contentMinHeight: '200px',
+};
