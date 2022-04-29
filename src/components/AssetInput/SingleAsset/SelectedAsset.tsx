@@ -59,7 +59,7 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
                 {...mergeProps(buttonProps, focusProps)}
                 ref={buttonRef}
                 className={merge([
-                    "tw-w-full tw-flex tw-border tw-rounded hover:tw-border-black-90 dark:hover:tw-border-black-40 focus-visible:tw-outline-none",
+                    "tw-w-full tw-flex tw-border tw-rounded tw-overflow-hidden hover:tw-border-black-90 dark:hover:tw-border-black-40 focus-visible:tw-outline-none",
                     isFocusVisible && FOCUS_STYLE,
                     size === AssetInputSize.Large ? "tw-h-[11.5rem] tw-flex-col" : "tw-h-14",
                     isOpen || isFocusVisible
