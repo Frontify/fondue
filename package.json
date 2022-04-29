@@ -27,7 +27,7 @@
         "build:library": "vite build",
         "build:storybook": "build-storybook",
         "dev": "cross-env NODE_ENV=development npm run dev:library",
-        "dev:library": "vite build --watch",
+        "dev:library": "vite build --emptyOutDir false --watch",
         "clean": "rimraf dist",
         "component:create": "esno scripts/createNewComponent.ts",
         "generate:icons": "npm run generate:reactIcons && npm run generate:iconsMap",
