@@ -68,7 +68,7 @@ export const Flyout: FC<FlyoutProps> = ({
     fitContent = false,
     fixedHeader,
     fixedFooter,
-    contentMinHeight = '0px',
+    contentMinHeight = "0px",
     legacyFooter = true,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });

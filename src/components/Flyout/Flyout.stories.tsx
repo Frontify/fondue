@@ -321,5 +321,5 @@ WithRenderFunctionTrigger.argTypes = {
 export const WithContentMinHeight = FlyoutTemplate.bind({});
 
 WithContentMinHeight.args = {
-    contentMinHeight: '200px',
+    contentMinHeight: "200px",
 };
