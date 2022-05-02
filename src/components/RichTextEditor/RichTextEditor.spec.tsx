@@ -8,9 +8,9 @@ import { textStyleClassnames, TextStyles } from "./utils/getTextStyles";
 
 const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
 const TOOLBAR = "[data-test-id=toolbar]";
-const TEXT_ALIGNMENT_BUTTONS = "[data-test-id=text-alignment-buttons]";
-const TEXT_MARK_BUTTONS = "[data-test-id=text-mark-buttons]";
-const TEXT_ELEMENT_BUTTONS = "[data-test-id=text-element-buttons]";
+const TEXT_ALIGNMENT_BUTTONS = "[data-test-id=toolbar-group-1]";
+const TEXT_MARK_BUTTONS = "[data-test-id=toolbar-group-2]";
+const TEXT_ELEMENT_BUTTONS = "[data-test-id=toolbar-group-3]";
 const TEXTSTYLE_DROPDOWN_TRIGGER = "[data-test-id=textstyle-dropdown-trigger]";
 const TEXTSTYLE_OPTION = "[data-test-id=textstyle-option]";
 const CHECKBOX_INPUT = "[data-test-id=checkbox-input]";
