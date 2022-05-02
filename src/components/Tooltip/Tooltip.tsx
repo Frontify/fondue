@@ -165,35 +165,48 @@ export const Tooltip: FC<TooltipProps> = ({
     let timeout: ReturnType<typeof setTimeout> | null = null;
 
     const handleShowTooltipOnHover = () => {
-        setIsOpen(true);
         if (timeout) {
             clearTimeout(timeout);
         }
+        setIsOpen(true);
     };
 
     const handleHideTooltipOnHover = () => {
         timeout = setTimeout(() => setIsOpen(false), hoverDelay);
     };
 
-    useEffect(() => {
-        if (triggerRefElement) {
-            triggerRefElement.current.addEventListener("click", () => setIsOpen(!isOpen));
-            triggerRefElement.current.addEventListener("mouseover", handleShowTooltipOnHover);
-            triggerRefElement.current.addEventListener("focus", () => setIsOpen(true));
-            triggerRefElement.current.addEventListener("blur", () => setIsOpen(false));
-            triggerRefElement.current.addEventListener("mouseleave", handleHideTooltipOnHover);
+    const checkIfHovered = (e: MouseEvent) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const hoveredElement = e.path;
+        if (hoveredElement.includes(triggerRefElement?.current)) {
+            handleShowTooltipOnHover();
         }
 
+        if (hoveredElement.includes(tooltipContainerRef?.current)) {
+            handleShowTooltipOnHover();
+        }
+    };
+
+    useEffect(() => {
+        triggerRefElement?.current.addEventListener("mouseover", (event: MouseEvent) => checkIfHovered(event));
+        triggerRefElement?.current.addEventListener("mouseleave", handleHideTooltipOnHover);
+        triggerRefElement?.current.addEventListener("focus", () => setIsOpen(true));
+        triggerRefElement?.current.addEventListener("blur", () => setIsOpen(false));
+        tooltipContainerRef?.current?.addEventListener("mouseover", (event: MouseEvent) => checkIfHovered(event));
+        tooltipContainerRef?.current?.addEventListener("mouseleave", handleHideTooltipOnHover);
+
         return () => {
-            if (triggerRefElement) {
-                triggerRefElement.current.removeEventListener("click", () => setIsOpen(!isOpen));
-                triggerRefElement.current.removeEventListener("mouseover", handleShowTooltipOnHover);
-                triggerRefElement.current.removeEventListener("mouseleave", handleHideTooltipOnHover);
-                triggerRefElement.current.removeEventListener("focus", () => setIsOpen(true));
-                triggerRefElement.current.removeEventListener("blur", () => setIsOpen(false));
-            }
+            triggerRefElement?.current.removeEventListener("mouseover", (event: MouseEvent) => checkIfHovered(event));
+            triggerRefElement?.current.removeEventListener("mouseleave", handleHideTooltipOnHover);
+            triggerRefElement?.current.removeEventListener("focus", () => setIsOpen(true));
+            triggerRefElement?.current.addEventListener("blur", () => setIsOpen(false));
+            tooltipContainerRef?.current?.removeEventListener("mouseover", (event: MouseEvent) =>
+                checkIfHovered(event),
+            );
+            tooltipContainerRef?.current?.removeEventListener("mouseleave", handleHideTooltipOnHover);
         };
-    }, []);
+    }, [checkIfHovered]);
 
     return createPortal(
         <div>
