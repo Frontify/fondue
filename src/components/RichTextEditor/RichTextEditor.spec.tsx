@@ -8,9 +8,8 @@ import { textStyleClassnames, TextStyles } from "./utils/getTextStyles";
 
 const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
 const TOOLBAR = "[data-test-id=toolbar]";
-const TEXT_ALIGNMENT_BUTTONS = "[data-test-id=text-alignment-buttons]";
+const TEXT_ALIGNMENT_AND_LISTS_BUTTONS = "[data-test-id=text-alignment-and-lists-buttons]";
 const TEXT_MARK_BUTTONS = "[data-test-id=text-mark-buttons]";
-const TEXT_ELEMENT_BUTTONS = "[data-test-id=text-element-buttons]";
 const TEXTSTYLE_DROPDOWN_TRIGGER = "[data-test-id=textstyle-dropdown-trigger]";
 const TEXTSTYLE_OPTION = "[data-test-id=textstyle-option]";
 const CHECKBOX_INPUT = "[data-test-id=checkbox-input]";
@@ -125,7 +124,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_MARK_BUTTONS).children().eq(4).click();
+        cy.get(TEXT_MARK_BUTTONS).children().eq(5).click();
         cy.get("[contenteditable=true]").should(
             "include.html",
             "tw-table-cell tw-rounded tw-text-xs tw-bg-black-5 tw-text-violet-90 tw-m-0 tw-px-2 tw-py-0.5",
@@ -137,8 +136,17 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_ELEMENT_BUTTONS).children().eq(1).click();
+        cy.get(TEXT_ALIGNMENT_AND_LISTS_BUTTONS).children().eq(4).click();
         cy.get("[contenteditable=true]").should("include.html", "<ul");
+    });
+
+    it("renders a checkbox and checks it", () => {
+        mount(<RichTextEditor />);
+
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR).should("be.visible");
+        cy.get(TEXT_ALIGNMENT_AND_LISTS_BUTTONS).children().eq(5).click();
+        cy.get(CHECKBOX_INPUT).check().should("be.checked");
     });
 
     it("renders an ordered list", () => {
@@ -146,7 +154,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_ELEMENT_BUTTONS).children().eq(2).click();
+        cy.get(TEXT_ALIGNMENT_AND_LISTS_BUTTONS).children().eq(6).click();
         cy.get("[contenteditable=true]").should("include.html", "<ol");
     });
 
@@ -155,7 +163,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_ALIGNMENT_BUTTONS).children().eq(2).click();
+        cy.get(TEXT_ALIGNMENT_AND_LISTS_BUTTONS).children().eq(2).click();
         cy.get("[contenteditable=true]").should("include.html", "text-align: right");
     });
 
@@ -193,15 +201,6 @@ describe("RichTextEditor Component", () => {
         cy.get("[contenteditable=true]").last().should("contain.text", text2);
     });
 
-    it("renders a checkbox and checks it", () => {
-        mount(<RichTextEditor />);
-
-        insertTextAndOpenToolbar();
-        cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_MARK_BUTTONS).children().eq(5).click();
-        cy.get(CHECKBOX_INPUT).check().should("be.checked");
-    });
-
     it("emits onTextChange when choosing an inline style", () => {
         const onTextChange = cy.stub();
         mount(<RichTextEditor onTextChange={onTextChange} />);
@@ -224,7 +223,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_ELEMENT_BUTTONS)
+        cy.get(TEXT_ALIGNMENT_AND_LISTS_BUTTONS)
             .children()
             .eq(1)
             .click()
