@@ -3,7 +3,8 @@
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
-import { checkboxValue, htmlValue, value } from "./utils/exampleValues";
+import { EditorActions } from "./utils/actions";
+import { checkboxValue, htmlValue, IPSUM, value } from "./utils/exampleValues";
 import { TextStyles } from "./utils/getTextStyles";
 
 // eslint-disable-next-line import/no-default-export
@@ -106,3 +107,12 @@ WithChecklist.args = {
     value: JSON.stringify(checkboxValue),
 };
 WithChecklist.argTypes = { value: { type: "string" } };
+
+export const WithCustomControls: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <RichTextEditorComponent {...args} />
+);
+WithCustomControls.args = {
+    value: IPSUM,
+    actions: [[EditorActions.TEXT_STYLES], [EditorActions.ITALIC, EditorActions.BOLD, EditorActions.UNDERLINE]],
+};
+WithCustomControls.argTypes = { value: { type: "string" } };
