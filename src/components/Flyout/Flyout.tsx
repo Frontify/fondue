@@ -46,7 +46,7 @@ export type FlyoutProps = PropsWithChildren<{
     onOpenChange: (isOpen: boolean) => void;
     fixedHeader?: ReactNode;
     fixedFooter?: ReactNode;
-    contentMinHeight?: string;
+    contentMinHeight?: number;
     /**
      * The legacy footer buttons section inside of the flyout will be deleted in the future.
      * @deprecated Pass the FlyoutFooter component with buttons to the Flyout component.
@@ -68,7 +68,7 @@ export const Flyout: FC<FlyoutProps> = ({
     fitContent = false,
     fixedHeader,
     fixedFooter,
-    contentMinHeight = "0px",
+    contentMinHeight,
     legacyFooter = true,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });

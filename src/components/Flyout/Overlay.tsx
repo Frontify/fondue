@@ -57,7 +57,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                         !fixedFooter && "tw-rounded-b",
                     ])}
                     style={{
-                        minHeight: contentMinHeight,
+                        minHeight: `${contentMinHeight}px`,
                     }}
                 >
                     {title && (
