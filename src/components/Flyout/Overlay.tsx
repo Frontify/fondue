@@ -30,6 +30,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         fixedHeader,
         fixedFooter,
         fitContent,
+        contentMinHeight,
     },
     ref,
 ) => {
@@ -55,6 +56,9 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                         !fixedHeader && "tw-rounded-t",
                         !fixedFooter && "tw-rounded-b",
                     ])}
+                    style={{
+                        minHeight: `${contentMinHeight}px`,
+                    }}
                 >
                     {title && (
                         <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8">
