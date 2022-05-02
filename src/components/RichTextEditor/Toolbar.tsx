@@ -45,11 +45,7 @@ type ToolbarProps = {
 
 export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }) => {
     const editor = usePlateEditorRef(editorId);
-
     const toolbarActions = actions.length > 0 ? actions : defaultActions;
-
-    console.log({ toolbarActions });
-
     const toolbarComponents: Record<EditorActions, ReactElement> = {
         [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} textStyles={textStyles} />,
         [EditorActions.ALIGN_LEFT]: <AlignToolbarButton value="left" icon={<IconTextAlignLeft />} />,
@@ -78,8 +74,6 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
             <ListToolbarButton type={getPluginType(editor, ELEMENT_UL)} icon={<IconListBullets />} />
         ),
     };
-
-    console.log({ toolbarComponents });
 
     return (
         <BalloonToolbar

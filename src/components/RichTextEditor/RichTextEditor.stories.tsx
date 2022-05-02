@@ -113,6 +113,10 @@ export const WithCustomControls: Story<RichTextEditorProps> = (args: RichTextEdi
 );
 WithCustomControls.args = {
     value: IPSUM,
-    actions: [[EditorActions.TEXT_STYLES], [EditorActions.ITALIC, EditorActions.BOLD, EditorActions.UNDERLINE]],
+    actions: [
+        [EditorActions.LINK],
+        [EditorActions.ITALIC, EditorActions.BOLD, EditorActions.UNDERLINE],
+        [EditorActions.ORDERED_LIST, EditorActions.UNORDERED_LIST],
+    ],
 };
 WithCustomControls.argTypes = { value: { type: "string" } };
