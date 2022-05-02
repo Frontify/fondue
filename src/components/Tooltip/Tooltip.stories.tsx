@@ -90,7 +90,7 @@ export const MultipleTooltipsComponent: Story<TooltipProps> = (args: TooltipProp
             <button ref={firstTriggerRef} className="tw-mr-1">
                 <IconAttentionFilled size={IconSize.Size16} />
             </button>
-            <Tooltip {...args} triggerRefElement={firstTriggerRef} withArrow={true} />
+            <Tooltip {...args} triggerRefElement={firstTriggerRef} />
             <button ref={secondTriggerRef}>
                 <IconAlert size={IconSize.Size16} />
             </button>
