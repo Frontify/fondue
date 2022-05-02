@@ -39,13 +39,19 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
 
     const [flyoutWidth, setFlyoutWidth] = useState(0);
 
-    const calcFlyoutWidth = () => {
-        setFlyoutWidth(buttonRef.current?.getBoundingClientRect().width || 0);
-    };
-
     useEffect(() => {
-        calcFlyoutWidth();
-        window.addEventListener("resize", calcFlyoutWidth, false);
+        const calculateFlyoutWidth = () => {
+            const calculatedWidth = buttonRef.current?.getBoundingClientRect().width ?? 0;
+            setTimeout(() => setFlyoutWidth(calculatedWidth), 0);
+        };
+        const resizeObserver = new ResizeObserver(calculateFlyoutWidth);
+        if (buttonRef.current) {
+            resizeObserver.observe(buttonRef.current);
+        }
+
+        return () => {
+            resizeObserver.disconnect();
+        };
     }, []);
 
     return (
@@ -116,6 +122,7 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
                             width: flyoutWidth,
                         }}
                         className="tw-absolute tw-left-auto tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20"
+                        data-test-id="asset-single-input-flyout"
                         key={`asset-input-menu-${menuId}`}
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
