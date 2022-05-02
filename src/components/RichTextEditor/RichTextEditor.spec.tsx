@@ -4,13 +4,15 @@ import { mount } from "@cypress/react";
 import { ELEMENT_PARAGRAPH } from "@udecode/plate";
 import React, { FC, useState } from "react";
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from "./RichTextEditor";
+import { EditorActions } from "./utils/actions";
 import { textStyleClassnames, TextStyles } from "./utils/getTextStyles";
 
 const RICH_TEXT_EDITOR = "[data-test-id=rich-text-editor]";
 const TOOLBAR = "[data-test-id=toolbar]";
-const TEXT_ALIGNMENT_BUTTONS = "[data-test-id=toolbar-group-1]";
-const TEXT_MARK_BUTTONS = "[data-test-id=toolbar-group-2]";
-const TEXT_ELEMENT_BUTTONS = "[data-test-id=toolbar-group-3]";
+const TOOLBAR_GROUP_0 = "[data-test-id=toolbar-group-0]";
+const TOOLBAR_GROUP_1 = "[data-test-id=toolbar-group-1]";
+const TOOLBAR_GROUP_2 = "[data-test-id=toolbar-group-2]";
+const TOOLBAR_GROUP_3 = "[data-test-id=toolbar-group-3]";
 const TEXTSTYLE_DROPDOWN_TRIGGER = "[data-test-id=textstyle-dropdown-trigger]";
 const TEXTSTYLE_OPTION = "[data-test-id=textstyle-option]";
 const CHECKBOX_INPUT = "[data-test-id=checkbox-input]";
@@ -84,12 +86,24 @@ describe("RichTextEditor Component", () => {
         cy.get(TOOLBAR).should("not.be.visible");
     });
 
+    it("renders a toolbar with custom controls", () => {
+        const actions = [[EditorActions.LINK], [EditorActions.ITALIC, EditorActions.BOLD], [EditorActions.LINK]];
+        mount(<RichTextEditor actions={actions} />);
+
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR).should("be.visible");
+        cy.get(TOOLBAR_GROUP_0).find("span").should("have.length", 1);
+        cy.get(TOOLBAR_GROUP_1).find("span").should("have.length", 2);
+        cy.get(TOOLBAR_GROUP_2).find("span").should("have.length", 1);
+        cy.get(TOOLBAR_GROUP_3).should("not.exist");
+    });
+
     it("renders a bold text", () => {
         mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_MARK_BUTTONS).children().eq(0).click();
+        cy.get(TOOLBAR_GROUP_2).children().eq(0).click();
         cy.get("[contenteditable=true]").should("include.html", "tw-font-bold");
     });
 
@@ -98,7 +112,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_MARK_BUTTONS).children().eq(1).click();
+        cy.get(TOOLBAR_GROUP_2).children().eq(1).click();
         cy.get("[contenteditable=true]").should("include.html", "tw-italic");
     });
 
@@ -107,7 +121,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_MARK_BUTTONS).children().eq(2).click();
+        cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
         cy.get("[contenteditable=true]").should("include.html", "tw-underline");
     });
 
@@ -116,7 +130,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_MARK_BUTTONS).children().eq(3).click();
+        cy.get(TOOLBAR_GROUP_2).children().eq(3).click();
         cy.get("[contenteditable=true]").should("include.html", "tw-line-through");
     });
 
@@ -125,7 +139,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_MARK_BUTTONS).children().eq(4).click();
+        cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
         cy.get("[contenteditable=true]").should(
             "include.html",
             "tw-table-cell tw-rounded tw-text-xs tw-bg-black-5 tw-text-violet-90 tw-m-0 tw-px-2 tw-py-0.5",
@@ -137,7 +151,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_ELEMENT_BUTTONS).children().eq(1).click();
+        cy.get(TOOLBAR_GROUP_3).children().eq(1).click();
         cy.get("[contenteditable=true]").should("include.html", "<ul");
     });
 
@@ -146,7 +160,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_ELEMENT_BUTTONS).children().eq(2).click();
+        cy.get(TOOLBAR_GROUP_3).children().eq(2).click();
         cy.get("[contenteditable=true]").should("include.html", "<ol");
     });
 
@@ -155,7 +169,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_ALIGNMENT_BUTTONS).children().eq(2).click();
+        cy.get(TOOLBAR_GROUP_1).children().eq(2).click();
         cy.get("[contenteditable=true]").should("include.html", "text-align: right");
     });
 
@@ -198,7 +212,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_MARK_BUTTONS).children().eq(5).click();
+        cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
         cy.get(CHECKBOX_INPUT).check().should("be.checked");
     });
 
@@ -208,7 +222,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_MARK_BUTTONS)
+        cy.get(TOOLBAR_GROUP_2)
             .children()
             .eq(0)
             .click()
@@ -224,7 +238,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TEXT_ELEMENT_BUTTONS)
+        cy.get(TOOLBAR_GROUP_3)
             .children()
             .eq(1)
             .click()
