@@ -188,23 +188,37 @@ export const Tooltip: FC<TooltipProps> = ({
         }
     };
 
+    const hasInteractiveElements = !!(buttons?.length || linkUrl?.length);
+    const firstButtonRef = useRef<HTMLButtonElement | null>(null);
+    const lastButtonRef = useRef<HTMLButtonElement | null>(null);
+
     useEffect(() => {
         triggerRefElement?.current.addEventListener("mouseover", (event: MouseEvent) => checkIfHovered(event));
         triggerRefElement?.current.addEventListener("mouseleave", handleHideTooltipOnHover);
         triggerRefElement?.current.addEventListener("focus", () => setIsOpen(true));
-        triggerRefElement?.current.addEventListener("blur", () => setIsOpen(false));
+        triggerRefElement?.current.addEventListener("blur", () => (!hasInteractiveElements ? setIsOpen(false) : null));
         tooltipContainerRef?.current?.addEventListener("mouseover", (event: MouseEvent) => checkIfHovered(event));
         tooltipContainerRef?.current?.addEventListener("mouseleave", handleHideTooltipOnHover);
+        firstButtonRef?.current?.addEventListener("blur", () =>
+            buttons && buttons.length < 2 ? setIsOpen(false) : null,
+        );
+        lastButtonRef?.current?.addEventListener("blur", () => setIsOpen(false));
 
         return () => {
             triggerRefElement?.current.removeEventListener("mouseover", (event: MouseEvent) => checkIfHovered(event));
             triggerRefElement?.current.removeEventListener("mouseleave", handleHideTooltipOnHover);
             triggerRefElement?.current.removeEventListener("focus", () => setIsOpen(true));
-            triggerRefElement?.current.addEventListener("blur", () => setIsOpen(false));
+            triggerRefElement?.current.removeEventListener("blur", () =>
+                !hasInteractiveElements ? setIsOpen(false) : null,
+            );
             tooltipContainerRef?.current?.removeEventListener("mouseover", (event: MouseEvent) =>
                 checkIfHovered(event),
             );
             tooltipContainerRef?.current?.removeEventListener("mouseleave", handleHideTooltipOnHover);
+            firstButtonRef?.current?.removeEventListener("blur", () =>
+                buttons && buttons.length < 2 ? setIsOpen(false) : null,
+            );
+            lastButtonRef?.current?.removeEventListener("blur", () => setIsOpen(false));
         };
     }, [checkIfHovered]);
 
@@ -257,6 +271,7 @@ export const Tooltip: FC<TooltipProps> = ({
                                     "tw-text-xs tw-text-black-40 dark:tw-text-black-80 tw-underline tw-mt-1",
                                     isFocusVisible && FOCUS_STYLE,
                                 ])}
+                                onBlur={() => (buttons && buttons.length ? null : setIsOpen(false))}
                             >
                                 {linkLabel ?? "Click here to learn more."}
                             </a>
@@ -265,6 +280,7 @@ export const Tooltip: FC<TooltipProps> = ({
                             <div className="tw-flex tw-flex-row-reverse tw-gap-x-1 tw-mt-4">
                                 {buttons.length > 0 && (
                                     <Button
+                                        ref={firstButtonRef}
                                         style={ButtonStyle.Primary}
                                         size={ButtonSize.Small}
                                         inverted
@@ -275,6 +291,7 @@ export const Tooltip: FC<TooltipProps> = ({
                                 )}
                                 {buttons.length === 2 && (
                                     <Button
+                                        ref={lastButtonRef}
                                         style={ButtonStyle.Secondary}
                                         size={ButtonSize.Small}
                                         inverted
