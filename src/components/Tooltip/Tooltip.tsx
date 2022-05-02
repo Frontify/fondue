@@ -29,7 +29,7 @@ export type TooltipButton = {
 };
 
 export type TooltipProps = {
-    triggerRefElement?: MutableRefObject<HTMLElement>;
+    triggerRefElement?: MutableRefObject<HTMLElement | HTMLButtonElement | HTMLDivElement | null>;
     content: ReactNode;
     tooltipIcon?: ReactElement;
     heading?: ReactNode;
