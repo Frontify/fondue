@@ -21,6 +21,7 @@ import React, {
 import { BrightHeader, brightHeaderArrowBackgroundColors, BrightHeaderStyle } from "./BrightHeader";
 import { usePopper } from "react-popper";
 import { createPortal } from "react-dom";
+import { VariationPlacement } from "@popperjs/core";
 
 export type TooltipButton = {
     label: string;
@@ -71,10 +72,15 @@ export enum TooltipAlignment {
     End = "End",
 }
 
-const alignementSuffix: Record<TooltipAlignment, string> = {
-    [TooltipAlignment.Start]: "-start",
-    [TooltipAlignment.Middle]: "",
-    [TooltipAlignment.End]: "-end",
+const placementMap: Record<string, VariationPlacement> = {
+    ["top-Start"]: "top-start",
+    ["top-End"]: "top-end",
+    ["bottom-Start"]: "bottom-start",
+    ["bottom-End"]: "bottom-end",
+    ["left-Start"]: "left-start",
+    ["left-End"]: "left-end",
+    ["right-Start"]: "right-start",
+    ["right-End"]: "right-end",
 };
 
 export const Tooltip: FC<TooltipProps> = ({
@@ -99,7 +105,7 @@ export const Tooltip: FC<TooltipProps> = ({
     const { isFocusVisible, focusProps } = useFocusRing();
     const hasLargePaddingTop = linkUrl || brightHeader || buttons || heading || headingIcon;
 
-    const placement = position + alignementSuffix[alignment];
+    const placement = alignment === "Middle" ? position : placementMap[`${position}-${alignment}`];
     const tooltipContainerRef = useRef<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
@@ -136,8 +142,6 @@ export const Tooltip: FC<TooltipProps> = ({
 
     const tooltipOffset = withArrow ? 10 : 5;
     const popperInstance = usePopper(triggerRefElement?.current, tooltipContainerRef.current, {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         placement: placement,
         modifiers: [
             {
