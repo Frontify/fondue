@@ -25,7 +25,7 @@ export type CheckboxProps = {
     state?: CheckboxState;
     disabled?: boolean;
     required?: boolean;
-    value: string;
+    value?: string;
     onChange?: (isChecked: boolean) => void;
     label?: string;
     tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
