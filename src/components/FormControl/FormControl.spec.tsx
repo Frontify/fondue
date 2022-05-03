@@ -3,11 +3,15 @@
 import React from "react";
 import { mount } from "@cypress/react";
 import { FormControl, FormControlDirection, HelperPosition } from "./FormControl";
+import { TextInput } from "..";
 
 const FORM_CONTROL_ID = "[data-test-id=form-control]";
 const FORM_CONTROL_EXTRA_ID = "[data-test-id=form-control-extra]";
 const FORM_CONTROL_HELPER_TEXT_ID = "[data-test-id=form-control-helper-text]";
 const FORM_CONTROL_CONTENT = "Control Input could be anything...";
+const TEXT_INPUT_ID = '[data-test-id="text-input"]';
+
+const INPUT_ID = "ID";
 
 describe("FormControl Component", () => {
     it("should render a form control", () => {
@@ -70,5 +74,15 @@ describe("FormControl Component", () => {
             .should("contain", FORM_CONTROL_CONTENT)
             .next()
             .and("contain", HELPER_TEXT);
+    });
+
+    it("should still forward id if label is not defined", () => {
+        mount(
+            <FormControl>
+                <TextInput id={INPUT_ID} />
+            </FormControl>,
+        );
+
+        cy.get(TEXT_INPUT_ID).should("have.attr", "id", INPUT_ID);
     });
 });

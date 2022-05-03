@@ -108,7 +108,11 @@ export const FormControl: FC<FormControlProps> = ({
             {children && (
                 <div className={direction === FormControlDirection.Vertical ? "tw-w-full tw-grid tw-gap-5" : ""}>
                     {isValidElement(children)
-                        ? cloneElement(children, { id: label?.htmlFor, disabled, validation: inputValidation[style] })
+                        ? cloneElement(children, {
+                              id: label?.htmlFor ?? children.props.id,
+                              disabled,
+                              validation: inputValidation[style],
+                          })
                         : children}
                 </div>
             )}
