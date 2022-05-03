@@ -27,6 +27,13 @@ export const defaultActions = [
         EditorActions.LINK,
         EditorActions.CODE,
     ],
-    [EditorActions.ALIGN_LEFT, EditorActions.ALIGN_CENTER, EditorActions.ALIGN_RIGHT, EditorActions.ALIGN_JUSTIFY],
-    [EditorActions.UNORDERED_LIST, EditorActions.CHECK_ITEM, EditorActions.ORDERED_LIST],
+    [
+        EditorActions.ALIGN_LEFT,
+        EditorActions.ALIGN_CENTER,
+        EditorActions.ALIGN_RIGHT,
+        EditorActions.ALIGN_JUSTIFY,
+        EditorActions.UNORDERED_LIST,
+        EditorActions.CHECK_ITEM,
+        EditorActions.ORDERED_LIST,
+    ],
 ];
