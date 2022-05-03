@@ -29,6 +29,7 @@ import {
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
+    PlateEditor,
     usePlateEditorRef,
 } from "@udecode/plate";
 import React, { FC, ReactElement } from "react";
@@ -43,37 +44,40 @@ type ToolbarProps = {
     actions?: EditorActions[][];
 };
 
+const toolbarComponents = (
+    editor: PlateEditor,
+    editorId?: string,
+    textStyles?: TextStyleType[],
+): Record<EditorActions, ReactElement> => ({
+    [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} textStyles={textStyles} />,
+    [EditorActions.ALIGN_LEFT]: <AlignToolbarButton value="left" icon={<IconTextAlignLeft />} />,
+    [EditorActions.ALIGN_CENTER]: <AlignToolbarButton value="center" icon={<IconTextAlignCenter />} />,
+    [EditorActions.ALIGN_RIGHT]: <AlignToolbarButton value="right" icon={<IconTextAlignRight />} />,
+    [EditorActions.ALIGN_JUSTIFY]: <AlignToolbarButton value="justify" icon={<IconTextAlignJustify />} />,
+    [EditorActions.BOLD]: <MarkToolbarButton type={getPluginType(editor, MARK_BOLD)} icon={<IconBold />} />,
+    [EditorActions.ITALIC]: <MarkToolbarButton type={getPluginType(editor, MARK_ITALIC)} icon={<IconItalic />} />,
+    [EditorActions.UNDERLINE]: (
+        <MarkToolbarButton type={getPluginType(editor, MARK_UNDERLINE)} icon={<IconUnderline />} />
+    ),
+    [EditorActions.STRIKETHROUGH]: (
+        <MarkToolbarButton type={getPluginType(editor, MARK_STRIKETHROUGH)} icon={<IconStrikethrough />} />
+    ),
+    [EditorActions.CODE]: <MarkToolbarButton type={getPluginType(editor, MARK_CODE)} icon={<IconStrikethrough />} />,
+    [EditorActions.CHECK_ITEM]: (
+        <BlockToolbarButton type={getPluginType(editor, ELEMENT_CHECK_ITEM)} icon={<IconListChecklist />} />
+    ),
+    [EditorActions.LINK]: <LinkToolbarButton icon={<IconLink />} />,
+    [EditorActions.ORDERED_LIST]: (
+        <ListToolbarButton type={getPluginType(editor, ELEMENT_OL)} icon={<IconListNumbers />} />
+    ),
+    [EditorActions.UNORDERED_LIST]: (
+        <ListToolbarButton type={getPluginType(editor, ELEMENT_UL)} icon={<IconListBullets />} />
+    ),
+});
+
 export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }) => {
     const editor = usePlateEditorRef(editorId);
     const toolbarActions = actions.length > 0 ? actions : defaultActions;
-    const toolbarComponents: Record<EditorActions, ReactElement> = {
-        [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} textStyles={textStyles} />,
-        [EditorActions.ALIGN_LEFT]: <AlignToolbarButton value="left" icon={<IconTextAlignLeft />} />,
-        [EditorActions.ALIGN_CENTER]: <AlignToolbarButton value="center" icon={<IconTextAlignCenter />} />,
-        [EditorActions.ALIGN_RIGHT]: <AlignToolbarButton value="right" icon={<IconTextAlignRight />} />,
-        [EditorActions.ALIGN_JUSTIFY]: <AlignToolbarButton value="justify" icon={<IconTextAlignJustify />} />,
-        [EditorActions.BOLD]: <MarkToolbarButton type={getPluginType(editor, MARK_BOLD)} icon={<IconBold />} />,
-        [EditorActions.ITALIC]: <MarkToolbarButton type={getPluginType(editor, MARK_ITALIC)} icon={<IconItalic />} />,
-        [EditorActions.UNDERLINE]: (
-            <MarkToolbarButton type={getPluginType(editor, MARK_UNDERLINE)} icon={<IconUnderline />} />
-        ),
-        [EditorActions.STRIKETHROUGH]: (
-            <MarkToolbarButton type={getPluginType(editor, MARK_STRIKETHROUGH)} icon={<IconStrikethrough />} />
-        ),
-        [EditorActions.CODE]: (
-            <MarkToolbarButton type={getPluginType(editor, MARK_CODE)} icon={<IconStrikethrough />} />
-        ),
-        [EditorActions.CHECK_ITEM]: (
-            <BlockToolbarButton type={getPluginType(editor, ELEMENT_CHECK_ITEM)} icon={<IconListChecklist />} />
-        ),
-        [EditorActions.LINK]: <LinkToolbarButton icon={<IconLink />} />,
-        [EditorActions.ORDERED_LIST]: (
-            <ListToolbarButton type={getPluginType(editor, ELEMENT_OL)} icon={<IconListNumbers />} />
-        ),
-        [EditorActions.UNORDERED_LIST]: (
-            <ListToolbarButton type={getPluginType(editor, ELEMENT_UL)} icon={<IconListBullets />} />
-        ),
-    };
 
     return (
         <BalloonToolbar
@@ -97,7 +101,9 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
                         className="tw-flex tw-items-center tw-border-r last:tw-border-r-0 tw-px-3 tw-py-2 tw-border-black-5"
                     >
                         {actions.map((action, index) => (
-                            <React.Fragment key={index}>{toolbarComponents[action]}</React.Fragment>
+                            <React.Fragment key={index}>
+                                {toolbarComponents(editor, editorId, textStyles)[action]}
+                            </React.Fragment>
                         ))}
                     </div>
                 ))}
