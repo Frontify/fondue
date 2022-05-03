@@ -248,6 +248,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     >
                         <button
                             className={isFocusVisible ? FOCUS_STYLE : ""}
+                            type="button"
                             onClick={() => {
                                 checkIfOverflowing();
                                 setIsMenuOpened(!isMenuOpened);
@@ -277,6 +278,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                                 }
                                             }}
                                             role="tab"
+                                            type="button"
                                             aria-selected={tab.id === activeItemId}
                                             aria-controls={`${tab.id}-content`}
                                             aria-hidden={tab.disabled}
