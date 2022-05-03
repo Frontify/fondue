@@ -58,7 +58,6 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     const inputRef = useForwardedRef<HTMLInputElement | null>(ref);
     const { isFocusVisible, focusProps } = useFocusRing();
     const toggleState = useToggleState({
-        value,
         onChange: disabled ? undefined : onChange,
         isSelected: state === CheckboxState.Checked,
     });
@@ -68,10 +67,13 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
             isRequired: required,
             isIndeterminate: state === CheckboxState.Mixed,
             "aria-label": ariaLabel || label,
+            value,
         },
         toggleState,
         inputRef,
     );
+
+    console.log(groupInputProps);
 
     return (
         <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">
