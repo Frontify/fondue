@@ -197,6 +197,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                             <button
                                 data-test-id="tab-item"
                                 role="tab"
+                                type="button"
                                 aria-selected={tab.id === activeItemId}
                                 aria-controls={`${tab.id}-content`}
                                 aria-hidden={tab.disabled}
