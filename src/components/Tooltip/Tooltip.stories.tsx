@@ -181,5 +181,3 @@ export const WithArrow = TooltipComponent.bind({});
 WithArrow.args = {
     withArrow: true,
 };
-
-export const MultipleTooltips = MultipleTooltipsComponent.bind({});

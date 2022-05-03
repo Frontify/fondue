@@ -29,7 +29,7 @@ export type TooltipButton = {
 };
 
 export type TooltipProps = {
-    triggerRefElement?: MutableRefObject<any>;
+    triggerRefElement?: MutableRefObject<HTMLElement | HTMLDivElement | HTMLButtonElement | null>;
     content: ReactNode;
     tooltipIcon?: ReactElement;
     heading?: ReactNode;
@@ -165,21 +165,20 @@ export const Tooltip: FC<TooltipProps> = ({
 
     const arrowStyling = setArrowClasses();
     const [isOpen, setIsOpen] = useState(false);
-
-    let timeout: ReturnType<typeof setTimeout> | null = null;
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const handleShowTooltipOnHover = () => {
-        if (timeout) {
-            clearTimeout(timeout);
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
         }
         setIsOpen(true);
     };
 
     const handleHideTooltipOnHover = () => {
-        timeout = setTimeout(() => setIsOpen(false), hoverDelay);
+        timeoutRef.current = setTimeout(() => setIsOpen(false), hoverDelay);
     };
 
-    const checkIfHovered = (e: MouseEvent) => {
+    const checkIfHovered = (e: Event) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const hoveredElement = e.path;
@@ -197,10 +196,10 @@ export const Tooltip: FC<TooltipProps> = ({
     const lastButtonRef = useRef<HTMLButtonElement | null>(null);
 
     useEffect(() => {
-        triggerRefElement?.current.addEventListener("mouseover", (event: MouseEvent) => checkIfHovered(event));
-        triggerRefElement?.current.addEventListener("mouseleave", handleHideTooltipOnHover);
-        triggerRefElement?.current.addEventListener("focus", () => setIsOpen(true));
-        triggerRefElement?.current.addEventListener("blur", () => (!hasInteractiveElements ? setIsOpen(false) : null));
+        triggerRefElement?.current?.addEventListener("mouseover", (event: Event) => checkIfHovered(event));
+        triggerRefElement?.current?.addEventListener("mouseleave", handleHideTooltipOnHover);
+        triggerRefElement?.current?.addEventListener("focus", () => setIsOpen(true));
+        triggerRefElement?.current?.addEventListener("blur", () => (!hasInteractiveElements ? setIsOpen(false) : null));
         tooltipContainerRef?.current?.addEventListener("mouseover", (event: MouseEvent) => checkIfHovered(event));
         tooltipContainerRef?.current?.addEventListener("mouseleave", handleHideTooltipOnHover);
         firstButtonRef?.current?.addEventListener("blur", () =>
@@ -209,10 +208,10 @@ export const Tooltip: FC<TooltipProps> = ({
         lastButtonRef?.current?.addEventListener("blur", () => setIsOpen(false));
 
         return () => {
-            triggerRefElement?.current.removeEventListener("mouseover", (event: MouseEvent) => checkIfHovered(event));
-            triggerRefElement?.current.removeEventListener("mouseleave", handleHideTooltipOnHover);
-            triggerRefElement?.current.removeEventListener("focus", () => setIsOpen(true));
-            triggerRefElement?.current.removeEventListener("blur", () =>
+            triggerRefElement?.current?.removeEventListener("mouseover", (event: Event) => checkIfHovered(event));
+            triggerRefElement?.current?.removeEventListener("mouseleave", handleHideTooltipOnHover);
+            triggerRefElement?.current?.removeEventListener("focus", () => setIsOpen(true));
+            triggerRefElement?.current?.removeEventListener("blur", () =>
                 !hasInteractiveElements ? setIsOpen(false) : null,
             );
             tooltipContainerRef?.current?.removeEventListener("mouseover", (event: MouseEvent) =>
