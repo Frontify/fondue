@@ -20,8 +20,10 @@ const columnsStyle: Record<Columns, string> = {
     4: "tw-grid-cols-4",
 };
 
+export type ChecklistValue = Omit<CheckboxProps, "onChange" | "groupInputProps" | "value"> & { value: string };
+
 type ChecklistBase = {
-    checkboxes: (Omit<CheckboxProps, "onChange" | "groupInputProps" | "value"> & { value: string })[];
+    checkboxes: ChecklistValue[];
     setActiveValues: (value: string[]) => void;
     activeValues?: string[];
     ariaLabel?: string;
