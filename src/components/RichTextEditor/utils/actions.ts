@@ -19,14 +19,14 @@ export enum EditorActions {
 
 export const defaultActions = [
     [EditorActions.TEXT_STYLES],
-    [EditorActions.ALIGN_LEFT, EditorActions.ALIGN_CENTER, EditorActions.ALIGN_RIGHT, EditorActions.ALIGN_JUSTIFY],
     [
         EditorActions.BOLD,
         EditorActions.ITALIC,
         EditorActions.UNDERLINE,
         EditorActions.STRIKETHROUGH,
+        EditorActions.LINK,
         EditorActions.CODE,
-        EditorActions.CHECK_ITEM,
     ],
-    [EditorActions.LINK, EditorActions.UNORDERED_LIST, EditorActions.ORDERED_LIST],
+    [EditorActions.ALIGN_LEFT, EditorActions.ALIGN_CENTER, EditorActions.ALIGN_RIGHT, EditorActions.ALIGN_JUSTIFY],
+    [EditorActions.UNORDERED_LIST, EditorActions.CHECK_ITEM, EditorActions.ORDERED_LIST],
 ];
