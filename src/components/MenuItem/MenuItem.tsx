@@ -24,6 +24,7 @@ export type MenuItemProps = {
     disabled?: boolean;
     active?: boolean;
     selectionIndicator?: SelectionIndicatorIcon;
+    type?: string;
 } & Omit<MenuItemContentProps, "iconSize">;
 
 export const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
@@ -54,6 +55,7 @@ export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextC
 export const MenuItem: FC<MenuItemProps> = ({
     title,
     decorator,
+    switchComponent,
     subtitle,
     size = MenuItemContentSize.Small,
     style = MenuItemStyle.Primary,
@@ -91,11 +93,13 @@ export const MenuItem: FC<MenuItemProps> = ({
                 textClass,
             ])}
         >
-            {size === MenuItemContentSize.Large ? (
-                <MenuItemContent title={title} decorator={decorator} subtitle={subtitle} size={size} />
-            ) : (
-                <MenuItemContent title={title} decorator={decorator} size={size} />
-            )}
+            <MenuItemContent
+                title={title}
+                decorator={decorator}
+                subtitle={size === MenuItemContentSize.Large ? subtitle : undefined}
+                size={size}
+                switchComponent={switchComponent}
+            />
             <div className="tw-flex-none">{currentIcon}</div>
         </div>
     );

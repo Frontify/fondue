@@ -6,6 +6,7 @@ import { debounce } from "@utilities/debounce";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
 import { Toolbar } from "./Toolbar";
+import { EditorActions } from "./utils/actions";
 import { getEditorConfig } from "./utils/getEditorConfig";
 import { TextStyleType } from "./utils/getTextStyles";
 import { EMPTY_RICH_TEXT_VALUE, parseRawValue } from "./utils/parseRawValue";
@@ -19,6 +20,7 @@ export type RichTextEditorProps = {
     readonly?: boolean;
     clear?: boolean;
     textStyles?: TextStyleType[];
+    actions?: EditorActions[][];
 };
 
 export const ON_SAVE_DELAY_IN_MS = 500;
@@ -30,6 +32,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     readonly = false,
     clear = false,
     textStyles,
+    actions = [],
     onTextChange,
     onBlur,
 }) => {
@@ -78,7 +81,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 editableProps={editableProps}
                 plugins={getEditorConfig(textStyles)}
             >
-                <Toolbar editorId={editorId} textStyles={textStyles} />
+                <Toolbar editorId={editorId} textStyles={textStyles} actions={actions} />
             </Plate>
         </div>
     );

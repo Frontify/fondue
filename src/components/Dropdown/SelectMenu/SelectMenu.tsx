@@ -11,7 +11,7 @@ import React, { ReactElement, useRef } from "react";
 import { SelectMenuItem } from "./SelectMenuItem";
 import { SelectMenuSection } from "./SelectMenuSection";
 
-export type MenuItemType = MenuItemProps & { id: string | number; link?: string };
+export type MenuItemType = Omit<MenuItemProps, "switchComponent"> & { id: string | number; link?: string };
 
 export type MenuBlock = {
     id: string;
