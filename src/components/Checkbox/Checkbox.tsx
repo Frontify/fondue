@@ -61,6 +61,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         onChange: disabled ? undefined : onChange,
         isSelected: state === CheckboxState.Checked,
     });
+
     const { inputProps } = useCheckbox(
         {
             isDisabled: disabled,
@@ -72,8 +73,6 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         toggleState,
         inputRef,
     );
-
-    console.log(groupInputProps);
 
     return (
         <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">

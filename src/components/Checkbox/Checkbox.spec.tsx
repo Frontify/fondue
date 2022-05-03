@@ -9,8 +9,9 @@ const CHECKBOX_ID = "[data-test-id=checkbox]";
 const TOOLTIP_ID = "[data-test-id=tooltip]";
 const CHECKBOX_INPUT_ID = "[data-test-id=checkbox-input]";
 const TOOLTIP_ICON_TRIGGER_ID = "[data-test-id=tooltip-icon-trigger]";
+const CHECKBOX_VALUE = "value";
 
-const CheckboxComponent: FC<Omit<CheckboxProps, "value">> = (props) => {
+const CheckboxComponent: FC<CheckboxProps> = (props) => {
     const [checked, setChecked] = useState(props.state);
 
     return (
@@ -82,5 +83,11 @@ describe("Checkbox component", () => {
         cy.get("body").realPress("Tab");
         cy.get(TOOLTIP_ICON_TRIGGER_ID).should("be.focused");
         cy.get(TOOLTIP_ID).should("contain", "Checkbox tooltip");
+    });
+
+    it("should forward value to input", () => {
+        mount(<CheckboxComponent value={CHECKBOX_VALUE} />);
+
+        cy.get(CHECKBOX_INPUT_ID).should("have.value", CHECKBOX_VALUE);
     });
 });
