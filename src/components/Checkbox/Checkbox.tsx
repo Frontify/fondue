@@ -25,7 +25,7 @@ export type CheckboxProps = {
     state?: CheckboxState;
     disabled?: boolean;
     required?: boolean;
-    value: string;
+    value?: string;
     onChange?: (isChecked: boolean) => void;
     label?: string;
     tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
@@ -58,16 +58,17 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     const inputRef = useForwardedRef<HTMLInputElement | null>(ref);
     const { isFocusVisible, focusProps } = useFocusRing();
     const toggleState = useToggleState({
-        value,
         onChange: disabled ? undefined : onChange,
         isSelected: state === CheckboxState.Checked,
     });
+
     const { inputProps } = useCheckbox(
         {
             isDisabled: disabled,
             isRequired: required,
             isIndeterminate: state === CheckboxState.Mixed,
             "aria-label": ariaLabel || label,
+            value,
         },
         toggleState,
         inputRef,
