@@ -17,7 +17,6 @@ const CheckboxComponent: FC<CheckboxProps> = (props) => {
     return (
         <Checkbox
             {...props}
-            value="checkbox"
             state={checked}
             onChange={(isChecked: boolean) => setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked)}
         />
