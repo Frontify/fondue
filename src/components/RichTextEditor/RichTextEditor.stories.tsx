@@ -98,7 +98,7 @@ WithChecklist.args = {
 
 export const WithCustomControls = RichTextEditorTemplate.bind({});
 WithCustomControls.args = {
-    value: IPSUM,
+    value: `<p>${IPSUM}</p>`,
     actions: [
         [EditorActions.LINK],
         [EditorActions.ITALIC, EditorActions.BOLD, EditorActions.UNDERLINE],
