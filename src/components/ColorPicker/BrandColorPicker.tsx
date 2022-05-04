@@ -84,7 +84,11 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                               >
                                   {colors.map((color) => (
                                       <li key={color.name} data-test-id="brand-color">
-                                          <button className="tw-flex tw-w-full" onClick={() => onSelect(color)}>
+                                          <button
+                                              className="tw-flex tw-w-full"
+                                              onClick={() => onSelect(color)}
+                                              type="button"
+                                          >
                                               <span
                                                   className={merge([
                                                       "tw-h-6 tw-w-6 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center tw-ring-1 tw-ring-black-10 tw-ring-offset-1",

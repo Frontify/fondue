@@ -65,6 +65,7 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
                     <button
                         ref={ref as RefObject<HTMLButtonElement>}
                         {...props}
+                        type="button"
                         onClick={onClick}
                         className={merge([classNames, isFocusVisible ? FOCUS_STYLE : ""])}
                     >
