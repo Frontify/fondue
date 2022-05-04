@@ -2,7 +2,7 @@
 
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
-import React, { useRef } from "react";
+import React from "react";
 import { BrightHeaderStyle } from "./BrightHeader";
 import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from "./Tooltip";
 import { IconAlert, IconAttentionFilled, IconSize } from "@foundation/Icon";
@@ -69,35 +69,41 @@ export default {
 } as Meta<TooltipProps>;
 
 export const TooltipComponent: Story<TooltipProps> = (args: TooltipProps) => {
-    const triggerRef = useRef<HTMLButtonElement>(null);
     return (
         <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
-            <button ref={triggerRef} className="tw-flex tw-justify-center tw-items-center">
-                <IconAttentionFilled size={IconSize.Size16} />
-                <span>Tooltip trigger</span>
-            </button>
-            <Tooltip {...args} triggerRefElement={triggerRef} />
+            <Tooltip
+                {...args}
+                triggerElement={
+                    <button className="tw-flex tw-justify-center tw-items-center">
+                        <IconAttentionFilled size={IconSize.Size16} />
+                        <span>Tooltip trigger</span>
+                    </button>
+                }
+            />
         </div>
     );
 };
 
 export const MultipleTooltipsComponent: Story<TooltipProps> = (args: TooltipProps) => {
-    const firstTriggerRef = useRef<HTMLButtonElement>(null);
-    const secondTriggerRef = useRef<HTMLButtonElement>(null);
     return (
         <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
             <p className="tw-mr-2">Label</p>
-            <button ref={firstTriggerRef} className="tw-mr-1">
-                <IconAttentionFilled size={IconSize.Size16} />
-            </button>
-            <Tooltip {...args} triggerRefElement={firstTriggerRef} />
-            <button ref={secondTriggerRef}>
-                <IconAlert size={IconSize.Size16} />
-            </button>
+            <Tooltip
+                {...args}
+                triggerElement={
+                    <button className="tw-mr-1">
+                        <IconAttentionFilled size={IconSize.Size16} />
+                    </button>
+                }
+            />
             <Tooltip
                 {...args}
                 content="Second tooltip"
-                triggerRefElement={secondTriggerRef}
+                triggerElement={
+                    <button>
+                        <IconAlert size={IconSize.Size16} />
+                    </button>
+                }
                 brightHeader={BrightHeaderStyle.Warning}
             />
         </div>

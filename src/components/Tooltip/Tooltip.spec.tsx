@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from "@cypress/react";
-import React, { useRef } from "react";
+import React from "react";
 import { Tooltip, TooltipProps } from "./Tooltip";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import { brightHeaderBackgroundColors, BrightHeaderStyle } from "./BrightHeader";
@@ -17,14 +17,17 @@ const GENERIC_ICON_CODE = "svg[name=IconIcons]";
 const BRIGHT_HEADER_ID = "[data-test-id=bright-header]";
 
 export const TooltipComponent = (args: TooltipProps) => {
-    const triggerRef = useRef<HTMLDivElement>(null);
     return (
         <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
-            <div data-test-id="tooltip-trigger" ref={triggerRef} className="tw-flex tw-justify-center tw-items-center">
-                <IconAttentionFilled size={IconSize.Size16} />
-                <span>Tooltip trigger</span>
-            </div>
-            <Tooltip {...args} triggerRefElement={triggerRef} />
+            <Tooltip
+                {...args}
+                triggerElement={
+                    <div data-test-id="tooltip-trigger" className="tw-flex tw-justify-center tw-items-center">
+                        <IconAttentionFilled size={IconSize.Size16} />
+                        <span>Tooltip trigger</span>
+                    </div>
+                }
+            />
         </div>
     );
 };
