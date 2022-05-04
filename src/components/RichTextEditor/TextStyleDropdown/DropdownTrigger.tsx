@@ -33,10 +33,10 @@ export const DropdownTrigger = ({ editorId, open }: DropdownTriggerProps) => {
     return (
         <button
             data-test-id="textstyle-dropdown-trigger"
-            className="tw-pl-2 tw-relative tw-inline-flex tw-flex-row tw-items-center tw-justify-between tw-rounded tw-overflow-hidden tw-gap-1 tw-cursor-default tw-text-black"
+            className="tw-pl-2 tw-relative tw-inline-flex tw-flex-row tw-items-center tw-justify-between tw-rounded tw-overflow-hidden tw-gap-1 tw-text-black tw-cursor-pointer hover:tw-text-violet-70"
             onMouseDown={editor ? getPreventDefaultHandler() : undefined}
         >
-            <span className="tw-text-md tw-text-black">{label || textStyleTitles[TextStyles.ELEMENT_HEADING1]}</span>
+            <span className="tw-text-s">{label || textStyleTitles[TextStyles.ELEMENT_HEADING1]}</span>
             <div className={merge(["tw-transition-transform", open && "tw-rotate-180"])}>
                 <IconCaretDown />
             </div>

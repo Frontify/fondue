@@ -1,18 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    IconBold,
-    IconItalic,
     IconLink,
     IconListBullets,
     IconListChecklist,
     IconListNumbers,
-    IconStrikethrough,
+    IconSize,
+    IconSnippet,
     IconTextAlignCenter,
     IconTextAlignJustify,
     IconTextAlignLeft,
     IconTextAlignRight,
-    IconUnderline,
+    IconTextFormatBold,
+    IconTextFormatItalic,
+    IconTextFormatStrikethrough,
+    IconTextFormatUnderline,
 } from "@foundation/Icon";
 import {
     AlignToolbarButton,
@@ -44,31 +46,47 @@ type ToolbarProps = {
     actions?: EditorActions[][];
 };
 
+const classNames = {
+    root: "tw-text-black-80 tw-ml-0.5 hover:tw-bg-base-alt hover:!tw-text-violet-70",
+    active: "tw-bg-base-alt tw-rounded !tw-text-violet-70",
+};
+const styles = { root: { width: "32px", height: "32px" } };
+
 const toolbarComponents = (
     editor: PlateEditor,
     editorId?: string,
     textStyles?: TextStyleType[],
 ): Record<EditorActions, ReactElement> => {
-    const classNames = {
-        root: "overwrite-hover-color tw-text-black-80 tw-ml-0.5 hover:tw-bg-base-alt",
-        active: "overwrite-color tw-bg-base-alt tw-rounded",
-    };
-    const styles = { root: { width: "32px", height: "32px" }, active: {} }; //: { background: "#6449C4", text:"#6449C4", color:"#6449C4 !important" }};
     return {
         [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} textStyles={textStyles} />,
         [EditorActions.ALIGN_LEFT]: (
-            <AlignToolbarButton value="left" icon={<IconTextAlignLeft />} classNames={classNames} styles={styles} />
+            <AlignToolbarButton
+                value="left"
+                icon={<IconTextAlignLeft size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
         ),
         [EditorActions.ALIGN_CENTER]: (
-            <AlignToolbarButton value="center" icon={<IconTextAlignCenter />} classNames={classNames} styles={styles} />
+            <AlignToolbarButton
+                value="center"
+                icon={<IconTextAlignCenter size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
         ),
         [EditorActions.ALIGN_RIGHT]: (
-            <AlignToolbarButton value="right" icon={<IconTextAlignRight />} classNames={classNames} styles={styles} />
+            <AlignToolbarButton
+                value="right"
+                icon={<IconTextAlignRight size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
         ),
         [EditorActions.ALIGN_JUSTIFY]: (
             <AlignToolbarButton
                 value="justify"
-                icon={<IconTextAlignJustify />}
+                icon={<IconTextAlignJustify size={IconSize.Size24} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -76,7 +94,7 @@ const toolbarComponents = (
         [EditorActions.BOLD]: (
             <MarkToolbarButton
                 type={getPluginType(editor, MARK_BOLD)}
-                icon={<IconBold />}
+                icon={<IconTextFormatBold size={IconSize.Size24} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -84,7 +102,7 @@ const toolbarComponents = (
         [EditorActions.ITALIC]: (
             <MarkToolbarButton
                 type={getPluginType(editor, MARK_ITALIC)}
-                icon={<IconItalic />}
+                icon={<IconTextFormatItalic size={IconSize.Size24} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -92,7 +110,7 @@ const toolbarComponents = (
         [EditorActions.UNDERLINE]: (
             <MarkToolbarButton
                 type={getPluginType(editor, MARK_UNDERLINE)}
-                icon={<IconUnderline />}
+                icon={<IconTextFormatUnderline size={IconSize.Size24} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -100,7 +118,7 @@ const toolbarComponents = (
         [EditorActions.STRIKETHROUGH]: (
             <MarkToolbarButton
                 type={getPluginType(editor, MARK_STRIKETHROUGH)}
-                icon={<IconStrikethrough />}
+                icon={<IconTextFormatStrikethrough size={IconSize.Size24} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -108,7 +126,7 @@ const toolbarComponents = (
         [EditorActions.CODE]: (
             <MarkToolbarButton
                 type={getPluginType(editor, MARK_CODE)}
-                icon={<IconStrikethrough />}
+                icon={<IconSnippet size={IconSize.Size24} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -116,16 +134,18 @@ const toolbarComponents = (
         [EditorActions.CHECK_ITEM]: (
             <BlockToolbarButton
                 type={getPluginType(editor, ELEMENT_CHECK_ITEM)}
-                icon={<IconListChecklist />}
+                icon={<IconListChecklist size={IconSize.Size24} />}
                 classNames={classNames}
                 styles={styles}
             />
         ),
-        [EditorActions.LINK]: <LinkToolbarButton icon={<IconLink />} />,
+        [EditorActions.LINK]: (
+            <LinkToolbarButton icon={<IconLink size={IconSize.Size24} />} classNames={classNames} styles={styles} />
+        ),
         [EditorActions.ORDERED_LIST]: (
             <ListToolbarButton
                 type={getPluginType(editor, ELEMENT_OL)}
-                icon={<IconListNumbers />}
+                icon={<IconListNumbers size={IconSize.Size24} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -133,7 +153,7 @@ const toolbarComponents = (
         [EditorActions.UNORDERED_LIST]: (
             <ListToolbarButton
                 type={getPluginType(editor, ELEMENT_UL)}
-                icon={<IconListBullets />}
+                icon={<IconListBullets size={IconSize.Size24} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -141,38 +161,29 @@ const toolbarComponents = (
     };
 };
 
-const css = `
-    .overwrite-color {
-        color: #6449C4 !important;
-}
-    .overwrite-hover-color:hover {
-        color: #6449C4 !important;
-}`;
-
 export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }) => {
     const editor = usePlateEditorRef(editorId);
     const toolbarActions = actions.length > 0 ? actions : defaultActions;
 
     return (
         <BalloonToolbar
-            theme="light"
             popperOptions={{
                 modifiers: [
                     { name: "offset", options: { offset: [0, 12] } },
                     { name: "flip", options: { fallbackPlacements: ["bottom", "right"] } },
                 ],
             }}
-            styles={{ root: { border: "none", background: "#ffffff" } }}
+            styles={{ root: { border: "none", background: "#ffffff", margin: "8px" } }}
         >
             <div
                 data-test-id="toolbar"
-                className="tw-flex tw-flex-wrap tw-items-center tw-bg-base tw-rounded tw-shadow-mid tw-gap-0.5"
+                className="tw-flex tw-flex-wrap tw-content-start tw-shadow-lg tw-border tw-bg-base tw-rounded tw-border-black-10"
             >
                 {toolbarActions.map((actions, index) => (
                     <div
                         key={index}
                         data-test-id={`toolbar-group-${index}`}
-                        className="tw-flex tw-items-center tw-border-r last:tw-border-r-0 tw-px-3 tw-py-2 tw-border-black-5"
+                        className="tw-flex tw-items-center tw-border-l tw-border-b tw-px-3 tw-py-2 tw-border-black-10 tw-h-12"
                     >
                         {actions.map((action, index) => (
                             <React.Fragment key={index}>
@@ -182,8 +193,6 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
                     </div>
                 ))}
             </div>
-            {/* this overwrites default color value */}
-            <style>{css}</style>
         </BalloonToolbar>
     );
 };
