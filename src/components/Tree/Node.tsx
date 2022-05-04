@@ -140,7 +140,12 @@ export const Node = ({
                             <span className="tw-flex tw-items-center" data-test-id="node-link-name">
                                 {name}
                                 {badge && (
-                                    <div className="tw-flex tw-justify-center tw-items-center tw-w-8 tw-h-5 tw-ml-2 tw-bg-box-neutral tw-rounded-full">
+                                    <div
+                                        className={merge([
+                                            "tw-flex tw-justify-center tw-items-center tw-w-8 tw-h-5 tw-ml-2 tw-bg-box-neutral tw-rounded-full",
+                                            selected && "tw-bg-transparent",
+                                        ])}
+                                    >
                                         <span>{badge}</span>
                                     </div>
                                 )}
