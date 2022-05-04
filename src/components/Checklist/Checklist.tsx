@@ -21,7 +21,7 @@ const columnsStyle: Record<Columns, string> = {
 };
 
 type ChecklistBase = {
-    checkboxes: Omit<CheckboxProps, "onChange" | "groupInputProps">[];
+    checkboxes: (Omit<CheckboxProps, "onChange" | "groupInputProps" | "value"> & { value: string })[];
     setActiveValues: (value: string[]) => void;
     activeValues?: string[];
     ariaLabel?: string;
