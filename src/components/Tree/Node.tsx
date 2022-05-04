@@ -55,9 +55,9 @@ export const Node = ({
     onDrop,
     treeName,
 }: NodeProps): ReactElement<NodeProps> => {
-    const { id, value, name, label, icon, nodes, actions } = node;
+    const { id, value, name, label, icon, nodes, actions, badge } = node;
     const [{ opacity }, drag] = useDrag({
-        item: { id, value, name, label, icon, nodes, actions },
+        item: { id, value, name, label, icon, nodes, actions, badge },
         collect: (monitor) => ({
             opacity: monitor.isDragging() ? 0.4 : 1,
         }),
@@ -137,7 +137,14 @@ export const Node = ({
                                     ))}
                             </span>
                             {icon && <span>{icon}</span>}
-                            <span data-test-id="node-link-name">{name}</span>
+                            <span className="tw-flex tw-items-center" data-test-id="node-link-name">
+                                {name}
+                                {badge && (
+                                    <div className="tw-flex tw-justify-center tw-items-center tw-w-8 tw-h-5 tw-ml-2 tw-bg-box-neutral tw-rounded-full">
+                                        <span>{badge}</span>
+                                    </div>
+                                )}
+                            </span>
                         </div>
                         <div className="tw-px-1.5">
                             <span

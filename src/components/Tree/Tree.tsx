@@ -15,6 +15,7 @@ export interface TreeFlatListItem {
     label?: string;
     value?: string;
     actions?: React.ReactNode[];
+    badge?: ReactElement<IconProps>;
     parentId: NullableString;
 }
 

@@ -1,5 +1,5 @@
 import { MenuItemContentSize } from "@components/MenuItem";
-import { IconFile, IconFolder, IconSize } from "@foundation/Icon";
+import { IconFile, IconFolder, IconSize, IconSmileysPeople } from "@foundation/Icon";
 import React from "react";
 import { TreeFlatListItem, TreeNodeItem } from "@components/Tree";
 import { DraggableItem } from "@utilities/dnd";
@@ -141,6 +141,7 @@ export const mockNodesFlat: DraggableItem<TreeFlatListItem>[] = [
         icon: <IconFolder size={IconSize.Size16} />,
         value: "https://weare.frontify.com/document/923#/test",
         sort: null,
+        badge: <IconSmileysPeople size={IconSize.Size16} />,
     },
     ...testCategoryNodes,
 ];
