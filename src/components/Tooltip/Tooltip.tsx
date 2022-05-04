@@ -14,6 +14,7 @@ import React, {
     ReactChild,
     ReactElement,
     ReactNode,
+    useCallback,
     useEffect,
     useMemo,
     useRef,
@@ -84,6 +85,36 @@ const placementMap: Record<string, VariationPlacement> = {
     ["right-End"]: "right-end",
 };
 
+const setArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderStyle | undefined, alignment: string) => {
+    switch (true) {
+        case currentPlacement.toString().includes(TooltipPosition.Top):
+            return "before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px] before:tw-bg-black-100 before:dark:tw-bg-white";
+        case currentPlacement.toString().includes(TooltipPosition.Right):
+            return merge([
+                "before:tw-border-t-0 before:tw-border-r-0 tw-left-[-6px]",
+                brightHeader && alignment === TooltipAlignment.Start
+                    ? brightHeaderArrowBackgroundColors[brightHeader]
+                    : "before:tw-bg-black-100 before:dark:tw-bg-white",
+            ]);
+        case currentPlacement.toString().includes(TooltipPosition.Bottom):
+            return merge([
+                "before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px]",
+                brightHeader
+                    ? brightHeaderArrowBackgroundColors[brightHeader]
+                    : "before:tw-bg-black-100 before:dark:tw-bg-white",
+            ]);
+        case currentPlacement.toString().includes(TooltipPosition.Left):
+            return merge([
+                "before:tw-border-b-0 before:tw-border-l-0 tw-right-[-6px]",
+                brightHeader && alignment === TooltipAlignment.Start
+                    ? brightHeaderArrowBackgroundColors[brightHeader]
+                    : "before:tw-bg-black-100 before:dark:tw-bg-white",
+            ]);
+        default:
+            return "before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px] before:tw-bg-black-100 before:dark:tw-bg-white";
+    }
+};
+
 export const Tooltip = ({
     content,
     tooltipIcon,
@@ -104,42 +135,14 @@ export const Tooltip = ({
     const linkRef = useRef<HTMLAnchorElement | null>(null);
     const { linkProps } = useLink({}, linkRef);
     const { isFocusVisible, focusProps } = useFocusRing();
-    const hasLargePaddingTop = useMemo(() => linkUrl || brightHeader || buttons || heading || headingIcon, []);
+    const hasLargePaddingTop = useMemo(
+        () => linkUrl || brightHeader || buttons || heading || headingIcon,
+        [linkUrl, brightHeader, buttons, heading, headingIcon],
+    );
 
     const placement = alignment === "Middle" ? position : placementMap[`${position}-${alignment}`];
     const tooltipContainerRef = useRef<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
-
-    const setArrowClasses = () => {
-        const currentPlacement = popperInstance.state?.placement ?? position;
-        switch (true) {
-            case currentPlacement.toString().includes(TooltipPosition.Top):
-                return "before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px] before:tw-bg-black-100 before:dark:tw-bg-white";
-            case currentPlacement.toString().includes(TooltipPosition.Right):
-                return merge([
-                    "before:tw-border-t-0 before:tw-border-r-0 tw-left-[-6px]",
-                    brightHeader && alignment === TooltipAlignment.Start
-                        ? brightHeaderArrowBackgroundColors[brightHeader]
-                        : "before:tw-bg-black-100 before:dark:tw-bg-white",
-                ]);
-            case currentPlacement.toString().includes(TooltipPosition.Bottom):
-                return merge([
-                    "before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px]",
-                    brightHeader
-                        ? brightHeaderArrowBackgroundColors[brightHeader]
-                        : "before:tw-bg-black-100 before:dark:tw-bg-white",
-                ]);
-            case currentPlacement.toString().includes(TooltipPosition.Left):
-                return merge([
-                    "before:tw-border-b-0 before:tw-border-l-0 tw-right-[-6px]",
-                    brightHeader && alignment === TooltipAlignment.Start
-                        ? brightHeaderArrowBackgroundColors[brightHeader]
-                        : "before:tw-bg-black-100 before:dark:tw-bg-white",
-                ]);
-            default:
-                return "before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px] before:tw-bg-black-100 before:dark:tw-bg-white";
-        }
-    };
 
     const tooltipOffset = withArrow ? 10 : 5;
     const popperInstance = usePopper(triggerRefElement?.current, tooltipContainerRef.current, {
@@ -164,37 +167,39 @@ export const Tooltip = ({
         ],
     });
 
-    const arrowStyling = setArrowClasses();
+    const currentPlacement = popperInstance.state?.placement ?? position;
+    const arrowStyling = setArrowClasses(currentPlacement, brightHeader, alignment);
     const [isOpen, setIsOpen] = useState(false);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const handleShowTooltipOnHover = () => {
+    const handleShowTooltipOnHover = useCallback(() => {
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
         }
         setIsOpen(true);
-    };
+    }, [triggerRefElement?.current]);
 
-    const handleHideTooltipOnHover = () => {
+    const handleHideTooltipOnHover = useCallback(() => {
         timeoutRef.current = setTimeout(() => setIsOpen(false), hoverDelay);
-    };
+    }, [triggerRefElement?.current, tooltipContainerRef?.current]);
 
-    const checkIfHovered = (event: Event) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const hoveredElement = event.path;
-        if (hoveredElement.includes(triggerRefElement?.current)) {
-            handleShowTooltipOnHover();
-        }
+    const checkIfHovered = useCallback(
+        (event: Event) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const hoveredElement = event.path;
+            if (hoveredElement.includes(triggerRefElement?.current)) {
+                handleShowTooltipOnHover();
+            }
 
-        if (hoveredElement.includes(tooltipContainerRef?.current)) {
-            handleShowTooltipOnHover();
-        }
-    };
+            if (hoveredElement.includes(tooltipContainerRef?.current)) {
+                handleShowTooltipOnHover();
+            }
+        },
+        [triggerRefElement?.current],
+    );
 
     const hasInteractiveElements = !!(buttons?.length || linkUrl?.length);
-    const firstButtonRef = useRef<HTMLButtonElement | null>(null);
-    const lastButtonRef = useRef<HTMLButtonElement | null>(null);
 
     useEffect(() => {
         triggerRefElement?.current?.addEventListener("mouseover", (event: Event) => checkIfHovered(event));
@@ -203,10 +208,6 @@ export const Tooltip = ({
         triggerRefElement?.current?.addEventListener("blur", () => (!hasInteractiveElements ? setIsOpen(false) : null));
         tooltipContainerRef?.current?.addEventListener("mouseover", (event: MouseEvent) => checkIfHovered(event));
         tooltipContainerRef?.current?.addEventListener("mouseleave", handleHideTooltipOnHover);
-        firstButtonRef?.current?.addEventListener("blur", () =>
-            buttons && buttons.length < 2 ? setIsOpen(false) : null,
-        );
-        lastButtonRef?.current?.addEventListener("blur", () => setIsOpen(false));
 
         return () => {
             triggerRefElement?.current?.removeEventListener("mouseover", (event: Event) => checkIfHovered(event));
@@ -219,10 +220,6 @@ export const Tooltip = ({
                 checkIfHovered(event),
             );
             tooltipContainerRef?.current?.removeEventListener("mouseleave", handleHideTooltipOnHover);
-            firstButtonRef?.current?.removeEventListener("blur", () =>
-                buttons && buttons.length < 2 ? setIsOpen(false) : null,
-            );
-            lastButtonRef?.current?.removeEventListener("blur", () => setIsOpen(false));
         };
     }, [checkIfHovered]);
 
@@ -283,26 +280,28 @@ export const Tooltip = ({
                         {buttons && (
                             <div className="tw-flex tw-flex-row-reverse tw-gap-x-1 tw-mt-4">
                                 {buttons.length > 0 && (
-                                    <Button
-                                        ref={firstButtonRef}
-                                        style={ButtonStyle.Primary}
-                                        size={ButtonSize.Small}
-                                        inverted
-                                        onClick={buttons[0].action}
-                                    >
-                                        {buttons[0].label}
-                                    </Button>
+                                    <div onBlur={() => (buttons && buttons.length < 2 ? setIsOpen(false) : null)}>
+                                        <Button
+                                            style={ButtonStyle.Primary}
+                                            size={ButtonSize.Small}
+                                            inverted
+                                            onClick={buttons[0].action}
+                                        >
+                                            {buttons[0].label}
+                                        </Button>
+                                    </div>
                                 )}
                                 {buttons.length === 2 && (
-                                    <Button
-                                        ref={lastButtonRef}
-                                        style={ButtonStyle.Secondary}
-                                        size={ButtonSize.Small}
-                                        inverted
-                                        onClick={buttons[1].action}
-                                    >
-                                        {buttons[1].label}
-                                    </Button>
+                                    <div onBlur={() => setIsOpen(false)}>
+                                        <Button
+                                            style={ButtonStyle.Secondary}
+                                            size={ButtonSize.Small}
+                                            inverted
+                                            onClick={buttons[1].action}
+                                        >
+                                            {buttons[1].label}
+                                        </Button>
+                                    </div>
                                 )}
                             </div>
                         )}
