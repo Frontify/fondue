@@ -9,12 +9,13 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, {
     cloneElement,
-    FC,
     MutableRefObject,
+    PropsWithChildren,
     ReactChild,
     ReactElement,
     ReactNode,
     useEffect,
+    useMemo,
     useRef,
     useState,
 } from "react";
@@ -28,7 +29,7 @@ export type TooltipButton = {
     action: () => void;
 };
 
-export type TooltipProps = {
+export type TooltipProps = PropsWithChildren<{
     triggerRefElement?: MutableRefObject<HTMLElement | HTMLDivElement | HTMLButtonElement | null>;
     content: ReactNode;
     tooltipIcon?: ReactElement;
@@ -44,7 +45,7 @@ export type TooltipProps = {
     flip?: boolean;
     withArrow?: boolean;
     hoverDelay?: number;
-};
+}>;
 
 /**
  * This is a temporary workaround because for some yet unknown reasons `tailwindcss` in clarify purges the `tw-pb-3.5` and `tw-pt-3.5` class.
@@ -83,7 +84,7 @@ const placementMap: Record<string, VariationPlacement> = {
     ["right-End"]: "right-end",
 };
 
-export const Tooltip: FC<TooltipProps> = ({
+export const Tooltip = ({
     content,
     tooltipIcon,
     heading,
@@ -99,11 +100,11 @@ export const Tooltip: FC<TooltipProps> = ({
     flip = true,
     triggerRefElement,
     hoverDelay = 200,
-}) => {
+}: TooltipProps) => {
     const linkRef = useRef<HTMLAnchorElement | null>(null);
     const { linkProps } = useLink({}, linkRef);
     const { isFocusVisible, focusProps } = useFocusRing();
-    const hasLargePaddingTop = linkUrl || brightHeader || buttons || heading || headingIcon;
+    const hasLargePaddingTop = useMemo(() => linkUrl || brightHeader || buttons || heading || headingIcon, []);
 
     const placement = alignment === "Middle" ? position : placementMap[`${position}-${alignment}`];
     const tooltipContainerRef = useRef<HTMLDivElement | null>(null);
@@ -178,10 +179,10 @@ export const Tooltip: FC<TooltipProps> = ({
         timeoutRef.current = setTimeout(() => setIsOpen(false), hoverDelay);
     };
 
-    const checkIfHovered = (e: Event) => {
+    const checkIfHovered = (event: Event) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const hoveredElement = e.path;
+        const hoveredElement = event.path;
         if (hoveredElement.includes(triggerRefElement?.current)) {
             handleShowTooltipOnHover();
         }
