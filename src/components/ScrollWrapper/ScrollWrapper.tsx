@@ -42,7 +42,7 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
             )}
             <div
                 ref={scrollingContainer}
-                className={merge([scrollWrapperDirections[direction], "tw-flex-auto tw-min-h-0"])}
+                className={merge([scrollWrapperDirections[direction], "tw-flex-auto tw-min-h-0 tw--mx-2 tw-px-2"])}
                 {...scrollDivProps}
             >
                 {children}
