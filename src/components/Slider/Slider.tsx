@@ -129,7 +129,8 @@ export const Slider: FC<SliderProps> = ({
         >
             <motion.div
                 aria-hidden="true"
-                animate={{ x: `${100 * selectedIndex}%` }}
+                // div border is not included in width so it must be subtracted from translation.
+                animate={{ x: `calc(${100 * selectedIndex}% - ${2 * selectedIndex}px)` }}
                 initial={false}
                 transition={{ type: "tween", duration: 0.3 }}
                 style={{
