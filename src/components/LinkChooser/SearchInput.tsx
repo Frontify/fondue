@@ -142,6 +142,7 @@ const IconButton: FC<IconButtonProps> = ({ disabled, title, ariaLabel, testId, i
             data-combo-box-control={isComboBoxControl}
             disabled={disabled}
             onClick={handleClick}
+            type="button"
             {...focusProps}
         >
             {icon}

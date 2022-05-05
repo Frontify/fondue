@@ -69,6 +69,7 @@ export const Trigger: FC<TriggerProps> = ({
                         {...clearableFocusProps}
                         data-test-id="dropdown-clear-button"
                         aria-label="Clear selection"
+                        type="button"
                         className={merge([
                             isClearFocusVisible && FOCUS_STYLE,
                             disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
@@ -83,6 +84,7 @@ export const Trigger: FC<TriggerProps> = ({
                         {...onDeleteFocusProps}
                         data-test-id="dropdown-delete-button"
                         aria-label="Delete selection"
+                        type="button"
                         className={merge([
                             isOnDeleteFocusVisible && FOCUS_STYLE,
                             disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
@@ -95,6 +97,7 @@ export const Trigger: FC<TriggerProps> = ({
                 <button
                     {...buttonProps}
                     aria-hidden="true"
+                    type="button"
                     className={merge([
                         disabled
                             ? "tw-pointer-events-none tw-text-black-40"
