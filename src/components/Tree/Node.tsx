@@ -10,6 +10,7 @@ import { useDrag } from "react-dnd";
 import { DropZone, OnDropCallback } from "@components/DropZone";
 import { TreeFlatListItem } from "@components/Tree";
 import { DraggableItem, DropZonePosition } from "@utilities/dnd";
+import { EditableNodeItem } from "./components/EditableNodeItem";
 
 export type RenderNodeArrayData = Omit<NodeProps, "isFirst" | "strong" | "node"> & {
     nodes: DraggableItem<TreeNodeItem>[];
@@ -55,9 +56,9 @@ export const Node = ({
     onDrop,
     treeName,
 }: NodeProps): ReactElement<NodeProps> => {
-    const { id, value, name, label, icon, nodes, actions, badge } = node;
+    const { id, value, name, label, icon, nodes, actions, editable, onEditableSave, badge } = node;
     const [{ opacity }, drag] = useDrag({
-        item: { id, value, name, label, icon, nodes, actions, badge },
+        item: { id, value, name, label, icon, nodes, actions, editable, onEditableSave, badge },
         collect: (monitor) => ({
             opacity: monitor.isDragging() ? 0.4 : 1,
         }),
@@ -152,10 +153,14 @@ export const Node = ({
                                     ))}
                             </span>
                             {icon && <span>{icon}</span>}
-                            <span className="tw-flex tw-items-center" data-test-id="node-link-name">
-                                {name}
-                                {badge && insertBadge()}
-                            </span>
+                            {editable && onEditableSave ? (
+                                <EditableNodeItem name={name} onEditableSave={onEditableSave} />
+                            ) : (
+                                <span className="tw-flex tw-items-center" data-test-id="node-link-name">
+                                    {name}
+                                    {badge && insertBadge()}
+                                </span>
+                            )}
                         </div>
                         <div className="tw-px-1.5">
                             <span

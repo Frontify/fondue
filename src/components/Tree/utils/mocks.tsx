@@ -127,6 +127,8 @@ export const mockNodesFlat: DraggableItem<TreeFlatListItem>[] = [
         icon: <IconFolder size={IconSize.Size16} />,
         parentId: null,
         sort: 1,
+        editable: true,
+        onEditableSave: (value) => console.log(value),
     },
     {
         id: "1-1",
