@@ -21,7 +21,7 @@ import React, {
 import { BrightHeader, brightHeaderArrowBackgroundColors, BrightHeaderStyle } from "./BrightHeader";
 import { usePopper } from "react-popper";
 import { createPortal } from "react-dom";
-import { VariationPlacement } from "@popperjs/core";
+import { Placement } from "@popperjs/core";
 
 export type TooltipButton = {
     label: string;
@@ -60,10 +60,10 @@ const paddingsBottom = {
 };
 
 export enum TooltipPosition {
-    Top = "top",
-    Right = "right",
-    Bottom = "bottom",
-    Left = "left",
+    Top = "Top",
+    Right = "Right",
+    Bottom = "Bottom",
+    Left = "Left",
 }
 
 export enum TooltipAlignment {
@@ -72,36 +72,40 @@ export enum TooltipAlignment {
     End = "End",
 }
 
-const placementMap: Record<string, VariationPlacement> = {
-    ["top-Start"]: "top-start",
-    ["top-End"]: "top-end",
-    ["bottom-Start"]: "bottom-start",
-    ["bottom-End"]: "bottom-end",
-    ["left-Start"]: "left-start",
-    ["left-End"]: "left-end",
-    ["right-Start"]: "right-start",
-    ["right-End"]: "right-end",
+const placementMap: Record<`${TooltipPosition}-${TooltipAlignment}`, Placement> = {
+    ["Top-Start"]: "top-start",
+    ["Top-End"]: "top-end",
+    ["Bottom-Start"]: "bottom-start",
+    ["Bottom-End"]: "bottom-end",
+    ["Left-Start"]: "left-start",
+    ["Left-End"]: "left-end",
+    ["Right-Start"]: "right-start",
+    ["Right-End"]: "right-end",
+    ["Top-Middle"]: "top",
+    ["Right-Middle"]: "right",
+    ["Bottom-Middle"]: "bottom",
+    ["Left-Middle"]: "left",
 };
 
-const setArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderStyle | undefined, alignment: string) => {
+const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderStyle | undefined, alignment: string) => {
     switch (true) {
-        case currentPlacement.toString().includes(TooltipPosition.Top):
+        case currentPlacement.toString().includes("top"):
             return "before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px] before:tw-bg-black-100 before:dark:tw-bg-white";
-        case currentPlacement.toString().includes(TooltipPosition.Right):
+        case currentPlacement.toString().includes("right"):
             return merge([
                 "before:tw-border-t-0 before:tw-border-r-0 tw-left-[-6px]",
                 brightHeader && alignment === TooltipAlignment.Start
                     ? brightHeaderArrowBackgroundColors[brightHeader]
                     : "before:tw-bg-black-100 before:dark:tw-bg-white",
             ]);
-        case currentPlacement.toString().includes(TooltipPosition.Bottom):
+        case currentPlacement.toString().includes("bottom"):
             return merge([
                 "before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px]",
                 brightHeader
                     ? brightHeaderArrowBackgroundColors[brightHeader]
                     : "before:tw-bg-black-100 before:dark:tw-bg-white",
             ]);
-        case currentPlacement.toString().includes(TooltipPosition.Left):
+        case currentPlacement.toString().includes("left"):
             return merge([
                 "before:tw-border-b-0 before:tw-border-l-0 tw-right-[-6px]",
                 brightHeader && alignment === TooltipAlignment.Start
@@ -139,7 +143,7 @@ export const Tooltip = ({
         [linkUrl, brightHeader, buttons, heading, headingIcon],
     );
 
-    const placement = alignment === "Middle" ? position : placementMap[`${position}-${alignment}`];
+    const placement = placementMap[`${position}-${alignment}`];
     const tooltipContainerRef = useRef<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
@@ -167,7 +171,7 @@ export const Tooltip = ({
     });
 
     const currentPlacement = popperInstance.state?.placement ?? position;
-    const arrowStyling = setArrowClasses(currentPlacement, brightHeader, alignment);
+    const arrowStyling = getArrowClasses(currentPlacement, brightHeader, alignment);
     const [isOpen, setIsOpen] = useState(false);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
