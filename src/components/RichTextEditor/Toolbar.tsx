@@ -177,13 +177,13 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
         >
             <div
                 data-test-id="toolbar"
-                className="tw-flex tw-flex-wrap tw-content-start tw-shadow-lg tw-border tw-bg-base tw-rounded tw-border-black-10 tw-min-h-12 tw-divide-y"
+                className="tw-flex tw-flex-wrap tw-content-start tw-shadow-lg tw-border tw-bg-base tw-rounded tw-border-black-10 tw-min-h-12"
             >
                 {toolbarActions.map((actions, index) => (
                     <div
                         key={index}
                         data-test-id={`toolbar-group-${index}`}
-                        className="tw-flex tw-items-center tw-border-l tw-px-3 tw-py-2 tw-border-black-10 tw-h-12"
+                        className="tw-flex tw-items-center tw-border-l tw-px-3 tw-py-2 tw-border-black-10 tw-h-12 tw-border-b"
                     >
                         {actions.map((action, index) => (
                             <React.Fragment key={index}>
