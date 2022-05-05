@@ -9,6 +9,7 @@ import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, {
     cloneElement,
+    HTMLAttributes,
     PropsWithChildren,
     ReactChild,
     ReactElement,
@@ -89,23 +90,23 @@ const placementMap: Record<`${TooltipPosition}-${TooltipAlignment}`, Placement> 
 
 const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderStyle | undefined, alignment: string) => {
     switch (true) {
-        case currentPlacement.toString().includes("top"):
+        case currentPlacement.toString().includes(TooltipPosition.Top.toLowerCase()):
             return "before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px] before:tw-bg-black-100 before:dark:tw-bg-white";
-        case currentPlacement.toString().includes("right"):
+        case currentPlacement.toString().includes(TooltipPosition.Right.toLowerCase()):
             return merge([
                 "before:tw-border-t-0 before:tw-border-r-0 tw-left-[-6px]",
                 brightHeader && alignment === TooltipAlignment.Start
                     ? brightHeaderArrowBackgroundColors[brightHeader]
                     : "before:tw-bg-black-100 before:dark:tw-bg-white",
             ]);
-        case currentPlacement.toString().includes("bottom"):
+        case currentPlacement.toString().includes(TooltipPosition.Bottom.toLowerCase()):
             return merge([
                 "before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px]",
                 brightHeader
                     ? brightHeaderArrowBackgroundColors[brightHeader]
                     : "before:tw-bg-black-100 before:dark:tw-bg-white",
             ]);
-        case currentPlacement.toString().includes("left"):
+        case currentPlacement.toString().includes(TooltipPosition.Left.toLowerCase()):
             return merge([
                 "before:tw-border-b-0 before:tw-border-l-0 tw-right-[-6px]",
                 brightHeader && alignment === TooltipAlignment.Start
@@ -201,15 +202,16 @@ export const Tooltip = ({
     );
 
     const hasInteractiveElements = !!(buttons?.length || linkUrl?.length);
+    const triggerProps: HTMLAttributes<HTMLElement> = {
+        onMouseOver: (event) => checkIfHovered(event.nativeEvent),
+        onMouseLeave: handleHideTooltipOnHover,
+        onFocus: () => setIsOpen(true),
+        onBlur: () => (!hasInteractiveElements ? setIsOpen(false) : null),
+    };
 
     return (
-        <div>
-            <div
-                onMouseOver={(event) => checkIfHovered(event.nativeEvent)}
-                onMouseLeave={handleHideTooltipOnHover}
-                onFocus={() => setIsOpen(true)}
-                onBlur={() => (!hasInteractiveElements ? setIsOpen(false) : null)}
-            >
+        <>
+            <div {...triggerProps}>
                 {triggerElement &&
                     cloneElement(triggerElement, {
                         ref: triggerRefElement,
@@ -320,6 +322,6 @@ export const Tooltip = ({
                 </div>,
                 document.body,
             )}
-        </div>
+        </>
     );
 };
