@@ -11,7 +11,7 @@ type ComponentProps = {
     onDrop?: (modifiedItems: DraggableItem<TreeFlatListItem>[]) => void;
 };
 const Component: FC<ComponentProps> = ({ nodes, onDrop }) => {
-    const [selectedId, setSelectedId] = useState<NullableString>();
+    const [selectedIds, setSelectedIds] = useState<NullableString[]>([]);
     const onDropDefault = (items: DraggableItem<TreeFlatListItem>[]) => {
         console.log(items);
     };
@@ -19,8 +19,8 @@ const Component: FC<ComponentProps> = ({ nodes, onDrop }) => {
     return (
         <Tree
             nodes={nodes}
-            activeNodeId={selectedId}
-            onSelect={(id: NullableString) => setSelectedId(id)}
+            activeNodeIds={selectedIds}
+            onSelect={(ids: NullableString[]) => setSelectedIds(ids)}
             onUpdate={onDrop || onDropDefault}
         />
     );

@@ -2,9 +2,17 @@
 
 import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import { Meta, Story } from "@storybook/react";
-import React from "react";
+import React, { useState } from "react";
 import { MenuItem as MenuItemComponent, MenuItemProps, MenuItemStyle, SelectionIndicatorIcon } from "./MenuItem";
 import { MenuItemContentSize } from "./MenuItemContent";
+import { Switch, SwitchSize } from "@components/Switch";
+
+const SwitchComponent = () => {
+    const [switchValue, setSwitchValue] = useState<boolean>(false);
+    const toggleSwitch = () => setSwitchValue(!switchValue);
+
+    return <Switch size={SwitchSize.Small} on={switchValue} onChange={toggleSwitch} />;
+};
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -37,7 +45,6 @@ export default {
             options: Object.values(SelectionIndicatorIcon),
             control: { type: "radio" },
         },
-        onClick: { action: "onClick" },
     },
 } as Meta;
 
@@ -48,3 +55,8 @@ export const MenuItem: Story<MenuItemProps> = (args) => (
         subtitle={args.size === MenuItemContentSize.Large && args.subtitle ? args.subtitle : ""}
     />
 );
+
+export const WithOptionalSwitch = MenuItem.bind({});
+WithOptionalSwitch.args = {
+    switchComponent: <SwitchComponent />,
+};

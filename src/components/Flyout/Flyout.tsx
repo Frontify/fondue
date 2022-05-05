@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BadgeProps } from "@components/Badge/Badge";
+import { BadgeProps } from "@components/Badge";
 import { watchModals } from "@react-aria/aria-modal-polyfill";
 import { useButton } from "@react-aria/button";
 import { FocusScope, useFocusRing } from "@react-aria/focus";
@@ -20,9 +20,9 @@ import React, {
     useRef,
 } from "react";
 import { LegacyFlyoutFooter } from ".";
-import { Overlay } from "./Overlay";
 import { useContainScroll } from "./hooks/useContainScroll";
 import { useOverlayPositionWithBottomMargin } from "./hooks/useOverlayPositionWithBottomMargin";
+import { Overlay } from "./Overlay";
 
 export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
 export const FLYOUT_DIVIDER_HEIGHT = "10px";
@@ -46,6 +46,7 @@ export type FlyoutProps = PropsWithChildren<{
     onOpenChange: (isOpen: boolean) => void;
     fixedHeader?: ReactNode;
     fixedFooter?: ReactNode;
+    contentMinHeight?: number;
     /**
      * The legacy footer buttons section inside of the flyout will be deleted in the future.
      * @deprecated Pass the FlyoutFooter component with buttons to the Flyout component.
@@ -67,6 +68,7 @@ export const Flyout: FC<FlyoutProps> = ({
     fitContent = false,
     fixedHeader,
     fixedFooter,
+    contentMinHeight,
     legacyFooter = true,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
@@ -146,6 +148,7 @@ export const Flyout: FC<FlyoutProps> = ({
                             ref={overlayRef}
                             scrollRef={scrollRef}
                             fitContent={fitContent}
+                            contentMinHeight={contentMinHeight}
                         >
                             {children}
                         </Overlay>

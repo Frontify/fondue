@@ -20,24 +20,34 @@ export interface TreeFlatListItem {
 
 export type TreeProps = {
     nodes: DraggableItem<TreeFlatListItem>[];
-    onSelect: (id: NullableString) => void;
-    activeNodeId?: NullableString;
+    onSelect: (ids: NullableString[]) => void;
+    activeNodeIds: NullableString[];
     onUpdate?: (modifiedItems: DraggableItem<TreeFlatListItem>[]) => void;
 };
 
-export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActiveNodeId = null, onUpdate }) => {
-    const [activeNodeId, setActiveNodeId] = useState<NullableString>(initialActiveNodeId);
+export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeIds: initialActiveNodeIds, onUpdate }) => {
+    const [multiSelectMode, setMultiSelectMode] = useState<boolean>(false);
+    const [activeIds, setActiveIds] = useState<NullableString[]>(initialActiveNodeIds);
     const [treeNodes, setTreeNodes] = useState<DraggableItem<TreeFlatListItem>[]>([]);
     const treeName = useId();
-    useEffect(() => setActiveNodeId(initialActiveNodeId), [initialActiveNodeId]);
+
     useEffect(() => {
         const listToTreeNodes = listToTree(nodes);
         setTreeNodes(listToTreeNodes);
     }, [nodes]);
 
     const onNodeClick = (id: NullableString) => {
-        setActiveNodeId(id);
-        onSelect(id);
+        if (multiSelectMode) {
+            const modifiedSelectedIds: NullableString[] = activeIds.includes(id)
+                ? [...activeIds].filter((i) => i !== id)
+                : [...activeIds, id];
+
+            setActiveIds(modifiedSelectedIds);
+            onSelect(modifiedSelectedIds);
+        } else {
+            setActiveIds([id]);
+            onSelect([id]);
+        }
     };
 
     const handleDrop = onUpdate
@@ -51,6 +61,27 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActi
           }
         : undefined;
 
+    const downKeyHandler = (event: KeyboardEvent) => {
+        if (event.key === "Meta" || event.ctrlKey) {
+            setMultiSelectMode(true);
+        }
+    };
+
+    const upKeyHandler = (event: KeyboardEvent) => {
+        if (event.key === "Meta" || event.ctrlKey) {
+            setMultiSelectMode(false);
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener("keydown", downKeyHandler);
+        window.addEventListener("keyup", upKeyHandler);
+        return () => {
+            window.removeEventListener("keydown", downKeyHandler);
+            window.removeEventListener("keyup", upKeyHandler);
+        };
+    }, []);
+
     return (
         <DndProvider backend={HTML5Backend}>
             <ul
@@ -59,8 +90,8 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeId: initialActi
             >
                 {renderNodeArray({
                     nodes: treeNodes,
-                    activeNodeId,
                     treeName,
+                    activeIds,
                     onClick: onNodeClick,
                     onDrop: handleDrop,
                 })}

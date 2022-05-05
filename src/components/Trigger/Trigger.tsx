@@ -2,12 +2,13 @@
 
 import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
 import IconReject from "@foundation/Icon/Generated/IconReject";
+import IconTrash from "@foundation/Icon/Generated/IconTrash";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { FC, HTMLAttributes } from "react";
 import { Validation, validationClassMap } from "@utilities/validation";
+import React, { FC, HTMLAttributes } from "react";
 
 export enum TriggerSize {
     Small = "Small",
@@ -18,6 +19,7 @@ export type TriggerProps = {
     disabled?: boolean;
     isOpen?: boolean;
     onClear?: () => void;
+    onDelete?: () => void;
     buttonProps?: HTMLAttributes<HTMLElement>;
     isFocusVisible?: boolean;
     size?: TriggerSize;
@@ -28,6 +30,7 @@ export type TriggerProps = {
 export const Trigger: FC<TriggerProps> = ({
     buttonProps,
     onClear,
+    onDelete,
     children,
     disabled = false,
     isOpen = false,
@@ -37,6 +40,7 @@ export const Trigger: FC<TriggerProps> = ({
     validation = Validation.Default,
 }) => {
     const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
+    const { focusProps: onDeleteFocusProps, isFocusVisible: isOnDeleteFocusVisible } = useFocusRing();
 
     return (
         <div
@@ -65,8 +69,8 @@ export const Trigger: FC<TriggerProps> = ({
                         {...clearableFocusProps}
                         data-test-id="dropdown-clear-button"
                         aria-label="Clear selection"
+                        type="button"
                         className={merge([
-                            "tw-p-0 tw-outline-none tw-absolute tw-right-5",
                             isClearFocusVisible && FOCUS_STYLE,
                             disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
                         ])}
@@ -75,9 +79,25 @@ export const Trigger: FC<TriggerProps> = ({
                         <IconReject size={IconSize.Size12} />
                     </button>
                 )}
+                {!!onDelete && (
+                    <button
+                        {...onDeleteFocusProps}
+                        data-test-id="dropdown-delete-button"
+                        aria-label="Delete selection"
+                        type="button"
+                        className={merge([
+                            isOnDeleteFocusVisible && FOCUS_STYLE,
+                            disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
+                        ])}
+                        onClick={onDelete}
+                    >
+                        <IconTrash size={IconSize.Size12} />
+                    </button>
+                )}
                 <button
                     {...buttonProps}
                     aria-hidden="true"
+                    type="button"
                     className={merge([
                         disabled
                             ? "tw-pointer-events-none tw-text-black-40"

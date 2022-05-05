@@ -3,16 +3,19 @@
 import { mapToAriaProps } from "@components/ActionMenu/Aria/helper";
 import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
 import { useDropdownAutoHeight } from "@components/Dropdown/useDropdownAutoHeight";
-import IconDocument from "@foundation/Icon/Generated/IconDocument";
-import IconPatternLibrary from "@foundation/Icon/Generated/IconDocument";
-import IconDocumentLibrary from "@foundation/Icon/Generated/IconDocumentLibrary";
-import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
-import IconLink from "@foundation/Icon/Generated/IconLink";
-import IconTemplate from "@foundation/Icon/Generated/IconTemplate";
+import {
+    IconDocument,
+    IconDocumentLibrary,
+    IconExternalLink,
+    IconLink,
+    IconPatternLibrary,
+    IconTemplate,
+} from "@foundation/Icon/Generated";
 import { useComboBox } from "@react-aria/combobox";
 import { DismissButton } from "@react-aria/overlays";
 import { scrollIntoView } from "@react-aria/utils";
 import { useComboBoxState } from "@react-stately/combobox";
+import { Validation } from "@utilities/validation";
 import { useMachine } from "@xstate/react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, Key, MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -22,13 +25,12 @@ import { SearchInput } from "./SearchInput";
 import { SearchResultsList } from "./SearchResultsList";
 import { defaultSection } from "./sections";
 import { linkChooserMachine } from "./state/machine";
+import { LinkChooserState } from "./state/types";
 import { IconLabel, LinkChooserProps, SearchMenuBlock } from "./types";
 import { decoratedResults, doesContainSubstring, findSection, getDefaultData } from "./utils/helpers";
 import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection, shouldGoBack } from "./utils/state";
 import { createCustomLink } from "./utils/transformers";
 import { useManualComboBoxEventHandlers } from "./utils/useManualComboBoxHandlers";
-import { Validation } from "@utilities/validation";
-import { LinkChooserState } from "./state/types";
 
 export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Document]: <IconDocument />,
@@ -94,6 +96,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     const props = mapToAriaProps(ariaLabel, searchResultMenuBlocks);
 
+    const triggerRef = useRef<HTMLDivElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const listBoxRef = useRef<HTMLUListElement | null>(null);
     const popoverRef = useRef<HTMLDivElement | null>(null);
@@ -232,8 +235,19 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         }
     }, [focusedKey, isOpen]);
 
+    const [flyoutWidth, setFlyoutWidth] = useState(0);
+
+    const calcFlyoutWidth = () => {
+        setFlyoutWidth(triggerRef.current?.getBoundingClientRect().width || 0);
+    };
+
+    useEffect(() => {
+        calcFlyoutWidth();
+        window.addEventListener("resize", calcFlyoutWidth, false);
+    }, []);
+
     return (
-        <div data-test-id="link-chooser" className="tw-relative tw-w-full tw-font-sans tw-text-s">
+        <div data-test-id="link-chooser" ref={triggerRef} className="tw-w-full tw-font-sans tw-text-s">
             {!!label && (
                 <label
                     {...labelProps}
@@ -251,30 +265,31 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     )}
                 </label>
             )}
-            <div>
-                <SearchInput
-                    ariaProps={manualInputProps}
-                    selectedResult={context.selectedResult}
-                    ref={inputRef}
-                    disabled={disabled}
-                    decorator={IconOptions[context.selectedResult?.icon || DEFAULT_ICON]}
-                    clearable={clearable}
-                    onClear={handleClearClick}
-                    machineService={service}
-                    validation={validation}
-                    onClick={handleWrapperClick}
-                    onMouseDown={handleWrapperMouseDown}
-                />
-            </div>
+            <SearchInput
+                ariaProps={manualInputProps}
+                selectedResult={context.selectedResult}
+                ref={inputRef}
+                disabled={disabled}
+                decorator={IconOptions[context.selectedResult?.icon || DEFAULT_ICON]}
+                clearable={clearable}
+                onClear={handleClearClick}
+                machineService={service}
+                validation={validation}
+                onClick={handleWrapperClick}
+                onMouseDown={handleWrapperMouseDown}
+            />
             <AnimatePresence>
                 {matches(LinkChooserState.Focused) && (
                     <motion.div
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
+                        style={{
+                            width: flyoutWidth,
+                        }}
+                        className="tw-absolute tw-left-auto tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20"
                         key="content"
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}
                         exit={{ height: 0 }}
-                        transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
+                        transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         data-test-id="link-chooser-dropdown"
                     >
                         <DismissButton onDismiss={handleDropdownClose} />

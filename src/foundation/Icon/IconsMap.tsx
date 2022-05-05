@@ -155,6 +155,7 @@ import IconLineSpacer from "@foundation/Icon/Generated/IconLineSpacer";
 import IconLink from "@foundation/Icon/Generated/IconLink";
 import IconLinkOpen from "@foundation/Icon/Generated/IconLinkOpen";
 import IconListBullets from "@foundation/Icon/Generated/IconListBullets";
+import IconListCheck from "@foundation/Icon/Generated/IconListCheck";
 import IconListChecklist from "@foundation/Icon/Generated/IconListChecklist";
 import IconListIndented from "@foundation/Icon/Generated/IconListIndented";
 import IconListNumbers from "@foundation/Icon/Generated/IconListNumbers";
@@ -162,6 +163,7 @@ import IconLock from "@foundation/Icon/Generated/IconLock";
 import IconLogo from "@foundation/Icon/Generated/IconLogo";
 import IconLogoGrid from "@foundation/Icon/Generated/IconLogoGrid";
 import IconLogout from "@foundation/Icon/Generated/IconLogout";
+import IconMapPointer from "@foundation/Icon/Generated/IconMapPointer";
 import IconMarkArea from "@foundation/Icon/Generated/IconMarkArea";
 import IconMeasurements from "@foundation/Icon/Generated/IconMeasurements";
 import IconMedia from "@foundation/Icon/Generated/IconMedia";
@@ -235,6 +237,10 @@ import IconTextAlignCenter from "@foundation/Icon/Generated/IconTextAlignCenter"
 import IconTextAlignJustify from "@foundation/Icon/Generated/IconTextAlignJustify";
 import IconTextAlignLeft from "@foundation/Icon/Generated/IconTextAlignLeft";
 import IconTextAlignRight from "@foundation/Icon/Generated/IconTextAlignRight";
+import IconTextFormatBold from "@foundation/Icon/Generated/IconTextFormatBold";
+import IconTextFormatItalic from "@foundation/Icon/Generated/IconTextFormatItalic";
+import IconTextFormatStrikethrough from "@foundation/Icon/Generated/IconTextFormatStrikethrough";
+import IconTextFormatUnderline from "@foundation/Icon/Generated/IconTextFormatUnderline";
 import IconTextLibrary from "@foundation/Icon/Generated/IconTextLibrary";
 import IconTextMultiColumn from "@foundation/Icon/Generated/IconTextMultiColumn";
 import IconTextOnImage from "@foundation/Icon/Generated/IconTextOnImage";
@@ -426,6 +432,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Link]: <IconLink />,
     [IconEnum.LinkOpen]: <IconLinkOpen />,
     [IconEnum.ListBullets]: <IconListBullets />,
+    [IconEnum.ListCheck]: <IconListCheck />,
     [IconEnum.ListChecklist]: <IconListChecklist />,
     [IconEnum.ListIndented]: <IconListIndented />,
     [IconEnum.ListNumbers]: <IconListNumbers />,
@@ -433,6 +440,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Logo]: <IconLogo />,
     [IconEnum.LogoGrid]: <IconLogoGrid />,
     [IconEnum.Logout]: <IconLogout />,
+    [IconEnum.MapPointer]: <IconMapPointer />,
     [IconEnum.MarkArea]: <IconMarkArea />,
     [IconEnum.Measurements]: <IconMeasurements />,
     [IconEnum.Media]: <IconMedia />,
@@ -506,6 +514,10 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.TextAlignJustify]: <IconTextAlignJustify />,
     [IconEnum.TextAlignLeft]: <IconTextAlignLeft />,
     [IconEnum.TextAlignRight]: <IconTextAlignRight />,
+    [IconEnum.TextFormatBold]: <IconTextFormatBold />,
+    [IconEnum.TextFormatItalic]: <IconTextFormatItalic />,
+    [IconEnum.TextFormatStrikethrough]: <IconTextFormatStrikethrough />,
+    [IconEnum.TextFormatUnderline]: <IconTextFormatUnderline />,
     [IconEnum.TextLibrary]: <IconTextLibrary />,
     [IconEnum.TextMultiColumn]: <IconTextMultiColumn />,
     [IconEnum.TextOnImage]: <IconTextOnImage />,

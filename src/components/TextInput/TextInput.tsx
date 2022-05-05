@@ -182,6 +182,7 @@ export const TextInput: FC<TextInputProps> = ({
                     title="Clear text input"
                     aria-label="clear text input"
                     disabled={disabled}
+                    type="button"
                     {...clearButtonFocusProps}
                 >
                     <IconReject />
@@ -197,6 +198,7 @@ export const TextInput: FC<TextInputProps> = ({
                     onClick={() => setIsObfuscated(!isObfuscated)}
                     data-test-id="visibility-icon"
                     title="Toggle text visibility"
+                    type="button"
                     aria-label={`${isObfuscated ? "unveil" : "obfuscate"} text input`}
                     disabled={disabled}
                     {...passwordButtonFocusProps}
@@ -220,6 +222,7 @@ export const TextInput: FC<TextInputProps> = ({
                     data-test-id="copy-icon"
                     title="Copy input text"
                     disabled={disabled}
+                    type="button"
                     {...copyButtonFocusProps}
                 >
                     {status === "error" && (

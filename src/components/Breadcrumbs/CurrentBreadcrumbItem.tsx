@@ -1,4 +1,4 @@
-import { Badge, BadgeProps } from "@components/Badge/Badge";
+import { Badge, BadgeProps } from "@components/Badge";
 import { useBreadcrumbItem } from "@react-aria/breadcrumbs";
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
@@ -65,6 +65,7 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
                     <button
                         ref={ref as RefObject<HTMLButtonElement>}
                         {...props}
+                        type="button"
                         onClick={onClick}
                         className={merge([classNames, isFocusVisible ? FOCUS_STYLE : ""])}
                     >

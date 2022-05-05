@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ColorPreview } from "@components/ColorPicker";
 import { ColorPicker, ColorPickerProps } from "@components/ColorPicker/ColorPicker";
 import { Flyout } from "@components/Flyout/Flyout";
 import React, { FC, useState } from "react";
 import { Color, ColorFormat } from "../../types/colors";
 import { ColorInputTrigger } from "./ColorPickerTrigger";
-import { ColorPreview } from "@components/ColorPicker";
 
 export type ColorPickerFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSelect"> & {
     id?: string;
@@ -15,6 +15,7 @@ export type ColorPickerFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSele
     currentColor: Color | null;
     clearable?: boolean;
     onClear?: () => void;
+    onDelete?: () => void;
 };
 
 export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
@@ -27,6 +28,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
     disabled = false,
     clearable = false,
     onClear,
+    onDelete,
 }) => {
     const [open, setOpen] = useState(false);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
@@ -63,6 +65,14 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
                         setOpen(false);
                         onClear && onClear();
                     }}
+                    onDelete={
+                        onDelete
+                            ? () => {
+                                  setOpen(false);
+                                  onDelete && onDelete();
+                              }
+                            : undefined
+                    }
                 />
             }
         >
