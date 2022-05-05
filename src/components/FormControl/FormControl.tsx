@@ -58,12 +58,14 @@ export type FormControlProps = PropsWithChildren<{
     extra?: ReactNode;
     helper?: Omit<HelperTextProps, "disabled" | "style"> & { position?: HelperPosition };
     style?: FormControlStyle;
+    name?: string;
 }>;
 
 export const FormControl: FC<FormControlProps> = ({
     label,
     children,
     extra,
+    name,
     helper,
     disabled,
     direction = FormControlDirection.Vertical,
@@ -74,6 +76,7 @@ export const FormControl: FC<FormControlProps> = ({
     return (
         <div
             data-test-id="form-control"
+            data-name={name}
             className={merge([
                 "tw-flex tw-items-center tw-gap-2",
                 direction === FormControlDirection.Horizontal ? "tw-flex-row" : "tw-w-full tw-flex-col",
