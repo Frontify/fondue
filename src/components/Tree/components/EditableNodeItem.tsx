@@ -9,7 +9,7 @@ export const EditableNodeItem = ({ name, onEditableSave }: EditableNodeItem) => 
     const [inputValue, setInputValue] = useState(name);
     const [showInput, setShowInput] = useState<boolean>(false);
 
-    const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
             setShowInput(false);
 
@@ -21,6 +21,10 @@ export const EditableNodeItem = ({ name, onEditableSave }: EditableNodeItem) => 
         setInputValue(event.target.value);
     };
 
+    const handleDoubleClick = () => {
+        setShowInput(true);
+    };
+
     return (
         <div>
             {showInput ? (
@@ -30,11 +34,11 @@ export const EditableNodeItem = ({ name, onEditableSave }: EditableNodeItem) => 
                         className="tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-text-black tw-placeholder-black-60 dark:tw-text-white"
                         value={inputValue}
                         onChange={handleInputChange}
-                        onKeyDown={onKeyDown}
+                        onKeyDown={handleKeyDown}
                     />
                 </div>
             ) : (
-                <div onDoubleClick={() => setShowInput(true)}>:{name}:</div>
+                <div onDoubleClick={handleDoubleClick}>:{name}:</div>
             )}
         </div>
     );
