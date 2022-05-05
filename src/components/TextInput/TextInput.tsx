@@ -198,6 +198,7 @@ export const TextInput: FC<TextInputProps> = ({
                     onClick={() => setIsObfuscated(!isObfuscated)}
                     data-test-id="visibility-icon"
                     title="Toggle text visibility"
+                    type="button"
                     aria-label={`${isObfuscated ? "unveil" : "obfuscate"} text input`}
                     disabled={disabled}
                     {...passwordButtonFocusProps}

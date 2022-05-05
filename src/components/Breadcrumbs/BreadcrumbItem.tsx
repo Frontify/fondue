@@ -53,6 +53,7 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
             ) : onClick ? (
                 <button
                     ref={ref as RefObject<HTMLButtonElement>}
+                    type="button"
                     {...props}
                     onClick={onClick}
                     className={isFocusVisible ? FOCUS_STYLE : ""}

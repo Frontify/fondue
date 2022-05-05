@@ -47,6 +47,7 @@ export const TooltipIcon: FC<TooltipIconProps> = ({ tooltip, iconSize = IconSize
                 <div {...hoverProps}>
                     <button
                         data-test-id="tooltip-icon-trigger"
+                        type="button"
                         ref={tooltipTriggerElement}
                         className={merge([
                             "tw-inline-flex tw-justify-center tw-items-center tw-text-black-60 hover:tw-text-black-60 dark:tw-text-black-40 dark:hover:tw-text-white tw-cursor-default tw-outline-none tw-rounded-full",

@@ -19,6 +19,7 @@ export const RadioPill: FC<RadioPillProps> = ({ label, active, icon, onClick }) 
     return (
         <button
             data-test-id="radio-pill"
+            type="button"
             className={merge([
                 "tw-inline-flex tw-items-center tw-rounded-full tw-text-xs tw-px-2 tw-py-1",
                 active

@@ -70,6 +70,7 @@ export const Badge: FC<BadgeProps> = ({
                 <span className="tw-text-center tw-text-xxs tw-font-sans tw-font-normal">{children}</span>
                 {onDismiss && (
                     <button
+                        type="button"
                         data-test-id="badge-dismiss"
                         onClick={(event) => {
                             event.stopPropagation();
