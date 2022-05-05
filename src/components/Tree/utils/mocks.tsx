@@ -3,6 +3,7 @@ import { IconFile, IconFolder, IconSize, IconSmileysPeople } from "@foundation/I
 import React from "react";
 import { TreeFlatListItem, TreeNodeItem } from "@components/Tree";
 import { DraggableItem } from "@utilities/dnd";
+import { Badge } from "../../..";
 
 export const mockActionMenuBlocks = [
     {
@@ -103,6 +104,7 @@ const testCategoryNodes = [
         value: "https://weare.frontify.com/page/5",
         icon: <IconFile size={IconSize.Size16} />,
         sort: null,
+        badge: <Badge icon={<IconSmileysPeople size={IconSize.Size16} />}></Badge>,
     },
     {
         id: "1-2-3",
@@ -112,6 +114,7 @@ const testCategoryNodes = [
         value: "https://weare.frontify.com/page/6",
         icon: <IconFile size={IconSize.Size16} />,
         sort: null,
+        badge: <Badge>Hello, I am a badge</Badge>,
     },
 ];
 
