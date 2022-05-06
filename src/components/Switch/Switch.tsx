@@ -34,7 +34,7 @@ export type SwitchProps = {
     name?: string;
     size?: SwitchSize;
     hug?: boolean;
-    tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
+    tooltip?: TooltipProps;
     onChange?: (e: MouseEvent) => void;
 };
 
