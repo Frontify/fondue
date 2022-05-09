@@ -103,7 +103,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TOOLBAR_GROUP_2).children().eq(0).click();
+        cy.get(TOOLBAR_GROUP_1).children().eq(0).click();
         cy.get("[contenteditable=true]").should("include.html", "tw-font-bold");
     });
 
@@ -112,7 +112,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TOOLBAR_GROUP_2).children().eq(1).click();
+        cy.get(TOOLBAR_GROUP_1).children().eq(1).click();
         cy.get("[contenteditable=true]").should("include.html", "tw-italic");
     });
 
@@ -121,7 +121,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
+        cy.get(TOOLBAR_GROUP_1).children().eq(2).click();
         cy.get("[contenteditable=true]").should("include.html", "tw-underline");
     });
 
@@ -130,7 +130,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TOOLBAR_GROUP_2).children().eq(3).click();
+        cy.get(TOOLBAR_GROUP_1).children().eq(3).click();
         cy.get("[contenteditable=true]").should("include.html", "tw-line-through");
     });
 
@@ -139,7 +139,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
+        cy.get(TOOLBAR_GROUP_1).children().eq(5).click();
         cy.get("[contenteditable=true]").should(
             "include.html",
             "tw-table-cell tw-rounded tw-text-xs tw-bg-black-5 tw-text-violet-90 tw-m-0 tw-px-2 tw-py-0.5",
@@ -151,7 +151,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TOOLBAR_GROUP_3).children().eq(1).click();
+        cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
         cy.get("[contenteditable=true]").should("include.html", "<ul");
     });
 
@@ -160,7 +160,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TOOLBAR_GROUP_3).children().eq(2).click();
+        cy.get(TOOLBAR_GROUP_2).children().eq(6).click();
         cy.get("[contenteditable=true]").should("include.html", "<ol");
     });
 
@@ -169,7 +169,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TOOLBAR_GROUP_1).children().eq(2).click();
+        cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
         cy.get("[contenteditable=true]").should("include.html", "text-align: right");
     });
 
@@ -238,7 +238,7 @@ describe("RichTextEditor Component", () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should("be.visible");
-        cy.get(TOOLBAR_GROUP_3)
+        cy.get(TOOLBAR_GROUP_1)
             .children()
             .eq(1)
             .click()
