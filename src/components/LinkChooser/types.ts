@@ -2,7 +2,6 @@
 
 import { CheckboxState } from "@components/Checkbox/Checkbox";
 import { MenuBlock, MenuItemType } from "@components/Dropdown/SelectMenu/SelectMenu";
-import { Validation } from "@components/TextInput";
 import { AriaListBoxOptions } from "@react-aria/listbox";
 import { ComboBoxState } from "@react-stately/combobox";
 import { ListState } from "@react-stately/list";
@@ -19,6 +18,7 @@ import {
     RefObject,
 } from "react";
 import { DoneInvokeEvent, Interpreter } from "xstate";
+import { Validation } from "@utilities/validation";
 
 export type MachineService = Interpreter<
     LinkChooserContext,
@@ -32,14 +32,8 @@ export type MachineService = Interpreter<
     }
 >;
 
-export const validationClassMap: Record<Validation, string> = {
-    [Validation.Default]: "tw-border-black-20",
-    [Validation.Loading]: "tw-border-black-10",
-    [Validation.Success]: "tw-border-green-50",
-    [Validation.Error]: "tw-border-red-60",
-};
-
 export enum IconLabel {
+    Block = "BLOCK",
     Document = "DOCUMENT",
     Library = "LIBRARY",
     Link = "LINK",
@@ -50,12 +44,12 @@ export enum IconLabel {
 export type ExtraSection = {
     id: string;
     title: string;
-    items: (SearchResult | ImageSearchResult)[];
     getResults?: (query: string) => Promise<SearchResult[]>;
     renderPreview?: (item: SearchResult) => ReactElement;
 };
 
 export type LinkChooserProps = {
+    selectedResult?: SearchResult | null;
     openInNewTab: boolean;
     ariaLabel?: string;
     label?: string;

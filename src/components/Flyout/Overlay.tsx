@@ -13,7 +13,6 @@ type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange" | "onConfirm" |
     positionProps: HTMLAttributes<Element>;
     overlayTriggerProps: HTMLAttributes<Element>;
     scrollRef: RefObject<HTMLDivElement>;
-    innerOverlayRef: RefObject<HTMLDivElement>;
     onClose: () => void;
 };
 
@@ -28,10 +27,10 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         positionProps,
         overlayTriggerProps,
         scrollRef,
-        innerOverlayRef,
         fixedHeader,
         fixedFooter,
         fitContent,
+        contentMinHeight,
     },
     ref,
 ) => {
@@ -48,11 +47,18 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                 fitContent ? "tw-min-w-0" : "tw-min-w-[400px]",
             ])}
         >
-            <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0" ref={innerOverlayRef}>
+            <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0">
                 {fixedHeader}
                 <div
                     ref={scrollRef}
-                    className="tw-flex tw-overflow-y-auto tw-overflow-x-hidden tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95"
+                    className={merge([
+                        "tw-flex tw-overflow-y-auto tw-overflow-x-hidden tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95",
+                        !fixedHeader && "tw-rounded-t",
+                        !fixedFooter && "tw-rounded-b",
+                    ])}
+                    style={{
+                        minHeight: `${contentMinHeight}px`,
+                    }}
                 >
                     {title && (
                         <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8">
@@ -69,7 +75,6 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                     {Children.map(children, (child, index) => (
                         <div key={index}>{child}</div>
                     ))}
-
                     <DismissButton onDismiss={onClose} />
                 </div>
                 {fixedFooter}

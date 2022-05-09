@@ -31,7 +31,11 @@ ActionMenu.args = {
                     size: MenuItemContentSize.Small,
                     decorator: <IconAudio />,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
-                    onClick: action("click"),
+                    onClick: (value) => {
+                        action("switch toggled")(value);
+                    },
+                    type: "switch",
+                    initialValue: false,
                 },
                 {
                     id: "2",

@@ -11,7 +11,7 @@ import { merge } from "@utilities/merge";
 import { useActor } from "@xstate/react";
 import React, { FC, useMemo, useRef } from "react";
 import { defaultSection } from "./sections";
-import { DropdownState, LinkChooserState } from "./state/machine";
+import { DropdownState, LinkChooserState } from "./state/types";
 import { NavigationMenuItemProps, NavigationMenuProps } from "./types";
 
 export const NavigationMenu: FC<NavigationMenuProps> = ({ machineService, state }) => {
@@ -67,7 +67,7 @@ export const NavigationMenuItem: FC<NavigationMenuItemProps> = ({
             aria-label={`Navigate to ${id} section of search results.`}
             data-key={id}
             data-test-id="link-chooser-navigation-menu-item"
-            className={merge(["hover:tw-bg-black-0", isFocused && isFocusVisible && "tw-bg-black-0"])}
+            className={merge(["hover:tw-bg-black-10", isFocused && isFocusVisible && "tw-bg-black-10"])}
         >
             <MenuItem
                 title={itemTitle}

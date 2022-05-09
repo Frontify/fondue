@@ -1,15 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FieldsetHeaderType } from "@components/FieldsetHeader/FieldsetHeader";
 import { mount } from "@cypress/react";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import { TextInput } from "@components/TextInput/TextInput";
-import { TEXT_INPUT_ID } from "@components/TextInput/TextInput.spec";
-import React from "react";
+import React, { FC } from "react";
 import { Accordion, AccordionItem } from "./Accordion";
+import { AccordionHeaderProps } from ".";
 
 const ACCORDION_ITEM_ID = "[data-test-id=accordion-item]";
-const ACCORDION_ITEM_CONTENT_ID = "[data-test-id=accordion-item-content]";
+const ACCORDION_ITEM_CONTENT_ID = '[data-test-id="collapsible-wrap"]';
+const TEXT_INPUT_ID = "[data-test-id=text-input]";
+const TEST_HEADER_ID = '[data-test-id="test-header"]';
+const ACCORDION_ID = "[data-test-id=accordion]";
+
+const itemClasses = ["tw-divide-y tw-divide-black-10"];
+const accordionClasses = ["tw-border-b", "tw-border-t", "tw-border-black-10", ...itemClasses];
+
+const TestHeader: FC<AccordionHeaderProps> = ({ isOpen, disabled, children }) => (
+    <div data-test-id="test-header" data-state={isOpen ? "open" : "closed"} data-disabled={disabled}>
+        {children}
+    </div>
+);
 
 describe("Accordion Component", () => {
     it("should not render any item", () => {
@@ -53,11 +64,9 @@ describe("Accordion Component", () => {
         const onClickStub = cy.stub().as("onClickStub");
         mount(
             <Accordion>
-                <AccordionItem header={{ children: "1", decorator: <IconIcons />, type: FieldsetHeaderType.Accordion }}>
-                    1
-                </AccordionItem>
+                <AccordionItem header={{ children: "1", decorator: <IconIcons /> }}>1</AccordionItem>
                 <AccordionItem header={{ children: "2" }}>2</AccordionItem>
-                <AccordionItem header={{ children: "3", type: FieldsetHeaderType.AddRemove, onClick: onClickStub }} />
+                <AccordionItem header={{ children: "3", onClick: onClickStub }} />
             </Accordion>,
         );
 
@@ -93,6 +102,61 @@ describe("Accordion Component", () => {
         cy.get(ACCORDION_ITEM_ID).eq(0).siblings(ACCORDION_ITEM_CONTENT_ID).should("not.exist");
         cy.get(ACCORDION_ITEM_ID).eq(1).siblings(ACCORDION_ITEM_CONTENT_ID).should("exist");
         cy.get(ACCORDION_ITEM_ID).eq(2).siblings(ACCORDION_ITEM_CONTENT_ID).should("exist");
+    });
+
+    it("renders a custom header component", () => {
+        mount(
+            <Accordion>
+                <AccordionItem header={{ children: "1" }} headerComponent={TestHeader}>
+                    1
+                </AccordionItem>
+                <AccordionItem header={{ children: "2", disabled: true }} headerComponent={TestHeader}>
+                    2
+                </AccordionItem>
+                <AccordionItem header={{ children: "3", active: true }} headerComponent={TestHeader}>
+                    3
+                </AccordionItem>
+            </Accordion>,
+        );
+
+        cy.get(TEST_HEADER_ID).should("have.length", 3);
+        cy.get(TEST_HEADER_ID).first().should("have.text", "1");
+        cy.get(TEST_HEADER_ID).eq(1).invoke("data", "disabled").should("be.true");
+        cy.get(TEST_HEADER_ID).eq(2).invoke("data", "state").should("equal", "open");
+    });
+
+    it("shows border and divider on the Accordion", () => {
+        mount(
+            <Accordion>
+                <AccordionItem header={{ children: "1" }} divider={true}>
+                    1
+                </AccordionItem>
+            </Accordion>,
+        );
+
+        cy.get(ACCORDION_ID).should("have.length", 1);
+        cy.wrap(accordionClasses).each(($class) => {
+            cy.get(ACCORDION_ID).should("have.class", $class);
+        });
+        cy.wrap(itemClasses).each(($class) => {
+            cy.get(ACCORDION_ITEM_ID).parent().should("have.class", $class);
+        });
+    });
+
+    it("hides border and divider", () => {
+        mount(
+            <Accordion border={false} divider={false}>
+                <AccordionItem header={{ children: "1" }}>1</AccordionItem>
+            </Accordion>,
+        );
+
+        cy.get(ACCORDION_ID).should("have.length", 1);
+        cy.wrap(itemClasses).each(($class) => {
+            cy.get(ACCORDION_ITEM_ID).parent().should("not.have.class", $class);
+        });
+        cy.wrap(accordionClasses).each(($class) => {
+            cy.get(ACCORDION_ID).should("not.have.class", $class);
+        });
     });
 
     it("should correctly navigate with keyboard", () => {

@@ -36,7 +36,7 @@ export const AliasTokens: Story = () => {
                         <div className="tw-flex tw-flex-col tw-space-y-3 sm:tw-flex-row tw-text-xs sm:tw-space-y-0 sm:tw-space-x-4">
                             <div className="tw-w-32 tw-shrink-0">
                                 <div className="tw-h-10 tw-flex tw-flex-col tw-justify-center">
-                                    <div className="tw-text-sm tw-font-semibold tw-text-grey-90">{category}</div>
+                                    <div className="tw-text-sm tw-font-semibold tw-text-text">{category}</div>
                                 </div>
                             </div>
 
@@ -45,11 +45,11 @@ export const AliasTokens: Story = () => {
                                     return (
                                         <div className="tw-space-y-1.5" key={name}>
                                             <div
-                                                className={`tw-h-10 tw-w-full tw-rounded tw-ring-1 tw-ring-inset tw-ring-black tw-ring-opacity-0 tw-border-grey-20 tw-border`}
+                                                className={`tw-h-10 tw-w-full tw-rounded tw-ring-1 tw-ring-inset tw-ring-black tw-ring-opacity-0 tw-border-line tw-border`}
                                                 style={{ backgroundColor: value }}
                                             />
                                             <div className="tw-block">
-                                                <div className="tw-font-medium tw-font-sans tw-text-grey-90">
+                                                <div className="tw-font-medium tw-font-sans tw-text-text">
                                                     {attributes["tailwind-name"]}
                                                 </div>
                                             </div>
@@ -78,7 +78,7 @@ export const BrandTokens: Story = () => {
                         <div className="tw-flex tw-flex-col tw-space-y-3 sm:tw-flex-row tw-text-xs sm:tw-space-y-0 sm:tw-space-x-4">
                             <div className="tw-w-32 tw-shrink-0">
                                 <div className="tw-h-10 tw-flex tw-flex-col tw-justify-center">
-                                    <div className="tw-text-sm tw-font-semibold tw-text-grey-90">{category}</div>
+                                    <div className="tw-text-sm tw-font-semibold tw-text-text">{category}</div>
                                 </div>
                             </div>
 
@@ -87,11 +87,11 @@ export const BrandTokens: Story = () => {
                                     return (
                                         <div className="tw-space-y-1.5" key={name}>
                                             <div
-                                                className={`tw-h-10 tw-w-full tw-rounded tw-ring-1 tw-ring-inset tw-ring-black tw-ring-opacity-0 tw-border-grey-20 tw-border`}
+                                                className={`tw-h-10 tw-w-full tw-rounded tw-ring-1 tw-ring-inset tw-ring-black tw-ring-opacity-0 tw-border-line tw-border`}
                                                 style={{ backgroundColor: value }}
                                             />
                                             <div className="tw-block">
-                                                <div className="tw-font-medium tw-font-sans tw-text-grey-90">
+                                                <div className="tw-font-medium tw-font-sans tw-text-text">
                                                     {attributes.item}
                                                 </div>
                                             </div>

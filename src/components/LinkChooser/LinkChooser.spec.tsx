@@ -2,14 +2,14 @@
 
 import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
-import { Validation } from "@components/TextInput";
+import { Validation, validationClassMap } from "@utilities/validation";
 import { mount } from "@cypress/react";
 import React from "react";
 import { LinkChooser, QUERIES_STORAGE_KEY } from "./LinkChooser";
 import { data } from "./mock/data";
-import { guidelineSection } from "./mock/guidelines";
-import { templateSection } from "./mock/templates";
-import { LinkChooserProps, SearchResult, validationClassMap } from "./types";
+import { guidelineSection, GUIDELINE_ITEMS } from "./mock/guidelines";
+import { templateSection, TEMPLATE_ITEMS } from "./mock/templates";
+import { LinkChooserProps, SearchResult } from "./types";
 import { filterItems } from "./utils/helpers";
 
 const LINK_CHOOSER_ID = "[data-test-id=link-chooser]";
@@ -36,11 +36,11 @@ const MENU_ITEM = "[data-test-id='link-chooser-navigation-menu-item']";
 const DEFAULT_TIMEOUT = 100;
 const CUSTOM_QUERY = "Custom link";
 const SELECTED_CLASS = "tw-text-violet-60";
-const FOCUSED_OPTION_CLASS = "tw-bg-black-0";
+const FOCUSED_OPTION_CLASS = "tw-bg-black-10";
 const TEMPLATE_TITLE = templateSection.title;
 const GUIDELINE_TITLE = guidelineSection.title;
-const FIRST_TEMPLATE_TITLE = templateSection.items[0].title;
-const FIRST_GUIDELINE_TITLE = guidelineSection.items[0].title;
+const FIRST_TEMPLATE_TITLE = TEMPLATE_ITEMS[0].title;
+const FIRST_GUIDELINE_TITLE = GUIDELINE_ITEMS[0].title;
 
 const PREFILLED_LOCAL_STORAGE = [
     {
@@ -110,14 +110,14 @@ const getLinkChooserComponent = (overwriteProps?: Partial<LinkChooserProps>, ret
     const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> =>
         new Promise((resolve, reject) =>
             setTimeout(() => {
-                returnError ? reject() : resolve(filterItems(query, templateSection.items));
+                returnError ? reject() : resolve(filterItems(query, TEMPLATE_ITEMS));
             }, DEFAULT_TIMEOUT),
         );
 
     const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> =>
         new Promise((resolve, reject) =>
             setTimeout(() => {
-                returnError ? reject() : resolve(filterItems(query, guidelineSection.items));
+                returnError ? reject() : resolve(filterItems(query, GUIDELINE_ITEMS));
             }, DEFAULT_TIMEOUT),
         );
 
@@ -284,6 +284,15 @@ describe("LinkChooser Component", () => {
             cy.get(DROPDOWN_WRAPPER_ID).should("not.exist");
         });
 
+        it("hides dropdown on escape", () => {
+            mount(getLinkChooserComponent());
+
+            cy.get(SEARCH_WRAPPER_ID).click();
+            cy.get(DROPDOWN_WRAPPER_ID).should("exist");
+            cy.get(SEARCH_INPUT_ID).realPress("Escape");
+            cy.get(DROPDOWN_WRAPPER_ID).should("not.exist");
+        });
+
         it("adds selected item to local storage", () => {
             mount(getLinkChooserComponent());
 
@@ -325,12 +334,14 @@ describe("LinkChooser Component", () => {
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(`${SELECT_SECTION_ID} > li`).should("have.length", 2);
             cy.get("@firstSelectItem").should("contain.text", `${CUSTOM_QUERY}1`);
-            cy.get(SEARCH_INPUT_ID).type("{Backspace}2");
+            cy.get(SEARCH_INPUT_ID).clear();
+            cy.get(SEARCH_INPUT_ID).type(`${CUSTOM_QUERY}2`);
             cy.get("@firstSelectItem").click();
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(`${SELECT_SECTION_ID} > li`).should("have.length", 3);
             cy.get("@firstSelectItem").should("contain.text", `${CUSTOM_QUERY}2`);
-            cy.get(SEARCH_INPUT_ID).type("{Backspace}1");
+            cy.get(SEARCH_INPUT_ID).clear();
+            cy.get(SEARCH_INPUT_ID).type(`${CUSTOM_QUERY}1`);
             cy.get("@firstSelectItem").click();
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(`${SELECT_SECTION_ID} > li`).should("have.length", 3);
@@ -499,7 +510,7 @@ describe("LinkChooser Component", () => {
             cy.get(BACK_BUTTON_ID).should("not.exist");
             cy.get(ACTION_MENU_ID).contains(TEMPLATE_TITLE).click();
             cy.get(MENU_ITEM).should("have.length", 1).and("have.text", TEMPLATE_TITLE);
-            cy.get(SELECT_SECTION_ID).children().should("have.length", templateSection.items.length);
+            cy.get(SELECT_SECTION_ID).children().should("have.length", TEMPLATE_ITEMS.length);
         });
 
         it("shows loading animation and loads results", () => {
@@ -588,19 +599,17 @@ describe("LinkChooser Component", () => {
             cy.get(MENU_ITEM).eq(1).should("have.class", FOCUSED_OPTION_CLASS).and("have.text", TEMPLATE_TITLE);
             cy.get(SEARCH_INPUT_ID).realPress("Enter");
             cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
+            cy.get(MENU_ITEM).first().should("have.class", FOCUSED_OPTION_CLASS);
+            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
             cy.get(`${SELECT_SECTION_ID} > li`).first().as("firstSelectItem");
-            cy.get("@firstSelectItem").should("contain.text", FIRST_TEMPLATE_TITLE);
-            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
-            cy.get(MENU_ITEM).first().should("have.text", TEMPLATE_TITLE);
-            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
-            cy.get(`@firstSelectItem`).should("have.class", FOCUSED_OPTION_CLASS);
-            cy.get(SEARCH_INPUT_ID).realPress("Escape");
-            //TODO: add back button test section as soon as keyboard-navigation is fixed
-            // cy.get(SEARCH_INPUT_ID).realPress("ArrowUp");
-            // cy.get(`@firstSelectItem`).should("not.have.class", FOCUSED_OPTION_CLASS);
-            // cy.get(MENU_ITEM).first().should("have.class", FOCUSED_OPTION_CLASS);
-            // cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
-            // cy.get(EMPTY_RESULTS_ID).should("be.visible");
+            cy.get("@firstSelectItem")
+                .should("contain.text", FIRST_TEMPLATE_TITLE)
+                .and("have.class", FOCUSED_OPTION_CLASS);
+            cy.get(SEARCH_INPUT_ID).realPress("ArrowUp");
+            cy.get(MENU_ITEM).first().should("have.class", FOCUSED_OPTION_CLASS).and("have.text", TEMPLATE_TITLE);
+            cy.get(SEARCH_INPUT_ID).realPress("Enter");
+            cy.get(EMPTY_RESULTS_ID).should("be.visible");
+            cy.get(MENU_ITEM).eq(1).should("have.text", TEMPLATE_TITLE).and("have.class", FOCUSED_OPTION_CLASS);
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
             cy.get(`@firstSelectItem`)
                 .should("not.have.class", FOCUSED_OPTION_CLASS)
@@ -623,7 +632,7 @@ describe("LinkChooser Component", () => {
             cy.get(BACK_BUTTON_ID).should("not.exist");
             cy.get(ACTION_MENU_ID).contains(GUIDELINE_TITLE).click();
             cy.get(MENU_ITEM).should("have.length", 1).and("have.text", GUIDELINE_TITLE);
-            cy.get(SELECT_SECTION_ID).children().should("have.length", guidelineSection.items.length);
+            cy.get(SELECT_SECTION_ID).children().should("have.length", GUIDELINE_ITEMS.length);
         });
 
         it("shows loading animation and loads results", () => {
@@ -635,7 +644,7 @@ describe("LinkChooser Component", () => {
             cy.get(LOADER_ID).should("exist");
             cy.get(RESULTS_LIST_ID)
                 .children()
-                .should("have.length", filterItems(FIRST_GUIDELINE_TITLE, guidelineSection.items).length);
+                .should("have.length", filterItems(FIRST_GUIDELINE_TITLE, GUIDELINE_ITEMS).length);
         });
 
         it("searches the same query when switching from default view to guidelines view", () => {
@@ -647,7 +656,7 @@ describe("LinkChooser Component", () => {
             cy.get(LOADER_ID).should("exist");
             cy.get(RESULTS_LIST_ID)
                 .children()
-                .should("have.length", filterItems(FIRST_GUIDELINE_TITLE, guidelineSection.items).length);
+                .should("have.length", filterItems(FIRST_GUIDELINE_TITLE, GUIDELINE_ITEMS).length);
         });
 
         it("searches the same query when switching from guidelines view to default view", () => {
@@ -661,7 +670,7 @@ describe("LinkChooser Component", () => {
             cy.get(LOADER_ID).should("exist");
             cy.get(RESULTS_LIST_ID)
                 .children()
-                .should("have.length", filterItems(FIRST_GUIDELINE_TITLE, guidelineSection.items).length);
+                .should("have.length", filterItems(FIRST_GUIDELINE_TITLE, GUIDELINE_ITEMS).length);
         });
 
         it("selects first item", () => {
@@ -708,7 +717,7 @@ describe("LinkChooser Component", () => {
                 .should("contain", JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || "null")[0].title);
         });
 
-        it.only("can be navigated to by keyboard", () => {
+        it("can be navigated to by keyboard", () => {
             mount(getLinkChooserComponent());
             cy.window().focus();
             cy.get("body").realPress("Tab");
@@ -718,7 +727,6 @@ describe("LinkChooser Component", () => {
             cy.get(DROPDOWN_WRAPPER_ID).should("be.visible");
             cy.get(`${SELECT_SECTION_ID} > li`).first().as("firstSelectItem");
             cy.get("@firstSelectItem").should("contain.text", FIRST_GUIDELINE_TITLE);
-            cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
             cy.get(SEARCH_INPUT_ID).realPress("ArrowDown");
             cy.get(`@firstSelectItem`).should("have.class", FOCUSED_OPTION_CLASS);
             cy.get(SEARCH_INPUT_ID).realPress("Enter");

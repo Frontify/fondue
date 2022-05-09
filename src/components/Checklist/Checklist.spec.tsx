@@ -23,7 +23,7 @@ const CHECKBOXES = [
     },
 ];
 
-export const CHECKLIST_ID = "[data-test-id=checklist]";
+const CHECKLIST_ID = "[data-test-id=checklist]";
 
 const Component: FC<{ direction: ChecklistDirection; columns?: Columns }> = ({ direction, columns }) => {
     const [activeBoxes, setActiveBoxes] = useState<string[]>([]);

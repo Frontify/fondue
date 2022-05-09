@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ColorPreview } from "@components/ColorPicker";
 import { ColorPicker, ColorPickerProps } from "@components/ColorPicker/ColorPicker";
 import { Flyout } from "@components/Flyout/Flyout";
 import React, { FC, useState } from "react";
 import { Color, ColorFormat } from "../../types/colors";
 import { ColorInputTrigger } from "./ColorPickerTrigger";
-import { ColorPreview } from "@components/ColorPicker";
 
 export type ColorPickerFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSelect"> & {
     id?: string;
@@ -13,6 +13,9 @@ export type ColorPickerFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSele
     onClick?: () => void;
     onClose?: () => void;
     currentColor: Color | null;
+    clearable?: boolean;
+    onClear?: () => void;
+    onDelete?: () => void;
 };
 
 export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
@@ -23,6 +26,9 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
     currentColor,
     palettes,
     disabled = false,
+    clearable = false,
+    onClear,
+    onDelete,
 }) => {
     const [open, setOpen] = useState(false);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
@@ -45,7 +51,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
             onConfirm={handleClick}
             isOpen={open}
             onCancel={() => handleOpenChange(false)}
-            fixedHeader={<ColorPreview color={currentColor || { r: 255, g: 255, b: 255 }} format={currentFormat} />}
+            fixedHeader={<ColorPreview color={currentColor || { r: 255, g: 255, b: 255 }} />}
             onOpenChange={handleOpenChange}
             trigger={
                 <ColorInputTrigger
@@ -54,6 +60,19 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
                     format={currentFormat}
                     disabled={disabled}
                     id={id}
+                    clearable={clearable}
+                    onClear={() => {
+                        setOpen(false);
+                        onClear && onClear();
+                    }}
+                    onDelete={
+                        onDelete
+                            ? () => {
+                                  setOpen(false);
+                                  onDelete && onDelete();
+                              }
+                            : undefined
+                    }
                 />
             }
         >

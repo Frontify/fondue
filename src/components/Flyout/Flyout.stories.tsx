@@ -1,20 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Slider } from "@components/Slider/Slider";
-import { FormControl } from "@components/FormControl/FormControl";
-import { BadgeStatus, BadgeStyle } from "@components/Badge/Badge";
+import { BadgeStatus, BadgeStyle } from "@components/Badge";
 import { Button, ButtonStyle } from "@components/Button/Button";
 import { Divider } from "@components/Divider/Divider";
-import IconActions from "@foundation/Icon/Generated/IconActions";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import { FormControl } from "@components/FormControl/FormControl";
+import { Slider } from "@components/Slider/Slider";
 import { Textarea } from "@components/Textarea/Textarea";
 import { TextInput } from "@components/TextInput/TextInput";
+import IconActions from "@foundation/Icon/Generated/IconActions";
+import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import { chain } from "@react-aria/utils";
 import { action } from "@storybook/addon-actions";
 import { Meta, Story } from "@storybook/react";
-import React, { useState } from "react";
-import { Flyout, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, FlyoutProps } from "./Flyout";
+import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { merge } from "@utilities/merge";
+import React, { MutableRefObject, useState } from "react";
+import { Flyout, FlyoutProps, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT } from "./Flyout";
 import { FlyoutFooter } from "./FlyoutFooter";
-import { chain } from "@react-aria/utils";
+import { Dropdown } from "@components/Dropdown";
+import { DatePicker } from "@components/DatePicker";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -128,16 +132,41 @@ WithBadges.args = {
 
 const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
     const [open, setOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<Date | null>();
 
     return (
         <Flyout
             {...args}
-            trigger={<Button onClick={() => setOpen((open) => !open)}>Button</Button>}
+            trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+                <Button onClick={() => setOpen(!open)} ref={ref} aria-label={ariaLabel}>
+                    Button
+                </Button>
+            )}
             isOpen={open}
             onOpenChange={chain(args.onOpenChange, setOpen)}
             onCancel={chain(args.onCancel, () => setOpen(false))}
         >
-            <p className="tw-text-center tw-py-8">Fun with Flyouts and Buttons!</p>
+            <div className="tw-p-4">
+                <p className="tw-pt-3">Field 1</p>
+                <Dropdown
+                    onChange={(id) => console.log(id)}
+                    activeItemId={"1"}
+                    menuBlocks={[
+                        {
+                            id: "block1",
+                            menuItems: [
+                                { id: "1", title: "Item 1" },
+                                { id: "2", title: "Item 2" },
+                                { id: "3", title: "Item 3" },
+                                { id: "4", title: "Item 4" },
+                                { id: "5", title: "Item 5" },
+                            ],
+                        },
+                    ]}
+                />
+                <p className="tw-pt-3">Field 2</p>
+                <DatePicker value={selectedDate as Date} onChange={setSelectedDate} />
+            </div>
         </Flyout>
     );
 };
@@ -208,4 +237,89 @@ WithCustomFooter.args = {
 WithCustomFooter.argTypes = {
     trigger: { table: { disable: true } },
     decorator: { table: { disable: true } },
+};
+
+const WithCustomFooterAndHeaderTemplate: Story<FlyoutProps> = (args) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <Flyout
+            {...args}
+            trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+                <Button onClick={() => setIsOpen(!isOpen)} ref={ref} aria-label={ariaLabel}>
+                    Click me
+                </Button>
+            )}
+            isOpen={isOpen}
+            onOpenChange={chain(args.onOpenChange, setIsOpen)}
+            onCancel={chain(args.onCancel, () => setIsOpen(false))}
+        >
+            <p className="tw-text-center tw-py-8">Flyout Content</p>
+        </Flyout>
+    );
+};
+export const WithCustomFooterAndHeader = WithCustomFooterAndHeaderTemplate.bind({});
+
+WithCustomFooterAndHeader.args = {
+    legacyFooter: false,
+    fixedHeader: (
+        <div className="tw-py-5 tw-px-8 tw-bg-white dark:tw-bg-black-95 tw-border-b tw-border-b-black-10">
+            Custom Header
+        </div>
+    ),
+    fixedFooter: (
+        <FlyoutFooter
+            buttons={[
+                {
+                    children: "A button",
+                    style: ButtonStyle.Primary,
+                },
+            ]}
+        />
+    ),
+};
+
+const WithRenderFunctionTriggerTemplate: Story<FlyoutProps> = (args) => {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <Flyout
+            {...args}
+            trigger={(props, ref: MutableRefObject<HTMLDivElement>, state) => (
+                <div
+                    {...props}
+                    ref={ref}
+                    className={merge([
+                        "tw-border tw-rounded tw-w-[200px] tw-p-2 tw-text-s tw-text-center tw-h-[60px] tw-outline-none tw-items-center tw-flex tw-justify-center",
+                        state.isFocusVisible && FOCUS_STYLE,
+                        state.isPressed && "tw-bg-black-10",
+                    ])}
+                >
+                    {state.isPressed ? "I'm Pressed!" : " Accessible custom trigger"}
+                </div>
+            )}
+            isOpen={open}
+            onOpenChange={chain(args.onOpenChange, setOpen)}
+            onCancel={chain(args.onCancel, () => setOpen(false))}
+        >
+            <p className="tw-text-center tw-py-8">Fun with Flyouts and Buttons!</p>
+        </Flyout>
+    );
+};
+export const WithRenderFunctionTrigger = WithRenderFunctionTriggerTemplate.bind({});
+
+WithRenderFunctionTrigger.args = {
+    title: "Header title",
+    decorator: <IconIcons />,
+};
+
+WithRenderFunctionTrigger.argTypes = {
+    trigger: { table: { disable: true } },
+    decorator: { table: { disable: true } },
+};
+
+export const WithContentMinHeight = FlyoutTemplate.bind({});
+
+WithContentMinHeight.args = {
+    contentMinHeight: 200,
 };

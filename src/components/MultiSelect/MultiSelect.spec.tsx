@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CHECKLIST_ID } from "@components/Checklist/Checklist.spec";
 import { mount } from "@cypress/react";
-import { CHECKBOX_ID, CHECKBOX_INPUT_ID } from "@components/Checkbox/Checkbox.spec";
-import { TAG_ID } from "@components/Tag/Tag.spec";
 import React, { FC, useState } from "react";
 import { MultiSelect } from "./MultiSelect";
 
 const TRIGGER_ID = "[data-test-id=trigger]";
+const CHECKBOX_ID = "[data-test-id=checkbox]";
+const CHECKBOX_INPUT_ID = "[data-test-id=checkbox-input]";
+const TAG_ID = "[data-test-id=tag]";
+const CHECKLIST_ID = "[data-test-id=checklist]";
 
 const ITEMS = {
     activeItemKeys: ["Short tag", "Tag 74"],

@@ -6,7 +6,16 @@ import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
-import React, { cloneElement, FC, MouseEvent, ReactElement, ReactNode, useCallback, useRef } from "react";
+import { useForwardedRef } from "@utilities/useForwardedRef";
+import React, {
+    cloneElement,
+    forwardRef,
+    ForwardRefRenderFunction,
+    MouseEvent,
+    ReactElement,
+    ReactNode,
+    useCallback,
+} from "react";
 
 export enum ButtonStyle {
     Secondary = "Secondary",
@@ -27,6 +36,11 @@ export enum ButtonType {
     Reset = "Reset",
 }
 
+export enum ButtonRounding {
+    Medium = "Medium",
+    Full = "Full",
+}
+
 const sizeClasses: Record<ButtonSize, string> = {
     [ButtonSize.Small]: "tw-px-3 tw-h-6 tw-text-xs",
     [ButtonSize.Medium]: "tw-px-4 tw-h-9 tw-text-s",
@@ -37,6 +51,12 @@ const iconOnlySizeClasses: Record<ButtonSize, string> = {
     [ButtonSize.Small]: "tw-p-1",
     [ButtonSize.Medium]: "tw-p-2",
     [ButtonSize.Large]: "tw-p-3",
+};
+
+const iconOnlyFullRoundingSizeClasses: Record<ButtonSize, string> = {
+    [ButtonSize.Small]: "tw-p-0.5",
+    [ButtonSize.Medium]: "tw-p-1",
+    [ButtonSize.Large]: "tw-p-2",
 };
 
 const iconSpacing: Record<ButtonSize, string> = {
@@ -91,6 +111,7 @@ export type ButtonProps = {
     type?: ButtonType;
     style?: ButtonStyle;
     size?: ButtonSize;
+    rounding?: ButtonRounding;
     solid?: boolean;
     inverted?: boolean;
     disabled?: boolean;
@@ -98,23 +119,29 @@ export type ButtonProps = {
     children?: ReactNode;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     hugWidth?: boolean;
+    "aria-label"?: string;
 };
 
-export const Button: FC<ButtonProps> = ({
-    type = ButtonType.Button,
-    style = ButtonStyle.Primary,
-    size = ButtonSize.Medium,
-    solid = true,
-    inverted = false,
-    disabled = false,
-    icon,
-    children,
-    onClick,
-    hugWidth = true,
-}) => {
+const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, ButtonProps> = (
+    {
+        type = ButtonType.Button,
+        style = ButtonStyle.Primary,
+        size = ButtonSize.Medium,
+        rounding = ButtonRounding.Medium,
+        solid = true,
+        inverted = false,
+        disabled = false,
+        icon,
+        children,
+        onClick,
+        hugWidth = true,
+        "aria-label": ariaLabel,
+    },
+    externalRef,
+) => {
     const wrap = (child: ReactNode) => (children ? <span className={iconSpacing[size]}>{child}</span> : child);
     const { isFocusVisible, focusProps } = useFocusRing();
-    const ref = useRef<HTMLButtonElement | null>(null);
+    const ref = useForwardedRef<HTMLButtonElement | null>(externalRef);
     const { buttonProps } = useButton(
         { onPress: () => onClick && onClick(), isDisabled: disabled, type: typesMap[type] },
         ref,
@@ -131,10 +158,15 @@ export const Button: FC<ButtonProps> = ({
     return (
         <button
             {...mergeProps(buttonProps, focusProps)}
+            aria-label={ariaLabel}
             ref={ref}
             className={merge([
-                "tw-outline-none tw-relative tw-flex tw-items-center tw-justify-center tw-border-0 tw-rounded tw-cursor-pointer tw-font-sans tw-transition-colors",
-                icon && !children ? iconOnlySizeClasses[size] : sizeClasses[size],
+                "tw-outline-none tw-relative tw-flex tw-items-center tw-justify-center tw-border-0 tw-cursor-pointer tw-font-sans tw-transition-colors",
+                rounding === ButtonRounding.Full
+                    ? `tw-rounded-full ${iconOnlyFullRoundingSizeClasses[size]}`
+                    : "tw-rounded",
+                rounding === ButtonRounding.Medium &&
+                    (icon && !children ? iconOnlySizeClasses[size] : sizeClasses[size]),
                 merge(
                     disabled
                         ? [
@@ -153,3 +185,5 @@ export const Button: FC<ButtonProps> = ({
         </button>
     );
 };
+
+export const Button = forwardRef(ButtonComponent);

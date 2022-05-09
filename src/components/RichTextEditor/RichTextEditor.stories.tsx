@@ -2,16 +2,17 @@
 
 import { Meta, Story } from "@storybook/react";
 import React from "react";
-import { BlockStyleTypes, TextAlignTypes } from "./renderer/renderBlockStyles";
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from "./RichTextEditor";
-import { createLinkNode } from "./utils/editor/link";
-import { createListItemNode } from "./utils/editor/listItem";
+import { EditorActions } from "./utils/actions";
+import { checkboxValue, htmlValue, IPSUM, value } from "./utils/exampleValues";
+import { TextStyles } from "./utils/getTextStyles";
 
 // eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Rich Text Editor",
     component: RichTextEditorComponent,
     args: {
+        value: JSON.stringify(value),
         placeholder: "Some placeholder",
         readonly: false,
         clear: false,
@@ -19,92 +20,88 @@ export default {
     argTypes: {
         onTextChange: { action: "onTextChange" },
         onBlur: { action: "onBlur" },
+        vale: { type: "string" },
     },
 } as Meta;
 
-const value = [
-    { type: BlockStyleTypes.Paragraph, children: [{ text: "bold", bold: true }] },
-    { type: BlockStyleTypes.Paragraph, children: [{ text: "italic", italic: true }] },
-    { type: BlockStyleTypes.Paragraph, children: [{ text: "underline", underline: true }] },
-    { type: BlockStyleTypes.Paragraph, children: [{ text: "strikethrough", strikethrough: true }] },
-    { type: BlockStyleTypes.Paragraph, children: [{ text: "code", code: true }] },
-    {
-        type: BlockStyleTypes.UnorderedList,
-        children: [createListItemNode("red"), createListItemNode("blue"), createListItemNode("yellow")],
-    },
-    {
-        type: BlockStyleTypes.OrderedList,
-        children: [
-            createListItemNode("Mix flour, baking powder, sugar, and salt."),
-            createListItemNode("In another bowl, mix eggs, milk, and oil."),
-            createListItemNode("Stir both mixtures together."),
-            createListItemNode("Fill muffin tray 3/4 full."),
-            createListItemNode("Bake for 20 minutes."),
-        ],
-    },
-    {
-        type: BlockStyleTypes.Paragraph,
-        children: [
-            {
-                text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
-            },
-        ],
-        properties: {
-            textAlign: TextAlignTypes.AlignCenter,
-        },
-    },
-];
-
-export const RichTextEditor: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+const RichTextEditorTemplate: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
-RichTextEditor.argTypes = { value: { type: "string" } };
-RichTextEditor.args = { value: JSON.stringify(value) };
 
-export const WithReadonlyState: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
-    <RichTextEditorComponent {...args} />
-);
+export const RichTextEditor = RichTextEditorTemplate.bind({});
+
+export const WithReadonlyState = RichTextEditorTemplate.bind({});
 WithReadonlyState.args = {
     readonly: true,
-    value: JSON.stringify([
-        ...value,
-        {
-            type: BlockStyleTypes.Paragraph,
-            children: [createLinkNode("https://git-scm.com/downloads", "Link")],
-        },
-    ]),
 };
-WithReadonlyState.argTypes = { value: { type: "string" } };
 
-export const RichTextWithHTML: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
-    <RichTextEditorComponent {...args} />
-);
+export const RichTextWithHTML = RichTextEditorTemplate.bind({});
 RichTextWithHTML.args = {
-    value: `
-        <p><strong>bold</strong></p>
-        <p><i>italic</i></p>
-        <p><u>underline</u></p>
-        <p><s>strikethrough</s></p>
-        <p><code>code</code></p>
-        <ul>
-            <li>red</li>
-            <li>blue</li>
-            <li>yellow</li>
-        </ul>
-        <ol>
-            <li>Mix flour, baking powder, sugar, and salt.</li>
-            <li>In another bowl, mix eggs, milk, and oil.</li>
-            <li>Stir both mixtures together.</li>
-            <li>Fill muffin tray 3/4 full.</li>
-            <li>Bake for 20 minutes.</li>
-        </ol>
-    `,
+    value: htmlValue,
 };
-RichTextWithHTML.argTypes = { value: { type: "string" } };
 
 export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <div className="tw-flex">
         <RichTextEditorComponent {...args} />
     </div>
 );
-RichTextEditorFlex.argTypes = { value: { type: "string" } };
+
+export const WithCustomTextStyle = RichTextEditorTemplate.bind({});
+WithCustomTextStyle.args = {
+    textStyles: [
+        { type: TextStyles.ELEMENT_HEADING1, className: "tw-text-7xl tw-font-bold tw-text-green-80" },
+        { type: TextStyles.ELEMENT_HEADING2, className: "tw-text-5xl tw-font-bold tw-text-violet-60" },
+        { type: TextStyles.ELEMENT_HEADING3, className: "tw-text-3xl tw-font-bold tw-text-yellow-70" },
+        { type: TextStyles.ELEMENT_HEADING4, className: "tw-text-xl tw-text-red-50" },
+        { type: TextStyles.ELEMENT_CUSTOM1, className: "tw-font-mono tw-italic tw-text-black-80" },
+        { type: TextStyles.ELEMENT_CUSTOM2, className: "tw-underline tw-text-black-80" },
+    ],
+};
+
+export const MultipleRichTextEditors: Story<RichTextEditorProps> = () => (
+    <div className="tw-grid tw-grid-cols-2 tw-gap-2">
+        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
+            <RichTextEditorComponent
+                placeholder="I'm placeholder one"
+                id="editor-one"
+                value="<p>I'm editor <strong>one</strong>.</p>"
+            />
+        </div>
+        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
+            <RichTextEditorComponent
+                placeholder="I'm placeholder two"
+                id="editor-two"
+                value="<p>I'm editor <strong>two</strong>.</p>"
+            />
+        </div>
+        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
+            <RichTextEditorComponent
+                placeholder="I'm placeholder three"
+                id="editor-three"
+                value="<p>I'm editor <strong>three</strong>.</p>"
+            />
+        </div>
+        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
+            <RichTextEditorComponent
+                placeholder="I'm placeholder four"
+                id="editor-four"
+                value="<p>I'm editor <strong>four</strong>.</p>"
+            />
+        </div>
+    </div>
+);
+
+export const WithChecklist = RichTextEditorTemplate.bind({});
+WithChecklist.args = {
+    value: JSON.stringify(checkboxValue),
+};
+
+export const WithCustomControls = RichTextEditorTemplate.bind({});
+WithCustomControls.args = {
+    value: `<p>${IPSUM}</p>`,
+    actions: [
+        [EditorActions.LINK],
+        [EditorActions.ITALIC, EditorActions.BOLD, EditorActions.UNDERLINE],
+        [EditorActions.ORDERED_LIST, EditorActions.UNORDERED_LIST],
+    ],
+};

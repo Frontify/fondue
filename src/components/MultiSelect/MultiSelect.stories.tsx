@@ -2,6 +2,7 @@
 
 import { Meta, Story } from "@storybook/react";
 import React, { useState } from "react";
+import { FormControl } from "@components/FormControl";
 import { MultiSelect as MultiSelectComponent, MultiSelectProps, MultiSelectType } from "./MultiSelect";
 
 // eslint-disable-next-line import/no-default-export
@@ -42,12 +43,27 @@ export default {
 
 const MultiSelectTemplate: Story<MultiSelectProps> = (args) => {
     const [activeItemKeys, setActiveItemKeys] = useState<(string | number)[]>(args.activeItemKeys);
+
     return (
         <MultiSelectComponent
             {...args}
             activeItemKeys={activeItemKeys}
             onSelectionChange={(keys) => setActiveItemKeys(keys)}
         />
+    );
+};
+
+const MultiSelectFormControlTemplate: Story<MultiSelectProps> = (args) => {
+    const [activeItemKeys, setActiveItemKeys] = useState<(string | number)[]>(args.activeItemKeys);
+
+    return (
+        <FormControl helper={{ text: "Helper Text" }} label={{ children: "Multi-Select", htmlFor: "" }}>
+            <MultiSelectComponent
+                {...args}
+                activeItemKeys={activeItemKeys}
+                onSelectionChange={(keys) => setActiveItemKeys(keys)}
+            />
+        </FormControl>
     );
 };
 
@@ -65,3 +81,5 @@ export const WithOptionsSummarized = MultiSelectTemplate.bind({});
 WithOptionsSummarized.args = {
     type: MultiSelectType.Summarized,
 };
+
+export const WithFormControl = MultiSelectFormControlTemplate.bind({});

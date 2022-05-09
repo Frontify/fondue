@@ -2,19 +2,21 @@
 
 import { MenuBlock } from "@components/Dropdown/SelectMenu/SelectMenu";
 import { mount } from "@cypress/react";
-import { MENU_ITEM_ACTIVE_ID, MENU_ITEM_ID, MENU_ITEM_TITLE_ID } from "@components/MenuItem/MenuItem.spec";
 import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import React, { FC, ReactElement, useState } from "react";
 import { Dropdown } from "./Dropdown";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
 
-export const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
+const DROPDOWN_TRIGGER_ID = "[data-test-id=dropdown-trigger]";
 const DROPDOWN_MENU_ID = "[data-test-id=dropdown-menu]";
 const DROPDOWN_CLEAR_BUTTON_ID = "[data-test-id=dropdown-clear-button]";
 const MENU_ITEM_LIST_ID = "[data-test-id=menu-item-list]";
 const MENU_ITEM_DECORATOR_ID = "[data-test-id=menu-item-decorator]";
 const TRIGGER_ID = "[data-test-id=trigger]";
+const MENU_ITEM_ID = "[data-test-id=menu-item]";
+const MENU_ITEM_ACTIVE_ID = "[data-test-id=menu-item-active]";
+const MENU_ITEM_TITLE_ID = "[data-test-id=menu-item-title]";
 
 const ITEMS = [
     {
@@ -163,7 +165,7 @@ describe("Dropdown Component", () => {
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_MENU_ID).then(($el) => {
             const { bottom } = $el[0].getBoundingClientRect();
-            expect(bottom).to.equal(220 - 32);
+            expect(Number(bottom.toFixed(0))).to.equal(220 - 33);
         });
     });
 

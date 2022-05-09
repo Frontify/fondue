@@ -2,8 +2,8 @@
 
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { Button, ButtonProps, ButtonSize, ButtonStyle, ButtonType } from "./Button";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import { Button, ButtonProps, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from "./Button";
+import { IconIcons, IconActions } from "@foundation/Icon/Generated";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -20,6 +20,10 @@ export default {
         },
         style: {
             options: [ButtonStyle.Primary, ButtonStyle.Secondary, ButtonStyle.Danger, ButtonStyle.Positive],
+            control: { type: "select" },
+        },
+        rounding: {
+            options: [ButtonRounding.Medium, ButtonRounding.Full],
             control: { type: "select" },
         },
         type: {
@@ -53,6 +57,18 @@ withIcon.args = {
     type: ButtonType.Button,
 };
 withIcon.storyName = "Icon Only";
+
+export const withRoundedIcon = ButtonTemplate.bind({});
+withRoundedIcon.args = {
+    disabled: false,
+    icon: <IconActions />,
+    size: ButtonSize.Medium,
+    rounding: ButtonRounding.Full,
+    solid: true,
+    style: ButtonStyle.Secondary,
+    type: ButtonType.Button,
+};
+withRoundedIcon.storyName = "Icon Only rounded";
 
 export const withIconAndLabel = ButtonTemplate.bind({});
 withIconAndLabel.args = {

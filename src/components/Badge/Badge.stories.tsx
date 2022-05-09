@@ -2,8 +2,9 @@
 
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { Badge, BadgeProps, BadgeStatus, BadgeStyle } from "./Badge";
+import { Badge } from "./Badge";
 import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import { BadgeEmphasis, BadgeProps, BadgeStatus, BadgeStyle } from "./types";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -14,12 +15,23 @@ export default {
             options: Object.values(BadgeStyle),
             control: { type: "select" },
         },
+        emphasis: {
+            options: Object.values(BadgeEmphasis),
+            control: { type: "select" },
+        },
+        size: {
+            options: ["s", "m"],
+            control: { type: "select" },
+        },
         onClick: { table: { disable: true } },
         onDismiss: { table: { disable: true } },
     },
     args: {
         style: BadgeStyle.Primary,
         children: "Text",
+        size: "m",
+        emphasis: BadgeEmphasis.Strong,
+        disabled: false,
     },
 } as Meta<BadgeProps>;
 
@@ -59,10 +71,16 @@ WithStatus.args = {
     status: BadgeStatus.Positive,
 };
 
-export const WithHexStatusColor = BadgeTemplate.bind({});
+export const WithCustomStatusColor = BadgeTemplate.bind({});
 
-WithHexStatusColor.args = {
-    status: "#FFC0CB",
+WithCustomStatusColor.args = {
+    status: { r: 40, g: 200, b: 100, a: 1 },
+};
+
+export const WithCustomStatusString = BadgeTemplate.bind({});
+
+WithCustomStatusString.args = {
+    status: "#f14394",
 };
 
 export const WithIcon = BadgeTemplate.bind({});

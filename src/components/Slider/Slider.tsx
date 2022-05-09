@@ -66,31 +66,7 @@ const SliderItem = (props: SliderItemProps) => {
     };
 
     return (
-        <motion.li
-            layout="position"
-            layoutDependency={radioGroupState.selectedValue}
-            key={item.id}
-            className="tw-relative"
-        >
-            {isActive && (
-                <motion.div
-                    key={id}
-                    initial={false}
-                    layoutId={id}
-                    layoutDependency={isActive}
-                    className={merge([
-                        "tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none",
-                        disabled ? "tw-border-black-20 tw-bg-black-0" : "tw-border-black tw-bg-white",
-                        isFocusVisible && FOCUS_STYLE,
-                    ])}
-                    // Since framer-motion sets `visibility` to `visible` which leads
-                    // to undesired side effects for example when this component is
-                    // used inside an `AccordionItem` that's why we explicitly
-                    // set the prop to `inherit` so framer leave it as is.
-                    animate={{ visibility: "inherit" }}
-                    aria-hidden="true"
-                />
-            )}
+        <li key={item.id} className={merge(["tw-relative", isFocusVisible && FOCUS_STYLE])}>
             <div
                 // TODO: Change element back to label when bug #2380 from @react-aria is fixed
                 // https://github.com/adobe/react-spectrum/issues/2380
@@ -116,7 +92,7 @@ const SliderItem = (props: SliderItemProps) => {
                     {isIconItem(item) ? <span aria-label={item.ariaLabel}>{item.icon}</span> : item.value.toString()}
                 </span>
             </div>
-        </motion.li>
+        </li>
     );
 };
 
@@ -143,6 +119,7 @@ export const Slider: FC<SliderProps> = ({
             />
         ));
     }, [items.length, radioGroupState, disabled, id]);
+    const selectedIndex = items.findIndex((item) => item.id === radioGroupState.selectedValue);
 
     return (
         <ul
@@ -150,6 +127,20 @@ export const Slider: FC<SliderProps> = ({
             data-test-id="slider"
             className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none tw-select-none"
         >
+            <motion.div
+                aria-hidden="true"
+                // div border is not included in width so it must be subtracted from translation.
+                animate={{ x: `calc(${100 * selectedIndex}% - ${2 * selectedIndex}px)` }}
+                initial={false}
+                transition={{ type: "tween", duration: 0.3 }}
+                style={{
+                    width: `${100 / items.length}%`,
+                }}
+                className={merge([
+                    "tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none",
+                    disabled ? "tw-border-black-20 tw-bg-black-0" : "tw-border-black tw-bg-white",
+                ])}
+            />
             {itemElements}
         </ul>
     );

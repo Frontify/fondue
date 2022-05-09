@@ -5,7 +5,8 @@ import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
 import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import { Meta, Story } from "@storybook/react";
 import React, { useEffect, useState } from "react";
-import { Dropdown, DropdownProps, DropdownSize } from "./Dropdown";
+import { Dropdown, DropdownAlignment, DropdownPosition, DropdownProps, DropdownSize } from "./Dropdown";
+import { Validation } from "@utilities/validation";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -15,12 +16,29 @@ export default {
         placeholder: "select item",
         disabled: false,
         clearable: false,
+        validation: Validation.Default,
     },
     argTypes: {
         size: {
-            table: { disable: true },
+            options: Object.values(DropdownSize),
+            control: { type: "select" },
+            defaultValue: DropdownSize.Small,
         },
         activeItemId: { type: "string" },
+        validation: {
+            options: Object.values(Validation),
+            control: { type: "select" },
+        },
+        alignment: {
+            options: Object.values(DropdownAlignment),
+            control: { type: "select" },
+            defaultValue: DropdownAlignment.Start,
+        },
+        position: {
+            options: Object.values(DropdownPosition),
+            control: { type: "select" },
+            defaultValue: DropdownPosition.Bottom,
+        },
     },
 } as Meta;
 
@@ -36,8 +54,30 @@ const DropdownWithLimitedWidthTemplate: Story<DropdownProps> = (args: DropdownPr
     useEffect(() => setActive(args.activeItemId), [args.activeItemId]);
 
     return (
-        <div className="tw-max-w-[150px]">
+        <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
+            <div className="tw-max-w-[150px]">
+                <Dropdown {...args} activeItemId={active} onChange={(id) => setActive(id)} />
+            </div>
+        </div>
+    );
+};
+
+const DropdownWithinOverflownContainer: Story<DropdownProps> = (args: DropdownProps) => {
+    const [active, setActive] = useState(args.activeItemId);
+    useEffect(() => setActive(args.activeItemId), [args.activeItemId]);
+
+    return (
+        <div className="tw-overflow-y-auto tw-h-[100px] tw-my-6">
+            <p className="tw-p2">Title</p>
+            <p className="tw-p2">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut mattis iaculis eros. Curabitur quis tortor
+                vestibulum lacus gravida ultrices eget sed velit. Donec id interdum nibh.
+            </p>
             <Dropdown {...args} activeItemId={active} onChange={(id) => setActive(id)} />
+            <p className="tw-p2">
+                Duis orci sapien, gravida pellentesque cursus non, cursus vitae dolor. Etiam luctus aliquam sem, non
+                maximus risus efficitur sit amet. Nulla diam urna
+            </p>
         </div>
     );
 };
@@ -265,6 +305,85 @@ LargeSelect.args = {
                     title: "Large warning disabled",
                     subtitle: "Subtitle",
                     size: MenuItemContentSize.Large,
+                    style: MenuItemStyle.Danger,
+                    disabled: true,
+                },
+            ],
+        },
+    ],
+};
+
+export const WithinOverflow = DropdownWithinOverflownContainer.bind({});
+
+WithinOverflow.args = {
+    size: DropdownSize.Small,
+    menuBlocks: [
+        {
+            id: "block1",
+            ariaLabel: "First section",
+            menuItems: [
+                {
+                    id: "9",
+                    title: "With Icon",
+                    subtitle: "Subtitle",
+                    decorator: <IconAudio />,
+                    size: MenuItemContentSize.Large,
+                },
+                {
+                    id: "10",
+                    title: "Warning icon",
+                    subtitle: "Subtitle",
+                    decorator: <IconAudio />,
+                    size: MenuItemContentSize.Large,
+                    style: MenuItemStyle.Danger,
+                },
+                {
+                    id: "11",
+                    title: "This is disabled",
+                    subtitle: "Subtitle",
+                    decorator: <IconAudio />,
+                    size: MenuItemContentSize.Large,
+                    disabled: true,
+                },
+                {
+                    id: "12",
+                    title: "Icon warning disabled",
+                    subtitle: "Subtitle",
+                    size: MenuItemContentSize.Small,
+                    style: MenuItemStyle.Danger,
+                    disabled: true,
+                },
+            ],
+        },
+        {
+            id: "block2",
+            ariaLabel: "Second section",
+            menuItems: [
+                {
+                    id: "17",
+                    title: "Small",
+                    subtitle: "Subtitle",
+                    size: MenuItemContentSize.Small,
+                },
+                {
+                    id: "18",
+                    title: "Small warning",
+                    subtitle: "Subtitle",
+                    size: MenuItemContentSize.Small,
+                    style: MenuItemStyle.Danger,
+                },
+                {
+                    id: "19",
+                    title: "Small disabled",
+                    subtitle: "Subtitle",
+                    size: MenuItemContentSize.Small,
+                    disabled: true,
+                },
+                {
+                    id: "20",
+                    title: "Warning disabled",
+                    subtitle: "Subtitle",
+                    size: MenuItemContentSize.Small,
                     style: MenuItemStyle.Danger,
                     disabled: true,
                 },

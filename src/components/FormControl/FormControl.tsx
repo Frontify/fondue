@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { InputLabel, InputLabelProps } from "@components/InputLabel/InputLabel";
-import { Validation } from "@components/TextInput/TextInput";
+import { Validation } from "@utilities/validation";
 import { merge } from "@utilities/merge";
 import React, { cloneElement, FC, isValidElement, PropsWithChildren, ReactNode } from "react";
 
@@ -58,12 +58,14 @@ export type FormControlProps = PropsWithChildren<{
     extra?: ReactNode;
     helper?: Omit<HelperTextProps, "disabled" | "style"> & { position?: HelperPosition };
     style?: FormControlStyle;
+    name?: string;
 }>;
 
 export const FormControl: FC<FormControlProps> = ({
     label,
     children,
     extra,
+    name,
     helper,
     disabled,
     direction = FormControlDirection.Vertical,
@@ -74,6 +76,7 @@ export const FormControl: FC<FormControlProps> = ({
     return (
         <div
             data-test-id="form-control"
+            data-name={name}
             className={merge([
                 "tw-flex tw-items-center tw-gap-2",
                 direction === FormControlDirection.Horizontal ? "tw-flex-row" : "tw-w-full tw-flex-col",
@@ -108,7 +111,11 @@ export const FormControl: FC<FormControlProps> = ({
             {children && (
                 <div className={direction === FormControlDirection.Vertical ? "tw-w-full tw-grid tw-gap-5" : ""}>
                     {isValidElement(children)
-                        ? cloneElement(children, { id: label?.htmlFor, disabled, validation: inputValidation[style] })
+                        ? cloneElement(children, {
+                              id: label?.htmlFor ?? children.props.id,
+                              disabled,
+                              validation: inputValidation[style],
+                          })
                         : children}
                 </div>
             )}

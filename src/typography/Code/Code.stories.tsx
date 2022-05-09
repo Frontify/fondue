@@ -14,7 +14,7 @@ export default {
             control: { type: "select" },
         },
         weight: {
-            options: ["medium", "strong"],
+            options: ["default", "strong"],
             control: { type: "select" },
         },
         as: {
@@ -29,7 +29,7 @@ export default {
     args: {
         children: "The <blink>fox</blink> jumps <marquee>over</marquee> the lazy dog",
         size: "medium",
-        weight: "medium",
+        weight: "default",
         as: "span",
         color: "default",
     },
