@@ -13,7 +13,7 @@ export const EditableNodeItem = ({ name, onEditableSave }: EditableNodeItem) => 
         if (event.key === "Enter") {
             setShowInput(false);
 
-            onEditableSave && onEditableSave((event.target as HTMLInputElement).value);
+            onEditableSave((event.target as HTMLInputElement).value);
         }
     };
 
