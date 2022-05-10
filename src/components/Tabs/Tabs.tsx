@@ -244,10 +244,13 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                 {isOverflowing && (
                     <div
                         data-test-id="tab-overflow"
-                        className="tw-absolute tw-right-3 tw-top-0 tw-w-6 tw-h-6 tw-bg-box-neutral tw-rounded tw-flex tw-justify-center tw-items-center"
+                        className="tw-absolute tw-right-3 tw-bottom-0 tw-top-0 tw-flex tw-justify-center tw-items-center"
                     >
                         <button
-                            className={isFocusVisible ? FOCUS_STYLE : ""}
+                            className={merge([
+                                "tw-w-6 tw-h-6 tw-bg-box-neutral tw-rounded tw-flex tw-justify-center tw-items-center",
+                                isFocusVisible ? FOCUS_STYLE : "",
+                            ])}
                             type="button"
                             onClick={() => {
                                 checkIfOverflowing();
@@ -260,7 +263,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                         </button>
                         {isMenuOpened && (
                             <div
-                                className="tw-absolute tw-right-0 tw-top-8 tw-px-3 tw-pt-3 tw-bg-base tw-shadow tw-w-max"
+                                className="tw-absolute tw-right-0 tw-top-11 tw-px-3 tw-pt-3 tw-bg-base tw-shadow tw-w-max"
                                 role="dialog"
                             >
                                 {getOverflownTabs().map((tab) => {
