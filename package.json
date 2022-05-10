@@ -42,8 +42,7 @@
         "test:browser": "cypress open-ct",
         "test:file": "cypress run-ct --spec",
         "typecheck": "tsc",
-        "storybook": "start-storybook -p 6006",
-        "prepublishOnly": "npm run build"
+        "storybook": "start-storybook -p 6006"
     },
     "keywords": [
         "frontify",
