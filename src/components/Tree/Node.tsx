@@ -88,6 +88,7 @@ export const Node = ({
     const insertBadge = () => {
         return (
             <div
+                data-test-id="node-badge"
                 className={merge([
                     "tw-flex tw-justify-center tw-items-center tw-ml-2",
                     selected && "tw-bg-transparent",
