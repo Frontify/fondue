@@ -204,7 +204,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                 tabIndex={tab.id === activeItemId ? 0 : -1}
                                 id={`${tab.id}-btn`}
                                 className={merge([
-                                    "tw-group tw-relative tw-mx-0 tw-pb-4 tw-pt-4 tw-px-2 tw-w-max tw-h-10 tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap",
+                                    "tw-group tw-relative tw-mx-0 tw-py-4 tw-px-2 tw-w-max tw-h-10 tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap",
                                     tab.disabled && "tw-text-text-disabled",
                                     tab.id === activeItemId ? "tw-font-medium tw-text-text" : "tw-text-text-weak",
                                     size === TabSize.Small ? "tw-text-sm" : "tw-text-md",
