@@ -86,8 +86,6 @@ export const Node = ({
     };
 
     const insertBadge = () => {
-        console.log(badge);
-
         return (
             <div
                 className={merge([
