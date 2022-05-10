@@ -204,7 +204,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                 tabIndex={tab.id === activeItemId ? 0 : -1}
                                 id={`${tab.id}-btn`}
                                 className={merge([
-                                    "tw-group tw-relative tw-mx-0 tw-pb-5 tw-pt-2 tw-px-2 tw-w-max tw-h-10 tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap",
+                                    "tw-group tw-relative tw-mx-0 tw-pb-4 tw-pt-4 tw-px-2 tw-w-max tw-h-10 tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap",
                                     tab.disabled && "tw-text-text-disabled",
                                     tab.id === activeItemId ? "tw-font-medium tw-text-text" : "tw-text-text-weak",
                                     size === TabSize.Small ? "tw-text-sm" : "tw-text-md",
@@ -231,11 +231,11 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                     <motion.div
                                         data-test-id="tab-active-highlight"
                                         layoutId="underline"
-                                        className="tw-absolute tw-h-1 tw-bg-violet-60 tw-rounded-t-x-large tw-w-full tw-bottom-0"
+                                        className="tw-absolute tw-h-[3px] tw-bg-violet-60 tw-rounded-t-x-large tw-w-full tw-bottom-0"
                                     />
                                 )}
                                 {tab.id !== activeItemId && !tab.disabled && (
-                                    <div className="group-hover:tw-absolute group-hover:tw-h-1 group-hover:tw-bg-box-neutral-hover group-hover:tw-rounded-t-x-large group-hover:tw-w-full group-hover:tw-bottom-0" />
+                                    <div className="group-hover:tw-absolute group-hover:tw-h-[3px] group-hover:tw-bg-box-neutral-hover group-hover:tw-rounded-t-x-large group-hover:tw-w-full group-hover:tw-bottom-0" />
                                 )}
                             </button>
                         );
