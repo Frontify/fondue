@@ -189,7 +189,7 @@ export const Tooltip = ({
 
     const checkIfHovered = useCallback(
         (event) => {
-            const hoveredElement = event.path || (event.composedPath && event.composedPath());
+            const hoveredElement = event.path ?? event.composedPath?.();
             if (hoveredElement && hoveredElement.includes(triggerRefElement?.current)) {
                 handleShowTooltipOnHover();
             }
