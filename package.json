@@ -1,6 +1,6 @@
 {
     "name": "@frontify/arcade",
-    "version": "8.0.0",
+    "version": "8.1.1",
     "description": "Design system of Frontify",
     "main": "dist/index.umd.js",
     "unpkg": "dist/index.umd.js",
@@ -42,8 +42,7 @@
         "test:browser": "cypress open-ct",
         "test:file": "cypress run-ct --spec",
         "typecheck": "tsc",
-        "storybook": "start-storybook -p 6006",
-        "prepublishOnly": "npm run build"
+        "storybook": "start-storybook -p 6006"
     },
     "keywords": [
         "frontify",
