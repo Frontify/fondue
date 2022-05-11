@@ -46,7 +46,7 @@ export const TooltipIcon: FC<TooltipIconProps> = ({
                                 {...focusProps}
                                 data-test-id="tooltip-icon-trigger"
                                 className={merge([
-                                    "tw-inline-flex tw-justify-center tw-items-center  dark:tw-text-black-40 dark:hover:tw-text-white tw-cursor-default tw-outline-none tw-rounded-full",
+                                    "tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full",
                                     isFocusVisible && FOCUS_STYLE,
                                     tooltipTriggerStyleClass[triggerStyle],
                                 ])}
