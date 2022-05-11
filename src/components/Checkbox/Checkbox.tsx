@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TooltipProps } from "@components/Tooltip/Tooltip";
 import IconCheck from "@foundation/Icon/Generated/IconCheck";
 import IconMinus from "@foundation/Icon/Generated/IconMinus";
-import { InputLabel } from "@components/InputLabel/InputLabel";
+import { InputLabel, InputLabelTooltipProps } from "@components/InputLabel/InputLabel";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { useCheckbox } from "@react-aria/checkbox";
 import { useFocusRing } from "@react-aria/focus";
@@ -28,7 +27,7 @@ export type CheckboxProps = {
     value?: string;
     onChange?: (isChecked: boolean) => void;
     label?: string;
-    tooltip?: TooltipProps;
+    tooltip?: InputLabelTooltipProps;
     note?: string;
     ariaLabel?: string;
     groupInputProps?: HTMLAttributes<HTMLElement>;
