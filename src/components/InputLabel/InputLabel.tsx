@@ -1,21 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TooltipProps } from "@components/Tooltip/Tooltip";
-import { TooltipIcon, TooltipIconTriggerStyle } from "@components/TooltipIcon/TooltipIcon";
-import { IconProps } from "@foundation/Icon";
+import { TooltipIcon, TooltipIconProps } from "@components/TooltipIcon/TooltipIcon";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
-import React, { FC, PropsWithChildren, ReactElement } from "react";
+import React, { FC, PropsWithChildren } from "react";
 
 export type InputLabelTooltipProps =
-    | (TooltipProps & {
-          triggerIcon?: ReactElement<IconProps>;
-          triggerStyle?: TooltipIconTriggerStyle;
-      })
-    | (TooltipProps & {
-          triggerIcon?: ReactElement<IconProps>;
-          triggerStyle?: TooltipIconTriggerStyle;
-      })[];
+    | (TooltipProps & Pick<TooltipIconProps, "triggerStyle" | "triggerIcon">)
+    | (TooltipProps & Pick<TooltipIconProps, "triggerStyle" | "triggerIcon">)[];
 
 export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;

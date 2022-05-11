@@ -4,7 +4,7 @@ import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { IconAttentionFilled, IconInfo, IconQuestion } from "@foundation/Icon/Generated";
 import { InputLabel as InputLabelComponent, InputLabelProps } from "./InputLabel";
-import { TooltipIconTriggerStyle } from "..";
+import { TooltipIconTriggerStyle } from "@components/TooltipIcon";
 
 // eslint-disable-next-line import/no-default-export
 export default {

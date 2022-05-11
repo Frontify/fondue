@@ -4,6 +4,7 @@ import { Meta, Story } from "@storybook/react";
 import React, { useEffect, useState } from "react";
 import { IconAttentionFilled, IconInfo, IconQuestion } from "@foundation/Icon/Generated";
 import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState } from "./Checkbox";
+import { TooltipIconTriggerStyle } from "@components/TooltipIcon";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -52,8 +53,8 @@ export const CheckboxWithMultipleTooltips = Checkbox.bind({});
 CheckboxWithMultipleTooltips.args = {
     ...Checkbox.args,
     tooltip: [
-        { triggerIcon: <IconInfo />, triggerStyle: "Danger", content: "Tooltip 1" },
-        { triggerIcon: <IconQuestion />, triggerStyle: "Primary", content: "Tooltip 2" },
-        { triggerIcon: <IconAttentionFilled />, triggerStyle: "Warning", content: "Tooltip 3" },
+        { triggerIcon: <IconInfo />, triggerStyle: TooltipIconTriggerStyle.Danger, content: "Tooltip 1" },
+        { triggerIcon: <IconQuestion />, triggerStyle: TooltipIconTriggerStyle.Primary, content: "Tooltip 2" },
+        { triggerIcon: <IconAttentionFilled />, triggerStyle: TooltipIconTriggerStyle.Warning, content: "Tooltip 3" },
     ],
 };

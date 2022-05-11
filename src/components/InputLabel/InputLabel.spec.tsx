@@ -4,6 +4,7 @@ import React from "react";
 import { mount } from "@cypress/react";
 import { InputLabel } from "./InputLabel";
 import { IconActivity } from "@foundation/Icon/Generated";
+import { TooltipIconTriggerStyle } from "@components/TooltipIcon";
 
 const LABEL_TEXT = "This is a fancy label.";
 const LABEL_TOOLTIP = "This is a fancy tooltip.";
@@ -46,7 +47,7 @@ describe("InputLabel Component", () => {
             <InputLabel
                 htmlFor="input"
                 tooltip={[
-                    { content: LABEL_TOOLTIP, triggerStyle: "Danger" },
+                    { content: LABEL_TOOLTIP, triggerStyle: TooltipIconTriggerStyle.Danger },
                     { content: LABEL_TOOLTIP, triggerIcon: <IconActivity /> },
                 ]}
             >
