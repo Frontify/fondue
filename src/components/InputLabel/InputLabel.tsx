@@ -62,9 +62,9 @@ export const InputLabel: FC<InputLabelProps> = ({
                     *
                 </span>
             )}
-            {tooltips.map(({ triggerIcon, triggerStyle, hoverDelay = 0, ...tooltipProps }, index) => (
+            {tooltips.map(({ triggerIcon, triggerStyle, hoverDelay = 100, ...tooltipProps }, index) => (
                 <TooltipIcon
-                    tooltip={{ hoverDelay, ...tooltipProps }}
+                    tooltip={{ ...tooltipProps, hoverDelay }}
                     key={index}
                     iconSize={IconSize.Size16}
                     triggerIcon={triggerIcon}
