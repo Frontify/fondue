@@ -18,6 +18,9 @@ import React, { FC, ReactElement, useEffect, useRef } from "react";
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from "./useDropdownAutoHeight";
 import { Validation } from "@utilities/validation";
 import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
+import { createPortal } from "react-dom";
+import { usePopper } from "react-popper";
+import { VariationPlacement } from "@popperjs/core";
 
 export enum DropdownSize {
     Small = "Small",
@@ -33,11 +36,6 @@ export enum DropdownPosition {
     Top = "Top",
     Bottom = "Bottom",
 }
-
-const alignmentStyling: Record<DropdownAlignment, string> = {
-    [DropdownAlignment.Start]: "tw-left-0",
-    [DropdownAlignment.End]: "tw-right-0",
-};
 
 export type DropdownProps = {
     id?: string;
@@ -119,11 +117,8 @@ export const Dropdown: FC<DropdownProps> = ({
 
     const heightIsReady = !autoResize || maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
 
-    const textState = disabled
-        ? MenuItemTextColorState.Disabled
-        : activeItem
-        ? MenuItemTextColorState.Active
-        : MenuItemTextColorState.Default;
+    const enabledTextColorState = activeItem ? MenuItemTextColorState.Active : MenuItemTextColorState.Default;
+    const textState = disabled ? MenuItemTextColorState.Disabled : enabledTextColorState;
 
     const textColorClass = activeItem
         ? menuItemTextColorRecord[activeItem.style || MenuItemStyle.Primary][textState]
@@ -140,10 +135,29 @@ export const Dropdown: FC<DropdownProps> = ({
         : undefined;
 
     const showClear = !!activeItem && !!onClear;
+    const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-    const getDropdownBottomPosition = (dropDownSize: string) => {
-        return dropDownSize === DropdownSize.Small ? "tw-mb-2 tw-bottom-[34px]" : "tw-mb-2 tw-bottom-[60px]";
+    const placementMap: Record<string, VariationPlacement> = {
+        ["Top-Start"]: "top-start",
+        ["Top-End"]: "top-end",
+        ["Bottom-Start"]: "bottom-start",
+        ["Bottom-End"]: "bottom-end",
     };
+    const popperInstance = usePopper(triggerRef?.current, dropdownRef.current, {
+        placement: placementMap[`${position}-${alignment}`],
+        modifiers: [
+            {
+                name: "offset",
+                options: {
+                    offset: [0, 8],
+                },
+            },
+            {
+                name: "flip",
+                enabled: false,
+            },
+        ],
+    });
 
     return (
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
@@ -180,36 +194,47 @@ export const Dropdown: FC<DropdownProps> = ({
                     />
                 </button>
             </Trigger>
-            <AnimatePresence>
-                {!disabled && isOpen && heightIsReady && (
-                    <motion.div
-                        className={merge([
-                            "tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-20 tw-min-w-full tw-overflow-hidden",
-                            alignmentStyling[alignment],
-                            position === DropdownPosition.Bottom ? "tw-mt-2" : getDropdownBottomPosition(size),
-                        ])}
-                        key="content"
-                        initial={{ height: 0 }}
-                        animate={{ height: "auto" }}
-                        transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
-                    >
-                        <FocusScope restoreFocus>
-                            <div
-                                {...overlayProps}
-                                ref={overlayRef}
-                                style={autoResize ? { maxHeight } : {}}
-                                className="tw-flex tw-flex-col"
-                                data-test-id="dropdown-menu"
-                                role="dialog"
-                            >
-                                <DismissButton onDismiss={() => close()} />
-                                <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} scrollable />
-                                <DismissButton onDismiss={() => close()} />
-                            </div>
-                        </FocusScope>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {createPortal(
+                <AnimatePresence>
+                    {!disabled && isOpen && heightIsReady && (
+                        <motion.div
+                            ref={dropdownRef}
+                            style={{
+                                ...popperInstance.styles.popper,
+                                width: triggerRef.current?.getBoundingClientRect().width,
+                                minWidth: "fit-content",
+                            }}
+                            {...popperInstance.attributes.popper}
+                            className="tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
+                            key="content"
+                            initial={{ height: 0 }}
+                            animate={{ height: "auto" }}
+                            transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
+                        >
+                            <FocusScope restoreFocus>
+                                <div
+                                    {...overlayProps}
+                                    ref={overlayRef}
+                                    style={autoResize ? { maxHeight } : {}}
+                                    className="tw-flex tw-flex-col"
+                                    data-test-id="dropdown-menu"
+                                    role="dialog"
+                                >
+                                    <DismissButton onDismiss={() => close()} />
+                                    <SelectMenu
+                                        ariaProps={menuProps}
+                                        state={state}
+                                        menuBlocks={menuBlocks}
+                                        scrollable
+                                    />
+                                    <DismissButton onDismiss={() => close()} />
+                                </div>
+                            </FocusScope>
+                        </motion.div>
+                    )}
+                </AnimatePresence>,
+                document.body,
+            )}
             {validation === Validation.Loading && (
                 <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />

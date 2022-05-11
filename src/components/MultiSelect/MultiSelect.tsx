@@ -122,7 +122,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
             <AnimatePresence>
                 {open && (
                     <motion.div
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
+                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10 tw-bg-base"
                         key="content"
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}

@@ -8,11 +8,11 @@ import { merge } from "@utilities/merge";
 import React, { FC, PropsWithChildren, ReactElement } from "react";
 
 export type InputLabelTooltipProps =
-    | (Omit<TooltipProps, "tooltipAriaProps"> & {
+    | (TooltipProps & {
           triggerIcon?: ReactElement<IconProps>;
           triggerStyle?: TooltipIconTriggerStyle;
       })
-    | (Omit<TooltipProps, "tooltipAriaProps"> & {
+    | (TooltipProps & {
           triggerIcon?: ReactElement<IconProps>;
           triggerStyle?: TooltipIconTriggerStyle;
       })[];

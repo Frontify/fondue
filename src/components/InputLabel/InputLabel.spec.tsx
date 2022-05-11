@@ -9,7 +9,6 @@ const LABEL_TEXT = "This is a fancy label.";
 const LABEL_TOOLTIP = "This is a fancy tooltip.";
 
 const INPUT_LABEL_ID = "[data-test-id=input-label]";
-const INPUT_LABEL_CONTAINER_ID = "[data-test-id=input-label-container]";
 const TOOLTIP_ICON_TRIGGER_ID = "[data-test-id=tooltip-icon-trigger]";
 const TOOLTIP_ID = "[data-test-id=tooltip]";
 const INPUT_LABEL_REQUIRED_ID = "[data-test-id=input-label-required]";
@@ -39,7 +38,7 @@ describe("InputLabel Component", () => {
         );
 
         cy.get(TOOLTIP_ICON_TRIGGER_ID).realHover({ position: "top" });
-        cy.get(INPUT_LABEL_CONTAINER_ID).find(TOOLTIP_ID).should("exist");
+        cy.get(TOOLTIP_ID).should("exist");
     });
 
     it("renders with multiple tooltip triggers", () => {

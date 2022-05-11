@@ -11,7 +11,7 @@ import { useMenuTriggerState } from "@react-stately/menu";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, useRef } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { AssetInputProps, AssetInputSize, AssetType } from "../AssetInput";
 import { AssetThumbnail } from "../AssetThumbnail";
 import { AssetSubline } from "./AssetSubline";
@@ -37,6 +37,23 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
     );
     const title = asset?.name || "Your Asset";
 
+    const [flyoutWidth, setFlyoutWidth] = useState(0);
+
+    useEffect(() => {
+        const calculateFlyoutWidth = () => {
+            const calculatedWidth = buttonRef.current?.getBoundingClientRect().width ?? 0;
+            setTimeout(() => setFlyoutWidth(calculatedWidth), 0);
+        };
+        const resizeObserver = new ResizeObserver(calculateFlyoutWidth);
+        if (buttonRef.current) {
+            resizeObserver.observe(buttonRef.current);
+        }
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, []);
+
     return (
         <div
             className="tw-font-sans tw-w-full tw-text-s tw-bg-transparent tw-font-normal tw-min-w-0"
@@ -48,7 +65,7 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
                 {...mergeProps(buttonProps, focusProps)}
                 ref={buttonRef}
                 className={merge([
-                    "tw-w-full tw-flex tw-border tw-rounded hover:tw-border-black-90 dark:hover:tw-border-black-40 focus-visible:tw-outline-none",
+                    "tw-w-full tw-flex tw-border tw-rounded tw-overflow-hidden hover:tw-border-black-90 dark:hover:tw-border-black-40 focus-visible:tw-outline-none",
                     isFocusVisible && FOCUS_STYLE,
                     size === AssetInputSize.Large ? "tw-h-[11.5rem] tw-flex-col" : "tw-h-14",
                     isOpen || isFocusVisible
@@ -102,9 +119,10 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
                 {isOpen && (
                     <motion.div
                         style={{
-                            width: buttonRef.current?.getBoundingClientRect().width,
+                            width: flyoutWidth,
                         }}
-                        className="tw-absolute tw-left-auto tw-min-w-fit tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20"
+                        className="tw-absolute tw-left-auto tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20"
+                        data-test-id="asset-single-input-flyout"
                         key={`asset-input-menu-${menuId}`}
                         initial={{ height: 0 }}
                         animate={{ height: "auto" }}

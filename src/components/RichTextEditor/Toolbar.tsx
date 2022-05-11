@@ -1,19 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    IconBold,
-    IconItalic,
     IconLink,
     IconListBullets,
     IconListChecklist,
     IconListNumbers,
+    IconSize,
     IconSnippet,
-    IconStrikethrough,
     IconTextAlignCenter,
     IconTextAlignJustify,
     IconTextAlignLeft,
     IconTextAlignRight,
-    IconUnderline,
+    IconTextFormatBold,
+    IconTextFormatItalic,
+    IconTextFormatStrikethrough,
+    IconTextFormatUnderline,
 } from "@foundation/Icon";
 import {
     AlignToolbarButton,
@@ -30,74 +31,167 @@ import {
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
+    PlateEditor,
     usePlateEditorRef,
 } from "@udecode/plate";
-import React, { FC } from "react";
+import React, { FC, ReactElement } from "react";
 import { ELEMENT_CHECK_ITEM } from "./plugins/checkboxListPlugin";
 import { TextStyleDropdown } from "./TextStyleDropdown/TextStyleDropdown";
+import { defaultActions, EditorActions } from "./utils/actions";
 import { TextStyleType } from "./utils/getTextStyles";
 
 type ToolbarProps = {
     editorId?: string;
     textStyles?: TextStyleType[];
+    actions?: EditorActions[][];
 };
 
-type ButtonGroupProps = {
-    testId?: string;
-    children: JSX.Element | JSX.Element[];
+const classNames = {
+    root: "tw-text-black-80 tw-ml-0.5 hover:tw-bg-base-alt hover:!tw-text-violet-70",
+    active: "tw-bg-base-alt tw-rounded !tw-text-violet-70",
+};
+const styles = { root: { width: "32px", height: "32px" } };
+
+const toolbarComponents = (
+    editor: PlateEditor,
+    editorId?: string,
+    textStyles?: TextStyleType[],
+): Record<EditorActions, ReactElement> => {
+    return {
+        [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} textStyles={textStyles} />,
+        [EditorActions.ALIGN_LEFT]: (
+            <AlignToolbarButton
+                value="left"
+                icon={<IconTextAlignLeft size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.ALIGN_CENTER]: (
+            <AlignToolbarButton
+                value="center"
+                icon={<IconTextAlignCenter size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.ALIGN_RIGHT]: (
+            <AlignToolbarButton
+                value="right"
+                icon={<IconTextAlignRight size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.ALIGN_JUSTIFY]: (
+            <AlignToolbarButton
+                value="justify"
+                icon={<IconTextAlignJustify size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.BOLD]: (
+            <MarkToolbarButton
+                type={getPluginType(editor, MARK_BOLD)}
+                icon={<IconTextFormatBold size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.ITALIC]: (
+            <MarkToolbarButton
+                type={getPluginType(editor, MARK_ITALIC)}
+                icon={<IconTextFormatItalic size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.UNDERLINE]: (
+            <MarkToolbarButton
+                type={getPluginType(editor, MARK_UNDERLINE)}
+                icon={<IconTextFormatUnderline size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.STRIKETHROUGH]: (
+            <MarkToolbarButton
+                type={getPluginType(editor, MARK_STRIKETHROUGH)}
+                icon={<IconTextFormatStrikethrough size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.CODE]: (
+            <MarkToolbarButton
+                type={getPluginType(editor, MARK_CODE)}
+                icon={<IconSnippet size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.CHECK_ITEM]: (
+            <BlockToolbarButton
+                type={getPluginType(editor, ELEMENT_CHECK_ITEM)}
+                icon={<IconListChecklist size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.LINK]: (
+            <LinkToolbarButton icon={<IconLink size={IconSize.Size24} />} classNames={classNames} styles={styles} />
+        ),
+        [EditorActions.ORDERED_LIST]: (
+            <ListToolbarButton
+                type={getPluginType(editor, ELEMENT_OL)}
+                icon={<IconListNumbers size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.UNORDERED_LIST]: (
+            <ListToolbarButton
+                type={getPluginType(editor, ELEMENT_UL)}
+                icon={<IconListBullets size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+    };
 };
 
-export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles }) => {
+export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }) => {
     const editor = usePlateEditorRef(editorId);
-
-    const ButtonGroup: FC<ButtonGroupProps> = ({ testId, children }) => (
-        <div
-            data-test-id={testId}
-            className="tw-flex tw-items-center tw-border-r last:tw-border-r-0 tw-px-3 tw-py-2 tw-border-black-5"
-        >
-            {children}
-        </div>
-    );
+    const toolbarActions = actions.length > 0 ? actions : defaultActions;
 
     return (
         <BalloonToolbar
-            theme={"light"}
             popperOptions={{
                 modifiers: [
                     { name: "offset", options: { offset: [0, 12] } },
                     { name: "flip", options: { fallbackPlacements: ["bottom", "right"] } },
                 ],
             }}
-            styles={{ root: { border: "none", background: "#ffffff" } }}
+            styles={{ root: { border: "none", background: "#ffffff", margin: "8px" } }}
         >
             <div
                 data-test-id="toolbar"
-                className="tw-flex tw-p-0.5 tw-items-center tw-bg-white tw-rounded tw-shadow-mid tw-gap-0.5"
+                className="tw-flex tw-flex-wrap tw-content-start tw-shadow-lg tw-border tw-bg-base tw-rounded tw-border-black-10 tw-min-h-12"
             >
-                <ButtonGroup testId="text-style-buttons">
-                    <TextStyleDropdown editorId={editorId} textStyles={textStyles} />
-                </ButtonGroup>
-                <ButtonGroup testId="text-alignment-buttons">
-                    <AlignToolbarButton value="left" icon={<IconTextAlignLeft />} />
-                    <AlignToolbarButton value="center" icon={<IconTextAlignCenter />} />
-                    <AlignToolbarButton value="right" icon={<IconTextAlignRight />} />
-                    <AlignToolbarButton value="justify" icon={<IconTextAlignJustify />} />
-                </ButtonGroup>
-
-                <ButtonGroup testId="text-mark-buttons">
-                    <MarkToolbarButton type={getPluginType(editor, MARK_BOLD)} icon={<IconBold />} />
-                    <MarkToolbarButton type={getPluginType(editor, MARK_ITALIC)} icon={<IconItalic />} />
-                    <MarkToolbarButton type={getPluginType(editor, MARK_UNDERLINE)} icon={<IconUnderline />} />
-                    <MarkToolbarButton type={getPluginType(editor, MARK_STRIKETHROUGH)} icon={<IconStrikethrough />} />
-                    <MarkToolbarButton type={getPluginType(editor, MARK_CODE)} icon={<IconSnippet />} />
-                    <BlockToolbarButton type={getPluginType(editor, ELEMENT_CHECK_ITEM)} icon={<IconListChecklist />} />
-                </ButtonGroup>
-
-                <ButtonGroup testId="text-element-buttons">
-                    <LinkToolbarButton icon={<IconLink />} />
-                    <ListToolbarButton type={getPluginType(editor, ELEMENT_UL)} icon={<IconListBullets />} />
-                    <ListToolbarButton type={getPluginType(editor, ELEMENT_OL)} icon={<IconListNumbers />} />
-                </ButtonGroup>
+                {toolbarActions.map((actions, index) => (
+                    <div
+                        key={index}
+                        data-test-id={`toolbar-group-${index}`}
+                        className="tw-flex tw-items-center tw-border-l tw-px-3 tw-py-2 tw-border-black-10 tw-h-12 tw-border-b"
+                    >
+                        {actions.map((action, index) => (
+                            <React.Fragment key={index}>
+                                {toolbarComponents(editor, editorId, textStyles)[action]}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                ))}
             </div>
         </BalloonToolbar>
     );
