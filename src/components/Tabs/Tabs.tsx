@@ -305,7 +305,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                 )}
             </div>
 
-            <div className="tw-p-3" data-test-id="tab-content">
+            <div data-test-id="tab-content">
                 {Children.map(children, (child) => {
                     if (!isValidElement(child)) {
                         return null;
