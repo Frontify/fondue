@@ -22,6 +22,13 @@ export const brightHeaderBackgroundColors: Record<BrightHeaderStyle, string> = {
     [BrightHeaderStyle.Note]: "tw-bg-yellow-60",
 };
 
+export const brightHeaderArrowBackgroundColors: Record<BrightHeaderStyle, string> = {
+    [BrightHeaderStyle.Information]: "before:tw-bg-violet-60",
+    [BrightHeaderStyle.Warning]: "before:tw-bg-red-60",
+    [BrightHeaderStyle.Tip]: "before:tw-bg-green-60",
+    [BrightHeaderStyle.Note]: "before:tw-bg-yellow-60",
+};
+
 const brightHeaderIcon: Record<BrightHeaderStyle, ReactElement> = {
     [BrightHeaderStyle.Information]: <IconInfo />,
     [BrightHeaderStyle.Warning]: <IconCallout />,

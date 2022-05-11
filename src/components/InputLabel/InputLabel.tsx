@@ -11,7 +11,7 @@ export type InputLabelProps = PropsWithChildren<{
     required?: boolean;
     disabled?: boolean;
     clickable?: boolean;
-    tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
+    tooltip?: TooltipProps;
     bold?: boolean;
 }>;
 

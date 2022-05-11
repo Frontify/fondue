@@ -11,10 +11,15 @@ import { FocusStrategy } from "@react-types/shared";
 import React, { ReactElement, useRef } from "react";
 
 export type ActionMenuItemType = MenuItemType & { onClick: () => void };
+export type ActionMenuSwitchItemType = MenuItemType & {
+    onClick: (switchValue: boolean) => void;
+    type: "switch";
+    initialValue: boolean;
+};
 
 export type ActionMenuBlock = {
     id: string;
-    menuItems: ActionMenuItemType[];
+    menuItems: (ActionMenuItemType | ActionMenuSwitchItemType)[];
     ariaLabel?: string;
 };
 

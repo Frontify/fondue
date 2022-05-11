@@ -4,13 +4,13 @@ import IconIcons from "@foundation/Icon/Generated/IconIcons";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { BrightHeaderStyle } from "./BrightHeader";
-import { Tooltip as TooltipComponent, TooltipProps } from "./Tooltip";
-import { TooltipArrow } from "./TooltipArrow";
+import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from "./Tooltip";
+import { IconAlert, IconAttentionFilled, IconSize } from "@foundation/Icon";
 
 // eslint-disable-next-line import/no-default-export
 export default {
     title: "Components/Tooltip",
-    component: TooltipComponent,
+    component: Tooltip,
     args: {
         content: "Cupcake ipsum dolor sit amet ice cream.",
         heading: "",
@@ -43,37 +43,99 @@ export default {
             },
             control: { type: "select" },
         },
+        position: {
+            options: Object.values(TooltipPosition),
+            control: { type: "select" },
+            defaultValue: TooltipPosition.Bottom,
+        },
+        alignment: {
+            options: Object.values(TooltipAlignment),
+            control: { type: "select" },
+            defaultValue: TooltipAlignment.Middle,
+        },
+        withArrow: {
+            control: { type: "boolean" },
+            defaultValue: false,
+        },
+        flip: {
+            control: { type: "boolean" },
+            defaultValue: true,
+        },
+        hoverDelay: {
+            control: { type: "number" },
+            defaultValue: 200,
+        },
     },
-} as Meta;
+} as Meta<TooltipProps>;
 
-export const Tooltip: Story<TooltipProps> = (args: TooltipProps) => <TooltipComponent {...args} />;
+export const TooltipComponent: Story<TooltipProps> = (args: TooltipProps) => {
+    return (
+        <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
+            <Tooltip
+                {...args}
+                triggerElement={
+                    <button className="tw-flex tw-justify-center tw-items-center">
+                        <IconAttentionFilled size={IconSize.Size16} />
+                        <span>Tooltip trigger</span>
+                    </button>
+                }
+            />
+        </div>
+    );
+};
 
-export const WithInfoBrightHeader = Tooltip.bind({});
+export const MultipleTooltipsComponent: Story<TooltipProps> = (args: TooltipProps) => {
+    return (
+        <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
+            <p className="tw-mr-2">Label</p>
+            <Tooltip
+                {...args}
+                triggerElement={
+                    <button className="tw-mr-1">
+                        <IconAttentionFilled size={IconSize.Size16} />
+                    </button>
+                }
+            />
+            <Tooltip
+                {...args}
+                content="Second tooltip"
+                triggerElement={
+                    <button>
+                        <IconAlert size={IconSize.Size16} />
+                    </button>
+                }
+                brightHeader={BrightHeaderStyle.Warning}
+            />
+        </div>
+    );
+};
+
+export const WithInfoBrightHeader = TooltipComponent.bind({});
 WithInfoBrightHeader.args = {
     brightHeader: BrightHeaderStyle.Information,
 };
 
-export const WithWarningBrightHeader = Tooltip.bind({});
+export const WithWarningBrightHeader = TooltipComponent.bind({});
 WithWarningBrightHeader.args = {
     brightHeader: BrightHeaderStyle.Warning,
 };
 
-export const WithTipBrightHeader = Tooltip.bind({});
+export const WithTipBrightHeader = TooltipComponent.bind({});
 WithTipBrightHeader.args = {
     brightHeader: BrightHeaderStyle.Tip,
 };
 
-export const WithNoteBrightHeader = Tooltip.bind({});
+export const WithNoteBrightHeader = TooltipComponent.bind({});
 WithNoteBrightHeader.args = {
     brightHeader: BrightHeaderStyle.Note,
 };
 
-export const WithOneButton = Tooltip.bind({});
+export const WithOneButton = TooltipComponent.bind({});
 WithOneButton.args = {
     buttons: [{ label: "Primary", action: () => null }],
 };
 
-export const WithTwoButtons = Tooltip.bind({});
+export const WithTwoButtons = TooltipComponent.bind({});
 WithTwoButtons.args = {
     buttons: [
         { label: "Primary", action: () => null },
@@ -81,34 +143,34 @@ WithTwoButtons.args = {
     ],
 };
 
-export const WithHeading = Tooltip.bind({});
+export const WithHeading = TooltipComponent.bind({});
 WithHeading.args = {
     heading: "I'm a heading",
 };
 
-export const WithHeadingAndIcon = Tooltip.bind({});
+export const WithHeadingAndIcon = TooltipComponent.bind({});
 WithHeadingAndIcon.args = {
     heading: "I'm a heading",
     headingIcon: <IconIcons />,
 };
 
-export const TooltipWithIcon = Tooltip.bind({});
+export const TooltipWithIcon = TooltipComponent.bind({});
 TooltipWithIcon.args = {
     tooltipIcon: <IconIcons />,
 };
 
-export const WithLinkWithDefaultLabel = Tooltip.bind({});
+export const WithLinkWithDefaultLabel = TooltipComponent.bind({});
 WithLinkWithDefaultLabel.args = {
     linkUrl: "#",
 };
 
-export const WithLinkWithCustomLabel = Tooltip.bind({});
+export const WithLinkWithCustomLabel = TooltipComponent.bind({});
 WithLinkWithCustomLabel.args = {
     linkUrl: "#",
     linkLabel: "Upgrade your plan",
 };
 
-export const WithEverythingDisplayed = Tooltip.bind({});
+export const WithEverythingDisplayed = TooltipComponent.bind({});
 WithEverythingDisplayed.args = {
     tooltipIcon: <IconIcons />,
     heading: "I'm a heading",
@@ -121,40 +183,7 @@ WithEverythingDisplayed.args = {
     ],
 };
 
-type ArrowPosition = "left" | "right" | "top" | "bottom";
-type WithArrowProps = TooltipProps & { arrowPosition: ArrowPosition };
-const getArrowStyle = (position: ArrowPosition) => {
-    switch (position) {
-        case "left":
-            return { top: 0, left: 0, transform: "translate3d(-6px, 26px, 0)" };
-        case "right":
-            return { top: 0, right: 0, transform: "translate3d(6px, 26px, 0)" };
-        case "top":
-            return { top: 0, left: "50%", transform: "translate3d(-50%, -6px, 0)" };
-        case "bottom":
-            return { bottom: 0, left: "50%", transform: "translate3d(-50%, 6px, 0)" };
-        default:
-            return {};
-    }
-};
-
-export const WithArrow: Story<WithArrowProps> = (args: WithArrowProps) => (
-    <div className="tw-relative tw-inline-block">
-        <TooltipComponent {...args}>
-            <TooltipArrow
-                style={getArrowStyle(args.arrowPosition)}
-                placement={args.arrowPosition}
-                headerColor={args.brightHeader}
-            />
-        </TooltipComponent>
-    </div>
-);
+export const WithArrow = TooltipComponent.bind({});
 WithArrow.args = {
-    arrowPosition: "left",
-};
-WithArrow.argTypes = {
-    arrowPosition: {
-        options: ["left", "right", "top", "bottom"],
-        control: { type: "select" },
-    },
+    withArrow: true,
 };
