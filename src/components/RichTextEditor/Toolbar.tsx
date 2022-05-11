@@ -49,11 +49,19 @@ type ToolbarProps = {
     actions?: EditorActions[][];
 };
 
+type iconWrapProps = {
+    icon: ReactElement;
+};
+
 const classNames = {
     root: 'tw-text-text-weak tw-ml-0.5 hover:tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded',
     active: 'tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse',
 };
 const styles = { root: { width: '32px', height: '32px' } };
+
+const WrapIconStyling: FC<iconWrapProps> = ({ icon }) => {
+    return <span className="tw-p-2 tw-h-12 tw-justify-center tw-items-center tw-flex">{icon}</span>;
+};
 
 const toolbarComponents = (
     editor: PlateEditor,
@@ -65,7 +73,7 @@ const toolbarComponents = (
         [EditorActions.ALIGN_LEFT]: (
             <AlignToolbarButton
                 value="left"
-                icon={<IconTextAlignLeft size={IconSize.Size24} />}
+                icon={<WrapIconStyling icon={<IconTextAlignLeft size={IconSize.Size24} />} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -73,7 +81,7 @@ const toolbarComponents = (
         [EditorActions.ALIGN_CENTER]: (
             <AlignToolbarButton
                 value="center"
-                icon={<IconTextAlignCenter size={IconSize.Size24} />}
+                icon={<WrapIconStyling icon={<IconTextAlignCenter size={IconSize.Size24} />} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -81,7 +89,7 @@ const toolbarComponents = (
         [EditorActions.ALIGN_RIGHT]: (
             <AlignToolbarButton
                 value="right"
-                icon={<IconTextAlignRight size={IconSize.Size24} />}
+                icon={<WrapIconStyling icon={<IconTextAlignRight size={IconSize.Size24} />} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -89,7 +97,7 @@ const toolbarComponents = (
         [EditorActions.ALIGN_JUSTIFY]: (
             <AlignToolbarButton
                 value="justify"
-                icon={<IconTextAlignJustify size={IconSize.Size24} />}
+                icon={<WrapIconStyling icon={<IconTextAlignJustify size={IconSize.Size24} />} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -97,7 +105,7 @@ const toolbarComponents = (
         [EditorActions.BOLD]: (
             <MarkToolbarButton
                 type={getPluginType(editor, MARK_BOLD)}
-                icon={<IconTextFormatBold size={IconSize.Size24} />}
+                icon={<WrapIconStyling icon={<IconTextFormatBold size={IconSize.Size24} />} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -105,7 +113,7 @@ const toolbarComponents = (
         [EditorActions.ITALIC]: (
             <MarkToolbarButton
                 type={getPluginType(editor, MARK_ITALIC)}
-                icon={<IconTextFormatItalic size={IconSize.Size24} />}
+                icon={<WrapIconStyling icon={<IconTextFormatItalic size={IconSize.Size24} />} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -113,7 +121,7 @@ const toolbarComponents = (
         [EditorActions.UNDERLINE]: (
             <MarkToolbarButton
                 type={getPluginType(editor, MARK_UNDERLINE)}
-                icon={<IconTextFormatUnderline size={IconSize.Size24} />}
+                icon={<WrapIconStyling icon={<IconTextFormatUnderline size={IconSize.Size24} />} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -121,7 +129,7 @@ const toolbarComponents = (
         [EditorActions.STRIKETHROUGH]: (
             <MarkToolbarButton
                 type={getPluginType(editor, MARK_STRIKETHROUGH)}
-                icon={<IconTextFormatStrikethrough size={IconSize.Size24} />}
+                icon={<WrapIconStyling icon={<IconTextFormatStrikethrough size={IconSize.Size24} />} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -129,7 +137,7 @@ const toolbarComponents = (
         [EditorActions.CODE]: (
             <MarkToolbarButton
                 type={getPluginType(editor, MARK_CODE)}
-                icon={<IconSnippet size={IconSize.Size24} />}
+                icon={<WrapIconStyling icon={<IconSnippet size={IconSize.Size24} />} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -137,7 +145,7 @@ const toolbarComponents = (
         [EditorActions.CHECK_ITEM]: (
             <CheckboxListToolbarButton
                 type={getPluginType(editor, ELEMENT_CHECK_ITEM)}
-                icon={<IconListChecklist size={IconSize.Size24} />}
+                icon={<WrapIconStyling icon={<IconListChecklist size={IconSize.Size24} />} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -148,7 +156,7 @@ const toolbarComponents = (
                 icon={
                     <ToolbarButton
                         active={!!editor?.selection && someNode(editor, { match: { ELEMENT_CHECK_ITEM } })}
-                        icon={<IconLink size={IconSize.Size24} />}
+                        icon={<WrapIconStyling icon={<IconLink size={IconSize.Size24} />} />}
                         classNames={classNames}
                         styles={styles}
                     />
@@ -158,7 +166,7 @@ const toolbarComponents = (
         [EditorActions.ORDERED_LIST]: (
             <ListToolbarButton
                 type={getPluginType(editor, ELEMENT_OL)}
-                icon={<IconListNumbers size={IconSize.Size24} />}
+                icon={<WrapIconStyling icon={<IconListNumbers size={IconSize.Size24} />} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -166,7 +174,7 @@ const toolbarComponents = (
         [EditorActions.UNORDERED_LIST]: (
             <ListToolbarButton
                 type={getPluginType(editor, ELEMENT_UL)}
-                icon={<IconListBullets size={IconSize.Size24} />}
+                icon={<WrapIconStyling icon={<IconListBullets size={IconSize.Size24} />} />}
                 classNames={classNames}
                 styles={styles}
             />
@@ -196,7 +204,7 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
                     <div
                         key={index}
                         data-test-id={`toolbar-group-${index}`}
-                        className="tw-flex tw-items-center tw-border-l tw-border-line tw-h-12 tw-border-b"
+                        className="tw-flex tw-items-center tw-border-l tw-border-line tw-h-12 tw-border-b tw-p-2"
                     >
                         {actions.map((action, index) => (
                             <React.Fragment key={index}>
