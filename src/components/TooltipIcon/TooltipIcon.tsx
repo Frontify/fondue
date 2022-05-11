@@ -23,9 +23,9 @@ export enum TooltipIconTriggerStyle {
 }
 
 const tooltipTriggerStyleClass: Record<TooltipIconTriggerStyle, string> = {
-    [TooltipIconTriggerStyle.Danger]: "tw-text-box-negative-strong",
-    [TooltipIconTriggerStyle.Warning]: "tw-text-box-warning-strong",
-    [TooltipIconTriggerStyle.Primary]: "tw-text-text-weak",
+    [TooltipIconTriggerStyle.Danger]: "tw-text-box-negative-strong hover:tw-text-box-negative-strong-hover",
+    [TooltipIconTriggerStyle.Warning]: "tw-text-box-warning-strong hover:tw-text-box-warning-strong-hover",
+    [TooltipIconTriggerStyle.Primary]: "tw-text-text-weak hover:tw-text-text-x-weak",
 };
 
 export const TooltipIcon: FC<TooltipIconProps> = ({
@@ -46,7 +46,7 @@ export const TooltipIcon: FC<TooltipIconProps> = ({
                                 {...focusProps}
                                 data-test-id="tooltip-icon-trigger"
                                 className={merge([
-                                    "tw-inline-flex tw-justify-center tw-items-center tw-text-black-60 hover:tw-text-black-60 dark:tw-text-black-40 dark:hover:tw-text-white tw-cursor-default tw-outline-none tw-rounded-full",
+                                    "tw-inline-flex tw-justify-center tw-items-center  dark:tw-text-black-40 dark:hover:tw-text-white tw-cursor-default tw-outline-none tw-rounded-full",
                                     isFocusVisible && FOCUS_STYLE,
                                     tooltipTriggerStyleClass[triggerStyle],
                                 ])}

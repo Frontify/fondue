@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { TooltipIcon, TooltipIconProps } from "./TooltipIcon";
+import { TooltipIcon, TooltipIconProps, TooltipIconTriggerStyle } from "./TooltipIcon";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { IconAttentionFilled } from "@foundation/Icon/Generated";
 
@@ -12,7 +12,7 @@ export default {
     component: TooltipIcon,
     argTypes: {
         triggerStyle: {
-            options: ["Danger", "Warning", "Primary"],
+            options: Object.values(TooltipIconTriggerStyle),
             control: { type: "select" },
         },
     },
