@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, ReactElement, cloneElement } from "react";
-import { useFocusVisible } from "@react-aria/interactions";
 import IconQuestion from "@foundation/Icon/Generated/IconQuestion";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { Tooltip, TooltipProps } from "@components/Tooltip/Tooltip";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { IconProps } from "@foundation/Icon";
+import { useFocusRing } from "@react-aria/focus";
 
 export type TooltipIconProps = {
     tooltip?: TooltipProps;
@@ -34,7 +34,7 @@ export const TooltipIcon: FC<TooltipIconProps> = ({
     triggerIcon = <IconQuestion />,
     triggerStyle = TooltipIconTriggerStyle.Primary,
 }: TooltipIconProps) => {
-    const { isFocusVisible } = useFocusVisible();
+    const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
         <div data-test-id="tooltip-icon">
@@ -43,6 +43,7 @@ export const TooltipIcon: FC<TooltipIconProps> = ({
                     <Tooltip
                         triggerElement={
                             <button
+                                {...focusProps}
                                 data-test-id="tooltip-icon-trigger"
                                 className={merge([
                                     "tw-inline-flex tw-justify-center tw-items-center tw-text-black-60 hover:tw-text-black-60 dark:tw-text-black-40 dark:hover:tw-text-white tw-cursor-default tw-outline-none tw-rounded-full",
