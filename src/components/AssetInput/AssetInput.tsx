@@ -8,7 +8,7 @@ import { IconProps } from "@foundation/Icon/IconProps";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { useMemoizedId } from "@hooks/useMemoizedId";
 import { merge } from "@utilities/merge";
-import React, { FC, ReactElement, useEffect, useRef } from "react";
+import React, { ChangeEvent, FC, ReactElement } from "react";
 import { MultiAssetPreview } from "./MultiAssetPreview";
 import { SelectedAsset } from "./SingleAsset/SelectedAsset";
 
@@ -85,19 +85,14 @@ export const AssetInput: FC<AssetInputProps> = ({
 }) => {
     const assetsLength = assets.length;
     const id = useMemoizedId();
-    const inputRef = useRef<HTMLInputElement | null>(null);
 
-    const onFileChange = (event: Event) => {
-        const files = (event.target as HTMLInputElement).files;
+    const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+
         if (files && onUploadClick) {
             onUploadClick(files);
         }
     };
-
-    useEffect(() => {
-        inputRef?.current?.addEventListener("change", (event: Event) => onFileChange(event));
-        return inputRef?.current?.removeEventListener("change", (event: Event) => onFileChange(event));
-    }, [inputRef]);
 
     if ((isLoading || assetsLength === 1) && actions) {
         return <SelectedAsset asset={assets[0]} size={size} actions={actions} isLoading={isLoading} />;
@@ -131,11 +126,11 @@ export const AssetInput: FC<AssetInputProps> = ({
                     </label>
                     <input
                         id={id}
-                        ref={inputRef}
                         className="tw-hidden"
                         type="file"
                         accept={acceptFileType}
                         multiple={!!onMultiAssetClick}
+                        onChange={onFileChange}
                     />
                 </div>
             )}
