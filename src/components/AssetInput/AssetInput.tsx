@@ -5,8 +5,10 @@ import { Button, ButtonStyle } from "@components/Button/Button";
 import IconImageLibrary from "@foundation/Icon/Generated/IconImageLibrary";
 import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternative";
 import { IconProps } from "@foundation/Icon/IconProps";
+import { IconSize } from "@foundation/Icon/IconSize";
+import { useMemoizedId } from "@hooks/useMemoizedId";
 import { merge } from "@utilities/merge";
-import React, { FC, ReactElement } from "react";
+import React, { FC, ReactElement, useEffect, useRef } from "react";
 import { MultiAssetPreview } from "./MultiAssetPreview";
 import { SelectedAsset } from "./SingleAsset/SelectedAsset";
 
@@ -64,9 +66,10 @@ export type AssetInputProps = {
     numberOfLocations?: number;
     actions?: ActionMenuProps["menuBlocks"];
     isLoading?: boolean;
-    onUploadClick?: () => void;
+    onUploadClick?: (files: FileList) => void;
     onLibraryClick?: () => void;
     onMultiAssetClick?: () => void;
+    acceptFileType?: string;
 };
 
 export const AssetInput: FC<AssetInputProps> = ({
@@ -78,8 +81,23 @@ export const AssetInput: FC<AssetInputProps> = ({
     onLibraryClick,
     onUploadClick,
     onMultiAssetClick,
+    acceptFileType,
 }) => {
     const assetsLength = assets.length;
+    const id = useMemoizedId();
+    const inputRef = useRef<HTMLInputElement | null>(null);
+
+    const onFileChange = (event: Event) => {
+        const files = (event.target as HTMLInputElement).files;
+        if (files && onUploadClick) {
+            onUploadClick(files);
+        }
+    };
+
+    useEffect(() => {
+        inputRef?.current?.addEventListener("change", (event: Event) => onFileChange(event));
+        return inputRef?.current?.removeEventListener("change", (event: Event) => onFileChange(event));
+    }, [inputRef]);
 
     if ((isLoading || assetsLength === 1) && actions) {
         return <SelectedAsset asset={assets[0]} size={size} actions={actions} isLoading={isLoading} />;
@@ -102,14 +120,23 @@ export const AssetInput: FC<AssetInputProps> = ({
                     className={merge(["tw-flex tw-flex-col tw-h-8", onLibraryClick && "tw-pr-3"])}
                     data-test-id="asset-input-upload"
                 >
-                    <Button
-                        onClick={onUploadClick}
-                        style={ButtonStyle.Secondary}
-                        solid={false}
-                        icon={<IconUploadAlternative />}
+                    <label
+                        className="tw-relative tw-cursor-pointer tw-rounded tw-flex tw-items-center tw-justify-center tw-px-4 tw-h-9 tw-text-s tw-text-black-80 tw-bg-transparent hover:tw-bg-black-10 hover:tw-text-black active:tw-bg-black-20 active:tw-text-black dark:tw-text-white dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark dark:hover:tw-text-white"
+                        htmlFor={id}
                     >
+                        <span className="tw--ml-1 tw-mr-1.5">
+                            <IconUploadAlternative size={IconSize.Size20} />
+                        </span>
                         Upload
-                    </Button>
+                    </label>
+                    <input
+                        id={id}
+                        ref={inputRef}
+                        className="tw-hidden"
+                        type="file"
+                        accept={acceptFileType}
+                        multiple={!!onMultiAssetClick}
+                    />
                 </div>
             )}
             {onLibraryClick && (

@@ -35,6 +35,7 @@ describe("MultiAssetPreview Component", () => {
         cy.get(ASSET_PLACEHOLDER_ID).should("exist");
         cy.get("@onUploadClickStub").should("not.be.called");
         cy.get(ASSET_PLACEHOLDER_UPLOAD_ID).click();
+        cy.get("input[type=file]").selectFile("cypress/fixtures/Hiking.jpg", { force: true });
         cy.get("@onUploadClickStub").should("be.calledOnce");
         cy.get("@onLibraryClickStub").should("not.be.called");
         cy.get(ASSET_PLACEHOLDER_LIBRARY_ID).click();
