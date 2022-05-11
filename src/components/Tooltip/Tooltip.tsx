@@ -221,7 +221,7 @@ export const Tooltip = ({
                     {isOpen && (
                         <div
                             ref={tooltipContainerRef}
-                            className="tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20"
+                            className="tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-[120000]"
                             data-test-id="tooltip"
                             role="tooltip"
                             style={popperInstance.styles.popper}
