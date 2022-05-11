@@ -3,7 +3,7 @@
 import { getPreventDefaultHandler, someNode, toggleNodeType, unwrapList, usePlateEditorState } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import React from 'react';
-import { TextStyleType, TextStyles, getTextStyles } from '../utils/getTextStyles';
+import { getTextStyles, TextStyles, TextStyleType } from '../utils/getTextStyles';
 
 type DropdownItemProps = {
     editorId?: string;
@@ -20,8 +20,8 @@ export const DropdownItem = ({ editorId, label, type, textStyles }: DropdownItem
             data-test-id="textstyle-option"
             type="button"
             className={merge([
-                'tw-block tw-w-full tw-text-left tw-border-b tw-px-3 tw-py-2 tw-border-black-30 tw-outline-none tw-cursor-pointer tw-truncate ',
-                isActive ? 'tw-bg-black-100 tw-text-white' : 'hover:tw-bg-black-0',
+                'tw-block tw-w-full tw-text-left tw-border-b tw-px-3 tw-py-2 tw-border-line tw-outline-none tw-cursor-pointer tw-truncate hover:tw-bg-box-neutral-hover hover:w-text-box-neutral-inverse-hover',
+                isActive ? 'tw-text-box-neutral-inverse tw-bg-box-neutral' : 'tw-text-text',
                 getTextStyles(type, textStyles),
             ])}
             onMouseDown={(event) => {
