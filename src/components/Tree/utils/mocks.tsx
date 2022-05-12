@@ -95,6 +95,8 @@ const testCategoryNodes = [
         value: "https://weare.frontify.com/page/4",
         icon: <IconFile size={IconSize.Size16} />,
         sort: null,
+        editable: true,
+        onEditableSave: (value: string) => value,
     },
     {
         id: "1-2-2",
