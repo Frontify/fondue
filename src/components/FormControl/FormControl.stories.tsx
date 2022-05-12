@@ -50,7 +50,7 @@ export const WithTextInput: Story<FormControlProps> = (args) => {
     const [input, setInput] = useState("");
 
     return (
-        <FormControl {...args}>
+        <FormControl clickable={true} {...args}>
             <TextInput value={input} onChange={setInput} />
         </FormControl>
     );

@@ -77,7 +77,7 @@ export const Switch: FC<SwitchProps> = ({
     return (
         <div className={containerClasses} data-test-id="switch-container">
             {label && (
-                <InputLabel htmlFor={id} disabled={disabled} tooltip={tooltip}>
+                <InputLabel clickable={true} htmlFor={id} disabled={disabled} tooltip={tooltip}>
                     {label}
                 </InputLabel>
             )}

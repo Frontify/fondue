@@ -14,6 +14,7 @@ export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;
     required?: boolean;
     disabled?: boolean;
+    clickable?: boolean;
     tooltip?: InputLabelTooltipProps;
     bold?: boolean;
 }>;
@@ -23,6 +24,7 @@ export const InputLabel: FC<InputLabelProps> = ({
     htmlFor,
     required = false,
     disabled = false,
+    clickable = false,
     tooltip = [],
     bold,
 }) => {
@@ -44,7 +46,7 @@ export const InputLabel: FC<InputLabelProps> = ({
                     className={merge([
                         "tw-select-none",
                         bold && "tw-font-medium",
-                        disabled
+                        disabled || !clickable
                             ? "hover:tw-cursor-not-allowed tw-pointer-events-none"
                             : "hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white",
                     ])}
