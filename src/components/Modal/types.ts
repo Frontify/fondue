@@ -59,5 +59,6 @@ export type ModalProps = {
     width?: ModalWidth;
     children?: ModalBodyChildren;
     isOpen: boolean;
+    zIndex?: number;
 } & Omit<OverlayProps, "isOpen"> &
     AriaDialogProps;

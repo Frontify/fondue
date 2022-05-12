@@ -48,8 +48,10 @@ export const MODAL_PADDING = {
     bottom: "tw-pb-14",
 };
 
+const DEFAULT_ZINDEX = 50;
+
 const ModalComponent: FC<ModalProps> = memo((props) => {
-    const { visual, children, width = ModalWidth.Default } = props;
+    const { visual, children, width = ModalWidth.Default, zIndex = DEFAULT_ZINDEX } = props;
     const ref = useRef<HTMLDivElement>(null);
     const {
         overlayProps,
@@ -67,10 +69,13 @@ const ModalComponent: FC<ModalProps> = memo((props) => {
             initial="initial"
             animate="show"
             exit="exit"
-            style={{ background: "rgba(0, 0, 0, .5)" }}
+            style={{
+                background: "rgba(0, 0, 0, .5)",
+                zIndex,
+            }}
             onPointerDown={onPointerDown}
             data-is-underlay={true}
-            className="tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0 tw-z-50 tw-flex tw-justify-center tw-items-center tw-p-4"
+            className={`tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0 tw-flex tw-justify-center tw-items-center tw-p-4`}
         >
             {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
             <FocusScope contain restoreFocus autoFocus>
