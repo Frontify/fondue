@@ -120,6 +120,7 @@ export type ButtonProps = {
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     hugWidth?: boolean;
     "aria-label"?: string;
+    formId?: string;
 };
 
 const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, ButtonProps> = (
@@ -136,6 +137,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         onClick,
         hugWidth = true,
         "aria-label": ariaLabel,
+        formId,
     },
     externalRef,
 ) => {
@@ -179,6 +181,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             ])}
             disabled={disabled}
             data-test-id="button"
+            form={formId}
         >
             {icon && wrap(cloneElement(icon, { size: iconSizes[size] }))}
             {children}
