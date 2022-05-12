@@ -2,15 +2,16 @@
 
 import React, { ReactElement, useRef, useState } from "react";
 import { MenuItem, MenuItemProps } from "@components/MenuItem";
-import { Validation } from "@utilities/validation";
+import { Validation, validationClassMap } from "@utilities/validation";
 import { merge } from "@utilities/merge";
 import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
-import { IconSize } from "@foundation/Icon";
+import { IconReject, IconSize } from "@foundation/Icon";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { VariationPlacement } from "@popperjs/core";
 import { usePopper } from "react-popper";
 import { FOCUS_VISIBLE_STYLE } from "@utilities/focusStyle";
+import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
 
 export type MenuItemType = Omit<MenuItemProps, "switchComponent"> & { id: string | number; link?: string };
 export type MenuBlock = {
@@ -36,7 +37,7 @@ export enum DropdownPosition {
 
 export type DropdownComponentProps = {
     menuBlocks: MenuBlock[];
-    activeItemId?: string | number;
+    activeItemId?: string | number | null;
     onChange: (id?: string | number) => void;
     placeholder?: string;
     size?: DropdownSize;
@@ -61,10 +62,13 @@ export const DropdownComponent = ({
     menuBlocks = [],
     activeItemId,
     onChange,
+    disabled,
     size = DropdownSize.Small,
     placeholder = "Select an option",
     position = DropdownPosition.Bottom,
     alignment = DropdownAlignment.Start,
+    validation = Validation.Default,
+    clearable,
 }: DropdownComponentProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -82,12 +86,6 @@ export const DropdownComponent = ({
         placement: placementMap[`${position}-${alignment}`],
         modifiers: [
             {
-                name: "offset",
-                options: {
-                    offset: [0, 8],
-                },
-            },
-            {
                 name: "flip",
                 enabled: false,
             },
@@ -95,12 +93,19 @@ export const DropdownComponent = ({
     });
 
     return (
-        <div data-test-id="dropdown-component">
+        <div data-test-id="dropdown-component" className="tw-relative">
             <button
                 className={merge([
-                    "tw-relative tw-flex tw-justify-between tw-items-center tw-w-full tw-text-left tw-outline-none tw-border tw-rounded tw-transition-colors",
+                    "tw-flex tw-justify-between tw-items-center tw-w-full tw-text-left tw-outline-none tw-border tw-rounded tw-transition-colors",
                     size === DropdownSize.Small ? "tw-py-2 tw-px-3 tw-min-h-[36px]" : "tw-pl-5 tw-py-4 tw-min-h-[60px]",
                     FOCUS_VISIBLE_STYLE,
+                    disabled
+                        ? "tw-border-black-5 tw-bg-black-5 tw-pointer-events-none"
+                        : merge([
+                              "tw-bg-white hover:tw-border-black-90",
+                              isOpen ? "tw-border-black-100" : "tw-border-black-20",
+                              validationClassMap[validation],
+                          ]),
                 ])}
                 data-test-id="dropdown-trigger"
                 placeholder={placeholder}
@@ -112,11 +117,34 @@ export const DropdownComponent = ({
                     {activeItem?.decorator}
                     <span className="tw-ml-2.5">{activeItem?.title ?? placeholder}</span>
                 </div>
-
-                <div className={merge(["tw-transition-transform", isOpen && "tw-rotate-180"])}>
+                <div
+                    className={merge([
+                        "tw-transition-transform tw-absolute",
+                        isOpen && "tw-rotate-180",
+                        size === DropdownSize.Small ? "tw-top-3.5 tw-right-3.5" : "tw-top-[22px] tw-right-[22px]",
+                    ])}
+                >
                     <IconCaretDown size={IconSize.Size16} />
                 </div>
             </button>
+            {clearable && activeItemId && (
+                <button
+                    data-test-id="dropdown-delete-button"
+                    className={merge([
+                        "tw-absolute",
+                        FOCUS_VISIBLE_STYLE,
+                        disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
+                        size === DropdownSize.Small ? "tw-top-4 tw-right-[2rem]" : "tw-top-[24px] tw-right-[42px]",
+                    ])}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        onChange(undefined);
+                        setIsOpen(false);
+                    }}
+                >
+                    <IconReject size={IconSize.Size12} />
+                </button>
+            )}
             {createPortal(
                 <AnimatePresence>
                     {isOpen && (
@@ -127,7 +155,7 @@ export const DropdownComponent = ({
                                 width: triggerRef.current?.getBoundingClientRect().width,
                                 minWidth: "fit-content",
                             }}
-                            className="tw-absolute tw-p-0 tw-shadow-mid tw-m-0 tw-z-[50] tw-overflow-hidden"
+                            className="tw-absolute tw-p-0 tw-m-0 tw-mt-2 tw-shadow-mid tw-z-[50] tw-overflow-hidden"
                             key="content"
                             initial={{ height: 0 }}
                             animate={{ height: "auto" }}
@@ -138,7 +166,7 @@ export const DropdownComponent = ({
                                     <div
                                         className={merge([
                                             "tw-pb-2",
-                                            index < menuBlocks.length - 1 ? "tw-border-b" : "",
+                                            index < menuBlocks.length - 1 ? "tw-border-b tw-border-black-20" : "",
                                         ])}
                                         key={block.id}
                                     >
@@ -171,6 +199,11 @@ export const DropdownComponent = ({
                     )}
                 </AnimatePresence>,
                 document.body,
+            )}
+            {validation === Validation.Loading && (
+                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
+                    <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
+                </span>
             )}
         </div>
     );
