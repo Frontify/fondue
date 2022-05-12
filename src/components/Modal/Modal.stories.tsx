@@ -21,6 +21,7 @@ import {
     ModalWidth,
 } from "./types";
 import { FormControl, FormControlDirection, FormControlStyle } from "@components/FormControl";
+import { Divider } from "..";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -223,13 +224,16 @@ WithLimitedText.args = { ...ModalTemplate.args, children: <ExampleParagraph /> }
 export const BodyWithoutHorizontalPadding = ModalTemplate.bind({});
 
 const ExampleFullWidthBody = () => (
-    <div
-        className={`tw-h-60 tw-bg-black-90 tw-text-white tw-overflow-y-auto ${MODAL_PADDING.top} ${MODAL_PADDING.horizontal} ${MODAL_PADDING.bottom}`}
-    >
-        <ExampleParagraph />
-        <ExampleParagraph />
-        <ExampleParagraph />
-        <ExampleParagraph />
+    <div>
+        <div className={`${MODAL_PADDING.horizontal}`}>
+            <ExampleParagraph />
+            <ExampleParagraph />
+        </div>
+        <Divider />
+        <div className={`${MODAL_PADDING.horizontal}`}>
+            <ExampleParagraph />
+            <ExampleParagraph />
+        </div>
     </div>
 );
 
