@@ -26,7 +26,6 @@ export const DropdownTrigger = ({ editorId, open }: DropdownTriggerProps) => {
     };
 
     const activeStyleInSelection = getStyleInSelection();
-    console.log(activeStyleInSelection);
     const label = activeStyleInSelection
         ? textStyleTitles[activeStyleInSelection]
         : textStyleTitles[TextStyles.ELEMENT_PARAGRAPH];
