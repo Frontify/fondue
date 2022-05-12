@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Modal } from "./Modal";
+import { Modal, MODAL_PADDING } from "./Modal";
 import React, { useState } from "react";
 import { Button, ButtonStyle } from "@components/Button";
 import { Story, Meta } from "@storybook/react";
@@ -222,9 +222,20 @@ WithLimitedText.args = { ...ModalTemplate.args, children: <ExampleParagraph /> }
 
 export const BodyWithoutHorizontalPadding = ModalTemplate.bind({});
 
+const ExampleFullWidthBody = () => (
+    <div
+        className={`tw-h-60 tw-bg-black-90 tw-text-white tw-overflow-y-auto ${MODAL_PADDING.top} ${MODAL_PADDING.horizontal} ${MODAL_PADDING.bottom}`}
+    >
+        <ExampleParagraph />
+        <ExampleParagraph />
+        <ExampleParagraph />
+        <ExampleParagraph />
+    </div>
+);
+
 BodyWithoutHorizontalPadding.args = {
     ...ModalTemplate.args,
     horizontalPadding: false,
     pattern: undefined,
-    children: <ExampleParagraph />,
+    children: <ExampleFullWidthBody />,
 };
