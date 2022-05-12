@@ -115,6 +115,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                 {label && (
                     <InputLabel
                         disabled={disabled}
+                        clickable
                         htmlFor={id}
                         tooltip={tooltip ?? undefined}
                         required={required}
