@@ -42,6 +42,12 @@ const widthMap: Record<ModalWidth, string> = {
     [ModalWidth.Large]: "tw-max-w-[1200px]",
 };
 
+export const MODAL_PADDING = {
+    top: "tw-pt-14",
+    horizontal: "tw-px-14",
+    bottom: "tw-pb-14",
+};
+
 const ModalComponent: FC<ModalProps> = memo((props) => {
     const { visual, children, width = ModalWidth.Default } = props;
     const ref = useRef<HTMLDivElement>(null);
