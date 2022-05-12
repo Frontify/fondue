@@ -15,7 +15,7 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
     const ariaTitleProps = useContext(ModalTitle);
 
     return (
-        <div data-test-id="modal-header">
+        <div data-test-id="modal-header" className="tw-px-14 tw-pt-14">
             <div className="tw-flex tw-items-center">
                 {decorator && (
                     <span

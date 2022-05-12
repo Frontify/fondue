@@ -42,6 +42,7 @@ type ModalBodyChildren = ReactElement | ReactElement[];
 export type ModalBodyProps = {
     direction?: ScrollWrapperDirection;
     children?: ModalBodyChildren;
+    horizontalPadding?: boolean;
 };
 
 export type ModalFooterProps = {

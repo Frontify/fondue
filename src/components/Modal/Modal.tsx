@@ -85,7 +85,7 @@ const ModalComponent: FC<ModalProps> = memo((props) => {
                                 <ModalVisual {...visual} />
                             </div>
                         )}
-                        <div className="tw-flex tw-flex-col tw-flex-1 tw-space-y-6 tw-p-14 tw-overflow-hidden">
+                        <div className="tw-flex tw-flex-col tw-flex-1 tw-space-y-6 tw-overflow-hidden">
                             <ModalTitle.Provider value={titleProps}>{children}</ModalTitle.Provider>
                         </div>
                     </div>
