@@ -4,10 +4,9 @@ import React, { FC, ReactElement, cloneElement } from "react";
 import IconQuestion from "@foundation/Icon/Generated/IconQuestion";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { Tooltip, TooltipProps } from "@components/Tooltip/Tooltip";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { FOCUS_VISIBLE_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import { IconProps } from "@foundation/Icon";
-import { useFocusRing } from "@react-aria/focus";
 
 export type TooltipIconProps = {
     tooltip?: TooltipProps;
@@ -34,8 +33,6 @@ export const TooltipIcon: FC<TooltipIconProps> = ({
     triggerIcon = <IconQuestion />,
     triggerStyle = TooltipIconTriggerStyle.Primary,
 }: TooltipIconProps) => {
-    const { isFocusVisible, focusProps } = useFocusRing();
-
     return (
         <div data-test-id="tooltip-icon">
             {tooltip && (
@@ -43,12 +40,11 @@ export const TooltipIcon: FC<TooltipIconProps> = ({
                     <Tooltip
                         triggerElement={
                             <button
-                                {...focusProps}
                                 type="button"
                                 data-test-id="tooltip-icon-trigger"
                                 className={merge([
                                     "tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full",
-                                    isFocusVisible && FOCUS_STYLE,
+                                    FOCUS_VISIBLE_STYLE,
                                     tooltipTriggerStyleClass[triggerStyle],
                                 ])}
                             >
