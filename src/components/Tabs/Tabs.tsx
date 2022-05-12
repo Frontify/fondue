@@ -15,8 +15,7 @@ import { TabItemProps } from "@components/Tabs/TabItem";
 import { merge } from "@utilities/merge";
 import { IconMore } from "@foundation/Icon";
 import { Badge } from "@components/Badge";
-import { LayoutGroup, motion } from "framer-motion";
-import { useMemoizedId } from "@hooks/useMemoizedId";
+import { motion } from "framer-motion";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 
@@ -49,7 +48,6 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
     const tabNavRef = useRef<HTMLDivElement | null>(null);
     const [isOverflowing, setIsOverflowing] = useState(false);
     const [isMenuOpened, setIsMenuOpened] = useState(false);
-    const layoutGroupId = useMemoizedId();
 
     const tabs: TabItemProps[] =
         Children.map(children, (child) => {
@@ -181,7 +179,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
-        <LayoutGroup id={layoutGroupId}>
+        <>
             <div data-test-id="tabs" className="tw-flex tw-relative tw-border-b tw-border-line">
                 <div
                     ref={tabNavRef}
@@ -229,6 +227,8 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                 )}
                                 {tab.id === activeItemId && (
                                     <motion.div
+                                        initial={false}
+                                        layoutDependency={activeItemId}
                                         data-test-id="tab-active-highlight"
                                         layoutId="underline"
                                         className="tw-absolute tw-h-[3px] tw-bg-violet-60 tw-rounded-t-x-large tw-w-full tw-bottom-0"
@@ -305,7 +305,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                 )}
             </div>
 
-            <div className="tw-p-3" data-test-id="tab-content">
+            <div data-test-id="tab-content">
                 {Children.map(children, (child) => {
                     if (!isValidElement(child)) {
                         return null;
@@ -314,6 +314,6 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     return cloneElement(child, { ...child.props, active: child.props.id === activeItemId });
                 })}
             </div>
-        </LayoutGroup>
+        </>
     );
 };

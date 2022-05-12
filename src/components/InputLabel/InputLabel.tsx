@@ -1,17 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TooltipProps } from "@components/Tooltip/Tooltip";
-import { TooltipIcon } from "@components/TooltipIcon/TooltipIcon";
+import { TooltipIcon, TooltipIconProps } from "@components/TooltipIcon/TooltipIcon";
 import { IconSize } from "@foundation/Icon/IconSize";
 import { merge } from "@utilities/merge";
 import React, { FC, PropsWithChildren } from "react";
+
+export type InputLabelTooltipProps =
+    | (TooltipProps & Pick<TooltipIconProps, "triggerStyle" | "triggerIcon">)
+    | (TooltipProps & Pick<TooltipIconProps, "triggerStyle" | "triggerIcon">)[];
 
 export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;
     required?: boolean;
     disabled?: boolean;
     clickable?: boolean;
-    tooltip?: TooltipProps;
+    tooltip?: InputLabelTooltipProps;
     bold?: boolean;
 }>;
 
@@ -21,13 +25,15 @@ export const InputLabel: FC<InputLabelProps> = ({
     required = false,
     disabled = false,
     clickable = false,
-    tooltip,
+    tooltip = [],
     bold,
 }) => {
+    const tooltips = Array.isArray(tooltip) ? tooltip : [tooltip];
+
     return (
         <div
             className={merge([
-                "tw-inline-flex tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-overflow-hidden tw-max-w-full",
+                "tw-inline-flex tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-max-w-full",
                 disabled
                     ? "tw-text-black-40 hover:tw-text-black-40 dark:tw-text-black-60 dark:hover:tw-text-black-60"
                     : "tw-text-black-90 dark:tw-text-white",
@@ -58,7 +64,15 @@ export const InputLabel: FC<InputLabelProps> = ({
                     *
                 </span>
             )}
-            {tooltip && <TooltipIcon tooltip={tooltip} iconSize={IconSize.Size16} />}
+            {tooltips.map(({ triggerIcon, triggerStyle, hoverDelay = 100, ...tooltipProps }, index) => (
+                <TooltipIcon
+                    tooltip={{ ...tooltipProps, hoverDelay }}
+                    key={index}
+                    iconSize={IconSize.Size16}
+                    triggerIcon={triggerIcon}
+                    triggerStyle={triggerStyle}
+                />
+            ))}
         </div>
     );
 };

@@ -94,7 +94,7 @@ const TabTemplate: Story<TabsProps> = (args) => {
         <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
             {data.map((item) => (
                 <TabItem id={item.id} key={item.id} label={item.label} disabled={item.disabled ?? false}>
-                    {item.children}
+                    <div className="tw-p-3">{item.children}</div>
                 </TabItem>
             ))}
         </Tabs>
@@ -116,7 +116,7 @@ const TabWithIconTemplate: Story<TabsProps> = (args) => {
                     disabled={item.disabled ?? false}
                     decorator={item.decorator}
                 >
-                    {item.children}
+                    <div className="tw-p-3">{item.children}</div>
                 </TabItem>
             ))}
         </Tabs>
@@ -145,7 +145,7 @@ const TabWithBadgeTemplate: Story<TabsProps> = (args) => {
                     disabled={item.disabled ?? false}
                     badge={item.badge}
                 >
-                    {item.children}
+                    <div className="tw-p-3">{item.children}</div>
                 </TabItem>
             ))}
         </Tabs>
@@ -170,7 +170,7 @@ const TabWithBadgeAndIconTemplate: Story<TabsProps> = (args) => {
                     badge={item.badge}
                     decorator={item.decorator}
                 >
-                    {item.children}
+                    <div className="tw-p-3">{item.children}</div>
                 </TabItem>
             ))}
         </Tabs>

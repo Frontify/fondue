@@ -8,6 +8,7 @@ import { useId } from "@react-aria/utils";
 import { DraggableItem, DropZonePosition } from "@utilities/dnd";
 import { getReorderedNodes, listToTree } from "@components/Tree/utils";
 import { IconProps } from "@foundation/Icon";
+import { BadgeProps } from "..";
 
 export interface TreeFlatListItem {
     name: string;
@@ -15,6 +16,7 @@ export interface TreeFlatListItem {
     label?: string;
     value?: string;
     actions?: React.ReactNode[];
+    badge?: ReactElement<IconProps> | ReactElement<BadgeProps>;
     parentId: NullableString;
 }
 
