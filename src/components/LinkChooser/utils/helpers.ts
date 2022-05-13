@@ -32,7 +32,7 @@ export const filterItems = (query: string, results: SearchResult[], section: Ext
     results.filter((item) => doesContainSubstring(item.title, query, section));
 
 export const prependHttps = (link: string) => {
-    if (!link.match(/https?:\/\//)) {
+    if (!link.match(/https?:\/\//) || !link.includes("mailto:") || !link.includes("tel:")) {
         return `https://${link}`;
     }
     return link;
