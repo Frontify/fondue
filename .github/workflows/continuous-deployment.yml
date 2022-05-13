@@ -41,6 +41,12 @@ jobs:
               if: steps.npm_cache.outputs.cache-hit != 'true'
               run: npm ci
 
+            - name: Parse test files for parallelization
+              id: parse-specs
+              uses: tgamauf/cypress-parallel@v1
+              with:
+                  count-runners: ${{ env.NUMBER_OF_RUNNERS }}
+
     component-tests:
         runs-on: ubuntu-latest
 
@@ -74,7 +80,6 @@ jobs:
               run: npm run test -- --spec ${{ matrix.spec }}
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
 
     publish:
         runs-on: ubuntu-latest
