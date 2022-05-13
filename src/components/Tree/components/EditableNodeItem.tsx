@@ -22,9 +22,9 @@ export const EditableNodeItem = ({ name, onEditableSave }: EditableNodeItem) => 
     const handleKeyDown: KeyboardEventHandler = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
             setShowInput(false);
-        }
 
-        onEditableSave((event.target as HTMLInputElement).value);
+            onEditableSave((event.target as HTMLInputElement).value);
+        }
     };
 
     const handleBlur: FocusEventHandler = (event: FocusEvent<HTMLTextAreaElement>) => {
