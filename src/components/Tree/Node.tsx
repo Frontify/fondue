@@ -10,6 +10,7 @@ import { useDrag } from "react-dnd";
 import { DropZone, OnDropCallback } from "@components/DropZone";
 import { TreeFlatListItem } from "@components/Tree";
 import { DraggableItem, DropZonePosition } from "@utilities/dnd";
+import { EditableNodeItem } from "./components/EditableNodeItem";
 
 export type RenderNodeArrayData = Omit<NodeProps, "isFirst" | "strong" | "node"> & {
     nodes: DraggableItem<TreeNodeItem>[];
@@ -55,9 +56,9 @@ export const Node = ({
     onDrop,
     treeName,
 }: NodeProps): ReactElement<NodeProps> => {
-    const { id, value, name, label, icon, nodes, actions } = node;
+    const { id, value, name, label, icon, nodes, actions, editable, onEditableSave, badge } = node;
     const [{ opacity }, drag] = useDrag({
-        item: { id, value, name, label, icon, nodes, actions },
+        item: { id, value, name, label, icon, nodes, actions, editable, onEditableSave, badge },
         collect: (monitor) => ({
             opacity: monitor.isDragging() ? 0.4 : 1,
         }),
@@ -83,6 +84,21 @@ export const Node = ({
     const toggleNodesVisibility = (event: React.MouseEvent) => {
         event.stopPropagation();
         setShowNodes(!showNodes);
+    };
+
+    const insertBadge = () => {
+        return (
+            <div
+                data-test-id="node-badge"
+                className={merge([
+                    "tw-flex tw-justify-center tw-items-center tw-ml-2",
+                    selected && "tw-bg-transparent",
+                    badge?.props.size && "tw-w-8 tw-h-5 tw-bg-box-neutral tw-rounded-full",
+                ])}
+            >
+                {badge}
+            </div>
+        );
     };
 
     /* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
@@ -137,7 +153,14 @@ export const Node = ({
                                     ))}
                             </span>
                             {icon && <span>{icon}</span>}
-                            <span data-test-id="node-link-name">{name}</span>
+                            {editable && onEditableSave ? (
+                                <EditableNodeItem name={name} onEditableSave={onEditableSave} />
+                            ) : (
+                                <span className="tw-flex tw-items-center" data-test-id="node-link-name">
+                                    {name}
+                                    {badge && insertBadge()}
+                                </span>
+                            )}
                         </div>
                         <div className="tw-px-1.5">
                             <span

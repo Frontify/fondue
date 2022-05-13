@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
-import { Modal } from "./Modal";
 import { mount } from "@cypress/react";
-import { ModalHeader } from "./ModalHeader";
 import { IconIcons } from "@foundation/Icon";
-import { ModalHeaderVariant } from "./types";
 import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 import { OverlayProvider } from "@react-aria/overlays";
+import React from "react";
+import { Modal } from "./Modal";
+import { ModalHeader } from "./ModalHeader";
+import { ModalHeaderVariant } from "./types";
 
 const MODAL_CONTAINER = "[data-test-id=modal-container]";
 const MODAL_VISUAL = "[data-test-id=modal-visual]";
@@ -70,7 +70,7 @@ describe("Modal Component", () => {
         cy.get(MODAL_HEADER).should("exist");
         cy.get(MODAL_HEADER).should("contain.text", title).and("contain.text", leadText);
         cy.get(MODAL_HEADER_DECORATOR).should("be.visible").and("have.class", "tw-text-violet-60");
-        cy.get(GENERIC_ICON_CODE).should("be.visible").and("have.class", "tw-h-6 tw-w-6");
+        cy.get(GENERIC_ICON_CODE).should("be.visible").and("have.class", "!tw-h-6 !tw-w-6");
     });
 
     it("should render the modal with a body and implement the ScrollWrapper component", () => {

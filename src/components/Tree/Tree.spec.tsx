@@ -33,6 +33,8 @@ const NODE_LINK_NAME_ID = "[data-test-id=node-link-name]";
 const TOGGLE_ID = "[data-test-id=toggle]";
 const SUB_TREE_ID = "[data-test-id=sub-tree]";
 const DROP_ZONE_ID = "[data-test-id=drop-zone]";
+const BADGE_ID = "[data-test-id=node-badge]";
+const NODE_EDITABLE_ID = "[data-test-id=node-editable]";
 
 describe("Tree Component", () => {
     // TODO check if DropZones are not present when no onDrop props is provided. Refactoring needed first
@@ -114,5 +116,57 @@ describe("Draggable Tree Component", () => {
             const expectedClass = index % 2 === 0 ? "tw-h-[10px]" : "tw-h-auto";
             expect($dropZone).to.have.class(expectedClass);
         });
+    });
+});
+
+describe("Badge Tree Component", () => {
+    beforeEach(() => {
+        mount(<Component nodes={mockNodesFlat} />);
+
+        cy.get(`${NODE_ID} ${TOGGLE_ID}`).click();
+    });
+
+    it("does not render badge", () => {
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:first ${BADGE_ID}`).should("not.exist");
+    });
+
+    it("renders icon", () => {
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:last ${BADGE_ID}`).should("exist");
+    });
+
+    it("renders badge", () => {
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:last ${TOGGLE_ID}`).click();
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:last ${BADGE_ID}`).should("exist");
+    });
+});
+
+describe("Editable Tree Component", () => {
+    beforeEach(() => {
+        mount(<Component nodes={mockNodesFlat} />);
+
+        cy.get(`${NODE_ID} ${TOGGLE_ID}`).click();
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:last ${TOGGLE_ID}`).click();
+    });
+
+    it("does not render the editable input on double click when props are not set", () => {
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:last ${NODE_LINK_NAME_ID}`).dblclick();
+        cy.get(`${NODE_EDITABLE_ID}`).should("not.exist");
+    });
+
+    it("renders the editable input on double click", () => {
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(3) ${NODE_LINK_NAME_ID}`).dblclick();
+        cy.get(`${NODE_EDITABLE_ID}`).should("exist");
+    });
+
+    it("exits the editable input on enter", () => {
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(3) ${NODE_LINK_NAME_ID}`).dblclick();
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(3) input`).type("{enter}");
+        cy.get(`${NODE_EDITABLE_ID}`).should("not.exist");
+    });
+
+    it("exits the editable input on blur", () => {
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(3) ${NODE_LINK_NAME_ID}`).dblclick();
+        cy.get(`${SUB_TREE_ID}  > ${NODE_ID}:first`).click();
+        cy.get(`${NODE_EDITABLE_ID}`).should("not.exist");
     });
 });

@@ -146,6 +146,7 @@ export const Tooltip = ({
 
     const placement = placementMap[`${position}-${alignment}`];
     const tooltipContainerRef = useRef<HTMLDivElement | null>(null);
+    const triggerElementContainerRef = useRef<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
     const tooltipOffset = withArrow ? 10 : 5;
@@ -189,16 +190,14 @@ export const Tooltip = ({
 
     const checkIfHovered = useCallback(
         (event) => {
-            const hoveredElement = event.path;
-            if (hoveredElement && hoveredElement.includes(triggerRefElement?.current)) {
-                handleShowTooltipOnHover();
-            }
+            const hoveredElement = event.path ?? event.composedPath?.();
+            const hoverSources = [triggerRefElement, triggerElementContainerRef, tooltipContainerRef];
 
-            if (hoveredElement && hoveredElement.includes(tooltipContainerRef?.current)) {
+            if (hoveredElement && hoverSources.some((el) => hoveredElement.includes(el?.current))) {
                 handleShowTooltipOnHover();
             }
         },
-        [triggerRefElement?.current, tooltipContainerRef?.current],
+        [triggerRefElement?.current, tooltipContainerRef?.current, triggerElementContainerRef?.current],
     );
 
     const hasInteractiveElements = !!(buttons?.length || linkUrl?.length);
@@ -211,7 +210,7 @@ export const Tooltip = ({
 
     return (
         <>
-            <div {...triggerProps}>
+            <div {...triggerProps} ref={triggerElementContainerRef}>
                 {triggerElement &&
                     cloneElement(triggerElement, {
                         ref: triggerRefElement,
@@ -222,7 +221,7 @@ export const Tooltip = ({
                     {isOpen && (
                         <div
                             ref={tooltipContainerRef}
-                            className="tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-20"
+                            className="tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-[120000]"
                             data-test-id="tooltip"
                             role="tooltip"
                             style={popperInstance.styles.popper}
