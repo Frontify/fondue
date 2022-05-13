@@ -54,6 +54,7 @@ export enum FormControlDirection {
 export type FormControlProps = PropsWithChildren<{
     direction?: FormControlDirection;
     disabled?: boolean;
+    clickable?: boolean;
     label?: Omit<InputLabelProps, "disabled">;
     extra?: ReactNode;
     helper?: Omit<HelperTextProps, "disabled" | "style"> & { position?: HelperPosition };
@@ -68,6 +69,7 @@ export const FormControl: FC<FormControlProps> = ({
     name,
     helper,
     disabled,
+    clickable,
     direction = FormControlDirection.Vertical,
     style = FormControlStyle.Primary,
 }) => {
@@ -89,7 +91,7 @@ export const FormControl: FC<FormControlProps> = ({
                         direction === FormControlDirection.Vertical && "tw-w-full",
                     ])}
                 >
-                    {label?.children && <InputLabel {...label} disabled={disabled} />}
+                    {label?.children && <InputLabel {...label} disabled={disabled} clickable={clickable} />}
                     {extra && (
                         <span
                             data-test-id="form-control-extra"

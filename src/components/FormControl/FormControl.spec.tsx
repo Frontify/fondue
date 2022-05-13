@@ -10,8 +10,10 @@ const FORM_CONTROL_EXTRA_ID = "[data-test-id=form-control-extra]";
 const FORM_CONTROL_HELPER_TEXT_ID = "[data-test-id=form-control-helper-text]";
 const FORM_CONTROL_CONTENT = "Control Input could be anything...";
 const TEXT_INPUT_ID = '[data-test-id="text-input"]';
+const LABEL_ID = '[data-test-id="input-label"]';
 
 const INPUT_ID = "ID";
+const LABEL_TEXT = "Label";
 
 describe("FormControl Component", () => {
     it("should render a form control", () => {
@@ -34,7 +36,6 @@ describe("FormControl Component", () => {
     });
 
     it("should render a form control with a label", () => {
-        const LABEL_TEXT = "Label";
         mount(<FormControl label={{ htmlFor: "foo", children: LABEL_TEXT }}>{FORM_CONTROL_CONTENT}</FormControl>);
 
         cy.get(FORM_CONTROL_ID).should("contain", LABEL_TEXT);
@@ -84,5 +85,21 @@ describe("FormControl Component", () => {
         );
 
         cy.get(TEXT_INPUT_ID).should("have.attr", "id", INPUT_ID);
+    });
+
+    it("renders unclickable label per default", () => {
+        mount(<FormControl label={{ htmlFor: "foo", children: LABEL_TEXT }}>{FORM_CONTROL_CONTENT}</FormControl>);
+        cy.get(LABEL_ID).should("not.have.class", "hover:tw-cursor-pointer");
+        cy.get(LABEL_ID).should("have.class", "tw-pointer-events-none");
+    });
+
+    it("renders clickable label", () => {
+        mount(
+            <FormControl clickable={true} label={{ htmlFor: "foo", children: LABEL_TEXT }}>
+                {FORM_CONTROL_CONTENT}
+            </FormControl>,
+        );
+        cy.get(LABEL_ID).should("have.class", "hover:tw-cursor-pointer");
+        cy.get(LABEL_ID).should("not.have.class", "tw-pointer-events-none");
     });
 });
