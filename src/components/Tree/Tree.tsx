@@ -18,6 +18,8 @@ export interface TreeFlatListItem {
     actions?: React.ReactNode[];
     badge?: ReactElement<IconProps> | ReactElement<BadgeProps>;
     parentId: NullableString;
+    editable?: boolean;
+    onEditableSave?: (value: string) => void;
 }
 
 export type TreeProps = {
