@@ -42,6 +42,12 @@ const widthMap: Record<ModalWidth, string> = {
     [ModalWidth.Large]: "tw-max-w-[1200px]",
 };
 
+export const MODAL_PADDING = {
+    top: "tw-pt-14",
+    horizontal: "tw-px-14",
+    bottom: "tw-pb-14",
+};
+
 const DEFAULT_ZINDEX = 50;
 
 const ModalComponent: FC<ModalProps> = memo((props) => {
@@ -90,7 +96,7 @@ const ModalComponent: FC<ModalProps> = memo((props) => {
                                 <ModalVisual {...visual} />
                             </div>
                         )}
-                        <div className="tw-flex tw-flex-col tw-flex-1 tw-space-y-6 tw-p-14 tw-overflow-hidden">
+                        <div className="tw-flex tw-flex-col tw-flex-1 tw-space-y-6 tw-overflow-hidden">
                             <ModalTitle.Provider value={titleProps}>{children}</ModalTitle.Provider>
                         </div>
                     </div>

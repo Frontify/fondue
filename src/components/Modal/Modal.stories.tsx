@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Modal } from "./Modal";
+import { Modal, MODAL_PADDING } from "./Modal";
 import React, { useState } from "react";
 import { Button, ButtonStyle } from "@components/Button";
 import { Story, Meta } from "@storybook/react";
@@ -12,8 +12,16 @@ import { PatternDesign, PatternTheme } from "@foundation/Pattern";
 import { IconAcademy, IconAudio, IconIcons } from "@foundation/Icon";
 import { ScrollWrapperDirection } from "@components/ScrollWrapper/types";
 import { OverlayContainer, OverlayProvider } from "@react-aria/overlays";
-import { ModalHeaderProps, ModalHeaderVariant, ModalProps, ModalVisualProps, ModalWidth } from "./types";
+import {
+    ModalBodyProps,
+    ModalHeaderProps,
+    ModalHeaderVariant,
+    ModalProps,
+    ModalVisualProps,
+    ModalWidth,
+} from "./types";
 import { FormControl, FormControlDirection, FormControlStyle } from "@components/FormControl";
+import { Divider } from "..";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -89,6 +97,13 @@ export default {
             defaultValue: ModalHeaderVariant.Default,
             control: { type: "select" },
         },
+        horizontalPadding: {
+            table: {
+                category: "Layout",
+            },
+            name: "Body Horizontal Padding",
+            defaultValue: true,
+        },
         children: {
             table: {
                 disable: true,
@@ -132,7 +147,7 @@ const ControlledInput = () => {
     );
 };
 
-const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = (args) => {
+const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps & ModalBodyProps> = (args) => {
     const state = useOverlayTriggerState({});
 
     return (
@@ -154,7 +169,9 @@ const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps> = (
                     decorator={args.decorator}
                     variant={args.variant}
                 />
-                <Modal.Body direction={ScrollWrapperDirection.Vertical}>{args.children}</Modal.Body>
+                <Modal.Body direction={ScrollWrapperDirection.Vertical} horizontalPadding={args.horizontalPadding}>
+                    {args.children}
+                </Modal.Body>
                 <Modal.Footer
                     buttons={[
                         {
@@ -203,3 +220,26 @@ Default.args = {
 export const WithLimitedText = ModalTemplate.bind({});
 
 WithLimitedText.args = { ...ModalTemplate.args, children: <ExampleParagraph /> };
+
+export const BodyWithoutHorizontalPadding = ModalTemplate.bind({});
+
+const ExampleFullWidthBody = () => (
+    <div>
+        <div className={`${MODAL_PADDING.horizontal}`}>
+            <ExampleParagraph />
+            <ExampleParagraph />
+        </div>
+        <Divider />
+        <div className={`${MODAL_PADDING.horizontal}`}>
+            <ExampleParagraph />
+            <ExampleParagraph />
+        </div>
+    </div>
+);
+
+BodyWithoutHorizontalPadding.args = {
+    ...ModalTemplate.args,
+    horizontalPadding: false,
+    pattern: undefined,
+    children: <ExampleFullWidthBody />,
+};

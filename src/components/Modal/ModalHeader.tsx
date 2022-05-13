@@ -5,6 +5,7 @@ import { merge } from "@utilities/merge";
 import { ModalHeaderProps, ModalHeaderVariant, modalHeaderVariants } from "./types";
 import { IconSize } from "@foundation/Icon";
 import { ModalTitle } from "./context/ModalTitle";
+import { MODAL_PADDING } from "./Modal";
 
 export const ModalHeader: FC<ModalHeaderProps> = ({
     title,
@@ -15,7 +16,7 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
     const ariaTitleProps = useContext(ModalTitle);
 
     return (
-        <div data-test-id="modal-header">
+        <div data-test-id="modal-header" className={`${MODAL_PADDING.top} ${MODAL_PADDING.horizontal}`}>
             <div className="tw-flex tw-items-center">
                 {decorator && (
                     <span
