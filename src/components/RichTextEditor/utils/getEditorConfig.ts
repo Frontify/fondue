@@ -47,6 +47,7 @@ import {
     UnorderedListElement,
 } from "../components";
 import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from "../plugins/checkboxListPlugin";
+import { createLinkChooserPlugin, ELEMENT_LINK_CHOOSER } from "../plugins/linkChooserPlugin/createLinkChooserPlugin";
 import { TextStyles, TextStyleType } from "./getTextStyles";
 
 export const getEditorConfig = (textStyles?: TextStyleType[]) => {
@@ -148,6 +149,13 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
             createListPlugin(),
             createCheckboxListPlugin(),
             createLinkPlugin(),
+            createLinkChooserPlugin({
+                inject: {
+                    props: {
+                        validTypes: [ELEMENT_LINK_CHOOSER],
+                    },
+                },
+            }),
             createBoldPlugin(),
             createItalicPlugin(),
             createUnderlinePlugin(),
