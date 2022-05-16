@@ -4,6 +4,7 @@ import { useOverlayPosition } from "@react-aria/overlays";
 import { MutableRefObject } from "react";
 import { getTotalOverlayHeight } from "../helpers/getTotalOverlayHeight";
 import { shouldDisplayAbove } from "../helpers/shouldDisplayAbove";
+import { FlyoutPlacement } from "@components/Flyout";
 
 const FLYOUT_OVERLAY_OFFSET = 5;
 const DEFAULT_OVERLAY_PADDING = 12;
@@ -14,6 +15,8 @@ type UseOverlayPositionWithBottomMarginProps = {
     overlayRef: MutableRefObject<HTMLElement | null>;
     scrollRef: MutableRefObject<HTMLElement | null>;
     isOpen: boolean;
+    placement?: FlyoutPlacement;
+    offset?: number;
 };
 
 export const useOverlayPositionWithBottomMargin = ({
@@ -21,6 +24,8 @@ export const useOverlayPositionWithBottomMargin = ({
     overlayRef,
     scrollRef,
     isOpen,
+    placement,
+    offset,
 }: UseOverlayPositionWithBottomMarginProps) => {
     const overlayHeight = getTotalOverlayHeight(overlayRef, scrollRef);
 
@@ -30,9 +35,9 @@ export const useOverlayPositionWithBottomMargin = ({
         targetRef: triggerRef,
         overlayRef,
         shouldFlip: false,
-        placement: isFlipped ? "top left" : "bottom left",
+        placement: placement ?? (isFlipped ? FlyoutPlacement.Top : FlyoutPlacement.Bottom),
         containerPadding: DEFAULT_OVERLAY_PADDING,
-        offset: FLYOUT_OVERLAY_OFFSET,
+        offset: offset ?? FLYOUT_OVERLAY_OFFSET,
         scrollRef,
         isOpen,
     });

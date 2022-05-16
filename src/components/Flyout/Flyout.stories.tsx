@@ -15,7 +15,7 @@ import { Meta, Story } from "@storybook/react";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { MutableRefObject, useState } from "react";
-import { Flyout, FlyoutProps, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT } from "./Flyout";
+import { Flyout, FlyoutProps, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, FlyoutPlacement } from "./Flyout";
 import { FlyoutFooter } from "./FlyoutFooter";
 import { Dropdown } from "@components/Dropdown";
 import { DatePicker } from "@components/DatePicker";
@@ -29,6 +29,15 @@ export default {
     argTypes: {
         onCancel: { action: "onCancel", table: { disable: true } },
         onOpenChange: { action: "onOpenChange", table: { disable: true } },
+        placement: {
+            options: Object.values(FlyoutPlacement),
+            control: { type: "select" },
+            defaultValue: FlyoutPlacement.Bottom,
+        },
+        offset: {
+            control: { type: "number" },
+            defaultValue: 5,
+        },
     },
     args: {
         trigger: (
