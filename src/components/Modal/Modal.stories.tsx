@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Modal, MODAL_PADDING } from "./Modal";
+import { Modal } from "./Modal";
 import React, { useState } from "react";
 import { Button, ButtonStyle } from "@components/Button";
 import { Story, Meta } from "@storybook/react";
@@ -16,12 +16,14 @@ import {
     ModalBodyProps,
     ModalHeaderProps,
     ModalHeaderVariant,
+    ModalPadding,
     ModalProps,
     ModalVisualProps,
     ModalWidth,
 } from "./types";
 import { FormControl, FormControlDirection, FormControlStyle } from "@components/FormControl";
 import { Divider } from "..";
+import { paddingMap } from "./context/ModalLayout";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -97,12 +99,22 @@ export default {
             defaultValue: ModalHeaderVariant.Default,
             control: { type: "select" },
         },
+        padding: {
+            table: {
+                category: "Layout",
+            },
+            name: "Padding Size",
+            options: [ModalPadding.Default, ModalPadding.Compact],
+            control: { type: "select" },
+            defaultValue: ModalPadding.Default,
+        },
         horizontalPadding: {
             table: {
                 category: "Layout",
             },
             name: "Body Horizontal Padding",
             defaultValue: true,
+            control: { type: "boolean" },
         },
         children: {
             table: {
@@ -162,6 +174,7 @@ const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps & Mo
                 onClose={state.close}
                 isOpen={state.isOpen}
                 isDismissable
+                padding={args.padding}
             >
                 <Modal.Header
                     title={args.title}
@@ -225,12 +238,12 @@ export const BodyWithoutHorizontalPadding = ModalTemplate.bind({});
 
 const ExampleFullWidthBody = () => (
     <div>
-        <div className={`${MODAL_PADDING.horizontal}`}>
+        <div className={`${paddingMap[ModalPadding.Default].horizontal}`}>
             <ExampleParagraph />
             <ExampleParagraph />
         </div>
         <Divider />
-        <div className={`${MODAL_PADDING.horizontal}`}>
+        <div className={`${paddingMap[ModalPadding.Default].horizontal}`}>
             <ExampleParagraph />
             <ExampleParagraph />
         </div>

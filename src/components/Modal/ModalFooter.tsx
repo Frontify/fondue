@@ -1,18 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import { ModalFooterProps } from "./types";
 import { Button, ButtonSize } from "@components/Button";
-import { MODAL_PADDING } from "./Modal";
+import { ModalLayout } from "./context/ModalLayout";
 
-export const ModalFooter: FC<ModalFooterProps> = ({ buttons }) => (
-    <div data-test-id="modal-footer" className={`${MODAL_PADDING.bottom} ${MODAL_PADDING.horizontal}`}>
-        {buttons && (
-            <div className="tw-flex tw-gap-x-3 tw-justify-end">
-                {buttons.map((button, index) => (
-                    <Button {...button} size={ButtonSize.Medium} key={index} />
-                ))}
-            </div>
-        )}
-    </div>
-);
+export const ModalFooter: FC<ModalFooterProps> = ({ buttons }) => {
+    const { padding } = useContext(ModalLayout);
+
+    return (
+        <div data-test-id="modal-footer" className={`${padding.bottom} ${padding.horizontal}`}>
+            {buttons && (
+                <div className="tw-flex tw-gap-x-3 tw-justify-end">
+                    {buttons.map((button, index) => (
+                        <Button {...button} size={ButtonSize.Medium} key={index} />
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
