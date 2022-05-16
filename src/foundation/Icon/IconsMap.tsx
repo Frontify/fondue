@@ -24,6 +24,7 @@ import IconApprove from "@foundation/Icon/Generated/IconApprove";
 import IconArrow from "@foundation/Icon/Generated/IconArrow";
 import IconArrowDown from "@foundation/Icon/Generated/IconArrowDown";
 import IconArrowLeft from "@foundation/Icon/Generated/IconArrowLeft";
+import IconArrowOutExternal from "@foundation/Icon/Generated/IconArrowOutExternal";
 import IconArrowRight from "@foundation/Icon/Generated/IconArrowRight";
 import IconArrowUp from "@foundation/Icon/Generated/IconArrowUp";
 import IconArrowUpAndDown from "@foundation/Icon/Generated/IconArrowUpAndDown";
@@ -55,6 +56,7 @@ import IconCenter from "@foundation/Icon/Generated/IconCenter";
 import IconCheck from "@foundation/Icon/Generated/IconCheck";
 import IconCheckFilled from "@foundation/Icon/Generated/IconCheckFilled";
 import IconCircle from "@foundation/Icon/Generated/IconCircle";
+import IconCloudArrowDown from "@foundation/Icon/Generated/IconCloudArrowDown";
 import IconCollapse from "@foundation/Icon/Generated/IconCollapse";
 import IconCollectionLarge from "@foundation/Icon/Generated/IconCollectionLarge";
 import IconCollectionMedium from "@foundation/Icon/Generated/IconCollectionMedium";
@@ -303,6 +305,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Arrow]: <IconArrow />,
     [IconEnum.ArrowDown]: <IconArrowDown />,
     [IconEnum.ArrowLeft]: <IconArrowLeft />,
+    [IconEnum.ArrowOutExternal]: <IconArrowOutExternal />,
     [IconEnum.ArrowRight]: <IconArrowRight />,
     [IconEnum.ArrowUp]: <IconArrowUp />,
     [IconEnum.ArrowUpAndDown]: <IconArrowUpAndDown />,
@@ -334,6 +337,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Check]: <IconCheck />,
     [IconEnum.CheckFilled]: <IconCheckFilled />,
     [IconEnum.Circle]: <IconCircle />,
+    [IconEnum.CloudArrowDown]: <IconCloudArrowDown />,
     [IconEnum.Collapse]: <IconCollapse />,
     [IconEnum.CollectionLarge]: <IconCollectionLarge />,
     [IconEnum.CollectionMedium]: <IconCollectionMedium />,
