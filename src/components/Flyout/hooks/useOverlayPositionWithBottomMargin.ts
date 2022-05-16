@@ -30,12 +30,14 @@ export const useOverlayPositionWithBottomMargin = ({
     const overlayHeight = getTotalOverlayHeight(overlayRef, scrollRef);
 
     const isFlipped = shouldDisplayAbove(triggerRef, overlayHeight, FLYOUT_OVERLAY_OFFSET, INTERCOM_BUTTON_HEIGHT);
+    const verticalPosition = isFlipped ? FlyoutPlacement.Top : FlyoutPlacement.Bottom;
 
     const { overlayProps: positionProps } = useOverlayPosition({
         targetRef: triggerRef,
         overlayRef,
         shouldFlip: false,
-        placement: placement ?? (isFlipped ? FlyoutPlacement.Top : FlyoutPlacement.Bottom),
+        placement:
+            placement === FlyoutPlacement.Left || placement === FlyoutPlacement.Right ? placement : verticalPosition,
         containerPadding: DEFAULT_OVERLAY_PADDING,
         offset: offset ?? FLYOUT_OVERLAY_OFFSET,
         scrollRef,
