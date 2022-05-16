@@ -13,7 +13,8 @@ describe("listToTree", () => {
     });
 
     it("Should return tree data structure on an flat data structure", () => {
-        data = mockNodesFlat;
+        const stub = cy.stub();
+        data = mockNodesFlat(stub);
         expected = mockNodesTree;
 
         const result = listToTree(data);
@@ -27,7 +28,8 @@ describe("listToTree", () => {
     });
 
     it("Should have item without children", () => {
-        data = mockNodesFlat;
+        const stub = cy.stub();
+        data = mockNodesFlat(stub);
         expected = [];
 
         const result = listToTree(data);
