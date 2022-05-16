@@ -54,11 +54,23 @@ export enum ModalWidth {
     Large = "Large",
 }
 
+export enum ModalPadding {
+    Default = "Default",
+    Compact = "Compact",
+}
+
+export type ModalPaddingType = {
+    top: string;
+    horizontal: string;
+    bottom: string;
+};
+
 export type ModalProps = {
     visual?: ModalVisualProps;
     width?: ModalWidth;
     children?: ModalBodyChildren;
     isOpen: boolean;
     zIndex?: number;
+    padding?: ModalPadding;
 } & Omit<OverlayProps, "isOpen"> &
     AriaDialogProps;
