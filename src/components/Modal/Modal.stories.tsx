@@ -16,14 +16,13 @@ import {
     ModalBodyProps,
     ModalHeaderProps,
     ModalHeaderVariant,
-    ModalPadding,
     ModalProps,
     ModalVisualProps,
     ModalWidth,
 } from "./types";
 import { FormControl, FormControlDirection, FormControlStyle } from "@components/FormControl";
 import { Divider } from "..";
-import { paddingMap } from "./context/ModalLayout";
+import { MODAL_PADDING } from "./context/ModalLayout";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -99,14 +98,13 @@ export default {
             defaultValue: ModalHeaderVariant.Default,
             control: { type: "select" },
         },
-        padding: {
+        compact: {
             table: {
                 category: "Layout",
             },
-            name: "Padding Size",
-            options: [ModalPadding.Default, ModalPadding.Compact],
-            control: { type: "select" },
-            defaultValue: ModalPadding.Default,
+            name: "Compact",
+            defaultValue: false,
+            control: { type: "boolean" },
         },
         horizontalPadding: {
             table: {
@@ -174,7 +172,7 @@ const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps & Mo
                 onClose={state.close}
                 isOpen={state.isOpen}
                 isDismissable
-                padding={args.padding}
+                compact={args.compact}
             >
                 <Modal.Header
                     title={args.title}
@@ -238,12 +236,12 @@ export const BodyWithoutHorizontalPadding = ModalTemplate.bind({});
 
 const ExampleFullWidthBody = () => (
     <div>
-        <div className={`${paddingMap[ModalPadding.Default].horizontal}`}>
+        <div className={`${MODAL_PADDING.default.horizontal}`}>
             <ExampleParagraph />
             <ExampleParagraph />
         </div>
         <Divider />
-        <div className={`${paddingMap[ModalPadding.Default].horizontal}`}>
+        <div className={`${MODAL_PADDING.default.horizontal}`}>
             <ExampleParagraph />
             <ExampleParagraph />
         </div>

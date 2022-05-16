@@ -14,7 +14,7 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
     variant = ModalHeaderVariant.Default,
 }) => {
     const ariaTitleProps = useContext(ModalTitle);
-    const { padding } = useContext(ModalLayout);
+    const { padding, compact } = useContext(ModalLayout);
 
     return (
         <div data-test-id="modal-header" className={`${padding.top} ${padding.horizontal}`}>
@@ -27,7 +27,13 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
                         {cloneElement(decorator, { size: IconSize.Size24 })}
                     </span>
                 )}
-                <h3 {...ariaTitleProps} className="tw-text-xl tw-font-heading tw-font-medium tw-text-text">
+                <h3
+                    {...ariaTitleProps}
+                    className={merge([
+                        "tw-font-heading tw-font-medium tw-text-text",
+                        compact ? "tw-text-lg" : "tw-text-xl",
+                    ])}
+                >
                     {title}
                 </h3>
             </div>
