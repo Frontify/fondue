@@ -95,6 +95,8 @@ import IconEnvelope from "@foundation/Icon/Generated/IconEnvelope";
 import IconExpand from "@foundation/Icon/Generated/IconExpand";
 import IconExternalAsset from "@foundation/Icon/Generated/IconExternalAsset";
 import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
+import IconEye from "@foundation/Icon/Generated/IconEye";
+import IconEyeOff from "@foundation/Icon/Generated/IconEyeOff";
 import IconFeedback from "@foundation/Icon/Generated/IconFeedback";
 import IconFigureTextBottom from "@foundation/Icon/Generated/IconFigureTextBottom";
 import IconFigureTextLeft from "@foundation/Icon/Generated/IconFigureTextLeft";
@@ -372,6 +374,8 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Expand]: <IconExpand />,
     [IconEnum.ExternalAsset]: <IconExternalAsset />,
     [IconEnum.ExternalLink]: <IconExternalLink />,
+    [IconEnum.Eye]: <IconEye />,
+    [IconEnum.EyeOff]: <IconEyeOff />,
     [IconEnum.Feedback]: <IconFeedback />,
     [IconEnum.FigureTextBottom]: <IconFigureTextBottom />,
     [IconEnum.FigureTextLeft]: <IconFigureTextLeft />,

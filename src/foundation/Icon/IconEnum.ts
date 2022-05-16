@@ -94,6 +94,8 @@ export enum IconEnum {
     Expand = "Expand",
     ExternalAsset = "ExternalAsset",
     ExternalLink = "ExternalLink",
+    Eye = "Eye",
+    EyeOff = "EyeOff",
     Feedback = "Feedback",
     FigureTextBottom = "FigureTextBottom",
     FigureTextLeft = "FigureTextLeft",
