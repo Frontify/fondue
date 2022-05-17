@@ -81,7 +81,7 @@ const SliderItem = (props: SliderItemProps) => {
                 }
                 className={merge([
                     "tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center",
-                    isActive && !disabled ? "tw-text-text" : "tw-text-text-weak",
+                    isActive && !disabled ? "tw-text-text tw-font-medium" : "tw-text-text-weak",
                     !disabled ? "hover:tw-text-text hover:tw-cursor-pointer" : "tw-text-box-disabled-inverse",
                 ])}
             >
@@ -125,7 +125,10 @@ export const Slider: FC<SliderProps> = ({
         <ul
             {...radioGroupProps}
             data-test-id="slider"
-            className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0  tw-bg-box-disabled tw-rounded tw-font-sans tw-text-s tw-list-none tw-select-none"
+            className={merge([
+                "tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-rounded tw-font-sans tw-text-s tw-list-none tw-select-none",
+                disabled ? "tw-bg-box-disabled" : "tw-bg-base-alt",
+            ])}
         >
             <motion.div
                 aria-hidden="true"
