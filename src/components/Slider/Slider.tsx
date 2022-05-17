@@ -138,9 +138,7 @@ export const Slider: FC<SliderProps> = ({
                 }}
                 className={merge([
                     "tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none",
-                    disabled
-                        ? "tw-border-line-x-strong tw-border-opacity-30 tw-bg-box-disabled"
-                        : "tw-border-line-xx-strong tw-bg-white",
+                    disabled ? "tw-border-line-x-strong tw-bg-box-disabled" : "tw-border-line-xx-strong tw-bg-white",
                 ])}
             />
             {itemElements}
