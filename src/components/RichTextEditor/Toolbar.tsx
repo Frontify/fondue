@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Modal } from "@components/Modal";
 import {
     IconLink,
     IconListBullets,
@@ -35,10 +34,10 @@ import {
     usePlateEditorRef,
 } from "@udecode/plate";
 import React, { FC, ReactElement, useState } from "react";
-import { ButtonStyle, LinkChooser } from "..";
 import { ELEMENT_CHECK_ITEM } from "./plugins/checkboxListPlugin";
 import { ELEMENT_LINK_CHOOSER } from "./plugins/linkChooserPlugin/createLinkChooserPlugin";
 import { ChosenLink } from "./plugins/linkChooserPlugin/types";
+import { LinkChooserModalWrapper } from "./plugins/linkChooserPlugin/ui/LinkChooserModalWrapper";
 import { LinkChooserToolBarButton } from "./plugins/linkChooserPlugin/ui/LinkChooserToolBarButton";
 import { TextStyleDropdown } from "./TextStyleDropdown/TextStyleDropdown";
 import { defaultActions, EditorActions } from "./utils/actions";
@@ -56,7 +55,7 @@ const classNames = {
 };
 const styles = { root: { width: "32px", height: "32px" } };
 
-const EVENT_LINK_CHANGE_CONFIRMED = "linkChangeConfirmed";
+export const EVENT_LINK_CHANGE_CONFIRMED = "linkChangeConfirmed";
 
 export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }) => {
     const toolbarComponents = (
@@ -174,7 +173,7 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
         };
     };
 
-    const [linkChooserIsOpen, setLinkChooserIsOpen] = useState<boolean>(false);
+    const [isLinkChooserModalOpen, setIsLinkChooserModalOpen] = useState<boolean>(false);
     const [chosenLink, setChosenLink] = useState<ChosenLink>({
         searchResult: null,
         openInNewTab: false,
@@ -183,7 +182,7 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
     const getLinkFromLinkChoser = (prevChosenLink: ChosenLink): Promise<ChosenLink> => {
         setChosenLink(prevChosenLink);
         setTimeout(() => {
-            setLinkChooserIsOpen(true);
+            setIsLinkChooserModalOpen(true);
         }, 100);
 
         return new Promise<ChosenLink>((resolve) => {
@@ -198,43 +197,12 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
 
     return (
         <>
-            <Modal isOpen={linkChooserIsOpen} isDismissable>
-                <LinkChooser
-                    openInNewTab={chosenLink?.openInNewTab || false}
-                    onOpenInNewTabChange={() => {
-                        setChosenLink({
-                            searchResult: chosenLink.searchResult,
-                            openInNewTab: !chosenLink.openInNewTab,
-                        });
-                    }}
-                    onLinkChange={(value) =>
-                        setChosenLink({
-                            searchResult: value,
-                            openInNewTab: chosenLink.openInNewTab,
-                        })
-                    }
-                    selectedResult={chosenLink.searchResult}
-                />
-                <Modal.Footer
-                    buttons={[
-                        {
-                            children: "Cancel",
-                            onClick: () => setLinkChooserIsOpen(false),
-                            style: ButtonStyle.Secondary,
-                        },
-                        {
-                            children: "Choose",
-                            onClick: () => {
-                                document.dispatchEvent(
-                                    new CustomEvent(EVENT_LINK_CHANGE_CONFIRMED, { detail: { chosenLink } }),
-                                );
-                                setLinkChooserIsOpen(false);
-                            },
-                            style: ButtonStyle.Primary,
-                        },
-                    ]}
-                />
-            </Modal>
+            <LinkChooserModalWrapper
+                isLinkChooserModalOpen={isLinkChooserModalOpen}
+                setLinkChooserModalIsOpen={setIsLinkChooserModalOpen}
+                chosenLink={chosenLink}
+                setChosenLink={setChosenLink}
+            />
             <BalloonToolbar
                 popperOptions={{
                     modifiers: [
