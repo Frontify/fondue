@@ -71,7 +71,8 @@ const ModalComponent: FC<ModalProps> = memo((props) => {
             data-is-underlay={true}
             className={`tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0 tw-flex tw-justify-center tw-items-center tw-p-4`}
         >
-            <FocusScope contain restoreFocus>
+            {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
+            <FocusScope contain restoreFocus autoFocus>
                 <motion.div
                     variants={MODAL_VARIANTS}
                     className={merge([widthMap[width], "tw-w-full tw-max-h-full tw-h-contents tw-flex tw-flex-col"])}
