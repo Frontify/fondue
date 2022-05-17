@@ -199,7 +199,7 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
         <>
             <LinkChooserModalWrapper
                 isLinkChooserModalOpen={isLinkChooserModalOpen}
-                setLinkChooserModalIsOpen={setIsLinkChooserModalOpen}
+                setIsLinkChooserModalOpen={setIsLinkChooserModalOpen}
                 chosenLink={chosenLink}
                 setChosenLink={setChosenLink}
             />

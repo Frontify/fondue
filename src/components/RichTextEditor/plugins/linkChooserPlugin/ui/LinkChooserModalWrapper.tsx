@@ -5,14 +5,14 @@ import { ChosenLink } from "../types";
 
 type LinkChooserModalWrapperProps = {
     isLinkChooserModalOpen: boolean;
-    setLinkChooserModalIsOpen: (isOpen: boolean) => void;
+    setIsLinkChooserModalOpen: (isOpen: boolean) => void;
     chosenLink: ChosenLink;
     setChosenLink: (chosenLink: ChosenLink) => void;
 };
 
 export const LinkChooserModalWrapper = ({
     isLinkChooserModalOpen,
-    setLinkChooserModalIsOpen,
+    setIsLinkChooserModalOpen,
     chosenLink,
     setChosenLink,
 }: LinkChooserModalWrapperProps) => {
@@ -38,7 +38,7 @@ export const LinkChooserModalWrapper = ({
                 buttons={[
                     {
                         children: "Cancel",
-                        onClick: () => setLinkChooserModalIsOpen(false),
+                        onClick: () => setIsLinkChooserModalOpen(false),
                         style: ButtonStyle.Secondary,
                     },
                     {
@@ -47,7 +47,7 @@ export const LinkChooserModalWrapper = ({
                             document.dispatchEvent(
                                 new CustomEvent(EVENT_LINK_CHANGE_CONFIRMED, { detail: { chosenLink } }),
                             );
-                            setLinkChooserModalIsOpen(false);
+                            setIsLinkChooserModalOpen(false);
                         },
                         style: ButtonStyle.Primary,
                     },
