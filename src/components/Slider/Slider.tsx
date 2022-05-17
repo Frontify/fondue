@@ -125,7 +125,7 @@ export const Slider: FC<SliderProps> = ({
         <ul
             {...radioGroupProps}
             data-test-id="slider"
-            className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none tw-select-none"
+            className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0  tw-bg-box-disabled tw-rounded tw-font-sans tw-text-s tw-list-none tw-select-none"
         >
             <motion.div
                 aria-hidden="true"
