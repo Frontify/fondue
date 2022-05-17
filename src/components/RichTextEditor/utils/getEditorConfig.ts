@@ -7,7 +7,6 @@ import {
     createCodePlugin,
     createIndentPlugin,
     createItalicPlugin,
-    createLinkPlugin,
     createListPlugin,
     createParagraphPlugin,
     createPlateUI,
@@ -30,6 +29,7 @@ import {
 } from "@udecode/plate";
 import {
     BoldMark,
+    ChosenLinkElement,
     CodeMark,
     Custom1Element,
     Custom2Element,
@@ -38,7 +38,6 @@ import {
     Heading3Element,
     Heading4Element,
     ItalicMark,
-    LinkElement,
     ListItemContentElement,
     ListItemElement,
     OrderedListElement,
@@ -47,6 +46,7 @@ import {
     UnorderedListElement,
 } from "../components";
 import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from "../plugins/checkboxListPlugin";
+import { createLinkChooserPlugin } from "../plugins/linkChooserPlugin/createLinkChooserPlugin";
 import { TextStyles, TextStyleType } from "./getTextStyles";
 
 export const getEditorConfig = (textStyles?: TextStyleType[]) => {
@@ -106,7 +106,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
 
     const components = createPlateUI({
         // this will override the components over the default ones
-        [ELEMENT_LINK]: LinkElement,
+        [ELEMENT_LINK]: ChosenLinkElement,
         [ELEMENT_UL]: UnorderedListElement,
         [ELEMENT_OL]: OrderedListElement,
         [ELEMENT_LI]: ListItemElement,
@@ -147,8 +147,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
             createCodeBlockPlugin(),
             createListPlugin(),
             createCheckboxListPlugin(),
-            createLinkPlugin(),
-
+            createLinkChooserPlugin(),
             createBoldPlugin(),
             createItalicPlugin(),
             createUnderlinePlugin(),

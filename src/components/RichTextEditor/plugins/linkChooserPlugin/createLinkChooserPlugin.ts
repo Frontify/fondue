@@ -1,5 +1,14 @@
-import { createLinkPlugin, ELEMENT_LINK } from "@udecode/plate";
+import { ChosenLinkElement } from "@components/RichTextEditor/components";
+import { createPluginFactory } from "@udecode/plate";
 
-export const ELEMENT_LINK_CHOOSER = ELEMENT_LINK;
+// Extends the default link plugin so that 'getChosenLink()' can be given into
+// https://github.com/udecode/plate/tree/main/packages/nodes/link/src
 
-export const createLinkChooserPlugin = createLinkPlugin;
+export const ELEMENT_LINK_CHOOSER = "link_chooser";
+
+export const createLinkChooserPlugin = createPluginFactory({
+    key: ELEMENT_LINK_CHOOSER,
+    isElement: true,
+    isInline: true,
+    component: ChosenLinkElement,
+});

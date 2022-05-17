@@ -7,7 +7,7 @@ export * from "./heading2";
 export * from "./heading3";
 export * from "./heading4";
 export * from "./italic";
-export * from "./link";
+export * from "./chosen-link";
 export * from "./list-item";
 export * from "./list-item-content";
 export * from "./ordered-list";

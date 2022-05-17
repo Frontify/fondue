@@ -33,7 +33,7 @@ export const upsertLinkAtSelection = <T = {}>(
         return insertNodes<TElement>(editor, {
             type,
             chosenLink,
-            children: [{ text: chosenLink.searchResult ? chosenLink.searchResult.title : "" }],
+            children: [{ text: "" }],
         });
     }
 
