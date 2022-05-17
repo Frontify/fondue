@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactElement, useEffect, useRef, useState } from "react";
-import { MenuItem, MenuItemProps } from "@components/MenuItem";
+import { MenuItem, MenuItemProps, MenuItemStyle } from "@components/MenuItem";
 import { Validation, validationClassMap } from "@utilities/validation";
 import { merge } from "@utilities/merge";
 import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
@@ -130,7 +130,14 @@ export const DropdownComponent = ({
                 ref={triggerRef}
                 aria-expanded={isOpen}
             >
-                <div className="tw-flex tw-items-center">
+                <div
+                    className={merge([
+                        "tw-flex tw-items-center",
+                        activeItem?.title && activeItem.style === MenuItemStyle.Danger
+                            ? "tw-text-red-60"
+                            : "tw-text-black-80",
+                    ])}
+                >
                     {activeItem?.decorator}
                     <span className="tw-ml-2.5">{activeItem?.title ?? placeholder}</span>
                 </div>
