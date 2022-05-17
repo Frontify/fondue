@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useRef, useState } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { MenuItem, MenuItemProps } from "@components/MenuItem";
 import { Validation, validationClassMap } from "@utilities/validation";
 import { merge } from "@utilities/merge";
@@ -91,6 +91,23 @@ export const DropdownComponent = ({
             },
         ],
     });
+
+    const handleClickOutside = (event: MouseEvent) => {
+        if (
+            dropdownRef.current &&
+            !dropdownRef.current.contains(event.target as Node) &&
+            event.target !== triggerRef.current
+        ) {
+            setIsOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener("click", handleClickOutside, true);
+        return () => {
+            document.removeEventListener("click", handleClickOutside, true);
+        };
+    }, []);
 
     return (
         <div data-test-id="dropdown-component" className="tw-relative">
