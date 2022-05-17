@@ -87,7 +87,11 @@ describe("RichTextEditor Component", () => {
     });
 
     it("renders a toolbar with custom controls", () => {
-        const actions = [[EditorActions.LINK], [EditorActions.ITALIC, EditorActions.BOLD], [EditorActions.LINK]];
+        const actions = [
+            [EditorActions.LINK_CHOOSER],
+            [EditorActions.ITALIC, EditorActions.BOLD],
+            [EditorActions.LINK_CHOOSER],
+        ];
         mount(<RichTextEditor actions={actions} />);
 
         insertTextAndOpenToolbar();
