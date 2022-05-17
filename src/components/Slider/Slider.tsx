@@ -82,7 +82,7 @@ const SliderItem = (props: SliderItemProps) => {
                 className={merge([
                     "tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center",
                     isActive && !disabled ? "tw-text-text" : "tw-text-text-weak",
-                    !disabled ? "hover:tw-text-black hover:tw-cursor-pointer" : "tw-text-text-disabled",
+                    !disabled ? "hover:tw-text-black hover:tw-cursor-pointer" : "tw-text-box-disabled-inverse",
                 ])}
             >
                 <VisuallyHidden>
@@ -139,8 +139,8 @@ export const Slider: FC<SliderProps> = ({
                 className={merge([
                     "tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none",
                     disabled
-                        ? "tw-border-line-x-strong tw-border-opacity-30 tw-bg-black-0"
-                        : "tw-border-black tw-bg-white",
+                        ? "tw-border-line-x-strong tw-border-opacity-30 tw-bg-box-disabled"
+                        : "tw-border-line-xx-strong tw-bg-white",
                 ])}
             />
             {itemElements}
