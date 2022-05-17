@@ -66,6 +66,7 @@ export const TextStyleDropdown = ({ editorId, textStyles }: TextStyleDropdownPro
                 label={textStyleTitles[TextStyles.ELEMENT_PARAGRAPH]}
                 type={TextStyles.ELEMENT_PARAGRAPH}
                 textStyles={textStyles}
+                lastElement={true}
             />
         </ToolbarDropdown>
     );
