@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useEffect, useRef, useState } from "react";
+import React, { KeyboardEvent, ReactElement, useEffect, useRef, useState } from "react";
 import { MenuItem, MenuItemProps, MenuItemStyle } from "@components/MenuItem";
 import { Validation, validationClassMap } from "@utilities/validation";
 import { merge } from "@utilities/merge";
@@ -10,7 +10,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { VariationPlacement } from "@popperjs/core";
 import { usePopper } from "react-popper";
-import { FOCUS_VISIBLE_STYLE } from "@utilities/focusStyle";
+import { FOCUS_STYLE_INSET, FOCUS_VISIBLE_STYLE } from "@utilities/focusStyle";
 import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
 
 export type MenuItemType = Omit<MenuItemProps, "switchComponent"> & { id: string | number; link?: string };
@@ -92,6 +92,44 @@ export const DropdownComponent = ({
         ],
     });
 
+    const handleKeyboardNavigation = (event: KeyboardEvent<HTMLButtonElement>, menuIndex: number) => {
+        const blockIndex = menuBlocks.findIndex((block) => block.menuItems[menuIndex] === activeItem);
+        const nextElement =
+            event.target === triggerRef.current
+                ? menuBlocks[0].menuItems[0]
+                : filterMenuList(menuBlocks[blockIndex].menuItems, "next")[0];
+        const previousElement =
+            event.target === triggerRef.current
+                ? null
+                : filterMenuList(menuBlocks[blockIndex].menuItems, "previous")[0];
+
+        if ((event.key === "ArrowRight" || event.key === "ArrowDown") && nextElement) {
+            onChange(nextElement.id);
+            document.getElementById(nextElement.id.toString())?.focus();
+        }
+
+        if ((event.key === "ArrowLeft" || event.key === "ArrowUp") && previousElement) {
+            onChange(previousElement.id);
+            document.getElementById(previousElement.id.toString())?.focus();
+        }
+    };
+
+    const filterMenuList = (array: MenuItemType[], direction: string) => {
+        return array.filter((item) => {
+            if (direction === "next" && activeItem) {
+                if (item.id > activeItem?.id && !item.disabled) {
+                    return item;
+                }
+            }
+
+            if (direction === "previous" && activeItem) {
+                if (item.id < activeItem?.id && !item.disabled) {
+                    return item;
+                }
+            }
+        });
+    };
+
     const handleClickOutside = (event: MouseEvent) => {
         if (
             dropdownRef.current &&
@@ -129,6 +167,7 @@ export const DropdownComponent = ({
                 onClick={() => setIsOpen(!isOpen)}
                 ref={triggerRef}
                 aria-expanded={isOpen}
+                onKeyDown={(event) => handleKeyboardNavigation(event, 0)}
             >
                 <div
                     className={merge([
@@ -186,26 +225,31 @@ export const DropdownComponent = ({
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         >
                             {menuBlocks.length &&
-                                menuBlocks.map((block, index) => (
+                                menuBlocks.map((block, blockIndex) => (
                                     <div
                                         className={merge([
                                             "tw-pb-2",
-                                            index < menuBlocks.length - 1 ? "tw-border-b tw-border-black-20" : "",
+                                            blockIndex < menuBlocks.length - 1 ? "tw-border-b tw-border-black-20" : "",
                                         ])}
                                         key={block.id}
                                     >
-                                        {block.menuItems.map((menuItem) => {
+                                        {block.menuItems.map((menuItem, menuIndex) => {
                                             return (
                                                 <button
-                                                    className={merge(["tw-w-full tw-text-left tw-outline-none"])}
+                                                    className={merge([
+                                                        "tw-w-full tw-text-left tw-outline-none",
+                                                        activeItemId === menuItem.id && FOCUS_STYLE_INSET,
+                                                    ])}
                                                     tabIndex={0}
                                                     key={menuItem.id}
+                                                    id={menuItem.id.toString()}
                                                     onClick={() => {
                                                         if (!menuItem.disabled) {
                                                             onChange(menuItem.id);
                                                             setIsOpen(false);
                                                         }
                                                     }}
+                                                    onKeyDown={(event) => handleKeyboardNavigation(event, menuIndex)}
                                                 >
                                                     <MenuItem
                                                         title={menuItem.title}
@@ -213,6 +257,7 @@ export const DropdownComponent = ({
                                                         size={menuItem.size}
                                                         style={menuItem.style}
                                                         disabled={menuItem.disabled}
+                                                        active={menuItem === activeItem}
                                                     ></MenuItem>
                                                 </button>
                                             );
