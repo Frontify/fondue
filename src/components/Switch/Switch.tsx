@@ -5,8 +5,7 @@ import { merge } from "@utilities/merge";
 import { useFocusRing } from "@react-aria/focus";
 import { FOCUS_STYLE } from "@utilities/focusStyle";
 import { useMemoizedId } from "@hooks/useMemoizedId";
-import { InputLabel } from "@components/InputLabel/InputLabel";
-import { TooltipProps } from "@components/Tooltip/Tooltip";
+import { InputLabel, InputLabelTooltipProps } from "@components/InputLabel/InputLabel";
 
 export enum SwitchSize {
     Small = "Small",
@@ -34,7 +33,7 @@ export type SwitchProps = {
     name?: string;
     size?: SwitchSize;
     hug?: boolean;
-    tooltip?: TooltipProps;
+    tooltip?: InputLabelTooltipProps;
     onChange?: (e: MouseEvent) => void;
 };
 
@@ -78,7 +77,7 @@ export const Switch: FC<SwitchProps> = ({
     return (
         <div className={containerClasses} data-test-id="switch-container">
             {label && (
-                <InputLabel htmlFor={id} disabled={disabled} tooltip={tooltip}>
+                <InputLabel clickable={true} htmlFor={id} disabled={disabled} tooltip={tooltip}>
                     {label}
                 </InputLabel>
             )}

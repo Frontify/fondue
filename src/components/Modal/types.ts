@@ -42,6 +42,7 @@ type ModalBodyChildren = ReactElement | ReactElement[];
 export type ModalBodyProps = {
     direction?: ScrollWrapperDirection;
     children?: ModalBodyChildren;
+    horizontalPadding?: boolean;
 };
 
 export type ModalFooterProps = {
@@ -53,10 +54,16 @@ export enum ModalWidth {
     Large = "Large",
 }
 
+export type ModalPadding = {
+    [key: string]: { top: string; horizontal: string; bottom: string };
+};
+
 export type ModalProps = {
     visual?: ModalVisualProps;
     width?: ModalWidth;
     children?: ModalBodyChildren;
     isOpen: boolean;
+    zIndex?: number;
+    compact?: boolean;
 } & Omit<OverlayProps, "isOpen"> &
     AriaDialogProps;

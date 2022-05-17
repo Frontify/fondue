@@ -1,8 +1,9 @@
 import { MenuItemContentSize } from "@components/MenuItem";
-import { IconFile, IconFolder, IconSize } from "@foundation/Icon";
+import { IconFile, IconFolder, IconSize, IconSmileysPeople } from "@foundation/Icon";
 import React from "react";
 import { TreeFlatListItem, TreeNodeItem } from "@components/Tree";
 import { DraggableItem } from "@utilities/dnd";
+import { Badge } from "../../..";
 
 export const mockActionMenuBlocks = [
     {
@@ -94,6 +95,8 @@ const testCategoryNodes = [
         value: "https://weare.frontify.com/page/4",
         icon: <IconFile size={IconSize.Size16} />,
         sort: null,
+        editable: true,
+        onEditableSave: (value: string) => value,
     },
     {
         id: "1-2-2",
@@ -103,6 +106,7 @@ const testCategoryNodes = [
         value: "https://weare.frontify.com/page/5",
         icon: <IconFile size={IconSize.Size16} />,
         sort: null,
+        badge: <Badge icon={<IconSmileysPeople size={IconSize.Size16} />}></Badge>,
     },
     {
         id: "1-2-3",
@@ -112,10 +116,14 @@ const testCategoryNodes = [
         value: "https://weare.frontify.com/page/6",
         icon: <IconFile size={IconSize.Size16} />,
         sort: null,
+        badge: <Badge>Hello, I am a badge</Badge>,
     },
 ];
 
-export const mockNodesFlat: DraggableItem<TreeFlatListItem>[] = [
+type onEditableSaveType = (value: string) => void;
+type mockNodeType = (onChange: onEditableSaveType) => DraggableItem<TreeFlatListItem>[];
+
+export const mockNodesFlat: mockNodeType = (onChange: onEditableSaveType) => [
     {
         id: "1",
         name: "Design System Testing",
@@ -124,6 +132,8 @@ export const mockNodesFlat: DraggableItem<TreeFlatListItem>[] = [
         icon: <IconFolder size={IconSize.Size16} />,
         parentId: null,
         sort: 1,
+        editable: true,
+        onEditableSave: (value: string) => onChange(value),
     },
     {
         id: "1-1",
@@ -141,6 +151,7 @@ export const mockNodesFlat: DraggableItem<TreeFlatListItem>[] = [
         icon: <IconFolder size={IconSize.Size16} />,
         value: "https://weare.frontify.com/document/923#/test",
         sort: null,
+        badge: <IconSmileysPeople size={IconSize.Size16} />,
     },
     ...testCategoryNodes,
 ];

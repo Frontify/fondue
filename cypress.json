@@ -1,9 +1,8 @@
 {
-    "projectId": "qbo5j3",
     "video": false,
+    "componentFolder": "./src/",
+    "testFiles": ["**/*.spec.tsx", "**/*.spec.ts"],
     "component": {
-        "componentFolder": "./src/",
-        "testFiles": "**/*.spec.ts*",
         "viewportHeight": 1280,
         "viewportWidth": 800
     },

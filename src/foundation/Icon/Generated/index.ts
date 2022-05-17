@@ -93,6 +93,8 @@ export { default as IconEnvelope } from "./IconEnvelope";
 export { default as IconExpand } from "./IconExpand";
 export { default as IconExternalAsset } from "./IconExternalAsset";
 export { default as IconExternalLink } from "./IconExternalLink";
+export { default as IconEye } from "./IconEye";
+export { default as IconEyeOff } from "./IconEyeOff";
 export { default as IconFeedback } from "./IconFeedback";
 export { default as IconFigureTextBottom } from "./IconFigureTextBottom";
 export { default as IconFigureTextLeft } from "./IconFigureTextLeft";
