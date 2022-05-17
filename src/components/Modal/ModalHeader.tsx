@@ -5,7 +5,7 @@ import { merge } from "@utilities/merge";
 import { ModalHeaderProps, ModalHeaderVariant, modalHeaderVariants } from "./types";
 import { IconSize } from "@foundation/Icon";
 import { ModalTitle } from "./context/ModalTitle";
-import { MODAL_PADDING } from "./Modal";
+import { ModalLayout } from "./context/ModalLayout";
 
 export const ModalHeader: FC<ModalHeaderProps> = ({
     title,
@@ -14,9 +14,10 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
     variant = ModalHeaderVariant.Default,
 }) => {
     const ariaTitleProps = useContext(ModalTitle);
+    const { padding, compact } = useContext(ModalLayout);
 
     return (
-        <div data-test-id="modal-header" className={`${MODAL_PADDING.top} ${MODAL_PADDING.horizontal}`}>
+        <div data-test-id="modal-header" className={`${padding.top} ${padding.horizontal}`}>
             <div className="tw-flex tw-items-center">
                 {decorator && (
                     <span
@@ -26,7 +27,13 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
                         {cloneElement(decorator, { size: IconSize.Size24 })}
                     </span>
                 )}
-                <h3 {...ariaTitleProps} className="tw-text-xl tw-font-heading tw-font-medium tw-text-text">
+                <h3
+                    {...ariaTitleProps}
+                    className={merge([
+                        "tw-font-heading tw-font-medium tw-text-text",
+                        compact ? "tw-text-lg" : "tw-text-xl",
+                    ])}
+                >
                     {title}
                 </h3>
             </div>
