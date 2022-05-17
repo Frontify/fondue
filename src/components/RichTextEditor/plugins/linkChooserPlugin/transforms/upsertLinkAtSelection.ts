@@ -30,6 +30,7 @@ export const upsertLinkAtSelection = <T = {}>(
     const type = getPluginType(editor, ELEMENT_LINK_CHOOSER);
 
     if (!wrap && isCollapsed(editor.selection)) {
+        console.log("asf");
         return insertNodes<TElement>(editor, {
             type,
             chosenLink,
@@ -46,7 +47,5 @@ export const upsertLinkAtSelection = <T = {}>(
 
     unwrapNodes(editor, { at: editor.selection, match: { type } });
 
-    wrapLink(editor, { at: editor.selection, chosenLink: chosenLink });
-
-    Transforms.collapse(editor, { edge: "end" });
+    wrapLink(editor, { at: editor.selection, chosenLink });
 };

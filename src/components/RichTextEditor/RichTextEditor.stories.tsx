@@ -100,7 +100,7 @@ export const WithCustomControls = RichTextEditorTemplate.bind({});
 WithCustomControls.args = {
     value: `<p>${IPSUM}</p>`,
     actions: [
-        [EditorActions.LINK],
+        [EditorActions.LINK_CHOOSER],
         [EditorActions.ITALIC, EditorActions.BOLD, EditorActions.UNDERLINE],
         [EditorActions.ORDERED_LIST, EditorActions.UNORDERED_LIST],
     ],

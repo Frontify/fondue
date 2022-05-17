@@ -38,17 +38,18 @@ export const LinkChooserModalWrapper = ({
                 buttons={[
                     {
                         children: "Cancel",
-                        onClick: () => setIsLinkChooserModalOpen(false),
+                        onClick: () => {
+                            setChosenLink({ searchResult: null, openInNewTab: false });
+                            setIsLinkChooserModalOpen(false);
+                        },
                         style: ButtonStyle.Secondary,
                     },
                     {
                         children: "Choose",
                         onClick: () => {
-                            if (chosenLink.searchResult) {
-                                document.dispatchEvent(
-                                    new CustomEvent(EVENT_LINK_CHANGE_CONFIRMED, { detail: { chosenLink } }),
-                                );
-                            }
+                            document.dispatchEvent(
+                                new CustomEvent(EVENT_LINK_CHANGE_CONFIRMED, { detail: { chosenLink } }),
+                            );
                             setIsLinkChooserModalOpen(false);
                         },
                         style: ButtonStyle.Primary,

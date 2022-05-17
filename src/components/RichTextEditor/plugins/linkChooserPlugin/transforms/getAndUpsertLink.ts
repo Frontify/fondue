@@ -44,12 +44,12 @@ export const getAndUpsertLink = async <T = {}>(
         };
     }
 
-    if (!chosenLink) {
+    if (!chosenLink.searchResult) {
         linkNode &&
             editor.selection &&
             unwrapNodes(editor, {
                 at: editor.selection,
-                match: { type: getPluginType(editor, ELEMENT_LINK_CHOOSER) },
+                match: { type },
             });
 
         return;
