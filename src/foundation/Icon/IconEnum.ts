@@ -35,6 +35,7 @@ export enum IconEnum {
     Backward5Seconds = "Backward5Seconds",
     Bold = "Bold",
     Bookmark = "Bookmark",
+    BracketsCurly = "BracketsCurly",
     Brand = "Brand",
     Briefing = "Briefing",
     Builder = "Builder",

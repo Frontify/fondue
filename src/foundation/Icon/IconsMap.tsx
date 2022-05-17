@@ -36,6 +36,7 @@ import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import IconBackward5Seconds from "@foundation/Icon/Generated/IconBackward5Seconds";
 import IconBold from "@foundation/Icon/Generated/IconBold";
 import IconBookmark from "@foundation/Icon/Generated/IconBookmark";
+import IconBracketsCurly from "@foundation/Icon/Generated/IconBracketsCurly";
 import IconBrand from "@foundation/Icon/Generated/IconBrand";
 import IconBriefing from "@foundation/Icon/Generated/IconBriefing";
 import IconBuilder from "@foundation/Icon/Generated/IconBuilder";
@@ -317,6 +318,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Backward5Seconds]: <IconBackward5Seconds />,
     [IconEnum.Bold]: <IconBold />,
     [IconEnum.Bookmark]: <IconBookmark />,
+    [IconEnum.BracketsCurly]: <IconBracketsCurly />,
     [IconEnum.Brand]: <IconBrand />,
     [IconEnum.Briefing]: <IconBriefing />,
     [IconEnum.Builder]: <IconBuilder />,
