@@ -44,9 +44,11 @@ export const LinkChooserModalWrapper = ({
                     {
                         children: "Choose",
                         onClick: () => {
-                            document.dispatchEvent(
-                                new CustomEvent(EVENT_LINK_CHANGE_CONFIRMED, { detail: { chosenLink } }),
-                            );
+                            if (chosenLink.searchResult) {
+                                document.dispatchEvent(
+                                    new CustomEvent(EVENT_LINK_CHANGE_CONFIRMED, { detail: { chosenLink } }),
+                                );
+                            }
                             setIsLinkChooserModalOpen(false);
                         },
                         style: ButtonStyle.Primary,
