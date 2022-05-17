@@ -35,9 +35,10 @@ import {
     usePlateEditorRef,
 } from "@udecode/plate";
 import React, { FC, ReactElement, useState } from "react";
-import { ButtonStyle, LinkChooser, SearchResult } from "..";
+import { ButtonStyle, LinkChooser } from "..";
 import { ELEMENT_CHECK_ITEM } from "./plugins/checkboxListPlugin";
 import { ELEMENT_LINK_CHOOSER } from "./plugins/linkChooserPlugin/createLinkChooserPlugin";
+import { ChosenLink } from "./plugins/linkChooserPlugin/types";
 import { LinkChooserToolBarButton } from "./plugins/linkChooserPlugin/ui/LinkChooserToolBarButton";
 import { TextStyleDropdown } from "./TextStyleDropdown/TextStyleDropdown";
 import { defaultActions, EditorActions } from "./utils/actions";
@@ -174,21 +175,18 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
     };
 
     const [linkChooserIsOpen, setLinkChooserIsOpen] = useState<boolean>(false);
-    const [chosenLink, setChosenLink] = useState<{ searchResult: SearchResult | null; openInNewTab: boolean }>({
+    const [chosenLink, setChosenLink] = useState<ChosenLink>({
         searchResult: null,
         openInNewTab: false,
     });
 
-    const getLinkFromLinkChoser = (prevChosenLink: {
-        searchResult: SearchResult | null;
-        openInNewTab: boolean;
-    }): Promise<{ searchResult: SearchResult | null; openInNewTab: boolean }> => {
+    const getLinkFromLinkChoser = (prevChosenLink: ChosenLink): Promise<ChosenLink> => {
         setChosenLink(prevChosenLink);
         setTimeout(() => {
             setLinkChooserIsOpen(true);
         }, 100);
 
-        return new Promise<{ searchResult: SearchResult | null; openInNewTab: boolean }>((resolve) => {
+        return new Promise<ChosenLink>((resolve) => {
             document.addEventListener(EVENT_LINK_CHANGE_CONFIRMED, (event: any) => {
                 resolve(event.detail.chosenLink);
             });

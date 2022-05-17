@@ -1,7 +1,7 @@
-import { SearchResult } from "@components/LinkChooser/types";
 import { getPluginType, insertNodes, isCollapsed, PlateEditor, TElement, unwrapNodes } from "@udecode/plate-core";
 import { Editor, Transforms } from "slate";
 import { ELEMENT_LINK_CHOOSER } from "../createLinkChooserPlugin";
+import { ChosenLink } from "../types";
 import { wrapLink } from "./wrapLink";
 
 /**
@@ -16,7 +16,7 @@ export const upsertLinkAtSelection = <T = {}>(
         chosenLink,
         wrap,
     }: {
-        chosenLink: { searchResult: SearchResult | null; openInNewTab: boolean };
+        chosenLink: ChosenLink;
         /**
          * If true, wrap the link at the location (default: selection) even if the selection is collapsed.
          */
@@ -30,7 +30,6 @@ export const upsertLinkAtSelection = <T = {}>(
     const type = getPluginType(editor, ELEMENT_LINK_CHOOSER);
 
     if (!wrap && isCollapsed(editor.selection)) {
-        console.log("NOT WRAP");
         return insertNodes<TElement>(editor, {
             type,
             chosenLink,

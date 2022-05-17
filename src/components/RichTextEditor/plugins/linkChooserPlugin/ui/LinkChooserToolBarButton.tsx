@@ -2,10 +2,10 @@ import { someNode, useEventPlateId, usePlateEditorState, withPlateEventProvider 
 import { ToolbarButton, ToolbarButtonProps } from "@udecode/plate-ui-toolbar";
 import React from "react";
 import { getAndUpsertLink } from "../transforms/getAndUpsertLink";
-import { LinkPlugin } from "../types";
+import { LinkChooserPlugin } from "../types";
 
 export interface LinkToolbarButtonProps extends ToolbarButtonProps {
-    getChosenLink?: LinkPlugin["getChosenLink"];
+    getChosenLink?: LinkChooserPlugin["getChosenLink"];
 }
 
 export const LinkChooserToolBarButton = withPlateEventProvider(
@@ -24,9 +24,7 @@ export const LinkChooserToolBarButton = withPlateEventProvider(
                     }
 
                     event.preventDefault();
-                    if (getChosenLink) {
-                        getAndUpsertLink(editor, getChosenLink);
-                    }
+                    getAndUpsertLink(editor, getChosenLink);
                 }}
                 {...props}
             />

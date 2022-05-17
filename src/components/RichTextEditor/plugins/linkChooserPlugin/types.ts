@@ -1,27 +1,12 @@
-import { HotkeyPlugin, RangeBeforeOptions, TElement } from "@udecode/plate-core";
+import { LinkPlugin } from "@udecode/plate";
 import { SearchResult } from "../../../..";
 
-export interface TLinkElement extends TElement {
-    url: string;
-}
+export type ChosenLink = { searchResult: SearchResult | null; openInNewTab: boolean };
 
-export interface LinkPlugin extends HotkeyPlugin {
-    /**
-     * Allow custom config for rangeBeforeOptions.
-     */
-    rangeBeforeOptions?: RangeBeforeOptions;
-
-    /**
-     * Callback to validate an url.
-     */
-    isUrl?: (text: string) => boolean;
-
+export interface LinkChooserPlugin extends LinkPlugin {
     /**
      * On keyboard shortcut or toolbar mousedown, get the link url by calling this promise. The
      * default behavior is to use the browser's native `prompt`.
      */
-    getChosenLink?: (prevUrl: {
-        searchResult: SearchResult | null;
-        openInNewTab: boolean;
-    }) => Promise<{ searchResult: SearchResult | null; openInNewTab: boolean }>;
+    getChosenLink?: (prevUrl: ChosenLink) => Promise<ChosenLink>;
 }

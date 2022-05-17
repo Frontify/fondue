@@ -1,13 +1,16 @@
 import { getAbove, getPluginType, isCollapsed, PlateEditor, unwrapNodes } from "@udecode/plate-core";
-import { IconEnum, SearchResult } from "../../../../..";
+import { IconEnum } from "../../../../..";
 import { ELEMENT_LINK_CHOOSER } from "../createLinkChooserPlugin";
-import { LinkPlugin } from "../types";
+import { ChosenLink, LinkChooserPlugin } from "../types";
 import { upsertLinkAtSelection } from "./upsertLinkAtSelection";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export const getAndUpsertLink = async <T = {}>(editor: PlateEditor<T>, getChosenLink?: LinkPlugin["getChosenLink"]) => {
+export const getAndUpsertLink = async <T = {}>(
+    editor: PlateEditor<T>,
+    getChosenLink?: LinkChooserPlugin["getChosenLink"],
+) => {
     const type = getPluginType(editor, ELEMENT_LINK_CHOOSER);
-    let prevChosenLink: { searchResult: SearchResult | null; openInNewTab: boolean } = {
+    let prevChosenLink: ChosenLink = {
         searchResult: null,
         openInNewTab: false,
     };
@@ -16,10 +19,10 @@ export const getAndUpsertLink = async <T = {}>(editor: PlateEditor<T>, getChosen
         match: { type },
     });
     if (linkNode) {
-        prevChosenLink = linkNode[0].chosenLink as { searchResult: SearchResult | null; openInNewTab: boolean };
+        prevChosenLink = linkNode[0].chosenLink as ChosenLink;
     }
 
-    let chosenLink: { searchResult: SearchResult | null; openInNewTab: boolean } = {
+    let chosenLink: ChosenLink = {
         searchResult: null,
         openInNewTab: false,
     };
@@ -33,7 +36,7 @@ export const getAndUpsertLink = async <T = {}>(editor: PlateEditor<T>, getChosen
                 title:
                     window.prompt(
                         `Enter the URL of the link:`,
-                        prevChosenLink.searchResult ? prevChosenLink.searchResult.link : "",
+                        prevChosenLink.searchResult ? prevChosenLink.searchResult.title : "",
                     ) || "",
                 local: false,
             },

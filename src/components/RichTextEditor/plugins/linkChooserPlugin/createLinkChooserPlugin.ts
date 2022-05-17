@@ -1,42 +1,5 @@
-import { withLink } from "@udecode/plate";
-import { createPluginFactory, isUrl as isUrlProtocol } from "@udecode/plate-core";
-import { onKeyDownLink } from "./onKeyDownLink";
-import { LinkPlugin } from "./types";
+import { createLinkPlugin, ELEMENT_LINK } from "@udecode/plate";
 
-export const ELEMENT_LINK_CHOOSER = "a";
+export const ELEMENT_LINK_CHOOSER = ELEMENT_LINK;
 
-/**
- * Enables support for hyperlinks.
- */
-export const createLinkChooserPlugin = createPluginFactory<LinkPlugin>({
-    key: ELEMENT_LINK_CHOOSER,
-    isElement: true,
-    isInline: true,
-    props: ({ element }) => ({ nodeProps: { url: element?.url } }),
-    handlers: {
-        onKeyDown: onKeyDownLink,
-    },
-    withOverrides: withLink,
-    options: {
-        isUrl: isUrlProtocol,
-        rangeBeforeOptions: {
-            matchString: " ",
-            skipInvalid: true,
-            afterMatch: true,
-        },
-        hotkey: "mod+k",
-    },
-    then: (editor, { type }) => ({
-        deserializeHtml: {
-            rules: [
-                {
-                    validNodeName: "A",
-                },
-            ],
-            getNode: (el) => ({
-                type,
-                url: el.getAttribute("href"),
-            }),
-        },
-    }),
-});
+export const createLinkChooserPlugin = createLinkPlugin;
