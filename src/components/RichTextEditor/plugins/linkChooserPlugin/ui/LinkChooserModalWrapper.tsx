@@ -1,7 +1,8 @@
 import { EVENT_LINK_CHANGE_CONFIRMED } from "@components/RichTextEditor/Toolbar";
 import React from "react";
-import { ButtonStyle, LinkChooser, Modal } from "../../../../..";
+import { ButtonStyle, Modal } from "../../../../..";
 import { ChosenLink } from "../types";
+import { SimpleLinkChooser } from "./SimpleLinkChooser";
 
 type LinkChooserModalWrapperProps = {
     isLinkChooserModalOpen: boolean;
@@ -18,7 +19,11 @@ export const LinkChooserModalWrapper = ({
 }: LinkChooserModalWrapperProps) => {
     return (
         <Modal isOpen={isLinkChooserModalOpen} isDismissable>
-            <LinkChooser
+            {/* Todo: Until we have moved the search logic, a 'simple link chooser' is rendered instead of the real link chooser */}
+
+            <SimpleLinkChooser chosenLink={chosenLink} setChosenLink={setChosenLink}></SimpleLinkChooser>
+
+            {/* <LinkChooser
                 openInNewTab={chosenLink?.openInNewTab || false}
                 onOpenInNewTabChange={() => {
                     setChosenLink({
@@ -33,7 +38,8 @@ export const LinkChooserModalWrapper = ({
                     })
                 }
                 selectedResult={chosenLink.searchResult}
-            />
+            /> */}
+
             <Modal.Footer
                 buttons={[
                     {

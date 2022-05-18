@@ -116,13 +116,7 @@ export const value = [
                 type: ELEMENT_LINK_CHOOSER,
                 chosenLink: {
                     searchResult: {
-                        id: "custom-link-id-3170803133",
-                        title: "smartive.ch",
                         link: "https://smartive.ch",
-                        icon: "LINK",
-                        size: "Large",
-                        selectionIndicator: "Check",
-                        local: true,
                     },
                     openInNewTab: true,
                 },
