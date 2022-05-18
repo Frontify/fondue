@@ -5,7 +5,7 @@ import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
 import React, { FC, useState } from 'react';
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from './RichTextEditor';
 import { EditorActions } from './utils/actions';
-import { textStyleClassnames, TextStyles } from './utils/getTextStyles';
+import { TextStyles, textStyleClassnames } from './utils/getTextStyles';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
 const TOOLBAR = '[data-test-id=toolbar]';
@@ -176,7 +176,7 @@ describe('RichTextEditor Component', () => {
         cy.get(TOOLBAR_GROUP_1).children().eq(5).click();
         cy.get('[contenteditable=true]').should(
             'include.html',
-            'tw-table-cell tw-rounded tw-text-xs tw-bg-black-5 tw-text-violet-90 tw-m-0 tw-px-2 tw-py-0.5',
+            'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5',
         );
     });
 
