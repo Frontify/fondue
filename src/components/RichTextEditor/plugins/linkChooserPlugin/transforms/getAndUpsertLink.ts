@@ -1,5 +1,5 @@
+import { IconEnum } from "@foundation/Icon";
 import { getAbove, getPluginType, isCollapsed, PlateEditor, unwrapNodes } from "@udecode/plate-core";
-import { IconEnum } from "../../../../..";
 import { ELEMENT_LINK_CHOOSER } from "../createLinkChooserPlugin";
 import { ChosenLink, LinkChooserPlugin } from "../types";
 import { upsertLinkAtSelection } from "./upsertLinkAtSelection";

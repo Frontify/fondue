@@ -1,6 +1,7 @@
+import { ButtonStyle } from "@components/Button";
+import { Modal } from "@components/Modal";
 import { EVENT_LINK_CHANGE_CONFIRMED } from "@components/RichTextEditor/Toolbar";
 import React from "react";
-import { ButtonStyle, Modal } from "../../../../..";
 import { ChosenLink } from "../types";
 import { SimpleLinkChooser } from "./SimpleLinkChooser";
 

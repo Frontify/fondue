@@ -30,7 +30,6 @@ export const upsertLinkAtSelection = <T = {}>(
     const type = getPluginType(editor, ELEMENT_LINK_CHOOSER);
 
     if (!wrap && isCollapsed(editor.selection)) {
-        console.log("asf");
         return insertNodes<TElement>(editor, {
             type,
             chosenLink,
