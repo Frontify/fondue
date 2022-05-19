@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { ReactElement } from "react";
 import { EditorActions } from "./utils/actions";
 import { TextStyleType } from "./utils/getTextStyles";
