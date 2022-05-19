@@ -22,7 +22,7 @@ export const ChosenLinkElement: FC<PlateRenderElementProps> = ({ element, attrib
             href={getHref()}
             target={getTarget()}
             rel="noreferrer"
-            className="tw-text-violet-70"
+            className="tw-text-violet-70 tw-underline"
             {...attributes}
         >
             {children}

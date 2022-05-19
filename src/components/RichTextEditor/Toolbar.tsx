@@ -33,11 +33,9 @@ import {
     PlateEditor,
     usePlateEditorRef,
 } from "@udecode/plate";
-import React, { FC, ReactElement, useState } from "react";
+import React, { FC, ReactElement } from "react";
 import { ELEMENT_CHECK_ITEM } from "./plugins/checkboxListPlugin";
 import { ELEMENT_LINK_CHOOSER } from "./plugins/linkChooserPlugin/createLinkChooserPlugin";
-import { ChosenLink } from "./plugins/linkChooserPlugin/types";
-import { LinkChooserModalWrapper } from "./plugins/linkChooserPlugin/ui/LinkChooserModalWrapper";
 import { LinkChooserToolBarButton } from "./plugins/linkChooserPlugin/ui/LinkChooserToolBarButton";
 import { TextStyleDropdown } from "./TextStyleDropdown/TextStyleDropdown";
 import { defaultActions, EditorActions } from "./utils/actions";
@@ -55,182 +53,152 @@ const classNames = {
 };
 const styles = { root: { width: "32px", height: "32px" } };
 
-export const EVENT_LINK_CHANGE_CONFIRMED = "linkChangeConfirmed";
+const toolbarComponents = (
+    editor: PlateEditor,
+    editorId?: string,
+    textStyles?: TextStyleType[],
+): Record<EditorActions, ReactElement> => {
+    return {
+        [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} textStyles={textStyles} />,
+        [EditorActions.ALIGN_LEFT]: (
+            <AlignToolbarButton
+                value="left"
+                icon={<IconTextAlignLeft size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.ALIGN_CENTER]: (
+            <AlignToolbarButton
+                value="center"
+                icon={<IconTextAlignCenter size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.ALIGN_RIGHT]: (
+            <AlignToolbarButton
+                value="right"
+                icon={<IconTextAlignRight size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.ALIGN_JUSTIFY]: (
+            <AlignToolbarButton
+                value="justify"
+                icon={<IconTextAlignJustify size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.BOLD]: (
+            <MarkToolbarButton
+                type={getPluginType(editor, MARK_BOLD)}
+                icon={<IconTextFormatBold size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.ITALIC]: (
+            <MarkToolbarButton
+                type={getPluginType(editor, MARK_ITALIC)}
+                icon={<IconTextFormatItalic size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.UNDERLINE]: (
+            <MarkToolbarButton
+                type={getPluginType(editor, MARK_UNDERLINE)}
+                icon={<IconTextFormatUnderline size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.STRIKETHROUGH]: (
+            <MarkToolbarButton
+                type={getPluginType(editor, MARK_STRIKETHROUGH)}
+                icon={<IconTextFormatStrikethrough size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.CODE]: (
+            <MarkToolbarButton
+                type={getPluginType(editor, MARK_CODE)}
+                icon={<IconSnippet size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.CHECK_ITEM]: (
+            <BlockToolbarButton
+                type={getPluginType(editor, ELEMENT_CHECK_ITEM)}
+                icon={<IconListChecklist size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.LINK_CHOOSER]: (
+            <LinkChooserToolBarButton
+                type={getPluginType(editor, ELEMENT_LINK_CHOOSER)}
+                icon={<IconLink size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.ORDERED_LIST]: (
+            <ListToolbarButton
+                type={getPluginType(editor, ELEMENT_OL)}
+                icon={<IconListNumbers size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+        [EditorActions.UNORDERED_LIST]: (
+            <ListToolbarButton
+                type={getPluginType(editor, ELEMENT_UL)}
+                icon={<IconListBullets size={IconSize.Size24} />}
+                classNames={classNames}
+                styles={styles}
+            />
+        ),
+    };
+};
 
 export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }) => {
-    const toolbarComponents = (
-        editor: PlateEditor,
-        editorId?: string,
-        textStyles?: TextStyleType[],
-    ): Record<EditorActions, ReactElement> => {
-        return {
-            [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} textStyles={textStyles} />,
-            [EditorActions.ALIGN_LEFT]: (
-                <AlignToolbarButton
-                    value="left"
-                    icon={<IconTextAlignLeft size={IconSize.Size24} />}
-                    classNames={classNames}
-                    styles={styles}
-                />
-            ),
-            [EditorActions.ALIGN_CENTER]: (
-                <AlignToolbarButton
-                    value="center"
-                    icon={<IconTextAlignCenter size={IconSize.Size24} />}
-                    classNames={classNames}
-                    styles={styles}
-                />
-            ),
-            [EditorActions.ALIGN_RIGHT]: (
-                <AlignToolbarButton
-                    value="right"
-                    icon={<IconTextAlignRight size={IconSize.Size24} />}
-                    classNames={classNames}
-                    styles={styles}
-                />
-            ),
-            [EditorActions.ALIGN_JUSTIFY]: (
-                <AlignToolbarButton
-                    value="justify"
-                    icon={<IconTextAlignJustify size={IconSize.Size24} />}
-                    classNames={classNames}
-                    styles={styles}
-                />
-            ),
-            [EditorActions.BOLD]: (
-                <MarkToolbarButton
-                    type={getPluginType(editor, MARK_BOLD)}
-                    icon={<IconTextFormatBold size={IconSize.Size24} />}
-                    classNames={classNames}
-                    styles={styles}
-                />
-            ),
-            [EditorActions.ITALIC]: (
-                <MarkToolbarButton
-                    type={getPluginType(editor, MARK_ITALIC)}
-                    icon={<IconTextFormatItalic size={IconSize.Size24} />}
-                    classNames={classNames}
-                    styles={styles}
-                />
-            ),
-            [EditorActions.UNDERLINE]: (
-                <MarkToolbarButton
-                    type={getPluginType(editor, MARK_UNDERLINE)}
-                    icon={<IconTextFormatUnderline size={IconSize.Size24} />}
-                    classNames={classNames}
-                    styles={styles}
-                />
-            ),
-            [EditorActions.STRIKETHROUGH]: (
-                <MarkToolbarButton
-                    type={getPluginType(editor, MARK_STRIKETHROUGH)}
-                    icon={<IconTextFormatStrikethrough size={IconSize.Size24} />}
-                    classNames={classNames}
-                    styles={styles}
-                />
-            ),
-            [EditorActions.CODE]: (
-                <MarkToolbarButton
-                    type={getPluginType(editor, MARK_CODE)}
-                    icon={<IconSnippet size={IconSize.Size24} />}
-                    classNames={classNames}
-                    styles={styles}
-                />
-            ),
-            [EditorActions.CHECK_ITEM]: (
-                <BlockToolbarButton
-                    type={getPluginType(editor, ELEMENT_CHECK_ITEM)}
-                    icon={<IconListChecklist size={IconSize.Size24} />}
-                    classNames={classNames}
-                    styles={styles}
-                />
-            ),
-            [EditorActions.LINK_CHOOSER]: (
-                <LinkChooserToolBarButton
-                    type={getPluginType(editor, ELEMENT_LINK_CHOOSER)}
-                    icon={<IconLink size={IconSize.Size24} />}
-                    getChosenLink={getLinkFromLinkChoser}
-                    classNames={classNames}
-                    styles={styles}
-                />
-            ),
-            [EditorActions.ORDERED_LIST]: (
-                <ListToolbarButton
-                    type={getPluginType(editor, ELEMENT_OL)}
-                    icon={<IconListNumbers size={IconSize.Size24} />}
-                    classNames={classNames}
-                    styles={styles}
-                />
-            ),
-            [EditorActions.UNORDERED_LIST]: (
-                <ListToolbarButton
-                    type={getPluginType(editor, ELEMENT_UL)}
-                    icon={<IconListBullets size={IconSize.Size24} />}
-                    classNames={classNames}
-                    styles={styles}
-                />
-            ),
-        };
-    };
-
-    const [isLinkChooserModalOpen, setIsLinkChooserModalOpen] = useState<boolean>(false);
-    const [chosenLink, setChosenLink] = useState<ChosenLink>({
-        searchResult: null,
-        openInNewTab: false,
-    });
-
-    const getLinkFromLinkChoser = (prevChosenLink: ChosenLink): Promise<ChosenLink> => {
-        setChosenLink(prevChosenLink);
-        setTimeout(() => {
-            setIsLinkChooserModalOpen(true);
-        }, 100);
-
-        return new Promise<ChosenLink>((resolve) => {
-            document.addEventListener(EVENT_LINK_CHANGE_CONFIRMED, (event: any) => {
-                resolve(event.detail.chosenLink);
-            });
-        });
-    };
-
     const editor = usePlateEditorRef(editorId);
     const toolbarActions = actions.length > 0 ? actions : defaultActions;
 
     return (
-        <>
-            <LinkChooserModalWrapper
-                isLinkChooserModalOpen={isLinkChooserModalOpen}
-                setIsLinkChooserModalOpen={setIsLinkChooserModalOpen}
-                chosenLink={chosenLink}
-                setChosenLink={setChosenLink}
-            />
-            <BalloonToolbar
-                popperOptions={{
-                    modifiers: [
-                        { name: "offset", options: { offset: [0, 12] } },
-                        { name: "flip", options: { fallbackPlacements: ["bottom", "right"] } },
-                    ],
-                }}
-                styles={{ root: { border: "none", background: "#ffffff", margin: "8px" } }}
+        <BalloonToolbar
+            popperOptions={{
+                modifiers: [
+                    { name: "offset", options: { offset: [0, 12] } },
+                    { name: "flip", options: { fallbackPlacements: ["bottom", "right"] } },
+                ],
+            }}
+            styles={{ root: { border: "none", background: "#ffffff", margin: "8px" } }}
+        >
+            <div
+                data-test-id="toolbar"
+                className="tw-flex tw-flex-wrap tw-content-start tw-shadow-lg tw-border tw-bg-base tw-rounded tw-border-black-10 tw-min-h-12"
             >
-                <div
-                    data-test-id="toolbar"
-                    className="tw-flex tw-flex-wrap tw-content-start tw-shadow-lg tw-border tw-bg-base tw-rounded tw-border-black-10 tw-min-h-12"
-                >
-                    {toolbarActions.map((actions, index) => (
-                        <div
-                            key={index}
-                            data-test-id={`toolbar-group-${index}`}
-                            className="tw-flex tw-items-center tw-border-l tw-px-3 tw-py-2 tw-border-black-10 tw-h-12 tw-border-b"
-                        >
-                            {actions.map((action, index) => (
-                                <React.Fragment key={index}>
-                                    {toolbarComponents(editor, editorId, textStyles)[action]}
-                                </React.Fragment>
-                            ))}
-                        </div>
-                    ))}
-                </div>
-            </BalloonToolbar>
-        </>
+                {toolbarActions.map((actions, index) => (
+                    <div
+                        key={index}
+                        data-test-id={`toolbar-group-${index}`}
+                        className="tw-flex tw-items-center tw-border-l tw-px-3 tw-py-2 tw-border-black-10 tw-h-12 tw-border-b"
+                    >
+                        {actions.map((action, index) => (
+                            <React.Fragment key={index}>
+                                {toolbarComponents(editor, editorId, textStyles)[action]}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                ))}
+            </div>
+        </BalloonToolbar>
     );
 };
