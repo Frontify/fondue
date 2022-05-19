@@ -6,7 +6,7 @@ import React, { FC, useState } from 'react';
 import { ELEMENT_LINK_CHOOSER } from './plugins/linkChooserPlugin/types';
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from './RichTextEditor';
 import { EditorActions } from './utils/actions';
-import { TextStyles, textStyleClassnames } from './utils/getTextStyles';
+import { textStyleClassnames, TextStyles } from './utils/getTextStyles';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
 const TOOLBAR = '[data-test-id=toolbar]';
