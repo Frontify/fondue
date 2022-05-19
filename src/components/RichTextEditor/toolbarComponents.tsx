@@ -33,9 +33,15 @@ import {
 import React, { ReactElement } from "react";
 import { ELEMENT_CHECK_ITEM } from "./plugins/checkboxListPlugin";
 import { TextStyleDropdown } from "./TextStyleDropdown/TextStyleDropdown";
-import { classNames, IconStylingWrapper, styles } from "./Toolbar";
+import { IconStylingWrapper } from "./Toolbar";
 import { EditorActions } from "./utils/actions";
 import { TextStyleType } from "./utils/getTextStyles";
+
+const classNames = {
+    root: "tw-text-text-weak tw-ml-0.5 hover:tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded",
+    active: "tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse",
+};
+const styles = { root: { width: "32px", height: "32px" } };
 
 export const toolbarComponents = (
     editor: PlateEditor,
