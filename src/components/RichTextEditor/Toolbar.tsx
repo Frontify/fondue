@@ -7,12 +7,6 @@ import { toolbarComponents } from './toolbarComponents';
 import { ButtonGroupProps, IconStylingWrapperProps, ToolbarProps } from './types';
 import { defaultActions, EditorActions } from './utils/actions';
 
-export const classNames = {
-    root: 'tw-text-text-weak tw-ml-0.5 hover:tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded',
-    active: 'tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse',
-};
-export const styles = { root: { width: '32px', height: '32px' } };
-
 export const IconStylingWrapper: FC<IconStylingWrapperProps> = ({ icon }) => {
     return <span className="tw-p-2 tw-h-12 tw-justify-center tw-items-center tw-flex">{icon}</span>;
 };
