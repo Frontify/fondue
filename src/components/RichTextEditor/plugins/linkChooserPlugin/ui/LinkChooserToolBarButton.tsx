@@ -36,7 +36,7 @@ export const LinkChooserToolBarButton = ({ id, type, icon, ...props }: ToolbarBu
     return (
         <div
             onMouseDown={async (event) => {
-                if (!editor) {
+                if (!editor || isFlyoutOpen) {
                     return;
                 }
 
@@ -86,7 +86,7 @@ export const LinkChooserToolBarButton = ({ id, type, icon, ...props }: ToolbarBu
                     <Checkbox
                         value="new-tab"
                         label="Open in New Tab"
-                        state={chosenLink?.openInNewTab || false ? CheckboxState.Checked : CheckboxState.Unchecked}
+                        state={chosenLink.openInNewTab ? CheckboxState.Checked : CheckboxState.Unchecked}
                         onChange={() => {
                             setChosenLink({
                                 searchResult: chosenLink.searchResult,
