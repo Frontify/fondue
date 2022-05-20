@@ -35,8 +35,8 @@ import {
 } from "@udecode/plate";
 import React, { FC, ReactElement } from "react";
 import { ELEMENT_CHECK_ITEM } from "./plugins/checkboxListPlugin";
-import { ELEMENT_LINK_CHOOSER } from "./plugins/linkChooserPlugin/createLinkChooserPlugin";
-import { LinkChooserToolBarButton } from "./plugins/linkChooserPlugin/ui/LinkChooserToolBarButton";
+import { ELEMENT_LINK_CHOOSER } from "./plugins/linkChooserPlugin/types";
+import { EditLinkChooserButton } from "./plugins/linkChooserPlugin/ui/EditLinkChooserButton";
 import { TextStyleDropdown } from "./TextStyleDropdown/TextStyleDropdown";
 import { defaultActions, EditorActions } from "./utils/actions";
 import { TextStyleType } from "./utils/getTextStyles";
@@ -141,7 +141,7 @@ const toolbarComponents = (
             />
         ),
         [EditorActions.LINK_CHOOSER]: (
-            <LinkChooserToolBarButton
+            <EditLinkChooserButton
                 type={getPluginType(editor, ELEMENT_LINK_CHOOSER)}
                 icon={<IconLink size={IconSize.Size24} />}
                 classNames={classNames}

@@ -1,7 +1,7 @@
 import { IconEnum } from "@foundation/Icon";
-import { getAbove, getPluginType, isCollapsed, PlateEditor, unwrapNodes } from "@udecode/plate-core";
-import { ELEMENT_LINK_CHOOSER } from "../createLinkChooserPlugin";
-import { ChosenLink, LinkChooserPlugin } from "../types";
+import { unwrapNodes } from "@udecode/plate";
+import { getAbove, isCollapsed, PlateEditor } from "@udecode/plate-core";
+import { ChosenLink, ELEMENT_LINK_CHOOSER, LinkChooserPlugin } from "../types";
 import { upsertLinkAtSelection } from "./upsertLinkAtSelection";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -9,7 +9,7 @@ export const getAndUpsertLink = async <T = {}>(
     editor: PlateEditor<T>,
     getChosenLink?: LinkChooserPlugin["getChosenLink"],
 ) => {
-    const type = getPluginType(editor, ELEMENT_LINK_CHOOSER);
+    const type = ELEMENT_LINK_CHOOSER;
     let prevChosenLink: ChosenLink = {
         searchResult: null,
         openInNewTab: false,

@@ -1,7 +1,6 @@
-import { getPluginType, PlateEditor, wrapNodes } from "@udecode/plate-core";
+import { PlateEditor, wrapNodes } from "@udecode/plate-core";
 import { Location } from "slate";
-import { ELEMENT_LINK_CHOOSER } from "../createLinkChooserPlugin";
-import { ChosenLink } from "../types";
+import { ChosenLink, ELEMENT_LINK_CHOOSER } from "../types";
 
 /**
  * Wrap selected nodes with a link and collapse at the end.
@@ -14,7 +13,7 @@ export const wrapLink = <T = {}>(
     wrapNodes(
         editor,
         {
-            type: getPluginType(editor, ELEMENT_LINK_CHOOSER),
+            type: ELEMENT_LINK_CHOOSER,
             chosenLink,
             children: [],
         },

@@ -12,7 +12,7 @@ import {
     MARK_UNDERLINE,
 } from "@udecode/plate";
 import { ELEMENT_CHECK_ITEM } from "../plugins/checkboxListPlugin";
-import { ELEMENT_LINK_CHOOSER } from "../plugins/linkChooserPlugin/createLinkChooserPlugin";
+import { ELEMENT_LINK_CHOOSER } from "../plugins/linkChooserPlugin/types";
 import { TextStyles } from "./getTextStyles";
 
 type CreateElementProps = {

@@ -115,6 +115,7 @@ export const Flyout: FC<FlyoutProps> = ({
                 className={merge([
                     "tw-outline-none tw-rounded",
                     hug ? "tw-mx-3" : "tw-w-full",
+                    trigger ? "" : "tw-hidden",
                     isFocusVisible && FOCUS_STYLE,
                 ])}
                 data-test-id="flyout-trigger"

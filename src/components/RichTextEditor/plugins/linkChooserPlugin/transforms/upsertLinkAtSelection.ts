@@ -1,7 +1,6 @@
-import { getPluginType, insertNodes, isCollapsed, PlateEditor, TElement, unwrapNodes } from "@udecode/plate-core";
+import { insertNodes, isCollapsed, PlateEditor, TElement, unwrapNodes } from "@udecode/plate-core";
 import { Editor, Transforms } from "slate";
-import { ELEMENT_LINK_CHOOSER } from "../createLinkChooserPlugin";
-import { ChosenLink } from "../types";
+import { ChosenLink, ELEMENT_LINK_CHOOSER } from "../types";
 import { wrapLink } from "./wrapLink";
 
 /**
@@ -27,7 +26,7 @@ export const upsertLinkAtSelection = <T = {}>(
         return;
     }
 
-    const type = getPluginType(editor, ELEMENT_LINK_CHOOSER);
+    const type = ELEMENT_LINK_CHOOSER;
 
     if (!wrap && isCollapsed(editor.selection)) {
         return insertNodes<TElement>(editor, {

@@ -9,7 +9,7 @@ import { ChosenLink } from "../types";
 
 const EVENT_LINK_CHANGE_CONFIRMED = "linkChangeConfirmed";
 
-export const LinkChooserToolBarButton = ({ id, type, icon, ...props }: ToolbarButtonProps) => {
+export const EditLinkChooserButton = ({ id, type, icon, ...props }: ToolbarButtonProps) => {
     id = useEventPlateId(id);
     const editor = usePlateEditorState(id)!;
     const isLink = !!editor?.selection && someNode(editor, { match: { type } });
