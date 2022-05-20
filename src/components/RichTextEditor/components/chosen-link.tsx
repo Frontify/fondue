@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Flyout } from "@components/Flyout";
-import { PlateRenderElementProps, useEditableProps } from "@udecode/plate";
+import { IconPen, IconTrash } from "@foundation/Icon";
+import { PlateRenderElementProps, unwrapNodes, useEditableProps } from "@udecode/plate";
 import React, { FC, MutableRefObject, useState } from "react";
-import { IconPen, IconTrash } from "../../..";
+import { ELEMENT_LINK_CHOOSER } from "../plugins/linkChooserPlugin/types";
 import { EditLinkChooserButton } from "../plugins/linkChooserPlugin/ui/EditLinkChooserButton";
-import { RemoveLinkChooserButton } from "../plugins/linkChooserPlugin/ui/RemoveLinkChooserButton copy";
 
 export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
     const { attributes, children, element, editor } = props;
@@ -66,8 +66,27 @@ export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
                     <span className="tw-flex tw-justify-between tw-gap-y-8 tw-p-8">
                         <span className="tw-text-violet-70">{getHref()}</span>
                         <span className="tw-flex">
-                            <EditLinkChooserButton icon={<IconPen />} />
-                            <RemoveLinkChooserButton editor={editor} icon={<IconTrash />} />
+                            <EditLinkChooserButton
+                                icon={
+                                    <span className="tw-cursor-pointer">
+                                        <IconPen />
+                                    </span>
+                                }
+                            />
+                            <span
+                                className="tw-cursor-pointer"
+                                onMouseDown={() => {
+                                    if (!editor.selection) {
+                                        return;
+                                    }
+                                    unwrapNodes(editor, {
+                                        at: editor.selection,
+                                        match: { type: ELEMENT_LINK_CHOOSER },
+                                    });
+                                }}
+                            >
+                                <IconTrash />
+                            </span>
                         </span>
                     </span>
                 </Flyout>

@@ -31,6 +31,8 @@ import {
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
     PlateEditor,
+    someNode,
+    ToolbarButton,
     usePlateEditorRef,
 } from "@udecode/plate";
 import React, { FC, ReactElement } from "react";
@@ -143,9 +145,14 @@ const toolbarComponents = (
         [EditorActions.LINK_CHOOSER]: (
             <EditLinkChooserButton
                 type={getPluginType(editor, ELEMENT_LINK_CHOOSER)}
-                icon={<IconLink size={IconSize.Size24} />}
-                classNames={classNames}
-                styles={styles}
+                icon={
+                    <ToolbarButton
+                        active={!!editor?.selection && someNode(editor, { match: { ELEMENT_CHECK_ITEM } })}
+                        icon={<IconLink size={IconSize.Size24} />}
+                        classNames={classNames}
+                        styles={styles}
+                    />
+                }
             />
         ),
         [EditorActions.ORDERED_LIST]: (

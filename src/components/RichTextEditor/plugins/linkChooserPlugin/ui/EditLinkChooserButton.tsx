@@ -2,17 +2,16 @@ import { Checkbox, CheckboxState } from "@components/Checkbox";
 import { Flyout } from "@components/Flyout";
 import { FormControl } from "@components/FormControl";
 import { TextInput } from "@components/TextInput";
-import { someNode, ToolbarButton, ToolbarButtonProps, useEventPlateId, usePlateEditorState } from "@udecode/plate";
+import { ToolbarButtonProps, useEventPlateId, usePlateEditorState } from "@udecode/plate";
 import React, { useState } from "react";
 import { getAndUpsertLink } from "../transforms/getAndUpsertLink";
 import { ChosenLink } from "../types";
 
 const EVENT_LINK_CHANGE_CONFIRMED = "linkChangeConfirmed";
 
-export const EditLinkChooserButton = ({ id, type, icon, ...props }: ToolbarButtonProps) => {
+export const EditLinkChooserButton = ({ id, icon }: ToolbarButtonProps) => {
     id = useEventPlateId(id);
     const editor = usePlateEditorState(id)!;
-    const isLink = !!editor?.selection && someNode(editor, { match: { type } });
 
     const [isFlyoutOpen, setIsFlyoutOpen] = useState<boolean>(false);
     const [chosenLink, setChosenLink] = useState<ChosenLink>({
@@ -44,7 +43,7 @@ export const EditLinkChooserButton = ({ id, type, icon, ...props }: ToolbarButto
                 getAndUpsertLink(editor, getLinkFromLinkChoser);
             }}
         >
-            <ToolbarButton active={isLink} icon={icon} {...props} />
+            {icon}
             <Flyout
                 isOpen={isFlyoutOpen}
                 onOpenChange={setIsFlyoutOpen}
