@@ -202,6 +202,7 @@ export enum IconEnum {
     Question = "Question",
     Quote = "Quote",
     Rectangle = "Rectangle",
+    RectangleLandscape = "RectangleLandscape",
     Refresh = "Refresh",
     Reject = "Reject",
     RejectCircle = "RejectCircle",

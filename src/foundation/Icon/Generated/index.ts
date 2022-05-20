@@ -34,6 +34,7 @@ export { default as IconAudio } from "./IconAudio";
 export { default as IconBackward5Seconds } from "./IconBackward5Seconds";
 export { default as IconBold } from "./IconBold";
 export { default as IconBookmark } from "./IconBookmark";
+export { default as IconBracketsCurly } from "./IconBracketsCurly";
 export { default as IconBrand } from "./IconBrand";
 export { default as IconBriefing } from "./IconBriefing";
 export { default as IconBuilder } from "./IconBuilder";

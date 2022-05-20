@@ -203,6 +203,7 @@ import IconPublication from "@foundation/Icon/Generated/IconPublication";
 import IconQuestion from "@foundation/Icon/Generated/IconQuestion";
 import IconQuote from "@foundation/Icon/Generated/IconQuote";
 import IconRectangle from "@foundation/Icon/Generated/IconRectangle";
+import IconRectangleLandscape from "@foundation/Icon/Generated/IconRectangleLandscape";
 import IconRefresh from "@foundation/Icon/Generated/IconRefresh";
 import IconReject from "@foundation/Icon/Generated/IconReject";
 import IconRejectCircle from "@foundation/Icon/Generated/IconRejectCircle";
@@ -485,6 +486,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Question]: <IconQuestion />,
     [IconEnum.Quote]: <IconQuote />,
     [IconEnum.Rectangle]: <IconRectangle />,
+    [IconEnum.RectangleLandscape]: <IconRectangleLandscape />,
     [IconEnum.Refresh]: <IconRefresh />,
     [IconEnum.Reject]: <IconReject />,
     [IconEnum.RejectCircle]: <IconRejectCircle />,
