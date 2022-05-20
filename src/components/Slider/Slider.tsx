@@ -81,8 +81,8 @@ const SliderItem = (props: SliderItemProps) => {
                 }
                 className={merge([
                     "tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center",
-                    isActive && !disabled ? "tw-text-black" : "tw-text-black-80",
-                    !disabled ? "hover:tw-text-black hover:tw-cursor-pointer" : "",
+                    isActive && !disabled ? "tw-text-text tw-font-medium" : "tw-text-text-weak",
+                    !disabled ? "hover:tw-text-text hover:tw-cursor-pointer" : "tw-text-box-disabled-inverse",
                 ])}
             >
                 <VisuallyHidden>
@@ -125,7 +125,10 @@ export const Slider: FC<SliderProps> = ({
         <ul
             {...radioGroupProps}
             data-test-id="slider"
-            className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none tw-select-none"
+            className={merge([
+                "tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-rounded tw-font-sans tw-text-s tw-list-none tw-select-none",
+                disabled ? "tw-bg-box-disabled" : "tw-bg-base-alt",
+            ])}
         >
             <motion.div
                 aria-hidden="true"
@@ -138,9 +141,7 @@ export const Slider: FC<SliderProps> = ({
                 }}
                 className={merge([
                     "tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none",
-                    disabled
-                        ? "tw-border-line-x-strong tw-border-opacity-30 tw-bg-black-0"
-                        : "tw-border-black tw-bg-white",
+                    disabled ? "tw-border-line-x-strong tw-bg-box-disabled" : "tw-border-line-xx-strong tw-bg-base",
                 ])}
             />
             {itemElements}
