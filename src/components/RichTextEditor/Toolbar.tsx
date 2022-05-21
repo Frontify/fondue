@@ -68,14 +68,16 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
         }
         const resizeObserver = new ResizeObserver((entries) => {
             if (entries.length > 0) {
-                setToolbarWidth(entries[0].target.clientWidth);
+                setTimeout(() => setToolbarWidth(entries[0].target.clientWidth), 0);
             }
         });
         if (toolbarRef.current) {
             resizeObserver.observe(toolbarRef.current);
         }
 
-        setToolbarWidth(toolbarRef.current?.clientWidth ?? null);
+        /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded" 
+                from being thrown during cypress component tests */
+        setTimeout(() => setToolbarWidth(toolbarRef.current?.clientWidth ?? 0), 0);
 
         return () => {
             toolbarRef.current && resizeObserver?.unobserve(toolbarRef.current);
