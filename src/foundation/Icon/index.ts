@@ -4,3 +4,4 @@ export * from "./IconEnum";
 export * from "./IconProps";
 export * from "./IconSize";
 export * from "./IconsMap";
+export * as AllIcons from "./Generated";
