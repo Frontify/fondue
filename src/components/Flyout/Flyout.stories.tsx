@@ -350,3 +350,31 @@ export const WithContentMinHeight = FlyoutTemplate.bind({});
 WithContentMinHeight.args = {
     contentMinHeight: 200,
 };
+
+const WithPlacementAndOffsetTemplate: Story<FlyoutProps> = (args) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <Flyout
+            {...args}
+            trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+                <div className="tw-flex tw-justify-center tw-items-center tw-w-full tw-h-screen">
+                    <Button onClick={() => setIsOpen(!isOpen)} ref={ref} aria-label={ariaLabel}>
+                        Click me
+                    </Button>
+                </div>
+            )}
+            isOpen={isOpen}
+            onOpenChange={chain(args.onOpenChange, setIsOpen)}
+            onCancel={chain(args.onCancel, () => setIsOpen(false))}
+        >
+            <p className="tw-text-center tw-py-8">Flyout Content</p>
+        </Flyout>
+    );
+};
+export const WithPlacementAndOffset = WithPlacementAndOffsetTemplate.bind({});
+
+WithPlacementAndOffset.args = {
+    placement: FlyoutPlacement.Top,
+    offset: 20,
+};
