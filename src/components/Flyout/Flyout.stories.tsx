@@ -19,6 +19,8 @@ import { Flyout, FlyoutProps, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT } from
 import { FlyoutFooter } from "./FlyoutFooter";
 import { Dropdown } from "@components/Dropdown";
 import { DatePicker } from "@components/DatePicker";
+import { TooltipIcon } from "@components/TooltipIcon";
+import { IconAttentionFilled } from "@foundation/Icon";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -147,7 +149,15 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
             onCancel={chain(args.onCancel, () => setOpen(false))}
         >
             <div className="tw-p-4">
-                <p className="tw-pt-3">Field 1</p>
+                <p className="tw-flex tw-items-center tw-my-2">
+                    Label 1
+                    <span className="tw-ml-2">
+                        <TooltipIcon
+                            tooltip={{ content: "Lorem ipsum dolor sit amet." }}
+                            triggerIcon={<IconAttentionFilled />}
+                        />
+                    </span>
+                </p>
                 <Dropdown
                     onChange={(id) => console.log(id)}
                     activeItemId={"1"}
@@ -164,7 +174,15 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
                         },
                     ]}
                 />
-                <p className="tw-pt-3">Field 2</p>
+                <p className="tw-flex tw-items-center tw-my-2">
+                    Label 2
+                    <span className="tw-ml-2">
+                        <TooltipIcon
+                            tooltip={{ content: "Lorem ipsum dolor sit amet." }}
+                            triggerIcon={<IconAttentionFilled />}
+                        />
+                    </span>
+                </p>
                 <DatePicker value={selectedDate as Date} onChange={setSelectedDate} />
             </div>
         </Flyout>

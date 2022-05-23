@@ -12,6 +12,7 @@ import { ModalTitle } from "./context/ModalTitle";
 import { ModalHeader } from "./ModalHeader";
 import { ModalBody } from "./ModalBody";
 import { ModalFooter } from "./ModalFooter";
+import { ModalLayout, MODAL_PADDING } from "./context/ModalLayout";
 
 const UNDERLAY_VARIANTS = {
     initial: {
@@ -45,7 +46,7 @@ const widthMap: Record<ModalWidth, string> = {
 const DEFAULT_ZINDEX = 50;
 
 const ModalComponent: FC<ModalProps> = memo((props) => {
-    const { visual, children, width = ModalWidth.Default, zIndex = DEFAULT_ZINDEX } = props;
+    const { visual, children, width = ModalWidth.Default, zIndex = DEFAULT_ZINDEX, compact = false } = props;
     const ref = useRef<HTMLDivElement>(null);
     const {
         overlayProps,
@@ -56,6 +57,8 @@ const ModalComponent: FC<ModalProps> = memo((props) => {
     const { modalProps } = useModal();
 
     const { dialogProps, titleProps } = useDialog(props, ref);
+
+    const padding = compact ? MODAL_PADDING.compact : MODAL_PADDING.default;
 
     return (
         <motion.div
@@ -90,8 +93,10 @@ const ModalComponent: FC<ModalProps> = memo((props) => {
                                 <ModalVisual {...visual} />
                             </div>
                         )}
-                        <div className="tw-flex tw-flex-col tw-flex-1 tw-space-y-6 tw-p-14 tw-overflow-hidden">
-                            <ModalTitle.Provider value={titleProps}>{children}</ModalTitle.Provider>
+                        <div className="tw-flex tw-flex-col tw-flex-1 tw-space-y-6 tw-overflow-hidden">
+                            <ModalLayout.Provider value={{ compact, padding }}>
+                                <ModalTitle.Provider value={titleProps}>{children}</ModalTitle.Provider>
+                            </ModalLayout.Provider>
                         </div>
                     </div>
                 </motion.div>

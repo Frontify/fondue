@@ -2,10 +2,8 @@
 
 import { Button, ButtonSize, ButtonStyle } from "@components/Button/Button";
 import { IconSize } from "@foundation/Icon/IconSize";
-import { useFocusRing } from "@react-aria/focus";
 import { useLink } from "@react-aria/link";
-import { mergeProps } from "@react-aria/utils";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
+import { FOCUS_VISIBLE_STYLE } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, {
     cloneElement,
@@ -138,7 +136,6 @@ export const Tooltip = ({
     const triggerRefElement = useRef<HTMLElement | HTMLDivElement | HTMLButtonElement | null>(null);
     const linkRef = useRef<HTMLAnchorElement | null>(null);
     const { linkProps } = useLink({}, linkRef);
-    const { isFocusVisible, focusProps } = useFocusRing();
     const hasLargePaddingTop = useMemo(
         () => linkUrl || brightHeader || buttons || heading || headingIcon,
         [linkUrl, brightHeader, buttons, heading, headingIcon],
@@ -258,7 +255,7 @@ export const Tooltip = ({
                                 </div>
                                 {linkUrl && (
                                     <a
-                                        {...mergeProps(linkProps, focusProps)}
+                                        {...linkProps}
                                         data-test-id="tooltip-link"
                                         ref={linkRef}
                                         href={linkUrl}
@@ -266,7 +263,7 @@ export const Tooltip = ({
                                         rel="noopener noreferrer"
                                         className={merge([
                                             "tw-text-xs tw-text-black-40 dark:tw-text-black-80 tw-underline tw-mt-1",
-                                            isFocusVisible && FOCUS_STYLE,
+                                            FOCUS_VISIBLE_STYLE,
                                         ])}
                                         onBlur={() => (buttons && buttons.length ? null : setIsOpen(false))}
                                     >

@@ -120,7 +120,10 @@ const testCategoryNodes = [
     },
 ];
 
-export const mockNodesFlat: DraggableItem<TreeFlatListItem>[] = [
+type onEditableSaveType = (value: string) => void;
+type mockNodeType = (onChange: onEditableSaveType) => DraggableItem<TreeFlatListItem>[];
+
+export const mockNodesFlat: mockNodeType = (onChange: onEditableSaveType) => [
     {
         id: "1",
         name: "Design System Testing",
@@ -129,6 +132,8 @@ export const mockNodesFlat: DraggableItem<TreeFlatListItem>[] = [
         icon: <IconFolder size={IconSize.Size16} />,
         parentId: null,
         sort: 1,
+        editable: true,
+        onEditableSave: (value: string) => onChange(value),
     },
     {
         id: "1-1",
