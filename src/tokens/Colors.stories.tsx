@@ -3,7 +3,7 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import tokens from "@frontify/arcade-tokens";
+import tokens from "@frontify/fondue-tokens";
 
 import { Meta, Story } from "@storybook/react";
 import React from "react";
@@ -25,7 +25,7 @@ export const AliasTokens: Story = () => {
             <div className="">
                 <p>
                     The name of the colors are targetted for the use as tailwind classes and are not a one-to-one match
-                    to the Arcade Tokens.
+                    to the Fondue Tokens.
                 </p>
             </div>
             {categories.map((category: string) => {
