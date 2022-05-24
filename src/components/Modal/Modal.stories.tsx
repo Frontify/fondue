@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Modal, MODAL_PADDING } from "./Modal";
+import { Modal } from "./Modal";
 import React, { useState } from "react";
 import { Button, ButtonStyle } from "@components/Button";
 import { Story, Meta } from "@storybook/react";
@@ -22,6 +22,7 @@ import {
 } from "./types";
 import { FormControl, FormControlDirection, FormControlStyle } from "@components/FormControl";
 import { Divider } from "..";
+import { MODAL_PADDING } from "./context/ModalLayout";
 
 // eslint-disable-next-line import/no-default-export
 export default {
@@ -97,12 +98,21 @@ export default {
             defaultValue: ModalHeaderVariant.Default,
             control: { type: "select" },
         },
+        compact: {
+            table: {
+                category: "Layout",
+            },
+            name: "Compact",
+            defaultValue: false,
+            control: { type: "boolean" },
+        },
         horizontalPadding: {
             table: {
                 category: "Layout",
             },
             name: "Body Horizontal Padding",
             defaultValue: true,
+            control: { type: "boolean" },
         },
         children: {
             table: {
@@ -162,6 +172,7 @@ const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps & Mo
                 onClose={state.close}
                 isOpen={state.isOpen}
                 isDismissable
+                compact={args.compact}
             >
                 <Modal.Header
                     title={args.title}
@@ -225,12 +236,12 @@ export const BodyWithoutHorizontalPadding = ModalTemplate.bind({});
 
 const ExampleFullWidthBody = () => (
     <div>
-        <div className={`${MODAL_PADDING.horizontal}`}>
+        <div className={`${MODAL_PADDING.default.horizontal}`}>
             <ExampleParagraph />
             <ExampleParagraph />
         </div>
         <Divider />
-        <div className={`${MODAL_PADDING.horizontal}`}>
+        <div className={`${MODAL_PADDING.default.horizontal}`}>
             <ExampleParagraph />
             <ExampleParagraph />
         </div>

@@ -24,6 +24,7 @@ import IconApprove from "@foundation/Icon/Generated/IconApprove";
 import IconArrow from "@foundation/Icon/Generated/IconArrow";
 import IconArrowDown from "@foundation/Icon/Generated/IconArrowDown";
 import IconArrowLeft from "@foundation/Icon/Generated/IconArrowLeft";
+import IconArrowOutExternal from "@foundation/Icon/Generated/IconArrowOutExternal";
 import IconArrowRight from "@foundation/Icon/Generated/IconArrowRight";
 import IconArrowUp from "@foundation/Icon/Generated/IconArrowUp";
 import IconArrowUpAndDown from "@foundation/Icon/Generated/IconArrowUpAndDown";
@@ -35,6 +36,7 @@ import IconAudio from "@foundation/Icon/Generated/IconAudio";
 import IconBackward5Seconds from "@foundation/Icon/Generated/IconBackward5Seconds";
 import IconBold from "@foundation/Icon/Generated/IconBold";
 import IconBookmark from "@foundation/Icon/Generated/IconBookmark";
+import IconBracketsCurly from "@foundation/Icon/Generated/IconBracketsCurly";
 import IconBrand from "@foundation/Icon/Generated/IconBrand";
 import IconBriefing from "@foundation/Icon/Generated/IconBriefing";
 import IconBuilder from "@foundation/Icon/Generated/IconBuilder";
@@ -55,6 +57,7 @@ import IconCenter from "@foundation/Icon/Generated/IconCenter";
 import IconCheck from "@foundation/Icon/Generated/IconCheck";
 import IconCheckFilled from "@foundation/Icon/Generated/IconCheckFilled";
 import IconCircle from "@foundation/Icon/Generated/IconCircle";
+import IconCloudArrowDown from "@foundation/Icon/Generated/IconCloudArrowDown";
 import IconCollapse from "@foundation/Icon/Generated/IconCollapse";
 import IconCollectionLarge from "@foundation/Icon/Generated/IconCollectionLarge";
 import IconCollectionMedium from "@foundation/Icon/Generated/IconCollectionMedium";
@@ -200,6 +203,7 @@ import IconPublication from "@foundation/Icon/Generated/IconPublication";
 import IconQuestion from "@foundation/Icon/Generated/IconQuestion";
 import IconQuote from "@foundation/Icon/Generated/IconQuote";
 import IconRectangle from "@foundation/Icon/Generated/IconRectangle";
+import IconRectangleLandscape from "@foundation/Icon/Generated/IconRectangleLandscape";
 import IconRefresh from "@foundation/Icon/Generated/IconRefresh";
 import IconReject from "@foundation/Icon/Generated/IconReject";
 import IconRejectCircle from "@foundation/Icon/Generated/IconRejectCircle";
@@ -303,6 +307,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Arrow]: <IconArrow />,
     [IconEnum.ArrowDown]: <IconArrowDown />,
     [IconEnum.ArrowLeft]: <IconArrowLeft />,
+    [IconEnum.ArrowOutExternal]: <IconArrowOutExternal />,
     [IconEnum.ArrowRight]: <IconArrowRight />,
     [IconEnum.ArrowUp]: <IconArrowUp />,
     [IconEnum.ArrowUpAndDown]: <IconArrowUpAndDown />,
@@ -314,6 +319,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Backward5Seconds]: <IconBackward5Seconds />,
     [IconEnum.Bold]: <IconBold />,
     [IconEnum.Bookmark]: <IconBookmark />,
+    [IconEnum.BracketsCurly]: <IconBracketsCurly />,
     [IconEnum.Brand]: <IconBrand />,
     [IconEnum.Briefing]: <IconBriefing />,
     [IconEnum.Builder]: <IconBuilder />,
@@ -334,6 +340,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Check]: <IconCheck />,
     [IconEnum.CheckFilled]: <IconCheckFilled />,
     [IconEnum.Circle]: <IconCircle />,
+    [IconEnum.CloudArrowDown]: <IconCloudArrowDown />,
     [IconEnum.Collapse]: <IconCollapse />,
     [IconEnum.CollectionLarge]: <IconCollectionLarge />,
     [IconEnum.CollectionMedium]: <IconCollectionMedium />,
@@ -479,6 +486,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Question]: <IconQuestion />,
     [IconEnum.Quote]: <IconQuote />,
     [IconEnum.Rectangle]: <IconRectangle />,
+    [IconEnum.RectangleLandscape]: <IconRectangleLandscape />,
     [IconEnum.Refresh]: <IconRefresh />,
     [IconEnum.Reject]: <IconReject />,
     [IconEnum.RejectCircle]: <IconRejectCircle />,

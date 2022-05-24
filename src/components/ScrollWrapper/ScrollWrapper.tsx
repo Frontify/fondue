@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useFocusRing } from "@react-aria/focus";
 import React, { FC, useRef } from "react";
-import { merge } from "../..";
+import { FOCUS_STYLE, merge } from "../..";
 import { useScrollWrapper } from "./hooks/useScrollWrapper";
 import { ScrollWrapperDirection, scrollWrapperDirections, ScrollWrapperProps } from "./types";
 
@@ -17,6 +18,8 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
 
     const [{ showTopShadow, showBottomShadow, showLeftShadow, showRightShadow }, scrollDivProps] =
         useScrollWrapper(scrollingContainer);
+
+    const { isFocusVisible, focusProps } = useFocusRing();
 
     const directionVertical =
         direction === ScrollWrapperDirection.Vertical || direction === ScrollWrapperDirection.Both;
@@ -42,11 +45,17 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
             )}
             <div
                 ref={scrollingContainer}
+                // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+                tabIndex={0}
+                role="region"
+                aria-label="Scrollable dialogue content"
                 className={merge([
                     scrollWrapperDirections[direction],
-                    "tw-flex-auto tw-min-h-0 tw--ml-2 tw-px-2 tw-pb-2",
+                    "tw-flex-auto tw-min-h-0 tw-outline-none tw--ml-2 tw-px-2 tw-pb-2",
+                    isFocusVisible && FOCUS_STYLE,
                 ])}
                 {...scrollDivProps}
+                {...focusProps}
             >
                 {children}
             </div>
