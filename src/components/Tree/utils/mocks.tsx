@@ -83,6 +83,7 @@ const uncategorizedPagesNodes = [
         value: "https://weare.frontify.com/page/3",
         icon: <IconFile size={IconSize.Size16} />,
         sort: null,
+        editable: true,
     },
 ];
 
@@ -96,7 +97,6 @@ const testCategoryNodes = [
         icon: <IconFile size={IconSize.Size16} />,
         sort: null,
         editable: true,
-        onEditableSave: (value: string) => value,
     },
     {
         id: "1-2-2",
@@ -120,10 +120,9 @@ const testCategoryNodes = [
     },
 ];
 
-type onEditableSaveType = (value: string) => void;
-type mockNodeType = (onChange: onEditableSaveType) => DraggableItem<TreeFlatListItem>[];
+type mockNodeType = () => DraggableItem<TreeFlatListItem>[];
 
-export const mockNodesFlat: mockNodeType = (onChange: onEditableSaveType) => [
+export const mockNodesFlat: mockNodeType = () => [
     {
         id: "1",
         name: "Design System Testing",
@@ -133,7 +132,6 @@ export const mockNodesFlat: mockNodeType = (onChange: onEditableSaveType) => [
         parentId: null,
         sort: 1,
         editable: true,
-        onEditableSave: (value: string) => onChange(value),
     },
     {
         id: "1-1",

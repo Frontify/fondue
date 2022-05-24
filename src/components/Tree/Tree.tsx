@@ -19,7 +19,6 @@ export interface TreeFlatListItem {
     badge?: ReactElement<IconProps> | ReactElement<BadgeProps>;
     parentId: NullableString;
     editable?: boolean;
-    onEditableSave?: (value: string) => void;
 }
 
 export type TreeProps = {
@@ -27,9 +26,16 @@ export type TreeProps = {
     onSelect: (ids: NullableString[]) => void;
     activeNodeIds: NullableString[];
     onUpdate?: (modifiedItems: DraggableItem<TreeFlatListItem>[]) => void;
+    onEditableSave?: (targetItemId: string, value: string) => void;
 };
 
-export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeIds: initialActiveNodeIds, onUpdate }) => {
+export const Tree: FC<TreeProps> = ({
+    nodes,
+    onSelect,
+    activeNodeIds: initialActiveNodeIds,
+    onUpdate,
+    onEditableSave,
+}) => {
     const [multiSelectMode, setMultiSelectMode] = useState<boolean>(false);
     const [activeIds, setActiveIds] = useState<NullableString[]>(initialActiveNodeIds);
     const [treeNodes, setTreeNodes] = useState<DraggableItem<TreeFlatListItem>[]>([]);
@@ -62,6 +68,12 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeIds: initialAct
           ) => {
               const modifiedItems = getReorderedNodes(targetItem, sourceItem, position, nodes);
               onUpdate(modifiedItems);
+          }
+        : undefined;
+
+    const handleEditableSave = onEditableSave
+        ? (targetItemId: string, value: string) => {
+              onEditableSave(targetItemId, value);
           }
         : undefined;
 
@@ -98,6 +110,7 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeIds: initialAct
                     activeIds,
                     onClick: onNodeClick,
                     onDrop: handleDrop,
+                    onEditableSave: handleEditableSave,
                 })}
             </ul>
         </DndProvider>
