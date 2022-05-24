@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getPreventDefaultHandler, someNode, toggleNodeType, usePlateEditorState } from "@udecode/plate";
+import { getPreventDefaultHandler, someNode, toggleNodeType, unwrapList, usePlateEditorState } from "@udecode/plate";
 import { merge } from "@utilities/merge";
 import React from "react";
 import { getTextStyles, TextStyles, TextStyleType } from "../utils/getTextStyles";
@@ -24,13 +24,18 @@ export const DropdownItem = ({ editorId, label, type, textStyles }: DropdownItem
                 isActive ? "tw-bg-black-100 tw-text-white" : "hover:tw-bg-black-0",
                 getTextStyles(type, textStyles),
             ])}
-            onMouseDown={
-                editor &&
+            onMouseDown={(event) => {
+                if (!editor || !editor.selection) {
+                    return;
+                }
+
+                unwrapList(editor, {});
+
                 getPreventDefaultHandler(toggleNodeType, editor, {
                     activeType: type,
                     inactiveType: type,
-                })
-            }
+                })(event);
+            }}
         >
             {label}
         </button>
