@@ -28,8 +28,12 @@ export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
 export const FLYOUT_DIVIDER_HEIGHT = "10px";
 
 export enum FlyoutPlacement {
-    Top = "top left",
-    Bottom = "bottom left",
+    Top = "top",
+    Bottom = "bottom",
+    TopLeft = "top left",
+    BottomLeft = "bottom left",
+    TopRight = "top right",
+    BottomRight = "bottom right",
     Right = "right",
     Left = "left",
 }
@@ -79,7 +83,7 @@ export const Flyout: FC<FlyoutProps> = ({
     fixedFooter,
     contentMinHeight,
     legacyFooter = true,
-    placement,
+    placement = FlyoutPlacement.BottomLeft,
     offset,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });

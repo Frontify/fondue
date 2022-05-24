@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useOverlayPosition } from "@react-aria/overlays";
+import { AriaPositionProps, useOverlayPosition } from "@react-aria/overlays";
 import { MutableRefObject } from "react";
 import { getTotalOverlayHeight } from "../helpers/getTotalOverlayHeight";
 import { shouldDisplayAbove } from "../helpers/shouldDisplayAbove";
@@ -19,6 +19,17 @@ type UseOverlayPositionWithBottomMarginProps = {
     offset?: number;
 };
 
+const flippedPositionMap: Record<FlyoutPlacement, AriaPositionProps["placement"]> = {
+    ["top"]: "bottom",
+    ["bottom"]: "top",
+    ["left"]: "right",
+    ["right"]: "left",
+    ["top left"]: "bottom left",
+    ["top right"]: "bottom right",
+    ["bottom left"]: "top left",
+    ["bottom right"]: "top right",
+};
+
 export const useOverlayPositionWithBottomMargin = ({
     triggerRef,
     overlayRef,
@@ -28,16 +39,18 @@ export const useOverlayPositionWithBottomMargin = ({
     offset,
 }: UseOverlayPositionWithBottomMarginProps) => {
     const overlayHeight = getTotalOverlayHeight(overlayRef, scrollRef);
-
     const isFlipped = shouldDisplayAbove(triggerRef, overlayHeight, FLYOUT_OVERLAY_OFFSET, INTERCOM_BUTTON_HEIGHT);
-    const verticalPosition = isFlipped ? FlyoutPlacement.Top : FlyoutPlacement.Bottom;
+    const flippedPosition = placement && flippedPositionMap[placement];
+    const verticalPosition = isFlipped ? flippedPosition : placement;
 
     const { overlayProps: positionProps } = useOverlayPosition({
         targetRef: triggerRef,
         overlayRef,
         shouldFlip: false,
         placement:
-            placement === FlyoutPlacement.Left || placement === FlyoutPlacement.Right ? placement : verticalPosition,
+            placement && (placement === FlyoutPlacement.Left || placement === FlyoutPlacement.Right)
+                ? placement
+                : verticalPosition,
         containerPadding: DEFAULT_OVERLAY_PADDING,
         offset: offset ?? FLYOUT_OVERLAY_OFFSET,
         scrollRef,
