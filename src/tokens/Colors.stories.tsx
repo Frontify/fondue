@@ -3,14 +3,14 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import tokens from "@frontify/fondue-tokens";
+import tokens from '@frontify/fondue-tokens';
 
-import { Meta, Story } from "@storybook/react";
-import React from "react";
+import { Meta, Story } from '@storybook/react';
+import React from 'react';
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Tokens",
+    title: 'Tokens',
 } as Meta;
 
 function getPalette(color: any) {
@@ -18,7 +18,7 @@ function getPalette(color: any) {
 }
 
 export const AliasTokens: Story = () => {
-    const categories = Object.keys(tokens).filter((category) => category !== "color");
+    const categories = Object.keys(tokens).filter((category) => category !== 'color');
 
     return (
         <div className="tw-grid tw-grid-cols-1 tw-gap-16">
@@ -45,12 +45,14 @@ export const AliasTokens: Story = () => {
                                     return (
                                         <div className="tw-space-y-1.5" key={name}>
                                             <div
-                                                className={`tw-h-10 tw-w-full tw-rounded tw-ring-1 tw-ring-inset tw-ring-black tw-ring-opacity-0 tw-border-line tw-border`}
+                                                className={
+                                                    'tw-h-10 tw-w-full tw-rounded tw-ring-1 tw-ring-inset tw-ring-black tw-ring-opacity-0 tw-border-line tw-border'
+                                                }
                                                 style={{ backgroundColor: value }}
                                             />
                                             <div className="tw-block">
                                                 <div className="tw-font-medium tw-font-sans tw-text-text">
-                                                    {attributes["tailwind-name"]}
+                                                    {attributes['tailwind-name']}
                                                 </div>
                                             </div>
                                         </div>
@@ -87,7 +89,9 @@ export const BrandTokens: Story = () => {
                                     return (
                                         <div className="tw-space-y-1.5" key={name}>
                                             <div
-                                                className={`tw-h-10 tw-w-full tw-rounded tw-ring-1 tw-ring-inset tw-ring-black tw-ring-opacity-0 tw-border-line tw-border`}
+                                                className={
+                                                    'tw-h-10 tw-w-full tw-rounded tw-ring-1 tw-ring-inset tw-ring-black tw-ring-opacity-0 tw-border-line tw-border'
+                                                }
                                                 style={{ backgroundColor: value }}
                                             />
                                             <div className="tw-block">

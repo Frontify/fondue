@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getRootProps, PlateRenderElementProps, setNodes, TElement, TodoListItemNodeData } from "@udecode/plate";
-import { merge } from "@utilities/merge";
-import React, { FC } from "react";
-import { ReactEditor } from "slate-react";
+import { PlateRenderElementProps, TElement, TodoListItemNodeData, getRootProps, setNodes } from '@udecode/plate';
+import { merge } from '@utilities/merge';
+import React, { FC } from 'react';
+import { ReactEditor } from 'slate-react';
 
 export const CheckboxItemElement: FC<PlateRenderElementProps> = (props) => {
     const { attributes, children, nodeProps, element, editor } = props;
@@ -24,7 +24,7 @@ export const CheckboxItemElement: FC<PlateRenderElementProps> = (props) => {
                     {...nodeProps}
                 />
             </div>
-            <span className={merge(["tw-flex-1 tw-focus:outline-none", checked && "tw-line-through"])}>{children}</span>
+            <span className={merge(['tw-flex-1 tw-focus:outline-none', checked && 'tw-line-through'])}>{children}</span>
         </div>
     );
 };

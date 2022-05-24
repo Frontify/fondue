@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
 export const useClickOutside = (reference: HTMLElement | null, callback: () => void): void => {
     useEffect(() => {
@@ -10,9 +10,9 @@ export const useClickOutside = (reference: HTMLElement | null, callback: () => v
             }
         }
 
-        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener('mousedown', handleClickOutside);
         return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [reference]);
 };

@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Badge } from "@components/Badge/Badge";
-import { Button, ButtonSize, ButtonStyle } from "@components/Button/Button";
-import IconActions from "@foundation/Icon/Generated/IconActions";
-import IconEmojiHappy from "@foundation/Icon/Generated/IconEmojiHappy";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { action } from "@storybook/addon-actions";
-import { Meta, Story } from "@storybook/react";
-import React, { FC, useState } from "react";
-import { Column, Row, SelectionMode, Table, TableProps } from "./Table";
+import { Badge } from '@components/Badge/Badge';
+import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
+import IconActions from '@foundation/Icon/Generated/IconActions';
+import IconEmojiHappy from '@foundation/Icon/Generated/IconEmojiHappy';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { action } from '@storybook/addon-actions';
+import { Meta, Story } from '@storybook/react';
+import React, { FC, useState } from 'react';
+import { Column, Row, SelectionMode, Table, TableProps } from './Table';
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Table",
+    title: 'Components/Table',
     component: Table,
     args: {
         selectionMode: SelectionMode.NoSelect,
@@ -20,7 +20,7 @@ export default {
     argTypes: {
         type: {
             options: Object.keys(SelectionMode),
-            control: { type: "select" },
+            control: { type: 'select' },
         },
     },
 } as Meta<TableProps>;
@@ -36,24 +36,24 @@ const User: FC<{ name: string }> = ({ name }) => (
 );
 
 const ActionButton: FC = () => (
-    <Button onClick={action("click")} size={ButtonSize.Small} style={ButtonStyle.Secondary} icon={<IconActions />} />
+    <Button onClick={action('click')} size={ButtonSize.Small} style={ButtonStyle.Secondary} icon={<IconActions />} />
 );
 
 const columns: Column[] = [
-    { name: "User", key: "user" },
-    { name: "Active Sessions", key: "activeSessions" },
-    { name: "Last Active", key: "lastActive" },
-    { name: "Regions", key: "regions" },
-    { name: "Countries", key: "countries" },
+    { name: 'User', key: 'user' },
+    { name: 'Active Sessions', key: 'activeSessions' },
+    { name: 'Last Active', key: 'lastActive' },
+    { name: 'Regions', key: 'regions' },
+    { name: 'Countries', key: 'countries' },
 ];
 
 const rows: Row[] = [
     {
-        key: "row-1",
+        key: 'row-1',
         actionElements: <ActionButton />,
         cells: {
             user: {
-                sortId: "anna",
+                sortId: 'anna',
                 value: <User name="Anna" />,
             },
             activeSessions: {
@@ -62,14 +62,14 @@ const rows: Row[] = [
             },
             lastActive: {
                 sortId: 12,
-                value: "12 days ago",
+                value: '12 days ago',
             },
             regions: {
-                sortId: "europe",
+                sortId: 'europe',
                 value: <Badge>Europe</Badge>,
             },
             countries: {
-                sortId: "france-spain",
+                sortId: 'france-spain',
                 value: (
                     <div className="tw-flex tw-gap-x-2">
                         <Badge>France</Badge>
@@ -80,11 +80,11 @@ const rows: Row[] = [
         },
     },
     {
-        key: "row-2",
+        key: 'row-2',
         actionElements: <ActionButton />,
         cells: {
             user: {
-                sortId: "bobby",
+                sortId: 'bobby',
                 value: <User name="Bobby" />,
             },
             activeSessions: {
@@ -93,14 +93,14 @@ const rows: Row[] = [
             },
             lastActive: {
                 sortId: 14,
-                value: "14 days ago",
+                value: '14 days ago',
             },
             regions: {
-                sortId: "south-america",
+                sortId: 'south-america',
                 value: <Badge>South America</Badge>,
             },
             countries: {
-                sortId: "brazil-chile",
+                sortId: 'brazil-chile',
                 value: (
                     <div className="tw-flex tw-gap-x-2">
                         <Badge>Brazil</Badge>
@@ -111,11 +111,11 @@ const rows: Row[] = [
         },
     },
     {
-        key: "row-3",
+        key: 'row-3',
         actionElements: <ActionButton />,
         cells: {
             user: {
-                sortId: "chris",
+                sortId: 'chris',
                 value: <User name="Chris" />,
             },
             activeSessions: {
@@ -124,14 +124,14 @@ const rows: Row[] = [
             },
             lastActive: {
                 sortId: 8,
-                value: "8 days ago",
+                value: '8 days ago',
             },
             regions: {
-                sortId: "africa",
+                sortId: 'africa',
                 value: <Badge>Africa</Badge>,
             },
             countries: {
-                sortId: "marocco-egypt",
+                sortId: 'marocco-egypt',
                 value: (
                     <div className="tw-flex tw-gap-x-2">
                         <Badge>Marocco</Badge>
@@ -142,11 +142,11 @@ const rows: Row[] = [
         },
     },
     {
-        key: "row-4",
+        key: 'row-4',
         actionElements: <ActionButton />,
         cells: {
             user: {
-                sortId: "david",
+                sortId: 'david',
                 value: <User name="David" />,
             },
             activeSessions: {
@@ -155,14 +155,14 @@ const rows: Row[] = [
             },
             lastActive: {
                 sortId: 6,
-                value: "6 days ago",
+                value: '6 days ago',
             },
             regions: {
-                sortId: "europe",
+                sortId: 'europe',
                 value: <Badge>Europe</Badge>,
             },
             countries: {
-                sortId: "germany",
+                sortId: 'germany',
                 value: (
                     <div className="tw-flex tw-gap-x-2">
                         <Badge>Germany</Badge>
@@ -172,11 +172,11 @@ const rows: Row[] = [
         },
     },
     {
-        key: "row-5",
+        key: 'row-5',
         actionElements: <ActionButton />,
         cells: {
             user: {
-                sortId: "emily",
+                sortId: 'emily',
                 value: <User name="Emily" />,
             },
             activeSessions: {
@@ -185,14 +185,14 @@ const rows: Row[] = [
             },
             lastActive: {
                 sortId: 10,
-                value: "10 days ago",
+                value: '10 days ago',
             },
             regions: {
-                sortId: "asia",
+                sortId: 'asia',
                 value: <Badge>Asia</Badge>,
             },
             countries: {
-                sortId: "thailand",
+                sortId: 'thailand',
                 value: (
                     <div className="tw-flex tw-gap-x-2">
                         <Badge>Thailand</Badge>

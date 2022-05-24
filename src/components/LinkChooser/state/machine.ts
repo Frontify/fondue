@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createMachine, DoneInvokeEvent } from "xstate";
-import { LinkChooserContext, LinkChooserEventData } from "../types";
-import { isFetching } from "../utils/state";
+import { DoneInvokeEvent, createMachine } from 'xstate';
+import { LinkChooserContext, LinkChooserEventData } from '../types';
+import { isFetching } from '../utils/state';
 import {
     clearSelectedResult,
     copyLinkToClipboard,
@@ -23,21 +23,21 @@ import {
     updateDropdownSearchResults,
     updateQueryFromObject,
     updateQueryFromString,
-} from "./actions";
-import { DropdownState, LinkChooserState, SectionState } from "./types";
+} from './actions';
+import { DropdownState, LinkChooserState, SectionState } from './types';
 
 const closeActions = [
-    "storeNewSelectedResult",
-    "updateQueryFromObject",
-    "setSelectedSearchResult",
-    "emitSelectSearchResult",
+    'storeNewSelectedResult',
+    'updateQueryFromObject',
+    'setSelectedSearchResult',
+    'emitSelectSearchResult',
 ];
 
 const clearingActions = [
-    "clearSelectedResult",
-    "updateQueryFromString",
-    "emitSelectSearchResult",
-    "populateDropdownSearchResultsWithRecentQueries",
+    'clearSelectedResult',
+    'updateQueryFromString',
+    'emitSelectSearchResult',
+    'populateDropdownSearchResultsWithRecentQueries',
 ];
 
 const sharedActions = {
@@ -45,10 +45,10 @@ const sharedActions = {
         actions: [...clearingActions],
     },
     OPEN_PREVIEW: {
-        actions: ["openPreviewContext"],
+        actions: ['openPreviewContext'],
     },
     COPY_TO_CLIPBOARD: {
-        actions: ["copyLinkToClipboard"],
+        actions: ['copyLinkToClipboard'],
     },
 };
 
@@ -59,19 +59,19 @@ const typingAction = {
         {
             target: SectionState.Typing,
             internal: false,
-            cond: "hasNoValue",
+            cond: 'hasNoValue',
             actions: [...clearingActions],
         },
         {
             target: SectionState.Typing,
             internal: false,
-            actions: ["updateQueryFromString"],
+            actions: ['updateQueryFromString'],
         },
     ],
 };
 
 export type SectionCondition = {
-    type: "isSection";
+    type: 'isSection';
     value: DropdownState[];
 };
 
@@ -102,15 +102,15 @@ const initializeSectionState = (
                 onDone: [
                     {
                         target: SectionState.Loaded,
-                        actions: ["updateDropdownSearchResults", "replaceCustomLink", "resolveFetching"],
+                        actions: ['updateDropdownSearchResults', 'replaceCustomLink', 'resolveFetching'],
                         cond: {
-                            type: "isSection",
+                            type: 'isSection',
                             value: [DropdownState.Default],
                         },
                     },
                     {
                         target: SectionState.Loaded,
-                        actions: ["updateDropdownSearchResults"],
+                        actions: ['updateDropdownSearchResults'],
                     },
                 ],
                 onError: SectionState.Error,
@@ -129,7 +129,7 @@ const initializeSectionState = (
 
 export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>(
     {
-        id: "link-chooser",
+        id: 'link-chooser',
         initial: LinkChooserState.Idle,
         states: {
             [LinkChooserState.Idle]: {
@@ -137,8 +137,8 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     OPEN_DROPDOWN: [
                         {
                             target: LinkChooserState.Focused,
-                            actions: ["populateDropdownSearchResultsWithRecentQueries"],
-                            cond: "isQueryEmpty",
+                            actions: ['populateDropdownSearchResultsWithRecentQueries'],
+                            cond: 'isQueryEmpty',
                         },
                         {
                             target: LinkChooserState.Focused,
@@ -151,7 +151,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                 initial: DropdownState.Default,
                 states: {
                     [DropdownState.Default]: {
-                        ...initializeSectionState(SectionState.Loaded, "fetchGlobal", fetchGlobalSearchResults),
+                        ...initializeSectionState(SectionState.Loaded, 'fetchGlobal', fetchGlobalSearchResults),
                         on: {
                             SELECT_EXTRA_SECTION: {
                                 target: DropdownState.ExtraSection,
@@ -162,7 +162,7 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     [DropdownState.ExtraSection]: {
                         ...initializeSectionState(
                             SectionState.Fetching,
-                            "fetchExtraSectionResults",
+                            'fetchExtraSectionResults',
                             fetchExtraSectionResults,
                         ),
                         on: {
@@ -181,17 +181,17 @@ export const linkChooserMachine = createMachine<LinkChooserContext, DoneInvokeEv
                     CLOSE_DROPDOWN: [
                         {
                             target: LinkChooserState.Idle,
-                            actions: [...closeActions, "interruptFetching", "replaceCustomLinkWithSelected"],
-                            cond: "shouldRefetch",
+                            actions: [...closeActions, 'interruptFetching', 'replaceCustomLinkWithSelected'],
+                            cond: 'shouldRefetch',
                         },
                         {
                             target: LinkChooserState.Idle,
-                            actions: [...closeActions, "replaceCustomLinkWithSelected"],
+                            actions: [...closeActions, 'replaceCustomLinkWithSelected'],
                         },
                     ],
                     SET_SELECTED_SEARCH_RESULT: {
                         target: LinkChooserState.Idle,
-                        actions: ["fillResultsWithNewRecentQueries", ...closeActions],
+                        actions: ['fillResultsWithNewRecentQueries', ...closeActions],
                     },
                     ...sharedActions,
                 },

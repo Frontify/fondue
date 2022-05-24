@@ -1,29 +1,29 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from "@storybook/react";
-import { merge } from "@utilities/merge";
-import React, { FC } from "react";
-import { Stack, StackProps } from "./Stack";
+import { Meta, Story } from '@storybook/react';
+import { merge } from '@utilities/merge';
+import React, { FC } from 'react';
+import { Stack, StackProps } from './Stack';
 
-const Placeholder: FC<{ width?: "auto" | "large" | "small"; height?: "large" | "small" }> = ({
-    width = "auto",
-    height = "large",
+const Placeholder: FC<{ width?: 'auto' | 'large' | 'small'; height?: 'large' | 'small' }> = ({
+    width = 'auto',
+    height = 'large',
 }) => (
     <div
         className={merge([
-            width === "auto" && "tw-w-full",
-            width === "large" && "tw-w-5/12",
-            width === "small" && "tw-w-2/12",
-            height === "large" && "tw-h-16",
-            height === "small" && "tw-h-8",
-            "tw-bg-base tw-opacity-50",
+            width === 'auto' && 'tw-w-full',
+            width === 'large' && 'tw-w-5/12',
+            width === 'small' && 'tw-w-2/12',
+            height === 'large' && 'tw-h-16',
+            height === 'small' && 'tw-h-8',
+            'tw-bg-base tw-opacity-50',
         ])}
     ></div>
 );
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Layout/Stack",
+    title: 'Layout/Stack',
     component: Stack,
     argTypes: {
         children: {
@@ -32,24 +32,24 @@ export default {
             },
         },
         padding: {
-            options: ["none", "xxs", "xs", "s", "m", "l", "xl", "xxl"],
-            control: { type: "select" },
+            options: ['none', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl'],
+            control: { type: 'select' },
         },
         spacing: {
-            options: ["none", "xxs", "xs", "s", "m", "l", "xl", "xxl"],
-            control: { type: "select" },
+            options: ['none', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl'],
+            control: { type: 'select' },
         },
         align: {
-            options: ["stretch", "start", "end", "center"],
-            control: { type: "select" },
+            options: ['stretch', 'start', 'end', 'center'],
+            control: { type: 'select' },
         },
         justify: {
-            options: ["start", "end", "center", "around", "evenly", "between"],
-            control: { type: "select" },
+            options: ['start', 'end', 'center', 'around', 'evenly', 'between'],
+            control: { type: 'select' },
         },
         direction: {
-            options: ["row", "column"],
-            control: { type: "radio" },
+            options: ['row', 'column'],
+            control: { type: 'radio' },
         },
     },
 } as Meta<StackProps>;
@@ -62,9 +62,9 @@ const Template: Story<StackProps> = (args) => (
 
 export const Default = Template.bind({});
 Default.args = {
-    direction: "row",
-    padding: "m",
-    spacing: "s",
+    direction: 'row',
+    padding: 'm',
+    spacing: 's',
     children: (
         <>
             <Placeholder />
@@ -76,9 +76,9 @@ Default.args = {
 
 export const Wrapped = Template.bind({});
 Wrapped.args = {
-    direction: "row",
-    padding: "m",
-    spacing: "s",
+    direction: 'row',
+    padding: 'm',
+    spacing: 's',
     wrap: false,
     children: (
         <>
@@ -91,11 +91,11 @@ Wrapped.args = {
 
 export const Alignment = Template.bind({});
 Alignment.args = {
-    direction: "row",
-    padding: "m",
-    spacing: "m",
-    align: "stretch",
-    justify: "start",
+    direction: 'row',
+    padding: 'm',
+    spacing: 'm',
+    align: 'stretch',
+    justify: 'start',
     children: (
         <>
             <Placeholder width="small" />

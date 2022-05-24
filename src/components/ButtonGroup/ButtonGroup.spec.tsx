@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from "@cypress/react";
-import { Button, ButtonSize, ButtonStyle } from "@components/Button/Button";
-import IconReject from "@foundation/Icon/Generated/IconReject";
-import React from "react";
-import { ButtonGroup } from "./ButtonGroup";
+import { mount } from '@cypress/react';
+import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
+import IconReject from '@foundation/Icon/Generated/IconReject';
+import React from 'react';
+import { ButtonGroup } from './ButtonGroup';
 
-describe("ButtonGroup Composition", () => {
-    it("should render a button group with correct spacing for small buttons", () => {
+describe('ButtonGroup Composition', () => {
+    it('should render a button group with correct spacing for small buttons', () => {
         mount(
             <ButtonGroup size={ButtonSize.Small}>
                 <Button>First, Small Button</Button>
@@ -18,12 +18,12 @@ describe("ButtonGroup Composition", () => {
             </ButtonGroup>,
         );
 
-        cy.get("[data-test-id=button-group]").as("ButtonGroup");
+        cy.get('[data-test-id=button-group]').as('ButtonGroup');
 
-        cy.get("@ButtonGroup").should("have.class", "tw-gap-x-1");
+        cy.get('@ButtonGroup').should('have.class', 'tw-gap-x-1');
     });
 
-    it("should render a button group with correct spacing for medium buttons", () => {
+    it('should render a button group with correct spacing for medium buttons', () => {
         mount(
             <ButtonGroup size={ButtonSize.Medium}>
                 <Button>First, Medium Button</Button>
@@ -34,12 +34,12 @@ describe("ButtonGroup Composition", () => {
             </ButtonGroup>,
         );
 
-        cy.get("[data-test-id=button-group]").as("ButtonGroup");
+        cy.get('[data-test-id=button-group]').as('ButtonGroup');
 
-        cy.get("@ButtonGroup").should("have.class", "tw-gap-x-2");
+        cy.get('@ButtonGroup').should('have.class', 'tw-gap-x-2');
     });
 
-    it("should render a button group with correct spacing for large buttons", () => {
+    it('should render a button group with correct spacing for large buttons', () => {
         mount(
             <ButtonGroup size={ButtonSize.Large}>
                 <Button>First, Large Button</Button>
@@ -50,9 +50,9 @@ describe("ButtonGroup Composition", () => {
             </ButtonGroup>,
         );
 
-        cy.get("[data-test-id=button-group]").as("ButtonGroup");
+        cy.get('[data-test-id=button-group]').as('ButtonGroup');
 
-        cy.get("@ButtonGroup").should("have.class", "tw-gap-x-3");
+        cy.get('@ButtonGroup').should('have.class', 'tw-gap-x-3');
     });
 
     it("enforces the same size for all buttons according to the group's size", () => {
@@ -68,8 +68,8 @@ describe("ButtonGroup Composition", () => {
             </ButtonGroup>,
         );
 
-        cy.get("[data-test-id=button-group]").as("ButtonGroup");
+        cy.get('[data-test-id=button-group]').as('ButtonGroup');
 
-        cy.get("@ButtonGroup").children().should("have.class", "tw-h-12");
+        cy.get('@ButtonGroup').children().should('have.class', 'tw-h-12');
     });
 });

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC } from "react";
-import tinycolor from "tinycolor2";
-import { Color } from "../../types/colors";
+import React, { FC } from 'react';
+import tinycolor from 'tinycolor2';
+import { Color } from '../../types/colors';
 
 type ColorPreviewProps = {
     color: Color;

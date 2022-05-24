@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useOverlayPosition } from "@react-aria/overlays";
-import { MutableRefObject } from "react";
-import { getTotalOverlayHeight } from "../helpers/getTotalOverlayHeight";
-import { shouldDisplayAbove } from "../helpers/shouldDisplayAbove";
+import { useOverlayPosition } from '@react-aria/overlays';
+import { MutableRefObject } from 'react';
+import { getTotalOverlayHeight } from '../helpers/getTotalOverlayHeight';
+import { shouldDisplayAbove } from '../helpers/shouldDisplayAbove';
 
 const FLYOUT_OVERLAY_OFFSET = 5;
 const DEFAULT_OVERLAY_PADDING = 12;
@@ -30,14 +30,14 @@ export const useOverlayPositionWithBottomMargin = ({
         targetRef: triggerRef,
         overlayRef,
         shouldFlip: false,
-        placement: isFlipped ? "top left" : "bottom left",
+        placement: isFlipped ? 'top left' : 'bottom left',
         containerPadding: DEFAULT_OVERLAY_PADDING,
         offset: FLYOUT_OVERLAY_OFFSET,
         scrollRef,
         isOpen,
     });
 
-    if (typeof positionProps?.style?.maxHeight === "number" && !isFlipped) {
+    if (typeof positionProps?.style?.maxHeight === 'number' && !isFlipped) {
         const heightToSubtract = INTERCOM_BUTTON_HEIGHT - DEFAULT_OVERLAY_PADDING;
         positionProps.style.maxHeight -= heightToSubtract;
     }

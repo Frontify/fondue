@@ -1,28 +1,28 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
-import { Meta, Story } from "@storybook/react";
+import React from 'react';
+import { Meta, Story } from '@storybook/react';
 import {
     AddBlockButton as AddBlockButtonComponent,
     AddBlockButtonDirection,
     AddBlockButtonProps,
-} from "./AddBlockButton";
+} from './AddBlockButton';
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Add Block Button",
+    title: 'Components/Add Block Button',
     component: AddBlockButtonComponent,
     args: {
-        title: "Add Block Button",
+        title: 'Add Block Button',
         orientation: AddBlockButtonDirection.Horizontal,
     },
     argTypes: {
         onClick: {
-            action: "Click",
+            action: 'Click',
         },
         orientation: {
             options: Object.values(AddBlockButtonDirection),
-            control: "radio",
+            control: 'radio',
         },
     },
 } as Meta<AddBlockButtonProps>;

@@ -1,24 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from "@storybook/react";
-import React, { useState } from "react";
-import { OrderableList as DropZoneComponent, OrderableListProps } from "../OrderableList";
-import { OrderableListItem } from "../OrderableList/types";
-import { chain } from "@react-aria/utils";
-import { Tree as TreeComponent, TreeFlatListItem, TreeProps } from "@components/Tree";
-import { DraggableItem } from "@utilities/dnd";
-import { mockNodesFlat } from "@components/Tree/utils";
-import { renderContent, storyItems, StoryListItem } from "@components/OrderableList/utils";
+import { Meta, Story } from '@storybook/react';
+import React, { useState } from 'react';
+import { OrderableList as DropZoneComponent, OrderableListProps } from '../OrderableList';
+import { OrderableListItem } from '../OrderableList/types';
+import { chain } from '@react-aria/utils';
+import { Tree as TreeComponent, TreeFlatListItem, TreeProps } from '@components/Tree';
+import { DraggableItem } from '@utilities/dnd';
+import { mockNodesFlat } from '@components/Tree/utils';
+import { StoryListItem, renderContent, storyItems } from '@components/OrderableList/utils';
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Drop Zone",
+    title: 'Components/Drop Zone',
     component: DropZoneComponent,
     args: {
         dragDisabled: false,
     },
     argTypes: {
-        onMove: { action: "onMove" },
+        onMove: { action: 'onMove' },
     },
 } as Meta<OrderableListProps<StoryListItem>>;
 
@@ -77,7 +77,7 @@ export const DropZoneWithTree: Story<TreeProps> = (args: TreeProps) => {
     };
 
     return (
-        <div style={{ maxWidth: "800px" }}>
+        <div style={{ maxWidth: '800px' }}>
             <TreeComponent {...args} nodes={nodesState} onUpdate={handleMove} />
         </div>
     );

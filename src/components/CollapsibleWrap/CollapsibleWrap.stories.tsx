@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from "@storybook/react";
-import React from "react";
-import { CollapsibleWrapProps } from "./types";
-import { CollapsibleWrap as CollapsibleWrapComponent } from "./CollapsibleWrap";
-import { Text } from "@typography/Text";
-import { Heading } from "@typography/Heading";
-import { Card } from "@components/Card";
+import { Meta, Story } from '@storybook/react';
+import React from 'react';
+import { CollapsibleWrapProps } from './types';
+import { CollapsibleWrap as CollapsibleWrapComponent } from './CollapsibleWrap';
+import { Text } from '@typography/Text';
+import { Heading } from '@typography/Heading';
+import { Card } from '@components/Card';
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Collapsible Wrap",
+    title: 'Components/Collapsible Wrap',
     component: CollapsibleWrapComponent,
     args: { isOpen: true, animateOpacity: true },
 } as Meta<CollapsibleWrapProps>;

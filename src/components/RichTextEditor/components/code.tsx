@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateRenderLeafProps } from "@udecode/plate";
-import React, { FC } from "react";
+import { PlateRenderLeafProps } from '@udecode/plate';
+import React, { FC } from 'react';
 
 export const CodeMark: FC<PlateRenderLeafProps> = ({ attributes, children }) => (
     <span

@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ToolbarDropdown } from "@udecode/plate";
-import React, { useCallback, useState } from "react";
-import { TextStyles, textStyleTitles, TextStyleType } from "../utils/getTextStyles";
-import { DropdownItem } from "./DropdownItem";
-import { DropdownTrigger } from "./DropdownTrigger";
+import { ToolbarDropdown } from '@udecode/plate';
+import React, { useCallback, useState } from 'react';
+import { TextStyleType, TextStyles, textStyleTitles } from '../utils/getTextStyles';
+import { DropdownItem } from './DropdownItem';
+import { DropdownTrigger } from './DropdownTrigger';
 
 type TextStyleDropdownProps = {
     editorId?: string;

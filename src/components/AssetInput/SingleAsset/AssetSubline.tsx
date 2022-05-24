@@ -1,17 +1,17 @@
-import IconImageLibrary from "@foundation/Icon/Generated/IconImageLibrary";
-import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternative";
-import React, { FC, Fragment } from "react";
-import { AssetInputProps } from "../AssetInput";
-import { SelectedAssetProps } from "./SelectedAsset";
+import IconImageLibrary from '@foundation/Icon/Generated/IconImageLibrary';
+import IconUploadAlternative from '@foundation/Icon/Generated/IconUploadAlternative';
+import React, { FC, Fragment } from 'react';
+import { AssetInputProps } from '../AssetInput';
+import { SelectedAssetProps } from './SelectedAsset';
 
-type AssetSublineProps = Pick<AssetInputProps, "isLoading"> & Pick<SelectedAssetProps, "asset">;
+type AssetSublineProps = Pick<AssetInputProps, 'isLoading'> & Pick<SelectedAssetProps, 'asset'>;
 
 export const AssetSubline: FC<AssetSublineProps> = ({ asset, isLoading = false }) => {
-    const title = isLoading ? "Uploading" : asset?.source === "library" ? asset.sourceName : "Uploaded";
+    const title = isLoading ? 'Uploading' : asset?.source === 'library' ? asset.sourceName : 'Uploaded';
     return (
         <span className="tw-max-w-full tw-flex tw-flex-row tw-items-center tw-gap-1 tw-text-black-80 tw-text-xxs tw-overflow-hidden">
             <div className="tw-flex-none tw-inline-flex tw-items-center tw-justify-center">
-                {asset?.source === "library" ? <IconImageLibrary /> : <IconUploadAlternative />}
+                {asset?.source === 'library' ? <IconImageLibrary /> : <IconUploadAlternative />}
             </div>
             <span>{title}</span>
             {asset &&

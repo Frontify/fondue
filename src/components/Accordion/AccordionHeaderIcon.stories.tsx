@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
-import { Meta, Story } from "@storybook/react";
-import { AccordionHeaderIcon as AccordionHeaderIconComponent } from "./AccordionHeaderIcon";
-import { AccordionHeaderIconProps, AccordionHeaderIconSize } from "./types";
+import React from 'react';
+import { Meta, Story } from '@storybook/react';
+import { AccordionHeaderIcon as AccordionHeaderIconComponent } from './AccordionHeaderIcon';
+import { AccordionHeaderIconProps, AccordionHeaderIconSize } from './types';
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Accordion/Accordion Header Icon",
+    title: 'Components/Accordion/Accordion Header Icon',
     component: AccordionHeaderIconComponent,
     argTypes: {
-        size: { control: "select", options: Object.values(AccordionHeaderIconSize) },
+        size: { control: 'select', options: Object.values(AccordionHeaderIconSize) },
     },
     args: {
         isOpen: false,

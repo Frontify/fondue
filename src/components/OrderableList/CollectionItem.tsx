@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useFocusRing } from "@react-aria/focus";
-import { useId } from "@react-aria/utils";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import React from "react";
-import { merge } from "@utilities/merge";
-import { CollectionItemProps, ItemDragState } from "./types";
-import { useDrag } from "react-dnd";
+import { useFocusRing } from '@react-aria/focus';
+import { useId } from '@react-aria/utils';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import React from 'react';
+import { merge } from '@utilities/merge';
+import { CollectionItemProps, ItemDragState } from './types';
+import { useDrag } from 'react-dnd';
 
 export const CollectionItem = <T extends object>({
     item,
@@ -28,12 +28,12 @@ export const CollectionItem = <T extends object>({
     return (
         <div
             ref={drag}
-            className={merge(["tw-relative tw-outline-none", isFocusVisible ? "tw-z-30" : "tw-z-0"])}
+            className={merge(['tw-relative tw-outline-none', isFocusVisible ? 'tw-z-30' : 'tw-z-0'])}
             aria-labelledby={id}
             data-test-id="draggable-item"
             aria-disabled={dragDisabled}
         >
-            <div className={merge(["tw-outline-none", isFocusVisible && FOCUS_STYLE])}>
+            <div className={merge(['tw-outline-none', isFocusVisible && FOCUS_STYLE])}>
                 {renderContent(item, { componentDragState, isFocusVisible })}
             </div>
         </div>

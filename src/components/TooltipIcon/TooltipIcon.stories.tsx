@@ -1,26 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
-import { Meta, Story } from "@storybook/react";
-import { TooltipIcon, TooltipIconProps, TooltipIconTriggerStyle } from "./TooltipIcon";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { IconAttentionFilled } from "@foundation/Icon/Generated";
+import React from 'react';
+import { Meta, Story } from '@storybook/react';
+import { TooltipIcon, TooltipIconProps, TooltipIconTriggerStyle } from './TooltipIcon';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { IconAttentionFilled } from '@foundation/Icon/Generated';
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/TooltipIcon",
+    title: 'Components/TooltipIcon',
     component: TooltipIcon,
     argTypes: {
         triggerStyle: {
             options: Object.values(TooltipIconTriggerStyle),
-            control: { type: "select" },
+            control: { type: 'select' },
         },
     },
     args: {
         tooltip: {
-            content: "Lorem ipsum dolor sit amet.",
+            content: 'Lorem ipsum dolor sit amet.',
         },
-        triggerStyle: "Primary",
+        triggerStyle: 'Primary',
     },
 } as Meta<TooltipIconProps>;
 

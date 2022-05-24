@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from "react";
-import { Story, Meta } from "@storybook/react";
-import { DatePicker, DatePickerProps } from "./DatePicker";
+import React, { useState } from 'react';
+import { Meta, Story } from '@storybook/react';
+import { DatePicker, DatePickerProps } from './DatePicker';
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/DatePicker",
+    title: 'Components/DatePicker',
     component: DatePicker,
 } as Meta<DatePickerProps>;
 
@@ -18,10 +18,10 @@ const Template: Story<DatePickerProps> = (args) => {
 
 export const Default = Template.bind({});
 Default.args = {
-    placeHolder: "Select a date",
+    placeHolder: 'Select a date',
     isClearable: true,
     shouldCloseOnSelect: true,
-    dateFormat: "MM/dd/yyyy",
+    dateFormat: 'MM/dd/yyyy',
 };
 
-Default.storyName = "Date Picker";
+Default.storyName = 'Date Picker';

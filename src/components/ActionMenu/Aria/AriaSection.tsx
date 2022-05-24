@@ -1,12 +1,12 @@
-import { useMenuSection } from "@react-aria/menu";
-import React, { FC } from "react";
+import { useMenuSection } from '@react-aria/menu';
+import React, { FC } from 'react';
 
 export type AriaSectionProps = {
     ariaLabel?: string;
 };
 
 export const AriaSection: FC<AriaSectionProps> = ({ ariaLabel, children }) => {
-    const { itemProps, groupProps } = useMenuSection({ "aria-label": ariaLabel });
+    const { itemProps, groupProps } = useMenuSection({ 'aria-label': ariaLabel });
 
     return (
         <li

@@ -1,25 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BadgeStatus, BadgeStyle } from "@components/Badge";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
-import { action } from "@storybook/addon-actions";
-import { Meta, Story } from "@storybook/react";
-import React from "react";
-import { Breadcrumbs, BreadcrumbsProps } from "./Breadcrumbs";
+import { BadgeStatus, BadgeStyle } from '@components/Badge';
+import IconIcons from '@foundation/Icon/Generated/IconIcons';
+import { action } from '@storybook/addon-actions';
+import { Meta, Story } from '@storybook/react';
+import React from 'react';
+import { Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs';
 
 const link = document.referrer;
 const ITEMS = [
-    { label: "Item 1", link },
-    { label: "Item 2", link },
-    { label: "Item 3", link },
+    { label: 'Item 1', link },
+    { label: 'Item 2', link },
+    { label: 'Item 3', link },
 ];
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Breadcrumbs",
+    title: 'Components/Breadcrumbs',
     component: Breadcrumbs,
     argTypes: {
-        onBlur: { action: "onBlur" },
+        onBlur: { action: 'onBlur' },
     },
 } as Meta<BreadcrumbsProps>;
 
@@ -28,19 +28,19 @@ const Template: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrum
 export const WithoutLinkOrAction = Template.bind({});
 
 WithoutLinkOrAction.args = {
-    items: [...ITEMS, { bold: true, label: "Active" }],
+    items: [...ITEMS, { bold: true, label: 'Active' }],
 };
 
 export const WithDecoratorAndAction = Template.bind({});
 
 WithDecoratorAndAction.args = {
-    items: [...ITEMS, { onClick: action("click"), bold: true, decorator: <IconIcons />, label: "Active" }],
+    items: [...ITEMS, { onClick: action('click'), bold: true, decorator: <IconIcons />, label: 'Active' }],
 };
 
 export const WithDecoratorAndLink = Template.bind({});
 
 WithDecoratorAndLink.args = {
-    items: [...ITEMS, { link, bold: true, decorator: <IconIcons />, label: "Active" }],
+    items: [...ITEMS, { link, bold: true, decorator: <IconIcons />, label: 'Active' }],
 };
 
 export const WithBadges = Template.bind({});
@@ -51,11 +51,11 @@ WithBadges.args = {
         {
             link,
             bold: true,
-            label: "Active",
+            label: 'Active',
             badges: [
-                { style: BadgeStyle.Positive, children: "Badge 1" },
-                { status: BadgeStatus.Danger, children: "Badge 2" },
-                { style: BadgeStyle.Danger, icon: <IconIcons />, children: "Badge 3" },
+                { style: BadgeStyle.Positive, children: 'Badge 1' },
+                { status: BadgeStatus.Danger, children: 'Badge 2' },
+                { style: BadgeStyle.Danger, icon: <IconIcons />, children: 'Badge 3' },
             ],
         },
     ],
@@ -70,8 +70,8 @@ WithDecoratorAndBadge.args = {
             link,
             bold: true,
             decorator: <IconIcons />,
-            label: "Active",
-            badges: [{ status: BadgeStatus.Positive, children: "Badge" }],
+            label: 'Active',
+            badges: [{ status: BadgeStatus.Positive, children: 'Badge' }],
         },
     ],
 };

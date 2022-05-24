@@ -6,7 +6,7 @@ import React, {
     KeyboardEventHandler,
     useRef,
     useState,
-} from "react";
+} from 'react';
 
 export interface EditableNodeItem {
     name: string;
@@ -21,7 +21,7 @@ export const EditableNodeItem = ({ name, targetItemId, onEditableSave }: Editabl
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const handleKeyDown: KeyboardEventHandler = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Enter") {
+        if (event.key === 'Enter') {
             setShowInput(false);
 
             onEditableSave(targetItemId, (event.target as HTMLInputElement).value);

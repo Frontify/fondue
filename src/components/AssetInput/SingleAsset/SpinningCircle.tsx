@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { merge } from "@utilities/merge";
-import React, { FC } from "react";
-import { AssetInputProps, AssetInputSize } from "..";
+import { merge } from '@utilities/merge';
+import React, { FC } from 'react';
+import { AssetInputProps, AssetInputSize } from '..';
 
-export const SpinningCircle: FC<Pick<AssetInputProps, "size">> = ({ size }) => (
+export const SpinningCircle: FC<Pick<AssetInputProps, 'size'>> = ({ size }) => (
     <svg
-        className={merge(["tw-animate-spin", size === AssetInputSize.Large ? "tw-w-16 tw-h-16" : "tw-w-5 tw-h-5"])}
+        className={merge(['tw-animate-spin', size === AssetInputSize.Large ? 'tw-w-16 tw-h-16' : 'tw-w-5 tw-h-5'])}
         width="100%"
         height="100%"
         viewBox="0 0 44 44"

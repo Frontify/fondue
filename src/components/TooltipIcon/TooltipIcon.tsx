@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactElement, cloneElement } from "react";
-import IconQuestion from "@foundation/Icon/Generated/IconQuestion";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { Tooltip, TooltipProps } from "@components/Tooltip/Tooltip";
-import { FOCUS_VISIBLE_STYLE } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import { IconProps } from "@foundation/Icon";
+import React, { FC, ReactElement, cloneElement } from 'react';
+import IconQuestion from '@foundation/Icon/Generated/IconQuestion';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { Tooltip, TooltipProps } from '@components/Tooltip/Tooltip';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import { IconProps } from '@foundation/Icon';
 
 export type TooltipIconProps = {
     tooltip?: TooltipProps;
@@ -16,15 +16,15 @@ export type TooltipIconProps = {
 };
 
 export enum TooltipIconTriggerStyle {
-    Danger = "Danger",
-    Warning = "Warning",
-    Primary = "Primary",
+    Danger = 'Danger',
+    Warning = 'Warning',
+    Primary = 'Primary',
 }
 
 const tooltipTriggerStyleClass: Record<TooltipIconTriggerStyle, string> = {
-    [TooltipIconTriggerStyle.Danger]: "tw-text-box-negative-strong hover:tw-text-box-negative-strong-hover",
-    [TooltipIconTriggerStyle.Warning]: "tw-text-box-warning-strong hover:tw-text-box-warning-strong-hover",
-    [TooltipIconTriggerStyle.Primary]: "tw-text-text-weak hover:tw-text-text-x-weak",
+    [TooltipIconTriggerStyle.Danger]: 'tw-text-box-negative-strong hover:tw-text-box-negative-strong-hover',
+    [TooltipIconTriggerStyle.Warning]: 'tw-text-box-warning-strong hover:tw-text-box-warning-strong-hover',
+    [TooltipIconTriggerStyle.Primary]: 'tw-text-text-weak hover:tw-text-text-x-weak',
 };
 
 export const TooltipIcon: FC<TooltipIconProps> = ({
@@ -43,7 +43,7 @@ export const TooltipIcon: FC<TooltipIconProps> = ({
                                 type="button"
                                 data-test-id="tooltip-icon-trigger"
                                 className={merge([
-                                    "tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full",
+                                    'tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full',
                                     FOCUS_VISIBLE_STYLE,
                                     tooltipTriggerStyleClass[triggerStyle],
                                 ])}

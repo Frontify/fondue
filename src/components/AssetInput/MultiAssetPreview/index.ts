@@ -1,1 +1,1 @@
-export * from "./MultiAssetPreview";
+export * from './MultiAssetPreview';

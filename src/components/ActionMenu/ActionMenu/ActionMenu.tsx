@@ -1,19 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AriaList } from "@components/ActionMenu/Aria/AriaList";
-import { AriaMenuItem } from "@components/ActionMenu/Aria/AriaMenuItem";
-import { AriaSection } from "@components/ActionMenu/Aria/AriaSection";
-import { getDisabledItemIds, getKeyItemRecord, getMenuItems, mapToAriaProps } from "@components/ActionMenu/Aria/helper";
-import { MenuItemType } from "@components/Dropdown/SelectMenu/SelectMenu";
-import { useMenu } from "@react-aria/menu";
-import { useTreeState } from "@react-stately/tree";
-import { FocusStrategy } from "@react-types/shared";
-import React, { ReactElement, useRef } from "react";
+import { AriaList } from '@components/ActionMenu/Aria/AriaList';
+import { AriaMenuItem } from '@components/ActionMenu/Aria/AriaMenuItem';
+import { AriaSection } from '@components/ActionMenu/Aria/AriaSection';
+import { getDisabledItemIds, getKeyItemRecord, getMenuItems, mapToAriaProps } from '@components/ActionMenu/Aria/helper';
+import { MenuItemType } from '@components/Dropdown/SelectMenu/SelectMenu';
+import { useMenu } from '@react-aria/menu';
+import { useTreeState } from '@react-stately/tree';
+import { FocusStrategy } from '@react-types/shared';
+import React, { ReactElement, useRef } from 'react';
 
 export type ActionMenuItemType = MenuItemType & { onClick: () => void };
 export type ActionMenuSwitchItemType = MenuItemType & {
     onClick: (switchValue: boolean) => void;
-    type: "switch";
+    type: 'switch';
     initialValue: boolean;
 };
 
@@ -33,7 +33,7 @@ export type ActionMenuProps = {
 
 export const ActionMenu = ({
     menuBlocks,
-    ariaLabel = "Action Menu",
+    ariaLabel = 'Action Menu',
     focus,
     border = true,
     scrollable = false,
@@ -43,7 +43,7 @@ export const ActionMenu = ({
     const props = mapToAriaProps(ariaLabel, menuBlocks);
     const state = useTreeState({
         ...props,
-        selectionMode: "none",
+        selectionMode: 'none',
         disabledKeys: getDisabledItemIds(items),
     });
     const menuRef = useRef<HTMLUListElement | null>(null);
@@ -52,7 +52,7 @@ export const ActionMenu = ({
     return (
         <AriaList ariaProps={{ ...menuProps }} ref={menuRef} border={border} scrollable={scrollable}>
             {[...state.collection].map((section) => {
-                const { key: sectionKey, "aria-label": sectionAriaLabel } = section;
+                const { key: sectionKey, 'aria-label': sectionAriaLabel } = section;
 
                 return (
                     <AriaSection key={sectionKey} ariaLabel={sectionAriaLabel}>

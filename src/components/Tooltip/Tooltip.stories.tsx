@@ -1,23 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
-import { Meta, Story } from "@storybook/react";
-import React from "react";
-import { BrightHeaderStyle } from "./BrightHeader";
-import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from "./Tooltip";
-import { IconAlert, IconAttentionFilled, IconSize } from "@foundation/Icon";
+import IconIcons from '@foundation/Icon/Generated/IconIcons';
+import { Meta, Story } from '@storybook/react';
+import React from 'react';
+import { BrightHeaderStyle } from './BrightHeader';
+import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
+import { IconAlert, IconAttentionFilled, IconSize } from '@foundation/Icon';
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Tooltip",
+    title: 'Components/Tooltip',
     component: Tooltip,
     args: {
-        content: "Cupcake ipsum dolor sit amet ice cream.",
-        heading: "",
+        content: 'Cupcake ipsum dolor sit amet ice cream.',
+        heading: '',
     },
     argTypes: {
         brightHeader: {
-            options: ["None", "Information", "Warning", "Tip", "Note"],
+            options: ['None', 'Information', 'Warning', 'Tip', 'Note'],
             mapping: {
                 None: null,
                 Information: BrightHeaderStyle.Information,
@@ -25,44 +25,44 @@ export default {
                 Tip: BrightHeaderStyle.Tip,
                 Note: BrightHeaderStyle.Note,
             },
-            control: { type: "select" },
+            control: { type: 'select' },
         },
         tooltipIcon: {
-            options: ["None", "Icon"],
+            options: ['None', 'Icon'],
             mapping: {
                 None: null,
                 Icon: <IconIcons />,
             },
-            control: { type: "select" },
+            control: { type: 'select' },
         },
         headingIcon: {
-            options: ["None", "Icon"],
+            options: ['None', 'Icon'],
             mapping: {
                 None: null,
                 Icon: <IconIcons />,
             },
-            control: { type: "select" },
+            control: { type: 'select' },
         },
         position: {
             options: Object.values(TooltipPosition),
-            control: { type: "select" },
+            control: { type: 'select' },
             defaultValue: TooltipPosition.Bottom,
         },
         alignment: {
             options: Object.values(TooltipAlignment),
-            control: { type: "select" },
+            control: { type: 'select' },
             defaultValue: TooltipAlignment.Middle,
         },
         withArrow: {
-            control: { type: "boolean" },
+            control: { type: 'boolean' },
             defaultValue: false,
         },
         flip: {
-            control: { type: "boolean" },
+            control: { type: 'boolean' },
             defaultValue: true,
         },
         hoverDelay: {
-            control: { type: "number" },
+            control: { type: 'number' },
             defaultValue: 200,
         },
     },
@@ -132,14 +132,14 @@ WithNoteBrightHeader.args = {
 
 export const WithOneButton = TooltipComponent.bind({});
 WithOneButton.args = {
-    buttons: [{ label: "Primary", action: () => null }],
+    buttons: [{ label: 'Primary', action: () => null }],
 };
 
 export const WithTwoButtons = TooltipComponent.bind({});
 WithTwoButtons.args = {
     buttons: [
-        { label: "Primary", action: () => null },
-        { label: "Secondary", action: () => null },
+        { label: 'Primary', action: () => null },
+        { label: 'Secondary', action: () => null },
     ],
 };
 
@@ -161,13 +161,13 @@ TooltipWithIcon.args = {
 
 export const WithLinkWithDefaultLabel = TooltipComponent.bind({});
 WithLinkWithDefaultLabel.args = {
-    linkUrl: "#",
+    linkUrl: '#',
 };
 
 export const WithLinkWithCustomLabel = TooltipComponent.bind({});
 WithLinkWithCustomLabel.args = {
-    linkUrl: "#",
-    linkLabel: "Upgrade your plan",
+    linkUrl: '#',
+    linkLabel: 'Upgrade your plan',
 };
 
 export const WithEverythingDisplayed = TooltipComponent.bind({});
@@ -175,11 +175,11 @@ WithEverythingDisplayed.args = {
     tooltipIcon: <IconIcons />,
     heading: "I'm a heading",
     headingIcon: <IconIcons />,
-    linkUrl: "#",
+    linkUrl: '#',
     brightHeader: BrightHeaderStyle.Warning,
     buttons: [
-        { label: "Primary", action: () => null },
-        { label: "Secondary", action: () => null },
+        { label: 'Primary', action: () => null },
+        { label: 'Secondary', action: () => null },
     ],
 };
 

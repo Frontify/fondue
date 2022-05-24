@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from "@storybook/react";
-import React, { useState } from "react";
-import { Color } from "../../types/colors";
-import { EXAMPLE_PALETTES } from "../ColorPicker/example-palettes";
-import { ColorPickerFlyout as ColorPickerFlyoutComponent, ColorPickerFlyoutProps } from "./ColorPickerFlyout";
+import { Meta, Story } from '@storybook/react';
+import React, { useState } from 'react';
+import { Color } from '../../types/colors';
+import { EXAMPLE_PALETTES } from '../ColorPicker/example-palettes';
+import { ColorPickerFlyout as ColorPickerFlyoutComponent, ColorPickerFlyoutProps } from './ColorPickerFlyout';
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Color Picker/Flyout",
+    title: 'Components/Color Picker/Flyout',
     component: ColorPickerFlyoutComponent,
     args: {
         disabled: false,
@@ -16,7 +16,7 @@ export default {
         clearable: false,
     },
     argTypes: {
-        onDelete: { action: "onDelete" },
+        onDelete: { action: 'onDelete' },
     },
 } as Meta<ColorPickerFlyoutProps>;
 

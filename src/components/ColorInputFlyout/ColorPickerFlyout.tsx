@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ColorPreview } from "@components/ColorPicker";
-import { ColorPicker, ColorPickerProps } from "@components/ColorPicker/ColorPicker";
-import { Flyout } from "@components/Flyout/Flyout";
-import React, { FC, useState } from "react";
-import { Color, ColorFormat } from "../../types/colors";
-import { ColorInputTrigger } from "./ColorPickerTrigger";
+import { ColorPreview } from '@components/ColorPicker';
+import { ColorPicker, ColorPickerProps } from '@components/ColorPicker/ColorPicker';
+import { Flyout } from '@components/Flyout/Flyout';
+import React, { FC, useState } from 'react';
+import { Color, ColorFormat } from '../../types/colors';
+import { ColorInputTrigger } from './ColorPickerTrigger';
 
-export type ColorPickerFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSelect"> & {
+export type ColorPickerFlyoutProps = Pick<ColorPickerProps, 'palettes' | 'onSelect'> & {
     id?: string;
     disabled?: boolean;
     onClick?: () => void;

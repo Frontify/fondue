@@ -1,40 +1,40 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getDisabledItemIds, getMenuItems, mapToAriaProps } from "@components/ActionMenu/Aria/helper";
-import { MenuBlock, MenuItemType, SelectMenu } from "@components/Dropdown/SelectMenu/SelectMenu";
-import { MenuItemStyle, menuItemTextColorRecord, MenuItemTextColorState } from "@components/MenuItem";
-import { MenuItemContent, MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
-import { Trigger, TriggerSize } from "@components/Trigger/Trigger";
-import { useMemoizedId } from "@hooks/useMemoizedId";
-import { useButton } from "@react-aria/button";
-import { FocusScope, useFocusRing } from "@react-aria/focus";
-import { DismissButton, useOverlay } from "@react-aria/overlays";
-import { HiddenSelect, useSelect } from "@react-aria/select";
-import { mergeProps } from "@react-aria/utils";
-import { useSelectState } from "@react-stately/select";
-import { merge } from "@utilities/merge";
-import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, ReactElement, useEffect, useRef } from "react";
-import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from "./useDropdownAutoHeight";
-import { Validation } from "@utilities/validation";
-import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
-import { createPortal } from "react-dom";
-import { usePopper } from "react-popper";
-import { VariationPlacement } from "@popperjs/core";
+import { getDisabledItemIds, getMenuItems, mapToAriaProps } from '@components/ActionMenu/Aria/helper';
+import { MenuBlock, MenuItemType, SelectMenu } from '@components/Dropdown/SelectMenu/SelectMenu';
+import { MenuItemStyle, MenuItemTextColorState, menuItemTextColorRecord } from '@components/MenuItem';
+import { MenuItemContent, MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import { Trigger, TriggerSize } from '@components/Trigger/Trigger';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { useButton } from '@react-aria/button';
+import { FocusScope, useFocusRing } from '@react-aria/focus';
+import { DismissButton, useOverlay } from '@react-aria/overlays';
+import { HiddenSelect, useSelect } from '@react-aria/select';
+import { mergeProps } from '@react-aria/utils';
+import { useSelectState } from '@react-stately/select';
+import { merge } from '@utilities/merge';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { FC, ReactElement, useEffect, useRef } from 'react';
+import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from './useDropdownAutoHeight';
+import { Validation } from '@utilities/validation';
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
+import { createPortal } from 'react-dom';
+import { usePopper } from 'react-popper';
+import { VariationPlacement } from '@popperjs/core';
 
 export enum DropdownSize {
-    Small = "Small",
-    Large = "Large",
+    Small = 'Small',
+    Large = 'Large',
 }
 
 export enum DropdownAlignment {
-    Start = "Start",
-    End = "End",
+    Start = 'Start',
+    End = 'End',
 }
 
 export enum DropdownPosition {
-    Top = "Top",
-    Bottom = "Bottom",
+    Top = 'Top',
+    Bottom = 'Bottom',
 }
 
 export type DropdownProps = {
@@ -73,11 +73,11 @@ export const Dropdown: FC<DropdownProps> = ({
     menuBlocks,
     onChange,
     activeItemId,
-    placeholder = "Select item",
+    placeholder = 'Select item',
     size = DropdownSize.Small,
     disabled = false,
     clearable = false,
-    ariaLabel = "Dropdown",
+    ariaLabel = 'Dropdown',
     decorator,
     autoResize = true,
     validation = Validation.Default,
@@ -122,11 +122,11 @@ export const Dropdown: FC<DropdownProps> = ({
 
     const textColorClass = activeItem
         ? menuItemTextColorRecord[activeItem.style || MenuItemStyle.Primary][textState]
-        : "tw-text-black-60";
+        : 'tw-text-black-60';
 
     const onClear = clearable
         ? () => {
-              state.setSelectedKey("");
+              state.setSelectedKey('');
               const first = state.collection.getFirstKey();
               if (first) {
                   state.selectionManager.setFocusedKey(first);
@@ -138,22 +138,22 @@ export const Dropdown: FC<DropdownProps> = ({
     const dropdownRef = useRef<HTMLDivElement | null>(null);
 
     const placementMap: Record<string, VariationPlacement> = {
-        ["Top-Start"]: "top-start",
-        ["Top-End"]: "top-end",
-        ["Bottom-Start"]: "bottom-start",
-        ["Bottom-End"]: "bottom-end",
+        ['Top-Start']: 'top-start',
+        ['Top-End']: 'top-end',
+        ['Bottom-Start']: 'bottom-start',
+        ['Bottom-End']: 'bottom-end',
     };
     const popperInstance = usePopper(triggerRef?.current, dropdownRef.current, {
         placement: placementMap[`${position}-${alignment}`],
         modifiers: [
             {
-                name: "offset",
+                name: 'offset',
                 options: {
                     offset: [0, 8],
                 },
             },
             {
-                name: "flip",
+                name: 'flip',
                 enabled: false,
             },
         ],
@@ -178,11 +178,11 @@ export const Dropdown: FC<DropdownProps> = ({
                     ref={triggerRef}
                     data-test-id="dropdown-trigger"
                     className={merge([
-                        "tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none",
+                        'tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none',
                         size === DropdownSize.Small
-                            ? "tw-py-2 tw-pl-3 tw-min-h-[34px]"
-                            : "tw-pl-5 tw-py-4 tw-min-h-[60px]",
-                        showClear ? "tw-pr-11" : "tw-pr-7",
+                            ? 'tw-py-2 tw-pl-3 tw-min-h-[34px]'
+                            : 'tw-pl-5 tw-py-4 tw-min-h-[60px]',
+                        showClear ? 'tw-pr-11' : 'tw-pr-7',
                         textColorClass,
                     ])}
                 >
@@ -202,13 +202,13 @@ export const Dropdown: FC<DropdownProps> = ({
                             style={{
                                 ...popperInstance.styles.popper,
                                 width: triggerRef.current?.getBoundingClientRect().width,
-                                minWidth: "fit-content",
+                                minWidth: 'fit-content',
                             }}
                             {...popperInstance.attributes.popper}
                             className="tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
                             key="content"
                             initial={{ height: 0 }}
-                            animate={{ height: "auto" }}
+                            animate={{ height: 'auto' }}
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         >
                             <FocusScope restoreFocus>

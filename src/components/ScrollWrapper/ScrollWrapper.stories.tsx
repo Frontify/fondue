@@ -1,23 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button } from "@components/Button";
-import { FormControl, FormControlDirection, FormControlStyle } from "@components/FormControl";
-import { TextInput } from "@components/TextInput";
-import { useId } from "@react-aria/utils";
-import { Meta, Story } from "@storybook/react";
-import React, { useState } from "react";
-import { Card } from "..";
-import { ScrollWrapper } from "./ScrollWrapper";
-import { ScrollWrapperDirection, ScrollWrapperProps } from "./types";
+import { Button } from '@components/Button';
+import { FormControl, FormControlDirection, FormControlStyle } from '@components/FormControl';
+import { TextInput } from '@components/TextInput';
+import { useId } from '@react-aria/utils';
+import { Meta, Story } from '@storybook/react';
+import React, { useState } from 'react';
+import { Card } from '..';
+import { ScrollWrapper } from './ScrollWrapper';
+import { ScrollWrapperDirection, ScrollWrapperProps } from './types';
 
 // eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/ScrollWrapper",
+    title: 'Components/ScrollWrapper',
     component: ScrollWrapper,
 } as Meta<ScrollWrapperProps>;
 
 export const Default: Story<ScrollWrapperProps> = (args) => {
-    const [input, setInput] = useState("");
+    const [input, setInput] = useState('');
 
     return (
         <div className="tw-max-h-[300px] tw-flex tw-flex-col">
@@ -42,10 +42,10 @@ export const Default: Story<ScrollWrapperProps> = (args) => {
                         style={FormControlStyle.Primary}
                         direction={FormControlDirection.Vertical}
                         label={{
-                            children: "Input Label",
+                            children: 'Input Label',
                             required: false,
                             htmlFor: useId(),
-                            tooltip: { content: "Tooltip Text" },
+                            tooltip: { content: 'Tooltip Text' },
                         }}
                     >
                         <TextInput value={input} onChange={setInput} />
@@ -57,10 +57,10 @@ export const Default: Story<ScrollWrapperProps> = (args) => {
     );
 };
 
-const CARDS = new Array(8).fill("");
+const CARDS = Array.from({ length: 8 }).fill('');
 
 export const Horizontal: Story<ScrollWrapperProps> = (args) => {
-    const [input, setInput] = useState("");
+    const [input, setInput] = useState('');
 
     return (
         <div className="tw-w-full">
@@ -80,10 +80,10 @@ export const Horizontal: Story<ScrollWrapperProps> = (args) => {
                             style={FormControlStyle.Primary}
                             direction={FormControlDirection.Vertical}
                             label={{
-                                children: "Input Label",
+                                children: 'Input Label',
                                 required: false,
                                 htmlFor: useId(),
-                                tooltip: { content: "Tooltip Text" },
+                                tooltip: { content: 'Tooltip Text' },
                             }}
                         >
                             <TextInput value={input} onChange={setInput} />
