@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-type IconComponent = {
-    size: string;
+export type IconComponent = {
+    size: string | null;
     filled: boolean;
     name: string;
 };
