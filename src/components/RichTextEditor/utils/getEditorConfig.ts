@@ -46,7 +46,7 @@ import {
     UnderlineMark,
     UnorderedListElement,
 } from "../components";
-import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from "../plugins/checkboxListPlugin";
+import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from "../plugins/checkboxListPlugin/createCheckboxListPlugin";
 import { TextStyles, TextStyleType } from "./getTextStyles";
 
 export const getEditorConfig = (textStyles?: TextStyleType[]) => {
