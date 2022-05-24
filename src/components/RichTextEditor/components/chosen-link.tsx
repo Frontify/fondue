@@ -1,18 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Flyout } from "@components/Flyout";
-import { IconPen, IconTrash } from "@foundation/Icon";
 import { PlateRenderElementProps, unwrapNodes, useEditableProps } from "@udecode/plate";
 import React, { FC, MutableRefObject, useState } from "react";
-import { ELEMENT_LINK_CHOOSER } from "../plugins/linkChooserPlugin/types";
-import { EditLinkChooserButton } from "../plugins/linkChooserPlugin/ui/EditLinkChooserButton";
+import { getAndUpsertLink } from "../plugins/linkChooserPlugin/transforms/getAndUpsertLink";
+import { ChosenLink } from "../plugins/linkChooserPlugin/types";
+import { LinkChooserFlyout } from "../plugins/linkChooserPlugin/ui/LinkChooserFlyout";
+import { LinkChooserPreviewFlyout } from "../plugins/linkChooserPlugin/ui/LinkChooserPreviewFlyout";
 
 export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
     const { children, element, editor } = props;
 
     const { chosenLink } = element;
 
-    const [isPreviewFlyoutOpen, setIsPreviewFlyoutOpen] = useState<boolean>(false);
+    const [isLinkChooserPreviewFlyoutOpen, setIsLinkChooserPreviewFlyoutOpen] = useState<boolean>(false);
+    const [isLinkChooserFlyoutOpen, setIsLinkChooserFlyoutOpen] = useState<boolean>(false);
+    const [prevChosenLink, setPrevChosenLink] = useState<ChosenLink>(chosenLink);
 
     const isReadOnly = useEditableProps(editor).readOnly;
 
@@ -24,6 +26,37 @@ export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
         const TARGET_DEFAULT = "_self";
         const TARGET_BLANK = "_blank";
         return chosenLink ? (chosenLink.openInNewTab ? TARGET_BLANK : TARGET_DEFAULT) : TARGET_DEFAULT;
+    };
+
+    const getLinkFromLinkChooser = (prevChosenLink: ChosenLink): Promise<ChosenLink> => {
+        setPrevChosenLink(prevChosenLink);
+        setTimeout(() => {
+            setIsLinkChooserFlyoutOpen(true);
+        }, 100);
+
+        return new Promise<ChosenLink>((resolve) => {
+            document.addEventListener("linkChangeConfirmed", (event: any) => {
+                resolve(event.detail.chosenLink);
+            });
+        });
+    };
+
+    const onEdit = () => {
+        setIsLinkChooserPreviewFlyoutOpen(false);
+        if (!editor) {
+            return;
+        }
+        getAndUpsertLink(editor, getLinkFromLinkChooser);
+    };
+
+    const onRemove = () => {
+        if (!editor.selection) {
+            return;
+        }
+        unwrapNodes(editor, {
+            at: editor.selection,
+            match: { type: "link_chooser" },
+        });
     };
 
     return (
@@ -39,58 +72,37 @@ export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
                     {children}
                 </a>
             ) : (
-                <Flyout
-                    isOpen={isPreviewFlyoutOpen}
-                    onOpenChange={setIsPreviewFlyoutOpen}
-                    onCancel={() => setIsPreviewFlyoutOpen(false)}
-                    trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLAnchorElement>) => (
-                        <a
-                            ref={ref}
-                            aria-label={ariaLabel}
-                            onClick={() => {
-                                setTimeout(() => {
-                                    setIsPreviewFlyoutOpen(true);
-                                }, 100);
-                            }}
-                            data-chosen-link={JSON.stringify(chosenLink)}
-                            href={getHref()}
-                            target={getTarget()}
-                            rel="noreferrer"
-                            className={"tw-text-violet-70 tw-underline tw-cursor-pointer"}
-                        >
-                            {children}
-                        </a>
-                    )}
-                    legacyFooter={false}
-                >
-                    <span data-test-id={"preview-link-flyout"} className="tw-flex tw-justify-between tw-gap-y-8 tw-p-5">
-                        <span className="tw-text-violet-70">{getHref()}</span>
-                        <span className="tw-flex">
-                            <EditLinkChooserButton
-                                icon={
-                                    <span data-test-id={"edit-link-button"} className="tw-cursor-pointer">
-                                        <IconPen />
-                                    </span>
-                                }
-                            />
-                            <span
-                                data-test-id={"remove-link-button"}
-                                className="tw-cursor-pointer"
-                                onMouseDown={() => {
-                                    if (!editor.selection) {
-                                        return;
-                                    }
-                                    unwrapNodes(editor, {
-                                        at: editor.selection,
-                                        match: { type: ELEMENT_LINK_CHOOSER },
-                                    });
-                                }}
-                            >
-                                <IconTrash />
-                            </span>
-                        </span>
-                    </span>
-                </Flyout>
+                <>
+                    <a
+                        onClick={() => setIsLinkChooserPreviewFlyoutOpen(true)}
+                        data-chosen-link={JSON.stringify(chosenLink)}
+                        href={getHref()}
+                        target={getTarget()}
+                        rel="noreferrer"
+                        className={"tw-text-violet-70 tw-underline tw-cursor-pointer"}
+                    >
+                        {children}
+                    </a>
+                    <LinkChooserPreviewFlyout
+                        isFlyoutOpen={isLinkChooserPreviewFlyoutOpen}
+                        setIsFlyoutOpen={setIsLinkChooserPreviewFlyoutOpen}
+                        trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLDivElement>) => (
+                            <span ref={ref} aria-label={ariaLabel}></span>
+                        )}
+                        href={getHref()}
+                        onEditClick={onEdit}
+                        onRemoveClick={onRemove}
+                    />
+                    <LinkChooserFlyout
+                        isFlyoutOpen={isLinkChooserFlyoutOpen}
+                        setIsFlyoutOpen={setIsLinkChooserFlyoutOpen}
+                        chosenLink={prevChosenLink}
+                        setChosenLink={setPrevChosenLink}
+                        trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLDivElement>) => (
+                            <span ref={ref} aria-label={ariaLabel}></span>
+                        )}
+                    />
+                </>
             )}
         </>
     );
