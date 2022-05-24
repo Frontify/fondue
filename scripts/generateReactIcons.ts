@@ -7,7 +7,7 @@ import { camelCase, toUpper } from "lodash";
 import { transform } from "@svgr/core";
 import { Entry } from "fast-glob/out/types";
 import { IconTemplate } from "../src/foundation/Icon/IconTemplate";
-import { IconTemplateDynamic } from "../src/foundation/Icon/IconTemplateDynamic";
+import { IconComponent, IconTemplateDynamic } from "../src/foundation/Icon/IconTemplateDynamic";
 
 const ICON_SOURCE_DIRECTORY = `node_modules/@frontify/arcade-icons/icons/`;
 const GENERATED_ICONS_DIRECTORY = `src/foundation/Icon/Generated/`;
@@ -34,10 +34,7 @@ const getShapeFolderPaths = async () => {
     });
 };
 
-/**
- * Given an icon name, returns the size of the icon. Returns null if no size found.
- */
-const getSize = (name) => {
+const getSize = (name: string): string | null => {
     let size = null;
     ICON_SIZES.forEach((element) => {
         if (name.includes(element)) {
@@ -83,18 +80,16 @@ const generateSvgComponent = async (svgPath: Entry) => {
 const generateDynamicIcon = async (shapeFolderPath: Entry) => {
     const svgPaths = await fastGlob(`${shapeFolderPath.path}/**/*.svg`, { objectMode: true });
     const shapeName = camelCase(`${shapeFolderPath.name}`).replace(/^(.)/, toUpper);
-    const components = [];
-
-    svgPaths.forEach((icon) => {
+     const components: IconComponent[] = svgPaths.map((icon) => {
         const iconName = camelCase(icon.name.replace(".svg", "")).replace(/^(.)/, toUpper);
         const size = getSize(iconName);
         const filled = iconName.toUpperCase().includes("filled".toUpperCase());
 
-        components.push({
+        return {
             size: size,
             filled: filled,
             name: ICON_COMPONENT_PREFIX + iconName,
-        });
+        };
     });
 
     const filePath = join(ICON_BUILD_DIRECTORY, `${ICON_COMPONENT_PREFIX}${shapeName}.tsx`);
