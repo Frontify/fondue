@@ -3,7 +3,7 @@
 import { DraggableItem, DropZonePosition } from '@utilities/dnd/types';
 import { moveItems } from '@utilities/dnd/moveItems';
 
-const items: DraggableItem<any> = [
+const items: DraggableItem[] = [
     {
         id: '1',
         sort: null,
