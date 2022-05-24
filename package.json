@@ -60,7 +60,7 @@
     "devDependencies": {
         "@cypress/react": "5.12.4",
         "@cypress/vite-dev-server": "2.2.2",
-        "@frontify/eslint-config-react": "0.13.2",
+        "@frontify/eslint-config-react": "^0.15.2",
         "@storybook/addon-actions": "6.4.20",
         "@storybook/addon-essentials": "6.4.20",
         "@storybook/addon-links": "6.4.20",
