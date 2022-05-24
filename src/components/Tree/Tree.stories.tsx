@@ -12,22 +12,15 @@ export default {
     component: TreeComponent,
     args: {
         activeNodeIds: ["1-1-3"],
+        onEditableSave: (targetItemId: string, value: string) => console.log(targetItemId, value),
     },
     argTypes: {
         onSelect: { action: "onSelect" },
-        onEditableSave: {
-            action: "onEditableSave",
-        },
     },
-} as Meta<TreeProps & { onEditableSave: typeof onEditableSaveDefault }>;
+} as Meta<TreeProps>;
 
-const onEditableSaveDefault = (value: string) => value;
-
-export const Tree: Story<TreeProps & { onEditableSave: typeof onEditableSaveDefault }> = ({
-    onEditableSave = onEditableSaveDefault,
-    ...args
-}: TreeProps & { onEditableSave: typeof onEditableSaveDefault }) => {
-    const [nodesState, setNodesState] = useState(mockNodesFlat(onEditableSave));
+export const Tree: Story<TreeProps> = ({ ...args }: TreeProps) => {
+    const [nodesState, setNodesState] = useState(mockNodesFlat);
 
     const handleMove = (modifiedItems: DraggableItem<TreeFlatListItem>[]): void => {
         const modifiedArray = nodesState.map((item) => {

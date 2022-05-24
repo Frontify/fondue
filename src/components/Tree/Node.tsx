@@ -16,16 +16,26 @@ export type RenderNodeArrayData = Omit<NodeProps, "isFirst" | "strong" | "node">
     nodes: DraggableItem<TreeNodeItem>[];
 };
 
-export const renderNodeArray = ({ nodes, activeIds, treeName, onClick, onDrop, parentIds }: RenderNodeArrayData) =>
+export const renderNodeArray = ({
+    nodes,
+    activeIds,
+    treeName,
+    onClick,
+    onDrop,
+    onEditableSave,
+    parentIds,
+}: RenderNodeArrayData) =>
     nodes.map((node, i) => (
         <Node
             key={node.id}
             node={node}
+            nodeIndex={i}
             activeIds={activeIds}
             strong
             onClick={onClick}
             isFirst={i === 0}
             onDrop={onDrop}
+            onEditableSave={onEditableSave}
             parentIds={parentIds}
             treeName={treeName}
         />
@@ -38,12 +48,14 @@ export interface TreeNodeItem extends TreeFlatListItem {
 type NodeProps = {
     node: DraggableItem<TreeNodeItem>;
     strong?: boolean;
+    nodeIndex?: number;
     activeIds?: NullableString[];
     parentIds?: string[];
     onClick: (id: NullableString) => void;
     isFirst: boolean;
     treeName: string;
     onDrop?: OnDropCallback<TreeNodeItem>;
+    onEditableSave?: (targetItemId: string, value: string) => void;
 };
 
 export const Node = ({
@@ -54,11 +66,12 @@ export const Node = ({
     parentIds = [],
     isFirst,
     onDrop,
+    onEditableSave,
     treeName,
 }: NodeProps): ReactElement<NodeProps> => {
-    const { id, value, name, label, icon, nodes, actions, editable, onEditableSave, badge } = node;
+    const { id, value, name, label, icon, nodes, actions, editable, badge } = node;
     const [{ opacity }, drag] = useDrag({
-        item: { id, value, name, label, icon, nodes, actions, editable, onEditableSave, badge },
+        item: { id, value, name, label, icon, nodes, actions, editable, badge },
         collect: (monitor) => ({
             opacity: monitor.isDragging() ? 0.4 : 1,
         }),
@@ -91,8 +104,7 @@ export const Node = ({
             <div
                 data-test-id="node-badge"
                 className={merge([
-                    "tw-flex tw-justify-center tw-items-center tw-ml-2",
-                    selected && "tw-bg-transparent",
+                    "tw-flex tw-justify-center tw-items-center tw-ml-2 tw-text-text-weak",
                     badge?.props.size && "tw-w-8 tw-h-5 tw-bg-box-neutral tw-rounded-full",
                 ])}
             >
@@ -154,7 +166,7 @@ export const Node = ({
                             </span>
                             {icon && <span>{icon}</span>}
                             {editable && onEditableSave ? (
-                                <EditableNodeItem name={name} onEditableSave={onEditableSave} />
+                                <EditableNodeItem name={name} targetItemId={node.id} onEditableSave={onEditableSave} />
                             ) : (
                                 <span className="tw-flex tw-items-center" data-test-id="node-link-name">
                                     {name}
@@ -200,6 +212,7 @@ export const Node = ({
                         activeIds,
                         onClick,
                         onDrop,
+                        onEditableSave,
                         parentIds: [...parentIds, id],
                     })}
                 </ul>
