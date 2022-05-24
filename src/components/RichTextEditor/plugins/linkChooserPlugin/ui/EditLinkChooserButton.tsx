@@ -32,6 +32,11 @@ export const EditLinkChooserButton = ({ id, icon }: ToolbarButtonProps) => {
         });
     };
 
+    const onConfirm = () => {
+        document.dispatchEvent(new CustomEvent(EVENT_LINK_CHANGE_CONFIRMED, { detail: { chosenLink } }));
+        setIsFlyoutOpen(false);
+    };
+
     return (
         <div
             onMouseDown={async (event) => {
@@ -49,13 +54,18 @@ export const EditLinkChooserButton = ({ id, icon }: ToolbarButtonProps) => {
                 onOpenChange={setIsFlyoutOpen}
                 contentMinHeight={180}
                 onCancel={() => setIsFlyoutOpen(false)}
-                onConfirm={() => {
-                    document.dispatchEvent(new CustomEvent(EVENT_LINK_CHANGE_CONFIRMED, { detail: { chosenLink } }));
-                    setIsFlyoutOpen(false);
-                }}
+                onConfirm={onConfirm}
                 trigger={<span />}
             >
-                <div className="tw-flex tw-flex-col tw-gap-y-8 tw-p-8">
+                <div
+                    onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                            onConfirm();
+                        }
+                    }}
+                    className="tw-flex tw-flex-col tw-gap-y-8 tw-p-8"
+                    data-test-id={"link-chooser-flyout"}
+                >
                     {/* Todo: Until we have moved the search logic, a 'simple link chooser' is rendered instead of the real link chooser */}
                     <FormControl
                         label={{

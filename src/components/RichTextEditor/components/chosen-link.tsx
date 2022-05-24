@@ -8,7 +8,7 @@ import { ELEMENT_LINK_CHOOSER } from "../plugins/linkChooserPlugin/types";
 import { EditLinkChooserButton } from "../plugins/linkChooserPlugin/ui/EditLinkChooserButton";
 
 export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
-    const { attributes, children, element, editor } = props;
+    const { children, element, editor } = props;
 
     const { chosenLink } = element;
 
@@ -63,17 +63,18 @@ export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
                     )}
                     legacyFooter={false}
                 >
-                    <span className="tw-flex tw-justify-between tw-gap-y-8 tw-p-8">
+                    <span data-test-id={"preview-link-flyout"} className="tw-flex tw-justify-between tw-gap-y-8 tw-p-5">
                         <span className="tw-text-violet-70">{getHref()}</span>
                         <span className="tw-flex">
                             <EditLinkChooserButton
                                 icon={
-                                    <span className="tw-cursor-pointer">
+                                    <span data-test-id={"edit-link-button"} className="tw-cursor-pointer">
                                         <IconPen />
                                     </span>
                                 }
                             />
                             <span
+                                data-test-id={"remove-link-button"}
                                 className="tw-cursor-pointer"
                                 onMouseDown={() => {
                                     if (!editor.selection) {
