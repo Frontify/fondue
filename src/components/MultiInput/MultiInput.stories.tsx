@@ -9,7 +9,6 @@ import { Meta, Story } from '@storybook/react';
 import React, { useState } from 'react';
 import { MultiInput as MultiInputComponent, MultiInputLayout, MultiInputProps } from './MultiInput';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Multi Input',
     component: MultiInputComponent,

@@ -70,7 +70,6 @@ const data: TabItemProps[] = [
     },
 ];
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Tabs',
     component: Tabs,

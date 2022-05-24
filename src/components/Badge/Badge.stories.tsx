@@ -6,7 +6,6 @@ import { Badge } from './Badge';
 import IconIcons from '@foundation/Icon/Generated/IconIcons';
 import { BadgeEmphasis, BadgeProps, BadgeStatus, BadgeStyle } from './types';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Badge',
     component: Badge,

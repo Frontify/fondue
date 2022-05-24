@@ -10,7 +10,6 @@ import { Meta, Story } from '@storybook/react';
 import React, { FC, useState } from 'react';
 import { Column, Row, SelectionMode, Table, TableProps } from './Table';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Table',
     component: Table,

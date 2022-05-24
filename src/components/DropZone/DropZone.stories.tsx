@@ -10,7 +10,6 @@ import { DraggableItem } from '@utilities/dnd';
 import { mockNodesFlat } from '@components/Tree/utils';
 import { StoryListItem, renderContent, storyItems } from '@components/OrderableList/utils';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Drop Zone',
     component: DropZoneComponent,

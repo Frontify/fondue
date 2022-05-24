@@ -8,7 +8,6 @@ import { OrderableListProps } from '.';
 import { chain } from '@react-aria/utils';
 import { renderContent, storyItems } from '@components/OrderableList/utils';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Orderable List',
     component: OrderableListComponent,

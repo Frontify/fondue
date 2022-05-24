@@ -8,7 +8,6 @@ import { Meta, Story } from '@storybook/react';
 import React from 'react';
 import { ActionMenu as ActionMenuComponent, ActionMenuProps } from './ActionMenu';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Action Menu',
     component: ActionMenuComponent,

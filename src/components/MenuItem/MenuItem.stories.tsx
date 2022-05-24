@@ -14,7 +14,6 @@ const SwitchComponent = () => {
     return <Switch size={SwitchSize.Small} on={switchValue} onChange={toggleSwitch} />;
 };
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Menu Item',
     component: MenuItemComponent,

@@ -1272,5 +1272,5 @@ function PatternDigitalAssets(): ReactElement {
 }
 
 const Memo = memo(PatternDigitalAssets);
-// eslint-disable-next-line import/no-default-export
+
 export default Memo;

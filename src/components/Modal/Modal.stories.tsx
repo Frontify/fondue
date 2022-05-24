@@ -24,7 +24,6 @@ import { FormControl, FormControlDirection, FormControlStyle } from '@components
 import { Divider } from '..';
 import { MODAL_PADDING } from './context/ModalLayout';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Modal',
     component: Modal,

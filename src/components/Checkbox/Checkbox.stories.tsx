@@ -6,7 +6,6 @@ import { IconAttentionFilled, IconInfo, IconQuestion } from '@foundation/Icon/Ge
 import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState } from './Checkbox';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Checkbox',
     argTypes: {

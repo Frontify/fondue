@@ -8,7 +8,6 @@ import { Text } from '@typography/Text';
 import { Heading } from '@typography/Heading';
 import { Card } from '@components/Card';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Collapsible Wrap',
     component: CollapsibleWrapComponent,

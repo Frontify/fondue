@@ -9,7 +9,6 @@ import { Stack } from '../../layout/Stack';
 import { Text } from '../../typography/Text';
 import { Button, ButtonStyle } from '@components/Button';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Card',
     component: Card,

@@ -5,7 +5,6 @@ import { Meta, Story } from '@storybook/react';
 import { AccordionHeaderIcon as AccordionHeaderIconComponent } from './AccordionHeaderIcon';
 import { AccordionHeaderIconProps, AccordionHeaderIconSize } from './types';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Accordion/Accordion Header Icon',
     component: AccordionHeaderIconComponent,

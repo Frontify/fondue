@@ -6,7 +6,6 @@ import { IconAttentionFilled, IconInfo, IconQuestion } from '@foundation/Icon/Ge
 import { InputLabel as InputLabelComponent, InputLabelProps } from './InputLabel';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Input Label',
     component: InputLabelComponent,

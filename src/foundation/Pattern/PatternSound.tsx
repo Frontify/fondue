@@ -548,5 +548,5 @@ function PatternSound(): ReactElement {
 }
 
 const Memo = memo(PatternSound);
-// eslint-disable-next-line import/no-default-export
+
 export default Memo;

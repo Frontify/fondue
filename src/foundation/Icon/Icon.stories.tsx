@@ -8,7 +8,6 @@ import { IconProps } from './IconProps';
 import { Icon as IconComponent } from './Icon';
 import { IconEnum } from './IconEnum';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Foundation/Icon',
     args: {

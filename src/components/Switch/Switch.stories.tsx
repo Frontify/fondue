@@ -6,7 +6,6 @@ import { IconInfo } from '@foundation/Icon/Generated';
 import { Switch, SwitchProps, SwitchSize } from './Switch';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Switch',
     component: Switch,

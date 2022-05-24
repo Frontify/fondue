@@ -5,7 +5,6 @@ import { Meta, Story } from '@storybook/react';
 import { PatternDesign, PatternScale, PatternTheme } from '@foundation/Pattern';
 import { FrontifyPattern, FrontifyPatternProps } from './FrontifyPattern';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/FrontifyPattern',
     component: FrontifyPattern,

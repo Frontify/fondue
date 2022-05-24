@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { DatePicker, DatePickerProps } from './DatePicker';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/DatePicker',
     component: DatePicker,

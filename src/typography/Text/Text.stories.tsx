@@ -5,7 +5,6 @@ import React from 'react';
 import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared.stories';
 import { Text as TextComponent, TextProps } from './Text';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Typography/Text',
     component: TextComponent,

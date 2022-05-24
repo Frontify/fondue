@@ -7,7 +7,6 @@ import { EditorActions } from './utils/actions';
 import { IPSUM, checkboxValue, htmlValue, value } from './utils/exampleValues';
 import { TextStyles } from './utils/getTextStyles';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Rich Text Editor',
     component: RichTextEditorComponent,

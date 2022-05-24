@@ -6,7 +6,6 @@ import { ColorFormat } from '../../types/colors';
 import { ColorPicker, ColorPickerProps } from './ColorPicker';
 import { EXAMPLE_PALETTES } from './example-palettes';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Color Picker',
     component: ColorPicker,

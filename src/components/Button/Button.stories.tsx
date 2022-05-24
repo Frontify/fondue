@@ -5,7 +5,6 @@ import { Meta, Story } from '@storybook/react';
 import { Button, ButtonProps, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './Button';
 import { IconActions, IconIcons } from '@foundation/Icon/Generated';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Button',
     component: Button,

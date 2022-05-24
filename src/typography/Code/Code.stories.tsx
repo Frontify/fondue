@@ -4,7 +4,6 @@ import { Meta, Story } from '@storybook/react';
 import React from 'react';
 import { Code as CodeComponent, CodeProps } from './Code';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Typography/Code',
     component: CodeComponent,

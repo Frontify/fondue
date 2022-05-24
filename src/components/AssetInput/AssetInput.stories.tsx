@@ -6,7 +6,6 @@ import { assetInputActions } from './asset-input-actions';
 import { AssetInput, AssetInputProps, AssetInputSize } from './AssetInput';
 import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Asset Input',
     component: AssetInput,

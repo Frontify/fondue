@@ -8,7 +8,6 @@ import React, { useEffect, useState } from 'react';
 import { Dropdown, DropdownAlignment, DropdownPosition, DropdownProps, DropdownSize } from './Dropdown';
 import { Validation } from '@utilities/validation';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Dropdown',
     component: Dropdown,

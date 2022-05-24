@@ -7,7 +7,6 @@ import { BrightHeaderStyle } from './BrightHeader';
 import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
 import { IconAlert, IconAttentionFilled, IconSize } from '@foundation/Icon';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Tooltip',
     component: Tooltip,

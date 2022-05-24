@@ -6,7 +6,6 @@ import { TooltipIcon, TooltipIconProps, TooltipIconTriggerStyle } from './Toolti
 import { IconSize } from '@foundation/Icon/IconSize';
 import { IconAttentionFilled } from '@foundation/Icon/Generated';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/TooltipIcon',
     component: TooltipIcon,

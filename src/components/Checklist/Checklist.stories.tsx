@@ -5,7 +5,6 @@ import { Meta, Story } from '@storybook/react';
 import React, { useState } from 'react';
 import { Checklist as ChecklistComponent, ChecklistDirection, ChecklistProps } from './Checklist';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Checklist',
     component: ChecklistComponent,

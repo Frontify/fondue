@@ -5,7 +5,6 @@ import React from 'react';
 import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared.stories';
 import { Heading as HeadingComponent, HeadingProps } from './Heading';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Typography/Heading',
     component: HeadingComponent,

@@ -27,7 +27,6 @@ import { Accordion as AccordionComponent, AccordionItem } from './Accordion';
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
 import { AccordionHeaderIconSize, AccordionHeaderProps, AccordionProps } from './types';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Accordion',
     component: AccordionComponent,

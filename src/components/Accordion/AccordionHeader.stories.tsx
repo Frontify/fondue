@@ -13,7 +13,6 @@ const decorators = {
     IconIcons: <IconIcons />,
 };
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Accordion/Accordion Header',
     component: AccordionHeaderComponent,

@@ -10,7 +10,6 @@ import { generateRandomId } from '@utilities/generateRandomId';
 import React, { useState } from 'react';
 import { FormControl, FormControlDirection, FormControlProps, FormControlStyle, HelperPosition } from './FormControl';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Form Control',
     component: FormControl,

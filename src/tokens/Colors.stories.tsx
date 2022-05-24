@@ -8,7 +8,6 @@ import tokens from '@frontify/fondue-tokens';
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Tokens',
 } as Meta;

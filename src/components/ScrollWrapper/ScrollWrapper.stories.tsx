@@ -10,7 +10,6 @@ import { Card } from '..';
 import { ScrollWrapper } from './ScrollWrapper';
 import { ScrollWrapperDirection, ScrollWrapperProps } from './types';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/ScrollWrapper',
     component: ScrollWrapper,

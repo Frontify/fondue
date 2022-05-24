@@ -7,7 +7,6 @@ import { Meta, Story } from '@storybook/react';
 import { TextInput, TextInputProps, TextInputType } from './TextInput';
 import { Validation } from '@utilities/validation';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Text Input',
     component: TextInput,

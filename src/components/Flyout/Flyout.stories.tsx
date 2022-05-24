@@ -22,7 +22,6 @@ import { DatePicker } from '@components/DatePicker';
 import { TooltipIcon } from '@components/TooltipIcon';
 import { IconAttentionFilled } from '@foundation/Icon';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Flyout',
     component: Flyout,

@@ -6,7 +6,6 @@ import { Tree as TreeComponent, TreeFlatListItem, TreeProps } from './Tree';
 import { mockNodesFlat } from '@components/Tree/utils/mocks';
 import { DraggableItem } from '@utilities/dnd';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Tree',
     component: TreeComponent,

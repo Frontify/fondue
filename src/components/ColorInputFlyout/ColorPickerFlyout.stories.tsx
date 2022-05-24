@@ -6,7 +6,6 @@ import { Color } from '../../types/colors';
 import { EXAMPLE_PALETTES } from '../ColorPicker/example-palettes';
 import { ColorPickerFlyout as ColorPickerFlyoutComponent, ColorPickerFlyoutProps } from './ColorPickerFlyout';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Color Picker/Flyout',
     component: ColorPickerFlyoutComponent,

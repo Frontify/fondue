@@ -21,7 +21,6 @@ const Placeholder: FC<{ width?: 'auto' | 'large' | 'small'; height?: 'large' | '
     ></div>
 );
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Layout/Stack',
     component: Stack,

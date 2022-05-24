@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import { FormControl } from '@components/FormControl';
 import { MultiSelect as MultiSelectComponent, MultiSelectProps, MultiSelectType } from './MultiSelect';
 
-// eslint-disable-next-line import/no-default-export
 export default {
     title: 'Components/Multi Select',
     component: MultiSelectComponent,
