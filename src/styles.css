@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import "@frontify/arcade-tokens/styles";
+@import "@frontify/fondue-tokens/styles";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
