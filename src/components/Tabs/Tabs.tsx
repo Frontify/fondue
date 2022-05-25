@@ -97,6 +97,8 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     return tab;
                 }
             }
+
+            return false;
         });
     };
 
