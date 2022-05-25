@@ -216,6 +216,37 @@ describe("RichTextEditor Component", () => {
         cy.get(CHECKBOX_INPUT).check().should("be.checked");
     });
 
+    it("switches between checkbox and lists", () => {
+        mount(<RichTextEditor />);
+
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
+
+        cy.get(CHECKBOX_INPUT).should("exist");
+        cy.get("ul li").should("not.exist");
+        cy.get("ol li").should("not.exist");
+
+        cy.get("[contenteditable=true]").click().type("{selectall}");
+        cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
+
+        cy.get(CHECKBOX_INPUT).should("not.exist");
+        cy.get("ul li").should("exist");
+        cy.get("ol li").should("not.exist");
+
+        cy.get("[contenteditable=true]").click().type("{selectall}");
+        cy.get(TOOLBAR_GROUP_2).children().eq(6).click();
+
+        cy.get(CHECKBOX_INPUT).should("not.exist");
+        cy.get("ul li").should("not.exist");
+        cy.get("ol li").should("exist");
+
+        cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
+
+        cy.get(CHECKBOX_INPUT).should("exist");
+        cy.get("ul li").should("not.exist");
+        cy.get("ol li").should("not.exist");
+    });
+
     it("emits onTextChange when choosing an inline style", () => {
         const onTextChange = cy.stub();
         mount(<RichTextEditor onTextChange={onTextChange} />);

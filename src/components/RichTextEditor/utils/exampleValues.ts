@@ -12,7 +12,7 @@ import {
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
 } from "@udecode/plate";
-import { ELEMENT_CHECK_ITEM } from "../plugins/checkboxListPlugin";
+import { ELEMENT_CHECK_ITEM } from "../plugins/checkboxListPlugin/createCheckboxListPlugin";
 import { TextStyles } from "./getTextStyles";
 
 type CreateElementProps = {
