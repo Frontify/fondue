@@ -132,7 +132,11 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
                         <FocusScope restoreFocus>
                             <div {...overlayProps} ref={overlayRef}>
                                 <DismissButton onDismiss={() => menuState.close()} />
-                                <ActionMenu menuBlocks={actions} focus={focusStrategy} />
+                                <ActionMenu
+                                    menuBlocks={actions}
+                                    focus={focusStrategy}
+                                    onClick={() => menuState.close()}
+                                />
                                 <DismissButton onDismiss={() => menuState.close()} />
                             </div>
                         </FocusScope>

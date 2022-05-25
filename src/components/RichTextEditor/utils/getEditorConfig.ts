@@ -1,17 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    ELEMENT_LI,
-    ELEMENT_LIC,
-    ELEMENT_LINK,
-    ELEMENT_OL,
-    ELEMENT_PARAGRAPH,
-    ELEMENT_UL,
-    MARK_BOLD,
-    MARK_CODE,
-    MARK_ITALIC,
-    MARK_STRIKETHROUGH,
-    MARK_UNDERLINE,
     createAlignPlugin,
     createBoldPlugin,
     createCodeBlockPlugin,
@@ -27,7 +16,18 @@ import {
     createSoftBreakPlugin,
     createStrikethroughPlugin,
     createUnderlinePlugin,
-} from '@udecode/plate';
+    ELEMENT_LI,
+    ELEMENT_LIC,
+    ELEMENT_LINK,
+    ELEMENT_OL,
+    ELEMENT_PARAGRAPH,
+    ELEMENT_UL,
+    MARK_BOLD,
+    MARK_CODE,
+    MARK_ITALIC,
+    MARK_STRIKETHROUGH,
+    MARK_UNDERLINE,
+} from "@udecode/plate";
 import {
     BoldMark,
     CodeMark,
@@ -45,9 +45,9 @@ import {
     StrikethroughMark,
     UnderlineMark,
     UnorderedListElement,
-} from '../components';
-import { ELEMENT_CHECK_ITEM, createCheckboxListPlugin } from '../plugins/checkboxListPlugin';
-import { TextStyleType, TextStyles } from './getTextStyles';
+} from "../components";
+import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from "../plugins/checkboxListPlugin/createCheckboxListPlugin";
+import { TextStyles, TextStyleType } from "./getTextStyles";
 
 export const getEditorConfig = (textStyles?: TextStyleType[]) => {
     const createHeading1Plugin = createPluginFactory({
@@ -55,7 +55,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
         isElement: true,
         component: Heading1Element,
         deserializeHtml: {
-            rules: [{ validNodeName: ['h1', 'H1'] }],
+            rules: [{ validNodeName: ["h1", "H1"] }],
         },
         props: { textStyles },
     });
@@ -65,7 +65,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
         isElement: true,
         component: Heading2Element,
         deserializeHtml: {
-            rules: [{ validNodeName: ['h2', 'H2'] }],
+            rules: [{ validNodeName: ["h2", "H2"] }],
         },
         props: { textStyles },
     });
@@ -75,7 +75,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
         isElement: true,
         component: Heading3Element,
         deserializeHtml: {
-            rules: [{ validNodeName: ['h3', 'H3'] }],
+            rules: [{ validNodeName: ["h3", "H3"] }],
         },
         props: { textStyles },
     });
@@ -85,7 +85,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
         isElement: true,
         component: Heading4Element,
         deserializeHtml: {
-            rules: [{ validNodeName: ['h4', 'H4'] }],
+            rules: [{ validNodeName: ["h4", "H4"] }],
         },
         props: { textStyles },
     });
