@@ -51,7 +51,8 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
                 aria-label="Scrollable dialogue content"
                 className={merge([
                     scrollWrapperDirections[direction],
-                    "tw-flex-auto tw-min-h-0 tw-outline-none tw--ml-2 tw-px-2 tw-pb-2",
+                    "tw-flex-auto tw-min-h-0 tw-outline-none tw-pb-2",
+                    showLeftShadow || isFocusVisible ? "tw-pr-2" : "tw-px-2 tw--ml-2",
                     isFocusVisible && FOCUS_STYLE,
                 ])}
                 {...scrollDivProps}
