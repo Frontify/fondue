@@ -128,7 +128,7 @@ export const Node = ({
             >
                 <div
                     className={merge([
-                        " tw-flex tw-py-2 tw-px-2 tw-no-underline tw-leading-5",
+                        " tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5",
                         strong && "tw-font-bold",
                         value && !selected && "hover:tw-bg-black-5",
                         selected ? "tw-bg-violet-60 tw-text-white" : "tw-text-black",
@@ -142,13 +142,13 @@ export const Node = ({
                         aria-selected={selected}
                         onClick={onNodeClick}
                     >
-                        <div className="tw-flex tw-space-x-2 tw-items-center">
+                        <div className="tw-flex tw-space-x-1 tw-items-center">
                             <span data-test-id="toggle" onClick={toggleNodesVisibility}>
                                 {nodes &&
                                     (showNodes ? (
-                                        <IconCaretDown size={IconSize.Size16} />
+                                        <IconCaretDown size={IconSize.Size12} />
                                     ) : (
-                                        <IconCaretRight size={IconSize.Size16} />
+                                        <IconCaretRight size={IconSize.Size12} />
                                     ))}
                             </span>
                             {icon && <span>{icon}</span>}
