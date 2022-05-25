@@ -250,6 +250,7 @@ import IconBookmark24 from "@foundation/Icon/Generated/IconBookmark24";
 import IconBookmark24Filled from "@foundation/Icon/Generated/IconBookmark24Filled";
 import IconBookmark32 from "@foundation/Icon/Generated/IconBookmark32";
 import IconBookmark32Filled from "@foundation/Icon/Generated/IconBookmark32Filled";
+import IconBracketsCurly from "@foundation/Icon/Generated/IconBracketsCurly";
 import IconBrand from "@foundation/Icon/Generated/IconBrand";
 import IconBriefing from "@foundation/Icon/Generated/IconBriefing";
 import IconBuilder from "@foundation/Icon/Generated/IconBuilder";
@@ -259,6 +260,7 @@ import IconBuildingBlock16 from "@foundation/Icon/Generated/IconBuildingBlock16"
 import IconBuildingBlock20 from "@foundation/Icon/Generated/IconBuildingBlock20";
 import IconBuildingBlock24 from "@foundation/Icon/Generated/IconBuildingBlock24";
 import IconBuildingBlock32 from "@foundation/Icon/Generated/IconBuildingBlock32";
+import IconBuildings from "@foundation/Icon/Generated/IconBuildings";
 import IconButton from "@foundation/Icon/Generated/IconButton";
 import IconButton12 from "@foundation/Icon/Generated/IconButton12";
 import IconButton16 from "@foundation/Icon/Generated/IconButton16";
@@ -642,6 +644,7 @@ import IconDoubleQuotesDown from "@foundation/Icon/Generated/IconDoubleQuotesDow
 import IconDoubleQuotesUp from "@foundation/Icon/Generated/IconDoubleQuotesUp";
 import IconDownload from "@foundation/Icon/Generated/IconDownload";
 import IconDownloadAlternative from "@foundation/Icon/Generated/IconDownloadAlternative";
+import IconDrop from "@foundation/Icon/Generated/IconDrop";
 import IconDroplet from "@foundation/Icon/Generated/IconDroplet";
 import IconDroplet12 from "@foundation/Icon/Generated/IconDroplet12";
 import IconDroplet16 from "@foundation/Icon/Generated/IconDroplet16";
@@ -945,6 +948,7 @@ import IconLeaf16 from "@foundation/Icon/Generated/IconLeaf16";
 import IconLeaf20 from "@foundation/Icon/Generated/IconLeaf20";
 import IconLeaf24 from "@foundation/Icon/Generated/IconLeaf24";
 import IconLeaf32 from "@foundation/Icon/Generated/IconLeaf32";
+import IconLeftCaret from "@foundation/Icon/Generated/IconLeftCaret";
 import IconLightbulb from "@foundation/Icon/Generated/IconLightbulb";
 import IconLightbulb12 from "@foundation/Icon/Generated/IconLightbulb12";
 import IconLightbulb16 from "@foundation/Icon/Generated/IconLightbulb16";
@@ -1399,6 +1403,7 @@ import IconReport24 from "@foundation/Icon/Generated/IconReport24";
 import IconReport32 from "@foundation/Icon/Generated/IconReport32";
 import IconRevert from "@foundation/Icon/Generated/IconRevert";
 import IconRevisions from "@foundation/Icon/Generated/IconRevisions";
+import IconRightCaret from "@foundation/Icon/Generated/IconRightCaret";
 import IconRocket from "@foundation/Icon/Generated/IconRocket";
 import IconRocket12 from "@foundation/Icon/Generated/IconRocket12";
 import IconRocket16 from "@foundation/Icon/Generated/IconRocket16";
@@ -1991,6 +1996,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Bookmark24Filled]: <IconBookmark24Filled />,
     [IconEnum.Bookmark32]: <IconBookmark32 />,
     [IconEnum.Bookmark32Filled]: <IconBookmark32Filled />,
+    [IconEnum.BracketsCurly]: <IconBracketsCurly />,
     [IconEnum.Brand]: <IconBrand />,
     [IconEnum.Briefing]: <IconBriefing />,
     [IconEnum.Builder]: <IconBuilder />,
@@ -2000,6 +2006,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.BuildingBlock20]: <IconBuildingBlock20 />,
     [IconEnum.BuildingBlock24]: <IconBuildingBlock24 />,
     [IconEnum.BuildingBlock32]: <IconBuildingBlock32 />,
+    [IconEnum.Buildings]: <IconBuildings />,
     [IconEnum.Button]: <IconButton />,
     [IconEnum.Button12]: <IconButton12 />,
     [IconEnum.Button16]: <IconButton16 />,
@@ -2383,6 +2390,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.DoubleQuotesUp]: <IconDoubleQuotesUp />,
     [IconEnum.Download]: <IconDownload />,
     [IconEnum.DownloadAlternative]: <IconDownloadAlternative />,
+    [IconEnum.Drop]: <IconDrop />,
     [IconEnum.Droplet]: <IconDroplet />,
     [IconEnum.Droplet12]: <IconDroplet12 />,
     [IconEnum.Droplet16]: <IconDroplet16 />,
@@ -2686,6 +2694,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Leaf20]: <IconLeaf20 />,
     [IconEnum.Leaf24]: <IconLeaf24 />,
     [IconEnum.Leaf32]: <IconLeaf32 />,
+    [IconEnum.LeftCaret]: <IconLeftCaret />,
     [IconEnum.Lightbulb]: <IconLightbulb />,
     [IconEnum.Lightbulb12]: <IconLightbulb12 />,
     [IconEnum.Lightbulb16]: <IconLightbulb16 />,
@@ -3140,6 +3149,7 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Report32]: <IconReport32 />,
     [IconEnum.Revert]: <IconRevert />,
     [IconEnum.Revisions]: <IconRevisions />,
+    [IconEnum.RightCaret]: <IconRightCaret />,
     [IconEnum.Rocket]: <IconRocket />,
     [IconEnum.Rocket12]: <IconRocket12 />,
     [IconEnum.Rocket16]: <IconRocket16 />,

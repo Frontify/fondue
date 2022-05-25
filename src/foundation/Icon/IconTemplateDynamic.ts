@@ -22,7 +22,7 @@ const componentsTsx = (components: Array<IconComponent>) => {
 const importsTsx = (components: Array<IconComponent>) => {
     return components
         .map((component: IconComponent) => {
-            return `import ${component.name} from './${component.name}';`;
+            return `import ${component.name} from './${component.name}'`;
         })
         .join(";\n");
 };
