@@ -27,11 +27,14 @@ export default {
 } as Meta<AssetInputProps>;
 
 const Template: Story<AssetInputProps & { onItemClick: () => void }> = (args) => {
-    args.actions?.forEach((block) =>
-        block.menuItems.forEach((item) => {
-            item.onClick = args.onItemClick;
-        }),
-    );
+    if (args?.actions) {
+        for (const block of args.actions) {
+            for (const item of block.menuItems) {
+                item.onClick = args.onItemClick;
+            }
+        }
+    }
+
     if (args.isLoading && args.assets) {
         args.assets = undefined;
     }
