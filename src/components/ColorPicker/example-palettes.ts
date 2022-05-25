@@ -5,7 +5,7 @@ import { Color, Palette } from '../../types/colors';
 
 const generatePalette = (color: string, amount: number): Color[] => {
     const sourceColor = tinycolor(color);
-    const palette = [...new Array(amount)].map((_, index) => {
+    return [...Array(amount)].map((_, index) => {
         const name = (90 - index * 10).toString();
         const lightColor = sourceColor.lighten(index * 3).toRgb();
         return {
@@ -13,7 +13,6 @@ const generatePalette = (color: string, amount: number): Color[] => {
             name,
         };
     });
-    return palette;
 };
 
 export const EXAMPLE_PALETTES: Palette[] = [
