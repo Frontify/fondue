@@ -143,7 +143,7 @@ export const Node = ({
                         onClick={onNodeClick}
                     >
                         <div className="tw-flex tw-space-x-1 tw-items-center">
-                            <span data-test-id="toggle" onClick={toggleNodesVisibility}>
+                            <span data-test-id="toggle" className="tw-w-3" onClick={toggleNodesVisibility}>
                                 {nodes &&
                                     (showNodes ? (
                                         <IconCaretDown size={IconSize.Size12} />
