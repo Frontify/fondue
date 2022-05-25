@@ -20,7 +20,7 @@ export const AssetThumbnail: FC<AssetThumbnailProps> = ({ asset, size, isActive 
                 ? 'tw-w-full tw-h-32'
                 : isMultiAsset
                 ? 'tw-w-11 tw-h-11'
-                : 'tw-w-14 tw-h-full'),
+                : 'tw-w-14 tw-h-full',
             isActive ? 'tw-text-black-100 dark:tw-text-white' : 'tw-text-black-80 dark:tw-text-black-20',
         ])}
         data-test-id="asset-input-thumbnail"

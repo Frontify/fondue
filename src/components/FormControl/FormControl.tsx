@@ -34,7 +34,7 @@ const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = fa
                 ? 'tw-text-red-60'
                 : style === FormControlStyle.Positive
                 ? 'tw-text-green-60'
-                : 'tw-text-black-80')
+                : 'tw-text-black-80'
         }`}
     >
         {text}

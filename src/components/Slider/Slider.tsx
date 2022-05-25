@@ -77,7 +77,7 @@ const SliderItem = (props: SliderItemProps) => {
                         ? 'slider-item-icon'
                         : typeof item.value === 'string'
                         ? 'slider-item-text'
-                        : 'slider-item-number')
+                        : 'slider-item-number'
                 }
                 className={merge([
                     'tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
