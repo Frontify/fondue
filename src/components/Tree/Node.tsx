@@ -128,7 +128,7 @@ export const Node = ({
             >
                 <div
                     className={merge([
-                        " tw-flex tw-py-1 tw-px-2 tw-rounded tw-no-underline tw-leading-6",
+                        " tw-flex tw-py-1 tw-px-2 tw-no-underline tw-leading-6",
                         strong && "tw-font-bold",
                         value && !selected && "hover:tw-bg-black-5",
                         selected ? "tw-bg-violet-60 tw-text-white" : "tw-text-black",
