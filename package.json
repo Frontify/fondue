@@ -25,7 +25,7 @@
         "build": "npm run clean && npm run generate:icons && npm run build:library && npm run build:extractedThirdPartyStyles",
         "build:extractedThirdPartyStyles": "concat src/components/**/*.css | postcss > dist/extractedThirdPartyStyles.css",
         "build:library": "vite build",
-        "build:storybook": "build-storybook",
+        "build:storybook": "NODE_OPTIONS=--max_old_space_size=8192 build-storybook",
         "dev": "cross-env NODE_ENV=development npm run dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
         "clean": "rimraf dist",
