@@ -1,21 +1,22 @@
 import { MenuItem } from "@components/MenuItem/MenuItem";
+import { Switch, SwitchSize } from "@components/Switch";
 import { useFocusRing } from "@react-aria/focus";
 import { useMenuItem } from "@react-aria/menu";
 import { mergeProps } from "@react-aria/utils";
 import { TreeState } from "@react-stately/tree";
+import { Node } from "@react-types/shared";
 import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
 import { merge } from "@utilities/merge";
 import React, { FC, useRef, useState } from "react";
-import { ActionMenuItemType, ActionMenuSwitchItemType } from "../ActionMenu/ActionMenu";
 import { MenuItemType } from "../../Dropdown/SelectMenu/SelectMenu";
-import { Node } from "@react-types/shared";
-import { Switch, SwitchSize } from "@components/Switch";
+import { ActionMenuItemType, ActionMenuSwitchItemType } from "../ActionMenu/ActionMenu";
 
 export type AriaOptionProps = {
     menuItem: MenuItemType | ActionMenuItemType | ActionMenuSwitchItemType;
     node: Node<object>;
     isSelected?: boolean;
     state: TreeState<object>;
+    onClick?: () => void;
 };
 
 const isActionMenuItem = (
@@ -39,7 +40,7 @@ const useSwitch = (initialValue: boolean) => {
     };
 };
 
-export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSelected }) => {
+export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSelected, onClick }) => {
     const ref = useRef<HTMLLIElement | null>(null);
     const {
         switchComponent = undefined,
@@ -78,6 +79,7 @@ export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSel
                 isFocusVisible && FOCUS_STYLE_INSET,
             ])}
             ref={ref}
+            onClick={onClick}
         >
             <MenuItem
                 title={title}

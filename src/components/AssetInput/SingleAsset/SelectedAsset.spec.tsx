@@ -9,6 +9,7 @@ import { SelectedAsset } from "./SelectedAsset";
 
 const SELECTED_ASSET_ID = "[data-test-id=asset-single-input]";
 const SELECTED_ASSET_FLYOUT_ID = "[data-test-id=asset-single-input-flyout]";
+const MENU_ITEM_ID = "[data-test-id=menu-item]";
 
 describe("SelectedAsset Component", () => {
     it("renders selected asset without crashing", () => {
@@ -43,5 +44,20 @@ describe("SelectedAsset Component", () => {
             $container.css("width", 300);
         });
         cy.get(SELECTED_ASSET_FLYOUT_ID).invoke("width").should("eq", 300);
+    });
+
+    it("closes on select", () => {
+        mount(
+            <SelectedAsset
+                isLoading={false}
+                asset={EXAMPLE_IMAGES[0]}
+                size={AssetInputSize.Small}
+                actions={assetInputActions}
+            />,
+        );
+        cy.get(SELECTED_ASSET_ID).click();
+
+        cy.get(MENU_ITEM_ID).first().click();
+        cy.get(MENU_ITEM_ID).should("not.exist");
     });
 });

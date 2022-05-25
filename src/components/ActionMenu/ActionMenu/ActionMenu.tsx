@@ -29,6 +29,7 @@ export type ActionMenuProps = {
     focus?: FocusStrategy;
     border?: boolean;
     scrollable?: boolean;
+    onClick?: () => void;
 };
 
 export const ActionMenu = ({
@@ -37,6 +38,7 @@ export const ActionMenu = ({
     focus,
     border = true,
     scrollable = false,
+    onClick,
 }: ActionMenuProps): ReactElement<ActionMenuProps> => {
     const items = getMenuItems(menuBlocks);
     const keyItemRecord = getKeyItemRecord(items);
@@ -57,7 +59,13 @@ export const ActionMenu = ({
                 return (
                     <AriaSection key={sectionKey} ariaLabel={sectionAriaLabel}>
                         {[...section.childNodes].map((item) => (
-                            <AriaMenuItem key={item.key} menuItem={keyItemRecord[item.key]} state={state} node={item} />
+                            <AriaMenuItem
+                                key={item.key}
+                                menuItem={keyItemRecord[item.key]}
+                                state={state}
+                                node={item}
+                                onClick={onClick}
+                            />
                         ))}
                     </AriaSection>
                 );
