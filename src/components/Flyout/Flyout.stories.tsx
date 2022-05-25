@@ -32,7 +32,7 @@ export default {
         placement: {
             options: Object.values(FlyoutPlacement),
             control: { type: "select" },
-            defaultValue: FlyoutPlacement.Bottom,
+            defaultValue: FlyoutPlacement.BottomLeft,
         },
         offset: {
             control: { type: "number" },

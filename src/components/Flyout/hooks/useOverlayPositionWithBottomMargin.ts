@@ -46,7 +46,7 @@ export const useOverlayPositionWithBottomMargin = ({
     const { overlayProps: positionProps } = useOverlayPosition({
         targetRef: triggerRef,
         overlayRef,
-        shouldFlip: false,
+        shouldFlip: placement === FlyoutPlacement.Left || placement === FlyoutPlacement.Right,
         placement:
             placement && (placement === FlyoutPlacement.Left || placement === FlyoutPlacement.Right)
                 ? placement
