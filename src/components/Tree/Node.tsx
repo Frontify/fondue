@@ -106,7 +106,7 @@ export const Node = ({
             data-test-id="node"
             ref={drag}
             style={{ opacity }}
-            className={merge([parentIds.length === 1 && "tw-pl-8", parentIds.length > 1 && "tw-pl-16"])}
+            className={merge([parentIds.length === 1 && "tw-pl-4", parentIds.length > 1 && "tw-pl-4"])}
         >
             {isFirst && (
                 <DropZone
