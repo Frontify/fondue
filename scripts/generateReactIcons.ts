@@ -9,7 +9,7 @@ import { Entry } from "fast-glob/out/types";
 import { IconTemplate } from "../src/foundation/Icon/IconTemplate";
 import { IconComponent, IconTemplateDynamic } from "../src/foundation/Icon/IconTemplateDynamic";
 
-const ICON_SOURCE_DIRECTORY = `node_modules/@frontify/arcade-icons/icons/`;
+const ICON_SOURCE_DIRECTORY = `node_modules/@frontify/fondue-icons/icons/`;
 const GENERATED_ICONS_DIRECTORY = `src/foundation/Icon/Generated/`;
 const ICON_BUILD_DIRECTORY = join(__dirname, "..", "src", "foundation", "Icon", "Generated");
 const ICON_COMPONENT_PREFIX = "Icon";
