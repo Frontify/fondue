@@ -12,7 +12,7 @@ export const Assets: FC<Pick<MultiAssetPreviewProps, 'assets'>> = ({ assets }) =
     const previewAssets = assets.slice(0, 4);
 
     if (assetslength < 4) {
-        for (const [index, _] of [...Array(4 - assetslength)].entries()) {
+        for (const [index] of [...Array(4 - assetslength)].entries()) {
             previewAssets.push({
                 name: `empty picture ${index + 1}`,
                 size: 20,
