@@ -130,7 +130,7 @@ export const Node = ({
                     className={merge([
                         " tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5",
                         strong && "tw-font-bold",
-                        value && !selected && "hover:tw-bg-black-5",
+                        value && !selected && "hover:tw-bg-black-10",
                         selected ? "tw-bg-violet-60 tw-text-white" : "tw-text-black",
                     ])}
                     onMouseEnter={setHoveredTrue}
