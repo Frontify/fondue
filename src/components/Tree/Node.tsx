@@ -102,12 +102,7 @@ export const Node = ({
 
     /* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
     return (
-        <li
-            data-test-id="node"
-            ref={drag}
-            style={{ opacity }}
-            className={merge([parentIds.length === 1 && "tw-pl-4", parentIds.length > 1 && "tw-pl-4"])}
-        >
+        <li data-test-id="node" ref={drag} style={{ opacity }}>
             {isFirst && (
                 <DropZone
                     data={{
@@ -138,7 +133,11 @@ export const Node = ({
                 >
                     <a
                         data-test-id="node-link"
-                        className="tw-flex tw-items-center tw-flex-grow tw-justify-between tw-cursor-pointer"
+                        className={merge([
+                            "tw-flex tw-items-center tw-flex-grow tw-justify-between tw-cursor-pointer",
+                            parentIds.length === 1 && "tw-pl-4",
+                            parentIds.length > 1 && "tw-pl-8",
+                        ])}
                         aria-selected={selected}
                         onClick={onNodeClick}
                     >
