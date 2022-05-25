@@ -60,8 +60,8 @@
     "devDependencies": {
         "@cypress/react": "5.12.4",
         "@cypress/vite-dev-server": "2.2.2",
-        "@frontify/arcade-icons": "^0.1.6",
         "@frontify/eslint-config-react": "0.13.2",
+        "@frontify/fondue-icons": "^0.1.6",
         "@storybook/addon-actions": "6.4.20",
         "@storybook/addon-essentials": "6.4.20",
         "@storybook/addon-links": "6.4.20",
