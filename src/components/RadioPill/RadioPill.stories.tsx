@@ -6,7 +6,6 @@ import { Meta, Story } from '@storybook/react';
 import React from 'react';
 import { RadioPill as RadioPillComponent, RadioPillProps } from './RadioPill';
 
-
 export default {
     title: 'Components/Radio Pill',
     component: RadioPillComponent,
