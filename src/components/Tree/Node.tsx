@@ -22,7 +22,6 @@ export const renderNodeArray = ({ nodes, activeIds, treeName, onClick, onDrop, p
             key={node.id}
             node={node}
             activeIds={activeIds}
-            strong
             onClick={onClick}
             isFirst={i === 0}
             onDrop={onDrop}
