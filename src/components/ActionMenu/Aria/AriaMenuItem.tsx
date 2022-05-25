@@ -70,6 +70,7 @@ export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSel
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
         <li
             {...mergeProps(menuItemProps, focusProps)}
             data-test-id="menu-item"
