@@ -22,7 +22,7 @@ const Component: FC<ComponentProps> = ({ nodes, onDrop, onEditableSave }) => {
             nodes={nodes}
             activeNodeIds={selectedIds}
             onSelect={(ids: NullableString[]) => setSelectedIds(ids)}
-            onUpdate={onDrop || onDropDefault}
+            onSortUpdate={onDrop || onDropDefault}
             onEditableSave={onEditableSave}
         />
     );

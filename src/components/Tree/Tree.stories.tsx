@@ -21,7 +21,9 @@ export default {
 export const Tree: Story<TreeProps> = ({ ...args }: TreeProps) => {
     const [nodesState, setNodesState] = useState(mockNodesFlat);
 
-    const handleMove = (modifiedItems: DraggableItem<TreeFlatListItem>[]): void => {
+    const handleMove = (sourceItemId: string, parentId: NullableString, positionBeforeId: NullableString): void => {
+        const modifiedItems = getReorderedNodes(sourceItemId, parentId, positionBeforeId, nodesState);
+
         const modifiedArray = nodesState.map((item) => {
             const matchingModifiedItem = modifiedItems.find((modifiedItem) => modifiedItem.id === item.id);
             if (matchingModifiedItem) {
@@ -36,7 +38,7 @@ export const Tree: Story<TreeProps> = ({ ...args }: TreeProps) => {
 
     return (
         <div style={{ maxWidth: '800px' }}>
-            <TreeComponent {...args} nodes={nodesState} onUpdate={handleMove} />
+            <TreeComponent {...args} nodes={nodesState} onSortUpdate={handleMove} />
         </div>
     );
 };

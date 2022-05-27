@@ -77,7 +77,7 @@ export const DropZoneWithTree: Story<TreeProps> = (args: TreeProps) => {
 
     return (
         <div style={{ maxWidth: '800px' }}>
-            <TreeComponent {...args} nodes={nodesState} onUpdate={handleMove} />
+            <TreeComponent {...args} nodes={nodesState} onSortUpdate={handleMove} />
         </div>
     );
 };

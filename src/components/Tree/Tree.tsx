@@ -25,7 +25,7 @@ export type TreeProps = {
     nodes: DraggableItem<TreeFlatListItem>[];
     onSelect: (ids: NullableString[]) => void;
     activeNodeIds: NullableString[];
-    onUpdate?: (modifiedItems: DraggableItem<TreeFlatListItem>[]) => void;
+    onSortUpdate?: (itemId: string, parentId: NullableString, positionBeforeId: NullableString) => void;
     onEditableSave?: (targetItemId: string, value: string) => void;
 };
 
@@ -33,7 +33,7 @@ export const Tree: FC<TreeProps> = ({
     nodes,
     onSelect,
     activeNodeIds: initialActiveNodeIds,
-    onUpdate,
+    onSortUpdate,
     onEditableSave,
 }) => {
     const [multiSelectMode, setMultiSelectMode] = useState<boolean>(false);
@@ -60,14 +60,32 @@ export const Tree: FC<TreeProps> = ({
         }
     };
 
-    const handleDrop = onUpdate
+    const handleDrop = onSortUpdate
         ? (
               targetItem: DraggableItem<TreeFlatListItem>,
               sourceItem: DraggableItem<TreeFlatListItem>,
               position: DropZonePosition,
           ) => {
-              const modifiedItems = getReorderedNodes(targetItem, sourceItem, position, nodes);
-              onUpdate(modifiedItems);
+              const getPositionBeforeId = () => {
+                  switch (position) {
+                      case DropZonePosition.After:
+                          const sameLevelNodes = nodes.filter((node) => node.parentId === targetItem.parentId);
+                          const targetItemIndex = sameLevelNodes.findIndex((item) => item.id === targetItem.id);
+                          if (targetItemIndex === sameLevelNodes.length - 1) {
+                              return null;
+                          } else {
+                              return sameLevelNodes[targetItemIndex + 1].id;
+                          }
+                      case DropZonePosition.Before:
+                          return targetItem.id;
+                      case DropZonePosition.Within:
+                          return null;
+                  }
+              };
+
+              const parentId = position === DropZonePosition.Within ? targetItem.id : targetItem.parentId;
+              const positionBeforeId = getPositionBeforeId();
+              onSortUpdate(sourceItem.id, parentId, positionBeforeId);
           }
         : undefined;
 
