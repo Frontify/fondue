@@ -1,24 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BalloonToolbar, usePlateEditorRef } from '@udecode/plate';
-import { merge } from '@utilities/merge';
-import { default as React, default as React, FC, useEffect, useRef, useState } from 'react';
-import { toolbarComponents } from './toolbarComponents';
-import { ButtonGroupProps, IconStylingWrapperProps, ToolbarProps } from './types';
-import { defaultActions, EditorActions } from './utils/actions';
+import { BalloonToolbar, usePlateEditorRef } from "@udecode/plate";
+import { merge } from "@utilities/merge";
+import React, { FC, useEffect, useRef, useState } from "react";
+import { toolbarComponents } from "./toolbarComponents";
+import { ButtonGroupProps, ToolbarProps } from "./types";
+import { defaultActions, EditorActions } from "./utils/actions";
 
-export const IconStylingWrapper: FC<IconStylingWrapperProps> = ({ icon }) => {
-    return <span className="tw-p-2 tw-h-12 tw-justify-center tw-items-center tw-flex">{icon}</span>;
-};
-
-const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyles, onLoaded, onClose, className }) => {
+const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyles, onLoaded, className, onClose }) => {
     const ref = useRef<HTMLDivElement | null>(null);
 
     const editor = usePlateEditorRef(editorId);
 
     useEffect(() => {
         onLoaded(index, ref.current?.clientWidth);
-        onClose();
+
+        // return onClose();
     }, [ref.current?.clientWidth]);
 
     return (
@@ -26,10 +23,7 @@ const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyle
             ref={ref}
             key={index}
             data-test-id={`toolbar-group-${index}`}
-            className={merge([
-                'tw-flex tw-items-center tw-border-l tw-border-line tw-h-12 tw-border-b tw-p-2',
-                className,
-            ])}
+            className={merge(["tw-flex tw-items-center tw-h-12 tw-p-2", className])}
         >
             {actions.map((action) => (
                 <React.Fragment key={action}>{toolbarComponents(editor, editorId, textStyles)[action]}</React.Fragment>
@@ -38,29 +32,44 @@ const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyle
     );
 };
 
-const DEFAULT_MAX_WIDTH = '100%';
-const BORDER_PX = 6;
+const DEFAULT_MAX_WIDTH = "100%";
+type ButtonGroupsWidths = { actions: EditorActions[]; buttonGroupWidth: number; index: number }[];
+type ButtonGroupWidthsPerRow = ButtonGroupsWidths[];
 
+const getButtonGroupWidthsPerRow = (toolbarWidth: number, buttonGroupsWidths: ButtonGroupsWidths) => {
+    return buttonGroupsWidths.reduce((buttonGroupWidthsPerRow, { actions, buttonGroupWidth, index }) => {
+        const rowCount = buttonGroupWidthsPerRow?.length === 0 ? 0 : buttonGroupWidthsPerRow?.length - 1;
+
+        if (!buttonGroupWidthsPerRow[rowCount]) {
+            buttonGroupWidthsPerRow[rowCount] = [];
+        }
+
+        const currentRowWidth = (buttonGroupWidthsPerRow[rowCount] ?? [{ actions: [], buttonGroupWidth: 0 }]).reduce(
+            (prev, { buttonGroupWidth }) => prev + buttonGroupWidth,
+            0,
+        );
+
+        if (currentRowWidth + buttonGroupWidth <= toolbarWidth) {
+            buttonGroupWidthsPerRow[rowCount].push({ actions, buttonGroupWidth, index });
+        } else {
+            buttonGroupWidthsPerRow.push([{ actions, buttonGroupWidth, index }]);
+        }
+
+        return buttonGroupWidthsPerRow.filter((element) => element.length !== 0);
+    }, [] as ButtonGroupWidthsPerRow);
+};
 export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }) => {
     const toolbarActions = actions.length > 0 ? actions : defaultActions;
-    const [buttonGroupsWidths, setButtonGroupsWidths] = useState<{ [index: number]: number | undefined }>({});
     const toolbarRef = useRef<HTMLDivElement | null>(null);
+    const [buttonGroupsWidths, setButtonGroupsWidths] = useState<ButtonGroupsWidths>([]);
+
     const [toolbarWidth, setToolbarWidth] = useState<number>(0);
-    const [cssStyles, setCssStyles] = useState({ maxWidth: toolbarWidth || DEFAULT_MAX_WIDTH });
-    const [borderClassname, setBorderClassname] = useState('');
 
-    useEffect(() => {
-        if (toolbarWidth <= 2) {
-            return;
-        }
-        const lengthButtonGroups = Object.entries(buttonGroupsWidths).length;
-        const array: number[][] = [...Array(lengthButtonGroups).keys()].map(() => [0]);
-
-        setToolbarMaxWidth(buttonGroupsWidths, toolbarWidth, array, setCssStyles);
-        setBorders(array, setBorderClassname, lengthButtonGroups);
-
-        return;
-    }, [buttonGroupsWidths]);
+    const toolbarButtonGroupsWidthsPerRow = getButtonGroupWidthsPerRow(toolbarWidth, buttonGroupsWidths);
+    const toolbarButtonGroups =
+        toolbarButtonGroupsWidthsPerRow.length === 0
+            ? [toolbarActions.map((actions, index) => ({ actions, buttonGroupWidth: 0, index }))]
+            : toolbarButtonGroupsWidthsPerRow;
 
     useEffect(() => {
         if (!toolbarRef.current) {
@@ -76,13 +85,30 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
         }
 
         /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded" 
-                from being thrown during cypress component tests */
+            from being thrown during cypress component tests */
         setTimeout(() => setToolbarWidth(toolbarRef.current?.clientWidth ?? 0), 0);
 
         return () => {
             toolbarRef.current && resizeObserver?.unobserve(toolbarRef.current);
         };
     }, [toolbarRef.current?.clientWidth]);
+    const toolbarWidthSum =
+        toolbarButtonGroups?.length &&
+        Math.max(
+            ...toolbarButtonGroups.map((element) =>
+                [...element, { actions: [], buttonGroupWidth: 0 }].reduce(
+                    (prev, { buttonGroupWidth }) => prev + buttonGroupWidth,
+                    0,
+                ),
+            ),
+        );
+
+    const style =
+        toolbarWidthSum !== 0
+            ? {
+                  maxWidth: toolbarWidthSum + toolbarButtonGroups.length + 12,
+              }
+            : { maxWidth: DEFAULT_MAX_WIDTH };
 
     return (
         <BalloonToolbar
@@ -96,63 +122,38 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
         >
             <div
                 data-test-id="toolbar"
-                style={cssStyles}
-                className="tw-flex tw-flex-wrap tw-content-start tw-bg-base tw-rounded tw-min-h-12 tw-border tw-border-line tw-shadow-lg"
+                style={style}
+                className={merge([
+                    "tw-rounded tw-min-h-12 tw-border tw-border-line tw-shadow-lg tw-bg-base tw-flex tw-flex-wrap tw-divide-y tw-divide-line",
+                    style.maxWidth === DEFAULT_MAX_WIDTH && "tw-invisible",
+                ])}
                 ref={toolbarRef}
             >
-                {toolbarActions.map((actions: EditorActions[], index: number) => (
-                    <ButtonGroup
-                        key={index}
-                        className={borderClassname}
-                        actions={actions}
-                        index={index}
-                        textStyles={textStyles}
-                        editorId={editorId}
-                        onLoaded={(index, width) => setButtonGroupsWidths((state) => ({ ...state, [index]: width }))}
-                        onClose={() => setCssStyles({ maxWidth: DEFAULT_MAX_WIDTH })}
-                    />
+                {toolbarButtonGroups.map((row, index) => (
+                    <div key={index} className="tw-divide-x tw-divide-line">
+                        {row.map(({ actions, index }) => {
+                            return (
+                                <ButtonGroup
+                                    key={index}
+                                    className={""}
+                                    actions={actions}
+                                    index={index}
+                                    textStyles={textStyles}
+                                    editorId={editorId}
+                                    onLoaded={(index, width) => {
+                                        return setButtonGroupsWidths((state) => {
+                                            const newState = [...state];
+                                            newState[index] = { actions, buttonGroupWidth: width ?? 0, index };
+                                            return newState;
+                                        });
+                                    }}
+                                    onClose={() => setButtonGroupsWidths([])}
+                                />
+                            );
+                        })}
+                    </div>
                 ))}
             </div>
         </BalloonToolbar>
     );
 };
-function setToolbarMaxWidth(
-    buttonGroupsWidths: { [index: number]: number | undefined },
-    toolbarWidth: number,
-    array: number[][],
-    setCssStyles: React.Dispatch<React.SetStateAction<{ maxWidth: string | number }>>,
-) {
-    let sum = 0;
-
-    for (const [, value] of Object.entries(buttonGroupsWidths)) {
-        sum += value || 0;
-
-        const index = Math.floor(sum / toolbarWidth);
-        array[index]?.push(value || 0);
-    }
-    const width = Math.max(...array.map((element) => element.reduce((prev, curr) => prev + curr), 0));
-    setCssStyles({ maxWidth: `${width + BORDER_PX}px` });
-    return sum;
-}
-
-function setBorders(
-    array: number[][],
-    setBorderClassname: React.Dispatch<React.SetStateAction<string>>,
-    lengthButtonGroups: number,
-) {
-    const rowNumber = array.reduce((prev, curr) => (curr.length > 1 ? prev + 1 : prev + 0), 0);
-
-    if (rowNumber === 1) {
-        setBorderClassname('first:tw-border-l-0 tw-border-b-0 first:tw-border-l-0 tw-border-l');
-    } else if (rowNumber === lengthButtonGroups) {
-        setBorderClassname('last:tw-border-b-0 tw-border-b tw-border-l-0 tw-flex-grow');
-    } else {
-        const lastIndexWithButtonGroupElement = lengthButtonGroups - (lengthButtonGroups - rowNumber) - 1;
-        const lengthLastElement = array[lastIndexWithButtonGroupElement].length;
-        if (lengthLastElement > 2) {
-            setBorderClassname('tw-border-t tw-border-l tw-border-b-0 first:tw-border-t-0');
-        } else {
-            setBorderClassname('first:tw-border-l-0 last:tw-border-b-0 tw-border-b tw-border-l last:tw-border-l-0');
-        }
-    }
-}
