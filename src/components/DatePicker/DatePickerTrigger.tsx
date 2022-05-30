@@ -1,8 +1,8 @@
-import { TextInput } from "@components/TextInput";
-import IconCalendar from "@foundation/Icon/Generated/IconCalendar";
-import { IconCaretDown, IconCaretUp, IconSize } from "@foundation/Icon/index";
-import { merge } from "@utilities/merge";
-import React, { forwardRef, PropsWithChildren } from "react";
+import { TextInput } from '@components/TextInput';
+import IconCalendar from '@foundation/Icon/Generated/IconCalendar';
+import { IconCaretDown, IconCaretUp, IconSize } from '@foundation/Icon/index';
+import { merge } from '@utilities/merge';
+import React, { PropsWithChildren, forwardRef } from 'react';
 
 type DatePickerTriggerProps = PropsWithChildren<{
     placeHolder?: string;
@@ -17,8 +17,8 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
         <div onClick={onClick} ref={ref} aria-hidden="true">
             <div
                 className={merge([
-                    "tw-absolute tw-top-2 tw-text-black-60 tw-right-8 tw-z-10",
-                    value === "" ? "tw-right-4" : "tw-right-8",
+                    'tw-absolute tw-top-2 tw-text-black-60 tw-right-8 tw-z-10',
+                    value === '' ? 'tw-right-4' : 'tw-right-8',
                 ])}
             >
                 {isCalendarOpen ? <IconCaretUp size={IconSize.Size20} /> : <IconCaretDown size={IconSize.Size20} />}
@@ -28,4 +28,4 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
     ),
 );
 
-DatePickerTrigger.displayName = "DatePickerTrigger";
+DatePickerTrigger.displayName = 'DatePickerTrigger';

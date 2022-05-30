@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useState } from "react";
-import { IconSize } from "@foundation/Icon/IconSize";
-import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
-import IconCaretRight from "@foundation/Icon/Generated/IconCaretRight";
-import { merge } from "@utilities/merge";
-import { AnimatePresence, motion } from "framer-motion";
-import { useDrag } from "react-dnd";
-import { DropZone, OnDropCallback } from "@components/DropZone";
-import { TreeFlatListItem } from "@components/Tree";
-import { DraggableItem, DropZonePosition } from "@utilities/dnd";
-import { EditableNodeItem } from "./components/EditableNodeItem";
+import React, { ReactElement, useState } from 'react';
+import { IconSize } from '@foundation/Icon/IconSize';
+import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
+import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
+import { merge } from '@utilities/merge';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useDrag } from 'react-dnd';
+import { DropZone, OnDropCallback } from '@components/DropZone';
+import { TreeFlatListItem } from '@components/Tree';
+import { DraggableItem, DropZonePosition } from '@utilities/dnd';
+import { EditableNodeItem } from './components/EditableNodeItem';
 
-export type RenderNodeArrayData = Omit<NodeProps, "isFirst" | "strong" | "node"> & {
+export type RenderNodeArrayData = Omit<NodeProps, 'isFirst' | 'strong' | 'node'> & {
     nodes: DraggableItem<TreeNodeItem>[];
 };
 
@@ -104,8 +104,8 @@ export const Node = ({
             <div
                 data-test-id="node-badge"
                 className={merge([
-                    "tw-flex tw-justify-center tw-items-center tw-ml-2 tw-text-text-weak",
-                    badge?.props.size && "tw-w-8 tw-h-5 tw-bg-box-neutral tw-rounded-full",
+                    'tw-flex tw-justify-center tw-items-center tw-ml-2 tw-text-text-weak',
+                    badge?.props.size && 'tw-w-8 tw-h-5 tw-bg-box-neutral tw-rounded-full',
                 ])}
             >
                 {badge}
@@ -119,7 +119,7 @@ export const Node = ({
             data-test-id="node"
             ref={drag}
             style={{ opacity }}
-            className={merge([parentIds.length === 1 && "tw-pl-8", parentIds.length > 1 && "tw-pl-16"])}
+            className={merge([parentIds.length === 1 && 'tw-pl-8', parentIds.length > 1 && 'tw-pl-16'])}
         >
             {isFirst && (
                 <DropZone
@@ -141,10 +141,10 @@ export const Node = ({
             >
                 <div
                     className={merge([
-                        " tw-flex tw-py-1 tw-px-2 tw-rounded tw-no-underline tw-leading-6",
-                        strong && "tw-font-bold",
-                        value && !selected && "hover:tw-bg-black-5",
-                        selected ? "tw-bg-violet-60 tw-text-white" : "tw-text-black",
+                        ' tw-flex tw-py-1 tw-px-2 tw-rounded tw-no-underline tw-leading-6',
+                        strong && 'tw-font-bold',
+                        value && !selected && 'hover:tw-bg-black-5',
+                        selected ? 'tw-bg-violet-60 tw-text-white' : 'tw-text-black',
                     ])}
                     onMouseEnter={setHoveredTrue}
                     onMouseLeave={setHoveredFalse}
@@ -177,8 +177,8 @@ export const Node = ({
                         <div className="tw-px-1.5">
                             <span
                                 className={merge([
-                                    "tw-text-black-100 tw-text-opacity-40 tw-font-normal",
-                                    selected && "tw-text-black-50",
+                                    'tw-text-black-100 tw-text-opacity-40 tw-font-normal',
+                                    selected && 'tw-text-black-50',
                                 ])}
                             >
                                 {label}
@@ -190,7 +190,7 @@ export const Node = ({
                             <motion.div
                                 className="tw-flex tw-space-x-1.5 tw-items-center"
                                 initial={{ width: 0 }}
-                                animate={{ width: "auto" }}
+                                animate={{ width: 'auto' }}
                                 exit={{ width: 0 }}
                                 transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                             >

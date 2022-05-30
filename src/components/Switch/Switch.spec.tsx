@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useState } from "react";
-import { mount } from "@cypress/react";
-import { Switch, SwitchProps } from "./Switch";
+import React, { FC, useState } from 'react';
+import { mount } from '@cypress/react';
+import { Switch, SwitchProps } from './Switch';
 
 const Component: FC<SwitchProps> = ({ on = false, ...props }) => {
     const [active, setActive] = useState(on);
@@ -19,59 +19,59 @@ const Component: FC<SwitchProps> = ({ on = false, ...props }) => {
     );
 };
 
-const SWITCH_ID = "[data-test-id=switch]";
-const SWITCH_CONTAINER_ID = "[data-test-id=switch-container]";
-const INPUT_LABEL_ID = "[data-test-id=input-label-container]";
+const SWITCH_ID = '[data-test-id=switch]';
+const SWITCH_CONTAINER_ID = '[data-test-id=switch-container]';
+const INPUT_LABEL_ID = '[data-test-id=input-label-container]';
 
-const SWITCH_LABEL = "Switch Label";
+const SWITCH_LABEL = 'Switch Label';
 
-describe("Switch Component", () => {
-    it("should render the value correctly", () => {
+describe('Switch Component', () => {
+    it('should render the value correctly', () => {
         mount(<Component name="switch-test-value" />);
 
-        cy.get(SWITCH_ID).as("Switch");
-        cy.get("@Switch").invoke("attr", "name").should("eq", "switch-test-value");
-        cy.get("@Switch").should("have.value", "false");
+        cy.get(SWITCH_ID).as('Switch');
+        cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-value');
+        cy.get('@Switch').should('have.value', 'false');
 
-        cy.get("@Switch").click();
-        cy.get("@Switch").should("have.value", "true");
+        cy.get('@Switch').click();
+        cy.get('@Switch').should('have.value', 'true');
     });
 
-    it("should react on click", () => {
-        const onChangeStub = cy.stub().as("onChangeStub");
+    it('should react on click', () => {
+        const onChangeStub = cy.stub().as('onChangeStub');
 
         mount(<Component name="switch-test-change" onChange={onChangeStub} />);
-        cy.get("@onChangeStub").should("not.be.called");
+        cy.get('@onChangeStub').should('not.be.called');
 
-        cy.get(SWITCH_ID).as("Switch");
-        cy.get("@Switch").click();
-        cy.get("@onChangeStub").should("be.calledOnce");
+        cy.get(SWITCH_ID).as('Switch');
+        cy.get('@Switch').click();
+        cy.get('@onChangeStub').should('be.calledOnce');
     });
 
-    it("should do nothing if disabled", () => {
+    it('should do nothing if disabled', () => {
         mount(<Component name="switch-test-disabled" disabled />);
 
-        cy.get(SWITCH_ID).as("Switch");
-        cy.get("@Switch").invoke("attr", "name").should("eq", "switch-test-disabled");
-        cy.get("@Switch").invoke("attr", "disabled").should("eq", "disabled");
+        cy.get(SWITCH_ID).as('Switch');
+        cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-disabled');
+        cy.get('@Switch').invoke('attr', 'disabled').should('eq', 'disabled');
     });
 
-    it("should have a label", () => {
+    it('should have a label', () => {
         mount(<Component label={SWITCH_LABEL} />);
 
-        cy.get(SWITCH_CONTAINER_ID).find(INPUT_LABEL_ID).should("exist");
+        cy.get(SWITCH_CONTAINER_ID).find(INPUT_LABEL_ID).should('exist');
         cy.get(INPUT_LABEL_ID).contains(SWITCH_LABEL);
     });
 
-    it("should hug the switch and label", () => {
+    it('should hug the switch and label', () => {
         mount(<Component label={SWITCH_LABEL} hug={true} />);
 
-        cy.get(SWITCH_CONTAINER_ID).should("have.css", "display", "inline-flex");
+        cy.get(SWITCH_CONTAINER_ID).should('have.css', 'display', 'inline-flex');
     });
 
-    it("switch should have a type definition", () => {
+    it('switch should have a type definition', () => {
         mount(<Component label={SWITCH_LABEL} />);
 
-        cy.get(SWITCH_ID).should("have.attr", "type", "button");
+        cy.get(SWITCH_ID).should('have.attr', 'type', 'button');
     });
 });

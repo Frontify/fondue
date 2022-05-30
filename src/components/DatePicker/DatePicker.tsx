@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonSize, ButtonStyle } from "@components/Button/Button";
-import IconCaretLeftDouble from "@foundation/Icon/Generated/IconCaretLeftDouble";
-import IconCaretRightDouble from "@foundation/Icon/Generated/IconCaretRightDouble";
-import IconLeftCaret from "@foundation/Icon/Generated/IconLeftCaret";
-import IconRightCaret from "@foundation/Icon/Generated/IconRightCaret";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { format, getYear } from "date-fns";
-import React, { FC, useState } from "react";
-import DatepickerComponent from "react-datepicker";
-import "./DatePicker.css";
-import { DatePickerTrigger } from "./DatePickerTrigger";
+import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
+import IconCaretLeftDouble from '@foundation/Icon/Generated/IconCaretLeftDouble';
+import IconCaretRightDouble from '@foundation/Icon/Generated/IconCaretRightDouble';
+import IconLeftCaret from '@foundation/Icon/Generated/IconLeftCaret';
+import IconRightCaret from '@foundation/Icon/Generated/IconRightCaret';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { format, getYear } from 'date-fns';
+import React, { FC, useState } from 'react';
+import DatepickerComponent from 'react-datepicker';
+import './DatePicker.css';
+import { DatePickerTrigger } from './DatePickerTrigger';
 
 export type DatePickerProps = {
     placeHolder?: string;
@@ -22,11 +22,11 @@ export type DatePickerProps = {
 };
 
 export const DatePicker: FC<DatePickerProps> = ({
-    placeHolder = "Select a date",
+    placeHolder = 'Select a date',
     isClearable,
     shouldCloseOnSelect,
     onChange,
-    dateFormat = "MM/dd/yyyy",
+    dateFormat = 'MM/dd/yyyy',
     value,
 }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
@@ -55,7 +55,7 @@ export const DatePicker: FC<DatePickerProps> = ({
                 onCalendarClose={() => setIsCalendarOpen(false)}
                 onCalendarOpen={() => setIsCalendarOpen(true)}
                 shouldCloseOnSelect={shouldCloseOnSelect}
-                dayClassName={(date) => (date < new Date() ? "past-date" : "future-date")}
+                dayClassName={(date) => (date < new Date() ? 'past-date' : 'future-date')}
                 renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
                     <div className="tw-flex tw-justify-between tw-pb-4 tw-px-0">
                         <Button
@@ -73,7 +73,7 @@ export const DatePicker: FC<DatePickerProps> = ({
                             icon={<IconLeftCaret size={IconSize.Size20} />}
                         />
                         <p className="tw-font-sans tw-font-semibold tw-grow tw-self-center">
-                            {format(date, "MMMM")} {getYear(date)}
+                            {format(date, 'MMMM')} {getYear(date)}
                         </p>
                         <Button
                             size={ButtonSize.Medium}

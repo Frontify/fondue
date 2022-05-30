@@ -2,16 +2,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getKeyItemRecord, getMenuItems } from "@components/ActionMenu/Aria/helper";
-import { MenuItemProps } from "@components/MenuItem/MenuItem";
-import { AriaListBoxOptions, useListBox } from "@react-aria/listbox";
-import { ListState } from "@react-stately/list";
-import { merge } from "@utilities/merge";
-import React, { ReactElement, useRef } from "react";
-import { SelectMenuItem } from "./SelectMenuItem";
-import { SelectMenuSection } from "./SelectMenuSection";
+import { getKeyItemRecord, getMenuItems } from '@components/ActionMenu/Aria/helper';
+import { MenuItemProps } from '@components/MenuItem/MenuItem';
+import { AriaListBoxOptions, useListBox } from '@react-aria/listbox';
+import { ListState } from '@react-stately/list';
+import { merge } from '@utilities/merge';
+import React, { ReactElement, useRef } from 'react';
+import { SelectMenuItem } from './SelectMenuItem';
+import { SelectMenuSection } from './SelectMenuSection';
 
-export type MenuItemType = Omit<MenuItemProps, "switchComponent"> & { id: string | number; link?: string };
+export type MenuItemType = Omit<MenuItemProps, 'switchComponent'> & { id: string | number; link?: string };
 
 export type MenuBlock = {
     id: string;
@@ -31,7 +31,7 @@ export const SelectMenu = ({
     menuBlocks,
     ariaProps,
     state,
-    ariaLabel = "Select Menu",
+    ariaLabel = 'Select Menu',
     scrollable = false,
 }: SelectMenuProps): ReactElement<SelectMenuProps> => {
     const items = getMenuItems(menuBlocks);
@@ -40,7 +40,7 @@ export const SelectMenu = ({
     const { listBoxProps } = useListBox(
         {
             ...ariaProps,
-            "aria-label": ariaLabel,
+            'aria-label': ariaLabel,
         },
         state,
         listRef,
@@ -51,13 +51,13 @@ export const SelectMenu = ({
             {...listBoxProps}
             ref={listRef}
             className={merge([
-                "tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-z-20 focus-visible:tw-outline-none",
-                scrollable && "tw-overflow-y-auto",
+                'tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-z-20 focus-visible:tw-outline-none',
+                scrollable && 'tw-overflow-y-auto',
             ])}
         >
             {[...state.collection].map((section) => {
                 return (
-                    <SelectMenuSection key={section.key} ariaLabel={section["aria-label"]}>
+                    <SelectMenuSection key={section.key} ariaLabel={section['aria-label']}>
                         {[...section.childNodes].map((item) => (
                             <SelectMenuItem
                                 key={item.key}

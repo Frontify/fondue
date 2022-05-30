@@ -1,23 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
+import React from 'react';
 
-import { Meta, Story } from "@storybook/react";
-import { IconSize } from "./IconSize";
-import { IconProps } from "./IconProps";
-import { Icon as IconComponent } from "./Icon";
-import { IconEnum } from "./IconEnum";
+import { Meta, Story } from '@storybook/react';
+import { IconSize } from './IconSize';
+import { IconProps } from './IconProps';
+import { Icon as IconComponent } from './Icon';
+import { IconEnum } from './IconEnum';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Foundation/Icon",
+    title: 'Foundation/Icon',
     args: {
         size: IconSize.Size16,
     },
     argTypes: {
         size: {
             options: Object.keys(IconSize),
-            control: { type: "select" },
+            control: { type: 'select' },
         },
     },
 } as Meta<IconProps>;

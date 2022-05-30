@@ -1,12 +1,12 @@
-import { useListBoxSection } from "@react-aria/listbox";
-import React, { FC, PropsWithChildren } from "react";
+import { useListBoxSection } from '@react-aria/listbox';
+import React, { FC, PropsWithChildren } from 'react';
 
 type SelectMenuSectionProps = PropsWithChildren<{
     ariaLabel?: string;
 }>;
 
 export const SelectMenuSection: FC<SelectMenuSectionProps> = ({ ariaLabel, children }) => {
-    const { itemProps, groupProps } = useListBoxSection({ "aria-label": ariaLabel });
+    const { itemProps, groupProps } = useListBoxSection({ 'aria-label': ariaLabel });
 
     return (
         <li

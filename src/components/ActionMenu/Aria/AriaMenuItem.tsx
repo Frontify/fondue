@@ -1,15 +1,15 @@
-import { MenuItem } from "@components/MenuItem/MenuItem";
-import { Switch, SwitchSize } from "@components/Switch";
-import { useFocusRing } from "@react-aria/focus";
-import { useMenuItem } from "@react-aria/menu";
-import { mergeProps } from "@react-aria/utils";
-import { TreeState } from "@react-stately/tree";
-import { Node } from "@react-types/shared";
-import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import React, { FC, useRef, useState } from "react";
-import { MenuItemType } from "../../Dropdown/SelectMenu/SelectMenu";
-import { ActionMenuItemType, ActionMenuSwitchItemType } from "../ActionMenu/ActionMenu";
+import { MenuItem } from '@components/MenuItem/MenuItem';
+import { Switch, SwitchSize } from '@components/Switch';
+import { useFocusRing } from '@react-aria/focus';
+import { useMenuItem } from '@react-aria/menu';
+import { mergeProps } from '@react-aria/utils';
+import { TreeState } from '@react-stately/tree';
+import { Node } from '@react-types/shared';
+import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import React, { FC, useRef, useState } from 'react';
+import { MenuItemType } from '../../Dropdown/SelectMenu/SelectMenu';
+import { ActionMenuItemType, ActionMenuSwitchItemType } from '../ActionMenu/ActionMenu';
 
 export type AriaOptionProps = {
     menuItem: MenuItemType | ActionMenuItemType | ActionMenuSwitchItemType;
@@ -22,11 +22,11 @@ export type AriaOptionProps = {
 const isActionMenuItem = (
     menuItem: MenuItemType | ActionMenuItemType | ActionMenuSwitchItemType,
 ): menuItem is ActionMenuItemType =>
-    typeof (menuItem as ActionMenuItemType).onClick !== "undefined" && typeof menuItem.type === "undefined";
+    typeof (menuItem as ActionMenuItemType).onClick !== 'undefined' && typeof menuItem.type === 'undefined';
 const isActionMenuSwitchItem = (
     menuItem: MenuItemType | ActionMenuItemType | ActionMenuSwitchItemType,
 ): menuItem is ActionMenuSwitchItemType =>
-    typeof (menuItem as ActionMenuSwitchItemType).onClick !== "undefined" && menuItem.type === "switch";
+    typeof (menuItem as ActionMenuSwitchItemType).onClick !== 'undefined' && menuItem.type === 'switch';
 
 const useSwitch = (initialValue: boolean) => {
     const [switchValue, setSwitchValue] = useState<boolean>(initialValue);
@@ -61,7 +61,7 @@ export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSel
                 }
             },
             isDisabled: menuItem?.disabled || false,
-            "aria-label": typeof menuItem?.title === "string" ? menuItem?.title : "Menu item",
+            'aria-label': typeof menuItem?.title === 'string' ? menuItem?.title : 'Menu item',
         },
         state,
         ref,
@@ -70,12 +70,13 @@ export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSel
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
         <li
             {...mergeProps(menuItemProps, focusProps)}
             data-test-id="menu-item"
             className={merge([
-                "tw-relative hover:tw-bg-black-0 tw-list-none tw-outline-none",
-                disabled && "tw-pointer-events-none tw-top-px",
+                'tw-relative hover:tw-bg-black-0 tw-list-none tw-outline-none',
+                disabled && 'tw-pointer-events-none tw-top-px',
                 isFocusVisible && FOCUS_STYLE_INSET,
             ])}
             ref={ref}

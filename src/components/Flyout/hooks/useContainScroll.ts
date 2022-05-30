@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MutableRefObject, useEffect } from "react";
+import { MutableRefObject, useEffect } from 'react';
 
 export const useContainScroll = (overlayRef: MutableRefObject<HTMLDivElement | null>, { isDisabled = false }) => {
     useEffect(() => {
         const overlay = overlayRef.current;
 
         const closestScrollableAncestor = (element: HTMLElement | null): HTMLElement | null => {
-            const SCROLL_TYPES = ["auto", "scroll"];
+            const SCROLL_TYPES = ['auto', 'scroll'];
             if (!element || element === overlay) {
                 return null;
             }
@@ -47,12 +47,12 @@ export const useContainScroll = (overlayRef: MutableRefObject<HTMLDivElement | n
         const eventProps = { passive: false, capture: false };
 
         if (!isDisabled && overlay !== null) {
-            overlay.addEventListener("wheel", scrollHandler, eventProps);
+            overlay.addEventListener('wheel', scrollHandler, eventProps);
         }
 
         return () => {
             if (!isDisabled && overlay !== null) {
-                overlay.removeEventListener("wheel", scrollHandler, eventProps);
+                overlay.removeEventListener('wheel', scrollHandler, eventProps);
             }
         };
     }, [isDisabled, overlayRef]);

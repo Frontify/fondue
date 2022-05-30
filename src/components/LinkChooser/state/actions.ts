@@ -1,19 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { QUERIES_STORAGE_KEY } from "@components/LinkChooser/LinkChooser";
-import { assign, DoneInvokeEvent } from "xstate";
-import { defaultSection } from "../sections";
-import { LinkChooserContext, LinkChooserEventData, SearchResult } from "../types";
-import { isCustomLink } from "../utils/helpers";
-import { createCustomLink, mergeResultWithRecentQueries, retrieveRecentQueries } from "../utils/transformers";
-import { DropdownState, LinkChooserState, SectionState } from "./types";
+import { QUERIES_STORAGE_KEY } from '@components/LinkChooser/LinkChooser';
+import { DoneInvokeEvent, assign } from 'xstate';
+import { defaultSection } from '../sections';
+import { LinkChooserContext, LinkChooserEventData, SearchResult } from '../types';
+import { isCustomLink } from '../utils/helpers';
+import { createCustomLink, mergeResultWithRecentQueries, retrieveRecentQueries } from '../utils/transformers';
+import { DropdownState, LinkChooserState, SectionState } from './types';
 
 export const updateQueryFromString = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
-    query: (_context, { data }) => data.query ?? "",
+    query: (_context, { data }) => data.query ?? '',
 });
 
 export const updateQueryFromObject = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
-    query: (_context, { data }) => data.selectedResult?.title ?? "",
+    query: (_context, { data }) => data.selectedResult?.title ?? '',
 });
 
 export const replaceCustomLink = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({
@@ -107,7 +107,7 @@ export const copyLinkToClipboard = ({ clipboardOptions, selectedResult }: LinkCh
 };
 
 export const openPreviewContext = ({ openPreview, selectedResult }: LinkChooserContext): void => {
-    selectedResult?.link && openPreview(selectedResult.link, "_blank");
+    selectedResult?.link && openPreview(selectedResult.link, '_blank');
 };
 
 export const updateDropdownSearchResults = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({

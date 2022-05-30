@@ -1,19 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CollapsibleWrap } from "@components/CollapsibleWrap";
-import { useAccordion, useAccordionItem } from "@react-aria/accordion";
-import { useFocusRing } from "@react-aria/focus";
-import { mergeProps } from "@react-aria/utils";
-import { Item as StatelyItem } from "@react-stately/collections";
-import { useTreeState } from "@react-stately/tree";
-import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import React, { Children, FC, isValidElement, Key, KeyboardEvent, ReactElement, useRef } from "react";
-import { AccordionHeader } from "./AccordionHeader";
-import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from "./types";
+import { CollapsibleWrap } from '@components/CollapsibleWrap';
+import { useAccordion, useAccordionItem } from '@react-aria/accordion';
+import { useFocusRing } from '@react-aria/focus';
+import { mergeProps } from '@react-aria/utils';
+import { Item as StatelyItem } from '@react-stately/collections';
+import { useTreeState } from '@react-stately/tree';
+import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import React, { Children, FC, Key, KeyboardEvent, ReactElement, isValidElement, useRef } from 'react';
+import { AccordionHeader } from './AccordionHeader';
+import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from './types';
 
-const ACCORDION_ID = "accordion";
-const ACCORDION_ITEM_ID = "accordion-item";
+const ACCORDION_ID = 'accordion';
+const ACCORDION_ITEM_ID = 'accordion-item';
 
 const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
     item,
@@ -32,7 +32,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
     return (
         <div
             key={item.key}
-            className={merge([isFocusVisible ? FOCUS_STYLE_INSET : "", divider && "tw-divide-y tw-divide-black-10"])}
+            className={merge([isFocusVisible ? FOCUS_STYLE_INSET : '', divider && 'tw-divide-y tw-divide-black-10'])}
         >
             <button
                 {...mergeProps(buttonProps, focusProps)}
@@ -48,7 +48,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
                     }
                 }}
                 onKeyUp={(event) => {
-                    if (header.onClick && event.key === "Enter") {
+                    if (header.onClick && event.key === 'Enter') {
                         header.onClick();
                     }
 
@@ -61,7 +61,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
                 <HeaderComponent isOpen={isOpen} size={size} {...headerProps} />
             </button>
             <CollapsibleWrap isOpen={isOpen} preventInitialAnimation={active}>
-                <div {...regionProps} className={merge([padding && "tw-px-8 tw-pb-6"])}>
+                <div {...regionProps} className={merge([padding && 'tw-px-8 tw-pb-6'])}>
                     {item.props.children?.()}
                 </div>
             </CollapsibleWrap>
@@ -90,7 +90,7 @@ const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => {
 const filterValidChildren = ({ children }: AccordionProps) =>
     Children.toArray(children).reduce<ReactElement<AccordionItemProps>[]>((validChildren, child) => {
         if (isValidElement(child) && !child.props.header) {
-            console.warn("Use `AccordionItem` as children of `Accordion` and set the `header` prop accordingly.");
+            console.warn('Use `AccordionItem` as children of `Accordion` and set the `header` prop accordingly.');
             return validChildren;
         }
 
@@ -138,8 +138,8 @@ export const Accordion: FC<AccordionProps> = (props) => {
             ref={ref}
             data-test-id={ACCORDION_ID}
             className={merge([
-                divider && "tw-divide-y tw-divide-black-10",
-                border && "tw-border-t tw-border-b tw-border-black-10",
+                divider && 'tw-divide-y tw-divide-black-10',
+                border && 'tw-border-t tw-border-b tw-border-black-10',
             ])}
         >
             {[...state.collection].map((item, index) => {

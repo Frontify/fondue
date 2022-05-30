@@ -23,7 +23,6 @@ export const globals = {
     "react-dom": "ReactDOM",
 };
 
-// eslint-disable-next-line import/no-default-export
 export default defineConfig({
     resolve: {
         alias,

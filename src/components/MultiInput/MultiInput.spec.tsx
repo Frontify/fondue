@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from "@cypress/react";
-import React from "react";
-import { MultiInput, MultiInputLayout } from "./MultiInput";
-import { TextInput } from "@components/TextInput/TextInput";
+import { mount } from '@cypress/react';
+import React from 'react';
+import { MultiInput, MultiInputLayout } from './MultiInput';
+import { TextInput } from '@components/TextInput/TextInput';
 
-const MULTI_INPUT_COLUMNS_ID = "[data-test-id=multi-input-grid-columns]";
-const MULTI_INPUT_SPIDER_ID = "[data-test-id=multi-input-grid-spider]";
+const MULTI_INPUT_COLUMNS_ID = '[data-test-id=multi-input-grid-columns]';
+const MULTI_INPUT_SPIDER_ID = '[data-test-id=multi-input-grid-spider]';
 
-describe("Multi Input Component", () => {
-    it("should render the Multi Input with columns", () => {
+describe('Multi Input Component', () => {
+    it('should render the Multi Input with columns', () => {
         mount(
             <MultiInput layout={MultiInputLayout.Columns}>
                 <TextInput />
@@ -19,10 +19,10 @@ describe("Multi Input Component", () => {
             </MultiInput>,
         );
 
-        cy.get(MULTI_INPUT_COLUMNS_ID).should("have.class", "tw-grid").and("have.class", "tw-grid-cols-2");
+        cy.get(MULTI_INPUT_COLUMNS_ID).should('have.class', 'tw-grid').and('have.class', 'tw-grid-cols-2');
     });
 
-    it("should render the Multi Input with spider layout", () => {
+    it('should render the Multi Input with spider layout', () => {
         mount(
             <MultiInput layout={MultiInputLayout.Spider}>
                 <TextInput />
@@ -32,10 +32,10 @@ describe("Multi Input Component", () => {
             </MultiInput>,
         );
 
-        cy.get(MULTI_INPUT_SPIDER_ID).should("have.class", "tw-grid").and("have.class", "tw-grid-cols-4");
+        cy.get(MULTI_INPUT_SPIDER_ID).should('have.class', 'tw-grid').and('have.class', 'tw-grid-cols-4');
     });
 
-    it("should render the Multi Input with the last child spanning two columns", () => {
+    it('should render the Multi Input with the last child spanning two columns', () => {
         mount(
             <MultiInput layout={MultiInputLayout.Columns} spanLastItem={true}>
                 <TextInput />
@@ -44,6 +44,6 @@ describe("Multi Input Component", () => {
             </MultiInput>,
         );
 
-        cy.get(MULTI_INPUT_COLUMNS_ID).children().last().should("have.class", "tw-col-span-2");
+        cy.get(MULTI_INPUT_COLUMNS_ID).children().last().should('have.class', 'tw-col-span-2');
     });
 });

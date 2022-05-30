@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DismissButton, useOverlay } from "@react-aria/overlays";
-import { mergeProps } from "@react-aria/utils";
-import React, { FC, MouseEvent, TouchEvent, useRef } from "react";
-import { PopoverProps } from "./types";
+import { DismissButton, useOverlay } from '@react-aria/overlays';
+import { mergeProps } from '@react-aria/utils';
+import React, { FC, MouseEvent, TouchEvent, useRef } from 'react';
+import { PopoverProps } from './types';
 
 export const Popover: FC<PopoverProps> = (props) => {
     const ref = useRef<HTMLDivElement>(null);

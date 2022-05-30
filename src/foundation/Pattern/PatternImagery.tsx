@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { memo, ReactElement } from "react";
+import React, { ReactElement, memo } from 'react';
 
 function PatternImagery(): ReactElement {
     return (
@@ -500,5 +500,5 @@ function PatternImagery(): ReactElement {
 }
 
 const Memo = memo(PatternImagery);
-// eslint-disable-next-line import/no-default-export
+
 export default Memo;

@@ -1,28 +1,28 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, MouseEvent, useMemo } from "react";
-import { merge } from "@utilities/merge";
-import { useFocusRing } from "@react-aria/focus";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { useMemoizedId } from "@hooks/useMemoizedId";
-import { InputLabel, InputLabelTooltipProps } from "@components/InputLabel/InputLabel";
+import React, { FC, MouseEvent, useMemo } from 'react';
+import { merge } from '@utilities/merge';
+import { useFocusRing } from '@react-aria/focus';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
 
 export enum SwitchSize {
-    Small = "Small",
-    Medium = "Medium",
-    Large = "Large",
+    Small = 'Small',
+    Medium = 'Medium',
+    Large = 'Large',
 }
 
 const lineSizeClasses: Record<SwitchSize, string> = {
-    [SwitchSize.Small]: "tw-w-5 tw-h-2",
-    [SwitchSize.Medium]: "tw-w-9 tw-h-5",
-    [SwitchSize.Large]: "tw-w-11 tw-h-6",
+    [SwitchSize.Small]: 'tw-w-5 tw-h-2',
+    [SwitchSize.Medium]: 'tw-w-9 tw-h-5',
+    [SwitchSize.Large]: 'tw-w-11 tw-h-6',
 };
 
 const dotSizeClasses: Record<SwitchSize, string> = {
-    [SwitchSize.Small]: "tw-w-3 tw-h-3",
-    [SwitchSize.Medium]: "tw-w-4 tw-h-4",
-    [SwitchSize.Large]: "tw-w-5 tw-h-5",
+    [SwitchSize.Small]: 'tw-w-3 tw-h-3',
+    [SwitchSize.Medium]: 'tw-w-4 tw-h-4',
+    [SwitchSize.Large]: 'tw-w-5 tw-h-5',
 };
 
 export type SwitchProps = {
@@ -52,26 +52,26 @@ export const Switch: FC<SwitchProps> = ({
     const { isFocusVisible, focusProps } = useFocusRing();
 
     const lineClasses = useMemo(() => {
-        const baseClasses = "tw-inline-flex tw-border-0 tw-rounded-full tw-transition-colors tw-shrink-0";
-        const sizeClasses = size !== SwitchSize.Small ? "tw-py-0 tw-px-[0.125rem]" : "tw-p-0";
-        const activatedClasses = on ? "tw-bg-black-90 hover:tw-bg-black" : "tw-bg-black-30 hover:tw-bg-black-60";
-        const disabledClasses = disabled ? "tw-bg-black-10 tw-pointer-events-none" : activatedClasses;
+        const baseClasses = 'tw-inline-flex tw-border-0 tw-rounded-full tw-transition-colors tw-shrink-0';
+        const sizeClasses = size !== SwitchSize.Small ? 'tw-py-0 tw-px-[0.125rem]' : 'tw-p-0';
+        const activatedClasses = on ? 'tw-bg-black-90 hover:tw-bg-black' : 'tw-bg-black-30 hover:tw-bg-black-60';
+        const disabledClasses = disabled ? 'tw-bg-black-10 tw-pointer-events-none' : activatedClasses;
 
         return merge([baseClasses, sizeClasses, disabledClasses, lineSizeClasses[size], isFocusVisible && FOCUS_STYLE]);
     }, [on, disabled, size, isFocusVisible]);
 
     const dotClasses = useMemo(() => {
-        const baseClasses = "tw-block tw-self-center tw-bg-white tw-rounded-full tw-transition-transform";
-        const disabledClasses = disabled ? "tw-border tw-border-black-30" : "tw-border tw-border-black";
-        const sizeClasses = size === SwitchSize.Small ? disabledClasses : "";
-        const activatedClasses = size === SwitchSize.Small ? "tw-translate-x-2" : "tw-translate-x-full";
-        const animationClasses = on ? activatedClasses : "tw-translate-x-0";
+        const baseClasses = 'tw-block tw-self-center tw-bg-white tw-rounded-full tw-transition-transform';
+        const disabledClasses = disabled ? 'tw-border tw-border-black-30' : 'tw-border tw-border-black';
+        const sizeClasses = size === SwitchSize.Small ? disabledClasses : '';
+        const activatedClasses = size === SwitchSize.Small ? 'tw-translate-x-2' : 'tw-translate-x-full';
+        const animationClasses = on ? activatedClasses : 'tw-translate-x-0';
 
         return merge([baseClasses, sizeClasses, dotSizeClasses[size], animationClasses]);
     }, [on, disabled, size]);
 
     const containerClasses = useMemo(() => {
-        return merge(["tw-gap-2 tw-items-center tw-justify-between", hug ? "tw-inline-flex" : "tw-flex"]);
+        return merge(['tw-gap-2 tw-items-center tw-justify-between', hug ? 'tw-inline-flex' : 'tw-flex']);
     }, [hug]);
 
     return (

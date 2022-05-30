@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactElement, useEffect, useState } from "react";
-import { renderNodeArray } from "./Node";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { useId } from "@react-aria/utils";
-import { DraggableItem, DropZonePosition } from "@utilities/dnd";
-import { getReorderedNodes, listToTree } from "@components/Tree/utils";
-import { IconProps } from "@foundation/Icon";
-import { BadgeProps } from "..";
+import React, { FC, ReactElement, useEffect, useState } from 'react';
+import { renderNodeArray } from './Node';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useId } from '@react-aria/utils';
+import { DraggableItem, DropZonePosition } from '@utilities/dnd';
+import { getReorderedNodes, listToTree } from '@components/Tree/utils';
+import { IconProps } from '@foundation/Icon';
+import { BadgeProps } from '..';
 
 export interface TreeFlatListItem {
     name: string;
@@ -78,23 +78,23 @@ export const Tree: FC<TreeProps> = ({
         : undefined;
 
     const downKeyHandler = (event: KeyboardEvent) => {
-        if (event.key === "Meta" || event.ctrlKey) {
+        if (event.key === 'Meta' || event.ctrlKey) {
             setMultiSelectMode(true);
         }
     };
 
     const upKeyHandler = (event: KeyboardEvent) => {
-        if (event.key === "Meta" || event.ctrlKey) {
+        if (event.key === 'Meta' || event.ctrlKey) {
             setMultiSelectMode(false);
         }
     };
 
     useEffect(() => {
-        window.addEventListener("keydown", downKeyHandler);
-        window.addEventListener("keyup", upKeyHandler);
+        window.addEventListener('keydown', downKeyHandler);
+        window.addEventListener('keyup', upKeyHandler);
         return () => {
-            window.removeEventListener("keydown", downKeyHandler);
-            window.removeEventListener("keyup", upKeyHandler);
+            window.removeEventListener('keydown', downKeyHandler);
+            window.removeEventListener('keyup', upKeyHandler);
         };
     }, []);
 
