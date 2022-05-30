@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconBarNarrow12 from './IconBarNarrow12';;
-import IconBarNarrow16 from './IconBarNarrow16';;
-import IconBarNarrow20 from './IconBarNarrow20';;
-import IconBarNarrow24 from './IconBarNarrow24';;
-import IconBarNarrow32 from './IconBarNarrow32';
+import IconBarNarrow12 from './IconBarNarrow12';
+import IconBarNarrow16 from './IconBarNarrow16';
+import IconBarNarrow20 from './IconBarNarrow20';
+import IconBarNarrow24 from './IconBarNarrow24';
+import IconBarNarrow32 from './IconBarNarrow32'
 
 function IconBarNarrow(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

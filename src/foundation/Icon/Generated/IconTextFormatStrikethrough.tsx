@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconTextFormatStrikethrough12 from './IconTextFormatStrikethrough12';;
-import IconTextFormatStrikethrough16 from './IconTextFormatStrikethrough16';;
-import IconTextFormatStrikethrough20 from './IconTextFormatStrikethrough20';;
-import IconTextFormatStrikethrough24 from './IconTextFormatStrikethrough24';;
-import IconTextFormatStrikethrough32 from './IconTextFormatStrikethrough32';
+import IconTextFormatStrikethrough12 from './IconTextFormatStrikethrough12';
+import IconTextFormatStrikethrough16 from './IconTextFormatStrikethrough16';
+import IconTextFormatStrikethrough20 from './IconTextFormatStrikethrough20';
+import IconTextFormatStrikethrough24 from './IconTextFormatStrikethrough24';
+import IconTextFormatStrikethrough32 from './IconTextFormatStrikethrough32'
 
 function IconTextFormatStrikethrough(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

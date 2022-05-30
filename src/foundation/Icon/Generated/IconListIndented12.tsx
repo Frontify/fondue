@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconListIndented12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconListIndented12(props: GeneratedIconProps): React.ReactElement<Gener
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M1.894 9.5a.375.375 0 0 1-.375-.375v-6.25a.375.375 0 0 1 .75 0v6.25a.375.375 0 0 1-.375.375ZM10.5 2.875a.375.375 0 0 1-.375.375H3.75a.375.375 0 1 1 0-.75h6.375c.207 0 .375.168.375.375Zm-7.125 6.25c0-.207.168-.375.375-.375h5.5a.375.375 0 1 1 0 .75h-5.5a.375.375 0 0 1-.375-.375Zm6.25-4.179a.375.375 0 0 1-.375.375h-5.5a.375.375 0 0 1 0-.75h5.5c.207 0 .375.168.375.375Zm.875 2.081a.375.375 0 0 1-.375.375H3.75a.375.375 0 0 1 0-.75h6.375c.207 0 .375.167.375.375Z"
+                d="M11.009 1.5a.5.5 0 0 1-.5.5H4.487a.5.5 0 1 1 0-1h6.022a.5.5 0 0 1 .5.5Zm-1.39 3a.5.5 0 0 1-.5.5H4.487a.5.5 0 1 1 0-1h4.632a.5.5 0 0 1 .5.5Zm.89 3.5a.5.5 0 0 0 0-1H4.487a.5.5 0 1 0 0 1h6.022Zm-.89 2.5a.5.5 0 0 1-.5.5H4.487a.5.5 0 0 1 0-1h4.632a.5.5 0 0 1 .5.5ZM1 1.5v9a.5.5 0 0 0 1 0v-9a.5.5 0 0 0-1 0Z"
                 clipRule="evenodd"
             />
         </svg>

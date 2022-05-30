@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconArrowBidirectional12 from './IconArrowBidirectional12';;
-import IconArrowBidirectional16 from './IconArrowBidirectional16';;
-import IconArrowBidirectional20 from './IconArrowBidirectional20';;
-import IconArrowBidirectional24 from './IconArrowBidirectional24';;
-import IconArrowBidirectional32 from './IconArrowBidirectional32';
+import IconArrowBidirectional12 from './IconArrowBidirectional12';
+import IconArrowBidirectional16 from './IconArrowBidirectional16';
+import IconArrowBidirectional20 from './IconArrowBidirectional20';
+import IconArrowBidirectional24 from './IconArrowBidirectional24';
+import IconArrowBidirectional32 from './IconArrowBidirectional32'
 
 function IconArrowBidirectional(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

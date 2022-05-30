@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconClipboard12 from './IconClipboard12';;
-import IconClipboard16 from './IconClipboard16';;
-import IconClipboard20 from './IconClipboard20';;
-import IconClipboard24 from './IconClipboard24';;
-import IconClipboard32 from './IconClipboard32';
+import IconClipboard12 from './IconClipboard12';
+import IconClipboard16 from './IconClipboard16';
+import IconClipboard20 from './IconClipboard20';
+import IconClipboard24 from './IconClipboard24';
+import IconClipboard32 from './IconClipboard32'
 
 function IconClipboard(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

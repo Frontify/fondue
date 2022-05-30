@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconTable12 from './IconTable12';;
-import IconTable16 from './IconTable16';;
-import IconTable20 from './IconTable20';;
-import IconTable24 from './IconTable24';;
-import IconTable32 from './IconTable32';
+import IconTable12 from './IconTable12';
+import IconTable16 from './IconTable16';
+import IconTable20 from './IconTable20';
+import IconTable24 from './IconTable24';
+import IconTable32 from './IconTable32'
 
 function IconTable(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

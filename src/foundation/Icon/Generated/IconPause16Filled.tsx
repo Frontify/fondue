@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconPause16Filled(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -14,7 +14,9 @@ function IconPause16Filled(props: GeneratedIconProps): React.ReactElement<Genera
         >
             <path
                 fill="currentColor"
-                d="M4 2.667a.667.667 0 0 0-.667.666v9.334c0 .368.299.666.667.666h2.667a.667.667 0 0 0 .667-.666V3.333a.667.667 0 0 0-.667-.666H4Zm5.334 0a.667.667 0 0 0-.667.666v9.334c0 .368.298.666.667.666H12a.667.667 0 0 0 .667-.666V3.333A.667.667 0 0 0 12 2.667H9.334Z"
+                fillRule="evenodd"
+                d="M3.5 1A1.5 1.5 0 0 0 2 2.5v11A1.5 1.5 0 0 0 3.5 15h2A1.5 1.5 0 0 0 7 13.5v-11A1.5 1.5 0 0 0 5.5 1h-2Zm7 0A1.5 1.5 0 0 0 9 2.5v11a1.5 1.5 0 0 0 1.5 1.5h2a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 12.5 1h-2Z"
+                clipRule="evenodd"
             />
         </svg>
     );

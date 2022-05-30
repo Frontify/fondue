@@ -1,17 +1,17 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconGridRegular12Filled from './IconGridRegular12Filled';;
-import IconGridRegular12 from './IconGridRegular12';;
-import IconGridRegular16Filled from './IconGridRegular16Filled';;
-import IconGridRegular16 from './IconGridRegular16';;
-import IconGridRegular20Filled from './IconGridRegular20Filled';;
-import IconGridRegular20 from './IconGridRegular20';;
-import IconGridRegular24Filled from './IconGridRegular24Filled';;
-import IconGridRegular24 from './IconGridRegular24';;
-import IconGridRegular32Filled from './IconGridRegular32Filled';;
-import IconGridRegular32 from './IconGridRegular32';
+import IconGridRegular12Filled from './IconGridRegular12Filled';
+import IconGridRegular12 from './IconGridRegular12';
+import IconGridRegular16Filled from './IconGridRegular16Filled';
+import IconGridRegular16 from './IconGridRegular16';
+import IconGridRegular20Filled from './IconGridRegular20Filled';
+import IconGridRegular20 from './IconGridRegular20';
+import IconGridRegular24Filled from './IconGridRegular24Filled';
+import IconGridRegular24 from './IconGridRegular24';
+import IconGridRegular32Filled from './IconGridRegular32Filled';
+import IconGridRegular32 from './IconGridRegular32'
 
 function IconGridRegular(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

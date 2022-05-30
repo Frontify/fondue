@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconEyeOff12 from './IconEyeOff12';;
-import IconEyeOff16 from './IconEyeOff16';;
-import IconEyeOff20 from './IconEyeOff20';;
-import IconEyeOff24 from './IconEyeOff24';;
-import IconEyeOff32 from './IconEyeOff32';
+import IconEyeOff12 from './IconEyeOff12';
+import IconEyeOff16 from './IconEyeOff16';
+import IconEyeOff20 from './IconEyeOff20';
+import IconEyeOff24 from './IconEyeOff24';
+import IconEyeOff32 from './IconEyeOff32'
 
 function IconEyeOff(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconFaceExtraHappy12 from './IconFaceExtraHappy12';;
-import IconFaceExtraHappy16 from './IconFaceExtraHappy16';;
-import IconFaceExtraHappy20 from './IconFaceExtraHappy20';;
-import IconFaceExtraHappy24 from './IconFaceExtraHappy24';;
-import IconFaceExtraHappy32 from './IconFaceExtraHappy32';
+import IconFaceExtraHappy12 from './IconFaceExtraHappy12';
+import IconFaceExtraHappy16 from './IconFaceExtraHappy16';
+import IconFaceExtraHappy20 from './IconFaceExtraHappy20';
+import IconFaceExtraHappy24 from './IconFaceExtraHappy24';
+import IconFaceExtraHappy32 from './IconFaceExtraHappy32'
 
 function IconFaceExtraHappy(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

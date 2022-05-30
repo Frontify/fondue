@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconCaretLeftDouble12 from './IconCaretLeftDouble12';;
-import IconCaretLeftDouble16 from './IconCaretLeftDouble16';;
-import IconCaretLeftDouble20 from './IconCaretLeftDouble20';;
-import IconCaretLeftDouble24 from './IconCaretLeftDouble24';;
-import IconCaretLeftDouble32 from './IconCaretLeftDouble32';
+import IconCaretLeftDouble12 from './IconCaretLeftDouble12';
+import IconCaretLeftDouble16 from './IconCaretLeftDouble16';
+import IconCaretLeftDouble20 from './IconCaretLeftDouble20';
+import IconCaretLeftDouble24 from './IconCaretLeftDouble24';
+import IconCaretLeftDouble32 from './IconCaretLeftDouble32'
 
 function IconCaretLeftDouble(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

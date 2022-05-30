@@ -1,17 +1,17 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconPlay12Filled from './IconPlay12Filled';;
-import IconPlay12 from './IconPlay12';;
-import IconPlay16Filled from './IconPlay16Filled';;
-import IconPlay16 from './IconPlay16';;
-import IconPlay20Filled from './IconPlay20Filled';;
-import IconPlay20 from './IconPlay20';;
-import IconPlay24Filled from './IconPlay24Filled';;
-import IconPlay24 from './IconPlay24';;
-import IconPlay32Filled from './IconPlay32Filled';;
-import IconPlay32 from './IconPlay32';
+import IconPlay12Filled from './IconPlay12Filled';
+import IconPlay12 from './IconPlay12';
+import IconPlay16Filled from './IconPlay16Filled';
+import IconPlay16 from './IconPlay16';
+import IconPlay20Filled from './IconPlay20Filled';
+import IconPlay20 from './IconPlay20';
+import IconPlay24Filled from './IconPlay24Filled';
+import IconPlay24 from './IconPlay24';
+import IconPlay32Filled from './IconPlay32Filled';
+import IconPlay32 from './IconPlay32'
 
 function IconPlay(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

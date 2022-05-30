@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconTextFormatItalic20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconTextFormatItalic20(props: GeneratedIconProps): React.ReactElement<G
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M7.944 3.45c0 .345.28.625.625.625h1.107L7.849 15.77H6.764a.625.625 0 1 0 0 1.25h4.627a.625.625 0 0 0 0-1.25h-1.042l1.827-11.695h1.02a.625.625 0 1 0 0-1.25H8.57a.625.625 0 0 0-.625.625Z"
+                d="M8.118 3.75a.75.75 0 0 1 .75-.75h5.416a.75.75 0 1 1 0 1.5h-2.12L9.449 15.552h1.764a.75.75 0 1 1 0 1.5H5.75a.75.75 0 1 1 0-1.5h2.157L10.621 4.5H8.868a.75.75 0 0 1-.75-.75Z"
                 clipRule="evenodd"
             />
         </svg>

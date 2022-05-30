@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconScissors32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconScissors32(props: GeneratedIconProps): React.ReactElement<Generated
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="m21.18 6.83-7.065 7.065-1.903-1.766c1.087-2.038.816-4.62-.815-6.25-1.902-2.039-5.163-1.903-7.202 0-2.038 1.902-2.038 5.163 0 7.473 1.767 1.766 4.349 2.038 6.25.815l1.903 1.902-1.902 1.903c-2.038-1.087-4.62-.816-6.25.815-2.039 1.902-1.903 5.164 0 7.202 1.902 2.038 5.163 2.038 7.201 0 1.767-1.767 2.038-4.349.815-6.25l10.87-10.871c.68-.68 1.631-.951 2.447-.68L15.066 18.651l5.843 5.843c1.902 2.038 5.163 2.038 7.201 0l.952-.951-7.746-7.745 8.017-8.017-.95-.952c-1.903-2.038-5.164-2.038-7.203 0Zm1.495 15.762L18.6 18.515l.951-.815 5.571 5.571c-.815.272-1.766 0-2.446-.68ZM9.631 11.178c.95-.952.95-2.582 0-3.67-.952-.95-2.582-.95-3.67 0-.95.952-.95 2.583 0 3.67 1.088 1.087 2.583 1.087 3.67 0Zm0 9.104c.95 1.087.95 2.717 0 3.669-1.087.95-2.582.95-3.67 0-.95-1.088-.95-2.718 0-3.67 1.088-.95 2.718-.95 3.67 0Z"
+                d="M12.283 12.303a4 4 0 1 0-1.106 1.669L14.557 16l-3.38 2.028a4 4 0 1 0 1.106 1.669l4.217-2.53 1.947-1.165-.003-.002 8.57-5.143a1 1 0 1 0-1.029-1.715L16.5 14.834l-4.217-2.53Zm6.162 6.03 1.946-1.165 6.623 3.974a1 1 0 1 1-1.029 1.715l-7.54-4.524ZM8.5 13a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm0 10a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z"
                 clipRule="evenodd"
             />
         </svg>

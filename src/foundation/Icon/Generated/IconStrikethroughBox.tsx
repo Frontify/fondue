@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconStrikethroughBox12 from './IconStrikethroughBox12';;
-import IconStrikethroughBox16 from './IconStrikethroughBox16';;
-import IconStrikethroughBox20 from './IconStrikethroughBox20';;
-import IconStrikethroughBox24 from './IconStrikethroughBox24';;
-import IconStrikethroughBox32 from './IconStrikethroughBox32';
+import IconStrikethroughBox12 from './IconStrikethroughBox12';
+import IconStrikethroughBox16 from './IconStrikethroughBox16';
+import IconStrikethroughBox20 from './IconStrikethroughBox20';
+import IconStrikethroughBox24 from './IconStrikethroughBox24';
+import IconStrikethroughBox32 from './IconStrikethroughBox32'
 
 function IconStrikethroughBox(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconLockOpen24(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,14 +12,12 @@ function IconLockOpen24(props: GeneratedIconProps): React.ReactElement<Generated
             name="IconLockOpen24"
             {...props}
         >
-            <g fill="currentColor">
-                <path d="M11.2 15.944a1.666 1.666 0 1 1 1.667 0V17a.833.833 0 0 1-1.667 0v-1.056Z" />
-                <path
-                    fillRule="evenodd"
-                    d="M15.367 8.667v-2.5a2.5 2.5 0 0 0-2.5-2.5H11.2a2.5 2.5 0 0 0-2.5 2.5.833.833 0 0 1-1.666 0A4.167 4.167 0 0 1 11.2 2h1.667a4.167 4.167 0 0 1 4.166 4.167v2.5h.834a2.5 2.5 0 0 1 2.5 2.5V19.5a2.5 2.5 0 0 1-2.5 2.5H6.2a2.5 2.5 0 0 1-2.5-2.5v-8.333a2.5 2.5 0 0 1 2.5-2.5h9.167ZM6.2 10.333a.833.833 0 0 0-.833.834V19.5c0 .46.373.833.833.833h11.667c.46 0 .833-.373.833-.833v-8.333a.833.833 0 0 0-.833-.834H6.2Z"
-                    clipRule="evenodd"
-                />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M10.961 3.65c-.593.132-1.113.368-1.409.733a13.13 13.13 0 0 0-.496.64.75.75 0 0 1-1.4-.5l.735.154c-.734-.154-.734-.156-.733-.158v-.004l.002-.007.004-.015a.766.766 0 0 1 .09-.216 2.14 2.14 0 0 1 .103-.156c.088-.124.244-.33.53-.683.612-.755 1.533-1.093 2.248-1.252a7.243 7.243 0 0 1 1.607-.166h.041l.078.001a5.12 5.12 0 0 1 5.12 5.12v.897A3 3 0 0 1 20 11v7a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-7a3 3 0 0 1 3-3h8.98v-.86a3.62 3.62 0 0 0-3.62-3.619l-.113-.001h-.027a5.749 5.749 0 0 0-1.259.13ZM17 9.5H7A1.5 1.5 0 0 0 5.5 11v7A1.5 1.5 0 0 0 7 19.5h10a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 17 9.5Zm-3.5 4.54a1.5 1.5 0 0 1-.772 1.311c.027.077.041.16.041.246v.807a.75.75 0 1 1-1.5 0v-.807c0-.08.012-.156.035-.228a1.5 1.5 0 1 1 2.196-1.33Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

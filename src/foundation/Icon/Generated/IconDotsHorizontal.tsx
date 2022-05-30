@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconDotsHorizontal12 from './IconDotsHorizontal12';;
-import IconDotsHorizontal16 from './IconDotsHorizontal16';;
-import IconDotsHorizontal20 from './IconDotsHorizontal20';;
-import IconDotsHorizontal24 from './IconDotsHorizontal24';;
-import IconDotsHorizontal32 from './IconDotsHorizontal32';
+import IconDotsHorizontal12 from './IconDotsHorizontal12';
+import IconDotsHorizontal16 from './IconDotsHorizontal16';
+import IconDotsHorizontal20 from './IconDotsHorizontal20';
+import IconDotsHorizontal24 from './IconDotsHorizontal24';
+import IconDotsHorizontal32 from './IconDotsHorizontal32'
 
 function IconDotsHorizontal(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

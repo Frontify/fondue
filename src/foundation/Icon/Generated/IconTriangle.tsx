@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconTriangle12 from './IconTriangle12';;
-import IconTriangle16 from './IconTriangle16';;
-import IconTriangle20 from './IconTriangle20';;
-import IconTriangle24 from './IconTriangle24';;
-import IconTriangle32 from './IconTriangle32';
+import IconTriangle12 from './IconTriangle12';
+import IconTriangle16 from './IconTriangle16';
+import IconTriangle20 from './IconTriangle20';
+import IconTriangle24 from './IconTriangle24';
+import IconTriangle32 from './IconTriangle32'
 
 function IconTriangle(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

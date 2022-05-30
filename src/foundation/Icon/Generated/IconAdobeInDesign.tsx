@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconAdobeInDesign12 from './IconAdobeInDesign12';;
-import IconAdobeInDesign16 from './IconAdobeInDesign16';;
-import IconAdobeInDesign20 from './IconAdobeInDesign20';;
-import IconAdobeInDesign24 from './IconAdobeInDesign24';;
-import IconAdobeInDesign32 from './IconAdobeInDesign32';
+import IconAdobeInDesign12 from './IconAdobeInDesign12';
+import IconAdobeInDesign16 from './IconAdobeInDesign16';
+import IconAdobeInDesign20 from './IconAdobeInDesign20';
+import IconAdobeInDesign24 from './IconAdobeInDesign24';
+import IconAdobeInDesign32 from './IconAdobeInDesign32'
 
 function IconAdobeInDesign(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

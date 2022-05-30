@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconLayersSingle12 from './IconLayersSingle12';;
-import IconLayersSingle16 from './IconLayersSingle16';;
-import IconLayersSingle20 from './IconLayersSingle20';;
-import IconLayersSingle24 from './IconLayersSingle24';;
-import IconLayersSingle32 from './IconLayersSingle32';
+import IconLayersSingle12 from './IconLayersSingle12';
+import IconLayersSingle16 from './IconLayersSingle16';
+import IconLayersSingle20 from './IconLayersSingle20';
+import IconLayersSingle24 from './IconLayersSingle24';
+import IconLayersSingle32 from './IconLayersSingle32'
 
 function IconLayersSingle(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

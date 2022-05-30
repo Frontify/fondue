@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconStackHorizontalAltTwo32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconStackHorizontalAltTwo32(props: GeneratedIconProps): React.ReactElem
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M6 9.333h5.555a3.333 3.333 0 0 1 3.334 3.334v6.666a3.333 3.333 0 0 1-3.334 3.334H6a3.333 3.333 0 0 1-3.333-3.334v-6.666A3.333 3.333 0 0 1 6 9.333Zm0 2.223a1.11 1.11 0 0 0-1.111 1.11v6.667a1.11 1.11 0 0 0 1.11 1.111h5.556a1.11 1.11 0 0 0 1.111-1.11v-6.667a1.11 1.11 0 0 0-1.11-1.111H6Zm14.444-2.223H26a3.333 3.333 0 0 1 3.333 3.334v6.666A3.333 3.333 0 0 1 26 22.667h-5.556a3.333 3.333 0 0 1-3.333-3.334v-6.666a3.333 3.333 0 0 1 3.333-3.334Zm0 2.223a1.11 1.11 0 0 0-1.11 1.11v6.667a1.11 1.11 0 0 0 1.11 1.111H26a1.11 1.11 0 0 0 1.111-1.11v-6.667c0-.614-.498-1.111-1.111-1.111h-5.556Z"
+                d="M7 11h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2Zm-4 2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-6Zm18-2h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2Zm-4 2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4v-6Z"
                 clipRule="evenodd"
             />
         </svg>

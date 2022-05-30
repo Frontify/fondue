@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconSkip5SecondsForward12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -14,7 +14,9 @@ function IconSkip5SecondsForward12(props: GeneratedIconProps): React.ReactElemen
         >
             <path
                 fill="currentColor"
-                d="M5.675 9.78h-2.25A1.925 1.925 0 0 1 1.5 7.857v-2c0-1.064.862-1.925 1.925-1.925h1.68l-.822-.821a.358.358 0 0 1 .001-.505c.14-.14.365-.14.504 0L6.305 4.12a.355.355 0 0 1 0 .504L4.788 6.14a.358.358 0 0 1-.504 0 .356.356 0 0 1 0-.505l.855-.855H3.425c-.594 0-1.075.48-1.075 1.075v2c0 .593.481 1.075 1.075 1.075h2.25a.425.425 0 0 1 0 .85Zm2.117-2.605c.104.539.67.907 1.353.907.847 0 1.446-.577 1.446-1.386 0-.753-.506-1.281-1.237-1.281-.385 0-.644.149-.77.314v-.93h1.798V4.15H7.924V6.4h.61c.099-.22.33-.347.605-.347.418 0 .704.286.704.704 0 .39-.27.688-.688.688-.313 0-.588-.171-.687-.457l-.676.187Z"
+                fillRule="evenodd"
+                d="M3.854 1.025a.5.5 0 0 0-.707.707L4.414 3H2.5A2.5 2.5 0 0 0 0 5.5v3A2.5 2.5 0 0 0 2.5 11H5a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 1 1 8.5v-3A1.5 1.5 0 0 1 2.5 4h1.914L3.147 5.268a.5.5 0 0 0 .707.707l2.121-2.121a.5.5 0 0 0 0-.708l-2.121-2.12ZM9.864 8c.664 0 1.132-.486 1.136-1.007.005-.558-.39-.998-.864-.998-.466 0-.804.106-1.018.205a1.557 1.557 0 0 0-.28.164l-.005.005A.5.5 0 0 1 8 5.996V3h2.954a.5.5 0 0 1 0 1H9v1.173c.3-.101.68-.178 1.136-.178 1.164 0 1.872 1.038 1.864 2.007C11.99 8.14 11.006 9 9.864 9c-.512 0-.933-.156-1.221-.308a2.689 2.689 0 0 1-.466-.31l-.01-.01-.003-.002-.001-.001v-.001l.337-.369-.338.368a.5.5 0 0 1 .673-.739L9.864 8Z"
+                clipRule="evenodd"
             />
         </svg>
     );

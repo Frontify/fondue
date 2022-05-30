@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconDocumentBadge12 from './IconDocumentBadge12';;
-import IconDocumentBadge16 from './IconDocumentBadge16';;
-import IconDocumentBadge20 from './IconDocumentBadge20';;
-import IconDocumentBadge24 from './IconDocumentBadge24';;
-import IconDocumentBadge32 from './IconDocumentBadge32';
+import IconDocumentBadge12 from './IconDocumentBadge12';
+import IconDocumentBadge16 from './IconDocumentBadge16';
+import IconDocumentBadge20 from './IconDocumentBadge20';
+import IconDocumentBadge24 from './IconDocumentBadge24';
+import IconDocumentBadge32 from './IconDocumentBadge32'
 
 function IconDocumentBadge(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

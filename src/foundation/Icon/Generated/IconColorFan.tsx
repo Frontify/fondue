@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconColorFan12 from './IconColorFan12';;
-import IconColorFan16 from './IconColorFan16';;
-import IconColorFan20 from './IconColorFan20';;
-import IconColorFan24 from './IconColorFan24';;
-import IconColorFan32 from './IconColorFan32';
+import IconColorFan12 from './IconColorFan12';
+import IconColorFan16 from './IconColorFan16';
+import IconColorFan20 from './IconColorFan20';
+import IconColorFan24 from './IconColorFan24';
+import IconColorFan32 from './IconColorFan32'
 
 function IconColorFan(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

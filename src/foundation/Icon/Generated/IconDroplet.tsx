@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconDroplet12 from './IconDroplet12';;
-import IconDroplet16 from './IconDroplet16';;
-import IconDroplet20 from './IconDroplet20';;
-import IconDroplet24 from './IconDroplet24';;
-import IconDroplet32 from './IconDroplet32';
+import IconDroplet12 from './IconDroplet12';
+import IconDroplet16 from './IconDroplet16';
+import IconDroplet20 from './IconDroplet20';
+import IconDroplet24 from './IconDroplet24';
+import IconDroplet32 from './IconDroplet32'
 
 function IconDroplet(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

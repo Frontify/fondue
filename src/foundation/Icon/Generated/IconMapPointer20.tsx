@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconMapPointer20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,10 +12,12 @@ function IconMapPointer20(props: GeneratedIconProps): React.ReactElement<Generat
             name="IconMapPointer20"
             {...props}
         >
-            <g fill="currentColor" fillRule="evenodd" clipRule="evenodd">
-                <path d="M12.917 7.878a2.917 2.917 0 1 1-5.834 0 2.917 2.917 0 0 1 5.834 0Zm-1.25 0a1.667 1.667 0 1 1-3.333 0 1.667 1.667 0 0 1 3.333 0Z" />
-                <path d="M17.083 7.25c0 5.412-4.258 9.596-6.171 11.202a1.404 1.404 0 0 1-1.824 0c-1.913-1.607-6.171-5.79-6.171-11.202C2.917 3.706 6.088.833 10 .833c3.912 0 7.083 2.873 7.083 6.417Zm-1.25 0c0 2.374-.935 4.53-2.152 6.327-1.217 1.794-2.667 3.158-3.573 3.918a.166.166 0 0 1-.108.043.166.166 0 0 1-.108-.043c-.905-.76-2.356-2.124-3.572-3.918C5.102 11.78 4.167 9.624 4.167 7.25c0-2.74 2.492-5.167 5.833-5.167 3.34 0 5.833 2.427 5.833 5.167Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M15.5 7.923c0 1.956-1.035 4.425-2.44 6.484-.689 1.009-1.417 1.845-2.056 2.41a4.44 4.44 0 0 1-.797.584c-.09.05-.153.075-.19.088a1.38 1.38 0 0 1-.192-.088 4.576 4.576 0 0 1-.802-.587c-.643-.565-1.375-1.402-2.067-2.41C5.54 12.344 4.5 9.876 4.5 7.924 4.5 4.946 6.951 2.5 10.018 2.5c3.056 0 5.482 2.437 5.482 5.423Zm1.5 0C17 12.7 12.123 19 10.018 19 7.912 19 3 12.7 3 7.923 3 4.1 6.142 1 10.018 1 13.893 1 17 4.1 17 7.923Zm-5.75-.173a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Zm1.5 0a2.75 2.75 0 1 1-5.5 0 2.75 2.75 0 0 1 5.5 0Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconMegaMenu12 from './IconMegaMenu12';;
-import IconMegaMenu16 from './IconMegaMenu16';;
-import IconMegaMenu20 from './IconMegaMenu20';;
-import IconMegaMenu24 from './IconMegaMenu24';;
-import IconMegaMenu32 from './IconMegaMenu32';
+import IconMegaMenu12 from './IconMegaMenu12';
+import IconMegaMenu16 from './IconMegaMenu16';
+import IconMegaMenu20 from './IconMegaMenu20';
+import IconMegaMenu24 from './IconMegaMenu24';
+import IconMegaMenu32 from './IconMegaMenu32'
 
 function IconMegaMenu(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

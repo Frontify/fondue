@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconPlusFrame24(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,14 +12,12 @@ function IconPlusFrame24(props: GeneratedIconProps): React.ReactElement<Generate
             name="IconPlusFrame24"
             {...props}
         >
-            <g fill="currentColor">
-                <path d="M12.91 16.436a.91.91 0 1 1-1.82 0v-1.818H9.274a.91.91 0 1 1 0-1.818h1.818v-1.818a.91.91 0 0 1 1.818 0V12.8h1.818a.91.91 0 0 1 0 1.818H12.91v1.818Z" />
-                <path
-                    fillRule="evenodd"
-                    d="M4.308 2.8h15.384A2.308 2.308 0 0 1 22 5.108v13.846a2.308 2.308 0 0 1-2.308 2.308H4.308A2.308 2.308 0 0 1 2 18.954V5.108A2.308 2.308 0 0 1 4.308 2.8Zm-.77 5.385v10.769c0 .425.345.77.77.77h15.384a.77.77 0 0 0 .77-.77V8.184H3.538Zm16.924-1.539H3.538V5.108a.77.77 0 0 1 .77-.77h15.384a.77.77 0 0 1 .77.77v1.538Z"
-                    clipRule="evenodd"
-                />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M19 4.5H5A1.5 1.5 0 0 0 3.5 6v1h17V6A1.5 1.5 0 0 0 19 4.5Zm1.5 4h-17V18A1.5 1.5 0 0 0 5 19.5h14a1.5 1.5 0 0 0 1.5-1.5V8.5ZM5 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H5Zm7.75 8.25a.75.75 0 0 0-1.5 0v2h-2a.75.75 0 0 0 0 1.5h2v2a.75.75 0 0 0 1.5 0v-2h2a.75.75 0 0 0 0-1.5h-2v-2Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

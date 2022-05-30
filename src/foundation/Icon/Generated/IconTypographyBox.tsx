@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconTypographyBox12 from './IconTypographyBox12';;
-import IconTypographyBox16 from './IconTypographyBox16';;
-import IconTypographyBox20 from './IconTypographyBox20';;
-import IconTypographyBox24 from './IconTypographyBox24';;
-import IconTypographyBox32 from './IconTypographyBox32';
+import IconTypographyBox12 from './IconTypographyBox12';
+import IconTypographyBox16 from './IconTypographyBox16';
+import IconTypographyBox20 from './IconTypographyBox20';
+import IconTypographyBox24 from './IconTypographyBox24';
+import IconTypographyBox32 from './IconTypographyBox32'
 
 function IconTypographyBox(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

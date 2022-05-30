@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconFlag20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconFlag20(props: GeneratedIconProps): React.ReactElement<GeneratedIcon
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M4.375 2.625a.625.625 0 1 1 1.25 0v.5H16.25c.52 0 .813.598.493 1.009L14.125 7.5l2.618 3.366a.625.625 0 0 1-.493 1.01H5.625v5.5a.625.625 0 0 1-1.25 0V2.624Zm1.25 8h9.347L12.84 7.884a.625.625 0 0 1 0-.768l2.132-2.74H5.625v6.25Z"
+                d="M5 2a.75.75 0 0 0-1.5 0v16A.75.75 0 0 0 5 18v-5h12.16c.88 0 1.33-1.055.722-1.691L14.717 8l3.165-3.309C18.491 4.055 18.04 3 17.16 3H5V2Zm0 2.5v7h10.99l-2.357-2.463L12.641 8l.992-1.037L15.989 4.5H5Z"
                 clipRule="evenodd"
             />
         </svg>

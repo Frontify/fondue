@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconCheckmarkCircleBox12 from './IconCheckmarkCircleBox12';;
-import IconCheckmarkCircleBox16 from './IconCheckmarkCircleBox16';;
-import IconCheckmarkCircleBox20 from './IconCheckmarkCircleBox20';;
-import IconCheckmarkCircleBox24 from './IconCheckmarkCircleBox24';;
-import IconCheckmarkCircleBox32 from './IconCheckmarkCircleBox32';
+import IconCheckmarkCircleBox12 from './IconCheckmarkCircleBox12';
+import IconCheckmarkCircleBox16 from './IconCheckmarkCircleBox16';
+import IconCheckmarkCircleBox20 from './IconCheckmarkCircleBox20';
+import IconCheckmarkCircleBox24 from './IconCheckmarkCircleBox24';
+import IconCheckmarkCircleBox32 from './IconCheckmarkCircleBox32'
 
 function IconCheckmarkCircleBox(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

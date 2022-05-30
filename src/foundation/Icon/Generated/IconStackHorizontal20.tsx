@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconStackHorizontal20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconStackHorizontal20(props: GeneratedIconProps): React.ReactElement<Ge
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M11.125 2.708c.53 0 .958.43.958.959v12.666c0 .53-.429.959-.958.959h-2.25a.958.958 0 0 1-.958-.959V3.668c0-.53.429-.958.958-.958h2.25Zm-.292 1.25H9.167v12.084h1.666V3.958Zm-5.116-1.25c.529 0 .958.43.958.959v12.666c0 .53-.43.959-.958.959h-2.25a.958.958 0 0 1-.959-.959V3.668c0-.53.43-.958.959-.958h2.25Zm-.292 1.25H3.758v12.084h1.667V3.958Zm11.109-1.25c.529 0 .958.43.958.959v12.666c0 .53-.429.959-.958.959h-2.25a.958.958 0 0 1-.959-.959V3.668c0-.53.43-.958.959-.958h2.25Zm-.292 1.25h-1.667v12.084h1.667V3.958Z"
+                d="M4 3.5H3a.5.5 0 0 0-.5.5v12a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V4a.5.5 0 0 0-.5-.5ZM3 2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H3Zm14 1.5h-1a.5.5 0 0 0-.5.5v12a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V4a.5.5 0 0 0-.5-.5ZM16 2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-1ZM9.5 3.5h1a.5.5 0 0 1 .5.5v12a.5.5 0 0 1-.5.5h-1A.5.5 0 0 1 9 16V4a.5.5 0 0 1 .5-.5Zm-2 .5a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2V4Z"
                 clipRule="evenodd"
             />
         </svg>

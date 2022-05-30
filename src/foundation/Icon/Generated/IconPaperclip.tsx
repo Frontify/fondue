@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconPaperclip12 from './IconPaperclip12';;
-import IconPaperclip16 from './IconPaperclip16';;
-import IconPaperclip20 from './IconPaperclip20';;
-import IconPaperclip24 from './IconPaperclip24';;
-import IconPaperclip32 from './IconPaperclip32';
+import IconPaperclip12 from './IconPaperclip12';
+import IconPaperclip16 from './IconPaperclip16';
+import IconPaperclip20 from './IconPaperclip20';
+import IconPaperclip24 from './IconPaperclip24';
+import IconPaperclip32 from './IconPaperclip32'
 
 function IconPaperclip(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

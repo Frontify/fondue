@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconImageWithText12 from './IconImageWithText12';;
-import IconImageWithText16 from './IconImageWithText16';;
-import IconImageWithText20 from './IconImageWithText20';;
-import IconImageWithText24 from './IconImageWithText24';;
-import IconImageWithText32 from './IconImageWithText32';
+import IconImageWithText12 from './IconImageWithText12';
+import IconImageWithText16 from './IconImageWithText16';
+import IconImageWithText20 from './IconImageWithText20';
+import IconImageWithText24 from './IconImageWithText24';
+import IconImageWithText32 from './IconImageWithText32'
 
 function IconImageWithText(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

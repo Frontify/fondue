@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconSoundWave12 from './IconSoundWave12';;
-import IconSoundWave16 from './IconSoundWave16';;
-import IconSoundWave20 from './IconSoundWave20';;
-import IconSoundWave24 from './IconSoundWave24';;
-import IconSoundWave32 from './IconSoundWave32';
+import IconSoundWave12 from './IconSoundWave12';
+import IconSoundWave16 from './IconSoundWave16';
+import IconSoundWave20 from './IconSoundWave20';
+import IconSoundWave24 from './IconSoundWave24';
+import IconSoundWave32 from './IconSoundWave32'
 
 function IconSoundWave(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

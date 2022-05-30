@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconMegaMenu12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconMegaMenu12(props: GeneratedIconProps): React.ReactElement<Generated
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M9.375 2.625h-6.75c-.621 0-1.125.504-1.125 1.125v4.875c0 .621.504 1.125 1.125 1.125h6.75c.621 0 1.125-.504 1.125-1.125V3.75c0-.621-.504-1.125-1.125-1.125ZM2.25 3.75c0-.207.168-.375.375-.375h6.75c.207 0 .375.168.375.375v4.875A.375.375 0 0 1 9.375 9h-6.75a.375.375 0 0 1-.375-.375V3.75Zm1.125 1.313a.375.375 0 1 1 0-.75H5.25a.375.375 0 1 1 0 .75H3.375Zm3-.375c0 .207.168.375.375.375h1.746a.375.375 0 1 0 0-.75H6.75a.375.375 0 0 0-.375.375Zm-3 1.875a.375.375 0 1 1 0-.75h.75a.375.375 0 1 1 0 .75h-.75Zm3-.375c0 .207.168.375.375.375h.75a.375.375 0 1 0 0-.75h-.75a.375.375 0 0 0-.375.375Zm-3 1.875a.375.375 0 1 1 0-.75h.75a.375.375 0 1 1 0 .75h-.75Zm3-.376c0 .208.168.375.375.375h.75a.375.375 0 1 0 0-.75h-.75a.375.375 0 0 0-.375.375Z"
+                d="M10.5 2h-9a.5.5 0 0 0-.5.5v6a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-6a.5.5 0 0 0-.5-.5Zm-9-1A1.5 1.5 0 0 0 0 2.5v6A1.5 1.5 0 0 0 1.5 10h9A1.5 1.5 0 0 0 12 8.5v-6A1.5 1.5 0 0 0 10.5 1h-9Zm1 2.5A.5.5 0 0 1 3 3h2a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5ZM3 5a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1H3Zm-.5 2.5A.5.5 0 0 1 3 7h1a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5ZM7 5a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1H7Zm-.5 2.5A.5.5 0 0 1 7 7h1a.5.5 0 0 1 0 1H7a.5.5 0 0 1-.5-.5ZM7 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1H7Z"
                 clipRule="evenodd"
             />
         </svg>

@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconTable24(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconTable24(props: GeneratedIconProps): React.ReactElement<GeneratedIco
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M4.308 3h15.384C20.967 3 22 4.007 22 5.25v13.5c0 1.243-1.033 2.25-2.308 2.25H4.308C3.033 21 2 19.993 2 18.75V5.25C2 4.007 3.033 3 4.308 3Zm-.77 5.625v2.625h4.616V8.625H3.538Zm6.154 0v2.625h4.616V8.625H9.692Zm6.154 0v2.625h4.616V8.625h-4.616Zm4.616-1.5H3.538V5.25a.76.76 0 0 1 .77-.75h15.384a.76.76 0 0 1 .77.75v1.875ZM9.692 12.75h4.616v2.625H9.692V12.75Zm-6.154 0h4.616v2.625H3.538V12.75Zm16.924 0h-4.616v2.625h4.616V12.75ZM3.538 16.875v1.875c0 .414.345.75.77.75h3.846v-2.625H3.538Zm6.154 0V19.5h4.616v-2.625H9.692Zm6.154 0V19.5h3.846a.76.76 0 0 0 .77-.75v-1.875h-4.616Z"
+                d="M5 4.5h13.5A1.5 1.5 0 0 1 20 6v1H3.5V6A1.5 1.5 0 0 1 5 4.5Zm-3 4V6a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3v11.5a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9Zm1.5 8.167v.833A1.5 1.5 0 0 0 5 19h3v-2.333H3.5ZM14 19H9.5v-2.333H14V19Zm1.5 0h3a1.5 1.5 0 0 0 1.5-1.5v-.833h-4.5V19Zm0-3.833H20V12.5h-4.5v2.667ZM14 12.5H9.5v2.667H14V12.5Zm0-1.5H9.5V8.5H14V11Zm1.5 0H20V8.5h-4.5V11Zm-12-2.5H8V11H3.5V8.5ZM8 15.167V12.5H3.5v2.667H8Z"
                 clipRule="evenodd"
             />
         </svg>

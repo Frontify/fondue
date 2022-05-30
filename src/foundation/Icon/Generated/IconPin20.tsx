@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconPin20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconPin20(props: GeneratedIconProps): React.ReactElement<GeneratedIconP
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M12.915 1.97a1.675 1.675 0 0 0-1.97.68L8.268 6.862a5.892 5.892 0 0 0-3.896.724l-.002.001a1.675 1.675 0 0 0-.335 2.631l2.433 2.433-4.409 4.408a.625.625 0 0 0 .884.884l4.408-4.409 2.433 2.433a1.675 1.675 0 0 0 2.631-.335l.002-.002a5.891 5.891 0 0 0 .723-3.896l4.21-2.679a1.675 1.675 0 0 0 .286-2.598l-4.091-4.09a1.676 1.676 0 0 0-.63-.396Zm-.602 1.158a.425.425 0 0 1 .347.122l4.09 4.09a.426.426 0 0 1-.072.66l-4.571 2.909a.625.625 0 0 0-.272.673 4.641 4.641 0 0 1-.5 3.417.424.424 0 0 1-.667.084l-5.75-5.75-.001-.001A.425.425 0 0 1 5 8.665a4.641 4.641 0 0 1 3.417-.5c.26.063.53-.046.673-.272L12 3.322a.426.426 0 0 1 .312-.194Z"
+                d="m12.766 9.921-.53.358-.108.628-.5 2.92a.503.503 0 0 1-.85.269L5.987 9.343a.497.497 0 0 1 .27-.843l2.945-.496.632-.107.361-.526 2.258-3.294a1.01 1.01 0 0 1 1.54-.144l2.24 2.22a.99.99 0 0 1-.146 1.529l-3.32 2.24Zm-6.76-2.894 2.944-.496 2.258-3.294a2.523 2.523 0 0 1 3.85-.36l2.24 2.22a2.477 2.477 0 0 1-.364 3.82l-3.321 2.24-.5 2.92c-.273 1.595-2.247 2.219-3.4 1.075l-1.801-1.786a.76.76 0 0 1-.062.07L3.319 17.93a.757.757 0 0 1-1.065 0 .743.743 0 0 1 0-1.057l4.53-4.494a.757.757 0 0 1 .071-.062L4.922 10.4c-1.153-1.143-.524-3.101 1.083-3.372Z"
                 clipRule="evenodd"
             />
         </svg>

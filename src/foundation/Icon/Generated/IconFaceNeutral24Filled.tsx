@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconFaceNeutral24Filled(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconFaceNeutral24Filled(props: GeneratedIconProps): React.ReactElement<
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M8.104 21.219A9.802 9.802 0 0 0 12 22c1.38 0 2.679-.26 3.896-.781a10.038 10.038 0 0 0 3.184-2.139 10.038 10.038 0 0 0 2.139-3.183A9.802 9.802 0 0 0 22 12c0-1.38-.26-2.679-.781-3.896A10.037 10.037 0 0 0 19.08 4.92a10.036 10.036 0 0 0-3.183-2.139A9.802 9.802 0 0 0 12 2c-1.38 0-2.679.26-3.896.781A10.035 10.035 0 0 0 4.92 4.92a10.035 10.035 0 0 0-2.14 3.184A9.801 9.801 0 0 0 2 12c0 1.38.26 2.679.781 3.896A10.036 10.036 0 0 0 4.92 19.08a10.037 10.037 0 0 0 3.184 2.139Zm2.078-11.492a1.364 1.364 0 1 1-2.727 0 1.364 1.364 0 0 1 2.727 0Zm5 1.364a1.364 1.364 0 1 0 0-2.727 1.364 1.364 0 0 0 0 2.727Zm-8.637 4.09c0 .503.407.91.91.91h9.09a.91.91 0 1 0 0-1.818h-9.09a.91.91 0 0 0-.91.909Z"
+                d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10ZM8.75 11a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5Zm7.75-1.25a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0ZM7.782 14.5a.75.75 0 0 0 0 1.5h8.452a.75.75 0 0 0 0-1.5H7.782Z"
                 clipRule="evenodd"
             />
         </svg>

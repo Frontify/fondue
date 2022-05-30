@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconMinusCircle12 from './IconMinusCircle12';;
-import IconMinusCircle16 from './IconMinusCircle16';;
-import IconMinusCircle20 from './IconMinusCircle20';;
-import IconMinusCircle24 from './IconMinusCircle24';;
-import IconMinusCircle32 from './IconMinusCircle32';
+import IconMinusCircle12 from './IconMinusCircle12';
+import IconMinusCircle16 from './IconMinusCircle16';
+import IconMinusCircle20 from './IconMinusCircle20';
+import IconMinusCircle24 from './IconMinusCircle24';
+import IconMinusCircle32 from './IconMinusCircle32'
 
 function IconMinusCircle(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

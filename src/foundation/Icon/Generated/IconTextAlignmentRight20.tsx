@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconTextAlignmentRight20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconTextAlignmentRight20(props: GeneratedIconProps): React.ReactElement
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M2.708 5c0-.345.28-.625.625-.625h13.733a.625.625 0 0 1 0 1.25H3.333A.625.625 0 0 1 2.708 5Zm2.446 3.333c0-.345.28-.625.625-.625h11.287a.625.625 0 0 1 0 1.25H5.78a.625.625 0 0 1-.625-.625Zm-2.446 3.334c0-.345.28-.625.625-.625h13.733a.625.625 0 0 1 0 1.25H3.333a.625.625 0 0 1-.625-.625Zm3.071 2.708h11.287a.625.625 0 1 1 0 1.25H5.78a.625.625 0 1 1 0-1.25Z"
+                d="M17.25 5.5a.75.75 0 0 0 0-1.5H2.75a.75.75 0 0 0 0 1.5h14.5Zm0 7a.75.75 0 0 0 0-1.5H2.75a.75.75 0 0 0 0 1.5h14.5ZM18 8.25a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1 0-1.5h10.5a.75.75 0 0 1 .75.75ZM17.25 16a.75.75 0 0 0 0-1.5H6.75a.75.75 0 0 0 0 1.5h10.5Z"
                 clipRule="evenodd"
             />
         </svg>

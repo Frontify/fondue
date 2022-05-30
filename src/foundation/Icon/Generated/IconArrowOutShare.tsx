@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconArrowOutShare12 from './IconArrowOutShare12';;
-import IconArrowOutShare16 from './IconArrowOutShare16';;
-import IconArrowOutShare20 from './IconArrowOutShare20';;
-import IconArrowOutShare24 from './IconArrowOutShare24';;
-import IconArrowOutShare32 from './IconArrowOutShare32';
+import IconArrowOutShare12 from './IconArrowOutShare12';
+import IconArrowOutShare16 from './IconArrowOutShare16';
+import IconArrowOutShare20 from './IconArrowOutShare20';
+import IconArrowOutShare24 from './IconArrowOutShare24';
+import IconArrowOutShare32 from './IconArrowOutShare32'
 
 function IconArrowOutShare(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconClock12 from './IconClock12';;
-import IconClock16 from './IconClock16';;
-import IconClock20 from './IconClock20';;
-import IconClock24 from './IconClock24';;
-import IconClock32 from './IconClock32';
+import IconClock12 from './IconClock12';
+import IconClock16 from './IconClock16';
+import IconClock20 from './IconClock20';
+import IconClock24 from './IconClock24';
+import IconClock32 from './IconClock32'
 
 function IconClock(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

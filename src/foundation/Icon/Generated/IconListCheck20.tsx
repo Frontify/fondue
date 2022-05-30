@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconListCheck20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconListCheck20(props: GeneratedIconProps): React.ReactElement<Generate
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M17.5 4.792c0 .345-.28.625-.625.625H9.792a.625.625 0 1 1 0-1.25h7.083c.345 0 .625.28.625.625ZM9.167 15.208c0-.345.28-.625.625-.625h5.416a.625.625 0 1 1 0 1.25H9.792a.625.625 0 0 1-.625-.625Zm6.666-6.964c0 .345-.28.625-.625.625H9.792a.625.625 0 0 1 0-1.25h5.416c.345 0 .625.28.625.625Zm1.667 3.467c0 .345-.28.625-.625.625H9.792a.625.625 0 1 1 0-1.25h7.083c.345 0 .625.28.625.625ZM4.7 7.55l-.805-.947a.625.625 0 0 0-.952.81L4.18 8.87a.792.792 0 0 0 1.3-.136L7.42 5.15a.625.625 0 1 0-1.1-.595L4.7 7.55Zm-.95 4.533v2.5h2.5v-2.5h-2.5Zm-.417-1.25a.833.833 0 0 0-.833.834V15c0 .46.373.833.833.833h3.334c.46 0 .833-.373.833-.833v-3.333a.833.833 0 0 0-.833-.834H3.333Z"
+                d="M19.014 4.75a.75.75 0 0 1-.75.75H9.585a.75.75 0 0 1 0-1.5h8.679a.75.75 0 0 1 .75.75Zm-2.003 3.5a.75.75 0 0 1-.75.75H9.585a.75.75 0 0 1 0-1.5h6.676a.75.75 0 0 1 .75.75Zm1.253 4.25a.75.75 0 0 0 0-1.5H9.585a.75.75 0 0 0 0 1.5h8.679Zm-1.253 2.75a.75.75 0 0 1-.75.75H9.585a.75.75 0 0 1 0-1.5h6.676a.75.75 0 0 1 .75.75ZM6.6 4.87a.75.75 0 0 1 0 1.06l-2.8 2.8-.531.53-.53-.53-1.4-1.4A.75.75 0 0 1 2.4 6.27l.87.87 2.27-2.27a.75.75 0 0 1 1.06 0ZM4.5 12.5h-2v2h2v-2Zm-2-1.5A1.5 1.5 0 0 0 1 12.5v2A1.5 1.5 0 0 0 2.5 16h2A1.5 1.5 0 0 0 6 14.5v-2A1.5 1.5 0 0 0 4.5 11h-2Z"
                 clipRule="evenodd"
             />
         </svg>

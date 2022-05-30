@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconMediaObjectRatio1To212 from './IconMediaObjectRatio1To212';;
-import IconMediaObjectRatio1To216 from './IconMediaObjectRatio1To216';;
-import IconMediaObjectRatio1To220 from './IconMediaObjectRatio1To220';;
-import IconMediaObjectRatio1To224 from './IconMediaObjectRatio1To224';;
-import IconMediaObjectRatio1To232 from './IconMediaObjectRatio1To232';
+import IconMediaObjectRatio1To212 from './IconMediaObjectRatio1To212';
+import IconMediaObjectRatio1To216 from './IconMediaObjectRatio1To216';
+import IconMediaObjectRatio1To220 from './IconMediaObjectRatio1To220';
+import IconMediaObjectRatio1To224 from './IconMediaObjectRatio1To224';
+import IconMediaObjectRatio1To232 from './IconMediaObjectRatio1To232'
 
 function IconMediaObjectRatio1To2(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

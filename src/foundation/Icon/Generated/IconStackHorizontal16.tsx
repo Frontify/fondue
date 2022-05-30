@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconStackHorizontal16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconStackHorizontal16(props: GeneratedIconProps): React.ReactElement<Ge
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M8.9 2.167c.423 0 .766.343.766.766v10.134a.767.767 0 0 1-.766.766H7.1a.767.767 0 0 1-.767-.766V2.933c0-.423.343-.766.767-.766h1.8Zm-.234 1H7.333v9.666h1.333V3.167Zm-4.093-1c.423 0 .767.343.767.766v10.134a.767.767 0 0 1-.767.766h-1.8a.767.767 0 0 1-.767-.766V2.933c0-.423.344-.766.767-.766h1.8Zm-.233 1H3.006v9.666H4.34V3.167Zm8.887-1c.423 0 .766.343.766.766v10.134a.767.767 0 0 1-.766.766h-1.8a.767.767 0 0 1-.767-.766V2.933c0-.423.343-.766.767-.766h1.8Zm-.234 1H11.66v9.666h1.333V3.167Z"
+                d="M3.389 3H2.5a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h.889a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5ZM2.5 2A1.5 1.5 0 0 0 1 3.5v9A1.5 1.5 0 0 0 2.5 14h.889a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5H2.5Zm11 1h-.889a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h.889a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5Zm-.889-1a1.5 1.5 0 0 0-1.5 1.5v9a1.5 1.5 0 0 0 1.5 1.5h.889a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 13.5 2h-.889ZM7.556 3h.888a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-.888a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5Zm-1.5.5a1.5 1.5 0 0 1 1.5-1.5h.888a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5h-.888a1.5 1.5 0 0 1-1.5-1.5v-9Z"
                 clipRule="evenodd"
             />
         </svg>

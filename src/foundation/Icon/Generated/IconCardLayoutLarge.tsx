@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconCardLayoutLarge12 from './IconCardLayoutLarge12';;
-import IconCardLayoutLarge16 from './IconCardLayoutLarge16';;
-import IconCardLayoutLarge20 from './IconCardLayoutLarge20';;
-import IconCardLayoutLarge24 from './IconCardLayoutLarge24';;
-import IconCardLayoutLarge32 from './IconCardLayoutLarge32';
+import IconCardLayoutLarge12 from './IconCardLayoutLarge12';
+import IconCardLayoutLarge16 from './IconCardLayoutLarge16';
+import IconCardLayoutLarge20 from './IconCardLayoutLarge20';
+import IconCardLayoutLarge24 from './IconCardLayoutLarge24';
+import IconCardLayoutLarge32 from './IconCardLayoutLarge32'
 
 function IconCardLayoutLarge(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

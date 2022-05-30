@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconMegaphone12 from './IconMegaphone12';;
-import IconMegaphone16 from './IconMegaphone16';;
-import IconMegaphone20 from './IconMegaphone20';;
-import IconMegaphone24 from './IconMegaphone24';;
-import IconMegaphone32 from './IconMegaphone32';
+import IconMegaphone12 from './IconMegaphone12';
+import IconMegaphone16 from './IconMegaphone16';
+import IconMegaphone20 from './IconMegaphone20';
+import IconMegaphone24 from './IconMegaphone24';
+import IconMegaphone32 from './IconMegaphone32'
 
 function IconMegaphone(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

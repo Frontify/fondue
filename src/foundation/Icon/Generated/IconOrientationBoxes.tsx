@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconOrientationBoxes12 from './IconOrientationBoxes12';;
-import IconOrientationBoxes16 from './IconOrientationBoxes16';;
-import IconOrientationBoxes20 from './IconOrientationBoxes20';;
-import IconOrientationBoxes24 from './IconOrientationBoxes24';;
-import IconOrientationBoxes32 from './IconOrientationBoxes32';
+import IconOrientationBoxes12 from './IconOrientationBoxes12';
+import IconOrientationBoxes16 from './IconOrientationBoxes16';
+import IconOrientationBoxes20 from './IconOrientationBoxes20';
+import IconOrientationBoxes24 from './IconOrientationBoxes24';
+import IconOrientationBoxes32 from './IconOrientationBoxes32'
 
 function IconOrientationBoxes(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

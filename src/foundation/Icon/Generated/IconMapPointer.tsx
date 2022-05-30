@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconMapPointer12 from './IconMapPointer12';;
-import IconMapPointer16 from './IconMapPointer16';;
-import IconMapPointer20 from './IconMapPointer20';;
-import IconMapPointer24 from './IconMapPointer24';;
-import IconMapPointer32 from './IconMapPointer32';
+import IconMapPointer12 from './IconMapPointer12';
+import IconMapPointer16 from './IconMapPointer16';
+import IconMapPointer20 from './IconMapPointer20';
+import IconMapPointer24 from './IconMapPointer24';
+import IconMapPointer32 from './IconMapPointer32'
 
 function IconMapPointer(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

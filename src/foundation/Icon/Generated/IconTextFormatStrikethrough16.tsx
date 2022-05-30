@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconTextFormatStrikethrough16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,15 +12,12 @@ function IconTextFormatStrikethrough16(props: GeneratedIconProps): React.ReactEl
             name="IconTextFormatStrikethrough16"
             {...props}
         >
-            <g fill="currentColor">
-                <path d="M10.052 12.257H8.513V9.629H7.487v2.628H5.95v1.025h4.103v-1.025Z" />
-                <path
-                    fillRule="evenodd"
-                    d="M2.833 8a.5.5 0 0 1 .5-.5h9.334a.5.5 0 1 1 0 1H3.333a.5.5 0 0 1-.5-.5Z"
-                    clipRule="evenodd"
-                />
-                <path d="M7.498 6.258h1.004V3.744h3.161v1.025h1.004V2.718H3.333v2.051h1.004V3.744h3.161v2.514Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M4 2h9v1.5a.5.5 0 0 1-1 0V3H9v3a.5.5 0 0 1-1 0V3H5v.5a.5.5 0 0 1-1 0V2Zm5 9a.5.5 0 0 0-1 0v2H6.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1H9v-2ZM5 8a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1H5Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

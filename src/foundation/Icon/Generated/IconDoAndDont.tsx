@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconDoAndDont12 from './IconDoAndDont12';;
-import IconDoAndDont16 from './IconDoAndDont16';;
-import IconDoAndDont20 from './IconDoAndDont20';;
-import IconDoAndDont24 from './IconDoAndDont24';;
-import IconDoAndDont32 from './IconDoAndDont32';
+import IconDoAndDont12 from './IconDoAndDont12';
+import IconDoAndDont16 from './IconDoAndDont16';
+import IconDoAndDont20 from './IconDoAndDont20';
+import IconDoAndDont24 from './IconDoAndDont24';
+import IconDoAndDont32 from './IconDoAndDont32'
 
 function IconDoAndDont(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

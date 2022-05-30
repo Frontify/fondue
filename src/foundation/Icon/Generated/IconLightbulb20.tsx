@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconLightbulb20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,14 +12,12 @@ function IconLightbulb20(props: GeneratedIconProps): React.ReactElement<Generate
             name="IconLightbulb20"
             {...props}
         >
-            <g fill="currentColor">
-                <path
-                    fillRule="evenodd"
-                    d="M4.708 7.083a5.292 5.292 0 1 1 8.5 4.209V12.5a2.375 2.375 0 0 1-2.375 2.375H9.166A2.375 2.375 0 0 1 6.791 12.5v-1.208a5.285 5.285 0 0 1-2.083-4.209Zm3.5 5.417c0 .53.429.958.958.958h1.667c.53 0 .958-.429.958-.958v-1.96l.322-.21a3.875 3.875 0 1 0-4.226 0l.321.21v1.96Z"
-                    clipRule="evenodd"
-                />
-                <path d="M12.375 16.666a.708.708 0 0 1-.709.709H8.333a.708.708 0 1 1 0-1.417h3.333c.391 0 .709.317.709.708Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M12.252 10.841a1.5 1.5 0 0 0-.752 1.3v2.284h-3v-2.284a1.5 1.5 0 0 0-.752-1.3 4.517 4.517 0 0 1-.563-.383A4.448 4.448 0 0 1 5.5 6.97C5.5 4.508 7.508 2.5 10 2.5s4.5 2.008 4.5 4.47a4.448 4.448 0 0 1-1.685 3.488 4.51 4.51 0 0 1-.563.383ZM7 14.425v-2.284a6.006 6.006 0 0 1-.75-.51A5.948 5.948 0 0 1 4 6.97C4 3.672 6.686 1 10 1s6 2.673 6 5.97a5.948 5.948 0 0 1-2.25 4.66c-.236.19-.487.36-.75.511v2.284a1.5 1.5 0 0 1-1.5 1.5h-3a1.5 1.5 0 0 1-1.5-1.5Zm1.125 2.99a.75.75 0 0 0 0 1.5h3.75a.75.75 0 0 0 0-1.5h-3.75Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

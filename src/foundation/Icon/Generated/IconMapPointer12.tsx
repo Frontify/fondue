@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconMapPointer12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,10 +12,12 @@ function IconMapPointer12(props: GeneratedIconProps): React.ReactElement<Generat
             name="IconMapPointer12"
             {...props}
         >
-            <g fill="currentColor" fillRule="evenodd" clipRule="evenodd">
-                <path d="M7.75 4.727a1.75 1.75 0 1 1-3.5 0 1.75 1.75 0 0 1 3.5 0Zm-.75 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
-                <path d="M10.25 4.35c0 3.247-2.555 5.757-3.703 6.721a.842.842 0 0 1-1.094 0C4.305 10.107 1.75 7.597 1.75 4.35 1.75 2.224 3.653.5 6 .5s4.25 1.724 4.25 3.85Zm-.75 0c0 1.424-.561 2.718-1.292 3.796a11.867 11.867 0 0 1-2.143 2.35.1.1 0 0 1-.065.027.1.1 0 0 1-.065-.026 11.867 11.867 0 0 1-2.143-2.35C3.062 7.067 2.5 5.773 2.5 4.35c0-1.644 1.496-3.1 3.5-3.1s3.5 1.456 3.5 3.1Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M10 4.615c0 1.284-.73 2.92-1.737 4.297-.491.672-1.012 1.23-1.473 1.61-.23.19-.428.32-.583.4a.867.867 0 0 1-.195.076.878.878 0 0 1-.196-.077 3.347 3.347 0 0 1-.587-.4c-.463-.38-.987-.94-1.481-1.612C2.735 7.532 2 5.897 2 4.615 2 2.695 3.717 1 6.013 1 8.3 1 10 2.689 10 4.615Zm1 0C11 7.8 7.516 12 6.013 12 4.509 12 1 7.8 1 4.615 1 2.066 3.244 0 6.013 0 8.78 0 11 2.066 11 4.615Zm-4.143.314a.929.929 0 1 1-1.857 0 .929.929 0 0 1 1.857 0Zm1 0a1.929 1.929 0 1 1-3.857 0 1.929 1.929 0 0 1 3.857 0Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

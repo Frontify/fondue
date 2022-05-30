@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconTrashBin24(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,14 +12,12 @@ function IconTrashBin24(props: GeneratedIconProps): React.ReactElement<Generated
             name="IconTrashBin24"
             {...props}
         >
-            <g fill="currentColor">
-                <path d="M8.754 10.182a.91.91 0 0 1 1.819 0v7.272a.91.91 0 1 1-1.819 0v-7.272Zm5.455-.909a.91.91 0 0 0-.91.909v7.272a.91.91 0 1 0 1.819 0v-7.272a.91.91 0 0 0-.91-.91Z" />
-                <path
-                    fillRule="evenodd"
-                    d="M13.754 2h-3.636A1.818 1.818 0 0 0 8.3 3.818v1.818H4.209a.91.91 0 1 0 0 1.819h.454v11.818A2.727 2.727 0 0 0 7.391 22h9.09a2.727 2.727 0 0 0 2.728-2.727V7.455h.633a.91.91 0 1 0 0-1.819h-4.27V3.818A1.818 1.818 0 0 0 13.755 2ZM6.482 7.455H17.39v11.818a.91.91 0 0 1-.91.909H7.39a.91.91 0 0 1-.91-.91V7.456Zm3.636-1.819V3.818h3.636v1.818h-3.636Z"
-                    clipRule="evenodd"
-                />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M10.5 4.5h3a.5.5 0 0 1 .5.5v1h-4V5a.5.5 0 0 1 .5-.5ZM8.5 6V5a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1H19a.75.75 0 0 1 0 1.5h-.5V18a3 3 0 0 1-3 3h-7a3 3 0 0 1-3-3V7.5H5A.75.75 0 0 1 5 6h3.5Zm7 1.5H7V18a1.5 1.5 0 0 0 1.5 1.5h7A1.5 1.5 0 0 0 17 18V7.5h-1.5Zm-6 9.5v-6.5a.75.75 0 0 1 1.5 0V17a.75.75 0 0 1-1.5 0Zm3.5-6.5V17a.75.75 0 0 0 1.5 0v-6.5a.75.75 0 0 0-1.5 0Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

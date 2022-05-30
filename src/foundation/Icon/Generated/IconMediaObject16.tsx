@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconMediaObject16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,14 +12,12 @@ function IconMediaObject16(props: GeneratedIconProps): React.ReactElement<Genera
             name="IconMediaObject16"
             {...props}
         >
-            <g fill="currentColor">
-                <path
-                    fillRule="evenodd"
-                    d="M7.723 2.667h-4.26c-1.176 0-2.13.955-2.13 2.133v6.4c0 1.178.954 2.133 2.13 2.133h4.26c1.176 0 2.13-.955 2.13-2.133V4.8a2.132 2.132 0 0 0-2.13-2.133ZM2.398 4.8c0-.59.477-1.067 1.065-1.067h4.26c.588 0 1.065.478 1.065 1.067v6.4c0 .589-.477 1.067-1.065 1.067h-4.26A1.066 1.066 0 0 1 2.398 11.2V4.8Z"
-                    clipRule="evenodd"
-                />
-                <path d="M11.184 5.333a.533.533 0 0 1 0-1.066h2.95a.533.533 0 0 1 0 1.066h-2.95Zm-.532 1.6c0 .295.238.534.532.534h1.885a.533.533 0 0 0 0-1.067h-1.885a.533.533 0 0 0-.532.533Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M8 3H3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1ZM3 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H3Zm8.5 2.5A.5.5 0 0 1 12 4h2.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5ZM12 7a.5.5 0 0 0 0 1h1.5a.5.5 0 0 0 0-1H12Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

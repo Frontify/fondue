@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconDividerBlank12 from './IconDividerBlank12';;
-import IconDividerBlank16 from './IconDividerBlank16';;
-import IconDividerBlank20 from './IconDividerBlank20';;
-import IconDividerBlank24 from './IconDividerBlank24';;
-import IconDividerBlank32 from './IconDividerBlank32';
+import IconDividerBlank12 from './IconDividerBlank12';
+import IconDividerBlank16 from './IconDividerBlank16';
+import IconDividerBlank20 from './IconDividerBlank20';
+import IconDividerBlank24 from './IconDividerBlank24';
+import IconDividerBlank32 from './IconDividerBlank32'
 
 function IconDividerBlank(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

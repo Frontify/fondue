@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconStackVertical24(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconStackVertical24(props: GeneratedIconProps): React.ReactElement<Gene
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M20.75 13.35a1.15 1.15 0 0 1-1.15 1.15H4.4a1.15 1.15 0 0 1-1.15-1.15v-2.7c0-.635.515-1.15 1.15-1.15h15.2c.635 0 1.15.515 1.15 1.15v2.7Zm-1.5-.35v-2H4.75v2h14.5Zm1.5-6.14a1.15 1.15 0 0 1-1.15 1.15H4.4a1.15 1.15 0 0 1-1.15-1.15v-2.7c0-.635.515-1.15 1.15-1.15h15.2c.635 0 1.15.515 1.15 1.15v2.7Zm-1.5-.35v-2H4.75v2h14.5Zm1.5 13.33a1.15 1.15 0 0 1-1.15 1.15H4.4a1.15 1.15 0 0 1-1.15-1.15v-2.7c0-.635.515-1.15 1.15-1.15h15.2c.635 0 1.15.515 1.15 1.15v2.7Zm-1.5-.35v-2H4.75v2h14.5Z"
+                d="M4.5 4.5h15v2h-15v-2ZM3 4.5A1.5 1.5 0 0 1 4.5 3h15A1.5 1.5 0 0 1 21 4.5v2A1.5 1.5 0 0 1 19.5 8h-15A1.5 1.5 0 0 1 3 6.5v-2ZM19.5 11h-15v2h15v-2Zm-15-1.5A1.5 1.5 0 0 0 3 11v2a1.5 1.5 0 0 0 1.5 1.5h15A1.5 1.5 0 0 0 21 13v-2a1.5 1.5 0 0 0-1.5-1.5h-15Zm15 8h-15v2h15v-2ZM4.5 16A1.5 1.5 0 0 0 3 17.5v2A1.5 1.5 0 0 0 4.5 21h15a1.5 1.5 0 0 0 1.5-1.5v-2a1.5 1.5 0 0 0-1.5-1.5h-15Z"
                 clipRule="evenodd"
             />
         </svg>

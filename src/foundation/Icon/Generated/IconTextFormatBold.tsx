@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconTextFormatBold12 from './IconTextFormatBold12';;
-import IconTextFormatBold16 from './IconTextFormatBold16';;
-import IconTextFormatBold20 from './IconTextFormatBold20';;
-import IconTextFormatBold24 from './IconTextFormatBold24';;
-import IconTextFormatBold32 from './IconTextFormatBold32';
+import IconTextFormatBold12 from './IconTextFormatBold12';
+import IconTextFormatBold16 from './IconTextFormatBold16';
+import IconTextFormatBold20 from './IconTextFormatBold20';
+import IconTextFormatBold24 from './IconTextFormatBold24';
+import IconTextFormatBold32 from './IconTextFormatBold32'
 
 function IconTextFormatBold(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconTextFormatUnderline12 from './IconTextFormatUnderline12';;
-import IconTextFormatUnderline16 from './IconTextFormatUnderline16';;
-import IconTextFormatUnderline20 from './IconTextFormatUnderline20';;
-import IconTextFormatUnderline24 from './IconTextFormatUnderline24';;
-import IconTextFormatUnderline32 from './IconTextFormatUnderline32';
+import IconTextFormatUnderline12 from './IconTextFormatUnderline12';
+import IconTextFormatUnderline16 from './IconTextFormatUnderline16';
+import IconTextFormatUnderline20 from './IconTextFormatUnderline20';
+import IconTextFormatUnderline24 from './IconTextFormatUnderline24';
+import IconTextFormatUnderline32 from './IconTextFormatUnderline32'
 
 function IconTextFormatUnderline(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

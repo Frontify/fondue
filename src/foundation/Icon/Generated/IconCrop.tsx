@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconCrop12 from './IconCrop12';;
-import IconCrop16 from './IconCrop16';;
-import IconCrop20 from './IconCrop20';;
-import IconCrop24 from './IconCrop24';;
-import IconCrop32 from './IconCrop32';
+import IconCrop12 from './IconCrop12';
+import IconCrop16 from './IconCrop16';
+import IconCrop20 from './IconCrop20';
+import IconCrop24 from './IconCrop24';
+import IconCrop32 from './IconCrop32'
 
 function IconCrop(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

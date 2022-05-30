@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconListIndented12 from './IconListIndented12';;
-import IconListIndented16 from './IconListIndented16';;
-import IconListIndented20 from './IconListIndented20';;
-import IconListIndented24 from './IconListIndented24';;
-import IconListIndented32 from './IconListIndented32';
+import IconListIndented12 from './IconListIndented12';
+import IconListIndented16 from './IconListIndented16';
+import IconListIndented20 from './IconListIndented20';
+import IconListIndented24 from './IconListIndented24';
+import IconListIndented32 from './IconListIndented32'
 
 function IconListIndented(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

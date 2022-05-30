@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconSpeakerOff12 from './IconSpeakerOff12';;
-import IconSpeakerOff16 from './IconSpeakerOff16';;
-import IconSpeakerOff20 from './IconSpeakerOff20';;
-import IconSpeakerOff24 from './IconSpeakerOff24';;
-import IconSpeakerOff32 from './IconSpeakerOff32';
+import IconSpeakerOff12 from './IconSpeakerOff12';
+import IconSpeakerOff16 from './IconSpeakerOff16';
+import IconSpeakerOff20 from './IconSpeakerOff20';
+import IconSpeakerOff24 from './IconSpeakerOff24';
+import IconSpeakerOff32 from './IconSpeakerOff32'
 
 function IconSpeakerOff(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

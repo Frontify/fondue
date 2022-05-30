@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconSpeechBubbleQuote12 from './IconSpeechBubbleQuote12';;
-import IconSpeechBubbleQuote16 from './IconSpeechBubbleQuote16';;
-import IconSpeechBubbleQuote20 from './IconSpeechBubbleQuote20';;
-import IconSpeechBubbleQuote24 from './IconSpeechBubbleQuote24';;
-import IconSpeechBubbleQuote32 from './IconSpeechBubbleQuote32';
+import IconSpeechBubbleQuote12 from './IconSpeechBubbleQuote12';
+import IconSpeechBubbleQuote16 from './IconSpeechBubbleQuote16';
+import IconSpeechBubbleQuote20 from './IconSpeechBubbleQuote20';
+import IconSpeechBubbleQuote24 from './IconSpeechBubbleQuote24';
+import IconSpeechBubbleQuote32 from './IconSpeechBubbleQuote32'
 
 function IconSpeechBubbleQuote(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconEraser12 from './IconEraser12';;
-import IconEraser16 from './IconEraser16';;
-import IconEraser20 from './IconEraser20';;
-import IconEraser24 from './IconEraser24';;
-import IconEraser32 from './IconEraser32';
+import IconEraser12 from './IconEraser12';
+import IconEraser16 from './IconEraser16';
+import IconEraser20 from './IconEraser20';
+import IconEraser24 from './IconEraser24';
+import IconEraser32 from './IconEraser32'
 
 function IconEraser(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

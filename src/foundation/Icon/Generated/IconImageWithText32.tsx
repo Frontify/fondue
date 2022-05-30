@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconImageWithText32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,11 +12,12 @@ function IconImageWithText32(props: GeneratedIconProps): React.ReactElement<Gene
             name="IconImageWithText32"
             {...props}
         >
-            <g fill="currentColor" fillRule="evenodd" clipRule="evenodd">
-                <path d="M14.667 10.333a1 1 0 0 1-1 1h-6a1 1 0 0 1 0-2h6a1 1 0 0 1 1 1Zm-2.667 8a1 1 0 0 1-1 1H7.667a1 1 0 0 1 0-2H11a1 1 0 0 1 1 1Zm2.667-4a1 1 0 0 1-1 1h-6a1 1 0 0 1 0-2h6a1 1 0 0 1 1 1Zm4.666-1a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm2-4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
-                <path d="M26.667 7.333H5.333A.667.667 0 0 0 4.667 8v16c0 .368.298.667.666.667h21.334a.667.667 0 0 0 .666-.667V8a.667.667 0 0 0-.666-.667Zm-21.334-2A2.667 2.667 0 0 0 2.667 8v16a2.667 2.667 0 0 0 2.666 2.667h21.334A2.667 2.667 0 0 0 29.333 24V8a2.667 2.667 0 0 0-2.666-2.667H5.333Z" />
-                <path d="m7.958 25.006 9.086-5.592a2.33 2.33 0 0 1 1.63-.31l9.152 1.62-.349 1.969-9.152-1.62a.334.334 0 0 0-.233.044L9.006 26.71l-1.048-1.703Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M7 8h18a2 2 0 0 1 2 2v10.962l-8.732-2.425-.45-.125-.385.264L9.69 24H7a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2Zm19.732 14.963.018.005A2 2 0 0 1 25 24H13.22l4.962-3.412 8.55 2.375ZM25 26H7a4 4 0 0 1-4-4V10a4 4 0 0 1 4-4h18a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4Zm-2-12.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm2 0a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0ZM8 10a1 1 0 1 0 0 2h5a1 1 0 1 0 0-2H8Zm-1 5a1 1 0 0 1 1-1h5a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm1 3a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H8Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

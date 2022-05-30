@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconLockOpen16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,14 +12,12 @@ function IconLockOpen16(props: GeneratedIconProps): React.ReactElement<Generated
             name="IconLockOpen16"
             {...props}
         >
-            <g fill="currentColor">
-                <path d="M7.467 10.63a1.11 1.11 0 1 1 1.11 0v.703a.556.556 0 0 1-1.11 0v-.704Z" />
-                <path
-                    fillRule="evenodd"
-                    d="M10.245 5.778V4.11c0-.92-.747-1.667-1.667-1.667H7.467c-.92 0-1.667.747-1.667 1.667a.556.556 0 1 1-1.111 0 2.778 2.778 0 0 1 2.778-2.778h1.11a2.778 2.778 0 0 1 2.779 2.778v1.667h.555c.92 0 1.667.746 1.667 1.666V13c0 .92-.746 1.667-1.667 1.667H4.133c-.92 0-1.666-.746-1.666-1.667V7.444c0-.92.746-1.666 1.666-1.666h6.112Zm-6.112 1.11a.556.556 0 0 0-.555.556V13c0 .307.249.556.555.556h7.778a.556.556 0 0 0 .556-.556V7.444a.556.556 0 0 0-.556-.555H4.133Z"
-                    clipRule="evenodd"
-                />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M7.06 2.588c-.337.087-.632.24-.805.483a5.376 5.376 0 0 0-.285.433.5.5 0 0 1-.966-.23l.496.06c-.497-.06-.496-.06-.496-.061v-.006l.001-.007.002-.013a.5.5 0 0 1 .04-.128c.015-.038.037-.08.065-.13a6.24 6.24 0 0 1 .327-.496c.368-.519.927-.759 1.37-.873.451-.116.853-.122.996-.12h.034l.047.001A3.114 3.114 0 0 1 11 4.616V5.8h1a2 2 0 0 1 2 2V13a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7.8a2 2 0 0 1 2-2h6V4.616A2.114 2.114 0 0 0 7.81 2.5h-.02c-.098-.002-.4.002-.73.087ZM12 6.8H4a1 1 0 0 0-1 1V13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V7.8a1 1 0 0 0-1-1Zm-4 4.7a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

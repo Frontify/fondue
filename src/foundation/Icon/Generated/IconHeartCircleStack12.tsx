@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconHeartCircleStack12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,9 +12,20 @@ function IconHeartCircleStack12(props: GeneratedIconProps): React.ReactElement<G
             name="IconHeartCircleStack12"
             {...props}
         >
-            <g fill="currentColor" fillRule="evenodd" clipRule="evenodd">
-                <path d="M7.132 4.55c.667.449.674 1.392.245 2.31-.396.847-1.432 1.876-2.104 1.897h-.032c-.667-.021-1.704-1.05-2.1-1.896-.429-.919-.422-1.862.245-2.31.62-.417 1.268-.282 1.873.324.605-.606 1.253-.741 1.873-.324Zm-.413.615c.276.186.28.754-.013 1.382-.29.62-1.136 1.46-1.454 1.47-.304-.01-1.15-.85-1.44-1.47-.293-.628-.289-1.196-.013-1.382.343-.23.696-.108 1.168.498a.37.37 0 0 0 .584 0c.473-.606.825-.728 1.168-.498Z" />
-                <path d="M7.863 9.721a4.26 4.26 0 1 1-3.691-7.49l-.007-.008a4.26 4.26 0 1 1 3.698 7.499ZM9.07 8.253a3.518 3.518 0 0 0-3.031-6.09 4.26 4.26 0 0 1 3.03 6.09ZM5.259 9.869a3.519 3.519 0 1 0 0-7.037 3.519 3.519 0 0 0 0 7.037Z" />
+            <g fill="none">
+                <g clipPath="url(#prefix__a)">
+                    <path
+                        fill="currentColor"
+                        fillRule="evenodd"
+                        d="M9.392 9.392a5 5 0 1 0-6.784-6.784 5 5 0 1 0 6.784 6.784Zm.56-1.692A4 4 0 0 0 4.3 2.049 5 5 0 0 1 9.951 7.7ZM5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM3.377 6.023c-.246.246-.261.43-.213.635.068.287.29.655.662 1.065a8.26 8.26 0 0 0 1.129 1.006L5 8.763l.045-.034a8.26 8.26 0 0 0 1.13-1.006c.372-.41.593-.778.66-1.065.049-.206.034-.39-.212-.635-.176-.176-.278-.192-.3-.194-.031-.004-.085-.001-.175.043a1.29 1.29 0 0 0-.359.292 1 1 0 0 1-1.592-.016 1.29 1.29 0 0 0-.345-.276c-.09-.044-.144-.047-.176-.043-.02.002-.123.018-.3.194ZM5.79 4.937c-.477.202-.79.613-.79.613s-.313-.411-.79-.613c-.42-.178-.968-.194-1.54.379C.672 7.313 5 9.976 5 9.976s4.328-2.663 2.33-4.66c-.572-.573-1.12-.557-1.54-.38Z"
+                        clipRule="evenodd"
+                    />
+                </g>
+                <defs>
+                    <clipPath id="prefix__a">
+                        <path fill="#fff" d="M0 0h12v12H0z" />
+                    </clipPath>
+                </defs>
             </g>
         </svg>
     );

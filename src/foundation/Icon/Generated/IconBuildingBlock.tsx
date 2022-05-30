@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconBuildingBlock12 from './IconBuildingBlock12';;
-import IconBuildingBlock16 from './IconBuildingBlock16';;
-import IconBuildingBlock20 from './IconBuildingBlock20';;
-import IconBuildingBlock24 from './IconBuildingBlock24';;
-import IconBuildingBlock32 from './IconBuildingBlock32';
+import IconBuildingBlock12 from './IconBuildingBlock12';
+import IconBuildingBlock16 from './IconBuildingBlock16';
+import IconBuildingBlock20 from './IconBuildingBlock20';
+import IconBuildingBlock24 from './IconBuildingBlock24';
+import IconBuildingBlock32 from './IconBuildingBlock32'
 
 function IconBuildingBlock(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

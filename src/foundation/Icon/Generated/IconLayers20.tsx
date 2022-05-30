@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconLayers20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,15 +12,12 @@ function IconLayers20(props: GeneratedIconProps): React.ReactElement<GeneratedIc
             name="IconLayers20"
             {...props}
         >
-            <g fill="currentColor">
-                <path
-                    fillRule="evenodd"
-                    d="m17.43 6.35-7.094-3.767a.708.708 0 0 0-.666 0L2.573 6.348a.754.754 0 0 0 .009 1.327l7.11 3.645a.708.708 0 0 0 .649 0l7.081-3.644a.754.754 0 0 0 .008-1.327Zm-7.414 3.472-5.51-2.824 5.497-2.916L15.5 7l-5.484 2.822Z"
-                    clipRule="evenodd"
-                />
-                <path d="M2.066 10.514a.754.754 0 0 1-.322-1 .716.716 0 0 1 .973-.33L10 12.946l7.283-3.762a.716.716 0 0 1 .973.33.754.754 0 0 1-.322 1l-7.6 3.926a.718.718 0 0 1-.624.02.655.655 0 0 1-.043-.02l-7.601-3.926Z" />
-                <path d="M2.066 13.49a.754.754 0 0 1-.322-.998.716.716 0 0 1 .973-.33L10 15.921l7.283-3.76a.716.716 0 0 1 .973.33.754.754 0 0 1-.322.999l-7.6 3.925a.718.718 0 0 1-.624.022.709.709 0 0 1-.043-.021L2.066 13.49Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="m15.315 6.622-5.07-2.56a.5.5 0 0 0-.45 0l-5.07 2.56 5.07 2.56a.5.5 0 0 0 .45 0l5.07-2.56Zm-4.393-3.9a2 2 0 0 0-1.804 0L2.812 5.909a.8.8 0 0 0 0 1.428l6.306 3.185a2 2 0 0 0 1.804 0l6.306-3.185a.8.8 0 0 0 0-1.428l-6.306-3.185ZM2.034 9.635A.75.75 0 0 1 3.04 9.3l6.98 3.49 6.981-3.49a.75.75 0 0 1 .67 1.341l-7.315 3.658-.336.168-.335-.168-7.316-3.658a.75.75 0 0 1-.335-1.006ZM3.04 12.58a.75.75 0 1 0-.67 1.342l7.315 3.658.335.168.336-.168 7.316-3.658A.75.75 0 0 0 17 12.579l-6.98 3.49-6.981-3.49Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

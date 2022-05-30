@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconLockClosed12 from './IconLockClosed12';;
-import IconLockClosed16 from './IconLockClosed16';;
-import IconLockClosed20 from './IconLockClosed20';;
-import IconLockClosed24 from './IconLockClosed24';;
-import IconLockClosed32 from './IconLockClosed32';
+import IconLockClosed12 from './IconLockClosed12';
+import IconLockClosed16 from './IconLockClosed16';
+import IconLockClosed20 from './IconLockClosed20';
+import IconLockClosed24 from './IconLockClosed24';
+import IconLockClosed32 from './IconLockClosed32'
 
 function IconLockClosed(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

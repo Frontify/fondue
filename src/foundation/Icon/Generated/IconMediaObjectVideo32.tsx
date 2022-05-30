@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconMediaObjectVideo32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,10 +12,12 @@ function IconMediaObjectVideo32(props: GeneratedIconProps): React.ReactElement<G
             name="IconMediaObjectVideo32"
             {...props}
         >
-            <g fill="currentColor" fillRule="evenodd" clipRule="evenodd">
-                <path d="M7.814 12.496a1.267 1.267 0 0 1 1.967-1.055l5.196 3.447c.75.497.757 1.594.015 2.101l-5.199 3.552a1.267 1.267 0 0 1-1.98-1.047l.002-6.998Zm2 1.367-.001 4.242 3.151-2.152-3.15-2.09Zm19.519-6.196a1 1 0 0 1-1 1h-4.648a1 1 0 1 1 0-2h4.648a1 1 0 0 1 1 1Zm0 8a1 1 0 0 1-1 1h-4.648a1 1 0 1 1 0-2h4.648a1 1 0 0 1 1 1Zm-1.9-4a1 1 0 0 1-1 1h-2.748a1 1 0 1 1 0-2h2.748a1 1 0 0 1 1 1Zm0 8a1 1 0 0 1-1 1h-2.748a1 1 0 1 1 0-2h2.748a1 1 0 0 1 1 1Z" />
-                <path d="M17.333 7.333h-12A.667.667 0 0 0 4.666 8v16c0 .368.299.667.667.667h12A.667.667 0 0 0 18 24V8a.667.667 0 0 0-.667-.667Zm-12-2A2.667 2.667 0 0 0 2.666 8v16a2.667 2.667 0 0 0 2.667 2.667h12A2.667 2.667 0 0 0 20 24V8a2.667 2.667 0 0 0-2.667-2.667h-12Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M7 7h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2ZM3 9a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9Zm19-1a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-6Zm-1 5a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2h-4a1 1 0 0 1-1-1ZM9.332 20.314l4.599-3.066a1.5 1.5 0 0 0 0-2.496l-4.599-3.066C8.335 11.022 7 11.736 7 12.934v6.132c0 1.198 1.335 1.912 2.332 1.248ZM9 13.868 12.197 16 9 18.131v-4.263Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconCrossCircleBox12 from './IconCrossCircleBox12';;
-import IconCrossCircleBox16 from './IconCrossCircleBox16';;
-import IconCrossCircleBox20 from './IconCrossCircleBox20';;
-import IconCrossCircleBox24 from './IconCrossCircleBox24';;
-import IconCrossCircleBox32 from './IconCrossCircleBox32';
+import IconCrossCircleBox12 from './IconCrossCircleBox12';
+import IconCrossCircleBox16 from './IconCrossCircleBox16';
+import IconCrossCircleBox20 from './IconCrossCircleBox20';
+import IconCrossCircleBox24 from './IconCrossCircleBox24';
+import IconCrossCircleBox32 from './IconCrossCircleBox32'
 
 function IconCrossCircleBox(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

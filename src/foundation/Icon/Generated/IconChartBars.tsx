@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconChartBars12 from './IconChartBars12';;
-import IconChartBars16 from './IconChartBars16';;
-import IconChartBars20 from './IconChartBars20';;
-import IconChartBars24 from './IconChartBars24';;
-import IconChartBars32 from './IconChartBars32';
+import IconChartBars12 from './IconChartBars12';
+import IconChartBars16 from './IconChartBars16';
+import IconChartBars20 from './IconChartBars20';
+import IconChartBars24 from './IconChartBars24';
+import IconChartBars32 from './IconChartBars32'
 
 function IconChartBars(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

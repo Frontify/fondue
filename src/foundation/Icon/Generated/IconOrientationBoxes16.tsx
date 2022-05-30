@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconOrientationBoxes16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconOrientationBoxes16(props: GeneratedIconProps): React.ReactElement<G
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M3.555 1.333h3.89c1.227 0 2.222.995 2.222 2.223v2.777h2.777c1.228 0 2.223.995 2.223 2.223v3.889a2.222 2.222 0 0 1-2.223 2.222H5.778a2.222 2.222 0 0 1-2.222-2.223 2.222 2.222 0 0 1-2.223-2.222V3.556c0-1.228.995-2.223 2.222-2.223Zm2.223 12.223a1.111 1.111 0 0 1-1.111-1.111h2.777a2.222 2.222 0 0 0 2.223-2.223V7.445h2.777a1.11 1.11 0 0 1 1.111 1.11v3.89a1.11 1.11 0 0 1-1.11 1.11H5.777Zm-3.334-10c0-.614.498-1.111 1.111-1.111h3.89c.613 0 1.11.497 1.11 1.11v6.667a1.11 1.11 0 0 1-1.11 1.111h-3.89a1.111 1.111 0 0 1-1.11-1.11V3.555Z"
+                d="M3 2h4a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm1 11H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4h4.5a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Zm5-5v3a2 2 0 0 1-2 2H5a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H9Z"
                 clipRule="evenodd"
             />
         </svg>

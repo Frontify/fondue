@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconTextAlignmentCentre12 from './IconTextAlignmentCentre12';;
-import IconTextAlignmentCentre16 from './IconTextAlignmentCentre16';;
-import IconTextAlignmentCentre20 from './IconTextAlignmentCentre20';;
-import IconTextAlignmentCentre24 from './IconTextAlignmentCentre24';;
-import IconTextAlignmentCentre32 from './IconTextAlignmentCentre32';
+import IconTextAlignmentCentre12 from './IconTextAlignmentCentre12';
+import IconTextAlignmentCentre16 from './IconTextAlignmentCentre16';
+import IconTextAlignmentCentre20 from './IconTextAlignmentCentre20';
+import IconTextAlignmentCentre24 from './IconTextAlignmentCentre24';
+import IconTextAlignmentCentre32 from './IconTextAlignmentCentre32'
 
 function IconTextAlignmentCentre(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconHeartCircle20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconHeartCircle20(props: GeneratedIconProps): React.ReactElement<Genera
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M10 18.333a8.333 8.333 0 1 1 0-16.666 8.333 8.333 0 0 1 0 16.666Zm4.447-7.41c.898-1.97.883-3.964-.456-4.89-1.315-.907-2.689-.568-3.99.858-1.303-1.426-2.677-1.765-3.991-.857-1.34.925-1.354 2.919-.457 4.89.835 1.835 3.049 4.09 4.413 4.135h.06c1.372-.044 3.586-2.3 4.421-4.135Zm-1.133-3.91c.727.502.737 1.908.05 3.418-.667 1.466-2.578 3.412-3.38 3.438-.77-.027-2.68-1.973-3.348-3.438-.687-1.51-.677-2.916.05-3.417.857-.592 1.742-.278 2.84 1.168.238.314.71.314.948 0 1.098-1.446 1.983-1.76 2.84-1.169ZM17.143 10a7.143 7.143 0 1 1-14.286 0 7.143 7.143 0 0 1 14.286 0Z"
+                d="M17.5 10a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Zm1.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM6.866 8.03c.343-.343.558-.38.638-.386.105-.008.258.02.472.144.216.125.42.307.582.48a3.157 3.157 0 0 1 .21.249l.003.004a1.5 1.5 0 0 0 2.458 0l.004-.004.036-.048a3.1 3.1 0 0 1 .173-.2c.162-.174.366-.356.582-.481.214-.124.367-.152.472-.144.08.006.296.043.638.385.519.519.572.956.462 1.424-.139.59-.577 1.298-1.26 2.05-.662.727-1.442 1.375-2.075 1.85l-.261.192-.261-.192c-.633-.475-1.413-1.123-2.075-1.85-.683-.752-1.121-1.46-1.26-2.05-.11-.468-.057-.905.462-1.424ZM10 7.66s.419-.607 1.084-1.053c.787-.528 1.919-.832 3.11.36C17.79 10.564 10 15.358 10 15.358s-7.79-4.794-4.195-8.39c1.192-1.192 2.324-.888 3.111-.36C9.581 7.054 10 7.66 10 7.66Z"
                 clipRule="evenodd"
             />
         </svg>

@@ -1,17 +1,17 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconPin12Filled from './IconPin12Filled';;
-import IconPin12 from './IconPin12';;
-import IconPin16Filled from './IconPin16Filled';;
-import IconPin16 from './IconPin16';;
-import IconPin20Filled from './IconPin20Filled';;
-import IconPin20 from './IconPin20';;
-import IconPin24Filled from './IconPin24Filled';;
-import IconPin24 from './IconPin24';;
-import IconPin32Filled from './IconPin32Filled';;
-import IconPin32 from './IconPin32';
+import IconPin12Filled from './IconPin12Filled';
+import IconPin12 from './IconPin12';
+import IconPin16Filled from './IconPin16Filled';
+import IconPin16 from './IconPin16';
+import IconPin20Filled from './IconPin20Filled';
+import IconPin20 from './IconPin20';
+import IconPin24Filled from './IconPin24Filled';
+import IconPin24 from './IconPin24';
+import IconPin32Filled from './IconPin32Filled';
+import IconPin32 from './IconPin32'
 
 function IconPin(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

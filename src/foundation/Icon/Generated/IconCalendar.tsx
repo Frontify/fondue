@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconCalendar12 from './IconCalendar12';;
-import IconCalendar16 from './IconCalendar16';;
-import IconCalendar20 from './IconCalendar20';;
-import IconCalendar24 from './IconCalendar24';;
-import IconCalendar32 from './IconCalendar32';
+import IconCalendar12 from './IconCalendar12';
+import IconCalendar16 from './IconCalendar16';
+import IconCalendar20 from './IconCalendar20';
+import IconCalendar24 from './IconCalendar24';
+import IconCalendar32 from './IconCalendar32'
 
 function IconCalendar(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconListCheck12 from './IconListCheck12';;
-import IconListCheck16 from './IconListCheck16';;
-import IconListCheck20 from './IconListCheck20';;
-import IconListCheck24 from './IconListCheck24';;
-import IconListCheck32 from './IconListCheck32';
+import IconListCheck12 from './IconListCheck12';
+import IconListCheck16 from './IconListCheck16';
+import IconListCheck20 from './IconListCheck20';
+import IconListCheck24 from './IconListCheck24';
+import IconListCheck32 from './IconListCheck32'
 
 function IconListCheck(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

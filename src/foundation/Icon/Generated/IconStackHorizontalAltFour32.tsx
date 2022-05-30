@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconStackHorizontalAltFour32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconStackHorizontalAltFour32(props: GeneratedIconProps): React.ReactEle
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M5.963 13a2.963 2.963 0 1 1 0 5.926 2.963 2.963 0 0 1 0-5.926Zm0 1.975a.988.988 0 1 0 0 1.976.988.988 0 0 0 0-1.976ZM12.877 13a2.963 2.963 0 1 1 0 5.926 2.963 2.963 0 0 1 0-5.926Zm0 1.975a.988.988 0 1 0 0 1.976.988.988 0 0 0 0-1.976Zm9.876.988a2.963 2.963 0 1 0-5.926 0 2.963 2.963 0 0 0 5.926 0Zm-3.95 0a.988.988 0 1 1 1.975 0 .988.988 0 0 1-1.976 0ZM26.704 13a2.963 2.963 0 1 1 0 5.926 2.963 2.963 0 0 1 0-5.926Zm0 1.975a.988.988 0 1 0 0 1.976.988.988 0 0 0 0-1.976Z"
+                d="M6 16a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Zm2 0a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm5 0a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Zm2 0a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm4.5.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1Zm0 2a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM27 16a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Zm2 0a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"
                 clipRule="evenodd"
             />
         </svg>

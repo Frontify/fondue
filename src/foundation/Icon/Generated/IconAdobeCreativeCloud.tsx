@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconAdobeCreativeCloud12 from './IconAdobeCreativeCloud12';;
-import IconAdobeCreativeCloud16 from './IconAdobeCreativeCloud16';;
-import IconAdobeCreativeCloud20 from './IconAdobeCreativeCloud20';;
-import IconAdobeCreativeCloud24 from './IconAdobeCreativeCloud24';;
-import IconAdobeCreativeCloud32 from './IconAdobeCreativeCloud32';
+import IconAdobeCreativeCloud12 from './IconAdobeCreativeCloud12';
+import IconAdobeCreativeCloud16 from './IconAdobeCreativeCloud16';
+import IconAdobeCreativeCloud20 from './IconAdobeCreativeCloud20';
+import IconAdobeCreativeCloud24 from './IconAdobeCreativeCloud24';
+import IconAdobeCreativeCloud32 from './IconAdobeCreativeCloud32'
 
 function IconAdobeCreativeCloud(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

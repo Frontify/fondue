@@ -1,17 +1,17 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconCheckMarkCircle12Filled from './IconCheckMarkCircle12Filled';;
-import IconCheckMarkCircle12 from './IconCheckMarkCircle12';;
-import IconCheckMarkCircle16Filled from './IconCheckMarkCircle16Filled';;
-import IconCheckMarkCircle16 from './IconCheckMarkCircle16';;
-import IconCheckMarkCircle20Filled from './IconCheckMarkCircle20Filled';;
-import IconCheckMarkCircle20 from './IconCheckMarkCircle20';;
-import IconCheckMarkCircle24Filled from './IconCheckMarkCircle24Filled';;
-import IconCheckMarkCircle24 from './IconCheckMarkCircle24';;
-import IconCheckMarkCircle32Filled from './IconCheckMarkCircle32Filled';;
-import IconCheckMarkCircle32 from './IconCheckMarkCircle32';
+import IconCheckMarkCircle12Filled from './IconCheckMarkCircle12Filled';
+import IconCheckMarkCircle12 from './IconCheckMarkCircle12';
+import IconCheckMarkCircle16Filled from './IconCheckMarkCircle16Filled';
+import IconCheckMarkCircle16 from './IconCheckMarkCircle16';
+import IconCheckMarkCircle20Filled from './IconCheckMarkCircle20Filled';
+import IconCheckMarkCircle20 from './IconCheckMarkCircle20';
+import IconCheckMarkCircle24Filled from './IconCheckMarkCircle24Filled';
+import IconCheckMarkCircle24 from './IconCheckMarkCircle24';
+import IconCheckMarkCircle32Filled from './IconCheckMarkCircle32Filled';
+import IconCheckMarkCircle32 from './IconCheckMarkCircle32'
 
 function IconCheckMarkCircle(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

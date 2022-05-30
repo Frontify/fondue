@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconTypographyMultiple24(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconTypographyMultiple24(props: GeneratedIconProps): React.ReactElement
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M11.23 17.308H8.924V6.538h3.846v1.539h1.539V5H2v3.077h1.538V6.538h3.847v10.77H5.077v1.538h6.154v-1.538Zm6.924 1.538v-7.692H22V9.615h-9.23v1.539h3.845v7.692h1.539Z"
+                d="M2 5.012h12.504v2.282a.75.75 0 0 1-1.5 0v-.782H9V17.5h1.25a.75.75 0 1 1 0 1.5h-4a.75.75 0 0 1 0-1.5H7.5V6.512h-4v.782a.75.75 0 0 1-1.5 0V5.012ZM16.5 11h-4V9.5H22V11h-4v8h-1.5v-8Z"
                 clipRule="evenodd"
             />
         </svg>

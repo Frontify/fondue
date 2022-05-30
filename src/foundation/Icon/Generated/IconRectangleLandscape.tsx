@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconRectangleLandscape12 from './IconRectangleLandscape12';;
-import IconRectangleLandscape16 from './IconRectangleLandscape16';;
-import IconRectangleLandscape20 from './IconRectangleLandscape20';;
-import IconRectangleLandscape24 from './IconRectangleLandscape24';;
-import IconRectangleLandscape32 from './IconRectangleLandscape32';
+import IconRectangleLandscape12 from './IconRectangleLandscape12';
+import IconRectangleLandscape16 from './IconRectangleLandscape16';
+import IconRectangleLandscape20 from './IconRectangleLandscape20';
+import IconRectangleLandscape24 from './IconRectangleLandscape24';
+import IconRectangleLandscape32 from './IconRectangleLandscape32'
 
 function IconRectangleLandscape(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

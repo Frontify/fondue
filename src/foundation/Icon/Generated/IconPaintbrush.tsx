@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconPaintbrush12 from './IconPaintbrush12';;
-import IconPaintbrush16 from './IconPaintbrush16';;
-import IconPaintbrush20 from './IconPaintbrush20';;
-import IconPaintbrush24 from './IconPaintbrush24';;
-import IconPaintbrush32 from './IconPaintbrush32';
+import IconPaintbrush12 from './IconPaintbrush12';
+import IconPaintbrush16 from './IconPaintbrush16';
+import IconPaintbrush20 from './IconPaintbrush20';
+import IconPaintbrush24 from './IconPaintbrush24';
+import IconPaintbrush32 from './IconPaintbrush32'
 
 function IconPaintbrush(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

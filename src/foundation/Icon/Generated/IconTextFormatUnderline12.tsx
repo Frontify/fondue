@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconTextFormatUnderline12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,14 +12,12 @@ function IconTextFormatUnderline12(props: GeneratedIconProps): React.ReactElemen
             name="IconTextFormatUnderline12"
             {...props}
         >
-            <g fill="currentColor">
-                <path d="M6.385 7.238h1.153v.77H4.462v-.77h1.153l.008-4.45H3.7v.769h-.77V2.018h6.155v1.539h-.77v-.77H6.393l-.007 4.45Z" />
-                <path
-                    fillRule="evenodd"
-                    d="M2.125 9.586c0-.207.168-.375.375-.375h7a.375.375 0 1 1 0 .75h-7a.375.375 0 0 1-.375-.375Z"
-                    clipRule="evenodd"
-                />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M4 2.33V2h2v6H5a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H7V2h2v.33a.5.5 0 1 0 1 0V1H3v1.33a.5.5 0 1 0 1 0ZM3 10a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1H3Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

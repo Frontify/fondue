@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconCloudArrowUp12 from './IconCloudArrowUp12';;
-import IconCloudArrowUp16 from './IconCloudArrowUp16';;
-import IconCloudArrowUp20 from './IconCloudArrowUp20';;
-import IconCloudArrowUp24 from './IconCloudArrowUp24';;
-import IconCloudArrowUp32 from './IconCloudArrowUp32';
+import IconCloudArrowUp12 from './IconCloudArrowUp12';
+import IconCloudArrowUp16 from './IconCloudArrowUp16';
+import IconCloudArrowUp20 from './IconCloudArrowUp20';
+import IconCloudArrowUp24 from './IconCloudArrowUp24';
+import IconCloudArrowUp32 from './IconCloudArrowUp32'
 
 function IconCloudArrowUp(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

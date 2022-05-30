@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconArrowRoundClockwise12 from './IconArrowRoundClockwise12';;
-import IconArrowRoundClockwise16 from './IconArrowRoundClockwise16';;
-import IconArrowRoundClockwise20 from './IconArrowRoundClockwise20';;
-import IconArrowRoundClockwise24 from './IconArrowRoundClockwise24';;
-import IconArrowRoundClockwise32 from './IconArrowRoundClockwise32';
+import IconArrowRoundClockwise12 from './IconArrowRoundClockwise12';
+import IconArrowRoundClockwise16 from './IconArrowRoundClockwise16';
+import IconArrowRoundClockwise20 from './IconArrowRoundClockwise20';
+import IconArrowRoundClockwise24 from './IconArrowRoundClockwise24';
+import IconArrowRoundClockwise32 from './IconArrowRoundClockwise32'
 
 function IconArrowRoundClockwise(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

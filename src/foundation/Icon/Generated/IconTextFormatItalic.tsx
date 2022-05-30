@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconTextFormatItalic12 from './IconTextFormatItalic12';;
-import IconTextFormatItalic16 from './IconTextFormatItalic16';;
-import IconTextFormatItalic20 from './IconTextFormatItalic20';;
-import IconTextFormatItalic24 from './IconTextFormatItalic24';;
-import IconTextFormatItalic32 from './IconTextFormatItalic32';
+import IconTextFormatItalic12 from './IconTextFormatItalic12';
+import IconTextFormatItalic16 from './IconTextFormatItalic16';
+import IconTextFormatItalic20 from './IconTextFormatItalic20';
+import IconTextFormatItalic24 from './IconTextFormatItalic24';
+import IconTextFormatItalic32 from './IconTextFormatItalic32'
 
 function IconTextFormatItalic(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

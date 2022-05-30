@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconAnnotationNumbers12 from './IconAnnotationNumbers12';;
-import IconAnnotationNumbers16 from './IconAnnotationNumbers16';;
-import IconAnnotationNumbers20 from './IconAnnotationNumbers20';;
-import IconAnnotationNumbers24 from './IconAnnotationNumbers24';;
-import IconAnnotationNumbers32 from './IconAnnotationNumbers32';
+import IconAnnotationNumbers12 from './IconAnnotationNumbers12';
+import IconAnnotationNumbers16 from './IconAnnotationNumbers16';
+import IconAnnotationNumbers20 from './IconAnnotationNumbers20';
+import IconAnnotationNumbers24 from './IconAnnotationNumbers24';
+import IconAnnotationNumbers32 from './IconAnnotationNumbers32'
 
 function IconAnnotationNumbers(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

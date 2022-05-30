@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconLightning24(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconLightning24(props: GeneratedIconProps): React.ReactElement<Generate
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M20.293 10.055c-.24-.596-.685-.895-1.333-.895h-3.97l1.985-5.194c.273-.714.091-1.278-.544-1.693-.636-.415-1.226-.357-1.771.175L4.445 12.41c-.453.44-.56.956-.32 1.546.24.59.677.886 1.313.886h3.6l-2.102 5.156c-.272.713-.097 1.284.525 1.712.623.428 1.213.382 1.77-.136l10.702-9.962c.48-.441.6-.96.36-1.557Zm-9.155 3.366h-5.7L15.652 3.46l-2.743 7.12h6.05l-10.7 9.962 2.88-7.12Z"
+                d="M4.749 15.271c-1.557-.004-2.334-1.886-1.233-2.987l9.733-9.73c1.312-1.311 3.495.05 2.894 1.804L14.717 8.52h4.531c1.56 0 2.34 1.885 1.238 2.987l-10 9.998c-1.316 1.315-3.504-.058-2.891-1.813l1.538-4.409-4.384-.013Zm-.172-1.926a.25.25 0 0 0 .176.426l5.438.016 1.052.003-.346.994-1.885 5.403c-.03.082-.02.134-.006.17a.272.272 0 0 0 .109.124.267.267 0 0 0 .159.043c.038-.002.089-.017.15-.078l10-9.998a.25.25 0 0 0-.176-.427h-6.63l.34-.993 1.765-5.156c.028-.082.019-.134.005-.17a.268.268 0 0 0-.109-.123.268.268 0 0 0-.159-.043c-.038.003-.089.017-.15.078l-9.733 9.73Z"
                 clipRule="evenodd"
             />
         </svg>

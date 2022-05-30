@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconArrowExpand12 from './IconArrowExpand12';;
-import IconArrowExpand16 from './IconArrowExpand16';;
-import IconArrowExpand20 from './IconArrowExpand20';;
-import IconArrowExpand24 from './IconArrowExpand24';;
-import IconArrowExpand32 from './IconArrowExpand32';
+import IconArrowExpand12 from './IconArrowExpand12';
+import IconArrowExpand16 from './IconArrowExpand16';
+import IconArrowExpand20 from './IconArrowExpand20';
+import IconArrowExpand24 from './IconArrowExpand24';
+import IconArrowExpand32 from './IconArrowExpand32'
 
 function IconArrowExpand(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconLightning20Filled(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -14,7 +14,7 @@ function IconLightning20Filled(props: GeneratedIconProps): React.ReactElement<Ge
         >
             <path
                 fill="currentColor"
-                d="M3.82 11.59h5.294l-2.457 6.075a.486.486 0 0 0 .782.538L17.112 9.2a.486.486 0 0 0-.332-.842h-5.65l2.322-6.03a.486.486 0 0 0-.793-.522l-9.178 8.95a.486.486 0 0 0 .34.835Z"
+                d="m11.332 2.053-8.286 8.284c-.629.629-.185 1.704.705 1.707l4.654.013-1.553 4.45c-.35 1.003.9 1.788 1.651 1.037l8.522-8.52c.63-.63.184-1.707-.707-1.707h-4.782l1.45-4.233c.343-1.002-.905-1.78-1.654-1.03Z"
             />
         </svg>
     );

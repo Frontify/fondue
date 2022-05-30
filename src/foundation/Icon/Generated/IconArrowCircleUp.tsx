@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconArrowCircleUp12 from './IconArrowCircleUp12';;
-import IconArrowCircleUp16 from './IconArrowCircleUp16';;
-import IconArrowCircleUp20 from './IconArrowCircleUp20';;
-import IconArrowCircleUp24 from './IconArrowCircleUp24';;
-import IconArrowCircleUp32 from './IconArrowCircleUp32';
+import IconArrowCircleUp12 from './IconArrowCircleUp12';
+import IconArrowCircleUp16 from './IconArrowCircleUp16';
+import IconArrowCircleUp20 from './IconArrowCircleUp20';
+import IconArrowCircleUp24 from './IconArrowCircleUp24';
+import IconArrowCircleUp32 from './IconArrowCircleUp32'
 
 function IconArrowCircleUp(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

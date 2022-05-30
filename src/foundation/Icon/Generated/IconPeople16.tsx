@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconPeople16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,14 +12,12 @@ function IconPeople16(props: GeneratedIconProps): React.ReactElement<GeneratedIc
             name="IconPeople16"
             {...props}
         >
-            <g fill="currentColor">
-                <path d="M11.377 11.448h3.014a4.597 4.597 0 0 0-2.394-4.508 3.217 3.217 0 1 0-5.239-3.304c.317.012.624.063.919.146a2.298 2.298 0 1 1 2.883 2.954c.083.292.139.597.162.912.118-.034.233-.074.344-.12a3.682 3.682 0 0 1 2.4 3H10.71c.252.283.476.59.667.92Z" />
-                <path
-                    fillRule="evenodd"
-                    d="M2 14.207c0 .155.008.308.023.46h9.15a4.597 4.597 0 0 0-2.394-4.508 3.217 3.217 0 0 0-2.156-5.607 3.217 3.217 0 0 0-2.174 5.59A4.597 4.597 0 0 0 2 14.206Zm4.623-3.218c-.443 0-.865-.09-1.248-.252a3.682 3.682 0 0 0-2.427 3.01h7.3a3.682 3.682 0 0 0-2.4-3 3.204 3.204 0 0 1-1.225.242ZM8.92 7.77a2.298 2.298 0 1 1-2.297-2.299 2.298 2.298 0 0 1 2.297 2.3Z"
-                    clipRule="evenodd"
-                />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M6 7a1.75 1.75 0 1 0 0-3.5A1.75 1.75 0 0 0 6 7Zm2.75-1.75c0 .832-.37 1.578-.954 2.082A5.002 5.002 0 0 1 11 12v1h2.696v-.74A3.349 3.349 0 0 0 11 8.978V7.62a1.391 1.391 0 0 0-1-2.577V4.025a2.391 2.391 0 0 1 1.91 4.177 4.35 4.35 0 0 1 2.786 4.059V14H1v-2a5.002 5.002 0 0 1 3.204-4.668A2.75 2.75 0 1 1 8.75 5.25ZM6 13h4v-1a4 4 0 1 0-8 0v1h4Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

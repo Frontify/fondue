@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconSkip5SecondsForward12 from './IconSkip5SecondsForward12';;
-import IconSkip5SecondsForward16 from './IconSkip5SecondsForward16';;
-import IconSkip5SecondsForward20 from './IconSkip5SecondsForward20';;
-import IconSkip5SecondsForward24 from './IconSkip5SecondsForward24';;
-import IconSkip5SecondsForward32 from './IconSkip5SecondsForward32';
+import IconSkip5SecondsForward12 from './IconSkip5SecondsForward12';
+import IconSkip5SecondsForward16 from './IconSkip5SecondsForward16';
+import IconSkip5SecondsForward20 from './IconSkip5SecondsForward20';
+import IconSkip5SecondsForward24 from './IconSkip5SecondsForward24';
+import IconSkip5SecondsForward32 from './IconSkip5SecondsForward32'
 
 function IconSkip5SecondsForward(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

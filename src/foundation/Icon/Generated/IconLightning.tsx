@@ -1,17 +1,17 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconLightning12Filled from './IconLightning12Filled';;
-import IconLightning12 from './IconLightning12';;
-import IconLightning16Filled from './IconLightning16Filled';;
-import IconLightning16 from './IconLightning16';;
-import IconLightning20Filled from './IconLightning20Filled';;
-import IconLightning20 from './IconLightning20';;
-import IconLightning24Filled from './IconLightning24Filled';;
-import IconLightning24 from './IconLightning24';;
-import IconLightning32Filled from './IconLightning32Filled';;
-import IconLightning32 from './IconLightning32';
+import IconLightning12Filled from './IconLightning12Filled';
+import IconLightning12 from './IconLightning12';
+import IconLightning16Filled from './IconLightning16Filled';
+import IconLightning16 from './IconLightning16';
+import IconLightning20Filled from './IconLightning20Filled';
+import IconLightning20 from './IconLightning20';
+import IconLightning24Filled from './IconLightning24Filled';
+import IconLightning24 from './IconLightning24';
+import IconLightning32Filled from './IconLightning32Filled';
+import IconLightning32 from './IconLightning32'
 
 function IconLightning(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

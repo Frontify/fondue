@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconTypographyMultiple12 from './IconTypographyMultiple12';;
-import IconTypographyMultiple16 from './IconTypographyMultiple16';;
-import IconTypographyMultiple20 from './IconTypographyMultiple20';;
-import IconTypographyMultiple24 from './IconTypographyMultiple24';;
-import IconTypographyMultiple32 from './IconTypographyMultiple32';
+import IconTypographyMultiple12 from './IconTypographyMultiple12';
+import IconTypographyMultiple16 from './IconTypographyMultiple16';
+import IconTypographyMultiple20 from './IconTypographyMultiple20';
+import IconTypographyMultiple24 from './IconTypographyMultiple24';
+import IconTypographyMultiple32 from './IconTypographyMultiple32'
 
 function IconTypographyMultiple(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

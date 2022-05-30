@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconPaperplane32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconPaperplane32(props: GeneratedIconProps): React.ReactElement<Generat
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="m9.946 21.125-6.7-3.61c-.758-.41-.776-1.513-.032-1.948L25.041 2.815c.724-.424 1.625.111 1.625.964v24.442c0 .835-.867 1.371-1.59.984l-7.484-4.008-5.924 3.954c-.72.48-1.676-.044-1.68-.924l-.042-7.102Zm.838-2.06L6.01 16.492l14.634-8.55-9.86 11.123Zm13.71-10.046-5.46 14.441 5.46 2.924V9.02Zm-7.627 14.008-4.718 3.15-.031-5.308 9.704-10.946-4.955 13.104Z"
+                d="M25.93 17.763c1.415-.752 1.415-2.78 0-3.533L8.96 5.22c-1.47-.781-3.195.471-2.908 2.111l1.518 8.666-1.518 8.665c-.287 1.64 1.438 2.893 2.908 2.112l16.968-9.01Zm-.939-1.766-16.968 9.01L9.426 17H16a1 1 0 1 0 0-2H9.427L8.023 6.986l16.968 9.01Z"
                 clipRule="evenodd"
             />
         </svg>

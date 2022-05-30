@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconArrowStretchBox12 from './IconArrowStretchBox12';;
-import IconArrowStretchBox16 from './IconArrowStretchBox16';;
-import IconArrowStretchBox20 from './IconArrowStretchBox20';;
-import IconArrowStretchBox24 from './IconArrowStretchBox24';;
-import IconArrowStretchBox32 from './IconArrowStretchBox32';
+import IconArrowStretchBox12 from './IconArrowStretchBox12';
+import IconArrowStretchBox16 from './IconArrowStretchBox16';
+import IconArrowStretchBox20 from './IconArrowStretchBox20';
+import IconArrowStretchBox24 from './IconArrowStretchBox24';
+import IconArrowStretchBox32 from './IconArrowStretchBox32'
 
 function IconArrowStretchBox(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

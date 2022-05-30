@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconPuzzle24(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconPuzzle24(props: GeneratedIconProps): React.ReactElement<GeneratedIc
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M22 14.4a3.6 3.6 0 0 0-4.8-3.395V8.4a1.6 1.6 0 0 0-1.6-1.6h-2.605a3.6 3.6 0 1 0-6.79 0H3.6A1.6 1.6 0 0 0 2 8.4v12A1.6 1.6 0 0 0 3.6 22h4.04a.8.8 0 0 0 .56-1.371 2 2 0 1 1 2.8 0A.8.8 0 0 0 11.56 22h4.04a1.6 1.6 0 0 0 1.6-1.6v-2.605A3.6 3.6 0 0 0 22 14.4Zm-6.4 1.96v4.04h-2.605a3.6 3.6 0 1 0-6.79 0H3.6v-12h4.04a.8.8 0 0 0 .56-1.371 2 2 0 1 1 2.8 0 .8.8 0 0 0 .56 1.371h4.04v4.04a.8.8 0 0 0 1.371.56 2 2 0 1 1 0 2.8.8.8 0 0 0-1.371.56Z"
+                d="M9.06 7.3H5a.5.5 0 0 0-.5.5V19a.5.5 0 0 0 .5.5h2.58v-.78a3.02 3.02 0 1 1 6.04 0v.78h2.58a.5.5 0 0 0 .5-.5v-4.06h2.26a1.54 1.54 0 0 0 0-3.08H16.7V7.8a.5.5 0 0 0-.5-.5h-4.06V5.04a1.54 1.54 0 1 0-3.08 0V7.3Zm9.14 10.64v-1.5h.76a3.04 3.04 0 0 0 0-6.08h-.76V7.8a2 2 0 0 0-2-2h-2.56v-.76a3.04 3.04 0 1 0-6.08 0v.76H5a2 2 0 0 0-2 2V19a2 2 0 0 0 2 2h4.08v-2.28a1.52 1.52 0 1 1 3.04 0V21h4.08a2 2 0 0 0 2-2v-1.06Z"
                 clipRule="evenodd"
             />
         </svg>

@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconArrowOutExternal12 from './IconArrowOutExternal12';;
-import IconArrowOutExternal16 from './IconArrowOutExternal16';;
-import IconArrowOutExternal20 from './IconArrowOutExternal20';;
-import IconArrowOutExternal24 from './IconArrowOutExternal24';;
-import IconArrowOutExternal32 from './IconArrowOutExternal32';
+import IconArrowOutExternal12 from './IconArrowOutExternal12';
+import IconArrowOutExternal16 from './IconArrowOutExternal16';
+import IconArrowOutExternal20 from './IconArrowOutExternal20';
+import IconArrowOutExternal24 from './IconArrowOutExternal24';
+import IconArrowOutExternal32 from './IconArrowOutExternal32'
 
 function IconArrowOutExternal(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

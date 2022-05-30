@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconLockClosed20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconLockClosed20(props: GeneratedIconProps): React.ReactElement<Generat
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M14.194 5.833a4.167 4.167 0 1 0-8.333 0v1.39h-.695c-1.15 0-2.083.932-2.083 2.083v6.944c0 1.15.933 2.083 2.083 2.083h9.723c1.15 0 2.083-.932 2.083-2.083V9.306a2.084 2.084 0 0 0-2.083-2.084h-.695V5.833ZM5.166 8.611a.694.694 0 0 0-.694.695v6.944c0 .384.31.695.694.695h9.723a.695.695 0 0 0 .694-.695V9.306a.694.694 0 0 0-.694-.695H5.166Zm7.64-1.389V5.833a2.778 2.778 0 1 0-5.556 0v1.39h5.555Zm-4.167 4.861c0 .514.279.963.694 1.204v.88a.694.694 0 1 0 1.389 0v-.88a1.388 1.388 0 1 0-2.083-1.204Z"
+                d="M13 6v1.5H7V6a3 3 0 0 1 6 0ZM5.5 7.5V6a4.5 4.5 0 0 1 9 0v1.5A2.5 2.5 0 0 1 17 10v6.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 3 16.5V10a2.5 2.5 0 0 1 2.5-2.5Zm9 1.5h-9a1 1 0 0 0-1 1v6.5a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V10a1 1 0 0 0-1-1Zm-3.25 4.25a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Z"
                 clipRule="evenodd"
             />
         </svg>

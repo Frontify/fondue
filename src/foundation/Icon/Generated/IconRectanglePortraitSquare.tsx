@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconRectanglePortraitSquare12 from './IconRectanglePortraitSquare12';;
-import IconRectanglePortraitSquare16 from './IconRectanglePortraitSquare16';;
-import IconRectanglePortraitSquare20 from './IconRectanglePortraitSquare20';;
-import IconRectanglePortraitSquare24 from './IconRectanglePortraitSquare24';;
-import IconRectanglePortraitSquare32 from './IconRectanglePortraitSquare32';
+import IconRectanglePortraitSquare12 from './IconRectanglePortraitSquare12';
+import IconRectanglePortraitSquare16 from './IconRectanglePortraitSquare16';
+import IconRectanglePortraitSquare20 from './IconRectanglePortraitSquare20';
+import IconRectanglePortraitSquare24 from './IconRectanglePortraitSquare24';
+import IconRectanglePortraitSquare32 from './IconRectanglePortraitSquare32'
 
 function IconRectanglePortraitSquare(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconListBullet24(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,14 +12,12 @@ function IconListBullet24(props: GeneratedIconProps): React.ReactElement<Generat
             name="IconListBullet24"
             {...props}
         >
-            <g fill="currentColor">
-                <path d="M3 18.25a1 1 0 1 1 2 0 1 1 0 0 1-2 0Zm0-8.357a1 1 0 1 1 2 0 1 1 0 0 1-2 0Zm0 4.16a1 1 0 1 1 2 0 1 1 0 0 1-2 0ZM3 5.75a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z" />
-                <path
-                    fillRule="evenodd"
-                    d="M21 5.75a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1 0-1.5h12.75a.75.75 0 0 1 .75.75ZM6.75 18.25a.75.75 0 0 1 .75-.75h10.75a.75.75 0 0 1 0 1.5H7.5a.75.75 0 0 1-.75-.75ZM19 9.893a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1 0-1.5h10.75a.75.75 0 0 1 .75.75Zm2 4.16a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1 0-1.5h12.75a.75.75 0 0 1 .75.75Z"
-                    clipRule="evenodd"
-                />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M5 6.75a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm15.198.75a.75.75 0 0 0 0-1.5H7.25a.75.75 0 1 0 0 1.5h12.947ZM17.21 11a.75.75 0 0 0 0-1.5H7.25a.75.75 0 0 0 0 1.5h9.96Zm3.738 2.75a.75.75 0 0 1-.75.75H7.25a.75.75 0 0 1 0-1.5h12.947a.75.75 0 0 1 .75.75ZM17.21 18a.75.75 0 0 0 0-1.5H7.25a.75.75 0 0 0 0 1.5h9.96ZM4 11.25a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm1 2.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm-1 4.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

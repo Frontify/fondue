@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconArrowOutLogout12 from './IconArrowOutLogout12';;
-import IconArrowOutLogout16 from './IconArrowOutLogout16';;
-import IconArrowOutLogout20 from './IconArrowOutLogout20';;
-import IconArrowOutLogout24 from './IconArrowOutLogout24';;
-import IconArrowOutLogout32 from './IconArrowOutLogout32';
+import IconArrowOutLogout12 from './IconArrowOutLogout12';
+import IconArrowOutLogout16 from './IconArrowOutLogout16';
+import IconArrowOutLogout20 from './IconArrowOutLogout20';
+import IconArrowOutLogout24 from './IconArrowOutLogout24';
+import IconArrowOutLogout32 from './IconArrowOutLogout32'
 
 function IconArrowOutLogout(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

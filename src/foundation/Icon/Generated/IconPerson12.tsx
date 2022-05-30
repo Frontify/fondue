@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconPerson12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconPerson12(props: GeneratedIconProps): React.ReactElement<GeneratedIc
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M7.98 6.499a4.175 4.175 0 0 1 2.175 4.094h-8.31a4.175 4.175 0 0 1 2.203-4.11 2.922 2.922 0 0 1 1.975-5.076A2.922 2.922 0 0 1 7.98 6.499Zm-.845.534a2.909 2.909 0 0 1-2.246-.009 3.344 3.344 0 0 0-2.204 2.734h6.63a3.344 3.344 0 0 0-2.18-2.725ZM8.11 4.33a2.087 2.087 0 1 1-4.174.002A2.087 2.087 0 0 1 8.11 4.33Z"
+                d="M7.475 3.391c0 .737-.628 1.392-1.475 1.392-.847 0-1.475-.655-1.475-1.392C4.525 2.655 5.153 2 6 2c.847 0 1.475.655 1.475 1.391Zm.027 1.9a2.36 2.36 0 0 0 .973-1.9C8.475 2.071 7.367 1 6 1S3.525 2.07 3.525 3.391c0 .775.381 1.464.972 1.9A4.001 4.001 0 0 0 2 9v2h8V9a4.001 4.001 0 0 0-2.498-3.708ZM9 9v1H3V9a3 3 0 0 1 6 0Z"
                 clipRule="evenodd"
             />
         </svg>

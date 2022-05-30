@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconPolygon12 from './IconPolygon12';;
-import IconPolygon16 from './IconPolygon16';;
-import IconPolygon20 from './IconPolygon20';;
-import IconPolygon24 from './IconPolygon24';;
-import IconPolygon32 from './IconPolygon32';
+import IconPolygon12 from './IconPolygon12';
+import IconPolygon16 from './IconPolygon16';
+import IconPolygon20 from './IconPolygon20';
+import IconPolygon24 from './IconPolygon24';
+import IconPolygon32 from './IconPolygon32'
 
 function IconPolygon(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

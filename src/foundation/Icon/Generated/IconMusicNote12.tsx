@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconMusicNote12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconMusicNote12(props: GeneratedIconProps): React.ReactElement<Generate
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M4.75 3.728v4.957a.412.412 0 0 1-.005.066 1.867 1.867 0 0 1-1.87 2A1.867 1.867 0 0 1 1 8.89c0-1.026.84-1.858 1.875-1.858.385 0 .744.115 1.042.313V1.663c0-.228.186-.413.416-.413h6.25c.23 0 .417.185.417.413v7.022a.41.41 0 0 1-.005.066 1.867 1.867 0 0 1-1.87 2A1.867 1.867 0 0 1 7.25 8.89c0-1.026.84-1.858 1.875-1.858.385 0 .744.115 1.042.313V3.728H4.75Zm0-.826h5.417v-.826H4.75v.826Zm-.833 5.99c0 .57-.467 1.032-1.042 1.032A1.037 1.037 0 0 1 1.833 8.89c0-.57.467-1.032 1.042-1.032s1.042.462 1.042 1.032Zm6.25 0c0 .57-.467 1.032-1.042 1.032A1.037 1.037 0 0 1 8.083 8.89c0-.57.467-1.032 1.042-1.032s1.042.462 1.042 1.032Z"
+                d="M4 1.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5V9a2 2 0 1 1-1-1.732V4.047H5.227A.498.498 0 0 1 5 3.993V9a2 2 0 1 1-1-1.732V1.5Zm1 1.601a.498.498 0 0 1 .227-.054H10V2H5v1.101ZM9 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM3 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"
                 clipRule="evenodd"
             />
         </svg>

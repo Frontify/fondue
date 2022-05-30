@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconSuitcaseTag24(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconSuitcaseTag24(props: GeneratedIconProps): React.ReactElement<Genera
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M16.61 6.35h3.08c.639 0 1.183.225 1.634.676.45.45.676.989.676 1.615v10.78c0 .638-.225 1.182-.676 1.633-.45.45-.995.676-1.634.676H4.31a2.226 2.226 0 0 1-1.634-.676A2.226 2.226 0 0 1 2 19.42V8.64c0-.625.225-1.163.676-1.614.45-.45.995-.676 1.634-.676h3.08V4.04c0-.426.15-.789.45-1.09.3-.3.664-.45 1.09-.45h6.14c.426 0 .79.15 1.09.45.3.301.45.664.45 1.09v2.31Zm-1.54 0V4.81a.742.742 0 0 0-.225-.545.742.742 0 0 0-.545-.225H9.68a.72.72 0 0 0-.525.225.742.742 0 0 0-.225.545v1.54h6.14ZM3.54 18.65V9.41c0-.412.15-.77.45-1.07.301-.3.658-.45 1.071-.45H7.25v2.122a2.5 2.5 0 0 0 0 4.976v5.202H5.061c-.413 0-.77-.15-1.07-.45a1.488 1.488 0 0 1-.451-1.09ZM8.75 15v5.19h6.5V7.89h-6.5V10h.75a2.5 2.5 0 0 1 0 5h-.75Zm8 5.19V7.89h2.17c.426 0 .789.15 1.09.45.3.3.45.658.45 1.07v9.24c0 .426-.15.789-.45 1.09-.301.3-.664.45-1.09.45h-2.17ZM7.5 11.5a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2h-2Z"
+                d="M11 4.5h2A1.5 1.5 0 0 1 14.5 6v1h-5V6A1.5 1.5 0 0 1 11 4.5ZM8 7V6a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v1h3a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-8a3 3 0 0 1 3-3h3Zm0 1.5H5A1.5 1.5 0 0 0 3.5 10v8A1.5 1.5 0 0 0 5 19.5h3V16H7a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2h1V8.5ZM9.5 11h1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-1v3.5h5v-11h-5V11ZM19 8.5h-3v11h3a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 19 8.5ZM6.5 13a.5.5 0 0 1 .5-.5h3.5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5v-1Z"
                 clipRule="evenodd"
             />
         </svg>

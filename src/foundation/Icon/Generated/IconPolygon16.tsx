@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconPolygon16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconPolygon16(props: GeneratedIconProps): React.ReactElement<GeneratedI
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="m12.12 14.333 2.546-7.828L8 1.667 1.333 6.505l2.546 7.828h8.24Zm-7.451-1.085L2.61 6.92 8 3.008l5.39 3.911-2.06 6.33H4.67Z"
+                d="m8 1.904.3.225 5.507 4.13.277.208-.096.332-2.003 6.884-.105.36H4.12l-.105-.36L2.013 6.8l-.097-.332.277-.208L7.7 2.13l.3-.225ZM3.07 6.852l1.8 6.191h6.26l1.8-6.191L8 3.154 3.07 6.852Z"
                 clipRule="evenodd"
             />
         </svg>

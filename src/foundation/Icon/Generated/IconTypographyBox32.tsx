@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconTypographyBox32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,14 +12,12 @@ function IconTypographyBox32(props: GeneratedIconProps): React.ReactElement<Gene
             name="IconTypographyBox32"
             {...props}
         >
-            <g fill="currentColor">
-                <path d="M14.974 13.051v7.313H13.19v2.052h5.62v-2.052h-1.785v-7.313h2.611v1.338h2.052v-3.39H10.312v3.39h2.052v-1.338h2.61Z" />
-                <path
-                    fillRule="evenodd"
-                    d="M26.256 4.4H5.743a3.077 3.077 0 0 0-3.077 3.077V25.94a3.077 3.077 0 0 0 3.077 3.076h20.513c1.7 0 3.077-1.377 3.077-3.076V7.477c0-1.7-1.377-3.077-3.077-3.077ZM4.718 7.477c0-.566.459-1.026 1.025-1.026h20.513c.567 0 1.026.46 1.026 1.026V25.94c0 .566-.46 1.025-1.026 1.025H5.743a1.025 1.025 0 0 1-1.025-1.025V7.477Z"
-                    clipRule="evenodd"
-                />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M9 7h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2ZM5 9a4 4 0 0 1 4-4h14a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V9Zm6 1.5h-1v3a1 1 0 1 0 2 0v-1h3V20h-1a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2h-1v-7.5h3v1a1 1 0 1 0 2 0v-3H11Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

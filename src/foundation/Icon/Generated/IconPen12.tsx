@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconPen12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,20 +12,12 @@ function IconPen12(props: GeneratedIconProps): React.ReactElement<GeneratedIconP
             name="IconPen12"
             {...props}
         >
-            <g fill="currentColor">
-                <path d="M6.784 9.733a.375.375 0 0 0 0 .75h2.549a.375.375 0 0 0 0-.75H6.784Z" />
-                <path
-                    fillRule="evenodd"
-                    d="M7.793 1.633a.875.875 0 0 1 1.237 0l1.31 1.309a.875.875 0 0 1 0 1.237l-6.3 6.299H1.495V7.93l6.298-6.298Zm.707.53a.125.125 0 0 0-.177 0L2.245 8.242v1.486H3.73l6.08-6.079a.125.125 0 0 0 0-.177L8.5 2.163Z"
-                    clipRule="evenodd"
-                />
-                <path d="M2.002 9h1v1h-1V9Z" />
-                <path
-                    fillRule="evenodd"
-                    d="M8.596 5.204 6.788 3.397l.53-.53 1.808 1.807-.53.53Zm-2.951 4.904c0-.207.168-.375.375-.375h3.313a.375.375 0 0 1 0 .75H6.02a.375.375 0 0 1-.375-.375Z"
-                    clipRule="evenodd"
-                />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M10.703 2.708 9.409 1.414l-.955.955 1.294 1.293.955-.954ZM2.288 8.536l5.46-5.46L9.04 4.37 3.58 9.83l-1.658.364.365-1.658Zm1.793 2.207 7.329-7.328a1 1 0 0 0 0-1.415L10.116.707a1 1 0 0 0-1.414 0L1.374 8.035.946 9.98a1 1 0 0 0 1.192 1.192l1.943-.428Zm3.573-.664a.5.5 0 0 0 0 1h2.965a.5.5 0 1 0 0-1H7.654Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

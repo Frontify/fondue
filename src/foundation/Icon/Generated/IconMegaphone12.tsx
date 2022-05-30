@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconMegaphone12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,14 +12,12 @@ function IconMegaphone12(props: GeneratedIconProps): React.ReactElement<Generate
             name="IconMegaphone12"
             {...props}
         >
-            <g fill="currentColor">
-                <path
-                    fillRule="evenodd"
-                    d="M8.038 1.139 5.583 2.757H2.25c-.69 0-1.25.554-1.25 1.237v2.06c0 .434.226.815.567 1.036l.867 3.594A.416.416 0 0 0 2.84 11h1.078c.23 0 .416-.184.416-.412V7.29h1.25l2.455 1.618a.84.84 0 0 0 .462.139.83.83 0 0 0 .833-.825V1.824a.818.818 0 0 0-.14-.457.839.839 0 0 0-1.155-.228ZM3.917 6.466H2.249a.414.414 0 0 1-.416-.412v-2.06c0-.228.187-.413.417-.413h1.667v2.885Zm-.749 3.71H3.5V7.29H2.472l.696 2.885ZM4.75 3.58v2.885h1.086L8.5 8.223V1.824L5.836 3.581H4.75Z"
-                    clipRule="evenodd"
-                />
-                <path d="M10.583 3.581a.417.417 0 0 0-.416.417V6.05a.417.417 0 1 0 .833 0V3.998a.417.417 0 0 0-.417-.417Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M8.47 1.054a1 1 0 0 1 1.53.848v7.196a1 1 0 0 1-1.53.848L5.357 8H5v2a1 1 0 0 1-1 1H2.924a1 1 0 0 1-.987-.836l-.368-2.21A2 2 0 0 1 0 6V5a2 2 0 0 1 2-2h3.357L8.47 1.054ZM4 8v2H2.924L2.59 8H4Zm1.5-1H5V4h.643l.122-.076L9 1.902v7.196L5.765 7.076 5.643 7H5.5ZM2 4h2v3H2a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Zm9 0v3a.5.5 0 0 0 1 0V4a.5.5 0 0 0-1 0Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

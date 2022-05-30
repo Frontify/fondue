@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconLayers12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,15 +12,12 @@ function IconLayers12(props: GeneratedIconProps): React.ReactElement<GeneratedIc
             name="IconLayers12"
             {...props}
         >
-            <g fill="currentColor">
-                <path
-                    fillRule="evenodd"
-                    d="M10.458 3.81 6.201 1.55a.425.425 0 0 0-.399 0L1.544 3.809a.452.452 0 0 0 .005.796l4.267 2.187a.425.425 0 0 0 .389 0l4.248-2.186a.452.452 0 0 0 .005-.796ZM6.01 5.893 2.703 4.2l3.299-1.75L9.3 4.2 6.01 5.893Z"
-                    clipRule="evenodd"
-                />
-                <path d="M1.24 6.308a.452.452 0 0 1-.194-.6.43.43 0 0 1 .584-.198L6 7.767l4.37-2.257a.43.43 0 0 1 .584.199.452.452 0 0 1-.194.6L6.2 8.663a.43.43 0 0 1-.4 0L1.24 6.308Z" />
-                <path d="M1.24 8.095a.452.452 0 0 1-.194-.6.43.43 0 0 1 .584-.198L6 9.554l4.37-2.257a.43.43 0 0 1 .584.198.452.452 0 0 1-.194.6L6.2 10.45a.422.422 0 0 1-.4 0L1.24 8.095Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M9.087 3.56 6.001 2.003 2.916 3.561 6 5.119l3.086-1.558ZM6.452 1.11a1 1 0 0 0-.901 0L1.405 3.204a.4.4 0 0 0 0 .714L5.55 6.012a1 1 0 0 0 .901 0l4.146-2.094a.4.4 0 0 0 0-.714L6.452 1.11Zm-5.4 4.416a.5.5 0 0 1 .672-.223L6 7.44l4.276-2.138a.5.5 0 0 1 .448.894l-4.5 2.25L6 8.56l-.224-.112-4.5-2.25a.5.5 0 0 1-.224-.67Zm.671 2.027a.5.5 0 0 0-.447.894l4.5 2.25.224.112.224-.112 4.5-2.25a.5.5 0 1 0-.447-.894L6 9.69 1.723 7.553Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

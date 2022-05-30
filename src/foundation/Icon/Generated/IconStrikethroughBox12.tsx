@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconStrikethroughBox12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,12 +12,21 @@ function IconStrikethroughBox12(props: GeneratedIconProps): React.ReactElement<G
             name="IconStrikethroughBox12"
             {...props}
         >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M10.899 1.744a.417.417 0 0 0-.588-.043l-.788.68a1.253 1.253 0 0 0-.606-.156H3.083c-.69 0-1.25.56-1.25 1.25v5c0 .166.033.324.091.47l-.78.673a.417.417 0 0 0 .545.63l.788-.68c.18.1.386.157.606.157h5.834c.69 0 1.25-.56 1.25-1.25v-5c0-.166-.033-.324-.091-.47l.78-.673a.417.417 0 0 0 .043-.588Zm-2.16 1.314H3.084a.417.417 0 0 0-.416.417v4.828L8.74 3.058ZM3.26 8.892l6.073-5.245v4.828c0 .23-.186.417-.416.417H3.26Z"
-                clipRule="evenodd"
-            />
+            <g fill="none">
+                <g clipPath="url(#prefix__a)">
+                    <path
+                        fill="currentColor"
+                        fillRule="evenodd"
+                        d="M11.854.854a.5.5 0 0 0-.708-.708l-1.13 1.13A1.99 1.99 0 0 0 9 1H3a2 2 0 0 0-2 2v6c0 .37.101.718.277 1.016l-1.13 1.13a.5.5 0 0 0 .707.708l1.13-1.13A2 2 0 0 0 3 11h6a2 2 0 0 0 2-2V3c0-.37-.101-.718-.277-1.016l1.13-1.13Zm-2.595 1.18A1.001 1.001 0 0 0 9 2H3a1 1 0 0 0-1 1v6c0 .09.012.176.034.259l7.225-7.225ZM2.741 9.966l7.225-7.225c.022.083.034.17.034.259v6a1 1 0 0 1-1 1H3c-.09 0-.176-.012-.259-.034Z"
+                        clipRule="evenodd"
+                    />
+                </g>
+                <defs>
+                    <clipPath id="prefix__a">
+                        <path fill="#fff" d="M0 0h12v12H0z" />
+                    </clipPath>
+                </defs>
+            </g>
         </svg>
     );
 }

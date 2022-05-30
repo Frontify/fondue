@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconTextFormatBold20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -14,7 +14,7 @@ function IconTextFormatBold20(props: GeneratedIconProps): React.ReactElement<Gen
         >
             <path
                 fill="currentColor"
-                d="M14.574 6.952c0-2.247-1.667-3.619-4.729-3.619H5v13.334h4.922c3.392 0 5.078-1.353 5.078-3.905 0-1.448-.892-2.743-2.83-2.934 1.57-.228 2.404-1.485 2.404-2.876Zm-6.512-.895h1.492c1.376 0 1.86.59 1.86 1.295 0 .781-.484 1.296-1.53 1.296H8.062v-2.59Zm3.799 6.495c0 .915-.698 1.41-1.977 1.41H8.062v-2.8h1.802c1.376 0 1.996.438 1.996 1.39Z"
+                d="M14.574 6.8c0-2.36-1.667-3.8-4.729-3.8H5v14h4.922C13.314 17 15 15.58 15 12.9c0-1.52-.892-2.88-2.83-3.08 1.57-.24 2.404-1.56 2.404-3.02Zm-6.512-.94h1.492c1.376 0 1.86.62 1.86 1.36 0 .82-.484 1.36-1.53 1.36H8.062V5.86Zm3.799 6.82c0 .96-.698 1.48-1.977 1.48H8.062v-2.94h1.802c1.376 0 1.996.46 1.996 1.46Z"
             />
         </svg>
     );

@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconScaleSmall16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconScaleSmall16(props: GeneratedIconProps): React.ReactElement<Generat
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M13.64 5.2H2.36c-.567 0-1.026.46-1.026 1.026v3.59c0 .566.46 1.025 1.026 1.025h11.28c.566 0 1.026-.46 1.026-1.026v-3.59c0-.566-.46-1.025-1.026-1.025ZM2.36 9.815v-3.59h4.615v3.59H2.36Zm5.64 0v-3.59h3.078v3.59H8Zm4.103 0h1.539v-3.59h-1.539v3.59Z"
+                d="M11 6H8v4h3V6Zm1 0v4h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-1Zm0 5h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h9Zm-9-1h4V6H3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Z"
                 clipRule="evenodd"
             />
         </svg>

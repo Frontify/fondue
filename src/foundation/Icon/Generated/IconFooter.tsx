@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconFooter12 from './IconFooter12';;
-import IconFooter16 from './IconFooter16';;
-import IconFooter20 from './IconFooter20';;
-import IconFooter24 from './IconFooter24';;
-import IconFooter32 from './IconFooter32';
+import IconFooter12 from './IconFooter12';
+import IconFooter16 from './IconFooter16';
+import IconFooter20 from './IconFooter20';
+import IconFooter24 from './IconFooter24';
+import IconFooter32 from './IconFooter32'
 
 function IconFooter(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

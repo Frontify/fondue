@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconCursorClick12 from './IconCursorClick12';;
-import IconCursorClick16 from './IconCursorClick16';;
-import IconCursorClick20 from './IconCursorClick20';;
-import IconCursorClick24 from './IconCursorClick24';;
-import IconCursorClick32 from './IconCursorClick32';
+import IconCursorClick12 from './IconCursorClick12';
+import IconCursorClick16 from './IconCursorClick16';
+import IconCursorClick20 from './IconCursorClick20';
+import IconCursorClick24 from './IconCursorClick24';
+import IconCursorClick32 from './IconCursorClick32'
 
 function IconCursorClick(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

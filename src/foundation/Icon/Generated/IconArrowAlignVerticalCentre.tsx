@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconArrowAlignVerticalCentre12 from './IconArrowAlignVerticalCentre12';;
-import IconArrowAlignVerticalCentre16 from './IconArrowAlignVerticalCentre16';;
-import IconArrowAlignVerticalCentre20 from './IconArrowAlignVerticalCentre20';;
-import IconArrowAlignVerticalCentre24 from './IconArrowAlignVerticalCentre24';;
-import IconArrowAlignVerticalCentre32 from './IconArrowAlignVerticalCentre32';
+import IconArrowAlignVerticalCentre12 from './IconArrowAlignVerticalCentre12';
+import IconArrowAlignVerticalCentre16 from './IconArrowAlignVerticalCentre16';
+import IconArrowAlignVerticalCentre20 from './IconArrowAlignVerticalCentre20';
+import IconArrowAlignVerticalCentre24 from './IconArrowAlignVerticalCentre24';
+import IconArrowAlignVerticalCentre32 from './IconArrowAlignVerticalCentre32'
 
 function IconArrowAlignVerticalCentre(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

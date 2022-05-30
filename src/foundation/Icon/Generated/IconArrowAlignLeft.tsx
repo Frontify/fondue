@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconArrowAlignLeft12 from './IconArrowAlignLeft12';;
-import IconArrowAlignLeft16 from './IconArrowAlignLeft16';;
-import IconArrowAlignLeft20 from './IconArrowAlignLeft20';;
-import IconArrowAlignLeft24 from './IconArrowAlignLeft24';;
-import IconArrowAlignLeft32 from './IconArrowAlignLeft32';
+import IconArrowAlignLeft12 from './IconArrowAlignLeft12';
+import IconArrowAlignLeft16 from './IconArrowAlignLeft16';
+import IconArrowAlignLeft20 from './IconArrowAlignLeft20';
+import IconArrowAlignLeft24 from './IconArrowAlignLeft24';
+import IconArrowAlignLeft32 from './IconArrowAlignLeft32'
 
 function IconArrowAlignLeft(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

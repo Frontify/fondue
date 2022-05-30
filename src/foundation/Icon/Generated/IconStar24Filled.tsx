@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconStar24Filled(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -14,7 +14,9 @@ function IconStar24Filled(props: GeneratedIconProps): React.ReactElement<Generat
         >
             <path
                 fill="currentColor"
-                d="M5.82 21.021 7 14.14 2 9.265l6.91-1.004L12 2l3.09 6.261L22 9.265l-5 4.874 1.18 6.882-6.18-3.25-6.18 3.25Z"
+                fillRule="evenodd"
+                d="M12.678 3.679 12 2.249l-.678 1.43-2.41 5.081-5.504.677-1.63.201 1.22 1.1 4.121 3.718-1.03 5.404-.302 1.584 1.407-.79L12 17.95l4.806 2.703 1.407.79-.302-1.584-1.03-5.404 4.121-3.717 1.22-1.101-1.63-.2-5.504-.678-2.41-5.081Z"
+                clipRule="evenodd"
             />
         </svg>
     );

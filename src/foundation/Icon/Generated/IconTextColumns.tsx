@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconTextColumns12 from './IconTextColumns12';;
-import IconTextColumns16 from './IconTextColumns16';;
-import IconTextColumns20 from './IconTextColumns20';;
-import IconTextColumns24 from './IconTextColumns24';;
-import IconTextColumns32 from './IconTextColumns32';
+import IconTextColumns12 from './IconTextColumns12';
+import IconTextColumns16 from './IconTextColumns16';
+import IconTextColumns20 from './IconTextColumns20';
+import IconTextColumns24 from './IconTextColumns24';
+import IconTextColumns32 from './IconTextColumns32'
 
 function IconTextColumns(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

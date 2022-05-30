@@ -1,17 +1,17 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconExclamationMarkCircle12Filled from './IconExclamationMarkCircle12Filled';;
-import IconExclamationMarkCircle12 from './IconExclamationMarkCircle12';;
-import IconExclamationMarkCircle16Filled from './IconExclamationMarkCircle16Filled';;
-import IconExclamationMarkCircle16 from './IconExclamationMarkCircle16';;
-import IconExclamationMarkCircle20Filled from './IconExclamationMarkCircle20Filled';;
-import IconExclamationMarkCircle20 from './IconExclamationMarkCircle20';;
-import IconExclamationMarkCircle24Filled from './IconExclamationMarkCircle24Filled';;
-import IconExclamationMarkCircle24 from './IconExclamationMarkCircle24';;
-import IconExclamationMarkCircle32Filled from './IconExclamationMarkCircle32Filled';;
-import IconExclamationMarkCircle32 from './IconExclamationMarkCircle32';
+import IconExclamationMarkCircle12Filled from './IconExclamationMarkCircle12Filled';
+import IconExclamationMarkCircle12 from './IconExclamationMarkCircle12';
+import IconExclamationMarkCircle16Filled from './IconExclamationMarkCircle16Filled';
+import IconExclamationMarkCircle16 from './IconExclamationMarkCircle16';
+import IconExclamationMarkCircle20Filled from './IconExclamationMarkCircle20Filled';
+import IconExclamationMarkCircle20 from './IconExclamationMarkCircle20';
+import IconExclamationMarkCircle24Filled from './IconExclamationMarkCircle24Filled';
+import IconExclamationMarkCircle24 from './IconExclamationMarkCircle24';
+import IconExclamationMarkCircle32Filled from './IconExclamationMarkCircle32Filled';
+import IconExclamationMarkCircle32 from './IconExclamationMarkCircle32'
 
 function IconExclamationMarkCircle(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

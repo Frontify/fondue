@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconFunnel24(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconFunnel24(props: GeneratedIconProps): React.ReactElement<GeneratedIc
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M20.095 3H4.133A2 2 0 0 0 2.46 6.098l5.82 8.857a3 3 0 0 1 .493 1.647v3.744a2 2 0 0 0 3.027 1.716l2.634-1.575a2 2 0 0 0 .973-1.687l.032-2.222a3 3 0 0 1 .493-1.603l5.833-8.877A2 2 0 0 0 20.095 3ZM9.953 13.856 4.133 5h15.962l-5.833 8.876a5 5 0 0 0-.821 2.673l-.033 2.221-2.634 1.576v-3.744a5 5 0 0 0-.821-2.746Z"
+                d="m14 14 .3-.4 5.47-7.3a.5.5 0 0 0-.4-.8H5.66a.5.5 0 0 0-.401.799l5.444 7.305.297.399v4.847a.5.5 0 0 0 .688.463l2-.814a.5.5 0 0 0 .312-.463V14Zm1.5.5 5.47-7.3c.988-1.32.047-3.2-1.6-3.2H5.66C4.015 4 3.073 5.876 4.056 7.195L9.5 14.5v4.35a2 2 0 0 0 2.754 1.852l2-.813a2 2 0 0 0 1.246-1.853V14.5Z"
                 clipRule="evenodd"
             />
         </svg>

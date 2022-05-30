@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconStackHorizontalAltTwo12 from './IconStackHorizontalAltTwo12';;
-import IconStackHorizontalAltTwo16 from './IconStackHorizontalAltTwo16';;
-import IconStackHorizontalAltTwo20 from './IconStackHorizontalAltTwo20';;
-import IconStackHorizontalAltTwo24 from './IconStackHorizontalAltTwo24';;
-import IconStackHorizontalAltTwo32 from './IconStackHorizontalAltTwo32';
+import IconStackHorizontalAltTwo12 from './IconStackHorizontalAltTwo12';
+import IconStackHorizontalAltTwo16 from './IconStackHorizontalAltTwo16';
+import IconStackHorizontalAltTwo20 from './IconStackHorizontalAltTwo20';
+import IconStackHorizontalAltTwo24 from './IconStackHorizontalAltTwo24';
+import IconStackHorizontalAltTwo32 from './IconStackHorizontalAltTwo32'
 
 function IconStackHorizontalAltTwo(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

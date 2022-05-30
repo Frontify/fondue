@@ -28,9 +28,9 @@ const importsTsx = (components: Array<IconComponent>) => {
 };
 
 export const IconTemplateDynamic = (props: IconShapeTemplateInputs) => {
-    return `import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+    return `import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
 ${importsTsx(props.components)}
 

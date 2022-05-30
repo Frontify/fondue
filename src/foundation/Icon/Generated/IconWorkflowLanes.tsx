@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconWorkflowLanes12 from './IconWorkflowLanes12';;
-import IconWorkflowLanes16 from './IconWorkflowLanes16';;
-import IconWorkflowLanes20 from './IconWorkflowLanes20';;
-import IconWorkflowLanes24 from './IconWorkflowLanes24';;
-import IconWorkflowLanes32 from './IconWorkflowLanes32';
+import IconWorkflowLanes12 from './IconWorkflowLanes12';
+import IconWorkflowLanes16 from './IconWorkflowLanes16';
+import IconWorkflowLanes20 from './IconWorkflowLanes20';
+import IconWorkflowLanes24 from './IconWorkflowLanes24';
+import IconWorkflowLanes32 from './IconWorkflowLanes32'
 
 function IconWorkflowLanes(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconLollipop12 from './IconLollipop12';;
-import IconLollipop16 from './IconLollipop16';;
-import IconLollipop20 from './IconLollipop20';;
-import IconLollipop24 from './IconLollipop24';;
-import IconLollipop32 from './IconLollipop32';
+import IconLollipop12 from './IconLollipop12';
+import IconLollipop16 from './IconLollipop16';
+import IconLollipop20 from './IconLollipop20';
+import IconLollipop24 from './IconLollipop24';
+import IconLollipop32 from './IconLollipop32'
 
 function IconLollipop(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

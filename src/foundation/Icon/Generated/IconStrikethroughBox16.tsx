@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconStrikethroughBox16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconStrikethroughBox16(props: GeneratedIconProps): React.ReactElement<G
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M14.531 2.326a.555.555 0 0 0-.783-.058l-1.05.908a1.66 1.66 0 0 0-.81-.21H4.112c-.92 0-1.667.747-1.667 1.667V11.3c0 .221.043.432.122.626l-1.04.898a.556.556 0 0 0 .726.84l1.05-.906c.24.133.515.209.809.209h7.778c.92 0 1.666-.747 1.666-1.667V4.633c0-.221-.043-.432-.121-.625l1.04-.899a.556.556 0 0 0 .057-.783Zm-2.878 1.752H4.11a.556.556 0 0 0-.556.555v6.438l8.098-6.993Zm-7.306 7.777 8.097-6.993V11.3a.556.556 0 0 1-.556.555h-7.54Z"
+                d="M14.854 1.854a.5.5 0 0 0-.708-.708l-1.13 1.13A1.99 1.99 0 0 0 12 2H4a2 2 0 0 0-2 2v8c0 .37.101.718.277 1.016l-1.13 1.13a.5.5 0 0 0 .707.708l1.13-1.13A2 2 0 0 0 4 14h8a2 2 0 0 0 2-2V4c0-.37-.101-.718-.277-1.016l1.13-1.13Zm-2.595 1.18A1.001 1.001 0 0 0 12 3H4a1 1 0 0 0-1 1v8c0 .09.012.176.034.259l9.225-9.225Zm-8.518 9.932 9.225-9.225c.022.083.034.17.034.259v8a1 1 0 0 1-1 1H4c-.09 0-.176-.012-.259-.034Z"
                 clipRule="evenodd"
             />
         </svg>

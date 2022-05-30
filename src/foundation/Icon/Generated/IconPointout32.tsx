@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconPointout32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,10 +12,12 @@ function IconPointout32(props: GeneratedIconProps): React.ReactElement<Generated
             name="IconPointout32"
             {...props}
         >
-            <g fill="currentColor" fillRule="evenodd" clipRule="evenodd">
-                <path d="M19.333 18.667a4.667 4.667 0 1 1 0-9.334 4.667 4.667 0 0 1 0 9.334Zm0-2.667a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
-                <path d="M25.333 4H6.667a4 4 0 0 0-4 4v16a4 4 0 0 0 4 4h18.666a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4Zm-20 4c0-.736.597-1.333 1.333-1.333h18.667c.737 0 1.334.597 1.334 1.333v16c0 .736-.598 1.333-1.334 1.333H6.667A1.333 1.333 0 0 1 5.332 24V8Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M7 8h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2Zm-4 2a4 4 0 0 1 4-4h18a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V10Zm20 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm2 0a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

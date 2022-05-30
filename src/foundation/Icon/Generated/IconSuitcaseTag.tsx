@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconSuitcaseTag12 from './IconSuitcaseTag12';;
-import IconSuitcaseTag16 from './IconSuitcaseTag16';;
-import IconSuitcaseTag20 from './IconSuitcaseTag20';;
-import IconSuitcaseTag24 from './IconSuitcaseTag24';;
-import IconSuitcaseTag32 from './IconSuitcaseTag32';
+import IconSuitcaseTag12 from './IconSuitcaseTag12';
+import IconSuitcaseTag16 from './IconSuitcaseTag16';
+import IconSuitcaseTag20 from './IconSuitcaseTag20';
+import IconSuitcaseTag24 from './IconSuitcaseTag24';
+import IconSuitcaseTag32 from './IconSuitcaseTag32'
 
 function IconSuitcaseTag(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

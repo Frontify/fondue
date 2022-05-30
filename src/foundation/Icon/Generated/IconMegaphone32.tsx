@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconMegaphone32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,14 +12,12 @@ function IconMegaphone32(props: GeneratedIconProps): React.ReactElement<Generate
             name="IconMegaphone32"
             {...props}
         >
-            <g fill="currentColor">
-                <path
-                    fillRule="evenodd"
-                    d="m21.434 3.036-6.545 4.316h-8.89c-1.84 0-3.332 1.476-3.332 3.297v5.496c0 1.156.601 2.173 1.512 2.762l2.312 9.582c.12.495.566.844 1.08.844h2.873c.614 0 1.111-.492 1.111-1.099v-8.792h3.334l6.545 4.316c.365.24.794.37 1.233.37a2.211 2.211 0 0 0 2.222-2.199V4.865c0-.434-.13-.858-.373-1.22a2.237 2.237 0 0 0-3.082-.609Zm-10.99 14.208H5.997a1.105 1.105 0 0 1-1.108-1.1V10.65c0-.607.497-1.099 1.11-1.099h4.445v7.694ZM8.45 27.135h.884v-7.693h-2.74l1.856 7.693ZM12.666 9.55v7.694h2.896l7.104 4.685V4.865L15.563 9.55h-2.896Z"
-                    clipRule="evenodd"
-                />
-                <path d="M28.222 9.55c-.614 0-1.111.498-1.111 1.111v5.472a1.111 1.111 0 0 0 2.222 0V10.66a1.11 1.11 0 0 0-1.11-1.11Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M20.94 4.108c1.332-.832 3.06.125 3.06 1.696v15.392c0 1.57-1.728 2.528-3.06 1.696L14.713 19H12v6.335a2.665 2.665 0 0 1-5.266.578L5.09 18.515A4 4 0 0 1 3 15v-3a4 4 0 0 1 4-4h7.713l6.227-3.892ZM15 17h-2v-7h2.287l.243-.152L22 5.804v15.392l-6.47-4.044-.243-.152H15Zm-8-7h4v7H7a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2Zm.247 9 1.44 6.48A.665.665 0 0 0 10 25.335V19H7.247ZM29 10a1 1 0 1 0-2 0v7a1 1 0 1 0 2 0v-7Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

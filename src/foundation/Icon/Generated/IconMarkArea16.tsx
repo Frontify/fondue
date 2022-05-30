@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconMarkArea16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,10 +12,12 @@ function IconMarkArea16(props: GeneratedIconProps): React.ReactElement<Generated
             name="IconMarkArea16"
             {...props}
         >
-            <g fill="currentColor" fillRule="evenodd" clipRule="evenodd">
-                <path d="M6 4.667h4a2 2 0 0 1 2 2v.666a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-.666a2 2 0 0 1 2-2ZM6 6a.667.667 0 0 0-.667.667v.666c0 .369.299.667.667.667h4a.667.667 0 0 0 .667-.667v-.666A.667.667 0 0 0 10 6H6Z" />
-                <path d="M12.667 2H3.333a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9.334a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Zm-10 2c0-.368.298-.667.667-.667h9.333c.368 0 .667.299.667.667v8a.667.667 0 0 1-.667.667H3.333A.667.667 0 0 1 2.667 12V4Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M3 3h10a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1ZM1 4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4Zm4 2h6v2H5V6ZM4 6a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

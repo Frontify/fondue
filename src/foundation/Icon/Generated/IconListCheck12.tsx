@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconListCheck12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,12 +12,21 @@ function IconListCheck12(props: GeneratedIconProps): React.ReactElement<Generate
             name="IconListCheck12"
             {...props}
         >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M10.5 2.875a.375.375 0 0 1-.375.375h-4.25a.375.375 0 1 1 0-.75h4.25c.207 0 .375.168.375.375Zm-5 6.25c0-.207.168-.375.375-.375h3.25a.375.375 0 1 1 0 .75h-3.25a.375.375 0 0 1-.375-.375Zm4-4.179a.375.375 0 0 1-.375.375h-3.25a.375.375 0 0 1 0-.75h3.25c.207 0 .375.168.375.375Zm1 2.081a.375.375 0 0 1-.375.375h-4.25a.375.375 0 0 1 0-.75h4.25c.207 0 .375.167.375.375ZM2.82 4.53l-.483-.568a.375.375 0 1 0-.571.486l.743.874c.216.254.62.212.78-.082l1.163-2.15a.375.375 0 0 0-.66-.357L2.82 4.53Zm-.57 2.72v1.5h1.5v-1.5h-1.5ZM2 6.5a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V7a.5.5 0 0 0-.5-.5H2Z"
-                clipRule="evenodd"
-            />
+            <g fill="none">
+                <g clipPath="url(#prefix__a)">
+                    <path
+                        fill="currentColor"
+                        fillRule="evenodd"
+                        d="M5.254 1.046a.5.5 0 0 1 0 .708l-2.8 2.8-.354.353-.354-.353-1.4-1.4a.5.5 0 0 1 .707-.707L2.1 3.493l2.447-2.447a.5.5 0 0 1 .707 0ZM3.5 7h-2a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5Zm-2-1A1.5 1.5 0 0 0 0 7.5v2A1.5 1.5 0 0 0 1.5 11h2A1.5 1.5 0 0 0 5 9.5v-2A1.5 1.5 0 0 0 3.5 6h-2Zm10.53-4.5a.5.5 0 0 1-.5.5H7.485a.5.5 0 1 1 0-1h4.045a.5.5 0 0 1 .5.5Zm-.934 3a.5.5 0 0 1-.5.5H7.485a.5.5 0 0 1 0-1h3.111a.5.5 0 0 1 .5.5ZM11.53 8a.5.5 0 0 0 0-1H7.485a.5.5 0 0 0 0 1h4.045Zm-.434 2.5a.5.5 0 0 1-.5.5H7.485a.5.5 0 0 1 0-1h3.111a.5.5 0 0 1 .5.5Z"
+                        clipRule="evenodd"
+                    />
+                </g>
+                <defs>
+                    <clipPath id="prefix__a">
+                        <path fill="#fff" d="M0 0h12v12H0z" />
+                    </clipPath>
+                </defs>
+            </g>
         </svg>
     );
 }

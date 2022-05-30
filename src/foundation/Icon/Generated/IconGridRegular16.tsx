@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconGridRegular16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconGridRegular16(props: GeneratedIconProps): React.ReactElement<Genera
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M6.267 9.667h-3.2A.067.067 0 0 0 3 9.733v3.2c0 .037.03.067.067.067h3.2c.036 0 .066-.03.066-.067v-3.2a.067.067 0 0 0-.066-.066Zm-3.2-1C2.477 8.667 2 9.144 2 9.733v3.2C2 13.523 2.478 14 3.067 14h3.2c.589 0 1.066-.478 1.066-1.067v-3.2c0-.589-.477-1.066-1.066-1.066h-3.2Zm9.866 1h-3.2a.067.067 0 0 0-.066.066v3.2c0 .037.03.067.066.067h3.2c.037 0 .067-.03.067-.067v-3.2a.067.067 0 0 0-.067-.066Zm-3.2-1c-.589 0-1.066.477-1.066 1.066v3.2c0 .59.477 1.067 1.066 1.067h3.2c.59 0 1.067-.478 1.067-1.067v-3.2c0-.589-.478-1.066-1.067-1.066h-3.2ZM12.933 3h-3.2a.067.067 0 0 0-.066.067v3.2c0 .036.03.066.066.066h3.2c.037 0 .067-.03.067-.066v-3.2A.067.067 0 0 0 12.933 3Zm-3.2-1c-.589 0-1.066.478-1.066 1.067v3.2c0 .589.477 1.066 1.066 1.066h3.2c.59 0 1.067-.477 1.067-1.066v-3.2C14 2.477 13.522 2 12.933 2h-3.2ZM6.267 3h-3.2A.067.067 0 0 0 3 3.067v3.2c0 .036.03.066.067.066h3.2c.036 0 .066-.03.066-.066v-3.2A.067.067 0 0 0 6.267 3Zm-3.2-1C2.477 2 2 2.478 2 3.067v3.2c0 .589.478 1.066 1.067 1.066h3.2c.589 0 1.066-.477 1.066-1.066v-3.2C7.333 2.477 6.856 2 6.267 2h-3.2Z"
+                d="M3.5 3h2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 1 .5-.5ZM2 3.5A1.5 1.5 0 0 1 3.5 2h2A1.5 1.5 0 0 1 7 3.5v2A1.5 1.5 0 0 1 5.5 7h-2A1.5 1.5 0 0 1 2 5.5v-2ZM3.5 10h2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 1 .5-.5Zm-1.5.5A1.5 1.5 0 0 1 3.5 9h2A1.5 1.5 0 0 1 7 10.5v2A1.5 1.5 0 0 1 5.5 14h-2A1.5 1.5 0 0 1 2 12.5v-2Zm10.5-.5h-2a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5Zm-2-1A1.5 1.5 0 0 0 9 10.5v2a1.5 1.5 0 0 0 1.5 1.5h2a1.5 1.5 0 0 0 1.5-1.5v-2A1.5 1.5 0 0 0 12.5 9h-2Zm0-6h2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 1 .5-.5ZM9 3.5A1.5 1.5 0 0 1 10.5 2h2A1.5 1.5 0 0 1 14 3.5v2A1.5 1.5 0 0 1 12.5 7h-2A1.5 1.5 0 0 1 9 5.5v-2Z"
                 clipRule="evenodd"
             />
         </svg>

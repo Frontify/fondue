@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconHeartCircleStack20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,10 +12,12 @@ function IconHeartCircleStack20(props: GeneratedIconProps): React.ReactElement<G
             name="IconHeartCircleStack20"
             {...props}
         >
-            <g fill="currentColor" fillRule="evenodd" clipRule="evenodd">
-                <path d="M11.887 7.584c1.112.748 1.123 2.32.408 3.85-.66 1.412-2.387 3.126-3.507 3.161h-.053c-1.112-.035-2.84-1.75-3.499-3.16-.715-1.531-.704-3.103.408-3.85 1.033-.696 2.113-.47 3.121.54 1.01-1.01 2.089-1.236 3.122-.54Zm-.689 1.025c.46.31.468 1.256-.022 2.303-.483 1.034-1.892 2.432-2.422 2.45-.508-.018-1.916-1.417-2.4-2.45-.489-1.047-.482-1.994-.022-2.303.572-.385 1.159-.181 1.947.829a.617.617 0 0 0 .973 0c.788-1.01 1.375-1.214 1.946-.83Z" />
-                <path d="M13.105 16.202A7.099 7.099 0 1 1 6.953 3.718l-.011-.014a7.099 7.099 0 1 1 6.163 12.498Zm2.013-2.447a5.864 5.864 0 0 0-5.052-10.151 7.101 7.101 0 0 1 5.052 10.15Zm-6.353 2.693a5.864 5.864 0 1 0 0-11.729 5.864 5.864 0 0 0 0 11.729Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M15.088 15.088a7.5 7.5 0 1 1 .84-2.538A6 6 0 0 0 7.45 4.073a7.449 7.449 0 0 0-2.539.84 7.5 7.5 0 1 1 10.176 10.175ZM8.5 17.5a6 6 0 1 0 0-12 6 6 0 0 0 0 12ZM6.344 9.819a1.1 1.1 0 0 0-.28.215c-.368.37-.39.644-.318.953.102.43.434.983.992 1.597.537.59 1.174 1.12 1.694 1.51l.068.05.067-.05c.52-.39 1.158-.92 1.694-1.51.559-.614.891-1.167.992-1.597.073-.309.05-.584-.318-.953a1.1 1.1 0 0 0-.279-.215.23.23 0 0 0-.086-.028c-.02-.001-.097 0-.248.09-.153.09-.306.226-.431.362a2.418 2.418 0 0 0-.158.189v.001a1.5 1.5 0 0 1-2.466 0l-.001-.002.001.002v-.001a2.418 2.418 0 0 0-.157-.189 2.017 2.017 0 0 0-.432-.363c-.152-.089-.228-.09-.248-.089a.23.23 0 0 0-.086.028Zm3.267-1.26C8.938 8.936 8.5 9.58 8.5 9.58s-.438-.643-1.111-1.02c-.64-.358-1.492-.478-2.385.415-2.996 2.995 3.496 6.99 3.496 6.99s6.492-3.995 3.496-6.991c-.893-.893-1.745-.773-2.385-.415Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

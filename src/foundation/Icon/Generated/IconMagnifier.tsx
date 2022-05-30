@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconMagnifier12 from './IconMagnifier12';;
-import IconMagnifier16 from './IconMagnifier16';;
-import IconMagnifier20 from './IconMagnifier20';;
-import IconMagnifier24 from './IconMagnifier24';;
-import IconMagnifier32 from './IconMagnifier32';
+import IconMagnifier12 from './IconMagnifier12';
+import IconMagnifier16 from './IconMagnifier16';
+import IconMagnifier20 from './IconMagnifier20';
+import IconMagnifier24 from './IconMagnifier24';
+import IconMagnifier32 from './IconMagnifier32'
 
 function IconMagnifier(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

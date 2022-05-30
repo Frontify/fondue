@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconHighlighter12 from './IconHighlighter12';;
-import IconHighlighter16 from './IconHighlighter16';;
-import IconHighlighter20 from './IconHighlighter20';;
-import IconHighlighter24 from './IconHighlighter24';;
-import IconHighlighter32 from './IconHighlighter32';
+import IconHighlighter12 from './IconHighlighter12';
+import IconHighlighter16 from './IconHighlighter16';
+import IconHighlighter20 from './IconHighlighter20';
+import IconHighlighter24 from './IconHighlighter24';
+import IconHighlighter32 from './IconHighlighter32'
 
 function IconHighlighter(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

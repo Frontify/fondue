@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconMediaObjectTextLeft12 from './IconMediaObjectTextLeft12';;
-import IconMediaObjectTextLeft16 from './IconMediaObjectTextLeft16';;
-import IconMediaObjectTextLeft20 from './IconMediaObjectTextLeft20';;
-import IconMediaObjectTextLeft24 from './IconMediaObjectTextLeft24';;
-import IconMediaObjectTextLeft32 from './IconMediaObjectTextLeft32';
+import IconMediaObjectTextLeft12 from './IconMediaObjectTextLeft12';
+import IconMediaObjectTextLeft16 from './IconMediaObjectTextLeft16';
+import IconMediaObjectTextLeft20 from './IconMediaObjectTextLeft20';
+import IconMediaObjectTextLeft24 from './IconMediaObjectTextLeft24';
+import IconMediaObjectTextLeft32 from './IconMediaObjectTextLeft32'
 
 function IconMediaObjectTextLeft(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

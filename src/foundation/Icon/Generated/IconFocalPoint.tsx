@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconFocalPoint12 from './IconFocalPoint12';;
-import IconFocalPoint16 from './IconFocalPoint16';;
-import IconFocalPoint20 from './IconFocalPoint20';;
-import IconFocalPoint24 from './IconFocalPoint24';;
-import IconFocalPoint32 from './IconFocalPoint32';
+import IconFocalPoint12 from './IconFocalPoint12';
+import IconFocalPoint16 from './IconFocalPoint16';
+import IconFocalPoint20 from './IconFocalPoint20';
+import IconFocalPoint24 from './IconFocalPoint24';
+import IconFocalPoint32 from './IconFocalPoint32'
 
 function IconFocalPoint(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

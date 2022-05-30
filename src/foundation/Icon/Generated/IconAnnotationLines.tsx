@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconAnnotationLines12 from './IconAnnotationLines12';;
-import IconAnnotationLines16 from './IconAnnotationLines16';;
-import IconAnnotationLines20 from './IconAnnotationLines20';;
-import IconAnnotationLines24 from './IconAnnotationLines24';;
-import IconAnnotationLines32 from './IconAnnotationLines32';
+import IconAnnotationLines12 from './IconAnnotationLines12';
+import IconAnnotationLines16 from './IconAnnotationLines16';
+import IconAnnotationLines20 from './IconAnnotationLines20';
+import IconAnnotationLines24 from './IconAnnotationLines24';
+import IconAnnotationLines32 from './IconAnnotationLines32'
 
 function IconAnnotationLines(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

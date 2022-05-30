@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconExclamationMarkTriangle12 from './IconExclamationMarkTriangle12';;
-import IconExclamationMarkTriangle16 from './IconExclamationMarkTriangle16';;
-import IconExclamationMarkTriangle20 from './IconExclamationMarkTriangle20';;
-import IconExclamationMarkTriangle24 from './IconExclamationMarkTriangle24';;
-import IconExclamationMarkTriangle32 from './IconExclamationMarkTriangle32';
+import IconExclamationMarkTriangle12 from './IconExclamationMarkTriangle12';
+import IconExclamationMarkTriangle16 from './IconExclamationMarkTriangle16';
+import IconExclamationMarkTriangle20 from './IconExclamationMarkTriangle20';
+import IconExclamationMarkTriangle24 from './IconExclamationMarkTriangle24';
+import IconExclamationMarkTriangle32 from './IconExclamationMarkTriangle32'
 
 function IconExclamationMarkTriangle(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

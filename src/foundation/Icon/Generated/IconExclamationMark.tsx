@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconExclamationMark12 from './IconExclamationMark12';;
-import IconExclamationMark16 from './IconExclamationMark16';;
-import IconExclamationMark20 from './IconExclamationMark20';;
-import IconExclamationMark24 from './IconExclamationMark24';;
-import IconExclamationMark32 from './IconExclamationMark32';
+import IconExclamationMark12 from './IconExclamationMark12';
+import IconExclamationMark16 from './IconExclamationMark16';
+import IconExclamationMark20 from './IconExclamationMark20';
+import IconExclamationMark24 from './IconExclamationMark24';
+import IconExclamationMark32 from './IconExclamationMark32'
 
 function IconExclamationMark(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

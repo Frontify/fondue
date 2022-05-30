@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconMoneyCircle12Filled from './IconMoneyCircle12Filled';;
-import IconMoneyCircle16Filled from './IconMoneyCircle16Filled';;
-import IconMoneyCircle20Filled from './IconMoneyCircle20Filled';;
-import IconMoneyCircle24Filled from './IconMoneyCircle24Filled';;
-import IconMoneyCircle32Filled from './IconMoneyCircle32Filled';
+import IconMoneyCircle12Filled from './IconMoneyCircle12Filled';
+import IconMoneyCircle16Filled from './IconMoneyCircle16Filled';
+import IconMoneyCircle20Filled from './IconMoneyCircle20Filled';
+import IconMoneyCircle24Filled from './IconMoneyCircle24Filled';
+import IconMoneyCircle32Filled from './IconMoneyCircle32Filled'
 
 function IconMoneyCircle(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

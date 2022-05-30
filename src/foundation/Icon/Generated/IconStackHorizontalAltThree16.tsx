@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconStackHorizontalAltThree16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconStackHorizontalAltThree16(props: GeneratedIconProps): React.ReactEl
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M3.714 6h-.952a1.43 1.43 0 0 0-1.429 1.429v1.428c0 .79.64 1.429 1.43 1.429h.951c.79 0 1.429-.64 1.429-1.429V7.43c0-.79-.64-1.429-1.429-1.429ZM2.286 7.429c0-.263.213-.477.476-.477h.952c.263 0 .477.214.477.477v1.428a.476.476 0 0 1-.477.476h-.952a.476.476 0 0 1-.476-.476V7.43ZM8.476 6h-.952a1.43 1.43 0 0 0-1.429 1.429v1.428c0 .79.64 1.429 1.429 1.429h.952c.79 0 1.429-.64 1.429-1.429V7.43c0-.79-.64-1.429-1.429-1.429ZM7.048 7.429c0-.263.213-.477.476-.477h.952c.263 0 .477.214.477.477v1.428a.476.476 0 0 1-.477.476h-.952a.476.476 0 0 1-.476-.476V7.43ZM12.286 6h.952c.79 0 1.429.64 1.429 1.429v1.428c0 .79-.64 1.429-1.429 1.429h-.952c-.79 0-1.429-.64-1.429-1.429V7.43c0-.79.64-1.429 1.429-1.429Zm0 .952a.476.476 0 0 0-.476.477v1.428c0 .263.213.476.476.476h.952a.476.476 0 0 0 .476-.476V7.43a.476.476 0 0 0-.476-.477h-.952Z"
+                d="M3.389 7H2.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h.889a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5ZM2.5 6A1.5 1.5 0 0 0 1 7.5v1A1.5 1.5 0 0 0 2.5 10h.889a1.5 1.5 0 0 0 1.5-1.5v-1a1.5 1.5 0 0 0-1.5-1.5H2.5Zm11 1h-.889a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h.889a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5Zm-.889-1a1.5 1.5 0 0 0-1.5 1.5v1a1.5 1.5 0 0 0 1.5 1.5h.889A1.5 1.5 0 0 0 15 8.5v-1A1.5 1.5 0 0 0 13.5 6h-.889ZM7.556 7h.889a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-.89a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Zm-1.5.5a1.5 1.5 0 0 1 1.5-1.5h.889a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-.89a1.5 1.5 0 0 1-1.5-1.5v-1Z"
                 clipRule="evenodd"
             />
         </svg>

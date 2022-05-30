@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconDividerSolid12 from './IconDividerSolid12';;
-import IconDividerSolid16 from './IconDividerSolid16';;
-import IconDividerSolid20 from './IconDividerSolid20';;
-import IconDividerSolid24 from './IconDividerSolid24';;
-import IconDividerSolid32 from './IconDividerSolid32';
+import IconDividerSolid12 from './IconDividerSolid12';
+import IconDividerSolid16 from './IconDividerSolid16';
+import IconDividerSolid20 from './IconDividerSolid20';
+import IconDividerSolid24 from './IconDividerSolid24';
+import IconDividerSolid32 from './IconDividerSolid32'
 
 function IconDividerSolid(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconTrashBinOpen12 from './IconTrashBinOpen12';;
-import IconTrashBinOpen16 from './IconTrashBinOpen16';;
-import IconTrashBinOpen20 from './IconTrashBinOpen20';;
-import IconTrashBinOpen24 from './IconTrashBinOpen24';;
-import IconTrashBinOpen32 from './IconTrashBinOpen32';
+import IconTrashBinOpen12 from './IconTrashBinOpen12';
+import IconTrashBinOpen16 from './IconTrashBinOpen16';
+import IconTrashBinOpen20 from './IconTrashBinOpen20';
+import IconTrashBinOpen24 from './IconTrashBinOpen24';
+import IconTrashBinOpen32 from './IconTrashBinOpen32'
 
 function IconTrashBinOpen(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

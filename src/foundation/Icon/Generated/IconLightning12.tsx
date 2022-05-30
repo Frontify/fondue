@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconLightning12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,12 +12,21 @@ function IconLightning12(props: GeneratedIconProps): React.ReactElement<Generate
             name="IconLightning12"
             {...props}
         >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M10.146 5.028c-.12-.299-.342-.448-.666-.448H7.495l.993-2.597c.136-.357.045-.639-.273-.847-.317-.207-.613-.178-.885.088l-5.107 4.98c-.227.221-.28.48-.16.774.12.295.338.443.656.443h1.8L3.468 9.999c-.136.356-.049.642.263.856.31.214.606.191.885-.068l5.35-4.981c.24-.22.3-.48.18-.778ZM5.57 6.71H2.72l5.106-4.98-1.372 3.56H9.48l-5.35 4.981 1.44-3.56Z"
-                clipRule="evenodd"
-            />
+            <g fill="none">
+                <g clipPath="url(#prefix__a)">
+                    <path
+                        fill="currentColor"
+                        fillRule="evenodd"
+                        d="M1.741 7.93C.86 7.929.418 6.845 1.043 6.21L6.863.302c.743-.755 1.98.029 1.64 1.039l-.868 2.573h2.622c.884 0 1.326 1.086.701 1.72L4.984 11.7c-.745.757-1.986-.034-1.638-1.045l.933-2.717-2.538-.007Zm5.823-6.916-5.82 5.91 3.234.009.697.002-.23.667-1.162 3.385 5.974-6.066h-4.01l.224-.667 1.093-3.24Z"
+                        clipRule="evenodd"
+                    />
+                </g>
+                <defs>
+                    <clipPath id="prefix__a">
+                        <path fill="#fff" d="M0 0h12v12H0z" />
+                    </clipPath>
+                </defs>
+            </g>
         </svg>
     );
 }

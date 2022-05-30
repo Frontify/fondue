@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconLinkBox12 from './IconLinkBox12';;
-import IconLinkBox16 from './IconLinkBox16';;
-import IconLinkBox20 from './IconLinkBox20';;
-import IconLinkBox24 from './IconLinkBox24';;
-import IconLinkBox32 from './IconLinkBox32';
+import IconLinkBox12 from './IconLinkBox12';
+import IconLinkBox16 from './IconLinkBox16';
+import IconLinkBox20 from './IconLinkBox20';
+import IconLinkBox24 from './IconLinkBox24';
+import IconLinkBox32 from './IconLinkBox32'
 
 function IconLinkBox(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconScaleLarge24(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconScaleLarge24(props: GeneratedIconProps): React.ReactElement<Generat
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M4.308 3.3A2.308 2.308 0 0 0 2 5.608v13.846a2.308 2.308 0 0 0 2.308 2.308h15.384A2.308 2.308 0 0 0 22 19.454V5.608A2.308 2.308 0 0 0 19.692 3.3H4.308Zm11.538 1.54H12.77v15.384h3.077V4.84Zm1.539 15.384h2.307a.77.77 0 0 0 .77-.77V5.609a.77.77 0 0 0-.77-.77h-2.307v15.385ZM8.923 4.84h2.308v15.384H8.923V4.84Zm-1.538 0H5.846v15.384h1.539V4.84Zm-3.077 0v15.384a.77.77 0 0 1-.77-.77V5.609a.77.77 0 0 1 .77-.77Z"
+                d="M6.5 5.5H9v13H6.5v-13Zm4 13v-13H14v13h-3.5Zm5 0H19a1.5 1.5 0 0 0 1.5-1.5V7A1.5 1.5 0 0 0 19 5.5h-3.5v13ZM5 5.5A1.5 1.5 0 0 0 3.5 7v10A1.5 1.5 0 0 0 5 18.5v-13ZM2 7a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7Z"
                 clipRule="evenodd"
             />
         </svg>

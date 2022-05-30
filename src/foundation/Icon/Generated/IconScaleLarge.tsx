@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconScaleLarge12 from './IconScaleLarge12';;
-import IconScaleLarge16 from './IconScaleLarge16';;
-import IconScaleLarge20 from './IconScaleLarge20';;
-import IconScaleLarge24 from './IconScaleLarge24';;
-import IconScaleLarge32 from './IconScaleLarge32';
+import IconScaleLarge12 from './IconScaleLarge12';
+import IconScaleLarge16 from './IconScaleLarge16';
+import IconScaleLarge20 from './IconScaleLarge20';
+import IconScaleLarge24 from './IconScaleLarge24';
+import IconScaleLarge32 from './IconScaleLarge32'
 
 function IconScaleLarge(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

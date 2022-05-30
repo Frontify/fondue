@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconPin32Filled(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -14,7 +14,9 @@ function IconPin32Filled(props: GeneratedIconProps): React.ReactElement<Generate
         >
             <path
                 fill="currentColor"
-                d="M20.664 3.152a2.68 2.68 0 0 0-3.15 1.089l-4.287 6.737a9.426 9.426 0 0 0-6.233 1.158l-.003.002a2.68 2.68 0 0 0-.536 4.21l3.892 3.891-7.054 7.054a1 1 0 1 0 1.414 1.414l7.054-7.053 3.893 3.892a2.68 2.68 0 0 0 4.209-.537l.002-.003a9.426 9.426 0 0 0 1.157-6.233l6.736-4.286a2.68 2.68 0 0 0 .457-4.157L21.67 3.785a2.68 2.68 0 0 0-1.006-.633Z"
+                fillRule="evenodd"
+                d="M22.604 4.931a3 3 0 0 0-4.602.435l-3.784 5.565-4.23.719c-2.402.408-3.342 3.356-1.62 5.079l2.767 2.766a.914.914 0 0 0-.022.022l-6.807 6.807a1 1 0 1 0 1.414 1.414l6.807-6.807a.914.914 0 0 0 .021-.022l2.723 2.723c1.723 1.722 4.671.782 5.08-1.62l.717-4.23 5.566-3.784a3 3 0 0 0 .435-4.602L22.604 4.93Z"
+                clipRule="evenodd"
             />
         </svg>
     );

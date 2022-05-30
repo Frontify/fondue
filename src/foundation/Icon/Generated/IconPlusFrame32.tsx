@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconPlusFrame32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,14 +12,12 @@ function IconPlusFrame32(props: GeneratedIconProps): React.ReactElement<Generate
             name="IconPlusFrame32"
             {...props}
         >
-            <g fill="currentColor">
-                <path d="M17.212 21.915a1.212 1.212 0 0 1-2.424 0v-2.424h-2.425a1.212 1.212 0 0 1 0-2.424h2.425v-2.425a1.212 1.212 0 1 1 2.424 0v2.425h2.424a1.212 1.212 0 1 1 0 2.424h-2.424v2.424Z" />
-                <path
-                    fillRule="evenodd"
-                    d="M5.743 3.733h20.513c1.7 0 3.077 1.378 3.077 3.077v18.462c0 1.7-1.377 3.077-3.077 3.077H5.743a3.077 3.077 0 0 1-3.077-3.077V6.81c0-1.7 1.378-3.077 3.077-3.077Zm-1.025 7.18v14.359c0 .566.459 1.025 1.025 1.025h20.513c.567 0 1.026-.459 1.026-1.025v-14.36H4.718Zm22.564-2.051H4.718V6.81c0-.566.459-1.025 1.025-1.025h20.513c.567 0 1.026.459 1.026 1.025v2.052Z"
-                    clipRule="evenodd"
-                />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M25 6H7a2 2 0 0 0-2 2v1h22V8a2 2 0 0 0-2-2Zm2 5H5v13a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V11ZM7 4a4 4 0 0 0-4 4v16a4 4 0 0 0 4 4h18a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4H7Zm9.875 11a1 1 0 1 0-2 0v2.375H12.5a1 1 0 1 0 0 2h2.375V22a1 1 0 1 0 2 0v-2.625H19.5a1 1 0 1 0 0-2h-2.625V15Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

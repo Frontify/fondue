@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconHeartCircleStack12 from './IconHeartCircleStack12';;
-import IconHeartCircleStack16 from './IconHeartCircleStack16';;
-import IconHeartCircleStack20 from './IconHeartCircleStack20';;
-import IconHeartCircleStack24 from './IconHeartCircleStack24';;
-import IconHeartCircleStack32 from './IconHeartCircleStack32';
+import IconHeartCircleStack12 from './IconHeartCircleStack12';
+import IconHeartCircleStack16 from './IconHeartCircleStack16';
+import IconHeartCircleStack20 from './IconHeartCircleStack20';
+import IconHeartCircleStack24 from './IconHeartCircleStack24';
+import IconHeartCircleStack32 from './IconHeartCircleStack32'
 
 function IconHeartCircleStack(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

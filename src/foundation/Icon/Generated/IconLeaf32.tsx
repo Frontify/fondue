@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconLeaf32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconLeaf32(props: GeneratedIconProps): React.ReactElement<GeneratedIcon
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M25.521 16.783c1.37-4.06 1.636-8.99.49-10.152-1.156-1.17-6.072-.923-10.186.434-5.381 1.774-8.828 5.082-8.828 9.85 0 2.046.724 3.923 1.929 5.39L6.623 24.63a1 1 0 1 0 1.42 1.407l2.325-2.346a8.46 8.46 0 0 0 5.115 1.72c4.86.106 8.232-3.272 10.038-8.628Zm-13.73 5.47a6.466 6.466 0 0 0 3.703 1.158h.023c3.821.088 6.55-2.645 8.11-7.267 1.137-3.374 1.37-7.693.96-8.108-.41-.415-4.72-.198-8.136.928-4.652 1.534-7.454 4.223-7.454 7.95a6.47 6.47 0 0 0 1.346 3.96l1.59-1.605.003-.031.526-4.632a1 1 0 0 1 1.987.225l-.243 2.144 3.61-3.644a1 1 0 1 1 1.42 1.407l-3.54 3.573 2.174-.285a1 1 0 0 1 .26 1.983l-4.73.622-1.609 1.623Z"
+                d="m12 18.572-1.413 1.412a6.502 6.502 0 0 1 .653-8.43c.533-.534 1.48-1.085 2.803-1.566 1.288-.469 2.779-.816 4.242-1.03 1.465-.215 2.837-.288 3.879-.238.42.02.753.058.998.104.046.244.084.577.104.998.05 1.042-.023 2.413-.238 3.879-.214 1.463-.561 2.954-1.03 4.242-.481 1.322-1.032 2.27-1.565 2.802a6.502 6.502 0 0 1-8.431.653L13.4 20H18a1 1 0 1 0 0-2h-2.6l3.57-3.569a1 1 0 1 0-1.415-1.414L14 16.572V14.5a1 1 0 0 0-2 0v4.072Zm-2.174-8.433A8.501 8.501 0 0 0 9.16 21.41l-2.15 2.15a1 1 0 1 0 1.415 1.415l2.15-2.15a8.501 8.501 0 0 0 11.272-.666c3.32-3.32 4.164-13.514 2.828-14.85-1.335-1.335-11.53-.49-14.849 2.829Zm13.692-1.224Zm-.442-.435a.083.083 0 0 1-.006-.012l.006.012Z"
                 clipRule="evenodd"
             />
         </svg>

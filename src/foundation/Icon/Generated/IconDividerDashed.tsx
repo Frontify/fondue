@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconDividerDashed12 from './IconDividerDashed12';;
-import IconDividerDashed16 from './IconDividerDashed16';;
-import IconDividerDashed20 from './IconDividerDashed20';;
-import IconDividerDashed24 from './IconDividerDashed24';;
-import IconDividerDashed32 from './IconDividerDashed32';
+import IconDividerDashed12 from './IconDividerDashed12';
+import IconDividerDashed16 from './IconDividerDashed16';
+import IconDividerDashed20 from './IconDividerDashed20';
+import IconDividerDashed24 from './IconDividerDashed24';
+import IconDividerDashed32 from './IconDividerDashed32'
 
 function IconDividerDashed(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

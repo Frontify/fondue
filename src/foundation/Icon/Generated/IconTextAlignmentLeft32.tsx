@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconTextAlignmentLeft32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconTextAlignmentLeft32(props: GeneratedIconProps): React.ReactElement<
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M27.974 7.667a1 1 0 0 1-1 1H5a1 1 0 0 1 0-2h21.973a1 1 0 0 1 1 1Zm-4.943 17.667H4.971a1 1 0 1 1 0-2h18.06a1 1 0 1 1 0 2Zm1-12.144a1 1 0 0 1-1 1H4.971a1 1 0 0 1 0-2h18.06a1 1 0 0 1 1 1Zm3.943 5.548a1 1 0 0 1-1 1H5a1 1 0 1 1 0-2h21.973a1 1 0 0 1 1 1Z"
+                d="M6 10a1 1 0 0 1 0-2h21a1 1 0 1 1 0 2H6Zm0 10a1 1 0 1 1 0-2h21a1 1 0 1 1 0 2H6Zm-1-6a1 1 0 0 0 1 1h17a1 1 0 1 0 0-2H6a1 1 0 0 0-1 1Zm1 11a1 1 0 1 1 0-2h17a1 1 0 1 1 0 2H6Z"
                 clipRule="evenodd"
             />
         </svg>

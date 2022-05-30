@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconFaceSad12Filled(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconFaceSad12Filled(props: GeneratedIconProps): React.ReactElement<Gene
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M4.052 10.61C4.66 10.87 5.31 11 6 11s1.34-.13 1.948-.39A5.017 5.017 0 0 0 9.54 9.54a5.017 5.017 0 0 0 1.07-1.592C10.87 7.34 11 6.69 11 6s-.13-1.34-.39-1.948A5.017 5.017 0 0 0 9.54 2.46a5.017 5.017 0 0 0-1.592-1.07A4.9 4.9 0 0 0 6 1a4.9 4.9 0 0 0-1.948.39A5.013 5.013 0 0 0 2.46 2.46a5.017 5.017 0 0 0-1.07 1.592A4.9 4.9 0 0 0 1 6c0 .69.13 1.34.39 1.948.261.609.617 1.14 1.07 1.592.452.453.983.809 1.592 1.07Zm1.039-6.2a.682.682 0 1 1-1.364 0 .682.682 0 0 1 1.364 0Zm2.5.68a.682.682 0 1 0 0-1.363.682.682 0 0 0 0 1.364ZM3.524 8.453a.455.455 0 0 1-.203-.61C3.853 6.777 4.769 6.227 6 6.227c1.23 0 2.147.55 2.68 1.615a.455.455 0 1 1-.814.407C7.49 7.496 6.891 7.136 6 7.136c-.89 0-1.49.36-1.866 1.113a.455.455 0 0 1-.61.203Z"
+                d="M6 12A6 6 0 1 0 6 0a6 6 0 0 0 0 12ZM3.75 5.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM9 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM3.319 9.366a.5.5 0 0 0 .645-.28l.001-.003a1.378 1.378 0 0 1 .078-.144c.064-.103.167-.245.32-.388.296-.278.802-.58 1.637-.58s1.34.302 1.638.58a1.903 1.903 0 0 1 .385.506.68.68 0 0 1 .012.026v.002a.5.5 0 0 0 .931-.366L8.5 8.9l.466-.182v-.002l-.002-.003-.003-.007-.01-.021a2.372 2.372 0 0 0-.143-.27 2.902 2.902 0 0 0-.487-.594C7.854 7.383 7.109 6.97 6 6.97c-1.11 0-1.854.413-2.32.85a2.902 2.902 0 0 0-.602.799 1.664 1.664 0 0 0-.03.065l-.009.02-.003.008-.001.003v.002L3.5 8.9l-.466-.181a.5.5 0 0 0 .285.647Zm4.716-.283v-.001.001Z"
                 clipRule="evenodd"
             />
         </svg>

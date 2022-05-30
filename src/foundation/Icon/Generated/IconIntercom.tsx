@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconIntercom12 from './IconIntercom12';;
-import IconIntercom16 from './IconIntercom16';;
-import IconIntercom20 from './IconIntercom20';;
-import IconIntercom24 from './IconIntercom24';;
-import IconIntercom32 from './IconIntercom32';
+import IconIntercom12 from './IconIntercom12';
+import IconIntercom16 from './IconIntercom16';
+import IconIntercom20 from './IconIntercom20';
+import IconIntercom24 from './IconIntercom24';
+import IconIntercom32 from './IconIntercom32'
 
 function IconIntercom(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

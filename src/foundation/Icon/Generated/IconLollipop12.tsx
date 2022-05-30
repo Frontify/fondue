@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconLollipop12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,14 +12,12 @@ function IconLollipop12(props: GeneratedIconProps): React.ReactElement<Generated
             name="IconLollipop12"
             {...props}
         >
-            <g fill="currentColor">
-                <path d="M4.625 4v3.5a.375.375 0 1 0 .75 0V4a.375.375 0 1 0-.75 0Zm2 3.5V4a.375.375 0 1 1 .75 0v3.5a.375.375 0 1 1-.75 0Z" />
-                <path
-                    fillRule="evenodd"
-                    d="M6 1a3.5 3.5 0 0 1 3.5 3.5v3.276a1.5 1.5 0 0 1-1.5 1.5h-.75v.474a1.25 1.25 0 1 1-2.5 0v-.474H4a1.5 1.5 0 0 1-1.5-1.5V4.5A3.5 3.5 0 0 1 6 1Zm-.5 8.276v.474a.5.5 0 0 0 1 0v-.474h-1ZM6 1.75A2.75 2.75 0 0 0 3.25 4.5v3.276c0 .414.336.75.75.75h4a.75.75 0 0 0 .75-.75V4.5A2.75 2.75 0 0 0 6 1.75Z"
-                    clipRule="evenodd"
-                />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M9 8.333V4a3 3 0 0 0-6 0v4.333c0 .369.298.667.667.667h4.666A.667.667 0 0 0 9 8.333ZM3.667 10H4.5v.5a1.5 1.5 0 0 0 3 0V10h.833C9.253 10 10 9.254 10 8.333V4a4 4 0 1 0-8 0v4.333C2 9.253 2.746 10 3.667 10Zm1.833.5V10h1v.5a.5.5 0 0 1-1 0ZM5 3a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0v-4A.5.5 0 0 1 5 3Zm2 0a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0v-4A.5.5 0 0 1 7 3Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

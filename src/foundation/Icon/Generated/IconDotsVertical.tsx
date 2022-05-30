@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconDotsVertical12 from './IconDotsVertical12';;
-import IconDotsVertical16 from './IconDotsVertical16';;
-import IconDotsVertical20 from './IconDotsVertical20';;
-import IconDotsVertical24 from './IconDotsVertical24';;
-import IconDotsVertical32 from './IconDotsVertical32';
+import IconDotsVertical12 from './IconDotsVertical12';
+import IconDotsVertical16 from './IconDotsVertical16';
+import IconDotsVertical20 from './IconDotsVertical20';
+import IconDotsVertical24 from './IconDotsVertical24';
+import IconDotsVertical32 from './IconDotsVertical32'
 
 function IconDotsVertical(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

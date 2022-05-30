@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconTriangle16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconTriangle16(props: GeneratedIconProps): React.ReactElement<Generated
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M3.848 12.858h8.304L8 4.554l-4.152 8.304ZM14 14H2L8 2l6 12Z"
+                d="M8 1.5a.5.5 0 0 1 .435.254l6.5 11.5A.5.5 0 0 1 14.5 14h-13a.5.5 0 0 1-.435-.746l6.5-11.5A.5.5 0 0 1 8 1.5ZM2.357 13h11.286L8 3.016 2.357 13Z"
                 clipRule="evenodd"
             />
         </svg>

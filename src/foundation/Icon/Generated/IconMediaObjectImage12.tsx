@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconMediaObjectImage12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,10 +12,12 @@ function IconMediaObjectImage12(props: GeneratedIconProps): React.ReactElement<G
             name="IconMediaObjectImage12"
             {...props}
         >
-            <g fill="currentColor" fillRule="evenodd" clipRule="evenodd">
-                <path d="M11 2.927a.375.375 0 0 1-.375.375H8.882a.375.375 0 1 1 0-.75h1.743c.207 0 .375.168.375.375Zm0 3a.375.375 0 0 1-.375.375H8.882a.375.375 0 1 1 0-.75h1.743c.207 0 .375.168.375.375Zm-.712-1.5a.375.375 0 0 1-.375.375H8.882a.375.375 0 0 1 0-.75h1.03c.208 0 .376.168.376.375Zm0 3a.375.375 0 0 1-.375.375H8.882a.375.375 0 0 1 0-.75h1.03c.208 0 .376.168.376.375ZM6.5 2.75H2a.25.25 0 0 0-.25.25v6c0 .138.112.25.25.25h4.5A.25.25 0 0 0 6.75 9V3a.25.25 0 0 0-.25-.25ZM2 2a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h4.5a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2Z" />
-                <path d="M5.506 7.5c.046.026.103.02.143-.014l1.111-.969a.375.375 0 1 1 .493.566l-1.111.968a.875.875 0 0 1-1.003.103L3.03 6.971a.125.125 0 0 0-.127.003l-1.207.745a.375.375 0 0 1-.394-.638l1.207-.745a.875.875 0 0 1 .888-.019L5.506 7.5Zm-.906-3a.4.4 0 1 0 .8 0 .4.4 0 0 0-.8 0Zm.4-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M5.5 2h-4a.5.5 0 0 0-.5.5v4.793l.646-.647.267-.266.33.183L6 8.65V2.5a.5.5 0 0 0-.5-.5Zm.43 7.755L2.087 7.62 1 8.707V9.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .43-.245ZM1.5 1A1.5 1.5 0 0 0 0 2.5v7A1.5 1.5 0 0 0 1.5 11h4A1.5 1.5 0 0 0 7 9.5v-7A1.5 1.5 0 0 0 5.5 1h-4Zm7 2.5A.5.5 0 0 1 9 3h2.5a.5.5 0 0 1 0 1H9a.5.5 0 0 1-.5-.5ZM9 5a.5.5 0 0 0 0 1h1.5a.5.5 0 0 0 0-1H9ZM3.5 5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1Zm0 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconCarousel12 from './IconCarousel12';;
-import IconCarousel16 from './IconCarousel16';;
-import IconCarousel20 from './IconCarousel20';;
-import IconCarousel24 from './IconCarousel24';;
-import IconCarousel32 from './IconCarousel32';
+import IconCarousel12 from './IconCarousel12';
+import IconCarousel16 from './IconCarousel16';
+import IconCarousel20 from './IconCarousel20';
+import IconCarousel24 from './IconCarousel24';
+import IconCarousel32 from './IconCarousel32'
 
 function IconCarousel(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

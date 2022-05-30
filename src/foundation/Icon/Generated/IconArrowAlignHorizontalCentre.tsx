@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconArrowAlignHorizontalCentre12 from './IconArrowAlignHorizontalCentre12';;
-import IconArrowAlignHorizontalCentre16 from './IconArrowAlignHorizontalCentre16';;
-import IconArrowAlignHorizontalCentre20 from './IconArrowAlignHorizontalCentre20';;
-import IconArrowAlignHorizontalCentre24 from './IconArrowAlignHorizontalCentre24';;
-import IconArrowAlignHorizontalCentre32 from './IconArrowAlignHorizontalCentre32';
+import IconArrowAlignHorizontalCentre12 from './IconArrowAlignHorizontalCentre12';
+import IconArrowAlignHorizontalCentre16 from './IconArrowAlignHorizontalCentre16';
+import IconArrowAlignHorizontalCentre20 from './IconArrowAlignHorizontalCentre20';
+import IconArrowAlignHorizontalCentre24 from './IconArrowAlignHorizontalCentre24';
+import IconArrowAlignHorizontalCentre32 from './IconArrowAlignHorizontalCentre32'
 
 function IconArrowAlignHorizontalCentre(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

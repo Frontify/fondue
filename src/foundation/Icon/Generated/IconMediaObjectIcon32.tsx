@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconMediaObjectIcon32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,11 +12,12 @@ function IconMediaObjectIcon32(props: GeneratedIconProps): React.ReactElement<Ge
             name="IconMediaObjectIcon32"
             {...props}
         >
-            <g fill="currentColor" fillRule="evenodd" clipRule="evenodd">
-                <path d="M17.333 7.333h-12A.667.667 0 0 0 4.666 8v16c0 .368.299.667.667.667h12A.667.667 0 0 0 18 24V8a.667.667 0 0 0-.667-.667Zm-12-2A2.667 2.667 0 0 0 2.666 8v16a2.667 2.667 0 0 0 2.667 2.667h12A2.667 2.667 0 0 0 20 24V8a2.667 2.667 0 0 0-2.667-2.667h-12Z" />
-                <path d="M17.296 25.662 3.72 7.466l1.65-1.128 13.577 18.195-1.65 1.129Z" />
-                <path d="M3.72 24.533 17.295 6.338l1.651 1.128L5.37 25.662l-1.65-1.129ZM29.333 7.667a1 1 0 0 1-1 1h-4.648a1 1 0 1 1 0-2h4.648a1 1 0 0 1 1 1Zm0 8a1 1 0 0 1-1 1h-4.648a1 1 0 1 1 0-2h4.648a1 1 0 0 1 1 1Zm-1.9-4a1 1 0 0 1-1 1h-2.748a1 1 0 1 1 0-2h2.748a1 1 0 0 1 1 1Zm0 8a1 1 0 0 1-1 1h-2.748a1 1 0 1 1 0-2h2.748a1 1 0 0 1 1 1Z" />
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M7 7h8c.386 0 .746.11 1.051.298L11 14.292 5.949 7.298A1.99 1.99 0 0 1 7 7Zm2.766 9L5 9.4v13.2L9.766 16ZM5.95 24.702 11 17.708l5.051 6.994A1.99 1.99 0 0 1 15 25H7a1.99 1.99 0 0 1-1.051-.298ZM12.233 16 17 9.4v13.2L12.233 16ZM3 9a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9Zm18 0a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2h-6a1 1 0 0 1-1-1Zm1 3a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2h-4Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

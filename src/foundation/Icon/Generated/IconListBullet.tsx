@@ -1,12 +1,12 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
 
-import IconListBullet12 from './IconListBullet12';;
-import IconListBullet16 from './IconListBullet16';;
-import IconListBullet20 from './IconListBullet20';;
-import IconListBullet24 from './IconListBullet24';;
-import IconListBullet32 from './IconListBullet32';
+import IconListBullet12 from './IconListBullet12';
+import IconListBullet16 from './IconListBullet16';
+import IconListBullet20 from './IconListBullet20';
+import IconListBullet24 from './IconListBullet24';
+import IconListBullet32 from './IconListBullet32'
 
 function IconListBullet(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const size = props.size || IconSize.Size16;

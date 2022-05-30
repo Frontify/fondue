@@ -251,9 +251,20 @@ import IconBookmark24Filled from '@foundation/Icon/Generated/IconBookmark24Fille
 import IconBookmark32 from '@foundation/Icon/Generated/IconBookmark32';
 import IconBookmark32Filled from '@foundation/Icon/Generated/IconBookmark32Filled';
 import IconBracketsCurly from '@foundation/Icon/Generated/IconBracketsCurly';
+import IconBracketsCurly12 from '@foundation/Icon/Generated/IconBracketsCurly12';
+import IconBracketsCurly16 from '@foundation/Icon/Generated/IconBracketsCurly16';
+import IconBracketsCurly20 from '@foundation/Icon/Generated/IconBracketsCurly20';
+import IconBracketsCurly24 from '@foundation/Icon/Generated/IconBracketsCurly24';
+import IconBracketsCurly32 from '@foundation/Icon/Generated/IconBracketsCurly32';
 import IconBrand from '@foundation/Icon/Generated/IconBrand';
 import IconBriefing from '@foundation/Icon/Generated/IconBriefing';
 import IconBuilder from '@foundation/Icon/Generated/IconBuilder';
+import IconBuilding from '@foundation/Icon/Generated/IconBuilding';
+import IconBuilding12 from '@foundation/Icon/Generated/IconBuilding12';
+import IconBuilding16 from '@foundation/Icon/Generated/IconBuilding16';
+import IconBuilding20 from '@foundation/Icon/Generated/IconBuilding20';
+import IconBuilding24 from '@foundation/Icon/Generated/IconBuilding24';
+import IconBuilding32 from '@foundation/Icon/Generated/IconBuilding32';
 import IconBuildingBlock from '@foundation/Icon/Generated/IconBuildingBlock';
 import IconBuildingBlock12 from '@foundation/Icon/Generated/IconBuildingBlock12';
 import IconBuildingBlock16 from '@foundation/Icon/Generated/IconBuildingBlock16';
@@ -261,6 +272,11 @@ import IconBuildingBlock20 from '@foundation/Icon/Generated/IconBuildingBlock20'
 import IconBuildingBlock24 from '@foundation/Icon/Generated/IconBuildingBlock24';
 import IconBuildingBlock32 from '@foundation/Icon/Generated/IconBuildingBlock32';
 import IconBuildings from '@foundation/Icon/Generated/IconBuildings';
+import IconBuildings12 from '@foundation/Icon/Generated/IconBuildings12';
+import IconBuildings16 from '@foundation/Icon/Generated/IconBuildings16';
+import IconBuildings20 from '@foundation/Icon/Generated/IconBuildings20';
+import IconBuildings24 from '@foundation/Icon/Generated/IconBuildings24';
+import IconBuildings32 from '@foundation/Icon/Generated/IconBuildings32';
 import IconButton from '@foundation/Icon/Generated/IconButton';
 import IconButton12 from '@foundation/Icon/Generated/IconButton12';
 import IconButton16 from '@foundation/Icon/Generated/IconButton16';
@@ -417,12 +433,18 @@ import IconClock16 from '@foundation/Icon/Generated/IconClock16';
 import IconClock20 from '@foundation/Icon/Generated/IconClock20';
 import IconClock24 from '@foundation/Icon/Generated/IconClock24';
 import IconClock32 from '@foundation/Icon/Generated/IconClock32';
+import IconClockAlternative from '@foundation/Icon/Generated/IconClockAlternative';
 import IconClockAlternative1 from '@foundation/Icon/Generated/IconClockAlternative1';
 import IconClockAlternative112 from '@foundation/Icon/Generated/IconClockAlternative112';
 import IconClockAlternative116 from '@foundation/Icon/Generated/IconClockAlternative116';
+import IconClockAlternative12 from '@foundation/Icon/Generated/IconClockAlternative12';
 import IconClockAlternative120 from '@foundation/Icon/Generated/IconClockAlternative120';
 import IconClockAlternative124 from '@foundation/Icon/Generated/IconClockAlternative124';
 import IconClockAlternative132 from '@foundation/Icon/Generated/IconClockAlternative132';
+import IconClockAlternative16 from '@foundation/Icon/Generated/IconClockAlternative16';
+import IconClockAlternative20 from '@foundation/Icon/Generated/IconClockAlternative20';
+import IconClockAlternative24 from '@foundation/Icon/Generated/IconClockAlternative24';
+import IconClockAlternative32 from '@foundation/Icon/Generated/IconClockAlternative32';
 import IconCloudArrowDown from '@foundation/Icon/Generated/IconCloudArrowDown';
 import IconCloudArrowDown12 from '@foundation/Icon/Generated/IconCloudArrowDown12';
 import IconCloudArrowDown16 from '@foundation/Icon/Generated/IconCloudArrowDown16';
@@ -487,6 +509,12 @@ import IconCommandLineBox16 from '@foundation/Icon/Generated/IconCommandLineBox1
 import IconCommandLineBox20 from '@foundation/Icon/Generated/IconCommandLineBox20';
 import IconCommandLineBox24 from '@foundation/Icon/Generated/IconCommandLineBox24';
 import IconCommandLineBox32 from '@foundation/Icon/Generated/IconCommandLineBox32';
+import IconContentBlock from '@foundation/Icon/Generated/IconContentBlock';
+import IconContentBlock12 from '@foundation/Icon/Generated/IconContentBlock12';
+import IconContentBlock16 from '@foundation/Icon/Generated/IconContentBlock16';
+import IconContentBlock20 from '@foundation/Icon/Generated/IconContentBlock20';
+import IconContentBlock24 from '@foundation/Icon/Generated/IconContentBlock24';
+import IconContentBlock32 from '@foundation/Icon/Generated/IconContentBlock32';
 import IconController from '@foundation/Icon/Generated/IconController';
 import IconController12 from '@foundation/Icon/Generated/IconController12';
 import IconController16 from '@foundation/Icon/Generated/IconController16';
@@ -605,6 +633,12 @@ import IconDocumentCheck16 from '@foundation/Icon/Generated/IconDocumentCheck16'
 import IconDocumentCheck20 from '@foundation/Icon/Generated/IconDocumentCheck20';
 import IconDocumentCheck24 from '@foundation/Icon/Generated/IconDocumentCheck24';
 import IconDocumentCheck32 from '@foundation/Icon/Generated/IconDocumentCheck32';
+import IconDocumentCode from '@foundation/Icon/Generated/IconDocumentCode';
+import IconDocumentCode12 from '@foundation/Icon/Generated/IconDocumentCode12';
+import IconDocumentCode16 from '@foundation/Icon/Generated/IconDocumentCode16';
+import IconDocumentCode20 from '@foundation/Icon/Generated/IconDocumentCode20';
+import IconDocumentCode24 from '@foundation/Icon/Generated/IconDocumentCode24';
+import IconDocumentCode32 from '@foundation/Icon/Generated/IconDocumentCode32';
 import IconDocumentLibrary from '@foundation/Icon/Generated/IconDocumentLibrary';
 import IconDocumentList from '@foundation/Icon/Generated/IconDocumentList';
 import IconDocumentList12 from '@foundation/Icon/Generated/IconDocumentList12';
@@ -1581,6 +1615,12 @@ import IconTeam from '@foundation/Icon/Generated/IconTeam';
 import IconTeamO from '@foundation/Icon/Generated/IconTeamO';
 import IconTemplate from '@foundation/Icon/Generated/IconTemplate';
 import IconTemplates from '@foundation/Icon/Generated/IconTemplates';
+import IconTester from '@foundation/Icon/Generated/IconTester';
+import IconTester12 from '@foundation/Icon/Generated/IconTester12';
+import IconTester16 from '@foundation/Icon/Generated/IconTester16';
+import IconTester20 from '@foundation/Icon/Generated/IconTester20';
+import IconTester24 from '@foundation/Icon/Generated/IconTester24';
+import IconTester32 from '@foundation/Icon/Generated/IconTester32';
 import IconText from '@foundation/Icon/Generated/IconText';
 import IconTextAlignCenter from '@foundation/Icon/Generated/IconTextAlignCenter';
 import IconTextAlignJustify from '@foundation/Icon/Generated/IconTextAlignJustify';
@@ -1997,9 +2037,20 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Bookmark32]: <IconBookmark32 />,
     [IconEnum.Bookmark32Filled]: <IconBookmark32Filled />,
     [IconEnum.BracketsCurly]: <IconBracketsCurly />,
+    [IconEnum.BracketsCurly12]: <IconBracketsCurly12 />,
+    [IconEnum.BracketsCurly16]: <IconBracketsCurly16 />,
+    [IconEnum.BracketsCurly20]: <IconBracketsCurly20 />,
+    [IconEnum.BracketsCurly24]: <IconBracketsCurly24 />,
+    [IconEnum.BracketsCurly32]: <IconBracketsCurly32 />,
     [IconEnum.Brand]: <IconBrand />,
     [IconEnum.Briefing]: <IconBriefing />,
     [IconEnum.Builder]: <IconBuilder />,
+    [IconEnum.Building]: <IconBuilding />,
+    [IconEnum.Building12]: <IconBuilding12 />,
+    [IconEnum.Building16]: <IconBuilding16 />,
+    [IconEnum.Building20]: <IconBuilding20 />,
+    [IconEnum.Building24]: <IconBuilding24 />,
+    [IconEnum.Building32]: <IconBuilding32 />,
     [IconEnum.BuildingBlock]: <IconBuildingBlock />,
     [IconEnum.BuildingBlock12]: <IconBuildingBlock12 />,
     [IconEnum.BuildingBlock16]: <IconBuildingBlock16 />,
@@ -2007,6 +2058,11 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.BuildingBlock24]: <IconBuildingBlock24 />,
     [IconEnum.BuildingBlock32]: <IconBuildingBlock32 />,
     [IconEnum.Buildings]: <IconBuildings />,
+    [IconEnum.Buildings12]: <IconBuildings12 />,
+    [IconEnum.Buildings16]: <IconBuildings16 />,
+    [IconEnum.Buildings20]: <IconBuildings20 />,
+    [IconEnum.Buildings24]: <IconBuildings24 />,
+    [IconEnum.Buildings32]: <IconBuildings32 />,
     [IconEnum.Button]: <IconButton />,
     [IconEnum.Button12]: <IconButton12 />,
     [IconEnum.Button16]: <IconButton16 />,
@@ -2163,12 +2219,18 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Clock20]: <IconClock20 />,
     [IconEnum.Clock24]: <IconClock24 />,
     [IconEnum.Clock32]: <IconClock32 />,
+    [IconEnum.ClockAlternative]: <IconClockAlternative />,
     [IconEnum.ClockAlternative1]: <IconClockAlternative1 />,
     [IconEnum.ClockAlternative112]: <IconClockAlternative112 />,
     [IconEnum.ClockAlternative116]: <IconClockAlternative116 />,
+    [IconEnum.ClockAlternative12]: <IconClockAlternative12 />,
     [IconEnum.ClockAlternative120]: <IconClockAlternative120 />,
     [IconEnum.ClockAlternative124]: <IconClockAlternative124 />,
     [IconEnum.ClockAlternative132]: <IconClockAlternative132 />,
+    [IconEnum.ClockAlternative16]: <IconClockAlternative16 />,
+    [IconEnum.ClockAlternative20]: <IconClockAlternative20 />,
+    [IconEnum.ClockAlternative24]: <IconClockAlternative24 />,
+    [IconEnum.ClockAlternative32]: <IconClockAlternative32 />,
     [IconEnum.CloudArrowDown]: <IconCloudArrowDown />,
     [IconEnum.CloudArrowDown12]: <IconCloudArrowDown12 />,
     [IconEnum.CloudArrowDown16]: <IconCloudArrowDown16 />,
@@ -2233,6 +2295,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.CommandLineBox20]: <IconCommandLineBox20 />,
     [IconEnum.CommandLineBox24]: <IconCommandLineBox24 />,
     [IconEnum.CommandLineBox32]: <IconCommandLineBox32 />,
+    [IconEnum.ContentBlock]: <IconContentBlock />,
+    [IconEnum.ContentBlock12]: <IconContentBlock12 />,
+    [IconEnum.ContentBlock16]: <IconContentBlock16 />,
+    [IconEnum.ContentBlock20]: <IconContentBlock20 />,
+    [IconEnum.ContentBlock24]: <IconContentBlock24 />,
+    [IconEnum.ContentBlock32]: <IconContentBlock32 />,
     [IconEnum.Controller]: <IconController />,
     [IconEnum.Controller12]: <IconController12 />,
     [IconEnum.Controller16]: <IconController16 />,
@@ -2351,6 +2419,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.DocumentCheck20]: <IconDocumentCheck20 />,
     [IconEnum.DocumentCheck24]: <IconDocumentCheck24 />,
     [IconEnum.DocumentCheck32]: <IconDocumentCheck32 />,
+    [IconEnum.DocumentCode]: <IconDocumentCode />,
+    [IconEnum.DocumentCode12]: <IconDocumentCode12 />,
+    [IconEnum.DocumentCode16]: <IconDocumentCode16 />,
+    [IconEnum.DocumentCode20]: <IconDocumentCode20 />,
+    [IconEnum.DocumentCode24]: <IconDocumentCode24 />,
+    [IconEnum.DocumentCode32]: <IconDocumentCode32 />,
     [IconEnum.DocumentLibrary]: <IconDocumentLibrary />,
     [IconEnum.DocumentList]: <IconDocumentList />,
     [IconEnum.DocumentList12]: <IconDocumentList12 />,
@@ -3327,6 +3401,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.TeamO]: <IconTeamO />,
     [IconEnum.Template]: <IconTemplate />,
     [IconEnum.Templates]: <IconTemplates />,
+    [IconEnum.Tester]: <IconTester />,
+    [IconEnum.Tester12]: <IconTester12 />,
+    [IconEnum.Tester16]: <IconTester16 />,
+    [IconEnum.Tester20]: <IconTester20 />,
+    [IconEnum.Tester24]: <IconTester24 />,
+    [IconEnum.Tester32]: <IconTester32 />,
     [IconEnum.Text]: <IconText />,
     [IconEnum.TextAlignCenter]: <IconTextAlignCenter />,
     [IconEnum.TextAlignJustify]: <IconTextAlignJustify />,

@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconPuzzle32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
+    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ function IconPuzzle32(props: GeneratedIconProps): React.ReactElement<GeneratedIc
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M29.334 19.2a4.8 4.8 0 0 0-6.4-4.527V11.2A2.133 2.133 0 0 0 20.8 9.067h-3.473a4.8 4.8 0 1 0-9.053 0H4.8A2.133 2.133 0 0 0 2.667 11.2v16c0 1.178.955 2.133 2.133 2.133h5.388c.955 0 1.429-1.16.746-1.828a2.667 2.667 0 1 1 3.732 0c-.682.669-.208 1.828.747 1.828H20.8a2.133 2.133 0 0 0 2.134-2.133v-3.473a4.8 4.8 0 0 0 6.4-4.527ZM20.8 21.813V27.2h-3.473a4.8 4.8 0 1 0-9.053 0H4.8v-16h5.388c.955 0 1.428-1.16.746-1.829a2.667 2.667 0 1 1 3.732 0c-.682.67-.208 1.829.747 1.829H20.8v5.387c0 .956 1.16 1.43 1.829.747a2.667 2.667 0 1 1 0 3.732c-.669-.682-1.829-.209-1.829.747Z"
+                d="M12 10H7a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3v-1a4 4 0 0 1 8 0v1h3a1 1 0 0 0 1-1v-5h3a2 2 0 1 0 0-4h-3v-5a1 1 0 0 0-1-1h-5V7a2 2 0 1 0-4 0v3Zm12 14v-2h1a4 4 0 0 0 0-8h-1v-3a3 3 0 0 0-3-3h-3V7a4 4 0 0 0-8 0v1H7a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h5v-3a2 2 0 1 1 4 0v3h5a3 3 0 0 0 3-3v-1Z"
                 clipRule="evenodd"
             />
         </svg>
