@@ -1,43 +1,43 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Switch, SwitchSize } from "@components/Switch/Switch";
-import IconAddSimple from "@foundation/Icon/Generated/IconAddSimple";
-import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
-import IconMinus from "@foundation/Icon/Generated/IconMinus";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { useMemoizedId } from "@hooks/useMemoizedId";
-import { merge } from "@utilities/merge";
-import React, { cloneElement, FC, isValidElement, ReactNode } from "react";
+import { Switch, SwitchSize } from '@components/Switch/Switch';
+import IconAddSimple from '@foundation/Icon/Generated/IconAddSimple';
+import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
+import IconMinus from '@foundation/Icon/Generated/IconMinus';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { merge } from '@utilities/merge';
+import React, { FC, ReactNode, cloneElement, isValidElement } from 'react';
 
 export enum FieldsetHeaderSize {
-    Small = "Small",
-    Medium = "Medium",
-    Large = "Large",
+    Small = 'Small',
+    Medium = 'Medium',
+    Large = 'Large',
 }
 
 const sizeMap: Record<FieldsetHeaderSize, { icon: IconSize; text: string; switch: SwitchSize }> = {
     [FieldsetHeaderSize.Small]: {
         icon: IconSize.Size12,
-        text: "tw-text-s",
+        text: 'tw-text-s',
         switch: SwitchSize.Small,
     },
     [FieldsetHeaderSize.Medium]: {
         icon: IconSize.Size16,
-        text: "tw-text-m",
+        text: 'tw-text-m',
         switch: SwitchSize.Medium,
     },
     [FieldsetHeaderSize.Large]: {
         icon: IconSize.Size20,
-        text: "tw-text-l",
+        text: 'tw-text-l',
         switch: SwitchSize.Large,
     },
 };
 
 export enum FieldsetHeaderType {
-    Default = "Default",
-    Switch = "Switch",
-    Accordion = "Accordion",
-    AddRemove = "AddRemove",
+    Default = 'Default',
+    Switch = 'Switch',
+    Accordion = 'Accordion',
+    AddRemove = 'AddRemove',
 }
 
 export type FieldsetHeaderProps = {
@@ -61,7 +61,7 @@ export const renderFieldsetHeaderIconType = (
     disabled: boolean,
 ) => {
     const props = {
-        "aria-labelledby": id,
+        'aria-labelledby': id,
         size: sizeMap[size].icon,
     };
 
@@ -72,11 +72,11 @@ export const renderFieldsetHeaderIconType = (
             return (
                 <div
                     className={merge([
-                        "tw-transition-transform",
-                        active && "tw-rotate-180 tw-duration-300",
-                        disabled && !active && "tw-text-black-40",
-                        !disabled && active && "tw-text-black",
-                        !disabled && !active && "tw-text-black-80",
+                        'tw-transition-transform',
+                        active && 'tw-rotate-180 tw-duration-300',
+                        disabled && !active && 'tw-text-black-40',
+                        !disabled && active && 'tw-text-black',
+                        !disabled && !active && 'tw-text-black-80',
                     ])}
                 >
                     <IconCaretDown {...props} />
@@ -86,9 +86,9 @@ export const renderFieldsetHeaderIconType = (
             return (
                 <div
                     className={merge([
-                        active && disabled && "tw-text-black-40",
-                        active && !disabled && "tw-text-black",
-                        !active && !disabled && "tw-text-black-80",
+                        active && disabled && 'tw-text-black-40',
+                        active && !disabled && 'tw-text-black',
+                        !active && !disabled && 'tw-text-black-80',
                     ])}
                 >
                     {active ? <IconMinus {...props} /> : <IconAddSimple {...props} />}
@@ -108,7 +108,7 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
     bold = true,
     children,
     onClick,
-    as: Heading = "label",
+    as: Heading = 'label',
     tabIndex = -1,
 }) => {
     const id = useMemoizedId();
@@ -117,14 +117,14 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
     return (
         <header
             data-test-id="fieldset-header"
-            role={onClick ? "button" : undefined}
+            role={onClick ? 'button' : undefined}
             onClick={clickOnNotDisabled}
             onKeyPress={clickOnNotDisabled}
             className={merge([
-                "tw-flex tw-items-center tw-gap-x-1.5 tw-w-full tw-flex-row",
-                disabled ? "tw-text-black-40" : "dark:tw-text-white",
-                !disabled && active ? "tw-text-black" : "tw-text-black-80",
-                !disabled && onClick ? "hover:tw-cursor-pointer" : "tw-pointer-events-none",
+                'tw-flex tw-items-center tw-gap-x-1.5 tw-w-full tw-flex-row',
+                disabled ? 'tw-text-black-40' : 'dark:tw-text-white',
+                !disabled && active ? 'tw-text-black' : 'tw-text-black-80',
+                !disabled && onClick ? 'hover:tw-cursor-pointer' : 'tw-pointer-events-none',
             ])}
             tabIndex={tabIndex}
         >
@@ -138,10 +138,10 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
             <Heading
                 id={id}
                 className={merge([
-                    "tw-text-left",
+                    'tw-text-left',
                     sizeMap[size].text,
-                    bold ? "tw-font-bold" : size === FieldsetHeaderSize.Medium ? "tw-font-medium" : "tw-font-normal",
-                    onClick && "hover:tw-cursor-pointer",
+                    bold ? 'tw-font-bold' : size === FieldsetHeaderSize.Medium ? 'tw-font-medium' : 'tw-font-normal',
+                    onClick && 'hover:tw-cursor-pointer',
                 ])}
             >
                 {children}

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { memo, ReactElement } from "react";
+import React, { ReactElement, memo } from 'react';
 
 function PatternSound(): ReactElement {
     return (
@@ -548,5 +548,5 @@ function PatternSound(): ReactElement {
 }
 
 const Memo = memo(PatternSound);
-// eslint-disable-next-line import/no-default-export
+
 export default Memo;

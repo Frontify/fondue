@@ -1,29 +1,28 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
-import { Story, Meta } from "@storybook/react";
-import { PatternDesign, PatternScale, PatternTheme } from "@foundation/Pattern";
-import { FrontifyPatternProps, FrontifyPattern } from "./FrontifyPattern";
+import React from 'react';
+import { Meta, Story } from '@storybook/react';
+import { PatternDesign, PatternScale, PatternTheme } from '@foundation/Pattern';
+import { FrontifyPattern, FrontifyPatternProps } from './FrontifyPattern';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/FrontifyPattern",
+    title: 'Components/FrontifyPattern',
     component: FrontifyPattern,
     argTypes: {
         pattern: {
             options: Object.keys(PatternDesign),
             defaultValue: PatternDesign.DigitalAssets,
-            control: { type: "select" },
+            control: { type: 'select' },
         },
         scale: {
             options: Object.keys(PatternScale),
             defaultValue: PatternScale.SM,
-            control: { type: "select" },
+            control: { type: 'select' },
         },
         foregroundColor: {
             options: Object.keys(PatternTheme),
             defaultValue: PatternTheme.Black,
-            control: { type: "select" },
+            control: { type: 'select' },
         },
     },
     decorators: [

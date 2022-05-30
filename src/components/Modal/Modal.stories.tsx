@@ -1,17 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Modal } from "./Modal";
-import React, { useState } from "react";
-import { Button, ButtonStyle } from "@components/Button";
-import { Story, Meta } from "@storybook/react";
-import { TextInput } from "@components/TextInput";
-import { action } from "@storybook/addon-actions";
-import { generateRandomId } from "@utilities/generateRandomId";
-import { useOverlayTriggerState } from "@react-stately/overlays";
-import { PatternDesign, PatternTheme } from "@foundation/Pattern";
-import { IconAcademy, IconAudio, IconIcons } from "@foundation/Icon";
-import { ScrollWrapperDirection } from "@components/ScrollWrapper/types";
-import { OverlayContainer, OverlayProvider } from "@react-aria/overlays";
+import { Modal } from './Modal';
+import React, { useState } from 'react';
+import { Button, ButtonStyle } from '@components/Button';
+import { Meta, Story } from '@storybook/react';
+import { TextInput } from '@components/TextInput';
+import { action } from '@storybook/addon-actions';
+import { generateRandomId } from '@utilities/generateRandomId';
+import { useOverlayTriggerState } from '@react-stately/overlays';
+import { PatternDesign, PatternTheme } from '@foundation/Pattern';
+import { IconAcademy, IconAudio, IconIcons } from '@foundation/Icon';
+import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
+import { OverlayContainer, OverlayProvider } from '@react-aria/overlays';
 import {
     ModalBodyProps,
     ModalHeaderProps,
@@ -19,100 +19,99 @@ import {
     ModalProps,
     ModalVisualProps,
     ModalWidth,
-} from "./types";
-import { FormControl, FormControlDirection, FormControlStyle } from "@components/FormControl";
-import { Divider } from "..";
-import { MODAL_PADDING } from "./context/ModalLayout";
+} from './types';
+import { FormControl, FormControlDirection, FormControlStyle } from '@components/FormControl';
+import { Divider } from '..';
+import { MODAL_PADDING } from './context/ModalLayout';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Modal",
+    title: 'Components/Modal',
     component: Modal,
     argTypes: {
         pattern: {
             table: {
-                category: "Visual",
+                category: 'Visual',
             },
-            name: "Pattern",
-            options: ["None", ...Object.values(PatternDesign)],
+            name: 'Pattern',
+            options: ['None', ...Object.values(PatternDesign)],
             mapping: { None: null, ...Object.values(PatternDesign) },
             defaultValue: PatternDesign.DigitalAssets,
-            control: { type: "select" },
+            control: { type: 'select' },
         },
         foregroundColor: {
             table: {
-                category: "Visual",
+                category: 'Visual',
             },
-            name: "Theme",
-            options: ["None", ...Object.values(PatternTheme)],
+            name: 'Theme',
+            options: ['None', ...Object.values(PatternTheme)],
             mapping: { None: null, ...Object.values(PatternDesign) },
             defaultValue: PatternTheme.Black,
-            control: { type: "select" },
+            control: { type: 'select' },
         },
         width: {
             table: {
-                category: "Layout",
+                category: 'Layout',
             },
-            name: "Width",
+            name: 'Width',
             options: [ModalWidth.Default, ModalWidth.Large],
-            control: { type: "select" },
+            control: { type: 'select' },
         },
         title: {
             table: {
-                category: "Header",
+                category: 'Header',
             },
-            name: "Title",
-            defaultValue: "Awesome modal",
-            control: { type: "text" },
+            name: 'Title',
+            defaultValue: 'Awesome modal',
+            control: { type: 'text' },
         },
         leadText: {
             table: {
-                category: "Header",
+                category: 'Header',
             },
-            name: "Lead Text",
-            defaultValue: "The Home for Brand Management",
-            control: { type: "text" },
+            name: 'Lead Text',
+            defaultValue: 'The Home for Brand Management',
+            control: { type: 'text' },
         },
         decorator: {
             table: {
-                category: "Header",
+                category: 'Header',
             },
-            name: "Decorator",
-            options: ["None", "Icons", "Academy", "Audio"],
+            name: 'Decorator',
+            options: ['None', 'Icons', 'Academy', 'Audio'],
             mapping: {
                 None: null,
                 Icons: <IconIcons key="iconIcons" />,
                 Academy: <IconAcademy key="iconAcademy" />,
                 Audio: <IconAudio key="iconAudio" />,
             },
-            defaultValue: "Icons",
-            control: { type: "select" },
+            defaultValue: 'Icons',
+            control: { type: 'select' },
         },
         variant: {
             table: {
-                category: "Header",
+                category: 'Header',
             },
-            name: "Variant",
-            options: ["None", ...Object.values(ModalHeaderVariant)],
+            name: 'Variant',
+            options: ['None', ...Object.values(ModalHeaderVariant)],
             mapping: { None: null, ...Object.values(ModalHeaderVariant) },
             defaultValue: ModalHeaderVariant.Default,
-            control: { type: "select" },
+            control: { type: 'select' },
         },
         compact: {
             table: {
-                category: "Layout",
+                category: 'Layout',
             },
-            name: "Compact",
+            name: 'Compact',
             defaultValue: false,
-            control: { type: "boolean" },
+            control: { type: 'boolean' },
         },
         horizontalPadding: {
             table: {
-                category: "Layout",
+                category: 'Layout',
             },
-            name: "Body Horizontal Padding",
+            name: 'Body Horizontal Padding',
             defaultValue: true,
-            control: { type: "boolean" },
+            control: { type: 'boolean' },
         },
         children: {
             table: {
@@ -139,17 +138,17 @@ const ExampleParagraph = () => (
 );
 
 const ControlledInput = () => {
-    const [input, setInput] = useState("");
+    const [input, setInput] = useState('');
 
     return (
         <FormControl
             style={FormControlStyle.Primary}
             direction={FormControlDirection.Vertical}
             label={{
-                children: "Input Label",
+                children: 'Input Label',
                 required: false,
                 htmlFor: generateRandomId(),
-                tooltip: { content: "Tooltip Text" },
+                tooltip: { content: 'Tooltip Text' },
             }}
         >
             <TextInput value={input} onChange={setInput} />
@@ -186,15 +185,15 @@ const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps & Mo
                 <Modal.Footer
                     buttons={[
                         {
-                            children: "Okay",
+                            children: 'Okay',
                             onClick: () => {
-                                action("click");
+                                action('click');
                                 state.close();
                             },
                             style: ButtonStyle.Secondary,
                         },
                         {
-                            children: "Cancel",
+                            children: 'Cancel',
                             onClick: () => state.close(),
                             style: ButtonStyle.Primary,
                         },

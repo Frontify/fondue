@@ -1,17 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Dropdown, DropdownSize } from "@components/Dropdown/Dropdown";
-import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
-import { TextInput } from "@components/TextInput/TextInput";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { Meta, Story } from "@storybook/react";
-import React, { useState } from "react";
-import { MultiInput as MultiInputComponent, MultiInputLayout, MultiInputProps } from "./MultiInput";
+import { Dropdown, DropdownSize } from '@components/Dropdown/Dropdown';
+import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import { TextInput } from '@components/TextInput/TextInput';
+import IconIcons from '@foundation/Icon/Generated/IconIcons';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { Meta, Story } from '@storybook/react';
+import React, { useState } from 'react';
+import { MultiInput as MultiInputComponent, MultiInputLayout, MultiInputProps } from './MultiInput';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Multi Input",
+    title: 'Components/Multi Input',
     component: MultiInputComponent,
     args: {
         layout: MultiInputLayout.Columns,
@@ -20,16 +19,16 @@ export default {
     argTypes: {
         layout: {
             options: Object.values(MultiInputLayout),
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
     },
 } as Meta<MultiInputProps>;
 
 export const MultiInputColumns: Story<MultiInputProps> = (args: MultiInputProps) => {
-    const [input1, setInput1] = useState("Some value");
-    const [input2, setInput2] = useState("Some value");
-    const [input3, setInput3] = useState("Some value");
-    const [input4, setInput4] = useState("Some value");
+    const [input1, setInput1] = useState('Some value');
+    const [input2, setInput2] = useState('Some value');
+    const [input3, setInput3] = useState('Some value');
+    const [input4, setInput4] = useState('Some value');
 
     return (
         <MultiInputComponent {...args}>
@@ -54,8 +53,8 @@ export const MultiInputTwoInputs: Story<MultiInputProps> = (args: MultiInputProp
 };
 
 export const MultiInputThreeInputs: Story<MultiInputProps> = (args: MultiInputProps) => {
-    const [input1, setInput1] = useState("Some value");
-    const [input2, setInput2] = useState("Some other value");
+    const [input1, setInput1] = useState('Some value');
+    const [input2, setInput2] = useState('Some other value');
     const [activeItemId, setActiveItemId] = useState<string | number | undefined>();
 
     return (
@@ -68,11 +67,11 @@ export const MultiInputThreeInputs: Story<MultiInputProps> = (args: MultiInputPr
                 size={DropdownSize.Small}
                 menuBlocks={[
                     {
-                        id: "block1",
+                        id: 'block1',
                         menuItems: [
-                            { id: "1", title: "This is an option", size: MenuItemContentSize.Small },
-                            { id: "2", title: "Another option", size: MenuItemContentSize.Small },
-                            { id: "3", title: "Third option", size: MenuItemContentSize.Small },
+                            { id: '1', title: 'This is an option', size: MenuItemContentSize.Small },
+                            { id: '2', title: 'Another option', size: MenuItemContentSize.Small },
+                            { id: '3', title: 'Third option', size: MenuItemContentSize.Small },
                         ],
                     },
                 ]}
@@ -86,10 +85,10 @@ MultiInputThreeInputs.args = {
 };
 
 export const MultiInputSpider: Story<MultiInputProps> = (args: MultiInputProps) => {
-    const [input1, setInput1] = useState("8px");
-    const [input2, setInput2] = useState("8px");
-    const [input3, setInput3] = useState("8px");
-    const [input4, setInput4] = useState("8px");
+    const [input1, setInput1] = useState('8px');
+    const [input2, setInput2] = useState('8px');
+    const [input3, setInput3] = useState('8px');
+    const [input4, setInput4] = useState('8px');
 
     return (
         <MultiInputComponent {...args}>

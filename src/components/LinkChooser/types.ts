@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CheckboxState } from "@components/Checkbox/Checkbox";
-import { MenuBlock, MenuItemType } from "@components/Dropdown/SelectMenu/SelectMenu";
-import { AriaListBoxOptions } from "@react-aria/listbox";
-import { ComboBoxState } from "@react-stately/combobox";
-import { ListState } from "@react-stately/list";
-import { Node } from "@react-types/shared";
+import { CheckboxState } from '@components/Checkbox/Checkbox';
+import { MenuBlock, MenuItemType } from '@components/Dropdown/SelectMenu/SelectMenu';
+import { AriaListBoxOptions } from '@react-aria/listbox';
+import { ComboBoxState } from '@react-stately/combobox';
+import { ListState } from '@react-stately/list';
+import { Node } from '@react-types/shared';
 import {
     HTMLAttributes,
     InputHTMLAttributes,
@@ -16,9 +16,9 @@ import {
     ReactElement,
     ReactNode,
     RefObject,
-} from "react";
-import { DoneInvokeEvent, Interpreter } from "xstate";
-import { Validation } from "@utilities/validation";
+} from 'react';
+import { DoneInvokeEvent, Interpreter } from 'xstate';
+import { Validation } from '@utilities/validation';
 
 export type MachineService = Interpreter<
     LinkChooserContext,
@@ -33,12 +33,12 @@ export type MachineService = Interpreter<
 >;
 
 export enum IconLabel {
-    Block = "BLOCK",
-    Document = "DOCUMENT",
-    Library = "LIBRARY",
-    Link = "LINK",
-    External = "EXTERNAL",
-    Template = "TEMPLATE",
+    Block = 'BLOCK',
+    Document = 'DOCUMENT',
+    Library = 'LIBRARY',
+    Link = 'LINK',
+    External = 'EXTERNAL',
+    Template = 'TEMPLATE',
 }
 
 export type ExtraSection = {
@@ -66,11 +66,11 @@ export type LinkChooserProps = {
     readonly openPreview?: (value: string, target: string) => void;
 };
 
-export type SearchResult = Omit<MenuItemType, "title"> & { icon: string; title: string; local?: boolean };
+export type SearchResult = Omit<MenuItemType, 'title'> & { icon: string; title: string; local?: boolean };
 
 export type ImageSearchResult = SearchResult & { preview: string };
 
-export type SearchMenuBlock = Omit<MenuBlock, "menuItems"> & { menuItems: SearchResult[] };
+export type SearchMenuBlock = Omit<MenuBlock, 'menuItems'> & { menuItems: SearchResult[] };
 
 export type SearchResultListProps = AriaListBoxOptions<unknown> & {
     listBoxRef?: RefObject<HTMLUListElement>;
@@ -110,7 +110,7 @@ export type NavigationMenuItemProps = {
     section: ExtraSection;
     onPress: (event: KeyboardEvent<HTMLDivElement> | MouseEvent<HTMLDivElement>) => void;
     state: ListState<unknown>;
-    direction?: "left" | "right";
+    direction?: 'left' | 'right';
 };
 
 export type SearchInputProps = {

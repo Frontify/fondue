@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from "./DropZone";
+export * from './DropZone';

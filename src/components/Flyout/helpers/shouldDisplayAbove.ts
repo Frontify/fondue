@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MutableRefObject } from "react";
+import { MutableRefObject } from 'react';
 
 export const shouldDisplayAbove = (
     triggerRef: MutableRefObject<HTMLElement | null>,

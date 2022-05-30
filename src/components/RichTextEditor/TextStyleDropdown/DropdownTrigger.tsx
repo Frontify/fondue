@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretDown } from "@foundation/Icon";
-import { getParent, getPreventDefaultHandler, usePlateEditorState } from "@udecode/plate";
-import { merge } from "@utilities/merge";
-import React from "react";
-import { TextStyles, textStyleTitles } from "../utils/getTextStyles";
+import { IconCaretDown } from '@foundation/Icon';
+import { getParent, getPreventDefaultHandler, usePlateEditorState } from '@udecode/plate';
+import { merge } from '@utilities/merge';
+import React from 'react';
+import { TextStyles, textStyleTitles } from '../utils/getTextStyles';
 
 type DropdownTriggerProps = {
     editorId?: string;
@@ -38,7 +38,7 @@ export const DropdownTrigger = ({ editorId, open }: DropdownTriggerProps) => {
             onMouseDown={editor ? getPreventDefaultHandler() : undefined}
         >
             <span className="tw-text-s">{label || textStyleTitles[TextStyles.ELEMENT_HEADING1]}</span>
-            <div className={merge(["tw-transition-transform", open && "tw-rotate-180"])}>
+            <div className={merge(['tw-transition-transform', open && 'tw-rotate-180'])}>
                 <IconCaretDown />
             </div>
         </button>

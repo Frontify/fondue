@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from "react";
-import { DraggableItem } from "@utilities/dnd";
+import { ReactElement } from 'react';
+import { DraggableItem } from '@utilities/dnd';
 
 export type RenderListItem<T> = (items: OrderableListItem<T>, dragProps: DragProperties) => ReactElement;
 
@@ -29,7 +29,7 @@ export type OrderableListProps<T> = {
 };
 
 export enum ItemDragState {
-    Dragging = "Dragging",
-    Idle = "Idle",
-    Preview = "Preview",
+    Dragging = 'Dragging',
+    Idle = 'Idle',
+    Preview = 'Preview',
 }

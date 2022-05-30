@@ -1,6 +1,6 @@
 {
     "name": "@frontify/arcade",
-    "version": "9.3.1",
+    "version": "9.4.0",
     "description": "Design system of Frontify",
     "main": "dist/index.umd.js",
     "unpkg": "dist/index.umd.js",
@@ -25,7 +25,7 @@
         "build": "npm run clean && npm run generate:icons && npm run build:library && npm run build:extractedThirdPartyStyles",
         "build:extractedThirdPartyStyles": "concat src/components/**/*.css | postcss > dist/extractedThirdPartyStyles.css",
         "build:library": "vite build",
-        "build:storybook": "NODE_OPTIONS=--max_old_space_size=8192 build-storybook",
+        "build:storybook": "build-storybook",
         "dev": "cross-env NODE_ENV=development npm run dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
         "clean": "rimraf dist",
@@ -60,7 +60,7 @@
     "devDependencies": {
         "@cypress/react": "5.12.4",
         "@cypress/vite-dev-server": "2.2.2",
-        "@frontify/eslint-config-react": "0.13.2",
+        "@frontify/eslint-config-react": "^0.15.2",
         "@frontify/fondue-icons": "^0.1.6",
         "@storybook/addon-actions": "6.4.20",
         "@storybook/addon-essentials": "6.4.20",

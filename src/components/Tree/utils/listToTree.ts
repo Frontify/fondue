@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TreeFlatListItem, TreeNodeItem } from "@components/Tree";
-import { DraggableItem, draggableItemCompareFn } from "@utilities/dnd";
+import { TreeFlatListItem, TreeNodeItem } from '@components/Tree';
+import { DraggableItem, draggableItemCompareFn } from '@utilities/dnd';
 
 export const listToTree = (
     items: DraggableItem<TreeFlatListItem>[],

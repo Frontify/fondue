@@ -13,7 +13,7 @@ type IconShapeTemplateInputs = {
 const componentsTsx = (components: Array<IconComponent>) => {
     return components.map((component: IconComponent) => {
         return `{size === IconSize.Size${component.size} && ${
-            component.filled ? `props.filled` : `!props.filled`
+            component.filled ? 'props.filled' : '!props.filled'
         } && <${component.name} {...props}/>}`;
     }).join(`
             `);
@@ -24,7 +24,7 @@ const importsTsx = (components: Array<IconComponent>) => {
         .map((component: IconComponent) => {
             return `import ${component.name} from './${component.name}'`;
         })
-        .join(";\n");
+        .join(';\n');
 };
 
 export const IconTemplateDynamic = (props: IconShapeTemplateInputs) => {

@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useListBoxSection } from "@react-aria/listbox";
-import React, { FC } from "react";
-import { SearchResultSectionProps } from "./types";
-import { SearchResultOption } from "./SearchResultOption";
+import { useListBoxSection } from '@react-aria/listbox';
+import React, { FC } from 'react';
+import { SearchResultSectionProps } from './types';
+import { SearchResultOption } from './SearchResultOption';
 
 export const SearchResultSection: FC<SearchResultSectionProps> = ({
     heading,
@@ -13,7 +13,7 @@ export const SearchResultSection: FC<SearchResultSectionProps> = ({
 }) => {
     const { itemProps, groupProps } = useListBoxSection({
         heading: heading.rendered,
-        "aria-label": heading["aria-label"],
+        'aria-label': heading['aria-label'],
     });
 
     return (

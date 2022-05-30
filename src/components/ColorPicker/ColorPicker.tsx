@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Slider } from "@components/Slider/Slider";
-import React, { FC, useState } from "react";
-import { Color, ColorFormat, Palette } from "../../types/colors";
-import { BrandColorPicker } from "./BrandColorPicker";
-import "./ColorPicker.css";
-import { ColorPreview } from "./ColorPreview";
-import { CustomColorPicker } from "./CustomColorPicker";
+import { Slider } from '@components/Slider/Slider';
+import React, { FC, useState } from 'react';
+import { Color, ColorFormat, Palette } from '../../types/colors';
+import { BrandColorPicker } from './BrandColorPicker';
+import './ColorPicker.css';
+import { ColorPreview } from './ColorPreview';
+import { CustomColorPicker } from './CustomColorPicker';
 
 export type ColorPickerProps = {
     palettes?: Palette[];
@@ -18,13 +18,13 @@ export type ColorPickerProps = {
 };
 
 enum ColorType {
-    Brand = "Brand",
-    Custom = "Custom",
+    Brand = 'Brand',
+    Custom = 'Custom',
 }
 
 const colorTypes = [
-    { id: ColorType.Brand, value: "Brand" },
-    { id: ColorType.Custom, value: "Custom" },
+    { id: ColorType.Brand, value: 'Brand' },
+    { id: ColorType.Custom, value: 'Custom' },
 ];
 
 export const ColorPicker: FC<ColorPickerProps> = ({

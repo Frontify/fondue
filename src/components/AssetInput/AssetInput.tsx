@@ -1,23 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ActionMenuProps } from "@components/ActionMenu/ActionMenu/ActionMenu";
-import { Button, ButtonStyle } from "@components/Button/Button";
-import IconImageLibrary from "@foundation/Icon/Generated/IconImageLibrary";
-import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternative";
-import { IconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { useMemoizedId } from "@hooks/useMemoizedId";
-import { merge } from "@utilities/merge";
-import React, { ChangeEvent, FC, ReactElement } from "react";
-import { MultiAssetPreview } from "./MultiAssetPreview";
-import { SelectedAsset } from "./SingleAsset/SelectedAsset";
+import { ActionMenuProps } from '@components/ActionMenu/ActionMenu/ActionMenu';
+import { Button, ButtonStyle } from '@components/Button/Button';
+import IconImageLibrary from '@foundation/Icon/Generated/IconImageLibrary';
+import IconUploadAlternative from '@foundation/Icon/Generated/IconUploadAlternative';
+import { IconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { merge } from '@utilities/merge';
+import React, { ChangeEvent, FC, ReactElement } from 'react';
+import { MultiAssetPreview } from './MultiAssetPreview';
+import { SelectedAsset } from './SingleAsset/SelectedAsset';
 
 type BaseAsset = {
     name: string;
 };
 
 export type ImageAsset = {
-    type: "image" | "logo";
+    type: 'image' | 'logo';
     name: string;
     extension: string;
     src?: string;
@@ -27,7 +27,7 @@ export type ImageAsset = {
 };
 
 type OtherAsset = BaseAsset & {
-    type: "audio";
+    type: 'audio';
     extension: string;
     src?: undefined;
     alt?: undefined;
@@ -36,7 +36,7 @@ type OtherAsset = BaseAsset & {
 };
 
 type IconAsset = BaseAsset & {
-    type: "icon";
+    type: 'icon';
     extension?: undefined;
     src?: undefined;
     alt?: undefined;
@@ -44,12 +44,12 @@ type IconAsset = BaseAsset & {
     size?: undefined;
 };
 
-export type UploadSource = { source: "upload"; sourceName?: undefined };
-export type LibrarySource = { source: "library"; sourceName: string };
+export type UploadSource = { source: 'upload'; sourceName?: undefined };
+export type LibrarySource = { source: 'library'; sourceName: string };
 
 export enum AssetInputSize {
-    Small = "Small",
-    Large = "Large",
+    Small = 'Small',
+    Large = 'Large',
 }
 
 export type AssetType =
@@ -64,7 +64,7 @@ export type AssetInputProps = {
     assets?: AssetType[];
     size: AssetInputSize;
     numberOfLocations?: number;
-    actions?: ActionMenuProps["menuBlocks"];
+    actions?: ActionMenuProps['menuBlocks'];
     isLoading?: boolean;
     onUploadClick?: (files: FileList) => void;
     onLibraryClick?: () => void;
@@ -106,13 +106,13 @@ export const AssetInput: FC<AssetInputProps> = ({
         <div
             data-test-id="asset-input-placeholder"
             className={merge([
-                "tw-grid tw-p-3 tw-border tw-border-dashed tw-border-black-10 tw-rounded",
-                onUploadClick && onLibraryClick ? "tw-grid-cols-2 tw-divide-x tw-divide-black-10" : "tw-grid-cols-1",
+                'tw-grid tw-p-3 tw-border tw-border-dashed tw-border-black-10 tw-rounded',
+                onUploadClick && onLibraryClick ? 'tw-grid-cols-2 tw-divide-x tw-divide-black-10' : 'tw-grid-cols-1',
             ])}
         >
             {onUploadClick && (
                 <div
-                    className={merge(["tw-flex tw-flex-col tw-h-8", onLibraryClick && "tw-pr-3"])}
+                    className={merge(['tw-flex tw-flex-col tw-h-8', onLibraryClick && 'tw-pr-3'])}
                     data-test-id="asset-input-upload"
                 >
                     <label
@@ -136,7 +136,7 @@ export const AssetInput: FC<AssetInputProps> = ({
             )}
             {onLibraryClick && (
                 <div
-                    className={merge(["tw-flex tw-flex-col tw-h-8", onUploadClick && "tw-pl-3"])}
+                    className={merge(['tw-flex tw-flex-col tw-h-8', onUploadClick && 'tw-pl-3'])}
                     data-test-id="asset-input-library"
                 >
                     <Button

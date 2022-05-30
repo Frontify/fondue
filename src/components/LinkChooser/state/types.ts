@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export enum LinkChooserState {
-    Idle = "idle",
-    Focused = "focused",
+    Idle = 'idle',
+    Focused = 'focused',
 }
 
 export enum DropdownState {
-    Default = "default",
-    ExtraSection = "extra-section",
+    Default = 'default',
+    ExtraSection = 'extra-section',
 }
 
 export enum SectionState {
-    Loaded = "loaded",
-    Typing = "typing",
-    Fetching = "fetching",
-    Error = "error",
+    Loaded = 'loaded',
+    Typing = 'typing',
+    Fetching = 'fetching',
+    Error = 'error',
 }
