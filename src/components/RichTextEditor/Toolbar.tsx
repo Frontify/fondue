@@ -21,7 +21,6 @@ import {
     BalloonToolbar,
     ELEMENT_OL,
     ELEMENT_UL,
-    LinkToolbarButton,
     ListToolbarButton,
     MARK_BOLD,
     MARK_CODE,
@@ -32,10 +31,14 @@ import {
     PlateEditor,
     getPluginType,
     usePlateEditorRef,
+    ToolbarButton,
+    someNode,
 } from '@udecode/plate';
 import React, { FC, ReactElement } from 'react';
 import { ELEMENT_CHECK_ITEM } from './plugins/checkboxListPlugin/createCheckboxListPlugin';
 import { CheckboxListToolbarButton } from './plugins/checkboxListPlugin/ui/CheckboxListToolbarButton';
+import { ELEMENT_LINK_CHOOSER } from './plugins/linkChooserPlugin/types';
+import { EditLinkChooserButton } from './plugins/linkChooserPlugin/ui/EditLinkChooserButton';
 import { TextStyleDropdown } from './TextStyleDropdown/TextStyleDropdown';
 import { EditorActions, defaultActions } from './utils/actions';
 import { TextStyleType } from './utils/getTextStyles';
@@ -139,8 +142,18 @@ const toolbarComponents = (
                 styles={styles}
             />
         ),
-        [EditorActions.LINK]: (
-            <LinkToolbarButton icon={<IconLink size={IconSize.Size24} />} classNames={classNames} styles={styles} />
+        [EditorActions.LINK_CHOOSER]: (
+            <EditLinkChooserButton
+                type={getPluginType(editor, ELEMENT_LINK_CHOOSER)}
+                icon={
+                    <ToolbarButton
+                        active={!!editor?.selection && someNode(editor, { match: { ELEMENT_CHECK_ITEM } })}
+                        icon={<IconLink size={IconSize.Size24} />}
+                        classNames={classNames}
+                        styles={styles}
+                    />
+                }
+            />
         ),
         [EditorActions.ORDERED_LIST]: (
             <ListToolbarButton

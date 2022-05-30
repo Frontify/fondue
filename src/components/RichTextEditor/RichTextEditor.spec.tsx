@@ -3,9 +3,10 @@
 import { mount } from '@cypress/react';
 import { ELEMENT_PARAGRAPH } from '@udecode/plate';
 import React, { FC, useState } from 'react';
+import { ELEMENT_LINK_CHOOSER } from './plugins/linkChooserPlugin/types';
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from './RichTextEditor';
 import { EditorActions } from './utils/actions';
-import { TextStyles, textStyleClassnames } from './utils/getTextStyles';
+import { textStyleClassnames, TextStyles } from './utils/getTextStyles';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
 const TOOLBAR = '[data-test-id=toolbar]';
@@ -16,6 +17,12 @@ const TOOLBAR_GROUP_3 = '[data-test-id=toolbar-group-3]';
 const TEXTSTYLE_DROPDOWN_TRIGGER = '[data-test-id=textstyle-dropdown-trigger]';
 const TEXTSTYLE_OPTION = '[data-test-id=textstyle-option]';
 const CHECKBOX_INPUT = '[data-test-id=checkbox-input]';
+const PREVIEW_LINK_FLYOUT = '[data-test-id=preview-link-flyout]';
+const EDIT_LINK_BUTTON = '[data-test-id=edit-link-button]';
+const REMOVE_LINK_BUTTON = '[data-test-id=remove-link-button]';
+const LINK_CHOOSER_FLYOUT = '[data-test-id=link-chooser-flyout]';
+const BUTTON = '[data-test-id=button]';
+const LINK_CHOOSER_CHECKBOX = '.tw-group > .tw-inline-flex > .tw-flex-1 > .tw-select-none';
 
 const insertTextAndOpenToolbar = () => cy.get('[contenteditable=true]').click().type('hello{selectall}');
 
@@ -28,6 +35,34 @@ const RichTextWithClearButton: FC<Pick<RichTextEditorProps, 'value'>> = ({ value
             </button>
             <RichTextEditor value={value} clear={clear} />
         </div>
+    );
+};
+
+const RichTextWithLink: FC<{ text: string; link: string }> = ({ text, link }) => {
+    return (
+        <RichTextEditor
+            value={JSON.stringify([
+                {
+                    type: ELEMENT_PARAGRAPH,
+                    children: [
+                        {
+                            type: ELEMENT_LINK_CHOOSER,
+                            chosenLink: {
+                                searchResult: {
+                                    link,
+                                },
+                                openInNewTab: true,
+                            },
+                            children: [
+                                {
+                                    text,
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ])}
+        />
     );
 };
 
@@ -87,7 +122,11 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders a toolbar with custom controls', () => {
-        const actions = [[EditorActions.LINK], [EditorActions.ITALIC, EditorActions.BOLD], [EditorActions.LINK]];
+        const actions = [
+            [EditorActions.LINK_CHOOSER],
+            [EditorActions.ITALIC, EditorActions.BOLD],
+            [EditorActions.LINK_CHOOSER],
+        ];
         mount(<RichTextEditor actions={actions} />);
 
         insertTextAndOpenToolbar();
@@ -302,5 +341,76 @@ describe('RichTextEditor Component', () => {
         cy.get(RICH_TEXT_EDITOR).should('contain.text', text);
         cy.get('[data-test-id=clear-button]').click();
         cy.get(RICH_TEXT_EDITOR).should('not.contain.text', text);
+    });
+
+    it('should render with link', () => {
+        const link = 'https://smartive.ch';
+        const text = 'This is a link';
+        mount(<RichTextWithLink link={link} text={text} />);
+
+        cy.get('[contenteditable=true] a').should('contain.text', text);
+        cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
+        cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
+    });
+
+    it('should open link chooser flyout and link', () => {
+        const link = 'https://smartive.ch';
+        mount(<RichTextEditor />);
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR).should('be.visible');
+        cy.get(TOOLBAR_GROUP_1).children().eq(4).click();
+        cy.get(LINK_CHOOSER_FLYOUT).should('exist');
+        cy.get('[type=text]').click().type(link);
+        cy.get(LINK_CHOOSER_CHECKBOX).click();
+        cy.get(BUTTON).eq(1).click();
+        cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
+        cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
+    });
+
+    it('should open preview link and link chooser flyout', () => {
+        const link = 'https://smartive.ch';
+        const text = 'This is a link';
+        mount(<RichTextWithLink link={link} text={text} />);
+        cy.get(PREVIEW_LINK_FLYOUT).should('not.exist');
+        cy.get(LINK_CHOOSER_FLYOUT).should('not.exist');
+        cy.get(EDIT_LINK_BUTTON).should('not.exist');
+        cy.get(REMOVE_LINK_BUTTON).should('not.exist');
+
+        cy.get('[contenteditable=true] a').click();
+        cy.get(PREVIEW_LINK_FLYOUT).should('contain', link);
+        cy.get(EDIT_LINK_BUTTON).should('exist');
+        cy.get(REMOVE_LINK_BUTTON).should('exist');
+        cy.get(EDIT_LINK_BUTTON).click();
+        cy.get(LINK_CHOOSER_FLYOUT).should('exist');
+
+        cy.get('[type=text]').should('have.attr', 'value', link);
+        cy.get('[type=checkbox]').should('be.checked');
+    });
+
+    it('should edit link', () => {
+        const link = 'https://smartive.ch';
+        const text = 'This is a link';
+        const additionalText = 'hello';
+        mount(<RichTextWithLink link={link} text={text} />);
+        cy.get('[contenteditable=true] a').click();
+        cy.get(EDIT_LINK_BUTTON).click();
+
+        cy.get('[type=text]').click().type(additionalText);
+        cy.get(LINK_CHOOSER_CHECKBOX).click();
+
+        cy.get(BUTTON).eq(1).click();
+        cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalText);
+        cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
+    });
+
+    it('should remove link', () => {
+        const link = 'https://smartive.ch';
+        const text = 'This is a link';
+        mount(<RichTextWithLink link={link} text={text} />);
+        cy.get('[contenteditable=true] a').click();
+        cy.get(REMOVE_LINK_BUTTON).click();
+
+        cy.get('[contenteditable=true]').should('contain.text', text);
+        cy.get('[contenteditable=true] a').should('not.exist');
     });
 });
