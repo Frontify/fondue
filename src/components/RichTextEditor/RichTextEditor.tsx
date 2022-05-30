@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useMemoizedId } from "@hooks/useMemoizedId";
-import { Plate, TNode, usePlateEditorState } from "@udecode/plate";
-import { debounce } from "@utilities/debounce";
-import React, { FC, useCallback, useEffect, useRef, useState } from "react";
-import { EditableProps } from "slate-react/dist/components/editable";
-import { Toolbar } from "./Toolbar";
-import { EditorActions } from "./utils/actions";
-import { getEditorConfig } from "./utils/getEditorConfig";
-import { TextStyleType } from "./utils/getTextStyles";
-import { EMPTY_RICH_TEXT_VALUE, parseRawValue } from "./utils/parseRawValue";
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { Plate, TNode, usePlateEditorState } from '@udecode/plate';
+import { debounce } from '@utilities/debounce';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { EditableProps } from 'slate-react/dist/components/editable';
+import { Toolbar } from './Toolbar';
+import { EditorActions } from './utils/actions';
+import { getEditorConfig } from './utils/getEditorConfig';
+import { TextStyleType } from './utils/getTextStyles';
+import { EMPTY_RICH_TEXT_VALUE, parseRawValue } from './utils/parseRawValue';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -28,7 +28,7 @@ export const ON_SAVE_DELAY_IN_MS = 500;
 export const RichTextEditor: FC<RichTextEditorProps> = ({
     id,
     value: initialValue,
-    placeholder = "",
+    placeholder = '',
     readonly = false,
     clear = false,
     textStyles,
@@ -41,7 +41,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const localValue = useRef<TNode[] | null>(null);
     const [debouncedValue, setDebouncedValue] = useState<TNode[] | null>(null);
     const editableProps: EditableProps = {
-        placeholder: placeholder,
+        placeholder,
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
     };

@@ -1,19 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from "react";
-import { Meta, Story } from "@storybook/react";
-import { Tabs, TabSize, TabsPaddingX, TabsProps } from "./Tabs";
-import { Button } from "@components/Button";
-import { Text } from "../../typography/Text";
-import { Divider } from "@components/Divider";
-import { TabItem, TabItemProps } from "@components/Tabs/TabItem";
-import { IconIcons, IconSize } from "@foundation/Icon";
-import { BadgeStyle } from "@components/Badge";
+import React, { useState } from 'react';
+import { Meta, Story } from '@storybook/react';
+import { TabSize, Tabs, TabsPaddingX, TabsProps } from './Tabs';
+import { Button } from '@components/Button';
+import { Text } from '../../typography/Text';
+import { Divider } from '@components/Divider';
+import { TabItem, TabItemProps } from '@components/Tabs/TabItem';
+import { IconIcons, IconSize } from '@foundation/Icon';
+import { BadgeStyle } from '@components/Badge';
 
 const data: TabItemProps[] = [
     {
-        id: "tab-1",
-        label: "A tab",
+        id: 'tab-1',
+        label: 'A tab',
         children: (
             <Text>
                 Bacon ipsum dolor amet spare ribs swine meatloaf, pastrami cupim tail leberkas frankfurter jowl chislic
@@ -23,14 +23,14 @@ const data: TabItemProps[] = [
         ),
     },
     {
-        id: "tab-2",
-        label: "Disabled",
+        id: 'tab-2',
+        label: 'Disabled',
         disabled: true,
-        children: "Rib-eye",
+        children: 'Rib-eye',
     },
     {
-        id: "tab-3",
-        label: "A long tab name",
+        id: 'tab-3',
+        label: 'A long tab name',
         children: (
             <Text>
                 Sirloin prosciutto cow short loin, andouille bresaola doner fatback pork loin. Tongue ribeye kielbasa
@@ -41,8 +41,8 @@ const data: TabItemProps[] = [
         ),
     },
     {
-        id: "tab-4",
-        label: "An even longer tab name",
+        id: 'tab-4',
+        label: 'An even longer tab name',
         children: (
             <div>
                 <Text>
@@ -58,31 +58,30 @@ const data: TabItemProps[] = [
         ),
     },
     {
-        id: "tab-5",
-        label: "Disabled",
+        id: 'tab-5',
+        label: 'Disabled',
         disabled: true,
         children: <Button>Sirloin</Button>,
     },
     {
-        id: "tab-6",
-        label: "Last tab",
+        id: 'tab-6',
+        label: 'Last tab',
         children: <Text>Meat.</Text>,
     },
 ];
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Tabs",
+    title: 'Components/Tabs',
     component: Tabs,
     argTypes: {
         paddingX: {
             options: Object.values(TabsPaddingX),
-            control: { type: "select" },
+            control: { type: 'select' },
             defaultValue: TabsPaddingX.Small,
         },
         size: {
             options: Object.values(TabSize),
-            control: { type: "select" },
+            control: { type: 'select' },
             defaultValue: TabSize.Small,
         },
     },
@@ -101,7 +100,7 @@ const TabTemplate: Story<TabsProps> = (args) => {
     );
 };
 export const Default = TabTemplate.bind({});
-Default.storyName = "Label Only";
+Default.storyName = 'Label Only';
 
 const dataWithIcon = data.map((item) => Object.assign({}, item, { decorator: <IconIcons size={IconSize.Size16} /> }));
 const TabWithIconTemplate: Story<TabsProps> = (args) => {
@@ -123,13 +122,13 @@ const TabWithIconTemplate: Story<TabsProps> = (args) => {
     );
 };
 export const withIcon = TabWithIconTemplate.bind({});
-withIcon.storyName = "Icon and Label";
+withIcon.storyName = 'Icon and Label';
 
 const dataWithBadge = data.map((item) =>
     Object.assign({}, item, {
         badge: {
             style: BadgeStyle.Positive,
-            children: "Badge",
+            children: 'Badge',
         },
     }),
 );
@@ -152,7 +151,7 @@ const TabWithBadgeTemplate: Story<TabsProps> = (args) => {
     );
 };
 export const withBadge = TabWithBadgeTemplate.bind({});
-withBadge.storyName = "Label and Badge";
+withBadge.storyName = 'Label and Badge';
 
 const dataWithBadgeAndIcon = dataWithBadge.map((item) =>
     Object.assign({}, item, { decorator: <IconIcons size={IconSize.Size16} /> }),
@@ -177,4 +176,4 @@ const TabWithBadgeAndIconTemplate: Story<TabsProps> = (args) => {
     );
 };
 export const withBadgeAndIcon = TabWithBadgeAndIconTemplate.bind({});
-withBadgeAndIcon.storyName = "Label, Badge and Icon";
+withBadgeAndIcon.storyName = 'Label, Badge and Icon';

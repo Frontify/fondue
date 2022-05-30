@@ -1,50 +1,51 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CheckboxState } from "@components/Checkbox/Checkbox";
-import { Meta, Story } from "@storybook/react";
-import React, { useState } from "react";
-import { Checklist as ChecklistComponent, ChecklistDirection, ChecklistProps } from "./Checklist";
+import { CheckboxState } from '@components/Checkbox/Checkbox';
+import { Meta, Story } from '@storybook/react';
+import React, { useState } from 'react';
+import { Checklist as ChecklistComponent, ChecklistDirection, ChecklistProps } from './Checklist';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Checklist",
+    title: 'Components/Checklist',
     component: ChecklistComponent,
     argTypes: {
         columns: {
             options: [1, 2, 3, 4],
-            control: { type: "select" },
+            control: { type: 'select' },
         },
         direction: {
             options: [ChecklistDirection.Horizontal, ChecklistDirection.Vertical],
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
     },
 } as Meta<ChecklistProps>;
 
 const CHECKBOXES = [
     {
-        value: "box-1",
-        label: "Checkbox label",
-        tooltip: { content: "Random Tooltip" },
+        value: 'box-1',
+        label: 'Checkbox label',
+        tooltip: { content: 'Random Tooltip' },
     },
     {
-        value: "box-2",
-        label: "Checkbox label",
-        note: "Note about this input",
+        value: 'box-2',
+        label: 'Checkbox label',
+        note: 'Note about this input',
         disabled: true,
     },
     {
-        value: "box-3",
-        label: "Checkbox label",
+        value: 'box-3',
+        label: 'Checkbox label',
         state: CheckboxState.Mixed,
     },
 ];
 
-const COLUMN_CHECKBOXES = new Array(8).fill({}).map((_, index) => ({
-    value: `box-${index}`,
-    label: `Checkbox Nr. ${index}`,
-    tooltip: { content: `Random Tooltip ${index}` },
-}));
+const COLUMN_CHECKBOXES = Array.from({ length: 8 })
+    .fill({})
+    .map((_, index) => ({
+        value: `box-${index}`,
+        label: `Checkbox Nr. ${index}`,
+        tooltip: { content: `Random Tooltip ${index}` },
+    }));
 
 export const Checklist: Story<ChecklistProps> = (args) => {
     const [activeBoxes, setActiveBoxes] = useState<string[]>([]);

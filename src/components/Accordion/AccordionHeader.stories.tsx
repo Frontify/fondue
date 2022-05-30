@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
-import { Meta, Story } from "@storybook/react";
-import { AccordionHeader as AccordionHeaderComponent } from "./AccordionHeader";
-import { AccordionHeaderProps } from "./types";
-import { IconBrand, IconCallout, IconIcons } from "@foundation/Icon";
+import React from 'react';
+import { Meta, Story } from '@storybook/react';
+import { AccordionHeader as AccordionHeaderComponent } from './AccordionHeader';
+import { AccordionHeaderProps } from './types';
+import { IconBrand, IconCallout, IconIcons } from '@foundation/Icon';
 
 const decorators = {
     IconNone: null,
@@ -13,21 +13,20 @@ const decorators = {
     IconIcons: <IconIcons />,
 };
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Accordion/Accordion Header",
+    title: 'Components/Accordion/Accordion Header',
     component: AccordionHeaderComponent,
     argTypes: {
         decorator: {
             options: Object.keys(decorators),
             mapping: decorators,
             control: {
-                type: "select",
+                type: 'select',
                 labels: {
-                    IconNone: "None",
-                    IconIcons: "Icon",
-                    IconDefault: "Brand",
-                    IconCallout: "Callout",
+                    IconNone: 'None',
+                    IconIcons: 'Icon',
+                    IconDefault: 'Brand',
+                    IconCallout: 'Callout',
                 },
             },
         },
@@ -36,7 +35,7 @@ export default {
         isOpen: false,
         disabled: false,
         bold: true,
-        children: "I am the Default Accordion Header",
+        children: 'I am the Default Accordion Header',
     },
 } as Meta<AccordionHeaderProps>;
 

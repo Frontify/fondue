@@ -1,34 +1,34 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Slider } from "@components/Slider/Slider";
-import { TextInput } from "@components/TextInput/TextInput";
-import { IconLayoutGrid, IconLayoutVertical } from "@foundation/Icon/Generated";
-import IconCheck from "@foundation/Icon/Generated/IconCheck";
-import IconSearch from "@foundation/Icon/Generated/IconSearch";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { isColorLight } from "@utilities/colors";
-import { merge } from "@utilities/merge";
-import React, { FC, useEffect, useState } from "react";
-import tinycolor from "tinycolor2";
-import { ColorPickerProps } from "./ColorPicker";
+import { Slider } from '@components/Slider/Slider';
+import { TextInput } from '@components/TextInput/TextInput';
+import { IconLayoutGrid, IconLayoutVertical } from '@foundation/Icon/Generated';
+import IconCheck from '@foundation/Icon/Generated/IconCheck';
+import IconSearch from '@foundation/Icon/Generated/IconSearch';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { isColorLight } from '@utilities/colors';
+import { merge } from '@utilities/merge';
+import React, { FC, useEffect, useState } from 'react';
+import tinycolor from 'tinycolor2';
+import { ColorPickerProps } from './ColorPicker';
 
-const find = (haystack?: string, needle = "") =>
+const find = (haystack?: string, needle = '') =>
     haystack?.toLocaleLowerCase().includes(needle.toLocaleLowerCase().trim());
 
 enum BrandColorView {
-    List = "List",
-    Grid = "Grid",
+    List = 'List',
+    Grid = 'Grid',
 }
 
-type Props = Omit<ColorPickerProps, "currentFormat" | "setFormat">;
+type Props = Omit<ColorPickerProps, 'currentFormat' | 'setFormat'>;
 
 export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], currentColor, onSelect }) => {
     const views = [
-        { id: BrandColorView.Grid, icon: <IconLayoutGrid />, ariaLabel: "Grid" },
-        { id: BrandColorView.List, icon: <IconLayoutVertical />, ariaLabel: "List" },
+        { id: BrandColorView.Grid, icon: <IconLayoutGrid />, ariaLabel: 'Grid' },
+        { id: BrandColorView.List, icon: <IconLayoutVertical />, ariaLabel: 'List' },
     ];
     const [view, setView] = useState(views[0].id);
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState('');
     const [palettes, setPalettes] = useState(defaultPalettes);
 
     useEffect(() => {
@@ -49,7 +49,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
         return () => clearTimeout(timer);
     }, [query]);
 
-    const palettesWithColors = palettes.filter((palette) => !!palette.colors.length);
+    const palettesWithColors = palettes.filter((palette) => palette.colors.length > 0);
 
     return (
         <div className="tw-flex tw-flex-col tw-gap-4" data-test-id="brand-color-picker">
@@ -72,14 +72,14 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                 </div>
             </div>
             <ul className="tw-flex tw-flex-col tw-gap-4">
-                {palettesWithColors.length
+                {palettesWithColors.length > 0
                     ? palettesWithColors.map(({ id, title, colors }) => (
                           <li key={id} className="tw-flex tw-flex-col tw-gap-2">
                               <p className="tw-text-black tw-text-xs tw-font-medium dark:tw-text-white">{title}</p>
                               <ul
                                   className={merge([
-                                      "tw-flex tw-gap-y-2 tw-flex-wrap",
-                                      view === BrandColorView.List && "tw-flex-col",
+                                      'tw-flex tw-gap-y-2 tw-flex-wrap',
+                                      view === BrandColorView.List && 'tw-flex-col',
                                   ])}
                               >
                                   {colors.map((color) => (
@@ -91,8 +91,8 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                                           >
                                               <span
                                                   className={merge([
-                                                      "tw-h-6 tw-w-6 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center tw-ring-1 tw-ring-black-10 tw-ring-offset-1",
-                                                      isColorLight(color) ? "tw-text-black" : "tw-text-white",
+                                                      'tw-h-6 tw-w-6 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center tw-ring-1 tw-ring-black-10 tw-ring-offset-1',
+                                                      isColorLight(color) ? 'tw-text-black' : 'tw-text-white',
                                                   ])}
                                                   style={{ background: tinycolor(color).toRgbString() }}
                                               >
@@ -114,7 +114,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                               </ul>
                           </li>
                       ))
-                    : "No colors found"}
+                    : 'No colors found'}
             </ul>
         </div>
     );

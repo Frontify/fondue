@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TooltipProps } from "@components/Tooltip/Tooltip";
-import { TooltipIcon, TooltipIconProps } from "@components/TooltipIcon/TooltipIcon";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { merge } from "@utilities/merge";
-import React, { FC, PropsWithChildren } from "react";
+import { TooltipProps } from '@components/Tooltip/Tooltip';
+import { TooltipIcon, TooltipIconProps } from '@components/TooltipIcon/TooltipIcon';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { merge } from '@utilities/merge';
+import React, { FC, PropsWithChildren } from 'react';
 
 export type InputLabelTooltipProps =
-    | (TooltipProps & Pick<TooltipIconProps, "triggerStyle" | "triggerIcon">)
-    | (TooltipProps & Pick<TooltipIconProps, "triggerStyle" | "triggerIcon">)[];
+    | (TooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)
+    | (TooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)[];
 
 export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;
@@ -33,10 +33,10 @@ export const InputLabel: FC<InputLabelProps> = ({
     return (
         <div
             className={merge([
-                "tw-inline-flex tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-max-w-full",
+                'tw-inline-flex tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-max-w-full',
                 disabled
-                    ? "tw-text-black-40 hover:tw-text-black-40 dark:tw-text-black-60 dark:hover:tw-text-black-60"
-                    : "tw-text-black-90 dark:tw-text-white",
+                    ? 'tw-text-black-40 hover:tw-text-black-40 dark:tw-text-black-60 dark:hover:tw-text-black-60'
+                    : 'tw-text-black-90 dark:tw-text-white',
             ])}
             data-test-id="input-label-container"
         >
@@ -44,11 +44,11 @@ export const InputLabel: FC<InputLabelProps> = ({
                 <label
                     htmlFor={htmlFor}
                     className={merge([
-                        "tw-select-none",
-                        bold && "tw-font-medium",
+                        'tw-select-none',
+                        bold && 'tw-font-medium',
                         disabled || !clickable
-                            ? "hover:tw-cursor-not-allowed tw-pointer-events-none"
-                            : "hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white",
+                            ? 'hover:tw-cursor-not-allowed tw-pointer-events-none'
+                            : 'hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
                     ])}
                     data-test-id="input-label"
                 >

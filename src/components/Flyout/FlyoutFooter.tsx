@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonProps, ButtonSize, ButtonStyle } from "@components/Button/Button";
-import { IconCheck } from "@foundation/Icon";
-import { merge } from "@utilities/merge";
-import React, { FC, PropsWithChildren } from "react";
+import { Button, ButtonProps, ButtonSize, ButtonStyle } from '@components/Button/Button';
+import { IconCheck } from '@foundation/Icon';
+import { merge } from '@utilities/merge';
+import React, { FC, PropsWithChildren } from 'react';
 
 export type FlyoutFooterProps = PropsWithChildren<{
     buttons: [ButtonProps, ButtonProps] | [ButtonProps];
@@ -14,8 +14,8 @@ export const FlyoutFooter: FC<FlyoutFooterProps> = ({ buttons, border = true }) 
     return (
         <div
             className={merge([
-                "tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-bg-white dark:tw-bg-black-95",
-                border && "tw-border-t tw-border-t-black-10",
+                'tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-bg-white dark:tw-bg-black-95',
+                border && 'tw-border-t tw-border-t-black-10',
             ])}
         >
             {buttons.map((button, index) => (
@@ -30,10 +30,10 @@ export const LegacyFlyoutFooter = ({ onConfirm, onCancel }: { onConfirm?: () => 
         buttons={
             onConfirm
                 ? [
-                      { children: "Cancel", onClick: onCancel, style: ButtonStyle.Secondary },
-                      { children: "Confirm", onClick: onConfirm, style: ButtonStyle.Primary, icon: <IconCheck /> },
+                      { children: 'Cancel', onClick: onCancel, style: ButtonStyle.Secondary },
+                      { children: 'Confirm', onClick: onConfirm, style: ButtonStyle.Primary, icon: <IconCheck /> },
                   ]
-                : [{ children: "Close", onClick: onCancel, style: ButtonStyle.Secondary }]
+                : [{ children: 'Close', onClick: onCancel, style: ButtonStyle.Secondary }]
         }
     />
 );

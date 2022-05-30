@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactElement, ReactNode } from "react";
-import { BadgeProps } from "@components/Badge";
-import { useFocusRing } from "@react-aria/focus";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
+import React, { FC, ReactElement, ReactNode } from 'react';
+import { BadgeProps } from '@components/Badge';
+import { useFocusRing } from '@react-aria/focus';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
 
 export type TabItemProps = {
     id: string;
@@ -24,7 +24,7 @@ export const TabItem: FC<TabItemProps & { active?: boolean }> = ({ active, disab
             role="tabpanel"
             id={`${id}-content`}
             aria-labelledby={id}
-            className={merge([!active || disabled ? "tw-hidden" : "", isFocusVisible && FOCUS_STYLE])}
+            className={merge([!active || disabled ? 'tw-hidden' : '', isFocusVisible && FOCUS_STYLE])}
             tabIndex={0}
             {...focusProps}
         >

@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { SelectionIndicatorIcon } from "@components/MenuItem/MenuItem";
-import { MenuItemContentSize } from "@components/MenuItem/MenuItemContent";
-import { generateRandomId } from "@utilities/generateRandomId";
-import { CUSTOM_LINK_ID, DEFAULT_ICON, MAX_STORED_ITEMS, QUERIES_STORAGE_KEY } from "../LinkChooser";
-import { SearchResult } from "../types";
-import { isCustomLink, prependHttps } from "./helpers";
+import { SelectionIndicatorIcon } from '@components/MenuItem/MenuItem';
+import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import { generateRandomId } from '@utilities/generateRandomId';
+import { CUSTOM_LINK_ID, DEFAULT_ICON, MAX_STORED_ITEMS, QUERIES_STORAGE_KEY } from '../LinkChooser';
+import { SearchResult } from '../types';
+import { isCustomLink, prependHttps } from './helpers';
 
 export const createCustomLink = (query: string): SearchResult =>
     ({
@@ -18,7 +18,7 @@ export const createCustomLink = (query: string): SearchResult =>
     } as SearchResult);
 
 export const retrieveRecentQueries = (): SearchResult[] => {
-    const recentQueries = JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || "null");
+    const recentQueries = JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || 'null');
     return recentQueries || [];
 };
 

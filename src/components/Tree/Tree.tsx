@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactElement, useEffect, useState } from "react";
-import { renderNodeArray } from "./Node";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { useId } from "@react-aria/utils";
-import { DraggableItem, DropZonePosition } from "@utilities/dnd";
-import { getReorderedNodes, listToTree } from "@components/Tree/utils";
-import { IconProps } from "@foundation/Icon";
-import { BadgeProps } from "..";
+import React, { FC, ReactElement, useEffect, useState } from 'react';
+import { renderNodeArray } from './Node';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useId } from '@react-aria/utils';
+import { DraggableItem, DropZonePosition } from '@utilities/dnd';
+import { getReorderedNodes, listToTree } from '@components/Tree/utils';
+import { IconProps } from '@foundation/Icon';
+import { BadgeProps } from '..';
 
 export interface TreeFlatListItem {
     name: string;
@@ -19,7 +19,6 @@ export interface TreeFlatListItem {
     badge?: ReactElement<IconProps> | ReactElement<BadgeProps>;
     parentId: NullableString;
     editable?: boolean;
-    onEditableSave?: (value: string) => void;
 }
 
 export type TreeProps = {
@@ -27,9 +26,16 @@ export type TreeProps = {
     onSelect: (ids: NullableString[]) => void;
     activeNodeIds: NullableString[];
     onUpdate?: (modifiedItems: DraggableItem<TreeFlatListItem>[]) => void;
+    onEditableSave?: (targetItemId: string, value: string) => void;
 };
 
-export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeIds: initialActiveNodeIds, onUpdate }) => {
+export const Tree: FC<TreeProps> = ({
+    nodes,
+    onSelect,
+    activeNodeIds: initialActiveNodeIds,
+    onUpdate,
+    onEditableSave,
+}) => {
     const [multiSelectMode, setMultiSelectMode] = useState<boolean>(false);
     const [activeIds, setActiveIds] = useState<NullableString[]>(initialActiveNodeIds);
     const [treeNodes, setTreeNodes] = useState<DraggableItem<TreeFlatListItem>[]>([]);
@@ -65,24 +71,30 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeIds: initialAct
           }
         : undefined;
 
+    const handleEditableSave = onEditableSave
+        ? (targetItemId: string, value: string) => {
+              onEditableSave(targetItemId, value);
+          }
+        : undefined;
+
     const downKeyHandler = (event: KeyboardEvent) => {
-        if (event.key === "Meta" || event.ctrlKey) {
+        if (event.key === 'Meta' || event.ctrlKey) {
             setMultiSelectMode(true);
         }
     };
 
     const upKeyHandler = (event: KeyboardEvent) => {
-        if (event.key === "Meta" || event.ctrlKey) {
+        if (event.key === 'Meta' || event.ctrlKey) {
             setMultiSelectMode(false);
         }
     };
 
     useEffect(() => {
-        window.addEventListener("keydown", downKeyHandler);
-        window.addEventListener("keyup", upKeyHandler);
+        window.addEventListener('keydown', downKeyHandler);
+        window.addEventListener('keyup', upKeyHandler);
         return () => {
-            window.removeEventListener("keydown", downKeyHandler);
-            window.removeEventListener("keyup", upKeyHandler);
+            window.removeEventListener('keydown', downKeyHandler);
+            window.removeEventListener('keyup', upKeyHandler);
         };
     }, []);
 
@@ -98,6 +110,7 @@ export const Tree: FC<TreeProps> = ({ nodes, onSelect, activeNodeIds: initialAct
                     activeIds,
                     onClick: onNodeClick,
                     onDrop: handleDrop,
+                    onEditableSave: handleEditableSave,
                 })}
             </ul>
         </DndProvider>

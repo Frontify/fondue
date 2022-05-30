@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useTableHeaderRow } from "@react-aria/table";
-import { TableState } from "@react-stately/table";
-import React, { FC, useRef } from "react";
+import { useTableHeaderRow } from '@react-aria/table';
+import { TableState } from '@react-stately/table';
+import React, { FC, useRef } from 'react';
 
 export type TableHeaderRowProps = {
     item: any;

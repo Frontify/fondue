@@ -1,13 +1,13 @@
-import { useFocusRing } from "@react-aria/focus";
-import { useOption } from "@react-aria/listbox";
-import { mergeProps } from "@react-aria/utils";
-import { ListState } from "@react-stately/list";
-import { Node } from "@react-types/shared";
-import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import React, { FC, useRef } from "react";
-import { MenuItem } from "../../MenuItem";
-import { MenuItemType } from "./SelectMenu";
+import { useFocusRing } from '@react-aria/focus';
+import { useOption } from '@react-aria/listbox';
+import { mergeProps } from '@react-aria/utils';
+import { ListState } from '@react-stately/list';
+import { Node } from '@react-types/shared';
+import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import React, { FC, useRef } from 'react';
+import { MenuItem } from '../../MenuItem';
+import { MenuItemType } from './SelectMenu';
 
 type SelectMenuItemProps = {
     state: ListState<object>;
@@ -34,8 +34,8 @@ export const SelectMenuItem: FC<SelectMenuItemProps> = ({ state, menuItem, node 
             {...mergeProps(optionProps, focusProps)}
             data-test-id="menu-item"
             className={merge([
-                "tw-relative hover:tw-bg-black-0 tw-list-none tw-outline-none",
-                disabled && "tw-pointer-events-none tw-top-px",
+                'tw-relative hover:tw-bg-black-0 tw-list-none tw-outline-none',
+                disabled && 'tw-pointer-events-none tw-top-px',
                 isFocusVisible && FOCUS_STYLE_INSET,
             ])}
             ref={ref}

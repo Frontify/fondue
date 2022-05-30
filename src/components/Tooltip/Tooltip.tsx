@@ -1,26 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonSize, ButtonStyle } from "@components/Button/Button";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { useLink } from "@react-aria/link";
-import { FOCUS_VISIBLE_STYLE } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
+import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { useLink } from '@react-aria/link';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
 import React, {
-    cloneElement,
     HTMLAttributes,
     PropsWithChildren,
     ReactChild,
     ReactElement,
     ReactNode,
+    cloneElement,
     useCallback,
     useMemo,
     useRef,
     useState,
-} from "react";
-import { BrightHeader, brightHeaderArrowBackgroundColors, BrightHeaderStyle } from "./BrightHeader";
-import { usePopper } from "react-popper";
-import { createPortal } from "react-dom";
-import { Placement } from "@popperjs/core";
+} from 'react';
+import { BrightHeader, BrightHeaderStyle, brightHeaderArrowBackgroundColors } from './BrightHeader';
+import { usePopper } from 'react-popper';
+import { createPortal } from 'react-dom';
+import { Placement } from '@popperjs/core';
 
 export type TooltipButton = {
     label: string;
@@ -49,70 +49,70 @@ export type TooltipProps = PropsWithChildren<{
  * This is a temporary workaround because for some yet unknown reasons `tailwindcss` in clarify purges the `tw-pb-3.5` and `tw-pt-3.5` class.
  */
 const paddingsTop = {
-    small: "tw-pt-3.5",
-    large: "tw-pt-4",
+    small: 'tw-pt-3.5',
+    large: 'tw-pt-4',
 };
 
 const paddingsBottom = {
-    small: "tw-pb-3.5",
-    large: "tw-pb-4",
+    small: 'tw-pb-3.5',
+    large: 'tw-pb-4',
 };
 
 export enum TooltipPosition {
-    Top = "Top",
-    Right = "Right",
-    Bottom = "Bottom",
-    Left = "Left",
+    Top = 'Top',
+    Right = 'Right',
+    Bottom = 'Bottom',
+    Left = 'Left',
 }
 
 export enum TooltipAlignment {
-    Start = "Start",
-    Middle = "Middle",
-    End = "End",
+    Start = 'Start',
+    Middle = 'Middle',
+    End = 'End',
 }
 
 const placementMap: Record<`${TooltipPosition}-${TooltipAlignment}`, Placement> = {
-    ["Top-Start"]: "top-start",
-    ["Top-End"]: "top-end",
-    ["Bottom-Start"]: "bottom-start",
-    ["Bottom-End"]: "bottom-end",
-    ["Left-Start"]: "left-start",
-    ["Left-End"]: "left-end",
-    ["Right-Start"]: "right-start",
-    ["Right-End"]: "right-end",
-    ["Top-Middle"]: "top",
-    ["Right-Middle"]: "right",
-    ["Bottom-Middle"]: "bottom",
-    ["Left-Middle"]: "left",
+    ['Top-Start']: 'top-start',
+    ['Top-End']: 'top-end',
+    ['Bottom-Start']: 'bottom-start',
+    ['Bottom-End']: 'bottom-end',
+    ['Left-Start']: 'left-start',
+    ['Left-End']: 'left-end',
+    ['Right-Start']: 'right-start',
+    ['Right-End']: 'right-end',
+    ['Top-Middle']: 'top',
+    ['Right-Middle']: 'right',
+    ['Bottom-Middle']: 'bottom',
+    ['Left-Middle']: 'left',
 };
 
 const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderStyle | undefined, alignment: string) => {
     switch (true) {
         case currentPlacement.toString().includes(TooltipPosition.Top.toLowerCase()):
-            return "before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px] before:tw-bg-black-100 before:dark:tw-bg-white";
+            return 'before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px] before:tw-bg-black-100 before:dark:tw-bg-white';
         case currentPlacement.toString().includes(TooltipPosition.Right.toLowerCase()):
             return merge([
-                "before:tw-border-t-0 before:tw-border-r-0 tw-left-[-6px]",
+                'before:tw-border-t-0 before:tw-border-r-0 tw-left-[-6px]',
                 brightHeader && alignment === TooltipAlignment.Start
                     ? brightHeaderArrowBackgroundColors[brightHeader]
-                    : "before:tw-bg-black-100 before:dark:tw-bg-white",
+                    : 'before:tw-bg-black-100 before:dark:tw-bg-white',
             ]);
         case currentPlacement.toString().includes(TooltipPosition.Bottom.toLowerCase()):
             return merge([
-                "before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px]",
+                'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px]',
                 brightHeader
                     ? brightHeaderArrowBackgroundColors[brightHeader]
-                    : "before:tw-bg-black-100 before:dark:tw-bg-white",
+                    : 'before:tw-bg-black-100 before:dark:tw-bg-white',
             ]);
         case currentPlacement.toString().includes(TooltipPosition.Left.toLowerCase()):
             return merge([
-                "before:tw-border-b-0 before:tw-border-l-0 tw-right-[-6px]",
+                'before:tw-border-b-0 before:tw-border-l-0 tw-right-[-6px]',
                 brightHeader && alignment === TooltipAlignment.Start
                     ? brightHeaderArrowBackgroundColors[brightHeader]
-                    : "before:tw-bg-black-100 before:dark:tw-bg-white",
+                    : 'before:tw-bg-black-100 before:dark:tw-bg-white',
             ]);
         default:
-            return "before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px] before:tw-bg-black-100 before:dark:tw-bg-white";
+            return 'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px] before:tw-bg-black-100 before:dark:tw-bg-white';
     }
 };
 
@@ -148,22 +148,22 @@ export const Tooltip = ({
 
     const tooltipOffset = withArrow ? 10 : 5;
     const popperInstance = usePopper(triggerRefElement?.current, tooltipContainerRef.current, {
-        placement: placement,
+        placement,
         modifiers: [
             {
-                name: "arrow",
+                name: 'arrow',
                 options: {
                     element: arrowElement,
                 },
             },
             {
-                name: "offset",
+                name: 'offset',
                 options: {
                     offset: [0, tooltipOffset],
                 },
             },
             {
-                name: "flip",
+                name: 'flip',
                 enabled: flip,
             },
         ],
@@ -230,7 +230,7 @@ export const Tooltip = ({
                             {brightHeader && <BrightHeader headerStyle={brightHeader} />}
                             <div
                                 className={merge([
-                                    "tw-px-4",
+                                    'tw-px-4',
                                     hasLargePaddingTop ? paddingsTop.small : paddingsTop.large,
                                     linkUrl ? paddingsBottom.small : paddingsBottom.large,
                                 ])}
@@ -262,12 +262,12 @@ export const Tooltip = ({
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className={merge([
-                                            "tw-text-xs tw-text-black-40 dark:tw-text-black-80 tw-underline tw-mt-1",
+                                            'tw-text-xs tw-text-black-40 dark:tw-text-black-80 tw-underline tw-mt-1',
                                             FOCUS_VISIBLE_STYLE,
                                         ])}
-                                        onBlur={() => (buttons && buttons.length ? null : setIsOpen(false))}
+                                        onBlur={() => (buttons && buttons.length > 0 ? null : setIsOpen(false))}
                                     >
-                                        {linkLabel ?? "Click here to learn more."}
+                                        {linkLabel ?? 'Click here to learn more.'}
                                     </a>
                                 )}
                                 {buttons && (
@@ -307,7 +307,7 @@ export const Tooltip = ({
                                     style={popperInstance.styles.arrow}
                                     className={merge([
                                         withArrow &&
-                                            "tw-popper-arrow tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line",
+                                            'tw-popper-arrow tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line',
                                         withArrow && arrowStyling,
                                     ])}
                                 />

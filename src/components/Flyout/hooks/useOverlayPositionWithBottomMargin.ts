@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AriaPositionProps, useOverlayPosition } from "@react-aria/overlays";
-import { MutableRefObject } from "react";
-import { getTotalOverlayHeight } from "../helpers/getTotalOverlayHeight";
-import { shouldDisplayAbove } from "../helpers/shouldDisplayAbove";
-import { FlyoutPlacement } from "@components/Flyout";
+import { AriaPositionProps, useOverlayPosition } from '@react-aria/overlays';
+import { MutableRefObject } from 'react';
+import { getTotalOverlayHeight } from '../helpers/getTotalOverlayHeight';
+import { shouldDisplayAbove } from '../helpers/shouldDisplayAbove';
+import { FlyoutPlacement } from '@components/Flyout';
 
 const FLYOUT_OVERLAY_OFFSET = 5;
 const DEFAULT_OVERLAY_PADDING = 12;
@@ -19,15 +19,15 @@ type UseOverlayPositionWithBottomMarginProps = {
     offset?: number;
 };
 
-const flippedPositionMap: Record<FlyoutPlacement, AriaPositionProps["placement"]> = {
-    ["top"]: "bottom",
-    ["bottom"]: "top",
-    ["left"]: "right",
-    ["right"]: "left",
-    ["top left"]: "bottom left",
-    ["top right"]: "bottom right",
-    ["bottom left"]: "top left",
-    ["bottom right"]: "top right",
+const flippedPositionMap: Record<FlyoutPlacement, AriaPositionProps['placement']> = {
+    ['top']: 'bottom',
+    ['bottom']: 'top',
+    ['left']: 'right',
+    ['right']: 'left',
+    ['top left']: 'bottom left',
+    ['top right']: 'bottom right',
+    ['bottom left']: 'top left',
+    ['bottom right']: 'top right',
 };
 
 export const useOverlayPositionWithBottomMargin = ({
@@ -57,7 +57,7 @@ export const useOverlayPositionWithBottomMargin = ({
         isOpen,
     });
 
-    if (typeof positionProps?.style?.maxHeight === "number" && !isFlipped) {
+    if (typeof positionProps?.style?.maxHeight === 'number' && !isFlipped) {
         const heightToSubtract = INTERCOM_BUTTON_HEIGHT - DEFAULT_OVERLAY_PADDING;
         positionProps.style.maxHeight -= heightToSubtract;
     }

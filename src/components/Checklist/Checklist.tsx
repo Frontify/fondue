@@ -1,26 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Checkbox, CheckboxProps, CheckboxState } from "@components/Checkbox/Checkbox";
-import { useCheckboxGroup, useCheckboxGroupItem } from "@react-aria/checkbox";
-import { useCheckboxGroupState } from "@react-stately/checkbox";
-import { merge } from "@utilities/merge";
-import React, { FC, useEffect, useRef, useState } from "react";
+import { Checkbox, CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
+import { useCheckboxGroup, useCheckboxGroupItem } from '@react-aria/checkbox';
+import { useCheckboxGroupState } from '@react-stately/checkbox';
+import { merge } from '@utilities/merge';
+import React, { FC, useEffect, useRef, useState } from 'react';
 
 export enum ChecklistDirection {
-    Horizontal = "Horizontal",
-    Vertical = "Vertical",
+    Horizontal = 'Horizontal',
+    Vertical = 'Vertical',
 }
 
 export type Columns = 1 | 2 | 3 | 4;
 
 const columnsStyle: Record<Columns, string> = {
-    1: "tw-grid-cols-1",
-    2: "tw-grid-cols-2",
-    3: "tw-grid-cols-3",
-    4: "tw-grid-cols-4",
+    1: 'tw-grid-cols-1',
+    2: 'tw-grid-cols-2',
+    3: 'tw-grid-cols-3',
+    4: 'tw-grid-cols-4',
 };
 
-export type CheckboxValue = Omit<CheckboxProps, "onChange" | "groupInputProps" | "value"> & { value: string };
+export type CheckboxValue = Omit<CheckboxProps, 'onChange' | 'groupInputProps' | 'value'> & { value: string };
 
 type ChecklistBase = {
     checkboxes: CheckboxValue[];
@@ -44,7 +44,7 @@ export type ChecklistProps = ChecklistVertical | ChecklistHorizontal;
 export const Checklist: FC<ChecklistProps> = ({
     checkboxes,
     setActiveValues,
-    ariaLabel = "Checklist",
+    ariaLabel = 'Checklist',
     activeValues = [],
     direction = ChecklistDirection.Horizontal,
     columns = 1,
@@ -55,7 +55,7 @@ export const Checklist: FC<ChecklistProps> = ({
     });
     const { groupProps } = useCheckboxGroup(
         {
-            "aria-label": ariaLabel,
+            'aria-label': ariaLabel,
         },
         state,
     );
@@ -66,7 +66,7 @@ export const Checklist: FC<ChecklistProps> = ({
             data-test-id="checklist"
             className={merge([
                 direction === ChecklistDirection.Horizontal
-                    ? "tw-flex tw-flex-row tw-gap-12"
+                    ? 'tw-flex tw-flex-row tw-gap-12'
                     : `tw-grid tw-gap-4 ${columns && columnsStyle[columns]}`,
             ])}
         >
@@ -76,7 +76,7 @@ export const Checklist: FC<ChecklistProps> = ({
                 const [checkState, setCheckState] = useState(checkboxState);
                 const isSelected = state.isSelected(value);
                 const { inputProps } = useCheckboxGroupItem(
-                    { value, isDisabled: disabled, "aria-label": checkboxAriaLabel || label },
+                    { value, isDisabled: disabled, 'aria-label': checkboxAriaLabel || label },
                     state,
                     ref,
                 );

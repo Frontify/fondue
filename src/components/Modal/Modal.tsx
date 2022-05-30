@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, memo, useRef } from "react";
-import { merge } from "@utilities/merge";
-import { ModalProps, ModalWidth } from "./types";
-import { ModalVisual } from "./ModalVisual";
-import { OverlayContainer, useModal, useOverlay, usePreventScroll } from "@react-aria/overlays";
-import { FocusScope } from "@react-aria/focus";
-import { useDialog } from "@react-aria/dialog";
-import { AnimatePresence, motion } from "framer-motion";
-import { ModalTitle } from "./context/ModalTitle";
-import { ModalHeader } from "./ModalHeader";
-import { ModalBody } from "./ModalBody";
-import { ModalFooter } from "./ModalFooter";
-import { ModalLayout, MODAL_PADDING } from "./context/ModalLayout";
+import React, { FC, memo, useRef } from 'react';
+import { merge } from '@utilities/merge';
+import { ModalProps, ModalWidth } from './types';
+import { ModalVisual } from './ModalVisual';
+import { OverlayContainer, useModal, useOverlay, usePreventScroll } from '@react-aria/overlays';
+import { FocusScope } from '@react-aria/focus';
+import { useDialog } from '@react-aria/dialog';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ModalTitle } from './context/ModalTitle';
+import { ModalHeader } from './ModalHeader';
+import { ModalBody } from './ModalBody';
+import { ModalFooter } from './ModalFooter';
+import { MODAL_PADDING, ModalLayout } from './context/ModalLayout';
 
 const UNDERLAY_VARIANTS = {
     initial: {
@@ -39,8 +39,8 @@ const MODAL_VARIANTS = {
 };
 
 const widthMap: Record<ModalWidth, string> = {
-    [ModalWidth.Default]: "tw-max-w-[800px]",
-    [ModalWidth.Large]: "tw-max-w-[1200px]",
+    [ModalWidth.Default]: 'tw-max-w-[800px]',
+    [ModalWidth.Large]: 'tw-max-w-[1200px]',
 };
 
 const DEFAULT_ZINDEX = 50;
@@ -67,18 +67,20 @@ const ModalComponent: FC<ModalProps> = memo((props) => {
             animate="show"
             exit="exit"
             style={{
-                background: "rgba(0, 0, 0, .5)",
+                background: 'rgba(0, 0, 0, .5)',
                 zIndex,
             }}
             onPointerDown={onPointerDown}
             data-is-underlay={true}
-            className={`tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0 tw-flex tw-justify-center tw-items-center tw-p-4`}
+            className={
+                'tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0 tw-flex tw-justify-center tw-items-center tw-p-4'
+            }
         >
             {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
             <FocusScope contain restoreFocus autoFocus>
                 <motion.div
                     variants={MODAL_VARIANTS}
-                    className={merge([widthMap[width], "tw-w-full tw-max-h-full tw-h-contents tw-flex tw-flex-col"])}
+                    className={merge([widthMap[width], 'tw-w-full tw-max-h-full tw-h-contents tw-flex tw-flex-col'])}
                 >
                     <div
                         {...overlayProps}
@@ -105,7 +107,7 @@ const ModalComponent: FC<ModalProps> = memo((props) => {
     );
 });
 
-ModalComponent.displayName = "Modal";
+ModalComponent.displayName = 'Modal';
 
 export const Modal = ({ isOpen, ...modalProps }: ModalProps) => (
     <OverlayContainer>

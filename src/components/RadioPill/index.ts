@@ -1,1 +1,1 @@
-export * from "./RadioPill";
+export * from './RadioPill';

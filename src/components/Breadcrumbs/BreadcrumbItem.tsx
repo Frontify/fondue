@@ -1,9 +1,9 @@
-import { useBreadcrumbItem } from "@react-aria/breadcrumbs";
-import { useFocusRing } from "@react-aria/focus";
-import { mergeProps } from "@react-aria/utils";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import React, { FC, RefObject, useRef } from "react";
-import { Breadcrumb } from "./Breadcrumbs";
+import { useBreadcrumbItem } from '@react-aria/breadcrumbs';
+import { useFocusRing } from '@react-aria/focus';
+import { mergeProps } from '@react-aria/utils';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import React, { FC, RefObject, useRef } from 'react';
+import { Breadcrumb } from './Breadcrumbs';
 
 const Separator = () => (
     <svg
@@ -19,7 +19,7 @@ const Separator = () => (
     </svg>
 );
 
-type BreadcrumbItemProps = Pick<Breadcrumb, "label" | "link" | "onClick"> & {
+type BreadcrumbItemProps = Pick<Breadcrumb, 'label' | 'link' | 'onClick'> & {
     showSeparator: boolean;
 };
 
@@ -29,7 +29,7 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
         {
             isCurrent: false,
             children: label,
-            elementType: link ? "a" : onClick ? "button" : "span",
+            elementType: link ? 'a' : onClick ? 'button' : 'span',
         },
         ref,
     );
@@ -46,7 +46,7 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
                     ref={ref as RefObject<HTMLAnchorElement>}
                     {...props}
                     href={link}
-                    className={isFocusVisible ? FOCUS_STYLE : ""}
+                    className={isFocusVisible ? FOCUS_STYLE : ''}
                 >
                     {label}
                 </a>
@@ -56,12 +56,12 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
                     type="button"
                     {...props}
                     onClick={onClick}
-                    className={isFocusVisible ? FOCUS_STYLE : ""}
+                    className={isFocusVisible ? FOCUS_STYLE : ''}
                 >
                     {label}
                 </button>
             ) : (
-                <span ref={ref as RefObject<HTMLSpanElement>} {...props} className={isFocusVisible ? FOCUS_STYLE : ""}>
+                <span ref={ref as RefObject<HTMLSpanElement>} {...props} className={isFocusVisible ? FOCUS_STYLE : ''}>
                     {label}
                 </span>
             )}

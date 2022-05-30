@@ -1,41 +1,40 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BadgeStatus, BadgeStyle } from "@components/Badge";
-import { Button, ButtonStyle } from "@components/Button/Button";
-import { Divider } from "@components/Divider/Divider";
-import { FormControl } from "@components/FormControl/FormControl";
-import { Slider } from "@components/Slider/Slider";
-import { Textarea } from "@components/Textarea/Textarea";
-import { TextInput } from "@components/TextInput/TextInput";
-import IconActions from "@foundation/Icon/Generated/IconActions";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
-import { chain } from "@react-aria/utils";
-import { action } from "@storybook/addon-actions";
-import { Meta, Story } from "@storybook/react";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import React, { MutableRefObject, useState } from "react";
-import { Flyout, FlyoutProps, FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, FlyoutPlacement } from "./Flyout";
-import { FlyoutFooter } from "./FlyoutFooter";
-import { Dropdown } from "@components/Dropdown";
-import { DatePicker } from "@components/DatePicker";
-import { TooltipIcon } from "@components/TooltipIcon";
-import { IconAttentionFilled } from "@foundation/Icon";
+import { BadgeStatus, BadgeStyle } from '@components/Badge';
+import { Button, ButtonStyle } from '@components/Button/Button';
+import { Divider } from '@components/Divider/Divider';
+import { FormControl } from '@components/FormControl/FormControl';
+import { Slider } from '@components/Slider/Slider';
+import { Textarea } from '@components/Textarea/Textarea';
+import { TextInput } from '@components/TextInput/TextInput';
+import IconActions from '@foundation/Icon/Generated/IconActions';
+import IconIcons from '@foundation/Icon/Generated/IconIcons';
+import { chain } from '@react-aria/utils';
+import { action } from '@storybook/addon-actions';
+import { Meta, Story } from '@storybook/react';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import React, { MutableRefObject, useState } from 'react';
+import { FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, Flyout, FlyoutPlacement, FlyoutProps } from './Flyout';
+import { FlyoutFooter } from './FlyoutFooter';
+import { Dropdown } from '@components/Dropdown';
+import { DatePicker } from '@components/DatePicker';
+import { TooltipIcon } from '@components/TooltipIcon';
+import { IconAttentionFilled } from '@foundation/Icon';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Flyout",
+    title: 'Components/Flyout',
     component: Flyout,
     argTypes: {
-        onCancel: { action: "onCancel", table: { disable: true } },
-        onOpenChange: { action: "onOpenChange", table: { disable: true } },
+        onCancel: { action: 'onCancel', table: { disable: true } },
+        onOpenChange: { action: 'onOpenChange', table: { disable: true } },
         placement: {
             options: Object.values(FlyoutPlacement),
-            control: { type: "select" },
+            control: { type: 'select' },
             defaultValue: FlyoutPlacement.BottomLeft,
         },
         offset: {
-            control: { type: "number" },
+            control: { type: 'number' },
             defaultValue: 5,
         },
     },
@@ -49,8 +48,8 @@ export default {
 } as Meta<FlyoutProps>;
 
 const FlyoutTemplate: Story<FlyoutProps> = (args) => {
-    const [activeItemId, setActiveItemId] = useState("a");
-    const [input, setInput] = useState("");
+    const [activeItemId, setActiveItemId] = useState('a');
+    const [input, setInput] = useState('');
     const [open, setOpen] = useState(false);
 
     return (
@@ -67,9 +66,9 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
                     <div className="tw-flex tw-flex-col tw-gap-y-8 tw-p-8">
                         <FormControl
                             label={{
-                                children: "Input Label",
-                                htmlFor: "input-id",
-                                tooltip: { content: "Input tooltip" },
+                                children: 'Input Label',
+                                htmlFor: 'input-id',
+                                tooltip: { content: 'Input tooltip' },
                             }}
                             extra="Extra Text"
                         >
@@ -78,17 +77,17 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
                         <Divider color={FLYOUT_DIVIDER_COLOR} height={FLYOUT_DIVIDER_HEIGHT} />
                         <FormControl
                             label={{
-                                children: "Slider Label",
-                                htmlFor: "slider-id",
+                                children: 'Slider Label',
+                                htmlFor: 'slider-id',
                             }}
                         >
                             <Slider
                                 activeItemId={activeItemId}
                                 onChange={setActiveItemId}
                                 items={[
-                                    { id: "a", value: "abc" },
-                                    { id: "b", value: "def" },
-                                    { id: "c", value: "ghi" },
+                                    { id: 'a', value: 'abc' },
+                                    { id: 'b', value: 'def' },
+                                    { id: 'c', value: 'ghi' },
                                 ]}
                             />
                         </FormControl>
@@ -97,8 +96,8 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
                     <div className="tw-p-8">
                         <FormControl
                             label={{
-                                children: "Textarea Label",
-                                htmlFor: "textarea-id",
+                                children: 'Textarea Label',
+                                htmlFor: 'textarea-id',
                             }}
                         >
                             <Textarea placeholder="This is a placeholder" />
@@ -120,24 +119,24 @@ export const WithoutHeader = FlyoutTemplate.bind({});
 export const WithOnclick = FlyoutTemplate.bind({});
 
 WithOnclick.argTypes = {
-    onConfirm: { action: "onConfirm" },
+    onConfirm: { action: 'onConfirm' },
 };
 
 WithOnclick.args = {
-    title: "Header title",
+    title: 'Header title',
     decorator: <IconIcons />,
-    onConfirm: action("onConfirm"),
+    onConfirm: action('onConfirm'),
 };
 
 export const WithBadges = FlyoutTemplate.bind({});
 
 WithBadges.args = {
-    title: "Header title",
+    title: 'Header title',
     decorator: <IconIcons />,
     badges: [
-        { style: BadgeStyle.Positive, children: "Badge 1" },
-        { status: BadgeStatus.Danger, children: "Badge 2" },
-        { style: BadgeStyle.Danger, icon: <IconIcons />, children: "Badge 3" },
+        { style: BadgeStyle.Positive, children: 'Badge 1' },
+        { status: BadgeStatus.Danger, children: 'Badge 2' },
+        { style: BadgeStyle.Danger, icon: <IconIcons />, children: 'Badge 3' },
     ],
 };
 
@@ -148,7 +147,7 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
                 <Button onClick={() => setOpen(!open)} ref={ref} aria-label={ariaLabel}>
                     Button
                 </Button>
@@ -162,23 +161,23 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
                     Label 1
                     <span className="tw-ml-2">
                         <TooltipIcon
-                            tooltip={{ content: "Lorem ipsum dolor sit amet." }}
+                            tooltip={{ content: 'Lorem ipsum dolor sit amet.' }}
                             triggerIcon={<IconAttentionFilled />}
                         />
                     </span>
                 </p>
                 <Dropdown
                     onChange={(id) => console.log(id)}
-                    activeItemId={"1"}
+                    activeItemId={'1'}
                     menuBlocks={[
                         {
-                            id: "block1",
+                            id: 'block1',
                             menuItems: [
-                                { id: "1", title: "Item 1" },
-                                { id: "2", title: "Item 2" },
-                                { id: "3", title: "Item 3" },
-                                { id: "4", title: "Item 4" },
-                                { id: "5", title: "Item 5" },
+                                { id: '1', title: 'Item 1' },
+                                { id: '2', title: 'Item 2' },
+                                { id: '3', title: 'Item 3' },
+                                { id: '4', title: 'Item 4' },
+                                { id: '5', title: 'Item 5' },
                             ],
                         },
                     ]}
@@ -187,7 +186,7 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
                     Label 2
                     <span className="tw-ml-2">
                         <TooltipIcon
-                            tooltip={{ content: "Lorem ipsum dolor sit amet." }}
+                            tooltip={{ content: 'Lorem ipsum dolor sit amet.' }}
                             triggerIcon={<IconAttentionFilled />}
                         />
                     </span>
@@ -200,7 +199,7 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
 export const WithButtonTrigger = WithButtonFlyoutTemplate.bind({});
 
 WithButtonTrigger.args = {
-    title: "Header title",
+    title: 'Header title',
     decorator: <IconIcons />,
 };
 
@@ -224,14 +223,14 @@ const WithCustomFooterFlyoutTemplate: Story<FlyoutProps> = (args) => {
                         <FlyoutFooter
                             buttons={[
                                 {
-                                    children: "Cancel",
+                                    children: 'Cancel',
                                     style: ButtonStyle.Secondary,
-                                    onClick: chain(action("onCancel"), () => setOpen(false)),
+                                    onClick: chain(action('onCancel'), () => setOpen(false)),
                                 },
                                 {
-                                    children: "Add",
+                                    children: 'Add',
                                     style: ButtonStyle.Primary,
-                                    onClick: chain(action("onConfirm"), () => setOpen(false)),
+                                    onClick: chain(action('onConfirm'), () => setOpen(false)),
                                 },
                             ]}
                         />
@@ -251,7 +250,7 @@ const WithCustomFooterFlyoutTemplate: Story<FlyoutProps> = (args) => {
 export const WithCustomFooter = WithCustomFooterFlyoutTemplate.bind({});
 
 WithCustomFooter.args = {
-    title: "Header title",
+    title: 'Header title',
     decorator: <IconIcons />,
     trigger: (
         <span className="tw-flex tw-h-full tw-items-center tw-p-1 tw-rounded tw-bg-black-20 hover:tw-bg-black-30 dark:tw-bg-black-80 dark:hover:tw-bg-black-70">
@@ -272,7 +271,7 @@ const WithCustomFooterAndHeaderTemplate: Story<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
                 <Button onClick={() => setIsOpen(!isOpen)} ref={ref} aria-label={ariaLabel}>
                     Click me
                 </Button>
@@ -298,7 +297,7 @@ WithCustomFooterAndHeader.args = {
         <FlyoutFooter
             buttons={[
                 {
-                    children: "A button",
+                    children: 'A button',
                     style: ButtonStyle.Primary,
                 },
             ]}
@@ -317,12 +316,12 @@ const WithRenderFunctionTriggerTemplate: Story<FlyoutProps> = (args) => {
                     {...props}
                     ref={ref}
                     className={merge([
-                        "tw-border tw-rounded tw-w-[200px] tw-p-2 tw-text-s tw-text-center tw-h-[60px] tw-outline-none tw-items-center tw-flex tw-justify-center",
+                        'tw-border tw-rounded tw-w-[200px] tw-p-2 tw-text-s tw-text-center tw-h-[60px] tw-outline-none tw-items-center tw-flex tw-justify-center',
                         state.isFocusVisible && FOCUS_STYLE,
-                        state.isPressed && "tw-bg-black-10",
+                        state.isPressed && 'tw-bg-black-10',
                     ])}
                 >
-                    {state.isPressed ? "I'm Pressed!" : " Accessible custom trigger"}
+                    {state.isPressed ? "I'm Pressed!" : ' Accessible custom trigger'}
                 </div>
             )}
             isOpen={open}
@@ -336,7 +335,7 @@ const WithRenderFunctionTriggerTemplate: Story<FlyoutProps> = (args) => {
 export const WithRenderFunctionTrigger = WithRenderFunctionTriggerTemplate.bind({});
 
 WithRenderFunctionTrigger.args = {
-    title: "Header title",
+    title: 'Header title',
     decorator: <IconIcons />,
 };
 
@@ -357,7 +356,7 @@ const WithPlacementAndOffsetTemplate: Story<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
                 <div className="tw-flex tw-justify-center tw-items-center tw-w-full tw-h-screen">
                     <Button onClick={() => setIsOpen(!isOpen)} ref={ref} aria-label={ariaLabel}>
                         Click me

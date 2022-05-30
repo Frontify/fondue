@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TreeState } from "@react-stately/tree";
-import { FC, PropsWithChildren, ReactNode } from "react";
-import { Node } from "@react-types/shared";
-import { FieldsetHeaderType, FieldsetHeaderSize } from "@components/FieldsetHeader";
+import { TreeState } from '@react-stately/tree';
+import { FC, PropsWithChildren, ReactNode } from 'react';
+import { Node } from '@react-types/shared';
+import { FieldsetHeaderSize, FieldsetHeaderType } from '@components/FieldsetHeader';
 
 export type AccordionProps = {
     children?: ReactNode;
@@ -14,23 +14,23 @@ export type AccordionProps = {
 export type AriaAccordionItemProps = {
     item: Node<AccordionItemProps>;
     state: TreeState<AccordionItemProps>;
-    header: Omit<AccordionHeaderProps, "isOpen"> & { active?: boolean; onClick?: () => void };
+    header: Omit<AccordionHeaderProps, 'isOpen'> & { active?: boolean; onClick?: () => void };
     padding?: boolean;
     divider?: boolean;
     headerComponent?: FC<AccordionHeaderProps>;
 };
 
 export type AccordionItemProps = PropsWithChildren<{
-    header: Omit<AccordionHeaderProps, "isOpen"> & { active?: boolean; onClick?: () => void };
+    header: Omit<AccordionHeaderProps, 'isOpen'> & { active?: boolean; onClick?: () => void };
     padding?: boolean;
     divider?: boolean;
     headerComponent?: FC<AccordionHeaderProps>;
 }>;
 
 export enum AccordionHeaderIconSize {
-    Small = "Small",
-    Medium = "Medium",
-    Large = "Large",
+    Small = 'Small',
+    Medium = 'Medium',
+    Large = 'Large',
 }
 
 export type AccordionHeaderProps = {

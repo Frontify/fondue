@@ -15,30 +15,33 @@ import {
     IconTextFormatItalic,
     IconTextFormatStrikethrough,
     IconTextFormatUnderline,
-} from "@foundation/Icon";
+} from '@foundation/Icon';
 import {
     AlignToolbarButton,
     BalloonToolbar,
-    BlockToolbarButton,
     ELEMENT_OL,
     ELEMENT_UL,
-    getPluginType,
-    LinkToolbarButton,
     ListToolbarButton,
-    MarkToolbarButton,
     MARK_BOLD,
     MARK_CODE,
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
+    MarkToolbarButton,
     PlateEditor,
+    getPluginType,
     usePlateEditorRef,
-} from "@udecode/plate";
-import React, { FC, ReactElement } from "react";
-import { ELEMENT_CHECK_ITEM } from "./plugins/checkboxListPlugin";
-import { TextStyleDropdown } from "./TextStyleDropdown/TextStyleDropdown";
-import { defaultActions, EditorActions } from "./utils/actions";
-import { TextStyleType } from "./utils/getTextStyles";
+    ToolbarButton,
+    someNode,
+} from '@udecode/plate';
+import React, { FC, ReactElement } from 'react';
+import { ELEMENT_CHECK_ITEM } from './plugins/checkboxListPlugin/createCheckboxListPlugin';
+import { CheckboxListToolbarButton } from './plugins/checkboxListPlugin/ui/CheckboxListToolbarButton';
+import { ELEMENT_LINK_CHOOSER } from './plugins/linkChooserPlugin/types';
+import { EditLinkChooserButton } from './plugins/linkChooserPlugin/ui/EditLinkChooserButton';
+import { TextStyleDropdown } from './TextStyleDropdown/TextStyleDropdown';
+import { EditorActions, defaultActions } from './utils/actions';
+import { TextStyleType } from './utils/getTextStyles';
 
 type ToolbarProps = {
     editorId?: string;
@@ -47,10 +50,10 @@ type ToolbarProps = {
 };
 
 const classNames = {
-    root: "tw-text-black-80 tw-ml-0.5 hover:tw-bg-base-alt hover:!tw-text-violet-70",
-    active: "tw-bg-base-alt tw-rounded !tw-text-violet-70",
+    root: 'tw-text-black-80 tw-ml-0.5 hover:tw-bg-base-alt hover:!tw-text-violet-70',
+    active: 'tw-bg-base-alt tw-rounded !tw-text-violet-70',
 };
-const styles = { root: { width: "32px", height: "32px" } };
+const styles = { root: { width: '32px', height: '32px' } };
 
 const toolbarComponents = (
     editor: PlateEditor,
@@ -132,15 +135,25 @@ const toolbarComponents = (
             />
         ),
         [EditorActions.CHECK_ITEM]: (
-            <BlockToolbarButton
+            <CheckboxListToolbarButton
                 type={getPluginType(editor, ELEMENT_CHECK_ITEM)}
                 icon={<IconListChecklist size={IconSize.Size24} />}
                 classNames={classNames}
                 styles={styles}
             />
         ),
-        [EditorActions.LINK]: (
-            <LinkToolbarButton icon={<IconLink size={IconSize.Size24} />} classNames={classNames} styles={styles} />
+        [EditorActions.LINK_CHOOSER]: (
+            <EditLinkChooserButton
+                type={getPluginType(editor, ELEMENT_LINK_CHOOSER)}
+                icon={
+                    <ToolbarButton
+                        active={!!editor?.selection && someNode(editor, { match: { ELEMENT_CHECK_ITEM } })}
+                        icon={<IconLink size={IconSize.Size24} />}
+                        classNames={classNames}
+                        styles={styles}
+                    />
+                }
+            />
         ),
         [EditorActions.ORDERED_LIST]: (
             <ListToolbarButton
@@ -169,11 +182,11 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
         <BalloonToolbar
             popperOptions={{
                 modifiers: [
-                    { name: "offset", options: { offset: [0, 12] } },
-                    { name: "flip", options: { fallbackPlacements: ["bottom", "right"] } },
+                    { name: 'offset', options: { offset: [0, 12] } },
+                    { name: 'flip', options: { fallbackPlacements: ['bottom', 'right'] } },
                 ],
             }}
-            styles={{ root: { border: "none", background: "#ffffff", margin: "8px" } }}
+            styles={{ root: { border: 'none', background: '#ffffff', margin: '8px' } }}
         >
             <div
                 data-test-id="toolbar"

@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
-import IconReject from "@foundation/Icon/Generated/IconReject";
-import IconTrash from "@foundation/Icon/Generated/IconTrash";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { useFocusRing } from "@react-aria/focus";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import { Validation, validationClassMap } from "@utilities/validation";
-import React, { FC, HTMLAttributes } from "react";
+import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
+import IconReject from '@foundation/Icon/Generated/IconReject';
+import IconTrash from '@foundation/Icon/Generated/IconTrash';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { useFocusRing } from '@react-aria/focus';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import { Validation, validationClassMap } from '@utilities/validation';
+import React, { FC, HTMLAttributes } from 'react';
 
 export enum TriggerSize {
-    Small = "Small",
-    Large = "Large",
+    Small = 'Small',
+    Large = 'Large',
 }
 
 export type TriggerProps = {
@@ -46,13 +46,13 @@ export const Trigger: FC<TriggerProps> = ({
         <div
             data-test-id="trigger"
             className={merge([
-                "tw-group tw-relative tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-rounded tw-transition-colors tw-min-h-[36px]",
+                'tw-group tw-relative tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-rounded tw-transition-colors tw-min-h-[36px]',
                 isFocusVisible && FOCUS_STYLE,
                 disabled
-                    ? "tw-border-black-5 tw-bg-black-5 tw-pointer-events-none"
+                    ? 'tw-border-black-5 tw-bg-black-5 tw-pointer-events-none'
                     : merge([
-                          "tw-bg-white hover:tw-border-black-90",
-                          isOpen ? "tw-border-black-100" : "tw-border-black-20",
+                          'tw-bg-white hover:tw-border-black-90',
+                          isOpen ? 'tw-border-black-100' : 'tw-border-black-20',
                           validationClassMap[validation],
                       ]),
             ])}
@@ -60,8 +60,8 @@ export const Trigger: FC<TriggerProps> = ({
             {children}
             <div
                 className={merge([
-                    "tw-flex-none tw-flex tw-items-center tw-absolute",
-                    size === TriggerSize.Large ? "tw-right-5 tw-gap-1.5" : "tw-right-3 tw-gap-1",
+                    'tw-flex-none tw-flex tw-items-center tw-absolute',
+                    size === TriggerSize.Large ? 'tw-right-5 tw-gap-1.5' : 'tw-right-3 tw-gap-1',
                 ])}
             >
                 {showClear && (
@@ -72,7 +72,7 @@ export const Trigger: FC<TriggerProps> = ({
                         type="button"
                         className={merge([
                             isClearFocusVisible && FOCUS_STYLE,
-                            disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
+                            disabled ? 'tw-pointer-events-none tw-text-black-40' : 'tw-text-black-80',
                         ])}
                         onClick={() => !!onClear && onClear()}
                     >
@@ -87,7 +87,7 @@ export const Trigger: FC<TriggerProps> = ({
                         type="button"
                         className={merge([
                             isOnDeleteFocusVisible && FOCUS_STYLE,
-                            disabled ? "tw-pointer-events-none tw-text-black-40" : "tw-text-black-80",
+                            disabled ? 'tw-pointer-events-none tw-text-black-40' : 'tw-text-black-80',
                         ])}
                         onClick={onDelete}
                     >
@@ -100,11 +100,11 @@ export const Trigger: FC<TriggerProps> = ({
                     type="button"
                     className={merge([
                         disabled
-                            ? "tw-pointer-events-none tw-text-black-40"
-                            : merge(["group-hover:tw-text-black", isOpen ? "tw-text-black-100" : "tw-text-black-80"]),
+                            ? 'tw-pointer-events-none tw-text-black-40'
+                            : merge(['group-hover:tw-text-black', isOpen ? 'tw-text-black-100' : 'tw-text-black-80']),
                     ])}
                 >
-                    <div className={merge(["tw-transition-transform", isOpen && "tw-rotate-180"])}>
+                    <div className={merge(['tw-transition-transform', isOpen && 'tw-rotate-180'])}>
                         <IconCaretDown size={IconSize.Size16} />
                     </div>
                 </button>

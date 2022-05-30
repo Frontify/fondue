@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mapToAriaProps } from "@components/ActionMenu/Aria/helper";
-import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
-import { useDropdownAutoHeight } from "@components/Dropdown/useDropdownAutoHeight";
+import { mapToAriaProps } from '@components/ActionMenu/Aria/helper';
+import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
+import { useDropdownAutoHeight } from '@components/Dropdown/useDropdownAutoHeight';
 import {
     IconDocument,
     IconDocumentLibrary,
@@ -10,27 +10,27 @@ import {
     IconLink,
     IconPatternLibrary,
     IconTemplate,
-} from "@foundation/Icon/Generated";
-import { useComboBox } from "@react-aria/combobox";
-import { DismissButton } from "@react-aria/overlays";
-import { scrollIntoView } from "@react-aria/utils";
-import { useComboBoxState } from "@react-stately/combobox";
-import { Validation } from "@utilities/validation";
-import { useMachine } from "@xstate/react";
-import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, Key, MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { NavigationMenu } from "./NavigationMenu";
-import { Popover } from "./Popover";
-import { SearchInput } from "./SearchInput";
-import { SearchResultsList } from "./SearchResultsList";
-import { defaultSection } from "./sections";
-import { linkChooserMachine } from "./state/machine";
-import { LinkChooserState } from "./state/types";
-import { IconLabel, LinkChooserProps, SearchMenuBlock } from "./types";
-import { decoratedResults, doesContainSubstring, findSection, getDefaultData } from "./utils/helpers";
-import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection, shouldGoBack } from "./utils/state";
-import { createCustomLink } from "./utils/transformers";
-import { useManualComboBoxEventHandlers } from "./utils/useManualComboBoxHandlers";
+} from '@foundation/Icon/Generated';
+import { useComboBox } from '@react-aria/combobox';
+import { DismissButton } from '@react-aria/overlays';
+import { scrollIntoView } from '@react-aria/utils';
+import { useComboBoxState } from '@react-stately/combobox';
+import { Validation } from '@utilities/validation';
+import { useMachine } from '@xstate/react';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { FC, Key, MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { NavigationMenu } from './NavigationMenu';
+import { Popover } from './Popover';
+import { SearchInput } from './SearchInput';
+import { SearchResultsList } from './SearchResultsList';
+import { defaultSection } from './sections';
+import { linkChooserMachine } from './state/machine';
+import { LinkChooserState } from './state/types';
+import { IconLabel, LinkChooserProps, SearchMenuBlock } from './types';
+import { decoratedResults, doesContainSubstring, findSection, getDefaultData } from './utils/helpers';
+import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection, shouldGoBack } from './utils/state';
+import { createCustomLink } from './utils/transformers';
+import { useManualComboBoxEventHandlers } from './utils/useManualComboBoxHandlers';
 
 export const IconOptions: Record<IconLabel | string, ReactElement> = {
     [IconLabel.Document]: <IconDocument />,
@@ -42,9 +42,9 @@ export const IconOptions: Record<IconLabel | string, ReactElement> = {
 };
 
 export const DEFAULT_ICON = IconLabel.Link;
-export const CUSTOM_LINK_ID = "custom-link";
+export const CUSTOM_LINK_ID = 'custom-link';
 export const MAX_STORED_ITEMS = 5;
-export const QUERIES_STORAGE_KEY = "queries";
+export const QUERIES_STORAGE_KEY = 'queries';
 
 export const LinkChooser: FC<LinkChooserProps> = ({
     getGlobalByQuery = getDefaultData,
@@ -52,7 +52,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     clipboardOptions = navigator.clipboard,
     selectedResult = null,
     openInNewTab = false,
-    ariaLabel = "Menu",
+    ariaLabel = 'Menu',
     extraSections = [],
     label,
     placeholder,
@@ -67,7 +67,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         linkChooserMachine.withContext({
             searchResults: [],
             selectedResult,
-            query: "",
+            query: '',
             interruptedFetch: false,
             getExtraResultsByQuery: null,
             currentSectionId: defaultSection.id,
@@ -84,12 +84,12 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const searchResultMenuBlocks = useMemo(
         () =>
             [
-                !isDefault && { id: "menu-top", menuItems: [findSection(extraSections, context.currentSectionId)] },
+                !isDefault && { id: 'menu-top', menuItems: [findSection(extraSections, context.currentSectionId)] },
                 {
-                    id: "search",
+                    id: 'search',
                     menuItems: decoratedResults(context.searchResults),
                 },
-                isDefault && { id: "menu-bottom", menuItems: extraSections.map(({ id, title }) => ({ id, title })) },
+                isDefault && { id: 'menu-bottom', menuItems: extraSections.map(({ id, title }) => ({ id, title })) },
             ].filter(Boolean),
         [context.searchResults, isDefault, context.currentSectionId],
     ) as SearchMenuBlock[];
@@ -105,7 +105,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         const foundItem = context.searchResults.find((item) => item.id === key);
         if (foundItem) {
             setSearchInput(foundItem.title);
-            send({ type: "SET_SELECTED_SEARCH_RESULT", data: { selectedResult: foundItem } });
+            send({ type: 'SET_SELECTED_SEARCH_RESULT', data: { selectedResult: foundItem } });
         }
         closeBoxState(state);
         setSelectedKey(key);
@@ -114,7 +114,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     const handleInputChange = useCallback(
         (query: string) => {
             setSearchInput(query);
-            send({ type: "TYPING", data: { query } });
+            send({ type: 'TYPING', data: { query } });
         },
         [value],
     );
@@ -127,7 +127,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         inputValue: searchInput,
         onInputChange: handleInputChange,
         onSelectionChange: handleSelectionChange,
-        menuTrigger: "manual",
+        menuTrigger: 'manual',
         shouldCloseOnBlur: false,
         allowsEmptyCollection: true,
         selectedKey,
@@ -146,13 +146,13 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     );
 
     const handleClearClick = useCallback(() => {
-        state.setInputValue("");
-        setSelectedKey("");
-        send({ type: "CLEARING", data: { query: "" } });
+        state.setInputValue('');
+        setSelectedKey('');
+        send({ type: 'CLEARING', data: { query: '' } });
     }, []);
 
     const handleDropdownOpen = () => {
-        send("OPEN_DROPDOWN");
+        send('OPEN_DROPDOWN');
         openBoxState(state);
     };
 
@@ -178,7 +178,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 selectedResult = createCustomLink(state.inputValue);
             }
         }
-        send({ type: "CLOSE_DROPDOWN", data: { selectedResult } });
+        send({ type: 'CLOSE_DROPDOWN', data: { selectedResult } });
         if (selectedResult && selectedKey !== selectedResult.id) {
             setSelectedKey(selectedResult.id);
         }
@@ -193,7 +193,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             onNavigate: (id) => {
                 if (isDefault) {
                     send({
-                        type: "SELECT_EXTRA_SECTION",
+                        type: 'SELECT_EXTRA_SECTION',
                         data: {
                             getExtraResultsByQuery: findSection(extraSections, id)?.getResults || null,
                             currentSectionId: id.toString(),
@@ -201,7 +201,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                     });
                 } else {
                     send({
-                        type: "BACK_TO_DEFAULT",
+                        type: 'BACK_TO_DEFAULT',
                         data: { getExtraResultsByQuery: null },
                     });
                 }
@@ -212,7 +212,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     useEffect(() => {
         if (isLoaded(matches) && context.interruptedFetch) {
-            send({ type: "TYPING", data: { query: context.query } });
+            send({ type: 'TYPING', data: { query: context.query } });
         }
     }, [context.interruptedFetch, value]);
 
@@ -243,7 +243,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
 
     useEffect(() => {
         calcFlyoutWidth();
-        window.addEventListener("resize", calcFlyoutWidth, false);
+        window.addEventListener('resize', calcFlyoutWidth, false);
     }, []);
 
     return (
@@ -287,7 +287,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                         className="tw-absolute tw-left-auto tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-20"
                         key="content"
                         initial={{ height: 0 }}
-                        animate={{ height: "auto" }}
+                        animate={{ height: 'auto' }}
                         exit={{ height: 0 }}
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         data-test-id="link-chooser-dropdown"
