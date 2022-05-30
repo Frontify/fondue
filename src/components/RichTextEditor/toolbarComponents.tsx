@@ -32,10 +32,10 @@ import {
     MARK_UNDERLINE,
     PlateEditor,
 } from "@udecode/plate";
-import React, { ReactElement } from "react";
+import React, { FC, ReactElement } from "react";
 import { ELEMENT_CHECK_ITEM } from "./plugins/checkboxListPlugin";
 import { TextStyleDropdown } from "./TextStyleDropdown/TextStyleDropdown";
-import { IconStylingWrapper } from "./Toolbar";
+import { IconStylingWrapperProps } from "./types";
 import { EditorActions } from "./utils/actions";
 import { TextStyleType } from "./utils/getTextStyles";
 
@@ -44,6 +44,10 @@ const classNames = {
     active: "tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse",
 };
 const styles = { root: { width: "32px", height: "32px" } };
+
+const IconStylingWrapper: FC<IconStylingWrapperProps> = ({ icon }) => {
+    return <span className="tw-p-2 tw-h-12 tw-justify-center tw-items-center tw-flex">{icon}</span>;
+};
 
 export const toolbarComponents = (
     editor: PlateEditor,
