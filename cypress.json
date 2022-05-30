@@ -8,6 +8,5 @@
     },
     "retries": {
         "runMode": 2
-    },
-    "defaultCommandTimeout": 10000
+    }
 }
