@@ -52,7 +52,7 @@ describe('Tree Component', () => {
 
         cy.get(`${NODE_ID} ${TOGGLE_ID}`).as('Toggle');
         cy.get('@Toggle').click();
-        cy.get(NODE_ID).should('have.length', 3);
+        cy.get(NODE_ID).should('have.length', 4);
 
         cy.get('@Toggle').click();
         cy.get(NODE_ID).should('have.length', 1);
@@ -113,7 +113,7 @@ describe('Draggable Tree Component', () => {
         );
 
         cy.get(`${NODE_ID} ${TOGGLE_ID}`).click();
-        cy.get(`${SUB_TREE_ID} ${DROP_ZONE_ID}`).should('have.length', 5);
+        cy.get(`${SUB_TREE_ID} ${DROP_ZONE_ID}`).should('have.length', 7);
         cy.get(`${SUB_TREE_ID} ${DROP_ZONE_ID}`).each(($dropZone, index) => {
             const expectedClass = index % 2 === 0 ? 'tw-h-[10px]' : 'tw-h-auto';
             expect($dropZone).to.have.class(expectedClass);
@@ -133,12 +133,12 @@ describe('Badge Tree Component', () => {
     });
 
     it('renders icon', () => {
-        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:last ${BADGE_ID}`).should('exist');
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(2) ${BADGE_ID}`).should('exist');
     });
 
     it('renders badge', () => {
-        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:last ${TOGGLE_ID}`).click();
-        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:last ${BADGE_ID}`).should('exist');
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(2) ${TOGGLE_ID}`).click();
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(2) ${BADGE_ID}`).should('exist');
     });
 });
 
@@ -148,7 +148,7 @@ describe('Editable Tree Component', () => {
         mount(<Component nodes={mockNodesFlat()} onEditableSave={onEditableSaveStub} />);
 
         cy.get(`${NODE_ID} ${TOGGLE_ID}`).click();
-        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:last ${TOGGLE_ID}`).click();
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(2) ${TOGGLE_ID}`).click();
     });
 
     it('does not render the editable input on double click when props are not set', () => {
