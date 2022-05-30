@@ -92,9 +92,9 @@ describe('RichTextEditor Component', () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
-        cy.get(`${TOOLBAR_GROUP_0} > span`).should('have.length', 1);
-        cy.get(`${TOOLBAR_GROUP_1} > span`).should('have.length', 2);
-        cy.get(`${TOOLBAR_GROUP_2} > span`).should('have.length', 1);
+        cy.get(TOOLBAR_GROUP_0).find('>span').should('have.length', 1);
+        cy.get(TOOLBAR_GROUP_1).find('>span').should('have.length', 2);
+        cy.get(TOOLBAR_GROUP_2).find('>span').should('have.length', 1);
         cy.get(TOOLBAR_GROUP_3).should('not.exist');
     });
 
