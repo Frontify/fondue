@@ -1,25 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from "@storybook/react";
-import React, { useEffect, useState } from "react";
-import { IconInfo } from "@foundation/Icon/Generated";
-import { Switch, SwitchProps, SwitchSize } from "./Switch";
-import { TooltipIconTriggerStyle } from "@components/TooltipIcon";
+import { Meta, Story } from '@storybook/react';
+import React, { useEffect, useState } from 'react';
+import { IconInfo } from '@foundation/Icon/Generated';
+import { Switch, SwitchProps, SwitchSize } from './Switch';
+import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Switch",
+    title: 'Components/Switch',
     component: Switch,
     argTypes: {
         size: {
             options: Object.values(SwitchSize),
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
         label: {
-            placeholder: "Switch label",
-            type: { name: "string", required: false },
+            placeholder: 'Switch label',
+            type: { name: 'string', required: false },
             control: {
-                type: "text",
+                type: 'text',
             },
         },
     },
@@ -27,7 +26,7 @@ export default {
         on: true,
         disabled: false,
         hug: false,
-        name: "switch-name",
+        name: 'switch-name',
         size: SwitchSize.Small,
     },
 } as Meta<SwitchProps>;
@@ -55,19 +54,19 @@ export const Large: Story<Props> = Default.bind({});
 Large.args = { size: SwitchSize.Large };
 
 export const WithLabel: Story<Props> = Default.bind({});
-WithLabel.args = { label: "Switch label" };
+WithLabel.args = { label: 'Switch label' };
 
 export const WithLabelAndTooltip: Story<Props> = Default.bind({});
-WithLabelAndTooltip.args = { label: "Switch label", tooltip: { content: "Switch tooltip" } };
+WithLabelAndTooltip.args = { label: 'Switch label', tooltip: { content: 'Switch tooltip' } };
 
 export const WithLabelAndMultipleTooltips: Story<Props> = Default.bind({});
 WithLabelAndMultipleTooltips.args = {
-    label: "Switch label",
+    label: 'Switch label',
     tooltip: [
-        { content: "First tooltip" },
-        { content: "Second Tooltip", triggerIcon: <IconInfo />, triggerStyle: TooltipIconTriggerStyle.Warning },
+        { content: 'First tooltip' },
+        { content: 'Second Tooltip', triggerIcon: <IconInfo />, triggerStyle: TooltipIconTriggerStyle.Warning },
     ],
 };
 
 export const HugLabel: Story<Props> = Default.bind({});
-HugLabel.args = { hug: true, label: "Switch label" };
+HugLabel.args = { hug: true, label: 'Switch label' };

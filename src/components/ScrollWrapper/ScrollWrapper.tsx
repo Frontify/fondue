@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useFocusRing } from "@react-aria/focus";
-import React, { FC, useRef } from "react";
-import { FOCUS_STYLE, merge } from "../..";
-import { useScrollWrapper } from "./hooks/useScrollWrapper";
-import { ScrollWrapperDirection, scrollWrapperDirections, ScrollWrapperProps } from "./types";
+import { useFocusRing } from '@react-aria/focus';
+import React, { FC, useRef } from 'react';
+import { FOCUS_STYLE, merge } from '../..';
+import { useScrollWrapper } from './hooks/useScrollWrapper';
+import { ScrollWrapperDirection, ScrollWrapperProps, scrollWrapperDirections } from './types';
 
 const GRADIENTS = {
-    right: "linear-gradient(90deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)",
-    left: "linear-gradient(270deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)",
-    bottom: "linear-gradient(180deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)",
-    top: "linear-gradient(0deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)",
+    right: 'linear-gradient(90deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)',
+    left: 'linear-gradient(270deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)',
+    bottom: 'linear-gradient(180deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)',
+    top: 'linear-gradient(0deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)',
 };
 
 export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrapperDirection.Vertical, children }) => {
@@ -51,7 +51,7 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
                 aria-label="Scrollable dialogue content"
                 className={merge([
                     scrollWrapperDirections[direction],
-                    "tw-flex-auto tw-min-h-0 tw-outline-none",
+                    'tw-flex-auto tw-min-h-0 tw-outline-none',
                     isFocusVisible && FOCUS_STYLE,
                 ])}
                 {...scrollDivProps}

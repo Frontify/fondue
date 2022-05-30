@@ -1,30 +1,29 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Validation } from "@utilities/validation";
-import { Meta, Story } from "@storybook/react";
-import React, { useState } from "react";
-import { LinkChooser as LinkChooserComponent } from "./LinkChooser";
-import { data } from "./mock/data";
-import { extraSections } from "./sections";
-import { LinkChooserProps, SearchResult } from "./types";
-import { doesContainSubstring } from "./utils/helpers";
+import { Validation } from '@utilities/validation';
+import { Meta, Story } from '@storybook/react';
+import React, { useState } from 'react';
+import { LinkChooser as LinkChooserComponent } from './LinkChooser';
+import { data } from './mock/data';
+import { extraSections } from './sections';
+import { LinkChooserProps, SearchResult } from './types';
+import { doesContainSubstring } from './utils/helpers';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Link Chooser",
+    title: 'Components/Link Chooser',
     component: LinkChooserComponent,
     args: {
-        placeholder: "https://example.com",
+        placeholder: 'https://example.com',
         disabled: false,
         clearable: false,
         required: true,
         validation: Validation.Default,
     },
     argTypes: {
-        onLinkChange: { action: "onLinkChange" },
+        onLinkChange: { action: 'onLinkChange' },
         validation: {
             options: Object.values(Validation),
-            control: { type: "select" },
+            control: { type: 'select' },
         },
     },
 } as Meta<LinkChooserProps>;

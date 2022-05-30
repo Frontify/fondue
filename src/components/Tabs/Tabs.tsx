@@ -2,32 +2,32 @@
 
 import React, {
     Children,
-    cloneElement,
     FC,
-    isValidElement,
     KeyboardEvent,
     ReactNode,
+    cloneElement,
+    isValidElement,
     useEffect,
     useRef,
     useState,
-} from "react";
-import { TabItemProps } from "@components/Tabs/TabItem";
-import { merge } from "@utilities/merge";
-import { IconMore } from "@foundation/Icon";
-import { Badge } from "@components/Badge";
-import { motion } from "framer-motion";
-import { useFocusRing } from "@react-aria/focus";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
+} from 'react';
+import { TabItemProps } from '@components/Tabs/TabItem';
+import { merge } from '@utilities/merge';
+import { IconMore } from '@foundation/Icon';
+import { Badge } from '@components/Badge';
+import { motion } from 'framer-motion';
+import { useFocusRing } from '@react-aria/focus';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
 
 export enum TabsPaddingX {
-    Small = "Small",
-    Medium = "Medium",
-    Large = "Large",
+    Small = 'Small',
+    Medium = 'Medium',
+    Large = 'Large',
 }
 
 export enum TabSize {
-    Small = "Small",
-    Large = "Large",
+    Small = 'Small',
+    Large = 'Large',
 }
 
 export type TabsProps = {
@@ -39,9 +39,9 @@ export type TabsProps = {
 };
 
 const paddingMap: Record<TabsPaddingX, string> = {
-    [TabsPaddingX.Small]: "tw-pl-s",
-    [TabsPaddingX.Medium]: "tw-pl-m",
-    [TabsPaddingX.Large]: "tw-pl-l",
+    [TabsPaddingX.Small]: 'tw-pl-s',
+    [TabsPaddingX.Medium]: 'tw-pl-m',
+    [TabsPaddingX.Large]: 'tw-pl-l',
 };
 
 export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, onChange }) => {
@@ -86,46 +86,48 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
 
     const filterTabList = (array: TabItemProps[], direction: string) => {
         return array.filter((tab) => {
-            if (direction === "next") {
+            if (direction === 'next') {
                 if (tab.id > activeItemId && !tab.disabled) {
                     return tab;
                 }
             }
 
-            if (direction === "previous") {
+            if (direction === 'previous') {
                 if (tab.id < activeItemId && !tab.disabled) {
                     return tab;
                 }
             }
+
+            return false;
         });
     };
 
     const handleKeyboardTabChange = (event: KeyboardEvent<HTMLButtonElement>) => {
         const overflownTabs = getOverflownTabs();
         const target = event.target as HTMLElement;
-        const fromOverflow = target.id.includes("-m");
-        const currentTabId = target.id.replace("-btn-m", "");
+        const fromOverflow = target.id.includes('-m');
+        const currentTabId = target.id.replace('-btn-m', '');
         const currentTabsArray = fromOverflow ? overflownTabs : tabs;
 
-        const nextTabs = filterTabList(currentTabsArray, "next");
-        const previousTabs = filterTabList(currentTabsArray, "previous");
+        const nextTabs = filterTabList(currentTabsArray, 'next');
+        const previousTabs = filterTabList(currentTabsArray, 'previous');
 
-        if ((event.key === "ArrowRight" || event.key === "ArrowDown") && nextTabs.length) {
+        if ((event.key === 'ArrowRight' || event.key === 'ArrowDown') && nextTabs.length > 0) {
             triggerTabButton(nextTabs[0].id, fromOverflow);
         }
 
-        if ((event.key === "ArrowLeft" || event.key === "ArrowUp") && previousTabs.length) {
+        if ((event.key === 'ArrowLeft' || event.key === 'ArrowUp') && previousTabs.length > 0) {
             triggerTabButton(previousTabs[previousTabs.length - 1].id, fromOverflow);
         }
 
-        if (event.key === "Enter" && fromOverflow) {
+        if (event.key === 'Enter' && fromOverflow) {
             triggerTabButton(currentTabId, true);
             setIsMenuOpened(false);
             const contentSection = document.getElementById(`${currentTabId}-content`) as HTMLDivElement;
             contentSection.focus();
         }
 
-        if (!target.id.includes("-m")) {
+        if (!target.id.includes('-m')) {
             setIsMenuOpened(false);
         }
     };
@@ -139,7 +141,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
             if (onChange) {
                 onChange(elementId);
             }
-            tabElement.scrollIntoView({ behavior: "smooth", block: "end", inline: "end" });
+            tabElement.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'end' });
             buttonElement.focus();
         } catch (error) {
             throw (error as Error).message;
@@ -150,7 +152,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
         checkIfOverflowing();
         const overflownTabs = getOverflownTabs();
 
-        if (event.key === "Enter") {
+        if (event.key === 'Enter') {
             if (!isMenuOpened && overflownTabs.length > 0) {
                 const buttonElement = document.getElementById(`${overflownTabs[0].id}-btn-m`) as HTMLButtonElement;
                 if (buttonElement) {
@@ -159,7 +161,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
             }
         }
 
-        if (isMenuOpened && (event.key === "ArrowRight" || event.key === "ArrowDown")) {
+        if (isMenuOpened && (event.key === 'ArrowRight' || event.key === 'ArrowDown')) {
             triggerTabButton(overflownTabs[0].id, true);
         }
     };
@@ -170,9 +172,9 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
     }, []);
 
     useEffect(() => {
-        window.addEventListener("resize", checkIfOverflowing);
+        window.addEventListener('resize', checkIfOverflowing);
         return () => {
-            window.removeEventListener("resize", checkIfOverflowing);
+            window.removeEventListener('resize', checkIfOverflowing);
         };
     }, [checkIfOverflowing]);
 
@@ -185,9 +187,9 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     ref={tabNavRef}
                     role="tablist"
                     className={merge([
-                        "tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start tw-pr-8",
+                        'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start tw-pr-8',
                         paddingMap[paddingX ?? TabsPaddingX.Small],
-                        size === TabSize.Small ? "tw-gap-xxs" : "tw-gap-xs ",
+                        size === TabSize.Small ? 'tw-gap-xxs' : 'tw-gap-xs ',
                     ])}
                 >
                     {tabs.map((tab) => {
@@ -202,10 +204,10 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                 tabIndex={tab.id === activeItemId ? 0 : -1}
                                 id={`${tab.id}-btn`}
                                 className={merge([
-                                    "tw-group tw-relative tw-mx-0 tw-py-4 tw-px-2 tw-w-max tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap",
-                                    tab.disabled && "tw-text-text-disabled",
-                                    tab.id === activeItemId ? "tw-font-medium tw-text-text" : "tw-text-text-weak",
-                                    size === TabSize.Small ? "tw-text-sm" : "tw-text-md",
+                                    'tw-group tw-relative tw-mx-0 tw-py-4 tw-px-2 tw-w-max tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap',
+                                    tab.disabled && 'tw-text-text-disabled',
+                                    tab.id === activeItemId ? 'tw-font-medium tw-text-text' : 'tw-text-text-weak',
+                                    size === TabSize.Small ? 'tw-text-sm' : 'tw-text-md',
                                 ])}
                                 key={tab.id}
                                 onClick={() => {
@@ -248,8 +250,8 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     >
                         <button
                             className={merge([
-                                "tw-w-6 tw-h-6 tw-bg-box-neutral tw-rounded tw-flex tw-justify-center tw-items-center",
-                                isFocusVisible ? FOCUS_STYLE : "",
+                                'tw-w-6 tw-h-6 tw-bg-box-neutral tw-rounded tw-flex tw-justify-center tw-items-center',
+                                isFocusVisible ? FOCUS_STYLE : '',
                             ])}
                             type="button"
                             onClick={() => {
@@ -270,8 +272,8 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                     return (
                                         <button
                                             className={merge([
-                                                "tw-flex tw-items-center tw-w-full tw-mb-3 tw-text-left tw-text-text-weak",
-                                                tab.disabled && "tw-text-text-disabled",
+                                                'tw-flex tw-items-center tw-w-full tw-mb-3 tw-text-left tw-text-text-weak',
+                                                tab.disabled && 'tw-text-text-disabled',
                                             ])}
                                             key={tab.id}
                                             onClick={() => {

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ForwardedRef, MutableRefObject, useEffect, useRef } from "react";
+import { ForwardedRef, MutableRefObject, useEffect, useRef } from 'react';
 
 export function useForwardedRef<T>(ref: ForwardedRef<T>): MutableRefObject<T | null> {
     const innerRef = useRef(null);
@@ -10,7 +10,7 @@ export function useForwardedRef<T>(ref: ForwardedRef<T>): MutableRefObject<T | n
             return;
         }
 
-        if (typeof ref === "function") {
+        if (typeof ref === 'function') {
             ref(innerRef.current);
         } else {
             ref.current = innerRef.current;

@@ -1,21 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
-import { Story, Meta } from "@storybook/react";
-import { LoadingCircle, LoadingCircleProps, LoadingCircleSize, LoadingCircleStyle } from "./LoadingCircle";
+import React from 'react';
+import { Meta, Story } from '@storybook/react';
+import { LoadingCircle, LoadingCircleProps, LoadingCircleSize, LoadingCircleStyle } from './LoadingCircle';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/LoadingCircle",
+    title: 'Components/LoadingCircle',
     component: LoadingCircle,
     argTypes: {
         style: {
             options: Object.values(LoadingCircleStyle),
-            control: { type: "select" },
+            control: { type: 'select' },
         },
         size: {
             options: Object.values(LoadingCircleSize),
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
     },
     args: {

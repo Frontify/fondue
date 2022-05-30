@@ -6,31 +6,32 @@ import React, {
     KeyboardEventHandler,
     useRef,
     useState,
-} from "react";
+} from 'react';
 
 export interface EditableNodeItem {
     name: string;
-    onEditableSave: (value: string) => void;
+    targetItemId: string;
+    onEditableSave: (targetItemId: string, value: string) => void;
 }
 
-export const EditableNodeItem = ({ name, onEditableSave }: EditableNodeItem) => {
+export const EditableNodeItem = ({ name, targetItemId, onEditableSave }: EditableNodeItem) => {
     const [inputValue, setInputValue] = useState(name);
     const [showInput, setShowInput] = useState<boolean>(false);
 
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const handleKeyDown: KeyboardEventHandler = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Enter") {
+        if (event.key === 'Enter') {
             setShowInput(false);
 
-            onEditableSave((event.target as HTMLInputElement).value);
+            onEditableSave(targetItemId, (event.target as HTMLInputElement).value);
         }
     };
 
     const handleBlur: FocusEventHandler = (event: FocusEvent<HTMLTextAreaElement>) => {
         setShowInput(false);
 
-        onEditableSave((event.target as HTMLTextAreaElement).value);
+        onEditableSave(targetItemId, (event.target as HTMLTextAreaElement).value);
     };
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {

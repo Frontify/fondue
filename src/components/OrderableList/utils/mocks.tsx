@@ -1,32 +1,32 @@
-import { OrderableListItem } from "@components/OrderableList";
-import { HighlightColor, HighlightProps, StoryListItem } from "@components/OrderableList/utils/types";
-import React, { FC } from "react";
-import { merge } from "@utilities/merge";
+import { OrderableListItem } from '@components/OrderableList';
+import { HighlightColor, HighlightProps, StoryListItem } from '@components/OrderableList/utils/types';
+import React, { FC } from 'react';
+import { merge } from '@utilities/merge';
 
 const HighlightClasses: Record<HighlightColor, string> = {
-    [HighlightColor.Violet]: "tw-text-violet-60",
-    [HighlightColor.Green]: "tw-text-green-60",
-    [HighlightColor.Red]: "tw-text-red-60",
+    [HighlightColor.Violet]: 'tw-text-violet-60',
+    [HighlightColor.Green]: 'tw-text-green-60',
+    [HighlightColor.Red]: 'tw-text-red-60',
 };
 
 const Highlight: FC<HighlightProps> = ({ color, children }) => (
-    <span className={merge(["tw-font-medium", HighlightClasses[color]])}>{children}</span>
+    <span className={merge(['tw-font-medium', HighlightClasses[color]])}>{children}</span>
 );
 
 export const storyItems: OrderableListItem<StoryListItem>[] = [
     {
-        id: "1",
+        id: '1',
         textContent: (
             <p>
                 The list rendering is completely customizable through the &nbsp;
                 <Highlight color={HighlightColor.Green}>renderContent</Highlight> callback prop.
             </p>
         ),
-        alt: "one",
+        alt: 'one',
         sort: 1,
     },
     {
-        id: "3",
+        id: '3',
         textContent: (
             <p>
                 Use the <Highlight color={HighlightColor.Green}>sort</Highlight> property in the &nbsp;
@@ -34,17 +34,17 @@ export const storyItems: OrderableListItem<StoryListItem>[] = [
                 items in the list.
             </p>
         ),
-        alt: "three",
+        alt: 'three',
         sort: 2,
     },
     {
-        id: "4",
+        id: '4',
         textContent: <p>Items can contain multiple focusable elements.</p>,
-        alt: "four",
+        alt: 'four',
         sort: null,
     },
     {
-        id: "7",
+        id: '7',
         textContent: (
             <p>
                 The drag-preview is created as a new element, using the
@@ -53,7 +53,7 @@ export const storyItems: OrderableListItem<StoryListItem>[] = [
                 consistent rendering in the drag preview.
             </p>
         ),
-        alt: "seven",
+        alt: 'seven',
         sort: 3,
     },
 ];

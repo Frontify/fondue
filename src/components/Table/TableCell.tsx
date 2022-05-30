@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
-import { useCheckbox } from "@react-aria/checkbox";
-import { useFocusRing } from "@react-aria/focus";
-import { useTableCell, useTableSelectionCheckbox } from "@react-aria/table";
-import { mergeProps } from "@react-aria/utils";
-import { TableState } from "@react-stately/table";
-import { useToggleState } from "@react-stately/toggle";
-import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import React, { FC, useRef } from "react";
+import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
+import { useCheckbox } from '@react-aria/checkbox';
+import { useFocusRing } from '@react-aria/focus';
+import { useTableCell, useTableSelectionCheckbox } from '@react-aria/table';
+import { mergeProps } from '@react-aria/utils';
+import { TableState } from '@react-stately/table';
+import { useToggleState } from '@react-stately/toggle';
+import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import React, { FC, useRef } from 'react';
 
 export enum TableCellType {
-    Default = "Default",
-    Checkbox = "Checkbox",
+    Default = 'Default',
+    Checkbox = 'Checkbox',
 }
 
 export type TableCellProps = {
@@ -39,14 +39,14 @@ export const TableCell: FC<TableCellProps> = ({ cell, state, type = TableCellTyp
                 {...gridCellProps}
                 ref={ref}
                 className={merge([
-                    "tw-pl-8 tw-py-4 tw-pr-4 tw-border-l-4",
-                    checked ? "tw-border-violet-60" : "tw-border-transparent",
+                    'tw-pl-8 tw-py-4 tw-pr-4 tw-border-l-4',
+                    checked ? 'tw-border-violet-60' : 'tw-border-transparent',
                 ])}
                 data-test-id="table-select-cell"
             >
                 <Checkbox
                     value={key}
-                    ariaLabel={cell["aria-label"] || key}
+                    ariaLabel={cell['aria-label'] || key}
                     state={checked ? CheckboxState.Checked : CheckboxState.Unchecked}
                 />
             </td>
@@ -58,8 +58,8 @@ export const TableCell: FC<TableCellProps> = ({ cell, state, type = TableCellTyp
             {...mergeProps(gridCellProps, focusProps)}
             ref={ref}
             className={merge([
-                "tw-p-4 tw-font-normal tw-text-xs focus:tw-outline-none",
-                checked ? "tw-text-black-100 dark:tw-text-white" : "tw-text-black-80 dark:tw-text-black-20",
+                'tw-p-4 tw-font-normal tw-text-xs focus:tw-outline-none',
+                checked ? 'tw-text-black-100 dark:tw-text-white' : 'tw-text-black-80 dark:tw-text-black-20',
                 isFocusVisible && FOCUS_STYLE_INSET,
             ])}
         >

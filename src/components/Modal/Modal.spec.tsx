@@ -1,39 +1,39 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from "@cypress/react";
-import { IconIcons } from "@foundation/Icon";
-import { PatternDesign, PatternTheme } from "@foundation/Pattern";
-import { OverlayProvider } from "@react-aria/overlays";
-import React from "react";
-import { Modal } from "./Modal";
-import { ModalHeader } from "./ModalHeader";
-import { ModalHeaderVariant } from "./types";
+import { mount } from '@cypress/react';
+import { IconIcons } from '@foundation/Icon';
+import { PatternDesign, PatternTheme } from '@foundation/Pattern';
+import { OverlayProvider } from '@react-aria/overlays';
+import React from 'react';
+import { Modal } from './Modal';
+import { ModalHeader } from './ModalHeader';
+import { ModalHeaderVariant } from './types';
 
-const MODAL_CONTAINER = "[data-test-id=modal-container]";
-const MODAL_VISUAL = "[data-test-id=modal-visual]";
-const MODAL_HEADER = "[data-test-id=modal-header]";
-const MODAL_BODY = "[data-test-id=modal-body]";
-const MODAL_FOOTER = "[data-test-id=modal-footer]";
-const MODAL_HEADER_DECORATOR = "[data-test-id=modal-header-decorator-container]";
-const GENERIC_ICON_CODE = "svg[name=IconIcons]";
-const SCROLL_WRAPPER_CONTAINER = "[data-test-id=scroll-wrapper]";
+const MODAL_CONTAINER = '[data-test-id=modal-container]';
+const MODAL_VISUAL = '[data-test-id=modal-visual]';
+const MODAL_HEADER = '[data-test-id=modal-header]';
+const MODAL_BODY = '[data-test-id=modal-body]';
+const MODAL_FOOTER = '[data-test-id=modal-footer]';
+const MODAL_HEADER_DECORATOR = '[data-test-id=modal-header-decorator-container]';
+const GENERIC_ICON_CODE = 'svg[name=IconIcons]';
+const SCROLL_WRAPPER_CONTAINER = '[data-test-id=scroll-wrapper]';
 
-describe("Modal Component", () => {
-    it("should render an empty modal", () => {
+describe('Modal Component', () => {
+    it('should render an empty modal', () => {
         mount(
             <OverlayProvider>
                 <Modal isOpen={true} />
             </OverlayProvider>,
         );
 
-        cy.get(MODAL_CONTAINER).should("exist");
-        cy.get(MODAL_VISUAL).should("not.exist");
-        cy.get(MODAL_HEADER).should("not.exist");
-        cy.get(MODAL_BODY).should("not.exist");
-        cy.get(MODAL_FOOTER).should("not.exist");
+        cy.get(MODAL_CONTAINER).should('exist');
+        cy.get(MODAL_VISUAL).should('not.exist');
+        cy.get(MODAL_HEADER).should('not.exist');
+        cy.get(MODAL_BODY).should('not.exist');
+        cy.get(MODAL_FOOTER).should('not.exist');
     });
 
-    it("should render the modal with a visual", () => {
+    it('should render the modal with a visual', () => {
         mount(
             <OverlayProvider>
                 <Modal
@@ -46,13 +46,13 @@ describe("Modal Component", () => {
             </OverlayProvider>,
         );
 
-        cy.get(MODAL_VISUAL).should("exist");
-        cy.get(MODAL_VISUAL).should("have.class", "tw-text-violet-60");
+        cy.get(MODAL_VISUAL).should('exist');
+        cy.get(MODAL_VISUAL).should('have.class', 'tw-text-violet-60');
     });
 
-    it("should render the modal with a header", () => {
-        const title = "Modal header";
-        const leadText = "The Home for Brand Management";
+    it('should render the modal with a header', () => {
+        const title = 'Modal header';
+        const leadText = 'The Home for Brand Management';
 
         mount(
             <OverlayProvider>
@@ -67,13 +67,13 @@ describe("Modal Component", () => {
             </OverlayProvider>,
         );
 
-        cy.get(MODAL_HEADER).should("exist");
-        cy.get(MODAL_HEADER).should("contain.text", title).and("contain.text", leadText);
-        cy.get(MODAL_HEADER_DECORATOR).should("be.visible").and("have.class", "tw-text-violet-60");
-        cy.get(GENERIC_ICON_CODE).should("be.visible").and("have.class", "!tw-h-6 !tw-w-6");
+        cy.get(MODAL_HEADER).should('exist');
+        cy.get(MODAL_HEADER).should('contain.text', title).and('contain.text', leadText);
+        cy.get(MODAL_HEADER_DECORATOR).should('be.visible').and('have.class', 'tw-text-violet-60');
+        cy.get(GENERIC_ICON_CODE).should('be.visible').and('have.class', '!tw-h-6 !tw-w-6');
     });
 
-    it("should render the modal with a body and implement the ScrollWrapper component", () => {
+    it('should render the modal with a body and implement the ScrollWrapper component', () => {
         mount(
             <OverlayProvider>
                 <Modal isOpen={true}>
@@ -84,7 +84,7 @@ describe("Modal Component", () => {
             </OverlayProvider>,
         );
 
-        cy.get(MODAL_BODY).should("exist");
-        cy.get(SCROLL_WRAPPER_CONTAINER).should("exist");
+        cy.get(MODAL_BODY).should('exist');
+        cy.get(SCROLL_WRAPPER_CONTAINER).should('exist');
     });
 });

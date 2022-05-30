@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DraggableItem, DropZonePosition } from "@utilities/dnd/types";
+import { DraggableItem, DropZonePosition } from '@utilities/dnd/types';
 
 const updateItemsSort = <T extends object>(
     items: DraggableItem<T>[], // nodes without the moved node
@@ -9,7 +9,7 @@ const updateItemsSort = <T extends object>(
     const modifiedSameLevelArray: DraggableItem<T>[] = [];
     const changedItems: DraggableItem<T>[] = [];
 
-    items.forEach((item, index) => {
+    for (const [index, item] of items.entries()) {
         const previousItem = modifiedSameLevelArray[index - 1];
         let modifiedItem = { ...item };
 
@@ -33,8 +33,8 @@ const updateItemsSort = <T extends object>(
         }
 
         modifiedSameLevelArray.push(modifiedItem);
-        return;
-    });
+        continue;
+    }
 
     return changedItems;
 };

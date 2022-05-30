@@ -1,24 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from "@storybook/react";
-import React from "react";
-import { Divider as DividerComponent, DividerHeight, DividerProps, DividerStyle } from "./Divider";
+import { Meta, Story } from '@storybook/react';
+import React from 'react';
+import { Divider as DividerComponent, DividerHeight, DividerProps, DividerStyle } from './Divider';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Divider",
+    title: 'Components/Divider',
     component: DividerComponent,
     args: {
-        color: "red",
+        color: 'red',
     },
     argTypes: {
         color: {
-            control: { type: "color" },
+            control: { type: 'color' },
         },
         style: {
             options: Object.values(DividerStyle),
             control: {
-                type: "select",
+                type: 'select',
                 labels: Object.entries(DividerStyle).reduce(
                     (labels, [key, value]) => ({ ...labels, [value]: key }),
                     {},
@@ -28,7 +27,7 @@ export default {
         height: {
             options: Object.values(DividerHeight),
             control: {
-                type: "select",
+                type: 'select',
                 labels: Object.entries(DividerHeight).reduce(
                     (labels, [key, value]) => ({ ...labels, [value]: key }),
                     {},

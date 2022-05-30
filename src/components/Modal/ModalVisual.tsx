@@ -1,17 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC } from "react";
-import { merge } from "@utilities/merge";
-import { ModalVisualProps } from "./types";
-import { FrontifyPattern } from "@components/FrontifyPattern/FrontifyPattern";
-import { PatternDesign, PatternScale, patternThemes } from "@foundation/Pattern";
+import React, { FC } from 'react';
+import { merge } from '@utilities/merge';
+import { ModalVisualProps } from './types';
+import { FrontifyPattern } from '@components/FrontifyPattern/FrontifyPattern';
+import { PatternDesign, PatternScale, patternThemes } from '@foundation/Pattern';
 
 export const ModalVisual: FC<ModalVisualProps> = ({ pattern = PatternDesign.DigitalAssets, foregroundColor }) => {
     return (
         <div
             data-test-id="modal-visual"
             className={merge([
-                "tw-h-[1802px] tw-absolute tw-bottom-0",
+                'tw-h-[1802px] tw-absolute tw-bottom-0',
                 foregroundColor && patternThemes[foregroundColor],
             ])}
             style={{
@@ -22,7 +22,7 @@ export const ModalVisual: FC<ModalVisualProps> = ({ pattern = PatternDesign.Digi
             <div className="tw-absolute tw-bottom-0">
                 <FrontifyPattern
                     pattern={pattern}
-                    scaleOrigin={["left", "bottom"]}
+                    scaleOrigin={['left', 'bottom']}
                     scale={PatternScale.XXL}
                     foregroundColor={foregroundColor}
                 />

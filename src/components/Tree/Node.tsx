@@ -1,30 +1,40 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useState } from "react";
-import { IconSize } from "@foundation/Icon/IconSize";
-import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
-import IconCaretRight from "@foundation/Icon/Generated/IconCaretRight";
-import { merge } from "@utilities/merge";
-import { AnimatePresence, motion } from "framer-motion";
-import { useDrag } from "react-dnd";
-import { DropZone, OnDropCallback } from "@components/DropZone";
-import { TreeFlatListItem } from "@components/Tree";
-import { DraggableItem, DropZonePosition } from "@utilities/dnd";
-import { EditableNodeItem } from "./components/EditableNodeItem";
+import React, { ReactElement, useState } from 'react';
+import { IconSize } from '@foundation/Icon/IconSize';
+import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
+import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
+import { merge } from '@utilities/merge';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useDrag } from 'react-dnd';
+import { DropZone, OnDropCallback } from '@components/DropZone';
+import { TreeFlatListItem } from '@components/Tree';
+import { DraggableItem, DropZonePosition } from '@utilities/dnd';
+import { EditableNodeItem } from './components/EditableNodeItem';
 
-export type RenderNodeArrayData = Omit<NodeProps, "isFirst" | "strong" | "node"> & {
+export type RenderNodeArrayData = Omit<NodeProps, 'isFirst' | 'strong' | 'node'> & {
     nodes: DraggableItem<TreeNodeItem>[];
 };
 
-export const renderNodeArray = ({ nodes, activeIds, treeName, onClick, onDrop, parentIds }: RenderNodeArrayData) =>
+export const renderNodeArray = ({
+    nodes,
+    activeIds,
+    treeName,
+    onClick,
+    onDrop,
+    onEditableSave,
+    parentIds,
+}: RenderNodeArrayData) =>
     nodes.map((node, i) => (
         <Node
             key={node.id}
             node={node}
+            nodeIndex={i}
             activeIds={activeIds}
             onClick={onClick}
             isFirst={i === 0}
             onDrop={onDrop}
+            onEditableSave={onEditableSave}
             parentIds={parentIds}
             treeName={treeName}
         />
@@ -37,12 +47,14 @@ export interface TreeNodeItem extends TreeFlatListItem {
 type NodeProps = {
     node: DraggableItem<TreeNodeItem>;
     strong?: boolean;
+    nodeIndex?: number;
     activeIds?: NullableString[];
     parentIds?: string[];
     onClick: (id: NullableString) => void;
     isFirst: boolean;
     treeName: string;
     onDrop?: OnDropCallback<TreeNodeItem>;
+    onEditableSave?: (targetItemId: string, value: string) => void;
 };
 
 export const Node = ({
@@ -53,11 +65,12 @@ export const Node = ({
     parentIds = [],
     isFirst,
     onDrop,
+    onEditableSave,
     treeName,
 }: NodeProps): ReactElement<NodeProps> => {
-    const { id, value, name, label, icon, nodes, actions, editable, onEditableSave, badge } = node;
+    const { id, value, name, label, icon, nodes, actions, editable, badge } = node;
     const [{ opacity }, drag] = useDrag({
-        item: { id, value, name, label, icon, nodes, actions, editable, onEditableSave, badge },
+        item: { id, value, name, label, icon, nodes, actions, editable, badge },
         collect: (monitor) => ({
             opacity: monitor.isDragging() ? 0.4 : 1,
         }),
@@ -90,9 +103,8 @@ export const Node = ({
             <div
                 data-test-id="node-badge"
                 className={merge([
-                    "tw-flex tw-justify-center tw-items-center tw-ml-2",
-                    selected && "tw-bg-transparent",
-                    badge?.props.size && "tw-w-8 tw-h-5 tw-bg-box-neutral tw-rounded-full",
+                    'tw-flex tw-justify-center tw-items-center tw-ml-2 tw-text-text-weak',
+                    badge?.props.size && 'tw-w-8 tw-h-5 tw-bg-box-neutral tw-rounded-full',
                 ])}
             >
                 {badge}
@@ -123,12 +135,12 @@ export const Node = ({
             >
                 <div
                     className={merge([
-                        " tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5",
-                        strong && "tw-font-bold",
-                        value && !selected && "hover:tw-bg-black-10 hover:tw-text-box-neutral-inverse-hover",
+                        ' tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5',
+                        strong && 'tw-font-bold',
+                        value && !selected && 'hover:tw-bg-black-10 hover:tw-text-box-neutral-inverse-hover',
                         selected
-                            ? "tw-bg-violet-60 tw-text-white hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover"
-                            : "tw-text-black",
+                            ? 'tw-bg-violet-60 tw-text-white hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover'
+                            : 'tw-text-black',
                     ])}
                     onMouseEnter={setHoveredTrue}
                     onMouseLeave={setHoveredFalse}
@@ -136,9 +148,9 @@ export const Node = ({
                     <a
                         data-test-id="node-link"
                         className={merge([
-                            "tw-flex tw-items-center tw-flex-grow tw-justify-between tw-cursor-pointer",
-                            parentIds.length === 1 && "tw-pl-4",
-                            parentIds.length > 1 && "tw-pl-8",
+                            'tw-flex tw-items-center tw-flex-grow tw-justify-between tw-cursor-pointer',
+                            parentIds.length === 1 && 'tw-pl-4',
+                            parentIds.length > 1 && 'tw-pl-8',
                         ])}
                         aria-selected={selected}
                         onClick={onNodeClick}
@@ -154,7 +166,7 @@ export const Node = ({
                             </span>
                             {icon && <span>{icon}</span>}
                             {editable && onEditableSave ? (
-                                <EditableNodeItem name={name} onEditableSave={onEditableSave} />
+                                <EditableNodeItem name={name} targetItemId={node.id} onEditableSave={onEditableSave} />
                             ) : (
                                 <span className="tw-flex tw-items-center" data-test-id="node-link-name">
                                     {name}
@@ -165,8 +177,8 @@ export const Node = ({
                         <div className="tw-px-1.5">
                             <span
                                 className={merge([
-                                    "tw-text-black-100 tw-text-opacity-40 tw-font-normal",
-                                    selected && "tw-text-black-50",
+                                    'tw-text-black-100 tw-text-opacity-40 tw-font-normal',
+                                    selected && 'tw-text-black-50',
                                 ])}
                             >
                                 {label}
@@ -178,7 +190,7 @@ export const Node = ({
                             <motion.div
                                 className="tw-flex tw-space-x-1.5 tw-items-center"
                                 initial={{ width: 0 }}
-                                animate={{ width: "auto" }}
+                                animate={{ width: 'auto' }}
                                 exit={{ width: 0 }}
                                 transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                             >
@@ -200,6 +212,7 @@ export const Node = ({
                         activeIds,
                         onClick,
                         onDrop,
+                        onEditableSave,
                         parentIds: [...parentIds, id],
                     })}
                 </ul>
