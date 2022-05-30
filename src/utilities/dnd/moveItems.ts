@@ -52,7 +52,7 @@ const updateItemsSort = <T extends object>(
 };
 
 export const moveItems = <T extends object>(
-    targetItem: DraggableItem<T>,
+    targetItem: DraggableItem<T> | undefined,
     sourceItem: DraggableItem<T>,
     position: DropZonePosition,
     items: DraggableItem<T>[],
@@ -62,7 +62,7 @@ export const moveItems = <T extends object>(
 
     sourceIndex !== -1 && itemsClone.splice(sourceIndex, 1);
 
-    let targetIndex = itemsClone.findIndex((item) => item.id === targetItem.id);
+    let targetIndex = itemsClone.findIndex((item) => item.id === targetItem?.id);
     targetIndex = position === DropZonePosition.After ? targetIndex + 1 : targetIndex;
 
     itemsClone.splice(targetIndex, 0, sourceItem);

@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { Tree as TreeComponent, TreeFlatListItem, TreeProps } from './Tree';
+import { Tree as TreeComponent, TreeProps } from './Tree';
 import { mockNodesFlat } from '@components/Tree/utils/mocks';
-import { DraggableItem } from '@utilities/dnd';
+import { getReorderedNodes } from '@components/Tree/utils';
 
 export default {
     title: 'Components/Tree',
@@ -38,7 +38,7 @@ export const Tree: Story<TreeProps> = ({ ...args }: TreeProps) => {
 
     return (
         <div style={{ maxWidth: '800px' }}>
-            <TreeComponent {...args} nodes={nodesState} onSortUpdate={handleMove} />
+            <TreeComponent {...args} nodes={nodesState} onDragAndDrop={handleMove} />
         </div>
     );
 };

@@ -5,8 +5,8 @@ import { renderNodeArray } from './Node';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useId } from '@react-aria/utils';
-import { DraggableItem, DropZonePosition } from '@utilities/dnd';
-import { getReorderedNodes, listToTree } from '@components/Tree/utils';
+import { DraggableItem, DropZonePosition, draggableItemCompareFn } from '@utilities/dnd';
+import { listToTree } from '@components/Tree/utils';
 import { IconProps } from '@foundation/Icon';
 import { BadgeProps } from '..';
 
@@ -25,7 +25,7 @@ export type TreeProps = {
     nodes: DraggableItem<TreeFlatListItem>[];
     onSelect: (ids: NullableString[]) => void;
     activeNodeIds: NullableString[];
-    onSortUpdate?: (itemId: string, parentId: NullableString, positionBeforeId: NullableString) => void;
+    onDragAndDrop?: (itemId: string, parentId: NullableString, positionBeforeId: NullableString) => void;
     onEditableSave?: (targetItemId: string, value: string) => void;
 };
 
@@ -33,7 +33,7 @@ export const Tree: FC<TreeProps> = ({
     nodes,
     onSelect,
     activeNodeIds: initialActiveNodeIds,
-    onSortUpdate,
+    onDragAndDrop,
     onEditableSave,
 }) => {
     const [multiSelectMode, setMultiSelectMode] = useState<boolean>(false);
@@ -60,7 +60,7 @@ export const Tree: FC<TreeProps> = ({
         }
     };
 
-    const handleDrop = onSortUpdate
+    const handleDrop = onDragAndDrop
         ? (
               targetItem: DraggableItem<TreeFlatListItem>,
               sourceItem: DraggableItem<TreeFlatListItem>,
@@ -70,6 +70,7 @@ export const Tree: FC<TreeProps> = ({
                   switch (position) {
                       case DropZonePosition.After:
                           const sameLevelNodes = nodes.filter((node) => node.parentId === targetItem.parentId);
+                          sameLevelNodes.sort(draggableItemCompareFn);
                           const targetItemIndex = sameLevelNodes.findIndex((item) => item.id === targetItem.id);
                           if (targetItemIndex === sameLevelNodes.length - 1) {
                               return null;
@@ -85,7 +86,7 @@ export const Tree: FC<TreeProps> = ({
 
               const parentId = position === DropZonePosition.Within ? targetItem.id : targetItem.parentId;
               const positionBeforeId = getPositionBeforeId();
-              onSortUpdate(sourceItem.id, parentId, positionBeforeId);
+              onDragAndDrop(sourceItem.id, parentId, positionBeforeId);
           }
         : undefined;
 

@@ -13,7 +13,7 @@ export const getReorderedNodes = (
     const position = targetItemIndex === -1 ? DropZonePosition.After : DropZonePosition.Before;
 
     return moveItems<TreeFlatListItem>(
-        sameLevelNodes.at(targetItemIndex) as DraggableItem<TreeFlatListItem>,
+        sameLevelNodes.at(targetItemIndex),
         { ...sourceItem, parentId: targetParentId, sort: null },
         position,
         sameLevelNodes,
