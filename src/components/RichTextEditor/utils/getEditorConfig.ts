@@ -1,6 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    createAlignPlugin,
+    createBoldPlugin,
+    createCodeBlockPlugin,
+    createCodePlugin,
+    createIndentPlugin,
+    createItalicPlugin,
+    createListPlugin,
+    createParagraphPlugin,
+    createPlateUI,
+    createPluginFactory,
+    createPlugins,
+    createSoftBreakPlugin,
+    createStrikethroughPlugin,
+    createUnderlinePlugin,
     ELEMENT_LI,
     ELEMENT_LIC,
     ELEMENT_LINK,
@@ -12,24 +26,10 @@ import {
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
-    createAlignPlugin,
-    createBoldPlugin,
-    createCodeBlockPlugin,
-    createCodePlugin,
-    createIndentPlugin,
-    createItalicPlugin,
-    createLinkPlugin,
-    createListPlugin,
-    createParagraphPlugin,
-    createPlateUI,
-    createPluginFactory,
-    createPlugins,
-    createSoftBreakPlugin,
-    createStrikethroughPlugin,
-    createUnderlinePlugin,
 } from '@udecode/plate';
 import {
     BoldMark,
+    ChosenLinkElement,
     CodeMark,
     Custom1Element,
     Custom2Element,
@@ -38,7 +38,6 @@ import {
     Heading3Element,
     Heading4Element,
     ItalicMark,
-    LinkElement,
     ListItemContentElement,
     ListItemElement,
     OrderedListElement,
@@ -46,8 +45,9 @@ import {
     UnderlineMark,
     UnorderedListElement,
 } from '../components';
-import { ELEMENT_CHECK_ITEM, createCheckboxListPlugin } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
-import { TextStyleType, TextStyles } from './getTextStyles';
+import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
+import { createLinkChooserPlugin } from '../plugins/linkChooserPlugin/createLinkChooserPlugin';
+import { TextStyles, TextStyleType } from './getTextStyles';
 
 export const getEditorConfig = (textStyles?: TextStyleType[]) => {
     const createHeading1Plugin = createPluginFactory({
@@ -106,7 +106,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
 
     const components = createPlateUI({
         // this will override the components over the default ones
-        [ELEMENT_LINK]: LinkElement,
+        [ELEMENT_LINK]: ChosenLinkElement,
         [ELEMENT_UL]: UnorderedListElement,
         [ELEMENT_OL]: OrderedListElement,
         [ELEMENT_LI]: ListItemElement,
@@ -147,7 +147,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
             createCodeBlockPlugin(),
             createListPlugin(),
             createCheckboxListPlugin(),
-            createLinkPlugin(),
+            createLinkChooserPlugin(),
             createBoldPlugin(),
             createItalicPlugin(),
             createUnderlinePlugin(),
