@@ -4,8 +4,9 @@ import { BalloonToolbar, usePlateEditorRef } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { toolbarComponents } from './toolbarComponents';
-import { ButtonGroupProps, ToolbarProps } from './types';
-import { defaultActions, EditorActions } from './utils/actions';
+import { ButtonGroupProps, ButtonGroupWidths, ToolbarProps } from './types';
+import { defaultActions } from './utils/actions';
+import { getButtonGroupWidthsPerRow } from './utils/toolbarCalc';
 
 const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyles, onLoaded, onClose }) => {
     const ref = useRef<HTMLDivElement | null>(null);
@@ -33,44 +34,19 @@ const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyle
 };
 
 const DEFAULT_MAX_WIDTH = '100%';
-type ButtonGroupsWidths = { actions: EditorActions[]; buttonGroupWidth: number; index: number }[];
-type ButtonGroupWidthsPerRow = ButtonGroupsWidths[];
+const OFFSET_IN_PX = 12;
 
-const getButtonGroupWidthsPerRow = (toolbarWidth: number, buttonGroupsWidths: ButtonGroupsWidths) => {
-    return buttonGroupsWidths.reduce((buttonGroupWidthsPerRow, { actions, buttonGroupWidth, index }) => {
-        const rowCount = buttonGroupWidthsPerRow?.length === 0 ? 0 : buttonGroupWidthsPerRow?.length - 1;
-
-        if (!buttonGroupWidthsPerRow[rowCount]) {
-            buttonGroupWidthsPerRow[rowCount] = [];
-        }
-
-        const currentRowWidth = (buttonGroupWidthsPerRow[rowCount] ?? [{ actions: [], buttonGroupWidth: 0 }]).reduce(
-            (prev, { buttonGroupWidth }) => prev + buttonGroupWidth,
-            0,
-        );
-
-        if (currentRowWidth + buttonGroupWidth <= toolbarWidth) {
-            buttonGroupWidthsPerRow[rowCount].push({ actions, buttonGroupWidth, index });
-        } else {
-            buttonGroupWidthsPerRow.push([{ actions, buttonGroupWidth, index }]);
-        }
-
-        return buttonGroupWidthsPerRow.filter((element) => element.length > 0);
-    }, [] as ButtonGroupWidthsPerRow);
-};
 export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }) => {
     const toolbarActions = actions.length > 0 ? actions : defaultActions;
     const toolbarRef = useRef<HTMLDivElement | null>(null);
-    const [buttonGroupsWidths, setButtonGroupsWidths] = useState<ButtonGroupsWidths>([]);
+    const [buttonGroupsWidths, setButtonGroupsWidths] = useState<ButtonGroupWidths>([]);
     const [style, setStyle] = useState({ maxWidth: DEFAULT_MAX_WIDTH });
-
     const [toolbarWidth, setToolbarWidth] = useState<number>(0);
 
-    const toolbarButtonGroupsWidthsPerRow = getButtonGroupWidthsPerRow(toolbarWidth, buttonGroupsWidths);
     const toolbarButtonGroups =
-        toolbarButtonGroupsWidthsPerRow.length === 0
+        buttonGroupsWidths.length === 0
             ? [toolbarActions.map((actions, index) => ({ actions, buttonGroupWidth: 0, index }))]
-            : toolbarButtonGroupsWidthsPerRow;
+            : getButtonGroupWidthsPerRow(toolbarWidth, buttonGroupsWidths);
 
     useEffect(() => {
         if (!toolbarRef.current) {
@@ -106,20 +82,20 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
                 ),
             );
 
-        setStyle(
-            toolbarWidthSum !== 0
-                ? {
-                      maxWidth: `${toolbarWidthSum + toolbarButtonGroups.length + 20}px`,
-                  }
-                : { maxWidth: DEFAULT_MAX_WIDTH },
-        );
+        setStyle({
+            maxWidth:
+                toolbarWidthSum !== 0
+                    ? `${toolbarWidthSum + toolbarButtonGroups.length + OFFSET_IN_PX}px`
+                    : DEFAULT_MAX_WIDTH,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [buttonGroupsWidths]);
 
     return (
         <BalloonToolbar
             popperOptions={{
                 modifiers: [
-                    { name: 'offset', options: { offset: [0, 12] } },
+                    { name: 'offset', options: { offset: [0, OFFSET_IN_PX] } },
                     { name: 'flip', options: { fallbackPlacements: ['bottom', 'right'] } },
                 ],
             }}

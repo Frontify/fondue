@@ -22,3 +22,5 @@ export type ButtonGroupProps = {
     onClose: () => void;
     onLoaded: (index: number, width?: number) => void;
 };
+
+export type ButtonGroupWidths = { actions: EditorActions[]; buttonGroupWidth: number; index: number }[];
