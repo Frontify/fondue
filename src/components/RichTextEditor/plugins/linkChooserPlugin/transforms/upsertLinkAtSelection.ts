@@ -1,7 +1,7 @@
-import { insertNodes, isCollapsed, PlateEditor, TElement, unwrapNodes } from "@udecode/plate-core";
-import { Editor, Transforms } from "slate";
-import { ChosenLink, ELEMENT_LINK_CHOOSER } from "../types";
-import { wrapLink } from "./wrapLink";
+import { insertNodes, isCollapsed, PlateEditor, TElement, unwrapNodes } from '@udecode/plate-core';
+import { Editor, Transforms } from 'slate';
+import { ChosenLink, ELEMENT_LINK_CHOOSER } from '../types';
+import { wrapLink } from './wrapLink';
 
 /**
  * Unwrap link at a location (default: selection).
@@ -32,7 +32,7 @@ export const upsertLinkAtSelection = <T = {}>(
         return insertNodes<TElement>(editor, {
             type,
             chosenLink,
-            children: [{ text: "" }],
+            children: [{ text: '' }],
         });
     }
 

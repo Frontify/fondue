@@ -360,7 +360,9 @@ describe('RichTextEditor Component', () => {
         cy.get(TOOLBAR).should('be.visible');
         cy.get(TOOLBAR_GROUP_1).children().eq(4).click();
         cy.get(LINK_CHOOSER_FLYOUT).should('exist');
+        cy.get(BUTTON).eq(1).should('be.disabled');
         cy.get('[type=text]').click().type(link);
+        cy.get(BUTTON).eq(1).should('not.be.disabled');
         cy.get(LINK_CHOOSER_CHECKBOX).click();
         cy.get(BUTTON).eq(1).click();
         cy.get('[contenteditable=true] a').should('have.attr', 'href', link);

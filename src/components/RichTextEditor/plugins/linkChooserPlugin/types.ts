@@ -1,7 +1,7 @@
-import { SearchResult } from "@components/LinkChooser";
-import { LinkPlugin } from "@udecode/plate";
+import { SearchResult } from '@components/LinkChooser';
+import { LinkPlugin } from '@udecode/plate';
 
-export const ELEMENT_LINK_CHOOSER = "link_chooser";
+export const ELEMENT_LINK_CHOOSER = 'link_chooser';
 
 export type ChosenLink = { searchResult: SearchResult | null; openInNewTab: boolean };
 
