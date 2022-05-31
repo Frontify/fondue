@@ -1,19 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
+import IconCheck from '@foundation/Icon/Generated/IconCheck';
+import IconCopyToClipboard from '@foundation/Icon/Generated/IconCopyToClipboard';
 import IconReject from '@foundation/Icon/Generated/IconReject';
+import IconRejectCircle from '@foundation/Icon/Generated/IconRejectCircle';
 import IconView from '@foundation/Icon/Generated/IconView';
 import IconViewSlash from '@foundation/Icon/Generated/IconViewSlash';
-import IconCopyToClipboard from '@foundation/Icon/Generated/IconCopyToClipboard';
-import IconCheck from '@foundation/Icon/Generated/IconCheck';
-import IconRejectCircle from '@foundation/Icon/Generated/IconRejectCircle';
 import { useCopy } from '@hooks/useCopy';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, FocusEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import { Validation, validationClassMap } from '@utilities/validation';
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
+import React, { FC, FocusEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from 'react';
 
 export enum TextInputType {
     Text = 'text',

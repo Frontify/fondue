@@ -30,9 +30,7 @@ export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
 
     const getLinkFromLinkChooser = (prevChosenLink: ChosenLink): Promise<ChosenLink> => {
         setPrevChosenLink(prevChosenLink);
-        setTimeout(() => {
-            setIsLinkChooserFlyoutOpen(true);
-        }, 100);
+        setIsLinkChooserFlyoutOpen(true);
 
         return new Promise<ChosenLink>((resolve) => {
             document.addEventListener('linkChangeConfirmed', (event: any) => {

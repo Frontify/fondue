@@ -1,13 +1,13 @@
-import { IconEnum } from "@foundation/Icon";
-import { unwrapNodes } from "@udecode/plate";
-import { getAbove, isCollapsed, PlateEditor } from "@udecode/plate-core";
-import { ChosenLink, ELEMENT_LINK_CHOOSER, LinkChooserPlugin } from "../types";
-import { upsertLinkAtSelection } from "./upsertLinkAtSelection";
+import { IconEnum } from '@foundation/Icon';
+import { unwrapNodes } from '@udecode/plate';
+import { getAbove, isCollapsed, PlateEditor } from '@udecode/plate-core';
+import { ChosenLink, ELEMENT_LINK_CHOOSER, LinkChooserPlugin } from '../types';
+import { upsertLinkAtSelection } from './upsertLinkAtSelection';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const getAndUpsertLink = async <T = {}>(
     editor: PlateEditor<T>,
-    getChosenLink?: LinkChooserPlugin["getChosenLink"],
+    getChosenLink?: LinkChooserPlugin['getChosenLink'],
 ) => {
     const type = ELEMENT_LINK_CHOOSER;
     let prevChosenLink: ChosenLink = {
@@ -32,12 +32,12 @@ export const getAndUpsertLink = async <T = {}>(
         chosenLink = {
             searchResult: {
                 icon: IconEnum.Academy,
-                id: "id",
+                id: 'id',
                 title:
                     window.prompt(
                         `Enter the URL of the link:`,
-                        prevChosenLink.searchResult ? prevChosenLink.searchResult.title : "",
-                    ) || "",
+                        prevChosenLink.searchResult ? prevChosenLink.searchResult.title : '',
+                    ) || '',
                 local: false,
             },
             openInNewTab: false,

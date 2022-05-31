@@ -1,8 +1,8 @@
-import { ToolbarButtonProps, useEventPlateId, usePlateEditorState } from "@udecode/plate";
-import React, { MutableRefObject, useState } from "react";
-import { getAndUpsertLink } from "../transforms/getAndUpsertLink";
-import { ChosenLink } from "../types";
-import { LinkChooserFlyout } from "./LinkChooserFlyout";
+import { ToolbarButtonProps, useEventPlateId, usePlateEditorState } from '@udecode/plate';
+import React, { MutableRefObject, useState } from 'react';
+import { getAndUpsertLink } from '../transforms/getAndUpsertLink';
+import { ChosenLink } from '../types';
+import { LinkChooserFlyout } from './LinkChooserFlyout';
 
 export const EditLinkChooserButton = ({ id, icon }: ToolbarButtonProps) => {
     id = useEventPlateId(id);
@@ -21,7 +21,7 @@ export const EditLinkChooserButton = ({ id, icon }: ToolbarButtonProps) => {
         }, 100);
 
         return new Promise<ChosenLink>((resolve) => {
-            document.addEventListener("linkChangeConfirmed", (event: any) => {
+            document.addEventListener('linkChangeConfirmed', (event: any) => {
                 resolve(event.detail.chosenLink);
             });
         });
@@ -33,7 +33,7 @@ export const EditLinkChooserButton = ({ id, icon }: ToolbarButtonProps) => {
             setIsFlyoutOpen={setIsFlyoutOpen}
             chosenLink={chosenLink}
             setChosenLink={setChosenLink}
-            trigger={({ "aria-label": ariaLabel }, ref: MutableRefObject<HTMLDivElement>) => (
+            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLDivElement>) => (
                 <div
                     ref={ref}
                     aria-label={ariaLabel}
@@ -46,7 +46,7 @@ export const EditLinkChooserButton = ({ id, icon }: ToolbarButtonProps) => {
                         getAndUpsertLink(editor, getLinkFromLinkChooser);
                     }}
                     data-chosen-link={JSON.stringify(chosenLink)}
-                    className={"tw-text-violet-70 tw-underline tw-cursor-pointer"}
+                    className={'tw-text-violet-70 tw-underline tw-cursor-pointer'}
                 >
                     {icon}
                 </div>

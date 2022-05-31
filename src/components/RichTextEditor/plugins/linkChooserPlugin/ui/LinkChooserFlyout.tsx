@@ -1,9 +1,11 @@
-import { Checkbox, CheckboxState } from "@components/Checkbox";
-import { Flyout } from "@components/Flyout";
-import { FormControl } from "@components/FormControl";
-import { TextInput } from "@components/TextInput";
-import React, { HTMLAttributes, MutableRefObject, ReactNode } from "react";
-import { ChosenLink } from "../types";
+import { ButtonStyle } from '@components/Button';
+import { Checkbox, CheckboxState } from '@components/Checkbox';
+import { Flyout, FlyoutFooter } from '@components/Flyout';
+import { FormControl } from '@components/FormControl';
+import { TextInput } from '@components/TextInput';
+import { IconCheck } from '@foundation/Icon';
+import React, { HTMLAttributes, MutableRefObject, ReactNode } from 'react';
+import { ChosenLink } from '../types';
 
 type LinkChooserFlyoutProps = {
     isFlyoutOpen: boolean;
@@ -27,7 +29,7 @@ export const LinkChooserFlyout = ({
     trigger,
 }: LinkChooserFlyoutProps) => {
     const onConfirm = () => {
-        document.dispatchEvent(new CustomEvent("linkChangeConfirmed", { detail: { chosenLink } }));
+        document.dispatchEvent(new CustomEvent('linkChangeConfirmed', { detail: { chosenLink } }));
         setIsFlyoutOpen(false);
     };
 
@@ -35,29 +37,50 @@ export const LinkChooserFlyout = ({
         <Flyout
             isOpen={isFlyoutOpen}
             onOpenChange={setIsFlyoutOpen}
-            contentMinHeight={180}
+            contentMinHeight={170}
             onCancel={() => setIsFlyoutOpen(false)}
             onConfirm={onConfirm}
             trigger={trigger}
+            legacyFooter={false}
+            fixedFooter={
+                <FlyoutFooter
+                    buttons={[
+                        {
+                            children: 'Cancel',
+                            style: ButtonStyle.Secondary,
+                            onClick: () => setIsFlyoutOpen(false),
+                        },
+                        {
+                            children: 'Save',
+                            onClick: onConfirm,
+                            style: ButtonStyle.Primary,
+                            icon: <IconCheck />,
+                            disabled: !chosenLink.searchResult,
+                        },
+                    ]}
+                />
+            }
         >
             <div
                 onKeyDown={(event) => {
-                    if (event.key === "Enter") {
+                    if (event.key === 'Enter') {
                         onConfirm();
                     }
                 }}
-                className="tw-flex tw-flex-col tw-gap-y-8 tw-p-8"
-                data-test-id={"link-chooser-flyout"}
+                className="tw-flex tw-flex-col tw-gap-y-5 tw-p-7"
+                data-test-id={'link-chooser-flyout'}
             >
                 {/* Todo: Until we have moved the search logic, a 'simple link chooser' is rendered instead of the real link chooser */}
                 <FormControl
                     label={{
-                        children: "URL",
-                        htmlFor: "url",
+                        children: 'URL',
+                        htmlFor: 'url',
+                        required: true,
                     }}
                 >
                     <TextInput
-                        id={"url"}
+                        required={true}
+                        id={'url'}
                         placeholder="https://example.com"
                         value={chosenLink.searchResult?.link}
                         onChange={(value) => {
@@ -67,7 +90,7 @@ export const LinkChooserFlyout = ({
                                           id: value,
                                           title: value,
                                           link: value,
-                                          icon: "LINK",
+                                          icon: 'LINK',
                                       }
                                     : null,
                                 openInNewTab: chosenLink.openInNewTab,
