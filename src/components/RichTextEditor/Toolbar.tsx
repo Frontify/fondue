@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BalloonToolbar, usePlateEditorRef } from "@udecode/plate";
-import { merge } from "@utilities/merge";
-import React, { FC, useEffect, useRef, useState } from "react";
-import { toolbarComponents } from "./toolbarComponents";
-import { ButtonGroupProps, ToolbarProps } from "./types";
-import { defaultActions, EditorActions } from "./utils/actions";
+import { BalloonToolbar, usePlateEditorRef } from '@udecode/plate';
+import { merge } from '@utilities/merge';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { toolbarComponents } from './toolbarComponents';
+import { ButtonGroupProps, ToolbarProps } from './types';
+import { defaultActions, EditorActions } from './utils/actions';
 
-const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyles, onLoaded, className, onClose }) => {
+const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyles, onLoaded, onClose }) => {
     const ref = useRef<HTMLDivElement | null>(null);
 
     const editor = usePlateEditorRef(editorId);
@@ -15,7 +15,7 @@ const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyle
     useEffect(() => {
         onLoaded(index, ref.current?.clientWidth);
 
-        // return onClose();
+        return onClose();
     }, [ref.current?.clientWidth]);
 
     return (
@@ -23,7 +23,7 @@ const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyle
             ref={ref}
             key={index}
             data-test-id={`toolbar-group-${index}`}
-            className={merge(["tw-flex tw-items-center tw-h-12 tw-p-2", className])}
+            className="tw-flex tw-items-center tw-h-12 tw-p-2"
         >
             {actions.map((action) => (
                 <React.Fragment key={action}>{toolbarComponents(editor, editorId, textStyles)[action]}</React.Fragment>
@@ -32,7 +32,7 @@ const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyle
     );
 };
 
-const DEFAULT_MAX_WIDTH = "100%";
+const DEFAULT_MAX_WIDTH = '100%';
 type ButtonGroupsWidths = { actions: EditorActions[]; buttonGroupWidth: number; index: number }[];
 type ButtonGroupWidthsPerRow = ButtonGroupsWidths[];
 
@@ -55,13 +55,14 @@ const getButtonGroupWidthsPerRow = (toolbarWidth: number, buttonGroupsWidths: Bu
             buttonGroupWidthsPerRow.push([{ actions, buttonGroupWidth, index }]);
         }
 
-        return buttonGroupWidthsPerRow.filter((element) => element.length !== 0);
+        return buttonGroupWidthsPerRow.filter((element) => element.length > 0);
     }, [] as ButtonGroupWidthsPerRow);
 };
 export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }) => {
     const toolbarActions = actions.length > 0 ? actions : defaultActions;
     const toolbarRef = useRef<HTMLDivElement | null>(null);
     const [buttonGroupsWidths, setButtonGroupsWidths] = useState<ButtonGroupsWidths>([]);
+    const [style, setStyle] = useState({ maxWidth: DEFAULT_MAX_WIDTH });
 
     const [toolbarWidth, setToolbarWidth] = useState<number>(0);
 
@@ -92,23 +93,27 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
             toolbarRef.current && resizeObserver?.unobserve(toolbarRef.current);
         };
     }, [toolbarRef.current?.clientWidth]);
-    const toolbarWidthSum =
-        toolbarButtonGroups?.length &&
-        Math.max(
-            ...toolbarButtonGroups.map((element) =>
-                [...element, { actions: [], buttonGroupWidth: 0 }].reduce(
-                    (prev, { buttonGroupWidth }) => prev + buttonGroupWidth,
-                    0,
-                ),
-            ),
-        );
 
-    const style =
-        toolbarWidthSum !== 0
-            ? {
-                  maxWidth: toolbarWidthSum + toolbarButtonGroups.length + 12,
-              }
-            : { maxWidth: DEFAULT_MAX_WIDTH };
+    useEffect(() => {
+        const toolbarWidthSum =
+            toolbarButtonGroups?.length &&
+            Math.max(
+                ...toolbarButtonGroups.map((element) =>
+                    [...element, { actions: [], buttonGroupWidth: 0 }].reduce(
+                        (prev, { buttonGroupWidth }) => prev + buttonGroupWidth,
+                        0,
+                    ),
+                ),
+            );
+
+        setStyle(
+            toolbarWidthSum !== 0
+                ? {
+                      maxWidth: `${toolbarWidthSum + toolbarButtonGroups.length + 20}px`,
+                  }
+                : { maxWidth: DEFAULT_MAX_WIDTH },
+        );
+    }, [buttonGroupsWidths]);
 
     return (
         <BalloonToolbar
@@ -124,18 +129,17 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
                 data-test-id="toolbar"
                 style={style}
                 className={merge([
-                    "tw-rounded tw-min-h-12 tw-border tw-border-line tw-shadow-lg tw-bg-base tw-flex tw-flex-wrap tw-divide-y tw-divide-line",
-                    style.maxWidth === DEFAULT_MAX_WIDTH && "tw-invisible",
+                    'tw-rounded tw-min-h-12 tw-border tw-border-line tw-shadow-lg tw-bg-base tw-divide-y tw-divide-line tw-flex tw-flex-wrap',
+                    style.maxWidth === DEFAULT_MAX_WIDTH && 'tw-invisible',
                 ])}
                 ref={toolbarRef}
             >
                 {toolbarButtonGroups.map((row, index) => (
-                    <div key={index} className="tw-divide-x tw-divide-line">
+                    <div key={index} className="tw-divide-x tw-divide-line tw-flex tw-w-full tw-flex-wrap">
                         {row.map(({ actions, index }) => {
                             return (
                                 <ButtonGroup
                                     key={index}
-                                    className={""}
                                     actions={actions}
                                     index={index}
                                     textStyles={textStyles}
@@ -147,7 +151,7 @@ export const Toolbar: FC<ToolbarProps> = ({ editorId, textStyles, actions = [] }
                                             return newState;
                                         });
                                     }}
-                                    onClose={() => setButtonGroupsWidths([])}
+                                    onClose={() => setStyle({ maxWidth: DEFAULT_MAX_WIDTH })}
                                 />
                             );
                         })}

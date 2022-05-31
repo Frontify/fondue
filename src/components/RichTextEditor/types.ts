@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from "react";
-import { EditorActions } from "./utils/actions";
-import { TextStyleType } from "./utils/getTextStyles";
+import { ReactElement } from 'react';
+import { EditorActions } from './utils/actions';
+import { TextStyleType } from './utils/getTextStyles';
 
 export type ToolbarProps = {
     editorId?: string;
@@ -19,7 +19,6 @@ export type ButtonGroupProps = {
     editorId?: string;
     actions: EditorActions[];
     textStyles?: TextStyleType[];
-    className: string;
     onClose: () => void;
     onLoaded: (index: number, width?: number) => void;
 };

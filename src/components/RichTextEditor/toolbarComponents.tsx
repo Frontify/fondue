@@ -18,11 +18,9 @@ import {
 } from '@foundation/Icon';
 import {
     AlignToolbarButton,
-    BlockToolbarButton,
     ELEMENT_OL,
     ELEMENT_UL,
     getPluginType,
-    LinkToolbarButton,
     ListToolbarButton,
     MarkToolbarButton,
     MARK_BOLD,
@@ -31,9 +29,14 @@ import {
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
     PlateEditor,
+    someNode,
+    ToolbarButton,
 } from '@udecode/plate';
 import React, { FC, ReactElement } from 'react';
 import { ELEMENT_CHECK_ITEM } from './plugins/checkboxListPlugin/createCheckboxListPlugin';
+import { CheckboxListToolbarButton } from './plugins/checkboxListPlugin/ui/CheckboxListToolbarButton';
+import { ELEMENT_LINK_CHOOSER } from './plugins/linkChooserPlugin/types';
+import { EditLinkChooserButton } from './plugins/linkChooserPlugin/ui/EditLinkChooserButton';
 import { TextStyleDropdown } from './TextStyleDropdown/TextStyleDropdown';
 import { IconStylingWrapperProps } from './types';
 import { EditorActions } from './utils/actions';
@@ -128,7 +131,7 @@ export const toolbarComponents = (
         />
     ),
     [EditorActions.CHECK_ITEM]: (
-        <BlockToolbarButton
+        <CheckboxListToolbarButton
             type={getPluginType(editor, ELEMENT_CHECK_ITEM)}
             icon={<IconStylingWrapper icon={<IconListChecklist size={IconSize.Size24} />} />}
             classNames={classNames}
@@ -136,10 +139,16 @@ export const toolbarComponents = (
         />
     ),
     [EditorActions.LINK_CHOOSER]: (
-        <LinkToolbarButton
-            icon={<IconStylingWrapper icon={<IconLink size={IconSize.Size24} />} />}
-            classNames={classNames}
-            styles={styles}
+        <EditLinkChooserButton
+            type={getPluginType(editor, ELEMENT_LINK_CHOOSER)}
+            icon={
+                <ToolbarButton
+                    active={!!editor?.selection && someNode(editor, { match: { ELEMENT_CHECK_ITEM } })}
+                    icon={<IconLink size={IconSize.Size24} />}
+                    classNames={classNames}
+                    styles={styles}
+                />
+            }
         />
     ),
     [EditorActions.ORDERED_LIST]: (
