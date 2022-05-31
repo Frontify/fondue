@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, Children } from "react";
+import React, { Children, FC } from 'react';
 
 export enum MultiInputLayout {
-    Columns = "Columns",
-    Spider = "Spider",
+    Columns = 'Columns',
+    Spider = 'Spider',
 }
 
 export type MultiInputProps = {
@@ -21,7 +21,7 @@ export const MultiInput: FC<MultiInputProps> = ({ layout, spanLastItem, children
                 <div data-test-id="multi-input-grid-columns" className="tw-grid tw-grid-cols-2 tw-gap-2">
                     {childrenArray.map((child, index) => (
                         <div
-                            className={spanLastItem && index === childrenArray.length - 1 ? "tw-col-span-2" : ""}
+                            className={spanLastItem && index === childrenArray.length - 1 ? 'tw-col-span-2' : ''}
                             key={index}
                         >
                             {child}

@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
-import { mount } from "@cypress/react";
-import { Stack } from "./Stack";
+import React from 'react';
+import { mount } from '@cypress/react';
+import { Stack } from './Stack';
 
-describe("Stack Layout", () => {
-    it("should render a row layout", () => {
+describe('Stack Layout', () => {
+    it('should render a row layout', () => {
         mount(
             <Stack padding="none" spacing="none">
                 <div>1</div>
@@ -14,11 +14,11 @@ describe("Stack Layout", () => {
             </Stack>,
         );
 
-        cy.get("[data-test-id=stack]").as("Stack");
-        cy.get("@Stack").should("have.class", "tw-flex-row");
+        cy.get('[data-test-id=stack]').as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-flex-row');
     });
 
-    it("should render a column layout", () => {
+    it('should render a column layout', () => {
         mount(
             <Stack direction="column" padding="none" spacing="none">
                 <div>1</div>
@@ -27,11 +27,11 @@ describe("Stack Layout", () => {
             </Stack>,
         );
 
-        cy.get("[data-test-id=stack]").as("Stack");
-        cy.get("@Stack").should("have.class", "tw-flex-col");
+        cy.get('[data-test-id=stack]').as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-flex-col');
     });
 
-    it("should render a spacing in a stack", () => {
+    it('should render a spacing in a stack', () => {
         mount(
             <Stack padding="m" spacing="m">
                 <div>1</div>
@@ -40,12 +40,12 @@ describe("Stack Layout", () => {
             </Stack>,
         );
 
-        cy.get("[data-test-id=stack]").as("Stack");
-        cy.get("@Stack").should("have.class", "tw-p-m");
-        cy.get("@Stack").should("have.class", "tw-gap-m");
+        cy.get('[data-test-id=stack]').as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-p-m');
+        cy.get('@Stack').should('have.class', 'tw-gap-m');
     });
 
-    it("should render alignment in a stack", () => {
+    it('should render alignment in a stack', () => {
         mount(
             <Stack align="start" justify="between" padding="none" spacing="none">
                 <div>1</div>
@@ -54,8 +54,8 @@ describe("Stack Layout", () => {
             </Stack>,
         );
 
-        cy.get("[data-test-id=stack]").as("Stack");
-        cy.get("@Stack").should("have.class", "tw-justify-between");
-        cy.get("@Stack").should("have.class", "tw-items-start");
+        cy.get('[data-test-id=stack]').as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-justify-between');
+        cy.get('@Stack').should('have.class', 'tw-items-start');
     });
 });

@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getKeyItemRecord, getMenuItems } from "@components/ActionMenu/Aria/helper";
-import { useListBox } from "@react-aria/listbox";
-import { useActor } from "@xstate/react";
-import React, { FC, useMemo, useRef } from "react";
-import BackgroundIcon from "./assets/background.svg";
-import NoResultsIcon from "./assets/no-results.svg";
-import FetchingIcon from "./assets/nook-animated.png";
-import { NavigationMenuItem } from "./NavigationMenu";
-import { SearchResultSection } from "./SearchResultSection";
-import { defaultSection } from "./sections";
-import { SearchResultListProps } from "./types";
-import { findSection } from "./utils/helpers";
-import { isFetching, isUnsuccessful, shouldGoBack } from "./utils/state";
+import { getKeyItemRecord, getMenuItems } from '@components/ActionMenu/Aria/helper';
+import { useListBox } from '@react-aria/listbox';
+import { useActor } from '@xstate/react';
+import React, { FC, useMemo, useRef } from 'react';
+import BackgroundIcon from './assets/background.svg';
+import NoResultsIcon from './assets/no-results.svg';
+import FetchingIcon from './assets/nook-animated.png';
+import { NavigationMenuItem } from './NavigationMenu';
+import { SearchResultSection } from './SearchResultSection';
+import { defaultSection } from './sections';
+import { SearchResultListProps } from './types';
+import { findSection } from './utils/helpers';
+import { isFetching, isUnsuccessful, shouldGoBack } from './utils/state';
 
 export const SearchResultsList: FC<SearchResultListProps> = (props) => {
     const ref = useRef<HTMLUListElement>(null);
@@ -51,7 +51,7 @@ export const SearchResultsList: FC<SearchResultListProps> = (props) => {
                         section={currentSection}
                         onPress={() => {
                             send({
-                                type: "BACK_TO_DEFAULT",
+                                type: 'BACK_TO_DEFAULT',
                                 data: { getExtraResultsByQuery: null },
                             });
                         }}
@@ -65,9 +65,9 @@ export const SearchResultsList: FC<SearchResultListProps> = (props) => {
                 ref={listBoxRef}
                 className="tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-z-20 focus-visible:tw-outline-none"
             >
-                {searchResults.length ? (
+                {searchResults.length > 0 ? (
                     [...state.collection]
-                        .filter((section) => section.key === "search")
+                        .filter((section) => section.key === 'search')
                         .map((item) => (
                             <SearchResultSection
                                 key={item.key}
@@ -82,7 +82,7 @@ export const SearchResultsList: FC<SearchResultListProps> = (props) => {
                         prompt={
                             query
                                 ? `We could not find any results for "${query}".`
-                                : "Use the search above to discover your brand assets, or enter a URL"
+                                : 'Use the search above to discover your brand assets, or enter a URL'
                         }
                         icon={query ? NoResultsIcon : BackgroundIcon}
                     />
@@ -102,7 +102,7 @@ const EmptyResults: FC<{ prompt: string; icon: string }> = ({ prompt, icon }) =>
     </div>
 );
 
-const FetchingError: FC<{ error?: string }> = ({ error = "An error occurred while fetching the results" }) => (
+const FetchingError: FC<{ error?: string }> = ({ error = 'An error occurred while fetching the results' }) => (
     <div
         data-test-id="link-chooser-error"
         className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[278px] tw-p-3"

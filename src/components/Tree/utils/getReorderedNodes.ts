@@ -1,5 +1,5 @@
-import { DraggableItem, DropZonePosition, moveItems } from "@utilities/dnd";
-import { TreeFlatListItem } from "@components/Tree";
+import { DraggableItem, DropZonePosition, moveItems } from '@utilities/dnd';
+import { TreeFlatListItem } from '@components/Tree';
 
 export const getReorderedNodes = (
     targetItem: DraggableItem<TreeFlatListItem>,

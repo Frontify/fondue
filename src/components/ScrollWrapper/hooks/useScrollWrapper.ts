@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { RefObject, useState, UIEvent, useEffect } from "react";
+import { RefObject, UIEvent, useEffect, useState } from 'react';
 
 const getScrollDimensions = (HTMLElement: HTMLElement) => ({
     top: HTMLElement.scrollTop,
@@ -34,11 +34,11 @@ export const useScrollWrapper = (scrollingContainer: RefObject<HTMLElement>) => 
         if (scrollingContainer.current) {
             resizeObserver.observe(scrollingContainer.current);
         }
-        window.addEventListener("resize", updateDimensionsFromRef);
+        window.addEventListener('resize', updateDimensionsFromRef);
 
         return () => {
             resizeObserver.disconnect();
-            window.removeEventListener("resize", updateDimensionsFromRef);
+            window.removeEventListener('resize', updateDimensionsFromRef);
         };
     }, []);
 

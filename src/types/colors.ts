@@ -15,6 +15,6 @@ export type Palette = {
 };
 
 export enum ColorFormat {
-    Hex = "Hex",
-    Rgba = "Rgba",
+    Hex = 'Hex',
+    Rgba = 'Rgba',
 }

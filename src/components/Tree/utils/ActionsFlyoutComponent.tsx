@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { Flyout } from "@components/Flyout";
-import { Button, ButtonSize, ButtonStyle } from "@components/Button";
-import { IconActions, IconSize } from "@foundation/Icon";
-import { ActionMenu } from "@components/ActionMenu/ActionMenu";
-import { mockActionMenuBlocks } from "./mocks";
+import React, { useState } from 'react';
+import { Flyout } from '@components/Flyout';
+import { Button, ButtonSize, ButtonStyle } from '@components/Button';
+import { IconActions, IconSize } from '@foundation/Icon';
+import { ActionMenu } from '@components/ActionMenu/ActionMenu';
+import { mockActionMenuBlocks } from './mocks';
 
 export const ActionsFlyoutComponent = () => {
     const [open, setOpen] = useState(false);

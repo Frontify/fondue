@@ -1,17 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Dropdown } from "@components/Dropdown/Dropdown";
-import { TextInputType } from "@components/TextInput/TextInput";
-import React, { FC, useEffect, useState } from "react";
-import { RgbaColorPicker } from "react-colorful";
-import tinycolor from "tinycolor2";
-import { Color, ColorFormat } from "../../types/colors";
-import { ColorInput, DecoratorPosition } from "./ColorInput";
-import { ColorPickerProps } from "./ColorPicker";
+import { Dropdown } from '@components/Dropdown/Dropdown';
+import { TextInputType } from '@components/TextInput/TextInput';
+import React, { FC, useEffect, useState } from 'react';
+import { RgbaColorPicker } from 'react-colorful';
+import tinycolor from 'tinycolor2';
+import { Color, ColorFormat } from '../../types/colors';
+import { ColorInput, DecoratorPosition } from './ColorInput';
+import { ColorPickerProps } from './ColorPicker';
 
 const convertToHex = (color: Color) => tinycolor(color).toHex();
 
-export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
+export const CustomColorPicker: FC<Omit<ColorPickerProps, 'palette'>> = ({
     currentColor,
     currentFormat,
     setFormat,
@@ -19,7 +19,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
 }) => {
     const formatMenuBlock = [
         {
-            id: "color-picker-format-dropdown-block",
+            id: 'color-picker-format-dropdown-block',
             menuItems: Object.values(ColorFormat).map((id) => ({ id, title: id.toLocaleUpperCase() })),
         },
     ];
@@ -103,7 +103,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
                     decorator="%"
                     decoratorPosition={DecoratorPosition.Right}
                     onChange={(value) => {
-                        const a = parseInt(value || "0", 10) / 100;
+                        const a = parseInt(value || '0', 10) / 100;
                         setAlpha(a);
                         onSelect({ ...currentColor, a });
                     }}
@@ -111,7 +111,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, "palette">> = ({
             </div>
             <div className="tw-flex tw-gap-2 tw-w-full tw-h-[200px]">
                 <div className="tw-relative tw-grow tw-rounded">
-                    <RgbaColorPicker color={{ ...currentColor, a }} onChange={onSelect} style={{ width: "100%" }} />
+                    <RgbaColorPicker color={{ ...currentColor, a }} onChange={onSelect} style={{ width: '100%' }} />
                 </div>
             </div>
         </div>

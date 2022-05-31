@@ -1,1 +1,1 @@
-export * from "./MultiInput";
+export * from './MultiInput';

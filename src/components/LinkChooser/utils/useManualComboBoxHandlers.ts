@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { chain } from "@react-aria/utils";
-import { FocusEvent, KeyboardEvent } from "react";
-import { ManualComboBoxEventProps, ManualComboBoxEvents } from "../types";
+import { chain } from '@react-aria/utils';
+import { FocusEvent, KeyboardEvent } from 'react';
+import { ManualComboBoxEventProps, ManualComboBoxEvents } from '../types';
 
 export const useManualComboBoxEventHandlers = (
     { inputProps, inputRef, popoverRef, state }: ManualComboBoxEventProps,
@@ -16,7 +16,7 @@ export const useManualComboBoxEventHandlers = (
         onBlur: chain(onBlur, (event: FocusEvent<HTMLInputElement, HTMLElement>) => {
             if (
                 popoverRef.current?.contains(event.relatedTarget as HTMLElement) ||
-                (event.relatedTarget?.dataset.comboBoxControl === "true" && state.isOpen)
+                (event.relatedTarget?.dataset.comboBoxControl === 'true' && state.isOpen)
             ) {
                 inputRef.current?.focus();
             } else {
@@ -25,14 +25,14 @@ export const useManualComboBoxEventHandlers = (
         }),
         onFocus: chain(onFocus, onOpen),
         onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
-            const SUBMISSION_KEYS = ["Enter", "Tab"];
-            const NAVIGATION_KEYS = ["ArrowRight", "ArrowLeft", ...SUBMISSION_KEYS];
+            const SUBMISSION_KEYS = ['Enter', 'Tab'];
+            const NAVIGATION_KEYS = ['ArrowRight', 'ArrowLeft', ...SUBMISSION_KEYS];
             const focusedKey = state.selectionManager.focusedKey;
             const item = state.collection.getItem(focusedKey);
             const { key } = event;
 
             if (state.isOpen && SUBMISSION_KEYS.includes(key)) {
-                if (item && item.parentKey !== "search") {
+                if (item && item.parentKey !== 'search') {
                     onNavigate(item.key);
                     /* If focused key is a not part of the search results then the function must 
                     end before the react-aria event chain begins is started so that the item is not 
@@ -44,7 +44,7 @@ export const useManualComboBoxEventHandlers = (
                     onClose();
                     return;
                 }
-            } else if (state.isOpen && key === "Escape") {
+            } else if (state.isOpen && key === 'Escape') {
                 onClose();
             } else if (!state.isOpen && !NAVIGATION_KEYS.includes(key)) {
                 onOpen();

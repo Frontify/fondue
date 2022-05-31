@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, FC, useContext } from "react";
-import { merge } from "@utilities/merge";
-import { ModalHeaderProps, ModalHeaderVariant, modalHeaderVariants } from "./types";
-import { IconSize } from "@foundation/Icon";
-import { ModalTitle } from "./context/ModalTitle";
-import { ModalLayout } from "./context/ModalLayout";
+import React, { FC, cloneElement, useContext } from 'react';
+import { merge } from '@utilities/merge';
+import { ModalHeaderProps, ModalHeaderVariant, modalHeaderVariants } from './types';
+import { IconSize } from '@foundation/Icon';
+import { ModalTitle } from './context/ModalTitle';
+import { ModalLayout } from './context/ModalLayout';
 
 export const ModalHeader: FC<ModalHeaderProps> = ({
     title,
@@ -22,7 +22,7 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
                 {decorator && (
                     <span
                         data-test-id="modal-header-decorator-container"
-                        className={merge(["tw-mr-2", modalHeaderVariants[variant]])}
+                        className={merge(['tw-mr-2', modalHeaderVariants[variant]])}
                     >
                         {cloneElement(decorator, { size: IconSize.Size24 })}
                     </span>
@@ -30,8 +30,8 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
                 <h3
                     {...ariaTitleProps}
                     className={merge([
-                        "tw-font-heading tw-font-medium tw-text-text",
-                        compact ? "tw-text-lg" : "tw-text-xl",
+                        'tw-font-heading tw-font-medium tw-text-text',
+                        compact ? 'tw-text-lg' : 'tw-text-xl',
                     ])}
                 >
                     {title}

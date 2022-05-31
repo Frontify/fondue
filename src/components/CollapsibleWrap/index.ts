@@ -1,1 +1,1 @@
-export * from "./CollapsibleWrap";
+export * from './CollapsibleWrap';

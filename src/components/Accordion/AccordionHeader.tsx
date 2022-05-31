@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@foundation/Icon/IconSize";
-import { merge } from "@utilities/merge";
-import React, { cloneElement, FC, isValidElement } from "react";
-import { AccordionHeaderProps, AccordionHeaderIconSize } from "./types";
-import { AccordionHeaderIcon } from "./AccordionHeaderIcon";
+import { IconSize } from '@foundation/Icon/IconSize';
+import { merge } from '@utilities/merge';
+import React, { FC, cloneElement, isValidElement } from 'react';
+import { AccordionHeaderIconSize, AccordionHeaderProps } from './types';
+import { AccordionHeaderIcon } from './AccordionHeaderIcon';
 
 export const AccordionHeader: FC<AccordionHeaderProps> = ({
     isOpen = false,
@@ -13,7 +13,7 @@ export const AccordionHeader: FC<AccordionHeaderProps> = ({
     children,
     bold = true,
     type,
-    as: Heading = "div",
+    as: Heading = 'div',
 }) => {
     const icon = (
         <AccordionHeaderIcon isOpen={isOpen} disabled={disabled} size={AccordionHeaderIconSize.Medium} type={type} />
@@ -23,9 +23,9 @@ export const AccordionHeader: FC<AccordionHeaderProps> = ({
             <header
                 data-test-id="fieldset-header"
                 className={merge([
-                    "tw-flex tw-items-center tw-gap-x-1.5 tw-w-full tw-flex-row",
-                    disabled ? "tw-text-black-40" : "dark:tw-text-white",
-                    !disabled && isOpen ? "tw-text-black" : "tw-text-black-80",
+                    'tw-flex tw-items-center tw-gap-x-1.5 tw-w-full tw-flex-row',
+                    disabled ? 'tw-text-black-40' : 'dark:tw-text-white',
+                    !disabled && isOpen ? 'tw-text-black' : 'tw-text-black-80',
                 ])}
             >
                 {isValidElement(decorator) && (
@@ -35,7 +35,7 @@ export const AccordionHeader: FC<AccordionHeaderProps> = ({
                         })}
                     </span>
                 )}
-                <Heading className={merge(["tw-text-left tw-text-m", bold ? "tw-font-medium" : "tw-font-normal"])}>
+                <Heading className={merge(['tw-text-left tw-text-m', bold ? 'tw-font-medium' : 'tw-font-normal'])}>
                     {children}
                 </Heading>
                 {icon && <span className="tw-ml-auto tw-shrink-0">{icon}</span>}

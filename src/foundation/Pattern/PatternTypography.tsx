@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { memo, ReactElement } from "react";
+import React, { ReactElement, memo } from 'react';
 
 function PatternTypography(): ReactElement {
     return (
@@ -608,5 +608,5 @@ function PatternTypography(): ReactElement {
 }
 
 const Memo = memo(PatternTypography);
-// eslint-disable-next-line import/no-default-export
+
 export default Memo;

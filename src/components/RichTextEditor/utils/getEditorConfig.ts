@@ -7,7 +7,6 @@ import {
     createCodePlugin,
     createIndentPlugin,
     createItalicPlugin,
-    createLinkPlugin,
     createListPlugin,
     createParagraphPlugin,
     createPlateUI,
@@ -27,9 +26,10 @@ import {
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
-} from "@udecode/plate";
+} from '@udecode/plate';
 import {
     BoldMark,
+    ChosenLinkElement,
     CodeMark,
     Custom1Element,
     Custom2Element,
@@ -38,16 +38,16 @@ import {
     Heading3Element,
     Heading4Element,
     ItalicMark,
-    LinkElement,
     ListItemContentElement,
     ListItemElement,
     OrderedListElement,
     StrikethroughMark,
     UnderlineMark,
     UnorderedListElement,
-} from "../components";
-import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from "../plugins/checkboxListPlugin";
-import { TextStyles, TextStyleType } from "./getTextStyles";
+} from '../components';
+import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
+import { createLinkChooserPlugin } from '../plugins/linkChooserPlugin/createLinkChooserPlugin';
+import { TextStyles, TextStyleType } from './getTextStyles';
 
 export const getEditorConfig = (textStyles?: TextStyleType[]) => {
     const createHeading1Plugin = createPluginFactory({
@@ -55,7 +55,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
         isElement: true,
         component: Heading1Element,
         deserializeHtml: {
-            rules: [{ validNodeName: ["h1", "H1"] }],
+            rules: [{ validNodeName: ['h1', 'H1'] }],
         },
         props: { textStyles },
     });
@@ -65,7 +65,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
         isElement: true,
         component: Heading2Element,
         deserializeHtml: {
-            rules: [{ validNodeName: ["h2", "H2"] }],
+            rules: [{ validNodeName: ['h2', 'H2'] }],
         },
         props: { textStyles },
     });
@@ -75,7 +75,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
         isElement: true,
         component: Heading3Element,
         deserializeHtml: {
-            rules: [{ validNodeName: ["h3", "H3"] }],
+            rules: [{ validNodeName: ['h3', 'H3'] }],
         },
         props: { textStyles },
     });
@@ -85,7 +85,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
         isElement: true,
         component: Heading4Element,
         deserializeHtml: {
-            rules: [{ validNodeName: ["h4", "H4"] }],
+            rules: [{ validNodeName: ['h4', 'H4'] }],
         },
         props: { textStyles },
     });
@@ -106,7 +106,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
 
     const components = createPlateUI({
         // this will override the components over the default ones
-        [ELEMENT_LINK]: LinkElement,
+        [ELEMENT_LINK]: ChosenLinkElement,
         [ELEMENT_UL]: UnorderedListElement,
         [ELEMENT_OL]: OrderedListElement,
         [ELEMENT_LI]: ListItemElement,
@@ -147,7 +147,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
             createCodeBlockPlugin(),
             createListPlugin(),
             createCheckboxListPlugin(),
-            createLinkPlugin(),
+            createLinkChooserPlugin(),
             createBoldPlugin(),
             createItalicPlugin(),
             createUnderlinePlugin(),

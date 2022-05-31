@@ -1,22 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from "@storybook/react";
-import React, { useState } from "react";
-import { OrderableList as OrderableListComponent } from "./OrderableList";
-import { OrderableListItem } from "./types";
-import { OrderableListProps } from ".";
-import { chain } from "@react-aria/utils";
-import { renderContent, storyItems } from "@components/OrderableList/utils";
+import { Meta, Story } from '@storybook/react';
+import React, { useState } from 'react';
+import { OrderableList as OrderableListComponent } from './OrderableList';
+import { OrderableListItem } from './types';
+import { OrderableListProps } from '.';
+import { chain } from '@react-aria/utils';
+import { renderContent, storyItems } from '@components/OrderableList/utils';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Orderable List",
+    title: 'Components/Orderable List',
     component: OrderableListComponent,
     args: {
         dragDisabled: false,
     },
     argTypes: {
-        onMove: { action: "onMove" },
+        onMove: { action: 'onMove' },
     },
 } as Meta<OrderableListProps<StoryListItem>>;
 
