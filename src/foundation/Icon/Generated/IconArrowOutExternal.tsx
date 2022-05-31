@@ -1,29 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconArrowOutExternal12 from './IconArrowOutExternal12';
+import IconArrowOutExternal16 from './IconArrowOutExternal16';
+import IconArrowOutExternal20 from './IconArrowOutExternal20';
+import IconArrowOutExternal24 from './IconArrowOutExternal24';
+import IconArrowOutExternal32 from './IconArrowOutExternal32'
 
 function IconArrowOutExternal(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconArrowOutExternal"
-            {...props}
-        >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M14.25 4a.75.75 0 0 0 0 1.5h3.19l-6.47 6.47a.75.75 0 1 0 1.06 1.06l6.47-6.47v3.19a.75.75 0 0 0 1.5 0V4h-5.75ZM4 8.75A3.25 3.25 0 0 1 7.25 5.5H10A.75.75 0 0 1 10 7H7.25A1.75 1.75 0 0 0 5.5 8.75v8c0 .966.784 1.75 1.75 1.75h8A1.75 1.75 0 0 0 17 16.75V14a.75.75 0 0 1 1.5 0v2.75A3.25 3.25 0 0 1 15.25 20h-8A3.25 3.25 0 0 1 4 16.75v-8Z"
-                clipRule="evenodd"
-            />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconArrowOutExternal12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconArrowOutExternal16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconArrowOutExternal20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconArrowOutExternal24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconArrowOutExternal32 {...props}/>}
+        </span>
     );
 }
 

@@ -1,25 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconPolygon12 from './IconPolygon12';
+import IconPolygon16 from './IconPolygon16';
+import IconPolygon20 from './IconPolygon20';
+import IconPolygon24 from './IconPolygon24';
+import IconPolygon32 from './IconPolygon32'
 
 function IconPolygon(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconPolygon"
-            {...props}
-        >
-            <path d="M0 0h24v24H0z" />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconPolygon12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconPolygon16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconPolygon20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconPolygon24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconPolygon32 {...props}/>}
+        </span>
     );
 }
 

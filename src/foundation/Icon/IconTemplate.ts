@@ -6,12 +6,11 @@ export const IconTemplate: Template = ({ interfaces, componentName, jsx, exports
     return tpl`
       import React, { memo } from "react";
       import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-      import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
 
       ${interfaces}
 
       function ${componentName}(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-        const customClassName = ["tw-flex tw-items-center tw-justify-center tw-fill-current", IconSizeMap[props.size || IconSize.Size16]].join(' ');
+        const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
 
         return ${jsx};
       }

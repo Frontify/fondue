@@ -1,29 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconPaperplane12 from './IconPaperplane12';
+import IconPaperplane16 from './IconPaperplane16';
+import IconPaperplane20 from './IconPaperplane20';
+import IconPaperplane24 from './IconPaperplane24';
+import IconPaperplane32 from './IconPaperplane32'
 
 function IconPaperplane(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconPaperplane"
-            {...props}
-        >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M19.388 11.779a.25.25 0 0 1 0 .447L4.863 19.468a.25.25 0 0 1-.357-.27l1.203-6.445h6.29a.75.75 0 0 0 0-1.5H5.71L4.506 4.807a.25.25 0 0 1 .357-.27l14.525 7.242Zm.67 1.79c1.292-.644 1.292-2.488 0-3.132L5.533 3.195c-1.294-.644-2.767.467-2.502 1.887l1.283 6.875a.25.25 0 0 1 0 .092l-1.283 6.874c-.265 1.42 1.208 2.532 2.502 1.887l14.525-7.241Z"
-                clipRule="evenodd"
-            />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconPaperplane12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconPaperplane16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconPaperplane20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconPaperplane24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconPaperplane32 {...props}/>}
+        </span>
     );
 }
 

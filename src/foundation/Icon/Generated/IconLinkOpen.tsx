@@ -1,29 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconLinkOpen12 from './IconLinkOpen12';
+import IconLinkOpen16 from './IconLinkOpen16';
+import IconLinkOpen20 from './IconLinkOpen20';
+import IconLinkOpen24 from './IconLinkOpen24';
+import IconLinkOpen32 from './IconLinkOpen32'
 
 function IconLinkOpen(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconLinkOpen"
-            {...props}
-        >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M6.75 7.25a4.75 4.75 0 0 0 0 9.5h2a.75.75 0 0 0 0-1.5h-2a3.25 3.25 0 0 1 0-6.5h2a.75.75 0 0 0 0-1.5h-2Zm10.5 9.5a4.75 4.75 0 1 0 0-9.5h-2a.75.75 0 0 0 0 1.5h2a3.25 3.25 0 0 1 0 6.5h-2a.75.75 0 0 0 0 1.5h2Z"
-                clipRule="evenodd"
-            />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconLinkOpen12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconLinkOpen16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconLinkOpen20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconLinkOpen24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconLinkOpen32 {...props}/>}
+        </span>
     );
 }
 

@@ -1,29 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconTextFormatUnderline12 from './IconTextFormatUnderline12';
+import IconTextFormatUnderline16 from './IconTextFormatUnderline16';
+import IconTextFormatUnderline20 from './IconTextFormatUnderline20';
+import IconTextFormatUnderline24 from './IconTextFormatUnderline24';
+import IconTextFormatUnderline32 from './IconTextFormatUnderline32'
 
 function IconTextFormatUnderline(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconTextFormatUnderline"
-            {...props}
-        >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M5.75 4H5v3.35a.75.75 0 0 0 1.5 0V5.5H11v9H9.1a.75.75 0 0 0 0 1.5h5.433a.75.75 0 0 0 0-1.5H12.5v-9H17v1.85a.75.75 0 0 0 1.5 0V4H5.75ZM5.5 18.5a.75.75 0 0 0 0 1.5H18a.75.75 0 0 0 0-1.5H5.5Z"
-                clipRule="evenodd"
-            />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconTextFormatUnderline12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconTextFormatUnderline16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconTextFormatUnderline20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconTextFormatUnderline24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconTextFormatUnderline32 {...props}/>}
+        </span>
     );
 }
 
