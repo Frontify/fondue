@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconLayersSingle12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
+    const customClassName = 'tw-inline tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
