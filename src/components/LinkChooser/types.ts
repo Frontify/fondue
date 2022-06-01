@@ -32,7 +32,7 @@ export type MachineService = Interpreter<
     }
 >;
 
-export enum IconLabel {
+export enum IconName {
     Block = 'BLOCK',
     Document = 'DOCUMENT',
     Library = 'LIBRARY',
