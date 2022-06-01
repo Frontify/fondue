@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { Tree as TreeComponent, TreeFlatListItem, TreeProps } from './Tree';
+import { Tree as TreeComponent, TreeProps } from './Tree';
 import { mockNodesFlat } from '@components/Tree/utils/mocks';
-import { DraggableItem } from '@utilities/dnd';
+import { getReorderedNodes } from '@components/Tree/utils';
 
 export default {
     title: 'Components/Tree',
@@ -21,7 +21,9 @@ export default {
 export const Tree: Story<TreeProps> = ({ ...args }: TreeProps) => {
     const [nodesState, setNodesState] = useState(mockNodesFlat);
 
-    const handleMove = (modifiedItems: DraggableItem<TreeFlatListItem>[]): void => {
+    const handleMove = (sourceItemId: string, parentId: NullableString, positionBeforeId: NullableString): void => {
+        const modifiedItems = getReorderedNodes(sourceItemId, parentId, positionBeforeId, nodesState);
+
         const modifiedArray = nodesState.map((item) => {
             const matchingModifiedItem = modifiedItems.find((modifiedItem) => modifiedItem.id === item.id);
             if (matchingModifiedItem) {
@@ -36,7 +38,7 @@ export const Tree: Story<TreeProps> = ({ ...args }: TreeProps) => {
 
     return (
         <div style={{ maxWidth: '800px' }}>
-            <TreeComponent {...args} nodes={nodesState} onUpdate={handleMove} />
+            <TreeComponent {...args} nodes={nodesState} onDragAndDrop={handleMove} />
         </div>
     );
 };
