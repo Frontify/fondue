@@ -1,11 +1,14 @@
-import { ToolbarButtonProps, useEventPlateId, usePlateEditorState } from '@udecode/plate';
-import React, { MutableRefObject, useState } from 'react';
+import { ToolbarButton, ToolbarButtonProps, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
+import React, { MutableRefObject, useEffect, useState } from 'react';
+import { IconLink, IconSize } from '../../../../..';
+import { ELEMENT_CHECK_ITEM } from '../../checkboxListPlugin/createCheckboxListPlugin';
 import { getAndUpsertLink } from '../transforms/getAndUpsertLink';
 import { ChosenLink } from '../types';
 import { LinkChooserFlyout } from './LinkChooserFlyout';
 
-export const EditLinkChooserButton = ({ id, icon }: ToolbarButtonProps) => {
+export const EditLinkChooserButton = ({ id, styles, classNames, setShowToolbar }: Omit<ToolbarButtonProps, 'icon'>) => {
     id = useEventPlateId(id);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const editor = usePlateEditorState(id)!;
 
     const [isFlyoutOpen, setIsFlyoutOpen] = useState<boolean>(false);
@@ -27,6 +30,11 @@ export const EditLinkChooserButton = ({ id, icon }: ToolbarButtonProps) => {
         });
     };
 
+    useEffect(() => {
+        setShowToolbar && setShowToolbar(isFlyoutOpen);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isFlyoutOpen]);
+
     return (
         <LinkChooserFlyout
             isFlyoutOpen={isFlyoutOpen}
@@ -37,18 +45,24 @@ export const EditLinkChooserButton = ({ id, icon }: ToolbarButtonProps) => {
                 <div
                     ref={ref}
                     aria-label={ariaLabel}
-                    onMouseDown={async (event) => {
-                        if (!editor || isFlyoutOpen) {
-                            return;
-                        }
-
-                        event.preventDefault();
-                        getAndUpsertLink(editor, getLinkFromLinkChooser);
-                    }}
                     data-chosen-link={JSON.stringify(chosenLink)}
-                    className={'tw-text-violet-70 tw-underline tw-cursor-pointer'}
+                    className="tw-cursor-pointer"
                 >
-                    {icon}
+                    <ToolbarButton
+                        classNames={classNames}
+                        styles={styles}
+                        active={!!editor?.selection && someNode(editor, { match: { ELEMENT_CHECK_ITEM } })}
+                        icon={<IconLink size={IconSize.Size24} />}
+                        onMouseDown={async (event) => {
+                            event.stopPropagation();
+                            event.preventDefault();
+                            if (!editor || isFlyoutOpen) {
+                                return;
+                            }
+
+                            getAndUpsertLink(editor, getLinkFromLinkChooser);
+                        }}
+                    />
                 </div>
             )}
         />

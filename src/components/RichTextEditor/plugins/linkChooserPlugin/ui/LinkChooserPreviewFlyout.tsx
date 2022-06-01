@@ -1,4 +1,5 @@
 import { Flyout } from '@components/Flyout';
+import { LINK_CHOOSER_CLASS_NAMES } from '@components/RichTextEditor/components/chosen-link';
 import { IconPen, IconTrash } from '@foundation/Icon';
 import React, { HTMLAttributes, MutableRefObject, ReactNode } from 'react';
 
@@ -34,20 +35,24 @@ export const LinkChooserPreviewFlyout = ({
                 legacyFooter={false}
                 trigger={trigger}
             >
-                <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between tw-p-4">
-                    <span className="tw-text-violet-70">{href}</span>
+                <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between tw-p-5">
+                    <span className={`${LINK_CHOOSER_CLASS_NAMES} tw-pointer-events-none`}>{href}</span>
                     <span className="tw-flex tw-gap-2">
                         <span
+                            role="button"
+                            tabIndex={0}
                             data-test-id={'edit-link-button'}
-                            className="tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1"
+                            className="tw-cursor-pointer"
                             onMouseDown={() => onEditClick()}
                         >
                             <IconPen />
                         </span>
 
                         <span
+                            role="button"
+                            tabIndex={0}
                             data-test-id={'remove-link-button'}
-                            className="tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1"
+                            className="tw-cursor-pointer"
                             onMouseDown={() => onRemoveClick()}
                         >
                             <IconTrash />

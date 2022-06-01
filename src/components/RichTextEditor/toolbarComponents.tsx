@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    IconLink,
     IconListBullets,
     IconListChecklist,
     IconListNumbers,
@@ -20,17 +19,15 @@ import {
     AlignToolbarButton,
     ELEMENT_OL,
     ELEMENT_UL,
-    getPluginType,
     ListToolbarButton,
-    MarkToolbarButton,
     MARK_BOLD,
     MARK_CODE,
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
+    MarkToolbarButton,
     PlateEditor,
-    someNode,
-    ToolbarButton,
+    getPluginType,
 } from '@udecode/plate';
 import React, { FC, ReactElement } from 'react';
 import { ELEMENT_CHECK_ITEM } from './plugins/checkboxListPlugin/createCheckboxListPlugin';
@@ -56,6 +53,7 @@ export const toolbarComponents = (
     editor: PlateEditor,
     editorId?: string,
     textStyles?: TextStyleType[],
+    setShowToolbar?: (isFlyoutOpen: boolean) => void,
 ): Record<EditorActions, ReactElement> => ({
     [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} textStyles={textStyles} />,
     [EditorActions.ALIGN_LEFT]: (
@@ -140,15 +138,10 @@ export const toolbarComponents = (
     ),
     [EditorActions.LINK_CHOOSER]: (
         <EditLinkChooserButton
+            classNames={classNames}
+            styles={styles}
             type={getPluginType(editor, ELEMENT_LINK_CHOOSER)}
-            icon={
-                <ToolbarButton
-                    active={!!editor?.selection && someNode(editor, { match: { ELEMENT_CHECK_ITEM } })}
-                    icon={<IconLink size={IconSize.Size24} />}
-                    classNames={classNames}
-                    styles={styles}
-                />
-            }
+            setShowToolbar={setShowToolbar}
         />
     ),
     [EditorActions.ORDERED_LIST]: (

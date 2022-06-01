@@ -7,6 +7,8 @@ import { ChosenLink } from '../plugins/linkChooserPlugin/types';
 import { LinkChooserFlyout } from '../plugins/linkChooserPlugin/ui/LinkChooserFlyout';
 import { LinkChooserPreviewFlyout } from '../plugins/linkChooserPlugin/ui/LinkChooserPreviewFlyout';
 
+export const LINK_CHOOSER_CLASS_NAMES = 'tw-text-text-interactive tw-underline tw-cursor-pointer';
+
 export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
     const { children, element, editor } = props;
 
@@ -65,7 +67,7 @@ export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
                     href={getHref()}
                     target={getTarget()}
                     rel="noreferrer"
-                    className={'tw-text-violet-70 tw-underline tw-cursor-pointer'}
+                    className={LINK_CHOOSER_CLASS_NAMES}
                 >
                     {children}
                 </a>
@@ -77,7 +79,7 @@ export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
                         href={getHref()}
                         target={getTarget()}
                         rel="noreferrer"
-                        className={'tw-text-violet-70 tw-underline tw-cursor-pointer'}
+                        className={LINK_CHOOSER_CLASS_NAMES}
                     >
                         {children}
                     </a>
