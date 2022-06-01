@@ -22,14 +22,13 @@ export const getButtonGroupWidthsPerRow = (toolbarWidth: number, buttonGroupsWid
         return buttonGroupWidthsPerRow.filter((element) => element.length > 0);
     }, []);
 
-export const calculateToolbarWidth = () => {
+export const calculateToolbarWidth = (toolbarButtonGroups: ButtonGroupWidths[]) =>
     toolbarButtonGroups?.length &&
-        Math.max(
-            ...toolbarButtonGroups.map((element) =>
-                [...element, { actions: [], buttonGroupWidth: 0 }].reduce(
-                    (prev, { buttonGroupWidth }) => prev + buttonGroupWidth,
-                    0,
-                ),
+    Math.max(
+        ...toolbarButtonGroups.map((element) =>
+            [...element, { actions: [], buttonGroupWidth: 0 }].reduce(
+                (prev, { buttonGroupWidth }) => prev + buttonGroupWidth,
+                0,
             ),
-        );
-};
+        ),
+    );
