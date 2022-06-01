@@ -37,7 +37,6 @@ export const LinkChooserFlyout = ({
         <Flyout
             isOpen={isFlyoutOpen}
             onOpenChange={setIsFlyoutOpen}
-            contentMinHeight={170}
             onCancel={() => setIsFlyoutOpen(false)}
             onConfirm={onConfirm}
             trigger={trigger}

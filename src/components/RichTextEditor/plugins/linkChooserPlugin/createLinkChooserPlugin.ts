@@ -1,5 +1,5 @@
 import { ChosenLinkElement } from '@components/RichTextEditor/components';
-import { createPluginFactory } from '@udecode/plate';
+import { createPluginFactory, ELEMENT_LINK } from '@udecode/plate';
 import { ELEMENT_LINK_CHOOSER } from './types';
 
 // Extends the default link plugin so that 'getChosenLink()' can be given into
@@ -7,6 +7,16 @@ import { ELEMENT_LINK_CHOOSER } from './types';
 
 export const createLinkChooserPlugin = createPluginFactory({
     key: ELEMENT_LINK_CHOOSER,
+    isElement: true,
+    isInline: true,
+    component: ChosenLinkElement,
+});
+
+/**
+ * @deprecated
+ */
+export const createLinkPlugin = createPluginFactory({
+    key: ELEMENT_LINK,
     isElement: true,
     isInline: true,
     component: ChosenLinkElement,

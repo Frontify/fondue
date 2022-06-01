@@ -10,7 +10,14 @@ import { LinkChooserPreviewFlyout } from '../plugins/linkChooserPlugin/ui/LinkCh
 export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
     const { children, element, editor } = props;
 
-    const { chosenLink } = element;
+    const {
+        chosenLink = {
+            searchResult: {
+                link: element.url,
+            },
+            openInNewTab: false,
+        },
+    } = element;
 
     const [isLinkChooserPreviewFlyoutOpen, setIsLinkChooserPreviewFlyoutOpen] = useState<boolean>(false);
     const [isLinkChooserFlyoutOpen, setIsLinkChooserFlyoutOpen] = useState<boolean>(false);
@@ -19,7 +26,7 @@ export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
     const isReadOnly = useEditableProps(editor).readOnly;
 
     const getHref = () => {
-        return chosenLink ? (chosenLink.searchResult ? element.chosenLink.searchResult.link : '') : '';
+        return chosenLink ? (chosenLink.searchResult ? chosenLink.searchResult.link : '') : '';
     };
 
     const getTarget = () => {
@@ -53,7 +60,7 @@ export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
         }
         unwrapNodes(editor, {
             at: editor.selection,
-            match: { type: 'link_chooser' },
+            match: { type: ['link_chooser', 'a'] },
         });
     };
 

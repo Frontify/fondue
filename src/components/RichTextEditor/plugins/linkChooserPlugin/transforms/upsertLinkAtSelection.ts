@@ -1,3 +1,4 @@
+import { ELEMENT_LINK } from '@udecode/plate';
 import { insertNodes, isCollapsed, PlateEditor, TElement, unwrapNodes } from '@udecode/plate-core';
 import { Editor, Transforms } from 'slate';
 import { ChosenLink, ELEMENT_LINK_CHOOSER } from '../types';
@@ -26,11 +27,11 @@ export const upsertLinkAtSelection = <T = {}>(
         return;
     }
 
-    const type = ELEMENT_LINK_CHOOSER;
+    const types = [ELEMENT_LINK, ELEMENT_LINK_CHOOSER];
 
     if (!wrap && isCollapsed(editor.selection)) {
         return insertNodes<TElement>(editor, {
-            type,
+            type: ELEMENT_LINK_CHOOSER,
             chosenLink,
             children: [{ text: '' }],
         });
@@ -43,7 +44,7 @@ export const upsertLinkAtSelection = <T = {}>(
         Transforms.select(editor, inlinePath);
     }
 
-    unwrapNodes(editor, { at: editor.selection, match: { type } });
+    unwrapNodes(editor, { at: editor.selection, match: { type: types } });
 
     wrapLink(editor, { at: editor.selection, chosenLink });
 };

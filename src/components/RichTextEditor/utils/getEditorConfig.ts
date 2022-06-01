@@ -46,7 +46,7 @@ import {
     UnorderedListElement,
 } from '../components';
 import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
-import { createLinkChooserPlugin } from '../plugins/linkChooserPlugin/createLinkChooserPlugin';
+import { createLinkChooserPlugin, createLinkPlugin } from '../plugins/linkChooserPlugin/createLinkChooserPlugin';
 import { TextStyles, TextStyleType } from './getTextStyles';
 
 export const getEditorConfig = (textStyles?: TextStyleType[]) => {
@@ -148,6 +148,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
             createListPlugin(),
             createCheckboxListPlugin(),
             createLinkChooserPlugin(),
+            createLinkPlugin(),
             createBoldPlugin(),
             createItalicPlugin(),
             createUnderlinePlugin(),

@@ -1,5 +1,5 @@
 import { IconEnum } from '@foundation/Icon';
-import { unwrapNodes } from '@udecode/plate';
+import { ELEMENT_LINK, unwrapNodes } from '@udecode/plate';
 import { getAbove, isCollapsed, PlateEditor } from '@udecode/plate-core';
 import { ChosenLink, ELEMENT_LINK_CHOOSER, LinkChooserPlugin } from '../types';
 import { upsertLinkAtSelection } from './upsertLinkAtSelection';
@@ -9,17 +9,29 @@ export const getAndUpsertLink = async <T = {}>(
     editor: PlateEditor<T>,
     getChosenLink?: LinkChooserPlugin['getChosenLink'],
 ) => {
-    const type = ELEMENT_LINK_CHOOSER;
+    const types = [ELEMENT_LINK, ELEMENT_LINK_CHOOSER];
     let prevChosenLink: ChosenLink = {
         searchResult: null,
         openInNewTab: false,
     };
 
     const linkNode = getAbove(editor, {
-        match: { type },
+        match: { type: types },
     });
     if (linkNode) {
-        prevChosenLink = linkNode[0].chosenLink as ChosenLink;
+        if (linkNode[0].url) {
+            prevChosenLink = {
+                searchResult: {
+                    id: linkNode[0].url,
+                    title: linkNode[0].url,
+                    link: linkNode[0].url,
+                    icon: 'LINK',
+                },
+                openInNewTab: false,
+            };
+        } else {
+            prevChosenLink = linkNode[0].chosenLink as ChosenLink;
+        }
     }
 
     let chosenLink: ChosenLink = {
@@ -49,7 +61,7 @@ export const getAndUpsertLink = async <T = {}>(
             editor.selection &&
             unwrapNodes(editor, {
                 at: editor.selection,
-                match: { type },
+                match: { type: types },
             });
 
         return;

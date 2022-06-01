@@ -2,6 +2,7 @@
 
 import {
     ELEMENT_LI,
+    ELEMENT_LINK,
     ELEMENT_OL,
     ELEMENT_PARAGRAPH,
     ELEMENT_UL,
@@ -113,6 +114,16 @@ export const value = [
         type: ELEMENT_PARAGRAPH,
         children: [
             {
+                type: ELEMENT_LINK,
+                children: [{ text: 'This is a Link.' }],
+                url: 'https://frontify.com',
+            },
+        ],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [
+            {
                 type: ELEMENT_LINK_CHOOSER,
                 chosenLink: {
                     searchResult: {
@@ -122,7 +133,7 @@ export const value = [
                 },
                 children: [
                     {
-                        text: 'This is a Link.',
+                        text: 'This is also a Link.',
                     },
                 ],
             },
