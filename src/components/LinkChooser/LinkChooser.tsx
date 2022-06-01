@@ -26,22 +26,22 @@ import { SearchResultsList } from './SearchResultsList';
 import { defaultSection } from './sections';
 import { linkChooserMachine } from './state/machine';
 import { LinkChooserState } from './state/types';
-import { IconLabel, LinkChooserProps, SearchMenuBlock } from './types';
+import { IconName, LinkChooserProps, SearchMenuBlock } from './types';
 import { decoratedResults, doesContainSubstring, findSection, getDefaultData } from './utils/helpers';
 import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection, shouldGoBack } from './utils/state';
 import { createCustomLink } from './utils/transformers';
 import { useManualComboBoxEventHandlers } from './utils/useManualComboBoxHandlers';
 
-export const IconOptions: Record<IconLabel | string, ReactElement> = {
-    [IconLabel.Document]: <IconDocument />,
-    [IconLabel.Library]: <IconDocumentLibrary />,
-    [IconLabel.Link]: <IconLink />,
-    [IconLabel.External]: <IconExternalLink />,
-    [IconLabel.Template]: <IconTemplate />,
-    [IconLabel.Block]: <IconPatternLibrary />,
+export const IconOptions: Record<IconName | string, ReactElement> = {
+    [IconName.Document]: <IconDocument />,
+    [IconName.Library]: <IconDocumentLibrary />,
+    [IconName.Link]: <IconLink />,
+    [IconName.External]: <IconExternalLink />,
+    [IconName.Template]: <IconTemplate />,
+    [IconName.Block]: <IconPatternLibrary />,
 };
 
-export const DEFAULT_ICON = IconLabel.Link;
+export const DEFAULT_ICON = IconName.Link;
 export const CUSTOM_LINK_ID = 'custom-link';
 export const MAX_STORED_ITEMS = 5;
 export const QUERIES_STORAGE_KEY = 'queries';
