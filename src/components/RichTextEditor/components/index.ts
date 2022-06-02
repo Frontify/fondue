@@ -1,6 +1,6 @@
 export * from './bold';
 export * from './checkbox-item';
-export * from './chosen-link';
+export * from './link';
 export * from './code';
 export * from './custom1';
 export * from './custom2';

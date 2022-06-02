@@ -29,7 +29,6 @@ import {
 } from '@udecode/plate';
 import {
     BoldMark,
-    ChosenLinkElement,
     CodeMark,
     Custom1Element,
     Custom2Element,
@@ -38,6 +37,7 @@ import {
     Heading3Element,
     Heading4Element,
     ItalicMark,
+    LinkElement,
     ListItemContentElement,
     ListItemElement,
     OrderedListElement,
@@ -106,7 +106,7 @@ export const getEditorConfig = (textStyles?: TextStyleType[]) => {
 
     const components = createPlateUI({
         // this will override the components over the default ones
-        [ELEMENT_LINK]: ChosenLinkElement,
+        [ELEMENT_LINK]: LinkElement,
         [ELEMENT_UL]: UnorderedListElement,
         [ELEMENT_OL]: OrderedListElement,
         [ELEMENT_LI]: ListItemElement,

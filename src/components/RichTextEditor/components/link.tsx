@@ -7,10 +7,18 @@ import { ChosenLink } from '../plugins/linkChooserPlugin/types';
 import { LinkChooserFlyout } from '../plugins/linkChooserPlugin/ui/LinkChooserFlyout';
 import { LinkChooserPreviewFlyout } from '../plugins/linkChooserPlugin/ui/LinkChooserPreviewFlyout';
 
-export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
+export const LinkElement: FC<PlateRenderElementProps> = (props) => {
     const { children, element, editor } = props;
 
-    const { chosenLink } = element;
+    // Because an old version was already used in clarify, it must be ensured that the element can also handle the old structure.
+    const {
+        chosenLink = {
+            searchResult: {
+                link: element.url,
+            },
+            openInNewTab: false,
+        },
+    } = element;
 
     const [isLinkChooserPreviewFlyoutOpen, setIsLinkChooserPreviewFlyoutOpen] = useState<boolean>(false);
     const [isLinkChooserFlyoutOpen, setIsLinkChooserFlyoutOpen] = useState<boolean>(false);
@@ -19,17 +27,23 @@ export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
     const isReadOnly = useEditableProps(editor).readOnly;
 
     const getHref = () => {
-        return chosenLink ? (chosenLink.searchResult ? element.chosenLink.searchResult.link : '') : '';
+        if (!chosenLink || !chosenLink.searchResult) {
+            return '';
+        }
+        return chosenLink.searchResult.link;
     };
 
     const getTarget = () => {
         const TARGET_DEFAULT = '_self';
         const TARGET_BLANK = '_blank';
-        return chosenLink ? (chosenLink.openInNewTab ? TARGET_BLANK : TARGET_DEFAULT) : TARGET_DEFAULT;
+        if (!chosenLink || !chosenLink.openInNewTab) {
+            return TARGET_DEFAULT;
+        }
+        return TARGET_BLANK;
     };
 
-    const getLinkFromLinkChooser = (prevChosenLink: ChosenLink): Promise<ChosenLink> => {
-        setPrevChosenLink(prevChosenLink);
+    const getLinkFromLinkChooser = (prevLink: ChosenLink): Promise<ChosenLink> => {
+        setPrevChosenLink(prevLink);
         setIsLinkChooserFlyoutOpen(true);
 
         return new Promise<ChosenLink>((resolve) => {
@@ -53,7 +67,7 @@ export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
         }
         unwrapNodes(editor, {
             at: editor.selection,
-            match: { type: 'link_chooser' },
+            match: { type: ['a'] },
         });
     };
 
