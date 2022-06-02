@@ -366,16 +366,6 @@ describe('RichTextEditor Component', () => {
         cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
     });
 
-    it('should render with link with old structure', () => {
-        const link = 'https://smartive.ch';
-        const text = 'This is a link';
-        mount(<RichTextWithLink link={link} text={text} oldStructure={true} />);
-
-        cy.get('[contenteditable=true] a').should('contain.text', text);
-        cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
-        cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
-    });
-
     it('should open link chooser flyout and link', () => {
         const link = 'https://smartive.ch';
         mount(<RichTextEditor />);
@@ -429,9 +419,9 @@ describe('RichTextEditor Component', () => {
     });
 
     it('should edit link with old structure', () => {
-        const link = 'https://smartive.ch';
-        const text = 'This is a link';
-        const additionalText = 'hello';
+        const link = 'https://frontify.com';
+        const text = 'This is a old structured link';
+        const additionalText = 'additional';
         mount(<RichTextWithLink link={link} text={text} oldStructure={true} />);
         cy.get('[contenteditable=true] a').click();
         cy.get(EDIT_LINK_BUTTON).click();
