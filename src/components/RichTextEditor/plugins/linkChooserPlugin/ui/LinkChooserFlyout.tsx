@@ -41,6 +41,7 @@ export const LinkChooserFlyout = ({
             onConfirm={onConfirm}
             trigger={trigger}
             legacyFooter={false}
+            contentMinHeight={152}
             fixedFooter={
                 <FlyoutFooter
                     buttons={[

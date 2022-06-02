@@ -27,17 +27,23 @@ export const LinkElement: FC<PlateRenderElementProps> = (props) => {
     const isReadOnly = useEditableProps(editor).readOnly;
 
     const getHref = () => {
-        return chosenLink ? (chosenLink.searchResult ? chosenLink.searchResult.link : '') : '';
+        if (!chosenLink || !chosenLink.searchResult) {
+            return '';
+        }
+        return chosenLink.searchResult.link;
     };
 
     const getTarget = () => {
         const TARGET_DEFAULT = '_self';
         const TARGET_BLANK = '_blank';
-        return chosenLink ? (chosenLink.openInNewTab ? TARGET_BLANK : TARGET_DEFAULT) : TARGET_DEFAULT;
+        if (!chosenLink || !chosenLink.openInNewTab) {
+            return TARGET_DEFAULT;
+        }
+        return TARGET_BLANK;
     };
 
-    const getLinkFromLinkChooser = (prevChosenLink: ChosenLink): Promise<ChosenLink> => {
-        setPrevChosenLink(prevChosenLink);
+    const getLinkFromLinkChooser = (prevLink: ChosenLink): Promise<ChosenLink> => {
+        setPrevChosenLink(prevLink);
         setIsLinkChooserFlyoutOpen(true);
 
         return new Promise<ChosenLink>((resolve) => {
