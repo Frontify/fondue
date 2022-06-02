@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from '@cypress/react';
-import { ELEMENT_PARAGRAPH } from '@udecode/plate';
+import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
 import React, { FC, useState } from 'react';
-import { ELEMENT_LINK_CHOOSER } from './plugins/linkChooserPlugin/types';
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from './RichTextEditor';
 import { EditorActions } from './utils/actions';
 import { textStyleClassnames, TextStyles } from './utils/getTextStyles';
@@ -46,7 +45,7 @@ const RichTextWithLink: FC<{ text: string; link: string }> = ({ text, link }) =>
                     type: ELEMENT_PARAGRAPH,
                     children: [
                         {
-                            type: ELEMENT_LINK_CHOOSER,
+                            type: ELEMENT_LINK,
                             chosenLink: {
                                 searchResult: {
                                     link,
@@ -58,6 +57,25 @@ const RichTextWithLink: FC<{ text: string; link: string }> = ({ text, link }) =>
                                     text,
                                 },
                             ],
+                        },
+                    ],
+                },
+            ])}
+        />
+    );
+};
+
+const RichTextWithLinkWithOldStructure: FC<{ text: string; link: string }> = ({ text, link }) => {
+    return (
+        <RichTextEditor
+            value={JSON.stringify([
+                {
+                    type: ELEMENT_PARAGRAPH,
+                    children: [
+                        {
+                            type: ELEMENT_LINK,
+                            children: [{ text }],
+                            url: link,
                         },
                     ],
                 },
@@ -122,11 +140,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders a toolbar with custom controls', () => {
-        const actions = [
-            [EditorActions.LINK_CHOOSER],
-            [EditorActions.ITALIC, EditorActions.BOLD],
-            [EditorActions.LINK_CHOOSER],
-        ];
+        const actions = [[EditorActions.LINK], [EditorActions.ITALIC, EditorActions.BOLD], [EditorActions.LINK]];
         mount(<RichTextEditor actions={actions} />);
 
         insertTextAndOpenToolbar();
@@ -353,6 +367,16 @@ describe('RichTextEditor Component', () => {
         cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
     });
 
+    it('should render with link with old structure', () => {
+        const link = 'https://smartive.ch';
+        const text = 'This is a link';
+        mount(<RichTextWithLinkWithOldStructure link={link} text={text} />);
+
+        cy.get('[contenteditable=true] a').should('contain.text', text);
+        cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
+        cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
+    });
+
     it('should open link chooser flyout and link', () => {
         const link = 'https://smartive.ch';
         mount(<RichTextEditor />);
@@ -403,6 +427,22 @@ describe('RichTextEditor Component', () => {
         cy.get(BUTTON).eq(1).click();
         cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalText);
         cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
+    });
+
+    it('should edit link with old structure', () => {
+        const link = 'https://smartive.ch';
+        const text = 'This is a link';
+        const additionalText = 'hello';
+        mount(<RichTextWithLinkWithOldStructure link={link} text={text} />);
+        cy.get('[contenteditable=true] a').click();
+        cy.get(EDIT_LINK_BUTTON).click();
+
+        cy.get('[type=text]').click().type(additionalText);
+        cy.get(LINK_CHOOSER_CHECKBOX).click();
+
+        cy.get(BUTTON).eq(1).click();
+        cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalText);
+        cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
     });
 
     it('should remove link', () => {

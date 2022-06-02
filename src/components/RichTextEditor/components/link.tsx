@@ -7,9 +7,10 @@ import { ChosenLink } from '../plugins/linkChooserPlugin/types';
 import { LinkChooserFlyout } from '../plugins/linkChooserPlugin/ui/LinkChooserFlyout';
 import { LinkChooserPreviewFlyout } from '../plugins/linkChooserPlugin/ui/LinkChooserPreviewFlyout';
 
-export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
+export const LinkElement: FC<PlateRenderElementProps> = (props) => {
     const { children, element, editor } = props;
 
+    // Because an old version was already used in clarify, it must be ensured that the element can also handle the old structure.
     const {
         chosenLink = {
             searchResult: {
@@ -60,7 +61,7 @@ export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
         }
         unwrapNodes(editor, {
             at: editor.selection,
-            match: { type: ['link_chooser', 'a'] },
+            match: { type: ['a'] },
         });
     };
 
