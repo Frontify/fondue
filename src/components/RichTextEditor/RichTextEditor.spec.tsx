@@ -37,51 +37,50 @@ const RichTextWithClearButton: FC<Pick<RichTextEditorProps, 'value'>> = ({ value
     );
 };
 
-const RichTextWithLink: FC<{ text: string; link: string }> = ({ text, link }) => {
-    return (
-        <RichTextEditor
-            value={JSON.stringify([
-                {
-                    type: ELEMENT_PARAGRAPH,
-                    children: [
-                        {
-                            type: ELEMENT_LINK,
-                            chosenLink: {
-                                searchResult: {
-                                    link,
-                                },
-                                openInNewTab: true,
+const RichTextWithLink: FC<{ text: string; link: string; oldStructure?: boolean }> = ({
+    text,
+    link,
+    oldStructure = false,
+}) => {
+    let value = null;
+    if (!oldStructure) {
+        value = JSON.stringify([
+            {
+                type: ELEMENT_PARAGRAPH,
+                children: [
+                    {
+                        type: ELEMENT_LINK,
+                        chosenLink: {
+                            searchResult: {
+                                link,
                             },
-                            children: [
-                                {
-                                    text,
-                                },
-                            ],
+                            openInNewTab: true,
                         },
-                    ],
-                },
-            ])}
-        />
-    );
-};
+                        children: [
+                            {
+                                text,
+                            },
+                        ],
+                    },
+                ],
+            },
+        ]);
+    } else {
+        value = JSON.stringify([
+            {
+                type: ELEMENT_PARAGRAPH,
+                children: [
+                    {
+                        type: ELEMENT_LINK,
+                        children: [{ text }],
+                        url: link,
+                    },
+                ],
+            },
+        ]);
+    }
 
-const RichTextWithLinkWithOldStructure: FC<{ text: string; link: string }> = ({ text, link }) => {
-    return (
-        <RichTextEditor
-            value={JSON.stringify([
-                {
-                    type: ELEMENT_PARAGRAPH,
-                    children: [
-                        {
-                            type: ELEMENT_LINK,
-                            children: [{ text }],
-                            url: link,
-                        },
-                    ],
-                },
-            ])}
-        />
-    );
+    return <RichTextEditor value={value} />;
 };
 
 describe('RichTextEditor Component', () => {
@@ -370,7 +369,7 @@ describe('RichTextEditor Component', () => {
     it('should render with link with old structure', () => {
         const link = 'https://smartive.ch';
         const text = 'This is a link';
-        mount(<RichTextWithLinkWithOldStructure link={link} text={text} />);
+        mount(<RichTextWithLink link={link} text={text} oldStructure={true} />);
 
         cy.get('[contenteditable=true] a').should('contain.text', text);
         cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
@@ -433,7 +432,7 @@ describe('RichTextEditor Component', () => {
         const link = 'https://smartive.ch';
         const text = 'This is a link';
         const additionalText = 'hello';
-        mount(<RichTextWithLinkWithOldStructure link={link} text={text} />);
+        mount(<RichTextWithLink link={link} text={text} oldStructure={true} />);
         cy.get('[contenteditable=true] a').click();
         cy.get(EDIT_LINK_BUTTON).click();
 
