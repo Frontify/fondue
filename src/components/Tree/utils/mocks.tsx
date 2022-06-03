@@ -152,6 +152,14 @@ export const mockNodesFlat: mockNodeType = () => [
         badge: <IconSmileysPeople size={IconSize.Size16} />,
     },
     ...testCategoryNodes,
+    {
+        id: '1-3',
+        name: 'Category Without Subitems',
+        icon: <IconFolder size={IconSize.Size16} />,
+        parentId: '1',
+        value: 'https://weare.frontify.com/document/923#/test',
+        sort: null,
+    },
 ];
 
 export const mockNodesTree: DraggableItem<TreeNodeItem>[] = [
