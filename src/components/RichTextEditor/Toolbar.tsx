@@ -7,7 +7,7 @@ import { ButtonGroupProps, ButtonGroupWidths, ToolbarCustomProps } from './types
 import { defaultActions } from './utils/actions';
 import { calculateToolbarWidth, getButtonGroupWidthsPerRow } from './utils/toolbarCalc';
 
-const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyles, onLoaded, onFlyoutToggle }) => {
+const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyles, onLoaded }) => {
     const ref = useRef<HTMLDivElement | null>(null);
 
     const editor = usePlateEditorRef(editorId);
@@ -25,9 +25,7 @@ const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyle
             className="tw-flex tw-items-center tw-h-12 tw-p-2"
         >
             {actions.map((action) => (
-                <React.Fragment key={action}>
-                    {toolbarComponents(editor, editorId, textStyles, onFlyoutToggle)[action]}
-                </React.Fragment>
+                <React.Fragment key={action}>{toolbarComponents(editor, editorId, textStyles)[action]}</React.Fragment>
             ))}
         </div>
     );
@@ -82,6 +80,7 @@ export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, textStyles, actions 
                         enabled: true,
                         phase: 'beforeWrite',
                         fn: ({ state }) => {
+                            console.log(width);
                             if (width) {
                                 state.styles.popper.visibility = 'visible';
                             }

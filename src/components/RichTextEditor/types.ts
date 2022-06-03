@@ -21,7 +21,6 @@ export type ButtonGroupProps = {
     actions: EditorActions[];
     textStyles?: TextStyleType[];
     onLoaded: (index: number, width?: number) => void;
-    onFlyoutToggle?: (isFlyoutOpen: boolean) => void;
 };
 
 export type ButtonGroupWidths = { actions: EditorActions[]; buttonGroupWidth: number; index: number }[];
