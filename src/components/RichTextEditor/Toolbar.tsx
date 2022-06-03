@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { BalloonToolbar, usePlateEditorRef } from '@udecode/plate';
-import { merge } from '@utilities/merge';
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { toolbarComponents } from './toolbarComponents';
 import { ButtonGroupProps, ButtonGroupWidths, ToolbarCustomProps } from './types';
 import { defaultActions } from './utils/actions';
@@ -44,79 +43,57 @@ const ButtonGroup: FC<ButtonGroupProps> = ({
     );
 };
 
-const DEFAULT_WIDTH = '100%';
-const OFFSET_IN_PX = 12;
-
-export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, textStyles, actions = [] }) => {
+export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, textStyles, actions = [], rteWidth }) => {
     const toolbarActions = actions.length > 0 ? actions : defaultActions;
-    const toolbarRef = useRef<HTMLDivElement | null>(null);
     const [buttonGroupWidths, setButtonGroupWidths] = useState<ButtonGroupWidths>(
         toolbarActions.map((actions, index) => ({ actions, buttonGroupWidth: 0, index })),
     );
-    const [style, setStyle] = useState({ width: DEFAULT_WIDTH });
-    const [toolbarWidth, setToolbarWidth] = useState<number>(0);
-    const [showToolbar, setShowToolbar] = useState(false);
+    const maxWidth = buttonGroupWidths.reduce((prev, { buttonGroupWidth }) => prev + buttonGroupWidth, 0);
 
-    useMemo(() => {
-        if (toolbarRef.current) {
-            const observer = new ResizeObserver((entries) => {
-                if (entries.length > 0) {
-                    /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded" 
-                        from being thrown during cypress component tests */
-                    setTimeout(() => setToolbarWidth(entries[0].target.clientWidth + 10), 0);
-                }
-            });
+    const [width, setWidth] = useState<number | null>(null);
+    const [hideToolbar, setHideToolbar] = useState(false);
 
-            observer.observe(toolbarRef.current);
-            return observer;
-        }
-    }, [toolbarRef.current]);
+    const toolbarButtonGroups =
+        maxWidth > rteWidth ? getButtonGroupWidthsPerRow(rteWidth, buttonGroupWidths) : [buttonGroupWidths];
 
-    const toolbarButtonGroups = getButtonGroupWidthsPerRow(toolbarWidth, buttonGroupWidths);
-
+    const toolbarWidthSum = calculateToolbarWidth(toolbarButtonGroups);
     useEffect(() => {
-        const toolbarWidthSum = calculateToolbarWidth(toolbarButtonGroups);
-        setStyle({
-            width:
-                toolbarWidthSum !== 0
-                    ? `${toolbarWidthSum + toolbarButtonGroups.length + OFFSET_IN_PX}px`
-                    : DEFAULT_WIDTH,
-        });
-
+        if (toolbarWidthSum !== 0) {
+            setWidth(toolbarWidthSum + buttonGroupWidths.length * 2);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [buttonGroupWidths]);
-    const arrow = document.querySelector('#arrow');
+    }, [buttonGroupWidths, rteWidth]);
 
     return (
         <BalloonToolbar
             popperOptions={{
-                ...(showToolbar ? { isHidden: false } : {}),
+                ...(hideToolbar ? { isHidden: false } : {}),
                 modifiers: [
                     { name: 'offset', options: { offset: [0, 2] } },
                     { name: 'flip', options: { fallbackPlacements: ['bottom', 'top', 'right', 'left'] } },
                     {
-                        name: 'arrow',
-                        options: {
-                            element: arrow,
+                        name: 'sameWidth',
+                        enabled: true,
+                        fn: ({ state }) => {
+                            state.styles.popper.width = width ? `${width}px` : '100%';
                         },
+                        phase: 'beforeWrite',
+                        requires: ['computeStyles'],
                     },
                 ],
                 placement: 'top',
             }}
-            styles={{ root: { border: 'none', background: '#ffffff' } }}
-            classNames={{
-                root: `${showToolbar && 'tw-invisible'}`,
-                active: '',
+            styles={{
+                root: {
+                    border: 'none',
+                    background: '#ffffff',
+                    visibility: hideToolbar ? 'hidden' : 'visible', //|| !width
+                },
             }}
         >
             <div
                 data-test-id="toolbar"
-                style={style}
-                className={merge([
-                    'tw-rounded tw-min-h-12 tw-border tw-border-line tw-shadow-lg tw-bg-base tw-divide-y tw-divide-line tw-flex tw-flex-wrap',
-                    style.width === DEFAULT_WIDTH && 'tw-invisible',
-                ])}
-                ref={toolbarRef}
+                className="tw-rounded tw-min-h-12 tw-border tw-border-line tw-shadow-lg tw-bg-base tw-divide-y tw-divide-line tw-flex tw-flex-wrap"
             >
                 {toolbarButtonGroups.map((row, index) => (
                     <div key={index} className="tw-divide-x tw-divide-line tw-flex tw-w-full tw-flex-wrap">
@@ -139,8 +116,8 @@ export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, textStyles, actions 
                                             return newState;
                                         });
                                     }}
-                                    setShowToolbar={setShowToolbar}
-                                    onClose={() => setStyle({ width: DEFAULT_WIDTH })}
+                                    setShowToolbar={setHideToolbar}
+                                    onClose={() => setWidth(null)}
                                 />
                             );
                         })}

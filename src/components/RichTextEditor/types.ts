@@ -6,6 +6,7 @@ import { TextStyleType } from './utils/getTextStyles';
 
 export type ToolbarCustomProps = {
     editorId?: string;
+    rteWidth: number;
     textStyles?: TextStyleType[];
     actions?: EditorActions[][];
 };

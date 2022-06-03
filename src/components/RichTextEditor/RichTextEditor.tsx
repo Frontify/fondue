@@ -3,7 +3,7 @@
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Plate, TNode, usePlateEditorState } from '@udecode/plate';
 import { debounce } from '@utilities/debounce';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './Toolbar';
 import { EditorActions } from './utils/actions';
@@ -39,12 +39,29 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const editorId = id || useMemoizedId();
     const editor = usePlateEditorState(editorId);
     const localValue = useRef<TNode[] | null>(null);
+    const rteRef = useRef<HTMLDivElement | null>(null);
+    const [rteWidth, setRteWidth] = useState<number>(0);
+
     const [debouncedValue, setDebouncedValue] = useState<TNode[] | null>(null);
     const editableProps: EditableProps = {
         placeholder,
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
     };
+    useMemo(() => {
+        if (rteRef.current) {
+            const observer = new ResizeObserver((entries) => {
+                if (entries.length > 0) {
+                    /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded" 
+                        from being thrown during cypress component tests */
+                    setTimeout(() => setRteWidth(entries[0].target.clientWidth + 10), 0);
+                }
+            });
+
+            observer.observe(rteRef.current);
+            return observer;
+        }
+    }, [rteRef.current]);
 
     useEffect(() => {
         debouncedValue && onTextChange && onTextChange(JSON.stringify(debouncedValue));
@@ -73,7 +90,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     }, []);
 
     return (
-        <div data-test-id="rich-text-editor" className="tw-relative tw-w-full">
+        <div data-test-id="rich-text-editor" className="tw-relative tw-w-full" ref={rteRef}>
             <Plate
                 id={editorId}
                 initialValue={parseRawValue(initialValue)}
@@ -81,7 +98,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 editableProps={editableProps}
                 plugins={getEditorConfig(textStyles)}
             >
-                <Toolbar editorId={editorId} textStyles={textStyles} actions={actions} />
+                <Toolbar editorId={editorId} textStyles={textStyles} actions={actions} rteWidth={rteWidth} />
             </Plate>
         </div>
     );
