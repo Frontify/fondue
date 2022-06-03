@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from '@cypress/react';
-import { ELEMENT_PARAGRAPH } from '@udecode/plate';
+import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
 import React, { FC, useState } from 'react';
-import { ELEMENT_LINK_CHOOSER } from './plugins/linkChooserPlugin/types';
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from './RichTextEditor';
 import { EditorActions } from './utils/actions';
 import { textStyleClassnames, TextStyles } from './utils/getTextStyles';
@@ -46,7 +45,7 @@ const RichTextWithLink: FC<{ text: string; link: string }> = ({ text, link }) =>
                     type: ELEMENT_PARAGRAPH,
                     children: [
                         {
-                            type: ELEMENT_LINK_CHOOSER,
+                            type: ELEMENT_LINK,
                             chosenLink: {
                                 searchResult: {
                                     link,
@@ -122,11 +121,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders a toolbar with custom controls', () => {
-        const actions = [
-            [EditorActions.LINK_CHOOSER],
-            [EditorActions.ITALIC, EditorActions.BOLD],
-            [EditorActions.LINK_CHOOSER],
-        ];
+        const actions = [[EditorActions.LINK], [EditorActions.ITALIC, EditorActions.BOLD], [EditorActions.LINK]];
         mount(<RichTextEditor actions={actions} />);
 
         insertTextAndOpenToolbar();

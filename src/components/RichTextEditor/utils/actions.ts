@@ -12,7 +12,7 @@ export enum EditorActions {
     STRIKETHROUGH = 'strikethrough',
     CODE = 'code',
     CHECK_ITEM = 'check-item',
-    LINK_CHOOSER = 'link-chooser',
+    LINK = 'link',
     ORDERED_LIST = 'ordered-list',
     UNORDERED_LIST = 'unordered-list',
 }
@@ -24,7 +24,7 @@ export const defaultActions = [
         EditorActions.ITALIC,
         EditorActions.UNDERLINE,
         EditorActions.STRIKETHROUGH,
-        EditorActions.LINK_CHOOSER,
+        EditorActions.LINK,
         EditorActions.CODE,
     ],
     [

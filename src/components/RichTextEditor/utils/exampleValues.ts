@@ -2,6 +2,7 @@
 
 import {
     ELEMENT_LI,
+    ELEMENT_LINK,
     ELEMENT_OL,
     ELEMENT_PARAGRAPH,
     ELEMENT_UL,
@@ -12,7 +13,6 @@ import {
     MARK_UNDERLINE,
 } from '@udecode/plate';
 import { ELEMENT_CHECK_ITEM } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
-import { ELEMENT_LINK_CHOOSER } from '../plugins/linkChooserPlugin/types';
 import { TextStyles } from './getTextStyles';
 
 type CreateElementProps = {
@@ -113,7 +113,17 @@ export const value = [
         type: ELEMENT_PARAGRAPH,
         children: [
             {
-                type: ELEMENT_LINK_CHOOSER,
+                type: ELEMENT_LINK,
+                children: [{ text: 'This is a Link.' }],
+                url: 'https://frontify.com',
+            },
+        ],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [
+            {
+                type: ELEMENT_LINK,
                 chosenLink: {
                     searchResult: {
                         link: 'https://smartive.ch',
@@ -122,7 +132,7 @@ export const value = [
                 },
                 children: [
                     {
-                        text: 'This is a Link.',
+                        text: 'This is also a Link.',
                     },
                 ],
             },

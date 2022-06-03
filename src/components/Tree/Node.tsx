@@ -31,7 +31,6 @@ export const renderNodeArray = ({
             node={node}
             nodeIndex={i}
             activeIds={activeIds}
-            strong
             onClick={onClick}
             isFirst={i === 0}
             onDrop={onDrop}
@@ -115,12 +114,7 @@ export const Node = ({
 
     /* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
     return (
-        <li
-            data-test-id="node"
-            ref={drag}
-            style={{ opacity }}
-            className={merge([parentIds.length === 1 && 'tw-pl-8', parentIds.length > 1 && 'tw-pl-16'])}
-        >
+        <li data-test-id="node" ref={drag} style={{ opacity }}>
             {isFirst && (
                 <DropZone
                     data={{
@@ -141,27 +135,32 @@ export const Node = ({
             >
                 <div
                     className={merge([
-                        ' tw-flex tw-py-1 tw-px-2 tw-rounded tw-no-underline tw-leading-6',
+                        'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-text-text',
                         strong && 'tw-font-bold',
-                        value && !selected && 'hover:tw-bg-black-5',
-                        selected ? 'tw-bg-violet-60 tw-text-white' : 'tw-text-black',
+                        value && !selected && 'hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
+                        selected &&
+                            'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover',
                     ])}
                     onMouseEnter={setHoveredTrue}
                     onMouseLeave={setHoveredFalse}
                 >
                     <a
                         data-test-id="node-link"
-                        className="tw-flex tw-items-center tw-flex-grow tw-justify-between tw-cursor-pointer"
+                        className={merge([
+                            'tw-flex tw-items-center tw-flex-grow tw-justify-between tw-cursor-pointer',
+                            parentIds.length === 1 && 'tw-pl-4',
+                            parentIds.length > 1 && 'tw-pl-8',
+                        ])}
                         aria-selected={selected}
                         onClick={onNodeClick}
                     >
-                        <div className="tw-flex tw-space-x-2 tw-items-center">
-                            <span data-test-id="toggle" onClick={toggleNodesVisibility}>
+                        <div className="tw-flex tw-space-x-1 tw-items-center">
+                            <span data-test-id="toggle" className="tw-w-3" onClick={toggleNodesVisibility}>
                                 {nodes &&
                                     (showNodes ? (
-                                        <IconCaretDown size={IconSize.Size16} />
+                                        <IconCaretDown size={IconSize.Size12} />
                                     ) : (
-                                        <IconCaretRight size={IconSize.Size16} />
+                                        <IconCaretRight size={IconSize.Size12} />
                                     ))}
                             </span>
                             {icon && <span>{icon}</span>}
