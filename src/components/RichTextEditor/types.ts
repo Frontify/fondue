@@ -8,6 +8,7 @@ export type ToolbarCustomProps = {
     editorId?: string;
     textStyles?: TextStyleType[];
     actions?: EditorActions[][];
+    editorWidth?: number;
 };
 
 export type IconStylingWrapperProps = {

@@ -39,6 +39,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const editorId = id || useMemoizedId();
     const editor = usePlateEditorState(editorId);
     const localValue = useRef<TNode[] | null>(null);
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
     const [debouncedValue, setDebouncedValue] = useState<TNode[] | null>(null);
     const editableProps: EditableProps = {
         placeholder,
@@ -73,7 +74,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     }, []);
 
     return (
-        <div data-test-id="rich-text-editor" className="tw-relative tw-w-full">
+        <div data-test-id="rich-text-editor" className="tw-relative tw-w-full" ref={wrapperRef}>
             <Plate
                 id={editorId}
                 initialValue={parseRawValue(initialValue)}
@@ -81,7 +82,12 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 editableProps={editableProps}
                 plugins={getEditorConfig(textStyles)}
             >
-                <Toolbar editorId={editorId} textStyles={textStyles} actions={actions} />
+                <Toolbar
+                    editorId={editorId}
+                    textStyles={textStyles}
+                    actions={actions}
+                    editorWidth={wrapperRef.current?.clientWidth}
+                />
             </Plate>
         </div>
     );
