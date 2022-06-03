@@ -20,9 +20,8 @@ export type ButtonGroupProps = {
     editorId?: string;
     actions: EditorActions[];
     textStyles?: TextStyleType[];
-    onClose: () => void;
     onLoaded: (index: number, width?: number) => void;
-    setShowToolbar?: (isFlyoutOpen: boolean) => void;
+    onFlyoutToggle?: (isFlyoutOpen: boolean) => void;
 };
 
 export type ButtonGroupWidths = { actions: EditorActions[]; buttonGroupWidth: number; index: number }[];

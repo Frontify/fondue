@@ -3,7 +3,7 @@
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Plate, TNode, usePlateEditorState } from '@udecode/plate';
 import { debounce } from '@utilities/debounce';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './Toolbar';
 import { EditorActions } from './utils/actions';
@@ -38,14 +38,30 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 }) => {
     const editorId = id || useMemoizedId();
     const editor = usePlateEditorState(editorId);
+    const editorRef = useRef<HTMLDivElement | null>(null);
+    const [editorWidth, setEditorWidth] = useState<number | undefined>();
     const localValue = useRef<TNode[] | null>(null);
-    const wrapperRef = useRef<HTMLDivElement | null>(null);
     const [debouncedValue, setDebouncedValue] = useState<TNode[] | null>(null);
     const editableProps: EditableProps = {
         placeholder,
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
     };
+
+    useMemo(() => {
+        if (editorRef.current) {
+            const observer = new ResizeObserver((entries) => {
+                if (entries.length > 0) {
+                    /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded" 
+                        from being thrown during cypress component tests */
+                    setTimeout(() => setEditorWidth(entries[0].target.clientWidth), 0);
+                }
+            });
+
+            observer.observe(editorRef.current);
+            return observer;
+        }
+    }, [editorRef.current]);
 
     useEffect(() => {
         debouncedValue && onTextChange && onTextChange(JSON.stringify(debouncedValue));
@@ -74,7 +90,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     }, []);
 
     return (
-        <div data-test-id="rich-text-editor" className="tw-relative tw-w-full" ref={wrapperRef}>
+        <div data-test-id="rich-text-editor" className="tw-relative tw-w-full" ref={editorRef}>
             <Plate
                 id={editorId}
                 initialValue={parseRawValue(initialValue)}
@@ -82,12 +98,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 editableProps={editableProps}
                 plugins={getEditorConfig(textStyles)}
             >
-                <Toolbar
-                    editorId={editorId}
-                    textStyles={textStyles}
-                    actions={actions}
-                    editorWidth={wrapperRef.current?.clientWidth}
-                />
+                <Toolbar editorId={editorId} textStyles={textStyles} actions={actions} editorWidth={editorWidth} />
             </Plate>
         </div>
     );

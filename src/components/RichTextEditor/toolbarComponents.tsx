@@ -53,7 +53,6 @@ export const toolbarComponents = (
     editor: PlateEditor,
     editorId?: string,
     textStyles?: TextStyleType[],
-    setShowToolbar?: (isFlyoutOpen: boolean) => void,
 ): Record<EditorActions, ReactElement> => ({
     [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} textStyles={textStyles} />,
     [EditorActions.ALIGN_LEFT]: (
@@ -141,7 +140,6 @@ export const toolbarComponents = (
             classNames={classNames}
             styles={styles}
             type={getPluginType(editor, ELEMENT_LINK_CHOOSER)}
-            setShowToolbar={setShowToolbar}
         />
     ),
     [EditorActions.ORDERED_LIST]: (

@@ -6,7 +6,7 @@ import { getAndUpsertLink } from '../transforms/getAndUpsertLink';
 import { ChosenLink } from '../types';
 import { LinkChooserFlyout } from './LinkChooserFlyout';
 
-export const EditLinkChooserButton = ({ id, styles, classNames, setShowToolbar }: Omit<ToolbarButtonProps, 'icon'>) => {
+export const EditLinkChooserButton = ({ id, styles, classNames }: Omit<ToolbarButtonProps, 'icon'>) => {
     id = useEventPlateId(id);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const editor = usePlateEditorState(id)!;
@@ -29,11 +29,6 @@ export const EditLinkChooserButton = ({ id, styles, classNames, setShowToolbar }
             });
         });
     };
-
-    useEffect(() => {
-        setShowToolbar && setShowToolbar(isFlyoutOpen);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isFlyoutOpen]);
 
     return (
         <LinkChooserFlyout

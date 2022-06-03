@@ -1,32 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Modifier } from '@popperjs/core';
 import { BalloonToolbar, usePlateEditorRef } from '@udecode/plate';
-import { merge } from '@utilities/merge';
-import { startOfYesterday } from 'date-fns/esm';
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { toolbarComponents } from './toolbarComponents';
 import { ButtonGroupProps, ButtonGroupWidths, ToolbarCustomProps } from './types';
 import { defaultActions } from './utils/actions';
 import { calculateToolbarWidth, getButtonGroupWidthsPerRow } from './utils/toolbarCalc';
 
-const ButtonGroup: FC<ButtonGroupProps> = ({
-    index,
-    actions,
-    editorId,
-    textStyles,
-    onLoaded,
-    onClose,
-    setShowToolbar,
-}) => {
+const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyles, onLoaded, onFlyoutToggle }) => {
     const ref = useRef<HTMLDivElement | null>(null);
 
     const editor = usePlateEditorRef(editorId);
 
     useEffect(() => {
         onLoaded(index, ref.current?.clientWidth);
-
-        return onClose();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ref.current?.clientWidth]);
 
@@ -39,14 +26,13 @@ const ButtonGroup: FC<ButtonGroupProps> = ({
         >
             {actions.map((action) => (
                 <React.Fragment key={action}>
-                    {toolbarComponents(editor, editorId, textStyles, setShowToolbar)[action]}
+                    {toolbarComponents(editor, editorId, textStyles, onFlyoutToggle)[action]}
                 </React.Fragment>
             ))}
         </div>
     );
 };
 
-const DEFAULT_WIDTH = '100%';
 const OFFSET_IN_PX = 12;
 
 export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, textStyles, actions = [], editorWidth }) => {
@@ -56,14 +42,13 @@ export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, textStyles, actions 
         toolbarActions.map((actions, index) => ({ actions, buttonGroupWidth: 0, index })),
     );
     const [width, setWidth] = useState<number | null>(null);
-    const [showToolbar, setShowToolbar] = useState(false);
-
     const toolbarButtonGroups = getButtonGroupWidthsPerRow(editorWidth || 0, buttonGroupWidths);
 
     useEffect(() => {
         const toolbarWidthSum = calculateToolbarWidth(toolbarButtonGroups);
-        setWidth(toolbarWidthSum !== 0 ? toolbarWidthSum + toolbarButtonGroups.length + OFFSET_IN_PX : null);
-
+        if (toolbarWidthSum > 0) {
+            setWidth(toolbarWidthSum + toolbarButtonGroups.length + OFFSET_IN_PX);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [buttonGroupWidths]);
     const arrow = document.querySelector('#arrow');
@@ -71,7 +56,6 @@ export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, textStyles, actions 
     return (
         <BalloonToolbar
             popperOptions={{
-                ...(showToolbar ? { isHidden: false } : {}),
                 modifiers: [
                     { name: 'offset', options: { offset: [0, 2] } },
                     { name: 'flip', options: { fallbackPlacements: ['bottom', 'top'] } },
@@ -116,30 +100,26 @@ export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, textStyles, actions 
             >
                 {toolbarButtonGroups.map((row, index) => (
                     <div key={index} className="tw-divide-x tw-divide-line tw-flex tw-w-full tw-flex-wrap">
-                        {row.map(({ actions, index }) => {
-                            return (
-                                <ButtonGroup
-                                    key={index}
-                                    actions={actions}
-                                    index={index}
-                                    textStyles={textStyles}
-                                    editorId={editorId}
-                                    onLoaded={(index, width) => {
-                                        return setButtonGroupWidths((state) => {
-                                            const newState = [...state];
-                                            newState[index] = {
-                                                actions,
-                                                buttonGroupWidth: width ?? 0,
-                                                index,
-                                            };
-                                            return newState;
-                                        });
-                                    }}
-                                    setShowToolbar={setShowToolbar}
-                                    onClose={() => {}}
-                                />
-                            );
-                        })}
+                        {row.map(({ actions, index }) => (
+                            <ButtonGroup
+                                key={index}
+                                actions={actions}
+                                index={index}
+                                textStyles={textStyles}
+                                editorId={editorId}
+                                onLoaded={(index, width) =>
+                                    setButtonGroupWidths((state) => {
+                                        const newState = [...state];
+                                        newState[index] = {
+                                            actions,
+                                            buttonGroupWidth: width ?? 0,
+                                            index,
+                                        };
+                                        return newState;
+                                    })
+                                }
+                            />
+                        ))}
                     </div>
                 ))}
             </div>
