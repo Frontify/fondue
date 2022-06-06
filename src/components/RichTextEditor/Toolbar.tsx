@@ -66,7 +66,7 @@ export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, textStyles, actions 
                     },
                 ],
             }}
-            styles={{ root: { border: 'none' } }}
+            styles={{ root: { border: 'none', background: '#ffffff' } }}
         >
             <div
                 data-test-id="toolbar"
