@@ -9,7 +9,7 @@ import { LinkChooserPreviewFlyout } from '../plugins/linkChooserPlugin/ui/LinkCh
 
 export const LINK_CHOOSER_CLASS_NAMES = 'tw-text-text-interactive tw-underline tw-cursor-pointer';
 
-export const ChosenLinkElement: FC<PlateRenderElementProps> = (props) => {
+export const LinkElement: FC<PlateRenderElementProps> = (props) => {
     const { children, element, editor } = props;
 
     // Because an old version was already used in clarify, it must be ensured that the element can also handle the old structure.

@@ -1,5 +1,5 @@
 import { Flyout } from '@components/Flyout';
-import { LINK_CHOOSER_CLASS_NAMES } from '@components/RichTextEditor/components/chosen-link';
+import { LINK_CHOOSER_CLASS_NAMES } from '@components/RichTextEditor/components/link';
 import { IconPen, IconTrash } from '@foundation/Icon';
 import React, { HTMLAttributes, MutableRefObject, ReactNode } from 'react';
 

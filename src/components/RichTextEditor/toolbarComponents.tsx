@@ -17,6 +17,7 @@ import {
 } from '@foundation/Icon';
 import {
     AlignToolbarButton,
+    ELEMENT_LINK,
     ELEMENT_OL,
     ELEMENT_UL,
     ListToolbarButton,
@@ -32,7 +33,6 @@ import {
 import React, { FC, ReactElement } from 'react';
 import { ELEMENT_CHECK_ITEM } from './plugins/checkboxListPlugin/createCheckboxListPlugin';
 import { CheckboxListToolbarButton } from './plugins/checkboxListPlugin/ui/CheckboxListToolbarButton';
-import { ELEMENT_LINK_CHOOSER } from './plugins/linkChooserPlugin/types';
 import { EditLinkChooserButton } from './plugins/linkChooserPlugin/ui/EditLinkChooserButton';
 import { TextStyleDropdown } from './TextStyleDropdown/TextStyleDropdown';
 import { IconStylingWrapperProps } from './types';
@@ -135,12 +135,8 @@ export const toolbarComponents = (
             styles={styles}
         />
     ),
-    [EditorActions.LINK_CHOOSER]: (
-        <EditLinkChooserButton
-            classNames={classNames}
-            styles={styles}
-            type={getPluginType(editor, ELEMENT_LINK_CHOOSER)}
-        />
+    [EditorActions.LINK]: (
+        <EditLinkChooserButton classNames={classNames} styles={styles} type={getPluginType(editor, ELEMENT_LINK)} />
     ),
     [EditorActions.ORDERED_LIST]: (
         <ListToolbarButton
