@@ -20,7 +20,6 @@ export type ButtonGroupProps = {
     editorId?: string;
     actions: EditorActions[];
     textStyles?: TextStyleType[];
-    onLoaded: (index: number, width?: number) => void;
 };
 
 export type ButtonGroupWidths = { actions: EditorActions[]; buttonGroupWidth: number; index: number }[];

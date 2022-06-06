@@ -1,5 +1,5 @@
 import { ToolbarButton, ToolbarButtonProps, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
-import React, { MutableRefObject, useEffect, useState } from 'react';
+import React, { MutableRefObject, useState } from 'react';
 import { IconLink, IconSize } from '../../../../..';
 import { ELEMENT_CHECK_ITEM } from '../../checkboxListPlugin/createCheckboxListPlugin';
 import { getAndUpsertLink } from '../transforms/getAndUpsertLink';
@@ -51,9 +51,6 @@ export const EditLinkChooserButton = ({ id, styles, classNames }: Omit<ToolbarBu
                         onMouseDown={async (event) => {
                             event.stopPropagation();
                             event.preventDefault();
-                            if (!editor || isFlyoutOpen) {
-                                return;
-                            }
 
                             getAndUpsertLink(editor, getLinkFromLinkChooser);
                         }}
