@@ -1,17 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCaretDown } from '@foundation/Icon';
-import {
-    PlateEditor,
-    getNodes,
-    getPreventDefaultHandler,
-    isElement,
-    isType,
-    usePlateEditorState,
-} from '@udecode/plate';
+import { getPreventDefaultHandler, usePlateEditorState } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import React from 'react';
-import { TextStyles, textStyleTitles } from '../utils/getTextStyles';
+import { AvailableTextStyles } from '../types';
+import { textStyleTitles } from '../utils/getTextStyles';
+import { useSelectedTextStyles } from '../utils/useSelectedTextStyles';
 
 type DropdownTriggerProps = {
     editorId?: string;
@@ -19,46 +14,23 @@ type DropdownTriggerProps = {
 };
 const DEFAULT_TEXTSTYLE_VALUE = 'Mixed';
 
-enum ListType {
+export enum ListStyles {
     UL = 'ul',
     OL = 'ol',
     CHECKLIST_ITEM = 'checkbox_item',
 }
 
-const listTitle: Record<ListType, string> = {
-    [ListType.UL]: 'Bullet List',
-    [ListType.OL]: 'List',
-    [ListType.CHECKLIST_ITEM]: 'Checklist',
+const listTitle: Record<ListStyles, string> = {
+    [ListStyles.UL]: 'Bullet List',
+    [ListStyles.OL]: 'List',
+    [ListStyles.CHECKLIST_ITEM]: 'Checklist',
 };
-
-type AvailableTextStyles = ListType & TextStyles;
 
 const TEXT_STYLE_TITLES: Record<AvailableTextStyles, string> = { ...listTitle, ...textStyleTitles };
 
-const getSelectedTextStyles: (editor: PlateEditor) => AvailableTextStyles[] = (editor) => {
-    if (!editor.selection) {
-        return [];
-    }
-
-    return Array.from(
-        getNodes(editor, {
-            unhang: true,
-            at: editor.selection,
-            match: (node) => isElement(node) && isType(editor, node, Object.values({ ...TextStyles, ...ListType })),
-        }),
-    ).reduce<AvailableTextStyles[]>((types, current) => {
-        const type = current[0].type as AvailableTextStyles;
-        if (!types.includes(type)) {
-            types.push(type);
-        }
-        return types;
-    }, []);
-};
-
 export const DropdownTrigger = ({ editorId, open }: DropdownTriggerProps) => {
     const editor = usePlateEditorState(editorId);
-
-    const selectedTextStyles = getSelectedTextStyles(editor);
+    const selectedTextStyles = useSelectedTextStyles(editorId);
 
     const label = selectedTextStyles.length === 1 ? TEXT_STYLE_TITLES[selectedTextStyles[0]] : DEFAULT_TEXTSTYLE_VALUE;
 

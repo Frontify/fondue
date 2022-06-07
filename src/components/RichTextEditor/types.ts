@@ -1,8 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement } from 'react';
+import { ListStyles } from './TextStyleDropdown/DropdownTrigger';
 import { EditorActions } from './utils/actions';
-import { TextStyleType } from './utils/getTextStyles';
+import { TextStyles } from './utils/getTextStyles';
+
+export type TextStyleType = {
+    type: TextStyles;
+    className: string;
+};
 
 export type ToolbarCustomProps = {
     editorId?: string;
@@ -23,3 +29,5 @@ export type ButtonGroupProps = {
 };
 
 export type ButtonGroupWidths = { actions: EditorActions[]; buttonGroupWidth: number; index: number }[];
+
+export type AvailableTextStyles = ListStyles & TextStyles;
