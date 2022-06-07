@@ -135,9 +135,11 @@ export const Node = ({
             >
                 <div
                     className={merge([
-                        'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-text-text',
+                        'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5',
                         strong && 'tw-font-bold',
-                        value && !selected && 'hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
+                        value &&
+                            !selected &&
+                            'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
                         selected &&
                             'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover',
                     ])}
