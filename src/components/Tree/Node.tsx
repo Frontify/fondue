@@ -54,8 +54,6 @@ type NodeProps = {
     onEditableSave?: (targetItemId: string, value: string) => void;
 };
 
-const baseClasses = 'tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal';
-
 export const Node = ({
     node,
     strong = false,
@@ -161,24 +159,15 @@ export const Node = ({
                                 className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center"
                                 onClick={toggleNodesVisibility}
                             >
-                                {nodes &&
-                                    (showNodes ? (
-                                        <div
-                                            className={merge([
-                                                baseClasses,
-                                                'tw-border-l-4 tw-border-l-transparent tw-border-r-4 tw-border-r-transparent tw-border-t-4 tw-border-t-x-strong',
-                                                selected && 'tw-text-box-selected-strong-inverse',
-                                            ])}
-                                        ></div>
-                                    ) : (
-                                        <div
-                                            className={merge([
-                                                baseClasses,
-                                                'tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
-                                                selected && 'tw-text-box-selected-strong-inverse',
-                                            ])}
-                                        ></div>
-                                    ))}
+                                {nodes && (
+                                    <div
+                                        className={merge([
+                                            'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
+                                            showNodes ? 'tw-rotate-90' : '',
+                                            selected && 'tw-text-box-selected-strong-inverse',
+                                        ])}
+                                    ></div>
+                                )}
                             </span>
                             {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
