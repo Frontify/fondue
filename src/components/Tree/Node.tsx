@@ -1,9 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactElement, useState } from 'react';
-import { IconSize } from '@foundation/Icon/IconSize';
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
-import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
 import { merge } from '@utilities/merge';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useDrag } from 'react-dnd';
@@ -135,11 +132,13 @@ export const Node = ({
             >
                 <div
                     className={merge([
-                        'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-text-text',
+                        'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5',
                         strong && 'tw-font-bold',
-                        value && !selected && 'hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
+                        value &&
+                            !selected &&
+                            'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
                         selected &&
-                            'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover',
+                            'tw-font-medium tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover',
                     ])}
                     onMouseEnter={setHoveredTrue}
                     onMouseLeave={setHoveredFalse}
@@ -155,15 +154,22 @@ export const Node = ({
                         onClick={onNodeClick}
                     >
                         <div className="tw-flex tw-space-x-1 tw-items-center">
-                            <span data-test-id="toggle" className="tw-w-3" onClick={toggleNodesVisibility}>
-                                {nodes &&
-                                    (showNodes ? (
-                                        <IconCaretDown size={IconSize.Size12} />
-                                    ) : (
-                                        <IconCaretRight size={IconSize.Size12} />
-                                    ))}
+                            <span
+                                data-test-id="toggle"
+                                className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center"
+                                onClick={toggleNodesVisibility}
+                            >
+                                {nodes && (
+                                    <div
+                                        className={merge([
+                                            'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
+                                            showNodes ? 'tw-rotate-90' : '',
+                                            selected && 'tw-text-box-selected-strong-inverse',
+                                        ])}
+                                    ></div>
+                                )}
                             </span>
-                            {icon && <span>{icon}</span>}
+                            {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
                                 <EditableNodeItem name={name} targetItemId={node.id} onEditableSave={onEditableSave} />
                             ) : (
@@ -176,8 +182,8 @@ export const Node = ({
                         <div className="tw-px-1.5">
                             <span
                                 className={merge([
-                                    'tw-text-black-100 tw-text-opacity-40 tw-font-normal',
-                                    selected && 'tw-text-black-50',
+                                    'tw-text-black-100 tw-text-opacity-40 tw-text-xs tw-font-normal',
+                                    selected && 'tw-text-box-selected-strong-inverse',
                                 ])}
                             >
                                 {label}
