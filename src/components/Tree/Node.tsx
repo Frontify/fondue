@@ -1,9 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactElement, useState } from 'react';
-import { IconSize } from '@foundation/Icon/IconSize';
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
-import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
 import { merge } from '@utilities/merge';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useDrag } from 'react-dnd';
@@ -56,6 +53,8 @@ type NodeProps = {
     onDrop?: OnDropCallback<TreeNodeItem>;
     onEditableSave?: (targetItemId: string, value: string) => void;
 };
+
+const baseClasses = 'tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal';
 
 export const Node = ({
     node,
@@ -157,15 +156,31 @@ export const Node = ({
                         onClick={onNodeClick}
                     >
                         <div className="tw-flex tw-space-x-1 tw-items-center">
-                            <span data-test-id="toggle" className="tw-w-3" onClick={toggleNodesVisibility}>
+                            <span
+                                data-test-id="toggle"
+                                className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center"
+                                onClick={toggleNodesVisibility}
+                            >
                                 {nodes &&
                                     (showNodes ? (
-                                        <IconCaretDown size={IconSize.Size12} />
+                                        <div
+                                            className={merge([
+                                                baseClasses,
+                                                'tw-border-l-4 tw-border-l-transparent tw-border-r-4 tw-border-r-transparent tw-border-t-4 tw-border-t-x-strong',
+                                                selected && 'tw-text-box-selected-strong-inverse',
+                                            ])}
+                                        ></div>
                                     ) : (
-                                        <IconCaretRight size={IconSize.Size12} />
+                                        <div
+                                            className={merge([
+                                                baseClasses,
+                                                'tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
+                                                selected && 'tw-text-box-selected-strong-inverse',
+                                            ])}
+                                        ></div>
                                     ))}
                             </span>
-                            {icon && <span>{icon}</span>}
+                            {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
                                 <EditableNodeItem name={name} targetItemId={node.id} onEditableSave={onEditableSave} />
                             ) : (
