@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AriaPositionProps, useOverlayPosition } from '@react-aria/overlays';
-import { MutableRefObject } from 'react';
+import { MutableRefObject, useLayoutEffect, useState } from 'react';
 import { getTotalOverlayHeight } from '../helpers/getTotalOverlayHeight';
 import { shouldDisplayAbove } from '../helpers/shouldDisplayAbove';
 import { FlyoutPlacement } from '@components/Flyout';
@@ -17,6 +17,7 @@ type UseOverlayPositionWithBottomMarginProps = {
     isOpen: boolean;
     placement?: FlyoutPlacement;
     offset?: number;
+    updatePositionOnContentChange: boolean;
 };
 
 const flippedPositionMap: Record<FlyoutPlacement, AriaPositionProps['placement']> = {
@@ -37,13 +38,13 @@ export const useOverlayPositionWithBottomMargin = ({
     isOpen,
     placement,
     offset,
+    updatePositionOnContentChange,
 }: UseOverlayPositionWithBottomMarginProps) => {
-    const overlayHeight = getTotalOverlayHeight(overlayRef, scrollRef);
-    const isFlipped = shouldDisplayAbove(triggerRef, overlayHeight, FLYOUT_OVERLAY_OFFSET, INTERCOM_BUTTON_HEIGHT);
+    const [flipVerticalPosition, setFlipVerticalPosition] = useState(false);
     const flippedPosition = placement && flippedPositionMap[placement];
-    const verticalPosition = isFlipped ? flippedPosition : placement;
+    const verticalPosition = flipVerticalPosition ? flippedPosition : placement;
 
-    const { overlayProps: positionProps } = useOverlayPosition({
+    const { overlayProps: positionProps, updatePosition } = useOverlayPosition({
         targetRef: triggerRef,
         overlayRef,
         shouldFlip: placement === FlyoutPlacement.Left || placement === FlyoutPlacement.Right,
@@ -57,7 +58,31 @@ export const useOverlayPositionWithBottomMargin = ({
         isOpen,
     });
 
-    if (typeof positionProps?.style?.maxHeight === 'number' && !isFlipped) {
+    useLayoutEffect(() => {
+        /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded" 
+                from being thrown during cypress component tests */
+        const resizeObserver = new ResizeObserver(() => setTimeout(updatePosition, 0));
+
+        if (isOpen) {
+            const overlayHeight = getTotalOverlayHeight(overlayRef, scrollRef);
+            setFlipVerticalPosition(
+                shouldDisplayAbove(triggerRef, overlayHeight, FLYOUT_OVERLAY_OFFSET, INTERCOM_BUTTON_HEIGHT),
+            );
+
+            if (scrollRef.current && updatePositionOnContentChange) {
+                resizeObserver.observe(scrollRef.current);
+            }
+            if (overlayRef.current && updatePositionOnContentChange) {
+                resizeObserver.observe(overlayRef.current);
+            }
+        }
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, [isOpen, updatePositionOnContentChange, updatePosition, scrollRef, overlayRef, triggerRef]);
+
+    if (typeof positionProps?.style?.maxHeight === 'number' && !flipVerticalPosition) {
         const heightToSubtract = INTERCOM_BUTTON_HEIGHT - DEFAULT_OVERLAY_PADDING;
         positionProps.style.maxHeight -= heightToSubtract;
     }
