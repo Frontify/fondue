@@ -1,29 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconTextFormatItalic12 from './IconTextFormatItalic12';
+import IconTextFormatItalic16 from './IconTextFormatItalic16';
+import IconTextFormatItalic20 from './IconTextFormatItalic20';
+import IconTextFormatItalic24 from './IconTextFormatItalic24';
+import IconTextFormatItalic32 from './IconTextFormatItalic32'
 
 function IconTextFormatItalic(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconTextFormatItalic"
-            {...props}
-        >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M9.909 4.716a.75.75 0 0 1 .75-.75h6.522a.75.75 0 1 1 0 1.5H14.5L11.144 18.5h2.492a.75.75 0 0 1 0 1.5H6.75a.75.75 0 0 1 0-1.5H9.6l3.355-13.034h-2.296a.75.75 0 0 1-.75-.75Z"
-                clipRule="evenodd"
-            />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconTextFormatItalic12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconTextFormatItalic16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconTextFormatItalic20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconTextFormatItalic24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconTextFormatItalic32 {...props}/>}
+        </span>
     );
 }
 

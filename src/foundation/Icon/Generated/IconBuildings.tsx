@@ -1,31 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconBuildings12 from './IconBuildings12';
+import IconBuildings16 from './IconBuildings16';
+import IconBuildings20 from './IconBuildings20';
+import IconBuildings24 from './IconBuildings24';
+import IconBuildings32 from './IconBuildings32'
 
 function IconBuildings(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconBuildings"
-            {...props}
-        >
-            <path
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M7.5 8.5h2m-7 12h2m3-8h2m-2 4h2m3 4V9l7-2.5V17m-7 3.5h-8m8 0h9m-17 0v-15l8-2.5v3m2.5 6.5h2m-2 4h2"
-            />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconBuildings12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconBuildings16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconBuildings20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconBuildings24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconBuildings32 {...props}/>}
+        </span>
     );
 }
 

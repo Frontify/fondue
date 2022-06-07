@@ -5,6 +5,7 @@ import { IconSize } from './IconSize';
 
 export type GeneratedIconProps = {
     size?: IconSize;
+    filled?: boolean;
 };
 
 export type IconProps = GeneratedIconProps & {

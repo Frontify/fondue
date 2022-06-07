@@ -1,27 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconTextFormatBold12 from './IconTextFormatBold12';
+import IconTextFormatBold16 from './IconTextFormatBold16';
+import IconTextFormatBold20 from './IconTextFormatBold20';
+import IconTextFormatBold24 from './IconTextFormatBold24';
+import IconTextFormatBold32 from './IconTextFormatBold32'
 
 function IconTextFormatBold(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconTextFormatBold"
-            {...props}
-        >
-            <path
-                fill="currentColor"
-                d="M17.488 8.343c0-2.697-2-4.343-5.674-4.343H6v16h5.907C15.977 20 18 18.377 18 15.314c0-1.737-1.07-3.291-3.395-3.52 1.883-.274 2.883-1.783 2.883-3.451ZM9.674 7.269h1.791c1.651 0 2.233.708 2.233 1.554 0 .937-.582 1.554-1.838 1.554H9.675V7.27Zm4.559 7.794c0 1.097-.838 1.691-2.373 1.691H9.675v-3.36h2.163c1.651 0 2.396.526 2.396 1.669Z"
-            />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconTextFormatBold12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconTextFormatBold16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconTextFormatBold20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconTextFormatBold24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconTextFormatBold32 {...props}/>}
+        </span>
     );
 }
 

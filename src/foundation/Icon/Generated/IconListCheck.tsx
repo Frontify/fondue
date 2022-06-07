@@ -1,29 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconListCheck12 from './IconListCheck12';
+import IconListCheck16 from './IconListCheck16';
+import IconListCheck20 from './IconListCheck20';
+import IconListCheck24 from './IconListCheck24';
+import IconListCheck32 from './IconListCheck32'
 
 function IconListCheck(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconListCheck"
-            {...props}
-        >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M7.96 6.116a.75.75 0 0 1 0 1.06l-2.998 3-.53.53-.531-.53-1.5-1.5a.75.75 0 1 1 1.061-1.06l.97.969L6.9 6.115a.75.75 0 0 1 1.06 0Zm-2.305 7.729H4a.5.5 0 0 0-.5.5V16a.5.5 0 0 0 .5.5h1.655a.5.5 0 0 0 .5-.5v-1.655a.5.5 0 0 0-.5-.5ZM4 12.345a2 2 0 0 0-2 2V16a2 2 0 0 0 2 2h1.655a2 2 0 0 0 2-2v-1.655a2 2 0 0 0-2-2H4ZM22.13 6.75a.75.75 0 0 1-.75.75h-9.812a.75.75 0 1 1 0-1.5h9.811a.75.75 0 0 1 .75.75Zm-2.265 3.5a.75.75 0 0 1-.75.75h-7.547a.75.75 0 0 1 0-1.5h7.547a.75.75 0 0 1 .75.75Zm1.514 4.25a.75.75 0 0 0 0-1.5h-9.81a.75.75 0 1 0 0 1.5h9.81Zm-1.514 2.75a.75.75 0 0 1-.75.75h-7.547a.75.75 0 0 1 0-1.5h7.547a.75.75 0 0 1 .75.75Z"
-                clipRule="evenodd"
-            />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconListCheck12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconListCheck16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconListCheck20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconListCheck24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconListCheck32 {...props}/>}
+        </span>
     );
 }
 

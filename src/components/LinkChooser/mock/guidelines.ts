@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ExtraSection, SearchResult } from '..';
-import { IconLabel } from '../types';
+import { IconName } from '../types';
 import { filterItems } from '../utils/helpers';
 
 const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> =>
@@ -25,7 +25,7 @@ export const GUIDELINE_ITEMS = [
         title: 'Brand Guideline 1',
         subtitle: 'Corporate Library',
         link: '#',
-        icon: IconLabel.Document,
+        icon: IconName.Document,
     },
     {
         id: '16',
@@ -34,7 +34,7 @@ export const GUIDELINE_ITEMS = [
         title: 'Brooklyn',
         subtitle: 'Brand Guideline 2',
         link: '#',
-        icon: IconLabel.Document,
+        icon: IconName.Document,
     },
     {
         id: '17',
@@ -43,7 +43,7 @@ export const GUIDELINE_ITEMS = [
         title: 'Internal Project: SRF Kultur',
         subtitle: '',
         link: '#',
-        icon: IconLabel.Library,
+        icon: IconName.Library,
     },
     {
         id: '18',
@@ -52,7 +52,7 @@ export const GUIDELINE_ITEMS = [
         title: 'Color Block',
         subtitle: 'UNICEF Social Campaign',
         link: '#',
-        icon: IconLabel.Document,
+        icon: IconName.Document,
     },
     {
         id: '19',
@@ -61,6 +61,6 @@ export const GUIDELINE_ITEMS = [
         title: 'Brand Business View',
         subtitle: 'Guideline Library',
         link: '#',
-        icon: IconLabel.Template,
+        icon: IconName.Template,
     },
 ];

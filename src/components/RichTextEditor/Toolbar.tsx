@@ -19,25 +19,28 @@ import {
 import {
     AlignToolbarButton,
     BalloonToolbar,
+    ELEMENT_LINK,
     ELEMENT_OL,
     ELEMENT_UL,
-    LinkToolbarButton,
+    getPluginType,
     ListToolbarButton,
+    MarkToolbarButton,
     MARK_BOLD,
     MARK_CODE,
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
-    MarkToolbarButton,
     PlateEditor,
-    getPluginType,
+    someNode,
+    ToolbarButton,
     usePlateEditorRef,
 } from '@udecode/plate';
 import React, { FC, ReactElement } from 'react';
 import { ELEMENT_CHECK_ITEM } from './plugins/checkboxListPlugin/createCheckboxListPlugin';
 import { CheckboxListToolbarButton } from './plugins/checkboxListPlugin/ui/CheckboxListToolbarButton';
+import { EditLinkChooserButton } from './plugins/linkChooserPlugin/ui/EditLinkChooserButton';
 import { TextStyleDropdown } from './TextStyleDropdown/TextStyleDropdown';
-import { EditorActions, defaultActions } from './utils/actions';
+import { defaultActions, EditorActions } from './utils/actions';
 import { TextStyleType } from './utils/getTextStyles';
 
 type ToolbarProps = {
@@ -140,7 +143,17 @@ const toolbarComponents = (
             />
         ),
         [EditorActions.LINK]: (
-            <LinkToolbarButton icon={<IconLink size={IconSize.Size24} />} classNames={classNames} styles={styles} />
+            <EditLinkChooserButton
+                type={getPluginType(editor, ELEMENT_LINK)}
+                icon={
+                    <ToolbarButton
+                        active={!!editor?.selection && someNode(editor, { match: { ELEMENT_CHECK_ITEM } })}
+                        icon={<IconLink size={IconSize.Size24} />}
+                        classNames={classNames}
+                        styles={styles}
+                    />
+                }
+            />
         ),
         [EditorActions.ORDERED_LIST]: (
             <ListToolbarButton

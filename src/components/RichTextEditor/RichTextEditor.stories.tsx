@@ -4,7 +4,7 @@ import { Meta, Story } from '@storybook/react';
 import React from 'react';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { EditorActions } from './utils/actions';
-import { IPSUM, checkboxValue, htmlValue, value } from './utils/exampleValues';
+import { checkboxValue, htmlValue, IPSUM, value } from './utils/exampleValues';
 import { TextStyles } from './utils/getTextStyles';
 
 export default {

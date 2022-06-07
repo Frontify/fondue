@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ExtraSection, SearchResult } from '..';
-import { IconLabel } from '../types';
+import { IconName } from '../types';
 import { filterItems } from '../utils/helpers';
 
-const defaultTemplateProps = { link: '#', icon: IconLabel.Template };
+const defaultTemplateProps = { link: '#', icon: IconName.Template };
 
 const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> =>
     new Promise((resolve) =>

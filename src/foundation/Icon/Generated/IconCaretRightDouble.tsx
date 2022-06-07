@@ -1,25 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconCaretRightDouble12 from './IconCaretRightDouble12';
+import IconCaretRightDouble16 from './IconCaretRightDouble16';
+import IconCaretRightDouble20 from './IconCaretRightDouble20';
+import IconCaretRightDouble24 from './IconCaretRightDouble24';
+import IconCaretRightDouble32 from './IconCaretRightDouble32'
 
 function IconCaretRightDouble(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconCaretRightDouble"
-            {...props}
-        >
-            <path fill="currentColor" d="M12.53 4.47a.75.75 0 00-1.06 1.06L17.94 12l-6.47 6.47a.75.75 0 101.06 1.06l7-7 .53-.53-.53-.53-7-7Zm-7 0a.75.75 0 00-1.06 1.06L10.94 12l-6.47 6.47a.75.75 0 101.06 1.06l7-7 .53-.53-.53-.53-7-7Z" />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconCaretRightDouble12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconCaretRightDouble16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconCaretRightDouble20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconCaretRightDouble24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconCaretRightDouble32 {...props}/>}
+        </span>
     );
 }
 

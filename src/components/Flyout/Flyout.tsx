@@ -27,6 +27,17 @@ import { Overlay } from './Overlay';
 export const FLYOUT_DIVIDER_COLOR = '#eaebeb';
 export const FLYOUT_DIVIDER_HEIGHT = '10px';
 
+export enum FlyoutPlacement {
+    Top = "top",
+    Bottom = "bottom",
+    TopLeft = "top left",
+    BottomLeft = "bottom left",
+    TopRight = "top right",
+    BottomRight = "bottom right",
+    Right = "right",
+    Left = "left",
+}
+
 export type FlyoutProps = PropsWithChildren<{
     trigger:
         | ReactNode
@@ -52,6 +63,8 @@ export type FlyoutProps = PropsWithChildren<{
      * @deprecated Pass the FlyoutFooter component with buttons to the Flyout component.
      */
     legacyFooter?: boolean;
+    placement?: FlyoutPlacement;
+    offset?: number;
 }>;
 
 export const Flyout: FC<FlyoutProps> = ({
@@ -70,6 +83,8 @@ export const Flyout: FC<FlyoutProps> = ({
     fixedFooter,
     contentMinHeight,
     legacyFooter = true,
+    placement = FlyoutPlacement.BottomLeft,
+    offset,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
     const { toggle, close } = state;
@@ -89,6 +104,8 @@ export const Flyout: FC<FlyoutProps> = ({
         overlayRef,
         scrollRef,
         isOpen,
+        placement,
+        offset,
     });
 
     const { buttonProps, isPressed } = useButton({ onPress: () => toggle(), elementType: 'div' }, triggerRef);

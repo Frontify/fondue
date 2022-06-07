@@ -8,13 +8,15 @@ import { mockNodesFlat } from '@components/Tree/utils';
 
 type ComponentProps = {
     nodes: DraggableItem<TreeFlatListItem>[];
-    onDrop?: (modifiedItems: DraggableItem<TreeFlatListItem>[]) => void;
+    onDrop?: (sourceItemId: string, parentId: NullableString, positionBeforeId: NullableString) => void;
     onEditableSave?: (itemId: string, value: string) => void;
 };
 const Component: FC<ComponentProps> = ({ nodes, onDrop, onEditableSave }) => {
     const [selectedIds, setSelectedIds] = useState<NullableString[]>([]);
-    const onDropDefault = (items: DraggableItem<TreeFlatListItem>[]) => {
-        console.log(items);
+    const onDropDefault = (sourceItemId: string, parentId: NullableString, positionBeforeId: NullableString) => {
+        console.log(sourceItemId);
+        console.log(parentId);
+        console.log(positionBeforeId);
     };
 
     return (
@@ -22,7 +24,7 @@ const Component: FC<ComponentProps> = ({ nodes, onDrop, onEditableSave }) => {
             nodes={nodes}
             activeNodeIds={selectedIds}
             onSelect={(ids: NullableString[]) => setSelectedIds(ids)}
-            onUpdate={onDrop || onDropDefault}
+            onDragAndDrop={onDrop || onDropDefault}
             onEditableSave={onEditableSave}
         />
     );

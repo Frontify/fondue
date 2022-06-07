@@ -387,7 +387,7 @@ describe('LinkChooser Component', () => {
             cy.get(SEARCH_INPUT_ID).type(data[0].title[data[0].title.length - 1]);
             cy.get('body').click();
             cy.get(SEARCH_INPUT_ID).should('have.value', data[0].title);
-            cy.get(`${DECORATOR_ICON_ID} > svg`).invoke('attr', 'name').should('eq', 'IconDocument');
+            cy.get(`${DECORATOR_ICON_ID} > span > svg`).invoke('attr', 'name').should('eq', 'IconDocument16');
         });
 
         it('selects existing document and does not reselect it on interrupt if the titles do not match', () => {
@@ -402,7 +402,7 @@ describe('LinkChooser Component', () => {
             cy.get(SEARCH_INPUT_ID).type(CUSTOM_QUERY);
             cy.get('body').click();
             cy.get(SEARCH_INPUT_ID).should('have.value', CUSTOM_QUERY);
-            cy.get(`${DECORATOR_ICON_ID} > svg`).invoke('attr', 'name').should('eq', 'IconLink');
+            cy.get(`${DECORATOR_ICON_ID} > span > svg`).invoke('attr', 'name').should('eq', 'IconLink16');
         });
 
         it('Creates and selects a custom link if enter pressed and no item is focused, even when loading', () => {
@@ -433,7 +433,7 @@ describe('LinkChooser Component', () => {
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
             cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as('firstSelectItem');
             cy.get('@firstSelectItem').click();
-            cy.get(`${DECORATOR_ICON_ID} > svg`).invoke('attr', 'name').should('eq', 'IconDocument');
+            cy.get(`${DECORATOR_ICON_ID} > span > svg`).invoke('attr', 'name').should('eq', 'IconDocument16');
             cy.get(DECORATOR_ICON_ID).should('have.class', SELECTED_CLASS);
             cy.get('@onLinkChange').should('be.calledOnce');
             cy.get(SEARCH_WRAPPER_ID).click();

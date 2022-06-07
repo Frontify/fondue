@@ -114,8 +114,27 @@ export const value = [
         children: [
             {
                 type: ELEMENT_LINK,
-                children: [{ text: 'This is a link.' }],
+                children: [{ text: 'This is a Link.' }],
                 url: 'https://frontify.com',
+            },
+        ],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [
+            {
+                type: ELEMENT_LINK,
+                chosenLink: {
+                    searchResult: {
+                        link: 'https://smartive.ch',
+                    },
+                    openInNewTab: true,
+                },
+                children: [
+                    {
+                        text: 'This is also a Link.',
+                    },
+                ],
             },
         ],
     },
