@@ -410,4 +410,16 @@ describe('RichTextEditor Component', () => {
         cy.get('[contenteditable=true]').should('contain.text', text);
         cy.get('[contenteditable=true] a').should('not.exist');
     });
+
+    it('renders toolbar responsively', () => {
+        mount(<RichTextEditor />);
+        insertTextAndOpenToolbar();
+
+        cy.viewport(1200, 1200);
+        cy.get(TOOLBAR).children().should('have.length', 1);
+        cy.viewport(550, 750);
+        cy.get(TOOLBAR).children().should('have.length', 2);
+        cy.viewport(320, 480);
+        cy.get(TOOLBAR).children().should('have.length', 3);
+    });
 });
