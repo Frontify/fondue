@@ -141,7 +141,7 @@ export const Node = ({
                             !selected &&
                             'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
                         selected &&
-                            'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover',
+                            'tw-font-medium tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover',
                     ])}
                     onMouseEnter={setHoveredTrue}
                     onMouseLeave={setHoveredFalse}
@@ -179,7 +179,7 @@ export const Node = ({
                             <span
                                 className={merge([
                                     'tw-text-black-100 tw-text-opacity-40 tw-font-normal',
-                                    selected && 'tw-text-black-50',
+                                    selected && 'tw-text-box-selected-strong-inverse',
                                 ])}
                             >
                                 {label}
