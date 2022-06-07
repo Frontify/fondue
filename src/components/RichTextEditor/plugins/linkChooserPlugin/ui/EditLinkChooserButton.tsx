@@ -1,10 +1,12 @@
-import { ToolbarButtonProps, useEventPlateId, usePlateEditorState } from '@udecode/plate';
+import { ToolbarButton, ToolbarButtonProps, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
 import React, { MutableRefObject, useState } from 'react';
+import { IconLink, IconSize } from '../../../../..';
+import { ELEMENT_CHECK_ITEM } from '../../checkboxListPlugin/createCheckboxListPlugin';
 import { getAndUpsertLink } from '../transforms/getAndUpsertLink';
 import { ChosenLink } from '../types';
 import { LinkChooserFlyout } from './LinkChooserFlyout';
 
-export const EditLinkChooserButton = ({ id, icon }: ToolbarButtonProps) => {
+export const EditLinkChooserButton = ({ id, styles, classNames }: Omit<ToolbarButtonProps, 'icon'>) => {
     id = useEventPlateId(id);
     const editor = usePlateEditorState(id)!;
 
@@ -37,18 +39,21 @@ export const EditLinkChooserButton = ({ id, icon }: ToolbarButtonProps) => {
                 <div
                     ref={ref}
                     aria-label={ariaLabel}
-                    onMouseDown={async (event) => {
-                        if (!editor || isFlyoutOpen) {
-                            return;
-                        }
-
-                        event.preventDefault();
-                        getAndUpsertLink(editor, getLinkFromLinkChooser);
-                    }}
                     data-chosen-link={JSON.stringify(chosenLink)}
-                    className={'tw-text-violet-70 tw-underline tw-cursor-pointer'}
+                    className="tw-cursor-pointer"
                 >
-                    {icon}
+                    <ToolbarButton
+                        classNames={classNames}
+                        styles={styles}
+                        active={!!editor?.selection && someNode(editor, { match: { ELEMENT_CHECK_ITEM } })}
+                        icon={<IconLink size={IconSize.Size24} />}
+                        onMouseDown={async (event) => {
+                            event.stopPropagation();
+                            event.preventDefault();
+
+                            getAndUpsertLink(editor, getLinkFromLinkChooser);
+                        }}
+                    />
                 </div>
             )}
         />

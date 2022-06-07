@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { TextStyleType } from '../types';
+
 export enum TextStyles {
     ELEMENT_HEADING1 = 'heading1',
     ELEMENT_HEADING2 = 'heading2',
@@ -18,11 +20,6 @@ export const textStyleTitles: Record<TextStyles, string> = {
     [TextStyles.ELEMENT_CUSTOM1]: 'Custom 01',
     [TextStyles.ELEMENT_CUSTOM2]: 'Custom 02',
     [TextStyles.ELEMENT_PARAGRAPH]: 'Paragraph',
-};
-
-export type TextStyleType = {
-    type: TextStyles;
-    className: string;
 };
 
 export const textStyleClassnames: Record<TextStyles, string> = {
