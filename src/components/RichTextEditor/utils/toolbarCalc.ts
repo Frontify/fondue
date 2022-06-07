@@ -3,11 +3,9 @@ import { EditorActions } from './actions';
 
 export const getButtonGroupWidthsPerRow = (toolbarWidth: number, buttonGroupsWidths: ButtonGroupWidths) =>
     buttonGroupsWidths.reduce<ButtonGroupWidths[]>((buttonGroupWidthsPerRow, { actions, buttonGroupWidth, index }) => {
-        const rowCount = buttonGroupWidthsPerRow?.length === 0 ? 0 : buttonGroupWidthsPerRow?.length - 1;
+        const rowCount = Math.max(0, buttonGroupWidthsPerRow.length - 1);
 
-        if (!buttonGroupWidthsPerRow[rowCount]) {
-            buttonGroupWidthsPerRow[rowCount] = [];
-        }
+        buttonGroupWidthsPerRow[rowCount] = buttonGroupWidthsPerRow[rowCount] ?? [];
 
         const currentRowWidth = (buttonGroupWidthsPerRow[rowCount] ?? [{ actions: [], buttonGroupWidth: 0 }]).reduce(
             (prev, { buttonGroupWidth }) => prev + buttonGroupWidth,
@@ -20,12 +18,13 @@ export const getButtonGroupWidthsPerRow = (toolbarWidth: number, buttonGroupsWid
             buttonGroupWidthsPerRow.push([{ actions, buttonGroupWidth, index }]);
         }
 
-        return buttonGroupWidthsPerRow.filter((element) => element.length > 0);
+        return buttonGroupWidthsPerRow.filter((element) => element.length);
     }, []);
 
 export const calculateToolbarWidth = (toolbarButtonGroups: ButtonGroupWidths[]) =>
-    toolbarButtonGroups?.length &&
+    // toolbarButtonGroups.length &&
     Math.max(
+        0,
         ...toolbarButtonGroups.map((element) =>
             [...element, { actions: [], buttonGroupWidth: 0 }].reduce(
                 (prev, { buttonGroupWidth }) => prev + buttonGroupWidth,

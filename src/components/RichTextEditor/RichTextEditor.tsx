@@ -3,7 +3,7 @@
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Plate, TNode, usePlateEditorState } from '@udecode/plate';
 import { debounce } from '@utilities/debounce';
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './Toolbar';
 import { EditorActions } from './utils/actions';
@@ -38,7 +38,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 }) => {
     const editorId = id || useMemoizedId();
     const editor = usePlateEditorState(editorId);
-    const editorRef = useRef<HTMLDivElement | null>(null);
+
     const [editorWidth, setEditorWidth] = useState<number | undefined>();
     const localValue = useRef<TNode[] | null>(null);
     const [debouncedValue, setDebouncedValue] = useState<TNode[] | null>(null);
@@ -48,20 +48,21 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
     };
 
-    useMemo(() => {
-        if (editorRef.current) {
-            const observer = new ResizeObserver((entries) => {
-                if (entries.length > 0) {
-                    /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded" 
-                        from being thrown during cypress component tests */
-                    setTimeout(() => setEditorWidth(entries[0].target.clientWidth), 0);
-                }
-            });
-
-            observer.observe(editorRef.current);
-            return observer;
+    const editorRef = useCallback((node) => {
+        if (!node) {
+            return;
         }
-    }, [editorRef.current]);
+        const observer = new ResizeObserver((entries) => {
+            if (entries.length > 0) {
+                /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded" 
+                    from being thrown during cypress component tests */
+                setTimeout(() => setEditorWidth(entries[0].target.clientWidth), 0);
+            }
+        });
+
+        observer.observe(node);
+        return observer;
+    }, []);
 
     useEffect(() => {
         debouncedValue && onTextChange && onTextChange(JSON.stringify(debouncedValue));

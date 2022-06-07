@@ -8,7 +8,6 @@ import { LinkChooserFlyout } from './LinkChooserFlyout';
 
 export const EditLinkChooserButton = ({ id, styles, classNames }: Omit<ToolbarButtonProps, 'icon'>) => {
     id = useEventPlateId(id);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const editor = usePlateEditorState(id)!;
 
     const [isFlyoutOpen, setIsFlyoutOpen] = useState<boolean>(false);

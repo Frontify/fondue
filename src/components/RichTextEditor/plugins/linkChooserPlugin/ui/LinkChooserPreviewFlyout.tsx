@@ -18,6 +18,8 @@ type LinkChooserFlyoutProps = {
           ) => JSX.Element);
 };
 
+const buttonClassName = 'tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1';
+
 export const LinkChooserPreviewFlyout = ({
     isFlyoutOpen,
     setIsFlyoutOpen,
@@ -35,14 +37,14 @@ export const LinkChooserPreviewFlyout = ({
                 legacyFooter={false}
                 trigger={trigger}
             >
-                <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between tw-p-5">
+                <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between tw-p-4">
                     <span className={`${LINK_CHOOSER_CLASS_NAMES} tw-pointer-events-none`}>{href}</span>
                     <span className="tw-flex tw-gap-2">
                         <span
                             role="button"
                             tabIndex={0}
                             data-test-id={'edit-link-button'}
-                            className="tw-cursor-pointer"
+                            className={buttonClassName}
                             onMouseDown={() => onEditClick()}
                         >
                             <IconPen />
@@ -52,7 +54,7 @@ export const LinkChooserPreviewFlyout = ({
                             role="button"
                             tabIndex={0}
                             data-test-id={'remove-link-button'}
-                            className="tw-cursor-pointer"
+                            className={buttonClassName}
                             onMouseDown={() => onRemoveClick()}
                         >
                             <IconTrash />
