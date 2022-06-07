@@ -29,27 +29,38 @@ import {
     MarkToolbarButton,
     PlateEditor,
     getPluginType,
+    usePlateEditorRef,
 } from '@udecode/plate';
 import React, { FC, ReactElement } from 'react';
 import { ELEMENT_CHECK_ITEM } from './plugins/checkboxListPlugin/createCheckboxListPlugin';
 import { CheckboxListToolbarButton } from './plugins/checkboxListPlugin/ui/CheckboxListToolbarButton';
 import { EditLinkChooserButton } from './plugins/linkChooserPlugin/ui/EditLinkChooserButton';
 import { TextStyleDropdown } from './TextStyleDropdown/TextStyleDropdown';
-import { IconStylingWrapperProps } from './types';
+import { ButtonGroupProps, IconStylingWrapperProps, TextStyleType } from './types';
 import { EditorActions } from './utils/actions';
-import { TextStyleType } from './utils/getTextStyles';
-
 const classNames = {
     root: 'tw-text-text-weak tw-ml-0.5 hover:tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded',
     active: 'tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse',
 };
 const styles = { root: { width: '32px', height: '32px' } };
 
-const IconStylingWrapper: FC<IconStylingWrapperProps> = ({ icon }) => {
-    return <span className="tw-p-2 tw-h-12 tw-justify-center tw-items-center tw-flex">{icon}</span>;
+const IconStylingWrapper: FC<IconStylingWrapperProps> = ({ icon }) => (
+    <span className="tw-p-2 tw-h-12 tw-justify-center tw-items-center tw-flex">{icon}</span>
+);
+
+export const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyles }) => {
+    const editor = usePlateEditorRef(editorId);
+
+    return (
+        <div key={index} data-test-id={`toolbar-group-${index}`} className="tw-flex tw-items-center tw-h-12 tw-p-2">
+            {actions.map((action) => (
+                <div key={action}>{ToolbarButtonMap(editor, editorId, textStyles)[action]}</div>
+            ))}
+        </div>
+    );
 };
 
-export const toolbarComponents = (
+const ToolbarButtonMap = (
     editor: PlateEditor,
     editorId?: string,
     textStyles?: TextStyleType[],

@@ -27,41 +27,37 @@ export const LinkChooserPreviewFlyout = ({
     href,
     onEditClick,
     onRemoveClick,
-}: LinkChooserFlyoutProps) => {
-    return (
-        <>
-            <Flyout
-                isOpen={isFlyoutOpen}
-                onOpenChange={setIsFlyoutOpen}
-                onCancel={() => setIsFlyoutOpen(false)}
-                legacyFooter={false}
-                trigger={trigger}
-            >
-                <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between tw-p-4">
-                    <span className={`${LINK_CHOOSER_CLASS_NAMES} tw-pointer-events-none`}>{href}</span>
-                    <span className="tw-flex tw-gap-2">
-                        <span
-                            role="button"
-                            tabIndex={0}
-                            data-test-id={'edit-link-button'}
-                            className={buttonClassName}
-                            onMouseDown={() => onEditClick()}
-                        >
-                            <IconPen />
-                        </span>
-
-                        <span
-                            role="button"
-                            tabIndex={0}
-                            data-test-id={'remove-link-button'}
-                            className={buttonClassName}
-                            onMouseDown={() => onRemoveClick()}
-                        >
-                            <IconTrash />
-                        </span>
-                    </span>
+}: LinkChooserFlyoutProps) => (
+    <Flyout
+        isOpen={isFlyoutOpen}
+        onOpenChange={setIsFlyoutOpen}
+        onCancel={() => setIsFlyoutOpen(false)}
+        legacyFooter={false}
+        trigger={trigger}
+    >
+        <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between tw-p-4">
+            <span className={`${LINK_CHOOSER_CLASS_NAMES} tw-pointer-events-none`}>{href}</span>
+            <span className="tw-flex tw-gap-2">
+                <span
+                    role="button"
+                    tabIndex={0}
+                    data-test-id={'edit-link-button'}
+                    className={buttonClassName}
+                    onMouseDown={() => onEditClick()}
+                >
+                    <IconPen />
                 </span>
-            </Flyout>
-        </>
-    );
-};
+
+                <span
+                    role="button"
+                    tabIndex={0}
+                    data-test-id={'remove-link-button'}
+                    className={buttonClassName}
+                    onMouseDown={() => onRemoveClick()}
+                >
+                    <IconTrash />
+                </span>
+            </span>
+        </span>
+    </Flyout>
+);

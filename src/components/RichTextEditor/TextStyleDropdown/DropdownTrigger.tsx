@@ -4,9 +4,9 @@ import { IconCaretDown } from '@foundation/Icon';
 import { getPreventDefaultHandler, usePlateEditorState } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import React from 'react';
+import { useSelectedTextStyles } from '../hooks/useSelectedTextStyles';
 import { AvailableTextStyles } from '../types';
 import { textStyleTitles } from '../utils/getTextStyles';
-import { useSelectedTextStyles } from '../utils/useSelectedTextStyles';
 
 type DropdownTriggerProps = {
     editorId?: string;

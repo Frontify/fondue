@@ -1,23 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BalloonToolbar, usePlateEditorRef } from '@udecode/plate';
+import { BalloonToolbar } from '@udecode/plate';
 import React, { FC, useEffect, useState } from 'react';
-import { toolbarComponents } from './ToolbarComponents';
-import { ButtonGroupProps, ToolbarCustomProps } from './types';
+import { ButtonGroup } from './ButtonGroup';
+import { ToolbarCustomProps } from './types';
 import { defaultActions } from './utils/actions';
 import { calculateToolbarWidth, getButtonGroupWidths, getButtonGroupWidthsPerRow } from './utils/toolbarCalc';
-
-const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyles }) => {
-    const editor = usePlateEditorRef(editorId);
-
-    return (
-        <div key={index} data-test-id={`toolbar-group-${index}`} className="tw-flex tw-items-center tw-h-12 tw-p-2">
-            {actions.map((action) => (
-                <React.Fragment key={action}>{toolbarComponents(editor, editorId, textStyles)[action]}</React.Fragment>
-            ))}
-        </div>
-    );
-};
 
 const OFFSET_IN_PX = 12;
 
