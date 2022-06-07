@@ -2,7 +2,7 @@
 
 import { BalloonToolbar, usePlateEditorRef } from '@udecode/plate';
 import React, { FC, useEffect, useState } from 'react';
-import { toolbarComponents } from './toolbarComponents';
+import { toolbarComponents } from './ToolbarComponents';
 import { ButtonGroupProps, ToolbarCustomProps } from './types';
 import { defaultActions } from './utils/actions';
 import { calculateToolbarWidth, getButtonGroupWidths, getButtonGroupWidthsPerRow } from './utils/toolbarCalc';

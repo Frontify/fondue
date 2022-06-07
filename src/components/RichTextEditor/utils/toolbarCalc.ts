@@ -22,7 +22,6 @@ export const getButtonGroupWidthsPerRow = (toolbarWidth: number, buttonGroupsWid
     }, []);
 
 export const calculateToolbarWidth = (toolbarButtonGroups: ButtonGroupWidths[]) =>
-    // toolbarButtonGroups.length &&
     Math.max(
         0,
         ...toolbarButtonGroups.map((element) =>
