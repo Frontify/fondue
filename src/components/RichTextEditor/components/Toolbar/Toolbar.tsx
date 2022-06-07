@@ -2,10 +2,10 @@
 
 import { BalloonToolbar } from '@udecode/plate';
 import React, { FC, useEffect, useState } from 'react';
+import { ToolbarCustomProps } from '../../types';
+import { defaultActions } from '../../utils/actions';
+import { calculateToolbarWidth, getButtonGroupWidths, getButtonGroupWidthsPerRow } from '../../utils/toolbarCalc';
 import { ButtonGroup } from './ButtonGroup';
-import { ToolbarCustomProps } from './types';
-import { defaultActions } from './utils/actions';
-import { calculateToolbarWidth, getButtonGroupWidths, getButtonGroupWidthsPerRow } from './utils/toolbarCalc';
 
 const OFFSET_IN_PX = 12;
 
