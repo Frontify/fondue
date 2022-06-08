@@ -1,30 +1,30 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 //@ts-ignore
-const { alias } = require("../vite.config");
-const { dependencies, peerDependencies } = require("../package.json");
-const { resolve } = require("path");
+const { alias } = require('../vite.config');
+const { dependencies, peerDependencies } = require('../package.json');
+const { resolve } = require('path');
 
 module.exports = {
     core: {
-        builder: "@storybook/builder-vite",
+        builder: '@storybook/builder-vite',
     },
-    stories: ["../src/**/*.stories.tsx"],
-    addons: ["storybook-dark-mode", "@storybook/addon-links", "@storybook/addon-essentials", "@storybook/addon-a11y"],
-    staticDirs: ["assets"],
+    stories: ['../src/**/*.stories.tsx'],
+    addons: ['storybook-dark-mode', '@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-a11y'],
+    staticDirs: ['assets'],
     async viteFinal(config: any) {
         config.resolve.alias = {
             ...config.resolve.alias,
             ...alias,
         };
 
-        config.cacheDir = resolve(__dirname, "../node_modules/.cache/vite");
+        config.cacheDir = resolve(__dirname, '../node_modules/.cache/vite');
 
         config.optimizeDeps = {
             ...(config.optimizeDeps || {}),
             include: [
-                "@storybook/addon-actions",
-                "@storybook/theming/create",
+                '@storybook/addon-actions',
+                '@storybook/theming/create',
                 ...Object.keys(dependencies),
                 ...Object.keys(peerDependencies),
                 ...(config.optimizeDeps?.include || []),
