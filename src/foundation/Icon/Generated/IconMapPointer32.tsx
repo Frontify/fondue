@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
 function IconMapPointer32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = 'tw-inline tw-fill-current';
+    const customClassName = 'tw-inline-flex tw-justify-center tw-items-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
