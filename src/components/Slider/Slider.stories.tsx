@@ -50,3 +50,22 @@ Icon.args = {
         { id: 'c', icon: <IconTextAlignRight size={IconSize.Size16} />, ariaLabel: 'Text Align Right' },
     ],
 };
+
+export const IconAndText = SliderTemplate.bind({});
+IconAndText.args = {
+    items: [
+        { id: 'a', icon: <IconTextAlignLeft size={IconSize.Size16} />, ariaLabel: 'Text Align Left', value: 'Title 1' },
+        {
+            id: 'b',
+            icon: <IconTextAlignCenter size={IconSize.Size16} />,
+            ariaLabel: 'Text Align Center',
+            value: 'Title 2',
+        },
+        {
+            id: 'c',
+            icon: <IconTextAlignRight size={IconSize.Size16} />,
+            ariaLabel: 'Text Align Right',
+            value: 'Title 3',
+        },
+    ],
+};

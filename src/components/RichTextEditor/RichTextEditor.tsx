@@ -5,10 +5,10 @@ import { Plate, TNode, usePlateEditorState } from '@udecode/plate';
 import { debounce } from '@utilities/debounce';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { EditableProps } from 'slate-react/dist/components/editable';
-import { Toolbar } from './Toolbar';
+import { Toolbar } from './components/Toolbar/Toolbar';
+import { TextStyleType } from './types';
 import { EditorActions } from './utils/actions';
 import { getEditorConfig } from './utils/getEditorConfig';
-import { TextStyleType } from './utils/getTextStyles';
 import { EMPTY_RICH_TEXT_VALUE, parseRawValue } from './utils/parseRawValue';
 
 export type RichTextEditorProps = {
@@ -38,6 +38,8 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 }) => {
     const editorId = id || useMemoizedId();
     const editor = usePlateEditorState(editorId);
+
+    const [editorWidth, setEditorWidth] = useState<number | undefined>();
     const localValue = useRef<TNode[] | null>(null);
     const [debouncedValue, setDebouncedValue] = useState<TNode[] | null>(null);
     const editableProps: EditableProps = {
@@ -45,6 +47,22 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
     };
+
+    const editorRef = useCallback((node) => {
+        if (!node) {
+            return;
+        }
+        const observer = new ResizeObserver((entries) => {
+            if (entries.length > 0) {
+                /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded" 
+                    from being thrown during cypress component tests */
+                setTimeout(() => setEditorWidth(entries[0].target.clientWidth), 0);
+            }
+        });
+
+        observer.observe(node);
+        return observer;
+    }, []);
 
     useEffect(() => {
         debouncedValue && onTextChange && onTextChange(JSON.stringify(debouncedValue));
@@ -73,7 +91,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     }, []);
 
     return (
-        <div data-test-id="rich-text-editor" className="tw-relative tw-w-full">
+        <div data-test-id="rich-text-editor" className="tw-relative tw-w-full" ref={editorRef}>
             <Plate
                 id={editorId}
                 initialValue={parseRawValue(initialValue)}
@@ -81,7 +99,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 editableProps={editableProps}
                 plugins={getEditorConfig(textStyles)}
             >
-                <Toolbar editorId={editorId} textStyles={textStyles} actions={actions} />
+                <Toolbar editorId={editorId} textStyles={textStyles} actions={actions} editorWidth={editorWidth} />
             </Plate>
         </div>
     );

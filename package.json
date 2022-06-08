@@ -58,7 +58,7 @@
         "url": "https://github.com/frontify/arcade/issues"
     },
     "devDependencies": {
-        "@cypress/react": "5.12.4",
+        "@cypress/react": "5.12.5",
         "@cypress/vite-dev-server": "2.2.2",
         "@frontify/eslint-config-react": "^0.15.2",
         "@frontify/fondue-icons": "^0.1.6",

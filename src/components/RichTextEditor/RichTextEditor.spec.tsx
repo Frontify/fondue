@@ -176,7 +176,7 @@ describe('RichTextEditor Component', () => {
         cy.get(TOOLBAR_GROUP_1).children().eq(5).click();
         cy.get('[contenteditable=true]').should(
             'include.html',
-            'tw-table-cell tw-rounded tw-text-xs tw-bg-black-5 tw-text-violet-90 tw-m-0 tw-px-2 tw-py-0.5',
+            'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5',
         );
     });
 
@@ -409,5 +409,17 @@ describe('RichTextEditor Component', () => {
 
         cy.get('[contenteditable=true]').should('contain.text', text);
         cy.get('[contenteditable=true] a').should('not.exist');
+    });
+
+    it('renders toolbar responsively', () => {
+        mount(<RichTextEditor />);
+        insertTextAndOpenToolbar();
+
+        cy.viewport(1200, 1200);
+        cy.get(TOOLBAR).children().should('have.length', 1);
+        cy.viewport(550, 750);
+        cy.get(TOOLBAR).children().should('have.length', 2);
+        cy.viewport(320, 480);
+        cy.get(TOOLBAR).children().should('have.length', 3);
     });
 });

@@ -15,6 +15,7 @@ import React, { FC, ReactElement, useMemo, useRef } from 'react';
 export type IconItem = {
     id: string;
     icon: ReactElement<IconProps>;
+    value?: string;
     ariaLabel: string;
 };
 
@@ -88,8 +89,9 @@ const SliderItem = (props: SliderItemProps) => {
                 <VisuallyHidden>
                     <input {...inputProps} {...focusProps} data-test-id="slider-input" ref={ref} />
                 </VisuallyHidden>
-                <span className="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap">
-                    {isIconItem(item) ? <span aria-label={item.ariaLabel}>{item.icon}</span> : item.value.toString()}
+                <span className="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap tw-flex">
+                    {isIconItem(item) && <span aria-label={item.ariaLabel}>{item.icon}</span>}
+                    {item.value && <span className={isIconItem(item) ? 'tw-ml-2' : ''}>{item.value.toString()}</span>}
                 </span>
             </div>
         </li>
