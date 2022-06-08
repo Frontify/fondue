@@ -28,14 +28,14 @@ export const FLYOUT_DIVIDER_COLOR = '#eaebeb';
 export const FLYOUT_DIVIDER_HEIGHT = '10px';
 
 export enum FlyoutPlacement {
-    Top = "top",
-    Bottom = "bottom",
-    TopLeft = "top left",
-    BottomLeft = "bottom left",
-    TopRight = "top right",
-    BottomRight = "bottom right",
-    Right = "right",
-    Left = "left",
+    Top = 'top',
+    Bottom = 'bottom',
+    TopLeft = 'top left',
+    BottomLeft = 'bottom left',
+    TopRight = 'top right',
+    BottomRight = 'bottom right',
+    Right = 'right',
+    Left = 'left',
 }
 
 export type FlyoutProps = PropsWithChildren<{
@@ -65,6 +65,7 @@ export type FlyoutProps = PropsWithChildren<{
     legacyFooter?: boolean;
     placement?: FlyoutPlacement;
     offset?: number;
+    updatePositionOnContentChange?: boolean;
 }>;
 
 export const Flyout: FC<FlyoutProps> = ({
@@ -85,6 +86,7 @@ export const Flyout: FC<FlyoutProps> = ({
     legacyFooter = true,
     placement = FlyoutPlacement.BottomLeft,
     offset,
+    updatePositionOnContentChange = false,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
     const { toggle, close } = state;
@@ -106,6 +108,7 @@ export const Flyout: FC<FlyoutProps> = ({
         isOpen,
         placement,
         offset,
+        updatePositionOnContentChange,
     });
 
     const { buttonProps, isPressed } = useButton({ onPress: () => toggle(), elementType: 'div' }, triggerRef);
