@@ -136,6 +136,7 @@
         "@react-stately/toggle": "^3.2.6",
         "@react-stately/tooltip": "^3.0.8",
         "@react-stately/tree": "^3.2.3",
+        "@storybook/addon-a11y": "^6.5.7",
         "@udecode/plate": "^10.6.0",
         "@xstate/immer": "^0.3.1",
         "@xstate/react": "^1.6.3",
