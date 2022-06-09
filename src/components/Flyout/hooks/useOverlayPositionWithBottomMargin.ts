@@ -59,9 +59,7 @@ export const useOverlayPositionWithBottomMargin = ({
     });
 
     useLayoutEffect(() => {
-        /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded" 
-                from being thrown during cypress component tests */
-        const resizeObserver = new ResizeObserver(() => setTimeout(updatePosition, 0));
+        const resizeObserver = new ResizeObserver(updatePosition);
 
         if (isOpen) {
             const overlayHeight = getTotalOverlayHeight(overlayRef, scrollRef);
