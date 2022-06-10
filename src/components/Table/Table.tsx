@@ -145,6 +145,9 @@ export const Table: FC<TableProps> = ({
         }
     }, [sortedColumnKey, sortOrder]);
 
+    console.log('rows');
+    console.log(rows);
+
     return (
         <div className="tw-w-full tw-max-h-96 sm:tw-max-h-full">
             <table

@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Badge } from '@components/Badge/Badge';
+import { TextInput } from '@components/TextInput/TextInput';
+
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
 import IconActions from '@foundation/Icon/Generated/IconActions';
 import IconEmojiHappy from '@foundation/Icon/Generated/IconEmojiHappy';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Column, Row, SelectionMode, Table, TableProps } from './Table';
 
 export default {
@@ -203,16 +205,36 @@ const rows: Row[] = [
 ];
 
 const Template: Story<TableProps> = (args) => {
+    const [filteredRows, setfilteredRows] = useState<Row[]>(rows);
     const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
 
+    const [filter, setfilter] = useState('');
+
+    useEffect(() => {
+        if (filter === '') {
+            setfilteredRows(rows);
+        }
+        const newFilteredRowsValue = rows.filter((row) => {
+            const cells = Object.values(row.cells);
+            return cells.some((cell) => String(cell.sortId).includes(filter));
+        });
+        setfilteredRows(newFilteredRowsValue);
+    }, [filter]);
+
+    console.log('filteredRows');
+    console.log(filteredRows);
+
     return (
-        <Table
-            {...args}
-            columns={columns}
-            rows={rows}
-            selectedRowIds={selectedRows}
-            onSelectionChange={(ids) => setSelectedRows(ids || [])}
-        />
+        <>
+            <TextInput onChange={(val) => setfilter(val)} value={filter} />
+            <Table
+                {...args}
+                columns={columns}
+                rows={filteredRows}
+                selectedRowIds={selectedRows}
+                onSelectionChange={(ids) => setSelectedRows(ids || [])}
+            />
+        </>
     );
 };
 
