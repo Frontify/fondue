@@ -2,7 +2,6 @@
 
 import React, { ReactElement, useState } from 'react';
 import { merge } from '@utilities/merge';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useDrag } from 'react-dnd';
 import { DropZone, OnDropCallback } from '@components/DropZone';
 import { TreeFlatListItem } from '@components/Tree';
