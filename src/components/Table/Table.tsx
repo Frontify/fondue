@@ -10,7 +10,7 @@ import {
     TableStateProps,
     useTableState,
 } from '@react-stately/table';
-import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import React, { FC, ReactNode, useRef, useState } from 'react';
 import { TableCell, TableCellType } from './TableCell';
 import { TableColumnHeader, TableColumnHeaderType } from './TableColumnHeader';
 import { TableHeaderRow } from './TableHeaderRow';
@@ -109,13 +109,12 @@ export const Table: FC<TableProps> = ({
     ariaLabel = 'Table',
 }) => {
     const isSelectTable = selectionMode === SelectionMode.SingleSelect || selectionMode === SelectionMode.MultiSelect;
-    const [sortedRows, setSortedRows] = useState(rows);
     const [{ sortedColumnKey, sortOrder }, setSortedColumn] = useState<SortType>({
         sortedColumnKey: undefined,
         sortOrder: undefined,
     });
     const ref = useRef<HTMLTableElement | null>(null);
-    const props = mapToTableAriaProps(columns, sortedRows);
+    const props = mapToTableAriaProps(columns, rows);
     const state = useTableState({
         ...props,
         selectionMode,
@@ -131,22 +130,16 @@ export const Table: FC<TableProps> = ({
         onSelectionChange: (keys) =>
             isSelectTable &&
             onSelectionChange &&
-            onSelectionChange(keys === 'all' ? getAllRowIds(sortedRows) : Array.from(keys)),
+            onSelectionChange(keys === 'all' ? getAllRowIds(rows) : Array.from(keys)),
         defaultSelectedKeys: isSelectTable ? selectedRowIds : undefined,
         showSelectionCheckboxes: isSelectTable,
     });
     const { collection } = state;
     const { gridProps } = useTable({ 'aria-label': ariaLabel }, state, ref);
 
-    useEffect(() => {
-        if (sortedColumnKey && sortOrder) {
-            const currentSortedRows = sortRows(rows, sortedColumnKey, sortOrder === DEFAULT_SORT_ORDER);
-            setSortedRows(currentSortedRows);
-        }
-    }, [sortedColumnKey, sortOrder]);
-
-    console.log('rows');
-    console.log(rows);
+    if (sortedColumnKey && sortOrder) {
+        rows = sortRows(rows, sortedColumnKey, sortOrder === DEFAULT_SORT_ORDER);
+    }
 
     return (
         <div className="tw-w-full tw-max-h-96 sm:tw-max-h-full">
