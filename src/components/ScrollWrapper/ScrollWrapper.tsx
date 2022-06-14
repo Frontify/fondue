@@ -21,6 +21,8 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
     const directionVertical =
         direction === ScrollWrapperDirection.Vertical || direction === ScrollWrapperDirection.Both;
 
+    const gradientWidth = scrollingContainer.current ? scrollingContainer.current.clientWidth + 8 : '100%';
+
     return (
         <div
             data-test-id="scroll-wrapper"
@@ -29,7 +31,10 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
             {directionVertical && showTopShadow && (
                 <div
                     className="tw-h-3 tw-w-full tw-absolute tw-z-10 tw-top-0 tw-left-0 tw-mix-blend-darken tw-border-t tw-border-line"
-                    style={{ background: GRADIENTS.top }}
+                    style={{
+                        background: GRADIENTS.top,
+                        width: gradientWidth,
+                    }}
                 />
             )}
             <div
@@ -50,8 +55,11 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
             </div>
             {directionVertical && showBottomShadow && (
                 <div
-                    className="tw-h-3 tw-w-full tw-absolute tw-z-10 tw-bottom-0 tw-left-0 tw-mix-blend-darken tw-border-b tw-border-line"
-                    style={{ background: GRADIENTS.bottom }}
+                    className="tw-h-3 tw-absolute tw-z-10 tw-bottom-0 tw-left-0 tw-mix-blend-darken tw-border-b tw-border-line"
+                    style={{
+                        background: GRADIENTS.bottom,
+                        width: gradientWidth,
+                    }}
                 />
             )}
         </div>
