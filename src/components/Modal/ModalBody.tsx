@@ -11,7 +11,7 @@ export const ModalBody: FC<ModalBodyProps> = ({ direction, children, horizontalP
     return (
         <div
             data-test-id="modal-body"
-            className={`tw-flex-auto tw-min-h-0 ${horizontalPadding ? padding.horizontal : ''}`}
+            className={`tw-flex-auto tw-min-h-0 ${horizontalPadding ? padding.horizontal : 'tw-pr-2'}`}
         >
             <ScrollWrapper direction={direction}>{children}</ScrollWrapper>
         </div>
