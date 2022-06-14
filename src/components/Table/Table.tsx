@@ -113,6 +113,11 @@ export const Table: FC<TableProps> = ({
         sortedColumnKey: undefined,
         sortOrder: undefined,
     });
+
+    if (sortedColumnKey && sortOrder) {
+        rows = sortRows(rows, sortedColumnKey, sortOrder === DEFAULT_SORT_ORDER);
+    }
+
     const ref = useRef<HTMLTableElement | null>(null);
     const props = mapToTableAriaProps(columns, rows);
     const state = useTableState({
@@ -136,10 +141,6 @@ export const Table: FC<TableProps> = ({
     });
     const { collection } = state;
     const { gridProps } = useTable({ 'aria-label': ariaLabel }, state, ref);
-
-    if (sortedColumnKey && sortOrder) {
-        rows = sortRows(rows, sortedColumnKey, sortOrder === DEFAULT_SORT_ORDER);
-    }
 
     return (
         <div className="tw-w-full tw-max-h-96 sm:tw-max-h-full">
