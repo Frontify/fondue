@@ -2,7 +2,6 @@
 
 import React, { ReactElement, useState } from 'react';
 import { merge } from '@utilities/merge';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useDrag } from 'react-dnd';
 import { DropZone, OnDropCallback } from '@components/DropZone';
 import { TreeFlatListItem } from '@components/Tree';
@@ -190,19 +189,17 @@ export const Node = ({
                             </span>
                         </div>
                     </a>
-                    <AnimatePresence>
-                        {actions && (isHovered || selected) && (
-                            <motion.div
-                                className="tw-flex tw-space-x-1.5 tw-items-center"
-                                initial={{ width: 0 }}
-                                animate={{ width: 'auto' }}
-                                exit={{ width: 0 }}
-                                transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
-                            >
-                                {actions.map((action) => action)}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+
+                    {actions && (
+                        <div
+                            className={merge([
+                                'tw-flex tw-items-center',
+                                isHovered || selected ? 'tw-visible tw-space-x-1.5' : 'tw-invisible tw-w-0',
+                            ])}
+                        >
+                            {actions.map((action) => action)}
+                        </div>
+                    )}
                 </div>
             </DropZone>
 
