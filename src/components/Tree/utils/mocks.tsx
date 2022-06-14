@@ -1,7 +1,7 @@
 import { MenuItemContentSize } from '@components/MenuItem';
-import { IconFile, IconFolder, IconSize, IconSmileysPeople, IconPlus } from '@foundation/Icon';
+import { IconFile, IconFolder, IconPlus, IconSize, IconSmileysPeople } from '@foundation/Icon';
 import React from 'react';
-import { TreeFlatListItem } from '@components/Tree';
+import { TreeFlatListItem, TreeNodeItem } from '@components/Tree';
 import { DraggableItem } from '@utilities/dnd';
 import { Badge } from '../../..';
 import { Button, ButtonSize } from '@components/Button';
@@ -164,5 +164,37 @@ export const mockNodesFlat: mockNodeType = () => [
         parentId: '1',
         value: 'https://weare.frontify.com/document/923#/test',
         sort: null,
+    },
+];
+
+export const mockNodesTree: DraggableItem<TreeNodeItem>[] = [
+    {
+        id: '1',
+        name: 'Design System Testing',
+        label: 'Document',
+        value: 'https://weare.frontify.com/document/1',
+        icon: <IconFolder size={IconSize.Size16} />,
+        parentId: null,
+        sort: 1,
+        nodes: [
+            {
+                id: '1-1',
+                name: 'Uncategorizes Pages',
+                icon: <IconFolder size={IconSize.Size16} />,
+                parentId: '1',
+                sort: 1,
+                nodes: [...uncategorizedPagesNodes],
+            },
+            {
+                id: '1-2',
+                parentId: '1',
+                name: 'Test Category',
+                label: 'Document',
+                icon: <IconFolder size={IconSize.Size16} />,
+                value: 'https://weare.frontify.com/document/923#/test',
+                sort: null,
+                nodes: [...testCategoryNodes],
+            },
+        ],
     },
 ];
