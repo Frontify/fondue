@@ -39,7 +39,6 @@ export default defineConfig({
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
             fileName: (format: string) => `index.${format}.js`,
-            formats: ['es', 'umd', 'cjs'],
             name: 'Arcade',
         },
         sourcemap: true,
