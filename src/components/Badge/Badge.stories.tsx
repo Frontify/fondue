@@ -3,7 +3,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { Badge } from './Badge';
-import IconIcons from '@foundation/Icon/Generated/IconIcons';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { BadgeEmphasis, BadgeProps, BadgeStatus, BadgeStyle } from './types';
 
 export default {
@@ -89,7 +89,7 @@ WithIcon.argTypes = {
 };
 
 WithIcon.args = {
-    icon: <IconIcons />,
+    icon: <IconIcon />,
 };
 
 export const WithOnClickAndIcon = BadgeTemplate.bind({});
@@ -100,7 +100,7 @@ WithOnClickAndIcon.argTypes = {
 };
 
 WithOnClickAndIcon.args = {
-    icon: <IconIcons />,
+    icon: <IconIcon />,
 };
 
 export const WithStatusAndIcon = BadgeTemplate.bind({});
@@ -115,7 +115,7 @@ WithStatusAndIcon.argTypes = {
 
 WithStatusAndIcon.args = {
     status: BadgeStatus.Positive,
-    icon: <IconIcons />,
+    icon: <IconIcon />,
 };
 
 export const StatusOnly = BadgeTemplate.bind({});
@@ -141,7 +141,7 @@ IconOnly.argTypes = {
 };
 
 IconOnly.args = {
-    icon: <IconIcons />,
+    icon: <IconIcon />,
     children: '',
 };
 
@@ -163,5 +163,5 @@ BetweenElements.argTypes = {
 
 BetweenElements.args = {
     status: BadgeStatus.Positive,
-    icon: <IconIcons />,
+    icon: <IconIcon />,
 };
