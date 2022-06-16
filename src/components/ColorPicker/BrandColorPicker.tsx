@@ -2,9 +2,7 @@
 
 import { Slider } from '@components/Slider/Slider';
 import { TextInput } from '@components/TextInput/TextInput';
-import { IconLayoutGrid, IconLayoutVertical } from '@foundation/Icon/Generated';
-import IconCheck from '@foundation/Icon/Generated/IconCheck';
-import IconSearch from '@foundation/Icon/Generated/IconSearch';
+import { IconCheckMark, IconGridRegular, IconMagnifier, IconStackVertical } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { isColorLight } from '@utilities/colors';
 import { merge } from '@utilities/merge';
@@ -24,8 +22,8 @@ type Props = Omit<ColorPickerProps, 'currentFormat' | 'setFormat'>;
 
 export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], currentColor, onSelect }) => {
     const views = [
-        { id: BrandColorView.Grid, icon: <IconLayoutGrid />, ariaLabel: 'Grid' },
-        { id: BrandColorView.List, icon: <IconLayoutVertical />, ariaLabel: 'List' },
+        { id: BrandColorView.Grid, icon: <IconGridRegular />, ariaLabel: 'Grid' },
+        { id: BrandColorView.List, icon: <IconStackVertical />, ariaLabel: 'List' },
     ];
     const [view, setView] = useState(views[0].id);
     const [query, setQuery] = useState('');
@@ -57,7 +55,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                 <div className="tw-flex-1">
                     <TextInput
                         value={query}
-                        decorator={<IconSearch />}
+                        decorator={<IconMagnifier />}
                         placeholder="Search"
                         onChange={(value) => setQuery(value)}
                         clearable
@@ -100,7 +98,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                                                       color.g === currentColor.g &&
                                                       color.b === currentColor.b &&
                                                       color.a === currentColor.a && (
-                                                          <IconCheck size={IconSize.Size20} />
+                                                          <IconCheckMark size={IconSize.Size20} />
                                                       )}
                                               </span>
                                               {view === BrandColorView.List && (

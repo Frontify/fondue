@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { BadgeStatus, BadgeStyle } from '@components/Badge';
-import IconIcons from '@foundation/Icon/Generated/IconIcons';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
@@ -33,13 +33,13 @@ WithoutLinkOrAction.args = {
 export const WithDecoratorAndAction = Template.bind({});
 
 WithDecoratorAndAction.args = {
-    items: [...ITEMS, { onClick: action('click'), bold: true, decorator: <IconIcons />, label: 'Active' }],
+    items: [...ITEMS, { onClick: action('click'), bold: true, decorator: <IconIcon />, label: 'Active' }],
 };
 
 export const WithDecoratorAndLink = Template.bind({});
 
 WithDecoratorAndLink.args = {
-    items: [...ITEMS, { link, bold: true, decorator: <IconIcons />, label: 'Active' }],
+    items: [...ITEMS, { link, bold: true, decorator: <IconIcon />, label: 'Active' }],
 };
 
 export const WithBadges = Template.bind({});
@@ -54,7 +54,7 @@ WithBadges.args = {
             badges: [
                 { style: BadgeStyle.Positive, children: 'Badge 1' },
                 { status: BadgeStatus.Danger, children: 'Badge 2' },
-                { style: BadgeStyle.Danger, icon: <IconIcons />, children: 'Badge 3' },
+                { style: BadgeStyle.Danger, icon: <IconIcon />, children: 'Badge 3' },
             ],
         },
     ],
@@ -68,7 +68,7 @@ WithDecoratorAndBadge.args = {
         {
             link,
             bold: true,
-            decorator: <IconIcons />,
+            decorator: <IconIcon />,
             label: 'Active',
             badges: [{ status: BadgeStatus.Positive, children: 'Badge' }],
         },

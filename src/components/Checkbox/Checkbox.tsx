@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconCheck from '@foundation/Icon/Generated/IconCheck';
+import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import IconMinus from '@foundation/Icon/Generated/IconMinus';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
 import { useMemoizedId } from '@hooks/useMemoizedId';
@@ -109,7 +109,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                               ]),
                     ])}
                 >
-                    {state === CheckboxState.Checked && <IconCheck />}
+                    {state === CheckboxState.Checked && <IconCheckMark />}
                     {state === CheckboxState.Mixed && <IconMinus />}
                 </span>
                 {label && (
