@@ -1,6 +1,6 @@
 {
-    "name": "@frontify/arcade",
-    "version": "9.6.1",
+    "name": "@frontify/fondue",
+    "version": "9.6.2",
     "description": "Design system of Frontify",
     "main": "dist/index.umd.js",
     "unpkg": "dist/index.umd.js",
@@ -53,10 +53,10 @@
     ],
     "author": "Frontify Developers <developers@frontify.com>",
     "repository": {
-        "url": "https://github.com/frontify/arcade"
+        "url": "https://github.com/frontify/fondue"
     },
     "bugs": {
-        "url": "https://github.com/frontify/arcade/issues"
+        "url": "https://github.com/frontify/fondue/issues"
     },
     "devDependencies": {
         "@cypress/react": "5.12.5",
