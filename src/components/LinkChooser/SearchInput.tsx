@@ -3,9 +3,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
 import { Validation, validationClassMap } from '@utilities/validation';
-import IconCopyToClipboard from '@foundation/Icon/Generated/IconCopyToClipboard';
-import IconExternalLink from '@foundation/Icon/Generated/IconExternalLink';
-import IconReject from '@foundation/Icon/Generated/IconReject';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
@@ -13,6 +10,7 @@ import { merge } from '@utilities/merge';
 import { useActor } from '@xstate/react';
 import React, { FC, MouseEvent, forwardRef } from 'react';
 import { IconButtonProps, SearchInputProps } from './types';
+import { IconArrowOutExternal, IconClipboard, IconCross } from '@foundation/Icon';
 
 export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>(
     (
@@ -85,7 +83,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         testId="link-chooser-preview-icon"
                         title="Preview link"
                         ariaLabel="preview link"
-                        icon={<IconExternalLink />}
+                        icon={<IconArrowOutExternal />}
                         onClick={() => send('OPEN_PREVIEW')}
                     />
                 )}
@@ -95,7 +93,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         testId="link-chooser-copy-icon"
                         title="Copy text to clipboard"
                         ariaLabel="copy text to clipboard"
-                        icon={<IconCopyToClipboard />}
+                        icon={<IconClipboard />}
                         onClick={() => send('COPY_TO_CLIPBOARD')}
                     />
                 )}
@@ -105,7 +103,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         testId="link-chooser-clear-icon"
                         title="Clear text input"
                         ariaLabel="clear text input"
-                        icon={<IconReject />}
+                        icon={<IconCross />}
                         isComboBoxControl
                         onClick={onClear}
                     />

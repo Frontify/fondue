@@ -4,12 +4,12 @@ import { mapToAriaProps } from '@components/ActionMenu/Aria/helper';
 import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
 import { useDropdownAutoHeight } from '@components/Dropdown/useDropdownAutoHeight';
 import {
+    IconArrowOutExternal,
+    IconBuildingBlock,
     IconDocument,
-    IconDocumentLibrary,
-    IconExternalLink,
+    IconDocumentStack,
+    IconLayersSingle,
     IconLink,
-    IconPatternLibrary,
-    IconTemplate,
 } from '@foundation/Icon/Generated';
 import { useComboBox } from '@react-aria/combobox';
 import { DismissButton } from '@react-aria/overlays';
@@ -34,11 +34,11 @@ import { useManualComboBoxEventHandlers } from './utils/useManualComboBoxHandler
 
 export const IconOptions: Record<IconName | string, ReactElement> = {
     [IconName.Document]: <IconDocument />,
-    [IconName.Library]: <IconDocumentLibrary />,
+    [IconName.Library]: <IconDocumentStack />,
     [IconName.Link]: <IconLink />,
-    [IconName.External]: <IconExternalLink />,
-    [IconName.Template]: <IconTemplate />,
-    [IconName.Block]: <IconPatternLibrary />,
+    [IconName.External]: <IconArrowOutExternal />,
+    [IconName.Template]: <IconLayersSingle />,
+    [IconName.Block]: <IconBuildingBlock />,
 };
 
 export const DEFAULT_ICON = IconName.Link;

@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from '@cypress/react';
-import IconAudio from '@foundation/Icon/Generated/IconAudio';
 import { IconSize } from '@foundation/Icon/IconSize';
 import React from 'react';
 import { MenuItem, MenuItemProps, SelectionIndicatorIcon } from './MenuItem';
 import { MenuItemContentSize } from './MenuItemContent';
+import { IconMusicNote } from '@foundation/Icon';
 
 const MENU_ITEM_ACTIVE_ID = '[data-test-id=menu-item-active]';
 const MENU_ITEM_TITLE_ID = '[data-test-id=menu-item-title]';
@@ -18,7 +18,7 @@ const ITEMS: MenuItemProps[] = [
     {
         title: 'Small',
         size: MenuItemContentSize.Small,
-        decorator: <IconAudio size={IconSize.Size16} />,
+        decorator: <IconMusicNote size={IconSize.Size16} />,
     },
     {
         title: 'Small',
@@ -32,7 +32,7 @@ const ITEMS: MenuItemProps[] = [
     {
         title: 'Large icon',
         subtitle: 'Large icon subtitle',
-        decorator: <IconAudio size={IconSize.Size16} />,
+        decorator: <IconMusicNote size={IconSize.Size16} />,
         size: MenuItemContentSize.Large,
     },
     {
