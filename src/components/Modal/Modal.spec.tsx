@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from '@cypress/react';
-import { IconIcons } from '@foundation/Icon';
+import { IconIcon } from '@foundation/Icon';
 import { PatternDesign, PatternTheme } from '@foundation/Pattern';
 import { OverlayProvider } from '@react-aria/overlays';
 import React from 'react';
@@ -60,7 +60,7 @@ describe('Modal Component', () => {
                     <ModalHeader
                         title={title}
                         leadText={leadText}
-                        decorator={<IconIcons />}
+                        decorator={<IconIcon />}
                         variant={ModalHeaderVariant.Informative}
                     />
                 </Modal>

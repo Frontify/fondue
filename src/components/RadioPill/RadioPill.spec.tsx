@@ -3,11 +3,11 @@
 import React from 'react';
 import { mount } from '@cypress/react';
 import { RadioPill } from './RadioPill';
-import IconIcons from '@foundation/Icon/Generated/IconIcons';
+import { IconIcon } from '@foundation/Icon';
 
 const RADIOPILL_TEST_ID = '[data-test-id=radio-pill]';
 const RADIOPILL_LABEL = 'Label';
-const RADIOPILL_ICON = <IconIcons />;
+const RADIOPILL_ICON = <IconIcon />;
 const RADIOPILL_ICON_CODE = 'svg[name=IconIcons]';
 
 describe('RadioPill Component', () => {

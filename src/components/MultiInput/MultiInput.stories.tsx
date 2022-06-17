@@ -3,11 +3,11 @@
 import { Dropdown, DropdownSize } from '@components/Dropdown/Dropdown';
 import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
 import { TextInput } from '@components/TextInput/TextInput';
-import IconIcons from '@foundation/Icon/Generated/IconIcons';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { Meta, Story } from '@storybook/react';
 import React, { useState } from 'react';
 import { MultiInput as MultiInputComponent, MultiInputLayout, MultiInputProps } from './MultiInput';
+import { IconIcon } from '@foundation/Icon';
 
 export default {
     title: 'Components/Multi Input',
@@ -93,22 +93,22 @@ export const MultiInputSpider: Story<MultiInputProps> = (args: MultiInputProps) 
     return (
         <MultiInputComponent {...args}>
             <TextInput
-                decorator={<IconIcons size={IconSize.Size16} />}
+                decorator={<IconIcon size={IconSize.Size16} />}
                 value={input1}
                 onChange={(value) => setInput1(value)}
             />
             <TextInput
-                decorator={<IconIcons size={IconSize.Size16} />}
+                decorator={<IconIcon size={IconSize.Size16} />}
                 value={input2}
                 onChange={(value) => setInput2(value)}
             />
             <TextInput
-                decorator={<IconIcons size={IconSize.Size16} />}
+                decorator={<IconIcon size={IconSize.Size16} />}
                 value={input3}
                 onChange={(value) => setInput3(value)}
             />
             <TextInput
-                decorator={<IconIcons size={IconSize.Size16} />}
+                decorator={<IconIcon size={IconSize.Size16} />}
                 value={input4}
                 onChange={(value) => setInput4(value)}
             />

@@ -2,7 +2,7 @@
 
 import { Meta, Story } from '@storybook/react';
 import React, { useEffect, useState } from 'react';
-import { IconInfo } from '@foundation/Icon/Generated';
+import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
 import { Switch, SwitchProps, SwitchSize } from './Switch';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
@@ -64,7 +64,11 @@ WithLabelAndMultipleTooltips.args = {
     label: 'Switch label',
     tooltip: [
         { content: 'First tooltip' },
-        { content: 'Second Tooltip', triggerIcon: <IconInfo />, triggerStyle: TooltipIconTriggerStyle.Warning },
+        {
+            content: 'Second Tooltip',
+            triggerIcon: <IconExclamationMarkCircle />,
+            triggerStyle: TooltipIconTriggerStyle.Warning,
+        },
     ],
 };
 

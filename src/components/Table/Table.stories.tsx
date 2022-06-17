@@ -2,13 +2,12 @@
 
 import { Badge } from '@components/Badge/Badge';
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
-import IconActions from '@foundation/Icon/Generated/IconActions';
-import IconEmojiHappy from '@foundation/Icon/Generated/IconEmojiHappy';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
 import React, { FC, useState } from 'react';
 import { Column, Row, SelectionMode, Table, TableProps } from './Table';
+import { IconDotsVertical, IconFaceHappy } from '@foundation/Icon';
 
 export default {
     title: 'Components/Table',
@@ -26,7 +25,7 @@ export default {
 
 const User: FC<{ name: string }> = ({ name }) => (
     <div className="tw-flex tw-gap-x-2 tw-items-center">
-        <IconEmojiHappy size={IconSize.Size32} />
+        <IconFaceHappy size={IconSize.Size32} />
         <div>
             <p>{name}</p>
             <p>mb@gmail.com</p>
@@ -35,7 +34,12 @@ const User: FC<{ name: string }> = ({ name }) => (
 );
 
 const ActionButton: FC = () => (
-    <Button onClick={action('click')} size={ButtonSize.Small} style={ButtonStyle.Secondary} icon={<IconActions />} />
+    <Button
+        onClick={action('click')}
+        size={ButtonSize.Small}
+        style={ButtonStyle.Secondary}
+        icon={<IconDotsVertical />}
+    />
 );
 
 const columns: Column[] = [

@@ -4,7 +4,7 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { TooltipIcon, TooltipIconProps, TooltipIconTriggerStyle } from './TooltipIcon';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { IconAttentionFilled } from '@foundation/Icon/Generated';
+import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
 
 export default {
     title: 'Components/TooltipIcon',
@@ -36,5 +36,5 @@ WithCustomIconSize.args = {
 
 export const WithCustomIcon = TooltipIconTemplate.bind({});
 WithCustomIcon.args = {
-    triggerIcon: <IconAttentionFilled />,
+    triggerIcon: <IconExclamationMarkCircle filled />,
 };

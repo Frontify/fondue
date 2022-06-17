@@ -1,12 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconTextAlignCenter from '@foundation/Icon/Generated/IconTextAlignCenter';
-import IconTextAlignLeft from '@foundation/Icon/Generated/IconTextAlignLeft';
-import IconTextAlignRight from '@foundation/Icon/Generated/IconTextAlignRight';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { Meta, Story } from '@storybook/react';
 import React, { useState } from 'react';
 import { Slider, SliderProps } from './Slider';
+import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon';
 
 export default {
     title: 'Components/Slider',
@@ -45,25 +43,30 @@ Number.args = {
 export const Icon = SliderTemplate.bind({});
 Icon.args = {
     items: [
-        { id: 'a', icon: <IconTextAlignLeft size={IconSize.Size16} />, ariaLabel: 'Text Align Left' },
-        { id: 'b', icon: <IconTextAlignCenter size={IconSize.Size16} />, ariaLabel: 'Text Align Center' },
-        { id: 'c', icon: <IconTextAlignRight size={IconSize.Size16} />, ariaLabel: 'Text Align Right' },
+        { id: 'a', icon: <IconTextAlignmentLeft size={IconSize.Size16} />, ariaLabel: 'Text Align Left' },
+        { id: 'b', icon: <IconTextAlignmentCentre size={IconSize.Size16} />, ariaLabel: 'Text Align Center' },
+        { id: 'c', icon: <IconTextAlignmentRight size={IconSize.Size16} />, ariaLabel: 'Text Align Right' },
     ],
 };
 
 export const IconAndText = SliderTemplate.bind({});
 IconAndText.args = {
     items: [
-        { id: 'a', icon: <IconTextAlignLeft size={IconSize.Size16} />, ariaLabel: 'Text Align Left', value: 'Title 1' },
+        {
+            id: 'a',
+            icon: <IconTextAlignmentLeft size={IconSize.Size16} />,
+            ariaLabel: 'Text Align Left',
+            value: 'Title 1',
+        },
         {
             id: 'b',
-            icon: <IconTextAlignCenter size={IconSize.Size16} />,
+            icon: <IconTextAlignmentCentre size={IconSize.Size16} />,
             ariaLabel: 'Text Align Center',
             value: 'Title 2',
         },
         {
             id: 'c',
-            icon: <IconTextAlignRight size={IconSize.Size16} />,
+            icon: <IconTextAlignmentRight size={IconSize.Size16} />,
             ariaLabel: 'Text Align Right',
             value: 'Title 3',
         },

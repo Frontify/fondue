@@ -3,16 +3,15 @@
 import { mount } from '@cypress/react';
 import React from 'react';
 import { Tooltip, TooltipProps } from './Tooltip';
-import IconIcons from '@foundation/Icon/Generated/IconIcons';
 import { BrightHeaderStyle, brightHeaderBackgroundColors } from './BrightHeader';
-import { IconAttentionFilled, IconSize } from '@foundation/Icon';
+import { IconExclamationMarkCircle, IconIcon, IconSize } from '@foundation/Icon';
 
 const TOOLTIP_TEXT = 'This is a tooltip';
 const TOOLTIP_ID = '[data-test-id=tooltip]';
 const TOOLTIP_LINK_ID = '[data-test-id=tooltip-link]';
 const TOOLTIP_LINK_URL = 'https://www.frontify.com';
 const TOOLTIP_HEADING_TEXT = "I'm a heading";
-const GENERIC_ICON = <IconIcons />;
+const GENERIC_ICON = <IconIcon />;
 const GENERIC_ICON_CODE = 'svg[name=IconIcons]';
 const BRIGHT_HEADER_ID = '[data-test-id=bright-header]';
 
@@ -23,7 +22,7 @@ export const TooltipComponent = (args: TooltipProps) => {
                 {...args}
                 triggerElement={
                     <div data-test-id="tooltip-trigger" className="tw-flex tw-justify-center tw-items-center">
-                        <IconAttentionFilled size={IconSize.Size16} />
+                        <IconExclamationMarkCircle size={IconSize.Size16} filled />
                         <span>Tooltip trigger</span>
                     </div>
                 }
