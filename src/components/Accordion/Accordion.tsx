@@ -120,17 +120,18 @@ export const Accordion: FC<AccordionProps> = (props) => {
 
     // We need to detect the firstRender to not toggle any panel
     const firstRender = useRef(true);
+    const childLength = useRef(Children.toArray(props.children).length);
     useEffect(() => {
         /**
          * Checks if the last child in the Array is active
          * This solution does not work when adding Children not to the end of the Accordeon
-         * or if any children get removed from the accordeon
          */
         const childActive = lastChildInArrayIsActive(props.children);
-        if (!!childActive && !firstRender.current) {
+        if (!!childActive && !firstRender.current && Children.toArray(props.children).length > childLength.current) {
             state.toggleKey(ariaProps.defaultExpandedKeys[ariaProps.defaultExpandedKeys.length - 1]);
         }
         firstRender.current = false;
+        childLength.current = Children.toArray(props.children).length;
     }, [props.children]);
 
     const {

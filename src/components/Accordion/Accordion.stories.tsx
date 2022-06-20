@@ -379,6 +379,9 @@ export const WithAccordionItemAddition: Story<
                 <Button onClick={() => setAccordionItem([...accordionItem, elementWithoutActive])}>
                     Add Element without active prop
                 </Button>
+                <Button onClick={() => setAccordionItem([...accordionItem.slice(0, accordionItem.length - 1)])}>
+                    Remove an Element from the Accordion
+                </Button>
             </Stack>
         </>
     );
