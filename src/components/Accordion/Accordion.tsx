@@ -103,9 +103,7 @@ const filterValidChildren = ({ children }: AccordionProps) =>
 
 export const AccordionItem = ({ children }: AccordionItemProps): ReactElement => <>{children}</>;
 
-const lastChildInArrayIsActive = (
-    children: React.ReactNode | (React.ReactNode & undefined) | undefined,
-): boolean | undefined => {
+const lastChildInArrayIsActive = (children: React.ReactNode | undefined): boolean | undefined => {
     const childrenArray = Children.toArray(children) as { key: string; props?: { header?: { active?: boolean } } }[];
     return childrenArray[childrenArray.length - 1]?.props?.header?.active === true;
 };
