@@ -118,12 +118,12 @@ export const Accordion: FC<AccordionProps> = (props) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const state = useTreeState<AccordionItemProps>(ariaProps);
 
-    // We need to detect the firstRender to not toggle any panel
+    // We need to detect the firstRender and childLength to not toggle any panel
     const accordionChildren = useRef({ firstRender: true, childLength: Children.toArray(props.children).length });
     useEffect(() => {
         /**
          * Checks if the last child in the Array is active
-         * This solution does not work when adding Children not to the end of the Accordeon
+         * Only works when adding Children to end of Accordion
          */
         const childActive = lastChildInArrayIsActive(props.children);
         if (
