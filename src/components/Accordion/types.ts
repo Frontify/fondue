@@ -43,7 +43,7 @@ export type AccordionHeaderProps = {
     /** @deprecated use headerComponent prop for custom header styles */
     bold?: boolean;
     /** @deprecated Icon type will be fixed to FieldsetHeaderType.Accordion.
-    Use headerComponent prop for custom header styles */
+     Use headerComponent prop for custom header styles */
     type?: FieldsetHeaderType;
     /** @deprecated use headerComponent prop for custom header styles */
     as?: keyof JSX.IntrinsicElements;
@@ -54,6 +54,6 @@ export type AccordionHeaderIconProps = {
     size?: AccordionHeaderIconSize;
     disabled?: boolean;
     /** @deprecated Icon type will be fixed to FieldsetHeaderType.Accordion.
-    Use headerComponent prop for custom header styles */
+     Use headerComponent prop for custom header styles */
     type?: FieldsetHeaderType;
 };

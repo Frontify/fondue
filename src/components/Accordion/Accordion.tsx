@@ -8,7 +8,7 @@ import { Item as StatelyItem } from '@react-stately/collections';
 import { useTreeState } from '@react-stately/tree';
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { Children, FC, Key, KeyboardEvent, ReactElement, isValidElement, useRef } from 'react';
+import React, { Children, FC, Key, KeyboardEvent, ReactElement, isValidElement, useEffect, useRef } from 'react';
 import { AccordionHeader } from './AccordionHeader';
 import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from './types';
 
@@ -26,7 +26,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
     const { size, active, ...headerProps } = header;
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
-    const isOpen = state.expandedKeys.has(item.key) && item.props.children;
+    const isOpen = state.expandedKeys.has(item.key);
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
@@ -103,6 +103,13 @@ const filterValidChildren = ({ children }: AccordionProps) =>
 
 export const AccordionItem = ({ children }: AccordionItemProps): ReactElement => <>{children}</>;
 
+const lastChildInArrayIsActive = (
+    children: React.ReactNode | (React.ReactNode & undefined) | undefined,
+): boolean | undefined => {
+    const childrenArray = Children.toArray(children) as { key: string; props: { header: { active?: boolean } } }[];
+    return childrenArray[childrenArray.length - 1].props.header.active;
+};
+
 export const Accordion: FC<AccordionProps> = (props) => {
     const { divider = true, border = true } = props;
     const children = filterValidChildren(props);
@@ -110,6 +117,22 @@ export const Accordion: FC<AccordionProps> = (props) => {
 
     const ref = useRef<HTMLDivElement | null>(null);
     const state = useTreeState<AccordionItemProps>(ariaProps);
+
+    // We need to detect the firstRender to not toggle any panel
+    const firstRender = useRef(true);
+    useEffect(() => {
+        /**
+         * Checks if the last child in the Array is active
+         * This solution does not work when adding Children not to the end of the Accordeon
+         * or if any children get removed from the accordeon
+         */
+        const childActive = lastChildInArrayIsActive(props.children);
+        if (!!childActive && !firstRender.current) {
+            state.toggleKey(ariaProps.defaultExpandedKeys[ariaProps.defaultExpandedKeys.length - 1]);
+        }
+        firstRender.current = false;
+    }, [props.children]);
+
     const {
         // @react-aria prevents default action for onMouseDown as implemented here: https://github.com/adobe/react-spectrum/blob/e14523fedd93ac1a4ede355aed70988af572ae74/packages/%40react-aria/selection/src/useSelectableCollection.ts#L370
         // This makes it impossible to edit or select text in input fields inside the accordion
