@@ -31,12 +31,12 @@ import {
     PlateEditor,
     usePlateEditorRef,
 } from '@udecode/plate';
-import { CSSProperties, default as React, FC, ReactElement } from 'react';
+import { default as React, FC, ReactElement } from 'react';
 import { ELEMENT_CHECK_ITEM } from '../../plugins/checkboxListPlugin/createCheckboxListPlugin';
 import { CheckboxListToolbarButton } from '../../plugins/checkboxListPlugin/ui/CheckboxListToolbarButton';
 import { EditLinkChooserButton } from '../../plugins/linkChooserPlugin/ui/EditLinkChooserButton';
 import { TextStyleDropdown } from '../../TextStyleDropdown/TextStyleDropdown';
-import { ButtonGroupProps, DesignTokenName, DesignTokens, IconStylingWrapperProps } from '../../types';
+import { ButtonGroupProps, DesignTokens, IconStylingWrapperProps } from '../../types';
 import { EditorActions } from '../../utils/actions';
 const classNames = {
     root: 'tw-text-text-weak tw-ml-0.5 hover:tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded',
