@@ -205,6 +205,20 @@ const rows: Row[] = [
 ];
 
 const Template: Story<TableProps> = (args) => {
+    const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
+
+    return (
+        <Table
+            {...args}
+            columns={columns}
+            rows={rows}
+            selectedRowIds={selectedRows}
+            onSelectionChange={(ids) => setSelectedRows(ids || [])}
+        />
+    );
+};
+
+const TemplateWithSearch: Story<TableProps> = (args) => {
     const [filteredRows, setfilteredRows] = useState<Row[]>(rows);
     const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
 
@@ -221,12 +235,13 @@ const Template: Story<TableProps> = (args) => {
         setfilteredRows(newFilteredRowsValue);
     }, [filter]);
 
-    console.log('filteredRows');
-    console.log(filteredRows);
-
     return (
         <>
-            <TextInput onChange={(val) => setfilter(val)} value={filter} />
+            <TextInput
+                value={filter}
+                onChange={(val) => setfilter(val)}
+                placeholder={'Filter rows by "sortId" value'}
+            />
             <Table
                 {...args}
                 columns={columns}
@@ -249,3 +264,5 @@ export const MultiSelect = Template.bind({});
 MultiSelect.args = {
     selectionMode: SelectionMode.MultiSelect,
 };
+
+export const FilterRows = TemplateWithSearch.bind({});
