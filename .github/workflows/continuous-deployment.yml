@@ -111,7 +111,7 @@ jobs:
                   key: node_modules-${{ hashFiles('package-lock.json') }}
                   restore-keys: node_modules-
 
-            - name: Build Arcade
+            - name: Build Fondue
               run: npm run build
 
             - name: Publish to npm

@@ -1,9 +1,10 @@
 import { MenuItemContentSize } from '@components/MenuItem';
-import { IconFile, IconFolder, IconSize, IconSmileysPeople } from '@foundation/Icon';
+import { IconFile, IconFolder, IconPlus, IconSize, IconSmileysPeople } from '@foundation/Icon';
 import React from 'react';
 import { TreeFlatListItem, TreeNodeItem } from '@components/Tree';
 import { DraggableItem } from '@utilities/dnd';
 import { Badge } from '../../..';
+import { Button, ButtonSize } from '@components/Button';
 
 export const mockActionMenuBlocks = [
     {
@@ -129,6 +130,7 @@ export const mockNodesFlat: mockNodeType = () => [
         label: 'Document',
         value: 'https://weare.frontify.com/document/1',
         icon: <IconFolder size={IconSize.Size16} />,
+        actions: [<Button size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />],
         parentId: null,
         sort: 1,
         editable: true,
@@ -137,6 +139,7 @@ export const mockNodesFlat: mockNodeType = () => [
         id: '1-1',
         name: 'Uncategorizes Pages',
         icon: <IconFolder size={IconSize.Size16} />,
+        actions: [<Button size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />],
         parentId: '1',
         sort: 1,
     },
@@ -147,6 +150,7 @@ export const mockNodesFlat: mockNodeType = () => [
         name: 'Test Category',
         label: 'Document',
         icon: <IconFolder size={IconSize.Size16} />,
+        actions: [<Button size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />],
         value: 'https://weare.frontify.com/document/923#/test',
         sort: null,
         badge: <IconSmileysPeople size={IconSize.Size16} />,
@@ -156,6 +160,7 @@ export const mockNodesFlat: mockNodeType = () => [
         id: '1-3',
         name: 'Category Without Subitems',
         icon: <IconFolder size={IconSize.Size16} />,
+        actions: [<Button size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />],
         parentId: '1',
         value: 'https://weare.frontify.com/document/923#/test',
         sort: null,
