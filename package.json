@@ -104,7 +104,7 @@
     "dependencies": {
         "@frontify/fondue-tokens": "^3.0.1",
         "@popperjs/core": "^2.11.5",
-        "@react-aria/accordion": "3.0.0-alpha.6",
+        "@react-aria/accordion": "3.0.0-alpha.9",
         "@react-aria/aria-modal-polyfill": "^3.4.3",
         "@react-aria/breadcrumbs": "^3.1.9",
         "@react-aria/button": "^3.4.3",
