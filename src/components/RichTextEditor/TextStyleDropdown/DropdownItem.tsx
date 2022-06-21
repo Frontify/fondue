@@ -3,7 +3,7 @@
 import { getPreventDefaultHandler, someNode, toggleNodeType, unwrapList, usePlateEditorState } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import React, { ReactNode } from 'react';
-import { TextStyles } from '../utils/getTextStyles';
+import { TextStyles } from '../utils/textStyles';
 
 type DropdownItemProps = {
     editorId?: string;

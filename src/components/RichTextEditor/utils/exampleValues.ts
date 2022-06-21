@@ -13,7 +13,7 @@ import {
     MARK_UNDERLINE,
 } from '@udecode/plate';
 import { ELEMENT_CHECK_ITEM } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
-import { TextStyles } from './getTextStyles';
+import { TextStyles } from './textStyles';
 
 type CreateElementProps = {
     text: string;

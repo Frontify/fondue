@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_PARAGRAPH, TDescendant, createPlateEditor, deserializeHtml, parseHtmlDocument } from '@udecode/plate';
-import { getEditorConfig } from './getEditorConfig';
+import { getEditorConfig } from './editorConfig';
 
 export const EMPTY_RICH_TEXT_VALUE: TDescendant[] = [{ type: ELEMENT_PARAGRAPH, children: [{ text: '' }] }];
 

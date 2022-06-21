@@ -49,9 +49,9 @@ import { Custom3Element } from '../components/custom3';
 import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
 import { createLinkChooserPlugin } from '../plugins/linkChooserPlugin/createLinkChooserPlugin';
 import { DesignTokens } from '../types';
-import { TextStyles } from './getTextStyles';
+import { TextStyles } from './textStyles';
 
-export const getEditorConfig = (designTokens: DesignTokens) => {
+export const getEditorConfig = (designTokens?: DesignTokens) => {
     const createHeading1Plugin = createPluginFactory({
         key: TextStyles.ELEMENT_HEADING1,
         isElement: true,
