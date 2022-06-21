@@ -156,7 +156,7 @@ describe('Dropdown Component', () => {
     it('should display persisted icon if provided', () => {
         mount(<Component menuBlocks={ITEMS} decorator={<IconIcon />} />);
 
-        cy.get(`${MENU_ITEM_DECORATOR_ID} > svg`).invoke('attr', 'name').should('eq', 'IconIcons');
+        cy.get(MENU_ITEM_DECORATOR_ID).find('svg').invoke('attr', 'name').should('eq', 'IconIcon16');
     });
 
     it('should have a maximum height calculated based on viewport and dropdown position', () => {
