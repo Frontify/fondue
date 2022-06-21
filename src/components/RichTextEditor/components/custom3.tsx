@@ -5,12 +5,12 @@ import { merge } from '@utilities/merge';
 import React, { FC } from 'react';
 import { alignmentClassnames } from '../utils/alignment';
 
-export const Heading3Element: FC<PlateRenderElementProps> = ({ element, attributes, children, designTokens }) => (
-    <h3
+export const Custom3Element: FC<PlateRenderElementProps> = ({ element, attributes, children, designTokens }) => (
+    <p
         {...attributes}
         className={merge([element.align && alignmentClassnames[element.align]])}
-        style={designTokens.heading3}
+        style={designTokens.custom3}
     >
         {children}
-    </h3>
+    </p>
 );

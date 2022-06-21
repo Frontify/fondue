@@ -6,7 +6,7 @@ import { debounce } from '@utilities/debounce';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './components/Toolbar/Toolbar';
-import { TextStyleType } from './types';
+import { defaultDesignTokens, DesignTokens } from './types';
 import { EditorActions } from './utils/actions';
 import { getEditorConfig } from './utils/getEditorConfig';
 import { EMPTY_RICH_TEXT_VALUE, parseRawValue } from './utils/parseRawValue';
@@ -19,7 +19,7 @@ export type RichTextEditorProps = {
     onBlur?: (value: string) => void;
     readonly?: boolean;
     clear?: boolean;
-    textStyles?: TextStyleType[];
+    designTokens?: DesignTokens;
     actions?: EditorActions[][];
 };
 
@@ -31,7 +31,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     placeholder = '',
     readonly = false,
     clear = false,
-    textStyles,
+    designTokens = defaultDesignTokens,
     actions = [],
     onTextChange,
     onBlur,
@@ -47,6 +47,28 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
     };
+
+    if (!designTokens.heading1) {
+        designTokens.heading1 = defaultDesignTokens.heading1;
+    }
+    if (!designTokens.heading2) {
+        designTokens.heading2 = defaultDesignTokens.heading2;
+    }
+    if (!designTokens.heading3) {
+        designTokens.heading3 = defaultDesignTokens.heading3;
+    }
+    if (!designTokens.heading4) {
+        designTokens.heading4 = defaultDesignTokens.heading4;
+    }
+    if (!designTokens.custom1) {
+        designTokens.custom1 = defaultDesignTokens.custom1;
+    }
+    if (!designTokens.custom2) {
+        designTokens.custom2 = defaultDesignTokens.custom2;
+    }
+    if (!designTokens.custom3) {
+        designTokens.custom3 = defaultDesignTokens.custom3;
+    }
 
     const editorRef = useCallback((node) => {
         if (!node) {
@@ -97,9 +119,9 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 initialValue={parseRawValue(initialValue)}
                 onChange={onChange}
                 editableProps={editableProps}
-                plugins={getEditorConfig(textStyles)}
+                plugins={getEditorConfig(designTokens)}
             >
-                <Toolbar editorId={editorId} textStyles={textStyles} actions={actions} editorWidth={editorWidth} />
+                <Toolbar editorId={editorId} designTokens={designTokens} actions={actions} editorWidth={editorWidth} />
             </Plate>
         </div>
     );

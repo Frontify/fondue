@@ -5,7 +5,6 @@ import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
 import React, { FC, useState } from 'react';
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from './RichTextEditor';
 import { EditorActions } from './utils/actions';
-import { textStyleClassnames, TextStyles } from './utils/getTextStyles';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
 const TOOLBAR = '[data-test-id=toolbar]';
@@ -223,8 +222,30 @@ describe('RichTextEditor Component', () => {
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
         cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-        cy.get(TEXTSTYLE_OPTION).eq(5).click();
-        cy.get('[contenteditable=true]').should('include.html', textStyleClassnames[TextStyles.ELEMENT_CUSTOM2]);
+        cy.get(TEXTSTYLE_OPTION).eq(6).click();
+        cy.get('[contenteditable=true] > p').should(
+            'have.attr',
+            'style',
+            'font-size: 14px; text-decoration: underline;',
+        );
+    });
+
+    it('renders a passed font style', () => {
+        mount(
+            <RichTextEditor
+                designTokens={{
+                    custom1: {
+                        fontSize: '42px',
+                    },
+                }}
+            />,
+        );
+
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR).should('be.visible');
+        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+        cy.get(TEXTSTYLE_OPTION).eq(4).click();
+        cy.get('[contenteditable=true] > p').should('have.attr', 'style', 'font-size: 42px;');
     });
 
     it('renders multiple editors', () => {
