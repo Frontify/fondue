@@ -43,7 +43,7 @@ describe('Button component', () => {
                 it(`renders in ${style} ${size} and ${solid ? 'solid' : 'translucent'} with only an icon.`, () => {
                     mount(<Button style={style} size={size} solid={solid} icon={<IconIcon />} />);
 
-                    cy.get(BUTTON_ID).children('svg').should('be.visible');
+                    cy.get(BUTTON_ID).find('svg').should('be.visible');
                     cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
                 });
 
@@ -60,7 +60,7 @@ describe('Button component', () => {
                         />,
                     );
 
-                    cy.get(BUTTON_ID).children('svg').should('be.visible');
+                    cy.get(BUTTON_ID).find('svg').should('be.visible');
                     cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
                     cy.get(BUTTON_ID).should('have.class', 'tw-rounded-full');
                 });
@@ -75,7 +75,7 @@ describe('Button component', () => {
                     cy.get(BUTTON_ID).should('be.visible');
                     cy.get(BUTTON_ID).contains(BUTTON_TEXT);
 
-                    cy.get(BUTTON_ID).children('span').children('svg').should('be.visible');
+                    cy.get(BUTTON_ID).children('span').find('svg').should('be.visible');
                     cy.get(BUTTON_ID).contains(BUTTON_TEXT);
                 });
             }

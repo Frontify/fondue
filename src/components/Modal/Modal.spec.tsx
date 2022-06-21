@@ -15,7 +15,7 @@ const MODAL_HEADER = '[data-test-id=modal-header]';
 const MODAL_BODY = '[data-test-id=modal-body]';
 const MODAL_FOOTER = '[data-test-id=modal-footer]';
 const MODAL_HEADER_DECORATOR = '[data-test-id=modal-header-decorator-container]';
-const GENERIC_ICON_CODE = 'svg[name=IconIcons]';
+const GENERIC_ICON_CODE = 'svg[name=IconIcon24]';
 const SCROLL_WRAPPER_CONTAINER = '[data-test-id=scroll-wrapper]';
 
 describe('Modal Component', () => {
@@ -70,7 +70,8 @@ describe('Modal Component', () => {
         cy.get(MODAL_HEADER).should('exist');
         cy.get(MODAL_HEADER).should('contain.text', title).and('contain.text', leadText);
         cy.get(MODAL_HEADER_DECORATOR).should('be.visible').and('have.class', 'tw-text-violet-60');
-        cy.get(GENERIC_ICON_CODE).should('be.visible').and('have.class', '!tw-h-6 !tw-w-6');
+        cy.get(GENERIC_ICON_CODE).should('be.visible').and('have.css', 'width').and('eq', '24px');
+        cy.get(GENERIC_ICON_CODE).should('be.visible').and('have.css', 'height').and('eq', '24px');
     });
 
     it('should render the modal with a body and implement the ScrollWrapper component', () => {

@@ -57,12 +57,12 @@ describe('InputLabel Component', () => {
         cy.get(TOOLTIP_ICON_TRIGGER_ID)
             .first()
             .should('have.class', 'tw-text-box-negative-strong')
-            .children('svg')
-            .should('have.attr', 'name', 'IconQuestion');
+            .find('svg')
+            .should('have.attr', 'name', 'IconQuestionMarkCircle16');
         cy.get(TOOLTIP_ICON_TRIGGER_ID)
-            .eq(1)
+            .last()
             .should('have.class', 'tw-text-text-weak')
-            .children('svg')
-            .should('have.attr', 'name', 'IconActivity');
+            .find('svg')
+            .should('have.attr', 'name', 'IconReport16');
     });
 });
