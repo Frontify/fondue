@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
-import IconReject from '@foundation/Icon/Generated/IconReject';
+import IconCross from '@foundation/Icon/Generated/IconCross';
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
@@ -27,7 +27,7 @@ export const ButtonGroup: Story<ButtonGroupProps> = (args: ButtonGroupProps) => 
         <Button onClick={action('onClick')} style={ButtonStyle.Secondary}>
             The Second
         </Button>
-        <Button onClick={action('onClick')} icon={<IconReject />} style={ButtonStyle.Danger}>
+        <Button onClick={action('onClick')} icon={<IconCross />} style={ButtonStyle.Danger}>
             The Third
         </Button>
     </ButtonGroupComponent>

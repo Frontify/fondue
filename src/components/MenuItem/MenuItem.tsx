@@ -1,11 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MenuItemContent, MenuItemContentProps, MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
-import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
-import IconCheck from '@foundation/Icon/Generated/IconCheck';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 import React, { FC } from 'react';
+import { IconCaretRight, IconCheckMark, IconSize } from '@foundation/Icon';
 
 export enum MenuItemStyle {
     Primary = 'Primary',
@@ -69,7 +67,9 @@ export const MenuItem: FC<MenuItemProps> = ({
 
     const currentIcon = {
         [SelectionIndicatorIcon.CaretRight]: <IconCaretRight data-test-id="menu-item-caret" size={currentIconSize} />,
-        [SelectionIndicatorIcon.Check]: active && <IconCheck data-test-id="menu-item-active" size={currentIconSize} />,
+        [SelectionIndicatorIcon.Check]: active && (
+            <IconCheckMark data-test-id="menu-item-active" size={currentIconSize} />
+        ),
         [SelectionIndicatorIcon.None]: null,
     }[selectionIndicator];
 

@@ -4,13 +4,13 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { AccordionHeader as AccordionHeaderComponent } from './AccordionHeader';
 import { AccordionHeaderProps } from './types';
-import { IconBrand, IconCallout, IconIcons } from '@foundation/Icon';
+import { IconExclamationMarkTriangle, IconHome, IconIcon } from '@foundation/Icon';
 
 const decorators = {
     IconNone: null,
-    IconDefault: <IconBrand />,
-    IconCallout: <IconCallout />,
-    IconIcons: <IconIcons />,
+    IconDefault: <IconHome />,
+    IconCallout: <IconExclamationMarkTriangle />,
+    IconIcons: <IconIcon />,
 };
 
 export default {

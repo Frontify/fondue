@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconAudio from '@foundation/Icon/Generated/IconAudio';
 import { Meta, Story } from '@storybook/react';
 import React, { useState } from 'react';
 import { MenuItem as MenuItemComponent, MenuItemProps, MenuItemStyle, SelectionIndicatorIcon } from './MenuItem';
 import { MenuItemContentSize } from './MenuItemContent';
 import { Switch, SwitchSize } from '@components/Switch';
+import { IconMusicNote } from '@foundation/Icon';
 
 const SwitchComponent = () => {
     const [switchValue, setSwitchValue] = useState<boolean>(false);
@@ -24,7 +24,7 @@ export default {
         size: MenuItemContentSize.Small,
         style: MenuItemStyle.Primary,
         disabled: false,
-        decorator: <IconAudio />,
+        decorator: <IconMusicNote />,
         active: false,
         selectionIndicator: SelectionIndicatorIcon.Check,
     },
@@ -50,7 +50,7 @@ export default {
 export const MenuItem: Story<MenuItemProps> = (args) => (
     <MenuItemComponent
         {...args}
-        decorator={args.decorator && <IconAudio />}
+        decorator={args.decorator && <IconMusicNote />}
         subtitle={args.size === MenuItemContentSize.Large && args.subtitle ? args.subtitle : ''}
     />
 );

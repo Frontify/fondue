@@ -2,14 +2,14 @@
 
 import {
     IconListBullets,
-    IconListChecklist,
+    IconListCheck,
     IconListNumbers,
     IconSize,
-    IconSnippet,
-    IconTextAlignCenter,
-    IconTextAlignJustify,
-    IconTextAlignLeft,
-    IconTextAlignRight,
+    IconTextAlignmentCentre,
+    IconTextAlignmentJustify,
+    IconTextAlignmentLeft,
+    IconTextAlignmentRight,
+    IconTextBrackets,
     IconTextFormatBold,
     IconTextFormatItalic,
     IconTextFormatStrikethrough,
@@ -69,7 +69,7 @@ const ToolbarButtonMap = (
     [EditorActions.ALIGN_LEFT]: (
         <AlignToolbarButton
             value="left"
-            icon={<IconStylingWrapper icon={<IconTextAlignLeft size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconTextAlignmentLeft size={IconSize.Size24} />} />}
             classNames={classNames}
             styles={styles}
         />
@@ -77,7 +77,7 @@ const ToolbarButtonMap = (
     [EditorActions.ALIGN_CENTER]: (
         <AlignToolbarButton
             value="center"
-            icon={<IconStylingWrapper icon={<IconTextAlignCenter size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconTextAlignmentCentre size={IconSize.Size24} />} />}
             classNames={classNames}
             styles={styles}
         />
@@ -85,7 +85,7 @@ const ToolbarButtonMap = (
     [EditorActions.ALIGN_RIGHT]: (
         <AlignToolbarButton
             value="right"
-            icon={<IconStylingWrapper icon={<IconTextAlignRight size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconTextAlignmentRight size={IconSize.Size24} />} />}
             classNames={classNames}
             styles={styles}
         />
@@ -93,7 +93,7 @@ const ToolbarButtonMap = (
     [EditorActions.ALIGN_JUSTIFY]: (
         <AlignToolbarButton
             value="justify"
-            icon={<IconStylingWrapper icon={<IconTextAlignJustify size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconTextAlignmentJustify size={IconSize.Size24} />} />}
             classNames={classNames}
             styles={styles}
         />
@@ -133,7 +133,7 @@ const ToolbarButtonMap = (
     [EditorActions.CODE]: (
         <MarkToolbarButton
             type={getPluginType(editor, MARK_CODE)}
-            icon={<IconStylingWrapper icon={<IconSnippet size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconTextBrackets size={IconSize.Size24} />} />}
             classNames={classNames}
             styles={styles}
         />
@@ -141,7 +141,7 @@ const ToolbarButtonMap = (
     [EditorActions.CHECK_ITEM]: (
         <CheckboxListToolbarButton
             type={getPluginType(editor, ELEMENT_CHECK_ITEM)}
-            icon={<IconStylingWrapper icon={<IconListChecklist size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconListCheck size={IconSize.Size24} />} />}
             classNames={classNames}
             styles={styles}
         />

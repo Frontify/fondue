@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from '@cypress/react';
-import IconDocument from '@foundation/Icon/Generated/IconDocument';
 import { IconSize } from '@foundation/Icon/IconSize';
 import React from 'react';
 import { BadgeStyle } from '.';
 import { Badge } from './Badge';
 import { BadgeEmphasis, BadgeStatus } from './types';
+import { IconDocumentText } from '@foundation/Icon';
 
 const BADGE_TEXT = 'Frontify';
 const BADGE_ID = '[data-test-id=badge]';
@@ -31,7 +31,7 @@ describe('Badge component', () => {
     });
 
     it('should render badge with icon and overwrite size', () => {
-        mount(<Badge icon={<IconDocument size={IconSize.Size8} />}>{BADGE_TEXT}</Badge>);
+        mount(<Badge icon={<IconDocumentText size={IconSize.Size8} />}>{BADGE_TEXT}</Badge>);
 
         cy.get(BADGE_ICON_ID).should('exist').and('have.css', 'width', '16px');
     });
@@ -43,14 +43,14 @@ describe('Badge component', () => {
     });
 
     it('should be a big circle', () => {
-        mount(<Badge icon={<IconDocument />} />);
+        mount(<Badge icon={<IconDocumentText />} />);
 
         cy.get(BADGE_ID).should('have.css', 'width', '24px').and('have.css', 'height', '24px');
     });
 
     it('should have disabled style', () => {
         mount(
-            <Badge icon={<IconDocument />} style={BadgeStyle.Danger} disabled>
+            <Badge icon={<IconDocumentText />} style={BadgeStyle.Danger} disabled>
                 {BADGE_TEXT}
             </Badge>,
         );
@@ -61,7 +61,7 @@ describe('Badge component', () => {
 
     it('should have emphasised style', () => {
         mount(
-            <Badge icon={<IconDocument />} style={BadgeStyle.Positive} emphasis={BadgeEmphasis.Strong}>
+            <Badge icon={<IconDocumentText />} style={BadgeStyle.Positive} emphasis={BadgeEmphasis.Strong}>
                 {BADGE_TEXT}
             </Badge>,
         );
@@ -72,7 +72,7 @@ describe('Badge component', () => {
     it('should have hover styles if onClick prop is a function', () => {
         const onClickStub = cy.stub();
         mount(
-            <Badge icon={<IconDocument />} style={BadgeStyle.Danger} onClick={onClickStub}>
+            <Badge icon={<IconDocumentText />} style={BadgeStyle.Danger} onClick={onClickStub}>
                 {BADGE_TEXT}
             </Badge>,
         );
@@ -85,7 +85,7 @@ describe('Badge component', () => {
     it('should call onDismiss', () => {
         const onDismissStub = cy.stub();
         mount(
-            <Badge icon={<IconDocument />} onDismiss={onDismissStub}>
+            <Badge icon={<IconDocumentText />} onDismiss={onDismissStub}>
                 {BADGE_TEXT}
             </Badge>,
         );
@@ -103,7 +103,7 @@ describe('Badge component', () => {
         const DOT_COLOR = { r, g, b, a };
 
         mount(
-            <Badge icon={<IconDocument />} status={DOT_COLOR}>
+            <Badge icon={<IconDocumentText />} status={DOT_COLOR}>
                 {BADGE_TEXT}
             </Badge>,
         );
@@ -115,7 +115,7 @@ describe('Badge component', () => {
         const DOT_COLOR = 'rgba(0, 100, 200, 0.9)';
 
         mount(
-            <Badge icon={<IconDocument />} status={DOT_COLOR}>
+            <Badge icon={<IconDocumentText />} status={DOT_COLOR}>
                 {BADGE_TEXT}
             </Badge>,
         );

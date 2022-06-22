@@ -1,16 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
-import IconCaretLeftDouble from '@foundation/Icon/Generated/IconCaretLeftDouble';
-import IconCaretRightDouble from '@foundation/Icon/Generated/IconCaretRightDouble';
-import IconLeftCaret from '@foundation/Icon/Generated/IconLeftCaret';
-import IconRightCaret from '@foundation/Icon/Generated/IconRightCaret';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { format, getYear } from 'date-fns';
 import React, { FC, useState } from 'react';
 import DatepickerComponent from 'react-datepicker';
 import './DatePicker.css';
 import { DatePickerTrigger } from './DatePickerTrigger';
+import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@foundation/Icon';
 
 export type DatePickerProps = {
     placeHolder?: string;
@@ -70,7 +67,7 @@ export const DatePicker: FC<DatePickerProps> = ({
                             style={ButtonStyle.Secondary}
                             onClick={decreaseMonth}
                             solid={false}
-                            icon={<IconLeftCaret size={IconSize.Size20} />}
+                            icon={<IconCaretLeft size={IconSize.Size20} />}
                         />
                         <p className="tw-font-sans tw-font-semibold tw-grow tw-self-center">
                             {format(date, 'MMMM')} {getYear(date)}
@@ -80,7 +77,7 @@ export const DatePicker: FC<DatePickerProps> = ({
                             style={ButtonStyle.Secondary}
                             onClick={increaseMonth}
                             solid={false}
-                            icon={<IconRightCaret size={IconSize.Size20} />}
+                            icon={<IconCaretRight size={IconSize.Size20} />}
                         />
                         <Button
                             size={ButtonSize.Medium}

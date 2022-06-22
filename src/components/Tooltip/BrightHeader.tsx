@@ -2,11 +2,13 @@
 
 import React, { FC, ReactElement, cloneElement } from 'react';
 import { merge } from '@utilities/merge';
-import { IconSize } from '@foundation/Icon/IconSize';
-import IconInfo from '@foundation/Icon/Generated/IconInfo';
-import IconCheck from '@foundation/Icon/Generated/IconCheck';
-import IconCallout from '@foundation/Icon/Generated/IconCallout';
-import IconDocument from '@foundation/Icon/Generated/IconDocument';
+import {
+    IconCheckMark,
+    IconDocument,
+    IconExclamationMarkCircle,
+    IconExclamationMarkTriangle,
+    IconSize,
+} from '@foundation/Icon';
 
 export enum BrightHeaderStyle {
     Information = 'Information',
@@ -30,9 +32,9 @@ export const brightHeaderArrowBackgroundColors: Record<BrightHeaderStyle, string
 };
 
 const brightHeaderIcon: Record<BrightHeaderStyle, ReactElement> = {
-    [BrightHeaderStyle.Information]: <IconInfo />,
-    [BrightHeaderStyle.Warning]: <IconCallout />,
-    [BrightHeaderStyle.Tip]: <IconCheck />,
+    [BrightHeaderStyle.Information]: <IconExclamationMarkCircle />,
+    [BrightHeaderStyle.Warning]: <IconExclamationMarkTriangle />,
+    [BrightHeaderStyle.Tip]: <IconCheckMark />,
     [BrightHeaderStyle.Note]: <IconDocument />,
 };
 

@@ -1,12 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from '@cypress/react';
-import IconTextAlignCenter from '@foundation/Icon/Generated/IconTextAlignCenter';
-import IconTextAlignLeft from '@foundation/Icon/Generated/IconTextAlignLeft';
-import IconTextAlignRight from '@foundation/Icon/Generated/IconTextAlignRight';
 import { IconSize } from '@foundation/Icon/IconSize';
 import React, { FC, useState } from 'react';
 import { IconItem, Slider, TextOrNumberItem } from './Slider';
+import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon';
 
 const SLIDER_ID = '[data-test-id=slider]';
 const ICON_ITEM_ID = '[data-test-id=slider-item-icon]';
@@ -27,9 +25,9 @@ const NUMBER_ITEMS = [
 ];
 
 const ICON_ITEMS = [
-    { id: 'a', icon: <IconTextAlignLeft size={IconSize.Size16} />, ariaLabel: 'Text Align Left' },
-    { id: 'b', icon: <IconTextAlignCenter size={IconSize.Size16} />, ariaLabel: 'Text Align Center' },
-    { id: 'c', icon: <IconTextAlignRight size={IconSize.Size16} />, ariaLabel: 'Text Align Right' },
+    { id: 'a', icon: <IconTextAlignmentLeft size={IconSize.Size16} />, ariaLabel: 'Text Align Left' },
+    { id: 'b', icon: <IconTextAlignmentCentre size={IconSize.Size16} />, ariaLabel: 'Text Align Center' },
+    { id: 'c', icon: <IconTextAlignmentRight size={IconSize.Size16} />, ariaLabel: 'Text Align Right' },
 ];
 
 type Props = {

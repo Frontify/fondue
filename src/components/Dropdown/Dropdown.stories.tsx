@@ -2,11 +2,11 @@
 
 import { MenuItemStyle } from '@components/MenuItem/MenuItem';
 import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
-import IconAudio from '@foundation/Icon/Generated/IconAudio';
 import { Meta, Story } from '@storybook/react';
 import React, { useEffect, useState } from 'react';
 import { Dropdown, DropdownAlignment, DropdownPosition, DropdownProps, DropdownSize } from './Dropdown';
 import { Validation } from '@utilities/validation';
+import { IconMusicNote } from '@foundation/Icon';
 
 export default {
     title: 'Components/Dropdown',
@@ -94,27 +94,27 @@ SmallSelect.args = {
                     id: 1,
                     title: 'Small icon',
                     size: MenuItemContentSize.Small,
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                 },
                 {
                     id: 2,
                     title: 'Small icon warning',
                     size: MenuItemContentSize.Small,
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                     style: MenuItemStyle.Danger,
                 },
                 {
                     id: 3,
                     title: 'Small icon disabled',
                     size: MenuItemContentSize.Small,
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                     disabled: true,
                 },
                 {
                     id: 4,
                     title: 'Small icon warning disabled',
                     size: MenuItemContentSize.Small,
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                     style: MenuItemStyle.Danger,
                     disabled: true,
                 },
@@ -166,20 +166,20 @@ DropdownWithLimitedWidth.args = {
                     id: 1,
                     title: 'Limited width icon',
                     size: MenuItemContentSize.Small,
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                 },
                 {
                     id: 2,
                     title: 'Limited width warning',
                     style: MenuItemStyle.Danger,
                     size: MenuItemContentSize.Small,
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                 },
                 {
                     id: 3,
                     title: 'Limited width disabled',
                     size: MenuItemContentSize.Small,
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                     disabled: true,
                 },
                 {
@@ -187,7 +187,7 @@ DropdownWithLimitedWidth.args = {
                     title: 'Limited width warning disabled',
                     style: MenuItemStyle.Danger,
                     size: MenuItemContentSize.Small,
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                     disabled: true,
                 },
                 {
@@ -195,7 +195,7 @@ DropdownWithLimitedWidth.args = {
                     title: 'Limited width warning with long title',
                     style: MenuItemStyle.Danger,
                     size: MenuItemContentSize.Small,
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                 },
             ],
         },
@@ -245,14 +245,14 @@ LargeSelect.args = {
                     id: '5',
                     title: 'Large icon',
                     subtitle: 'Subtitle',
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                     size: MenuItemContentSize.Large,
                 },
                 {
                     id: '6',
                     title: 'Large icon warning',
                     subtitle: 'Subtitle',
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                     size: MenuItemContentSize.Large,
                     style: MenuItemStyle.Danger,
                 },
@@ -260,7 +260,7 @@ LargeSelect.args = {
                     id: '7',
                     title: 'Large icon disabled',
                     subtitle: 'Subtitle',
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                     size: MenuItemContentSize.Large,
                     disabled: true,
                 },
@@ -268,7 +268,7 @@ LargeSelect.args = {
                     id: '8',
                     title: 'Large icon warning disabled',
                     subtitle: 'Subtitle',
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                     size: MenuItemContentSize.Large,
                     style: MenuItemStyle.Danger,
                     disabled: true,
@@ -325,14 +325,14 @@ WithinOverflow.args = {
                     id: '9',
                     title: 'With Icon',
                     subtitle: 'Subtitle',
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                     size: MenuItemContentSize.Large,
                 },
                 {
                     id: '10',
                     title: 'Warning icon',
                     subtitle: 'Subtitle',
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                     size: MenuItemContentSize.Large,
                     style: MenuItemStyle.Danger,
                 },
@@ -340,7 +340,7 @@ WithinOverflow.args = {
                     id: '11',
                     title: 'This is disabled',
                     subtitle: 'Subtitle',
-                    decorator: <IconAudio />,
+                    decorator: <IconMusicNote />,
                     size: MenuItemContentSize.Large,
                     disabled: true,
                 },

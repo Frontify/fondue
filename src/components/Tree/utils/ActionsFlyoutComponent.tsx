@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Flyout } from '@components/Flyout';
 import { Button, ButtonSize, ButtonStyle } from '@components/Button';
-import { IconActions, IconSize } from '@foundation/Icon';
+import { IconDotsVertical, IconSize } from '@foundation/Icon';
 import { ActionMenu } from '@components/ActionMenu/ActionMenu';
 import { mockActionMenuBlocks } from './mocks';
 
@@ -21,7 +21,7 @@ export const ActionsFlyoutComponent = () => {
                 <Button
                     onClick={handleClick}
                     style={ButtonStyle.Secondary}
-                    icon={<IconActions size={IconSize.Size12} />}
+                    icon={<IconDotsVertical size={IconSize.Size12} />}
                     size={ButtonSize.Small}
                 />
             }

@@ -1,12 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
-import IconCheck from '@foundation/Icon/Generated/IconCheck';
-import IconCopyToClipboard from '@foundation/Icon/Generated/IconCopyToClipboard';
-import IconReject from '@foundation/Icon/Generated/IconReject';
-import IconRejectCircle from '@foundation/Icon/Generated/IconRejectCircle';
-import IconView from '@foundation/Icon/Generated/IconView';
-import IconViewSlash from '@foundation/Icon/Generated/IconViewSlash';
 import { useCopy } from '@hooks/useCopy';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
@@ -14,6 +8,7 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import React, { FC, FocusEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import { IconCheckMark, IconClipboard, IconCross, IconCrossCircle, IconEye, IconEyeOff } from '@foundation/Icon';
 
 export enum TextInputType {
     Text = 'text',
@@ -185,7 +180,7 @@ export const TextInput: FC<TextInputProps> = ({
                     type="button"
                     {...clearButtonFocusProps}
                 >
-                    <IconReject />
+                    <IconCross />
                 </button>
             )}
             {type === TextInputType.Password && (
@@ -203,7 +198,7 @@ export const TextInput: FC<TextInputProps> = ({
                     disabled={disabled}
                     {...passwordButtonFocusProps}
                 >
-                    {isObfuscated ? <IconView /> : <IconViewSlash />}
+                    {isObfuscated ? <IconEye /> : <IconEyeOff />}
                 </button>
             )}
             {validation === Validation.Loading && (
@@ -227,13 +222,13 @@ export const TextInput: FC<TextInputProps> = ({
                 >
                     {status === 'error' && (
                         <span className="tw-text-box-negative-strong">
-                            <IconRejectCircle />
+                            <IconCrossCircle />
                         </span>
                     )}
-                    {status === 'idle' && <IconCopyToClipboard />}
+                    {status === 'idle' && <IconClipboard />}
                     {status === 'success' && (
                         <span className="tw-text-box-positive-strong">
-                            <IconCheck />
+                            <IconCheckMark />
                         </span>
                     )}
                 </button>
