@@ -10,7 +10,7 @@ import {
     TableStateProps,
     useTableState,
 } from '@react-stately/table';
-import React, { FC, ReactNode, useRef, useState } from 'react';
+import React, { PropsWithChildren, ReactNode, useRef, useState } from 'react';
 import { TableCell, TableCellType } from './TableCell';
 import { TableColumnHeader, TableColumnHeaderType } from './TableColumnHeader';
 import { TableHeaderRow } from './TableHeaderRow';
@@ -41,14 +41,14 @@ export type Row = {
     actionElements?: ReactNode;
 };
 
-export type TableProps = {
+export type TableProps = PropsWithChildren<{
     columns: Column[];
     rows: Row[];
     onSelectionChange?: (ids?: (string | number)[]) => void;
     selectionMode?: SelectionMode;
     selectedRowIds?: (string | number)[];
     ariaLabel?: string;
-};
+}>;
 
 const DEFAULT_SORT_ORDER = 'descending';
 
@@ -100,14 +100,14 @@ const sortRows = (rows: Row[], columnKey: string | number, isDescending: boolean
     return [...rows].sort(sort);
 };
 
-export const Table: FC<TableProps> = ({
+export const Table = ({
     columns,
     rows,
     onSelectionChange,
     selectionMode = SelectionMode.NoSelect,
     selectedRowIds = [],
     ariaLabel = 'Table',
-}) => {
+}: TableProps) => {
     const isSelectTable = selectionMode === SelectionMode.SingleSelect || selectionMode === SelectionMode.MultiSelect;
     const [{ sortedColumnKey, sortOrder }, setSortedColumn] = useState<SortType>({
         sortedColumnKey: undefined,
