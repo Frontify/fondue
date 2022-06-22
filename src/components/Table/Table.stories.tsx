@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Badge } from '@components/Badge/Badge';
+import { TextInput } from '@components/TextInput/TextInput';
+
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Column, Row, SelectionMode, Table, TableProps } from './Table';
 import { IconDotsVertical, IconFaceHappy } from '@foundation/Icon';
 
@@ -220,6 +222,41 @@ const Template: Story<TableProps> = (args) => {
     );
 };
 
+const TemplateWithSearch: Story<TableProps> = (args) => {
+    const [filteredRows, setfilteredRows] = useState<Row[]>(rows);
+    const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
+
+    const [filter, setfilter] = useState('');
+
+    useEffect(() => {
+        if (filter === '') {
+            setfilteredRows(rows);
+        }
+        const newFilteredRowsValue = rows.filter((row) => {
+            const cells = Object.values(row.cells);
+            return cells.some((cell) => String(cell.sortId).includes(filter));
+        });
+        setfilteredRows(newFilteredRowsValue);
+    }, [filter]);
+
+    return (
+        <>
+            <TextInput
+                value={filter}
+                onChange={(val) => setfilter(val)}
+                placeholder={'Filter rows by "sortId" value'}
+            />
+            <Table
+                {...args}
+                columns={columns}
+                rows={filteredRows}
+                selectedRowIds={selectedRows}
+                onSelectionChange={(ids) => setSelectedRows(ids || [])}
+            />
+        </>
+    );
+};
+
 export const ReadOnly = Template.bind({});
 
 export const SingleSelect = Template.bind({});
@@ -231,3 +268,5 @@ export const MultiSelect = Template.bind({});
 MultiSelect.args = {
     selectionMode: SelectionMode.MultiSelect,
 };
+
+export const FilterRows = TemplateWithSearch.bind({});
