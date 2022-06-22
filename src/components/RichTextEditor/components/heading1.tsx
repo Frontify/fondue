@@ -4,15 +4,12 @@ import { PlateRenderElementProps } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import React, { FC } from 'react';
 import { alignmentClassnames } from '../utils/alignment';
-import { TextStyles, getTextStyles } from '../utils/getTextStyles';
 
-export const Heading1Element: FC<PlateRenderElementProps> = ({ element, attributes, children, textStyles }) => (
+export const Heading1Element: FC<PlateRenderElementProps> = ({ element, attributes, children, designTokens }) => (
     <h1
         {...attributes}
-        className={merge([
-            getTextStyles(TextStyles.ELEMENT_HEADING1, textStyles),
-            element.align && alignmentClassnames[element.align],
-        ])}
+        className={merge([element.align && alignmentClassnames[element.align]])}
+        style={designTokens.heading1}
     >
         {children}
     </h1>

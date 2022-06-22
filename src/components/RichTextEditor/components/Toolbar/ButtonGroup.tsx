@@ -20,23 +20,23 @@ import {
     ELEMENT_LINK,
     ELEMENT_OL,
     ELEMENT_UL,
+    getPluginType,
     ListToolbarButton,
+    MarkToolbarButton,
     MARK_BOLD,
     MARK_CODE,
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
-    MarkToolbarButton,
     PlateEditor,
-    getPluginType,
     usePlateEditorRef,
 } from '@udecode/plate';
-import React, { FC, ReactElement } from 'react';
+import { default as React, FC, ReactElement } from 'react';
 import { ELEMENT_CHECK_ITEM } from '../../plugins/checkboxListPlugin/createCheckboxListPlugin';
 import { CheckboxListToolbarButton } from '../../plugins/checkboxListPlugin/ui/CheckboxListToolbarButton';
 import { EditLinkChooserButton } from '../../plugins/linkChooserPlugin/ui/EditLinkChooserButton';
 import { TextStyleDropdown } from '../../TextStyleDropdown/TextStyleDropdown';
-import { ButtonGroupProps, IconStylingWrapperProps, TextStyleType } from '../../types';
+import { ButtonGroupProps, DesignTokens, IconStylingWrapperProps } from '../../types';
 import { EditorActions } from '../../utils/actions';
 const classNames = {
     root: 'tw-text-text-weak tw-ml-0.5 hover:tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded',
@@ -48,13 +48,13 @@ const IconStylingWrapper: FC<IconStylingWrapperProps> = ({ icon }) => (
     <span className="tw-p-2 tw-h-12 tw-justify-center tw-items-center tw-flex">{icon}</span>
 );
 
-export const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, textStyles }) => {
+export const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, designTokens }) => {
     const editor = usePlateEditorRef(editorId);
 
     return (
         <div key={index} data-test-id={`toolbar-group-${index}`} className="tw-flex tw-items-center tw-h-12 tw-p-2">
             {actions.map((action) => (
-                <div key={action}>{ToolbarButtonMap(editor, editorId, textStyles)[action]}</div>
+                <div key={action}>{ToolbarButtonMap(editor, designTokens, editorId)[action]}</div>
             ))}
         </div>
     );
@@ -62,10 +62,10 @@ export const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, te
 
 const ToolbarButtonMap = (
     editor: PlateEditor,
+    designTokens: DesignTokens,
     editorId?: string,
-    textStyles?: TextStyleType[],
 ): Record<EditorActions, ReactElement> => ({
-    [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} textStyles={textStyles} />,
+    [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} designTokens={designTokens} />,
     [EditorActions.ALIGN_LEFT]: (
         <AlignToolbarButton
             value="left"
