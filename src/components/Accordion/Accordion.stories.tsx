@@ -26,6 +26,7 @@ import { Accordion as AccordionComponent, AccordionItem } from './Accordion';
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
 import { AccordionHeaderIconSize, AccordionHeaderProps, AccordionProps } from './types';
 import IconTextAlignmentCentre from '@foundation/Icon/Generated/IconTextAlignmentCentre';
+import { Stack } from '@layout/Stack';
 
 export default {
     title: 'Components/Accordion',
@@ -278,6 +279,120 @@ export const WithCustomAccordionHeaderComponent: Story<AccordionProps> = () => (
         </AccordionItem>
     </AccordionComponent>
 );
+
+export const WithAccordionItemAddition: Story<
+    AccordionProps & {
+        'Accordion Divider': boolean;
+        'Accordion Border': boolean;
+        'Item Divider': boolean;
+    }
+> = (args) => {
+    const AccordtionItemsStart = [
+        <AccordionItem
+            key={1}
+            header={{ children: 'Accordion Divider & Border', type: FieldsetHeaderType.Accordion, active: true }}
+            divider={args['Item Divider']}
+        >
+            <div className="tw-p-6">
+                Settings the <Code>divider</Code> prop on the <Code>Accordion</Code> will add a divider between the
+                children of the <Code>Accordion</Code>, whereas the <Code>border</Code> prop will add a top and bottom
+                border to the entire <Code>Accordion</Code>.
+            </div>
+        </AccordionItem>,
+        <AccordionItem
+            key={2}
+            header={{ children: 'AccordionItem Divider', type: FieldsetHeaderType.Accordion, active: true }}
+            divider={args['Item Divider']}
+        >
+            <div className="tw-p-6">
+                Settings the <Code>divider</Code> prop on the <Code>AccordionItem</Code> will add a divider between the
+                header and content of the <Code>AccordionItem</Code> when it is open.
+                <Code>Accordion</Code>.
+            </div>
+        </AccordionItem>,
+        <AccordionItem
+            key={3}
+            header={{ children: 'Additional Info', type: FieldsetHeaderType.Accordion, active: true }}
+            divider={args['Item Divider']}
+        >
+            <div className="tw-p-6">
+                Play around with the settings below to see the difference between these three properties. The&nbsp;
+                <Code>Accordion</Code> Ccomponent has the <Code>divider</Code> and <Code>border</Code> set to true by
+                default, whereas the&nbsp;
+                <Code>AccordionItem</Code> has the divider set to false by default.
+            </div>
+        </AccordionItem>,
+    ];
+
+    const newItemOpen = (key: number) => (
+        <AccordionItem
+            key={key}
+            header={{ children: 'I Should be open', type: FieldsetHeaderType.Accordion, active: true }}
+            divider={args['Item Divider']}
+        >
+            <div className="tw-p-6">
+                Settings the <Code>divider</Code> prop on the <Code>Accordion</Code> will add a divider between the
+                children of the <Code>Accordion</Code>, whereas the <Code>border</Code> prop will add a top and bottom
+                border to the entire <Code>Accordion</Code>.
+            </div>
+        </AccordionItem>
+    );
+
+    const inactive = (
+        <AccordionItem
+            key={10}
+            header={{ children: 'I should be closed', type: FieldsetHeaderType.Accordion, active: false }}
+            divider={args['Item Divider']}
+        >
+            <div className="tw-p-6">
+                Settings the <Code>divider</Code> prop on the <Code>Accordion</Code> will add a divider between the
+                children of the <Code>Accordion</Code>, whereas the <Code>border</Code> prop will add a top and bottom
+                border to the entire <Code>Accordion</Code>.
+            </div>
+        </AccordionItem>
+    );
+
+    const elementWithoutActive = (
+        <AccordionItem
+            key={22}
+            header={{ children: 'I should also be closed', type: FieldsetHeaderType.Accordion }}
+            divider={args['Item Divider']}
+        >
+            <div className="tw-p-6">
+                Settings the <Code>divider</Code> prop on the <Code>Accordion</Code> will add a divider between the
+                children of the <Code>Accordion</Code>, whereas the <Code>border</Code> prop will add a top and bottom
+                border to the entire <Code>Accordion</Code>.
+            </div>
+        </AccordionItem>
+    );
+
+    const [accordionItem, setAccordionItem] = useState(AccordtionItemsStart);
+    const [accordionKey, setAccordionKey] = useState(5);
+    return (
+        <>
+            <AccordionComponent divider={args['Accordion Divider']} border={args['Accordion Border']}>
+                {accordionItem.map((item) => item)}
+            </AccordionComponent>
+            <Stack padding="xs" spacing="xs">
+                <Button
+                    onClick={() => {
+                        setAccordionKey(accordionKey + 1);
+                        setAccordionItem([...accordionItem, newItemOpen(accordionKey)]);
+                    }}
+                >
+                    Add Element active
+                </Button>
+                <Button onClick={() => setAccordionItem([...accordionItem, inactive])}>Add Element inactive</Button>
+                <Button onClick={() => setAccordionItem([...accordionItem, elementWithoutActive])}>
+                    Add Element without active prop
+                </Button>
+                <Button onClick={() => setAccordionItem([...accordionItem.slice(0, accordionItem.length - 1)])}>
+                    Remove an Element from the Accordion
+                </Button>
+            </Stack>
+        </>
+    );
+};
 
 export const WithDividers: Story<
     AccordionProps & {
