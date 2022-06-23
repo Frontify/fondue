@@ -36,6 +36,7 @@ export type TextInputBaseProps = {
     onClear?: () => void;
     size?: number;
     spellcheck?: boolean;
+    focusOnMount?: boolean;
 };
 
 export type TextInputProps =
@@ -75,6 +76,7 @@ export const TextInput: FC<TextInputProps> = ({
     size,
     spellcheck,
     readonly,
+    focusOnMount,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
@@ -87,6 +89,10 @@ export const TextInput: FC<TextInputProps> = ({
     const [isObfuscated, setIsObfuscated] = useState(
         typeof obfuscated === 'boolean' ? obfuscated : type === TextInputType.Password,
     );
+
+    useEffect(() => {
+        focusOnMount && inputElement.current?.focus();
+    }, []);
 
     useEffect(() => {
         if (typeof obfuscated === 'boolean') {

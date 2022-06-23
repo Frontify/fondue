@@ -132,3 +132,10 @@ TypeNumber.argTypes = {
 TypeNumber.args = {
     type: TextInputType.Number,
 };
+
+export const FocusOnMount = TextInputTemplate.bind({});
+
+FocusOnMount.args = {
+    value: 'Value text',
+    focusOnMount: true,
+};
