@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { mount } from '@cypress/react';
 import { Button } from '@components/Button/Button';
-import React from 'react';
+import { TextInput } from '@components/TextInput/TextInput';
+import React, { useEffect, useState } from 'react';
 import { Column, Row, SelectionMode, Table } from './Table';
 
 const TABLE_COLUMNS: Column[] = [
@@ -139,5 +140,46 @@ describe('Table Component', () => {
         cy.get(TABLE_COLUMN_ID).eq(1).click();
         cy.get(TABLE_ROW_ID).eq(1).get('td').contains(125);
         cy.get(TABLE_ROW_ID).first().get('td').contains('Bobby');
+    });
+
+    it('should rerender if rows change', () => {
+        const WrappingFilterComponent = () => {
+            const [filteredRows, setfilteredRows] = useState<Row[]>(TABLE_ROWS);
+            const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
+
+            const [filter, setfilter] = useState('');
+
+            useEffect(() => {
+                if (filter === '') {
+                    setfilteredRows(TABLE_ROWS);
+                }
+                const newFilteredRowsValue = TABLE_ROWS.filter((row) => {
+                    const cells = Object.values(row.cells);
+                    return cells.some((cell) => String(cell.sortId).includes(filter));
+                });
+                setfilteredRows(newFilteredRowsValue);
+            }, [filter]);
+
+            return (
+                <>
+                    <TextInput id="searchInput" onChange={(val) => setfilter(val)} value={filter} />
+                    <Table
+                        columns={TABLE_COLUMNS}
+                        rows={filteredRows}
+                        selectedRowIds={selectedRows}
+                        onSelectionChange={(ids) => setSelectedRows(ids || [])}
+                    />
+                </>
+            );
+        };
+        mount(<WrappingFilterComponent />);
+
+        cy.get(TABLE_ROW_ID).get('td').contains('Anna');
+        cy.get(TABLE_ROW_ID).get('td').contains('Chris');
+
+        cy.get('#searchInput').type('anna');
+
+        cy.get(TABLE_ROW_ID).get('td').contains('Anna');
+        cy.get(TABLE_ROW_ID).get('td').should('not.contain', 'Chris');
     });
 });

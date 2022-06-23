@@ -12,10 +12,9 @@ import { LinkChooser } from '@components/LinkChooser/LinkChooser.stories';
 import { Slider } from '@components/Slider/Slider';
 import { Switch, SwitchSize } from '@components/Switch/Switch';
 import { TextInput, TextInputType } from '@components/TextInput/TextInput';
-import IconIcons from '@foundation/Icon/Generated/IconIcons';
-import IconTextAlignCenter from '@foundation/Icon/Generated/IconTextAlignCenter';
-import IconTextAlignLeft from '@foundation/Icon/Generated/IconTextAlignLeft';
-import IconTextAlignRight from '@foundation/Icon/Generated/IconTextAlignRight';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import IconTextAlignmentLeft from '@foundation/Icon/Generated/IconTextAlignmentLeft';
+import IconTextAlignmentRight from '@foundation/Icon/Generated/IconTextAlignmentRight';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
@@ -26,6 +25,7 @@ import { EXAMPLE_IMAGES } from '../AssetInput/example-assets';
 import { Accordion as AccordionComponent, AccordionItem } from './Accordion';
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
 import { AccordionHeaderIconSize, AccordionHeaderProps, AccordionProps } from './types';
+import IconTextAlignmentCentre from '@foundation/Icon/Generated/IconTextAlignmentCentre';
 import { Stack } from '@layout/Stack';
 
 export default {
@@ -46,7 +46,7 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
             <AccordionItem
                 header={{
                     children: 'Item with decorator, type Accordion and a FormControl child',
-                    decorator: <IconIcons />,
+                    decorator: <IconIcon />,
                     type: FieldsetHeaderType.Accordion,
                     active: true,
                 }}
@@ -172,7 +172,7 @@ export const WithCustomAccordionHeaderComponent: Story<AccordionProps> = () => (
         <AccordionItem
             header={{
                 children: 'Item with a custom headerComponent prop',
-                decorator: <IconIcons />,
+                decorator: <IconIcon />,
                 active: true,
             }}
             divider
@@ -238,7 +238,7 @@ export const WithCustomAccordionHeaderComponent: Story<AccordionProps> = () => (
         <AccordionItem
             header={{
                 children: 'AccordionHeaderIcon Details',
-                decorator: <IconIcons />,
+                decorator: <IconIcon />,
                 active: true,
             }}
             divider
@@ -490,17 +490,17 @@ export const WithAdvancedFormControls: Story<AccordionProps> = () => {
                         items={[
                             {
                                 id: 'l',
-                                icon: <IconTextAlignLeft size={IconSize.Size16} />,
+                                icon: <IconTextAlignmentLeft size={IconSize.Size16} />,
                                 ariaLabel: 'Text Align Left',
                             },
                             {
                                 id: 'c',
-                                icon: <IconTextAlignCenter size={IconSize.Size16} />,
+                                icon: <IconTextAlignmentCentre size={IconSize.Size16} />,
                                 ariaLabel: 'Text Align Center',
                             },
                             {
                                 id: 'r',
-                                icon: <IconTextAlignRight size={IconSize.Size16} />,
+                                icon: <IconTextAlignmentRight size={IconSize.Size16} />,
                                 ariaLabel: 'Text Align Right',
                             },
                         ]}

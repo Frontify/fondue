@@ -1,14 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Badge } from '@components/Badge/Badge';
+import { TextInput } from '@components/TextInput/TextInput';
+
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
-import IconActions from '@foundation/Icon/Generated/IconActions';
-import IconEmojiHappy from '@foundation/Icon/Generated/IconEmojiHappy';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Column, Row, SelectionMode, Table, TableProps } from './Table';
+import { IconDotsVertical, IconFaceHappy } from '@foundation/Icon';
 
 export default {
     title: 'Components/Table',
@@ -26,7 +27,7 @@ export default {
 
 const User: FC<{ name: string }> = ({ name }) => (
     <div className="tw-flex tw-gap-x-2 tw-items-center">
-        <IconEmojiHappy size={IconSize.Size32} />
+        <IconFaceHappy size={IconSize.Size32} />
         <div>
             <p>{name}</p>
             <p>mb@gmail.com</p>
@@ -35,7 +36,12 @@ const User: FC<{ name: string }> = ({ name }) => (
 );
 
 const ActionButton: FC = () => (
-    <Button onClick={action('click')} size={ButtonSize.Small} style={ButtonStyle.Secondary} icon={<IconActions />} />
+    <Button
+        onClick={action('click')}
+        size={ButtonSize.Small}
+        style={ButtonStyle.Secondary}
+        icon={<IconDotsVertical />}
+    />
 );
 
 const columns: Column[] = [
@@ -216,6 +222,41 @@ const Template: Story<TableProps> = (args) => {
     );
 };
 
+const TemplateWithSearch: Story<TableProps> = (args) => {
+    const [filteredRows, setfilteredRows] = useState<Row[]>(rows);
+    const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
+
+    const [filter, setfilter] = useState('');
+
+    useEffect(() => {
+        if (filter === '') {
+            setfilteredRows(rows);
+        }
+        const newFilteredRowsValue = rows.filter((row) => {
+            const cells = Object.values(row.cells);
+            return cells.some((cell) => String(cell.sortId).includes(filter));
+        });
+        setfilteredRows(newFilteredRowsValue);
+    }, [filter]);
+
+    return (
+        <>
+            <TextInput
+                value={filter}
+                onChange={(val) => setfilter(val)}
+                placeholder={'Filter rows by "sortId" value'}
+            />
+            <Table
+                {...args}
+                columns={columns}
+                rows={filteredRows}
+                selectedRowIds={selectedRows}
+                onSelectionChange={(ids) => setSelectedRows(ids || [])}
+            />
+        </>
+    );
+};
+
 export const ReadOnly = Template.bind({});
 
 export const SingleSelect = Template.bind({});
@@ -227,3 +268,5 @@ export const MultiSelect = Template.bind({});
 MultiSelect.args = {
     selectionMode: SelectionMode.MultiSelect,
 };
+
+export const FilterRows = TemplateWithSearch.bind({});

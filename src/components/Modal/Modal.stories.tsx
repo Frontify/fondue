@@ -9,7 +9,7 @@ import { action } from '@storybook/addon-actions';
 import { generateRandomId } from '@utilities/generateRandomId';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { PatternDesign, PatternTheme } from '@foundation/Pattern';
-import { IconAcademy, IconAudio, IconIcons } from '@foundation/Icon';
+import { IconCap, IconIcon, IconMusicNote } from '@foundation/Icon';
 import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
 import { OverlayContainer, OverlayProvider } from '@react-aria/overlays';
 import {
@@ -80,9 +80,9 @@ export default {
             options: ['None', 'Icons', 'Academy', 'Audio'],
             mapping: {
                 None: null,
-                Icons: <IconIcons key="iconIcons" />,
-                Academy: <IconAcademy key="iconAcademy" />,
-                Audio: <IconAudio key="iconAudio" />,
+                Icons: <IconIcon key="iconIcon" />,
+                Academy: <IconCap key="iconAcademy" />,
+                Audio: <IconMusicNote key="iconAudio" />,
             },
             defaultValue: 'Icons',
             control: { type: 'select' },

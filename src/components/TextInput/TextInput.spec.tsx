@@ -167,10 +167,10 @@ describe('Text Input component', () => {
                 .as('copy')
                 .callsFake(() => INPUT_TEXT);
         });
-        cy.get(COPY_ICON_ID).find('svg').should('have.attr', 'name', 'IconCopyToClipboard');
+        cy.get(COPY_ICON_ID).find('svg').should('have.attr', 'name', 'IconClipboard16');
         cy.get(COPY_ICON_ID).realClick();
         cy.get('@copy').should('be.calledWithExactly', INPUT_TEXT);
-        cy.get(COPY_ICON_ID).find('svg').should('have.attr', 'name', 'IconCheck');
+        cy.get(COPY_ICON_ID).find('svg').should('have.attr', 'name', 'IconCheckMark16');
     });
 
     it('has the copy turned off by default', () => {

@@ -9,7 +9,7 @@ import { ButtonGroup } from './ButtonGroup';
 
 const OFFSET_IN_PX = 12;
 
-export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, textStyles, actions = [], editorWidth }) => {
+export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, designTokens, actions = [], editorWidth }) => {
     const toolbarActions = actions.length > 0 ? actions : defaultActions;
     const buttonGroupWidths = getButtonGroupWidths(toolbarActions);
 
@@ -67,7 +67,7 @@ export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, textStyles, actions 
                                 key={index}
                                 actions={actions}
                                 index={index}
-                                textStyles={textStyles}
+                                designTokens={designTokens}
                                 editorId={editorId}
                             />
                         ))}

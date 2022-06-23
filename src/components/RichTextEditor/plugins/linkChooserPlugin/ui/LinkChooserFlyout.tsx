@@ -3,7 +3,7 @@ import { Checkbox, CheckboxState } from '@components/Checkbox';
 import { Flyout, FlyoutFooter } from '@components/Flyout';
 import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
-import { IconCheck } from '@foundation/Icon';
+import { IconCheckMark } from '@foundation/Icon';
 import React, { HTMLAttributes, MutableRefObject, ReactNode } from 'react';
 import { ChosenLink } from '../types';
 
@@ -54,7 +54,7 @@ export const LinkChooserFlyout = ({
                             children: 'Save',
                             onClick: onConfirm,
                             style: ButtonStyle.Primary,
-                            icon: <IconCheck />,
+                            icon: <IconCheckMark />,
                             disabled: !chosenLink.searchResult,
                         },
                     ]}

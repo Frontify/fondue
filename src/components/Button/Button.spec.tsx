@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mount } from '@cypress/react';
-import IconIcons from '@foundation/Icon/Generated/IconIcons';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import React from 'react';
 import { Button, ButtonRounding, ButtonSize, ButtonStyle } from './Button';
 
@@ -41,9 +41,9 @@ describe('Button component', () => {
                 });
 
                 it(`renders in ${style} ${size} and ${solid ? 'solid' : 'translucent'} with only an icon.`, () => {
-                    mount(<Button style={style} size={size} solid={solid} icon={<IconIcons />} />);
+                    mount(<Button style={style} size={size} solid={solid} icon={<IconIcon />} />);
 
-                    cy.get(BUTTON_ID).children('svg').should('be.visible');
+                    cy.get(BUTTON_ID).find('svg').should('be.visible');
                     cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
                 });
 
@@ -55,19 +55,19 @@ describe('Button component', () => {
                             style={style}
                             size={size}
                             solid={solid}
-                            icon={<IconIcons />}
+                            icon={<IconIcon />}
                             rounding={ButtonRounding.Full}
                         />,
                     );
 
-                    cy.get(BUTTON_ID).children('svg').should('be.visible');
+                    cy.get(BUTTON_ID).find('svg').should('be.visible');
                     cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
                     cy.get(BUTTON_ID).should('have.class', 'tw-rounded-full');
                 });
 
                 it(`renders in ${style} ${size} and ${solid ? 'solid' : 'translucent'} with an icon and text.`, () => {
                     mount(
-                        <Button style={style} size={size} solid={solid} icon={<IconIcons />}>
+                        <Button style={style} size={size} solid={solid} icon={<IconIcon />}>
                             {BUTTON_TEXT}
                         </Button>,
                     );
@@ -75,7 +75,7 @@ describe('Button component', () => {
                     cy.get(BUTTON_ID).should('be.visible');
                     cy.get(BUTTON_ID).contains(BUTTON_TEXT);
 
-                    cy.get(BUTTON_ID).children('span').children('svg').should('be.visible');
+                    cy.get(BUTTON_ID).children('span').find('svg').should('be.visible');
                     cy.get(BUTTON_ID).contains(BUTTON_TEXT);
                 });
             }

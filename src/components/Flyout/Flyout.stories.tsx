@@ -7,8 +7,6 @@ import { FormControl } from '@components/FormControl/FormControl';
 import { Slider } from '@components/Slider/Slider';
 import { Textarea } from '@components/Textarea/Textarea';
 import { TextInput } from '@components/TextInput/TextInput';
-import IconActions from '@foundation/Icon/Generated/IconActions';
-import IconIcons from '@foundation/Icon/Generated/IconIcons';
 import { chain } from '@react-aria/utils';
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
@@ -20,7 +18,7 @@ import { FlyoutFooter } from './FlyoutFooter';
 import { Dropdown } from '@components/Dropdown';
 import { DatePicker } from '@components/DatePicker';
 import { TooltipIcon } from '@components/TooltipIcon';
-import { IconAttentionFilled } from '@foundation/Icon';
+import { IconDotsVertical, IconExclamationMarkCircle, IconIcon } from '@foundation/Icon';
 
 export default {
     title: 'Components/Flyout',
@@ -41,7 +39,7 @@ export default {
     args: {
         trigger: (
             <span className="tw-flex tw-h-full tw-items-center tw-p-1 tw-rounded tw-bg-black-20 hover:tw-bg-black-30 dark:tw-bg-black-80 dark:hover:tw-bg-black-70">
-                <IconActions />
+                <IconDotsVertical />
             </span>
         ),
     },
@@ -124,7 +122,7 @@ WithOnclick.argTypes = {
 
 WithOnclick.args = {
     title: 'Header title',
-    decorator: <IconIcons />,
+    decorator: <IconIcon />,
     onConfirm: action('onConfirm'),
 };
 
@@ -132,11 +130,11 @@ export const WithBadges = FlyoutTemplate.bind({});
 
 WithBadges.args = {
     title: 'Header title',
-    decorator: <IconIcons />,
+    decorator: <IconIcon />,
     badges: [
         { style: BadgeStyle.Positive, children: 'Badge 1' },
         { status: BadgeStatus.Danger, children: 'Badge 2' },
-        { style: BadgeStyle.Danger, icon: <IconIcons />, children: 'Badge 3' },
+        { style: BadgeStyle.Danger, icon: <IconIcon />, children: 'Badge 3' },
     ],
 };
 
@@ -162,7 +160,7 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
                     <span className="tw-ml-2">
                         <TooltipIcon
                             tooltip={{ content: 'Lorem ipsum dolor sit amet.' }}
-                            triggerIcon={<IconAttentionFilled />}
+                            triggerIcon={<IconExclamationMarkCircle />}
                         />
                     </span>
                 </p>
@@ -187,7 +185,7 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
                     <span className="tw-ml-2">
                         <TooltipIcon
                             tooltip={{ content: 'Lorem ipsum dolor sit amet.' }}
-                            triggerIcon={<IconAttentionFilled />}
+                            triggerIcon={<IconExclamationMarkCircle />}
                         />
                     </span>
                 </p>
@@ -200,7 +198,7 @@ export const WithButtonTrigger = WithButtonFlyoutTemplate.bind({});
 
 WithButtonTrigger.args = {
     title: 'Header title',
-    decorator: <IconIcons />,
+    decorator: <IconIcon />,
 };
 
 WithButtonTrigger.argTypes = {
@@ -251,10 +249,10 @@ export const WithCustomFooter = WithCustomFooterFlyoutTemplate.bind({});
 
 WithCustomFooter.args = {
     title: 'Header title',
-    decorator: <IconIcons />,
+    decorator: <IconIcon />,
     trigger: (
         <span className="tw-flex tw-h-full tw-items-center tw-p-1 tw-rounded tw-bg-black-20 hover:tw-bg-black-30 dark:tw-bg-black-80 dark:hover:tw-bg-black-70">
-            <IconActions />
+            <IconDotsVertical />
         </span>
     ),
     legacyFooter: false,
@@ -336,7 +334,7 @@ export const WithRenderFunctionTrigger = WithRenderFunctionTriggerTemplate.bind(
 
 WithRenderFunctionTrigger.args = {
     title: 'Header title',
-    decorator: <IconIcons />,
+    decorator: <IconIcon />,
 };
 
 WithRenderFunctionTrigger.argTypes = {

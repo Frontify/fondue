@@ -1,8 +1,7 @@
-import IconImageLibrary from '@foundation/Icon/Generated/IconImageLibrary';
-import IconUploadAlternative from '@foundation/Icon/Generated/IconUploadAlternative';
 import React, { FC, Fragment } from 'react';
 import { AssetInputProps } from '../AssetInput';
 import { SelectedAssetProps } from './SelectedAsset';
+import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon';
 
 type AssetSublineProps = Pick<AssetInputProps, 'isLoading'> & Pick<SelectedAssetProps, 'asset'>;
 
@@ -11,7 +10,7 @@ export const AssetSubline: FC<AssetSublineProps> = ({ asset, isLoading = false }
     return (
         <span className="tw-max-w-full tw-flex tw-flex-row tw-items-center tw-gap-1 tw-text-black-80 tw-text-xxs tw-overflow-hidden">
             <div className="tw-flex-none tw-inline-flex tw-items-center tw-justify-center">
-                {asset?.source === 'library' ? <IconImageLibrary /> : <IconUploadAlternative />}
+                {asset?.source === 'library' ? <IconImageStack /> : <IconArrowCircleUp />}
             </div>
             <span>{title}</span>
             {asset &&

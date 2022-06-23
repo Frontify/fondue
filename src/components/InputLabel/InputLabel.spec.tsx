@@ -3,7 +3,7 @@
 import React from 'react';
 import { mount } from '@cypress/react';
 import { InputLabel } from './InputLabel';
-import { IconActivity } from '@foundation/Icon/Generated';
+import { IconReport } from '@foundation/Icon/Generated';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
 const LABEL_TEXT = 'This is a fancy label.';
@@ -48,7 +48,7 @@ describe('InputLabel Component', () => {
                 htmlFor="input"
                 tooltip={[
                     { content: LABEL_TOOLTIP, triggerStyle: TooltipIconTriggerStyle.Danger },
-                    { content: LABEL_TOOLTIP, triggerIcon: <IconActivity /> },
+                    { content: LABEL_TOOLTIP, triggerIcon: <IconReport /> },
                 ]}
             >
                 {LABEL_TEXT}
@@ -57,12 +57,12 @@ describe('InputLabel Component', () => {
         cy.get(TOOLTIP_ICON_TRIGGER_ID)
             .first()
             .should('have.class', 'tw-text-box-negative-strong')
-            .children('svg')
-            .should('have.attr', 'name', 'IconQuestion');
+            .find('svg')
+            .should('have.attr', 'name', 'IconQuestionMarkCircle16');
         cy.get(TOOLTIP_ICON_TRIGGER_ID)
-            .eq(1)
+            .last()
             .should('have.class', 'tw-text-text-weak')
-            .children('svg')
-            .should('have.attr', 'name', 'IconActivity');
+            .find('svg')
+            .should('have.attr', 'name', 'IconReport16');
     });
 });

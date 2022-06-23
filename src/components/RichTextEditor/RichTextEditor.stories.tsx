@@ -5,7 +5,6 @@ import React from 'react';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { EditorActions } from './utils/actions';
 import { checkboxValue, htmlValue, IPSUM, value } from './utils/exampleValues';
-import { TextStyles } from './utils/getTextStyles';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -47,14 +46,41 @@ export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEdi
 
 export const WithCustomTextStyle = RichTextEditorTemplate.bind({});
 WithCustomTextStyle.args = {
-    textStyles: [
-        { type: TextStyles.ELEMENT_HEADING1, className: 'tw-text-7xl tw-font-bold tw-text-green-80' },
-        { type: TextStyles.ELEMENT_HEADING2, className: 'tw-text-5xl tw-font-bold tw-text-violet-60' },
-        { type: TextStyles.ELEMENT_HEADING3, className: 'tw-text-3xl tw-font-bold tw-text-yellow-70' },
-        { type: TextStyles.ELEMENT_HEADING4, className: 'tw-text-xl tw-text-red-50' },
-        { type: TextStyles.ELEMENT_CUSTOM1, className: 'tw-font-mono tw-italic tw-text-black-80' },
-        { type: TextStyles.ELEMENT_CUSTOM2, className: 'tw-underline tw-text-black-80' },
-    ],
+    designTokens: {
+        heading1: {
+            fontSize: '48px',
+            fontStyle: 'italic',
+            fontWeight: '800',
+            textDecoration: 'underline',
+            textTransform: 'uppercase',
+        },
+        heading2: {
+            fontFamily: 'inherit',
+            fontSize: '32px',
+            fontWeight: '300',
+            textDecoration: 'underline',
+        },
+        heading3: {
+            fontSize: '24px',
+        },
+        heading4: {
+            fontSize: '18px',
+            fontStyle: 'italic',
+        },
+        custom1: {
+            fontSize: '14px',
+            color: 'rgb(255, 0, 0)',
+            fontWeight: '700',
+            textTransform: 'uppercase',
+        },
+        custom2: {
+            fontSize: '14px',
+            letterSpacing: 10,
+        },
+        custom3: {
+            fontSize: '14px',
+        },
+    },
 };
 
 export const MultipleRichTextEditors: Story<RichTextEditorProps> = () => (

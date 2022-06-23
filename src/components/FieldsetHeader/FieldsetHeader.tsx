@@ -1,13 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Switch, SwitchSize } from '@components/Switch/Switch';
-import IconAddSimple from '@foundation/Icon/Generated/IconAddSimple';
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
-import IconMinus from '@foundation/Icon/Generated/IconMinus';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
 import React, { FC, ReactNode, cloneElement, isValidElement } from 'react';
+import { IconCaretDown, IconMinus, IconPlus, IconSize } from '@foundation/Icon';
 
 export enum FieldsetHeaderSize {
     Small = 'Small',
@@ -91,7 +88,7 @@ export const renderFieldsetHeaderIconType = (
                         !active && !disabled && 'tw-text-black-80',
                     ])}
                 >
-                    {active ? <IconMinus {...props} /> : <IconAddSimple {...props} />}
+                    {active ? <IconMinus {...props} /> : <IconPlus {...props} />}
                 </div>
             );
     }

@@ -16,13 +16,15 @@ describe('TooltipIcon Component', () => {
     it('should render an icon with default size', () => {
         mount(<TooltipIcon tooltip={TOOLTIP_PROPS} />);
 
-        cy.get(TOOLTIP_ICON_ID).find(TOOLTIP_ICON_TRIGGER_ID).children().should('have.class', '!tw-h-4');
+        cy.get(TOOLTIP_ICON_ID).find(TOOLTIP_ICON_TRIGGER_ID).children().should('have.css', 'width').and('eq', '16px');
+        cy.get(TOOLTIP_ICON_ID).find(TOOLTIP_ICON_TRIGGER_ID).children().should('have.css', 'height').and('eq', '16px');
     });
 
     it('should render an icon with custom size', () => {
         mount(<TooltipIcon tooltip={TOOLTIP_PROPS} iconSize={IconSize.Size20} />);
 
-        cy.get(TOOLTIP_ICON_ID).find(TOOLTIP_ICON_TRIGGER_ID).children().should('have.class', '!tw-h-5');
+        cy.get(TOOLTIP_ICON_ID).find(TOOLTIP_ICON_TRIGGER_ID).children().should('have.css', 'width').and('eq', '20px');
+        cy.get(TOOLTIP_ICON_ID).find(TOOLTIP_ICON_TRIGGER_ID).children().should('have.css', 'height').and('eq', '20px');
     });
 
     it('should render a tooltip when the icon is hovered', () => {

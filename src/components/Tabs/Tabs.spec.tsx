@@ -3,7 +3,7 @@
 import { mount } from '@cypress/react';
 import React, { useState } from 'react';
 import { TabSize, Tabs, TabsPaddingX } from '@components/Tabs/Tabs';
-import { IconIcons, IconSize } from '@foundation/Icon';
+import { IconIcon, IconSize } from '@foundation/Icon';
 import { BadgeStyle } from '@components/Badge';
 import { TabItem, TabItemProps } from '@components/Tabs/TabItem';
 
@@ -22,7 +22,7 @@ const data: TabItemProps[] = [
     {
         id: 'tab-3',
         label: 'A long tab name',
-        decorator: <IconIcons size={IconSize.Size12} />,
+        decorator: <IconIcon size={IconSize.Size12} />,
         children: 'This is content for label 3',
     },
     {
@@ -39,7 +39,7 @@ const data: TabItemProps[] = [
     {
         id: 'tab-5',
         label: 'All disabled',
-        decorator: <IconIcons size={IconSize.Size12} />,
+        decorator: <IconIcon size={IconSize.Size12} />,
         badge: { style: BadgeStyle.Danger, children: 'Badge 2' },
         disabled: true,
         children: <button>This is content for label 5</button>,
@@ -47,7 +47,7 @@ const data: TabItemProps[] = [
     {
         id: 'tab-6',
         label: 'Last tab',
-        decorator: <IconIcons size={IconSize.Size12} />,
+        decorator: <IconIcon size={IconSize.Size12} />,
         badge: { style: BadgeStyle.Danger, children: 'Badge 2' },
         children: <button>This is content for label 6</button>,
     },

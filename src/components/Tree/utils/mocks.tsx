@@ -1,5 +1,5 @@
 import { MenuItemContentSize } from '@components/MenuItem';
-import { IconFile, IconFolder, IconPlus, IconSize, IconSmileysPeople } from '@foundation/Icon';
+import { IconDocument, IconFaceExtraHappy, IconFolder, IconPlus, IconSize, IconSmileysPeople } from '@foundation/Icon';
 import React from 'react';
 import { TreeFlatListItem, TreeNodeItem } from '@components/Tree';
 import { DraggableItem } from '@utilities/dnd';
@@ -65,7 +65,7 @@ const uncategorizedPagesNodes = [
         name: 'Home',
         label: 'Page',
         value: 'https://weare.frontify.com/page/1',
-        icon: <IconFile size={IconSize.Size16} />,
+        icon: <IconDocument size={IconSize.Size16} />,
     },
     {
         id: '1-1-2',
@@ -73,7 +73,7 @@ const uncategorizedPagesNodes = [
         name: 'Members',
         label: 'Page',
         value: 'https://weare.frontify.com/page/2',
-        icon: <IconFile size={IconSize.Size16} />,
+        icon: <IconDocument size={IconSize.Size16} />,
         sort: null,
     },
     {
@@ -82,7 +82,7 @@ const uncategorizedPagesNodes = [
         name: 'About us',
         label: 'Page',
         value: 'https://weare.frontify.com/page/3',
-        icon: <IconFile size={IconSize.Size16} />,
+        icon: <IconDocument size={IconSize.Size16} />,
         sort: null,
         editable: true,
     },
@@ -95,7 +95,7 @@ const testCategoryNodes = [
         name: 'Home Category',
         label: 'Home Page',
         value: 'https://weare.frontify.com/page/4',
-        icon: <IconFile size={IconSize.Size16} />,
+        icon: <IconDocument size={IconSize.Size16} />,
         sort: null,
         editable: true,
     },
@@ -105,9 +105,9 @@ const testCategoryNodes = [
         name: 'Members Category',
         label: 'Members Page',
         value: 'https://weare.frontify.com/page/5',
-        icon: <IconFile size={IconSize.Size16} />,
+        icon: <IconDocument size={IconSize.Size16} />,
         sort: null,
-        badge: <Badge icon={<IconSmileysPeople size={IconSize.Size16} />}></Badge>,
+        badge: <Badge icon={<IconFaceExtraHappy size={IconSize.Size16} />}></Badge>,
     },
     {
         id: '1-2-3',
@@ -115,7 +115,7 @@ const testCategoryNodes = [
         name: 'About us Category',
         label: 'About Us Page',
         value: 'https://weare.frontify.com/page/6',
-        icon: <IconFile size={IconSize.Size16} />,
+        icon: <IconDocument size={IconSize.Size16} />,
         sort: null,
         badge: <Badge>Hello, I am a badge</Badge>,
     },

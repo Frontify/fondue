@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconIcons from '@foundation/Icon/Generated/IconIcons';
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
 import { BrightHeaderStyle } from './BrightHeader';
 import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
-import { IconAlert, IconAttentionFilled, IconSize } from '@foundation/Icon';
+import { IconExclamationMarkCircle, IconExclamationMarkTriangle, IconIcon, IconSize } from '@foundation/Icon';
 
 export default {
     title: 'Components/Tooltip',
@@ -30,7 +29,7 @@ export default {
             options: ['None', 'Icon'],
             mapping: {
                 None: null,
-                Icon: <IconIcons />,
+                Icon: <IconIcon />,
             },
             control: { type: 'select' },
         },
@@ -38,7 +37,7 @@ export default {
             options: ['None', 'Icon'],
             mapping: {
                 None: null,
-                Icon: <IconIcons />,
+                Icon: <IconIcon />,
             },
             control: { type: 'select' },
         },
@@ -74,7 +73,7 @@ export const TooltipComponent: Story<TooltipProps> = (args: TooltipProps) => {
                 {...args}
                 triggerElement={
                     <button className="tw-flex tw-justify-center tw-items-center">
-                        <IconAttentionFilled size={IconSize.Size16} />
+                        <IconExclamationMarkCircle size={IconSize.Size16} filled />
                         <span>Tooltip trigger</span>
                     </button>
                 }
@@ -91,7 +90,7 @@ export const MultipleTooltipsComponent: Story<TooltipProps> = (args: TooltipProp
                 {...args}
                 triggerElement={
                     <button className="tw-mr-1">
-                        <IconAttentionFilled size={IconSize.Size16} />
+                        <IconExclamationMarkCircle size={IconSize.Size16} filled />
                     </button>
                 }
             />
@@ -100,7 +99,7 @@ export const MultipleTooltipsComponent: Story<TooltipProps> = (args: TooltipProp
                 content="Second tooltip"
                 triggerElement={
                     <button>
-                        <IconAlert size={IconSize.Size16} />
+                        <IconExclamationMarkTriangle size={IconSize.Size16} />
                     </button>
                 }
                 brightHeader={BrightHeaderStyle.Warning}
@@ -150,12 +149,12 @@ WithHeading.args = {
 export const WithHeadingAndIcon = TooltipComponent.bind({});
 WithHeadingAndIcon.args = {
     heading: "I'm a heading",
-    headingIcon: <IconIcons />,
+    headingIcon: <IconIcon />,
 };
 
 export const TooltipWithIcon = TooltipComponent.bind({});
 TooltipWithIcon.args = {
-    tooltipIcon: <IconIcons />,
+    tooltipIcon: <IconIcon />,
 };
 
 export const WithLinkWithDefaultLabel = TooltipComponent.bind({});
@@ -171,9 +170,9 @@ WithLinkWithCustomLabel.args = {
 
 export const WithEverythingDisplayed = TooltipComponent.bind({});
 WithEverythingDisplayed.args = {
-    tooltipIcon: <IconIcons />,
+    tooltipIcon: <IconIcon />,
     heading: "I'm a heading",
-    headingIcon: <IconIcons />,
+    headingIcon: <IconIcon />,
     linkUrl: '#',
     brightHeader: BrightHeaderStyle.Warning,
     buttons: [

@@ -8,7 +8,7 @@ import {
     FieldsetHeaderSize,
     FieldsetHeaderType,
 } from './FieldsetHeader';
-import IconIcons from '@foundation/Icon/Generated/IconIcons';
+import { IconIcon } from '@foundation/Icon';
 
 export default {
     title: 'Components/Fieldset Header',
@@ -44,7 +44,7 @@ export const FieldsetHeader: Story<FieldsetHeaderProps> = (args: FieldsetHeaderP
     return (
         <FieldsetHeaderComponent
             {...args}
-            decorator={args.decorator && <IconIcons />}
+            decorator={args.decorator && <IconIcon />}
             active={active}
             onClick={() => setActive(!active)}
         />

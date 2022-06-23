@@ -3,7 +3,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { Button, ButtonProps, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './Button';
-import { IconActions, IconIcons } from '@foundation/Icon/Generated';
+import { IconDotsVertical, IconIcon } from '@foundation/Icon/Generated';
 
 export default {
     title: 'Components/Button',
@@ -49,7 +49,7 @@ Default.storyName = 'Text Label Only';
 export const withIcon = ButtonTemplate.bind({});
 withIcon.args = {
     disabled: false,
-    icon: <IconIcons />,
+    icon: <IconIcon />,
     size: ButtonSize.Medium,
     solid: true,
     style: ButtonStyle.Primary,
@@ -60,7 +60,7 @@ withIcon.storyName = 'Icon Only';
 export const withRoundedIcon = ButtonTemplate.bind({});
 withRoundedIcon.args = {
     disabled: false,
-    icon: <IconActions />,
+    icon: <IconDotsVertical />,
     size: ButtonSize.Medium,
     rounding: ButtonRounding.Full,
     solid: true,
@@ -73,7 +73,7 @@ export const withIconAndLabel = ButtonTemplate.bind({});
 withIconAndLabel.args = {
     children: 'Button Text',
     disabled: false,
-    icon: <IconIcons />,
+    icon: <IconIcon />,
     size: ButtonSize.Medium,
     solid: true,
     style: ButtonStyle.Primary,

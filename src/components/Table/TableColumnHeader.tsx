@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
-import IconArrowDown from '@foundation/Icon/Generated/IconArrowDown';
-import IconArrowUp from '@foundation/Icon/Generated/IconArrowUp';
-import IconArrowUpAndDown from '@foundation/Icon/Generated/IconArrowUpAndDown';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useCheckbox } from '@react-aria/checkbox';
 import { useFocusRing } from '@react-aria/focus';
@@ -14,6 +11,7 @@ import { useToggleState } from '@react-stately/toggle';
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import React, { FC, cloneElement, useCallback, useEffect, useRef, useState } from 'react';
+import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@foundation/Icon';
 
 export enum TableColumnHeaderType {
     Default = 'Default',
@@ -36,7 +34,7 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
         rendered,
         props: { allowsSorting },
     } = column;
-    const [icon, setIcon] = useState(<IconArrowUpAndDown />);
+    const [icon, setIcon] = useState(<IconArrowBidirectional />);
     const ref = useRef<HTMLTableCellElement | null>(null);
     const { columnHeaderProps } = useTableColumnHeader({ node: column }, state, ref);
     const isSortedColumn = state.sortDescriptor?.column === key;
@@ -47,7 +45,7 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
         if (isSortedColumn) {
             setIcon(sortDirection === 'descending' ? <IconArrowDown /> : <IconArrowUp />);
         } else {
-            setIcon(<IconArrowUpAndDown />);
+            setIcon(<IconArrowBidirectional />);
         }
     }, [isSortedColumn, sortDirection]);
 

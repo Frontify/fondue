@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconAddSimple from '@foundation/Icon/Generated/IconAddSimple';
+import IconPlus from '@foundation/Icon/Generated/IconPlus';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
@@ -50,7 +50,7 @@ export const AddBlockButton: FC<AddBlockButtonProps> = ({
                     )`,
                 }}
             >
-                <IconAddSimple size={IconSize.Size16} />
+                <IconPlus size={IconSize.Size16} />
             </span>
         </button>
     );

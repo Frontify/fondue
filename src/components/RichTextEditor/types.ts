@@ -1,18 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
+import { CSSProperties, ReactElement } from 'react';
 import { ListStyles } from './TextStyleDropdown/DropdownTrigger';
 import { EditorActions } from './utils/actions';
-import { TextStyles } from './utils/getTextStyles';
+import { TextStyles } from './utils/textStyles';
 
-export type TextStyleType = {
-    type: TextStyles;
-    className: string;
-};
+export type DesignTokens = Partial<Record<TextStyles, CSSProperties>>;
 
 export type ToolbarCustomProps = {
     editorId?: string;
-    textStyles?: TextStyleType[];
+    designTokens: DesignTokens;
     actions?: EditorActions[][];
     editorWidth?: number;
 };
@@ -25,7 +22,7 @@ export type ButtonGroupProps = {
     index: number;
     editorId?: string;
     actions: EditorActions[];
-    textStyles?: TextStyleType[];
+    designTokens: DesignTokens;
 };
 
 export type ButtonGroupWidths = { actions: EditorActions[]; buttonGroupWidth: number; index: number }[];

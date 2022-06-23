@@ -1,14 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
-import IconReject from '@foundation/Icon/Generated/IconReject';
-import IconTrash from '@foundation/Icon/Generated/IconTrash';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import React, { FC, HTMLAttributes } from 'react';
+import { IconCross, IconTrashBin } from '@foundation/Icon';
 
 export enum TriggerSize {
     Small = 'Small',
@@ -76,7 +75,7 @@ export const Trigger: FC<TriggerProps> = ({
                         ])}
                         onClick={() => !!onClear && onClear()}
                     >
-                        <IconReject size={IconSize.Size12} />
+                        <IconCross size={IconSize.Size12} />
                     </button>
                 )}
                 {!!onDelete && (
@@ -91,7 +90,7 @@ export const Trigger: FC<TriggerProps> = ({
                         ])}
                         onClick={onDelete}
                     >
-                        <IconTrash size={IconSize.Size12} />
+                        <IconTrashBin size={IconSize.Size12} />
                     </button>
                 )}
                 <button

@@ -2,8 +2,7 @@
 
 import { ActionMenuProps } from '@components/ActionMenu/ActionMenu/ActionMenu';
 import { Button, ButtonStyle } from '@components/Button/Button';
-import IconImageLibrary from '@foundation/Icon/Generated/IconImageLibrary';
-import IconUploadAlternative from '@foundation/Icon/Generated/IconUploadAlternative';
+import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon/';
 import { IconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';
@@ -120,7 +119,7 @@ export const AssetInput: FC<AssetInputProps> = ({
                         htmlFor={id}
                     >
                         <span className="tw--ml-1 tw-mr-1.5">
-                            <IconUploadAlternative size={IconSize.Size20} />
+                            <IconArrowCircleUp size={IconSize.Size20} />
                         </span>
                         Upload
                     </label>
@@ -143,7 +142,7 @@ export const AssetInput: FC<AssetInputProps> = ({
                         onClick={onLibraryClick}
                         style={ButtonStyle.Secondary}
                         solid={false}
-                        icon={<IconImageLibrary />}
+                        icon={<IconImageStack />}
                     >
                         Browse
                     </Button>
