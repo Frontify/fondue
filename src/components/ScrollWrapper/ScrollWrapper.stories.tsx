@@ -6,9 +6,8 @@ import { TextInput } from '@components/TextInput';
 import { useId } from '@react-aria/utils';
 import { Meta, Story } from '@storybook/react';
 import React, { useState } from 'react';
-import { Card } from '..';
 import { ScrollWrapper } from './ScrollWrapper';
-import { ScrollWrapperDirection, ScrollWrapperProps } from './types';
+import { ScrollWrapperProps } from './types';
 
 export default {
     title: 'Components/ScrollWrapper',
@@ -51,45 +50,6 @@ export const Default: Story<ScrollWrapperProps> = (args) => {
                     </FormControl>
                 </div>
                 <Button>Action</Button>
-            </ScrollWrapper>
-        </div>
-    );
-};
-
-const CARDS = Array.from({ length: 8 }).fill('');
-
-export const Horizontal: Story<ScrollWrapperProps> = (args) => {
-    const [input, setInput] = useState('');
-
-    return (
-        <div className="tw-w-full">
-            <ScrollWrapper {...args} direction={ScrollWrapperDirection.Horizontal}>
-                <div className="tw-w-[2500px]">
-                    <div className="tw-w-full tw-flex tw-gap-x-2">
-                        {CARDS.map((_, index) => (
-                            <Card key={index}>
-                                <div className="tw-flex tw-justify-center tw-items-center tw-p-3">
-                                    Card #{index + 1}
-                                </div>
-                            </Card>
-                        ))}
-                    </div>
-                    <div className="tw-my-4">
-                        <FormControl
-                            style={FormControlStyle.Primary}
-                            direction={FormControlDirection.Vertical}
-                            label={{
-                                children: 'Input Label',
-                                required: false,
-                                htmlFor: useId(),
-                                tooltip: { content: 'Tooltip Text' },
-                            }}
-                        >
-                            <TextInput value={input} onChange={setInput} />
-                        </FormControl>
-                    </div>
-                    <Button>Action</Button>
-                </div>
             </ScrollWrapper>
         </div>
     );
