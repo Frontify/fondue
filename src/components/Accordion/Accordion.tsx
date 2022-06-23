@@ -103,7 +103,7 @@ const filterValidChildren = ({ children }: AccordionProps) =>
 
 export const AccordionItem = ({ children }: AccordionItemProps): ReactElement => <>{children}</>;
 
-const lastChildInArrayIsActive = (children: React.ReactNode | undefined): boolean | undefined => {
+const lastChildrenActive = (children: React.ReactNode | undefined): boolean | undefined => {
     const childrenArray = Children.toArray(children) as { key: string; props?: { header?: { active?: boolean } } }[];
     return childrenArray[childrenArray.length - 1]?.props?.header?.active === true;
 };
@@ -116,23 +116,24 @@ export const Accordion: FC<AccordionProps> = (props) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const state = useTreeState<AccordionItemProps>(ariaProps);
 
-    // We need to detect the firstRender and childLength to not toggle any panel
+    // We need to detect the firstRender and childrenLength to not toggle any panel
     const accordionChildren = useRef({ firstRender: true, childLength: Children.toArray(props.children).length });
+    const childrenLength = Children.toArray(props.children).length;
     useEffect(() => {
         /**
          * Checks if the last child in the Array is active
          * Only works when adding Children to end of Accordion
          */
-        const childActive = lastChildInArrayIsActive(props.children);
+        const childrenIsActive = lastChildrenActive(props.children);
         if (
-            !!childActive &&
+            !!childrenIsActive &&
             !accordionChildren.current.firstRender &&
             Children.toArray(props.children).length > accordionChildren.current.childLength
         ) {
             state.toggleKey(ariaProps.defaultExpandedKeys[ariaProps.defaultExpandedKeys.length - 1]);
         }
         accordionChildren.current = { firstRender: false, childLength: Children.toArray(props.children).length };
-    }, [props.children]);
+    }, [childrenLength]);
 
     const {
         // @react-aria prevents default action for onMouseDown as implemented here: https://github.com/adobe/react-spectrum/blob/e14523fedd93ac1a4ede355aed70988af572ae74/packages/%40react-aria/selection/src/useSelectableCollection.ts#L370
