@@ -324,9 +324,9 @@ export const WithAccordionItemAddition: Story<
         </AccordionItem>,
     ];
 
-    const newItemOpen = (
+    const newItemOpen = (key: number) => (
         <AccordionItem
-            key={5}
+            key={key}
             header={{ children: 'I Should be open', type: FieldsetHeaderType.Accordion, active: true }}
             divider={args['Item Divider']}
         >
@@ -367,14 +367,21 @@ export const WithAccordionItemAddition: Story<
     );
 
     const [accordionItem, setAccordionItem] = useState(AccordtionItemsStart);
-
+    const [accordionKey, setAccordionKey] = useState(5);
     return (
         <>
             <AccordionComponent divider={args['Accordion Divider']} border={args['Accordion Border']}>
                 {accordionItem.map((item) => item)}
             </AccordionComponent>
             <Stack padding="xs" spacing="xs">
-                <Button onClick={() => setAccordionItem([...accordionItem, newItemOpen])}>Add Element active</Button>
+                <Button
+                    onClick={() => {
+                        setAccordionKey(accordionKey + 1);
+                        setAccordionItem([...accordionItem, newItemOpen(accordionKey)]);
+                    }}
+                >
+                    Add Element active
+                </Button>
                 <Button onClick={() => setAccordionItem([...accordionItem, inactive])}>Add Element inactive</Button>
                 <Button onClick={() => setAccordionItem([...accordionItem, elementWithoutActive])}>
                     Add Element without active prop
