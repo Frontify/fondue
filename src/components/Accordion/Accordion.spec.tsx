@@ -228,7 +228,7 @@ const TestAccordion = () => {
     const [accordionData, setAccordionData] = useState(accordionItems);
     return (
         <>
-            <Accordion>{accordionData.map((item) => item)}</Accordion>
+            <Accordion>{[...accordionData]}</Accordion>
             <button
                 onClick={() => {
                     setAccordionData([...accordionItems, ...additionalAccordionItem]);
