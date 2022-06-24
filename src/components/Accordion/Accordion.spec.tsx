@@ -3,7 +3,7 @@
 import { mount } from '@cypress/react';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { TextInput } from '@components/TextInput/TextInput';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { Accordion, AccordionItem } from './Accordion';
 import { AccordionHeaderProps } from '.';
 
@@ -194,4 +194,49 @@ describe('Accordion Component', () => {
         cy.get(ACCORDION_ITEM_ID).eq(2).realPress('ArrowUp');
         cy.get(ACCORDION_ITEM_ID).eq(1).should('be.focused');
     });
+
+    it('Should add a new Item in open state', () => {
+        mount(<TestAccordion />);
+
+        cy.get(ACCORDION_ITEM_ID).should('have.length', 2);
+        cy.get(ACCORDION_ITEM_CONTENT_ID).should('have.length', 1);
+        cy.get(ACCORDION_ITEM_ID).eq(0).siblings(ACCORDION_ITEM_CONTENT_ID).should('not.exist');
+        cy.get(ACCORDION_ITEM_ID).eq(1).siblings(ACCORDION_ITEM_CONTENT_ID).should('exist');
+
+        cy.get('#BUTTON_TEST_ID').click();
+        cy.get(ACCORDION_ITEM_ID).should('have.length', 3);
+        cy.get(ACCORDION_ITEM_ID).eq(2).siblings(ACCORDION_ITEM_CONTENT_ID).should('exist');
+    });
 });
+
+const TestAccordion = () => {
+    const accordionItems = [
+        <AccordionItem key={0} header={{ children: '1' }}>
+            1
+        </AccordionItem>,
+        <AccordionItem key={1} header={{ children: '2', active: true }}>
+            2
+        </AccordionItem>,
+    ];
+
+    const additionalAccordionItem = [
+        <AccordionItem key={2} header={{ children: '3', active: true }}>
+            3
+        </AccordionItem>,
+    ];
+
+    const [accordionData, setAccordionData] = useState(accordionItems);
+    return (
+        <>
+            <Accordion>{accordionData.map((item) => item)}</Accordion>
+            <button
+                onClick={() => {
+                    setAccordionData([...accordionItems, ...additionalAccordionItem]);
+                }}
+                id={'BUTTON_TEST_ID'}
+            >
+                Add Element active
+            </button>
+        </>
+    );
+};
