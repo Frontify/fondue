@@ -141,7 +141,9 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
             if (onChange) {
                 onChange(elementId);
             }
-            tabElement.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'end' });
+            if (isOverflowing) {
+                tabElement.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'end' });
+            }
             buttonElement.focus();
         } catch (error) {
             throw (error as Error).message;
