@@ -2,7 +2,7 @@
 
 import { ToolbarDropdown } from '@udecode/plate';
 import React, { useCallback, useContext, useState } from 'react';
-import { DesignTokensContext } from '../DesignTokensContext';
+import { DesignTokensContext } from '../context/DesignTokensContext';
 import { TextStyles, textStyleTitles } from '../utils/textStyles';
 import { DropdownItem } from './DropdownItem';
 import { DropdownTrigger } from './DropdownTrigger';
