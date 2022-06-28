@@ -12,6 +12,7 @@ import { EditorActions } from './utils/actions';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { getEditorConfig } from './utils/editorConfig';
 import { EMPTY_RICH_TEXT_VALUE, parseRawValue } from './utils/parseRawValue';
+import { TextStyles } from './utils/textStyles';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -67,26 +68,12 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     }, []);
 
     useEffect(() => {
-        if (!designTokens.heading1) {
-            designTokens.heading1 = defaultDesignTokens.heading1;
-        }
-        if (!designTokens.heading2) {
-            designTokens.heading2 = defaultDesignTokens.heading2;
-        }
-        if (!designTokens.heading3) {
-            designTokens.heading3 = defaultDesignTokens.heading3;
-        }
-        if (!designTokens.heading4) {
-            designTokens.heading4 = defaultDesignTokens.heading4;
-        }
-        if (!designTokens.custom1) {
-            designTokens.custom1 = defaultDesignTokens.custom1;
-        }
-        if (!designTokens.custom2) {
-            designTokens.custom2 = defaultDesignTokens.custom2;
-        }
-        if (!designTokens.custom3) {
-            designTokens.custom3 = defaultDesignTokens.custom3;
+        for (const element of Object.values(TextStyles).filter(
+            (textStyle) => textStyle !== TextStyles.ELEMENT_PARAGRAPH,
+        )) {
+            if (!designTokens[element]) {
+                designTokens[element] = defaultDesignTokens[element];
+            }
         }
     }, [designTokens]);
 
