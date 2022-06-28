@@ -64,6 +64,25 @@ const RichTextWithLink: FC<{ text: string; link: string }> = ({ text, link }) =>
     );
 };
 
+const RichTextWithLegacyLink: FC<{ text: string; url: string }> = ({ text, url }) => {
+    return (
+        <RichTextEditor
+            value={JSON.stringify([
+                {
+                    type: ELEMENT_PARAGRAPH,
+                    children: [
+                        {
+                            type: ELEMENT_LINK,
+                            children: [{ text }],
+                            url,
+                        },
+                    ],
+                },
+            ])}
+        />
+    );
+};
+
 describe('RichTextEditor Component', () => {
     it('should render an empty rich text editor', () => {
         mount(<RichTextEditor />);
@@ -425,6 +444,27 @@ describe('RichTextEditor Component', () => {
         const link = 'https://smartive.ch';
         const text = 'This is a link';
         mount(<RichTextWithLink link={link} text={text} />);
+        cy.get('[contenteditable=true] a').click();
+        cy.get(REMOVE_LINK_BUTTON).click();
+
+        cy.get('[contenteditable=true]').should('contain.text', text);
+        cy.get('[contenteditable=true] a').should('not.exist');
+    });
+
+    it('should render with legacy link', () => {
+        const url = 'https://frontify.ch';
+        const text = 'This is a link';
+        mount(<RichTextWithLegacyLink url={url} text={text} />);
+
+        cy.get('[contenteditable=true] a').should('contain.text', text);
+        cy.get('[contenteditable=true] a').should('have.attr', 'href', url);
+    });
+
+    it('should remove legacy link', () => {
+        const url = 'https://frontify.ch';
+        const text = 'This is a link';
+        mount(<RichTextWithLegacyLink url={url} text={text} />);
+
         cy.get('[contenteditable=true] a').click();
         cy.get(REMOVE_LINK_BUTTON).click();
 
