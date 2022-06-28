@@ -36,7 +36,7 @@ import { ELEMENT_CHECK_ITEM } from '../../plugins/checkboxListPlugin/createCheck
 import { CheckboxListToolbarButton } from '../../plugins/checkboxListPlugin/ui/CheckboxListToolbarButton';
 import { EditLinkChooserButton } from '../../plugins/linkChooserPlugin/ui/EditLinkChooserButton';
 import { TextStyleDropdown } from '../../TextStyleDropdown/TextStyleDropdown';
-import { ButtonGroupProps, DesignTokens, IconStylingWrapperProps } from '../../types';
+import { ButtonGroupProps, IconStylingWrapperProps } from '../../types';
 import { EditorActions } from '../../utils/actions';
 const classNames = {
     root: 'tw-text-text-weak tw-ml-0.5 hover:tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded',
@@ -48,24 +48,20 @@ const IconStylingWrapper: FC<IconStylingWrapperProps> = ({ icon }) => (
     <span className="tw-p-2 tw-h-12 tw-justify-center tw-items-center tw-flex">{icon}</span>
 );
 
-export const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId, designTokens }) => {
+export const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId }) => {
     const editor = usePlateEditorRef(editorId);
 
     return (
         <div key={index} data-test-id={`toolbar-group-${index}`} className="tw-flex tw-items-center tw-h-12 tw-p-2">
             {actions.map((action) => (
-                <div key={action}>{ToolbarButtonMap(editor, designTokens, editorId)[action]}</div>
+                <div key={action}>{ToolbarButtonMap(editor, editorId)[action]}</div>
             ))}
         </div>
     );
 };
 
-const ToolbarButtonMap = (
-    editor: PlateEditor,
-    designTokens: DesignTokens,
-    editorId?: string,
-): Record<EditorActions, ReactElement> => ({
-    [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} designTokens={designTokens} />,
+const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<EditorActions, ReactElement> => ({
+    [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} />,
     [EditorActions.ALIGN_LEFT]: (
         <AlignToolbarButton
             value="left"

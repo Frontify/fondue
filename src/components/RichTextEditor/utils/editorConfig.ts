@@ -48,10 +48,9 @@ import {
 import { Custom3Element } from '../components/custom3';
 import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
 import { createLinkChooserPlugin } from '../plugins/linkChooserPlugin/createLinkChooserPlugin';
-import { DesignTokens } from '../types';
 import { TextStyles } from './textStyles';
 
-export const getEditorConfig = (designTokens?: DesignTokens) => {
+export const getEditorConfig = () => {
     const createHeading1Plugin = createPluginFactory({
         key: TextStyles.ELEMENT_HEADING1,
         isElement: true,
@@ -59,7 +58,6 @@ export const getEditorConfig = (designTokens?: DesignTokens) => {
         deserializeHtml: {
             rules: [{ validNodeName: ['h1', 'H1'] }],
         },
-        props: { designTokens },
     });
 
     const createHeading2Plugin = createPluginFactory({
@@ -69,7 +67,6 @@ export const getEditorConfig = (designTokens?: DesignTokens) => {
         deserializeHtml: {
             rules: [{ validNodeName: ['h2', 'H2'] }],
         },
-        props: { designTokens },
     });
 
     const createHeading3Plugin = createPluginFactory({
@@ -79,7 +76,6 @@ export const getEditorConfig = (designTokens?: DesignTokens) => {
         deserializeHtml: {
             rules: [{ validNodeName: ['h3', 'H3'] }],
         },
-        props: { designTokens },
     });
 
     const createHeading4Plugin = createPluginFactory({
@@ -89,28 +85,24 @@ export const getEditorConfig = (designTokens?: DesignTokens) => {
         deserializeHtml: {
             rules: [{ validNodeName: ['h4', 'H4'] }],
         },
-        props: { designTokens },
     });
 
     const createCustom1Plugin = createPluginFactory({
         key: TextStyles.ELEMENT_CUSTOM1,
         isElement: true,
         component: Custom1Element,
-        props: { designTokens },
     });
 
     const createCustom2Plugin = createPluginFactory({
         key: TextStyles.ELEMENT_CUSTOM2,
         isElement: true,
         component: Custom2Element,
-        props: { designTokens },
     });
 
     const createCustom3Plugin = createPluginFactory({
         key: TextStyles.ELEMENT_CUSTOM3,
         isElement: true,
         component: Custom3Element,
-        props: { designTokens },
     });
 
     const components = createPlateUI({
