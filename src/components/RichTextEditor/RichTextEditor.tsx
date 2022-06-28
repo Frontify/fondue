@@ -6,6 +6,7 @@ import { debounce } from '@utilities/debounce';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './components/Toolbar/Toolbar';
+import { DesignTokensContext } from './DesignTokensContext';
 import { DesignTokens } from './types';
 import { EditorActions } from './utils/actions';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
@@ -49,28 +50,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
     };
 
-    if (!designTokens.heading1) {
-        designTokens.heading1 = defaultDesignTokens.heading1;
-    }
-    if (!designTokens.heading2) {
-        designTokens.heading2 = defaultDesignTokens.heading2;
-    }
-    if (!designTokens.heading3) {
-        designTokens.heading3 = defaultDesignTokens.heading3;
-    }
-    if (!designTokens.heading4) {
-        designTokens.heading4 = defaultDesignTokens.heading4;
-    }
-    if (!designTokens.custom1) {
-        designTokens.custom1 = defaultDesignTokens.custom1;
-    }
-    if (!designTokens.custom2) {
-        designTokens.custom2 = defaultDesignTokens.custom2;
-    }
-    if (!designTokens.custom3) {
-        designTokens.custom3 = defaultDesignTokens.custom3;
-    }
-
     const editorRef = useCallback((node) => {
         if (!node) {
             return;
@@ -86,6 +65,30 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         observer.observe(node);
         return observer;
     }, []);
+
+    useEffect(() => {
+        if (!designTokens.heading1) {
+            designTokens.heading1 = defaultDesignTokens.heading1;
+        }
+        if (!designTokens.heading2) {
+            designTokens.heading2 = defaultDesignTokens.heading2;
+        }
+        if (!designTokens.heading3) {
+            designTokens.heading3 = defaultDesignTokens.heading3;
+        }
+        if (!designTokens.heading4) {
+            designTokens.heading4 = defaultDesignTokens.heading4;
+        }
+        if (!designTokens.custom1) {
+            designTokens.custom1 = defaultDesignTokens.custom1;
+        }
+        if (!designTokens.custom2) {
+            designTokens.custom2 = defaultDesignTokens.custom2;
+        }
+        if (!designTokens.custom3) {
+            designTokens.custom3 = defaultDesignTokens.custom3;
+        }
+    }, [designTokens]);
 
     useEffect(() => {
         debouncedValue && onTextChange && onTextChange(JSON.stringify(debouncedValue));
@@ -114,16 +117,18 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     }, []);
 
     return (
-        <div data-test-id="rich-text-editor" className="tw-relative tw-w-full" ref={editorRef}>
-            <Plate
-                id={editorId}
-                initialValue={parseRawValue(initialValue)}
-                onChange={onChange}
-                editableProps={editableProps}
-                plugins={getEditorConfig(designTokens)}
-            >
-                <Toolbar editorId={editorId} designTokens={designTokens} actions={actions} editorWidth={editorWidth} />
-            </Plate>
-        </div>
+        <DesignTokensContext.Provider value={{ designTokens }}>
+            <div data-test-id="rich-text-editor" className="tw-relative tw-w-full" ref={editorRef}>
+                <Plate
+                    id={editorId}
+                    initialValue={parseRawValue(initialValue)}
+                    onChange={onChange}
+                    editableProps={editableProps}
+                    plugins={getEditorConfig()}
+                >
+                    <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
+                </Plate>
+            </div>
+        </DesignTokensContext.Provider>
     );
 };

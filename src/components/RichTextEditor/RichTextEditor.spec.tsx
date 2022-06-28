@@ -4,6 +4,7 @@ import { mount } from '@cypress/react';
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
 import React, { FC, useState } from 'react';
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from './RichTextEditor';
+import { DesignTokens } from './types';
 import { EditorActions } from './utils/actions';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
@@ -13,6 +14,7 @@ const TOOLBAR_GROUP_1 = '[data-test-id=toolbar-group-1]';
 const TOOLBAR_GROUP_2 = '[data-test-id=toolbar-group-2]';
 const TOOLBAR_GROUP_3 = '[data-test-id=toolbar-group-3]';
 const TEXTSTYLE_DROPDOWN_TRIGGER = '[data-test-id=textstyle-dropdown-trigger]';
+const CHANGE_DESIGN_TOKENS_TRIGGER = '[data-test-id=change-design-tokens-button]';
 const TEXTSTYLE_OPTION = '[data-test-id=textstyle-option]';
 const CHECKBOX_INPUT = '[data-test-id=checkbox-input]';
 const PREVIEW_LINK_FLYOUT = '[data-test-id=preview-link-flyout]';
@@ -61,6 +63,31 @@ const RichTextWithLink: FC<{ text: string; link: string }> = ({ text, link }) =>
                 },
             ])}
         />
+    );
+};
+
+const RichTextWithChangeDesignTokensButton: FC = () => {
+    const [designTokens, setDesignTokens] = useState<DesignTokens>({
+        custom1: {
+            fontSize: '42px',
+        },
+    });
+    return (
+        <div>
+            <button
+                data-test-id="change-design-tokens-button"
+                onClick={() =>
+                    setDesignTokens({
+                        custom1: {
+                            fontSize: '11px',
+                        },
+                    })
+                }
+            >
+                Change font size from 42 to 11
+            </button>
+            <RichTextEditor designTokens={designTokens} />
+        </div>
     );
 };
 
@@ -246,6 +273,20 @@ describe('RichTextEditor Component', () => {
         cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
         cy.get(TEXTSTYLE_OPTION).eq(4).click();
         cy.get('[contenteditable=true] > p').should('have.attr', 'style', 'font-size: 42px;');
+    });
+
+    it('change a passed font style', () => {
+        mount(<RichTextWithChangeDesignTokensButton />);
+
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR).should('be.visible');
+        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+        cy.get(TEXTSTYLE_OPTION).eq(4).click();
+        cy.get('[contenteditable=true] > p').should('have.attr', 'style', 'font-size: 42px;');
+
+        cy.get(CHANGE_DESIGN_TOKENS_TRIGGER).click();
+
+        cy.get('[contenteditable=true] > p').should('have.attr', 'style', 'font-size: 11px;');
     });
 
     it('renders multiple editors', () => {
