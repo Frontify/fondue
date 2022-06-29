@@ -1,11 +1,13 @@
-import { draggableItemCompareFn } from "@utilities/dnd/draggableItemCompareFn";
-import { DraggableItem } from "@utilities/dnd/types";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-describe("draggableItemCompareFn", () => {
-    const firstItem: DraggableItem = { id: "1", sort: 1 };
-    const secondItem: DraggableItem = { id: "2", sort: 2 };
+import { draggableItemCompareFn } from '@utilities/dnd/draggableItemCompareFn';
+import { DraggableItem } from '@utilities/dnd/types';
 
-    it("Should return 1 when one of the items has sort set to null", () => {
+describe('draggableItemCompareFn', () => {
+    const firstItem: DraggableItem = { id: '1', sort: 1 };
+    const secondItem: DraggableItem = { id: '2', sort: 2 };
+
+    it('Should return 1 when one of the items has sort set to null', () => {
         const expected = 1;
 
         firstItem.sort = null;
@@ -14,7 +16,7 @@ describe("draggableItemCompareFn", () => {
         expect(result).equal(expected);
     });
 
-    it("Should return 1 when both items have sort set to null", () => {
+    it('Should return 1 when both items have sort set to null', () => {
         const expected = 1;
 
         firstItem.sort = null;
@@ -24,7 +26,7 @@ describe("draggableItemCompareFn", () => {
         expect(result).equal(expected);
     });
 
-    it("Should return positive number when both items have sort set to number and first is bigger", () => {
+    it('Should return positive number when both items have sort set to number and first is bigger', () => {
         const expected = 3;
 
         firstItem.sort = 7;
@@ -34,7 +36,7 @@ describe("draggableItemCompareFn", () => {
         expect(result).equal(expected);
     });
 
-    it("Should return negative number when both items have sort set to number and second is bigger", () => {
+    it('Should return negative number when both items have sort set to number and second is bigger', () => {
         const expected = -3;
 
         firstItem.sort = 4;

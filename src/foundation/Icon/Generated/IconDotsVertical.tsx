@@ -1,30 +1,25 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconDotsVertical12 from './IconDotsVertical12';
+import IconDotsVertical16 from './IconDotsVertical16';
+import IconDotsVertical20 from './IconDotsVertical20';
+import IconDotsVertical24 from './IconDotsVertical24';
+import IconDotsVertical32 from './IconDotsVertical32'
 
 function IconDotsVertical(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconDotsVertical"
-            {...props}
-        >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M8.5 4.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 5.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm1.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"
-                clipRule="evenodd"
-            />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconDotsVertical12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconDotsVertical16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconDotsVertical20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconDotsVertical24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconDotsVertical32 {...props}/>}
+        </span>
     );
 }
 
-export default memo(IconDotsVertical);
+const Memo = memo(IconDotsVertical);
+export default Memo;

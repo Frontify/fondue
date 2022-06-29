@@ -1,24 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconReject from "@foundation/Icon/Generated/IconReject";
-import IconView from "@foundation/Icon/Generated/IconView";
-import IconViewSlash from "@foundation/Icon/Generated/IconViewSlash";
-import IconCopyToClipboard from "@foundation/Icon/Generated/IconCopyToClipboard";
-import IconCheck from "@foundation/Icon/Generated/IconCheck";
-import IconRejectCircle from "@foundation/Icon/Generated/IconRejectCircle";
-import { useCopy } from "@hooks/useCopy";
-import { useMemoizedId } from "@hooks/useMemoizedId";
-import { useFocusRing } from "@react-aria/focus";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import React, { FC, FocusEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
-import { Validation, validationClassMap } from "@utilities/validation";
-import { LoadingCircle, LoadingCircleSize } from "@components/LoadingCircle";
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
+import { useCopy } from '@hooks/useCopy';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { useFocusRing } from '@react-aria/focus';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import { Validation, validationClassMap } from '@utilities/validation';
+import React, { FC, FocusEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import { IconCheckMark, IconClipboard, IconCross, IconCrossCircle, IconEye, IconEyeOff } from '@foundation/Icon';
 
 export enum TextInputType {
-    Text = "text",
-    Password = "password",
-    Number = "number",
+    Text = 'text',
+    Password = 'password',
+    Number = 'number',
 }
 
 export type TextInputBaseProps = {
@@ -41,6 +36,7 @@ export type TextInputBaseProps = {
     onClear?: () => void;
     size?: number;
     spellcheck?: boolean;
+    focusOnMount?: boolean;
 };
 
 export type TextInputProps =
@@ -71,7 +67,7 @@ export const TextInput: FC<TextInputProps> = ({
     disabled = false,
     autocomplete = false,
     dotted = false,
-    value = "",
+    value = '',
     copyable = false,
     onChange,
     onEnterPressed,
@@ -80,6 +76,7 @@ export const TextInput: FC<TextInputProps> = ({
     size,
     spellcheck,
     readonly,
+    focusOnMount,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
@@ -90,17 +87,21 @@ export const TextInput: FC<TextInputProps> = ({
 
     const inputElement = useRef<HTMLInputElement | null>(null);
     const [isObfuscated, setIsObfuscated] = useState(
-        typeof obfuscated === "boolean" ? obfuscated : type === TextInputType.Password,
+        typeof obfuscated === 'boolean' ? obfuscated : type === TextInputType.Password,
     );
 
     useEffect(() => {
-        if (typeof obfuscated === "boolean") {
+        focusOnMount && inputElement.current?.focus();
+    }, []);
+
+    useEffect(() => {
+        if (typeof obfuscated === 'boolean') {
             setIsObfuscated(obfuscated);
         }
     }, [obfuscated]);
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Enter") {
+        if (event.key === 'Enter') {
             onEnterPressed && onEnterPressed(event);
         }
     };
@@ -112,18 +113,18 @@ export const TextInput: FC<TextInputProps> = ({
         return type;
     };
 
-    const spellcheckProp = typeof spellcheck === "boolean" ? { spellCheck: spellcheck } : null;
+    const spellcheckProp = typeof spellcheck === 'boolean' ? { spellCheck: spellcheck } : null;
 
     return (
         <div
             {...focusProps}
             className={merge([
-                "tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent",
-                dotted ? "tw-border-dashed" : "tw-border-solid",
+                'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent',
+                dotted ? 'tw-border-dashed' : 'tw-border-solid',
                 disabled || readonly
-                    ? "tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90"
+                    ? 'tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90'
                     : merge([
-                          "focus-within:tw-border-black-90",
+                          'focus-within:tw-border-black-90',
                           validationClassMap[validation],
                           isFocusVisible && FOCUS_STYLE,
                       ]),
@@ -132,8 +133,8 @@ export const TextInput: FC<TextInputProps> = ({
             {decorator && (
                 <div
                     className={merge([
-                        "tw-flex tw-items-center tw-justify-center tw-pl-1",
-                        disabled ? "tw-text-black-60" : "tw-text-black-80",
+                        'tw-flex tw-items-center tw-justify-center tw-pl-1',
+                        disabled ? 'tw-text-black-60' : 'tw-text-black-80',
                     ])}
                     data-test-id="decorator"
                 >
@@ -144,10 +145,10 @@ export const TextInput: FC<TextInputProps> = ({
                 id={useMemoizedId(propId)}
                 ref={inputElement}
                 className={merge([
-                    "tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows",
+                    'tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows',
                     disabled || readonly
-                        ? "tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40"
-                        : "tw-text-black tw-placeholder-black-60 dark:tw-text-white",
+                        ? 'tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40'
+                        : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
                 ])}
                 onClick={() => inputElement.current?.focus()}
                 onChange={(event) => onChange && onChange(event.currentTarget.value)}
@@ -159,49 +160,51 @@ export const TextInput: FC<TextInputProps> = ({
                 required={required}
                 readOnly={readonly}
                 disabled={disabled}
-                autoComplete={autocomplete ? "on" : "off"}
+                autoComplete={autocomplete ? 'on' : 'off'}
                 size={size}
                 data-test-id="text-input"
                 {...spellcheckProp}
             />
-            {`${value}`.length !== 0 && clearable && (
+            {`${value}`.length > 0 && clearable && (
                 <button
                     className={merge([
-                        "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
-                        disabled ? "tw-cursor-default tw-text-black-40" : "tw-text-black-60  hover:tw-text-black-100",
+                        'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded',
+                        disabled ? 'tw-cursor-default tw-text-black-40' : 'tw-text-black-60  hover:tw-text-black-100',
                         clearButtonIsFocusVisible && FOCUS_STYLE,
                     ])}
                     onClick={() => {
                         inputElement.current?.focus();
-                        inputElement.current?.setAttribute("value", "");
+                        inputElement.current?.setAttribute('value', '');
 
-                        onChange && onChange("");
+                        onChange && onChange('');
                         onClear && onClear();
                     }}
                     data-test-id="clear-icon"
                     title="Clear text input"
                     aria-label="clear text input"
                     disabled={disabled}
+                    type="button"
                     {...clearButtonFocusProps}
                 >
-                    <IconReject />
+                    <IconCross />
                 </button>
             )}
             {type === TextInputType.Password && (
                 <button
                     className={merge([
-                        "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
-                        disabled ? "tw-cursor-default tw-text-black-40" : "tw-text-black-60 hover:tw-text-black-100",
+                        'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded',
+                        disabled ? 'tw-cursor-default tw-text-black-40' : 'tw-text-black-60 hover:tw-text-black-100',
                         passwordButtonIsFocusVisible && FOCUS_STYLE,
                     ])}
                     onClick={() => setIsObfuscated(!isObfuscated)}
                     data-test-id="visibility-icon"
                     title="Toggle text visibility"
-                    aria-label={`${isObfuscated ? "unveil" : "obfuscate"} text input`}
+                    type="button"
+                    aria-label={`${isObfuscated ? 'unveil' : 'obfuscate'} text input`}
                     disabled={disabled}
                     {...passwordButtonFocusProps}
                 >
-                    {isObfuscated ? <IconView /> : <IconViewSlash />}
+                    {isObfuscated ? <IconEye /> : <IconEyeOff />}
                 </button>
             )}
             {validation === Validation.Loading && (
@@ -212,25 +215,26 @@ export const TextInput: FC<TextInputProps> = ({
             {copyable && (
                 <button
                     className={merge([
-                        "tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded",
-                        disabled ? "tw-cursor-default tw-text-black-40" : "tw-text-black-60 hover:tw-text-black-100",
+                        'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded',
+                        disabled ? 'tw-cursor-default tw-text-black-40' : 'tw-text-black-60 hover:tw-text-black-100',
                         copyButtonIsFocusVisible && FOCUS_STYLE,
                     ])}
                     onClick={() => copy(value)}
                     data-test-id="copy-icon"
                     title="Copy input text"
                     disabled={disabled}
+                    type="button"
                     {...copyButtonFocusProps}
                 >
-                    {status === "error" && (
+                    {status === 'error' && (
                         <span className="tw-text-box-negative-strong">
-                            <IconRejectCircle />
+                            <IconCrossCircle />
                         </span>
                     )}
-                    {status === "idle" && <IconCopyToClipboard />}
-                    {status === "success" && (
+                    {status === 'idle' && <IconClipboard />}
+                    {status === 'success' && (
                         <span className="tw-text-box-positive-strong">
-                            <IconCheck />
+                            <IconCheckMark />
                         </span>
                     )}
                 </button>

@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Badge } from "@components/Badge/Badge";
-import { Button, ButtonSize, ButtonStyle } from "@components/Button/Button";
-import IconActions from "@foundation/Icon/Generated/IconActions";
-import IconEmojiHappy from "@foundation/Icon/Generated/IconEmojiHappy";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { action } from "@storybook/addon-actions";
-import { Meta, Story } from "@storybook/react";
-import React, { FC, useState } from "react";
-import { Column, Row, SelectionMode, Table, TableProps } from "./Table";
+import { Badge } from '@components/Badge/Badge';
+import { TextInput } from '@components/TextInput/TextInput';
 
-// eslint-disable-next-line import/no-default-export
+import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { action } from '@storybook/addon-actions';
+import { Meta, Story } from '@storybook/react';
+import React, { FC, useEffect, useState } from 'react';
+import { Column, Row, SelectionMode, Table, TableProps } from './Table';
+import { IconDotsVertical, IconFaceHappy } from '@foundation/Icon';
+
 export default {
-    title: "Components/Table",
+    title: 'Components/Table',
     component: Table,
     args: {
         selectionMode: SelectionMode.NoSelect,
@@ -20,14 +20,14 @@ export default {
     argTypes: {
         type: {
             options: Object.keys(SelectionMode),
-            control: { type: "select" },
+            control: { type: 'select' },
         },
     },
 } as Meta<TableProps>;
 
 const User: FC<{ name: string }> = ({ name }) => (
     <div className="tw-flex tw-gap-x-2 tw-items-center">
-        <IconEmojiHappy size={IconSize.Size32} />
+        <IconFaceHappy size={IconSize.Size32} />
         <div>
             <p>{name}</p>
             <p>mb@gmail.com</p>
@@ -36,24 +36,29 @@ const User: FC<{ name: string }> = ({ name }) => (
 );
 
 const ActionButton: FC = () => (
-    <Button onClick={action("click")} size={ButtonSize.Small} style={ButtonStyle.Secondary} icon={<IconActions />} />
+    <Button
+        onClick={action('click')}
+        size={ButtonSize.Small}
+        style={ButtonStyle.Secondary}
+        icon={<IconDotsVertical />}
+    />
 );
 
 const columns: Column[] = [
-    { name: "User", key: "user" },
-    { name: "Active Sessions", key: "activeSessions" },
-    { name: "Last Active", key: "lastActive" },
-    { name: "Regions", key: "regions" },
-    { name: "Countries", key: "countries" },
+    { name: 'User', key: 'user' },
+    { name: 'Active Sessions', key: 'activeSessions' },
+    { name: 'Last Active', key: 'lastActive' },
+    { name: 'Regions', key: 'regions' },
+    { name: 'Countries', key: 'countries' },
 ];
 
 const rows: Row[] = [
     {
-        key: "row-1",
+        key: 'row-1',
         actionElements: <ActionButton />,
         cells: {
             user: {
-                sortId: "anna",
+                sortId: 'anna',
                 value: <User name="Anna" />,
             },
             activeSessions: {
@@ -62,14 +67,14 @@ const rows: Row[] = [
             },
             lastActive: {
                 sortId: 12,
-                value: "12 days ago",
+                value: '12 days ago',
             },
             regions: {
-                sortId: "europe",
+                sortId: 'europe',
                 value: <Badge>Europe</Badge>,
             },
             countries: {
-                sortId: "france-spain",
+                sortId: 'france-spain',
                 value: (
                     <div className="tw-flex tw-gap-x-2">
                         <Badge>France</Badge>
@@ -80,11 +85,11 @@ const rows: Row[] = [
         },
     },
     {
-        key: "row-2",
+        key: 'row-2',
         actionElements: <ActionButton />,
         cells: {
             user: {
-                sortId: "bobby",
+                sortId: 'bobby',
                 value: <User name="Bobby" />,
             },
             activeSessions: {
@@ -93,14 +98,14 @@ const rows: Row[] = [
             },
             lastActive: {
                 sortId: 14,
-                value: "14 days ago",
+                value: '14 days ago',
             },
             regions: {
-                sortId: "south-america",
+                sortId: 'south-america',
                 value: <Badge>South America</Badge>,
             },
             countries: {
-                sortId: "brazil-chile",
+                sortId: 'brazil-chile',
                 value: (
                     <div className="tw-flex tw-gap-x-2">
                         <Badge>Brazil</Badge>
@@ -111,11 +116,11 @@ const rows: Row[] = [
         },
     },
     {
-        key: "row-3",
+        key: 'row-3',
         actionElements: <ActionButton />,
         cells: {
             user: {
-                sortId: "chris",
+                sortId: 'chris',
                 value: <User name="Chris" />,
             },
             activeSessions: {
@@ -124,14 +129,14 @@ const rows: Row[] = [
             },
             lastActive: {
                 sortId: 8,
-                value: "8 days ago",
+                value: '8 days ago',
             },
             regions: {
-                sortId: "africa",
+                sortId: 'africa',
                 value: <Badge>Africa</Badge>,
             },
             countries: {
-                sortId: "marocco-egypt",
+                sortId: 'marocco-egypt',
                 value: (
                     <div className="tw-flex tw-gap-x-2">
                         <Badge>Marocco</Badge>
@@ -142,11 +147,11 @@ const rows: Row[] = [
         },
     },
     {
-        key: "row-4",
+        key: 'row-4',
         actionElements: <ActionButton />,
         cells: {
             user: {
-                sortId: "david",
+                sortId: 'david',
                 value: <User name="David" />,
             },
             activeSessions: {
@@ -155,14 +160,14 @@ const rows: Row[] = [
             },
             lastActive: {
                 sortId: 6,
-                value: "6 days ago",
+                value: '6 days ago',
             },
             regions: {
-                sortId: "europe",
+                sortId: 'europe',
                 value: <Badge>Europe</Badge>,
             },
             countries: {
-                sortId: "germany",
+                sortId: 'germany',
                 value: (
                     <div className="tw-flex tw-gap-x-2">
                         <Badge>Germany</Badge>
@@ -172,11 +177,11 @@ const rows: Row[] = [
         },
     },
     {
-        key: "row-5",
+        key: 'row-5',
         actionElements: <ActionButton />,
         cells: {
             user: {
-                sortId: "emily",
+                sortId: 'emily',
                 value: <User name="Emily" />,
             },
             activeSessions: {
@@ -185,14 +190,14 @@ const rows: Row[] = [
             },
             lastActive: {
                 sortId: 10,
-                value: "10 days ago",
+                value: '10 days ago',
             },
             regions: {
-                sortId: "asia",
+                sortId: 'asia',
                 value: <Badge>Asia</Badge>,
             },
             countries: {
-                sortId: "thailand",
+                sortId: 'thailand',
                 value: (
                     <div className="tw-flex tw-gap-x-2">
                         <Badge>Thailand</Badge>
@@ -217,6 +222,41 @@ const Template: Story<TableProps> = (args) => {
     );
 };
 
+const TemplateWithSearch: Story<TableProps> = (args) => {
+    const [filteredRows, setfilteredRows] = useState<Row[]>(rows);
+    const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
+
+    const [filter, setfilter] = useState('');
+
+    useEffect(() => {
+        if (filter === '') {
+            setfilteredRows(rows);
+        }
+        const newFilteredRowsValue = rows.filter((row) => {
+            const cells = Object.values(row.cells);
+            return cells.some((cell) => String(cell.sortId).includes(filter));
+        });
+        setfilteredRows(newFilteredRowsValue);
+    }, [filter]);
+
+    return (
+        <>
+            <TextInput
+                value={filter}
+                onChange={(val) => setfilter(val)}
+                placeholder={'Filter rows by "sortId" value'}
+            />
+            <Table
+                {...args}
+                columns={columns}
+                rows={filteredRows}
+                selectedRowIds={selectedRows}
+                onSelectionChange={(ids) => setSelectedRows(ids || [])}
+            />
+        </>
+    );
+};
+
 export const ReadOnly = Template.bind({});
 
 export const SingleSelect = Template.bind({});
@@ -228,3 +268,5 @@ export const MultiSelect = Template.bind({});
 MultiSelect.args = {
     selectionMode: SelectionMode.MultiSelect,
 };
+
+export const FilterRows = TemplateWithSearch.bind({});

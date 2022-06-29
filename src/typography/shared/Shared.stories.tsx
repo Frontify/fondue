@@ -2,31 +2,31 @@
 
 export const sharedTypographyArgTypes = {
     overflow: {
-        options: ["ellipsis", "clip", "visible", "truncate"],
-        control: { type: "select" },
+        options: ['ellipsis', 'clip', 'visible', 'truncate'],
+        control: { type: 'select' },
     },
     whitespace: {
-        options: ["nowrap", "pre-wrap", "pre", "pre-line", "normal"],
-        control: { type: "select" },
+        options: ['nowrap', 'pre-wrap', 'pre', 'pre-line', 'normal'],
+        control: { type: 'select' },
     },
     display: {
-        options: ["block", "inline-block", "none", "inline"],
-        control: { type: "select" },
+        options: ['block', 'inline-block', 'none', 'inline'],
+        control: { type: 'select' },
     },
     wordBreak: {
-        options: ["break-all", "break-words", "normal"],
-        control: { type: "select" },
+        options: ['break-all', 'break-words', 'normal'],
+        control: { type: 'select' },
     },
     decoration: {
-        options: ["underline", "line-through", "none"],
-        control: { type: "select" },
+        options: ['underline', 'line-through', 'none'],
+        control: { type: 'select' },
     },
 };
 
 export const sharedTypographyArgs = {
-    overflow: "visible",
-    wordBreak: "normal",
-    decoration: "none",
-    whitespace: "normal",
-    display: "block",
+    overflow: 'visible',
+    wordBreak: 'normal',
+    decoration: 'none',
+    whitespace: 'normal',
+    display: 'block',
 };

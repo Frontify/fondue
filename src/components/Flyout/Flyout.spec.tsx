@@ -1,19 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from "@cypress/react";
-import { TextInput } from "@components/TextInput/TextInput";
-import React, { FC, useState } from "react";
-import { Flyout, FlyoutProps } from "./Flyout";
-import { ButtonStyle } from "@components/Button";
-import { FlyoutFooter } from "./FlyoutFooter";
+import { ButtonStyle } from '@components/Button';
+import { TextInput } from '@components/TextInput/TextInput';
+import { mount } from '@cypress/react';
+import React, { FC, useState } from 'react';
+import { Flyout, FlyoutProps } from './Flyout';
+import { FlyoutFooter } from './FlyoutFooter';
 
-const FLYOUT_TRIGGER_ID = "[data-test-id=flyout-trigger]";
-const BADGE_ID = "[data-test-id=badge]";
-const BUTTON_ID = "[data-test-id=button]";
-const FIELDSET_HEADER_ID = "[data-test-id=fieldset-header]";
-const TEXT_INPUT_ID = "[data-test-id=text-input]";
+const FLYOUT_TRIGGER_ID = '[data-test-id=flyout-trigger]';
+const BADGE_ID = '[data-test-id=badge]';
+const BUTTON_ID = '[data-test-id=button]';
+const FIELDSET_HEADER_ID = '[data-test-id=fieldset-header]';
+const TEXT_INPUT_ID = '[data-test-id=text-input]';
 
-const Component: FC<Pick<FlyoutProps, "onConfirm" | "onCancel" | "badges" | "legacyFooter">> = ({
+const Component: FC<Pick<FlyoutProps, 'onConfirm' | 'onCancel' | 'badges' | 'legacyFooter'>> = ({
     onConfirm,
     onCancel,
     badges,
@@ -35,8 +35,8 @@ const Component: FC<Pick<FlyoutProps, "onConfirm" | "onCancel" | "badges" | "leg
             {legacyFooter === false && (
                 <FlyoutFooter
                     buttons={[
-                        { children: "Cancel", style: ButtonStyle.Secondary, onClick: cy.stub().as("onCloseStub") },
-                        { children: "Add", style: ButtonStyle.Primary, onClick: cy.stub().as("onClickStub") },
+                        { children: 'Cancel', style: ButtonStyle.Secondary, onClick: cy.stub().as('onCloseStub') },
+                        { children: 'Add', style: ButtonStyle.Primary, onClick: cy.stub().as('onClickStub') },
                     ]}
                 />
             )}
@@ -44,38 +44,38 @@ const Component: FC<Pick<FlyoutProps, "onConfirm" | "onCancel" | "badges" | "leg
     );
 };
 
-describe("Flyout Component", () => {
-    it("should render with header and badges", () => {
-        const onCloseStub = cy.stub().as("onCloseStub");
+describe('Flyout Component', () => {
+    it('should render with header and badges', () => {
+        const onCloseStub = cy.stub().as('onCloseStub');
 
-        mount(<Component badges={[{ children: "Badge 1" }, { children: "Badge 2" }]} onCancel={onCloseStub} />);
+        mount(<Component badges={[{ children: 'Badge 1' }, { children: 'Badge 2' }]} onCancel={onCloseStub} />);
 
         cy.get(FLYOUT_TRIGGER_ID).click();
-        cy.get(FIELDSET_HEADER_ID).should("contain", "Header title");
-        cy.get(BADGE_ID).should("have.length", 2);
-        cy.get(TEXT_INPUT_ID).should("have.attr", "placeholder").and("eq", "placeholder");
+        cy.get(FIELDSET_HEADER_ID).should('contain', 'Header title');
+        cy.get(BADGE_ID).should('have.length', 2);
+        cy.get(TEXT_INPUT_ID).should('have.attr', 'placeholder').and('eq', 'placeholder');
         cy.get(BUTTON_ID).click();
-        cy.get("@onCloseStub").should("be.calledOnce");
+        cy.get('@onCloseStub').should('be.calledOnce');
     });
-    it("should render with onClick action", () => {
-        const onCloseStub = cy.stub().as("onCloseStub");
-        const onClickStub = cy.stub().as("onClickStub");
+    it('should render with onClick action', () => {
+        const onCloseStub = cy.stub().as('onCloseStub');
+        const onClickStub = cy.stub().as('onClickStub');
 
         mount(<Component onConfirm={onClickStub} onCancel={onCloseStub} />);
 
         cy.get(FLYOUT_TRIGGER_ID).click();
-        cy.get(BUTTON_ID).should("have.length", 2);
+        cy.get(BUTTON_ID).should('have.length', 2);
         cy.get(BUTTON_ID).eq(1).click();
-        cy.get("@onClickStub").should("be.calledOnce");
+        cy.get('@onClickStub').should('be.calledOnce');
     });
-    it("should render with custom footer buttons", () => {
+    it('should render with custom footer buttons', () => {
         mount(<Component legacyFooter={false} />);
 
         cy.get(FLYOUT_TRIGGER_ID).click();
-        cy.get(BUTTON_ID).should("have.length", 2);
+        cy.get(BUTTON_ID).should('have.length', 2);
         cy.get(BUTTON_ID).eq(0).click();
-        cy.get("@onCloseStub").should("be.calledOnce");
+        cy.get('@onCloseStub').should('be.calledOnce');
         cy.get(BUTTON_ID).eq(1).click();
-        cy.get("@onClickStub").should("be.calledOnce");
+        cy.get('@onClickStub').should('be.calledOnce');
     });
 });

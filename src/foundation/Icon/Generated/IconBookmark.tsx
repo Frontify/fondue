@@ -1,25 +1,33 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconBookmark12Filled from './IconBookmark12Filled';
+import IconBookmark12 from './IconBookmark12';
+import IconBookmark16Filled from './IconBookmark16Filled';
+import IconBookmark16 from './IconBookmark16';
+import IconBookmark20Filled from './IconBookmark20Filled';
+import IconBookmark20 from './IconBookmark20';
+import IconBookmark24Filled from './IconBookmark24Filled';
+import IconBookmark24 from './IconBookmark24';
+import IconBookmark32Filled from './IconBookmark32Filled';
+import IconBookmark32 from './IconBookmark32'
 
 function IconBookmark(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconBookmark"
-            {...props}
-        >
-            <path d="M7.333 3.6a.79.79 0 0 0-.777.8v15.998l5.032-3.235a.76.76 0 0 1 .824 0l5.032 3.235V4.4a.79.79 0 0 0-.777-.8H7.333Zm.047 18.154c-1.036.666-2.38-.1-2.38-1.356V4.4C5 3.074 6.045 2 7.333 2h9.334C17.955 2 19 3.074 19 4.4v15.998c0 1.256-1.344 2.022-2.38 1.356L12 18.784l-4.62 2.97Z" />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && props.filled && <IconBookmark12Filled {...props}/>}
+            {size === IconSize.Size12 && !props.filled && <IconBookmark12 {...props}/>}
+            {size === IconSize.Size16 && props.filled && <IconBookmark16Filled {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconBookmark16 {...props}/>}
+            {size === IconSize.Size20 && props.filled && <IconBookmark20Filled {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconBookmark20 {...props}/>}
+            {size === IconSize.Size24 && props.filled && <IconBookmark24Filled {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconBookmark24 {...props}/>}
+            {size === IconSize.Size32 && props.filled && <IconBookmark32Filled {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconBookmark32 {...props}/>}
+        </span>
     );
 }
 

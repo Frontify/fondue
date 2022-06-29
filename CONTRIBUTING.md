@@ -1,6 +1,6 @@
 # How to contribute
 
-## Running Arcade Locally
+## Running Fondue Locally
 
 1. Clone the Git repository
 2. Install the dependencies
@@ -9,7 +9,7 @@
 5. Profit!
 
 ```
-$ git clone git@github.com:Frontify/arcade.git
+$ git clone git@github.com:Frontify/fondue.git
 $ npm ci
 $ npm run storybook
 $ echo "YAY ✨"
@@ -17,7 +17,7 @@ $ echo "YAY ✨"
 
 ## Create a new Component
 
-When adding a new component to arcade this is the flow that is applied.
+When adding a new component to Fondue this is the flow that is applied.
 
 1. Create new branch
 2. Create component files, write tests, write stories & fiddle with React

@@ -1,36 +1,41 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getPreventDefaultHandler, someNode, toggleNodeType, usePlateEditorState } from "@udecode/plate";
-import { merge } from "@utilities/merge";
-import React from "react";
-import { getTextStyles, TextStyles, TextStyleType } from "../utils/getTextStyles";
+import { getPreventDefaultHandler, someNode, toggleNodeType, unwrapList, usePlateEditorState } from '@udecode/plate';
+import { merge } from '@utilities/merge';
+import React, { ReactNode } from 'react';
+import { TextStyles } from '../utils/textStyles';
 
 type DropdownItemProps = {
-    label: string;
+    editorId?: string;
     type: TextStyles;
-    textStyles?: TextStyleType[];
+    children: ReactNode;
 };
 
-export const DropdownItem = ({ label, type, textStyles }: DropdownItemProps) => {
-    const editor = usePlateEditorState();
+export const DropdownItem = ({ editorId, type, children }: DropdownItemProps) => {
+    const editor = usePlateEditorState(editorId);
     const isActive = !!editor?.selection && someNode(editor, { match: { type } });
     return (
         <button
             data-test-id="textstyle-option"
+            type="button"
             className={merge([
-                "tw-block tw-w-full tw-text-left tw-border-b tw-px-3 tw-py-2 tw-border-black-30 tw-outline-none tw-cursor-pointer tw-truncate ",
-                isActive ? "tw-bg-black-100 tw-text-white" : "hover:tw-bg-black-0",
-                getTextStyles(type, textStyles),
+                'tw-block tw-w-full tw-text-left tw-px-3 tw-py-2 tw-outline-none tw-cursor-pointer tw-truncate hover:tw-bg-box-neutral-hover hover:w-text-box-neutral-inverse-hover tw-max-h-20 tw-max-w-[15rem] tw-min-h-[2.25rem]',
+                isActive ? 'tw-text-box-neutral-inverse tw-bg-box-neutral' : 'tw-text-text',
             ])}
-            onMouseDown={
-                editor &&
+            onMouseDown={(event) => {
+                if (!editor || !editor.selection) {
+                    return;
+                }
+
+                unwrapList(editor, {});
+
                 getPreventDefaultHandler(toggleNodeType, editor, {
                     activeType: type,
                     inactiveType: type,
-                })
-            }
+                })(event);
+            }}
         >
-            {label}
+            {children}
         </button>
     );
 };

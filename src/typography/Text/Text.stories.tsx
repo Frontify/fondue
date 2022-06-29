@@ -1,39 +1,38 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from "@storybook/react";
-import React from "react";
-import { sharedTypographyArgs, sharedTypographyArgTypes } from "../shared/Shared.stories";
-import { Text as TextComponent, TextProps } from "./Text";
+import { Meta, Story } from '@storybook/react';
+import React from 'react';
+import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared.stories';
+import { Text as TextComponent, TextProps } from './Text';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Typography/Text",
+    title: 'Typography/Text',
     component: TextComponent,
     argTypes: {
         size: {
-            options: ["x-small", "small", "medium", "large"],
-            control: { type: "select" },
+            options: ['x-small', 'small', 'medium', 'large'],
+            control: { type: 'select' },
         },
         weight: {
-            options: ["regular", "strong", "x-strong"],
-            control: { type: "select" },
+            options: ['default', 'strong', 'x-strong'],
+            control: { type: 'select' },
         },
         as: {
-            options: ["a", "abbr", "address", "em", "label", "li", "span", "strong", "time", "p"],
-            control: { type: "select" },
+            options: ['a', 'abbr', 'address', 'em', 'label', 'li', 'span', 'strong', 'time', 'p'],
+            control: { type: 'select' },
         },
         color: {
-            options: ["default", "weak", "x-weak", "disabled", "negative", "positive", "warning", "interactive"],
-            control: { type: "select" },
+            options: ['default', 'weak', 'x-weak', 'disabled', 'negative', 'positive', 'warning', 'interactive'],
+            control: { type: 'select' },
         },
         ...sharedTypographyArgTypes,
     },
     args: {
-        children: "The fox jumps over the lazy dog",
-        size: "medium",
-        weight: "regular",
-        as: "span",
-        color: "default",
+        children: 'The fox jumps over the lazy dog',
+        size: 'medium',
+        weight: 'default',
+        as: 'span',
+        color: 'default',
         ...sharedTypographyArgs,
     },
 } as Meta<TextProps>;

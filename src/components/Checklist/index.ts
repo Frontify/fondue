@@ -1,1 +1,3 @@
-export * from "./Checklist";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+export * from './Checklist';

@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BadgeProps } from "@components/Badge/Badge";
-import { watchModals } from "@react-aria/aria-modal-polyfill";
-import { useButton } from "@react-aria/button";
-import { FocusScope, useFocusRing } from "@react-aria/focus";
-import { OverlayContainer, useOverlayTrigger } from "@react-aria/overlays";
-import { mergeProps } from "@react-aria/utils";
-import { useOverlayTriggerState } from "@react-stately/overlays";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
+import { BadgeProps } from '@components/Badge';
+import { watchModals } from '@react-aria/aria-modal-polyfill';
+import { useButton } from '@react-aria/button';
+import { FocusScope, useFocusRing } from '@react-aria/focus';
+import { OverlayContainer, useOverlayTrigger } from '@react-aria/overlays';
+import { mergeProps } from '@react-aria/utils';
+import { useOverlayTriggerState } from '@react-stately/overlays';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
 import React, {
     FC,
     HTMLAttributes,
@@ -18,14 +18,25 @@ import React, {
     ReactNode,
     useEffect,
     useRef,
-} from "react";
-import { LegacyFlyoutFooter } from ".";
-import { Overlay } from "./Overlay";
-import { useContainScroll } from "./hooks/useContainScroll";
-import { useOverlayPositionWithBottomMargin } from "./hooks/useOverlayPositionWithBottomMargin";
+} from 'react';
+import { LegacyFlyoutFooter } from '.';
+import { useContainScroll } from './hooks/useContainScroll';
+import { useOverlayPositionWithBottomMargin } from './hooks/useOverlayPositionWithBottomMargin';
+import { Overlay } from './Overlay';
 
-export const FLYOUT_DIVIDER_COLOR = "#eaebeb";
-export const FLYOUT_DIVIDER_HEIGHT = "10px";
+export const FLYOUT_DIVIDER_COLOR = '#eaebeb';
+export const FLYOUT_DIVIDER_HEIGHT = '10px';
+
+export enum FlyoutPlacement {
+    Top = 'top',
+    Bottom = 'bottom',
+    TopLeft = 'top left',
+    BottomLeft = 'bottom left',
+    TopRight = 'top right',
+    BottomRight = 'bottom right',
+    Right = 'right',
+    Left = 'left',
+}
 
 export type FlyoutProps = PropsWithChildren<{
     trigger:
@@ -46,11 +57,15 @@ export type FlyoutProps = PropsWithChildren<{
     onOpenChange: (isOpen: boolean) => void;
     fixedHeader?: ReactNode;
     fixedFooter?: ReactNode;
+    contentMinHeight?: number;
     /**
      * The legacy footer buttons section inside of the flyout will be deleted in the future.
      * @deprecated Pass the FlyoutFooter component with buttons to the Flyout component.
      */
     legacyFooter?: boolean;
+    placement?: FlyoutPlacement;
+    offset?: number;
+    updatePositionOnContentChange?: boolean;
 }>;
 
 export const Flyout: FC<FlyoutProps> = ({
@@ -61,13 +76,17 @@ export const Flyout: FC<FlyoutProps> = ({
     children,
     onOpenChange,
     isOpen = false,
-    title = "",
+    title = '',
     badges = [],
     hug = true,
     fitContent = false,
     fixedHeader,
     fixedFooter,
+    contentMinHeight,
     legacyFooter = true,
+    placement = FlyoutPlacement.BottomLeft,
+    offset,
+    updatePositionOnContentChange = false,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
     const { toggle, close } = state;
@@ -77,7 +96,7 @@ export const Flyout: FC<FlyoutProps> = ({
     const { isFocusVisible, focusProps } = useFocusRing();
 
     const { triggerProps, overlayProps: overlayTriggerProps } = useOverlayTrigger(
-        { type: "dialog" },
+        { type: 'dialog' },
         state,
         triggerRef,
     );
@@ -87,9 +106,12 @@ export const Flyout: FC<FlyoutProps> = ({
         overlayRef,
         scrollRef,
         isOpen,
+        placement,
+        offset,
+        updatePositionOnContentChange,
     });
 
-    const { buttonProps, isPressed } = useButton({ onPress: () => toggle(), elementType: "div" }, triggerRef);
+    const { buttonProps, isPressed } = useButton({ onPress: () => toggle(), elementType: 'div' }, triggerRef);
 
     useEffect(() => {
         const revert = watchModals();
@@ -100,19 +122,19 @@ export const Flyout: FC<FlyoutProps> = ({
     useContainScroll(overlayRef, { isDisabled: !isOpen });
 
     const combinedTriggerProps = mergeProps(buttonProps, triggerProps, focusProps, {
-        "aria-label": "Toggle Flyout Menu",
+        'aria-label': 'Toggle Flyout Menu',
     });
 
     const triggerComponent =
-        typeof trigger === "function" ? (
+        typeof trigger === 'function' ? (
             trigger(combinedTriggerProps, triggerRef, { isFocusVisible, isPressed })
         ) : (
             <div
                 {...combinedTriggerProps}
                 ref={triggerRef}
                 className={merge([
-                    "tw-outline-none tw-rounded",
-                    hug ? "tw-mx-3" : "tw-w-full",
+                    'tw-outline-none tw-rounded',
+                    hug ? 'tw-mx-3' : 'tw-w-full',
                     isFocusVisible && FOCUS_STYLE,
                 ])}
                 data-test-id="flyout-trigger"
@@ -146,6 +168,7 @@ export const Flyout: FC<FlyoutProps> = ({
                             ref={overlayRef}
                             scrollRef={scrollRef}
                             fitContent={fitContent}
+                            contentMinHeight={contentMinHeight}
                         >
                             {children}
                         </Overlay>

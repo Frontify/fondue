@@ -1,32 +1,32 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ActionMenu, ActionMenuProps } from "@components/ActionMenu/ActionMenu/ActionMenu";
-import { Button, ButtonStyle } from "@components/Button/Button";
-import IconAudio from "@foundation/Icon/Generated/IconAudio";
-import IconCaretDown from "@foundation/Icon/Generated/IconCaretDown";
-import IconImageLibrary from "@foundation/Icon/Generated/IconImageLibrary";
-import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternative";
-import { IconProps } from "@foundation/Icon/IconProps";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { useMemoizedId } from "@hooks/useMemoizedId";
-import { useButton } from "@react-aria/button";
-import { FocusScope, useFocusRing } from "@react-aria/focus";
-import { useMenuTrigger } from "@react-aria/menu";
-import { DismissButton, useOverlay } from "@react-aria/overlays";
-import { mergeProps } from "@react-aria/utils";
-import { useMenuTriggerState } from "@react-stately/menu";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import { AnimatePresence, motion } from "framer-motion";
-import React, { cloneElement, FC, ReactElement, useRef } from "react";
-import { SpinningCircle } from "./SpinningCircle";
+import { ActionMenuProps } from '@components/ActionMenu/ActionMenu/ActionMenu';
+import { Button, ButtonStyle } from '@components/Button/Button';
+import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon/';
+import { IconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { merge } from '@utilities/merge';
+import React, { ChangeEvent, FC, ReactElement } from 'react';
+import { MultiAssetPreview } from './MultiAssetPreview';
+import { SelectedAsset } from './SingleAsset/SelectedAsset';
 
 type BaseAsset = {
     name: string;
 };
 
+export type ImageAsset = {
+    type: 'image' | 'logo';
+    name: string;
+    extension: string;
+    src?: string;
+    alt?: string;
+    icon?: undefined;
+    size: number;
+};
+
 type OtherAsset = BaseAsset & {
-    type: "audio";
+    type: 'audio';
     extension: string;
     src?: undefined;
     alt?: undefined;
@@ -34,17 +34,8 @@ type OtherAsset = BaseAsset & {
     size: number;
 };
 
-type ImageAsset = BaseAsset & {
-    type: "image" | "logo";
-    extension: string;
-    src: string;
-    alt?: string;
-    icon?: undefined;
-    size: number;
-};
-
 type IconAsset = BaseAsset & {
-    type: "icon";
+    type: 'icon';
     extension?: undefined;
     src?: undefined;
     alt?: undefined;
@@ -52,15 +43,15 @@ type IconAsset = BaseAsset & {
     size?: undefined;
 };
 
-type UploadSource = { source: "upload"; sourceName?: undefined };
-type LibrarySource = { source: "library"; sourceName: string };
+export type UploadSource = { source: 'upload'; sourceName?: undefined };
+export type LibrarySource = { source: 'library'; sourceName: string };
 
 export enum AssetInputSize {
-    Small = "Small",
-    Large = "Large",
+    Small = 'Small',
+    Large = 'Large',
 }
 
-type AssetType =
+export type AssetType =
     | (ImageAsset & UploadSource)
     | (ImageAsset & LibrarySource)
     | (IconAsset & UploadSource)
@@ -68,211 +59,90 @@ type AssetType =
     | (OtherAsset & UploadSource)
     | (OtherAsset & LibrarySource);
 
-export type AssetProps = {
-    asset?: AssetType;
+export type AssetInputProps = {
+    assets?: AssetType[];
     size: AssetInputSize;
-    actions: ActionMenuProps["menuBlocks"];
+    numberOfLocations?: number;
+    actions?: ActionMenuProps['menuBlocks'];
     isLoading?: boolean;
-};
-
-export type AssetInputProps =
-    | (AssetProps & {
-          onUploadClick?: undefined;
-          onLibraryClick?: undefined;
-      })
-    | {
-          asset?: undefined;
-          actions?: undefined;
-          size?: undefined;
-          onUploadClick?: () => void;
-          onLibraryClick?: () => void;
-          isLoading?: boolean;
-      };
-
-type AssetThumbnailProps = {
-    asset: AssetType;
-    size: AssetProps["size"];
-    isActive?: boolean;
-};
-
-const AssetThumbnail: FC<Required<AssetThumbnailProps>> = ({ asset, size, isActive }) => (
-    <div
-        className={merge([
-            "tw-flex tw-flex-none tw-items-center tw-justify-center tw-bg-black-5 dark:tw-bg-black-95",
-            size === AssetInputSize.Large ? "tw-w-full tw-h-32" : "tw-w-14 tw-h-full",
-            isActive ? "tw-text-black-100 dark:tw-text-white" : "tw-text-black-80 dark:tw-text-black-20",
-        ])}
-    >
-        {asset.type === "icon" ? (
-            cloneElement(asset.icon, { size: IconSize.Size24 })
-        ) : asset.type === "audio" ? (
-            <IconAudio size={IconSize.Size24} />
-        ) : (
-            <img src={asset.src} alt={asset.alt || ""} className="tw-max-h-full" />
-        )}
-    </div>
-);
-
-const AssetSubline: FC<Pick<AssetProps, "asset" | "isLoading">> = ({ asset, isLoading = false }) => {
-    const title = isLoading ? "Uploading" : asset?.source === "library" ? asset.sourceName : "Uploaded";
-
-    return (
-        <span className="tw-max-w-full tw-flex tw-flex-row tw-items-center tw-gap-1 tw-text-black-80 tw-text-xxs tw-overflow-hidden">
-            <div className="tw-flex-none tw-inline-flex tw-items-center tw-justify-center">
-                {asset?.source === "library" ? <IconImageLibrary /> : <IconUploadAlternative />}
-            </div>
-            <span>{title}</span>
-            {asset &&
-                !isLoading &&
-                [asset.extension, asset.size].filter(Boolean).map((item) => (
-                    <>
-                        <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
-                        <span>{item}</span>
-                    </>
-                ))}
-        </span>
-    );
-};
-
-const SelectedAsset: FC<AssetProps> = ({ asset, size, actions, isLoading }) => {
-    const menuId = useMemoizedId();
-    const labelId = useMemoizedId();
-    const buttonRef = useRef<HTMLButtonElement | null>(null);
-    const menuState = useMenuTriggerState({ closeOnSelect: true });
-    const { isOpen, focusStrategy } = menuState;
-    const { menuTriggerProps } = useMenuTrigger({}, menuState, buttonRef);
-    const { buttonProps } = useButton(menuTriggerProps, buttonRef);
-    const { isFocusVisible, focusProps } = useFocusRing();
-    const overlayRef = useRef<HTMLDivElement | null>(null);
-    const { overlayProps } = useOverlay(
-        { onClose: () => menuState.close(), shouldCloseOnBlur: true, isOpen, isDismissable: true },
-        overlayRef,
-    );
-    const title = asset?.name || "Your Asset";
-
-    return (
-        <div
-            className="tw-relative tw-font-sans tw-w-full tw-text-s tw-bg-transparent tw-font-normal tw-min-w-0"
-            aria-labelledby={labelId}
-            title={title}
-        >
-            <button
-                {...mergeProps(buttonProps, focusProps)}
-                ref={buttonRef}
-                className={merge([
-                    "tw-w-full tw-flex tw-border tw-rounded hover:tw-border-black-90 dark:hover:tw-border-black-40 focus-visible:tw-outline-none",
-                    isFocusVisible && FOCUS_STYLE,
-                    size === AssetInputSize.Large ? "tw-h-[11.5rem] tw-flex-col" : "tw-h-14",
-                    isOpen || isFocusVisible
-                        ? "tw-border-black-90 dark:tw-border-black-10"
-                        : "tw-border-black-20 dark:tw-border-black-80",
-                ])}
-            >
-                {isLoading && !asset && (
-                    <div
-                        className={merge([
-                            "tw-flex tw-justify-center tw-items-center",
-                            size === AssetInputSize.Large ? "tw-w-full tw-h-32" : "tw-w-14 tw-h-full",
-                        ])}
-                    >
-                        <SpinningCircle size={size} />
-                    </div>
-                )}
-                {asset && <AssetThumbnail asset={asset} size={size} isActive={isOpen || isFocusVisible} />}
-                <div
-                    className={merge([
-                        "tw-min-w-0 tw-max-w-full tw-flex tw-flex-auto tw-self-stretch tw-border-black-100 tw-border-opacity-25",
-                        size === AssetInputSize.Large ? "tw-h-14 tw-border-t" : "tw-h-full tw-border-l",
-                    ])}
-                >
-                    <div className="tw-min-w-0 tw-pr-3 tw-pl-4 tw-flex tw-flex-auto tw-flex-col tw-items-start tw-justify-center tw-h-full">
-                        <span
-                            id={labelId}
-                            className={merge([
-                                "tw-max-w-full tw-text-black-100 tw-text-s tw-truncate dark:tw-text-white",
-                                (isOpen || isFocusVisible) && "tw-font-medium",
-                            ])}
-                        >
-                            {title}
-                        </span>
-                        <AssetSubline asset={asset} isLoading={isLoading} />
-                    </div>
-                    <div className="tw-p-4 tw-flex tw-flex-none tw-items-center tw-justify-center">
-                        <span
-                            className={merge([
-                                "tw-transition-transform",
-                                isOpen ? "tw-rotate-180 tw-text-black-90" : "tw-text-black-60",
-                            ])}
-                        >
-                            <IconCaretDown size={IconSize.Size16} />
-                        </span>
-                    </div>
-                </div>
-            </button>
-
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-box-border tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-10"
-                        key={`asset-input-menu-${menuId}`}
-                        initial={{ height: 0 }}
-                        animate={{ height: "auto" }}
-                        exit={{ height: 0 }}
-                        transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
-                    >
-                        <FocusScope restoreFocus>
-                            <div {...overlayProps} ref={overlayRef}>
-                                <DismissButton onDismiss={() => menuState.close()} />
-                                <ActionMenu menuBlocks={actions} focus={focusStrategy} />
-                                <DismissButton onDismiss={() => menuState.close()} />
-                            </div>
-                        </FocusScope>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </div>
-    );
+    onUploadClick?: (files: FileList) => void;
+    onLibraryClick?: () => void;
+    onMultiAssetClick?: () => void;
+    acceptFileType?: string;
 };
 
 export const AssetInput: FC<AssetInputProps> = ({
-    asset,
+    assets = [],
+    numberOfLocations = 1,
     actions = [],
     size = AssetInputSize.Small,
     isLoading = false,
     onLibraryClick,
     onUploadClick,
+    onMultiAssetClick,
+    acceptFileType,
 }) => {
-    if (isLoading || asset) {
-        return <SelectedAsset asset={asset} size={size} actions={actions} isLoading={isLoading} />;
+    const assetsLength = assets.length;
+    const id = useMemoizedId();
+
+    const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+
+        if (files && onUploadClick) {
+            onUploadClick(files);
+        }
+    };
+
+    if ((isLoading || assetsLength === 1) && actions) {
+        return <SelectedAsset asset={assets[0]} size={size} actions={actions} isLoading={isLoading} />;
+    }
+
+    if (assetsLength > 1 && onMultiAssetClick) {
+        return <MultiAssetPreview assets={assets} onClick={onMultiAssetClick} numberOfLocations={numberOfLocations} />;
     }
 
     return (
         <div
             data-test-id="asset-input-placeholder"
             className={merge([
-                "tw-grid tw-p-3 tw-border tw-border-dashed tw-border-black-10 tw-rounded",
-                onUploadClick && onLibraryClick ? "tw-grid-cols-2 tw-divide-x tw-divide-black-10" : "tw-grid-cols-1",
+                'tw-grid tw-p-3 tw-border tw-border-dashed tw-border-black-10 tw-rounded',
+                onUploadClick && onLibraryClick ? 'tw-grid-cols-2 tw-divide-x tw-divide-black-10' : 'tw-grid-cols-1',
             ])}
         >
             {onUploadClick && (
-                <div className={merge(["tw-flex tw-flex-col tw-h-8", onLibraryClick && "tw-pr-3"])}>
-                    <Button
-                        onClick={onUploadClick}
-                        style={ButtonStyle.Secondary}
-                        solid={false}
-                        icon={<IconUploadAlternative />}
+                <div
+                    className={merge(['tw-flex tw-flex-col tw-h-8', onLibraryClick && 'tw-pr-3'])}
+                    data-test-id="asset-input-upload"
+                >
+                    <label
+                        className="tw-relative tw-cursor-pointer tw-rounded tw-flex tw-items-center tw-justify-center tw-px-4 tw-h-9 tw-text-s tw-text-black-80 tw-bg-transparent hover:tw-bg-black-10 hover:tw-text-black active:tw-bg-black-20 active:tw-text-black dark:tw-text-white dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark dark:hover:tw-text-white"
+                        htmlFor={id}
                     >
+                        <span className="tw--ml-1 tw-mr-1.5">
+                            <IconArrowCircleUp size={IconSize.Size20} />
+                        </span>
                         Upload
-                    </Button>
+                    </label>
+                    <input
+                        id={id}
+                        className="tw-hidden"
+                        type="file"
+                        accept={acceptFileType}
+                        multiple={!!onMultiAssetClick}
+                        onChange={onFileChange}
+                    />
                 </div>
             )}
             {onLibraryClick && (
-                <div className={merge(["tw-flex tw-flex-col tw-h-8", onUploadClick && "tw-pl-3"])}>
+                <div
+                    className={merge(['tw-flex tw-flex-col tw-h-8', onUploadClick && 'tw-pl-3'])}
+                    data-test-id="asset-input-library"
+                >
                     <Button
                         onClick={onLibraryClick}
                         style={ButtonStyle.Secondary}
                         solid={false}
-                        icon={<IconImageLibrary />}
+                        icon={<IconImageStack />}
                     >
                         Browse
                     </Button>

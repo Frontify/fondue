@@ -1,11 +1,11 @@
-import { Badge, BadgeProps } from "@components/Badge/Badge";
-import { useBreadcrumbItem } from "@react-aria/breadcrumbs";
-import { useFocusRing } from "@react-aria/focus";
-import { mergeProps } from "@react-aria/utils";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import React, { FC, RefObject, useRef } from "react";
-import { Breadcrumb } from "./Breadcrumbs";
+import { Badge, BadgeProps } from '@components/Badge';
+import { useBreadcrumbItem } from '@react-aria/breadcrumbs';
+import { useFocusRing } from '@react-aria/focus';
+import { mergeProps } from '@react-aria/utils';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import React, { FC, RefObject, useRef } from 'react';
+import { Breadcrumb } from './Breadcrumbs';
 
 const ItemWithBadges: FC<{ badges?: BadgeProps[] }> = ({ badges, children }) => (
     <span className="tw-inline-flex tw-gap-x-2 tw-items-center">
@@ -34,12 +34,12 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
         {
             isCurrent: true,
             children: label,
-            elementType: link ? "a" : onClick ? "button" : "span",
+            elementType: link ? 'a' : onClick ? 'button' : 'span',
         },
         ref,
     );
 
-    const classNames = merge([decorator && "tw-flex tw-gap-x-1 tw-items-center", bold && "tw-font-bold"]);
+    const classNames = merge([decorator && 'tw-flex tw-gap-x-1 tw-items-center', bold && 'tw-font-bold']);
     const { isFocusVisible, focusProps } = useFocusRing();
     const props = mergeProps(itemProps, focusProps);
 
@@ -54,10 +54,10 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
                         ref={ref as RefObject<HTMLAnchorElement>}
                         {...props}
                         href={link}
-                        className={merge([classNames, isFocusVisible ? FOCUS_STYLE : ""])}
+                        className={merge([classNames, isFocusVisible ? FOCUS_STYLE : ''])}
                     >
                         {decorator}
-                        <span className={bold ? "tw-font-bold" : ""}>{label}</span>
+                        <span className={bold ? 'tw-font-bold' : ''}>{label}</span>
                     </a>
                 </ItemWithBadges>
             ) : onClick ? (
@@ -65,8 +65,9 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
                     <button
                         ref={ref as RefObject<HTMLButtonElement>}
                         {...props}
+                        type="button"
                         onClick={onClick}
-                        className={merge([classNames, isFocusVisible ? FOCUS_STYLE : ""])}
+                        className={merge([classNames, isFocusVisible ? FOCUS_STYLE : ''])}
                     >
                         {decorator}
                         {label}
@@ -79,7 +80,7 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
                         <span
                             ref={ref as RefObject<HTMLSpanElement>}
                             {...props}
-                            className={merge([bold && "tw-font-bold", isFocusVisible && FOCUS_STYLE])}
+                            className={merge([bold && 'tw-font-bold', isFocusVisible && FOCUS_STYLE])}
                         >
                             {label}
                         </span>

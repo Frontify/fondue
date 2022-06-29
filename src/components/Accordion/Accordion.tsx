@@ -1,58 +1,39 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FieldsetHeader, FieldsetHeaderProps, FieldsetHeaderSize } from "@components/FieldsetHeader/FieldsetHeader";
-import { useAccordion, useAccordionItem } from "@react-aria/accordion";
-import { useFocusRing } from "@react-aria/focus";
-import { mergeProps } from "@react-aria/utils";
-import { Item as StatelyItem } from "@react-stately/collections";
-import { TreeState, useTreeState } from "@react-stately/tree";
-import { Node } from "@react-types/shared";
-import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import { AnimatePresence, motion } from "framer-motion";
-import React, {
-    Children,
-    FC,
-    isValidElement,
-    KeyboardEvent,
-    PropsWithChildren,
-    ReactElement,
-    ReactNode,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import { CollapsibleWrap } from '@components/CollapsibleWrap';
+import { useAccordion, useAccordionItem } from '@react-aria/accordion';
+import { useFocusRing } from '@react-aria/focus';
+import { mergeProps } from '@react-aria/utils';
+import { Item as StatelyItem } from '@react-stately/collections';
+import { useTreeState } from '@react-stately/tree';
+import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import React, { Children, FC, Key, KeyboardEvent, ReactElement, isValidElement, useEffect, useRef } from 'react';
+import { AccordionHeader } from './AccordionHeader';
+import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from './types';
 
-export type AccordionItemProps = PropsWithChildren<{ header: FieldsetHeaderProps; padding?: boolean }>;
+const ACCORDION_ID = 'accordion';
+const ACCORDION_ITEM_ID = 'accordion-item';
 
-const ACCORDION_ID = "accordion";
-const ACCORDION_ITEM_ID = "accordion-item";
-
-type AriaAccordionItemProps = {
-    item: Node<AccordionItemProps>;
-    state: TreeState<AccordionItemProps>;
-    header: FieldsetHeaderProps;
-    padding?: boolean;
-};
-
-const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header, padding = true }) => {
+const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
+    item,
+    state,
+    header,
+    padding = true,
+    divider = false,
+    headerComponent: HeaderComponent = AccordionHeader,
+}) => {
+    const { size, active, ...headerProps } = header;
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
-    const isOpen = state.expandedKeys.has(item.key) && item.props.children;
+    const isOpen = state.expandedKeys.has(item.key);
     const { isFocusVisible, focusProps } = useFocusRing();
-    const [isActive, setIsActive] = useState(header.active);
-
-    useEffect(() => {
-        if (isActive) {
-            state.toggleKey(item.key);
-        }
-        // We add a timeout to avoid isActive being set to false before
-        // the first re-render, so that the animations won't play on load
-        setTimeout(() => setIsActive(false), 50);
-    }, []);
 
     return (
-        <div key={item.key} className={isFocusVisible ? FOCUS_STYLE_INSET : ""}>
+        <div
+            key={item.key}
+            className={merge([isFocusVisible ? FOCUS_STYLE_INSET : '', divider && 'tw-divide-y tw-divide-black-10'])}
+        >
             <button
                 {...mergeProps(buttonProps, focusProps)}
                 data-test-id={ACCORDION_ITEM_ID}
@@ -67,7 +48,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header, pa
                     }
                 }}
                 onKeyUp={(event) => {
-                    if (header.onClick && event.key === "Enter") {
+                    if (header.onClick && event.key === 'Enter') {
                         header.onClick();
                     }
 
@@ -75,48 +56,21 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({ item, state, header, pa
                         buttonProps.onKeyUp(event);
                     }
                 }}
-                className="tw-w-full tw-px-8 tw-py-6 focus-visible:tw-outline-none"
+                className="tw-w-full focus-visible:tw-outline-none"
             >
-                <FieldsetHeader {...header} size={FieldsetHeaderSize.Medium} active={isOpen} onClick={undefined} />
+                <HeaderComponent isOpen={isOpen} size={size} {...headerProps} />
             </button>
-
-            <AnimatePresence>
-                {item.props.children && isOpen && (
-                    <motion.div
-                        key={item.key}
-                        initial={isActive ? false : "collapsed"}
-                        animate={"open"}
-                        exit={"collapsed"}
-                        variants={{
-                            open: { height: "auto", overflow: "visible" },
-                            collapsed: { height: 0, overflow: "hidden" },
-                        }}
-                        transition={{ type: "tween" }}
-                        data-test-id="accordion-item-content"
-                    >
-                        <div {...regionProps} className={merge(["tw-pb-6", padding && "tw-px-8"])}>
-                            <motion.div
-                                initial={isActive ? false : { opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.3 }}
-                            >
-                                {item.props.children()}
-                            </motion.div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            <CollapsibleWrap isOpen={isOpen} preventInitialAnimation={active}>
+                <div {...regionProps} className={merge([padding && 'tw-px-8 tw-pb-6'])}>
+                    {item.props.children?.()}
+                </div>
+            </CollapsibleWrap>
         </div>
     );
 };
 
-export type AccordionProps = {
-    children?: ReactNode;
-};
-
-const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => ({
-    children: Children.map(children, (child, index) => {
+const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => {
+    const ariaChildren = Children.map(children, (child, index) => {
         const { header, children } = child.props;
 
         return (
@@ -124,13 +78,19 @@ const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => ({
                 {children ? () => children : null}
             </StatelyItem>
         );
-    }),
-});
+    });
+
+    const defaultExpandedKeys = (ariaChildren
+        .map((item) => item.key)
+        .filter((key, index) => key && !!children[index]?.props.header?.active) || []) as Key[];
+
+    return { children: ariaChildren, defaultExpandedKeys };
+};
 
 const filterValidChildren = ({ children }: AccordionProps) =>
     Children.toArray(children).reduce<ReactElement<AccordionItemProps>[]>((validChildren, child) => {
         if (isValidElement(child) && !child.props.header) {
-            console.warn("Use `AccordionItem` as children of `Accordion` and set the `header` prop accordingly.");
+            console.warn('Use `AccordionItem` as children of `Accordion` and set the `header` prop accordingly.');
             return validChildren;
         }
 
@@ -143,11 +103,38 @@ const filterValidChildren = ({ children }: AccordionProps) =>
 
 export const AccordionItem = ({ children }: AccordionItemProps): ReactElement => <>{children}</>;
 
+const lastChildrenActive = (children: React.ReactNode | undefined): boolean | undefined => {
+    const childrenArray = Children.toArray(children) as { key: string; props?: { header?: { active?: boolean } } }[];
+    return childrenArray[childrenArray.length - 1]?.props?.header?.active === true;
+};
+
 export const Accordion: FC<AccordionProps> = (props) => {
+    const { divider = true, border = true } = props;
     const children = filterValidChildren(props);
     const ariaProps = mapToAriaProps(children);
+
     const ref = useRef<HTMLDivElement | null>(null);
     const state = useTreeState<AccordionItemProps>(ariaProps);
+
+    // We need to detect the firstRender and childrenLength to not toggle any panel
+    const accordionChildren = useRef({ firstRender: true, childLength: Children.toArray(props.children).length });
+    const childrenLength = Children.toArray(props.children).length;
+    useEffect(() => {
+        /**
+         * Checks if the last child in the Array is active
+         * Only works when adding Children to end of Accordion
+         */
+        const childrenIsActive = lastChildrenActive(props.children);
+        if (
+            !!childrenIsActive &&
+            !accordionChildren.current.firstRender &&
+            Children.toArray(props.children).length > accordionChildren.current.childLength
+        ) {
+            state.toggleKey(ariaProps.defaultExpandedKeys[ariaProps.defaultExpandedKeys.length - 1]);
+        }
+        accordionChildren.current = { firstRender: false, childLength: Children.toArray(props.children).length };
+    }, [childrenLength]);
+
     const {
         // @react-aria prevents default action for onMouseDown as implemented here: https://github.com/adobe/react-spectrum/blob/e14523fedd93ac1a4ede355aed70988af572ae74/packages/%40react-aria/selection/src/useSelectableCollection.ts#L370
         // This makes it impossible to edit or select text in input fields inside the accordion
@@ -175,11 +162,24 @@ export const Accordion: FC<AccordionProps> = (props) => {
             {...propsWithModifiedKeyDown}
             ref={ref}
             data-test-id={ACCORDION_ID}
-            className="tw-divide-y tw-divide-black-10 tw-border-t tw-border-b tw-border-black-10"
+            className={merge([
+                divider && 'tw-divide-y tw-divide-black-10',
+                border && 'tw-border-t tw-border-b tw-border-black-10',
+            ])}
         >
             {[...state.collection].map((item, index) => {
-                const { header, padding } = children[index].props;
-                return <AriaAccordionItem key={item.key} item={item} state={state} header={header} padding={padding} />;
+                const { header, padding, headerComponent, divider } = children[index].props;
+                return (
+                    <AriaAccordionItem
+                        key={item.key}
+                        item={item}
+                        state={state}
+                        divider={divider}
+                        header={header}
+                        padding={padding}
+                        headerComponent={headerComponent}
+                    />
+                );
             })}
         </div>
     );

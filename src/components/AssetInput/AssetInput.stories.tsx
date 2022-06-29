@@ -1,89 +1,42 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ActionMenuBlock } from "@components/ActionMenu/ActionMenu/ActionMenu";
-import { MenuItemStyle } from "@components/MenuItem/MenuItem";
-import IconCrop from "@foundation/Icon/Generated/IconCrop";
-import IconExternalLink from "@foundation/Icon/Generated/IconExternalLink";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
-import IconImageLibrary from "@foundation/Icon/Generated/IconImageLibrary";
-import IconReject from "@foundation/Icon/Generated/IconReject";
-import IconUploadAlternative from "@foundation/Icon/Generated/IconUploadAlternative";
-import { Meta, Story } from "@storybook/react";
-import React from "react";
-import { AssetInput, AssetInputProps, AssetInputSize } from "./AssetInput";
+import { Meta, Story } from '@storybook/react';
+import React from 'react';
+import { assetInputActions } from './asset-input-actions';
+import { AssetInput, AssetInputProps, AssetInputSize } from './AssetInput';
+import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';
 
-const actions = [
-    {
-        id: "block1",
-        ariaLabel: "First section",
-        menuItems: [
-            {
-                id: "1",
-                title: "Replace with Asset",
-                decorator: <IconImageLibrary />,
-            },
-            {
-                id: "2",
-                title: "Replace with Upload",
-                decorator: <IconUploadAlternative />,
-            },
-        ],
-    },
-    {
-        id: "block2",
-        ariaLabel: "Second section",
-        menuItems: [
-            {
-                id: "10",
-                title: "Crop / Resize",
-                decorator: <IconCrop />,
-            },
-            {
-                id: "11",
-                title: "Small warning",
-                decorator: <IconExternalLink />,
-            },
-        ],
-    },
-    {
-        id: "block3",
-        ariaLabel: "Third section",
-        menuItems: [
-            {
-                id: "20",
-                title: "Remove",
-                style: MenuItemStyle.Danger,
-                decorator: <IconReject />,
-            },
-        ],
-    },
-] as ActionMenuBlock[];
-
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Asset Input",
+    title: 'Components/Asset Input',
     component: AssetInput,
     argTypes: {
         size: {
             options: Object.values(AssetInputSize),
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
-        onItemClick: { action: "onItemClick", table: { disable: true } },
+        onItemClick: { action: 'onItemClick', table: { disable: true } },
+        onMultiAssetClick: {
+            action: 'onMultiAssetClick',
+        },
     },
     args: {
         size: AssetInputSize.Small,
         isLoading: false,
+        numberOfLocations: 1,
     },
 } as Meta<AssetInputProps>;
 
 const Template: Story<AssetInputProps & { onItemClick: () => void }> = (args) => {
-    args.actions?.forEach((block) =>
-        block.menuItems.forEach((item) => {
-            item.onClick = args.onItemClick;
-        }),
-    );
-    if (args.isLoading && args.asset) {
-        args.asset = undefined;
+    if (args?.actions) {
+        for (const block of args.actions) {
+            for (const item of block.menuItems) {
+                item.onClick = args.onItemClick;
+            }
+        }
+    }
+
+    if (args.isLoading && args.assets) {
+        args.assets = undefined;
     }
 
     return <AssetInput {...args} />;
@@ -92,65 +45,76 @@ const Template: Story<AssetInputProps & { onItemClick: () => void }> = (args) =>
 export const Placeholder = Template.bind({});
 
 Placeholder.argTypes = {
-    onUploadClick: { action: "onUploadClick", table: { disable: true } },
-    onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
+    onUploadClick: { action: 'onUploadClick', table: { disable: true } },
+    onLibraryClick: { action: 'onLibraryClick', table: { disable: true } },
     size: { table: { disable: true } },
     isLoading: { table: { disable: true } },
+    numberOfLocations: { table: { disable: true } },
+    onMultiAssetClick: { table: { disable: true } },
 };
 
 export const PlaceholderUploadOnly = Template.bind({});
 
 PlaceholderUploadOnly.argTypes = {
-    onUploadClick: { action: "onUploadClick", table: { disable: true } },
+    onUploadClick: { action: 'onUploadClick', table: { disable: true } },
     size: { table: { disable: true } },
     isLoading: { table: { disable: true } },
+    numberOfLocations: { table: { disable: true } },
+    onMultiAssetClick: { table: { disable: true } },
 };
 
 export const PlaceholderLibraryOnly = Template.bind({});
 
 PlaceholderLibraryOnly.argTypes = {
-    onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
+    onLibraryClick: { action: 'onLibraryClick', table: { disable: true } },
     size: { table: { disable: true } },
     isLoading: { table: { disable: true } },
+    numberOfLocations: { table: { disable: true } },
+    onMultiAssetClick: { table: { disable: true } },
 };
 
 export const Image = Template.bind({});
 
 Image.args = {
-    asset: {
-        source: "upload",
-        name: "foo",
-        size: 2000,
-        type: "image",
-        extension: "JPG",
-        src: "https://picsum.photos/200/300",
-    },
-    actions,
+    assets: [EXAMPLE_IMAGES[0]],
+    actions: assetInputActions,
 };
 
 export const Audio = Template.bind({});
 
 Audio.args = {
-    asset: {
-        source: "library",
-        sourceName: "Foobar",
-        name: "foo",
-        extension: "MP3",
-        size: 2000,
-        type: "audio",
-    },
-    actions,
+    assets: [MIXED_ASSETS[3]],
+    actions: assetInputActions,
 };
 
 export const Icon = Template.bind({});
 
 Icon.args = {
-    asset: {
-        source: "library",
-        sourceName: "Foobar",
-        name: "foo",
-        type: "icon",
-        icon: <IconIcons />,
-    },
-    actions,
+    assets: [MIXED_ASSETS[2]],
+    actions: assetInputActions,
 };
+
+const multiAssetInputArgTypes = {
+    onUploadClick: { action: 'onUploadClick', table: { disable: true } },
+    onLibraryClick: { action: 'onLibraryClick', table: { disable: true } },
+    size: { table: { disable: true } },
+    isLoading: { table: { disable: true } },
+};
+
+export const MixedAssets = Template.bind({});
+
+MixedAssets.args = {
+    assets: [EXAMPLE_IMAGES[0], ...MIXED_ASSETS.slice(2, 4)],
+    numberOfLocations: 1,
+};
+
+MixedAssets.argTypes = multiAssetInputArgTypes;
+
+export const ImageAssets = Template.bind({});
+
+ImageAssets.args = {
+    assets: EXAMPLE_IMAGES,
+    numberOfLocations: 2,
+};
+
+ImageAssets.argTypes = multiAssetInputArgTypes;

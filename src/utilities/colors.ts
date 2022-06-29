@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import tinycolor from "tinycolor2";
-import { Color, ColorFormat } from "../types/colors";
+import tinycolor from 'tinycolor2';
+import { Color, ColorFormat } from '../types/colors';
 
 export const getColorDisplayValue = (color: Color, format: ColorFormat, showAlpha = true): string => {
     const parsedColor = tinycolor(color);

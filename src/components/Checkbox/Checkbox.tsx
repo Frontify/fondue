@@ -1,23 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TooltipProps } from "@components/Tooltip/Tooltip";
-import IconCheck from "@foundation/Icon/Generated/IconCheck";
-import IconMinus from "@foundation/Icon/Generated/IconMinus";
-import { InputLabel } from "@components/InputLabel/InputLabel";
-import { useMemoizedId } from "@hooks/useMemoizedId";
-import { useCheckbox } from "@react-aria/checkbox";
-import { useFocusRing } from "@react-aria/focus";
-import { mergeProps } from "@react-aria/utils";
-import { useToggleState } from "@react-stately/toggle";
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import { useForwardedRef } from "@utilities/useForwardedRef";
-import React, { forwardRef, ForwardRefRenderFunction, HTMLAttributes } from "react";
+import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
+import IconMinus from '@foundation/Icon/Generated/IconMinus';
+import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { useCheckbox } from '@react-aria/checkbox';
+import { useFocusRing } from '@react-aria/focus';
+import { mergeProps } from '@react-aria/utils';
+import { useToggleState } from '@react-stately/toggle';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import { useForwardedRef } from '@utilities/useForwardedRef';
+import React, { ForwardRefRenderFunction, HTMLAttributes, forwardRef } from 'react';
 
 export enum CheckboxState {
-    Checked = "Checked",
-    Unchecked = "Unchecked",
-    Mixed = "Mixed",
+    Checked = 'Checked',
+    Unchecked = 'Unchecked',
+    Mixed = 'Mixed',
 }
 
 export type CheckboxProps = {
@@ -25,10 +24,10 @@ export type CheckboxProps = {
     state?: CheckboxState;
     disabled?: boolean;
     required?: boolean;
-    value: string;
+    value?: string;
     onChange?: (isChecked: boolean) => void;
     label?: string;
-    tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
+    tooltip?: InputLabelTooltipProps;
     note?: string;
     ariaLabel?: string;
     groupInputProps?: HTMLAttributes<HTMLElement>;
@@ -58,16 +57,17 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     const inputRef = useForwardedRef<HTMLInputElement | null>(ref);
     const { isFocusVisible, focusProps } = useFocusRing();
     const toggleState = useToggleState({
-        value,
         onChange: disabled ? undefined : onChange,
         isSelected: state === CheckboxState.Checked,
     });
+
     const { inputProps } = useCheckbox(
         {
             isDisabled: disabled,
             isRequired: required,
             isIndeterminate: state === CheckboxState.Mixed,
-            "aria-label": ariaLabel || label,
+            'aria-label': ariaLabel || label,
+            value,
         },
         toggleState,
         inputRef,
@@ -77,8 +77,8 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">
             <label
                 className={merge([
-                    "tw-group tw-flex tw-items-center tw-gap-2 tw-select-none tw-outline-none",
-                    !disabled && "hover:tw-cursor-pointer",
+                    'tw-group tw-flex tw-items-center tw-gap-2 tw-select-none tw-outline-none',
+                    !disabled && 'hover:tw-cursor-pointer',
                 ])}
             >
                 <input
@@ -91,30 +91,31 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                 <span
                     aria-hidden="true"
                     className={merge([
-                        "tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0",
+                        'tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0',
                         isFocusVisible && FOCUS_STYLE,
                         disabled
                             ? merge([
-                                  "tw-text-white tw-pointer-events-none",
+                                  'tw-text-white tw-pointer-events-none',
                                   !isCheckedOrMixed(state) &&
-                                      "tw-border-black-20 tw-bg-white dark:tw-border-black-80 dark:tw-bg-black-90",
+                                      'tw-border-black-20 tw-bg-white dark:tw-border-black-80 dark:tw-bg-black-90',
                                   isCheckedOrMixed(state) &&
-                                      "tw-border-black-40 tw-bg-black-40 dark:tw-border-black-60 dark:tw-bg-black-60",
+                                      'tw-border-black-40 tw-bg-black-40 dark:tw-border-black-60 dark:tw-bg-black-60',
                               ])
                             : merge([
                                   !isCheckedOrMixed(state) &&
-                                      "tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90 group-hover:tw-bg-white group-hover:tw-border-black dark:group-hover:tw-border-black-20 dark:group-hover:tw-bg-black-90",
+                                      'tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90 group-hover:tw-bg-white group-hover:tw-border-black dark:group-hover:tw-border-black-20 dark:group-hover:tw-bg-black-90',
                                   isCheckedOrMixed(state) &&
-                                      "tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60 group-hover:tw-text-white group-hover:tw-border-violet-70 group-hover:tw-bg-violet-70 dark:group-hover:tw-border-violet-60 dark:group-hover:tw-bg-violet-60",
+                                      'tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60 group-hover:tw-text-white group-hover:tw-border-violet-70 group-hover:tw-bg-violet-70 dark:group-hover:tw-border-violet-60 dark:group-hover:tw-bg-violet-60',
                               ]),
                     ])}
                 >
-                    {state === CheckboxState.Checked && <IconCheck />}
+                    {state === CheckboxState.Checked && <IconCheckMark />}
                     {state === CheckboxState.Mixed && <IconMinus />}
                 </span>
                 {label && (
                     <InputLabel
                         disabled={disabled}
+                        clickable
                         htmlFor={id}
                         tooltip={tooltip ?? undefined}
                         required={required}

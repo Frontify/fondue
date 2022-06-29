@@ -1,8 +1,8 @@
-import React from "react";
-import { useDrop } from "react-dnd";
-import { merge } from "@utilities/merge";
-import { OrderableListItem } from "@components/OrderableList/types";
-import { DraggableItem, DropZonePosition } from "@utilities/dnd";
+import React from 'react';
+import { useDrop } from 'react-dnd';
+import { merge } from '@utilities/merge';
+import { OrderableListItem } from '@components/OrderableList/types';
+import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 
 export type OnDropCallback<T> = (
     targetItem: DraggableItem<T>,
@@ -43,9 +43,9 @@ export const DropZone = <T extends object>({ data, onDrop, children, treeName }:
     });
 
     const isActive = isOver && canDrop;
-    const outerDropZoneClassNames = "tw-my-[-4px] tw-h-[10px] tw-py-1 tw-outline-none tw-relative tw-z-20";
-    const activeOuterDropZoneClassNames = "tw-border-violet-60 tw-border-2 tw-h-7 tw-bg-clip-content";
-    const bgColorClassName = "tw-bg-violet-20";
+    const outerDropZoneClassNames = 'tw-my-[-4px] tw-h-[10px] tw-py-1 tw-outline-none tw-relative tw-z-20';
+    const activeOuterDropZoneClassNames = 'tw-border-violet-60 tw-border-2 tw-h-7 tw-bg-clip-content';
+    const bgColorClassName = 'tw-bg-violet-20';
 
     return (
         <div
@@ -53,10 +53,10 @@ export const DropZone = <T extends object>({ data, onDrop, children, treeName }:
             aria-hidden={!isActive}
             data-test-id="drop-zone"
             className={merge([
-                "tw-w-full tw-transition-height",
-                data.position !== DropZonePosition.Within ? outerDropZoneClassNames : "tw-h-auto",
-                isActive && data.position !== DropZonePosition.Within ? activeOuterDropZoneClassNames : "",
-                isActive && data.position === DropZonePosition.Within ? bgColorClassName : "",
+                'tw-w-full tw-transition-height',
+                data.position !== DropZonePosition.Within ? outerDropZoneClassNames : 'tw-h-auto',
+                isActive && data.position !== DropZonePosition.Within ? activeOuterDropZoneClassNames : '',
+                isActive && data.position === DropZonePosition.Within ? bgColorClassName : '',
             ])}
             ref={drop}
         >

@@ -1,14 +1,14 @@
-import { MenuItemContentSize } from "@components/MenuItem";
-import { MenuItem } from "@components/MenuItem/MenuItem";
-import { getInteractionModality } from "@react-aria/interactions";
-import { useOption } from "@react-aria/listbox";
-import { merge } from "@utilities/merge";
-import { useActor } from "@xstate/react";
-import React, { FC, useRef } from "react";
-import { IconOptions } from "./LinkChooser";
-import { DropdownState, LinkChooserState, SectionState } from "./state/machine";
-import { ImageMenuItemProps, SearchResultOptionProps, SearchResult } from "./types";
-import { findSection } from "./utils/helpers";
+import { MenuItemContentSize } from '@components/MenuItem';
+import { MenuItem } from '@components/MenuItem/MenuItem';
+import { getInteractionModality } from '@react-aria/interactions';
+import { useOption } from '@react-aria/listbox';
+import { merge } from '@utilities/merge';
+import { useActor } from '@xstate/react';
+import React, { FC, useRef } from 'react';
+import { IconOptions } from './LinkChooser';
+import { DropdownState, LinkChooserState, SectionState } from './state/types';
+import { ImageMenuItemProps, SearchResult, SearchResultOptionProps } from './types';
+import { findSection } from './utils/helpers';
 
 export const SearchResultOption: FC<SearchResultOptionProps> = ({ item, state, keyItemRecord, machineService }) => {
     const ref = useRef<HTMLLIElement>(null);
@@ -33,7 +33,7 @@ export const SearchResultOption: FC<SearchResultOptionProps> = ({ item, state, k
     const isLoaded = (currentState: DropdownState) =>
         matches(`${LinkChooserState.Focused}.${currentState}.${SectionState.Loaded}`);
 
-    const isFocusVisible = getInteractionModality() !== "pointer";
+    const isFocusVisible = getInteractionModality() !== 'pointer';
 
     const renderExtraSection = (menuItem: SearchResult) =>
         currentSection?.renderPreview?.(menuItem) || <ImageMenuItem {...menuItem} />;
@@ -43,9 +43,9 @@ export const SearchResultOption: FC<SearchResultOptionProps> = ({ item, state, k
             {...optionProps}
             ref={ref}
             className={merge([
-                "tw-relative hover:tw-bg-black-10 tw-list-none tw-outline-none",
-                isDisabled && "tw-pointer-events-none tw-top-px",
-                isFocused && isFocusVisible && "tw-bg-black-10",
+                'tw-relative hover:tw-bg-black-10 tw-list-none tw-outline-none',
+                isDisabled && 'tw-pointer-events-none tw-top-px',
+                isFocused && isFocusVisible && 'tw-bg-black-10',
             ])}
         >
             {isLoaded(DropdownState.Default) && (

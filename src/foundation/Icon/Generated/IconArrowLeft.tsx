@@ -1,25 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconArrowLeft12 from './IconArrowLeft12';
+import IconArrowLeft16 from './IconArrowLeft16';
+import IconArrowLeft20 from './IconArrowLeft20';
+import IconArrowLeft24 from './IconArrowLeft24';
+import IconArrowLeft32 from './IconArrowLeft32'
 
 function IconArrowLeft(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconArrowLeft"
-            {...props}
-        >
-            <path d="m5.502 13.03 5.428 5.43a1.026 1.026 0 1 1-1.45 1.45L2.3 12.73c-.4-.4-.4-1.05 0-1.45L9.48 4.1a1.026 1.026 0 1 1 1.45 1.45l-5.428 5.43h15.472a1.026 1.026 0 1 1 0 2.05H5.502Z" />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconArrowLeft12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconArrowLeft16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconArrowLeft20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconArrowLeft24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconArrowLeft32 {...props}/>}
+        </span>
     );
 }
 

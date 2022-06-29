@@ -1,19 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateRenderElementProps } from "@udecode/plate";
-import { merge } from "@utilities/merge";
-import React, { FC } from "react";
-import { alignmentClassnames } from "../utils/alignment";
-import { getTextStyles, TextStyles } from "../utils/getTextStyles";
+import { PlateRenderElementProps } from '@udecode/plate';
+import { merge } from '@utilities/merge';
+import React, { FC, useContext } from 'react';
+import { DesignTokensContext } from '../context/DesignTokensContext';
+import { alignmentClassnames } from '../utils/alignment';
 
-export const Heading3Element: FC<PlateRenderElementProps> = ({ element, attributes, children, textStyles }) => (
-    <h3
-        {...attributes}
-        className={merge([
-            getTextStyles(TextStyles.ELEMENT_HEADING3, textStyles),
-            element.align && alignmentClassnames[element.align],
-        ])}
-    >
-        {children}
-    </h3>
-);
+export const Heading3Element: FC<PlateRenderElementProps> = ({ element, attributes, children }) => {
+    const { designTokens } = useContext(DesignTokensContext);
+    return (
+        <h3
+            {...attributes}
+            className={merge([element.align && alignmentClassnames[element.align]])}
+            style={designTokens.heading3}
+        >
+            {children}
+        </h3>
+    );
+};

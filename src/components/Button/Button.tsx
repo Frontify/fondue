@@ -29,10 +29,10 @@ const iconSizes: Record<ButtonSize, IconSize> = {
     [ButtonSize.Large]: IconSize.Size24,
 };
 
-const typesMap: Record<ButtonType, "button" | "submit" | "reset"> = {
-    [ButtonType.Button]: "button",
-    [ButtonType.Submit]: "submit",
-    [ButtonType.Reset]: "reset",
+const typesMap: Record<ButtonType, 'button' | 'submit' | 'reset'> = {
+    [ButtonType.Button]: 'button',
+    [ButtonType.Submit]: 'submit',
+    [ButtonType.Reset]: 'reset',
 };
 
 export type ButtonProps = {
@@ -49,7 +49,8 @@ export type ButtonProps = {
     children?: ReactNode;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     hugWidth?: boolean;
-    "aria-label"?: string;
+    'aria-label'?: string;
+    formId?: string;
 };
 
 const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, ButtonProps> = (
@@ -67,7 +68,8 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         children,
         onClick,
         hugWidth = true,
-        "aria-label": ariaLabel,
+        'aria-label': ariaLabel,
+        formId,
     },
     externalRef,
 ) => {
@@ -127,6 +129,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             className={buttonClassName}
             disabled={disabled}
             data-test-id="button"
+            form={formId}
         >
             {icon && (
                 <span

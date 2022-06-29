@@ -23,7 +23,6 @@ export const globals = {
     "react-dom": "ReactDOM",
 };
 
-// eslint-disable-next-line import/no-default-export
 export default defineConfig({
     resolve: {
         alias,
@@ -34,12 +33,12 @@ export default defineConfig({
             entry: resolve(__dirname, "src/index.ts"),
             fileName: (format: string) => `index.${format}.js`,
             formats: ["es", "umd", "cjs"],
-            name: "Arcade",
+            name: "Fondue",
         },
         sourcemap: true,
         minify: true,
         rollupOptions: {
-            external: [...dependencies, ...peerDependencies, "react-color/lib/components/common"],
+            external: [...dependencies, ...peerDependencies],
             output: {
                 assetFileNames: (chunkInfo: PreRenderedAsset): string => {
                     if (chunkInfo.name === "style.css") {

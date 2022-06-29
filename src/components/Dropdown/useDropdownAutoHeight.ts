@@ -1,6 +1,6 @@
-import { MutableRefObject, useEffect, useState } from "react";
+import { MutableRefObject, useEffect, useState } from 'react';
 
-export const DEFAULT_DROPDOWN_MAX_HEIGHT = "auto";
+export const DEFAULT_DROPDOWN_MAX_HEIGHT = 'auto';
 
 type DropdownAutoHeightProps = {
     isOpen: boolean;
@@ -8,7 +8,7 @@ type DropdownAutoHeightProps = {
 };
 
 const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>) => {
-    let maxHeight = "auto";
+    let maxHeight = 'auto';
     if (triggerRef.current) {
         const { innerHeight } = window;
         const { bottom } = triggerRef.current.getBoundingClientRect();
@@ -28,14 +28,14 @@ export const useDropdownAutoHeight = (
         const updateMaxHeight = () => setMaxHeight(getInnerOverlayHeight(triggerRef));
         if (autoResize && isOpen) {
             updateMaxHeight();
-            window.addEventListener("resize", updateMaxHeight);
+            window.addEventListener('resize', updateMaxHeight);
         } else if (autoResize && !isOpen) {
             setMaxHeight(DEFAULT_DROPDOWN_MAX_HEIGHT);
         }
 
         return () => {
             if (isOpen && autoResize) {
-                window.removeEventListener("resize", updateMaxHeight);
+                window.removeEventListener('resize', updateMaxHeight);
             }
         };
     }, [isOpen, autoResize]);

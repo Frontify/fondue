@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Badge } from "@components/Badge/Badge";
-import { FieldsetHeader } from "@components/FieldsetHeader/FieldsetHeader";
-import { useDialog } from "@react-aria/dialog";
-import { DismissButton, useModal, useOverlay } from "@react-aria/overlays";
-import { mergeProps } from "@react-aria/utils";
-import { merge } from "@utilities/merge";
-import React, { Children, forwardRef, ForwardRefRenderFunction, HTMLAttributes, RefObject } from "react";
-import { FlyoutProps } from ".";
+import { Badge } from '@components/Badge/Badge';
+import { FieldsetHeader } from '@components/FieldsetHeader/FieldsetHeader';
+import { useDialog } from '@react-aria/dialog';
+import { DismissButton, useModal, useOverlay } from '@react-aria/overlays';
+import { mergeProps } from '@react-aria/utils';
+import { merge } from '@utilities/merge';
+import React, { Children, ForwardRefRenderFunction, HTMLAttributes, RefObject, forwardRef } from 'react';
+import { FlyoutProps } from '.';
 
-type OverlayProps = Omit<FlyoutProps, "trigger" | "onOpenChange" | "onConfirm" | "legacyFooter" | "onCancel"> & {
+type OverlayProps = Omit<FlyoutProps, 'trigger' | 'onOpenChange' | 'onConfirm' | 'legacyFooter' | 'onCancel'> & {
     positionProps: HTMLAttributes<Element>;
     overlayTriggerProps: HTMLAttributes<Element>;
     scrollRef: RefObject<HTMLDivElement>;
@@ -30,6 +30,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         fixedHeader,
         fixedFooter,
         fitContent,
+        contentMinHeight,
     },
     ref,
 ) => {
@@ -42,15 +43,22 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
             {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
             ref={ref}
             className={merge([
-                "tw-max-h-full tw-flex tw-shadow-mid tw-outline-none",
-                fitContent ? "tw-min-w-0" : "tw-min-w-[400px]",
+                'tw-max-h-full tw-flex tw-shadow-mid tw-outline-none',
+                fitContent ? 'tw-min-w-0' : 'tw-min-w-[400px]',
             ])}
         >
             <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0">
                 {fixedHeader}
                 <div
                     ref={scrollRef}
-                    className="tw-flex tw-overflow-y-auto tw-overflow-x-hidden tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-rounded tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95"
+                    className={merge([
+                        'tw-flex tw-overflow-y-auto tw-overflow-x-hidden tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95',
+                        !fixedHeader && 'tw-rounded-t',
+                        !fixedFooter && 'tw-rounded-b',
+                    ])}
+                    style={{
+                        minHeight: `${contentMinHeight}px`,
+                    }}
                 >
                     {title && (
                         <div className="tw-flex tw-justify-between tw-flex-wrap tw-gap-3 tw-p-8">

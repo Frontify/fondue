@@ -1,35 +1,32 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Slider } from "@components/Slider/Slider";
-import { TextInput } from "@components/TextInput/TextInput";
-import IconCheck from "@foundation/Icon/Generated/IconCheck";
-import IconImageGrid2 from "@foundation/Icon/Generated/IconImageGrid2";
-import IconListBullets from "@foundation/Icon/Generated/IconListBullets";
-import IconSearch from "@foundation/Icon/Generated/IconSearch";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { isColorLight } from "@utilities/colors";
-import { merge } from "@utilities/merge";
-import React, { FC, useEffect, useState } from "react";
-import tinycolor from "tinycolor2";
-import { ColorPickerProps } from "./ColorPicker";
+import { Slider } from '@components/Slider/Slider';
+import { TextInput } from '@components/TextInput/TextInput';
+import { IconCheckMark, IconGridRegular, IconMagnifier, IconStackVertical } from '@foundation/Icon/Generated';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { isColorLight } from '@utilities/colors';
+import { merge } from '@utilities/merge';
+import React, { FC, useEffect, useState } from 'react';
+import tinycolor from 'tinycolor2';
+import { ColorPickerProps } from './ColorPicker';
 
-const find = (haystack?: string, needle = "") =>
+const find = (haystack?: string, needle = '') =>
     haystack?.toLocaleLowerCase().includes(needle.toLocaleLowerCase().trim());
 
 enum BrandColorView {
-    List = "List",
-    Grid = "Grid",
+    List = 'List',
+    Grid = 'Grid',
 }
 
-type Props = Omit<ColorPickerProps, "currentFormat" | "setFormat">;
+type Props = Omit<ColorPickerProps, 'currentFormat' | 'setFormat'>;
 
 export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], currentColor, onSelect }) => {
     const views = [
-        { id: BrandColorView.Grid, icon: <IconImageGrid2 />, ariaLabel: "Grid" },
-        { id: BrandColorView.List, icon: <IconListBullets />, ariaLabel: "List" },
+        { id: BrandColorView.Grid, icon: <IconGridRegular />, ariaLabel: 'Grid' },
+        { id: BrandColorView.List, icon: <IconStackVertical />, ariaLabel: 'List' },
     ];
     const [view, setView] = useState(views[0].id);
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState('');
     const [palettes, setPalettes] = useState(defaultPalettes);
 
     useEffect(() => {
@@ -50,15 +47,15 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
         return () => clearTimeout(timer);
     }, [query]);
 
-    const palettesWithColors = palettes.filter((palette) => !!palette.colors.length);
+    const palettesWithColors = palettes.filter((palette) => palette.colors.length > 0);
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-5" data-test-id="brand-color-picker">
-            <div className="tw-flex tw-gap-3">
+        <div className="tw-flex tw-flex-col tw-gap-4" data-test-id="brand-color-picker">
+            <div className="tw-flex tw-gap-2">
                 <div className="tw-flex-1">
                     <TextInput
                         value={query}
-                        decorator={<IconSearch />}
+                        decorator={<IconMagnifier />}
                         placeholder="Search"
                         onChange={(value) => setQuery(value)}
                         clearable
@@ -72,27 +69,28 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                     />
                 </div>
             </div>
-            <ul className="tw-flex tw-flex-col tw-gap-5">
-                {palettesWithColors.length
+            <ul className="tw-flex tw-flex-col tw-gap-4">
+                {palettesWithColors.length > 0
                     ? palettesWithColors.map(({ id, title, colors }) => (
-                          <li key={id} className="tw-flex tw-flex-col tw-gap-3">
-                              <p className="tw-text-black dark:tw-text-white">{title}</p>
+                          <li key={id} className="tw-flex tw-flex-col tw-gap-2">
+                              <p className="tw-text-black tw-text-xs tw-font-medium dark:tw-text-white">{title}</p>
                               <ul
                                   className={merge([
-                                      "tw-flex tw-gap-y-2 tw-flex-wrap",
-                                      view === BrandColorView.List && "tw-flex-col",
+                                      'tw-flex tw-gap-y-2 tw-flex-wrap',
+                                      view === BrandColorView.List && 'tw-flex-col',
                                   ])}
                               >
                                   {colors.map((color) => (
                                       <li key={color.name} data-test-id="brand-color">
                                           <button
-                                              className="tw-flex tw-overflow-hidden tw-w-full"
+                                              className="tw-flex tw-w-full"
                                               onClick={() => onSelect(color)}
+                                              type="button"
                                           >
                                               <span
                                                   className={merge([
-                                                      "tw-h-8 tw-w-8 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center ",
-                                                      isColorLight(color) ? "tw-text-black" : "tw-text-white",
+                                                      'tw-h-6 tw-w-6 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center tw-ring-1 tw-ring-black-10 tw-ring-offset-1',
+                                                      isColorLight(color) ? 'tw-text-black' : 'tw-text-white',
                                                   ])}
                                                   style={{ background: tinycolor(color).toRgbString() }}
                                               >
@@ -100,11 +98,11 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                                                       color.g === currentColor.g &&
                                                       color.b === currentColor.b &&
                                                       color.a === currentColor.a && (
-                                                          <IconCheck size={IconSize.Size20} />
+                                                          <IconCheckMark size={IconSize.Size20} />
                                                       )}
                                               </span>
                                               {view === BrandColorView.List && (
-                                                  <span className="tw-h-8 tw-grow tw-flex tw-items-center tw-text-left">
+                                                  <span className="tw-h-6 tw-grow tw-flex tw-items-center tw-text-sm tw-text-left">
                                                       {color.name}
                                                   </span>
                                               )}
@@ -114,7 +112,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                               </ul>
                           </li>
                       ))
-                    : "No colors found"}
+                    : 'No colors found'}
             </ul>
         </div>
     );

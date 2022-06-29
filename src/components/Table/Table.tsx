@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useTable } from "@react-aria/table";
+import { useTable } from '@react-aria/table';
 import {
     Cell as AriaCell,
     Column as AriaColumn,
@@ -9,17 +9,17 @@ import {
     TableHeader,
     TableStateProps,
     useTableState,
-} from "@react-stately/table";
-import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
-import { TableCell, TableCellType } from "./TableCell";
-import { TableColumnHeader, TableColumnHeaderType } from "./TableColumnHeader";
-import { TableHeaderRow } from "./TableHeaderRow";
-import { TableRow } from "./TableRow";
+} from '@react-stately/table';
+import React, { PropsWithChildren, ReactNode, useRef, useState } from 'react';
+import { TableCell, TableCellType } from './TableCell';
+import { TableColumnHeader, TableColumnHeaderType } from './TableColumnHeader';
+import { TableHeaderRow } from './TableHeaderRow';
+import { TableRow } from './TableRow';
 
 export enum SelectionMode {
-    NoSelect = "none",
-    SingleSelect = "single",
-    MultiSelect = "multiple",
+    NoSelect = 'none',
+    SingleSelect = 'single',
+    MultiSelect = 'multiple',
 }
 
 export type Cell = {
@@ -41,20 +41,20 @@ export type Row = {
     actionElements?: ReactNode;
 };
 
-export type TableProps = {
+export type TableProps = PropsWithChildren<{
     columns: Column[];
     rows: Row[];
     onSelectionChange?: (ids?: (string | number)[]) => void;
     selectionMode?: SelectionMode;
     selectedRowIds?: (string | number)[];
     ariaLabel?: string;
-};
+}>;
 
-const DEFAULT_SORT_ORDER = "descending";
+const DEFAULT_SORT_ORDER = 'descending';
 
 type SortType = {
     sortedColumnKey?: string | number;
-    sortOrder?: "ascending" | "descending";
+    sortOrder?: 'ascending' | 'descending';
 };
 
 /* react-aria hook props types are inexplicitly typed */
@@ -100,22 +100,26 @@ const sortRows = (rows: Row[], columnKey: string | number, isDescending: boolean
     return [...rows].sort(sort);
 };
 
-export const Table: FC<TableProps> = ({
+export const Table = ({
     columns,
     rows,
     onSelectionChange,
     selectionMode = SelectionMode.NoSelect,
     selectedRowIds = [],
-    ariaLabel = "Table",
-}) => {
+    ariaLabel = 'Table',
+}: TableProps) => {
     const isSelectTable = selectionMode === SelectionMode.SingleSelect || selectionMode === SelectionMode.MultiSelect;
-    const [sortedRows, setSortedRows] = useState(rows);
     const [{ sortedColumnKey, sortOrder }, setSortedColumn] = useState<SortType>({
         sortedColumnKey: undefined,
         sortOrder: undefined,
     });
+
+    if (sortedColumnKey && sortOrder) {
+        rows = sortRows(rows, sortedColumnKey, sortOrder === DEFAULT_SORT_ORDER);
+    }
+
     const ref = useRef<HTMLTableElement | null>(null);
-    const props = mapToTableAriaProps(columns, sortedRows);
+    const props = mapToTableAriaProps(columns, rows);
     const state = useTableState({
         ...props,
         selectionMode,
@@ -131,19 +135,12 @@ export const Table: FC<TableProps> = ({
         onSelectionChange: (keys) =>
             isSelectTable &&
             onSelectionChange &&
-            onSelectionChange(keys === "all" ? getAllRowIds(sortedRows) : Array.from(keys)),
+            onSelectionChange(keys === 'all' ? getAllRowIds(rows) : Array.from(keys)),
         defaultSelectedKeys: isSelectTable ? selectedRowIds : undefined,
         showSelectionCheckboxes: isSelectTable,
     });
     const { collection } = state;
-    const { gridProps } = useTable({ "aria-label": ariaLabel }, state, ref);
-
-    useEffect(() => {
-        if (sortedColumnKey && sortOrder) {
-            const currentSortedRows = sortRows(rows, sortedColumnKey, sortOrder === DEFAULT_SORT_ORDER);
-            setSortedRows(currentSortedRows);
-        }
-    }, [sortedColumnKey, sortOrder]);
+    const { gridProps } = useTable({ 'aria-label': ariaLabel }, state, ref);
 
     return (
         <div className="tw-w-full tw-max-h-96 sm:tw-max-h-full">

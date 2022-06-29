@@ -1,9 +1,12 @@
 {
     "video": false,
+    "componentFolder": "./src/",
+    "testFiles": ["**/*.spec.tsx", "**/*.spec.ts"],
     "component": {
-        "componentFolder": "./src/",
-        "testFiles": "**/*.spec.ts*",
         "viewportHeight": 1280,
         "viewportWidth": 800
+    },
+    "retries": {
+        "runMode": 2
     }
 }
