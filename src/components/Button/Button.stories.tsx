@@ -79,7 +79,7 @@ withRoundedIcon.storyName = 'Icon Only rounded';
 export const withIconAndLabel = ButtonTemplate.bind({});
 withIconAndLabel.args = {
     ...defaultArgs,
-    icon: iconsMap[IconEnum.Icons],
+    icon: iconsMap[IconEnum.ColorScale],
 };
 withIconAndLabel.storyName = 'Icon and Text Label';
 
