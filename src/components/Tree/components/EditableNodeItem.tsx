@@ -4,17 +4,21 @@ import React, {
     FocusEventHandler,
     KeyboardEvent,
     KeyboardEventHandler,
+    ReactElement,
     useRef,
     useState,
 } from 'react';
 
+import { BadgeProps, IconProps } from '../../..';
+
 export interface EditableNodeItem {
     name: string;
     targetItemId: string;
+    badge?: ReactElement<IconProps> | ReactElement<BadgeProps>;
     onEditableSave: (targetItemId: string, value: string) => void;
 }
 
-export const EditableNodeItem = ({ name, targetItemId, onEditableSave }: EditableNodeItem) => {
+export const EditableNodeItem = ({ name, targetItemId, badge, onEditableSave }: EditableNodeItem) => {
     const [inputValue, setInputValue] = useState(name);
     const [showInput, setShowInput] = useState<boolean>(false);
 
@@ -62,8 +66,13 @@ export const EditableNodeItem = ({ name, targetItemId, onEditableSave }: Editabl
                     />
                 </div>
             ) : (
-                <div data-test-id="node-link-name" onDoubleClick={handleDoubleClick}>
+                <div
+                    data-test-id="node-link-name"
+                    className="tw-flex tw-items-center"
+                    onDoubleClick={handleDoubleClick}
+                >
                     {name}
+                    {badge}
                 </div>
             )}
         </div>

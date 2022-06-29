@@ -170,7 +170,12 @@ export const Node = ({
                             </span>
                             {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
-                                <EditableNodeItem name={name} targetItemId={node.id} onEditableSave={onEditableSave} />
+                                <EditableNodeItem
+                                    name={name}
+                                    targetItemId={node.id}
+                                    badge={badge && insertBadge()}
+                                    onEditableSave={onEditableSave}
+                                />
                             ) : (
                                 <span className="tw-flex tw-items-center" data-test-id="node-link-name">
                                     {name}
