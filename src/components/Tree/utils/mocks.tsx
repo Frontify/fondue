@@ -108,6 +108,7 @@ const testCategoryNodes = [
         icon: <IconDocument size={IconSize.Size16} />,
         sort: null,
         badge: <Badge icon={<IconFaceExtraHappy size={IconSize.Size16} />}></Badge>,
+        editable: true,
     },
     {
         id: '1-2-3',
