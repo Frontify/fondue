@@ -1,34 +1,35 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export enum ButtonRounding {
-    Medium = "Medium",
-    Full = "Full",
+    Medium = 'Medium',
+    Full = 'Full',
 }
+
 export enum ButtonStyle {
-    Default = "Default",
-    Positive = "Positive",
-    Negative = "Negative",
-    Danger = "Danger",
-    Primary = "Primary",
-    Secondary = "Secondary",
+    Default = 'Default',
+    Positive = 'Positive',
+    Negative = 'Negative',
+    Danger = 'Danger',
+    Primary = 'Primary',
+    Secondary = 'Secondary',
 }
 
 export enum ButtonSize {
-    Small = "Small",
-    Medium = "Medium",
-    Large = "Large",
+    Small = 'Small',
+    Medium = 'Medium',
+    Large = 'Large',
 }
 
 export enum ButtonType {
-    Button = "Button",
-    Submit = "Submit",
-    Reset = "Reset",
+    Button = 'Button',
+    Submit = 'Submit',
+    Reset = 'Reset',
 }
 
 export enum ButtonEmphasis {
-    Default = "Default",
-    Weak = "Weak",
-    Strong = "Strong",
+    Default = 'Default',
+    Weak = 'Weak',
+    Strong = 'Strong',
 }
 
 export type ButtonElements = {

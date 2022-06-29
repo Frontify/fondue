@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
-import { Meta, Story } from "@storybook/react";
-import { Button, ButtonEmphasis, ButtonProps, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from "./Button";
-import { IconEnum, iconsMap } from "@foundation/Icon";
+import React from 'react';
+import { Meta, Story } from '@storybook/react';
+import { Button, ButtonEmphasis, ButtonProps, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './Button';
+import { IconEnum, iconsMap } from '@foundation/Icon';
 
 const defaultArgs = {
-    children: "Button Text",
+    children: 'Button Text',
     size: ButtonSize.Medium,
     style: ButtonStyle.Default,
     emphasis: ButtonEmphasis.Default,
@@ -18,23 +18,22 @@ const defaultArgs = {
     type: ButtonType.Button,
 };
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Button",
+    title: 'Components/Button',
     component: Button,
     argTypes: {
         size: {
             options: [ButtonSize.Small, ButtonSize.Medium, ButtonSize.Large],
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
         style: {
             options: [ButtonStyle.Default, ButtonStyle.Positive, ButtonStyle.Negative, ButtonStyle.Danger],
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
 
         emphasis: {
             options: [ButtonEmphasis.Default, ButtonEmphasis.Weak, ButtonEmphasis.Strong],
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
         icon: {
             options: [IconEnum.Icons, IconEnum.DotsVertical, IconEnum.ColorScale, IconEnum.Settings],
@@ -44,17 +43,17 @@ export default {
                 [IconEnum.ColorScale]: iconsMap[IconEnum.ColorScale],
                 [IconEnum.Settings]: iconsMap[IconEnum.Settings],
             },
-            control: { type: "select" },
+            control: { type: 'select' },
         },
         rounding: {
             options: [ButtonRounding.Medium, ButtonRounding.Full],
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
         type: {
             options: [ButtonType.Button, ButtonType.Submit, ButtonType.Reset],
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
-        onClick: { action: "onClick" },
+        onClick: { action: 'onClick' },
     },
 } as Meta;
 
@@ -62,11 +61,11 @@ const ButtonTemplate: Story<ButtonProps> = (args: ButtonProps) => <Button {...ar
 
 export const Default = ButtonTemplate.bind({});
 Default.args = { ...defaultArgs };
-Default.storyName = "Text Label Only";
+Default.storyName = 'Text Label Only';
 
 export const withIcon = ButtonTemplate.bind({});
 withIcon.args = { ...defaultArgs, hideLabel: true, icon: iconsMap[IconEnum.Icons] };
-withIcon.storyName = "Icon Only";
+withIcon.storyName = 'Icon Only';
 
 export const withRoundedIcon = ButtonTemplate.bind({});
 withRoundedIcon.args = {
@@ -75,18 +74,18 @@ withRoundedIcon.args = {
     icon: iconsMap[IconEnum.Icons],
     hideLabel: true,
 };
-withRoundedIcon.storyName = "Icon Only rounded";
+withRoundedIcon.storyName = 'Icon Only rounded';
 
 export const withIconAndLabel = ButtonTemplate.bind({});
 withIconAndLabel.args = {
     ...defaultArgs,
     icon: iconsMap[IconEnum.Icons],
 };
-withIconAndLabel.storyName = "Icon and Text Label";
+withIconAndLabel.storyName = 'Icon and Text Label';
 
 export const Inverted = ButtonTemplate.bind({});
 Inverted.args = { ...defaultArgs, inverted: true, icon: iconsMap[IconEnum.Icons] };
-Inverted.storyName = "Inverted";
+Inverted.storyName = 'Inverted';
 Inverted.parameters = {
-    backgrounds: { default: "dark" },
+    backgrounds: { default: 'dark' },
 };

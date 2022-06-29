@@ -1,27 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, forwardRef, ForwardRefRenderFunction, MouseEvent, ReactElement, ReactNode } from "react";
+import React, { ForwardRefRenderFunction, MouseEvent, ReactElement, ReactNode, cloneElement, forwardRef } from 'react';
 
-import { useButton } from "@react-aria/button";
-import { useFocusRing } from "@react-aria/focus";
-import { mergeProps } from "@react-aria/utils";
+import { useButton } from '@react-aria/button';
+import { useFocusRing } from '@react-aria/focus';
+import { mergeProps } from '@react-aria/utils';
 
-import { FOCUS_STYLE } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import { useForwardedRef } from "@utilities/useForwardedRef";
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import { useForwardedRef } from '@utilities/useForwardedRef';
 
-import { IconSize } from "@foundation/Icon/IconSize";
-import { ButtonRounding, ButtonSize, ButtonType, ButtonStyle, ButtonEmphasis } from "./ButtonTypes";
+import { IconSize } from '@foundation/Icon/IconSize';
+import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
 import {
-    ButtonStyleClasses,
     ButtonCommonClasses,
-    ButtonSizeClasses,
-    ButtonRoundingClasses,
-    IconSpacingClasses,
     ButtonDisabledClasses,
-} from "./ButtonClasses";
+    ButtonRoundingClasses,
+    ButtonSizeClasses,
+    ButtonStyleClasses,
+    IconSpacingClasses,
+} from './ButtonClasses';
 
-export * from "./ButtonTypes";
+export * from './ButtonTypes';
 
 const iconSizes: Record<ButtonSize, IconSize> = {
     [ButtonSize.Small]: IconSize.Size16,
@@ -79,7 +79,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         { onPress: () => onClick && onClick(), isDisabled: disabled, type: typesMap[type] },
         ref,
     );
-    const invertedStyleKey = inverted ? "inverted" : "default";
+    const invertedStyleKey = inverted ? 'inverted' : 'default';
 
     const getButtonStyleClasses = () => {
         if (!solid) {
@@ -92,15 +92,15 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         if (!disabled) {
             const buttonClass = getButtonStyleClasses();
             switch (kind) {
-                case "button":
+                case 'button':
                     if (isFocusVisible) {
                         return buttonClass.button && FOCUS_STYLE;
                     } else {
                         return buttonClass.button;
                     }
-                case "icon":
+                case 'icon':
                     return buttonClass.icon;
-                case "text":
+                case 'text':
                     return buttonClass.text;
             }
         }
@@ -117,8 +117,8 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         ButtonCommonClasses,
         rounding === ButtonRounding.Full ? ButtonRoundingClasses.Full : ButtonRoundingClasses.Medium,
         (icon && !children) || hideLabel ? ButtonSizeClasses[size].iconOnly : ButtonSizeClasses[size].default,
-        !hugWidth && "tw-w-full",
-        setStylingClass("button"),
+        !hugWidth && 'tw-w-full',
+        setStylingClass('button'),
     ]);
 
     return (
@@ -134,7 +134,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             {icon && (
                 <span
                     data-test-id="button-icon"
-                    className={merge([children && !hideLabel ? IconSpacingClasses[size] : "", setStylingClass("icon")])}
+                    className={merge([children && !hideLabel ? IconSpacingClasses[size] : '', setStylingClass('icon')])}
                 >
                     {cloneElement(icon, { size: iconSizes[size] })}
                 </span>
@@ -142,7 +142,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             {children && (
                 <span
                     data-test-id="button-text"
-                    className={merge([setStylingClass("text"), hideLabel && "tw-sr-only"])}
+                    className={merge([setStylingClass('text'), hideLabel && 'tw-sr-only'])}
                 >
                     {children}
                 </span>
