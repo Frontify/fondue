@@ -97,6 +97,7 @@ const testCategoryNodes = [
         value: 'https://weare.frontify.com/page/4',
         icon: <IconDocument size={IconSize.Size16} />,
         sort: null,
+        badge: <Badge icon={<IconFaceExtraHappy size={IconSize.Size16} />}></Badge>,
         editable: true,
     },
     {
@@ -107,8 +108,6 @@ const testCategoryNodes = [
         value: 'https://weare.frontify.com/page/5',
         icon: <IconDocument size={IconSize.Size16} />,
         sort: null,
-        badge: <Badge icon={<IconFaceExtraHappy size={IconSize.Size16} />}></Badge>,
-        editable: true,
     },
     {
         id: '1-2-3',
