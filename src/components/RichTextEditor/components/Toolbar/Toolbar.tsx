@@ -9,7 +9,7 @@ import { ButtonGroup } from './ButtonGroup';
 
 const OFFSET_IN_PX = 12;
 
-export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, designTokens, actions = [], editorWidth }) => {
+export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, actions = [], editorWidth }) => {
     const toolbarActions = actions.length > 0 ? actions : defaultActions;
     const buttonGroupWidths = getButtonGroupWidths(toolbarActions);
 
@@ -63,13 +63,7 @@ export const Toolbar: FC<ToolbarCustomProps> = ({ editorId, designTokens, action
                 {toolbarButtonGroups.map((row, index) => (
                     <div key={index} className="tw-divide-x tw-divide-line tw-flex tw-w-full tw-flex-wrap">
                         {row.map(({ actions, index }) => (
-                            <ButtonGroup
-                                key={index}
-                                actions={actions}
-                                index={index}
-                                designTokens={designTokens}
-                                editorId={editorId}
-                            />
+                            <ButtonGroup key={index} actions={actions} index={index} editorId={editorId} />
                         ))}
                     </div>
                 ))}
