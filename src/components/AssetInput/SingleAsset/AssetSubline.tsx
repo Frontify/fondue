@@ -12,7 +12,7 @@ export const AssetSubline: FC<AssetSublineProps> = ({ asset, isLoading = false }
             <div className="tw-flex-none tw-inline-flex tw-items-center tw-justify-center">
                 {asset?.source === 'library' ? <IconImageStack /> : <IconArrowCircleUp />}
             </div>
-            <span>{title}</span>
+            {title && <span>{title}</span>}
             {asset &&
                 !isLoading &&
                 [asset.extension, asset.size].filter(Boolean).map((item, i) => (
