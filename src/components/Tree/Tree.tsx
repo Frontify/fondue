@@ -99,6 +99,8 @@ export const Tree: FC<TreeProps> = ({
     const downKeyHandler = (event: KeyboardEvent) => {
         if (event.key === 'Meta' || event.ctrlKey) {
             setMultiSelectMode(true);
+        } else {
+            setMultiSelectMode(false);
         }
     };
 
@@ -111,6 +113,7 @@ export const Tree: FC<TreeProps> = ({
     useEffect(() => {
         window.addEventListener('keydown', downKeyHandler);
         window.addEventListener('keyup', upKeyHandler);
+
         return () => {
             window.removeEventListener('keydown', downKeyHandler);
             window.removeEventListener('keyup', upKeyHandler);
