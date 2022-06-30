@@ -3,9 +3,9 @@
 import { RefObject, UIEvent, useEffect, useState } from 'react';
 
 const getScrollDimensions = (HTMLElement: HTMLElement) => ({
-    top: HTMLElement.scrollTop,
+    top: Math.ceil(HTMLElement.scrollTop),
     height: HTMLElement.scrollHeight,
-    left: HTMLElement.scrollLeft,
+    left: Math.ceil(HTMLElement.scrollLeft),
     width: HTMLElement.scrollWidth,
 });
 
@@ -47,7 +47,6 @@ export const useScrollWrapper = (scrollingContainer: RefObject<HTMLElement>) => 
     const currentHeight = scrollingContainer.current?.clientHeight ?? 0;
     const showTopShadow = height > 0 && top !== 0;
     const showBottomShadow = height !== 0 && top < height - currentHeight;
-
     const currentWidth = scrollingContainer.current?.clientWidth ?? 0;
     const showLeftShadow = width > 0 && left !== 0;
     const showRightShadow = width !== 0 && left < width - currentWidth;
