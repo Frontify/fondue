@@ -14,6 +14,7 @@ module.exports = {
     staticDirs: ['assets'],
     features: {
         storyStoreV7: true,
+        buildStoriesJson: true,
     },
     async viteFinal(config: any) {
         config.resolve.alias = {
