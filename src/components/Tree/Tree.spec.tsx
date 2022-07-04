@@ -158,6 +158,10 @@ describe('Editable Tree Component', () => {
         cy.get(`${NODE_EDITABLE_ID}`).should('not.exist');
     });
 
+    it('renders the badge or icon on editable node', () => {
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(3) ${BADGE_ID}`).should('exist');
+    });
+
     it('renders the editable input on double click', () => {
         cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(3) ${NODE_LINK_NAME_ID}`).dblclick();
         cy.get(`${NODE_EDITABLE_ID}`).should('exist');
@@ -181,7 +185,7 @@ describe('Editable Tree Component', () => {
         cy.get('@onEditableSaveStub').should('be.called');
     });
 
-    it('calls the onEditableSave on blue', () => {
+    it('calls the onEditableSave on blur', () => {
         cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(3) ${NODE_LINK_NAME_ID}`).dblclick();
         cy.get(`${SUB_TREE_ID}  > ${NODE_ID}:first`).click();
         cy.get('@onEditableSaveStub').should('be.called');
