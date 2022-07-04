@@ -12,21 +12,17 @@ function IconCross12(props: GeneratedIconProps): React.ReactElement<GeneratedIco
             name="IconCross12"
             {...props}
         >
-            <g fill="none">
-                <g clipPath="url(#prefix__a)">
-                    <path
-                        fill="currentColor"
-                        fillRule="evenodd"
-                        d="M3.171 2.464a.5.5 0 1 0-.707.708L5.293 6 2.464 8.828a.5.5 0 1 0 .707.708L6 6.707l2.828 2.829a.5.5 0 1 0 .707-.708L6.707 6l2.828-2.828a.5.5 0 0 0-.707-.708L6 5.293 3.17 2.464Z"
-                        clipRule="evenodd"
-                    />
-                </g>
-                <defs>
-                    <clipPath id="prefix__a">
-                        <path fill="#fff" d="M0 0h12v12H0z" />
-                    </clipPath>
-                </defs>
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M3.171 2.464a.5.5 0 1 0-.707.708L5.293 6 2.464 8.828a.5.5 0 1 0 .707.708L6 6.707l2.828 2.829a.5.5 0 1 0 .707-.708L6.707 6l2.828-2.828a.5.5 0 0 0-.707-.708L6 5.293 3.17 2.464Z"
+                clipRule="evenodd"
+            />
+            <defs>
+                <clipPath id="prefix__a">
+                    <path fill="#fff" d="M0 0h12v12H0z" />
+                </clipPath>
+            </defs>
         </svg>
     );
 }
