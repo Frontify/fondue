@@ -18,13 +18,13 @@ type DropZoneData<T> = {
 export type DropZoneProps<T> = {
     data: DropZoneData<T>;
     onDrop?: OnDropCallback<T>;
-    treeName: string;
+    treeId: string;
     children?: JSX.Element;
 };
 
-export const DropZone = <T extends object>({ data, onDrop, children, treeName }: DropZoneProps<T>) => {
+export const DropZone = <T extends object>({ data, onDrop, children, treeId }: DropZoneProps<T>) => {
     const [{ isOver, canDrop }, drop] = useDrop({
-        accept: treeName,
+        accept: treeId,
         drop: (item: OrderableListItem<T>) => {
             onDrop?.(data.targetItem, item, data.position);
         },
