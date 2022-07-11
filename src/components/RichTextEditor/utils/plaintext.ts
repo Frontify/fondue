@@ -1,4 +1,4 @@
-import { isDescendant, TDescendant } from '@udecode/plate';
+import { TDescendant, isDescendant } from '@udecode/plate';
 import { Node } from 'slate';
 
 export const toPlaintext = (nodes: TDescendant[]): string =>
