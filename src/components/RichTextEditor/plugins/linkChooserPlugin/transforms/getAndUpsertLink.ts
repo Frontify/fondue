@@ -1,6 +1,6 @@
 import { IconEnum } from '@foundation/Icon';
 import { ELEMENT_LINK, unwrapNodes } from '@udecode/plate';
-import { getAbove, isCollapsed, PlateEditor } from '@udecode/plate-core';
+import { PlateEditor, getAbove, isCollapsed } from '@udecode/plate-core';
 import { ChosenLink, LinkChooserPlugin } from '../types';
 import { upsertLinkAtSelection } from './upsertLinkAtSelection';
 
@@ -47,7 +47,7 @@ export const getAndUpsertLink = async <T = {}>(
                 id: 'id',
                 title:
                     window.prompt(
-                        `Enter the URL of the link:`,
+                        'Enter the URL of the link:',
                         prevChosenLink.searchResult ? prevChosenLink.searchResult.title : '',
                     ) || '',
                 local: false,
