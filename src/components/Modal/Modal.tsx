@@ -88,7 +88,7 @@ const ModalComponent: FC<ModalProps> = memo((props) => {
                         {...modalProps}
                         ref={ref}
                         data-test-id="modal-container"
-                        className="tw-flex-initial tw-min-h-0 tw-w-full tw-flex tw-bg-white tw-border tw-border-solid tw-border-line-strong tw-rounded tw-shadow-2xl"
+                        className="tw-flex-initial tw-min-h-0 tw-w-full tw-flex tw-bg-white tw-overflow-hidden tw-border tw-border-solid tw-border-line-strong tw-rounded tw-shadow-2xl"
                     >
                         {visual?.pattern && (
                             <div className="tw-w-[260px] tw-relative tw-flex-shrink-0 tw-overflow-hidden">
