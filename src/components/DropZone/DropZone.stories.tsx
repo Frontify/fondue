@@ -6,7 +6,7 @@ import { OrderableList as DropZoneComponent, OrderableListProps } from '../Order
 import { OrderableListItem } from '../OrderableList/types';
 import { chain } from '@react-aria/utils';
 import { Tree as TreeComponent, TreeProps } from '@components/Tree';
-import { getReorderedNodes, mockNodesFlat} from '@components/Tree/utils';
+import { getReorderedNodes, mockNodesFlat } from '@components/Tree/utils';
 import { StoryListItem, renderContent, storyItems } from '@components/OrderableList/utils';
 
 export default {
