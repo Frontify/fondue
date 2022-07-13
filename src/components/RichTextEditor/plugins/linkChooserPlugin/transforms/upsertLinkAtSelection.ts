@@ -27,11 +27,9 @@ export const upsertLinkAtSelection = <T = {}>(
         return;
     }
 
-    const type = ELEMENT_LINK;
-
     if (!wrap && isCollapsed(editor.selection)) {
         return insertNodes<TElement>(editor, {
-            type,
+            type: ELEMENT_LINK,
             chosenLink,
             children: [{ text: '' }],
         });
@@ -44,7 +42,7 @@ export const upsertLinkAtSelection = <T = {}>(
         Transforms.select(editor, inlinePath);
     }
 
-    unwrapNodes(editor, { at: editor.selection, match: { type } });
+    unwrapNodes(editor, { at: editor.selection, match: { type: ELEMENT_LINK } });
 
     wrapLink(editor, { at: editor.selection, chosenLink });
 };
