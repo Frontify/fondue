@@ -20,9 +20,12 @@ export type TextareaProps = {
     onInput?: (value: string) => void;
     onBlur?: (value: string) => void;
     validation?: Validation;
+    /** When autosize if false, this is used as 'rows' property for standard textarea */
     minRows?: number;
+    /** When autosize if false, this property is ignored */
     maxRows?: number;
     autosize?: boolean;
+    resizeable?: boolean;
 };
 
 export const Textarea: FC<TextareaProps> = ({
@@ -38,6 +41,7 @@ export const Textarea: FC<TextareaProps> = ({
     minRows,
     maxRows,
     autosize = false,
+    resizeable = true,
 }) => {
     const Component = autosize ? TextareaAutosize : 'textarea';
 
@@ -73,10 +77,10 @@ export const Textarea: FC<TextareaProps> = ({
                         : 'tw-text-black tw-border-black-20 hover:tw-border-black-90',
                     isFocusVisible && FOCUS_STYLE,
                     validationClassMap[validation],
-                    autosize && 'tw-resize-none',
+                    !resizeable && 'tw-resize-none',
                 ])}
                 disabled={disabled}
-                {...(autosize ? autosizeProps : {})}
+                {...(autosize ? autosizeProps : { rows: minRows })}
             />
             {validation === Validation.Loading && (
                 <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">

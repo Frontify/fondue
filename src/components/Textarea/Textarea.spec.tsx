@@ -104,4 +104,17 @@ describe('Textarea component', () => {
             expect(Math.round(height)).to.equal(ROW_HEIGHT * 2);
         });
     });
+
+    it('uses min-rows as rows if autosize is false', () => {
+        mount(<Textarea minRows={10} />);
+        cy.get(TEXTAREA_ID).should(($textarea) => {
+            const height = $textarea.height() ?? 0;
+            expect(Math.round(height)).to.equal(ROW_HEIGHT * 10);
+        });
+    });
+
+    it('removes resize handler', () => {
+        mount(<Textarea resizeable={false} />);
+        cy.get(TEXTAREA_ID).should('have.css', 'resize', 'none');
+    });
 });

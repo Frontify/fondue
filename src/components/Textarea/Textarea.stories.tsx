@@ -12,6 +12,7 @@ export default {
         disabled: false,
         required: false,
         autosize: false,
+        resizeable: true,
         validation: Validation.Default,
     },
     argTypes: {
