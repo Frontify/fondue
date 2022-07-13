@@ -1,5 +1,5 @@
-import { ELEMENT_LINK } from '@udecode/plate';
-import { PlateEditor, wrapNodes } from '@udecode/plate-core';
+import { ELEMENT_LINK, insertNodes } from '@udecode/plate';
+import { PlateEditor } from '@udecode/plate-core';
 import { Location } from 'slate';
 import { ChosenLink } from '../types';
 
@@ -11,13 +11,15 @@ export const wrapLink = <T = {}>(
     editor: PlateEditor<T>,
     { at, chosenLink }: { chosenLink: ChosenLink; at?: Location },
 ) => {
-    wrapNodes(
-        editor,
-        {
+    if (chosenLink.searchResult?.title) {
+        insertNodes(editor, {
             type: ELEMENT_LINK,
             chosenLink,
-            children: [],
-        },
-        { at, split: true },
-    );
+            children: [
+                {
+                    text: chosenLink.searchResult.title,
+                },
+            ],
+        });
+    }
 };

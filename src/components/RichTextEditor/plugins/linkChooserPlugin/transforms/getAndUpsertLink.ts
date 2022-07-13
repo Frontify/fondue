@@ -23,15 +23,34 @@ export const getAndUpsertLink = async <T = {}>(
             prevChosenLink = {
                 searchResult: {
                     id: linkNode[0].url,
-                    title: linkNode[0].url,
+                    title: linkNode[0].children[0].text,
                     link: linkNode[0].url,
                     icon: 'LINK',
                 },
                 openInNewTab: false,
             };
         } else {
-            prevChosenLink = linkNode[0].chosenLink as ChosenLink;
+            prevChosenLink = {
+                searchResult: {
+                    id: linkNode[0].chosenLink.searchResult.id,
+                    title: linkNode[0].children[0].text,
+                    link: linkNode[0].chosenLink.searchResult.link,
+                    icon: linkNode[0].chosenLink.searchResult.icon,
+                },
+                openInNewTab: linkNode[0].chosenLink.openInNewTab,
+            };
         }
+    } else {
+        const selectionText = window.getSelection()?.toString();
+        prevChosenLink = {
+            searchResult: {
+                id: '',
+                title: selectionText ?? '',
+                link: '',
+                icon: '',
+            },
+            openInNewTab: false,
+        };
     }
 
     let chosenLink: ChosenLink = {
