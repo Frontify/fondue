@@ -1,4 +1,4 @@
-import { ELEMENT_LINK, unwrapNodes } from '@udecode/plate';
+import { ELEMENT_LINK } from '@udecode/plate';
 import { getAbove, isCollapsed, PlateEditor } from '@udecode/plate-core';
 import { ChosenLink, LinkChooserPlugin } from '../types';
 import { upsertLinkAtSelection } from './upsertLinkAtSelection';
@@ -63,16 +63,6 @@ export const getAndUpsertLink = async <T = {}>(
 
     if (getChosenLink) {
         chosenLink = await getChosenLink(prevChosenLink);
-    }
-
-    if (!chosenLink.searchResult) {
-        linkNode &&
-            editor.selection &&
-            unwrapNodes(editor, {
-                at: editor.selection,
-                match: { ELEMENT_LINK },
-            });
-        return;
     }
 
     // If our cursor is in middle of a link, then we don't want to insert it inline
