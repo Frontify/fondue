@@ -1,5 +1,5 @@
 import { ELEMENT_LINK } from '@udecode/plate';
-import { insertNodes, isCollapsed, PlateEditor, TElement, unwrapNodes } from '@udecode/plate-core';
+import { isCollapsed, PlateEditor, unwrapNodes } from '@udecode/plate-core';
 import { Editor, Transforms } from 'slate';
 import { ChosenLink } from '../types';
 import { wrapLink } from './wrapLink';
@@ -27,14 +27,6 @@ export const upsertLinkAtSelection = <T = {}>(
         return;
     }
 
-    if (!wrap && isCollapsed(editor.selection)) {
-        return insertNodes<TElement>(editor, {
-            type: ELEMENT_LINK,
-            chosenLink,
-            children: [{ text: '' }],
-        });
-    }
-
     // if our cursor is inside an existing link, but don't have the text selected, select it now
     if (wrap && isCollapsed(editor.selection)) {
         const linkLeaf = Editor.leaf(editor, editor.selection);
@@ -44,5 +36,5 @@ export const upsertLinkAtSelection = <T = {}>(
 
     unwrapNodes(editor, { at: editor.selection, match: { type: ELEMENT_LINK } });
 
-    wrapLink(editor, { at: editor.selection, chosenLink });
+    wrapLink(editor, { chosenLink });
 };
