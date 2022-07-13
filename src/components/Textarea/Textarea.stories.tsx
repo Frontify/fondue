@@ -11,6 +11,7 @@ export default {
     args: {
         disabled: false,
         required: false,
+        autosize: false,
         validation: Validation.Default,
     },
     argTypes: {
@@ -24,6 +25,8 @@ export default {
             options: Object.values(Validation),
             control: { type: 'select' },
         },
+        minRows: { type: 'number' },
+        maxRows: { type: 'number' },
     },
 } as Meta<TextareaProps>;
 
