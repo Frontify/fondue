@@ -65,6 +65,7 @@ export const Textarea: FC<TextareaProps> = ({
                     onInput: (event: FormEvent<HTMLTextAreaElement>) =>
                         onInput && onInput((event.target as HTMLTextAreaElement).value),
                 }) as TextareaAutosizeProps)}
+                {...(autosize ? autosizeProps : { rows: minRows })}
                 id={useMemoizedId(propId)}
                 value={value}
                 placeholder={placeholder}
@@ -80,7 +81,7 @@ export const Textarea: FC<TextareaProps> = ({
                     !resizeable && 'tw-resize-none',
                 ])}
                 disabled={disabled}
-                {...(autosize ? autosizeProps : { rows: minRows })}
+                data-test-id="textarea"
             />
             {validation === Validation.Loading && (
                 <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">

@@ -10,7 +10,7 @@ const DECORATOR_TEXT = 'And also a decorator';
 const DECORATOR = <span>{DECORATOR_TEXT}</span>;
 const INPUT_TEXT = 'some text';
 const ROW_HEIGHT = 16;
-const TEXTAREA_ID = 'textarea.tw-border';
+const TEXTAREA_ID = '[data-test-id=textarea]';
 
 describe('Textarea component', () => {
     it('renders', () => {
