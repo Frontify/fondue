@@ -439,7 +439,8 @@ describe('RichTextEditor Component', () => {
         cy.get(TOOLBAR_GROUP_1).children().eq(4).click();
         cy.get(LINK_CHOOSER_FLYOUT).should('exist');
         cy.get(BUTTON).eq(1).should('be.disabled');
-        cy.get('[type=text]').click().type(link);
+        cy.get('[type=text]').eq(0).should('have.attr', 'value', 'hello');
+        cy.get('[type=text]').eq(1).click().type(link);
         cy.get(BUTTON).eq(1).should('not.be.disabled');
         cy.get(LINK_CHOOSER_CHECKBOX).click();
         cy.get(BUTTON).eq(1).click();
@@ -463,23 +464,27 @@ describe('RichTextEditor Component', () => {
         cy.get(EDIT_LINK_BUTTON).click();
         cy.get(LINK_CHOOSER_FLYOUT).should('exist');
 
-        cy.get('[type=text]').should('have.attr', 'value', link);
+        cy.get('[type=text]').eq(0).should('have.attr', 'value', text);
+        cy.get('[type=text]').eq(1).should('have.attr', 'value', link);
         cy.get('[type=checkbox]').should('be.checked');
     });
 
     it('should edit link', () => {
         const link = 'https://smartive.ch';
         const text = 'This is a link';
-        const additionalText = 'hello';
+        const additionalText = ' to the team of smartive';
+        const additionalLink = '/team';
         mount(<RichTextWithLink link={link} text={text} />);
         cy.get('[contenteditable=true] a').click();
         cy.get(EDIT_LINK_BUTTON).click();
 
-        cy.get('[type=text]').click().type(additionalText);
+        cy.get('[type=text]').eq(0).click().type(additionalText);
+        cy.get('[type=text]').eq(1).click().type(additionalLink);
         cy.get(LINK_CHOOSER_CHECKBOX).click();
 
         cy.get(BUTTON).eq(1).click();
-        cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalText);
+        cy.get('[contenteditable=true] a').should('contain', text + additionalText);
+        cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
         cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
     });
 

@@ -55,7 +55,7 @@ export const LinkChooserFlyout = ({
                             onClick: onConfirm,
                             style: ButtonStyle.Primary,
                             icon: <IconCheckMark />,
-                            disabled: !chosenLink.searchResult,
+                            disabled: !chosenLink.searchResult?.link || !chosenLink.searchResult?.title,
                         },
                     ]}
                 />
@@ -71,6 +71,32 @@ export const LinkChooserFlyout = ({
                 data-test-id={'link-chooser-flyout'}
             >
                 {/* Todo: Until we have moved the search logic, a 'simple link chooser' is rendered instead of the real link chooser */}
+
+                <FormControl
+                    label={{
+                        children: 'Text',
+                        htmlFor: 'linkText',
+                        required: true,
+                    }}
+                >
+                    <TextInput
+                        required={true}
+                        id={'linkText'}
+                        placeholder="Link Text"
+                        value={chosenLink.searchResult?.title}
+                        onChange={(value) => {
+                            setChosenLink({
+                                searchResult: {
+                                    id: value,
+                                    title: value,
+                                    link: chosenLink.searchResult?.link ?? '',
+                                    icon: 'LINK',
+                                },
+                                openInNewTab: chosenLink.openInNewTab,
+                            });
+                        }}
+                    />
+                </FormControl>
                 <FormControl
                     label={{
                         children: 'URL',
@@ -85,14 +111,12 @@ export const LinkChooserFlyout = ({
                         value={chosenLink.searchResult?.link}
                         onChange={(value) => {
                             setChosenLink({
-                                searchResult: value
-                                    ? {
-                                          id: value,
-                                          title: value,
-                                          link: value,
-                                          icon: 'LINK',
-                                      }
-                                    : null,
+                                searchResult: {
+                                    id: value,
+                                    title: chosenLink.searchResult?.title ?? '',
+                                    link: value,
+                                    icon: 'LINK',
+                                },
                                 openInNewTab: chosenLink.openInNewTab,
                             });
                         }}

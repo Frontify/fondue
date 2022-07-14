@@ -1,70 +1,68 @@
-import { IconEnum } from '@foundation/Icon';
-import { ELEMENT_LINK, unwrapNodes } from '@udecode/plate';
+import { ELEMENT_LINK } from '@udecode/plate';
 import { getAbove, isCollapsed, PlateEditor } from '@udecode/plate-core';
 import { ChosenLink, LinkChooserPlugin } from '../types';
 import { upsertLinkAtSelection } from './upsertLinkAtSelection';
 
+const defaultChosenLink: ChosenLink = {
+    searchResult: null,
+    openInNewTab: false,
+};
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const getAndUpsertLink = async <T = {}>(
     editor: PlateEditor<T>,
-    getChosenLink?: LinkChooserPlugin['getChosenLink'],
+    getChosenLink: LinkChooserPlugin['getChosenLink'],
 ) => {
-    const type = ELEMENT_LINK;
-    let prevChosenLink: ChosenLink = {
-        searchResult: null,
-        openInNewTab: false,
-    };
+    let prevChosenLink = { ...defaultChosenLink };
 
     const linkNode = getAbove(editor, {
-        match: { type },
+        match: { type: ELEMENT_LINK },
     });
-    if (linkNode) {
-        if (linkNode[0].url) {
-            prevChosenLink = {
-                searchResult: {
-                    id: linkNode[0].url,
-                    title: linkNode[0].url,
-                    link: linkNode[0].url,
-                    icon: 'LINK',
-                },
-                openInNewTab: false,
-            };
-        } else {
-            prevChosenLink = linkNode[0].chosenLink as ChosenLink;
-        }
-    }
 
-    let chosenLink: ChosenLink = {
-        searchResult: null,
-        openInNewTab: false,
-    };
-    if (getChosenLink) {
-        chosenLink = await getChosenLink(prevChosenLink);
-    } else {
-        chosenLink = {
+    // legacy link structure
+    if (Array.isArray(linkNode) && linkNode[0].url) {
+        const { url, children } = linkNode[0];
+
+        prevChosenLink = {
             searchResult: {
-                icon: IconEnum.Academy,
-                id: 'id',
-                title:
-                    window.prompt(
-                        `Enter the URL of the link:`,
-                        prevChosenLink.searchResult ? prevChosenLink.searchResult.title : '',
-                    ) || '',
-                local: false,
+                id: url,
+                title: children[0].text,
+                link: url,
+                icon: 'LINK',
             },
             openInNewTab: false,
         };
     }
 
-    if (!chosenLink.searchResult) {
-        linkNode &&
-            editor.selection &&
-            unwrapNodes(editor, {
-                at: editor.selection,
-                match: { type },
-            });
+    // new link structure
+    else if (linkNode && linkNode[0].chosenLink) {
+        const { chosenLink, children } = linkNode[0];
+        prevChosenLink = {
+            searchResult: {
+                ...chosenLink.searchResult,
+                title: children[0].text,
+            },
+            openInNewTab: chosenLink.openInNewTab,
+        };
 
-        return;
+        // no link existing
+    } else {
+        const selectionText = window.getSelection()?.toString();
+        prevChosenLink = {
+            searchResult: {
+                id: '',
+                title: selectionText ?? '',
+                link: '',
+                icon: '',
+            },
+            openInNewTab: false,
+        };
+    }
+
+    let chosenLink: ChosenLink = { ...defaultChosenLink };
+
+    if (getChosenLink) {
+        chosenLink = await getChosenLink(prevChosenLink);
     }
 
     // If our cursor is in middle of a link, then we don't want to insert it inline
