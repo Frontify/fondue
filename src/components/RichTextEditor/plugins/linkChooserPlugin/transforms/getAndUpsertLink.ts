@@ -20,7 +20,7 @@ export const getAndUpsertLink = async <T = {}>(
     });
 
     // legacy link structure
-    if (linkNode && linkNode[0].url) {
+    if (Array.isArray(linkNode) && linkNode[0].url) {
         const { url, children } = linkNode[0];
 
         prevChosenLink = {
