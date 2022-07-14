@@ -149,6 +149,7 @@
         "react-dnd-html5-backend": "^15.1.2",
         "react-is": "^18.1.0",
         "react-popper": "^2.2.5",
+        "react-textarea-autosize": "^8.3.4",
         "slate": "^0.78.0",
         "slate-history": "^0.66.0",
         "slate-hyperscript": "^0.77.0",
