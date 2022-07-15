@@ -18,7 +18,7 @@ import { Badge } from '@components/Badge';
 import { motion } from 'framer-motion';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
-import { useMemoizedId } from '../..';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 
 export enum TabsPaddingX {
     Small = 'Small',
