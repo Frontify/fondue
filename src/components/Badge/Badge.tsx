@@ -29,11 +29,11 @@ export const Badge: FC<BadgeProps> = ({
     return (
         // This `tw-inline-block` and the `tw-float-left` on the first child was added, to remove
         // a 1px space before this component when using without the `icon`-prop
-        <span className="tw-inline-block">
+        <span className="tw-inline-flex tw-flex-initial tw-min-w-0">
             <Container
                 onClick={() => onClick && onClick()}
                 className={merge([
-                    'tw-float-left tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-transition-color tw-select-none',
+                    'tw-float-left tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-transition-color tw-select-none tw-flex-initial tw-min-w-0',
                     disabled
                         ? 'tw-bg-box-disabled tw-text-box-disabled-inverse'
                         : getStyleClasses(style, !!onClick, emphasis === BadgeEmphasis.Strong),
@@ -46,7 +46,7 @@ export const Badge: FC<BadgeProps> = ({
                     <span
                         data-test-id="badge-status"
                         className={merge([
-                            'tw-w-2 tw-h-2 tw-rounded-full',
+                            'tw-w-2 tw-h-2 tw-rounded-full tw-flex-none',
                             disabled && 'tw-opacity-30',
                             isBadgeStatus(status) && badgeStatusClasses[status],
                         ])}
@@ -63,11 +63,11 @@ export const Badge: FC<BadgeProps> = ({
                     />
                 )}
                 {icon && (
-                    <span data-test-id="badge-icon" className={merge([disabled && 'tw-opacity-30'])}>
+                    <span data-test-id="badge-icon" className={merge([disabled && 'tw-opacity-30', 'tw-flex-none'])}>
                         {cloneElement(icon, { size: IconSize.Size16 })}
                     </span>
                 )}
-                <span className="tw-text-center tw-text-xxs tw-font-sans tw-font-normal">{children}</span>
+                <span className="tw-text-center tw-text-xxs tw-font-sans tw-font-normal tw-truncate">{children}</span>
                 {onDismiss && (
                     <button
                         type="button"

@@ -34,7 +34,19 @@ export default {
     },
 } as Meta<BadgeProps>;
 
-const BadgeTemplate: Story<BadgeProps> = (args: BadgeProps) => <Badge {...args} />;
+const BadgeTemplate: Story<BadgeProps> = (args: BadgeProps) => (
+    <div className="tw-w-25 tw-flex tw-flex-nowrap">
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+    </div>
+);
 
 export const LabelOnly = BadgeTemplate.bind({});
 
@@ -164,4 +176,20 @@ BetweenElements.argTypes = {
 BetweenElements.args = {
     status: BadgeStatus.Positive,
     icon: <IconIcon />,
+};
+
+export const MultipleBadgesInRow: Story<BadgeProps> = (args: BadgeProps) => (
+    <div className="tw-flex tw-flex-nowrap tw-border tw-border-line tw-rounded tw-p-2 tw-gap-2">
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+    </div>
+);
+
+MultipleBadgesInRow.args = {
+    status: BadgeStatus.Positive,
+    icon: <IconIcon />,
+    children: 'A long string of text',
 };
