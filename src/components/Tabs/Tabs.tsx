@@ -18,6 +18,7 @@ import { Badge } from '@components/Badge';
 import { motion } from 'framer-motion';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 
 export enum TabsPaddingX {
     Small = 'Small',
@@ -45,6 +46,7 @@ const paddingMap: Record<TabsPaddingX, string> = {
 };
 
 export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, onChange }) => {
+    const groupId = useMemoizedId();
     const tabNavRef = useRef<HTMLDivElement | null>(null);
     const [isOverflowing, setIsOverflowing] = useState(false);
     const [isMenuOpened, setIsMenuOpened] = useState(false);
@@ -234,7 +236,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                         initial={false}
                                         layoutDependency={activeItemId}
                                         data-test-id="tab-active-highlight"
-                                        layoutId="underline"
+                                        layoutId={groupId}
                                         className="tw-absolute tw-h-[3px] tw-bg-violet-60 tw-rounded-t-x-large tw-w-full tw-bottom-0"
                                     />
                                 )}
