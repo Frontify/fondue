@@ -12,6 +12,7 @@ import { EditorActions } from './utils/actions';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { getEditorConfig } from './utils/editorConfig';
 import { EMPTY_RICH_TEXT_VALUE, parseRawValue } from './utils/parseRawValue';
+import { serializePlate, serializeSlate } from './utils/serializeToHtml';
 import { TextStyles } from './utils/textStyles';
 
 export type RichTextEditorProps = {
@@ -102,6 +103,18 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         debouncedOnChange(value);
         localValue.current = value;
     }, []);
+
+    console.log('parsed:');
+    const parsed = parseRawValue(initialValue);
+    console.log(parsed);
+
+    console.log('serialized with slate:');
+    console.log(serializeSlate(parsed));
+
+    console.log('serialized with plate:');
+    console.log(serializePlate(parsed));
+
+    console.log('');
 
     return (
         <DesignTokensContext.Provider value={{ designTokens }}>
