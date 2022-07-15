@@ -34,19 +34,7 @@ export default {
     },
 } as Meta<BadgeProps>;
 
-const BadgeTemplate: Story<BadgeProps> = (args: BadgeProps) => (
-    <div className="tw-w-25 tw-flex tw-flex-nowrap">
-        <Badge {...args} />
-        <Badge {...args} />
-        <Badge {...args} />
-        <Badge {...args} />
-        <Badge {...args} />
-        <Badge {...args} />
-        <Badge {...args} />
-        <Badge {...args} />
-        <Badge {...args} />
-    </div>
-);
+const BadgeTemplate: Story<BadgeProps> = (args: BadgeProps) => <Badge {...args} />;
 
 export const LabelOnly = BadgeTemplate.bind({});
 
