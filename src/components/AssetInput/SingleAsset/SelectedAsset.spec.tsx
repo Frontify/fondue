@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from '@cypress/react';
+import { mount } from 'cypress/react';
 import React from 'react';
 import { assetInputActions } from '../asset-input-actions';
 import { AssetInputSize } from '../AssetInput';

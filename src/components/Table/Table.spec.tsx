@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-import { mount } from '@cypress/react';
 import { Button } from '@components/Button/Button';
 import { TextInput } from '@components/TextInput/TextInput';
+import { mount } from 'cypress/react';
 import React, { useEffect, useState } from 'react';
 import { Column, Row, SelectionMode, Table } from './Table';
 

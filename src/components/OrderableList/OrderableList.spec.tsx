@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { mount } from 'cypress/react';
 import React from 'react';
-import { mount } from '@cypress/react';
 import { DragProperties, ItemDragState, OrderableList, OrderableListItem, OrderableListProps } from '.';
 
 const LIST_ID = '[data-test-id=orderable-list]';

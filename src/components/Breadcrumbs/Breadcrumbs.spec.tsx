@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from '@cypress/react';
+import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { BreadcrumbsProps } from '.';
 import { Breadcrumbs } from './Breadcrumbs';

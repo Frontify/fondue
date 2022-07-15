@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { mount } from 'cypress/react';
 import React from 'react';
-import { mount } from '@cypress/react';
-import { FormControl, FormControlDirection, HelperPosition } from './FormControl';
 import { TextInput } from '..';
+import { FormControl, FormControlDirection, HelperPosition } from './FormControl';
 
 const FORM_CONTROL_ID = '[data-test-id=form-control]';
 const FORM_CONTROL_EXTRA_ID = '[data-test-id=form-control-extra]';

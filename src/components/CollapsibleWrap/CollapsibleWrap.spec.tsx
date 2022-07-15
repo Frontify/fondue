@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useState } from 'react';
 import { Button } from '@components/Button';
+import { mount } from 'cypress/react';
+import React, { FC, useState } from 'react';
 import { CollapsibleWrap as CollapsibleWrapComponent } from './CollapsibleWrap';
-import { mount } from '@cypress/react';
 import { CollapsibleWrapProps } from './types';
 
 const CONTENT_ID = '[data-test-id="collapsible-wrap-content"]';
@@ -45,7 +45,7 @@ describe('CollapsibleWrap', () => {
         cy.get(CONTENT_ID).should('be.visible');
         cy.get(WRAP_ID).should('have.css', 'opacity', '1');
         cy.get(BUTTON_ID).click();
-        cy.get(WRAP_ID).should('have.css', 'opacity', '0');
+        cy.get(WRAP_ID).should('not.exist');
         cy.get(CONTENT_ID).should('not.exist');
     });
 

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from '@cypress/react';
 import { IconSize } from '@foundation/Icon/IconSize';
+import { mount } from 'cypress/react';
 import React from 'react';
 import { TooltipIcon } from './TooltipIcon';
 

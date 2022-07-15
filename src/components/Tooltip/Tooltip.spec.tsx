@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from '@cypress/react';
-import React from 'react';
-import { Tooltip, TooltipProps } from './Tooltip';
-import { BrightHeaderStyle, brightHeaderBackgroundColors } from './BrightHeader';
 import { IconExclamationMarkCircle, IconIcon, IconSize } from '@foundation/Icon';
+import { mount } from 'cypress/react';
+import React from 'react';
+import { brightHeaderBackgroundColors, BrightHeaderStyle } from './BrightHeader';
+import { Tooltip, TooltipProps } from './Tooltip';
 
 const TOOLTIP_TEXT = 'This is a tooltip';
 const TOOLTIP_ID = '[data-test-id=tooltip]';

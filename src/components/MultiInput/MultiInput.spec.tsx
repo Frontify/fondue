@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from '@cypress/react';
+import { TextInput } from '@components/TextInput/TextInput';
+import { mount } from 'cypress/react';
 import React from 'react';
 import { MultiInput, MultiInputLayout } from './MultiInput';
-import { TextInput } from '@components/TextInput/TextInput';
 
 const MULTI_INPUT_COLUMNS_ID = '[data-test-id=multi-input-grid-columns]';
 const MULTI_INPUT_SPIDER_ID = '[data-test-id=multi-input-grid-spider]';

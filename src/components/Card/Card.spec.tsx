@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
-import { mount } from '@cypress/react';
-import { Card } from './Card';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { mount } from 'cypress/react';
+import React from 'react';
+import { Card } from './Card';
 
 const CARD_ID = '[data-test-id=card]';
 

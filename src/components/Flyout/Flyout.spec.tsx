@@ -2,7 +2,7 @@
 
 import { ButtonStyle } from '@components/Button';
 import { TextInput } from '@components/TextInput/TextInput';
-import { mount } from '@cypress/react';
+import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { Flyout, FlyoutProps } from './Flyout';
 import { FlyoutFooter } from './FlyoutFooter';

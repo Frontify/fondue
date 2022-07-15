@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { mockNodesFlat } from '@components/Tree/utils';
+import { DraggableItem } from '@utilities/dnd';
+import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { Tree, TreeFlatListItem } from './Tree';
-import { mount } from '@cypress/react';
-import { DraggableItem } from '@utilities/dnd';
-import { mockNodesFlat } from '@components/Tree/utils';
 
 type ComponentProps = {
     nodes: DraggableItem<TreeFlatListItem>[];

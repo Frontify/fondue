@@ -3,12 +3,12 @@
 import { SelectionIndicatorIcon } from '@components/MenuItem/MenuItem';
 import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
 import { Validation, validationClassMap } from '@utilities/validation';
-import { mount } from '@cypress/react';
+import { mount } from 'cypress/react';
 import React from 'react';
 import { LinkChooser, QUERIES_STORAGE_KEY } from './LinkChooser';
 import { data } from './mock/data';
-import { GUIDELINE_ITEMS, guidelineSection } from './mock/guidelines';
-import { TEMPLATE_ITEMS, templateSection } from './mock/templates';
+import { guidelineSection, GUIDELINE_ITEMS } from './mock/guidelines';
+import { templateSection, TEMPLATE_ITEMS } from './mock/templates';
 import { LinkChooserProps, SearchResult } from './types';
 import { filterItems } from './utils/helpers';
 

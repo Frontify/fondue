@@ -1,7 +1,7 @@
-import React from 'react';
 import { DropZone, DropZoneProps } from '@components/DropZone/DropZone';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
-import { mount } from '@cypress/react';
+import { mount } from 'cypress/react';
+import React from 'react';
 import { DndProvider, useDrag } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 

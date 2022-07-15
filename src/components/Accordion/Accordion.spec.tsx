@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from '@cypress/react';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { TextInput } from '@components/TextInput/TextInput';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
-import { Accordion, AccordionItem } from './Accordion';
 import { AccordionHeaderProps } from '.';
+import { Accordion, AccordionItem } from './Accordion';
 
 const ACCORDION_ITEM_ID = '[data-test-id=accordion-item]';
 const ACCORDION_ITEM_CONTENT_ID = '[data-test-id="collapsible-wrap"]';
@@ -29,7 +29,6 @@ describe('Accordion Component', () => {
                 <div data-test-id="invalid-item">Invalid Item</div>
             </Accordion>,
         );
-
         cy.get(ACCORDION_ITEM_CONTENT_ID).should('not.exist');
         cy.get('[data-test-id=invalid-item]').should('not.exist');
     });

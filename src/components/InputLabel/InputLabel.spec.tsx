@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
-import { mount } from '@cypress/react';
-import { InputLabel } from './InputLabel';
-import { IconReport } from '@foundation/Icon/Generated';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
+import { IconReport } from '@foundation/Icon/Generated';
+import { mount } from 'cypress/react';
+import React from 'react';
+import { InputLabel } from './InputLabel';
 
 const LABEL_TEXT = 'This is a fancy label.';
 const LABEL_TOOLTIP = 'This is a fancy tooltip.';

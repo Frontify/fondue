@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from '@cypress/react';
+import { IconDocumentText } from '@foundation/Icon';
 import { IconSize } from '@foundation/Icon/IconSize';
+import { mount } from 'cypress/react';
 import React from 'react';
 import { BadgeStyle } from '.';
 import { Badge } from './Badge';
 import { BadgeEmphasis, BadgeStatus } from './types';
-import { IconDocumentText } from '@foundation/Icon';
 
 const BADGE_TEXT = 'Frontify';
 const BADGE_ID = '[data-test-id=badge]';

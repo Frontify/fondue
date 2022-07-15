@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from '@cypress/react';
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
 import IconCross from '@foundation/Icon/Generated/IconCross';
+import { mount } from 'cypress/react';
 import React from 'react';
 import { ButtonGroup } from './ButtonGroup';
 

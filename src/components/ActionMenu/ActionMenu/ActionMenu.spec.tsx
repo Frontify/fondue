@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
-import { mount } from '@cypress/react';
+import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { ActionMenu } from './ActionMenu';
 

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from '@cypress/react';
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
+import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from './RichTextEditor';
 import { DesignTokens } from './types';

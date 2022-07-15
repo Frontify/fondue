@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
-import { mount } from '@cypress/react';
-import { RadioPill } from './RadioPill';
 import { IconIcon } from '@foundation/Icon';
+import { mount } from 'cypress/react';
+import React from 'react';
+import { RadioPill } from './RadioPill';
 
 const RADIOPILL_TEST_ID = '[data-test-id=radio-pill]';
 const RADIOPILL_LABEL = 'Label';

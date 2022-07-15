@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MenuBlock } from '@components/Dropdown/SelectMenu/SelectMenu';
-import { mount } from '@cypress/react';
 import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import { IconIcon } from '@foundation/Icon';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { mount } from 'cypress/react';
 import React, { FC, ReactElement, useState } from 'react';
 import { Dropdown } from './Dropdown';
-import { IconIcon } from '@foundation/Icon';
 
 const DROPDOWN_TRIGGER_ID = '[data-test-id=dropdown-trigger]';
 const DROPDOWN_MENU_ID = '[data-test-id=dropdown-menu]';

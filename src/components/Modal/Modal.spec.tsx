@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from '@cypress/react';
 import { IconIcon } from '@foundation/Icon';
 import { PatternDesign, PatternTheme } from '@foundation/Pattern';
 import { OverlayProvider } from '@react-aria/overlays';
+import { mount } from 'cypress/react';
 import React from 'react';
 import { Modal } from './Modal';
 import { ModalHeader } from './ModalHeader';

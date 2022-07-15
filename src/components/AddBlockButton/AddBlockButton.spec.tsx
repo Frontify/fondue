@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-
+import { mount } from 'cypress/react';
 import React from 'react';
-import { mount } from '@cypress/react';
 import { AddBlockButton } from './AddBlockButton';
 
 const BUTTON_ID = '[data-test-id=add-block-button]';

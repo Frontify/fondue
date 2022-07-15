@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { mount } from 'cypress/react';
 import React from 'react';
-import { mount } from '@cypress/react';
 import { ScrollWrapper } from './ScrollWrapper';
 
 const SCROLL_WRAPPER_CONTAINER = '[data-test-id=scroll-wrapper]';

@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { PatternDesign, PatternScale, patternScales, PatternTheme, patternThemes } from '@foundation/Pattern';
+import { mount } from 'cypress/react';
 import React from 'react';
-import { mount } from '@cypress/react';
 import { FrontifyPattern } from './FrontifyPattern';
-import { PatternDesign, PatternScale, PatternTheme, patternScales, patternThemes } from '@foundation/Pattern';
 
 const FRONTIFY_PATTERN = '[data-test-id=frontify-pattern]';
 const PATTERN_IDS = Array.from([

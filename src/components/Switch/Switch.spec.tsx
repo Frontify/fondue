@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
-import { mount } from '@cypress/react';
 import { Switch, SwitchProps } from './Switch';
 
 const Component: FC<SwitchProps> = ({ on = false, ...props }) => {

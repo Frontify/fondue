@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { mount } from 'cypress/react';
 import React from 'react';
-import { mount } from '@cypress/react';
 import { DatePicker } from './DatePicker';
 
 export const TEXT_INPUT_ID = '[data-test-id=text-input]';
