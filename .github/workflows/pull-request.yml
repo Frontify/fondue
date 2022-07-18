@@ -46,7 +46,7 @@ jobs:
               id: parse-specs
               uses: tgamauf/cypress-parallel@v1
               with:
-                  working-directory: cypress/parallel-config
+                  working-directory: cypress
                   count-runners: ${{ env.NUMBER_OF_RUNNERS }}
 
     component-tests:
