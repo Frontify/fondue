@@ -52,12 +52,8 @@ jobs:
     component-tests:
         runs-on: ubuntu-latest
 
-        needs: [setup-project]
-
         strategy:
             fail-fast: false
-            matrix:
-                spec: ${{ fromJson(needs.setup-project.outputs.component-tests) }}
 
         steps:
             - name: Checkout current commit
@@ -79,7 +75,7 @@ jobs:
                   restore-keys: node_modules-
 
             - name: Component Tests
-              run: npm run test -- --spec ${{ matrix.spec }}
+              run: npm run test
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
