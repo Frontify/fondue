@@ -39,6 +39,8 @@ export const Badge: FC<BadgeProps> = ({
         return '';
     };
 
+    const badgeTitle = getNodeText(children);
+
     return (
         <Container
             onClick={() => onClick && onClick()}
@@ -51,7 +53,7 @@ export const Badge: FC<BadgeProps> = ({
                 getSizeClasses(children, Boolean(status || icon), size === 's'),
             ])}
             data-test-id="badge"
-            title={getNodeText(children)}
+            title={badgeTitle}
         >
             {status && (
                 <span
