@@ -3,7 +3,7 @@ name: Continuous Integration
 on:
     push:
         branches:
-            - "main"
+            - 'main'
 
 env:
     NODE_VERSION: 16
@@ -26,7 +26,7 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: ${{ env.NODE_VERSION }}
-                  cache: "npm"
+                  cache: 'npm'
 
             - name: Cache dependencies
               id: npm_cache
@@ -42,11 +42,11 @@ jobs:
               if: steps.npm_cache.outputs.cache-hit != 'true'
               run: npm ci
 
-            - name: Parse test files for parallelization
-              id: parse-specs
-              uses: tgamauf/cypress-parallel@v1
-              with:
-                  count-runners: ${{ env.NUMBER_OF_RUNNERS }}
+            # - name: Parse test files for parallelization
+            #   id: parse-specs
+            #   uses: tgamauf/cypress-parallel@v1
+            #   with:
+            #       count-runners: ${{ env.NUMBER_OF_RUNNERS }}
 
     component-tests:
         runs-on: ubuntu-latest
