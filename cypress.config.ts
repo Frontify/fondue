@@ -6,7 +6,7 @@ export default defineConfig({
         runMode: 2,
     },
     component: {
-        setupNodeEvents(on, config) {
+        setupNodeEvents() {
             return require('./cypress/plugins/index.ts');
         },
         viewportHeight: 1280,
