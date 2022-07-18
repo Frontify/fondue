@@ -4,7 +4,7 @@ import RejectIcon from '@foundation/Icon/Generated/IconReject';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { getColorDisplayValue } from '@utilities/colors';
 import { merge } from '@utilities/merge';
-import React, { FC, cloneElement } from 'react';
+import React, { FC, ReactNode, cloneElement } from 'react';
 import { ColorFormat } from '../../types';
 import { badgeStatusClasses, getSizeClasses, getStyleClasses, isBadgeStatus } from './helpers';
 import { BadgeEmphasis, BadgeProps, BadgeStyle } from './types';
@@ -26,6 +26,19 @@ export const Badge: FC<BadgeProps> = ({
 
     const Container = onClick ? 'a' : 'span';
 
+    const getNodeText = (node: ReactNode): string => {
+        if (['string', 'number'].includes(typeof node)) {
+            return node as string;
+        }
+        if (node instanceof Array) {
+            return node.map(getNodeText).join('');
+        }
+        if (node && typeof node === 'object' && 'props' in node) {
+            return getNodeText(node.props.children);
+        }
+        return '';
+    };
+
     return (
         <Container
             onClick={() => onClick && onClick()}
@@ -38,6 +51,7 @@ export const Badge: FC<BadgeProps> = ({
                 getSizeClasses(children, Boolean(status || icon), size === 's'),
             ])}
             data-test-id="badge"
+            title={getNodeText(children)}
         >
             {status && (
                 <span
