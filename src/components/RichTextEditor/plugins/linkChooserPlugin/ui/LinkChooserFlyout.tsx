@@ -33,11 +33,19 @@ export const LinkChooserFlyout = ({
         setIsFlyoutOpen(false);
     };
 
+    const onCancel = () => {
+        document.dispatchEvent(new CustomEvent('linkChangeCanceled'));
+        setIsFlyoutOpen(false);
+    };
+
     return (
         <Flyout
             isOpen={isFlyoutOpen}
-            onOpenChange={setIsFlyoutOpen}
-            onCancel={() => setIsFlyoutOpen(false)}
+            onOpenChange={(open: boolean) => {
+                if (!open) {
+                    onCancel();
+                }
+            }}
             onConfirm={onConfirm}
             trigger={trigger}
             legacyFooter={false}
@@ -48,7 +56,7 @@ export const LinkChooserFlyout = ({
                         {
                             children: 'Cancel',
                             style: ButtonStyle.Secondary,
-                            onClick: () => setIsFlyoutOpen(false),
+                            onClick: () => onCancel(),
                         },
                         {
                             children: 'Save',

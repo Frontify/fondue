@@ -1,4 +1,4 @@
-import { ToolbarButton, ToolbarButtonProps, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
+import { someNode, ToolbarButton, ToolbarButtonProps, useEventPlateId, usePlateEditorState } from '@udecode/plate';
 import React, { MutableRefObject, useState } from 'react';
 import { IconLink, IconSize } from '../../../../..';
 import { ELEMENT_CHECK_ITEM } from '../../checkboxListPlugin/createCheckboxListPlugin';
@@ -16,16 +16,15 @@ export const EditLinkChooserButton = ({ id, styles, classNames }: Omit<ToolbarBu
         openInNewTab: false,
     });
 
-    const getLinkFromLinkChooser = (prevChosenLink: ChosenLink): Promise<ChosenLink> => {
+    const getLinkFromLinkChooser = (prevChosenLink: ChosenLink): Promise<ChosenLink | void> => {
         setChosenLink(prevChosenLink);
-        setTimeout(() => {
-            setIsFlyoutOpen(true);
-        }, 100);
+        setIsFlyoutOpen(true);
 
-        return new Promise<ChosenLink>((resolve) => {
+        return new Promise<ChosenLink | void>((resolve) => {
             document.addEventListener('linkChangeConfirmed', (event: any) => {
                 resolve(event.detail.chosenLink);
             });
+            document.addEventListener('linkChangeCanceled', () => resolve());
         });
     };
 

@@ -44,14 +44,15 @@ export const LinkElement: FC<PlateRenderElementProps> = (props) => {
         return TARGET_BLANK;
     };
 
-    const getLinkFromLinkChooser = (prevLink: ChosenLink): Promise<ChosenLink> => {
+    const getLinkFromLinkChooser = (prevLink: ChosenLink): Promise<ChosenLink | void> => {
         setPrevChosenLink(prevLink);
         setIsLinkChooserFlyoutOpen(true);
 
-        return new Promise<ChosenLink>((resolve) => {
+        return new Promise<ChosenLink | void>((resolve) => {
             document.addEventListener('linkChangeConfirmed', (event: any) => {
                 resolve(event.detail.chosenLink);
             });
+            document.addEventListener('linkChangeCanceled', () => resolve());
         });
     };
 
