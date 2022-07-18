@@ -41,6 +41,7 @@ jobs:
 
     component-tests:
         runs-on: ubuntu-latest
+        parallelism: 4
         steps:
             - name: Checkout current commit
               uses: actions/checkout@v3
@@ -61,7 +62,7 @@ jobs:
                   restore-keys: node_modules-
 
             - name: Component Tests
-              run: npm run test:record -- --parallel --group
+              run: npm run test -- --parallel
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
