@@ -45,7 +45,7 @@ jobs:
               id: parse-specs
               uses: tgamauf/cypress-parallel@v1
               with:
-                  working-directory: cypress/parallel-config
+                  working-directory: cypress
                   count-runners: ${{ env.NUMBER_OF_RUNNERS }}
 
     component-tests:
@@ -78,7 +78,7 @@ jobs:
                   restore-keys: node_modules-
 
             - name: Component Tests
-              run: npm run test -- --spec ${{ matrix.spec }}
+              run: npm run test
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
