@@ -9,7 +9,6 @@ env:
     NODE_VERSION: 16
     CI: true
     CYPRESS_CACHE_FOLDER: cypress_cache
-    NUMBER_OF_RUNNERS: 6
 
 jobs:
     setup-project:
@@ -41,7 +40,10 @@ jobs:
 
     component-tests:
         runs-on: ubuntu-latest
-        parallelism: 4
+
+        strategy:
+            fail-fast: false
+
         steps:
             - name: Checkout current commit
               uses: actions/checkout@v3
@@ -62,7 +64,7 @@ jobs:
                   restore-keys: node_modules-
 
             - name: Component Tests
-              run: npm run test -- --parallel
+              run: npm run test
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}

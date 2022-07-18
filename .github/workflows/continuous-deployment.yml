@@ -8,14 +8,10 @@ env:
     NODE_VERSION: 16
     CI: true
     CYPRESS_CACHE_FOLDER: cypress_cache
-    NUMBER_OF_RUNNERS: 6
 
 jobs:
     setup-project:
         runs-on: ubuntu-latest
-
-        outputs:
-            component-tests: ${{ steps.parse-specs.outputs.component-tests }}
 
         steps:
             - name: Checkout default branch
@@ -40,13 +36,6 @@ jobs:
             - name: Install dependencies
               if: steps.npm_cache.outputs.cache-hit != 'true'
               run: npm ci
-
-            # - name: Parse test files for parallelization
-            #   id: parse-specs
-            #   uses: tgamauf/cypress-parallel@v1
-            #   with:
-            #       working-directory: cypress
-            #       count-runners: ${{ env.NUMBER_OF_RUNNERS }}
 
     component-tests:
         runs-on: ubuntu-latest
