@@ -533,7 +533,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('should convert rich text editor format to plaintext', () => {
-        expect(toPlaintext(value)).to.be.eq(
+        expect(toPlaintext(JSON.stringify(value))).to.be.eq(
             'This text is bold.\nThis text is italic.\nThis text has an underline.\nThis text has a strikethrough.\nThis text is a code line.\nLorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\nThis is list item number one.\nThis is list item number two.\nThis is list item number three.\nThis is child item number one.\nThis is child item number two, with more children.\nThis is child of child item number one.\nThis is child of child item number two.\nThis comes first.\nThis comes second.\nAnd last but not least, this comes third.\nThis is a Link.\nThis is also a Link.\nThis is a checked checklist item.\nThis is an unchecked checklist item.\nThis is checked again.\nHeading 1\nHeading 2\nHeading 3\nHeading 4\nCustom 1\nCustom 2',
         );
     });
