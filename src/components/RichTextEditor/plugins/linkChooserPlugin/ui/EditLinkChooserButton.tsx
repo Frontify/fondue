@@ -2,6 +2,7 @@ import { someNode, ToolbarButton, ToolbarButtonProps, useEventPlateId, usePlateE
 import React, { MutableRefObject, useState } from 'react';
 import { IconLink, IconSize } from '../../../../..';
 import { ELEMENT_CHECK_ITEM } from '../../checkboxListPlugin/createCheckboxListPlugin';
+import { LINK_CHANGE_CANCELED, LINK_CHANGE_CONFIRMED } from '../events';
 import { getAndUpsertLink } from '../transforms/getAndUpsertLink';
 import { ChosenLink } from '../types';
 import { LinkChooserFlyout } from './LinkChooserFlyout';
@@ -21,10 +22,10 @@ export const EditLinkChooserButton = ({ id, styles, classNames }: Omit<ToolbarBu
         setIsFlyoutOpen(true);
 
         return new Promise<ChosenLink | void>((resolve) => {
-            document.addEventListener('linkChangeConfirmed', (event: any) => {
+            document.addEventListener(LINK_CHANGE_CONFIRMED, (event: any) => {
                 resolve(event.detail.chosenLink);
             });
-            document.addEventListener('linkChangeCanceled', () => resolve());
+            document.addEventListener(LINK_CHANGE_CANCELED, () => resolve());
         });
     };
 

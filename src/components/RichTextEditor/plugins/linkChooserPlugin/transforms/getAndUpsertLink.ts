@@ -62,7 +62,7 @@ export const getAndUpsertLink = async <T = {}>(
     const chosenLink = await getChosenLink(prevChosenLink);
     if (!chosenLink) {
         // Cancel Button was clicked
-        return;
+        return null;
     }
 
     // If our cursor is in middle of a link, then we don't want to insert it inline
