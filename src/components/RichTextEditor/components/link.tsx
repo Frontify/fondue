@@ -2,6 +2,7 @@
 
 import { PlateRenderElementProps, unwrapNodes, useEditableProps } from '@udecode/plate';
 import React, { FC, MutableRefObject, useState } from 'react';
+import { LINK_CHANGE_CANCELED, LINK_CHANGE_CONFIRMED } from '../plugins/linkChooserPlugin/events';
 import { getAndUpsertLink } from '../plugins/linkChooserPlugin/transforms/getAndUpsertLink';
 import { ChosenLink } from '../plugins/linkChooserPlugin/types';
 import { LinkChooserFlyout } from '../plugins/linkChooserPlugin/ui/LinkChooserFlyout';
@@ -44,14 +45,15 @@ export const LinkElement: FC<PlateRenderElementProps> = (props) => {
         return TARGET_BLANK;
     };
 
-    const getLinkFromLinkChooser = (prevLink: ChosenLink): Promise<ChosenLink> => {
+    const getLinkFromLinkChooser = (prevLink: ChosenLink): Promise<ChosenLink | void> => {
         setPrevChosenLink(prevLink);
         setIsLinkChooserFlyoutOpen(true);
 
-        return new Promise<ChosenLink>((resolve) => {
-            document.addEventListener('linkChangeConfirmed', (event: any) => {
+        return new Promise<ChosenLink | void>((resolve) => {
+            document.addEventListener(LINK_CHANGE_CONFIRMED, (event: any) => {
                 resolve(event.detail.chosenLink);
             });
+            document.addEventListener(LINK_CHANGE_CANCELED, () => resolve());
         });
     };
 

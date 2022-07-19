@@ -5,6 +5,7 @@ import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
 import { IconCheckMark } from '@foundation/Icon';
 import React, { HTMLAttributes, MutableRefObject, ReactNode } from 'react';
+import { LINK_CHANGE_CANCELED, LINK_CHANGE_CONFIRMED } from '../events';
 import { ChosenLink } from '../types';
 
 type LinkChooserFlyoutProps = {
@@ -29,15 +30,19 @@ export const LinkChooserFlyout = ({
     trigger,
 }: LinkChooserFlyoutProps) => {
     const onConfirm = () => {
-        document.dispatchEvent(new CustomEvent('linkChangeConfirmed', { detail: { chosenLink } }));
+        document.dispatchEvent(new CustomEvent(LINK_CHANGE_CONFIRMED, { detail: { chosenLink } }));
+        setIsFlyoutOpen(false);
+    };
+
+    const onCancel = () => {
+        document.dispatchEvent(new CustomEvent(LINK_CHANGE_CANCELED));
         setIsFlyoutOpen(false);
     };
 
     return (
         <Flyout
             isOpen={isFlyoutOpen}
-            onOpenChange={setIsFlyoutOpen}
-            onCancel={() => setIsFlyoutOpen(false)}
+            onOpenChange={(open: boolean) => open && onCancel()}
             onConfirm={onConfirm}
             trigger={trigger}
             legacyFooter={false}
@@ -48,7 +53,7 @@ export const LinkChooserFlyout = ({
                         {
                             children: 'Cancel',
                             style: ButtonStyle.Secondary,
-                            onClick: () => setIsFlyoutOpen(false),
+                            onClick: () => onCancel(),
                         },
                         {
                             children: 'Save',

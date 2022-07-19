@@ -1,6 +1,6 @@
 import { ELEMENT_LINK } from '@udecode/plate';
 import { getAbove, isCollapsed, PlateEditor } from '@udecode/plate-core';
-import { ChosenLink, LinkChooserPlugin } from '../types';
+import { ChosenLink } from '../types';
 import { upsertLinkAtSelection } from './upsertLinkAtSelection';
 
 const defaultChosenLink: ChosenLink = {
@@ -11,7 +11,7 @@ const defaultChosenLink: ChosenLink = {
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const getAndUpsertLink = async <T = {}>(
     editor: PlateEditor<T>,
-    getChosenLink: LinkChooserPlugin['getChosenLink'],
+    getChosenLink: (prevLink: ChosenLink) => Promise<ChosenLink | void>,
 ) => {
     let prevChosenLink = { ...defaultChosenLink };
 
@@ -59,10 +59,10 @@ export const getAndUpsertLink = async <T = {}>(
         };
     }
 
-    let chosenLink: ChosenLink = { ...defaultChosenLink };
-
-    if (getChosenLink) {
-        chosenLink = await getChosenLink(prevChosenLink);
+    const chosenLink = await getChosenLink(prevChosenLink);
+    if (!chosenLink) {
+        // Cancel Button was clicked
+        return null;
     }
 
     // If our cursor is in middle of a link, then we don't want to insert it inline
