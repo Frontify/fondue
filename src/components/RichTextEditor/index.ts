@@ -3,4 +3,4 @@
 export * from './RichTextEditor';
 export * from './utils';
 export { EditorActions } from './utils/actions';
-export { EMPTY_RICH_TEXT_VALUE } from './utils/parseRawValue';
+export * from './utils/parseRawValue';
