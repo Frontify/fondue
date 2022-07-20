@@ -539,7 +539,7 @@ describe('RichTextEditor Component', () => {
         );
     });
 
-    it.only('should serialize to html', () => {
+    it('should serialize to html', () => {
         const serialized = serializeNodesToHtml(nodesToSerialize);
         expect(serialized).to.equal(serializedHtml);
     });
