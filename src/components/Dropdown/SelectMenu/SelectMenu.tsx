@@ -51,7 +51,7 @@ export const SelectMenu = ({
             {...listBoxProps}
             ref={listRef}
             className={merge([
-                'tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-z-20 focus-visible:tw-outline-none',
+                'tw-list-none tw-p-0 tw-m-0 tw-bg-base tw-z-20 focus-visible:tw-outline-none',
                 scrollable && 'tw-overflow-y-auto',
             ])}
         >

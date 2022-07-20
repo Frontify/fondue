@@ -39,9 +39,9 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
             <div
                 data-test-id="link-chooser-search-wrapper"
                 className={merge([
-                    'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-2.5 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent',
+                    'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-2.5 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-base',
                     disabled
-                        ? 'tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90'
+                        ? 'tw-border-black-5 tw-bg-base-alt dark:tw-border-black-90'
                         : merge([
                               'focus-within:tw-border-black-100',
                               isFocusVisible && FOCUS_STYLE,

@@ -142,7 +142,7 @@ export const Slider: FC<SliderProps> = ({
                     'tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
                     disabled
                         ? 'tw-border-line-x-strong tw-border-opacity-30 tw-bg-black-0'
-                        : 'tw-border-black tw-bg-white',
+                        : 'tw-border-black tw-bg-base',
                 ])}
             />
             {itemElements}

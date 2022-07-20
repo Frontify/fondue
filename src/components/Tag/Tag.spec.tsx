@@ -18,7 +18,7 @@ describe('Tag Component', () => {
     it('should render a suggested tag', () => {
         mount(<Tag type={TagType.Suggested} label={TAG_LABEL} />);
 
-        cy.get(TAG_ID).should('have.class', 'tw-bg-white').and('have.class', 'tw-text-black-80');
+        cy.get(TAG_ID).should('have.class', 'tw-bg-base').and('have.class', 'tw-text-black-80');
         cy.get(TAG_REJECT_ICON_ATTRIBUTE).should('not.exist');
     });
 
@@ -43,7 +43,7 @@ describe('Tag Component', () => {
     it('should render a previously selected tag', () => {
         mount(<Tag type={TagType.PreviouslySelected} label={TAG_LABEL} />);
 
-        cy.get(TAG_ID).should('have.class', 'tw-bg-white').and('have.class', 'tw-text-violet-60');
+        cy.get(TAG_ID).should('have.class', 'tw-bg-base').and('have.class', 'tw-text-violet-60');
         cy.get(TAG_REJECT_ICON_ATTRIBUTE).should('not.exist');
     });
 

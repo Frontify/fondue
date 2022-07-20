@@ -286,11 +286,7 @@ export const WithCustomFooterAndHeader = WithCustomFooterAndHeaderTemplate.bind(
 
 WithCustomFooterAndHeader.args = {
     legacyFooter: false,
-    fixedHeader: (
-        <div className="tw-py-5 tw-px-8 tw-bg-white dark:tw-bg-black-95 tw-border-b tw-border-b-black-10">
-            Custom Header
-        </div>
-    ),
+    fixedHeader: <div className="tw-py-5 tw-px-8 tw-bg-base tw-border-b tw-border-b-black-10">Custom Header</div>,
     fixedFooter: (
         <FlyoutFooter
             buttons={[

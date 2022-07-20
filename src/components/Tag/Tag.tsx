@@ -18,13 +18,13 @@ export enum TagType {
 
 export const tagStyles: Record<TagType, string> = {
     [TagType.Suggested]:
-        'tw-bg-white dark:tw-bg-black-100 hover:tw-bg-black-0 dark:hover:tw-bg-black-superdark tw-border-black-20 dark:tw-border-white hover:tw-border-black-40 dark:hover:tw-border-black-20 tw-text-black-80 dark:tw-text-white dark:hover:tw-text-black-20',
+        'tw-bg-base hover:tw-bg-black-0 dark:hover:tw-bg-grey-100 tw-border-black-20 dark:tw-border-white hover:tw-border-black-40 dark:hover:tw-border-black-20 tw-text-black-80 dark:tw-text-white dark:hover:tw-text-black-20',
     [TagType.Selected]:
         'tw-bg-black-5 hover:tw-bg-black-10 dark:hover:tw-bg-black-20 tw-border-black-5 hover:tw-border-black-10 dark:hover:tw-border-black-20 tw-text-black-80 hover:tw-text-black-100',
     [TagType.SelectedWithFocus]:
         'tw-bg-violet-60 dark:tw-bg-violet-50 hover:tw-bg-violet-70 dark:hover:tw-bg-violet-60 tw-border-violet-60 dark:tw-border-violet-50 hover:tw-border-violet-70 dark:hover:tw-border-violet-60 tw-text-white',
     [TagType.PreviouslySelected]:
-        'tw-bg-white dark:tw-bg-black-100 hover:tw-bg-black-0 dark:hover:tw-bg-black-superdark tw-text-violet-60 dark:tw-text-violet-50 hover:tw-text-violet-70 dark:hover:tw-text-violet-60',
+        'tw-bg-base hover:tw-bg-black-0 dark:hover:tw-bg-grey-100 tw-text-violet-60 dark:tw-text-violet-50 hover:tw-text-violet-70 dark:hover:tw-text-violet-60',
 };
 
 export type TagProps = TagPropsUnselected | TagPropsSelected;

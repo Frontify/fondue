@@ -58,7 +58,7 @@ export const Textarea: FC<TextareaProps> = ({
                     'tw-w-full tw-p-2 tw-border tw-rounded tw-text-s tw-outline-none tw-transition tw-placeholder-black-60',
                     !!decorator && 'tw-pl-7 ',
                     disabled
-                        ? 'tw-border-black-5 tw-bg-black-5 tw-text-black-40'
+                        ? 'tw-border-black-5 tw-bg-base-alt tw-text-black-40'
                         : 'tw-text-black tw-border-black-20 hover:tw-border-black-90',
                     isFocusVisible && FOCUS_STYLE,
                     validationClassMap[validation],
@@ -66,7 +66,7 @@ export const Textarea: FC<TextareaProps> = ({
                 disabled={disabled}
             ></textarea>
             {validation === Validation.Loading && (
-                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
+                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-base tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
             )}

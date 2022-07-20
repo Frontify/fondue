@@ -50,7 +50,7 @@ export const Trigger: FC<TriggerProps> = ({
                 disabled
                     ? 'tw-border-black-5 tw-bg-black-5 tw-pointer-events-none'
                     : merge([
-                          'tw-bg-white hover:tw-border-black-90',
+                          'tw-bg-base hover:tw-border-black-90',
                           isOpen ? 'tw-border-black-100' : 'tw-border-black-20',
                           validationClassMap[validation],
                       ]),

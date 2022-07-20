@@ -30,7 +30,7 @@ export const Card: FC<CardProps> = ({ hoverable = false, children, onClick }) =>
             data-test-id="card"
             ref={ref}
             className={merge([
-                'tw-w-full tw-outline-none tw-bg-white tw-border tw-border-black-10 tw-rounded',
+                'tw-w-full tw-outline-none tw-bg-base tw-border tw-border-black-10 tw-rounded',
                 hoverable ? 'hover:tw-border-black' : '',
                 onClick ? 'tw-cursor-pointer' : 'tw-cursor-default',
                 isFocusVisible && FOCUS_STYLE,
