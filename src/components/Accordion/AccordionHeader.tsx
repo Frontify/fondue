@@ -24,8 +24,8 @@ export const AccordionHeader: FC<AccordionHeaderProps> = ({
                 data-test-id="fieldset-header"
                 className={merge([
                     'tw-flex tw-items-center tw-gap-x-1.5 tw-w-full tw-flex-row',
-                    disabled ? 'tw-text-black-40' : 'dark:tw-text-white',
-                    !disabled && isOpen ? 'tw-text-black' : 'tw-text-black-80',
+                    disabled ? 'tw-text-text-disabled' : '',
+                    !disabled && isOpen ? 'tw-text-black' : 'tw-text-text-weak',
                 ])}
             >
                 {isValidElement(decorator) && (
