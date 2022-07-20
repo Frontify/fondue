@@ -52,7 +52,7 @@ export const EditableNodeItem = ({ name, targetItemId, onEditableSave, children 
                 <div className="tw-flex tw-items-center">
                     <div
                         data-test-id="node-editable"
-                        className="tw-flex tw-items-center tw-h-6 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent"
+                        className="tw-flex tw-items-center tw-h-6 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-base"
                     >
                         <input
                             ref={inputRef}

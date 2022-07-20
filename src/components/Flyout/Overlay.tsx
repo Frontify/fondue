@@ -52,7 +52,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                 <div
                     ref={scrollRef}
                     className={merge([
-                        'tw-flex tw-overflow-y-auto tw-overflow-x-hidden tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95',
+                        'tw-flex tw-overflow-y-auto tw-overflow-x-hidden tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-bg-base tw-text-black dark:tw-text-white',
                         !fixedHeader && 'tw-rounded-t',
                         !fixedFooter && 'tw-rounded-b',
                     ])}

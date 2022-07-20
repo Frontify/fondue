@@ -96,16 +96,15 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                         disabled
                             ? merge([
                                   'tw-text-white tw-pointer-events-none',
-                                  !isCheckedOrMixed(state) &&
-                                      'tw-border-black-20 tw-bg-white dark:tw-border-black-80 dark:tw-bg-black-90',
+                                  !isCheckedOrMixed(state) && 'tw-border-black-20 tw-bg-base dark:tw-border-black-80',
                                   isCheckedOrMixed(state) &&
-                                      'tw-border-black-40 tw-bg-black-40 dark:tw-border-black-60 dark:tw-bg-black-60',
+                                      'tw-border-black-40 tw-bg-base-alt dark:tw-border-black-60',
                               ])
                             : merge([
                                   !isCheckedOrMixed(state) &&
-                                      'tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90 group-hover:tw-bg-white group-hover:tw-border-black dark:group-hover:tw-border-black-20 dark:group-hover:tw-bg-black-90',
+                                      'tw-border-black-80 tw-bg-base hover:tw-border-black dark:tw-border-white dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90 group-hover:tw-bg-white group-hover:tw-border-black dark:group-hover:tw-border-black-20 dark:group-hover:tw-bg-black-90',
                                   isCheckedOrMixed(state) &&
-                                      'tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60 group-hover:tw-text-white group-hover:tw-border-violet-70 group-hover:tw-bg-violet-70 dark:group-hover:tw-border-violet-60 dark:group-hover:tw-bg-violet-60',
+                                      'tw-border-violet-60 tw-bg-box-selected-strong tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60 group-hover:tw-text-white group-hover:tw-border-violet-70 group-hover:tw-bg-violet-70 dark:group-hover:tw-border-violet-60 dark:group-hover:tw-bg-violet-60',
                               ]),
                     ])}
                 >

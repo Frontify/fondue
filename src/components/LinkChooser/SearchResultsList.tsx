@@ -63,7 +63,7 @@ export const SearchResultsList: FC<SearchResultListProps> = (props) => {
                 {...listBoxProps}
                 data-test-id="link-chooser-results-list"
                 ref={listBoxRef}
-                className="tw-list-none tw-p-0 tw-m-0 tw-bg-white tw-z-20 focus-visible:tw-outline-none"
+                className="tw-list-none tw-p-0 tw-m-0 tw-bg-base tw-z-20 focus-visible:tw-outline-none"
             >
                 {searchResults.length > 0 ? (
                     [...state.collection]

@@ -68,7 +68,7 @@ const iconSpacing: Record<ButtonSize, string> = {
 const styles: Record<'solid' | 'translucent' | 'inverted', Record<ButtonStyle, string>> = {
     solid: {
         [ButtonStyle.Primary]:
-            'tw-text-white tw-bg-black-90 hover:tw-bg-black-100 active:tw-bg-black-superdark dark:tw-text-black dark:tw-bg-white dark:hover:tw-bg-black-10 dark:active:tw-bg-black-20',
+            'tw-text-button-positive-text tw-bg-black-90 hover:tw-bg-black-100 active:tw-bg-black-superdark dark:tw-bg-white dark:hover:tw-bg-black-10 dark:active:tw-bg-black-20',
         [ButtonStyle.Secondary]:
             'tw-text-black tw-bg-black-10 hover:tw-bg-black-20 active:tw-bg-black-30 dark:tw-text-white dark:tw-bg-black-80 dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark',
         [ButtonStyle.Danger]: 'tw-text-black tw-bg-red-50 hover:tw-bg-red-65 active:tw-bg-red-70',

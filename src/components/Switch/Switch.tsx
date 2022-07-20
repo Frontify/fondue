@@ -61,7 +61,7 @@ export const Switch: FC<SwitchProps> = ({
     }, [on, disabled, size, isFocusVisible]);
 
     const dotClasses = useMemo(() => {
-        const baseClasses = 'tw-block tw-self-center tw-bg-white tw-rounded-full tw-transition-transform';
+        const baseClasses = 'tw-block tw-self-center tw-bg-base tw-rounded-full tw-transition-transform';
         const disabledClasses = disabled ? 'tw-border tw-border-black-30' : 'tw-border tw-border-black';
         const sizeClasses = size === SwitchSize.Small ? disabledClasses : '';
         const activatedClasses = size === SwitchSize.Small ? 'tw-translate-x-2' : 'tw-translate-x-full';

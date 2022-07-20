@@ -236,7 +236,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 document.body,
             )}
             {validation === Validation.Loading && (
-                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
+                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-base tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
             )}

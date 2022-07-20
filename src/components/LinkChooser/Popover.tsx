@@ -20,7 +20,7 @@ export const Popover: FC<PopoverProps> = (props) => {
     );
 
     /* Focus must not be shifted to the popover when any buttons are pressed since this will close the input.
-    There is a blur event fired on the input when clicking inside the popover which gets fired twice *sometimes*, 
+    There is a blur event fired on the input when clicking inside the popover which gets fired twice *sometimes*,
     (once with a relatedTarget and once without). This way all blur events are prevented */
 
     const bubblingEventProps = {
@@ -32,7 +32,7 @@ export const Popover: FC<PopoverProps> = (props) => {
         <div
             {...mergeProps(overlayProps, { style: { maxHeight } })}
             ref={popoverRef}
-            className="tw-bg-white tw-border-black-10 tw-border tw-rounded tw-overflow-x-hidden tw-shadow-mid tw-overflow-y-auto"
+            className="tw-bg-base tw-border-black-10 tw-border tw-rounded tw-overflow-x-hidden tw-shadow-mid tw-overflow-y-auto"
         >
             <div {...bubblingEventProps}>
                 {children}
