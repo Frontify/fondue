@@ -10,7 +10,7 @@ module.exports = {
         builder: '@storybook/builder-vite',
     },
     stories: ['../src/**/*.stories.tsx'],
-    addons: ['storybook-dark-mode', '@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-a11y'],
+    addons: ['storybook-dark-mode', '@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-a11y', 'storybook-addon-performance/register'],
     staticDirs: ['assets'],
     features: {
         storyStoreV7: true,
