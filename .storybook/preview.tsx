@@ -1,5 +1,6 @@
 import "../src/styles.css";
 import { dark, light } from "./frontifyTheme";
+import { withPerformance } from 'storybook-addon-performance';
 
 export const parameters = {
     options: {
@@ -15,3 +16,5 @@ export const parameters = {
         light: { ...light },
     },
 };
+
+export const decorators = [withPerformance];
