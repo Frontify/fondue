@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from 'cypress/react';
 import React from 'react';
 import { FieldsetHeader, FieldsetHeaderType } from './FieldsetHeader';
 
@@ -11,7 +10,7 @@ describe('FieldsetHeader Composition', () => {
     it('should not fire click handler if disabled', () => {
         const onClick = cy.stub().as('onClickStub');
 
-        mount(
+        cy.mount(
             <FieldsetHeader type={FieldsetHeaderType.Switch} onClick={onClick} disabled>
                 {HEADING}
             </FieldsetHeader>,

@@ -2,7 +2,6 @@
 
 import { IconDocumentText } from '@foundation/Icon';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { mount } from 'cypress/react';
 import React from 'react';
 import { BadgeStyle } from '.';
 import { Badge } from './Badge';
@@ -16,7 +15,7 @@ const BADGE_DISMISS = '[data-test-id=badge-dismiss]';
 
 describe('Badge component', () => {
     it('renders', () => {
-        mount(<Badge>{BADGE_TEXT}</Badge>);
+        cy.mount(<Badge>{BADGE_TEXT}</Badge>);
 
         cy.get(BADGE_ID).should('exist');
         cy.get(BADGE_STATUS_ID).should('not.exist');
@@ -25,31 +24,31 @@ describe('Badge component', () => {
     });
 
     it('renders the status dot', () => {
-        mount(<Badge status={BadgeStatus.Positive}>{BADGE_TEXT}</Badge>);
+        cy.mount(<Badge status={BadgeStatus.Positive}>{BADGE_TEXT}</Badge>);
 
         cy.get(BADGE_STATUS_ID).should('exist');
     });
 
     it('should render badge with icon and overwrite size', () => {
-        mount(<Badge icon={<IconDocumentText size={IconSize.Size8} />}>{BADGE_TEXT}</Badge>);
+        cy.mount(<Badge icon={<IconDocumentText size={IconSize.Size8} />}>{BADGE_TEXT}</Badge>);
 
         cy.get(BADGE_ICON_ID).should('exist').and('have.css', 'width', '16px');
     });
 
     it('should be a small circle', () => {
-        mount(<Badge status={BadgeStatus.Danger} size="s" />);
+        cy.mount(<Badge status={BadgeStatus.Danger} size="s" />);
 
         cy.get(BADGE_ID).should('have.css', 'width', '20px').and('have.css', 'height', '20px');
     });
 
     it('should be a big circle', () => {
-        mount(<Badge icon={<IconDocumentText />} />);
+        cy.mount(<Badge icon={<IconDocumentText />} />);
 
         cy.get(BADGE_ID).should('have.css', 'width', '24px').and('have.css', 'height', '24px');
     });
 
     it('should have disabled style', () => {
-        mount(
+        cy.mount(
             <Badge icon={<IconDocumentText />} style={BadgeStyle.Danger} disabled>
                 {BADGE_TEXT}
             </Badge>,
@@ -60,7 +59,7 @@ describe('Badge component', () => {
     });
 
     it('should have emphasised style', () => {
-        mount(
+        cy.mount(
             <Badge icon={<IconDocumentText />} style={BadgeStyle.Positive} emphasis={BadgeEmphasis.Strong}>
                 {BADGE_TEXT}
             </Badge>,
@@ -71,7 +70,7 @@ describe('Badge component', () => {
 
     it('should have hover styles if onClick prop is a function', () => {
         const onClickStub = cy.stub();
-        mount(
+        cy.mount(
             <Badge icon={<IconDocumentText />} style={BadgeStyle.Danger} onClick={onClickStub}>
                 {BADGE_TEXT}
             </Badge>,
@@ -84,7 +83,7 @@ describe('Badge component', () => {
 
     it('should call onDismiss', () => {
         const onDismissStub = cy.stub();
-        mount(
+        cy.mount(
             <Badge icon={<IconDocumentText />} onDismiss={onDismissStub}>
                 {BADGE_TEXT}
             </Badge>,
@@ -102,7 +101,7 @@ describe('Badge component', () => {
 
         const DOT_COLOR = { r, g, b, a };
 
-        mount(
+        cy.mount(
             <Badge icon={<IconDocumentText />} status={DOT_COLOR}>
                 {BADGE_TEXT}
             </Badge>,
@@ -114,7 +113,7 @@ describe('Badge component', () => {
     it('should display custom status dot with string value', () => {
         const DOT_COLOR = 'rgba(0, 100, 200, 0.9)';
 
-        mount(
+        cy.mount(
             <Badge icon={<IconDocumentText />} status={DOT_COLOR}>
                 {BADGE_TEXT}
             </Badge>,

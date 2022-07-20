@@ -4,7 +4,6 @@ import { MenuBlock } from '@components/Dropdown/SelectMenu/SelectMenu';
 import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
 import { IconIcon } from '@foundation/Icon';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
-import { mount } from 'cypress/react';
 import React, { FC, ReactElement, useState } from 'react';
 import { Dropdown } from './Dropdown';
 
@@ -89,21 +88,21 @@ const Component: FC<Props> = ({
 
 describe('Dropdown Component', () => {
     it('renders with placeholder', () => {
-        mount(<Component menuBlocks={ITEMS} placeholder="Select item" />);
+        cy.mount(<Component menuBlocks={ITEMS} placeholder="Select item" />);
         cy.get(MENU_ITEM_TITLE_ID).contains('Select item');
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(MENU_ITEM_LIST_ID).children().should('have.length', 5);
     });
 
     it('renders with initial active item', () => {
-        mount(<Component menuBlocks={ITEMS} initialActiveId={FIRST_ITEM_ID} />);
+        cy.mount(<Component menuBlocks={ITEMS} initialActiveId={FIRST_ITEM_ID} />);
         cy.get(MENU_ITEM_TITLE_ID).contains('Small');
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(MENU_ITEM_ACTIVE_ID).should('exist').and('have.length', 1);
     });
 
     it('changes selection on click', () => {
-        mount(<Component menuBlocks={ITEMS} initialActiveId={FIRST_ITEM_ID} />);
+        cy.mount(<Component menuBlocks={ITEMS} initialActiveId={FIRST_ITEM_ID} />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(MENU_ITEM_ID).first().as('firstListItem');
         cy.get(MENU_ITEM_ID).eq(1).as('secondListItem');
@@ -123,7 +122,7 @@ describe('Dropdown Component', () => {
     });
 
     it('renders with clearable option', () => {
-        mount(<Component menuBlocks={ITEMS} placeholder="Select item" clearable />);
+        cy.mount(<Component menuBlocks={ITEMS} placeholder="Select item" clearable />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(MENU_ITEM_ID).first().as('firstListItem');
 
@@ -138,7 +137,7 @@ describe('Dropdown Component', () => {
     });
 
     it('should not focus the dropdown when disabled', () => {
-        mount(<Component menuBlocks={ITEMS} disabled={true} />);
+        cy.mount(<Component menuBlocks={ITEMS} disabled={true} />);
 
         cy.window().focus();
         cy.get('body').realPress('Tab');
@@ -148,20 +147,20 @@ describe('Dropdown Component', () => {
     });
 
     it('should not display persisted icon if omitted', () => {
-        mount(<Component menuBlocks={ITEMS} />);
+        cy.mount(<Component menuBlocks={ITEMS} />);
 
         cy.get(`${MENU_ITEM_DECORATOR_ID} > svg`).should('not.exist');
     });
 
     it('should display persisted icon if provided', () => {
-        mount(<Component menuBlocks={ITEMS} decorator={<IconIcon />} />);
+        cy.mount(<Component menuBlocks={ITEMS} decorator={<IconIcon />} />);
 
         cy.get(MENU_ITEM_DECORATOR_ID).find('svg').invoke('attr', 'name').should('eq', 'IconIcon16');
     });
 
     it('should have a maximum height calculated based on viewport and dropdown position', () => {
         cy.viewport(550, 220);
-        mount(<Component menuBlocks={ITEMS} decorator={<IconIcon />} />);
+        cy.mount(<Component menuBlocks={ITEMS} decorator={<IconIcon />} />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_MENU_ID).then(($el) => {
             const { bottom } = $el[0].getBoundingClientRect();
@@ -171,7 +170,7 @@ describe('Dropdown Component', () => {
 
     it('should prevent height adjusting if autoResize is false', () => {
         cy.viewport(550, 220);
-        mount(<Component menuBlocks={ITEMS} decorator={<IconIcon />} autoResize={false} />);
+        cy.mount(<Component menuBlocks={ITEMS} decorator={<IconIcon />} autoResize={false} />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_MENU_ID).then(($el) => {
             const { bottom } = $el[0].getBoundingClientRect();
@@ -185,7 +184,7 @@ describe('Dropdown Component', () => {
 
     it('should have a minimum height of 130px', () => {
         cy.viewport(550, 160);
-        mount(<Component menuBlocks={ITEMS} decorator={<IconIcon />} />);
+        cy.mount(<Component menuBlocks={ITEMS} decorator={<IconIcon />} />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_MENU_ID).then(($el) => {
             const height = $el[0].clientHeight;
@@ -196,7 +195,7 @@ describe('Dropdown Component', () => {
     it('should open dropdown on click next to the caret icon', () => {
         const MARGIN_RIGHT = 6;
         const MARGIN_TOP = 17;
-        mount(<Component menuBlocks={ITEMS} placeholder="Select item" />);
+        cy.mount(<Component menuBlocks={ITEMS} placeholder="Select item" />);
         cy.get(MENU_ITEM_TITLE_ID).contains('Select item');
         cy.get(TRIGGER_ID)
             .invoke('css', 'width')

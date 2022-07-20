@@ -2,7 +2,6 @@
 
 import { mockNodesFlat } from '@components/Tree/utils';
 import { DraggableItem } from '@utilities/dnd';
-import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { Tree, TreeFlatListItem } from './Tree';
 
@@ -43,14 +42,14 @@ const NODE_EDITABLE_ID = '[data-test-id=node-editable]';
 describe('Tree Component', () => {
     // TODO check if DropZones are not present when no onDrop props is provided. Refactoring needed first
     it('renders tree', () => {
-        mount(<Component nodes={mockNodesFlat()} />);
+        cy.mount(<Component nodes={mockNodesFlat()} />);
 
         cy.get(TREE_ID).should('be.visible');
         cy.get(NODE_ID).should('have.length', 1);
     });
 
     it('toggles node on click', () => {
-        mount(<Component nodes={mockNodesFlat()} />);
+        cy.mount(<Component nodes={mockNodesFlat()} />);
 
         cy.get(`${NODE_ID} ${TOGGLE_ID}`).as('Toggle');
         cy.get('@Toggle').click();
@@ -61,14 +60,14 @@ describe('Tree Component', () => {
     });
 
     it('selects a node with a value on click', () => {
-        mount(<Component nodes={mockNodesFlat()} />);
+        cy.mount(<Component nodes={mockNodesFlat()} />);
 
         cy.get(NODE_LINK_NAME_ID).click();
         cy.get(NODE_LINK_ID).should('have.attr', 'aria-selected', 'true');
     });
 
     it("doesn't select a node without a value", () => {
-        mount(<Component nodes={mockNodesFlat()} />);
+        cy.mount(<Component nodes={mockNodesFlat()} />);
 
         cy.get(`${NODE_ID} ${TOGGLE_ID}`).click();
         cy.get(`${SUB_TREE_ID} > ${NODE_ID}:first ${TOGGLE_ID}`).click();
@@ -76,7 +75,7 @@ describe('Tree Component', () => {
     });
 
     it('deselects all the other nodes when selecting a new one', () => {
-        mount(<Component nodes={mockNodesFlat()} />);
+        cy.mount(<Component nodes={mockNodesFlat()} />);
 
         cy.get(`${NODE_ID} ${TOGGLE_ID}`).click();
         cy.get(`${SUB_TREE_ID} > ${NODE_ID}:last ${NODE_LINK_ID}`).as('InitiallySelectedItem');
@@ -92,7 +91,7 @@ describe('Tree Component', () => {
 
 describe('Draggable Tree Component', () => {
     it('renders correct drop zones on the top level', () => {
-        mount(
+        cy.mount(
             <Component
                 nodes={mockNodesFlat()}
                 onDrop={() => {
@@ -105,7 +104,7 @@ describe('Draggable Tree Component', () => {
     });
 
     it('renders correct drop zones on the second level', () => {
-        mount(
+        cy.mount(
             <Component
                 nodes={mockNodesFlat()}
                 onDrop={() => {
@@ -125,7 +124,7 @@ describe('Draggable Tree Component', () => {
 
 describe('Badge Tree Component', () => {
     beforeEach(() => {
-        mount(<Component nodes={mockNodesFlat()} />);
+        cy.mount(<Component nodes={mockNodesFlat()} />);
 
         cy.get(`${NODE_ID} ${TOGGLE_ID}`).click();
     });
@@ -147,7 +146,7 @@ describe('Badge Tree Component', () => {
 describe('Editable Tree Component', () => {
     beforeEach(() => {
         const onEditableSaveStub = cy.stub().as('onEditableSaveStub');
-        mount(<Component nodes={mockNodesFlat()} onEditableSave={onEditableSaveStub} />);
+        cy.mount(<Component nodes={mockNodesFlat()} onEditableSave={onEditableSaveStub} />);
 
         cy.get(`${NODE_ID} ${TOGGLE_ID}`).click();
         cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(2) ${TOGGLE_ID}`).click();

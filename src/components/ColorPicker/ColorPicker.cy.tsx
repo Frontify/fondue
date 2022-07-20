@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { Color, ColorFormat, Palette } from '../../types/colors';
 import { ColorPicker } from './ColorPicker';
@@ -39,7 +38,7 @@ const Component: FC<Props> = ({ palettes, currentColor = { r: 255, g: 0, b: 0 } 
 
 describe('ColorPicker Component', () => {
     it('should render custom color picker', () => {
-        mount(<Component />);
+        cy.mount(<Component />);
 
         cy.get(CUSTOM_COLOR_PICKER_ID).should('exist');
         cy.get(COLOR_PREVIEW_ID).should('have.css', 'background-color', 'rgb(255, 0, 0)');
@@ -51,7 +50,7 @@ describe('ColorPicker Component', () => {
     });
 
     it('should render brand color picker', () => {
-        mount(<Component palettes={EXAMPLE_PALETTES} />);
+        cy.mount(<Component palettes={EXAMPLE_PALETTES} />);
 
         cy.get(BRAND_COLOR_PICKER_ID).should('exist');
         cy.get(BRAND_COLOR_ID).should('have.length', 18);
@@ -60,7 +59,7 @@ describe('ColorPicker Component', () => {
     });
 
     it('should change palette display', () => {
-        mount(<Component palettes={EXAMPLE_PALETTES} />);
+        cy.mount(<Component palettes={EXAMPLE_PALETTES} />);
 
         cy.get(BRAND_COLOR_ID).parent('ul').should('not.have.class', 'tw-flex-col');
         cy.get(ICON_ITEM_ID).last().click();
@@ -68,7 +67,7 @@ describe('ColorPicker Component', () => {
     });
 
     it('should display correct search results', () => {
-        mount(<Component palettes={EXAMPLE_PALETTES} />);
+        cy.mount(<Component palettes={EXAMPLE_PALETTES} />);
 
         cy.get(TEXT_INPUT_ID).type('90');
         cy.get(BRAND_COLOR_ID).should('have.length', 3);
@@ -79,7 +78,7 @@ describe('ColorPicker Component', () => {
     });
 
     it('should display message if no brand colors are found in palettes', () => {
-        mount(<Component palettes={EXAMPLE_PALETTES.map((palette) => ({ ...palette, colors: [] }))} />);
+        cy.mount(<Component palettes={EXAMPLE_PALETTES.map((palette) => ({ ...palette, colors: [] }))} />);
         cy.get(BRAND_COLOR_PICKER_ID).should('exist');
         cy.get(BRAND_COLOR_ID).should('not.exist');
         cy.get(BRAND_COLOR_PICKER_ID).children('ul').should('contain', 'No colors found');

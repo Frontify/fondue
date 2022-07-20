@@ -2,7 +2,6 @@
 
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 import { IconReport } from '@foundation/Icon/Generated';
-import { mount } from 'cypress/react';
 import React from 'react';
 import { InputLabel } from './InputLabel';
 
@@ -16,13 +15,13 @@ const INPUT_LABEL_REQUIRED_ID = '[data-test-id=input-label-required]';
 
 describe('InputLabel Component', () => {
     it('should render label text correctly', () => {
-        mount(<InputLabel htmlFor="input">{LABEL_TEXT}</InputLabel>);
+        cy.mount(<InputLabel htmlFor="input">{LABEL_TEXT}</InputLabel>);
 
         cy.get(INPUT_LABEL_ID).should('contain', LABEL_TEXT);
     });
 
     it('should render a required label', () => {
-        mount(
+        cy.mount(
             <InputLabel htmlFor="input" required>
                 {LABEL_TEXT}
             </InputLabel>,
@@ -32,7 +31,7 @@ describe('InputLabel Component', () => {
     });
 
     it('renders with a tooltip', () => {
-        mount(
+        cy.mount(
             <InputLabel htmlFor="input" tooltip={{ content: LABEL_TOOLTIP }}>
                 {LABEL_TEXT}
             </InputLabel>,
@@ -43,7 +42,7 @@ describe('InputLabel Component', () => {
     });
 
     it('renders with multiple tooltip triggers', () => {
-        mount(
+        cy.mount(
             <InputLabel
                 htmlFor="input"
                 tooltip={[

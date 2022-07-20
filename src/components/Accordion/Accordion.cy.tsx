@@ -2,7 +2,6 @@
 
 import { TextInput } from '@components/TextInput/TextInput';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
-import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { AccordionHeaderProps } from '.';
 import { Accordion, AccordionItem } from './Accordion';
@@ -24,7 +23,7 @@ const TestHeader: FC<AccordionHeaderProps> = ({ isOpen, disabled, children }) =>
 
 describe('Accordion Component', () => {
     it('should not render any item', () => {
-        mount(
+        cy.mount(
             <Accordion>
                 <div data-test-id="invalid-item">Invalid Item</div>
             </Accordion>,
@@ -34,7 +33,7 @@ describe('Accordion Component', () => {
     });
 
     it('should render 3 items', () => {
-        mount(
+        cy.mount(
             <Accordion>
                 <AccordionItem header={{ children: '1' }}>1</AccordionItem>
                 <AccordionItem header={{ children: '2' }}>2</AccordionItem>
@@ -46,7 +45,7 @@ describe('Accordion Component', () => {
     });
 
     it('should open item 2', () => {
-        mount(
+        cy.mount(
             <Accordion>
                 <AccordionItem header={{ children: '1' }}>1</AccordionItem>
                 <AccordionItem header={{ children: '2' }}>2</AccordionItem>
@@ -61,7 +60,7 @@ describe('Accordion Component', () => {
 
     it('should call header action', () => {
         const onClickStub = cy.stub().as('onClickStub');
-        mount(
+        cy.mount(
             <Accordion>
                 <AccordionItem header={{ children: '1', decorator: <IconIcon /> }}>1</AccordionItem>
                 <AccordionItem header={{ children: '2' }}>2</AccordionItem>
@@ -75,7 +74,7 @@ describe('Accordion Component', () => {
     });
 
     it('should not have any open section by defaut', () => {
-        mount(
+        cy.mount(
             <Accordion>
                 <AccordionItem header={{ children: '1' }}>1</AccordionItem>
                 <AccordionItem header={{ children: '2' }}>2</AccordionItem>
@@ -88,7 +87,7 @@ describe('Accordion Component', () => {
     });
 
     it('allows multiple sections to be open by default', () => {
-        mount(
+        cy.mount(
             <Accordion>
                 <AccordionItem header={{ children: '1' }}>1</AccordionItem>
                 <AccordionItem header={{ children: '2', active: true }}>2</AccordionItem>
@@ -104,7 +103,7 @@ describe('Accordion Component', () => {
     });
 
     it('renders a custom header component', () => {
-        mount(
+        cy.mount(
             <Accordion>
                 <AccordionItem header={{ children: '1' }} headerComponent={TestHeader}>
                     1
@@ -125,7 +124,7 @@ describe('Accordion Component', () => {
     });
 
     it('shows border and divider on the Accordion', () => {
-        mount(
+        cy.mount(
             <Accordion>
                 <AccordionItem header={{ children: '1' }} divider={true}>
                     1
@@ -143,7 +142,7 @@ describe('Accordion Component', () => {
     });
 
     it('hides border and divider', () => {
-        mount(
+        cy.mount(
             <Accordion border={false} divider={false}>
                 <AccordionItem header={{ children: '1' }}>1</AccordionItem>
             </Accordion>,
@@ -159,7 +158,7 @@ describe('Accordion Component', () => {
     });
 
     it('should correctly navigate with keyboard', () => {
-        mount(
+        cy.mount(
             <Accordion>
                 <AccordionItem header={{ children: '1' }}>
                     <TextInput />
@@ -195,7 +194,7 @@ describe('Accordion Component', () => {
     });
 
     it('Should add a new Item in open state', () => {
-        mount(<TestAccordion />);
+        cy.mount(<TestAccordion />);
 
         cy.get(ACCORDION_ITEM_ID).should('have.length', 2);
         cy.get(ACCORDION_ITEM_CONTENT_ID).should('have.length', 1);

@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from '@foundation/Icon/IconSize';
-import { mount } from 'cypress/react';
 import React from 'react';
 import { TooltipIcon } from './TooltipIcon';
 
@@ -14,21 +13,21 @@ const TOOLTIP_ID = '[data-test-id=tooltip]';
 
 describe('TooltipIcon Component', () => {
     it('should render an icon with default size', () => {
-        mount(<TooltipIcon tooltip={TOOLTIP_PROPS} />);
+        cy.mount(<TooltipIcon tooltip={TOOLTIP_PROPS} />);
 
         cy.get(TOOLTIP_ICON_ID).find(TOOLTIP_ICON_TRIGGER_ID).children().should('have.css', 'width').and('eq', '16px');
         cy.get(TOOLTIP_ICON_ID).find(TOOLTIP_ICON_TRIGGER_ID).children().should('have.css', 'height').and('eq', '16px');
     });
 
     it('should render an icon with custom size', () => {
-        mount(<TooltipIcon tooltip={TOOLTIP_PROPS} iconSize={IconSize.Size20} />);
+        cy.mount(<TooltipIcon tooltip={TOOLTIP_PROPS} iconSize={IconSize.Size20} />);
 
         cy.get(TOOLTIP_ICON_ID).find(TOOLTIP_ICON_TRIGGER_ID).children().should('have.css', 'width').and('eq', '20px');
         cy.get(TOOLTIP_ICON_ID).find(TOOLTIP_ICON_TRIGGER_ID).children().should('have.css', 'height').and('eq', '20px');
     });
 
     it('should render a tooltip when the icon is hovered', () => {
-        mount(<TooltipIcon tooltip={TOOLTIP_PROPS} />);
+        cy.mount(<TooltipIcon tooltip={TOOLTIP_PROPS} />);
 
         cy.get('body').realClick();
         cy.get(TOOLTIP_ICON_TRIGGER_ID).realHover({ position: 'top' });

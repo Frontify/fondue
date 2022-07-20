@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from 'cypress/react';
 import React from 'react';
 import { Stack } from './Stack';
 
 describe('Stack Layout', () => {
     it('should render a row layout', () => {
-        mount(
+        cy.mount(
             <Stack padding="none" spacing="none">
                 <div>1</div>
                 <div>2</div>
@@ -19,7 +18,7 @@ describe('Stack Layout', () => {
     });
 
     it('should render a column layout', () => {
-        mount(
+        cy.mount(
             <Stack direction="column" padding="none" spacing="none">
                 <div>1</div>
                 <div>2</div>
@@ -32,7 +31,7 @@ describe('Stack Layout', () => {
     });
 
     it('should render a spacing in a stack', () => {
-        mount(
+        cy.mount(
             <Stack padding="m" spacing="m">
                 <div>1</div>
                 <div>2</div>
@@ -46,7 +45,7 @@ describe('Stack Layout', () => {
     });
 
     it('should render alignment in a stack', () => {
-        mount(
+        cy.mount(
             <Stack align="start" justify="between" padding="none" spacing="none">
                 <div>1</div>
                 <div>2</div>

@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconIcon } from '@foundation/Icon';
-import { mount } from 'cypress/react';
 import React from 'react';
 import { RadioPill } from './RadioPill';
 
@@ -12,7 +11,7 @@ const RADIOPILL_ICON_CODE = 'svg[name=IconIcon16]';
 
 describe('RadioPill Component', () => {
     it('should render inactive radio pill without icon', () => {
-        mount(<RadioPill label={RADIOPILL_LABEL} active={false} />);
+        cy.mount(<RadioPill label={RADIOPILL_LABEL} active={false} />);
 
         cy.get(RADIOPILL_TEST_ID).contains(RADIOPILL_LABEL);
         cy.get(RADIOPILL_TEST_ID).get(RADIOPILL_ICON_CODE).should('not.exist');
@@ -22,7 +21,7 @@ describe('RadioPill Component', () => {
     });
 
     it('should render active radio pill without icon', () => {
-        mount(<RadioPill label={RADIOPILL_LABEL} active={true} />);
+        cy.mount(<RadioPill label={RADIOPILL_LABEL} active={true} />);
 
         cy.get(RADIOPILL_TEST_ID).contains(RADIOPILL_LABEL);
         cy.get(RADIOPILL_TEST_ID).should('have.class', 'tw-bg-black-100');
@@ -31,7 +30,7 @@ describe('RadioPill Component', () => {
     });
 
     it('should render active radio pill with icon', () => {
-        mount(<RadioPill label={RADIOPILL_LABEL} active={true} icon={RADIOPILL_ICON} />);
+        cy.mount(<RadioPill label={RADIOPILL_LABEL} active={true} icon={RADIOPILL_ICON} />);
 
         cy.get(RADIOPILL_TEST_ID).contains(RADIOPILL_LABEL);
         cy.get(RADIOPILL_TEST_ID).get(RADIOPILL_ICON_CODE).should('exist');
@@ -41,7 +40,7 @@ describe('RadioPill Component', () => {
     });
 
     it('should render inactive radio pill with icon', () => {
-        mount(<RadioPill label={RADIOPILL_LABEL} active={false} icon={RADIOPILL_ICON} />);
+        cy.mount(<RadioPill label={RADIOPILL_LABEL} active={false} icon={RADIOPILL_ICON} />);
 
         cy.get(RADIOPILL_TEST_ID).contains(RADIOPILL_LABEL);
         cy.get(RADIOPILL_TEST_ID).should('not.have.class', 'tw-bg-black-100');

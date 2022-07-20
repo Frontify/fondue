@@ -2,7 +2,6 @@
 
 import { ButtonStyle } from '@components/Button';
 import { TextInput } from '@components/TextInput/TextInput';
-import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { Flyout, FlyoutProps } from './Flyout';
 import { FlyoutFooter } from './FlyoutFooter';
@@ -48,7 +47,7 @@ describe('Flyout Component', () => {
     it('should render with header and badges', () => {
         const onCloseStub = cy.stub().as('onCloseStub');
 
-        mount(<Component badges={[{ children: 'Badge 1' }, { children: 'Badge 2' }]} onCancel={onCloseStub} />);
+        cy.mount(<Component badges={[{ children: 'Badge 1' }, { children: 'Badge 2' }]} onCancel={onCloseStub} />);
 
         cy.get(FLYOUT_TRIGGER_ID).click();
         cy.get(FIELDSET_HEADER_ID).should('contain', 'Header title');
@@ -61,7 +60,7 @@ describe('Flyout Component', () => {
         const onCloseStub = cy.stub().as('onCloseStub');
         const onClickStub = cy.stub().as('onClickStub');
 
-        mount(<Component onConfirm={onClickStub} onCancel={onCloseStub} />);
+        cy.mount(<Component onConfirm={onClickStub} onCancel={onCloseStub} />);
 
         cy.get(FLYOUT_TRIGGER_ID).click();
         cy.get(BUTTON_ID).should('have.length', 2);
@@ -69,7 +68,7 @@ describe('Flyout Component', () => {
         cy.get('@onClickStub').should('be.calledOnce');
     });
     it('should render with custom footer buttons', () => {
-        mount(<Component legacyFooter={false} />);
+        cy.mount(<Component legacyFooter={false} />);
 
         cy.get(FLYOUT_TRIGGER_ID).click();
         cy.get(BUTTON_ID).should('have.length', 2);

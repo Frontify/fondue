@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { BreadcrumbsProps } from '.';
 import { Breadcrumbs } from './Breadcrumbs';
@@ -36,14 +35,14 @@ const ChangingBreadcrumbs: FC<BreadcrumbsProps> = () => {
 
 describe('Breadcrumb component', () => {
     it('should render single item as current', () => {
-        mount(<Breadcrumbs items={[BREADCRUMB_ITEMS[0]]} />);
+        cy.mount(<Breadcrumbs items={[BREADCRUMB_ITEMS[0]]} />);
 
         cy.get(BREADCRUMB_ITEM_ID).should('have.length', 1);
         cy.get(BREADCRUMB_ITEM_ID).find('a').should('have.attr', 'aria-current', 'page');
     });
 
     it('should render the last item as current', () => {
-        mount(<Breadcrumbs items={BREADCRUMB_ITEMS} />);
+        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS} />);
 
         cy.get(BREADCRUMB_ITEM_ID).should('have.length', 3);
         cy.get(BREADCRUMB_ITEM_ID).eq(2).find('a').should('have.attr', 'aria-current', 'page');
@@ -53,7 +52,7 @@ describe('Breadcrumb component', () => {
         const onClickStub = cy.stub().as('onClickStub');
         const ITEMS_WITH_ON_CLICK = [...BREADCRUMB_ITEMS, { label: 'Some fourth label', onClick: onClickStub }];
 
-        mount(<Breadcrumbs items={ITEMS_WITH_ON_CLICK} />);
+        cy.mount(<Breadcrumbs items={ITEMS_WITH_ON_CLICK} />);
 
         cy.get('@onClickStub').should('not.be.called');
         cy.get(BREADCRUMB_ITEM_ID).last().get('button').click();
@@ -64,7 +63,7 @@ describe('Breadcrumb component', () => {
         const onClickStub = cy.stub().as('onClickStub');
         const ITEMS_WITH_ON_CLICK = [...BREADCRUMB_ITEMS, { label: 'Some fourth label', onClick: onClickStub }];
 
-        mount(<Breadcrumbs items={ITEMS_WITH_ON_CLICK} />);
+        cy.mount(<Breadcrumbs items={ITEMS_WITH_ON_CLICK} />);
 
         cy.get(BREADCRUMB_ITEM_ID).first().find('a').as('firstItem');
         cy.get(BREADCRUMB_ITEM_ID).eq(1).find('a').as('secondItem');
@@ -81,7 +80,7 @@ describe('Breadcrumb component', () => {
     });
 
     it('should be able to handle a changing number of items', () => {
-        mount(<ChangingBreadcrumbs items={BREADCRUMB_ITEMS} />);
+        cy.mount(<ChangingBreadcrumbs items={BREADCRUMB_ITEMS} />);
 
         cy.get(BREADCRUMB_ITEM_ID).should('have.length', 3);
         cy.get('[data-test-id="add-item-button"]').first().click();

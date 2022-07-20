@@ -2,7 +2,6 @@
 
 import { IconMusicNote } from '@foundation/Icon';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { mount } from 'cypress/react';
 import React from 'react';
 import { MenuItem, MenuItemProps, SelectionIndicatorIcon } from './MenuItem';
 import { MenuItemContentSize } from './MenuItemContent';
@@ -50,45 +49,45 @@ const ITEMS: MenuItemProps[] = [
 
 describe('MenuItem Component', () => {
     it('renders small item with icon', () => {
-        mount(<MenuItem {...ITEMS[0]} />);
+        cy.mount(<MenuItem {...ITEMS[0]} />);
         cy.get(MENU_ITEM_DECORATOR_ID).should('exist');
         cy.get(MENU_ITEM_CONTENT_ID).contains('Small');
         cy.get(MENU_ITEM_SUBTITLE_ID).should('not.exist');
     });
 
     it('renders small item without icon', () => {
-        mount(<MenuItem {...ITEMS[1]} />);
+        cy.mount(<MenuItem {...ITEMS[1]} />);
         cy.get(MENU_ITEM_DECORATOR_ID).should('not.exist');
         cy.get(MENU_ITEM_CONTENT_ID).contains('Small');
         cy.get(MENU_ITEM_SUBTITLE_ID).should('not.exist');
     });
 
     it('renders small active item', () => {
-        mount(<MenuItem {...ITEMS[1]} active />);
+        cy.mount(<MenuItem {...ITEMS[1]} active />);
         cy.get(MENU_ITEM_ACTIVE_ID).should('exist');
     });
 
     it('renders small item with caret indicator', () => {
-        mount(<MenuItem {...ITEMS[2]} />);
+        cy.mount(<MenuItem {...ITEMS[2]} />);
         cy.get(MENU_ITEM_CARET_ID).should('exist');
     });
 
     it('renders large item with icon', () => {
-        mount(<MenuItem {...ITEMS[3]} />);
+        cy.mount(<MenuItem {...ITEMS[3]} />);
         cy.get(MENU_ITEM_DECORATOR_ID).should('exist');
         cy.get(MENU_ITEM_TITLE_ID).contains('Large icon');
         cy.get(MENU_ITEM_SUBTITLE_ID).contains('Large icon subtitle');
     });
 
     it('renders large item without icon', () => {
-        mount(<MenuItem {...ITEMS[4]} />);
+        cy.mount(<MenuItem {...ITEMS[4]} />);
         cy.get(MENU_ITEM_DECORATOR_ID).should('not.exist');
         cy.get(MENU_ITEM_TITLE_ID).contains('Large icon');
         cy.get(MENU_ITEM_SUBTITLE_ID).contains('Large icon subtitle');
     });
 
     it('renders large item with caret indicator', () => {
-        mount(<MenuItem {...ITEMS[5]} />);
+        cy.mount(<MenuItem {...ITEMS[5]} />);
         cy.get(MENU_ITEM_CARET_ID).should('exist');
     });
 });

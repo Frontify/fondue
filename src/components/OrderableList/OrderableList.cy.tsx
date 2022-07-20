@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from 'cypress/react';
 import React from 'react';
 import { DragProperties, ItemDragState, OrderableList, OrderableListItem, OrderableListProps } from '.';
 
@@ -50,7 +49,7 @@ const OrderableListWithDefaultProps = ({
 
 describe('OrderableList Component', () => {
     it('renders correct number of list items', () => {
-        mount(<OrderableListWithDefaultProps />);
+        cy.mount(<OrderableListWithDefaultProps />);
         cy.get(LIST_ID)
             .find(DRAGGABLE_ITEM)
             .should('have.length', testItems.length)
@@ -60,7 +59,7 @@ describe('OrderableList Component', () => {
     });
 
     it('Does not crash if item list is empty', () => {
-        mount(<OrderableListWithDefaultProps items={[]} />);
+        cy.mount(<OrderableListWithDefaultProps items={[]} />);
         cy.get(LIST_ID).should('exist');
     });
 
@@ -69,7 +68,7 @@ describe('OrderableList Component', () => {
         const dataTransfer = new DataTransfer();
         const targetDropZone = 4;
 
-        mount(<OrderableListWithDefaultProps onMove={stubbedOnMove} />);
+        cy.mount(<OrderableListWithDefaultProps onMove={stubbedOnMove} />);
 
         cy.get(DRAGGABLE_ITEM).first().trigger('dragstart', { dataTransfer }).trigger('drag');
         cy.get(DROP_ZONE).eq(targetDropZone).as('fourthDropZone');
@@ -88,7 +87,7 @@ describe('OrderableList Component', () => {
     });
 
     it('Hides insertion indicator if position change is original index', () => {
-        mount(<OrderableListWithDefaultProps />);
+        cy.mount(<OrderableListWithDefaultProps />);
 
         cy.get(DRAGGABLE_ITEM).each(($el, index) => {
             const dataTransfer = new DataTransfer();
@@ -108,7 +107,7 @@ describe('OrderableList Component', () => {
             <div style={{ height: `${ITEM_HEIGHT}px` }}>{componentDragState}</div>
         );
 
-        mount(<OrderableListWithDefaultProps renderContent={renderWithDragState} />);
+        cy.mount(<OrderableListWithDefaultProps renderContent={renderWithDragState} />);
 
         cy.get(DRAGGABLE_ITEM).each(($el) => {
             const dataTransfer = new DataTransfer();
@@ -123,7 +122,7 @@ describe('OrderableList Component', () => {
     });
 
     it('Should disable drag events if dragDisabled prop is true, but maintain focus for navigation', () => {
-        mount(<OrderableListWithDefaultProps dragDisabled={true} renderContent={renderWithFocusableItems} />);
+        cy.mount(<OrderableListWithDefaultProps dragDisabled={true} renderContent={renderWithFocusableItems} />);
         cy.get(DRAGGABLE_ITEM).each(($el) => {
             const disabled = $el.attr('aria-disabled');
             expect(disabled).to.equal('true');
@@ -133,7 +132,7 @@ describe('OrderableList Component', () => {
     it('Should not allow drag into other orderable list', () => {
         const dataTransfer = new DataTransfer();
 
-        mount(
+        cy.mount(
             <>
                 <OrderableListWithDefaultProps />
                 <OrderableListWithDefaultProps />

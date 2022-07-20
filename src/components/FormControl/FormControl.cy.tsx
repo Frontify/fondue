@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from 'cypress/react';
 import React from 'react';
 import { TextInput } from '..';
 import { FormControl, FormControlDirection, HelperPosition } from './FormControl';
@@ -17,33 +16,33 @@ const LABEL_TEXT = 'Label';
 
 describe('FormControl Component', () => {
     it('should render a form control', () => {
-        mount(<FormControl>{FORM_CONTROL_CONTENT}</FormControl>);
+        cy.mount(<FormControl>{FORM_CONTROL_CONTENT}</FormControl>);
 
         cy.get(FORM_CONTROL_ID).should('be.visible').and('contain', FORM_CONTROL_CONTENT);
     });
 
     it('should render a horizontal form control', () => {
-        mount(<FormControl direction={FormControlDirection.Horizontal}>{FORM_CONTROL_CONTENT}</FormControl>);
+        cy.mount(<FormControl direction={FormControlDirection.Horizontal}>{FORM_CONTROL_CONTENT}</FormControl>);
 
         cy.get(FORM_CONTROL_ID).should('have.css', 'flex-direction', 'row');
     });
 
     it('should render a form control with an extra', () => {
         const EXTRA_TEXT = 'Extra text';
-        mount(<FormControl extra={EXTRA_TEXT}>{FORM_CONTROL_CONTENT}</FormControl>);
+        cy.mount(<FormControl extra={EXTRA_TEXT}>{FORM_CONTROL_CONTENT}</FormControl>);
 
         cy.get(FORM_CONTROL_EXTRA_ID).should('contain', EXTRA_TEXT);
     });
 
     it('should render a form control with a label', () => {
-        mount(<FormControl label={{ htmlFor: 'foo', children: LABEL_TEXT }}>{FORM_CONTROL_CONTENT}</FormControl>);
+        cy.mount(<FormControl label={{ htmlFor: 'foo', children: LABEL_TEXT }}>{FORM_CONTROL_CONTENT}</FormControl>);
 
         cy.get(FORM_CONTROL_ID).should('contain', LABEL_TEXT);
     });
 
     it('should render a helper text before the control content', () => {
         const HELPER_TEXT = 'Helper text';
-        mount(
+        cy.mount(
             <FormControl
                 helper={{
                     text: HELPER_TEXT,
@@ -66,7 +65,7 @@ describe('FormControl Component', () => {
 
     it('should render a helper text after the control content', () => {
         const HELPER_TEXT = 'Helper text';
-        mount(<FormControl helper={{ text: HELPER_TEXT }}>{FORM_CONTROL_CONTENT}</FormControl>);
+        cy.mount(<FormControl helper={{ text: HELPER_TEXT }}>{FORM_CONTROL_CONTENT}</FormControl>);
 
         cy.get(FORM_CONTROL_HELPER_TEXT_ID).should('be.visible');
         cy.get(FORM_CONTROL_ID)
@@ -78,7 +77,7 @@ describe('FormControl Component', () => {
     });
 
     it('should still forward id if label is not defined', () => {
-        mount(
+        cy.mount(
             <FormControl>
                 <TextInput id={INPUT_ID} />
             </FormControl>,
@@ -88,13 +87,13 @@ describe('FormControl Component', () => {
     });
 
     it('renders unclickable label per default', () => {
-        mount(<FormControl label={{ htmlFor: 'foo', children: LABEL_TEXT }}>{FORM_CONTROL_CONTENT}</FormControl>);
+        cy.mount(<FormControl label={{ htmlFor: 'foo', children: LABEL_TEXT }}>{FORM_CONTROL_CONTENT}</FormControl>);
         cy.get(LABEL_ID).should('not.have.class', 'hover:tw-cursor-pointer');
         cy.get(LABEL_ID).should('have.class', 'tw-pointer-events-none');
     });
 
     it('renders clickable label', () => {
-        mount(
+        cy.mount(
             <FormControl clickable={true} label={{ htmlFor: 'foo', children: LABEL_TEXT }}>
                 {FORM_CONTROL_CONTENT}
             </FormControl>,

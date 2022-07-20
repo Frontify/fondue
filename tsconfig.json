@@ -25,6 +25,6 @@
         },
         "types": ["cypress", "cypress-real-events", "vite/client"]
     },
-    "include": ["src/types", "src/**/*"],
+    "include": ["src/types", "src/**/*", "cypress/support/component.ts"],
     "exclude": ["node_modules", "dist"]
 }

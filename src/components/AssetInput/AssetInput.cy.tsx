@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from 'cypress/react';
 import React from 'react';
 import { assetInputActions } from './asset-input-actions';
 import { AssetInput, AssetInputSize } from './AssetInput';
@@ -24,7 +23,7 @@ describe('MultiAssetPreview Component', () => {
     it('renders empty asset input with placeholders', () => {
         const onLibraryClickStub = cy.stub().as('onLibraryClickStub');
         const onUploadClickStub = cy.stub().as('onUploadClickStub');
-        mount(
+        cy.mount(
             <AssetInput
                 size={AssetInputSize.Small}
                 onLibraryClick={onLibraryClickStub}
@@ -43,7 +42,7 @@ describe('MultiAssetPreview Component', () => {
     });
 
     it('renders asset input with single image', () => {
-        mount(<AssetInput size={AssetInputSize.Small} assets={[EXAMPLE_IMAGES[0]]} actions={assetInputActions} />);
+        cy.mount(<AssetInput size={AssetInputSize.Small} assets={[EXAMPLE_IMAGES[0]]} actions={assetInputActions} />);
 
         cy.get(ASSET_SINGLE_INPUT_ID).should('contain', '2000');
         cy.get(ASSET_SINGLE_INPUT_ID).should('contain', 'Upload');
@@ -53,7 +52,7 @@ describe('MultiAssetPreview Component', () => {
     });
 
     it('renders asset input with audio', () => {
-        mount(<AssetInput size={AssetInputSize.Small} assets={[MIXED_ASSETS[3]]} actions={assetInputActions} />);
+        cy.mount(<AssetInput size={AssetInputSize.Small} assets={[MIXED_ASSETS[3]]} actions={assetInputActions} />);
 
         cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_AUDIO_ID);
         cy.get(ASSET_SINGLE_INPUT_ID).should('contain', 'Foobar');
@@ -62,7 +61,7 @@ describe('MultiAssetPreview Component', () => {
 
     it('renders with three image assets', () => {
         const onMultiAssetClick = cy.stub().as('onMultiAssetClick');
-        mount(
+        cy.mount(
             <AssetInput
                 onMultiAssetClick={onMultiAssetClick}
                 numberOfLocations={12}
@@ -84,7 +83,7 @@ describe('MultiAssetPreview Component', () => {
 
     it('renders mixed assets', () => {
         const onMultiAssetClick = cy.stub().as('onMultiAssetClick');
-        mount(
+        cy.mount(
             <AssetInput
                 assets={MIXED_ASSETS}
                 onMultiAssetClick={onMultiAssetClick}
@@ -101,7 +100,7 @@ describe('MultiAssetPreview Component', () => {
     });
 
     it('displays loading animation', () => {
-        mount(<AssetInput size={AssetInputSize.Small} isLoading={true} />);
+        cy.mount(<AssetInput size={AssetInputSize.Small} isLoading={true} />);
 
         cy.get(ASSET_SINGLE_INPUT_ID).should('contain', 'Uploading').and('contain', 'Your Asset');
         cy.get(SPINNING_CIRCLE_ID).should('exist');

@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { Color, Palette } from '../../types/colors';
 import { EXAMPLE_PALETTES } from '../ColorPicker/example-palettes';
@@ -44,7 +43,7 @@ const Component: FC<Props> = ({ palettes, currentColor = null, clearable = false
 
 describe('ColorInputFlyout Component', () => {
     it('should render without initial color', () => {
-        mount(<Component palettes={EXAMPLE_PALETTES} />);
+        cy.mount(<Component palettes={EXAMPLE_PALETTES} />);
 
         cy.get(TRIGGER_ID).should('contain', 'Select color');
         cy.get(TRIGGER_ID).click();
@@ -55,7 +54,7 @@ describe('ColorInputFlyout Component', () => {
     });
 
     it('should render with initial color', () => {
-        mount(<Component currentColor={TEST_COLOR} />);
+        cy.mount(<Component currentColor={TEST_COLOR} />);
 
         cy.get(TRIGGER_ID).should('contain', TEST_COLOR_HEX).click();
         cy.get(COLOR_PREVIEW_ID).should('have.css', 'background-color', TEST_COLOR_RGB);
@@ -66,7 +65,7 @@ describe('ColorInputFlyout Component', () => {
     });
 
     it('should reset color when clearing', () => {
-        mount(<Component currentColor={TEST_COLOR} clearable={true} />);
+        cy.mount(<Component currentColor={TEST_COLOR} clearable={true} />);
 
         cy.get(CLEAR_BUTTON_ID).click();
         cy.get(TRIGGER_ID).should('contain', 'Select color');

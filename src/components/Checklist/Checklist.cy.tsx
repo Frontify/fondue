@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from '@components/Checkbox/Checkbox';
-import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { Checklist, ChecklistDirection, Columns } from './Checklist';
 
@@ -48,19 +47,19 @@ const Component: FC<{ direction: ChecklistDirection; columns?: Columns }> = ({ d
 
 describe('Checklist Component', () => {
     it('should render the Checklist horizontally', () => {
-        mount(<Component direction={ChecklistDirection.Horizontal} />);
+        cy.mount(<Component direction={ChecklistDirection.Horizontal} />);
 
         cy.get(CHECKLIST_ID).should('have.class', 'tw-flex');
     });
 
     it('should render the Checklist vertically', () => {
-        mount(<Component direction={ChecklistDirection.Vertical} />);
+        cy.mount(<Component direction={ChecklistDirection.Vertical} />);
 
         cy.get(CHECKLIST_ID).should('have.class', 'tw-grid');
     });
 
     it('should render the Checklist in two columns', () => {
-        mount(<Component direction={ChecklistDirection.Vertical} columns={2} />);
+        cy.mount(<Component direction={ChecklistDirection.Vertical} columns={2} />);
 
         cy.get(CHECKLIST_ID).should('have.class', 'tw-grid').and('have.class', 'tw-grid-cols-2');
     });

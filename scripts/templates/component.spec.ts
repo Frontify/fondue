@@ -6,14 +6,13 @@ export default (componentName: string, componentType: string): ComponentFileBuil
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from "react";
-import { mount } from "cypress/react";
 import { ${componentName} } from "./${componentName}";
 
 const ${componentName}_FOO = "bar";
 
 describe("${componentName} Component", () => {
     it("should render foo text correctly", () => {
-        mount(<${componentName} foo={${componentName}_FOO} />);
+        cy.mount(<${componentName} foo={${componentName}_FOO} />);
 
         cy.get("[data-test-id=${toKebabCase(componentName)}]").as("${componentName}");
 
@@ -21,5 +20,5 @@ describe("${componentName} Component", () => {
     });
 });
 `,
-    extension: `.spec.tsx`,
+    extension: '.cy.tsx',
 });

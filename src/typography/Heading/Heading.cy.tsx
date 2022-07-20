@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from 'cypress/react';
 import React from 'react';
 import { Heading } from './Heading';
 
@@ -22,19 +21,19 @@ const headingProps = Object.entries(classRecord).reduce((acc, [key, [value]]) =>
 
 describe('Heading', () => {
     it('should render headings as span by default', () => {
-        mount(<Heading>The fox jumps over the lazy dog</Heading>);
+        cy.mount(<Heading>The fox jumps over the lazy dog</Heading>);
 
         cy.get('[data-test-id=heading]').should((el) => el.attr('tagName') === 'SPAN');
     });
 
     it('should render headings as h1 if provided', () => {
-        mount(<Heading as="h1">The fox jumps over the lazy dog</Heading>);
+        cy.mount(<Heading as="h1">The fox jumps over the lazy dog</Heading>);
 
         cy.get('[data-test-id=heading]').should((el) => el.attr('tagName') === 'H1');
     });
 
     it('should add correct classes to element', () => {
-        mount(<Heading {...headingProps}>The fox jumps over the lazy dog</Heading>);
+        cy.mount(<Heading {...headingProps}>The fox jumps over the lazy dog</Heading>);
 
         cy.get('[data-test-id=heading]').should((el) => {
             for (const value of Object.values(classRecord)) {

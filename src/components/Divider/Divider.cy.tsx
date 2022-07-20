@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from 'cypress/react';
 import React from 'react';
 import { Divider } from './Divider';
 
@@ -10,14 +9,14 @@ const COLOR_HEX = '#4065AE';
 
 describe('Divider component', () => {
     it('renders', () => {
-        mount(<Divider />);
+        cy.mount(<Divider />);
 
         cy.get('[data-test-id=divider]').should('exist');
         cy.get('[data-test-id=divider-hr]').should('exist').and('have.css', 'border-top-color', DEFAULT_COLOR);
     });
 
     it('has the correct color code', () => {
-        mount(<Divider color={COLOR_HEX} />);
+        cy.mount(<Divider color={COLOR_HEX} />);
 
         cy.get('[data-test-id=divider-hr]').should('exist').and('have.css', 'border-top-color', COLOR_RGB);
     });

@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
-import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { ActionMenu } from './ActionMenu';
 
@@ -92,7 +91,7 @@ describe('ActionMenu Component', () => {
             })),
         }));
 
-        mount(<ActionMenu menuBlocks={menuBlocks} />);
+        cy.mount(<ActionMenu menuBlocks={menuBlocks} />);
 
         cy.get(MENU_ITEM_LIST_ID).should('have.length', 2);
         cy.get(MENU_BLOCK_DIVIDER).should('have.length', 2);
@@ -102,7 +101,7 @@ describe('ActionMenu Component', () => {
     });
 
     it('renders action menu with dynamic items', () => {
-        mount(<TestComponent />);
+        cy.mount(<TestComponent />);
 
         cy.get(MENU_ITEM_LIST_ID).should('have.length', 2);
 

@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button } from '@components/Button';
-import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { CollapsibleWrap as CollapsibleWrapComponent } from './CollapsibleWrap';
 import { CollapsibleWrapProps } from './types';
@@ -34,12 +33,12 @@ const CollapsibleWrap: FC<Partial<CollapsibleWrapProps>> = ({
 
 describe('CollapsibleWrap', () => {
     it('renders without crashing', () => {
-        mount(<CollapsibleWrap isOpen={true} />);
+        cy.mount(<CollapsibleWrap isOpen={true} />);
         cy.get(CONTENT_ID).should('exist');
     });
 
     it('renders without content visible', () => {
-        mount(<CollapsibleWrap />);
+        cy.mount(<CollapsibleWrap />);
         cy.get(CONTENT_ID).should('not.exist');
         cy.get(BUTTON_ID).click();
         cy.get(CONTENT_ID).should('be.visible');
@@ -50,12 +49,12 @@ describe('CollapsibleWrap', () => {
     });
 
     it('renders with no opacity transition', () => {
-        mount(<CollapsibleWrap isOpen={true} animateOpacity={false} />);
+        cy.mount(<CollapsibleWrap isOpen={true} animateOpacity={false} />);
         cy.get(WRAP_ID).should('have.css', 'opacity', '1');
     });
 
     it('renders with content visible and no animation', () => {
-        mount(<CollapsibleWrap preventInitialAnimation={true} isOpen={true} />);
+        cy.mount(<CollapsibleWrap preventInitialAnimation={true} isOpen={true} />);
         cy.get(CONTENT_ID).should('be.visible');
         cy.get(BUTTON_ID).click();
         cy.get(CONTENT_ID).should('not.exist');

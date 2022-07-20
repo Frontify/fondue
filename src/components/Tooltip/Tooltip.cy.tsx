@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconExclamationMarkCircle, IconIcon, IconSize } from '@foundation/Icon';
-import { mount } from 'cypress/react';
 import React from 'react';
 import { brightHeaderBackgroundColors, BrightHeaderStyle } from './BrightHeader';
 import { Tooltip, TooltipProps } from './Tooltip';
@@ -32,7 +31,7 @@ export const TooltipComponent = (args: TooltipProps) => {
 };
 
 const initTooltip = (args: TooltipProps) => {
-    mount(<TooltipComponent {...args} />);
+    cy.mount(<TooltipComponent {...args} />);
     cy.get('[data-test-id=tooltip-trigger]').as('Trigger');
     cy.get('@Trigger').trigger('mouseover');
 };

@@ -1,6 +1,5 @@
 import { DropZone, DropZoneProps } from '@components/DropZone/DropZone';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
-import { mount } from 'cypress/react';
 import React from 'react';
 import { DndProvider, useDrag } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -37,7 +36,7 @@ describe('DropZone', () => {
         const dataTransfer = new DataTransfer();
         const onDropStub = cy.stub().as('onDrop');
 
-        mount(
+        cy.mount(
             <DndProvider backend={HTML5Backend}>
                 <DraggableItem id={SOURCE_ITEM.id} sort={SOURCE_ITEM.sort} />
                 <DropZoneWithDefaultProps onDrop={onDropStub} />
@@ -54,7 +53,7 @@ describe('DropZone', () => {
         const dataTransfer = new DataTransfer();
         const onDropStub = cy.stub().as('onDrop');
 
-        mount(
+        cy.mount(
             <DndProvider backend={HTML5Backend}>
                 <DraggableItem id={DROP_ZONE_DATA.targetItem.id} sort={SOURCE_ITEM.sort} />
                 <DropZoneWithDefaultProps onDrop={onDropStub} />

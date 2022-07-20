@@ -2,7 +2,6 @@
 
 import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { IconItem, Slider, TextOrNumberItem } from './Slider';
 
@@ -42,7 +41,7 @@ const Component: FC<Props> = ({ items, disabled = false }) => {
 
 describe('Slider Component', () => {
     it('renders text items', () => {
-        mount(<Component items={TEXT_ITEMS} />);
+        cy.mount(<Component items={TEXT_ITEMS} />);
 
         cy.get(SLIDER_ID).should('be.visible');
         cy.get(TEXT_ITEM_ID).should('have.length', 3);
@@ -51,28 +50,28 @@ describe('Slider Component', () => {
         cy.get(TEXT_ITEM_ID).first().contains(TEXT_ITEMS[0].value);
     });
     it('renders number items', () => {
-        mount(<Component items={NUMBER_ITEMS} />);
+        cy.mount(<Component items={NUMBER_ITEMS} />);
 
         cy.get(NUMBER_ITEM_ID).should('have.length', 3);
         cy.get(INPUT_ID).first().should('have.attr', 'aria-label', '12');
         cy.get(NUMBER_ITEM_ID).first().contains(NUMBER_ITEMS[0].value);
     });
     it('renders icon items', () => {
-        mount(<Component items={ICON_ITEMS} />);
+        cy.mount(<Component items={ICON_ITEMS} />);
 
         cy.get(ICON_ITEM_ID).should('have.length', 3);
         cy.get(INPUT_ID).first().should('be.checked');
         cy.get(INPUT_ID).first().should('have.attr', 'aria-label', 'Text Align Left');
     });
     it('changes active item on click', () => {
-        mount(<Component items={TEXT_ITEMS} />);
+        cy.mount(<Component items={TEXT_ITEMS} />);
 
         cy.get(TEXT_ITEM_ID).last().click();
         cy.get(INPUT_ID).last().should('be.checked');
         cy.get(INPUT_ID).first().should('not.be.checked');
     });
     it('changes active item via keyboard', () => {
-        mount(<Component items={TEXT_ITEMS} />);
+        cy.mount(<Component items={TEXT_ITEMS} />);
 
         cy.window().focus();
         cy.get('body').realPress('Tab');
@@ -84,7 +83,7 @@ describe('Slider Component', () => {
         cy.get(INPUT_ID).first().should('be.checked');
     });
     it('renders disabled slider', () => {
-        mount(<Component items={TEXT_ITEMS} disabled />);
+        cy.mount(<Component items={TEXT_ITEMS} disabled />);
 
         cy.get(SLIDER_ID).should('have.attr', 'aria-disabled', 'true');
         cy.get(INPUT_ID).first().should('be.be.disabled');

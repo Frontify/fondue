@@ -3,7 +3,6 @@
 import { SelectionIndicatorIcon } from '@components/MenuItem/MenuItem';
 import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
 import { Validation, validationClassMap } from '@utilities/validation';
-import { mount } from 'cypress/react';
 import React from 'react';
 import { LinkChooser, QUERIES_STORAGE_KEY } from './LinkChooser';
 import { data } from './mock/data';
@@ -147,7 +146,7 @@ const getLinkChooserComponent = (overwriteProps?: Partial<LinkChooserProps>, ret
 
 describe('LinkChooser Component', () => {
     it('renders correctly', () => {
-        mount(getLinkChooserComponent());
+        cy.mount(getLinkChooserComponent());
 
         cy.get(LINK_CHOOSER_ID).should('be.visible');
     });
@@ -156,7 +155,7 @@ describe('LinkChooser Component', () => {
         it('renders input props Label', () => {
             const label = 'LABEL';
             const placeholder = 'PLACEHOLDER';
-            mount(getLinkChooserComponent({ label, placeholder, required: true, validation: Validation.Error }));
+            cy.mount(getLinkChooserComponent({ label, placeholder, required: true, validation: Validation.Error }));
 
             cy.get(LABEL_ID).should('contain', label);
             cy.get(REQUIRED_ID).should('have.text', '*');
@@ -165,7 +164,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('disables input and checkbox', () => {
-            mount(getLinkChooserComponent({ disabled: true }));
+            cy.mount(getLinkChooserComponent({ disabled: true }));
 
             cy.get(SEARCH_INPUT_ID).should('be.disabled');
             cy.get("input[type='checkbox']").should('be.disabled');
@@ -178,7 +177,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('displays empty results on click', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SELECT_SECTION_ID).should('not.exist');
@@ -189,7 +188,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('opens dropdown on focus and/or typing, closes on escape', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
             cy.window().focus();
             cy.get('body').realPress('Tab');
             cy.get(SEARCH_INPUT_ID).should('be.focused');
@@ -201,7 +200,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('shows loading animation and loads results', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
@@ -212,7 +211,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('selects first item', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
@@ -224,14 +223,14 @@ describe('LinkChooser Component', () => {
         });
 
         it('opens in new tab', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(`${NEW_TAB_ID} ${CHECKBOX_LABEL_ID}`).click();
             cy.get('@onOpenInNewTabChange').should('be.calledOnce');
         });
 
         it('opens preview', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
@@ -242,7 +241,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('copies to clipboard', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
@@ -253,7 +252,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('clears the search input', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
@@ -265,7 +264,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('displays a custom link', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(CUSTOM_QUERY);
@@ -276,7 +275,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('hides dropdown on blur', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(DROPDOWN_WRAPPER_ID).should('exist');
@@ -285,7 +284,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('hides dropdown on escape', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(DROPDOWN_WRAPPER_ID).should('exist');
@@ -294,7 +293,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('adds selected item to local storage', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
@@ -306,7 +305,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('interrupts the fetching phase and selects the query as custom link', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(CUSTOM_QUERY);
@@ -321,7 +320,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('adds a new custom link to local storage each time, unless matching text', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(CUSTOM_QUERY);
@@ -350,7 +349,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('resumes fetching when dropdown opens if the fetching phase was previously interrupted', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
@@ -363,7 +362,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('does not resume fetching when dropdown opens if the fetching phase was previously resolved', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
@@ -376,7 +375,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('selects existing document and reselects it on interrupt if the titles match', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
@@ -391,7 +390,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('selects existing document and does not reselect it on interrupt if the titles do not match', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
@@ -406,7 +405,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('Creates and selects a custom link if enter pressed and no item is focused, even when loading', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(CUSTOM_QUERY);
@@ -427,7 +426,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('resets selection if input is empty', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
@@ -443,7 +442,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('displays error message when fetching fails', () => {
-            mount(getLinkChooserComponent({}, true));
+            cy.mount(getLinkChooserComponent({}, true));
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
@@ -458,7 +457,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('displays recent queries on click', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(PREVIEW_ICON_ID).should('not.exist');
@@ -471,7 +470,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('replaces first item with the most recent selection', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(`${SELECT_SECTION_ID} > li`).eq(0).as('firstSelectItem');
@@ -491,7 +490,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('replaces local storage results with search results on search input change', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(data[0].title);
@@ -504,7 +503,7 @@ describe('LinkChooser Component', () => {
 
     describe('Templates section', () => {
         it('displays all templates when query is empty', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(BACK_BUTTON_ID).should('not.exist');
@@ -514,7 +513,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('shows loading animation and loads results', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(ACTION_MENU_ID).contains(TEMPLATE_TITLE).click({ waitForAnimations: true });
@@ -524,7 +523,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('searches the same query when switching from default view to templates view', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(FIRST_TEMPLATE_TITLE);
@@ -534,7 +533,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('searches the same query when switching from templates view to default view', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(ACTION_MENU_ID).contains(TEMPLATE_TITLE).click({ waitForAnimations: true });
@@ -546,7 +545,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('selects first item', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(ACTION_MENU_ID).contains(TEMPLATE_TITLE).click({ waitForAnimations: true });
@@ -559,7 +558,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('does not display a custom link', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(ACTION_MENU_ID).contains(TEMPLATE_TITLE).click({ waitForAnimations: true });
@@ -569,7 +568,7 @@ describe('LinkChooser Component', () => {
 
         it('repopulates default view with recent queries when selected', () => {
             localStorage.setItem(QUERIES_STORAGE_KEY, JSON.stringify(PREFILLED_LOCAL_STORAGE));
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SELECT_SECTION_ID)
@@ -589,7 +588,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('can be navigated to by keyboard', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
             cy.window().focus();
             cy.get('body').realPress('Tab');
             cy.get(DROPDOWN_WRAPPER_ID).should('be.visible');
@@ -626,7 +625,7 @@ describe('LinkChooser Component', () => {
 
     describe('Guidelines Section', () => {
         it('displays all guidelines when query is empty', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(BACK_BUTTON_ID).should('not.exist');
@@ -636,7 +635,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('shows loading animation and loads results', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(ACTION_MENU_ID).contains(GUIDELINE_TITLE).click({ waitForAnimations: true });
@@ -648,7 +647,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('searches the same query when switching from default view to guidelines view', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(FIRST_GUIDELINE_TITLE);
@@ -660,7 +659,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('searches the same query when switching from guidelines view to default view', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(ACTION_MENU_ID).contains(GUIDELINE_TITLE).click({ waitForAnimations: true });
@@ -674,7 +673,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('selects first item', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(ACTION_MENU_ID).contains(GUIDELINE_TITLE).click({ waitForAnimations: true });
@@ -688,7 +687,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('does not display a custom link', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(ACTION_MENU_ID).contains(GUIDELINE_TITLE).click({ waitForAnimations: true });
@@ -698,7 +697,7 @@ describe('LinkChooser Component', () => {
 
         it('repopulates default view with recent queries when selected', () => {
             localStorage.setItem(QUERIES_STORAGE_KEY, JSON.stringify(PREFILLED_LOCAL_STORAGE));
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SELECT_SECTION_ID)
@@ -718,7 +717,7 @@ describe('LinkChooser Component', () => {
         });
 
         it('can be navigated to by keyboard', () => {
-            mount(getLinkChooserComponent());
+            cy.mount(getLinkChooserComponent());
             cy.window().focus();
             cy.get('body').realPress('Tab');
             cy.get(DROPDOWN_WRAPPER_ID).should('be.visible');

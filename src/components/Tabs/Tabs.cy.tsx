@@ -4,7 +4,6 @@ import { BadgeStyle } from '@components/Badge';
 import { TabItem, TabItemProps } from '@components/Tabs/TabItem';
 import { Tabs, TabSize, TabsPaddingX } from '@components/Tabs/Tabs';
 import { IconIcon, IconSize } from '@foundation/Icon';
-import { mount } from 'cypress/react';
 import React, { useState } from 'react';
 
 const data: TabItemProps[] = [
@@ -80,7 +79,7 @@ const TabComponent = () => {
 
 describe('Tabs Component', () => {
     beforeEach('Mount Component', () => {
-        mount(<TabComponent />);
+        cy.mount(<TabComponent />);
         cy.get('[data-test-id=tabs]').as('Tabs');
     });
 

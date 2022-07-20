@@ -2,13 +2,12 @@
 
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
 import IconCross from '@foundation/Icon/Generated/IconCross';
-import { mount } from 'cypress/react';
 import React from 'react';
 import { ButtonGroup } from './ButtonGroup';
 
 describe('ButtonGroup Composition', () => {
     it('should render a button group with correct spacing for small buttons', () => {
-        mount(
+        cy.mount(
             <ButtonGroup size={ButtonSize.Small}>
                 <Button>First, Small Button</Button>
                 <Button style={ButtonStyle.Secondary}>The Second, Small Button</Button>
@@ -24,7 +23,7 @@ describe('ButtonGroup Composition', () => {
     });
 
     it('should render a button group with correct spacing for medium buttons', () => {
-        mount(
+        cy.mount(
             <ButtonGroup size={ButtonSize.Medium}>
                 <Button>First, Medium Button</Button>
                 <Button style={ButtonStyle.Secondary}>The Second, Medium Button</Button>
@@ -40,7 +39,7 @@ describe('ButtonGroup Composition', () => {
     });
 
     it('should render a button group with correct spacing for large buttons', () => {
-        mount(
+        cy.mount(
             <ButtonGroup size={ButtonSize.Large}>
                 <Button>First, Large Button</Button>
                 <Button style={ButtonStyle.Secondary}>The Second, Large Button</Button>
@@ -56,7 +55,7 @@ describe('ButtonGroup Composition', () => {
     });
 
     it("enforces the same size for all buttons according to the group's size", () => {
-        mount(
+        cy.mount(
             <ButtonGroup size={ButtonSize.Large}>
                 <Button size={ButtonSize.Small}>The First</Button>
                 <Button size={ButtonSize.Medium} style={ButtonStyle.Secondary}>

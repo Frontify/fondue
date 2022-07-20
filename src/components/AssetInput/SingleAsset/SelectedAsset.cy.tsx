@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from 'cypress/react';
 import React from 'react';
 import { assetInputActions } from '../asset-input-actions';
 import { AssetInputSize } from '../AssetInput';
@@ -13,7 +12,7 @@ const MENU_ITEM_ID = '[data-test-id=menu-item]';
 
 describe('SelectedAsset Component', () => {
     it('renders selected asset without crashing', () => {
-        mount(
+        cy.mount(
             <SelectedAsset
                 isLoading={false}
                 asset={EXAMPLE_IMAGES[0]}
@@ -25,7 +24,7 @@ describe('SelectedAsset Component', () => {
     });
 
     it('calculates the appropriate width for the flyout on resize', () => {
-        mount(
+        cy.mount(
             <div style={{ width: 0 }} id="resize-container">
                 <SelectedAsset
                     isLoading={false}
@@ -47,7 +46,7 @@ describe('SelectedAsset Component', () => {
     });
 
     it('closes on select', () => {
-        mount(
+        cy.mount(
             <SelectedAsset
                 isLoading={false}
                 asset={EXAMPLE_IMAGES[0]}

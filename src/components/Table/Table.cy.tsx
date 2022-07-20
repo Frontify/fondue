@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { Button } from '@components/Button/Button';
 import { TextInput } from '@components/TextInput/TextInput';
-import { mount } from 'cypress/react';
 import React, { useEffect, useState } from 'react';
 import { Column, Row, SelectionMode, Table } from './Table';
 
@@ -74,7 +73,7 @@ const CHECKBOX_INPUT_ID = '[data-test-id=checkbox-input]';
 
 describe('Table Component', () => {
     it('should render read only table', () => {
-        mount(<Table columns={TABLE_COLUMNS} rows={TABLE_ROWS} />);
+        cy.mount(<Table columns={TABLE_COLUMNS} rows={TABLE_ROWS} />);
 
         cy.get(TABLE_SELECT_CELL_ID).should('not.exist');
         cy.get(TABLE_COLUMN_ID).should('have.length', 3);
@@ -90,7 +89,7 @@ describe('Table Component', () => {
     });
 
     it('should render single-select table', () => {
-        mount(<Table columns={TABLE_COLUMNS} rows={TABLE_ROWS} selectionMode={SelectionMode.SingleSelect} />);
+        cy.mount(<Table columns={TABLE_COLUMNS} rows={TABLE_ROWS} selectionMode={SelectionMode.SingleSelect} />);
         cy.get(CHECKBOX_INPUT_ID).first().as('firstCheckbox');
 
         cy.get(TABLE_SELECT_CELL_ID).children(CHECKBOX_ID).should('have.length', 3);
@@ -102,7 +101,7 @@ describe('Table Component', () => {
     });
 
     it('should render multi-select table', () => {
-        mount(<Table columns={TABLE_COLUMNS} rows={TABLE_ROWS} selectionMode={SelectionMode.MultiSelect} />);
+        cy.mount(<Table columns={TABLE_COLUMNS} rows={TABLE_ROWS} selectionMode={SelectionMode.MultiSelect} />);
         cy.get(CHECKBOX_INPUT_ID).first().as('headerCheckbox');
 
         cy.get(TABLE_SELECT_CELL_ID).children(CHECKBOX_ID).should('have.length', 4);
@@ -121,7 +120,7 @@ describe('Table Component', () => {
             actions: <Button onClick={onClickStub} />,
         }));
 
-        mount(<Table columns={TABLE_COLUMNS} rows={ROWS_WITH_ACTIONS} />);
+        cy.mount(<Table columns={TABLE_COLUMNS} rows={ROWS_WITH_ACTIONS} />);
 
         cy.get(TABLE_ACTIONS_ID).should('have.length', 3);
         cy.get('@onClickStub').should('not.be.called');
@@ -130,7 +129,7 @@ describe('Table Component', () => {
     });
 
     it.only('should sort table', () => {
-        mount(<Table columns={TABLE_COLUMNS} rows={TABLE_ROWS} />);
+        cy.mount(<Table columns={TABLE_COLUMNS} rows={TABLE_ROWS} />);
 
         cy.get(TABLE_ROW_ID).first().get('td').contains('Anna');
         cy.get(TABLE_COLUMN_ID).first().click();
@@ -172,7 +171,7 @@ describe('Table Component', () => {
                 </>
             );
         };
-        mount(<WrappingFilterComponent />);
+        cy.mount(<WrappingFilterComponent />);
 
         cy.get(TABLE_ROW_ID).get('td').contains('Anna');
         cy.get(TABLE_ROW_ID).get('td').contains('Chris');

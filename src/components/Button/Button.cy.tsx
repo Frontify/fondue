@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
-import { mount } from 'cypress/react';
 import React from 'react';
 import { Button, ButtonRounding, ButtonSize, ButtonStyle } from './Button';
 
@@ -17,7 +16,7 @@ describe('Button component', () => {
         for (const size of sizes) {
             for (const solid of solids) {
                 it(`renders in ${style} ${size} and ${solid ? 'solid' : 'translucent'} with only text.`, () => {
-                    mount(
+                    cy.mount(
                         <Button style={style} size={size} solid={solid}>
                             {BUTTON_TEXT}
                         </Button>,
@@ -30,7 +29,7 @@ describe('Button component', () => {
                 it(`renders in ${style} ${size} and ${
                     solid ? 'solid' : 'translucent'
                 } and inverted with only text.`, () => {
-                    mount(
+                    cy.mount(
                         <Button style={style} size={size} solid={solid} inverted>
                             {BUTTON_TEXT}
                         </Button>,
@@ -41,7 +40,7 @@ describe('Button component', () => {
                 });
 
                 it(`renders in ${style} ${size} and ${solid ? 'solid' : 'translucent'} with only an icon.`, () => {
-                    mount(<Button style={style} size={size} solid={solid} icon={<IconIcon />} />);
+                    cy.mount(<Button style={style} size={size} solid={solid} icon={<IconIcon />} />);
 
                     cy.get(BUTTON_ID).find('svg').should('be.visible');
                     cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
@@ -50,7 +49,7 @@ describe('Button component', () => {
                 it(`renders in ${style} ${size} and ${
                     solid ? 'solid' : 'translucent'
                 } with only an icon and fully rounded.`, () => {
-                    mount(
+                    cy.mount(
                         <Button
                             style={style}
                             size={size}
@@ -66,7 +65,7 @@ describe('Button component', () => {
                 });
 
                 it(`renders in ${style} ${size} and ${solid ? 'solid' : 'translucent'} with an icon and text.`, () => {
-                    mount(
+                    cy.mount(
                         <Button style={style} size={size} solid={solid} icon={<IconIcon />}>
                             {BUTTON_TEXT}
                         </Button>,
@@ -85,7 +84,7 @@ describe('Button component', () => {
     it('reacts on click', () => {
         const onClickStub = cy.stub().as('onClickStub');
 
-        mount(<Button onClick={onClickStub}>{BUTTON_TEXT}</Button>);
+        cy.mount(<Button onClick={onClickStub}>{BUTTON_TEXT}</Button>);
 
         cy.get('@onClickStub').should('not.be.called');
         cy.get(BUTTON_ID).click();
@@ -93,7 +92,7 @@ describe('Button component', () => {
     });
 
     it('does not react on click when disabled', () => {
-        mount(<Button disabled>{BUTTON_TEXT}</Button>);
+        cy.mount(<Button disabled>{BUTTON_TEXT}</Button>);
         cy.get(BUTTON_ID).invoke('attr', 'disabled').should('eq', 'disabled');
     });
 });

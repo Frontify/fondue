@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { MultiSelect } from './MultiSelect';
 
@@ -47,19 +46,19 @@ const Component: FC = () => {
 
 describe('MultiSelect Component', () => {
     it('renders with initial active items', () => {
-        mount(<Component />);
+        cy.mount(<Component />);
 
         cy.get(TAG_ID).should('have.length', 2);
         cy.get(TAG_ID).should('contain', 'Short tag').and('contain', 'Tag 74');
     });
     it('opens dropdown select list on click', () => {
-        mount(<Component />);
+        cy.mount(<Component />);
 
         cy.get(TRIGGER_ID).click();
         cy.get(CHECKLIST_ID).should('be.visible');
     });
     it('changes selection on click', () => {
-        mount(<Component />);
+        cy.mount(<Component />);
         cy.get(TRIGGER_ID).click();
 
         cy.get(CHECKBOX_ID).first().click();

@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
-import { mount } from 'cypress/react';
 import React, { FC, useState } from 'react';
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from './RichTextEditor';
 import { DesignTokens } from './types';
@@ -114,20 +113,20 @@ const RichTextWithChangeDesignTokensButton: FC = () => {
 
 describe('RichTextEditor Component', () => {
     it('should render an empty rich text editor', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         cy.get(RICH_TEXT_EDITOR).should('be.visible');
     });
 
     it('should render a raw content state', () => {
         const text = 'This is some text that you can not edit';
-        mount(<RichTextEditor value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text }] }])} />);
+        cy.mount(<RichTextEditor value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text }] }])} />);
 
         cy.get(RICH_TEXT_EDITOR).should('contain.text', text);
     });
 
     it('should render a raw html content state', () => {
-        mount(<RichTextEditor value={'<b>this is bold</b> and <i>this italic</i>'} />);
+        cy.mount(<RichTextEditor value={'<b>this is bold</b> and <i>this italic</i>'} />);
 
         cy.get(RICH_TEXT_EDITOR).should('contain.text', 'this is bold and this italic');
         cy.get('[contenteditable=true]').should('include.html', 'tw-font-bold');
@@ -135,32 +134,32 @@ describe('RichTextEditor Component', () => {
     });
 
     it('should be editable by default ', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         cy.get('[contenteditable=true]').should('exist');
     });
 
     it('should not the able to edit when readonly ', () => {
-        mount(<RichTextEditor readonly />);
+        cy.mount(<RichTextEditor readonly />);
 
         cy.get('[contenteditable=false]').should('exist');
     });
 
     it('should type and insert text', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         cy.get('[contenteditable=true]').click().type('hello');
     });
 
     it('should display toolbar when selecting inserted text', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
     });
 
     it('should close toolbar on blur', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get('[contenteditable=true]').blur();
@@ -169,7 +168,7 @@ describe('RichTextEditor Component', () => {
 
     it('renders a toolbar with custom controls', () => {
         const actions = [[EditorActions.LINK], [EditorActions.ITALIC, EditorActions.BOLD], [EditorActions.LINK]];
-        mount(<RichTextEditor actions={actions} />);
+        cy.mount(<RichTextEditor actions={actions} />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -180,7 +179,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders a bold text', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -189,7 +188,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders italic', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -198,7 +197,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders underline', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -207,7 +206,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders strikethrough', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -216,7 +215,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders code', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -228,7 +227,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders an unordered list', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -237,7 +236,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders an ordered list', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -246,7 +245,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders a right aligned text', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -255,7 +254,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders a heading', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -265,7 +264,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders a custom font', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -279,7 +278,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders a passed font style', () => {
-        mount(
+        cy.mount(
             <RichTextEditor
                 designTokens={{
                     custom1: {
@@ -297,7 +296,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('change a passed font style', () => {
-        mount(<RichTextWithChangeDesignTokensButton />);
+        cy.mount(<RichTextWithChangeDesignTokensButton />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -313,7 +312,7 @@ describe('RichTextEditor Component', () => {
     it('renders multiple editors', () => {
         const text1 = 'editor one content';
         const text2 = 'editor two content';
-        mount(
+        cy.mount(
             <>
                 <RichTextEditor id="one" value={text1} />
                 <RichTextEditor id="two" value={text2} />
@@ -325,7 +324,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders a checkbox and checks it', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -334,7 +333,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('switches between checkbox and lists', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
@@ -366,7 +365,7 @@ describe('RichTextEditor Component', () => {
 
     it('emits onTextChange when choosing an inline style', () => {
         const onTextChange = cy.stub();
-        mount(<RichTextEditor onTextChange={onTextChange} />);
+        cy.mount(<RichTextEditor onTextChange={onTextChange} />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -382,7 +381,7 @@ describe('RichTextEditor Component', () => {
 
     it('emits onTextChange when choosing a block style', () => {
         const onTextChange = cy.stub();
-        mount(<RichTextEditor onTextChange={onTextChange} />);
+        cy.mount(<RichTextEditor onTextChange={onTextChange} />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
@@ -399,7 +398,7 @@ describe('RichTextEditor Component', () => {
     it('emits onBlur with the correct value', () => {
         const onBlur = cy.spy();
         const content = 'hello world';
-        mount(<RichTextEditor onBlur={onBlur} />);
+        cy.mount(<RichTextEditor onBlur={onBlur} />);
 
         cy.get('[contenteditable=true]')
             .click()
@@ -414,7 +413,9 @@ describe('RichTextEditor Component', () => {
 
     it('should clear editor content', () => {
         const text = 'This is some text';
-        mount(<RichTextWithClearButton value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text }] }])} />);
+        cy.mount(
+            <RichTextWithClearButton value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text }] }])} />,
+        );
 
         cy.get(RICH_TEXT_EDITOR).should('contain.text', text);
         cy.get('[data-test-id=clear-button]').click();
@@ -424,7 +425,7 @@ describe('RichTextEditor Component', () => {
     it('should render with link', () => {
         const link = 'https://smartive.ch';
         const text = 'This is a link';
-        mount(<RichTextWithLink link={link} text={text} />);
+        cy.mount(<RichTextWithLink link={link} text={text} />);
 
         cy.get('[contenteditable=true] a').should('contain.text', text);
         cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
@@ -433,7 +434,7 @@ describe('RichTextEditor Component', () => {
 
     it('should open link chooser flyout and link', () => {
         const link = 'https://smartive.ch';
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
         cy.get(TOOLBAR_GROUP_1).children().eq(4).click();
@@ -451,7 +452,7 @@ describe('RichTextEditor Component', () => {
     it('should open preview link and link chooser flyout', () => {
         const link = 'https://smartive.ch';
         const text = 'This is a link';
-        mount(<RichTextWithLink link={link} text={text} />);
+        cy.mount(<RichTextWithLink link={link} text={text} />);
         cy.get(PREVIEW_LINK_FLYOUT).should('not.exist');
         cy.get(LINK_CHOOSER_FLYOUT).should('not.exist');
         cy.get(EDIT_LINK_BUTTON).should('not.exist');
@@ -474,7 +475,7 @@ describe('RichTextEditor Component', () => {
         const text = 'This is a link';
         const additionalText = ' to the team of smartive';
         const additionalLink = '/team';
-        mount(<RichTextWithLink link={link} text={text} />);
+        cy.mount(<RichTextWithLink link={link} text={text} />);
         cy.get('[contenteditable=true] a').click();
         cy.get(EDIT_LINK_BUTTON).click();
 
@@ -491,7 +492,7 @@ describe('RichTextEditor Component', () => {
     it('should remove link', () => {
         const link = 'https://smartive.ch';
         const text = 'This is a link';
-        mount(<RichTextWithLink link={link} text={text} />);
+        cy.mount(<RichTextWithLink link={link} text={text} />);
         cy.get('[contenteditable=true] a').click();
         cy.get(REMOVE_LINK_BUTTON).click();
 
@@ -502,7 +503,7 @@ describe('RichTextEditor Component', () => {
     it('should render with legacy link', () => {
         const url = 'https://frontify.ch';
         const text = 'This is a link';
-        mount(<RichTextWithLegacyLink url={url} text={text} />);
+        cy.mount(<RichTextWithLegacyLink url={url} text={text} />);
 
         cy.get('[contenteditable=true] a').should('contain.text', text);
         cy.get('[contenteditable=true] a').should('have.attr', 'href', url);
@@ -511,7 +512,7 @@ describe('RichTextEditor Component', () => {
     it('should remove legacy link', () => {
         const url = 'https://frontify.ch';
         const text = 'This is a link';
-        mount(<RichTextWithLegacyLink url={url} text={text} />);
+        cy.mount(<RichTextWithLegacyLink url={url} text={text} />);
 
         cy.get('[contenteditable=true] a').click();
         cy.get(REMOVE_LINK_BUTTON).click();
@@ -521,7 +522,7 @@ describe('RichTextEditor Component', () => {
     });
 
     it('renders toolbar responsively', () => {
-        mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor />);
         insertTextAndOpenToolbar();
 
         cy.viewport(1200, 1200);

@@ -3,7 +3,6 @@
 import { IconIcon } from '@foundation/Icon';
 import { PatternDesign, PatternTheme } from '@foundation/Pattern';
 import { OverlayProvider } from '@react-aria/overlays';
-import { mount } from 'cypress/react';
 import React from 'react';
 import { Modal } from './Modal';
 import { ModalHeader } from './ModalHeader';
@@ -20,7 +19,7 @@ const SCROLL_WRAPPER_CONTAINER = '[data-test-id=scroll-wrapper]';
 
 describe('Modal Component', () => {
     it('should render an empty modal', () => {
-        mount(
+        cy.mount(
             <OverlayProvider>
                 <Modal isOpen={true} />
             </OverlayProvider>,
@@ -34,7 +33,7 @@ describe('Modal Component', () => {
     });
 
     it('should render the modal with a visual', () => {
-        mount(
+        cy.mount(
             <OverlayProvider>
                 <Modal
                     isOpen={true}
@@ -54,7 +53,7 @@ describe('Modal Component', () => {
         const title = 'Modal header';
         const leadText = 'The Home for Brand Management';
 
-        mount(
+        cy.mount(
             <OverlayProvider>
                 <Modal isOpen={true}>
                     <ModalHeader
@@ -75,7 +74,7 @@ describe('Modal Component', () => {
     });
 
     it('should render the modal with a body and implement the ScrollWrapper component', () => {
-        mount(
+        cy.mount(
             <OverlayProvider>
                 <Modal isOpen={true}>
                     <Modal.Body>
