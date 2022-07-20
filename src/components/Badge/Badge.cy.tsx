@@ -123,7 +123,7 @@ describe('Badge component', () => {
     });
 
     it('should display all text on hover', () => {
-        mount(
+        cy.mount(
             <Badge icon={<IconDocumentText />}>
                 <span>
                     {BADGE_TEXT}_1_
