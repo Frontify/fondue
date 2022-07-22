@@ -6,6 +6,8 @@ import React, { FC, useState } from 'react';
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from './RichTextEditor';
 import { DesignTokens } from './types';
 import { EditorActions } from './utils/actions';
+import { value } from './utils/exampleValues';
+import { toPlaintext } from './utils/plaintext';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
 const TOOLBAR = '[data-test-id=toolbar]';
@@ -437,7 +439,8 @@ describe('RichTextEditor Component', () => {
         cy.get(TOOLBAR_GROUP_1).children().eq(4).click();
         cy.get(LINK_CHOOSER_FLYOUT).should('exist');
         cy.get(BUTTON).eq(1).should('be.disabled');
-        cy.get('[type=text]').click().type(link);
+        cy.get('[type=text]').eq(0).should('have.attr', 'value', 'hello');
+        cy.get('[type=text]').eq(1).click().type(link);
         cy.get(BUTTON).eq(1).should('not.be.disabled');
         cy.get(LINK_CHOOSER_CHECKBOX).click();
         cy.get(BUTTON).eq(1).click();
@@ -461,23 +464,27 @@ describe('RichTextEditor Component', () => {
         cy.get(EDIT_LINK_BUTTON).click();
         cy.get(LINK_CHOOSER_FLYOUT).should('exist');
 
-        cy.get('[type=text]').should('have.attr', 'value', link);
+        cy.get('[type=text]').eq(0).should('have.attr', 'value', text);
+        cy.get('[type=text]').eq(1).should('have.attr', 'value', link);
         cy.get('[type=checkbox]').should('be.checked');
     });
 
     it('should edit link', () => {
         const link = 'https://smartive.ch';
         const text = 'This is a link';
-        const additionalText = 'hello';
+        const additionalText = ' to the team of smartive';
+        const additionalLink = '/team';
         mount(<RichTextWithLink link={link} text={text} />);
         cy.get('[contenteditable=true] a').click();
         cy.get(EDIT_LINK_BUTTON).click();
 
-        cy.get('[type=text]').click().type(additionalText);
+        cy.get('[type=text]').eq(0).click().type(additionalText);
+        cy.get('[type=text]').eq(1).click().type(additionalLink);
         cy.get(LINK_CHOOSER_CHECKBOX).click();
 
         cy.get(BUTTON).eq(1).click();
-        cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalText);
+        cy.get('[contenteditable=true] a').should('contain', text + additionalText);
+        cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
         cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
     });
 
@@ -523,5 +530,11 @@ describe('RichTextEditor Component', () => {
         cy.get(TOOLBAR).children().should('have.length', 2);
         cy.viewport(320, 480);
         cy.get(TOOLBAR).children().should('have.length', 3);
+    });
+
+    it('should convert rich text editor format to plaintext', () => {
+        expect(toPlaintext(JSON.stringify(value))).to.be.eq(
+            'This text is bold.\nThis text is italic.\nThis text has an underline.\nThis text has a strikethrough.\nThis text is a code line.\nLorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\nThis is list item number one.\nThis is list item number two.\nThis is list item number three.\nThis is child item number one.\nThis is child item number two, with more children.\nThis is child of child item number one.\nThis is child of child item number two.\nThis comes first.\nThis comes second.\nAnd last but not least, this comes third.\nThis is a Link.\nThis is also a Link.\nThis is a checked checklist item.\nThis is an unchecked checklist item.\nThis is checked again.\nHeading 1\nHeading 2\nHeading 3\nHeading 4\nCustom 1\nCustom 2',
+        );
     });
 });

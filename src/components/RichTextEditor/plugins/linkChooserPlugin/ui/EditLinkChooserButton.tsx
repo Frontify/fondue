@@ -1,7 +1,8 @@
-import { ToolbarButton, ToolbarButtonProps, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
+import { someNode, ToolbarButton, ToolbarButtonProps, useEventPlateId, usePlateEditorState } from '@udecode/plate';
 import React, { MutableRefObject, useState } from 'react';
 import { IconLink, IconSize } from '../../../../..';
 import { ELEMENT_CHECK_ITEM } from '../../checkboxListPlugin/createCheckboxListPlugin';
+import { LINK_CHANGE_CANCELED, LINK_CHANGE_CONFIRMED } from '../events';
 import { getAndUpsertLink } from '../transforms/getAndUpsertLink';
 import { ChosenLink } from '../types';
 import { LinkChooserFlyout } from './LinkChooserFlyout';
@@ -16,16 +17,15 @@ export const EditLinkChooserButton = ({ id, styles, classNames }: Omit<ToolbarBu
         openInNewTab: false,
     });
 
-    const getLinkFromLinkChooser = (prevChosenLink: ChosenLink): Promise<ChosenLink> => {
+    const getLinkFromLinkChooser = (prevChosenLink: ChosenLink): Promise<ChosenLink | void> => {
         setChosenLink(prevChosenLink);
-        setTimeout(() => {
-            setIsFlyoutOpen(true);
-        }, 100);
+        setIsFlyoutOpen(true);
 
-        return new Promise<ChosenLink>((resolve) => {
-            document.addEventListener('linkChangeConfirmed', (event: any) => {
+        return new Promise<ChosenLink | void>((resolve) => {
+            document.addEventListener(LINK_CHANGE_CONFIRMED, (event: any) => {
                 resolve(event.detail.chosenLink);
             });
+            document.addEventListener(LINK_CHANGE_CANCELED, () => resolve());
         });
     };
 

@@ -122,4 +122,20 @@ describe('Badge component', () => {
 
         cy.get(BADGE_STATUS_ID).should('have.css', 'backgroundColor', DOT_COLOR);
     });
+
+    it('should display all text on hover', () => {
+        mount(
+            <Badge icon={<IconDocumentText />}>
+                <span>
+                    {BADGE_TEXT}_1_
+                    <span>
+                        {BADGE_TEXT}_2_
+                        <span>{BADGE_TEXT}</span>
+                    </span>
+                </span>
+            </Badge>,
+        );
+
+        cy.get(BADGE_ID).invoke('attr', 'title').should('equal', `${BADGE_TEXT}_1_${BADGE_TEXT}_2_${BADGE_TEXT}`);
+    });
 });

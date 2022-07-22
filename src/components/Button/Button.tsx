@@ -1,99 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from '@foundation/Icon/IconSize';
+import React, { ForwardRefRenderFunction, MouseEvent, ReactElement, ReactNode, cloneElement, forwardRef } from 'react';
+
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
+
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
-import React, {
-    ForwardRefRenderFunction,
-    MouseEvent,
-    ReactElement,
-    ReactNode,
-    cloneElement,
-    forwardRef,
-    useCallback,
-} from 'react';
 
-export enum ButtonStyle {
-    Secondary = 'Secondary',
-    Primary = 'Primary',
-    Danger = 'Danger',
-    Positive = 'Positive',
-}
+import { IconSize } from '@foundation/Icon/IconSize';
+import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
+import {
+    ButtonCommonClasses,
+    ButtonDisabledClasses,
+    ButtonRoundingClasses,
+    ButtonSizeClasses,
+    ButtonStyleClasses,
+    IconSpacingClasses,
+} from './ButtonClasses';
 
-export enum ButtonSize {
-    Small = 'Small',
-    Medium = 'Medium',
-    Large = 'Large',
-}
-
-export enum ButtonType {
-    Button = 'Button',
-    Submit = 'Submit',
-    Reset = 'Reset',
-}
-
-export enum ButtonRounding {
-    Medium = 'Medium',
-    Full = 'Full',
-}
-
-const sizeClasses: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: 'tw-px-3 tw-h-6 tw-text-xs',
-    [ButtonSize.Medium]: 'tw-px-4 tw-h-9 tw-text-s',
-    [ButtonSize.Large]: 'tw-px-6 tw-h-12 tw-text-m',
-};
-
-const iconOnlySizeClasses: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: 'tw-p-1',
-    [ButtonSize.Medium]: 'tw-p-2',
-    [ButtonSize.Large]: 'tw-p-3',
-};
-
-const iconOnlyFullRoundingSizeClasses: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: 'tw-p-0.5',
-    [ButtonSize.Medium]: 'tw-p-1',
-    [ButtonSize.Large]: 'tw-p-2',
-};
-
-const iconSpacing: Record<ButtonSize, string> = {
-    [ButtonSize.Small]: 'tw--ml-0.5 tw-mr-1',
-    [ButtonSize.Medium]: 'tw--ml-1 tw-mr-1.5',
-    [ButtonSize.Large]: 'tw--ml-1 tw-mr-2',
-};
-
-const styles: Record<'solid' | 'translucent' | 'inverted', Record<ButtonStyle, string>> = {
-    solid: {
-        [ButtonStyle.Primary]:
-            'tw-text-white tw-bg-black-90 hover:tw-bg-black-100 active:tw-bg-black-superdark dark:tw-text-black dark:tw-bg-white dark:hover:tw-bg-black-10 dark:active:tw-bg-black-20',
-        [ButtonStyle.Secondary]:
-            'tw-text-black tw-bg-black-10 hover:tw-bg-black-20 active:tw-bg-black-30 dark:tw-text-white dark:tw-bg-black-80 dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark',
-        [ButtonStyle.Danger]: 'tw-text-black tw-bg-red-50 hover:tw-bg-red-65 active:tw-bg-red-70',
-        [ButtonStyle.Positive]:
-            'tw-text-black tw-bg-green-60 hover:tw-bg-green-70 active:tw-bg-green-75 dark:active:tw-bg-green-90',
-    },
-    inverted: {
-        [ButtonStyle.Primary]:
-            'tw-text-black tw-bg-white hover:tw-bg-black-10 active:tw-bg-black-20 dark:tw-text-white dark:tw-bg-black-90 dark:hover:tw-bg-black-100 dark:active:tw-bg-black-superdark',
-        [ButtonStyle.Secondary]:
-            'tw-text-white tw-bg-black-80 hover:tw-bg-black-95 active:tw-bg-black-superdark dark:tw-text-black dark:tw-bg-black-10 dark:hover:tw-bg-black-20 dark:active:tw-bg-black-30',
-        [ButtonStyle.Danger]: 'tw-text-black tw-bg-red-50 hover:tw-bg-red-65 active:tw-bg-red-70',
-        [ButtonStyle.Positive]:
-            'tw-text-black tw-bg-green-60 hover:tw-bg-green-70 active:tw-bg-green-75 dark:active:tw-bg-green-90',
-    },
-    translucent: {
-        [ButtonStyle.Primary]: 'tw-text-white tw-bg-black-90 hover:tw-bg-black-100 active:tw-bg-black-superdark',
-        [ButtonStyle.Secondary]:
-            'tw-text-black-80 tw-bg-transparent hover:tw-bg-black-10 hover:tw-text-black active:tw-bg-black-20 active:tw-text-black dark:tw-text-white dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark dark:hover:tw-text-white',
-        [ButtonStyle.Danger]:
-            'tw-text-red-65 tw-bg-transparent hover:tw-bg-black-10 active:tw-bg-black-20 dark:tw-text-red-50 dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark',
-        [ButtonStyle.Positive]:
-            'tw-text-green-75 tw-bg-transparent hover:tw-bg-black-10 active:tw-bg-black-20 dark:tw-text-green-60 dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark',
-    },
-};
+export * from './ButtonTypes';
 
 const iconSizes: Record<ButtonSize, IconSize> = {
     [ButtonSize.Small]: IconSize.Size16,
@@ -110,10 +38,11 @@ const typesMap: Record<ButtonType, 'button' | 'submit' | 'reset'> = {
 export type ButtonProps = {
     type?: ButtonType;
     style?: ButtonStyle;
+    emphasis?: ButtonEmphasis;
+    hideLabel?: boolean;
     size?: ButtonSize;
     rounding?: ButtonRounding;
     solid?: boolean;
-    inverted?: boolean;
     disabled?: boolean;
     icon?: ReactElement;
     children?: ReactNode;
@@ -126,11 +55,12 @@ export type ButtonProps = {
 const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, ButtonProps> = (
     {
         type = ButtonType.Button,
-        style = ButtonStyle.Primary,
+        style = ButtonStyle.Default,
         size = ButtonSize.Medium,
         rounding = ButtonRounding.Medium,
+        emphasis = style === ButtonStyle.Danger ? ButtonEmphasis.Strong : ButtonEmphasis.Default,
+        hideLabel = false,
         solid = true,
-        inverted = false,
         disabled = false,
         icon,
         children,
@@ -141,7 +71,6 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     },
     externalRef,
 ) => {
-    const wrap = (child: ReactNode) => (children ? <span className={iconSpacing[size]}>{child}</span> : child);
     const { isFocusVisible, focusProps } = useFocusRing();
     const ref = useForwardedRef<HTMLButtonElement | null>(externalRef);
     const { buttonProps } = useButton(
@@ -149,42 +78,72 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         ref,
     );
 
-    const getButtonTheme = useCallback(() => {
-        if (inverted) {
-            return 'inverted';
+    const getButtonStyleClasses = () => {
+        if (!solid) {
+            emphasis = ButtonEmphasis.Weak;
+        }
+        return ButtonStyleClasses[emphasis][style];
+    };
+
+    const setStylingClass = (kind: string) => {
+        if (!disabled) {
+            const buttonClass = getButtonStyleClasses();
+            switch (kind) {
+                case 'button':
+                    if (isFocusVisible) {
+                        return buttonClass && FOCUS_STYLE;
+                    } else {
+                        return buttonClass.button;
+                    }
+                case 'icon':
+                    return buttonClass.icon;
+                case 'text':
+                    return buttonClass.text;
+            }
         }
 
-        return solid ? 'solid' : 'translucent';
-    }, [solid, inverted]);
+        if (disabled) {
+            return merge([
+                ButtonDisabledClasses.common,
+                !solid ? ButtonDisabledClasses.weak : ButtonDisabledClasses.default,
+            ]);
+        }
+    };
+
+    const buttonClassName = merge([
+        ButtonCommonClasses,
+        rounding === ButtonRounding.Full ? ButtonRoundingClasses.Full : ButtonRoundingClasses.Medium,
+        (icon && !children) || hideLabel ? ButtonSizeClasses[size].iconOnly : ButtonSizeClasses[size].default,
+        !hugWidth && 'tw-w-full',
+        setStylingClass('button'),
+    ]);
 
     return (
         <button
             {...mergeProps(buttonProps, focusProps)}
             aria-label={ariaLabel}
             ref={ref}
-            className={merge([
-                'tw-outline-none tw-relative tw-flex tw-items-center tw-justify-center tw-border-0 tw-cursor-pointer tw-font-sans tw-transition-colors',
-                rounding === ButtonRounding.Full
-                    ? `tw-rounded-full ${iconOnlyFullRoundingSizeClasses[size]}`
-                    : 'tw-rounded',
-                rounding === ButtonRounding.Medium &&
-                    (icon && !children ? iconOnlySizeClasses[size] : sizeClasses[size]),
-                merge(
-                    disabled
-                        ? [
-                              'tw-not-allowed tw-pointer-events-none tw-text-black-40 dark:tw-text-black-60',
-                              solid ? 'tw-bg-black-5 dark:tw-bg-black-90' : 'tw-bg-transparent',
-                          ]
-                        : [isFocusVisible && FOCUS_STYLE, styles[getButtonTheme()][style]],
-                ),
-                !hugWidth && 'tw-w-full',
-            ])}
+            className={buttonClassName}
             disabled={disabled}
             data-test-id="button"
             form={formId}
         >
-            {icon && wrap(cloneElement(icon, { size: iconSizes[size] }))}
-            {children}
+            {icon && (
+                <span
+                    data-test-id="button-icon"
+                    className={merge([children && !hideLabel ? IconSpacingClasses[size] : '', setStylingClass('icon')])}
+                >
+                    {cloneElement(icon, { size: iconSizes[size] })}
+                </span>
+            )}
+            {children && (
+                <span
+                    data-test-id="button-text"
+                    className={merge([setStylingClass('text'), hideLabel && 'tw-sr-only'])}
+                >
+                    {children}
+                </span>
+            )}
         </button>
     );
 };
