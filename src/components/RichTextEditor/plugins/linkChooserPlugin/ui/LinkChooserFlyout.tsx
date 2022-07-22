@@ -5,6 +5,7 @@ import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
 import { IconCheckMark } from '@foundation/Icon';
 import React, { HTMLAttributes, MutableRefObject, ReactNode } from 'react';
+import { LINK_CHANGE_CANCELED, LINK_CHANGE_CONFIRMED } from '../events';
 import { ChosenLink } from '../types';
 
 type LinkChooserFlyoutProps = {
@@ -29,15 +30,19 @@ export const LinkChooserFlyout = ({
     trigger,
 }: LinkChooserFlyoutProps) => {
     const onConfirm = () => {
-        document.dispatchEvent(new CustomEvent('linkChangeConfirmed', { detail: { chosenLink } }));
+        document.dispatchEvent(new CustomEvent(LINK_CHANGE_CONFIRMED, { detail: { chosenLink } }));
+        setIsFlyoutOpen(false);
+    };
+
+    const onCancel = () => {
+        document.dispatchEvent(new CustomEvent(LINK_CHANGE_CANCELED));
         setIsFlyoutOpen(false);
     };
 
     return (
         <Flyout
             isOpen={isFlyoutOpen}
-            onOpenChange={setIsFlyoutOpen}
-            onCancel={() => setIsFlyoutOpen(false)}
+            onOpenChange={(open: boolean) => open && onCancel()}
             onConfirm={onConfirm}
             trigger={trigger}
             legacyFooter={false}
@@ -48,14 +53,14 @@ export const LinkChooserFlyout = ({
                         {
                             children: 'Cancel',
                             style: ButtonStyle.Secondary,
-                            onClick: () => setIsFlyoutOpen(false),
+                            onClick: () => onCancel(),
                         },
                         {
                             children: 'Save',
                             onClick: onConfirm,
                             style: ButtonStyle.Primary,
                             icon: <IconCheckMark />,
-                            disabled: !chosenLink.searchResult,
+                            disabled: !chosenLink.searchResult?.link || !chosenLink.searchResult?.title,
                         },
                     ]}
                 />
@@ -71,6 +76,32 @@ export const LinkChooserFlyout = ({
                 data-test-id={'link-chooser-flyout'}
             >
                 {/* Todo: Until we have moved the search logic, a 'simple link chooser' is rendered instead of the real link chooser */}
+
+                <FormControl
+                    label={{
+                        children: 'Text',
+                        htmlFor: 'linkText',
+                        required: true,
+                    }}
+                >
+                    <TextInput
+                        required={true}
+                        id={'linkText'}
+                        placeholder="Link Text"
+                        value={chosenLink.searchResult?.title}
+                        onChange={(value) => {
+                            setChosenLink({
+                                searchResult: {
+                                    id: value,
+                                    title: value,
+                                    link: chosenLink.searchResult?.link ?? '',
+                                    icon: 'LINK',
+                                },
+                                openInNewTab: chosenLink.openInNewTab,
+                            });
+                        }}
+                    />
+                </FormControl>
                 <FormControl
                     label={{
                         children: 'URL',
@@ -85,14 +116,12 @@ export const LinkChooserFlyout = ({
                         value={chosenLink.searchResult?.link}
                         onChange={(value) => {
                             setChosenLink({
-                                searchResult: value
-                                    ? {
-                                          id: value,
-                                          title: value,
-                                          link: value,
-                                          icon: 'LINK',
-                                      }
-                                    : null,
+                                searchResult: {
+                                    id: value,
+                                    title: chosenLink.searchResult?.title ?? '',
+                                    link: value,
+                                    icon: 'LINK',
+                                },
                                 openInNewTab: chosenLink.openInNewTab,
                             });
                         }}

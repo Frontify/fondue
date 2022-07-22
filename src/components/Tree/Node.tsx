@@ -15,7 +15,7 @@ export type RenderNodeArrayData = Omit<NodeProps, 'isFirst' | 'strong' | 'node'>
 export const renderNodeArray = ({
     nodes,
     activeIds,
-    treeName,
+    treeId,
     onClick,
     onDrop,
     onEditableSave,
@@ -32,7 +32,7 @@ export const renderNodeArray = ({
             onDrop={onDrop}
             onEditableSave={onEditableSave}
             parentIds={parentIds}
-            treeName={treeName}
+            treeId={treeId}
         />
     ));
 
@@ -48,7 +48,7 @@ type NodeProps = {
     parentIds?: string[];
     onClick: (id: NullableString) => void;
     isFirst: boolean;
-    treeName: string;
+    treeId: string;
     onDrop?: OnDropCallback<TreeNodeItem>;
     onEditableSave?: (targetItemId: string, value: string) => void;
 };
@@ -62,7 +62,7 @@ export const Node = ({
     isFirst,
     onDrop,
     onEditableSave,
-    treeName,
+    treeId,
 }: NodeProps): ReactElement<NodeProps> => {
     const { id, value, name, label, icon, nodes, actions, editable, badge } = node;
     const [{ opacity }, drag] = useDrag({
@@ -70,7 +70,7 @@ export const Node = ({
         collect: (monitor) => ({
             opacity: monitor.isDragging() ? 0.4 : 1,
         }),
-        type: treeName,
+        type: treeId,
         canDrag: onDrop !== undefined,
     });
     const [showNodes, setShowNodes] = useState(false);
@@ -118,7 +118,7 @@ export const Node = ({
                         position: DropZonePosition.Before,
                     }}
                     onDrop={onDrop}
-                    treeName={treeName}
+                    treeId={treeId}
                 />
             )}
             <DropZone
@@ -127,7 +127,7 @@ export const Node = ({
                     position: DropZonePosition.Within,
                 }}
                 onDrop={onDrop}
-                treeName={treeName}
+                treeId={treeId}
             >
                 <div
                     className={merge([
@@ -170,7 +170,9 @@ export const Node = ({
                             </span>
                             {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
-                                <EditableNodeItem name={name} targetItemId={node.id} onEditableSave={onEditableSave} />
+                                <EditableNodeItem name={name} targetItemId={node.id} onEditableSave={onEditableSave}>
+                                    {badge && insertBadge()}
+                                </EditableNodeItem>
                             ) : (
                                 <span className="tw-flex tw-items-center" data-test-id="node-link-name">
                                     {name}
@@ -210,7 +212,7 @@ export const Node = ({
                 >
                     {renderNodeArray({
                         nodes,
-                        treeName,
+                        treeId,
                         activeIds,
                         onClick,
                         onDrop,
@@ -225,7 +227,7 @@ export const Node = ({
                     position: DropZonePosition.After,
                 }}
                 onDrop={onDrop}
-                treeName={treeName}
+                treeId={treeId}
             />
         </li>
     );

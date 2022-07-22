@@ -1,12 +1,13 @@
 {
     "name": "@frontify/fondue",
-    "version": "9.6.2",
+    "version": "9.9.0",
     "description": "Design system of Frontify",
     "main": "dist/index.umd.js",
     "unpkg": "dist/index.umd.js",
     "jsdelivr": "dist/index.umd.js",
     "module": "dist/index.es.js",
     "types": "dist/index.d.ts",
+    "sideEffects": false,
     "files": [
         "dist",
         "tailwind.config.js"
@@ -149,6 +150,7 @@
         "react-dnd-html5-backend": "^15.1.2",
         "react-is": "^18.1.0",
         "react-popper": "^2.2.5",
+        "react-textarea-autosize": "^8.3.4",
         "slate": "^0.78.0",
         "slate-history": "^0.66.0",
         "slate-hyperscript": "^0.77.0",

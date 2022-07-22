@@ -2,10 +2,8 @@
 
 import React, { FC, ReactElement, useEffect, useState } from 'react';
 import { renderNodeArray } from './Node';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useId } from '@react-aria/utils';
-import { DraggableItem, DropZonePosition, draggableItemCompareFn } from '@utilities/dnd';
+import { DndWrapper, DraggableItem, DropZonePosition, draggableItemCompareFn } from '@utilities/dnd';
 import { listToTree } from '@components/Tree/utils';
 import { IconProps } from '@foundation/Icon';
 import { BadgeProps } from '..';
@@ -39,7 +37,7 @@ export const Tree: FC<TreeProps> = ({
     const [multiSelectMode, setMultiSelectMode] = useState<boolean>(false);
     const [activeIds, setActiveIds] = useState<NullableString[]>(initialActiveNodeIds);
     const [treeNodes, setTreeNodes] = useState<DraggableItem<TreeFlatListItem>[]>([]);
-    const treeName = useId();
+    const treeId = useId();
 
     useEffect(() => {
         const listToTreeNodes = listToTree(nodes);
@@ -99,6 +97,8 @@ export const Tree: FC<TreeProps> = ({
     const downKeyHandler = (event: KeyboardEvent) => {
         if (event.key === 'Meta' || event.ctrlKey) {
             setMultiSelectMode(true);
+        } else {
+            setMultiSelectMode(false);
         }
     };
 
@@ -111,6 +111,7 @@ export const Tree: FC<TreeProps> = ({
     useEffect(() => {
         window.addEventListener('keydown', downKeyHandler);
         window.addEventListener('keyup', upKeyHandler);
+
         return () => {
             window.removeEventListener('keydown', downKeyHandler);
             window.removeEventListener('keyup', upKeyHandler);
@@ -118,20 +119,21 @@ export const Tree: FC<TreeProps> = ({
     }, []);
 
     return (
-        <DndProvider backend={HTML5Backend}>
-            <ul
-                data-test-id="tree"
-                className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
-            >
+        <ul
+            id={treeId}
+            data-test-id="tree"
+            className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
+        >
+            <DndWrapper id={treeId}>
                 {renderNodeArray({
                     nodes: treeNodes,
-                    treeName,
+                    treeId,
                     activeIds,
                     onClick: onNodeClick,
                     onDrop: handleDrop,
                     onEditableSave: handleEditableSave,
                 })}
-            </ul>
-        </DndProvider>
+            </DndWrapper>
+        </ul>
     );
 };

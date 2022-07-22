@@ -80,6 +80,14 @@ Image.args = {
     actions: assetInputActions,
 };
 
+export const ImageLibraryLarge = Template.bind({});
+
+ImageLibraryLarge.args = {
+    assets: [EXAMPLE_IMAGES[1]],
+    size: AssetInputSize.Large,
+    actions: assetInputActions,
+};
+
 export const Audio = Template.bind({});
 
 Audio.args = {
