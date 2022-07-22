@@ -24,7 +24,7 @@ const ChangingBreadcrumbs: FC<BreadcrumbsProps> = () => {
             <button
                 data-test-id="add-item-button"
                 onClick={() => {
-                    setItems((items) => [...items, { label: 'Some fourth label', link: '/some-fourth-link' }]);
+                    setItems(() => [...items, { label: 'Some fourth label', link: '/some-fourth-link' }]);
                 }}
             >
                 Add Block

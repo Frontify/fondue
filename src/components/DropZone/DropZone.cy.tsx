@@ -1,5 +1,5 @@
 import { DropZone, DropZoneProps } from '@components/DropZone/DropZone';
-import { DraggableItem, DropZonePosition } from '@utilities/dnd';
+import { DraggableItem as DraggableItemProp, DropZonePosition } from '@utilities/dnd';
 import React from 'react';
 import { DndProvider, useDrag } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -13,9 +13,8 @@ const SOURCE_ITEM = { id: '2', sort: null };
 const DRAGGABLE_ITEM_ID = '[data-test-id=draggable-item]';
 const DROP_ZONE_ID = '[data-test-id=drop-zone]';
 
-const DraggableItem = ({ id, sort }: DraggableItem<any>) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_collected, drag] = useDrag({
+const DraggableItem = ({ id, sort }: DraggableItemProp<any>) => {
+    const [, drag] = useDrag({
         item: { id, sort },
         type: LIST_ID,
         canDrag: true,
