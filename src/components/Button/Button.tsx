@@ -43,7 +43,6 @@ export type ButtonProps = {
     size?: ButtonSize;
     rounding?: ButtonRounding;
     solid?: boolean;
-    inverted?: boolean;
     disabled?: boolean;
     icon?: ReactElement;
     children?: ReactNode;
@@ -62,7 +61,6 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         emphasis = style === ButtonStyle.Danger ? ButtonEmphasis.Strong : ButtonEmphasis.Default,
         hideLabel = false,
         solid = true,
-        inverted = false,
         disabled = false,
         icon,
         children,
@@ -79,13 +77,12 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         { onPress: () => onClick && onClick(), isDisabled: disabled, type: typesMap[type] },
         ref,
     );
-    const invertedStyleKey = inverted ? 'inverted' : 'default';
 
     const getButtonStyleClasses = () => {
         if (!solid) {
             emphasis = ButtonEmphasis.Weak;
         }
-        return ButtonStyleClasses[emphasis][style][invertedStyleKey];
+        return ButtonStyleClasses[emphasis][style];
     };
 
     const setStylingClass = (kind: string) => {
@@ -94,7 +91,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             switch (kind) {
                 case 'button':
                     if (isFocusVisible) {
-                        return buttonClass.button && FOCUS_STYLE;
+                        return buttonClass && FOCUS_STYLE;
                     } else {
                         return buttonClass.button;
                     }

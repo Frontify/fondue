@@ -3,83 +3,72 @@
 import { mount } from '@cypress/react';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import React from 'react';
-import { Button, ButtonRounding, ButtonSize, ButtonStyle } from './Button';
+import { Button } from './Button';
+import { ButtonRounding, ButtonSize, ButtonStyle } from './ButtonTypes';
 
 const BUTTON_TEXT = 'Frontify';
 const BUTTON_ID = '[data-test-id=button]';
 const BUTTON_ICON_ID = '[data-test-id=button-icon]';
 
 const styles = Object.values(ButtonStyle);
-const sizes = Object.values(ButtonSize);
 const solids = [true, false];
 
 describe('Button component', () => {
     for (const style of styles) {
-        for (const size of sizes) {
-            for (const solid of solids) {
-                it(`renders in ${style} ${size} and ${solid ? 'solid' : 'translucent'} with only text.`, () => {
-                    mount(
-                        <Button style={style} size={size} solid={solid}>
-                            {BUTTON_TEXT}
-                        </Button>,
-                    );
+        for (const solid of solids) {
+            it(`renders in ${style}  and ${solid ? 'solid' : 'translucent'} with only text.`, () => {
+                mount(
+                    <Button style={style} size={ButtonSize.Medium} solid={solid}>
+                        {BUTTON_TEXT}
+                    </Button>,
+                );
 
-                    cy.get(BUTTON_ID).should('be.visible');
-                    cy.get(BUTTON_ID).contains(BUTTON_TEXT);
-                });
+                cy.get(BUTTON_ID).should('be.visible');
+                cy.get(BUTTON_ID).contains(BUTTON_TEXT);
+            });
 
-                it(`renders in ${style} ${size} and ${
-                    solid ? 'solid' : 'translucent'
-                } and inverted with only text.`, () => {
-                    mount(
-                        <Button style={style} size={size} solid={solid} inverted>
-                            {BUTTON_TEXT}
-                        </Button>,
-                    );
+            it(`renders in ${style} ${ButtonSize.Medium} and ${
+                solid ? 'solid' : 'translucent'
+            } with only an icon.`, () => {
+                mount(<Button style={style} size={ButtonSize.Medium} solid={solid} icon={<IconIcon />} />);
 
-                    cy.get(BUTTON_ID).should('be.visible');
-                    cy.get(BUTTON_ID).contains(BUTTON_TEXT);
-                });
+                cy.get(BUTTON_ID).children(BUTTON_ICON_ID).should('be.visible');
+                cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
+            });
 
-                it(`renders in ${style} ${size} and ${solid ? 'solid' : 'translucent'} with only an icon.`, () => {
-                    mount(<Button style={style} size={size} solid={solid} icon={<IconIcon />} />);
+            it(`renders in ${style} ${ButtonSize.Medium} and ${
+                solid ? 'solid' : 'translucent'
+            } with only an icon and fully rounded.`, () => {
+                mount(
+                    <Button
+                        style={style}
+                        size={ButtonSize.Medium}
+                        solid={solid}
+                        icon={<IconIcon />}
+                        rounding={ButtonRounding.Full}
+                    />,
+                );
 
-                    cy.get(BUTTON_ID).children(BUTTON_ICON_ID).should('be.visible');
-                    cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
-                });
+                cy.get(BUTTON_ID).children(BUTTON_ICON_ID).should('be.visible');
+                cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
+                cy.get(BUTTON_ID).should('have.class', 'tw-rounded-full');
+            });
 
-                it(`renders in ${style} ${size} and ${
-                    solid ? 'solid' : 'translucent'
-                } with only an icon and fully rounded.`, () => {
-                    mount(
-                        <Button
-                            style={style}
-                            size={size}
-                            solid={solid}
-                            icon={<IconIcon />}
-                            rounding={ButtonRounding.Full}
-                        />,
-                    );
+            it(`renders in ${style} ${ButtonSize.Medium} and ${
+                solid ? 'solid' : 'translucent'
+            } with an icon and text.`, () => {
+                mount(
+                    <Button style={style} size={ButtonSize.Medium} solid={solid} icon={<IconIcon />}>
+                        {BUTTON_TEXT}
+                    </Button>,
+                );
 
-                    cy.get(BUTTON_ID).children(BUTTON_ICON_ID).should('be.visible');
-                    cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
-                    cy.get(BUTTON_ID).should('have.class', 'tw-rounded-full');
-                });
+                cy.get(BUTTON_ID).should('be.visible');
+                cy.get(BUTTON_ID).contains(BUTTON_TEXT);
 
-                it(`renders in ${style} ${size} and ${solid ? 'solid' : 'translucent'} with an icon and text.`, () => {
-                    mount(
-                        <Button style={style} size={size} solid={solid} icon={<IconIcon />}>
-                            {BUTTON_TEXT}
-                        </Button>,
-                    );
-
-                    cy.get(BUTTON_ID).should('be.visible');
-                    cy.get(BUTTON_ID).contains(BUTTON_TEXT);
-
-                    cy.get(BUTTON_ID).children(BUTTON_ICON_ID).should('be.visible');
-                    cy.get(BUTTON_ID).contains(BUTTON_TEXT);
-                });
-            }
+                cy.get(BUTTON_ID).children(BUTTON_ICON_ID).should('be.visible');
+                cy.get(BUTTON_ID).contains(BUTTON_TEXT);
+            });
         }
     }
 

@@ -2,8 +2,9 @@
 
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import { Button, ButtonEmphasis, ButtonProps, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './Button';
+import { Button, ButtonProps } from './Button';
 import { IconEnum, iconsMap } from '@foundation/Icon';
+import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
 
 const defaultArgs = {
     children: 'Button Text',
@@ -14,7 +15,6 @@ const defaultArgs = {
     hideLabel: false,
     hugWidth: true,
     rounding: ButtonRounding.Medium,
-    inverted: false,
     type: ButtonType.Button,
 };
 
@@ -82,10 +82,3 @@ withIconAndLabel.args = {
     icon: iconsMap[IconEnum.ColorScale],
 };
 withIconAndLabel.storyName = 'Icon and Text Label';
-
-export const Inverted = ButtonTemplate.bind({});
-Inverted.args = { ...defaultArgs, inverted: true, icon: iconsMap[IconEnum.Icons] };
-Inverted.storyName = 'Inverted';
-Inverted.parameters = {
-    backgrounds: { default: 'dark' },
-};
