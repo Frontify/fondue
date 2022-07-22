@@ -8,15 +8,12 @@ const BUTTON_TEXT = 'Frontify';
 const BUTTON_ID = '[data-test-id=button]';
 
 const styles = Object.values(ButtonStyle);
-const sizes = Object.values(ButtonSize);
 const solids = [true, false];
 
 describe('Button component', () => {
     for (const style of styles) {
         for (const solid of solids) {
-            it(`renders in ${style} ${ButtonSize.Medium} and ${
-                solid ? 'solid' : 'translucent'
-            } with only text.`, () => {
+            it(`renders in ${style} ${ButtonSize.Medium} and solid: ${solid} with only text.`, () => {
                 cy.mount(
                     <Button style={style} size={ButtonSize.Medium} solid={solid}>
                         {BUTTON_TEXT}
@@ -27,9 +24,7 @@ describe('Button component', () => {
                 cy.get(BUTTON_ID).contains(BUTTON_TEXT);
             });
 
-            it(`renders in ${style} ${ButtonSize.Medium} and ${
-                solid ? 'solid' : 'translucent'
-            } and inverted with only text.`, () => {
+            it(`renders in ${style} ${ButtonSize.Medium} and solid: ${solid} and inverted with only text.`, () => {
                 cy.mount(
                     <Button style={style} size={ButtonSize.Medium} solid={solid} inverted>
                         {BUTTON_TEXT}
@@ -49,9 +44,7 @@ describe('Button component', () => {
                 cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
             });
 
-            it(`renders in ${style} ${ButtonSize.Medium} and ${
-                solid ? 'solid' : 'translucent'
-            } with only an icon and fully rounded.`, () => {
+            it(`renders in ${style} ${ButtonSize.Medium} and solid: ${solid} with only an icon and fully rounded.`, () => {
                 cy.mount(
                     <Button
                         style={style}
@@ -67,9 +60,7 @@ describe('Button component', () => {
                 cy.get(BUTTON_ID).should('have.class', 'tw-rounded-full');
             });
 
-            it(`renders in ${style} ${ButtonSize.Medium} and ${
-                solid ? 'solid' : 'translucent'
-            } with an icon and text.`, () => {
+            it(`renders in ${style} ${ButtonSize.Medium} and solid: ${solid} with an icon and text.`, () => {
                 cy.mount(
                     <Button style={style} size={ButtonSize.Medium} solid={solid} icon={<IconIcon />}>
                         {BUTTON_TEXT}
