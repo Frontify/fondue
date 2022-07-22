@@ -6,8 +6,8 @@ import { Validation, validationClassMap } from '@utilities/validation';
 import React from 'react';
 import { LinkChooser, QUERIES_STORAGE_KEY } from './LinkChooser';
 import { data } from './mock/data';
-import { guidelineSection, GUIDELINE_ITEMS } from './mock/guidelines';
-import { templateSection, TEMPLATE_ITEMS } from './mock/templates';
+import { GUIDELINE_ITEMS, guidelineSection } from './mock/guidelines';
+import { TEMPLATE_ITEMS, templateSection } from './mock/templates';
 import { LinkChooserProps, SearchResult } from './types';
 import { filterItems } from './utils/helpers';
 
@@ -199,7 +199,7 @@ describe('LinkChooser Component', () => {
             cy.get(DROPDOWN_WRAPPER_ID).should('be.visible');
         });
 
-        it('shows loading animation and loads results', () => {
+        it('shows loading animation and loads results and replaces local storage results with search results on search input change', () => {
             cy.mount(getLinkChooserComponent());
 
             cy.get(SEARCH_WRAPPER_ID).click();
@@ -487,17 +487,6 @@ describe('LinkChooser Component', () => {
                 'contain',
                 JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || 'null')[3].title,
             );
-        });
-
-        it('replaces local storage results with search results on search input change', () => {
-            cy.mount(getLinkChooserComponent());
-
-            cy.get(SEARCH_WRAPPER_ID).click();
-            cy.get(SEARCH_INPUT_ID).type(data[0].title);
-            cy.get(LOADER_ID).should('exist');
-            cy.get(SELECT_SECTION_ID)
-                .children()
-                .should('have.length', filterItems(data[0].title, data).length + 1);
         });
     });
 
