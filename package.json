@@ -86,7 +86,7 @@
         "eslint-plugin-jsx-a11y": "6.5.1",
         "esno": "0.14.1",
         "fast-glob": "3.2.11",
-        "postcss": "8.4.12",
+        "postcss": "8.4.14",
         "postcss-cli": "9.1.0",
         "postcss-import": "14.1.0",
         "postcss-nested": "5.0.6",
