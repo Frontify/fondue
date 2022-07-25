@@ -34,6 +34,8 @@ export default defineConfig({
     resolve: {
         alias,
     },
+    // needs to be defined here, such that it is not undefined in the tests.
+    define: { 'process.env.REACT_APP_SC_ATTR': process.env.REACT_APP_SC_ATTR },
     plugins: [dts({ insertTypesEntry: true })],
     build: {
         lib: {
