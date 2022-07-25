@@ -14,7 +14,7 @@ export const getReorderedNodes = (
 
     return sourceItem
         ? moveItems<TreeFlatListItem>(
-              sameLevelNodes[targetItemIndex],
+              sameLevelNodes[targetItemIndex < 0 ? sameLevelNodes.length + targetItemIndex : targetItemIndex],
               { ...sourceItem, parentId: targetParentId, sort: null },
               position,
               sameLevelNodes,
