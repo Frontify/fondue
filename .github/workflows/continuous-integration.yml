@@ -3,20 +3,16 @@ name: Continuous Integration
 on:
     push:
         branches:
-            - "main"
+            - 'main'
 
 env:
     NODE_VERSION: 16
     CI: true
     CYPRESS_CACHE_FOLDER: cypress_cache
-    NUMBER_OF_RUNNERS: 6
 
 jobs:
     setup-project:
         runs-on: ubuntu-latest
-
-        outputs:
-            component-tests: ${{ steps.parse-specs.outputs.component-tests }}
 
         steps:
             - name: Checkout default branch
@@ -26,7 +22,7 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: ${{ env.NODE_VERSION }}
-                  cache: "npm"
+                  cache: 'npm'
 
             - name: Cache dependencies
               id: npm_cache
@@ -42,21 +38,11 @@ jobs:
               if: steps.npm_cache.outputs.cache-hit != 'true'
               run: npm ci
 
-            - name: Parse test files for parallelization
-              id: parse-specs
-              uses: tgamauf/cypress-parallel@v1
-              with:
-                  count-runners: ${{ env.NUMBER_OF_RUNNERS }}
-
     component-tests:
         runs-on: ubuntu-latest
 
-        needs: [setup-project]
-
         strategy:
             fail-fast: false
-            matrix:
-                spec: ${{ fromJson(needs.setup-project.outputs.component-tests) }}
 
         steps:
             - name: Checkout current commit
@@ -78,7 +64,7 @@ jobs:
                   restore-keys: node_modules-
 
             - name: Component Tests
-              run: npm run test -- --spec ${{ matrix.spec }}
+              run: npm run test
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
