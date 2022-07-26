@@ -9,12 +9,13 @@ export const getReorderedNodes = (
 ) => {
     const sameLevelNodes = nodes.filter((node) => node.parentId === targetParentId);
     const sourceItem = nodes.find((item) => item.id === sourceItemId);
-    const targetItemIndex = sameLevelNodes.findIndex((item) => item.id === positionBeforeId);
+    let targetItemIndex = sameLevelNodes.findIndex((item) => item.id === positionBeforeId);
+    targetItemIndex = targetItemIndex < 0 ? sameLevelNodes.length + targetItemIndex : targetItemIndex;
     const position = targetItemIndex === -1 ? DropZonePosition.After : DropZonePosition.Before;
 
     return sourceItem
         ? moveItems<TreeFlatListItem>(
-              sameLevelNodes[targetItemIndex < 0 ? sameLevelNodes.length + targetItemIndex : targetItemIndex],
+              sameLevelNodes[targetItemIndex],
               { ...sourceItem, parentId: targetParentId, sort: null },
               position,
               sameLevelNodes,
