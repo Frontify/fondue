@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+export default {};
 export const sharedTypographyArgTypes = {
     overflow: {
         options: ['ellipsis', 'clip', 'visible', 'truncate'],

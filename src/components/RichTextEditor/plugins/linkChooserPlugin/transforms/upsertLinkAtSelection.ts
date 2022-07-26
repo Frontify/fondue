@@ -1,5 +1,5 @@
 import { ELEMENT_LINK } from '@udecode/plate';
-import { isCollapsed, PlateEditor, unwrapNodes } from '@udecode/plate-core';
+import { PlateEditor, isCollapsed, unwrapNodes } from '@udecode/plate-core';
 import { Editor, Transforms } from 'slate';
 import { ChosenLink } from '../types';
 import { wrapLink } from './wrapLink';

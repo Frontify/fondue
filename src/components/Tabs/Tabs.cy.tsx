@@ -2,7 +2,7 @@
 
 import { BadgeStyle } from '@components/Badge';
 import { TabItem, TabItemProps } from '@components/Tabs/TabItem';
-import { Tabs, TabSize, TabsPaddingX } from '@components/Tabs/Tabs';
+import { TabSize, Tabs, TabsPaddingX } from '@components/Tabs/Tabs';
 import { IconIcon, IconSize } from '@foundation/Icon';
 import React, { useState } from 'react';
 

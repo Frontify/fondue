@@ -1,21 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-//@ts-ignore
-const { alias } = require('../vite.config');
-const { dependencies, peerDependencies } = require('../package.json');
-const { resolve } = require('path');
+import { resolve } from "path";
+import { dependencies, peerDependencies } from "../package.json";
+import { alias } from "../vite.config";
+import eslint from "vite-plugin-eslint";
 
-module.exports = {
+export default {
     core: {
         builder: '@storybook/builder-vite',
     },
     stories: ['../src/**/*.stories.tsx'],
     addons: ['storybook-dark-mode', '@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-a11y'],
     staticDirs: ['assets'],
-    features: {
-        storyStoreV7: true,
-        buildStoriesJson: true,
-    },
+    // features: {
+    //     storyStoreV7: true,
+    // },
     async viteFinal(config: any) {
         config.resolve.alias = {
             ...config.resolve.alias,
@@ -34,6 +33,21 @@ module.exports = {
                 ...(config.optimizeDeps?.include || []),
             ],
         };
+        config.esbuild = {
+            logOverride: { 'this-is-undefined-in-esm': 'silent' },
+        };
+
+        config.plugins = [
+            {
+                ...eslint({
+                    include: 'src/components/**/*.+(js|ts|tsx)',
+                    exclude: 'src/components/RichTextEditor/**/*.+(js|ts|tsx)',
+                    emitWarning: true,
+                }),
+                enforce: 'pre',
+            },
+            ...config.plugins,
+        ];
 
         return config;
     },
