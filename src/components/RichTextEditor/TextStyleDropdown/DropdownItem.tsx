@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getPreventDefaultHandler, someNode, toggleNodeType, unwrapList, usePlateEditorState } from '@udecode/plate';
+import { getPreventDefaultHandler, someNode, toggleNodeType, usePlateEditorState } from '@udecode/plate-core';
+import { unwrapList } from '@udecode/plate-list';
 import { merge } from '@utilities/merge';
 import React, { ReactNode } from 'react';
 import { TextStyles } from '../utils/textStyles';

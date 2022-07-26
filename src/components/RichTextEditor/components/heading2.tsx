@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateRenderElementProps } from '@udecode/plate';
+import { PlateRenderElementProps } from '@udecode/plate-core/dist/types/plate/PlateRenderElementProps';
 import { merge } from '@utilities/merge';
 import React, { FC, useContext } from 'react';
 import { DesignTokensContext } from '../context/DesignTokensContext';

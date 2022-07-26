@@ -1,14 +1,13 @@
 import {
-    BlockToolbarButtonProps,
-    ToolbarButton,
     getPreventDefaultHandler,
     someNode,
     toggleNodeType,
-    unwrapList,
     useEventPlateId,
     usePlateEditorState,
     withPlateEventProvider,
-} from '@udecode/plate';
+} from '@udecode/plate-core';
+import { unwrapList } from '@udecode/plate-list';
+import { BlockToolbarButtonProps, ToolbarButton } from '@udecode/plate-ui-toolbar';
 import React from 'react';
 
 export const CheckboxListToolbarButton = withPlateEventProvider(

@@ -1,5 +1,5 @@
-import { ELEMENT_LINK, insertNodes } from '@udecode/plate';
-import { PlateEditor } from '@udecode/plate-core';
+import { insertNodes, PlateEditor } from '@udecode/plate-core';
+import { ELEMENT_LINK } from '@udecode/plate-link';
 import { ChosenLink } from '../types';
 
 /**

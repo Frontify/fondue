@@ -15,22 +15,14 @@ import {
     IconTextFormatStrikethrough,
     IconTextFormatUnderline,
 } from '@foundation/Icon';
-import {
-    AlignToolbarButton,
-    ELEMENT_LINK,
-    ELEMENT_OL,
-    ELEMENT_UL,
-    getPluginType,
-    ListToolbarButton,
-    MarkToolbarButton,
-    MARK_BOLD,
-    MARK_CODE,
-    MARK_ITALIC,
-    MARK_STRIKETHROUGH,
-    MARK_UNDERLINE,
-    PlateEditor,
-    usePlateEditorRef,
-} from '@udecode/plate';
+import { MARK_BOLD, MARK_CODE, MARK_ITALIC, MARK_STRIKETHROUGH, MARK_UNDERLINE } from '@udecode/plate-basic-marks';
+import { getPluginType, PlateEditor, usePlateEditorRef } from '@udecode/plate-core';
+import { ELEMENT_LINK } from '@udecode/plate-link';
+import { ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
+import { AlignToolbarButton } from '@udecode/plate-ui';
+import { ListToolbarButton } from '@udecode/plate-ui-list';
+import { MarkToolbarButton } from '@udecode/plate-ui-toolbar';
+
 import { default as React, FC, ReactElement } from 'react';
 import { ELEMENT_CHECK_ITEM } from '../../plugins/checkboxListPlugin/createCheckboxListPlugin';
 import { CheckboxListToolbarButton } from '../../plugins/checkboxListPlugin/ui/CheckboxListToolbarButton';

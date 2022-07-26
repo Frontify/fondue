@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCaretDown } from '@foundation/Icon';
-import { getPreventDefaultHandler, usePlateEditorState } from '@udecode/plate';
+import { getPreventDefaultHandler, usePlateEditorState } from '@udecode/plate-core';
 import { merge } from '@utilities/merge';
 import React from 'react';
 import { useSelectedTextStyles } from '../hooks/useSelectedTextStyles';

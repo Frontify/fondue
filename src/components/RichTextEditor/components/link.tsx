@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateRenderElementProps, unwrapNodes, useEditableProps } from '@udecode/plate';
+import { PlateRenderElementProps, unwrapNodes, useEditableProps } from '@udecode/plate-core';
 import React, { FC, MutableRefObject, useState } from 'react';
 import { LINK_CHANGE_CANCELED, LINK_CHANGE_CONFIRMED } from '../plugins/linkChooserPlugin/events';
 import { getAndUpsertLink } from '../plugins/linkChooserPlugin/transforms/getAndUpsertLink';

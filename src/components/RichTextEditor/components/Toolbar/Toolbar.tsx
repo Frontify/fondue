@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BalloonToolbar } from '@udecode/plate';
+import { BalloonToolbar } from '@udecode/plate-ui-toolbar';
 import React, { FC, useEffect, useState } from 'react';
 import { ToolbarCustomProps } from '../../types';
 import { defaultActions } from '../../utils/actions';

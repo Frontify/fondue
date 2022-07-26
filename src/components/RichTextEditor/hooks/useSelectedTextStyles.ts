@@ -1,11 +1,11 @@
-import { getNodes, isElement, isType, usePlateEditorState } from '@udecode/plate';
+import { getNodes, isElement, isType, usePlateEditorState } from '@udecode/plate-core';
 import { ListStyles } from '../TextStyleDropdown/DropdownTrigger';
 import { AvailableTextStyles } from '../types';
 import { TextStyles } from '../utils/textStyles';
 
 export const useSelectedTextStyles = (editorId?: string): AvailableTextStyles[] => {
     const editor = usePlateEditorState(editorId);
-    if (!editor.selection) {
+    if (!editor || !editor.selection) {
         return [];
     }
 

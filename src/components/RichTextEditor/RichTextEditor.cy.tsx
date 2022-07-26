@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
+import { ELEMENT_LINK } from '@udecode/plate-link';
+import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
 import React, { FC, useState } from 'react';
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from './RichTextEditor';
 import { DesignTokens } from './types';

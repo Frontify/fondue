@@ -1,5 +1,5 @@
 import { SearchResult } from '@components/LinkChooser';
-import { LinkPlugin } from '@udecode/plate';
+import { LinkPlugin } from '@udecode/plate-link';
 
 export type ChosenLink = { searchResult: SearchResult | null; openInNewTab: boolean };
 

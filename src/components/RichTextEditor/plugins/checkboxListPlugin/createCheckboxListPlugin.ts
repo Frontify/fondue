@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createPluginFactory } from '@udecode/plate';
+import { createPluginFactory } from '@udecode/plate-core';
 import { CheckboxItemElement } from '../../components';
 
 export const ELEMENT_CHECK_ITEM = 'checkbox_item';

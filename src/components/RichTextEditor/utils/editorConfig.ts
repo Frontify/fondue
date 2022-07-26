@@ -1,32 +1,28 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { createParagraphPlugin, ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
+
+import { createAlignPlugin } from '@udecode/plate-alignment';
 import {
-    createAlignPlugin,
     createBoldPlugin,
-    createCodeBlockPlugin,
     createCodePlugin,
-    createIndentPlugin,
     createItalicPlugin,
-    createListPlugin,
-    createParagraphPlugin,
-    createPlateUI,
-    createPluginFactory,
-    createPlugins,
-    createSoftBreakPlugin,
     createStrikethroughPlugin,
     createUnderlinePlugin,
-    ELEMENT_LI,
-    ELEMENT_LIC,
-    ELEMENT_LINK,
-    ELEMENT_OL,
-    ELEMENT_PARAGRAPH,
-    ELEMENT_UL,
     MARK_BOLD,
     MARK_CODE,
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
-} from '@udecode/plate';
+} from '@udecode/plate-basic-marks';
+import { createSoftBreakPlugin } from '@udecode/plate-break';
+import { createCodeBlockPlugin } from '@udecode/plate-code-block';
+import { createPluginFactory, createPlugins } from '@udecode/plate-core';
+import { createIndentPlugin } from '@udecode/plate-indent';
+import { createLinkPlugin, ELEMENT_LINK } from '@udecode/plate-link';
+import { createListPlugin, ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
+import { createPlateUI } from '@udecode/plate-ui';
+
 import {
     BoldMark,
     CodeMark,
@@ -149,6 +145,7 @@ export const getEditorConfig = () => {
             createListPlugin(),
             createCheckboxListPlugin(),
             createLinkChooserPlugin(),
+            createLinkPlugin(),
             createBoldPlugin(),
             createItalicPlugin(),
             createUnderlinePlugin(),

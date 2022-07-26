@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ToolbarDropdown } from '@udecode/plate';
+import { ToolbarDropdown } from '@udecode/plate-ui-toolbar';
 import React, { useCallback, useContext, useState } from 'react';
 import { DesignTokensContext } from '../context/DesignTokensContext';
 import { TextStyles, textStyleTitles } from '../utils/textStyles';

@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateRenderElementProps, TElement, TodoListItemNodeData, getRootProps, setNodes } from '@udecode/plate';
+import { PlateRenderElementProps, setNodes, TElement } from '@udecode/plate-core';
+import { getRootProps } from '@udecode/plate-ui';
 import { merge } from '@utilities/merge';
 import React, { FC } from 'react';
 import { ReactEditor } from 'slate-react';
