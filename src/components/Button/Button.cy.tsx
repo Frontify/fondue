@@ -26,7 +26,7 @@ describe('Button component', () => {
 
             it(`renders in ${style} ${ButtonSize.Medium} and solid: ${solid} and inverted with only text.`, () => {
                 cy.mount(
-                    <Button style={style} size={ButtonSize.Medium} solid={solid} inverted>
+                    <Button style={style} size={ButtonSize.Medium} solid={solid}>
                         {BUTTON_TEXT}
                     </Button>,
                 );
