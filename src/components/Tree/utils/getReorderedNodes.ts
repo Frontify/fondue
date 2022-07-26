@@ -10,8 +10,8 @@ export const getReorderedNodes = (
     const sameLevelNodes = nodes.filter((node) => node.parentId === targetParentId);
     const sourceItem = nodes.find((item) => item.id === sourceItemId);
     let targetItemIndex = sameLevelNodes.findIndex((item) => item.id === positionBeforeId);
-    targetItemIndex = targetItemIndex < 0 ? sameLevelNodes.length + targetItemIndex : targetItemIndex;
     const position = targetItemIndex === -1 ? DropZonePosition.After : DropZonePosition.Before;
+    targetItemIndex = targetItemIndex < 0 ? sameLevelNodes.length + targetItemIndex : targetItemIndex;
 
     return sourceItem
         ? moveItems<TreeFlatListItem>(
