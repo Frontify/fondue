@@ -108,7 +108,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
             <div data-test-id="rich-text-editor" className="tw-relative tw-w-full" ref={editorRef}>
                 <Plate
                     id={editorId}
-                    key={initialValue}
                     initialValue={parseRawValue(initialValue)}
                     onChange={onChange}
                     editableProps={editableProps}
