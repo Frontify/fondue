@@ -24,17 +24,6 @@ describe('Button component', () => {
                 cy.get(BUTTON_ID).contains(BUTTON_TEXT);
             });
 
-            it(`renders in ${style} ${ButtonSize.Medium} and solid: ${solid} and inverted with only text.`, () => {
-                cy.mount(
-                    <Button style={style} size={ButtonSize.Medium} solid={solid}>
-                        {BUTTON_TEXT}
-                    </Button>,
-                );
-
-                cy.get(BUTTON_ID).should('be.visible');
-                cy.get(BUTTON_ID).contains(BUTTON_TEXT);
-            });
-
             it(`renders in ${style} ${ButtonSize.Medium} and ${
                 solid ? 'solid' : 'translucent'
             } with only an icon.`, () => {
