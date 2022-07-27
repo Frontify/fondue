@@ -22,32 +22,33 @@ export const useContainScroll = (overlayRef: MutableRefObject<HTMLDivElement | n
         };
 
         const scrollHandler = (event: WheelEvent) => {
-            const prevent = () => {
-                event.stopPropagation();
-                event.preventDefault();
-            };
             if (overlay !== null) {
                 const pixelPositionDifference = event.deltaY;
                 const isScrollingUpwards = pixelPositionDifference < 0;
                 const scrollableAncestor = closestScrollableAncestor(event.target as HTMLElement) ?? overlay;
                 const { scrollTop, scrollHeight, clientHeight } = scrollableAncestor;
 
-                const scrolledPastBottom =
+                const willScrollPastBottom =
                     !isScrollingUpwards && pixelPositionDifference > scrollHeight - clientHeight - scrollTop;
-                const scrolledPastTop = isScrollingUpwards && -pixelPositionDifference > scrollTop;
+                const willScrollPastTop = isScrollingUpwards && -pixelPositionDifference > scrollTop;
 
-                if (scrolledPastBottom) {
-                    // Scrolling down, but this will take us past the bottom so we prevent the event
-                    // from moving up the tree past the overlay and set the scrollHeight to the bottom.
-                    scrollableAncestor.scrollTop = scrollHeight;
-                    prevent();
-                    return false;
-                } else if (scrolledPastTop) {
-                    // Scrolling up, but this will take us past the top so we prevent the event
-                    // from moving up the tree past the overlay and set the scrollHeight to the very top.
-                    scrollableAncestor.scrollTop = 0;
-                    prevent();
-                    return false;
+                /* On Safari scrollbar can go past the boundaries of the element height 
+                and does not bubble up on the same scroll event so resetting the scrollHeight makes it glitchy */
+                const safariBouncedPastTop = scrollTop < 0;
+                const safariBouncedPastBottom = scrollTop > scrollHeight - clientHeight;
+
+                if (willScrollPastBottom) {
+                    // Scrolling down, but this will take us past the bottom.
+                    if (!safariBouncedPastBottom) {
+                        scrollableAncestor.scrollTop = scrollHeight;
+                    }
+                    event.preventDefault();
+                } else if (willScrollPastTop) {
+                    // Scrolling up, but this will take us past the top.
+                    if (!safariBouncedPastTop) {
+                        scrollableAncestor.scrollTop = safariBouncedPastTop ? scrollableAncestor.scrollTop : 0;
+                    }
+                    event.preventDefault();
                 }
             }
         };
