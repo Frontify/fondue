@@ -11,8 +11,10 @@ export const useContainScroll = (overlayRef: MutableRefObject<HTMLDivElement | n
             if (!element || element === overlay) {
                 return null;
             }
-            const hasVisibleScroll = SCROLL_TYPES.includes(window.getComputedStyle(element).overflowY);
-            if (element.scrollHeight > element.clientHeight && hasVisibleScroll) {
+            const hasVisibleScrollbar =
+                element.scrollHeight > element.clientHeight &&
+                SCROLL_TYPES.includes(window.getComputedStyle(element).overflowY);
+            if (hasVisibleScrollbar) {
                 return element;
             } else {
                 return closestScrollableAncestor(element.parentElement);
@@ -25,18 +27,24 @@ export const useContainScroll = (overlayRef: MutableRefObject<HTMLDivElement | n
                 event.preventDefault();
             };
             if (overlay !== null) {
-                const deltaY = event.deltaY;
-                const up = deltaY < 0;
+                const pixelPositionDifference = event.deltaY;
+                const isScrollingUpwards = pixelPositionDifference < 0;
                 const scrollableAncestor = closestScrollableAncestor(event.target as HTMLElement) ?? overlay;
                 const { scrollTop, scrollHeight, clientHeight } = scrollableAncestor;
 
-                if (!up && deltaY > scrollHeight - clientHeight - scrollTop) {
-                    // Scrolling down, but this will take us past the bottom.
+                const scrolledPastBottom =
+                    !isScrollingUpwards && pixelPositionDifference > scrollHeight - clientHeight - scrollTop;
+                const scrolledPastTop = isScrollingUpwards && -pixelPositionDifference > scrollTop;
+
+                if (scrolledPastBottom) {
+                    // Scrolling down, but this will take us past the bottom so we prevent the event
+                    // from moving up the tree past the overlay and set the scrollHeight to the bottom.
                     scrollableAncestor.scrollTop = scrollHeight;
                     prevent();
                     return false;
-                } else if (up && -deltaY > scrollTop) {
-                    // Scrolling up, but this will take us past the top.
+                } else if (scrolledPastTop) {
+                    // Scrolling up, but this will take us past the top so we prevent the event
+                    // from moving up the tree past the overlay and set the scrollHeight to the very top.
                     scrollableAncestor.scrollTop = 0;
                     prevent();
                     return false;
