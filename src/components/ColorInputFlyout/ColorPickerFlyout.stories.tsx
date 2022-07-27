@@ -13,30 +13,40 @@ export default {
         disabled: false,
         currentColor: null,
         clearable: false,
+        closeOnScroll: false,
     },
     argTypes: {
         onDelete: { action: 'onDelete' },
     },
 } as Meta<ColorPickerFlyoutProps>;
 
-export const Flyout: Story<ColorPickerFlyoutProps> = ({ disabled, currentColor, clearable, onDelete }) => {
+export const Flyout: Story<ColorPickerFlyoutProps> = ({
+    disabled,
+    currentColor,
+    clearable,
+    onDelete,
+    closeOnScroll,
+}) => {
     const [temporaryColor, setTemporaryColor] = useState<Color | null>(null);
     const [selectedColor, setSelectedColor] = useState<Color | null>(currentColor);
 
     return (
-        <ColorPickerFlyoutComponent
-            disabled={disabled}
-            clearable={clearable}
-            currentColor={temporaryColor ?? selectedColor}
-            onClick={() => setSelectedColor(temporaryColor)}
-            onClose={() => setTemporaryColor(null)}
-            onSelect={(color) => setTemporaryColor(color)}
-            palettes={EXAMPLE_PALETTES}
-            onClear={() => {
-                setTemporaryColor(null);
-                setSelectedColor(null);
-            }}
-            onDelete={onDelete}
-        />
+        <div className="tw-h-[1500px] tw-pt-[400px]">
+            <ColorPickerFlyoutComponent
+                disabled={disabled}
+                clearable={clearable}
+                currentColor={temporaryColor ?? selectedColor}
+                onClick={() => setSelectedColor(temporaryColor)}
+                onClose={() => setTemporaryColor(null)}
+                onSelect={(color) => setTemporaryColor(color)}
+                palettes={EXAMPLE_PALETTES}
+                onClear={() => {
+                    setTemporaryColor(null);
+                    setSelectedColor(null);
+                }}
+                closeOnScroll={closeOnScroll}
+                onDelete={onDelete}
+            />
+        </div>
     );
 };

@@ -16,6 +16,8 @@ export type ColorPickerFlyoutProps = Pick<ColorPickerProps, 'palettes' | 'onSele
     clearable?: boolean;
     onClear?: () => void;
     onDelete?: () => void;
+    // For demo purposes
+    closeOnScroll: boolean;
 };
 
 export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
@@ -29,6 +31,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
     clearable = false,
     onClear,
     onDelete,
+    closeOnScroll,
 }) => {
     const [open, setOpen] = useState(false);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
@@ -49,6 +52,8 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
         <Flyout
             hug={false}
             onConfirm={handleClick}
+            // For demo purposes
+            closeOnScroll={closeOnScroll}
             isOpen={open}
             onCancel={() => handleOpenChange(false)}
             fixedHeader={<ColorPreview color={currentColor || { r: 255, g: 255, b: 255 }} />}

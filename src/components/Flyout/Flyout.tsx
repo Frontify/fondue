@@ -66,6 +66,8 @@ export type FlyoutProps = PropsWithChildren<{
     placement?: FlyoutPlacement;
     offset?: number;
     updatePositionOnContentChange?: boolean;
+    // For demo purposes
+    closeOnScroll: boolean;
 }>;
 
 export const Flyout: FC<FlyoutProps> = ({
@@ -87,6 +89,7 @@ export const Flyout: FC<FlyoutProps> = ({
     placement = FlyoutPlacement.BottomLeft,
     offset,
     updatePositionOnContentChange = false,
+    closeOnScroll,
 }) => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
     const { toggle, close } = state;
@@ -119,7 +122,12 @@ export const Flyout: FC<FlyoutProps> = ({
         return () => revert();
     }, []);
 
-    useContainScroll(overlayRef, { isDisabled: !isOpen });
+    useContainScroll(overlayRef, {
+        isDisabled:
+            !isOpen ||
+            // For demo purposes
+            closeOnScroll,
+    });
 
     const combinedTriggerProps = mergeProps(buttonProps, triggerProps, focusProps, {
         'aria-label': 'Toggle Flyout Menu',

@@ -9,7 +9,10 @@ import { merge } from '@utilities/merge';
 import React, { Children, ForwardRefRenderFunction, HTMLAttributes, RefObject, forwardRef } from 'react';
 import { FlyoutProps } from '.';
 
-type OverlayProps = Omit<FlyoutProps, 'trigger' | 'onOpenChange' | 'onConfirm' | 'legacyFooter' | 'onCancel'> & {
+type OverlayProps = Omit<
+    FlyoutProps,
+    'trigger' | 'onOpenChange' | 'onConfirm' | 'legacyFooter' | 'onCancel' | 'closeOnScroll'
+> & {
     positionProps: HTMLAttributes<Element>;
     overlayTriggerProps: HTMLAttributes<Element>;
     scrollRef: RefObject<HTMLDivElement>;
