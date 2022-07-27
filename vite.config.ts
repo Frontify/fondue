@@ -4,7 +4,6 @@ import { resolve } from 'path';
 import { PreRenderedAsset } from 'rollup';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
-
 import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
 
 const peerDependencies = Object.keys(peerDependenciesMap);
@@ -36,13 +35,15 @@ export default defineConfig({
         alias,
     },
     // needs to be defined here, such that it is not undefined in the tests.
-    define: { 'process.env.REACT_APP_SC_ATTR': process.env.REACT_APP_SC_ATTR },
-    // To lint and abort on errors eslint() can be added here for the build
+    define: {
+        'process.env.REACT_APP_SC_ATTR': JSON.stringify(process.env.REACT_APP_SC_ATTR),
+        'process.env.SC_ATTR': JSON.stringify(process.env.SC_ATTR),
+    },
     plugins: [dts({ insertTypesEntry: true })],
     build: {
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
-            fileName: (format: string) => `index.${format}.js`,
+            fileName: (format: string) => `[name].${format}.js`,
             name: 'Fondue',
         },
         sourcemap: true,
