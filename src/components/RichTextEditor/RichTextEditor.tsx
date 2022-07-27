@@ -57,7 +57,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         }
         const observer = new ResizeObserver((entries) => {
             if (entries.length > 0) {
-                /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded" 
+                /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded"
                     from being thrown during cypress component tests */
                 setTimeout(() => setEditorWidth(entries[0].target.clientWidth), 0);
             }
@@ -108,6 +108,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
             <div data-test-id="rich-text-editor" className="tw-relative tw-w-full" ref={editorRef}>
                 <Plate
                     id={editorId}
+                    key={initialValue}
                     initialValue={parseRawValue(initialValue)}
                     onChange={onChange}
                     editableProps={editableProps}
