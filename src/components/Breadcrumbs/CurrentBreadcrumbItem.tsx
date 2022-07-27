@@ -67,7 +67,7 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
                         {...props}
                         type="button"
                         onClick={onClick}
-                        className={merge([classNames, isFocusVisible ? FOCUS_STYLE : ''])}
+                        className={merge(['tw-leading-4', classNames, isFocusVisible ? FOCUS_STYLE : ''])}
                     >
                         {decorator}
                         {label}
@@ -80,7 +80,7 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
                         <span
                             ref={ref as RefObject<HTMLSpanElement>}
                             {...props}
-                            className={merge([bold && 'tw-font-bold', isFocusVisible && FOCUS_STYLE])}
+                            className={merge(['tw-leading-4', bold && 'tw-font-bold', isFocusVisible && FOCUS_STYLE])}
                         >
                             {label}
                         </span>
