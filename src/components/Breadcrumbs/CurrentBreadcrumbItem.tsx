@@ -39,13 +39,13 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
         ref,
     );
 
-    const classNames = merge([decorator && 'tw-flex tw-gap-x-1 tw-items-start', bold && 'tw-font-bold']);
+    const classNames = merge([decorator && 'tw-flex tw-gap-x-1 tw-items-start tw-py-1', bold && 'tw-font-bold']);
     const { isFocusVisible, focusProps } = useFocusRing();
     const props = mergeProps(itemProps, focusProps);
 
     return (
         <li
-            className="tw-w-full tw-flex tw-mt-1 tw-gap-x-1 tw-items-center tw-text-m tw-text-black dark:tw-text-white"
+            className="tw-w-full tw-inline-flex tw-align-middle tw-mt-1 tw-gap-x-1 tw-text-m tw-text-black dark:tw-text-white"
             data-test-id="breadcrumb-item"
         >
             {link ? (
@@ -80,7 +80,11 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
                         <span
                             ref={ref as RefObject<HTMLSpanElement>}
                             {...props}
-                            className={merge(['tw-leading-4', bold && 'tw-font-bold', isFocusVisible && FOCUS_STYLE])}
+                            className={merge([
+                                'tw-leading-4 tw-py-1 ',
+                                bold && 'tw-font-bold',
+                                isFocusVisible && FOCUS_STYLE,
+                            ])}
                         >
                             {label}
                         </span>
