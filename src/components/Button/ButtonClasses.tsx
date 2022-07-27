@@ -44,7 +44,6 @@ export const IconSpacingClasses: Record<ButtonSize, string> = {
  * A NOTE ABOUT THIS BIG LONG LIST
  *
  * - We're deprecating Primary and Secondary in favour of 'emphasis' (-33%)
- * - Once we introduce the ThemeProvider we can deprecate all the 'inverted' variants (-50%)
  */
 
 export const ButtonStyleClasses: Record<ButtonEmphasis, Record<ButtonStyle, ButtonElements>> = {
