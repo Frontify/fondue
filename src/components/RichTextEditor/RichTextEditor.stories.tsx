@@ -4,7 +4,8 @@ import { Meta, Story } from '@storybook/react';
 import React from 'react';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { EditorActions } from './utils/actions';
-import { IPSUM, checkboxValue, htmlValue, value } from './utils/exampleValues';
+import { checkboxValue, htmlValue, IPSUM, nodesToSerialize, value } from './utils/exampleValues';
+import { serializeNodesToHtml } from './utils/serializeToHtml';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -129,4 +130,25 @@ WithCustomControls.args = {
         [EditorActions.ITALIC, EditorActions.BOLD, EditorActions.UNDERLINE],
         [EditorActions.ORDERED_LIST, EditorActions.UNORDERED_LIST],
     ],
+};
+
+export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
+    const serialized = serializeNodesToHtml(nodesToSerialize);
+
+    return (
+        <>
+            {serialized ? (
+                <>
+                    Serialized:
+                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                        <code>{serialized}</code>
+                    </div>
+                    Rendered:
+                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                        <RichTextEditorComponent readonly value={serialized} />
+                    </div>
+                </>
+            ) : null}
+        </>
+    );
 };
