@@ -1,6 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    ELEMENT_LI,
+    ELEMENT_LIC,
+    ELEMENT_LINK,
+    ELEMENT_OL,
+    ELEMENT_PARAGRAPH,
+    ELEMENT_UL,
+    MARK_BOLD,
+    MARK_CODE,
+    MARK_ITALIC,
+    MARK_STRIKETHROUGH,
+    MARK_UNDERLINE,
     createAlignPlugin,
     createBoldPlugin,
     createCodeBlockPlugin,
@@ -16,17 +27,6 @@ import {
     createSoftBreakPlugin,
     createStrikethroughPlugin,
     createUnderlinePlugin,
-    ELEMENT_LI,
-    ELEMENT_LIC,
-    ELEMENT_LINK,
-    ELEMENT_OL,
-    ELEMENT_PARAGRAPH,
-    ELEMENT_UL,
-    MARK_BOLD,
-    MARK_CODE,
-    MARK_ITALIC,
-    MARK_STRIKETHROUGH,
-    MARK_UNDERLINE,
 } from '@udecode/plate';
 import {
     BoldMark,
@@ -47,7 +47,7 @@ import {
     UnorderedListElement,
 } from '../components';
 import { Custom3Element } from '../components/custom3';
-import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
+import { ELEMENT_CHECK_ITEM, createCheckboxListPlugin } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
 import { createLinkChooserPlugin } from '../plugins/linkChooserPlugin/createLinkChooserPlugin';
 import { TextStyles } from './textStyles';
 
