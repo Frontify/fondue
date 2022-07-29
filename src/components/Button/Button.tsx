@@ -58,7 +58,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         style = ButtonStyle.Default,
         size = ButtonSize.Medium,
         rounding = ButtonRounding.Medium,
-        emphasis = style === ButtonStyle.Danger ? ButtonEmphasis.Strong : ButtonEmphasis.Default,
+        emphasis = ButtonEmphasis.Strong,
         hideLabel = false,
         solid = true,
         disabled = false,
