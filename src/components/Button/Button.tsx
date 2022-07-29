@@ -5,13 +5,11 @@ import React, { ForwardRefRenderFunction, MouseEvent, ReactElement, ReactNode, c
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
-
-import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
 
 import { IconSize } from '@foundation/Icon/IconSize';
-import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
+import { ButtonElements, ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
 import {
     ButtonCommonClasses,
     ButtonDisabledClasses,
@@ -19,7 +17,9 @@ import {
     ButtonSizeClasses,
     ButtonStyleClasses,
     IconSpacingClasses,
+    Solid,
 } from './ButtonClasses';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
 
 export * from './ButtonTypes';
 
@@ -42,7 +42,7 @@ export type ButtonProps = {
     hideLabel?: boolean;
     size?: ButtonSize;
     rounding?: ButtonRounding;
-    solid?: boolean;
+    solid?: Solid;
     disabled?: boolean;
     icon?: ReactElement;
     children?: ReactNode;
@@ -58,9 +58,9 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         style = ButtonStyle.Default,
         size = ButtonSize.Medium,
         rounding = ButtonRounding.Medium,
-        emphasis = ButtonEmphasis.Strong,
+        emphasis = ButtonEmphasis.Default,
         hideLabel = false,
-        solid = true,
+        solid = Solid.filled,
         disabled = false,
         icon,
         children,
@@ -71,6 +71,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     },
     externalRef,
 ) => {
+    // some accessibility stuff
     const { isFocusVisible, focusProps } = useFocusRing();
     const ref = useForwardedRef<HTMLButtonElement | null>(externalRef);
     const { buttonProps } = useButton(
@@ -78,44 +79,22 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         ref,
     );
 
-    const getButtonStyleClasses = () => {
-        if (!solid) {
-            emphasis = ButtonEmphasis.Weak;
-        }
-        return ButtonStyleClasses[emphasis][style];
-    };
-
-    const setStylingClass = (kind: string) => {
+    const getStyles = (kind: keyof ButtonElements) => {
         if (!disabled) {
-            const buttonClass = getButtonStyleClasses();
-            switch (kind) {
-                case 'button':
-                    if (isFocusVisible) {
-                        return buttonClass && FOCUS_STYLE;
-                    } else {
-                        return buttonClass.button;
-                    }
-                case 'icon':
-                    return buttonClass.icon;
-                case 'text':
-                    return buttonClass.text;
-            }
-        }
-
-        if (disabled) {
-            return merge([
-                ButtonDisabledClasses.common,
-                !solid ? ButtonDisabledClasses.weak : ButtonDisabledClasses.default,
-            ]);
+            return `${ButtonStyleClasses[solid][emphasis][style][kind]} ${
+                isFocusVisible && kind === 'button' && FOCUS_STYLE
+            }`;
+        } else {
+            return ButtonDisabledClasses[solid];
         }
     };
 
     const buttonClassName = merge([
         ButtonCommonClasses,
-        rounding === ButtonRounding.Full ? ButtonRoundingClasses.Full : ButtonRoundingClasses.Medium,
+        ButtonRoundingClasses[rounding],
         (icon && !children) || hideLabel ? ButtonSizeClasses[size].iconOnly : ButtonSizeClasses[size].default,
         !hugWidth && 'tw-w-full',
-        setStylingClass('button'),
+        getStyles('button'),
     ]);
 
     return (
@@ -131,16 +110,13 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             {icon && (
                 <span
                     data-test-id="button-icon"
-                    className={merge([children && !hideLabel ? IconSpacingClasses[size] : '', setStylingClass('icon')])}
+                    className={merge([children && !hideLabel ? IconSpacingClasses[size] : '', getStyles('icon')])}
                 >
                     {cloneElement(icon, { size: iconSizes[size] })}
                 </span>
             )}
             {children && (
-                <span
-                    data-test-id="button-text"
-                    className={merge([setStylingClass('text'), hideLabel && 'tw-sr-only'])}
-                >
+                <span data-test-id="button-text" className={merge([getStyles('text'), hideLabel && 'tw-sr-only'])}>
                     {children}
                 </span>
             )}

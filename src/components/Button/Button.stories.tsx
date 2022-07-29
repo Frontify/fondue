@@ -5,17 +5,18 @@ import { Meta, Story } from '@storybook/react';
 import { Button, ButtonProps } from './Button';
 import { IconEnum, iconsMap } from '@foundation/Icon';
 import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
+import { Solid } from '@components/Button/ButtonClasses';
 
 const defaultArgs = {
-    children: 'Button Text',
-    size: ButtonSize.Medium,
-    style: ButtonStyle.Default,
-    emphasis: ButtonEmphasis.Default,
-    disabled: false,
-    hideLabel: false,
-    hugWidth: true,
-    rounding: ButtonRounding.Medium,
     type: ButtonType.Button,
+    style: ButtonStyle.Default,
+    size: ButtonSize.Medium,
+    rounding: ButtonRounding.Medium,
+    solid: Solid.filled,
+    hideLabel: false,
+    disabled: false,
+    hugWidth: true,
+    children: 'Button Text',
 };
 
 export default {
@@ -30,7 +31,10 @@ export default {
             options: ButtonStyle,
             control: { type: 'radio' },
         },
-
+        solid: {
+            options: Solid,
+            control: { type: 'radio' },
+        },
         emphasis: {
             options: ButtonEmphasis,
             control: { type: 'radio' },

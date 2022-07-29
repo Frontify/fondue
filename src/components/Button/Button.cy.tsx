@@ -3,6 +3,7 @@
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import React from 'react';
 import { Button, ButtonRounding, ButtonSize, ButtonStyle } from './Button';
+import { Solid } from './ButtonClasses';
 
 const BUTTON_TEXT = 'Frontify';
 const BUTTON_ID = '[data-test-id=button]';
@@ -13,9 +14,9 @@ const solids = [true, false];
 describe('Button component', () => {
     for (const style of styles) {
         for (const solid of solids) {
-            it(`renders in ${style} ${ButtonSize.Medium} and solid: ${solid} with only text.`, () => {
+            it(`renders in ${style} ${ButtonSize.Medium} and solid: ${Solid.filled} with only text.`, () => {
                 cy.mount(
-                    <Button style={style} size={ButtonSize.Medium} solid={solid}>
+                    <Button style={style} size={ButtonSize.Medium} solid={Solid.filled}>
                         {BUTTON_TEXT}
                     </Button>,
                 );
@@ -27,18 +28,18 @@ describe('Button component', () => {
             it(`renders in ${style} ${ButtonSize.Medium} and ${
                 solid ? 'solid' : 'translucent'
             } with only an icon.`, () => {
-                cy.mount(<Button style={style} size={ButtonSize.Medium} solid={solid} icon={<IconIcon />} />);
+                cy.mount(<Button style={style} size={ButtonSize.Medium} solid={Solid.filled} icon={<IconIcon />} />);
 
                 cy.get(BUTTON_ID).find('svg').should('be.visible');
                 cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
             });
 
-            it(`renders in ${style} ${ButtonSize.Medium} and solid: ${solid} with only an icon and fully rounded.`, () => {
+            it(`renders in ${style} ${ButtonSize.Medium} and solid: ${Solid.filled} with only an icon and fully rounded.`, () => {
                 cy.mount(
                     <Button
                         style={style}
                         size={ButtonSize.Medium}
-                        solid={solid}
+                        solid={Solid.filled}
                         icon={<IconIcon />}
                         rounding={ButtonRounding.Full}
                     />,
@@ -51,7 +52,7 @@ describe('Button component', () => {
 
             it(`renders in ${style} ${ButtonSize.Medium} and solid: ${solid} with an icon and text.`, () => {
                 cy.mount(
-                    <Button style={style} size={ButtonSize.Medium} solid={solid} icon={<IconIcon />}>
+                    <Button style={style} size={ButtonSize.Medium} solid={Solid.filled} icon={<IconIcon />}>
                         {BUTTON_TEXT}
                     </Button>,
                 );
