@@ -23,16 +23,16 @@ export default {
     component: Button,
     argTypes: {
         size: {
-            options: [ButtonSize.Small, ButtonSize.Medium, ButtonSize.Large],
+            options: ButtonSize,
             control: { type: 'radio' },
         },
         style: {
-            options: [ButtonStyle.Default, ButtonStyle.Positive, ButtonStyle.Negative, ButtonStyle.Danger],
+            options: ButtonStyle,
             control: { type: 'radio' },
         },
 
         emphasis: {
-            options: [ButtonEmphasis.Default, ButtonEmphasis.Weak, ButtonEmphasis.Strong],
+            options: ButtonEmphasis,
             control: { type: 'radio' },
         },
         icon: {
@@ -46,11 +46,11 @@ export default {
             control: { type: 'select' },
         },
         rounding: {
-            options: [ButtonRounding.Medium, ButtonRounding.Full],
+            options: ButtonRounding,
             control: { type: 'radio' },
         },
         type: {
-            options: [ButtonType.Button, ButtonType.Submit, ButtonType.Reset],
+            options: ButtonType,
             control: { type: 'radio' },
         },
         onClick: { action: 'onClick' },
