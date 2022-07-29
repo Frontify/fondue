@@ -1,20 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    createAlignPlugin,
-    createBoldPlugin,
-    createCodeBlockPlugin,
-    createCodePlugin,
-    createIndentPlugin,
-    createItalicPlugin,
-    createListPlugin,
-    createParagraphPlugin,
-    createPlateUI,
-    createPluginFactory,
-    createPlugins,
-    createSoftBreakPlugin,
-    createStrikethroughPlugin,
-    createUnderlinePlugin,
     ELEMENT_LI,
     ELEMENT_LIC,
     ELEMENT_LINK,
@@ -26,6 +12,21 @@ import {
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
+    createAlignPlugin,
+    createBoldPlugin,
+    createCodeBlockPlugin,
+    createCodePlugin,
+    createIndentPlugin,
+    createItalicPlugin,
+    createLinkPlugin,
+    createListPlugin,
+    createParagraphPlugin,
+    createPlateUI,
+    createPluginFactory,
+    createPlugins,
+    createSoftBreakPlugin,
+    createStrikethroughPlugin,
+    createUnderlinePlugin,
 } from '@udecode/plate';
 import {
     BoldMark,
@@ -46,7 +47,7 @@ import {
     UnorderedListElement,
 } from '../components';
 import { Custom3Element } from '../components/custom3';
-import { createCheckboxListPlugin, ELEMENT_CHECK_ITEM } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
+import { ELEMENT_CHECK_ITEM, createCheckboxListPlugin } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
 import { createLinkChooserPlugin } from '../plugins/linkChooserPlugin/createLinkChooserPlugin';
 import { TextStyles } from './textStyles';
 
@@ -149,6 +150,7 @@ export const getEditorConfig = () => {
             createListPlugin(),
             createCheckboxListPlugin(),
             createLinkChooserPlugin(),
+            createLinkPlugin(),
             createBoldPlugin(),
             createItalicPlugin(),
             createUnderlinePlugin(),

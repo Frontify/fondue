@@ -1,4 +1,4 @@
-import { someNode, ToolbarButton, ToolbarButtonProps, useEventPlateId, usePlateEditorState } from '@udecode/plate';
+import { ToolbarButton, ToolbarButtonProps, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
 import React, { MutableRefObject, useState } from 'react';
 import { IconLink, IconSize } from '../../../../..';
 import { ELEMENT_CHECK_ITEM } from '../../checkboxListPlugin/createCheckboxListPlugin';

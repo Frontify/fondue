@@ -1,5 +1,5 @@
 import { ELEMENT_LINK } from '@udecode/plate';
-import { getAbove, isCollapsed, PlateEditor } from '@udecode/plate-core';
+import { PlateEditor, getAbove, isCollapsed } from '@udecode/plate-core';
 import { ChosenLink } from '../types';
 import { upsertLinkAtSelection } from './upsertLinkAtSelection';
 
