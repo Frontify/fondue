@@ -21,5 +21,4 @@ function IconMagnifier(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-const Memo = memo(IconMagnifier);
-export default Memo;
+export default memo(IconMagnifier);

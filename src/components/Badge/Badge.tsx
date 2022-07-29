@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import RejectIcon from '@foundation/Icon/Generated/IconReject';
+import RejectIcon from '@foundation/Icon/Generated/IconCross';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { getColorDisplayValue } from '@utilities/colors';
 import { merge } from '@utilities/merge';

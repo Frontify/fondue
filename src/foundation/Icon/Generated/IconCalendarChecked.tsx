@@ -21,5 +21,4 @@ function IconCalendarChecked(props: GeneratedIconProps): React.ReactElement<Gene
     );
 }
 
-const Memo = memo(IconCalendarChecked);
-export default Memo;
+export default memo(IconCalendarChecked);

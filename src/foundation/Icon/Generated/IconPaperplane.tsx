@@ -21,5 +21,4 @@ function IconPaperplane(props: GeneratedIconProps): React.ReactElement<Generated
     );
 }
 
-const Memo = memo(IconPaperplane);
-export default Memo;
+export default memo(IconPaperplane);

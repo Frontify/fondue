@@ -21,5 +21,4 @@ function IconChartBars(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-const Memo = memo(IconChartBars);
-export default Memo;
+export default memo(IconChartBars);

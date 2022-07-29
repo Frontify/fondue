@@ -21,5 +21,4 @@ function IconArrowAlignVerticalCentre(props: GeneratedIconProps): React.ReactEle
     );
 }
 
-const Memo = memo(IconArrowAlignVerticalCentre);
-export default Memo;
+export default memo(IconArrowAlignVerticalCentre);
