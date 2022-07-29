@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PatternDesign, PatternScale, patternScales, PatternTheme, patternThemes } from '@foundation/Pattern';
+import { PatternDesign, PatternScale, PatternTheme, patternScales, patternThemes } from '@foundation/Pattern';
 import React from 'react';
 import { FrontifyPattern } from './FrontifyPattern';
 

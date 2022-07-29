@@ -2,7 +2,7 @@
 
 import { IconExclamationMarkCircle, IconIcon, IconSize } from '@foundation/Icon';
 import React from 'react';
-import { brightHeaderBackgroundColors, BrightHeaderStyle } from './BrightHeader';
+import { BrightHeaderStyle, brightHeaderBackgroundColors } from './BrightHeader';
 import { Tooltip, TooltipProps } from './Tooltip';
 
 const TOOLTIP_TEXT = 'This is a tooltip';
