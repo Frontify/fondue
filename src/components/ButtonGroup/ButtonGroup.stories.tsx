@@ -12,15 +12,15 @@ export default {
     component: ButtonGroupComponent,
     argTypes: {
         size: {
-            options: [ButtonSize.Small, ButtonSize.Medium, ButtonSize.Large],
+            options: ButtonSize,
             control: { type: 'radio' },
         },
         style: {
-            options: [ButtonStyle.Default, ButtonStyle.Positive, ButtonStyle.Negative, ButtonStyle.Danger],
+            options: ButtonStyle,
             control: { type: 'radio' },
         },
         emphasis: {
-            options: [ButtonEmphasis.Default, ButtonEmphasis.Weak, ButtonEmphasis.Strong],
+            options: ButtonEmphasis,
             control: { type: 'radio' },
         },
     },
