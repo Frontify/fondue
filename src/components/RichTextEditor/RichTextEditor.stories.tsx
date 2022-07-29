@@ -4,7 +4,7 @@ import { Meta, Story } from '@storybook/react';
 import React from 'react';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { EditorActions } from './utils/actions';
-import { checkboxValue, htmlValue, IPSUM, nodesToSerialize, value } from './utils/exampleValues';
+import { IPSUM, checkboxValue, htmlValue, nodesToSerialize, value } from './utils/exampleValues';
 import { serializeNodesToHtml } from './utils/serializeToHtml';
 
 export default {

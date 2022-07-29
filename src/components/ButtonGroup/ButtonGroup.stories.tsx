@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonSize, ButtonStyle, ButtonEmphasis } from "@components/Button/Button";
-import { IconAddSimple, IconReject, IconCheck } from "@foundation/Icon/Generated";
-import { action } from "@storybook/addon-actions";
-import { Meta } from "@storybook/react";
-import React from "react";
-import { ButtonGroup as ButtonGroupComponent, ButtonGroupProps } from "./ButtonGroup";
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/Button';
+import { IconAddSimple, IconCheck, IconReject } from '@foundation/Icon/Generated';
+import { action } from '@storybook/addon-actions';
+import { Meta } from '@storybook/react';
+import React from 'react';
+import { ButtonGroup as ButtonGroupComponent, ButtonGroupProps } from './ButtonGroup';
 
 export default {
     title: 'Components/Button Group',
@@ -17,11 +17,11 @@ export default {
         },
         style: {
             options: [ButtonStyle.Default, ButtonStyle.Positive, ButtonStyle.Negative, ButtonStyle.Danger],
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
         emphasis: {
             options: [ButtonEmphasis.Default, ButtonEmphasis.Weak, ButtonEmphasis.Strong],
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
     },
     args: {
@@ -39,7 +39,7 @@ export const ButtonGroup = ({ ...args }) => (
             emphasis={args.emphasis}
             inverted={args.inverted}
             icon={<IconAddSimple />}
-            onClick={action("onClick")}
+            onClick={action('onClick')}
         >
             Button Text
         </Button>
@@ -48,7 +48,7 @@ export const ButtonGroup = ({ ...args }) => (
             emphasis={args.emphasis}
             inverted={args.inverted}
             icon={<IconCheck />}
-            onClick={action("onClick")}
+            onClick={action('onClick')}
         >
             The Second
         </Button>
@@ -57,7 +57,7 @@ export const ButtonGroup = ({ ...args }) => (
             emphasis={args.emphasis}
             inverted={args.inverted}
             icon={<IconReject />}
-            onClick={action("onClick")}
+            onClick={action('onClick')}
         >
             The Third
         </Button>

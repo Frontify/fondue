@@ -5,7 +5,7 @@ import React, { FC, useState } from 'react';
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from './RichTextEditor';
 import { DesignTokens } from './types';
 import { EditorActions } from './utils/actions';
-import { nodesToSerialize, serializedHtml, value as exampleValue } from './utils/exampleValues';
+import { value as exampleValue, nodesToSerialize, serializedHtml } from './utils/exampleValues';
 import { toPlaintext } from './utils/plaintext';
 import { serializeNodesToHtml } from './utils/serializeToHtml';
 
