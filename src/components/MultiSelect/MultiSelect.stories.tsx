@@ -3,13 +3,14 @@
 import { Meta, Story } from '@storybook/react';
 import React, { useState } from 'react';
 import { FormControl } from '@components/FormControl';
-import { MultiSelect as MultiSelectComponent, MultiSelectProps, MultiSelectType } from './MultiSelect';
+import { MultiSelect as MultiSelectComponent, MultiSelectProps, MultiSelectSize, MultiSelectType } from './MultiSelect';
 
 export default {
     title: 'Components/Multi Select',
     component: MultiSelectComponent,
     args: {
         type: MultiSelectType.Default,
+        size: MultiSelectSize.Medium,
         activeItemKeys: ['Short tag', 'Tag 74'],
         items: [
             {
@@ -35,6 +36,10 @@ export default {
     argTypes: {
         type: {
             options: Object.keys(MultiSelectType),
+            control: { type: 'select' },
+        },
+        size: {
+            options: Object.keys(MultiSelectSize),
             control: { type: 'select' },
         },
     },

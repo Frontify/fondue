@@ -1,18 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Checklist, ChecklistDirection } from '@components/Checklist/Checklist';
-import { Tag, TagType } from '@components/Tag/Tag';
+import { Tag, TagSize, TagType } from '@components/Tag/Tag';
 import { Trigger } from '@components/Trigger/Trigger';
 import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { useOverlay } from '@react-aria/overlays';
 import { mergeProps } from '@react-aria/utils';
+import { merge } from '@utilities/merge';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { FC, useRef, useState } from 'react';
+import { getSizeClasses } from './helpers';
 
 export enum MultiSelectType {
     Default = 'Default',
     Summarized = 'Summarized',
+}
+
+export enum MultiSelectSize {
+    Small = 'Small',
+    Medium = 'Medium',
 }
 
 export type MultiSelectItem = {
@@ -28,6 +35,7 @@ export type MultiSelectProps = {
     ariaLabel?: string;
     placeholder?: string;
     type?: MultiSelectType;
+    size?: MultiSelectSize;
 };
 
 export const MultiSelect: FC<MultiSelectProps> = ({
@@ -38,6 +46,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     disabled = false,
     placeholder,
     type = MultiSelectType.Default,
+    size = MultiSelectSize.Medium,
 }) => {
     const [open, setOpen] = useState(false);
     const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -94,7 +103,10 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                 <div
                     {...mergeProps(buttonProps, focusProps)}
                     ref={triggerRef}
-                    className="tw-flex-1 tw-flex tw-flex-wrap tw-gap-1 tw-pl-[19px] tw-py-[11px] tw-min-h-[34px] tw-outline-none tw-pr-7"
+                    className={merge([
+                        'tw-flex-1 tw-flex tw-flex-wrap tw-gap-1 tw-pl-[19px] tw-min-h-[34px] tw-outline-none tw-pr-7',
+                        getSizeClasses(size, activeItemKeys.length > 0),
+                    ])}
                 >
                     {type === MultiSelectType.Default &&
                         activeItemKeys.map((key) => (
@@ -102,6 +114,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                 key={key}
                                 type={open ? TagType.SelectedWithFocus : TagType.Selected}
                                 label={key.toString()}
+                                size={size === MultiSelectSize.Small ? TagSize.Small : TagSize.Medium}
                                 onClick={() => toggleSelection(key)}
                             />
                         ))}
@@ -110,6 +123,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                         <Tag
                             type={open ? TagType.SelectedWithFocus : TagType.Selected}
                             label={summarizedLabel}
+                            size={size === MultiSelectSize.Small ? TagSize.Small : TagSize.Medium}
                             onClick={() => onSelectionChange([])}
                         />
                     )}
