@@ -23,5 +23,4 @@ function IconTextIndent32(props: GeneratedIconProps): React.ReactElement<Generat
     );
 }
 
-const Memo = memo(IconTextIndent32);
-export default Memo;
+export default memo(IconTextIndent32);

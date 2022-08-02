@@ -22,5 +22,4 @@ function IconLinesTriangular12(props: GeneratedIconProps): React.ReactElement<Ge
     );
 }
 
-const Memo = memo(IconLinesTriangular12);
-export default Memo;
+export default memo(IconLinesTriangular12);

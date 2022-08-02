@@ -22,5 +22,4 @@ function IconListIndented32(props: GeneratedIconProps): React.ReactElement<Gener
     );
 }
 
-const Memo = memo(IconListIndented32);
-export default Memo;
+export default memo(IconListIndented32);

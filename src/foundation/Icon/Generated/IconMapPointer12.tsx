@@ -22,5 +22,4 @@ function IconMapPointer12(props: GeneratedIconProps): React.ReactElement<Generat
     );
 }
 
-const Memo = memo(IconMapPointer12);
-export default Memo;
+export default memo(IconMapPointer12);

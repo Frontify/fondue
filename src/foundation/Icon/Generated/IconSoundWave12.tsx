@@ -22,5 +22,4 @@ function IconSoundWave12(props: GeneratedIconProps): React.ReactElement<Generate
     );
 }
 
-const Memo = memo(IconSoundWave12);
-export default Memo;
+export default memo(IconSoundWave12);

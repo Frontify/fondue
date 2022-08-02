@@ -20,5 +20,4 @@ function IconSubscript16(props: GeneratedIconProps): React.ReactElement<Generate
     );
 }
 
-const Memo = memo(IconSubscript16);
-export default Memo;
+export default memo(IconSubscript16);

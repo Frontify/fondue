@@ -31,5 +31,4 @@ function IconLightning12(props: GeneratedIconProps): React.ReactElement<Generate
     );
 }
 
-const Memo = memo(IconLightning12);
-export default Memo;
+export default memo(IconLightning12);

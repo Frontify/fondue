@@ -23,5 +23,4 @@ function IconH16(props: GeneratedIconProps): React.ReactElement<GeneratedIconPro
     );
 }
 
-const Memo = memo(IconH16);
-export default Memo;
+export default memo(IconH16);

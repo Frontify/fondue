@@ -22,5 +22,4 @@ function IconIntercom32(props: GeneratedIconProps): React.ReactElement<Generated
     );
 }
 
-const Memo = memo(IconIntercom32);
-export default Memo;
+export default memo(IconIntercom32);

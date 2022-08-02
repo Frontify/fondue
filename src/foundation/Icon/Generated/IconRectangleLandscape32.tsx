@@ -22,5 +22,4 @@ function IconRectangleLandscape32(props: GeneratedIconProps): React.ReactElement
     );
 }
 
-const Memo = memo(IconRectangleLandscape32);
-export default Memo;
+export default memo(IconRectangleLandscape32);

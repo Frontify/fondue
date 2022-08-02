@@ -22,5 +22,4 @@ function IconMediaObjectTextBottom12(props: GeneratedIconProps): React.ReactElem
     );
 }
 
-const Memo = memo(IconMediaObjectTextBottom12);
-export default Memo;
+export default memo(IconMediaObjectTextBottom12);

@@ -31,5 +31,4 @@ function IconSkip5SecondsBackward12(props: GeneratedIconProps): React.ReactEleme
     );
 }
 
-const Memo = memo(IconSkip5SecondsBackward12);
-export default Memo;
+export default memo(IconSkip5SecondsBackward12);

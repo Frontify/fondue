@@ -22,5 +22,4 @@ function IconFooter12(props: GeneratedIconProps): React.ReactElement<GeneratedIc
     );
 }
 
-const Memo = memo(IconFooter12);
-export default Memo;
+export default memo(IconFooter12);

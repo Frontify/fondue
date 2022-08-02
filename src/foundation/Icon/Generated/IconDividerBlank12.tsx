@@ -22,5 +22,4 @@ function IconDividerBlank12(props: GeneratedIconProps): React.ReactElement<Gener
     );
 }
 
-const Memo = memo(IconDividerBlank12);
-export default Memo;
+export default memo(IconDividerBlank12);

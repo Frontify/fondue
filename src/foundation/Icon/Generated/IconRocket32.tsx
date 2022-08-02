@@ -22,5 +22,4 @@ function IconRocket32(props: GeneratedIconProps): React.ReactElement<GeneratedIc
     );
 }
 
-const Memo = memo(IconRocket32);
-export default Memo;
+export default memo(IconRocket32);

@@ -22,5 +22,4 @@ function IconStackVertical20(props: GeneratedIconProps): React.ReactElement<Gene
     );
 }
 
-const Memo = memo(IconStackVertical20);
-export default Memo;
+export default memo(IconStackVertical20);

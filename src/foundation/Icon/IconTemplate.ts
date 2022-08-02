@@ -15,6 +15,6 @@ export const IconTemplate: Template = ({ interfaces, componentName, jsx, exports
         return ${jsx};
       }
 
-      ${exports}
+      export default memo(${componentName});
     `;
 };

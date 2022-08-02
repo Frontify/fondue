@@ -22,5 +22,4 @@ function IconRocket24(props: GeneratedIconProps): React.ReactElement<GeneratedIc
     );
 }
 
-const Memo = memo(IconRocket24);
-export default Memo;
+export default memo(IconRocket24);

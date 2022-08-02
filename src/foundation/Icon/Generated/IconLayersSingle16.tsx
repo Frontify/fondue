@@ -22,5 +22,4 @@ function IconLayersSingle16(props: GeneratedIconProps): React.ReactElement<Gener
     );
 }
 
-const Memo = memo(IconLayersSingle16);
-export default Memo;
+export default memo(IconLayersSingle16);

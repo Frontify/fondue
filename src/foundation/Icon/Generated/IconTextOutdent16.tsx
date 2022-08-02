@@ -22,5 +22,4 @@ function IconTextOutdent16(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconTextOutdent16);
-export default Memo;
+export default memo(IconTextOutdent16);

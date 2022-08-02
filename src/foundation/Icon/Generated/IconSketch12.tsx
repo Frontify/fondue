@@ -20,5 +20,4 @@ function IconSketch12(props: GeneratedIconProps): React.ReactElement<GeneratedIc
     );
 }
 
-const Memo = memo(IconSketch12);
-export default Memo;
+export default memo(IconSketch12);

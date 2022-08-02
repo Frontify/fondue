@@ -20,5 +20,4 @@ function IconSuperscript24(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconSuperscript24);
-export default Memo;
+export default memo(IconSuperscript24);

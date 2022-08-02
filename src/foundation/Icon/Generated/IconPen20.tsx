@@ -22,5 +22,4 @@ function IconPen20(props: GeneratedIconProps): React.ReactElement<GeneratedIconP
     );
 }
 
-const Memo = memo(IconPen20);
-export default Memo;
+export default memo(IconPen20);

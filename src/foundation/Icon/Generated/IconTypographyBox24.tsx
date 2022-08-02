@@ -22,5 +22,4 @@ function IconTypographyBox24(props: GeneratedIconProps): React.ReactElement<Gene
     );
 }
 
-const Memo = memo(IconTypographyBox24);
-export default Memo;
+export default memo(IconTypographyBox24);

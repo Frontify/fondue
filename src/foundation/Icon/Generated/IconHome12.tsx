@@ -31,5 +31,4 @@ function IconHome12(props: GeneratedIconProps): React.ReactElement<GeneratedIcon
     );
 }
 
-const Memo = memo(IconHome12);
-export default Memo;
+export default memo(IconHome12);

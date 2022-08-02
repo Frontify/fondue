@@ -22,5 +22,4 @@ function IconWorkflowShapes12(props: GeneratedIconProps): React.ReactElement<Gen
     );
 }
 
-const Memo = memo(IconWorkflowShapes12);
-export default Memo;
+export default memo(IconWorkflowShapes12);

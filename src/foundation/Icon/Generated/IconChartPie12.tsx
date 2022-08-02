@@ -22,5 +22,4 @@ function IconChartPie12(props: GeneratedIconProps): React.ReactElement<Generated
     );
 }
 
-const Memo = memo(IconChartPie12);
-export default Memo;
+export default memo(IconChartPie12);

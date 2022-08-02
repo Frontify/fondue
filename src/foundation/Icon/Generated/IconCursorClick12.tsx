@@ -22,5 +22,4 @@ function IconCursorClick12(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconCursorClick12);
-export default Memo;
+export default memo(IconCursorClick12);

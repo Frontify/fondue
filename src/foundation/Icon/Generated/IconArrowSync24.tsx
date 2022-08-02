@@ -22,5 +22,4 @@ function IconArrowSync24(props: GeneratedIconProps): React.ReactElement<Generate
     );
 }
 
-const Memo = memo(IconArrowSync24);
-export default Memo;
+export default memo(IconArrowSync24);

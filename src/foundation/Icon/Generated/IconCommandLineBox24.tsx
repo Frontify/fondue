@@ -22,5 +22,4 @@ function IconCommandLineBox24(props: GeneratedIconProps): React.ReactElement<Gen
     );
 }
 
-const Memo = memo(IconCommandLineBox24);
-export default Memo;
+export default memo(IconCommandLineBox24);
