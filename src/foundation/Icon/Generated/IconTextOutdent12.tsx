@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
-function IconCross12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+function IconTextOutdent12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
@@ -9,18 +9,18 @@ function IconCross12(props: GeneratedIconProps): React.ReactElement<GeneratedIco
             width={12}
             height={12}
             className={customClassName}
-            name="IconCross12"
+            name="IconTextOutdent12"
             {...props}
         >
             <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M3.171 2.465a.5.5 0 0 0-.707.707L5.293 6 2.465 8.83a.5.5 0 0 0 .707.707L6 6.708l2.828 2.828a.5.5 0 0 0 .707-.707L6.707 6l2.829-2.828a.5.5 0 0 0-.707-.707l-2.83 2.828-2.828-2.828Z"
-                clipRule="evenodd"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                d="M1.5 3.5h9m-9 2h5m-5 4h9m-9-2h5m3.906-2.06L9.346 6.5l1.06 1.06"
             />
         </svg>
     );
 }
 
-const Memo = memo(IconCross12);
+const Memo = memo(IconTextOutdent12);
 export default Memo;

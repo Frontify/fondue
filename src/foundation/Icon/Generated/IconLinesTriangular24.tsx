@@ -1,26 +1,26 @@
 import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 
-function IconCross20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+function IconLinesTriangular24(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            width={20}
-            height={20}
+            width={24}
+            height={24}
             className={customClassName}
-            name="IconCross20"
+            name="IconLinesTriangular24"
             {...props}
         >
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M5.756 4.697a.75.75 0 0 0-1.061 1.06L8.938 10l-4.243 4.243a.75.75 0 1 0 1.06 1.06l4.243-4.242 4.597 4.596a.75.75 0 1 0 1.06-1.06L11.06 10l4.596-4.596a.75.75 0 1 0-1.06-1.06L9.997 8.94 5.756 4.697Z"
+                d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM5.998 12a.75.75 0 0 1 .75-.75h10.5a.75.75 0 1 1 0 1.5h-10.5a.75.75 0 0 1-.75-.75Zm3.752 4.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z"
                 clipRule="evenodd"
             />
         </svg>
     );
 }
 
-const Memo = memo(IconCross20);
+const Memo = memo(IconLinesTriangular24);
 export default Memo;

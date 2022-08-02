@@ -760,6 +760,12 @@ import IconGridRegular24 from '@foundation/Icon/Generated/IconGridRegular24';
 import IconGridRegular24Filled from '@foundation/Icon/Generated/IconGridRegular24Filled';
 import IconGridRegular32 from '@foundation/Icon/Generated/IconGridRegular32';
 import IconGridRegular32Filled from '@foundation/Icon/Generated/IconGridRegular32Filled';
+import IconH from '@foundation/Icon/Generated/IconH';
+import IconH12 from '@foundation/Icon/Generated/IconH12';
+import IconH16 from '@foundation/Icon/Generated/IconH16';
+import IconH20 from '@foundation/Icon/Generated/IconH20';
+import IconH24 from '@foundation/Icon/Generated/IconH24';
+import IconH32 from '@foundation/Icon/Generated/IconH32';
 import IconHeading from '@foundation/Icon/Generated/IconHeading';
 import IconHeading12 from '@foundation/Icon/Generated/IconHeading12';
 import IconHeading16 from '@foundation/Icon/Generated/IconHeading16';
@@ -885,6 +891,12 @@ import IconLines16 from '@foundation/Icon/Generated/IconLines16';
 import IconLines20 from '@foundation/Icon/Generated/IconLines20';
 import IconLines24 from '@foundation/Icon/Generated/IconLines24';
 import IconLines32 from '@foundation/Icon/Generated/IconLines32';
+import IconLinesTriangular from '@foundation/Icon/Generated/IconLinesTriangular';
+import IconLinesTriangular12 from '@foundation/Icon/Generated/IconLinesTriangular12';
+import IconLinesTriangular16 from '@foundation/Icon/Generated/IconLinesTriangular16';
+import IconLinesTriangular20 from '@foundation/Icon/Generated/IconLinesTriangular20';
+import IconLinesTriangular24 from '@foundation/Icon/Generated/IconLinesTriangular24';
+import IconLinesTriangular32 from '@foundation/Icon/Generated/IconLinesTriangular32';
 import IconLink from '@foundation/Icon/Generated/IconLink';
 import IconLink12 from '@foundation/Icon/Generated/IconLink12';
 import IconLink16 from '@foundation/Icon/Generated/IconLink16';
@@ -1307,6 +1319,12 @@ import IconScissors16 from '@foundation/Icon/Generated/IconScissors16';
 import IconScissors20 from '@foundation/Icon/Generated/IconScissors20';
 import IconScissors24 from '@foundation/Icon/Generated/IconScissors24';
 import IconScissors32 from '@foundation/Icon/Generated/IconScissors32';
+import IconSketch from '@foundation/Icon/Generated/IconSketch';
+import IconSketch12 from '@foundation/Icon/Generated/IconSketch12';
+import IconSketch16 from '@foundation/Icon/Generated/IconSketch16';
+import IconSketch20 from '@foundation/Icon/Generated/IconSketch20';
+import IconSketch24 from '@foundation/Icon/Generated/IconSketch24';
+import IconSketch32 from '@foundation/Icon/Generated/IconSketch32';
 import IconSkip5SecondsBackward from '@foundation/Icon/Generated/IconSkip5SecondsBackward';
 import IconSkip5SecondsBackward12 from '@foundation/Icon/Generated/IconSkip5SecondsBackward12';
 import IconSkip5SecondsBackward16 from '@foundation/Icon/Generated/IconSkip5SecondsBackward16';
@@ -1408,6 +1426,12 @@ import IconStrikethroughBox16 from '@foundation/Icon/Generated/IconStrikethrough
 import IconStrikethroughBox20 from '@foundation/Icon/Generated/IconStrikethroughBox20';
 import IconStrikethroughBox24 from '@foundation/Icon/Generated/IconStrikethroughBox24';
 import IconStrikethroughBox32 from '@foundation/Icon/Generated/IconStrikethroughBox32';
+import IconSubscript from '@foundation/Icon/Generated/IconSubscript';
+import IconSubscript12 from '@foundation/Icon/Generated/IconSubscript12';
+import IconSubscript16 from '@foundation/Icon/Generated/IconSubscript16';
+import IconSubscript20 from '@foundation/Icon/Generated/IconSubscript20';
+import IconSubscript24 from '@foundation/Icon/Generated/IconSubscript24';
+import IconSubscript32 from '@foundation/Icon/Generated/IconSubscript32';
 import IconSuitcase from '@foundation/Icon/Generated/IconSuitcase';
 import IconSuitcase12 from '@foundation/Icon/Generated/IconSuitcase12';
 import IconSuitcase16 from '@foundation/Icon/Generated/IconSuitcase16';
@@ -1420,6 +1444,12 @@ import IconSuitcaseTag16 from '@foundation/Icon/Generated/IconSuitcaseTag16';
 import IconSuitcaseTag20 from '@foundation/Icon/Generated/IconSuitcaseTag20';
 import IconSuitcaseTag24 from '@foundation/Icon/Generated/IconSuitcaseTag24';
 import IconSuitcaseTag32 from '@foundation/Icon/Generated/IconSuitcaseTag32';
+import IconSuperscript from '@foundation/Icon/Generated/IconSuperscript';
+import IconSuperscript12 from '@foundation/Icon/Generated/IconSuperscript12';
+import IconSuperscript16 from '@foundation/Icon/Generated/IconSuperscript16';
+import IconSuperscript20 from '@foundation/Icon/Generated/IconSuperscript20';
+import IconSuperscript24 from '@foundation/Icon/Generated/IconSuperscript24';
+import IconSuperscript32 from '@foundation/Icon/Generated/IconSuperscript32';
 import IconTable from '@foundation/Icon/Generated/IconTable';
 import IconTable12 from '@foundation/Icon/Generated/IconTable12';
 import IconTable16 from '@foundation/Icon/Generated/IconTable16';
@@ -1510,6 +1540,18 @@ import IconTextFormatUnderline16 from '@foundation/Icon/Generated/IconTextFormat
 import IconTextFormatUnderline20 from '@foundation/Icon/Generated/IconTextFormatUnderline20';
 import IconTextFormatUnderline24 from '@foundation/Icon/Generated/IconTextFormatUnderline24';
 import IconTextFormatUnderline32 from '@foundation/Icon/Generated/IconTextFormatUnderline32';
+import IconTextIndent from '@foundation/Icon/Generated/IconTextIndent';
+import IconTextIndent12 from '@foundation/Icon/Generated/IconTextIndent12';
+import IconTextIndent16 from '@foundation/Icon/Generated/IconTextIndent16';
+import IconTextIndent20 from '@foundation/Icon/Generated/IconTextIndent20';
+import IconTextIndent24 from '@foundation/Icon/Generated/IconTextIndent24';
+import IconTextIndent32 from '@foundation/Icon/Generated/IconTextIndent32';
+import IconTextOutdent from '@foundation/Icon/Generated/IconTextOutdent';
+import IconTextOutdent12 from '@foundation/Icon/Generated/IconTextOutdent12';
+import IconTextOutdent16 from '@foundation/Icon/Generated/IconTextOutdent16';
+import IconTextOutdent20 from '@foundation/Icon/Generated/IconTextOutdent20';
+import IconTextOutdent24 from '@foundation/Icon/Generated/IconTextOutdent24';
+import IconTextOutdent32 from '@foundation/Icon/Generated/IconTextOutdent32';
 import IconTrashBin from '@foundation/Icon/Generated/IconTrashBin';
 import IconTrashBin12 from '@foundation/Icon/Generated/IconTrashBin12';
 import IconTrashBin16 from '@foundation/Icon/Generated/IconTrashBin16';
@@ -2326,6 +2368,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.GridRegular24Filled]: <IconGridRegular24Filled />,
     [IconEnum.GridRegular32]: <IconGridRegular32 />,
     [IconEnum.GridRegular32Filled]: <IconGridRegular32Filled />,
+    [IconEnum.H]: <IconH />,
+    [IconEnum.H12]: <IconH12 />,
+    [IconEnum.H16]: <IconH16 />,
+    [IconEnum.H20]: <IconH20 />,
+    [IconEnum.H24]: <IconH24 />,
+    [IconEnum.H32]: <IconH32 />,
     [IconEnum.Heading]: <IconHeading />,
     [IconEnum.Heading12]: <IconHeading12 />,
     [IconEnum.Heading16]: <IconHeading16 />,
@@ -2451,6 +2499,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Lines20]: <IconLines20 />,
     [IconEnum.Lines24]: <IconLines24 />,
     [IconEnum.Lines32]: <IconLines32 />,
+    [IconEnum.LinesTriangular]: <IconLinesTriangular />,
+    [IconEnum.LinesTriangular12]: <IconLinesTriangular12 />,
+    [IconEnum.LinesTriangular16]: <IconLinesTriangular16 />,
+    [IconEnum.LinesTriangular20]: <IconLinesTriangular20 />,
+    [IconEnum.LinesTriangular24]: <IconLinesTriangular24 />,
+    [IconEnum.LinesTriangular32]: <IconLinesTriangular32 />,
     [IconEnum.Link]: <IconLink />,
     [IconEnum.Link12]: <IconLink12 />,
     [IconEnum.Link16]: <IconLink16 />,
@@ -2873,6 +2927,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Scissors20]: <IconScissors20 />,
     [IconEnum.Scissors24]: <IconScissors24 />,
     [IconEnum.Scissors32]: <IconScissors32 />,
+    [IconEnum.Sketch]: <IconSketch />,
+    [IconEnum.Sketch12]: <IconSketch12 />,
+    [IconEnum.Sketch16]: <IconSketch16 />,
+    [IconEnum.Sketch20]: <IconSketch20 />,
+    [IconEnum.Sketch24]: <IconSketch24 />,
+    [IconEnum.Sketch32]: <IconSketch32 />,
     [IconEnum.Skip5SecondsBackward]: <IconSkip5SecondsBackward />,
     [IconEnum.Skip5SecondsBackward12]: <IconSkip5SecondsBackward12 />,
     [IconEnum.Skip5SecondsBackward16]: <IconSkip5SecondsBackward16 />,
@@ -2974,6 +3034,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.StrikethroughBox20]: <IconStrikethroughBox20 />,
     [IconEnum.StrikethroughBox24]: <IconStrikethroughBox24 />,
     [IconEnum.StrikethroughBox32]: <IconStrikethroughBox32 />,
+    [IconEnum.Subscript]: <IconSubscript />,
+    [IconEnum.Subscript12]: <IconSubscript12 />,
+    [IconEnum.Subscript16]: <IconSubscript16 />,
+    [IconEnum.Subscript20]: <IconSubscript20 />,
+    [IconEnum.Subscript24]: <IconSubscript24 />,
+    [IconEnum.Subscript32]: <IconSubscript32 />,
     [IconEnum.Suitcase]: <IconSuitcase />,
     [IconEnum.Suitcase12]: <IconSuitcase12 />,
     [IconEnum.Suitcase16]: <IconSuitcase16 />,
@@ -2986,6 +3052,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.SuitcaseTag20]: <IconSuitcaseTag20 />,
     [IconEnum.SuitcaseTag24]: <IconSuitcaseTag24 />,
     [IconEnum.SuitcaseTag32]: <IconSuitcaseTag32 />,
+    [IconEnum.Superscript]: <IconSuperscript />,
+    [IconEnum.Superscript12]: <IconSuperscript12 />,
+    [IconEnum.Superscript16]: <IconSuperscript16 />,
+    [IconEnum.Superscript20]: <IconSuperscript20 />,
+    [IconEnum.Superscript24]: <IconSuperscript24 />,
+    [IconEnum.Superscript32]: <IconSuperscript32 />,
     [IconEnum.Table]: <IconTable />,
     [IconEnum.Table12]: <IconTable12 />,
     [IconEnum.Table16]: <IconTable16 />,
@@ -3076,6 +3148,18 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.TextFormatUnderline20]: <IconTextFormatUnderline20 />,
     [IconEnum.TextFormatUnderline24]: <IconTextFormatUnderline24 />,
     [IconEnum.TextFormatUnderline32]: <IconTextFormatUnderline32 />,
+    [IconEnum.TextIndent]: <IconTextIndent />,
+    [IconEnum.TextIndent12]: <IconTextIndent12 />,
+    [IconEnum.TextIndent16]: <IconTextIndent16 />,
+    [IconEnum.TextIndent20]: <IconTextIndent20 />,
+    [IconEnum.TextIndent24]: <IconTextIndent24 />,
+    [IconEnum.TextIndent32]: <IconTextIndent32 />,
+    [IconEnum.TextOutdent]: <IconTextOutdent />,
+    [IconEnum.TextOutdent12]: <IconTextOutdent12 />,
+    [IconEnum.TextOutdent16]: <IconTextOutdent16 />,
+    [IconEnum.TextOutdent20]: <IconTextOutdent20 />,
+    [IconEnum.TextOutdent24]: <IconTextOutdent24 />,
+    [IconEnum.TextOutdent32]: <IconTextOutdent32 />,
     [IconEnum.TrashBin]: <IconTrashBin />,
     [IconEnum.TrashBin12]: <IconTrashBin12 />,
     [IconEnum.TrashBin16]: <IconTrashBin16 />,
