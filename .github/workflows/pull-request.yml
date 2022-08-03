@@ -33,6 +33,10 @@ jobs:
                   key: node_modules-${{ hashFiles('package-lock.json') }}
                   restore-keys: node_modules-
 
+            - name: Install dependencies
+              if: steps.npm_cache.outputs.cache-hit != 'true'
+              run: npm ci
+
             - name: Component Tests
               run: npm run test
               env:
