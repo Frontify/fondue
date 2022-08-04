@@ -5,7 +5,13 @@ import React, { FC, useState } from 'react';
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from './RichTextEditor';
 import { DesignTokens } from './types';
 import { EditorActions } from './utils/actions';
-import { nodesToSerialize, serializedHtml, value as exampleValue } from './utils/exampleValues';
+import {
+    customDesignTokens,
+    nodesToSerialize,
+    serializedHtml,
+    serializedHtmlWithCustomDesignTokens,
+    value as exampleValue,
+} from './utils/exampleValues';
 import { toPlaintext } from './utils/plaintext';
 import { serializeNodesToHtml } from './utils/serializeToHtml';
 
@@ -543,5 +549,10 @@ describe('RichTextEditor Component', () => {
     it('should serialize to html', () => {
         const serialized = serializeNodesToHtml(nodesToSerialize);
         expect(serialized).to.equal(serializedHtml);
+    });
+
+    it('should serialize to html with custom design tokens', () => {
+        const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
+        expect(serialized).to.equal(serializedHtmlWithCustomDesignTokens);
     });
 });

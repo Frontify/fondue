@@ -11,45 +11,49 @@ import {
     UNDERLINE_CLASSES,
 } from '../components';
 import { ELEMENT_CHECK_ITEM } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
+import { DesignTokens } from '../types';
+import { defaultDesignTokens } from './defaultDesignTokens';
 import { parseRawValue } from './parseRawValue';
 import { TextStyles } from './textStyles';
 
-export const serializeRawToHtml = (raw?: string): string => {
+export const serializeRawToHtml = (raw?: string, designTokens: DesignTokens = defaultDesignTokens): string => {
     if (!raw) {
         return '';
     }
 
     const nodes = parseRawValue(raw);
-
-    return serializeNodesToHtml(nodes);
+    return serializeNodesToHtml(nodes, designTokens);
 };
 
-export const serializeNodesToHtml = (nodes: TDescendant[]): string => {
-    return nodes.map((node) => serializeNodeToHtmlRecursive(node)).join('');
+export const serializeNodesToHtml = (
+    nodes: TDescendant[],
+    designTokens: DesignTokens = defaultDesignTokens,
+): string => {
+    return nodes.map((node) => serializeNodeToHtmlRecursive(node, designTokens)).join('');
 };
 
-const serializeNodeToHtmlRecursive = (node: TDescendant): string => {
+const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: DesignTokens): string => {
     if (!node.children) {
         return serializeLeafToHtml(node);
     }
 
-    const children = node.children.map((n: TDescendant) => serializeNodeToHtmlRecursive(n)).join('');
+    const children = node.children.map((n: TDescendant) => serializeNodeToHtmlRecursive(n, designTokens)).join('');
 
     switch (node.type) {
         case TextStyles.ELEMENT_HEADING1:
-            return `<h1 class="tw-text-5xl tw-font-bold">${children}</h1>`;
+            return `<h1 style="${reactCssPropsToCss(designTokens.heading1)}">${children}</h1>`;
         case TextStyles.ELEMENT_HEADING2:
-            return `<h2 class="tw-text-4xl">${children}</h2>`;
+            return `<h2 style="${reactCssPropsToCss(designTokens.heading2)}">${children}</h2>`;
         case TextStyles.ELEMENT_HEADING3:
-            return `<h3 class="tw-text-3xl">${children}</h3>`;
+            return `<h3 style="${reactCssPropsToCss(designTokens.heading3)}">${children}</h3>`;
         case TextStyles.ELEMENT_HEADING4:
-            return `<h4 class="tw-text-2xl">${children}</h4>`;
+            return `<h4 style="${reactCssPropsToCss(designTokens.heading4)}">${children}</h4>`;
         case TextStyles.ELEMENT_CUSTOM1:
-            return `<p>${children}</p>`;
+            return `<p style="${reactCssPropsToCss(designTokens.custom1)}">${children}</p>`;
         case TextStyles.ELEMENT_CUSTOM2:
-            return `<p>${children}</p>`;
+            return `<p style="${reactCssPropsToCss(designTokens.custom2)}">${children}</p>`;
         case TextStyles.ELEMENT_CUSTOM3:
-            return `<p>${children}</p>`;
+            return `<p style="${reactCssPropsToCss(designTokens.custom3)}">${children}</p>`;
         case ELEMENT_PARAGRAPH:
             return `<p>${children}</p>`;
         case ELEMENT_UL:
@@ -93,4 +97,19 @@ const serializeLeafToHtml = (node: TDescendant): string => {
         string = `<span class="${CODE_CLASSES}">${string}</span>`;
     }
     return string;
+};
+
+const reactCssPropsToCss = (props?: any): string => {
+    if (!props) {
+        return '';
+    }
+    return Object.keys(props)
+        .map((key) => {
+            return `${convertCamelCaseToKebabCase(key)}: ${props[key]};`;
+        })
+        .join(' ');
+};
+
+const convertCamelCaseToKebabCase = (str: string): string => {
+    return str.replace(/([A-Z])/g, '-$1').toLowerCase();
 };
