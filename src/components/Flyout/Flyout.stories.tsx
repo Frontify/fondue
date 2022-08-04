@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { BadgeStatus, BadgeStyle } from '@components/Badge';
-import { Button, ButtonStyle } from '@components/Button/Button';
+import { Button, buttonPreset } from '@components/Button';
 import { Divider } from '@components/Divider/Divider';
 import { FormControl } from '@components/FormControl/FormControl';
 import { Slider } from '@components/Slider/Slider';
@@ -146,7 +146,7 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
         <Flyout
             {...args}
             trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
-                <Button onClick={() => setOpen(!open)} ref={ref} aria-label={ariaLabel}>
+                <Button {...buttonPreset.primary} onClick={() => setOpen(!open)} ref={ref} aria-label={ariaLabel}>
                     Button
                 </Button>
             )}
@@ -221,13 +221,14 @@ const WithCustomFooterFlyoutTemplate: Story<FlyoutProps> = (args) => {
                         <FlyoutFooter
                             buttons={[
                                 {
+                                    ...buttonPreset.secondary,
                                     children: 'Cancel',
-                                    style: ButtonStyle.Secondary,
+
                                     onClick: chain(action('onCancel'), () => setOpen(false)),
                                 },
                                 {
+                                    ...buttonPreset.primary,
                                     children: 'Add',
-                                    style: ButtonStyle.Primary,
                                     onClick: chain(action('onConfirm'), () => setOpen(false)),
                                 },
                             ]}
@@ -270,7 +271,7 @@ const WithCustomFooterAndHeaderTemplate: Story<FlyoutProps> = (args) => {
         <Flyout
             {...args}
             trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
-                <Button onClick={() => setIsOpen(!isOpen)} ref={ref} aria-label={ariaLabel}>
+                <Button {...buttonPreset.primary} onClick={() => setIsOpen(!isOpen)} ref={ref} aria-label={ariaLabel}>
                     Click me
                 </Button>
             )}
@@ -295,8 +296,8 @@ WithCustomFooterAndHeader.args = {
         <FlyoutFooter
             buttons={[
                 {
+                    ...buttonPreset.primary,
                     children: 'A button',
-                    style: ButtonStyle.Primary,
                 },
             ]}
         />
@@ -356,7 +357,12 @@ const WithPlacementAndOffsetTemplate: Story<FlyoutProps> = (args) => {
             {...args}
             trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
                 <div className="tw-flex tw-justify-center tw-items-center tw-w-full tw-h-screen">
-                    <Button onClick={() => setIsOpen(!isOpen)} ref={ref} aria-label={ariaLabel}>
+                    <Button
+                        {...buttonPreset.primary}
+                        onClick={() => setIsOpen(!isOpen)}
+                        ref={ref}
+                        aria-label={ariaLabel}
+                    >
                         Click me
                     </Button>
                 </div>

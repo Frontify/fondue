@@ -2,8 +2,7 @@
 
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import React from 'react';
-import { Button, ButtonRounding, ButtonSize, ButtonStyle } from './Button';
-import { Solid } from './ButtonClasses';
+import { Button, ButtonRounding, ButtonSize, ButtonStyle, Solid } from './';
 
 const BUTTON_TEXT = 'Frontify';
 const BUTTON_ID = '[data-test-id=button]';

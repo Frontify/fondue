@@ -5,9 +5,9 @@ import { Meta, Story } from '@storybook/react';
 import { Card, CardProps } from './Card';
 import { Slider } from '@components/Slider/Slider';
 import { Divider } from '@components/Divider/Divider';
-import { Stack } from '../../layout/Stack';
-import { Text } from '../../typography/Text';
-import { Button, ButtonStyle } from '@components/Button';
+import { Stack } from '@layout/Stack';
+import { Text } from '@typography/Text';
+import { Button, buttonPreset } from '@components/Button';
 
 export default {
     title: 'Components/Card',
@@ -52,7 +52,7 @@ Default.args = {
             <Text>I am a card component with some content</Text>
             <Stack spacing="m" padding="none">
                 <Button>Button 1</Button>
-                <Button style={ButtonStyle.Secondary}>Button 2</Button>
+                <Button {...buttonPreset.secondary}>Button 2</Button>
                 <Button>Button 3</Button>
             </Stack>
         </Stack>
@@ -117,7 +117,7 @@ WithOnClick.args = {
             </div>
             <Stack spacing="m" padding="none">
                 <Button>Button 1</Button>
-                <Button style={ButtonStyle.Secondary}>Button 2</Button>
+                <Button {...buttonPreset.secondary}>Button 2</Button>
                 <Button>Button 3</Button>
             </Stack>
         </Stack>

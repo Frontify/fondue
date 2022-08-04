@@ -1,17 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ButtonElements, ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle } from './ButtonTypes';
+import { ButtonElements, ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, Solid } from './ButtonTypes';
 
 export const ButtonCommonClasses =
     'tw-group ' +
     'tw-border ' +
     'tw-box-box tw-relative tw-flex tw-items-center tw-justify-center ' +
     'tw-cursor-pointer tw-outline-none tw-font-body tw-font-medium ';
-
-export enum Solid {
-    filled = 'filled',
-    empty = 'empty',
-}
 
 export const ButtonDisabledClasses: Record<Solid, string> = {
     [Solid.filled]:

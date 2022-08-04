@@ -4,12 +4,17 @@ import React, { ForwardRefRenderFunction, MouseEvent, ReactElement, ReactNode, c
 
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
-import { mergeProps } from '@react-aria/utils';
 import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
-
-import { IconSize } from '@foundation/Icon/IconSize';
-import { ButtonElements, ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
+import {
+    ButtonElements,
+    ButtonEmphasis,
+    ButtonRounding,
+    ButtonSize,
+    ButtonStyle,
+    ButtonType,
+    Solid,
+} from './ButtonTypes';
 import {
     ButtonCommonClasses,
     ButtonDisabledClasses,
@@ -17,23 +22,9 @@ import {
     ButtonSizeClasses,
     ButtonStyleClasses,
     IconSpacingClasses,
-    Solid,
 } from './ButtonClasses';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
-
-export * from './ButtonTypes';
-
-const iconSizes: Record<ButtonSize, IconSize> = {
-    [ButtonSize.Small]: IconSize.Size16,
-    [ButtonSize.Medium]: IconSize.Size20,
-    [ButtonSize.Large]: IconSize.Size24,
-};
-
-const typesMap: Record<ButtonType, 'button' | 'submit' | 'reset'> = {
-    [ButtonType.Button]: 'button',
-    [ButtonType.Submit]: 'submit',
-    [ButtonType.Reset]: 'reset',
-};
+import { buttonIconSizeMap, buttonTypeMap } from '@components/Button/mappings';
 
 export type ButtonProps = {
     type?: ButtonType;
@@ -75,44 +66,39 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     const { isFocusVisible, focusProps } = useFocusRing();
     const ref = useForwardedRef<HTMLButtonElement | null>(externalRef);
     const { buttonProps } = useButton(
-        { onPress: () => onClick && onClick(), isDisabled: disabled, type: typesMap[type] },
+        { onPress: () => onClick && onClick(), isDisabled: disabled, type: buttonTypeMap[type] },
         ref,
     );
 
-    const getStyles = (kind: keyof ButtonElements) => {
-        if (!disabled) {
-            return `${ButtonStyleClasses[solid][emphasis][style][kind]} ${
-                isFocusVisible && kind === 'button' && FOCUS_STYLE
-            }`;
-        } else {
-            return ButtonDisabledClasses[solid];
-        }
-    };
+    const getStyles = (kind: keyof ButtonElements) =>
+        !disabled ? `${ButtonStyleClasses[solid][emphasis][style][kind]}` : ButtonDisabledClasses[solid];
 
     const buttonClassName = merge([
+        getStyles('button'),
         ButtonCommonClasses,
         ButtonRoundingClasses[rounding],
         (icon && !children) || hideLabel ? ButtonSizeClasses[size].iconOnly : ButtonSizeClasses[size].default,
         !hugWidth && 'tw-w-full',
-        getStyles('button'),
+        isFocusVisible && FOCUS_STYLE,
     ]);
 
     return (
         <button
-            {...mergeProps(buttonProps, focusProps)}
             aria-label={ariaLabel}
             ref={ref}
             className={buttonClassName}
             disabled={disabled}
             data-test-id="button"
             form={formId}
+            {...focusProps}
+            {...buttonProps}
         >
             {icon && (
                 <span
                     data-test-id="button-icon"
                     className={merge([children && !hideLabel ? IconSpacingClasses[size] : '', getStyles('icon')])}
                 >
-                    {cloneElement(icon, { size: iconSizes[size] })}
+                    {cloneElement(icon, { size: buttonIconSizeMap[size] })}
                 </span>
             )}
             {children && (

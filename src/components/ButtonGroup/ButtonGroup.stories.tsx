@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/Button';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { IconAddSimple, IconCheck, IconReject } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
 import { Meta } from '@storybook/react';

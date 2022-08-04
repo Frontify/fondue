@@ -4,8 +4,8 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { Button, ButtonProps } from './Button';
 import { IconEnum, iconsMap } from '@foundation/Icon';
-import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
-import { Solid } from '@components/Button/ButtonClasses';
+import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType, Solid } from './ButtonTypes';
+import { buttonPreset } from '@components/Button';
 
 const defaultArgs = {
     type: ButtonType.Button,
@@ -24,19 +24,19 @@ export default {
     component: Button,
     argTypes: {
         size: {
-            options: ButtonSize,
+            options: Object.values(ButtonSize),
             control: { type: 'radio' },
         },
         style: {
-            options: ButtonStyle,
+            options: Object.values(ButtonStyle),
             control: { type: 'radio' },
         },
         solid: {
-            options: Solid,
+            options: Object.values(Solid),
             control: { type: 'radio' },
         },
         emphasis: {
-            options: ButtonEmphasis,
+            options: Object.values(ButtonEmphasis),
             control: { type: 'radio' },
         },
         icon: {
@@ -50,11 +50,11 @@ export default {
             control: { type: 'select' },
         },
         rounding: {
-            options: ButtonRounding,
+            options: Object.values(ButtonRounding),
             control: { type: 'radio' },
         },
         type: {
-            options: ButtonType,
+            options: Object.values(ButtonType),
             control: { type: 'radio' },
         },
         onClick: { action: 'onClick' },
@@ -67,22 +67,36 @@ export const Default = ButtonTemplate.bind({});
 Default.args = { ...defaultArgs };
 Default.storyName = 'Text Label Only';
 
-export const withIcon = ButtonTemplate.bind({});
-withIcon.args = { ...defaultArgs, hideLabel: true, icon: iconsMap[IconEnum.Icons] };
-withIcon.storyName = 'Icon Only';
+export const WithIcon = ButtonTemplate.bind({});
+WithIcon.args = { ...defaultArgs, hideLabel: true, icon: iconsMap[IconEnum.Icons] };
+WithIcon.storyName = 'Icon Only';
 
-export const withRoundedIcon = ButtonTemplate.bind({});
-withRoundedIcon.args = {
+export const WithRoundedIcon = ButtonTemplate.bind({});
+WithRoundedIcon.args = {
     ...defaultArgs,
     rounding: ButtonRounding.Full,
     icon: iconsMap[IconEnum.Icons],
     hideLabel: true,
 };
-withRoundedIcon.storyName = 'Icon Only rounded';
+WithRoundedIcon.storyName = 'Icon Only rounded';
 
-export const withIconAndLabel = ButtonTemplate.bind({});
-withIconAndLabel.args = {
+export const WithIconAndLabel = ButtonTemplate.bind({});
+WithIconAndLabel.args = {
     ...defaultArgs,
     icon: iconsMap[IconEnum.ColorScale],
 };
-withIconAndLabel.storyName = 'Icon and Text Label';
+WithIconAndLabel.storyName = 'Icon and Text Label';
+
+export const ButtonPresetPrimary = ButtonTemplate.bind({});
+ButtonPresetPrimary.args = {
+    children: 'Primary Button',
+    icon: iconsMap[IconEnum.ColorScale],
+    ...buttonPreset.primary,
+};
+
+export const ButtonPresetSecondary = ButtonTemplate.bind({});
+ButtonPresetSecondary.args = {
+    children: 'Secondary Button',
+    icon: iconsMap[IconEnum.ColorScale],
+    ...buttonPreset.secondary,
+};

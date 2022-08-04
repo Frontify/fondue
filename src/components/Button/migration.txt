@@ -1,0 +1,6 @@
+Breaking:
+
+- Removed primary, secondary styles => new buttonPreset.primary, buttonstyles.secondary
+- Move exports to index.ts,         => changed exports from button/button -> button
+- Solid changed to enum             => {filled -> true, empty -> false)
+
