@@ -40,11 +40,11 @@ export default {
             control: { type: 'radio' },
         },
         icon: {
-            options: [IconEnum.Icons, IconEnum.DotsVertical, IconEnum.ColorScale, IconEnum.Settings],
+            options: [IconEnum.Icon, IconEnum.DotsVertical, IconEnum.ColorFan, IconEnum.Settings],
             mapping: {
-                [IconEnum.Icons]: iconsMap[IconEnum.Icons],
+                [IconEnum.Icon]: iconsMap[IconEnum.Icon],
                 [IconEnum.DotsVertical]: iconsMap[IconEnum.DotsVertical],
-                [IconEnum.ColorScale]: iconsMap[IconEnum.ColorScale],
+                [IconEnum.ColorFan]: iconsMap[IconEnum.ColorFan],
                 [IconEnum.Settings]: iconsMap[IconEnum.Settings],
             },
             control: { type: 'select' },
@@ -68,14 +68,14 @@ Default.args = { ...defaultArgs };
 Default.storyName = 'Text Label Only';
 
 export const WithIcon = ButtonTemplate.bind({});
-WithIcon.args = { ...defaultArgs, hideLabel: true, icon: iconsMap[IconEnum.Icons] };
+WithIcon.args = { ...defaultArgs, hideLabel: true, icon: iconsMap[IconEnum.Icon] };
 WithIcon.storyName = 'Icon Only';
 
 export const WithRoundedIcon = ButtonTemplate.bind({});
 WithRoundedIcon.args = {
     ...defaultArgs,
     rounding: ButtonRounding.Full,
-    icon: iconsMap[IconEnum.Icons],
+    icon: iconsMap[IconEnum.Icon],
     hideLabel: true,
 };
 WithRoundedIcon.storyName = 'Icon Only rounded';
@@ -83,20 +83,20 @@ WithRoundedIcon.storyName = 'Icon Only rounded';
 export const WithIconAndLabel = ButtonTemplate.bind({});
 WithIconAndLabel.args = {
     ...defaultArgs,
-    icon: iconsMap[IconEnum.ColorScale],
+    icon: iconsMap[IconEnum.ColorFan],
 };
 WithIconAndLabel.storyName = 'Icon and Text Label';
 
 export const ButtonPresetPrimary = ButtonTemplate.bind({});
 ButtonPresetPrimary.args = {
     children: 'Primary Button',
-    icon: iconsMap[IconEnum.ColorScale],
+    icon: iconsMap[IconEnum.ColorFan],
     ...buttonPreset.primary,
 };
 
 export const ButtonPresetSecondary = ButtonTemplate.bind({});
 ButtonPresetSecondary.args = {
     children: 'Secondary Button',
-    icon: iconsMap[IconEnum.ColorScale],
+    icon: iconsMap[IconEnum.ColorFan],
     ...buttonPreset.secondary,
 };

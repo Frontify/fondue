@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
-import { IconAddSimple, IconCheck, IconReject } from '@foundation/Icon/Generated';
+import { IconCheckMark, IconCross, IconPlus } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
 import { Meta } from '@storybook/react';
 import React from 'react';
@@ -33,13 +33,13 @@ export default {
 
 export const ButtonGroup = ({ ...args }) => (
     <ButtonGroupComponent size={args.size}>
-        <Button style={args.style} emphasis={args.emphasis} icon={<IconAddSimple />} onClick={action('onClick')}>
+        <Button style={args.style} emphasis={args.emphasis} icon={<IconPlus />} onClick={action('onClick')}>
             Button Text
         </Button>
-        <Button style={args.style} emphasis={args.emphasis} icon={<IconCheck />} onClick={action('onClick')}>
+        <Button style={args.style} emphasis={args.emphasis} icon={<IconCheckMark />} onClick={action('onClick')}>
             The Second
         </Button>
-        <Button style={args.style} emphasis={args.emphasis} icon={<IconReject />} onClick={action('onClick')}>
+        <Button style={args.style} emphasis={args.emphasis} icon={<IconCross />} onClick={action('onClick')}>
             The Third
         </Button>
     </ButtonGroupComponent>
