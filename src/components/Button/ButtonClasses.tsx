@@ -40,6 +40,64 @@ export const IconSpacingClasses: Record<ButtonSize, string> = {
     [ButtonSize.Large]: 'tw--ml-1 tw-mr-2 ',
 };
 
+const ButtonEmphasisWeak = {
+    [ButtonStyle.Default]: {
+        button:
+            'tw-border-transparent ' +
+            'hover:tw-bg-button-background-hover hover:tw-border-button-border ' +
+            'active:tw-bg-button-background-pressed ',
+        icon:
+            'tw-text-button-icon ' +
+            'group-hover:tw-text-button-icon-hover ' +
+            'group-active:tw-text-button-icon-pressed tw-leading-none ',
+        text:
+            'tw-text-button-text ' +
+            'group-hover:tw-text-button-text-hover ' +
+            'group-active:tw-text-button-text-pressed ',
+    },
+    [ButtonStyle.Positive]: {
+        button:
+            'tw-border-transparent ' +
+            'hover:tw-bg-button-positive-background-hover hover:tw-border-button-positive-border ' +
+            'active:tw-bg-button-positive-background-pressed ',
+        icon:
+            'tw-text-button-strong-positive-icon ' +
+            'group-hover:tw-text-button-strong-positive-icon-hover' +
+            'group-active:tw-text-button-strong-positive-icon-pressed tw-leading-none ',
+        text:
+            'tw-text-button-positive-text ' +
+            'group-hover:tw-text-button-positive-text-hover ' +
+            'group-active:tw-text-button-positive-text-pressed ',
+    },
+    [ButtonStyle.Negative]: {
+        button:
+            'tw-border-transparent ' +
+            'hover:tw-bg-button-negative-background-hover hover:tw-border-button-negative-border ' +
+            'active:tw-bg-button-negative-background-pressed ',
+        icon:
+            'tw-text-button-negative-icon ' +
+            'group-hover:tw-text-button-negative-icon-hover' +
+            'group-active:tw-text-button-negative-icon-pressed tw-leading-none ',
+        text:
+            'tw-text-button-negative-text ' +
+            'group-hover:tw-text-button-negative-text-hover' +
+            'group-active:tw-text-button-negative-text-pressed ',
+    },
+    [ButtonStyle.Danger]: {
+        button:
+            'tw-border-transparent ' +
+            'hover:tw-bg-button-background-hover ' +
+            'active:tw-bg-button-background-pressed ',
+        icon:
+            'tw-text-button-negative-icon ' +
+            'group-hover:tw-text-button-negative-icon-hover' +
+            'group-active:tw-text-button-negative-icon-pressed tw-leading-none ',
+        text:
+            'tw-text-button-negative-icon ' +
+            'group-hover:tw-text-button-negative-icon-hover' +
+            'group-active:tw-text-button-negative-icon-pressed ',
+    },
+};
 /**
  * A NOTE ABOUT THIS BIG LONG LIST
  *
@@ -164,239 +222,11 @@ export const ButtonStyleClasses: Record<Solid, Record<ButtonEmphasis, Record<But
                     'group-active:tw-text-button-danger-text-pressed ',
             },
         },
-        [ButtonEmphasis.Weak]: {
-            [ButtonStyle.Default]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-background-hover hover:tw-border-button-border ' +
-                    'active:tw-bg-button-background-pressed ',
-                icon:
-                    'tw-text-button-icon ' +
-                    'group-hover:tw-text-button-icon-hover ' +
-                    'group-active:tw-text-button-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-text ' +
-                    'group-hover:tw-text-button-text-hover ' +
-                    'group-active:tw-text-button-text-pressed ',
-            },
-            [ButtonStyle.Positive]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-positive-background-hover hover:tw-border-button-positive-border ' +
-                    'active:tw-bg-button-positive-background-pressed ',
-                icon:
-                    'tw-text-button-strong-positive-icon ' +
-                    'group-hover:tw-text-button-strong-positive-icon-hover' +
-                    'group-active:tw-text-button-strong-positive-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-positive-text ' +
-                    'group-hover:tw-text-button-positive-text-hover ' +
-                    'group-active:tw-text-button-positive-text-pressed ',
-            },
-            [ButtonStyle.Negative]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-negative-background-hover hover:tw-border-button-negative-border ' +
-                    'active:tw-bg-button-negative-background-pressed ',
-                icon:
-                    'tw-text-button-negative-icon ' +
-                    'group-hover:tw-text-button-negative-icon-hover' +
-                    'group-active:tw-text-button-negative-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-negative-text ' +
-                    'group-hover:tw-text-button-negative-text-hover' +
-                    'group-active:tw-text-button-negative-text-pressed ',
-            },
-            [ButtonStyle.Danger]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-background-hover ' +
-                    'active:tw-bg-button-background-pressed ',
-                icon:
-                    'tw-text-button-negative-icon ' +
-                    'group-hover:tw-text-button-negative-icon-hover' +
-                    'group-active:tw-text-button-negative-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-negative-icon ' +
-                    'group-hover:tw-text-button-negative-icon-hover' +
-                    'group-active:tw-text-button-negative-icon-pressed ',
-            },
-        },
+        [ButtonEmphasis.Weak]: ButtonEmphasisWeak,
     },
     [Solid.empty]: {
-        [ButtonEmphasis.Default]: {
-            [ButtonStyle.Default]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-background-hover hover:tw-border-button-border ' +
-                    'active:tw-bg-button-background-pressed ',
-                icon:
-                    'tw-text-button-icon ' +
-                    'group-hover:tw-text-button-icon-hover ' +
-                    'group-active:tw-text-button-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-text ' +
-                    'group-hover:tw-text-button-text-hover ' +
-                    'group-active:tw-text-button-text-pressed ',
-            },
-            [ButtonStyle.Positive]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-positive-background-hover hover:tw-border-button-positive-border ' +
-                    'active:tw-bg-button-positive-background-pressed ',
-                icon:
-                    'tw-text-button-strong-positive-icon ' +
-                    'group-hover:tw-text-button-strong-positive-icon-hover' +
-                    'group-active:tw-text-button-strong-positive-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-positive-text ' +
-                    'group-hover:tw-text-button-positive-text-hover ' +
-                    'group-active:tw-text-button-positive-text-pressed ',
-            },
-            [ButtonStyle.Negative]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-negative-background-hover hover:tw-border-button-negative-border ' +
-                    'active:tw-bg-button-negative-background-pressed ',
-                icon:
-                    'tw-text-button-negative-icon ' +
-                    'group-hover:tw-text-button-negative-icon-hover' +
-                    'group-active:tw-text-button-negative-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-negative-text ' +
-                    'group-hover:tw-text-button-negative-text-hover' +
-                    'group-active:tw-text-button-negative-text-pressed ',
-            },
-            [ButtonStyle.Danger]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-background-hover ' +
-                    'active:tw-bg-button-background-pressed ',
-                icon:
-                    'tw-text-button-negative-icon ' +
-                    'group-hover:tw-text-button-negative-icon-hover' +
-                    'group-active:tw-text-button-negative-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-negative-icon ' +
-                    'group-hover:tw-text-button-negative-icon-hover' +
-                    'group-active:tw-text-button-negative-icon-pressed ',
-            },
-        },
-        [ButtonEmphasis.Strong]: {
-            [ButtonStyle.Default]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-background-hover hover:tw-border-button-border ' +
-                    'active:tw-bg-button-background-pressed ',
-                icon:
-                    'tw-text-button-icon ' +
-                    'group-hover:tw-text-button-icon-hover ' +
-                    'group-active:tw-text-button-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-text ' +
-                    'group-hover:tw-text-button-text-hover ' +
-                    'group-active:tw-text-button-text-pressed ',
-            },
-            [ButtonStyle.Positive]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-positive-background-hover hover:tw-border-button-positive-border ' +
-                    'active:tw-bg-button-positive-background-pressed ',
-                icon:
-                    'tw-text-button-strong-positive-icon ' +
-                    'group-hover:tw-text-button-strong-positive-icon-hover' +
-                    'group-active:tw-text-button-strong-positive-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-positive-text ' +
-                    'group-hover:tw-text-button-positive-text-hover ' +
-                    'group-active:tw-text-button-positive-text-pressed ',
-            },
-            [ButtonStyle.Negative]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-negative-background-hover hover:tw-border-button-negative-border ' +
-                    'active:tw-bg-button-negative-background-pressed ',
-                icon:
-                    'tw-text-button-negative-icon ' +
-                    'group-hover:tw-text-button-negative-icon-hover' +
-                    'group-active:tw-text-button-negative-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-negative-text ' +
-                    'group-hover:tw-text-button-negative-text-hover' +
-                    'group-active:tw-text-button-negative-text-pressed ',
-            },
-            [ButtonStyle.Danger]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-background-hover ' +
-                    'active:tw-bg-button-background-pressed ',
-                icon:
-                    'tw-text-button-negative-icon ' +
-                    'group-hover:tw-text-button-negative-icon-hover' +
-                    'group-active:tw-text-button-negative-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-negative-icon ' +
-                    'group-hover:tw-text-button-negative-icon-hover' +
-                    'group-active:tw-text-button-negative-icon-pressed ',
-            },
-        },
-        [ButtonEmphasis.Weak]: {
-            [ButtonStyle.Default]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-background-hover hover:tw-border-button-border ' +
-                    'active:tw-bg-button-background-pressed ',
-                icon:
-                    'tw-text-button-icon ' +
-                    'group-hover:tw-text-button-icon-hover ' +
-                    'group-active:tw-text-button-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-text ' +
-                    'group-hover:tw-text-button-text-hover ' +
-                    'group-active:tw-text-button-text-pressed ',
-            },
-            [ButtonStyle.Positive]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-positive-background-hover hover:tw-border-button-positive-border ' +
-                    'active:tw-bg-button-positive-background-pressed ',
-                icon:
-                    'tw-text-button-strong-positive-icon ' +
-                    'group-hover:tw-text-button-strong-positive-icon-hover' +
-                    'group-active:tw-text-button-strong-positive-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-positive-text ' +
-                    'group-hover:tw-text-button-positive-text-hover ' +
-                    'group-active:tw-text-button-positive-text-pressed ',
-            },
-            [ButtonStyle.Negative]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-negative-background-hover hover:tw-border-button-negative-border ' +
-                    'active:tw-bg-button-negative-background-pressed ',
-                icon:
-                    'tw-text-button-negative-icon ' +
-                    'group-hover:tw-text-button-negative-icon-hover' +
-                    'group-active:tw-text-button-negative-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-negative-text ' +
-                    'group-hover:tw-text-button-negative-text-hover' +
-                    'group-active:tw-text-button-negative-text-pressed ',
-            },
-            [ButtonStyle.Danger]: {
-                button:
-                    'tw-border-transparent ' +
-                    'hover:tw-bg-button-background-hover ' +
-                    'active:tw-bg-button-background-pressed ',
-                icon:
-                    'tw-text-button-negative-icon ' +
-                    'group-hover:tw-text-button-negative-icon-hover' +
-                    'group-active:tw-text-button-negative-icon-pressed tw-leading-none ',
-                text:
-                    'tw-text-button-negative-icon ' +
-                    'group-hover:tw-text-button-negative-icon-hover' +
-                    'group-active:tw-text-button-negative-icon-pressed ',
-            },
-        },
+        [ButtonEmphasis.Default]: ButtonEmphasisWeak,
+        [ButtonEmphasis.Strong]: ButtonEmphasisWeak,
+        [ButtonEmphasis.Weak]: ButtonEmphasisWeak,
     },
 };
