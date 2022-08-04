@@ -3,7 +3,6 @@
 import React, { ForwardRefRenderFunction, MouseEvent, ReactElement, ReactNode, cloneElement, forwardRef } from 'react';
 
 import { useButton } from '@react-aria/button';
-import { useFocusRing } from '@react-aria/focus';
 import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
 import {
@@ -62,7 +61,6 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     },
     externalRef,
 ) => {
-    const { focusProps } = useFocusRing();
     const ref = useForwardedRef<HTMLButtonElement | null>(externalRef);
     const { buttonProps } = useButton(
         { onPress: () => onClick && onClick(), isDisabled: disabled, type: buttonTypeMap[type] },
@@ -89,7 +87,6 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             disabled={disabled}
             data-test-id="button"
             form={formId}
-            {...focusProps}
             {...buttonProps}
         >
             {icon && (
