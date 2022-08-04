@@ -82,6 +82,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     return (
         <button
             aria-label={ariaLabel}
+            aria-disabled={disabled}
             ref={ref}
             className={buttonClassName}
             disabled={disabled}
