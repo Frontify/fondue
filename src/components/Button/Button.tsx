@@ -23,7 +23,7 @@ import {
     ButtonStyleClasses,
     IconSpacingClasses,
 } from './ButtonClasses';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { buttonIconSizeMap, buttonTypeMap } from '@components/Button/mappings';
 
 export type ButtonProps = {
@@ -62,8 +62,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     },
     externalRef,
 ) => {
-    // some accessibility stuff
-    const { isFocusVisible, focusProps } = useFocusRing();
+    const { focusProps } = useFocusRing();
     const ref = useForwardedRef<HTMLButtonElement | null>(externalRef);
     const { buttonProps } = useButton(
         { onPress: () => onClick && onClick(), isDisabled: disabled, type: buttonTypeMap[type] },
@@ -74,12 +73,12 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         !disabled ? `${ButtonStyleClasses[solid][emphasis][style][kind]}` : ButtonDisabledClasses[solid];
 
     const buttonClassName = merge([
+        FOCUS_VISIBLE_STYLE,
         getStyles('button'),
         ButtonCommonClasses,
         ButtonRoundingClasses[rounding],
         (icon && !children) || hideLabel ? ButtonSizeClasses[size].iconOnly : ButtonSizeClasses[size].default,
         !hugWidth && 'tw-w-full',
-        isFocusVisible && FOCUS_STYLE,
     ]);
 
     return (
