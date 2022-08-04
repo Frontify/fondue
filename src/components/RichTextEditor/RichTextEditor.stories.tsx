@@ -145,7 +145,7 @@ export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
                     </div>
                     Rendered:
                     <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                        <RichTextEditorComponent readonly value={serialized} />
+                        <div dangerouslySetInnerHTML={{ __html: serialized }} />
                     </div>
                 </>
             ) : null}
