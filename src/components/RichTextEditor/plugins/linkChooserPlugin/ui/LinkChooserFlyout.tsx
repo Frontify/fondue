@@ -1,4 +1,4 @@
-import { ButtonStyle } from '@components/Button';
+import { buttonPreset } from '@components/Button';
 import { Checkbox, CheckboxState } from '@components/Checkbox';
 import { Flyout, FlyoutFooter } from '@components/Flyout';
 import { FormControl } from '@components/FormControl';
@@ -51,14 +51,14 @@ export const LinkChooserFlyout = ({
                 <FlyoutFooter
                     buttons={[
                         {
+                            ...buttonPreset.secondary,
                             children: 'Cancel',
-                            style: ButtonStyle.Secondary,
                             onClick: () => onCancel(),
                         },
                         {
+                            ...buttonPreset.primary,
                             children: 'Save',
                             onClick: onConfirm,
-                            style: ButtonStyle.Primary,
                             icon: <IconCheckMark />,
                             disabled: !chosenLink.searchResult?.link || !chosenLink.searchResult?.title,
                         },

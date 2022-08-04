@@ -5,7 +5,7 @@ import { Meta, Story } from '@storybook/react';
 import { Button, ButtonProps } from './Button';
 import { IconEnum, iconsMap } from '@foundation/Icon';
 import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType, Solid } from './ButtonTypes';
-import { buttonPreset } from '@components/Button';
+import { buttonPreset } from '@components/Button/ButtonPreset';
 
 const defaultArgs = {
     type: ButtonType.Button,

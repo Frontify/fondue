@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ButtonStyle } from '@components/Button';
+import { buttonPreset } from '@components/Button';
 import { TextInput } from '@components/TextInput/TextInput';
 import React, { FC, useState } from 'react';
 import { Flyout, FlyoutProps } from './Flyout';
@@ -34,8 +34,8 @@ const Component: FC<Pick<FlyoutProps, 'onConfirm' | 'onCancel' | 'badges' | 'leg
             {legacyFooter === false && (
                 <FlyoutFooter
                     buttons={[
-                        { children: 'Cancel', style: ButtonStyle.Secondary, onClick: cy.stub().as('onCloseStub') },
-                        { children: 'Add', style: ButtonStyle.Primary, onClick: cy.stub().as('onClickStub') },
+                        { ...buttonPreset.secondary, children: 'Cancel', onClick: cy.stub().as('onCloseStub') },
+                        { ...buttonPreset.primary, children: 'Add', onClick: cy.stub().as('onClickStub') },
                     ]}
                 />
             )}
