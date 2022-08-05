@@ -29,6 +29,7 @@ export const serializeNodesToHtml = (
     nodes: TDescendant[],
     designTokens: DesignTokens = defaultDesignTokens,
 ): string => {
+    designTokens = setDefaultDesignTokensIfNull(designTokens);
     return nodes.map((node) => serializeNodeToHtmlRecursive(node, designTokens)).join('');
 };
 
@@ -97,6 +98,15 @@ const serializeLeafToHtml = (node: TDescendant): string => {
         string = `<span class="${CODE_CLASSES}">${string}</span>`;
     }
     return string;
+};
+
+const setDefaultDesignTokensIfNull = (designTokens: DesignTokens): DesignTokens => {
+    for (const element of Object.values(TextStyles).filter((textStyle) => textStyle !== TextStyles.ELEMENT_PARAGRAPH)) {
+        if (!designTokens[element]) {
+            designTokens[element] = defaultDesignTokens[element];
+        }
+    }
+    return designTokens;
 };
 
 const reactCssPropsToCss = (props?: any): string => {
