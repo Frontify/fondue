@@ -3,9 +3,9 @@
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
+import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import { EditorActions } from './utils/actions';
-import { checkboxValue, customDesignTokens, htmlValue, IPSUM, nodesToSerialize, value } from './utils/exampleValues';
-import { serializeNodesToHtml } from './utils/serializeToHtml';
+import { IPSUM, checkboxValue, customDesignTokens, htmlValue, nodesToSerialize, value } from './utils/exampleValues';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -134,6 +134,8 @@ WithCustomControls.args = {
 
 export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
     const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
+
+    console.log(nodesToSerialize);
 
     return (
         <>

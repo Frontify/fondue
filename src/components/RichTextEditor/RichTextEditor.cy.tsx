@@ -5,15 +5,8 @@ import React, { FC, useState } from 'react';
 import { ON_SAVE_DELAY_IN_MS, RichTextEditor, RichTextEditorProps } from './RichTextEditor';
 import { DesignTokens } from './types';
 import { EditorActions } from './utils/actions';
-import {
-    customDesignTokens,
-    nodesToSerialize,
-    serializedHtml,
-    serializedHtmlWithCustomDesignTokens,
-    value as exampleValue,
-} from './utils/exampleValues';
+import { value as exampleValue } from './utils/exampleValues';
 import { toPlaintext } from './utils/plaintext';
-import { serializeNodesToHtml } from './utils/serializeToHtml';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
 const TOOLBAR = '[data-test-id=toolbar]';
@@ -544,15 +537,5 @@ describe('RichTextEditor Component', () => {
         expect(toPlaintext(JSON.stringify(exampleValue))).to.be.eq(
             'This text is bold.\nThis text is italic.\nThis text has an underline.\nThis text has a strikethrough.\nThis text is a code line.\nLorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\nThis is list item number one.\nThis is list item number two.\nThis is list item number three.\nThis is child item number one.\nThis is child item number two, with more children.\nThis is child of child item number one.\nThis is child of child item number two.\nThis comes first.\nThis comes second.\nAnd last but not least, this comes third.\nThis is a Link.\nThis is also a Link.\nThis is a checked checklist item.\nThis is an unchecked checklist item.\nThis is checked again.\nHeading 1\nHeading 2\nHeading 3\nHeading 4\nCustom 1\nCustom 2',
         );
-    });
-
-    it('should serialize to html', () => {
-        const serialized = serializeNodesToHtml(nodesToSerialize);
-        expect(serialized).to.equal(serializedHtml);
-    });
-
-    it('should serialize to html with custom design tokens', () => {
-        const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
-        expect(serialized).to.equal(serializedHtmlWithCustomDesignTokens);
     });
 });
