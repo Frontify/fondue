@@ -38,14 +38,12 @@ export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: De
         case ELEMENT_LI:
             return `<li>${children}</li>`;
         case ELEMENT_LINK:
-            if (node.url) {
-                return `<a class="${LINK_CLASSES}" href="${escapeHtml(node.url)}">${children}</a>`;
-            }
             if (node.chosenLink) {
                 return `<a class="${LINK_CLASSES}" target=${
                     node.chosenLink.openInNewTab ? '_blank' : '_self'
                 } href="${escapeHtml(node.chosenLink.searchResult.link)}">${children}</a>`;
             }
+            return `<a class="${LINK_CLASSES}" href="${escapeHtml(node.url)}">${children}</a>`;
         case ELEMENT_CHECK_ITEM:
             return `<input type="checkbox"/><label>${children}</label>`;
 

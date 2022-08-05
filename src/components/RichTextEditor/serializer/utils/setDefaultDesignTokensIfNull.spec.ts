@@ -13,7 +13,7 @@ describe('setDefaultDesignTokensIfNull()', () => {
     it('overwrites the defaults', () => {
         const designTokens: DesignTokens = {
             heading3: {
-                textAlign: 'left',
+                textAlign: 'right',
             },
         };
 
