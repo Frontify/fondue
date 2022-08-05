@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import fastGlob from 'fast-glob';
 import { join } from 'path';
 import { readFile, writeFile } from 'fs/promises';
 import { camelCase, toUpper } from 'lodash';
-// @ts-ignore
 import { transform } from '@svgr/core';
 import { Entry } from 'fast-glob/out/types';
-import { IconTemplate } from '../src/foundation/Icon/IconTemplate';
-import { IconComponent, IconTemplateDynamic } from '../src/foundation/Icon/IconTemplateDynamic';
+import { IconTemplate } from '@foundation/Icon/IconTemplate';
+import { IconComponent, IconTemplateDynamic } from '@foundation/Icon/IconTemplateDynamic';
 
 const ICON_SOURCE_DIRECTORY = 'node_modules/@frontify/fondue-icons/icons/';
 const GENERATED_ICONS_DIRECTORY = 'src/foundation/Icon/Generated/';
@@ -20,15 +18,15 @@ export const GENERATED_ICONS_INDEX_PATH = `${GENERATED_ICONS_DIRECTORY}index.ts`
 /**
  * Gets an array of all svg file paths from the source directory
  */
-const getSvgFilePaths = async () => {
-    return await fastGlob(`${ICON_SOURCE_DIRECTORY}**/*.svg`, { objectMode: true });
+const getSvgFilePaths = () => {
+    return fastGlob(`${ICON_SOURCE_DIRECTORY}**/*.svg`, { objectMode: true });
 };
 
 /**
  * Gets an array of all the directories containing icon variants (i.e. the parents of the svgs)
  */
-const getShapeFolderPaths = async () => {
-    return await fastGlob(`${ICON_SOURCE_DIRECTORY}**`, {
+const getShapeFolderPaths = () => {
+    return fastGlob(`${ICON_SOURCE_DIRECTORY}**`, {
         onlyDirectories: true,
         objectMode: true,
     });
@@ -52,7 +50,7 @@ const generateSvgComponent = async (svgPath: Entry) => {
     const svgFileContent = await readFile(svgPath.path, { encoding: 'utf-8' });
     const svgFileName = camelCase(svgPath.name.replace('.svg', '')).replace(/^(.)/, toUpper);
 
-    await transform(
+    const tsxCode = await transform(
         svgFileContent,
         {
             plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx', '@svgr/plugin-prettier'],
@@ -66,10 +64,10 @@ const generateSvgComponent = async (svgPath: Entry) => {
             },
         },
         { componentName: `${ICON_COMPONENT_PREFIX}${svgFileName}` },
-    ).then(async (tsxCode: string) => {
-        const generatedTsxFilePath = join(ICON_BUILD_DIRECTORY, `${ICON_COMPONENT_PREFIX}${svgFileName}.tsx`);
-        await writeFile(generatedTsxFilePath, tsxCode);
-    });
+    );
+
+    const generatedTsxFilePath = join(ICON_BUILD_DIRECTORY, `${ICON_COMPONENT_PREFIX}${svgFileName}.tsx`);
+    await writeFile(generatedTsxFilePath, tsxCode);
 };
 
 /**
