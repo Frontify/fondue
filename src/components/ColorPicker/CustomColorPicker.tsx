@@ -104,9 +104,9 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, 'palette'>> = ({
                     decorator="%"
                     decoratorPosition={DecoratorPosition.Right}
                     onChange={(value) => {
-                        const alpha = parseInt(value || '0', 10) / 100;
-                        setAlphaValue(alpha);
-                        onSelect({ ...currentColor, alpha });
+                        const a = parseInt(value || '0', 10) / 100;
+                        setAlphaValue(a);
+                        onSelect({ ...currentColor, alpha: a });
                     }}
                 />
             </div>
