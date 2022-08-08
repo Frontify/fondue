@@ -16,7 +16,7 @@ export type AriaOptionProps = {
     node: Node<object>;
     isSelected?: boolean;
     state: TreeState<object>;
-    onClick?: () => void;
+    onClick?: (event: React.MouseEvent) => void;
 };
 
 const isActionMenuItem = (

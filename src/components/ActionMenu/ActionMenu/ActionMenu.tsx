@@ -29,7 +29,7 @@ export type ActionMenuProps = {
     focus?: FocusStrategy;
     border?: boolean;
     scrollable?: boolean;
-    onClick?: () => void;
+    onClick?: (event: React.MouseEvent) => void;
 };
 
 export const ActionMenu = ({
