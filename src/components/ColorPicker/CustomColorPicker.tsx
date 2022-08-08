@@ -70,7 +70,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, 'palette'>> = ({
                                 size={3}
                                 type={TextInputType.Number}
                                 value={red.toString()}
-                                onChange={(red) => onSelect({ ...currentColor, red: parseInt(red) })}
+                                onChange={(value) => onSelect({ ...currentColor, red: parseInt(value) })}
                             />
                         </div>
                         <div className="tw-flex-1">
@@ -80,7 +80,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, 'palette'>> = ({
                                 size={3}
                                 type={TextInputType.Number}
                                 value={green.toString()}
-                                onChange={(green) => onSelect({ ...currentColor, green: parseInt(green) })}
+                                onChange={(value) => onSelect({ ...currentColor, green: parseInt(value) })}
                             />
                         </div>
                         <div className="tw-flex-1">
@@ -90,7 +90,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, 'palette'>> = ({
                                 size={3}
                                 type={TextInputType.Number}
                                 value={blue.toString()}
-                                onChange={(blue) => onSelect({ ...currentColor, blue: parseInt(blue) })}
+                                onChange={(value) => onSelect({ ...currentColor, blue: parseInt(value) })}
                             />
                         </div>
                     </>
