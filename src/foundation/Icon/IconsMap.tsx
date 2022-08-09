@@ -1570,6 +1570,12 @@ import IconTriangle16 from '@foundation/Icon/Generated/IconTriangle16';
 import IconTriangle20 from '@foundation/Icon/Generated/IconTriangle20';
 import IconTriangle24 from '@foundation/Icon/Generated/IconTriangle24';
 import IconTriangle32 from '@foundation/Icon/Generated/IconTriangle32';
+import IconTwitter from '@foundation/Icon/Generated/IconTwitter';
+import IconTwitter12 from '@foundation/Icon/Generated/IconTwitter12';
+import IconTwitter16 from '@foundation/Icon/Generated/IconTwitter16';
+import IconTwitter20 from '@foundation/Icon/Generated/IconTwitter20';
+import IconTwitter24 from '@foundation/Icon/Generated/IconTwitter24';
+import IconTwitter32 from '@foundation/Icon/Generated/IconTwitter32';
 import IconTypography from '@foundation/Icon/Generated/IconTypography';
 import IconTypography12 from '@foundation/Icon/Generated/IconTypography12';
 import IconTypography16 from '@foundation/Icon/Generated/IconTypography16';
@@ -1594,6 +1600,12 @@ import IconTypographyMultiple16 from '@foundation/Icon/Generated/IconTypographyM
 import IconTypographyMultiple20 from '@foundation/Icon/Generated/IconTypographyMultiple20';
 import IconTypographyMultiple24 from '@foundation/Icon/Generated/IconTypographyMultiple24';
 import IconTypographyMultiple32 from '@foundation/Icon/Generated/IconTypographyMultiple32';
+import IconVimeo from '@foundation/Icon/Generated/IconVimeo';
+import IconVimeo12 from '@foundation/Icon/Generated/IconVimeo12';
+import IconVimeo16 from '@foundation/Icon/Generated/IconVimeo16';
+import IconVimeo20 from '@foundation/Icon/Generated/IconVimeo20';
+import IconVimeo24 from '@foundation/Icon/Generated/IconVimeo24';
+import IconVimeo32 from '@foundation/Icon/Generated/IconVimeo32';
 import IconWorkflowLanes from '@foundation/Icon/Generated/IconWorkflowLanes';
 import IconWorkflowLanes12 from '@foundation/Icon/Generated/IconWorkflowLanes12';
 import IconWorkflowLanes16 from '@foundation/Icon/Generated/IconWorkflowLanes16';
@@ -3178,6 +3190,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Triangle20]: <IconTriangle20 />,
     [IconEnum.Triangle24]: <IconTriangle24 />,
     [IconEnum.Triangle32]: <IconTriangle32 />,
+    [IconEnum.Twitter]: <IconTwitter />,
+    [IconEnum.Twitter12]: <IconTwitter12 />,
+    [IconEnum.Twitter16]: <IconTwitter16 />,
+    [IconEnum.Twitter20]: <IconTwitter20 />,
+    [IconEnum.Twitter24]: <IconTwitter24 />,
+    [IconEnum.Twitter32]: <IconTwitter32 />,
     [IconEnum.Typography]: <IconTypography />,
     [IconEnum.Typography12]: <IconTypography12 />,
     [IconEnum.Typography16]: <IconTypography16 />,
@@ -3202,6 +3220,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.TypographyMultiple20]: <IconTypographyMultiple20 />,
     [IconEnum.TypographyMultiple24]: <IconTypographyMultiple24 />,
     [IconEnum.TypographyMultiple32]: <IconTypographyMultiple32 />,
+    [IconEnum.Vimeo]: <IconVimeo />,
+    [IconEnum.Vimeo12]: <IconVimeo12 />,
+    [IconEnum.Vimeo16]: <IconVimeo16 />,
+    [IconEnum.Vimeo20]: <IconVimeo20 />,
+    [IconEnum.Vimeo24]: <IconVimeo24 />,
+    [IconEnum.Vimeo32]: <IconVimeo32 />,
     [IconEnum.WorkflowLanes]: <IconWorkflowLanes />,
     [IconEnum.WorkflowLanes12]: <IconWorkflowLanes12 />,
     [IconEnum.WorkflowLanes16]: <IconWorkflowLanes16 />,

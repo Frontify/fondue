@@ -12,12 +12,21 @@ function IconMagnifier12(props: GeneratedIconProps): React.ReactElement<Generate
             name="IconMagnifier12"
             {...props}
         >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M10.354 5.677a4.677 4.677 0 1 1-9.354 0 4.677 4.677 0 0 1 9.354 0ZM9.322 10.03a5.677 5.677 0 1 1 .707-.707l1.603 1.602a.5.5 0 1 1-.707.707L9.322 10.03Z"
-                clipRule="evenodd"
-            />
+            <g fill="none">
+                <g clipPath="url(#prefix__a)">
+                    <path
+                        fill="currentColor"
+                        fillRule="evenodd"
+                        d="M10.354 5.677a4.677 4.677 0 1 1-9.354 0 4.677 4.677 0 0 1 9.354 0ZM9.322 10.03a5.677 5.677 0 1 1 .707-.707l1.603 1.602a.5.5 0 1 1-.707.707L9.322 10.03Z"
+                        clipRule="evenodd"
+                    />
+                </g>
+                <defs>
+                    <clipPath id="prefix__a">
+                        <path fill="#fff" d="M0 0h12v12H0z" />
+                    </clipPath>
+                </defs>
+            </g>
         </svg>
     );
 }

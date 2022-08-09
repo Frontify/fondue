@@ -12,12 +12,21 @@ function IconCircle12(props: GeneratedIconProps): React.ReactElement<GeneratedIc
             name="IconCircle12"
             {...props}
         >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M6 11A5 5 0 1 0 6 1a5 5 0 0 0 0 10Zm0 1A6 6 0 1 0 6 0a6 6 0 0 0 0 12Z"
-                clipRule="evenodd"
-            />
+            <g fill="none">
+                <g clipPath="url(#prefix__a)">
+                    <path
+                        fill="currentColor"
+                        fillRule="evenodd"
+                        d="M6 11A5 5 0 1 0 6 1a5 5 0 0 0 0 10Zm0 1A6 6 0 1 0 6 0a6 6 0 0 0 0 12Z"
+                        clipRule="evenodd"
+                    />
+                </g>
+                <defs>
+                    <clipPath id="prefix__a">
+                        <path fill="#fff" d="M0 0h12v12H0z" />
+                    </clipPath>
+                </defs>
+            </g>
         </svg>
     );
 }
