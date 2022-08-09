@@ -80,7 +80,12 @@ export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSel
                 isFocusVisible && FOCUS_STYLE_INSET,
             ])}
             ref={ref}
-            onClick={onClick}
+            onClick={(e) => {
+                e.stopPropagation();
+                if (onClick) {
+                    onClick();
+                }
+            }}
         >
             <MenuItem
                 title={title}
