@@ -80,8 +80,8 @@ export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSel
                 isFocusVisible && FOCUS_STYLE_INSET,
             ])}
             ref={ref}
-            onClick={(e) => {
-                e.stopPropagation();
+            onClick={(event) => {
+                event.stopPropagation();
                 if (onClick) {
                     onClick();
                 }
