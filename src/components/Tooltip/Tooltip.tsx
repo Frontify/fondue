@@ -126,7 +126,7 @@ export const Tooltip = ({
     brightHeader,
     buttons,
     children,
-    position = TooltipPosition.Bottom,
+    position = TooltipPosition.Top,
     alignment = TooltipAlignment.Middle,
     withArrow,
     flip = true,
