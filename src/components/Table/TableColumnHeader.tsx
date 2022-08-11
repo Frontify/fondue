@@ -1,23 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Checkbox, CheckboxState } from "@components/Checkbox/Checkbox";
-import IconArrowDown from "@foundation/Icon/Generated/IconArrowDown";
-import IconArrowUp from "@foundation/Icon/Generated/IconArrowUp";
-import IconArrowUpAndDown from "@foundation/Icon/Generated/IconArrowUpAndDown";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { useCheckbox } from "@react-aria/checkbox";
-import { useFocusRing } from "@react-aria/focus";
-import { useTableColumnHeader, useTableSelectAllCheckbox } from "@react-aria/table";
-import { mergeProps } from "@react-aria/utils";
-import { VisuallyHidden } from "@react-aria/visually-hidden";
-import { TableState } from "@react-stately/table";
-import { useToggleState } from "@react-stately/toggle";
-import { FOCUS_STYLE_INSET } from "@utilities/focusStyle";
-import { merge } from "@utilities/merge";
-import React, { cloneElement, FC, useCallback, useEffect, useRef, useState } from "react";
+import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { useCheckbox } from '@react-aria/checkbox';
+import { useFocusRing } from '@react-aria/focus';
+import { useTableColumnHeader, useTableSelectAllCheckbox } from '@react-aria/table';
+import { mergeProps } from '@react-aria/utils';
+import { VisuallyHidden } from '@react-aria/visually-hidden';
+import { TableState } from '@react-stately/table';
+import { useToggleState } from '@react-stately/toggle';
+import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import React, { FC, cloneElement, useCallback, useEffect, useRef, useState } from 'react';
+import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@foundation/Icon';
 
 export enum TableColumnHeaderType {
-    Default = "Default",
-    SelectAll = "SelectAll",
+    Default = 'Default',
+    SelectAll = 'SelectAll',
 }
 
 export type TableColumnHeaderProps = {
@@ -36,7 +34,7 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
         rendered,
         props: { allowsSorting },
     } = column;
-    const [icon, setIcon] = useState(<IconArrowUpAndDown />);
+    const [icon, setIcon] = useState(<IconArrowBidirectional />);
     const ref = useRef<HTMLTableCellElement | null>(null);
     const { columnHeaderProps } = useTableColumnHeader({ node: column }, state, ref);
     const isSortedColumn = state.sortDescriptor?.column === key;
@@ -45,9 +43,9 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
 
     useEffect(() => {
         if (isSortedColumn) {
-            setIcon(sortDirection === "descending" ? <IconArrowDown /> : <IconArrowUp />);
+            setIcon(sortDirection === 'descending' ? <IconArrowDown /> : <IconArrowUp />);
         } else {
-            setIcon(<IconArrowUpAndDown />);
+            setIcon(<IconArrowBidirectional />);
         }
     }, [isSortedColumn, sortDirection]);
 
@@ -77,13 +75,13 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
                 {...headerProps}
                 ref={ref}
                 className={merge([
-                    "tw-pl-8 tw-py-3 tw-pr-4 tw-w-16 tw-border-l-4 tw-border-transparent tw-group tw-outline-none",
-                    selectionMode === "multiple" && "tw-cursor-pointer",
+                    'tw-pl-8 tw-py-3 tw-pr-4 tw-w-16 tw-border-l-4 tw-border-transparent tw-group tw-outline-none',
+                    selectionMode === 'multiple' && 'tw-cursor-pointer',
                 ])}
                 data-test-id="table-select-cell"
             >
-                {selectionMode === "single" ? (
-                    <VisuallyHidden>{inputProps["aria-label"]}</VisuallyHidden>
+                {selectionMode === 'single' ? (
+                    <VisuallyHidden>{inputProps['aria-label']}</VisuallyHidden>
                 ) : (
                     <Checkbox value={key} ariaLabel={key} state={getCheckboxState()} />
                 )}
@@ -96,7 +94,7 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
             {...mergeProps(columnHeaderProps, focusProps)}
             ref={ref}
             className={merge([
-                "tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-outline-none tw-cursor-pointer tw-group",
+                'tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-outline-none tw-cursor-pointer tw-group',
                 isFocusVisible && FOCUS_STYLE_INSET,
             ])}
             data-test-id="table-column"
@@ -108,8 +106,8 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
                         aria-hidden="true"
                         className={
                             isSortedColumn
-                                ? "tw-text-violet-50"
-                                : "tw-text-black-40 dark:tw-text-black-60 group-hover:tw-text-black-100 dark:group-hover:tw-text-white"
+                                ? 'tw-text-violet-50'
+                                : 'tw-text-black-40 dark:tw-text-black-60 group-hover:tw-text-black-100 dark:group-hover:tw-text-white'
                         }
                     >
                         {cloneElement(icon, { size: IconSize.Size12 })}

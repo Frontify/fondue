@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ComboBoxState } from "@react-stately/combobox";
-import { DropdownState, LinkChooserState, SectionState } from "../state/machine";
-import { SearchResult } from "../types";
+import { ComboBoxState } from '@react-stately/combobox';
+import { DropdownState, LinkChooserState, SectionState } from '../state/types';
+import { SearchResult } from '../types';
 
 type MachineMatches = (value: string) => boolean;
 
@@ -40,7 +40,7 @@ export const closeBoxState = (state: ComboBoxState<object>) => {
 
 export const openBoxState = (state: ComboBoxState<object>) => {
     if (!state.isOpen) {
-        state.open("first", "manual");
+        state.open('first', 'manual');
         state.setFocused(true);
     }
 };

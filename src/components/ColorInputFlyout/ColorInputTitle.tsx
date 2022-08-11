@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getColorDisplayValue } from "@utilities/colors";
-import React, { FC } from "react";
-import tinycolor from "tinycolor2";
-import { Color, ColorFormat } from "../../types/colors";
+import { getColorDisplayValue } from '@utilities/colors';
+import React, { FC } from 'react';
+import tinycolor from 'tinycolor2';
+import { Color, ColorFormat } from '../../types/colors';
 
 type Props = {
     currentColor: Color;

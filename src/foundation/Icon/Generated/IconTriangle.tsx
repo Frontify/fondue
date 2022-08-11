@@ -1,25 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconTriangle12 from './IconTriangle12';
+import IconTriangle16 from './IconTriangle16';
+import IconTriangle20 from './IconTriangle20';
+import IconTriangle24 from './IconTriangle24';
+import IconTriangle32 from './IconTriangle32'
 
 function IconTriangle(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconTriangle"
-            {...props}
-        >
-            <path d="M5.772 19.287h12.456L12 6.83 5.772 19.287ZM21 21H3l9-18 9 18Z" />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconTriangle12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconTriangle16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconTriangle20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconTriangle24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconTriangle32 {...props}/>}
+        </span>
     );
 }
 

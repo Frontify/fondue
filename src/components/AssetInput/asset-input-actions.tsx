@@ -1,49 +1,49 @@
-import React from "react";
-import { ActionMenuBlock, MenuItemStyle } from "..";
-import { IconCrop, IconExternalLink, IconImageLibrary, IconReject, IconUploadAlternative } from "../..";
+import React from 'react';
+import { ActionMenuBlock, MenuItemStyle } from '..';
+import { IconArrowCircleUp, IconArrowOutExternal, IconCrop, IconCross, IconImageStack } from '@foundation/Icon';
 
 export const assetInputActions = [
     {
-        id: "block1",
-        ariaLabel: "First section",
+        id: 'block1',
+        ariaLabel: 'First section',
         menuItems: [
             {
-                id: "1",
-                title: "Replace with Asset",
-                decorator: <IconImageLibrary />,
+                id: '1',
+                title: 'Replace with Asset',
+                decorator: <IconImageStack />,
             },
             {
-                id: "2",
-                title: "Replace with Upload",
-                decorator: <IconUploadAlternative />,
+                id: '2',
+                title: 'Replace with Upload',
+                decorator: <IconArrowCircleUp />,
             },
         ],
     },
     {
-        id: "block2",
-        ariaLabel: "Second section",
+        id: 'block2',
+        ariaLabel: 'Second section',
         menuItems: [
             {
-                id: "10",
-                title: "Crop / Resize",
+                id: '10',
+                title: 'Crop / Resize',
                 decorator: <IconCrop />,
             },
             {
-                id: "11",
-                title: "Small warning",
-                decorator: <IconExternalLink />,
+                id: '11',
+                title: 'Small warning',
+                decorator: <IconArrowOutExternal />,
             },
         ],
     },
     {
-        id: "block3",
-        ariaLabel: "Third section",
+        id: 'block3',
+        ariaLabel: 'Third section',
         menuItems: [
             {
-                id: "20",
-                title: "Remove",
+                id: '20',
+                title: 'Remove',
                 style: MenuItemStyle.Danger,
-                decorator: <IconReject />,
+                decorator: <IconCross />,
             },
         ],
     },

@@ -1,29 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconDrops12 from './IconDrops12';
+import IconDrops16 from './IconDrops16';
+import IconDrops20 from './IconDrops20';
+import IconDrops24 from './IconDrops24';
+import IconDrops32 from './IconDrops32'
 
 function IconDrops(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconDrops"
-            {...props}
-        >
-            <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M7.625 8.876a4.376 4.376 0 1 0 8.75 0 4.376 4.376 0 0 0-8.75 0ZM12 3a5.876 5.876 0 1 0 0 11.751A5.876 5.876 0 0 0 12 3ZM18 17.146a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1 0-1.5h10.5a.75.75 0 0 1 .75.75ZM16 20.196a.75.75 0 0 1-.75.75h-6.5a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 .75.75Z"
-            />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconDrops12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconDrops16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconDrops20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconDrops24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconDrops32 {...props}/>}
+        </span>
     );
 }
 

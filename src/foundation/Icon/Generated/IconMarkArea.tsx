@@ -1,25 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconMarkArea12 from './IconMarkArea12';
+import IconMarkArea16 from './IconMarkArea16';
+import IconMarkArea20 from './IconMarkArea20';
+import IconMarkArea24 from './IconMarkArea24';
+import IconMarkArea32 from './IconMarkArea32'
 
 function IconMarkArea(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconMarkArea"
-            {...props}
-        >
-            <path d="M5 5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H5Zm0-2h14a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Zm4 6a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H9Zm0-2h6a3 3 0 0 1 3 3v1a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3v-1a3 3 0 0 1 3-3Z" />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconMarkArea12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconMarkArea16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconMarkArea20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconMarkArea24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconMarkArea32 {...props}/>}
+        </span>
     );
 }
 

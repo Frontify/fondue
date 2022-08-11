@@ -1,27 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from "react";
-import { Story, Meta } from "@storybook/react";
+import React, { useEffect, useState } from 'react';
+import { Meta, Story } from '@storybook/react';
 import {
     FieldsetHeader as FieldsetHeaderComponent,
     FieldsetHeaderProps,
     FieldsetHeaderSize,
     FieldsetHeaderType,
-} from "./FieldsetHeader";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
+} from './FieldsetHeader';
+import { IconIcon } from '@foundation/Icon';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Fieldset Header",
+    title: 'Components/Fieldset Header',
     component: FieldsetHeaderComponent,
     argTypes: {
         size: {
             options: [FieldsetHeaderSize.Small, FieldsetHeaderSize.Medium, FieldsetHeaderSize.Large],
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
         type: {
             options: Object.values(FieldsetHeaderType),
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
     },
     args: {
@@ -30,7 +29,7 @@ export default {
         type: FieldsetHeaderType.Default,
         disabled: false,
         bold: true,
-        children: "Heading",
+        children: 'Heading',
         decorator: true,
     },
 } as Meta<FieldsetHeaderProps>;
@@ -45,7 +44,7 @@ export const FieldsetHeader: Story<FieldsetHeaderProps> = (args: FieldsetHeaderP
     return (
         <FieldsetHeaderComponent
             {...args}
-            decorator={args.decorator && <IconIcons />}
+            decorator={args.decorator && <IconIcon />}
             active={active}
             onClick={() => setActive(!active)}
         />

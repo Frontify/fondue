@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ColorPicker, ColorPickerProps } from "@components/ColorPicker/ColorPicker";
-import { Flyout } from "@components/Flyout/Flyout";
-import React, { FC, useState } from "react";
-import { Color, ColorFormat } from "../../types/colors";
-import { ColorInputTrigger } from "./ColorPickerTrigger";
-import { ColorPreview } from "@components/ColorPicker";
+import { ColorPreview } from '@components/ColorPicker';
+import { ColorPicker, ColorPickerProps } from '@components/ColorPicker/ColorPicker';
+import { Flyout } from '@components/Flyout/Flyout';
+import React, { FC, useState } from 'react';
+import { Color, ColorFormat } from '../../types/colors';
+import { ColorInputTrigger } from './ColorPickerTrigger';
 
-export type ColorPickerFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSelect"> & {
+export type ColorPickerFlyoutProps = Pick<ColorPickerProps, 'palettes' | 'onSelect'> & {
     id?: string;
     disabled?: boolean;
     onClick?: () => void;
@@ -15,6 +15,7 @@ export type ColorPickerFlyoutProps = Pick<ColorPickerProps, "palettes" | "onSele
     currentColor: Color | null;
     clearable?: boolean;
     onClear?: () => void;
+    onDelete?: () => void;
 };
 
 export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
@@ -27,6 +28,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
     disabled = false,
     clearable = false,
     onClear,
+    onDelete,
 }) => {
     const [open, setOpen] = useState(false);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
@@ -49,7 +51,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
             onConfirm={handleClick}
             isOpen={open}
             onCancel={() => handleOpenChange(false)}
-            fixedHeader={<ColorPreview color={currentColor || { r: 255, g: 255, b: 255 }} format={currentFormat} />}
+            fixedHeader={<ColorPreview color={currentColor || { r: 255, g: 255, b: 255 }} />}
             onOpenChange={handleOpenChange}
             trigger={
                 <ColorInputTrigger
@@ -63,6 +65,14 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
                         setOpen(false);
                         onClear && onClear();
                     }}
+                    onDelete={
+                        onDelete
+                            ? () => {
+                                  setOpen(false);
+                                  onDelete && onDelete();
+                              }
+                            : undefined
+                    }
                 />
             }
         >

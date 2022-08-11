@@ -1,25 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconButton12 from './IconButton12';
+import IconButton16 from './IconButton16';
+import IconButton20 from './IconButton20';
+import IconButton24 from './IconButton24';
+import IconButton32 from './IconButton32'
 
 function IconButton(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            fill="currentColor"
-            viewBox="0 0 31 28"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconButton"
-            {...props}
-        >
-            <path d="M25.075 15.125h1.991a3.045 3.045 0 0 0 3.045-3.045V5.99a3.045 3.045 0 0 0-3.045-3.045H4.228A3.045 3.045 0 0 0 1.183 5.99v6.09a3.045 3.045 0 0 0 3.045 3.045h10.919l-.58-8.221 10.508 8.221z" />
-            <path d="m23.801 21.034 2.623 4.933-2.689 1.43-2.608-4.905-3.569 3.017-1.056-14.958 11.81 9.24z" />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconButton12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconButton16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconButton20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconButton24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconButton32 {...props}/>}
+        </span>
     );
 }
 

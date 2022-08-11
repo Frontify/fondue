@@ -1,14 +1,24 @@
-import { DraggableItem, DropZonePosition, moveItems } from "@utilities/dnd";
-import { TreeFlatListItem } from "@components/Tree";
+import { DraggableItem, DropZonePosition, moveItems } from '@utilities/dnd';
+import { TreeFlatListItem } from '@components/Tree';
 
 export const getReorderedNodes = (
-    targetItem: DraggableItem<TreeFlatListItem>,
-    sourceItem: DraggableItem<TreeFlatListItem>,
-    position: DropZonePosition,
+    sourceItemId: string,
+    targetParentId: NullableString,
+    positionBeforeId: NullableString,
     nodes: DraggableItem<TreeFlatListItem>[],
 ) => {
-    const parentId = position === DropZonePosition.Within ? targetItem.id : targetItem.parentId;
-    const sameLevelNodes = nodes.filter((node) => node.parentId === parentId);
+    const sameLevelNodes = nodes.filter((node) => node.parentId === targetParentId);
+    const sourceItem = nodes.find((item) => item.id === sourceItemId);
+    let targetItemIndex = sameLevelNodes.findIndex((item) => item.id === positionBeforeId);
+    const position = targetItemIndex === -1 ? DropZonePosition.After : DropZonePosition.Before;
+    targetItemIndex = targetItemIndex < 0 ? sameLevelNodes.length + targetItemIndex : targetItemIndex;
 
-    return moveItems(targetItem, { ...sourceItem, parentId, sort: null }, position, sameLevelNodes);
+    return sourceItem
+        ? moveItems<TreeFlatListItem>(
+              sameLevelNodes[targetItemIndex],
+              { ...sourceItem, parentId: targetParentId, sort: null },
+              position,
+              sameLevelNodes,
+          )
+        : [...nodes];
 };

@@ -1,35 +1,35 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
-import { Meta, Story } from "@storybook/react";
-import { Badge, BadgeProps, BadgeStatus, BadgeStyle } from "./Badge";
-import IconIcons from "@foundation/Icon/Generated/IconIcons";
+import React from 'react';
+import { Meta, Story } from '@storybook/react';
+import { Badge } from './Badge';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { BadgeEmphasis, BadgeProps, BadgeStatus, BadgeStyle } from './types';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Badge",
+    title: 'Components/Badge',
     component: Badge,
     argTypes: {
         style: {
             options: Object.values(BadgeStyle),
-            control: { type: "select" },
+            control: { type: 'select' },
         },
         emphasis: {
-            options: ["Strong", "None"],
-            control: { type: "select" },
+            options: Object.values(BadgeEmphasis),
+            control: { type: 'select' },
         },
         size: {
-            options: ["s", "m"],
-            control: { type: "select" },
+            options: ['s', 'm'],
+            control: { type: 'select' },
         },
         onClick: { table: { disable: true } },
         onDismiss: { table: { disable: true } },
     },
     args: {
         style: BadgeStyle.Primary,
-        children: "Text",
-        size: "m",
-        emphasis: "Strong",
+        children: 'Text',
+        size: 'm',
+        emphasis: BadgeEmphasis.Strong,
         disabled: false,
     },
 } as Meta<BadgeProps>;
@@ -41,20 +41,20 @@ export const LabelOnly = BadgeTemplate.bind({});
 export const WithOnClick = BadgeTemplate.bind({});
 
 WithOnClick.argTypes = {
-    onClick: { action: "Click" },
+    onClick: { action: 'Click' },
 };
 
 export const WithDismiss = BadgeTemplate.bind({});
 
 WithDismiss.argTypes = {
-    onDismiss: { action: "Dismiss" },
+    onDismiss: { action: 'Dismiss' },
 };
 
 export const WithOnClickAndDismiss = BadgeTemplate.bind({});
 
 WithOnClickAndDismiss.argTypes = {
-    onDismiss: { action: "Dismiss" },
-    onClick: { action: "Click" },
+    onDismiss: { action: 'Dismiss' },
+    onClick: { action: 'Click' },
 };
 
 export const WithStatus = BadgeTemplate.bind({});
@@ -62,7 +62,7 @@ export const WithStatus = BadgeTemplate.bind({});
 WithStatus.argTypes = {
     status: {
         options: Object.values(BadgeStatus),
-        control: { type: "select" },
+        control: { type: 'select' },
     },
 };
 
@@ -79,7 +79,7 @@ WithCustomStatusColor.args = {
 export const WithCustomStatusString = BadgeTemplate.bind({});
 
 WithCustomStatusString.args = {
-    status: "#f14394",
+    status: '#f14394',
 };
 
 export const WithIcon = BadgeTemplate.bind({});
@@ -89,18 +89,18 @@ WithIcon.argTypes = {
 };
 
 WithIcon.args = {
-    icon: <IconIcons />,
+    icon: <IconIcon />,
 };
 
 export const WithOnClickAndIcon = BadgeTemplate.bind({});
 
 WithOnClickAndIcon.argTypes = {
-    onClick: { action: "Click" },
+    onClick: { action: 'Click' },
     icon: { table: { disable: true } },
 };
 
 WithOnClickAndIcon.args = {
-    icon: <IconIcons />,
+    icon: <IconIcon />,
 };
 
 export const WithStatusAndIcon = BadgeTemplate.bind({});
@@ -108,14 +108,14 @@ export const WithStatusAndIcon = BadgeTemplate.bind({});
 WithStatusAndIcon.argTypes = {
     status: {
         options: Object.values(BadgeStatus),
-        control: { type: "select" },
+        control: { type: 'select' },
     },
     icon: { table: { disable: true } },
 };
 
 WithStatusAndIcon.args = {
     status: BadgeStatus.Positive,
-    icon: <IconIcons />,
+    icon: <IconIcon />,
 };
 
 export const StatusOnly = BadgeTemplate.bind({});
@@ -123,14 +123,14 @@ export const StatusOnly = BadgeTemplate.bind({});
 StatusOnly.argTypes = {
     status: {
         options: Object.values(BadgeStatus),
-        control: { type: "select" },
+        control: { type: 'select' },
     },
     children: { table: { disable: true } },
 };
 
 StatusOnly.args = {
     status: BadgeStatus.Positive,
-    children: "",
+    children: '',
 };
 
 export const IconOnly = BadgeTemplate.bind({});
@@ -141,8 +141,8 @@ IconOnly.argTypes = {
 };
 
 IconOnly.args = {
-    icon: <IconIcons />,
-    children: "",
+    icon: <IconIcon />,
+    children: '',
 };
 
 export const BetweenElements: Story<BadgeProps> = (args: BadgeProps) => (
@@ -156,12 +156,28 @@ export const BetweenElements: Story<BadgeProps> = (args: BadgeProps) => (
 BetweenElements.argTypes = {
     status: {
         options: Object.values(BadgeStatus),
-        control: { type: "select" },
+        control: { type: 'select' },
     },
     icon: { table: { disable: true } },
 };
 
 BetweenElements.args = {
     status: BadgeStatus.Positive,
-    icon: <IconIcons />,
+    icon: <IconIcon />,
+};
+
+export const MultipleBadgesInRow: Story<BadgeProps> = (args: BadgeProps) => (
+    <div className="tw-flex tw-flex-nowrap tw-border tw-border-line tw-rounded tw-p-2 tw-gap-2">
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+    </div>
+);
+
+MultipleBadgesInRow.args = {
+    status: BadgeStatus.Positive,
+    icon: <IconIcon />,
+    children: 'A long string of text',
 };

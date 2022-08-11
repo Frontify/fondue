@@ -1,39 +1,38 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from "@storybook/react";
-import React from "react";
-import { sharedTypographyArgs, sharedTypographyArgTypes } from "../shared/Shared.stories";
-import { Heading as HeadingComponent, HeadingProps } from "./Heading";
+import { Meta, Story } from '@storybook/react';
+import React from 'react';
+import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared';
+import { Heading as HeadingComponent, HeadingProps } from './Heading';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Typography/Heading",
+    title: 'Typography/Heading',
     component: HeadingComponent,
     argTypes: {
         size: {
-            options: ["medium", "large", "x-large", "xx-large"],
-            control: { type: "select" },
+            options: ['medium', 'large', 'x-large', 'xx-large'],
+            control: { type: 'select' },
         },
         weight: {
-            options: ["default", "strong"],
-            control: { type: "select" },
+            options: ['default', 'strong'],
+            control: { type: 'select' },
         },
         as: {
-            options: ["h1", "h2", "h3", "h4", "h5", "h6", "span", "p"],
-            control: { type: "select" },
+            options: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span', 'p'],
+            control: { type: 'select' },
         },
         color: {
-            options: ["default", "weak", "x-weak", "disabled", "negative", "positive", "warning", "interactive"],
-            control: { type: "select" },
+            options: ['default', 'weak', 'x-weak', 'disabled', 'negative', 'positive', 'warning', 'interactive'],
+            control: { type: 'select' },
         },
         ...sharedTypographyArgTypes,
     },
     args: {
-        children: "The fox jumps over the lazy dog",
-        size: "medium",
-        weight: "default",
-        as: "span",
-        color: "default",
+        children: 'The fox jumps over the lazy dog',
+        size: 'medium',
+        weight: 'default',
+        as: 'span',
+        color: 'default',
         ...sharedTypographyArgs,
     },
 } as Meta<HeadingProps>;

@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import { CollectionItem } from "./CollectionItem";
-import { OrderableListItem, OrderableListProps } from "./types";
-import { DropZone } from "@components/DropZone";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { DndProvider } from "react-dnd";
-import { DropZonePosition, moveItems } from "@utilities/dnd";
-import { useId } from "@react-aria/utils";
+import { CollectionItem } from './CollectionItem';
+import { OrderableListItem, OrderableListProps } from './types';
+import { DropZone } from '@components/DropZone';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from 'react-dnd';
+import { DropZonePosition, moveItems } from '@utilities/dnd';
+import { useId } from '@react-aria/utils';
 
 const listItemsCompareFn = <T extends object>(itemA: OrderableListItem<T>, itemB: OrderableListItem<T>): number => {
     if (itemA.sort === null && itemB.sort === null) {
@@ -61,7 +61,7 @@ export const OrderableList = <T extends object>({
                                 position: DropZonePosition.Before,
                             }}
                             onDrop={handleDrop}
-                            treeName={listId}
+                            treeId={listId}
                         />
                         <CollectionItem
                             key={item.id}
@@ -78,7 +78,7 @@ export const OrderableList = <T extends object>({
                                     position: DropZonePosition.After,
                                 }}
                                 onDrop={handleDrop}
-                                treeName={listId}
+                                treeId={listId}
                             />
                         )}
                     </>

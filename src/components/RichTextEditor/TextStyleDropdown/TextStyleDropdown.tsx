@@ -1,18 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ToolbarDropdown } from "@udecode/plate";
-import React, { useCallback, useState } from "react";
-import { TextStyles, textStyleTitles, TextStyleType } from "../utils/getTextStyles";
-import { DropdownItem } from "./DropdownItem";
-import { DropdownTrigger } from "./DropdownTrigger";
+import { ToolbarDropdown } from '@udecode/plate';
+import React, { useCallback, useContext, useState } from 'react';
+import { DesignTokensContext } from '../context/DesignTokensContext';
+import { TextStyles, textStyleTitles } from '../utils/textStyles';
+import { DropdownItem } from './DropdownItem';
+import { DropdownTrigger } from './DropdownTrigger';
 
 type TextStyleDropdownProps = {
     editorId?: string;
-    textStyles?: TextStyleType[];
 };
 
-export const TextStyleDropdown = ({ editorId, textStyles }: TextStyleDropdownProps) => {
+export const TextStyleDropdown = ({ editorId }: TextStyleDropdownProps) => {
     const [open, setOpen] = useState(false);
+
+    const { designTokens } = useContext(DesignTokensContext);
 
     const onToggle = useCallback(() => {
         setOpen(!open);
@@ -25,48 +27,32 @@ export const TextStyleDropdown = ({ editorId, textStyles }: TextStyleDropdownPro
             onOpen={onToggle}
             onClose={onToggle}
         >
-            <DropdownItem
-                editorId={editorId}
-                label={textStyleTitles[TextStyles.ELEMENT_HEADING1]}
-                type={TextStyles.ELEMENT_HEADING1}
-                textStyles={textStyles}
-            />
-            <DropdownItem
-                editorId={editorId}
-                label={textStyleTitles[TextStyles.ELEMENT_HEADING2]}
-                type={TextStyles.ELEMENT_HEADING2}
-                textStyles={textStyles}
-            />
-            <DropdownItem
-                editorId={editorId}
-                label={textStyleTitles[TextStyles.ELEMENT_HEADING3]}
-                type={TextStyles.ELEMENT_HEADING3}
-                textStyles={textStyles}
-            />
-            <DropdownItem
-                editorId={editorId}
-                label={textStyleTitles[TextStyles.ELEMENT_HEADING4]}
-                type={TextStyles.ELEMENT_HEADING4}
-                textStyles={textStyles}
-            />
-            <DropdownItem
-                editorId={editorId}
-                label={textStyleTitles[TextStyles.ELEMENT_CUSTOM1]}
-                type={TextStyles.ELEMENT_CUSTOM1}
-                textStyles={textStyles}
-            />
-            <DropdownItem
-                editorId={editorId}
-                label={textStyleTitles[TextStyles.ELEMENT_CUSTOM2]}
-                type={TextStyles.ELEMENT_CUSTOM2}
-                textStyles={textStyles}
-            />
-            <DropdownItem
-                editorId={editorId}
-                label={textStyleTitles[TextStyles.ELEMENT_PARAGRAPH]}
-                type={TextStyles.ELEMENT_PARAGRAPH}
-                textStyles={textStyles}
-            />
+            <div className="tw-divide-y tw-divide-line">
+                <DropdownItem editorId={editorId} type={TextStyles.ELEMENT_HEADING1}>
+                    <span style={designTokens.heading1}>{textStyleTitles[TextStyles.ELEMENT_HEADING1]}</span>
+                </DropdownItem>
+                <DropdownItem editorId={editorId} type={TextStyles.ELEMENT_HEADING2}>
+                    <span style={designTokens.heading2}>{textStyleTitles[TextStyles.ELEMENT_HEADING2]}</span>
+                </DropdownItem>
+                <DropdownItem editorId={editorId} type={TextStyles.ELEMENT_HEADING3}>
+                    <span style={designTokens.heading3}>{textStyleTitles[TextStyles.ELEMENT_HEADING3]}</span>
+                </DropdownItem>
+                <DropdownItem editorId={editorId} type={TextStyles.ELEMENT_HEADING4}>
+                    <span style={designTokens.heading4}>{textStyleTitles[TextStyles.ELEMENT_HEADING4]}</span>
+                </DropdownItem>
+                <DropdownItem editorId={editorId} type={TextStyles.ELEMENT_CUSTOM1}>
+                    <span style={designTokens.custom1}>{textStyleTitles[TextStyles.ELEMENT_CUSTOM1]}</span>
+                </DropdownItem>
+                <DropdownItem editorId={editorId} type={TextStyles.ELEMENT_CUSTOM2}>
+                    <span style={designTokens.custom2}>{textStyleTitles[TextStyles.ELEMENT_CUSTOM2]}</span>
+                </DropdownItem>
+                <DropdownItem editorId={editorId} type={TextStyles.ELEMENT_CUSTOM3}>
+                    <span style={designTokens.custom3}>{textStyleTitles[TextStyles.ELEMENT_CUSTOM3]}</span>
+                </DropdownItem>
+                <DropdownItem editorId={editorId} type={TextStyles.ELEMENT_PARAGRAPH}>
+                    <span>{textStyleTitles[TextStyles.ELEMENT_PARAGRAPH]}</span>
+                </DropdownItem>
+            </div>
         </ToolbarDropdown>
     );
 };

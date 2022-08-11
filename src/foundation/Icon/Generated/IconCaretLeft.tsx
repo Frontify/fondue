@@ -1,25 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconCaretLeft12 from './IconCaretLeft12';
+import IconCaretLeft16 from './IconCaretLeft16';
+import IconCaretLeft20 from './IconCaretLeft20';
+import IconCaretLeft24 from './IconCaretLeft24';
+import IconCaretLeft32 from './IconCaretLeft32'
 
 function IconCaretLeft(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconCaretLeft"
-            {...props}
-        >
-            <path d="M15.52 5.138 8.946 12.02l6.576 6.89a.84.84 0 0 1-.041 1.102.75.75 0 0 1-1.053.043L6.75 12.02l7.677-8.034a.751.751 0 0 1 1.094 0 .83.83 0 0 1 .229.576.83.83 0 0 1-.23.576Z" />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconCaretLeft12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconCaretLeft16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconCaretLeft20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconCaretLeft24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconCaretLeft32 {...props}/>}
+        </span>
     );
 }
 

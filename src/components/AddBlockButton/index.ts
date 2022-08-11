@@ -1,1 +1,1 @@
-export * from "./AddBlockButton";
+export * from './AddBlockButton';

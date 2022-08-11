@@ -1,23 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from "@foundation/Icon/IconSize";
-import { merge } from "@utilities/merge";
-import React, { cloneElement, FC, HTMLAttributes, ReactElement, ReactNode } from "react";
+import { IconSize } from '@foundation/Icon/IconSize';
+import { merge } from '@utilities/merge';
+import React, { FC, HTMLAttributes, ReactElement, ReactNode, cloneElement } from 'react';
 
 export enum MenuItemContentSize {
-    XSmall = "XSmall",
-    Small = "Small",
-    Large = "Large",
+    XSmall = 'XSmall',
+    Small = 'Small',
+    Large = 'Large',
 }
 
 export enum MenuItemContentStyle {
-    Primary = "Primary",
-    Danger = "Danger",
+    Primary = 'Primary',
+    Danger = 'Danger',
 }
 
 export type MenuItemContentProps = {
     title: ReactNode;
     decorator?: ReactElement;
+    switchComponent?: ReactElement;
     subtitle?: string;
     size?: MenuItemContentSize;
     ariaProps?: HTMLAttributes<HTMLElement>;
@@ -27,14 +28,15 @@ export type MenuItemContentProps = {
  * This is a temporary workaround because for some yet unknown reasons `tailwindcss` in clarify purges the `tw-pr-1.5` class.
  */
 const paddingRight: Record<MenuItemContentSize, string> = {
-    [MenuItemContentSize.XSmall]: "tw-pr-1.5",
-    [MenuItemContentSize.Small]: "tw-pr-1.5",
-    [MenuItemContentSize.Large]: "tw-pr-2",
+    [MenuItemContentSize.XSmall]: 'tw-pr-1.5',
+    [MenuItemContentSize.Small]: 'tw-pr-1.5',
+    [MenuItemContentSize.Large]: 'tw-pr-2',
 };
 
 export const MenuItemContent: FC<MenuItemContentProps> = ({
     title,
     decorator,
+    switchComponent,
     subtitle,
     ariaProps,
     size = MenuItemContentSize.Small,
@@ -45,7 +47,7 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
         className="tw-flex tw-box-border tw-items-center tw-font-sans tw-text-s tw-flex-auto tw-min-w-0"
     >
         {decorator && (
-            <span className={merge(["tw-shrink-0", paddingRight[size]])} data-test-id="menu-item-decorator">
+            <span className={merge(['tw-shrink-0', paddingRight[size]])} data-test-id="menu-item-decorator">
                 {cloneElement(decorator, {
                     size: size === MenuItemContentSize.Large ? IconSize.Size24 : IconSize.Size16,
                 })}
@@ -55,7 +57,7 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
             <div
                 data-test-id="menu-item-title"
                 className="tw-select-none tw-text-ellipsis tw-overflow-hidden"
-                title={typeof title === "string" ? title : ""}
+                title={typeof title === 'string' ? title : ''}
             >
                 {title}
             </div>
@@ -65,5 +67,10 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
                 </div>
             )}
         </div>
+        {switchComponent && (
+            <span className={merge(['tw-shrink-0', paddingRight[size]])} data-test-id="menu-item-decorator">
+                {switchComponent}
+            </span>
+        )}
     </div>
 );

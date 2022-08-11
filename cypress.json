@@ -1,9 +1,0 @@
-{
-    "video": false,
-    "component": {
-        "componentFolder": "./src/",
-        "testFiles": "**/*.spec.ts*",
-        "viewportHeight": 1280,
-        "viewportWidth": 800
-    }
-}

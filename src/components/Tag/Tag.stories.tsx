@@ -1,21 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { action } from "@storybook/addon-actions";
-import { Meta, Story } from "@storybook/react";
-import React from "react";
-import { Tag, TagProps, TagType } from "./Tag";
+import { action } from '@storybook/addon-actions';
+import { Meta, Story } from '@storybook/react';
+import React from 'react';
+import { Tag, TagProps, TagSize, TagType } from './Tag';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Tag",
+    title: 'Components/Tag',
     component: Tag,
     args: {
-        label: "Label",
+        label: 'Label',
+        size: TagSize.Medium,
     },
     argTypes: {
         type: {
             options: Object.keys(TagType),
-            control: { type: "select" },
+            control: { type: 'select' },
+        },
+        size: {
+            options: Object.keys(TagSize),
+            control: { type: 'select' },
         },
     },
 } as Meta<TagProps>;
@@ -30,13 +34,13 @@ Suggested.args = {
 export const Selected = TagTemplate.bind({});
 Selected.args = {
     type: TagType.Selected,
-    onClick: action("onClick"),
+    onClick: action('onClick'),
 };
 
 export const SelectedWithFocus = TagTemplate.bind({});
 SelectedWithFocus.args = {
     type: TagType.SelectedWithFocus,
-    onClick: action("onClick"),
+    onClick: action('onClick'),
 };
 
 export const PreviouslySelected = TagTemplate.bind({});

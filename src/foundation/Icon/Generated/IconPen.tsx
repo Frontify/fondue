@@ -1,25 +1,23 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconPen12 from './IconPen12';
+import IconPen16 from './IconPen16';
+import IconPen20 from './IconPen20';
+import IconPen24 from './IconPen24';
+import IconPen32 from './IconPen32'
 
 function IconPen(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconPen"
-            {...props}
-        >
-            <path d="m6.95 19.875 8.425-8.431-2.825-2.819-8.425 8.431v1.283h1.539v1.536H6.95Zm5.793-13.5 4.882 4.882L7.882 21H3v-4.882l9.743-9.743Zm8.257.81c0 .402-.14.744-.42 1.025l-1.578 1.54-4.752-4.788 1.579-1.52A1.31 1.31 0 0 1 16.847 3c.413 0 .759.148 1.038.443l2.696 2.695c.28.295.419.644.419 1.046Z" />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconPen12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconPen16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconPen20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconPen24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconPen32 {...props}/>}
+        </span>
     );
 }
 

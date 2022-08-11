@@ -1,16 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TooltipProps } from "@components/Tooltip/Tooltip";
-import { TooltipIcon } from "@components/TooltipIcon/TooltipIcon";
-import { IconSize } from "@foundation/Icon/IconSize";
-import { merge } from "@utilities/merge";
-import React, { FC, PropsWithChildren } from "react";
+import { TooltipProps } from '@components/Tooltip/Tooltip';
+import { TooltipIcon, TooltipIconProps } from '@components/TooltipIcon/TooltipIcon';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { merge } from '@utilities/merge';
+import React, { FC, PropsWithChildren } from 'react';
+
+export type InputLabelTooltipProps =
+    | (TooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)
+    | (TooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)[];
 
 export type InputLabelProps = PropsWithChildren<{
     htmlFor: string;
     required?: boolean;
     disabled?: boolean;
-    tooltip?: Omit<TooltipProps, "tooltipAriaProps">;
+    clickable?: boolean;
+    tooltip?: InputLabelTooltipProps;
     bold?: boolean;
 }>;
 
@@ -19,16 +24,19 @@ export const InputLabel: FC<InputLabelProps> = ({
     htmlFor,
     required = false,
     disabled = false,
-    tooltip,
+    clickable = false,
+    tooltip = [],
     bold,
 }) => {
+    const tooltips = Array.isArray(tooltip) ? tooltip : [tooltip];
+
     return (
         <div
             className={merge([
-                "tw-inline-flex tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-overflow-hidden tw-max-w-full",
+                'tw-inline-flex tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-max-w-full',
                 disabled
-                    ? "tw-text-black-40 hover:tw-text-black-40 dark:tw-text-black-60 dark:hover:tw-text-black-60"
-                    : "tw-text-black-90 dark:tw-text-white",
+                    ? 'tw-text-black-40 hover:tw-text-black-40 dark:tw-text-black-60 dark:hover:tw-text-black-60'
+                    : 'tw-text-black-90 dark:tw-text-white',
             ])}
             data-test-id="input-label-container"
         >
@@ -36,11 +44,11 @@ export const InputLabel: FC<InputLabelProps> = ({
                 <label
                     htmlFor={htmlFor}
                     className={merge([
-                        "tw-select-none",
-                        bold && "tw-font-medium",
-                        disabled
-                            ? "hover:tw-cursor-not-allowed tw-pointer-events-none"
-                            : "hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white",
+                        'tw-select-none',
+                        bold && 'tw-font-medium',
+                        disabled || !clickable
+                            ? 'hover:tw-cursor-not-allowed tw-pointer-events-none'
+                            : 'hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
                     ])}
                     data-test-id="input-label"
                 >
@@ -56,7 +64,15 @@ export const InputLabel: FC<InputLabelProps> = ({
                     *
                 </span>
             )}
-            {tooltip && <TooltipIcon tooltip={tooltip} iconSize={IconSize.Size16} />}
+            {tooltips.map(({ triggerIcon, triggerStyle, hoverDelay = 100, ...tooltipProps }, index) => (
+                <TooltipIcon
+                    tooltip={{ ...tooltipProps, hoverDelay }}
+                    key={index}
+                    iconSize={IconSize.Size16}
+                    triggerIcon={triggerIcon}
+                    triggerStyle={triggerStyle}
+                />
+            ))}
         </div>
     );
 };

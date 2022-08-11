@@ -1,23 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from "@storybook/react";
-import React from "react";
-import { assetInputActions } from "./asset-input-actions";
-import { AssetInput, AssetInputProps, AssetInputSize } from "./AssetInput";
-import { EXAMPLE_IMAGES, MIXED_ASSETS } from "./example-assets";
+import { Meta, Story } from '@storybook/react';
+import React from 'react';
+import { assetInputActions } from './asset-input-actions';
+import { AssetInput, AssetInputProps, AssetInputSize } from './AssetInput';
+import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';
 
-// eslint-disable-next-line import/no-default-export
 export default {
-    title: "Components/Asset Input",
+    title: 'Components/Asset Input',
     component: AssetInput,
     argTypes: {
         size: {
             options: Object.values(AssetInputSize),
-            control: { type: "radio" },
+            control: { type: 'radio' },
         },
-        onItemClick: { action: "onItemClick", table: { disable: true } },
+        onItemClick: { action: 'onItemClick', table: { disable: true } },
         onMultiAssetClick: {
-            action: "onMultiAssetClick",
+            action: 'onMultiAssetClick',
         },
     },
     args: {
@@ -28,11 +27,14 @@ export default {
 } as Meta<AssetInputProps>;
 
 const Template: Story<AssetInputProps & { onItemClick: () => void }> = (args) => {
-    args.actions?.forEach((block) =>
-        block.menuItems.forEach((item) => {
-            item.onClick = args.onItemClick;
-        }),
-    );
+    if (args?.actions) {
+        for (const block of args.actions) {
+            for (const item of block.menuItems) {
+                item.onClick = args.onItemClick;
+            }
+        }
+    }
+
     if (args.isLoading && args.assets) {
         args.assets = undefined;
     }
@@ -43,8 +45,8 @@ const Template: Story<AssetInputProps & { onItemClick: () => void }> = (args) =>
 export const Placeholder = Template.bind({});
 
 Placeholder.argTypes = {
-    onUploadClick: { action: "onUploadClick", table: { disable: true } },
-    onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
+    onUploadClick: { action: 'onUploadClick', table: { disable: true } },
+    onLibraryClick: { action: 'onLibraryClick', table: { disable: true } },
     size: { table: { disable: true } },
     isLoading: { table: { disable: true } },
     numberOfLocations: { table: { disable: true } },
@@ -54,7 +56,7 @@ Placeholder.argTypes = {
 export const PlaceholderUploadOnly = Template.bind({});
 
 PlaceholderUploadOnly.argTypes = {
-    onUploadClick: { action: "onUploadClick", table: { disable: true } },
+    onUploadClick: { action: 'onUploadClick', table: { disable: true } },
     size: { table: { disable: true } },
     isLoading: { table: { disable: true } },
     numberOfLocations: { table: { disable: true } },
@@ -64,7 +66,7 @@ PlaceholderUploadOnly.argTypes = {
 export const PlaceholderLibraryOnly = Template.bind({});
 
 PlaceholderLibraryOnly.argTypes = {
-    onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
+    onLibraryClick: { action: 'onLibraryClick', table: { disable: true } },
     size: { table: { disable: true } },
     isLoading: { table: { disable: true } },
     numberOfLocations: { table: { disable: true } },
@@ -75,6 +77,14 @@ export const Image = Template.bind({});
 
 Image.args = {
     assets: [EXAMPLE_IMAGES[0]],
+    actions: assetInputActions,
+};
+
+export const ImageLibraryLarge = Template.bind({});
+
+ImageLibraryLarge.args = {
+    assets: [EXAMPLE_IMAGES[1]],
+    size: AssetInputSize.Large,
     actions: assetInputActions,
 };
 
@@ -93,8 +103,8 @@ Icon.args = {
 };
 
 const multiAssetInputArgTypes = {
-    onUploadClick: { action: "onUploadClick", table: { disable: true } },
-    onLibraryClick: { action: "onLibraryClick", table: { disable: true } },
+    onUploadClick: { action: 'onUploadClick', table: { disable: true } },
+    onLibraryClick: { action: 'onLibraryClick', table: { disable: true } },
     size: { table: { disable: true } },
     isLoading: { table: { disable: true } },
 };

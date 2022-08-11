@@ -1,23 +1,25 @@
-import { DraggableItem, DropZonePosition } from "@utilities/dnd/types";
-import { moveItems } from "@utilities/dnd/moveItems";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-const items: DraggableItem<any> = [
+import { DraggableItem, DropZonePosition } from '@utilities/dnd/types';
+import { moveItems } from '@utilities/dnd/moveItems';
+
+const items: DraggableItem[] = [
     {
-        id: "1",
+        id: '1',
         sort: null,
     },
     {
-        id: "2",
+        id: '2',
         sort: null,
     },
     {
-        id: "3",
+        id: '3',
         sort: null,
     },
 ];
 
-describe("moveItems", () => {
-    it("adds correct sort property for dropping after", () => {
+describe('moveItems', () => {
+    it('adds correct sort property for dropping after', () => {
         const result = moveItems(items[0], items[2], DropZonePosition.After, items);
 
         expect(result).to.be.instanceof(Array);
@@ -29,7 +31,7 @@ describe("moveItems", () => {
         expect(result[1].sort).to.equal(1);
     });
 
-    it("adds correct sort property for dropping before", () => {
+    it('adds correct sort property for dropping before', () => {
         const result = moveItems(items[0], items[2], DropZonePosition.Before, items);
 
         expect(result).to.be.instanceof(Array);
@@ -39,7 +41,7 @@ describe("moveItems", () => {
         expect(result[0].sort).to.equal(0);
     });
 
-    it("adds correct sort property for dropping after last item", () => {
+    it('adds correct sort property for dropping after last item', () => {
         const result = moveItems(items[2], items[0], DropZonePosition.After, items);
 
         expect(result).to.be.instanceof(Array);

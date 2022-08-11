@@ -2,52 +2,107 @@
 import fastGlob from "fast-glob";
 import { join } from "path";
 import { writeFile, readFile } from "fs/promises";
+import { camelCase, toUpper } from "lodash";
 // @ts-ignore
 import { transform } from "@svgr/core";
 import { Entry } from "fast-glob/out/types";
 import { IconTemplate } from "../src/foundation/Icon/IconTemplate";
+import { IconComponent, IconTemplateDynamic } from "../src/foundation/Icon/IconTemplateDynamic";
 
-export const GENERATED_ICONS_INDEX_PATH = "src/foundation/Icon/Generated/index.ts";
+const ICON_SOURCE_DIRECTORY = `node_modules/@frontify/fondue-icons/icons/`;
+const GENERATED_ICONS_DIRECTORY = `src/foundation/Icon/Generated/`;
+const ICON_BUILD_DIRECTORY = join(__dirname, "..", "src", "foundation", "Icon", "Generated");
+const ICON_COMPONENT_PREFIX = "Icon";
+const ICON_SIZES = ["12", "16", "20", "24", "32"];
 
-(async () => {
-    const iconsSvgPath = await fastGlob("src/foundation/Icon/Svg/**/*.svg", { objectMode: true });
-    iconsSvgPath.forEach(async (svgPath: Entry) => {
-        const svgFileContent = await readFile(svgPath.path, { encoding: "utf-8" });
-        const svgFileName = svgPath.name.replace(".svg", "");
+export const GENERATED_ICONS_INDEX_PATH = `${GENERATED_ICONS_DIRECTORY}index.ts`;
 
-        await transform(
-            svgFileContent,
-            {
-                icon: true,
-                plugins: ["@svgr/plugin-svgo", "@svgr/plugin-jsx", "@svgr/plugin-prettier"],
-                memo: true,
-                template: IconTemplate,
-                dimensions: false,
-                typescript: true,
-                svgProps: {
-                    width: "100%",
-                    height: "100%",
-                    className: "{customClassName}",
-                    name: `Icon${svgFileName}`,
-                },
+/**
+ * Gets an array of all svg file paths from the source directory
+ */
+const getSvgFilePaths = async () => {
+    return await fastGlob(`${ICON_SOURCE_DIRECTORY}**/*.svg`, { objectMode: true });
+};
+
+/**
+ * Gets an array of all the directories containing icon variants (i.e. the parents of the svgs)
+ */
+const getShapeFolderPaths = async () => {
+    return await fastGlob(`${ICON_SOURCE_DIRECTORY}**`, {
+        onlyDirectories: true,
+        objectMode: true,
+    });
+};
+
+const getSize = (name: string): string | null => {
+    let size = null;
+    ICON_SIZES.forEach((element) => {
+        if (name.includes(element)) {
+            size = element;
+        }
+    });
+    return size;
+};
+
+/**
+ * Given an svg file path, uses the file's content to generate a corresponding React
+ * component in the build directory.
+ */
+const generateSvgComponent = async (svgPath: Entry) => {
+    const svgFileContent = await readFile(svgPath.path, { encoding: "utf-8" });
+    const svgFileName = camelCase(svgPath.name.replace(".svg", "")).replace(/^(.)/, toUpper);
+
+    await transform(
+        svgFileContent,
+        {
+            plugins: ["@svgr/plugin-svgo", "@svgr/plugin-jsx", "@svgr/plugin-prettier"],
+            memo: true,
+            template: IconTemplate,
+            dimensions: true,
+            typescript: true,
+            svgProps: {
+                className: "{customClassName}",
+                name: `${ICON_COMPONENT_PREFIX}${svgFileName}`,
             },
-            { componentName: `Icon${svgFileName}` },
-        ).then(async (tsxCode: string) => {
-            const generatedTsxFilePath = join(
-                __dirname,
-                "..",
-                "src",
-                "foundation",
-                "Icon",
-                "Generated",
-                `Icon${svgFileName}.tsx`,
-            );
-            await writeFile(generatedTsxFilePath, tsxCode);
-        });
+        },
+        { componentName: `${ICON_COMPONENT_PREFIX}${svgFileName}` },
+    ).then(async (tsxCode: string) => {
+        const generatedTsxFilePath = join(ICON_BUILD_DIRECTORY, `${ICON_COMPONENT_PREFIX}${svgFileName}.tsx`);
+        await writeFile(generatedTsxFilePath, tsxCode);
+    });
+};
+
+/**
+ * Given the path of a directory containing icon svgs, writes a React component to the build
+ * directory that accepts props for size and filled. i.e. all icon variants for a particular shape
+ * in one component.
+ */
+const generateDynamicIcon = async (shapeFolderPath: Entry) => {
+    const svgPaths = await fastGlob(`${shapeFolderPath.path}/**/*.svg`, { objectMode: true });
+    const shapeName = camelCase(`${shapeFolderPath.name}`).replace(/^(.)/, toUpper);
+     const components: IconComponent[] = svgPaths.map((icon) => {
+        const iconName = camelCase(icon.name.replace(".svg", "")).replace(/^(.)/, toUpper);
+        const size = getSize(iconName);
+        const filled = iconName.toUpperCase().includes("filled".toUpperCase());
+
+        return {
+            size: size,
+            filled: filled,
+            name: ICON_COMPONENT_PREFIX + iconName,
+        };
     });
 
-    const iconComponentsFilePath = await fastGlob(["src/foundation/Icon/Generated/**/*.tsx"], { objectMode: true });
+    const filePath = join(ICON_BUILD_DIRECTORY, `${ICON_COMPONENT_PREFIX}${shapeName}.tsx`);
+    const tpl = IconTemplateDynamic({ components, name: `${ICON_COMPONENT_PREFIX}${shapeName}` });
 
+    await writeFile(filePath, tpl);
+};
+
+/**
+ * Generates the index file in build directory
+ */
+const generateIndex = async () => {
+    const iconComponentsFilePath = await fastGlob([`${GENERATED_ICONS_DIRECTORY}**/*.tsx`], { objectMode: true });
     const iconComponents = iconComponentsFilePath
         .map((filePath) => {
             const filename = filePath.name;
@@ -58,12 +113,26 @@ export const GENERATED_ICONS_INDEX_PATH = "src/foundation/Icon/Generated/index.t
         })
         .filter((filePath) => filePath.name.indexOf(".") === -1)
         .filter((component) => component.name !== "Icon");
-
     const iconComponentNameToExport = (name: string) => `export { default as ${name} } from "./${name}";`;
+    const fileContent = `${iconComponents.map((c) => iconComponentNameToExport(c.name)).join("\n")}\n`;
 
-    const fileContent = `
-        ${iconComponents.map((c) => iconComponentNameToExport(c.name)).join("\n")}
-    `;
+    await writeFile(join(__dirname, "..", GENERATED_ICONS_INDEX_PATH), fileContent, { encoding: "utf8" });
+};
 
-    writeFile(join(__dirname, "..", GENERATED_ICONS_INDEX_PATH), fileContent, { encoding: "utf8" });
+/**
+ * Script
+ */
+(async () => {
+    const iconSvgPaths = await getSvgFilePaths();
+    const iconShapeFolderPaths = await getShapeFolderPaths();
+
+    iconSvgPaths.forEach((svgPath: Entry) => {
+        generateSvgComponent(svgPath);
+    });
+
+    iconShapeFolderPaths.forEach((directory: Entry) => {
+        generateDynamicIcon(directory);
+    });
+
+    generateIndex();
 })();
