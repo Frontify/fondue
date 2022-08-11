@@ -145,6 +145,7 @@ export const Dropdown: FC<DropdownProps> = ({
     };
     const popperInstance = usePopper(triggerRef?.current, dropdownRef.current, {
         placement: placementMap[`${position}-${alignment}`],
+        strategy: 'fixed',
         modifiers: [
             {
                 name: 'offset',
