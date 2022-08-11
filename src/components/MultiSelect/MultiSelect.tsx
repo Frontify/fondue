@@ -104,7 +104,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                     {...mergeProps(buttonProps, focusProps)}
                     ref={triggerRef}
                     className={merge([
-                        'tw-flex-1 tw-flex tw-flex-wrap tw-gap-1 tw-min-h-[34px] tw-outline-none ',
+                        'tw-flex-1 tw-flex tw-flex-wrap tw-gap-1 tw-min-h-[34px] tw-outline-none',
                         getPaddingClasses(size, activeItemKeys.length > 0),
                     ])}
                 >
