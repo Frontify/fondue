@@ -1319,6 +1319,12 @@ import IconScissors16 from '@foundation/Icon/Generated/IconScissors16';
 import IconScissors20 from '@foundation/Icon/Generated/IconScissors20';
 import IconScissors24 from '@foundation/Icon/Generated/IconScissors24';
 import IconScissors32 from '@foundation/Icon/Generated/IconScissors32';
+import IconSide from '@foundation/Icon/Generated/IconSide';
+import IconSide12 from '@foundation/Icon/Generated/IconSide12';
+import IconSide16 from '@foundation/Icon/Generated/IconSide16';
+import IconSide20 from '@foundation/Icon/Generated/IconSide20';
+import IconSide24 from '@foundation/Icon/Generated/IconSide24';
+import IconSide32 from '@foundation/Icon/Generated/IconSide32';
 import IconSketch from '@foundation/Icon/Generated/IconSketch';
 import IconSketch12 from '@foundation/Icon/Generated/IconSketch12';
 import IconSketch16 from '@foundation/Icon/Generated/IconSketch16';
@@ -2939,6 +2945,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Scissors20]: <IconScissors20 />,
     [IconEnum.Scissors24]: <IconScissors24 />,
     [IconEnum.Scissors32]: <IconScissors32 />,
+    [IconEnum.Side]: <IconSide />,
+    [IconEnum.Side12]: <IconSide12 />,
+    [IconEnum.Side16]: <IconSide16 />,
+    [IconEnum.Side20]: <IconSide20 />,
+    [IconEnum.Side24]: <IconSide24 />,
+    [IconEnum.Side32]: <IconSide32 />,
     [IconEnum.Sketch]: <IconSketch />,
     [IconEnum.Sketch12]: <IconSketch12 />,
     [IconEnum.Sketch16]: <IconSketch16 />,
