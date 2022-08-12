@@ -14,6 +14,11 @@ const BREADCRUMB_ITEMS = [
     { label: 'Some second label', link: '/some-second-link' },
     { label: 'Some third label', link: '/some-third-link' },
 ];
+const BREADCRUMB_ITEMS_MIXED_ELEMENTS = [
+    { label: 'text only item' },
+    { label: 'item with onclick', onClick: () => 'test' },
+    { label: 'item with link', link: '/some-third-link' },
+];
 
 const ChangingBreadcrumbs: FC<BreadcrumbsProps> = () => {
     const [items, setItems] = useState(BREADCRUMB_ITEMS);
@@ -77,6 +82,14 @@ describe('Breadcrumb component', () => {
         cy.get('@secondItem').realPress('Tab');
         cy.get(BREADCRUMB_ITEM_ID).last().find('button').type('{enter}');
         cy.get('@onClickStub').should('be.calledOnce');
+    });
+
+    it('should be able render content as link, button and span', () => {
+        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_MIXED_ELEMENTS} />);
+
+        cy.get(BREADCRUMB_ITEM_ID).first().find('span').should('exist');
+        cy.get(BREADCRUMB_ITEM_ID).eq(1).find('button').should('exist');
+        cy.get(BREADCRUMB_ITEM_ID).eq(2).find('a').should('exist');
     });
 
     it('should be able to handle a changing number of items', () => {
