@@ -15,14 +15,14 @@ export enum SwitchSize {
 
 const lineSizeClasses: Record<SwitchSize, string> = {
     [SwitchSize.Small]: 'tw-w-5 tw-h-2',
-    [SwitchSize.Medium]: 'tw-w-9 tw-h-5',
-    [SwitchSize.Large]: 'tw-w-11 tw-h-6',
+    [SwitchSize.Medium]: 'tw-w-7 tw-h-4',
+    [SwitchSize.Large]: 'tw-w-9 tw-h-5',
 };
 
 const dotSizeClasses: Record<SwitchSize, string> = {
     [SwitchSize.Small]: 'tw-w-3 tw-h-3',
-    [SwitchSize.Medium]: 'tw-w-4 tw-h-4',
-    [SwitchSize.Large]: 'tw-w-5 tw-h-5',
+    [SwitchSize.Medium]: 'tw-w-3 tw-h-3',
+    [SwitchSize.Large]: 'tw-w-4 tw-h-4',
 };
 
 export type SwitchProps = {

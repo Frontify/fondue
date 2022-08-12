@@ -6,7 +6,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, MouseEvent, useRef } from 'react';
+import React, { MouseEvent, useRef } from 'react';
 import { IconCross } from '@foundation/Icon';
 
 export enum TagType {
@@ -14,6 +14,11 @@ export enum TagType {
     Selected = 'Selected',
     SelectedWithFocus = 'SelectedWithFocus',
     PreviouslySelected = 'PreviouslySelected',
+}
+
+export enum TagSize {
+    Small = 'Small',
+    Medium = 'Medium',
 }
 
 export const tagStyles: Record<TagType, string> = {
@@ -33,15 +38,17 @@ type TagPropsSelected = {
     type: TagType.Selected | TagType.SelectedWithFocus;
     label: string;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    size?: TagSize;
 };
 
 type TagPropsUnselected = {
     type: TagType.Suggested | TagType.PreviouslySelected;
     label: string;
     onClick?: null;
+    size?: TagSize;
 };
 
-export const Tag: FC<TagProps> = ({ type, label, onClick }) => {
+export const Tag = ({ type, label, onClick, size = TagSize.Medium }: TagProps) => {
     const ref = useRef<HTMLButtonElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
     const isClickable = (type === TagType.Selected || type === TagType.SelectedWithFocus) && onClick;
@@ -56,7 +63,8 @@ export const Tag: FC<TagProps> = ({ type, label, onClick }) => {
         <button
             data-test-id="tag"
             className={merge([
-                'tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-group tw-px-2.5 tw-py-1 tw-break-word',
+                'tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-group  tw-break-word',
+                size === TagSize.Small ? 'tw-px-[6px] tw-py-[2px]' : 'tw-px-2.5 tw-py-1',
                 tagStyles[type],
                 isClickable ? 'tw-cursor-pointer' : 'tw-cursor-default',
                 isFocusVisible && FOCUS_STYLE,
