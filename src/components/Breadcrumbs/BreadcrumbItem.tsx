@@ -23,17 +23,19 @@ type BreadcrumbItemProps = Pick<Breadcrumb, 'label' | 'link' | 'onClick'> & {
     showSeparator: boolean;
 };
 
-type BreadcrumbItemContentElementType = 'a' | 'button' | 'span';
+export const getElementType = (link: BreadcrumbItemProps['link'], onClick: BreadcrumbItemProps['onClick']) => {
+    if (link) {
+        return 'a';
+    } else if (onClick) {
+        return 'button';
+    }
+    return 'span';
+};
 
 export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, showSeparator }) => {
     const ref = useRef<HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null>(null);
 
-    let contentElementType: BreadcrumbItemContentElementType = 'span';
-    if (link) {
-        contentElementType = 'a';
-    } else if (onClick) {
-        contentElementType = 'button';
-    }
+    const contentElementType = getElementType(link, onClick);
 
     const { itemProps } = useBreadcrumbItem(
         {
