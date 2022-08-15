@@ -27,17 +27,14 @@ type BreadcrumbItemContentElementType = 'a' | 'button' | 'span';
 
 export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, showSeparator }) => {
     const ref = useRef<HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null>(null);
-    const getContentElementType = (): BreadcrumbItemContentElementType => {
-        if (link) {
-            return 'a';
-        }
-        if (onClick) {
-            return 'button';
-        }
 
-        return 'span';
-    };
-    const contentElementType = getContentElementType();
+    let contentElementType: BreadcrumbItemContentElementType = 'span';
+    if (link) {
+        contentElementType = 'a';
+    } else if (onClick) {
+        contentElementType = 'button';
+    }
+
     const { itemProps } = useBreadcrumbItem(
         {
             isCurrent: false,
@@ -49,12 +46,9 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
     const { isFocusVisible, focusProps } = useFocusRing();
     const props = mergeProps(itemProps, focusProps);
 
-    return (
-        <li
-            className="tw-flex tw-items-center tw-text-black-80 hover:tw-text-black-100 tw-text-xs dark:tw-text-black-10 dark:hover:tw-text-black-30 tw-transition-colors"
-            data-test-id="breadcrumb-item"
-        >
-            {contentElementType === 'a' && (
+    const renderItemContent = () => {
+        if (contentElementType === 'a') {
+            return (
                 <a
                     ref={ref as RefObject<HTMLAnchorElement>}
                     {...props}
@@ -63,8 +57,11 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
                 >
                     {label}
                 </a>
-            )}
-            {contentElementType === 'button' && (
+            );
+        }
+
+        if (contentElementType === 'button') {
+            return (
                 <button
                     ref={ref as RefObject<HTMLButtonElement>}
                     type="button"
@@ -74,12 +71,24 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
                 >
                     {label}
                 </button>
-            )}
-            {contentElementType === 'span' && (
+            );
+        }
+
+        if (contentElementType === 'span') {
+            return (
                 <span ref={ref as RefObject<HTMLSpanElement>} {...props} className={isFocusVisible ? FOCUS_STYLE : ''}>
                     {label}
                 </span>
-            )}
+            );
+        }
+    };
+
+    return (
+        <li
+            className="tw-flex tw-items-center tw-text-black-80 hover:tw-text-black-100 tw-text-xs dark:tw-text-black-10 dark:hover:tw-text-black-30 tw-transition-colors"
+            data-test-id="breadcrumb-item"
+        >
+            {renderItemContent()}
             {showSeparator && <Separator />}
         </li>
     );
