@@ -46,9 +46,12 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
     const { isFocusVisible, focusProps } = useFocusRing();
     const props = mergeProps(itemProps, focusProps);
 
-    const renderItemContent = () => {
-        if (contentElementType === 'a') {
-            return (
+    return (
+        <li
+            className="tw-flex tw-items-center tw-text-black-80 hover:tw-text-black-100 tw-text-xs dark:tw-text-black-10 dark:hover:tw-text-black-30 tw-transition-colors"
+            data-test-id="breadcrumb-item"
+        >
+            {contentElementType === 'a' && (
                 <a
                     ref={ref as RefObject<HTMLAnchorElement>}
                     {...props}
@@ -57,11 +60,8 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
                 >
                     {label}
                 </a>
-            );
-        }
-
-        if (contentElementType === 'button') {
-            return (
+            )}
+            {contentElementType === 'button' && (
                 <button
                     ref={ref as RefObject<HTMLButtonElement>}
                     type="button"
@@ -71,24 +71,12 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
                 >
                     {label}
                 </button>
-            );
-        }
-
-        if (contentElementType === 'span') {
-            return (
+            )}
+            {contentElementType === 'span' && (
                 <span ref={ref as RefObject<HTMLSpanElement>} {...props} className={isFocusVisible ? FOCUS_STYLE : ''}>
                     {label}
                 </span>
-            );
-        }
-    };
-
-    return (
-        <li
-            className="tw-flex tw-items-center tw-text-black-80 hover:tw-text-black-100 tw-text-xs dark:tw-text-black-10 dark:hover:tw-text-black-30 tw-transition-colors"
-            data-test-id="breadcrumb-item"
-        >
-            {renderItemContent()}
+            )}
             {showSeparator && <Separator />}
         </li>
     );
