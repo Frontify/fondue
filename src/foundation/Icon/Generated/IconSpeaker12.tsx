@@ -31,5 +31,4 @@ function IconSpeaker12(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-const Memo = memo(IconSpeaker12);
-export default Memo;
+export default memo(IconSpeaker12);

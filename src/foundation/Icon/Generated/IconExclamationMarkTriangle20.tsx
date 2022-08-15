@@ -22,5 +22,4 @@ function IconExclamationMarkTriangle20(props: GeneratedIconProps): React.ReactEl
     );
 }
 
-const Memo = memo(IconExclamationMarkTriangle20);
-export default Memo;
+export default memo(IconExclamationMarkTriangle20);

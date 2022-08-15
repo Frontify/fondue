@@ -22,5 +22,4 @@ function IconArrowAlignDown12(props: GeneratedIconProps): React.ReactElement<Gen
     );
 }
 
-const Memo = memo(IconArrowAlignDown12);
-export default Memo;
+export default memo(IconArrowAlignDown12);

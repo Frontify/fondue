@@ -22,5 +22,4 @@ function IconScaleLarge20(props: GeneratedIconProps): React.ReactElement<Generat
     );
 }
 
-const Memo = memo(IconScaleLarge20);
-export default Memo;
+export default memo(IconScaleLarge20);

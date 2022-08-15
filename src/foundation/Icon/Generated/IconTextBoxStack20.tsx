@@ -22,5 +22,4 @@ function IconTextBoxStack20(props: GeneratedIconProps): React.ReactElement<Gener
     );
 }
 
-const Memo = memo(IconTextBoxStack20);
-export default Memo;
+export default memo(IconTextBoxStack20);

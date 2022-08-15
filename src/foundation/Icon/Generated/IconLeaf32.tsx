@@ -22,5 +22,4 @@ function IconLeaf32(props: GeneratedIconProps): React.ReactElement<GeneratedIcon
     );
 }
 
-const Memo = memo(IconLeaf32);
-export default Memo;
+export default memo(IconLeaf32);

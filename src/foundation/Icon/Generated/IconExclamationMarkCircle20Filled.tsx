@@ -22,5 +22,4 @@ function IconExclamationMarkCircle20Filled(props: GeneratedIconProps): React.Rea
     );
 }
 
-const Memo = memo(IconExclamationMarkCircle20Filled);
-export default Memo;
+export default memo(IconExclamationMarkCircle20Filled);

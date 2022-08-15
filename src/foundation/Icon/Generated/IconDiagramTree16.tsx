@@ -22,5 +22,4 @@ function IconDiagramTree16(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconDiagramTree16);
-export default Memo;
+export default memo(IconDiagramTree16);

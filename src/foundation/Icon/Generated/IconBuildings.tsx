@@ -21,5 +21,4 @@ function IconBuildings(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-const Memo = memo(IconBuildings);
-export default Memo;
+export default memo(IconBuildings);

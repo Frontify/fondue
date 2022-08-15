@@ -21,5 +21,4 @@ function IconArchive(props: GeneratedIconProps): React.ReactElement<GeneratedIco
     );
 }
 
-const Memo = memo(IconArchive);
-export default Memo;
+export default memo(IconArchive);

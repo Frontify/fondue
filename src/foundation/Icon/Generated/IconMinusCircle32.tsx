@@ -22,5 +22,4 @@ function IconMinusCircle32(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconMinusCircle32);
-export default Memo;
+export default memo(IconMinusCircle32);

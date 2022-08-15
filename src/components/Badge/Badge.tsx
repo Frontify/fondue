@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import RejectIcon from '@foundation/Icon/Generated/IconReject';
+import RejectIcon from '@foundation/Icon/Generated/IconCross';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { getColorDisplayValue } from '@utilities/colors';
 import { merge } from '@utilities/merge';
@@ -88,12 +88,13 @@ export const Badge: FC<BadgeProps> = ({
                 <button
                     type="button"
                     data-test-id="badge-dismiss"
+                    className="tw--mr-0.5"
                     onClick={(event) => {
                         event.stopPropagation();
                         onDismiss();
                     }}
                 >
-                    <RejectIcon size={IconSize.Size12} />
+                    <RejectIcon size={IconSize.Size16} />
                 </button>
             )}
         </Container>

@@ -1,27 +1,24 @@
-import React, { memo } from "react";
-import { GeneratedIconProps } from "@foundation/Icon/IconProps";
-import { IconSize, IconSizeMap } from "@foundation/Icon/IconSize";
+import React, { memo } from 'react';
+import { GeneratedIconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import IconVimeo12 from './IconVimeo12';
+import IconVimeo16 from './IconVimeo16';
+import IconVimeo20 from './IconVimeo20';
+import IconVimeo24 from './IconVimeo24';
+import IconVimeo32 from './IconVimeo32'
 
 function IconVimeo(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
-    const customClassName = [
-        "tw-flex tw-items-center tw-justify-center tw-fill-current",
-        IconSizeMap[props.size || IconSize.Size16],
-    ].join(" ");
+    const size = props.size || IconSize.Size16;
     return (
-        <svg
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100%"
-            height="100%"
-            className={customClassName}
-            name="IconVimeo"
-            {...props}
-        >
-            <path d="M21.99 8.01c-.089 1.95-1.448 4.622-4.078 8.012-2.72 3.54-5.02 5.311-6.902 5.311-1.166 0-2.153-1.078-2.958-3.234l-1.615-5.931c-.598-2.156-1.24-3.235-1.926-3.235-.15 0-.674.315-1.57.944L2 8.662c.987-.869 1.96-1.738 2.919-2.608 1.316-1.14 2.304-1.739 2.963-1.8 1.557-.15 2.515.917 2.874 3.199.389 2.462.658 3.993.809 4.592.448 2.043.942 3.063 1.481 3.063.42 0 1.048-.662 1.886-1.987.838-1.325 1.286-2.334 1.347-3.026.12-1.144-.33-1.717-1.347-1.717-.479 0-.972.11-1.48.329.983-3.226 2.86-4.793 5.633-4.703 2.055.06 3.024 1.395 2.905 4.006" />
-        </svg>
+        <span>
+            {size === IconSize.Size12 && !props.filled && <IconVimeo12 {...props}/>}
+            {size === IconSize.Size16 && !props.filled && <IconVimeo16 {...props}/>}
+            {size === IconSize.Size20 && !props.filled && <IconVimeo20 {...props}/>}
+            {size === IconSize.Size24 && !props.filled && <IconVimeo24 {...props}/>}
+            {size === IconSize.Size32 && !props.filled && <IconVimeo32 {...props}/>}
+        </span>
     );
 }
 
-const Memo = memo(IconVimeo);
-export default Memo;
+export default memo(IconVimeo);

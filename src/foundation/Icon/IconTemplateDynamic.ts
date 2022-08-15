@@ -43,6 +43,5 @@ function ${props.name}(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-const Memo = memo(${props.name});
-export default Memo;`;
+export default memo(${props.name});`;
 };

@@ -20,5 +20,4 @@ function IconLightning32Filled(props: GeneratedIconProps): React.ReactElement<Ge
     );
 }
 
-const Memo = memo(IconLightning32Filled);
-export default Memo;
+export default memo(IconLightning32Filled);

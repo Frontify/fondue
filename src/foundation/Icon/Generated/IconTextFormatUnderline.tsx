@@ -21,5 +21,4 @@ function IconTextFormatUnderline(props: GeneratedIconProps): React.ReactElement<
     );
 }
 
-const Memo = memo(IconTextFormatUnderline);
-export default Memo;
+export default memo(IconTextFormatUnderline);

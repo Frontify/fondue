@@ -22,5 +22,4 @@ function IconDroplet32(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-const Memo = memo(IconDroplet32);
-export default Memo;
+export default memo(IconDroplet32);

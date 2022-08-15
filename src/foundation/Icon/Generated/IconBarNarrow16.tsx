@@ -22,5 +22,4 @@ function IconBarNarrow16(props: GeneratedIconProps): React.ReactElement<Generate
     );
 }
 
-const Memo = memo(IconBarNarrow16);
-export default Memo;
+export default memo(IconBarNarrow16);

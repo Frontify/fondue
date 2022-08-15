@@ -21,5 +21,4 @@ function IconArrowLeft(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-const Memo = memo(IconArrowLeft);
-export default Memo;
+export default memo(IconArrowLeft);

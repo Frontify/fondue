@@ -2,7 +2,7 @@
 
 import { Template } from '@svgr/babel-plugin-transform-svg-component';
 
-export const IconTemplate: Template = ({ interfaces, componentName, jsx, exports }, { tpl }) => {
+export const IconTemplate: Template = ({ interfaces, componentName, jsx }, { tpl }) => {
     return tpl`
       import React, { memo } from "react";
       import { GeneratedIconProps } from "@foundation/Icon/IconProps";
@@ -15,6 +15,6 @@ export const IconTemplate: Template = ({ interfaces, componentName, jsx, exports
         return ${jsx};
       }
 
-      ${exports}
+      export default memo(${componentName});
     `;
 };

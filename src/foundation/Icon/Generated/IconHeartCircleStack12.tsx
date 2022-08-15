@@ -31,5 +31,4 @@ function IconHeartCircleStack12(props: GeneratedIconProps): React.ReactElement<G
     );
 }
 
-const Memo = memo(IconHeartCircleStack12);
-export default Memo;
+export default memo(IconHeartCircleStack12);

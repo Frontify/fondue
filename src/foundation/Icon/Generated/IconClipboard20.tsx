@@ -22,5 +22,4 @@ function IconClipboard20(props: GeneratedIconProps): React.ReactElement<Generate
     );
 }
 
-const Memo = memo(IconClipboard20);
-export default Memo;
+export default memo(IconClipboard20);

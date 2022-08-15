@@ -22,5 +22,4 @@ function IconDotsVertical32(props: GeneratedIconProps): React.ReactElement<Gener
     );
 }
 
-const Memo = memo(IconDotsVertical32);
-export default Memo;
+export default memo(IconDotsVertical32);

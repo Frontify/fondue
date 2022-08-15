@@ -22,5 +22,4 @@ function IconStar32(props: GeneratedIconProps): React.ReactElement<GeneratedIcon
     );
 }
 
-const Memo = memo(IconStar32);
-export default Memo;
+export default memo(IconStar32);
