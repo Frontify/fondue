@@ -5,8 +5,6 @@ export const reactCssPropsToCss = (props?: any): string => {
         return '';
     }
     return Object.keys(props)
-        .map((key) => {
-            return `${convertCamelCaseToKebabCase(key)}: ${props[key]};`;
-        })
+        .map((key) => `${convertCamelCaseToKebabCase(key)}: ${props[key]};`)
         .join(' ');
 };

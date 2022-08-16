@@ -5,11 +5,7 @@ import { parseRawValue } from '../utils/parseRawValue';
 import { serializeNodeToHtmlRecursive } from './utils/serializeNodeToHtmlRecursive';
 import { setDefaultDesignTokensIfNull } from './utils/setDefaultDesignTokensIfNull';
 
-export const serializeRawToHtml = (raw?: string, designTokens: DesignTokens = defaultDesignTokens): string => {
-    if (!raw) {
-        return '';
-    }
-
+export const serializeRawToHtml = (raw: string, designTokens: DesignTokens = defaultDesignTokens): string => {
     const nodes = parseRawValue(raw);
     return serializeNodesToHtml(nodes, designTokens);
 };
