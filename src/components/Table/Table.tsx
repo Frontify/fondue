@@ -164,6 +164,7 @@ export const Table = ({
                                     <TableColumnHeader key={column.key} column={column} state={state} />
                                 ),
                             )}
+                            <td />
                         </TableHeaderRow>
                     ))}
                 </thead>
