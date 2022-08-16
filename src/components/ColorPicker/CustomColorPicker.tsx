@@ -2,6 +2,7 @@
 
 import { Dropdown } from '@components/Dropdown/Dropdown';
 import { TextInputType } from '@components/TextInput/TextInput';
+import { toLongRgb, toShortRgb } from '@utilities/colors';
 import React, { FC, useEffect, useState } from 'react';
 import { RgbaColorPicker } from 'react-colorful';
 import tinycolor from 'tinycolor2';
@@ -9,7 +10,7 @@ import { Color, ColorFormat } from '../../types/colors';
 import { ColorInput, DecoratorPosition } from './ColorInput';
 import { ColorPickerProps } from './ColorPicker';
 
-const convertToHex = (color: Color) => tinycolor(color).toHex();
+const convertToHex = (color: Color) => tinycolor(toShortRgb(color)).toHex();
 
 export const CustomColorPicker: FC<Omit<ColorPickerProps, 'palette'>> = ({
     currentColor,
@@ -23,19 +24,19 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, 'palette'>> = ({
             menuItems: Object.values(ColorFormat).map((id) => ({ id, title: id.toLocaleUpperCase() })),
         },
     ];
-    const { r, g, b, a = 1 } = currentColor;
+    const { red, green, blue, alpha = 1 } = currentColor;
     const [hexInput, setHexInput] = useState(convertToHex(currentColor));
-    const [alpha, setAlpha] = useState(a);
+    const [alphaValue, setAlphaValue] = useState(alpha);
 
     const handleHexChange = () => {
         const parsedHex = tinycolor(hexInput);
         if (parsedHex.isValid()) {
-            onSelect(parsedHex.toRgb());
+            onSelect(toLongRgb(parsedHex.toRgb()));
         }
     };
 
     useEffect(() => {
-        setAlpha(a);
+        setAlphaValue(alpha);
         setHexInput(convertToHex(currentColor));
     }, [currentColor]);
 
@@ -68,8 +69,8 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, 'palette'>> = ({
                                 max={255}
                                 size={3}
                                 type={TextInputType.Number}
-                                value={r.toString()}
-                                onChange={(r) => onSelect({ ...currentColor, r: parseInt(r) })}
+                                value={red.toString()}
+                                onChange={(value) => onSelect({ ...currentColor, red: parseInt(value) })}
                             />
                         </div>
                         <div className="tw-flex-1">
@@ -78,8 +79,8 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, 'palette'>> = ({
                                 max={255}
                                 size={3}
                                 type={TextInputType.Number}
-                                value={g.toString()}
-                                onChange={(g) => onSelect({ ...currentColor, g: parseInt(g) })}
+                                value={green.toString()}
+                                onChange={(value) => onSelect({ ...currentColor, green: parseInt(value) })}
                             />
                         </div>
                         <div className="tw-flex-1">
@@ -88,8 +89,8 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, 'palette'>> = ({
                                 max={255}
                                 size={3}
                                 type={TextInputType.Number}
-                                value={b.toString()}
-                                onChange={(b) => onSelect({ ...currentColor, b: parseInt(b) })}
+                                value={blue.toString()}
+                                onChange={(value) => onSelect({ ...currentColor, blue: parseInt(value) })}
                             />
                         </div>
                     </>
@@ -99,19 +100,30 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, 'palette'>> = ({
                     max={100}
                     size={3}
                     type={TextInputType.Number}
-                    value={Math.trunc(alpha * 100).toString()}
+                    value={Math.trunc(alphaValue * 100).toString()}
                     decorator="%"
                     decoratorPosition={DecoratorPosition.Right}
                     onChange={(value) => {
                         const a = parseInt(value || '0', 10) / 100;
-                        setAlpha(a);
-                        onSelect({ ...currentColor, a });
+                        setAlphaValue(a);
+                        onSelect({ ...currentColor, alpha: a });
                     }}
                 />
             </div>
             <div className="tw-flex tw-gap-2 tw-w-full tw-h-[200px]">
                 <div className="tw-relative tw-grow tw-rounded">
-                    <RgbaColorPicker color={{ ...currentColor, a }} onChange={onSelect} style={{ width: '100%' }} />
+                    <RgbaColorPicker
+                        color={{ r: red, g: green, b: blue, a: alpha }}
+                        onChange={(color) =>
+                            onSelect({
+                                red: color.r,
+                                green: color.g,
+                                blue: color.b,
+                                alpha: color.a,
+                            })
+                        }
+                        style={{ width: '100%' }}
+                    />
                 </div>
             </div>
         </div>

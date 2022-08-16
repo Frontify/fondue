@@ -94,12 +94,12 @@ describe('Badge component', () => {
     });
 
     it('should display custom status dot with Color value', () => {
-        const r = 30;
-        const g = 40;
-        const b = 50;
-        const a = 0.2;
+        const red = 30;
+        const green = 40;
+        const blue = 50;
+        const alpha = 0.2;
 
-        const DOT_COLOR = { r, g, b, a };
+        const DOT_COLOR = { red, green, blue, alpha };
 
         cy.mount(
             <Badge icon={<IconDocumentText />} status={DOT_COLOR}>
@@ -107,7 +107,7 @@ describe('Badge component', () => {
             </Badge>,
         );
 
-        cy.get(BADGE_STATUS_ID).should('have.css', 'backgroundColor', `rgba(${r}, ${g}, ${b}, ${a})`);
+        cy.get(BADGE_STATUS_ID).should('have.css', 'backgroundColor', `rgba(${red}, ${green}, ${blue}, ${alpha})`);
     });
 
     it('should display custom status dot with string value', () => {

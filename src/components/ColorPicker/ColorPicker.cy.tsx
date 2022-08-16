@@ -21,7 +21,7 @@ type Props = {
     currentColor?: Color;
 };
 
-const Component: FC<Props> = ({ palettes, currentColor = { r: 255, g: 0, b: 0 } }) => {
+const Component: FC<Props> = ({ palettes, currentColor = { red: 255, green: 0, blue: 0 } }) => {
     const [selectedColor, setSelectedColor] = useState<Color>(currentColor);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
 
