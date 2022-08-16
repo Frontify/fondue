@@ -11,7 +11,7 @@ export default defineConfig({
         },
         viewportHeight: 1280,
         viewportWidth: 800,
-        specPattern: './src/*.{spec,cy}.{ts,tsx}',
+        specPattern: './src/**/*.{spec,cy}.{ts,tsx}',
         devServer: {
             framework: 'react',
             bundler: 'vite',
