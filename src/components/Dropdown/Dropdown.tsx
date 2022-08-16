@@ -210,6 +210,7 @@ export const Dropdown: FC<DropdownProps> = ({
                             key="content"
                             initial={{ height: 0 }}
                             animate={{ height: 'auto' }}
+                            exit={{ height: 0 }}
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         >
                             <FocusScope restoreFocus>
