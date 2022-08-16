@@ -21,5 +21,4 @@ function IconSpeakerOff(props: GeneratedIconProps): React.ReactElement<Generated
     );
 }
 
-const Memo = memo(IconSpeakerOff);
-export default Memo;
+export default memo(IconSpeakerOff);

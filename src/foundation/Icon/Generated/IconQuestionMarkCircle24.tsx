@@ -22,5 +22,4 @@ function IconQuestionMarkCircle24(props: GeneratedIconProps): React.ReactElement
     );
 }
 
-const Memo = memo(IconQuestionMarkCircle24);
-export default Memo;
+export default memo(IconQuestionMarkCircle24);

@@ -22,5 +22,4 @@ function IconOrientationBoxes20(props: GeneratedIconProps): React.ReactElement<G
     );
 }
 
-const Memo = memo(IconOrientationBoxes20);
-export default Memo;
+export default memo(IconOrientationBoxes20);

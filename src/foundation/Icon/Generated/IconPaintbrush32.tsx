@@ -31,5 +31,4 @@ function IconPaintbrush32(props: GeneratedIconProps): React.ReactElement<Generat
     );
 }
 
-const Memo = memo(IconPaintbrush32);
-export default Memo;
+export default memo(IconPaintbrush32);

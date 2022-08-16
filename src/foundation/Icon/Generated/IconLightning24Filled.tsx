@@ -20,5 +20,4 @@ function IconLightning24Filled(props: GeneratedIconProps): React.ReactElement<Ge
     );
 }
 
-const Memo = memo(IconLightning24Filled);
-export default Memo;
+export default memo(IconLightning24Filled);

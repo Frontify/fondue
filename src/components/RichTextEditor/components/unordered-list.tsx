@@ -3,8 +3,10 @@
 import { PlateRenderElementProps } from '@udecode/plate';
 import React, { FC } from 'react';
 
+export const UL_CLASSES = 'tw-list-disc tw-pl-6';
+
 export const UnorderedListElement: FC<PlateRenderElementProps> = ({ attributes, children }) => (
-    <ul className="tw-list-disc tw-pl-6" {...attributes}>
+    <ul className={UL_CLASSES} {...attributes}>
         {children}
     </ul>
 );

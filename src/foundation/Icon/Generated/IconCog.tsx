@@ -21,5 +21,4 @@ function IconCog(props: GeneratedIconProps): React.ReactElement<GeneratedIconPro
     );
 }
 
-const Memo = memo(IconCog);
-export default Memo;
+export default memo(IconCog);

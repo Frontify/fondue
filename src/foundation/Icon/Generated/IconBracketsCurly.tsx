@@ -21,5 +21,4 @@ function IconBracketsCurly(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconBracketsCurly);
-export default Memo;
+export default memo(IconBracketsCurly);

@@ -21,5 +21,4 @@ function IconPlayFrame(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-const Memo = memo(IconPlayFrame);
-export default Memo;
+export default memo(IconPlayFrame);

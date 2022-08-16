@@ -22,5 +22,4 @@ function IconFocalPoint12(props: GeneratedIconProps): React.ReactElement<Generat
     );
 }
 
-const Memo = memo(IconFocalPoint12);
-export default Memo;
+export default memo(IconFocalPoint12);

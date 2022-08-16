@@ -22,5 +22,4 @@ function IconPolygon32(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-const Memo = memo(IconPolygon32);
-export default Memo;
+export default memo(IconPolygon32);

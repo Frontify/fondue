@@ -22,5 +22,4 @@ function IconArrowExpand32(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconArrowExpand32);
-export default Memo;
+export default memo(IconArrowExpand32);

@@ -22,5 +22,4 @@ function IconDividerDotted20(props: GeneratedIconProps): React.ReactElement<Gene
     );
 }
 
-const Memo = memo(IconDividerDotted20);
-export default Memo;
+export default memo(IconDividerDotted20);

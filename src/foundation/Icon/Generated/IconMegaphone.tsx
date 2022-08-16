@@ -21,5 +21,4 @@ function IconMegaphone(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-const Memo = memo(IconMegaphone);
-export default Memo;
+export default memo(IconMegaphone);

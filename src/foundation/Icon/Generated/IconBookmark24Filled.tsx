@@ -20,5 +20,4 @@ function IconBookmark24Filled(props: GeneratedIconProps): React.ReactElement<Gen
     );
 }
 
-const Memo = memo(IconBookmark24Filled);
-export default Memo;
+export default memo(IconBookmark24Filled);

@@ -22,5 +22,4 @@ function IconStackHorizontalAltFour20(props: GeneratedIconProps): React.ReactEle
     );
 }
 
-const Memo = memo(IconStackHorizontalAltFour20);
-export default Memo;
+export default memo(IconStackHorizontalAltFour20);

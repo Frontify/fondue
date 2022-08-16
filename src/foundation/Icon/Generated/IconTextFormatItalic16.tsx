@@ -22,5 +22,4 @@ function IconTextFormatItalic16(props: GeneratedIconProps): React.ReactElement<G
     );
 }
 
-const Memo = memo(IconTextFormatItalic16);
-export default Memo;
+export default memo(IconTextFormatItalic16);

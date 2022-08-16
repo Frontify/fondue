@@ -10,7 +10,7 @@ import { mergeProps } from '@react-aria/utils';
 import { merge } from '@utilities/merge';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { FC, useRef, useState } from 'react';
-import { getSizeClasses } from './helpers';
+import { getPaddingClasses } from './helpers';
 
 export enum MultiSelectType {
     Default = 'Default',
@@ -104,8 +104,8 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                     {...mergeProps(buttonProps, focusProps)}
                     ref={triggerRef}
                     className={merge([
-                        'tw-flex-1 tw-flex tw-flex-wrap tw-gap-1 tw-pl-[19px] tw-min-h-[34px] tw-outline-none tw-pr-7',
-                        getSizeClasses(size, activeItemKeys.length > 0),
+                        'tw-flex-1 tw-flex tw-flex-wrap tw-gap-1 tw-min-h-[34px] tw-outline-none',
+                        getPaddingClasses(size, activeItemKeys.length > 0),
                     ])}
                 >
                     {type === MultiSelectType.Default &&

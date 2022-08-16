@@ -22,5 +22,4 @@ function IconTextAlignmentJustify32(props: GeneratedIconProps): React.ReactEleme
     );
 }
 
-const Memo = memo(IconTextAlignmentJustify32);
-export default Memo;
+export default memo(IconTextAlignmentJustify32);

@@ -22,5 +22,4 @@ function IconSpeechBubbleQuote16(props: GeneratedIconProps): React.ReactElement<
     );
 }
 
-const Memo = memo(IconSpeechBubbleQuote16);
-export default Memo;
+export default memo(IconSpeechBubbleQuote16);

@@ -29,5 +29,4 @@ function IconTrashBinOpen12(props: GeneratedIconProps): React.ReactElement<Gener
     );
 }
 
-const Memo = memo(IconTrashBinOpen12);
-export default Memo;
+export default memo(IconTrashBinOpen12);

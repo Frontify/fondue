@@ -21,5 +21,4 @@ function IconHighlighter(props: GeneratedIconProps): React.ReactElement<Generate
     );
 }
 
-const Memo = memo(IconHighlighter);
-export default Memo;
+export default memo(IconHighlighter);

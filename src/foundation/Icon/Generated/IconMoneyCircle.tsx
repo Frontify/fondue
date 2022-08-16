@@ -21,5 +21,4 @@ function IconMoneyCircle(props: GeneratedIconProps): React.ReactElement<Generate
     );
 }
 
-const Memo = memo(IconMoneyCircle);
-export default Memo;
+export default memo(IconMoneyCircle);

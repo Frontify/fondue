@@ -4,7 +4,7 @@ import { Slider } from '@components/Slider/Slider';
 import { TextInput } from '@components/TextInput/TextInput';
 import { IconCheckMark, IconGridRegular, IconMagnifier, IconStackVertical } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { isColorLight } from '@utilities/colors';
+import { isColorLight, toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
 import React, { FC, useEffect, useState } from 'react';
 import tinycolor from 'tinycolor2';
@@ -92,12 +92,12 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                                                       'tw-h-6 tw-w-6 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center tw-ring-1 tw-ring-black-10 tw-ring-offset-1',
                                                       isColorLight(color) ? 'tw-text-black' : 'tw-text-white',
                                                   ])}
-                                                  style={{ background: tinycolor(color).toRgbString() }}
+                                                  style={{ background: tinycolor(toShortRgb(color)).toRgbString() }}
                                               >
-                                                  {color.r === currentColor.r &&
-                                                      color.g === currentColor.g &&
-                                                      color.b === currentColor.b &&
-                                                      color.a === currentColor.a && (
+                                                  {color.red === currentColor.red &&
+                                                      color.green === currentColor.green &&
+                                                      color.blue === currentColor.blue &&
+                                                      color.alpha === currentColor.alpha && (
                                                           <IconCheckMark size={IconSize.Size20} />
                                                       )}
                                               </span>

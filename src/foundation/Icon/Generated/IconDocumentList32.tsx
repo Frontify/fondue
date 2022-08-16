@@ -22,5 +22,4 @@ function IconDocumentList32(props: GeneratedIconProps): React.ReactElement<Gener
     );
 }
 
-const Memo = memo(IconDocumentList32);
-export default Memo;
+export default memo(IconDocumentList32);

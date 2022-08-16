@@ -12,15 +12,23 @@ function IconCheckMarkCircle12Filled(props: GeneratedIconProps): React.ReactElem
             name="IconCheckMarkCircle12Filled"
             {...props}
         >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M6 12A6 6 0 1 0 6 0a6 6 0 0 0 0 12Zm2.934-6.967a.5.5 0 1 0-.707-.707L5.1 7.454 3.773 6.128a.5.5 0 0 0-.707.707l1.68 1.68.353.353.353-.353 3.482-3.482Z"
-                clipRule="evenodd"
-            />
+            <g fill="none">
+                <g clipPath="url(#prefix__a)">
+                    <path
+                        fill="currentColor"
+                        fillRule="evenodd"
+                        d="M6 12A6 6 0 1 0 6 0a6 6 0 0 0 0 12Zm2.934-6.967a.5.5 0 1 0-.707-.707L5.1 7.454 3.773 6.128a.5.5 0 0 0-.707.707l1.68 1.68.353.353.353-.353 3.482-3.482Z"
+                        clipRule="evenodd"
+                    />
+                </g>
+                <defs>
+                    <clipPath id="prefix__a">
+                        <path fill="#fff" d="M0 0h12v12H0z" />
+                    </clipPath>
+                </defs>
+            </g>
         </svg>
     );
 }
 
-const Memo = memo(IconCheckMarkCircle12Filled);
-export default Memo;
+export default memo(IconCheckMarkCircle12Filled);

@@ -22,5 +22,4 @@ function IconRectanglePortraitSquare24(props: GeneratedIconProps): React.ReactEl
     );
 }
 
-const Memo = memo(IconRectanglePortraitSquare24);
-export default Memo;
+export default memo(IconRectanglePortraitSquare24);

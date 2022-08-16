@@ -22,5 +22,4 @@ function IconFunnel32(props: GeneratedIconProps): React.ReactElement<GeneratedIc
     );
 }
 
-const Memo = memo(IconFunnel32);
-export default Memo;
+export default memo(IconFunnel32);

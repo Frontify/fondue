@@ -22,5 +22,4 @@ function IconArrowStretchBox16(props: GeneratedIconProps): React.ReactElement<Ge
     );
 }
 
-const Memo = memo(IconArrowStretchBox16);
-export default Memo;
+export default memo(IconArrowStretchBox16);

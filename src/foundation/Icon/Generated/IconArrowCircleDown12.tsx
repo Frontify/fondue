@@ -31,5 +31,4 @@ function IconArrowCircleDown12(props: GeneratedIconProps): React.ReactElement<Ge
     );
 }
 
-const Memo = memo(IconArrowCircleDown12);
-export default Memo;
+export default memo(IconArrowCircleDown12);

@@ -21,5 +21,4 @@ function IconLightbulb(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-const Memo = memo(IconLightbulb);
-export default Memo;
+export default memo(IconLightbulb);

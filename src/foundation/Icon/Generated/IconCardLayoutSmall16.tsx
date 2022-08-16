@@ -22,5 +22,4 @@ function IconCardLayoutSmall16(props: GeneratedIconProps): React.ReactElement<Ge
     );
 }
 
-const Memo = memo(IconCardLayoutSmall16);
-export default Memo;
+export default memo(IconCardLayoutSmall16);

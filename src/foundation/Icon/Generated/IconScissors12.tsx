@@ -31,5 +31,4 @@ function IconScissors12(props: GeneratedIconProps): React.ReactElement<Generated
     );
 }
 
-const Memo = memo(IconScissors12);
-export default Memo;
+export default memo(IconScissors12);

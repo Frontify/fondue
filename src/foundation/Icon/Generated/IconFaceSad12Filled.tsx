@@ -22,5 +22,4 @@ function IconFaceSad12Filled(props: GeneratedIconProps): React.ReactElement<Gene
     );
 }
 
-const Memo = memo(IconFaceSad12Filled);
-export default Memo;
+export default memo(IconFaceSad12Filled);
