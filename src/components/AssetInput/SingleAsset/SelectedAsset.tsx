@@ -40,9 +40,10 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
     const [flyoutWidth, setFlyoutWidth] = useState(0);
 
     useEffect(() => {
+        let timer: NodeJS.Timeout | null = null;
         const calculateFlyoutWidth = () => {
             const calculatedWidth = buttonRef.current?.getBoundingClientRect().width ?? 0;
-            setTimeout(() => setFlyoutWidth(calculatedWidth), 0);
+            timer = setTimeout(() => setFlyoutWidth(calculatedWidth), 0);
         };
         const resizeObserver = new ResizeObserver(calculateFlyoutWidth);
         if (buttonRef.current) {
@@ -50,6 +51,7 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
         }
 
         return () => {
+            timer && clearTimeout(timer);
             resizeObserver.disconnect();
         };
     }, []);
