@@ -1,27 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { forwardRef, useEffect, useState } from 'react';
 import { BalloonToolbar } from '@udecode/plate';
-import React, { useEffect, useState } from 'react';
-import { ToolbarCustomProps } from '../../types';
-import { defaultActions } from '../../utils/actions';
-import { calculateToolbarWidth, getButtonGroupWidths, getButtonGroupWidthsPerRow } from '../../utils/toolbarCalc';
-import { ButtonGroup } from './ButtonGroup';
+import { ToolbarWrapperProps, WrapperProps } from './types';
+import { calculateToolbarWidth } from '../utils/toolbarCalc';
+import { OFFSET_IN_PX } from '../utils';
 
-const OFFSET_IN_PX = 12;
+export const PlateWrapper = forwardRef<HTMLDivElement, WrapperProps>(({ children }, ref) => (
+    <div data-test-id="rich-text-editor" className="tw-relative tw-w-full" ref={ref}>
+        {children}
+    </div>
+));
+PlateWrapper.displayName = 'ToolbarPositioningFloatingPlateWrapper';
 
-export const ToolbarFloating = ({ editorId, actions = [], editorWidth }: ToolbarCustomProps) => {
-    const toolbarActions = actions.length > 0 ? actions : defaultActions;
-    const buttonGroupWidths = getButtonGroupWidths(toolbarActions);
-
+export const ToolbarWrapper = ({ children, editorWidth, toolbarButtonGroups }: ToolbarWrapperProps) => {
     const [width, setWidth] = useState<number | null>(null);
-    const toolbarButtonGroups = getButtonGroupWidthsPerRow(editorWidth || 0, buttonGroupWidths);
 
     useEffect(() => {
         const toolbarWidthSum = calculateToolbarWidth(toolbarButtonGroups);
         if (toolbarWidthSum > 0) {
             setWidth(toolbarWidthSum + toolbarButtonGroups.length + OFFSET_IN_PX);
         }
-    }, [editorWidth]);
+    }, [editorWidth, toolbarButtonGroups]);
 
     return (
         <BalloonToolbar
@@ -60,13 +60,7 @@ export const ToolbarFloating = ({ editorId, actions = [], editorWidth }: Toolbar
                 data-test-id="toolbar"
                 className="tw-rounded tw-min-h-12 tw-border tw-border-line tw-shadow-lg tw-bg-base tw-divide-y tw-divide-line tw-flex tw-flex-wrap"
             >
-                {toolbarButtonGroups.map((row, index) => (
-                    <div key={index} className="tw-divide-x tw-divide-line tw-flex tw-w-full tw-flex-wrap">
-                        {row.map(({ actions, index }) => (
-                            <ButtonGroup key={index} actions={actions} index={index} editorId={editorId} />
-                        ))}
-                    </div>
-                ))}
+                {children}
             </div>
         </BalloonToolbar>
     );

@@ -1,19 +1,29 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Position, ToolbarCustomProps } from '../../types';
+import { ToolbarCustomProps } from '../../types';
 
-import { ToolbarFloating } from './ToolbarFloating';
-import { ToolbarBottom } from './ToolbarBottom';
+import { useRichTextEditorContext } from '../../context/DesignTokensContext';
+import { getButtonGroupWidths, getButtonGroupWidthsPerRow } from '../../utils/toolbarCalc';
+import { defaultActions } from '../../utils/actions';
+import { ButtonGroup } from './ButtonGroup';
 
-type ToolbarProps = ToolbarCustomProps & {
-    position: Position;
-};
+export const Toolbar = ({ editorId, actions = [], editorWidth }: ToolbarCustomProps) => {
+    const { ToolbarPositioning } = useRichTextEditorContext();
 
-export const Toolbar = ({ position, editorId, actions = [], editorWidth }: ToolbarProps) => {
-    if (position === Position.BOTTOM) {
-        return <ToolbarBottom editorId={editorId} actions={actions} />;
-    }
+    const toolbarActions = actions.length > 0 ? actions : defaultActions;
+    const buttonGroupWidths = getButtonGroupWidths(toolbarActions);
+    const toolbarButtonGroups = getButtonGroupWidthsPerRow(editorWidth || 0, buttonGroupWidths);
 
-    return <ToolbarFloating editorId={editorId} actions={actions} editorWidth={editorWidth} />;
+    return (
+        <ToolbarPositioning.ToolbarWrapper editorWidth={editorWidth} toolbarButtonGroups={toolbarButtonGroups}>
+            {toolbarButtonGroups.map((row, index) => (
+                <div key={index} className="tw-divide-x tw-divide-line tw-flex tw-w-full tw-flex-wrap">
+                    {row.map(({ actions, index }) => (
+                        <ButtonGroup key={index} actions={actions} index={index} editorId={editorId} />
+                    ))}
+                </div>
+            ))}
+        </ToolbarPositioning.ToolbarWrapper>
+    );
 };
