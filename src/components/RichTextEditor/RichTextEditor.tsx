@@ -10,7 +10,7 @@ import { DesignTokensContext } from './context/DesignTokensContext';
 import { useEditorState } from './hooks/useEditorState';
 import { DesignTokens, Position } from './types';
 import { EditorActions } from './utils/actions';
-import { ON_SAVE_DELAY_IN_MS } from './utils/constants';
+import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { getEditorConfig } from './utils/editorConfig';
 import { parseRawValue } from './utils/parseRawValue';
