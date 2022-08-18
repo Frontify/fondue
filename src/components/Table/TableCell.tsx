@@ -1,14 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
-import { useCheckbox } from '@react-aria/checkbox';
-import { useFocusRing } from '@react-aria/focus';
-import { useTableCell, useTableSelectionCheckbox } from '@react-aria/table';
-import { mergeProps } from '@react-aria/utils';
-import { TableState } from '@react-stately/table';
-import { useToggleState } from '@react-stately/toggle';
-import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
+import { Checkbox as CheckboxCmp, CheckboxState } from '@components/Checkbox/Checkbox';
 import { merge } from '@utilities/merge';
-import React, { FC, useRef } from 'react';
+import React, { FC, Key, useRef } from 'react';
+import { SelectionMode } from '..';
 
 export enum TableCellType {
     Default = 'Default',
@@ -17,37 +11,57 @@ export enum TableCellType {
 
 export type TableCellProps = {
     cell: any;
-    state: TableState<any>;
+    selectionMode: string;
     type?: TableCellType;
+    isChecked?: boolean;
+    selectedRows: Key[];
+    setSelectedRows?: (ids?: Key[]) => void;
 };
 
-export const TableCell: FC<TableCellProps> = ({ cell, state, type = TableCellType.Default }) => {
+export const TableCell: FC<TableCellProps> = ({
+    cell,
+    selectionMode,
+    type = TableCellType.Default,
+    isChecked = false,
+    selectedRows,
+    setSelectedRows,
+}) => {
     const ref = useRef<HTMLTableCellElement | null>(null);
-    const { gridCellProps } = useTableCell({ node: cell }, state, ref);
-    const { checkboxProps } = useTableSelectionCheckbox({ key: cell.parentKey }, state);
-    const inputRef = useRef(null);
-    const {
-        inputProps: { checked },
-    } = useCheckbox(checkboxProps, useToggleState(checkboxProps), inputRef);
-    const { isFocusVisible, focusProps } = useFocusRing();
 
     if (type === TableCellType.Checkbox) {
         const { key } = cell;
+        const handleChange = () => {
+            if (!setSelectedRows) {
+                return;
+            }
+
+            if (isChecked) {
+                const filteredRows = selectedRows.filter((row) => row !== cell.parentKey);
+                setSelectedRows(filteredRows);
+                return;
+            }
+            if (selectionMode === SelectionMode.SingleSelect) {
+                setSelectedRows([cell.parentKey]);
+            } else {
+                setSelectedRows([...selectedRows, cell.parentKey]);
+            }
+        };
 
         return (
             <td
-                {...gridCellProps}
+                role="cell"
                 ref={ref}
                 className={merge([
                     'tw-pl-8 tw-py-4 tw-pr-4 tw-border-l-4',
-                    checked ? 'tw-border-violet-60' : 'tw-border-transparent',
+                    isChecked ? 'tw-border-violet-60' : 'tw-border-transparent',
                 ])}
                 data-test-id="table-select-cell"
             >
-                <Checkbox
+                <CheckboxCmp
                     value={key}
                     ariaLabel={cell['aria-label'] || key}
-                    state={checked ? CheckboxState.Checked : CheckboxState.Unchecked}
+                    state={isChecked ? CheckboxState.Checked : CheckboxState.Unchecked}
+                    onChange={handleChange}
                 />
             </td>
         );
@@ -55,12 +69,11 @@ export const TableCell: FC<TableCellProps> = ({ cell, state, type = TableCellTyp
 
     return (
         <td
-            {...mergeProps(gridCellProps, focusProps)}
+            role="cell"
             ref={ref}
             className={merge([
                 'tw-p-4 tw-font-normal tw-text-xs focus:tw-outline-none',
-                checked ? 'tw-text-black-100 dark:tw-text-white' : 'tw-text-black-80 dark:tw-text-black-20',
-                isFocusVisible && FOCUS_STYLE_INSET,
+                isChecked ? 'tw-text-black-100 dark:tw-text-white' : 'tw-text-black-80 dark:tw-text-black-20',
             ])}
         >
             {cell.rendered}
