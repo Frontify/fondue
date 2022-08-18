@@ -4,7 +4,7 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { Button, ButtonProps } from './Button';
 import { IconEnum, iconsMap } from '@foundation/Icon';
-import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType, Solid } from './ButtonTypes';
+import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
 import { ButtonPreset } from '@components/Button/ButtonPreset';
 
 const defaultArgs = {
@@ -12,7 +12,6 @@ const defaultArgs = {
     style: ButtonStyle.Default,
     size: ButtonSize.Medium,
     rounding: ButtonRounding.Medium,
-    solid: Solid.filled,
     hideLabel: false,
     disabled: false,
     hugWidth: true,
@@ -29,10 +28,6 @@ export default {
         },
         style: {
             options: Object.values(ButtonStyle),
-            control: { type: 'radio' },
-        },
-        solid: {
-            options: Object.values(Solid),
             control: { type: 'radio' },
         },
         emphasis: {
@@ -62,6 +57,11 @@ export default {
 } as Meta;
 
 const ButtonTemplate: Story<ButtonProps> = (args: ButtonProps) => <Button {...args} />;
+const ButtonTemplateInverted: Story<ButtonProps> = (args: ButtonProps) => (
+    <div className={'tw-dark'}>
+        <Button {...args} />
+    </div>
+);
 
 export const Default = ButtonTemplate.bind({});
 Default.args = { ...defaultArgs };
@@ -106,4 +106,11 @@ ButtonWithoutAnyDefaults.args = {
     children: 'Out of the Box Button',
     icon: iconsMap[IconEnum.ColorFan],
     type: ButtonType.Submit,
+};
+
+export const ButtonPrimaryInverted = ButtonTemplateInverted.bind({});
+ButtonPrimaryInverted.args = {
+    children: 'Primary Button inverted',
+    icon: iconsMap[IconEnum.ColorFan],
+    ...ButtonPreset.Primary,
 };

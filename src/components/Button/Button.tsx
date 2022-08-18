@@ -5,15 +5,7 @@ import React, { ForwardRefRenderFunction, MouseEvent, ReactElement, ReactNode, c
 import { useButton } from '@react-aria/button';
 import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
-import {
-    ButtonElements,
-    ButtonEmphasis,
-    ButtonRounding,
-    ButtonSize,
-    ButtonStyle,
-    ButtonType,
-    Solid,
-} from './ButtonTypes';
+import { ButtonElements, ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
 import {
     ButtonCommonClasses,
     ButtonDisabledClasses,
@@ -32,7 +24,6 @@ export type ButtonProps = {
     hideLabel?: boolean;
     size?: ButtonSize;
     rounding?: ButtonRounding;
-    solid?: Solid;
     disabled?: boolean;
     icon?: ReactElement;
     children?: ReactNode;
@@ -50,7 +41,6 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         rounding = ButtonRounding.Medium,
         emphasis = ButtonEmphasis.Default,
         hideLabel = false,
-        solid = Solid.filled,
         disabled = false,
         icon,
         children,
@@ -68,7 +58,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     );
 
     const getStyles = (kind: keyof ButtonElements) =>
-        !disabled ? `${ButtonStyleClasses[solid][emphasis][style][kind]}` : ButtonDisabledClasses[solid];
+        !disabled ? `${ButtonStyleClasses[emphasis][style][kind]}` : ButtonDisabledClasses;
 
     const buttonClassName = merge([
         FOCUS_VISIBLE_STYLE,

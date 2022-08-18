@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ActionMenuProps } from '@components/ActionMenu/ActionMenu/ActionMenu';
-import { Button, ButtonPreset, Solid } from '@components/Button';
+import { Button, ButtonEmphasis, ButtonPreset } from '@components/Button';
 import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon/';
 import { IconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
@@ -141,7 +141,7 @@ export const AssetInput: FC<AssetInputProps> = ({
                     <Button
                         {...ButtonPreset.Secondary}
                         onClick={onLibraryClick}
-                        solid={Solid.empty}
+                        emphasis={ButtonEmphasis.Weak}
                         icon={<IconImageStack />}
                     >
                         Browse

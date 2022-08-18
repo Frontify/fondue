@@ -35,8 +35,3 @@ export type ButtonElements = {
     icon: string;
     text: string;
 };
-
-export enum Solid {
-    filled = 'filled',
-    empty = 'empty',
-}

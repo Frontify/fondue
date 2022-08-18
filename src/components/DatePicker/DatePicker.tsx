@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonPreset, ButtonSize, Solid } from '@components/Button';
+import { Button, ButtonEmphasis, ButtonPreset, ButtonSize } from '@components/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { format, getYear } from 'date-fns';
 import React, { FC, useState } from 'react';
@@ -59,14 +59,14 @@ export const DatePicker: FC<DatePickerProps> = ({
                             {...ButtonPreset.Secondary}
                             size={ButtonSize.Medium}
                             onClick={decreaseYear}
-                            solid={Solid.empty}
+                            emphasis={ButtonEmphasis.Weak}
                             icon={<IconCaretLeftDouble size={IconSize.Size20} />}
                         />
                         <Button
                             {...ButtonPreset.Secondary}
                             size={ButtonSize.Medium}
                             onClick={decreaseMonth}
-                            solid={Solid.empty}
+                            emphasis={ButtonEmphasis.Weak}
                             icon={<IconCaretLeft size={IconSize.Size20} />}
                         />
                         <p className="tw-font-sans tw-font-semibold tw-grow tw-self-center">
@@ -76,14 +76,14 @@ export const DatePicker: FC<DatePickerProps> = ({
                             {...ButtonPreset.Secondary}
                             size={ButtonSize.Medium}
                             onClick={increaseMonth}
-                            solid={Solid.empty}
+                            emphasis={ButtonEmphasis.Weak}
                             icon={<IconCaretRight size={IconSize.Size20} />}
                         />
                         <Button
                             {...ButtonPreset.Secondary}
                             size={ButtonSize.Medium}
                             onClick={increaseYear}
-                            solid={Solid.empty}
+                            emphasis={ButtonEmphasis.Weak}
                             icon={<IconCaretRightDouble size={IconSize.Size20} />}
                         />
                     </div>

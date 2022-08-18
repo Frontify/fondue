@@ -1,6 +1,6 @@
 Breaking:
 
-- Removed Primary, Secondary styles => new ButtonPreset.Primary, ButtonPreset.Secondary
+- Removed Primary, Secondary styles => now ButtonPreset.Primary, ButtonPreset.Secondary
 - Move exports to index.ts,         => changed exports from button/button -> button
-- Solid changed to enum             => {filled -> true, empty -> false)
-
+- Solid removed                     => Is now covered with emphasis
+- Inverted removed                  => Wrap the Button with div and className="tw-dark"
