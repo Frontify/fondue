@@ -2,7 +2,7 @@
 
 import { Modal } from './Modal';
 import React, { useState } from 'react';
-import { Button, buttonPreset } from '@components/Button';
+import { Button, ButtonPreset } from '@components/Button';
 import { Meta, Story } from '@storybook/react';
 import { TextInput } from '@components/TextInput';
 import { action } from '@storybook/addon-actions';
@@ -190,12 +190,12 @@ const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps & Mo
                                 action('click');
                                 state.close();
                             },
-                            ...buttonPreset.secondary,
+                            ...ButtonPreset.secondary,
                         },
                         {
                             children: 'Cancel',
                             onClick: () => state.close(),
-                            ...buttonPreset.primary,
+                            ...ButtonPreset.primary,
                         },
                     ]}
                 />

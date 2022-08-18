@@ -5,7 +5,7 @@ import { Meta, Story } from '@storybook/react';
 import { Button, ButtonProps } from './Button';
 import { IconEnum, iconsMap } from '@foundation/Icon';
 import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType, Solid } from './ButtonTypes';
-import { buttonPreset } from '@components/Button/ButtonPreset';
+import { ButtonPreset } from '@components/Button/ButtonPreset';
 
 const defaultArgs = {
     type: ButtonType.Button,
@@ -91,12 +91,12 @@ export const ButtonPresetPrimary = ButtonTemplate.bind({});
 ButtonPresetPrimary.args = {
     children: 'Primary Button',
     icon: iconsMap[IconEnum.ColorFan],
-    ...buttonPreset.primary,
+    ...ButtonPreset.primary,
 };
 
 export const ButtonPresetSecondary = ButtonTemplate.bind({});
 ButtonPresetSecondary.args = {
     children: 'Secondary Button',
     icon: iconsMap[IconEnum.ColorFan],
-    ...buttonPreset.secondary,
+    ...ButtonPreset.secondary,
 };

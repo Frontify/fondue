@@ -3,7 +3,7 @@
 import { Badge } from '@components/Badge/Badge';
 import { TextInput } from '@components/TextInput/TextInput';
 
-import { Button, ButtonSize, buttonPreset } from '@components/Button';
+import { Button, ButtonPreset, ButtonSize } from '@components/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
@@ -36,7 +36,7 @@ const User: FC<{ name: string }> = ({ name }) => (
 );
 
 const ActionButton: FC = () => (
-    <Button {...buttonPreset.secondary} onClick={action('click')} size={ButtonSize.Small} icon={<IconDotsVertical />} />
+    <Button {...ButtonPreset.secondary} onClick={action('click')} size={ButtonSize.Small} icon={<IconDotsVertical />} />
 );
 
 const columns: Column[] = [

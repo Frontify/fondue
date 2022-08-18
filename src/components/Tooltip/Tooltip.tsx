@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonSize, buttonPreset } from '@components/Button';
+import { Button, ButtonPreset, ButtonSize } from '@components/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useLink } from '@react-aria/link';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
@@ -277,7 +277,7 @@ export const Tooltip = ({
                                                 onBlur={() => (buttons && buttons.length < 2 ? setIsOpen(false) : null)}
                                             >
                                                 <Button
-                                                    {...buttonPreset.primary}
+                                                    {...ButtonPreset.primary}
                                                     size={ButtonSize.Small}
                                                     onClick={buttons[0].action}
                                                 >
@@ -288,7 +288,7 @@ export const Tooltip = ({
                                         {buttons.length === 2 && (
                                             <div onBlur={() => setIsOpen(false)}>
                                                 <Button
-                                                    {...buttonPreset.secondary}
+                                                    {...ButtonPreset.secondary}
                                                     size={ButtonSize.Small}
                                                     onClick={buttons[1].action}
                                                 >

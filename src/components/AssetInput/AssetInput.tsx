@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ActionMenuProps } from '@components/ActionMenu/ActionMenu/ActionMenu';
-import { Button, Solid, buttonPreset } from '@components/Button';
+import { Button, ButtonPreset, Solid } from '@components/Button';
 import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon/';
 import { IconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
@@ -139,7 +139,7 @@ export const AssetInput: FC<AssetInputProps> = ({
                     data-test-id="asset-input-library"
                 >
                     <Button
-                        {...buttonPreset.secondary}
+                        {...ButtonPreset.secondary}
                         onClick={onLibraryClick}
                         solid={Solid.empty}
                         icon={<IconImageStack />}

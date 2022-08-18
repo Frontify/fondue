@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonProps, ButtonSize, buttonPreset } from '@components/Button';
+import { Button, ButtonPreset, ButtonProps, ButtonSize } from '@components/Button';
 import { IconCheckMark } from '@foundation/Icon';
 import { merge } from '@utilities/merge';
 import React, { FC, PropsWithChildren } from 'react';
@@ -30,10 +30,10 @@ export const LegacyFlyoutFooter = ({ onConfirm, onCancel }: { onConfirm?: () => 
         buttons={
             onConfirm
                 ? [
-                      { ...buttonPreset.secondary, children: 'Cancel', onClick: onCancel },
-                      { ...buttonPreset.primary, children: 'Confirm', onClick: onConfirm, icon: <IconCheckMark /> },
+                      { ...ButtonPreset.secondary, children: 'Cancel', onClick: onCancel },
+                      { ...ButtonPreset.primary, children: 'Confirm', onClick: onConfirm, icon: <IconCheckMark /> },
                   ]
-                : [{ ...buttonPreset.secondary, children: 'Close', onClick: onCancel }]
+                : [{ ...ButtonPreset.secondary, children: 'Close', onClick: onCancel }]
         }
     />
 );

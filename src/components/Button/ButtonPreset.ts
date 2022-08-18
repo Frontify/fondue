@@ -1,6 +1,6 @@
 import { ButtonEmphasis, ButtonStyle, Solid } from '@components/Button';
 
-export const buttonPreset = {
+export const ButtonPreset = {
     primary: {
         solid: Solid.filled,
         style: ButtonStyle.Default,

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonSize, Solid, buttonPreset } from '@components/Button';
+import { Button, ButtonPreset, ButtonSize, Solid } from '@components/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { format, getYear } from 'date-fns';
 import React, { FC, useState } from 'react';
@@ -56,14 +56,14 @@ export const DatePicker: FC<DatePickerProps> = ({
                 renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
                     <div className="tw-flex tw-justify-between tw-pb-4 tw-px-0">
                         <Button
-                            {...buttonPreset.secondary}
+                            {...ButtonPreset.secondary}
                             size={ButtonSize.Medium}
                             onClick={decreaseYear}
                             solid={Solid.empty}
                             icon={<IconCaretLeftDouble size={IconSize.Size20} />}
                         />
                         <Button
-                            {...buttonPreset.secondary}
+                            {...ButtonPreset.secondary}
                             size={ButtonSize.Medium}
                             onClick={decreaseMonth}
                             solid={Solid.empty}
@@ -73,14 +73,14 @@ export const DatePicker: FC<DatePickerProps> = ({
                             {format(date, 'MMMM')} {getYear(date)}
                         </p>
                         <Button
-                            {...buttonPreset.secondary}
+                            {...ButtonPreset.secondary}
                             size={ButtonSize.Medium}
                             onClick={increaseMonth}
                             solid={Solid.empty}
                             icon={<IconCaretRight size={IconSize.Size20} />}
                         />
                         <Button
-                            {...buttonPreset.secondary}
+                            {...ButtonPreset.secondary}
                             size={ButtonSize.Medium}
                             onClick={increaseYear}
                             solid={Solid.empty}

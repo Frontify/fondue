@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Flyout } from '@components/Flyout';
-import { Button, ButtonSize, buttonPreset } from '@components/Button';
+import { Button, ButtonPreset, ButtonSize } from '@components/Button';
 import { IconDotsVertical, IconSize } from '@foundation/Icon';
 import { ActionMenu } from '@components/ActionMenu/ActionMenu';
 import { mockActionMenuBlocks } from './mocks';
@@ -19,7 +19,7 @@ export const ActionsFlyoutComponent = () => {
             hug={false}
             trigger={
                 <Button
-                    {...buttonPreset.secondary}
+                    {...ButtonPreset.secondary}
                     onClick={handleClick}
                     icon={<IconDotsVertical size={IconSize.Size12} />}
                     size={ButtonSize.Small}

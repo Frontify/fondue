@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonSize, ButtonStyle, buttonPreset } from '@components/Button';
+import { Button, ButtonPreset, ButtonSize, ButtonStyle } from '@components/Button';
 import IconCross from '@foundation/Icon/Generated/IconCross';
 import React from 'react';
 import { ButtonGroup } from './ButtonGroup';
@@ -10,7 +10,7 @@ describe('ButtonGroup Composition', () => {
         cy.mount(
             <ButtonGroup size={ButtonSize.Small}>
                 <Button>First, Small Button</Button>
-                <Button {...buttonPreset.secondary}>The Second, Small Button</Button>
+                <Button {...ButtonPreset.secondary}>The Second, Small Button</Button>
                 <Button icon={<IconCross />} style={ButtonStyle.Danger}>
                     And The Third, Small Button
                 </Button>
@@ -26,7 +26,7 @@ describe('ButtonGroup Composition', () => {
         cy.mount(
             <ButtonGroup size={ButtonSize.Medium}>
                 <Button>First, Medium Button</Button>
-                <Button {...buttonPreset.secondary}>The Second, Medium Button</Button>
+                <Button {...ButtonPreset.secondary}>The Second, Medium Button</Button>
                 <Button icon={<IconCross />} style={ButtonStyle.Danger}>
                     And The Third, Medium Button
                 </Button>
@@ -42,7 +42,7 @@ describe('ButtonGroup Composition', () => {
         cy.mount(
             <ButtonGroup size={ButtonSize.Large}>
                 <Button>First, Large Button</Button>
-                <Button {...buttonPreset.secondary}>The Second, Large Button</Button>
+                <Button {...ButtonPreset.secondary}>The Second, Large Button</Button>
                 <Button icon={<IconCross />} style={ButtonStyle.Danger}>
                     And The Third, Large Button
                 </Button>
@@ -58,7 +58,7 @@ describe('ButtonGroup Composition', () => {
         cy.mount(
             <ButtonGroup size={ButtonSize.Large}>
                 <Button size={ButtonSize.Small}>The First</Button>
-                <Button size={ButtonSize.Medium} {...buttonPreset.secondary}>
+                <Button size={ButtonSize.Medium} {...ButtonPreset.secondary}>
                     The Second
                 </Button>
                 <Button size={ButtonSize.Large} icon={<IconCross />} style={ButtonStyle.Danger}>

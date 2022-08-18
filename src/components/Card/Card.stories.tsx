@@ -7,7 +7,7 @@ import { Slider } from '@components/Slider/Slider';
 import { Divider } from '@components/Divider/Divider';
 import { Stack } from '@layout/Stack';
 import { Text } from '@typography/Text';
-import { Button, buttonPreset } from '@components/Button';
+import { Button, ButtonPreset } from '@components/Button';
 
 export default {
     title: 'Components/Card',
@@ -52,7 +52,7 @@ Default.args = {
             <Text>I am a card component with some content</Text>
             <Stack spacing="m" padding="none">
                 <Button>Button 1</Button>
-                <Button {...buttonPreset.secondary}>Button 2</Button>
+                <Button {...ButtonPreset.secondary}>Button 2</Button>
                 <Button>Button 3</Button>
             </Stack>
         </Stack>
@@ -117,7 +117,7 @@ WithOnClick.args = {
             </div>
             <Stack spacing="m" padding="none">
                 <Button>Button 1</Button>
-                <Button {...buttonPreset.secondary}>Button 2</Button>
+                <Button {...ButtonPreset.secondary}>Button 2</Button>
                 <Button>Button 3</Button>
             </Stack>
         </Stack>
