@@ -28,6 +28,7 @@ export type ButtonGroupWidths = { actions: EditorActions[]; buttonGroupWidth: nu
 export type AvailableTextStyles = ListStyles & TextStyles;
 
 export enum Position {
-    FLOATING = 'floating',
-    BOTTOM = 'bottom',
+    FLOATING = 'Floating',
+    BOTTOM = 'Bottom',
+    TOP = 'Top',
 }

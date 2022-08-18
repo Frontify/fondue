@@ -22,7 +22,7 @@ export default {
         onTextChange: { action: 'onTextChange' },
         onBlur: { action: 'onBlur' },
         value: { type: 'string' },
-        position: { options: [Position.FLOATING, Position.BOTTOM] },
+        position: { options: Object.values(Position) },
     },
 } as Meta;
 
