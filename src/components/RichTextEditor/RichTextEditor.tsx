@@ -6,7 +6,7 @@ import { debounce } from '@utilities/debounce';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './components/Toolbar/Toolbar';
-import { RichTextEditorContext } from './context/DesignTokensContext';
+import { RichTextEditorContext } from './context/RichTextEditorContext';
 import { useEditorState } from './hooks/useEditorState';
 import { DesignTokens, Position } from './types';
 import { EditorActions } from './utils/actions';

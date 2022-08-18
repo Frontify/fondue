@@ -8,7 +8,6 @@ type RichTextEditorContextProps = {
     ToolbarPositioning: typeof ToolbarPositioningComponent[Position.FLOATING];
 };
 
-export const DesignTokensContext = createContext<{ designTokens: DesignTokens }>({ designTokens: defaultDesignTokens });
 export const RichTextEditorContext = createContext<RichTextEditorContextProps>({
     designTokens: defaultDesignTokens,
     ToolbarPositioning: ToolbarPositioningComponent[Position.FLOATING],

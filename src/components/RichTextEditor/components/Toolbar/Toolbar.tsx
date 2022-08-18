@@ -3,7 +3,7 @@
 import React from 'react';
 import { ToolbarCustomProps } from '../../types';
 
-import { useRichTextEditorContext } from '../../context/DesignTokensContext';
+import { useRichTextEditorContext } from '../../context/RichTextEditorContext';
 import { getButtonGroupWidths, getButtonGroupWidthsPerRow } from '../../utils/toolbarCalc';
 import { defaultActions } from '../../utils/actions';
 import { ButtonGroup } from './ButtonGroup';
