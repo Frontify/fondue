@@ -19,7 +19,7 @@ export const ActionsFlyoutComponent = () => {
             hug={false}
             trigger={
                 <Button
-                    {...ButtonPreset.secondary}
+                    {...ButtonPreset.Secondary}
                     onClick={handleClick}
                     icon={<IconDotsVertical size={IconSize.Size12} />}
                     size={ButtonSize.Small}

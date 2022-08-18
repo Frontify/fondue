@@ -51,12 +51,12 @@ export const LinkChooserFlyout = ({
                 <FlyoutFooter
                     buttons={[
                         {
-                            ...ButtonPreset.secondary,
+                            ...ButtonPreset.Secondary,
                             children: 'Cancel',
                             onClick: () => onCancel(),
                         },
                         {
-                            ...ButtonPreset.primary,
+                            ...ButtonPreset.Primary,
                             children: 'Save',
                             onClick: onConfirm,
                             icon: <IconCheckMark />,

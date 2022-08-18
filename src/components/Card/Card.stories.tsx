@@ -52,7 +52,7 @@ Default.args = {
             <Text>I am a card component with some content</Text>
             <Stack spacing="m" padding="none">
                 <Button>Button 1</Button>
-                <Button {...ButtonPreset.secondary}>Button 2</Button>
+                <Button {...ButtonPreset.Secondary}>Button 2</Button>
                 <Button>Button 3</Button>
             </Stack>
         </Stack>
@@ -117,7 +117,7 @@ WithOnClick.args = {
             </div>
             <Stack spacing="m" padding="none">
                 <Button>Button 1</Button>
-                <Button {...ButtonPreset.secondary}>Button 2</Button>
+                <Button {...ButtonPreset.Secondary}>Button 2</Button>
                 <Button>Button 3</Button>
             </Stack>
         </Stack>

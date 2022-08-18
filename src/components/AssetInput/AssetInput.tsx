@@ -139,7 +139,7 @@ export const AssetInput: FC<AssetInputProps> = ({
                     data-test-id="asset-input-library"
                 >
                     <Button
-                        {...ButtonPreset.secondary}
+                        {...ButtonPreset.Secondary}
                         onClick={onLibraryClick}
                         solid={Solid.empty}
                         icon={<IconImageStack />}

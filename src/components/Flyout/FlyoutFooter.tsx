@@ -30,10 +30,10 @@ export const LegacyFlyoutFooter = ({ onConfirm, onCancel }: { onConfirm?: () => 
         buttons={
             onConfirm
                 ? [
-                      { ...ButtonPreset.secondary, children: 'Cancel', onClick: onCancel },
-                      { ...ButtonPreset.primary, children: 'Confirm', onClick: onConfirm, icon: <IconCheckMark /> },
+                      { ...ButtonPreset.Secondary, children: 'Cancel', onClick: onCancel },
+                      { ...ButtonPreset.Primary, children: 'Confirm', onClick: onConfirm, icon: <IconCheckMark /> },
                   ]
-                : [{ ...ButtonPreset.secondary, children: 'Close', onClick: onCancel }]
+                : [{ ...ButtonPreset.Secondary, children: 'Close', onClick: onCancel }]
         }
     />
 );

@@ -277,7 +277,7 @@ export const Tooltip = ({
                                                 onBlur={() => (buttons && buttons.length < 2 ? setIsOpen(false) : null)}
                                             >
                                                 <Button
-                                                    {...ButtonPreset.primary}
+                                                    {...ButtonPreset.Primary}
                                                     size={ButtonSize.Small}
                                                     onClick={buttons[0].action}
                                                 >
@@ -288,7 +288,7 @@ export const Tooltip = ({
                                         {buttons.length === 2 && (
                                             <div onBlur={() => setIsOpen(false)}>
                                                 <Button
-                                                    {...ButtonPreset.secondary}
+                                                    {...ButtonPreset.Secondary}
                                                     size={ButtonSize.Small}
                                                     onClick={buttons[1].action}
                                                 >

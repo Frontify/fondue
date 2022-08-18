@@ -91,12 +91,19 @@ export const ButtonPresetPrimary = ButtonTemplate.bind({});
 ButtonPresetPrimary.args = {
     children: 'Primary Button',
     icon: iconsMap[IconEnum.ColorFan],
-    ...ButtonPreset.primary,
+    ...ButtonPreset.Primary,
 };
 
 export const ButtonPresetSecondary = ButtonTemplate.bind({});
 ButtonPresetSecondary.args = {
     children: 'Secondary Button',
     icon: iconsMap[IconEnum.ColorFan],
-    ...ButtonPreset.secondary,
+    ...ButtonPreset.Secondary,
+};
+
+export const ButtonWithoutAnyDefaults = ButtonTemplate.bind({});
+ButtonWithoutAnyDefaults.args = {
+    children: 'Out of the Box Button',
+    icon: iconsMap[IconEnum.ColorFan],
+    type: ButtonType.Submit,
 };

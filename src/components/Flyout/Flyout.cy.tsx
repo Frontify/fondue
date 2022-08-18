@@ -34,8 +34,8 @@ const Component: FC<Pick<FlyoutProps, 'onConfirm' | 'onCancel' | 'badges' | 'leg
             {legacyFooter === false && (
                 <FlyoutFooter
                     buttons={[
-                        { ...ButtonPreset.secondary, children: 'Cancel', onClick: cy.stub().as('onCloseStub') },
-                        { ...ButtonPreset.primary, children: 'Add', onClick: cy.stub().as('onClickStub') },
+                        { ...ButtonPreset.Secondary, children: 'Cancel', onClick: cy.stub().as('onCloseStub') },
+                        { ...ButtonPreset.Primary, children: 'Add', onClick: cy.stub().as('onClickStub') },
                     ]}
                 />
             )}

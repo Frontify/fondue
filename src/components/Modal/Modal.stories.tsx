@@ -190,12 +190,12 @@ const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps & Mo
                                 action('click');
                                 state.close();
                             },
-                            ...ButtonPreset.secondary,
+                            ...ButtonPreset.Secondary,
                         },
                         {
                             children: 'Cancel',
                             onClick: () => state.close(),
-                            ...ButtonPreset.primary,
+                            ...ButtonPreset.Primary,
                         },
                     ]}
                 />

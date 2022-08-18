@@ -36,7 +36,7 @@ const User: FC<{ name: string }> = ({ name }) => (
 );
 
 const ActionButton: FC = () => (
-    <Button {...ButtonPreset.secondary} onClick={action('click')} size={ButtonSize.Small} icon={<IconDotsVertical />} />
+    <Button {...ButtonPreset.Secondary} onClick={action('click')} size={ButtonSize.Small} icon={<IconDotsVertical />} />
 );
 
 const columns: Column[] = [
