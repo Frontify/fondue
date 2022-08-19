@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ButtonGroupWidths } from '../../../types';
 import { ReactNode } from 'react';
-import { ButtonGroupWidths } from '../types';
 
 export type WrapperProps = {
     children: ReactNode;

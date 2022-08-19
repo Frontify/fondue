@@ -15,8 +15,7 @@ import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { getEditorConfig } from './utils/editorConfig';
 import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './utils/textStyles';
-
-import { ToolbarPositioningComponent } from './Abstract';
+import { ToolbarPositioningComponent } from './components/Toolbar/ToolbarPositioning';
 
 export type RichTextEditorProps = {
     id?: string;

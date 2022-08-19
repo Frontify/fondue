@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 import { DesignTokens, Position } from '../types';
 import { defaultDesignTokens } from '../utils/defaultDesignTokens';
-import { ToolbarPositioningComponent } from '../Abstract';
+import { ToolbarPositioningComponent } from '../components/Toolbar/ToolbarPositioning';
 
 type RichTextEditorContextProps = {
     designTokens: DesignTokens;
