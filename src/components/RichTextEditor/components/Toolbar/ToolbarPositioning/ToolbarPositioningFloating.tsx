@@ -2,9 +2,9 @@
 
 import React, { forwardRef, useEffect, useState } from 'react';
 import { BalloonToolbar } from '@udecode/plate';
+import { calculateToolbarWidth } from '@components/RichTextEditor/utils/toolbarCalc';
+import { OFFSET_IN_PX } from '@components/RichTextEditor/utils';
 import { ToolbarWrapperProps, WrapperProps } from './types';
-import { calculateToolbarWidth } from '../utils/toolbarCalc';
-import { OFFSET_IN_PX } from '../utils';
 
 export const PlateWrapper = forwardRef<HTMLDivElement, WrapperProps>(({ children }, ref) => (
     <div data-test-id="rich-text-editor" className="tw-relative tw-w-full" ref={ref}>

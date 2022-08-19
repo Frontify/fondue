@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ButtonGroupWidths } from '../../../types';
+import { ButtonGroupWidths } from '@components/RichTextEditor/types';
 import { ReactNode } from 'react';
 
 export type WrapperProps = {
