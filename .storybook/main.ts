@@ -40,6 +40,7 @@ export default {
                     include: 'src/components/**/*.+(js|ts|tsx)',
                     exclude: 'src/components/RichTextEditor/**/*.+(js|ts|tsx)',
                     emitWarning: true,
+                    failOnError: false
                 }),
                 enforce: 'pre',
             },
