@@ -9,4 +9,8 @@ export const ButtonPreset = {
         style: ButtonStyle.Default,
         emphasis: ButtonEmphasis.Default,
     },
+    Danger: {
+        style: ButtonStyle.Danger,
+        emphasis: ButtonEmphasis.Strong,
+    },
 };

@@ -100,6 +100,12 @@ ButtonPresetSecondary.args = {
     icon: iconsMap[IconEnum.ColorFan],
     ...ButtonPreset.Secondary,
 };
+export const ButtonPresetDanger = ButtonTemplate.bind({});
+ButtonPresetDanger.args = {
+    children: 'Secondary Button',
+    icon: iconsMap[IconEnum.ColorFan],
+    ...ButtonPreset.Danger,
+};
 
 export const ButtonWithoutAnyDefaults = ButtonTemplate.bind({});
 ButtonWithoutAnyDefaults.args = {

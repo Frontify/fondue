@@ -39,7 +39,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         style = ButtonStyle.Default,
         size = ButtonSize.Medium,
         rounding = ButtonRounding.Medium,
-        emphasis = ButtonEmphasis.Default,
+        emphasis = ButtonEmphasis.Strong,
         hideLabel = false,
         disabled = false,
         icon,
