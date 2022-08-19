@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Checkbox as CheckboxCmp, CheckboxState } from '@components/Checkbox/Checkbox';
+import { Checkbox as CheckboxComponent, CheckboxState } from '@components/Checkbox/Checkbox';
 import { merge } from '@utilities/merge';
-import React, { FC, Key, useRef } from 'react';
+import React, { Key, useRef } from 'react';
 import { SelectionMode } from '..';
 
 export enum TableCellType {
@@ -18,14 +18,14 @@ export type TableCellProps = {
     setSelectedRows?: (ids?: Key[]) => void;
 };
 
-export const TableCell: FC<TableCellProps> = ({
+export const TableCell = ({
     cell,
     selectionMode,
     type = TableCellType.Default,
     isChecked = false,
     selectedRows,
     setSelectedRows,
-}) => {
+}: TableCellProps) => {
     const ref = useRef<HTMLTableCellElement | null>(null);
 
     if (type === TableCellType.Checkbox) {
@@ -40,11 +40,10 @@ export const TableCell: FC<TableCellProps> = ({
                 setSelectedRows(filteredRows);
                 return;
             }
-            if (selectionMode === SelectionMode.SingleSelect) {
-                setSelectedRows([cell.parentKey]);
-            } else {
-                setSelectedRows([...selectedRows, cell.parentKey]);
-            }
+
+            const rowsToSelect =
+                selectionMode === SelectionMode.SingleSelect ? [cell.parentKey] : [...selectedRows, cell.parentKey];
+            setSelectedRows(rowsToSelect);
         };
 
         return (
@@ -57,7 +56,7 @@ export const TableCell: FC<TableCellProps> = ({
                 ])}
                 data-test-id="table-select-cell"
             >
-                <CheckboxCmp
+                <CheckboxComponent
                     value={key}
                     ariaLabel={cell['aria-label'] || key}
                     state={isChecked ? CheckboxState.Checked : CheckboxState.Unchecked}

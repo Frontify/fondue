@@ -1,10 +1,11 @@
-import React, { FC, useRef } from 'react';
+import React, { ReactNode, useRef } from 'react';
 
 export type TableRowProps = {
     isSelected?: boolean;
+    children: ReactNode;
 };
 
-export const TableRow: FC<TableRowProps> = ({ isSelected = false, children }) => {
+export const TableRow = ({ isSelected = false, children }: TableRowProps) => {
     const ref = useRef<HTMLTableRowElement | null>(null);
 
     const ariaProps = {

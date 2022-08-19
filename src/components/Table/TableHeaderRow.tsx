@@ -1,6 +1,10 @@
-import React, { FC, useRef } from 'react';
+import React, { ReactNode, useRef } from 'react';
 
-export const TableHeaderRow: FC = ({ children }) => {
+type TableHeaderRowProps = {
+    children: ReactNode;
+};
+
+export const TableHeaderRow = ({ children }: TableHeaderRowProps) => {
     const ref = useRef<HTMLTableRowElement | null>(null);
 
     return (

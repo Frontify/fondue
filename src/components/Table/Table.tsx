@@ -33,7 +33,7 @@ export type Column = {
 };
 
 export type Row = {
-    key: string | number;
+    key: Key;
     // cell keys have to correspond to column key values
     // e.g. Column { name: 'User', key: 'user' } ==> Row Cell { user: { id: 'anna', value: 'Anna' } }
     cells: Record<string, Cell>;
@@ -45,16 +45,19 @@ export type TableProps = PropsWithChildren<{
     rows: Row[];
     onSelectionChange?: (ids?: Key[]) => void;
     selectionMode?: SelectionMode;
-    selectedRowIds?: (string | number)[];
+    selectedRowIds?: Key[];
     ariaLabel?: string;
 }>;
 
-const DEFAULT_SORT_ORDER = 'descending';
+export enum SortDirection {
+    Ascending = 'ascending',
+    Descending = 'descending',
+}
 
-export type SortDirection = 'ascending' | 'descending';
+const DEFAULT_SORT_ORDER = SortDirection.Descending;
 
 type SortType = {
-    sortedColumnKey?: string | number;
+    sortedColumnKey?: Key;
     sortOrder?: SortDirection;
 };
 
@@ -79,11 +82,11 @@ const mapToTableAriaProps = (columns: Column[], rows: Row[]): TableStateProps<an
     ],
 });
 
-const getRowFromId = (rows: Row[], id: string | number) => rows.find(({ key }) => key === id) || null;
+const getRowFromId = (rows: Row[], id: Key) => rows.find(({ key }) => key === id) || null;
 
-const getAllRowIds = (rows: Row[]): (string | number)[] => rows.map(({ key: id }) => id);
+const getAllRowIds = (rows: Row[]): Key[] => rows.map(({ key: id }) => id);
 
-const sortRows = (rows: Row[], columnKey: string | number, isDescending: boolean) => {
+const sortRows = (rows: Row[], columnKey: Key, isDescending: boolean) => {
     const sort = (a: Row, b: Row) => {
         const keyA = a.cells[columnKey].sortId;
         const keyB = b.cells[columnKey].sortId;

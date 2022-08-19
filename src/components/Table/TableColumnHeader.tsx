@@ -3,7 +3,7 @@ import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, Key, cloneElement, useEffect, useRef, useState } from 'react';
+import React, { Key, cloneElement, useEffect, useRef, useState } from 'react';
 import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@foundation/Icon';
 import { SelectionMode, SortDirection } from '..';
 
@@ -23,7 +23,7 @@ export type TableColumnHeaderProps = {
     setSelectedRows?: (ids?: Key[]) => void;
 };
 
-export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
+export const TableColumnHeader = ({
     column,
     type = TableColumnHeaderType.Default,
     rowIds,
@@ -32,7 +32,7 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
     isColumnSorted = false,
     handleSortChange,
     setSelectedRows,
-}) => {
+}: TableColumnHeaderProps) => {
     const {
         key,
         rendered,
@@ -41,11 +41,12 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
     const [icon, setIcon] = useState(<IconArrowBidirectional />);
     const [isChecked, setIsChecked] = useState(false);
     const ref = useRef<HTMLTableCellElement | null>(null);
-    const inverseSortDirection = sortDirection === 'ascending' ? 'descending' : 'ascending';
+    const inverseSortDirection =
+        sortDirection === SortDirection.Ascending ? SortDirection.Descending : SortDirection.Ascending;
 
     useEffect(() => {
         if (isColumnSorted) {
-            setIcon(sortDirection === 'descending' ? <IconArrowDown /> : <IconArrowUp />);
+            setIcon(sortDirection === SortDirection.Descending ? <IconArrowDown /> : <IconArrowUp />);
         } else {
             setIcon(<IconArrowBidirectional />);
         }
