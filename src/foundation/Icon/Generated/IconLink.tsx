@@ -21,5 +21,4 @@ function IconLink(props: GeneratedIconProps): React.ReactElement<GeneratedIconPr
     );
 }
 
-const Memo = memo(IconLink);
-export default Memo;
+export default memo(IconLink);

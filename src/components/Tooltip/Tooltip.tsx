@@ -149,6 +149,7 @@ export const Tooltip = ({
     const tooltipOffset = withArrow ? 10 : 5;
     const popperInstance = usePopper(triggerRefElement?.current, tooltipContainerRef.current, {
         placement,
+        strategy: 'fixed',
         modifiers: [
             {
                 name: 'arrow',
@@ -251,7 +252,7 @@ export const Tooltip = ({
                                             {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
                                         </span>
                                     )}
-                                    <p className="tw-text-s">{content}</p>
+                                    <p className="tw-text-s tw-min-w-0 tw-break-words">{content}</p>
                                 </div>
                                 {linkUrl && (
                                     <a

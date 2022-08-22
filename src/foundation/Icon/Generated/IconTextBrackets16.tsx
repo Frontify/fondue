@@ -22,5 +22,4 @@ function IconTextBrackets16(props: GeneratedIconProps): React.ReactElement<Gener
     );
 }
 
-const Memo = memo(IconTextBrackets16);
-export default Memo;
+export default memo(IconTextBrackets16);

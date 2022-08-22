@@ -22,5 +22,4 @@ function IconStackHorizontal24(props: GeneratedIconProps): React.ReactElement<Ge
     );
 }
 
-const Memo = memo(IconStackHorizontal24);
-export default Memo;
+export default memo(IconStackHorizontal24);

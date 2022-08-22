@@ -22,5 +22,4 @@ function IconDividerDashed32(props: GeneratedIconProps): React.ReactElement<Gene
     );
 }
 
-const Memo = memo(IconDividerDashed32);
-export default Memo;
+export default memo(IconDividerDashed32);

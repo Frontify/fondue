@@ -22,5 +22,4 @@ function IconFaceExtraHappy16(props: GeneratedIconProps): React.ReactElement<Gen
     );
 }
 
-const Memo = memo(IconFaceExtraHappy16);
-export default Memo;
+export default memo(IconFaceExtraHappy16);

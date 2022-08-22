@@ -22,5 +22,4 @@ function IconDoAndDont12(props: GeneratedIconProps): React.ReactElement<Generate
     );
 }
 
-const Memo = memo(IconDoAndDont12);
-export default Memo;
+export default memo(IconDoAndDont12);

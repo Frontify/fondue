@@ -22,5 +22,4 @@ function IconBasketball20(props: GeneratedIconProps): React.ReactElement<Generat
     );
 }
 
-const Memo = memo(IconBasketball20);
-export default Memo;
+export default memo(IconBasketball20);

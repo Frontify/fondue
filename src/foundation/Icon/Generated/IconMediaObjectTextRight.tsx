@@ -21,5 +21,4 @@ function IconMediaObjectTextRight(props: GeneratedIconProps): React.ReactElement
     );
 }
 
-const Memo = memo(IconMediaObjectTextRight);
-export default Memo;
+export default memo(IconMediaObjectTextRight);

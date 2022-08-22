@@ -22,5 +22,4 @@ function IconBuildingBlock24(props: GeneratedIconProps): React.ReactElement<Gene
     );
 }
 
-const Memo = memo(IconBuildingBlock24);
-export default Memo;
+export default memo(IconBuildingBlock24);

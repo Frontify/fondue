@@ -22,5 +22,4 @@ function IconStackHorizontalAltThree32(props: GeneratedIconProps): React.ReactEl
     );
 }
 
-const Memo = memo(IconStackHorizontalAltThree32);
-export default Memo;
+export default memo(IconStackHorizontalAltThree32);

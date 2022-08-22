@@ -22,5 +22,4 @@ function IconColorFan16(props: GeneratedIconProps): React.ReactElement<Generated
     );
 }
 
-const Memo = memo(IconColorFan16);
-export default Memo;
+export default memo(IconColorFan16);

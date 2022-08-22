@@ -22,5 +22,4 @@ function IconArrowRoundAntiClockwise32(props: GeneratedIconProps): React.ReactEl
     );
 }
 
-const Memo = memo(IconArrowRoundAntiClockwise32);
-export default Memo;
+export default memo(IconArrowRoundAntiClockwise32);

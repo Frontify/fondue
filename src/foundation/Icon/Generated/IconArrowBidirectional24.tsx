@@ -22,5 +22,4 @@ function IconArrowBidirectional24(props: GeneratedIconProps): React.ReactElement
     );
 }
 
-const Memo = memo(IconArrowBidirectional24);
-export default Memo;
+export default memo(IconArrowBidirectional24);

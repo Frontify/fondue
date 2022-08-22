@@ -22,5 +22,4 @@ function IconArrowAlignVerticalCentre32(props: GeneratedIconProps): React.ReactE
     );
 }
 
-const Memo = memo(IconArrowAlignVerticalCentre32);
-export default Memo;
+export default memo(IconArrowAlignVerticalCentre32);

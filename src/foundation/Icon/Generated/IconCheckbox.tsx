@@ -21,5 +21,4 @@ function IconCheckbox(props: GeneratedIconProps): React.ReactElement<GeneratedIc
     );
 }
 
-const Memo = memo(IconCheckbox);
-export default Memo;
+export default memo(IconCheckbox);

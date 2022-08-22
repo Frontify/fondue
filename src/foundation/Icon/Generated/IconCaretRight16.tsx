@@ -22,5 +22,4 @@ function IconCaretRight16(props: GeneratedIconProps): React.ReactElement<Generat
     );
 }
 
-const Memo = memo(IconCaretRight16);
-export default Memo;
+export default memo(IconCaretRight16);

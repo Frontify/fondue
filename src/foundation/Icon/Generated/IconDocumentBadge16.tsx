@@ -22,5 +22,4 @@ function IconDocumentBadge16(props: GeneratedIconProps): React.ReactElement<Gene
     );
 }
 
-const Memo = memo(IconDocumentBadge16);
-export default Memo;
+export default memo(IconDocumentBadge16);

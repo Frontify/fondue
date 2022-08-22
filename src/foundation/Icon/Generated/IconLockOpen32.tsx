@@ -22,5 +22,4 @@ function IconLockOpen32(props: GeneratedIconProps): React.ReactElement<Generated
     );
 }
 
-const Memo = memo(IconLockOpen32);
-export default Memo;
+export default memo(IconLockOpen32);

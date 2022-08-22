@@ -21,5 +21,4 @@ function IconMediaObjectRatio1To2(props: GeneratedIconProps): React.ReactElement
     );
 }
 
-const Memo = memo(IconMediaObjectRatio1To2);
-export default Memo;
+export default memo(IconMediaObjectRatio1To2);

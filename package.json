@@ -1,6 +1,6 @@
 {
     "name": "@frontify/fondue",
-    "version": "9.11.0",
+    "version": "11.0.0",
     "description": "Design system of Frontify",
     "main": "dist/index.umd.js",
     "unpkg": "dist/index.umd.js",
@@ -26,7 +26,7 @@
         "build": "npm run clean && npm run generate:icons && npm run build:library && npm run build:extractedThirdPartyStyles",
         "build:extractedThirdPartyStyles": "concat src/components/**/*.css | postcss > dist/extractedThirdPartyStyles.css",
         "build:library": "vite build",
-        "build:storybook": "NODE_OPTIONS=--max_old_space_size=5120 build-storybook",
+        "build:storybook": "NODE_OPTIONS=--max_old_space_size=6144 build-storybook",
         "dev": "cross-env NODE_ENV=development npm run dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
         "clean": "rimraf dist",
@@ -61,7 +61,7 @@
     "devDependencies": {
         "@cypress/vite-dev-server": "3.0.0",
         "@frontify/eslint-config-react": "^0.15.2",
-        "@frontify/fondue-icons": "^0.1.6",
+        "@frontify/fondue-icons": "^0.1.11",
         "@storybook/addon-actions": "6.5.9",
         "@storybook/addon-essentials": "6.5.9",
         "@storybook/addon-links": "6.5.9",

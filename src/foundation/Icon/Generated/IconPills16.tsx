@@ -22,5 +22,4 @@ function IconPills16(props: GeneratedIconProps): React.ReactElement<GeneratedIco
     );
 }
 
-const Memo = memo(IconPills16);
-export default Memo;
+export default memo(IconPills16);

@@ -22,5 +22,4 @@ function IconDocumentStack24(props: GeneratedIconProps): React.ReactElement<Gene
     );
 }
 
-const Memo = memo(IconDocumentStack24);
-export default Memo;
+export default memo(IconDocumentStack24);

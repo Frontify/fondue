@@ -21,5 +21,4 @@ function IconListCheck(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-const Memo = memo(IconListCheck);
-export default Memo;
+export default memo(IconListCheck);

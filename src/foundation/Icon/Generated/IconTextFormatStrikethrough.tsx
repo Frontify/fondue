@@ -21,5 +21,4 @@ function IconTextFormatStrikethrough(props: GeneratedIconProps): React.ReactElem
     );
 }
 
-const Memo = memo(IconTextFormatStrikethrough);
-export default Memo;
+export default memo(IconTextFormatStrikethrough);

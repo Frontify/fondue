@@ -22,5 +22,4 @@ function IconLollipop20(props: GeneratedIconProps): React.ReactElement<Generated
     );
 }
 
-const Memo = memo(IconLollipop20);
-export default Memo;
+export default memo(IconLollipop20);

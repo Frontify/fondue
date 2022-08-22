@@ -15,12 +15,11 @@ function IconCross32(props: GeneratedIconProps): React.ReactElement<GeneratedIco
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="m23 24.438 6.469 6.468a1.016 1.016 0 1 0 1.437-1.437L24.438 23l6.468-6.469a1.016 1.016 0 1 0-1.437-1.437L23 21.563l-6.468-6.47a1.016 1.016 0 1 0-1.438 1.438L21.563 23l-6.469 6.469a1.016 1.016 0 1 0 1.438 1.437L23 24.438Z"
+                d="M16.53 15.093a1.016 1.016 0 1 0-1.437 1.438L21.562 23l-6.47 6.469a1.016 1.016 0 1 0 1.438 1.437L23 24.437l6.468 6.469a1.017 1.017 0 0 0 1.438-1.438L24.437 23l6.468-6.469a1.017 1.017 0 0 0-1.437-1.437L23 21.562l-6.47-6.469Z"
                 clipRule="evenodd"
             />
         </svg>
     );
 }
 
-const Memo = memo(IconCross32);
-export default Memo;
+export default memo(IconCross32);

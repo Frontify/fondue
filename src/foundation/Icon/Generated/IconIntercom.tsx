@@ -21,5 +21,4 @@ function IconIntercom(props: GeneratedIconProps): React.ReactElement<GeneratedIc
     );
 }
 
-const Memo = memo(IconIntercom);
-export default Memo;
+export default memo(IconIntercom);

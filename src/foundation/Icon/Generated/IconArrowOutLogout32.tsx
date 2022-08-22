@@ -22,5 +22,4 @@ function IconArrowOutLogout32(props: GeneratedIconProps): React.ReactElement<Gen
     );
 }
 
-const Memo = memo(IconArrowOutLogout32);
-export default Memo;
+export default memo(IconArrowOutLogout32);

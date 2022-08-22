@@ -22,5 +22,4 @@ function IconCaretLeftDouble20(props: GeneratedIconProps): React.ReactElement<Ge
     );
 }
 
-const Memo = memo(IconCaretLeftDouble20);
-export default Memo;
+export default memo(IconCaretLeftDouble20);
