@@ -1,17 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { useCheckbox } from '@react-aria/checkbox';
-import { useFocusRing } from '@react-aria/focus';
-import { useTableColumnHeader, useTableSelectAllCheckbox } from '@react-aria/table';
-import { mergeProps } from '@react-aria/utils';
-import { VisuallyHidden } from '@react-aria/visually-hidden';
-import { TableState } from '@react-stately/table';
-import { useToggleState } from '@react-stately/toggle';
-import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, cloneElement, useCallback, useEffect, useRef, useState } from 'react';
+import React, { Key, cloneElement, useEffect, useRef, useState } from 'react';
 import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@foundation/Icon';
+import { SelectionMode, SortDirection } from '..';
 
 export enum TableColumnHeaderType {
     Default = 'Default',
@@ -20,70 +14,78 @@ export enum TableColumnHeaderType {
 
 export type TableColumnHeaderProps = {
     column: any;
-    state: TableState<any>;
     type?: TableColumnHeaderType;
+    rowIds: Key[];
+    sortDirection?: SortDirection;
+    selectionMode: string;
+    isColumnSorted?: boolean;
+    handleSortChange: (column: Key, direction: SortDirection) => void;
+    setSelectedRows?: (ids?: Key[]) => void;
 };
 
-export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
+export const TableColumnHeader = ({
     column,
-    state,
     type = TableColumnHeaderType.Default,
-}) => {
+    rowIds,
+    sortDirection,
+    selectionMode,
+    isColumnSorted = false,
+    handleSortChange,
+    setSelectedRows,
+}: TableColumnHeaderProps) => {
     const {
         key,
         rendered,
         props: { allowsSorting },
     } = column;
     const [icon, setIcon] = useState(<IconArrowBidirectional />);
+    const [isChecked, setIsChecked] = useState(false);
     const ref = useRef<HTMLTableCellElement | null>(null);
-    const { columnHeaderProps } = useTableColumnHeader({ node: column }, state, ref);
-    const isSortedColumn = state.sortDescriptor?.column === key;
-    const sortDirection = state.sortDescriptor?.direction;
-    const { isFocusVisible, focusProps } = useFocusRing();
+    const inverseSortDirection =
+        sortDirection === SortDirection.Ascending ? SortDirection.Descending : SortDirection.Ascending;
 
     useEffect(() => {
-        if (isSortedColumn) {
-            setIcon(sortDirection === 'descending' ? <IconArrowDown /> : <IconArrowUp />);
+        if (isColumnSorted) {
+            setIcon(sortDirection === SortDirection.Descending ? <IconArrowDown /> : <IconArrowUp />);
         } else {
             setIcon(<IconArrowBidirectional />);
         }
-    }, [isSortedColumn, sortDirection]);
+    }, [isColumnSorted, sortDirection]);
 
     if (type === TableColumnHeaderType.SelectAll) {
-        const { checkboxProps } = useTableSelectAllCheckbox(state);
-        const {
-            selectionManager: { selectedKeys, selectionMode },
-        } = state;
-        const inputRef = useRef(null);
-        const toggleState = useToggleState(checkboxProps);
-        const { inputProps } = useCheckbox(checkboxProps, toggleState, inputRef);
-        const headerProps = { ...columnHeaderProps, onClick: () => state.selectionManager.toggleSelectAll() };
-        const selectedKeyCount = selectedKeys.size;
+        const ariaProps = {
+            'aria-checked': isChecked,
+            'aria-label': 'Select all',
+            scope: 'col',
+        };
 
-        const getCheckboxState = useCallback(() => {
-            if (selectedKeyCount === state.collection.size) {
-                return CheckboxState.Checked;
+        const checkboxState = isChecked ? CheckboxState.Checked : CheckboxState.Unchecked;
+
+        const handleChange = () => {
+            if (!setSelectedRows) {
+                return;
             }
-            if (selectedKeyCount > 0) {
-                return CheckboxState.Mixed;
+
+            if (isChecked) {
+                setSelectedRows([]);
+            } else {
+                setSelectedRows(rowIds);
             }
-            return CheckboxState.Unchecked;
-        }, [selectedKeyCount]);
+
+            setIsChecked((checked) => !checked);
+        };
 
         return (
             <th
-                {...headerProps}
+                {...ariaProps}
                 ref={ref}
-                className={merge([
-                    'tw-pl-8 tw-py-3 tw-pr-4 tw-w-16 tw-border-l-4 tw-border-transparent tw-group tw-outline-none',
-                    selectionMode === 'multiple' && 'tw-cursor-pointer',
-                ])}
+                className="tw-pl-8 tw-py-3 tw-pr-4 tw-w-16 tw-border-l-4 tw-border-transparent tw-group tw-outline-none"
                 data-test-id="table-select-cell"
             >
-                {selectionMode === 'single' ? (
-                    <VisuallyHidden>{inputProps['aria-label']}</VisuallyHidden>
+                {selectionMode === SelectionMode.SingleSelect ? (
+                    <span className="tw-sr-only">{ariaProps['aria-label']}</span>
                 ) : (
-                    <Checkbox value={key} ariaLabel={key} state={getCheckboxState()} />
+                    <Checkbox value={key} ariaLabel={key} state={checkboxState} onChange={handleChange} />
                 )}
             </th>
         );
@@ -91,21 +93,19 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
 
     return (
         <th
-            {...mergeProps(columnHeaderProps, focusProps)}
             ref={ref}
-            className={merge([
-                'tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-outline-none tw-cursor-pointer tw-group',
-                isFocusVisible && FOCUS_STYLE_INSET,
-            ])}
+            className="tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-outline-none tw-cursor-pointer tw-group focus-visible:bg-violet-90"
             data-test-id="table-column"
+            scope="col"
+            onClick={() => handleSortChange(column.key, inverseSortDirection)}
         >
-            <div className="tw-flex tw-gap-x-1 tw-items-center">
+            <button className={merge(['tw-flex tw-gap-x-1 tw-items-center', FOCUS_VISIBLE_STYLE])}>
                 {rendered}
                 {allowsSorting && (
                     <span
                         aria-hidden="true"
                         className={
-                            isSortedColumn
+                            isColumnSorted
                                 ? 'tw-text-violet-50'
                                 : 'tw-text-black-40 dark:tw-text-black-60 group-hover:tw-text-black-100 dark:group-hover:tw-text-white'
                         }
@@ -113,7 +113,7 @@ export const TableColumnHeader: FC<TableColumnHeaderProps> = ({
                         {cloneElement(icon, { size: IconSize.Size12 })}
                     </span>
                 )}
-            </div>
+            </button>
         </th>
     );
 };

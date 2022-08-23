@@ -1,19 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useTableHeaderRow } from '@react-aria/table';
-import { TableState } from '@react-stately/table';
-import React, { FC, useRef } from 'react';
+import React, { ReactNode, useRef } from 'react';
 
-export type TableHeaderRowProps = {
-    item: any;
-    state: TableState<any>;
+type TableHeaderRowProps = {
+    children: ReactNode;
 };
 
-export const TableHeaderRow: FC<TableHeaderRowProps> = ({ item, state, children }) => {
+export const TableHeaderRow = ({ children }: TableHeaderRowProps) => {
     const ref = useRef<HTMLTableRowElement | null>(null);
-    const { rowProps } = useTableHeaderRow({ node: item }, state, ref);
 
     return (
-        <tr {...rowProps} ref={ref} className="tw-py-4 tw-px-8 tw-sticky tw-top-0 tw-bg-base tw-z-10">
+        <tr role="row" ref={ref} className="tw-py-4 tw-px-8 tw-sticky tw-top-0 tw-bg-base tw-z-10">
             {children}
         </tr>
     );
