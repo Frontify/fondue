@@ -13,7 +13,7 @@ export const TableHeaderRow: FC<TableHeaderRowProps> = ({ item, state, children 
     const { rowProps } = useTableHeaderRow({ node: item }, state, ref);
 
     return (
-        <tr {...rowProps} ref={ref} className="tw-py-4 tw-px-8">
+        <tr {...rowProps} ref={ref} className="tw-py-4 tw-px-8 tw-sticky tw-top-0 tw-bg-base tw-z-10">
             {children}
         </tr>
     );
