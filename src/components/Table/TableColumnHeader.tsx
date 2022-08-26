@@ -54,7 +54,6 @@ export const TableColumnHeader = ({
 
     if (type === TableColumnHeaderType.SelectAll) {
         const ariaProps = {
-            'aria-checked': isChecked,
             'aria-label': 'Select all',
             scope: 'col',
         };
