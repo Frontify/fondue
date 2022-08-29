@@ -9,7 +9,10 @@ const generatePalette = (color: string, amount: number): Color[] => {
         const name = (90 - index * 10).toString();
         const lightColor = sourceColor.lighten(index * 3).toRgb();
         return {
-            ...lightColor,
+            red: lightColor.r,
+            green: lightColor.g,
+            blue: lightColor.b,
+            alpha: lightColor.a,
             name,
         };
     });

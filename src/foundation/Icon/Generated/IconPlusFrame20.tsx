@@ -22,5 +22,4 @@ function IconPlusFrame20(props: GeneratedIconProps): React.ReactElement<Generate
     );
 }
 
-const Memo = memo(IconPlusFrame20);
-export default Memo;
+export default memo(IconPlusFrame20);

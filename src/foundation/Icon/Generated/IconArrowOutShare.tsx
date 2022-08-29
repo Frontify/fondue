@@ -21,5 +21,4 @@ function IconArrowOutShare(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconArrowOutShare);
-export default Memo;
+export default memo(IconArrowOutShare);

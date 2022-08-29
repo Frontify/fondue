@@ -1,5 +1,5 @@
 import { Flyout } from '@components/Flyout';
-import { LINK_CHOOSER_CLASS_NAMES } from '@components/RichTextEditor/components/link';
+import { LINK_CLASSES } from '@components/RichTextEditor/components/link';
 import { IconPen, IconTrashBin } from '@foundation/Icon';
 import React, { HTMLAttributes, MutableRefObject, ReactNode } from 'react';
 
@@ -36,7 +36,7 @@ export const LinkChooserPreviewFlyout = ({
         trigger={trigger}
     >
         <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between tw-p-4">
-            <span className={`${LINK_CHOOSER_CLASS_NAMES} tw-pointer-events-none`}>{href}</span>
+            <span className={`${LINK_CLASSES} tw-pointer-events-none`}>{href}</span>
             <span className="tw-flex tw-gap-2">
                 <span
                     role="button"

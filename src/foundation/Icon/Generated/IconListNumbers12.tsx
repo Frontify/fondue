@@ -31,5 +31,4 @@ function IconListNumbers12(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconListNumbers12);
-export default Memo;
+export default memo(IconListNumbers12);

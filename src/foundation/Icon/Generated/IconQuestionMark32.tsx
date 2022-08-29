@@ -22,5 +22,4 @@ function IconQuestionMark32(props: GeneratedIconProps): React.ReactElement<Gener
     );
 }
 
-const Memo = memo(IconQuestionMark32);
-export default Memo;
+export default memo(IconQuestionMark32);

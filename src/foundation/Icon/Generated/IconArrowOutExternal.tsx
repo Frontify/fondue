@@ -21,5 +21,4 @@ function IconArrowOutExternal(props: GeneratedIconProps): React.ReactElement<Gen
     );
 }
 
-const Memo = memo(IconArrowOutExternal);
-export default Memo;
+export default memo(IconArrowOutExternal);

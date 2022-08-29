@@ -22,5 +22,4 @@ function IconArrowAlignHorizontalCentre16(props: GeneratedIconProps): React.Reac
     );
 }
 
-const Memo = memo(IconArrowAlignHorizontalCentre16);
-export default Memo;
+export default memo(IconArrowAlignHorizontalCentre16);

@@ -22,5 +22,4 @@ function IconTextColumns12(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconTextColumns12);
-export default Memo;
+export default memo(IconTextColumns12);

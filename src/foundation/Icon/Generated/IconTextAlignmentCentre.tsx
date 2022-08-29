@@ -21,5 +21,4 @@ function IconTextAlignmentCentre(props: GeneratedIconProps): React.ReactElement<
     );
 }
 
-const Memo = memo(IconTextAlignmentCentre);
-export default Memo;
+export default memo(IconTextAlignmentCentre);

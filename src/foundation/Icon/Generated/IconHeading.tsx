@@ -21,5 +21,4 @@ function IconHeading(props: GeneratedIconProps): React.ReactElement<GeneratedIco
     );
 }
 
-const Memo = memo(IconHeading);
-export default Memo;
+export default memo(IconHeading);

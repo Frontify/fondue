@@ -22,5 +22,4 @@ function IconAnnotationLines32(props: GeneratedIconProps): React.ReactElement<Ge
     );
 }
 
-const Memo = memo(IconAnnotationLines32);
-export default Memo;
+export default memo(IconAnnotationLines32);

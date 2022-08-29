@@ -21,5 +21,4 @@ function IconMarkArea(props: GeneratedIconProps): React.ReactElement<GeneratedIc
     );
 }
 
-const Memo = memo(IconMarkArea);
-export default Memo;
+export default memo(IconMarkArea);

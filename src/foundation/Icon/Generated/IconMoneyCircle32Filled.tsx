@@ -22,5 +22,4 @@ function IconMoneyCircle32Filled(props: GeneratedIconProps): React.ReactElement<
     );
 }
 
-const Memo = memo(IconMoneyCircle32Filled);
-export default Memo;
+export default memo(IconMoneyCircle32Filled);

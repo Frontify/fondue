@@ -22,5 +22,4 @@ function IconCodeDocument12(props: GeneratedIconProps): React.ReactElement<Gener
     );
 }
 
-const Memo = memo(IconCodeDocument12);
-export default Memo;
+export default memo(IconCodeDocument12);

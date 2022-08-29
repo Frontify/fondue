@@ -6,6 +6,7 @@ import IconDroplet from '@foundation/Icon/Generated/IconDroplet';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
+import { toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
 import React, { FC } from 'react';
 import tinycolor from 'tinycolor2';
@@ -32,7 +33,7 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
     onDelete,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing();
-    const backgroundColor = currentColor ? tinycolor(currentColor).toRgbString() : '';
+    const backgroundColor = currentColor ? tinycolor(toShortRgb(currentColor)).toRgbString() : '';
 
     return (
         <Trigger

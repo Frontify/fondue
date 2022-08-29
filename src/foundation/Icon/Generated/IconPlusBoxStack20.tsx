@@ -22,5 +22,4 @@ function IconPlusBoxStack20(props: GeneratedIconProps): React.ReactElement<Gener
     );
 }
 
-const Memo = memo(IconPlusBoxStack20);
-export default Memo;
+export default memo(IconPlusBoxStack20);

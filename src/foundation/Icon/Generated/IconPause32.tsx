@@ -22,5 +22,4 @@ function IconPause32(props: GeneratedIconProps): React.ReactElement<GeneratedIco
     );
 }
 
-const Memo = memo(IconPause32);
-export default Memo;
+export default memo(IconPause32);

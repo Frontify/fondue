@@ -22,5 +22,4 @@ function IconSpeechBubbleStack32(props: GeneratedIconProps): React.ReactElement<
     );
 }
 
-const Memo = memo(IconSpeechBubbleStack32);
-export default Memo;
+export default memo(IconSpeechBubbleStack32);

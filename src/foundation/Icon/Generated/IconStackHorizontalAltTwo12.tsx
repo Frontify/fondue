@@ -22,5 +22,4 @@ function IconStackHorizontalAltTwo12(props: GeneratedIconProps): React.ReactElem
     );
 }
 
-const Memo = memo(IconStackHorizontalAltTwo12);
-export default Memo;
+export default memo(IconStackHorizontalAltTwo12);

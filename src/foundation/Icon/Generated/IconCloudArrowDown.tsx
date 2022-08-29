@@ -21,5 +21,4 @@ function IconCloudArrowDown(props: GeneratedIconProps): React.ReactElement<Gener
     );
 }
 
-const Memo = memo(IconCloudArrowDown);
-export default Memo;
+export default memo(IconCloudArrowDown);

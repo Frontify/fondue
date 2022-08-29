@@ -22,5 +22,4 @@ function IconPointout20(props: GeneratedIconProps): React.ReactElement<Generated
     );
 }
 
-const Memo = memo(IconPointout20);
-export default Memo;
+export default memo(IconPointout20);

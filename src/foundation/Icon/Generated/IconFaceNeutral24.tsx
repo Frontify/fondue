@@ -22,5 +22,4 @@ function IconFaceNeutral24(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconFaceNeutral24);
-export default Memo;
+export default memo(IconFaceNeutral24);
