@@ -138,15 +138,11 @@ export const Table = ({
         showSelectionCheckboxes: isSelectTable,
     });
     const { collection } = state;
-    const ariaProps = {
-        'aria-label': ariaLabel,
-        'aria-multiselectable': selectionMode === SelectionMode.MultiSelect,
-    };
 
     return (
         <div className="tw-w-full tw-max-h-96 sm:tw-max-h-full">
             <table
-                {...ariaProps}
+                aria-label={ariaLabel}
                 ref={ref}
                 className="tw-border-collapse tw-table-auto tw-w-full tw-min-w-max tw-text-left dark:tw-bg-black-100 dark:tw-text-black-20"
             >
@@ -172,7 +168,7 @@ export const Table = ({
                                     />
                                 );
                             })}
-                            <th />
+                            <td />
                         </TableHeaderRow>
                     ))}
                 </thead>
