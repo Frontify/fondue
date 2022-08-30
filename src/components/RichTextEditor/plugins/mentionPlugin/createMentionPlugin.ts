@@ -3,11 +3,11 @@
 import {
     ELEMENT_MENTION,
     ELEMENT_MENTION_INPUT,
-    MentionPlugin,
     createPluginFactory,
     mentionOnKeyDownHandler,
     withMention,
 } from '@udecode/plate';
+import { MentionPlugin, WithOverrideType } from './types';
 
 export const createMentionPlugin = createPluginFactory<MentionPlugin>({
     key: ELEMENT_MENTION,
@@ -17,10 +17,10 @@ export const createMentionPlugin = createPluginFactory<MentionPlugin>({
     handlers: {
         onKeyDown: mentionOnKeyDownHandler(),
     },
-    withOverrides: withMention,
+    withOverrides: withMention as WithOverrideType,
     options: {
         trigger: '@',
-        createMentionNode: (item) => ({ value: item.text }),
+        createMentionNode: (item) => ({ value: item.text, key: item.key, category: item.category }),
     },
     plugins: [
         {

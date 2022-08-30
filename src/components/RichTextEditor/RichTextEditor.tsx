@@ -117,7 +117,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     plugins={getEditorConfig(config)}
                 >
                     <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
-                    <MentionCombobox items={mentionable} />
+                    {config === EditorConfig.ANNOTATIONS && <MentionCombobox items={mentionable} />}
                 </Plate>
             </div>
         </DesignTokensContext.Provider>
