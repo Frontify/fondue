@@ -5,7 +5,6 @@ import {
     ELEMENT_LIC,
     ELEMENT_LINK,
     ELEMENT_MENTION,
-    ELEMENT_MENTION_INPUT,
     ELEMENT_OL,
     ELEMENT_PARAGRAPH,
     ELEMENT_UL,
@@ -14,7 +13,6 @@ import {
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
-    MentionPlugin,
     createAlignPlugin,
     createBoldPlugin,
     createCodeBlockPlugin,
@@ -31,14 +29,13 @@ import {
     createSoftBreakPlugin,
     createStrikethroughPlugin,
     createUnderlinePlugin,
-    mentionOnKeyDownHandler,
-    withMention,
 } from '@udecode/plate';
 import {
     BoldMark,
     CodeMark,
     Custom1Element,
     Custom2Element,
+    Custom3Element,
     Heading1Element,
     Heading2Element,
     Heading3Element,
@@ -53,12 +50,24 @@ import {
     UnderlineMark,
     UnorderedListElement,
 } from '../components';
-import { Custom3Element } from '../components/custom3';
-import { ELEMENT_CHECK_ITEM, createCheckboxListPlugin } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
-import { createLinkChooserPlugin } from '../plugins/linkChooserPlugin/createLinkChooserPlugin';
+import { ELEMENT_CHECK_ITEM, createCheckboxListPlugin, createLinkChooserPlugin, createMentionPlugin } from '../plugins';
 import { TextStyles } from './textStyles';
 
-export const getEditorConfig = () => {
+export enum EditorConfig {
+    DEFAULT = 'default',
+    ANNOTATIONS = 'annotations',
+}
+
+export const getEditorConfig = (config: EditorConfig) => {
+    switch (config) {
+        case EditorConfig.ANNOTATIONS:
+            return EditorConfigAnnotation();
+        default:
+            return EditorConfigDefault();
+    }
+};
+
+export const EditorConfigDefault = () => {
     const createHeading1Plugin = createPluginFactory({
         key: TextStyles.ELEMENT_HEADING1,
         isElement: true,
@@ -113,33 +122,6 @@ export const getEditorConfig = () => {
         component: Custom3Element,
     });
 
-    const createMentionPlugin = createPluginFactory<MentionPlugin>({
-        key: ELEMENT_MENTION,
-        isElement: true,
-        isInline: true,
-        isVoid: true,
-        handlers: {
-            onKeyDown: mentionOnKeyDownHandler(),
-        },
-        withOverrides: withMention,
-        options: {
-            trigger: '@',
-            createMentionNode: (item) => ({ value: item.text }),
-        },
-        plugins: [
-            {
-                key: ELEMENT_MENTION_INPUT,
-                isElement: true,
-                isInline: true,
-            },
-        ],
-        then: (editor, { key }) => ({
-            options: {
-                id: key,
-            },
-        }),
-    });
-
     const components = createPlateUI({
         // this will override the components over the default ones
         [ELEMENT_LINK]: LinkElement,
@@ -152,7 +134,6 @@ export const getEditorConfig = () => {
         [MARK_UNDERLINE]: UnderlineMark,
         [MARK_STRIKETHROUGH]: StrikethroughMark,
         [MARK_CODE]: CodeMark,
-        [ELEMENT_MENTION]: MentionElement,
     });
 
     return createPlugins(
@@ -198,6 +179,29 @@ export const getEditorConfig = () => {
             createCustom1Plugin(),
             createCustom2Plugin(),
             createCustom3Plugin(),
+        ],
+        {
+            components,
+        },
+    );
+};
+
+export const EditorConfigAnnotation = () => {
+    const components = createPlateUI({
+        [ELEMENT_LINK]: LinkElement,
+        [ELEMENT_UL]: UnorderedListElement,
+        [ELEMENT_OL]: OrderedListElement,
+        [MARK_BOLD]: BoldMark,
+        [ELEMENT_MENTION]: MentionElement,
+    });
+
+    return createPlugins(
+        [
+            createParagraphPlugin(),
+            createListPlugin(),
+            createLinkChooserPlugin(),
+            createLinkPlugin(),
+            createBoldPlugin(),
             createComboboxPlugin(),
             createMentionPlugin(),
         ],

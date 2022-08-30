@@ -3,6 +3,7 @@ export * from './checkbox-item';
 export * from './code';
 export * from './custom1';
 export * from './custom2';
+export * from './custom3';
 export * from './heading1';
 export * from './heading2';
 export * from './heading3';

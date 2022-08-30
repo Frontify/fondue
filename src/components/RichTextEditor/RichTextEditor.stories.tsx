@@ -5,6 +5,7 @@ import React from 'react';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import { EditorActions } from './utils/actions';
+import { EditorConfig } from './utils/editorConfig';
 import {
     IPSUM,
     checkboxValue,
@@ -147,6 +148,7 @@ WithMentions.args = {
         [EditorActions.UNORDERED_LIST, EditorActions.ORDERED_LIST],
         [EditorActions.BOLD, EditorActions.LINK],
     ],
+    config: EditorConfig.ANNOTATIONS,
 };
 
 export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {

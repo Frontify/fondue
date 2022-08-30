@@ -10,7 +10,7 @@ import { DesignTokensContext } from './context/DesignTokensContext';
 import { DesignTokens } from './types';
 import { EditorActions } from './utils/actions';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
-import { getEditorConfig } from './utils/editorConfig';
+import { EditorConfig, getEditorConfig } from './utils/editorConfig';
 import { EMPTY_RICH_TEXT_VALUE, parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './utils/textStyles';
 import { mentionable } from './utils/exampleValues';
@@ -25,6 +25,7 @@ export type RichTextEditorProps = {
     clear?: boolean;
     designTokens?: DesignTokens;
     actions?: EditorActions[][];
+    config?: EditorConfig;
 };
 
 export const ON_SAVE_DELAY_IN_MS = 500;
@@ -39,6 +40,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     actions = [],
     onTextChange,
     onBlur,
+    config = EditorConfig.DEFAULT,
 }) => {
     const editorId = id || useMemoizedId();
     const editor = usePlateEditorState(editorId);
@@ -112,7 +114,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     initialValue={parseRawValue(initialValue)}
                     onChange={onChange}
                     editableProps={editableProps}
-                    plugins={getEditorConfig()}
+                    plugins={getEditorConfig(config)}
                 >
                     <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
                     <MentionCombobox items={mentionable} />
