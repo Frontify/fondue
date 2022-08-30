@@ -3,6 +3,7 @@
 import React from 'react';
 import { MentionElementProps } from '@udecode/plate';
 import { useFocused, useSelected } from 'slate-react';
+import { TCategory } from '../plugins';
 
 export const MentionElement = (props: MentionElementProps) => {
     const { attributes, children, element, nodeProps, prefix, renderLabel } = props;
@@ -17,10 +18,10 @@ export const MentionElement = (props: MentionElementProps) => {
     console.log('element', element);
     // const { value, key, category } = element;
 
-    const backgroundColor: Record<string, string> = {
-        group: '#00FF00',
-        user: '#ff0000',
-        all: '#0000FF',
+    const backgroundColor: Record<TCategory, string> = {
+        [TCategory.GROUP]: '#00FF00',
+        [TCategory.USER]: '#ff0000',
+        [TCategory.ALL]: '#0000FF',
     };
 
     return (
@@ -39,7 +40,7 @@ export const MentionElement = (props: MentionElementProps) => {
                 verticalAlign: 'baseline',
                 display: 'inline-block',
                 borderRadius: '4px',
-                backgroundColor: backgroundColor[element.category],
+                backgroundColor: backgroundColor[element.category as TCategory],
                 fontSize: '0.9em',
                 boxShadow: selected && focused ? '0 0 0 2px #B4D5FF' : 'none',
             }}

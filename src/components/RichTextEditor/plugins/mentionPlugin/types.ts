@@ -12,7 +12,13 @@ export interface CreateMentionNode<TData extends Data> {
     (item: TComboboxItemMention<TData>): MentionNodeData;
 }
 
-export interface MentionPlugin<TData extends Data = string> {
+export enum TCategory {
+    GROUP = 'group',
+    ALL = 'all',
+    USER = 'user',
+}
+
+export interface MentionPlugin<TData extends Data = TCategory> {
     createMentionNode?: CreateMentionNode<TData>;
     id?: string;
     insertSpaceAfterMention?: boolean;
@@ -23,8 +29,8 @@ export interface MentionPlugin<TData extends Data = string> {
     };
 }
 
-export interface TComboboxItemMention<TType extends Data = string> extends TComboboxItemBase {
-    category: TType;
+export interface TComboboxItemMention<T extends Data = TCategory> extends TComboboxItemBase {
+    category: T;
 }
 
-export type WithOverrideType = WithOverride<Record<string, unknown>, MentionPlugin<string>>;
+export type WithOverrideType = WithOverride<Record<string, unknown>, MentionPlugin<TCategory>>;
