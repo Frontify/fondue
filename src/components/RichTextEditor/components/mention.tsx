@@ -8,15 +8,8 @@ import { TCategory } from '../plugins';
 export const MentionElement = (props: MentionElementProps) => {
     const { attributes, children, element, nodeProps, prefix, renderLabel } = props;
 
-    console.log('props', props);
     const selected = useSelected();
     const focused = useFocused();
-
-    // const styles = getMentionElementStyles({ ...props, selected, focused });
-    // console.log('styles', styles);
-
-    console.log('element', element);
-    // const { value, key, category } = element;
 
     const backgroundColor: Record<TCategory, string> = {
         [TCategory.GROUP]: '#00FF00',
@@ -32,8 +25,6 @@ export const MentionElement = (props: MentionElementProps) => {
             data-slate-category={element.category}
             contentEditable={false}
             data-cy={`mention-${element.value?.replaceAll(' ', '-')}`}
-            // className={styles.root.className}
-            // css={styles.root.css}
             style={{
                 padding: '3px 3px 2px',
                 margin: '0 1px',

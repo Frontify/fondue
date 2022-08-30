@@ -58,14 +58,8 @@ export enum EditorConfig {
     ANNOTATIONS = 'annotations',
 }
 
-export const getEditorConfig = (config: EditorConfig) => {
-    switch (config) {
-        case EditorConfig.ANNOTATIONS:
-            return EditorConfigAnnotation();
-        default:
-            return EditorConfigDefault();
-    }
-};
+export const getEditorConfig = (config: EditorConfig) =>
+    config === EditorConfig.ANNOTATIONS ? EditorConfigAnnotation() : EditorConfigDefault();
 
 export const EditorConfigDefault = () => {
     const createHeading1Plugin = createPluginFactory({
