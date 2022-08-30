@@ -4,6 +4,8 @@ import {
     ELEMENT_LI,
     ELEMENT_LIC,
     ELEMENT_LINK,
+    ELEMENT_MENTION,
+    ELEMENT_MENTION_INPUT,
     ELEMENT_OL,
     ELEMENT_PARAGRAPH,
     ELEMENT_UL,
@@ -12,10 +14,12 @@ import {
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
+    MentionPlugin,
     createAlignPlugin,
     createBoldPlugin,
     createCodeBlockPlugin,
     createCodePlugin,
+    createComboboxPlugin,
     createIndentPlugin,
     createItalicPlugin,
     createLinkPlugin,
@@ -27,6 +31,8 @@ import {
     createSoftBreakPlugin,
     createStrikethroughPlugin,
     createUnderlinePlugin,
+    mentionOnKeyDownHandler,
+    withMention,
 } from '@udecode/plate';
 import {
     BoldMark,
@@ -41,6 +47,7 @@ import {
     LinkElement,
     ListItemContentElement,
     ListItemElement,
+    MentionElement,
     OrderedListElement,
     StrikethroughMark,
     UnderlineMark,
@@ -106,6 +113,33 @@ export const getEditorConfig = () => {
         component: Custom3Element,
     });
 
+    const createMentionPlugin = createPluginFactory<MentionPlugin>({
+        key: ELEMENT_MENTION,
+        isElement: true,
+        isInline: true,
+        isVoid: true,
+        handlers: {
+            onKeyDown: mentionOnKeyDownHandler(),
+        },
+        withOverrides: withMention,
+        options: {
+            trigger: '@',
+            createMentionNode: (item) => ({ value: item.text }),
+        },
+        plugins: [
+            {
+                key: ELEMENT_MENTION_INPUT,
+                isElement: true,
+                isInline: true,
+            },
+        ],
+        then: (editor, { key }) => ({
+            options: {
+                id: key,
+            },
+        }),
+    });
+
     const components = createPlateUI({
         // this will override the components over the default ones
         [ELEMENT_LINK]: LinkElement,
@@ -118,6 +152,7 @@ export const getEditorConfig = () => {
         [MARK_UNDERLINE]: UnderlineMark,
         [MARK_STRIKETHROUGH]: StrikethroughMark,
         [MARK_CODE]: CodeMark,
+        [ELEMENT_MENTION]: MentionElement,
     });
 
     return createPlugins(
@@ -163,6 +198,8 @@ export const getEditorConfig = () => {
             createCustom1Plugin(),
             createCustom2Plugin(),
             createCustom3Plugin(),
+            createComboboxPlugin(),
+            createMentionPlugin(),
         ],
         {
             components,

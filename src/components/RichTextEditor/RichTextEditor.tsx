@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useMemoizedId } from '@hooks/useMemoizedId';
-import { Plate, TNode, usePlateEditorState } from '@udecode/plate';
-import { debounce } from '@utilities/debounce';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { MentionCombobox, Plate, TNode, usePlateEditorState } from '@udecode/plate';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { debounce } from '@utilities/debounce';
 import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './components/Toolbar/Toolbar';
 import { DesignTokensContext } from './context/DesignTokensContext';
@@ -13,6 +13,7 @@ import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { getEditorConfig } from './utils/editorConfig';
 import { EMPTY_RICH_TEXT_VALUE, parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './utils/textStyles';
+import { mentionable } from './utils/exampleValues';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -114,6 +115,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     plugins={getEditorConfig()}
                 >
                     <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
+                    <MentionCombobox items={mentionable} />
                 </Plate>
             </div>
         </DesignTokensContext.Provider>

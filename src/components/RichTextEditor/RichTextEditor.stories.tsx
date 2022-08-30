@@ -5,7 +5,15 @@ import React from 'react';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import { EditorActions } from './utils/actions';
-import { checkboxValue, customDesignTokens, htmlValue, IPSUM, nodesToSerialize, value } from './utils/exampleValues';
+import {
+    IPSUM,
+    checkboxValue,
+    customDesignTokens,
+    htmlValue,
+    mentionValue,
+    nodesToSerialize,
+    value,
+} from './utils/exampleValues';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -129,6 +137,15 @@ WithCustomControls.args = {
         [EditorActions.LINK],
         [EditorActions.ITALIC, EditorActions.BOLD, EditorActions.UNDERLINE],
         [EditorActions.ORDERED_LIST, EditorActions.UNORDERED_LIST],
+    ],
+};
+
+export const WithMentions = RichTextEditorTemplate.bind({});
+WithMentions.args = {
+    value: JSON.stringify(mentionValue),
+    actions: [
+        [EditorActions.UNORDERED_LIST, EditorActions.ORDERED_LIST],
+        [EditorActions.BOLD, EditorActions.LINK],
     ],
 };
 

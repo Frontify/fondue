@@ -3,6 +3,7 @@
 import {
     ELEMENT_LI,
     ELEMENT_LINK,
+    ELEMENT_MENTION,
     ELEMENT_OL,
     ELEMENT_PARAGRAPH,
     ELEMENT_UL,
@@ -11,6 +12,8 @@ import {
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
+    TComboboxItem,
+    TDescendant,
 } from '@udecode/plate';
 import { ELEMENT_CHECK_ITEM } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
 import { DesignTokens } from '../types';
@@ -22,13 +25,8 @@ type CreateElementProps = {
     mark?: string;
 };
 
-type LeafType = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any;
-};
-
 const createElement = ({ text, element = ELEMENT_PARAGRAPH, mark }: CreateElementProps) => {
-    const leaf: LeafType = { text };
+    const leaf: TDescendant = { text };
     if (mark) {
         leaf[mark] = true;
     }
@@ -376,3 +374,111 @@ export const serializedHtml =
 
 export const serializedHtmlWithCustomDesignTokens =
     '<p><span class="tw-font-bold">This text is bold.</span></p><p><span class="tw-italic">This text is italic.</span></p><p><span class="tw-underline">This text has an underline.</span></p><p><span class="tw-line-through">This text has a strikethrough.</span></p><p><span class="tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5">This text is a code line.</span></p><p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p><ul class="tw-list-disc tw-pl-6"><li>This is list item number one.</li><li>This is list item number two.</li><li>This is list item number three.</li><ul class="tw-list-disc tw-pl-6"><li>This is child item number one.</li><li>This is child item number two, with more children.</li><ul class="tw-list-disc tw-pl-6"><li>This is child of child item number one.</li><li>This is child of child item number two.</li></ul></ul></ul><ol class="tw-list-decimal tw-pl-6"><li>This comes first.</li><li>This comes second.</li><li>And last but not least, this comes third.</li></ol><p><a class="tw-text-text-interactive tw-underline tw-cursor-pointer" href="https://frontify.com">This is a Link.</a></p><p><a class="tw-text-text-interactive tw-underline tw-cursor-pointer" target=_blank href="https://smartive.ch">This is also a Link.</a></p><h1 style="font-size: 1.5rem; font-weight: 800;">Heading 1</h1><h2 style="font-size: 1.25rem; font-weight: 500;">Heading 2</h2><h3 style="font-size: 24px;">Heading 3</h3><h4 style="font-size: 18px;">Heading 4</h4><p style="font-size: 14px;">Custom 1</p><p style="font-size: 14px; font-weight: 600;">Custom 2</p>';
+
+export const mentionValue = [
+    createElement({ text: '💬 Mention', mark: TextStyles.ELEMENT_HEADING2 }),
+    createElement({
+        text: 'This example shows how you might implement a simple @-mentions feature that lets users autocomplete mentioning a user by their username. Which, in this case means Star Wars characters. The mentions are rendered as void inline elements inside the document.',
+        mark: ELEMENT_PARAGRAPH,
+    }),
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [
+            { text: 'Try mentioning characters, like ' },
+            {
+                type: ELEMENT_MENTION,
+                children: [{ text: '' }],
+                value: 'R2-D2',
+            },
+            { text: ' or ' },
+            {
+                type: ELEMENT_MENTION,
+                children: [{ text: '' }],
+                value: 'Mace Windu',
+            },
+            { text: '.' },
+        ],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'Continue ...' }, { text: ' ' }],
+    },
+];
+
+export const mentionable: TComboboxItem[] = [
+    { key: '0', text: 'Aayla Secura' },
+    { key: '1', text: 'Adi Gallia' },
+    {
+        key: '2',
+        text: 'Admiral Dodd Rancit',
+    },
+    {
+        key: '3',
+        text: 'Admiral Firmus Piett',
+    },
+    {
+        key: '4',
+        text: 'Admiral Gial Ackbar',
+    },
+    { key: '5', text: 'Admiral Ozzel' },
+    { key: '6', text: 'Admiral Raddus' },
+    {
+        key: '7',
+        text: 'Admiral Terrinald Screed',
+    },
+    { key: '8', text: 'Admiral Trench' },
+    {
+        key: '9',
+        text: 'Admiral U.O. Statura',
+    },
+    { key: '10', text: 'Agen Kolar' },
+    { key: '11', text: 'Agent Kallus' },
+    {
+        key: '12',
+        text: 'Aiolin and Morit Astarte',
+    },
+    { key: '13', text: 'Aks Moe' },
+    { key: '14', text: 'Almec' },
+    { key: '15', text: 'Alton Kastle' },
+    { key: '16', text: 'Amee' },
+    { key: '17', text: 'AP-5' },
+    { key: '18', text: 'Armitage Hux' },
+    { key: '19', text: 'Artoo' },
+    { key: '20', text: 'Arvel Crynyd' },
+    { key: '21', text: 'Asajj Ventress' },
+    { key: '22', text: 'Aurra Sing' },
+    { key: '23', text: 'AZI-3' },
+    { key: '24', text: 'Bala-Tik' },
+    { key: '25', text: 'Barada' },
+    { key: '26', text: 'Bargwill Tomder' },
+    { key: '27', text: 'Baron Papanoida' },
+    { key: '28', text: 'Barriss Offee' },
+    { key: '29', text: 'Baze Malbus' },
+    { key: '30', text: 'Bazine Netal' },
+    { key: '31', text: 'BB-8' },
+    { key: '32', text: 'BB-9E' },
+    { key: '33', text: 'Ben Quadinaros' },
+    { key: '34', text: 'Berch Teller' },
+    { key: '35', text: 'Beru Lars' },
+    { key: '36', text: 'Bib Fortuna' },
+    {
+        key: '37',
+        text: 'Biggs Darklighter',
+    },
+    { key: '38', text: 'Black Krrsantan' },
+    { key: '39', text: 'Bo-Katan Kryze' },
+    { key: '40', text: 'Boba Fett' },
+    { key: '41', text: 'Bobbajo' },
+    { key: '42', text: 'Bodhi Rook' },
+    { key: '43', text: 'Borvo the Hutt' },
+    { key: '44', text: 'Boss Nass' },
+    { key: '45', text: 'Bossk' },
+    {
+        key: '46',
+        text: 'Breha Antilles-Organa',
+    },
+    { key: '47', text: 'Bren Derlin' },
+    { key: '48', text: 'Brendol Hux' },
+    { key: '49', text: 'BT-1' },
+    { key: '50', text: 'C-3PO' },
+];
