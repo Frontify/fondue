@@ -53,13 +53,13 @@ import {
 import { ELEMENT_CHECK_ITEM, createCheckboxListPlugin, createLinkChooserPlugin, createMentionPlugin } from '../plugins';
 import { TextStyles } from './textStyles';
 
-export enum EditorConfig {
+export enum EditorConfigType {
     DEFAULT = 'default',
     ANNOTATIONS = 'annotations',
 }
 
-export const getEditorConfig = (config: EditorConfig) =>
-    config === EditorConfig.ANNOTATIONS ? EditorConfigAnnotation() : EditorConfigDefault();
+export const getEditorConfig = (config: EditorConfigType) =>
+    config === EditorConfigType.ANNOTATIONS ? EditorConfigAnnotation() : EditorConfigDefault();
 
 export const EditorConfigDefault = () => {
     const createHeading1Plugin = createPluginFactory({

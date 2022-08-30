@@ -1,2 +1,2 @@
 export * from './plaintext';
-export { EditorConfig } from './editorConfig';
+export { EditorConfigType } from './editorConfig';
