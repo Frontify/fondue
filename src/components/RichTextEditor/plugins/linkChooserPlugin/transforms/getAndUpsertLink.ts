@@ -1,6 +1,6 @@
 import { SearchResult } from '@components/LinkChooser';
-import { ELEMENT_LINK, Value } from '@udecode/plate';
-import { PlateEditor, getBlockAbove, isCollapsed } from '@udecode/plate-core';
+import { ELEMENT_LINK, Value, getAboveNode } from '@udecode/plate';
+import { PlateEditor, isCollapsed } from '@udecode/plate-core';
 import { ChosenLink } from '../types';
 import { upsertLinkAtSelection } from './upsertLinkAtSelection';
 
@@ -15,7 +15,7 @@ export const getAndUpsertLink = async (
 ) => {
     let prevChosenLink = { ...defaultChosenLink };
 
-    const linkNode = getBlockAbove(editor, {
+    const linkNode = getAboveNode(editor, {
         match: { type: ELEMENT_LINK },
     });
 
