@@ -84,7 +84,7 @@ describe('Breadcrumb component', () => {
         cy.get('@onClickStub').should('be.calledOnce');
     });
 
-    it('should be able render content as link, button and span', () => {
+    it('should be able to render content as link, button and span', () => {
         cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_MIXED_ELEMENTS} />);
 
         cy.get(BREADCRUMB_ITEM_ID).first().find('span').should('exist');
