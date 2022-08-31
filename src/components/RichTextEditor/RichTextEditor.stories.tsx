@@ -5,7 +5,7 @@ import React from 'react';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import { EditorActions } from './utils/actions';
-import { checkboxValue, customDesignTokens, htmlValue, IPSUM, nodesToSerialize, value } from './utils/exampleValues';
+import { IPSUM, checkboxValue, customDesignTokens, htmlValue, nodesToSerialize, value } from './utils/exampleValues';
 
 export default {
     title: 'Components/Rich Text Editor',

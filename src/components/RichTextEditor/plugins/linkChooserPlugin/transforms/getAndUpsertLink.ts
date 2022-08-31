@@ -1,5 +1,6 @@
-import { ELEMENT_LINK } from '@udecode/plate';
-import { PlateEditor, getAbove, isCollapsed } from '@udecode/plate-core';
+import { SearchResult } from '@components/LinkChooser';
+import { ELEMENT_LINK, Value } from '@udecode/plate';
+import { PlateEditor, getBlockAbove, isCollapsed } from '@udecode/plate-core';
 import { ChosenLink } from '../types';
 import { upsertLinkAtSelection } from './upsertLinkAtSelection';
 
@@ -8,14 +9,13 @@ const defaultChosenLink: ChosenLink = {
     openInNewTab: false,
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export const getAndUpsertLink = async <T = {}>(
-    editor: PlateEditor<T>,
+export const getAndUpsertLink = async (
+    editor: PlateEditor<Value>,
     getChosenLink: (prevLink: ChosenLink) => Promise<ChosenLink | void>,
 ) => {
     let prevChosenLink = { ...defaultChosenLink };
 
-    const linkNode = getAbove(editor, {
+    const linkNode = getBlockAbove(editor, {
         match: { type: ELEMENT_LINK },
     });
 
@@ -25,9 +25,9 @@ export const getAndUpsertLink = async <T = {}>(
 
         prevChosenLink = {
             searchResult: {
-                id: url,
-                title: children[0].text,
-                link: url,
+                id: url as string,
+                title: children[0].text as string,
+                link: url as string,
                 icon: 'LINK',
             },
             openInNewTab: false,
@@ -36,13 +36,14 @@ export const getAndUpsertLink = async <T = {}>(
 
     // new link structure
     else if (linkNode && linkNode[0].chosenLink) {
-        const { chosenLink, children } = linkNode[0];
+        const { chooseLink, children } = linkNode[0];
+
         prevChosenLink = {
             searchResult: {
-                ...chosenLink.searchResult,
-                title: children[0].text,
+                ...((chooseLink as ChosenLink).searchResult as SearchResult),
+                title: children[0].text as string,
             },
-            openInNewTab: chosenLink.openInNewTab,
+            openInNewTab: (chooseLink as ChosenLink).openInNewTab,
         };
 
         // no link existing
