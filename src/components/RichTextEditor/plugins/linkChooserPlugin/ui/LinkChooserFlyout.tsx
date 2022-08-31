@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { ButtonStyle } from '@components/Button';
 import { Checkbox, CheckboxState } from '@components/Checkbox';
 import { Flyout, FlyoutFooter } from '@components/Flyout';
@@ -39,6 +40,9 @@ export const LinkChooserFlyout = ({
         setIsFlyoutOpen(false);
     };
 
+    const openInNewTab = chosenLink?.openInNewTab;
+    const searchResult = chosenLink?.searchResult;
+
     return (
         <Flyout
             isOpen={isFlyoutOpen}
@@ -60,7 +64,7 @@ export const LinkChooserFlyout = ({
                             onClick: onConfirm,
                             style: ButtonStyle.Primary,
                             icon: <IconCheckMark />,
-                            disabled: !chosenLink.searchResult?.link || !chosenLink.searchResult?.title,
+                            disabled: !searchResult?.link || !searchResult?.title,
                         },
                     ]}
                 />
@@ -88,16 +92,16 @@ export const LinkChooserFlyout = ({
                         required={true}
                         id={'linkText'}
                         placeholder="Link Text"
-                        value={chosenLink.searchResult?.title}
+                        value={searchResult?.title}
                         onChange={(value) => {
                             setChosenLink({
                                 searchResult: {
                                     id: value,
                                     title: value,
-                                    link: chosenLink.searchResult?.link ?? '',
+                                    link: searchResult?.link ?? '',
                                     icon: 'LINK',
                                 },
-                                openInNewTab: chosenLink.openInNewTab,
+                                openInNewTab,
                             });
                         }}
                     />
@@ -113,16 +117,16 @@ export const LinkChooserFlyout = ({
                         required={true}
                         id={'url'}
                         placeholder="https://example.com"
-                        value={chosenLink.searchResult?.link}
+                        value={searchResult?.link}
                         onChange={(value) => {
                             setChosenLink({
                                 searchResult: {
                                     id: value,
-                                    title: chosenLink.searchResult?.title ?? '',
+                                    title: searchResult?.title ?? '',
                                     link: value,
                                     icon: 'LINK',
                                 },
-                                openInNewTab: chosenLink.openInNewTab,
+                                openInNewTab,
                             });
                         }}
                     />
@@ -130,11 +134,11 @@ export const LinkChooserFlyout = ({
                 <Checkbox
                     value="new-tab"
                     label="Open in New Tab"
-                    state={chosenLink.openInNewTab ? CheckboxState.Checked : CheckboxState.Unchecked}
+                    state={openInNewTab ? CheckboxState.Checked : CheckboxState.Unchecked}
                     onChange={() => {
                         setChosenLink({
-                            searchResult: chosenLink.searchResult,
-                            openInNewTab: !chosenLink.openInNewTab,
+                            searchResult,
+                            openInNewTab: !openInNewTab,
                         });
                     }}
                 />
