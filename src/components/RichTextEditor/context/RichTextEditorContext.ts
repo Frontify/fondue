@@ -1,16 +1,16 @@
 import { createContext, useContext } from 'react';
-import { DesignTokens, Position } from '../types';
+import { DesignTokens } from '../types';
 import { defaultDesignTokens } from '../utils/defaultDesignTokens';
-import { ToolbarPositioningComponent } from '../components/Toolbar/ToolbarPositioning';
+import { Position, PositioningEditorWrapper } from '../PositioningEditorWrapper';
 
 type RichTextEditorContextProps = {
     designTokens: DesignTokens;
-    ToolbarPositioning: typeof ToolbarPositioningComponent[Position.FLOATING];
+    PositioningWrapper: typeof PositioningEditorWrapper[Position.FLOATING];
 };
 
 export const RichTextEditorContext = createContext<RichTextEditorContextProps>({
     designTokens: defaultDesignTokens,
-    ToolbarPositioning: ToolbarPositioningComponent[Position.FLOATING],
+    PositioningWrapper: PositioningEditorWrapper[Position.FLOATING],
 });
 
 export const useRichTextEditorContext = () => {

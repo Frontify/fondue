@@ -9,14 +9,14 @@ import { defaultActions } from '../../utils/actions';
 import { ButtonGroup } from './ButtonGroup';
 
 export const Toolbar = ({ editorId, actions = [], editorWidth }: ToolbarCustomProps) => {
-    const { ToolbarPositioning } = useRichTextEditorContext();
+    const { PositioningWrapper } = useRichTextEditorContext();
 
     const toolbarActions = actions.length > 0 ? actions : defaultActions;
     const buttonGroupWidths = getButtonGroupWidths(toolbarActions);
     const toolbarButtonGroups = getButtonGroupWidthsPerRow(editorWidth || 0, buttonGroupWidths);
 
     return (
-        <ToolbarPositioning.ToolbarWrapper editorWidth={editorWidth} toolbarButtonGroups={toolbarButtonGroups}>
+        <PositioningWrapper.ToolbarWrapper editorWidth={editorWidth} toolbarButtonGroups={toolbarButtonGroups}>
             {toolbarButtonGroups.map((row, index) => (
                 <div key={index} className="tw-divide-x tw-divide-line tw-flex tw-w-full tw-flex-wrap">
                     {row.map(({ actions, index }) => (
@@ -24,6 +24,6 @@ export const Toolbar = ({ editorId, actions = [], editorWidth }: ToolbarCustomPr
                     ))}
                 </div>
             ))}
-        </ToolbarPositioning.ToolbarWrapper>
+        </PositioningWrapper.ToolbarWrapper>
     );
 };

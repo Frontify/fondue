@@ -8,14 +8,15 @@ import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './components/Toolbar/Toolbar';
 import { RichTextEditorContext } from './context/RichTextEditorContext';
 import { useEditorState } from './hooks/useEditorState';
-import { DesignTokens, Position } from './types';
+import { DesignTokens } from './types';
 import { EditorActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { getEditorConfig } from './utils/editorConfig';
 import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './utils/textStyles';
-import { ToolbarPositioningComponent } from './components/Toolbar/ToolbarPositioning';
+import { PositioningEditorWrapper } from './PositioningEditorWrapper';
+import { Position } from './PositioningEditorWrapper';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -90,11 +91,11 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         [debouncedOnChange, localValue],
     );
 
-    const ToolbarPositioning = ToolbarPositioningComponent[position];
+    const PositioningWrapper = PositioningEditorWrapper[position];
 
     return (
-        <RichTextEditorContext.Provider value={{ designTokens, ToolbarPositioning }}>
-            <ToolbarPositioning.PlateWrapper ref={editorRef}>
+        <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
+            <PositioningWrapper.PlateWrapper ref={editorRef}>
                 <Plate
                     id={editorId}
                     initialValue={parseRawValue(initialValue)}
@@ -104,7 +105,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 >
                     <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
                 </Plate>
-            </ToolbarPositioning.PlateWrapper>
+            </PositioningWrapper.PlateWrapper>
         </RichTextEditorContext.Provider>
     );
 };

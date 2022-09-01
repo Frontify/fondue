@@ -3,11 +3,12 @@
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
 import React, { FC, useState } from 'react';
 import { RichTextEditor, RichTextEditorProps } from './RichTextEditor';
-import { DesignTokens, Position } from './types';
+import { DesignTokens } from './types';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { EditorActions } from './utils/actions';
 import { value as exampleValue } from './utils/exampleValues';
 import { toPlaintext } from './utils/plaintext';
+import { Position } from './PositioningEditorWrapper';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
 const TOOLBAR = '[data-test-id=toolbar-floating]';

@@ -26,9 +26,3 @@ export type ButtonGroupProps = {
 export type ButtonGroupWidths = { actions: EditorActions[]; buttonGroupWidth: number; index: number }[];
 
 export type AvailableTextStyles = ListStyles & TextStyles;
-
-export enum Position {
-    FLOATING = 'Floating',
-    BOTTOM = 'Bottom',
-    TOP = 'Top',
-}

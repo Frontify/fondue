@@ -1,19 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BalloonToolbar } from '@udecode/plate';
 import { calculateToolbarWidth } from '@components/RichTextEditor/utils/toolbarCalc';
 import { OFFSET_IN_PX } from '@components/RichTextEditor/utils';
-import { ToolbarWrapperProps, WrapperProps } from './types';
+import { ToolbarWrapperProps } from './types';
 
-export const PlateWrapper = forwardRef<HTMLDivElement, WrapperProps>(({ children }, ref) => (
-    <div data-test-id="rich-text-editor" className="tw-relative tw-w-full" ref={ref}>
-        {children}
-    </div>
-));
-PlateWrapper.displayName = 'ToolbarPositioningFloatingPlateWrapper';
-
-export const ToolbarWrapper = ({ children, editorWidth, toolbarButtonGroups }: ToolbarWrapperProps) => {
+export const ToolbarWrapperPositioningFloating = ({
+    children,
+    editorWidth,
+    toolbarButtonGroups,
+}: ToolbarWrapperProps) => {
     const [width, setWidth] = useState<number | null>(null);
 
     useEffect(() => {
