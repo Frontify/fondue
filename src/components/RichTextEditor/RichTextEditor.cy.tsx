@@ -114,7 +114,7 @@ const RichTextWithChangeDesignTokensButton: FC = () => {
     );
 };
 
-const RichTextWithToolbarPositioning = ({ position }: { position?: Position | undefined }) => {
+const RichTextWithToolbarPositioning = ({ position }: { position?: Position }) => {
     return <RichTextEditor position={position} />;
 };
 
