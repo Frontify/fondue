@@ -3,14 +3,16 @@
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
 import React, { FC, useState } from 'react';
 import { RichTextEditor, RichTextEditorProps } from './RichTextEditor';
-import { DesignTokens } from './types';
+import { DesignTokens, Position } from './types';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { EditorActions } from './utils/actions';
 import { value as exampleValue } from './utils/exampleValues';
 import { toPlaintext } from './utils/plaintext';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
-const TOOLBAR = '[data-test-id=toolbar]';
+const TOOLBAR = '[data-test-id=toolbar-floating]';
+const TOOLBAR_BOTTOM = '[data-test-id=toolbar-bottom]';
+const TOOLBAR_TOP = '[data-test-id=toolbar-top]';
 const TOOLBAR_GROUP_0 = '[data-test-id=toolbar-group-0]';
 const TOOLBAR_GROUP_1 = '[data-test-id=toolbar-group-1]';
 const TOOLBAR_GROUP_2 = '[data-test-id=toolbar-group-2]';
@@ -110,6 +112,10 @@ const RichTextWithChangeDesignTokensButton: FC = () => {
             <RichTextEditor designTokens={designTokens} />
         </div>
     );
+};
+
+const RichTextWithToolbarPositioning = ({ position }: { position?: Position | undefined }) => {
+    return <RichTextEditor position={position} />;
 };
 
 describe('RichTextEditor Component', () => {
@@ -538,5 +544,28 @@ describe('RichTextEditor Component', () => {
         expect(toPlaintext(JSON.stringify(exampleValue))).to.be.eq(
             'This text is bold.\nThis text is italic.\nThis text has an underline.\nThis text has a strikethrough.\nThis text is a code line.\nLorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\nThis is list item number one.\nThis is list item number two.\nThis is list item number three.\nThis is child item number one.\nThis is child item number two, with more children.\nThis is child of child item number one.\nThis is child of child item number two.\nThis comes first.\nThis comes second.\nAnd last but not least, this comes third.\nThis is a Link.\nThis is also a Link.\nThis is a checked checklist item.\nThis is an unchecked checklist item.\nThis is checked again.\nHeading 1\nHeading 2\nHeading 3\nHeading 4\nCustom 1\nCustom 2',
         );
+    });
+});
+
+describe('RichTextEditor Component: Positioning of Toolbar', () => {
+    it('should render with floating toolbar', () => {
+        cy.mount(<RichTextWithToolbarPositioning />);
+
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR).should('be.visible');
+    });
+
+    it('should render with fixed top toolbar', () => {
+        cy.mount(<RichTextWithToolbarPositioning position={Position.TOP} />);
+
+        cy.get(RICH_TEXT_EDITOR).should('be.visible');
+        cy.get(TOOLBAR_TOP).should('be.visible');
+    });
+
+    it('should render with fixed bottom toolbar', () => {
+        cy.mount(<RichTextWithToolbarPositioning position={Position.BOTTOM} />);
+
+        cy.get(RICH_TEXT_EDITOR).should('be.visible');
+        cy.get(TOOLBAR_BOTTOM).should('be.visible');
     });
 });

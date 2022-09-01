@@ -57,7 +57,7 @@ export const ToolbarWrapper = ({ children, editorWidth, toolbarButtonGroups }: T
             styles={{ root: { border: 'none', background: '#ffffff' } }}
         >
             <div
-                data-test-id="toolbar"
+                data-test-id="toolbar-floating"
                 className="tw-rounded tw-min-h-12 tw-border tw-border-line tw-shadow-lg tw-bg-base tw-divide-y tw-divide-line tw-flex tw-flex-wrap"
             >
                 {children}
