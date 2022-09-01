@@ -551,6 +551,7 @@ describe('RichTextEditor Component: Positioning of Toolbar', () => {
     it('should render with floating toolbar', () => {
         cy.mount(<RichTextWithToolbarPositioning />);
 
+        cy.get(TOOLBAR).should('not.visible');
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR).should('be.visible');
     });
@@ -560,6 +561,7 @@ describe('RichTextEditor Component: Positioning of Toolbar', () => {
 
         cy.get(RICH_TEXT_EDITOR).should('be.visible');
         cy.get(TOOLBAR_TOP).should('be.visible');
+        cy.get('[role=textbox]').prev(TOOLBAR_TOP).should('exist');
     });
 
     it('should render with fixed bottom toolbar', () => {
@@ -567,5 +569,6 @@ describe('RichTextEditor Component: Positioning of Toolbar', () => {
 
         cy.get(RICH_TEXT_EDITOR).should('be.visible');
         cy.get(TOOLBAR_BOTTOM).should('be.visible');
+        cy.get('[role=textbox]').prev(TOOLBAR_BOTTOM).should('exist');
     });
 });
