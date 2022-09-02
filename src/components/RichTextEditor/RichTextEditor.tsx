@@ -15,8 +15,8 @@ import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { getEditorConfig } from './utils/editorConfig';
 import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './utils/textStyles';
-import { PositioningEditorWrapper } from './PositioningEditorWrapper';
-import { Position } from './PositioningEditorWrapper';
+import { EditorPositioningWrapper } from './EditorPositioningWrapper';
+import { Position } from './EditorPositioningWrapper';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -91,7 +91,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         [debouncedOnChange, localValue],
     );
 
-    const PositioningWrapper = PositioningEditorWrapper[position];
+    const PositioningWrapper = EditorPositioningWrapper[position];
 
     return (
         <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
