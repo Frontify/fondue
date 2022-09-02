@@ -13,7 +13,7 @@ import {
 } from './ToolbarWrapper';
 
 export { Position } from './types';
-export const PositioningEditorWrapper = {
+export const EditorPositioningWrapper = {
     [Position.BOTTOM]: {
         PlateWrapper: PlateWrapperPositioningBottom,
         ToolbarWrapper: ToolbarWrapperPositioningBottom,
