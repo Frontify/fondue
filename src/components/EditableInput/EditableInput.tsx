@@ -9,14 +9,14 @@ import React, {
     useState,
 } from 'react';
 
-export interface EditableNodeItem {
+export interface EditableInputProps {
     name: string;
     targetItemId: string;
     onEditableSave: (targetItemId: string, value: string) => void;
     children: ReactNode;
 }
 
-export const EditableNodeItem = ({ name, targetItemId, onEditableSave, children }: EditableNodeItem) => {
+export const EditableInput = ({ name, targetItemId, onEditableSave, children }: EditableInputProps) => {
     const [inputValue, setInputValue] = useState(name);
     const [showInput, setShowInput] = useState<boolean>(false);
 
