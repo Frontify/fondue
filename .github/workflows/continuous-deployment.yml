@@ -38,7 +38,7 @@ jobs:
                     restore-keys: node_modules-
 
             -   name: Component Tests
-                run: npm run test:file -- $(node ./.github/lib/cypress-matrix.js ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})
+                run: npm run test
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
