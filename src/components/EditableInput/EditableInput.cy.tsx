@@ -44,7 +44,7 @@ describe('EditableInput', () => {
 
         cy.get(EDITABLE_NODE).type('Hey');
 
-        cy.get('@onChangeSpy').should('have.not.been.called.with');
+        cy.get('@onChangeSpy').should('have.not.been.called');
         cy.get(EDITABLE_CONTAINER).click();
         cy.get('@onChangeSpy').should('have.been.calledWith', 'This InputHey');
     });
@@ -62,6 +62,6 @@ describe('EditableInput', () => {
 
         cy.get(EDITABLE_NODE).type('Hey');
         cy.get(EDITABLE_NODE).type('{enter}');
-        cy.get('@onChangeSpy').should('have.been.called.with');
+        cy.get('@onChangeSpy').should('have.been.called');
     });
 });
