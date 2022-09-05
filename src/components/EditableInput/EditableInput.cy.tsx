@@ -32,12 +32,12 @@ describe('EditableInput', () => {
     });
 
     it('Event gets triggered when writing Hey in input form that nothing is sent and when clicking away that it sent an event', () => {
-        const onChangeSpy = cy.spy().as('onChangeSpy');
+        const onEditableSaveSpy = cy.spy().as('onChangeSpy');
         cy.mount(
             <EditableInput
                 name={'This Input'}
                 targetItemId={'id'}
-                onEditableSave={(one: string, two: string) => onChangeSpy(two)}
+                onEditableSave={(one: string, two: string) => onEditableSaveSpy(two)}
             ></EditableInput>,
         );
         cy.get(EDITABLE_LINK_NAME).dblclick();
