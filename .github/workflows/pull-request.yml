@@ -43,7 +43,7 @@ jobs:
                 run: npm ci
 
             -   name: Component Tests
-                run: npm run test:file -- $(node ./.github/lib/cypress-matrix.js ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})
+                run: npm run test
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                     CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
