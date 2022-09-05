@@ -13,7 +13,7 @@ export interface EditableInputProps {
     name: string;
     targetItemId: string;
     onEditableSave: (targetItemId: string, value: string) => void;
-    children: ReactNode;
+    children?: ReactNode;
 }
 
 export const EditableInput = ({ name, targetItemId, onEditableSave, children }: EditableInputProps) => {
@@ -47,7 +47,7 @@ export const EditableInput = ({ name, targetItemId, onEditableSave, children }: 
     };
 
     return (
-        <div>
+        <div data-test-id="editable-node-container">
             {showInput ? (
                 <div className="tw-flex tw-items-center">
                     <div
