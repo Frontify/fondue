@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    IconListBullets,
+    IconListBullet,
     IconListCheck,
     IconListNumbers,
     IconSize,
@@ -156,7 +156,7 @@ const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<Editor
     [EditorActions.UNORDERED_LIST]: (
         <ListToolbarButton
             type={getPluginType(editor, ELEMENT_UL)}
-            icon={<IconStylingWrapper icon={<IconListBullets size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconListBullet size={IconSize.Size24} />} />}
             classNames={classNames}
             styles={styles}
         />

@@ -22,5 +22,4 @@ function IconArrowMinimize24(props: GeneratedIconProps): React.ReactElement<Gene
     );
 }
 
-const Memo = memo(IconArrowMinimize24);
-export default Memo;
+export default memo(IconArrowMinimize24);

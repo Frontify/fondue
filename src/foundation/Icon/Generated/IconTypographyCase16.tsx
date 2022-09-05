@@ -22,5 +22,4 @@ function IconTypographyCase16(props: GeneratedIconProps): React.ReactElement<Gen
     );
 }
 
-const Memo = memo(IconTypographyCase16);
-export default Memo;
+export default memo(IconTypographyCase16);

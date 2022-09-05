@@ -22,5 +22,4 @@ function IconFolder16(props: GeneratedIconProps): React.ReactElement<GeneratedIc
     );
 }
 
-const Memo = memo(IconFolder16);
-export default Memo;
+export default memo(IconFolder16);

@@ -22,5 +22,4 @@ function IconCarousel16(props: GeneratedIconProps): React.ReactElement<Generated
     );
 }
 
-const Memo = memo(IconCarousel16);
-export default Memo;
+export default memo(IconCarousel16);

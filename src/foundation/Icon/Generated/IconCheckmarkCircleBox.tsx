@@ -21,5 +21,4 @@ function IconCheckmarkCircleBox(props: GeneratedIconProps): React.ReactElement<G
     );
 }
 
-const Memo = memo(IconCheckmarkCircleBox);
-export default Memo;
+export default memo(IconCheckmarkCircleBox);

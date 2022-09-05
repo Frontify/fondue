@@ -31,5 +31,4 @@ function IconFaceSad(props: GeneratedIconProps): React.ReactElement<GeneratedIco
     );
 }
 
-const Memo = memo(IconFaceSad);
-export default Memo;
+export default memo(IconFaceSad);

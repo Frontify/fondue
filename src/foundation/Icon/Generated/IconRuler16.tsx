@@ -22,5 +22,4 @@ function IconRuler16(props: GeneratedIconProps): React.ReactElement<GeneratedIco
     );
 }
 
-const Memo = memo(IconRuler16);
-export default Memo;
+export default memo(IconRuler16);

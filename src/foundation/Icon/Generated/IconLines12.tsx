@@ -22,5 +22,4 @@ function IconLines12(props: GeneratedIconProps): React.ReactElement<GeneratedIco
     );
 }
 
-const Memo = memo(IconLines12);
-export default Memo;
+export default memo(IconLines12);

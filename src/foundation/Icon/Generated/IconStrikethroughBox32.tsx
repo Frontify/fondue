@@ -22,5 +22,4 @@ function IconStrikethroughBox32(props: GeneratedIconProps): React.ReactElement<G
     );
 }
 
-const Memo = memo(IconStrikethroughBox32);
-export default Memo;
+export default memo(IconStrikethroughBox32);

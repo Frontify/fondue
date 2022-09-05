@@ -22,5 +22,4 @@ function IconDividerSolidInset24(props: GeneratedIconProps): React.ReactElement<
     );
 }
 
-const Memo = memo(IconDividerSolidInset24);
-export default Memo;
+export default memo(IconDividerSolidInset24);

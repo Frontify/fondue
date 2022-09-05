@@ -21,5 +21,4 @@ function IconMediaObjectTextTop(props: GeneratedIconProps): React.ReactElement<G
     );
 }
 
-const Memo = memo(IconMediaObjectTextTop);
-export default Memo;
+export default memo(IconMediaObjectTextTop);

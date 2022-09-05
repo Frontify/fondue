@@ -31,5 +31,4 @@ function IconBookmark(props: GeneratedIconProps): React.ReactElement<GeneratedIc
     );
 }
 
-const Memo = memo(IconBookmark);
-export default Memo;
+export default memo(IconBookmark);

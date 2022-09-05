@@ -6,7 +6,7 @@ import { EXAMPLE_PALETTES } from '../ColorPicker/example-palettes';
 import { ColorPickerFlyout } from './ColorPickerFlyout';
 
 const TRIGGER_ID = '[data-test-id=trigger]';
-const TEST_COLOR = { r: 0, g: 133, b: 255 };
+const TEST_COLOR = { red: 0, green: 133, blue: 255 };
 const TEST_COLOR_HEX = '#0085ff';
 const TEST_COLOR_RGB = 'rgb(0, 133, 255)';
 const BUTTON_ID = '[data-test-id=button]';

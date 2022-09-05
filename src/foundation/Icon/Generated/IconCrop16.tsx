@@ -22,5 +22,4 @@ function IconCrop16(props: GeneratedIconProps): React.ReactElement<GeneratedIcon
     );
 }
 
-const Memo = memo(IconCrop16);
-export default Memo;
+export default memo(IconCrop16);

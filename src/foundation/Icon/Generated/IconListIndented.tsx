@@ -21,5 +21,4 @@ function IconListIndented(props: GeneratedIconProps): React.ReactElement<Generat
     );
 }
 
-const Memo = memo(IconListIndented);
-export default Memo;
+export default memo(IconListIndented);

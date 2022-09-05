@@ -22,5 +22,4 @@ function IconGridRegular20(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconGridRegular20);
-export default Memo;
+export default memo(IconGridRegular20);

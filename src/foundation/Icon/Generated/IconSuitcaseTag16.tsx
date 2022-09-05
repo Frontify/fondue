@@ -22,5 +22,4 @@ function IconSuitcaseTag16(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconSuitcaseTag16);
-export default Memo;
+export default memo(IconSuitcaseTag16);

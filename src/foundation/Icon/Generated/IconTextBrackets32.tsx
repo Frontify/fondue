@@ -22,5 +22,4 @@ function IconTextBrackets32(props: GeneratedIconProps): React.ReactElement<Gener
     );
 }
 
-const Memo = memo(IconTextBrackets32);
-export default Memo;
+export default memo(IconTextBrackets32);

@@ -31,5 +31,4 @@ function IconEyeOff12(props: GeneratedIconProps): React.ReactElement<GeneratedIc
     );
 }
 
-const Memo = memo(IconEyeOff12);
-export default Memo;
+export default memo(IconEyeOff12);

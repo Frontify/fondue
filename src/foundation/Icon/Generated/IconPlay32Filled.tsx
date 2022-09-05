@@ -20,5 +20,4 @@ function IconPlay32Filled(props: GeneratedIconProps): React.ReactElement<Generat
     );
 }
 
-const Memo = memo(IconPlay32Filled);
-export default Memo;
+export default memo(IconPlay32Filled);

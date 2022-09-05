@@ -22,5 +22,4 @@ function IconCrossCircle32(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconCrossCircle32);
-export default Memo;
+export default memo(IconCrossCircle32);

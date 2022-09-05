@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { toShortRgb } from '@utilities/colors';
 import React, { FC } from 'react';
 import tinycolor from 'tinycolor2';
 import { Color } from '../../types/colors';
@@ -9,7 +10,7 @@ type ColorPreviewProps = {
 };
 
 export const ColorPreview: FC<ColorPreviewProps> = ({ color }) => {
-    const parsedColor = tinycolor(color);
+    const parsedColor = tinycolor(toShortRgb(color));
     const backgroundColor = parsedColor.toRgbString();
 
     return (

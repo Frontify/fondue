@@ -22,5 +22,4 @@ function IconFolderArrowUp20(props: GeneratedIconProps): React.ReactElement<Gene
     );
 }
 
-const Memo = memo(IconFolderArrowUp20);
-export default Memo;
+export default memo(IconFolderArrowUp20);

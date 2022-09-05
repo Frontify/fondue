@@ -21,5 +21,4 @@ function IconEraser(props: GeneratedIconProps): React.ReactElement<GeneratedIcon
     );
 }
 
-const Memo = memo(IconEraser);
-export default Memo;
+export default memo(IconEraser);

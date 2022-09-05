@@ -22,5 +22,4 @@ function IconColorFan32(props: GeneratedIconProps): React.ReactElement<Generated
     );
 }
 
-const Memo = memo(IconColorFan32);
-export default Memo;
+export default memo(IconColorFan32);
