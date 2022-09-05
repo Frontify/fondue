@@ -28,6 +28,7 @@ export type RichTextEditorProps = {
     clear?: boolean;
     designTokens?: DesignTokens;
     actions?: EditorActions[][];
+    padding?: number;
     position?: Position;
 };
 
@@ -41,6 +42,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     actions = [],
     onTextChange,
     onBlur,
+    padding = 0,
     position = Position.FLOATING,
 }) => {
     const editorId = useMemoizedId(id);
@@ -51,6 +53,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         placeholder,
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
+        className: `tw-p-${padding}`,
     };
 
     const editorRef = useCallback((node) => {
