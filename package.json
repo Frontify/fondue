@@ -41,7 +41,7 @@
         "lint:prettier": "prettier --check src",
         "test": "cypress run --component",
         "test:browser": "cypress open --component",
-        "test:file": "cypress run --browser chromium --component --spec ",
+        "test:file": "cypress run --component --spec ",
         "typecheck": "tsc",
         "storybook": "start-storybook -p 6006"
     },
