@@ -25,9 +25,9 @@ describe('OverflowMenu component', () => {
         it('opens the menu and checks if the links are correct', () => {
             cy.get('@OverflowMenu').find('button').click();
             cy.get(ITEM_TEST_ID).should('have.length', 3);
-            ITEMS_LINKS.forEach((item, index) => {
+            for (const [index, item] of ITEMS_LINKS.entries()) {
                 cy.get(ITEM_TEST_ID).eq(index).find('a').should('have.attr', 'href', item.link);
-            });
+            }
         });
     });
 });
