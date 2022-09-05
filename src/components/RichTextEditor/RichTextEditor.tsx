@@ -12,11 +12,12 @@ import { DesignTokens } from './types';
 import { EditorActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
-import { getEditorConfig } from './utils/editorConfig';
+// import { getEditorConfig } from './utils/editorConfig';
 import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './utils/textStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
+import { Plugins, defaultPlugins, loadPlugins } from './EditorPlugins';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -29,6 +30,7 @@ export type RichTextEditorProps = {
     designTokens?: DesignTokens;
     actions?: EditorActions[][];
     position?: Position;
+    plugins: Plugins[];
 };
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
@@ -42,6 +44,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     onTextChange,
     onBlur,
     position = Position.FLOATING,
+    plugins = defaultPlugins,
 }) => {
     const editorId = useMemoizedId(id);
     const { localValue } = useEditorState(editorId, clear);
@@ -93,6 +96,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     const PositioningWrapper = EditorPositioningWrapper[position];
 
+    const config = loadPlugins(plugins);
+    // const config = getEditorConfig();
+    console.log(config);
+
     return (
         <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
             <PositioningWrapper.PlateWrapper ref={editorRef}>
@@ -101,7 +108,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     initialValue={parseRawValue(initialValue)}
                     onChange={onChange}
                     editableProps={editableProps}
-                    plugins={getEditorConfig()}
+                    plugins={config}
                 >
                     <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
                 </Plate>
