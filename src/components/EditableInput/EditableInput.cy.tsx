@@ -30,6 +30,7 @@ describe('EditableInput', () => {
 
         cy.get(EDITABLE_NODE).should('exist');
     });
+
     it('Event gets triggered when writing Hey in input form that nothing is sent and when clicking away that it sent an event', () => {
         const onChangeSpy = cy.spy().as('onChangeSpy');
         cy.mount(
@@ -45,7 +46,7 @@ describe('EditableInput', () => {
 
         cy.get('@onChangeSpy').should('have.not.been.called.with');
         cy.get(EDITABLE_CONTAINER).click();
-        cy.get('@onChangeSpy').should('have.been.called.with');
+        cy.get('@onChangeSpy').should('have.been.calledWith', 'This InputHey');
     });
 
     it('Event Triggers when hitting enter', () => {
