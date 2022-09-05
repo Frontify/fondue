@@ -59,7 +59,7 @@
         "url": "https://github.com/frontify/fondue/issues"
     },
     "devDependencies": {
-        "@cypress/vite-dev-server": "3.0.0",
+        "@cypress/vite-dev-server": "^3.1.1",
         "@frontify/eslint-config-react": "^0.15.2",
         "@frontify/fondue-icons": "^0.1.11",
         "@storybook/addon-actions": "6.5.9",
@@ -79,7 +79,7 @@
         "chalk": "5.0.1",
         "concat": "1.0.3",
         "cross-env": "7.0.3",
-        "cypress": "^10.6.0",
+        "cypress": "^10.7.0",
         "cypress-real-events": "^1.7.1",
         "eslint": "8.20.0",
         "eslint-plugin-jsx-a11y": "6.6.1",

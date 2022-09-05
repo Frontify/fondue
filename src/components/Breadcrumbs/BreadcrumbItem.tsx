@@ -23,13 +23,25 @@ type BreadcrumbItemProps = Pick<Breadcrumb, 'label' | 'link' | 'onClick'> & {
     showSeparator: boolean;
 };
 
+export const getElementType = (link: BreadcrumbItemProps['link'], onClick: BreadcrumbItemProps['onClick']) => {
+    if (link) {
+        return 'a';
+    } else if (onClick) {
+        return 'button';
+    }
+    return 'span';
+};
+
 export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, showSeparator }) => {
     const ref = useRef<HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null>(null);
+
+    const contentElementType = getElementType(link, onClick);
+
     const { itemProps } = useBreadcrumbItem(
         {
             isCurrent: false,
             children: label,
-            elementType: link ? 'a' : onClick ? 'button' : 'span',
+            elementType: contentElementType,
         },
         ref,
     );
@@ -41,7 +53,7 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
             className="tw-flex tw-items-center tw-text-black-80 hover:tw-text-black-100 tw-text-xs dark:tw-text-black-10 dark:hover:tw-text-black-30 tw-transition-colors"
             data-test-id="breadcrumb-item"
         >
-            {link ? (
+            {contentElementType === 'a' && (
                 <a
                     ref={ref as RefObject<HTMLAnchorElement>}
                     {...props}
@@ -50,7 +62,8 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
                 >
                     {label}
                 </a>
-            ) : onClick ? (
+            )}
+            {contentElementType === 'button' && (
                 <button
                     ref={ref as RefObject<HTMLButtonElement>}
                     type="button"
@@ -60,7 +73,8 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
                 >
                     {label}
                 </button>
-            ) : (
+            )}
+            {contentElementType === 'span' && (
                 <span ref={ref as RefObject<HTMLSpanElement>} {...props} className={isFocusVisible ? FOCUS_STYLE : ''}>
                     {label}
                 </span>
