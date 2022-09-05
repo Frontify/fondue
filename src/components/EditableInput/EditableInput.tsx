@@ -51,7 +51,7 @@ export const EditableInput = ({ name, targetItemId, onEditableSave, children }: 
             {showInput ? (
                 <div className="tw-flex tw-items-center">
                     <div
-                        data-test-id="node-editable"
+                        data-test-id="editable-input"
                         className="tw-flex tw-items-center tw-h-6 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-base"
                     >
                         <input

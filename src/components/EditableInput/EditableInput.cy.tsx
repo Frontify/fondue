@@ -3,7 +3,7 @@ import { EditableInput } from '@components/EditableInput/EditableInput';
 
 const EDITABLE_CONTAINER = '[data-test-id=editable-node-container]';
 const EDITABLE_LINK_NAME = '[data-test-id=node-link-name]';
-const EDITABLE_NODE = '[data-test-id=node-editable]';
+const EDITABLE_NODE = '[data-test-id=editable-input]';
 
 describe('EditableInput', () => {
     beforeEach('Setup component', () => {
