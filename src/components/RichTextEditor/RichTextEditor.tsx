@@ -12,7 +12,6 @@ import { DesignTokens } from './types';
 import { EditorActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
-// import { getEditorConfig } from './utils/editorConfig';
 import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './utils/textStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
@@ -30,7 +29,7 @@ export type RichTextEditorProps = {
     designTokens?: DesignTokens;
     actions?: EditorActions[][];
     position?: Position;
-    plugins: Plugins[];
+    plugins?: Plugins;
 };
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
@@ -95,10 +94,8 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
 
     const PositioningWrapper = EditorPositioningWrapper[position];
-
     const config = loadPlugins(plugins);
-    // const config = getEditorConfig();
-    console.log(config);
+    // console.log(config);
 
     return (
         <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
@@ -108,7 +105,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     initialValue={parseRawValue(initialValue)}
                     onChange={onChange}
                     editableProps={editableProps}
-                    plugins={config}
+                    plugins={config.create()}
                 >
                     <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
                 </Plate>

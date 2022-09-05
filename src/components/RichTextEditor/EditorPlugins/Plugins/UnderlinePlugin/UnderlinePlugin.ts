@@ -2,9 +2,9 @@
 
 import { MARK_UNDERLINE, createUnderlinePlugin } from '@udecode/plate';
 import { UnderlineElement } from './UnderlineElement';
-import { EditorPlugin } from '../EditorPlugin';
+import { Plugin } from '../../types';
 
-export class UnderlinePlugin implements EditorPlugin {
+export class UnderlinePlugin implements Plugin {
     public id = MARK_UNDERLINE;
     public element = UnderlineElement;
 
