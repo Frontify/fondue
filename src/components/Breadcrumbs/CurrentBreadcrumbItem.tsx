@@ -6,6 +6,7 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import React, { FC, RefObject, useRef } from 'react';
 import { Breadcrumb } from './Breadcrumbs';
+import { getElementType } from './BreadcrumbItem';
 
 const ItemWithBadges: FC<{ badges?: BadgeProps[] }> = ({ badges, children }) => (
     <span className="tw-inline-flex tw-gap-x-2 tw-items-center">
@@ -30,11 +31,12 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
     onClick,
 }) => {
     const ref = useRef<HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null>(null);
+    const contentElementType = getElementType(link, onClick);
     const { itemProps } = useBreadcrumbItem(
         {
             isCurrent: true,
             children: label,
-            elementType: link ? 'a' : onClick ? 'button' : 'span',
+            elementType: contentElementType,
         },
         ref,
     );
@@ -48,7 +50,7 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
             className="tw-w-full tw-inline-flex tw-align-middle tw-mt-1 tw-gap-x-1 tw-text-m tw-text-black dark:tw-text-white"
             data-test-id="breadcrumb-item"
         >
-            {link ? (
+            {contentElementType === 'a' && (
                 <ItemWithBadges badges={badges}>
                     <a
                         ref={ref as RefObject<HTMLAnchorElement>}
@@ -60,7 +62,8 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
                         <span className={merge(['tw-leading-4', bold ? 'tw-font-bold' : ''])}>{label}</span>
                     </a>
                 </ItemWithBadges>
-            ) : onClick ? (
+            )}
+            {contentElementType === 'button' && (
                 <ItemWithBadges badges={badges}>
                     <button
                         ref={ref as RefObject<HTMLButtonElement>}
@@ -73,7 +76,8 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
                         {label}
                     </button>
                 </ItemWithBadges>
-            ) : (
+            )}
+            {contentElementType === 'span' && (
                 <>
                     {decorator}
                     <ItemWithBadges badges={badges}>
