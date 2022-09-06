@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { PlatePlugin, PlatePluginComponent, createPlateUI, createPlugins, usePlateEditorRef } from '@udecode/plate';
-import { Plugins, Plugin } from './plugins/types';
+import { Plugin, Plugins } from './plugins/types';
 import { LoadPluginsReturn, ObjectType, UnknownObject } from './types';
 import { ButtonGroupWrapper } from './Plugins/helper';
 import { Toolbar } from './Toolbar';
