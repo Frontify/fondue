@@ -15,6 +15,7 @@ export type ColorPickerProps = {
     setFormat: (id: ColorFormat) => void;
     onSelect: (color: Color) => void;
     showPreview?: boolean;
+    showSlider?: boolean;
 };
 
 enum ColorType {
@@ -34,6 +35,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({
     setFormat,
     showPreview = true,
     currentFormat = ColorFormat.Hex,
+    showSlider = true,
 }) => {
     const [colorType, setColorType] = useState(ColorType.Brand);
 
@@ -41,7 +43,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({
         <div className="tw-w-[400px] tw-relative">
             {showPreview && <ColorPreview color={currentColor} />}
             <div className="tw-p-5 tw-flex tw-flex-col tw-gap-2">
-                {palettes && (
+                {palettes && showSlider && (
                     <Slider
                         items={colorTypes}
                         activeItemId={colorType}

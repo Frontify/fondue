@@ -37,6 +37,10 @@ const Template: Story<ColorPickerProps> = (args) => {
 
 export const OnlyCustomColor = Template.bind({});
 
+export const OnlyBrandColor = Template.bind({});
+
+OnlyBrandColor.args = { palettes: EXAMPLE_PALETTES, showSlider: false };
+
 export const WithBrandColors = Template.bind({});
 
 WithBrandColors.args = { palettes: EXAMPLE_PALETTES };
