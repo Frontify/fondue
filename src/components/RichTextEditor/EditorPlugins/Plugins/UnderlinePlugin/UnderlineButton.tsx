@@ -2,15 +2,15 @@
 
 import React from 'react';
 import { MarkToolbarButton, getPluginType } from '@udecode/plate';
-import { IconSize, IconTextFormatBold } from '@foundation/Icon';
+import { IconSize, IconTextFormatUnderline } from '@foundation/Icon';
 import { IconStylingWrapper, buttonClassNames, buttonStyles } from '../helper';
 import { ButtonProps } from '../types';
 
-export const BoldButton = ({ editor, id }: ButtonProps) => (
+export const UnderlineButton = ({ editor, id }: ButtonProps) => (
     <MarkToolbarButton
         key={id}
         type={getPluginType(editor, id)}
-        icon={<IconStylingWrapper icon={<IconTextFormatBold size={IconSize.Size24} />} />}
+        icon={<IconStylingWrapper icon={<IconTextFormatUnderline size={IconSize.Size24} />} />}
         classNames={buttonClassNames}
         styles={buttonStyles}
     />

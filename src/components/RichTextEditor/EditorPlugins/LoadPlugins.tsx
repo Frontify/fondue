@@ -36,7 +36,7 @@ export const LoadPlugins = (editorId: string, plugins: Plugins): LoadPluginsRetu
                         return <ButtonGroupWrapper index={index}>I am button</ButtonGroupWrapper>;
                     }
 
-                    return 'Only button';
+                    return group.button({ editor, id: group.id });
                 })}
             </>
         ),

@@ -7,6 +7,7 @@ import { UnknownObject } from '../types';
 export interface Plugin {
     id: string;
     element: PlatePluginComponent<any>;
+    button: ({ editor, id }: ButtonProps) => JSX.Element;
     plugins: () => PlatePlugin<UnknownObject, any>[];
 }
 
@@ -17,6 +18,6 @@ export type IconStylingWrapperProps = {
 };
 
 export type ButtonProps = {
-    key: string;
+    id: string;
     editor: PlateEditor<UnknownObject>;
 };
