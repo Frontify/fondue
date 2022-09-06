@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// import { usePlateEditorRef } from '@udecode/plate';
 import React, { ReactNode } from 'react';
 import { IconStylingWrapperProps } from './types';
 
@@ -17,8 +16,6 @@ export const IconStylingWrapper = ({ icon }: IconStylingWrapperProps) => (
 export type ButtonGroupProps = {
     index: number;
     children?: ReactNode;
-    // editorId?: string;
-    // actions: EditorActions[];
 };
 
 export const ButtonGroupWrapper = ({ index, children }: ButtonGroupProps) => {
