@@ -13,15 +13,12 @@ export const LoadPlugins = (editorId: string, plugins: Plugins): LoadPluginsRetu
     const plateComponents: ObjectType<PlatePluginComponent<any>> = {};
     const platePlugins: PlatePlugin<UnknownObject, UnknownObject>[] = [];
 
-    for (const groupPlugin of plugins) {
-        if (Array.isArray(groupPlugin)) {
-            for (const plugin of groupPlugin) {
-                plateComponents[plugin.id] = plugin.element;
-                platePlugins.push(...plugin.plugins());
-            }
-        } else {
-            plateComponents[groupPlugin.id] = groupPlugin.element;
-            platePlugins.push(...groupPlugin.plugins());
+    for (const group of plugins) {
+        const groupOfPlugins: Plugin[] = Array.isArray(group) ? group : [group];
+
+        for (const plugin of groupOfPlugins) {
+            plateComponents[plugin.id] = plugin.element;
+            platePlugins.push(...plugin.plugins());
         }
     }
 
