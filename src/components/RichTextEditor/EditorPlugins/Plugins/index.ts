@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Plugins } from '../types';
+import { Plugins } from './types';
 import { BoldPlugin } from './BoldPlugin';
 import { ItalicPlugin } from './ItalicPlugin';
 import { UnderlinePlugin } from './UnderlinePlugin';
@@ -19,3 +19,5 @@ export default {
     UnderlinePlugin,
     StrikethroughPlugin,
 };
+
+export * from './types';

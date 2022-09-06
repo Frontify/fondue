@@ -2,7 +2,7 @@
 
 import { MARK_UNDERLINE, createUnderlinePlugin } from '@udecode/plate';
 import { UnderlineElement } from './UnderlineElement';
-import { Plugin } from '../../types';
+import { Plugin } from '../types';
 
 export class UnderlinePlugin implements Plugin {
     public id = MARK_UNDERLINE;

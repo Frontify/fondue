@@ -2,7 +2,7 @@
 
 import { MARK_ITALIC, createItalicPlugin } from '@udecode/plate';
 import { ItalicElement } from './ItalicElement';
-import { Plugin } from '../../types';
+import { Plugin } from '../types';
 
 export class ItalicPlugin implements Plugin {
     public id = MARK_ITALIC;

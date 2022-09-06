@@ -16,7 +16,7 @@ import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './utils/textStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
-import { Plugins, defaultPlugins, loadPlugins } from './EditorPlugins';
+import { LoadPlugins, Plugins, defaultPlugins } from './EditorPlugins';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -94,7 +94,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
 
     const PositioningWrapper = EditorPositioningWrapper[position];
-    const config = loadPlugins(plugins);
+    const config = LoadPlugins(editorId, plugins);
     // console.log(config);
 
     return (
@@ -107,6 +107,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     editableProps={editableProps}
                     plugins={config.create()}
                 >
+                    {config.toolbar()}
                     <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
                 </Plate>
             </PositioningWrapper.PlateWrapper>
