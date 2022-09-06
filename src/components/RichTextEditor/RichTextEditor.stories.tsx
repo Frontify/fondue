@@ -2,11 +2,11 @@
 
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
+import { Position } from './EditorPositioningWrapper';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
-import { Position } from './EditorPositioningWrapper';
 import { EditorActions } from './utils/actions';
-import { IPSUM, checkboxValue, customDesignTokens, htmlValue, nodesToSerialize, value } from './utils/exampleValues';
+import { checkboxValue, customDesignTokens, htmlValue, IPSUM, nodesToSerialize, value } from './utils/exampleValues';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -137,7 +137,6 @@ WithCustomControls.args = {
 
 export const WithToolbarPositioning = RichTextEditorTemplate.bind({});
 WithToolbarPositioning.args = {
-    value: htmlValue,
     position: Position.TOP,
 };
 

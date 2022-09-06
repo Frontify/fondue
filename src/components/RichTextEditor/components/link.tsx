@@ -14,14 +14,21 @@ export const LinkElement: FC<PlateRenderElementProps> = (props) => {
     const { children, element, editor } = props;
 
     // Because an old version was already used in clarify, it must be ensured that the element can also handle the old structure.
-    const {
-        chosenLink = {
-            searchResult: {
-                link: element.url,
-            },
-            openInNewTab: false,
-        },
-    } = element;
+    let chosenLink: ChosenLink = {
+        searchResult: null,
+        openInNewTab: false,
+    };
+
+    if (element.url) {
+        chosenLink.searchResult = {
+            icon: '',
+            title: '',
+            id: '',
+            link: element.url as string,
+        };
+    } else if (element.chosenLink) {
+        chosenLink = element.chosenLink as ChosenLink;
+    }
 
     const [isLinkChooserPreviewFlyoutOpen, setIsLinkChooserPreviewFlyoutOpen] = useState<boolean>(false);
     const [isLinkChooserFlyoutOpen, setIsLinkChooserFlyoutOpen] = useState<boolean>(false);
@@ -29,21 +36,8 @@ export const LinkElement: FC<PlateRenderElementProps> = (props) => {
 
     const isReadOnly = useEditableProps(editor).readOnly;
 
-    const getHref = () => {
-        if (!chosenLink || !chosenLink.searchResult) {
-            return '';
-        }
-        return chosenLink.searchResult.link;
-    };
-
-    const getTarget = () => {
-        const TARGET_DEFAULT = '_self';
-        const TARGET_BLANK = '_blank';
-        if (!chosenLink || !chosenLink.openInNewTab) {
-            return TARGET_DEFAULT;
-        }
-        return TARGET_BLANK;
-    };
+    const href = chosenLink?.searchResult?.link || '';
+    const hrefTarget = chosenLink?.openInNewTab ? '_blank' : '_self';
 
     const getLinkFromLinkChooser = (prevLink: ChosenLink): Promise<ChosenLink | void> => {
         setPrevChosenLink(prevLink);
@@ -80,8 +74,8 @@ export const LinkElement: FC<PlateRenderElementProps> = (props) => {
             {isReadOnly ? (
                 <a
                     data-chosen-link={JSON.stringify(chosenLink)}
-                    href={getHref()}
-                    target={getTarget()}
+                    href={href}
+                    target={hrefTarget}
                     rel="noreferrer"
                     className={LINK_CLASSES}
                 >
@@ -92,8 +86,8 @@ export const LinkElement: FC<PlateRenderElementProps> = (props) => {
                     <a
                         onClick={() => setIsLinkChooserPreviewFlyoutOpen(true)}
                         data-chosen-link={JSON.stringify(chosenLink)}
-                        href={getHref()}
-                        target={getTarget()}
+                        href={href}
+                        target={hrefTarget}
                         rel="noreferrer"
                         className={LINK_CLASSES}
                     >
@@ -105,7 +99,7 @@ export const LinkElement: FC<PlateRenderElementProps> = (props) => {
                         trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLDivElement>) => (
                             <span ref={ref} aria-label={ariaLabel}></span>
                         )}
-                        href={getHref()}
+                        href={href}
                         onEditClick={onEdit}
                         onRemoveClick={onRemove}
                     />
