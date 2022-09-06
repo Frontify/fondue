@@ -15,8 +15,7 @@ export const defaultPlugins: Plugins = [
     new BoldPlugin(),
     new ItalicPlugin(),
     [new BoldPlugin(), new ItalicPlugin(), new UnderlinePlugin(), new StrikethroughPlugin(), new CodePlugin()],
-    [new AlignPlugin()],
-    [new UnorderedListPlugin(), new CheckboxListPlugin(), new OrderedListPlugin()],
+    [new AlignPlugin(), new UnorderedListPlugin(), new CheckboxListPlugin(), new OrderedListPlugin()],
 ];
 
 export default {

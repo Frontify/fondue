@@ -11,7 +11,7 @@ export const AlignButtons = ({ id }: ButtonProps) => (
     <>
         <AlignLeftButton id={id} />
         <AlignCenterButton id={id} />
-        <AlignJustifyButton id={id} />
         <AlignRightButton id={id} />
+        <AlignJustifyButton id={id} />
     </>
 );
