@@ -9,11 +9,13 @@ import { CodePlugin } from './CodePlugin';
 import { UnorderedListPlugin } from './UnorderedListPlugin';
 import { OrderedListPlugin } from './OrderedListPlugin';
 import { CheckboxListPlugin } from './CheckboxListPlugin';
+import { AlignPlugin } from './AlignPlugin';
 
 export const defaultPlugins: Plugins = [
     new BoldPlugin(),
     new ItalicPlugin(),
     [new BoldPlugin(), new ItalicPlugin(), new UnderlinePlugin(), new StrikethroughPlugin(), new CodePlugin()],
+    [new AlignPlugin()],
     [new UnorderedListPlugin(), new CheckboxListPlugin(), new OrderedListPlugin()],
 ];
 
@@ -26,6 +28,7 @@ export default {
     UnorderedListPlugin,
     OrderedListPlugin,
     CheckboxListPlugin,
+    AlignPlugin,
 };
 
 export * from './types';

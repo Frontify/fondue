@@ -1,7 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { PlatePlugin, PlatePluginComponent, createPlateUI, createPlugins, usePlateEditorRef } from '@udecode/plate';
+import {
+    PlatePlugin,
+    PlatePluginComponent,
+    createParagraphPlugin,
+    createPlateUI,
+    createPlugins,
+    usePlateEditorRef,
+} from '@udecode/plate';
 import { Plugin, Plugins } from './plugins/types';
 import { LoadPluginsReturn, ObjectType, UnknownObject } from './types';
 import { ButtonGroupWrapper } from './Plugins/helper';
@@ -11,13 +18,16 @@ export const LoadPlugins = (editorId: string, plugins: Plugins): LoadPluginsRetu
     const editor = usePlateEditorRef(editorId);
 
     const plateComponents: ObjectType<PlatePluginComponent<any>> = {};
-    const platePlugins: PlatePlugin<UnknownObject, UnknownObject>[] = [];
+    const platePlugins: PlatePlugin<UnknownObject, UnknownObject>[] = [createParagraphPlugin()];
 
     for (const group of plugins) {
         const groupOfPlugins: Plugin[] = Array.isArray(group) ? group : [group];
 
         for (const plugin of groupOfPlugins) {
-            plateComponents[plugin.id] = plugin.element;
+            if (plugin.element) {
+                plateComponents[plugin.id] = plugin.element;
+            }
+
             platePlugins.push(...plugin.plugins());
         }
     }
@@ -35,9 +45,7 @@ export const LoadPlugins = (editorId: string, plugins: Plugins): LoadPluginsRetu
                     return (
                         <ButtonGroupWrapper index={index} key={index}>
                             {groupOfPlugins.map((plugin, idx) => (
-                                <div key={idx} data-plugin-id={plugin.id}>
-                                    {plugin.button({ editor, id: plugin.id })}
-                                </div>
+                                <plugin.button editor={editor} id={plugin.id} key={idx.toString()} />
                             ))}
                         </ButtonGroupWrapper>
                     );
