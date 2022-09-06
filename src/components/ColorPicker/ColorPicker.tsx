@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Slider } from '@components/Slider/Slider';
-import React, { FC, useState } from 'react';
+import React, { useState } from 'react';
 import { Color, ColorFormat, Palette } from '../../types/colors';
 import { BrandColorPicker } from './BrandColorPicker';
 import './ColorPicker.css';
@@ -15,6 +15,7 @@ export type ColorPickerProps = {
     setFormat: (id: ColorFormat) => void;
     onSelect: (color: Color) => void;
     showPreview?: boolean;
+    allowCustomColor?: boolean;
 };
 
 enum ColorType {
@@ -27,21 +28,22 @@ const colorTypes = [
     { id: ColorType.Custom, value: 'Custom' },
 ];
 
-export const ColorPicker: FC<ColorPickerProps> = ({
+export const ColorPicker = ({
     currentColor,
     palettes,
     onSelect,
     setFormat,
     showPreview = true,
     currentFormat = ColorFormat.Hex,
-}) => {
+    allowCustomColor = true,
+}: ColorPickerProps) => {
     const [colorType, setColorType] = useState(ColorType.Brand);
 
     return (
         <div className="tw-w-[400px] tw-relative">
             {showPreview && <ColorPreview color={currentColor} />}
             <div className="tw-p-5 tw-flex tw-flex-col tw-gap-2">
-                {palettes && (
+                {palettes && allowCustomColor && (
                     <Slider
                         items={colorTypes}
                         activeItemId={colorType}
