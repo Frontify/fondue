@@ -96,6 +96,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const PositioningWrapper = EditorPositioningWrapper[position];
     const config = LoadPlugins(editorId, plugins);
 
+    console.log(config.create());
     return (
         <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
             <PositioningWrapper.PlateWrapper ref={editorRef}>

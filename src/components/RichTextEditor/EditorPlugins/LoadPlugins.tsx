@@ -38,7 +38,9 @@ export const LoadPlugins = (editorId: string, plugins: Plugins): LoadPluginsRetu
                     return (
                         <ButtonGroupWrapper index={index} key={index}>
                             {groupOfPlugins.map((plugin, idx) => (
-                                <div key={idx}> {plugin.button({ editor, id: plugin.id })}</div>
+                                <div key={idx} data-plugin-id={plugin.id}>
+                                    {plugin.button({ editor, id: plugin.id })}
+                                </div>
                             ))}
                         </ButtonGroupWrapper>
                     );
