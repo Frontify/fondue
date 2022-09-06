@@ -4,8 +4,9 @@ import { Meta, Story } from '@storybook/react';
 import React from 'react';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
+import { Position } from './EditorPositioningWrapper';
 import { EditorActions } from './utils/actions';
-import { checkboxValue, customDesignTokens, htmlValue, IPSUM, nodesToSerialize, value } from './utils/exampleValues';
+import { IPSUM, checkboxValue, customDesignTokens, htmlValue, nodesToSerialize, value } from './utils/exampleValues';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -15,11 +16,13 @@ export default {
         placeholder: 'Some placeholder',
         readonly: false,
         clear: false,
+        position: Position.FLOATING,
     },
     argTypes: {
         onTextChange: { action: 'onTextChange' },
         onBlur: { action: 'onBlur' },
-        vale: { type: 'string' },
+        value: { type: 'string' },
+        position: { options: Object.values(Position) },
     },
 } as Meta;
 
@@ -130,6 +133,12 @@ WithCustomControls.args = {
         [EditorActions.ITALIC, EditorActions.BOLD, EditorActions.UNDERLINE],
         [EditorActions.ORDERED_LIST, EditorActions.UNORDERED_LIST],
     ],
+};
+
+export const WithToolbarPositioning = RichTextEditorTemplate.bind({});
+WithToolbarPositioning.args = {
+    value: htmlValue,
+    position: Position.TOP,
 };
 
 export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
