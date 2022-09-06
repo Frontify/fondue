@@ -13,5 +13,6 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-import "cypress-real-events/support";
-import "../../src/styles.css";
+import 'cypress-real-events/support';
+import '../../src/styles.css';
+import '@cypress/code-coverage/support';
