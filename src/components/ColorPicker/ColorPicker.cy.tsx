@@ -19,10 +19,14 @@ const TEXT_ITEM_ID = '[data-test-id=slider-item-text]';
 type Props = {
     palettes?: Palette[];
     currentColor?: Color;
-    showSlider?: boolean;
+    allowCustomColor?: boolean;
 };
 
-const Component: FC<Props> = ({ palettes, currentColor = { red: 255, green: 0, blue: 0 }, showSlider = true }) => {
+const Component: FC<Props> = ({
+    palettes,
+    currentColor = { red: 255, green: 0, blue: 0 },
+    allowCustomColor = true,
+}) => {
     const [selectedColor, setSelectedColor] = useState<Color>(currentColor);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
 
@@ -33,7 +37,7 @@ const Component: FC<Props> = ({ palettes, currentColor = { red: 255, green: 0, b
             setFormat={setCurrentFormat}
             onSelect={(color) => setSelectedColor(color)}
             palettes={palettes}
-            showSlider={showSlider}
+            allowCustomColor={allowCustomColor}
         />
     );
 };
@@ -61,7 +65,7 @@ describe('ColorPicker Component', () => {
     });
 
     it('should only render brand color picker', () => {
-        cy.mount(<Component palettes={EXAMPLE_PALETTES} showSlider={false} />);
+        cy.mount(<Component palettes={EXAMPLE_PALETTES} allowCustomColor={false} />);
 
         cy.get(BRAND_COLOR_PICKER_ID).should('exist');
         cy.get(BRAND_COLOR_ID).should('have.length', 18);

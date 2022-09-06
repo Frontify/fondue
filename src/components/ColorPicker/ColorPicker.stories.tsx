@@ -39,7 +39,7 @@ export const OnlyCustomColor = Template.bind({});
 
 export const OnlyBrandColor = Template.bind({});
 
-OnlyBrandColor.args = { palettes: EXAMPLE_PALETTES, showSlider: false };
+OnlyBrandColor.args = { palettes: EXAMPLE_PALETTES, allowCustomColor: false };
 
 export const WithBrandColors = Template.bind({});
 
