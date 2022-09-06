@@ -37,7 +37,7 @@ const TOGGLE_ID = '[data-test-id=toggle]';
 const SUB_TREE_ID = '[data-test-id=sub-tree]';
 const DROP_ZONE_ID = '[data-test-id=drop-zone]';
 const BADGE_ID = '[data-test-id=node-badge]';
-const NODE_EDITABLE_ID = '[data-test-id=node-editable]';
+const NODE_EDITABLE_ID = '[data-test-id=editable-input]';
 
 describe('Tree Component', () => {
     // TODO check if DropZones are not present when no onDrop props is provided. Refactoring needed first

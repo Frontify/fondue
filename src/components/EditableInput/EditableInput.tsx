@@ -9,14 +9,14 @@ import React, {
     useState,
 } from 'react';
 
-export interface EditableNodeItem {
+export interface EditableInputProps {
     name: string;
     targetItemId: string;
     onEditableSave: (targetItemId: string, value: string) => void;
-    children: ReactNode;
+    children?: ReactNode;
 }
 
-export const EditableNodeItem = ({ name, targetItemId, onEditableSave, children }: EditableNodeItem) => {
+export const EditableInput = ({ name, targetItemId, onEditableSave, children }: EditableInputProps) => {
     const [inputValue, setInputValue] = useState(name);
     const [showInput, setShowInput] = useState<boolean>(false);
 
@@ -47,17 +47,17 @@ export const EditableNodeItem = ({ name, targetItemId, onEditableSave, children 
     };
 
     return (
-        <div>
+        <div data-test-id="editable-node-container">
             {showInput ? (
                 <div className="tw-flex tw-items-center">
                     <div
-                        data-test-id="node-editable"
-                        className="tw-flex tw-items-center tw-h-6 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent"
+                        data-test-id="editable-input"
+                        className="tw-flex tw-items-center tw-h-6 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-base"
                     >
                         <input
                             ref={inputRef}
                             type="text"
-                            className="tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-text-black tw-placeholder-black-60 dark:tw-text-white"
+                            className="tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-base tw-hide-input-arrows tw-text-text tw-placeholder-text"
                             value={inputValue}
                             onChange={handleInputChange}
                             onKeyDown={handleKeyDown}
