@@ -2,43 +2,48 @@
 
 import React from 'react';
 import { PlatePlugin, PlatePluginComponent, createPlateUI, createPlugins, usePlateEditorRef } from '@udecode/plate';
-import { Plugins } from './plugins/types';
+import { Plugins, Plugin } from './plugins/types';
 import { LoadPluginsReturn, ObjectType, UnknownObject } from './types';
 import { ButtonGroupWrapper } from './Plugins/helper';
+import { Toolbar } from './Toolbar';
 
 export const LoadPlugins = (editorId: string, plugins: Plugins): LoadPluginsReturn => {
     const editor = usePlateEditorRef(editorId);
-    console.log(editor);
-    const allComponents: ObjectType<PlatePluginComponent<any>> = {};
-    const arrayOfPlugins: PlatePlugin<UnknownObject, UnknownObject>[] = [];
+
+    const plateComponents: ObjectType<PlatePluginComponent<any>> = {};
+    const platePlugins: PlatePlugin<UnknownObject, UnknownObject>[] = [];
 
     for (const groupPlugin of plugins) {
         if (Array.isArray(groupPlugin)) {
             for (const plugin of groupPlugin) {
-                allComponents[plugin.id] = plugin.element;
-                arrayOfPlugins.push(...plugin.plugins());
+                plateComponents[plugin.id] = plugin.element;
+                platePlugins.push(...plugin.plugins());
             }
         } else {
-            allComponents[groupPlugin.id] = groupPlugin.element;
-            arrayOfPlugins.push(...groupPlugin.plugins());
+            plateComponents[groupPlugin.id] = groupPlugin.element;
+            platePlugins.push(...groupPlugin.plugins());
         }
     }
 
     return {
         create: () =>
-            createPlugins(arrayOfPlugins, {
-                components: createPlateUI(allComponents),
+            createPlugins(platePlugins, {
+                components: createPlateUI(plateComponents),
             }),
         toolbar: () => (
-            <>
+            <Toolbar>
                 {plugins.map((group, index) => {
-                    if (Array.isArray(group)) {
-                        return <ButtonGroupWrapper index={index}>I am button</ButtonGroupWrapper>;
-                    }
+                    const groupOfPlugins: Plugin[] = Array.isArray(group) ? group : [group];
 
-                    return group.button({ editor, id: group.id });
+                    return (
+                        <ButtonGroupWrapper index={index} key={index}>
+                            {groupOfPlugins.map((plugin, idx) => (
+                                <div key={idx}> {plugin.button({ editor, id: plugin.id })}</div>
+                            ))}
+                        </ButtonGroupWrapper>
+                    );
                 })}
-            </>
+            </Toolbar>
         ),
     };
 };
