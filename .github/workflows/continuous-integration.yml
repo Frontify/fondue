@@ -14,10 +14,6 @@ env:
 jobs:
     component-tests:
         runs-on: ubuntu-latest
-        strategy:
-            fail-fast: false
-            matrix:
-                containers: [ 0, 1, 2, 3, 4, 5, 6 ]
 
         steps:
             -   name: Checkout current commit
@@ -43,7 +39,7 @@ jobs:
                 run: npm ci
 
             -   name: Component Tests
-                run: npm run test:file -- $(node ./.github/lib/cypress-matrix.js ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})
+                run: npm run test
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
