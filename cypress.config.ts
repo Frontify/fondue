@@ -16,5 +16,6 @@ export default defineConfig({
             framework: 'react',
             bundler: 'vite',
         },
+        experimentalSingleTabRunMode: true,
     },
 });
