@@ -28,7 +28,10 @@ export type RichTextEditorProps = {
     clear?: boolean;
     designTokens?: DesignTokens;
     actions?: EditorActions[][];
+<<<<<<< HEAD
     padding?: number;
+=======
+>>>>>>> f113cbebb5d2a8d35caad3291f5528e7356072c5
     position?: Position;
 };
 
@@ -42,7 +45,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     actions = [],
     onTextChange,
     onBlur,
+<<<<<<< HEAD
     padding = 0,
+=======
+>>>>>>> f113cbebb5d2a8d35caad3291f5528e7356072c5
     position = Position.FLOATING,
 }) => {
     const editorId = useMemoizedId(id);
