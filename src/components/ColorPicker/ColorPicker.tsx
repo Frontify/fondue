@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Slider } from '@components/Slider/Slider';
-import React, { FC, useState } from 'react';
+import React, { useState } from 'react';
 import { Color, ColorFormat, Palette } from '../../types/colors';
 import { BrandColorPicker } from './BrandColorPicker';
 import './ColorPicker.css';
@@ -28,7 +28,7 @@ const colorTypes = [
     { id: ColorType.Custom, value: 'Custom' },
 ];
 
-export const ColorPicker: FC<ColorPickerProps> = ({
+export const ColorPicker = ({
     currentColor,
     palettes,
     onSelect,
@@ -36,7 +36,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({
     showPreview = true,
     currentFormat = ColorFormat.Hex,
     allowCustomColor = true,
-}) => {
+}: ColorPickerProps) => {
     const [colorType, setColorType] = useState(ColorType.Brand);
 
     return (

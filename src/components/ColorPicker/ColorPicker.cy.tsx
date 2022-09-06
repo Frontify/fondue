@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useState } from 'react';
+import React, { useState } from 'react';
 import { Color, ColorFormat, Palette } from '../../types/colors';
 import { ColorPicker } from './ColorPicker';
 import { EXAMPLE_PALETTES } from './example-palettes';
@@ -22,11 +22,7 @@ type Props = {
     allowCustomColor?: boolean;
 };
 
-const Component: FC<Props> = ({
-    palettes,
-    currentColor = { red: 255, green: 0, blue: 0 },
-    allowCustomColor = true,
-}) => {
+const Component = ({ palettes, currentColor = { red: 255, green: 0, blue: 0 }, allowCustomColor = true }: Props) => {
     const [selectedColor, setSelectedColor] = useState<Color>(currentColor);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
 
