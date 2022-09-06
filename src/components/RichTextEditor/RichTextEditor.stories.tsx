@@ -135,6 +135,12 @@ WithCustomControls.args = {
     ],
 };
 
+export const WithToolbarPositioning = RichTextEditorTemplate.bind({});
+WithToolbarPositioning.args = {
+    value: htmlValue,
+    position: Position.TOP,
+};
+
 export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
     const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
     return (
