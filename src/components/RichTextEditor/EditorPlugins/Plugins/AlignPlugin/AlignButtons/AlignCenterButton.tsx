@@ -3,7 +3,7 @@
 import React from 'react';
 import { AlignToolbarButton } from '@udecode/plate';
 import { IconSize, IconTextAlignmentCentre } from '@foundation/Icon';
-import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../helper';
+import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
 
 export const AlignCenterButton = ({ id }: { id: string }) => (
     <ButtonWrapper id={`${id}-center`}>
