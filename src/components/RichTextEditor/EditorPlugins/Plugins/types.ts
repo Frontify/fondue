@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { PlateEditor, PlatePlugin, PlatePluginComponent } from '@udecode/plate';
 import { UnknownObject } from '../types';
 
@@ -24,5 +24,5 @@ export type ButtonProps = {
 
 export type ButtonGroupProps = {
     index: number;
-    children?: JSX.Element;
+    children?: ReactNode;
 };
