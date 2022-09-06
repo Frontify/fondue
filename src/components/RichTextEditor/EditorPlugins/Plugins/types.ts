@@ -21,3 +21,8 @@ export type ButtonProps = {
     id: string;
     editor: PlateEditor<UnknownObject>;
 };
+
+export type ButtonGroupProps = {
+    index: number;
+    children?: JSX.Element;
+};
