@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TElement, getNodes, isElement, isType, usePlateEditorState } from '@udecode/plate';
+import { TElement, getNodeEntries, isElement, isType, usePlateEditorState } from '@udecode/plate';
 import { ListStyles } from '../TextStyleDropdown/DropdownTrigger';
 import { AvailableTextStyles } from '../types';
 import { TextStyles } from '../utils/textStyles';
@@ -12,7 +12,7 @@ export const useSelectedTextStyles = (editorId?: string): AvailableTextStyles[] 
     }
 
     return Array.from(
-        getNodes(editor, {
+        getNodeEntries(editor, {
             unhang: true,
             at: editor.selection,
             match: (node: TElement) =>
