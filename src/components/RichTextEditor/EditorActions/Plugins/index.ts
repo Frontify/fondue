@@ -13,8 +13,10 @@ import { AlignCenterPlugin, AlignJustifyPlugin, AlignLeftPlugin, AlignRightPlugi
 export const defaultEditorActions = new PluginComposer();
 defaultEditorActions
     .setElement([new ListItemMarkupElement(), new ListItemContentMarkupElement()])
-    .setPlugin([new BoldPlugin(), [new OrderedListPlugin(), new UnorderedListPlugin()]])
-    .setPlugin([[new AlignLeftPlugin(), new AlignCenterPlugin(), new AlignRightPlugin(), new AlignJustifyPlugin()]]);
+    .setPlugin([new BoldPlugin()])
+    .setPlugin([[new AlignLeftPlugin(), new AlignCenterPlugin(), new AlignRightPlugin(), new AlignJustifyPlugin()]])
+    .setPlugin([[new UnorderedListPlugin(), new OrderedListPlugin()]]);
 
 export * from './ListPlugin';
 export * from './BoldPlugin';
+export * from './AlignPlugin';
