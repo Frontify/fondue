@@ -36,6 +36,7 @@ export const OverflowMenu = ({ items }: OverflowMenuProps) => {
         <div data-test-id="overflow-menu" className="tw-relative tw-bottom-0 tw-top-0 tw-flex">
             <Button
                 ref={setMenuOpenerRef}
+                aria-label="Open overflow menu"
                 icon={<IconDotsHorizontal />}
                 solid={false}
                 rounding={ButtonRounding.Medium}

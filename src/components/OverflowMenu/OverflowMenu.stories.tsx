@@ -62,15 +62,32 @@ WithBoxAutoPositioning.decorators = [
     ),
 ];
 
+const Separator = () => (
+    <svg
+        aria-hidden="true"
+        width="13"
+        height="17"
+        viewBox="0 0 13 17"
+        fill="none"
+        className="tw-stroke-current tw-text-black-20"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <line x1="3.52447" y1="16.0623" x2="8.46874" y2="0.845385" />
+    </svg>
+);
+
 export const BeforeBreadcrumbItems = Template.bind({});
 BeforeBreadcrumbItems.args = { items: [...BUTTON_ITEMS] };
 BeforeBreadcrumbItems.decorators = [
     (StoryElement) => (
         <div>
-            <div className="tw-flex">
-                <StoryElement />
+            <ol className="tw-flex">
+                <li className="tw-flex tw-items-center">
+                    <StoryElement />
+                    <Separator />
+                </li>
                 <BreadcrumbItem label="Breadcrumb item 4" showSeparator={false} />
-            </div>
+            </ol>
             <small>
                 The separator should be handled by the <strong>Breadcrumbs</strong> component
             </small>
@@ -83,11 +100,14 @@ BetweenBreadcrumbItems.args = { items: [...BUTTON_ITEMS] };
 BetweenBreadcrumbItems.decorators = [
     (StoryElement) => (
         <div>
-            <div className="tw-flex">
+            <ol className="tw-flex">
                 <BreadcrumbItem label="Breadcrumb item 1" showSeparator={true} />
-                <StoryElement />
+                <li className="tw-flex tw-items-center">
+                    <StoryElement />
+                    <Separator />
+                </li>
                 <BreadcrumbItem label="Breadcrumb item 5" showSeparator={false} />
-            </div>
+            </ol>
             <small>
                 The separator should be handled by the <strong>Breadcrumbs</strong> component
             </small>
