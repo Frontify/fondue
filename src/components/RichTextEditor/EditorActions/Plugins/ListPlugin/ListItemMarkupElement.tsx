@@ -1,0 +1,13 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import React from 'react';
+import { ELEMENT_LI, PlateRenderElementProps } from '@udecode/plate';
+import { MarkupElement } from '../types';
+
+const ListItemMarkupElementTag = ({ attributes, children }: PlateRenderElementProps) => (
+    <li {...attributes}>{children}</li>
+);
+
+export class ListItemMarkupElement implements MarkupElement {
+    constructor(public id = ELEMENT_LI, public elementTag = ListItemMarkupElementTag) {}
+}

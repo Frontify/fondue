@@ -18,6 +18,7 @@ import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
 import { getEditorConfig } from './utils/editorConfig';
 import { LoadPlugins, Plugins, defaultPlugins } from './EditorPlugins';
+import { CreateEditorActions, defaultEditorActions } from './EditorActions';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -97,10 +98,14 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
 
     const PositioningWrapper = EditorPositioningWrapper[position];
-    const config = LoadPlugins(editorId, plugins);
-    console.log(config.create());
 
-    const editorConfig = withNew ? config.create() : getEditorConfig();
+    const config = LoadPlugins(editorId, plugins);
+    console.log('config', config.create());
+
+    const config2 = CreateEditorActions(editorId, defaultEditorActions);
+    console.log('config2', config2.create());
+
+    const editorConfig = withNew ? config2.create() : getEditorConfig();
 
     return (
         <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
@@ -112,11 +117,9 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     editableProps={editableProps}
                     plugins={editorConfig}
                 >
-                    {withNew ? (
-                        config.toolbar()
-                    ) : (
-                        <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
-                    )}
+                    {withNew && config2.toolbar()}
+                    {withNew && config.toolbar()}
+                    {!withNew && <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />}
                 </Plate>
             </PositioningWrapper.PlateWrapper>
         </RichTextEditorContext.Provider>
