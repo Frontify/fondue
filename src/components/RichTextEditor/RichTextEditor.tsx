@@ -16,6 +16,7 @@ import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './utils/textStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
+import { getEditorConfig } from './utils/editorConfig';
 import { LoadPlugins, Plugins, defaultPlugins } from './EditorPlugins';
 
 export type RichTextEditorProps = {
@@ -30,6 +31,7 @@ export type RichTextEditorProps = {
     actions?: EditorActions[][];
     position?: Position;
     plugins?: Plugins;
+    withNew?: boolean;
 };
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
@@ -44,6 +46,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     onBlur,
     position = Position.FLOATING,
     plugins = defaultPlugins,
+    withNew = false,
 }) => {
     const editorId = useMemoizedId(id);
     const { localValue } = useEditorState(editorId, clear);
@@ -95,8 +98,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     const PositioningWrapper = EditorPositioningWrapper[position];
     const config = LoadPlugins(editorId, plugins);
-
     console.log(config.create());
+
+    const editorConfig = withNew ? config.create() : getEditorConfig();
+
     return (
         <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
             <PositioningWrapper.PlateWrapper ref={editorRef}>
@@ -105,10 +110,13 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     initialValue={parseRawValue(initialValue)}
                     onChange={onChange}
                     editableProps={editableProps}
-                    plugins={config.create()}
+                    plugins={editorConfig}
                 >
-                    {config.toolbar()}
-                    <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
+                    {withNew ? (
+                        config.toolbar()
+                    ) : (
+                        <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
+                    )}
                 </Plate>
             </PositioningWrapper.PlateWrapper>
         </RichTextEditorContext.Provider>

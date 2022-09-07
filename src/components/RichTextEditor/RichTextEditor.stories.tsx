@@ -141,6 +141,13 @@ WithToolbarPositioning.args = {
     position: Position.TOP,
 };
 
+export const WithNewToolbar = RichTextEditorTemplate.bind({});
+WithNewToolbar.args = {
+    value: htmlValue,
+    position: Position.TOP,
+    withNew: true,
+};
+
 export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
     const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
     return (
