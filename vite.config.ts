@@ -50,7 +50,8 @@ export default defineConfig({
             exclude: ['node_modules', 'test/'],
             extension: ['.js', '.ts', '.vue'],
             requireEnv: true,
-            cypress: true,
+            forceBuildInstrument: true,
+            // cypress: true,
         }),
     ],
     build: {
@@ -60,7 +61,7 @@ export default defineConfig({
             name: 'Fondue',
         },
         sourcemap: true,
-        minify: true,
+        minify: false,
         rollupOptions: {
             external: [...dependencies, ...peerDependencies],
             output: [
