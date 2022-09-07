@@ -5,6 +5,6 @@ import { ButtonGroupWidths } from '@components/RichTextEditor/types';
 
 export type ToolbarWrapperProps = {
     children: ReactNode;
-    editorWidth?: number | undefined;
+    editorWidth?: number;
     toolbarButtonGroups?: ButtonGroupWidths[];
 };
