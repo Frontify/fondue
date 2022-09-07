@@ -62,7 +62,7 @@ export const getSizeClasses = (children: ReactNode, hasExtra: boolean, isSmall: 
     if (isCircular) {
         sizeClasses.push(isSmall ? 'tw-w-5' : 'tw-w-6');
     } else {
-        sizeClasses.push(...[isSmall ? 'tw-px-1.5' : 'tw-px-2.5', isSmall ? 'tw-gap-x-0' : 'tw-gap-x-0.5']);
+        sizeClasses.push(isSmall ? 'tw-px-1.5 tw-gap-x-0.5' : 'tw-px-2.5 tw-gap-x-1');
     }
     return sizeClasses.join(' ');
 };

@@ -59,7 +59,7 @@ export const Badge: FC<BadgeProps> = ({
                 <span
                     data-test-id="badge-status"
                     className={merge([
-                        'tw-w-2 tw-h-2 tw-rounded-full tw-flex-none',
+                        'tw-w-2 tw-h-2 tw-rounded-full tw-flex-none tw-m-0.5',
                         disabled && 'tw-opacity-30',
                         isBadgeStatus(status) && badgeStatusClasses[status],
                     ])}
