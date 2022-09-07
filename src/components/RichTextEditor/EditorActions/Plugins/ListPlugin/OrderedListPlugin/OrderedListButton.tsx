@@ -3,10 +3,10 @@
 import React from 'react';
 import { ListToolbarButton, getPluginType } from '@udecode/plate';
 import { IconListNumbers, IconSize } from '@foundation/Icon';
-import { ButtonProps } from '../../types';
+import { PluginButtonProps } from '../../types';
 import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
 
-export const OrderedListButton = ({ editor, id }: ButtonProps) => (
+export const OrderedListButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <ListToolbarButton
             type={getPluginType(editor, id)}

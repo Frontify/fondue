@@ -2,13 +2,13 @@
 
 import { PlatePlugin } from '@udecode/plate';
 import { UnknownObject } from '../types';
-import { ButtonProps } from './types';
+import { PluginButton } from './types';
 import type { MarkupElement } from './MarkupElement';
 
 export abstract class Plugin {
     constructor(
         private readonly _id: string,
-        private readonly _button: ({ editor, id }: ButtonProps) => JSX.Element,
+        private readonly _button: PluginButton,
         private readonly _markupElement: MarkupElement,
     ) {}
 

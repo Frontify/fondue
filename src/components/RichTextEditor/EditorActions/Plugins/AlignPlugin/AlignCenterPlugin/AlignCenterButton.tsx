@@ -3,10 +3,10 @@
 import React from 'react';
 import { AlignToolbarButton } from '@udecode/plate';
 import { IconSize, IconTextAlignmentCentre } from '@foundation/Icon';
-import { ButtonProps } from '../../types';
+import { PluginButtonProps } from '../../types';
 import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
 
-export const AlignCenterButton = ({ id }: ButtonProps) => (
+export const AlignCenterButton = ({ id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <AlignToolbarButton
             value="center"

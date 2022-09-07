@@ -4,9 +4,9 @@ import React from 'react';
 import { MarkToolbarButton, getPluginType } from '@udecode/plate';
 import { IconSize, IconTextFormatBold } from '@foundation/Icon';
 import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../helper';
-import { ButtonProps } from '../types';
+import { PluginButtonProps } from '../types';
 
-export const BoldButton = ({ editor, id }: ButtonProps) => (
+export const BoldButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <MarkToolbarButton
             key={id}

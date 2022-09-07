@@ -5,7 +5,7 @@ import { ReactElement, ReactNode } from 'react';
 import { UnknownObject } from '../types';
 import type { Plugin } from './Plugin';
 
-export type ButtonProps = {
+export type PluginButtonProps = {
     id: string;
     editor: PlateEditor<UnknownObject>;
     key?: string;
@@ -16,9 +16,10 @@ export type ButtonGroupProps = {
     children?: ReactNode;
 };
 
+export type PluginButton = ({ editor, id }: PluginButtonProps) => ReactElement;
 export type Button = {
     id: string;
-    button: ({ editor, id }: ButtonProps) => JSX.Element;
+    button: PluginButton;
 };
 export type Buttons = Button[][];
 
