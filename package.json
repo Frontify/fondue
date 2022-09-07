@@ -1,6 +1,6 @@
 {
     "name": "@frontify/fondue",
-    "version": "11.1.0",
+    "version": "11.3.0",
     "description": "Design system of Frontify",
     "main": "dist/index.umd.js",
     "unpkg": "dist/index.umd.js",
