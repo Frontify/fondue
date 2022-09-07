@@ -59,6 +59,7 @@
         "url": "https://github.com/frontify/fondue/issues"
     },
     "devDependencies": {
+        "@bahmutov/cypress-code-coverage": "^1.3.2",
         "@cypress/vite-dev-server": "^3.1.1",
         "@frontify/eslint-config-react": "^0.15.2",
         "@frontify/fondue-icons": "^0.1.13",

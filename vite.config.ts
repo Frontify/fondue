@@ -47,11 +47,11 @@ export default defineConfig({
         dts({ insertTypesEntry: true }),
         istanbul({
             include: 'src/*',
-            exclude: ['node_modules', 'test/'],
+            exclude: ['node_modules', 'test/', 'cypress/'],
             extension: ['.js', '.ts', '.vue'],
-            // requireEnv: true,
-            forceBuildInstrument: true,
-            // cypress: true,
+            requireEnv: false,
+            // forceBuildInstrument: true,
+            cypress: true,
         }),
     ],
     build: {
@@ -61,7 +61,7 @@ export default defineConfig({
             name: 'Fondue',
         },
         sourcemap: true,
-        minify: false,
+        minify: true,
         rollupOptions: {
             external: [...dependencies, ...peerDependencies],
             output: [
