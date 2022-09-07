@@ -2,7 +2,9 @@
 
 import { PlatePlugin, PlatePluginComponent, createParagraphPlugin } from '@udecode/plate';
 import { ObjectType, UnknownObject } from '../types';
-import { Button, Buttons, MarkupElement, Plugin, Plugins } from './types';
+import { MarkupElement } from './MarkupElement';
+import { Button, Buttons, Plugins } from './types';
+import type { Plugin } from './Plugin';
 
 export class PluginComposer {
     private platePlugins: Map<string, PlatePlugin<UnknownObject, UnknownObject>[]> = new Map();
@@ -17,7 +19,9 @@ export class PluginComposer {
         const markupElements = Array.isArray(markupElement) ? markupElement : [markupElement];
 
         for (const markupElement of markupElements) {
-            this.markupElements[markupElement.id] = markupElement.elementTag;
+            if (markupElement.elementTag) {
+                this.markupElements[markupElement.id] = markupElement.elementTag;
+            }
         }
 
         return this;
@@ -30,7 +34,9 @@ export class PluginComposer {
             const groupOfButtons = [];
             for (const plugin of groupOfPlugins) {
                 this.setElement(plugin.markupElement);
-                this.platePlugins.set(plugin.type, plugin.plugins());
+                if (plugin.id) {
+                    this.platePlugins.set(plugin.id, plugin.plugins());
+                }
 
                 groupOfButtons.push({
                     id: plugin.markupElement.id,

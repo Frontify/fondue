@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ELEMENT_OL, PlateRenderLeafProps } from '@udecode/plate';
-import { MarkupElement } from '../../types';
+import { MarkupElement } from '../../MarkupElement';
 
 export const OL_CLASSES = 'tw-list-decimal tw-pl-6';
 
@@ -12,6 +12,8 @@ export const OrderedListMarkupElementTag = ({ attributes, children }: PlateRende
     </ol>
 );
 
-export class OrderedListMarkupElement implements MarkupElement {
-    constructor(public id = ELEMENT_OL, public elementTag = OrderedListMarkupElementTag) {}
+export class OrderedListMarkupElement extends MarkupElement {
+    constructor(id = ELEMENT_OL, elementTag = OrderedListMarkupElementTag) {
+        super(id, elementTag);
+    }
 }

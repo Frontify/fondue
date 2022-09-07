@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { MARK_BOLD, PlateRenderLeafProps } from '@udecode/plate';
-import { MarkupElement } from '../types';
+import { MarkupElement } from '../MarkupElement';
 
 export const BOLD_CLASSES = 'tw-font-bold';
 
@@ -12,6 +12,8 @@ export const BoldMarkupElementTag = ({ attributes, children }: PlateRenderLeafPr
     </span>
 );
 
-export class BoldMarkupElement implements MarkupElement {
-    constructor(public id = MARK_BOLD, public elementTag = BoldMarkupElementTag) {}
+export class BoldMarkupElement extends MarkupElement {
+    constructor(id = MARK_BOLD, elementTag = BoldMarkupElementTag) {
+        super(id, elementTag);
+    }
 }

@@ -145,7 +145,7 @@ export const WithNewToolbar = RichTextEditorTemplate.bind({});
 WithNewToolbar.args = {
     value: htmlValue,
     position: Position.TOP,
-    withNew: true,
+    actions: undefined,
 };
 
 export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {

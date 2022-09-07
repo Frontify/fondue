@@ -32,7 +32,6 @@ export type RichTextEditorProps = {
     actions?: EditorActions[][];
     position?: Position;
     plugins?: Plugins;
-    withNew?: boolean;
 };
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
@@ -47,8 +46,8 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     onBlur,
     position = Position.FLOATING,
     plugins = defaultPlugins,
-    withNew = false,
 }) => {
+    const isNew = actions.length === 0 && plugins;
     const editorId = useMemoizedId(id);
     const { localValue } = useEditorState(editorId, clear);
 
@@ -105,7 +104,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const config2 = CreateEditorActions(editorId, defaultEditorActions);
     console.log('config2', config2.create());
 
-    const editorConfig = withNew ? config2.create() : getEditorConfig();
+    const editorConfig = isNew ? config2.create() : getEditorConfig();
 
     return (
         <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
@@ -117,9 +116,9 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     editableProps={editableProps}
                     plugins={editorConfig}
                 >
-                    {withNew && config2.toolbar()}
-                    {withNew && config.toolbar()}
-                    {!withNew && <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />}
+                    {isNew && config2.toolbar()}
+                    {isNew && config.toolbar()}
+                    {!isNew && <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />}
                 </Plate>
             </PositioningWrapper.PlateWrapper>
         </RichTextEditorContext.Provider>

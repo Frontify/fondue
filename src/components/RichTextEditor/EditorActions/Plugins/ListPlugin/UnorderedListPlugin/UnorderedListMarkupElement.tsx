@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ELEMENT_UL, PlateRenderLeafProps } from '@udecode/plate';
-import { MarkupElement } from '../../types';
+import { MarkupElement } from '../../MarkupElement';
 
 export const UL_CLASSES = 'tw-list-disc tw-pl-6';
 
@@ -12,6 +12,8 @@ export const UnorderedListMarkupElementTag = ({ attributes, children }: PlateRen
     </ul>
 );
 
-export class UnorderedListMarkupElement implements MarkupElement {
-    constructor(public id = ELEMENT_UL, public elementTag = UnorderedListMarkupElementTag) {}
+export class UnorderedListMarkupElement extends MarkupElement {
+    constructor(id = ELEMENT_UL, elementTag = UnorderedListMarkupElementTag) {
+        super(id, elementTag);
+    }
 }

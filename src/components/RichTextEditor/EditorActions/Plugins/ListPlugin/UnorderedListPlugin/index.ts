@@ -1,17 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createListPlugin } from '@udecode/plate';
-import { Plugin } from '../../types';
 import { LIST_PLUGIN } from '../id';
 import { UnorderedListMarkupElement } from './UnorderedListMarkupElement';
 import { UnorderedListButton } from './UnorderedListButton';
+import { ListPlugin } from '../ListPlugin';
 
-export class UnorderedListPlugin implements Plugin {
-    public type = LIST_PLUGIN;
-    public markupElement = new UnorderedListMarkupElement();
-    public button = UnorderedListButton;
-
-    plugins() {
-        return [createListPlugin()];
+export class UnorderedListPlugin extends ListPlugin {
+    constructor(id = LIST_PLUGIN, button = UnorderedListButton, markupElement = new UnorderedListMarkupElement()) {
+        super(id, button, markupElement);
     }
 }
