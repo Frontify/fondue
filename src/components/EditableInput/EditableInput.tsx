@@ -9,30 +9,46 @@ import React, {
     useState,
 } from 'react';
 
+export enum EditableInputState {
+    INPUT = 'INPUT',
+    LABEL = 'LABEL',
+}
+
 export interface EditableInputProps {
     name: string;
     targetItemId: string;
     onEditableSave: (targetItemId: string, value: string) => void;
+    onEditableChange?: (editableState: EditableInputState) => void;
+    overrideEditableState?: EditableInputState;
     children?: ReactNode;
+    singleClick?: boolean;
 }
 
-export const EditableInput = ({ name, targetItemId, onEditableSave, children }: EditableInputProps) => {
+export const EditableInput = ({
+    name,
+    targetItemId,
+    onEditableSave,
+    onEditableChange,
+    children,
+    overrideEditableState,
+    singleClick,
+}: EditableInputProps) => {
     const [inputValue, setInputValue] = useState(name);
-    const [showInput, setShowInput] = useState<boolean>(false);
+    const [editableState, setEditableState] = useState<EditableInputState>(EditableInputState.LABEL);
 
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const handleKeyDown: KeyboardEventHandler = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
-            setShowInput(false);
-
+            setEditableState(EditableInputState.LABEL);
+            onEditableChange && onEditableChange(overrideEditableState ?? EditableInputState.LABEL);
             onEditableSave(targetItemId, (event.target as HTMLInputElement).value);
         }
     };
 
     const handleBlur: FocusEventHandler = (event: FocusEvent<HTMLTextAreaElement>) => {
-        setShowInput(false);
-
+        setEditableState(EditableInputState.LABEL);
+        onEditableChange && onEditableChange(overrideEditableState ?? EditableInputState.LABEL);
         onEditableSave(targetItemId, (event.target as HTMLTextAreaElement).value);
     };
 
@@ -40,15 +56,16 @@ export const EditableInput = ({ name, targetItemId, onEditableSave, children }: 
         setInputValue(event.target.value);
     };
 
-    const handleDoubleClick = () => {
-        setShowInput(true);
-
+    const handleSwitchToInput = () => {
+        setEditableState(EditableInputState.INPUT);
+        onEditableChange && onEditableChange(overrideEditableState ?? EditableInputState.INPUT);
         setTimeout(() => inputRef.current?.focus(), 0);
     };
 
     return (
         <div data-test-id="editable-node-container">
-            {showInput ? (
+            {(editableState === EditableInputState.INPUT || overrideEditableState === EditableInputState.INPUT) &&
+            overrideEditableState !== EditableInputState.LABEL ? (
                 <div className="tw-flex tw-items-center">
                     <div
                         data-test-id="editable-input"
@@ -68,14 +85,15 @@ export const EditableInput = ({ name, targetItemId, onEditableSave, children }: 
                     {children}
                 </div>
             ) : (
-                <div
+                <button
                     data-test-id="node-link-name"
                     className="tw-flex tw-items-center"
-                    onDoubleClick={handleDoubleClick}
+                    onDoubleClick={handleSwitchToInput}
+                    onClick={singleClick ? handleSwitchToInput : undefined}
                 >
                     {name}
                     {children}
-                </div>
+                </button>
             )}
         </div>
     );
