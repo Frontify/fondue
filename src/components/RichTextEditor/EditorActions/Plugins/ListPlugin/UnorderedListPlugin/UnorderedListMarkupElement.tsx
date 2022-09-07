@@ -13,7 +13,7 @@ export const UnorderedListMarkupElementTag = ({ attributes, children }: PlateRen
 );
 
 export class UnorderedListMarkupElement extends MarkupElement {
-    constructor(id = ELEMENT_UL, elementTag = UnorderedListMarkupElementTag) {
-        super(id, elementTag);
+    constructor(id = ELEMENT_UL, tag = UnorderedListMarkupElementTag) {
+        super(id, tag);
     }
 }

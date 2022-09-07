@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { PlatePlugin, PlatePluginComponent, createParagraphPlugin } from '@udecode/plate';
-import { ObjectType, UnknownObject } from '../types';
 import { MarkupElement } from './MarkupElement';
+import { ObjectType, UnknownObject } from '../types';
 import { Button, Buttons, Plugins } from './types';
 import type { Plugin } from './Plugin';
 
@@ -15,51 +15,62 @@ export class PluginComposer {
         this.platePlugins.set('default', [createParagraphPlugin()]);
     }
 
-    public setElement(markupElement: MarkupElement | MarkupElement[]): this {
-        const markupElements = Array.isArray(markupElement) ? markupElement : [markupElement];
-
-        for (const markupElement of markupElements) {
-            if (markupElement.elementTag) {
-                this.markupElements[markupElement.id] = markupElement.elementTag;
-            }
-        }
-
-        return this;
-    }
-
     public setPlugin(plugins: Plugins): this {
         for (const group of plugins) {
             const groupOfPlugins: Plugin[] = Array.isArray(group) ? group : [group];
 
-            const groupOfButtons = [];
             for (const plugin of groupOfPlugins) {
-                this.setElement(plugin.markupElement);
-                if (plugin.id) {
-                    this.platePlugins.set(plugin.id, plugin.plugins());
-                }
-
-                groupOfButtons.push({
-                    id: plugin.markupElement.id,
-                    button: plugin.button,
-                });
+                this.addElements(plugin.markupElement);
+                this.addPlugin(plugin);
             }
 
-            this.setButtons(groupOfButtons);
+            this.generateGroupOfButtons(groupOfPlugins);
         }
 
         return this;
     }
 
-    private setButtons(groupOfButton: Button[]): this {
-        this.toolbarButtons.push(groupOfButton);
-        return this;
+    private addElements(markupElement: MarkupElement | MarkupElement[] | undefined) {
+        if (markupElement === undefined) {
+            return;
+        }
+
+        const markupElements = Array.isArray(markupElement) ? markupElement : [markupElement];
+        for (const { id, tag } of markupElements) {
+            if (tag && !this.markupElements[id]) {
+                this.markupElements[id] = tag;
+            }
+        }
     }
 
-    public get elements() {
+    private addPlugin(plugin: Plugin) {
+        if (plugin.id && !this.platePlugins.has(plugin.id)) {
+            this.platePlugins.set(plugin.id, plugin.plugins());
+        }
+    }
+
+    private generateGroupOfButtons(groupOfPlugins: Plugin[]) {
+        const groupOfButtons: Button[] = [];
+
+        for (const { markupElement, button, id } of groupOfPlugins) {
+            if (!button || !markupElement) {
+                continue;
+            }
+
+            groupOfButtons.push({
+                id,
+                button,
+            });
+        }
+
+        this.toolbarButtons.push(groupOfButtons);
+    }
+
+    get elements() {
         return this.markupElements;
     }
 
-    public get plugins() {
+    get plugins() {
         const platePlugins = [];
         for (const value of this.platePlugins.values()) {
             platePlugins.push(...value);
@@ -68,7 +79,7 @@ export class PluginComposer {
         return platePlugins;
     }
 
-    public get buttons(): Buttons {
+    get buttons(): Buttons {
         return this.toolbarButtons;
     }
 }

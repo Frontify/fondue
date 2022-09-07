@@ -10,6 +10,8 @@ import { ButtonGroupWrapper } from './Plugins/helper';
 export const GeneratePlugins = (editorId: string, editorActions: PluginComposer): GeneratePluginsReturn => {
     const editor = usePlateEditorRef(editorId);
 
+    console.log('editorActions', editorActions);
+
     return {
         create: () =>
             createPlugins(editorActions.plugins, {

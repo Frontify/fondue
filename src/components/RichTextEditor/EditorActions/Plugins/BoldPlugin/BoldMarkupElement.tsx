@@ -13,7 +13,7 @@ export const BoldMarkupElementTag = ({ attributes, children }: PlateRenderLeafPr
 );
 
 export class BoldMarkupElement extends MarkupElement {
-    constructor(id = MARK_BOLD, elementTag = BoldMarkupElementTag) {
-        super(id, elementTag);
+    constructor(id = MARK_BOLD, tag = BoldMarkupElementTag) {
+        super(id, tag);
     }
 }

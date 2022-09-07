@@ -9,7 +9,7 @@ const ListItemMarkupElementTag = ({ attributes, children }: PlateRenderElementPr
 );
 
 export class ListItemMarkupElement extends MarkupElement {
-    constructor(id = ELEMENT_LI, elementTag = ListItemMarkupElementTag) {
-        super(id, elementTag);
+    constructor(id = ELEMENT_LI, tag = ListItemMarkupElementTag) {
+        super(id, tag);
     }
 }

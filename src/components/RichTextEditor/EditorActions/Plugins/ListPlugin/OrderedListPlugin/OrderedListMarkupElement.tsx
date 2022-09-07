@@ -13,7 +13,7 @@ export const OrderedListMarkupElementTag = ({ attributes, children }: PlateRende
 );
 
 export class OrderedListMarkupElement extends MarkupElement {
-    constructor(id = ELEMENT_OL, elementTag = OrderedListMarkupElementTag) {
-        super(id, elementTag);
+    constructor(id = ELEMENT_OL, tag = OrderedListMarkupElementTag) {
+        super(id, tag);
     }
 }
