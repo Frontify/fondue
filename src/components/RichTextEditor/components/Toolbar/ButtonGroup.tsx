@@ -52,11 +52,13 @@ export const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId }) 
     const editor = usePlateEditorRef(editorId);
 
     return (
-        <div key={index} data-test-id={`toolbar-group-${index}`} className="tw-flex tw-items-center tw-h-12 tw-p-2">
-            {actions.map((action) => (
-                <div key={action}>{ToolbarButtonMap(editor, editorId)[action]}</div>
-            ))}
-        </div>
+        editor && (
+            <div key={index} data-test-id={`toolbar-group-${index}`} className="tw-flex tw-items-center tw-h-12 tw-p-2">
+                {actions.map((action) => (
+                    <div key={action}>{ToolbarButtonMap(editor, editorId)[action]}</div>
+                ))}
+            </div>
+        )
     );
 };
 

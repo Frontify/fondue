@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createPlateEditor, deserializeHtml, ELEMENT_PARAGRAPH, parseHtmlDocument, Value } from '@udecode/plate';
+import { ELEMENT_PARAGRAPH, Value, createPlateEditor, deserializeHtml, parseHtmlDocument } from '@udecode/plate';
 import { getEditorConfig } from './editorConfig';
 
 export const EMPTY_RICH_TEXT_VALUE: Value = [{ type: ELEMENT_PARAGRAPH, children: [{ text: '' }] }];

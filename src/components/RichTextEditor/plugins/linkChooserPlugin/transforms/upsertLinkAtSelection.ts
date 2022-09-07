@@ -1,4 +1,4 @@
-import { ELEMENT_LINK } from '@udecode/plate';
+import { ELEMENT_LINK, Value } from '@udecode/plate';
 import { PlateEditor, isCollapsed, unwrapNodes } from '@udecode/plate-core';
 import { Editor, Transforms } from 'slate';
 import { ChosenLink } from '../types';
@@ -10,8 +10,8 @@ import { wrapLink } from './wrapLink';
  * Then, wrap the link at the location.
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
-export const upsertLinkAtSelection = <T = {}>(
-    editor: PlateEditor<T>,
+export const upsertLinkAtSelection = (
+    editor: PlateEditor<Value>,
     {
         chosenLink,
         wrap,

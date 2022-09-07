@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateRenderElementProps, TElement, TodoListItemNodeData, getRootProps, setNodes } from '@udecode/plate';
+import { PlateRenderElementProps, TTodoListItemElement, getRootProps, setNodes } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import React, { FC } from 'react';
 import { ReactEditor } from 'slate-react';
@@ -8,7 +8,8 @@ import { ReactEditor } from 'slate-react';
 export const CheckboxItemElement: FC<PlateRenderElementProps> = (props) => {
     const { attributes, children, nodeProps, element, editor } = props;
     const rootProps = getRootProps(props);
-    const { checked } = element;
+    const checked = element.checked as boolean;
+
     return (
         <div {...attributes} {...rootProps} className="tw-flex tw-flex-row tw-py-1">
             <div contentEditable={false} className="tw-flex tw-items-center tw-justify-center tw-select-none tw-mr-1.5">
@@ -19,7 +20,7 @@ export const CheckboxItemElement: FC<PlateRenderElementProps> = (props) => {
                     checked={!!checked}
                     onChange={(e) => {
                         const path = ReactEditor.findPath(editor, element);
-                        setNodes<TElement<TodoListItemNodeData>>(editor, { checked: e.target.checked }, { at: path });
+                        setNodes<TTodoListItemElement>(editor, { checked: e.target.checked }, { at: path });
                     }}
                     {...nodeProps}
                 />

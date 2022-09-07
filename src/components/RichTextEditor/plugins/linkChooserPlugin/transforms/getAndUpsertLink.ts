@@ -1,6 +1,6 @@
 import { SearchResult } from '@components/LinkChooser';
-import { ELEMENT_LINK, getAboveNode, Value } from '@udecode/plate';
-import { isCollapsed, PlateEditor } from '@udecode/plate-core';
+import { ELEMENT_LINK, Value, getAboveNode } from '@udecode/plate';
+import { PlateEditor, isCollapsed } from '@udecode/plate-core';
 import { ChosenLink } from '../types';
 import { upsertLinkAtSelection } from './upsertLinkAtSelection';
 
