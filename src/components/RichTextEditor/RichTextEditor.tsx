@@ -9,7 +9,7 @@ import { Toolbar } from './components/Toolbar/Toolbar';
 import { RichTextEditorContext } from './context/RichTextEditorContext';
 import { useEditorState } from './hooks/useEditorState';
 import { DesignTokens } from './types';
-import { EditorActions } from './utils/actions';
+import { EditorActions, defaultActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { parseRawValue } from './utils/parseRawValue';
@@ -17,7 +17,7 @@ import { TextStyles } from './utils/textStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
 import { getEditorConfig } from './utils/editorConfig';
-import { CreateEditorActions, PluginComposer, defaultPlugins } from './EditorActions';
+import { GeneratePlugins, PluginComposer, defaultPlugins } from './EditorActions';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -40,7 +40,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     readonly = false,
     clear = false,
     designTokens = defaultDesignTokens,
-    actions = [],
+    actions = defaultActions,
     onTextChange,
     onBlur,
     position = Position.FLOATING,
@@ -96,7 +96,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     const PositioningWrapper = EditorPositioningWrapper[position];
 
-    const config = CreateEditorActions(editorId, plugins);
+    const config = GeneratePlugins(editorId, plugins);
     const isNew = actions.length === 0 && plugins;
     const editorConfig = isNew ? config.create() : getEditorConfig();
     console.log('config', config.create());

@@ -2,12 +2,12 @@
 
 import React from 'react';
 import { createPlateUI, createPlugins, usePlateEditorRef } from '@udecode/plate';
-import { CreateEditorActionsReturn } from './types';
+import { GeneratePluginsReturn } from './types';
 import { PluginComposer } from './Plugins/PluginComposer';
 import { Toolbar } from './Toolbar';
 import { ButtonGroupWrapper } from './Plugins/helper';
 
-export const CreateEditorActions = (editorId: string, editorActions: PluginComposer): CreateEditorActionsReturn => {
+export const GeneratePlugins = (editorId: string, editorActions: PluginComposer): GeneratePluginsReturn => {
     const editor = usePlateEditorRef(editorId);
 
     return {

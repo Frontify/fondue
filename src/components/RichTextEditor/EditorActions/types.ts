@@ -7,7 +7,7 @@ export type Unknown = unknown;
 export type ObjectType<T extends Unknown> = Record<string, T>;
 export type UnknownObject = ObjectType<unknown>;
 
-export type CreateEditorActionsReturn = {
+export type GeneratePluginsReturn = {
     create: () => PlatePlugin<UnknownObject, UnknownObject>[];
     toolbar: () => ReactNode;
 };
