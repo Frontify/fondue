@@ -49,7 +49,7 @@ export default defineConfig({
             include: 'src/*',
             exclude: ['node_modules', 'test/'],
             extension: ['.js', '.ts', '.vue'],
-            requireEnv: true,
+            // requireEnv: true,
             forceBuildInstrument: true,
             // cypress: true,
         }),
