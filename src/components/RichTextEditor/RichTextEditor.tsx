@@ -17,8 +17,7 @@ import { TextStyles } from './utils/textStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
 import { getEditorConfig } from './utils/editorConfig';
-import { LoadPlugins, Plugins, defaultPlugins } from './EditorPlugins';
-import { CreateEditorActions, defaultEditorActions } from './EditorActions';
+import { CreateEditorActions, PluginComposer, defaultPlugins } from './EditorActions';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -31,7 +30,7 @@ export type RichTextEditorProps = {
     designTokens?: DesignTokens;
     actions?: EditorActions[][];
     position?: Position;
-    plugins?: Plugins;
+    plugins?: PluginComposer;
 };
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
@@ -47,7 +46,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     position = Position.FLOATING,
     plugins = defaultPlugins,
 }) => {
-    const isNew = actions.length === 0 && plugins;
     const editorId = useMemoizedId(id);
     const { localValue } = useEditorState(editorId, clear);
 
@@ -98,13 +96,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     const PositioningWrapper = EditorPositioningWrapper[position];
 
-    const config = LoadPlugins(editorId, plugins);
+    const config = CreateEditorActions(editorId, plugins);
+    const isNew = actions.length === 0 && plugins;
+    const editorConfig = isNew ? config.create() : getEditorConfig();
     console.log('config', config.create());
-
-    const config2 = CreateEditorActions(editorId, defaultEditorActions);
-    console.log('config2', config2.create());
-
-    const editorConfig = isNew ? config2.create() : getEditorConfig();
 
     return (
         <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
@@ -116,7 +111,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     editableProps={editableProps}
                     plugins={editorConfig}
                 >
-                    {isNew && config2.toolbar()}
                     {isNew && config.toolbar()}
                     {!isNew && <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />}
                 </Plate>

@@ -2,7 +2,10 @@
 
 import { ReactElement, ReactNode } from 'react';
 import { PlateEditor, PlatePlugin, PlatePluginComponent } from '@udecode/plate';
-import { UnknownObject } from '../types';
+
+export type Unknown = unknown;
+export type ObjectType<T extends Unknown> = Record<string, T>;
+export type UnknownObject = ObjectType<unknown>;
 
 export interface MarkupElement {
     id: string;
