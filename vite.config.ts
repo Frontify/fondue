@@ -4,6 +4,7 @@ import { resolve } from 'path';
 import { PreRenderedAsset } from 'rollup';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import istanbul from 'vite-plugin-istanbul';
 import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
 
 const peerDependencies = Object.keys(peerDependenciesMap);
@@ -39,7 +40,19 @@ export default defineConfig({
         'process.env.REACT_APP_SC_ATTR': JSON.stringify(process.env.REACT_APP_SC_ATTR),
         'process.env.SC_ATTR': JSON.stringify(process.env.SC_ATTR),
     },
-    plugins: [dts({ insertTypesEntry: true })],
+    // these 2 properties were in https://github.com/ifaxity/vite-plugin-istanbul, but they aren't recognised here
+    // open: true,
+    // port: 3000,
+    plugins: [
+        dts({ insertTypesEntry: true }),
+        istanbul({
+            include: 'src/*',
+            exclude: ['node_modules', 'test/'],
+            extension: ['.js', '.ts', '.vue'],
+            requireEnv: true,
+            cypress: true,
+        }),
+    ],
     build: {
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
