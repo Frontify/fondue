@@ -2,7 +2,7 @@
 
 import { OFFSET_IN_PX } from '@components/RichTextEditor/utils';
 import { calculateToolbarWidth } from '@components/RichTextEditor/utils/toolbarCalc';
-import { autoPlacement, BalloonToolbar } from '@udecode/plate';
+import { BalloonToolbar, autoPlacement } from '@udecode/plate';
 import React, { useEffect, useState } from 'react';
 import { ToolbarWrapperProps } from './types';
 

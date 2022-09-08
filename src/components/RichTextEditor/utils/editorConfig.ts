@@ -48,7 +48,7 @@ import {
 } from '../components';
 import { Custom3Element } from '../components/custom3';
 import { ELEMENT_CHECK_ITEM, createCheckboxListPlugin } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
-import { createLinkChooserPlugin } from '../plugins/linkChooserPlugin/createLinkChooserPlugin';
+import { linkPlugin } from '../plugins/linkPlugin/createLinkPlugin';
 import { TextStyles } from './textStyles';
 
 export const getEditorConfig = () => {
@@ -149,8 +149,7 @@ export const getEditorConfig = () => {
             createCodeBlockPlugin(),
             createListPlugin(),
             createCheckboxListPlugin(),
-            createLinkChooserPlugin(),
-            createLinkPlugin(),
+            createLinkPlugin(linkPlugin),
             createBoldPlugin(),
             createItalicPlugin(),
             createUnderlinePlugin(),

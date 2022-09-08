@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    IconLink,
     IconListBullet,
     IconListCheck,
     IconListNumbers,
@@ -17,9 +18,9 @@ import {
 } from '@foundation/Icon';
 import {
     AlignToolbarButton,
-    ELEMENT_LINK,
     ELEMENT_OL,
     ELEMENT_UL,
+    LinkToolbarButton,
     ListToolbarButton,
     MARK_BOLD,
     MARK_CODE,
@@ -34,7 +35,6 @@ import {
 import { FC, default as React, ReactElement } from 'react';
 import { ELEMENT_CHECK_ITEM } from '../../plugins/checkboxListPlugin/createCheckboxListPlugin';
 import { CheckboxListToolbarButton } from '../../plugins/checkboxListPlugin/ui/CheckboxListToolbarButton';
-import { EditLinkChooserButton } from '../../plugins/linkChooserPlugin/ui/EditLinkChooserButton';
 import { TextStyleDropdown } from '../../TextStyleDropdown/TextStyleDropdown';
 import { ButtonGroupProps, IconStylingWrapperProps } from '../../types';
 import { EditorActions } from '../../utils/actions';
@@ -145,7 +145,11 @@ const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<Editor
         />
     ),
     [EditorActions.LINK]: (
-        <EditLinkChooserButton classNames={classNames} styles={styles} type={getPluginType(editor, ELEMENT_LINK)} />
+        <LinkToolbarButton
+            icon={<IconStylingWrapper icon={<IconLink size={IconSize.Size24} />} />}
+            classNames={classNames}
+            styles={styles}
+        />
     ),
     [EditorActions.ORDERED_LIST]: (
         <ListToolbarButton
