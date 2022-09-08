@@ -2,35 +2,20 @@ import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
 import { LINK_CLASSES } from '@components/RichTextEditor/components';
 import { IconCheckMark, IconPen, IconTrashBin } from '@foundation/Icon';
 import {
-    ELEMENT_LINK,
-    findNode,
     floatingLinkActions,
-    getPluginType,
-    PlateEditor,
     submitFloatingLink,
-    TLinkElement,
     useEditorRef,
     useFloatingLinkSelectors,
-    Value,
+    useFloatingLinkUrlInput,
 } from '@udecode/plate';
 import React, { useState } from 'react';
 import { FloatingLink } from './FloatingLink';
-
-const getUrlFromEditor = (editor: PlateEditor<Value>) => {
-    const entry = findNode<TLinkElement>(editor, {
-        match: { type: getPluginType(editor, ELEMENT_LINK) },
-    });
-    if (!entry) return;
-
-    const [link] = entry;
-
-    return link.url;
-};
 
 export const CustomFloatingLink = () => {
     const isEditing = useFloatingLinkSelectors().isEditing();
     const editor = useEditorRef();
     const [isUrlInValid, setIsUrlInValid] = useState(false);
+    const urlHtmlProps = useFloatingLinkUrlInput({});
 
     const input = (
         <div className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
@@ -38,9 +23,9 @@ export const CustomFloatingLink = () => {
             <div className="tw-pt-5">
                 <FloatingLink.UrlInput />
             </div>
-            {isUrlInValid && <span>URL is invalid</span>}
+            {isUrlInValid && <div className="tw-text-red-65 tw-mt-3">Url is invalid.</div>}
 
-            <div className="tw-mt-8">
+            <div className="tw-mt-3">
                 <div className={'tw-pt-5 tw-flex tw-gap-x-3 tw-justify-end tw-border-t tw-border-t-black-10'}>
                     <Button
                         onClick={(e) => {
@@ -75,7 +60,7 @@ export const CustomFloatingLink = () => {
     const editContent = !isEditing ? (
         <div className="tw-bg-white tw-rounded tw-shadow tw-p-4 tw-min-w-[400px]">
             <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between">
-                <span className={`${LINK_CLASSES} tw-pointer-events-none`}>{getUrlFromEditor(editor)}</span>
+                <span className={`${LINK_CLASSES} tw-pointer-events-none`}>{urlHtmlProps.defaultValue}</span>
                 <span className="tw-flex tw-gap-2">
                     <span
                         role="button"

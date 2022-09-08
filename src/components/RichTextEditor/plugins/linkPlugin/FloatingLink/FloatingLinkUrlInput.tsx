@@ -1,11 +1,10 @@
 import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
-import { useFloatingLinkUrlInput } from '@udecode/plate';
+import { floatingLinkSelectors, useFloatingLinkUrlInput } from '@udecode/plate';
 import { AsProps, createComponentAs } from '@udecode/plate-core';
 import React, { useState } from 'react';
 
 export const FloatingLinkUrlInput = createComponentAs<AsProps<'input'>>((props) => {
-    console.log(props);
     const htmlProps = useFloatingLinkUrlInput(props);
     const [value, setValue] = useState<string>((htmlProps.defaultValue as string) || '');
     return (

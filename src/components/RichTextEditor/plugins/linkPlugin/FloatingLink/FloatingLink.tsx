@@ -1,18 +1,28 @@
 import {
+    createComponentAs,
+    createElementAs,
     FloatingLinkEditButton,
-    FloatingLinkEditRoot,
     FloatingLinkProps,
     OpenLinkButton,
     UnlinkButton,
-    createComponentAs,
-    createElementAs,
 } from '@udecode/plate';
 import { FloatingLinkTextInput } from './FloatingLinkTextInput';
 import { FloatingLinkUrlInput } from './FloatingLinkUrlInput';
-import { useFloatingLinkInsert } from './useFloatingInsert';
+import { useFloatingLinkEdit } from './useFloatingLinkEdit';
+import { useFloatingLinkInsert } from './useFloatingLinkInsert';
 
 const FloatingLinkInsertRoot = createComponentAs<FloatingLinkProps>((props) => {
     const htmlProps = useFloatingLinkInsert(props);
+
+    if (htmlProps.style?.display === 'none') {
+        return null;
+    }
+
+    return createElementAs('div', htmlProps);
+});
+
+export const FloatingLinkEditRoot = createComponentAs<FloatingLinkProps>((props) => {
+    const htmlProps = useFloatingLinkEdit(props);
 
     if (htmlProps.style?.display === 'none') {
         return null;
