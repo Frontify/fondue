@@ -54,9 +54,9 @@ export const CustomFloatingLink = () => {
                     </Button>
                     <Button
                         onClick={(e) => {
-                            e?.preventDefault();
-
                             if (submitFloatingLink(editor)) {
+                                e?.preventDefault();
+
                                 setIsUrlInValid(false);
                             } else {
                                 setIsUrlInValid(true);
