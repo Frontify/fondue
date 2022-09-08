@@ -1,5 +1,5 @@
 import React from 'react';
-import { EditableInput, EditableInputProps, EditableInputState } from '@components/EditableInput/EditableInput';
+import { EditableInput, EditableInputProps, EditableMode } from '@components/EditableInput/EditableInput';
 import { Story } from '@storybook/react';
 import { IconArrowOutExternal, IconBell, IconPen } from '@foundation/Icon';
 
@@ -47,5 +47,5 @@ OverrideEditableStateToInput.args = {
     name: 'Region',
     targetItemId: 'ID',
     singleClick: true,
-    overrideEditableState: EditableInputState.INPUT,
+    mode: EditableMode.INPUT,
 };

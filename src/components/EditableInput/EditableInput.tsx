@@ -9,18 +9,18 @@ import React, {
     useState,
 } from 'react';
 
-export enum EditableInputState {
+export enum EditableMode {
     INPUT = 'INPUT',
     LABEL = 'LABEL',
-    EDITABLE = 'EDITABLE',
+    AUTO = 'AUTO',
 }
 
 export interface EditableInputProps {
     name: string;
     targetItemId: string;
     onEditableSave: (targetItemId: string, value: string) => void;
-    onEditableChange?: (editableState: EditableInputState) => void;
-    overrideEditableState?: EditableInputState;
+    onModeChange?: (editableState: EditableMode) => void;
+    mode?: EditableMode;
     children?: ReactNode;
     singleClick?: boolean;
 }
@@ -29,27 +29,27 @@ export const EditableInput = ({
     name,
     targetItemId,
     onEditableSave,
-    onEditableChange,
+    onModeChange,
     children,
-    overrideEditableState = EditableInputState.EDITABLE,
+    mode = EditableMode.AUTO,
     singleClick,
 }: EditableInputProps) => {
     const [inputValue, setInputValue] = useState(name);
-    const [editableState, setEditableState] = useState<EditableInputState>(EditableInputState.LABEL);
+    const [editableState, setEditableState] = useState<EditableMode>(EditableMode.LABEL);
 
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const handleKeyDown: KeyboardEventHandler = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
-            setEditableState(EditableInputState.LABEL);
-            onEditableChange && onEditableChange(overrideEditableState ?? EditableInputState.LABEL);
+            setEditableState(EditableMode.LABEL);
+            onModeChange && onModeChange(mode !== EditableMode.AUTO ? mode : EditableMode.LABEL);
             onEditableSave(targetItemId, (event.target as HTMLInputElement).value);
         }
     };
 
     const handleBlur: FocusEventHandler = (event: FocusEvent<HTMLTextAreaElement>) => {
-        setEditableState(EditableInputState.LABEL);
-        onEditableChange && onEditableChange(overrideEditableState ?? EditableInputState.LABEL);
+        setEditableState(EditableMode.LABEL);
+        onModeChange && onModeChange(mode !== EditableMode.AUTO ? mode : EditableMode.LABEL);
         onEditableSave(targetItemId, (event.target as HTMLTextAreaElement).value);
     };
 
@@ -58,19 +58,18 @@ export const EditableInput = ({
     };
 
     const handleSwitchToInput = () => {
-        setEditableState(EditableInputState.INPUT);
-        onEditableChange && onEditableChange(overrideEditableState ?? EditableInputState.INPUT);
+        setEditableState(EditableMode.INPUT);
+        onModeChange && onModeChange(mode !== EditableMode.AUTO ? mode : EditableMode.INPUT);
         setTimeout(() => inputRef.current?.focus(), 0);
     };
 
-    if (overrideEditableState === EditableInputState.INPUT) {
+    if (mode === EditableMode.INPUT) {
         setTimeout(() => inputRef.current?.focus(), 0);
     }
 
     return (
         <div data-test-id="editable-node-container">
-            {(editableState === EditableInputState.INPUT || overrideEditableState === EditableInputState.INPUT) &&
-            overrideEditableState !== EditableInputState.LABEL ? (
+            {(editableState === EditableMode.INPUT || mode === EditableMode.INPUT) && mode !== EditableMode.LABEL ? (
                 <div className="tw-flex tw-items-center">
                     <div
                         data-test-id="editable-input"
