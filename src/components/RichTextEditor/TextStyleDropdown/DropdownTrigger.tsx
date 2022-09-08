@@ -38,7 +38,7 @@ export const DropdownTrigger = ({ editorId, open }: DropdownTriggerProps) => {
         <button
             data-test-id="textstyle-dropdown-trigger"
             type="button"
-            className="tw-cursor-pointer tw-h-12 tw-w-full"
+            className="tw-cursor-pointer tw-h-8 tw-w-full"
             onMouseDown={editor ? getPreventDefaultHandler() : undefined}
         >
             <div
