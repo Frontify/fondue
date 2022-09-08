@@ -36,6 +36,41 @@ describe('OverflowMenu component', () => {
                 cy.get(ITEM_TEST_ID).eq(index).find('a').should('have.attr', 'href', item.link);
             }
         });
+
+        it('navigates using the keyboard', () => {
+            cy.get('@OverflowMenu').find('button').focus().realPress('Enter');
+            cy.get(ITEM_TEST_ID).should('have.length', 3);
+            cy.focused().should('have.attr', 'href', LINK_ITEMS[0].link);
+            cy.focused().trigger('keydown', { key: 'ArrowDown' });
+            cy.focused().should('have.attr', 'href', LINK_ITEMS[1].link);
+            cy.focused().trigger('keydown', { key: 'ArrowDown' });
+            cy.focused().should('have.attr', 'href', LINK_ITEMS[2].link);
+            cy.focused().trigger('keydown', { key: 'ArrowUp' });
+            cy.focused().should('have.attr', 'href', LINK_ITEMS[1].link);
+            cy.focused().trigger('keydown', { key: 'ArrowUp' });
+            cy.focused().should('have.attr', 'href', LINK_ITEMS[0].link);
+            cy.focused().trigger('keydown', { key: 'Tab' });
+            cy.focused().should('have.attr', 'href', LINK_ITEMS[1].link);
+            cy.focused().trigger('keydown', { key: 'Tab' });
+            cy.focused().should('have.attr', 'href', LINK_ITEMS[2].link);
+            cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
+            cy.focused().should('have.attr', 'href', LINK_ITEMS[1].link);
+            cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
+            cy.focused().should('have.attr', 'href', LINK_ITEMS[0].link);
+            // Close the overflow menu and focus the three dots button and re-open it
+            cy.focused().realPress(['Shift', 'Tab']);
+            cy.get(ITEM_TEST_ID).should('have.length', 0);
+            cy.focused().realPress('Enter');
+            cy.get(ITEM_TEST_ID).should('have.length', 3);
+            cy.focused().should('have.attr', 'href', LINK_ITEMS[0].link);
+            cy.focused().trigger('keydown', { key: 'Tab' });
+            cy.focused().should('have.attr', 'href', LINK_ITEMS[1].link);
+            cy.focused().trigger('keydown', { key: 'Tab' });
+            cy.focused().should('have.attr', 'href', LINK_ITEMS[2].link);
+            // Close the overflow menu
+            cy.focused().realPress('Tab');
+            cy.get(ITEM_TEST_ID).should('have.length', 0);
+        });
     });
     describe('With Buttons', () => {
         beforeEach(() => {
@@ -63,6 +98,65 @@ describe('OverflowMenu component', () => {
                 cy.get(ITEM_TEST_ID).eq(index).find('> button').click();
                 cy.get('@onButtonClick').should('have.been.calledWith', index + 1);
             }
+        });
+
+        it('navigates using the keyboard', () => {
+            cy.get('@OverflowMenu').find('button').focus().realPress('Enter');
+            cy.get(ITEM_TEST_ID).should('have.length', 3);
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 1);
+            cy.focused().trigger('keydown', { key: 'ArrowDown' });
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 2);
+            cy.focused().trigger('keydown', { key: 'ArrowDown' });
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 3);
+            cy.focused().trigger('keydown', { key: 'ArrowUp' });
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 2);
+            cy.focused().trigger('keydown', { key: 'ArrowUp' });
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 1);
+            cy.focused().trigger('keydown', { key: 'Tab' });
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 2);
+            cy.focused().trigger('keydown', { key: 'Tab' });
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 3);
+            cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 2);
+            cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 1);
+            // Close the overflow menu and focus the three dots button and re-open it
+            cy.focused().realPress(['Shift', 'Tab']);
+            cy.get(ITEM_TEST_ID).should('have.length', 0);
+            cy.focused().realPress('Enter');
+            cy.get(ITEM_TEST_ID).should('have.length', 3);
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 1);
+            cy.focused().trigger('keydown', { key: 'Tab' });
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 2);
+            cy.focused().trigger('keydown', { key: 'Tab' });
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 3);
+            // Close the overflow menu
+            cy.focused().realPress('Tab');
+            cy.get(ITEM_TEST_ID).should('have.length', 0);
         });
     });
     describe('With Spans', () => {
