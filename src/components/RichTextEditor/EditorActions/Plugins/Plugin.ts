@@ -9,7 +9,8 @@ export abstract class Plugin {
     constructor(
         readonly id: string,
         readonly button?: PluginButton,
-        readonly markupElement?: MarkupElement | MarkupElement[],
+        readonly markupElement?: MarkupElement,
+        readonly leafMarkupElements?: MarkupElement | MarkupElement[],
     ) {}
 
     abstract plugins(): PlatePlugin<UnknownObject, any>[];

@@ -9,9 +9,9 @@ import { ListItemContentMarkupElement } from './ListItemContentMarkupElement';
 import { ListItemMarkupElement } from './ListItemMarkupElement';
 
 export class ListPlugin extends Plugin {
-    constructor(id = LIST_PLUGIN, button: PluginButton, markupElement: MarkupElement | MarkupElement[]) {
-        const markupElements = Array.isArray(markupElement) ? markupElement : [markupElement];
-        super(id, button, [new ListItemContentMarkupElement(), new ListItemMarkupElement(), ...markupElements]);
+    constructor(id = LIST_PLUGIN, button: PluginButton, markupElement: MarkupElement) {
+        const leafMarkupElement = [new ListItemContentMarkupElement(), new ListItemMarkupElement()];
+        super(id, button, markupElement, leafMarkupElement);
     }
 
     plugins() {

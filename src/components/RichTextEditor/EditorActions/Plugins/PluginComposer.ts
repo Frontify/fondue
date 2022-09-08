@@ -20,7 +20,8 @@ export class PluginComposer {
             const groupOfPlugins: Plugin[] = Array.isArray(group) ? group : [group];
 
             for (const plugin of groupOfPlugins) {
-                this.addElements(plugin.markupElement);
+                this.addElement(plugin.markupElement);
+                this.addLeafElements(plugin.leafMarkupElements);
                 this.addPlugin(plugin);
             }
 
@@ -30,16 +31,25 @@ export class PluginComposer {
         return this;
     }
 
-    private addElements(markupElement: MarkupElement | MarkupElement[] | undefined) {
+    private addLeafElements(leafMarkupElement: MarkupElement | MarkupElement[] | undefined) {
+        if (leafMarkupElement === undefined) {
+            return;
+        }
+
+        const leafMarkupElements = Array.isArray(leafMarkupElement) ? leafMarkupElement : [leafMarkupElement];
+        for (const leafMarkupElement of leafMarkupElements) {
+            this.addElement(leafMarkupElement);
+        }
+    }
+
+    private addElement(markupElement: MarkupElement | undefined) {
         if (markupElement === undefined) {
             return;
         }
 
-        const markupElements = Array.isArray(markupElement) ? markupElement : [markupElement];
-        for (const { id, tag } of markupElements) {
-            if (tag && !this.markupElements[id]) {
-                this.markupElements[id] = tag;
-            }
+        const { id, tag } = markupElement;
+        if (tag && !this.markupElements[id]) {
+            this.markupElements[id] = tag;
         }
     }
 
@@ -52,13 +62,14 @@ export class PluginComposer {
     private generateGroupOfButtons(groupOfPlugins: Plugin[]) {
         const groupOfButtons: Button[] = [];
 
-        for (const { markupElement, button, id } of groupOfPlugins) {
+        for (const { markupElement, button } of groupOfPlugins) {
             if (!button || !markupElement) {
                 continue;
             }
 
+            console.log('markupElement', markupElement);
             groupOfButtons.push({
-                id,
+                id: markupElement.id,
                 button,
             });
         }
