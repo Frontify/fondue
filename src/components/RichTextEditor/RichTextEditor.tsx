@@ -8,7 +8,7 @@ import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './components/Toolbar/Toolbar';
 import { RichTextEditorContext } from './context/RichTextEditorContext';
 import { useEditorState } from './hooks/useEditorState';
-import { DesignTokens } from './types';
+import { DesignTokens, PaddingSizes } from './types';
 import { EditorActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
@@ -28,7 +28,7 @@ export type RichTextEditorProps = {
     clear?: boolean;
     designTokens?: DesignTokens;
     actions?: EditorActions[][];
-    padding?: number;
+    padding?: PaddingSizes;
     position?: Position;
 };
 
@@ -42,7 +42,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     actions = [],
     onTextChange,
     onBlur,
-    padding = 0,
+    padding = PaddingSizes.None,
     position = Position.FLOATING,
 }) => {
     const editorId = useMemoizedId(id);
@@ -53,7 +53,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         placeholder,
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
-        className: `tw-p-${padding}`,
+        className: padding,
     };
 
     const editorRef = useCallback((node) => {
