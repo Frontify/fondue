@@ -7,6 +7,7 @@ import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import { Position } from './EditorPositioningWrapper';
 import { EditorActions } from './utils/actions';
 import { IPSUM, checkboxValue, customDesignTokens, htmlValue, nodesToSerialize, value } from './utils/exampleValues';
+import { PaddingSizes } from './types';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -17,12 +18,14 @@ export default {
         readonly: false,
         clear: false,
         position: Position.FLOATING,
+        padding: PaddingSizes.None,
     },
     argTypes: {
         onTextChange: { action: 'onTextChange' },
         onBlur: { action: 'onBlur' },
         value: { type: 'string' },
         position: { options: Object.values(Position) },
+        padding: { options: PaddingSizes },
     },
 } as Meta;
 
