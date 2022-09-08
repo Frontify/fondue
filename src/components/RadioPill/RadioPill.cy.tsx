@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconIcon } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 import React from 'react';
 import { RadioPill } from './RadioPill';
 
 const RADIOPILL_TEST_ID = '[data-test-id=radio-pill]';
 const RADIOPILL_LABEL = 'Label';
-const RADIOPILL_ICON = <IconIcon />;
+const RADIOPILL_ICON = <IconJohanna />;
 const RADIOPILL_ICON_CODE = 'svg[name=IconIcon16]';
 
 describe('RadioPill Component', () => {

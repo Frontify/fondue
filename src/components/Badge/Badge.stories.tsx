@@ -3,7 +3,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { Badge } from './Badge';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import { BadgeEmphasis, BadgeProps, BadgeStatus, BadgeStyle } from './types';
 
 export default {
@@ -89,7 +89,7 @@ WithIcon.argTypes = {
 };
 
 WithIcon.args = {
-    icon: <IconIcon />,
+    icon: <IconJohanna />,
 };
 
 export const WithOnClickAndIcon = BadgeTemplate.bind({});
@@ -100,7 +100,7 @@ WithOnClickAndIcon.argTypes = {
 };
 
 WithOnClickAndIcon.args = {
-    icon: <IconIcon />,
+    icon: <IconJohanna />,
 };
 
 export const WithStatusAndIcon = BadgeTemplate.bind({});
@@ -115,7 +115,7 @@ WithStatusAndIcon.argTypes = {
 
 WithStatusAndIcon.args = {
     status: BadgeStatus.Positive,
-    icon: <IconIcon />,
+    icon: <IconJohanna />,
 };
 
 export const StatusOnly = BadgeTemplate.bind({});
@@ -141,7 +141,7 @@ IconOnly.argTypes = {
 };
 
 IconOnly.args = {
-    icon: <IconIcon />,
+    icon: <IconJohanna />,
     children: '',
 };
 
@@ -163,7 +163,7 @@ BetweenElements.argTypes = {
 
 BetweenElements.args = {
     status: BadgeStatus.Positive,
-    icon: <IconIcon />,
+    icon: <IconJohanna />,
 };
 
 export const MultipleBadgesInRow: Story<BadgeProps> = (args: BadgeProps) => (
@@ -178,6 +178,6 @@ export const MultipleBadgesInRow: Story<BadgeProps> = (args: BadgeProps) => (
 
 MultipleBadgesInRow.args = {
     status: BadgeStatus.Positive,
-    icon: <IconIcon />,
+    icon: <IconJohanna />,
     children: 'A long string of text',
 };

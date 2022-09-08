@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import React from 'react';
 import { Button, ButtonRounding, ButtonSize, ButtonStyle } from './Button';
 
@@ -38,7 +38,7 @@ describe('Button component', () => {
             it(`renders in ${style} ${ButtonSize.Medium} and ${
                 solid ? 'solid' : 'translucent'
             } with only an icon.`, () => {
-                cy.mount(<Button style={style} size={ButtonSize.Medium} solid={solid} icon={<IconIcon />} />);
+                cy.mount(<Button style={style} size={ButtonSize.Medium} solid={solid} icon={<IconJohanna />} />);
 
                 cy.get(BUTTON_ID).find('svg').should('be.visible');
                 cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
@@ -50,7 +50,7 @@ describe('Button component', () => {
                         style={style}
                         size={ButtonSize.Medium}
                         solid={solid}
-                        icon={<IconIcon />}
+                        icon={<IconJohanna />}
                         rounding={ButtonRounding.Full}
                     />,
                 );
@@ -62,7 +62,7 @@ describe('Button component', () => {
 
             it(`renders in ${style} ${ButtonSize.Medium} and solid: ${solid} with an icon and text.`, () => {
                 cy.mount(
-                    <Button style={style} size={ButtonSize.Medium} solid={solid} icon={<IconIcon />}>
+                    <Button style={style} size={ButtonSize.Medium} solid={solid} icon={<IconJohanna />}>
                         {BUTTON_TEXT}
                     </Button>,
                 );

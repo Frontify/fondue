@@ -4,7 +4,7 @@
 import { MenuItem } from '@components/MenuItem';
 import { SelectionIndicatorIcon } from '@components/MenuItem/MenuItem';
 import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
-import { IconArrowLeft } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 import { getInteractionModality } from '@react-aria/interactions';
 import { useOption } from '@react-aria/listbox';
 import { merge } from '@utilities/merge';
@@ -72,7 +72,7 @@ export const NavigationMenuItem: FC<NavigationMenuItemProps> = ({
             <MenuItem
                 title={itemTitle}
                 selectionIndicator={direction === 'right' ? SelectionIndicatorIcon.CaretRight : undefined}
-                decorator={direction === 'left' ? <IconArrowLeft /> : undefined}
+                decorator={direction === 'left' ? <IconJohanna /> : undefined}
                 size={MenuItemContentSize.XSmall}
             />
         </div>

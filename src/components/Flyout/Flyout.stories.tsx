@@ -18,7 +18,7 @@ import { FlyoutFooter } from './FlyoutFooter';
 import { Dropdown } from '@components/Dropdown';
 import { DatePicker } from '@components/DatePicker';
 import { TooltipIcon } from '@components/TooltipIcon';
-import { IconDotsVertical, IconExclamationMarkCircle, IconIcon } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 export default {
     title: 'Components/Flyout',
@@ -39,7 +39,7 @@ export default {
     args: {
         trigger: (
             <span className="tw-flex tw-h-full tw-items-center tw-p-1 tw-rounded tw-bg-black-20 hover:tw-bg-black-30 dark:tw-bg-black-80 dark:hover:tw-bg-black-70">
-                <IconDotsVertical />
+                <IconJohanna />
             </span>
         ),
     },
@@ -122,7 +122,7 @@ WithOnclick.argTypes = {
 
 WithOnclick.args = {
     title: 'Header title',
-    decorator: <IconIcon />,
+    decorator: <IconJohanna />,
     onConfirm: action('onConfirm'),
 };
 
@@ -130,11 +130,11 @@ export const WithBadges = FlyoutTemplate.bind({});
 
 WithBadges.args = {
     title: 'Header title',
-    decorator: <IconIcon />,
+    decorator: <IconJohanna />,
     badges: [
         { style: BadgeStyle.Positive, children: 'Badge 1' },
         { status: BadgeStatus.Danger, children: 'Badge 2' },
-        { style: BadgeStyle.Danger, icon: <IconIcon />, children: 'Badge 3' },
+        { style: BadgeStyle.Danger, icon: <IconJohanna />, children: 'Badge 3' },
     ],
 };
 
@@ -160,7 +160,7 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
                     <span className="tw-ml-2">
                         <TooltipIcon
                             tooltip={{ content: 'Lorem ipsum dolor sit amet.' }}
-                            triggerIcon={<IconExclamationMarkCircle />}
+                            triggerIcon={<IconJohanna />}
                         />
                     </span>
                 </p>
@@ -185,7 +185,7 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
                     <span className="tw-ml-2">
                         <TooltipIcon
                             tooltip={{ content: 'Lorem ipsum dolor sit amet.' }}
-                            triggerIcon={<IconExclamationMarkCircle />}
+                            triggerIcon={<IconJohanna />}
                         />
                     </span>
                 </p>
@@ -198,7 +198,7 @@ export const WithButtonTrigger = WithButtonFlyoutTemplate.bind({});
 
 WithButtonTrigger.args = {
     title: 'Header title',
-    decorator: <IconIcon />,
+    decorator: <IconJohanna />,
 };
 
 WithButtonTrigger.argTypes = {
@@ -249,10 +249,10 @@ export const WithCustomFooter = WithCustomFooterFlyoutTemplate.bind({});
 
 WithCustomFooter.args = {
     title: 'Header title',
-    decorator: <IconIcon />,
+    decorator: <IconJohanna />,
     trigger: (
         <span className="tw-flex tw-h-full tw-items-center tw-p-1 tw-rounded tw-bg-black-20 hover:tw-bg-black-30 dark:tw-bg-black-80 dark:hover:tw-bg-black-70">
-            <IconDotsVertical />
+            <IconJohanna />
         </span>
     ),
     legacyFooter: false,
@@ -334,7 +334,7 @@ export const WithRenderFunctionTrigger = WithRenderFunctionTriggerTemplate.bind(
 
 WithRenderFunctionTrigger.args = {
     title: 'Header title',
-    decorator: <IconIcon />,
+    decorator: <IconJohanna />,
 };
 
 WithRenderFunctionTrigger.argTypes = {

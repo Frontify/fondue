@@ -1,7 +1,7 @@
 import { Flyout } from '@components/Flyout';
 import { LINK_CLASSES } from '@components/RichTextEditor/components/link';
-import { IconPen, IconTrashBin } from '@foundation/Icon';
 import React, { HTMLAttributes, MutableRefObject, ReactNode } from 'react';
+import { IconJohanna } from '@foundation/Icon';
 
 type LinkChooserFlyoutProps = {
     isFlyoutOpen: boolean;
@@ -45,7 +45,7 @@ export const LinkChooserPreviewFlyout = ({
                     className={buttonClassName}
                     onMouseDown={() => onEditClick()}
                 >
-                    <IconPen />
+                    <IconJohanna />
                 </span>
 
                 <span
@@ -55,7 +55,7 @@ export const LinkChooserPreviewFlyout = ({
                     className={buttonClassName}
                     onMouseDown={() => onRemoveClick()}
                 >
-                    <IconTrashBin />
+                    <IconJohanna />
                 </span>
             </span>
         </span>

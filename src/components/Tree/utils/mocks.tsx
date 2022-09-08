@@ -1,5 +1,5 @@
 import { MenuItemContentSize } from '@components/MenuItem';
-import { IconDocument, IconFaceExtraHappy, IconFolder, IconPlus, IconSize } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 import React from 'react';
 import { TreeFlatListItem, TreeNodeItem } from '@components/Tree';
 import { DraggableItem } from '@utilities/dnd';
@@ -65,7 +65,7 @@ const uncategorizedPagesNodes = [
         name: 'Home',
         label: 'Page',
         value: 'https://weare.frontify.com/page/1',
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconJohanna />,
     },
     {
         id: '1-1-2',
@@ -73,7 +73,7 @@ const uncategorizedPagesNodes = [
         name: 'Members',
         label: 'Page',
         value: 'https://weare.frontify.com/page/2',
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconJohanna />,
         sort: null,
     },
     {
@@ -82,7 +82,7 @@ const uncategorizedPagesNodes = [
         name: 'About us',
         label: 'Page',
         value: 'https://weare.frontify.com/page/3',
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconJohanna />,
         sort: null,
         editable: true,
     },
@@ -95,9 +95,9 @@ const testCategoryNodes = [
         name: 'Home Category',
         label: 'Home Page',
         value: 'https://weare.frontify.com/page/4',
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconJohanna />,
         sort: null,
-        badge: <Badge icon={<IconFaceExtraHappy size={IconSize.Size16} />}></Badge>,
+        badge: <Badge icon={<IconJohanna />}></Badge>,
         editable: true,
     },
     {
@@ -106,7 +106,7 @@ const testCategoryNodes = [
         name: 'Members Category',
         label: 'Members Page',
         value: 'https://weare.frontify.com/page/5',
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconJohanna />,
         sort: null,
     },
     {
@@ -115,7 +115,7 @@ const testCategoryNodes = [
         name: 'About us Category',
         label: 'About Us Page',
         value: 'https://weare.frontify.com/page/6',
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconJohanna />,
         sort: null,
         badge: <Badge>Hello, I am a badge</Badge>,
     },
@@ -129,8 +129,8 @@ export const mockNodesFlat: mockNodeType = () => [
         name: 'Design System Testing',
         label: 'Document',
         value: 'https://weare.frontify.com/document/1',
-        icon: <IconFolder size={IconSize.Size16} />,
-        actions: [<Button key={'Design System Testing'} size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />],
+        icon: <IconJohanna></IconJohanna>,
+        actions: [<Button key={'Design System Testing'} size={ButtonSize.Small} icon={<IconJohanna></IconJohanna>} />],
         parentId: null,
         sort: 1,
         editable: true,
@@ -138,13 +138,9 @@ export const mockNodesFlat: mockNodeType = () => [
     {
         id: '1-1',
         name: 'Uncategorizes Pages',
-        icon: <IconFolder size={IconSize.Size16} />,
+        icon: <IconJohanna />,
         actions: [
-            <Button
-                key={'Design System Testing Uncategorizes Pages'}
-                size={ButtonSize.Small}
-                icon={<IconPlus></IconPlus>}
-            />,
+            <Button key={'Design System Testing Uncategorizes Pages'} size={ButtonSize.Small} icon={<IconJohanna />} />,
         ],
         parentId: '1',
         sort: 1,
@@ -155,28 +151,28 @@ export const mockNodesFlat: mockNodeType = () => [
         parentId: '1',
         name: 'Test Category',
         label: 'Document',
-        icon: <IconFolder size={IconSize.Size16} />,
+        icon: <IconJohanna />,
         actions: [
             <Button
                 key={'Design System Testing Uncategorizes Pages Test'}
                 size={ButtonSize.Small}
-                icon={<IconPlus></IconPlus>}
+                icon={<IconJohanna />}
             />,
         ],
         value: 'https://weare.frontify.com/document/923#/test',
         sort: null,
-        badge: <IconFaceExtraHappy size={IconSize.Size16} />,
+        badge: <IconJohanna />,
     },
     ...testCategoryNodes,
     {
         id: '1-3',
         name: 'Category Without Subitems',
-        icon: <IconFolder size={IconSize.Size16} />,
+        icon: <IconJohanna />,
         actions: [
             <Button
                 key={'Design System Testing Uncategorizes Pages Test Subitems'}
                 size={ButtonSize.Small}
-                icon={<IconPlus></IconPlus>}
+                icon={<IconJohanna />}
             />,
         ],
         parentId: '1',
@@ -191,14 +187,14 @@ export const mockNodesTree: DraggableItem<TreeNodeItem>[] = [
         name: 'Design System Testing',
         label: 'Document',
         value: 'https://weare.frontify.com/document/1',
-        icon: <IconFolder size={IconSize.Size16} />,
+        icon: <IconJohanna />,
         parentId: null,
         sort: 1,
         nodes: [
             {
                 id: '1-1',
                 name: 'Uncategorizes Pages',
-                icon: <IconFolder size={IconSize.Size16} />,
+                icon: <IconJohanna />,
                 parentId: '1',
                 sort: 1,
                 nodes: [...uncategorizedPagesNodes],
@@ -208,7 +204,7 @@ export const mockNodesTree: DraggableItem<TreeNodeItem>[] = [
                 parentId: '1',
                 name: 'Test Category',
                 label: 'Document',
-                icon: <IconFolder size={IconSize.Size16} />,
+                icon: <IconJohanna />,
                 value: 'https://weare.frontify.com/document/923#/test',
                 sort: null,
                 nodes: [...testCategoryNodes],

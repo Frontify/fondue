@@ -8,7 +8,7 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import React, { FC, FocusEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from 'react';
-import { IconCheckMark, IconClipboard, IconCross, IconCrossCircle, IconEye, IconEyeOff } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 export enum TextInputType {
     Text = 'text',
@@ -186,7 +186,7 @@ export const TextInput: FC<TextInputProps> = ({
                     type="button"
                     {...clearButtonFocusProps}
                 >
-                    <IconCross />
+                    <IconJohanna />
                 </button>
             )}
             {type === TextInputType.Password && (
@@ -204,7 +204,7 @@ export const TextInput: FC<TextInputProps> = ({
                     disabled={disabled}
                     {...passwordButtonFocusProps}
                 >
-                    {isObfuscated ? <IconEye /> : <IconEyeOff />}
+                    {isObfuscated ? <IconJohanna /> : <IconJohanna />}
                 </button>
             )}
             {validation === Validation.Loading && (
@@ -228,13 +228,13 @@ export const TextInput: FC<TextInputProps> = ({
                 >
                     {status === 'error' && (
                         <span className="tw-text-box-negative-strong">
-                            <IconCrossCircle />
+                            <IconJohanna />
                         </span>
                     )}
-                    {status === 'idle' && <IconClipboard />}
+                    {status === 'idle' && <IconJohanna />}
                     {status === 'success' && (
                         <span className="tw-text-box-positive-strong">
-                            <IconCheckMark />
+                            <IconJohanna />
                         </span>
                     )}
                 </button>

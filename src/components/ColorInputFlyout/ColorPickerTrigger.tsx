@@ -2,8 +2,8 @@
 
 import { MenuItemContent } from '@components/MenuItem/MenuItemContent';
 import { Trigger } from '@components/Trigger/Trigger';
-import IconDroplet from '@foundation/Icon/Generated/IconDroplet';
-import { IconSize } from '@foundation/Icon/IconSize';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
+
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
 import { toShortRgb } from '@utilities/colors';
@@ -69,7 +69,7 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
                             />
                         ) : (
                             <span className="tw-text-black-70">
-                                <IconDroplet size={IconSize.Size12} />
+                                <IconJohanna />
                             </span>
                         )
                     }

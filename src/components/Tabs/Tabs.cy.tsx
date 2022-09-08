@@ -3,7 +3,7 @@
 import { BadgeStyle } from '@components/Badge';
 import { TabItem, TabItemProps } from '@components/Tabs/TabItem';
 import { TabSize, Tabs, TabsPaddingX } from '@components/Tabs/Tabs';
-import { IconIcon, IconSize } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 import React, { useState } from 'react';
 
 const data: TabItemProps[] = [
@@ -21,7 +21,7 @@ const data: TabItemProps[] = [
     {
         id: 'tab-3',
         label: 'A long tab name',
-        decorator: <IconIcon size={IconSize.Size12} />,
+        decorator: <IconJohanna />,
         children: 'This is content for label 3',
     },
     {
@@ -38,7 +38,7 @@ const data: TabItemProps[] = [
     {
         id: 'tab-5',
         label: 'All disabled',
-        decorator: <IconIcon size={IconSize.Size12} />,
+        decorator: <IconJohanna />,
         badge: { style: BadgeStyle.Danger, children: 'Badge 2' },
         disabled: true,
         children: <button>This is content for label 5</button>,
@@ -46,7 +46,7 @@ const data: TabItemProps[] = [
     {
         id: 'tab-6',
         label: 'Last tab',
-        decorator: <IconIcon size={IconSize.Size12} />,
+        decorator: <IconJohanna />,
         badge: { style: BadgeStyle.Danger, children: 'Badge 2' },
         children: <button>This is content for label 6</button>,
     },

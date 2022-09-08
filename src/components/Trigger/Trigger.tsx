@@ -1,13 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
-import { IconSize } from '@foundation/Icon/IconSize';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import React, { FC, HTMLAttributes } from 'react';
-import { IconCross, IconTrashBin } from '@foundation/Icon';
 
 export enum TriggerSize {
     Small = 'Small',
@@ -75,7 +73,7 @@ export const Trigger: FC<TriggerProps> = ({
                         ])}
                         onClick={() => !!onClear && onClear()}
                     >
-                        <IconCross size={IconSize.Size12} />
+                        <IconJohanna />
                     </button>
                 )}
                 {!!onDelete && (
@@ -90,7 +88,7 @@ export const Trigger: FC<TriggerProps> = ({
                         ])}
                         onClick={onDelete}
                     >
-                        <IconTrashBin size={IconSize.Size12} />
+                        <IconJohanna />
                     </button>
                 )}
                 <button
@@ -104,7 +102,7 @@ export const Trigger: FC<TriggerProps> = ({
                     ])}
                 >
                     <div className={merge(['tw-transition-transform', isOpen && 'tw-rotate-180'])}>
-                        <IconCaretDown size={IconSize.Size16} />
+                        <IconJohanna />
                     </div>
                 </button>
             </div>

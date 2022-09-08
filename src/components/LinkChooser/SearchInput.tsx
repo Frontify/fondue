@@ -10,7 +10,7 @@ import { merge } from '@utilities/merge';
 import { useActor } from '@xstate/react';
 import React, { FC, MouseEvent, forwardRef } from 'react';
 import { IconButtonProps, SearchInputProps } from './types';
-import { IconArrowOutExternal, IconClipboard, IconCross } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>(
     (
@@ -83,7 +83,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         testId="link-chooser-preview-icon"
                         title="Preview link"
                         ariaLabel="preview link"
-                        icon={<IconArrowOutExternal />}
+                        icon={<IconJohanna />}
                         onClick={() => send('OPEN_PREVIEW')}
                     />
                 )}
@@ -93,7 +93,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         testId="link-chooser-copy-icon"
                         title="Copy text to clipboard"
                         ariaLabel="copy text to clipboard"
-                        icon={<IconClipboard />}
+                        icon={<IconJohanna />}
                         onClick={() => send('COPY_TO_CLIPBOARD')}
                     />
                 )}
@@ -103,7 +103,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         testId="link-chooser-clear-icon"
                         title="Clear text input"
                         ariaLabel="clear text input"
-                        icon={<IconCross />}
+                        icon={<IconJohanna />}
                         isComboBoxControl
                         onClick={onClear}
                     />

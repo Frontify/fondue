@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
-import { IconSize } from '@foundation/Icon/IconSize';
+
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import React, { Key, cloneElement, useEffect, useRef, useState } from 'react';
-import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@foundation/Icon';
 import { SelectionMode, SortDirection } from '..';
+import { IconJohanna } from '@foundation/Icon';
 
 export enum TableColumnHeaderType {
     Default = 'Default',
@@ -38,7 +38,7 @@ export const TableColumnHeader = ({
         rendered,
         props: { allowsSorting },
     } = column;
-    const [icon, setIcon] = useState(<IconArrowBidirectional />);
+    const [icon, setIcon] = useState(<IconJohanna />);
     const [isChecked, setIsChecked] = useState(false);
     const ref = useRef<HTMLTableCellElement | null>(null);
     const inverseSortDirection =
@@ -46,9 +46,9 @@ export const TableColumnHeader = ({
 
     useEffect(() => {
         if (isColumnSorted) {
-            setIcon(sortDirection === SortDirection.Descending ? <IconArrowDown /> : <IconArrowUp />);
+            setIcon(sortDirection === SortDirection.Descending ? <IconJohanna /> : <IconJohanna />);
         } else {
-            setIcon(<IconArrowBidirectional />);
+            setIcon(<IconJohanna />);
         }
     }, [isColumnSorted, sortDirection]);
 
@@ -109,7 +109,7 @@ export const TableColumnHeader = ({
                                 : 'tw-text-black-40 dark:tw-text-black-60 group-hover:tw-text-black-100 dark:group-hover:tw-text-white'
                         }
                     >
-                        {cloneElement(icon, { size: IconSize.Size12 })}
+                        {cloneElement(icon, { size: 12 })}
                     </span>
                 )}
             </button>

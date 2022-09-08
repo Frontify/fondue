@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from '@foundation/Icon/IconSize';
 import React from 'react';
 import { TooltipIcon } from './TooltipIcon';
 
@@ -20,7 +19,7 @@ describe('TooltipIcon Component', () => {
     });
 
     it('should render an icon with custom size', () => {
-        cy.mount(<TooltipIcon tooltip={TOOLTIP_PROPS} iconSize={IconSize.Size20} />);
+        cy.mount(<TooltipIcon tooltip={TOOLTIP_PROPS} iconSize={20} />);
 
         cy.get(TOOLTIP_ICON_ID).find(TOOLTIP_ICON_TRIGGER_ID).children().should('have.css', 'width').and('eq', '20px');
         cy.get(TOOLTIP_ICON_ID).find(TOOLTIP_ICON_TRIGGER_ID).children().should('have.css', 'height').and('eq', '20px');

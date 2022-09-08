@@ -13,7 +13,7 @@ import React, {
 } from 'react';
 import { TabItemProps } from '@components/Tabs/TabItem';
 import { merge } from '@utilities/merge';
-import { IconDotsHorizontal } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 import { Badge } from '@components/Badge';
 import { motion } from 'framer-motion';
 import { useFocusRing } from '@react-aria/focus';
@@ -265,7 +265,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                             onKeyDown={(event) => triggerOverflowMenu(event)}
                             {...focusProps}
                         >
-                            <IconDotsHorizontal />
+                            <IconJohanna />
                         </button>
                         {isMenuOpened && (
                             <div

@@ -1,13 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from '@foundation/Icon/IconSize';
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import React, { MouseEvent, useRef } from 'react';
-import { IconCross } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 export enum TagType {
     Suggested = 'Suggested',
@@ -77,7 +76,7 @@ export const Tag = ({ type, label, onClick, size = TagSize.Medium }: TagProps) =
                     data-test-id="tag-reject-icon"
                     className="tw-opacity-80 group-hover:tw-opacity-100 tw-transition-opacity tw-ml-1"
                 >
-                    <IconCross size={IconSize.Size12} />
+                    <IconJohanna />
                 </span>
             )}
         </button>

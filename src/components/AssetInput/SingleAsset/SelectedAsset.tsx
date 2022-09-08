@@ -1,6 +1,5 @@
 import { ActionMenu } from '@components/ActionMenu/ActionMenu/ActionMenu';
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
-import { IconSize } from '@foundation/Icon/IconSize';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
@@ -111,7 +110,7 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
                                 isOpen ? 'tw-rotate-180 tw-text-black-90' : 'tw-text-black-60',
                             ])}
                         >
-                            <IconCaretDown size={IconSize.Size16} />
+                            <IconJohanna />
                         </span>
                     </div>
                 </div>

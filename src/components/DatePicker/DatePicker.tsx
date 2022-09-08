@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
-import { IconSize } from '@foundation/Icon/IconSize';
+
 import { format, getYear } from 'date-fns';
 import React, { FC, useState } from 'react';
 import DatepickerComponent from 'react-datepicker';
 import './DatePicker.css';
 import { DatePickerTrigger } from './DatePickerTrigger';
-import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 export type DatePickerProps = {
     placeHolder?: string;
@@ -60,14 +60,14 @@ export const DatePicker: FC<DatePickerProps> = ({
                             style={ButtonStyle.Secondary}
                             onClick={decreaseYear}
                             solid={false}
-                            icon={<IconCaretLeftDouble size={IconSize.Size20} />}
+                            icon={<IconJohanna />}
                         />
                         <Button
                             size={ButtonSize.Medium}
                             style={ButtonStyle.Secondary}
                             onClick={decreaseMonth}
                             solid={false}
-                            icon={<IconCaretLeft size={IconSize.Size20} />}
+                            icon={<IconJohanna />}
                         />
                         <p className="tw-font-sans tw-font-semibold tw-grow tw-self-center">
                             {format(date, 'MMMM')} {getYear(date)}
@@ -77,14 +77,14 @@ export const DatePicker: FC<DatePickerProps> = ({
                             style={ButtonStyle.Secondary}
                             onClick={increaseMonth}
                             solid={false}
-                            icon={<IconCaretRight size={IconSize.Size20} />}
+                            icon={<IconJohanna />}
                         />
                         <Button
                             size={ButtonSize.Medium}
                             style={ButtonStyle.Secondary}
                             onClick={increaseYear}
                             solid={false}
-                            icon={<IconCaretRightDouble size={IconSize.Size20} />}
+                            icon={<IconJohanna />}
                         />
                     </div>
                 )}

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import RejectIcon from '@foundation/Icon/Generated/IconCross';
-import { IconSize } from '@foundation/Icon/IconSize';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
+
 import { getColorDisplayValue } from '@utilities/colors';
 import { merge } from '@utilities/merge';
 import React, { FC, ReactNode, cloneElement } from 'react';
@@ -80,7 +80,7 @@ export const Badge: FC<BadgeProps> = ({
                     data-test-id="badge-icon"
                     className={merge([disabled && 'tw-opacity-30', 'tw-flex-none tw-leading-none'])}
                 >
-                    {cloneElement(icon, { size: IconSize.Size16 })}
+                    {cloneElement(icon, { size: 16 })}
                 </span>
             )}
             <span className="tw-text-center tw-text-xxs tw-font-sans tw-font-normal tw-truncate">{children}</span>
@@ -94,7 +94,7 @@ export const Badge: FC<BadgeProps> = ({
                         onDismiss();
                     }}
                 >
-                    <RejectIcon size={IconSize.Size16} />
+                    <IconJohanna />
                 </button>
             )}
         </Container>

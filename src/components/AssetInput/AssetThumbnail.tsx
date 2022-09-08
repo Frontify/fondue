@@ -1,9 +1,8 @@
-import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 import React, { FC, cloneElement } from 'react';
 import { AssetInputProps, AssetInputSize } from './AssetInput';
 import { SelectedAssetProps } from './SingleAsset/SelectedAsset';
-import { IconMusicNote } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 type AssetThumbnailProps = {
     asset: SelectedAssetProps['asset'];
@@ -37,12 +36,10 @@ export const AssetThumbnail: FC<AssetThumbnailProps> = ({ asset, size, isActive 
         >
             {thumbnailVariant === 'icon' && (
                 <span data-test-id="asset-input-thumbnail-icon">
-                    {asset.icon && cloneElement(asset.icon, { size: IconSize.Size24 })}
+                    {asset.icon && cloneElement(asset.icon, { size: 24 })}
                 </span>
             )}
-            {thumbnailVariant === 'audio' && (
-                <IconMusicNote size={IconSize.Size24} data-test-id="asset-input-thumbnail-audio" />
-            )}
+            {thumbnailVariant === 'audio' && <IconJohanna />}
             {thumbnailVariant === 'default' && (
                 <img
                     src={asset.src}

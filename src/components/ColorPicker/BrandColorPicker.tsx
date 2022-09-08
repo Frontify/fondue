@@ -2,8 +2,8 @@
 
 import { Slider } from '@components/Slider/Slider';
 import { TextInput } from '@components/TextInput/TextInput';
-import { IconCheckMark, IconGridRegular, IconMagnifier, IconStackVertical } from '@foundation/Icon/Generated';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconJohanna } from '@foundation/Icon/Generated';
+
 import { isColorLight, toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
 import React, { FC, useEffect, useState } from 'react';
@@ -22,8 +22,8 @@ type Props = Omit<ColorPickerProps, 'currentFormat' | 'setFormat'>;
 
 export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], currentColor, onSelect }) => {
     const views = [
-        { id: BrandColorView.Grid, icon: <IconGridRegular />, ariaLabel: 'Grid' },
-        { id: BrandColorView.List, icon: <IconStackVertical />, ariaLabel: 'List' },
+        { id: BrandColorView.Grid, icon: <IconJohanna />, ariaLabel: 'Grid' },
+        { id: BrandColorView.List, icon: <IconJohanna />, ariaLabel: 'List' },
     ];
     const [view, setView] = useState(views[0].id);
     const [query, setQuery] = useState('');
@@ -55,7 +55,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                 <div className="tw-flex-1">
                     <TextInput
                         value={query}
-                        decorator={<IconMagnifier />}
+                        decorator={<IconJohanna />}
                         placeholder="Search"
                         onChange={(value) => setQuery(value)}
                         clearable
@@ -97,9 +97,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                                                   {color.red === currentColor.red &&
                                                       color.green === currentColor.green &&
                                                       color.blue === currentColor.blue &&
-                                                      color.alpha === currentColor.alpha && (
-                                                          <IconCheckMark size={IconSize.Size20} />
-                                                      )}
+                                                      color.alpha === currentColor.alpha && <IconJohanna />}
                                               </span>
                                               {view === BrandColorView.List && (
                                                   <span className="tw-h-6 tw-grow tw-flex tw-items-center tw-text-sm tw-text-left">

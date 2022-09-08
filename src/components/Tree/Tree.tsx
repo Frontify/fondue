@@ -5,16 +5,15 @@ import { renderNodeArray } from './Node';
 import { useId } from '@react-aria/utils';
 import { DndWrapper, DraggableItem, DropZonePosition, draggableItemCompareFn } from '@utilities/dnd';
 import { listToTree } from '@components/Tree/utils';
-import { IconProps } from '@foundation/Icon';
 import { BadgeProps } from '..';
 
 export interface TreeFlatListItem {
     name: string;
-    icon?: ReactElement<IconProps>;
+    icon?: ReactElement;
     label?: string;
     value?: string;
     actions?: React.ReactNode[];
-    badge?: ReactElement<IconProps> | ReactElement<BadgeProps>;
+    badge?: ReactElement | ReactElement<BadgeProps>;
     parentId: NullableString;
     editable?: boolean;
 }

@@ -2,7 +2,7 @@
 
 import { Meta, Story } from '@storybook/react';
 import React, { useEffect, useState } from 'react';
-import { IconExclamationMarkCircle, IconInfo, IconQuestionMarkCircle } from '@foundation/Icon/Generated';
+import { IconJohanna } from '@foundation/Icon/Generated';
 import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState } from './Checkbox';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
@@ -52,14 +52,14 @@ export const CheckboxWithMultipleTooltips = Checkbox.bind({});
 CheckboxWithMultipleTooltips.args = {
     ...Checkbox.args,
     tooltip: [
-        { triggerIcon: <IconInfo />, triggerStyle: TooltipIconTriggerStyle.Danger, content: 'Tooltip 1' },
+        { triggerIcon: <IconJohanna />, triggerStyle: TooltipIconTriggerStyle.Danger, content: 'Tooltip 1' },
         {
-            triggerIcon: <IconQuestionMarkCircle />,
+            triggerIcon: <IconJohanna />,
             triggerStyle: TooltipIconTriggerStyle.Primary,
             content: 'Tooltip 2',
         },
         {
-            triggerIcon: <IconExclamationMarkCircle filled />,
+            triggerIcon: <IconJohanna />,
             triggerStyle: TooltipIconTriggerStyle.Warning,
             content: 'Tooltip 3',
         },

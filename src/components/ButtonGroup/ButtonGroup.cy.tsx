@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
-import IconCross from '@foundation/Icon/Generated/IconCross';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import React from 'react';
 import { ButtonGroup } from './ButtonGroup';
 
@@ -11,7 +11,7 @@ describe('ButtonGroup Composition', () => {
             <ButtonGroup size={ButtonSize.Small}>
                 <Button>First, Small Button</Button>
                 <Button style={ButtonStyle.Secondary}>The Second, Small Button</Button>
-                <Button icon={<IconCross />} style={ButtonStyle.Danger}>
+                <Button icon={<IconJohanna />} style={ButtonStyle.Danger}>
                     And The Third, Small Button
                 </Button>
             </ButtonGroup>,
@@ -27,7 +27,7 @@ describe('ButtonGroup Composition', () => {
             <ButtonGroup size={ButtonSize.Medium}>
                 <Button>First, Medium Button</Button>
                 <Button style={ButtonStyle.Secondary}>The Second, Medium Button</Button>
-                <Button icon={<IconCross />} style={ButtonStyle.Danger}>
+                <Button icon={<IconJohanna />} style={ButtonStyle.Danger}>
                     And The Third, Medium Button
                 </Button>
             </ButtonGroup>,
@@ -43,7 +43,7 @@ describe('ButtonGroup Composition', () => {
             <ButtonGroup size={ButtonSize.Large}>
                 <Button>First, Large Button</Button>
                 <Button style={ButtonStyle.Secondary}>The Second, Large Button</Button>
-                <Button icon={<IconCross />} style={ButtonStyle.Danger}>
+                <Button icon={<IconJohanna />} style={ButtonStyle.Danger}>
                     And The Third, Large Button
                 </Button>
             </ButtonGroup>,
@@ -61,7 +61,7 @@ describe('ButtonGroup Composition', () => {
                 <Button size={ButtonSize.Medium} style={ButtonStyle.Secondary}>
                     The Second
                 </Button>
-                <Button size={ButtonSize.Large} icon={<IconCross />} style={ButtonStyle.Danger}>
+                <Button size={ButtonSize.Large} icon={<IconJohanna />} style={ButtonStyle.Danger}>
                     The Third
                 </Button>
             </ButtonGroup>,

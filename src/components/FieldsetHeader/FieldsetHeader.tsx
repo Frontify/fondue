@@ -4,7 +4,7 @@ import { Switch, SwitchSize } from '@components/Switch/Switch';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
 import React, { FC, ReactNode, cloneElement, isValidElement } from 'react';
-import { IconCaretDown, IconMinus, IconPlus, IconSize } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 export enum FieldsetHeaderSize {
     Small = 'Small',
@@ -12,19 +12,19 @@ export enum FieldsetHeaderSize {
     Large = 'Large',
 }
 
-const sizeMap: Record<FieldsetHeaderSize, { icon: IconSize; text: string; switch: SwitchSize }> = {
+const sizeMap: Record<FieldsetHeaderSize, { icon: number; text: string; switch: SwitchSize }> = {
     [FieldsetHeaderSize.Small]: {
-        icon: IconSize.Size12,
+        icon: 12,
         text: 'tw-text-s',
         switch: SwitchSize.Small,
     },
     [FieldsetHeaderSize.Medium]: {
-        icon: IconSize.Size16,
+        icon: 16,
         text: 'tw-text-m',
         switch: SwitchSize.Medium,
     },
     [FieldsetHeaderSize.Large]: {
-        icon: IconSize.Size20,
+        icon: 20,
         text: 'tw-text-l',
         switch: SwitchSize.Large,
     },
@@ -76,7 +76,7 @@ export const renderFieldsetHeaderIconType = (
                         !disabled && !active && 'tw-text-black-80',
                     ])}
                 >
-                    <IconCaretDown {...props} />
+                    <IconJohanna />
                 </div>
             );
         case FieldsetHeaderType.AddRemove:
@@ -88,7 +88,7 @@ export const renderFieldsetHeaderIconType = (
                         !active && !disabled && 'tw-text-black-80',
                     ])}
                 >
-                    {active ? <IconMinus {...props} /> : <IconPlus {...props} />}
+                    {active ? <IconJohanna /> : <IconJohanna />}
                 </div>
             );
     }

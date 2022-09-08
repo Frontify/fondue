@@ -3,14 +3,6 @@
 import { mapToAriaProps } from '@components/ActionMenu/Aria/helper';
 import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
 import { useDropdownAutoHeight } from '@components/Dropdown/useDropdownAutoHeight';
-import {
-    IconArrowOutExternal,
-    IconBuildingBlock,
-    IconDocument,
-    IconDocumentStack,
-    IconLayersSingle,
-    IconLink,
-} from '@foundation/Icon/Generated';
 import { useComboBox } from '@react-aria/combobox';
 import { DismissButton } from '@react-aria/overlays';
 import { scrollIntoView } from '@react-aria/utils';
@@ -31,14 +23,15 @@ import { decoratedResults, doesContainSubstring, findSection, getDefaultData } f
 import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection, shouldGoBack } from './utils/state';
 import { createCustomLink } from './utils/transformers';
 import { useManualComboBoxEventHandlers } from './utils/useManualComboBoxHandlers';
+import { IconJohanna } from '@foundation/Icon';
 
 export const IconOptions: Record<IconName | string, ReactElement> = {
-    [IconName.Document]: <IconDocument />,
-    [IconName.Library]: <IconDocumentStack />,
-    [IconName.Link]: <IconLink />,
-    [IconName.External]: <IconArrowOutExternal />,
-    [IconName.Template]: <IconLayersSingle />,
-    [IconName.Block]: <IconBuildingBlock />,
+    [IconName.Document]: <IconJohanna />,
+    [IconName.Library]: <IconJohanna />,
+    [IconName.Link]: <IconJohanna />,
+    [IconName.External]: <IconJohanna />,
+    [IconName.Template]: <IconJohanna />,
+    [IconName.Block]: <IconJohanna />,
 };
 
 export const DEFAULT_ICON = IconName.Link;

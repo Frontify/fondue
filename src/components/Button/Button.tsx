@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from '@foundation/Icon/IconSize';
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
@@ -95,10 +94,10 @@ const styles: Record<'solid' | 'translucent' | 'inverted', Record<ButtonStyle, s
     },
 };
 
-const iconSizes: Record<ButtonSize, IconSize> = {
-    [ButtonSize.Small]: IconSize.Size16,
-    [ButtonSize.Medium]: IconSize.Size20,
-    [ButtonSize.Large]: IconSize.Size24,
+const iconSizes: Record<ButtonSize, number> = {
+    [ButtonSize.Small]: 16,
+    [ButtonSize.Medium]: 20,
+    [ButtonSize.Large]: 24,
 };
 
 const typesMap: Record<ButtonType, 'button' | 'submit' | 'reset'> = {

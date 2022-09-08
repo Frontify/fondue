@@ -11,7 +11,7 @@ import { IconEnum } from './IconEnum';
 export default {
     title: 'Foundation/Icon',
     args: {
-        size: IconSize.Size16,
+        size: 16,
     },
     argTypes: {
         size: {

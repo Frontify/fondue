@@ -4,12 +4,12 @@ import { Badge } from '@components/Badge/Badge';
 import { TextInput } from '@components/TextInput/TextInput';
 
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
-import { IconSize } from '@foundation/Icon/IconSize';
+
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
 import React, { FC, useEffect, useState } from 'react';
 import { Column, Row, SelectionMode, Table, TableProps } from './Table';
-import { IconDotsVertical, IconFaceHappy } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 export default {
     title: 'Components/Table',
@@ -27,7 +27,7 @@ export default {
 
 const User: FC<{ name: string }> = ({ name }) => (
     <div className="tw-flex tw-gap-x-2 tw-items-center">
-        <IconFaceHappy size={IconSize.Size32} />
+        <IconJohanna />
         <div>
             <p>{name}</p>
             <p>mb@gmail.com</p>
@@ -41,7 +41,7 @@ const ActionButton: FC = () => (
         onClick={action('click')}
         size={ButtonSize.Small}
         style={ButtonStyle.Secondary}
-        icon={<IconDotsVertical />}
+        icon={<IconJohanna />}
     />
 );
 

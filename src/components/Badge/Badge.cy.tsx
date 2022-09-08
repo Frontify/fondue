@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconDocumentText } from '@foundation/Icon';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconJohanna } from '@foundation/Icon';
+
 import React from 'react';
 import { BadgeStyle } from '.';
 import { Badge } from './Badge';
@@ -30,7 +30,7 @@ describe('Badge component', () => {
     });
 
     it('should render badge with icon and overwrite size', () => {
-        cy.mount(<Badge icon={<IconDocumentText size={IconSize.Size8} />}>{BADGE_TEXT}</Badge>);
+        cy.mount(<Badge icon={<IconJohanna />}>{BADGE_TEXT}</Badge>);
 
         cy.get(BADGE_ICON_ID).should('exist').and('have.css', 'width', '16px');
     });
@@ -42,14 +42,14 @@ describe('Badge component', () => {
     });
 
     it('should be a big circle', () => {
-        cy.mount(<Badge icon={<IconDocumentText />} />);
+        cy.mount(<Badge icon={<IconJohanna />);
 
         cy.get(BADGE_ID).should('have.css', 'width', '24px').and('have.css', 'height', '24px');
     });
 
     it('should have disabled style', () => {
         cy.mount(
-            <Badge icon={<IconDocumentText />} style={BadgeStyle.Danger} disabled>
+            <Badge icon={<IconJohanna />} style={BadgeStyle.Danger} disabled>
                 {BADGE_TEXT}
             </Badge>,
         );
@@ -60,7 +60,7 @@ describe('Badge component', () => {
 
     it('should have emphasised style', () => {
         cy.mount(
-            <Badge icon={<IconDocumentText />} style={BadgeStyle.Positive} emphasis={BadgeEmphasis.Strong}>
+            <Badge icon={<IconJohanna />} style={BadgeStyle.Positive} emphasis={BadgeEmphasis.Strong}>
                 {BADGE_TEXT}
             </Badge>,
         );
@@ -71,7 +71,7 @@ describe('Badge component', () => {
     it('should have hover styles if onClick prop is a function', () => {
         const onClickStub = cy.stub();
         cy.mount(
-            <Badge icon={<IconDocumentText />} style={BadgeStyle.Danger} onClick={onClickStub}>
+            <Badge icon={<IconJohanna />} style={BadgeStyle.Danger} onClick={onClickStub}>
                 {BADGE_TEXT}
             </Badge>,
         );
@@ -84,7 +84,7 @@ describe('Badge component', () => {
     it('should call onDismiss', () => {
         const onDismissStub = cy.stub();
         cy.mount(
-            <Badge icon={<IconDocumentText />} onDismiss={onDismissStub}>
+            <Badge icon={<IconJohanna />} onDismiss={onDismissStub}>
                 {BADGE_TEXT}
             </Badge>,
         );
@@ -102,7 +102,7 @@ describe('Badge component', () => {
         const DOT_COLOR = { red, green, blue, alpha };
 
         cy.mount(
-            <Badge icon={<IconDocumentText />} status={DOT_COLOR}>
+            <Badge icon={<IconJohanna />} status={DOT_COLOR}>
                 {BADGE_TEXT}
             </Badge>,
         );
@@ -114,7 +114,7 @@ describe('Badge component', () => {
         const DOT_COLOR = 'rgba(0, 100, 200, 0.9)';
 
         cy.mount(
-            <Badge icon={<IconDocumentText />} status={DOT_COLOR}>
+            <Badge icon={<IconJohanna />} status={DOT_COLOR}>
                 {BADGE_TEXT}
             </Badge>,
         );
@@ -124,7 +124,7 @@ describe('Badge component', () => {
 
     it('should display all text on hover', () => {
         cy.mount(
-            <Badge icon={<IconDocumentText />}>
+            <Badge icon={<IconJohanna />}>
                 <span>
                     {BADGE_TEXT}_1_
                     <span>

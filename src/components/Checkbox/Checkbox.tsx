@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import IconMinus from '@foundation/Icon/Generated/IconMinus';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useCheckbox } from '@react-aria/checkbox';
@@ -109,8 +108,8 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                               ]),
                     ])}
                 >
-                    {state === CheckboxState.Checked && <IconCheckMark />}
-                    {state === CheckboxState.Mixed && <IconMinus />}
+                    {state === CheckboxState.Checked && <IconJohanna />}
+                    {state === CheckboxState.Mixed && <IconJohanna />}
                 </span>
                 {label && (
                     <InputLabel

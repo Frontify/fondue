@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconIcon } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 import { PatternDesign, PatternTheme } from '@foundation/Pattern';
 import { OverlayProvider } from '@react-aria/overlays';
 import React from 'react';
@@ -59,7 +59,7 @@ describe('Modal Component', () => {
                     <ModalHeader
                         title={title}
                         leadText={leadText}
-                        decorator={<IconIcon />}
+                        decorator={<IconJohanna />}
                         variant={ModalHeaderVariant.Informative}
                     />
                 </Modal>

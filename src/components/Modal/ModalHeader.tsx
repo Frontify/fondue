@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, cloneElement, useContext } from 'react';
+import React, { FC, useContext } from 'react';
 import { merge } from '@utilities/merge';
 import { ModalHeaderProps, ModalHeaderVariant, modalHeaderVariants } from './types';
-import { IconSize } from '@foundation/Icon';
 import { ModalTitle } from './context/ModalTitle';
 import { ModalLayout } from './context/ModalLayout';
 
@@ -23,9 +22,7 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
                     <span
                         data-test-id="modal-header-decorator-container"
                         className={merge(['tw-mr-2', modalHeaderVariants[variant]])}
-                    >
-                        {cloneElement(decorator, { size: IconSize.Size24 })}
-                    </span>
+                    ></span>
                 )}
                 <h3
                     {...ariaTitleProps}

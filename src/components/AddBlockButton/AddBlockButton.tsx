@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconPlus from '@foundation/Icon/Generated/IconPlus';
-import { IconSize } from '@foundation/Icon/IconSize';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
+
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
@@ -50,7 +50,7 @@ export const AddBlockButton: FC<AddBlockButtonProps> = ({
                     )`,
                 }}
             >
-                <IconPlus size={IconSize.Size16} />
+                <IconJohanna />
             </span>
         </button>
     );

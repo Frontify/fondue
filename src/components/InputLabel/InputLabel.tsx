@@ -2,7 +2,7 @@
 
 import { TooltipProps } from '@components/Tooltip/Tooltip';
 import { TooltipIcon, TooltipIconProps } from '@components/TooltipIcon/TooltipIcon';
-import { IconSize } from '@foundation/Icon/IconSize';
+
 import { merge } from '@utilities/merge';
 import React, { FC, PropsWithChildren } from 'react';
 
@@ -68,7 +68,7 @@ export const InputLabel: FC<InputLabelProps> = ({
                 <TooltipIcon
                     tooltip={{ ...tooltipProps, hoverDelay }}
                     key={index}
-                    iconSize={IconSize.Size16}
+                    iconSize={16}
                     triggerIcon={triggerIcon}
                     triggerStyle={triggerStyle}
                 />

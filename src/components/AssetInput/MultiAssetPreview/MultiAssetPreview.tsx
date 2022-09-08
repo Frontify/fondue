@@ -1,4 +1,4 @@
-import { IconCaretRight, IconSize } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
@@ -47,7 +47,7 @@ export const MultiAssetPreview: FC<MultiAssetPreviewProps> = ({ numberOfLocation
                     </div>
                     <div className="tw-flex tw-items-center tw-text-black-70 tw-pl-4">
                         <div className="tw-absolute tw-right-12">
-                            <IconCaretRight size={IconSize.Size24} />
+                            <IconJohanna />
                         </div>
                     </div>
                 </div>

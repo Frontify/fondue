@@ -6,7 +6,7 @@ import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
 import { ActionMenu as ActionMenuComponent, ActionMenuProps } from './ActionMenu';
-import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 
 export default {
     title: 'Components/Action Menu',
@@ -28,7 +28,7 @@ ActionMenu.args = {
                     id: '1',
                     title: 'Small item with icon',
                     size: MenuItemContentSize.Small,
-                    decorator: <IconMusicNote />,
+                    decorator: <IconJohanna />,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
                     onClick: (value) => {
                         action('switch toggled')(value);
@@ -40,7 +40,7 @@ ActionMenu.args = {
                     id: '2',
                     title: 'Small item with icon warning',
                     size: MenuItemContentSize.Small,
-                    decorator: <IconMusicNote />,
+                    decorator: <IconJohanna />,
                     style: MenuItemStyle.Danger,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
                     onClick: action('click'),
@@ -49,7 +49,7 @@ ActionMenu.args = {
                     id: '3',
                     title: 'Small item with icon disabled',
                     size: MenuItemContentSize.Small,
-                    decorator: <IconMusicNote />,
+                    decorator: <IconJohanna />,
                     disabled: true,
                     onClick: action('click'),
                 },
@@ -57,7 +57,7 @@ ActionMenu.args = {
                     id: '4',
                     title: 'Small item with icon warning disabled',
                     size: MenuItemContentSize.Small,
-                    decorator: <IconMusicNote />,
+                    decorator: <IconJohanna />,
                     style: MenuItemStyle.Danger,
                     disabled: true,
                     onClick: action('click'),
@@ -108,7 +108,7 @@ ActionMenu.args = {
                     id: '5',
                     title: 'Large item with icon',
                     subtitle: 'Subtitle',
-                    decorator: <IconMusicNote />,
+                    decorator: <IconJohanna />,
                     size: MenuItemContentSize.Large,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
                     onClick: action('click'),
@@ -117,7 +117,7 @@ ActionMenu.args = {
                     id: '6',
                     title: 'Large item with icon warning',
                     subtitle: 'Subtitle',
-                    decorator: <IconMusicNote />,
+                    decorator: <IconJohanna />,
                     size: MenuItemContentSize.Large,
                     style: MenuItemStyle.Danger,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
@@ -127,7 +127,7 @@ ActionMenu.args = {
                     id: '7',
                     title: 'Large item with icon disabled',
                     subtitle: 'Subtitle',
-                    decorator: <IconMusicNote />,
+                    decorator: <IconJohanna />,
                     size: MenuItemContentSize.Large,
                     disabled: true,
                     onClick: action('click'),
@@ -136,7 +136,7 @@ ActionMenu.args = {
                     id: '8',
                     title: 'Large item with icon warning disabled',
                     subtitle: 'Subtitle',
-                    decorator: <IconMusicNote />,
+                    decorator: <IconJohanna />,
                     size: MenuItemContentSize.Large,
                     style: MenuItemStyle.Danger,
                     disabled: true,

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TextInput } from '@components/TextInput/TextInput';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import React, { FC, useState } from 'react';
 import { AccordionHeaderProps } from '.';
 import { Accordion, AccordionItem } from './Accordion';
@@ -62,7 +62,7 @@ describe('Accordion Component', () => {
         const onClickStub = cy.stub().as('onClickStub');
         cy.mount(
             <Accordion>
-                <AccordionItem header={{ children: '1', decorator: <IconIcon /> }}>1</AccordionItem>
+                <AccordionItem header={{ children: '1', decorator: <IconJohanna /> }}>1</AccordionItem>
                 <AccordionItem header={{ children: '2' }}>2</AccordionItem>
                 <AccordionItem header={{ children: '3', onClick: onClickStub }} />
             </Accordion>,

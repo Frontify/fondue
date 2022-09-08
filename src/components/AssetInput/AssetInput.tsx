@@ -2,9 +2,8 @@
 
 import { ActionMenuProps } from '@components/ActionMenu/ActionMenu/ActionMenu';
 import { Button, ButtonStyle } from '@components/Button/Button';
-import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon/';
 import { IconProps } from '@foundation/Icon/IconProps';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconJohanna } from '@foundation/Icon/';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
 import React, { ChangeEvent, FC, ReactElement } from 'react';
@@ -119,7 +118,7 @@ export const AssetInput: FC<AssetInputProps> = ({
                         htmlFor={id}
                     >
                         <span className="tw--ml-1 tw-mr-1.5">
-                            <IconArrowCircleUp size={IconSize.Size20} />
+                            <IconJohanna />
                         </span>
                         Upload
                     </label>
@@ -138,12 +137,7 @@ export const AssetInput: FC<AssetInputProps> = ({
                     className={merge(['tw-flex tw-flex-col tw-h-8', onUploadClick && 'tw-pl-3'])}
                     data-test-id="asset-input-library"
                 >
-                    <Button
-                        onClick={onLibraryClick}
-                        style={ButtonStyle.Secondary}
-                        solid={false}
-                        icon={<IconImageStack />}
-                    >
+                    <Button onClick={onLibraryClick} style={ButtonStyle.Secondary} solid={false} icon={<IconJohanna />}>
                         Browse
                     </Button>
                 </div>

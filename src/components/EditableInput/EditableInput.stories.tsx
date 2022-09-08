@@ -1,12 +1,12 @@
 import React from 'react';
 import { EditableInput, EditableInputProps } from '@components/EditableInput/EditableInput';
 import { Story } from '@storybook/react';
-import { IconArrowOutExternal, IconBell, IconPen } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 const IconList = {
-    pen: <IconPen />,
-    external: <IconArrowOutExternal />,
-    bell: <IconBell />,
+    pen: <IconJohanna />,
+    external: <IconJohanna />,
+    bell: <IconJohanna />,
 };
 
 export default {
@@ -37,7 +37,7 @@ const EditableSaveStub = (targetItemId: string, value: string) => {
 
 export const Default = ButtonTemplate.bind({});
 Default.args = {
-    children: <IconPen />,
+    children: <IconJohanna />,
     name: 'Region',
     targetItemId: 'ID',
     onEditableSave: EditableSaveStub,

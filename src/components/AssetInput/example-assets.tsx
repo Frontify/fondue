@@ -1,4 +1,4 @@
-import { IconIcon } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 import React from 'react';
 import { AssetType } from './AssetInput';
 
@@ -56,7 +56,7 @@ export const MIXED_ASSETS: AssetType[] = [
         sourceName: 'Foobar',
         name: 'foo',
         type: 'icon',
-        icon: <IconIcon />,
+        icon: <IconJohanna />,
     },
     {
         source: 'library',

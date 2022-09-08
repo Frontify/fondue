@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { useEffect, useState } from 'react';
-import { IconSize } from '@foundation/Icon/IconSize';
+
 import { Meta, Story } from '@storybook/react';
 import { TextInput, TextInputProps, TextInputType } from './TextInput';
 import { Validation } from '@utilities/validation';
-import { IconIcon } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 export default {
     title: 'Components/Text Input',
@@ -71,7 +71,7 @@ export const WithIconDecorator = TextInputTemplate.bind({});
 
 WithIconDecorator.args = {
     value: 'Value text',
-    decorator: <IconIcon size={IconSize.Size16} />,
+    decorator: <IconJohanna />,
 };
 
 export const WithCharacterDecorator = TextInputTemplate.bind({});
@@ -102,7 +102,7 @@ PasswordWithIconDecorator.argTypes = PasswordArgTypes;
 
 PasswordWithIconDecorator.args = {
     ...PasswordArgs,
-    decorator: <IconIcon size={IconSize.Size16} />,
+    decorator: <IconJohanna />,
 };
 
 export const PasswordWithCharacterDecorator = TextInputTemplate.bind({});

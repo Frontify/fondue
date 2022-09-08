@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, ReactElement, cloneElement } from 'react';
-import { IconSize } from '@foundation/Icon/IconSize';
+
 import { Tooltip, TooltipProps } from '@components/Tooltip/Tooltip';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { IconProps, IconQuestionMarkCircle } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 export type TooltipIconProps = {
     tooltip?: TooltipProps;
-    iconSize?: IconSize;
-    triggerIcon?: ReactElement<IconProps>;
+    iconSize?: number;
+    triggerIcon?: ReactElement;
     triggerStyle?: TooltipIconTriggerStyle;
 };
 
@@ -28,8 +28,8 @@ const tooltipTriggerStyleClass: Record<TooltipIconTriggerStyle, string> = {
 
 export const TooltipIcon: FC<TooltipIconProps> = ({
     tooltip,
-    iconSize = IconSize.Size16,
-    triggerIcon = <IconQuestionMarkCircle />,
+    iconSize = 16,
+    triggerIcon = <IconJohanna />,
     triggerStyle = TooltipIconTriggerStyle.Primary,
 }: TooltipIconProps) => {
     return (

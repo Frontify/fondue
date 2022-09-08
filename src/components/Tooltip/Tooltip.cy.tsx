@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconExclamationMarkCircle, IconIcon, IconSize } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 import React from 'react';
 import { BrightHeaderStyle, brightHeaderBackgroundColors } from './BrightHeader';
 import { Tooltip, TooltipProps } from './Tooltip';
@@ -10,7 +10,7 @@ const TOOLTIP_ID = '[data-test-id=tooltip]';
 const TOOLTIP_LINK_ID = '[data-test-id=tooltip-link]';
 const TOOLTIP_LINK_URL = 'https://www.frontify.com';
 const TOOLTIP_HEADING_TEXT = "I'm a heading";
-const GENERIC_ICON = <IconIcon />;
+const GENERIC_ICON = <IconJohanna />;
 const GENERIC_ICON_CODE = 'svg[name=IconIcon16]';
 const BRIGHT_HEADER_ID = '[data-test-id=bright-header]';
 
@@ -21,7 +21,7 @@ export const TooltipComponent = (args: TooltipProps) => {
                 {...args}
                 triggerElement={
                     <div data-test-id="tooltip-trigger" className="tw-flex tw-justify-center tw-items-center">
-                        <IconExclamationMarkCircle size={IconSize.Size16} filled />
+                        <IconJohanna />
                         <span>Tooltip trigger</span>
                     </div>
                 }

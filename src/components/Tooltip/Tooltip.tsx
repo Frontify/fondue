@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
-import { IconSize } from '@foundation/Icon/IconSize';
+
 import { useLink } from '@react-aria/link';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
@@ -239,9 +239,7 @@ export const Tooltip = ({
                                 {heading && (
                                     <h4 className="tw-flex tw-text-m tw-font-bold tw-mb-1">
                                         {headingIcon && (
-                                            <span className="tw-mr-1.5">
-                                                {cloneElement(headingIcon, { size: IconSize.Size20 })}
-                                            </span>
+                                            <span className="tw-mr-1.5">{cloneElement(headingIcon, { size: 20 })}</span>
                                         )}
                                         {heading}
                                     </h4>
@@ -249,7 +247,7 @@ export const Tooltip = ({
                                 <div className="tw-flex">
                                     {tooltipIcon && (
                                         <span className="tw-shrink-0 tw-mr-1">
-                                            {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
+                                            {cloneElement(tooltipIcon, { size: 16 })}
                                         </span>
                                     )}
                                     <p className="tw-text-s tw-min-w-0 tw-break-words">{content}</p>

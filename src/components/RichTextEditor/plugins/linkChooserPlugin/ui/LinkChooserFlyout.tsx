@@ -3,7 +3,7 @@ import { Checkbox, CheckboxState } from '@components/Checkbox';
 import { Flyout, FlyoutFooter } from '@components/Flyout';
 import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
-import { IconCheckMark } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 import React, { HTMLAttributes, MutableRefObject, ReactNode } from 'react';
 import { LINK_CHANGE_CANCELED, LINK_CHANGE_CONFIRMED } from '../events';
 import { ChosenLink } from '../types';
@@ -59,7 +59,7 @@ export const LinkChooserFlyout = ({
                             children: 'Save',
                             onClick: onConfirm,
                             style: ButtonStyle.Primary,
-                            icon: <IconCheckMark />,
+                            icon: <IconJohanna />,
                             disabled: !chosenLink.searchResult?.link || !chosenLink.searchResult?.title,
                         },
                     ]}

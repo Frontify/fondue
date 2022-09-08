@@ -2,7 +2,7 @@
 
 import { MenuBlock } from '@components/Dropdown/SelectMenu/SelectMenu';
 import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
-import { IconIcon } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import React, { FC, ReactElement, useState } from 'react';
 import { Dropdown } from './Dropdown';
@@ -153,14 +153,14 @@ describe('Dropdown Component', () => {
     });
 
     it('should display persisted icon if provided', () => {
-        cy.mount(<Component menuBlocks={ITEMS} decorator={<IconIcon />} />);
+        cy.mount(<Component menuBlocks={ITEMS} decorator={<IconJohanna />);
 
         cy.get(MENU_ITEM_DECORATOR_ID).find('svg').invoke('attr', 'name').should('eq', 'IconIcon16');
     });
 
     it('should have a maximum height calculated based on viewport and dropdown position', () => {
         cy.viewport(550, 220);
-        cy.mount(<Component menuBlocks={ITEMS} decorator={<IconIcon />} />);
+        cy.mount(<Component menuBlocks={ITEMS} decorator={<IconJohanna />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_MENU_ID).then(($el) => {
             const { bottom } = $el[0].getBoundingClientRect();
@@ -170,7 +170,7 @@ describe('Dropdown Component', () => {
 
     it('should prevent height adjusting if autoResize is false', () => {
         cy.viewport(550, 220);
-        cy.mount(<Component menuBlocks={ITEMS} decorator={<IconIcon />} autoResize={false} />);
+        cy.mount(<Component menuBlocks={ITEMS} decorator={<IconJohanna />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_MENU_ID).then(($el) => {
             const { bottom } = $el[0].getBoundingClientRect();
@@ -184,7 +184,7 @@ describe('Dropdown Component', () => {
 
     it('should have a minimum height of 130px', () => {
         cy.viewport(550, 160);
-        cy.mount(<Component menuBlocks={ITEMS} decorator={<IconIcon />} />);
+        cy.mount(<Component menuBlocks={ITEMS} decorator={<IconJohanna />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_MENU_ID).then(($el) => {
             const height = $el[0].clientHeight;

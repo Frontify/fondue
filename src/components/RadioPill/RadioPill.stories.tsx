@@ -4,7 +4,7 @@ import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
 import { RadioPill as RadioPillComponent, RadioPillProps } from './RadioPill';
-import { IconIcon } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 export default {
     title: 'Components/Radio Pill',
@@ -19,7 +19,7 @@ export default {
             options: ['None', 'Icon'],
             mapping: {
                 None: null,
-                Icon: <IconIcon />,
+                Icon: <IconJohanna />,
             },
             control: { type: 'select' },
         },

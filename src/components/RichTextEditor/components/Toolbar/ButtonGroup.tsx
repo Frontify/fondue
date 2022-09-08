@@ -63,41 +63,21 @@ export const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId }) 
 const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<EditorActions, ReactElement> => ({
     [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} />,
     [EditorActions.ALIGN_LEFT]: (
-        <AlignToolbarButton
-            value="left"
-            icon={<IconStylingWrapper icon={<IconTextAlignmentLeft size={IconSize.Size16} />} />}
-            classNames={classNames}
-            styles={styles}
-        />
+        <AlignToolbarButton value="left" icon={<IconJohanna />} classNames={classNames} styles={styles} />
     ),
     [EditorActions.ALIGN_CENTER]: (
-        <AlignToolbarButton
-            value="center"
-            icon={<IconStylingWrapper icon={<IconTextAlignmentCentre size={IconSize.Size16} />} />}
-            classNames={classNames}
-            styles={styles}
-        />
+        <AlignToolbarButton value="center" icon={<IconJohanna />} classNames={classNames} styles={styles} />
     ),
     [EditorActions.ALIGN_RIGHT]: (
-        <AlignToolbarButton
-            value="right"
-            icon={<IconStylingWrapper icon={<IconTextAlignmentRight size={IconSize.Size16} />} />}
-            classNames={classNames}
-            styles={styles}
-        />
+        <AlignToolbarButton value="right" icon={<IconJohanna />} classNames={classNames} styles={styles} />
     ),
     [EditorActions.ALIGN_JUSTIFY]: (
-        <AlignToolbarButton
-            value="justify"
-            icon={<IconStylingWrapper icon={<IconTextAlignmentJustify size={IconSize.Size16} />} />}
-            classNames={classNames}
-            styles={styles}
-        />
+        <AlignToolbarButton value="justify" icon={<IconJohanna />} classNames={classNames} styles={styles} />
     ),
     [EditorActions.BOLD]: (
         <MarkToolbarButton
             type={getPluginType(editor, MARK_BOLD)}
-            icon={<IconStylingWrapper icon={<IconTextFormatBold size={IconSize.Size16} />} />}
+            icon={<IconJohanna />}
             classNames={classNames}
             styles={styles}
         />
@@ -105,7 +85,7 @@ const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<Editor
     [EditorActions.ITALIC]: (
         <MarkToolbarButton
             type={getPluginType(editor, MARK_ITALIC)}
-            icon={<IconStylingWrapper icon={<IconTextFormatItalic size={IconSize.Size16} />} />}
+            icon={<IconJohanna />}
             classNames={classNames}
             styles={styles}
         />
@@ -113,7 +93,7 @@ const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<Editor
     [EditorActions.UNDERLINE]: (
         <MarkToolbarButton
             type={getPluginType(editor, MARK_UNDERLINE)}
-            icon={<IconStylingWrapper icon={<IconTextFormatUnderline size={IconSize.Size16} />} />}
+            icon={<IconJohanna />}
             classNames={classNames}
             styles={styles}
         />
@@ -121,7 +101,7 @@ const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<Editor
     [EditorActions.STRIKETHROUGH]: (
         <MarkToolbarButton
             type={getPluginType(editor, MARK_STRIKETHROUGH)}
-            icon={<IconStylingWrapper icon={<IconTextFormatStrikethrough size={IconSize.Size16} />} />}
+            icon={<IconJohanna />}
             classNames={classNames}
             styles={styles}
         />
@@ -129,7 +109,7 @@ const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<Editor
     [EditorActions.CODE]: (
         <MarkToolbarButton
             type={getPluginType(editor, MARK_CODE)}
-            icon={<IconStylingWrapper icon={<IconTextBrackets size={IconSize.Size16} />} />}
+            icon={<IconJohanna />}
             classNames={classNames}
             styles={styles}
         />
@@ -137,7 +117,7 @@ const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<Editor
     [EditorActions.CHECK_ITEM]: (
         <CheckboxListToolbarButton
             type={getPluginType(editor, ELEMENT_CHECK_ITEM)}
-            icon={<IconStylingWrapper icon={<IconListCheck size={IconSize.Size16} />} />}
+            icon={<IconJohanna />}
             classNames={classNames}
             styles={styles}
         />
@@ -148,7 +128,7 @@ const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<Editor
     [EditorActions.ORDERED_LIST]: (
         <ListToolbarButton
             type={getPluginType(editor, ELEMENT_OL)}
-            icon={<IconStylingWrapper icon={<IconListNumbers size={IconSize.Size16} />} />}
+            icon={<IconJohanna />}
             classNames={classNames}
             styles={styles}
         />
@@ -156,7 +136,7 @@ const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<Editor
     [EditorActions.UNORDERED_LIST]: (
         <ListToolbarButton
             type={getPluginType(editor, ELEMENT_UL)}
-            icon={<IconStylingWrapper icon={<IconListBullet size={IconSize.Size16} />} />}
+            icon={<IconJohanna />}
             classNames={classNames}
             styles={styles}
         />

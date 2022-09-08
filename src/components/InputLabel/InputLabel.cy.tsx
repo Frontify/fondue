@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
-import { IconReport } from '@foundation/Icon/Generated';
+import { IconJohanna } from '@foundation/Icon/Generated';
 import React from 'react';
 import { InputLabel } from './InputLabel';
 
@@ -47,7 +47,7 @@ describe('InputLabel Component', () => {
                 htmlFor="input"
                 tooltip={[
                     { content: LABEL_TOOLTIP, triggerStyle: TooltipIconTriggerStyle.Danger },
-                    { content: LABEL_TOOLTIP, triggerIcon: <IconReport /> },
+                    { content: LABEL_TOOLTIP, triggerIcon: <IconJohanna /> },
                 ]}
             >
                 {LABEL_TEXT}

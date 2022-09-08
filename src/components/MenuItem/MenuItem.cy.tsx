@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconMusicNote } from '@foundation/Icon';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconJohanna } from '@foundation/Icon';
+
 import React from 'react';
 import { MenuItem, MenuItemProps, SelectionIndicatorIcon } from './MenuItem';
 import { MenuItemContentSize } from './MenuItemContent';
@@ -17,7 +17,7 @@ const ITEMS: MenuItemProps[] = [
     {
         title: 'Small',
         size: MenuItemContentSize.Small,
-        decorator: <IconMusicNote size={IconSize.Size16} />,
+        decorator: <IconJohanna />,
     },
     {
         title: 'Small',
@@ -31,7 +31,7 @@ const ITEMS: MenuItemProps[] = [
     {
         title: 'Large icon',
         subtitle: 'Large icon subtitle',
-        decorator: <IconMusicNote size={IconSize.Size16} />,
+        decorator: <IconJohanna />,
         size: MenuItemContentSize.Large,
     },
     {

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconJohanna } from '@foundation/Icon';
+
 import React, { FC, useState } from 'react';
 import { IconItem, Slider, TextOrNumberItem } from './Slider';
 
@@ -24,9 +24,9 @@ const NUMBER_ITEMS = [
 ];
 
 const ICON_ITEMS = [
-    { id: 'a', icon: <IconTextAlignmentLeft size={IconSize.Size16} />, ariaLabel: 'Text Align Left' },
-    { id: 'b', icon: <IconTextAlignmentCentre size={IconSize.Size16} />, ariaLabel: 'Text Align Center' },
-    { id: 'c', icon: <IconTextAlignmentRight size={IconSize.Size16} />, ariaLabel: 'Text Align Right' },
+    { id: 'a', icon: <IconJohanna />, ariaLabel: 'Text Align Left' },
+    { id: 'b', icon: <IconJohanna />, ariaLabel: 'Text Align Center' },
+    { id: 'c', icon: <IconJohanna />, ariaLabel: 'Text Align Right' },
 ];
 
 type Props = {

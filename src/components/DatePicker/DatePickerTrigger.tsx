@@ -1,6 +1,5 @@
 import { TextInput } from '@components/TextInput';
-import IconCalendar from '@foundation/Icon/Generated/IconCalendar';
-import { IconCaretDown, IconCaretUp, IconSize } from '@foundation/Icon/index';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import { merge } from '@utilities/merge';
 import React, { PropsWithChildren, forwardRef } from 'react';
 
@@ -21,9 +20,11 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
                     value === '' ? 'tw-right-4' : 'tw-right-8',
                 ])}
             >
-                {isCalendarOpen ? <IconCaretUp size={IconSize.Size20} /> : <IconCaretDown size={IconSize.Size20} />}
+                {isClearable}
+                {placeHolder}
+                {isCalendarOpen ? <IconJohanna /> : <IconJohanna />}
             </div>
-            <TextInput decorator={<IconCalendar />} placeholder={placeHolder} value={value} clearable={isClearable} />
+            <TextInput decorator={<IconJohanna />} />
         </div>
     ),
 );

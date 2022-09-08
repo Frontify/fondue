@@ -7,7 +7,7 @@ import { Button } from '@components/Button';
 import { Text } from '../../typography/Text';
 import { Divider } from '@components/Divider';
 import { TabItem, TabItemProps } from '@components/Tabs/TabItem';
-import { IconIcon, IconSize } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 import { BadgeStyle } from '@components/Badge';
 
 const data: TabItemProps[] = [
@@ -102,7 +102,7 @@ const TabTemplate: Story<TabsProps> = (args) => {
 export const Default = TabTemplate.bind({});
 Default.storyName = 'Label Only';
 
-const dataWithIcon = data.map((item) => Object.assign({}, item, { decorator: <IconIcon size={IconSize.Size16} /> }));
+const dataWithIcon = data.map((item) => Object.assign({}, item, { decorator: <IconJohanna /> }));
 const TabWithIconTemplate: Story<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
@@ -153,9 +153,7 @@ const TabWithBadgeTemplate: Story<TabsProps> = (args) => {
 export const withBadge = TabWithBadgeTemplate.bind({});
 withBadge.storyName = 'Label and Badge';
 
-const dataWithBadgeAndIcon = dataWithBadge.map((item) =>
-    Object.assign({}, item, { decorator: <IconIcon size={IconSize.Size16} /> }),
-);
+const dataWithBadgeAndIcon = dataWithBadge.map((item) => Object.assign({}, item, { decorator: <IconJohanna /> }));
 const TabWithBadgeAndIconTemplate: Story<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (

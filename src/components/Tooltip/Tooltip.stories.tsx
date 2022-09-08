@@ -4,7 +4,7 @@ import { Meta, Story } from '@storybook/react';
 import React from 'react';
 import { BrightHeaderStyle } from './BrightHeader';
 import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
-import { IconExclamationMarkCircle, IconExclamationMarkTriangle, IconIcon, IconSize } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 export default {
     title: 'Components/Tooltip',
@@ -29,7 +29,7 @@ export default {
             options: ['None', 'Icon'],
             mapping: {
                 None: null,
-                Icon: <IconIcon />,
+                Icon: <IconJohanna />,
             },
             control: { type: 'select' },
         },
@@ -37,7 +37,7 @@ export default {
             options: ['None', 'Icon'],
             mapping: {
                 None: null,
-                Icon: <IconIcon />,
+                Icon: <IconJohanna />,
             },
             control: { type: 'select' },
         },
@@ -73,7 +73,7 @@ export const TooltipComponent: Story<TooltipProps> = (args: TooltipProps) => {
                 {...args}
                 triggerElement={
                     <button className="tw-flex tw-justify-center tw-items-center">
-                        <IconExclamationMarkCircle size={IconSize.Size16} filled />
+                        <IconJohanna />
                         <span>Tooltip trigger</span>
                     </button>
                 }
@@ -90,7 +90,7 @@ export const MultipleTooltipsComponent: Story<TooltipProps> = (args: TooltipProp
                 {...args}
                 triggerElement={
                     <button className="tw-mr-1">
-                        <IconExclamationMarkCircle size={IconSize.Size16} filled />
+                        <IconJohanna />
                     </button>
                 }
             />
@@ -99,7 +99,7 @@ export const MultipleTooltipsComponent: Story<TooltipProps> = (args: TooltipProp
                 content="Second tooltip"
                 triggerElement={
                     <button>
-                        <IconExclamationMarkTriangle size={IconSize.Size16} />
+                        <IconJohanna />
                     </button>
                 }
                 brightHeader={BrightHeaderStyle.Warning}
@@ -149,12 +149,12 @@ WithHeading.args = {
 export const WithHeadingAndIcon = TooltipComponent.bind({});
 WithHeadingAndIcon.args = {
     heading: "I'm a heading",
-    headingIcon: <IconIcon />,
+    headingIcon: <IconJohanna />,
 };
 
 export const TooltipWithIcon = TooltipComponent.bind({});
 TooltipWithIcon.args = {
-    tooltipIcon: <IconIcon />,
+    tooltipIcon: <IconJohanna />,
 };
 
 export const WithLinkWithDefaultLabel = TooltipComponent.bind({});
@@ -170,9 +170,9 @@ WithLinkWithCustomLabel.args = {
 
 export const WithEverythingDisplayed = TooltipComponent.bind({});
 WithEverythingDisplayed.args = {
-    tooltipIcon: <IconIcon />,
+    tooltipIcon: <IconJohanna />,
     heading: "I'm a heading",
-    headingIcon: <IconIcon />,
+    headingIcon: <IconJohanna />,
     linkUrl: '#',
     brightHeader: BrightHeaderStyle.Warning,
     buttons: [

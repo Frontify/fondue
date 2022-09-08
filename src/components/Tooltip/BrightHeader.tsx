@@ -2,14 +2,7 @@
 
 import React, { FC, ReactElement, cloneElement } from 'react';
 import { merge } from '@utilities/merge';
-import {
-    IconCheckMark,
-    IconDocument,
-    IconExclamationMarkCircle,
-    IconExclamationMarkTriangle,
-    IconSize,
-} from '@foundation/Icon';
-
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 export enum BrightHeaderStyle {
     Information = 'Information',
     Warning = 'Warning',
@@ -32,10 +25,10 @@ export const brightHeaderArrowBackgroundColors: Record<BrightHeaderStyle, string
 };
 
 const brightHeaderIcon: Record<BrightHeaderStyle, ReactElement> = {
-    [BrightHeaderStyle.Information]: <IconExclamationMarkCircle />,
-    [BrightHeaderStyle.Warning]: <IconExclamationMarkTriangle />,
-    [BrightHeaderStyle.Tip]: <IconCheckMark />,
-    [BrightHeaderStyle.Note]: <IconDocument />,
+    [BrightHeaderStyle.Information]: <IconJohanna />,
+    [BrightHeaderStyle.Warning]: <IconJohanna />,
+    [BrightHeaderStyle.Tip]: <IconJohanna />,
+    [BrightHeaderStyle.Note]: <IconJohanna />,
 };
 
 type BrightHeaderProps = {
@@ -51,7 +44,7 @@ export const BrightHeader: FC<BrightHeaderProps> = ({ headerStyle }) => {
                 brightHeaderBackgroundColors[headerStyle],
             ])}
         >
-            {cloneElement(brightHeaderIcon[headerStyle], { size: IconSize.Size20 })}
+            {cloneElement(brightHeaderIcon[headerStyle], { size: 20 })}
         </div>
     );
 };

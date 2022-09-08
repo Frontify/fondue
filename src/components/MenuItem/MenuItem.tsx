@@ -3,7 +3,7 @@
 import { MenuItemContent, MenuItemContentProps, MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
 import { merge } from '@utilities/merge';
 import React, { FC } from 'react';
-import { IconCaretRight, IconCheckMark, IconSize } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 export enum MenuItemStyle {
     Primary = 'Primary',
@@ -63,13 +63,9 @@ export const MenuItem: FC<MenuItemProps> = ({
 }) => {
     const isDangerStyle = style === MenuItemStyle.Danger;
 
-    const currentIconSize = size === MenuItemContentSize.XSmall ? IconSize.Size16 : IconSize.Size20;
-
     const currentIcon = {
-        [SelectionIndicatorIcon.CaretRight]: <IconCaretRight data-test-id="menu-item-caret" size={currentIconSize} />,
-        [SelectionIndicatorIcon.Check]: active && (
-            <IconCheckMark data-test-id="menu-item-active" size={currentIconSize} />
-        ),
+        [SelectionIndicatorIcon.CaretRight]: <IconJohanna />,
+        [SelectionIndicatorIcon.Check]: active && <IconJohanna />,
         [SelectionIndicatorIcon.None]: null,
     }[selectionIndicator];
 

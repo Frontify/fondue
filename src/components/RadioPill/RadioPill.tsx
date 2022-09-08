@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from '@foundation/Icon/IconSize';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
@@ -31,7 +30,7 @@ export const RadioPill: FC<RadioPillProps> = ({ label, active, icon, onClick }) 
             onClick={onClick}
             {...focusProps}
         >
-            {icon && <span className="tw-mr-1">{cloneElement(icon, { size: IconSize.Size16 })}</span>}
+            {icon && <span className="tw-mr-1">{cloneElement(icon, { size: 16 })}</span>}
             <span>{label}</span>
         </button>
     );

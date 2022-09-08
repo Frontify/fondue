@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActionMenuBlock, MenuItemStyle } from '..';
-import { IconArrowCircleUp, IconArrowOutExternal, IconCrop, IconCross, IconImageStack } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 
 export const assetInputActions = [
     {
@@ -10,12 +10,12 @@ export const assetInputActions = [
             {
                 id: '1',
                 title: 'Replace with Asset',
-                decorator: <IconImageStack />,
+                decorator: <IconJohanna />,
             },
             {
                 id: '2',
                 title: 'Replace with Upload',
-                decorator: <IconArrowCircleUp />,
+                decorator: <IconJohanna />,
             },
         ],
     },
@@ -26,12 +26,12 @@ export const assetInputActions = [
             {
                 id: '10',
                 title: 'Crop / Resize',
-                decorator: <IconCrop />,
+                decorator: <IconJohanna />,
             },
             {
                 id: '11',
                 title: 'Small warning',
-                decorator: <IconArrowOutExternal />,
+                decorator: <IconJohanna />,
             },
         ],
     },
@@ -43,7 +43,7 @@ export const assetInputActions = [
                 id: '20',
                 title: 'Remove',
                 style: MenuItemStyle.Danger,
-                decorator: <IconCross />,
+                decorator: <IconJohanna />,
             },
         ],
     },

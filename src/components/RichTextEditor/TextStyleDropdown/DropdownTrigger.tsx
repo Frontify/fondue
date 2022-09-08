@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretDown } from '@foundation/Icon';
+import { IconJohanna } from '@foundation/Icon';
 import { getPreventDefaultHandler, usePlateEditorState } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import React from 'react';
@@ -49,7 +49,7 @@ export const DropdownTrigger = ({ editorId, open }: DropdownTriggerProps) => {
             >
                 <span className="tw-text-s tw-truncate">{label}</span>
                 <div className={merge(['tw-transition-transform', open && 'tw-rotate-180'])}>
-                    <IconCaretDown />
+                    <IconJohanna />
                 </div>
             </div>
         </button>
