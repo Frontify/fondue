@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useState } from 'react';
+import React, { useState } from 'react';
 import { Color, ColorFormat, Palette } from '../../types/colors';
 import { ColorPicker } from './ColorPicker';
 import { EXAMPLE_PALETTES } from './example-palettes';
@@ -19,9 +19,10 @@ const TEXT_ITEM_ID = '[data-test-id=slider-item-text]';
 type Props = {
     palettes?: Palette[];
     currentColor?: Color;
+    allowCustomColor?: boolean;
 };
 
-const Component: FC<Props> = ({ palettes, currentColor = { red: 255, green: 0, blue: 0 } }) => {
+const Component = ({ palettes, currentColor = { red: 255, green: 0, blue: 0 }, allowCustomColor = true }: Props) => {
     const [selectedColor, setSelectedColor] = useState<Color>(currentColor);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
 
@@ -32,6 +33,7 @@ const Component: FC<Props> = ({ palettes, currentColor = { red: 255, green: 0, b
             setFormat={setCurrentFormat}
             onSelect={(color) => setSelectedColor(color)}
             palettes={palettes}
+            allowCustomColor={allowCustomColor}
         />
     );
 };
@@ -56,6 +58,14 @@ describe('ColorPicker Component', () => {
         cy.get(BRAND_COLOR_ID).should('have.length', 18);
         cy.get(TEXT_ITEM_ID).last().click();
         cy.get(CUSTOM_COLOR_PICKER_ID).should('exist');
+    });
+
+    it('should only render brand color picker', () => {
+        cy.mount(<Component palettes={EXAMPLE_PALETTES} allowCustomColor={false} />);
+
+        cy.get(BRAND_COLOR_PICKER_ID).should('exist');
+        cy.get(BRAND_COLOR_ID).should('have.length', 18);
+        cy.get(TEXT_ITEM_ID).should('not.exist');
     });
 
     it('should change palette display', () => {

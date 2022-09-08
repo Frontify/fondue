@@ -1,18 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { Plate, TNode, usePlateEditorState } from '@udecode/plate';
+import { Plate, TNode } from '@udecode/plate';
 import { debounce } from '@utilities/debounce';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './components/Toolbar/Toolbar';
-import { DesignTokensContext } from './context/DesignTokensContext';
+import { RichTextEditorContext } from './context/RichTextEditorContext';
+import { useEditorState } from './hooks/useEditorState';
 import { DesignTokens } from './types';
 import { EditorActions } from './utils/actions';
+import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { getEditorConfig } from './utils/editorConfig';
-import { EMPTY_RICH_TEXT_VALUE, parseRawValue } from './utils/parseRawValue';
+import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './utils/textStyles';
+import { EditorPositioningWrapper } from './EditorPositioningWrapper';
+import { Position } from './EditorPositioningWrapper';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -24,9 +28,8 @@ export type RichTextEditorProps = {
     clear?: boolean;
     designTokens?: DesignTokens;
     actions?: EditorActions[][];
+    position?: Position;
 };
-
-export const ON_SAVE_DELAY_IN_MS = 500;
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
     id,
@@ -38,13 +41,12 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     actions = [],
     onTextChange,
     onBlur,
+    position = Position.FLOATING,
 }) => {
-    const editorId = id || useMemoizedId();
-    const editor = usePlateEditorState(editorId);
+    const editorId = useMemoizedId(id);
+    const { localValue } = useEditorState(editorId, clear);
 
     const [editorWidth, setEditorWidth] = useState<number | undefined>();
-    const localValue = useRef<TNode[] | null>(null);
-    const [debouncedValue, setDebouncedValue] = useState<TNode[] | null>(null);
     const editableProps: EditableProps = {
         placeholder,
         readOnly: readonly,
@@ -77,35 +79,23 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         }
     }, [designTokens]);
 
-    useEffect(() => {
-        debouncedValue && onTextChange && onTextChange(JSON.stringify(debouncedValue));
-    }, [debouncedValue]);
+    const debouncedOnChange = debounce((value: TNode[]) => {
+        onTextChange && onTextChange(JSON.stringify(value));
+    }, ON_SAVE_DELAY_IN_MS);
 
-    useEffect(() => {
-        if (clear && editor) {
-            const point = { path: [0, 0], offset: 0 };
-            editor.selection = { anchor: point, focus: point };
-            editor.history = { redos: [], undos: [] };
-            editor.children = EMPTY_RICH_TEXT_VALUE;
-            localValue.current = EMPTY_RICH_TEXT_VALUE;
-        }
-    }, [clear]);
-
-    const debouncedOnChange = useCallback(
-        debounce((value: TNode[]) => {
-            setDebouncedValue(value);
-        }, ON_SAVE_DELAY_IN_MS),
-        [],
+    const onChange = useCallback(
+        (value) => {
+            debouncedOnChange(value);
+            localValue.current = value;
+        },
+        [debouncedOnChange, localValue],
     );
 
-    const onChange = useCallback((value) => {
-        debouncedOnChange(value);
-        localValue.current = value;
-    }, []);
+    const PositioningWrapper = EditorPositioningWrapper[position];
 
     return (
-        <DesignTokensContext.Provider value={{ designTokens }}>
-            <div data-test-id="rich-text-editor" className="tw-relative tw-w-full" ref={editorRef}>
+        <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
+            <PositioningWrapper.PlateWrapper ref={editorRef}>
                 <Plate
                     id={editorId}
                     initialValue={parseRawValue(initialValue)}
@@ -115,7 +105,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 >
                     <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
                 </Plate>
-            </div>
-        </DesignTokensContext.Provider>
+            </PositioningWrapper.PlateWrapper>
+        </RichTextEditorContext.Provider>
     );
 };

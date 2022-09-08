@@ -16,7 +16,7 @@ const ASSET_SINGLE_INPUT_ID = '[data-test-id=asset-single-input]';
 const ASSET_SINGLE_INPUT_THUMBNAIL_ID = '[data-test-id=asset-input-thumbnail]';
 const ASSET_SINGLE_INPUT_THUMBNAIL_IMAGE_ID = '[data-test-id=asset-input-thumbnail-image]';
 const ASSET_SINGLE_INPUT_THUMBNAIL_AUDIO_ID = '[data-test-id=asset-input-thumbnail-audio]';
-const ASSET_SINGLE_INPUT_THUMBNAIL_ICON_ID = '[data-test-id=asset-input-thumbnail-icon]';
+const ASSET_SINGLE_INPUT_THUMBNAIL_ICON_WRAPPER_ID = '[data-test-id=asset-input-thumbnail-icon]';
 const SPINNING_CIRCLE_ID = '[data-test-id=spinning-circle]';
 
 describe('MultiAssetPreview Component', () => {
@@ -96,7 +96,7 @@ describe('MultiAssetPreview Component', () => {
         cy.get(NUMBER_OF_LOCATIONS_ID).should('contain', '2');
         cy.get(ASSETS_IMAGE_ID).should('exist');
         cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_AUDIO_ID).should('exist');
-        cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_ICON_ID).should('exist');
+        cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_ICON_WRAPPER_ID).should('exist').find('svg').should('exist');
     });
 
     it('displays loading animation', () => {

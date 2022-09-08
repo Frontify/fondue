@@ -54,15 +54,20 @@ export const Switch: FC<SwitchProps> = ({
     const lineClasses = useMemo(() => {
         const baseClasses = 'tw-inline-flex tw-border-0 tw-rounded-full tw-transition-colors tw-shrink-0';
         const sizeClasses = size !== SwitchSize.Small ? 'tw-py-0 tw-px-[0.125rem]' : 'tw-p-0';
-        const activatedClasses = on ? 'tw-bg-black-90 hover:tw-bg-black' : 'tw-bg-black-30 hover:tw-bg-black-60';
-        const disabledClasses = disabled ? 'tw-bg-black-10 tw-pointer-events-none' : activatedClasses;
+        const activatedClasses = on
+            ? 'tw-bg-button-strong-background hover:tw-bg-button-strong-background-hover'
+            : 'tw-bg-text-x-weak hover:tw-bg-text-weak';
+        const disabledClasses = disabled ? 'tw-bg-box-disabled-strong tw-pointer-events-none' : activatedClasses;
 
         return merge([baseClasses, sizeClasses, disabledClasses, lineSizeClasses[size], isFocusVisible && FOCUS_STYLE]);
     }, [on, disabled, size, isFocusVisible]);
 
     const dotClasses = useMemo(() => {
-        const baseClasses = 'tw-block tw-self-center tw-bg-white tw-rounded-full tw-transition-transform';
-        const disabledClasses = disabled ? 'tw-border tw-border-black-30' : 'tw-border tw-border-black';
+        const baseClasses =
+            'tw-block tw-self-center tw-bg-box-neutral-strong-inverse tw-rounded-full tw-transition-transform';
+        const disabledClasses = disabled
+            ? 'tw-border tw-border-box-disabled-strong'
+            : 'tw-border tw-border-line-xx-strong';
         const sizeClasses = size === SwitchSize.Small ? disabledClasses : '';
         const activatedClasses = size === SwitchSize.Small ? 'tw-translate-x-2' : 'tw-translate-x-full';
         const animationClasses = on ? activatedClasses : 'tw-translate-x-0';

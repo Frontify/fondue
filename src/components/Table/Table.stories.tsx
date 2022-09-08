@@ -37,6 +37,7 @@ const User: FC<{ name: string }> = ({ name }) => (
 
 const ActionButton: FC = () => (
     <Button
+        aria-label="action menu"
         onClick={action('click')}
         size={ButtonSize.Small}
         style={ButtonStyle.Secondary}
