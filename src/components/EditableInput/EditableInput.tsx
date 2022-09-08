@@ -12,6 +12,7 @@ import React, {
 export enum EditableInputState {
     INPUT = 'INPUT',
     LABEL = 'LABEL',
+    EDITABLE = 'EDITABLE',
 }
 
 export interface EditableInputProps {
@@ -30,7 +31,7 @@ export const EditableInput = ({
     onEditableSave,
     onEditableChange,
     children,
-    overrideEditableState,
+    overrideEditableState = EditableInputState.EDITABLE,
     singleClick,
 }: EditableInputProps) => {
     const [inputValue, setInputValue] = useState(name);
@@ -61,6 +62,10 @@ export const EditableInput = ({
         onEditableChange && onEditableChange(overrideEditableState ?? EditableInputState.INPUT);
         setTimeout(() => inputRef.current?.focus(), 0);
     };
+
+    if (overrideEditableState === EditableInputState.INPUT) {
+        setTimeout(() => inputRef.current?.focus(), 0);
+    }
 
     return (
         <div data-test-id="editable-node-container">
