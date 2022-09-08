@@ -8,10 +8,11 @@ import { OverflowMenuItem, OverflowMenuItemProps } from './OverflowMenuItem';
 import { useOverflowMenuKeyboardNavigation } from './useOverflowMenuKeyboardNavigation';
 
 export interface OverflowMenuProps {
+    id?: string;
     items: OverflowMenuItemProps[];
 }
 
-export const OverflowMenu = ({ items }: OverflowMenuProps) => {
+export const OverflowMenu = ({ id = 'overflow-menu', items }: OverflowMenuProps) => {
     const [isMenuOpened, setIsMenuOpened] = useState(false);
     const [menuContainerRef, setMenuContainerRef] = useState<HTMLElement | null>(null);
     const [menuOpenerRef, setMenuOpenerRef] = useState<HTMLButtonElement | null>(null);
@@ -57,6 +58,7 @@ export const OverflowMenu = ({ items }: OverflowMenuProps) => {
             </button>
             {isMenuOpened && (
                 <nav
+                    id={id}
                     className="tw-bg-base tw-border tw-border-line-strong tw-rounded-lg tw-absolute tw-left-0 tw-top-7 tw-py-1.5 tw-shadow tw-w-max"
                     role="dialog"
                     ref={setMenuContainerRef}
@@ -65,11 +67,7 @@ export const OverflowMenu = ({ items }: OverflowMenuProps) => {
                 >
                     <ol className="tw-list-none tw-flex-wrap tw-gap-y-1">
                         {items.map((item, index) => (
-                            <OverflowMenuItem
-                                {...item}
-                                key={`overflow-menu-item-${index}`}
-                                id={`overflow-menu-item-${index}`}
-                            />
+                            <OverflowMenuItem {...item} key={`${id}-item-${index}`} id={`${id}-item-${index}`} />
                         ))}
                     </ol>
                 </nav>

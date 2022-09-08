@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 
-export const useOverflowMenuKeyboardNavigation = (isMenuOpened: boolean, menuContainerRef: HTMLElement | null) => {
+export const useOverflowMenuKeyboardNavigation = (
+    isMenuOpened: boolean,
+    menuContainerRef: HTMLElement | null,
+    focusableElementsSelector = '.item-action',
+) => {
     const [currentItemIndex, setCurrentItemIndex] = useState(0);
     const [itemsElements, setItemsElements] = useState<NodeList>();
     const [menuKeyboardNavigationAction, setMenuKeyboardNavigationAction] = useState('');
@@ -37,7 +41,9 @@ export const useOverflowMenuKeyboardNavigation = (isMenuOpened: boolean, menuCon
             return;
         }
 
-        const focusableItems = menuContainerRef?.querySelectorAll('[id^=overflow-menu-item] .item-action');
+        const focusableItems = menuContainerRef.querySelectorAll(
+            `[id^=${menuContainerRef.getAttribute('id')}-item] ${focusableElementsSelector}`,
+        );
 
         for (const item of focusableItems) {
             (item as HTMLButtonElement | HTMLAnchorElement).onkeydown = handleKeyDown;
@@ -46,14 +52,16 @@ export const useOverflowMenuKeyboardNavigation = (isMenuOpened: boolean, menuCon
         if (!itemsElements) {
             setItemsElements(focusableItems);
         }
-    }, [isMenuOpened, menuContainerRef, itemsElements, handleKeyDown]);
+    }, [isMenuOpened, menuContainerRef, itemsElements, handleKeyDown, focusableElementsSelector]);
 
     useEffect(() => {
         if (!itemsElements) {
             return;
         }
 
-        (itemsElements[currentItemIndex] as HTMLButtonElement).focus();
+        if (itemsElements[currentItemIndex]) {
+            (itemsElements[currentItemIndex] as HTMLButtonElement).focus();
+        }
     }, [currentItemIndex, itemsElements]);
 
     useEffect(() => {

@@ -6,14 +6,14 @@ import { MenuItem } from '..';
 import { getItemElementType } from '@utilities/elements';
 
 export interface OverflowMenuItemProps {
-    id: string;
+    id?: string;
     label: string;
     link?: string;
     onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
     decorator?: ReactElement<IconProps>;
 }
 
-export const OverflowMenuItem = ({ id, label, link, onClick }: OverflowMenuItemProps) => {
+export const OverflowMenuItem = ({ id = 'overflow-menu-item', label, link, onClick }: OverflowMenuItemProps) => {
     const contentElementType = getItemElementType(link, onClick);
 
     const menuItemElement = <MenuItem title={label} />;
