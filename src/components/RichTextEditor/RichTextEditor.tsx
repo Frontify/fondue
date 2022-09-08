@@ -99,7 +99,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const config = GeneratePlugins(editorId, plugins);
     const isNew = actions.length === 0 && plugins;
     const editorConfig = isNew ? config.create() : getEditorConfig();
-    console.log('config', config.create());
 
     return (
         <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>

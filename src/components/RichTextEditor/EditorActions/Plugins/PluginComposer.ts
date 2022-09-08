@@ -67,7 +67,6 @@ export class PluginComposer {
                 continue;
             }
 
-            console.log('markupElement', markupElement);
             groupOfButtons.push({
                 id: markupElement.id,
                 button,
