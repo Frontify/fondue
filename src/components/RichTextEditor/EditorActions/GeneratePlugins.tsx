@@ -8,11 +8,11 @@ import { Toolbar } from './Toolbar';
 import { ButtonGroupWrapper } from './Plugins/helper';
 
 export const GeneratePlugins = (editorId: string, pluginComposer?: PluginComposer): GeneratePluginsReturn | null => {
+    const editor = usePlateEditorRef(editorId);
+
     if (!pluginComposer) {
         return null;
     }
-
-    const editor = usePlateEditorRef(editorId);
 
     return {
         create: () =>
