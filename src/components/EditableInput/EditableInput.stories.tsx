@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { EditableInput, EditableInputProps, EditableMode } from '@components/EditableInput/EditableInput';
 import { Story } from '@storybook/react';
 import { IconArrowOutExternal, IconBell, IconPen } from '@foundation/Icon';
@@ -28,24 +28,48 @@ const ButtonTemplate: Story<EditableInputProps> = (args: EditableInputProps) => 
 export const Default = ButtonTemplate.bind({});
 Default.args = {
     children: <IconPen />,
-    name: 'Region',
-    targetItemId: 'ID',
 };
 Default.storyName = 'Editable Input';
 
 export const EditableInputSingleCLick = ButtonTemplate.bind({});
 EditableInputSingleCLick.args = {
     children: <IconPen />,
-    name: 'Region',
-    targetItemId: 'ID',
-    singleClick: true,
+};
+
+export const ControlledInputExample: Story<EditableInputProps> = () => {
+    const [label, setLabel] = useState('Im set from the outside');
+
+    const outputTest = (one: string, two: string) => console.log(one, two);
+    return (
+        <EditableInput
+            onEditableSave={(value) => setLabel(value)}
+            onAdditionalValueSave={outputTest}
+            options={{
+                additionalValues: 'ID',
+                enableDoubleClick: true,
+                customInputTextClasses: 'tw-text-2xl tw-w-fit',
+                customContainerClasses: 'tw-flex tw-w-fit',
+            }}
+        >
+            <div>
+                <h1 className={'tw-text-2xl tw-w-fit'}>{label}</h1>
+                <IconPen />
+            </div>
+        </EditableInput>
+    );
 };
 
 export const OverrideEditableStateToInput = ButtonTemplate.bind({});
 OverrideEditableStateToInput.args = {
-    children: <IconPen />,
-    name: 'Region',
-    targetItemId: 'ID',
-    singleClick: true,
-    mode: EditableMode.INPUT,
+    children: (
+        <div>
+            <h1 className="tw-text-2xl">
+                This is something else new
+                <IconPen />
+            </h1>
+        </div>
+    ),
+    options: {
+        mode: EditableMode.INPUT,
+    },
 };

@@ -4,100 +4,151 @@ import React, {
     FocusEventHandler,
     KeyboardEvent,
     KeyboardEventHandler,
-    ReactNode,
+    useEffect,
     useRef,
     useState,
 } from 'react';
+import { EditableInputHelper } from '@components/EditableInput/lib/helper';
+import { DEFAULT_CONTAINER_CLASS, DEFAULT_INPUT_TEXT_CLASS } from '@components/EditableInput/constant';
 
 export enum EditableMode {
     INPUT = 'INPUT',
     LABEL = 'LABEL',
-    AUTO = 'AUTO',
 }
 
-export interface EditableInputProps {
-    name: string;
-    targetItemId: string;
-    onEditableSave: (targetItemId: string, value: string) => void;
-    onModeChange?: (editableState: EditableMode) => void;
+/**
+ * Define custom Styles with
+ * - customContainerClasses (<div>)
+ * - customInputTextClasses (<input>)
+ *
+ * mode: display as Input or Label first
+ * enableDoubleClick: Should the input be triggered by a double click or single click
+ * targeItemId: additional information to be passed via onClick Event
+ */
+interface EditableOptionProps {
+    customContainerClasses?: string;
+    customInputTextClasses?: string;
     mode?: EditableMode;
-    children?: ReactNode;
-    singleClick?: boolean;
+    enableDoubleClick?: boolean;
+    additionalValues?: string;
 }
 
+/**
+ * Add Children with badges or icons
+ * onEditableSave callback to get updated Value
+ * onAdditionalValueSave callback with more information (ex. ID)
+ * onModeChange callback when state changes
+ * options to specify styling and additional behaviours
+ */
+export interface EditableInputProps {
+    children?: React.ReactElement;
+    onAdditionalValueSave?: (additionalValue: string, value: string) => void;
+    onEditableSave?: (value: string) => void;
+    onModeChange?: (editableState?: EditableMode) => void;
+    options?: EditableOptionProps;
+}
+
+/**
+ * Component to switch between Label and Input state
+ *
+ * Clones the children and adds clickHandlers to flip on Click
+ * Offers events for the onSave (switch from input to label),
+ * when a switch happens and can be extended with additional information.
+ * Options property to adjust click behaviour and styling.
+ *
+ *
+ * @param onEditableSave
+ * @param onModeChange
+ * @param onAdditionalIDSave
+ * @param children
+ * @param options
+ */
 export const EditableInput = ({
-    name,
-    targetItemId,
     onEditableSave,
     onModeChange,
+    onAdditionalValueSave,
     children,
-    mode = EditableMode.AUTO,
-    singleClick,
+    options,
 }: EditableInputProps) => {
-    const [inputValue, setInputValue] = useState(name);
+    // Read initial text strings from children
+    const childrenLabel = EditableInputHelper.getLabel(children);
+
+    // use text strings from children in the input field
+    const [inputValue, setInputValue] = useState(childrenLabel);
     const [editableState, setEditableState] = useState<EditableMode>(EditableMode.LABEL);
 
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const listenedRef = useRef();
 
-    const handleKeyDown: KeyboardEventHandler = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            setEditableState(EditableMode.LABEL);
-            onModeChange && onModeChange(mode !== EditableMode.AUTO ? mode : EditableMode.LABEL);
-            onEditableSave(targetItemId, (event.target as HTMLInputElement).value);
-        }
-    };
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => setInputValue(event.target.value);
 
-    const handleBlur: FocusEventHandler = (event: FocusEvent<HTMLTextAreaElement>) => {
+    const handleSwitchToLabel = (event: KeyboardEvent | FocusEvent) => {
         setEditableState(EditableMode.LABEL);
-        onModeChange && onModeChange(mode !== EditableMode.AUTO ? mode : EditableMode.LABEL);
-        onEditableSave(targetItemId, (event.target as HTMLTextAreaElement).value);
+
+        onModeChange && onModeChange(EditableMode.LABEL);
+        options?.additionalValues &&
+            onAdditionalValueSave &&
+            onAdditionalValueSave(options.additionalValues, (event.target as HTMLTextAreaElement).value);
+        onEditableSave && onEditableSave((event.target as HTMLTextAreaElement).value);
     };
 
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setInputValue(event.target.value);
-    };
-
-    const handleSwitchToInput = () => {
+    const handleSwitchToInput = (childrenText: string) => () => {
+        setInputValue(childrenText);
         setEditableState(EditableMode.INPUT);
-        onModeChange && onModeChange(mode !== EditableMode.AUTO ? mode : EditableMode.INPUT);
+
+        onModeChange && onModeChange(EditableMode.INPUT);
         setTimeout(() => inputRef.current?.focus(), 0);
     };
 
-    if (mode === EditableMode.INPUT) {
+    const handleKeyDown: KeyboardEventHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            handleSwitchToLabel(event);
+        }
+    };
+    const handleBlur: FocusEventHandler = (event: FocusEvent<HTMLTextAreaElement>) => handleSwitchToLabel(event);
+
+    // Set initial state of component if provided in the mode
+    useEffect(() => setEditableState(options?.mode ?? EditableMode.LABEL), [options?.mode]);
+
+    const clickBehaviour = options?.enableDoubleClick
+        ? { onDoubleClick: handleSwitchToInput(childrenLabel) }
+        : { onClick: handleSwitchToInput(childrenLabel) };
+
+    // Clone Child and add clickHandler and ref to Children
+    const ChildrenWithHandler =
+        children &&
+        React.cloneElement(children, {
+            ...clickBehaviour,
+            ref: listenedRef,
+            'data-test-id': 'node-link-name',
+        });
+
+    // If the Input is visible initially focus into it
+    if (options?.mode === EditableMode.INPUT) {
         setTimeout(() => inputRef.current?.focus(), 0);
     }
 
     return (
         <div data-test-id="editable-node-container">
-            {(editableState === EditableMode.INPUT || mode === EditableMode.INPUT) && mode !== EditableMode.LABEL ? (
+            {editableState === EditableMode.INPUT ? (
                 <div className="tw-flex tw-items-center">
                     <div
                         data-test-id="editable-input"
-                        className="tw-flex tw-items-center tw-h-6 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-base"
+                        className={options?.customContainerClasses ?? DEFAULT_CONTAINER_CLASS}
                     >
                         <input
                             ref={inputRef}
                             type="text"
-                            className="tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-base tw-hide-input-arrows tw-text-text tw-placeholder-text"
+                            className={options?.customInputTextClasses ?? DEFAULT_INPUT_TEXT_CLASS}
                             value={inputValue}
                             onChange={handleInputChange}
                             onKeyDown={handleKeyDown}
                             onBlur={handleBlur}
                         />
                     </div>
-
-                    {children}
                 </div>
             ) : (
-                <button
-                    data-test-id="node-link-name"
-                    className="tw-flex tw-items-center"
-                    onDoubleClick={handleSwitchToInput}
-                    onClick={singleClick ? handleSwitchToInput : undefined}
-                >
-                    {name}
-                    {children}
-                </button>
+                <>{ChildrenWithHandler}</>
             )}
         </div>
     );

@@ -10,15 +10,17 @@ describe('EditableInput', () => {
         const onEditableSaveSpy = cy.spy().as('onEditableSaveSpy');
         cy.mount(
             <EditableInput
-                name={'This Input'}
-                targetItemId={'id'}
-                onEditableSave={(one: string, two: string) => onEditableSaveSpy(two)}
-            ></EditableInput>,
+                options={{ additionalValues: 'id', enableDoubleClick: true }}
+                onAdditionalValueSave={(one: string, two: string) => onEditableSaveSpy(two)}
+            >
+                <div>This Input</div>
+            </EditableInput>,
         );
     });
     it('renders without error', () => {
         cy.get(EDITABLE_CONTAINER).should('exist');
     });
+
     it('on double click changes to input', () => {
         cy.get(EDITABLE_LINK_NAME).should('exist');
         cy.get(EDITABLE_LINK_NAME).dblclick();
