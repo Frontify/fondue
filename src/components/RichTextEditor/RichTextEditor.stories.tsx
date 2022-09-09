@@ -7,6 +7,7 @@ import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import { Position } from './EditorPositioningWrapper';
 import { EditorActions } from './utils/actions';
 import { IPSUM, checkboxValue, customDesignTokens, htmlValue, nodesToSerialize, value } from './utils/exampleValues';
+import { defaultPlugins } from './EditorActions';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -146,6 +147,7 @@ WithNewToolbar.args = {
     value: htmlValue,
     position: Position.TOP,
     actions: [],
+    plugins: defaultPlugins,
 };
 
 export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {

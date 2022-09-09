@@ -17,7 +17,7 @@ import { TextStyles } from './utils/textStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
 import { getEditorConfig } from './utils/editorConfig';
-import { GeneratePlugins, PluginComposer, defaultPlugins } from './EditorActions';
+import { GeneratePlugins, PluginComposer } from './EditorActions';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -44,7 +44,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     onTextChange,
     onBlur,
     position = Position.FLOATING,
-    plugins = defaultPlugins,
+    plugins,
 }) => {
     const editorId = useMemoizedId(id);
     const { localValue } = useEditorState(editorId, clear);
@@ -97,7 +97,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const PositioningWrapper = EditorPositioningWrapper[position];
 
     const config = GeneratePlugins(editorId, plugins);
-    const isNew = actions.length === 0 && plugins;
+    const isNew = config && actions.length === 0 && plugins;
     const editorConfig = isNew ? config.create() : getEditorConfig();
 
     return (
