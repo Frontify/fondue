@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { MentionCombobox, Plate, TNode } from '@udecode/plate';
+import { Plate, TNode } from '@udecode/plate';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { debounce } from '@utilities/debounce';
 import { EditableProps } from 'slate-react/dist/components/editable';
@@ -16,9 +16,8 @@ import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './utils/textStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
-import { EditorConfigType, getEditorConfig } from './utils/editorConfig';
+import { getEditorConfig } from './utils/editorConfig';
 import { GeneratePlugins, PluginComposer } from './EditorActions';
-import { mentionable } from './utils/exampleValues';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -30,7 +29,6 @@ export type RichTextEditorProps = {
     clear?: boolean;
     designTokens?: DesignTokens;
     actions?: EditorActions[][];
-    config2?: EditorConfigType;
     position?: Position;
     plugins?: PluginComposer;
 };
@@ -45,7 +43,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     actions = defaultActions,
     onTextChange,
     onBlur,
-    config2 = EditorConfigType.DEFAULT,
     position = Position.FLOATING,
     plugins,
 }) => {
@@ -101,21 +98,21 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     const config = GeneratePlugins(editorId, plugins);
     const isNew = config && actions.length === 0 && plugins;
-    const editorConfig = isNew ? config.create() : getEditorConfig(config2);
+    const editorConfig = isNew ? config.create() : getEditorConfig();
 
     return (
         <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
             <PositioningWrapper.PlateWrapper ref={editorRef}>
                 <Plate
                     id={editorId}
-                    initialValue={parseRawValue(initialValue, config2)}
+                    initialValue={parseRawValue(initialValue)}
                     onChange={onChange}
                     editableProps={editableProps}
                     plugins={editorConfig}
                 >
                     {isNew && config.toolbar()}
                     {!isNew && <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />}
-                    {config2 === EditorConfigType.ANNOTATIONS && <MentionCombobox items={mentionable} />}
+                    {/* {config2 === EditorConfigType.ANNOTATIONS && <MentionCombobox items={mentionable} />} */}
                 </Plate>
             </PositioningWrapper.PlateWrapper>
         </RichTextEditorContext.Provider>

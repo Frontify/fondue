@@ -53,15 +53,7 @@ import {
 import { ELEMENT_CHECK_ITEM, createCheckboxListPlugin, createLinkChooserPlugin, createMentionPlugin } from '../plugins';
 import { TextStyles } from './textStyles';
 
-export enum EditorConfigType {
-    DEFAULT = 'default',
-    ANNOTATIONS = 'annotations',
-}
-
-export const getEditorConfig = (config: EditorConfigType) =>
-    config === EditorConfigType.ANNOTATIONS ? EditorConfigAnnotation() : EditorConfigDefault();
-
-export const EditorConfigDefault = () => {
+export const getEditorConfig = () => {
     const createHeading1Plugin = createPluginFactory({
         key: TextStyles.ELEMENT_HEADING1,
         isElement: true,
