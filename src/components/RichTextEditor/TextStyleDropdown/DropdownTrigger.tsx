@@ -43,11 +43,11 @@ export const DropdownTrigger = ({ editorId, open }: DropdownTriggerProps) => {
         >
             <div
                 className={merge([
-                    'tw-relative tw-inline-flex tw-flex-row tw-items-center tw-justify-between tw-overflow-hidden tw-text-text tw-rounded tw-gap-1 tw-p-2 hover:tw-text-text hover:tw-bg-box-neutral tw-h-8 tw-w-28',
+                    'tw-relative tw-inline-flex tw-flex-row tw-items-center tw-justify-between tw-overflow-hidden tw-text-text tw-rounded tw-gap-1 tw-px-2 hover:tw-text-text hover:tw-bg-box-neutral tw-h-6 tw-w-28',
                     open && 'tw-bg-box-neutral',
                 ])}
             >
-                <span className="tw-text-s tw-truncate">{label}</span>
+                <span className="tw-text-xs tw-truncate">{label}</span>
                 <div className={merge(['tw-transition-transform', open && 'tw-rotate-180'])}>
                     <IconCaretDown size={IconSize.Size12} />
                 </div>
