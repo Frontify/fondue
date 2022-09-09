@@ -25,7 +25,14 @@ export default {
         onBlur: { action: 'onBlur' },
         value: { type: 'string' },
         position: { options: Object.values(Position) },
-        padding: { options: PaddingSizes },
+        padding: {
+            options: Object.keys(PaddingSizes),
+            mapping: PaddingSizes,
+            control: {
+                type: 'radio',
+                labels: Object.entries(PaddingSizes).map(([key, value]) => [value, key]),
+            },
+        },
     },
 } as Meta;
 
