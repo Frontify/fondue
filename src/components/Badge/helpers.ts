@@ -55,7 +55,11 @@ export const getStyleClasses = (style: BadgeStyle, hasHover: boolean, strong: bo
 export const isBadgeStatus = (style: BadgeStatus | Color | string): style is BadgeStatus =>
     Object.values(BadgeStatus).includes(style as BadgeStatus);
 
-export const getCircularSizeClasses = (size: BadgeSize) => ({ s: 'tw-h-5 tw-w-5', m: 'tw-h-6 tw-w-6' }[size]);
+export const getCircularSizeClasses = (size: BadgeSize) =>
+    ({
+        s: 'tw-h-5 tw-w-5',
+        m: 'tw-h-6 tw-w-6',
+    }[size]);
 
 export const getSizeClasses = (
     children: ReactNode,
