@@ -6,7 +6,6 @@ import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from '
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import { Position } from './EditorPositioningWrapper';
 import { EditorActions } from './utils/actions';
-import { EditorConfigType } from './utils/editorConfig';
 import {
     IPSUM,
     checkboxValue,
@@ -16,7 +15,7 @@ import {
     nodesToSerialize,
     value,
 } from './utils/exampleValues';
-import { defaultPlugins } from './EditorActions';
+import { annotationPlugins, defaultPlugins } from './EditorActions';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -162,11 +161,8 @@ WithNewToolbar.args = {
 export const WithMentions = RichTextEditorTemplate.bind({});
 WithMentions.args = {
     value: JSON.stringify(mentionValue),
-    actions: [
-        [EditorActions.UNORDERED_LIST, EditorActions.ORDERED_LIST],
-        [EditorActions.BOLD, EditorActions.LINK],
-    ],
-    config2: EditorConfigType.ANNOTATIONS,
+    actions: [],
+    plugins: annotationPlugins,
 };
 
 export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
