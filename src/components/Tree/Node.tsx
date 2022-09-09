@@ -174,7 +174,7 @@ export const Node = ({
                                     options={{ additionalValues: node.id, enableDoubleClick: true }}
                                     onAdditionalValueSave={onEditableSave}
                                 >
-                                    <div>
+                                    <div className={'tw-flex'}>
                                         {name}
                                         {badge && insertBadge()}
                                     </div>
