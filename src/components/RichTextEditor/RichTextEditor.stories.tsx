@@ -4,6 +4,7 @@ import { Meta, Story } from '@storybook/react';
 import React from 'react';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
+import { Position } from './EditorPositioningWrapper';
 import { EditorActions } from './utils/actions';
 import { EditorConfigType } from './utils/editorConfig';
 import {
@@ -15,6 +16,7 @@ import {
     nodesToSerialize,
     value,
 } from './utils/exampleValues';
+import { defaultPlugins } from './EditorActions';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -24,11 +26,13 @@ export default {
         placeholder: 'Some placeholder',
         readonly: false,
         clear: false,
+        position: Position.FLOATING,
     },
     argTypes: {
         onTextChange: { action: 'onTextChange' },
         onBlur: { action: 'onBlur' },
-        vale: { type: 'string' },
+        value: { type: 'string' },
+        position: { options: Object.values(Position) },
     },
 } as Meta;
 
@@ -141,6 +145,20 @@ WithCustomControls.args = {
     ],
 };
 
+export const WithToolbarPositioning = RichTextEditorTemplate.bind({});
+WithToolbarPositioning.args = {
+    value: htmlValue,
+    position: Position.TOP,
+};
+
+export const WithNewToolbar = RichTextEditorTemplate.bind({});
+WithNewToolbar.args = {
+    value: htmlValue,
+    position: Position.TOP,
+    actions: [],
+    plugins: defaultPlugins,
+};
+
 export const WithMentions = RichTextEditorTemplate.bind({});
 WithMentions.args = {
     value: JSON.stringify(mentionValue),
@@ -148,7 +166,7 @@ WithMentions.args = {
         [EditorActions.UNORDERED_LIST, EditorActions.ORDERED_LIST],
         [EditorActions.BOLD, EditorActions.LINK],
     ],
-    config: EditorConfigType.ANNOTATIONS,
+    config2: EditorConfigType.ANNOTATIONS,
 };
 
 export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {

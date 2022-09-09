@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { getNodes, isElement, isType, usePlateEditorState } from '@udecode/plate';
 import { ListStyles } from '../TextStyleDropdown/DropdownTrigger';
 import { AvailableTextStyles } from '../types';

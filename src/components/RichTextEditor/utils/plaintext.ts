@@ -4,7 +4,7 @@ import { Node } from 'slate';
 export const toPlaintext = (nodes: TDescendant[] | string): string => {
     const nodesArray = typeof nodes === 'string' ? JSON.parse(nodes) : nodes;
     return nodesArray
-        .map((node) => {
+        .map((node: TDescendant) => {
             if (!isDescendant(node)) {
                 return '';
             }
