@@ -11,6 +11,9 @@ defaultPlugins
     .setPlugin([[new AlignLeftPlugin(), new AlignCenterPlugin(), new AlignRightPlugin(), new AlignJustifyPlugin()]])
     .setPlugin([[new UnorderedListPlugin(), new OrderedListPlugin()]]);
 
+export const annotationPlugins = new PluginComposer();
+defaultPlugins.setPlugin([[new UnorderedListPlugin(), new OrderedListPlugin()]]).setPlugin([new BoldPlugin()]);
+
 export * from './PluginComposer';
 export * from './ListPlugin';
 export * from './BoldPlugin';

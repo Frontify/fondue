@@ -4,7 +4,6 @@ import {
     ELEMENT_LI,
     ELEMENT_LIC,
     ELEMENT_LINK,
-    ELEMENT_MENTION,
     ELEMENT_OL,
     ELEMENT_PARAGRAPH,
     ELEMENT_UL,
@@ -17,7 +16,6 @@ import {
     createBoldPlugin,
     createCodeBlockPlugin,
     createCodePlugin,
-    createComboboxPlugin,
     createIndentPlugin,
     createItalicPlugin,
     createLinkPlugin,
@@ -44,13 +42,12 @@ import {
     LinkElement,
     ListItemContentElement,
     ListItemElement,
-    MentionElement,
     OrderedListElement,
     StrikethroughMark,
     UnderlineMark,
     UnorderedListElement,
 } from '../components';
-import { ELEMENT_CHECK_ITEM, createCheckboxListPlugin, createLinkChooserPlugin, createMentionPlugin } from '../plugins';
+import { ELEMENT_CHECK_ITEM, createCheckboxListPlugin, createLinkChooserPlugin } from '../plugins';
 import { TextStyles } from './textStyles';
 
 export const getEditorConfig = () => {
@@ -165,31 +162,6 @@ export const getEditorConfig = () => {
             createCustom1Plugin(),
             createCustom2Plugin(),
             createCustom3Plugin(),
-        ],
-        {
-            components,
-        },
-    );
-};
-
-export const EditorConfigAnnotation = () => {
-    const components = createPlateUI({
-        [ELEMENT_LINK]: LinkElement,
-        [ELEMENT_UL]: UnorderedListElement,
-        [ELEMENT_OL]: OrderedListElement,
-        [MARK_BOLD]: BoldMark,
-        [ELEMENT_MENTION]: MentionElement,
-    });
-
-    return createPlugins(
-        [
-            createParagraphPlugin(),
-            createListPlugin(),
-            createLinkChooserPlugin(),
-            createLinkPlugin(),
-            createBoldPlugin(),
-            createComboboxPlugin(),
-            createMentionPlugin(),
         ],
         {
             components,
