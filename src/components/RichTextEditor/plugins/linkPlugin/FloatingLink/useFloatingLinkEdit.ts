@@ -1,3 +1,4 @@
+import { getUrlFromLinkOrLegacyLink } from '@components/RichTextEditor/components';
 import {
     ELEMENT_LINK,
     floatingLinkActions,
@@ -32,21 +33,7 @@ const getUrlFromEditor = (editor: PlateEditor<Value>) => {
         return url;
     }
 
-    if (linkNode[0].url) {
-        url = linkNode[0].url as string;
-    }
-
-    // legacy link structure
-    else if (linkNode[0].chosenLink) {
-        const legacyLink = linkNode[0] as unknown as {
-            chosenLink: {
-                searchResult: {
-                    link: string;
-                };
-            };
-        };
-        url = legacyLink.chosenLink.searchResult.link;
-    }
+    url = getUrlFromLinkOrLegacyLink(linkNode[0] as any);
     return url;
 };
 
@@ -83,8 +70,6 @@ export const useFloatingLinkEdit = ({ floatingOptions, ...props }: FloatingLinkP
     useEffect(() => {
         if (getUrlFromEditor(editor)) {
             floatingLinkActions.url(getUrlFromEditor(editor));
-            console.log('floatingLinkSelectors.url()');
-            console.log(floatingLinkSelectors.url());
         }
         if (
             editor.selection &&

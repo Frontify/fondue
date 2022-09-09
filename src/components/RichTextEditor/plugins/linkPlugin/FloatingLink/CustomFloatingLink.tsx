@@ -18,7 +18,7 @@ export const CustomFloatingLink = () => {
     const urlHtmlProps = useFloatingLinkUrlInput({});
 
     const input = (
-        <div className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
+        <div data-test-id="floating-link-insert" className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
             <FloatingLink.TextInput />
             <div className="tw-pt-5">
                 <FloatingLink.UrlInput />
@@ -58,7 +58,7 @@ export const CustomFloatingLink = () => {
         </div>
     );
     const editContent = !isEditing ? (
-        <div className="tw-bg-white tw-rounded tw-shadow tw-p-4 tw-min-w-[400px]">
+        <div data-test-id="floating-link-edit" className="tw-bg-white tw-rounded tw-shadow tw-p-4 tw-min-w-[400px]">
             <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between">
                 <span className={`${LINK_CLASSES} tw-pointer-events-none`}>{urlHtmlProps.defaultValue}</span>
                 <span className="tw-flex tw-gap-2">
