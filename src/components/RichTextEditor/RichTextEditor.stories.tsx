@@ -7,6 +7,7 @@ import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import { Position } from './EditorPositioningWrapper';
 import { EditorActions } from './utils/actions';
 import { IPSUM, checkboxValue, customDesignTokens, htmlValue, nodesToSerialize, value } from './utils/exampleValues';
+import { defaultPlugins } from './EditorActions';
 import { PaddingSizes } from './types';
 
 export default {
@@ -149,6 +150,14 @@ export const WithToolbarPositioning = RichTextEditorTemplate.bind({});
 WithToolbarPositioning.args = {
     value: htmlValue,
     position: Position.TOP,
+};
+
+export const WithNewToolbar = RichTextEditorTemplate.bind({});
+WithNewToolbar.args = {
+    value: htmlValue,
+    position: Position.TOP,
+    actions: [],
+    plugins: defaultPlugins,
 };
 
 export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {

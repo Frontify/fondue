@@ -141,6 +141,13 @@ describe('RichTextEditor Component', () => {
         cy.get('[contenteditable=true]').should('include.html', 'tw-italic');
     });
 
+    it('should render a plain text string content state', () => {
+        const TEXT = 'This is text';
+        cy.mount(<RichTextEditor value={TEXT} />);
+
+        cy.get(RICH_TEXT_EDITOR).should('contain.text', TEXT);
+    });
+
     it('should be editable by default ', () => {
         cy.mount(<RichTextEditor />);
 

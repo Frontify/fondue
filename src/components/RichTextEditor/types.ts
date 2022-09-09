@@ -8,9 +8,9 @@ import { TextStyles } from './utils/textStyles';
 export type DesignTokens = Partial<Record<TextStyles, CSSProperties>>;
 
 export type ToolbarCustomProps = {
-    editorId?: string;
-    actions?: EditorActions[][];
+    actions: EditorActions[][];
     editorWidth?: number;
+    editorId?: string;
 };
 
 export type IconStylingWrapperProps = {
