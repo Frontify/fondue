@@ -13,12 +13,6 @@ export default {
     title: 'Components/Editable Input',
     component: EditableInput,
     parameters: { actions: { argTypesRegex: '^on.*' } },
-    argTypes: {
-        children: {
-            options: Object.keys(IconList),
-            mapping: IconList,
-        },
-    },
 };
 
 const ButtonTemplate: Story<EditableInputProps> = (args: EditableInputProps) => (
@@ -27,23 +21,30 @@ const ButtonTemplate: Story<EditableInputProps> = (args: EditableInputProps) => 
 
 export const Default = ButtonTemplate.bind({});
 Default.args = {
-    children: <IconPen />,
+    children: (
+        <h1>
+            hey default <IconPen />
+        </h1>
+    ),
 };
 Default.storyName = 'Editable Input';
 
 export const EditableInputSingleCLick = ButtonTemplate.bind({});
 EditableInputSingleCLick.args = {
-    children: <IconPen />,
+    children: (
+        <h2>
+            Im so single
+            <IconPen />
+        </h2>
+    ),
 };
 
 export const ControlledInputExample: Story<EditableInputProps> = () => {
     const [label, setLabel] = useState('Im set from the outside');
 
-    const outputTest = (one: string, two: string) => console.log(one, two);
     return (
         <EditableInput
             onEditableSave={(value) => setLabel(value)}
-            onAdditionalValueSave={outputTest}
             options={{
                 additionalValues: 'ID',
                 enableDoubleClick: true,
@@ -64,12 +65,14 @@ OverrideEditableStateToInput.args = {
     children: (
         <div>
             <h1 className="tw-text-2xl">
-                This is something else new
+                Im such a Input Mode
                 <IconPen />
             </h1>
         </div>
     ),
     options: {
         mode: EditableMode.INPUT,
+        customInputTextClasses: 'tw-text-2xl',
+        customContainerClasses: 'tw-flex',
     },
 };
