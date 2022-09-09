@@ -45,7 +45,7 @@ export const Badge: FC<BadgeProps> = ({
         <Container
             onClick={() => onClick && onClick()}
             className={merge([
-                'tw-inline-flex tw-items-center tw-justify-center tw-self-start tw-rounded-full tw-transition-color tw-select-none tw-flex-initial tw-min-w-0 tw-align-top',
+                'tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-transition-color tw-select-none tw-flex-initial tw-min-w-0 tw-align-top',
                 disabled
                     ? 'tw-bg-box-disabled tw-text-box-disabled-inverse'
                     : getStyleClasses(style, !!onClick, emphasis === BadgeEmphasis.Strong),

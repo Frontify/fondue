@@ -472,6 +472,12 @@ import IconController16 from '@foundation/Icon/Generated/IconController16';
 import IconController20 from '@foundation/Icon/Generated/IconController20';
 import IconController24 from '@foundation/Icon/Generated/IconController24';
 import IconController32 from '@foundation/Icon/Generated/IconController32';
+import IconCountry from '@foundation/Icon/Generated/IconCountry';
+import IconCountry12 from '@foundation/Icon/Generated/IconCountry12';
+import IconCountry16 from '@foundation/Icon/Generated/IconCountry16';
+import IconCountry20 from '@foundation/Icon/Generated/IconCountry20';
+import IconCountry24 from '@foundation/Icon/Generated/IconCountry24';
+import IconCountry32 from '@foundation/Icon/Generated/IconCountry32';
 import IconCrop from '@foundation/Icon/Generated/IconCrop';
 import IconCrop12 from '@foundation/Icon/Generated/IconCrop12';
 import IconCrop16 from '@foundation/Icon/Generated/IconCrop16';
@@ -850,6 +856,12 @@ import IconLabel16 from '@foundation/Icon/Generated/IconLabel16';
 import IconLabel20 from '@foundation/Icon/Generated/IconLabel20';
 import IconLabel24 from '@foundation/Icon/Generated/IconLabel24';
 import IconLabel32 from '@foundation/Icon/Generated/IconLabel32';
+import IconLanguage from '@foundation/Icon/Generated/IconLanguage';
+import IconLanguage12 from '@foundation/Icon/Generated/IconLanguage12';
+import IconLanguage16 from '@foundation/Icon/Generated/IconLanguage16';
+import IconLanguage20 from '@foundation/Icon/Generated/IconLanguage20';
+import IconLanguage24 from '@foundation/Icon/Generated/IconLanguage24';
+import IconLanguage32 from '@foundation/Icon/Generated/IconLanguage32';
 import IconLayers from '@foundation/Icon/Generated/IconLayers';
 import IconLayers12 from '@foundation/Icon/Generated/IconLayers12';
 import IconLayers16 from '@foundation/Icon/Generated/IconLayers16';
@@ -2098,6 +2110,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Controller20]: <IconController20 />,
     [IconEnum.Controller24]: <IconController24 />,
     [IconEnum.Controller32]: <IconController32 />,
+    [IconEnum.Country]: <IconCountry />,
+    [IconEnum.Country12]: <IconCountry12 />,
+    [IconEnum.Country16]: <IconCountry16 />,
+    [IconEnum.Country20]: <IconCountry20 />,
+    [IconEnum.Country24]: <IconCountry24 />,
+    [IconEnum.Country32]: <IconCountry32 />,
     [IconEnum.Crop]: <IconCrop />,
     [IconEnum.Crop12]: <IconCrop12 />,
     [IconEnum.Crop16]: <IconCrop16 />,
@@ -2476,6 +2494,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Label20]: <IconLabel20 />,
     [IconEnum.Label24]: <IconLabel24 />,
     [IconEnum.Label32]: <IconLabel32 />,
+    [IconEnum.Language]: <IconLanguage />,
+    [IconEnum.Language12]: <IconLanguage12 />,
+    [IconEnum.Language16]: <IconLanguage16 />,
+    [IconEnum.Language20]: <IconLanguage20 />,
+    [IconEnum.Language24]: <IconLanguage24 />,
+    [IconEnum.Language32]: <IconLanguage32 />,
     [IconEnum.Layers]: <IconLayers />,
     [IconEnum.Layers12]: <IconLayers12 />,
     [IconEnum.Layers16]: <IconLayers16 />,
