@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import { EditableInput, EditableInputProps, EditableMode } from '@components/EditableInput/EditableInput';
 import { Story } from '@storybook/react';
-import { IconArrowOutExternal, IconBell, IconPen } from '@foundation/Icon';
-
-const IconList = {
-    pen: <IconPen />,
-    external: <IconArrowOutExternal />,
-    bell: <IconBell />,
-};
+import { IconPen } from '@foundation/Icon';
 
 export default {
     title: 'Components/Editable Input',
