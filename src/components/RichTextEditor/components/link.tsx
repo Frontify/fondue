@@ -16,7 +16,6 @@ export const getUrlFromLinkOrLegacyLink = (element: TLinkElement): string => {
 };
 
 const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
-    console.log('here', props);
     const _props = useElementProps<TLinkElement, 'a'>({
         ...props,
         elementToAttributes: (element) => ({
