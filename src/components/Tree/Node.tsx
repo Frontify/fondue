@@ -170,8 +170,14 @@ export const Node = ({
                             </span>
                             {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
-                                <EditableInput name={name} targetItemId={node.id} onEditableSave={onEditableSave}>
-                                    {badge && insertBadge()}
+                                <EditableInput
+                                    options={{ additionalValues: node.id, enableDoubleClick: true }}
+                                    onAdditionalValueSave={onEditableSave}
+                                >
+                                    <div>
+                                        {name}
+                                        {badge && insertBadge()}
+                                    </div>
                                 </EditableInput>
                             ) : (
                                 <span className="tw-flex tw-items-center" data-test-id="node-link-name">
