@@ -185,16 +185,18 @@ const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps & Mo
                 <Modal.Footer
                     buttons={[
                         {
-                            children: 'Okay',
+                            children: 'Cancel',
                             onClick: () => {
-                                action('click');
                                 state.close();
                             },
                             style: ButtonStyle.Secondary,
                         },
                         {
-                            children: 'Cancel',
-                            onClick: () => state.close(),
+                            children: 'Confirm',
+                            onClick: () => {
+                                action('click');
+                                state.close();
+                            },
                             style: ButtonStyle.Primary,
                         },
                     ]}
