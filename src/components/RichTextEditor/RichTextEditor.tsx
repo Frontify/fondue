@@ -9,14 +9,15 @@ import { Toolbar } from './components/Toolbar/Toolbar';
 import { RichTextEditorContext } from './context/RichTextEditorContext';
 import { useEditorState } from './hooks/useEditorState';
 import { DesignTokens } from './types';
-import { EditorActions } from './utils/actions';
+import { EditorActions, defaultActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
-import { getEditorConfig } from './utils/editorConfig';
 import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './utils/textStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
+import { getEditorConfig } from './utils/editorConfig';
+import { GeneratePlugins, PluginComposer } from './EditorActions';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -29,6 +30,7 @@ export type RichTextEditorProps = {
     designTokens?: DesignTokens;
     actions?: EditorActions[][];
     position?: Position;
+    plugins?: PluginComposer;
 };
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
@@ -38,10 +40,11 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     readonly = false,
     clear = false,
     designTokens = defaultDesignTokens,
-    actions = [],
+    actions = defaultActions,
     onTextChange,
     onBlur,
     position = Position.FLOATING,
+    plugins,
 }) => {
     const editorId = useMemoizedId(id);
     const { localValue } = useEditorState(editorId, clear);
@@ -93,6 +96,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     const PositioningWrapper = EditorPositioningWrapper[position];
 
+    const config = GeneratePlugins(editorId, plugins);
+    const isNew = config && actions.length === 0 && plugins;
+    const editorConfig = isNew ? config.create() : getEditorConfig();
+
     return (
         <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
             <PositioningWrapper.PlateWrapper ref={editorRef}>
@@ -101,9 +108,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     initialValue={parseRawValue(initialValue)}
                     onChange={onChange}
                     editableProps={editableProps}
-                    plugins={getEditorConfig()}
+                    plugins={editorConfig}
                 >
-                    <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
+                    {isNew && config.toolbar()}
+                    {!isNew && <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />}
                 </Plate>
             </PositioningWrapper.PlateWrapper>
         </RichTextEditorContext.Provider>
