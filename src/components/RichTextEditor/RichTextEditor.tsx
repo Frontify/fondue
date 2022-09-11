@@ -112,7 +112,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 >
                     {isNew && config.toolbar()}
                     {!isNew && <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />}
-                    {/* {config2 === EditorConfigType.ANNOTATIONS && <MentionCombobox items={mentionable} />} */}
+                    {/* {config2 === <MentionCombobox items={mentionable} />} */}
                 </Plate>
             </PositioningWrapper.PlateWrapper>
         </RichTextEditorContext.Provider>

@@ -15,7 +15,7 @@ import {
     nodesToSerialize,
     value,
 } from './utils/exampleValues';
-import { annotationPlugins, defaultPlugins } from './EditorActions';
+import { defaultPlugins, mentionPlugins } from './EditorActions';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -162,7 +162,7 @@ export const WithMentions = RichTextEditorTemplate.bind({});
 WithMentions.args = {
     value: JSON.stringify(mentionValue),
     actions: [],
-    plugins: annotationPlugins,
+    plugins: mentionPlugins,
 };
 
 export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {

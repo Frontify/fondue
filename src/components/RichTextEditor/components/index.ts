@@ -12,7 +12,6 @@ export * from './italic';
 export * from './link';
 export * from './list-item';
 export * from './list-item-content';
-export * from './mention';
 export * from './ordered-list';
 export * from './strikethrough';
 export * from './underline';
