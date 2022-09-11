@@ -52,14 +52,14 @@ export interface EditableInputProps {
  *
  * Clones the children and adds clickHandlers to flip on Click.
  * Events:
- * - onEditableSave
- * - onModeChange
- * - onAdditionalValueSave
+ * - onEditableSave // When changing from input to label state
+ * - onModeChange // Indicates which state is active
+ * - onAdditionalValueSave // Similar to editable Save with additional Values provided
  *
  * Options properties:
  * - customContainerClasses
  * - customInputTextClasses
- * - mode: display as Input or Label first
+ * - mode: enum EditableMode {INPUT = 'INPUT',LABEL = 'LABEL'}
  * - enableDoubleClick: Should the input be triggered by a double click or single click
  * - additionalValues: additional information to be passed via onClick Event
  *
