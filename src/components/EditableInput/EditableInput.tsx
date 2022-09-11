@@ -17,13 +17,12 @@ export enum EditableMode {
 }
 
 /**
- * Define custom Styles with
- * - customContainerClasses (<div>)
- * - customInputTextClasses (<input>)
- *
+ * Define custom Styles with:
+ * customContainerClasses (<div>)
+ * customInputTextClasses (<input>)
  * mode: display as Input or Label first
  * enableDoubleClick: Should the input be triggered by a double click or single click
- * targeItemId: additional information to be passed via onClick Event
+ * additionalValues: additional information to be passed via onClick Event
  */
 interface EditableOptionProps {
     customContainerClasses?: string;
@@ -51,15 +50,22 @@ export interface EditableInputProps {
 /**
  * Component to switch between Label and Input state
  *
- * Clones the children and adds clickHandlers to flip on Click
- * Offers events for the onSave (switch from input to label),
- * when a switch happens and can be extended with additional information.
- * Options property to adjust click behaviour and styling.
+ * Clones the children and adds clickHandlers to flip on Click.
+ * Events:
+ * - onEditableSave
+ * - onModeChange
+ * - onAdditionalValueSave
  *
+ * Options properties:
+ * - customContainerClasses
+ * - customInputTextClasses
+ * - mode: display as Input or Label first
+ * - enableDoubleClick: Should the input be triggered by a double click or single click
+ * - additionalValues: additional information to be passed via onClick Event
  *
  * @param onEditableSave
  * @param onModeChange
- * @param onAdditionalIDSave
+ * @param onAdditionalValueSave
  * @param children
  * @param options
  */
@@ -78,7 +84,6 @@ export const EditableInput = ({
     const [editableState, setEditableState] = useState<EditableMode>(EditableMode.LABEL);
 
     const inputRef = useRef<HTMLInputElement | null>(null);
-    const listenedRef = useRef();
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => setInputValue(event.target.value);
 
@@ -97,7 +102,6 @@ export const EditableInput = ({
         setEditableState(EditableMode.INPUT);
 
         onModeChange && onModeChange(EditableMode.INPUT);
-        setTimeout(() => inputRef.current?.focus(), 0);
     };
 
     const handleKeyDown: KeyboardEventHandler = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -119,14 +123,15 @@ export const EditableInput = ({
         children &&
         React.cloneElement(children, {
             ...clickBehaviour,
-            ref: listenedRef,
             'data-test-id': 'node-link-name',
         });
 
     // If the Input is visible initially focus into it
-    if (options?.mode === EditableMode.INPUT) {
-        setTimeout(() => inputRef.current?.focus(), 0);
-    }
+    useEffect(() => {
+        if (editableState === EditableMode.INPUT) {
+            inputRef.current?.focus();
+        }
+    }, [editableState, inputRef]);
 
     return (
         <div data-test-id="editable-node-container">
