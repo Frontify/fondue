@@ -18,7 +18,7 @@ export enum TCategory {
     USER = 'user',
 }
 
-export interface MentionPlugin<TData extends Data = TCategory> {
+export interface MentionPluginType<TData extends Data = TCategory> {
     createMentionNode?: CreateMentionNode<TData>;
     id?: string;
     insertSpaceAfterMention?: boolean;
@@ -33,4 +33,4 @@ export interface TComboboxItemMention<T extends Data = TCategory> extends TCombo
     category: T;
 }
 
-export type WithOverrideType = WithOverride<Record<string, unknown>, MentionPlugin<TCategory>>;
+export type WithOverrideType = WithOverride<Record<string, unknown>, MentionPluginType<TCategory>>;

@@ -7,9 +7,9 @@ import {
     mentionOnKeyDownHandler,
     withMention,
 } from '@udecode/plate';
-import { MentionPlugin, WithOverrideType } from './types';
+import { MentionPluginType, WithOverrideType } from './types';
 
-export const createMentionPlugin = createPluginFactory<MentionPlugin>({
+export const createMentionPlugin = createPluginFactory<MentionPluginType>({
     key: ELEMENT_MENTION,
     isElement: true,
     isInline: true,
