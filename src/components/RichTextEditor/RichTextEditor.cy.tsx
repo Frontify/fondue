@@ -542,9 +542,9 @@ describe('RichTextEditor Component', () => {
 
         cy.viewport(1200, 1200);
         cy.get(TOOLBAR_FLOATING).children().should('have.length', 1);
-        cy.viewport(550, 750);
+        cy.viewport(480, 750);
         cy.get(TOOLBAR_FLOATING).children().should('have.length', 2);
-        cy.viewport(320, 480);
+        cy.viewport(280, 480);
         cy.get(TOOLBAR_FLOATING).children().should('have.length', 3);
     });
 

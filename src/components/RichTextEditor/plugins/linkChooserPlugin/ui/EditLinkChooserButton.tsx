@@ -46,7 +46,7 @@ export const EditLinkChooserButton = ({ id, styles, classNames }: Omit<ToolbarBu
                         classNames={classNames}
                         styles={styles}
                         active={!!editor?.selection && someNode(editor, { match: { ELEMENT_CHECK_ITEM } })}
-                        icon={<IconLink size={IconSize.Size24} />}
+                        icon={<IconLink size={IconSize.Size16} />}
                         onMouseDown={async (event) => {
                             event.stopPropagation();
                             event.preventDefault();
