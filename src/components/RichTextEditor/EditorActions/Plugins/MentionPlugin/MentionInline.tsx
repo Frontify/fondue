@@ -2,8 +2,9 @@
 
 import React from 'react';
 import { MentionCombobox } from '@udecode/plate';
-import { mentionable } from '@components/RichTextEditor/utils/exampleValues';
+import { MentionableItems } from './types';
 
-export const MentionInline = () => {
-    return <MentionCombobox items={mentionable} />;
+// eslint-disable-next-line react/display-name
+export const MentionInline = (items: MentionableItems) => () => {
+    return <MentionCombobox items={items} />;
 };

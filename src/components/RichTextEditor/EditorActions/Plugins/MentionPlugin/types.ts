@@ -8,9 +8,7 @@ interface MentionNodeData {
     value: string;
 }
 
-export interface CreateMentionNode<TData extends Data> {
-    (item: TComboboxItemMention<TData>): MentionNodeData;
-}
+export type CreateMentionNode<TData extends Data> = (item: TComboboxItemMention<TData>) => MentionNodeData;
 
 export enum TCategory {
     GROUP = 'group',
@@ -32,5 +30,6 @@ export interface MentionPluginType<TData extends Data = TCategory> {
 export interface TComboboxItemMention<T extends Data = TCategory> extends TComboboxItemBase {
     category: T;
 }
+export type MentionableItems = TComboboxItemMention<TCategory>[];
 
 export type WithOverrideType = WithOverride<Record<string, unknown>, MentionPluginType<TCategory>>;

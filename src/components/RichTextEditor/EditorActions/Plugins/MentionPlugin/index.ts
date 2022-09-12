@@ -7,13 +7,15 @@ import { Plugin } from '../Plugin';
 import { MentionInline } from './MentionInline';
 import { createMentionPlugin } from './createMentionPlugin';
 
+import { mentionable } from '@components/RichTextEditor/utils/exampleValues';
+
 export class MentionPlugin extends Plugin {
     constructor(id = MENTION_PLUGIN, button = undefined, markupElement = new MentionMarkupElement()) {
         super(id, button, markupElement);
     }
 
     inline() {
-        return MentionInline;
+        return MentionInline(mentionable);
     }
 
     plugins() {
