@@ -7,6 +7,33 @@ export default {
     title: 'Components/Editable Input',
     component: EditableInput,
     parameters: { actions: { argTypesRegex: '^on.*' } },
+    argTypes: {
+        children: {
+            table: {
+                disable: true,
+            },
+        },
+        options: {
+            table: {
+                category: 'Custom',
+            },
+        },
+        onAdditionalValueSave: {
+            table: {
+                category: 'Event',
+            },
+        },
+        onEditableSave: {
+            table: {
+                category: 'Event',
+            },
+        },
+        onModeChange: {
+            table: {
+                category: 'Event',
+            },
+        },
+    },
 };
 
 const ButtonTemplate: Story<EditableInputProps> = (args: EditableInputProps) => (
@@ -16,21 +43,30 @@ const ButtonTemplate: Story<EditableInputProps> = (args: EditableInputProps) => 
 export const Default = ButtonTemplate.bind({});
 Default.args = {
     children: (
-        <h1>
-            hey default <IconPen />
-        </h1>
+        <div className={'tw-flex tw-flex-row tw-items-center'}>
+            <h1 className={'tw-text-text tw-p-2'}>hey default</h1>
+        </div>
     ),
+    options: {
+        mode: EditableMode.LABEL,
+        customInputTextClasses: 'tw-text-text tw-p-2',
+        customContainerClasses: 'tw-flex',
+        enableDoubleClick: false,
+        additionalValues: 'Values only for the Event',
+    },
 };
 Default.storyName = 'Editable Input';
 
-export const EditableInputSingleCLick = ButtonTemplate.bind({});
-EditableInputSingleCLick.args = {
+export const EditWithDoubleClick = ButtonTemplate.bind({});
+EditWithDoubleClick.args = {
     children: (
-        <h2>
-            Im so single
-            <IconPen />
-        </h2>
+        <div className={'tw-flex tw-flex-row tw-items-center'}>
+            <h1>Change me with a Double Click</h1>
+        </div>
     ),
+    options: {
+        enableDoubleClick: true,
+    },
 };
 
 export const ControlledInputExample: Story<EditableInputProps> = () => {
@@ -42,31 +78,44 @@ export const ControlledInputExample: Story<EditableInputProps> = () => {
             options={{
                 additionalValues: 'ID',
                 enableDoubleClick: true,
-                customInputTextClasses: 'tw-text-2xl tw-w-fit',
+                customInputTextClasses: 'tw-text-2xl tw-w-fit tw-p-2',
                 customContainerClasses: 'tw-flex tw-w-fit',
             }}
         >
-            <div>
-                <h1 className={'tw-text-2xl tw-w-fit'}>{label}</h1>
+            <div className={'tw-flex tw-flex-row tw-items-center'}>
+                <h1 className={'tw-text-2xl tw-w-fit tw-p-2'}>{label}</h1>
                 <IconPen />
             </div>
         </EditableInput>
     );
 };
 
-export const OverrideEditableStateToInput = ButtonTemplate.bind({});
-OverrideEditableStateToInput.args = {
+export const InitialStartInInput = ButtonTemplate.bind({});
+InitialStartInInput.args = {
     children: (
-        <div>
-            <h1 className="tw-text-2xl">
-                Im such a Input Mode
-                <IconPen />
-            </h1>
+        <div className={'tw-flex tw-flex-row tw-items-center'}>
+            <h1 className={'tw-p-2'}>Im such a Input Mode</h1>
+            <IconPen />
         </div>
     ),
     options: {
         mode: EditableMode.INPUT,
-        customInputTextClasses: 'tw-text-2xl',
+        customInputTextClasses: 'tw-text-2xl tw-p-2',
+        customContainerClasses: 'tw-flex',
+    },
+};
+
+export const InputWithCustomStyling = ButtonTemplate.bind({});
+InputWithCustomStyling.args = {
+    children: (
+        <div className={'tw-flex tw-flex-row tw-items-center'}>
+            <h1 className="tw-text-2xl tw-p-2">Im such a Input Mode</h1>
+            <IconPen />
+        </div>
+    ),
+    options: {
+        mode: EditableMode.INPUT,
+        customInputTextClasses: 'tw-text-2xl tw-p-2',
         customContainerClasses: 'tw-flex',
     },
 };
