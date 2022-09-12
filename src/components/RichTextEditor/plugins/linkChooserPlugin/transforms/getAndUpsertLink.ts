@@ -3,17 +3,15 @@ import { PlateEditor, getAbove, isCollapsed } from '@udecode/plate-core';
 import { ChosenLink } from '../types';
 import { upsertLinkAtSelection } from './upsertLinkAtSelection';
 
-const defaultChosenLink: ChosenLink = {
-    searchResult: null,
-    openInNewTab: false,
-};
-
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const getAndUpsertLink = async <T = {}>(
     editor: PlateEditor<T>,
     getChosenLink: (prevLink: ChosenLink) => Promise<ChosenLink | void>,
 ) => {
-    let prevChosenLink = Object.assign({}, defaultChosenLink);
+    let prevChosenLink: ChosenLink = {
+        searchResult: null,
+        openInNewTab: false,
+    };
 
     const linkNode = getAbove(editor, {
         match: { type: ELEMENT_LINK },
