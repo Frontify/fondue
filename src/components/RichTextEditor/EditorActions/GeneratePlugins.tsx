@@ -32,5 +32,13 @@ export const GeneratePlugins = (editorId: string, pluginComposer?: PluginCompose
                 })}
             </Toolbar>
         ),
+        mentions: () => (
+            <>
+                {/* {pluginComposer.inline.map((Inline, index) => { */}
+                {pluginComposer.inline.map((Inline) => {
+                    return Inline(); //<Inline key={index} />;
+                })}
+            </>
+        ),
     };
 };

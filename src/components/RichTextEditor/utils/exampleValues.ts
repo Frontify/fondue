@@ -15,7 +15,7 @@ import {
     TDescendant,
 } from '@udecode/plate';
 import { ELEMENT_CHECK_ITEM } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
-import { TCategory, TComboboxItemMention } from '../plugins/mentionPlugin';
+import { TCategory, TComboboxItemMention } from '../EditorActions/Plugins/MentionPlugin/types';
 import { DesignTokens } from '../types';
 import { TextStyles } from './textStyles';
 

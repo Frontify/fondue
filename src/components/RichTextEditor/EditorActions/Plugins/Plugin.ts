@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ReactElement } from 'react';
 import { PlatePlugin } from '@udecode/plate';
 import { UnknownObject } from '../types';
 import { PluginButton } from './types';
@@ -12,6 +13,10 @@ export abstract class Plugin {
         readonly markupElement?: MarkupElement,
         readonly leafMarkupElements?: MarkupElement | MarkupElement[],
     ) {}
+
+    inline(): (() => ReactElement) | undefined {
+        return undefined;
+    }
 
     abstract plugins(): PlatePlugin<UnknownObject, any>[];
 }

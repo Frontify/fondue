@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ReactNode } from 'react';
 import { PlatePlugin, PlatePluginComponent, createParagraphPlugin } from '@udecode/plate';
 import { MarkupElement } from './MarkupElement';
 import { ObjectType, UnknownObject } from '../types';
@@ -10,6 +11,7 @@ export class PluginComposer {
     private platePlugins: Map<string, PlatePlugin<UnknownObject, UnknownObject>[]> = new Map();
     private markupElements: ObjectType<PlatePluginComponent<any>> = {};
     private toolbarButtons: Buttons = [];
+    private inlineElements: (() => ReactNode)[] = [];
 
     constructor() {
         this.platePlugins.set('default', [createParagraphPlugin()]);
@@ -23,6 +25,7 @@ export class PluginComposer {
                 this.addElement(plugin.markupElement);
                 this.addLeafElements(plugin.leafMarkupElements);
                 this.addPlugin(plugin);
+                this.addInline(plugin.inline());
             }
 
             this.generateGroupOfButtons(groupOfPlugins);
@@ -59,6 +62,14 @@ export class PluginComposer {
         }
     }
 
+    private addInline(inl: (() => ReactNode) | undefined) {
+        console.log('inline', inl);
+
+        if (inl) {
+            this.inlineElements.push(inl);
+        }
+    }
+
     private generateGroupOfButtons(groupOfPlugins: Plugin[]) {
         const groupOfButtons: Button[] = [];
 
@@ -91,5 +102,9 @@ export class PluginComposer {
 
     get buttons(): Buttons {
         return this.toolbarButtons;
+    }
+
+    get inline(): (() => ReactNode)[] {
+        return this.inlineElements;
     }
 }
