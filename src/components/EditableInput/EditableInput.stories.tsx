@@ -114,7 +114,6 @@ InputWithCustomStyling.args = {
         </div>
     ),
     options: {
-        mode: EditableMode.INPUT,
         customInputTextClasses: 'tw-text-2xl tw-p-2',
         customContainerClasses: 'tw-flex',
     },
