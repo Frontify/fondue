@@ -11,7 +11,7 @@ export const CheckboxListButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <CheckboxListToolbarButton
             type={getPluginType(editor, id)}
-            icon={<IconStylingWrapper icon={<IconListCheck size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconListCheck size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
         />

@@ -10,7 +10,7 @@ export const CodeButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <MarkToolbarButton
             type={getPluginType(editor, id)}
-            icon={<IconStylingWrapper icon={<IconTextBrackets size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconTextBrackets size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
         />

@@ -11,7 +11,7 @@ export const BoldButton = ({ editor, id }: PluginButtonProps) => (
         <MarkToolbarButton
             key={id}
             type={getPluginType(editor, id)}
-            icon={<IconStylingWrapper icon={<IconTextFormatBold size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconTextFormatBold size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
         />
