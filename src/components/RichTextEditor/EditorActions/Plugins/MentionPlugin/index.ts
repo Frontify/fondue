@@ -3,32 +3,22 @@
 import { createComboboxPlugin } from '@udecode/plate';
 import { MENTION_PLUGIN } from './id';
 import { MentionMarkupElement } from './MentionMarkupElement';
-import { Plugin, PluginProps } from '../Plugin';
+import { Plugin } from '../Plugin';
 import { MentionInline } from './MentionInline';
 import { createMentionPlugin } from './createMentionPlugin';
-import { MentionableItems } from './types';
+import { MentionPluginProps } from './types';
 
-type MentionPluginProps = PluginProps & {
-    mentionableItems?: MentionableItems;
-};
-
-export class MentionPlugin extends Plugin {
-    private mentionableItems: MentionableItems = [];
-
+export class MentionPlugin extends Plugin<MentionPluginProps> {
     constructor(props?: MentionPluginProps) {
         super({
             id: MENTION_PLUGIN,
             markupElement: new MentionMarkupElement(),
             ...props,
         });
-
-        if (props?.mentionableItems) {
-            this.mentionableItems = props?.mentionableItems;
-        }
     }
 
     inline() {
-        return MentionInline(this.mentionableItems);
+        return MentionInline(this.props?.mentionableItems || []);
     }
 
     plugins() {

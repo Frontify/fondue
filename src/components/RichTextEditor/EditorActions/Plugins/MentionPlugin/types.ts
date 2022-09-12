@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TComboboxItemBase, WithOverride } from '@udecode/plate';
+import { PluginProps } from '../Plugin';
 
 export declare type Data = unknown;
 
@@ -31,5 +32,8 @@ export interface TComboboxItemMention<T extends Data = TCategory> extends TCombo
     category: T;
 }
 export type MentionableItems = TComboboxItemMention<TCategory>[];
+export type MentionPluginProps = PluginProps & {
+    mentionableItems?: MentionableItems;
+};
 
 export type WithOverrideType = WithOverride<Record<string, unknown>, MentionPluginType<TCategory>>;
