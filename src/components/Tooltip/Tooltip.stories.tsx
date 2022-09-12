@@ -55,6 +55,10 @@ export default {
             control: { type: 'boolean' },
             defaultValue: false,
         },
+        open: {
+            control: { type: 'boolean' },
+            defaultValue: false,
+        },
         flip: {
             control: { type: 'boolean' },
             defaultValue: true,
@@ -183,5 +187,11 @@ WithEverythingDisplayed.args = {
 
 export const WithArrow = TooltipComponent.bind({});
 WithArrow.args = {
+    withArrow: true,
+};
+
+export const OpenByDefault = TooltipComponent.bind({});
+OpenByDefault.args = {
+    open: true,
     withArrow: true,
 };

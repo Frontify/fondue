@@ -13,6 +13,7 @@ import React, {
     ReactNode,
     cloneElement,
     useCallback,
+    useEffect,
     useMemo,
     useRef,
     useState,
@@ -43,6 +44,7 @@ export type TooltipProps = PropsWithChildren<{
     flip?: boolean;
     withArrow?: boolean;
     hoverDelay?: number;
+    open?: boolean;
 }>;
 
 /**
@@ -132,6 +134,7 @@ export const Tooltip = ({
     flip = true,
     triggerElement,
     hoverDelay = 200,
+    open = false,
 }: TooltipProps) => {
     const triggerRefElement = useRef<HTMLElement | HTMLDivElement | HTMLButtonElement | null>(null);
     const linkRef = useRef<HTMLAnchorElement | null>(null);
@@ -205,6 +208,10 @@ export const Tooltip = ({
         onFocus: () => setIsOpen(true),
         onBlur: () => (!hasInteractiveElements ? setIsOpen(false) : null),
     };
+
+    useEffect(() => {
+        setIsOpen(open);
+    }, [open]);
 
     return (
         <>
