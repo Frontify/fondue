@@ -6,20 +6,29 @@ import { MentionMarkupElement } from './MentionMarkupElement';
 import { Plugin, PluginProps } from '../Plugin';
 import { MentionInline } from './MentionInline';
 import { createMentionPlugin } from './createMentionPlugin';
+import { MentionableItems } from './types';
 
-import { mentionable } from '../../../utils/exampleValues';
+type MentionPluginProps = PluginProps & {
+    mentionableItems?: MentionableItems;
+};
 
 export class MentionPlugin extends Plugin {
-    constructor(props?: PluginProps) {
+    private mentionableItems: MentionableItems = [];
+
+    constructor(props?: MentionPluginProps) {
         super({
             id: MENTION_PLUGIN,
             markupElement: new MentionMarkupElement(),
             ...props,
         });
+
+        if (props?.mentionableItems) {
+            this.mentionableItems = props?.mentionableItems;
+        }
     }
 
     inline() {
-        return MentionInline(mentionable);
+        return MentionInline(this.mentionableItems);
     }
 
     plugins() {

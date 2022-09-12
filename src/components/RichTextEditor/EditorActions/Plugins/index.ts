@@ -9,6 +9,8 @@ import { CodePlugin } from './CodePlugin';
 import { ItalicPlugin } from './ItalicPlugin';
 import { MentionPlugin } from './MentionPlugin';
 
+import { mentionable } from '../../utils/exampleValues';
+
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
     .setPlugin([[new BoldPlugin(), new ItalicPlugin(), new CodePlugin()]])
@@ -17,7 +19,7 @@ defaultPlugins
 
 export const mentionPlugins = new PluginComposer();
 mentionPlugins
-    .setPlugin([new MentionPlugin()])
+    .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin([[new UnorderedListPlugin(), new OrderedListPlugin()]])
     .setPlugin([new BoldPlugin()]);
 
