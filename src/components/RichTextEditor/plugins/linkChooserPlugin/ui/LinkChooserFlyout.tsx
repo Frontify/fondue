@@ -75,8 +75,6 @@ export const LinkChooserFlyout = ({
                 className="tw-flex tw-flex-col tw-gap-y-5 tw-p-7"
                 data-test-id={'link-chooser-flyout'}
             >
-                {/* Todo: Until we have moved the search logic, a 'simple link chooser' is rendered instead of the real link chooser */}
-
                 <FormControl
                     label={{
                         children: 'Text',
