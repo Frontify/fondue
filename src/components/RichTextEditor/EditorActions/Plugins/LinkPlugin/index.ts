@@ -4,7 +4,7 @@ import { ELEMENT_LINK, createBoldPlugin, createPluginFactory } from '@udecode/pl
 import { LINK_PLUGIN } from './id';
 import { LinkMarkupElement } from './LinkMarkupElement';
 import { LinkButton } from './LinkButton';
-import { Plugin } from '../Plugin';
+import { Plugin, PluginProps } from '../Plugin';
 
 export const createLinkChooserPlugin = createPluginFactory({
     key: ELEMENT_LINK,
@@ -13,8 +13,13 @@ export const createLinkChooserPlugin = createPluginFactory({
 });
 
 export class LinkPlugin extends Plugin {
-    constructor(id = LINK_PLUGIN, button = LinkButton, markupElement = new LinkMarkupElement()) {
-        super(id, button, markupElement);
+    constructor(props?: PluginProps) {
+        super({
+            id: LINK_PLUGIN,
+            button: LinkButton,
+            markupElement: new LinkMarkupElement(),
+            ...props,
+        });
     }
 
     plugins() {
