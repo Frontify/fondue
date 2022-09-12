@@ -158,6 +158,32 @@ describe('OverflowMenu component', () => {
             cy.focused().realPress('Tab');
             cy.get(ITEM_TEST_ID).should('have.length', 0);
         });
+        it('jumps disabled button on keyboard navigation', () => {
+            const onClickSpy = cy.spy().as('onButtonClick');
+            cy.mount(
+                <OverflowMenu
+                    items={BUTTON_ITEMS.map((item, index) => ({
+                        ...item,
+                        onClick: () => onClickSpy(index + 1),
+                        disabled: index === 1,
+                    }))}
+                />,
+            );
+            cy.get(COMPONENT_TEST_ID).as('OverflowMenu');
+            cy.get('@OverflowMenu').find('button').focus().realPress('Enter');
+            cy.get(ITEM_TEST_ID).should('have.length', 3);
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 1);
+            cy.focused().trigger('keydown', { key: 'ArrowDown' });
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 3);
+            cy.focused().trigger('keydown', { key: 'ArrowUp' });
+            cy.focused().should('have.attr', 'type', 'button');
+            cy.focused().realPress('Enter');
+            cy.get('@onButtonClick').should('have.been.calledWith', 1);
+        });
     });
     describe('With Spans', () => {
         beforeEach(() => {

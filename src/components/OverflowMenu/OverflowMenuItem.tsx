@@ -11,22 +11,25 @@ export interface OverflowMenuItemProps {
     link?: string;
     onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
     decorator?: ReactElement<IconProps>;
+    disabled?: boolean;
 }
 
-export const OverflowMenuItem = ({ id = 'overflow-menu-item', label, link, onClick }: OverflowMenuItemProps) => {
+export const OverflowMenuItem = ({
+    id = 'overflow-menu-item',
+    label,
+    link,
+    onClick,
+    disabled = false,
+}: OverflowMenuItemProps) => {
     const contentElementType = getItemElementType(link, onClick);
 
-    const menuItemElement = <MenuItem title={label} />;
+    const menuItemElement = <MenuItem title={label} disabled={disabled} />;
 
     return (
         <li id={id} data-test-id="overflow-menu-item">
-            {contentElementType === 'a' && (
-                <a className="item-action" href={link}>
-                    {menuItemElement}
-                </a>
-            )}
+            {contentElementType === 'a' && <a href={link}>{menuItemElement}</a>}
             {contentElementType === 'button' && (
-                <button onClick={onClick} type="button" className="item-action">
+                <button onClick={onClick} type="button" disabled={disabled}>
                     {menuItemElement}
                 </button>
             )}

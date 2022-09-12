@@ -46,6 +46,14 @@ WithLinkItems.args = { items: [...ITEMS] };
 export const WithButtonItems = Template.bind({});
 WithButtonItems.args = { items: [...BUTTON_ITEMS] };
 
+export const WithDisabledButtonInItemsList = Template.bind({});
+WithDisabledButtonInItemsList.args = {
+    items: BUTTON_ITEMS.map((item, index) => ({
+        ...item,
+        disabled: index === 1,
+    })),
+};
+
 export const WithSpanItems = Template.bind({});
 WithSpanItems.args = { items: [...SPAN_ITEMS] };
 

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 export const useOverflowMenuKeyboardNavigation = (
     isMenuOpened: boolean,
     menuContainerRef: HTMLElement | null,
-    focusableElementsSelector = '.item-action',
+    focusableElementsSelector = 'li > button:not(:disabled)',
 ) => {
     const [currentItemIndex, setCurrentItemIndex] = useState(0);
     const [itemsElements, setItemsElements] = useState<NodeList>();
@@ -41,9 +41,7 @@ export const useOverflowMenuKeyboardNavigation = (
             return;
         }
 
-        const focusableItems = menuContainerRef.querySelectorAll(
-            `[id^=${menuContainerRef.getAttribute('id')}-item] ${focusableElementsSelector}`,
-        );
+        const focusableItems = menuContainerRef.querySelectorAll(focusableElementsSelector);
 
         for (const item of focusableItems) {
             (item as HTMLButtonElement | HTMLAnchorElement).onkeydown = handleKeyDown;
