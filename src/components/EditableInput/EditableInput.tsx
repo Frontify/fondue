@@ -57,11 +57,11 @@ export interface EditableInputProps {
  * - onAdditionalValueSave // Similar to editable Save with additional Values provided
  *
  * Options properties:
- * - customContainerClasses
- * - customInputTextClasses
- * - mode: enum EditableMode {INPUT = 'INPUT',LABEL = 'LABEL'}
- * - enableDoubleClick: Should the input be triggered by a double click or single click
- * - additionalValues: additional information to be passed via onClick Event
+ * - customContainerClasses: string             // Tailwind Classes
+ * - customInputTextClasses: string             // Tailwind Classes
+ * - mode:                   enum EditableMode  // {INPUT = 'INPUT',LABEL = 'LABEL'}
+ * - enableDoubleClick:      boolean            // should the input be triggered by a double click or single click
+ * - additionalValues:       string             // additional information to be passed via onClick Event
  *
  * @param onEditableSave
  * @param onModeChange
