@@ -52,9 +52,9 @@ export interface EditableInputProps {
  *
  * Clones the children and adds clickHandlers to flip on Click.
  * Events:
- * - onEditableSave // When changing from input to label state
- * - onModeChange // Indicates which state is active
- * - onAdditionalValueSave // Similar to editable Save with additional Values provided
+ * - onEditableSave         // When changing from input to label state
+ * - onModeChange           // Indicates which state is active
+ * - onAdditionalValueSave  // Similar to editable Save with additional Values provided
  *
  * Options properties:
  * - customContainerClasses: string             // Tailwind Classes
