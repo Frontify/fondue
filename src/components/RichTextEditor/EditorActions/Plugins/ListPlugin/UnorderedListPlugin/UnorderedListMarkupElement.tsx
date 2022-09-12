@@ -6,14 +6,14 @@ import { MarkupElement } from '../../MarkupElement';
 
 export const UL_CLASSES = 'tw-list-disc tw-pl-6';
 
-export const UnorderedListMarkupElementTag = ({ attributes, children }: PlateRenderLeafProps) => (
+export const UnorderedListMarkupElementNode = ({ attributes, children }: PlateRenderLeafProps) => (
     <ul className={UL_CLASSES} {...attributes}>
         {children}
     </ul>
 );
 
 export class UnorderedListMarkupElement extends MarkupElement {
-    constructor(id = ELEMENT_UL, tag = UnorderedListMarkupElementTag) {
-        super(id, tag);
+    constructor(id = ELEMENT_UL, node = UnorderedListMarkupElementNode) {
+        super(id, node);
     }
 }

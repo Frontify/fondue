@@ -1,5 +1,5 @@
 import { LINK_CLASSES, OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/components';
-import { ELEMENT_CHECK_ITEM } from '@components/RichTextEditor/plugins/checkboxListPlugin/createCheckboxListPlugin';
+import { ELEMENT_CHECK_ITEM } from '../../EditorActions/Plugins/CheckboxListPlugin/id';
 import { DesignTokens } from '@components/RichTextEditor/types';
 import { TextStyles } from '@components/RichTextEditor/utils/textStyles';
 import { ELEMENT_LI, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL, TDescendant } from '@udecode/plate';

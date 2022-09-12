@@ -49,9 +49,9 @@ export class PluginComposer {
             return;
         }
 
-        const { id, tag } = markupElement;
-        if (tag && !this.markupElements[id]) {
-            this.markupElements[id] = tag;
+        const { id, node } = markupElement;
+        if (node && !this.markupElements[id]) {
+            this.markupElements[id] = node;
         }
     }
 

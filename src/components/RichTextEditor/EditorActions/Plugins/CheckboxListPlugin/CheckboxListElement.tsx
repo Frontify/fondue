@@ -1,14 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from 'react';
+import { ReactEditor } from 'slate-react';
 import { PlateRenderElementProps, TElement, TodoListItemNodeData, getRootProps, setNodes } from '@udecode/plate';
 import { merge } from '@utilities/merge';
-import React, { FC } from 'react';
-import { ReactEditor } from 'slate-react';
+import { MarkupElement } from '../MarkupElement';
+import { ELEMENT_CHECK_ITEM } from './id';
 
-export const CheckboxItemElement: FC<PlateRenderElementProps> = (props) => {
+export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const { attributes, children, nodeProps, element, editor } = props;
     const rootProps = getRootProps(props);
     const { checked } = element;
+
     return (
         <div {...attributes} {...rootProps} className="tw-flex tw-flex-row tw-py-1">
             <div contentEditable={false} className="tw-flex tw-items-center tw-justify-center tw-select-none tw-mr-1.5">
@@ -28,3 +31,9 @@ export const CheckboxItemElement: FC<PlateRenderElementProps> = (props) => {
         </div>
     );
 };
+
+export class CheckboxListElement extends MarkupElement {
+    constructor(id = ELEMENT_CHECK_ITEM, node = CheckboxListElementNode) {
+        super(id, node);
+    }
+}
