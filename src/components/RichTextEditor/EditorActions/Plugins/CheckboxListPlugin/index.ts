@@ -4,7 +4,7 @@ import { createPluginFactory } from '@udecode/plate';
 import { CHECKBOX_LIST_PLUGIN, ELEMENT_CHECK_ITEM } from './id';
 import { CheckboxListElement } from './CheckboxListElement';
 import { CheckboxListButton } from './CheckboxListButton';
-import { Plugin } from '../Plugin';
+import { Plugin, PluginProps } from '../Plugin';
 
 export const createCheckboxListPlugin = createPluginFactory({
     key: ELEMENT_CHECK_ITEM,
@@ -12,8 +12,13 @@ export const createCheckboxListPlugin = createPluginFactory({
 });
 
 export class CheckboxListPlugin extends Plugin {
-    constructor(id = CHECKBOX_LIST_PLUGIN, button = CheckboxListButton, markupElement = new CheckboxListElement()) {
-        super(id, button, markupElement);
+    constructor(props?: PluginProps) {
+        super({
+            id: CHECKBOX_LIST_PLUGIN,
+            button: CheckboxListButton,
+            markupElement: new CheckboxListElement(),
+            ...props,
+        });
     }
 
     plugins() {
