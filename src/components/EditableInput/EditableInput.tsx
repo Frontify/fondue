@@ -126,7 +126,7 @@ export const EditableInput = ({
             'data-test-id': 'node-link-name',
         });
 
-    // If the Input is visible initially focus into it
+    // If the Input is visible focus into it
     useEffect(() => {
         if (editableState === EditableMode.INPUT) {
             inputRef.current?.focus();
