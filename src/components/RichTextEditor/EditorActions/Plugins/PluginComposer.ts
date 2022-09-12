@@ -73,7 +73,9 @@ export class PluginComposer {
             });
         }
 
-        this.toolbarButtons.push(groupOfButtons);
+        if (groupOfButtons.length > 0) {
+            this.toolbarButtons.push(groupOfButtons);
+        }
     }
 
     get elements() {
