@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretDown } from '@foundation/Icon';
+import { IconCaretDown, IconSize } from '@foundation/Icon';
 import { getPreventDefaultHandler, usePlateEditorState } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import React from 'react';
@@ -38,18 +38,18 @@ export const DropdownTrigger = ({ editorId, open }: DropdownTriggerProps) => {
         <button
             data-test-id="textstyle-dropdown-trigger"
             type="button"
-            className="tw-cursor-pointer tw-h-12 tw-w-full"
+            className="tw-cursor-pointer tw-h-8 tw-w-full"
             onMouseDown={editor ? getPreventDefaultHandler() : undefined}
         >
             <div
                 className={merge([
-                    'tw-relative tw-inline-flex tw-flex-row tw-items-center tw-justify-between tw-overflow-hidden tw-text-text tw-rounded tw-gap-1 tw-p-2 hover:tw-text-text hover:tw-bg-box-neutral tw-h-8 tw-w-28',
+                    'tw-relative tw-inline-flex tw-flex-row tw-items-center tw-justify-between tw-overflow-hidden tw-text-text tw-rounded tw-gap-1 tw-px-2 hover:tw-text-text hover:tw-bg-box-neutral tw-h-6 tw-w-28',
                     open && 'tw-bg-box-neutral',
                 ])}
             >
-                <span className="tw-text-s tw-truncate">{label}</span>
+                <span className="tw-text-xs tw-truncate">{label}</span>
                 <div className={merge(['tw-transition-transform', open && 'tw-rotate-180'])}>
-                    <IconCaretDown />
+                    <IconCaretDown size={IconSize.Size12} />
                 </div>
             </div>
         </button>

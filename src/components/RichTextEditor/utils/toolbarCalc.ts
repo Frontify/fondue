@@ -32,8 +32,8 @@ export const calculateToolbarWidth = (toolbarButtonGroups: ButtonGroupWidths[]) 
         ),
     );
 
-const BUTTON_GROUP_PADDING_PX = 16;
-const BUTTON_GROUP_SIZE_PX = 34;
+const BUTTON_GROUP_PADDING_PX = 12;
+const BUTTON_GROUP_SIZE_PX = 26;
 const BUTTON_GROUP_DROPDOWN_PX = 128;
 
 export const getButtonGroupWidths = (toolbarActions: EditorActions[][]) =>
