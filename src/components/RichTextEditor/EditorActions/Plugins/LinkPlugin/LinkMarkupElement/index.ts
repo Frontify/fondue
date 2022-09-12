@@ -2,10 +2,10 @@
 
 import { ELEMENT_LINK } from '@udecode/plate';
 import { MarkupElement } from '../../MarkupElement';
-import { LinkMarkupElementTag } from './LinkMarkupElementTag';
+import { LinkMarkupElementNode } from './LinkMarkupElementNode';
 
 export class LinkMarkupElement extends MarkupElement {
-    constructor(id = ELEMENT_LINK, tag = LinkMarkupElementTag) {
-        super(id, tag);
+    constructor(id = ELEMENT_LINK, node = LinkMarkupElementNode) {
+        super(id, node);
     }
 }
