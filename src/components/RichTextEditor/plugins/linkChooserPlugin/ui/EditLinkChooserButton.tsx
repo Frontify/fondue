@@ -1,11 +1,11 @@
 import { ToolbarButton, ToolbarButtonProps, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
 import React, { MutableRefObject, useState } from 'react';
 import { IconLink, IconSize } from '../../../../..';
-import { ELEMENT_CHECK_ITEM } from '../../checkboxListPlugin/createCheckboxListPlugin';
 import { LINK_CHANGE_CANCELED, LINK_CHANGE_CONFIRMED } from '../events';
 import { getAndUpsertLink } from '../transforms/getAndUpsertLink';
 import { ChosenLink } from '../types';
 import { LinkChooserFlyout } from './LinkChooserFlyout';
+import { ELEMENT_CHECK_ITEM } from '../../../EditorActions/Plugins/CheckboxListPlugin/id';
 
 export const EditLinkChooserButton = ({ id, styles, classNames }: Omit<ToolbarButtonProps, 'icon'>) => {
     id = useEventPlateId(id);
