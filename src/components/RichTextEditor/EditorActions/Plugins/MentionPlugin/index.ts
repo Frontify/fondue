@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
 import { createComboboxPlugin } from '@udecode/plate';
 import { MENTION_PLUGIN } from './id';
 import { MentionMarkupElement } from './MentionMarkupElement';
@@ -13,7 +12,7 @@ export class MentionPlugin extends Plugin {
         super(id, button, markupElement);
     }
 
-    inline(): () => ReactElement {
+    inline() {
         return MentionInline;
     }
 

@@ -26,3 +26,5 @@ export type Plugins = (Plugin[] | Plugin)[];
 export type IconStylingWrapperProps = {
     icon: ReactElement;
 };
+
+export type InlineData = () => ReactElement;

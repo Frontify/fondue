@@ -34,10 +34,9 @@ export const GeneratePlugins = (editorId: string, pluginComposer?: PluginCompose
         ),
         mentions: () => (
             <>
-                {/* {pluginComposer.inline.map((Inline, index) => { */}
-                {pluginComposer.inline.map((Inline) => {
-                    return Inline(); //<Inline key={index} />;
-                })}
+                {pluginComposer.inline.map((Inline, index) => (
+                    <Inline key={index} />
+                ))}
             </>
         ),
     };

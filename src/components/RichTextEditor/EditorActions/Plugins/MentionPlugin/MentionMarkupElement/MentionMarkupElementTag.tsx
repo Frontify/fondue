@@ -8,7 +8,6 @@ import { TCategory } from '../types';
 export const MentionMarkupElementTag = (props: MentionElementProps) => {
     const { attributes, children, element, nodeProps, prefix, renderLabel } = props;
 
-    console.log('props', props);
     const selected = useSelected();
     const focused = useFocused();
 

@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
 import { PlatePlugin } from '@udecode/plate';
 import { UnknownObject } from '../types';
-import { PluginButton } from './types';
+import { InlineData, PluginButton } from './types';
 import type { MarkupElement } from './MarkupElement';
 
 export abstract class Plugin {
@@ -14,7 +13,7 @@ export abstract class Plugin {
         readonly leafMarkupElements?: MarkupElement | MarkupElement[],
     ) {}
 
-    inline(): (() => ReactElement) | undefined {
+    inline(): InlineData | undefined {
         return undefined;
     }
 
