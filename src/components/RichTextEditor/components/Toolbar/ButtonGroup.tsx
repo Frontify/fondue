@@ -33,7 +33,7 @@ import {
 } from '@udecode/plate';
 import { FC, default as React, ReactElement } from 'react';
 import { ELEMENT_CHECK_ITEM } from '../../plugins/checkboxListPlugin/createCheckboxListPlugin';
-import { CheckboxListToolbarButton } from '../../plugins/checkboxListPlugin/ui/CheckboxListToolbarButton';
+import { CheckboxListToolbarButton } from '../../EditorActions/Plugins/CheckboxListPlugin/CheckboxListButton/CheckboxListToolbarButton';
 import { EditLinkChooserButton } from '../../plugins/linkChooserPlugin/ui/EditLinkChooserButton';
 import { TextStyleDropdown } from '../../TextStyleDropdown/TextStyleDropdown';
 import { ButtonGroupProps, IconStylingWrapperProps } from '../../types';
