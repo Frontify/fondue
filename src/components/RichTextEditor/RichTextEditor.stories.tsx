@@ -16,6 +16,7 @@ import {
     value,
 } from './utils/exampleValues';
 import { defaultPlugins, mentionPlugins } from './EditorActions';
+import { PaddingSizes } from './types';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -26,12 +27,21 @@ export default {
         readonly: false,
         clear: false,
         position: Position.FLOATING,
+        padding: PaddingSizes.None,
     },
     argTypes: {
         onTextChange: { action: 'onTextChange' },
         onBlur: { action: 'onBlur' },
         value: { type: 'string' },
         position: { options: Object.values(Position) },
+        padding: {
+            options: Object.keys(PaddingSizes),
+            mapping: PaddingSizes,
+            control: {
+                type: 'radio',
+                labels: Object.entries(PaddingSizes).map(([key, value]) => [value, key]),
+            },
+        },
     },
 } as Meta;
 
