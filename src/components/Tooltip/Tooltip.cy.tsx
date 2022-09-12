@@ -30,10 +30,12 @@ export const TooltipComponent = (args: TooltipProps) => {
     );
 };
 
-const initTooltip = (args: TooltipProps) => {
+const initTooltip = (args: TooltipProps, triggerOpen = true) => {
     cy.mount(<TooltipComponent {...args} />);
     cy.get('[data-test-id=tooltip-trigger]').as('Trigger');
-    cy.get('@Trigger').trigger('mouseover');
+    if (triggerOpen) {
+        cy.get('@Trigger').trigger('mouseover');
+    }
 };
 
 describe('Tooltip Component', () => {
@@ -41,6 +43,11 @@ describe('Tooltip Component', () => {
         initTooltip({ content: TOOLTIP_TEXT });
         cy.get(TOOLTIP_ID).should('contain', TOOLTIP_TEXT);
         cy.get(BRIGHT_HEADER_ID).should('not.exist');
+    });
+
+    it('should render a tooltip open by default via component prop', () => {
+        initTooltip({ content: TOOLTIP_TEXT, open: true }, false);
+        cy.get(TOOLTIP_ID).should('contain', TOOLTIP_TEXT);
     });
 
     it('should render an icon next to the tooltip', () => {
