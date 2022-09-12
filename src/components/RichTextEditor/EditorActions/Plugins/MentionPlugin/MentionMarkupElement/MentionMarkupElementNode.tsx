@@ -5,7 +5,7 @@ import { useFocused, useSelected } from 'slate-react';
 import { MentionElementProps } from '@udecode/plate';
 import { TCategory } from '../types';
 
-export const MentionMarkupElementTag = (props: MentionElementProps) => {
+export const MentionMarkupElementNode = (props: MentionElementProps) => {
     const { attributes, children, element, nodeProps, prefix, renderLabel } = props;
 
     const selected = useSelected();

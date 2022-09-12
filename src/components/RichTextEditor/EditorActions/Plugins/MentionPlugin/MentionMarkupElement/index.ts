@@ -2,10 +2,10 @@
 
 import { ELEMENT_MENTION } from '@udecode/plate';
 import { MarkupElement } from '../../MarkupElement';
-import { MentionMarkupElementTag } from './MentionMarkupElementTag';
+import { MentionMarkupElementNode } from './MentionMarkupElementNode';
 
 export class MentionMarkupElement extends MarkupElement {
-    constructor(id = ELEMENT_MENTION, tag = MentionMarkupElementTag) {
-        super(id, tag);
+    constructor(id = ELEMENT_MENTION, node = MentionMarkupElementNode) {
+        super(id, node);
     }
 }
