@@ -7,17 +7,21 @@ import { PluginComposer } from './Plugins/PluginComposer';
 import { Toolbar } from './Toolbar';
 import { ButtonGroupWrapper } from './Plugins/helper';
 
-export const GeneratePlugins = (editorId: string, editorActions: PluginComposer): GeneratePluginsReturn => {
+export const GeneratePlugins = (editorId: string, pluginComposer?: PluginComposer): GeneratePluginsReturn | null => {
     const editor = usePlateEditorRef(editorId);
+
+    if (!pluginComposer) {
+        return null;
+    }
 
     return {
         create: () =>
-            createPlugins(editorActions.plugins, {
-                components: createPlateUI(editorActions.elements),
+            createPlugins(pluginComposer.plugins, {
+                components: createPlateUI(pluginComposer.elements),
             }),
         toolbar: () => (
             <Toolbar>
-                {editorActions.buttons.map((group, index) => {
+                {pluginComposer.buttons.map((group, index) => {
                     return (
                         <ButtonGroupWrapper index={index} key={index}>
                             {group.map((ToolbarButton, idx) => (

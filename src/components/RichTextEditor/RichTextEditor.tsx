@@ -8,7 +8,7 @@ import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './components/Toolbar/Toolbar';
 import { RichTextEditorContext } from './context/RichTextEditorContext';
 import { useEditorState } from './hooks/useEditorState';
-import { DesignTokens } from './types';
+import { DesignTokens, PaddingSizes } from './types';
 import { EditorActions, defaultActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
@@ -17,7 +17,7 @@ import { TextStyles } from './utils/textStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
 import { getEditorConfig } from './utils/editorConfig';
-import { GeneratePlugins, PluginComposer, defaultPlugins } from './EditorActions';
+import { GeneratePlugins, PluginComposer } from './EditorActions';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -29,6 +29,7 @@ export type RichTextEditorProps = {
     clear?: boolean;
     designTokens?: DesignTokens;
     actions?: EditorActions[][];
+    padding?: PaddingSizes;
     position?: Position;
     plugins?: PluginComposer;
 };
@@ -43,8 +44,9 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     actions = defaultActions,
     onTextChange,
     onBlur,
+    padding = PaddingSizes.None,
     position = Position.FLOATING,
-    plugins = defaultPlugins,
+    plugins,
 }) => {
     const editorId = useMemoizedId(id);
     const { localValue } = useEditorState(editorId, clear);
@@ -54,6 +56,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         placeholder,
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
+        className: padding,
     };
 
     const editorRef = useCallback((node) => {
@@ -97,7 +100,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const PositioningWrapper = EditorPositioningWrapper[position];
 
     const config = GeneratePlugins(editorId, plugins);
-    const isNew = actions.length === 0 && plugins;
+    const isNew = config && actions.length === 0 && plugins;
     const editorConfig = isNew ? config.create() : getEditorConfig();
 
     return (
