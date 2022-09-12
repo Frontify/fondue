@@ -7,7 +7,7 @@ import { merge } from '@utilities/merge';
 import { MarkupElement } from '../MarkupElement';
 import { ELEMENT_CHECK_ITEM } from './id';
 
-export const CheckboxListElementTag = (props: PlateRenderElementProps) => {
+export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const { attributes, children, nodeProps, element, editor } = props;
     const rootProps = getRootProps(props);
     const { checked } = element;
@@ -33,7 +33,7 @@ export const CheckboxListElementTag = (props: PlateRenderElementProps) => {
 };
 
 export class CheckboxListElement extends MarkupElement {
-    constructor(id = ELEMENT_CHECK_ITEM, tag = CheckboxListElementTag) {
-        super(id, tag);
+    constructor(id = ELEMENT_CHECK_ITEM, node = CheckboxListElementNode) {
+        super(id, node);
     }
 }
