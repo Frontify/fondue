@@ -1,5 +1,6 @@
 export * from './bold';
 export * from './checkbox-item';
+export * from '../EditorActions/Plugins/CheckboxListPlugin/CheckboxListElement';
 export * from './code';
 export * from './custom1';
 export * from './custom2';
