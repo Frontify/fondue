@@ -4,11 +4,16 @@ import { createUnderlinePlugin } from '@udecode/plate';
 import { UNDERLINE_PLUGIN } from './id';
 import { UnderlineMarkupElement } from './UnderlineMarkupElement';
 import { UnderlineButton } from './UnderlineButton';
-import { Plugin } from '../Plugin';
+import { Plugin, PluginProps } from '../Plugin';
 
 export class UnderlinePlugin extends Plugin {
-    constructor(id = UNDERLINE_PLUGIN, button = UnderlineButton, markupElement = new UnderlineMarkupElement()) {
-        super(id, button, markupElement);
+    constructor(props?: PluginProps) {
+        super({
+            id: UNDERLINE_PLUGIN,
+            button: UnderlineButton,
+            markupElement: new UnderlineMarkupElement(),
+            ...props,
+        });
     }
 
     plugins() {

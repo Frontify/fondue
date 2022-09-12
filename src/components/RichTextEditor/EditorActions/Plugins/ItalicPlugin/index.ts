@@ -3,12 +3,11 @@
 import { createItalicPlugin } from '@udecode/plate';
 import { ITALIC_PLUGIN } from './id';
 import { ItalicMarkupElement } from './ItalicMarkupElement';
-import { ItalicButton } from './ItalicButton';
-import { Plugin } from '../Plugin';
+import { Plugin, PluginProps } from '../Plugin';
 
 export class ItalicPlugin extends Plugin {
-    constructor(id = ITALIC_PLUGIN, button = ItalicButton, markupElement = new ItalicMarkupElement()) {
-        super(id, button, markupElement);
+    constructor(props?: PluginProps) {
+        super({ id: ITALIC_PLUGIN, markupElement: new ItalicMarkupElement(), ...props });
     }
 
     plugins() {
