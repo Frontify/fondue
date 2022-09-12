@@ -33,7 +33,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
 };
 
 export class CheckboxListElement extends MarkupElement {
-    constructor(id = ELEMENT_CHECK_ITEM, tag = CheckboxListElementNode) {
-        super(id, tag);
+    constructor(id = ELEMENT_CHECK_ITEM, node = CheckboxListElementNode) {
+        super(id, node);
     }
 }
