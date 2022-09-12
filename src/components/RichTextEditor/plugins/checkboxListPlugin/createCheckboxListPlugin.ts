@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ELEMENT_CHECK_ITEM } from '@components/RichTextEditor/EditorActions/Plugins/CheckboxListPlugin/id';
 import { createPluginFactory } from '@udecode/plate';
-import { CheckboxListElementTag } from '../../components';
-
-export const ELEMENT_CHECK_ITEM = 'checkbox_item';
+import { CheckboxListElementNode } from '../../components';
 
 export const createCheckboxListPlugin = createPluginFactory({
     key: ELEMENT_CHECK_ITEM,
     isElement: true,
-    component: CheckboxListElementTag,
+    component: CheckboxListElementNode,
 });
