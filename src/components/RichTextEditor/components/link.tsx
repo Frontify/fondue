@@ -20,6 +20,7 @@ const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
         ...props,
         elementToAttributes: (element) => ({
             href: getUrlFromLinkOrLegacyLink(element),
+            target: element.target || '_blank',
         }),
     });
 
@@ -39,7 +40,7 @@ export const LinkElement = (props: StyledElementProps<Value, TLinkElement>) => {
     const { attributes, children } = props;
 
     return (
-        <a {...attributes} href={htmlProps.href} className={LINK_CLASSES}>
+        <a {...attributes} href={htmlProps.href} target={htmlProps.target} className={LINK_CLASSES}>
             {children}
         </a>
     );

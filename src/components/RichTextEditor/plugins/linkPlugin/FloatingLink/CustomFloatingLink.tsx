@@ -24,6 +24,9 @@ export const CustomFloatingLink = () => {
                 <FloatingLink.UrlInput />
             </div>
             {isUrlInValid && <div className="tw-text-red-65 tw-mt-3">Url is invalid.</div>}
+            <div className="tw-pt-5">
+                <FloatingLink.NewTabInput />
+            </div>
 
             <div className="tw-mt-3">
                 <div className={'tw-pt-5 tw-flex tw-gap-x-3 tw-justify-end tw-border-t tw-border-t-black-10'}>

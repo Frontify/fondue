@@ -6,6 +6,7 @@ import {
     OpenLinkButton,
     UnlinkButton,
 } from '@udecode/plate';
+import { FloatingLinkNewTabInput } from './FloatingLinkNewTabInput';
 import { FloatingLinkTextInput } from './FloatingLinkTextInput';
 import { FloatingLinkUrlInput } from './FloatingLinkUrlInput';
 import { useFloatingLinkEdit } from './useFloatingLinkEdit';
@@ -37,6 +38,7 @@ export const FloatingLink = {
     UrlInput: FloatingLinkUrlInput,
     TextInput: FloatingLinkTextInput,
     EditButton: FloatingLinkEditButton,
+    NewTabInput: FloatingLinkNewTabInput,
     UnlinkButton,
     OpenLinkButton,
 };
