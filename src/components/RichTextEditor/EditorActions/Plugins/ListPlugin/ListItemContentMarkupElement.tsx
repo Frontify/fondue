@@ -4,12 +4,12 @@ import React from 'react';
 import { ELEMENT_LIC, PlateRenderElementProps } from '@udecode/plate';
 import { MarkupElement } from '../MarkupElement';
 
-const ListItemContentMarkupElementTag = ({ attributes, children }: PlateRenderElementProps) => (
+const ListItemContentMarkupElementNode = ({ attributes, children }: PlateRenderElementProps) => (
     <span {...attributes}>{children}</span>
 );
 
 export class ListItemContentMarkupElement extends MarkupElement {
-    constructor(id = ELEMENT_LIC, tag = ListItemContentMarkupElementTag) {
-        super(id, tag);
+    constructor(id = ELEMENT_LIC, node = ListItemContentMarkupElementNode) {
+        super(id, node);
     }
 }

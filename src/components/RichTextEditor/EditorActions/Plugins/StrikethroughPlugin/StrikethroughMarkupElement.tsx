@@ -6,14 +6,14 @@ import { MarkupElement } from '../MarkupElement';
 
 export const STRIKETHROUGH_CLASSES = 'tw-line-through';
 
-export const StrikethroughMarkupElementTag = ({ attributes, children }: PlateRenderLeafProps) => (
+export const StrikethroughMarkupElementNode = ({ attributes, children }: PlateRenderLeafProps) => (
     <span {...attributes} className={STRIKETHROUGH_CLASSES}>
         {children}
     </span>
 );
 
 export class StrikethroughMarkupElement extends MarkupElement {
-    constructor(id = MARK_STRIKETHROUGH, tag = StrikethroughMarkupElementTag) {
-        super(id, tag);
+    constructor(id = MARK_STRIKETHROUGH, node = StrikethroughMarkupElementNode) {
+        super(id, node);
     }
 }
