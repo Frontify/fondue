@@ -12,13 +12,13 @@ export type PluginProps = {
     leafMarkupElements?: MarkupElement | MarkupElement[];
 };
 
-export abstract class Plugin {
+export abstract class Plugin<P extends PluginProps = PluginProps> {
     readonly id?: string;
     readonly button?: PluginButton;
     readonly markupElement?: MarkupElement;
     readonly leafMarkupElements?: MarkupElement | MarkupElement[];
 
-    constructor(private props?: PluginProps) {
+    constructor(protected props?: P) {
         this.id = this.props?.id;
         this.button = this.props?.button;
         this.markupElement = this.props?.markupElement;
