@@ -13,7 +13,7 @@ export const getAndUpsertLink = async <T = {}>(
     editor: PlateEditor<T>,
     getChosenLink: (prevLink: ChosenLink) => Promise<ChosenLink | void>,
 ) => {
-    let prevChosenLink = { ...defaultChosenLink };
+    let prevChosenLink = Object.assign({}, defaultChosenLink);
 
     const linkNode = getAbove(editor, {
         match: { type: ELEMENT_LINK },
