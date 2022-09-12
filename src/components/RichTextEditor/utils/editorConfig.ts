@@ -47,7 +47,8 @@ import {
     UnorderedListElement,
 } from '../components';
 import { Custom3Element } from '../components/custom3';
-import { ELEMENT_CHECK_ITEM, createCheckboxListPlugin } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
+import { createCheckboxListPlugin } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
+import { ELEMENT_CHECK_ITEM } from '../EditorActions/Plugins/CheckboxListPlugin/id';
 import { createLinkChooserPlugin } from '../plugins/linkChooserPlugin/createLinkChooserPlugin';
 import { TextStyles } from './textStyles';
 
