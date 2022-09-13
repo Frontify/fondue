@@ -117,6 +117,25 @@ export const value = [
         ],
     },
     {
+        type: ELEMENT_PARAGRAPH,
+        children: [
+            {
+                type: ELEMENT_LINK,
+                chosenLink: {
+                    searchResult: {
+                        link: 'https://smartive.ch',
+                    },
+                    openInNewTab: true,
+                },
+                children: [
+                    {
+                        text: 'This is also a Link (Legacy Format).',
+                    },
+                ],
+            },
+        ],
+    },
+    {
         type: ELEMENT_CHECK_ITEM,
         checked: true,
         indent: 0,

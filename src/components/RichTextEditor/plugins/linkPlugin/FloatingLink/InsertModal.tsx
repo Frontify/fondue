@@ -16,11 +16,14 @@ import {
     useHotkeys,
 } from '@udecode/plate';
 import React, { useState } from 'react';
+import { getUrlFromEditor } from './useFloatingLinkEdit';
 
 const useInsertModal = () => {
     const [, setValue] = useState<string>();
 
     const editor = useEditorRef();
+
+    const predefinedUrl = getUrlFromEditor(editor);
 
     const isValidUrlOrEmpty = () => {
         const { isUrl } = getPluginOptions<LinkPlugin>(editor, ELEMENT_LINK);
@@ -50,6 +53,7 @@ const useInsertModal = () => {
     );
 
     return {
+        predefinedUrl,
         isValidUrlOrEmpty,
         setValue,
         hasValues,
@@ -58,7 +62,7 @@ const useInsertModal = () => {
 };
 
 export const InsertModal = () => {
-    const { isValidUrlOrEmpty, setValue, hasValues, submit } = useInsertModal();
+    const { predefinedUrl, isValidUrlOrEmpty, setValue, hasValues, submit } = useInsertModal();
 
     return (
         <div data-test-id="floating-link-insert" className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
@@ -89,7 +93,7 @@ export const InsertModal = () => {
                 >
                     <TextInput
                         id="url"
-                        value={floatingLinkSelectors.url()}
+                        value={floatingLinkSelectors.url() ?? predefinedUrl}
                         placeholder="https://example.com"
                         onChange={(val) => {
                             setValue(val);

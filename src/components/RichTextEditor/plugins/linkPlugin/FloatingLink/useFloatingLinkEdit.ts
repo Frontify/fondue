@@ -24,7 +24,7 @@ import {
 } from '@udecode/plate';
 import { useCallback, useEffect } from 'react';
 
-const getUrlFromEditor = (editor: PlateEditor<Value>) => {
+export const getUrlFromEditor = (editor: PlateEditor<Value>) => {
     let url = '';
 
     const linkNode = getAboveNode(editor, {
