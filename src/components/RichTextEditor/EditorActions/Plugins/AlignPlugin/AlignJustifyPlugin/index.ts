@@ -4,9 +4,15 @@ import { AlignJustifyMarkupElement } from './AlignJustifyMarkupElement';
 import { AlignJustifyButton } from './AlignJustifyButton';
 import { ALIGN_PLUGIN } from '../id';
 import { AlignPlugin } from '../AlignPlugin';
+import { PluginProps } from '../../Plugin';
 
 export class AlignJustifyPlugin extends AlignPlugin {
-    constructor(id = ALIGN_PLUGIN, button = AlignJustifyButton, markupElement = new AlignJustifyMarkupElement()) {
-        super(id, button, markupElement);
+    constructor(props?: PluginProps) {
+        super({
+            id: ALIGN_PLUGIN,
+            button: AlignJustifyButton,
+            markupElement: new AlignJustifyMarkupElement(),
+            ...props,
+        });
     }
 }
