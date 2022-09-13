@@ -42,7 +42,7 @@ const classNames = {
     root: 'tw-text-text-weak tw-ml-0.5 hover:tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded',
     active: 'tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse',
 };
-const styles = { root: { width: '32px', height: '32px' } };
+const styles = { root: { width: '24px', height: '24px' } };
 
 const IconStylingWrapper: FC<IconStylingWrapperProps> = ({ icon }) => (
     <span className="tw-p-2 tw-h-8 tw-justify-center tw-items-center tw-flex">{icon}</span>

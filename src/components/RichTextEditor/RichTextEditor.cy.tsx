@@ -143,6 +143,13 @@ describe('RichTextEditor Component', () => {
         cy.get('[contenteditable=true]').should('include.html', 'tw-italic');
     });
 
+    it('should render a plain text string content state', () => {
+        const TEXT = 'This is text';
+        cy.mount(<RichTextEditor value={TEXT} />);
+
+        cy.get(RICH_TEXT_EDITOR).should('contain.text', TEXT);
+    });
+
     it('should be editable by default ', () => {
         cy.mount(<RichTextEditor />);
 
@@ -519,9 +526,20 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] a').click();
             cy.get(REMOVE_LINK_BUTTON).click();
 
-            cy.get('[contenteditable=true]').should('contain.text', text);
-            cy.get('[contenteditable=true] a').should('not.exist');
-        });
+        cy.get('[contenteditable=true]').should('contain.text', text);
+        cy.get('[contenteditable=true] a').should('not.exist');
+    });
+
+    it('renders toolbar responsively', () => {
+        cy.mount(<RichTextEditor />);
+        insertTextAndOpenToolbar();
+
+        cy.viewport(1200, 1200);
+        cy.get(TOOLBAR_FLOATING).children().should('have.length', 1);
+        cy.viewport(480, 750);
+        cy.get(TOOLBAR_FLOATING).children().should('have.length', 2);
+        cy.viewport(280, 480);
+        cy.get(TOOLBAR_FLOATING).children().should('have.length', 3);
     });
 });
 

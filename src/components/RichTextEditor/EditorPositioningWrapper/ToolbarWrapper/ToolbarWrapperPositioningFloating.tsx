@@ -9,7 +9,7 @@ import { ToolbarWrapperProps } from './types';
 export const ToolbarWrapperPositioningFloating = ({
     children,
     editorWidth,
-    toolbarButtonGroups,
+    toolbarButtonGroups = [],
 }: ToolbarWrapperProps) => {
     const [width, setWidth] = useState<number | null>(null);
 
