@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { EditableInput, EditableInputProps, EditableMode } from '@components/EditableInput/EditableInput';
 import { Story } from '@storybook/react';
-import { IconPen } from '@foundation/Icon';
+import { IconPen, IconSize } from '@foundation/Icon';
 
 export default {
     title: 'Components/Editable Input',
@@ -78,13 +78,13 @@ export const ControlledInputExample: Story<EditableInputProps> = () => {
             options={{
                 additionalValues: 'ID',
                 enableDoubleClick: true,
-                customInputTextClasses: 'tw-text-2xl tw-w-fit tw-p-2',
+                customInputTextClasses: 'tw-text-xl tw-w-fit tw-p-2',
                 customContainerClasses: 'tw-flex tw-w-fit',
             }}
         >
             <div className={'tw-flex tw-flex-row tw-items-center'}>
-                <h1 className={'tw-text-2xl tw-w-fit tw-p-2'}>{label}</h1>
-                <IconPen />
+                <h1 className={'tw-text-xl tw-w-fit tw-p-2'}>{label}</h1>
+                <IconPen size={IconSize.Size24} />
             </div>
         </EditableInput>
     );
@@ -95,12 +95,12 @@ InitialStartInInput.args = {
     children: (
         <div className={'tw-flex tw-flex-row tw-items-center'}>
             <h1 className={'tw-p-2'}>Im such a Input Mode</h1>
-            <IconPen />
+            <IconPen size={IconSize.Size16} />
         </div>
     ),
     options: {
         mode: EditableMode.INPUT,
-        customInputTextClasses: 'tw-text-2xl tw-p-2',
+        customInputTextClasses: 'tw-p-2',
         customContainerClasses: 'tw-flex',
     },
 };
@@ -109,12 +109,12 @@ export const InputWithCustomStyling = ButtonTemplate.bind({});
 InputWithCustomStyling.args = {
     children: (
         <div className={'tw-flex tw-flex-row tw-items-center'}>
-            <h1 className="tw-text-2xl tw-p-2">Im such a Input Mode</h1>
-            <IconPen />
+            <h1 className="tw-text-xl tw-p-2">Im such a Input Mode</h1>
+            <IconPen size={IconSize.Size24} />
         </div>
     ),
     options: {
-        customInputTextClasses: 'tw-text-2xl tw-p-2',
+        customInputTextClasses: 'tw-text-xl tw-p-2',
         customContainerClasses: 'tw-flex',
     },
 };
