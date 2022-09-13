@@ -6,8 +6,11 @@ import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
 import { IconCheckMark } from '@foundation/Icon';
 import {
+    ELEMENT_LINK,
+    LinkPlugin,
     floatingLinkActions,
     floatingLinkSelectors,
+    getPluginOptions,
     submitFloatingLink,
     useEditorRef,
     useHotkeys,
@@ -19,10 +22,15 @@ const useInsertModal = () => {
 
     const editor = useEditorRef();
 
+    const isValidUrlOrEmpty = () => {
+        const { isUrl } = getPluginOptions<LinkPlugin>(editor, ELEMENT_LINK);
+        return !!!floatingLinkSelectors.url() || (isUrl && isUrl(floatingLinkSelectors.url()));
+    };
+
     const hasValues = () => floatingLinkSelectors.url() !== '' && floatingLinkSelectors.text() !== '';
 
     const submit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent | undefined) => {
-        if (!hasValues()) {
+        if (!isValidUrlOrEmpty() || !hasValues()) {
             return;
         }
         if (submitFloatingLink(editor)) {
@@ -42,6 +50,7 @@ const useInsertModal = () => {
     );
 
     return {
+        isValidUrlOrEmpty,
         setValue,
         hasValues,
         submit,
@@ -49,7 +58,7 @@ const useInsertModal = () => {
 };
 
 export const InsertModal = () => {
-    const { setValue, hasValues, submit } = useInsertModal();
+    const { isValidUrlOrEmpty, setValue, hasValues, submit } = useInsertModal();
 
     return (
         <div data-test-id="floating-link-insert" className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
@@ -88,6 +97,7 @@ export const InsertModal = () => {
                         }}
                     />
                 </FormControl>
+                {!isValidUrlOrEmpty() && <div className="tw-text-red-65 tw-mt-3">Please enter a valid URL.</div>}
             </div>
             <div className="tw-pt-5">
                 <Checkbox
@@ -116,7 +126,7 @@ export const InsertModal = () => {
                         size={ButtonSize.Medium}
                         style={ButtonStyle.Primary}
                         icon={<IconCheckMark />}
-                        disabled={!hasValues()}
+                        disabled={!isValidUrlOrEmpty() || !hasValues()}
                     >
                         Save
                     </Button>
