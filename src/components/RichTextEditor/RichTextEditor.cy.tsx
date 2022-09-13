@@ -397,7 +397,7 @@ describe('RichTextEditor Component', () => {
             });
     });
 
-    it('emits onBlur with the correct value', () => {
+    it.only('emits onBlur with the correct value', () => {
         const onBlur = cy.spy();
         const content = 'hello world';
         cy.mount(<RichTextEditor onBlur={onBlur} />);
@@ -432,7 +432,7 @@ describe('RichTextEditor Component', () => {
 
             cy.get('[contenteditable=true] a').should('contain.text', text);
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
-            // cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
+            cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
         });
 
         it('should open floating link insert', () => {
@@ -442,14 +442,14 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_1).children().eq(4).click();
             cy.get(FLOATING_LINK_INSERT).should('exist');
-            // cy.get(BUTTON).eq(1).should('be.disabled');
+            cy.get(BUTTON).eq(1).should('be.disabled');
             cy.get('[type=text]').eq(0).should('have.attr', 'value', 'hello');
             cy.get('[type=text]').eq(1).click().type(link);
-            // cy.get(BUTTON).eq(1).should('not.be.disabled');
-            // cy.get(LINK_CHOOSER_CHECKBOX).click();
+            cy.get(BUTTON).eq(1).should('not.be.disabled');
+            cy.get(LINK_CHOOSER_CHECKBOX).click();
             cy.get(BUTTON).eq(1).click();
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
-            // cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
+            cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
         });
 
         it('should open floating link insert and edit', () => {
@@ -470,7 +470,7 @@ describe('RichTextEditor Component', () => {
 
             cy.get('[type=text]').eq(0).should('have.attr', 'value', text);
             cy.get('[type=text]').eq(1).should('have.attr', 'value', link);
-            // cy.get('[type=checkbox]').should('be.checked');
+            cy.get('[type=checkbox]').should('be.checked');
         });
 
         it('should edit link', () => {
@@ -484,12 +484,11 @@ describe('RichTextEditor Component', () => {
 
             cy.get('[type=text]').eq(0).click().type(additionalText);
             cy.get('[type=text]').eq(1).click().type(additionalLink);
-            // cy.get(LINK_CHOOSER_CHECKBOX).click();
+            cy.get(LINK_CHOOSER_CHECKBOX).click();
 
             cy.get(BUTTON).eq(1).click();
-            // cy.get('[contenteditable=true] a').should('contain', text + additionalText);
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
-            // cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
+            cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
         });
 
         it('should remove link', () => {

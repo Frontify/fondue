@@ -1,4 +1,4 @@
-import { HTMLPropsAs, LinkRootProps, StyledElementProps, TLinkElement, useElementProps, Value } from '@udecode/plate';
+import { HTMLPropsAs, LinkRootProps, StyledElementProps, TLinkElement, Value, useElementProps } from '@udecode/plate';
 import React from 'react';
 
 export type LinkOrLegacyLink = {

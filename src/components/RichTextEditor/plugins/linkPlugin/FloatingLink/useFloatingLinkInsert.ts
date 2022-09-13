@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import {
     ELEMENT_LINK,
     FloatingLinkProps,
@@ -51,7 +53,9 @@ export const useFloatingLinkInsert = ({ floatingOptions, ...props }: FloatingLin
     const { update, style, floating } = useVirtualFloatingLink({
         open: open && mode === 'insert',
         getBoundingClientRect: getSelectionBoundingClientRect,
-        whileElementsMounted: () => {},
+        whileElementsMounted: () => {
+            //do nothing
+        },
         ...floatingOptions,
     });
 

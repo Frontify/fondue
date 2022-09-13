@@ -103,7 +103,7 @@ export const InsertModal = () => {
             <div className="tw-mt-3">
                 <div className={'tw-pt-5 tw-flex tw-gap-x-3 tw-justify-end tw-border-t tw-border-t-black-10'}>
                     <Button
-                        onClick={(e) => {
+                        onClick={() => {
                             floatingLinkActions.hide();
                         }}
                         size={ButtonSize.Medium}
