@@ -1,3 +1,4 @@
+import { ButtonGroupsPerRow } from '../EditorActions/Toolbar/utils';
 import { ButtonGroupWidths } from '../types';
 import { EditorActions } from './actions';
 
@@ -21,14 +22,11 @@ export const getButtonGroupWidthsPerRow = (toolbarWidth: number, buttonGroupsWid
         return buttonGroupWidthsPerRow.filter((element) => element.length);
     }, []);
 
-export const calculateToolbarWidth = (toolbarButtonGroups: ButtonGroupWidths[]) =>
+export const calculateToolbarWidth = (toolbarButtonGroups: ButtonGroupWidths[] | ButtonGroupsPerRow) =>
     Math.max(
         0,
         ...toolbarButtonGroups.map((element) =>
-            [...element, { actions: [], buttonGroupWidth: 0 }].reduce(
-                (prev, { buttonGroupWidth }) => prev + buttonGroupWidth,
-                0,
-            ),
+            [...element, { buttonGroupWidth: 0 }].reduce((prev, { buttonGroupWidth }) => prev + buttonGroupWidth, 0),
         ),
     );
 

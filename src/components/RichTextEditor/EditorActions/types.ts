@@ -9,6 +9,6 @@ export type UnknownObject = ObjectType<unknown>;
 
 export type GeneratePluginsReturn = {
     create: () => PlatePlugin<UnknownObject, UnknownObject>[];
-    toolbar: () => ReactNode;
+    toolbar: (editorWidth: number | undefined) => ReactNode;
     mentions: () => ReactNode;
 };
