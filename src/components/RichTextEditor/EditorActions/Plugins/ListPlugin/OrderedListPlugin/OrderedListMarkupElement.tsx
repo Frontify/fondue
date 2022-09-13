@@ -6,14 +6,14 @@ import { MarkupElement } from '../../MarkupElement';
 
 export const OL_CLASSES = 'tw-list-decimal tw-pl-6';
 
-export const OrderedListMarkupElementTag = ({ attributes, children }: PlateRenderLeafProps) => (
+export const OrderedListMarkupElementNode = ({ attributes, children }: PlateRenderLeafProps) => (
     <ol className={OL_CLASSES} {...attributes}>
         {children}
     </ol>
 );
 
 export class OrderedListMarkupElement extends MarkupElement {
-    constructor(id = ELEMENT_OL, tag = OrderedListMarkupElementTag) {
-        super(id, tag);
+    constructor(id = ELEMENT_OL, node = OrderedListMarkupElementNode) {
+        super(id, node);
     }
 }

@@ -47,9 +47,9 @@ export class PluginComposer {
             return;
         }
 
-        const { id, tag } = markupElement;
-        if (tag && !this.markupElements[id]) {
-            this.markupElements[id] = tag;
+        const { id, node } = markupElement;
+        if (node && !this.markupElements[id]) {
+            this.markupElements[id] = node;
         }
     }
 
@@ -73,7 +73,9 @@ export class PluginComposer {
             });
         }
 
-        this.toolbarButtons.push(groupOfButtons);
+        if (groupOfButtons.length > 0) {
+            this.toolbarButtons.push(groupOfButtons);
+        }
     }
 
     get elements() {
