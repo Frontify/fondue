@@ -404,7 +404,7 @@ describe('RichTextEditor Component', () => {
             });
     });
 
-    it.only('emits onBlur with the correct value', () => {
+    it('emits onBlur with the correct value', () => {
         const onBlur = cy.spy();
         const content = 'hello world';
         cy.mount(<RichTextEditor onBlur={onBlur} />);
@@ -526,20 +526,9 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] a').click();
             cy.get(REMOVE_LINK_BUTTON).click();
 
-        cy.get('[contenteditable=true]').should('contain.text', text);
-        cy.get('[contenteditable=true] a').should('not.exist');
-    });
-
-    it('renders toolbar responsively', () => {
-        cy.mount(<RichTextEditor />);
-        insertTextAndOpenToolbar();
-
-        cy.viewport(1200, 1200);
-        cy.get(TOOLBAR_FLOATING).children().should('have.length', 1);
-        cy.viewport(480, 750);
-        cy.get(TOOLBAR_FLOATING).children().should('have.length', 2);
-        cy.viewport(280, 480);
-        cy.get(TOOLBAR_FLOATING).children().should('have.length', 3);
+            cy.get('[contenteditable=true]').should('contain.text', text);
+            cy.get('[contenteditable=true] a').should('not.exist');
+        });
     });
 });
 
