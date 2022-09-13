@@ -20,19 +20,19 @@ import {
     AlignToolbarButton,
     ELEMENT_OL,
     ELEMENT_UL,
-    getPluginType,
     LinkToolbarButton,
     ListToolbarButton,
-    MarkToolbarButton,
     MARK_BOLD,
     MARK_CODE,
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
+    MarkToolbarButton,
     PlateEditor,
+    getPluginType,
     usePlateEditorRef,
 } from '@udecode/plate';
-import { default as React, FC, ReactElement } from 'react';
+import { FC, default as React, ReactElement } from 'react';
 import { ELEMENT_CHECK_ITEM } from '../../plugins/checkboxListPlugin/createCheckboxListPlugin';
 import { CheckboxListToolbarButton } from '../../plugins/checkboxListPlugin/ui/CheckboxListToolbarButton';
 import { TextStyleDropdown } from '../../TextStyleDropdown/TextStyleDropdown';

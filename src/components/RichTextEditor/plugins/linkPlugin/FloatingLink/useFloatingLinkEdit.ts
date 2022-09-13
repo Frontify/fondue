@@ -1,8 +1,13 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { getUrlFromLinkOrLegacyLink } from '@components/RichTextEditor/components';
 import {
     ELEMENT_LINK,
-    floatingLinkActions,
     FloatingLinkProps,
+    HTMLPropsAs,
+    PlateEditor,
+    Value,
+    floatingLinkActions,
     floatingLinkSelectors,
     getAboveNode,
     getDefaultBoundingClientRect,
@@ -10,15 +15,12 @@ import {
     getPluginType,
     getRangeBoundingClientRect,
     getStartPoint,
-    HTMLPropsAs,
-    PlateEditor,
     someNode,
     useComposedRef,
     useEditorRef,
     useFloatingLinkSelectors,
     usePlateSelectors,
     useVirtualFloatingLink,
-    Value,
 } from '@udecode/plate';
 import { useCallback, useEffect } from 'react';
 

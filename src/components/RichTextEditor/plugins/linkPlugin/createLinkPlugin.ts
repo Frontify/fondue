@@ -1,6 +1,12 @@
-import { LinkPlugin, PlatePlugin } from '@udecode/plate';
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { LinkPlugin, createLinkPlugin as createPlateLinkPlugin, createPluginFactory } from '@udecode/plate';
 import { CustomFloatingLink } from './FloatingLink/CustomFloatingLink';
 
-export const linkPlugin: Partial<PlatePlugin<LinkPlugin>> = {
+export const createLinkPlugin = createPluginFactory<LinkPlugin>({
+    ...createPlateLinkPlugin(),
     renderAfterEditable: CustomFloatingLink,
-};
+    options: {
+        isUrl: () => true,
+    },
+});

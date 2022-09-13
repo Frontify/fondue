@@ -1,4 +1,4 @@
-import { HTMLPropsAs, LinkRootProps, StyledElementProps, TLinkElement, useElementProps, Value } from '@udecode/plate';
+import { HTMLPropsAs, LinkRootProps, StyledElementProps, TLinkElement, Value, useElementProps } from '@udecode/plate';
 import React from 'react';
 
 export type LinkOrLegacyLink = {
@@ -20,7 +20,7 @@ const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
         ...props,
         elementToAttributes: (element) => ({
             href: getUrlFromLinkOrLegacyLink(element),
-            target: element.target || '_blank',
+            target: element.target,
         }),
     });
 

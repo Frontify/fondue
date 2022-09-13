@@ -1,14 +1,15 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import {
-    createComponentAs,
-    createElementAs,
     FloatingLinkEditButton,
     FloatingLinkProps,
     OpenLinkButton,
     UnlinkButton,
+    createComponentAs,
+    createElementAs,
 } from '@udecode/plate';
-import { FloatingLinkNewTabInput } from './FloatingLinkNewTabInput';
-import { FloatingLinkTextInput } from './FloatingLinkTextInput';
-import { FloatingLinkUrlInput } from './FloatingLinkUrlInput';
+import { EditModal } from './EditModal';
+import { InsertModal } from './InsertModal';
 import { useFloatingLinkEdit } from './useFloatingLinkEdit';
 import { useFloatingLinkInsert } from './useFloatingLinkInsert';
 
@@ -35,10 +36,9 @@ export const FloatingLinkEditRoot = createComponentAs<FloatingLinkProps>((props)
 export const FloatingLink = {
     EditRoot: FloatingLinkEditRoot,
     InsertRoot: FloatingLinkInsertRoot,
-    UrlInput: FloatingLinkUrlInput,
-    TextInput: FloatingLinkTextInput,
+    EditModal,
+    InsertModal,
     EditButton: FloatingLinkEditButton,
-    NewTabInput: FloatingLinkNewTabInput,
     UnlinkButton,
     OpenLinkButton,
 };
