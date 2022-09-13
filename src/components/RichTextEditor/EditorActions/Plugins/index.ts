@@ -7,13 +7,17 @@ import { BoldPlugin } from './BoldPlugin';
 import { AlignCenterPlugin, AlignJustifyPlugin, AlignLeftPlugin, AlignRightPlugin } from './AlignPlugin';
 import { CodePlugin } from './CodePlugin';
 import { ItalicPlugin } from './ItalicPlugin';
+import { UnderlinePlugin } from './UnderlinePlugin';
+import { StrikethroughPlugin } from './StrikethroughPlugin';
 import { MentionPlugin } from './MentionPlugin';
 
 import { mentionable } from '../../utils/exampleValues';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
-    .setPlugin([[new BoldPlugin(), new ItalicPlugin(), new CodePlugin()]])
+    .setPlugin([
+        [new BoldPlugin(), new ItalicPlugin(), new UnderlinePlugin(), new StrikethroughPlugin(), new CodePlugin()],
+    ])
     .setPlugin([[new AlignLeftPlugin(), new AlignCenterPlugin(), new AlignRightPlugin(), new AlignJustifyPlugin()]])
     .setPlugin([[new UnorderedListPlugin(), new CheckboxListPlugin(), new OrderedListPlugin()]]);
 
@@ -30,4 +34,6 @@ export * from './AlignPlugin';
 export * from './CheckboxListPlugin';
 export * from './CodePlugin';
 export * from './ItalicPlugin';
+export * from './UnderlinePlugin';
+export * from './StrikethroughPlugin';
 export * from './MentionPlugin';
