@@ -7,26 +7,19 @@ import { TextInput } from '@components/TextInput';
 import { IconCheckMark } from '@foundation/Icon';
 import {
     floatingLinkActions,
+    floatingLinkSelectors,
     submitFloatingLink,
     useEditorRef,
-    useFloatingLinkNewTabInput,
-    useFloatingLinkTextInput,
-    useFloatingLinkUrlInput,
     useHotkeys,
 } from '@udecode/plate';
 import React, { useState } from 'react';
 
-export const InsertModal = () => {
+const useInsertModal = () => {
+    const [, setValue] = useState<string>();
+
     const editor = useEditorRef();
-    const urlHtmlProps = useFloatingLinkUrlInput({});
-    const textHtmlProps = useFloatingLinkTextInput({});
-    const newTabHtmlProps = useFloatingLinkNewTabInput({});
 
-    const [, setUrlValue] = useState<string>((urlHtmlProps.defaultValue as string) || '');
-    const [, setTextValue] = useState<string>((textHtmlProps.defaultValue as string) || '');
-    const [, setNewTabValue] = useState<boolean>((newTabHtmlProps.checked as boolean) || false);
-
-    const hasValues = () => urlHtmlProps.defaultValue !== '' && textHtmlProps.defaultValue !== '';
+    const hasValues = () => floatingLinkSelectors.url() !== '' && floatingLinkSelectors.text() !== '';
 
     const submit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent | undefined) => {
         if (!hasValues()) {
@@ -48,6 +41,16 @@ export const InsertModal = () => {
         [],
     );
 
+    return {
+        setValue,
+        hasValues,
+        submit,
+    };
+};
+
+export const InsertModal = () => {
+    const { setValue, hasValues, submit } = useInsertModal();
+
     return (
         <div data-test-id="floating-link-insert" className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
             <FormControl
@@ -59,15 +62,11 @@ export const InsertModal = () => {
             >
                 <TextInput
                     id="linkText"
-                    value={textHtmlProps.defaultValue as string}
+                    value={floatingLinkSelectors.text()}
                     placeholder="Link Text"
                     onChange={(val) => {
-                        setTextValue(val);
-                        textHtmlProps.onChange?.({
-                            target: {
-                                value: val,
-                            },
-                        } as any);
+                        setValue(val);
+                        floatingLinkActions.text(val);
                     }}
                 />
             </FormControl>
@@ -81,15 +80,11 @@ export const InsertModal = () => {
                 >
                     <TextInput
                         id="url"
-                        value={urlHtmlProps.defaultValue as string}
+                        value={floatingLinkSelectors.url()}
                         placeholder="https://example.com"
                         onChange={(val) => {
-                            setUrlValue(val);
-                            urlHtmlProps.onChange?.({
-                                target: {
-                                    value: val,
-                                },
-                            } as any);
+                            setValue(val);
+                            floatingLinkActions.url(val);
                         }}
                     />
                 </FormControl>
@@ -98,14 +93,10 @@ export const InsertModal = () => {
                 <Checkbox
                     value="new-tab"
                     label="Open in new tab"
-                    state={newTabHtmlProps.checked ? CheckboxState.Checked : CheckboxState.Unchecked}
+                    state={floatingLinkSelectors.newTab() ? CheckboxState.Checked : CheckboxState.Unchecked}
                     onChange={(val) => {
-                        setNewTabValue(val);
-                        newTabHtmlProps.onChange?.({
-                            target: {
-                                checked: val,
-                            },
-                        } as any);
+                        setValue(val as unknown as string);
+                        floatingLinkActions.newTab(val);
                     }}
                 />
             </div>
