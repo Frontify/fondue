@@ -7,8 +7,8 @@ import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
-import React, { FC, useEffect, useState } from 'react';
-import { Column, Row, SelectionMode, Table, TableProps } from './Table';
+import React, { FC, Key, useEffect, useState } from 'react';
+import { Column, Row, SelectionMode, SortDirection, Table, TableProps } from './Table';
 import { IconDotsVertical, IconFaceHappy } from '@foundation/Icon';
 
 export default {
@@ -47,7 +47,7 @@ const ActionButton: FC = () => (
 
 const columns: Column[] = [
     { name: 'User', key: 'user' },
-    { name: 'Active Sessions', key: 'activeSessions' },
+    { name: 'Active Sessions', key: 'activeSessions', sortable: true },
     { name: 'Last Active', key: 'lastActive' },
     { name: 'Regions', key: 'regions' },
     { name: 'Countries', key: 'countries' },
@@ -211,14 +211,35 @@ const rows: Row[] = [
 
 const Template: Story<TableProps> = (args) => {
     const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
+    const [sortedRows, setSortedRows] = useState<Row[]>(rows);
+
+    const onSortChange = (key: Key, direction?: SortDirection) => {
+        const sortRows = () => {
+            const clonedRows = [...sortedRows];
+
+            clonedRows.sort((a, b) => {
+                const keyA = a.cells[key].sortId;
+                const keyB = b.cells[key].sortId;
+
+                if (direction !== SortDirection.Descending) {
+                    return keyA < keyB ? -1 : 1;
+                } else {
+                    return keyA < keyB ? 1 : -1;
+                }
+            });
+            setSortedRows(clonedRows);
+        };
+        sortRows();
+    };
 
     return (
         <Table
             {...args}
             columns={columns}
-            rows={rows}
+            rows={sortedRows}
             selectedRowIds={selectedRows}
             onSelectionChange={(ids) => setSelectedRows(ids || [])}
+            onSortChange={onSortChange}
         />
     );
 };

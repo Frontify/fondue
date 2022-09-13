@@ -19,7 +19,7 @@ export type TableColumnHeaderProps = {
     sortDirection?: SortDirection;
     selectionMode: string;
     isColumnSorted?: boolean;
-    handleSortChange: (column: Key, direction: SortDirection) => void;
+    handleSortChange: (column: string, direction?: SortDirection) => void;
     setSelectedRows?: (ids?: Key[]) => void;
 };
 
@@ -41,8 +41,7 @@ export const TableColumnHeader = ({
     const [icon, setIcon] = useState(<IconArrowBidirectional />);
     const [isChecked, setIsChecked] = useState(false);
     const ref = useRef<HTMLTableCellElement | null>(null);
-    const inverseSortDirection =
-        sortDirection === SortDirection.Ascending ? SortDirection.Descending : SortDirection.Ascending;
+    const ButtonOrSpan = allowsSorting ? 'button' : 'span';
 
     useEffect(() => {
         if (isColumnSorted) {
@@ -93,12 +92,20 @@ export const TableColumnHeader = ({
     return (
         <th
             ref={ref}
-            className="tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-outline-none tw-cursor-pointer tw-group focus-visible:bg-violet-90"
+            className={`tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-outline-none tw-group focus-visible:bg-violet-90 ${
+                allowsSorting ? 'tw-cursor-pointer' : ''
+            }`}
             data-test-id="table-column"
             scope="col"
-            onClick={() => handleSortChange(column.key, inverseSortDirection)}
+            onClick={allowsSorting ? () => handleSortChange(column.key, sortDirection) : () => null}
         >
-            <button className={merge(['tw-flex tw-gap-x-1 tw-items-center', FOCUS_VISIBLE_STYLE])}>
+            <ButtonOrSpan
+                className={merge([
+                    'tw-flex tw-gap-x-1 tw-items-center',
+                    FOCUS_VISIBLE_STYLE,
+                    allowsSorting ? 'tw-cursor-pointer' : 'tw-cursor-default',
+                ])}
+            >
                 {rendered}
                 {allowsSorting && (
                     <span
@@ -112,7 +119,7 @@ export const TableColumnHeader = ({
                         {cloneElement(icon, { size: IconSize.Size12 })}
                     </span>
                 )}
-            </button>
+            </ButtonOrSpan>
         </th>
     );
 };
