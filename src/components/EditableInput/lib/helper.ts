@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 
 export const EditableInputHelper = {
     /**
@@ -7,14 +7,14 @@ export const EditableInputHelper = {
      *
      * @param children
      */
-    getLabel: (children?: ReactElement) => {
+    getLabel: (children?: ReactNode | string) => {
         let label = '';
-        const iteratorStep = (children?: ReactElement | string) => {
+        const iteratorStep = (children?: ReactNode | string) => {
             React.Children.map(children, (child) => {
                 if (typeof child === 'string') {
                     label += child;
                 } else {
-                    !!child && iteratorStep(child.props.children);
+                    !!(child as ReactElement)?.props && iteratorStep((child as ReactElement)?.props.children);
                 }
             });
         };

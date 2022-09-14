@@ -4,6 +4,7 @@ import React, {
     FocusEventHandler,
     KeyboardEvent,
     KeyboardEventHandler,
+    PropsWithChildren,
     useEffect,
     useRef,
     useState,
@@ -40,13 +41,12 @@ interface EditableOptionProps {
  * onModeChange callback when state changes
  * options to specify styling and additional behaviours
  */
-export interface EditableInputProps {
-    children?: React.ReactElement;
+export type EditableInputProps = PropsWithChildren<{
     onAdditionalValueSave?: (additionalValue: string, value: string) => void;
     onEditableSave?: (value: string) => void;
     onModeChange?: (editableState?: EditableMode) => void;
     options?: EditableOptionProps;
-}
+}>;
 
 /**
  * Component to switch between Label and Input state. Wraps the Children
