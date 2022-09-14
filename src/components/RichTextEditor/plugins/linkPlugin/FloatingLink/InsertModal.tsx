@@ -3,27 +3,50 @@
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
 import { Checkbox, CheckboxState } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
+import { LegacyLink } from '@components/RichTextEditor/components';
 import { TextInput } from '@components/TextInput';
 import { IconCheckMark } from '@foundation/Icon';
 import {
     ELEMENT_LINK,
     LinkPlugin,
+    PlateEditor,
     floatingLinkActions,
     floatingLinkSelectors,
+    getAboveNode,
     getPluginOptions,
     submitFloatingLink,
     useEditorRef,
     useHotkeys,
 } from '@udecode/plate';
-import React, { useState } from 'react';
-import { getUrlFromEditor } from './useFloatingLinkEdit';
+import React, { useEffect, useState } from 'react';
+
+const getLegacyUrl = (editor: PlateEditor) => {
+    const legacyUrl = '';
+
+    const linkNode = getAboveNode(editor, {
+        match: { type: ELEMENT_LINK },
+    });
+
+    if (!Array.isArray(linkNode)) {
+        return legacyUrl;
+    }
+
+    const link = linkNode[0] as LegacyLink;
+    return link.chosenLink?.searchResult?.link || '';
+};
 
 const useInsertModal = () => {
     const [, setValue] = useState<string>();
 
     const editor = useEditorRef();
 
-    const predefinedUrl = getUrlFromEditor(editor);
+    useEffect(() => {
+        const legacyUrl = getLegacyUrl(editor);
+        if (legacyUrl !== '') {
+            floatingLinkActions.url(legacyUrl);
+            setValue(legacyUrl);
+        }
+    }, []);
 
     const isValidUrlOrEmpty = () => {
         const { isUrl } = getPluginOptions<LinkPlugin>(editor, ELEMENT_LINK);
@@ -53,7 +76,6 @@ const useInsertModal = () => {
     );
 
     return {
-        predefinedUrl,
         isValidUrlOrEmpty,
         setValue,
         hasValues,
@@ -62,7 +84,7 @@ const useInsertModal = () => {
 };
 
 export const InsertModal = () => {
-    const { predefinedUrl, isValidUrlOrEmpty, setValue, hasValues, submit } = useInsertModal();
+    const { isValidUrlOrEmpty, setValue, hasValues, submit } = useInsertModal();
 
     return (
         <div data-test-id="floating-link-insert" className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
@@ -93,7 +115,7 @@ export const InsertModal = () => {
                 >
                     <TextInput
                         id="url"
-                        value={floatingLinkSelectors.url() ?? predefinedUrl}
+                        value={floatingLinkSelectors.url()}
                         placeholder="https://example.com"
                         onChange={(val) => {
                             setValue(val);

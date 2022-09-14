@@ -1,8 +1,7 @@
 import { HTMLPropsAs, LinkRootProps, StyledElementProps, TLinkElement, Value, useElementProps } from '@udecode/plate';
 import React from 'react';
 
-export type LinkOrLegacyLink = {
-    url?: string;
+export type LegacyLink = {
     chosenLink?: {
         searchResult?: {
             link?: string;
@@ -11,7 +10,7 @@ export type LinkOrLegacyLink = {
 };
 
 export const getUrlFromLinkOrLegacyLink = (element: TLinkElement): string => {
-    const link = element as unknown as LinkOrLegacyLink;
+    const link = element as unknown as TLinkElement & LegacyLink;
     return link.url || link.chosenLink?.searchResult?.link || '';
 };
 

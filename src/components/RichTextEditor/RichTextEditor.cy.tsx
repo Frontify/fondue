@@ -483,13 +483,11 @@ describe('RichTextEditor Component', () => {
         it('should edit link', () => {
             const link = 'https://smartive.ch';
             const text = 'This is a link';
-            const additionalText = ' to the team of smartive';
             const additionalLink = '/team';
             cy.mount(<RichTextWithLink link={link} text={text} />);
             cy.get('[contenteditable=true] a').click();
             cy.get(EDIT_LINK_BUTTON).click();
 
-            cy.get('[type=text]').eq(0).click().type(additionalText);
             cy.get('[type=text]').eq(1).click().type(additionalLink);
             cy.get(LINK_CHOOSER_CHECKBOX).click();
 
@@ -528,6 +526,22 @@ describe('RichTextEditor Component', () => {
 
             cy.get('[contenteditable=true]').should('contain.text', text);
             cy.get('[contenteditable=true] a').should('not.exist');
+        });
+
+        it('should edit legacy link', () => {
+            const link = 'https://smartive.ch';
+            const text = 'This is a link';
+            const additionalLink = '/team';
+            cy.mount(<RichTextWithLegacyLink url={link} text={text} />);
+            cy.get('[contenteditable=true] a').click();
+            cy.get(EDIT_LINK_BUTTON).click();
+
+            cy.get('[type=text]').eq(1).click().type(additionalLink);
+            cy.get(LINK_CHOOSER_CHECKBOX).click();
+
+            cy.get(BUTTON).eq(1).click();
+            cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
+            cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
         });
     });
 });
