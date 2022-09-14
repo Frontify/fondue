@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin } from '@udecode/plate';
-import { UnknownObject } from '../types';
+import { AnyObject, PlatePlugin } from '@udecode/plate';
 import { InlineData, PluginButton } from './types';
 import type { MarkupElement } from './MarkupElement';
 
@@ -29,5 +28,5 @@ export abstract class Plugin<P extends PluginProps = PluginProps> {
         return undefined;
     }
 
-    abstract plugins(): PlatePlugin<UnknownObject, any>[];
+    abstract plugins(): PlatePlugin<AnyObject>[];
 }

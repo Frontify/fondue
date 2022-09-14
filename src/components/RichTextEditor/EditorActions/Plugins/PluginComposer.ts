@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin, PlatePluginComponent, createParagraphPlugin } from '@udecode/plate';
+import { AnyObject, PlatePlugin, PlatePluginComponent, createParagraphPlugin } from '@udecode/plate';
 import { MarkupElement } from './MarkupElement';
-import { ObjectType, UnknownObject } from '../types';
+import { ObjectType } from '../types';
 import { Button, Buttons, InlineData, Plugins } from './types';
 import type { Plugin } from './Plugin';
 
 export class PluginComposer {
-    private platePlugins: Map<string, PlatePlugin<UnknownObject, UnknownObject>[]> = new Map();
+    private platePlugins: Map<string, PlatePlugin<AnyObject>[]> = new Map();
     private markupElements: ObjectType<PlatePluginComponent<any>> = {};
     private toolbarButtons: Buttons = [];
     private inlineElements: InlineData[] = [];
