@@ -46,8 +46,9 @@ import {
     UnderlineMark,
     UnorderedListElement,
 } from '../components';
-import { createCheckboxListPlugin } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
+import { createCheckboxListPlugin } from '../EditorActions/Plugins/CheckboxListPlugin/index';
 import { ELEMENT_CHECK_ITEM } from '../EditorActions/Plugins/CheckboxListPlugin/id';
+import { CheckboxListElementNode } from '../EditorActions/Plugins/CheckboxListPlugin/CheckboxListElement';
 import { createLinkPlugin } from '../plugins/linkPlugin/createLinkPlugin';
 import { TextStyles } from './textStyles';
 
@@ -118,6 +119,7 @@ export const getEditorConfig = () => {
         [MARK_UNDERLINE]: UnderlineMark,
         [MARK_STRIKETHROUGH]: StrikethroughMark,
         [MARK_CODE]: CodeMark,
+        [ELEMENT_CHECK_ITEM]: CheckboxListElementNode,
     });
 
     return createPlugins(
