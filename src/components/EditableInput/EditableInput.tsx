@@ -151,7 +151,12 @@ export const EditableInput = ({
                     </div>
                 </div>
             ) : (
-                <button className={FOCUS_VISIBLE_STYLE} {...clickBehaviour} data-test-id={'node-link-name'}>
+                <button
+                    className={FOCUS_VISIBLE_STYLE}
+                    {...clickBehaviour}
+                    data-test-id={'node-link-name'}
+                    aria-pressed="false"
+                >
                     {children}
                 </button>
             )}
