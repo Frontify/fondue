@@ -6,16 +6,8 @@ import { Position } from './EditorPositioningWrapper';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import { EditorActions } from './utils/actions';
-import {
-    IPSUM,
-    checkboxValue,
-    customDesignTokens,
-    htmlValue,
-    mentionValue,
-    nodesToSerialize,
-    value,
-} from './utils/exampleValues';
-import { defaultPlugins, mentionPlugins } from './EditorActions';
+import { IPSUM, checkboxValue, customDesignTokens, htmlValue, nodesToSerialize, value } from './utils/exampleValues';
+import { defaultPlugins } from './EditorActions';
 import { PaddingSizes } from './types';
 
 export default {
@@ -166,13 +158,6 @@ WithNewToolbar.args = {
     position: Position.TOP,
     actions: [],
     plugins: defaultPlugins,
-};
-
-export const WithMentions = RichTextEditorTemplate.bind({});
-WithMentions.args = {
-    value: JSON.stringify(mentionValue),
-    actions: [],
-    plugins: mentionPlugins,
 };
 
 export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {

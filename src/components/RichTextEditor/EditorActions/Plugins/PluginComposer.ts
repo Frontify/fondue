@@ -3,14 +3,13 @@
 import { AnyObject, PlatePlugin, PlatePluginComponent, createParagraphPlugin } from '@udecode/plate';
 import { MarkupElement } from './MarkupElement';
 import { ObjectType } from '../types';
-import { Button, Buttons, InlineData, Plugins } from './types';
+import { Button, Buttons, Plugins } from './types';
 import type { Plugin } from './Plugin';
 
 export class PluginComposer {
     private platePlugins: Map<string, PlatePlugin<AnyObject>[]> = new Map();
     private markupElements: ObjectType<PlatePluginComponent<any>> = {};
     private toolbarButtons: Buttons = [];
-    private inlineElements: InlineData[] = [];
 
     constructor() {
         this.platePlugins.set('default', [createParagraphPlugin()]);
@@ -24,7 +23,6 @@ export class PluginComposer {
                 this.addElement(plugin.markupElement);
                 this.addLeafElements(plugin.leafMarkupElements);
                 this.addPlugin(plugin);
-                this.addInline(plugin.inline());
             }
 
             this.generateGroupOfButtons(groupOfPlugins);
@@ -58,12 +56,6 @@ export class PluginComposer {
     private addPlugin(plugin: Plugin) {
         if (plugin.id && !this.platePlugins.has(plugin.id)) {
             this.platePlugins.set(plugin.id, plugin.plugins());
-        }
-    }
-
-    private addInline(inl: InlineData | undefined) {
-        if (inl) {
-            this.inlineElements.push(inl);
         }
     }
 
@@ -101,9 +93,5 @@ export class PluginComposer {
 
     get buttons(): Buttons {
         return this.toolbarButtons;
-    }
-
-    get inline(): InlineData[] {
-        return this.inlineElements;
     }
 }

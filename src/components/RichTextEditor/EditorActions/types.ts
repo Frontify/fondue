@@ -9,5 +9,4 @@ export type ObjectType<T extends Unknown> = Record<string, T>;
 export type GeneratePluginsReturn = {
     create: () => PlatePlugin<AnyObject>[];
     toolbar: (editorWidth: number | undefined) => ReactNode;
-    mentions: () => ReactNode;
 };

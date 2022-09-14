@@ -9,9 +9,6 @@ import { CodePlugin } from './CodePlugin';
 import { ItalicPlugin } from './ItalicPlugin';
 import { UnderlinePlugin } from './UnderlinePlugin';
 import { StrikethroughPlugin } from './StrikethroughPlugin';
-import { MentionPlugin } from './MentionPlugin';
-
-import { mentionable } from '../../utils/exampleValues';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
@@ -20,12 +17,6 @@ defaultPlugins
     ])
     .setPlugin([[new AlignLeftPlugin(), new AlignCenterPlugin(), new AlignRightPlugin(), new AlignJustifyPlugin()]])
     .setPlugin([[new UnorderedListPlugin(), new CheckboxListPlugin(), new OrderedListPlugin()]]);
-
-export const mentionPlugins = new PluginComposer();
-mentionPlugins
-    .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
-    .setPlugin([[new UnorderedListPlugin(), new OrderedListPlugin()]])
-    .setPlugin([new BoldPlugin()]);
 
 export * from './PluginComposer';
 export * from './ListPlugin';
@@ -36,4 +27,3 @@ export * from './CodePlugin';
 export * from './ItalicPlugin';
 export * from './UnderlinePlugin';
 export * from './StrikethroughPlugin';
-export * from './MentionPlugin';

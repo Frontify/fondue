@@ -98,7 +98,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     plugins={editorConfig}
                 >
                     {isNew && config.toolbar(editorWidth)}
-                    {isNew && config.mentions()}
                     {!isNew && <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />}
                 </Plate>
             </PositioningWrapper.PlateWrapper>

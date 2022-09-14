@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AnyObject, PlatePlugin } from '@udecode/plate';
-import { InlineData, PluginButton } from './types';
+import { PluginButton } from './types';
 import type { MarkupElement } from './MarkupElement';
 
 export type PluginProps = {
@@ -22,10 +22,6 @@ export abstract class Plugin<P extends PluginProps = PluginProps> {
         this.button = this.props?.button;
         this.markupElement = this.props?.markupElement;
         this.leafMarkupElements = this.props?.leafMarkupElements;
-    }
-
-    inline(): InlineData | undefined {
-        return undefined;
     }
 
     abstract plugins(): PlatePlugin<AnyObject>[];
