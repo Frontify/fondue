@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_PARAGRAPH, TDescendant, createPlateEditor, deserializeHtml, parseHtmlDocument } from '@udecode/plate';
+import { ELEMENT_PARAGRAPH, Value, createPlateEditor, deserializeHtml, parseHtmlDocument } from '@udecode/plate';
 import { getEditorConfig } from './editorConfig';
 
 const wrapTextInHtml = (text: string) => {
@@ -9,9 +9,9 @@ const wrapTextInHtml = (text: string) => {
     return htmlDocRegex.test(text) ? text : `<p>${text}</p>`;
 };
 
-export const EMPTY_RICH_TEXT_VALUE: TDescendant[] = [{ type: ELEMENT_PARAGRAPH, children: [{ text: '' }] }];
+export const EMPTY_RICH_TEXT_VALUE: Value = [{ type: ELEMENT_PARAGRAPH, children: [{ text: '' }] }];
 
-export const parseRawValue = (raw?: string): TDescendant[] => {
+export const parseRawValue = (raw?: string): Value => {
     let parsedValue = EMPTY_RICH_TEXT_VALUE;
 
     if (!raw) {
@@ -28,7 +28,7 @@ export const parseRawValue = (raw?: string): TDescendant[] => {
         const parsedHtml = deserializeHtml(editor, {
             element: document.body,
             stripWhitespace: true,
-        });
+        }) as Value;
         if (parsedHtml) {
             parsedValue = parsedHtml;
         }
