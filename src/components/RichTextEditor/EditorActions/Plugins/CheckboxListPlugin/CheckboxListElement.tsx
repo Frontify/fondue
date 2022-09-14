@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ReactEditor } from 'slate-react';
-import { PlateRenderElementProps, getRootProps, setNodes } from '@udecode/plate';
+import { PlateRenderElementProps, TTodoListItemElement, getRootProps, setNodes } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import { MarkupElement } from '../MarkupElement';
 import { ELEMENT_CHECK_ITEM } from './id';
@@ -21,7 +21,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
                     checked={!!checked}
                     onChange={(e) => {
                         const path = ReactEditor.findPath(editor, element);
-                        setNodes(editor, { checked: e.target.checked }, { at: path });
+                        setNodes<TTodoListItemElement>(editor, { checked: e.target.checked }, { at: path });
                     }}
                     {...nodeProps}
                 />
