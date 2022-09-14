@@ -18,3 +18,4 @@ declare global {
 
 import 'cypress-real-events/support';
 import '../../src/styles.css';
+import '@bahmutov/cypress-code-coverage/support';

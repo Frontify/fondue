@@ -9,5 +9,6 @@ export default (on: any, config: any): any => {
         });
     });
 
+    require('@bahmutov/cypress-code-coverage/plugin')(on, config);
     return config;
 };
