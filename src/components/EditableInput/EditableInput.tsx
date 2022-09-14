@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 import { EditableInputHelper } from '@components/EditableInput/lib/helper';
 import { DEFAULT_CONTAINER_CLASS, DEFAULT_INPUT_TEXT_CLASS } from '@components/EditableInput/constant';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 
 export enum EditableMode {
     INPUT = 'INPUT',
@@ -48,9 +49,9 @@ export interface EditableInputProps {
 }
 
 /**
- * Component to switch between Label and Input state
+ * Component to switch between Label and Input state. Wraps the Children
+ * with a Button, to allow for accessibility
  *
- * Clones the children and adds clickHandlers to flip on Click.
  * Events:
  * - onEditableSave         // When changing from input to label state
  * - onModeChange           // Indicates which state is active
@@ -100,7 +101,6 @@ export const EditableInput = ({
     const handleSwitchToInput = (childrenText: string) => () => {
         setInputValue(childrenText);
         setEditableState(EditableMode.INPUT);
-
         onModeChange && onModeChange(EditableMode.INPUT);
     };
 
@@ -115,16 +115,14 @@ export const EditableInput = ({
     useEffect(() => setEditableState(options?.mode ?? EditableMode.LABEL), [options?.mode]);
 
     const clickBehaviour = options?.enableDoubleClick
-        ? { onDoubleClick: handleSwitchToInput(childrenLabel) }
-        : { onClick: handleSwitchToInput(childrenLabel) };
-
-    // Clone Child and add clickHandler and ref to Children
-    const ChildrenWithHandler =
-        children &&
-        React.cloneElement(children, {
-            ...clickBehaviour,
-            'data-test-id': 'node-link-name',
-        });
+        ? {
+              onDoubleClick: handleSwitchToInput(childrenLabel),
+              onKeyPress: (event: KeyboardEvent) => event.key === 'Enter' && handleSwitchToInput(childrenLabel)(),
+          }
+        : {
+              onClick: handleSwitchToInput(childrenLabel),
+              onKeyPress: (event: KeyboardEvent) => event.key === 'Enter' && handleSwitchToInput(childrenLabel)(),
+          };
 
     // If the Input is visible focus into it
     useEffect(() => {
@@ -153,7 +151,9 @@ export const EditableInput = ({
                     </div>
                 </div>
             ) : (
-                <>{ChildrenWithHandler}</>
+                <button className={FOCUS_VISIBLE_STYLE} {...clickBehaviour} data-test-id={'node-link-name'}>
+                    {children}
+                </button>
             )}
         </div>
     );
