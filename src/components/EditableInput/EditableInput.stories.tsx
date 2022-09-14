@@ -40,11 +40,21 @@ const ButtonTemplate: Story<EditableInputProps> = (args: EditableInputProps) => 
     <EditableInput {...args}>{args.children}</EditableInput>
 );
 
+export const EditableInputDefault = ButtonTemplate.bind({});
+EditableInputDefault.args = {
+    children: (
+        <div>
+            <p>Change me</p>
+        </div>
+    ),
+    options: {},
+};
+
 export const Default = ButtonTemplate.bind({});
 Default.args = {
     children: (
         <div className={'tw-flex tw-flex-row tw-items-center'}>
-            <h1 className={'tw-text-text tw-p-2'}>hey default</h1>
+            <h1 className={'tw-text-text tw-p-2'}>hey Styled</h1>
         </div>
     ),
     options: {
@@ -55,19 +65,7 @@ Default.args = {
         additionalValues: 'Values only for the Event',
     },
 };
-Default.storyName = 'Editable Input';
-
-export const EditWithDoubleClick = ButtonTemplate.bind({});
-EditWithDoubleClick.args = {
-    children: (
-        <div className={'tw-flex tw-flex-row tw-items-center'}>
-            <h1>Change me with a Double Click</h1>
-        </div>
-    ),
-    options: {
-        enableDoubleClick: true,
-    },
-};
+Default.storyName = 'Editable Input Custom Styling';
 
 export const ControlledInputExample: Story<EditableInputProps> = () => {
     const [label, setLabel] = useState('Im set from the outside');
@@ -101,20 +99,6 @@ InitialStartInInput.args = {
     options: {
         mode: EditableMode.INPUT,
         customInputTextClasses: 'tw-p-2',
-        customContainerClasses: 'tw-flex',
-    },
-};
-
-export const InputWithCustomStyling = ButtonTemplate.bind({});
-InputWithCustomStyling.args = {
-    children: (
-        <div className={'tw-flex tw-flex-row tw-items-center'}>
-            <h1 className="tw-text-xl tw-p-2">Im such a Input Mode</h1>
-            <IconPen size={IconSize.Size24} />
-        </div>
-    ),
-    options: {
-        customInputTextClasses: 'tw-text-xl tw-p-2',
         customContainerClasses: 'tw-flex',
     },
 };
