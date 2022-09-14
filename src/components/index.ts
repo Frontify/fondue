@@ -11,6 +11,7 @@ export * from './ButtonGroup';
 export * from './Card';
 export * from './Checkbox';
 export * from './Checklist';
+export * from './CollapsibleWrap';
 export * from './ColorInputFlyout';
 export * from './ColorPicker';
 export * from './DatePicker';
