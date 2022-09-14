@@ -6,7 +6,6 @@ import {
     FloatingLinkProps,
     HTMLPropsAs,
     PlateEditor,
-    Value,
     floatingLinkActions,
     floatingLinkSelectors,
     getAboveNode,
@@ -24,7 +23,7 @@ import {
 } from '@udecode/plate';
 import { useCallback, useEffect } from 'react';
 
-export const getUrlFromEditor = (editor: PlateEditor<Value>) => {
+export const getUrlFromEditor = (editor: PlateEditor) => {
     let url = '';
 
     const linkNode = getAboveNode(editor, {
