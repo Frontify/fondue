@@ -92,9 +92,10 @@ export const TableColumnHeader = ({
     return (
         <th
             ref={ref}
-            className={`tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-outline-none tw-group focus-visible:bg-violet-90 ${
-                allowsSorting ? 'tw-cursor-pointer' : ''
-            }`}
+            className={merge([
+                'tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-outline-none tw-group focus-visible:bg-violet-90',
+                allowsSorting ? 'tw-cursor-pointer' : '',
+            ])}
             data-test-id="table-column"
             scope="col"
             onClick={allowsSorting ? () => handleSortChange(column.key, sortDirection) : () => null}

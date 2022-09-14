@@ -7,7 +7,7 @@ import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
-import React, { FC, Key, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Column, Row, SelectionMode, SortDirection, Table, TableProps } from './Table';
 import { IconDotsVertical, IconFaceHappy } from '@foundation/Icon';
 
@@ -213,7 +213,7 @@ const Template: Story<TableProps> = (args) => {
     const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
     const [sortedRows, setSortedRows] = useState<Row[]>(rows);
 
-    const onSortChange = (key: Key, direction?: SortDirection) => {
+    const onSortChange = (key: string, direction?: SortDirection) => {
         const sortRows = () => {
             const clonedRows = [...sortedRows];
 
@@ -221,7 +221,7 @@ const Template: Story<TableProps> = (args) => {
                 const keyA = a.cells[key].sortId;
                 const keyB = b.cells[key].sortId;
 
-                if (direction !== SortDirection.Descending) {
+                if (direction === SortDirection.Descending) {
                     return keyA < keyB ? -1 : 1;
                 } else {
                     return keyA < keyB ? 1 : -1;
@@ -261,6 +261,25 @@ const TemplateWithSearch: Story<TableProps> = (args) => {
         setfilteredRows(newFilteredRowsValue);
     }, [filter]);
 
+    const onSortChange = (key: string, direction?: SortDirection) => {
+        const sortRows = () => {
+            const clonedRows = [...filteredRows];
+
+            clonedRows.sort((a, b) => {
+                const keyA = a.cells[key].sortId;
+                const keyB = b.cells[key].sortId;
+
+                if (direction === SortDirection.Descending) {
+                    return keyA < keyB ? -1 : 1;
+                } else {
+                    return keyA < keyB ? 1 : -1;
+                }
+            });
+            setfilteredRows(clonedRows);
+        };
+        sortRows();
+    };
+
     return (
         <>
             <TextInput
@@ -274,6 +293,7 @@ const TemplateWithSearch: Story<TableProps> = (args) => {
                 rows={filteredRows}
                 selectedRowIds={selectedRows}
                 onSelectionChange={(ids) => setSelectedRows(ids || [])}
+                onSortChange={onSortChange}
             />
         </>
     );
