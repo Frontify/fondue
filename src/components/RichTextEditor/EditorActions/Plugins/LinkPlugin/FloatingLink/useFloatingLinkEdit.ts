@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getUrlFromLinkOrLegacyLink } from '@components/RichTextEditor/components';
+import { useCallback, useEffect } from 'react';
 import {
     ELEMENT_LINK,
     FloatingLinkProps,
     HTMLPropsAs,
-    PlateEditor,
     floatingLinkActions,
     floatingLinkSelectors,
     getAboveNode,
@@ -21,22 +20,7 @@ import {
     usePlateSelectors,
     useVirtualFloatingLink,
 } from '@udecode/plate';
-import { useCallback, useEffect } from 'react';
-
-export const getUrlFromEditor = (editor: PlateEditor) => {
-    let url = '';
-
-    const linkNode = getAboveNode(editor, {
-        match: { type: ELEMENT_LINK },
-    });
-
-    if (!Array.isArray(linkNode)) {
-        return url;
-    }
-
-    url = getUrlFromLinkOrLegacyLink(linkNode[0] as any);
-    return url;
-};
+import { getUrlFromEditor } from '../utils';
 
 export const useFloatingLinkEdit = ({ floatingOptions, ...props }: FloatingLinkProps): HTMLPropsAs<'div'> => {
     const editor = useEditorRef();
@@ -69,8 +53,9 @@ export const useFloatingLinkEdit = ({ floatingOptions, ...props }: FloatingLinkP
     });
 
     useEffect(() => {
-        if (getUrlFromEditor(editor)) {
-            floatingLinkActions.url(getUrlFromEditor(editor));
+        const url = getUrlFromEditor(editor);
+        if (url) {
+            floatingLinkActions.url(url);
         }
         if (
             editor.selection &&

@@ -1,15 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_LINK, createBoldPlugin, createPluginFactory } from '@udecode/plate';
+import { createLinkPlugin as createPlateLinkPlugin, createPluginFactory } from '@udecode/plate';
 import { LINK_PLUGIN } from './id';
 import { LinkMarkupElement } from './LinkMarkupElement';
 import { LinkButton } from './LinkButton';
+import { CustomFloatingLink } from './FloatingLink/CustomFloatingLink';
 import { Plugin, PluginProps } from '../Plugin';
+import { isUrlOrPath } from './utils';
 
-export const createLinkChooserPlugin = createPluginFactory({
-    key: ELEMENT_LINK,
-    isElement: true,
-    isInline: true,
+export const createLinkPlugin = createPluginFactory({
+    ...createPlateLinkPlugin(),
+    renderAfterEditable: CustomFloatingLink,
+    options: {
+        isUrl: isUrlOrPath,
+    },
 });
 
 export class LinkPlugin extends Plugin {
@@ -23,6 +27,6 @@ export class LinkPlugin extends Plugin {
     }
 
     plugins() {
-        return [createBoldPlugin()];
+        return [createLinkPlugin()];
     }
 }

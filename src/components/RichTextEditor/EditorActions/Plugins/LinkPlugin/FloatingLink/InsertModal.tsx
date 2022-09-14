@@ -1,55 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
-import { Checkbox, CheckboxState } from '@components/Checkbox';
-import { FormControl } from '@components/FormControl';
-import { LegacyLink } from '@components/RichTextEditor/components';
-import { TextInput } from '@components/TextInput';
-import { IconCheckMark } from '@foundation/Icon';
+import React, { useEffect, useState } from 'react';
 import {
     ELEMENT_LINK,
     LinkPlugin,
-    PlateEditor,
-    TLinkElement,
     floatingLinkActions,
     floatingLinkSelectors,
-    getAboveNode,
     getPluginOptions,
     submitFloatingLink,
     useEditorRef,
     useHotkeys,
 } from '@udecode/plate';
-import React, { useEffect, useState } from 'react';
-
-const getLegacyUrl = (editor: PlateEditor) => {
-    const legacyUrl = '';
-
-    const linkNode = getAboveNode(editor, {
-        match: { type: ELEMENT_LINK },
-    });
-
-    if (!Array.isArray(linkNode)) {
-        return legacyUrl;
-    }
-
-    const link = linkNode[0] as LegacyLink;
-    return link.chosenLink?.searchResult?.link || '';
-};
-
-const getUrl = (editor: PlateEditor) => {
-    const url = '';
-
-    const linkNode = getAboveNode(editor, {
-        match: { type: ELEMENT_LINK },
-    });
-
-    if (!Array.isArray(linkNode)) {
-        return url;
-    }
-
-    const link = linkNode[0] as TLinkElement;
-    return link.url || '';
-};
+import { IconCheckMark } from '@foundation/Icon';
+import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
+import { Checkbox, CheckboxState } from '@components/Checkbox';
+import { FormControl } from '@components/FormControl';
+import { TextInput } from '@components/TextInput';
+import { getLegacyUrl, getUrl } from '../utils';
 
 const useInsertModal = () => {
     const [, setValue] = useState<string>();
@@ -59,7 +26,7 @@ const useInsertModal = () => {
     useEffect(() => {
         const legacyUrl = getLegacyUrl(editor);
         const url = getUrl(editor);
-        if (url === '' && legacyUrl !== '') {
+        if (url === '' && legacyUrl) {
             floatingLinkActions.url(legacyUrl);
             setValue(legacyUrl);
         }
@@ -67,7 +34,7 @@ const useInsertModal = () => {
 
     const isValidUrlOrEmpty = () => {
         const { isUrl } = getPluginOptions<LinkPlugin>(editor, ELEMENT_LINK);
-        return !!!floatingLinkSelectors.url() || (isUrl && isUrl(floatingLinkSelectors.url()));
+        return !floatingLinkSelectors.url() || (isUrl && isUrl(floatingLinkSelectors.url()));
     };
 
     const hasValues = () => floatingLinkSelectors.url() !== '' && floatingLinkSelectors.text() !== '';
@@ -147,7 +114,7 @@ export const InsertModal = () => {
                     value="new-tab"
                     label="Open in new tab"
                     state={floatingLinkSelectors.newTab() ? CheckboxState.Checked : CheckboxState.Unchecked}
-                    onChange={(val) => {
+                    onChange={(val: boolean) => {
                         setValue(val as unknown as string);
                         floatingLinkActions.newTab(val);
                     }}
