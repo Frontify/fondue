@@ -2,9 +2,9 @@
 
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
+import { Position } from './EditorPositioningWrapper';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
-import { Position } from './EditorPositioningWrapper';
 import { EditorActions } from './utils/actions';
 import {
     IPSUM,

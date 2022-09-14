@@ -131,7 +131,7 @@ export const value = [
                 },
                 children: [
                     {
-                        text: 'This is also a Link.',
+                        text: 'This is also a Link (Legacy Format).',
                     },
                 ],
             },
@@ -252,7 +252,7 @@ export const checkboxValue = [
     },
 ];
 
-export const nodesToSerialize = [
+export const nodesToSerialize: TDescendant[] = [
     createElement({ text: 'This text is bold.', mark: MARK_BOLD }),
     createElement({ text: 'This text is italic.', mark: MARK_ITALIC }),
     createElement({ text: 'This text has an underline.', mark: MARK_UNDERLINE }),
