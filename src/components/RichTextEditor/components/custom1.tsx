@@ -8,12 +8,9 @@ import { alignmentClassnames } from '../utils/alignment';
 
 export const Custom1Element: FC<PlateRenderElementProps> = ({ element, attributes, children }) => {
     const { designTokens } = useRichTextEditorContext();
+    const align = element.align as string;
     return (
-        <p
-            {...attributes}
-            className={merge([element.align && alignmentClassnames[element.align]])}
-            style={designTokens.custom1}
-        >
+        <p {...attributes} className={merge([align && alignmentClassnames[align]])} style={designTokens.custom1}>
             {children}
         </p>
     );

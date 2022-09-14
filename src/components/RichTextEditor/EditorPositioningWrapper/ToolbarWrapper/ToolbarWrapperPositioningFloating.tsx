@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from 'react';
-import { BalloonToolbar } from '@udecode/plate';
-import { calculateToolbarWidth } from '@components/RichTextEditor/utils/toolbarCalc';
 import { OFFSET_IN_PX } from '@components/RichTextEditor/utils';
+import { calculateToolbarWidth } from '@components/RichTextEditor/utils/toolbarCalc';
+import { BalloonToolbar, flip, shift } from '@udecode/plate';
+import React, { useEffect, useState } from 'react';
 import { ToolbarWrapperProps } from './types';
 
 export const ToolbarWrapperPositioningFloating = ({
@@ -22,36 +22,10 @@ export const ToolbarWrapperPositioningFloating = ({
 
     return (
         <BalloonToolbar
-            popperOptions={{
-                modifiers: [
-                    { name: 'offset', options: { offset: [0, 2] } },
-                    { name: 'flip', options: { fallbackPlacements: ['bottom', 'top'] } },
-                    {
-                        name: 'hideUntilComputed',
-                        enabled: true,
-                        phase: 'beforeMain',
-                        fn: ({ state }) => {
-                            state.styles.popper = {
-                                ...state.styles.popper,
-                                visibility: 'hidden',
-                                width: `${width}px`,
-                            };
-                        },
-                    },
-                    {
-                        name: 'showWhenComputed',
-                        enabled: true,
-                        phase: 'beforeWrite',
-                        fn: ({ state }) => {
-                            if (width) {
-                                state.styles.popper.visibility = 'visible';
-                            }
-                        },
-                        requires: ['hideUntilComputed'],
-                    },
-                ],
+            floatingOptions={{
+                middleware: [flip(), shift()],
             }}
-            styles={{ root: { border: 'none', background: '#ffffff' } }}
+            styles={{ root: { border: 'none', background: '#ffffff', width } }}
         >
             <div
                 data-test-id="toolbar-floating"
