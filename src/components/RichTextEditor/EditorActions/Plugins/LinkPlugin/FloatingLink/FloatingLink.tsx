@@ -23,7 +23,7 @@ const FloatingLinkInsertRoot = createComponentAs<FloatingLinkProps>((props) => {
     return createElementAs('div', htmlProps);
 });
 
-export const FloatingLinkEditRoot = createComponentAs<FloatingLinkProps>((props) => {
+const FloatingLinkEditRoot = createComponentAs<FloatingLinkProps>((props) => {
     const htmlProps = useFloatingLinkEdit(props);
 
     if (htmlProps.style?.display === 'none') {

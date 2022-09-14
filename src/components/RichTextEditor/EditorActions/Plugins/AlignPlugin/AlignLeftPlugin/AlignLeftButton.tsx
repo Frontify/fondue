@@ -10,7 +10,7 @@ export const AlignLeftButton = ({ id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <AlignToolbarButton
             value="left"
-            icon={<IconStylingWrapper icon={<IconTextAlignmentLeft size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconTextAlignmentLeft size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
         />

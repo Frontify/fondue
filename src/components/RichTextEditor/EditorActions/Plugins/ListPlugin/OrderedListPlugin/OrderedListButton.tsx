@@ -10,7 +10,7 @@ export const OrderedListButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <ListToolbarButton
             type={getPluginType(editor, id)}
-            icon={<IconStylingWrapper icon={<IconListNumbers size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconListNumbers size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
         />

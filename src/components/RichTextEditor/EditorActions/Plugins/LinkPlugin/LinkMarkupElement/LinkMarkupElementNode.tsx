@@ -1,18 +1,9 @@
-import { HTMLPropsAs, LinkRootProps, StyledElementProps, TLinkElement, Value, useElementProps } from '@udecode/plate';
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import React from 'react';
-
-export type LegacyLink = {
-    chosenLink?: {
-        searchResult?: {
-            link?: string;
-        };
-    };
-};
-
-export const getUrlFromLinkOrLegacyLink = (element: TLinkElement): string => {
-    const link = element as unknown as TLinkElement & LegacyLink;
-    return link.url || link.chosenLink?.searchResult?.link || '';
-};
+import { HTMLPropsAs, LinkRootProps, useElementProps } from '@udecode/plate';
+import { getUrlFromLinkOrLegacyLink } from '../utils';
+import { TLinkElement } from '../types';
 
 const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
     const _props = useElementProps<TLinkElement, 'a'>({
@@ -34,8 +25,8 @@ const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
 
 export const LINK_CLASSES = 'tw-text-text-interactive tw-underline tw-cursor-pointer';
 
-export const LinkElement = (props: StyledElementProps<Value, TLinkElement>) => {
-    const htmlProps = useLink(props as LinkRootProps);
+export const LinkMarkupElementNode = (props: LinkRootProps) => {
+    const htmlProps = useLink(props);
     const { attributes, children } = props;
 
     return (

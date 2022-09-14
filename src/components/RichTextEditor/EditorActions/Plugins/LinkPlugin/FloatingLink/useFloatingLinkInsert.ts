@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useEffect } from 'react';
 import {
     ELEMENT_LINK,
     FloatingLinkProps,
@@ -19,7 +20,6 @@ import {
     useOnClickOutside,
     useVirtualFloatingLink,
 } from '@udecode/plate';
-import { useEffect } from 'react';
 import { useFocused } from 'slate-react';
 
 export const useFloatingLinkInsert = ({ floatingOptions, ...props }: FloatingLinkProps): HTMLPropsAs<'div'> => {
