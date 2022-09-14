@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { HTMLPropsAs, LinkRootProps, StyledElementProps, Value, useElementProps } from '@udecode/plate';
+import { HTMLPropsAs, LinkRootProps, useElementProps } from '@udecode/plate';
 import { getUrlFromLinkOrLegacyLink } from '../utils';
 import { TLinkElement } from '../types';
 
@@ -25,8 +25,8 @@ const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
 
 export const LINK_CLASSES = 'tw-text-text-interactive tw-underline tw-cursor-pointer';
 
-export const LinkMarkupElementNode = (props: StyledElementProps<Value, TLinkElement>) => {
-    const htmlProps = useLink(props as LinkRootProps);
+export const LinkMarkupElementNode = (props: LinkRootProps) => {
+    const htmlProps = useLink(props);
     const { attributes, children } = props;
 
     return (
