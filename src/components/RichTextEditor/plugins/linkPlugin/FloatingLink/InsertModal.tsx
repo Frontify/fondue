@@ -10,6 +10,7 @@ import {
     ELEMENT_LINK,
     LinkPlugin,
     PlateEditor,
+    TLinkElement,
     floatingLinkActions,
     floatingLinkSelectors,
     getAboveNode,
@@ -35,6 +36,21 @@ const getLegacyUrl = (editor: PlateEditor) => {
     return link.chosenLink?.searchResult?.link || '';
 };
 
+const getUrl = (editor: PlateEditor) => {
+    const url = '';
+
+    const linkNode = getAboveNode(editor, {
+        match: { type: ELEMENT_LINK },
+    });
+
+    if (!Array.isArray(linkNode)) {
+        return url;
+    }
+
+    const link = linkNode[0] as TLinkElement;
+    return link.url || '';
+};
+
 const useInsertModal = () => {
     const [, setValue] = useState<string>();
 
@@ -42,7 +58,8 @@ const useInsertModal = () => {
 
     useEffect(() => {
         const legacyUrl = getLegacyUrl(editor);
-        if (legacyUrl !== '') {
+        const url = getUrl(editor);
+        if (url === '' && legacyUrl !== '') {
             floatingLinkActions.url(legacyUrl);
             setValue(legacyUrl);
         }
