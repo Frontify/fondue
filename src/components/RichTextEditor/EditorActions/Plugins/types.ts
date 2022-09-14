@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor } from '@udecode/plate';
 import { ReactElement, ReactNode } from 'react';
-import { UnknownObject } from '../types';
+import { PlateEditor } from '@udecode/plate';
 import type { Plugin } from './Plugin';
 
 export type ButtonGroupProps = {
@@ -12,7 +11,7 @@ export type ButtonGroupProps = {
 
 export type PluginButtonProps = {
     id: string;
-    editor: PlateEditor<UnknownObject>;
+    editor: PlateEditor | null;
 };
 export type PluginButton = ({ editor, id }: PluginButtonProps) => ReactElement;
 export type Button = {
