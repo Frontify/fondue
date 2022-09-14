@@ -1,4 +1,4 @@
-import React, {ReactElement} from 'react';
+import React, { ReactElement } from 'react';
 
 export const EditableInputHelper = {
     /**
@@ -7,7 +7,7 @@ export const EditableInputHelper = {
      *
      * @param children
      */
-    getLabel: (children?: React.ReactElement) => {
+    getLabel: (children?: ReactElement) => {
         let label = '';
         const iteratorStep = (children?: ReactElement | string) => {
             React.Children.map(children, (child) => {

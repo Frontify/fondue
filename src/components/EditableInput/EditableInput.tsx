@@ -64,11 +64,6 @@ export interface EditableInputProps {
  * - enableDoubleClick:      boolean            // should the input be triggered by a double click or single click
  * - additionalValues:       string             // additional information to be passed via onClick Event
  *
- * @param onEditableSave
- * @param onModeChange
- * @param onAdditionalValueSave
- * @param children
- * @param options
  */
 export const EditableInput = ({
     onEditableSave,
