@@ -4,7 +4,7 @@ import { IconProps } from '@foundation/Icon/IconProps';
 import { PropsWithChildren, ReactElement } from 'react';
 import { Color } from '../../types';
 
-export type BadgeSize = 's' | 'm';
+export type BadgeSize = 'small' | 'medium';
 
 export type BadgeProps = PropsWithChildren<{
     style?: BadgeStyle;

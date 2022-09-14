@@ -13,7 +13,7 @@ export const Badge: FC<BadgeProps> = ({
     status,
     icon,
     style = BadgeStyle.Primary,
-    size = 'm',
+    size = 'medium',
     emphasis = BadgeEmphasis.None,
     disabled = false,
     onClick,

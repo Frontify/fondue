@@ -57,8 +57,8 @@ export const isBadgeStatus = (style: BadgeStatus | Color | string): style is Bad
 
 export const getCircularSizeClasses = (size: BadgeSize) =>
     ({
-        s: 'tw-h-5 tw-w-5',
-        m: 'tw-h-6 tw-w-6',
+        small: 'tw-h-5 tw-w-5',
+        medium: 'tw-h-6 tw-w-6',
     }[size]);
 
 export const getSizeClasses = (
@@ -67,7 +67,7 @@ export const getSizeClasses = (
     icon: BadgeProps['icon'],
     size: BadgeSize,
 ) => {
-    const isSmall = size === 's';
+    const isSmall = size === 'small';
 
     if (isSmall) {
         return 'tw-h-5 tw-px-1.5';
