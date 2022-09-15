@@ -18,6 +18,12 @@ const BUTTON_ITEMS = [
 
 const SPAN_ITEMS = [{ label: 'Span Item 1' }, { label: 'Span Item 2' }, { label: 'Span Item 3' }];
 
+const verifyButtonItem = (value = 1) => {
+    cy.focused().should('have.attr', 'type', 'button');
+    cy.focused().realPress('Enter');
+    cy.get('@onButtonClick').should('have.been.calledWith', value);
+};
+
 describe('OverflowMenu component', () => {
     describe('With Links', () => {
         beforeEach(() => {
@@ -103,57 +109,33 @@ describe('OverflowMenu component', () => {
         it('navigates using the keyboard', () => {
             cy.get('@OverflowMenu').find('button').focus().realPress('Enter');
             cy.get(ITEM_TEST_ID).should('have.length', 3);
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 1);
+            verifyButtonItem(1);
             cy.focused().trigger('keydown', { key: 'ArrowDown' });
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 2);
+            verifyButtonItem(2);
             cy.focused().trigger('keydown', { key: 'ArrowDown' });
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 3);
+            verifyButtonItem(3);
             cy.focused().trigger('keydown', { key: 'ArrowUp' });
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 2);
+            verifyButtonItem(2);
             cy.focused().trigger('keydown', { key: 'ArrowUp' });
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 1);
+            verifyButtonItem(1);
             cy.focused().trigger('keydown', { key: 'Tab' });
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 2);
+            verifyButtonItem(2);
             cy.focused().trigger('keydown', { key: 'Tab' });
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 3);
+            verifyButtonItem(3);
             cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 2);
+            verifyButtonItem(2);
             cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 1);
+            verifyButtonItem(1);
             // Close the overflow menu and focus the three dots button and re-open it
             cy.focused().realPress(['Shift', 'Tab']);
             cy.get(ITEM_TEST_ID).should('have.length', 0);
             cy.focused().realPress('Enter');
             cy.get(ITEM_TEST_ID).should('have.length', 3);
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 1);
+            verifyButtonItem(1);
             cy.focused().trigger('keydown', { key: 'Tab' });
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 2);
+            verifyButtonItem(2);
             cy.focused().trigger('keydown', { key: 'Tab' });
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 3);
+            verifyButtonItem(3);
             // Close the overflow menu
             cy.focused().realPress('Tab');
             cy.get(ITEM_TEST_ID).should('have.length', 0);
@@ -172,17 +154,11 @@ describe('OverflowMenu component', () => {
             cy.get(COMPONENT_TEST_ID).as('OverflowMenu');
             cy.get('@OverflowMenu').find('button').focus().realPress('Enter');
             cy.get(ITEM_TEST_ID).should('have.length', 3);
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 1);
+            verifyButtonItem(1);
             cy.focused().trigger('keydown', { key: 'ArrowDown' });
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 3);
+            verifyButtonItem(3);
             cy.focused().trigger('keydown', { key: 'ArrowUp' });
-            cy.focused().should('have.attr', 'type', 'button');
-            cy.focused().realPress('Enter');
-            cy.get('@onButtonClick').should('have.been.calledWith', 1);
+            verifyButtonItem(1);
         });
     });
     describe('With Spans', () => {
