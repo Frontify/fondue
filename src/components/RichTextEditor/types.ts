@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CSSProperties, ReactElement } from 'react';
-import { ListStyles } from './TextStyleDropdown/DropdownTrigger';
+import { ListStyles, TextStyles } from './EditorActions/Plugins/TextStylePlugin/TextStyleDropdown/types';
 import { EditorActions } from './utils/actions';
-import { TextStyles } from './utils/textStyles';
 
 export type DesignTokens = Partial<Record<TextStyles, CSSProperties>>;
 

@@ -2,14 +2,11 @@
 
 import { ToolbarDropdown } from '@udecode/plate';
 import React, { useCallback, useState } from 'react';
-import { useRichTextEditorContext } from '../context/RichTextEditorContext';
-import { TextStyles, textStyleTitles } from '../utils/textStyles';
+import { useRichTextEditorContext } from '../../../../context/RichTextEditorContext';
 import { DropdownItem } from './DropdownItem';
 import { DropdownTrigger } from './DropdownTrigger';
-
-type TextStyleDropdownProps = {
-    editorId?: string;
-};
+import { textStyleTitles } from './textStyleTitles';
+import { TextStyleDropdownProps, TextStyles } from './types';
 
 export const TextStyleDropdown = ({ editorId }: TextStyleDropdownProps) => {
     const [open, setOpen] = useState(false);

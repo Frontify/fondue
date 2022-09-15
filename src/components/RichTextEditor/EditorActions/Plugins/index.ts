@@ -10,10 +10,13 @@ import { ItalicPlugin } from './ItalicPlugin';
 import { UnderlinePlugin } from './UnderlinePlugin';
 import { StrikethroughPlugin } from './StrikethroughPlugin';
 import { LinkPlugin } from './LinkPlugin';
+import { Heading1Plugin } from './TextStylePlugin/Heading1Plugin';
+import { TextStylePlugin } from './TextStylePlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
     .setPlugin([
+        [new TextStylePlugin(), new Heading1Plugin()],
         [
             new BoldPlugin(),
             new ItalicPlugin(),
@@ -23,8 +26,17 @@ defaultPlugins
             new CodePlugin(),
         ],
     ])
-    .setPlugin([[new AlignLeftPlugin(), new AlignCenterPlugin(), new AlignRightPlugin(), new AlignJustifyPlugin()]])
-    .setPlugin([[new UnorderedListPlugin(), new CheckboxListPlugin(), new OrderedListPlugin()]]);
+    .setPlugin([
+        [
+            new AlignLeftPlugin(),
+            new AlignCenterPlugin(),
+            new AlignRightPlugin(),
+            new AlignJustifyPlugin(),
+            new UnorderedListPlugin(),
+            new CheckboxListPlugin(),
+            new OrderedListPlugin(),
+        ],
+    ]);
 
 export * from './PluginComposer';
 export * from './ListPlugin';

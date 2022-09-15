@@ -35,7 +35,7 @@ import {
 import { FC, default as React, ReactElement } from 'react';
 import { ELEMENT_CHECK_ITEM } from '../../EditorActions/Plugins/CheckboxListPlugin/id';
 import { CheckboxListToolbarButton } from '../../EditorActions/Plugins/CheckboxListPlugin/CheckboxListButton/CheckboxListToolbarButton';
-import { TextStyleDropdown } from '../../TextStyleDropdown/TextStyleDropdown';
+import { TextStyleDropdown } from '../../EditorActions/Plugins/TextStylePlugin/TextStyleDropdown';
 import { ButtonGroupProps, IconStylingWrapperProps } from '../../types';
 import { EditorActions } from '../../utils/actions';
 const classNames = {
@@ -63,7 +63,7 @@ export const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId }) 
 };
 
 const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<EditorActions, ReactElement> => ({
-    [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} />,
+    [EditorActions.TEXT_STYLES]: <TextStyleDropdown editor={editor} />,
     [EditorActions.ALIGN_LEFT]: (
         <AlignToolbarButton
             value="left"

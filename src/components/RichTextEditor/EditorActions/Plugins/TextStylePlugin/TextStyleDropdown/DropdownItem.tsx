@@ -1,15 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from 'react';
 import { getPreventDefaultHandler, someNode, toggleNodeType, unwrapList, usePlateEditorState } from '@udecode/plate';
 import { merge } from '@utilities/merge';
-import React, { ReactNode } from 'react';
-import { TextStyles } from '../utils/textStyles';
-
-type DropdownItemProps = {
-    editorId?: string;
-    type: TextStyles;
-    children: ReactNode;
-};
+import { DropdownItemProps } from './types';
 
 export const DropdownItem = ({ editorId, type, children }: DropdownItemProps) => {
     const editor = usePlateEditorState(editorId);
