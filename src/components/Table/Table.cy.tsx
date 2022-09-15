@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { Button } from '@components/Button/Button';
 import { TextInput } from '@components/TextInput/TextInput';
-import React, { useEffect, useState } from 'react';
-import { Column, Row, SelectionMode, Table } from './Table';
+import React, { Key, useEffect, useState } from 'react';
+import { Column, Row, SelectionMode, SortDirection, Table } from './Table';
 
 const TABLE_COLUMNS: Column[] = [
     { name: 'User', key: 'user' },
-    { name: 'Active Sessions', key: 'activeSessions' },
+    { name: 'Active Sessions', key: 'activeSessions', sortable: true },
     { name: 'Regions', key: 'regions' },
 ];
 
@@ -71,6 +71,30 @@ const TABLE_ACTIONS_ID = '[data-test-id=table-actions]';
 const CHECKBOX_ID = '[data-test-id=checkbox]';
 const CHECKBOX_INPUT_ID = '[data-test-id=checkbox-input]';
 
+const SortableTable = () => {
+    const [sortedRows, setfilteredRows] = useState<Row[]>(TABLE_ROWS);
+    const onSortChange = (key: string, direction?: SortDirection) => {
+        const sortRows = () => {
+            const clonedRows = [...sortedRows];
+
+            clonedRows.sort((a, b) => {
+                const keyA: Key = a.cells[key].sortId;
+                const keyB: Key = b.cells[key].sortId;
+
+                if (direction === SortDirection.Descending) {
+                    return keyA < keyB ? -1 : 1;
+                } else {
+                    return keyA < keyB ? 1 : -1;
+                }
+            });
+            setfilteredRows(clonedRows);
+        };
+        sortRows();
+    };
+
+    return <Table columns={TABLE_COLUMNS} rows={sortedRows} onSortChange={onSortChange} />;
+};
+
 describe('Table Component', () => {
     it('should render read only table', () => {
         cy.mount(<Table columns={TABLE_COLUMNS} rows={TABLE_ROWS} />);
@@ -129,16 +153,13 @@ describe('Table Component', () => {
     });
 
     it.only('should sort table', () => {
-        cy.mount(<Table columns={TABLE_COLUMNS} rows={TABLE_ROWS} />);
+        cy.mount(<SortableTable />);
 
-        cy.get(TABLE_ROW_ID).first().get('td').contains('Anna');
-        cy.get(TABLE_COLUMN_ID).first().click();
-        cy.get(TABLE_ROW_ID).first().get('td').contains('Chris');
+        cy.get(TABLE_ROW_ID).first().eq(0).contains('Anna');
         cy.get(TABLE_COLUMN_ID).eq(1).click();
-        cy.get(TABLE_ROW_ID).eq(1).get('td').contains(108);
+        cy.get(TABLE_ROW_ID).first().eq(0).contains('Bobby');
         cy.get(TABLE_COLUMN_ID).eq(1).click();
-        cy.get(TABLE_ROW_ID).eq(1).get('td').contains(125);
-        cy.get(TABLE_ROW_ID).first().get('td').contains('Bobby');
+        cy.get(TABLE_ROW_ID).first().eq(0).contains('Anna');
     });
 
     it('should rerender if rows change', () => {
