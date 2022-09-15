@@ -169,7 +169,7 @@ export const EditableInput = ({
                             onKeyDown={handleKeyDown}
                             onBlur={handleBlur}
                         />
-                        <span aria-hidden="true" className="tw-px-4">
+                        <span aria-hidden="true" className="tw-px-4" style={inputStyling}>
                             {inputValue}
                         </span>
                     </div>
