@@ -52,7 +52,7 @@ describe('EditableInput', () => {
 
         cy.get('@onAdditionalValueSave').should('have.not.been.called');
         cy.get(EDITABLE_CONTAINER).click();
-        cy.get('@onAdditionalValueSave').should('have.been.calledWith', 'This InputHey');
+        cy.get('@onAdditionalValueSave').should('have.been.calledWith', 'Hey');
     });
 
     it('Event gets triggered when writing Hey in input form that nothing is sent and when clicking away that it sent an event', () => {
@@ -71,7 +71,7 @@ describe('EditableInput', () => {
         cy.get(EDITABLE_NODE).type('Hey');
         cy.get(EDITABLE_CONTAINER).click();
 
-        cy.get('@onEditableSave').should('have.been.calledWith', 'This InputHey');
+        cy.get('@onEditableSave').should('have.been.calledWith', 'Hey');
     });
 
     it('Event Triggers when hitting enter', () => {
