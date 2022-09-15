@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useMemoizedId } from '@hooks/useMemoizedId';
+import React, { FC, useCallback, useEffect } from 'react';
 import { Plate, TNode } from '@udecode/plate';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 import { debounce } from '@utilities/debounce';
-import React, { FC, useCallback, useEffect, useState } from 'react';
 import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './components/Toolbar/Toolbar';
 import { RichTextEditorContext } from './context/RichTextEditorContext';
-import { useEditorState } from './hooks/useEditorState';
+import { useEditorResize, useEditorState } from './hooks';
 import { DesignTokens, PaddingSizes } from './types';
 import { EditorActions, defaultActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
@@ -50,30 +50,14 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 }) => {
     const editorId = useMemoizedId(id);
     const { localValue } = useEditorState(editorId, clear);
+    const { editorRef, editorWidth } = useEditorResize();
 
-    const [editorWidth, setEditorWidth] = useState<number | undefined>();
     const editableProps: EditableProps = {
         placeholder,
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
         className: padding,
     };
-
-    const editorRef = useCallback((node) => {
-        if (!node) {
-            return;
-        }
-        const observer = new ResizeObserver((entries) => {
-            if (entries.length > 0) {
-                /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded"
-                    from being thrown during cypress component tests */
-                setTimeout(() => setEditorWidth(entries[0].target.clientWidth), 0);
-            }
-        });
-
-        observer.observe(node);
-        return observer;
-    }, []);
 
     useEffect(() => {
         for (const element of Object.values(TextStyles).filter(
@@ -113,7 +97,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     editableProps={editableProps}
                     plugins={editorConfig}
                 >
-                    {isNew && config.toolbar()}
+                    {isNew && config.toolbar(editorWidth)}
                     {!isNew && <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />}
                 </Plate>
             </PositioningWrapper.PlateWrapper>

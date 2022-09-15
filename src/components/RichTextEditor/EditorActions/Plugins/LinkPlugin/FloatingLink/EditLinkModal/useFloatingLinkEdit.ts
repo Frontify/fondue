@@ -20,7 +20,7 @@ import {
     usePlateSelectors,
     useVirtualFloatingLink,
 } from '@udecode/plate';
-import { getUrlFromEditor } from '../utils';
+import { getUrlFromEditor } from '../../utils';
 
 export const useFloatingLinkEdit = ({ floatingOptions, ...props }: FloatingLinkProps): HTMLPropsAs<'div'> => {
     const editor = useEditorRef();
