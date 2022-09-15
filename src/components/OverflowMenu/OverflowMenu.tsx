@@ -6,6 +6,7 @@ import { IconDotsHorizontal } from '@foundation/Icon';
 import { merge } from '@utilities/merge';
 import { OverflowMenuItem, OverflowMenuItemProps } from './OverflowMenuItem';
 import { useOverflowMenuKeyboardNavigation } from './useOverflowMenuKeyboardNavigation';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 
 export interface OverflowMenuProps {
     items: OverflowMenuItemProps[];
@@ -54,6 +55,7 @@ export const OverflowMenu = ({ items }: OverflowMenuProps) => {
                 className={merge([
                     'tw-w-6 tw-h-6 hover:tw-bg-box-neutral-strong-inverse-hover tw-rounded tw-flex tw-justify-center tw-items-center',
                     isMenuOpened ? 'tw-bg-box-neutral-strong-inverse-pressed' : 'tw-bg-box-neutral-strong-inverse',
+                    FOCUS_VISIBLE_STYLE,
                 ])}
                 type="button"
                 onClick={() => {
