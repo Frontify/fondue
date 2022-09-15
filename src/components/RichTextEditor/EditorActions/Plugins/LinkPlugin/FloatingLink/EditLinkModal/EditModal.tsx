@@ -3,8 +3,8 @@
 import React from 'react';
 import { useFloatingLinkUrlInput } from '@udecode/plate';
 import { IconPen, IconTrashBin } from '@foundation/Icon';
-import { LINK_CLASSES } from '../LinkMarkupElement/LinkMarkupElementNode';
-import { FloatingLink } from './FloatingLink';
+import { LINK_CLASSES } from '../../LinkMarkupElement/LinkMarkupElementNode';
+import { FloatingLink } from '../FloatingLink';
 
 export const EditModal = () => {
     const urlHtmlProps = useFloatingLinkUrlInput({});
