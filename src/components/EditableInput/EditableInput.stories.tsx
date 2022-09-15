@@ -36,11 +36,17 @@ export default {
     },
 };
 
-const ButtonTemplate: Story<EditableInputProps> = (args: EditableInputProps) => (
+const EditableTemplate: Story<EditableInputProps> = (args: EditableInputProps) => (
     <EditableInput {...args}>{args.children}</EditableInput>
 );
 
-export const EditableInputDefault = ButtonTemplate.bind({});
+const EditableTemplateIcon: Story<EditableInputProps> = (args: EditableInputProps) => (
+    <div className="tw-flex tw-items-center">
+        <EditableInput {...args}>{args.children}</EditableInput> <IconPen size={IconSize.Size24} />
+    </div>
+);
+
+export const EditableInputDefault = EditableTemplate.bind({});
 EditableInputDefault.args = {
     children: (
         <div>
@@ -50,7 +56,7 @@ EditableInputDefault.args = {
     options: {},
 };
 
-export const Default = ButtonTemplate.bind({});
+export const Default = EditableTemplate.bind({});
 Default.args = {
     children: (
         <div className={'tw-flex tw-flex-row tw-items-center'}>
@@ -71,31 +77,26 @@ export const ControlledInputExample: Story<EditableInputProps> = () => {
     const [label, setLabel] = useState('Im set from the outside');
 
     return (
-        <EditableInput
-            onEditableSave={(value) => setLabel(value)}
-            options={{
-                additionalValues: 'ID',
-                enableDoubleClick: true,
-                customInputTextClasses: 'tw-text-xl tw-w-fit tw-p-2',
-                customContainerClasses: 'tw-flex tw-w-fit',
-            }}
-        >
-            <div className={'tw-flex tw-flex-row tw-items-center'}>
+        <div className="tw-flex tw-items-center">
+            <EditableInput
+                onEditableSave={(value) => setLabel(value)}
+                options={{
+                    additionalValues: 'ID',
+                    enableDoubleClick: true,
+                    customInputTextClasses: 'tw-text-xl tw-w-fit tw-p-2',
+                    customContainerClasses: 'tw-flex tw-w-fit',
+                }}
+            >
                 <h1 className={'tw-text-xl tw-w-fit tw-p-2'}>{label}</h1>
-                <IconPen size={IconSize.Size24} />
-            </div>
-        </EditableInput>
+            </EditableInput>
+            <IconPen size={IconSize.Size24} />
+        </div>
     );
 };
 
-export const InitialStartInInput = ButtonTemplate.bind({});
+export const InitialStartInInput = EditableTemplateIcon.bind({});
 InitialStartInInput.args = {
-    children: (
-        <div className={'tw-flex tw-flex-row tw-items-center'}>
-            <h1 className={'tw-p-2'}>Im such a Input Mode</h1>
-            <IconPen size={IconSize.Size16} />
-        </div>
-    ),
+    children: <h1 className={'tw-p-2'}>Im such a Input Mode</h1>,
     options: {
         mode: EditableMode.INPUT,
         customInputTextClasses: 'tw-p-2',
