@@ -2,11 +2,10 @@
 
 import RejectIcon from '@foundation/Icon/Generated/IconCross';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { getColorDisplayValue } from '@utilities/colors';
 import { merge } from '@utilities/merge';
 import React, { FC, ReactNode, cloneElement } from 'react';
-import { ColorFormat } from '../../types';
-import { badgeStatusClasses, getSizeClasses, getStyleClasses, isBadgeStatus } from './helpers';
+import { BadgeStatusIcon } from './BadgeStatusIcon';
+import { getCircularSizeClasses, getSizeClasses, getStyleClasses } from './helpers';
 import { BadgeEmphasis, BadgeProps, BadgeStyle } from './types';
 
 export const Badge: FC<BadgeProps> = ({
@@ -14,7 +13,7 @@ export const Badge: FC<BadgeProps> = ({
     status,
     icon,
     style = BadgeStyle.Primary,
-    size = 'm',
+    size = 'medium',
     emphasis = BadgeEmphasis.None,
     disabled = false,
     onClick,
@@ -40,6 +39,7 @@ export const Badge: FC<BadgeProps> = ({
     };
 
     const badgeTitle = getNodeText(children);
+    const isCircular = !children && !onDismiss && Boolean(status || icon);
 
     return (
         <Container
@@ -50,31 +50,12 @@ export const Badge: FC<BadgeProps> = ({
                     ? 'tw-bg-box-disabled tw-text-box-disabled-inverse'
                     : getStyleClasses(style, !!onClick, emphasis === BadgeEmphasis.Strong),
                 onClick && !disabled ? 'hover:tw-cursor-pointer' : 'tw-cursor-default',
-                getSizeClasses(children, Boolean(status || icon), size === 's'),
+                isCircular ? getCircularSizeClasses(size) : getSizeClasses(children, status, icon, size),
             ])}
             data-test-id="badge"
             title={badgeTitle}
         >
-            {status && (
-                <span
-                    data-test-id="badge-status"
-                    className={merge([
-                        'tw-w-2 tw-h-2 tw-rounded-full tw-flex-none',
-                        disabled && 'tw-opacity-30',
-                        isBadgeStatus(status) && badgeStatusClasses[status],
-                    ])}
-                    style={
-                        isBadgeStatus(status)
-                            ? {}
-                            : {
-                                  backgroundColor:
-                                      typeof status === 'string'
-                                          ? status
-                                          : getColorDisplayValue(status, ColorFormat.Rgba, true),
-                              }
-                    }
-                />
-            )}
+            {status && <BadgeStatusIcon status={status} disabled={disabled} />}
             {icon && (
                 <span
                     data-test-id="badge-icon"
@@ -83,12 +64,16 @@ export const Badge: FC<BadgeProps> = ({
                     {cloneElement(icon, { size: IconSize.Size16 })}
                 </span>
             )}
-            <span className="tw-text-center tw-text-xxs tw-font-sans tw-font-normal tw-truncate">{children}</span>
+            {children && (
+                <span className="tw-text-center tw-text-xxs tw-font-sans tw-font-normal tw-truncate tw-px-0.5">
+                    {children}
+                </span>
+            )}
             {onDismiss && (
                 <button
                     type="button"
                     data-test-id="badge-dismiss"
-                    className="tw--mr-0.5"
+                    className="tw--mx-0.5"
                     onClick={(event) => {
                         event.stopPropagation();
                         onDismiss();
