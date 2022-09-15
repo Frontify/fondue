@@ -7,7 +7,7 @@ import { PluginComposer } from './Plugins/PluginComposer';
 import { Toolbar } from './Toolbar';
 
 export const GeneratePlugins = (editorId: string, pluginComposer?: PluginComposer): GeneratePluginsReturn | null => {
-    const editor = usePlateEditorRef(editorId);
+    const editor = usePlateEditorRef(editorId)!;
 
     if (!pluginComposer) {
         return null;
@@ -20,13 +20,6 @@ export const GeneratePlugins = (editorId: string, pluginComposer?: PluginCompose
             }),
         toolbar: (editorWidth: number | undefined) => (
             <Toolbar editorWidth={editorWidth} buttons={pluginComposer.buttons} editor={editor} />
-        ),
-        mentions: () => (
-            <>
-                {pluginComposer.inline.map((Inline, index) => (
-                    <Inline key={index} />
-                ))}
-            </>
         ),
     };
 };

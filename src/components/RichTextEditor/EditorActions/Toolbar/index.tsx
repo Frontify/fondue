@@ -5,12 +5,11 @@ import React from 'react';
 import { useRichTextEditorContext } from '../../context/RichTextEditorContext';
 import { ButtonGroupWrapper } from '../Plugins/helper';
 import { Buttons } from '../Plugins/types';
-import { UnknownObject } from '../types';
-import { getButtonGroupsPerRow, getButtonGroupWidths } from './utils';
+import { getButtonGroupWidths, getButtonGroupsPerRow } from './utils';
 
 type ToolbarProps = {
     buttons: Buttons;
-    editor: PlateEditor<UnknownObject>;
+    editor: PlateEditor;
     editorWidth?: number;
 };
 
