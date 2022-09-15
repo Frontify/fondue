@@ -10,7 +10,7 @@ export const UnorderedListButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <ListToolbarButton
             type={getPluginType(editor, id)}
-            icon={<IconStylingWrapper icon={<IconListBullet size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconListBullet size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
         />

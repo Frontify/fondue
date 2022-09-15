@@ -8,10 +8,8 @@ import {
     createComponentAs,
     createElementAs,
 } from '@udecode/plate';
-import { EditModal } from './EditModal';
-import { InsertModal } from './InsertModal';
-import { useFloatingLinkEdit } from './useFloatingLinkEdit';
-import { useFloatingLinkInsert } from './useFloatingLinkInsert';
+import { EditModal, useFloatingLinkEdit } from './EditLinkModal';
+import { InsertModal, useFloatingLinkInsert } from './InsertLinkModal';
 
 const FloatingLinkInsertRoot = createComponentAs<FloatingLinkProps>((props) => {
     const htmlProps = useFloatingLinkInsert(props);
@@ -23,7 +21,7 @@ const FloatingLinkInsertRoot = createComponentAs<FloatingLinkProps>((props) => {
     return createElementAs('div', htmlProps);
 });
 
-export const FloatingLinkEditRoot = createComponentAs<FloatingLinkProps>((props) => {
+const FloatingLinkEditRoot = createComponentAs<FloatingLinkProps>((props) => {
     const htmlProps = useFloatingLinkEdit(props);
 
     if (htmlProps.style?.display === 'none') {

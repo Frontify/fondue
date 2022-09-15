@@ -5,10 +5,9 @@ import { createPlateUI, createPlugins, usePlateEditorRef } from '@udecode/plate'
 import { GeneratePluginsReturn } from './types';
 import { PluginComposer } from './Plugins/PluginComposer';
 import { Toolbar } from './Toolbar';
-import { ButtonGroupWrapper } from './Plugins/helper';
 
 export const GeneratePlugins = (editorId: string, pluginComposer?: PluginComposer): GeneratePluginsReturn | null => {
-    const editor = usePlateEditorRef(editorId);
+    const editor = usePlateEditorRef(editorId)!;
 
     if (!pluginComposer) {
         return null;
@@ -19,18 +18,8 @@ export const GeneratePlugins = (editorId: string, pluginComposer?: PluginCompose
             createPlugins(pluginComposer.plugins, {
                 components: createPlateUI(pluginComposer.elements),
             }),
-        toolbar: () => (
-            <Toolbar>
-                {pluginComposer.buttons.map((group, index) => {
-                    return (
-                        <ButtonGroupWrapper index={index} key={index}>
-                            {group.map((ToolbarButton, idx) => (
-                                <ToolbarButton.button editor={editor} id={ToolbarButton.id} key={idx.toString()} />
-                            ))}
-                        </ButtonGroupWrapper>
-                    );
-                })}
-            </Toolbar>
+        toolbar: (editorWidth: number | undefined) => (
+            <Toolbar editorWidth={editorWidth} buttons={pluginComposer.buttons} editor={editor} />
         ),
         mentions: () => (
             <>

@@ -10,7 +10,7 @@ export const ItalicButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <MarkToolbarButton
             type={getPluginType(editor, id)}
-            icon={<IconStylingWrapper icon={<IconTextFormatItalic size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconTextFormatItalic size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
         />

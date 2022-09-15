@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { LINK_CLASSES } from '@components/RichTextEditor/components';
-import { IconPen, IconTrashBin } from '@foundation/Icon';
-import { useFloatingLinkUrlInput } from '@udecode/plate';
 import React from 'react';
-import { FloatingLink } from './FloatingLink';
+import { useFloatingLinkUrlInput } from '@udecode/plate';
+import { IconPen, IconTrashBin } from '@foundation/Icon';
+import { LINK_CLASSES } from '../../LinkMarkupElement/LinkMarkupElementNode';
+import { FloatingLink } from '../FloatingLink';
 
 export const EditModal = () => {
     const urlHtmlProps = useFloatingLinkUrlInput({});

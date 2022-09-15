@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useFloatingLinkSelectors } from '@udecode/plate';
 import React from 'react';
+import { useFloatingLinkSelectors } from '@udecode/plate';
 import { FloatingLink } from './FloatingLink';
 
 export const CustomFloatingLink = () => {

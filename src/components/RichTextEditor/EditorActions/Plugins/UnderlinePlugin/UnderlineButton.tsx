@@ -10,7 +10,7 @@ export const UnderlineButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <MarkToolbarButton
             type={getPluginType(editor, id)}
-            icon={<IconStylingWrapper icon={<IconTextFormatUnderline size={IconSize.Size24} />} />}
+            icon={<IconStylingWrapper icon={<IconTextFormatUnderline size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
         />
