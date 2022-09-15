@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { floatingLinkActions, floatingLinkSelectors } from '@udecode/plate';
 import { IconCheckMark } from '@foundation/Icon';
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
-import { Checkbox, CheckboxState } from '@components/Checkbox';
+import { Checkbox } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
 import { useInsertModal } from './useInsertModal';
 
 export const InsertModal = () => {
-    const { isValidUrlOrEmpty, setValue, hasValues, submit } = useInsertModal();
+    const { state, onTextChange, onUrlChange, onToggleTab, onCancel, onSave, isValidUrlOrEmpty, hasValues } =
+        useInsertModal();
 
     return (
         <div data-test-id="floating-link-insert" className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
@@ -21,15 +21,7 @@ export const InsertModal = () => {
                     required: true,
                 }}
             >
-                <TextInput
-                    id="linkText"
-                    value={floatingLinkSelectors.text()}
-                    placeholder="Link Text"
-                    onChange={(val) => {
-                        setValue(val);
-                        floatingLinkActions.text(val);
-                    }}
-                />
+                <TextInput id="linkText" value={state.text} placeholder="Link Text" onChange={onTextChange} />
             </FormControl>
             <div className="tw-pt-5">
                 <FormControl
@@ -39,47 +31,24 @@ export const InsertModal = () => {
                         required: true,
                     }}
                 >
-                    <TextInput
-                        id="url"
-                        value={floatingLinkSelectors.url()}
-                        placeholder="https://example.com"
-                        onChange={(val) => {
-                            console.log('test');
-                            setValue(val);
-                            floatingLinkActions.url(val);
-                        }}
-                    />
+                    <TextInput id="url" value={state.url} placeholder="https://example.com" onChange={onUrlChange} />
                 </FormControl>
                 {!isValidUrlOrEmpty() && <div className="tw-text-red-65 tw-mt-3">Please enter a valid URL.</div>}
             </div>
             <div className="tw-pt-5">
-                <Checkbox
-                    value="new-tab"
-                    label="Open in new tab"
-                    state={floatingLinkSelectors.newTab() ? CheckboxState.Checked : CheckboxState.Unchecked}
-                    onChange={(val: boolean) => {
-                        setValue(val as unknown as string);
-                        floatingLinkActions.newTab(val);
-                    }}
-                />
+                <Checkbox value="new-tab" label="Open in new tab" state={state.newTab} onChange={onToggleTab} />
             </div>
             <div className="tw-mt-3">
                 <div className={'tw-pt-5 tw-flex tw-gap-x-3 tw-justify-end tw-border-t tw-border-t-black-10'}>
-                    <Button
-                        onClick={() => {
-                            floatingLinkActions.hide();
-                        }}
-                        size={ButtonSize.Medium}
-                        style={ButtonStyle.Secondary}
-                    >
+                    <Button onClick={onCancel} size={ButtonSize.Medium} style={ButtonStyle.Secondary}>
                         Cancel
                     </Button>
                     <Button
-                        onClick={(e) => submit(e)}
+                        onClick={onSave}
                         size={ButtonSize.Medium}
                         style={ButtonStyle.Primary}
                         icon={<IconCheckMark />}
-                        disabled={!isValidUrlOrEmpty() || !hasValues()}
+                        disabled={!isValidUrlOrEmpty() || !hasValues}
                     >
                         Save
                     </Button>
