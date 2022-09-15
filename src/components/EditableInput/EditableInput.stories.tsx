@@ -55,11 +55,7 @@ const EditableTemplateIcon: Story<EditableInputProps> = (args: EditableInputProp
 
 export const EditableInputDefault = EditableTemplate.bind({});
 EditableInputDefault.args = {
-    children: (
-        <div>
-            <p>Change me</p>
-        </div>
-    ),
+    children: <p>Change me</p>,
     options: {},
 };
 
@@ -90,11 +86,9 @@ export const ControlledInputExample: Story<EditableInputProps> = () => {
                 options={{
                     additionalValues: 'ID',
                     enableDoubleClick: true,
-                    customInputTextClasses: 'tw-text-xl tw-w-fit tw-p-2',
-                    customContainerClasses: 'tw-flex tw-w-fit',
                 }}
             >
-                <h1 className={'tw-text-xl tw-w-fit tw-p-2'}>{label}</h1>
+                <h1 className={'tw-text-xl'}>{label}</h1>
             </EditableInput>
             <IconPen size={IconSize.Size24} />
         </div>
