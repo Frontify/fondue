@@ -4,18 +4,25 @@ import React, {
     FocusEventHandler,
     KeyboardEvent,
     KeyboardEventHandler,
-    PropsWithChildren,
+    ReactElement,
     useEffect,
     useRef,
     useState,
 } from 'react';
 import { EditableInputHelper } from '@components/EditableInput/lib/helper';
-import { DEFAULT_CONTAINER_CLASS, DEFAULT_INPUT_TEXT_CLASS } from '@components/EditableInput/constant';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
 
 export enum EditableMode {
     INPUT = 'INPUT',
     LABEL = 'LABEL',
+}
+
+interface InputStyling {
+    fontSize: string;
+    lineHeight: string;
+    letterSpacing: string;
+    minWidth: string;
 }
 
 /**
@@ -41,16 +48,17 @@ interface EditableOptionProps {
  * onModeChange callback when state changes
  * options to specify styling and additional behaviours
  */
-export type EditableInputProps = PropsWithChildren<{
+export interface EditableInputProps {
+    children?: ReactElement;
     onAdditionalValueSave?: (additionalValue: string, value: string) => void;
     onEditableSave?: (value: string) => void;
     onModeChange?: (editableState?: EditableMode) => void;
     options?: EditableOptionProps;
-}>;
+}
 
 /**
  * Component to switch between Label and Input state. Wraps the Children
- * with a Button, to allow for accessibility
+ * with a Button, to allow for accessibility and copies styles to input field
  *
  * Events:
  * - onEditableSave         // When changing from input to label state
@@ -78,6 +86,7 @@ export const EditableInput = ({
     // use text strings from children in the input field
     const [inputValue, setInputValue] = useState(childrenLabel);
     const [editableState, setEditableState] = useState<EditableMode>(EditableMode.LABEL);
+    const [inputStyling, setInputStyling] = useState<InputStyling>();
 
     const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -116,15 +125,27 @@ export const EditableInput = ({
           }
         : {
               onClick: handleSwitchToInput(childrenLabel),
-              onKeyPress: (event: KeyboardEvent) => event.key === 'Enter' && handleSwitchToInput(childrenLabel)(),
           };
 
-    // If the Input is visible focus into it
+    // Update Input Style and select input field if visible
     useEffect(() => {
+        if (childRef.current) {
+            setInputStyling(EditableInputHelper.copyStyles(childRef.current));
+        }
+
         if (editableState === EditableMode.INPUT) {
-            inputRef.current?.focus();
+            inputRef.current?.select();
         }
     }, [editableState, inputRef]);
+
+    const childRef = useRef();
+
+    // Clone Child and add ref to Children
+    const ChildrenWithRef =
+        children &&
+        React.cloneElement(children, {
+            ref: childRef,
+        });
 
     return (
         <div data-test-id="editable-node-container">
@@ -132,29 +153,39 @@ export const EditableInput = ({
                 <div className="tw-flex tw-items-center">
                     <div
                         data-test-id="editable-input"
-                        className={options?.customContainerClasses ?? DEFAULT_CONTAINER_CLASS}
+                        className={merge(['tw-relative', options?.customContainerClasses])}
                     >
                         <input
                             ref={inputRef}
                             type="text"
-                            className={options?.customInputTextClasses ?? DEFAULT_INPUT_TEXT_CLASS}
+                            className={merge([
+                                'tw-absolute tw-w-full',
+                                FOCUS_VISIBLE_STYLE,
+                                options?.customInputTextClasses,
+                            ])}
+                            style={inputStyling}
                             value={inputValue}
                             onChange={handleInputChange}
                             onKeyDown={handleKeyDown}
                             onBlur={handleBlur}
                         />
+                        <span aria-hidden="true" className="tw-px-4">
+                            {inputValue}
+                        </span>
                     </div>
                 </div>
             ) : (
-                <button
-                    className={FOCUS_VISIBLE_STYLE}
-                    {...clickBehaviour}
-                    data-test-id={'node-link-name'}
-                    aria-pressed="false"
-                >
-                    {children}
-                </button>
+                <></>
             )}
+            <button
+                style={{ display: editableState === EditableMode.INPUT ? 'none' : 'block' }}
+                className={FOCUS_VISIBLE_STYLE}
+                {...clickBehaviour}
+                data-test-id={'node-link-name'}
+                aria-pressed="false"
+            >
+                {ChildrenWithRef}
+            </button>
         </div>
     );
 };
