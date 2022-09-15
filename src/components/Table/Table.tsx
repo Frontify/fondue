@@ -65,24 +65,29 @@ type SortType = {
 
 /* react-aria hook props types are inexplicitly typed */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapToTableAriaProps = (columns: Column[], rows: Row[]): TableStateProps<any> => ({
-    children: [
-        <TableHeader key="table-header" columns={columns}>
-            {(column) => <AriaColumn allowsSorting={column.sortable}>{column.name}</AriaColumn>}
-        </TableHeader>,
-        <TableBody key="table-body" items={rows}>
-            {(item) => (
-                <AriaRow>
-                    {(columnKey) => (
-                        <AriaCell key={`${item.key}-${columnKey}`} aria-label={item.cells[columnKey].ariaLabel}>
-                            {item.cells[columnKey].value}
-                        </AriaCell>
-                    )}
-                </AriaRow>
-            )}
-        </TableBody>,
-    ],
-});
+const mapToTableAriaProps = (columns: Column[], rows: Row[], hasSort = false): TableStateProps<any> => {
+    return {
+        children: [
+            <TableHeader key="table-header" columns={columns}>
+                {(column) => {
+                    const allowsSorting = !!(column.sortable && hasSort);
+                    return <AriaColumn allowsSorting={allowsSorting}>{column.name}</AriaColumn>;
+                }}
+            </TableHeader>,
+            <TableBody key="table-body" items={rows}>
+                {(item) => (
+                    <AriaRow>
+                        {(columnKey) => (
+                            <AriaCell key={`${item.key}-${columnKey}`} aria-label={item.cells[columnKey].ariaLabel}>
+                                {item.cells[columnKey].value}
+                            </AriaCell>
+                        )}
+                    </AriaRow>
+                )}
+            </TableBody>,
+        ],
+    };
+};
 
 const getRowFromId = (rows: Row[], id: Key) => rows.find(({ key }) => key === id) || null;
 
@@ -115,7 +120,7 @@ export const Table = ({
 
     const rowIds = getAllRowIds(rows);
     const ref = useRef<HTMLTableElement | null>(null);
-    const props = mapToTableAriaProps(columns, rows);
+    const props = mapToTableAriaProps(columns, rows, !!onSort);
     const state = useTableState({
         ...props,
         selectionMode,
