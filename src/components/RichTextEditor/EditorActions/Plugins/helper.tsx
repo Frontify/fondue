@@ -4,17 +4,17 @@ import React, { ReactNode } from 'react';
 import { ButtonGroupProps, IconStylingWrapperProps } from './types';
 
 export const IconStylingWrapper = ({ icon }: IconStylingWrapperProps) => (
-    <span className="tw-p-2 tw-h-12 tw-justify-center tw-items-center tw-flex">{icon}</span>
+    <span className="tw-p-2 tw-h-8 tw-justify-center tw-items-center tw-flex">{icon}</span>
 );
 
 export const buttonClassNames = {
     root: 'tw-text-text-weak tw-ml-0.5 hover:tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded',
     active: 'tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse',
 };
-export const buttonStyles = { root: { width: '32px', height: '32px' } };
+export const buttonStyles = { root: { width: '24px', height: '24px' } };
 
 export const ButtonGroupWrapper = ({ index, children }: ButtonGroupProps) => (
-    <div data-test-id={`toolbar-group-${index}`} className="tw-flex tw-items-center tw-h-12 tw-p-2">
+    <div data-test-id={`toolbar-group-${index}`} className="tw-flex tw-items-center tw-h-9 tw-p-2">
         {children}
     </div>
 );

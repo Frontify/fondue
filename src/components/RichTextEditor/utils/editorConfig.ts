@@ -32,12 +32,13 @@ import {
     CodeMark,
     Custom1Element,
     Custom2Element,
+    Custom3Element,
     Heading1Element,
     Heading2Element,
     Heading3Element,
     Heading4Element,
     ItalicMark,
-    LinkElement,
+    LinkMarkupElementNode,
     ListItemContentElement,
     ListItemElement,
     OrderedListElement,
@@ -45,11 +46,10 @@ import {
     UnderlineMark,
     UnorderedListElement,
 } from '../components';
-import { Custom3Element } from '../components/custom3';
 import { createCheckboxListPlugin } from '../EditorActions/Plugins/CheckboxListPlugin/index';
 import { ELEMENT_CHECK_ITEM } from '../EditorActions/Plugins/CheckboxListPlugin/id';
 import { CheckboxListElementNode } from '../EditorActions/Plugins/CheckboxListPlugin/CheckboxListElement';
-import { createLinkPlugin } from '../plugins/linkPlugin/createLinkPlugin';
+import { createLinkPlugin } from '../EditorActions/Plugins/LinkPlugin';
 import { TextStyles } from './textStyles';
 
 export const getEditorConfig = () => {
@@ -109,7 +109,7 @@ export const getEditorConfig = () => {
 
     const components = createPlateUI({
         // this will override the components over the default ones
-        [ELEMENT_LINK]: LinkElement,
+        [ELEMENT_LINK]: LinkMarkupElementNode,
         [ELEMENT_UL]: UnorderedListElement,
         [ELEMENT_OL]: OrderedListElement,
         [ELEMENT_LI]: ListItemElement,
