@@ -40,6 +40,11 @@ export interface TreeNodeItem extends TreeFlatListItem {
     nodes?: DraggableItem<TreeNodeItem>[];
 }
 
+const DEFAULT_CONTAINER_CLASS =
+    'tw-flex tw-items-center tw-flex tw-items-center tw-h-6 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-base';
+const DEFAULT_INPUT_TEXT_CLASS =
+    'focus-visible:tw-ring-0 tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-base tw-hide-input-arrows tw-text-text tw-placeholder-text';
+
 type NodeProps = {
     node: DraggableItem<TreeNodeItem>;
     strong?: boolean;
@@ -172,7 +177,12 @@ export const Node = ({
                             {editable && onEditableSave ? (
                                 <>
                                     <EditableInput
-                                        options={{ additionalValues: node.id, enableDoubleClick: true }}
+                                        options={{
+                                            additionalValues: node.id,
+                                            enableDoubleClick: true,
+                                            customContainerClasses: DEFAULT_CONTAINER_CLASS,
+                                            customInputTextClasses: DEFAULT_INPUT_TEXT_CLASS,
+                                        }}
                                         onAdditionalValueSave={onEditableSave}
                                     >
                                         <div className="tw-flex">{name}</div>
