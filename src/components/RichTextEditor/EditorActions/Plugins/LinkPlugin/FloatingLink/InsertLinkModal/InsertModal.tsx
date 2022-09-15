@@ -1,71 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from 'react';
-import {
-    ELEMENT_LINK,
-    LinkPlugin,
-    floatingLinkActions,
-    floatingLinkSelectors,
-    getPluginOptions,
-    submitFloatingLink,
-    useEditorRef,
-    useHotkeys,
-} from '@udecode/plate';
+import React from 'react';
+import { floatingLinkActions, floatingLinkSelectors } from '@udecode/plate';
 import { IconCheckMark } from '@foundation/Icon';
 import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
 import { Checkbox, CheckboxState } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
-import { getLegacyUrl, getUrl } from '../utils';
-
-const useInsertModal = () => {
-    const [, setValue] = useState<string>();
-
-    const editor = useEditorRef();
-
-    useEffect(() => {
-        const legacyUrl = getLegacyUrl(editor);
-        const url = getUrl(editor);
-        if (url === '' && legacyUrl) {
-            floatingLinkActions.url(legacyUrl);
-            setValue(legacyUrl);
-        }
-    }, []);
-
-    const isValidUrlOrEmpty = () => {
-        const { isUrl } = getPluginOptions<LinkPlugin>(editor, ELEMENT_LINK);
-        return !floatingLinkSelectors.url() || (isUrl && isUrl(floatingLinkSelectors.url()));
-    };
-
-    const hasValues = () => floatingLinkSelectors.url() !== '' && floatingLinkSelectors.text() !== '';
-
-    const submit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent | undefined) => {
-        if (!isValidUrlOrEmpty() || !hasValues()) {
-            return;
-        }
-        if (submitFloatingLink(editor)) {
-            e?.preventDefault();
-        }
-    };
-
-    useHotkeys(
-        'enter',
-        (e) => {
-            submit(e);
-        },
-        {
-            enableOnTags: ['INPUT'],
-        },
-        [],
-    );
-
-    return {
-        isValidUrlOrEmpty,
-        setValue,
-        hasValues,
-        submit,
-    };
-};
+import { useInsertModal } from './useInsertModal';
 
 export const InsertModal = () => {
     const { isValidUrlOrEmpty, setValue, hasValues, submit } = useInsertModal();
@@ -102,6 +44,7 @@ export const InsertModal = () => {
                         value={floatingLinkSelectors.url()}
                         placeholder="https://example.com"
                         onChange={(val) => {
+                            console.log('test');
                             setValue(val);
                             floatingLinkActions.url(val);
                         }}
