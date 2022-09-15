@@ -40,11 +40,18 @@ const EditableTemplate: Story<EditableInputProps> = (args: EditableInputProps) =
     <EditableInput {...args}>{args.children}</EditableInput>
 );
 
-const EditableTemplateIcon: Story<EditableInputProps> = (args: EditableInputProps) => (
-    <div className="tw-flex tw-items-center">
-        <EditableInput {...args}>{args.children}</EditableInput> <IconPen size={IconSize.Size24} />
-    </div>
-);
+const EditableTemplateIcon: Story<EditableInputProps> = (args: EditableInputProps) => {
+    const [label, setLabel] = useState('Im set from the outside');
+
+    return (
+        <div className="tw-flex tw-items-center">
+            <EditableInput {...args} onEditableSave={(value) => setLabel(value)}>
+                <h1>{label}</h1>
+            </EditableInput>{' '}
+            <IconPen size={IconSize.Size24} />
+        </div>
+    );
+};
 
 export const EditableInputDefault = EditableTemplate.bind({});
 EditableInputDefault.args = {
@@ -94,12 +101,9 @@ export const ControlledInputExample: Story<EditableInputProps> = () => {
     );
 };
 
-export const InitialStartInInput = EditableTemplateIcon.bind({});
-InitialStartInInput.args = {
-    children: <h1 className={'tw-p-2'}>Im such a Input Mode</h1>,
+export const ControllelInitialInput = EditableTemplateIcon.bind({});
+ControllelInitialInput.args = {
     options: {
         mode: EditableMode.INPUT,
-        customInputTextClasses: 'tw-p-2',
-        customContainerClasses: 'tw-flex',
     },
 };
