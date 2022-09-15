@@ -4,16 +4,16 @@ import { ReactNode } from 'react';
 import { PlateEditor } from '@udecode/plate';
 
 export type TextStyleDropdownProps = {
-    editor: PlateEditor;
+    editorId?: string;
 };
 
 export type DropdownTriggerProps = {
-    editorId?: string;
+    editor: PlateEditor;
     open: boolean;
 };
 
 export type DropdownItemProps = {
-    editorId?: string;
+    editor: PlateEditor;
     type: TextStyles;
     children: ReactNode;
 };

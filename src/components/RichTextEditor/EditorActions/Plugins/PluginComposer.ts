@@ -60,7 +60,6 @@ export class PluginComposer {
     }
 
     private generateGroupOfButtons(groupOfPlugins: Plugin[]) {
-        console.log('groupOfPlugins', groupOfPlugins);
         const groupOfButtons: Button[] = [];
 
         for (const { markupElement, button, id } of groupOfPlugins) {
@@ -93,7 +92,6 @@ export class PluginComposer {
     }
 
     get buttons(): Buttons {
-        console.log('this.toolbarButtons', this.toolbarButtons);
         return this.toolbarButtons;
     }
 }

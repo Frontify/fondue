@@ -63,7 +63,7 @@ export const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId }) 
 };
 
 const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<EditorActions, ReactElement> => ({
-    [EditorActions.TEXT_STYLES]: <TextStyleDropdown editor={editor} />,
+    [EditorActions.TEXT_STYLES]: <TextStyleDropdown editorId={editorId} />,
     [EditorActions.ALIGN_LEFT]: (
         <AlignToolbarButton
             value="left"

@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { getPreventDefaultHandler, someNode, toggleNodeType, unwrapList, usePlateEditorState } from '@udecode/plate';
+import { getPreventDefaultHandler, someNode, toggleNodeType, unwrapList } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import { DropdownItemProps } from './types';
 
-export const DropdownItem = ({ editorId, type, children }: DropdownItemProps) => {
-    const editor = usePlateEditorState(editorId);
+export const DropdownItem = ({ editor, type, children }: DropdownItemProps) => {
     const isActive = !!editor?.selection && someNode(editor, { match: { type } });
     return (
         <button

@@ -19,7 +19,7 @@ export const GeneratePlugins = (editorId: string, pluginComposer?: PluginCompose
                 components: createPlateUI(pluginComposer.elements),
             }),
         toolbar: (editorWidth: number | undefined) => (
-            <Toolbar editorWidth={editorWidth} buttons={pluginComposer.buttons} editor={editor} />
+            <Toolbar editorWidth={editorWidth} buttons={pluginComposer.buttons} editor={editor} editorId={editorId} />
         ),
     };
 };

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { getPreventDefaultHandler, usePlateEditorState } from '@udecode/plate';
+import { getPreventDefaultHandler } from '@udecode/plate';
 import { IconCaretDown, IconSize } from '@foundation/Icon';
 import { merge } from '@utilities/merge';
 import { DropdownTriggerProps } from './types';
@@ -9,8 +9,7 @@ import { useSelectedTextStyles } from './useSelectedTextStyles';
 import { DEFAULT_TEXT_STYLE_VALUE, TEXT_STYLE_TITLES } from './textStyleTitles';
 
 export const DropdownTrigger = ({ editor, open }: DropdownTriggerProps) => {
-    const editor = usePlateEditorState(editorId);
-    const selectedTextStyles = useSelectedTextStyles(editorId);
+    const selectedTextStyles = useSelectedTextStyles(editor);
 
     const label = selectedTextStyles.length === 1 ? TEXT_STYLE_TITLES[selectedTextStyles[0]] : DEFAULT_TEXT_STYLE_VALUE;
 

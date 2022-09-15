@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TElement, getNodeEntries, isElement, isType, usePlateEditorState } from '@udecode/plate';
+import { PlateEditor, TElement, getNodeEntries, isElement, isType } from '@udecode/plate';
 import { TEXT_STYLE_ID } from './textStyleTitles';
 import { AvailableTextStyles } from './types';
 
-export const useSelectedTextStyles = (editorId?: string): AvailableTextStyles[] => {
-    const editor = usePlateEditorState(editorId);
+export const useSelectedTextStyles = (editor: PlateEditor): AvailableTextStyles[] => {
     if (!editor || !editor.selection) {
         return [];
     }
