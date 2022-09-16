@@ -5,3 +5,6 @@ export * from './Heading1Plugin';
 export * from './Heading2Plugin';
 export * from './Heading3Plugin';
 export * from './Heading4Plugin';
+export * from './Custom1Plugin';
+export * from './Custom2Plugin';
+export * from './Custom3Plugin';

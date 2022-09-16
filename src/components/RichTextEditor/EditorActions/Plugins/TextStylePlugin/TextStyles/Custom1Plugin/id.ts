@@ -2,4 +2,4 @@
 
 import { TextStyles } from '../';
 
-export const ELEMENT_HEADING4 = TextStyles.ELEMENT_HEADING4;
+export const ELEMENT_CUSTOM1 = TextStyles.ELEMENT_CUSTOM1;
