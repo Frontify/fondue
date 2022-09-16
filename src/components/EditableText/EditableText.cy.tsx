@@ -1,29 +1,28 @@
 import React from 'react';
-import { EditableInput, EditableMode } from '@components/EditableInput/EditableInput';
+import { EditableMode, EditableText } from '@components/EditableText/EditableText';
 
 const EDITABLE_CONTAINER = '[data-test-id=editable-node-container]';
 const EDITABLE_LINK_NAME = '[data-test-id=node-link-name]';
 const EDITABLE_NODE = '[data-test-id=editable-input]';
 
-describe('EditableInput', () => {
+describe('EditableText', () => {
     beforeEach('Setup component', () => {
         const onAdditionalValueSave = cy.spy().as('onAdditionalValueSave');
         const onEditableSave = cy.spy().as('onEditableSave');
         const onModeChange = cy.spy().as('onModeChange');
         cy.mount(
-            <EditableInput
+            <EditableText
                 options={{
                     additionalValues: 'id',
                     enableDoubleClick: true,
-                    customInputTextClasses: 'tw-text-2xl',
-                    customContainerClasses: 'tw-flex',
+                    isSlimInputField: true,
                 }}
                 onAdditionalValueSave={(one: string, two: string) => onAdditionalValueSave(two)}
                 onModeChange={(editableState?: EditableMode) => onModeChange(editableState)}
                 onEditableSave={(value: string) => onEditableSave(value)}
             >
                 <div>This Input</div>
-            </EditableInput>,
+            </EditableText>,
         );
     });
     it('renders without error', () => {
@@ -35,14 +34,6 @@ describe('EditableInput', () => {
         cy.get(EDITABLE_LINK_NAME).dblclick();
 
         cy.get(EDITABLE_NODE).should('exist');
-    });
-
-    it('Custom classes exist on the component', () => {
-        cy.get(EDITABLE_LINK_NAME).should('exist');
-        cy.get(EDITABLE_LINK_NAME).dblclick();
-
-        cy.get('.tw-text-2xl').should('exist');
-        cy.get('.tw-flex').should('exist');
     });
 
     it('onMode Change Event triggers when changing state', () => {

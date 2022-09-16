@@ -6,7 +6,7 @@ import { useDrag } from 'react-dnd';
 import { DropZone, OnDropCallback } from '@components/DropZone';
 import { TreeFlatListItem } from '@components/Tree';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
-import { EditableInput } from '../EditableInput';
+import { EditableText } from '../EditableText';
 
 export type RenderNodeArrayData = Omit<NodeProps, 'isFirst' | 'strong' | 'node'> & {
     nodes: DraggableItem<TreeNodeItem>[];
@@ -39,11 +39,6 @@ export const renderNodeArray = ({
 export interface TreeNodeItem extends TreeFlatListItem {
     nodes?: DraggableItem<TreeNodeItem>[];
 }
-
-const DEFAULT_CONTAINER_CLASS =
-    'tw-flex tw-items-center tw-flex tw-items-center tw-h-6 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-base';
-const DEFAULT_INPUT_TEXT_CLASS =
-    'focus-visible:tw-ring-0 tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-base tw-hide-input-arrows tw-text-text tw-placeholder-text';
 
 type NodeProps = {
     node: DraggableItem<TreeNodeItem>;
@@ -176,17 +171,16 @@ export const Node = ({
                             {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
                                 <>
-                                    <EditableInput
+                                    <EditableText
                                         options={{
                                             additionalValues: node.id,
                                             enableDoubleClick: true,
-                                            customContainerClasses: DEFAULT_CONTAINER_CLASS,
-                                            customInputTextClasses: DEFAULT_INPUT_TEXT_CLASS,
+                                            isSlimInputField: true,
                                         }}
                                         onAdditionalValueSave={onEditableSave}
                                     >
                                         <div className="tw-flex">{name}</div>
-                                    </EditableInput>
+                                    </EditableText>
                                     {badge && insertBadge()}
                                 </>
                             ) : (

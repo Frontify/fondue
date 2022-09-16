@@ -1,5 +1,5 @@
 import React from 'react';
-import { EditableInputHelper } from '@components/EditableInput/lib/helper';
+import { EditableTextHelper } from '@components/EditableText/lib/helper';
 import { IconPen } from '@foundation/Icon';
 
 describe('Test Children Nesting', () => {
@@ -7,7 +7,7 @@ describe('Test Children Nesting', () => {
         const TEXT = 'Hallo Frontify';
         const HTML_INPUT = <div>{TEXT}</div>;
 
-        const TextToTest = EditableInputHelper.getLabel(HTML_INPUT);
+        const TextToTest = EditableTextHelper.getLabel(HTML_INPUT);
         assert.equal(TextToTest, TEXT, 'To be equal');
     });
 
@@ -22,7 +22,7 @@ describe('Test Children Nesting', () => {
             </div>
         );
 
-        const TextToTest = EditableInputHelper.getLabel(HTML_INPUT);
+        const TextToTest = EditableTextHelper.getLabel(HTML_INPUT);
         assert.equal(TextToTest, TEXT, 'To be equal');
     });
 });

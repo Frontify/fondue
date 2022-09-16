@@ -9,7 +9,7 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import { EditableInputHelper } from '@components/EditableInput/lib/helper';
+import { EditableTextHelper } from '@components/EditableText/lib/helper';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
@@ -27,15 +27,13 @@ interface InputStyling {
 
 /**
  * Define custom Styles with:
- * customContainerClasses (<div>)
- * customInputTextClasses (<input>)
+ * removeInputPadding (boolean)
  * mode: display as Input or Label first
  * enableDoubleClick: Should the input be triggered by a double click or single click
  * additionalValues: additional information to be passed via onClick Event
  */
 interface EditableOptionProps {
-    customContainerClasses?: string;
-    customInputTextClasses?: string;
+    isSlimInputField?: boolean;
     mode?: EditableMode;
     enableDoubleClick?: boolean;
     additionalValues?: string;
@@ -48,7 +46,7 @@ interface EditableOptionProps {
  * onModeChange callback when state changes
  * options to specify styling and additional behaviours
  */
-export interface EditableInputProps {
+export interface EditableTextProps {
     children?: ReactElement;
     onAdditionalValueSave?: (additionalValue: string, value: string) => void;
     onEditableSave?: (value: string) => void;
@@ -67,21 +65,20 @@ export interface EditableInputProps {
  *
  * Options properties:
  * - customContainerClasses: string             // Tailwind Classes
- * - customInputTextClasses: string             // Tailwind Classes
  * - mode:                   enum EditableMode  // {INPUT = 'INPUT',LABEL = 'LABEL'}
  * - enableDoubleClick:      boolean            // should the input be triggered by a double click or single click
- * - additionalValues:       string             // additional information to be passed via onClick Event
+ * - isSlimInputField:       boolean            // removes y padding
  *
  */
-export const EditableInput = ({
+export const EditableText = ({
     onEditableSave,
     onModeChange,
     onAdditionalValueSave,
     children,
     options,
-}: EditableInputProps) => {
+}: EditableTextProps) => {
     // Read initial text strings from children
-    const childrenLabel = EditableInputHelper.getLabel(children);
+    const childrenLabel = EditableTextHelper.getLabel(children);
 
     // use text strings from children in the input field
     const [inputValue, setInputValue] = useState(childrenLabel);
@@ -130,7 +127,7 @@ export const EditableInput = ({
     // Update Input Style and select input field if visible
     useEffect(() => {
         if (childRef.current) {
-            setInputStyling(EditableInputHelper.copyStyles(childRef.current));
+            setInputStyling(EditableTextHelper.copyStyles(childRef.current));
         }
 
         if (editableState === EditableMode.INPUT) {
@@ -150,19 +147,22 @@ export const EditableInput = ({
     return (
         <div data-test-id="editable-node-container" className="tw-relative">
             {editableState === EditableMode.INPUT ? (
-                <div className="tw-flex tw-items-center tw-absolute -tw-left-[0.81rem] -tw-top-[0.56rem]">
-                    <div
-                        data-test-id="editable-input"
-                        className={merge(['tw-relative', options?.customContainerClasses])}
-                    >
+                <div
+                    className={merge([
+                        'tw-flex tw-items-center -tw-translate-x-[0.81rem] -tw-translate-y-[0.56rem]',
+                        options?.isSlimInputField === true && '-tw-translate-y-[0.06rem]',
+                    ])}
+                >
+                    <div data-test-id="editable-input" className={merge(['tw-relative'])}>
                         <input
                             ref={inputRef}
                             type="text"
                             className={merge([
                                 'tw-absolute tw-w-full',
                                 FOCUS_VISIBLE_STYLE,
-                                'tw-flex tw-items-center tw-px-3 tw-border tw-rounded tw-font-sans tw-bg-white dark:tw-bg-transparent',
-                                'tw-border-solid tw-py-2',
+                                'tw-text-text tw-px-3 tw-py-2 tw-border tw-rounded tw-bg-base',
+                                'tw-border-solid',
+                                options?.isSlimInputField === true && 'tw-py-0',
                             ])}
                             style={inputStyling}
                             value={inputValue}
@@ -170,7 +170,14 @@ export const EditableInput = ({
                             onKeyDown={handleKeyDown}
                             onBlur={handleBlur}
                         />
-                        <span aria-hidden="true" className="tw-px-4" style={inputStyling}>
+                        <span
+                            aria-hidden="true"
+                            className={merge([
+                                'tw-px-4 tw-py-2 tw-bg-base',
+                                options?.isSlimInputField === true && 'tw-py-0',
+                            ])}
+                            style={inputStyling}
+                        >
                             {inputValue}
                         </span>
                     </div>

@@ -1,6 +1,6 @@
 import React, { ReactElement, ReactNode } from 'react';
 
-export const EditableInputHelper = {
+export const EditableTextHelper = {
     /**
      * Recursively iterators through Children
      * returns all instances of string amended together
