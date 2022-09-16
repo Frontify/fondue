@@ -148,9 +148,9 @@ export const EditableInput = ({
         });
 
     return (
-        <div data-test-id="editable-node-container">
+        <div data-test-id="editable-node-container" className="tw-relative">
             {editableState === EditableMode.INPUT ? (
-                <div className="tw-flex tw-items-center">
+                <div className="tw-flex tw-items-center tw-absolute -tw-left-[0.81rem] -tw-top-[0.56rem]">
                     <div
                         data-test-id="editable-input"
                         className={merge(['tw-relative', options?.customContainerClasses])}
@@ -161,7 +161,8 @@ export const EditableInput = ({
                             className={merge([
                                 'tw-absolute tw-w-full',
                                 FOCUS_VISIBLE_STYLE,
-                                options?.customInputTextClasses,
+                                'tw-flex tw-items-center tw-px-3 tw-border tw-rounded tw-font-sans tw-bg-white dark:tw-bg-transparent',
+                                'tw-border-solid tw-py-2',
                             ])}
                             style={inputStyling}
                             value={inputValue}
