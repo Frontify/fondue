@@ -37,14 +37,16 @@ export default {
 };
 
 const EditableTemplate: Story<EditableInputProps> = (args: EditableInputProps) => (
-    <EditableInput {...args}>{args.children}</EditableInput>
+    <div className="tw-p-5">
+        <EditableInput {...args}>{args.children}</EditableInput>
+    </div>
 );
 
 const EditableTemplateIcon: Story<EditableInputProps> = (args: EditableInputProps) => {
     const [label, setLabel] = useState('Im set from the outside');
 
     return (
-        <div className="tw-flex tw-items-center">
+        <div className="tw-flex tw-items-center tw-p-5">
             <EditableInput {...args} onEditableSave={(value) => setLabel(value)}>
                 <h1>{label}</h1>
             </EditableInput>{' '}
@@ -80,7 +82,7 @@ export const ControlledInputExample: Story<EditableInputProps> = () => {
     const [label, setLabel] = useState('Im set from the outside');
 
     return (
-        <div className="tw-flex tw-items-center">
+        <div className="tw-flex tw-items-center tw-p-5">
             <EditableInput
                 onEditableSave={(value) => setLabel(value)}
                 options={{
