@@ -10,13 +10,12 @@ import { ItalicPlugin } from './ItalicPlugin';
 import { UnderlinePlugin } from './UnderlinePlugin';
 import { StrikethroughPlugin } from './StrikethroughPlugin';
 import { LinkPlugin } from './LinkPlugin';
-import { Heading1Plugin } from './TextStylePlugin/Heading1Plugin';
 import { TextStylePlugin } from './TextStylePlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
     .setPlugin([
-        [new TextStylePlugin(), new Heading1Plugin()],
+        [new TextStylePlugin()],
         [
             new BoldPlugin(),
             new ItalicPlugin(),

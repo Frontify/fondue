@@ -6,12 +6,13 @@ import { IconCaretDown, IconSize } from '@foundation/Icon';
 import { merge } from '@utilities/merge';
 import { DropdownTriggerProps } from './types';
 import { useSelectedTextStyles } from './useSelectedTextStyles';
-import { DEFAULT_TEXT_STYLE_VALUE, TEXT_STYLE_TITLES } from './textStyleTitles';
+import { AVAILABLE_STYLE_TITLES, DEFAULT_TEXT_STYLE_VALUE } from '../TextStyles';
 
 export const DropdownTrigger = ({ editor, open }: DropdownTriggerProps) => {
     const selectedTextStyles = useSelectedTextStyles(editor);
 
-    const label = selectedTextStyles.length === 1 ? TEXT_STYLE_TITLES[selectedTextStyles[0]] : DEFAULT_TEXT_STYLE_VALUE;
+    const label =
+        selectedTextStyles.length === 1 ? AVAILABLE_STYLE_TITLES[selectedTextStyles[0]] : DEFAULT_TEXT_STYLE_VALUE;
 
     return (
         <button
