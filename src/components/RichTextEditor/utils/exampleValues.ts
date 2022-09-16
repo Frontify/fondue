@@ -14,8 +14,8 @@ import {
     TDescendant,
 } from '@udecode/plate';
 import { ELEMENT_CHECK_ITEM } from '../EditorActions/Plugins/CheckboxListPlugin/id';
+import { TextStyles } from '../EditorActions/Plugins/TextStylePlugin/TextStyles';
 import { DesignTokens } from '../types';
-import { TextStyles } from './textStyles';
 
 type CreateElementProps = {
     text: string;
