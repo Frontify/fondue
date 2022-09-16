@@ -2,18 +2,18 @@
 
 export const DEFAULT_TEXT_STYLE_VALUE = 'Mixed';
 
-export enum ListStyle {
+export enum ListStyles {
     UL = 'ul',
     OL = 'ol',
     CHECKLIST_ITEM = 'checkbox_item',
 }
-export const listStyleTitle: Record<ListStyle, string> = {
-    [ListStyle.UL]: 'Bullet List',
-    [ListStyle.OL]: 'List',
-    [ListStyle.CHECKLIST_ITEM]: 'Checklist',
+export const listStyleTitle: Record<ListStyles, string> = {
+    [ListStyles.UL]: 'Bullet List',
+    [ListStyles.OL]: 'List',
+    [ListStyles.CHECKLIST_ITEM]: 'Checklist',
 };
 
-export enum TextStyle {
+export enum TextStyles {
     ELEMENT_HEADING1 = 'heading1',
     ELEMENT_HEADING2 = 'heading2',
     ELEMENT_HEADING3 = 'heading3',
@@ -24,18 +24,18 @@ export enum TextStyle {
     ELEMENT_PARAGRAPH = 'p',
 }
 
-export const textStyleTitle: Record<TextStyle, string> = {
-    [TextStyle.ELEMENT_HEADING1]: 'Heading 1',
-    [TextStyle.ELEMENT_HEADING2]: 'Heading 2',
-    [TextStyle.ELEMENT_HEADING3]: 'Heading 3',
-    [TextStyle.ELEMENT_HEADING4]: 'Heading 4',
-    [TextStyle.ELEMENT_CUSTOM1]: 'Custom 01',
-    [TextStyle.ELEMENT_CUSTOM2]: 'Custom 02',
-    [TextStyle.ELEMENT_CUSTOM3]: 'Custom 03',
-    [TextStyle.ELEMENT_PARAGRAPH]: 'Paragraph',
+export const textStyleTitle: Record<TextStyles, string> = {
+    [TextStyles.ELEMENT_HEADING1]: 'Heading 1',
+    [TextStyles.ELEMENT_HEADING2]: 'Heading 2',
+    [TextStyles.ELEMENT_HEADING3]: 'Heading 3',
+    [TextStyles.ELEMENT_HEADING4]: 'Heading 4',
+    [TextStyles.ELEMENT_CUSTOM1]: 'Custom 01',
+    [TextStyles.ELEMENT_CUSTOM2]: 'Custom 02',
+    [TextStyles.ELEMENT_CUSTOM3]: 'Custom 03',
+    [TextStyles.ELEMENT_PARAGRAPH]: 'Paragraph',
 };
 
 export const AVAILABLE_STYLE_TITLES = { ...listStyleTitle, ...textStyleTitle };
-export const AVAILABLE_STYLE = Object.values({ ...ListStyle, ...TextStyle });
+export const AVAILABLE_STYLE = Object.values({ ...ListStyles, ...TextStyles });
 
-export type AvailableStyles = ListStyle | TextStyle;
+export type AvailableStyles = ListStyles | TextStyles;

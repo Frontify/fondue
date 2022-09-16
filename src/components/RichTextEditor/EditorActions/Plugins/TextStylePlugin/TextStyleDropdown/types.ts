@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 import { PlateEditor } from '@udecode/plate';
-import { TextStyle } from '../TextStyles';
+import { TextStyles } from '../TextStyles';
 
 export type TextStyleDropdownProps = {
     editorId?: string;
@@ -15,6 +15,6 @@ export type DropdownTriggerProps = {
 
 export type DropdownItemProps = {
     editor: PlateEditor;
-    type: TextStyle;
+    type: TextStyles;
     children: ReactNode;
 };
