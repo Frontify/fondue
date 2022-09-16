@@ -30,6 +30,7 @@ export type Cell = {
 export type Column = {
     name: string;
     key: string;
+    sortable?: boolean;
 };
 
 export type Row = {
@@ -44,6 +45,7 @@ export type TableProps = PropsWithChildren<{
     columns: Column[];
     rows: Row[];
     onSelectionChange?: (ids?: Key[]) => void;
+    onSortChange?: (column: string, direction?: SortDirection) => void;
     selectionMode?: SelectionMode;
     selectedRowIds?: Key[];
     ariaLabel?: string;
@@ -57,58 +59,46 @@ export enum SortDirection {
 const DEFAULT_SORT_ORDER = SortDirection.Descending;
 
 type SortType = {
-    sortedColumnKey?: Key;
+    sortedColumnKey?: string;
     sortOrder?: SortDirection;
 };
 
 /* react-aria hook props types are inexplicitly typed */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapToTableAriaProps = (columns: Column[], rows: Row[]): TableStateProps<any> => ({
-    children: [
-        <TableHeader key="table-header" columns={columns}>
-            {(column) => <AriaColumn allowsSorting>{column.name}</AriaColumn>}
-        </TableHeader>,
-        <TableBody key="table-body" items={rows}>
-            {(item) => (
-                <AriaRow>
-                    {(columnKey) => (
-                        <AriaCell key={`${item.key}-${columnKey}`} aria-label={item.cells[columnKey].ariaLabel}>
-                            {item.cells[columnKey].value}
-                        </AriaCell>
-                    )}
-                </AriaRow>
-            )}
-        </TableBody>,
-    ],
-});
+const mapToTableAriaProps = (columns: Column[], rows: Row[], hasSort = false): TableStateProps<any> => {
+    return {
+        children: [
+            <TableHeader key="table-header" columns={columns}>
+                {(column) => {
+                    const allowsSorting = !!(column.sortable && hasSort);
+                    return <AriaColumn allowsSorting={allowsSorting}>{column.name}</AriaColumn>;
+                }}
+            </TableHeader>,
+            <TableBody key="table-body" items={rows}>
+                {(item) => (
+                    <AriaRow>
+                        {(columnKey) => (
+                            <AriaCell key={`${item.key}-${columnKey}`} aria-label={item.cells[columnKey].ariaLabel}>
+                                {item.cells[columnKey].value}
+                            </AriaCell>
+                        )}
+                    </AriaRow>
+                )}
+            </TableBody>,
+        ],
+    };
+};
 
 const getRowFromId = (rows: Row[], id: Key) => rows.find(({ key }) => key === id) || null;
 
 const getAllRowIds = (rows: Row[]): Key[] => rows.map(({ key: id }) => id);
-
-const sortRows = (rows: Row[], columnKey: Key, isDescending: boolean) => {
-    const sort = (a: Row, b: Row) => {
-        const keyA = a.cells[columnKey].sortId;
-        const keyB = b.cells[columnKey].sortId;
-
-        if (!keyA || !keyB || keyA === keyB) {
-            return 0;
-        }
-        if (isDescending) {
-            return keyA < keyB ? -1 : 1;
-        } else {
-            return keyA < keyB ? 1 : -1;
-        }
-    };
-
-    return [...rows].sort(sort);
-};
 
 export const Table = ({
     columns,
     rows,
     onSelectionChange,
     selectionMode = SelectionMode.NoSelect,
+    onSortChange: onSort,
     selectedRowIds = [],
     ariaLabel = 'Table',
 }: TableProps) => {
@@ -118,20 +108,19 @@ export const Table = ({
         sortOrder: undefined,
     });
 
-    if (sortedColumnKey && sortOrder) {
-        rows = sortRows(rows, sortedColumnKey, sortOrder === DEFAULT_SORT_ORDER);
-    }
-
-    const onSortChange = (column: Key, direction: SortDirection) => {
+    const onSortChange = (column: string, direction?: SortDirection) => {
+        const inverseSortDirection =
+            direction === SortDirection.Ascending ? SortDirection.Descending : SortDirection.Ascending;
         setSortedColumn({
             sortedColumnKey: column,
-            sortOrder: sortedColumnKey !== column ? DEFAULT_SORT_ORDER : direction,
+            sortOrder: sortedColumnKey !== column ? DEFAULT_SORT_ORDER : inverseSortDirection,
         });
+        onSort?.(column, direction);
     };
 
     const rowIds = getAllRowIds(rows);
     const ref = useRef<HTMLTableElement | null>(null);
-    const props = mapToTableAriaProps(columns, rows);
+    const props = mapToTableAriaProps(columns, rows, !!onSort);
     const state = useTableState({
         ...props,
         selectionMode,
