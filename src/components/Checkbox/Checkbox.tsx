@@ -91,7 +91,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                 <span
                     aria-hidden="true"
                     className={merge([
-                        'tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0',
+                        'tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
                         isFocusVisible && FOCUS_STYLE,
                         disabled
                             ? merge([

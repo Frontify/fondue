@@ -76,3 +76,26 @@ MultipleColumns.args = {
     direction: ChecklistDirection.Vertical,
     columns: 2,
 };
+
+export const MultipleColumnsInContainedSpace: Story<ChecklistProps> = (args) => {
+    const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
+
+    return (
+        <div className="tw-w-[300px] tw-p-2 tw-border- tw-border tw-rounded tw-border-line">
+            <ChecklistComponent
+                {...args}
+                checkboxes={COLUMN_CHECKBOXES}
+                activeValues={activeBoxes}
+                setActiveValues={setActiveBoxes}
+            />
+        </div>
+    );
+};
+MultipleColumnsInContainedSpace.args = {
+    direction: ChecklistDirection.Vertical,
+    columns: 2,
+};
+
+MultipleColumnsInContainedSpace.argTypes = {
+    direction: { table: { disable: true } },
+};
