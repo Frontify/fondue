@@ -71,7 +71,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     externalRef,
 ) => {
     // Map Style Primary, Secondary to ButtonPresets
-    // Therefore primary and secondary is omitted from the style type
+    // Primary and Secondary can be omitted from the style type
     if (style === ButtonStyle.Primary) {
         style = ButtonPreset.Primary.style;
         emphasis = ButtonPreset.Primary.emphasis;
@@ -81,7 +81,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     }
 
     // Rewrite Solid to property emphasis
-    if (!!solid) {
+    if (solid === false) {
         emphasis = ButtonEmphasis.Weak;
     }
 
