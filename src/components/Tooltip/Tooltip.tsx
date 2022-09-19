@@ -288,6 +288,7 @@ export const Tooltip = ({
                                                     {...ButtonPreset.Primary}
                                                     size={ButtonSize.Small}
                                                     onClick={buttons[0].action}
+                                                    inverted
                                                 >
                                                     {buttons[0].label}
                                                 </Button>
@@ -299,6 +300,7 @@ export const Tooltip = ({
                                                     {...ButtonPreset.Secondary}
                                                     size={ButtonSize.Small}
                                                     onClick={buttons[1].action}
+                                                    inverted
                                                 >
                                                     {buttons[1].label}
                                                 </Button>
