@@ -150,7 +150,7 @@ export const EditableText = ({
                 <div
                     className={merge([
                         'tw-flex tw-items-center -tw-translate-x-[0.81rem] -tw-translate-y-[0.56rem]',
-                        options?.isSlimInputField === true && '-tw-translate-y-[0.06rem]',
+                        options?.isSlimInputField === true && '-tw-translate-y-[0.06rem] -tw-translate-x-[0.15rem]',
                     ])}
                 >
                     <div data-test-id="editable-input" className={merge(['tw-relative'])}>
@@ -162,7 +162,7 @@ export const EditableText = ({
                                 FOCUS_VISIBLE_STYLE,
                                 'tw-text-text tw-px-3 tw-py-2 tw-border tw-rounded tw-bg-base',
                                 'tw-border-solid',
-                                options?.isSlimInputField === true && 'tw-py-0',
+                                options?.isSlimInputField === true && 'tw-py-0 tw-px-1',
                             ])}
                             style={inputStyling}
                             value={inputValue}
@@ -174,7 +174,7 @@ export const EditableText = ({
                             aria-hidden="true"
                             className={merge([
                                 'tw-px-4 tw-py-2 tw-bg-base',
-                                options?.isSlimInputField === true && 'tw-py-0',
+                                options?.isSlimInputField === true && 'tw-py-0 tw-px-2',
                             ])}
                             style={inputStyling}
                         >

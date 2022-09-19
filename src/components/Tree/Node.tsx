@@ -179,7 +179,7 @@ export const Node = ({
                                         }}
                                         onAdditionalValueSave={onEditableSave}
                                     >
-                                        <div className="tw-flex">{name}</div>
+                                        <p>{name}</p>
                                     </EditableText>
                                     {badge && insertBadge()}
                                 </>
