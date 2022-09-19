@@ -14,6 +14,13 @@ export enum ButtonStyle {
     Secondary = 'Secondary',
 }
 
+export enum UpdatedButtonStyle {
+    Default = 'Default',
+    Positive = 'Positive',
+    Negative = 'Negative',
+    Danger = 'Danger',
+}
+
 export enum ButtonSize {
     Small = 'Small',
     Medium = 'Medium',

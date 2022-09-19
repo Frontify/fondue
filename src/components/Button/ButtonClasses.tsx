@@ -1,6 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ButtonElements, ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle } from './ButtonTypes';
+import {
+    ButtonElements,
+    ButtonEmphasis,
+    ButtonRounding,
+    ButtonSize,
+    ButtonStyle,
+    UpdatedButtonStyle,
+} from './ButtonTypes';
 
 export const ButtonCommonClasses =
     'tw-group ' +
@@ -101,7 +108,7 @@ const ButtonEmphasisWeak = {
  * - We're deprecating Primary and Secondary in favour of 'emphasis' (-33%)
  */
 
-export const ButtonStyleClasses: Record<ButtonEmphasis, Record<ButtonStyle, ButtonElements>> = {
+export const ButtonStyleClasses: Record<ButtonEmphasis, Record<UpdatedButtonStyle, ButtonElements>> = {
     [ButtonEmphasis.Default]: {
         [ButtonStyle.Default]: {
             button:

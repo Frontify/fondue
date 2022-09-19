@@ -1,6 +1,0 @@
-Breaking:
-
-- Removed Primary, Secondary styles => now ButtonPreset.Primary, ButtonPreset.Secondary
-- Move exports to index.ts,         => changed exports from button/button -> button
-- Solid removed                     => Is now covered with emphasis weak
-- Inverted removed                  => Wrap the Button with div and className="tw-dark"

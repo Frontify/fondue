@@ -5,7 +5,15 @@ import React, { ForwardRefRenderFunction, MouseEvent, ReactElement, ReactNode, c
 import { useButton } from '@react-aria/button';
 import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
-import { ButtonElements, ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
+import {
+    ButtonElements,
+    ButtonEmphasis,
+    ButtonRounding,
+    ButtonSize,
+    ButtonStyle,
+    ButtonType,
+    UpdatedButtonStyle,
+} from './ButtonTypes';
 import {
     ButtonCommonClasses,
     ButtonDisabledClasses,
@@ -17,6 +25,10 @@ import {
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { buttonIconSizeMap, buttonTypeMap } from '@components/Button/mappings';
 import { ButtonPreset } from '@components/Button/ButtonPreset';
+
+// To be NON-Breaking but import should be done through index.ts
+export * from './ButtonClasses';
+export * from './ButtonTypes';
 
 export type ButtonProps = {
     type?: ButtonType;
@@ -34,6 +46,8 @@ export type ButtonProps = {
     formId?: string;
     /** @deprecated use emphasis with ButtonEmphasis.Weak */
     solid?: boolean;
+    /** @deprecated inverted can be done by wrapping the component in a className="tw-dark" */
+    inverted?: boolean;
 };
 
 const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, ButtonProps> = (
@@ -52,10 +66,12 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         'aria-label': ariaLabel,
         formId,
         solid,
+        inverted,
     },
     externalRef,
 ) => {
     // Map Style Primary, Secondary to ButtonPresets
+    // Therefore primary and secondary is omitted from the style type
     if (style === ButtonStyle.Primary) {
         style = ButtonPreset.Primary.style;
         emphasis = ButtonPreset.Primary.emphasis;
@@ -76,7 +92,9 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     );
 
     const getStyles = (kind: keyof ButtonElements) =>
-        !disabled ? `${ButtonStyleClasses[emphasis][style][kind]}` : ButtonDisabledClasses;
+        !disabled
+            ? `${ButtonStyleClasses[emphasis][style as unknown as UpdatedButtonStyle][kind]}`
+            : ButtonDisabledClasses;
 
     const buttonClassName = merge([
         FOCUS_VISIBLE_STYLE,
@@ -92,7 +110,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             aria-label={ariaLabel}
             aria-disabled={disabled}
             ref={ref}
-            className={buttonClassName}
+            className={merge([buttonClassName, inverted && 'tw-dark'])}
             disabled={disabled}
             data-test-id="button"
             form={formId}
