@@ -35,12 +35,12 @@ export default {
             control: { type: 'radio' },
         },
         icon: {
-            options: [IconEnum.Icon, IconEnum.DotsVertical, IconEnum.ColorFan, IconEnum.Settings],
+            options: [IconEnum.Icon, IconEnum.DotsVertical, IconEnum.ColorFan, IconEnum.Anchor],
             mapping: {
                 [IconEnum.Icon]: iconsMap[IconEnum.Icon],
                 [IconEnum.DotsVertical]: iconsMap[IconEnum.DotsVertical],
                 [IconEnum.ColorFan]: iconsMap[IconEnum.ColorFan],
-                [IconEnum.Settings]: iconsMap[IconEnum.Settings],
+                [IconEnum.Anchor]: iconsMap[IconEnum.Anchor],
             },
             control: { type: 'select' },
         },
@@ -114,9 +114,23 @@ ButtonWithoutAnyDefaults.args = {
     type: ButtonType.Submit,
 };
 
-export const ButtonPrimaryInverted = ButtonTemplateInverted.bind({});
-ButtonPrimaryInverted.args = {
-    children: 'Primary Button inverted',
+export const ButtonStylePrimary = ButtonTemplate.bind({});
+ButtonStylePrimary.args = {
+    children: 'Primary Button',
+    icon: iconsMap[IconEnum.ColorFan],
+    style: ButtonStyle.Primary,
+};
+
+export const ButtonStyleSecondary = ButtonTemplate.bind({});
+ButtonStyleSecondary.args = {
+    children: 'Secondary Button',
+    icon: iconsMap[IconEnum.ColorFan],
+    style: ButtonStyle.Secondary,
+};
+
+export const ButtonStyleInverted = ButtonTemplateInverted.bind({});
+ButtonStyleInverted.args = {
+    children: 'Primary Button',
     icon: iconsMap[IconEnum.ColorFan],
     ...ButtonPreset.Primary,
 };

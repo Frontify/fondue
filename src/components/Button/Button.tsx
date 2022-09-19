@@ -16,6 +16,7 @@ import {
 } from './ButtonClasses';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { buttonIconSizeMap, buttonTypeMap } from '@components/Button/mappings';
+import { ButtonPreset } from '@components/Button/ButtonPreset';
 
 export type ButtonProps = {
     type?: ButtonType;
@@ -31,6 +32,8 @@ export type ButtonProps = {
     hugWidth?: boolean;
     'aria-label'?: string;
     formId?: string;
+    /** @deprecated use emphasis with ButtonEmphasis.Weak */
+    solid?: boolean;
 };
 
 const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, ButtonProps> = (
@@ -48,9 +51,24 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         hugWidth = true,
         'aria-label': ariaLabel,
         formId,
+        solid,
     },
     externalRef,
 ) => {
+    // Map Style Primary, Secondary to ButtonPresets
+    if (style === ButtonStyle.Primary) {
+        style = ButtonPreset.Primary.style;
+        emphasis = ButtonPreset.Primary.emphasis;
+    } else if (style === ButtonStyle.Secondary) {
+        style = ButtonPreset.Secondary.style;
+        emphasis = ButtonPreset.Secondary.emphasis;
+    }
+
+    // Rewrite Solid to property emphasis
+    if (!!solid) {
+        emphasis = ButtonEmphasis.Weak;
+    }
+
     const ref = useForwardedRef<HTMLButtonElement | null>(externalRef);
     const { buttonProps } = useButton(
         { onPress: () => onClick && onClick(), isDisabled: disabled, type: buttonTypeMap[type] },

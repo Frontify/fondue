@@ -10,6 +10,8 @@ export enum ButtonStyle {
     Positive = 'Positive',
     Negative = 'Negative',
     Danger = 'Danger',
+    Primary = 'Primary',
+    Secondary = 'Secondary',
 }
 
 export enum ButtonSize {
