@@ -24,22 +24,33 @@ const inputValidation: Record<FormControlStyle, Validation> = {
     [FormControlStyle.Danger]: Validation.Error,
 };
 
-const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = false }) => (
-    <span
-        data-test-id="form-control-helper-text"
-        className={`tw-text-s tw-font-sans ${fullWidth ? 'tw-w-full' : ''} ${
-            disabled
-                ? 'tw-text-black-40'
-                : style === FormControlStyle.Danger
-                ? 'tw-text-red-60'
-                : style === FormControlStyle.Positive
-                ? 'tw-text-green-60'
-                : 'tw-text-black-80'
-        }`}
-    >
-        {text}
-    </span>
-);
+const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = false }) => {
+    let textColorClass;
+
+    switch (true) {
+        case disabled:
+            textColorClass = 'tw-text-black-40';
+            break;
+        case style === FormControlStyle.Danger:
+            textColorClass = 'tw-text-red-60';
+            break;
+        case style === FormControlStyle.Positive:
+            textColorClass = 'tw-text-green-60';
+            break;
+        default:
+            textColorClass = 'tw-text-black-80';
+            break;
+    }
+
+    return (
+        <span
+            data-test-id="form-control-helper-text"
+            className={`tw-text-s tw-font-sans ${fullWidth ? 'tw-w-full' : ''} ${textColorClass}`}
+        >
+            {text}
+        </span>
+    );
+};
 
 export enum HelperPosition {
     Before = 'Before',

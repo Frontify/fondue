@@ -111,6 +111,13 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
     const id = useMemoizedId();
     const clickOnNotDisabled = () => !disabled && onClick && onClick();
 
+    let headingFontWeightClass = 'tw-font-normal';
+    if (bold) {
+        headingFontWeightClass = 'tw-font-bold';
+    } else if (size === FieldsetHeaderSize.Medium) {
+        headingFontWeightClass = 'tw-font-medium';
+    }
+
     return (
         <header
             data-test-id="fieldset-header"
@@ -137,7 +144,7 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
                 className={merge([
                     'tw-text-left',
                     sizeMap[size].text,
-                    bold ? 'tw-font-bold' : size === FieldsetHeaderSize.Medium ? 'tw-font-medium' : 'tw-font-normal',
+                    headingFontWeightClass,
                     onClick && 'hover:tw-cursor-pointer',
                 ])}
             >

@@ -43,7 +43,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         expect(result).to.equal(`<ul class="${UL_CLASSES}"><li>This comes first.</li><li>This comes second.</li></ul>`);
     });
 
-    it('serializes old link format to html', () => {
+    it('serializes link to html', () => {
         const node = {
             type: ELEMENT_PARAGRAPH,
             children: [
@@ -59,7 +59,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         expect(result).to.equal(`<p><a class="${LINK_CLASSES}" href="https://frontify.com">This is a Link.</a></p>`);
     });
 
-    it('serializes new link format to html', () => {
+    it('serializes legacy link format to html', () => {
         const node = {
             type: ELEMENT_PARAGRAPH,
             children: [

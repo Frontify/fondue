@@ -1,18 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { FC, useCallback, useEffect } from 'react';
+import { Plate, TNode } from '@udecode/plate';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { Plate, TNode, usePlateEditorState } from '@udecode/plate';
 import { debounce } from '@utilities/debounce';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './components/Toolbar/Toolbar';
-import { DesignTokensContext } from './context/DesignTokensContext';
-import { DesignTokens } from './types';
-import { EditorActions } from './utils/actions';
+import { RichTextEditorContext } from './context/RichTextEditorContext';
+import { useEditorResize, useEditorState } from './hooks';
+import { DesignTokens, PaddingSizes } from './types';
+import { EditorActions, defaultActions } from './utils/actions';
+import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
-import { getEditorConfig } from './utils/editorConfig';
-import { EMPTY_RICH_TEXT_VALUE, parseRawValue } from './utils/parseRawValue';
+import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './utils/textStyles';
+import { EditorPositioningWrapper } from './EditorPositioningWrapper';
+import { Position } from './EditorPositioningWrapper';
+import { getEditorConfig } from './utils/editorConfig';
+import { GeneratePlugins, PluginComposer } from './EditorActions';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -24,9 +29,10 @@ export type RichTextEditorProps = {
     clear?: boolean;
     designTokens?: DesignTokens;
     actions?: EditorActions[][];
+    padding?: PaddingSizes;
+    position?: Position;
+    plugins?: PluginComposer;
 };
-
-export const ON_SAVE_DELAY_IN_MS = 500;
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
     id,
@@ -35,37 +41,23 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     readonly = false,
     clear = false,
     designTokens = defaultDesignTokens,
-    actions = [],
+    actions = defaultActions,
     onTextChange,
     onBlur,
+    padding = PaddingSizes.None,
+    position = Position.FLOATING,
+    plugins,
 }) => {
-    const editorId = id || useMemoizedId();
-    const editor = usePlateEditorState(editorId);
+    const editorId = useMemoizedId(id);
+    const { localValue } = useEditorState(editorId, clear);
+    const { editorRef, editorWidth } = useEditorResize();
 
-    const [editorWidth, setEditorWidth] = useState<number | undefined>();
-    const localValue = useRef<TNode[] | null>(null);
-    const [debouncedValue, setDebouncedValue] = useState<TNode[] | null>(null);
     const editableProps: EditableProps = {
         placeholder,
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
+        className: padding,
     };
-
-    const editorRef = useCallback((node) => {
-        if (!node) {
-            return;
-        }
-        const observer = new ResizeObserver((entries) => {
-            if (entries.length > 0) {
-                /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded"
-                    from being thrown during cypress component tests */
-                setTimeout(() => setEditorWidth(entries[0].target.clientWidth), 0);
-            }
-        });
-
-        observer.observe(node);
-        return observer;
-    }, []);
 
     useEffect(() => {
         for (const element of Object.values(TextStyles).filter(
@@ -77,45 +69,38 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         }
     }, [designTokens]);
 
-    useEffect(() => {
-        debouncedValue && onTextChange && onTextChange(JSON.stringify(debouncedValue));
-    }, [debouncedValue]);
+    const debouncedOnChange = debounce((value: TNode[]) => {
+        onTextChange && onTextChange(JSON.stringify(value));
+    }, ON_SAVE_DELAY_IN_MS);
 
-    useEffect(() => {
-        if (clear && editor) {
-            const point = { path: [0, 0], offset: 0 };
-            editor.selection = { anchor: point, focus: point };
-            editor.history = { redos: [], undos: [] };
-            editor.children = EMPTY_RICH_TEXT_VALUE;
-            localValue.current = EMPTY_RICH_TEXT_VALUE;
-        }
-    }, [clear]);
-
-    const debouncedOnChange = useCallback(
-        debounce((value: TNode[]) => {
-            setDebouncedValue(value);
-        }, ON_SAVE_DELAY_IN_MS),
-        [],
+    const onChange = useCallback(
+        (value) => {
+            debouncedOnChange(value);
+            localValue.current = value;
+        },
+        [debouncedOnChange, localValue],
     );
 
-    const onChange = useCallback((value) => {
-        debouncedOnChange(value);
-        localValue.current = value;
-    }, []);
+    const PositioningWrapper = EditorPositioningWrapper[position];
+
+    const config = GeneratePlugins(editorId, plugins);
+    const isNew = config && actions.length === 0 && plugins;
+    const editorConfig = isNew ? config.create() : getEditorConfig();
 
     return (
-        <DesignTokensContext.Provider value={{ designTokens }}>
-            <div data-test-id="rich-text-editor" className="tw-relative tw-w-full" ref={editorRef}>
+        <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
+            <PositioningWrapper.PlateWrapper ref={editorRef}>
                 <Plate
                     id={editorId}
                     initialValue={parseRawValue(initialValue)}
                     onChange={onChange}
                     editableProps={editableProps}
-                    plugins={getEditorConfig()}
+                    plugins={editorConfig}
                 >
-                    <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
+                    {isNew && config.toolbar(editorWidth)}
+                    {!isNew && <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />}
                 </Plate>
-            </div>
-        </DesignTokensContext.Provider>
+            </PositioningWrapper.PlateWrapper>
+        </RichTextEditorContext.Provider>
     );
 };

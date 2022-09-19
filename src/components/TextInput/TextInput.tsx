@@ -119,7 +119,7 @@ export const TextInput: FC<TextInputProps> = ({
         <div
             {...focusProps}
             className={merge([
-                'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent',
+                'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border hover:tw-border-black-90 tw-transition tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent',
                 dotted ? 'tw-border-dashed' : 'tw-border-solid',
                 disabled || readonly
                     ? 'tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90'
