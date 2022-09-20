@@ -10,7 +10,9 @@ export enum ButtonStyle {
     Positive = 'Positive',
     Negative = 'Negative',
     Danger = 'Danger',
+    /** @deprecated use ButtonStyle.Default and ButtonEmphasis.Strong */
     Primary = 'Primary',
+    /** @deprecated use ButtonStyle.Default and ButtonEmphasis.Default */
     Secondary = 'Secondary',
 }
 
