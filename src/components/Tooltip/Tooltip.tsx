@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useLink } from '@react-aria/link';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
@@ -285,10 +285,11 @@ export const Tooltip = ({
                                                 onBlur={() => (buttons && buttons.length < 2 ? setIsOpen(false) : null)}
                                             >
                                                 <Button
-                                                    style={ButtonStyle.Primary}
+                                                    style={ButtonStyle.Default}
+                                                    emphasis={ButtonEmphasis.Strong}
                                                     size={ButtonSize.Small}
-                                                    inverted
                                                     onClick={buttons[0].action}
+                                                    inverted
                                                 >
                                                     {buttons[0].label}
                                                 </Button>
@@ -297,10 +298,11 @@ export const Tooltip = ({
                                         {buttons.length === 2 && (
                                             <div onBlur={() => setIsOpen(false)}>
                                                 <Button
-                                                    style={ButtonStyle.Secondary}
+                                                    style={ButtonStyle.Default}
+                                                    emphasis={ButtonEmphasis.Default}
                                                     size={ButtonSize.Small}
-                                                    inverted
                                                     onClick={buttons[1].action}
+                                                    inverted
                                                 >
                                                     {buttons[1].label}
                                                 </Button>
