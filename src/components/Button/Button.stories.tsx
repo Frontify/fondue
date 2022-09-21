@@ -56,11 +56,6 @@ export default {
 } as Meta;
 
 const ButtonTemplate: Story<ButtonProps> = (args: ButtonProps) => <Button {...args} />;
-const ButtonTemplateInverted: Story<ButtonProps> = (args: ButtonProps) => (
-    <div className={'tw-dark'}>
-        <Button {...args} />
-    </div>
-);
 
 export const Default = ButtonTemplate.bind({});
 Default.args = { ...defaultArgs };
@@ -85,55 +80,3 @@ WithIconAndLabel.args = {
     icon: iconsMap[IconEnum.ColorFan],
 };
 WithIconAndLabel.storyName = 'Icon and Text Label';
-
-export const ButtonPresetPrimary = ButtonTemplate.bind({});
-ButtonPresetPrimary.args = {
-    children: 'Primary Button',
-    icon: iconsMap[IconEnum.ColorFan],
-    style: ButtonStyle.Default,
-    emphasis: ButtonEmphasis.Strong,
-};
-
-export const ButtonPresetSecondary = ButtonTemplate.bind({});
-ButtonPresetSecondary.args = {
-    children: 'Secondary Button',
-    icon: iconsMap[IconEnum.ColorFan],
-    style: ButtonStyle.Default,
-    emphasis: ButtonEmphasis.Default,
-};
-export const ButtonPresetDanger = ButtonTemplate.bind({});
-ButtonPresetDanger.args = {
-    children: 'Secondary Button',
-    icon: iconsMap[IconEnum.ColorFan],
-    style: ButtonStyle.Danger,
-    emphasis: ButtonEmphasis.Strong,
-};
-
-export const ButtonWithoutAnyDefaults = ButtonTemplate.bind({});
-ButtonWithoutAnyDefaults.args = {
-    children: 'Out of the Box Button',
-    icon: iconsMap[IconEnum.ColorFan],
-    type: ButtonType.Submit,
-};
-
-export const ButtonStylePrimary = ButtonTemplate.bind({});
-ButtonStylePrimary.args = {
-    children: 'Primary Button',
-    icon: iconsMap[IconEnum.ColorFan],
-    style: ButtonStyle.Primary,
-};
-
-export const ButtonStyleSecondary = ButtonTemplate.bind({});
-ButtonStyleSecondary.args = {
-    children: 'Secondary Button',
-    icon: iconsMap[IconEnum.ColorFan],
-    style: ButtonStyle.Secondary,
-};
-
-export const ButtonStyleInverted = ButtonTemplateInverted.bind({});
-ButtonStyleInverted.args = {
-    children: 'Primary Button',
-    icon: iconsMap[IconEnum.ColorFan],
-    style: ButtonStyle.Default,
-    emphasis: ButtonEmphasis.Strong,
-};
