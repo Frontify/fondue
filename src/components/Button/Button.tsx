@@ -24,7 +24,6 @@ import {
 } from './ButtonClasses';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { buttonIconSizeMap, buttonTypeMap } from '@components/Button/mappings';
-import { ButtonPreset } from '@components/Button/ButtonPreset';
 
 // To be NON-Breaking but import should be done through index.ts
 export * from './ButtonClasses';
@@ -70,14 +69,14 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     },
     externalRef,
 ) => {
-    // Map Style Primary, Secondary to ButtonPresets
+    // Map Style Primary, Secondary to style and emphasis
     // Primary and Secondary can be omitted from the style type
     if (style === ButtonStyle.Primary) {
-        style = ButtonPreset.Primary.style;
-        emphasis = ButtonPreset.Primary.emphasis;
+        style = ButtonStyle.Default;
+        emphasis = ButtonEmphasis.Strong;
     } else if (style === ButtonStyle.Secondary) {
-        style = ButtonPreset.Secondary.style;
-        emphasis = ButtonPreset.Secondary.emphasis;
+        style = ButtonStyle.Default;
+        emphasis = ButtonEmphasis.Default;
     }
 
     // Rewrite Solid to property emphasis

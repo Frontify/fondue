@@ -5,7 +5,6 @@ import { Meta, Story } from '@storybook/react';
 import { Button, ButtonProps } from './Button';
 import { IconEnum, iconsMap } from '@foundation/Icon';
 import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
-import { ButtonPreset } from '@components/Button/ButtonPreset';
 
 const defaultArgs = {
     type: ButtonType.Button,
@@ -91,20 +90,23 @@ export const ButtonPresetPrimary = ButtonTemplate.bind({});
 ButtonPresetPrimary.args = {
     children: 'Primary Button',
     icon: iconsMap[IconEnum.ColorFan],
-    ...ButtonPreset.Primary,
+    style: ButtonStyle.Default,
+    emphasis: ButtonEmphasis.Strong,
 };
 
 export const ButtonPresetSecondary = ButtonTemplate.bind({});
 ButtonPresetSecondary.args = {
     children: 'Secondary Button',
     icon: iconsMap[IconEnum.ColorFan],
-    ...ButtonPreset.Secondary,
+    style: ButtonStyle.Default,
+    emphasis: ButtonEmphasis.Default,
 };
 export const ButtonPresetDanger = ButtonTemplate.bind({});
 ButtonPresetDanger.args = {
     children: 'Secondary Button',
     icon: iconsMap[IconEnum.ColorFan],
-    ...ButtonPreset.Danger,
+    style: ButtonStyle.Danger,
+    emphasis: ButtonEmphasis.Strong,
 };
 
 export const ButtonWithoutAnyDefaults = ButtonTemplate.bind({});
@@ -132,5 +134,6 @@ export const ButtonStyleInverted = ButtonTemplateInverted.bind({});
 ButtonStyleInverted.args = {
     children: 'Primary Button',
     icon: iconsMap[IconEnum.ColorFan],
-    ...ButtonPreset.Primary,
+    style: ButtonStyle.Default,
+    emphasis: ButtonEmphasis.Strong,
 };

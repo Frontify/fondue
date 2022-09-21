@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonPreset, ButtonSize, ButtonStyle } from '@components/Button';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import IconCross from '@foundation/Icon/Generated/IconCross';
 import React from 'react';
 import { ButtonGroup } from './ButtonGroup';
@@ -10,7 +10,9 @@ describe('ButtonGroup Composition', () => {
         cy.mount(
             <ButtonGroup size={ButtonSize.Small}>
                 <Button>First, Small Button</Button>
-                <Button {...ButtonPreset.Secondary}>The Second, Small Button</Button>
+                <Button style={ButtonStyle.Default} emphasis={ButtonEmphasis.Default}>
+                    The Second, Small Button
+                </Button>
                 <Button icon={<IconCross />} style={ButtonStyle.Danger}>
                     And The Third, Small Button
                 </Button>
@@ -26,7 +28,9 @@ describe('ButtonGroup Composition', () => {
         cy.mount(
             <ButtonGroup size={ButtonSize.Medium}>
                 <Button>First, Medium Button</Button>
-                <Button {...ButtonPreset.Secondary}>The Second, Medium Button</Button>
+                <Button style={ButtonStyle.Default} emphasis={ButtonEmphasis.Default}>
+                    The Second, Medium Button
+                </Button>
                 <Button icon={<IconCross />} style={ButtonStyle.Danger}>
                     And The Third, Medium Button
                 </Button>
@@ -42,7 +46,9 @@ describe('ButtonGroup Composition', () => {
         cy.mount(
             <ButtonGroup size={ButtonSize.Large}>
                 <Button>First, Large Button</Button>
-                <Button {...ButtonPreset.Secondary}>The Second, Large Button</Button>
+                <Button style={ButtonStyle.Default} emphasis={ButtonEmphasis.Default}>
+                    The Second, Large Button
+                </Button>
                 <Button icon={<IconCross />} style={ButtonStyle.Danger}>
                     And The Third, Large Button
                 </Button>
@@ -58,7 +64,7 @@ describe('ButtonGroup Composition', () => {
         cy.mount(
             <ButtonGroup size={ButtonSize.Large}>
                 <Button size={ButtonSize.Small}>The First</Button>
-                <Button size={ButtonSize.Medium} {...ButtonPreset.Secondary}>
+                <Button size={ButtonSize.Medium} style={ButtonStyle.Default} emphasis={ButtonEmphasis.Default}>
                     The Second
                 </Button>
                 <Button size={ButtonSize.Large} icon={<IconCross />} style={ButtonStyle.Danger}>

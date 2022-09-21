@@ -7,7 +7,7 @@ import { Checkbox } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
 import { useInsertModal } from './useInsertModal';
-import { ButtonPreset, ButtonSize } from '@components/Button';
+import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 
 export const InsertModal = () => {
     const { state, onTextChange, onUrlChange, onToggleTab, onCancel, onSave, isValidUrlOrEmpty, hasValues } =
@@ -41,7 +41,12 @@ export const InsertModal = () => {
             </div>
             <div className="tw-mt-3">
                 <div className={'tw-pt-5 tw-flex tw-gap-x-3 tw-justify-end tw-border-t tw-border-t-black-10'}>
-                    <Button onClick={onCancel} size={ButtonSize.Medium} {...ButtonPreset.Secondary}>
+                    <Button
+                        onClick={onCancel}
+                        size={ButtonSize.Medium}
+                        style={ButtonStyle.Default}
+                        emphasis={ButtonEmphasis.Default}
+                    >
                         Cancel
                     </Button>
                     <Button

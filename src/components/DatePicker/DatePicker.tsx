@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonEmphasis, ButtonPreset, ButtonSize } from '@components/Button';
+import { Button, ButtonEmphasis, ButtonSize } from '@components/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { format, getYear } from 'date-fns';
 import React, { FC, useState } from 'react';
@@ -56,14 +56,14 @@ export const DatePicker: FC<DatePickerProps> = ({
                 renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
                     <div className="tw-flex tw-justify-between tw-pb-4 tw-px-0">
                         <Button
-                            {...ButtonPreset.Secondary}
+                            style={ButtonStyle.Default}
                             size={ButtonSize.Medium}
                             onClick={decreaseYear}
                             emphasis={ButtonEmphasis.Weak}
                             icon={<IconCaretLeftDouble size={IconSize.Size20} />}
                         />
                         <Button
-                            {...ButtonPreset.Secondary}
+                            style={ButtonStyle.Default}
                             size={ButtonSize.Medium}
                             onClick={decreaseMonth}
                             emphasis={ButtonEmphasis.Weak}
@@ -73,14 +73,14 @@ export const DatePicker: FC<DatePickerProps> = ({
                             {format(date, 'MMMM')} {getYear(date)}
                         </p>
                         <Button
-                            {...ButtonPreset.Secondary}
+                            style={ButtonStyle.Default}
                             size={ButtonSize.Medium}
                             onClick={increaseMonth}
                             emphasis={ButtonEmphasis.Weak}
                             icon={<IconCaretRight size={IconSize.Size20} />}
                         />
                         <Button
-                            {...ButtonPreset.Secondary}
+                            style={ButtonStyle.Default}
                             size={ButtonSize.Medium}
                             onClick={increaseYear}
                             emphasis={ButtonEmphasis.Weak}
