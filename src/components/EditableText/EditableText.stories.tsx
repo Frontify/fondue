@@ -74,7 +74,7 @@ Default.args = {
         additionalValues: 'Values only for the Event',
     },
 };
-Default.storyName = 'Editable Text Custom Styling';
+Default.storyName = 'Editable Text h1 styling';
 
 export const ControlledExample: Story<EditableTextProps> = () => {
     const [label, setLabel] = useState('Im set from the outside');

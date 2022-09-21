@@ -26,8 +26,7 @@ interface InputStyling {
 }
 
 /**
- * Define custom Styles with:
- * removeInputPadding (boolean)
+ * isSlimInputField: removes padding
  * mode: display as Input or Label first
  * enableDoubleClick: Should the input be triggered by a double click or single click
  * additionalValues: additional information to be passed via onClick Event
@@ -64,10 +63,10 @@ export interface EditableTextProps {
  * - onAdditionalValueSave  // Similar to editable Save with additional Values provided
  *
  * Options properties:
- * - customContainerClasses: string             // Tailwind Classes
  * - mode:                   enum EditableMode  // {INPUT = 'INPUT',LABEL = 'LABEL'}
  * - enableDoubleClick:      boolean            // should the input be triggered by a double click or single click
  * - isSlimInputField:       boolean            // removes y padding
+ * - additionalValues?:      string             // additional Values like ID
  *
  */
 export const EditableText = ({
