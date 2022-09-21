@@ -1,4 +1,4 @@
-import { LINK_CLASSES, OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/components';
+import { DEFAULT_LINK_CLASSES, OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/components';
 import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
 import { TextStyles } from '@components/RichTextEditor/utils/textStyles';
 import { ELEMENT_LI, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL } from '@udecode/plate';
@@ -56,7 +56,9 @@ describe('serializeNodeToHtmlRecursive()', () => {
         };
         const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
 
-        expect(result).to.equal(`<p><a class="${LINK_CLASSES}" href="https://frontify.com">This is a Link.</a></p>`);
+        expect(result).to.equal(
+            `<p><a class="${DEFAULT_LINK_CLASSES}" href="https://frontify.com">This is a Link.</a></p>`,
+        );
     });
 
     it('serializes legacy link format to html', () => {
@@ -82,7 +84,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
 
         expect(result).to.equal(
-            `<p><a class="${LINK_CLASSES}" target=_blank href="https://smartive.ch">This is also a Link.</a></p>`,
+            `<p><a class="${DEFAULT_LINK_CLASSES}" target=_blank href="https://smartive.ch">This is also a Link.</a></p>`,
         );
     });
 

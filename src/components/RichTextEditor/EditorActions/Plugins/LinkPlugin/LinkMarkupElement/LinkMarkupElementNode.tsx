@@ -4,6 +4,7 @@ import React from 'react';
 import { HTMLPropsAs, LinkRootProps, useElementProps } from '@udecode/plate';
 import { getUrlFromLinkOrLegacyLink } from '../utils';
 import { TLinkElement } from '../types';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 
 const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
     const _props = useElementProps<TLinkElement, 'a'>({
@@ -23,14 +24,21 @@ const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
     };
 };
 
-export const LINK_CLASSES = 'tw-text-text-interactive tw-underline tw-cursor-pointer';
+export const DEFAULT_LINK_CLASSES = 'tw-text-text-interactive tw-underline tw-cursor-pointer';
 
 export const LinkMarkupElementNode = (props: LinkRootProps) => {
     const htmlProps = useLink(props);
+    const { designTokens } = useRichTextEditorContext();
     const { attributes, children } = props;
 
     return (
-        <a {...attributes} href={htmlProps.href} target={htmlProps.target} className={LINK_CLASSES}>
+        <a
+            {...attributes}
+            href={htmlProps.href}
+            target={htmlProps.target}
+            className={designTokens.link ? '' : DEFAULT_LINK_CLASSES}
+            style={designTokens.link}
+        >
             {children}
         </a>
     );
