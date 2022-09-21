@@ -29,6 +29,8 @@ export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: De
             return `<p style="${reactCssPropsToCss(designTokens.custom2)}">${children}</p>`;
         case TextStyles.ELEMENT_CUSTOM3:
             return `<p style="${reactCssPropsToCss(designTokens.custom3)}">${children}</p>`;
+        case TextStyles.ELEMENT_QUOTE:
+            return `<p style="${reactCssPropsToCss(designTokens.quote)}">${children}</p>`;
         case ELEMENT_PARAGRAPH:
             return `<p>${children}</p>`;
         case ELEMENT_UL:

@@ -51,6 +51,7 @@ import { ELEMENT_CHECK_ITEM } from '../EditorActions/Plugins/CheckboxListPlugin/
 import { CheckboxListElementNode } from '../EditorActions/Plugins/CheckboxListPlugin/CheckboxListElement';
 import { createLinkPlugin } from '../EditorActions/Plugins/LinkPlugin';
 import { TextStyles } from './textStyles';
+import { QuoteElement } from '../components/quote';
 
 export const getEditorConfig = () => {
     const createHeading1Plugin = createPluginFactory({
@@ -105,6 +106,12 @@ export const getEditorConfig = () => {
         key: TextStyles.ELEMENT_CUSTOM3,
         isElement: true,
         component: Custom3Element,
+    });
+
+    const createQuotePlugin = createPluginFactory({
+        key: TextStyles.ELEMENT_QUOTE,
+        isElement: true,
+        component: QuoteElement,
     });
 
     const components = createPlateUI({
@@ -164,6 +171,7 @@ export const getEditorConfig = () => {
             createCustom1Plugin(),
             createCustom2Plugin(),
             createCustom3Plugin(),
+            createQuotePlugin(),
         ],
         {
             components,

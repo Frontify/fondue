@@ -159,6 +159,7 @@ export const value = [
     createElement({ text: 'Heading 4', element: TextStyles.ELEMENT_HEADING4 }),
     createElement({ text: 'Custom 1', element: TextStyles.ELEMENT_CUSTOM1 }),
     createElement({ text: 'Custom 2', element: TextStyles.ELEMENT_CUSTOM2 }),
+    createElement({ text: 'Quote', element: TextStyles.ELEMENT_QUOTE }),
 ];
 
 export const htmlValue = `
@@ -354,6 +355,7 @@ export const nodesToSerialize: TDescendant[] = [
     createElement({ text: 'Heading 4', element: TextStyles.ELEMENT_HEADING4 }),
     createElement({ text: 'Custom 1', element: TextStyles.ELEMENT_CUSTOM1 }),
     createElement({ text: 'Custom 2', element: TextStyles.ELEMENT_CUSTOM2 }),
+    createElement({ text: 'Quote', element: TextStyles.ELEMENT_QUOTE }),
 ];
 
 export const customDesignTokens: DesignTokens = {

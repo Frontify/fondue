@@ -146,6 +146,14 @@ describe('serializeNodeToHtmlRecursive()', () => {
                         },
                     ],
                 },
+                {
+                    type: TextStyles.ELEMENT_QUOTE,
+                    children: [
+                        {
+                            text: 'This is a quote.',
+                        },
+                    ],
+                },
             ],
         };
 
