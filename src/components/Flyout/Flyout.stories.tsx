@@ -70,7 +70,7 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
                             }}
                             extra="Extra Text"
                         >
-                            <TextInput value={input} onChange={setInput} />
+                            <TextInput value={input} onChange={setInput} focusOnMount />
                         </FormControl>
                         <Divider color={FLYOUT_DIVIDER_COLOR} height={FLYOUT_DIVIDER_HEIGHT} />
                         <FormControl
@@ -102,6 +102,136 @@ const FlyoutTemplate: Story<FlyoutProps> = (args) => {
                         </FormControl>
                     </div>
                 </Flyout>
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
+            </div>
+            <div>
+                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                anim ipsum est.
             </div>
             <div>
                 Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
