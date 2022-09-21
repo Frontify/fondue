@@ -11,7 +11,7 @@ export const light = create({
     appBg: "white",
     appBorderColor: "#EAEBEE",
     appBorderRadius: 4,
-
+    
     // Typography
     fontBase:
         "'Space Grotesk Frontify', Arial, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
