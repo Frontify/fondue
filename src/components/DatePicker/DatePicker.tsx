@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonEmphasis, ButtonSize } from '@components/Button';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { format, getYear } from 'date-fns';
 import React, { FC, useState } from 'react';
