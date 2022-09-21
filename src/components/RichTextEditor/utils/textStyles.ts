@@ -10,7 +10,7 @@ export enum TextStyles {
     ELEMENT_CUSTOM3 = 'custom3',
     ELEMENT_QUOTE = 'quote',
     ELEMENT_LINK = 'link',
-    ELEMENT_PARAGRAPH = 'p',
+    ELEMENT_PARAGRAPH = 'body',
 }
 
 export const textStyleTitles: Record<TextStyles, string> = {
