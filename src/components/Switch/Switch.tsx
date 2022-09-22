@@ -15,14 +15,14 @@ export enum SwitchSize {
 
 const lineSizeClasses: Record<SwitchSize, string> = {
     [SwitchSize.Small]: 'tw-w-5 tw-h-2',
-    [SwitchSize.Medium]: 'tw-w-9 tw-h-5',
-    [SwitchSize.Large]: 'tw-w-11 tw-h-6',
+    [SwitchSize.Medium]: 'tw-w-7 tw-h-4',
+    [SwitchSize.Large]: 'tw-w-9 tw-h-5',
 };
 
 const dotSizeClasses: Record<SwitchSize, string> = {
     [SwitchSize.Small]: 'tw-w-3 tw-h-3',
-    [SwitchSize.Medium]: 'tw-w-4 tw-h-4',
-    [SwitchSize.Large]: 'tw-w-5 tw-h-5',
+    [SwitchSize.Medium]: 'tw-w-3 tw-h-3',
+    [SwitchSize.Large]: 'tw-w-4 tw-h-4',
 };
 
 export type SwitchProps = {
@@ -54,15 +54,20 @@ export const Switch: FC<SwitchProps> = ({
     const lineClasses = useMemo(() => {
         const baseClasses = 'tw-inline-flex tw-border-0 tw-rounded-full tw-transition-colors tw-shrink-0';
         const sizeClasses = size !== SwitchSize.Small ? 'tw-py-0 tw-px-[0.125rem]' : 'tw-p-0';
-        const activatedClasses = on ? 'tw-bg-black-90 hover:tw-bg-black' : 'tw-bg-black-30 hover:tw-bg-black-60';
-        const disabledClasses = disabled ? 'tw-bg-black-10 tw-pointer-events-none' : activatedClasses;
+        const activatedClasses = on
+            ? 'tw-bg-button-strong-background hover:tw-bg-button-strong-background-hover'
+            : 'tw-bg-text-x-weak hover:tw-bg-text-weak';
+        const disabledClasses = disabled ? 'tw-bg-box-disabled-strong tw-pointer-events-none' : activatedClasses;
 
         return merge([baseClasses, sizeClasses, disabledClasses, lineSizeClasses[size], isFocusVisible && FOCUS_STYLE]);
     }, [on, disabled, size, isFocusVisible]);
 
     const dotClasses = useMemo(() => {
-        const baseClasses = 'tw-block tw-self-center tw-bg-base tw-rounded-full tw-transition-transform';
-        const disabledClasses = disabled ? 'tw-border tw-border-black-30' : 'tw-border tw-border-black';
+        const baseClasses =
+            'tw-block tw-self-center tw-bg-box-neutral-strong-inverse tw-rounded-full tw-transition-transform';
+        const disabledClasses = disabled
+            ? 'tw-border tw-border-box-disabled-strong'
+            : 'tw-border tw-border-line-xx-strong';
         const sizeClasses = size === SwitchSize.Small ? disabledClasses : '';
         const activatedClasses = size === SwitchSize.Small ? 'tw-translate-x-2' : 'tw-translate-x-full';
         const animationClasses = on ? activatedClasses : 'tw-translate-x-0';

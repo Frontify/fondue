@@ -22,5 +22,4 @@ function IconDrops24(props: GeneratedIconProps): React.ReactElement<GeneratedIco
     );
 }
 
-const Memo = memo(IconDrops24);
-export default Memo;
+export default memo(IconDrops24);

@@ -22,5 +22,4 @@ function IconSkip5SecondsForward24(props: GeneratedIconProps): React.ReactElemen
     );
 }
 
-const Memo = memo(IconSkip5SecondsForward24);
-export default Memo;
+export default memo(IconSkip5SecondsForward24);

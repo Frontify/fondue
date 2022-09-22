@@ -21,5 +21,4 @@ function IconMusicNote(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-const Memo = memo(IconMusicNote);
-export default Memo;
+export default memo(IconMusicNote);

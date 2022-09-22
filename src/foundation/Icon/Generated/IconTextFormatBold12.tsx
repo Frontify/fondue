@@ -20,5 +20,4 @@ function IconTextFormatBold12(props: GeneratedIconProps): React.ReactElement<Gen
     );
 }
 
-const Memo = memo(IconTextFormatBold12);
-export default Memo;
+export default memo(IconTextFormatBold12);

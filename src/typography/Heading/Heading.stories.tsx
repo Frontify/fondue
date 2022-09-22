@@ -2,7 +2,7 @@
 
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
-import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared.stories';
+import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared';
 import { Heading as HeadingComponent, HeadingProps } from './Heading';
 
 export default {

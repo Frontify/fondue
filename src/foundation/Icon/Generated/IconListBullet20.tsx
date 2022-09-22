@@ -22,5 +22,4 @@ function IconListBullet20(props: GeneratedIconProps): React.ReactElement<Generat
     );
 }
 
-const Memo = memo(IconListBullet20);
-export default Memo;
+export default memo(IconListBullet20);

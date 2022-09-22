@@ -21,5 +21,4 @@ function IconAdobeCreativeCloud(props: GeneratedIconProps): React.ReactElement<G
     );
 }
 
-const Memo = memo(IconAdobeCreativeCloud);
-export default Memo;
+export default memo(IconAdobeCreativeCloud);

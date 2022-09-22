@@ -22,5 +22,4 @@ function IconPaperclip20(props: GeneratedIconProps): React.ReactElement<Generate
     );
 }
 
-const Memo = memo(IconPaperclip20);
-export default Memo;
+export default memo(IconPaperclip20);

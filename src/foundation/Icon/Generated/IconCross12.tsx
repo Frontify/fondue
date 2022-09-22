@@ -15,17 +15,11 @@ function IconCross12(props: GeneratedIconProps): React.ReactElement<GeneratedIco
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M3.171 2.464a.5.5 0 1 0-.707.708L5.293 6 2.464 8.828a.5.5 0 1 0 .707.708L6 6.707l2.828 2.829a.5.5 0 1 0 .707-.708L6.707 6l2.828-2.828a.5.5 0 0 0-.707-.708L6 5.293 3.17 2.464Z"
+                d="M3.171 2.465a.5.5 0 0 0-.707.707L5.293 6 2.465 8.83a.5.5 0 0 0 .707.707L6 6.708l2.828 2.828a.5.5 0 0 0 .707-.707L6.707 6l2.829-2.828a.5.5 0 0 0-.707-.707l-2.83 2.828-2.828-2.828Z"
                 clipRule="evenodd"
             />
-            <defs>
-                <clipPath id="prefix__a">
-                    <path fill="#fff" d="M0 0h12v12H0z" />
-                </clipPath>
-            </defs>
         </svg>
     );
 }
 
-const Memo = memo(IconCross12);
-export default Memo;
+export default memo(IconCross12);

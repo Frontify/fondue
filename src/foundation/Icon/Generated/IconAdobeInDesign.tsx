@@ -21,5 +21,4 @@ function IconAdobeInDesign(props: GeneratedIconProps): React.ReactElement<Genera
     );
 }
 
-const Memo = memo(IconAdobeInDesign);
-export default Memo;
+export default memo(IconAdobeInDesign);

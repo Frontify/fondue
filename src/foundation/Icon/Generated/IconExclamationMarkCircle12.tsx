@@ -12,15 +12,23 @@ function IconExclamationMarkCircle12(props: GeneratedIconProps): React.ReactElem
             name="IconExclamationMarkCircle12"
             {...props}
         >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M11 6A5 5 0 1 1 1 6a5 5 0 0 1 10 0Zm1 0A6 6 0 1 1 0 6a6 6 0 0 1 12 0ZM6 2a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0v-4A.5.5 0 0 1 6 2Zm1 7a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"
-                clipRule="evenodd"
-            />
+            <g fill="none">
+                <g clipPath="url(#prefix__a)">
+                    <path
+                        fill="currentColor"
+                        fillRule="evenodd"
+                        d="M11 6A5 5 0 1 1 1 6a5 5 0 0 1 10 0Zm1 0A6 6 0 1 1 0 6a6 6 0 0 1 12 0ZM6 2a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0v-4A.5.5 0 0 1 6 2Zm1 7a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"
+                        clipRule="evenodd"
+                    />
+                </g>
+                <defs>
+                    <clipPath id="prefix__a">
+                        <path fill="#fff" d="M0 0h12v12H0z" />
+                    </clipPath>
+                </defs>
+            </g>
         </svg>
     );
 }
 
-const Memo = memo(IconExclamationMarkCircle12);
-export default Memo;
+export default memo(IconExclamationMarkCircle12);

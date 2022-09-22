@@ -10,7 +10,7 @@ export default {
     title: 'Components/Tooltip',
     component: Tooltip,
     args: {
-        content: 'Cupcake ipsum dolor sit amet ice cream.',
+        content: 'Cupcake ipsum dolor sit amet ice cream. (https://Cupcakeipsumdolorsitameticecream.com)',
         heading: '',
     },
     argTypes: {
@@ -52,6 +52,10 @@ export default {
             defaultValue: TooltipAlignment.Middle,
         },
         withArrow: {
+            control: { type: 'boolean' },
+            defaultValue: false,
+        },
+        open: {
             control: { type: 'boolean' },
             defaultValue: false,
         },
@@ -183,5 +187,11 @@ WithEverythingDisplayed.args = {
 
 export const WithArrow = TooltipComponent.bind({});
 WithArrow.args = {
+    withArrow: true,
+};
+
+export const OpenByDefault = TooltipComponent.bind({});
+OpenByDefault.args = {
+    open: true,
     withArrow: true,
 };

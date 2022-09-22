@@ -21,5 +21,4 @@ function IconAnnotationNumbers(props: GeneratedIconProps): React.ReactElement<Ge
     );
 }
 
-const Memo = memo(IconAnnotationNumbers);
-export default Memo;
+export default memo(IconAnnotationNumbers);

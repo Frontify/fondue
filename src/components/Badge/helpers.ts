@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BadgeStatus, BadgeStyle } from './types';
+import { BadgeProps, BadgeSize, BadgeStatus, BadgeStyle } from './types';
 import { merge } from '@utilities/merge';
 import { Color } from '../../types';
 import { ReactNode } from 'react';
@@ -55,16 +55,26 @@ export const getStyleClasses = (style: BadgeStyle, hasHover: boolean, strong: bo
 export const isBadgeStatus = (style: BadgeStatus | Color | string): style is BadgeStatus =>
     Object.values(BadgeStatus).includes(style as BadgeStatus);
 
-export const getSizeClasses = (children: ReactNode, hasExtra: boolean, isSmall: boolean) => {
-    const isCircular = !children && hasExtra;
-    const sizeClasses = [isSmall ? 'tw-h-5' : 'tw-h-6'];
+export const getCircularSizeClasses = (size: BadgeSize) =>
+    ({
+        small: 'tw-h-5 tw-w-5',
+        medium: 'tw-h-6 tw-w-6',
+    }[size]);
 
-    if (isCircular) {
-        sizeClasses.push(isSmall ? 'tw-w-5' : 'tw-w-6');
+export const getSizeClasses = (
+    children: ReactNode,
+    status: BadgeProps['status'],
+    icon: BadgeProps['icon'],
+    size: BadgeSize,
+) => {
+    const isSmall = size === 'small';
+
+    if (isSmall) {
+        return 'tw-h-5 tw-px-1.5';
     } else {
-        sizeClasses.push(...[isSmall ? 'tw-px-1.5' : 'tw-px-2.5', isSmall ? 'tw-gap-x-0.5' : 'tw-gap-x-1']);
+        const hasMaximumTwoComponents = !Boolean(children && status && icon);
+        return merge(['tw-h-6', 'tw-px-2', hasMaximumTwoComponents && 'tw-gap-x-0.5']);
     }
-    return sizeClasses.join(' ');
 };
 
 export const badgeStatusClasses: Record<BadgeStatus, string> = {

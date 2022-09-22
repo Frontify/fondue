@@ -21,5 +21,4 @@ function IconClockAlternative1(props: GeneratedIconProps): React.ReactElement<Ge
     );
 }
 
-const Memo = memo(IconClockAlternative1);
-export default Memo;
+export default memo(IconClockAlternative1);

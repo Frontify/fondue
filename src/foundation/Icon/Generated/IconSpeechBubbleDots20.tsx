@@ -22,5 +22,4 @@ function IconSpeechBubbleDots20(props: GeneratedIconProps): React.ReactElement<G
     );
 }
 
-const Memo = memo(IconSpeechBubbleDots20);
-export default Memo;
+export default memo(IconSpeechBubbleDots20);

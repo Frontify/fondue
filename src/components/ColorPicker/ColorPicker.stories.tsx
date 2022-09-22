@@ -10,7 +10,7 @@ export default {
     title: 'Components/Color Picker',
     component: ColorPicker,
     args: {
-        currentColor: { r: 85, g: 102, b: 255 },
+        currentColor: { red: 85, green: 102, blue: 255 },
     },
     argTypes: {
         onSelect: { action: 'Select Color' },
@@ -36,6 +36,10 @@ const Template: Story<ColorPickerProps> = (args) => {
 };
 
 export const OnlyCustomColor = Template.bind({});
+
+export const OnlyBrandColor = Template.bind({});
+
+OnlyBrandColor.args = { palettes: EXAMPLE_PALETTES, allowCustomColor: false };
 
 export const WithBrandColors = Template.bind({});
 

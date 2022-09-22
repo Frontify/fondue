@@ -2,9 +2,13 @@
 
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
+import { Position } from './EditorPositioningWrapper';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
+import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import { EditorActions } from './utils/actions';
-import { checkboxValue, htmlValue, IPSUM, value } from './utils/exampleValues';
+import { IPSUM, checkboxValue, customDesignTokens, htmlValue, nodesToSerialize, value } from './utils/exampleValues';
+import { defaultPlugins } from './EditorActions';
+import { PaddingSizes } from './types';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -14,11 +18,22 @@ export default {
         placeholder: 'Some placeholder',
         readonly: false,
         clear: false,
+        position: Position.FLOATING,
+        padding: PaddingSizes.None,
     },
     argTypes: {
         onTextChange: { action: 'onTextChange' },
         onBlur: { action: 'onBlur' },
-        vale: { type: 'string' },
+        value: { type: 'string' },
+        position: { options: Object.values(Position) },
+        padding: {
+            options: Object.keys(PaddingSizes),
+            mapping: PaddingSizes,
+            control: {
+                type: 'radio',
+                labels: Object.entries(PaddingSizes).map(([key, value]) => [value, key]),
+            },
+        },
     },
 } as Meta;
 
@@ -129,4 +144,38 @@ WithCustomControls.args = {
         [EditorActions.ITALIC, EditorActions.BOLD, EditorActions.UNDERLINE],
         [EditorActions.ORDERED_LIST, EditorActions.UNORDERED_LIST],
     ],
+};
+
+export const WithToolbarPositioning = RichTextEditorTemplate.bind({});
+WithToolbarPositioning.args = {
+    value: htmlValue,
+    position: Position.TOP,
+};
+
+export const WithNewToolbar = RichTextEditorTemplate.bind({});
+WithNewToolbar.args = {
+    value: htmlValue,
+    position: Position.TOP,
+    actions: [],
+    plugins: defaultPlugins,
+};
+
+export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
+    const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
+    return (
+        <>
+            {serialized ? (
+                <>
+                    Serialized:
+                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                        <code>{serialized}</code>
+                    </div>
+                    Rendered:
+                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                        <div dangerouslySetInnerHTML={{ __html: serialized }} />
+                    </div>
+                </>
+            ) : null}
+        </>
+    );
 };

@@ -22,5 +22,4 @@ function IconAnnotationNumbers32(props: GeneratedIconProps): React.ReactElement<
     );
 }
 
-const Memo = memo(IconAnnotationNumbers32);
-export default Memo;
+export default memo(IconAnnotationNumbers32);

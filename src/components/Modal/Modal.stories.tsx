@@ -2,7 +2,7 @@
 
 import { Modal } from './Modal';
 import React, { useState } from 'react';
-import { Button, ButtonStyle } from '@components/Button';
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Meta, Story } from '@storybook/react';
 import { TextInput } from '@components/TextInput';
 import { action } from '@storybook/addon-actions';
@@ -185,17 +185,21 @@ const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps & Mo
                 <Modal.Footer
                     buttons={[
                         {
-                            children: 'Okay',
+                            children: 'Cancel',
+                            onClick: () => {
+                                state.close();
+                            },
+                            style: ButtonStyle.Default,
+                            emphasis: ButtonEmphasis.Default,
+                        },
+                        {
+                            children: 'Confirm',
                             onClick: () => {
                                 action('click');
                                 state.close();
                             },
-                            style: ButtonStyle.Secondary,
-                        },
-                        {
-                            children: 'Cancel',
-                            onClick: () => state.close(),
-                            style: ButtonStyle.Primary,
+                            style: ButtonStyle.Default,
+                            emphasis: ButtonEmphasis.Strong,
                         },
                     ]}
                 />

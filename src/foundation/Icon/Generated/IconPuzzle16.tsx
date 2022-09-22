@@ -22,5 +22,4 @@ function IconPuzzle16(props: GeneratedIconProps): React.ReactElement<GeneratedIc
     );
 }
 
-const Memo = memo(IconPuzzle16);
-export default Memo;
+export default memo(IconPuzzle16);

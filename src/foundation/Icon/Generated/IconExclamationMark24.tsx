@@ -22,5 +22,4 @@ function IconExclamationMark24(props: GeneratedIconProps): React.ReactElement<Ge
     );
 }
 
-const Memo = memo(IconExclamationMark24);
-export default Memo;
+export default memo(IconExclamationMark24);

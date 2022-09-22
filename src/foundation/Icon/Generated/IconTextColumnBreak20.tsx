@@ -22,5 +22,4 @@ function IconTextColumnBreak20(props: GeneratedIconProps): React.ReactElement<Ge
     );
 }
 
-const Memo = memo(IconTextColumnBreak20);
-export default Memo;
+export default memo(IconTextColumnBreak20);

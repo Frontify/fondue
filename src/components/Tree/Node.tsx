@@ -6,7 +6,7 @@ import { useDrag } from 'react-dnd';
 import { DropZone, OnDropCallback } from '@components/DropZone';
 import { TreeFlatListItem } from '@components/Tree';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
-import { EditableNodeItem } from './components/EditableNodeItem';
+import { EditableText } from '../EditableText';
 
 export type RenderNodeArrayData = Omit<NodeProps, 'isFirst' | 'strong' | 'node'> & {
     nodes: DraggableItem<TreeNodeItem>[];
@@ -170,9 +170,19 @@ export const Node = ({
                             </span>
                             {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
-                                <EditableNodeItem name={name} targetItemId={node.id} onEditableSave={onEditableSave}>
+                                <>
+                                    <EditableText
+                                        options={{
+                                            additionalValues: node.id,
+                                            enableDoubleClick: true,
+                                            isSlimInputField: true,
+                                        }}
+                                        onAdditionalValueSave={onEditableSave}
+                                    >
+                                        <p>{name}</p>
+                                    </EditableText>
                                     {badge && insertBadge()}
-                                </EditableNodeItem>
+                                </>
                             ) : (
                                 <span className="tw-flex tw-items-center" data-test-id="node-link-name">
                                     {name}

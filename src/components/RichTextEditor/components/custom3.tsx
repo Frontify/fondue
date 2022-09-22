@@ -2,18 +2,16 @@
 
 import { PlateRenderElementProps } from '@udecode/plate';
 import { merge } from '@utilities/merge';
-import React, { FC, useContext } from 'react';
-import { DesignTokensContext } from '../context/DesignTokensContext';
+import React, { FC } from 'react';
+import { useRichTextEditorContext } from '../context/RichTextEditorContext';
 import { alignmentClassnames } from '../utils/alignment';
 
 export const Custom3Element: FC<PlateRenderElementProps> = ({ element, attributes, children }) => {
-    const { designTokens } = useContext(DesignTokensContext);
+    const { designTokens } = useRichTextEditorContext();
+    const align = element.align as string;
+
     return (
-        <p
-            {...attributes}
-            className={merge([element.align && alignmentClassnames[element.align]])}
-            style={designTokens.custom3}
-        >
+        <p {...attributes} className={merge([align && alignmentClassnames[align]])} style={designTokens.custom3}>
             {children}
         </p>
     );

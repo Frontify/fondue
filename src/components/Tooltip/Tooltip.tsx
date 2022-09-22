@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useLink } from '@react-aria/link';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
@@ -13,6 +13,7 @@ import React, {
     ReactNode,
     cloneElement,
     useCallback,
+    useEffect,
     useMemo,
     useRef,
     useState,
@@ -43,6 +44,7 @@ export type TooltipProps = PropsWithChildren<{
     flip?: boolean;
     withArrow?: boolean;
     hoverDelay?: number;
+    open?: boolean;
 }>;
 
 /**
@@ -132,6 +134,7 @@ export const Tooltip = ({
     flip = true,
     triggerElement,
     hoverDelay = 200,
+    open = false,
 }: TooltipProps) => {
     const triggerRefElement = useRef<HTMLElement | HTMLDivElement | HTMLButtonElement | null>(null);
     const linkRef = useRef<HTMLAnchorElement | null>(null);
@@ -149,6 +152,7 @@ export const Tooltip = ({
     const tooltipOffset = withArrow ? 10 : 5;
     const popperInstance = usePopper(triggerRefElement?.current, tooltipContainerRef.current, {
         placement,
+        strategy: 'fixed',
         modifiers: [
             {
                 name: 'arrow',
@@ -205,6 +209,10 @@ export const Tooltip = ({
         onBlur: () => (!hasInteractiveElements ? setIsOpen(false) : null),
     };
 
+    useEffect(() => {
+        setIsOpen(open);
+    }, [open]);
+
     return (
         <>
             <div {...triggerProps} ref={triggerElementContainerRef}>
@@ -251,7 +259,7 @@ export const Tooltip = ({
                                             {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
                                         </span>
                                     )}
-                                    <p className="tw-text-s">{content}</p>
+                                    <p className="tw-text-s tw-min-w-0 tw-break-words">{content}</p>
                                 </div>
                                 {linkUrl && (
                                     <a
@@ -277,10 +285,11 @@ export const Tooltip = ({
                                                 onBlur={() => (buttons && buttons.length < 2 ? setIsOpen(false) : null)}
                                             >
                                                 <Button
-                                                    style={ButtonStyle.Primary}
+                                                    style={ButtonStyle.Default}
+                                                    emphasis={ButtonEmphasis.Strong}
                                                     size={ButtonSize.Small}
-                                                    inverted
                                                     onClick={buttons[0].action}
+                                                    inverted
                                                 >
                                                     {buttons[0].label}
                                                 </Button>
@@ -289,10 +298,11 @@ export const Tooltip = ({
                                         {buttons.length === 2 && (
                                             <div onBlur={() => setIsOpen(false)}>
                                                 <Button
-                                                    style={ButtonStyle.Secondary}
+                                                    style={ButtonStyle.Default}
+                                                    emphasis={ButtonEmphasis.Default}
                                                     size={ButtonSize.Small}
-                                                    inverted
                                                     onClick={buttons[1].action}
+                                                    inverted
                                                 >
                                                     {buttons[1].label}
                                                 </Button>

@@ -1,11 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export type Color = {
+    red: number;
+    green: number;
+    blue: number;
+    alpha?: number;
+    name?: string;
+};
+
+export type ColorRgb = {
     r: number;
     g: number;
     b: number;
     a?: number;
-    name?: string;
 };
 
 export type Palette = {

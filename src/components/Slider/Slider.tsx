@@ -66,6 +66,17 @@ const SliderItem = (props: SliderItemProps) => {
         }
     };
 
+    const getSliderItemTestId = () => {
+        switch (true) {
+            case isIconItem(item):
+                return 'slider-item-icon';
+            case typeof item.value === 'string':
+                return 'slider-item-text';
+            default:
+                return 'slider-item-number';
+        }
+    };
+
     return (
         <li key={item.id} className={merge(['tw-relative', isFocusVisible && FOCUS_STYLE])}>
             <div
@@ -73,13 +84,7 @@ const SliderItem = (props: SliderItemProps) => {
                 // https://github.com/adobe/react-spectrum/issues/2380
                 role="none"
                 onClick={handleMockLabelClick}
-                data-test-id={
-                    isIconItem(item)
-                        ? 'slider-item-icon'
-                        : typeof item.value === 'string'
-                        ? 'slider-item-text'
-                        : 'slider-item-number'
-                }
+                data-test-id={getSliderItemTestId()}
                 className={merge([
                     'tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
                     isActive && !disabled ? 'tw-text-black' : 'tw-text-black-80',

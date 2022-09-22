@@ -73,7 +73,7 @@ WithStatus.args = {
 export const WithCustomStatusColor = BadgeTemplate.bind({});
 
 WithCustomStatusColor.args = {
-    status: { r: 40, g: 200, b: 100, a: 1 },
+    status: { red: 40, green: 200, blue: 100, alpha: 1 },
 };
 
 export const WithCustomStatusString = BadgeTemplate.bind({});
@@ -164,4 +164,20 @@ BetweenElements.argTypes = {
 BetweenElements.args = {
     status: BadgeStatus.Positive,
     icon: <IconIcon />,
+};
+
+export const MultipleBadgesInRow: Story<BadgeProps> = (args: BadgeProps) => (
+    <div className="tw-flex tw-flex-nowrap tw-border tw-border-line tw-rounded tw-p-2 tw-gap-2">
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+        <Badge {...args} />
+    </div>
+);
+
+MultipleBadgesInRow.args = {
+    status: BadgeStatus.Positive,
+    icon: <IconIcon />,
+    children: 'A long string of text',
 };

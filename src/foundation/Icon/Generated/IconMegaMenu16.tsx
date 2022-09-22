@@ -22,5 +22,4 @@ function IconMegaMenu16(props: GeneratedIconProps): React.ReactElement<Generated
     );
 }
 
-const Memo = memo(IconMegaMenu16);
-export default Memo;
+export default memo(IconMegaMenu16);

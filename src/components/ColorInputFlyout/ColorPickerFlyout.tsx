@@ -51,7 +51,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
             onConfirm={handleClick}
             isOpen={open}
             onCancel={() => handleOpenChange(false)}
-            fixedHeader={<ColorPreview color={currentColor || { r: 255, g: 255, b: 255 }} />}
+            fixedHeader={<ColorPreview color={currentColor || { red: 255, green: 255, blue: 255 }} />}
             onOpenChange={handleOpenChange}
             trigger={
                 <ColorInputTrigger
@@ -81,7 +81,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
                 setFormat={setCurrentFormat}
                 palettes={palettes}
                 showPreview={false}
-                currentColor={currentColor || { r: 255, g: 255, b: 255 }}
+                currentColor={currentColor || { red: 255, green: 255, blue: 255 }}
                 onSelect={onSelect}
             />
         </Flyout>

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { Children, FC, PropsWithChildren, cloneElement, isValidElement } from 'react';
-import { ButtonSize } from '@components/Button/Button';
+import { ButtonSize } from '@components/Button';
 import { merge } from '@utilities/merge';
 
 export type ButtonGroupProps = PropsWithChildren<{ size: ButtonSize }>;

@@ -22,5 +22,4 @@ function IconDividerSolid16(props: GeneratedIconProps): React.ReactElement<Gener
     );
 }
 
-const Memo = memo(IconDividerSolid16);
-export default Memo;
+export default memo(IconDividerSolid16);

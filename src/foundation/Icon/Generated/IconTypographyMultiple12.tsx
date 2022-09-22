@@ -22,5 +22,4 @@ function IconTypographyMultiple12(props: GeneratedIconProps): React.ReactElement
     );
 }
 
-const Memo = memo(IconTypographyMultiple12);
-export default Memo;
+export default memo(IconTypographyMultiple12);

@@ -15,12 +15,11 @@ function IconLayersSingle24(props: GeneratedIconProps): React.ReactElement<Gener
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="m20.017 12-7.805-4.745a.5.5 0 0 0-.52 0L3.889 12l7.805 4.745a.5.5 0 0 0 .52 0L20.016 12Zm-7.025-6.027a2 2 0 0 0-2.078 0l-8.508 5.173a1 1 0 0 0 0 1.708l8.508 5.173a2 2 0 0 0 2.078 0l8.507-5.173a1 1 0 0 0 0-1.708l-8.507-5.173Z"
+                d="m20.017 12-7.805-4.745a.5.5 0 0 0-.52 0L3.889 12l7.805 4.745a.5.5 0 0 0 .52 0L20.016 12Zm-7.025-6.027a2 2 0 0 0-2.079 0l-8.507 5.173a1 1 0 0 0 0 1.708l8.507 5.173a2 2 0 0 0 2.079 0l8.507-5.173a1 1 0 0 0 0-1.708l-8.507-5.173Z"
                 clipRule="evenodd"
             />
         </svg>
     );
 }
 
-const Memo = memo(IconLayersSingle24);
-export default Memo;
+export default memo(IconLayersSingle24);

@@ -22,5 +22,4 @@ function IconMasonry12(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-const Memo = memo(IconMasonry12);
-export default Memo;
+export default memo(IconMasonry12);

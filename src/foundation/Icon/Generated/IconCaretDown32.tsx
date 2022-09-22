@@ -22,5 +22,4 @@ function IconCaretDown32(props: GeneratedIconProps): React.ReactElement<Generate
     );
 }
 
-const Memo = memo(IconCaretDown32);
-export default Memo;
+export default memo(IconCaretDown32);
