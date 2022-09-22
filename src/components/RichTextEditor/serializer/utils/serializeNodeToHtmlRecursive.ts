@@ -1,4 +1,4 @@
-import { DEFAULT_LINK_CLASSES, OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/components';
+import { OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/components';
 import { ELEMENT_CHECK_ITEM } from '../../EditorActions/Plugins/CheckboxListPlugin/id';
 import { DesignTokens } from '@components/RichTextEditor/types';
 import { TextStyles } from '@components/RichTextEditor/utils/textStyles';
@@ -41,11 +41,11 @@ export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: De
             return `<li>${children}</li>`;
         case ELEMENT_LINK:
             if (node.chosenLink) {
-                return `<a class="${DEFAULT_LINK_CLASSES}" target=${
+                return `<a style="${reactCssPropsToCss(designTokens.link)}" target=${
                     node.chosenLink.openInNewTab ? '_blank' : '_self'
                 } href="${escapeHtml(node.chosenLink.searchResult.link)}">${children}</a>`;
             }
-            return `<a class="${DEFAULT_LINK_CLASSES}" href="${escapeHtml(node.url)}">${children}</a>`;
+            return `<a style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(node.url)}">${children}</a>`;
         case ELEMENT_CHECK_ITEM:
             return `<input type="checkbox"/><label>${children}</label>`;
 

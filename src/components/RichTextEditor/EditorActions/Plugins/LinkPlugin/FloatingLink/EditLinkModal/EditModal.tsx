@@ -3,16 +3,19 @@
 import React from 'react';
 import { useFloatingLinkUrlInput } from '@udecode/plate';
 import { IconPen, IconTrashBin } from '@foundation/Icon';
-import { DEFAULT_LINK_CLASSES } from '../../LinkMarkupElement/LinkMarkupElementNode';
 import { FloatingLink } from '../FloatingLink';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 
 export const EditModal = () => {
     const urlHtmlProps = useFloatingLinkUrlInput({});
+    const { designTokens } = useRichTextEditorContext();
 
     return (
         <div data-test-id="floating-link-edit" className="tw-bg-white tw-rounded tw-shadow tw-p-4 tw-min-w-[400px]">
             <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between">
-                <span className={`${DEFAULT_LINK_CLASSES} tw-pointer-events-none`}>{urlHtmlProps.defaultValue}</span>
+                <span style={designTokens.link} className="tw-pointer-events-none">
+                    {urlHtmlProps.defaultValue}
+                </span>
                 <span className="tw-flex tw-gap-2">
                     <span
                         role="button"

@@ -24,21 +24,13 @@ const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
     };
 };
 
-export const DEFAULT_LINK_CLASSES = 'tw-text-text-interactive tw-underline tw-cursor-pointer';
-
 export const LinkMarkupElementNode = (props: LinkRootProps) => {
     const htmlProps = useLink(props);
     const { designTokens } = useRichTextEditorContext();
     const { attributes, children } = props;
 
     return (
-        <a
-            {...attributes}
-            href={htmlProps.href}
-            target={htmlProps.target}
-            className={designTokens.link ? '' : DEFAULT_LINK_CLASSES}
-            style={designTokens.link}
-        >
+        <a {...attributes} href={htmlProps.href} target={htmlProps.target} style={designTokens.link}>
             {children}
         </a>
     );
