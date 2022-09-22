@@ -1,6 +1,7 @@
 import { useBreadcrumbItem } from '@react-aria/breadcrumbs';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
+import { getItemElementType } from '@utilities/elements';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import React, { FC, RefObject, useRef } from 'react';
 import { Breadcrumb } from './Breadcrumbs';
@@ -23,19 +24,10 @@ type BreadcrumbItemProps = Pick<Breadcrumb, 'label' | 'link' | 'onClick'> & {
     showSeparator: boolean;
 };
 
-export const getElementType = (link: BreadcrumbItemProps['link'], onClick: BreadcrumbItemProps['onClick']) => {
-    if (link) {
-        return 'a';
-    } else if (onClick) {
-        return 'button';
-    }
-    return 'span';
-};
-
 export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, showSeparator }) => {
     const ref = useRef<HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null>(null);
 
-    const contentElementType = getElementType(link, onClick);
+    const contentElementType = getItemElementType(link, onClick);
 
     const { itemProps } = useBreadcrumbItem(
         {
