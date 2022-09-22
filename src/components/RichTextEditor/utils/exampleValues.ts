@@ -11,8 +11,9 @@ import {
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
+    TDescendant,
 } from '@udecode/plate';
-import { ELEMENT_CHECK_ITEM } from '../plugins/checkboxListPlugin/createCheckboxListPlugin';
+import { ELEMENT_CHECK_ITEM } from '../EditorActions/Plugins/CheckboxListPlugin/id';
 import { DesignTokens } from '../types';
 import { TextStyles } from './textStyles';
 
@@ -22,13 +23,8 @@ type CreateElementProps = {
     mark?: string;
 };
 
-type LeafType = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any;
-};
-
 const createElement = ({ text, element = ELEMENT_PARAGRAPH, mark }: CreateElementProps) => {
-    const leaf: LeafType = { text };
+    const leaf: TDescendant = { text };
     if (mark) {
         leaf[mark] = true;
     }
@@ -133,7 +129,7 @@ export const value = [
                 },
                 children: [
                     {
-                        text: 'This is also a Link.',
+                        text: 'This is also a Link (Legacy Format).',
                     },
                 ],
             },
@@ -254,7 +250,7 @@ export const checkboxValue = [
     },
 ];
 
-export const nodesToSerialize = [
+export const nodesToSerialize: TDescendant[] = [
     createElement({ text: 'This text is bold.', mark: MARK_BOLD }),
     createElement({ text: 'This text is italic.', mark: MARK_ITALIC }),
     createElement({ text: 'This text has an underline.', mark: MARK_UNDERLINE }),

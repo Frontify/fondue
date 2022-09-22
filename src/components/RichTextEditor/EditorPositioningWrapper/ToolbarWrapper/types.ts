@@ -2,9 +2,10 @@
 
 import { ReactNode } from 'react';
 import { ButtonGroupWidths } from '@components/RichTextEditor/types';
+import { ButtonGroupsPerRow } from '../../EditorActions/Toolbar/utils';
 
 export type ToolbarWrapperProps = {
     children: ReactNode;
-    editorWidth: number | undefined;
-    toolbarButtonGroups: ButtonGroupWidths[];
+    editorWidth?: number;
+    toolbarButtonGroups?: ButtonGroupWidths[] | ButtonGroupsPerRow;
 };
