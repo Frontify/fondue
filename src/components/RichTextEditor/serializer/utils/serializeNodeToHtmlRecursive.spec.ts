@@ -48,7 +48,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             type: ELEMENT_PARAGRAPH,
             children: [
                 {
-                    type: ELEMENT_LINK, //TextStyles
+                    type: ELEMENT_LINK,
                     children: [{ text: 'This is a Link.' }],
                     url: 'https://frontify.com',
                 },
