@@ -11,16 +11,21 @@ export const useOverflowMenuKeyboardNavigation = (
 
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
-            if (!itemsElements || !['Tab', 'ArrowDown', 'ArrowUp'].includes(event.key)) {
+            if (!itemsElements || !['Tab', 'ArrowDown', 'ArrowUp', 'Escape'].includes(event.key)) {
                 return;
             }
 
             const isTab = event.key === 'Tab' && !event.shiftKey;
             const isShiftTab = event.key === 'Tab' && event.shiftKey;
+            const isEsc = event.key === 'Escape';
             const shouldMoveDown = isTab || event.key === 'ArrowDown';
             const shouldMoveUp = isShiftTab || event.key === 'ArrowUp';
 
-            if ((isShiftTab && currentItemIndex <= 0) || (isTab && currentItemIndex >= itemsElements.length - 1)) {
+            if (
+                (isShiftTab && currentItemIndex <= 0) ||
+                (isTab && currentItemIndex >= itemsElements.length - 1) ||
+                isEsc
+            ) {
                 setMenuKeyboardNavigationAction('CLOSE_MENU');
                 return;
             }

@@ -160,6 +160,13 @@ describe('OverflowMenu component', () => {
             cy.focused().trigger('keydown', { key: 'ArrowUp' });
             verifyButtonItem(1);
         });
+        it('closes the menu when pressing Esc key', () => {
+            cy.get('@OverflowMenu').find('button').focus().realPress('Enter');
+            cy.get(ITEM_TEST_ID).should('have.length', 3);
+            verifyButtonItem(1);
+            cy.focused().trigger('keydown', { key: 'Escape' });
+            cy.get(ITEM_TEST_ID).should('have.length', 0);
+        });
     });
     describe('With Spans', () => {
         beforeEach(() => {
