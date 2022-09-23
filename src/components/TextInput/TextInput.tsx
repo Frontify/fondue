@@ -91,8 +91,10 @@ export const TextInput: FC<TextInputProps> = ({
     );
 
     useEffect(() => {
-        focusOnMount && inputElement.current?.focus();
-    }, []);
+        setTimeout(() => {
+            focusOnMount && inputElement.current?.focus();
+        }, 0);
+    }, [focusOnMount]);
 
     useEffect(() => {
         if (typeof obfuscated === 'boolean') {
