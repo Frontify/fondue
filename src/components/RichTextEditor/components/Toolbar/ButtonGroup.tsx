@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    IconLink,
     IconListBullet,
     IconListCheck,
     IconListNumbers,
@@ -17,9 +18,9 @@ import {
 } from '@foundation/Icon';
 import {
     AlignToolbarButton,
-    ELEMENT_LINK,
     ELEMENT_OL,
     ELEMENT_UL,
+    LinkToolbarButton,
     ListToolbarButton,
     MARK_BOLD,
     MARK_CODE,
@@ -32,9 +33,8 @@ import {
     usePlateEditorRef,
 } from '@udecode/plate';
 import { FC, default as React, ReactElement } from 'react';
-import { ELEMENT_CHECK_ITEM } from '../../plugins/checkboxListPlugin/createCheckboxListPlugin';
-import { CheckboxListToolbarButton } from '../../plugins/checkboxListPlugin/ui/CheckboxListToolbarButton';
-import { EditLinkChooserButton } from '../../plugins/linkChooserPlugin/ui/EditLinkChooserButton';
+import { ELEMENT_CHECK_ITEM } from '../../EditorActions/Plugins/CheckboxListPlugin/id';
+import { CheckboxListToolbarButton } from '../../EditorActions/Plugins/CheckboxListPlugin/CheckboxListButton/CheckboxListToolbarButton';
 import { TextStyleDropdown } from '../../TextStyleDropdown/TextStyleDropdown';
 import { ButtonGroupProps, IconStylingWrapperProps } from '../../types';
 import { EditorActions } from '../../utils/actions';
@@ -42,7 +42,7 @@ const classNames = {
     root: 'tw-text-text-weak tw-ml-0.5 hover:tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded',
     active: 'tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse',
 };
-const styles = { root: { width: '32px', height: '32px' } };
+const styles = { root: { width: '24px', height: '24px' } };
 
 const IconStylingWrapper: FC<IconStylingWrapperProps> = ({ icon }) => (
     <span className="tw-p-2 tw-h-8 tw-justify-center tw-items-center tw-flex">{icon}</span>
@@ -52,11 +52,13 @@ export const ButtonGroup: FC<ButtonGroupProps> = ({ index, actions, editorId }) 
     const editor = usePlateEditorRef(editorId);
 
     return (
-        <div key={index} data-test-id={`toolbar-group-${index}`} className="tw-flex tw-items-center tw-h-9 tw-p-2">
-            {actions.map((action) => (
-                <div key={action}>{ToolbarButtonMap(editor, editorId)[action]}</div>
-            ))}
-        </div>
+        editor && (
+            <div key={index} data-test-id={`toolbar-group-${index}`} className="tw-flex tw-items-center tw-h-9 tw-p-2">
+                {actions.map((action) => (
+                    <div key={action}>{ToolbarButtonMap(editor, editorId)[action]}</div>
+                ))}
+            </div>
+        )
     );
 };
 
@@ -143,7 +145,11 @@ const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<Editor
         />
     ),
     [EditorActions.LINK]: (
-        <EditLinkChooserButton classNames={classNames} styles={styles} type={getPluginType(editor, ELEMENT_LINK)} />
+        <LinkToolbarButton
+            icon={<IconStylingWrapper icon={<IconLink size={IconSize.Size16} />} />}
+            classNames={classNames}
+            styles={styles}
+        />
     ),
     [EditorActions.ORDERED_LIST]: (
         <ListToolbarButton

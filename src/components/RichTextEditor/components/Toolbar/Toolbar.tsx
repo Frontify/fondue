@@ -5,14 +5,12 @@ import { ToolbarCustomProps } from '../../types';
 
 import { useRichTextEditorContext } from '../../context/RichTextEditorContext';
 import { getButtonGroupWidths, getButtonGroupWidthsPerRow } from '../../utils/toolbarCalc';
-import { defaultActions } from '../../utils/actions';
 import { ButtonGroup } from './ButtonGroup';
 
-export const Toolbar = ({ editorId, actions = [], editorWidth }: ToolbarCustomProps) => {
+export const Toolbar = ({ editorId, actions, editorWidth }: ToolbarCustomProps) => {
     const { PositioningWrapper } = useRichTextEditorContext();
 
-    const toolbarActions = actions.length > 0 ? actions : defaultActions;
-    const buttonGroupWidths = getButtonGroupWidths(toolbarActions);
+    const buttonGroupWidths = getButtonGroupWidths(actions);
     const toolbarButtonGroups = getButtonGroupWidthsPerRow(editorWidth || 0, buttonGroupWidths);
 
     return (

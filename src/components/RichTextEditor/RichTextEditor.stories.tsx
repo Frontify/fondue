@@ -2,11 +2,13 @@
 
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
+import { Position } from './EditorPositioningWrapper';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
-import { Position } from './EditorPositioningWrapper';
 import { EditorActions } from './utils/actions';
 import { IPSUM, checkboxValue, customDesignTokens, htmlValue, nodesToSerialize, value } from './utils/exampleValues';
+import { defaultPlugins } from './EditorActions';
+import { PaddingSizes } from './types';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -17,12 +19,21 @@ export default {
         readonly: false,
         clear: false,
         position: Position.FLOATING,
+        padding: PaddingSizes.None,
     },
     argTypes: {
         onTextChange: { action: 'onTextChange' },
         onBlur: { action: 'onBlur' },
         value: { type: 'string' },
         position: { options: Object.values(Position) },
+        padding: {
+            options: Object.keys(PaddingSizes),
+            mapping: PaddingSizes,
+            control: {
+                type: 'radio',
+                labels: Object.entries(PaddingSizes).map(([key, value]) => [value, key]),
+            },
+        },
     },
 } as Meta;
 
@@ -84,6 +95,10 @@ WithCustomTextStyle.args = {
         custom3: {
             fontSize: '14px',
         },
+        quote: {
+            fontSize: '16px',
+            fontStyle: 'italic',
+        },
     },
 };
 
@@ -139,6 +154,14 @@ export const WithToolbarPositioning = RichTextEditorTemplate.bind({});
 WithToolbarPositioning.args = {
     value: htmlValue,
     position: Position.TOP,
+};
+
+export const WithNewToolbar = RichTextEditorTemplate.bind({});
+WithNewToolbar.args = {
+    value: htmlValue,
+    position: Position.TOP,
+    actions: [],
+    plugins: defaultPlugins,
 };
 
 export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {

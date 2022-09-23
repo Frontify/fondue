@@ -1,22 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useMemoizedId } from '@hooks/useMemoizedId';
+import React, { FC, useCallback, useEffect } from 'react';
 import { Plate, TNode } from '@udecode/plate';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 import { debounce } from '@utilities/debounce';
-import React, { FC, useCallback, useEffect, useState } from 'react';
 import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './components/Toolbar/Toolbar';
 import { RichTextEditorContext } from './context/RichTextEditorContext';
-import { useEditorState } from './hooks/useEditorState';
-import { DesignTokens } from './types';
-import { EditorActions } from './utils/actions';
+import { useEditorResize, useEditorState } from './hooks';
+import { DesignTokens, PaddingSizes } from './types';
+import { EditorActions, defaultActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
-import { getEditorConfig } from './utils/editorConfig';
 import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './utils/textStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
+import { getEditorConfig } from './utils/editorConfig';
+import { GeneratePlugins, PluginComposer } from './EditorActions';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -28,7 +29,9 @@ export type RichTextEditorProps = {
     clear?: boolean;
     designTokens?: DesignTokens;
     actions?: EditorActions[][];
+    padding?: PaddingSizes;
     position?: Position;
+    plugins?: PluginComposer;
 };
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
@@ -38,36 +41,23 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     readonly = false,
     clear = false,
     designTokens = defaultDesignTokens,
-    actions = [],
+    actions = defaultActions,
     onTextChange,
     onBlur,
+    padding = PaddingSizes.None,
     position = Position.FLOATING,
+    plugins,
 }) => {
     const editorId = useMemoizedId(id);
     const { localValue } = useEditorState(editorId, clear);
+    const { editorRef, editorWidth } = useEditorResize();
 
-    const [editorWidth, setEditorWidth] = useState<number | undefined>();
     const editableProps: EditableProps = {
         placeholder,
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
+        className: padding,
     };
-
-    const editorRef = useCallback((node) => {
-        if (!node) {
-            return;
-        }
-        const observer = new ResizeObserver((entries) => {
-            if (entries.length > 0) {
-                /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded"
-                    from being thrown during cypress component tests */
-                setTimeout(() => setEditorWidth(entries[0].target.clientWidth), 0);
-            }
-        });
-
-        observer.observe(node);
-        return observer;
-    }, []);
 
     useEffect(() => {
         for (const element of Object.values(TextStyles).filter(
@@ -93,6 +83,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     const PositioningWrapper = EditorPositioningWrapper[position];
 
+    const config = GeneratePlugins(editorId, plugins);
+    const isNew = config && actions.length === 0 && plugins;
+    const editorConfig = isNew ? config.create() : getEditorConfig();
+
     return (
         <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
             <PositioningWrapper.PlateWrapper ref={editorRef}>
@@ -101,9 +95,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     initialValue={parseRawValue(initialValue)}
                     onChange={onChange}
                     editableProps={editableProps}
-                    plugins={getEditorConfig()}
+                    plugins={editorConfig}
                 >
-                    <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />
+                    {isNew && config.toolbar(editorWidth)}
+                    {!isNew && <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />}
                 </Plate>
             </PositioningWrapper.PlateWrapper>
         </RichTextEditorContext.Provider>

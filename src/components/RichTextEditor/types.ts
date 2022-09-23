@@ -8,9 +8,9 @@ import { TextStyles } from './utils/textStyles';
 export type DesignTokens = Partial<Record<TextStyles, CSSProperties>>;
 
 export type ToolbarCustomProps = {
-    editorId?: string;
-    actions?: EditorActions[][];
+    actions: EditorActions[][];
     editorWidth?: number;
+    editorId?: string;
 };
 
 export type IconStylingWrapperProps = {
@@ -26,3 +26,11 @@ export type ButtonGroupProps = {
 export type ButtonGroupWidths = { actions: EditorActions[]; buttonGroupWidth: number; index: number }[];
 
 export type AvailableTextStyles = ListStyles & TextStyles;
+
+export enum PaddingSizes {
+    None = 'tw-p-0',
+    Small = 'tw-p-2',
+    Medium = 'tw-p-4',
+    Large = 'tw-p-6',
+    XLarge = 'tw-p-8',
+}

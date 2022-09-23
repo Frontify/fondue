@@ -26,4 +26,14 @@ export const defaultDesignTokens: DesignTokens = {
         fontSize: '14px',
         textDecoration: 'underline',
     },
+    quote: {
+        fontSize: '16px',
+        fontStyle: 'italic',
+    },
+    link: {
+        fontSize: '14px',
+        color: 'rgb(113, 89, 215)',
+        textDecoration: 'underline',
+        cursor: 'pointer',
+    },
 };

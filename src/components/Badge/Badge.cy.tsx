@@ -36,7 +36,7 @@ describe('Badge component', () => {
     });
 
     it('should be a small circle', () => {
-        cy.mount(<Badge status={BadgeStatus.Danger} size="s" />);
+        cy.mount(<Badge status={BadgeStatus.Danger} size="small" />);
 
         cy.get(BADGE_ID).should('have.css', 'width', '20px').and('have.css', 'height', '20px');
     });

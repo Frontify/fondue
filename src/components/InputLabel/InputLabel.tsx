@@ -33,7 +33,7 @@ export const InputLabel: FC<InputLabelProps> = ({
     return (
         <div
             className={merge([
-                'tw-inline-flex tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-max-w-full',
+                'tw-inline-flex tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-max-w-full tw-min-w-0 tw-flex-initial',
                 disabled
                     ? 'tw-text-black-40 hover:tw-text-black-40 dark:tw-text-black-60 dark:hover:tw-text-black-60'
                     : 'tw-text-black-90 dark:tw-text-white',

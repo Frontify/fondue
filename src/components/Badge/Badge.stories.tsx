@@ -19,7 +19,7 @@ export default {
             control: { type: 'select' },
         },
         size: {
-            options: ['s', 'm'],
+            options: ['small', 'medium'],
             control: { type: 'select' },
         },
         onClick: { table: { disable: true } },
@@ -28,7 +28,7 @@ export default {
     args: {
         style: BadgeStyle.Primary,
         children: 'Text',
-        size: 'm',
+        size: 'medium',
         emphasis: BadgeEmphasis.Strong,
         disabled: false,
     },
@@ -73,7 +73,7 @@ WithStatus.args = {
 export const WithCustomStatusColor = BadgeTemplate.bind({});
 
 WithCustomStatusColor.args = {
-    status: { r: 40, g: 200, b: 100, a: 1 },
+    status: { red: 40, green: 200, blue: 100, alpha: 1 },
 };
 
 export const WithCustomStatusString = BadgeTemplate.bind({});
