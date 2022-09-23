@@ -95,6 +95,10 @@ WithCustomTextStyle.args = {
         custom3: {
             fontSize: '14px',
         },
+        quote: {
+            fontSize: '16px',
+            fontStyle: 'italic',
+        },
     },
 };
 
