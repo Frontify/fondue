@@ -19,7 +19,7 @@ export default {
             control: { type: 'select' },
         },
         size: {
-            options: ['s', 'm'],
+            options: ['small', 'medium'],
             control: { type: 'select' },
         },
         onClick: { table: { disable: true } },
@@ -28,7 +28,7 @@ export default {
     args: {
         style: BadgeStyle.Primary,
         children: 'Text',
-        size: 'm',
+        size: 'medium',
         emphasis: BadgeEmphasis.Strong,
         disabled: false,
     },
