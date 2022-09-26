@@ -45,6 +45,8 @@ export type TooltipProps = PropsWithChildren<{
     withArrow?: boolean;
     hoverDelay?: number;
     open?: boolean;
+    disabled?: boolean;
+    hidden?: boolean;
 }>;
 
 /**
@@ -135,6 +137,8 @@ export const Tooltip = ({
     triggerElement,
     hoverDelay = 200,
     open = false,
+    disabled = false,
+    hidden = false,
 }: TooltipProps) => {
     const triggerRefElement = useRef<HTMLElement | HTMLDivElement | HTMLButtonElement | null>(null);
     const linkRef = useRef<HTMLAnchorElement | null>(null);
@@ -222,10 +226,14 @@ export const Tooltip = ({
                     })}
             </div>
             {isOpen &&
+                !disabled &&
                 createPortal(
                     <div
                         ref={tooltipContainerRef}
-                        className="tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-[120000]"
+                        className={merge([
+                            'tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-[120000]',
+                            hidden && 'tw-hidden',
+                        ])}
                         data-test-id="tooltip"
                         role="tooltip"
                         style={popperInstance.styles.popper}
