@@ -176,6 +176,7 @@ export const Node = ({
                                             additionalValues: node.id,
                                             enableDoubleClick: true,
                                             isSlimInputField: true,
+                                            removeBoxPadding: true,
                                         }}
                                         onAdditionalValueSave={onEditableSave}
                                     >
