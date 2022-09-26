@@ -23,6 +23,7 @@ interface InputStyling {
     lineHeight: string;
     letterSpacing: string;
     minWidth: string;
+    fontWeight: string;
 }
 
 /**
@@ -30,12 +31,14 @@ interface InputStyling {
  * mode: display as Input or Label first
  * enableDoubleClick: Should the input be triggered by a double click or single click
  * additionalValues: additional information to be passed via onClick Event
+ * removeBoxPadding: Removes the Padding (tw-p-2) around the input Box
  */
 interface EditableOptionProps {
     isSlimInputField?: boolean;
     mode?: EditableMode;
     enableDoubleClick?: boolean;
     additionalValues?: string;
+    removeBoxPadding?: boolean;
 }
 
 /**
@@ -132,7 +135,7 @@ export const EditableText = ({
         if (editableState === EditableMode.INPUT) {
             inputRef.current?.select();
         }
-    }, [editableState, inputRef]);
+    }, [editableState, inputRef, children]);
 
     const childRef = useRef();
 
@@ -144,12 +147,17 @@ export const EditableText = ({
         });
 
     return (
-        <div data-test-id="editable-node-container" className="tw-relative">
+        <div
+            data-test-id="editable-node-container"
+            className={merge(['tw-relative', options?.removeBoxPadding === true ? '' : 'tw-p-2'])}
+        >
             {editableState === EditableMode.INPUT ? (
                 <div
                     className={merge([
-                        'tw-flex tw-items-center -tw-translate-x-[0.81rem] -tw-translate-y-[0.56rem]',
-                        options?.isSlimInputField === true && '-tw-translate-y-[0.06rem] -tw-translate-x-[0.15rem]',
+                        'tw-flex tw-items-center',
+                        options?.isSlimInputField === true
+                            ? '-tw-translate-x-[0.315rem] -tw-translate-y-[0.06rem]'
+                            : '-tw-translate-x-[0.81rem] -tw-translate-y-[0.56rem]',
                     ])}
                 >
                     <div data-test-id="editable-input" className={merge(['tw-relative'])}>
@@ -158,10 +166,12 @@ export const EditableText = ({
                             type="text"
                             className={merge([
                                 'tw-absolute tw-w-full',
-                                FOCUS_VISIBLE_STYLE,
-                                'tw-text-text tw-px-3 tw-py-2 tw-border tw-rounded tw-bg-base',
+                                options?.isSlimInputField === true
+                                    ? 'focus-visible:tw-outline-none'
+                                    : FOCUS_VISIBLE_STYLE,
+                                'tw-text-text tw-border tw-rounded tw-bg-base',
                                 'tw-border-solid',
-                                options?.isSlimInputField === true && 'tw-py-0 tw-px-1',
+                                options?.isSlimInputField === true ? 'tw-py-0 tw-px-1' : 'tw-px-3 tw-py-2',
                             ])}
                             style={inputStyling}
                             value={inputValue}
@@ -172,7 +182,7 @@ export const EditableText = ({
                         <span
                             aria-hidden="true"
                             className={merge([
-                                'tw-px-4 tw-py-2 tw-bg-base',
+                                'tw-rounded tw-px-4 tw-py-2 tw-bg-base',
                                 options?.isSlimInputField === true && 'tw-py-0 tw-px-2',
                             ])}
                             style={inputStyling}
