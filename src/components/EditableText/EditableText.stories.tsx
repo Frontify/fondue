@@ -37,16 +37,14 @@ export default {
 };
 
 const EditableTemplate: Story<EditableTextProps> = (args: EditableTextProps) => (
-    <div className="tw-p-5">
-        <EditableText {...args}>{args.children}</EditableText>
-    </div>
+    <EditableText {...args}>{args.children}</EditableText>
 );
 
 const EditableTemplateIcon: Story<EditableTextProps> = (args: EditableTextProps) => {
     const [label, setLabel] = useState('Im set from the outside');
 
     return (
-        <div className="tw-flex tw-items-center tw-p-5">
+        <div className="tw-flex tw-items-center">
             <EditableText {...args} onEditableSave={(value) => setLabel(value)}>
                 <h1>{label}</h1>
             </EditableText>{' '}
@@ -80,7 +78,7 @@ export const ControlledExample: Story<EditableTextProps> = () => {
     const [label, setLabel] = useState('Im set from the outside');
 
     return (
-        <div className="tw-flex tw-items-center tw-p-5">
+        <div className="tw-flex tw-items-center">
             <EditableText
                 onEditableSave={(value) => setLabel(value)}
                 options={{
