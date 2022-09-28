@@ -16,7 +16,7 @@ export enum SwitchSize {
 const trackSizeClasses: Record<SwitchSize, string> = {
     [SwitchSize.Small]: 'tw-w-[22px] tw-h-3',
     [SwitchSize.Medium]: 'tw-w-[30px] tw-h-4',
-    [SwitchSize.Large]: 'tw-w-10 tw-h-5',
+    [SwitchSize.Large]: 'tw-w-[38px] tw-h-5',
 };
 
 const dotSizeClasses: Record<SwitchSize, Record<'dimensions' | 'hoverWidth' | 'activeTranslation', string>> = {
@@ -33,7 +33,7 @@ const dotSizeClasses: Record<SwitchSize, Record<'dimensions' | 'hoverWidth' | 'a
     [SwitchSize.Large]: {
         dimensions: 'tw-w-5 tw-h-5',
         hoverWidth: 'group-hover:tw-w-[22px]',
-        activeTranslation: 'tw-translate-x-full',
+        activeTranslation: 'tw-translate-x-[17px]',
     },
 };
 
