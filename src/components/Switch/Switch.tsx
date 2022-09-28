@@ -13,16 +13,28 @@ export enum SwitchSize {
     Large = 'Large',
 }
 
-const lineSizeClasses: Record<SwitchSize, string> = {
-    [SwitchSize.Small]: 'tw-w-5 tw-h-2',
-    [SwitchSize.Medium]: 'tw-w-7 tw-h-4',
-    [SwitchSize.Large]: 'tw-w-9 tw-h-5',
+const trackSizeClasses: Record<SwitchSize, string> = {
+    [SwitchSize.Small]: 'tw-w-[22px] tw-h-3',
+    [SwitchSize.Medium]: 'tw-w-[30px] tw-h-4',
+    [SwitchSize.Large]: 'tw-w-10 tw-h-5',
 };
 
-const dotSizeClasses: Record<SwitchSize, string> = {
-    [SwitchSize.Small]: 'tw-w-3 tw-h-3',
-    [SwitchSize.Medium]: 'tw-w-3 tw-h-3',
-    [SwitchSize.Large]: 'tw-w-4 tw-h-4',
+const dotSizeClasses: Record<SwitchSize, Record<'dimensions' | 'hoverWidth' | 'activeTranslation', string>> = {
+    [SwitchSize.Small]: {
+        dimensions: 'tw-w-3 tw-h-3',
+        hoverWidth: 'group-hover:tw-w-[14px]',
+        activeTranslation: 'tw-translate-x-[9px]',
+    },
+    [SwitchSize.Medium]: {
+        dimensions: 'tw-w-4 tw-h-4',
+        hoverWidth: 'group-hover:tw-w-[18px]',
+        activeTranslation: 'tw-translate-x-[13px]',
+    },
+    [SwitchSize.Large]: {
+        dimensions: 'tw-w-5 tw-h-5',
+        hoverWidth: 'group-hover:tw-w-[22px]',
+        activeTranslation: 'tw-translate-x-full',
+    },
 };
 
 export type SwitchProps = {
@@ -51,30 +63,43 @@ export const Switch: FC<SwitchProps> = ({
     const id = useMemoizedId(propId);
     const { isFocusVisible, focusProps } = useFocusRing();
 
-    const lineClasses = useMemo(() => {
-        const baseClasses = 'tw-inline-flex tw-border-0 tw-rounded-full tw-transition-colors tw-shrink-0';
-        const sizeClasses = size !== SwitchSize.Small ? 'tw-py-0 tw-px-[0.125rem]' : 'tw-p-0';
-        const activatedClasses = on
-            ? 'tw-bg-button-strong-background hover:tw-bg-button-strong-background-hover'
-            : 'tw-bg-text-x-weak hover:tw-bg-text-weak';
-        const disabledClasses = disabled ? 'tw-bg-box-disabled-strong tw-pointer-events-none' : activatedClasses;
+    // The track on which the dot moves
+    const trackClasses = useMemo(() => {
+        const baseClasses = 'tw-group tw-border tw-inline-flex tw-rounded-full tw-shrink-0 tw-p-0';
 
-        return merge([baseClasses, sizeClasses, disabledClasses, lineSizeClasses[size], isFocusVisible && FOCUS_STYLE]);
+        const valueClasses = on
+            ? 'tw-bg-text-weak tw-border-line-xx-strong hover:tw-bg-text'
+            : 'tw-bg-box-neutral tw-border-line-x-strong hover:tw-bg-box-neutral-hover';
+
+        const disabledClasses = disabled ? 'tw-bg-box-disabled tw-border-line tw-pointer-events-none' : valueClasses;
+
+        return merge([baseClasses, disabledClasses, trackSizeClasses[size], isFocusVisible && FOCUS_STYLE]);
     }, [on, disabled, size, isFocusVisible]);
 
+    // Responsible for the left-right translation
+    const dotWrapperClasses = useMemo(() => {
+        const baseClasses = 'tw-relative tw-self-center tw-transition-transform';
+
+        const valueClasses = on && dotSizeClasses[size].activeTranslation;
+
+        return merge([baseClasses, dotSizeClasses[size].dimensions, valueClasses]);
+    }, [on, size]);
+
+    // Responsible for dot styling and width animation on hover
     const dotClasses = useMemo(() => {
         const baseClasses =
-            'tw-block tw-self-center tw-bg-box-neutral-strong-inverse tw-rounded-full tw-transition-transform';
-        const disabledClasses = disabled
-            ? 'tw-border tw-border-box-disabled-strong'
-            : 'tw-border tw-border-line-xx-strong';
-        const sizeClasses = size === SwitchSize.Small ? disabledClasses : '';
-        const activatedClasses = size === SwitchSize.Small ? 'tw-translate-x-2' : 'tw-translate-x-full';
-        const animationClasses = on ? activatedClasses : 'tw-translate-x-0';
+            'tw-border tw-bg-base tw-rounded-full tw-absolute tw-block tw-self-center tw-transition-width';
 
-        return merge([baseClasses, sizeClasses, dotSizeClasses[size], animationClasses]);
+        const valueClasses = on ? 'tw-right-0' : 'tw-left-0 -tw-translate-x-px';
+
+        const disabledStateClasses = disabled
+            ? 'tw-border-line-strong'
+            : merge(['tw-bg-base tw-border-line-xx-strong', dotSizeClasses[size].hoverWidth]);
+
+        return merge([baseClasses, dotSizeClasses[size].dimensions, valueClasses, disabledStateClasses]);
     }, [on, disabled, size]);
 
+    // Wraps the InputLabel instance and switch element
     const containerClasses = useMemo(() => {
         return merge(['tw-gap-2 tw-items-center tw-justify-between', hug ? 'tw-inline-flex' : 'tw-flex']);
     }, [hug]);
@@ -92,12 +117,14 @@ export const Switch: FC<SwitchProps> = ({
                 disabled={disabled}
                 name={name}
                 data-test-id="switch"
-                className={lineClasses}
+                className={trackClasses}
                 value={on.toString()}
                 onClick={onChange}
                 type="button"
             >
-                <div className={dotClasses} />
+                <div className={dotWrapperClasses}>
+                    <div className={dotClasses} />
+                </div>
             </button>
         </div>
     );
