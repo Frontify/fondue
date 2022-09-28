@@ -18,6 +18,7 @@ import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
 import { getEditorConfig } from './utils/editorConfig';
 import { GeneratePlugins, PluginComposer } from './EditorActions';
+import { forceTabOutOfActiveElement } from './helper';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -57,6 +58,12 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
         className: padding,
+        onKeyDown: (event) => {
+            if (event.code === 'Tab') {
+                // Forcing a blur event because of accessibility
+                forceTabOutOfActiveElement();
+            }
+        },
     };
 
     const editorRef = useCallback((node) => {
