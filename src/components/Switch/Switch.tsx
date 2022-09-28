@@ -65,7 +65,7 @@ export const Switch: FC<SwitchProps> = ({
 
     // The track on which the dot moves
     const trackClasses = useMemo(() => {
-        const baseClasses = 'tw-group tw-border tw-inline-flex tw-rounded-full tw-shrink-0 tw-p-0';
+        const baseClasses = 'tw-group tw-border tw-inline-flex tw-rounded-full tw-shrink-0 tw-p-0 tw-transition-colors';
 
         const valueClasses = on
             ? 'tw-bg-text-weak tw-border-line-xx-strong hover:tw-bg-text'
