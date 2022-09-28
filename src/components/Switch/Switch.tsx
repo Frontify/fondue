@@ -22,17 +22,17 @@ const trackSizeClasses: Record<SwitchSize, string> = {
 const dotSizeClasses: Record<SwitchSize, Record<'dimensions' | 'hoverWidth' | 'activeTranslation', string>> = {
     [SwitchSize.Small]: {
         dimensions: 'tw-w-3 tw-h-3',
-        hoverWidth: 'group-hover:tw-w-[14px]',
+        hoverWidth: 'group-hover:tw-w-[13px]',
         activeTranslation: 'tw-translate-x-[9px]',
     },
     [SwitchSize.Medium]: {
         dimensions: 'tw-w-4 tw-h-4',
-        hoverWidth: 'group-hover:tw-w-[18px]',
+        hoverWidth: 'group-hover:tw-w-[17px]',
         activeTranslation: 'tw-translate-x-[13px]',
     },
     [SwitchSize.Large]: {
         dimensions: 'tw-w-5 tw-h-5',
-        hoverWidth: 'group-hover:tw-w-[22px]',
+        hoverWidth: 'group-hover:tw-w-[21px]',
         activeTranslation: 'tw-translate-x-[17px]',
     },
 };
@@ -88,7 +88,7 @@ export const Switch: FC<SwitchProps> = ({
     // Responsible for dot styling and width animation on hover
     const dotClasses = useMemo(() => {
         const baseClasses =
-            'tw-border tw-bg-base tw-rounded-full tw-absolute tw-block tw-self-center tw-transition-width';
+            'tw-border tw-bg-base tw-rounded-full tw-absolute tw-block tw-self-center tw-transition-width tw-duration-75';
 
         const valueClasses = on ? 'tw-right-0' : 'tw-left-0 -tw-translate-x-px';
 
