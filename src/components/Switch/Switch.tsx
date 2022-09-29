@@ -19,20 +19,20 @@ const trackSizeClasses: Record<SwitchSize, string> = {
     [SwitchSize.Large]: 'tw-w-[38px] tw-h-5',
 };
 
-const dotSizeClasses: Record<SwitchSize, Record<'dimensions' | 'hoverWidth' | 'activeTranslation', string>> = {
+const dotSizeClasses: Record<SwitchSize, Record<'dimensions' | 'activeWidth' | 'activeTranslation', string>> = {
     [SwitchSize.Small]: {
         dimensions: 'tw-w-3 tw-h-3',
-        hoverWidth: 'group-hover:tw-w-[13px]',
+        activeWidth: 'group-active:tw-w-[14px]',
         activeTranslation: 'tw-translate-x-[9px]',
     },
     [SwitchSize.Medium]: {
         dimensions: 'tw-w-4 tw-h-4',
-        hoverWidth: 'group-hover:tw-w-[17px]',
+        activeWidth: 'group-active:tw-w-[18px]',
         activeTranslation: 'tw-translate-x-[13px]',
     },
     [SwitchSize.Large]: {
         dimensions: 'tw-w-5 tw-h-5',
-        hoverWidth: 'group-hover:tw-w-[21px]',
+        activeWidth: 'group-active:tw-w-[22px]',
         activeTranslation: 'tw-translate-x-[17px]',
     },
 };
@@ -94,7 +94,7 @@ export const Switch: FC<SwitchProps> = ({
 
         const disabledStateClasses = disabled
             ? 'tw-border-line-strong'
-            : merge(['tw-bg-base tw-border-line-xx-strong', dotSizeClasses[size].hoverWidth]);
+            : merge(['tw-bg-base tw-border-line-xx-strong', dotSizeClasses[size].activeWidth]);
 
         return merge([baseClasses, dotSizeClasses[size].dimensions, valueClasses, disabledStateClasses]);
     }, [on, disabled, size]);
