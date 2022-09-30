@@ -7,11 +7,12 @@ import { Tree, TreeFlatListItem } from './Tree';
 
 type ComponentProps = {
     nodes: DraggableItem<TreeFlatListItem>[];
+    activeNodeIds?: NullableString[];
     onDrop?: (sourceItemId: string, parentId: NullableString, positionBeforeId: NullableString) => void;
     onEditableSave?: (itemId: string, value: string) => void;
 };
-const Component: FC<ComponentProps> = ({ nodes, onDrop, onEditableSave }) => {
-    const [selectedIds, setSelectedIds] = useState<NullableString[]>([]);
+const Component: FC<ComponentProps> = ({ nodes, onDrop, onEditableSave, activeNodeIds }) => {
+    const [selectedIds, setSelectedIds] = useState<NullableString[]>(activeNodeIds || []);
     const onDropDefault = (sourceItemId: string, parentId: NullableString, positionBeforeId: NullableString) => {
         console.log(sourceItemId);
         console.log(parentId);
@@ -38,6 +39,7 @@ const SUB_TREE_ID = '[data-test-id=sub-tree]';
 const DROP_ZONE_ID = '[data-test-id=drop-zone]';
 const BADGE_ID = '[data-test-id=node-badge]';
 const NODE_EDITABLE_ID = '[data-test-id=editable-input]';
+const NODE_LABEL_ID = '[data-test-id=node-label]';
 
 describe('Tree Component', () => {
     // TODO check if DropZones are not present when no onDrop props is provided. Refactoring needed first
@@ -46,6 +48,17 @@ describe('Tree Component', () => {
 
         cy.get(TREE_ID).should('be.visible');
         cy.get(NODE_ID).should('have.length', 1);
+    });
+
+    it('renders tree expanded so that selected node is visible', () => {
+        const nodes = mockNodesFlat();
+        const activeNodeId = '1-2-2';
+        const activeNodeLabel = nodes.find((node) => node.id === activeNodeId)?.label || '';
+        cy.mount(<Component nodes={nodes} activeNodeIds={[activeNodeId]} />);
+
+        cy.get(NODE_ID).should('have.length', 7);
+        cy.get(`${NODE_ID} ${NODE_LABEL_ID}`).contains(activeNodeLabel).as('NodeLabel').should('be.visible');
+        cy.get('@NodeLabel').should('have.class', 'tw-text-box-selected-strong-inverse');
     });
 
     it('toggles node on click', () => {

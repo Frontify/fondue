@@ -211,6 +211,7 @@ export const Node = ({
                         </div>
                         <div className="tw-px-1.5">
                             <span
+                                data-test-id="node-label"
                                 className={merge([
                                     'tw-text-black-100 tw-text-opacity-40 tw-text-xs tw-font-normal',
                                     selected && 'tw-text-box-selected-strong-inverse',

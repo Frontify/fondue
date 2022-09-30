@@ -10,7 +10,6 @@ export default {
     title: 'Components/Tree',
     component: TreeComponent,
     args: {
-        activeNodeIds: ['1-1-3'],
         onEditableSave: (targetItemId: string, value: string) => console.log(targetItemId, value),
     },
     argTypes: {
@@ -41,4 +40,9 @@ export const Tree: Story<TreeProps> = ({ ...args }: TreeProps) => {
             <TreeComponent {...args} nodes={nodesState} onDragAndDrop={handleMove} />
         </div>
     );
+};
+
+export const TreeWithActiveNode = Tree.bind({});
+TreeWithActiveNode.args = {
+    activeNodeIds: ['1-1-3'],
 };
