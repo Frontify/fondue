@@ -2,7 +2,7 @@
 
 import { mockNodesFlat } from '@components/Tree/utils';
 import { DraggableItem } from '@utilities/dnd';
-import React, { FC, useState } from 'react';
+import React, { useState } from 'react';
 import { Tree, TreeFlatListItem } from './Tree';
 
 type ComponentProps = {
@@ -11,7 +11,7 @@ type ComponentProps = {
     onDrop?: (sourceItemId: string, parentId: NullableString, positionBeforeId: NullableString) => void;
     onEditableSave?: (itemId: string, value: string) => void;
 };
-const Component: FC<ComponentProps> = ({ nodes, onDrop, onEditableSave, activeNodeIds }) => {
+const Component = ({ nodes, onDrop, onEditableSave, activeNodeIds }: ComponentProps) => {
     const [selectedIds, setSelectedIds] = useState<NullableString[]>(activeNodeIds || []);
     const onDropDefault = (sourceItemId: string, parentId: NullableString, positionBeforeId: NullableString) => {
         console.log(sourceItemId);
