@@ -53,14 +53,14 @@ type NodeProps = {
     onEditableSave?: (targetItemId: string, value: string) => void;
 };
 
-const setShowNodesInitial = (currentNode: DraggableItem<TreeNodeItem>, activeNodeIds?: NullableString[]): boolean => {
-    const hasActiveChildNodes = (node: DraggableItem<TreeNodeItem>, activeIds: NullableString[]): boolean => {
-        if (node.nodes) {
+const getInitialShowNodesValue = (
+    currentNode: DraggableItem<TreeNodeItem>,
+    activeNodeIds?: NullableString[],
+): boolean => {
+    const hasActiveChildNodes = (node: DraggableItem<TreeNodeItem>, activeIds?: NullableString[]): boolean => {
+        if (node.nodes && activeIds) {
             for (const childNode of node.nodes) {
-                if (activeIds.includes(childNode.id)) {
-                    return true;
-                }
-                if (hasActiveChildNodes(childNode, activeIds)) {
+                if (activeIds.includes(childNode.id) || hasActiveChildNodes(childNode, activeIds)) {
                     return true;
                 }
             }
@@ -68,14 +68,7 @@ const setShowNodesInitial = (currentNode: DraggableItem<TreeNodeItem>, activeNod
         return false;
     };
 
-    if (activeNodeIds) {
-        if (activeNodeIds.includes(currentNode.id)) {
-            return true;
-        }
-        return hasActiveChildNodes(currentNode, activeNodeIds);
-    }
-
-    return false;
+    return hasActiveChildNodes(currentNode, activeNodeIds);
 };
 
 export const Node = ({
@@ -98,7 +91,7 @@ export const Node = ({
         type: treeId,
         canDrag: onDrop !== undefined,
     });
-    const [showNodes, setShowNodes] = useState(setShowNodesInitial(node, activeIds));
+    const [showNodes, setShowNodes] = useState(getInitialShowNodesValue(node, activeIds));
     const [isHovered, setIsHovered] = useState(false);
     const selected = activeIds && activeIds.length > 0 && activeIds.includes(id);
 
