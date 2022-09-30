@@ -53,14 +53,14 @@ type NodeProps = {
     onEditableSave?: (targetItemId: string, value: string) => void;
 };
 
-const setShowNodesInitial = (node: DraggableItem<TreeNodeItem>, activeNodeIds?: NullableString[]): boolean => {
-    const hasActiveChildNodes = (childNodes: DraggableItem<TreeNodeItem>[], activeIds: NullableString[]): boolean => {
-        for (const childNode of childNodes) {
-            if (activeIds.includes(childNode.id)) {
-                return true;
-            }
-            if (childNode.nodes) {
-                if (hasActiveChildNodes(childNode.nodes, activeIds)) {
+const setShowNodesInitial = (currentNode: DraggableItem<TreeNodeItem>, activeNodeIds?: NullableString[]): boolean => {
+    const hasActiveChildNodes = (node: DraggableItem<TreeNodeItem>, activeIds: NullableString[]): boolean => {
+        if (node.nodes) {
+            for (const childNode of node.nodes) {
+                if (activeIds.includes(childNode.id)) {
+                    return true;
+                }
+                if (hasActiveChildNodes(childNode, activeIds)) {
                     return true;
                 }
             }
@@ -69,12 +69,10 @@ const setShowNodesInitial = (node: DraggableItem<TreeNodeItem>, activeNodeIds?: 
     };
 
     if (activeNodeIds) {
-        if (activeNodeIds.includes(node.id)) {
+        if (activeNodeIds.includes(currentNode.id)) {
             return true;
         }
-        if (node.nodes) {
-            return hasActiveChildNodes(node.nodes, activeNodeIds);
-        }
+        return hasActiveChildNodes(currentNode, activeNodeIds);
     }
 
     return false;
