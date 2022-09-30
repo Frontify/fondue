@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ForwardRefRenderFunction, MouseEvent, ReactElement, ReactNode, cloneElement, forwardRef } from 'react';
+
+import { useButton } from '@react-aria/button';
 import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
 import {
@@ -83,6 +85,10 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     }
 
     const ref = useForwardedRef<HTMLButtonElement | null>(externalRef);
+    const { buttonProps } = useButton(
+        { onPress: () => onClick && onClick(), isDisabled: disabled, type: buttonTypeMap[type] },
+        ref,
+    );
 
     const getStyles = (kind: keyof ButtonElements) =>
         !disabled
@@ -102,13 +108,12 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         <button
             aria-label={ariaLabel}
             aria-disabled={disabled}
+            ref={ref}
             className={merge([buttonClassName, inverted && 'tw-dark'])}
+            disabled={disabled}
             data-test-id="button"
             form={formId}
-            onClick={onClick}
-            type={buttonTypeMap[type]}
-            disabled={disabled}
-            ref={ref}
+            {...buttonProps}
         >
             {icon && (
                 <span
