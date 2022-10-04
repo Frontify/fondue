@@ -91,7 +91,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const PositioningWrapper = EditorPositioningWrapper[position];
 
     const config = GeneratePlugins(editorId, plugins);
-    const isNew = config && actions.length === 0 && plugins;
+    const isNew = !!config && actions.length === 0 && !!plugins;
     const editorConfig = isNew ? config.create() : getEditorConfig();
 
     return (
