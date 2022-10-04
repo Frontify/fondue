@@ -33,7 +33,7 @@ export const mentionPlugins = new PluginComposer();
 mentionPlugins
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin([[new UnorderedListPlugin(), new OrderedListPlugin()]])
-    .setPlugin([new BoldPlugin()]);
+    .setPlugin([[new BoldPlugin(), new LinkPlugin()]]);
 
 export * from './PluginComposer';
 export * from './ListPlugin';
