@@ -6,7 +6,7 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import React, { FC, RefObject, useRef } from 'react';
 import { Breadcrumb } from './Breadcrumbs';
-import { getElementType } from './BreadcrumbItem';
+import { getItemElementType } from '@utilities/elements';
 
 const ItemWithBadges: FC<{ badges?: BadgeProps[] }> = ({ badges, children }) => (
     <span className="tw-inline-flex tw-gap-x-2 tw-items-center">
@@ -31,7 +31,7 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
     onClick,
 }) => {
     const ref = useRef<HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null>(null);
-    const contentElementType = getElementType(link, onClick);
+    const contentElementType = getItemElementType(link, onClick);
     const { itemProps } = useBreadcrumbItem(
         {
             isCurrent: true,

@@ -59,6 +59,14 @@ export default {
             control: { type: 'boolean' },
             defaultValue: false,
         },
+        disabled: {
+            control: { type: 'boolean' },
+            defaultValue: false,
+        },
+        hidden: {
+            control: { type: 'boolean' },
+            defaultValue: false,
+        },
         flip: {
             control: { type: 'boolean' },
             defaultValue: true,
@@ -195,3 +203,34 @@ OpenByDefault.args = {
     open: true,
     withArrow: true,
 };
+
+export const DisabledTooltip = TooltipComponent.bind({});
+DisabledTooltip.args = {
+    disabled: true,
+};
+DisabledTooltip.decorators = [
+    (StoryElement) => (
+        <div className="tw-flex tw-flex-col tw-justify-start">
+            <p>
+                The tooltip content will NOT be rendered when <strong>disabled</strong> is true. It disables the tooltip
+                open/close feature.
+            </p>
+            <StoryElement />
+        </div>
+    ),
+];
+
+export const HiddenTooltip = TooltipComponent.bind({});
+HiddenTooltip.args = {
+    hidden: true,
+};
+HiddenTooltip.decorators = [
+    (StoryElement) => (
+        <div className="tw-flex tw-flex-col tw-justify-start">
+            <p>
+                The tooltip content will not be displayed, but still be rendered, when <strong>hidden</strong> is true.
+            </p>
+            <StoryElement />
+        </div>
+    ),
+];

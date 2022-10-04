@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { format, getYear } from 'date-fns';
 import React, { FC, useState } from 'react';
@@ -56,34 +56,34 @@ export const DatePicker: FC<DatePickerProps> = ({
                 renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
                     <div className="tw-flex tw-justify-between tw-pb-4 tw-px-0">
                         <Button
+                            style={ButtonStyle.Default}
                             size={ButtonSize.Medium}
-                            style={ButtonStyle.Secondary}
                             onClick={decreaseYear}
-                            solid={false}
+                            emphasis={ButtonEmphasis.Weak}
                             icon={<IconCaretLeftDouble size={IconSize.Size20} />}
                         />
                         <Button
+                            style={ButtonStyle.Default}
                             size={ButtonSize.Medium}
-                            style={ButtonStyle.Secondary}
                             onClick={decreaseMonth}
-                            solid={false}
+                            emphasis={ButtonEmphasis.Weak}
                             icon={<IconCaretLeft size={IconSize.Size20} />}
                         />
                         <p className="tw-font-sans tw-font-semibold tw-grow tw-self-center">
                             {format(date, 'MMMM')} {getYear(date)}
                         </p>
                         <Button
+                            style={ButtonStyle.Default}
                             size={ButtonSize.Medium}
-                            style={ButtonStyle.Secondary}
                             onClick={increaseMonth}
-                            solid={false}
+                            emphasis={ButtonEmphasis.Weak}
                             icon={<IconCaretRight size={IconSize.Size20} />}
                         />
                         <Button
+                            style={ButtonStyle.Default}
                             size={ButtonSize.Medium}
-                            style={ButtonStyle.Secondary}
                             onClick={increaseYear}
-                            solid={false}
+                            emphasis={ButtonEmphasis.Weak}
                             icon={<IconCaretRightDouble size={IconSize.Size20} />}
                         />
                     </div>

@@ -2,78 +2,56 @@
 
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import React from 'react';
-import { Button, ButtonRounding, ButtonSize, ButtonStyle } from './Button';
+import { Button, ButtonRounding, ButtonSize, ButtonStyle } from './';
 
 const BUTTON_TEXT = 'Frontify';
 const BUTTON_ID = '[data-test-id=button]';
 
 const styles = Object.values(ButtonStyle);
-const solids = [true, false];
 
 describe('Button component', () => {
     for (const style of styles) {
-        for (const solid of solids) {
-            it(`renders in ${style} ${ButtonSize.Medium} and solid: ${solid} with only text.`, () => {
-                cy.mount(
-                    <Button style={style} size={ButtonSize.Medium} solid={solid}>
-                        {BUTTON_TEXT}
-                    </Button>,
-                );
+        it(`renders in ${style} ${ButtonSize.Medium} and with only text.`, () => {
+            cy.mount(
+                <Button style={style} size={ButtonSize.Medium}>
+                    {BUTTON_TEXT}
+                </Button>,
+            );
 
-                cy.get(BUTTON_ID).should('be.visible');
-                cy.get(BUTTON_ID).contains(BUTTON_TEXT);
-            });
+            cy.get(BUTTON_ID).should('be.visible');
+            cy.get(BUTTON_ID).contains(BUTTON_TEXT);
+        });
 
-            it(`renders in ${style} ${ButtonSize.Medium} and solid: ${solid} and inverted with only text.`, () => {
-                cy.mount(
-                    <Button style={style} size={ButtonSize.Medium} solid={solid} inverted>
-                        {BUTTON_TEXT}
-                    </Button>,
-                );
+        it(`renders in ${style} ${ButtonSize.Medium} with only an icon.`, () => {
+            cy.mount(<Button style={style} size={ButtonSize.Medium} icon={<IconIcon />} />);
 
-                cy.get(BUTTON_ID).should('be.visible');
-                cy.get(BUTTON_ID).contains(BUTTON_TEXT);
-            });
+            cy.get(BUTTON_ID).find('svg').should('be.visible');
+            cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
+        });
 
-            it(`renders in ${style} ${ButtonSize.Medium} and ${
-                solid ? 'solid' : 'translucent'
-            } with only an icon.`, () => {
-                cy.mount(<Button style={style} size={ButtonSize.Medium} solid={solid} icon={<IconIcon />} />);
+        it(`renders in ${style} ${ButtonSize.Medium} with only an icon and fully rounded.`, () => {
+            cy.mount(
+                <Button style={style} size={ButtonSize.Medium} icon={<IconIcon />} rounding={ButtonRounding.Full} />,
+            );
 
-                cy.get(BUTTON_ID).find('svg').should('be.visible');
-                cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
-            });
+            cy.get(BUTTON_ID).find('svg').should('be.visible');
+            cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
+            cy.get(BUTTON_ID).should('have.class', 'tw-rounded-full');
+        });
 
-            it(`renders in ${style} ${ButtonSize.Medium} and solid: ${solid} with only an icon and fully rounded.`, () => {
-                cy.mount(
-                    <Button
-                        style={style}
-                        size={ButtonSize.Medium}
-                        solid={solid}
-                        icon={<IconIcon />}
-                        rounding={ButtonRounding.Full}
-                    />,
-                );
+        it(`renders in ${style} ${ButtonSize.Medium} with an icon and text.`, () => {
+            cy.mount(
+                <Button style={style} size={ButtonSize.Medium} icon={<IconIcon />}>
+                    {BUTTON_TEXT}
+                </Button>,
+            );
 
-                cy.get(BUTTON_ID).find('svg').should('be.visible');
-                cy.get(BUTTON_ID).should('not.contain', BUTTON_TEXT);
-                cy.get(BUTTON_ID).should('have.class', 'tw-rounded-full');
-            });
+            cy.get(BUTTON_ID).should('be.visible');
+            cy.get(BUTTON_ID).contains(BUTTON_TEXT);
 
-            it(`renders in ${style} ${ButtonSize.Medium} and solid: ${solid} with an icon and text.`, () => {
-                cy.mount(
-                    <Button style={style} size={ButtonSize.Medium} solid={solid} icon={<IconIcon />}>
-                        {BUTTON_TEXT}
-                    </Button>,
-                );
-
-                cy.get(BUTTON_ID).should('be.visible');
-                cy.get(BUTTON_ID).contains(BUTTON_TEXT);
-
-                cy.get(BUTTON_ID).children('span').find('svg').should('be.visible');
-                cy.get(BUTTON_ID).contains(BUTTON_TEXT);
-            });
-        }
+            cy.get(BUTTON_ID).children('span').find('svg').should('be.visible');
+            cy.get(BUTTON_ID).contains(BUTTON_TEXT);
+        });
     }
 
     it('reacts on click', () => {
