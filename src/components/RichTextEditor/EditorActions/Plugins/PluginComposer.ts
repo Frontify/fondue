@@ -1,9 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AnyObject, PlatePlugin, PlatePluginComponent, createParagraphPlugin } from '@udecode/plate';
+import {
+    AnyObject,
+    PlatePlugin,
+    PlatePluginComponent,
+    createIndentPlugin,
+    createParagraphPlugin,
+    createSoftBreakPlugin,
+} from '@udecode/plate';
 import { MarkupElement } from './MarkupElement';
 import { ObjectType } from '../types';
 import { Button, Buttons, Plugins } from './types';
+import { ELEMENT_CHECK_ITEM } from './CheckboxListPlugin/id';
 import type { Plugin } from './Plugin';
 
 export class PluginComposer {
@@ -12,7 +20,17 @@ export class PluginComposer {
     private toolbarButtons: Buttons = [];
 
     constructor() {
-        this.platePlugins.set('default', [createParagraphPlugin()]);
+        this.platePlugins.set('default', [
+            createParagraphPlugin(),
+            createSoftBreakPlugin(),
+            createIndentPlugin({
+                inject: {
+                    props: {
+                        validTypes: [ELEMENT_CHECK_ITEM],
+                    },
+                },
+            }),
+        ]);
     }
 
     public setPlugin(plugins: Plugins): this {

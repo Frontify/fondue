@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createParagraphPlugin } from '@udecode/plate';
 import { TEXT_STYLE_PLUGIN } from './id';
 import { TextStyleButton } from './TextStyleDropdown/TextStyleButton';
 import { Plugin, PluginProps } from '../Plugin';
@@ -26,7 +25,6 @@ export class TextStylePlugin extends Plugin {
 
     plugins() {
         return [
-            createParagraphPlugin(),
             createHeading1Plugin(),
             createHeading2Plugin(),
             createHeading3Plugin(),
