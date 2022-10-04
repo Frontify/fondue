@@ -6,7 +6,7 @@ import { useDrag } from 'react-dnd';
 import { DropZone, OnDropCallback } from '@components/DropZone';
 import { TreeFlatListItem } from '@components/Tree';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
-import { EditableInput } from '../EditableInput';
+import { EditableText } from '../EditableText';
 
 export type RenderNodeArrayData = Omit<NodeProps, 'isFirst' | 'strong' | 'node'> & {
     nodes: DraggableItem<TreeNodeItem>[];
@@ -53,6 +53,24 @@ type NodeProps = {
     onEditableSave?: (targetItemId: string, value: string) => void;
 };
 
+const getInitialShowNodesValue = (
+    currentNode: DraggableItem<TreeNodeItem>,
+    activeNodeIds?: NullableString[],
+): boolean => {
+    const hasActiveChildNodes = (node: DraggableItem<TreeNodeItem>, activeIds?: NullableString[]): boolean => {
+        if (node.nodes && activeIds) {
+            for (const childNode of node.nodes) {
+                if (activeIds.includes(childNode.id) || hasActiveChildNodes(childNode, activeIds)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    return hasActiveChildNodes(currentNode, activeNodeIds);
+};
+
 export const Node = ({
     node,
     strong = false,
@@ -73,7 +91,7 @@ export const Node = ({
         type: treeId,
         canDrag: onDrop !== undefined,
     });
-    const [showNodes, setShowNodes] = useState(false);
+    const [showNodes, setShowNodes] = useState(getInitialShowNodesValue(node, activeIds));
     const [isHovered, setIsHovered] = useState(false);
     const selected = activeIds && activeIds.length > 0 && activeIds.includes(id);
 
@@ -170,9 +188,20 @@ export const Node = ({
                             </span>
                             {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
-                                <EditableInput name={name} targetItemId={node.id} onEditableSave={onEditableSave}>
+                                <>
+                                    <EditableText
+                                        options={{
+                                            additionalValues: node.id,
+                                            enableDoubleClick: true,
+                                            isSlimInputField: true,
+                                            removeBoxPadding: true,
+                                        }}
+                                        onAdditionalValueSave={onEditableSave}
+                                    >
+                                        <p>{name}</p>
+                                    </EditableText>
                                     {badge && insertBadge()}
-                                </EditableInput>
+                                </>
                             ) : (
                                 <span className="tw-flex tw-items-center" data-test-id="node-link-name">
                                     {name}
@@ -182,6 +211,7 @@ export const Node = ({
                         </div>
                         <div className="tw-px-1.5">
                             <span
+                                data-test-id="node-label"
                                 className={merge([
                                     'tw-text-black-100 tw-text-opacity-40 tw-text-xs tw-font-normal',
                                     selected && 'tw-text-box-selected-strong-inverse',

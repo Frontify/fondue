@@ -129,4 +129,29 @@ describe('Tooltip Component', () => {
         cy.get('button').realPress('Tab');
         cy.get('button').should('be.focused').and('contain', 'Secondary');
     });
+
+    it('should not render the tooltip content when disabled', () => {
+        initTooltip(
+            {
+                content: TOOLTIP_TEXT,
+                disabled: true,
+            },
+            true,
+        );
+
+        cy.get(TOOLTIP_ID).should('not.exist');
+    });
+
+    it('should render but not display the tooltip content when hidden', () => {
+        initTooltip(
+            {
+                content: TOOLTIP_TEXT,
+                hidden: true,
+            },
+            true,
+        );
+
+        cy.get(TOOLTIP_ID).should('exist');
+        cy.get(TOOLTIP_ID).should('have.class', 'tw-hidden');
+    });
 });

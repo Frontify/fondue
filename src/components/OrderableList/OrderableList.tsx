@@ -53,7 +53,7 @@ export const OrderableList = <T extends object>({
         <DndProvider backend={HTML5Backend}>
             <div className="tw-outline-none" data-test-id="orderable-list">
                 {itemsState.map((item, index) => (
-                    <>
+                    <React.Fragment key={`dropzone-orderable-list-key-${index}`}>
                         <DropZone
                             key={`orderable-list-item-${index}-before`}
                             data={{
@@ -81,7 +81,7 @@ export const OrderableList = <T extends object>({
                                 treeId={listId}
                             />
                         )}
-                    </>
+                    </React.Fragment>
                 ))}
             </div>
         </DndProvider>

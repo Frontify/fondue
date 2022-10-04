@@ -46,8 +46,11 @@ export const TextStyleDropdown = ({ editorId }: TextStyleDropdownProps) => {
                 <DropdownItem editor={editor} type={TextStyles.ELEMENT_CUSTOM3}>
                     <span style={designTokens.custom3}>{textStyleTitle[TextStyles.ELEMENT_CUSTOM3]}</span>
                 </DropdownItem>
+                <DropdownItem editor={editor} type={TextStyles.ELEMENT_QUOTE}>
+                    <span style={designTokens.quote}>{textStyleTitle[TextStyles.ELEMENT_QUOTE]}</span>
+                </DropdownItem>
                 <DropdownItem editor={editor} type={TextStyles.ELEMENT_PARAGRAPH}>
-                    <span>{textStyleTitle[TextStyles.ELEMENT_PARAGRAPH]}</span>
+                    <span style={designTokens.p}>{textStyleTitle[TextStyles.ELEMENT_PARAGRAPH]}</span>
                 </DropdownItem>
             </div>
         </ToolbarDropdown>

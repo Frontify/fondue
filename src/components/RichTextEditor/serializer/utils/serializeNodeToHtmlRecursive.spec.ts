@@ -1,5 +1,5 @@
-import { LINK_CLASSES, OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/components';
 import { TextStyles } from '@components/RichTextEditor/EditorActions/Plugins/TextStylePlugin/TextStyles';
+import { OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/components';
 import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
 import { ELEMENT_LI, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL } from '@udecode/plate';
 import { serializeNodeToHtmlRecursive } from './serializeNodeToHtmlRecursive';
@@ -56,7 +56,9 @@ describe('serializeNodeToHtmlRecursive()', () => {
         };
         const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
 
-        expect(result).to.equal(`<p><a class="${LINK_CLASSES}" href="https://frontify.com">This is a Link.</a></p>`);
+        expect(result).to.equal(
+            '<p><a style="font-size: 14px; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" href="https://frontify.com">This is a Link.</a></p>',
+        );
     });
 
     it('serializes legacy link format to html', () => {
@@ -82,7 +84,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
 
         expect(result).to.equal(
-            `<p><a class="${LINK_CLASSES}" target=_blank href="https://smartive.ch">This is also a Link.</a></p>`,
+            '<p><a style="font-size: 14px; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target=_blank href="https://smartive.ch">This is also a Link.</a></p>',
         );
     });
 
@@ -146,13 +148,21 @@ describe('serializeNodeToHtmlRecursive()', () => {
                         },
                     ],
                 },
+                {
+                    type: TextStyles.ELEMENT_QUOTE,
+                    children: [
+                        {
+                            text: 'This is a quote.',
+                        },
+                    ],
+                },
             ],
         };
 
         const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
 
         expect(result).to.equal(
-            '<p><h1 style="font-size: 48px; font-weight: 700;">This is a h1.</h1><h2 style="font-size: 32px; font-weight: 700;">This is a h2.</h2><h3 style="font-size: 24px;">This is a h3.</h3><h4 style="font-size: 18px;">This is a h4.</h4><p style="font-size: 14px;">This is a custom1.</p><p style="font-size: 14px; font-weight: 600;">This is a custom2.</p><p style="font-size: 14px; text-decoration: underline;">This is a custom3.</p></p>',
+            '<p><h1 style="font-size: 48px; font-weight: 700;">This is a h1.</h1><h2 style="font-size: 32px; font-weight: 700;">This is a h2.</h2><h3 style="font-size: 24px;">This is a h3.</h3><h4 style="font-size: 18px;">This is a h4.</h4><p style="font-size: 14px;">This is a custom1.</p><p style="font-size: 14px; font-weight: 600;">This is a custom2.</p><p style="font-size: 14px; text-decoration: underline;">This is a custom3.</p><p style="font-size: 16px; font-style: italic;">This is a quote.</p></p>',
         );
     });
 });

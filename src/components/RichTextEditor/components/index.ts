@@ -12,6 +12,7 @@ export * from '../EditorActions/Plugins/LinkPlugin/LinkMarkupElement/LinkMarkupE
 export * from './list-item';
 export * from './list-item-content';
 export * from './ordered-list';
+export * from './quote';
 export * from './strikethrough';
 export * from './underline';
 export * from './unordered-list';

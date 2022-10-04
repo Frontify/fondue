@@ -1,4 +1,4 @@
-import { LINK_CLASSES, OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/components';
+import { OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/components';
 import { ELEMENT_CHECK_ITEM } from '../../EditorActions/Plugins/CheckboxListPlugin/id';
 import { DesignTokens } from '@components/RichTextEditor/types';
 import { TextStyles } from '@components/RichTextEditor/EditorActions/Plugins/TextStylePlugin/TextStyles';
@@ -29,6 +29,8 @@ export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: De
             return `<p style="${reactCssPropsToCss(designTokens.custom2)}">${children}</p>`;
         case TextStyles.ELEMENT_CUSTOM3:
             return `<p style="${reactCssPropsToCss(designTokens.custom3)}">${children}</p>`;
+        case TextStyles.ELEMENT_QUOTE:
+            return `<p style="${reactCssPropsToCss(designTokens.quote)}">${children}</p>`;
         case ELEMENT_PARAGRAPH:
             return `<p>${children}</p>`;
         case ELEMENT_UL:
@@ -39,11 +41,11 @@ export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: De
             return `<li>${children}</li>`;
         case ELEMENT_LINK:
             if (node.chosenLink) {
-                return `<a class="${LINK_CLASSES}" target=${
+                return `<a style="${reactCssPropsToCss(designTokens.link)}" target=${
                     node.chosenLink.openInNewTab ? '_blank' : '_self'
                 } href="${escapeHtml(node.chosenLink.searchResult.link)}">${children}</a>`;
             }
-            return `<a class="${LINK_CLASSES}" href="${escapeHtml(node.url)}">${children}</a>`;
+            return `<a style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(node.url)}">${children}</a>`;
         case ELEMENT_CHECK_ITEM:
             return `<input type="checkbox"/><label>${children}</label>`;
 

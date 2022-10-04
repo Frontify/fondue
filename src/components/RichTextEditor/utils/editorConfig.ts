@@ -42,6 +42,7 @@ import {
     ListItemContentElement,
     ListItemElement,
     OrderedListElement,
+    QuoteElement,
     StrikethroughMark,
     UnderlineMark,
     UnorderedListElement,
@@ -107,6 +108,12 @@ export const getEditorConfig = () => {
         component: Custom3Element,
     });
 
+    const createQuotePlugin = createPluginFactory({
+        key: TextStyles.ELEMENT_QUOTE,
+        isElement: true,
+        component: QuoteElement,
+    });
+
     const components = createPlateUI({
         // this will override the components over the default ones
         [ELEMENT_LINK]: LinkMarkupElementNode,
@@ -164,6 +171,7 @@ export const getEditorConfig = () => {
             createCustom1Plugin(),
             createCustom2Plugin(),
             createCustom3Plugin(),
+            createQuotePlugin(),
         ],
         {
             components,

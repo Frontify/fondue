@@ -3,7 +3,7 @@
 import { Badge } from '@components/Badge/Badge';
 import { TextInput } from '@components/TextInput/TextInput';
 
-import { Button, ButtonSize, ButtonStyle } from '@components/Button/Button';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
@@ -37,10 +37,11 @@ const User: FC<{ name: string }> = ({ name }) => (
 
 const ActionButton: FC = () => (
     <Button
+        style={ButtonStyle.Default}
+        emphasis={ButtonEmphasis.Default}
         aria-label="action menu"
         onClick={action('click')}
         size={ButtonSize.Small}
-        style={ButtonStyle.Secondary}
         icon={<IconDotsVertical />}
     />
 );

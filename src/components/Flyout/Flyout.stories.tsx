@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { BadgeStatus, BadgeStyle } from '@components/Badge';
-import { Button, ButtonStyle } from '@components/Button/Button';
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Divider } from '@components/Divider/Divider';
 import { FormControl } from '@components/FormControl/FormControl';
 import { Slider } from '@components/Slider/Slider';
@@ -45,76 +45,91 @@ export default {
     },
 } as Meta<FlyoutProps>;
 
-const FlyoutTemplate: Story<FlyoutProps> = (args) => {
-    const [activeItemId, setActiveItemId] = useState('a');
-    const [input, setInput] = useState('');
-    const [open, setOpen] = useState(false);
+const FlyoutTemplate: (addScrollingContent: boolean, inputFocus: boolean) => Story<FlyoutProps> = (
+    addScrollingContent = false,
+    inputFocus = false,
+) => {
+    const Component = (args) => {
+        const [activeItemId, setActiveItemId] = useState('a');
+        const [input, setInput] = useState('');
+        const [open, setOpen] = useState(false);
 
-    return (
-        <div className="dark:tw-text-white">
-            <div className="tw-flex tw-items-center">
-                Some text
-                <Flyout
-                    {...args}
-                    isOpen={open}
-                    onOpenChange={chain(args.onOpenChange, setOpen)}
-                    onCancel={chain(args.onCancel, () => setOpen(false))}
-                    onConfirm={args.onConfirm && chain(args.onConfirm, setOpen)}
-                >
-                    <div className="tw-flex tw-flex-col tw-gap-y-8 tw-p-8">
-                        <FormControl
-                            label={{
-                                children: 'Input Label',
-                                htmlFor: 'input-id',
-                                tooltip: { content: 'Input tooltip' },
-                            }}
-                            extra="Extra Text"
-                        >
-                            <TextInput value={input} onChange={setInput} />
-                        </FormControl>
-                        <Divider color={FLYOUT_DIVIDER_COLOR} height={FLYOUT_DIVIDER_HEIGHT} />
-                        <FormControl
-                            label={{
-                                children: 'Slider Label',
-                                htmlFor: 'slider-id',
-                            }}
-                        >
-                            <Slider
-                                activeItemId={activeItemId}
-                                onChange={setActiveItemId}
-                                items={[
-                                    { id: 'a', value: 'abc' },
-                                    { id: 'b', value: 'def' },
-                                    { id: 'c', value: 'ghi' },
-                                ]}
-                            />
-                        </FormControl>
-                    </div>
+        return (
+            <div className="dark:tw-text-white">
+                <div className="tw-flex tw-items-center">
+                    Some text
+                    <Flyout
+                        {...args}
+                        isOpen={open}
+                        onOpenChange={chain(args.onOpenChange, setOpen)}
+                        onCancel={chain(args.onCancel, () => setOpen(false))}
+                        onConfirm={args.onConfirm && chain(args.onConfirm, setOpen)}
+                    >
+                        <div className="tw-flex tw-flex-col tw-gap-y-8 tw-p-8">
+                            <FormControl
+                                label={{
+                                    children: 'Input Label',
+                                    htmlFor: 'input-id',
+                                    tooltip: { content: 'Input tooltip' },
+                                }}
+                                extra="Extra Text"
+                            >
+                                <TextInput value={input} onChange={setInput} focusOnMount={inputFocus} />
+                            </FormControl>
+                            <Divider color={FLYOUT_DIVIDER_COLOR} height={FLYOUT_DIVIDER_HEIGHT} />
+                            <FormControl
+                                label={{
+                                    children: 'Slider Label',
+                                    htmlFor: 'slider-id',
+                                }}
+                            >
+                                <Slider
+                                    activeItemId={activeItemId}
+                                    onChange={setActiveItemId}
+                                    items={[
+                                        { id: 'a', value: 'abc' },
+                                        { id: 'b', value: 'def' },
+                                        { id: 'c', value: 'ghi' },
+                                    ]}
+                                />
+                            </FormControl>
+                        </div>
 
-                    <div className="tw-p-8">
-                        <FormControl
-                            label={{
-                                children: 'Textarea Label',
-                                htmlFor: 'textarea-id',
-                            }}
-                        >
-                            <Textarea placeholder="This is a placeholder" />
-                        </FormControl>
-                    </div>
-                </Flyout>
+                        <div className="tw-p-8">
+                            <FormControl
+                                label={{
+                                    children: 'Textarea Label',
+                                    htmlFor: 'textarea-id',
+                                }}
+                            >
+                                <Textarea placeholder="This is a placeholder" />
+                            </FormControl>
+                        </div>
+                    </Flyout>
+                </div>
+                <div>
+                    Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
+                    consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
+                    anim ipsum est.
+                </div>
+                {addScrollingContent &&
+                    Array.from(Array(15).keys()).map((i) => (
+                        <div key={`content${i}`}>
+                            Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna
+                            labore consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla
+                            aliqua in laborum anim ipsum est.
+                        </div>
+                    ))}
             </div>
-            <div>
-                Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
-                consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
-                anim ipsum est.
-            </div>
-        </div>
-    );
+        );
+    };
+
+    return Component;
 };
 
-export const WithoutHeader = FlyoutTemplate.bind({});
+export const WithoutHeader = FlyoutTemplate().bind({});
 
-export const WithOnclick = FlyoutTemplate.bind({});
+export const WithOnclick = FlyoutTemplate().bind({});
 
 WithOnclick.argTypes = {
     onConfirm: { action: 'onConfirm' },
@@ -126,7 +141,7 @@ WithOnclick.args = {
     onConfirm: action('onConfirm'),
 };
 
-export const WithBadges = FlyoutTemplate.bind({});
+export const WithBadges = FlyoutTemplate().bind({});
 
 WithBadges.args = {
     title: 'Header title',
@@ -146,7 +161,13 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
         <Flyout
             {...args}
             trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
-                <Button onClick={() => setOpen(!open)} ref={ref} aria-label={ariaLabel}>
+                <Button
+                    style={ButtonStyle.Default}
+                    emphasis={ButtonEmphasis.Strong}
+                    onClick={() => setOpen(!open)}
+                    ref={ref}
+                    aria-label={ariaLabel}
+                >
                     Button
                 </Button>
             )}
@@ -221,13 +242,16 @@ const WithCustomFooterFlyoutTemplate: Story<FlyoutProps> = (args) => {
                         <FlyoutFooter
                             buttons={[
                                 {
+                                    style: ButtonStyle.Default,
+                                    emphasis: ButtonEmphasis.Default,
                                     children: 'Cancel',
-                                    style: ButtonStyle.Secondary,
+
                                     onClick: chain(action('onCancel'), () => setOpen(false)),
                                 },
                                 {
+                                    style: ButtonStyle.Default,
+                                    emphasis: ButtonEmphasis.Strong,
                                     children: 'Add',
-                                    style: ButtonStyle.Primary,
                                     onClick: chain(action('onConfirm'), () => setOpen(false)),
                                 },
                             ]}
@@ -270,7 +294,13 @@ const WithCustomFooterAndHeaderTemplate: Story<FlyoutProps> = (args) => {
         <Flyout
             {...args}
             trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
-                <Button onClick={() => setIsOpen(!isOpen)} ref={ref} aria-label={ariaLabel}>
+                <Button
+                    style={ButtonStyle.Default}
+                    emphasis={ButtonEmphasis.Strong}
+                    onClick={() => setIsOpen(!isOpen)}
+                    ref={ref}
+                    aria-label={ariaLabel}
+                >
                     Click me
                 </Button>
             )}
@@ -295,8 +325,9 @@ WithCustomFooterAndHeader.args = {
         <FlyoutFooter
             buttons={[
                 {
+                    style: ButtonStyle.Default,
+                    emphasis: ButtonEmphasis.Strong,
                     children: 'A button',
-                    style: ButtonStyle.Primary,
                 },
             ]}
         />
@@ -342,7 +373,7 @@ WithRenderFunctionTrigger.argTypes = {
     decorator: { table: { disable: true } },
 };
 
-export const WithContentMinHeight = FlyoutTemplate.bind({});
+export const WithContentMinHeight = FlyoutTemplate().bind({});
 
 WithContentMinHeight.args = {
     contentMinHeight: 200,
@@ -356,7 +387,13 @@ const WithPlacementAndOffsetTemplate: Story<FlyoutProps> = (args) => {
             {...args}
             trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
                 <div className="tw-flex tw-justify-center tw-items-center tw-w-full tw-h-screen">
-                    <Button onClick={() => setIsOpen(!isOpen)} ref={ref} aria-label={ariaLabel}>
+                    <Button
+                        style={ButtonStyle.Default}
+                        emphasis={ButtonEmphasis.Strong}
+                        onClick={() => setIsOpen(!isOpen)}
+                        ref={ref}
+                        aria-label={ariaLabel}
+                    >
                         Click me
                     </Button>
                 </div>
@@ -375,3 +412,5 @@ WithPlacementAndOffset.args = {
     placement: FlyoutPlacement.Top,
     offset: 20,
 };
+
+export const WithTextInputAutofocusAndPageScrolling = FlyoutTemplate(true, true).bind({});
