@@ -8,3 +8,4 @@ export * from './Heading4Plugin';
 export * from './Custom1Plugin';
 export * from './Custom2Plugin';
 export * from './Custom3Plugin';
+export * from './Quote';

@@ -12,6 +12,7 @@ import {
     createHeading2Plugin,
     createHeading3Plugin,
     createHeading4Plugin,
+    createQuotePlugin,
 } from './TextStyles';
 
 export class TextStylePlugin extends Plugin {
@@ -33,6 +34,7 @@ export class TextStylePlugin extends Plugin {
             createCustom1Plugin(),
             createCustom2Plugin(),
             createCustom3Plugin(),
+            createQuotePlugin(),
         ];
     }
 }
