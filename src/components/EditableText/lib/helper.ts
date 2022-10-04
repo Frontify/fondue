@@ -33,6 +33,7 @@ export const EditableTextHelper = {
             lineHeight: window.getComputedStyle(current).getPropertyValue('line-height'),
             letterSpacing: window.getComputedStyle(current).getPropertyValue('letter-spacing'),
             minWidth: window.getComputedStyle(current).getPropertyValue('width'),
+            fontWeight: window.getComputedStyle(current).getPropertyValue('font-weight'),
         };
     },
 };

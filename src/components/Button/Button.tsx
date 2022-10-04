@@ -24,6 +24,7 @@ import {
 } from './ButtonClasses';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { buttonIconSizeMap, buttonTypeMap } from '@components/Button/mappings';
+import { useFocusRing } from '@react-aria/focus';
 
 // To be NON-Breaking but import should be done through index.ts
 export * from './ButtonClasses';
@@ -89,6 +90,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         { onPress: () => onClick && onClick(), isDisabled: disabled, type: buttonTypeMap[type] },
         ref,
     );
+    const { isFocusVisible, focusProps } = useFocusRing();
 
     const getStyles = (kind: keyof ButtonElements) =>
         !disabled
@@ -96,7 +98,6 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             : ButtonDisabledClasses;
 
     const buttonClassName = merge([
-        FOCUS_VISIBLE_STYLE,
         getStyles('button'),
         ButtonCommonClasses,
         ButtonRoundingClasses[rounding],
@@ -109,11 +110,12 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             aria-label={ariaLabel}
             aria-disabled={disabled}
             ref={ref}
-            className={merge([buttonClassName, inverted && 'tw-dark'])}
+            className={merge([buttonClassName, inverted && 'tw-dark', isFocusVisible && FOCUS_VISIBLE_STYLE])}
             disabled={disabled}
             data-test-id="button"
             form={formId}
             {...buttonProps}
+            {...focusProps}
         >
             {icon && (
                 <span
