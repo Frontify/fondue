@@ -21,7 +21,7 @@ export const GeneratePlugins = (editorId: string, pluginComposer?: PluginCompose
         toolbar: (editorWidth: number | undefined) => (
             <Toolbar editorWidth={editorWidth} buttons={pluginComposer.buttons} editor={editor} editorId={editorId} />
         ),
-        mentions: () => (
+        inline: () => (
             <>
                 {pluginComposer.inline.map((Inline, index) => (
                     <Inline key={index} />
