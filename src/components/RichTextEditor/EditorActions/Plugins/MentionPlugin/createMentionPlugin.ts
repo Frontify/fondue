@@ -7,9 +7,9 @@ import {
     mentionOnKeyDownHandler,
     withMention,
 } from '@udecode/plate';
-import { MentionPluginType, WithOverrideType } from './types';
+import { TComboboxItemMention } from './types';
 
-export const createMentionPlugin = createPluginFactory<MentionPluginType>({
+export const createMentionPlugin = createPluginFactory({
     key: ELEMENT_MENTION,
     isElement: true,
     isInline: true,
@@ -17,10 +17,14 @@ export const createMentionPlugin = createPluginFactory<MentionPluginType>({
     handlers: {
         onKeyDown: mentionOnKeyDownHandler(),
     },
-    withOverrides: withMention as WithOverrideType,
+    withOverrides: withMention,
     options: {
         trigger: '@',
-        createMentionNode: (item) => ({ value: item.text, key: item.key, category: item.category }),
+        createMentionNode: (item: TComboboxItemMention) => ({
+            value: item.text,
+            key: item.key,
+            category: item.category,
+        }),
     },
     plugins: [
         {

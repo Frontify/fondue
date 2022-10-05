@@ -1,9 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TComboboxItemBase, WithOverride } from '@udecode/plate';
+import { Data, TComboboxItemBase } from '@udecode/plate';
 import { PluginProps } from '../Plugin';
-
-export declare type Data = unknown;
 
 interface MentionNodeData {
     value: string;
@@ -17,23 +15,11 @@ export enum TCategory {
     USER = 'user',
 }
 
-export interface MentionPluginType<TData extends Data = TCategory> {
-    createMentionNode?: CreateMentionNode<TData>;
-    id?: string;
-    insertSpaceAfterMention?: boolean;
-    trigger?: string;
-    inputCreation?: {
-        key: string;
-        value: string;
-    };
-}
-
 export interface TComboboxItemMention<T extends Data = TCategory> extends TComboboxItemBase {
     category: T;
 }
-export type MentionableItems = TComboboxItemMention<TCategory>[];
+
+export type MentionableItems = TComboboxItemMention[];
 export type MentionPluginProps = PluginProps & {
     mentionableItems?: MentionableItems;
 };
-
-export type WithOverrideType = WithOverride<Record<string, unknown>, MentionPluginType<TCategory>>;

@@ -11,7 +11,7 @@ export type ButtonGroupProps = {
 
 export type PluginButtonProps = {
     id: string;
-    editor: PlateEditor | null;
+    editor: PlateEditor;
 };
 export type PluginButton = ({ editor, id }: PluginButtonProps) => ReactElement;
 export type Button = {
