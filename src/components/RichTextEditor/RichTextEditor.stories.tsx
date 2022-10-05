@@ -192,13 +192,6 @@ WithPositioningOfToolbar.args = {
     position: Position.TOP,
 };
 
-export const WithNewToolbar = RichTextEditorTemplate.bind({});
-WithNewToolbar.args = {
-    position: Position.TOP,
-    actions: [],
-    plugins: defaultPlugins,
-};
-
 const mentionPlugins = new PluginComposer();
 mentionPlugins
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
@@ -210,4 +203,11 @@ WithMentions.args = {
     value: JSON.stringify(mentionValue),
     actions: [],
     plugins: mentionPlugins,
+};
+
+export const WithNewToolbar = RichTextEditorTemplate.bind({});
+WithNewToolbar.args = {
+    position: Position.TOP,
+    actions: [],
+    plugins: defaultPlugins,
 };
