@@ -23,7 +23,13 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
             >
                 {isCalendarOpen ? <IconCaretUp size={IconSize.Size20} /> : <IconCaretDown size={IconSize.Size20} />}
             </div>
-            <TextInput decorator={<IconCalendar />} placeholder={placeHolder} value={value} clearable={isClearable} />
+            <TextInput
+                decorator={<IconCalendar />}
+                placeholder={placeHolder}
+                value={value}
+                clearable={isClearable}
+                onEnterPressed={onClick}
+            />
         </div>
     ),
 );
