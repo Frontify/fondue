@@ -14,8 +14,8 @@ import {
     TDescendant,
 } from '@udecode/plate';
 import { ELEMENT_CHECK_ITEM } from '../EditorActions/Plugins/CheckboxListPlugin/id';
+import { TextStyles } from '../EditorActions/Plugins/TextStylePlugin/TextStyles';
 import { DesignTokens } from '../types';
-import { TextStyles } from './textStyles';
 
 type CreateElementProps = {
     text: string;
@@ -159,6 +159,7 @@ export const value = [
     createElement({ text: 'Heading 4', element: TextStyles.ELEMENT_HEADING4 }),
     createElement({ text: 'Custom 1', element: TextStyles.ELEMENT_CUSTOM1 }),
     createElement({ text: 'Custom 2', element: TextStyles.ELEMENT_CUSTOM2 }),
+    createElement({ text: 'Custom 3', element: TextStyles.ELEMENT_CUSTOM3 }),
 ];
 
 export const htmlValue = `

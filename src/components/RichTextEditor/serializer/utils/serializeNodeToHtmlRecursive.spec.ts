@@ -1,6 +1,6 @@
+import { TextStyles } from '@components/RichTextEditor/EditorActions/Plugins/TextStylePlugin/TextStyles';
 import { OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/components';
 import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
-import { TextStyles } from '@components/RichTextEditor/utils/textStyles';
 import { ELEMENT_LI, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL } from '@udecode/plate';
 import { serializeNodeToHtmlRecursive } from './serializeNodeToHtmlRecursive';
 

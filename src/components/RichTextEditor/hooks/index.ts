@@ -2,4 +2,3 @@
 
 export * from './useEditorState';
 export * from './useEditorResize';
-export * from './useSelectedTextStyles';

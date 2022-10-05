@@ -1,5 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+export const DEFAULT_TEXT_STYLE_VALUE = 'Mixed';
+
+export enum ListStyles {
+    UL = 'ul',
+    OL = 'ol',
+    CHECKLIST_ITEM = 'checkbox_item',
+}
+export const listStyleTitle: Record<ListStyles, string> = {
+    [ListStyles.UL]: 'Bullet List',
+    [ListStyles.OL]: 'List',
+    [ListStyles.CHECKLIST_ITEM]: 'Checklist',
+};
+
 export enum TextStyles {
     ELEMENT_HEADING1 = 'heading1',
     ELEMENT_HEADING2 = 'heading2',
@@ -13,7 +26,7 @@ export enum TextStyles {
     ELEMENT_PARAGRAPH = 'p',
 }
 
-export const textStyleTitles: Record<TextStyles, string> = {
+export const textStyleTitle: Record<TextStyles, string> = {
     [TextStyles.ELEMENT_HEADING1]: 'Heading 1',
     [TextStyles.ELEMENT_HEADING2]: 'Heading 2',
     [TextStyles.ELEMENT_HEADING3]: 'Heading 3',
@@ -25,3 +38,8 @@ export const textStyleTitles: Record<TextStyles, string> = {
     [TextStyles.ELEMENT_LINK]: 'Link',
     [TextStyles.ELEMENT_PARAGRAPH]: 'Paragraph',
 };
+
+export const AVAILABLE_STYLE_TITLES = { ...listStyleTitle, ...textStyleTitle };
+export const AVAILABLE_STYLE = Object.values({ ...ListStyles, ...TextStyles });
+
+export type AvailableStyles = ListStyles | TextStyles;

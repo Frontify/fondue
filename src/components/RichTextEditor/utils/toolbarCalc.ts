@@ -1,4 +1,4 @@
-import { ButtonGroupsPerRow } from '../EditorActions/Toolbar/utils';
+import { ButtonGroupsPerRow } from '../EditorActions/Toolbar/types';
 import { ButtonGroupWidths } from '../types';
 import { EditorActions } from './actions';
 

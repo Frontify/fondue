@@ -42,6 +42,7 @@ import {
     ListItemContentElement,
     ListItemElement,
     OrderedListElement,
+    QuoteElement,
     StrikethroughMark,
     UnderlineMark,
     UnorderedListElement,
@@ -50,8 +51,7 @@ import { createCheckboxListPlugin } from '../EditorActions/Plugins/CheckboxListP
 import { ELEMENT_CHECK_ITEM } from '../EditorActions/Plugins/CheckboxListPlugin/id';
 import { CheckboxListElementNode } from '../EditorActions/Plugins/CheckboxListPlugin/CheckboxListElement';
 import { createLinkPlugin } from '../EditorActions/Plugins/LinkPlugin';
-import { TextStyles } from './textStyles';
-import { QuoteElement } from '../components/quote';
+import { TextStyles } from '../EditorActions/Plugins/TextStylePlugin/TextStyles';
 
 export const getEditorConfig = () => {
     const createHeading1Plugin = createPluginFactory({

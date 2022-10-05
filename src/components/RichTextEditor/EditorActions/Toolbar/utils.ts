@@ -2,13 +2,11 @@
 
 import { EditorActions } from '../../utils/actions';
 import { Button, Buttons } from '../Plugins/types';
+import { ButtonGroupWidths, ButtonGroupsPerRow } from './types';
 
 const BUTTON_GROUP_PADDING_PX = 12;
 const BUTTON_GROUP_SIZE_PX = 27;
 const BUTTON_GROUP_DROPDOWN_PX = 128;
-
-export type ButtonGroupWidths = { group: Button[]; buttonGroupWidth: number; index: number }[];
-export type ButtonGroupsPerRow = ButtonGroupWidths[];
 
 export const getButtonGroupWidths = (buttons: Buttons) =>
     buttons.map((group, index) => ({
