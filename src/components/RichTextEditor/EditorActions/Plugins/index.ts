@@ -48,3 +48,4 @@ export * from './UnderlinePlugin';
 export * from './StrikethroughPlugin';
 export * from './LinkPlugin';
 export * from './MentionPlugin';
+export * from './TextStylePlugin';
