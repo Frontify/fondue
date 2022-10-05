@@ -8,8 +8,7 @@ import { Plugin, PluginProps } from '../Plugin';
 
 export class BoldPlugin extends Plugin {
     constructor(props?: PluginProps) {
-        super({
-            id: BOLD_PLUGIN,
+        super(BOLD_PLUGIN, {
             button: BoldButton,
             markupElement: new BoldMarkupElement(),
             ...props,

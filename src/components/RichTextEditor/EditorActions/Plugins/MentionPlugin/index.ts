@@ -9,9 +9,8 @@ import { createMentionPlugin } from './createMentionPlugin';
 import { MentionPluginProps } from './types';
 
 export class MentionPlugin extends Plugin<MentionPluginProps> {
-    constructor(props?: MentionPluginProps) {
-        super({
-            id: MENTION_PLUGIN,
+    constructor(props: MentionPluginProps) {
+        super(MENTION_PLUGIN, {
             markupElement: new MentionMarkupElement(),
             ...props,
         });

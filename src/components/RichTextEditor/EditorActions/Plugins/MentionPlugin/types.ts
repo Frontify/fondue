@@ -21,5 +21,5 @@ export interface TComboboxItemMention<T extends Data = TCategory> extends TCombo
 
 export type MentionableItems = TComboboxItemMention[];
 export type MentionPluginProps = PluginProps & {
-    mentionableItems?: MentionableItems;
+    mentionableItems: MentionableItems;
 };

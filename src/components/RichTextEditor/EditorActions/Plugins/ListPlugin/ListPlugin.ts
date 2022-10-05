@@ -8,8 +8,7 @@ import { ListItemMarkupElement } from './ListItemMarkupElement';
 
 export class ListPlugin extends Plugin {
     constructor(props?: PluginProps) {
-        super({
-            id: LIST_PLUGIN,
+        super(LIST_PLUGIN, {
             leafMarkupElements: [new ListItemContentMarkupElement(), new ListItemMarkupElement()],
             ...props,
         });

@@ -8,8 +8,7 @@ import { Plugin, PluginProps } from '../Plugin';
 
 export class StrikethroughPlugin extends Plugin {
     constructor(props?: PluginProps) {
-        super({
-            id: STRIKETHROUGH_PLUGIN,
+        super(STRIKETHROUGH_PLUGIN, {
             button: StrikethroughButton,
             markupElement: new StrikethroughMarkupElement(),
             ...props,

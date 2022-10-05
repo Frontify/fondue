@@ -18,8 +18,7 @@ export const createLinkPlugin = createPluginFactory({
 
 export class LinkPlugin extends Plugin {
     constructor(props?: PluginProps) {
-        super({
-            id: LINK_PLUGIN,
+        super(LINK_PLUGIN, {
             button: LinkButton,
             markupElement: new LinkMarkupElement(),
             ...props,

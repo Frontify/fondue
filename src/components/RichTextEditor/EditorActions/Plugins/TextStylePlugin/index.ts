@@ -16,8 +16,7 @@ import {
 
 export class TextStylePlugin extends Plugin {
     constructor(props?: PluginProps) {
-        super({
-            id: TEXT_STYLE_PLUGIN,
+        super(TEXT_STYLE_PLUGIN, {
             button: TextStyleButton,
             ...props,
         });

@@ -8,8 +8,7 @@ import { PluginProps } from '../../Plugin';
 
 export class AlignRightPlugin extends AlignPlugin {
     constructor(props?: PluginProps) {
-        super({
-            id: ALIGN_PLUGIN,
+        super(ALIGN_PLUGIN, {
             button: AlignRightButton,
             markupElement: new AlignRightMarkupElement(),
             ...props,

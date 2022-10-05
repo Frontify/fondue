@@ -7,7 +7,7 @@ import { Plugin, PluginProps } from '../Plugin';
 
 export class ItalicPlugin extends Plugin {
     constructor(props?: PluginProps) {
-        super({ id: ITALIC_PLUGIN, markupElement: new ItalicMarkupElement(), ...props });
+        super(ITALIC_PLUGIN, { markupElement: new ItalicMarkupElement(), ...props });
     }
 
     plugins() {

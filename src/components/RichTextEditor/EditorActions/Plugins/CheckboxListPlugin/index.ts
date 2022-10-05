@@ -13,8 +13,7 @@ export const createCheckboxListPlugin = createPluginFactory({
 
 export class CheckboxListPlugin extends Plugin {
     constructor(props?: PluginProps) {
-        super({
-            id: CHECKBOX_LIST_PLUGIN,
+        super(CHECKBOX_LIST_PLUGIN, {
             button: CheckboxListButton,
             markupElement: new CheckboxListElement(),
             ...props,
