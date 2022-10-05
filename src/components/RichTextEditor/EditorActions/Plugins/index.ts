@@ -11,9 +11,6 @@ import { UnderlinePlugin } from './UnderlinePlugin';
 import { StrikethroughPlugin } from './StrikethroughPlugin';
 import { LinkPlugin } from './LinkPlugin';
 import { TextStylePlugin } from './TextStylePlugin';
-import { MentionPlugin } from './MentionPlugin';
-
-import { mentionable } from '../../utils/exampleValues';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
@@ -39,12 +36,6 @@ defaultPlugins
             new OrderedListPlugin(),
         ],
     ]);
-
-export const mentionPlugins = new PluginComposer();
-mentionPlugins
-    .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
-    .setPlugin([[new UnorderedListPlugin(), new OrderedListPlugin()]])
-    .setPlugin([[new BoldPlugin(), new LinkPlugin()]]);
 
 export * from './PluginComposer';
 export * from './ListPlugin';
