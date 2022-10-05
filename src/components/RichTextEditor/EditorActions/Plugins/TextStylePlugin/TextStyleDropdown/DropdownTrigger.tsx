@@ -1,38 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretDown, IconSize } from '@foundation/Icon';
-import { getPreventDefaultHandler, usePlateEditorState } from '@udecode/plate';
-import { merge } from '@utilities/merge';
 import React from 'react';
-import { useSelectedTextStyles } from '../hooks/useSelectedTextStyles';
-import { AvailableTextStyles } from '../types';
-import { textStyleTitles } from '../utils/textStyles';
+import { getPreventDefaultHandler } from '@udecode/plate';
+import { IconCaretDown, IconSize } from '@foundation/Icon';
+import { merge } from '@utilities/merge';
+import { DropdownTriggerProps } from './types';
+import { useSelectedTextStyles } from './useSelectedTextStyles';
+import { AVAILABLE_STYLE_TITLES, DEFAULT_TEXT_STYLE_VALUE } from '../TextStyles';
 
-type DropdownTriggerProps = {
-    editorId?: string;
-    open: boolean;
-};
-const DEFAULT_TEXTSTYLE_VALUE = 'Mixed';
+export const DropdownTrigger = ({ editor, open }: DropdownTriggerProps) => {
+    const selectedTextStyles = useSelectedTextStyles(editor);
 
-export enum ListStyles {
-    UL = 'ul',
-    OL = 'ol',
-    CHECKLIST_ITEM = 'checkbox_item',
-}
-
-const listTitle: Record<ListStyles, string> = {
-    [ListStyles.UL]: 'Bullet List',
-    [ListStyles.OL]: 'List',
-    [ListStyles.CHECKLIST_ITEM]: 'Checklist',
-};
-
-const TEXT_STYLE_TITLES: Record<AvailableTextStyles, string> = { ...listTitle, ...textStyleTitles };
-
-export const DropdownTrigger = ({ editorId, open }: DropdownTriggerProps) => {
-    const editor = usePlateEditorState(editorId);
-    const selectedTextStyles = useSelectedTextStyles(editorId);
-
-    const label = selectedTextStyles.length === 1 ? TEXT_STYLE_TITLES[selectedTextStyles[0]] : DEFAULT_TEXTSTYLE_VALUE;
+    const label =
+        selectedTextStyles.length === 1 ? AVAILABLE_STYLE_TITLES[selectedTextStyles[0]] : DEFAULT_TEXT_STYLE_VALUE;
 
     return (
         <button

@@ -5,20 +5,20 @@ import { InlineData, PluginButton } from './types';
 import type { MarkupElement } from './MarkupElement';
 
 export type PluginProps = {
-    id?: string;
+    id: string;
     button?: PluginButton;
     markupElement?: MarkupElement;
     leafMarkupElements?: MarkupElement | MarkupElement[];
 };
 
 export abstract class Plugin<P extends PluginProps = PluginProps> {
-    readonly id?: string;
+    readonly id: string;
     readonly button?: PluginButton;
     readonly markupElement?: MarkupElement;
     readonly leafMarkupElements?: MarkupElement | MarkupElement[];
 
-    constructor(protected props?: P) {
-        this.id = this.props?.id;
+    constructor(protected props: P) {
+        this.id = this.props.id;
         this.button = this.props?.button;
         this.markupElement = this.props?.markupElement;
         this.leafMarkupElements = this.props?.leafMarkupElements;

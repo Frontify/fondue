@@ -1,9 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AnyObject, PlatePlugin, PlatePluginComponent, createParagraphPlugin } from '@udecode/plate';
+import {
+    AnyObject,
+    PlatePlugin,
+    PlatePluginComponent,
+    createIndentPlugin,
+    createParagraphPlugin,
+    createSoftBreakPlugin,
+} from '@udecode/plate';
 import { MarkupElement } from './MarkupElement';
 import { ObjectType } from '../types';
 import { Button, Buttons, InlineData, Plugins } from './types';
+import { ELEMENT_CHECK_ITEM } from './CheckboxListPlugin/id';
 import type { Plugin } from './Plugin';
 
 export class PluginComposer {
@@ -13,7 +21,17 @@ export class PluginComposer {
     private inlineElements: InlineData[] = [];
 
     constructor() {
-        this.platePlugins.set('default', [createParagraphPlugin()]);
+        this.platePlugins.set('default', [
+            createParagraphPlugin(),
+            createSoftBreakPlugin(),
+            createIndentPlugin({
+                inject: {
+                    props: {
+                        validTypes: [ELEMENT_CHECK_ITEM],
+                    },
+                },
+            }),
+        ]);
     }
 
     public setPlugin(plugins: Plugins): this {
@@ -70,13 +88,13 @@ export class PluginComposer {
     private generateGroupOfButtons(groupOfPlugins: Plugin[]) {
         const groupOfButtons: Button[] = [];
 
-        for (const { markupElement, button } of groupOfPlugins) {
-            if (!button || !markupElement) {
+        for (const { markupElement, button, id } of groupOfPlugins) {
+            if (!button) {
                 continue;
             }
 
             groupOfButtons.push({
-                id: markupElement.id,
+                id: markupElement?.id || id,
                 button,
             });
         }

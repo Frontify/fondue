@@ -1,19 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor } from '@udecode/plate';
 import React from 'react';
 import { useRichTextEditorContext } from '../../context/RichTextEditorContext';
 import { ButtonGroupWrapper } from '../Plugins/helper';
-import { Buttons } from '../Plugins/types';
+import { ToolbarProps } from './types';
 import { getButtonGroupWidths, getButtonGroupsPerRow } from './utils';
 
-type ToolbarProps = {
-    buttons: Buttons;
-    editor: PlateEditor;
-    editorWidth?: number;
-};
-
-export const Toolbar = ({ buttons, editor, editorWidth }: ToolbarProps) => {
+export const Toolbar = ({ buttons, editor, editorId, editorWidth }: ToolbarProps) => {
     const { PositioningWrapper } = useRichTextEditorContext();
 
     const buttonGroupWidths = getButtonGroupWidths(buttons);
@@ -26,7 +19,12 @@ export const Toolbar = ({ buttons, editor, editorWidth }: ToolbarProps) => {
                     {row.map(({ group, index }) => (
                         <ButtonGroupWrapper index={index} key={index}>
                             {group.map((ToolbarButton, idx) => (
-                                <ToolbarButton.button editor={editor} id={ToolbarButton.id} key={idx.toString()} />
+                                <ToolbarButton.button
+                                    editor={editor}
+                                    editorId={editorId}
+                                    id={ToolbarButton.id}
+                                    key={idx.toString()}
+                                />
                             ))}
                         </ButtonGroupWrapper>
                     ))}
