@@ -34,7 +34,7 @@ export class PluginComposer {
         ]);
     }
 
-    public setPlugin(plugins: Plugins): this {
+    public setPlugin(...plugins: Plugins): this {
         for (const group of plugins) {
             const groupOfPlugins: Plugin[] = Array.isArray(group) ? group : [group];
 

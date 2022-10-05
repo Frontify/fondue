@@ -14,8 +14,8 @@ import { TextStylePlugin } from './TextStylePlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
-    .setPlugin([
-        [new TextStylePlugin()],
+    .setPlugin(new TextStylePlugin())
+    .setPlugin(
         [
             new BoldPlugin(),
             new ItalicPlugin(),
@@ -24,8 +24,6 @@ defaultPlugins
             new LinkPlugin(),
             new CodePlugin(),
         ],
-    ])
-    .setPlugin([
         [
             new AlignLeftPlugin(),
             new AlignCenterPlugin(),
@@ -35,7 +33,7 @@ defaultPlugins
             new CheckboxListPlugin(),
             new OrderedListPlugin(),
         ],
-    ]);
+    );
 
 export * from './PluginComposer';
 export * from './ListPlugin';

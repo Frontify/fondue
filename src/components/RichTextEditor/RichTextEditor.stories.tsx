@@ -181,16 +181,17 @@ WithNewToolbar.args = {
     plugins: defaultPlugins,
 };
 
-export const MentionPlugins = new PluginComposer();
-MentionPlugins.setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
-    .setPlugin([[new UnorderedListPlugin(), new OrderedListPlugin()]])
-    .setPlugin([[new BoldPlugin(), new LinkPlugin()]]);
+const mentionPlugins = new PluginComposer();
+mentionPlugins
+    .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
+    .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
+    .setPlugin([new BoldPlugin(), new LinkPlugin()]);
 
 export const WithMentions = RichTextEditorTemplate.bind({});
 WithMentions.args = {
     value: JSON.stringify(mentionValue),
     actions: [],
-    plugins: MentionPlugins,
+    plugins: mentionPlugins,
 };
 
 export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
