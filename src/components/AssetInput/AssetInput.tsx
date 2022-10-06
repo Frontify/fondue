@@ -115,7 +115,7 @@ export const AssetInput: FC<AssetInputProps> = ({
                     data-test-id="asset-input-upload"
                 >
                     <label
-                        className="tw-relative tw-cursor-pointer tw-rounded tw-flex tw-items-center tw-justify-center tw-px-4 tw-h-9 tw-text-s tw-text-black-80 tw-bg-transparent hover:tw-bg-black-10 hover:tw-text-black active:tw-bg-black-20 active:tw-text-black dark:tw-text-white dark:hover:tw-bg-black-95 dark:active:tw-bg-black-superdark dark:hover:tw-text-white"
+                        className="tw-relative tw-cursor-pointer tw-rounded tw-flex tw-items-center tw-justify-center tw-px-4 tw-h-9 tw-text-s tw-text-black-80 tw-bg-transparent hover:tw-bg-black-10 hover:tw-text-black active:tw-bg-black-20 active:tw-text-black dark:tw-text-white dark:hover:tw-bg-black-superdark dark:active:tw-bg-black-superdark dark:hover:tw-text-white tw-text-button-text tw-font-medium"
                         htmlFor={id}
                     >
                         <span className="tw--ml-1 tw-mr-1.5">
