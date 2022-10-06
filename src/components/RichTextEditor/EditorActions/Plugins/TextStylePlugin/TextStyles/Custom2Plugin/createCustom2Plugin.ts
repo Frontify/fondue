@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createPluginFactory } from '@udecode/plate';
-import { ELEMENT_CUSTOM2 } from './id';
 import { Custom2MarkupElementNode } from './Custom2MarkupElementNode';
+import { TextStyles } from '../textStyles';
 
 export const createCustom2Plugin = createPluginFactory({
-    key: ELEMENT_CUSTOM2,
+    key: TextStyles.ELEMENT_CUSTOM2,
     isElement: true,
     component: Custom2MarkupElementNode,
 });
