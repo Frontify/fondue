@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useLayoutEffect, useRef, useState } from 'react';
 import { merge } from '@utilities/merge';
 import { useDrag } from 'react-dnd';
 import { DropZone, OnDropCallback } from '@components/DropZone';
 import { TreeFlatListItem } from '@components/Tree';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 import { EditableText } from '../EditableText';
+import { TooltipIcon } from '@components/TooltipIcon';
 
 export type RenderNodeArrayData = Omit<NodeProps, 'isFirst' | 'strong' | 'node'> & {
     nodes: DraggableItem<TreeNodeItem>[];
@@ -126,6 +127,24 @@ export const Node = ({
         );
     };
 
+    const nameRef = useRef<HTMLDivElement | null>(null);
+    const [isOverflowing, setIsOverflowing] = useState(false);
+
+    useLayoutEffect(() => {
+        checkIfOverflowing();
+
+        window.addEventListener('resize', checkIfOverflowing);
+        return () => {
+            window.removeEventListener('resize', checkIfOverflowing);
+        };
+    }, []);
+
+    const checkIfOverflowing = () => {
+        if (nameRef) {
+            setIsOverflowing((nameRef.current && nameRef.current.scrollWidth > nameRef.current.clientWidth) ?? false);
+        }
+    };
+
     /* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
     return (
         <li data-test-id="node" ref={drag} style={{ opacity }}>
@@ -149,7 +168,7 @@ export const Node = ({
             >
                 <div
                     className={merge([
-                        'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5',
+                        'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-max-h-10 tw-whitespace-nowrap',
                         strong && 'tw-font-bold',
                         value &&
                             !selected &&
@@ -163,14 +182,14 @@ export const Node = ({
                     <a
                         data-test-id="node-link"
                         className={merge([
-                            'tw-flex tw-items-center tw-flex-grow tw-justify-between tw-cursor-pointer',
+                            'tw-flex tw-items-center tw-w-[90%] tw-flex-grow tw-justify-between tw-cursor-pointer',
                             parentIds.length === 1 && 'tw-pl-4',
                             parentIds.length > 1 && 'tw-pl-8',
                         ])}
                         aria-selected={selected}
                         onClick={onNodeClick}
                     >
-                        <div className="tw-flex tw-space-x-1 tw-items-center">
+                        <div className="tw-flex tw-space-x-1 tw-items-center tw-w-[75%]">
                             <span
                                 data-test-id="toggle"
                                 className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center"
@@ -198,18 +217,40 @@ export const Node = ({
                                         }}
                                         onAdditionalValueSave={onEditableSave}
                                     >
-                                        <p>{name}</p>
+                                        <div>
+                                            <div ref={nameRef} className="tw-min-w-0 tw-truncate">
+                                                {name}
+                                            </div>
+                                            {isOverflowing && (
+                                                <TooltipIcon
+                                                    tooltip={{
+                                                        content: name,
+                                                    }}
+                                                    triggerIcon={<span>...</span>}
+                                                />
+                                            )}
+                                        </div>
                                     </EditableText>
                                     {badge && insertBadge()}
                                 </>
                             ) : (
-                                <span className="tw-flex tw-items-center" data-test-id="node-link-name">
-                                    {name}
+                                <div className="tw-flex tw-items-center tw-w-full" data-test-id="node-link-name">
+                                    <div ref={nameRef} className="tw-min-w-0 tw-truncate tw-text-clip">
+                                        {name}
+                                    </div>
+                                    {isOverflowing && (
+                                        <TooltipIcon
+                                            tooltip={{
+                                                content: name,
+                                            }}
+                                            triggerIcon={<span>...</span>}
+                                        />
+                                    )}
                                     {badge && insertBadge()}
-                                </span>
+                                </div>
                             )}
                         </div>
-                        <div className="tw-px-1.5">
+                        <div className="tw-px-1.5 tw-w-[20%] tw-text-end">
                             <span
                                 data-test-id="node-label"
                                 className={merge([
@@ -226,7 +267,7 @@ export const Node = ({
                         <div
                             className={merge([
                                 'tw-flex tw-items-center',
-                                isHovered || selected ? 'tw-visible tw-space-x-1.5' : 'tw-invisible tw-w-0',
+                                isHovered || selected ? 'tw-visible' : 'tw-invisible tw-w-0',
                             ])}
                         >
                             {actions.map((action) => action)}

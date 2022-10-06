@@ -112,7 +112,7 @@ const testCategoryNodes = [
     {
         id: '1-2-3',
         parentId: '1-2',
-        name: 'About us Category',
+        name: 'About us Category Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consectetur quis tellus id elementum.',
         label: 'About Us Page',
         value: 'https://weare.frontify.com/page/6',
         icon: <IconDocument size={IconSize.Size16} />,
@@ -153,7 +153,7 @@ export const mockNodesFlat: mockNodeType = () => [
     {
         id: '1-2',
         parentId: '1',
-        name: 'Test Category',
+        name: 'Test Category Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         label: 'Document',
         icon: <IconFolder size={IconSize.Size16} />,
         actions: [
