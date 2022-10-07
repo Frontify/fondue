@@ -21,7 +21,6 @@ import {
     createListPlugin,
     createParagraphPlugin,
     createPlateUI,
-    createPluginFactory,
     createPlugins,
     createSoftBreakPlugin,
     createStrikethroughPlugin,
@@ -30,19 +29,11 @@ import {
 import {
     BoldMark,
     CodeMark,
-    Custom1Element,
-    Custom2Element,
-    Custom3Element,
-    Heading1Element,
-    Heading2Element,
-    Heading3Element,
-    Heading4Element,
     ItalicMark,
     LinkMarkupElementNode,
     ListItemContentElement,
     ListItemElement,
     OrderedListElement,
-    QuoteElement,
     StrikethroughMark,
     UnderlineMark,
     UnorderedListElement,
@@ -51,69 +42,19 @@ import { createCheckboxListPlugin } from '../EditorActions/Plugins/CheckboxListP
 import { ELEMENT_CHECK_ITEM } from '../EditorActions/Plugins/CheckboxListPlugin/id';
 import { CheckboxListElementNode } from '../EditorActions/Plugins/CheckboxListPlugin/CheckboxListElement';
 import { createLinkPlugin } from '../EditorActions/Plugins/LinkPlugin';
-import { TextStyles } from '../EditorActions/Plugins/TextStylePlugin/TextStyles';
+import {
+    TextStyles,
+    createCustom1Plugin,
+    createCustom2Plugin,
+    createCustom3Plugin,
+    createHeading1Plugin,
+    createHeading2Plugin,
+    createHeading3Plugin,
+    createHeading4Plugin,
+    createQuotePlugin,
+} from '../EditorActions/Plugins/TextStylePlugin/TextStyles';
 
 export const getEditorConfig = () => {
-    const createHeading1Plugin = createPluginFactory({
-        key: TextStyles.ELEMENT_HEADING1,
-        isElement: true,
-        component: Heading1Element,
-        deserializeHtml: {
-            rules: [{ validNodeName: ['h1', 'H1'] }],
-        },
-    });
-
-    const createHeading2Plugin = createPluginFactory({
-        key: TextStyles.ELEMENT_HEADING2,
-        isElement: true,
-        component: Heading2Element,
-        deserializeHtml: {
-            rules: [{ validNodeName: ['h2', 'H2'] }],
-        },
-    });
-
-    const createHeading3Plugin = createPluginFactory({
-        key: TextStyles.ELEMENT_HEADING3,
-        isElement: true,
-        component: Heading3Element,
-        deserializeHtml: {
-            rules: [{ validNodeName: ['h3', 'H3'] }],
-        },
-    });
-
-    const createHeading4Plugin = createPluginFactory({
-        key: TextStyles.ELEMENT_HEADING4,
-        isElement: true,
-        component: Heading4Element,
-        deserializeHtml: {
-            rules: [{ validNodeName: ['h4', 'H4'] }],
-        },
-    });
-
-    const createCustom1Plugin = createPluginFactory({
-        key: TextStyles.ELEMENT_CUSTOM1,
-        isElement: true,
-        component: Custom1Element,
-    });
-
-    const createCustom2Plugin = createPluginFactory({
-        key: TextStyles.ELEMENT_CUSTOM2,
-        isElement: true,
-        component: Custom2Element,
-    });
-
-    const createCustom3Plugin = createPluginFactory({
-        key: TextStyles.ELEMENT_CUSTOM3,
-        isElement: true,
-        component: Custom3Element,
-    });
-
-    const createQuotePlugin = createPluginFactory({
-        key: TextStyles.ELEMENT_QUOTE,
-        isElement: true,
-        component: QuoteElement,
-    });
-
     const components = createPlateUI({
         // this will override the components over the default ones
         [ELEMENT_LINK]: LinkMarkupElementNode,
@@ -143,6 +84,8 @@ export const getEditorConfig = () => {
                             TextStyles.ELEMENT_HEADING4,
                             TextStyles.ELEMENT_CUSTOM1,
                             TextStyles.ELEMENT_CUSTOM2,
+                            TextStyles.ELEMENT_CUSTOM3,
+                            TextStyles.ELEMENT_QUOTE,
                         ],
                     },
                 },

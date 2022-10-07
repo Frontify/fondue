@@ -8,8 +8,7 @@ import { Plugin, PluginProps } from '../Plugin';
 
 export class UnderlinePlugin extends Plugin {
     constructor(props?: PluginProps) {
-        super({
-            id: UNDERLINE_PLUGIN,
+        super(UNDERLINE_PLUGIN, {
             button: UnderlineButton,
             markupElement: new UnderlineMarkupElement(),
             ...props,

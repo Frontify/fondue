@@ -9,8 +9,7 @@ import {
     createSoftBreakPlugin,
 } from '@udecode/plate';
 import { MarkupElement } from './MarkupElement';
-import { ObjectType } from '../types';
-import { Button, Buttons, Plugins } from './types';
+import { Button, Buttons, InlineData, ObjectType, Plugins } from './types';
 import { ELEMENT_CHECK_ITEM } from './CheckboxListPlugin/id';
 import type { Plugin } from './Plugin';
 
@@ -18,6 +17,7 @@ export class PluginComposer {
     private platePlugins: Map<string, PlatePlugin<AnyObject>[]> = new Map();
     private markupElements: ObjectType<PlatePluginComponent<any>> = {};
     private toolbarButtons: Buttons = [];
+    private inlineElements: InlineData[] = [];
 
     constructor() {
         this.platePlugins.set('default', [
@@ -33,7 +33,7 @@ export class PluginComposer {
         ]);
     }
 
-    public setPlugin(plugins: Plugins): this {
+    public setPlugin(...plugins: Plugins): this {
         for (const group of plugins) {
             const groupOfPlugins: Plugin[] = Array.isArray(group) ? group : [group];
 
@@ -41,6 +41,7 @@ export class PluginComposer {
                 this.addElement(plugin.markupElement);
                 this.addLeafElements(plugin.leafMarkupElements);
                 this.addPlugin(plugin);
+                this.addInline(plugin.inline());
             }
 
             this.generateGroupOfButtons(groupOfPlugins);
@@ -74,6 +75,12 @@ export class PluginComposer {
     private addPlugin(plugin: Plugin) {
         if (plugin.id && !this.platePlugins.has(plugin.id)) {
             this.platePlugins.set(plugin.id, plugin.plugins());
+        }
+    }
+
+    private addInline(inl: InlineData | undefined) {
+        if (inl) {
+            this.inlineElements.push(inl);
         }
     }
 
@@ -111,5 +118,9 @@ export class PluginComposer {
 
     get buttons(): Buttons {
         return this.toolbarButtons;
+    }
+
+    get inline(): InlineData[] {
+        return this.inlineElements;
     }
 }

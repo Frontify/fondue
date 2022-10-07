@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createPluginFactory } from '@udecode/plate';
-import { ELEMENT_HEADING4 } from './id';
 import { Heading4MarkupElementNode } from './Heading4MarkupElementNode';
+import { TextStyles } from '../textStyles';
 
 export const createHeading4Plugin = createPluginFactory({
-    key: ELEMENT_HEADING4,
+    key: TextStyles.ELEMENT_HEADING4,
     isElement: true,
     component: Heading4MarkupElementNode,
     deserializeHtml: {
