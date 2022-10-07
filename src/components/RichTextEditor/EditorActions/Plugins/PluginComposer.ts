@@ -44,7 +44,7 @@ export class PluginComposer {
             }
 
             if (this.hasToolbar) {
-                this.generateGroupOfButtons(groupOfPlugins);
+                this.addButtons(groupOfPlugins);
             }
         }
 
@@ -85,11 +85,19 @@ export class PluginComposer {
         }
     }
 
-    private generateGroupOfButtons(groupOfPlugins: Plugin[]) {
+    private addButtons(plugins: Plugin[]) {
+        const groupOfButtons = this.createGroupOfButtons(plugins);
+
+        if (groupOfButtons.length > 0) {
+            this.toolbarButtons.push(groupOfButtons);
+        }
+    }
+
+    private createGroupOfButtons(plugins: Plugin[]): Button[] {
         const groupOfButtons: Button[] = [];
 
-        for (const { markupElement, button, id } of groupOfPlugins) {
-            if (!button) {
+        for (const { markupElement, button, id, props } of plugins) {
+            if (!button || props?.noButton) {
                 continue;
             }
 
@@ -99,9 +107,7 @@ export class PluginComposer {
             });
         }
 
-        if (groupOfButtons.length > 0) {
-            this.toolbarButtons.push(groupOfButtons);
-        }
+        return groupOfButtons;
     }
 
     get elements() {

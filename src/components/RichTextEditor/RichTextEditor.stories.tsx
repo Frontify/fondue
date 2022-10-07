@@ -200,6 +200,18 @@ WithNewToolbar.args = {
     plugins: defaultPlugins,
 };
 
+const mentionPlugins = new PluginComposer();
+mentionPlugins
+    .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
+    .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
+    .setPlugin([new BoldPlugin(), new LinkPlugin()]);
+export const WithMentions = RichTextEditorTemplate.bind({});
+WithMentions.args = {
+    value: JSON.stringify(mentionValue),
+    actions: [],
+    plugins: mentionPlugins,
+};
+
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
 withoutToolbarPlugins.setPlugin([
     new BoldPlugin(),
@@ -213,16 +225,4 @@ WithoutToolbar.args = {
     position: Position.TOP,
     actions: [],
     plugins: withoutToolbarPlugins,
-};
-
-const mentionPlugins = new PluginComposer();
-mentionPlugins
-    .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
-    .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
-    .setPlugin([new BoldPlugin(), new LinkPlugin()]);
-export const WithMentions = RichTextEditorTemplate.bind({});
-WithMentions.args = {
-    value: JSON.stringify(mentionValue),
-    actions: [],
-    plugins: mentionPlugins,
 };
