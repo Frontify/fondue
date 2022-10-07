@@ -4,6 +4,9 @@ import { ReactElement, ReactNode } from 'react';
 import { PlateEditor } from '@udecode/plate';
 import type { Plugin } from './Plugin';
 
+export type Unknown = unknown;
+export type ObjectType<T extends Unknown> = Record<string, T>;
+
 export type ButtonGroupProps = {
     index: number;
     children?: ReactNode;

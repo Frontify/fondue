@@ -17,7 +17,7 @@ import { TextStyles } from './EditorActions/Plugins/TextStylePlugin/TextStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
 import { getEditorConfig } from './utils/editorConfig';
-import { GeneratePlugins, PluginComposer } from './EditorActions';
+import { GeneratePlugins, PluginComposer } from './EditorActions/Plugins';
 import { forceTabOutOfActiveElement } from './helper';
 
 export type RichTextEditorProps = {

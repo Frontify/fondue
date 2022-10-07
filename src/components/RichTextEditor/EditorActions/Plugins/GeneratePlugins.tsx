@@ -1,12 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
-import { createPlateUI, createPlugins, usePlateEditorRef } from '@udecode/plate';
-import { GeneratePluginsReturn } from './types';
-import { PluginComposer } from './Plugins/PluginComposer';
-import { Toolbar } from './Toolbar';
+import React, { ReactNode } from 'react';
+import { AnyObject, PlatePlugin, createPlateUI, createPlugins, usePlateEditorRef } from '@udecode/plate';
+import { PluginComposer } from './PluginComposer';
+import { Toolbar } from '../Toolbar';
 
-export const GeneratePlugins = (editorId: string, pluginComposer?: PluginComposer): GeneratePluginsReturn | null => {
+type GeneratePluginsReturn = {
+    create: () => PlatePlugin<AnyObject>[];
+    toolbar: (editorWidth: number | undefined) => ReactNode;
+    inline: () => ReactNode;
+} | null;
+
+export const GeneratePlugins = (editorId: string, pluginComposer?: PluginComposer): GeneratePluginsReturn => {
     const editor = usePlateEditorRef(editorId)!;
 
     if (!pluginComposer) {

@@ -35,6 +35,7 @@ defaultPlugins
         ],
     );
 
+export * from './GeneratePlugins';
 export * from './PluginComposer';
 export * from './ListPlugin';
 export * from './BoldPlugin';

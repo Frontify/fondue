@@ -9,8 +9,7 @@ import {
     createSoftBreakPlugin,
 } from '@udecode/plate';
 import { MarkupElement } from './MarkupElement';
-import { ObjectType } from '../types';
-import { Button, Buttons, InlineData, Plugins } from './types';
+import { Button, Buttons, InlineData, ObjectType, Plugins } from './types';
 import { ELEMENT_CHECK_ITEM } from './CheckboxListPlugin/id';
 import type { Plugin } from './Plugin';
 
