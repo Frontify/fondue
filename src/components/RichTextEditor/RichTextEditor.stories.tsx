@@ -24,7 +24,7 @@ import {
     PluginComposer,
     UnorderedListPlugin,
     defaultPlugins,
-} from './EditorActions';
+} from './EditorActions/Plugins';
 import { PaddingSizes } from './types';
 
 export default {
