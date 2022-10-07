@@ -9,9 +9,8 @@ import {
     createSoftBreakPlugin,
 } from '@udecode/plate';
 import { MarkupElement } from './MarkupElement';
-import { Button, Buttons, InlineData, ObjectType, Plugins } from './types';
 import { ELEMENT_CHECK_ITEM } from './CheckboxListPlugin/id';
-import type { Plugin } from './Plugin';
+import { Button, Buttons, InlineData, ObjectType, Plugin, PluginComposerProps, Plugins } from './types';
 
 export class PluginComposer {
     private platePlugins: Map<string, PlatePlugin<AnyObject>[]> = new Map();
@@ -19,7 +18,7 @@ export class PluginComposer {
     private toolbarButtons: Buttons = [];
     private inlineElements: InlineData[] = [];
 
-    constructor() {
+    constructor(protected props?: PluginComposerProps) {
         this.platePlugins.set('default', [
             createParagraphPlugin(),
             createSoftBreakPlugin(),
@@ -44,7 +43,9 @@ export class PluginComposer {
                 this.addInline(plugin.inline());
             }
 
-            this.generateGroupOfButtons(groupOfPlugins);
+            if (this.hasToolbar) {
+                this.generateGroupOfButtons(groupOfPlugins);
+            }
         }
 
         return this;
@@ -122,5 +123,9 @@ export class PluginComposer {
 
     get inline(): InlineData[] {
         return this.inlineElements;
+    }
+
+    get hasToolbar(): boolean {
+        return !this.props?.noToolbar;
     }
 }
