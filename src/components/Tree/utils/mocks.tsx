@@ -92,7 +92,7 @@ const testCategoryNodes = [
     {
         id: '1-2-1',
         parentId: '1-2',
-        name: 'Home Category',
+        name: 'Home Category Test Category Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         label: 'Home Page',
         value: 'https://weare.frontify.com/page/4',
         icon: <IconDocument size={IconSize.Size16} />,

@@ -7,7 +7,6 @@ import { DropZone, OnDropCallback } from '@components/DropZone';
 import { TreeFlatListItem } from '@components/Tree';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 import { EditableText } from '../EditableText';
-import { TooltipIcon } from '@components/TooltipIcon';
 
 export type RenderNodeArrayData = Omit<NodeProps, 'isFirst' | 'strong' | 'node'> & {
     nodes: DraggableItem<TreeNodeItem>[];
@@ -182,14 +181,14 @@ export const Node = ({
                     <a
                         data-test-id="node-link"
                         className={merge([
-                            'tw-flex tw-items-center tw-w-[90%] tw-flex-grow tw-justify-between tw-cursor-pointer',
+                            'tw-flex tw-items-center tw-w-[80%] tw-flex-grow tw-justify-between tw-cursor-pointer',
                             parentIds.length === 1 && 'tw-pl-4',
                             parentIds.length > 1 && 'tw-pl-8',
                         ])}
                         aria-selected={selected}
                         onClick={onNodeClick}
                     >
-                        <div className="tw-flex tw-space-x-1 tw-items-center tw-w-[75%]">
+                        <div className="tw-flex tw-space-x-1 tw-items-center tw-w-[60%]">
                             <span
                                 data-test-id="toggle"
                                 className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center"
@@ -207,7 +206,11 @@ export const Node = ({
                             </span>
                             {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
-                                <>
+                                <div
+                                    title={isOverflowing ? name : ''}
+                                    ref={nameRef}
+                                    className="tw-flex tw-items-center tw-overflow-hidden"
+                                >
                                     <EditableText
                                         options={{
                                             additionalValues: node.id,
@@ -217,35 +220,15 @@ export const Node = ({
                                         }}
                                         onAdditionalValueSave={onEditableSave}
                                     >
-                                        <div>
-                                            <div ref={nameRef} className="tw-min-w-0 tw-truncate">
-                                                {name}
-                                            </div>
-                                            {isOverflowing && (
-                                                <TooltipIcon
-                                                    tooltip={{
-                                                        content: name,
-                                                    }}
-                                                    triggerIcon={<span>...</span>}
-                                                />
-                                            )}
-                                        </div>
+                                        <p>{name}</p>
                                     </EditableText>
                                     {badge && insertBadge()}
-                                </>
+                                </div>
                             ) : (
                                 <div className="tw-flex tw-items-center tw-w-full" data-test-id="node-link-name">
-                                    <div ref={nameRef} className="tw-min-w-0 tw-truncate tw-text-clip">
+                                    <div title={isOverflowing ? name : ''} ref={nameRef} className="tw-truncate">
                                         {name}
                                     </div>
-                                    {isOverflowing && (
-                                        <TooltipIcon
-                                            tooltip={{
-                                                content: name,
-                                            }}
-                                            triggerIcon={<span>...</span>}
-                                        />
-                                    )}
                                     {badge && insertBadge()}
                                 </div>
                             )}
@@ -267,7 +250,7 @@ export const Node = ({
                         <div
                             className={merge([
                                 'tw-flex tw-items-center',
-                                isHovered || selected ? 'tw-visible' : 'tw-invisible tw-w-0',
+                                isHovered || selected ? 'tw-visible tw-space-x-1.5' : 'tw-invisible tw-w-0',
                             ])}
                         >
                             {actions.map((action) => action)}
