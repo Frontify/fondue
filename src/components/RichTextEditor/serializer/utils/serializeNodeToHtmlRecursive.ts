@@ -1,7 +1,7 @@
 import { OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/components';
-import { ELEMENT_CHECK_ITEM } from '../../EditorActions/Plugins/CheckboxListPlugin/id';
+import { ELEMENT_CHECK_ITEM } from '../../Plugins/CheckboxListPlugin/id';
 import { DesignTokens } from '@components/RichTextEditor/types';
-import { TextStyles } from '@components/RichTextEditor/EditorActions/Plugins/TextStylePlugin/TextStyles';
+import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { ELEMENT_LI, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL, TDescendant } from '@udecode/plate';
 import escapeHtml from 'escape-html';
 import { reactCssPropsToCss } from './reactCssPropsToCss';

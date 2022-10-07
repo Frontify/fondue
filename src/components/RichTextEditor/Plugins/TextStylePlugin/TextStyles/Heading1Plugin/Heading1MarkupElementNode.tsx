@@ -3,16 +3,16 @@
 import React from 'react';
 import { PlateRenderElementProps } from '@udecode/plate';
 import { merge } from '@utilities/merge';
-import { useRichTextEditorContext } from '../../../../../context/RichTextEditorContext';
+import { useRichTextEditorContext } from '../../../../context/RichTextEditorContext';
 import { alignmentClassnames } from '../alignment';
 
-export const Custom2MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
+export const Heading1MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
     const align = element.align as string;
 
     return (
-        <p {...attributes} className={merge([align && alignmentClassnames[align]])} style={designTokens.custom2}>
+        <h1 {...attributes} className={merge([align && alignmentClassnames[align]])} style={designTokens.heading1}>
             {children}
-        </p>
+        </h1>
     );
 };

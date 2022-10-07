@@ -38,10 +38,10 @@ import {
     UnderlineMark,
     UnorderedListElement,
 } from '../components';
-import { createCheckboxListPlugin } from '../EditorActions/Plugins/CheckboxListPlugin/index';
-import { ELEMENT_CHECK_ITEM } from '../EditorActions/Plugins/CheckboxListPlugin/id';
-import { CheckboxListElementNode } from '../EditorActions/Plugins/CheckboxListPlugin/CheckboxListElement';
-import { createLinkPlugin } from '../EditorActions/Plugins/LinkPlugin';
+import { createCheckboxListPlugin } from '../Plugins/CheckboxListPlugin/index';
+import { ELEMENT_CHECK_ITEM } from '../Plugins/CheckboxListPlugin/id';
+import { CheckboxListElementNode } from '../Plugins/CheckboxListPlugin/CheckboxListElement';
+import { createLinkPlugin } from '../Plugins/LinkPlugin';
 import {
     TextStyles,
     createCustom1Plugin,
@@ -52,7 +52,7 @@ import {
     createHeading3Plugin,
     createHeading4Plugin,
     createQuotePlugin,
-} from '../EditorActions/Plugins/TextStylePlugin/TextStyles';
+} from '../Plugins/TextStylePlugin/TextStyles';
 
 export const getEditorConfig = () => {
     const components = createPlateUI({

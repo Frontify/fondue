@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CSSProperties, ReactElement } from 'react';
-import { TextStyles } from './EditorActions/Plugins/TextStylePlugin/TextStyles';
+import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { EditorActions } from './utils/actions';
 
 export type DesignTokens = Partial<Record<TextStyles, CSSProperties>>;

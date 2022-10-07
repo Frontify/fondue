@@ -13,11 +13,11 @@ import { EditorActions, defaultActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { parseRawValue } from './utils/parseRawValue';
-import { TextStyles } from './EditorActions/Plugins/TextStylePlugin/TextStyles';
+import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
 import { getEditorConfig } from './utils/editorConfig';
-import { GeneratePlugins, PluginComposer } from './EditorActions/Plugins';
+import { GeneratePlugins, PluginComposer } from './Plugins';
 import { forceTabOutOfActiveElement } from './helper';
 
 export type RichTextEditorProps = {
