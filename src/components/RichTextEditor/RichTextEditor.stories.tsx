@@ -19,6 +19,7 @@ import {
 import {
     BoldPlugin,
     CheckboxListPlugin,
+    InitPlugin,
     LinkPlugin,
     MentionPlugin,
     OrderedListPlugin,
@@ -202,6 +203,7 @@ WithNewToolbar.args = {
 
 const mentionPlugins = new PluginComposer();
 mentionPlugins
+    .setPlugin([new InitPlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
     .setPlugin([new BoldPlugin(), new LinkPlugin()]);
@@ -213,13 +215,15 @@ WithMentions.args = {
 };
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
-withoutToolbarPlugins.setPlugin([
-    new BoldPlugin(),
-    new LinkPlugin(),
-    new UnorderedListPlugin(),
-    new OrderedListPlugin(),
-    new CheckboxListPlugin(),
-]);
+withoutToolbarPlugins
+    .setPlugin([new InitPlugin()])
+    .setPlugin([
+        new BoldPlugin(),
+        new LinkPlugin(),
+        new UnorderedListPlugin(),
+        new OrderedListPlugin(),
+        new CheckboxListPlugin(),
+    ]);
 export const WithoutToolbar = RichTextEditorTemplate.bind({});
 WithoutToolbar.args = {
     position: Position.TOP,

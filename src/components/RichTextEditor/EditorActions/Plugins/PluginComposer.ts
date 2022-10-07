@@ -1,15 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    AnyObject,
-    PlatePlugin,
-    PlatePluginComponent,
-    createIndentPlugin,
-    createParagraphPlugin,
-    createSoftBreakPlugin,
-} from '@udecode/plate';
+import { AnyObject, PlatePlugin, PlatePluginComponent } from '@udecode/plate';
 import { MarkupElement } from './MarkupElement';
-import { ELEMENT_CHECK_ITEM } from './CheckboxListPlugin/id';
 import { Button, Buttons, InlineData, ObjectType, Plugin, PluginComposerProps, Plugins } from './types';
 
 export class PluginComposer {
@@ -18,19 +10,7 @@ export class PluginComposer {
     private toolbarButtons: Buttons = [];
     private inlineElements: InlineData[] = [];
 
-    constructor(protected props?: PluginComposerProps) {
-        this.platePlugins.set('default', [
-            createParagraphPlugin(),
-            createSoftBreakPlugin(),
-            createIndentPlugin({
-                inject: {
-                    props: {
-                        validTypes: [ELEMENT_CHECK_ITEM],
-                    },
-                },
-            }),
-        ]);
-    }
+    constructor(protected props?: PluginComposerProps) {}
 
     public setPlugin(...plugins: Plugins): this {
         for (const group of plugins) {
