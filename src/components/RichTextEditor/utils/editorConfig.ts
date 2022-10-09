@@ -26,20 +26,18 @@ import {
     createStrikethroughPlugin,
     createUnderlinePlugin,
 } from '@udecode/plate';
-import {
-    BoldMark,
-    CodeMark,
-    ItalicMark,
-    LinkMarkupElementNode,
-    ListItemContentElement,
-    ListItemElement,
-    OrderedListElement,
-    StrikethroughMark,
-    UnderlineMark,
-    UnorderedListElement,
-} from '../components';
-import { createCheckboxListPlugin } from '../Plugins/CheckboxListPlugin/index';
+import { ListItemMarkupElementNode } from '../Plugins/ListPlugin/ListItemMarkupElement';
+import { ListItemContentMarkupElementNode } from '../Plugins/ListPlugin/ListItemContentMarkupElement';
+import { LinkMarkupElementNode } from '../Plugins/LinkPlugin/LinkMarkupElement/LinkMarkupElementNode';
 import { ELEMENT_CHECK_ITEM } from '../Plugins/CheckboxListPlugin/id';
+import { UnderlineMarkupElementNode } from '../Plugins/UnderlinePlugin/UnderlineMarkupElement';
+import { OrderedListMarkupElementNode } from '../Plugins/ListPlugin/OrderedListPlugin/OrderedListMarkupElement';
+import { UnorderedListMarkupElementNode } from '../Plugins/ListPlugin/UnorderedListPlugin/UnorderedListMarkupElement';
+import { StrikethroughMarkupElementNode } from '../Plugins/StrikethroughPlugin/StrikethroughMarkupElement';
+import { BoldMarkupElementNode } from '../Plugins/BoldPlugin/BoldMarkupElement';
+import { CodeMarkupElementNode } from '../Plugins/CodePlugin/CodeMarkupElement';
+import { ItalicMarkupElementNode } from '../Plugins/ItalicPlugin/ItalicMarkupElement';
+import { createCheckboxListPlugin } from '../Plugins/CheckboxListPlugin/index';
 import { CheckboxListElementNode } from '../Plugins/CheckboxListPlugin/CheckboxListElement';
 import { createLinkPlugin } from '../Plugins/LinkPlugin';
 import {
@@ -58,15 +56,15 @@ export const getEditorConfig = () => {
     const components = createPlateUI({
         // this will override the components over the default ones
         [ELEMENT_LINK]: LinkMarkupElementNode,
-        [ELEMENT_UL]: UnorderedListElement,
-        [ELEMENT_OL]: OrderedListElement,
-        [ELEMENT_LI]: ListItemElement,
-        [ELEMENT_LIC]: ListItemContentElement,
-        [MARK_BOLD]: BoldMark,
-        [MARK_ITALIC]: ItalicMark,
-        [MARK_UNDERLINE]: UnderlineMark,
-        [MARK_STRIKETHROUGH]: StrikethroughMark,
-        [MARK_CODE]: CodeMark,
+        [ELEMENT_UL]: UnorderedListMarkupElementNode,
+        [ELEMENT_OL]: OrderedListMarkupElementNode,
+        [ELEMENT_LI]: ListItemMarkupElementNode,
+        [ELEMENT_LIC]: ListItemContentMarkupElementNode,
+        [MARK_BOLD]: BoldMarkupElementNode,
+        [MARK_ITALIC]: ItalicMarkupElementNode,
+        [MARK_UNDERLINE]: UnderlineMarkupElementNode,
+        [MARK_STRIKETHROUGH]: StrikethroughMarkupElementNode,
+        [MARK_CODE]: CodeMarkupElementNode,
         [ELEMENT_CHECK_ITEM]: CheckboxListElementNode,
     });
 
