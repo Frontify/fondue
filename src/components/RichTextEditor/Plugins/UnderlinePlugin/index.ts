@@ -19,3 +19,5 @@ export class UnderlinePlugin extends Plugin {
         return [createUnderlinePlugin()];
     }
 }
+
+export * from './UnderlineMarkupElement';

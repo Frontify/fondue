@@ -19,3 +19,5 @@ export class StrikethroughPlugin extends Plugin {
         return [createStrikethroughPlugin()];
     }
 }
+
+export * from './StrikethroughMarkupElement';

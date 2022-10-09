@@ -19,3 +19,5 @@ export class CodePlugin extends Plugin {
         return [createCodePlugin()];
     }
 }
+
+export * from './CodeMarkupElement';

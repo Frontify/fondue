@@ -19,3 +19,5 @@ export class ItalicPlugin extends Plugin {
         return [createItalicPlugin()];
     }
 }
+
+export * from './ItalicMarkupElement';

@@ -1,11 +1,13 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { TDescendant } from '@udecode/plate';
 import {
     BOLD_CLASSES,
     CODE_CLASSES,
     ITALIC_CLASSES,
     STRIKETHROUGH_CLASSES,
     UNDERLINE_CLASSES,
-} from '@components/RichTextEditor/components';
-import { TDescendant } from '@udecode/plate';
+} from '@components/RichTextEditor/Plugins';
 import escapeHtml from 'escape-html';
 
 export const serializeLeafToHtml = (node: TDescendant): string => {

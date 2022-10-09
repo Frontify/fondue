@@ -19,3 +19,5 @@ export class BoldPlugin extends Plugin {
         return [createBoldPlugin()];
     }
 }
+
+export * from './BoldMarkupElement';

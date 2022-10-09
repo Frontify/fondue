@@ -16,3 +16,6 @@ export class UnorderedListPlugin extends ListPlugin {
         });
     }
 }
+
+export * from './UnorderedListButton';
+export * from './UnorderedListMarkupElement';
