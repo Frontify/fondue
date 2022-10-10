@@ -207,7 +207,11 @@ export const Node = ({
                             </span>
                             {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
-                                <>
+                                <div
+                                    ref={nameRef}
+                                    title={isOverflowing ? name : ''}
+                                    className="tw-w-full tw-max-w-full"
+                                >
                                     <EditableText
                                         options={{
                                             additionalValues: node.id,
@@ -217,22 +221,14 @@ export const Node = ({
                                         }}
                                         onAdditionalValueSave={onEditableSave}
                                     >
-                                        <span
-                                            className="tw-flex tw-items-center tw-flex-1 tw-relative tw-min-w-[100px] tw-max-w-full"
-                                            title={isOverflowing ? name : 'test'}
-                                            data-test-id="node-link-name"
-                                        >
-                                            <span ref={nameRef} className="tw-truncate tw-max-w-full tw-absolute">
-                                                {name}
-                                            </span>
-                                        </span>
+                                        <span className="tw-max-w-full tw-truncate">{name}</span>
                                     </EditableText>
-                                </>
+                                </div>
                             ) : (
                                 <>
                                     <span
                                         className="tw-flex tw-items-center tw-flex-1 tw-relative"
-                                        title={isOverflowing ? name : 'test'}
+                                        title={isOverflowing ? name : ''}
                                         data-test-id="node-link-name"
                                     >
                                         <span ref={nameRef} className="tw-truncate tw-max-w-full tw-absolute">
