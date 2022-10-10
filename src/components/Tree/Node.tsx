@@ -139,8 +139,9 @@ export const Node = ({
     }, []);
 
     const checkIfOverflowing = () => {
-        if (nameRef) {
-            setIsOverflowing((nameRef.current && nameRef.current.scrollWidth > nameRef.current.clientWidth) ?? false);
+        if (nameRef.current) {
+            const isTextOverflowing = nameRef.current.scrollWidth > nameRef.current.clientWidth;
+            setIsOverflowing(isTextOverflowing);
         }
     };
 
@@ -167,7 +168,7 @@ export const Node = ({
             >
                 <div
                     className={merge([
-                        'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-max-h-10 tw-whitespace-nowrap',
+                        'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5',
                         strong && 'tw-font-bold',
                         value &&
                             !selected &&
@@ -181,14 +182,14 @@ export const Node = ({
                     <a
                         data-test-id="node-link"
                         className={merge([
-                            'tw-flex tw-items-center tw-w-[80%] tw-flex-grow tw-justify-between tw-cursor-pointer',
+                            'tw-flex tw-items-center tw-flex-grow tw-justify-between tw-cursor-pointer',
                             parentIds.length === 1 && 'tw-pl-4',
                             parentIds.length > 1 && 'tw-pl-8',
                         ])}
                         aria-selected={selected}
                         onClick={onNodeClick}
                     >
-                        <div className="tw-flex tw-space-x-1 tw-items-center tw-w-[60%]">
+                        <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center">
                             <span
                                 data-test-id="toggle"
                                 className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center"
@@ -206,11 +207,7 @@ export const Node = ({
                             </span>
                             {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
-                                <div
-                                    title={isOverflowing ? name : ''}
-                                    ref={nameRef}
-                                    className="tw-flex tw-items-center tw-overflow-hidden"
-                                >
+                                <>
                                     <EditableText
                                         options={{
                                             additionalValues: node.id,
@@ -222,18 +219,24 @@ export const Node = ({
                                     >
                                         <p>{name}</p>
                                     </EditableText>
-                                    {badge && insertBadge()}
-                                </div>
+                                    <span>{badge && insertBadge()}</span>
+                                </>
                             ) : (
-                                <div className="tw-flex tw-items-center tw-w-full" data-test-id="node-link-name">
-                                    <div title={isOverflowing ? name : ''} ref={nameRef} className="tw-truncate">
-                                        {name}
-                                    </div>
-                                    {badge && insertBadge()}
-                                </div>
+                                <>
+                                    <span
+                                        className="tw-flex tw-items-center tw-flex-1 tw-relative"
+                                        title={isOverflowing ? name : 'test'}
+                                        data-test-id="node-link-name"
+                                    >
+                                        <span ref={nameRef} className="tw-truncate tw-max-w-full tw-absolute">
+                                            {name}
+                                        </span>
+                                    </span>
+                                    <span>{badge && insertBadge()}</span>
+                                </>
                             )}
                         </div>
-                        <div className="tw-px-1.5 tw-w-[20%] tw-text-end">
+                        <div className="tw-px-1.5">
                             <span
                                 data-test-id="node-label"
                                 className={merge([
