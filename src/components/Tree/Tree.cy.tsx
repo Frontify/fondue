@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { useState } from 'react';
+import '@4tw/cypress-drag-drop';
 import { mockNodesFlat } from '@components/Tree/utils';
 import { DraggableItem } from '@utilities/dnd';
-import React, { useState } from 'react';
 import { Tree, TreeFlatListItem } from './Tree';
 
 type ComponentProps = {
@@ -141,6 +142,18 @@ describe('Draggable Tree Component', () => {
             const expectedClass = index % 2 === 0 ? 'tw-h-[10px]' : 'tw-h-auto';
             expect($dropZone).to.have.class(expectedClass);
         });
+    });
+
+    it('calls onDragAndDrop after drop', () => {
+        const nodes = mockNodesFlat();
+        const activeNodeId = '1-2-2';
+
+        const onDragAndDropStub = cy.stub().as('onDragAndDropStub');
+        cy.mount(<Component nodes={nodes} activeNodeIds={[activeNodeId]} onDrop={onDragAndDropStub} />);
+
+        cy.get(`${SUB_TREE_ID}:eq(1) ${NODE_ID}:eq(1)`).drag(`${TREE_ID} ${SUB_TREE_ID}:eq(0) ${DROP_ZONE_ID}:eq(0)`);
+
+        cy.get('@onDragAndDropStub').should('be.called');
     });
 });
 
