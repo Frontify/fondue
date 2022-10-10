@@ -10,8 +10,9 @@ type ComponentProps = {
     activeNodeIds?: NullableString[];
     onDrop?: (sourceItemId: string, parentId: NullableString, positionBeforeId: NullableString) => void;
     onEditableSave?: (itemId: string, value: string) => void;
+    onSelect?: (ids: NullableString[]) => void;
 };
-const Component = ({ nodes, onDrop, onEditableSave, activeNodeIds }: ComponentProps) => {
+const Component = ({ nodes, onDrop, onEditableSave, onSelect, activeNodeIds }: ComponentProps) => {
     const [selectedIds, setSelectedIds] = useState<NullableString[]>(activeNodeIds || []);
     const onDropDefault = (sourceItemId: string, parentId: NullableString, positionBeforeId: NullableString) => {
         console.log(sourceItemId);
@@ -23,7 +24,7 @@ const Component = ({ nodes, onDrop, onEditableSave, activeNodeIds }: ComponentPr
         <Tree
             nodes={nodes}
             activeNodeIds={selectedIds}
-            onSelect={(ids: NullableString[]) => setSelectedIds(ids)}
+            onSelect={onSelect ? onSelect : (ids: NullableString[]) => setSelectedIds(ids)}
             onDragAndDrop={onDrop || onDropDefault}
             onEditableSave={onEditableSave}
         />
@@ -99,6 +100,14 @@ describe('Tree Component', () => {
         cy.get(`${NODE_ID}:first ${NODE_LINK_NAME_ID}:first`).click();
         cy.get('@InitiallySelectedItem').should('have.attr', 'aria-selected', 'false');
         cy.get('@NextSelectedItem').should('have.attr', 'aria-selected', 'true');
+    });
+
+    it('calls onSelect on click', () => {
+        const onSelectStub = cy.stub().as('onSelectStub');
+        cy.mount(<Component nodes={mockNodesFlat()} onSelect={onSelectStub} />);
+
+        cy.get(NODE_LINK_NAME_ID).click();
+        cy.get('@onSelectStub').should('be.called');
     });
 });
 
@@ -183,6 +192,12 @@ describe('Editable Tree Component', () => {
         cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(3) ${NODE_LINK_NAME_ID}`).dblclick();
         cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(3) input`).type('{enter}');
         cy.get(`${NODE_EDITABLE_ID}`).should('not.exist');
+    });
+
+    it('calls the onEditableSave on blur', () => {
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(3) ${NODE_LINK_NAME_ID}`).dblclick();
+        cy.get(`${SUB_TREE_ID}  > ${NODE_ID}:first`).click();
+        cy.get('@onEditableSaveStub').should('be.called');
     });
 
     it('exits the editable input on blur', () => {
