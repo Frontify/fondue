@@ -217,9 +217,16 @@ export const Node = ({
                                         }}
                                         onAdditionalValueSave={onEditableSave}
                                     >
-                                        <p>{name}</p>
+                                        <span
+                                            className="tw-flex tw-items-center tw-flex-1 tw-relative tw-min-w-[100px] tw-max-w-full"
+                                            title={isOverflowing ? name : 'test'}
+                                            data-test-id="node-link-name"
+                                        >
+                                            <span ref={nameRef} className="tw-truncate tw-max-w-full tw-absolute">
+                                                {name}
+                                            </span>
+                                        </span>
                                     </EditableText>
-                                    <span>{badge && insertBadge()}</span>
                                 </>
                             ) : (
                                 <>
@@ -232,9 +239,9 @@ export const Node = ({
                                             {name}
                                         </span>
                                     </span>
-                                    <span>{badge && insertBadge()}</span>
                                 </>
                             )}
+                            <span>{badge && insertBadge()}</span>
                         </div>
                         <div className="tw-px-1.5">
                             <span
