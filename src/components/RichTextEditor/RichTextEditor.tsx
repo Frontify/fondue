@@ -5,19 +5,17 @@ import { Plate, TNode } from '@udecode/plate';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { debounce } from '@utilities/debounce';
 import { EditableProps } from 'slate-react/dist/components/editable';
-import { Toolbar } from './components/Toolbar/Toolbar';
 import { RichTextEditorContext } from './context/RichTextEditorContext';
 import { useEditorResize, useEditorState } from './hooks';
 import { DesignTokens, PaddingSizes } from './types';
-import { EditorActions, defaultActions } from './utils/actions';
+import { EditorActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
-import { getEditorConfig } from './utils/editorConfig';
-import { GeneratePlugins, PluginComposer } from './Plugins';
+import { GeneratePlugins, PluginComposer, defaultPlugins } from './Plugins';
 import { forceTabOutOfActiveElement } from './helper';
 
 export type RichTextEditorProps = {
@@ -42,12 +40,11 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     readonly = false,
     clear = false,
     designTokens = defaultDesignTokens,
-    actions = defaultActions,
     onTextChange,
     onBlur,
     padding = PaddingSizes.None,
     position = Position.FLOATING,
-    plugins,
+    plugins = defaultPlugins,
 }) => {
     const editorId = useMemoizedId(id);
     const { localValue } = useEditorState(editorId, clear);
@@ -89,10 +86,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
 
     const PositioningWrapper = EditorPositioningWrapper[position];
-
     const config = GeneratePlugins(editorId, plugins);
-    const isNew = !!config && actions.length === 0 && !!plugins;
-    const editorConfig = isNew ? config.create() : getEditorConfig();
 
     return (
         <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
@@ -102,11 +96,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     initialValue={parseRawValue(initialValue)}
                     onChange={onChange}
                     editableProps={editableProps}
-                    plugins={editorConfig}
+                    plugins={config.create()}
                 >
-                    {isNew && config.toolbar(editorWidth)}
-                    {isNew && config.inline()}
-                    {!isNew && <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />}
+                    {config.toolbar(editorWidth)}
+                    {config.inline()}
                 </Plate>
             </PositioningWrapper.PlateWrapper>
         </RichTextEditorContext.Provider>

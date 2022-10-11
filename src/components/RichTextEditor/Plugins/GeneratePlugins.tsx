@@ -9,14 +9,10 @@ type GeneratePluginsReturn = {
     create: () => PlatePlugin<AnyObject>[];
     toolbar: (editorWidth: number | undefined) => ReactNode;
     inline: () => ReactNode;
-} | null;
+};
 
-export const GeneratePlugins = (editorId: string, pluginComposer?: PluginComposer): GeneratePluginsReturn => {
+export const GeneratePlugins = (editorId: string, pluginComposer: PluginComposer): GeneratePluginsReturn => {
     const editor = usePlateEditorRef(editorId)!;
-
-    if (!pluginComposer) {
-        return null;
-    }
 
     return {
         create: () =>

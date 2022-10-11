@@ -16,24 +16,3 @@ export enum EditorActions {
     ORDERED_LIST = 'ordered-list',
     UNORDERED_LIST = 'unordered-list',
 }
-
-export const defaultActions = [
-    [EditorActions.TEXT_STYLES],
-    [
-        EditorActions.BOLD,
-        EditorActions.ITALIC,
-        EditorActions.UNDERLINE,
-        EditorActions.STRIKETHROUGH,
-        EditorActions.LINK,
-        EditorActions.CODE,
-    ],
-    [
-        EditorActions.ALIGN_LEFT,
-        EditorActions.ALIGN_CENTER,
-        EditorActions.ALIGN_RIGHT,
-        EditorActions.ALIGN_JUSTIFY,
-        EditorActions.UNORDERED_LIST,
-        EditorActions.CHECK_ITEM,
-        EditorActions.ORDERED_LIST,
-    ],
-];
