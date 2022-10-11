@@ -117,10 +117,6 @@ const RichTextWithChangeDesignTokensButton: FC = () => {
     );
 };
 
-const RichTextWithToolbarPositioning = ({ position }: { position?: Position }) => (
-    <RichTextEditor position={position} />
-);
-
 describe('RichTextEditor Component', () => {
     it('should render an empty rich text editor', () => {
         cy.mount(<RichTextEditor />);
@@ -544,20 +540,20 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
         });
     });
-});
 
-describe('RichTextEditor Component: Positioning of Toolbar', () => {
-    it('should render with fixed top toolbar', () => {
-        cy.mount(<RichTextWithToolbarPositioning position={Position.TOP} />);
+    describe('Positioning of Toolbar', () => {
+        it('should render with fixed top toolbar', () => {
+            cy.mount(<RichTextEditor position={Position.TOP} />);
 
-        cy.get(RICH_TEXT_EDITOR).should('be.visible');
-        cy.get(TOOLBAR_TOP).should('be.visible');
-    });
+            cy.get(RICH_TEXT_EDITOR).should('be.visible');
+            cy.get(TOOLBAR_TOP).should('be.visible');
+        });
 
-    it('should render with fixed bottom toolbar', () => {
-        cy.mount(<RichTextWithToolbarPositioning position={Position.BOTTOM} />);
+        it('should render with fixed bottom toolbar', () => {
+            cy.mount(<RichTextEditor position={Position.BOTTOM} />);
 
-        cy.get(RICH_TEXT_EDITOR).should('be.visible');
-        cy.get(TOOLBAR_BOTTOM).should('be.visible');
+            cy.get(RICH_TEXT_EDITOR).should('be.visible');
+            cy.get(TOOLBAR_BOTTOM).should('be.visible');
+        });
     });
 });
