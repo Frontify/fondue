@@ -2,8 +2,8 @@
 
 import React, { ReactNode } from 'react';
 import { AnyObject, PlatePlugin, createPlateUI, createPlugins, usePlateEditorRef } from '@udecode/plate';
-import { PluginComposer } from './PluginComposer';
 import { Toolbar } from '../Toolbar';
+import type { PluginComposer } from './PluginComposer';
 
 type GeneratePluginsReturn = {
     create: () => PlatePlugin<AnyObject>[];
@@ -11,14 +11,16 @@ type GeneratePluginsReturn = {
     inline: () => ReactNode;
 };
 
+export const createPlatePlugins = (pluginComposer: PluginComposer) =>
+    createPlugins(pluginComposer.plugins, {
+        components: createPlateUI(pluginComposer.elements),
+    });
+
 export const GeneratePlugins = (editorId: string, pluginComposer: PluginComposer): GeneratePluginsReturn => {
     const editor = usePlateEditorRef(editorId)!;
 
     return {
-        create: () =>
-            createPlugins(pluginComposer.plugins, {
-                components: createPlateUI(pluginComposer.elements),
-            }),
+        create: () => createPlatePlugins(pluginComposer),
         toolbar: (editorWidth: number | undefined) =>
             pluginComposer.hasToolbar ? (
                 <Toolbar
