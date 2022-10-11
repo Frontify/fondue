@@ -182,7 +182,7 @@ export const EditableText = ({
                         <span
                             aria-hidden="true"
                             className={merge([
-                                'tw-rounded tw-px-4 tw-py-2 tw-bg-base',
+                                'tw-rounded tw-px-4 tw-py-2 tw-bg-base tw-truncate',
                                 options?.isSlimInputField === true && 'tw-py-0 tw-px-2',
                             ])}
                             style={inputStyling}
@@ -195,8 +195,8 @@ export const EditableText = ({
                 <></>
             )}
             <button
-                style={{ display: editableState === EditableMode.INPUT ? 'none' : 'block' }}
-                className={FOCUS_VISIBLE_STYLE}
+                style={{ display: editableState === EditableMode.INPUT ? 'none' : 'flex' }}
+                className={merge(['tw-items-center', FOCUS_VISIBLE_STYLE])}
                 {...clickBehaviour}
                 data-test-id={'node-link-name'}
                 aria-pressed="false"

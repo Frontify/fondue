@@ -6,7 +6,7 @@ import { useDrag } from 'react-dnd';
 import { DropZone, OnDropCallback } from '@components/DropZone';
 import { TreeFlatListItem } from '@components/Tree';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
-import { EditableText } from '../EditableText';
+import { EditableMode, EditableText } from '../EditableText';
 
 export type RenderNodeArrayData = Omit<NodeProps, 'isFirst' | 'strong' | 'node'> & {
     nodes: DraggableItem<TreeNodeItem>[];
@@ -210,7 +210,7 @@ export const Node = ({
                                 <div
                                     ref={nameRef}
                                     title={isOverflowing ? name : ''}
-                                    className="tw-w-full tw-max-w-full"
+                                    className="tw-w-full tw-max-w-full tw-flex-1"
                                 >
                                     <EditableText
                                         options={{
@@ -218,10 +218,11 @@ export const Node = ({
                                             enableDoubleClick: true,
                                             isSlimInputField: true,
                                             removeBoxPadding: true,
+                                            mode: EditableMode.INPUT,
                                         }}
                                         onAdditionalValueSave={onEditableSave}
                                     >
-                                        <span className="tw-max-w-full tw-truncate">{name}</span>
+                                        <span className="tw-max-w-full tw-absolute tw-truncate">{name}</span>
                                     </EditableText>
                                 </div>
                             ) : (
