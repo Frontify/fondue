@@ -14,7 +14,7 @@ import {
     mentionable,
     nodesToSerialize,
     value,
-} from './utils/exampleValues';
+} from './helpers/exampleValues';
 import {
     BoldPlugin,
     CheckboxListPlugin,

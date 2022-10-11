@@ -3,7 +3,7 @@ import {
     nodesToSerialize,
     serializedHtml,
     serializedHtmlWithCustomDesignTokens,
-} from '../utils/exampleValues';
+} from '../helpers/exampleValues';
 import { serializeNodesToHtml } from './serializeToHtml';
 
 describe('serializeNodesToHtml()', () => {
