@@ -1,17 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    AnyObject,
-    PlatePlugin,
-    PlatePluginComponent,
-    createIndentPlugin,
-    createParagraphPlugin,
-    createSoftBreakPlugin,
-} from '@udecode/plate';
+import { AnyObject, PlatePlugin, PlatePluginComponent } from '@udecode/plate';
 import { MarkupElement } from './MarkupElement';
-import { Button, Buttons, InlineData, ObjectType, Plugins } from './types';
-import { ELEMENT_CHECK_ITEM } from './CheckboxListPlugin/id';
-import type { Plugin } from './Plugin';
+import { Button, Buttons, InlineData, ObjectType, Plugin, PluginComposerProps, Plugins } from './types';
 
 export class PluginComposer {
     private platePlugins: Map<string, PlatePlugin<AnyObject>[]> = new Map();
@@ -19,19 +10,7 @@ export class PluginComposer {
     private toolbarButtons: Buttons = [];
     private inlineElements: InlineData[] = [];
 
-    constructor() {
-        this.platePlugins.set('default', [
-            createParagraphPlugin(),
-            createSoftBreakPlugin(),
-            createIndentPlugin({
-                inject: {
-                    props: {
-                        validTypes: [ELEMENT_CHECK_ITEM],
-                    },
-                },
-            }),
-        ]);
-    }
+    constructor(protected props?: PluginComposerProps) {}
 
     public setPlugin(...plugins: Plugins): this {
         for (const group of plugins) {
@@ -44,7 +23,9 @@ export class PluginComposer {
                 this.addInline(plugin.inline());
             }
 
-            this.generateGroupOfButtons(groupOfPlugins);
+            if (this.hasToolbar) {
+                this.addButtons(groupOfPlugins);
+            }
         }
 
         return this;
@@ -84,11 +65,19 @@ export class PluginComposer {
         }
     }
 
-    private generateGroupOfButtons(groupOfPlugins: Plugin[]) {
+    private addButtons(plugins: Plugin[]) {
+        const groupOfButtons = this.createGroupOfButtons(plugins);
+
+        if (groupOfButtons.length > 0) {
+            this.toolbarButtons.push(groupOfButtons);
+        }
+    }
+
+    private createGroupOfButtons(plugins: Plugin[]): Button[] {
         const groupOfButtons: Button[] = [];
 
-        for (const { markupElement, button, id } of groupOfPlugins) {
-            if (!button) {
+        for (const { markupElement, button, id, props } of plugins) {
+            if (!button || props?.noButton) {
                 continue;
             }
 
@@ -98,9 +87,7 @@ export class PluginComposer {
             });
         }
 
-        if (groupOfButtons.length > 0) {
-            this.toolbarButtons.push(groupOfButtons);
-        }
+        return groupOfButtons;
     }
 
     get elements() {
@@ -122,5 +109,9 @@ export class PluginComposer {
 
     get inline(): InlineData[] {
         return this.inlineElements;
+    }
+
+    get hasToolbar(): boolean {
+        return !this.props?.noToolbar;
     }
 }

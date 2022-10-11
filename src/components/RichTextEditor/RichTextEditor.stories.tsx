@@ -18,6 +18,8 @@ import {
 } from './utils/exampleValues';
 import {
     BoldPlugin,
+    CheckboxListPlugin,
+    InitPlugin,
     LinkPlugin,
     MentionPlugin,
     OrderedListPlugin,
@@ -192,12 +194,19 @@ WithPositioningOfToolbar.args = {
     position: Position.TOP,
 };
 
+export const WithNewToolbar = RichTextEditorTemplate.bind({});
+WithNewToolbar.args = {
+    position: Position.TOP,
+    actions: [],
+    plugins: defaultPlugins,
+};
+
 const mentionPlugins = new PluginComposer();
 mentionPlugins
+    .setPlugin([new InitPlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
     .setPlugin([new BoldPlugin(), new LinkPlugin()]);
-
 export const WithMentions = RichTextEditorTemplate.bind({});
 WithMentions.args = {
     value: JSON.stringify(mentionValue),
@@ -205,9 +214,19 @@ WithMentions.args = {
     plugins: mentionPlugins,
 };
 
-export const WithNewToolbar = RichTextEditorTemplate.bind({});
-WithNewToolbar.args = {
+const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
+withoutToolbarPlugins
+    .setPlugin([new InitPlugin()])
+    .setPlugin([
+        new BoldPlugin(),
+        new LinkPlugin(),
+        new UnorderedListPlugin(),
+        new OrderedListPlugin(),
+        new CheckboxListPlugin(),
+    ]);
+export const WithoutToolbar = RichTextEditorTemplate.bind({});
+WithoutToolbar.args = {
     position: Position.TOP,
     actions: [],
-    plugins: defaultPlugins,
+    plugins: withoutToolbarPlugins,
 };

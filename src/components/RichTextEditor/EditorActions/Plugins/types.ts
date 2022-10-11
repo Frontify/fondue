@@ -25,9 +25,14 @@ export type Button = {
 export type Buttons = Button[][];
 
 export type Plugins = (Plugin[] | Plugin)[];
+export type { Plugin } from './Plugin';
 
 export type IconStylingWrapperProps = {
     icon: ReactElement;
 };
 
 export type InlineData = () => ReactElement;
+
+export type PluginComposerProps = {
+    noToolbar?: boolean;
+};

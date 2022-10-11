@@ -9,6 +9,7 @@ export type PluginProps = {
     button?: PluginButton;
     markupElement?: MarkupElement;
     leafMarkupElements?: MarkupElement | MarkupElement[];
+    noButton?: boolean;
 };
 
 export abstract class Plugin<P extends PluginProps = PluginProps> {
@@ -16,12 +17,14 @@ export abstract class Plugin<P extends PluginProps = PluginProps> {
     readonly button?: PluginButton;
     readonly markupElement?: MarkupElement;
     readonly leafMarkupElements?: MarkupElement | MarkupElement[];
+    readonly props?: P;
 
-    constructor(id: string, protected props: P) {
-        this.id = this.props.id || id;
-        this.button = this.props?.button;
-        this.markupElement = this.props?.markupElement;
-        this.leafMarkupElements = this.props?.leafMarkupElements;
+    constructor(id: string, protected rest: P) {
+        this.id = this.rest.id || id;
+        this.button = this.rest?.button;
+        this.markupElement = this.rest?.markupElement;
+        this.leafMarkupElements = this.rest?.leafMarkupElements;
+        this.props = this.rest;
     }
 
     inline(): InlineData | undefined {

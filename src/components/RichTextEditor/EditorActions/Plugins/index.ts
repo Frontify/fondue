@@ -11,9 +11,11 @@ import { UnderlinePlugin } from './UnderlinePlugin';
 import { StrikethroughPlugin } from './StrikethroughPlugin';
 import { LinkPlugin } from './LinkPlugin';
 import { TextStylePlugin } from './TextStylePlugin';
+import { InitPlugin } from './InitPlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
+    .setPlugin(new InitPlugin())
     .setPlugin(new TextStylePlugin())
     .setPlugin(
         [
@@ -37,6 +39,7 @@ defaultPlugins
 
 export * from './GeneratePlugins';
 export * from './PluginComposer';
+export * from './InitPlugin';
 export * from './ListPlugin';
 export * from './BoldPlugin';
 export * from './AlignPlugin';
