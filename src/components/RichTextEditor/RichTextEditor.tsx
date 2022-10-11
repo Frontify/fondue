@@ -89,7 +89,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const config = GeneratePlugins(editorId, plugins);
 
     return (
-        <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
+        <RichTextEditorContext.Provider value={{ designTokens, position: position ?? Position.FLOATING }}>
             <PositioningWrapper.PlateWrapper ref={editorRef}>
                 <Plate
                     id={editorId}

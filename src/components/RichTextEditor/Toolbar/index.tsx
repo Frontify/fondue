@@ -2,15 +2,18 @@
 
 import React from 'react';
 import { useRichTextEditorContext } from '../context/RichTextEditorContext';
+import { EditorPositioningWrapper } from '../EditorPositioningWrapper';
 import { ButtonGroupWrapper } from '../Plugins/helper';
 import { ToolbarProps } from './types';
 import { getButtonGroupWidths, getButtonGroupsPerRow } from './utils';
 
 export const Toolbar = ({ buttons, editor, editorId, editorWidth }: ToolbarProps) => {
-    const { PositioningWrapper } = useRichTextEditorContext();
+    const { position } = useRichTextEditorContext();
 
     const buttonGroupWidths = getButtonGroupWidths(buttons);
     const buttonGroupsPerRow = getButtonGroupsPerRow(editorWidth || 0, buttonGroupWidths);
+
+    const PositioningWrapper = EditorPositioningWrapper[position];
 
     return (
         <PositioningWrapper.ToolbarWrapper editorWidth={editorWidth} toolbarButtonGroups={buttonGroupsPerRow}>
