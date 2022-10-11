@@ -5,7 +5,6 @@ import React from 'react';
 import { Position } from './EditorPositioningWrapper';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
-import { EditorActions } from './utils/actions';
 import {
     IPSUM,
     checkboxValue,
@@ -20,10 +19,12 @@ import {
     BoldPlugin,
     CheckboxListPlugin,
     InitPlugin,
+    ItalicPlugin,
     LinkPlugin,
     MentionPlugin,
     OrderedListPlugin,
     PluginComposer,
+    UnderlinePlugin,
     UnorderedListPlugin,
     defaultPlugins,
 } from './Plugins';
@@ -179,14 +180,16 @@ WithChecklist.args = {
     value: JSON.stringify(checkboxValue),
 };
 
+const customPlugins = new PluginComposer();
+customPlugins
+    .setPlugin([new InitPlugin()])
+    .setPlugin([new LinkPlugin()])
+    .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
+    .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
 export const WithCustomControls = RichTextEditorTemplate.bind({});
 WithCustomControls.args = {
     value: `<p>${IPSUM}</p>`,
-    actions: [
-        [EditorActions.LINK],
-        [EditorActions.ITALIC, EditorActions.BOLD, EditorActions.UNDERLINE],
-        [EditorActions.ORDERED_LIST, EditorActions.UNORDERED_LIST],
-    ],
+    plugins: customPlugins,
 };
 
 export const WithPositioningOfToolbar = RichTextEditorTemplate.bind({});
