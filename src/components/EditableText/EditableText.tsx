@@ -54,6 +54,8 @@ export interface EditableTextProps {
     onEditableSave?: (value: string) => void;
     onModeChange?: (editableState?: EditableMode) => void;
     options?: EditableOptionProps;
+    /** @deprecated Temporary solution for text with ellipisis in Tree Component */
+    isOverflowing?: boolean;
 }
 
 /**
@@ -78,6 +80,7 @@ export const EditableText = ({
     onAdditionalValueSave,
     children,
     options,
+    isOverflowing = false,
 }: EditableTextProps) => {
     // Read initial text strings from children
     const childrenLabel = EditableTextHelper.getLabel(children);
@@ -162,18 +165,16 @@ export const EditableText = ({
                 >
                     <div
                         data-test-id="editable-input"
-                        className={merge(['tw-relative tw-w-full tw-flex tw-items-center'])}
+                        className={merge(['tw-relative', isOverflowing && 'tw-w-full tw-flex tw-items-center'])}
                     >
                         <input
                             ref={inputRef}
                             type="text"
                             className={merge([
-                                'tw-absolute tw-w-full',
                                 options?.isSlimInputField === true
                                     ? 'focus-visible:tw-outline-none'
                                     : FOCUS_VISIBLE_STYLE,
-                                'tw-text-text tw-border tw-rounded tw-bg-base',
-                                'tw-border-solid',
+                                'tw-absolute tw-w-full tw-text-text tw-border tw-rounded tw-bg-base tw-border-solid',
                                 options?.isSlimInputField === true ? 'tw-py-0 tw-px-1' : 'tw-px-3 tw-py-2',
                             ])}
                             style={inputStyling}
@@ -185,8 +186,9 @@ export const EditableText = ({
                         <span
                             aria-hidden="true"
                             className={merge([
-                                'tw-rounded tw-px-4 tw-py-2 tw-bg-base tw-w-0 tw-truncate',
+                                'tw-rounded tw-px-4 tw-py-2 tw-bg-base tw-truncate',
                                 options?.isSlimInputField === true && 'tw-py-0 tw-px-2',
+                                isOverflowing && 'tw-w-0',
                             ])}
                             style={inputStyling}
                         >
