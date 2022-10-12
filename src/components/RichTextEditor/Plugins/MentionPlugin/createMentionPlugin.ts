@@ -7,7 +7,7 @@ import {
     mentionOnKeyDownHandler,
     withMention,
 } from '@udecode/plate';
-import { TComboboxItemMention } from './types';
+import { MentionComboboxItem } from './types';
 
 export const createMentionPlugin = createPluginFactory({
     key: ELEMENT_MENTION,
@@ -20,7 +20,7 @@ export const createMentionPlugin = createPluginFactory({
     withOverrides: withMention,
     options: {
         trigger: '@',
-        createMentionNode: (item: TComboboxItemMention) => ({
+        createMentionNode: (item: MentionComboboxItem) => ({
             value: item.text,
             key: item.key,
             category: item.category,
