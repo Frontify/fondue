@@ -160,7 +160,10 @@ export const EditableText = ({
                             : '-tw-translate-x-[0.81rem] -tw-translate-y-[0.56rem]',
                     ])}
                 >
-                    <div data-test-id="editable-input" className={merge(['tw-relative'])}>
+                    <div
+                        data-test-id="editable-input"
+                        className={merge(['tw-relative tw-w-full tw-flex tw-items-center'])}
+                    >
                         <input
                             ref={inputRef}
                             type="text"
@@ -182,7 +185,7 @@ export const EditableText = ({
                         <span
                             aria-hidden="true"
                             className={merge([
-                                'tw-rounded tw-px-4 tw-py-2 tw-bg-base tw-truncate',
+                                'tw-rounded tw-px-4 tw-py-2 tw-bg-base tw-w-0 tw-truncate',
                                 options?.isSlimInputField === true && 'tw-py-0 tw-px-2',
                             ])}
                             style={inputStyling}

@@ -6,7 +6,7 @@ import { useDrag } from 'react-dnd';
 import { DropZone, OnDropCallback } from '@components/DropZone';
 import { TreeFlatListItem } from '@components/Tree';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
-import { EditableMode, EditableText } from '../EditableText';
+import { EditableText } from '../EditableText';
 
 export type RenderNodeArrayData = Omit<NodeProps, 'isFirst' | 'strong' | 'node'> & {
     nodes: DraggableItem<TreeNodeItem>[];
@@ -218,7 +218,6 @@ export const Node = ({
                                             enableDoubleClick: true,
                                             isSlimInputField: true,
                                             removeBoxPadding: true,
-                                            mode: EditableMode.INPUT,
                                         }}
                                         onAdditionalValueSave={onEditableSave}
                                     >
