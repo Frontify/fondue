@@ -274,37 +274,37 @@ export const nodesToSerialize: TDescendant[] = [
         children: [
             {
                 type: ELEMENT_LI,
-                children: [{ text: 'This is list item number one.' }],
+                children: [{ text: 'List item number one.' }],
             },
             {
                 type: ELEMENT_LI,
-                children: [{ text: 'This is list item number two.' }],
+                children: [{ text: 'List item number two.' }],
             },
             {
                 type: ELEMENT_LI,
-                children: [{ text: 'This is list item number three.' }],
+                children: [{ text: 'List item number three.' }],
             },
             {
                 type: ELEMENT_UL,
                 children: [
                     {
                         type: ELEMENT_LI,
-                        children: [{ text: 'This is child item number one.' }],
+                        children: [{ text: 'Child item number one.' }],
                     },
                     {
                         type: ELEMENT_LI,
-                        children: [{ text: 'This is child item number two, with more children.' }],
+                        children: [{ text: 'Child item number two, with more children.' }],
                     },
                     {
                         type: ELEMENT_UL,
                         children: [
                             {
                                 type: ELEMENT_LI,
-                                children: [{ text: 'This is child of child item number one.' }],
+                                children: [{ text: 'Child of child item number one.' }],
                             },
                             {
                                 type: ELEMENT_LI,
-                                children: [{ text: 'This is child of child item number two.' }],
+                                children: [{ text: 'Child of child item number two.' }],
                             },
                         ],
                     },
