@@ -31,7 +31,7 @@ export const useFloatingLinkInsert = ({ floatingOptions, ...props }: FloatingLin
     const { triggerFloatingLinkHotkeys } = getPluginOptions<LinkPlugin>(editor, ELEMENT_LINK);
 
     useHotkeys(
-        triggerFloatingLinkHotkeys!,
+        triggerFloatingLinkHotkeys ?? '',
         () => {
             triggerFloatingLinkInsert(editor, {
                 focused,
