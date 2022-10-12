@@ -168,7 +168,7 @@ export const Node = ({
             >
                 <div
                     className={merge([
-                        'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5',
+                        'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
                         strong && 'tw-font-bold',
                         value &&
                             !selected &&
@@ -182,14 +182,14 @@ export const Node = ({
                     <a
                         data-test-id="node-link"
                         className={merge([
-                            'tw-flex tw-items-center tw-flex-grow tw-justify-between tw-cursor-pointer',
+                            'tw-flex tw-items-center tw-flex-grow tw-justify-between tw-cursor-pointer tw-h-6',
                             parentIds.length === 1 && 'tw-pl-4',
                             parentIds.length > 1 && 'tw-pl-8',
                         ])}
                         aria-selected={selected}
                         onClick={onNodeClick}
                     >
-                        <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center">
+                        <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-full">
                             <span
                                 data-test-id="toggle"
                                 className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center"
@@ -207,7 +207,7 @@ export const Node = ({
                             </span>
                             {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
-                                <div ref={nameRef} title={isOverflowing ? name : ''} className="tw-w-full tw-flex-1">
+                                <div ref={nameRef} className="tw-relative tw-w-full tw-flex-1 tw-h-full">
                                     <EditableText
                                         options={{
                                             additionalValues: node.id,
@@ -218,21 +218,24 @@ export const Node = ({
                                         onAdditionalValueSave={onEditableSave}
                                         isOverflowing={true}
                                     >
-                                        <span className="tw-max-w-full tw-absolute tw-truncate">{name}</span>
+                                        <span
+                                            title={isOverflowing ? name : ''}
+                                            className="tw-max-w-full tw-absolute tw-truncate"
+                                        >
+                                            {name}
+                                        </span>
                                     </EditableText>
                                 </div>
                             ) : (
-                                <>
-                                    <span
-                                        className="tw-flex tw-items-center tw-flex-1 tw-relative"
-                                        title={isOverflowing ? name : ''}
-                                        data-test-id="node-link-name"
-                                    >
-                                        <span ref={nameRef} className="tw-truncate tw-max-w-full tw-absolute">
-                                            {name}
-                                        </span>
+                                <span
+                                    className="tw-flex tw-items-center tw-flex-1 tw-relative tw-h-10"
+                                    title={isOverflowing ? name : ''}
+                                    data-test-id="node-link-name"
+                                >
+                                    <span ref={nameRef} className="tw-truncate tw-max-w-full tw-absolute">
+                                        {name}
                                     </span>
-                                </>
+                                </span>
                             )}
                             <span>{badge && insertBadge()}</span>
                         </div>

@@ -152,14 +152,14 @@ export const EditableText = ({
     return (
         <div
             data-test-id="editable-node-container"
-            className={merge(['tw-relative', options?.removeBoxPadding === true ? '' : 'tw-p-2'])}
+            className={merge(['tw-relative tw-h-full', options?.removeBoxPadding === true ? '' : 'tw-p-2'])}
         >
             {editableState === EditableMode.INPUT ? (
                 <div
                     className={merge([
                         'tw-flex tw-items-center',
                         options?.isSlimInputField === true
-                            ? '-tw-translate-x-[0.315rem] -tw-translate-y-[0.06rem]'
+                            ? '-tw-translate-x-[0.315rem] -tw-translate-y-[0.07rem]'
                             : '-tw-translate-x-[0.81rem] -tw-translate-y-[0.56rem]',
                     ])}
                 >
@@ -201,7 +201,7 @@ export const EditableText = ({
             )}
             <button
                 style={{ display: editableState === EditableMode.INPUT ? 'none' : 'flex' }}
-                className={merge(['tw-items-center', FOCUS_VISIBLE_STYLE])}
+                className={merge([isOverflowing && 'tw-w-full', 'tw-h-full tw-items-center', FOCUS_VISIBLE_STYLE])}
                 {...clickBehaviour}
                 data-test-id={'node-link-name'}
                 aria-pressed="false"

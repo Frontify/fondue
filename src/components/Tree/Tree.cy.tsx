@@ -75,7 +75,7 @@ describe('Tree Component', () => {
     it('selects a node with a value on click', () => {
         cy.mount(<Component nodes={mockNodesFlat()} />);
 
-        cy.get(NODE_LINK_NAME_ID).click();
+        cy.get(NODE_LINK_NAME_ID).eq(0).click();
         cy.get(NODE_LINK_ID).should('have.attr', 'aria-selected', 'true');
     });
 
