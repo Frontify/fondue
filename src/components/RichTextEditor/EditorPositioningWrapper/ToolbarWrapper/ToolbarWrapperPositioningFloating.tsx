@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { BalloonToolbar, flip, shift } from '@udecode/plate';
-import { OFFSET_IN_PX } from '@components/RichTextEditor/utils';
-import { calculateToolbarWidth } from '@components/RichTextEditor/utils';
+import { OFFSET_IN_PX, calculateToolbarWidth } from '@components/RichTextEditor/utils';
 import { ToolbarWrapperProps } from './types';
 
 export const ToolbarWrapperPositioningFloating = ({
