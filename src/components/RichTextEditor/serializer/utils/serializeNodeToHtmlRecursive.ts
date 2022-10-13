@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import escapeHtml from 'escape-html';
 import { ELEMENT_LI, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL, TDescendant } from '@udecode/plate';
 import { ELEMENT_CHECK_ITEM, OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/Plugins';
 import { DesignTokens } from '@components/RichTextEditor/types';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
-import escapeHtml from 'escape-html';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
 
-export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: DesignTokens): string => {
+export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: DesignTokens) => {
     if (!node.children) {
         return serializeLeafToHtml(node);
     }
@@ -33,7 +33,7 @@ export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: De
         case TextStyles.ELEMENT_QUOTE:
             return `<p style="${reactCssPropsToCss(designTokens.quote)}">${children}</p>`;
         case ELEMENT_PARAGRAPH:
-            return `<p>${children}</p>`;
+            return `<p style="${reactCssPropsToCss(designTokens.p)}">${children}</p>`;
         case ELEMENT_UL:
             return `<ul class="${UL_CLASSES}">${children}</ul>`;
         case ELEMENT_OL:
