@@ -207,7 +207,10 @@ export const Node = ({
                             </span>
                             {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
-                                <div ref={nameRef} className="tw-relative tw-w-full tw-flex-1 tw-h-full">
+                                <div
+                                    ref={nameRef}
+                                    className="tw-relative tw-top-[0.2rem] tw-w-full tw-flex-1 tw-h-full"
+                                >
                                     <EditableText
                                         options={{
                                             additionalValues: node.id,
@@ -220,7 +223,7 @@ export const Node = ({
                                     >
                                         <span
                                             title={isOverflowing ? name : ''}
-                                            className="tw-max-w-full tw-absolute tw-truncate"
+                                            className="tw-max-w-full tw-absolute tw-top-[-0.08rem] tw-truncate"
                                         >
                                             {name}
                                         </span>
