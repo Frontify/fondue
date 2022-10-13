@@ -14,6 +14,6 @@ export const serializeNodesToHtml = (
     nodes: TDescendant[],
     designTokens: DesignTokens = defaultDesignTokens,
 ): string => {
-    designTokens = setDefaultDesignTokensIfNull(designTokens);
-    return nodes.map((node) => serializeNodeToHtmlRecursive(node, designTokens)).join('');
+    const mergedDesignTokens = setDefaultDesignTokensIfNull(defaultDesignTokens, designTokens);
+    return nodes.map((node) => serializeNodeToHtmlRecursive(node, mergedDesignTokens)).join('');
 };
