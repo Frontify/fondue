@@ -12,12 +12,21 @@ function IconFaceNeutral12Filled(props: GeneratedIconProps): React.ReactElement<
             name="IconFaceNeutral12Filled"
             {...props}
         >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M6 12A6 6 0 1 0 6 0a6 6 0 0 0 0 12ZM3.75 5.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM9 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM4 8a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1H4Z"
-                clipRule="evenodd"
-            />
+            <g fill="none">
+                <g clipPath="url(#prefix__a)">
+                    <path
+                        fill="currentColor"
+                        fillRule="evenodd"
+                        d="M6 12A6 6 0 1 0 6 0a6 6 0 0 0 0 12ZM3.75 5.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM9 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM4 8a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1H4Z"
+                        clipRule="evenodd"
+                    />
+                </g>
+                <defs>
+                    <clipPath id="prefix__a">
+                        <path fill="#fff" d="M0 0h12v12H0z" />
+                    </clipPath>
+                </defs>
+            </g>
         </svg>
     );
 }
