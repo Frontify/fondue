@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useLayoutEffect, useRef, useState } from 'react';
 import { merge } from '@utilities/merge';
 import { useDrag } from 'react-dnd';
 import { DropZone, OnDropCallback } from '@components/DropZone';
@@ -126,6 +126,25 @@ export const Node = ({
         );
     };
 
+    const nameRef = useRef<HTMLDivElement | null>(null);
+    const [isOverflowing, setIsOverflowing] = useState(false);
+
+    useLayoutEffect(() => {
+        checkIfOverflowing();
+
+        window.addEventListener('resize', checkIfOverflowing);
+        return () => {
+            window.removeEventListener('resize', checkIfOverflowing);
+        };
+    }, []);
+
+    const checkIfOverflowing = () => {
+        if (nameRef.current) {
+            const isTextOverflowing = nameRef.current.scrollWidth > nameRef.current.clientWidth;
+            setIsOverflowing(isTextOverflowing);
+        }
+    };
+
     /* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
     return (
         <li data-test-id="node" ref={drag} style={{ opacity }}>
@@ -149,7 +168,7 @@ export const Node = ({
             >
                 <div
                     className={merge([
-                        'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5',
+                        'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
                         strong && 'tw-font-bold',
                         value &&
                             !selected &&
@@ -163,14 +182,14 @@ export const Node = ({
                     <a
                         data-test-id="node-link"
                         className={merge([
-                            'tw-flex tw-items-center tw-flex-grow tw-justify-between tw-cursor-pointer',
+                            'tw-flex tw-items-center tw-flex-grow tw-justify-between tw-cursor-pointer tw-h-6',
                             parentIds.length === 1 && 'tw-pl-4',
                             parentIds.length > 1 && 'tw-pl-8',
                         ])}
                         aria-selected={selected}
                         onClick={onNodeClick}
                     >
-                        <div className="tw-flex tw-space-x-1 tw-items-center">
+                        <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-full">
                             <span
                                 data-test-id="toggle"
                                 className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center"
@@ -188,7 +207,10 @@ export const Node = ({
                             </span>
                             {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
                             {editable && onEditableSave ? (
-                                <>
+                                <div
+                                    ref={nameRef}
+                                    className="tw-relative tw-top-[0.2rem] tw-w-full tw-flex-1 tw-h-full"
+                                >
                                     <EditableText
                                         options={{
                                             additionalValues: node.id,
@@ -197,17 +219,28 @@ export const Node = ({
                                             removeBoxPadding: true,
                                         }}
                                         onAdditionalValueSave={onEditableSave}
+                                        isOverflowing={true}
                                     >
-                                        <p>{name}</p>
+                                        <span
+                                            title={isOverflowing ? name : ''}
+                                            className="tw-max-w-full tw-absolute tw-top-[-0.08rem] tw-truncate"
+                                        >
+                                            {name}
+                                        </span>
                                     </EditableText>
-                                    {badge && insertBadge()}
-                                </>
+                                </div>
                             ) : (
-                                <span className="tw-flex tw-items-center" data-test-id="node-link-name">
-                                    {name}
-                                    {badge && insertBadge()}
+                                <span
+                                    className="tw-flex tw-items-center tw-flex-1 tw-relative tw-h-10"
+                                    title={isOverflowing ? name : ''}
+                                    data-test-id="node-link-name"
+                                >
+                                    <span ref={nameRef} className="tw-truncate tw-max-w-full tw-absolute">
+                                        {name}
+                                    </span>
                                 </span>
                             )}
+                            <span>{badge && insertBadge()}</span>
                         </div>
                         <div className="tw-px-1.5">
                             <span
