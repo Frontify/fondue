@@ -54,6 +54,8 @@ export interface EditableTextProps {
     onEditableSave?: (value: string) => void;
     onModeChange?: (editableState?: EditableMode) => void;
     options?: EditableOptionProps;
+    /** @deprecated Temporary solution for text with ellipisis in Tree Component */
+    isOverflowing?: boolean;
 }
 
 /**
@@ -78,6 +80,7 @@ export const EditableText = ({
     onAdditionalValueSave,
     children,
     options,
+    isOverflowing = false,
 }: EditableTextProps) => {
     // Read initial text strings from children
     const childrenLabel = EditableTextHelper.getLabel(children);
@@ -149,28 +152,29 @@ export const EditableText = ({
     return (
         <div
             data-test-id="editable-node-container"
-            className={merge(['tw-relative', options?.removeBoxPadding === true ? '' : 'tw-p-2'])}
+            className={merge(['tw-relative tw-h-full', options?.removeBoxPadding === true ? '' : 'tw-p-2'])}
         >
             {editableState === EditableMode.INPUT ? (
                 <div
                     className={merge([
                         'tw-flex tw-items-center',
                         options?.isSlimInputField === true
-                            ? '-tw-translate-x-[0.315rem] -tw-translate-y-[0.06rem]'
+                            ? '-tw-translate-x-[0.315rem] -tw-translate-y-[0.07rem]'
                             : '-tw-translate-x-[0.81rem] -tw-translate-y-[0.56rem]',
                     ])}
                 >
-                    <div data-test-id="editable-input" className={merge(['tw-relative'])}>
+                    <div
+                        data-test-id="editable-input"
+                        className={merge(['tw-relative', isOverflowing && 'tw-w-full tw-flex tw-items-center'])}
+                    >
                         <input
                             ref={inputRef}
                             type="text"
                             className={merge([
-                                'tw-absolute tw-w-full',
                                 options?.isSlimInputField === true
                                     ? 'focus-visible:tw-outline-none'
                                     : FOCUS_VISIBLE_STYLE,
-                                'tw-text-text tw-border tw-rounded tw-bg-base',
-                                'tw-border-solid',
+                                'tw-absolute tw-w-full tw-text-text tw-border tw-rounded tw-bg-base tw-border-solid',
                                 options?.isSlimInputField === true ? 'tw-py-0 tw-px-1' : 'tw-px-3 tw-py-2',
                             ])}
                             style={inputStyling}
@@ -182,8 +186,9 @@ export const EditableText = ({
                         <span
                             aria-hidden="true"
                             className={merge([
-                                'tw-rounded tw-px-4 tw-py-2 tw-bg-base',
+                                'tw-rounded tw-px-4 tw-py-2 tw-bg-base tw-truncate',
                                 options?.isSlimInputField === true && 'tw-py-0 tw-px-2',
+                                isOverflowing && 'tw-w-0',
                             ])}
                             style={inputStyling}
                         >
@@ -195,8 +200,8 @@ export const EditableText = ({
                 <></>
             )}
             <button
-                style={{ display: editableState === EditableMode.INPUT ? 'none' : 'block' }}
-                className={FOCUS_VISIBLE_STYLE}
+                style={{ display: editableState === EditableMode.INPUT ? 'none' : 'flex' }}
+                className={merge([isOverflowing && 'tw-w-full', 'tw-h-full tw-items-center', FOCUS_VISIBLE_STYLE])}
                 {...clickBehaviour}
                 data-test-id={'node-link-name'}
                 aria-pressed="false"
