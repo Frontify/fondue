@@ -1,24 +1,42 @@
 import { DesignTokens } from '@components/RichTextEditor/types';
-import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
 import { setDefaultDesignTokensIfNull } from './setDefaultDesignTokensIfNull';
+
+const defaultDesignTokens: DesignTokens = {
+    heading1: {
+        fontSize: '48px',
+        fontWeight: 700,
+    },
+    heading2: {
+        fontSize: '32px',
+        fontWeight: 700,
+    },
+};
+
+const customDesignTokens: DesignTokens = {
+    heading1: {
+        textAlign: 'right',
+    },
+};
 
 describe('setDefaultDesignTokensIfNull()', () => {
     it('sets default values if null', () => {
-        const designTokens: DesignTokens = {};
-        const result = setDefaultDesignTokensIfNull(designTokens);
+        const customDesignTokens: DesignTokens = {};
+        const result = setDefaultDesignTokensIfNull(defaultDesignTokens, customDesignTokens);
 
-        expect(result).to.deep.equal(defaultDesignTokens);
+        expect(defaultDesignTokens).to.deep.equal(result);
     });
 
     it('overwrites the defaults', () => {
-        const designTokens: DesignTokens = {
-            heading3: {
+        const result = setDefaultDesignTokensIfNull(defaultDesignTokens, customDesignTokens);
+
+        expect({
+            heading1: {
                 textAlign: 'right',
             },
-        };
-
-        const result = setDefaultDesignTokensIfNull(designTokens);
-
-        expect({ ...defaultDesignTokens, heading3: { textAlign: 'right' } }).to.deep.equal(result);
+            heading2: {
+                fontSize: '32px',
+                fontWeight: 700,
+            },
+        }).to.deep.equal(result);
     });
 });
