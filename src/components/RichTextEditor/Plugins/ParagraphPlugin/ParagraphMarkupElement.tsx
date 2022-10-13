@@ -1,0 +1,29 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import React from 'react';
+import { PlateRenderElementProps } from '@udecode/plate';
+import { merge } from '@utilities/merge';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
+import { ELEMENT_PARAGRAPH_ITEM } from './id';
+import { MarkupElement } from '../MarkupElement';
+import { alignmentClassnames } from '../TextStylePlugin/TextStyles';
+
+export const PARAGRAPH_CLASSES = 'tw-m-0 tw-py-1 tw-px-0';
+
+export const ParagraphMarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
+    const { designTokens } = useRichTextEditorContext();
+    const align = element.align as string;
+    const className = merge([align && alignmentClassnames[align], PARAGRAPH_CLASSES]);
+
+    return (
+        <p {...attributes} className={className} style={designTokens.p}>
+            {children}
+        </p>
+    );
+};
+
+export class ParagraphMarkupElement extends MarkupElement {
+    constructor(id = ELEMENT_PARAGRAPH_ITEM, node = ParagraphMarkupElementNode) {
+        super(id, node);
+    }
+}
