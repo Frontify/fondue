@@ -1337,6 +1337,18 @@ import IconSide16 from '@foundation/Icon/Generated/IconSide16';
 import IconSide20 from '@foundation/Icon/Generated/IconSide20';
 import IconSide24 from '@foundation/Icon/Generated/IconSide24';
 import IconSide32 from '@foundation/Icon/Generated/IconSide32';
+import IconSidebarLeft from '@foundation/Icon/Generated/IconSidebarLeft';
+import IconSidebarLeft12 from '@foundation/Icon/Generated/IconSidebarLeft12';
+import IconSidebarLeft16 from '@foundation/Icon/Generated/IconSidebarLeft16';
+import IconSidebarLeft20 from '@foundation/Icon/Generated/IconSidebarLeft20';
+import IconSidebarLeft24 from '@foundation/Icon/Generated/IconSidebarLeft24';
+import IconSidebarLeft32 from '@foundation/Icon/Generated/IconSidebarLeft32';
+import IconSidebarRight from '@foundation/Icon/Generated/IconSidebarRight';
+import IconSidebarRight12 from '@foundation/Icon/Generated/IconSidebarRight12';
+import IconSidebarRight16 from '@foundation/Icon/Generated/IconSidebarRight16';
+import IconSidebarRight20 from '@foundation/Icon/Generated/IconSidebarRight20';
+import IconSidebarRight24 from '@foundation/Icon/Generated/IconSidebarRight24';
+import IconSidebarRight32 from '@foundation/Icon/Generated/IconSidebarRight32';
 import IconSketch from '@foundation/Icon/Generated/IconSketch';
 import IconSketch12 from '@foundation/Icon/Generated/IconSketch12';
 import IconSketch16 from '@foundation/Icon/Generated/IconSketch16';
@@ -2975,6 +2987,18 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Side20]: <IconSide20 />,
     [IconEnum.Side24]: <IconSide24 />,
     [IconEnum.Side32]: <IconSide32 />,
+    [IconEnum.SidebarLeft]: <IconSidebarLeft />,
+    [IconEnum.SidebarLeft12]: <IconSidebarLeft12 />,
+    [IconEnum.SidebarLeft16]: <IconSidebarLeft16 />,
+    [IconEnum.SidebarLeft20]: <IconSidebarLeft20 />,
+    [IconEnum.SidebarLeft24]: <IconSidebarLeft24 />,
+    [IconEnum.SidebarLeft32]: <IconSidebarLeft32 />,
+    [IconEnum.SidebarRight]: <IconSidebarRight />,
+    [IconEnum.SidebarRight12]: <IconSidebarRight12 />,
+    [IconEnum.SidebarRight16]: <IconSidebarRight16 />,
+    [IconEnum.SidebarRight20]: <IconSidebarRight20 />,
+    [IconEnum.SidebarRight24]: <IconSidebarRight24 />,
+    [IconEnum.SidebarRight32]: <IconSidebarRight32 />,
     [IconEnum.Sketch]: <IconSketch />,
     [IconEnum.Sketch12]: <IconSketch12 />,
     [IconEnum.Sketch16]: <IconSketch16 />,
