@@ -1,4 +1,4 @@
-import { TextStyles } from '@components/RichTextEditor/EditorActions/Plugins/TextStylePlugin/TextStyles';
+import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/components';
 import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
 import { ELEMENT_LI, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL } from '@udecode/plate';

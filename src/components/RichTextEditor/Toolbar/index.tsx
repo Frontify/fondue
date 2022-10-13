@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { useRichTextEditorContext } from '../../context/RichTextEditorContext';
+import { useRichTextEditorContext } from '../context/RichTextEditorContext';
 import { ButtonGroupWrapper } from '../Plugins/helper';
 import { ToolbarProps } from './types';
 import { getButtonGroupWidths, getButtonGroupsPerRow } from './utils';

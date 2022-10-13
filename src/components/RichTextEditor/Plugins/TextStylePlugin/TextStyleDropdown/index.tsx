@@ -2,7 +2,7 @@
 
 import { ToolbarDropdown, usePlateEditorState } from '@udecode/plate';
 import React, { useCallback, useState } from 'react';
-import { useRichTextEditorContext } from '../../../../context/RichTextEditorContext';
+import { useRichTextEditorContext } from '../../../context/RichTextEditorContext';
 import { TextStyles, textStyleTitle } from '../TextStyles';
 import { DropdownItem } from './DropdownItem';
 import { DropdownTrigger } from './DropdownTrigger';

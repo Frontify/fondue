@@ -33,9 +33,9 @@ import {
     usePlateEditorRef,
 } from '@udecode/plate';
 import { FC, default as React, ReactElement } from 'react';
-import { ELEMENT_CHECK_ITEM } from '../../EditorActions/Plugins/CheckboxListPlugin/id';
-import { CheckboxListToolbarButton } from '../../EditorActions/Plugins/CheckboxListPlugin/CheckboxListButton/CheckboxListToolbarButton';
-import { TextStyleDropdown } from '../../EditorActions/Plugins/TextStylePlugin/TextStyleDropdown';
+import { ELEMENT_CHECK_ITEM } from '../../Plugins/CheckboxListPlugin/id';
+import { CheckboxListToolbarButton } from '../../Plugins/CheckboxListPlugin/CheckboxListButton/CheckboxListToolbarButton';
+import { TextStyleDropdown } from '../../Plugins/TextStylePlugin/TextStyleDropdown';
 import { ButtonGroupProps, IconStylingWrapperProps } from '../../types';
 import { EditorActions } from '../../utils/actions';
 const classNames = {
