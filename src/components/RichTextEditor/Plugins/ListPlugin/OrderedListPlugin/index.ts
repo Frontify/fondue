@@ -16,3 +16,6 @@ export class OrderedListPlugin extends ListPlugin {
         });
     }
 }
+
+export * from './OrderedListButton';
+export * from './OrderedListMarkupElement';
