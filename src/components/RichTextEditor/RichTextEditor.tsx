@@ -6,15 +6,14 @@ import { useMemoizedId } from '@hooks/useMemoizedId';
 import { debounce } from '@utilities/debounce';
 import { EditableProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './components/Toolbar/Toolbar';
-import { RichTextEditorContext } from './context/RichTextEditorContext';
-import { useEditorResize, useEditorState } from './hooks';
+import { RichTextEditorProvider } from './context/RichTextEditorContext';
+import { useEditorState } from './hooks';
 import { DesignTokens, PaddingSizes } from './types';
 import { EditorActions, defaultActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
-import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
 import { getEditorConfig } from './utils/editorConfig';
 import { GeneratePlugins, PluginComposer } from './Plugins';
@@ -51,7 +50,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 }) => {
     const editorId = useMemoizedId(id);
     const { localValue } = useEditorState(editorId, clear);
-    const { editorRef, editorWidth } = useEditorResize();
 
     const editableProps: EditableProps = {
         placeholder,
@@ -88,27 +86,23 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         [debouncedOnChange, localValue],
     );
 
-    const PositioningWrapper = EditorPositioningWrapper[position];
-
     const config = GeneratePlugins(editorId, plugins);
     const isNew = !!config && actions.length === 0 && !!plugins;
     const editorConfig = isNew ? config.create() : getEditorConfig();
 
     return (
-        <RichTextEditorContext.Provider value={{ designTokens, PositioningWrapper }}>
-            <PositioningWrapper.PlateWrapper ref={editorRef}>
-                <Plate
-                    id={editorId}
-                    initialValue={parseRawValue(initialValue)}
-                    onChange={onChange}
-                    editableProps={editableProps}
-                    plugins={editorConfig}
-                >
-                    {isNew && config.toolbar(editorWidth)}
-                    {isNew && config.inline()}
-                    {!isNew && <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />}
-                </Plate>
-            </PositioningWrapper.PlateWrapper>
-        </RichTextEditorContext.Provider>
+        <RichTextEditorProvider value={{ designTokens, position }}>
+            <Plate
+                id={editorId}
+                initialValue={parseRawValue(initialValue)}
+                onChange={onChange}
+                editableProps={editableProps}
+                plugins={editorConfig}
+            >
+                {isNew && config.toolbar()}
+                {isNew && config.inline()}
+                {!isNew && <Toolbar editorId={editorId} actions={actions} />}
+            </Plate>
+        </RichTextEditorProvider>
     );
 };

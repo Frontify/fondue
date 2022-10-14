@@ -1,4 +1,5 @@
-import { ButtonGroupsPerRow } from '../Toolbar/types';
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { ButtonGroupWidths } from '../types';
 import { EditorActions } from './actions';
 
@@ -21,14 +22,6 @@ export const getButtonGroupWidthsPerRow = (toolbarWidth: number, buttonGroupsWid
 
         return buttonGroupWidthsPerRow.filter((element) => element.length);
     }, []);
-
-export const calculateToolbarWidth = (toolbarButtonGroups: ButtonGroupWidths[] | ButtonGroupsPerRow) =>
-    Math.max(
-        0,
-        ...toolbarButtonGroups.map((element) =>
-            [...element, { buttonGroupWidth: 0 }].reduce((prev, { buttonGroupWidth }) => prev + buttonGroupWidth, 0),
-        ),
-    );
 
 const BUTTON_GROUP_PADDING_PX = 12;
 const BUTTON_GROUP_SIZE_PX = 26;

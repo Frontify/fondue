@@ -10,7 +10,7 @@ const getLinkNode = (editor: PlateEditor, cb: (link: TLinkElement) => string): s
         return '';
     }
 
-    return cb(linkNode[0] as TLinkElement);
+    return cb(linkNode[0]);
 };
 
 export const getLegacyUrl = (editor: PlateEditor) => {
