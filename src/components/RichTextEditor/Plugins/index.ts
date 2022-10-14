@@ -12,10 +12,11 @@ import { StrikethroughPlugin } from './StrikethroughPlugin';
 import { LinkPlugin } from './LinkPlugin';
 import { TextStylePlugin } from './TextStylePlugin';
 import { InitPlugin } from './InitPlugin';
+import { ParagraphPlugin } from './ParagraphPlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
-    .setPlugin(new InitPlugin())
+    .setPlugin(new InitPlugin(), new ParagraphPlugin())
     .setPlugin(new TextStylePlugin())
     .setPlugin(
         [
@@ -51,3 +52,4 @@ export * from './StrikethroughPlugin';
 export * from './LinkPlugin';
 export * from './MentionPlugin';
 export * from './TextStylePlugin';
+export * from './ParagraphPlugin';
