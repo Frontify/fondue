@@ -4,7 +4,7 @@ import React from 'react';
 import { ELEMENT_LI, PlateRenderElementProps } from '@udecode/plate';
 import { MarkupElement } from '../MarkupElement';
 
-const ListItemMarkupElementNode = ({ attributes, children }: PlateRenderElementProps) => (
+export const ListItemMarkupElementNode = ({ attributes, children }: PlateRenderElementProps) => (
     <li {...attributes}>{children}</li>
 );
 
