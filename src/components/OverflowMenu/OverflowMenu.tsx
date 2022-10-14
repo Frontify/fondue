@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { IconDotsHorizontal } from '@foundation/Icon';
 import { merge } from '@utilities/merge';
@@ -10,9 +10,10 @@ import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 
 export interface OverflowMenuProps {
     items: OverflowMenuItemProps[];
+    triggerIcon?: ReactElement;
 }
 
-export const OverflowMenu = ({ items }: OverflowMenuProps) => {
+export const OverflowMenu = ({ items, triggerIcon }: OverflowMenuProps) => {
     const [isMenuOpened, setIsMenuOpened] = useState(false);
     const [menuContainerRef, setMenuContainerRef] = useState<HTMLElement | null>(null);
     const [menuOpenerRef, setMenuOpenerRef] = useState<HTMLButtonElement | null>(null);
@@ -62,7 +63,7 @@ export const OverflowMenu = ({ items }: OverflowMenuProps) => {
                     setIsMenuOpened(!isMenuOpened);
                 }}
             >
-                <IconDotsHorizontal />
+                {triggerIcon ?? <IconDotsHorizontal />}
             </button>
             {isMenuOpened && (
                 <nav
