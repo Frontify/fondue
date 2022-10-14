@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CSSProperties, ReactElement } from 'react';
-import { ListStyles } from './TextStyleDropdown/DropdownTrigger';
+import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { EditorActions } from './utils/actions';
-import { TextStyles } from './utils/textStyles';
 
 export type DesignTokens = Partial<Record<TextStyles, CSSProperties>>;
 
@@ -24,8 +23,6 @@ export type ButtonGroupProps = {
 };
 
 export type ButtonGroupWidths = { actions: EditorActions[]; buttonGroupWidth: number; index: number }[];
-
-export type AvailableTextStyles = ListStyles & TextStyles;
 
 export enum PaddingSizes {
     None = 'tw-p-0',

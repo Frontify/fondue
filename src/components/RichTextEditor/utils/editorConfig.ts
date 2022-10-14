@@ -21,111 +21,50 @@ import {
     createListPlugin,
     createParagraphPlugin,
     createPlateUI,
-    createPluginFactory,
     createPlugins,
     createSoftBreakPlugin,
     createStrikethroughPlugin,
     createUnderlinePlugin,
 } from '@udecode/plate';
+import { ListItemMarkupElementNode } from '../Plugins/ListPlugin/ListItemMarkupElement';
+import { ListItemContentMarkupElementNode } from '../Plugins/ListPlugin/ListItemContentMarkupElement';
+import { LinkMarkupElementNode } from '../Plugins/LinkPlugin/LinkMarkupElement/LinkMarkupElementNode';
+import { ELEMENT_CHECK_ITEM } from '../Plugins/CheckboxListPlugin/id';
+import { UnderlineMarkupElementNode } from '../Plugins/UnderlinePlugin/UnderlineMarkupElement';
+import { OrderedListMarkupElementNode } from '../Plugins/ListPlugin/OrderedListPlugin/OrderedListMarkupElement';
+import { UnorderedListMarkupElementNode } from '../Plugins/ListPlugin/UnorderedListPlugin/UnorderedListMarkupElement';
+import { StrikethroughMarkupElementNode } from '../Plugins/StrikethroughPlugin/StrikethroughMarkupElement';
+import { BoldMarkupElementNode } from '../Plugins/BoldPlugin/BoldMarkupElement';
+import { CodeMarkupElementNode } from '../Plugins/CodePlugin/CodeMarkupElement';
+import { ItalicMarkupElementNode } from '../Plugins/ItalicPlugin/ItalicMarkupElement';
+import { createCheckboxListPlugin } from '../Plugins/CheckboxListPlugin/index';
+import { CheckboxListElementNode } from '../Plugins/CheckboxListPlugin/CheckboxListElement';
+import { createLinkPlugin } from '../Plugins/LinkPlugin';
 import {
-    BoldMark,
-    CodeMark,
-    Custom1Element,
-    Custom2Element,
-    Custom3Element,
-    Heading1Element,
-    Heading2Element,
-    Heading3Element,
-    Heading4Element,
-    ItalicMark,
-    LinkMarkupElementNode,
-    ListItemContentElement,
-    ListItemElement,
-    OrderedListElement,
-    StrikethroughMark,
-    UnderlineMark,
-    UnorderedListElement,
-} from '../components';
-import { createCheckboxListPlugin } from '../EditorActions/Plugins/CheckboxListPlugin/index';
-import { ELEMENT_CHECK_ITEM } from '../EditorActions/Plugins/CheckboxListPlugin/id';
-import { CheckboxListElementNode } from '../EditorActions/Plugins/CheckboxListPlugin/CheckboxListElement';
-import { createLinkPlugin } from '../EditorActions/Plugins/LinkPlugin';
-import { TextStyles } from './textStyles';
-import { QuoteElement } from '../components/quote';
+    TextStyles,
+    createCustom1Plugin,
+    createCustom2Plugin,
+    createCustom3Plugin,
+    createHeading1Plugin,
+    createHeading2Plugin,
+    createHeading3Plugin,
+    createHeading4Plugin,
+    createQuotePlugin,
+} from '../Plugins/TextStylePlugin/TextStyles';
 
 export const getEditorConfig = () => {
-    const createHeading1Plugin = createPluginFactory({
-        key: TextStyles.ELEMENT_HEADING1,
-        isElement: true,
-        component: Heading1Element,
-        deserializeHtml: {
-            rules: [{ validNodeName: ['h1', 'H1'] }],
-        },
-    });
-
-    const createHeading2Plugin = createPluginFactory({
-        key: TextStyles.ELEMENT_HEADING2,
-        isElement: true,
-        component: Heading2Element,
-        deserializeHtml: {
-            rules: [{ validNodeName: ['h2', 'H2'] }],
-        },
-    });
-
-    const createHeading3Plugin = createPluginFactory({
-        key: TextStyles.ELEMENT_HEADING3,
-        isElement: true,
-        component: Heading3Element,
-        deserializeHtml: {
-            rules: [{ validNodeName: ['h3', 'H3'] }],
-        },
-    });
-
-    const createHeading4Plugin = createPluginFactory({
-        key: TextStyles.ELEMENT_HEADING4,
-        isElement: true,
-        component: Heading4Element,
-        deserializeHtml: {
-            rules: [{ validNodeName: ['h4', 'H4'] }],
-        },
-    });
-
-    const createCustom1Plugin = createPluginFactory({
-        key: TextStyles.ELEMENT_CUSTOM1,
-        isElement: true,
-        component: Custom1Element,
-    });
-
-    const createCustom2Plugin = createPluginFactory({
-        key: TextStyles.ELEMENT_CUSTOM2,
-        isElement: true,
-        component: Custom2Element,
-    });
-
-    const createCustom3Plugin = createPluginFactory({
-        key: TextStyles.ELEMENT_CUSTOM3,
-        isElement: true,
-        component: Custom3Element,
-    });
-
-    const createQuotePlugin = createPluginFactory({
-        key: TextStyles.ELEMENT_QUOTE,
-        isElement: true,
-        component: QuoteElement,
-    });
-
     const components = createPlateUI({
         // this will override the components over the default ones
         [ELEMENT_LINK]: LinkMarkupElementNode,
-        [ELEMENT_UL]: UnorderedListElement,
-        [ELEMENT_OL]: OrderedListElement,
-        [ELEMENT_LI]: ListItemElement,
-        [ELEMENT_LIC]: ListItemContentElement,
-        [MARK_BOLD]: BoldMark,
-        [MARK_ITALIC]: ItalicMark,
-        [MARK_UNDERLINE]: UnderlineMark,
-        [MARK_STRIKETHROUGH]: StrikethroughMark,
-        [MARK_CODE]: CodeMark,
+        [ELEMENT_UL]: UnorderedListMarkupElementNode,
+        [ELEMENT_OL]: OrderedListMarkupElementNode,
+        [ELEMENT_LI]: ListItemMarkupElementNode,
+        [ELEMENT_LIC]: ListItemContentMarkupElementNode,
+        [MARK_BOLD]: BoldMarkupElementNode,
+        [MARK_ITALIC]: ItalicMarkupElementNode,
+        [MARK_UNDERLINE]: UnderlineMarkupElementNode,
+        [MARK_STRIKETHROUGH]: StrikethroughMarkupElementNode,
+        [MARK_CODE]: CodeMarkupElementNode,
         [ELEMENT_CHECK_ITEM]: CheckboxListElementNode,
     });
 
@@ -143,6 +82,8 @@ export const getEditorConfig = () => {
                             TextStyles.ELEMENT_HEADING4,
                             TextStyles.ELEMENT_CUSTOM1,
                             TextStyles.ELEMENT_CUSTOM2,
+                            TextStyles.ELEMENT_CUSTOM3,
+                            TextStyles.ELEMENT_QUOTE,
                         ],
                     },
                 },

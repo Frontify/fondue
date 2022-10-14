@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { resolve } from "path";
-import { dependencies, peerDependencies } from "../package.json";
-import { alias } from "../vite.config";
-import eslint from "vite-plugin-eslint";
+import { resolve } from 'path';
+import { dependencies, peerDependencies } from '../package.json';
+import { alias } from '../vite.config';
+import eslint from 'vite-plugin-eslint';
 
 export default {
     core: {
@@ -40,7 +40,7 @@ export default {
                     include: 'src/components/**/*.+(js|ts|tsx)',
                     exclude: 'src/components/RichTextEditor/**/*.+(js|ts|tsx)',
                     emitWarning: true,
-                    failOnError: false
+                    failOnError: false,
                 }),
                 enforce: 'pre',
             },
