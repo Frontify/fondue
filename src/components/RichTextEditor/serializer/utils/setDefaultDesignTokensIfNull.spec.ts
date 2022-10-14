@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { DesignTokens } from '@components/RichTextEditor/types';
 import { setDefaultDesignTokensIfNull } from './setDefaultDesignTokensIfNull';
 
@@ -31,6 +33,8 @@ describe('setDefaultDesignTokensIfNull()', () => {
 
         expect({
             heading1: {
+                fontSize: '48px',
+                fontWeight: 700,
                 textAlign: 'right',
             },
             heading2: {
