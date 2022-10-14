@@ -103,6 +103,7 @@
         "vite-plugin-eslint": "^1.7.0"
     },
     "dependencies": {
+        "@4tw/cypress-drag-drop": "^2.2.1",
         "@frontify/fondue-tokens": "^3.1.0",
         "@popperjs/core": "^2.11.5",
         "@react-aria/accordion": "3.0.0-alpha.9",

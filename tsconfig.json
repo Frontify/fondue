@@ -23,7 +23,7 @@
             "@typography/*": ["./src/typography/*"],
             "@utilities/*": ["./src/utilities/*"]
         },
-        "types": ["cypress", "cypress-real-events", "vite/client"]
+        "types": ["cypress", "cypress-real-events", "vite/client", "@4tw/cypress-drag-drop"]
     },
     "include": ["src/types", "src/**/*", "cypress/support/component.ts", "scripts/**/*"],
     "exclude": ["node_modules", "dist"]
