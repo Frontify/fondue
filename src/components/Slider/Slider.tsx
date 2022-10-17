@@ -125,7 +125,7 @@ export const Slider: FC<SliderProps> = ({
                 key={`slider-${id}-item-${i}`}
             />
         ));
-    }, [items.length, radioGroupState, disabled, id]);
+    }, [items, id, disabled, radioGroupState]);
     const selectedIndex = items.findIndex((item) => item.id === radioGroupState.selectedValue);
 
     return (

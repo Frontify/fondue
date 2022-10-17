@@ -38,7 +38,7 @@ export const useDropdownAutoHeight = (
                 window.removeEventListener('resize', updateMaxHeight);
             }
         };
-    }, [isOpen, autoResize]);
+    }, [isOpen, autoResize, triggerRef]);
 
     return { maxHeight };
 };
