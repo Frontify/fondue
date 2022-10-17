@@ -64,8 +64,12 @@ const RichTextEditorTemplate: Story<RichTextEditorProps> = (args: RichTextEditor
 export const RichTextEditor = RichTextEditorTemplate.bind({});
 
 export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
-    <div className="tw-flex">
-        <RichTextEditorComponent {...args} />
+    <div className="tw-flex tw-gap-x-7 tw-justify-start">
+        <div className="tw-min-w-[1rem]">
+            <div className="tw-text-left">
+                <RichTextEditorComponent {...args} value={undefined} />
+            </div>
+        </div>
     </div>
 );
 

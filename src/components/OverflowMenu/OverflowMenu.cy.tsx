@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
+import { IconSpeechBubbleDots } from '@foundation/Icon';
 import { OverflowMenu } from './OverflowMenu';
 
 const COMPONENT_TEST_ID = '[data-test-id=overflow-menu]';
@@ -184,6 +185,19 @@ describe('OverflowMenu component', () => {
             for (const [index] of SPAN_ITEMS.entries()) {
                 cy.get(ITEM_TEST_ID).eq(index).find('> span').should('have.length', 1);
             }
+        });
+    });
+    describe('Optional Properties', () => {
+        it('renders the IconDotsHorizontal as default trigger icon', () => {
+            cy.mount(<OverflowMenu items={LINK_ITEMS} />);
+            cy.get(COMPONENT_TEST_ID).as('OverflowMenu');
+            cy.get('@OverflowMenu').find('svg[name^=IconDotsHorizontal]').should('exist');
+        });
+        it('renders the IconSpeechBubbleDots as custom trigger icon', () => {
+            cy.mount(<OverflowMenu items={LINK_ITEMS} triggerIcon={<IconSpeechBubbleDots />} />);
+            cy.get(COMPONENT_TEST_ID).as('OverflowMenu');
+            cy.get('@OverflowMenu').find('svg[name^=IconDotsHorizontal]').should('not.exist');
+            cy.get('@OverflowMenu').find('svg[name^=IconSpeechBubbleDots]').should('exist');
         });
     });
 });

@@ -4,19 +4,23 @@ import React, { FC, useCallback, useEffect } from 'react';
 import { Plate, TNode } from '@udecode/plate';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { debounce } from '@utilities/debounce';
-import { EditableProps } from 'slate-react/dist/components/editable';
-import { RichTextEditorContext } from './context/RichTextEditorContext';
-import { useEditorResize, useEditorState } from './hooks';
+import { useEditorState } from './hooks';
+import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
+import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { DesignTokens, PaddingSizes } from './types';
 import { EditorActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
-import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
 import { GeneratePlugins, PluginComposer, defaultPlugins } from './Plugins';
 import { forceTabOutOfActiveElement } from './helpers';
+
+const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
+    position: 'relative',
+    height: '0',
+};
 
 export type RichTextEditorProps = {
     id?: string;
@@ -48,10 +52,19 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 }) => {
     const editorId = useMemoizedId(id);
     const { localValue } = useEditorState(editorId, clear);
-    const { editorRef, editorWidth } = useEditorResize();
 
     const editableProps: EditableProps = {
         placeholder,
+        renderPlaceholder: ({ children, attributes }) => {
+            const mergedAttributes = {
+                ...attributes,
+                style: {
+                    ...attributes.style,
+                    ...PLACEHOLDER_STYLES,
+                },
+            };
+            return <p {...mergedAttributes}>{children}</p>;
+        },
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
         className: padding,
@@ -85,23 +98,20 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         [debouncedOnChange, localValue],
     );
 
-    const PositioningWrapper = EditorPositioningWrapper[position];
     const config = GeneratePlugins(editorId, plugins);
 
     return (
-        <RichTextEditorContext.Provider value={{ designTokens, position: position ?? Position.FLOATING }}>
-            <PositioningWrapper.PlateWrapper ref={editorRef}>
-                <Plate
-                    id={editorId}
-                    initialValue={parseRawValue(initialValue)}
-                    onChange={onChange}
-                    editableProps={editableProps}
-                    plugins={config.create()}
-                >
-                    {config.toolbar(editorWidth)}
-                    {config.inline()}
-                </Plate>
-            </PositioningWrapper.PlateWrapper>
-        </RichTextEditorContext.Provider>
+        <RichTextEditorProvider value={{ designTokens, position }}>
+            <Plate
+                id={editorId}
+                initialValue={parseRawValue(initialValue)}
+                onChange={onChange}
+                editableProps={editableProps}
+                plugins={config.create()}
+            >
+                {config.toolbar()}
+                {config.inline()}
+            </Plate>
+        </RichTextEditorProvider>
     );
 };
