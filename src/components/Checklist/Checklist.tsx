@@ -4,7 +4,7 @@ import { Checkbox, CheckboxProps, CheckboxState } from '@components/Checkbox/Che
 import { useCheckboxGroup, useCheckboxGroupItem } from '@react-aria/checkbox';
 import { CheckboxGroupState, useCheckboxGroupState } from '@react-stately/checkbox';
 import { merge } from '@utilities/merge';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export enum ChecklistDirection {
     Horizontal = 'Horizontal',
@@ -59,17 +59,18 @@ const ChecklistItem = ({ checkbox, state }: { checkbox: CheckboxValue; state: Ch
             setCheckState(isSelected ? CheckboxState.Checked : CheckboxState.Unchecked);
         }
     }, [checkState, isSelected]);
+
     return <Checkbox {...checkbox} state={checkState} groupInputProps={inputProps} ref={ref} />;
 };
 
-export const Checklist: FC<ChecklistProps> = ({
+export const Checklist = ({
     checkboxes,
     setActiveValues,
     ariaLabel = 'Checklist',
     activeValues = [],
     direction = ChecklistDirection.Horizontal,
     columns = 1,
-}) => {
+}: ChecklistProps) => {
     const state = useCheckboxGroupState({
         value: activeValues,
         onChange: setActiveValues,
