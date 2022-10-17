@@ -19,7 +19,7 @@ import { getEditorConfig } from './utils/editorConfig';
 import { GeneratePlugins, PluginComposer } from './Plugins';
 import { forceTabOutOfActiveElement } from './helpers';
 
-const PLACEHOLDER_STYLES: RenderPlaceholderProps["attributes"]["style"] = {
+const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
     position: 'relative',
     height: '0',
 };
@@ -63,12 +63,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 ...attributes,
                 style: {
                     ...attributes.style,
-                    ...PLACEHOLDER_STYLES
+                    ...PLACEHOLDER_STYLES,
                 },
             };
-            return (
-                <p {...mergedAttributes}>{children}</p >
-            );
+            return <p {...mergedAttributes}>{children}</p>;
         },
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
