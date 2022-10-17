@@ -28,13 +28,12 @@ const isActionMenuSwitchItem = (
 ): menuItem is ActionMenuSwitchItemType =>
     typeof (menuItem as ActionMenuSwitchItemType).onClick !== 'undefined' && menuItem.type === 'switch';
 
-const useSwitch = (menuItem: MenuItemType | ActionMenuItemType | ActionMenuSwitchItemType) => {
-    const [switchValue, setSwitchValue] = useState<boolean>(false);
-
-    if (isActionMenuSwitchItem(menuItem)) {
-        setSwitchValue(menuItem.initialValue);
+const useSwitch = (isSwitch: boolean, initialValue: boolean) => {
+    const [switchValue, setSwitchValue] = useState<boolean>(initialValue ?? false);
+    if (isSwitch) {
         const toggleSwitch = () => setSwitchValue(!switchValue);
         const switchComponent = <Switch size={SwitchSize.Small} on={switchValue} />;
+
         return {
             switchComponent,
             switchValue,
@@ -47,7 +46,12 @@ const useSwitch = (menuItem: MenuItemType | ActionMenuItemType | ActionMenuSwitc
 
 export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSelected, onClick }) => {
     const ref = useRef<HTMLLIElement | null>(null);
-    const { switchComponent = undefined, switchValue = null, toggleSwitch = null } = useSwitch(menuItem);
+    const initialValue = isActionMenuSwitchItem(menuItem) ? menuItem.initialValue : false;
+    const {
+        switchComponent = undefined,
+        switchValue = null,
+        toggleSwitch = null,
+    } = useSwitch(isActionMenuSwitchItem(menuItem), initialValue);
 
     const { menuItemProps } = useMenuItem(
         {
