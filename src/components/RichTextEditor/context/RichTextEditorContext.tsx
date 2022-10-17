@@ -1,22 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { createContext, useContext } from 'react';
 import { DesignTokens } from '../types';
 import { defaultDesignTokens } from '../utils/defaultDesignTokens';
 import { EditorPositioningWrapper, Position } from '../EditorPositioningWrapper';
-import { useEditorResize } from '../hooks';
+import { EditorResizeContextProvider } from './EditorResizeContext';
+import { EditorPositioningWrapperChildProps } from '../EditorPositioningWrapper/types';
 
 type RichTextEditorContextProps = {
     designTokens: DesignTokens;
-    PositioningWrapper: typeof EditorPositioningWrapper[Position.FLOATING];
-    editorWidth: number | undefined;
+    PositioningWrapper: EditorPositioningWrapperChildProps;
 };
 
 const RichTextEditorContext = createContext<RichTextEditorContextProps>({
     designTokens: defaultDesignTokens,
     PositioningWrapper: EditorPositioningWrapper[Position.FLOATING],
-    editorWidth: 0,
 });
 export const useRichTextEditorContext = () => useContext(RichTextEditorContext);
 
@@ -31,17 +30,17 @@ type RichTextEditorProviderProps = {
 export const RichTextEditorProvider = ({ children, value }: RichTextEditorProviderProps) => {
     const { designTokens, position } = value;
     const PositioningWrapper = EditorPositioningWrapper[position ?? Position.FLOATING];
-    const { editorRef, editorWidth } = useEditorResize();
 
-    const state = {
+    const [state] = useState({
         designTokens: designTokens ?? defaultDesignTokens,
         PositioningWrapper,
-        editorWidth,
-    };
+    });
 
     return (
         <RichTextEditorContext.Provider value={state}>
-            <PositioningWrapper.PlateWrapper ref={editorRef}>{children}</PositioningWrapper.PlateWrapper>
+            <EditorResizeContextProvider PositioningWrapper={PositioningWrapper}>
+                {children}
+            </EditorResizeContextProvider>
         </RichTextEditorContext.Provider>
     );
 };

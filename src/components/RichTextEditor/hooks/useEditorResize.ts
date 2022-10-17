@@ -8,7 +8,7 @@ export const useEditorResize = () => {
 
     const debounceRef = useRef(debounce((value: number) => setEditorWidth(value)));
 
-    const editorRef = useCallback((node) => {
+    const editorRef = useCallback((node: HTMLDivElement) => {
         if (!node) {
             return;
         }

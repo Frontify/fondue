@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Position } from './types';
+import { EditorPositioningWrapperProps, Position } from './types';
 import {
     PlateWrapperPositioningBottom,
     PlateWrapperPositioningFloating,
@@ -13,7 +13,7 @@ import {
 } from './ToolbarWrapper';
 
 export { Position } from './types';
-export const EditorPositioningWrapper = {
+export const EditorPositioningWrapper: EditorPositioningWrapperProps = {
     [Position.BOTTOM]: {
         PlateWrapper: PlateWrapperPositioningBottom,
         ToolbarWrapper: ToolbarWrapperPositioningBottom,
