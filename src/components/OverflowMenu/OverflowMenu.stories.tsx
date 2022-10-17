@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
+import { IconSpeechBubbleDots } from '@foundation/Icon';
 import { OverflowMenu, OverflowMenuProps } from './OverflowMenu';
 import { BreadcrumbItem } from '@components/Breadcrumbs';
 
@@ -122,3 +123,6 @@ BetweenBreadcrumbItems.decorators = [
         </div>
     ),
 ];
+
+export const WithCustomTriggerIcon = Template.bind({});
+WithCustomTriggerIcon.args = { items: [...BUTTON_ITEMS], triggerIcon: <IconSpeechBubbleDots /> };
