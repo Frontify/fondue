@@ -26,7 +26,6 @@ import {
     PluginComposer,
     UnderlinePlugin,
     UnorderedListPlugin,
-    defaultPlugins,
 } from './Plugins';
 import { PaddingSizes } from './types';
 
@@ -199,13 +198,6 @@ WithCustomControls.args = {
 export const WithPositioningOfToolbar = RichTextEditorTemplate.bind({});
 WithPositioningOfToolbar.args = {
     position: Position.TOP,
-};
-
-export const WithNewToolbar = RichTextEditorTemplate.bind({});
-WithNewToolbar.args = {
-    position: Position.TOP,
-    actions: [],
-    plugins: defaultPlugins,
 };
 
 const mentionPlugins = new PluginComposer();
