@@ -4,7 +4,7 @@ import React, { FC, useCallback, useEffect } from 'react';
 import { Plate, TNode } from '@udecode/plate';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { debounce } from '@utilities/debounce';
-import { EditableProps } from 'slate-react/dist/components/editable';
+import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './components/Toolbar/Toolbar';
 import { RichTextEditorContext } from './context/RichTextEditorContext';
 import { useEditorResize, useEditorState } from './hooks';
@@ -19,6 +19,11 @@ import { Position } from './EditorPositioningWrapper';
 import { getEditorConfig } from './utils/editorConfig';
 import { GeneratePlugins, PluginComposer } from './Plugins';
 import { forceTabOutOfActiveElement } from './helper';
+
+const PLACEHOLDER_STYLES: RenderPlaceholderProps["attributes"]["style"] = {
+    position: 'relative',
+    height: '0',
+};
 
 export type RichTextEditorProps = {
     id?: string;
@@ -55,6 +60,18 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     const editableProps: EditableProps = {
         placeholder,
+        renderPlaceholder: ({ children, attributes }) => {
+            const mergedAttributes = {
+                ...attributes,
+                style: {
+                    ...attributes.style,
+                    ...PLACEHOLDER_STYLES
+                },
+            };
+            return (
+                <p {...mergedAttributes}>{children}</p >
+            );
+        },
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
         className: padding,
