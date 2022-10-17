@@ -12,12 +12,13 @@ type RichTextEditorContextProps = {
     designTokens: DesignTokens;
     PositioningWrapper: EditorPositioningWrapperChildProps;
 };
-
-const RichTextEditorContext = createContext<RichTextEditorContextProps>({
-    designTokens: defaultDesignTokens,
-    PositioningWrapper: EditorPositioningWrapper[Position.FLOATING],
-});
-export const useRichTextEditorContext = () => useContext(RichTextEditorContext);
+const RichTextEditorContext = createContext<RichTextEditorContextProps | null>(null);
+export const useRichTextEditorContext = () => {
+    if (!RichTextEditorContext) {
+        throw new Error('useRichTextEditorContext must be used within a RichTextEditorProvider');
+    }
+    return useContext(RichTextEditorContext);
+};
 
 type RichTextEditorProviderProps = {
     children: React.ReactNode;
