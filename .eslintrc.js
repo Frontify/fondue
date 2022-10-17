@@ -6,7 +6,4 @@ module.exports = {
         },
     },
     plugins: ['jsx-a11y'],
-    rules: {
-        'react-hooks/rules-of-hooks': 'warn' /* degraded to warning to do a partial release */,
-    },
 };
