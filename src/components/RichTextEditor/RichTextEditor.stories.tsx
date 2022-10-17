@@ -6,8 +6,27 @@ import { Position } from './EditorPositioningWrapper';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import { EditorActions } from './utils/actions';
-import { IPSUM, checkboxValue, customDesignTokens, htmlValue, nodesToSerialize, value } from './utils/exampleValues';
-import { defaultPlugins } from './EditorActions';
+import {
+    IPSUM,
+    checkboxValue,
+    customDesignTokens,
+    htmlValue,
+    mentionValue,
+    mentionable,
+    nodesToSerialize,
+    value,
+} from './utils/exampleValues';
+import {
+    BoldPlugin,
+    CheckboxListPlugin,
+    InitPlugin,
+    LinkPlugin,
+    MentionPlugin,
+    OrderedListPlugin,
+    PluginComposer,
+    UnorderedListPlugin,
+    defaultPlugins,
+} from './Plugins';
 import { PaddingSizes } from './types';
 
 export default {
@@ -43,21 +62,74 @@ const RichTextEditorTemplate: Story<RichTextEditorProps> = (args: RichTextEditor
 
 export const RichTextEditor = RichTextEditorTemplate.bind({});
 
-export const WithReadonlyState = RichTextEditorTemplate.bind({});
-WithReadonlyState.args = {
-    readonly: true,
-};
-
-export const RichTextWithHTML = RichTextEditorTemplate.bind({});
-RichTextWithHTML.args = {
-    value: htmlValue,
-};
-
 export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <div className="tw-flex">
         <RichTextEditorComponent {...args} />
     </div>
 );
+
+export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
+    const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
+    return (
+        <>
+            {serialized ? (
+                <>
+                    Serialized:
+                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                        <code>{serialized}</code>
+                    </div>
+                    Rendered:
+                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                        <div dangerouslySetInnerHTML={{ __html: serialized }} />
+                    </div>
+                </>
+            ) : null}
+        </>
+    );
+};
+
+export const MultipleRichTextEditors: Story<RichTextEditorProps> = () => (
+    <div className="tw-grid tw-grid-cols-2 tw-gap-2">
+        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
+            <RichTextEditorComponent
+                placeholder="I'm placeholder one"
+                id="editor-one"
+                value="<p>I'm editor <strong>one</strong>.</p>"
+            />
+        </div>
+        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
+            <RichTextEditorComponent
+                placeholder="I'm placeholder two"
+                id="editor-two"
+                value="<p>I'm editor <strong>two</strong>.</p>"
+            />
+        </div>
+        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
+            <RichTextEditorComponent
+                placeholder="I'm placeholder three"
+                id="editor-three"
+                value="<p>I'm editor <strong>three</strong>.</p>"
+            />
+        </div>
+        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
+            <RichTextEditorComponent
+                placeholder="I'm placeholder four"
+                id="editor-four"
+                value="<p>I'm editor <strong>four</strong>.</p>"
+            />
+        </div>
+    </div>
+);
+
+export const WithReadonlyState = RichTextEditorTemplate.bind({});
+WithReadonlyState.args = {
+    readonly: true,
+};
+
+export const WithHtmlAsValue = RichTextEditorTemplate.bind({});
+WithHtmlAsValue.args = {
+    value: htmlValue,
+};
 
 export const WithCustomTextStyle = RichTextEditorTemplate.bind({});
 WithCustomTextStyle.args = {
@@ -102,39 +174,6 @@ WithCustomTextStyle.args = {
     },
 };
 
-export const MultipleRichTextEditors: Story<RichTextEditorProps> = () => (
-    <div className="tw-grid tw-grid-cols-2 tw-gap-2">
-        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
-            <RichTextEditorComponent
-                placeholder="I'm placeholder one"
-                id="editor-one"
-                value="<p>I'm editor <strong>one</strong>.</p>"
-            />
-        </div>
-        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
-            <RichTextEditorComponent
-                placeholder="I'm placeholder two"
-                id="editor-two"
-                value="<p>I'm editor <strong>two</strong>.</p>"
-            />
-        </div>
-        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
-            <RichTextEditorComponent
-                placeholder="I'm placeholder three"
-                id="editor-three"
-                value="<p>I'm editor <strong>three</strong>.</p>"
-            />
-        </div>
-        <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
-            <RichTextEditorComponent
-                placeholder="I'm placeholder four"
-                id="editor-four"
-                value="<p>I'm editor <strong>four</strong>.</p>"
-            />
-        </div>
-    </div>
-);
-
 export const WithChecklist = RichTextEditorTemplate.bind({});
 WithChecklist.args = {
     value: JSON.stringify(checkboxValue),
@@ -150,36 +189,44 @@ WithCustomControls.args = {
     ],
 };
 
-export const WithToolbarPositioning = RichTextEditorTemplate.bind({});
-WithToolbarPositioning.args = {
-    value: htmlValue,
+export const WithPositioningOfToolbar = RichTextEditorTemplate.bind({});
+WithPositioningOfToolbar.args = {
     position: Position.TOP,
 };
 
 export const WithNewToolbar = RichTextEditorTemplate.bind({});
 WithNewToolbar.args = {
-    value: htmlValue,
     position: Position.TOP,
     actions: [],
     plugins: defaultPlugins,
 };
 
-export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
-    const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
-    return (
-        <>
-            {serialized ? (
-                <>
-                    Serialized:
-                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                        <code>{serialized}</code>
-                    </div>
-                    Rendered:
-                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                        <div dangerouslySetInnerHTML={{ __html: serialized }} />
-                    </div>
-                </>
-            ) : null}
-        </>
-    );
+const mentionPlugins = new PluginComposer();
+mentionPlugins
+    .setPlugin([new InitPlugin()])
+    .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
+    .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
+    .setPlugin([new BoldPlugin(), new LinkPlugin()]);
+export const WithMentions = RichTextEditorTemplate.bind({});
+WithMentions.args = {
+    value: JSON.stringify(mentionValue),
+    actions: [],
+    plugins: mentionPlugins,
+};
+
+const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
+withoutToolbarPlugins
+    .setPlugin([new InitPlugin()])
+    .setPlugin([
+        new BoldPlugin(),
+        new LinkPlugin(),
+        new UnorderedListPlugin(),
+        new OrderedListPlugin(),
+        new CheckboxListPlugin(),
+    ]);
+export const WithoutToolbar = RichTextEditorTemplate.bind({});
+WithoutToolbar.args = {
+    position: Position.TOP,
+    actions: [],
+    plugins: withoutToolbarPlugins,
 };

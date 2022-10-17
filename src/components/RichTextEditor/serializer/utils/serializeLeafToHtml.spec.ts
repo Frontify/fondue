@@ -1,10 +1,12 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import {
     BOLD_CLASSES,
     CODE_CLASSES,
     ITALIC_CLASSES,
     STRIKETHROUGH_CLASSES,
     UNDERLINE_CLASSES,
-} from '@components/RichTextEditor/components';
+} from '@components/RichTextEditor/Plugins';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
 
 describe('serializeLeafToHtml()', () => {

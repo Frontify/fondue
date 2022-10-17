@@ -13,11 +13,11 @@ import { EditorActions, defaultActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { parseRawValue } from './utils/parseRawValue';
-import { TextStyles } from './utils/textStyles';
+import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { EditorPositioningWrapper } from './EditorPositioningWrapper';
 import { Position } from './EditorPositioningWrapper';
 import { getEditorConfig } from './utils/editorConfig';
-import { GeneratePlugins, PluginComposer } from './EditorActions';
+import { GeneratePlugins, PluginComposer } from './Plugins';
 import { forceTabOutOfActiveElement } from './helper';
 
 export type RichTextEditorProps = {
@@ -91,7 +91,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const PositioningWrapper = EditorPositioningWrapper[position];
 
     const config = GeneratePlugins(editorId, plugins);
-    const isNew = config && actions.length === 0 && plugins;
+    const isNew = !!config && actions.length === 0 && !!plugins;
     const editorConfig = isNew ? config.create() : getEditorConfig();
 
     return (
@@ -105,6 +105,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     plugins={editorConfig}
                 >
                     {isNew && config.toolbar(editorWidth)}
+                    {isNew && config.inline()}
                     {!isNew && <Toolbar editorId={editorId} actions={actions} editorWidth={editorWidth} />}
                 </Plate>
             </PositioningWrapper.PlateWrapper>

@@ -16,13 +16,13 @@ export const AssetSubline: FC<AssetSublineProps> = ({ asset, isLoading = false }
             <div className="tw-flex-none tw-inline-flex tw-items-center tw-justify-center">
                 {asset?.source === 'library' ? <IconImageStack /> : <IconArrowCircleUp />}
             </div>
-            {title && <span>{title}</span>}
+            {title && <span className="tw-whitespace-nowrap">{title}</span>}
             {asset &&
                 !isLoading &&
                 [asset.extension, asset.size].filter(Boolean).map((item, i) => (
                     <Fragment key={`${item}-${i}`}>
                         <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
-                        <span>{item}</span>
+                        <span className="tw-whitespace-nowrap">{item}</span>
                     </Fragment>
                 ))}
         </span>

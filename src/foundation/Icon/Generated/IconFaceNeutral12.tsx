@@ -12,12 +12,21 @@ function IconFaceNeutral12(props: GeneratedIconProps): React.ReactElement<Genera
             name="IconFaceNeutral12"
             {...props}
         >
-            <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M11 6A5 5 0 1 1 1 6a5 5 0 0 1 10 0Zm1 0A6 6 0 1 1 0 6a6 6 0 0 1 12 0Zm-8.25-.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM9 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM4 8a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1H4Z"
-                clipRule="evenodd"
-            />
+            <g fill="none">
+                <g clipPath="url(#prefix__a)">
+                    <path
+                        fill="currentColor"
+                        fillRule="evenodd"
+                        d="M11 6A5 5 0 1 1 1 6a5 5 0 0 1 10 0Zm1 0A6 6 0 1 1 0 6a6 6 0 0 1 12 0Zm-8.25-.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM9 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM4 8a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1H4Z"
+                        clipRule="evenodd"
+                    />
+                </g>
+                <defs>
+                    <clipPath id="prefix__a">
+                        <path fill="#fff" d="M0 0h12v12H0z" />
+                    </clipPath>
+                </defs>
+            </g>
         </svg>
     );
 }
