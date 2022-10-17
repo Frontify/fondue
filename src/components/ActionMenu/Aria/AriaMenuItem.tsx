@@ -8,8 +8,8 @@ import { Node } from '@react-types/shared';
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import React, { FC, useRef, useState } from 'react';
-import { MenuItemType } from '../../Dropdown/SelectMenu/SelectMenu';
-import { ActionMenuItemType, ActionMenuSwitchItemType } from '../ActionMenu/ActionMenu';
+import { MenuItemType } from '@components/Dropdown';
+import { ActionMenuItemType, ActionMenuSwitchItemType } from '@components/ActionMenu';
 
 export type AriaOptionProps = {
     menuItem: MenuItemType | ActionMenuItemType | ActionMenuSwitchItemType;
@@ -28,25 +28,26 @@ const isActionMenuSwitchItem = (
 ): menuItem is ActionMenuSwitchItemType =>
     typeof (menuItem as ActionMenuSwitchItemType).onClick !== 'undefined' && menuItem.type === 'switch';
 
-const useSwitch = (initialValue: boolean) => {
-    const [switchValue, setSwitchValue] = useState<boolean>(initialValue);
-    const toggleSwitch = () => setSwitchValue(!switchValue);
-    const switchComponent = <Switch size={SwitchSize.Small} on={switchValue} />;
+const useSwitch = (menuItem: MenuItemType | ActionMenuItemType | ActionMenuSwitchItemType) => {
+    const [switchValue, setSwitchValue] = useState<boolean>(false);
 
-    return {
-        switchComponent,
-        switchValue,
-        toggleSwitch,
-    };
+    if (isActionMenuSwitchItem(menuItem)) {
+        setSwitchValue(menuItem.initialValue);
+        const toggleSwitch = () => setSwitchValue(!switchValue);
+        const switchComponent = <Switch size={SwitchSize.Small} on={switchValue} />;
+        return {
+            switchComponent,
+            switchValue,
+            toggleSwitch,
+        };
+    }
+
+    return {};
 };
 
 export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSelected, onClick }) => {
     const ref = useRef<HTMLLIElement | null>(null);
-    const {
-        switchComponent = undefined,
-        switchValue = null,
-        toggleSwitch = null,
-    } = isActionMenuSwitchItem(menuItem) ? useSwitch(menuItem.initialValue) : {};
+    const { switchComponent = undefined, switchValue = null, toggleSwitch = null } = useSwitch(menuItem);
 
     const { menuItemProps } = useMenuItem(
         {
