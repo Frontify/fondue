@@ -41,7 +41,9 @@ type ChecklistHorizontal = ChecklistBase & {
 
 export type ChecklistProps = ChecklistVertical | ChecklistHorizontal;
 
-const ChecklistItem = ({ checkbox, state }: { checkbox: CheckboxValue; state: CheckboxGroupState }) => {
+type ChecklistItemProps = { checkbox: CheckboxValue; state: CheckboxGroupState };
+
+const ChecklistItem = ({ checkbox, state }: ChecklistItemProps) => {
     const ref = useRef<HTMLInputElement | null>(null);
     const { value, disabled, label, ariaLabel: checkboxAriaLabel, state: checkboxState } = checkbox;
     const [checkState, setCheckState] = useState(checkboxState);
