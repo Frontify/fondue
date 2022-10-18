@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { TabSize, Tabs, TabsPaddingX, TabsProps } from './Tabs';
 import { Button } from '@components/Button';
-import { Text } from '../../typography/Text';
+import { Text } from '@typography/Text';
 import { Divider } from '@components/Divider';
 import { TabItem, TabItemProps } from '@components/Tabs/TabItem';
 import { IconIcon, IconSize } from '@foundation/Icon';
@@ -121,8 +121,8 @@ const TabWithIconTemplate: Story<TabsProps> = (args) => {
         </Tabs>
     );
 };
-export const withIcon = TabWithIconTemplate.bind({});
-withIcon.storyName = 'Icon and Label';
+export const WithIcon = TabWithIconTemplate.bind({});
+WithIcon.storyName = 'Icon and Label';
 
 const dataWithBadge = data.map((item) =>
     Object.assign({}, item, {
@@ -150,8 +150,8 @@ const TabWithBadgeTemplate: Story<TabsProps> = (args) => {
         </Tabs>
     );
 };
-export const withBadge = TabWithBadgeTemplate.bind({});
-withBadge.storyName = 'Label and Badge';
+export const WithBadge = TabWithBadgeTemplate.bind({});
+WithBadge.storyName = 'Label and Badge';
 
 const dataWithBadgeAndIcon = dataWithBadge.map((item) =>
     Object.assign({}, item, { decorator: <IconIcon size={IconSize.Size16} /> }),
@@ -175,5 +175,5 @@ const TabWithBadgeAndIconTemplate: Story<TabsProps> = (args) => {
         </Tabs>
     );
 };
-export const withBadgeAndIcon = TabWithBadgeAndIconTemplate.bind({});
-withBadgeAndIcon.storyName = 'Label, Badge and Icon';
+export const WithBadgeAndIcon = TabWithBadgeAndIconTemplate.bind({});
+WithBadgeAndIcon.storyName = 'Label, Badge and Icon';

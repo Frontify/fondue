@@ -133,7 +133,7 @@ export const Accordion: FC<AccordionProps> = (props) => {
             state.toggleKey(ariaProps.defaultExpandedKeys[ariaProps.defaultExpandedKeys.length - 1]);
         }
         accordionChildren.current = { firstRender: false, childLength: Children.toArray(props.children).length };
-    }, [childrenLength]);
+    }, [ariaProps.defaultExpandedKeys, childrenLength, props.children, state]);
 
     const {
         // @react-aria prevents default action for onMouseDown as implemented here: https://github.com/adobe/react-spectrum/blob/e14523fedd93ac1a4ede355aed70988af572ae74/packages/%40react-aria/selection/src/useSelectableCollection.ts#L370

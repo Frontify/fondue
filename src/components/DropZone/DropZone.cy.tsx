@@ -13,7 +13,7 @@ const SOURCE_ITEM = { id: '2', sort: null };
 const DRAGGABLE_ITEM_ID = '[data-test-id=draggable-item]';
 const DROP_ZONE_ID = '[data-test-id=drop-zone]';
 
-const DraggableItem = ({ id, sort }: DraggableItemProp<any>) => {
+const DraggableItem = ({ id, sort }: DraggableItemProp<unknown>) => {
     const [, drag] = useDrag({
         item: { id, sort },
         type: LIST_ID,
@@ -27,7 +27,7 @@ const DraggableItem = ({ id, sort }: DraggableItemProp<any>) => {
     );
 };
 
-const DropZoneWithDefaultProps = ({ onDrop }: Partial<DropZoneProps<any>>) => {
+const DropZoneWithDefaultProps = ({ onDrop }: Partial<DropZoneProps<unknown>>) => {
     return <DropZone data={DROP_ZONE_DATA} treeId={LIST_ID} onDrop={onDrop} />;
 };
 describe('DropZone', () => {

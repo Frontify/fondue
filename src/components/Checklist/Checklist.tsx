@@ -2,9 +2,9 @@
 
 import { Checkbox, CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
 import { useCheckboxGroup, useCheckboxGroupItem } from '@react-aria/checkbox';
-import { useCheckboxGroupState } from '@react-stately/checkbox';
+import { CheckboxGroupState, useCheckboxGroupState } from '@react-stately/checkbox';
 import { merge } from '@utilities/merge';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export enum ChecklistDirection {
     Horizontal = 'Horizontal',
@@ -41,14 +41,38 @@ type ChecklistHorizontal = ChecklistBase & {
 
 export type ChecklistProps = ChecklistVertical | ChecklistHorizontal;
 
-export const Checklist: FC<ChecklistProps> = ({
+type ChecklistItemProps = { checkbox: CheckboxValue; state: CheckboxGroupState };
+
+const ChecklistItem = ({ checkbox, state }: ChecklistItemProps) => {
+    const ref = useRef<HTMLInputElement | null>(null);
+    const { value, disabled, label, ariaLabel: checkboxAriaLabel, state: checkboxState } = checkbox;
+    const [checkState, setCheckState] = useState(checkboxState);
+    const isSelected = state.isSelected(value);
+    const { inputProps } = useCheckboxGroupItem(
+        { value, isDisabled: disabled, 'aria-label': checkboxAriaLabel || label },
+        state,
+        ref,
+    );
+
+    useEffect(() => {
+        if (checkState === CheckboxState.Mixed && !isSelected) {
+            setCheckState(CheckboxState.Mixed);
+        } else {
+            setCheckState(isSelected ? CheckboxState.Checked : CheckboxState.Unchecked);
+        }
+    }, [checkState, isSelected]);
+
+    return <Checkbox {...checkbox} state={checkState} groupInputProps={inputProps} ref={ref} />;
+};
+
+export const Checklist = ({
     checkboxes,
     setActiveValues,
     ariaLabel = 'Checklist',
     activeValues = [],
     direction = ChecklistDirection.Horizontal,
     columns = 1,
-}) => {
+}: ChecklistProps) => {
     const state = useCheckboxGroupState({
         value: activeValues,
         onChange: setActiveValues,
@@ -71,27 +95,9 @@ export const Checklist: FC<ChecklistProps> = ({
             ])}
         >
             {checkboxes.map((checkbox) => {
-                const { value, disabled, label, ariaLabel: checkboxAriaLabel, state: checkboxState } = checkbox;
-                const ref = useRef<HTMLInputElement | null>(null);
-                const [checkState, setCheckState] = useState(checkboxState);
-                const isSelected = state.isSelected(value);
-                const { inputProps } = useCheckboxGroupItem(
-                    { value, isDisabled: disabled, 'aria-label': checkboxAriaLabel || label },
-                    state,
-                    ref,
-                );
-
-                useEffect(() => {
-                    if (checkState === CheckboxState.Mixed && !isSelected) {
-                        setCheckState(CheckboxState.Mixed);
-                    } else {
-                        setCheckState(isSelected ? CheckboxState.Checked : CheckboxState.Unchecked);
-                    }
-                }, [isSelected]);
-
                 return (
-                    <li key={value}>
-                        <Checkbox {...checkbox} state={checkState} groupInputProps={inputProps} ref={ref} />
+                    <li key={checkbox.value}>
+                        <ChecklistItem checkbox={checkbox} state={state} />
                     </li>
                 );
             })}
