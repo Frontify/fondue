@@ -8,7 +8,6 @@ export type DesignTokens = Partial<Record<TextStyles, CSSProperties>>;
 
 export type ToolbarCustomProps = {
     actions: EditorActions[][];
-    editorWidth?: number;
     editorId?: string;
 };
 

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createIndentPlugin, createParagraphPlugin, createSoftBreakPlugin } from '@udecode/plate';
+import { createIndentPlugin, createSoftBreakPlugin } from '@udecode/plate';
 import { INIT_PLUGIN } from './id';
 import { Plugin, PluginProps } from '../Plugin';
 import { ELEMENT_CHECK_ITEM } from '../CheckboxListPlugin/id';
@@ -14,7 +14,6 @@ export class InitPlugin extends Plugin {
 
     plugins() {
         return [
-            createParagraphPlugin(),
             createSoftBreakPlugin(),
             createIndentPlugin({
                 inject: {

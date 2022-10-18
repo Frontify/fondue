@@ -9,3 +9,4 @@ export * from './Heading2Plugin';
 export * from './Heading3Plugin';
 export * from './Heading4Plugin';
 export * from './Quote';
+export * from './alignment';

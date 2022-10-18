@@ -2,16 +2,20 @@
 
 import React from 'react';
 import { ToolbarCustomProps } from '../../types';
-
 import { useRichTextEditorContext } from '../../context/RichTextEditorContext';
 import { getButtonGroupWidths, getButtonGroupWidthsPerRow } from '../../utils/toolbarCalc';
 import { ButtonGroup } from './ButtonGroup';
+import { useEditorResizeContext } from '@components/RichTextEditor/context/EditorResizeContext';
+import { EditorPositioningWrapper } from '@components/RichTextEditor/EditorPositioningWrapper';
 
-export const Toolbar = ({ editorId, actions, editorWidth }: ToolbarCustomProps) => {
-    const { PositioningWrapper } = useRichTextEditorContext();
+export const Toolbar = ({ editorId, actions }: ToolbarCustomProps) => {
+    const { editorWidth } = useEditorResizeContext();
+    const { position } = useRichTextEditorContext();
 
     const buttonGroupWidths = getButtonGroupWidths(actions);
     const toolbarButtonGroups = getButtonGroupWidthsPerRow(editorWidth || 0, buttonGroupWidths);
+
+    const PositioningWrapper = EditorPositioningWrapper[position];
 
     return (
         <PositioningWrapper.ToolbarWrapper editorWidth={editorWidth} toolbarButtonGroups={toolbarButtonGroups}>

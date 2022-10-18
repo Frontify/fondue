@@ -7,7 +7,6 @@ export type ToolbarProps = {
     buttons: Buttons;
     editor: PlateEditor;
     editorId: string;
-    editorWidth?: number;
 };
 
 export type ButtonGroupWidths = { group: Button[]; buttonGroupWidth: number; index: number }[];
