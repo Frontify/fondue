@@ -31,7 +31,7 @@ export const SearchResultsList: FC<SearchResultListProps> = (props) => {
 
     const currentSection = useMemo(
         () => findSection(extraSections, currentSectionId) || defaultSection,
-        [currentSectionId],
+        [currentSectionId, extraSections],
     );
 
     if (isFetching(matches)) {

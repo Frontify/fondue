@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { WrapperProps } from './PlateWrapper/types';
+import { ReactNode } from 'react';
 import { ToolbarWrapperProps } from './ToolbarWrapper/types';
 
 export enum Position {
@@ -9,8 +9,12 @@ export enum Position {
     TOP = 'Top',
 }
 
+export type WrapperProps = {
+    children: ReactNode;
+};
+
 export type EditorPositioningWrapperChildProps = {
-    PlateWrapper: React.ForwardRefExoticComponent<WrapperProps & React.RefAttributes<HTMLDivElement>>;
+    PlateWrapperClassNames: string;
     ToolbarWrapper: ({ children }: ToolbarWrapperProps) => JSX.Element;
 };
 

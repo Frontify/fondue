@@ -63,7 +63,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                     ...PLACEHOLDER_STYLES,
                 },
             };
-            return <p {...mergedAttributes}>{children}</p>;
+            return <span {...mergedAttributes}>{children}</span>;
         },
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),

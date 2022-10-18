@@ -45,7 +45,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
         }, 200);
 
         return () => clearTimeout(timer);
-    }, [query]);
+    }, [defaultPalettes, query]);
 
     const palettesWithColors = palettes.filter((palette) => palette.colors.length > 0);
 

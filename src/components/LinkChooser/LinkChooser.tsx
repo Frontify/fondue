@@ -91,7 +91,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
                 },
                 isDefault && { id: 'menu-bottom', menuItems: extraSections.map(({ id, title }) => ({ id, title })) },
             ].filter(Boolean),
-        [context.searchResults, isDefault, context.currentSectionId],
+        [isDefault, extraSections, context.currentSectionId, context.searchResults],
     ) as SearchMenuBlock[];
 
     const props = mapToAriaProps(ariaLabel, searchResultMenuBlocks);
@@ -116,7 +116,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
             setSearchInput(query);
             send({ type: 'TYPING', data: { query } });
         },
-        [value],
+        [send],
     );
 
     const [selectedKey, setSelectedKey] = useState<Key | undefined>(context.selectedResult?.id);
@@ -149,7 +149,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         state.setInputValue('');
         setSelectedKey('');
         send({ type: 'CLEARING', data: { query: '' } });
-    }, []);
+    }, [send, state]);
 
     const handleDropdownOpen = () => {
         send('OPEN_DROPDOWN');
@@ -214,7 +214,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
         if (isLoaded(matches) && context.interruptedFetch) {
             send({ type: 'TYPING', data: { query: context.query } });
         }
-    }, [context.interruptedFetch, value]);
+    }, [context.interruptedFetch, context.query, matches, send, value]);
 
     const { maxHeight } = useDropdownAutoHeight(inputRef, {
         isOpen: matches(LinkChooserState.Focused),

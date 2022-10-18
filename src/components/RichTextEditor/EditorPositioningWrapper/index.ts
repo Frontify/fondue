@@ -2,11 +2,6 @@
 
 import { EditorPositioningWrapperProps, Position } from './types';
 import {
-    PlateWrapperPositioningBottom,
-    PlateWrapperPositioningFloating,
-    PlateWrapperPositioningTop,
-} from './PlateWrapper';
-import {
     ToolbarWrapperPositioningBottom,
     ToolbarWrapperPositioningFloating,
     ToolbarWrapperPositioningTop,
@@ -15,15 +10,15 @@ import {
 export { Position } from './types';
 export const EditorPositioningWrapper: EditorPositioningWrapperProps = {
     [Position.BOTTOM]: {
-        PlateWrapper: PlateWrapperPositioningBottom,
+        PlateWrapperClassNames: 'tw-relative tw-rounded tw-border tw-border-line tw-w-full tw-flex tw-flex-col',
         ToolbarWrapper: ToolbarWrapperPositioningBottom,
     },
     [Position.FLOATING]: {
-        PlateWrapper: PlateWrapperPositioningFloating,
+        PlateWrapperClassNames: 'tw-relative tw-w-full',
         ToolbarWrapper: ToolbarWrapperPositioningFloating,
     },
     [Position.TOP]: {
-        PlateWrapper: PlateWrapperPositioningTop,
+        PlateWrapperClassNames: 'tw-relative tw-rounded tw-border tw-border-line tw-w-full tw-flex tw-flex-col-reverse',
         ToolbarWrapper: ToolbarWrapperPositioningTop,
     },
 };
