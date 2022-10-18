@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { createContext, useContext } from 'react';
 import { DesignTokens } from '../types';
 import { defaultDesignTokens } from '../utils/defaultDesignTokens';
@@ -31,14 +31,10 @@ export const RichTextEditorProvider = ({ children, value }: RichTextEditorProvid
     const { designTokens, position } = value;
     const PositioningWrapper = EditorPositioningWrapper[position ?? Position.FLOATING];
 
-    const [state, setState] = useState({
+    const state = {
         designTokens: designTokens ?? defaultDesignTokens,
         PositioningWrapper,
-    });
-
-    useEffect(() => {
-        setState((state) => ({ ...state, designTokens }));
-    }, [designTokens]);
+    };
 
     return (
         <RichTextEditorContext.Provider value={state}>
