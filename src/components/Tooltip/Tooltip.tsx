@@ -187,11 +187,11 @@ export const Tooltip = ({
             clearTimeout(timeoutRef.current);
         }
         setIsOpen(true);
-    }, [triggerRefElement?.current]);
+    }, []);
 
     const handleHideTooltipOnHover = useCallback(() => {
         timeoutRef.current = setTimeout(() => setIsOpen(false), hoverDelay);
-    }, [triggerRefElement?.current, tooltipContainerRef?.current]);
+    }, [hoverDelay]);
 
     const checkIfHovered = useCallback(
         (event) => {
@@ -202,7 +202,7 @@ export const Tooltip = ({
                 handleShowTooltipOnHover();
             }
         },
-        [triggerRefElement?.current, tooltipContainerRef?.current, triggerElementContainerRef?.current],
+        [handleShowTooltipOnHover],
     );
 
     const hasInteractiveElements = !!(buttons?.length || linkUrl?.length);
@@ -294,7 +294,6 @@ export const Tooltip = ({
                                                 emphasis={ButtonEmphasis.Strong}
                                                 size={ButtonSize.Small}
                                                 onClick={buttons[0].action}
-                                                inverted
                                             >
                                                 {buttons[0].label}
                                             </Button>
@@ -307,7 +306,6 @@ export const Tooltip = ({
                                                 emphasis={ButtonEmphasis.Default}
                                                 size={ButtonSize.Small}
                                                 onClick={buttons[1].action}
-                                                inverted
                                             >
                                                 {buttons[1].label}
                                             </Button>

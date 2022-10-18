@@ -6,7 +6,7 @@ import { toLongRgb, toShortRgb } from '@utilities/colors';
 import React, { FC, useEffect, useState } from 'react';
 import { RgbaColorPicker } from 'react-colorful';
 import tinycolor from 'tinycolor2';
-import { Color, ColorFormat } from '../../types/colors';
+import { Color, ColorFormat } from '../../types';
 import { ColorInput, DecoratorPosition } from './ColorInput';
 import { ColorPickerProps } from './ColorPicker';
 
@@ -38,7 +38,7 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, 'palette'>> = ({
     useEffect(() => {
         setAlphaValue(alpha);
         setHexInput(convertToHex(currentColor));
-    }, [currentColor]);
+    }, [alpha, currentColor]);
 
     return (
         <div className="tw-flex tw-flex-col tw-gap-4" data-test-id="custom-color-picker" id="custom-color-picker">

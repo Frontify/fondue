@@ -26,7 +26,7 @@ export const Icon: Story<IconProps> = (args: IconProps) => (
         {Object.values(IconEnum)
             .filter(
                 (iconName) =>
-                    iconName.includes((args.size || '16').replace('Size', '')) ||
+                    iconName.includes((args?.size || '16').replace('Size', '')) ||
                     !['12', '16', '20', '24', '32'].some((item) => iconName.includes(item)),
             )
             .map((iconName) => (

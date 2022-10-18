@@ -7,6 +7,7 @@ import React, {
     ReactNode,
     cloneElement,
     isValidElement,
+    useCallback,
     useEffect,
     useRef,
     useState,
@@ -61,7 +62,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
 
     const [overflowArray, setOverflowArray] = useState([0]);
 
-    const checkIfOverflowing = () => {
+    const checkIfOverflowing = useCallback(() => {
         const tabNav = tabNavRef.current;
         setIsOverflowing((tabNav && tabNav.scrollWidth > tabNav.clientWidth) ?? false);
         const overFlowIndex = [];
@@ -78,7 +79,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
             const overFlowIndexInAscOrder = [...overFlowIndex].sort((a, b) => a - b);
             setOverflowArray(overFlowIndexInAscOrder);
         }
-    };
+    }, []);
 
     const getOverflownTabs = () => {
         return overflowArray.map((i) => {
@@ -173,7 +174,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
     // First render
     useEffect(() => {
         checkIfOverflowing();
-    }, []);
+    }, [checkIfOverflowing]);
 
     useEffect(() => {
         window.addEventListener('resize', checkIfOverflowing);
