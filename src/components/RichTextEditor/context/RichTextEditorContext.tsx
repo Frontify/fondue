@@ -4,18 +4,17 @@ import React from 'react';
 import { createContext, useContext } from 'react';
 import { DesignTokens } from '../types';
 import { defaultDesignTokens } from '../utils/defaultDesignTokens';
-import { EditorPositioningWrapper, Position } from '../EditorPositioningWrapper';
+import { Position } from '../EditorPositioningWrapper';
 import { EditorResizeContextProvider } from './EditorResizeContext';
-import { EditorPositioningWrapperChildProps } from '../EditorPositioningWrapper/types';
 
 type RichTextEditorContextProps = {
     designTokens: DesignTokens;
-    PositioningWrapper: EditorPositioningWrapperChildProps;
+    position: Position;
 };
 
 const RichTextEditorContext = createContext<RichTextEditorContextProps>({
     designTokens: defaultDesignTokens,
-    PositioningWrapper: EditorPositioningWrapper[Position.FLOATING],
+    position: Position.FLOATING,
 });
 export const useRichTextEditorContext = () => useContext(RichTextEditorContext);
 
@@ -29,18 +28,15 @@ type RichTextEditorProviderProps = {
 
 export const RichTextEditorProvider = ({ children, value }: RichTextEditorProviderProps) => {
     const { designTokens, position } = value;
-    const PositioningWrapper = EditorPositioningWrapper[position ?? Position.FLOATING];
 
     const state = {
         designTokens: designTokens ?? defaultDesignTokens,
-        PositioningWrapper,
+        position,
     };
 
     return (
         <RichTextEditorContext.Provider value={state}>
-            <EditorResizeContextProvider PositioningWrapper={PositioningWrapper}>
-                {children}
-            </EditorResizeContextProvider>
+            <EditorResizeContextProvider>{children}</EditorResizeContextProvider>
         </RichTextEditorContext.Provider>
     );
 };
