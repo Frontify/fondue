@@ -1397,6 +1397,12 @@ import IconSpeechBubbleDots16 from '@foundation/Icon/Generated/IconSpeechBubbleD
 import IconSpeechBubbleDots20 from '@foundation/Icon/Generated/IconSpeechBubbleDots20';
 import IconSpeechBubbleDots24 from '@foundation/Icon/Generated/IconSpeechBubbleDots24';
 import IconSpeechBubbleDots32 from '@foundation/Icon/Generated/IconSpeechBubbleDots32';
+import IconSpeechBubbleEmpty from '@foundation/Icon/Generated/IconSpeechBubbleEmpty';
+import IconSpeechBubbleEmpty12 from '@foundation/Icon/Generated/IconSpeechBubbleEmpty12';
+import IconSpeechBubbleEmpty16 from '@foundation/Icon/Generated/IconSpeechBubbleEmpty16';
+import IconSpeechBubbleEmpty20 from '@foundation/Icon/Generated/IconSpeechBubbleEmpty20';
+import IconSpeechBubbleEmpty24 from '@foundation/Icon/Generated/IconSpeechBubbleEmpty24';
+import IconSpeechBubbleEmpty32 from '@foundation/Icon/Generated/IconSpeechBubbleEmpty32';
 import IconSpeechBubbleQuote from '@foundation/Icon/Generated/IconSpeechBubbleQuote';
 import IconSpeechBubbleQuote12 from '@foundation/Icon/Generated/IconSpeechBubbleQuote12';
 import IconSpeechBubbleQuote16 from '@foundation/Icon/Generated/IconSpeechBubbleQuote16';
@@ -3053,6 +3059,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.SpeechBubbleDots20]: <IconSpeechBubbleDots20 />,
     [IconEnum.SpeechBubbleDots24]: <IconSpeechBubbleDots24 />,
     [IconEnum.SpeechBubbleDots32]: <IconSpeechBubbleDots32 />,
+    [IconEnum.SpeechBubbleEmpty]: <IconSpeechBubbleEmpty />,
+    [IconEnum.SpeechBubbleEmpty12]: <IconSpeechBubbleEmpty12 />,
+    [IconEnum.SpeechBubbleEmpty16]: <IconSpeechBubbleEmpty16 />,
+    [IconEnum.SpeechBubbleEmpty20]: <IconSpeechBubbleEmpty20 />,
+    [IconEnum.SpeechBubbleEmpty24]: <IconSpeechBubbleEmpty24 />,
+    [IconEnum.SpeechBubbleEmpty32]: <IconSpeechBubbleEmpty32 />,
     [IconEnum.SpeechBubbleQuote]: <IconSpeechBubbleQuote />,
     [IconEnum.SpeechBubbleQuote12]: <IconSpeechBubbleQuote12 />,
     [IconEnum.SpeechBubbleQuote16]: <IconSpeechBubbleQuote16 />,
