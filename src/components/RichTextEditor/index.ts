@@ -7,4 +7,3 @@ export * from './RichTextEditor';
 export * from './utils';
 export * from './Plugins';
 export * from './serializer/serializeToHtml';
-export { EditorActions } from './utils/actions';

@@ -210,7 +210,6 @@ mentionPlugins
 export const WithMentions = RichTextEditorTemplate.bind({});
 WithMentions.args = {
     value: JSON.stringify(mentionValue),
-    actions: [],
     plugins: mentionPlugins,
 };
 
@@ -227,6 +226,5 @@ withoutToolbarPlugins
 export const WithoutToolbar = RichTextEditorTemplate.bind({});
 WithoutToolbar.args = {
     position: Position.TOP,
-    actions: [],
     plugins: withoutToolbarPlugins,
 };

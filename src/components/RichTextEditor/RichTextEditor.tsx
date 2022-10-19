@@ -8,7 +8,6 @@ import { useEditorState } from './hooks';
 import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { DesignTokens, PaddingSizes } from './types';
-import { EditorActions } from './utils/actions';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { parseRawValue } from './utils/parseRawValue';
@@ -31,7 +30,6 @@ export type RichTextEditorProps = {
     readonly?: boolean;
     clear?: boolean;
     designTokens?: DesignTokens;
-    actions?: EditorActions[][];
     padding?: PaddingSizes;
     position?: Position;
     plugins?: PluginComposer;
