@@ -102,9 +102,9 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
 
     const config = GeneratePlugins(editorId, plugins);
-    const isNew = !!config && actions.length === 0 && !!plugins;
+    const isNew = !!config && actions.length === 0;
     const editorConfig = isNew ? config.create() : getEditorConfig();
-
+    console.log('isNew', isNew);
     return (
         <RichTextEditorProvider value={{ designTokens, position }}>
             <Plate

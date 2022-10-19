@@ -24,3 +24,6 @@ export class MentionPlugin extends Plugin<MentionPluginProps> {
         return [createComboboxPlugin(), createMentionPlugin()];
     }
 }
+
+export { MentionableCategory } from './types';
+export type { MentionableItems } from './types';
