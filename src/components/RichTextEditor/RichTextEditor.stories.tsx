@@ -195,9 +195,10 @@ WithCustomControls.args = {
     plugins: customPlugins,
 };
 
-export const WithPositioningOfToolbar = RichTextEditorTemplate.bind({});
-WithPositioningOfToolbar.args = {
+export const WithToolbarTopAndSmallPadding = RichTextEditorTemplate.bind({});
+WithToolbarTopAndSmallPadding.args = {
     position: Position.TOP,
+    padding: PaddingSizes.Medium,
 };
 
 const mentionPlugins = new PluginComposer();
