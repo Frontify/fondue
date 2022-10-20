@@ -18,7 +18,7 @@ const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
     return {
         ..._props,
         // quick fix: hovering <a> with href loses the editor focus
-        onMouseOver: (e) => {
+        onMouseOver: (e: MouseEvent) => {
             e.stopPropagation();
         },
     };
