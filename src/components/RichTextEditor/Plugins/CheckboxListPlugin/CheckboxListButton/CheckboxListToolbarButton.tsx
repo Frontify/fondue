@@ -20,7 +20,7 @@ export const CheckboxListToolbarButton = withPlateProvider(
         return (
             <ToolbarButton
                 active={isActive}
-                onMouseDown={(event: MouseEvent) => {
+                onMouseDown={(event) => {
                     if (!editor || !editor.selection) {
                         return;
                     }
