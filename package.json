@@ -61,7 +61,7 @@
     "devDependencies": {
         "@cypress/vite-dev-server": "^3.1.1",
         "@frontify/eslint-config-react": "^0.15.2",
-        "@frontify/fondue-icons": "^0.1.15",
+        "@frontify/fondue-icons": "^0.1.17",
         "@storybook/addon-actions": "6.5.9",
         "@storybook/addon-essentials": "6.5.9",
         "@storybook/addon-links": "6.5.9",
