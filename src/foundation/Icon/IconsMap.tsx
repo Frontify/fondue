@@ -755,6 +755,12 @@ import IconFunnel16 from '@foundation/Icon/Generated/IconFunnel16';
 import IconFunnel20 from '@foundation/Icon/Generated/IconFunnel20';
 import IconFunnel24 from '@foundation/Icon/Generated/IconFunnel24';
 import IconFunnel32 from '@foundation/Icon/Generated/IconFunnel32';
+import IconGrabHandle from '@foundation/Icon/Generated/IconGrabHandle';
+import IconGrabHandle12 from '@foundation/Icon/Generated/IconGrabHandle12';
+import IconGrabHandle16 from '@foundation/Icon/Generated/IconGrabHandle16';
+import IconGrabHandle20 from '@foundation/Icon/Generated/IconGrabHandle20';
+import IconGrabHandle24 from '@foundation/Icon/Generated/IconGrabHandle24';
+import IconGrabHandle32 from '@foundation/Icon/Generated/IconGrabHandle32';
 import IconGridRegular from '@foundation/Icon/Generated/IconGridRegular';
 import IconGridRegular12 from '@foundation/Icon/Generated/IconGridRegular12';
 import IconGridRegular12Filled from '@foundation/Icon/Generated/IconGridRegular12Filled';
@@ -1391,6 +1397,12 @@ import IconSpeechBubbleDots16 from '@foundation/Icon/Generated/IconSpeechBubbleD
 import IconSpeechBubbleDots20 from '@foundation/Icon/Generated/IconSpeechBubbleDots20';
 import IconSpeechBubbleDots24 from '@foundation/Icon/Generated/IconSpeechBubbleDots24';
 import IconSpeechBubbleDots32 from '@foundation/Icon/Generated/IconSpeechBubbleDots32';
+import IconSpeechBubbleEmpty from '@foundation/Icon/Generated/IconSpeechBubbleEmpty';
+import IconSpeechBubbleEmpty12 from '@foundation/Icon/Generated/IconSpeechBubbleEmpty12';
+import IconSpeechBubbleEmpty16 from '@foundation/Icon/Generated/IconSpeechBubbleEmpty16';
+import IconSpeechBubbleEmpty20 from '@foundation/Icon/Generated/IconSpeechBubbleEmpty20';
+import IconSpeechBubbleEmpty24 from '@foundation/Icon/Generated/IconSpeechBubbleEmpty24';
+import IconSpeechBubbleEmpty32 from '@foundation/Icon/Generated/IconSpeechBubbleEmpty32';
 import IconSpeechBubbleQuote from '@foundation/Icon/Generated/IconSpeechBubbleQuote';
 import IconSpeechBubbleQuote12 from '@foundation/Icon/Generated/IconSpeechBubbleQuote12';
 import IconSpeechBubbleQuote16 from '@foundation/Icon/Generated/IconSpeechBubbleQuote16';
@@ -2405,6 +2417,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Funnel20]: <IconFunnel20 />,
     [IconEnum.Funnel24]: <IconFunnel24 />,
     [IconEnum.Funnel32]: <IconFunnel32 />,
+    [IconEnum.GrabHandle]: <IconGrabHandle />,
+    [IconEnum.GrabHandle12]: <IconGrabHandle12 />,
+    [IconEnum.GrabHandle16]: <IconGrabHandle16 />,
+    [IconEnum.GrabHandle20]: <IconGrabHandle20 />,
+    [IconEnum.GrabHandle24]: <IconGrabHandle24 />,
+    [IconEnum.GrabHandle32]: <IconGrabHandle32 />,
     [IconEnum.GridRegular]: <IconGridRegular />,
     [IconEnum.GridRegular12]: <IconGridRegular12 />,
     [IconEnum.GridRegular12Filled]: <IconGridRegular12Filled />,
@@ -3041,6 +3059,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.SpeechBubbleDots20]: <IconSpeechBubbleDots20 />,
     [IconEnum.SpeechBubbleDots24]: <IconSpeechBubbleDots24 />,
     [IconEnum.SpeechBubbleDots32]: <IconSpeechBubbleDots32 />,
+    [IconEnum.SpeechBubbleEmpty]: <IconSpeechBubbleEmpty />,
+    [IconEnum.SpeechBubbleEmpty12]: <IconSpeechBubbleEmpty12 />,
+    [IconEnum.SpeechBubbleEmpty16]: <IconSpeechBubbleEmpty16 />,
+    [IconEnum.SpeechBubbleEmpty20]: <IconSpeechBubbleEmpty20 />,
+    [IconEnum.SpeechBubbleEmpty24]: <IconSpeechBubbleEmpty24 />,
+    [IconEnum.SpeechBubbleEmpty32]: <IconSpeechBubbleEmpty32 />,
     [IconEnum.SpeechBubbleQuote]: <IconSpeechBubbleQuote />,
     [IconEnum.SpeechBubbleQuote12]: <IconSpeechBubbleQuote12 />,
     [IconEnum.SpeechBubbleQuote16]: <IconSpeechBubbleQuote16 />,

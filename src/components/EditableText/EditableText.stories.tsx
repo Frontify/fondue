@@ -13,6 +13,11 @@ export default {
                 disable: true,
             },
         },
+        isOverflowing: {
+            table: {
+                disable: true,
+            },
+        },
         options: {
             table: {
                 category: 'Custom',
