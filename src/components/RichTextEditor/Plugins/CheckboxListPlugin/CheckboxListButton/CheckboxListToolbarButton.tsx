@@ -7,11 +7,11 @@ import {
     unwrapList,
     useEventPlateId,
     usePlateEditorState,
-    withPlateProvider,
+    withPlateEventProvider,
 } from '@udecode/plate';
 import React from 'react';
 
-export const CheckboxListToolbarButton = withPlateProvider(
+export const CheckboxListToolbarButton = withPlateEventProvider(
     ({ id, type, inactiveType, active, ...props }: BlockToolbarButtonProps) => {
         const editor = usePlateEditorState(useEventPlateId(id));
 
