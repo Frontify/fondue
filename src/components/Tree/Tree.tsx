@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactElement, useEffect, useState } from 'react';
+import React, { FC, ReactElement, ReactNode, useEffect, useState } from 'react';
 import { renderNodeArray } from './Node';
 import { useId } from '@react-aria/utils';
 import { DndWrapper, DraggableItem, DropZonePosition, draggableItemCompareFn } from '@utilities/dnd';
@@ -15,6 +15,7 @@ export interface TreeFlatListItem {
     value?: string;
     actions?: React.ReactNode[];
     badge?: ReactElement<IconProps> | ReactElement<BadgeProps>;
+    tooltipContent?: ReactNode;
     parentId: NullableString;
     editable?: boolean;
 }

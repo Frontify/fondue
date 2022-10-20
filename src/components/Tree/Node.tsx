@@ -7,6 +7,7 @@ import { DropZone, OnDropCallback } from '@components/DropZone';
 import { TreeFlatListItem } from '@components/Tree';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 import { EditableText } from '../EditableText';
+import { Tooltip, TooltipPosition } from '../Tooltip';
 
 export type RenderNodeArrayData = Omit<NodeProps, 'isFirst' | 'strong' | 'node'> & {
     nodes: DraggableItem<TreeNodeItem>[];
@@ -82,7 +83,7 @@ export const Node = ({
     onEditableSave,
     treeId,
 }: NodeProps): ReactElement<NodeProps> => {
-    const { id, value, name, label, icon, nodes, actions, editable, badge } = node;
+    const { id, value, name, label, icon, nodes, actions, editable, badge, tooltipContent } = node;
     const [{ opacity }, drag] = useDrag({
         item: { id, value, name, label, icon, nodes, actions, editable, badge },
         collect: (monitor) => ({
@@ -114,15 +115,23 @@ export const Node = ({
 
     const insertBadge = () => {
         return (
-            <div
-                data-test-id="node-badge"
-                className={merge([
-                    'tw-flex tw-justify-center tw-items-center tw-ml-2 tw-text-text-weak',
-                    badge?.props.size && 'tw-w-8 tw-h-5 tw-bg-box-neutral tw-rounded-full',
-                ])}
-            >
-                {badge}
-            </div>
+            <Tooltip
+                disabled={!tooltipContent}
+                content={tooltipContent}
+                position={TooltipPosition.Right}
+                withArrow
+                triggerElement={
+                    <div
+                        data-test-id="node-badge"
+                        className={merge([
+                            'tw-flex tw-justify-center tw-items-center tw-ml-2 tw-text-text-weak',
+                            badge?.props.size && 'tw-w-8 tw-h-5 tw-bg-box-neutral tw-rounded-full',
+                        ])}
+                    >
+                        {badge}
+                    </div>
+                }
+            />
         );
     };
 

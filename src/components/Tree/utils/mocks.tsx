@@ -118,6 +118,7 @@ const testCategoryNodes = [
         icon: <IconDocument size={IconSize.Size16} />,
         sort: null,
         badge: <Badge>Hello, I am a badge</Badge>,
+        tooltipContent: 'Hello, I am tooltip content',
     },
 ];
 
