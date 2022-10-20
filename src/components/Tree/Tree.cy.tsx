@@ -40,6 +40,7 @@ const DROP_ZONE_ID = '[data-test-id=drop-zone]';
 const BADGE_ID = '[data-test-id=node-badge]';
 const NODE_EDITABLE_ID = '[data-test-id=editable-input]';
 const NODE_LABEL_ID = '[data-test-id=node-label]';
+const TOOLTIP_ID = '[data-test-id=tooltip]';
 
 describe('Tree Component', () => {
     // TODO check if DropZones are not present when no onDrop props is provided. Refactoring needed first
@@ -153,6 +154,22 @@ describe('Badge Tree Component', () => {
     it('renders badge', () => {
         cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(2) ${TOGGLE_ID}`).click();
         cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(2) ${BADGE_ID}`).should('exist');
+    });
+
+    it('does not render badge tooltip', () => {
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(2) ${TOGGLE_ID}`).click();
+        cy.get(
+            `${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(2) > ${SUB_TREE_ID} > ${NODE_ID}:first-of-type ${BADGE_ID}`,
+        ).trigger('mouseover');
+        cy.get(TOOLTIP_ID).should('not.exist');
+    });
+
+    it('renders badge tooltip', () => {
+        cy.get(`${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(2) ${TOGGLE_ID}`).click();
+        cy.get(
+            `${SUB_TREE_ID} > ${NODE_ID}:nth-last-of-type(2) > ${SUB_TREE_ID} > ${NODE_ID}:last-of-type ${BADGE_ID}`,
+        ).trigger('mouseover');
+        cy.get(TOOLTIP_ID).should('exist');
     });
 });
 
