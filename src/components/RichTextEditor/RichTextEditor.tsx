@@ -16,7 +16,7 @@ import { parseRawValue } from './utils/parseRawValue';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { Position } from './EditorPositioningWrapper';
 import { getEditorConfig } from './utils/editorConfig';
-import { GeneratePlugins, PluginComposer } from './Plugins';
+import { GeneratePlugins, PluginComposer, defaultPlugins } from './Plugins';
 import { forceTabOutOfActiveElement } from './helpers';
 
 const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
@@ -51,7 +51,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     onBlur,
     padding = PaddingSizes.None,
     position = Position.FLOATING,
-    plugins,
+    plugins = defaultPlugins,
 }) => {
     const editorId = useMemoizedId(id);
     const { localValue } = useEditorState(editorId, clear);
@@ -102,7 +102,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     );
 
     const config = GeneratePlugins(editorId, plugins);
-    const isNew = !!config && actions.length === 0 && !!plugins;
+    const isNew = !!config && actions.length === 0;
     const editorConfig = isNew ? config.create() : getEditorConfig();
 
     return (
