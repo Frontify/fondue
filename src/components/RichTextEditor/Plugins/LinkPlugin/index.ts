@@ -13,6 +13,12 @@ export const createLinkPlugin = createPluginFactory({
     renderAfterEditable: CustomFloatingLink,
     options: {
         isUrl: isUrlOrPath,
+        rangeBeforeOptions: {
+            matchString: ' ',
+            skipInvalid: true,
+            afterMatch: true,
+        },
+        triggerFloatingLinkHotkeys: 'command+k, ctrl+k',
     },
 });
 

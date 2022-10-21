@@ -102,7 +102,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         <RichTextEditorProvider value={{ designTokens, position }}>
             <Plate
                 id={editorId}
-                initialValue={parseRawValue(initialValue)}
+                initialValue={parseRawValue(editorId, initialValue)}
                 onChange={onChange}
                 editableProps={editableProps}
                 plugins={config.create()}

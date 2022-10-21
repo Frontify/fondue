@@ -13,8 +13,7 @@ import React from 'react';
 
 export const CheckboxListToolbarButton = withPlateEventProvider(
     ({ id, type, inactiveType, active, ...props }: BlockToolbarButtonProps) => {
-        id = useEventPlateId(id);
-        const editor = usePlateEditorState(id);
+        const editor = usePlateEditorState(useEventPlateId(id));
 
         const isActive = active ?? (!!editor?.selection && someNode(editor, { match: { type } }));
 
