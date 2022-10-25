@@ -117,6 +117,12 @@ const RichTextWithChangeDesignTokensButton: FC = () => {
     );
 };
 
+const RichTextEditorWithValueSetOutside = ({ value }: { value: string }) => {
+    const [initialValue, setInitialValue] = useState(value);
+
+    return <RichTextEditor onTextChange={(value) => setInitialValue(value)} value={initialValue} />;
+};
+
 describe('RichTextEditor Component', () => {
     describe('Rendering', () => {
         it('should render an empty rich text editor', () => {
@@ -393,6 +399,13 @@ describe('RichTextEditor Component', () => {
     });
 
     describe('Emits event', () => {
+        it('wraps the Editor in the component ', () => {
+            const TEXT = 'This is new text';
+
+            cy.mount(<RichTextEditorWithValueSetOutside value={TEXT} />);
+            cy.get(RICH_TEXT_EDITOR).should('contain.text', TEXT);
+        });
+
         it('emits onTextChange when choosing an inline style', () => {
             const onTextChange = cy.stub();
             cy.mount(<RichTextEditor onTextChange={onTextChange} />);
