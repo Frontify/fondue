@@ -156,7 +156,7 @@ describe('RichTextEditor Component', () => {
         cy.get(RICH_TEXT_EDITOR).should('contain.text', TEXT);
     });
 
-    it('should be possible to pass and change value', () => {
+    it('wraps the Editor in the component ', () => {
         const TEXT = 'This is new text';
 
         cy.mount(<RichTextEditorWithValueSetOutside value={TEXT} />);
