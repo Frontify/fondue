@@ -3,9 +3,10 @@ import { AssetInputProps } from '../AssetInput';
 import { SelectedAssetProps } from './SelectedAsset';
 import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon';
 
-type AssetSublineProps = Pick<AssetInputProps, 'isLoading'> & Pick<SelectedAssetProps, 'asset'>;
+type AssetSublineProps = Pick<AssetInputProps, 'isLoading' | 'hideSizeAndExtension'> &
+    Pick<SelectedAssetProps, 'asset'>;
 
-export const AssetSubline: FC<AssetSublineProps> = ({ asset, isLoading = false }) => {
+export const AssetSubline: FC<AssetSublineProps> = ({ asset, isLoading = false, hideSizeAndExtension = false }) => {
     let title = isLoading ? 'Uploading' : 'Uploaded';
     if (asset?.source === 'library') {
         title = asset.sourceName;
@@ -19,6 +20,7 @@ export const AssetSubline: FC<AssetSublineProps> = ({ asset, isLoading = false }
             {title && <span className="tw-whitespace-nowrap">{title}</span>}
             {asset &&
                 !isLoading &&
+                !hideSizeAndExtension &&
                 [asset.extension, asset.size].filter(Boolean).map((item, i) => (
                     <Fragment key={`${item}-${i}`}>
                         <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
