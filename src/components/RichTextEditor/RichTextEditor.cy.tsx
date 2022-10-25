@@ -121,6 +121,12 @@ const RichTextWithToolbarPositioning = ({ position }: { position?: Position }) =
     <RichTextEditor position={position} />
 );
 
+const RichTextEditorWithValueSetOutside = ({ value }: { value: string }) => {
+    const [initialValue, setInitialValue] = useState(value);
+
+    return <RichTextEditor onTextChange={(value) => setInitialValue(value)} value={initialValue} />;
+};
+
 describe('RichTextEditor Component', () => {
     it('should render an empty rich text editor', () => {
         cy.mount(<RichTextEditor />);
@@ -147,6 +153,13 @@ describe('RichTextEditor Component', () => {
         const TEXT = 'This is text';
         cy.mount(<RichTextEditor value={TEXT} />);
 
+        cy.get(RICH_TEXT_EDITOR).should('contain.text', TEXT);
+    });
+
+    it('wraps the Editor in the component ', () => {
+        const TEXT = 'This is new text';
+
+        cy.mount(<RichTextEditorWithValueSetOutside value={TEXT} />);
         cy.get(RICH_TEXT_EDITOR).should('contain.text', TEXT);
     });
 
