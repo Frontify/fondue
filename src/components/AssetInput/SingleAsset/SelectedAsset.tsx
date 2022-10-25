@@ -17,13 +17,17 @@ import { AssetThumbnail } from '../AssetThumbnail';
 import { AssetSubline } from './AssetSubline';
 import { SpinningCircle } from './SpinningCircle';
 
-export type SelectedAssetProps = Pick<AssetInputProps, 'actions' | 'isLoading' | 'size' | 'hideSizeAndExtension'> & {
+export type SelectedAssetProps = Pick<
+    AssetInputProps,
+    'actions' | 'isLoading' | 'size' | 'hideSize' | 'hideExtension'
+> & {
     asset: AssetType;
 };
 
 export const SelectedAsset: FC<
-    Required<Omit<SelectedAssetProps, 'hideSizeAndExtension'>> & Pick<SelectedAssetProps, 'hideSizeAndExtension'>
-> = ({ asset, size, actions, isLoading, hideSizeAndExtension = false }) => {
+    Required<Omit<SelectedAssetProps, 'hideSize' | 'hideExtension'>> &
+        Pick<SelectedAssetProps, 'hideSize' | 'hideExtension'>
+> = ({ asset, size, actions, isLoading, hideSize = false, hideExtension = false }) => {
     const menuId = useMemoizedId();
     const labelId = useMemoizedId();
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -104,7 +108,12 @@ export const SelectedAsset: FC<
                         >
                             {title}
                         </span>
-                        <AssetSubline asset={asset} isLoading={isLoading} hideSizeAndExtension={hideSizeAndExtension} />
+                        <AssetSubline
+                            asset={asset}
+                            isLoading={isLoading}
+                            hideSize={hideSize}
+                            hideExtension={hideExtension}
+                        />
                     </div>
                     <div className="tw-p-4 tw-flex tw-flex-none tw-items-center tw-justify-center">
                         <span

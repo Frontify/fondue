@@ -51,13 +51,14 @@ describe('MultiAssetPreview Component', () => {
         cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_IMAGE_ID).should('have.attr', 'src', 'https://picsum.photos/100/150');
     });
 
-    it('does not render size and extension if hideSizeAndExtension is set', () => {
+    it('does not render size and extension if they are hidden', () => {
         cy.mount(
             <AssetInput
                 size={AssetInputSize.Small}
                 assets={[EXAMPLE_IMAGES[0]]}
                 actions={assetInputActions}
-                hideSizeAndExtension={true}
+                hideSize={true}
+                hideExtension={true}
             />,
         );
 

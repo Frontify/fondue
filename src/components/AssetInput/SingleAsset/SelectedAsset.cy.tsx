@@ -26,14 +26,15 @@ describe('SelectedAsset Component', () => {
         cy.get(SELECTED_ASSET_ID).should('contain', 'JPG');
     });
 
-    it('does not render size and extension if hideSizeAndExtension is set', () => {
+    it('does not render size and extension if they are hidden', () => {
         cy.mount(
             <SelectedAsset
                 isLoading={false}
                 asset={EXAMPLE_IMAGES[0]}
                 size={AssetInputSize.Small}
                 actions={assetInputActions}
-                hideSizeAndExtension={true}
+                hideSize={true}
+                hideExtension={true}
             />,
         );
         cy.get(SELECTED_ASSET_ID).should('exist');

@@ -22,7 +22,8 @@ export default {
     args: {
         size: AssetInputSize.Small,
         isLoading: false,
-        hideSizeAndExtension: false,
+        hideSize: false,
+        hideExtension: false,
         numberOfLocations: 1,
     },
 } as Meta<AssetInputProps>;
@@ -50,7 +51,8 @@ Placeholder.argTypes = {
     onLibraryClick: { action: 'onLibraryClick', table: { disable: true } },
     size: { table: { disable: true } },
     isLoading: { table: { disable: true } },
-    hideSizeAndExtension: { table: { disable: true } },
+    hideSize: { table: { disable: true } },
+    hideExtension: { table: { disable: true } },
     numberOfLocations: { table: { disable: true } },
     onMultiAssetClick: { table: { disable: true } },
 };
@@ -61,7 +63,8 @@ PlaceholderUploadOnly.argTypes = {
     onUploadClick: { action: 'onUploadClick', table: { disable: true } },
     size: { table: { disable: true } },
     isLoading: { table: { disable: true } },
-    hideSizeAndExtension: { table: { disable: true } },
+    hideSize: { table: { disable: true } },
+    hideExtension: { table: { disable: true } },
     numberOfLocations: { table: { disable: true } },
     onMultiAssetClick: { table: { disable: true } },
 };
@@ -72,7 +75,8 @@ PlaceholderLibraryOnly.argTypes = {
     onLibraryClick: { action: 'onLibraryClick', table: { disable: true } },
     size: { table: { disable: true } },
     isLoading: { table: { disable: true } },
-    hideSizeAndExtension: { table: { disable: true } },
+    hideSize: { table: { disable: true } },
+    hideExtension: { table: { disable: true } },
     numberOfLocations: { table: { disable: true } },
     onMultiAssetClick: { table: { disable: true } },
 };
@@ -111,7 +115,8 @@ const multiAssetInputArgTypes = {
     onLibraryClick: { action: 'onLibraryClick', table: { disable: true } },
     size: { table: { disable: true } },
     isLoading: { table: { disable: true } },
-    hideSizeAndExtension: { table: { disable: true } },
+    hideSize: { table: { disable: true } },
+    hideExtension: { table: { disable: true } },
 };
 
 export const MixedAssets = Template.bind({});

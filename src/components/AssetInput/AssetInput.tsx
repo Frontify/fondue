@@ -65,7 +65,8 @@ export type AssetInputProps = {
     numberOfLocations?: number;
     actions?: ActionMenuProps['menuBlocks'];
     isLoading?: boolean;
-    hideSizeAndExtension?: boolean;
+    hideSize?: boolean;
+    hideExtension?: boolean;
     onUploadClick?: (files: FileList) => void;
     onLibraryClick?: () => void;
     onMultiAssetClick?: () => void;
@@ -78,7 +79,8 @@ export const AssetInput: FC<AssetInputProps> = ({
     actions = [],
     size = AssetInputSize.Small,
     isLoading = false,
-    hideSizeAndExtension = false,
+    hideSize = false,
+    hideExtension = false,
     onLibraryClick,
     onUploadClick,
     onMultiAssetClick,
@@ -102,7 +104,8 @@ export const AssetInput: FC<AssetInputProps> = ({
                 size={size}
                 actions={actions}
                 isLoading={isLoading}
-                hideSizeAndExtension={hideSizeAndExtension}
+                hideExtension={hideExtension}
+                hideSize={hideSize}
             />
         );
     }
