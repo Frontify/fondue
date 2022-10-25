@@ -128,15 +128,6 @@ const RichTextEditorWithValueSetOutside = ({ value }: { value: string }) => {
 };
 
 describe('RichTextEditor Component', () => {
-    it('should be possible to pass and change value', () => {
-        const TEXT = 'This is text';
-
-        cy.mount(<RichTextEditorWithValueSetOutside value={TEXT} />);
-        cy.get(RICH_TEXT_EDITOR).should('contain.text', TEXT);
-    });
-});
-
-describe('RichTextEditor Component', () => {
     it('should render an empty rich text editor', () => {
         cy.mount(<RichTextEditor />);
 
@@ -162,6 +153,13 @@ describe('RichTextEditor Component', () => {
         const TEXT = 'This is text';
         cy.mount(<RichTextEditor value={TEXT} />);
 
+        cy.get(RICH_TEXT_EDITOR).should('contain.text', TEXT);
+    });
+
+    it('should be possible to pass and change value', () => {
+        const TEXT = 'This is new text';
+
+        cy.mount(<RichTextEditorWithValueSetOutside value={TEXT} />);
         cy.get(RICH_TEXT_EDITOR).should('contain.text', TEXT);
     });
 
