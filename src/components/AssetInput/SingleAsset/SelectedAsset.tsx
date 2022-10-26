@@ -17,11 +17,17 @@ import { AssetThumbnail } from '../AssetThumbnail';
 import { AssetSubline } from './AssetSubline';
 import { SpinningCircle } from './SpinningCircle';
 
-export type SelectedAssetProps = Pick<AssetInputProps, 'actions' | 'isLoading' | 'size'> & {
+export type SelectedAssetProps = Pick<
+    AssetInputProps,
+    'actions' | 'isLoading' | 'size' | 'hideSize' | 'hideExtension'
+> & {
     asset: AssetType;
 };
 
-export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, actions, isLoading }) => {
+export const SelectedAsset: FC<
+    Required<Omit<SelectedAssetProps, 'hideSize' | 'hideExtension'>> &
+        Pick<SelectedAssetProps, 'hideSize' | 'hideExtension'>
+> = ({ asset, size, actions, isLoading, hideSize = false, hideExtension = false }) => {
     const menuId = useMemoizedId();
     const labelId = useMemoizedId();
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -102,7 +108,12 @@ export const SelectedAsset: FC<Required<SelectedAssetProps>> = ({ asset, size, a
                         >
                             {title}
                         </span>
-                        <AssetSubline asset={asset} isLoading={isLoading} />
+                        <AssetSubline
+                            asset={asset}
+                            isLoading={isLoading}
+                            hideSize={hideSize}
+                            hideExtension={hideExtension}
+                        />
                     </div>
                     <div className="tw-p-4 tw-flex tw-flex-none tw-items-center tw-justify-center">
                         <span

@@ -3,9 +3,15 @@ import { AssetInputProps } from '../AssetInput';
 import { SelectedAssetProps } from './SelectedAsset';
 import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon';
 
-type AssetSublineProps = Pick<AssetInputProps, 'isLoading'> & Pick<SelectedAssetProps, 'asset'>;
+type AssetSublineProps = Pick<AssetInputProps, 'isLoading' | 'hideSize' | 'hideExtension'> &
+    Pick<SelectedAssetProps, 'asset'>;
 
-export const AssetSubline: FC<AssetSublineProps> = ({ asset, isLoading = false }) => {
+export const AssetSubline: FC<AssetSublineProps> = ({
+    asset,
+    isLoading = false,
+    hideSize = false,
+    hideExtension = false,
+}) => {
     let title = isLoading ? 'Uploading' : 'Uploaded';
     if (asset?.source === 'library') {
         title = asset.sourceName;
@@ -17,14 +23,25 @@ export const AssetSubline: FC<AssetSublineProps> = ({ asset, isLoading = false }
                 {asset?.source === 'library' ? <IconImageStack /> : <IconArrowCircleUp />}
             </div>
             {title && <span className="tw-whitespace-nowrap">{title}</span>}
-            {asset &&
-                !isLoading &&
-                [asset.extension, asset.size].filter(Boolean).map((item, i) => (
-                    <Fragment key={`${item}-${i}`}>
-                        <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
-                        <span className="tw-whitespace-nowrap">{item}</span>
-                    </Fragment>
-                ))}
+            {asset && !isLoading && (
+                <>
+                    <FileInfo label={asset.extension} hide={hideExtension} />
+                    <FileInfo label={asset.size} hide={hideSize} />
+                </>
+            )}
         </span>
+    );
+};
+
+const FileInfo: FC<{ label?: string | number; hide: boolean }> = ({ label, hide }) => {
+    if (hide || !label) {
+        return null;
+    }
+
+    return (
+        <Fragment>
+            <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
+            <span className="tw-whitespace-nowrap">{label}</span>
+        </Fragment>
     );
 };

@@ -51,6 +51,24 @@ describe('MultiAssetPreview Component', () => {
         cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_IMAGE_ID).should('have.attr', 'src', 'https://picsum.photos/100/150');
     });
 
+    it('does not render size and extension if they are hidden', () => {
+        cy.mount(
+            <AssetInput
+                size={AssetInputSize.Small}
+                assets={[EXAMPLE_IMAGES[0]]}
+                actions={assetInputActions}
+                hideSize={true}
+                hideExtension={true}
+            />,
+        );
+
+        cy.get(ASSET_SINGLE_INPUT_ID).should('contain', 'Upload');
+        cy.get(ASSET_SINGLE_INPUT_ID).should('not.contain', '2000');
+        cy.get(ASSET_SINGLE_INPUT_ID).should('not.contain', 'JPG');
+        cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_ID).should('have.class', 'tw-bg-black-5');
+        cy.get(ASSET_SINGLE_INPUT_THUMBNAIL_IMAGE_ID).should('have.attr', 'src', 'https://picsum.photos/100/150');
+    });
+
     it('renders asset input with audio', () => {
         cy.mount(<AssetInput size={AssetInputSize.Small} assets={[MIXED_ASSETS[3]]} actions={assetInputActions} />);
 
