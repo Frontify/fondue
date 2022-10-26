@@ -21,6 +21,26 @@ describe('SelectedAsset Component', () => {
             />,
         );
         cy.get(SELECTED_ASSET_ID).should('exist');
+        cy.get(SELECTED_ASSET_ID).should('contain', 'Upload');
+        cy.get(SELECTED_ASSET_ID).should('contain', '2000');
+        cy.get(SELECTED_ASSET_ID).should('contain', 'JPG');
+    });
+
+    it('does not render size and extension if they are hidden', () => {
+        cy.mount(
+            <SelectedAsset
+                isLoading={false}
+                asset={EXAMPLE_IMAGES[0]}
+                size={AssetInputSize.Small}
+                actions={assetInputActions}
+                hideSize={true}
+                hideExtension={true}
+            />,
+        );
+        cy.get(SELECTED_ASSET_ID).should('exist');
+        cy.get(SELECTED_ASSET_ID).should('contain', 'Upload');
+        cy.get(SELECTED_ASSET_ID).should('not.contain', '2000');
+        cy.get(SELECTED_ASSET_ID).should('not.contain', 'JPG');
     });
 
     it('calculates the appropriate width for the flyout on resize', () => {
