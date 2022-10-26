@@ -11,7 +11,12 @@ const wrapTextInHtml = (text: string) => {
 
 export const EMPTY_RICH_TEXT_VALUE: Value = [{ type: ELEMENT_PARAGRAPH, children: [{ text: '' }] }];
 
-export const parseRawValue = (raw?: string): Value => {
+type ParseRawValueOptions = {
+    editorId?: string;
+    raw?: string;
+};
+
+export const parseRawValue = ({ editorId = 'parseRawValue', raw }: ParseRawValueOptions): Value => {
     let parsedValue = EMPTY_RICH_TEXT_VALUE;
 
     if (!raw) {
@@ -21,7 +26,7 @@ export const parseRawValue = (raw?: string): Value => {
     try {
         parsedValue = JSON.parse(raw);
     } catch {
-        const editor = createPlateEditor({ plugins: getEditorConfig() });
+        const editor = createPlateEditor({ id: `${editorId}_parseRawValue`, plugins: getEditorConfig() });
         const trimmed = raw.trim().replace(/>\s+</g, '><');
         const htmlDocumentString = wrapTextInHtml(trimmed);
         const document = parseHtmlDocument(htmlDocumentString);
