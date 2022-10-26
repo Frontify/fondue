@@ -59,9 +59,9 @@
         "url": "https://github.com/frontify/fondue/issues"
     },
     "devDependencies": {
-        "@cypress/vite-dev-server": "^3.1.1",
-        "@frontify/eslint-config-react": "^0.15.2",
-        "@frontify/fondue-icons": "^0.1.17",
+        "@cypress/vite-dev-server": "3.1.1",
+        "@frontify/eslint-config-react": "0.15.2",
+        "@frontify/fondue-icons": "0.1.17",
         "@storybook/addon-actions": "6.5.9",
         "@storybook/addon-essentials": "6.5.9",
         "@storybook/addon-links": "6.5.9",
@@ -79,11 +79,11 @@
         "chalk": "5.0.1",
         "concat": "1.0.3",
         "cross-env": "7.0.3",
-        "cypress": "^10.7.0",
-        "cypress-real-events": "^1.7.1",
+        "cypress": "10.7.0",
+        "cypress-real-events": "1.7.1",
         "eslint": "8.20.0",
         "eslint-plugin-jsx-a11y": "6.6.1",
-        "eslint-plugin-storybook": "^0.6.1",
+        "eslint-plugin-storybook": "0.6.1",
         "esno": "0.16.3",
         "fast-glob": "3.2.11",
         "postcss": "8.4.14",
@@ -98,9 +98,9 @@
         "tailwindcss": "3.1.6",
         "ts-node": "10.9.1",
         "typescript": "4.7.4",
-        "vite": "^3.0.3",
+        "vite": "3.0.3",
         "vite-plugin-dts": "1.4.0",
-        "vite-plugin-eslint": "^1.7.0"
+        "vite-plugin-eslint": "1.7.0"
     },
     "dependencies": {
         "@frontify/fondue-tokens": "^3.1.0",
