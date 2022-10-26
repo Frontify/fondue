@@ -6,7 +6,7 @@ import { serializeNodeToHtmlRecursive } from './utils/serializeNodeToHtmlRecursi
 import { setDefaultDesignTokensIfNull } from './utils/setDefaultDesignTokensIfNull';
 
 export const serializeRawToHtml = (raw: string, designTokens: DesignTokens = defaultDesignTokens): string => {
-    const nodes = parseRawValue(raw);
+    const nodes = parseRawValue({ raw });
     return serializeNodesToHtml(nodes, designTokens);
 };
 
