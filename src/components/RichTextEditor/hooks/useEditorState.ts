@@ -1,22 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useRef } from 'react';
-import { TNode, usePlateEditorState } from '@udecode/plate';
-import { EMPTY_RICH_TEXT_VALUE } from '../utils/parseRawValue';
+import { useCallback, useRef } from 'react';
+import { TNode } from '@udecode/plate';
+import { debounce } from '@utilities/debounce';
+import { ON_SAVE_DELAY_IN_MS } from '../utils';
 
-export const useEditorState = (editorId: string, clear = false) => {
+type useEditorStateProps = ((value: string) => void) | undefined;
+
+export const useEditorState = (onTextChange: useEditorStateProps) => {
     const localValue = useRef<TNode[] | null>(null);
-    const editor = usePlateEditorState(editorId);
 
-    useEffect(() => {
-        if (clear && editor) {
-            const point = { path: [0, 0], offset: 0 };
-            editor.selection = { anchor: point, focus: point };
-            editor.history = { redos: [], undos: [] };
-            editor.children = EMPTY_RICH_TEXT_VALUE;
-            localValue.current = EMPTY_RICH_TEXT_VALUE;
-        }
-    }, [clear, editor]);
+    const debouncedOnChange = debounce((value: TNode[]) => {
+        onTextChange && onTextChange(JSON.stringify(value));
+    }, ON_SAVE_DELAY_IN_MS);
 
-    return { localValue };
+    const onChange = useCallback(
+        (value) => {
+            debouncedOnChange(value);
+            localValue.current = value;
+        },
+        [debouncedOnChange, localValue],
+    );
+
+    return { localValue, onChange };
 };
