@@ -22,7 +22,7 @@ export const orderedListTree = [
                         type: 'p',
                         children: [
                             {
-                                text: 'ordered list',
+                                text: 'First line of the list',
                             },
                         ],
                     },
@@ -35,20 +35,7 @@ export const orderedListTree = [
                         type: 'p',
                         children: [
                             {
-                                text: 'ordered list',
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                type: 'li',
-                children: [
-                    {
-                        type: 'p',
-                        children: [
-                            {
-                                text: 'ordered list',
+                                text: 'Second text of ordered list',
                             },
                         ],
                     },
@@ -136,7 +123,7 @@ export const orderedListTree = [
                         type: 'p',
                         children: [
                             {
-                                text: 'ordered list',
+                                text: 'Final phrase',
                             },
                         ],
                     },
