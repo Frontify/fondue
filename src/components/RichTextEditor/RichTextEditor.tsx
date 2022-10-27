@@ -1,19 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useCallback, useEffect } from 'react';
-import { Plate, TNode } from '@udecode/plate';
+import React, { FC } from 'react';
+import { Plate } from '@udecode/plate';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { debounce } from '@utilities/debounce';
 import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
 import { Toolbar } from './components/Toolbar/Toolbar';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { useEditorState } from './hooks';
 import { DesignTokens, PaddingSizes } from './types';
 import { EditorActions, defaultActions } from './utils/actions';
-import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { parseRawValue } from './utils/parseRawValue';
-import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { Position } from './EditorPositioningWrapper';
 import { getEditorConfig } from './utils/editorConfig';
 import { GeneratePlugins, PluginComposer, defaultPlugins } from './Plugins';
@@ -31,7 +28,6 @@ export type RichTextEditorProps = {
     onTextChange?: (value: string) => void;
     onBlur?: (value: string) => void;
     readonly?: boolean;
-    clear?: boolean;
     designTokens?: DesignTokens;
     actions?: EditorActions[][];
     padding?: PaddingSizes;
@@ -44,7 +40,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     value: initialValue,
     placeholder = '',
     readonly = false,
-    clear = false,
     designTokens = defaultDesignTokens,
     actions = defaultActions,
     onTextChange,
@@ -54,7 +49,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     plugins = defaultPlugins,
 }) => {
     const editorId = useMemoizedId(id);
-    const { localValue } = useEditorState(editorId, clear);
+    const { localValue, onChange } = useEditorState(onTextChange);
 
     const editableProps: EditableProps = {
         placeholder,
@@ -78,28 +73,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
             }
         },
     };
-
-    useEffect(() => {
-        for (const element of Object.values(TextStyles).filter(
-            (textStyle) => textStyle !== TextStyles.ELEMENT_PARAGRAPH,
-        )) {
-            if (!designTokens[element]) {
-                designTokens[element] = defaultDesignTokens[element];
-            }
-        }
-    }, [designTokens]);
-
-    const debouncedOnChange = debounce((value: TNode[]) => {
-        onTextChange && onTextChange(JSON.stringify(value));
-    }, ON_SAVE_DELAY_IN_MS);
-
-    const onChange = useCallback(
-        (value) => {
-            debouncedOnChange(value);
-            localValue.current = value;
-        },
-        [debouncedOnChange, localValue],
-    );
 
     const config = GeneratePlugins(editorId, plugins);
     const isNew = !!config && actions.length === 0;

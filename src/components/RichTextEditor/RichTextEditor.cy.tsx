@@ -3,7 +3,7 @@
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
 import React, { FC, useState } from 'react';
 import { Position } from './EditorPositioningWrapper';
-import { RichTextEditor, RichTextEditorProps } from './RichTextEditor';
+import { RichTextEditor } from './RichTextEditor';
 import { DesignTokens } from './types';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { EditorActions } from './utils/actions';
@@ -28,18 +28,6 @@ const BUTTON = '[data-test-id=button]';
 const LINK_CHOOSER_CHECKBOX = '.tw-group > .tw-inline-flex > .tw-flex-1 > .tw-select-none';
 
 const insertTextAndOpenToolbar = () => cy.get('[contenteditable=true]').click().type('hello{selectall}');
-
-const RichTextWithClearButton: FC<Pick<RichTextEditorProps, 'value'>> = ({ value }) => {
-    const [clear, setClear] = useState(false);
-    return (
-        <div>
-            <button data-test-id="clear-button" onClick={() => setClear(true)}>
-                clear
-            </button>
-            <RichTextEditor value={value} clear={clear} />
-        </div>
-    );
-};
 
 const RichTextWithLink: FC<{ text: string; link: string }> = ({ text, link }) => {
     return (
@@ -431,17 +419,6 @@ describe('RichTextEditor Component', () => {
                     JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: content }] }]),
                 );
             });
-    });
-
-    it('should clear editor content', () => {
-        const text = 'This is some text';
-        cy.mount(
-            <RichTextWithClearButton value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text }] }])} />,
-        );
-
-        cy.get(RICH_TEXT_EDITOR).should('contain.text', text);
-        cy.get('[data-test-id=clear-button]').click();
-        cy.get(RICH_TEXT_EDITOR).should('not.contain.text', text);
     });
 
     describe('link plugin', () => {
