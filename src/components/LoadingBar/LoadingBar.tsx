@@ -31,9 +31,18 @@ export const loadingBarSizeClasses: Record<LoadingBarSize, string> = {
 };
 
 export const loadingBarStateClasses: Record<LoadingBarState, { outer: string; inner: string }> = {
-    [LoadingBarState.Error]: { outer: 'tw-bg-box-negative', inner: 'tw-bg-text-negative' },
-    [LoadingBarState.Success]: { outer: 'tw-bg-box-positive', inner: 'tw-bg-text-positive' },
-    [LoadingBarState.Progress]: { outer: 'tw-bg-box-selected', inner: 'tw-bg-text-interactive' },
+    [LoadingBarState.Error]: {
+        outer: 'tw-bg-box-negative',
+        inner: 'tw-bg-text-negative',
+    },
+    [LoadingBarState.Success]: {
+        outer: 'tw-bg-box-positive',
+        inner: 'tw-bg-text-positive',
+    },
+    [LoadingBarState.Progress]: {
+        outer: 'tw-bg-box-selected',
+        inner: 'tw-bg-text-interactive',
+    },
 };
 
 export const LoadingBar = ({
