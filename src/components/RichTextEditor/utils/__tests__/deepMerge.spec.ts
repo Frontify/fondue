@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { deepMerge } from './deepMerge';
+import { deepMerge } from '../deepMerge';
 
 const defaultObject: object = {
     option1: {
