@@ -1,134 +1,87 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export const orderedListMD = `
-1. First line of the list
-1. Second text of ordered list
+1. Ordered list
+1. Ordered list
    1. aaa
    1. aaa
       1. eeeee
       1. eeeee
    1. aaa
-1. Final phrase
+1. Ordered list
 `;
+
+const listItemChild = {
+    type: 'p',
+    children: [
+        {
+            text: 'Ordered list',
+        },
+    ],
+};
+
+const listItem = {
+    type: 'li',
+    children: [listItemChild],
+};
+
+const secondListItemChild = {
+    type: 'p',
+    children: [
+        {
+            text: 'aaa',
+        },
+    ],
+};
+
+const secondListItem = {
+    type: 'li',
+    children: [secondListItemChild],
+};
+
+const thirdListItemChild = {
+    type: 'p',
+    children: [
+        {
+            text: 'eeeee',
+        },
+    ],
+};
+
+const thirdListItem = {
+    type: 'li',
+    children: [thirdListItemChild],
+};
 
 export const orderedListTree = [
     {
         type: 'ol',
         children: [
+            listItem,
             {
                 type: 'li',
                 children: [
-                    {
-                        type: 'p',
-                        children: [
-                            {
-                                text: 'First line of the list',
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                type: 'li',
-                children: [
-                    {
-                        type: 'p',
-                        children: [
-                            {
-                                text: 'Second text of ordered list',
-                            },
-                        ],
-                    },
+                    listItemChild,
                     {
                         type: 'ol',
                         children: [
+                            secondListItem,
                             {
                                 type: 'li',
                                 children: [
-                                    {
-                                        type: 'p',
-                                        children: [
-                                            {
-                                                text: 'aaa',
-                                            },
-                                        ],
-                                    },
-                                ],
-                            },
-                            {
-                                type: 'li',
-                                children: [
-                                    {
-                                        type: 'p',
-                                        children: [
-                                            {
-                                                text: 'aaa',
-                                            },
-                                        ],
-                                    },
+                                    secondListItemChild,
                                     {
                                         type: 'ol',
-                                        children: [
-                                            {
-                                                type: 'li',
-                                                children: [
-                                                    {
-                                                        type: 'p',
-                                                        children: [
-                                                            {
-                                                                text: 'eeeee',
-                                                            },
-                                                        ],
-                                                    },
-                                                ],
-                                            },
-                                            {
-                                                type: 'li',
-                                                children: [
-                                                    {
-                                                        type: 'p',
-                                                        children: [
-                                                            {
-                                                                text: 'eeeee',
-                                                            },
-                                                        ],
-                                                    },
-                                                ],
-                                            },
-                                        ],
+                                        children: [thirdListItem, thirdListItem],
                                     },
                                 ],
                             },
-                            {
-                                type: 'li',
-                                children: [
-                                    {
-                                        type: 'p',
-                                        children: [
-                                            {
-                                                text: 'aaa',
-                                            },
-                                        ],
-                                    },
-                                ],
-                            },
+                            secondListItem,
                         ],
                     },
                 ],
             },
-            {
-                type: 'li',
-                children: [
-                    {
-                        type: 'p',
-                        children: [
-                            {
-                                text: 'Final phrase',
-                            },
-                        ],
-                    },
-                ],
-            },
+            listItem,
         ],
     },
 ];
