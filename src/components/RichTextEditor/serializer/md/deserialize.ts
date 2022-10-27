@@ -21,51 +21,42 @@ import {
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     PlateEditor,
-    Value,
     getPluginType,
 } from '@udecode/plate';
 import slate from 'remark-slate';
 import markdown from 'remark-parse';
 import unified from 'unified';
 
+const deserializeOptions = (editor: PlateEditor) => ({
+    nodeTypes: {
+        paragraph: getPluginType(editor, ELEMENT_PARAGRAPH),
+        link: getPluginType(editor, ELEMENT_LINK),
+        block_quote: getPluginType(editor, ELEMENT_BLOCKQUOTE),
+        inline_code_mark: getPluginType(editor, MARK_CODE),
+        strong_mark: getPluginType(editor, MARK_BOLD),
+        emphasis_mark: getPluginType(editor, MARK_ITALIC),
+        delete_mark: getPluginType(editor, MARK_STRIKETHROUGH),
+        image: getPluginType(editor, ELEMENT_IMAGE),
+        code_block: getPluginType(editor, ELEMENT_CODE_BLOCK),
+        thematic_break: getPluginType(editor, ELEMENT_HR),
+        ul_list: getPluginType(editor, ELEMENT_UL),
+        ol_list: getPluginType(editor, ELEMENT_OL),
+        listItem: getPluginType(editor, ELEMENT_LI),
+        heading: {
+            1: getPluginType(editor, ELEMENT_H1),
+            2: getPluginType(editor, ELEMENT_H2),
+            3: getPluginType(editor, ELEMENT_H3),
+            4: getPluginType(editor, ELEMENT_H4),
+            5: getPluginType(editor, ELEMENT_H5),
+            6: getPluginType(editor, ELEMENT_H6),
+        },
+    },
+    linkDestinationKey: 'url',
+});
+
 /**
  * Deserialize content from Markdown format to Slate format.
  */
-export const deserialize = <V extends Value>(editor: PlateEditor<V>, data: string) => {
-    const tree = unified()
-        .use(markdown)
-        .use(slate, {
-            nodeTypes: {
-                // FIXME: underline, subscript superscript not yet supported by remark-slate
-                // underline: getPluginType(editor, MARK_UNDERLINE),
-                // subscript: getPluginType(editor, MARK_SUBSCRIPT),
-                // superscript: getPluginType(editor, MARK_SUPERSCRIPT),
-                // checkbox: getPluginType(editor, ELEMENT_CODE_BLOCK),
-                paragraph: getPluginType(editor, ELEMENT_PARAGRAPH),
-                link: getPluginType(editor, ELEMENT_LINK),
-                block_quote: getPluginType(editor, ELEMENT_BLOCKQUOTE),
-                inline_code_mark: getPluginType(editor, MARK_CODE),
-                strong_mark: getPluginType(editor, MARK_BOLD),
-                emphasis_mark: getPluginType(editor, MARK_ITALIC),
-                delete_mark: getPluginType(editor, MARK_STRIKETHROUGH),
-                image: getPluginType(editor, ELEMENT_IMAGE),
-                code_block: getPluginType(editor, ELEMENT_CODE_BLOCK),
-                thematic_break: getPluginType(editor, ELEMENT_HR),
-                ul_list: getPluginType(editor, ELEMENT_UL),
-                ol_list: getPluginType(editor, ELEMENT_OL),
-                listItem: getPluginType(editor, ELEMENT_LI),
-                heading: {
-                    1: getPluginType(editor, ELEMENT_H1),
-                    2: getPluginType(editor, ELEMENT_H2),
-                    3: getPluginType(editor, ELEMENT_H3),
-                    4: getPluginType(editor, ELEMENT_H4),
-                    5: getPluginType(editor, ELEMENT_H5),
-                    6: getPluginType(editor, ELEMENT_H6),
-                },
-            },
-            linkDestinationKey: 'url',
-        })
-        .processSync(data);
-
-    return tree.result;
+export const deserialize = (editor: PlateEditor, data: string) => {
+    return unified().use(markdown).use(slate, deserializeOptions(editor)).processSync(data).result;
 };
