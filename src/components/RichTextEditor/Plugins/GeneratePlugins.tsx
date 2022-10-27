@@ -6,9 +6,9 @@ import { Toolbar } from '../Toolbar';
 import type { PluginComposer } from './PluginComposer';
 
 type GeneratePluginsReturn = {
-    create: () => PlatePlugin<AnyObject>[];
-    toolbar: () => ReactNode;
-    inline: () => ReactNode;
+    Create: () => PlatePlugin<AnyObject>[];
+    Toolbar: () => ReactNode;
+    Inline: () => ReactNode;
 };
 
 export const createPlatePlugins = (pluginComposer: PluginComposer) =>
@@ -17,17 +17,18 @@ export const createPlatePlugins = (pluginComposer: PluginComposer) =>
     });
 
 export const GeneratePlugins = (editorId: string, pluginComposer: PluginComposer): GeneratePluginsReturn => {
-    const editor = usePlateEditorRef(editorId)!;
-
     return {
-        create: () => createPlatePlugins(pluginComposer),
-        toolbar: () =>
-            pluginComposer.hasToolbar ? (
-                <Toolbar buttons={pluginComposer.buttons} editor={editor} editorId={editorId} />
-            ) : (
-                <></>
-            ),
-        inline: () => (
+        Create: () => createPlatePlugins(pluginComposer),
+        Toolbar: () => {
+            const editor = usePlateEditorRef(editorId)!;
+
+            if (editor && pluginComposer.hasToolbar) {
+                return <Toolbar buttons={pluginComposer.buttons} editor={editor} editorId={editorId} />;
+            }
+
+            return <></>;
+        },
+        Inline: () => (
             <>
                 {pluginComposer.inline.map((Inline, index) => (
                     <Inline key={index} />
