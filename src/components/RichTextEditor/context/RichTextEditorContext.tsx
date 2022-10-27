@@ -11,13 +11,12 @@ type RichTextEditorContextProps = {
     designTokens: DesignTokens;
     position: Position;
 };
-const RichTextEditorContext = createContext<RichTextEditorContextProps | null>(null);
-export const useRichTextEditorContext = () => {
-    if (!RichTextEditorContext) {
-        throw new Error('useRichTextEditorContext must be used within a RichTextEditorProvider');
-    }
-    return useContext(RichTextEditorContext);
-};
+
+const RichTextEditorContext = createContext<RichTextEditorContextProps>({
+    designTokens: defaultDesignTokens,
+    position: Position.FLOATING,
+});
+export const useRichTextEditorContext = () => useContext(RichTextEditorContext);
 
 type RichTextEditorProviderProps = {
     children: React.ReactNode;

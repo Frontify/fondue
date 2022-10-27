@@ -78,10 +78,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 initialValue={parseRawValue({ editorId, raw: initialValue })}
                 onChange={onChange}
                 editableProps={editableProps}
-                plugins={config.Create()}
+                plugins={config.create()}
             >
-                {config.Toolbar()}
-                {config.Inline()}
+                {config.toolbar()}
+                {config.inline()}
             </Plate>
         </RichTextEditorProvider>
     );
