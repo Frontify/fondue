@@ -1,6 +1,6 @@
 {
     "name": "@frontify/fondue",
-    "version": "12.0.0-beta.12",
+    "version": "12.0.0-beta.13",
     "description": "Design system of Frontify",
     "main": "dist/index.umd.js",
     "unpkg": "dist/index.umd.js",
@@ -161,6 +161,9 @@
     },
     "peerDependencies": {
         "react": "^17.0.2",
-        "react-dom": "^17.0.2"
+        "react-dom": "^17.0.2",
+        "remark-parse": "^10.0.1",
+        "remark-slate": "^1.8.6",
+        "unified": "^10.1.2"
     }
 }

@@ -1,8 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const basicMarksMD = `
-aaaaaaaa**bold**_italic_~~delete~~\`inline code\`
-`;
+export const basicMarksMD = 'aaaaaaaa**bold**_italic_~~delete~~`inline code`\n';
 
 export const basicMarksTree = [
     {
