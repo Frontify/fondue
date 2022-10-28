@@ -1,8 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const codeBlockMD = `    tell application "Foo"
-        beep
-    end tell
+export const codeBlockMD = `
+\`\`\`
+tell application "Foo"
+    beep
+end tell
+\`\`\`
 `;
 
 export const codeBlockTree = [

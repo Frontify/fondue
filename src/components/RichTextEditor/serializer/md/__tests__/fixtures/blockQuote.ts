@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const blockQuoteMD = `> quote
+export const blockQuoteMD = `
+> quote
 > quote
 > quote
 > quote
