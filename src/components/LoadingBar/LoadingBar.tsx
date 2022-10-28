@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { merge } from '@utilities/merge';
 import React from 'react';
+import { merge } from '@utilities/merge';
 
 export enum LoadingBarSize {
     Small = 'Small',

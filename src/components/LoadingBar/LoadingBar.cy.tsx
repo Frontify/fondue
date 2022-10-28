@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from 'react';
 import {
     LoadingBar,
     LoadingBarSize,
@@ -7,7 +8,6 @@ import {
     loadingBarSizeClasses,
     loadingBarStateClasses,
 } from './LoadingBar';
-import React from 'react';
 
 const LOADING_BAR_INNER_ID = '[data-test-id=loading-bar-inner]';
 const LOADING_BAR_OUTER_ID = '[data-test-id=loading-bar-outer]';
