@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { usePlateEditorRef } from '@udecode/plate';
 import React from 'react';
 import { useEditorResizeContext } from '../context/EditorResizeContext';
 import { useRichTextEditorContext } from '../context/RichTextEditorContext';
@@ -8,7 +9,8 @@ import { ButtonGroupWrapper } from '../Plugins/helper';
 import { ToolbarProps } from './types';
 import { getButtonGroupWidths, getButtonGroupsPerRow } from './utils';
 
-export const Toolbar = ({ buttons, editor, editorId }: ToolbarProps) => {
+export const Toolbar = ({ buttons, editorId }: ToolbarProps) => {
+    const editor = usePlateEditorRef(editorId)!;
     const { editorWidth } = useEditorResizeContext();
     const { position } = useRichTextEditorContext();
 
