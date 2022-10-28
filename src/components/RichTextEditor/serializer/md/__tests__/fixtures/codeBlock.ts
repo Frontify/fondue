@@ -13,7 +13,7 @@ export const codeBlockTree = [
         language: null,
         children: [
             {
-                text: 'tell application &quot;Foo&quot;\n    beep\nend tell',
+                text: 'tell application "Foo"\n    beep\nend tell',
             },
         ],
     },
