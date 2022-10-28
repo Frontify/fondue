@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const codeBlockMD = `
-    tell application "Foo"
+export const codeBlockMD = `    tell application "Foo"
         beep
     end tell
 `;
