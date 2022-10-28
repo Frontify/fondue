@@ -76,7 +76,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
 
     const config = GeneratePlugins(editorId, plugins);
     const isNew = !!config && actions.length === 0;
-    const editorConfig = isNew ? config.Create() : getEditorConfig();
+    const editorConfig = isNew ? config.create() : getEditorConfig();
 
     return (
         <RichTextEditorProvider value={{ designTokens, position }}>
@@ -87,8 +87,8 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 editableProps={editableProps}
                 plugins={editorConfig}
             >
-                {isNew && config.Toolbar()}
-                {isNew && config.Inline()}
+                {isNew && config.toolbar()}
+                {isNew && config.inline()}
                 {!isNew && <Toolbar editorId={editorId} actions={actions} />}
             </Plate>
         </RichTextEditorProvider>
