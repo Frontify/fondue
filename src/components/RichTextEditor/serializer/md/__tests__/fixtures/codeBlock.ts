@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export const codeBlockMD = `\`\`\`
-tell application &quot;Foo&quot;
+tell application "Foo";
     beep
 end tell
 \`\`\`
