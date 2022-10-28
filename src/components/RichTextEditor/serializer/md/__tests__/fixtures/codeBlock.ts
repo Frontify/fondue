@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export const codeBlockMD = `\`\`\`
-tell application "Foo"
+tell application &quot;Foo&quot;
     beep
 end tell
 \`\`\`
@@ -13,7 +13,7 @@ export const codeBlockTree = [
         language: null,
         children: [
             {
-                text: 'tell application "Foo"\n    beep\nend tell',
+                text: 'tell application &quot;Foo&quot;\n    beep\nend tell',
             },
         ],
     },
