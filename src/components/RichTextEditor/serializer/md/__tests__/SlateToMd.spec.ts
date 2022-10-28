@@ -5,10 +5,18 @@ import { transform } from '../../transform';
 import {
     basicMarksMD,
     basicMarksTree,
+    blockQuoteMD,
+    blockQuoteTree,
     codeBlockMD,
     codeBlockTree,
     headingsMD,
     headingsTree,
+    hrMD,
+    hrTree,
+    imageMD,
+    imageTree,
+    linkMD,
+    linkTree,
     orderedListMD,
     orderedListTree,
     paragraphMD,
@@ -48,5 +56,25 @@ describe('Slate To Markdown transformer', () => {
     it.skip('should transform ordered list', () => {
         const result = transformer.process(orderedListTree);
         expect(result).to.deep.equal(orderedListMD);
+    });
+
+    it.skip('should transform hr', () => {
+        const result = transformer.process(hrTree);
+        expect(result).to.deep.equal(hrMD);
+    });
+
+    it.skip('should transform link', () => {
+        const result = transformer.process(linkTree);
+        expect(result).to.deep.equal(linkMD);
+    });
+
+    it.skip('should transform image', () => {
+        const result = transformer.process(imageTree);
+        expect(result).to.deep.equal(imageMD);
+    });
+
+    it.skip('should transform block quote', () => {
+        const result = transformer.process(blockQuoteTree);
+        expect(result).to.deep.equal(blockQuoteMD);
     });
 });
