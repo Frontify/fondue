@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { PlateEditor } from '@udecode/plate';
-import { Transformer, Unknown } from '../types';
+import { Transformer } from '../types';
 import { InitPlateEditor } from '@components/RichTextEditor/utils';
 
-export abstract class MdTransformer<T extends Unknown> implements Transformer<T> {
+export abstract class MdTransformer<T, R> implements Transformer<T, R> {
     protected editor: PlateEditor;
 
     constructor() {
         this.editor = InitPlateEditor.init().getInstance();
     }
 
-    abstract process(value: T): unknown;
+    abstract process(value: T): R;
 }
