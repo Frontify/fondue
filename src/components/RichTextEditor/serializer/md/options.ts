@@ -23,11 +23,8 @@ import {
     PlateEditor,
     getPluginType,
 } from '@udecode/plate';
-import slate from 'remark-slate';
-import markdown from 'remark-parse';
-import unified from 'unified';
 
-const deserializeOptions = (editor: PlateEditor) => ({
+export const options = (editor: PlateEditor) => ({
     nodeTypes: {
         paragraph: getPluginType(editor, ELEMENT_PARAGRAPH),
         link: getPluginType(editor, ELEMENT_LINK),
@@ -53,10 +50,3 @@ const deserializeOptions = (editor: PlateEditor) => ({
     },
     linkDestinationKey: 'url',
 });
-
-/**
- * Deserialize content from Markdown format to Slate format.
- */
-export const deserialize = (editor: PlateEditor, data: string) => {
-    return unified().use(markdown).use(slate, deserializeOptions(editor)).processSync(data).result;
-};

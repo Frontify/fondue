@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_PARAGRAPH, Value, deserializeHtml, parseHtmlDocument } from '@udecode/plate';
-import { initPlateEditor } from './initPlateEditor';
+import { InitPlateEditor } from './InitPlateEditor';
 
 const wrapTextInHtml = (text: string) => {
     const htmlDocRegex = /^<\w+>.*<\/\w+>$/;
@@ -26,10 +26,11 @@ export const parseRawValue = ({ editorId = 'parseRawValue', raw }: ParseRawValue
     try {
         parsedValue = JSON.parse(raw);
     } catch {
+        const editor = InitPlateEditor.init(`${editorId}_parseRawValue`).getInstance();
         const trimmed = raw.trim().replace(/>\s+</g, '><');
         const htmlDocumentString = wrapTextInHtml(trimmed);
         const document = parseHtmlDocument(htmlDocumentString);
-        const parsedHtml = deserializeHtml(initPlateEditor(`${editorId}_parseRawValue`), {
+        const parsedHtml = deserializeHtml(editor, {
             element: document.body,
             stripWhitespace: true,
         }) as Value;
