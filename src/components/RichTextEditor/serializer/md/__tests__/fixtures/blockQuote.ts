@@ -7,7 +7,7 @@ export const blockQuoteMD = `> quote
 
 > quote
 >
-> > quoted quote
+>> quoted quote
 `;
 
 export const blockQuoteTree = [
