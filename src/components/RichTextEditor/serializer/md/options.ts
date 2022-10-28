@@ -23,8 +23,9 @@ import {
     PlateEditor,
     getPluginType,
 } from '@udecode/plate';
+import { OptionType } from 'remark-slate';
 
-export const options = (editor: PlateEditor) => ({
+export const options = (editor: PlateEditor): OptionType => ({
     nodeTypes: {
         paragraph: getPluginType(editor, ELEMENT_PARAGRAPH),
         link: getPluginType(editor, ELEMENT_LINK),
