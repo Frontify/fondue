@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const headingsMD = `
-# heading 1
+export const headingsMD = `# heading 1
 
 ## heading 2
 
