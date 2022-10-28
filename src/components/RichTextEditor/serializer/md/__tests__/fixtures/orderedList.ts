@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const orderedListMD = `1. Ordered list
+export const orderedListMD = `
+1. Ordered list
 1. Ordered list
    1. aaa
    1. aaa
