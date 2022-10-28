@@ -2,4 +2,4 @@
 
 import { BlockType, LeafType } from 'remark-slate';
 
-export type MdToSlateReturn = (BlockType | LeafType)[];
+export type SlateObject = (BlockType | LeafType)[];
