@@ -48,12 +48,12 @@ describe('Slate To Markdown transformer', () => {
         expect(result).to.deep.equal(paragraphMD);
     });
 
-    it.skip('should transform unordered list', () => {
+    it('should transform unordered list', () => {
         const result = transformer.process(unorderedListTree);
         expect(result).to.deep.equal(unorderedListMD);
     });
 
-    it.skip('should transform ordered list', () => {
+    it('should transform ordered list', () => {
         const result = transformer.process(orderedListTree);
         expect(result).to.deep.equal(orderedListMD);
     });
