@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const unorderedListMD = `
-- list
+export const unorderedListMD = `- list
     - list
         - list
     - list

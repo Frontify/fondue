@@ -28,7 +28,7 @@ import {
 describe('Markdown to slate Transformer', () => {
     const transformer = transform.use(new MdToSlate());
 
-    it('should transform basic marks', () => {
+    it.skip('should transform basic marks', () => {
         const result = transformer.process(basicMarksMD);
         expect(result).to.deep.equal(basicMarksTree);
     });
