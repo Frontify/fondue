@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export interface Transformer {
-    process(data: string): unknown;
+export type Unknown = unknown;
+
+export interface Transformer<T extends Unknown = Unknown> {
+    process(value: T): unknown;
 }
