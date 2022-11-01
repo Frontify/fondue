@@ -18,6 +18,7 @@ export interface TreeFlatListItem {
     tooltipContent?: ReactNode;
     parentId: NullableString;
     editable?: boolean;
+    forceCaret?: boolean;
 }
 
 export type TreeProps = {
@@ -26,6 +27,7 @@ export type TreeProps = {
     activeNodeIds: NullableString[];
     onDragAndDrop?: (itemId: string, parentId: NullableString, positionBeforeId: NullableString) => void;
     onEditableSave?: (targetItemId: string, value: string) => void;
+    onNodeExpand?: (itemId: string) => void;
 };
 
 export const Tree: FC<TreeProps> = ({
@@ -34,6 +36,7 @@ export const Tree: FC<TreeProps> = ({
     activeNodeIds: initialActiveNodeIds,
     onDragAndDrop,
     onEditableSave,
+    onNodeExpand,
 }) => {
     const [multiSelectMode, setMultiSelectMode] = useState<boolean>(false);
     const [activeIds, setActiveIds] = useState<NullableString[]>(initialActiveNodeIds);
@@ -44,6 +47,8 @@ export const Tree: FC<TreeProps> = ({
         const listToTreeNodes = listToTree(nodes);
         setTreeNodes(listToTreeNodes);
     }, [nodes]);
+
+    console.log('🚀 ~ treeNodes', treeNodes);
 
     const onNodeClick = (id: NullableString) => {
         if (multiSelectMode) {
@@ -95,6 +100,12 @@ export const Tree: FC<TreeProps> = ({
           }
         : undefined;
 
+    const handleNodeExpand = onNodeExpand
+        ? (itemId: string) => {
+              onNodeExpand(itemId);
+          }
+        : undefined;
+
     const downKeyHandler = (event: KeyboardEvent) => {
         if (event.key === 'Meta' || event.ctrlKey) {
             setMultiSelectMode(true);
@@ -133,6 +144,7 @@ export const Tree: FC<TreeProps> = ({
                     onClick: onNodeClick,
                     onDrop: handleDrop,
                     onEditableSave: handleEditableSave,
+                    onNodeExpand: handleNodeExpand,
                 })}
             </DndWrapper>
         </ul>
