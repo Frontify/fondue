@@ -48,8 +48,6 @@ export const Tree: FC<TreeProps> = ({
         setTreeNodes(listToTreeNodes);
     }, [nodes]);
 
-    console.log('🚀 ~ treeNodes', treeNodes);
-
     const onNodeClick = (id: NullableString) => {
         if (multiSelectMode) {
             const modifiedSelectedIds: NullableString[] = activeIds.includes(id)
