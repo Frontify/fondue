@@ -13,6 +13,7 @@ import { LinkPlugin } from './LinkPlugin';
 import { TextStylePlugin } from './TextStylePlugin';
 import { InitPlugin } from './InitPlugin';
 import { ParagraphPlugin } from './ParagraphPlugin';
+import { ButtonPlugin } from './ButtonPlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
@@ -25,6 +26,7 @@ defaultPlugins
             new UnderlinePlugin(),
             new StrikethroughPlugin(),
             new LinkPlugin(),
+            new ButtonPlugin(),
             new CodePlugin(),
         ],
         [
@@ -50,6 +52,7 @@ export * from './ItalicPlugin';
 export * from './UnderlinePlugin';
 export * from './StrikethroughPlugin';
 export * from './LinkPlugin';
+export * from './ButtonPlugin';
 export * from './MentionPlugin';
 export * from './TextStylePlugin';
 export * from './ParagraphPlugin';

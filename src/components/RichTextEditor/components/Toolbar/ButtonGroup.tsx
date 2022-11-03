@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    IconButton,
     IconLink,
     IconListBullet,
     IconListCheck,
@@ -38,6 +39,8 @@ import { CheckboxListToolbarButton } from '../../Plugins/CheckboxListPlugin/Chec
 import { TextStyleDropdown } from '../../Plugins/TextStylePlugin/TextStyleDropdown';
 import { ButtonGroupProps, IconStylingWrapperProps } from '../../types';
 import { EditorActions } from '../../utils/actions';
+import { ButtonToolbarButton } from '@components/RichTextEditor/Plugins/ButtonPlugin/components/ButtonToolbarButton';
+import { ELEMENT_BUTTON } from '@components/RichTextEditor/Plugins';
 const classNames = {
     root: 'tw-text-text-weak tw-ml-0.5 hover:tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded',
     active: 'tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse',
@@ -147,6 +150,14 @@ const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<Editor
     [EditorActions.LINK]: (
         <LinkToolbarButton
             icon={<IconStylingWrapper icon={<IconLink size={IconSize.Size16} />} />}
+            classNames={classNames}
+            styles={styles}
+        />
+    ),
+    [EditorActions.BUTTON]: (
+        <ButtonToolbarButton
+            type={getPluginType(editor, ELEMENT_BUTTON)}
+            icon={<IconStylingWrapper icon={<IconButton size={IconSize.Size16} />} />}
             classNames={classNames}
             styles={styles}
         />
