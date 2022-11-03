@@ -17,6 +17,8 @@ export const submitFloatingButton = <V extends Value>(editor: PlateEditor<V>) =>
     const { isUrl, forceSubmit } = getPluginOptions<ButtonPlugin, V>(editor, ELEMENT_BUTTON);
 
     const url = floatingButtonSelectors.url();
+    console.log('submitFloatingButton', url);
+
     const isValid = isUrl?.(url) || forceSubmit;
     if (!isValid) {
         return;

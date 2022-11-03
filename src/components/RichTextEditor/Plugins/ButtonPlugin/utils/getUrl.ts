@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_LINK, PlateEditor, getAboveNode } from '@udecode/plate';
-import { TLinkElement } from '../types';
+import { PlateEditor, getAboveNode } from '@udecode/plate';
+import { ELEMENT_BUTTON } from '../createButtonPlugin';
+import { TButtonElement } from '../types';
 
-const getLinkNode = (editor: PlateEditor, cb: (link: TLinkElement) => string): string => {
-    const linkNode = getAboveNode<TLinkElement>(editor, { match: { type: ELEMENT_LINK } });
+const getLinkNode = (editor: PlateEditor, cb: (link: TButtonElement) => string): string => {
+    const linkNode = getAboveNode<TButtonElement>(editor, { match: { type: ELEMENT_BUTTON } });
 
     if (!Array.isArray(linkNode)) {
         return '';
@@ -21,7 +22,7 @@ export const getUrl = (editor: PlateEditor) => {
     return getLinkNode(editor, (link) => link.url || '');
 };
 
-export const getUrlFromLinkOrLegacyLink = (link: TLinkElement): string => {
+export const getUrlFromLinkOrLegacyLink = (link: TButtonElement): string => {
     return link.url || link.chosenLink?.searchResult?.link || '';
 };
 

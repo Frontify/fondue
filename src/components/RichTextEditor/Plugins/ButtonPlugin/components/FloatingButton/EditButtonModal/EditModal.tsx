@@ -1,17 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { useFloatingLinkUrlInput } from '@udecode/plate';
 import { IconPen, IconTrashBin } from '@foundation/Icon';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { FloatingButton } from '../FloatingButton';
+import { useFloatingButtonUrlInput } from '../FloatingButtonUrlInput';
 
 export const EditModal = () => {
-    const urlHtmlProps = useFloatingLinkUrlInput({});
+    const urlHtmlProps = useFloatingButtonUrlInput({});
     const { designTokens } = useRichTextEditorContext();
 
     return (
-        <div data-test-id="floating-link-edit" className="tw-bg-white tw-rounded tw-shadow tw-p-4 tw-min-w-[400px]">
+        <div data-test-id="floating-button-edit" className="tw-bg-white tw-rounded tw-shadow tw-p-4 tw-min-w-[400px]">
             <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between">
                 <span style={designTokens.link} className="tw-pointer-events-none">
                     {urlHtmlProps.defaultValue}
@@ -20,7 +20,7 @@ export const EditModal = () => {
                     <span
                         role="button"
                         tabIndex={0}
-                        data-test-id={'edit-link-button'}
+                        data-test-id={'edit-button-button'}
                         className="tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1"
                     >
                         <FloatingButton.EditButton>
@@ -31,7 +31,7 @@ export const EditModal = () => {
                     <span
                         role="button"
                         tabIndex={0}
-                        data-test-id={'remove-link-button'}
+                        data-test-id={'remove-button-button'}
                         className="tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1"
                     >
                         <FloatingButton.UnlinkButton>

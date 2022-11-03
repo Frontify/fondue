@@ -2,11 +2,7 @@
 
 import { useCallback, useEffect } from 'react';
 import {
-    ELEMENT_LINK,
-    FloatingLinkProps,
     HTMLPropsAs,
-    floatingLinkActions,
-    floatingLinkSelectors,
     getAboveNode,
     getDefaultBoundingClientRect,
     getEndPoint,
@@ -16,21 +12,23 @@ import {
     someNode,
     useComposedRef,
     useEditorRef,
-    useFloatingLinkSelectors,
     usePlateSelectors,
-    useVirtualFloatingLink,
 } from '@udecode/plate';
 import { getUrlFromEditor } from '../../../utils/getUrl';
+import { ELEMENT_BUTTON } from '../../../createButtonPlugin';
+import { floatingButtonActions, floatingButtonSelectors, useFloatingButtonSelectors } from '../floatingButtonStore';
+import { useVirtualFloatingButton } from '../useVirtualFloatingButton';
+import { FloatingButtonProps } from '../FloatingButton';
 
-export const useEditModal = ({ floatingOptions, ...props }: FloatingLinkProps): HTMLPropsAs<'div'> => {
+export const useEditModal = ({ floatingOptions, ...props }: FloatingButtonProps): HTMLPropsAs<'div'> => {
     const editor = useEditorRef();
     const keyEditor = usePlateSelectors(editor.id).keyEditor();
-    const mode = useFloatingLinkSelectors().mode();
-    const open = useFloatingLinkSelectors().open();
+    const mode = useFloatingButtonSelectors().mode();
+    const open = useFloatingButtonSelectors().open();
 
     const getBoundingClientRect = useCallback(() => {
         const entry = getAboveNode(editor, {
-            match: { type: getPluginType(editor, ELEMENT_LINK) },
+            match: { type: getPluginType(editor, ELEMENT_BUTTON) },
         });
 
         if (entry) {
@@ -46,7 +44,7 @@ export const useEditModal = ({ floatingOptions, ...props }: FloatingLinkProps): 
 
     const isOpen = open && mode === 'edit';
 
-    const { update, style, floating } = useVirtualFloatingLink({
+    const { update, style, floating } = useVirtualFloatingButton({
         open: isOpen,
         getBoundingClientRect,
         ...floatingOptions,
@@ -55,22 +53,22 @@ export const useEditModal = ({ floatingOptions, ...props }: FloatingLinkProps): 
     useEffect(() => {
         const url = getUrlFromEditor(editor);
         if (url) {
-            floatingLinkActions.url(url);
+            floatingButtonActions.url(url);
         }
         if (
             editor.selection &&
             someNode(editor, {
-                match: { type: getPluginType(editor, ELEMENT_LINK) },
+                match: { type: getPluginType(editor, ELEMENT_BUTTON) },
             })
         ) {
-            floatingLinkActions.show('edit');
+            floatingButtonActions.show('edit');
 
             update();
             return;
         }
 
-        if (floatingLinkSelectors.mode() === 'edit') {
-            floatingLinkActions.hide();
+        if (floatingButtonSelectors.mode() === 'edit') {
+            floatingButtonActions.hide();
         }
     }, [editor, keyEditor, update]);
 

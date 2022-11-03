@@ -1,23 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { Dispatch, Reducer, useEffect, useReducer } from 'react';
-import {
-    ELEMENT_LINK,
-    LinkPlugin,
-    floatingLinkActions,
-    floatingLinkSelectors,
-    getPluginOptions,
-    submitFloatingLink,
-    useEditorRef,
-    useHotkeys,
-} from '@udecode/plate';
+import { getPluginOptions, useEditorRef, useHotkeys } from '@udecode/plate';
 import { CheckboxState } from '@components/Checkbox';
 import { InsertModalDispatchType, InsertModalStateProps } from './types';
 import { getLegacyUrl, getUrl } from '../../../utils/getUrl';
+import { floatingButtonActions, floatingButtonSelectors } from '../floatingButtonStore';
+import { ButtonPlugin, ELEMENT_BUTTON } from '../../../createButtonPlugin';
+import { submitFloatingButton } from '../../../transforms/submitFloatingButton';
 
 const initialState: InsertModalStateProps = {
     url: '',
     text: '',
+    buttonStyle: 'primary',
     newTab: CheckboxState.Unchecked,
 };
 
@@ -38,6 +33,7 @@ export const InsertModalState = (): [InsertModalStateProps, Dispatch<InsertModal
                 };
             case 'URL':
             case 'TEXT':
+            case 'BUTTON_STYLE':
             case 'INIT':
                 return {
                     ...state,
@@ -62,9 +58,9 @@ export const useInsertModal = () => {
         dispatch({
             type: 'INIT',
             payload: {
-                text: floatingLinkSelectors.text(),
-                newTab: floatingLinkSelectors.newTab() ? CheckboxState.Checked : CheckboxState.Unchecked,
-                url: legacyUrl && url === '' ? legacyUrl : floatingLinkSelectors.url(),
+                text: floatingButtonSelectors.text(),
+                newTab: floatingButtonSelectors.newTab() ? CheckboxState.Checked : CheckboxState.Unchecked,
+                url: legacyUrl && url === '' ? legacyUrl : floatingButtonSelectors.url(),
             },
         });
     }, [dispatch, editor]);
@@ -95,7 +91,7 @@ export const useInsertModal = () => {
     };
 
     const onCancel = () => {
-        floatingLinkActions.hide();
+        floatingButtonActions.hide();
     };
 
     const onSave = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent | undefined) => {
@@ -103,11 +99,11 @@ export const useInsertModal = () => {
             return;
         }
 
-        floatingLinkActions.text(state.text);
-        floatingLinkActions.url(state.url);
-        floatingLinkActions.newTab(state.newTab === CheckboxState.Checked);
+        floatingButtonActions.text(state.text);
+        floatingButtonActions.url(state.url);
+        floatingButtonActions.newTab(state.newTab === CheckboxState.Checked);
 
-        if (submitFloatingLink(editor)) {
+        if (submitFloatingButton(editor)) {
             e?.preventDefault();
         }
     };
@@ -115,7 +111,7 @@ export const useInsertModal = () => {
     const hasValues = state.url !== '' && state.text !== '';
 
     const isValidUrlOrEmpty = () => {
-        const { isUrl } = getPluginOptions<LinkPlugin>(editor, ELEMENT_LINK);
+        const { isUrl } = getPluginOptions<ButtonPlugin>(editor, ELEMENT_BUTTON);
         return !state.url || (isUrl && isUrl(state.url));
     };
 
