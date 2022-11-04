@@ -75,6 +75,10 @@ export default {
             control: { type: 'number' },
             defaultValue: 200,
         },
+        enterDelay: {
+            control: { type: 'number' },
+            defaultValue: null,
+        },
     },
 } as Meta<TooltipProps>;
 

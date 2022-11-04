@@ -191,6 +191,7 @@ export const Dropdown: FC<DropdownProps> = ({
                         ariaProps={valueProps}
                         title={activeItem?.title || placeholder}
                         decorator={decorator ?? activeItem?.decorator}
+                        subtitle={activeItem?.subtitle}
                         size={size === DropdownSize.Small ? MenuItemContentSize.Small : MenuItemContentSize.Large}
                     />
                 </button>
