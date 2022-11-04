@@ -54,24 +54,19 @@ const getButtonStyle = (designTokens: any, buttonStyle: ButtonStyle) => {
 };
 
 type Props = {
-    attributes: {
-        'data-slate-node': 'element';
-        'data-slate-inline'?: true | undefined;
-        'data-slate-void'?: true | undefined;
-        dir?: 'rtl' | undefined;
-        ref: any;
-    };
+    attributes: ButtonRootProps['attributes'];
     styles: React.CSSProperties & { hover: React.CSSProperties };
     children: ReactNode;
     href?: string;
     target?: React.HTMLAttributeAnchorTarget | undefined;
 };
 
-const HoverableButtonLink: FC<Props> = ({ styles, children, href = '#', target }) => {
+const HoverableButtonLink: FC<Props> = ({ attributes, styles, children, href = '#', target }) => {
     const [hovered, setHovered] = useState(false);
 
     return (
         <a
+            {...attributes}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             href={href}
