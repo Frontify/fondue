@@ -8,13 +8,11 @@ import escapeHtml from 'escape-html';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
 
-export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: DesignTokens): string => {
+export const serializeNodeToHtmlRecursive = (node: any, designTokens: DesignTokens): string => {
     if (!node.children) {
         return serializeLeafToHtml(node);
     }
-
-    const nodeChildren: any = node.children;
-    const children = nodeChildren.map((n: TDescendant) => serializeNodeToHtmlRecursive(n, designTokens)).join('');
+    const children = node.children.map((n: TDescendant) => serializeNodeToHtmlRecursive(n, designTokens)).join('');
 
     switch (node.type) {
         case TextStyles.ELEMENT_HEADING1:
@@ -43,14 +41,12 @@ export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: De
             return `<li>${children}</li>`;
         case ELEMENT_LINK:
             if (node.chosenLink) {
-                const { chosenLink }: any = node;
+                const { chosenLink } = node;
                 return `<a style="${reactCssPropsToCss(designTokens.link)}" target=${
                     chosenLink.openInNewTab ? '_blank' : '_self'
                 } href="${escapeHtml(chosenLink.searchResult.link)}">${children}</a>`;
             }
-            return `<a style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(
-                node.url as any,
-            )}">${children}</a>`;
+            return `<a style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(node.url)}">${children}</a>`;
         case ELEMENT_CHECK_ITEM:
             return `<input type="checkbox"/><label>${children}</label>`;
 
