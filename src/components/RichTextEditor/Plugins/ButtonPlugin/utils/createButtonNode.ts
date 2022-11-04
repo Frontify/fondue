@@ -1,17 +1,18 @@
 import { PlateEditor, TText, Value, getPluginType } from '@udecode/plate-core';
 import { ELEMENT_BUTTON } from '../createButtonPlugin';
-import { TButtonElement } from '../types';
+import { ButtonStyle, TButtonElement } from '../types';
 
 export interface CreateButtonNodeOptions {
     url: string;
     text?: string;
+    buttonStyle?: ButtonStyle;
     target?: string;
     children?: TText[];
 }
 
 export const createButtonNode = <V extends Value>(
     editor: PlateEditor<V>,
-    { url, text = '', target, children }: CreateButtonNodeOptions,
+    { url, text = '', buttonStyle = 'primary', target, children }: CreateButtonNodeOptions,
 ): TButtonElement => {
     const type = getPluginType(editor, ELEMENT_BUTTON);
 
@@ -19,6 +20,7 @@ export const createButtonNode = <V extends Value>(
         type,
         url,
         target,
+        buttonStyle,
         children: children ?? [{ text }],
     };
 };

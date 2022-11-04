@@ -12,7 +12,7 @@ export const EditModal = () => {
 
     return (
         <div data-test-id="floating-button-edit" className="tw-bg-white tw-rounded tw-shadow tw-p-4 tw-min-w-[400px]">
-            <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between">
+            <span data-test-id={'preview-button-flyout'} className="tw-flex tw-justify-between">
                 <span style={designTokens.link} className="tw-pointer-events-none">
                     {urlHtmlProps.defaultValue}
                 </span>

@@ -1,4 +1,5 @@
 import { createStore } from '@udecode/plate-core';
+import { ButtonStyle } from '../../types';
 
 export type FloatingButtonMode = '' | 'insert' | 'edit';
 
@@ -8,6 +9,7 @@ export const floatingButtonStore = createStore('floatingButton')({
     updated: false,
     url: '',
     text: '',
+    buttonStyle: 'primary' as ButtonStyle,
     newTab: false,
     mode: '' as FloatingButtonMode,
     isEditing: false,
@@ -16,6 +18,7 @@ export const floatingButtonStore = createStore('floatingButton')({
         reset: () => {
             set.url('');
             set.text('');
+            set.buttonStyle('primary');
             set.newTab(false);
             set.mode('');
             set.isEditing(false);

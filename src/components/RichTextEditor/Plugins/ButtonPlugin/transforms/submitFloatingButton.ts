@@ -15,9 +15,7 @@ export const submitFloatingButton = <V extends Value>(editor: PlateEditor<V>) =>
     }
 
     const { isUrl, forceSubmit } = getPluginOptions<ButtonPlugin, V>(editor, ELEMENT_BUTTON);
-
     const url = floatingButtonSelectors.url();
-    console.log('submitFloatingButton', url);
 
     const isValid = isUrl?.(url) || forceSubmit;
     if (!isValid) {
@@ -25,6 +23,7 @@ export const submitFloatingButton = <V extends Value>(editor: PlateEditor<V>) =>
     }
 
     const text = floatingButtonSelectors.text();
+    const buttonStyle = floatingButtonSelectors.buttonStyle();
     const target = floatingButtonSelectors.newTab() ? undefined : '_self';
 
     floatingButtonActions.hide();
@@ -32,6 +31,7 @@ export const submitFloatingButton = <V extends Value>(editor: PlateEditor<V>) =>
     upsertButton(editor, {
         url,
         text,
+        buttonStyle,
         target,
         isUrl: (_url) => (forceSubmit || !isUrl ? true : isUrl(_url)),
     });

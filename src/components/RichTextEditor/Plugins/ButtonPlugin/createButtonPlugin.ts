@@ -66,7 +66,7 @@ export const createButtonPlugin = createPluginFactory({
             skipInvalid: true,
             afterMatch: true,
         },
-        triggerFloatingButtonHotkeys: 'command+k, ctrl+k',
+        triggerFloatingButtonHotkeys: 'command+shift+k, ctrl+shift+k',
     },
     then: (editor, { type }) => ({
         deserializeHtml: {

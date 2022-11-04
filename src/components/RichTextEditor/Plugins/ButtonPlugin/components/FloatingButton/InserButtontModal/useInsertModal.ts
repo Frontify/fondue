@@ -4,10 +4,11 @@ import React, { Dispatch, Reducer, useEffect, useReducer } from 'react';
 import { getPluginOptions, useEditorRef, useHotkeys } from '@udecode/plate';
 import { CheckboxState } from '@components/Checkbox';
 import { InsertModalDispatchType, InsertModalStateProps } from './types';
-import { getLegacyUrl, getUrl } from '../../../utils/getUrl';
 import { floatingButtonActions, floatingButtonSelectors } from '../floatingButtonStore';
 import { ButtonPlugin, ELEMENT_BUTTON } from '../../../createButtonPlugin';
 import { submitFloatingButton } from '../../../transforms/submitFloatingButton';
+import { ButtonStyle } from '../../../types';
+import { getButtonStyle } from '../../../utils/getButtonStyle';
 
 const initialState: InsertModalStateProps = {
     url: '',
@@ -52,15 +53,15 @@ export const useInsertModal = () => {
     const [state, dispatch] = InsertModalState();
 
     useEffect(() => {
-        const legacyUrl = getLegacyUrl(editor);
-        const url = getUrl(editor);
+        const buttonStyle = getButtonStyle(editor);
 
         dispatch({
             type: 'INIT',
             payload: {
                 text: floatingButtonSelectors.text(),
+                buttonStyle,
                 newTab: floatingButtonSelectors.newTab() ? CheckboxState.Checked : CheckboxState.Unchecked,
-                url: legacyUrl && url === '' ? legacyUrl : floatingButtonSelectors.url(),
+                url: floatingButtonSelectors.url(),
             },
         });
     }, [dispatch, editor]);
@@ -72,7 +73,7 @@ export const useInsertModal = () => {
         });
     };
 
-    const onButtonStyleChange = (value: string) => {
+    const onButtonStyleChange = (value: ButtonStyle) => {
         dispatch({
             type: 'BUTTON_STYLE',
             payload: { buttonStyle: value },
@@ -101,6 +102,7 @@ export const useInsertModal = () => {
 
         floatingButtonActions.text(state.text);
         floatingButtonActions.url(state.url);
+        floatingButtonActions.buttonStyle(state.buttonStyle);
         floatingButtonActions.newTab(state.newTab === CheckboxState.Checked);
 
         if (submitFloatingButton(editor)) {

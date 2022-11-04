@@ -1,9 +1,10 @@
 import { PlateEditor, Value, WrapNodesOptions, getPluginType, wrapNodes } from '@udecode/plate-core';
 import { ELEMENT_BUTTON } from '../createButtonPlugin';
-import { TButtonElement } from '../types';
+import { ButtonStyle, TButtonElement } from '../types';
 
 export interface WrapButtonOptions<V extends Value = Value> extends WrapNodesOptions<V> {
     url: string;
+    buttonStyle?: ButtonStyle;
     target?: string;
 }
 
@@ -12,13 +13,14 @@ export interface WrapButtonOptions<V extends Value = Value> extends WrapNodesOpt
  */
 export const wrapButton = <V extends Value>(
     editor: PlateEditor<V>,
-    { url, target, ...options }: WrapButtonOptions<V>,
+    { url, buttonStyle, target, ...options }: WrapButtonOptions<V>,
 ) => {
     wrapNodes<TButtonElement, Value>(
         editor,
         {
             type: getPluginType(editor, ELEMENT_BUTTON),
             url,
+            buttonStyle,
             target,
             children: [],
         },

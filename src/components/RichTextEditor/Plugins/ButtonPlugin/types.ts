@@ -1,6 +1,11 @@
-import { TElement } from '@udecode/plate-core';
+import { TLinkElement } from '@udecode/plate';
 
-export interface TButtonElement extends TElement {
-    url: string;
-    target?: string;
-}
+export type TButtonElement = TLinkElement & {
+    chosenLink?: {
+        searchResult?: {
+            link?: string;
+        };
+    };
+};
+
+export type ButtonStyle = 'primary' | 'secondary' | 'tertiary';
