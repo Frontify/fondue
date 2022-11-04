@@ -1,7 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, ReactNode, useState } from 'react';
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
+import {
+    RichTextEditorContextProps,
+    useRichTextEditorContext,
+} from '@components/RichTextEditor/context/RichTextEditorContext';
 import { ButtonRootProps } from '../components/Button';
 import { ButtonStyle, TButtonElement } from '../types';
 import { HTMLPropsAs, useElementProps } from '@udecode/plate';
@@ -26,7 +29,7 @@ const useButton = (props: ButtonRootProps): HTMLPropsAs<'a'> & { buttonStyle: Bu
 };
 
 export const ButtonMarkupElementNode = (props: ButtonRootProps) => {
-    const { designTokens } = useRichTextEditorContext();
+    const context = useRichTextEditorContext();
     const { href, target, buttonStyle } = useButton(props);
     const { attributes, children } = props;
 
@@ -35,33 +38,35 @@ export const ButtonMarkupElementNode = (props: ButtonRootProps) => {
             attributes={attributes}
             href={href}
             target={target}
-            styles={getButtonStyle(designTokens, buttonStyle)}
+            styles={getButtonStyle(context, buttonStyle)}
         >
             {children}
         </HoverableButtonLink>
     );
 };
 
-const getButtonStyle = (designTokens: any, buttonStyle: ButtonStyle) => {
-    switch (buttonStyle) {
-        case 'primary':
-            return designTokens.button_primary;
-        case 'secondary':
-            return designTokens.button_secondary;
-        case 'tertiary':
-            return designTokens.button_tertiary;
+const getButtonStyle = (rteContext: RichTextEditorContextProps | null, buttonStyle: ButtonStyle) => {
+    if (rteContext) {
+        switch (buttonStyle) {
+            case 'primary':
+                return rteContext.designTokens.button_primary;
+            case 'secondary':
+                return rteContext.designTokens.button_secondary;
+            case 'tertiary':
+                return rteContext.designTokens.button_tertiary;
+        }
     }
 };
 
 type Props = {
     attributes: ButtonRootProps['attributes'];
-    styles: React.CSSProperties & { hover: React.CSSProperties };
     children: ReactNode;
+    styles?: React.CSSProperties & { hover?: React.CSSProperties };
     href?: string;
     target?: React.HTMLAttributeAnchorTarget | undefined;
 };
 
-const HoverableButtonLink: FC<Props> = ({ attributes, styles, children, href = '#', target }) => {
+const HoverableButtonLink: FC<Props> = ({ attributes, styles = { hover: {} }, children, href = '#', target }) => {
     const [hovered, setHovered] = useState(false);
 
     return (

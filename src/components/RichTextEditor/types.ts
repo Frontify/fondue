@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CSSProperties, ReactElement } from 'react';
-import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
+import { ButtonStyles, TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { EditorActions } from './utils/actions';
 
-export type DesignTokens = Partial<Record<TextStyles, CSSProperties>>;
+export type DesignTokens = Partial<Record<TextStyles | ButtonStyles, CSSProperties>>;
 
 export type ToolbarCustomProps = {
     actions: EditorActions[][];
