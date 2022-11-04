@@ -20,6 +20,8 @@ export const renderNodeArray = ({
     onClick,
     onDrop,
     onEditableSave,
+    onNodeExpand,
+    forceCaret,
     parentIds,
 }: RenderNodeArrayData) =>
     nodes.map((node, i) => (
@@ -32,6 +34,8 @@ export const renderNodeArray = ({
             isFirst={i === 0}
             onDrop={onDrop}
             onEditableSave={onEditableSave}
+            onNodeExpand={onNodeExpand}
+            forceCaret={forceCaret}
             parentIds={parentIds}
             treeId={treeId}
         />
@@ -52,6 +56,8 @@ type NodeProps = {
     treeId: string;
     onDrop?: OnDropCallback<TreeNodeItem>;
     onEditableSave?: (targetItemId: string, value: string) => void;
+    forceCaret?: boolean;
+    onNodeExpand?: (itemId: string) => void;
 };
 
 const getInitialShowNodesValue = (
@@ -81,9 +87,10 @@ export const Node = ({
     isFirst,
     onDrop,
     onEditableSave,
+    onNodeExpand,
     treeId,
 }: NodeProps): ReactElement<NodeProps> => {
-    const { id, value, name, label, icon, nodes, actions, editable, badge, tooltipContent } = node;
+    const { id, value, name, label, icon, nodes, actions, editable, badge, tooltipContent, forceCaret } = node;
     const [{ opacity }, drag] = useDrag({
         item: { id, value, name, label, icon, nodes, actions, editable, badge },
         collect: (monitor) => ({
@@ -108,7 +115,14 @@ export const Node = ({
             onClick(id);
         }
     };
+
+    const [hasBeenExpanded, setHasBeenExpanded] = useState<boolean>(false);
     const toggleNodesVisibility = (event: React.MouseEvent) => {
+        if (!hasBeenExpanded) {
+            onNodeExpand?.(id);
+        }
+        setHasBeenExpanded(true);
+
         event.stopPropagation();
         setShowNodes(!showNodes);
     };
@@ -204,14 +218,14 @@ export const Node = ({
                                 className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center"
                                 onClick={toggleNodesVisibility}
                             >
-                                {nodes && (
+                                {(nodes || forceCaret) && (
                                     <div
                                         className={merge([
                                             'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
                                             showNodes ? 'tw-rotate-90' : '',
                                             selected && 'tw-text-box-selected-strong-inverse',
                                         ])}
-                                    ></div>
+                                    />
                                 )}
                             </span>
                             {icon && <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>}
@@ -289,6 +303,7 @@ export const Node = ({
                         onClick,
                         onDrop,
                         onEditableSave,
+                        onNodeExpand,
                         parentIds: [...parentIds, id],
                     })}
                 </ul>

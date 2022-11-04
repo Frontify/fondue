@@ -23,6 +23,7 @@ export * from './FormControl';
 export * from './FrontifyPattern';
 export * from './InputLabel';
 export * from './LinkChooser';
+export * from './LoadingBar';
 export * from './LoadingCircle';
 export * from './MenuItem';
 export * from './Modal';

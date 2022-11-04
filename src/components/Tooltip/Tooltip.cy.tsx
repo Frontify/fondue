@@ -13,6 +13,9 @@ const TOOLTIP_HEADING_TEXT = "I'm a heading";
 const GENERIC_ICON = <IconIcon />;
 const GENERIC_ICON_CODE = 'svg[name=IconIcon16]';
 const BRIGHT_HEADER_ID = '[data-test-id=bright-header]';
+const ENTER_DELAY = 1000;
+const DEFAULT_HOVER_DELAY = 200;
+const CUSTOM_HOVER_DELAY = 1000;
 
 export const TooltipComponent = (args: TooltipProps) => {
     return (
@@ -48,6 +51,40 @@ describe('Tooltip Component', () => {
     it('should render a tooltip open by default via component prop', () => {
         initTooltip({ content: TOOLTIP_TEXT, open: true }, false);
         cy.get(TOOLTIP_ID).should('contain', TOOLTIP_TEXT);
+    });
+
+    it('should render a tooltip after a timeout if enterDelay is set to a number greater than 0', () => {
+        initTooltip({ content: TOOLTIP_TEXT, enterDelay: ENTER_DELAY });
+
+        cy.get(TOOLTIP_ID).should('not.exist');
+
+        cy.wait(ENTER_DELAY);
+
+        cy.get(TOOLTIP_ID).should('exist');
+    });
+
+    it(`should close the tooltip after ${DEFAULT_HOVER_DELAY} milliseconds by default`, () => {
+        initTooltip({ content: TOOLTIP_TEXT });
+
+        cy.get('@Trigger').trigger('mouseout');
+
+        cy.get(TOOLTIP_ID).should('exist');
+
+        cy.wait(DEFAULT_HOVER_DELAY);
+
+        cy.get(TOOLTIP_ID).should('not.exist');
+    });
+
+    it('should close the tooltip after a specified time if hoverDelay is defined', () => {
+        initTooltip({ content: TOOLTIP_TEXT, hoverDelay: CUSTOM_HOVER_DELAY });
+
+        cy.get('@Trigger').trigger('mouseout');
+
+        cy.get(TOOLTIP_ID).should('exist');
+
+        cy.wait(CUSTOM_HOVER_DELAY);
+
+        cy.get(TOOLTIP_ID).should('not.exist');
     });
 
     it('should render an icon next to the tooltip', () => {
