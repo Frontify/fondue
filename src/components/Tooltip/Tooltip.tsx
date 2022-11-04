@@ -44,6 +44,7 @@ export type TooltipProps = PropsWithChildren<{
     flip?: boolean;
     withArrow?: boolean;
     hoverDelay?: number;
+    enterDelay?: number;
     open?: boolean;
     disabled?: boolean;
     hidden?: boolean;
@@ -136,6 +137,7 @@ export const Tooltip = ({
     flip = true,
     triggerElement,
     hoverDelay = 200,
+    enterDelay = 0,
     open = false,
     disabled = false,
     hidden = false,
@@ -182,16 +184,25 @@ export const Tooltip = ({
     const [isOpen, setIsOpen] = useState(false);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+    const handleHideTooltipOnHover = useCallback(() => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(() => setIsOpen(false), hoverDelay);
+    }, [hoverDelay]);
+
     const handleShowTooltipOnHover = useCallback(() => {
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
         }
-        setIsOpen(true);
-    }, []);
 
-    const handleHideTooltipOnHover = useCallback(() => {
-        timeoutRef.current = setTimeout(() => setIsOpen(false), hoverDelay);
-    }, [hoverDelay]);
+        if (enterDelay) {
+            timeoutRef.current = setTimeout(() => setIsOpen(true), enterDelay);
+            return;
+        }
+
+        setIsOpen(true);
+    }, [enterDelay]);
 
     const checkIfHovered = useCallback(
         (event) => {
