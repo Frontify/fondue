@@ -59,7 +59,7 @@ export const defaultNodeTypes: InputNodeTypes = {
     },
     emphasis_mark: 'italic',
     strong_mark: 'bold',
-    delete_mark: 'strikeThrough',
+    delete_mark: 'strikethrough',
     inline_code_mark: 'code',
     thematic_break: 'thematic_break',
     image: 'image',
