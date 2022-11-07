@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BlockType, LeafType } from '../astTypes';
+import { LeafType, NodeType } from '../astTypes';
 
-export const isLeafNode = (node: BlockType | LeafType): node is LeafType => {
+export const isLeafNode = (node: NodeType): node is LeafType => {
     return typeof (node as LeafType).text === 'string';
 };

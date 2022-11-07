@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import escapeHtml from 'escape-html';
-import { BlockType, InputNodeTypes, LeafType } from '../astTypes';
+import { BlockType, InputNodeTypes, NodeType } from '../astTypes';
 import { isLeafNode } from './isLeafNode';
 
 const processListItemNode = (
     nodeTypes: InputNodeTypes,
     children: string,
-    chunk: BlockType | LeafType,
+    chunk: NodeType,
     listDepth: number,
 ): string => {
     const isOL = chunk && chunk.parentType === nodeTypes.ol_list;
@@ -29,7 +29,7 @@ export const processNodes = (
     type: string,
     nodeTypes: InputNodeTypes,
     children: string,
-    chunk: BlockType | LeafType,
+    chunk: NodeType,
     listDepth: number,
 ) => {
     switch (type) {

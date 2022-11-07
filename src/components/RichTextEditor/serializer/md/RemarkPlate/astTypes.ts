@@ -24,7 +24,7 @@ export interface InputNodeTypes {
     image: string;
 }
 
-export type MdastNodeType =
+export type MdAstNodeType =
     | 'paragraph'
     | 'heading'
     | 'list'
@@ -65,6 +65,8 @@ export const defaultNodeTypes: InputNodeTypes = {
     image: 'image',
 };
 
+export type NodeType = BlockType | LeafType;
+
 export interface LeafType {
     text: string;
     strikeThrough?: boolean;
@@ -81,7 +83,7 @@ export interface BlockType {
     caption?: string;
     language?: string;
     break?: boolean;
-    children: Array<BlockType | LeafType>;
+    children: NodeType[];
 }
 
 type RecursivePartial<T> = {
@@ -95,12 +97,12 @@ export interface OptionType<T extends InputNodeTypes = InputNodeTypes> {
     imageCaptionKey?: string;
 }
 
-export interface MdastNode {
-    type?: MdastNodeType;
+export interface MdAstNode {
+    type?: MdAstNodeType;
     ordered?: boolean;
     value?: string;
     text?: string;
-    children?: Array<MdastNode>;
+    children?: Array<MdAstNode>;
     depth?: 1 | 2 | 3 | 4 | 5 | 6;
     url?: string;
     alt?: string;

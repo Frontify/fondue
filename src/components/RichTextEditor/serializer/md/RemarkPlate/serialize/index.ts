@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BlockType, InputNodeTypes, LeafType, defaultNodeTypes } from '../astTypes';
+import { BlockType, InputNodeTypes, LeafType, NodeType, defaultNodeTypes } from '../astTypes';
 import { applyFormattingToLeafNode } from './appplyFormatingToLeafNode';
 import { isLeafNode } from './isLeafNode';
 import { processNodes } from './processNodes';
@@ -14,10 +14,10 @@ interface Options {
 
 const VOID_ELEMENTS: Array<keyof InputNodeTypes> = ['thematic_break', 'image'];
 
-const isChildAList = (chunk: BlockType | LeafType, LIST_TYPES: string[]) =>
+const isChildAList = (chunk: NodeType, LIST_TYPES: string[]) =>
     !isLeafNode(chunk) ? LIST_TYPES.includes(chunk.type || '') : false;
 
-const doesChildHasALink = (chunk: BlockType | LeafType, nodeTypes: InputNodeTypes) =>
+const doesChildHasALink = (chunk: NodeType, nodeTypes: InputNodeTypes) =>
     !isLeafNode(chunk) && Array.isArray(chunk.children)
         ? chunk.children.some((child) => !isLeafNode(child) && child.type === nodeTypes.link)
         : false;
@@ -25,11 +25,11 @@ const doesChildHasALink = (chunk: BlockType | LeafType, nodeTypes: InputNodeType
 const shouldIgnoreParagraphNewline = (
     ignoreParagraphNewline: boolean,
     text: string,
-    chunk: BlockType | LeafType,
+    chunk: NodeType,
     nodeTypes: InputNodeTypes,
 ) => !ignoreParagraphNewline && (text === '' || text === '\n') && chunk.parentType === nodeTypes.paragraph;
 
-export default function serialize(chunk: BlockType | LeafType, opts: Options = { nodeTypes: defaultNodeTypes }) {
+export default function serialize(chunk: NodeType, opts: Options = { nodeTypes: defaultNodeTypes }) {
     const { nodeTypes: userNodeTypes = defaultNodeTypes, ignoreParagraphNewline = false, listDepth = 0 } = opts;
 
     const text = (chunk as LeafType).text ?? '';
@@ -50,7 +50,7 @@ export default function serialize(chunk: BlockType | LeafType, opts: Options = {
 
     if (!isLeafNode(chunk)) {
         children = chunk.children
-            .map((c: BlockType | LeafType) => {
+            .map((c: NodeType) => {
                 const isList = isChildAList(c, LIST_TYPES);
                 const selfIsList = LIST_TYPES.includes(chunk.type || '');
 

@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BlockType, LeafType } from '../astTypes';
+import { NodeType } from '../astTypes';
 import { isLeafNode } from './isLeafNode';
 import { BREAK_TAG } from './utils';
 
-export const applyFormattingToLeafNode = (children: string, chunk: BlockType | LeafType) => {
+export const applyFormattingToLeafNode = (children: string, chunk: NodeType) => {
     if (children === BREAK_TAG || !isLeafNode(chunk)) {
         return children;
     }
