@@ -11,7 +11,7 @@ import {
     LinkNode,
     ListItemNode,
     ListNode,
-    MdastNode,
+    MdAstNode,
     OptionType,
     ParagraphNode,
     TextNode,
@@ -19,7 +19,7 @@ import {
     defaultNodeTypes,
 } from './astTypes';
 
-export default function deserialize<T extends InputNodeTypes>(node: MdastNode, opts?: OptionType<T>) {
+export default function deserialize<T extends InputNodeTypes>(node: MdAstNode, opts?: OptionType<T>) {
     const types = {
         ...defaultNodeTypes,
         ...opts?.nodeTypes,
@@ -37,7 +37,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MdastNode, o
 
     const nodeChildren = node.children;
     if (nodeChildren && Array.isArray(nodeChildren) && nodeChildren.length > 0) {
-        children = nodeChildren.flatMap((c: MdastNode) =>
+        children = nodeChildren.flatMap((c: MdAstNode) =>
             deserialize(
                 {
                     ...c,
@@ -99,25 +99,25 @@ export default function deserialize<T extends InputNodeTypes>(node: MdastNode, o
             return {
                 [types.emphasis_mark as string]: true,
                 ...forceLeafNode(children as Array<TextNode>),
-                ...persistLeafFormats(children as Array<MdastNode>),
+                ...persistLeafFormats(children as Array<MdAstNode>),
             } as unknown as ItalicNode<T>;
         case 'strong':
             return {
                 [types.strong_mark as string]: true,
                 ...forceLeafNode(children as Array<TextNode>),
-                ...persistLeafFormats(children as Array<MdastNode>),
+                ...persistLeafFormats(children as Array<MdAstNode>),
             };
         case 'delete':
             return {
                 [types.delete_mark as string]: true,
                 ...forceLeafNode(children as Array<TextNode>),
-                ...persistLeafFormats(children as Array<MdastNode>),
+                ...persistLeafFormats(children as Array<MdAstNode>),
             };
         case 'inlineCode':
             return {
                 [types.inline_code_mark as string]: true,
                 text: node.value,
-                ...persistLeafFormats(children as Array<MdastNode>),
+                ...persistLeafFormats(children as Array<MdAstNode>),
             };
         case 'thematicBreak':
             return {
@@ -138,9 +138,9 @@ const forceLeafNode = (children: Array<TextNode>) => ({
 // This function is will take any unknown keys, and bring them up a level
 // allowing leaf nodes to have many different formats at once
 // for example, bold and italic on the same node
-function persistLeafFormats(children: Array<MdastNode>): Omit<MdastNode, 'children' | 'type' | 'text'> {
+function persistLeafFormats(children: Array<MdAstNode>): Omit<MdAstNode, 'children' | 'type' | 'text'> {
     return children.reduce((acc, node) => {
-        for (const key of Object.keys(node) as Array<keyof MdastNode>) {
+        for (const key of Object.keys(node) as Array<keyof MdAstNode>) {
             if (key === 'children' || key === 'type' || key === 'text') {
                 continue;
             }
