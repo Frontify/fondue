@@ -110,7 +110,7 @@ export interface MdastNode {
     indent?: any;
 }
 
-export type TextNode = { text?: string | undefined };
+export type TextNode = { text?: string };
 
 export type CodeBlockNode<T extends InputNodeTypes> = {
     type: T['code_block'];
