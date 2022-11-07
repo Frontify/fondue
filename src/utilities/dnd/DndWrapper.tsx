@@ -14,7 +14,7 @@ interface DndWrapperProps {
  * to the rootElement, thus preventing the `Cannot have two HTML5 backends at the same time` error.
  */
 export const DndWrapper = memo(({ id, children }: DndWrapperProps) => {
-    const [context, setContext] = useState<Nullable<HTMLElement>>(null);
+    const [context, setContext] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
         setContext(document.getElementById(id));
