@@ -5,6 +5,8 @@ import {
     HTMLPropsAs,
     LinkPlugin,
     floatingLinkActions,
+    floatingLinkSelectors,
+    focusEditor,
     getPluginOptions,
     triggerFloatingLinkInsert,
     useComposedRef,
@@ -12,6 +14,7 @@ import {
     useFloatingLinkEscape,
     useFloatingLinkSelectors,
     useHotkeys,
+    useOnClickOutside,
     useVirtualFloatingLink,
 } from '@udecode/plate';
 import { getSelectionBoundingClientRect } from '@udecode/plate-floating';
@@ -40,6 +43,13 @@ export const useFloatingLinkInsert = ({ floatingOptions, ...props }: FloatingLin
         [focused],
     );
 
+    const ref = useOnClickOutside(() => {
+        if (floatingLinkSelectors.mode() === 'insert' && open) {
+            floatingLinkActions.hide();
+            focusEditor(editor, editor.selection!);
+        }
+    });
+
     const { update, style, floating } = useVirtualFloatingLink({
         editorId: editor.id,
         open: open && mode === 'insert',
@@ -67,6 +77,6 @@ export const useFloatingLinkInsert = ({ floatingOptions, ...props }: FloatingLin
             zIndex: 1,
         },
         ...props,
-        ref: useComposedRef<HTMLElement | null>(props.ref, floating),
+        ref: useComposedRef<HTMLElement | null>(props.ref, floating, ref),
     };
 };
