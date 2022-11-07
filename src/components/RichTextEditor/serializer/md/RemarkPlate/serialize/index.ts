@@ -22,6 +22,13 @@ const doesChildHasALink = (chunk: BlockType | LeafType, nodeTypes: InputNodeType
         ? chunk.children.some((child) => !isLeafNode(child) && child.type === nodeTypes.link)
         : false;
 
+const shouldIgnoreParagraphNewline = (
+    ignoreParagraphNewline: boolean,
+    text: string,
+    chunk: BlockType | LeafType,
+    nodeTypes: InputNodeTypes,
+) => !ignoreParagraphNewline && (text === '' || text === '\n') && chunk.parentType === nodeTypes.paragraph;
+
 export default function serialize(chunk: BlockType | LeafType, opts: Options = { nodeTypes: defaultNodeTypes }) {
     const { nodeTypes: userNodeTypes = defaultNodeTypes, ignoreParagraphNewline = false, listDepth = 0 } = opts;
 
@@ -85,7 +92,7 @@ export default function serialize(chunk: BlockType | LeafType, opts: Options = {
     }
 
     // This is pretty fragile code, check the long comment where we iterate over children
-    if (!ignoreParagraphNewline && (text === '' || text === '\n') && chunk.parentType === nodeTypes.paragraph) {
+    if (shouldIgnoreParagraphNewline(ignoreParagraphNewline, text, chunk, nodeTypes)) {
         type = nodeTypes.paragraph;
         children = BREAK_TAG;
     }
