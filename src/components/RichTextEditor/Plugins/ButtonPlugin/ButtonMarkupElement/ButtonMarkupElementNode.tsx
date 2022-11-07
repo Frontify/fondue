@@ -47,14 +47,19 @@ export const ButtonMarkupElementNode = (props: ButtonRootProps) => {
 
 const getButtonStyle = (rteContext: RichTextEditorContextProps | null, buttonStyle: ButtonStyle) => {
     if (rteContext) {
+        let styles;
         switch (buttonStyle) {
             case 'primary':
-                return rteContext.designTokens.button_primary;
+                styles = rteContext.designTokens.button_primary;
+                break;
             case 'secondary':
-                return rteContext.designTokens.button_secondary;
+                styles = rteContext.designTokens.button_secondary;
+                break;
             case 'tertiary':
-                return rteContext.designTokens.button_tertiary;
+                styles = rteContext.designTokens.button_tertiary;
+                break;
         }
+        return { ...styles, cursor: 'pointer', display: 'inline-block', margin: '10px 0' };
     }
 };
 
@@ -77,7 +82,6 @@ const HoverableButtonLink: FC<Props> = ({ attributes, styles = { hover: {} }, ch
             href={href}
             target={target}
             style={hovered ? { ...styles, ...styles.hover } : styles}
-            className="hover:tw-cursor-pointer"
         >
             {children}
         </a>
