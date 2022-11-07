@@ -17,7 +17,7 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
         <div onClick={onClick} ref={ref} aria-hidden="true">
             <div
                 className={merge([
-                    'tw-absolute tw-top-2 tw-text-black-60 tw-right-8 tw-z-10',
+                    'tw-absolute tw-top-2 tw-text-black-60 tw-z-10',
                     value === '' || !isClearable ? 'tw-right-4' : 'tw-right-8',
                 ])}
             >
