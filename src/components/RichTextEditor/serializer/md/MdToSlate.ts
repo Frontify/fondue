@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { unified } from 'unified';
-import slate from 'remark-slate';
 import parse from 'remark-parse';
+import slate from './RemarkPlate';
 import { options } from './options';
 import { MdTransformer } from './MdTransformer';
 import { SlateObject } from './types';
