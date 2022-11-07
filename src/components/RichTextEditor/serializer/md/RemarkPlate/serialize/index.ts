@@ -1,15 +1,12 @@
-import { BlockType, InputNodeTypes, LeafType, defaultNodeTypes } from './astTypes';
-import escapeHtml from 'escape-html';
+import { BlockType, InputNodeTypes, LeafType, defaultNodeTypes } from '../astTypes';
+import { isLeafNode } from './isLeafNode';
+import { processNodes } from './processNodes';
 
 interface Options {
     nodeTypes?: InputNodeTypes;
     listDepth?: number;
     ignoreParagraphNewline?: boolean;
 }
-
-const isLeafNode = (node: BlockType | LeafType): node is LeafType => {
-    return typeof (node as LeafType).text === 'string';
-};
 
 const VOID_ELEMENTS: Array<keyof InputNodeTypes> = ['thematic_break', 'image'];
 
@@ -124,74 +121,6 @@ export default function serialize(chunk: BlockType | LeafType, opts: Options = {
 
     return processNodes(type, nodeTypes, children, chunk, listDepth);
 }
-
-const processNodes = (
-    type: string,
-    nodeTypes: InputNodeTypes,
-    children: string,
-    chunk: BlockType,
-    listDepth: number,
-) => {
-    switch (type) {
-        case nodeTypes.heading[1]:
-            return `# ${children}\n`;
-        case nodeTypes.heading[2]:
-            return `## ${children}\n`;
-        case nodeTypes.heading[3]:
-            return `### ${children}\n`;
-        case nodeTypes.heading[4]:
-            return `#### ${children}\n`;
-        case nodeTypes.heading[5]:
-            return `##### ${children}\n`;
-        case nodeTypes.heading[6]:
-            return `###### ${children}\n`;
-
-        case nodeTypes.block_quote:
-            /**
-             * For some reason, marked is parsing blockquote w/ one new line as
-             * continued blockquote, so adding two new lines ensures that doesn't
-             * happen
-             */
-            return `> ${children}\n\n`;
-
-        case nodeTypes.code_block:
-            return `\`\`\`${(chunk as BlockType).language || ''}\n${children}\n\`\`\`\n`;
-
-        case nodeTypes.link:
-            return `[${children}](${(chunk as BlockType).link || ''})`;
-        case nodeTypes.image:
-            return `![${(chunk as BlockType).caption}](${(chunk as BlockType).link || ''})`;
-
-        case nodeTypes.ul_list:
-        case nodeTypes.ol_list:
-            return `\n${children}\n`;
-
-        case nodeTypes.listItem:
-            const isOL = chunk && chunk.parentType === nodeTypes.ol_list;
-            const treatAsLeaf =
-                (chunk as BlockType).children.length === 1 && isLeafNode((chunk as BlockType).children[0]);
-
-            let spacer = '';
-            for (let k = 0; listDepth > k; k++) {
-                if (isOL) {
-                    // https://github.com/remarkjs/remark-react/issues/65
-                    spacer += '   ';
-                } else {
-                    spacer += '  ';
-                }
-            }
-            return `${spacer}${isOL ? '1.' : '-'} ${children}${treatAsLeaf ? '\n' : ''}`;
-
-        case nodeTypes.paragraph:
-            return `${children}\n`;
-
-        case nodeTypes.thematic_break:
-            return '---\n';
-
-        default:
-            return escapeHtml(children);
-    }
-};
 
 // This function handles the case of a string like this: "   foo   "
 // Where it would be invalid markdown to generate this: "**   foo   **"
