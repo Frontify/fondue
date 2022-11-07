@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 export interface InputNodeTypes {
     paragraph: string;
     block_quote: string;

@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import escapeHtml from 'escape-html';
 import { BlockType, InputNodeTypes, LeafType } from '../astTypes';
 import { isLeafNode } from './isLeafNode';
