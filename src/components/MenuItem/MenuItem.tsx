@@ -1,28 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MenuItemContent, MenuItemContentProps, MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
-import { merge } from '@utilities/merge';
 import React, { FC } from 'react';
+import { merge } from '@utilities/merge';
 import { IconCaretRight, IconCheckMark, IconSize } from '@foundation/Icon';
-
-export enum MenuItemStyle {
-    Primary = 'Primary',
-    Danger = 'Danger',
-}
-
-export enum SelectionIndicatorIcon {
-    Check = 'Check',
-    CaretRight = 'CaretRight',
-    None = 'None',
-}
+import { MenuItemContent, MenuItemContentProps } from '@components/MenuItem/MenuItemContent';
+import { MenuItemContentSize, MenuItemStyle, MenuItemType, SelectionIndicatorIcon } from './types';
 
 export type MenuItemProps = {
     style?: MenuItemStyle;
-    size?: MenuItemContentSize;
     disabled?: boolean;
     active?: boolean;
     selectionIndicator?: SelectionIndicatorIcon;
-    type?: string;
+    type?: MenuItemType;
 } & Omit<MenuItemContentProps, 'iconSize'>;
 
 export const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
@@ -60,6 +49,7 @@ export const MenuItem: FC<MenuItemProps> = ({
     disabled = false,
     active = false,
     selectionIndicator = SelectionIndicatorIcon.Check,
+    children,
 }) => {
     const isDangerStyle = style === MenuItemStyle.Danger;
 
@@ -99,7 +89,9 @@ export const MenuItem: FC<MenuItemProps> = ({
                 subtitle={size === MenuItemContentSize.Large ? subtitle : undefined}
                 size={size}
                 switchComponent={switchComponent}
-            />
+            >
+                {children}
+            </MenuItemContent>
             <div className="tw-flex-none">{currentIcon}</div>
         </div>
     );

@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MenuItemStyle, SelectionIndicatorIcon } from '@components/MenuItem/MenuItem';
-import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from '@components/MenuItem';
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
 import React from 'react';

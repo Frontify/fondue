@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { SelectionIndicatorIcon } from '@components/MenuItem/MenuItem';
-import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import { MenuItemContentSize, SelectionIndicatorIcon } from '@components/MenuItem';
 import { generateRandomId } from '@utilities/generateRandomId';
 import { CUSTOM_LINK_ID, DEFAULT_ICON, MAX_STORED_ITEMS, QUERIES_STORAGE_KEY } from '../LinkChooser';
 import { SearchResult } from '../types';

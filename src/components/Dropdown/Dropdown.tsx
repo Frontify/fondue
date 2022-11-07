@@ -2,8 +2,13 @@
 
 import { getDisabledItemIds, getMenuItems, mapToAriaProps } from '@components/ActionMenu/Aria/helper';
 import { MenuBlock, MenuItemType, SelectMenu } from '@components/Dropdown/SelectMenu/SelectMenu';
-import { MenuItemStyle, MenuItemTextColorState, menuItemTextColorRecord } from '@components/MenuItem';
-import { MenuItemContent, MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import {
+    MenuItemContent,
+    MenuItemContentSize,
+    MenuItemStyle,
+    MenuItemTextColorState,
+    menuItemTextColorRecord,
+} from '@components/MenuItem';
 import { Trigger, TriggerSize } from '@components/Trigger/Trigger';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useButton } from '@react-aria/button';
