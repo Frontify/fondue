@@ -122,6 +122,16 @@ export default function serialize(chunk: BlockType | LeafType, opts: Options = {
         }
     }
 
+    return processNodes(type, nodeTypes, children, chunk, listDepth);
+}
+
+const processNodes = (
+    type: string,
+    nodeTypes: InputNodeTypes,
+    children: string,
+    chunk: BlockType,
+    listDepth: number,
+) => {
     switch (type) {
         case nodeTypes.heading[1]:
             return `# ${children}\n`;
@@ -137,9 +147,11 @@ export default function serialize(chunk: BlockType | LeafType, opts: Options = {
             return `###### ${children}\n`;
 
         case nodeTypes.block_quote:
-            // For some reason, marked is parsing blockquotes w/ one new line
-            // as contiued blockquotes, so adding two new lines ensures that doesn't
-            // happen
+            /**
+             * For some reason, marked is parsing blockquote w/ one new line as
+             * continued blockquote, so adding two new lines ensures that doesn't
+             * happen
+             */
             return `> ${children}\n\n`;
 
         case nodeTypes.code_block:
@@ -179,7 +191,7 @@ export default function serialize(chunk: BlockType | LeafType, opts: Options = {
         default:
             return escapeHtml(children);
     }
-}
+};
 
 // This function handles the case of a string like this: "   foo   "
 // Where it would be invalid markdown to generate this: "**   foo   **"
