@@ -3,8 +3,7 @@
 import { IconMusicNote } from '@foundation/Icon';
 import { IconSize } from '@foundation/Icon/IconSize';
 import React from 'react';
-import { MenuItem, MenuItemProps, SelectionIndicatorIcon } from './MenuItem';
-import { MenuItemContentSize } from './MenuItemContent';
+import { MenuItem, MenuItemContentSize, MenuItemProps, SelectionIndicatorIcon } from '@components/MenuItem';
 
 const MENU_ITEM_ACTIVE_ID = '[data-test-id=menu-item-active]';
 const MENU_ITEM_TITLE_ID = '[data-test-id=menu-item-title]';
