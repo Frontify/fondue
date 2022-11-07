@@ -14,11 +14,19 @@ interface Options {
 
 const VOID_ELEMENTS: Array<keyof InputNodeTypes> = ['thematic_break', 'image'];
 
+const isChildAList = (chunk: BlockType | LeafType, LIST_TYPES: string[]) =>
+    !isLeafNode(chunk) ? LIST_TYPES.includes(chunk.type || '') : false;
+
+const doesChildHasALink = (chunk: BlockType | LeafType, nodeTypes: InputNodeTypes) =>
+    !isLeafNode(chunk) && Array.isArray(chunk.children)
+        ? chunk.children.some((child) => !isLeafNode(child) && child.type === nodeTypes.link)
+        : false;
+
 export default function serialize(chunk: BlockType | LeafType, opts: Options = { nodeTypes: defaultNodeTypes }) {
     const { nodeTypes: userNodeTypes = defaultNodeTypes, ignoreParagraphNewline = false, listDepth = 0 } = opts;
 
-    const text = (chunk as LeafType).text || '';
-    let type = (chunk as BlockType).type || '';
+    const text = (chunk as LeafType).text ?? '';
+    let type = (chunk as BlockType).type ?? '';
 
     const nodeTypes: InputNodeTypes = {
         ...defaultNodeTypes,
@@ -36,7 +44,7 @@ export default function serialize(chunk: BlockType | LeafType, opts: Options = {
     if (!isLeafNode(chunk)) {
         children = chunk.children
             .map((c: BlockType | LeafType) => {
-                const isList = !isLeafNode(c) ? LIST_TYPES.includes(c.type || '') : false;
+                const isList = isChildAList(c, LIST_TYPES);
                 const selfIsList = LIST_TYPES.includes(chunk.type || '');
 
                 // Links can have the following shape
@@ -50,11 +58,7 @@ export default function serialize(chunk: BlockType | LeafType, opts: Options = {
                 //    { text: '' }
                 //  ]
                 // }
-                let childrenHasLink = false;
-
-                if (!isLeafNode(chunk) && Array.isArray(chunk.children)) {
-                    childrenHasLink = chunk.children.some((f) => !isLeafNode(f) && f.type === nodeTypes.link);
-                }
+                const childrenHasLink = doesChildHasALink(chunk, nodeTypes);
 
                 return serialize(
                     { ...c, parentType: type },

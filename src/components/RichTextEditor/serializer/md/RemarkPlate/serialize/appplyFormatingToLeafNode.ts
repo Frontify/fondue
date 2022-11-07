@@ -5,6 +5,10 @@ import { isLeafNode } from './isLeafNode';
 import { BREAK_TAG } from './utils';
 
 export const applyFormattingToLeafNode = (children: string, chunk: BlockType | LeafType) => {
+    if (children === BREAK_TAG || !isLeafNode(chunk)) {
+        return children;
+    }
+
     // Never allow decorating break tags with rich text formatting,
     // this can malform generated markdown
     // Also ensure we're only ever applying text formatting to leaf node
@@ -12,27 +16,25 @@ export const applyFormattingToLeafNode = (children: string, chunk: BlockType | L
     // we try applying formatting like to a node like this:
     // "Text foo bar **baz**" resulting in "**Text foo bar **baz****"
     // which is invalid markup and can mess everything up
-    if (children !== BREAK_TAG && isLeafNode(chunk)) {
-        if (chunk.strikeThrough && chunk.bold && chunk.italic) {
-            children = retainWhitespaceAndFormat(children, '~~***');
-        } else if (chunk.bold && chunk.italic) {
-            children = retainWhitespaceAndFormat(children, '***');
-        } else {
-            if (chunk.bold) {
-                children = retainWhitespaceAndFormat(children, '**');
-            }
+    if (chunk.strikeThrough && chunk.bold && chunk.italic) {
+        children = retainWhitespaceAndFormat(children, '~~***');
+    } else if (chunk.bold && chunk.italic) {
+        children = retainWhitespaceAndFormat(children, '***');
+    } else {
+        if (chunk.bold) {
+            children = retainWhitespaceAndFormat(children, '**');
+        }
 
-            if (chunk.italic) {
-                children = retainWhitespaceAndFormat(children, '_');
-            }
+        if (chunk.italic) {
+            children = retainWhitespaceAndFormat(children, '_');
+        }
 
-            if (chunk.strikeThrough) {
-                children = retainWhitespaceAndFormat(children, '~~');
-            }
+        if (chunk.strikeThrough) {
+            children = retainWhitespaceAndFormat(children, '~~');
+        }
 
-            if (chunk.code) {
-                children = retainWhitespaceAndFormat(children, '`');
-            }
+        if (chunk.code) {
+            children = retainWhitespaceAndFormat(children, '`');
         }
     }
 
