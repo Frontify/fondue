@@ -73,6 +73,7 @@ export const createButtonPlugin = createPluginFactory({
             rules: [
                 {
                     validNodeName: 'A',
+                    validClassName: 'btn',
                 },
             ],
             getNode: (el) => ({

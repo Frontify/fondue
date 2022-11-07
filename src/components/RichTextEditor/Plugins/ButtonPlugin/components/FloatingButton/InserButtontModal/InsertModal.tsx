@@ -109,13 +109,13 @@ export const InsertModal = () => {
 };
 
 type Props = {
-    styles: React.CSSProperties & { hover: React.CSSProperties };
+    styles?: React.CSSProperties & { hover: React.CSSProperties };
     isActive: boolean;
     onClick: () => void;
     children: ReactNode;
 };
 
-const HoverableButton: FC<Props> = ({ styles, isActive, onClick, children }) => {
+const HoverableButton: FC<Props> = ({ styles = { hover: {} }, isActive, onClick, children }) => {
     const [hovered, setHovered] = useState(false);
 
     return (
