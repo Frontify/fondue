@@ -49,7 +49,7 @@ const FlyoutTemplate: (addScrollingContent: boolean, inputFocus: boolean) => Sto
     addScrollingContent = false,
     inputFocus = false,
 ) => {
-    const Component = (args) => {
+    const Component = (args: FlyoutProps) => {
         const [activeItemId, setActiveItemId] = useState('a');
         const [input, setInput] = useState('');
         const [open, setOpen] = useState(false);
@@ -127,9 +127,9 @@ const FlyoutTemplate: (addScrollingContent: boolean, inputFocus: boolean) => Sto
     return Component;
 };
 
-export const WithoutHeader = FlyoutTemplate().bind({});
+export const WithoutHeader = FlyoutTemplate(false, false).bind({});
 
-export const WithOnclick = FlyoutTemplate().bind({});
+export const WithOnclick = FlyoutTemplate(false, false).bind({});
 
 WithOnclick.argTypes = {
     onConfirm: { action: 'onConfirm' },
@@ -141,7 +141,7 @@ WithOnclick.args = {
     onConfirm: action('onConfirm'),
 };
 
-export const WithBadges = FlyoutTemplate().bind({});
+export const WithBadges = FlyoutTemplate(false, false).bind({});
 
 WithBadges.args = {
     title: 'Header title',
@@ -373,7 +373,7 @@ WithRenderFunctionTrigger.argTypes = {
     decorator: { table: { disable: true } },
 };
 
-export const WithContentMinHeight = FlyoutTemplate().bind({});
+export const WithContentMinHeight = FlyoutTemplate(false, false).bind({});
 
 WithContentMinHeight.args = {
     contentMinHeight: 200,
