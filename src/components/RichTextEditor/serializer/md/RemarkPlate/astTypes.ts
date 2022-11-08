@@ -69,7 +69,7 @@ export type NodeType = BlockType | LeafType;
 
 export interface LeafType {
     text: string;
-    strikeThrough?: boolean;
+    strikethrough?: boolean;
     bold?: boolean;
     italic?: boolean;
     code?: boolean;
@@ -183,7 +183,7 @@ export type BoldNode = {
 };
 
 export type StrikeThoughNode = {
-    strikeThrough: true;
+    strikethrough: true;
     children: TextNode;
 };
 
