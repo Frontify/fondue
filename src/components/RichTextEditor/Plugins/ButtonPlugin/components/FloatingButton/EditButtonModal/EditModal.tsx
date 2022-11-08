@@ -4,14 +4,18 @@ import React from 'react';
 import { IconPen, IconTrashBin } from '@foundation/Icon';
 import { FloatingButton } from '../FloatingButton';
 import { useFloatingButtonUrlInput } from '../FloatingButtonUrlInput';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 
 export const EditModal = () => {
     const urlHtmlProps = useFloatingButtonUrlInput({});
+    const { designTokens } = useRichTextEditorContext();
 
     return (
         <div data-test-id="floating-button-edit" className="tw-bg-white tw-rounded tw-shadow tw-p-4 tw-min-w-[400px]">
             <span data-test-id={'preview-button-flyout'} className="tw-flex tw-justify-between">
-                <span className="tw-pointer-events-none">{urlHtmlProps.defaultValue}</span>
+                <span className="tw-pointer-events-none" style={designTokens.link}>
+                    {urlHtmlProps.defaultValue}
+                </span>
                 <span className="tw-flex tw-gap-2">
                     <span
                         role="button"
