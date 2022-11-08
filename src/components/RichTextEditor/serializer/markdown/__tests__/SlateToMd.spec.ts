@@ -66,12 +66,12 @@ describe('Slate To Markdown transformer', () => {
         expect(result).to.deep.equal(hrMD);
     });
 
-    it.skip('should transform link', () => {
+    it('should transform link', () => {
         const result = transformer.process(linkTree);
         expect(result).to.deep.equal(linkMD);
     });
 
-    it.skip('should transform image', () => {
+    it('should transform image', () => {
         const result = transformer.process(imageTree);
         expect(result).to.deep.equal(imageMD);
     });
