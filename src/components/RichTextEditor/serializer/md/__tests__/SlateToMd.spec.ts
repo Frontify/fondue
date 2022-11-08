@@ -61,7 +61,7 @@ describe('Slate To Markdown transformer', () => {
         expect(result).to.deep.equal(orderedListMD);
     });
 
-    it.skip('should transform hr', () => {
+    it('should transform hr', () => {
         const result = transformer.process(hrTree);
         expect(result).to.deep.equal(hrMD);
     });
