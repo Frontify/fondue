@@ -23,7 +23,7 @@ import {
     PlateEditor,
     getPluginType,
 } from '@udecode/plate';
-import { OptionType } from 'remark-slate';
+import { OptionType } from './RemarkPlate';
 
 export const options = (editor: PlateEditor): OptionType => ({
     nodeTypes: {
