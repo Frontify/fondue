@@ -65,7 +65,7 @@
         "@storybook/addon-actions": "6.5.9",
         "@storybook/addon-essentials": "6.5.9",
         "@storybook/addon-links": "6.5.9",
-        "@storybook/builder-vite": "0.2.2",
+        "@storybook/builder-vite": "0.2.5",
         "@storybook/react": "6.5.9",
         "@svgr/core": "6.2.1",
         "@svgr/plugin-jsx": "6.2.1",
