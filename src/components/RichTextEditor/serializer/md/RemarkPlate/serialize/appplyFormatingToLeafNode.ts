@@ -16,7 +16,7 @@ export const applyFormattingToLeafNode = (children: string, chunk: NodeType) => 
     // we try applying formatting like to a node like this:
     // "Text foo bar **baz**" resulting in "**Text foo bar **baz****"
     // which is invalid markup and can mess everything up
-    if (chunk.strikeThrough && chunk.bold && chunk.italic) {
+    if (chunk.strikethrough && chunk.bold && chunk.italic) {
         children = retainWhitespaceAndFormat(children, '~~***');
     } else if (chunk.bold && chunk.italic) {
         children = retainWhitespaceAndFormat(children, '***');
@@ -29,7 +29,7 @@ export const applyFormattingToLeafNode = (children: string, chunk: NodeType) => 
             children = retainWhitespaceAndFormat(children, '_');
         }
 
-        if (chunk.strikeThrough) {
+        if (chunk.strikethrough) {
             children = retainWhitespaceAndFormat(children, '~~');
         }
 
