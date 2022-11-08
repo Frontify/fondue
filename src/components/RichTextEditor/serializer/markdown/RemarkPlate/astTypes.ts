@@ -97,17 +97,17 @@ export type OptionType<T extends InputNodeTypes = InputNodeTypes> = {
     imageCaptionKey?: string;
 };
 
-export type MdAstNode = {
+export type MarkdownAstNode = {
     type?: MarkdownAstNodeType;
     ordered?: boolean;
     value?: string;
     text?: string;
-    children?: Array<MdAstNode>;
+    children?: Array<MarkdownAstNode>;
     depth?: 1 | 2 | 3 | 4 | 5 | 6;
     url?: string;
     alt?: string;
     lang?: string;
-    // mdast metadata
+    // Markdown Ast metadata
     position?: any;
     spread?: any;
     checked?: any;
