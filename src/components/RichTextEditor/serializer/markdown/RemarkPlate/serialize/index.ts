@@ -56,7 +56,7 @@ const defaultOptions: OptionType = {
     linkDestinationKey: LINK_DESTINATION_KEY,
 };
 
-export default function serialize(chunk: NodeType, opts: PartialOptionType) {
+function process(chunk: NodeType, opts: PartialOptionType) {
     const options = {
         ...defaultOptions,
         ...opts,
@@ -97,7 +97,7 @@ export default function serialize(chunk: NodeType, opts: PartialOptionType) {
                 // }
                 const childrenHasLink = doesChildHasALink(chunk, nodeTypes);
 
-                return serialize(
+                return process(
                     { ...c, parentType: type },
                     {
                         nodeTypes,
@@ -139,4 +139,21 @@ export default function serialize(chunk: NodeType, opts: PartialOptionType) {
     children = processNodes(options, children, chunk, options.listDepth, type);
 
     return shouldEscapeNode(children, nodeTypes, type, parentType);
+}
+
+export default function serialize(opts: PartialOptionType) {
+    const options = {
+        ...defaultOptions,
+        ...opts,
+        nodeTypes: {
+            ...defaultOptions.nodeTypes,
+            ...opts?.nodeTypes,
+            heading: {
+                ...defaultOptions.nodeTypes.heading,
+                ...opts?.nodeTypes?.heading,
+            },
+        },
+    };
+
+    return (tree: NodeType[]): string => tree.map((node) => process(node, options)).join('');
 }
