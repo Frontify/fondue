@@ -127,7 +127,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MdAstNode, o
 
         case 'text':
         default:
-            return { text: node.value || '' };
+            return { text: node.value ?? '' };
     }
 }
 

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export interface InputNodeTypes {
+export type InputNodeTypes = {
     paragraph: string;
     block_quote: string;
     code_block: string;
@@ -22,9 +22,9 @@ export interface InputNodeTypes {
     inline_code_mark: string;
     thematic_break: string;
     image: string;
-}
+};
 
-export type MdAstNodeType =
+export type MarkdownAstNodeType =
     | 'paragraph'
     | 'heading'
     | 'list'
@@ -67,16 +67,16 @@ export const defaultNodeTypes: InputNodeTypes = {
 
 export type NodeType = BlockType | LeafType;
 
-export interface LeafType {
+export type LeafType = {
     text: string;
     strikethrough?: boolean;
     bold?: boolean;
     italic?: boolean;
     code?: boolean;
     parentType?: string;
-}
+};
 
-export interface BlockType {
+export type BlockType = {
     type: string;
     parentType?: string;
     link?: string;
@@ -84,21 +84,21 @@ export interface BlockType {
     language?: string;
     break?: boolean;
     children: NodeType[];
-}
+};
 
 type RecursivePartial<T> = {
     [P in keyof T]?: RecursivePartial<T[P]>;
 };
 
-export interface OptionType<T extends InputNodeTypes = InputNodeTypes> {
+export type OptionType<T extends InputNodeTypes = InputNodeTypes> = {
     nodeTypes?: RecursivePartial<T>;
     linkDestinationKey?: string;
     imageSourceKey?: string;
     imageCaptionKey?: string;
-}
+};
 
-export interface MdAstNode {
-    type?: MdAstNodeType;
+export type MdAstNode = {
+    type?: MarkdownAstNodeType;
     ordered?: boolean;
     value?: string;
     text?: string;
@@ -112,7 +112,7 @@ export interface MdAstNode {
     spread?: any;
     checked?: any;
     indent?: any;
-}
+};
 
 export type TextNode = { text?: string };
 

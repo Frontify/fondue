@@ -160,8 +160,8 @@
         "xstate": "^4.28.1"
     },
     "peerDependencies": {
+        "escape-html": "^1.0.3",
         "react": "^17.0.2",
-        "react-dom": "^17.0.2",
-        "escape-html": "^1.0.3"
+        "react-dom": "^17.0.2"
     }
 }
