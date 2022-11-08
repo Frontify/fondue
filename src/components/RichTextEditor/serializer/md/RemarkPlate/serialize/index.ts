@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import escapeHtml from 'escape-html';
 import { BlockType, InputNodeTypes, LeafType, NodeType, defaultNodeTypes } from '../astTypes';
 import { applyFormattingToLeafNode } from './appplyFormatingToLeafNode';
 import { isLeafNode } from './isLeafNode';
@@ -29,11 +30,21 @@ const shouldIgnoreParagraphNewline = (
     nodeTypes: InputNodeTypes,
 ) => !ignoreParagraphNewline && (text === '' || text === '\n') && chunk.parentType === nodeTypes.paragraph;
 
+const shouldEscapeNode = (children: string, nodeTypes: InputNodeTypes, type?: string, parentType?: string) => {
+    // don't escape if: code block
+    if (parentType !== nodeTypes.code_block && type !== nodeTypes.code_block) {
+        children = escapeHtml(children);
+    }
+
+    return children;
+};
+
 export default function serialize(chunk: NodeType, opts: Options = { nodeTypes: defaultNodeTypes }) {
     const { nodeTypes: userNodeTypes = defaultNodeTypes, ignoreParagraphNewline = false, listDepth = 0 } = opts;
 
     const text = (chunk as LeafType).text ?? '';
-    let type = (chunk as BlockType).type ?? '';
+    let type = (chunk as BlockType).type ?? undefined;
+    const parentType = (chunk as BlockType).parentType ?? undefined;
 
     const nodeTypes: InputNodeTypes = {
         ...defaultNodeTypes,
@@ -101,7 +112,11 @@ export default function serialize(chunk: NodeType, opts: Options = { nodeTypes: 
         return;
     }
 
-    children = applyFormattingToLeafNode(children, chunk);
+    if (children !== BREAK_TAG && isLeafNode(chunk)) {
+        children = applyFormattingToLeafNode(children, chunk);
+    }
 
-    return processNodes(type, nodeTypes, children, chunk, listDepth);
+    children = processNodes(nodeTypes, children, chunk, listDepth, type);
+
+    return shouldEscapeNode(children, nodeTypes, type, parentType);
 }

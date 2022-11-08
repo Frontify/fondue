@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import escapeHtml from 'escape-html';
+// import escapeHtml from 'escape-html';
 import { BlockType, InputNodeTypes, NodeType } from '../astTypes';
 import { isLeafNode } from './isLeafNode';
 
@@ -26,11 +26,11 @@ const processListItemNode = (
 };
 
 export const processNodes = (
-    type: string,
     nodeTypes: InputNodeTypes,
     children: string,
     chunk: NodeType,
     listDepth: number,
+    type?: string,
 ) => {
     switch (type) {
         case nodeTypes.heading[1]:
@@ -76,6 +76,6 @@ export const processNodes = (
             return '---\n';
 
         default:
-            return escapeHtml(children);
+            return children;
     }
 };
