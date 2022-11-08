@@ -2,6 +2,9 @@
     "name": "@frontify/fondue",
     "version": "12.0.0-beta.18",
     "description": "Design system of Frontify",
+    "engines": {
+        "node": "~16"
+    },
     "main": "dist/index.umd.js",
     "unpkg": "dist/index.umd.js",
     "jsdelivr": "dist/index.umd.js",
