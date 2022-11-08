@@ -229,7 +229,7 @@ describe('RichTextEditor Component', () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR_FLOATING).should('be.visible');
-        cy.get(TOOLBAR_GROUP_1).children().eq(5).click();
+        cy.get(TOOLBAR_GROUP_1).children().eq(6).click();
         cy.get('[contenteditable=true]').should(
             'include.html',
             'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5',
