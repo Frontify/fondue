@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BlockType, InputNodeTypes, NodeType } from '../astTypes';
+import { BlockType, InputNodeTypes, NodeType, OptionType } from '../astTypes';
 import { isLeafNode } from './isLeafNode';
-import { Options } from './types';
 
 const processListItemNode = (
     nodeTypes: InputNodeTypes,
@@ -25,8 +24,14 @@ const processListItemNode = (
     return `${spacer}${isOL ? '1.' : '-'} ${children}${treatAsLeaf ? '\n' : ''}`;
 };
 
-export const processNodes = (options: Options, children: string, chunk: NodeType, listDepth: number, type?: string) => {
-    const { nodeTypes } = options;
+export const processNodes = (
+    options: OptionType,
+    children: string,
+    chunk: NodeType,
+    listDepth: number,
+    type?: string,
+) => {
+    const nodeTypes = options.nodeTypes as InputNodeTypes;
 
     switch (type) {
         case nodeTypes.heading[1]:
