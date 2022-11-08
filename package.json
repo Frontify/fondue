@@ -1,6 +1,6 @@
 {
     "name": "@frontify/fondue",
-    "version": "12.0.0-beta-15",
+    "version": "12.0.0-beta.17",
     "description": "Design system of Frontify",
     "main": "dist/index.umd.js",
     "unpkg": "dist/index.umd.js",
@@ -79,7 +79,7 @@
         "chalk": "5.0.1",
         "concat": "1.0.3",
         "cross-env": "7.0.3",
-        "cypress": "^10.7.0",
+        "cypress": "^10.11.0",
         "cypress-real-events": "^1.7.1",
         "eslint": "8.20.0",
         "eslint-plugin-jsx-a11y": "6.6.1",
@@ -138,7 +138,7 @@
         "@react-stately/tooltip": "^3.1.1",
         "@react-stately/tree": "^3.3.1",
         "@storybook/addon-a11y": "^6.5.7",
-        "@udecode/plate": "16.9.1",
+        "@udecode/plate": "^18.8.1",
         "@xstate/immer": "^0.3.1",
         "@xstate/react": "^1.6.3",
         "date-fns": "^2.28.0",
@@ -160,10 +160,11 @@
         "xstate": "^4.28.1"
     },
     "peerDependencies": {
+        "escape-html": "^1.0.3",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
+        "remark-gfm": "^3.0.1",
         "remark-parse": "^10.0.1",
-        "remark-slate": "^1.8.6",
         "unified": "^10.1.2"
     }
 }

@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TDescendant } from '@udecode/plate';
 import {
     BOLD_CLASSES,
     CODE_CLASSES,
@@ -10,7 +9,7 @@ import {
 } from '@components/RichTextEditor/Plugins';
 import escapeHtml from 'escape-html';
 
-export const serializeLeafToHtml = (node: TDescendant): string => {
+export const serializeLeafToHtml = (node: any): string => {
     let string = escapeHtml(node.text);
     if (node.bold) {
         string = `<span class="${BOLD_CLASSES}">${string}</span>`;
