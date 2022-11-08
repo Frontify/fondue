@@ -1,26 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { deepMerge } from '@components/RichTextEditor/utils';
 import escapeHtml from 'escape-html';
 import { BlockType, InputNodeTypes, LeafType, NodeType, defaultNodeTypes } from '../astTypes';
 import { applyFormattingToLeafNode } from './appplyFormatingToLeafNode';
 import { isLeafNode } from './isLeafNode';
 import { processNodes } from './processNodes';
-import { BREAK_TAG } from './utils';
+import { Options } from './types';
+import { BREAK_TAG, LINK_DESTINATION_KEY } from './utils';
 
-interface Options {
-    nodeTypes?: InputNodeTypes;
-    listDepth?: number;
-    ignoreParagraphNewline?: boolean;
-}
-
-const VOID_ELEMENTS: Array<keyof InputNodeTypes> = ['thematic_break', 'image'];
+const VOID_ELEMENTS: Array<keyof InputNodeTypes> = ['thematic_break', 'image', 'img'];
 
 const isChildAList = (chunk: NodeType, LIST_TYPES: string[]) =>
     !isLeafNode(chunk) ? LIST_TYPES.includes(chunk.type || '') : false;
 
 const doesChildHasALink = (chunk: NodeType, nodeTypes: InputNodeTypes) =>
     !isLeafNode(chunk) && Array.isArray(chunk.children)
-        ? chunk.children.some((child) => !isLeafNode(child) && child.type === nodeTypes.link)
+        ? chunk.children.some(
+              (child) =>
+                  !isLeafNode(child) &&
+                  (child.type === nodeTypes.link || child.type === nodeTypes.img || child.type === nodeTypes.image),
+          )
         : false;
 
 const shouldIgnoreParagraphNewline = (
@@ -31,8 +31,9 @@ const shouldIgnoreParagraphNewline = (
 ) => !ignoreParagraphNewline && (text === '' || text === '\n') && chunk.parentType === nodeTypes.paragraph;
 
 const shouldEscapeNode = (children: string, nodeTypes: InputNodeTypes, type?: string, parentType?: string) => {
-    // don't escape if: code block
-    if (parentType !== nodeTypes.code_block && type !== nodeTypes.code_block) {
+    // don't escape if: code block, image, img
+    const isCodeBlock = parentType === nodeTypes.code_block || type === nodeTypes.code_block;
+    if (!isCodeBlock) {
         children = escapeHtml(children);
     }
 
@@ -42,26 +43,24 @@ const shouldEscapeNode = (children: string, nodeTypes: InputNodeTypes, type?: st
 const getDepthOfNestedLists = (listTypes: string[], children: NodeType, listDepth: number) =>
     listTypes.includes((children as BlockType).type || '') ? listDepth + 1 : listDepth;
 
-export default function serialize(chunk: NodeType, opts: Options = { nodeTypes: defaultNodeTypes }) {
-    const { nodeTypes: userNodeTypes = defaultNodeTypes, ignoreParagraphNewline = false, listDepth = 0 } = opts;
+const defaultOptions: Options = {
+    nodeTypes: defaultNodeTypes,
+    ignoreParagraphNewline: false,
+    listDepth: 0,
+    linkDestinationKey: LINK_DESTINATION_KEY,
+};
+
+export default function serialize(chunk: NodeType, opts: Options) {
+    const options = deepMerge<Options>(defaultOptions, opts) as Options;
+    const { nodeTypes } = options;
 
     const text = (chunk as LeafType).text ?? '';
     let type = (chunk as BlockType).type ?? undefined;
     const parentType = (chunk as BlockType).parentType ?? undefined;
-
-    const nodeTypes: InputNodeTypes = {
-        ...defaultNodeTypes,
-        ...userNodeTypes,
-        heading: {
-            ...defaultNodeTypes.heading,
-            ...userNodeTypes.heading,
-        },
-    };
-
     const LIST_TYPES = [nodeTypes.ul_list, nodeTypes.ol_list];
-
     let children = text;
 
+    console.log('chunk', chunk);
     if (!isLeafNode(chunk)) {
         children = chunk.children
             .map((c: NodeType) => {
@@ -93,12 +92,13 @@ export default function serialize(chunk: NodeType, opts: Options = { nodeTypes: 
                         // of whitespace. If we're parallel to a link we also don't want
                         // to respect neighboring paragraphs
                         ignoreParagraphNewline:
-                            (ignoreParagraphNewline || isList || selfIsList || childrenHasLink) &&
+                            (options.ignoreParagraphNewline || isList || selfIsList || childrenHasLink) &&
                             // if we have c.break, never ignore empty paragraph new line
                             !(c as BlockType).break,
 
                         // track depth of nested lists so we can add proper spacing
-                        listDepth: getDepthOfNestedLists(LIST_TYPES, c, listDepth),
+                        listDepth: getDepthOfNestedLists(LIST_TYPES, c, options.listDepth),
+                        linkDestinationKey: options.linkDestinationKey,
                     },
                 );
             })
@@ -106,7 +106,7 @@ export default function serialize(chunk: NodeType, opts: Options = { nodeTypes: 
     }
 
     // This is pretty fragile code, check the long comment where we iterate over children
-    if (shouldIgnoreParagraphNewline(ignoreParagraphNewline, text, chunk, nodeTypes)) {
+    if (shouldIgnoreParagraphNewline(options.ignoreParagraphNewline, text, chunk, nodeTypes)) {
         type = nodeTypes.paragraph;
         children = BREAK_TAG;
     }
@@ -119,7 +119,7 @@ export default function serialize(chunk: NodeType, opts: Options = { nodeTypes: 
         children = applyFormattingToLeafNode(children, chunk);
     }
 
-    children = processNodes(nodeTypes, children, chunk, listDepth, type);
+    children = processNodes(options, children, chunk, options.listDepth, type);
 
     return shouldEscapeNode(children, nodeTypes, type, parentType);
 }

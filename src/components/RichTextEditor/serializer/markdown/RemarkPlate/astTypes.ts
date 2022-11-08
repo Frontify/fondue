@@ -22,6 +22,7 @@ export type InputNodeTypes = {
     inline_code_mark: string;
     thematic_break: string;
     image: string;
+    img: string;
 };
 
 export type MarkdownAstNodeType =
@@ -63,6 +64,7 @@ export const defaultNodeTypes: InputNodeTypes = {
     inline_code_mark: 'code',
     thematic_break: 'thematic_break',
     image: 'image',
+    img: 'img',
 };
 
 export type NodeType = BlockType | LeafType;
@@ -78,12 +80,13 @@ export type LeafType = {
 
 export type BlockType = {
     type: string;
+    children: NodeType[];
     parentType?: string;
-    link?: string;
     caption?: string;
     language?: string;
     break?: boolean;
-    children: NodeType[];
+    link?: string;
+    url?: string;
 };
 
 type RecursivePartial<T> = {
