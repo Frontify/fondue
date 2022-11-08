@@ -2,6 +2,7 @@
 
 import { BlockType, InputNodeTypes, NodeType } from '../astTypes';
 import { isLeafNode } from './isLeafNode';
+import { Options } from './types';
 
 const processListItemNode = (
     nodeTypes: InputNodeTypes,
@@ -24,13 +25,9 @@ const processListItemNode = (
     return `${spacer}${isOL ? '1.' : '-'} ${children}${treatAsLeaf ? '\n' : ''}`;
 };
 
-export const processNodes = (
-    nodeTypes: InputNodeTypes,
-    children: string,
-    chunk: NodeType,
-    listDepth: number,
-    type?: string,
-) => {
+export const processNodes = (options: Options, children: string, chunk: NodeType, listDepth: number, type?: string) => {
+    const { nodeTypes } = options;
+
     switch (type) {
         case nodeTypes.heading[1]:
             return `# ${children}\n`;
@@ -57,9 +54,13 @@ export const processNodes = (
             return `\`\`\`${(chunk as BlockType).language || ''}\n${children}\n\`\`\`\n`;
 
         case nodeTypes.link:
-            return `[${children}](${(chunk as BlockType).link || ''})`;
+            const linkUrl = (chunk as BlockType).url ?? '';
+            return `[${children}](${linkUrl})`;
+
         case nodeTypes.image:
-            return `![${(chunk as BlockType).caption}](${(chunk as BlockType).link || ''})`;
+        case nodeTypes.img:
+            const imageUrl = (chunk as BlockType).link ?? '';
+            return `![${(chunk as BlockType).caption}](${imageUrl})`;
 
         case nodeTypes.ul_list:
         case nodeTypes.ol_list:
