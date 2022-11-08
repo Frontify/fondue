@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// import escapeHtml from 'escape-html';
 import { BlockType, InputNodeTypes, NodeType } from '../astTypes';
 import { isLeafNode } from './isLeafNode';
 
@@ -73,7 +72,7 @@ export const processNodes = (
             return `${children}\n`;
 
         case nodeTypes.thematic_break:
-            return '---\n';
+            return `\n---${children}\n\n`;
 
         default:
             return children;
