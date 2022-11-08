@@ -1,12 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import escapeHtml from 'escape-html';
-import { deepMerge } from '@components/RichTextEditor/utils';
-import { BlockType, InputNodeTypes, LeafType, NodeType, defaultNodeTypes } from '../astTypes';
+import {
+    BlockType,
+    InputNodeTypes,
+    LeafType,
+    NodeType,
+    OptionType,
+    PartialOptionType,
+    defaultNodeTypes,
+} from '../astTypes';
 import { applyFormattingToLeafNode } from './appplyFormatingToLeafNode';
 import { isLeafNode } from './isLeafNode';
 import { processNodes } from './processNodes';
-import { Options } from './types';
 import { BREAK_TAG, LINK_DESTINATION_KEY } from './utils';
 
 const VOID_ELEMENTS: Array<keyof InputNodeTypes> = ['thematic_break', 'image', 'img'];
@@ -43,16 +49,28 @@ const shouldEscapeNode = (children: string, nodeTypes: InputNodeTypes, type?: st
 const getDepthOfNestedLists = (listTypes: string[], children: NodeType, listDepth: number) =>
     listTypes.includes((children as BlockType).type || '') ? listDepth + 1 : listDepth;
 
-const defaultOptions: Options = {
+const defaultOptions: OptionType = {
     nodeTypes: defaultNodeTypes,
     ignoreParagraphNewline: false,
     listDepth: 0,
     linkDestinationKey: LINK_DESTINATION_KEY,
 };
 
-export default function serialize(chunk: NodeType, opts: Options) {
-    const options = deepMerge<Options>(defaultOptions, opts) as Options;
-    const { nodeTypes } = options;
+export default function serialize(chunk: NodeType, opts: PartialOptionType) {
+    const options = {
+        ...defaultOptions,
+        ...opts,
+        nodeTypes: {
+            ...defaultOptions.nodeTypes,
+            ...opts?.nodeTypes,
+            heading: {
+                ...defaultOptions.nodeTypes.heading,
+                ...opts?.nodeTypes?.heading,
+            },
+        },
+    };
+
+    const nodeTypes = options.nodeTypes as InputNodeTypes;
 
     const text = (chunk as LeafType).text ?? '';
     let type = (chunk as BlockType).type ?? undefined;
@@ -60,7 +78,6 @@ export default function serialize(chunk: NodeType, opts: Options) {
     const LIST_TYPES = [nodeTypes.ul_list, nodeTypes.ol_list];
     let children = text;
 
-    console.log('chunk', chunk);
     if (!isLeafNode(chunk)) {
         children = chunk.children
             .map((c: NodeType) => {
