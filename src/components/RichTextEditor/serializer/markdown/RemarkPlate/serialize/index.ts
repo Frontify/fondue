@@ -39,6 +39,9 @@ const shouldEscapeNode = (children: string, nodeTypes: InputNodeTypes, type?: st
     return children;
 };
 
+const getDepthOfNestedLists = (listTypes: string[], children: NodeType, listDepth: number) =>
+    listTypes.includes((children as BlockType).type || '') ? listDepth + 1 : listDepth;
+
 export default function serialize(chunk: NodeType, opts: Options = { nodeTypes: defaultNodeTypes }) {
     const { nodeTypes: userNodeTypes = defaultNodeTypes, ignoreParagraphNewline = false, listDepth = 0 } = opts;
 
@@ -95,7 +98,7 @@ export default function serialize(chunk: NodeType, opts: Options = { nodeTypes: 
                             !(c as BlockType).break,
 
                         // track depth of nested lists so we can add proper spacing
-                        listDepth: LIST_TYPES.includes((c as BlockType).type || '') ? listDepth + 1 : listDepth,
+                        listDepth: getDepthOfNestedLists(LIST_TYPES, c, listDepth),
                     },
                 );
             })
