@@ -1,14 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { NodeType } from '../astTypes';
-import { isLeafNode } from './isLeafNode';
-import { BREAK_TAG } from './utils';
+import { LeafType } from '../astTypes';
 
-export const applyFormattingToLeafNode = (children: string, chunk: NodeType) => {
-    if (children === BREAK_TAG || !isLeafNode(chunk)) {
-        return children;
-    }
-
+export const applyFormattingToLeafNode = (children: string, chunk: LeafType) => {
     // Never allow decorating break tags with rich text formatting,
     // this can malform generated markdown
     // Also ensure we're only ever applying text formatting to leaf node
