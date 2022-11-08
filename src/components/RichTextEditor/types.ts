@@ -4,7 +4,9 @@ import { CSSProperties, ReactElement } from 'react';
 import { ButtonStyles, TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { EditorActions } from './utils/actions';
 
-export type DesignTokens = Partial<Record<TextStyles | ButtonStyles, CSSProperties>>;
+export type DesignTokens =
+    | Partial<Record<TextStyles, CSSProperties>>
+    | Partial<Record<ButtonStyles, CSSProperties & { hover: CSSProperties }>>;
 
 export type ToolbarCustomProps = {
     actions: EditorActions[][];

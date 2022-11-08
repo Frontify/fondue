@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactNode, useState } from 'react';
+import React, { CSSProperties, FC, ReactNode, useState } from 'react';
 import {
     RichTextEditorContextProps,
     useRichTextEditorContext,
@@ -8,6 +8,7 @@ import {
 import { ButtonRootProps } from '../components/Button';
 import { ButtonStyle, TButtonElement } from '../types';
 import { HTMLPropsAs, useElementProps } from '@udecode/plate';
+import { ButtonStyles } from '../../TextStylePlugin/TextStyles';
 
 const useButton = (props: ButtonRootProps): HTMLPropsAs<'a'> & { buttonStyle: ButtonStyle } => {
     const _props = useElementProps<TButtonElement, 'a'>({
@@ -48,15 +49,18 @@ export const ButtonMarkupElementNode = (props: ButtonRootProps) => {
 const getButtonStyle = (rteContext: RichTextEditorContextProps | null, buttonStyle: ButtonStyle) => {
     if (rteContext) {
         let styles;
+        const design = rteContext.designTokens as Partial<
+            Record<ButtonStyles, CSSProperties & { hover: CSSProperties }>
+        >;
         switch (buttonStyle) {
             case 'primary':
-                styles = rteContext.designTokens.button_primary;
+                styles = design.button_primary;
                 break;
             case 'secondary':
-                styles = rteContext.designTokens.button_secondary;
+                styles = design.button_secondary;
                 break;
             case 'tertiary':
-                styles = rteContext.designTokens.button_tertiary;
+                styles = design.button_tertiary;
                 break;
         }
         return { ...styles, cursor: 'pointer', display: 'inline-block', margin: '10px 0' };

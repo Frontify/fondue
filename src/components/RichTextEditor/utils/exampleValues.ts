@@ -14,6 +14,7 @@ import {
     MARK_UNDERLINE,
     TDescendant,
 } from '@udecode/plate';
+import { ELEMENT_BUTTON } from '../Plugins';
 import { ELEMENT_CHECK_ITEM } from '../Plugins/CheckboxListPlugin/id';
 import { MentionComboboxItem, MentionableCategory } from '../Plugins/MentionPlugin/types';
 import { TextStyles } from '../Plugins/TextStylePlugin/TextStyles';
@@ -463,4 +464,46 @@ export const mentionable: MentionComboboxItem[] = [
     { category: MentionableCategory.USER, key: '48', text: 'Brendol Hux' },
     { category: MentionableCategory.USER, key: '49', text: 'BT-1' },
     { category: MentionableCategory.USER, key: '50', text: 'C-3PO' },
+];
+
+export const buttonValues = [
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [
+            { text: 'This is a ' },
+            {
+                type: ELEMENT_BUTTON,
+                url: 'https://www.google.com',
+                buttonStyle: 'primary',
+                children: [{ text: 'primary' }],
+            },
+            { text: ' button.' },
+        ],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [
+            { text: 'This is a ' },
+            {
+                type: ELEMENT_BUTTON,
+                url: 'https://www.google.com',
+                buttonStyle: 'secondary',
+                children: [{ text: 'secondary' }],
+            },
+            { text: ' button.' },
+        ],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [
+            { text: 'This is a ' },
+            {
+                type: ELEMENT_BUTTON,
+                url: 'https://www.google.com',
+                buttonStyle: 'tertiary',
+                children: [{ text: 'tertiary' }],
+            },
+            { text: ' button.' },
+        ],
+    },
 ];

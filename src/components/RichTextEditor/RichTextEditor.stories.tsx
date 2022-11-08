@@ -7,6 +7,7 @@ import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from '
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import {
     IPSUM,
+    buttonValues,
     checkboxValue,
     customDesignTokens,
     htmlValue,
@@ -28,6 +29,7 @@ import {
     UnorderedListPlugin,
 } from './Plugins';
 import { PaddingSizes } from './types';
+import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -138,6 +140,7 @@ WithHtmlAsValue.args = {
 export const WithCustomTextStyle = RichTextEditorTemplate.bind({});
 WithCustomTextStyle.args = {
     designTokens: {
+        ...defaultDesignTokens,
         heading1: {
             fontSize: '48px',
             fontStyle: 'italic',
@@ -175,7 +178,14 @@ WithCustomTextStyle.args = {
             fontSize: '16px',
             fontStyle: 'italic',
         },
-        // TODO: fix types
+    },
+};
+
+export const WithCustomButtonStyles = RichTextEditorTemplate.bind({});
+WithCustomButtonStyles.args = {
+    value: JSON.stringify(buttonValues),
+    designTokens: {
+        ...defaultDesignTokens,
         button_primary: {
             hover: {
                 color: 'rgba(76, 76, 76, 1)',
