@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactNode, useState } from 'react';
+import React, { CSSProperties, FC, ReactNode, useState } from 'react';
 import { IconCheckMark } from '@foundation/Icon';
 import { Button } from '@components/Button/Button';
 import { Checkbox } from '@components/Checkbox';
@@ -109,21 +109,22 @@ export const InsertModal = () => {
 };
 
 type Props = {
-    styles?: React.CSSProperties & { hover: React.CSSProperties };
+    styles?: CSSProperties & { hover?: CSSProperties };
     isActive: boolean;
     onClick: () => void;
     children: ReactNode;
 };
 
-const HoverableButton: FC<Props> = ({ styles = { hover: {} }, isActive, onClick, children }) => {
+const HoverableButton: FC<Props> = ({ styles, isActive, onClick, children }) => {
     const [hovered, setHovered] = useState(false);
+    const getStyles = () => (styles && styles.hover && hovered ? { ...styles, ...styles.hover } : styles);
 
     return (
         <button
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             onClick={onClick}
-            style={hovered ? { ...styles, ...styles.hover } : styles}
+            style={getStyles()}
             className={
                 isActive ? 'tw-outline tw-outline-1 tw-outline-violet-60 tw-outline-offset-2 tw-w-fit' : 'tw-w-fit'
             }

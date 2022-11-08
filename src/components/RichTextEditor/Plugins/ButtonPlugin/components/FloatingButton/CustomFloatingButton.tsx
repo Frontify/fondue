@@ -15,7 +15,6 @@ export const CustomFloatingButton = () => {
     return (
         <>
             <FloatingButton.InsertRoot>{input}</FloatingButton.InsertRoot>
-
             <FloatingButton.EditRoot>{editContent}</FloatingButton.EditRoot>
         </>
     );

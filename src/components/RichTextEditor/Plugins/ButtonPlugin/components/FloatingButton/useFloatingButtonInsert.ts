@@ -44,7 +44,7 @@ export const useFloatingButtonInsert = ({ floatingOptions, ...props }: FloatingB
         () => {
             if (floatingButtonSelectors.mode() === 'insert') {
                 floatingButtonActions.hide();
-                focusEditor(editor, editor.selection!);
+                focusEditor(editor, editor.selection ?? undefined);
             }
         },
         {
@@ -55,7 +55,7 @@ export const useFloatingButtonInsert = ({ floatingOptions, ...props }: FloatingB
     const { update, style, floating } = useVirtualFloatingButton({
         open: open && mode === 'insert',
         getBoundingClientRect: getSelectionBoundingClientRect,
-        whileElementsMounted: () => {},
+        whileElementsMounted: undefined,
         ...floatingOptions,
     });
 
