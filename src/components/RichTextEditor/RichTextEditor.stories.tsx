@@ -23,9 +23,11 @@ import {
     LinkPlugin,
     MentionPlugin,
     OrderedListPlugin,
+    ParagraphPlugin,
     PluginComposer,
     UnderlinePlugin,
     UnorderedListPlugin,
+    defaultPlugins,
 } from './Plugins';
 import { PaddingSizes } from './types';
 
@@ -187,6 +189,7 @@ const customPlugins = new PluginComposer();
 customPlugins
     .setPlugin([new InitPlugin()])
     .setPlugin([new LinkPlugin()])
+    .setPlugin([new ParagraphPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
     .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
 export const WithCustomControls = RichTextEditorTemplate.bind({});
@@ -200,6 +203,8 @@ export const WithToolbarTopAndSmallPadding = RichTextEditorTemplate.bind({});
 WithToolbarTopAndSmallPadding.args = {
     position: Position.TOP,
     padding: PaddingSizes.Medium,
+    plugins: defaultPlugins,
+    actions: [],
 };
 
 const mentionPlugins = new PluginComposer();
