@@ -89,16 +89,20 @@ export type BlockType = {
     url?: string;
 };
 
-type RecursivePartial<T> = {
+export type RecursivePartial<T> = {
     [P in keyof T]?: RecursivePartial<T[P]>;
 };
 
 export type OptionType<T extends InputNodeTypes = InputNodeTypes> = {
-    nodeTypes?: RecursivePartial<T>;
-    linkDestinationKey?: string;
+    nodeTypes: RecursivePartial<T>;
+    linkDestinationKey: string;
+    ignoreParagraphNewline: boolean;
+    listDepth: number;
     imageSourceKey?: string;
     imageCaptionKey?: string;
 };
+
+export type PartialOptionType = Partial<OptionType>;
 
 export type MarkdownAstNode = {
     type?: MarkdownAstNodeType;
