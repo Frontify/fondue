@@ -6,6 +6,6 @@ import { MdTransformer } from './MdTransformer';
 
 export class SlateToMd extends MdTransformer<NodeType[], string> {
     process(value: NodeType[]) {
-        return value.map((node) => serialize(node, options(this.editor))).join('');
+        return serialize(options(this.editor))(value);
     }
 }
