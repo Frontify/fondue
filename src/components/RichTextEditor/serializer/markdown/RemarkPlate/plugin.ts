@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { MdAstNode, OptionType } from './astTypes';
 import transform from './deserialize';
 
