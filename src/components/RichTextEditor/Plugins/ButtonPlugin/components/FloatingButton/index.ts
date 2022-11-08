@@ -4,10 +4,7 @@
 
 export * from './FloatingButton';
 export * from './FloatingButtonEditButton';
-export * from './FloatingButtonNewTabInput';
-export * from './FloatingButtonTextInput';
 export * from './FloatingButtonUrlInput';
-export * from './OpenButtonButton';
 export * from './UnlinkButton';
 export * from './floatingButtonStore';
 export * from './useFloatingButtonEdit';

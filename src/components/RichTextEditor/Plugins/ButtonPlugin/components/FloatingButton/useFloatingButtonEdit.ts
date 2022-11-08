@@ -20,6 +20,7 @@ import { floatingButtonActions, floatingButtonSelectors, useFloatingButtonSelect
 import { useFloatingButtonEnter } from './useFloatingButtonEnter';
 import { useFloatingButtonEscape } from './useFloatingButtonEscape';
 import { useVirtualFloatingButton } from './useVirtualFloatingButton';
+import { getUrlFromEditor } from '../../utils';
 
 export const useFloatingButtonEdit = ({ floatingOptions, ...props }: FloatingButtonProps): HTMLPropsAs<'div'> => {
     const editor = useEditorRef();
@@ -54,6 +55,11 @@ export const useFloatingButtonEdit = ({ floatingOptions, ...props }: FloatingBut
     });
 
     useEffect(() => {
+        const url = getUrlFromEditor(editor);
+        if (url) {
+            floatingButtonActions.url(url);
+        }
+
         if (
             editor.selection &&
             someNode(editor, {

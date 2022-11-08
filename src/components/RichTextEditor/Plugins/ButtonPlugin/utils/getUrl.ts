@@ -14,10 +14,6 @@ const getLinkNode = (editor: PlateEditor, cb: (link: TButtonElement) => string):
     return cb(linkNode[0]);
 };
 
-export const getUrlFromLinkOrLegacyLink = (link: TButtonElement): string => {
-    return link.url || link.chosenLink?.searchResult?.link || '';
-};
-
 export const getUrlFromEditor = (editor: PlateEditor) => {
-    return getLinkNode(editor, getUrlFromLinkOrLegacyLink);
+    return getLinkNode(editor, (link) => link.url ?? '');
 };

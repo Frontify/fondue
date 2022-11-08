@@ -1,10 +1,6 @@
 import { HTMLPropsAs, createComponentAs, createElementAs } from '@udecode/plate-core';
 import { UseVirtualFloatingOptions } from '@udecode/plate-floating';
 import { FloatingButtonEditButton } from './FloatingButtonEditButton';
-import { FloatingButtonNewTabInput } from './FloatingButtonNewTabInput';
-import { FloatingButtonTextInput } from './FloatingButtonTextInput';
-import { FloatingButtonUrlInput } from './FloatingButtonUrlInput';
-import { OpenButtonButton } from './OpenButtonButton';
 import { UnlinkButton } from './UnlinkButton';
 import { useFloatingButtonEdit } from './useFloatingButtonEdit';
 import { useFloatingButtonInsert } from './useFloatingButtonInsert';
@@ -35,10 +31,6 @@ export const FloatingButtonInsertRoot = createComponentAs<FloatingButtonProps>((
 export const FloatingButton = {
     EditRoot: FloatingButtonEditRoot,
     InsertRoot: FloatingButtonInsertRoot,
-    UrlInput: FloatingButtonUrlInput,
-    TextInput: FloatingButtonTextInput,
-    NewTabInput: FloatingButtonNewTabInput,
     EditButton: FloatingButtonEditButton,
     UnlinkButton,
-    OpenLinkButton: OpenButtonButton,
 };

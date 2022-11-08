@@ -1,12 +1,5 @@
 import { ChangeEventHandler, useCallback, useEffect, useRef } from 'react';
-import {
-    AsProps,
-    HTMLPropsAs,
-    createComponentAs,
-    createElementAs,
-    mergeProps,
-    useComposedRef,
-} from '@udecode/plate-core';
+import { HTMLPropsAs, mergeProps, useComposedRef } from '@udecode/plate-core';
 import { floatingButtonActions, floatingButtonSelectors, useFloatingButtonSelectors } from './floatingButtonStore';
 
 export const useFloatingButtonUrlInput = (props: HTMLPropsAs<'input'>): HTMLPropsAs<'input'> => {
@@ -33,9 +26,3 @@ export const useFloatingButtonUrlInput = (props: HTMLPropsAs<'input'>): HTMLProp
         { ...props, ref: useComposedRef<HTMLInputElement>(props.ref, ref) },
     );
 };
-
-export const FloatingButtonUrlInput = createComponentAs<AsProps<'input'>>((props) => {
-    const htmlProps = useFloatingButtonUrlInput(props);
-
-    return createElementAs('input', htmlProps);
-});
