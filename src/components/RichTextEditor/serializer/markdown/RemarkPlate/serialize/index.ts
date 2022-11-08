@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { deepMerge } from '@components/RichTextEditor/utils';
 import escapeHtml from 'escape-html';
+import { deepMerge } from '@components/RichTextEditor/utils';
 import { BlockType, InputNodeTypes, LeafType, NodeType, defaultNodeTypes } from '../astTypes';
 import { applyFormattingToLeafNode } from './appplyFormatingToLeafNode';
 import { isLeafNode } from './isLeafNode';
