@@ -6,7 +6,7 @@ type NestedObject = {
 
 export const isObject = <T = object>(obj: T) => obj && typeof obj === 'object' && !Array.isArray(obj);
 
-export const deepMerge = <T extends NestedObject>(target: T, source: T): any => {
+export const deepMerge = <T extends NestedObject = NestedObject>(target: T, source: T): NestedObject => {
     if (!isObject(target) || !isObject(source)) {
         return {};
     }
