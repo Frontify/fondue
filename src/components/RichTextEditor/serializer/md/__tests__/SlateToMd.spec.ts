@@ -38,9 +38,12 @@ describe('Slate To Markdown transformer', () => {
         expect(result).to.deep.equal(headingsMD);
     });
 
-    it.skip('should transform code block', () => {
-        const result = transformer.process(codeBlockTree);
-        expect(result).to.deep.equal(codeBlockMD);
+    it('should transform code block', () => {
+        let result = transformer.process(codeBlockTree[0]);
+        expect(result).to.deep.equal(codeBlockMD[0]);
+
+        result = transformer.process(codeBlockTree[1]);
+        expect(result).to.deep.equal(codeBlockMD[1]);
     });
 
     it('should transform paragraph', () => {
