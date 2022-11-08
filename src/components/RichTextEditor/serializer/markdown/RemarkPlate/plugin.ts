@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MdAstNode, OptionType } from './astTypes';
+import { MarkdownAstNode, OptionType } from './astTypes';
 import transform from './deserialize';
 
 export default function plugin(opts?: OptionType) {
-    const compiler = (node: { children: Array<MdAstNode> }) => {
+    const compiler = (node: { children: Array<MarkdownAstNode> }) => {
         return node.children.map((c) => transform(c, opts));
     };
 
