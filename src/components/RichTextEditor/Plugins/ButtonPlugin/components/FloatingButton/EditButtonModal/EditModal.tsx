@@ -20,7 +20,7 @@ export const EditModal = () => {
                     <span
                         role="button"
                         tabIndex={0}
-                        data-test-id={'edit-button-button'}
+                        data-test-id="edit-button-button"
                         className="tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1"
                     >
                         <FloatingButton.EditButton>
@@ -31,7 +31,7 @@ export const EditModal = () => {
                     <span
                         role="button"
                         tabIndex={0}
-                        data-test-id={'remove-button-button'}
+                        data-test-id="remove-button-button"
                         className="tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1"
                     >
                         <FloatingButton.UnlinkButton>

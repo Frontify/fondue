@@ -26,7 +26,7 @@ export const InsertModal = () => {
     const { designTokens } = useRichTextEditorContext();
 
     return (
-        <div data-test-id="floating-link-insert" className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
+        <div data-test-id="floating-button-insert" className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
             <FormControl
                 label={{
                     children: 'Button Text',
@@ -45,6 +45,7 @@ export const InsertModal = () => {
                     }}
                 >
                     <HoverableButton
+                        id="primary"
                         styles={designTokens.button_primary}
                         isActive={state.buttonStyle === 'primary'}
                         onClick={() => onButtonStyleChange('primary')}
@@ -53,6 +54,7 @@ export const InsertModal = () => {
                     </HoverableButton>
 
                     <HoverableButton
+                        id="secondary"
                         styles={designTokens.button_secondary}
                         isActive={state.buttonStyle === 'secondary'}
                         onClick={() => onButtonStyleChange('secondary')}
@@ -61,6 +63,7 @@ export const InsertModal = () => {
                     </HoverableButton>
 
                     <HoverableButton
+                        id="tertiary"
                         styles={designTokens.button_tertiary}
                         isActive={state.buttonStyle === 'tertiary'}
                         onClick={() => onButtonStyleChange('tertiary')}
@@ -109,18 +112,20 @@ export const InsertModal = () => {
 };
 
 type Props = {
+    id: string;
     styles?: CSSProperties & { hover?: CSSProperties };
     isActive: boolean;
     onClick: () => void;
     children: ReactNode;
 };
 
-const HoverableButton: FC<Props> = ({ styles, isActive, onClick, children }) => {
+const HoverableButton: FC<Props> = ({ id, styles, isActive, onClick, children }) => {
     const [hovered, setHovered] = useState(false);
     const getStyles = () => (styles && styles.hover && hovered ? { ...styles, ...styles.hover } : styles);
 
     return (
         <button
+            data-test-id={`floating-button-insert-${id}`}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             onClick={onClick}
