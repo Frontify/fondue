@@ -39,5 +39,5 @@ export const triggerFloatingButtonInsert = <V extends Value>(
     }
 
     floatingButtonActions.text(getEditorString(editor, editor.selection));
-    floatingButtonActions.show('insert');
+    floatingButtonActions.show('insert', editor.id);
 };

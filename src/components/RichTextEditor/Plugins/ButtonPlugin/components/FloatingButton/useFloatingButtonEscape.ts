@@ -12,7 +12,7 @@ export const useFloatingButtonEscape = () => {
             }
 
             if (floatingButtonSelectors.isEditing()) {
-                floatingButtonActions.show('edit');
+                floatingButtonActions.show('edit', editor.id);
                 focusEditor(editor, editor.selection!);
                 return;
             }

@@ -4,7 +4,7 @@ import { ButtonStyle } from '../../types';
 export type FloatingButtonMode = '' | 'insert' | 'edit';
 
 export const floatingButtonStore = createStore('floatingButton')({
-    open: false,
+    openEditorId: null as null | string,
     mouseDown: false,
     updated: false,
     url: '',
@@ -25,15 +25,18 @@ export const floatingButtonStore = createStore('floatingButton')({
         },
     }))
     .extendActions((set) => ({
-        show: (mode: FloatingButtonMode) => {
+        show: (mode: FloatingButtonMode, editorId: string) => {
             set.mode(mode);
             set.isEditing(false);
-            set.open(true);
+            set.openEditorId(editorId);
         },
         hide: () => {
-            set.open(false);
             set.reset();
+            set.openEditorId(null);
         },
+    }))
+    .extendSelectors((state) => ({
+        isOpen: (editorId: string) => state.openEditorId === editorId,
     }));
 
 export const floatingButtonActions = floatingButtonStore.set;

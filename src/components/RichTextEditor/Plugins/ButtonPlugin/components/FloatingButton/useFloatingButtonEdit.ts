@@ -25,7 +25,7 @@ export const useFloatingButtonEdit = ({ floatingOptions, ...props }: FloatingBut
     const editor = useEditorRef();
     const keyEditor = usePlateSelectors().keyEditor();
     const mode = useFloatingButtonSelectors().mode();
-    const open = useFloatingButtonSelectors().open();
+    const open = useFloatingButtonSelectors().isOpen(editor.id);
 
     const { triggerFloatingButtonHotkeys } = getPluginOptions<ButtonPlugin>(editor, ELEMENT_BUTTON);
 
@@ -60,7 +60,7 @@ export const useFloatingButtonEdit = ({ floatingOptions, ...props }: FloatingBut
                 match: { type: getPluginType(editor, ELEMENT_BUTTON) },
             })
         ) {
-            floatingButtonActions.show('edit');
+            floatingButtonActions.show('edit', editor.id);
             update();
             return;
         }

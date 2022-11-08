@@ -21,7 +21,7 @@ export const useFloatingButtonInsert = ({ floatingOptions, ...props }: FloatingB
     const editor = useEditorRef();
     const focused = useFocused();
     const mode = useFloatingButtonSelectors().mode();
-    const open = useFloatingButtonSelectors().open();
+    const open = useFloatingButtonSelectors().isOpen(editor.id);
 
     const { triggerFloatingButtonHotkeys } = getPluginOptions<ButtonPlugin>(editor, ELEMENT_BUTTON);
 
@@ -40,12 +40,17 @@ export const useFloatingButtonInsert = ({ floatingOptions, ...props }: FloatingB
         [focused],
     );
 
-    const ref = useOnClickOutside(() => {
-        if (floatingButtonSelectors.mode() === 'insert') {
-            floatingButtonActions.hide();
-            focusEditor(editor, editor.selection!);
-        }
-    });
+    const ref = useOnClickOutside(
+        () => {
+            if (floatingButtonSelectors.mode() === 'insert') {
+                floatingButtonActions.hide();
+                focusEditor(editor, editor.selection!);
+            }
+        },
+        {
+            disabled: !open,
+        },
+    );
 
     const { update, style, floating } = useVirtualFloatingButton({
         open: open && mode === 'insert',

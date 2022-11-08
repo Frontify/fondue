@@ -24,7 +24,7 @@ export const useEditModal = ({ floatingOptions, ...props }: FloatingButtonProps)
     const editor = useEditorRef();
     const keyEditor = usePlateSelectors(editor.id).keyEditor();
     const mode = useFloatingButtonSelectors().mode();
-    const open = useFloatingButtonSelectors().open();
+    const open = useFloatingButtonSelectors().isOpen(editor.id);
 
     const getBoundingClientRect = useCallback(() => {
         const entry = getAboveNode(editor, {
@@ -61,7 +61,7 @@ export const useEditModal = ({ floatingOptions, ...props }: FloatingButtonProps)
                 match: { type: getPluginType(editor, ELEMENT_BUTTON) },
             })
         ) {
-            floatingButtonActions.show('edit');
+            floatingButtonActions.show('edit', editor.id);
 
             update();
             return;
