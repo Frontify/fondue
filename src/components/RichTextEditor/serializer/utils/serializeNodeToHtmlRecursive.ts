@@ -8,11 +8,10 @@ import escapeHtml from 'escape-html';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
 
-export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: DesignTokens): string => {
+export const serializeNodeToHtmlRecursive = (node: any, designTokens: DesignTokens): string => {
     if (!node.children) {
         return serializeLeafToHtml(node);
     }
-
     const children = node.children.map((n: TDescendant) => serializeNodeToHtmlRecursive(n, designTokens)).join('');
 
     switch (node.type) {
@@ -42,9 +41,10 @@ export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: De
             return `<li>${children}</li>`;
         case ELEMENT_LINK:
             if (node.chosenLink) {
+                const { chosenLink } = node;
                 return `<a style="${reactCssPropsToCss(designTokens.link)}" target=${
-                    node.chosenLink.openInNewTab ? '_blank' : '_self'
-                } href="${escapeHtml(node.chosenLink.searchResult.link)}">${children}</a>`;
+                    chosenLink.openInNewTab ? '_blank' : '_self'
+                } href="${escapeHtml(chosenLink.searchResult.link)}">${children}</a>`;
             }
             return `<a style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(node.url)}">${children}</a>`;
         case ELEMENT_BUTTON:

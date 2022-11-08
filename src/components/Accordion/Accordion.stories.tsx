@@ -20,7 +20,7 @@ import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
 import { merge } from '@utilities/merge';
 import React, { FC, ReactNode, useState } from 'react';
-import { Color } from '../../types/colors';
+import { Color } from '../../types';
 import { EXAMPLE_IMAGES } from '../AssetInput/example-assets';
 import { Accordion as AccordionComponent, AccordionItem } from './Accordion';
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
@@ -37,7 +37,7 @@ export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
     const [showContent, setShowContent] = useState(true);
     const [input, setInput] = useState('');
     const [activeItemId, setActiveItemId] = useState<string | number | undefined>();
-    const [temporaryColor, setTemporaryColor] = useState<Color | null>({ r: 0, g: 146, b: 120 });
+    const [temporaryColor, setTemporaryColor] = useState<Color | null>({ red: 0, green: 146, blue: 120 });
     const [selectedColor, setSelectedColor] = useState<Color | null>(null);
     const [openInNewTab, setOpenInNewTab] = useState<boolean>(false);
 
