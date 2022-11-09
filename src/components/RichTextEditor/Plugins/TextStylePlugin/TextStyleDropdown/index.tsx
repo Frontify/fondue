@@ -15,7 +15,7 @@ export const TextStyleDropdown = ({ editorId }: TextStyleDropdownProps) => {
     const editor = usePlateEditorState(editorId)!;
     const { designTokens } = useRichTextEditorContext();
 
-    const { state, positioningProps } = usePopperDropdown(triggerElement, popperElement);
+    const { state, dropdownProps } = usePopperDropdown(triggerElement, popperElement);
 
     return (
         <>
@@ -27,7 +27,7 @@ export const TextStyleDropdown = ({ editorId }: TextStyleDropdownProps) => {
                         console.log(node);
                         setPopperElement(node);
                     }}
-                    {...positioningProps}
+                    {...dropdownProps}
                 >
                     <DropdownItem editor={editor} type={TextStyles.ELEMENT_HEADING1}>
                         <span style={designTokens.heading1}>{textStyleTitle[TextStyles.ELEMENT_HEADING1]}</span>

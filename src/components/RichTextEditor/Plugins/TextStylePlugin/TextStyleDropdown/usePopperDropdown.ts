@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { HTMLAttributes, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
 
 export const usePopperDropdown = <T extends HTMLElement, P extends HTMLElement>(
     triggerElement: T | null,
     popperElement: P | null,
-): { state: { isOpen: boolean; toggle: () => void }; positioningProps: { style: React.CSSProperties } } => {
+): { state: { isOpen: boolean; toggle: () => void }; dropdownProps: HTMLAttributes<P> } => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggle = useCallback(() => {
@@ -20,7 +20,7 @@ export const usePopperDropdown = <T extends HTMLElement, P extends HTMLElement>(
             {
                 name: 'offset',
                 options: {
-                    offset: [0, 5],
+                    offset: [0, 6],
                 },
             },
             {
@@ -52,6 +52,9 @@ export const usePopperDropdown = <T extends HTMLElement, P extends HTMLElement>(
 
     return {
         state: { isOpen, toggle },
-        positioningProps: { style: popperInstance.styles.popper },
+        dropdownProps: {
+            ...popperInstance.attributes.popper,
+            style: popperInstance.styles.popper,
+        },
     };
 };
