@@ -7,7 +7,7 @@ import { PluginButtonProps } from '../../types';
 
 export type TextStyleDropdownProps = {
     editorId?: string;
-    selectableStyles?: OptionalTextStyles[];
+    textStyles?: OptionalTextStyles[];
 };
 
 export type DropdownTriggerProps = {
@@ -22,5 +22,5 @@ export type DropdownItemProps = {
 };
 
 export type TextStyleButtonProps = PluginButtonProps & {
-    selectableStyles?: OptionalTextStyles[];
+    textStyles?: OptionalTextStyles[];
 };

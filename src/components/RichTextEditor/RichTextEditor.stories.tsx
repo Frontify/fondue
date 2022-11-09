@@ -205,7 +205,7 @@ WithToolbarTopAndSmallPadding.args = {
     padding: PaddingSizes.Medium,
     actions: [],
     plugins: topbarPlugins.setPlugin([
-        new TextStylePlugin({ selectableStyles: [TextStyles.ELEMENT_CUSTOM1, TextStyles.ELEMENT_HEADING1] }),
+        new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_CUSTOM1, TextStyles.ELEMENT_HEADING1] }),
     ]),
 };
 
