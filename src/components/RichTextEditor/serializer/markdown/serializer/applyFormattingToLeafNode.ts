@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { LeafType } from '../astTypes';
+import { LeafType } from '../types';
 
 export const applyFormattingToLeafNode = (children: string, chunk: LeafType) => {
     // Never allow decorating break tags with rich text formatting,

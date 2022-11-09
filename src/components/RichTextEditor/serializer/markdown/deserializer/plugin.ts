@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MarkdownAstNode, OptionType } from './astTypes';
+import { MarkdownAstNode, OptionType } from '../types';
 import deserialize from './deserialize';
 
 export default function plugin(opts?: OptionType) {
