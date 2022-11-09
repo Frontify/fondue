@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { textStylePluginsRecord } from './TextStyleDropdown/textStylePluginsRecord';
-import { OptionalTextStyles } from './TextStyles';
+import { SelectableTextStyles } from './TextStyles';
 
-export const getTextStylePlugins = (textStyles: OptionalTextStyles[]) =>
+export const getTextStylePlugins = (textStyles: SelectableTextStyles[]) =>
     textStyles.map((style) => textStylePluginsRecord[style].plugin());

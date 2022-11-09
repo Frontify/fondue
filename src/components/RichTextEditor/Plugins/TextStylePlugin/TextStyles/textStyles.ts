@@ -26,7 +26,7 @@ export enum TextStyles {
     ELEMENT_PARAGRAPH = 'p',
 }
 
-export type OptionalTextStyles = Exclude<TextStyles, TextStyles.ELEMENT_PARAGRAPH | TextStyles.ELEMENT_LINK>;
+export type SelectableTextStyles = Exclude<TextStyles, TextStyles.ELEMENT_PARAGRAPH | TextStyles.ELEMENT_LINK>;
 
 export const textStyleTitle: Record<TextStyles, string> = {
     [TextStyles.ELEMENT_HEADING1]: 'Heading 1',

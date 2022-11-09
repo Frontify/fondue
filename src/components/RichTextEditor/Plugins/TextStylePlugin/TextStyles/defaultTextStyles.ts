@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { OptionalTextStyles, TextStyles } from '.';
+import { SelectableTextStyles, TextStyles } from '.';
 
-export const defaultTextStyles: OptionalTextStyles[] = [
+export const defaultTextStyles: SelectableTextStyles[] = [
     TextStyles.ELEMENT_HEADING1,
     TextStyles.ELEMENT_HEADING2,
     TextStyles.ELEMENT_HEADING3,
