@@ -5,8 +5,8 @@ import { ButtonWrapper } from '../../helper';
 import { PluginButtonProps } from '../../types';
 import { TextStyleDropdown } from '.';
 
-export const TextStyleButton = ({ editorId, id }: PluginButtonProps) => (
+export const TextStyleButton = ({ editorId, id, selectableStyles }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
-        <TextStyleDropdown editorId={editorId} />
+        <TextStyleDropdown editorId={editorId} selectableStyles={selectableStyles} />
     </ButtonWrapper>
 );

@@ -13,7 +13,7 @@ export const listStyleTitle: Record<ListStyles, string> = {
     [ListStyles.CHECKLIST_ITEM]: 'Checklist',
 };
 
-export enum TextStyles {
+export enum OptionalTextStyles {
     ELEMENT_HEADING1 = 'heading1',
     ELEMENT_HEADING2 = 'heading2',
     ELEMENT_HEADING3 = 'heading3',
@@ -22,9 +22,15 @@ export enum TextStyles {
     ELEMENT_CUSTOM2 = 'custom2',
     ELEMENT_CUSTOM3 = 'custom3',
     ELEMENT_QUOTE = 'quote',
+}
+
+enum FixedTextStyles {
     ELEMENT_LINK = 'link',
     ELEMENT_PARAGRAPH = 'p',
 }
+
+export type TextStyles = OptionalTextStyles | FixedTextStyles;
+export const TextStyles = { ...OptionalTextStyles, ...FixedTextStyles };
 
 export const textStyleTitle: Record<TextStyles, string> = {
     [TextStyles.ELEMENT_HEADING1]: 'Heading 1',

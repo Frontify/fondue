@@ -2,10 +2,11 @@
 
 import { ReactNode } from 'react';
 import { PlateEditor } from '@udecode/plate';
-import { TextStyles } from '../TextStyles';
+import { OptionalTextStyles, TextStyles } from '../TextStyles';
 
 export type TextStyleDropdownProps = {
     editorId?: string;
+    selectableStyles?: OptionalTextStyles[];
 };
 
 export type DropdownTriggerProps = {

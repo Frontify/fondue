@@ -24,10 +24,12 @@ import {
     MentionPlugin,
     OrderedListPlugin,
     PluginComposer,
+    TextStylePlugin,
     UnderlinePlugin,
     UnorderedListPlugin,
 } from './Plugins';
 import { PaddingSizes } from './types';
+import { OptionalTextStyles } from './Plugins/TextStylePlugin/TextStyles';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -200,6 +202,12 @@ export const WithToolbarTopAndSmallPadding = RichTextEditorTemplate.bind({});
 WithToolbarTopAndSmallPadding.args = {
     position: Position.TOP,
     padding: PaddingSizes.Medium,
+    plugins: new PluginComposer().setPlugin([new InitPlugin()]).setPlugin([
+        new TextStylePlugin({
+            selectableStyles: [OptionalTextStyles.ELEMENT_HEADING2, OptionalTextStyles.ELEMENT_HEADING3],
+        }),
+    ]),
+    actions: [],
 };
 
 const mentionPlugins = new PluginComposer();
