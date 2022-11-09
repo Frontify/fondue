@@ -118,7 +118,7 @@ export const MarkdownDeserialized: Story<RichTextEditorProps> = () => {
             </div>
             Rich Text Editor:
             <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                <RichTextEditorComponent value={JSON.stringify(result)} onTextChange={(value) => console.log(value)} />
+                <RichTextEditorComponent value={JSON.stringify(result)} />
             </div>
         </>
     );
