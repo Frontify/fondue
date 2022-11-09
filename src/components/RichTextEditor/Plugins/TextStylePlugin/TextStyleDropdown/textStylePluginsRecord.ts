@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { PlatePlugin } from '@udecode/plate';
 import {
+    SelectableTextStyles,
     TextStyles,
     createCustom1Plugin,
     createCustom2Plugin,
@@ -12,7 +14,7 @@ import {
     createQuotePlugin,
 } from '../TextStyles';
 
-export const textStylePluginsRecord = {
+export const textStylePluginsRecord: Record<SelectableTextStyles, { plugin: () => PlatePlugin }> = {
     [TextStyles.ELEMENT_HEADING1]: { plugin: createHeading1Plugin },
     [TextStyles.ELEMENT_HEADING2]: { plugin: createHeading2Plugin },
     [TextStyles.ELEMENT_HEADING3]: { plugin: createHeading3Plugin },
