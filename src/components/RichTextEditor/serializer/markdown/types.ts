@@ -100,7 +100,7 @@ export type OptionType<T extends InputNodeTypes = InputNodeTypes> = {
     imageCaptionKey?: string;
 };
 
-export type PartialOptionType = Partial<OptionType>;
+export type PartialOptionType<T extends OptionType = OptionType> = Partial<T>;
 
 export type MarkdownAstNode = {
     type?: MarkdownAstNodeType;
