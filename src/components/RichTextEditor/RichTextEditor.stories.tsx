@@ -190,8 +190,7 @@ customPlugins
     .setPlugin([new InitPlugin()])
     .setPlugin([new LinkPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
-    .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()])
-    .setPlugin([new TextStylePlugin({ selectableStyles: [TextStyles.ELEMENT_CUSTOM1, TextStyles.ELEMENT_HEADING1] })]);
+    .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
 export const WithCustomControls = RichTextEditorTemplate.bind({});
 WithCustomControls.args = {
     value: `<p>${IPSUM}</p>`,
@@ -199,10 +198,15 @@ WithCustomControls.args = {
     plugins: customPlugins,
 };
 
+const topbarPlugins = new PluginComposer();
 export const WithToolbarTopAndSmallPadding = RichTextEditorTemplate.bind({});
 WithToolbarTopAndSmallPadding.args = {
     position: Position.TOP,
     padding: PaddingSizes.Medium,
+    actions: [],
+    plugins: topbarPlugins.setPlugin([
+        new TextStylePlugin({ selectableStyles: [TextStyles.ELEMENT_CUSTOM1, TextStyles.ELEMENT_HEADING1] }),
+    ]),
 };
 
 const mentionPlugins = new PluginComposer();
