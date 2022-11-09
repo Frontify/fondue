@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export const blockQuoteMarkdown_0 = `> quote
-> quote
-> quote
-> quote
+quote
+quote
+quote
 
 > quote
 quote
@@ -11,7 +11,7 @@ quote
 `;
 export const blockQuoteTree_0 = [
     {
-        type: 'blockquote',
+        type: 'quote',
         children: [
             {
                 type: 'p',
@@ -24,7 +24,7 @@ export const blockQuoteTree_0 = [
         ],
     },
     {
-        type: 'blockquote',
+        type: 'quote',
         children: [
             {
                 type: 'p',
@@ -50,7 +50,7 @@ quoted quote
 `;
 const blockQuoteTree_1 = [
     {
-        type: 'blockquote',
+        type: 'quote',
         children: [
             {
                 type: 'p',
@@ -71,7 +71,7 @@ const blockQuoteTree_1 = [
         ],
     },
     {
-        type: 'blockquote',
+        type: 'quote',
         children: [
             {
                 type: 'p',

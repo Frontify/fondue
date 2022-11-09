@@ -11,7 +11,7 @@ import {
 } from '../types';
 import { applyFormattingToLeafNode } from './applyFormattingToLeafNode';
 import { isLeafNode } from './isLeafNode';
-import { processNodes } from './processNodes';
+import { applyFormattingToBlockNode } from './applyFormattingToBlockNode';
 import { BREAK_TAG, LINK_DESTINATION_KEY } from './utils';
 
 const VOID_ELEMENTS: Array<keyof InputNodeTypes> = ['thematic_break', 'image'];
@@ -109,7 +109,7 @@ const process = (chunk: NodeType, options: OptionType) => {
         children = applyFormattingToLeafNode(children, chunk);
     }
 
-    return processNodes(options, children, chunk, options.listDepth, type, parentType);
+    return applyFormattingToBlockNode(options, children, chunk, options.listDepth, type, parentType);
 };
 
 export default function serialize(options: PartialOptionType) {

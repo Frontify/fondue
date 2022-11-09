@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import escapeHtml from 'escape-html';
-import { BlockType, InputNodeTypes, NodeType, OptionType } from '../types';
+import { BlockType, InputNodeTypes, LeafType, NodeType, OptionType } from '../types';
 import { isLeafNode } from './isLeafNode';
 
 const processListItemNode = (
@@ -25,9 +25,17 @@ const processListItemNode = (
     return `${spacer}${isOL ? '1.' : '-'} ${children}${treatAsLeaf ? '\n' : ''}`;
 };
 
-const shouldEscapeNode = (children: string, nodeTypes: InputNodeTypes, type?: string, parentType?: string) => {
-    // don't escape if: code block, image, img
-    const isCodeBlock = parentType === nodeTypes.code_block || type === nodeTypes.code_block;
+const shouldEscapeNode = (
+    chunk: NodeType,
+    children: string,
+    nodeTypes: InputNodeTypes,
+    type?: string,
+    parentType?: string,
+) => {
+    // don't escape if: code block, image
+    const isCodeBlock =
+        parentType === nodeTypes.code_block || type === nodeTypes.code_block || (chunk as LeafType).code;
+
     if (!isCodeBlock) {
         children = escapeHtml(children);
     }
@@ -35,7 +43,7 @@ const shouldEscapeNode = (children: string, nodeTypes: InputNodeTypes, type?: st
     return children;
 };
 
-export const processNodes = (
+export const applyFormattingToBlockNode = (
     options: OptionType,
     children: string,
     chunk: NodeType,
@@ -92,6 +100,6 @@ export const processNodes = (
             return `\n---${children}\n\n`;
 
         default:
-            return shouldEscapeNode(children, nodeTypes, type, parentType);
+            return shouldEscapeNode(chunk, children, nodeTypes, type, parentType);
     }
 };
