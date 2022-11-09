@@ -80,7 +80,10 @@ describe('Markdown to slate Transformer', () => {
     });
 
     it('should transform block quote', () => {
-        const result = transformer.process(blockQuoteMD);
-        expect(result).to.deep.equal(blockQuoteTree);
+        let result = transformer.process(blockQuoteMD[0]);
+        expect(result).to.deep.equal(blockQuoteTree[0]);
+
+        result = transformer.process(blockQuoteMD[1]);
+        expect(result).to.deep.equal(blockQuoteTree[1]);
     });
 });

@@ -76,8 +76,14 @@ describe('Slate To Markdown transformer', () => {
         expect(result).to.deep.equal(imageMD);
     });
 
-    it.skip('should transform block quote', () => {
-        const result = transformer.process(blockQuoteTree);
-        expect(result).to.deep.equal(blockQuoteMD);
+    it('should transform block quote', () => {
+        let result = transformer.process(blockQuoteTree[0]);
+        expect(result).to.deep.equal(blockQuoteMD[0]);
+
+        result = transformer.process(blockQuoteTree[1]);
+        expect(result).to.deep.equal(blockQuoteMD[1]);
+
+        result = transformer.process(blockQuoteTree[2]);
+        expect(result).to.deep.equal(blockQuoteMD[2]);
     });
 });
