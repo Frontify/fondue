@@ -19,8 +19,6 @@ export const TextStyleDropdown = ({ editorId, selectableStyles = defaultStyles }
         setOpen(!open);
     }, [open, setOpen]);
 
-    console.log(selectableStyles, 'Selectable styles');
-
     return (
         <ToolbarDropdown
             control={<DropdownTrigger editor={editor} open={open} />}
