@@ -3,7 +3,6 @@
 import { ReactElement, ReactNode } from 'react';
 import { PlateEditor } from '@udecode/plate';
 import type { Plugin } from './Plugin';
-import { OptionalTextStyles } from './TextStylePlugin/TextStyles';
 
 export type Unknown = unknown;
 export type ObjectType<T extends Unknown> = Record<string, T>;
@@ -17,7 +16,6 @@ export type PluginButtonProps = {
     id: string;
     editor: PlateEditor;
     editorId: string;
-    selectableStyles?: OptionalTextStyles[];
 };
 export type PluginButton = ({ editor, editorId, id }: PluginButtonProps) => ReactElement;
 export type Button = {

@@ -3,14 +3,13 @@
 import { ToolbarDropdown, usePlateEditorState } from '@udecode/plate';
 import React, { useCallback, useState } from 'react';
 import { useRichTextEditorContext } from '../../../context/RichTextEditorContext';
-import { OptionalTextStyles, TextStyles, textStyleTitle } from '../TextStyles';
+import { defaultSelectableStyles } from '../defaultSelectableStyles';
+import { TextStyles, textStyleTitle } from '../TextStyles';
 import { DropdownItem } from './DropdownItem';
 import { DropdownTrigger } from './DropdownTrigger';
 import { TextStyleDropdownProps } from './types';
 
-const defaultStyles = Object.values(OptionalTextStyles);
-
-export const TextStyleDropdown = ({ editorId, selectableStyles = defaultStyles }: TextStyleDropdownProps) => {
+export const TextStyleDropdown = ({ editorId, selectableStyles = defaultSelectableStyles }: TextStyleDropdownProps) => {
     const [open, setOpen] = useState(false);
     const editor = usePlateEditorState(editorId)!;
     const { designTokens } = useRichTextEditorContext();

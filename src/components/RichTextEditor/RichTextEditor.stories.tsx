@@ -29,7 +29,7 @@ import {
     UnorderedListPlugin,
 } from './Plugins';
 import { PaddingSizes } from './types';
-import { OptionalTextStyles } from './Plugins/TextStylePlugin/TextStyles';
+import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -190,7 +190,8 @@ customPlugins
     .setPlugin([new InitPlugin()])
     .setPlugin([new LinkPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
-    .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
+    .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()])
+    .setPlugin([new TextStylePlugin({ selectableStyles: [TextStyles.ELEMENT_CUSTOM1, TextStyles.ELEMENT_HEADING1] })]);
 export const WithCustomControls = RichTextEditorTemplate.bind({});
 WithCustomControls.args = {
     value: `<p>${IPSUM}</p>`,
@@ -202,12 +203,6 @@ export const WithToolbarTopAndSmallPadding = RichTextEditorTemplate.bind({});
 WithToolbarTopAndSmallPadding.args = {
     position: Position.TOP,
     padding: PaddingSizes.Medium,
-    plugins: new PluginComposer().setPlugin([new InitPlugin()]).setPlugin([
-        new TextStylePlugin({
-            selectableStyles: [OptionalTextStyles.ELEMENT_HEADING2, OptionalTextStyles.ELEMENT_HEADING3],
-        }),
-    ]),
-    actions: [],
 };
 
 const mentionPlugins = new PluginComposer();

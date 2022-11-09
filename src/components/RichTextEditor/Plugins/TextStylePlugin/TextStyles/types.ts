@@ -4,5 +4,5 @@ import { OptionalTextStyles } from '.';
 import { PluginProps } from '../../Plugin';
 
 export type TextStylePluginProps = PluginProps & {
-    selectableStyles?: OptionalTextStyles[];
+    selectableStyles: OptionalTextStyles[];
 };

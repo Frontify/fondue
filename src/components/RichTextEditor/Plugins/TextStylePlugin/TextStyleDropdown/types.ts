@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import { PlateEditor } from '@udecode/plate';
 import { OptionalTextStyles, TextStyles } from '../TextStyles';
+import { PluginButtonProps } from '../../types';
 
 export type TextStyleDropdownProps = {
     editorId?: string;
@@ -18,4 +19,8 @@ export type DropdownItemProps = {
     editor: PlateEditor;
     type: TextStyles;
     children: ReactNode;
+};
+
+export type TextStyleButtonProps = PluginButtonProps & {
+    selectableStyles?: OptionalTextStyles[];
 };
