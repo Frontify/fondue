@@ -2,10 +2,10 @@
 
 import { serialize } from './serializer';
 import { options } from './options';
-import { MdTransformer } from './MdTransformer';
+import { MarkdownTransformer } from './MarkdownTransformer';
 import { NodeType } from './types';
 
-export class SlateToMd extends MdTransformer<NodeType[], string> {
+export class SlateToMarkdown extends MarkdownTransformer<NodeType[], string> {
     process(value: NodeType[]) {
         return serialize(options(this.editor))(value);
     }

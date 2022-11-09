@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { SlateToMd } from '..';
+import { SlateToMarkdown } from '..';
 import { transform } from '../../transform';
 import {
     basicMarksMD,
@@ -26,7 +26,7 @@ import {
 } from './fixtures';
 
 describe('Slate To Markdown transformer', () => {
-    const transformer = transform.use(new SlateToMd());
+    const transformer = transform.use(new SlateToMarkdown());
 
     it('should transform basic marks', () => {
         const result = transformer.process(basicMarksTree[0]);
