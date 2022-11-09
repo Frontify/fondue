@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
 import React from 'react';
+import { Meta, Story } from '@storybook/react';
 import { Position } from './EditorPositioningWrapper';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
@@ -47,7 +47,14 @@ export default {
         onTextChange: { action: 'onTextChange' },
         onBlur: { action: 'onBlur' },
         value: { type: 'string' },
-        position: { options: Object.values(Position) },
+        position: {
+            options: Object.values(Position),
+            mapping: Position,
+            control: {
+                type: 'radio',
+                labels: Object.entries(Position).map(([key, value]) => [value, key]),
+            },
+        },
         padding: {
             options: Object.keys(PaddingSizes),
             mapping: PaddingSizes,
@@ -95,7 +102,7 @@ export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
     );
 };
 
-export const RichTextEditorMarkdownDeserialized: Story<RichTextEditorProps> = () => {
+export const MarkdownDeserialized: Story<RichTextEditorProps> = () => {
     const transformer = Transform.use(new MarkdownToSlate());
     const result = transformer.process(markdownText);
 
@@ -103,7 +110,7 @@ export const RichTextEditorMarkdownDeserialized: Story<RichTextEditorProps> = ()
         <>
             Markdown Text:
             <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                <code>{markdownText}</code>
+                <pre>{markdownText}</pre>
             </div>
             Slate JSON Object:
             <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
@@ -111,7 +118,7 @@ export const RichTextEditorMarkdownDeserialized: Story<RichTextEditorProps> = ()
             </div>
             Rich Text Editor:
             <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                <RichTextEditorComponent value={JSON.stringify(result)} />
+                <RichTextEditorComponent value={JSON.stringify(result)} onTextChange={(value) => console.log(value)} />
             </div>
         </>
     );

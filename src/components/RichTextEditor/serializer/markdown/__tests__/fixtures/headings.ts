@@ -1,43 +1,43 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const headingsMarkdown = `# heading 1
-## heading 2
-### heading 3
-#### heading 4
-##### heading 5
-###### heading 6
+export const headingsMarkdown = `# Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+##### Heading 5
+###### Heading 6
 `;
 
 export const headingsTree = [
     {
-        type: 'h1',
+        type: 'heading1',
         children: [
             {
-                text: 'heading 1',
+                text: 'Heading 1',
             },
         ],
     },
     {
-        type: 'h2',
+        type: 'heading2',
         children: [
             {
-                text: 'heading 2',
+                text: 'Heading 2',
             },
         ],
     },
     {
-        type: 'h3',
+        type: 'heading3',
         children: [
             {
-                text: 'heading 3',
+                text: 'Heading 3',
             },
         ],
     },
     {
-        type: 'h4',
+        type: 'heading4',
         children: [
             {
-                text: 'heading 4',
+                text: 'Heading 4',
             },
         ],
     },
@@ -45,7 +45,7 @@ export const headingsTree = [
         type: 'h5',
         children: [
             {
-                text: 'heading 5',
+                text: 'Heading 5',
             },
         ],
     },
@@ -53,7 +53,7 @@ export const headingsTree = [
         type: 'h6',
         children: [
             {
-                text: 'heading 6',
+                text: 'Heading 6',
             },
         ],
     },

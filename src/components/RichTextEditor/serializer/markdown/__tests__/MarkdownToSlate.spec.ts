@@ -17,6 +17,8 @@ import {
     imageTree,
     linkMarkdown,
     linkTree,
+    mixedMarkdown,
+    mixedTree,
     orderedListMarkdown,
     orderedListTree,
     paragraphMarkdown,
@@ -79,5 +81,10 @@ describe('Markdown to slate Transformer', () => {
     it('should transform block quote', () => {
         const result = transformer.process(blockQuoteMarkdown);
         expect(result).to.deep.equal(blockQuoteTree);
+    });
+
+    it('should transform mixed text', () => {
+        const result = transformer.process(mixedMarkdown);
+        expect(result).to.deep.equal(mixedTree);
     });
 });

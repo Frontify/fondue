@@ -12,7 +12,7 @@ export const blockQuoteMarkdown = `> quote
 
 export const blockQuoteTree = [
     {
-        type: 'blockquote',
+        type: 'quote',
         children: [
             {
                 type: 'p',
@@ -25,7 +25,7 @@ export const blockQuoteTree = [
         ],
     },
     {
-        type: 'blockquote',
+        type: 'quote',
         children: [
             {
                 type: 'p',
@@ -36,7 +36,7 @@ export const blockQuoteTree = [
                 ],
             },
             {
-                type: 'blockquote',
+                type: 'quote',
                 children: [
                     {
                         type: 'p',

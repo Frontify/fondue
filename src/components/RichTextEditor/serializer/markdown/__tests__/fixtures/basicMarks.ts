@@ -1,15 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-const basicMarksMarkdown_1 = 'aaaaaaaa**bold**_italic_~~delete~~`inline code`\n';
-const basicMarksMarkdown_2 = 'This is ~~text that has strikethrough~~ in it';
-export const basicMarksMarkdown = [basicMarksMarkdown_1, basicMarksMarkdown_2];
-
+const basicMarksMarkdown_1 = 'i am inline text**bold**_italic_~~delete~~`inline code`\n';
 const basicMarksTree_1 = [
     {
         type: 'p',
         children: [
             {
-                text: 'aaaaaaaa',
+                text: 'i am inline text',
             },
             {
                 bold: true,
@@ -31,6 +28,7 @@ const basicMarksTree_1 = [
     },
 ];
 
+const basicMarksMarkdown_2 = 'This is ~~text that has strikethrough~~ in it';
 const basicMarksTree_2 = [
     {
         type: 'p',
@@ -48,4 +46,6 @@ const basicMarksTree_2 = [
         ],
     },
 ];
+
+export const basicMarksMarkdown = [basicMarksMarkdown_1, basicMarksMarkdown_2];
 export const basicMarksTree = [basicMarksTree_1, basicMarksTree_2];
