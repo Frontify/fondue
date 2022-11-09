@@ -75,7 +75,6 @@ export const processNodes = (
             return `[${children}](${linkUrl})`;
 
         case nodeTypes.image:
-        case nodeTypes.img:
             const imageUrl = (chunk as BlockType).link ?? '';
             return `![${(chunk as BlockType).caption}](${imageUrl})`;
 

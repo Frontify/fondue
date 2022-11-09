@@ -14,7 +14,7 @@ import { isLeafNode } from './isLeafNode';
 import { processNodes } from './processNodes';
 import { BREAK_TAG, LINK_DESTINATION_KEY } from './utils';
 
-const VOID_ELEMENTS: Array<keyof InputNodeTypes> = ['thematic_break', 'image', 'img'];
+const VOID_ELEMENTS: Array<keyof InputNodeTypes> = ['thematic_break', 'image'];
 
 const isChildAList = (chunk: NodeType, LIST_TYPES: string[]) =>
     !isLeafNode(chunk) ? LIST_TYPES.includes(chunk.type || '') : false;
@@ -22,9 +22,7 @@ const isChildAList = (chunk: NodeType, LIST_TYPES: string[]) =>
 const doesChildHasALink = (chunk: NodeType, nodeTypes: InputNodeTypes) =>
     !isLeafNode(chunk) && Array.isArray(chunk.children)
         ? chunk.children.some(
-              (child) =>
-                  !isLeafNode(child) &&
-                  (child.type === nodeTypes.link || child.type === nodeTypes.img || child.type === nodeTypes.image),
+              (child) => !isLeafNode(child) && (child.type === nodeTypes.link || child.type === nodeTypes.image),
           )
         : false;
 
@@ -57,7 +55,7 @@ function process(chunk: NodeType, options: OptionType) {
         children = chunk.children
             .map((c: NodeType) => {
                 const isList = isChildAList(c, LIST_TYPES);
-                const selfIsList = LIST_TYPES.includes(chunk.type || '');
+                const selfIsList = LIST_TYPES.includes(chunk.type ?? '');
 
                 // Links can have the following shape
                 // In which case we don't want to surround
