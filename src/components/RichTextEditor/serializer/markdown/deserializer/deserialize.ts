@@ -12,14 +12,14 @@ import {
     ListItemNode,
     ListNode,
     MarkdownAstNode,
-    OptionType,
     ParagraphNode,
+    PartialOptionType,
     TextNode,
     ThematicBreakNode,
     defaultNodeTypes,
 } from '../types';
 
-export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstNode, opts?: OptionType<T>) {
+export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstNode, opts?: PartialOptionType) {
     const types = {
         ...defaultNodeTypes,
         ...opts?.nodeTypes,

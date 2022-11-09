@@ -1,89 +1,96 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MarkdownToSlate } from '../';
-import { transform } from '../../transform';
+import { Transform } from '../../transform';
 import {
-    basicMarksMD,
+    basicMarksMarkdown,
     basicMarksTree,
-    blockQuoteMD,
+    blockQuoteMarkdown,
     blockQuoteTree,
-    codeBlockMD,
+    codeBlockMarkdown,
     codeBlockTree,
-    headingsMD,
+    headingsMarkdown,
     headingsTree,
-    hrMD,
+    hrMarkdown,
     hrTree,
-    imageMD,
+    imageMarkdown,
     imageTree,
-    linkMD,
+    linkMarkdown,
     linkTree,
-    orderedListMD,
+    mixedMarkdown,
+    mixedTree,
+    orderedListMarkdown,
     orderedListTree,
-    paragraphMD,
+    paragraphMarkdown,
     paragraphTree,
-    unorderedListMD,
+    unorderedListMarkdown,
     unorderedListTree,
 } from './fixtures';
 
 describe('Markdown to slate Transformer', () => {
-    const transformer = transform.use(new MarkdownToSlate());
+    const transformer = Transform.use(new MarkdownToSlate());
 
     it('should transform basic marks', () => {
-        let result = transformer.process(basicMarksMD[0]);
+        let result = transformer.process(basicMarksMarkdown[0]);
         expect(result).to.deep.equal(basicMarksTree[0]);
 
-        result = transformer.process(basicMarksMD[1]);
+        result = transformer.process(basicMarksMarkdown[1]);
         expect(result).to.deep.equal(basicMarksTree[1]);
     });
 
     it('should transform headings', () => {
-        const result = transformer.process(headingsMD);
+        const result = transformer.process(headingsMarkdown);
         expect(result).to.deep.equal(headingsTree);
     });
 
     it('should transform code block', () => {
-        let result = transformer.process(codeBlockMD[0]);
+        let result = transformer.process(codeBlockMarkdown[0]);
         expect(result).to.deep.equal(codeBlockTree[0]);
 
-        result = transformer.process(codeBlockMD[1]);
+        result = transformer.process(codeBlockMarkdown[1]);
         expect(result).to.deep.equal(codeBlockTree[1]);
     });
 
     it('should transform paragraph', () => {
-        const result = transformer.process(paragraphMD);
+        const result = transformer.process(paragraphMarkdown);
         expect(result).to.deep.equal(paragraphTree);
     });
 
     it('should transform unordered list', () => {
-        const result = transformer.process(unorderedListMD);
+        const result = transformer.process(unorderedListMarkdown);
         expect(result).to.deep.equal(unorderedListTree);
     });
 
     it('should transform ordered list', () => {
-        const result = transformer.process(orderedListMD);
+        const result = transformer.process(orderedListMarkdown);
         expect(result).to.deep.equal(orderedListTree);
     });
 
     it('should transform hr', () => {
-        const result = transformer.process(hrMD);
+        const result = transformer.process(hrMarkdown);
         expect(result).to.deep.equal(hrTree);
     });
 
     it('should transform link', () => {
-        const result = transformer.process(linkMD);
+        const result = transformer.process(linkMarkdown);
         expect(result).to.deep.equal(linkTree);
     });
 
     it('should transform image', () => {
-        const result = transformer.process(imageMD);
+        const result = transformer.process(imageMarkdown);
         expect(result).to.deep.equal(imageTree);
     });
 
     it('should transform block quote', () => {
-        let result = transformer.process(blockQuoteMD[0]);
+        let result = transformer.process(blockQuoteMarkdown[0]);
         expect(result).to.deep.equal(blockQuoteTree[0]);
 
-        result = transformer.process(blockQuoteMD[1]);
+        result = transformer.process(blockQuoteMarkdown[1]);
         expect(result).to.deep.equal(blockQuoteTree[1]);
+    });
+
+    it('should transform mixed text', () => {
+        const result = transformer.process(mixedMarkdown);
+        expect(result).to.deep.equal(mixedTree);
     });
 });

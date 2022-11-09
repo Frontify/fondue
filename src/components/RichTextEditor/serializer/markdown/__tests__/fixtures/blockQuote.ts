@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const blockQuoteMD_0 = `> quote
-quote
-quote
-quote
+export const blockQuoteMarkdown_0 = `> quote
+> quote
+> quote
+> quote
 
 > quote
 quote
@@ -38,7 +38,7 @@ export const blockQuoteTree_0 = [
     },
 ];
 
-export const blockQuoteMD_1 = `> quote
+export const blockQuoteMarkdown_1 = `> quote
 quote
 quote
 quote
@@ -85,7 +85,7 @@ const blockQuoteTree_1 = [
     },
 ];
 
-export const blockQuoteMDNested = `> quote
+export const blockQuoteMarkdownNested = `> quote
 quote
 quote
 quote
@@ -96,7 +96,7 @@ quote
 `;
 const blockQuoteTreeNested = [
     {
-        type: 'blockquote',
+        type: 'quote',
         children: [
             {
                 type: 'p',
@@ -109,7 +109,7 @@ const blockQuoteTreeNested = [
         ],
     },
     {
-        type: 'blockquote',
+        type: 'quote',
         children: [
             {
                 type: 'p',
@@ -120,7 +120,7 @@ const blockQuoteTreeNested = [
                 ],
             },
             {
-                type: 'blockquote',
+                type: 'quote',
                 children: [
                     {
                         type: 'p',
@@ -136,5 +136,5 @@ const blockQuoteTreeNested = [
     },
 ];
 
-export const blockQuoteMD = [blockQuoteMD_0, blockQuoteMD_1, blockQuoteMDNested];
+export const blockQuoteMarkdown = [blockQuoteMarkdown_0, blockQuoteMarkdown_1, blockQuoteMarkdownNested];
 export const blockQuoteTree = [blockQuoteTree_0, blockQuoteTree_1, blockQuoteTreeNested];

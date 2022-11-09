@@ -1,19 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-const codeBlockMD_0 = `\`\`\`
+export const codeBlockMarkdown_0 = `\`\`\`
 tell application "Foo";
     beep
 end tell
 \`\`\`
 `;
 
-const codeBlockMD_1 = `\`\`\`
+const codeBlockMarkdown_1 = `\`\`\`
 var add2 = function (number) {
     return number + 2;
 };
 \`\`\`
 `;
-export const codeBlockMD = [codeBlockMD_0, codeBlockMD_1];
+export const codeBlockMarkdown = [codeBlockMarkdown_0, codeBlockMarkdown_1];
 
 export const codeBlockTree_0 = [
     {
