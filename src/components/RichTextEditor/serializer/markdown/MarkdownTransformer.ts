@@ -4,7 +4,7 @@ import { PlateEditor } from '@udecode/plate';
 import { Transformer } from '../types';
 import { InitPlateEditor } from '@components/RichTextEditor/utils';
 
-export abstract class MdTransformer<T, R> implements Transformer<T, R> {
+export abstract class MarkdownTransformer<T, R> implements Transformer<T, R> {
     protected editor: PlateEditor;
 
     constructor() {

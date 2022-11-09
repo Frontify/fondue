@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MdToSlate } from '..';
+import { MarkdownToSlate } from '../';
 import { transform } from '../../transform';
 import {
     basicMarksMD,
@@ -26,7 +26,7 @@ import {
 } from './fixtures';
 
 describe('Markdown to slate Transformer', () => {
-    const transformer = transform.use(new MdToSlate());
+    const transformer = transform.use(new MarkdownToSlate());
 
     it('should transform basic marks', () => {
         let result = transformer.process(basicMarksMD[0]);
