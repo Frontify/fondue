@@ -23,6 +23,7 @@ import {
     LinkPlugin,
     MentionPlugin,
     OrderedListPlugin,
+    ParagraphPlugin,
     PluginComposer,
     UnderlinePlugin,
     UnorderedListPlugin,
@@ -185,7 +186,7 @@ WithChecklist.args = {
 
 const customPlugins = new PluginComposer();
 customPlugins
-    .setPlugin([new InitPlugin()])
+    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
     .setPlugin([new LinkPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
     .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
@@ -215,7 +216,7 @@ WithMentions.args = {
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
 withoutToolbarPlugins
-    .setPlugin([new InitPlugin()])
+    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
     .setPlugin([
         new BoldPlugin(),
         new LinkPlugin(),
