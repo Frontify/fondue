@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const hrMD = `
+export const hrMarkdown = `
 ---
 
 --- header line

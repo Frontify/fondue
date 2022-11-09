@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const headingsMD = `# heading 1
+export const headingsMarkdown = `# heading 1
 ## heading 2
 ### heading 3
 #### heading 4

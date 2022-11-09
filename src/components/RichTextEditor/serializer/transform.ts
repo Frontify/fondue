@@ -2,7 +2,7 @@
 
 import { Transformer } from './types';
 
-export class transform {
+export class Transform {
     public static use(transformer: Transformer) {
         return transformer;
     }

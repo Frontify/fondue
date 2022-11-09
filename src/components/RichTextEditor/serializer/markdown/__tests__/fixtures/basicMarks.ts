@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-const basicMarksMD_1 = 'aaaaaaaa**bold**_italic_~~delete~~`inline code`\n';
-const basicMarksMD_2 = 'This is ~~text that has strikethrough~~ in it';
-export const basicMarksMD = [basicMarksMD_1, basicMarksMD_2];
+const basicMarksMarkdown_1 = 'aaaaaaaa**bold**_italic_~~delete~~`inline code`\n';
+const basicMarksMarkdown_2 = 'This is ~~text that has strikethrough~~ in it';
+export const basicMarksMarkdown = [basicMarksMarkdown_1, basicMarksMarkdown_2];
 
 const basicMarksTree_1 = [
     {

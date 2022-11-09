@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const orderedListMD = `
+export const orderedListMarkdown = `
 1. Ordered list
 1. Ordered list
 

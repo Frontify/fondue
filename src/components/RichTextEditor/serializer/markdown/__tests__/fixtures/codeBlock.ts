@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const codeBlockMD = `\`\`\`
+export const codeBlockMarkdown = `\`\`\`
 tell application "Foo";
     beep
 end tell

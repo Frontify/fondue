@@ -10,6 +10,7 @@ import {
     checkboxValue,
     customDesignTokens,
     htmlValue,
+    markdownText,
     mentionValue,
     mentionable,
     nodesToSerialize,
@@ -28,6 +29,8 @@ import {
     UnorderedListPlugin,
 } from './Plugins';
 import { PaddingSizes } from './types';
+import { MarkdownToSlate } from './serializer/markdown';
+import { Transform } from './serializer';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -88,6 +91,28 @@ export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
                     </div>
                 </>
             ) : null}
+        </>
+    );
+};
+
+export const RichTextEditorMarkdownDeserialized: Story<RichTextEditorProps> = () => {
+    const transformer = Transform.use(new MarkdownToSlate());
+    const result = transformer.process(markdownText);
+
+    return (
+        <>
+            Markdown Text:
+            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                <code>{markdownText}</code>
+            </div>
+            Slate JSON Object:
+            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                <pre id="json">{JSON.stringify(result, undefined, 2)}</pre>
+            </div>
+            Rich Text Editor:
+            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                <RichTextEditorComponent value={JSON.stringify(result)} />
+            </div>
         </>
     );
 };
