@@ -1,3 +1,4 @@
+import { TNode, TNodeEntry } from '@udecode/plate';
 import {
     InsertNodesOptions,
     PlateEditor,
@@ -17,7 +18,7 @@ import {
     setNodes,
 } from '@udecode/plate-core';
 import { ButtonPlugin, ELEMENT_BUTTON } from '../createButtonPlugin';
-import { TButtonElement } from '../types';
+import { ButtonStyle, TButtonElement } from '../types';
 import { CreateButtonNodeOptions } from '../utils/index';
 import { insertButton } from './insertButton';
 import { unwrapButton } from './unwrapButton';
@@ -80,24 +81,8 @@ export const upsertButton = <V extends Value>(
         text = url;
     }
 
-    // edit the button url and/or target
     if (buttonAbove) {
-        if (
-            url !== buttonAbove[0]?.url ||
-            target !== buttonAbove[0]?.target ||
-            buttonStyle !== buttonAbove[0]?.buttonStyle
-        ) {
-            setNodes<TButtonElement>(
-                editor,
-                { url, target, buttonStyle },
-                {
-                    at: buttonAbove[1],
-                },
-            );
-        }
-
-        upsertButtonText(editor, { url, text, target });
-
+        editButtonUrlAndTarget<V>(url, editor, buttonAbove, target, buttonStyle, text);
         return true;
     }
 
@@ -120,25 +105,7 @@ export const upsertButton = <V extends Value>(
     }
 
     if (isExpanded(at)) {
-        // anchor and focus in button
-        if (buttonAbove) {
-            unwrapButton(editor, {
-                at: buttonAbove[1],
-            });
-        } else {
-            unwrapButton(editor, {
-                split: true,
-            });
-        }
-
-        wrapButton(editor, {
-            url,
-            buttonStyle,
-            target,
-        });
-
-        upsertButtonText(editor, { url, target, text });
-
+        anchorAndFocusInButton<V>(buttonAbove, editor, url, buttonStyle, target, text);
         return true;
     }
 
@@ -148,7 +115,7 @@ export const upsertButton = <V extends Value>(
         });
     }
 
-    const props = getNodeProps(buttonNode ?? ({} as any));
+    const props = getNodeProps(buttonNode ?? ({} as TNode));
 
     const path = editor.selection?.focus.path;
     if (!path) {
@@ -180,3 +147,55 @@ export const upsertButton = <V extends Value>(
     );
     return true;
 };
+
+function anchorAndFocusInButton<V extends Value>(
+    buttonAbove: undefined,
+    editor: PlateEditor<V>,
+    url: string,
+    buttonStyle?: ButtonStyle,
+    target?: string,
+    text?: string,
+) {
+    if (buttonAbove) {
+        unwrapButton(editor, {
+            at: buttonAbove[1],
+        });
+    } else {
+        unwrapButton(editor, {
+            split: true,
+        });
+    }
+
+    wrapButton(editor, {
+        url,
+        buttonStyle,
+        target,
+    });
+
+    upsertButtonText(editor, { url, target, text });
+}
+
+function editButtonUrlAndTarget<V extends Value>(
+    url: string,
+    editor: PlateEditor<V>,
+    buttonAbove: TNodeEntry<TButtonElement>,
+    target?: string,
+    buttonStyle?: string,
+    text?: string,
+) {
+    if (
+        url !== buttonAbove[0]?.url ||
+        target !== buttonAbove[0]?.target ||
+        buttonStyle !== buttonAbove[0]?.buttonStyle
+    ) {
+        setNodes<TButtonElement>(
+            editor,
+            { url, target, buttonStyle },
+            {
+                at: buttonAbove[1],
+            },
+        );
+    }
+
+    upsertButtonText(editor, { url, text, target });
+}

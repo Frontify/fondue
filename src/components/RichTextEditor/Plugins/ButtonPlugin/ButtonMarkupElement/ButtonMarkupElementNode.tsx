@@ -72,7 +72,7 @@ type Props = {
     children: ReactNode;
     styles?: React.CSSProperties & { hover?: React.CSSProperties };
     href?: string;
-    target?: React.HTMLAttributeAnchorTarget | undefined;
+    target?: React.HTMLAttributeAnchorTarget;
 };
 
 const HoverableButtonLink: FC<Props> = ({ attributes, styles = { hover: {} }, children, href = '#', target }) => {

@@ -23,6 +23,7 @@ import { withRemoveEmptyNodes } from '@udecode/plate-normalizers';
 import { Path, Point, Range } from 'slate';
 import { upsertButton } from './transforms/index';
 import { ButtonPlugin, ELEMENT_BUTTON } from './createButtonPlugin';
+import { AnyObject } from '@udecode/plate';
 
 /**
  * Insert space after a url to wrap a bztton.
@@ -122,35 +123,40 @@ export const withButton = <V extends Value = Value, E extends PlateEditor<V> = P
     };
 
     editor.apply = (operation) => {
-        if (operation.type === 'set_selection') {
-            const range = operation.newProperties as Range | null;
+        if (operation.type !== 'set_selection') {
+            apply(operation);
+            return;
+        }
 
-            if (range && range.focus && range.anchor && isCollapsed(range)) {
-                const entry = getAboveNode(editor, {
-                    at: range,
-                    match: { type: getPluginType(editor, ELEMENT_BUTTON) },
-                });
+        const range = operation.newProperties;
+        if (!range?.focus || !range.anchor || !isCollapsed(range as Range)) {
+            apply(operation);
+            return;
+        }
 
-                if (entry) {
-                    const [, path] = entry;
+        const entry = getAboveNode(editor, {
+            at: range as Range,
+            match: { type: getPluginType(editor, ELEMENT_BUTTON) },
+        });
 
-                    let newPoint: Point | undefined;
+        if (entry) {
+            const [, path] = entry;
 
-                    if (isStartPoint(editor, range.focus, path)) {
-                        newPoint = getPreviousNodeEndPoint(editor, path);
-                    }
+            let newPoint: Point | undefined;
 
-                    if (isEndPoint(editor, range.focus, path)) {
-                        newPoint = getNextNodeStartPoint(editor, path);
-                    }
+            if (isStartPoint(editor, range.focus, path)) {
+                newPoint = getPreviousNodeEndPoint(editor, path);
+            }
 
-                    if (newPoint) {
-                        operation.newProperties = {
-                            anchor: newPoint,
-                            focus: newPoint,
-                        };
-                    }
-                }
+            if (isEndPoint(editor, range.focus, path)) {
+                newPoint = getNextNodeStartPoint(editor, path);
+            }
+
+            if (newPoint) {
+                operation.newProperties = {
+                    anchor: newPoint,
+                    focus: newPoint,
+                };
             }
         }
 
@@ -161,19 +167,17 @@ export const withButton = <V extends Value = Value, E extends PlateEditor<V> = P
         if (node.type === getPluginType(editor, ELEMENT_BUTTON)) {
             const range = editor.selection as Range | null;
 
-            if (range && isCollapsed(range)) {
-                if (isEndPoint(editor, range.focus, path)) {
-                    const nextPoint = getNextNodeStartPoint(editor, path);
+            if (range && isCollapsed(range) && isEndPoint(editor, range.focus, path)) {
+                const nextPoint = getNextNodeStartPoint(editor, path);
 
-                    // select next text node if any
-                    if (nextPoint) {
-                        select(editor, nextPoint);
-                    } else {
-                        // insert text node then select
-                        const nextPath = Path.next(path);
-                        insertNodes(editor, { text: '' } as any, { at: nextPath });
-                        select(editor, nextPath);
-                    }
+                // select next text node if any
+                if (nextPoint) {
+                    select(editor, nextPoint);
+                } else {
+                    // insert text node then select
+                    const nextPath = Path.next(path);
+                    insertNodes(editor, { text: '' } as any, { at: nextPath });
+                    select(editor, nextPath);
                 }
             }
         }
@@ -181,12 +185,10 @@ export const withButton = <V extends Value = Value, E extends PlateEditor<V> = P
         normalizeNode([node, path]);
     };
 
-    editor = withRemoveEmptyNodes<V, E>(
+    return withRemoveEmptyNodes<V, E>(
         editor,
-        mockPlugin<{}, V, E>({
+        mockPlugin<AnyObject, V, E>({
             options: { types: type },
         }),
     );
-
-    return editor;
 };
