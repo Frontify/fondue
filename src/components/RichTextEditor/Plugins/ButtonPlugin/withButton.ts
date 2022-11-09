@@ -121,7 +121,6 @@ export const withButton = <V extends Value = Value, E extends PlateEditor<V> = P
         insertData(data);
     };
 
-    // TODO: plugin
     editor.apply = (operation) => {
         if (operation.type === 'set_selection') {
             const range = operation.newProperties as Range | null;
@@ -158,7 +157,6 @@ export const withButton = <V extends Value = Value, E extends PlateEditor<V> = P
         apply(operation);
     };
 
-    // TODO: plugin
     editor.normalizeNode = ([node, path]) => {
         if (node.type === getPluginType(editor, ELEMENT_BUTTON)) {
             const range = editor.selection as Range | null;

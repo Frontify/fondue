@@ -83,8 +83,6 @@ export const createButtonPlugin = createPluginFactory({
             }),
         },
     }),
-
-    //TODO: only override some props
 });
 
 export class ButtonPlugin extends Plugin {
