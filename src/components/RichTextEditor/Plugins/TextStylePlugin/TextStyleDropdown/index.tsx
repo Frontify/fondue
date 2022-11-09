@@ -23,10 +23,7 @@ export const TextStyleDropdown = ({ editorId }: TextStyleDropdownProps) => {
             {state.isOpen && (
                 <div
                     className="tw-divide-y tw-divide-line tw-bg-base tw-shadow-md tw-border tw-border-line tw-z-[1000] tw-overflow-auto tw-min-h-[40px]"
-                    ref={(node) => {
-                        console.log(node);
-                        setPopperElement(node);
-                    }}
+                    ref={setPopperElement}
                     {...dropdownProps}
                 >
                     <DropdownItem editor={editor} type={TextStyles.ELEMENT_HEADING1}>
