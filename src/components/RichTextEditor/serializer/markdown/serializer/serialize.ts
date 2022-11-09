@@ -8,8 +8,8 @@ import {
     OptionType,
     PartialOptionType,
     defaultNodeTypes,
-} from '../astTypes';
-import { applyFormattingToLeafNode } from './appplyFormatingToLeafNode';
+} from '../types';
+import { applyFormattingToLeafNode } from './applyFormattingToLeafNode';
 import { isLeafNode } from './isLeafNode';
 import { processNodes } from './processNodes';
 import { BREAK_TAG, LINK_DESTINATION_KEY } from './utils';
@@ -43,7 +43,7 @@ const defaultOptions: OptionType = {
     linkDestinationKey: LINK_DESTINATION_KEY,
 };
 
-function process(chunk: NodeType, options: OptionType) {
+const process = (chunk: NodeType, options: OptionType) => {
     const nodeTypes = options.nodeTypes as InputNodeTypes;
     const text = (chunk as LeafType).text ?? '';
     let type = (chunk as BlockType).type ?? undefined;
@@ -110,7 +110,7 @@ function process(chunk: NodeType, options: OptionType) {
     }
 
     return processNodes(options, children, chunk, options.listDepth, type, parentType);
-}
+};
 
 export default function serialize(options: PartialOptionType) {
     const userOptions = {

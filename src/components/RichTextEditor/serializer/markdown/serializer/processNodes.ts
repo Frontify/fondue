@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import escapeHtml from 'escape-html';
-import { BlockType, InputNodeTypes, NodeType, OptionType } from '../astTypes';
+import { BlockType, InputNodeTypes, NodeType, OptionType } from '../types';
 import { isLeafNode } from './isLeafNode';
 
 const processListItemNode = (
