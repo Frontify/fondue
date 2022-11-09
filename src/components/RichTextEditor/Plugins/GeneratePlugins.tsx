@@ -11,11 +11,10 @@ type GeneratePluginsReturn = {
     inline: () => ReactNode;
 };
 
-export const createPlatePlugins = (pluginComposer: PluginComposer) => {
-    return createPlugins(pluginComposer.plugins, {
+export const createPlatePlugins = (pluginComposer: PluginComposer) =>
+    createPlugins(pluginComposer.plugins, {
         components: createPlateUI(pluginComposer.elements),
     });
-};
 
 export const GeneratePlugins = (editorId: string, pluginComposer?: PluginComposer): GeneratePluginsReturn | null => {
     if (!pluginComposer) {
