@@ -56,22 +56,8 @@ const defaultOptions: OptionType = {
     linkDestinationKey: LINK_DESTINATION_KEY,
 };
 
-function process(chunk: NodeType, opts: PartialOptionType) {
-    const options = {
-        ...defaultOptions,
-        ...opts,
-        nodeTypes: {
-            ...defaultOptions.nodeTypes,
-            ...opts?.nodeTypes,
-            heading: {
-                ...defaultOptions.nodeTypes.heading,
-                ...opts?.nodeTypes?.heading,
-            },
-        },
-    };
-
+function process(chunk: NodeType, options: OptionType) {
     const nodeTypes = options.nodeTypes as InputNodeTypes;
-
     const text = (chunk as LeafType).text ?? '';
     let type = (chunk as BlockType).type ?? undefined;
     const parentType = (chunk as BlockType).parentType ?? undefined;
@@ -141,19 +127,19 @@ function process(chunk: NodeType, opts: PartialOptionType) {
     return shouldEscapeNode(children, nodeTypes, type, parentType);
 }
 
-export default function serialize(opts: PartialOptionType) {
-    const options = {
+export default function serialize(options: PartialOptionType) {
+    const userOptions = {
         ...defaultOptions,
-        ...opts,
+        ...options,
         nodeTypes: {
             ...defaultOptions.nodeTypes,
-            ...opts?.nodeTypes,
+            ...options?.nodeTypes,
             heading: {
                 ...defaultOptions.nodeTypes.heading,
-                ...opts?.nodeTypes?.heading,
+                ...options?.nodeTypes?.heading,
             },
         },
     };
 
-    return (tree: NodeType[]): string => tree.map((node) => process(node, options)).join('');
+    return (tree: NodeType[]): string => tree.map((node) => process(node, userOptions)).join('');
 }
