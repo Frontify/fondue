@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import escapeHtml from 'escape-html';
 import {
     BlockType,
     InputNodeTypes,
@@ -35,16 +34,6 @@ const shouldIgnoreParagraphNewline = (
     chunk: NodeType,
     nodeTypes: InputNodeTypes,
 ) => !ignoreParagraphNewline && (text === '' || text === '\n') && chunk.parentType === nodeTypes.paragraph;
-
-const shouldEscapeNode = (children: string, nodeTypes: InputNodeTypes, type?: string, parentType?: string) => {
-    // don't escape if: code block, image, img
-    const isCodeBlock = parentType === nodeTypes.code_block || type === nodeTypes.code_block;
-    if (!isCodeBlock) {
-        children = escapeHtml(children);
-    }
-
-    return children;
-};
 
 const getDepthOfNestedLists = (listTypes: string[], children: NodeType, listDepth: number) =>
     listTypes.includes((children as BlockType).type || '') ? listDepth + 1 : listDepth;
@@ -122,9 +111,7 @@ function process(chunk: NodeType, options: OptionType) {
         children = applyFormattingToLeafNode(children, chunk);
     }
 
-    children = processNodes(options, children, chunk, options.listDepth, type);
-
-    return shouldEscapeNode(children, nodeTypes, type, parentType);
+    return processNodes(options, children, chunk, options.listDepth, type, parentType);
 }
 
 export default function serialize(options: PartialOptionType) {
