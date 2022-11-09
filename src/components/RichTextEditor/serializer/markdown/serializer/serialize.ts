@@ -8,13 +8,13 @@ import {
     OptionType,
     PartialOptionType,
     defaultNodeTypes,
-} from '../astTypes';
-import { applyFormattingToLeafNode } from './appplyFormatingToLeafNode';
+} from '../types';
+import { applyFormattingToLeafNode } from './applyFormattingToLeafNode';
 import { isLeafNode } from './isLeafNode';
 import { processNodes } from './processNodes';
 import { BREAK_TAG, LINK_DESTINATION_KEY } from './utils';
 
-const VOID_ELEMENTS: Array<keyof InputNodeTypes> = ['thematic_break', 'image', 'img'];
+const VOID_ELEMENTS: Array<keyof InputNodeTypes> = ['thematic_break', 'image'];
 
 const isChildAList = (chunk: NodeType, LIST_TYPES: string[]) =>
     !isLeafNode(chunk) ? LIST_TYPES.includes(chunk.type || '') : false;
@@ -22,9 +22,7 @@ const isChildAList = (chunk: NodeType, LIST_TYPES: string[]) =>
 const doesChildHasALink = (chunk: NodeType, nodeTypes: InputNodeTypes) =>
     !isLeafNode(chunk) && Array.isArray(chunk.children)
         ? chunk.children.some(
-              (child) =>
-                  !isLeafNode(child) &&
-                  (child.type === nodeTypes.link || child.type === nodeTypes.img || child.type === nodeTypes.image),
+              (child) => !isLeafNode(child) && (child.type === nodeTypes.link || child.type === nodeTypes.image),
           )
         : false;
 
@@ -45,7 +43,7 @@ const defaultOptions: OptionType = {
     linkDestinationKey: LINK_DESTINATION_KEY,
 };
 
-function process(chunk: NodeType, options: OptionType) {
+const process = (chunk: NodeType, options: OptionType) => {
     const nodeTypes = options.nodeTypes as InputNodeTypes;
     const text = (chunk as LeafType).text ?? '';
     let type = (chunk as BlockType).type ?? undefined;
@@ -57,7 +55,7 @@ function process(chunk: NodeType, options: OptionType) {
         children = chunk.children
             .map((c: NodeType) => {
                 const isList = isChildAList(c, LIST_TYPES);
-                const selfIsList = LIST_TYPES.includes(chunk.type || '');
+                const selfIsList = LIST_TYPES.includes(chunk.type ?? '');
 
                 // Links can have the following shape
                 // In which case we don't want to surround
@@ -112,7 +110,7 @@ function process(chunk: NodeType, options: OptionType) {
     }
 
     return processNodes(options, children, chunk, options.listDepth, type, parentType);
-}
+};
 
 export default function serialize(options: PartialOptionType) {
     const userOptions = {

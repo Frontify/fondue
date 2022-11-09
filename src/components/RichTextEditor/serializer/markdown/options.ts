@@ -23,7 +23,7 @@ import {
     PlateEditor,
     getPluginType,
 } from '@udecode/plate';
-import { PartialOptionType } from './RemarkPlate';
+import { PartialOptionType } from './types';
 
 export const options = (editor: PlateEditor): PartialOptionType => ({
     nodeTypes: {

@@ -17,7 +17,7 @@ import {
     TextNode,
     ThematicBreakNode,
     defaultNodeTypes,
-} from './astTypes';
+} from '../types';
 
 export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstNode, opts?: OptionType<T>) {
     const types = {
@@ -138,7 +138,7 @@ const forceLeafNode = (children: Array<TextNode>) => ({
 // This function is will take any unknown keys, and bring them up a level
 // allowing leaf nodes to have many different formats at once
 // for example, bold and italic on the same node
-function persistLeafFormats(children: Array<MarkdownAstNode>): Omit<MarkdownAstNode, 'children' | 'type' | 'text'> {
+const persistLeafFormats = (children: Array<MarkdownAstNode>): Omit<MarkdownAstNode, 'children' | 'type' | 'text'> => {
     return children.reduce((acc, node) => {
         for (const key of Object.keys(node) as Array<keyof MarkdownAstNode>) {
             if (key === 'children' || key === 'type' || key === 'text') {
@@ -150,4 +150,4 @@ function persistLeafFormats(children: Array<MarkdownAstNode>): Omit<MarkdownAstN
 
         return acc;
     }, {});
-}
+};
