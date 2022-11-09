@@ -1,71 +1,33 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { usePlateEditorState } from '@udecode/plate';
-import React, { useCallback, useEffect, useState } from 'react';
-import { usePopper } from 'react-popper';
+import React, { useState } from 'react';
 import { useRichTextEditorContext } from '../../../context/RichTextEditorContext';
 import { TextStyles, textStyleTitle } from '../TextStyles';
 import { DropdownItem } from './DropdownItem';
 import { DropdownTrigger } from './DropdownTrigger';
 import { TextStyleDropdownProps } from './types';
+import { usePopperDropdown } from './usePopperDropdown';
 
 export const TextStyleDropdown = ({ editorId }: TextStyleDropdownProps) => {
     const [triggerElement, setTriggerElement] = useState<HTMLButtonElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-    const [open, setOpen] = useState(false);
     const editor = usePlateEditorState(editorId)!;
     const { designTokens } = useRichTextEditorContext();
 
-    const onToggle = useCallback(() => {
-        setOpen(!open);
-    }, [open, setOpen]);
-
-    const popperInstance = usePopper(triggerElement, popperElement, {
-        placement: 'bottom-start',
-        strategy: 'absolute',
-        modifiers: [
-            {
-                name: 'offset',
-                options: {
-                    offset: [0, 5],
-                },
-            },
-            {
-                name: 'flip',
-                enabled: true,
-            },
-        ],
-    });
-
-    useEffect(() => {
-        const listener = (event: Event) => {
-            if (open) {
-                const target = event.currentTarget as HTMLElement;
-                if (popperElement && target.contains(popperElement)) {
-                    return;
-                }
-                if (triggerElement && target.contains(triggerElement)) {
-                    return;
-                }
-
-                setOpen(false);
-            }
-        };
-        document.body.addEventListener('mousedown', listener);
-        return () => {
-            document.body.removeEventListener('mousedown', listener);
-        };
-    }, [open, popperElement, setOpen, triggerElement]);
+    const { state, positioningProps } = usePopperDropdown(triggerElement, popperElement);
 
     return (
         <>
-            <DropdownTrigger editor={editor} open={open} onClick={onToggle} ref={setTriggerElement} />
-            {open && (
+            <DropdownTrigger editor={editor} open={state.isOpen} onClick={state.toggle} ref={setTriggerElement} />
+            {state.isOpen && (
                 <div
                     className="tw-divide-y tw-divide-line tw-bg-base tw-shadow-md tw-border tw-border-line tw-z-[1000] tw-overflow-auto tw-min-h-[40px]"
-                    ref={setPopperElement}
-                    style={popperInstance.styles.popper}
-                    {...popperInstance.attributes.popper}
+                    ref={(node) => {
+                        console.log(node);
+                        setPopperElement(node);
+                    }}
+                    {...positioningProps}
                 >
                     <DropdownItem editor={editor} type={TextStyles.ELEMENT_HEADING1}>
                         <span style={designTokens.heading1}>{textStyleTitle[TextStyles.ELEMENT_HEADING1]}</span>
