@@ -10,7 +10,6 @@ import { textStylePluginsRecord } from './TextStyleDropdown/textStylePluginsReco
 
 export class TextStylePlugin extends Plugin<TextStylePluginProps> {
     constructor({ selectableStyles = defaultSelectableStyles, ...pluginProps }: Partial<TextStylePluginProps> = {}) {
-        console.log(selectableStyles, 'CONSTURCTOR');
         super(TEXT_STYLE_PLUGIN, {
             button: withSelectableStyles(TextStyleButton, selectableStyles),
             selectableStyles,
