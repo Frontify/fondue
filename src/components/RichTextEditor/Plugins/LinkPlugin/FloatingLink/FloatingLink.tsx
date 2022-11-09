@@ -5,9 +5,9 @@ import {
     FloatingLink as PlateFloatingLink,
     createComponentAs,
     createElementAs,
+    useFloatingLinkInsert,
 } from '@udecode/plate';
 import { useFloatingLinkEdit } from './EditLinkModal';
-import { useFloatingLinkInsert } from './InsertLinkModal';
 
 const FloatingLinkInsertRoot = createComponentAs<FloatingLinkProps>((props) => {
     const htmlProps = useFloatingLinkInsert(props);
