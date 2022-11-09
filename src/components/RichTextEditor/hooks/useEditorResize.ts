@@ -12,6 +12,7 @@ export const useEditorResize = () => {
         if (!node) {
             return;
         }
+        setEditorWidth(node.clientWidth);
 
         const observer = new ResizeObserver((entries) => {
             if (entries.length > 0) {
