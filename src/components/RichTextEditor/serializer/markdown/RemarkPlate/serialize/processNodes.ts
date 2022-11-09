@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import escapeHtml from 'escape-html';
 import { BlockType, InputNodeTypes, NodeType, OptionType } from '../astTypes';
 import { isLeafNode } from './isLeafNode';
 
@@ -24,12 +25,23 @@ const processListItemNode = (
     return `${spacer}${isOL ? '1.' : '-'} ${children}${treatAsLeaf ? '\n' : ''}`;
 };
 
+const shouldEscapeNode = (children: string, nodeTypes: InputNodeTypes, type?: string, parentType?: string) => {
+    // don't escape if: code block, image, img
+    const isCodeBlock = parentType === nodeTypes.code_block || type === nodeTypes.code_block;
+    if (!isCodeBlock) {
+        children = escapeHtml(children);
+    }
+
+    return children;
+};
+
 export const processNodes = (
     options: OptionType,
     children: string,
     chunk: NodeType,
     listDepth: number,
     type?: string,
+    parentType?: string,
 ) => {
     const nodeTypes = options.nodeTypes as InputNodeTypes;
 
@@ -53,7 +65,7 @@ export const processNodes = (
              * continued blockquote, so adding two new lines ensures that doesn't
              * happen
              */
-            return `> ${children}\n\n`;
+            return `> ${children}\n`;
 
         case nodeTypes.code_block:
             return `\`\`\`${(chunk as BlockType).language || ''}\n${children}\n\`\`\`\n`;
@@ -81,6 +93,6 @@ export const processNodes = (
             return `\n---${children}\n\n`;
 
         default:
-            return children;
+            return shouldEscapeNode(children, nodeTypes, type, parentType);
     }
 };
