@@ -14,8 +14,6 @@ export const ParagraphMarkupElementNode = ({ element, attributes, children }: Pl
     const align = element.align as string;
     const className = merge([align && alignmentClassnames[align], PARAGRAPH_CLASSES]);
 
-    console.log(designTokens, 'TOKENS');
-
     return (
         <p {...attributes} className={className} style={designTokens.p}>
             {children}

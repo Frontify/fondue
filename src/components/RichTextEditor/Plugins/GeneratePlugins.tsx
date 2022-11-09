@@ -12,7 +12,6 @@ type GeneratePluginsReturn = {
 };
 
 export const createPlatePlugins = (pluginComposer: PluginComposer) => {
-    console.log(pluginComposer.elements);
     return createPlugins(pluginComposer.plugins, {
         components: createPlateUI(pluginComposer.elements),
     });
