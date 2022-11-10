@@ -14,7 +14,8 @@ import { isLeafNode } from './isLeafNode';
 import { processNodes } from './processNodes';
 import { BREAK_TAG, LINK_DESTINATION_KEY } from './utils';
 
-const VOID_ELEMENTS: Array<keyof InputNodeTypes> = ['thematic_break', 'image'];
+// TODO: check if it works!!!!!!!!!
+const VOID_ELEMENTS: Array<keyof InputNodeTypes> = ['thematicBreak', 'image'];
 
 const isChildAList = (chunk: NodeType, LIST_TYPES: string[]) =>
     !isLeafNode(chunk) ? LIST_TYPES.includes(chunk.type || '') : false;
@@ -48,7 +49,7 @@ const process = (chunk: NodeType, options: OptionType) => {
     const text = (chunk as LeafType).text ?? '';
     let type = (chunk as BlockType).type ?? undefined;
     const parentType = (chunk as BlockType).parentType ?? undefined;
-    const LIST_TYPES = [nodeTypes.ul_list, nodeTypes.ol_list];
+    const LIST_TYPES = [nodeTypes.ulList, nodeTypes.olList];
     let children = text;
 
     if (!isLeafNode(chunk)) {

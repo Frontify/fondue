@@ -2,11 +2,11 @@
 
 export type InputNodeTypes = {
     paragraph: string;
-    block_quote: string;
-    code_block: string;
+    blockQuote: string;
+    codeBlock: string;
     link: string;
-    ul_list: string;
-    ol_list: string;
+    ulList: string;
+    olList: string;
     listItem: string;
     heading: {
         1: string;
@@ -16,11 +16,11 @@ export type InputNodeTypes = {
         5: string;
         6: string;
     };
-    emphasis_mark: string;
-    strong_mark: string;
-    delete_mark: string;
-    inline_code_mark: string;
-    thematic_break: string;
+    emphasisMark: string;
+    strongMark: string;
+    deleteMark: string;
+    inlineCodeMark: string;
+    thematicBreak: string;
     image: string;
 };
 
@@ -43,11 +43,11 @@ export type MarkdownAstNodeType =
 
 export const defaultNodeTypes: InputNodeTypes = {
     paragraph: 'paragraph',
-    block_quote: 'block_quote',
-    code_block: 'code_block',
+    blockQuote: 'block_quote',
+    codeBlock: 'code_block',
     link: 'link',
-    ul_list: 'ul_list',
-    ol_list: 'ol_list',
+    ulList: 'ul_list',
+    olList: 'ol_list',
     listItem: 'list_item',
     heading: {
         1: 'heading_one',
@@ -57,11 +57,11 @@ export const defaultNodeTypes: InputNodeTypes = {
         5: 'heading_five',
         6: 'heading_six',
     },
-    emphasis_mark: 'italic',
-    strong_mark: 'bold',
-    delete_mark: 'strikethrough',
-    inline_code_mark: 'code',
-    thematic_break: 'thematic_break',
+    emphasisMark: 'italic',
+    strongMark: 'bold',
+    deleteMark: 'strikethrough',
+    inlineCodeMark: 'code',
+    thematicBreak: 'thematic_break',
     image: 'image',
 };
 
@@ -122,7 +122,7 @@ export type MarkdownAstNode = {
 export type TextNode = { text?: string };
 
 export type CodeBlockNode<T extends InputNodeTypes> = {
-    type: T['code_block'];
+    type: T['codeBlock'];
     language: string | undefined;
     children: Array<TextNode>;
 };
@@ -133,7 +133,7 @@ export type HeadingNode<T extends InputNodeTypes> = {
 };
 
 export type ListNode<T extends InputNodeTypes> = {
-    type: T['ol_list'] | T['ul_list'];
+    type: T['olList'] | T['ulList'];
     children: Array<DeserializedNode<T>>;
 };
 
@@ -161,23 +161,23 @@ export type ImageNode<T extends InputNodeTypes> = {
 };
 
 export type BlockQuoteNode<T extends InputNodeTypes> = {
-    type: T['block_quote'];
+    type: T['blockQuote'];
     children: Array<DeserializedNode<T>>;
 };
 
 export type InlineCodeMarkNode<T extends InputNodeTypes> = {
-    type: T['inline_code_mark'];
+    type: T['inlineCodeMark'];
     children: Array<TextNode>;
     language: string | undefined;
 };
 
 export type ThematicBreakNode<T extends InputNodeTypes> = {
-    type: T['thematic_break'];
+    type: T['thematicBreak'];
     children: Array<DeserializedNode<T>>;
 };
 
 export type ItalicNode<T extends InputNodeTypes> = {
-    [K in T['emphasis_mark']]: true;
+    [K in T['emphasisMark']]: true;
 } & {
     children: TextNode;
 };
