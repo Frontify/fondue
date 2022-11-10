@@ -2,36 +2,22 @@
 
 import { TEXT_STYLE_PLUGIN } from './id';
 import { TextStyleButton } from './TextStyleDropdown/TextStyleButton';
-import { Plugin, PluginProps } from '../Plugin';
-import {
-    createCustom1Plugin,
-    createCustom2Plugin,
-    createCustom3Plugin,
-    createHeading1Plugin,
-    createHeading2Plugin,
-    createHeading3Plugin,
-    createHeading4Plugin,
-    createQuotePlugin,
-} from './TextStyles';
+import { Plugin } from '../Plugin';
+import { TextStylePluginProps } from './TextStyles/types';
+import { withTextStyles } from './TextStyleDropdown/withTextStyles';
+import { defaultTextStyles } from './TextStyles/defaultTextStyles';
+import { getTextStylePlugins } from './getTextStylePlugins';
 
-export class TextStylePlugin extends Plugin {
-    constructor(props?: PluginProps) {
+export class TextStylePlugin extends Plugin<TextStylePluginProps> {
+    constructor({ textStyles = defaultTextStyles, ...pluginProps }: Partial<TextStylePluginProps> = {}) {
         super(TEXT_STYLE_PLUGIN, {
-            button: TextStyleButton,
-            ...props,
+            button: withTextStyles(TextStyleButton, textStyles),
+            textStyles,
+            ...pluginProps,
         });
     }
 
     plugins() {
-        return [
-            createHeading1Plugin(),
-            createHeading2Plugin(),
-            createHeading3Plugin(),
-            createHeading4Plugin(),
-            createCustom1Plugin(),
-            createCustom2Plugin(),
-            createCustom3Plugin(),
-            createQuotePlugin(),
-        ];
+        return getTextStylePlugins(this.props?.textStyles ?? []);
     }
 }
