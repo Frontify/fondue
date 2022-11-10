@@ -1,18 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    BlockType,
-    InputNodeTypes,
-    LeafType,
-    NodeType,
-    OptionType,
-    PartialOptionType,
-    defaultNodeTypes,
-} from '../types';
+import { BlockType, InputNodeTypes, LeafType, NodeType, OptionType, PartialOptionType } from '../types';
 import { applyFormattingToLeafNode } from './applyFormattingToLeafNode';
 import { isLeafNode } from './isLeafNode';
 import { applyFormattingToBlockNode } from './applyFormattingToBlockNode';
-import { BREAK_TAG, LINK_DESTINATION_KEY } from './utils';
+import { BREAK_TAG, getSelectedOptions } from '../utils';
 
 const VOID_ELEMENTS: Array<keyof InputNodeTypes> = ['thematic_break', 'image'];
 
@@ -35,13 +27,6 @@ const shouldIgnoreParagraphNewline = (
 
 const getDepthOfNestedLists = (listTypes: string[], children: NodeType, listDepth: number) =>
     listTypes.includes((children as BlockType).type || '') ? listDepth + 1 : listDepth;
-
-const defaultOptions: OptionType = {
-    nodeTypes: defaultNodeTypes,
-    ignoreParagraphNewline: false,
-    listDepth: 0,
-    linkDestinationKey: LINK_DESTINATION_KEY,
-};
 
 const process = (chunk: NodeType, options: OptionType) => {
     const nodeTypes = options.nodeTypes as InputNodeTypes;
@@ -112,19 +97,8 @@ const process = (chunk: NodeType, options: OptionType) => {
     return applyFormattingToBlockNode(options, children, chunk, options.listDepth, type, parentType);
 };
 
-export default function serialize(options: PartialOptionType) {
-    const userOptions = {
-        ...defaultOptions,
-        ...options,
-        nodeTypes: {
-            ...defaultOptions.nodeTypes,
-            ...options?.nodeTypes,
-            heading: {
-                ...defaultOptions.nodeTypes.heading,
-                ...options?.nodeTypes?.heading,
-            },
-        },
-    };
+export default function serialize(opts?: PartialOptionType) {
+    const options = getSelectedOptions(opts);
 
-    return (tree: NodeType[]): string => tree.map((node) => process(node, userOptions)).join('');
+    return (tree: NodeType[]): string => tree.map((node) => process(node, options)).join('');
 }
