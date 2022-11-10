@@ -84,9 +84,6 @@ describe('Slate To Markdown transformer', () => {
 
         result = transformer.process(blockQuoteTree[1]);
         expect(result).to.deep.equal(blockQuoteMarkdown[1]);
-
-        // result = transformer.process(blockQuoteTree[2]);
-        // expect(result).to.deep.equal(blockQuoteMarkdown[2]);
     });
 
     it('should transform mixed text', () => {
