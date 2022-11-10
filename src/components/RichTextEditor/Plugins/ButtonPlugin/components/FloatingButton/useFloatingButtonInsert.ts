@@ -63,10 +63,8 @@ export const useFloatingButtonInsert = ({ floatingOptions, ...props }: FloatingB
     useEffect(() => {
         if (open) {
             update();
-            floatingButtonActions.updated(true);
-        } else {
-            floatingButtonActions.updated(false);
         }
+        floatingButtonActions.updated(open);
     }, [open, update]);
 
     useFloatingButtonEscape();

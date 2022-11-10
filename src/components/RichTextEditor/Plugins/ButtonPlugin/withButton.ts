@@ -26,12 +26,12 @@ import { ButtonPlugin, ELEMENT_BUTTON } from './createButtonPlugin';
 import { AnyObject } from '@udecode/plate';
 
 /**
- * Insert space after a url to wrap a bztton.
+ * Insert space after a url to wrap a button.
  * Lookup from the block start to the cursor to check if there is an url.
  * If not found, lookup before the cursor for a space character to check the url.
  *
  * On insert data:
- * Paste a string inside a bztton element will edit its children text but not its url.
+ * Paste a string inside a button element will edit its children text but not its url.
  *
  */
 

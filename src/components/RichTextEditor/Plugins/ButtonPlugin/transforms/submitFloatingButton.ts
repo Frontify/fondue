@@ -3,12 +3,6 @@ import { floatingButtonActions, floatingButtonSelectors } from '../components/Fl
 import { ButtonPlugin, ELEMENT_BUTTON } from '../createButtonPlugin';
 import { upsertButton } from './index';
 
-/**
- * Insert button if url is valid.
- * Text is url if empty.
- * Close floating button.
- * Focus editor.
- */
 export const submitFloatingButton = <V extends Value>(editor: PlateEditor<V>) => {
     if (!editor.selection) {
         return;
