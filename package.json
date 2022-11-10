@@ -1,6 +1,6 @@
 {
     "name": "@frontify/fondue",
-    "version": "12.0.0-beta.19",
+    "version": "12.0.0-beta.20",
     "description": "Design system of Frontify",
     "engines": {
         "node": "~16"
@@ -145,6 +145,7 @@
         "@xstate/immer": "^0.3.1",
         "@xstate/react": "^1.6.3",
         "date-fns": "^2.28.0",
+        "escape-html": "^1.0.3",
         "framer-motion": "^6.4.3",
         "immer": "^9.0.12",
         "react-colorful": "^5.5.1",
