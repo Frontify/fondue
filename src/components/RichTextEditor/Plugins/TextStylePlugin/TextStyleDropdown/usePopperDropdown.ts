@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { HTMLAttributes, useCallback, useEffect, useState } from 'react';
+import { HTMLAttributes, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
 
 export const usePopperDropdown = <T extends HTMLElement, P extends HTMLElement>(
@@ -15,7 +15,7 @@ export const usePopperDropdown = <T extends HTMLElement, P extends HTMLElement>(
 
     const popperInstance = usePopper(triggerElement, popperElement, {
         placement: 'bottom-start',
-        strategy: 'fixed',
+        strategy: 'absolute',
         modifiers: [
             {
                 name: 'offset',
@@ -33,20 +33,21 @@ export const usePopperDropdown = <T extends HTMLElement, P extends HTMLElement>(
     useEffect(() => {
         const listener = (event: Event) => {
             if (isOpen) {
-                const target = event.currentTarget as HTMLElement;
-                if (popperElement && target.contains(popperElement)) {
+                const target = event.target as HTMLElement;
+                console.log(target, triggerElement);
+                if (popperElement && popperElement.contains(target)) {
                     return;
                 }
-                if (triggerElement && target.contains(triggerElement)) {
+                if (triggerElement && triggerElement.contains(target)) {
                     return;
                 }
 
                 setIsOpen(false);
             }
         };
-        document.body.addEventListener('mousedown', listener);
+        document.addEventListener('mousedown', listener);
         return () => {
-            document.body.removeEventListener('mousedown', listener);
+            document.removeEventListener('mousedown', listener);
         };
     }, [isOpen, popperElement, setIsOpen, triggerElement]);
 
