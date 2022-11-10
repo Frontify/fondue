@@ -40,7 +40,6 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
         const listener = (event: Event) => {
             if (isOpen) {
                 const target = event.target as HTMLElement;
-                console.log(target, triggerElement);
                 if (popperElement && popperElement.contains(target)) {
                     return;
                 }
