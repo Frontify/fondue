@@ -103,11 +103,11 @@ export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
 };
 
 export const MarkdownSerializerDeserializer: Story<RichTextEditorProps> = () => {
-    const transformer = Transform.use(new MarkdownToSlate());
-    const resultSlate = transformer.process(markdownText);
+    const toSlateTransform = Transform.use(new MarkdownToSlate());
+    const resultSlate = toSlateTransform.process(markdownText);
 
-    const transformer2 = Transform.use(new SlateToMarkdown());
-    const resultMarkdown = transformer2.process(resultSlate);
+    const toMarkdownTransform = Transform.use(new SlateToMarkdown());
+    const resultMarkdown = toMarkdownTransform.process(resultSlate);
 
     return (
         <>
