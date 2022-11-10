@@ -1,5 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { orderedListTree } from './orderedList';
+import { unorderedListTree } from './unorderedList';
+
 export const mixedMarkdown = `# Heading 1
 ## Heading 2
 ### Heading 3
@@ -21,6 +24,31 @@ no sea takimata sanctus est Lorem ipsum dolor sit amet.
 Presenting the Paragraph
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+
+- list
+
+  - list
+
+    - list
+
+  - list
+  - list
+
+
+
+1. Ordered list
+1. Ordered list
+
+   1. aaa
+   1. aaa
+
+      1. eeeee
+      1. eeeee
+
+   1. aaa
+
+1. Ordered list
+
 `;
 
 export const mixedTree = [
@@ -130,4 +158,7 @@ export const mixedTree = [
             },
         ],
     },
+
+    ...unorderedListTree,
+    ...orderedListTree,
 ];
