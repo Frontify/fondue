@@ -1,41 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { CSSProperties, FC, ReactNode, useState } from 'react';
-import { IconCheckMark } from '@foundation/Icon';
-import { Button } from '@components/Button/Button';
-import { Checkbox } from '@components/Checkbox';
+
 import { FormControl } from '@components/FormControl';
-import { TextInput } from '@components/TextInput';
 import { useInsertModal } from './useInsertModal';
-import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
+import { InsertModal } from '@components/RichTextEditor/Plugins/LinkPlugin/FloatingLink/InsertLinkModal';
+import { ButtonStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 
-export const InsertModal = () => {
-    const {
-        state,
-        onTextChange,
-        onButtonStyleChange,
-        onUrlChange,
-        onToggleTab,
-        onCancel,
-        onSave,
-        isValidUrlOrEmpty,
-        hasValues,
-    } = useInsertModal();
+export const InsertButtonModal = () => {
+    const modalProps = useInsertModal();
+    const { state, onButtonStyleChange } = modalProps;
+    const context = useRichTextEditorContext();
 
-    const { designTokens } = useRichTextEditorContext();
+    const designTokens = context.designTokens as Partial<
+        Record<ButtonStyles, CSSProperties & { hover: CSSProperties }>
+    >;
 
     return (
-        <div data-test-id="floating-button-insert" className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
-            <FormControl
-                label={{
-                    children: 'Button Text',
-                    htmlFor: 'linkText',
-                    required: true,
-                }}
-            >
-                <TextInput id="linkText" value={state.text} placeholder="Link Text" onChange={onTextChange} />
-            </FormControl>
+        <InsertModal {...modalProps}>
             <div className="tw-pt-5">
                 <FormControl
                     label={{
@@ -72,42 +55,7 @@ export const InsertModal = () => {
                     </HoverableButton>
                 </FormControl>
             </div>
-            <div className="tw-pt-5">
-                <FormControl
-                    label={{
-                        children: 'URL',
-                        htmlFor: 'url',
-                        required: true,
-                    }}
-                >
-                    <TextInput id="url" value={state.url} placeholder="https://example.com" onChange={onUrlChange} />
-                </FormControl>
-                {!isValidUrlOrEmpty() && <div className="tw-text-red-65 tw-mt-3">Please enter a valid URL.</div>}
-            </div>
-            <div className="tw-pt-5">
-                <Checkbox value="new-tab" label="Open in new tab" state={state.newTab} onChange={onToggleTab} />
-            </div>
-            <div className="tw-mt-3">
-                <div className={'tw-pt-5 tw-flex tw-gap-x-3 tw-justify-end tw-border-t tw-border-t-black-10'}>
-                    <Button
-                        onClick={onCancel}
-                        size={ButtonSize.Medium}
-                        style={ButtonStyle.Default}
-                        emphasis={ButtonEmphasis.Default}
-                    >
-                        Cancel
-                    </Button>
-                    <Button
-                        onClick={onSave}
-                        size={ButtonSize.Medium}
-                        icon={<IconCheckMark />}
-                        disabled={!isValidUrlOrEmpty() || !hasValues}
-                    >
-                        Save
-                    </Button>
-                </div>
-            </div>
-        </div>
+        </InsertModal>
     );
 };
 

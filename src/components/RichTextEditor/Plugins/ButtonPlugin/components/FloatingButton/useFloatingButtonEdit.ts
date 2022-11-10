@@ -24,7 +24,7 @@ import { getUrlFromEditor } from '../../utils';
 
 export const useFloatingButtonEdit = ({ floatingOptions, ...props }: FloatingButtonProps): HTMLPropsAs<'div'> => {
     const editor = useEditorRef();
-    const keyEditor = usePlateSelectors().keyEditor();
+    const keyEditor = usePlateSelectors(editor.id).keyEditor();
     const mode = useFloatingButtonSelectors().mode();
     const open = useFloatingButtonSelectors().isOpen(editor.id);
 
