@@ -18,7 +18,7 @@ export const InsertButtonModal = () => {
     >;
 
     return (
-        <InsertModal {...modalProps}>
+        <InsertModal {...modalProps} testId="floating-button-insert">
             <div className="tw-pt-5">
                 <FormControl
                     label={{

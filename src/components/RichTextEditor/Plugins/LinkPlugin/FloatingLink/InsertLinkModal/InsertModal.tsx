@@ -18,6 +18,7 @@ type Props = {
     onSave: (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent | undefined) => void;
     hasValues: boolean;
     isValidUrlOrEmpty: () => boolean | undefined;
+    testId?: string;
     children?: React.ReactNode;
 };
 
@@ -30,9 +31,10 @@ export const InsertModal: FC<Props> = ({
     onSave,
     isValidUrlOrEmpty,
     hasValues,
+    testId,
     children,
 }) => (
-    <div data-test-id="floating-link-insert" className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
+    <div data-test-id={testId} className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
         <FormControl
             label={{
                 children: 'Text',
