@@ -19,19 +19,19 @@ import {
     defaultNodeTypes,
 } from '../types';
 
-export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstNode, opts?: PartialOptionType) {
+export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstNode, options?: PartialOptionType) {
     const types = {
         ...defaultNodeTypes,
-        ...opts?.nodeTypes,
+        ...options?.nodeTypes,
         heading: {
             ...defaultNodeTypes.heading,
-            ...opts?.nodeTypes?.heading,
+            ...options?.nodeTypes?.heading,
         },
     };
 
-    const linkDestinationKey = opts?.linkDestinationKey ?? 'link';
-    const imageSourceKey = opts?.imageSourceKey ?? 'link';
-    const imageCaptionKey = opts?.imageCaptionKey ?? 'caption';
+    const linkDestinationKey = options?.linkDestinationKey ?? 'link';
+    const imageSourceKey = options?.imageSourceKey ?? 'link';
+    const imageCaptionKey = options?.imageCaptionKey ?? 'caption';
 
     let children: Array<DeserializedNode<T>> = [{ text: '' }];
 
@@ -43,7 +43,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
                     ...c,
                     ordered: node.ordered || false,
                 },
-                opts,
+                options,
             ),
         );
     }
