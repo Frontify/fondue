@@ -26,11 +26,11 @@ const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
 
 export const LinkMarkupElementNode = (props: LinkRootProps) => {
     const htmlProps = useLink(props);
-    const { designTokens } = useRichTextEditorContext();
+    const context = useRichTextEditorContext();
     const { attributes, children } = props;
 
     return (
-        <a {...attributes} href={htmlProps.href} target={htmlProps.target} style={designTokens.link}>
+        <a {...attributes} href={htmlProps.href} target={htmlProps.target} style={context?.designTokens.link}>
             {children}
         </a>
     );

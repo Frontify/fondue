@@ -4,13 +4,13 @@ import React from 'react';
 import { useFloatingLinkSelectors } from '@udecode/plate';
 import { FloatingLink } from './FloatingLink';
 import { EditModal } from './EditLinkModal';
-import { InsertModal } from './InsertLinkModal';
+import { InsertLinkModal } from './InsertLinkModal/InsertLinkModal';
 
 export const CustomFloatingLink = () => {
     const isEditing = useFloatingLinkSelectors().isEditing();
 
-    const input = <InsertModal />;
-    const editContent = !isEditing ? <EditModal /> : input;
+    const input = <InsertLinkModal />;
+    const editContent = isEditing ? input : <EditModal />;
 
     return (
         <>

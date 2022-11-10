@@ -2,7 +2,7 @@
 
 import escapeHtml from 'escape-html';
 import { ELEMENT_LI, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL, TDescendant } from '@udecode/plate';
-import { ELEMENT_CHECK_ITEM, OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/Plugins';
+import { ELEMENT_BUTTON, ELEMENT_CHECK_ITEM, OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/Plugins';
 import { DesignTokens } from '@components/RichTextEditor/types';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
@@ -47,6 +47,8 @@ export const serializeNodeToHtmlRecursive = (node: any, designTokens: DesignToke
                 } href="${escapeHtml(chosenLink.searchResult.link)}">${children}</a>`;
             }
             return `<a style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(node.url)}">${children}</a>`;
+        case ELEMENT_BUTTON:
+            return `<a class="btn btn-${node.buttonStyle}" href="${escapeHtml(node.url)}">${children}</a>`;
         case ELEMENT_CHECK_ITEM:
             return `<input type="checkbox"/><label>${children}</label>`;
 
