@@ -51,6 +51,8 @@ import {
     createHeading4Plugin,
     createQuotePlugin,
 } from '../Plugins/TextStylePlugin/TextStyles';
+import { ButtonMarkupElementNode } from '../Plugins/ButtonPlugin/ButtonMarkupElement/ButtonMarkupElementNode';
+import { ELEMENT_BUTTON, createButtonPlugin } from '../Plugins/ButtonPlugin/createButtonPlugin';
 
 export const getEditorConfig = () => {
     const components = createPlateUI({
@@ -66,6 +68,7 @@ export const getEditorConfig = () => {
         [MARK_STRIKETHROUGH]: StrikethroughMarkupElementNode,
         [MARK_CODE]: CodeMarkupElementNode,
         [ELEMENT_CHECK_ITEM]: CheckboxListElementNode,
+        [ELEMENT_BUTTON]: ButtonMarkupElementNode,
     });
 
     return createPlugins(
@@ -100,6 +103,7 @@ export const getEditorConfig = () => {
             createListPlugin(),
             createCheckboxListPlugin(),
             createLinkPlugin(),
+            createButtonPlugin(),
             createBoldPlugin(),
             createItalicPlugin(),
             createUnderlinePlugin(),

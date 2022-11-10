@@ -7,7 +7,7 @@ import { defaultDesignTokens } from '../utils/defaultDesignTokens';
 import { Position } from '../EditorPositioningWrapper';
 import { EditorResizeContextProvider } from './EditorResizeContext';
 
-type RichTextEditorContextProps = {
+export type RichTextEditorContextProps = {
     designTokens: DesignTokens;
     position: Position;
 };
