@@ -2,11 +2,17 @@
 
 import { HTMLAttributes, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
+import { SelectableTextStyles, TextStyles } from '../TextStyles';
 
-export const usePopperDropdown = <T extends HTMLElement, P extends HTMLElement>(
+export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElement>(
     triggerElement: T | null,
     popperElement: P | null,
-): { state: { isOpen: boolean; toggle: () => void }; dropdownProps: HTMLAttributes<P> } => {
+    textStyles: SelectableTextStyles[],
+): {
+    state: { isOpen: boolean; toggle: () => void };
+    dropdownProps: HTMLAttributes<P>;
+    dropdownOptions: TextStyles[];
+} => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggle = useCallback(() => {
@@ -57,5 +63,6 @@ export const usePopperDropdown = <T extends HTMLElement, P extends HTMLElement>(
             ...popperInstance.attributes.popper,
             style: popperInstance.styles.popper,
         },
+        dropdownOptions: [...textStyles, TextStyles.ELEMENT_PARAGRAPH],
     };
 };

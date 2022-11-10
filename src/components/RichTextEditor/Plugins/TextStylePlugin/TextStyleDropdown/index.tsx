@@ -3,19 +3,21 @@
 import { usePlateEditorState } from '@udecode/plate';
 import React, { useState } from 'react';
 import { useRichTextEditorContext } from '../../../context/RichTextEditorContext';
-import { TextStyles, textStyleTitle } from '../TextStyles';
+import { defaultTextStyles } from '../TextStyles/defaultTextStyles';
+import { textStyleTitle } from '../TextStyles';
 import { DropdownItem } from './DropdownItem';
 import { DropdownTrigger } from './DropdownTrigger';
 import { TextStyleDropdownProps } from './types';
-import { usePopperDropdown } from './usePopperDropdown';
+import { DesignTokens } from '@components/RichTextEditor/types';
+import { useTextStyleDropdown } from './useTextStyleDropdown';
 
-export const TextStyleDropdown = ({ editorId }: TextStyleDropdownProps) => {
+export const TextStyleDropdown = ({ editorId, textStyles = defaultTextStyles }: TextStyleDropdownProps) => {
     const [triggerElement, setTriggerElement] = useState<HTMLButtonElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
     const editor = usePlateEditorState(editorId)!;
     const { designTokens } = useRichTextEditorContext();
 
-    const { state, dropdownProps } = usePopperDropdown(triggerElement, popperElement);
+    const { state, dropdownProps, dropdownOptions } = useTextStyleDropdown(triggerElement, popperElement, textStyles);
 
     return (
         <>
@@ -26,33 +28,11 @@ export const TextStyleDropdown = ({ editorId }: TextStyleDropdownProps) => {
                     ref={setPopperElement}
                     {...dropdownProps}
                 >
-                    <DropdownItem editor={editor} type={TextStyles.ELEMENT_HEADING1}>
-                        <span style={designTokens.heading1}>{textStyleTitle[TextStyles.ELEMENT_HEADING1]}</span>
-                    </DropdownItem>
-                    <DropdownItem editor={editor} type={TextStyles.ELEMENT_HEADING2}>
-                        <span style={designTokens.heading2}>{textStyleTitle[TextStyles.ELEMENT_HEADING2]}</span>
-                    </DropdownItem>
-                    <DropdownItem editor={editor} type={TextStyles.ELEMENT_HEADING3}>
-                        <span style={designTokens.heading3}>{textStyleTitle[TextStyles.ELEMENT_HEADING3]}</span>
-                    </DropdownItem>
-                    <DropdownItem editor={editor} type={TextStyles.ELEMENT_HEADING4}>
-                        <span style={designTokens.heading4}>{textStyleTitle[TextStyles.ELEMENT_HEADING4]}</span>
-                    </DropdownItem>
-                    <DropdownItem editor={editor} type={TextStyles.ELEMENT_CUSTOM1}>
-                        <span style={designTokens.custom1}>{textStyleTitle[TextStyles.ELEMENT_CUSTOM1]}</span>
-                    </DropdownItem>
-                    <DropdownItem editor={editor} type={TextStyles.ELEMENT_CUSTOM2}>
-                        <span style={designTokens.custom2}>{textStyleTitle[TextStyles.ELEMENT_CUSTOM2]}</span>
-                    </DropdownItem>
-                    <DropdownItem editor={editor} type={TextStyles.ELEMENT_CUSTOM3}>
-                        <span style={designTokens.custom3}>{textStyleTitle[TextStyles.ELEMENT_CUSTOM3]}</span>
-                    </DropdownItem>
-                    <DropdownItem editor={editor} type={TextStyles.ELEMENT_QUOTE}>
-                        <span style={designTokens.quote}>{textStyleTitle[TextStyles.ELEMENT_QUOTE]}</span>
-                    </DropdownItem>
-                    <DropdownItem editor={editor} type={TextStyles.ELEMENT_PARAGRAPH}>
-                        <span style={designTokens.p}>{textStyleTitle[TextStyles.ELEMENT_PARAGRAPH]}</span>
-                    </DropdownItem>
+                    {dropdownOptions.map((style) => (
+                        <DropdownItem editor={editor} type={style} key={style}>
+                            <span style={designTokens[style as keyof DesignTokens]}>{textStyleTitle[style]}</span>
+                        </DropdownItem>
+                    ))}
                 </div>
             )}
         </>
