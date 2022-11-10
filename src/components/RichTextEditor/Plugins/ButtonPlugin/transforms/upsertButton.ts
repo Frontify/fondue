@@ -17,6 +17,7 @@ import {
     removeNodes,
     setNodes,
 } from '@udecode/plate-core';
+import { Path } from 'slate';
 import { ButtonPlugin, ELEMENT_BUTTON } from '../createButtonPlugin';
 import { ButtonStyle, TButtonElement } from '../types';
 import { CreateButtonNodeOptions } from '../utils/index';
@@ -94,15 +95,7 @@ export const upsertButton = <V extends Value>(
 
     const [buttonNode, buttonPath] = buttonEntry ?? [];
 
-    let shouldReplaceText = false;
-
-    if (buttonPath && text?.length) {
-        const buttonText = getEditorString(editor, buttonPath);
-
-        if (text !== buttonText) {
-            shouldReplaceText = true;
-        }
-    }
+    const shouldReplaceText = shouldReplaceButtonText<V>(editor, buttonPath, text);
 
     if (isExpanded(at)) {
         anchorAndFocusInButton<V>(buttonAbove, editor, url, buttonStyle, target, text);
@@ -147,6 +140,10 @@ export const upsertButton = <V extends Value>(
     );
     return true;
 };
+
+function shouldReplaceButtonText<V extends Value>(editor: PlateEditor<V>, buttonPath?: Path, text?: string) {
+    return buttonPath && text?.length && text !== getEditorString(editor, buttonPath);
+}
 
 function anchorAndFocusInButton<V extends Value>(
     buttonAbove: undefined,
