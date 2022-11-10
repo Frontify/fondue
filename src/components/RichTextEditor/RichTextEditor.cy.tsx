@@ -477,8 +477,8 @@ describe('RichTextEditor Component', () => {
             cy.get(BUTTON).eq(1).should('not.be.disabled');
             cy.get(LINK_CHOOSER_CHECKBOX).click();
             cy.get(BUTTON).eq(1).click();
-            cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
             cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
+            cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
         });
 
         it('should open floating link insert and edit', () => {
