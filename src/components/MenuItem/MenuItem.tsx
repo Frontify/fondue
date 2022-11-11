@@ -43,8 +43,11 @@ export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextC
     },
 };
 
-const ITEM_BASE_CLASSES = 'tw-cursor-pointer tw-flex tw-items-center tw-justify-between tw-transition-colors tw-gap-2';
-const ITEM_PADDING_X = 'tw-py-2 tw-px-5';
+const ITEM_WRAPPER_CLASSES =
+    'tw-cursor-pointer tw-flex tw-items-center tw-justify-between tw-transition-colors tw-gap-2';
+const ITEM_HOVER_CLASSES = 'hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover';
+const ITEM_FOCUS_CLASSES = 'focus:tw-bg-box-neutral-hover focus:tw-text-box-neutral-inverse-hover';
+const ITEM_BASE_CLASSES = merge(['tw-w-full tw-text-left tw-py-2 tw-px-5', ITEM_HOVER_CLASSES, ITEM_FOCUS_CLASSES]);
 
 export const MenuItem: FC<MenuItemProps> = ({
     title,
@@ -92,18 +95,21 @@ export const MenuItem: FC<MenuItemProps> = ({
     return (
         <>
             {children && (
-                <li role="menuitem" className={merge(['tw-text-sm tw-leading-4 tw-text-text-weak', ITEM_BASE_CLASSES])}>
+                <li
+                    role="menuitem"
+                    className={merge(['tw-text-sm tw-leading-4 tw-text-text-weak', ITEM_WRAPPER_CLASSES])}
+                >
                     {mainElementType === 'a' && (
-                        <a href={link} className={merge([ITEM_PADDING_X])}>
+                        <a href={link} className={ITEM_BASE_CLASSES}>
                             {children}
                         </a>
                     )}
                     {mainElementType === 'button' && (
-                        <button onClick={onClick} className={merge([ITEM_PADDING_X])}>
+                        <button onClick={onClick} className={ITEM_BASE_CLASSES}>
                             {children}
                         </button>
                     )}
-                    {mainElementType === 'span' && <span className={merge([ITEM_PADDING_X])}>{children}</span>}
+                    {mainElementType === 'span' && <span className={ITEM_BASE_CLASSES}>{children}</span>}
                 </li>
             )}
             {/* The implementation without children is the first behavior of the MenuItem component.
@@ -113,7 +119,7 @@ export const MenuItem: FC<MenuItemProps> = ({
             {!children && (
                 <div
                     className={merge([
-                        ITEM_BASE_CLASSES,
+                        ITEM_WRAPPER_CLASSES,
                         'tw-rounded',
                         isDangerStyle ? 'hover:tw-text-red-70' : 'hover:tw-text-black',
                         menuItemSizeClassMap[size],
