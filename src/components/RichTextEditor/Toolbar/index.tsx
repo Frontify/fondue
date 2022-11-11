@@ -10,7 +10,7 @@ import { ToolbarProps } from './types';
 import { getButtonGroupWidths, getButtonGroupsPerRow } from './utils';
 
 export const Toolbar = ({ buttons, editorId }: ToolbarProps) => {
-    const editor = usePlateEditorRef(editorId)!;
+    const editor = usePlateEditorRef(editorId);
     const { editorWidth } = useEditorResizeContext();
     const { position } = useRichTextEditorContext();
 

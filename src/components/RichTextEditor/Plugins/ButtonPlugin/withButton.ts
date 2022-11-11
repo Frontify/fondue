@@ -25,7 +25,7 @@ import { withRemoveEmptyNodes } from '@udecode/plate-normalizers';
 import { Path, Point, Range } from 'slate';
 import { upsertButton } from './transforms/index';
 import { ButtonPlugin, ELEMENT_BUTTON } from './createButtonPlugin';
-import { AnyObject } from '@udecode/plate';
+import { AnyObject, EText } from '@udecode/plate';
 
 /**
  * Insert space after a url to wrap a button.
@@ -45,7 +45,7 @@ export const withButton = <V extends Value = Value, E extends PlateEditor<V> = P
 
     const wrapButton = () => {
         withoutNormalizing(editor, () => {
-            const selection = editor.selection!;
+            const selection = editor.selection as Range;
 
             // get the range from first space before the cursor
             let beforeWordRange = getRangeBefore(editor, selection, rangeBeforeOptions);
@@ -74,7 +74,7 @@ export const withButton = <V extends Value = Value, E extends PlateEditor<V> = P
             beforeWordText = getUrlHref?.(beforeWordText) ?? beforeWordText;
 
             // if word before is not an url, exit
-            if (!isUrl!(beforeWordText)) {
+            if (!isUrl(beforeWordText)) {
                 return;
             }
 
@@ -178,7 +178,7 @@ export const withButton = <V extends Value = Value, E extends PlateEditor<V> = P
                 } else {
                     // insert text node then select
                     const nextPath = Path.next(path);
-                    insertNodes(editor, { text: '' } as any, { at: nextPath });
+                    insertNodes(editor, { text: '' } as EText<V>, { at: nextPath });
                     select(editor, nextPath);
                 }
             }

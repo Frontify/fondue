@@ -29,7 +29,7 @@ export const ButtonToolbarButton = ({ id, type, ...props }: LinkToolbarButtonPro
                 event.preventDefault();
                 event.stopPropagation();
 
-                focusEditor(editor, editor.selection ?? editor.prevSelection!);
+                focusEditor(editor, editor.selection ?? editor.prevSelection ?? undefined);
 
                 setTimeout(() => {
                     triggerFloatingButton(editor, { focused: true });

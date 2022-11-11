@@ -26,6 +26,6 @@ export const wrapButton = <V extends Value>(
             target,
             children: [],
         },
-        { split: true, ...options } as any,
+        { split: true, ...options } as WrapNodesOptions,
     );
 };
