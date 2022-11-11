@@ -18,8 +18,6 @@ export class TextStylePlugin extends Plugin<TextStylePluginProps> {
     }
 
     plugins() {
-        const plug = getTextStylePlugins(this.props?.textStyles ?? []);
-        console.log(plug);
-        return plug;
+        return getTextStylePlugins(this.props?.textStyles ?? []);
     }
 }
