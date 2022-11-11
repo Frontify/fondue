@@ -58,8 +58,6 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
         };
     }, [isOpen, popperElement, setIsOpen, triggerElement]);
 
-    console.log(popperInstance.styles.popper);
-
     return {
         state: { isOpen, toggle },
         dropdownProps: {
