@@ -5,10 +5,11 @@ import {
     RichTextEditorContextProps,
     useRichTextEditorContext,
 } from '@components/RichTextEditor/context/RichTextEditorContext';
-import { ButtonRootProps } from '../components/Button';
 import { ButtonStyle, TButtonElement } from '../types';
-import { HTMLPropsAs, useElementProps } from '@udecode/plate';
+import { HTMLPropsAs, PlateRenderElementProps, Value, useElementProps } from '@udecode/plate';
 import { ButtonStyles } from '../../TextStylePlugin/TextStyles';
+
+export type ButtonRootProps = PlateRenderElementProps<Value, TButtonElement> & HTMLPropsAs<'a'>;
 
 const useButton = (props: ButtonRootProps): HTMLPropsAs<'a'> & { buttonStyle: ButtonStyle } => {
     const _props = useElementProps<TButtonElement, 'a'>({

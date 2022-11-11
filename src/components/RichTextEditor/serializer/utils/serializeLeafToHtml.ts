@@ -7,9 +7,10 @@ import {
     STRIKETHROUGH_CLASSES,
     UNDERLINE_CLASSES,
 } from '@components/RichTextEditor/Plugins';
+import { TText } from '@udecode/plate';
 import escapeHtml from 'escape-html';
 
-export const serializeLeafToHtml = (node: any): string => {
+export const serializeLeafToHtml = (node: TText): string => {
     let string = escapeHtml(node.text);
     if (node.bold) {
         string = `<span class="${BOLD_CLASSES}">${string}</span>`;

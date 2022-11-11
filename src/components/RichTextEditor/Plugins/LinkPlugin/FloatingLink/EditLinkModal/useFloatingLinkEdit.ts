@@ -34,7 +34,7 @@ export const useFloatingLinkEdit = ({ floatingOptions, ...props }: FloatingLinkP
     const mode = useFloatingLinkSelectors().mode();
     const open = useFloatingLinkSelectors().isOpen(editor.id);
 
-    const { triggerFloatingLinkHotkeys } = getPluginOptions<LinkPlugin>(editor, ELEMENT_LINK);
+    const { triggerFloatingLinkHotkeys = 'command+k, ctrl+k' } = getPluginOptions<LinkPlugin>(editor, ELEMENT_LINK);
 
     const getBoundingClientRect = useCallback(() => {
         const entry = getAboveNode(editor, {
@@ -84,7 +84,7 @@ export const useFloatingLinkEdit = ({ floatingOptions, ...props }: FloatingLinkP
     }, [editor, keyEditor, update]);
 
     useHotkeys(
-        triggerFloatingLinkHotkeys!,
+        triggerFloatingLinkHotkeys,
         (e) => {
             e.preventDefault();
 
