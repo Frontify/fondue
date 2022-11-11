@@ -18,7 +18,7 @@ export const getVerticalPositioning = (
     }
 
     const { top: triggerTop, bottom: triggerBottom } = triggerRef.current.getBoundingClientRect();
-    const viewportHeight = window.visualViewport.height;
+    const viewportHeight = window.visualViewport?.height ?? 0;
     const spaceBelow = viewportHeight - triggerBottom - offset - bottomMargin;
     const spaceAbove = triggerTop - offset;
 
