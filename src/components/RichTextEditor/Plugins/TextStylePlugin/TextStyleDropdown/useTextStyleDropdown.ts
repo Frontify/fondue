@@ -3,6 +3,7 @@
 import { HTMLAttributes, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { SelectableTextStyles, TextStyles } from '../TextStyles';
+import { verticalPositionModifier } from './verticalPositionModifier';
 
 export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElement>(
     triggerElement: T | null,
@@ -21,7 +22,7 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
 
     const popperInstance = usePopper(triggerElement, popperElement, {
         placement: 'bottom-start',
-        strategy: 'absolute',
+        strategy: 'fixed',
         modifiers: [
             {
                 name: 'offset',
@@ -31,8 +32,9 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
             },
             {
                 name: 'flip',
-                enabled: true,
+                enabled: false,
             },
+            verticalPositionModifier,
         ],
     });
 
@@ -55,6 +57,8 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
             document.removeEventListener('mousedown', listener);
         };
     }, [isOpen, popperElement, setIsOpen, triggerElement]);
+
+    console.log(popperInstance.styles.popper);
 
     return {
         state: { isOpen, toggle },
