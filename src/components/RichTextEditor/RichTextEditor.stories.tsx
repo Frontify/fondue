@@ -24,7 +24,6 @@ import {
     LinkPlugin,
     MentionPlugin,
     OrderedListPlugin,
-    ParagraphPlugin,
     PluginComposer,
     TextStylePlugin,
     UnderlinePlugin,
