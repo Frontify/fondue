@@ -1,17 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC } from 'react';
+import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { merge } from '@utilities/merge';
 import { IconCaretRight, IconCheckMark, IconSize } from '@foundation/Icon';
 import { MenuItemContent, MenuItemContentProps } from '@components/MenuItem/MenuItemContent';
-import { MenuItemContentSize, MenuItemStyle, MenuItemType, SelectionIndicatorIcon } from './types';
+import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from './types';
+import { getItemElementType } from '@utilities/elements';
 
 export type MenuItemProps = {
     style?: MenuItemStyle;
     disabled?: boolean;
     active?: boolean;
     selectionIndicator?: SelectionIndicatorIcon;
-    type?: MenuItemType;
+    /** @deprecated this prop is not being used anymore */
+    type?: string;
+    link?: string;
+    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 } & Omit<MenuItemContentProps, 'iconSize'>;
 
 export const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
@@ -39,6 +43,9 @@ export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextC
     },
 };
 
+const ITEM_BASE_CLASSES = 'tw-cursor-pointer tw-flex tw-items-center tw-justify-between tw-transition-colors tw-gap-2';
+const ITEM_PADDING_X = 'tw-py-2 tw-px-5';
+
 export const MenuItem: FC<MenuItemProps> = ({
     title,
     decorator,
@@ -50,6 +57,8 @@ export const MenuItem: FC<MenuItemProps> = ({
     active = false,
     selectionIndicator = SelectionIndicatorIcon.Check,
     children,
+    link,
+    onClick,
 }) => {
     const isDangerStyle = style === MenuItemStyle.Danger;
 
@@ -72,27 +81,57 @@ export const MenuItem: FC<MenuItemProps> = ({
 
     const textClass = menuItemTextColorRecord[style][textState];
 
+    const [mainElementType, setMainElementType] = useState('span');
+
+    useEffect(() => {
+        if (link || onClick) {
+            setMainElementType(getItemElementType(link, onClick));
+        }
+    }, [link, onClick]);
+
     return (
-        <div
-            className={merge([
-                'tw-rounded tw-cursor-pointer tw-flex tw-items-center tw-justify-between tw-transition-colors tw-gap-2',
-                isDangerStyle ? 'hover:tw-text-red-70' : 'hover:tw-text-black',
-                menuItemSizeClassMap[size],
-                disabled && 'tw-bg-black-0 tw-pointer-events-none',
-                active && 'tw-font-medium',
-                textClass,
-            ])}
-        >
-            <MenuItemContent
-                title={title}
-                decorator={decorator}
-                subtitle={size === MenuItemContentSize.Large ? subtitle : undefined}
-                size={size}
-                switchComponent={switchComponent}
-            >
-                {children}
-            </MenuItemContent>
-            <div className="tw-flex-none">{currentIcon}</div>
-        </div>
+        <>
+            {children && (
+                <li role="menuitem" className={merge(['tw-text-sm tw-leading-4 tw-text-text-weak', ITEM_BASE_CLASSES])}>
+                    {mainElementType === 'a' && (
+                        <a href={link} className={merge([ITEM_PADDING_X])}>
+                            {children}
+                        </a>
+                    )}
+                    {mainElementType === 'button' && (
+                        <button onClick={onClick} className={merge([ITEM_PADDING_X])}>
+                            {children}
+                        </button>
+                    )}
+                    {mainElementType === 'span' && <span className={merge([ITEM_PADDING_X])}>{children}</span>}
+                </li>
+            )}
+            {/* The implementation without children is the first behavior of the MenuItem component.
+                This way we can introduce the new changes without breaking the current usage of it.
+                In the future, this implementation should be replaced by the new one and the projects updated properly
+            */}
+            {!children && (
+                <div
+                    className={merge([
+                        ITEM_BASE_CLASSES,
+                        'tw-rounded',
+                        isDangerStyle ? 'hover:tw-text-red-70' : 'hover:tw-text-black',
+                        menuItemSizeClassMap[size],
+                        disabled && 'tw-bg-black-0 tw-pointer-events-none',
+                        active && 'tw-font-medium',
+                        textClass,
+                    ])}
+                >
+                    <MenuItemContent
+                        title={title}
+                        decorator={decorator}
+                        subtitle={size === MenuItemContentSize.Large ? subtitle : undefined}
+                        size={size}
+                        switchComponent={switchComponent}
+                    />
+                    <div className="tw-flex-none">{currentIcon}</div>
+                </div>
+            )}
+        </>
     );
 };

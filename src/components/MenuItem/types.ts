@@ -21,8 +21,3 @@ export enum MenuItemContentStyle {
     Primary = 'Primary',
     Danger = 'Danger',
 }
-
-export enum MenuItemType {
-    Button = 'Button',
-    Link = 'Link',
-}

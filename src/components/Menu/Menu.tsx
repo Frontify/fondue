@@ -1,25 +1,30 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { PropsWithChildren, ReactElement, RefObject, useCallback, useEffect, useState } from 'react';
+import React, { PropsWithChildren, ReactElement, RefObject, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { merge } from '@utilities/merge';
 import { MenuItemProps } from '@components/MenuItem';
+import { useMenuKeyboardNavigation } from '@components/MenuItem/useMenuKeyboardNavigation';
 
 interface Props {
     triggerRef: RefObject<Element>;
-    open?: boolean;
+    open: boolean;
     children?: ReactElement<MenuItemProps>[];
-    onOpen?: () => void;
     onClose?: () => void;
 }
 
 export type MenuProps = PropsWithChildren<Props>;
 
-export const Menu = ({ triggerRef, children, open = false, onOpen, onClose }: MenuProps) => {
-    const [isDirty, setIsDirty] = useState(false);
-    const [isMenuOpened, setIsMenuOpened] = useState(false);
+export const Menu = ({ triggerRef, children, open = false, onClose }: MenuProps) => {
+    const [isMenuOpen, setIsMenuOpen] = useState(open);
     const [menuContainerRef, setMenuContainerRef] = useState<HTMLElement | null>(null);
     const [menuOpenerRef, setMenuOpenerRef] = useState<Element | null>(null);
+
+    const menuKeyboardNavigationAction = useMenuKeyboardNavigation(
+        isMenuOpen,
+        menuContainerRef,
+        'li > a, li > button:not(:disabled)',
+    );
 
     const popperInstance = usePopper(menuOpenerRef, menuContainerRef, {
         placement: 'bottom-start',
@@ -38,61 +43,40 @@ export const Menu = ({ triggerRef, children, open = false, onOpen, onClose }: Me
         ],
     });
 
-    const handleTriggerClick = useCallback(() => {
-        setIsDirty(true);
-        setIsMenuOpened((isOpen) => !isOpen);
-    }, []);
-
     useEffect(() => {
         const trigger = triggerRef?.current;
+
         if (trigger) {
-            trigger.removeEventListener('click', handleTriggerClick);
-            trigger.addEventListener('click', handleTriggerClick);
             setMenuOpenerRef(trigger);
         }
-
-        return () => {
-            if (trigger) {
-                trigger.removeEventListener('click', handleTriggerClick);
-            }
-        };
-    }, [triggerRef, handleTriggerClick]);
+    }, [triggerRef]);
 
     useEffect(() => {
-        setIsDirty(true);
-        setIsMenuOpened(open);
+        setIsMenuOpen(open);
     }, [open]);
 
     useEffect(() => {
-        if (!isDirty) {
-            return;
+        if (menuKeyboardNavigationAction === 'CLOSE_MENU') {
+            setIsMenuOpen(false);
+            if (onClose) {
+                onClose();
+            }
         }
-
-        if (isMenuOpened && onOpen) {
-            onOpen();
-        } else if (!isMenuOpened && onClose) {
-            onClose();
-        }
-    }, [isMenuOpened, isDirty, onClose, onOpen]);
+    }, [menuKeyboardNavigationAction, onClose]);
 
     return (
         <nav
             className={merge([
-                'tw-bg-base tw-border tw-border-line-strong tw-rounded-lg tw-absolute tw-left-0 tw-top-7 tw-py-1.5 tw-shadow tw-w-max',
-                isMenuOpened ? 'tw-block' : 'tw-hidden',
+                'tw-bg-base tw-border tw-border-line tw-rounded tw-absolute tw-left-0 tw-top-7 tw-py-2 tw-shadow tw-w-max',
+                isMenuOpen ? 'tw-block' : 'tw-hidden',
             ])}
             role="dialog"
             ref={setMenuContainerRef}
             style={popperInstance.styles.popper}
             {...popperInstance.attributes.popper}
         >
-            <ol className="tw-list-none tw-flex-wrap tw-gap-y-1" role="menu">
-                {children &&
-                    children.map((child, index) => (
-                        <li key={`menu-item-${index}`} role="menuitem">
-                            {child}
-                        </li>
-                    ))}
+            <ol className="tw-list-none" role="menu">
+                {children}
             </ol>
         </nav>
     );
