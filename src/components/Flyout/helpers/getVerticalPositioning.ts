@@ -1,11 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MutableRefObject } from 'react';
-
 type VerticalPosition = 'top' | 'bottom';
 
-export const getVerticalPositioning = (
-    triggerRef: MutableRefObject<HTMLElement | null>,
+export const getVerticalPositioning = <T extends HTMLElement>(
+    triggerRef: T | null,
     overlayHeight: number,
     offset: number,
     bottomMargin: number,
@@ -13,11 +11,11 @@ export const getVerticalPositioning = (
     let position: VerticalPosition = 'bottom';
     let maxHeight = Infinity;
 
-    if (!triggerRef.current || !overlayHeight) {
+    if (!triggerRef || !overlayHeight) {
         return { position, maxHeight };
     }
 
-    const { top: triggerTop, bottom: triggerBottom } = triggerRef.current.getBoundingClientRect();
+    const { top: triggerTop, bottom: triggerBottom } = triggerRef.getBoundingClientRect();
     const viewportHeight = window.visualViewport?.height ?? 0;
     const spaceBelow = viewportHeight - triggerBottom - offset - bottomMargin;
     const spaceAbove = triggerTop - offset;

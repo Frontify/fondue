@@ -14,7 +14,7 @@ export const verticalPositionModifier: Partial<Modifier<'vertical-positioning'>>
             return;
         }
         const { position, maxHeight } = getVerticalPositioning(
-            { current: state.elements.reference as HTMLElement },
+            state.elements.reference as HTMLElement,
             state.rects.popper.height,
             OFFSET + VIEWPORT_PADDING,
             0,

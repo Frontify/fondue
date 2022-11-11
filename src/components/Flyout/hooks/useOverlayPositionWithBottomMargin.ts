@@ -64,7 +64,7 @@ export const useOverlayPositionWithBottomMargin = ({
         if (isOpen) {
             const overlayHeight = getTotalOverlayHeight(overlayRef, scrollRef);
             const shouldFlip =
-                getVerticalPositioning(triggerRef, overlayHeight, FLYOUT_OVERLAY_OFFSET, INTERCOM_BUTTON_HEIGHT)
+                getVerticalPositioning(triggerRef.current, overlayHeight, FLYOUT_OVERLAY_OFFSET, INTERCOM_BUTTON_HEIGHT)
                     .position === 'top';
             setFlipVerticalPosition(shouldFlip);
 
