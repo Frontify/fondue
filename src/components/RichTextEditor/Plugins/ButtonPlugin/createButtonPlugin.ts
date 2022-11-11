@@ -59,6 +59,7 @@ export const createButtonPlugin = createPluginFactory({
     props: ({ element }) => ({
         nodeProps: { href: element?.url, target: element?.target },
     }),
+    //@ts-ignore
     withOverrides: withButton,
     renderAfterEditable: CustomFloatingButton,
     options: {

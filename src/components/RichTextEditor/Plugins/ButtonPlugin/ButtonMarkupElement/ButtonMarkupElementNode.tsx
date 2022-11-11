@@ -23,6 +23,7 @@ const useButton = (props: ButtonRootProps): HTMLPropsAs<'a'> & { buttonStyle: Bu
     return {
         ..._props,
         // quick fix: hovering <a> with href loses the editor focus
+        //@ts-ignore
         onMouseOver: (e: MouseEvent) => {
             e.stopPropagation();
         },

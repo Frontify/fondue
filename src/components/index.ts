@@ -31,6 +31,7 @@ export * from './MultiInput';
 export * from './MultiSelect';
 export * from './OrderableList';
 export * from './RadioPill';
+//@ts-ignore
 export * from './RichTextEditor';
 export * from './ScrollWrapper';
 export * from './Slider';
