@@ -13,7 +13,7 @@ export const ParagraphMarkupElementNode = ({ element, attributes, children }: Pl
     const { designTokens } = useRichTextEditorContext();
     const align = element.align as string;
     const className = merge([align && alignmentClassnames[align], PARAGRAPH_CLASSES]);
-    console.log('P');
+
     return (
         <p {...attributes} className={className} style={designTokens.p}>
             {children}
