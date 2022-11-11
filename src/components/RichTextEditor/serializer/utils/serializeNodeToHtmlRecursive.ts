@@ -15,6 +15,7 @@ import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/T
 import escapeHtml from 'escape-html';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
+import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/types';
 
 export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: DesignTokens): string => {
     if (!node.children) {
@@ -51,14 +52,16 @@ export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: De
             return `<li>${children}</li>`;
         case ELEMENT_LINK:
             if (node.chosenLink) {
-                const { chosenLink } = node;
+                const { chosenLink } = node as TLinkElement;
                 return `<a style="${reactCssPropsToCss(designTokens.link)}" target=${
-                    chosenLink.openInNewTab ? '_blank' : '_self'
-                } href="${escapeHtml(chosenLink.searchResult.link)}">${children}</a>`;
+                    chosenLink?.openInNewTab ? '_blank' : '_self'
+                } href="${escapeHtml(chosenLink?.searchResult?.link)}">${children}</a>`;
             }
-            return `<a style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(node.url)}">${children}</a>`;
+            return `<a style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(
+                node.url as string,
+            )}">${children}</a>`;
         case ELEMENT_BUTTON:
-            return `<a class="btn btn-${node.buttonStyle}" href="${escapeHtml(node.url)}">${children}</a>`;
+            return `<a class="btn btn-${node.buttonStyle}" href="${escapeHtml(node.url as string)}">${children}</a>`;
         case ELEMENT_CHECK_ITEM:
             return `<input type="checkbox"/><label>${children}</label>`;
 
