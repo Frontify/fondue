@@ -24,6 +24,7 @@ import {
     LinkPlugin,
     MentionPlugin,
     OrderedListPlugin,
+    ParagraphPlugin,
     PluginComposer,
     TextStylePlugin,
     UnderlinePlugin,
@@ -270,7 +271,10 @@ WithToolbarTopAndSmallPadding.args = {
     padding: PaddingSizes.Medium,
     actions: [],
     plugins: topbarPlugins.setPlugin([
-        new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_CUSTOM1, TextStyles.ELEMENT_HEADING1] }),
+        // new ParagraphPlugin(),
+        new TextStylePlugin({
+            textStyles: [TextStyles.ELEMENT_CUSTOM1, TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH],
+        }),
     ]),
 };
 

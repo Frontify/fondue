@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { PlatePlugin } from '@udecode/plate';
+import { createParagraphPlugin } from '../../ParagraphPlugin/createParagraphPlugin';
 import {
     SelectableTextStyles,
     TextStyles,
@@ -23,4 +24,5 @@ export const textStylePluginsRecord: Record<SelectableTextStyles, { plugin: () =
     [TextStyles.ELEMENT_CUSTOM2]: { plugin: createCustom2Plugin },
     [TextStyles.ELEMENT_CUSTOM3]: { plugin: createCustom3Plugin },
     [TextStyles.ELEMENT_QUOTE]: { plugin: createQuotePlugin },
+    [TextStyles.ELEMENT_PARAGRAPH]: { plugin: createParagraphPlugin },
 };
