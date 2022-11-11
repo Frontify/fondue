@@ -8,7 +8,7 @@ on:
 env:
     NODE_VERSION: 16
     CI: true
-    CYPRESS_CACHE_FOLDER: cypress_cache
+    CYPRESS_CACHE_FOLDER: /tmp/cypress_cache
     NUMBER_OF_RUNNERS: 7
 
 jobs:
