@@ -1,4 +1,6 @@
-import ComponentFileBuilderResponse from "./ComponentFileBuilderResponse";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import ComponentFileBuilderResponse from './ComponentFileBuilderResponse';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default (componentName: string, componentType: string): ComponentFileBuilderResponse => ({
@@ -21,5 +23,5 @@ Default.args = {
     foo: "bar",
 };
 `,
-    extension: `.stories.tsx`,
+    extension: '.stories.tsx',
 });

@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import React, { ReactElement } from 'react';
 import { IconEnum } from './IconEnum';
 import IconAdobeCreativeCloud from '@foundation/Icon/Generated/IconAdobeCreativeCloud';

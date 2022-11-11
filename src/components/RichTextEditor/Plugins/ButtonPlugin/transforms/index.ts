@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 export * from './insertButton';
 export * from './submitFloatingButton';
 export * from './unwrapButton';

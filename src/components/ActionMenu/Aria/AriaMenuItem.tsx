@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { MenuItem } from '@components/MenuItem/MenuItem';
 import { Switch, SwitchSize } from '@components/Switch';
 import { useFocusRing } from '@react-aria/focus';

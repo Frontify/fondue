@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { useCallback, useEffect } from 'react';
 import {
     HTMLPropsAs,

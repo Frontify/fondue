@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { TLinkElement } from '@udecode/plate';
 
 export type TButtonElement = TLinkElement & {

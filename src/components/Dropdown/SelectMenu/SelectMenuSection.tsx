@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { useListBoxSection } from '@react-aria/listbox';
 import React, { FC, PropsWithChildren } from 'react';
 

@@ -1,5 +1,7 @@
-import ComponentFileBuilderResponse from "./ComponentFileBuilderResponse";
-import { toKebabCase } from "./transforms";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import ComponentFileBuilderResponse from './ComponentFileBuilderResponse';
+import { toKebabCase } from './transforms';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars,import/no-default-export
 export default (componentName: string, componentType: string): ComponentFileBuilderResponse => ({
@@ -18,5 +20,5 @@ export const ${componentName} = ({ foo, children }: ${componentName}Props) => {
     );
 };
 `,
-    extension: `.tsx`,
+    extension: '.tsx',
 });

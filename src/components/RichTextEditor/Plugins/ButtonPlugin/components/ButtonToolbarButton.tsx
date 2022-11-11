@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import React from 'react';
 import { focusEditor, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate-core';
 import { ToolbarButton } from '@udecode/plate-ui-toolbar';

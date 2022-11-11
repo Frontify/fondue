@@ -1,13 +1,15 @@
-import { access, mkdir, writeFile } from "fs/promises";
-import chalk from "chalk";
-import templates from "./templates";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { access, mkdir, writeFile } from 'fs/promises';
+import chalk from 'chalk';
+import templates from './templates';
 
 (async () => {
-    const componentType = process.argv[3] ? process.argv[2] : "components";
+    const componentType = process.argv[3] ? process.argv[2] : 'components';
     const componentName = process.argv[3] || process.argv[2];
 
     if (!componentName) {
-        console.error(chalk.red("You need to supply a component name."));
+        console.error(chalk.red('You need to supply a component name.'));
         process.exit(1);
     }
 
