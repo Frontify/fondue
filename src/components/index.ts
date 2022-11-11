@@ -31,6 +31,7 @@ export * from './MultiInput';
 export * from './MultiSelect';
 export * from './OrderableList';
 export * from './RadioPill';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 export * from './RichTextEditor';
 export * from './ScrollWrapper';

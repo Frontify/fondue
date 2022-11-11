@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import ComponentFileBuilderResponse from './ComponentFileBuilderResponse';
-import { toKebabCase } from './transforms';
+import type { ComponentFileBuilderResponse } from '../types';
+import { toKebabCase } from '../transforms';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars,import/no-default-export
-export default (componentName: string, componentType: string): ComponentFileBuilderResponse => ({
+export const setup = (componentName: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { PropsWithChildren } from "react";

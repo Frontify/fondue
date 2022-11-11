@@ -34,9 +34,9 @@ import templates from './templates';
 
     const generatedTemplates = templates.map((template) => template(componentName, componentType));
 
-    generatedTemplates.forEach(async (template) => {
+    for (const template of generatedTemplates) {
         await writeFile(`${componentDirectory}/${componentName}${template.extension}`, template.content);
-    });
+    }
 
     console.log(chalk.green(`Component created in ${componentDirectory}`));
 })();

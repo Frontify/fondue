@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import ComponentFileBuilderResponse from './ComponentFileBuilderResponse';
+/* eslint-disable storybook/default-exports, storybook/prefer-pascal-case */
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default (componentName: string, componentType: string): ComponentFileBuilderResponse => ({
+import type { ComponentFileBuilderResponse } from '../types';
+
+export const setup = (componentName: string, componentType: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from "react";
