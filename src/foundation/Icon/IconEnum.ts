@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 export enum IconEnum {
     AdobeCreativeCloud = 'AdobeCreativeCloud',
     AdobeCreativeCloud12 = 'AdobeCreativeCloud12',

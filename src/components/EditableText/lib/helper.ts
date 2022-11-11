@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import React, { ReactElement, ReactNode } from 'react';
 
 export const EditableTextHelper = {

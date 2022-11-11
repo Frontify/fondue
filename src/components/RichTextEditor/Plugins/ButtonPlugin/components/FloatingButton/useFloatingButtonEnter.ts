@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { useEditorRef, useHotkeys } from '@udecode/plate-core';
 import { submitFloatingButton } from '../../transforms/submitFloatingButton';
 

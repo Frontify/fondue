@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { useFocusRing } from '@react-aria/focus';
 import { useOption } from '@react-aria/listbox';
 import { mergeProps } from '@react-aria/utils';

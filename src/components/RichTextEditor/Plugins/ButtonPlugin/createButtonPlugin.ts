@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { RangeBeforeOptions, createPluginFactory, isUrl as isUrlProtocol } from '@udecode/plate-core';
 import { Plugin, PluginProps } from '../Plugin';
 import { ButtonMarkupElement } from './ButtonMarkupElement';
@@ -57,6 +59,8 @@ export const createButtonPlugin = createPluginFactory({
     props: ({ element }) => ({
         nodeProps: { href: element?.url, target: element?.target },
     }),
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
     withOverrides: withButton,
     renderAfterEditable: CustomFloatingButton,
     options: {

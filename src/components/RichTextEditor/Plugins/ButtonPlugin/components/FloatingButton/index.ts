@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 export * from './FloatingButton';
 export * from './FloatingButtonEditButton';
 export * from './FloatingButtonUrlInput';

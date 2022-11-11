@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { IconIcon } from '@foundation/Icon';
 import React from 'react';
 import { AssetType } from './AssetInput';

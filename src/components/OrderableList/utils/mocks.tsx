@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { OrderableListItem } from '@components/OrderableList';
 import { HighlightColor, HighlightProps, StoryListItem } from '@components/OrderableList/utils/types';
 import React, { FC } from 'react';
