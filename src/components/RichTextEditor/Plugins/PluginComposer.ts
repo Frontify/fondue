@@ -94,7 +94,7 @@ export class PluginComposer {
         return { ...this.defaultElementsFromPlugins, ...this.markupElements };
     }
 
-    get defaultElementsFromPlugins() {
+    private get defaultElementsFromPlugins() {
         const defaultElements: ObjectType<PlatePluginComponent> = {};
         for (const pluginArray of this.platePlugins.values()) {
             for (const plugin of pluginArray) {
