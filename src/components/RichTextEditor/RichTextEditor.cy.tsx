@@ -212,6 +212,7 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').click().type('hello');
         });
     });
+
     describe('Toolbar', () => {
         it('should display toolbar when selecting inserted text', () => {
             cy.mount(<RichTextEditor />);
@@ -424,6 +425,7 @@ describe('RichTextEditor Component', () => {
             cy.get('ol li').should('not.exist');
         });
     });
+
     describe('Emits event', () => {
         it('emits onTextChange when choosing an inline style', () => {
             const onTextChange = cy.stub();
