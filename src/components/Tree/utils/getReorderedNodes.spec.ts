@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { TreeFlatListItem } from '@components/Tree';
 import { DraggableItem } from '@utilities/dnd';
 import { getReorderedNodes } from '@components/Tree/utils/getReorderedNodes';

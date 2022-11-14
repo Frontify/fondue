@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import React, { useState } from 'react';
 import { Flyout } from '@components/Flyout';
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';

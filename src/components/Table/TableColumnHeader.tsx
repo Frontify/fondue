@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
 import { IconSize } from '@foundation/Icon/IconSize';

@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { Item, Section } from '@react-stately/collections';
 import React, { ReactNode } from 'react';
 import { ActionMenuBlock, ActionMenuItemType } from '../ActionMenu/ActionMenu';

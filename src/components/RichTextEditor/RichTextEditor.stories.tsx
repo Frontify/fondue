@@ -26,10 +26,12 @@ import {
     OrderedListPlugin,
     ParagraphPlugin,
     PluginComposer,
+    TextStylePlugin,
     UnderlinePlugin,
     UnorderedListPlugin,
 } from './Plugins';
 import { PaddingSizes } from './types';
+import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
 export default {
@@ -261,10 +263,15 @@ WithCustomControls.args = {
     plugins: customPlugins,
 };
 
+const topbarPlugins = new PluginComposer();
 export const WithToolbarTopAndSmallPadding = RichTextEditorTemplate.bind({});
 WithToolbarTopAndSmallPadding.args = {
     position: Position.TOP,
     padding: PaddingSizes.Medium,
+    actions: [],
+    plugins: topbarPlugins.setPlugin([
+        new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_CUSTOM1, TextStyles.ELEMENT_HEADING1] }),
+    ]),
 };
 
 const mentionPlugins = new PluginComposer();

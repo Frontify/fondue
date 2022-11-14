@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { PlateEditor, TText, Value, getPluginType } from '@udecode/plate-core';
 import { ELEMENT_BUTTON } from '../createButtonPlugin';
 import { ButtonStyle, TButtonElement } from '../types';

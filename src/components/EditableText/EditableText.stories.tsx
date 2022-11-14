@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import React, { useState } from 'react';
 import { EditableMode, EditableText, EditableTextProps } from '@components/EditableText/EditableText';
 import { Story } from '@storybook/react';

@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { ButtonWrapper } from '../../helper';
-import { PluginButtonProps } from '../../types';
 import { TextStyleDropdown } from '.';
+import { TextStyleButtonProps } from './types';
 
-export const TextStyleButton = ({ editorId, id }: PluginButtonProps) => (
+export const TextStyleButton = ({ editorId, id, textStyles }: TextStyleButtonProps) => (
     <ButtonWrapper id={id}>
-        <TextStyleDropdown editorId={editorId} />
+        <TextStyleDropdown editorId={editorId} textStyles={textStyles} />
     </ButtonWrapper>
 );

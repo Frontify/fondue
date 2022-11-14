@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { ChangeEventHandler, useCallback, useEffect, useRef } from 'react';
 import { HTMLPropsAs, mergeProps, useComposedRef } from '@udecode/plate-core';
 import { floatingButtonActions, floatingButtonSelectors, useFloatingButtonSelectors } from './floatingButtonStore';

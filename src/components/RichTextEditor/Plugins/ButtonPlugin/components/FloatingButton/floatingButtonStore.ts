@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { createStore } from '@udecode/plate-core';
 import { ButtonStyle } from '../../types';
 
