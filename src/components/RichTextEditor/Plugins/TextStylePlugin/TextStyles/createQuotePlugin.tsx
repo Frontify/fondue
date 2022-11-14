@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { PlateRenderElementProps } from '@udecode/plate';
+import { PlateRenderElementProps, createPluginFactory } from '@udecode/plate';
 import { merge } from '@utilities/merge';
-import { useRichTextEditorContext } from '../../../../context/RichTextEditorContext';
-import { alignmentClassnames } from '../alignment';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
+import { TextStyles } from './textStyles';
+import { alignmentClassnames } from './alignment';
 
 export const QuoteMarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
@@ -16,3 +17,9 @@ export const QuoteMarkupElementNode = ({ element, attributes, children }: PlateR
         </blockquote>
     );
 };
+
+export const createQuotePlugin = createPluginFactory({
+    key: TextStyles.ELEMENT_QUOTE,
+    isElement: true,
+    component: QuoteMarkupElementNode,
+});
