@@ -2,6 +2,8 @@
 
 import { PlatePlugin } from '@udecode/plate';
 import {
+    SelectableTextStyles,
+    TextStyles,
     createCustom1Plugin,
     createCustom2Plugin,
     createCustom3Plugin,
@@ -10,8 +12,6 @@ import {
     createHeading3Plugin,
     createHeading4Plugin,
     createQuotePlugin,
-    SelectableTextStyles,
-    TextStyles,
 } from '../TextStyles';
 
 export const textStylePluginsRecord: Record<SelectableTextStyles, { plugin: () => PlatePlugin }> = {
