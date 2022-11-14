@@ -7,6 +7,7 @@ import { DropdownItemProps } from './types';
 
 export const DropdownItem = ({ editor, type, children }: DropdownItemProps) => {
     const isActive = !!editor?.selection && someNode(editor, { match: { type } });
+
     return (
         <button
             data-test-id="textstyle-option"

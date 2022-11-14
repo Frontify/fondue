@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { TDescendant } from '@udecode/plate';
 import { DesignTokens } from '../types';
 import { defaultDesignTokens } from '../utils/defaultDesignTokens';
