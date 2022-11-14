@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
-
 function IconDividerDotted20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
@@ -21,5 +20,4 @@ function IconDividerDotted20(props: GeneratedIconProps): React.ReactElement<Gene
         </svg>
     );
 }
-
 export default memo(IconDividerDotted20);

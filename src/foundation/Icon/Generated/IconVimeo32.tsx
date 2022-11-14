@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
-
 function IconVimeo32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
@@ -19,5 +18,4 @@ function IconVimeo32(props: GeneratedIconProps): React.ReactElement<GeneratedIco
         </svg>
     );
 }
-
 export default memo(IconVimeo32);
