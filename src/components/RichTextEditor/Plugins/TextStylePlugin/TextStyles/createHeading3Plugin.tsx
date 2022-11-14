@@ -18,11 +18,12 @@ export const Heading3MarkupElementNode = ({ element, attributes, children }: Pla
     );
 };
 
-export const createHeading3Plugin = createPluginFactory({
-    key: TextStyles.ELEMENT_HEADING3,
-    isElement: true,
-    component: Heading3MarkupElementNode,
-    deserializeHtml: {
-        rules: [{ validNodeName: ['h3', 'H3'] }],
-    },
-});
+export const createHeading3Plugin = () =>
+    createPluginFactory({
+        key: TextStyles.ELEMENT_HEADING3,
+        isElement: true,
+        component: Heading3MarkupElementNode,
+        deserializeHtml: {
+            rules: [{ validNodeName: ['h3', 'H3'] }],
+        },
+    });

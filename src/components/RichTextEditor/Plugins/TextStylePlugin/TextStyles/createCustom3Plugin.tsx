@@ -18,8 +18,9 @@ export const Custom3MarkupElementNode = ({ element, attributes, children }: Plat
     );
 };
 
-export const createCustom3Plugin = createPluginFactory({
-    key: TextStyles.ELEMENT_CUSTOM3,
-    isElement: true,
-    component: Custom3MarkupElementNode,
-});
+export const createCustom3Plugin = () =>
+    createPluginFactory({
+        key: TextStyles.ELEMENT_CUSTOM3,
+        isElement: true,
+        component: Custom3MarkupElementNode,
+    });
