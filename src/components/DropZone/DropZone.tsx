@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import React from 'react';
 import { useDrop } from 'react-dnd';
 import { merge } from '@utilities/merge';

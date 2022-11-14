@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { IconCaretRight, IconSize } from '@foundation/Icon';
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';

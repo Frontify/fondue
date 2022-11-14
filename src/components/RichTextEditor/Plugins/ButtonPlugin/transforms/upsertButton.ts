@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { TNode, TNodeEntry } from '@udecode/plate';
 import {
     InsertNodesOptions,

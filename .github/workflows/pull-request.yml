@@ -8,38 +8,100 @@ on:
 env:
     NODE_VERSION: 16
     CI: true
-    CYPRESS_CACHE_FOLDER: cypress_cache
+    CYPRESS_CACHE_FOLDER: /tmp/cypress_cache
     NUMBER_OF_RUNNERS: 7
 
 jobs:
+    linting:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+        steps:
+            - name: Checkout current commit
+              uses: actions/checkout@v3
+
+            - name: Use Node.js ${{ env.NODE_VERSION }} (npm repository)
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+                  cache: 'npm'
+
+            - name: Cache dependencies
+              id: npm_cache
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      node_modules
+                      ${{ env.CYPRESS_CACHE_FOLDER }}
+                  key: node_modules-${{ hashFiles('package-lock.json') }}
+                  restore-keys: node_modules-
+
+            - name: Install dependencies
+              if: steps.npm_cache.outputs.cache-hit != 'true'
+              run: npm ci
+
+            - name: Lint files
+              run: npm run lint
+
+    typecheck:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+        steps:
+            - name: Checkout current commit
+              uses: actions/checkout@v3
+
+            - name: Use Node.js ${{ env.NODE_VERSION }} (npm repository)
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+                  cache: 'npm'
+
+            - name: Cache dependencies
+              id: npm_cache
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      node_modules
+                      ${{ env.CYPRESS_CACHE_FOLDER }}
+                  key: node_modules-${{ hashFiles('package-lock.json') }}
+                  restore-keys: node_modules-
+
+            - name: Install dependencies
+              if: steps.npm_cache.outputs.cache-hit != 'true'
+              run: npm ci
+
+            - name: Typecheck files
+              run: npm run typecheck
+
     component-tests:
         runs-on: ubuntu-latest
 
         steps:
-            -   name: Checkout current commit
-                uses: actions/checkout@v3
+            - name: Checkout current commit
+              uses: actions/checkout@v3
 
-            -   name: Use Node.js ${{ env.NODE_VERSION }}
-                uses: actions/setup-node@v3
-                with:
-                    node-version: ${{ env.NODE_VERSION }}
+            - name: Use Node.js ${{ env.NODE_VERSION }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
 
-            -   name: Cache dependencies
-                id: npm_cache
-                uses: actions/cache@v3
-                with:
-                    path: |
-                        node_modules
-                        ${{ env.CYPRESS_CACHE_FOLDER }}
-                    key: node_modules-${{ hashFiles('package-lock.json') }}
-                    restore-keys: node_modules-
+            - name: Cache dependencies
+              id: npm_cache
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      node_modules
+                      ${{ env.CYPRESS_CACHE_FOLDER }}
+                  key: node_modules-${{ hashFiles('package-lock.json') }}
+                  restore-keys: node_modules-
 
-            -   name: Install dependencies
-                if: steps.npm_cache.outputs.cache-hit != 'true'
-                run: npm ci
+            - name: Install dependencies
+              if: steps.npm_cache.outputs.cache-hit != 'true'
+              run: npm ci
 
-            -   name: Component Tests
-                run: npm run test
-                env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                    CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+            - name: Component Tests
+              run: npm run test
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}

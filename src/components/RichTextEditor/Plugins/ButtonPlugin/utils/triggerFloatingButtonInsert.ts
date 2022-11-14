@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { PlateEditor, Value, getEditorString, getPluginType, isRangeAcrossBlocks, someNode } from '@udecode/plate-core';
 import { floatingButtonActions, floatingButtonSelectors } from '../components/FloatingButton/floatingButtonStore';
 import { ELEMENT_BUTTON } from '../createButtonPlugin';
