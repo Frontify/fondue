@@ -4,15 +4,12 @@ import React, { FC } from 'react';
 import { Plate } from '@udecode/plate';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
-import { Toolbar } from './components/Toolbar/Toolbar';
-import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { useEditorState } from './hooks';
+import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { DesignTokens, PaddingSizes } from './types';
-import { EditorActions, defaultActions } from './utils/actions';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { parseRawValue } from './utils/parseRawValue';
 import { Position } from './EditorPositioningWrapper';
-import { getEditorConfig } from './utils/editorConfig';
 import { GeneratePlugins, PluginComposer, defaultPlugins } from './Plugins';
 import { forceTabOutOfActiveElement } from './helpers';
 
@@ -29,7 +26,6 @@ export type RichTextEditorProps = {
     onBlur?: (value: string) => void;
     readonly?: boolean;
     designTokens?: DesignTokens;
-    actions?: EditorActions[][];
     padding?: PaddingSizes;
     position?: Position;
     plugins?: PluginComposer;
@@ -41,7 +37,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     placeholder = '',
     readonly = false,
     designTokens = defaultDesignTokens,
-    actions = defaultActions,
     onTextChange,
     onBlur,
     padding = PaddingSizes.None,
@@ -75,8 +70,6 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     };
 
     const config = GeneratePlugins(editorId, plugins);
-    const isNew = !!config && actions.length === 0;
-    const editorConfig = isNew ? config.create() : getEditorConfig();
 
     return (
         <RichTextEditorProvider value={{ designTokens, position }}>
@@ -85,11 +78,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 initialValue={parseRawValue({ editorId, raw: initialValue })}
                 onChange={onChange}
                 editableProps={editableProps}
-                plugins={editorConfig}
+                plugins={config.create()}
             >
-                {isNew && config.toolbar()}
-                {isNew && config.inline()}
-                {!isNew && <Toolbar editorId={editorId} actions={actions} />}
+                {config.toolbar()}
+                {config.inline()}
             </Plate>
         </RichTextEditorProvider>
     );
