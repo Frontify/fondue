@@ -16,29 +16,26 @@ import { ParagraphPlugin } from './ParagraphPlugin';
 import { ButtonPlugin } from './ButtonPlugin';
 
 export const defaultPlugins = new PluginComposer();
-defaultPlugins
-    .setPlugin(new InitPlugin(), new ParagraphPlugin())
-    .setPlugin(new TextStylePlugin())
-    .setPlugin(
-        [
-            new BoldPlugin(),
-            new ItalicPlugin(),
-            new UnderlinePlugin(),
-            new StrikethroughPlugin(),
-            new LinkPlugin(),
-            new ButtonPlugin(),
-            new CodePlugin(),
-        ],
-        [
-            new AlignLeftPlugin(),
-            new AlignCenterPlugin(),
-            new AlignRightPlugin(),
-            new AlignJustifyPlugin(),
-            new UnorderedListPlugin(),
-            new CheckboxListPlugin(),
-            new OrderedListPlugin(),
-        ],
-    );
+defaultPlugins.setPlugin(new InitPlugin(), new ParagraphPlugin()).setPlugin(new TextStylePlugin()).setPlugin(
+    [
+        new BoldPlugin(),
+        new ItalicPlugin(),
+        new UnderlinePlugin(),
+        new StrikethroughPlugin(),
+        // new LinkPlugin(),
+        new ButtonPlugin(),
+        new CodePlugin(),
+    ],
+    [
+        new AlignLeftPlugin(),
+        new AlignCenterPlugin(),
+        new AlignRightPlugin(),
+        new AlignJustifyPlugin(),
+        new UnorderedListPlugin(),
+        new CheckboxListPlugin(),
+        new OrderedListPlugin(),
+    ],
+);
 
 export * from './GeneratePlugins';
 export * from './PluginComposer';
