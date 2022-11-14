@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { Badge, BadgeProps } from '@components/Badge';
 import { useBreadcrumbItem } from '@react-aria/breadcrumbs';
 import { useFocusRing } from '@react-aria/focus';

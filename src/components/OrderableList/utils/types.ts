@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { ReactChild } from 'react';
 
 export type StoryListItem = {

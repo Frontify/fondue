@@ -18,12 +18,12 @@ import {
     ThematicBreakNode,
 } from '../types';
 
-export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstNode, opts: OptionType) {
-    const types = opts?.nodeTypes as InputNodeTypes;
+export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstNode, options: OptionType) {
+    const types = options?.nodeTypes as InputNodeTypes;
 
-    const linkDestinationKey = opts?.linkDestinationKey ?? 'link';
-    const imageSourceKey = opts?.imageSourceKey ?? 'link';
-    const imageCaptionKey = opts?.imageCaptionKey ?? 'caption';
+    const linkDestinationKey = options?.linkDestinationKey ?? 'link';
+    const imageSourceKey = options?.imageSourceKey ?? 'link';
+    const imageCaptionKey = options?.imageCaptionKey ?? 'caption';
 
     let children: Array<DeserializedNode<T>> = [{ text: '' }];
 
@@ -35,7 +35,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
                     ...c,
                     ordered: node.ordered || false,
                 },
-                opts,
+                options,
             ),
         );
     }
@@ -48,7 +48,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
             } as HeadingNode<T>;
         case 'list':
             return {
-                type: node.ordered ? types.ol_list : types.ul_list,
+                type: node.ordered ? types.olList : types.ulList,
                 children,
             } as ListNode<T>;
         case 'listItem':
@@ -69,10 +69,10 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
                 [imageCaptionKey]: node.alt,
             } as ImageNode<T>;
         case 'blockquote':
-            return { type: types.block_quote, children } as BlockQuoteNode<T>;
+            return { type: types.blockQuote, children } as BlockQuoteNode<T>;
         case 'code':
             return {
-                type: types.code_block,
+                type: types.codeBlock,
                 language: node.lang,
                 children: [{ text: node.value }],
             } as CodeBlockNode<T>;
@@ -89,31 +89,31 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
 
         case 'emphasis':
             return {
-                [types.emphasis_mark as string]: true,
+                [types.emphasisMark as string]: true,
                 ...forceLeafNode(children as Array<TextNode>),
                 ...persistLeafFormats(children as Array<MarkdownAstNode>),
             } as unknown as ItalicNode<T>;
         case 'strong':
             return {
-                [types.strong_mark as string]: true,
+                [types.strongMark as string]: true,
                 ...forceLeafNode(children as Array<TextNode>),
                 ...persistLeafFormats(children as Array<MarkdownAstNode>),
             };
         case 'delete':
             return {
-                [types.delete_mark as string]: true,
+                [types.deleteMark as string]: true,
                 ...forceLeafNode(children as Array<TextNode>),
                 ...persistLeafFormats(children as Array<MarkdownAstNode>),
             };
         case 'inlineCode':
             return {
-                [types.inline_code_mark as string]: true,
+                [types.inlineCodeMark as string]: true,
                 text: node.value,
                 ...persistLeafFormats(children as Array<MarkdownAstNode>),
             };
         case 'thematicBreak':
             return {
-                type: types.thematic_break,
+                type: types.thematicBreak,
                 children: [{ text: '' }],
             } as ThematicBreakNode<T>;
 

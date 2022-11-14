@@ -1,5 +1,7 @@
-import component from "./component";
-import componentStories from "./component.stories";
-import componentSpec from "./component.spec";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export default [component, componentStories, componentSpec];
+import * as component from './component';
+import * as componentStories from './component.stories';
+import * as componentSpec from './component.spec';
+
+export default [component.setup, componentStories.setup, componentSpec.setup];

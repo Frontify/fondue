@@ -1,4 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import React from 'react';
 import { AddBlockButton } from './AddBlockButton';
 

@@ -4,10 +4,9 @@ import { MarkdownAstNode, PartialOptionType } from '../types';
 import { getSelectedOptions } from '../utils';
 import deserialize from './deserialize';
 
-export default function plugin(opts?: PartialOptionType) {
+export default function plugin(options?: PartialOptionType) {
     const compiler = (node: { children: Array<MarkdownAstNode> }) => {
-        const options = getSelectedOptions(opts);
-        return node.children.map((c) => deserialize(c, options));
+        return node.children.map((c) => deserialize(c, getSelectedOptions(options)));
     };
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

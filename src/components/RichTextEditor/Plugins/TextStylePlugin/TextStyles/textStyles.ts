@@ -13,6 +13,12 @@ export const listStyleTitle: Record<ListStyles, string> = {
     [ListStyles.CHECKLIST_ITEM]: 'Checklist',
 };
 
+export enum ButtonStyles {
+    ELEMENT_BUTTON_PRIMARY = 'button_primary',
+    ELEMENT_BUTTON_SECONDARY = 'button_secondary',
+    ELEMENT_BUTTON_TERTIARY = 'button_tertiary',
+}
+
 export enum TextStyles {
     ELEMENT_HEADING1 = 'heading1',
     ELEMENT_HEADING2 = 'heading2',
@@ -25,6 +31,8 @@ export enum TextStyles {
     ELEMENT_LINK = 'link',
     ELEMENT_PARAGRAPH = 'p',
 }
+
+export type SelectableTextStyles = Exclude<TextStyles, TextStyles.ELEMENT_PARAGRAPH | TextStyles.ELEMENT_LINK>;
 
 export const textStyleTitle: Record<TextStyles, string> = {
     [TextStyles.ELEMENT_HEADING1]: 'Heading 1',

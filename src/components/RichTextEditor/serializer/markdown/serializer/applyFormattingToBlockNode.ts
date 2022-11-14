@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import escapeHtml from 'escape-html';
-import { BlockType, InputNodeTypes, LeafType, NodeType, OptionType } from '../types';
+import { BlockType, InputNodeTypes, NodeType, OptionType } from '../types';
 import { isLeafNode } from './isLeafNode';
 
 const processListItemNode = (
@@ -10,7 +10,7 @@ const processListItemNode = (
     chunk: NodeType,
     listDepth: number,
 ): string => {
-    const isOL = chunk && chunk.parentType === nodeTypes.ol_list;
+    const isOL = chunk && chunk.parentType === nodeTypes.olList;
     const treatAsLeaf = (chunk as BlockType).children.length === 1 && isLeafNode((chunk as BlockType).children[0]);
 
     let spacer = '';
@@ -25,17 +25,9 @@ const processListItemNode = (
     return `${spacer}${isOL ? '1.' : '-'} ${children}${treatAsLeaf ? '\n' : ''}`;
 };
 
-const shouldEscapeNode = (
-    chunk: NodeType,
-    children: string,
-    nodeTypes: InputNodeTypes,
-    type?: string,
-    parentType?: string,
-) => {
-    // don't escape if: code block, image
-    const isCodeBlock =
-        parentType === nodeTypes.code_block || type === nodeTypes.code_block || (chunk as LeafType).code;
-
+const shouldEscapeNode = (children: string, nodeTypes: InputNodeTypes, type?: string, parentType?: string) => {
+    // don't escape if: code block, image, img
+    const isCodeBlock = parentType === nodeTypes.codeBlock || type === nodeTypes.codeBlock;
     if (!isCodeBlock) {
         children = escapeHtml(children);
     }
@@ -67,7 +59,7 @@ export const applyFormattingToBlockNode = (
         case nodeTypes.heading[6]:
             return `###### ${children}\n`;
 
-        case nodeTypes.block_quote:
+        case nodeTypes.blockQuote:
             /**
              * For some reason, marked is parsing blockquote w/ one new line as
              * continued blockquote, so adding two new lines ensures that doesn't
@@ -75,7 +67,7 @@ export const applyFormattingToBlockNode = (
              */
             return `> ${children}\n`;
 
-        case nodeTypes.code_block:
+        case nodeTypes.codeBlock:
             return `\`\`\`${(chunk as BlockType).language || ''}\n${children}\n\`\`\`\n`;
 
         case nodeTypes.link:
@@ -86,8 +78,8 @@ export const applyFormattingToBlockNode = (
             const imageUrl = (chunk as BlockType).link ?? '';
             return `![${(chunk as BlockType).caption}](${imageUrl})`;
 
-        case nodeTypes.ul_list:
-        case nodeTypes.ol_list:
+        case nodeTypes.ulList:
+        case nodeTypes.olList:
             return `\n${children}\n`;
 
         case nodeTypes.listItem:
@@ -96,10 +88,10 @@ export const applyFormattingToBlockNode = (
         case nodeTypes.paragraph:
             return `${children}\n`;
 
-        case nodeTypes.thematic_break:
+        case nodeTypes.thematicBreak:
             return `\n---${children}\n\n`;
 
         default:
-            return shouldEscapeNode(chunk, children, nodeTypes, type, parentType);
+            return shouldEscapeNode(children, nodeTypes, type, parentType);
     }
 };

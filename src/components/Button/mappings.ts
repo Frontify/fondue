@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { IconSize } from '@foundation/Icon';
 import { ButtonSize, ButtonType } from '@components/Button/ButtonTypes';
 

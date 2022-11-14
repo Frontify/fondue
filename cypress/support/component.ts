@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import './commands';
 
 import { MountOptions, MountReturn } from 'cypress/react';
