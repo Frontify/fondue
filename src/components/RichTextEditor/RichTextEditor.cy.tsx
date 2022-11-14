@@ -155,7 +155,7 @@ const RichTextEditorWithValueSetOutside = ({ value }: { value: string }) => {
     return <RichTextEditor onTextChange={(value) => setInitialValue(value)} value={initialValue} />;
 };
 
-describe.skip('RichTextEditor Component', () => {
+describe('RichTextEditor Component', () => {
     describe('Rendering', () => {
         it('should render an empty rich text editor', () => {
             cy.mount(<RichTextEditor />);
@@ -689,7 +689,7 @@ describe.skip('RichTextEditor Component', () => {
     });
 });
 
-describe.skip('RichTextEditor Component: Positioning of Toolbar', () => {
+describe('RichTextEditor Component: Positioning of Toolbar', () => {
     it('should render with fixed top toolbar', () => {
         cy.mount(<RichTextWithToolbarPositioning position={Position.TOP} />);
 
@@ -702,24 +702,5 @@ describe.skip('RichTextEditor Component: Positioning of Toolbar', () => {
 
         cy.get(RICH_TEXT_EDITOR).should('be.visible');
         cy.get(TOOLBAR_BOTTOM).should('be.visible');
-    });
-});
-
-describe('RichTextEditor Component: Positioning of Toolbar 2', () => {
-    it('should open floating button insert', () => {
-        const link = 'https://smartive.ch';
-        cy.mount(<RichTextEditor />);
-        insertTextAndOpenToolbar();
-        cy.get(TOOLBAR_FLOATING).should('be.visible');
-        cy.get(TOOLBAR_GROUP_1).children().eq(4).click();
-        cy.get(FLOATING_BUTTON_INSERT).should('exist');
-        cy.get(BUTTON).eq(1).should('be.disabled');
-        cy.get('[type=text]').eq(0).should('have.attr', 'value', 'hello');
-        cy.get('[type=text]').eq(1).click().type(link);
-        cy.get(BUTTON).eq(1).should('not.be.disabled');
-        cy.get(LINK_CHOOSER_CHECKBOX).click();
-        cy.get(BUTTON).eq(1).click();
-        cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
-        cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
     });
 });
