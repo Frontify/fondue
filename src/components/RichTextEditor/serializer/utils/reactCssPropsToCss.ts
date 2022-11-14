@@ -8,8 +8,10 @@ export const reactCssPropsToCss = (props?: CSSProperties): string => {
         return '';
     }
 
-    return Object.keys(props).reduce<string>((acc, key) => {
-        const value = props[key as keyof CSSProperties];
-        return value ? `${acc}${convertCamelCaseToKebabCase(key)}: ${value}; ` : acc;
-    }, '');
+    return Object.keys(props)
+        .reduce<string>((acc, key) => {
+            const value = props[key as keyof CSSProperties];
+            return value ? `${acc}${convertCamelCaseToKebabCase(key)}: ${value}; ` : acc;
+        }, '')
+        .trim();
 };
