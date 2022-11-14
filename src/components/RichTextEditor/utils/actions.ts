@@ -13,6 +13,7 @@ export enum EditorActions {
     CODE = 'code',
     CHECK_ITEM = 'check-item',
     LINK = 'link',
+    BUTTON = 'button',
     ORDERED_LIST = 'ordered-list',
     UNORDERED_LIST = 'unordered-list',
 }
@@ -25,6 +26,7 @@ export const defaultActions = [
         EditorActions.UNDERLINE,
         EditorActions.STRIKETHROUGH,
         EditorActions.LINK,
+        EditorActions.BUTTON,
         EditorActions.CODE,
     ],
     [

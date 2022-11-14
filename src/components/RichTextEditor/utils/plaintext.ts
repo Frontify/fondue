@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { TDescendant, isDescendant } from '@udecode/plate';
 import { Node } from 'slate';
 

@@ -7,6 +7,7 @@ import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from '
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import {
     IPSUM,
+    buttonValues,
     checkboxValue,
     customDesignTokens,
     htmlValue,
@@ -24,10 +25,13 @@ import {
     MentionPlugin,
     OrderedListPlugin,
     PluginComposer,
+    TextStylePlugin,
     UnderlinePlugin,
     UnorderedListPlugin,
 } from './Plugins';
 import { PaddingSizes } from './types';
+import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
+import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -138,6 +142,7 @@ WithHtmlAsValue.args = {
 export const WithCustomTextStyle = RichTextEditorTemplate.bind({});
 WithCustomTextStyle.args = {
     designTokens: {
+        ...defaultDesignTokens,
         heading1: {
             fontSize: '48px',
             fontStyle: 'italic',
@@ -178,6 +183,68 @@ WithCustomTextStyle.args = {
     },
 };
 
+export const WithCustomButtonStyles = RichTextEditorTemplate.bind({});
+WithCustomButtonStyles.args = {
+    value: JSON.stringify(buttonValues),
+    designTokens: {
+        ...defaultDesignTokens,
+        button_primary: {
+            hover: {
+                color: 'rgba(76, 76, 76, 1)',
+                backgroundColor: 'rgba(0, 230, 0, 1)',
+                borderColor: 'rgba(155, 155, 155, 1)',
+            },
+            fontFamily: 'inherit',
+            fontSize: '13px',
+            backgroundColor: 'rgba(230,0,0,1)',
+            paddingTop: 10,
+            paddingRight: 20,
+            paddingBottom: 10,
+            paddingLeft: 20,
+            color: 'rgba(102,102,102,1)',
+            borderColor: 'rgba(207, 207, 207, 1)',
+        },
+        button_secondary: {
+            hover: {
+                color: 'rgba(76, 76, 76, 1)',
+                backgroundColor: 'rgba(172, 172, 172, 1)',
+                borderColor: 'rgba(155, 155, 155, 1)',
+            },
+            fontFamily: 'inherit',
+            fontSize: '13px',
+            backgroundColor: 'rgba(230,230,230,1)',
+            paddingTop: 20,
+            paddingRight: 40,
+            paddingBottom: 20,
+            paddingLeft: 40,
+            color: 'rgba(102,102,102,1)',
+            borderColor: 'rgba(207, 207, 207, 1)',
+        },
+        button_tertiary: {
+            hover: {
+                color: 'rgb(194, 185, 223)',
+                borderColor: 'rgb(255, 7, 212)',
+                backgroundColor: 'rgb(0, 0, 0)',
+            },
+            fontSize: '14px',
+            color: 'rgb(255, 246, 0)',
+            paddingTop: 11,
+            paddingRight: 21,
+            paddingBottom: 11,
+            paddingLeft: 21,
+            fontFamily: 'Arial',
+            fontStyle: 'italic',
+            fontWeight: '900',
+            textTransform: 'uppercase',
+            lineHeight: '1.4',
+            borderColor: 'rgb(0, 255, 21)',
+            borderWidth: '3px',
+            borderRadius: '6px',
+            backgroundColor: 'rgb(255, 0, 0)',
+        },
+    },
+};
+
 export const WithChecklist = RichTextEditorTemplate.bind({});
 WithChecklist.args = {
     value: JSON.stringify(checkboxValue),
@@ -196,10 +263,15 @@ WithCustomControls.args = {
     plugins: customPlugins,
 };
 
+const topbarPlugins = new PluginComposer();
 export const WithToolbarTopAndSmallPadding = RichTextEditorTemplate.bind({});
 WithToolbarTopAndSmallPadding.args = {
     position: Position.TOP,
     padding: PaddingSizes.Medium,
+    actions: [],
+    plugins: topbarPlugins.setPlugin([
+        new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_CUSTOM1, TextStyles.ELEMENT_HEADING1] }),
+    ]),
 };
 
 const mentionPlugins = new PluginComposer();

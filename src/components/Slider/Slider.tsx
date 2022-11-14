@@ -26,7 +26,7 @@ export type TextOrNumberItem = {
 
 export type SliderProps = {
     id?: string;
-    items: TextOrNumberItem[] | IconItem[];
+    items: (TextOrNumberItem | IconItem)[];
     activeItemId: string;
     onChange: (id: string) => void;
     ariaLabel?: string;

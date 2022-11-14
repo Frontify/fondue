@@ -1,4 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+
 export type IconComponent = {
     size: string | null;
     filled: boolean;

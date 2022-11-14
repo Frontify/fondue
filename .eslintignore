@@ -1,1 +1,3 @@
 **/src/foundation/Icon/Generated/**/*.tsx
+dist
+storybook-static

@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 export { default as IconAdobeCreativeCloud } from './IconAdobeCreativeCloud';
 export { default as IconAdobeCreativeCloud12 } from './IconAdobeCreativeCloud12';
 export { default as IconAdobeCreativeCloud16 } from './IconAdobeCreativeCloud16';

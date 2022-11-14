@@ -127,7 +127,7 @@ export const Dropdown: FC<DropdownProps> = ({
 
     const textColorClass = activeItem
         ? menuItemTextColorRecord[activeItem.style || MenuItemStyle.Primary][textState]
-        : 'tw-text-black-60';
+        : 'tw-text-text-x-weak';
 
     const onClear = clearable
         ? () => {
@@ -212,7 +212,7 @@ export const Dropdown: FC<DropdownProps> = ({
                                 minWidth: 'fit-content',
                             }}
                             {...popperInstance.attributes.popper}
-                            className="tw-absolute tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
+                            className="tw-absolute tw-p-0 tw-shadow tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
                             key="content"
                             initial={{ height: 0 }}
                             animate={{ height: 'auto' }}
@@ -243,7 +243,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 document.body,
             )}
             {validation === Validation.Loading && (
-                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
+                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-base tw-rounded-full tw-p-[2px] tw-border tw-border-line-weak">
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
             )}

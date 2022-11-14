@@ -32,9 +32,9 @@ export enum MenuItemTextColorState {
 
 export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextColorState, string>> = {
     [MenuItemStyle.Primary]: {
-        [MenuItemTextColorState.Default]: 'tw-text-black-80',
-        [MenuItemTextColorState.Active]: 'tw-text-black',
-        [MenuItemTextColorState.Disabled]: 'tw-text-black-40',
+        [MenuItemTextColorState.Default]: 'tw-text-text-x-weak',
+        [MenuItemTextColorState.Active]: 'tw-text-text',
+        [MenuItemTextColorState.Disabled]: 'tw-text-text-disabled',
     },
     [MenuItemStyle.Danger]: {
         [MenuItemTextColorState.Default]: 'tw-text-red-60',
@@ -121,9 +121,9 @@ export const MenuItem: FC<MenuItemProps> = ({
                     className={merge([
                         ITEM_WRAPPER_CLASSES,
                         'tw-rounded',
-                        isDangerStyle ? 'hover:tw-text-red-70' : 'hover:tw-text-black',
+                        isDangerStyle ? 'hover:tw-text-negative' : 'hover:tw-text-text',
                         menuItemSizeClassMap[size],
-                        disabled && 'tw-bg-black-0 tw-pointer-events-none',
+                        disabled && 'tw-bg-box-disabled tw-pointer-events-none',
                         active && 'tw-font-medium',
                         textClass,
                     ])}

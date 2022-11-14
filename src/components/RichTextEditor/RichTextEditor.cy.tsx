@@ -1,12 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
-import React, { FC, useState } from 'react';
+import React, { CSSProperties, FC, useState } from 'react';
 import { Position } from './EditorPositioningWrapper';
+import { ButtonStyle, ELEMENT_BUTTON } from './Plugins';
+import { ButtonStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor } from './RichTextEditor';
 import { DesignTokens } from './types';
 import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { EditorActions } from './utils/actions';
+import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
 const TOOLBAR_FLOATING = '[data-test-id=toolbar-floating]';
@@ -21,9 +24,14 @@ const CHANGE_DESIGN_TOKENS_TRIGGER = '[data-test-id=change-design-tokens-button]
 const TEXTSTYLE_OPTION = '[data-test-id=textstyle-option]';
 const CHECKBOX_INPUT = '[data-test-id=checkbox-input]';
 const EDIT_LINK_BUTTON = '[data-test-id=edit-link-button]';
+const EDIT_BUTTON_BUTTON = '[data-test-id=edit-button-button]';
 const REMOVE_LINK_BUTTON = '[data-test-id=remove-link-button]';
+const REMOVE_BUTTON_BUTTON = '[data-test-id=remove-button-button]';
 const FLOATING_LINK_INSERT = '[data-test-id=floating-link-insert]';
+const FLOATING_BUTTON_INSERT = '[data-test-id=floating-button-insert]';
 const FLOATING_LINK_EDIT = '[data-test-id=floating-link-edit]';
+const FLOATING_BUTTON_EDIT = '[data-test-id=floating-button-edit]';
+const FLOATING_BUTTON_SECONDARY = '[data-test-id=floating-button-insert-secondary]';
 const BUTTON = '[data-test-id=button]';
 const LINK_CHOOSER_CHECKBOX = '.tw-group > .tw-inline-flex > .tw-flex-1 > .tw-select-none';
 
@@ -72,6 +80,30 @@ const RichTextWithLegacyLink: FC<{ text: string; url: string }> = ({ text, url }
                                     text,
                                 },
                             ],
+                        },
+                    ],
+                },
+            ])}
+        />
+    );
+};
+
+const RichTextWithButton: FC<{ text: string; link: string; buttonStyle: ButtonStyle }> = ({
+    text,
+    link,
+    buttonStyle,
+}) => {
+    return (
+        <RichTextEditor
+            value={JSON.stringify([
+                {
+                    type: ELEMENT_PARAGRAPH,
+                    children: [
+                        {
+                            type: ELEMENT_BUTTON,
+                            url: link,
+                            buttonStyle,
+                            children: [{ text }],
                         },
                     ],
                 },
@@ -229,7 +261,7 @@ describe('RichTextEditor Component', () => {
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR_FLOATING).should('be.visible');
-        cy.get(TOOLBAR_GROUP_1).children().eq(5).click();
+        cy.get(TOOLBAR_GROUP_1).children().eq(6).click();
         cy.get('[contenteditable=true]').should(
             'include.html',
             'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5',
@@ -445,8 +477,8 @@ describe('RichTextEditor Component', () => {
             cy.get(BUTTON).eq(1).should('not.be.disabled');
             cy.get(LINK_CHOOSER_CHECKBOX).click();
             cy.get(BUTTON).eq(1).click();
-            cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
             cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
+            cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
         });
 
         it('should open floating link insert and edit', () => {
@@ -532,6 +564,106 @@ describe('RichTextEditor Component', () => {
             cy.get(BUTTON).eq(1).click();
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
             cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
+        });
+    });
+
+    describe('button plugin', () => {
+        it('should render with button', () => {
+            const link = 'https://smartive.ch';
+            const text = 'This is a link';
+            cy.mount(<RichTextWithButton link={link} text={text} buttonStyle="primary" />);
+
+            cy.get('[contenteditable=true] a').should('contain.text', text);
+            cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
+            cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
+        });
+
+        it('should open floating button insert', () => {
+            const link = 'https://smartive.ch';
+            cy.mount(<RichTextEditor />);
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_1).children().eq(5).click();
+            cy.get(FLOATING_BUTTON_INSERT).should('exist');
+            cy.get(BUTTON).eq(1).should('be.disabled');
+            cy.get('[type=text]').eq(0).should('have.attr', 'value', 'hello');
+            cy.get('[type=text]').eq(1).click().type(link);
+            cy.get(BUTTON).eq(1).should('not.be.disabled');
+            cy.get(LINK_CHOOSER_CHECKBOX).click();
+            cy.get(BUTTON).eq(1).click();
+            cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
+            cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
+        });
+
+        it('should open floating button insert and edit', () => {
+            const link = 'https://smartive.ch';
+            const text = 'This is a link';
+            cy.mount(<RichTextWithButton link={link} text={text} buttonStyle="primary" />);
+            cy.get(FLOATING_BUTTON_EDIT).should('not.exist');
+            cy.get(FLOATING_BUTTON_INSERT).should('not.exist');
+            cy.get(EDIT_BUTTON_BUTTON).should('not.exist');
+            cy.get(REMOVE_BUTTON_BUTTON).should('not.exist');
+
+            cy.get('[contenteditable=true] a').click();
+            cy.get(FLOATING_BUTTON_EDIT).should('contain', link);
+            cy.get(EDIT_BUTTON_BUTTON).should('exist');
+            cy.get(REMOVE_BUTTON_BUTTON).should('exist');
+            cy.get(EDIT_BUTTON_BUTTON).click();
+            cy.get(FLOATING_BUTTON_INSERT).should('exist');
+
+            cy.get('[type=text]').eq(0).should('have.attr', 'value', text);
+            cy.get('[type=text]').eq(1).should('have.attr', 'value', link);
+            cy.get('[type=checkbox]').should('be.checked');
+        });
+
+        it('should edit button link', () => {
+            const link = 'https://smartive.ch';
+            const text = 'This is a link';
+            const additionalLink = '/team';
+            cy.mount(<RichTextWithButton link={link} text={text} buttonStyle="primary" />);
+            cy.get('[contenteditable=true] a').click();
+            cy.get(EDIT_BUTTON_BUTTON).click();
+
+            cy.get('[type=text]').eq(1).click().type(additionalLink);
+            cy.get(LINK_CHOOSER_CHECKBOX).click();
+
+            cy.get(BUTTON).eq(1).click();
+            cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
+            cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
+        });
+
+        it('should edit button style', () => {
+            const link = 'https://smartive.ch';
+            const text = 'This is a link';
+            const designTokens = defaultDesignTokens as Partial<
+                Record<ButtonStyles, CSSProperties & { hover: CSSProperties }>
+            >;
+
+            cy.mount(<RichTextWithButton link={link} text={text} buttonStyle="primary" />);
+            cy.get('[contenteditable=true] a')
+                .invoke('attr', 'style')
+                .should('contain', `color: ${designTokens.button_primary?.color}`);
+
+            cy.get('[contenteditable=true] a').click();
+            cy.get(EDIT_BUTTON_BUTTON).click();
+
+            cy.get(FLOATING_BUTTON_SECONDARY).click();
+            cy.get(BUTTON).eq(1).click();
+
+            cy.get('[contenteditable=true] a')
+                .invoke('attr', 'style')
+                .should('contain', `color: ${designTokens.button_secondary?.color}`);
+        });
+
+        it('should remove button', () => {
+            const link = 'https://smartive.ch';
+            const text = 'This is a link';
+            cy.mount(<RichTextWithButton link={link} text={text} buttonStyle="primary" />);
+            cy.get('[contenteditable=true] a').click();
+            cy.get(REMOVE_BUTTON_BUTTON).click();
+
+            cy.get('[contenteditable=true]').should('contain.text', text);
+            cy.get('[contenteditable=true] a').should('not.exist');
         });
     });
 });

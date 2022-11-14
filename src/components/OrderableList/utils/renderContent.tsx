@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { DragProperties, ItemDragState, OrderableListItem } from '@components/OrderableList';
 import { merge } from '@utilities/merge';
 import React from 'react';
