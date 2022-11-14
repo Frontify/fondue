@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ToolbarDropdown, usePlateEditorState } from '@udecode/plate';
-import React, { CSSProperties, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useRichTextEditorContext } from '../../../context/RichTextEditorContext';
 import { defaultTextStyles } from '../TextStyles/defaultTextStyles';
 import { TextStyles, textStyleTitle } from '../TextStyles';
@@ -12,8 +12,7 @@ import { TextStyleDropdownProps } from './types';
 export const TextStyleDropdown = ({ editorId, textStyles = defaultTextStyles }: TextStyleDropdownProps) => {
     const [open, setOpen] = useState(false);
     const editor = usePlateEditorState(editorId);
-    const context = useRichTextEditorContext();
-    const designTokens = context.designTokens as Partial<Record<TextStyles, CSSProperties>>;
+    const { designTokens } = useRichTextEditorContext();
 
     const onToggle = useCallback(() => {
         setOpen(!open);

@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AnyObject } from '@udecode/plate';
+import { CSSProperties } from 'react';
 import { convertCamelCaseToKebabCase } from './convertCamelCaseToKebabCase';
 
-export const reactCssPropsToCss = (props?: AnyObject): string => {
+export const reactCssPropsToCss = (props?: CSSProperties): string => {
     if (!props) {
         return '';
     }
-    return Object.keys(props)
-        .map((key) => `${convertCamelCaseToKebabCase(key)}: ${props[key]};`)
-        .join(' ');
+
+    return Object.keys(props).reduce<string>((acc, key) => {
+        const value = props[key as keyof CSSProperties];
+        return value ? `${acc}${convertCamelCaseToKebabCase(key)}: ${value}; ` : acc;
+    }, '');
 };
