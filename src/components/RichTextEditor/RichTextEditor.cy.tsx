@@ -3,7 +3,7 @@
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
 import React, { CSSProperties, FC, useState } from 'react';
 import { Position } from './EditorPositioningWrapper';
-import { ButtonStyle, ELEMENT_BUTTON } from './Plugins';
+import { ELEMENT_BUTTON, RichTextButtonStyle } from './Plugins';
 import { ButtonStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor } from './RichTextEditor';
 import { DesignTokens } from './types';
@@ -88,7 +88,7 @@ const RichTextWithLegacyLink: FC<{ text: string; url: string }> = ({ text, url }
     );
 };
 
-const RichTextWithButton: FC<{ text: string; link: string; buttonStyle: ButtonStyle }> = ({
+const RichTextWithButton: FC<{ text: string; link: string; buttonStyle: RichTextButtonStyle }> = ({
     text,
     link,
     buttonStyle,

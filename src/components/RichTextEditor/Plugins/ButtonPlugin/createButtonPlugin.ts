@@ -59,8 +59,6 @@ export const createButtonPlugin = createPluginFactory({
     props: ({ element }) => ({
         nodeProps: { href: element?.url, target: element?.target },
     }),
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
     withOverrides: withButton,
     renderAfterEditable: CustomFloatingButton,
     options: {
