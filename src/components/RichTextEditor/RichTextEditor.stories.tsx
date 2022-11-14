@@ -16,7 +16,7 @@ import {
     mentionable,
     nodesToSerialize,
     value,
-} from './utils/exampleValues';
+} from './helpers/exampleValues';
 import {
     BoldPlugin,
     CheckboxListPlugin,
@@ -25,6 +25,7 @@ import {
     LinkPlugin,
     MentionPlugin,
     OrderedListPlugin,
+    ParagraphPlugin,
     PluginComposer,
     TextStylePlugin,
     UnderlinePlugin,
@@ -284,14 +285,13 @@ WithChecklist.args = {
 
 const customPlugins = new PluginComposer();
 customPlugins
-    .setPlugin([new InitPlugin()])
+    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
     .setPlugin([new LinkPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
     .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
 export const WithCustomControls = RichTextEditorTemplate.bind({});
 WithCustomControls.args = {
     value: `<p>${IPSUM}</p>`,
-    actions: [],
     plugins: customPlugins,
 };
 
@@ -300,7 +300,6 @@ export const WithToolbarTopAndSmallPadding = RichTextEditorTemplate.bind({});
 WithToolbarTopAndSmallPadding.args = {
     position: Position.TOP,
     padding: PaddingSizes.Medium,
-    actions: [],
     plugins: topbarPlugins.setPlugin([
         new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_CUSTOM1, TextStyles.ELEMENT_HEADING1] }),
     ]),
@@ -315,13 +314,12 @@ mentionPlugins
 export const WithMentions = RichTextEditorTemplate.bind({});
 WithMentions.args = {
     value: JSON.stringify(mentionValue),
-    actions: [],
     plugins: mentionPlugins,
 };
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
 withoutToolbarPlugins
-    .setPlugin([new InitPlugin()])
+    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
     .setPlugin([
         new BoldPlugin(),
         new LinkPlugin(),
@@ -332,6 +330,5 @@ withoutToolbarPlugins
 export const WithoutToolbar = RichTextEditorTemplate.bind({});
 WithoutToolbar.args = {
     position: Position.TOP,
-    actions: [],
     plugins: withoutToolbarPlugins,
 };
