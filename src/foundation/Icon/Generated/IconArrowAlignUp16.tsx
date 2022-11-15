@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
-
 function IconArrowAlignUp16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
@@ -21,5 +20,4 @@ function IconArrowAlignUp16(props: GeneratedIconProps): React.ReactElement<Gener
         </svg>
     );
 }
-
 export default memo(IconArrowAlignUp16);

@@ -1,18 +1,29 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import escapeHtml from 'escape-html';
-import { ELEMENT_LI, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL, TDescendant } from '@udecode/plate';
+import {
+    ELEMENT_LI,
+    ELEMENT_LINK,
+    ELEMENT_OL,
+    ELEMENT_PARAGRAPH,
+    ELEMENT_UL,
+    TDescendant,
+    TText,
+} from '@udecode/plate';
 import { ELEMENT_BUTTON, ELEMENT_CHECK_ITEM, OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/Plugins';
 import { DesignTokens } from '@components/RichTextEditor/types';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
+import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/types';
 
-export const serializeNodeToHtmlRecursive = (node: any, designTokens: DesignTokens): string => {
+export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: DesignTokens): string => {
     if (!node.children) {
-        return serializeLeafToHtml(node);
+        return serializeLeafToHtml(node as TText);
     }
-    const children = node.children.map((n: TDescendant) => serializeNodeToHtmlRecursive(n, designTokens)).join('');
+    const children = (node.children as TDescendant[])
+        .map((n: TDescendant) => serializeNodeToHtmlRecursive(n, designTokens))
+        .join('');
 
     switch (node.type) {
         case TextStyles.ELEMENT_HEADING1:
@@ -41,14 +52,16 @@ export const serializeNodeToHtmlRecursive = (node: any, designTokens: DesignToke
             return `<li>${children}</li>`;
         case ELEMENT_LINK:
             if (node.chosenLink) {
-                const { chosenLink } = node;
+                const { chosenLink } = node as TLinkElement;
                 return `<a style="${reactCssPropsToCss(designTokens.link)}" target=${
-                    chosenLink.openInNewTab ? '_blank' : '_self'
-                } href="${escapeHtml(chosenLink.searchResult.link)}">${children}</a>`;
+                    chosenLink?.openInNewTab ? '_blank' : '_self'
+                } href="${escapeHtml(chosenLink?.searchResult?.link)}">${children}</a>`;
             }
-            return `<a style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(node.url)}">${children}</a>`;
+            return `<a style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(
+                node.url as string,
+            )}">${children}</a>`;
         case ELEMENT_BUTTON:
-            return `<a class="btn btn-${node.buttonStyle}" href="${escapeHtml(node.url)}">${children}</a>`;
+            return `<a class="btn btn-${node.buttonStyle}" href="${escapeHtml(node.url as string)}">${children}</a>`;
         case ELEMENT_CHECK_ITEM:
             return `<input type="checkbox"/><label>${children}</label>`;
 

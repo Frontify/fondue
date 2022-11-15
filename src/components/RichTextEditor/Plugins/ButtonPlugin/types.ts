@@ -10,4 +10,4 @@ export type TButtonElement = TLinkElement & {
     };
 };
 
-export type ButtonStyle = 'primary' | 'secondary' | 'tertiary';
+export type RichTextButtonStyle = 'primary' | 'secondary' | 'tertiary';
