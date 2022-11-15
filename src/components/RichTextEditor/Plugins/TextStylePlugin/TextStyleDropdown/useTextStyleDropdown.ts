@@ -24,7 +24,7 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
         setIsOpen((open) => !open);
     }, [setIsOpen]);
 
-    const popperInstance = usePopper(triggerElement, popperElement, {
+    const popperInstance = usePopper<'offset' | 'flip' | 'vertical-positioning'>(triggerElement, popperElement, {
         placement: 'bottom-start',
         strategy: 'fixed',
         modifiers: [
