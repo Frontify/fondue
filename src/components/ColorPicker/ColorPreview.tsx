@@ -15,7 +15,7 @@ export const ColorPreview: FC<ColorPreviewProps> = ({ color }) => {
 
     return (
         <div
-            className="tw-sticky tw-box-content tw-shrink-0 tw-h-2 tw-top-0 tw-bg-white tw-z-20 dark:tw-bg-black-95 tw-shadow-inner tw-border-l tw-border-r tw-border-line tw-rounded-t"
+            className="tw-sticky tw-box-content tw-shrink-0 tw-h-2 tw-top-0 tw-bg-white tw-z-20 dark:tw-bg-black-95 tw-border-t tw-mt-[-1px] tw-border-l tw-border-r tw-border-line tw-rounded-t"
             style={{ backgroundColor }}
             data-test-id="color-preview"
         ></div>
