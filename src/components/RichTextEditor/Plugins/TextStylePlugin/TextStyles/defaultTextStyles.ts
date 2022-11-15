@@ -11,4 +11,5 @@ export const defaultTextStyles: SelectableTextStyles[] = [
     TextStyles.ELEMENT_CUSTOM2,
     TextStyles.ELEMENT_CUSTOM3,
     TextStyles.ELEMENT_QUOTE,
+    TextStyles.ELEMENT_PARAGRAPH,
 ];

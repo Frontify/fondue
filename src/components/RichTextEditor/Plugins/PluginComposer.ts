@@ -6,7 +6,7 @@ import { Button, Buttons, InlineData, ObjectType, Plugin, PluginComposerProps, P
 
 export class PluginComposer {
     private platePlugins: Map<string, PlatePlugin<AnyObject>[]> = new Map();
-    private markupElements: ObjectType<PlatePluginComponent<any>> = {};
+    private markupElements: ObjectType<PlatePluginComponent> = {};
     private toolbarButtons: Buttons = [];
     private inlineElements: InlineData[] = [];
 
@@ -91,7 +91,20 @@ export class PluginComposer {
     }
 
     get elements() {
-        return this.markupElements;
+        return { ...this.defaultElementsFromPlugins, ...this.markupElements };
+    }
+
+    private get defaultElementsFromPlugins() {
+        const defaultElements: ObjectType<PlatePluginComponent> = {};
+        for (const pluginArray of this.platePlugins.values()) {
+            for (const plugin of pluginArray) {
+                const { key, component } = plugin;
+                if (component) {
+                    defaultElements[key] = component;
+                }
+            }
+        }
+        return defaultElements;
     }
 
     get plugins() {

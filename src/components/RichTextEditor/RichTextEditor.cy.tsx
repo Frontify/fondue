@@ -5,12 +5,12 @@ import React, { CSSProperties, FC, useState } from 'react';
 import { Position } from './EditorPositioningWrapper';
 import {
     BoldPlugin,
-    ButtonStyle,
     ELEMENT_BUTTON,
     InitPlugin,
     ItalicPlugin,
     LinkPlugin,
     PluginComposer,
+    RichTextButtonStyle,
     UnorderedListPlugin,
 } from './Plugins';
 import { ButtonStyles } from './Plugins/TextStylePlugin/TextStyles';
@@ -96,7 +96,7 @@ const RichTextWithLegacyLink: FC<{ text: string; url: string }> = ({ text, url }
     );
 };
 
-const RichTextWithButton: FC<{ text: string; link: string; buttonStyle: ButtonStyle }> = ({
+const RichTextWithButton: FC<{ text: string; link: string; buttonStyle: RichTextButtonStyle }> = ({
     text,
     link,
     buttonStyle,
