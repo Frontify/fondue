@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { useCallback } from 'react';
 import { Button } from '@udecode/plate-button';
 import {

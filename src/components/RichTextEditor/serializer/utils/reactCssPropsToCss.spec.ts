@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { CSSProperties } from 'react';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 

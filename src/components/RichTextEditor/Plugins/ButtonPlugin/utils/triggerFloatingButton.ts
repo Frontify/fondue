@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { PlateEditor, Value } from '@udecode/plate-core';
 import { floatingButtonSelectors } from '../components/index';
 import { triggerFloatingButtonEdit } from './triggerFloatingButtonEdit';

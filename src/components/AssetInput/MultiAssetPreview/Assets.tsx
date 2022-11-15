@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { merge } from '@utilities/merge';
 import React, { FC } from 'react';
 import { AssetInputSize, AssetType, ImageAsset, LibrarySource } from '../AssetInput';

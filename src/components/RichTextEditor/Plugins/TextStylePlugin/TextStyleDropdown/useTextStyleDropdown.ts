@@ -1,20 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { HTMLAttributes, useCallback, useEffect, useState } from 'react';
+import { PlateEditor, usePlateEditorState } from '@udecode/plate';
+import { Dispatch, HTMLAttributes, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
-import { SelectableTextStyles, TextStyles } from '../TextStyles';
 import { verticalPositionModifier } from './verticalPositionModifier';
 
-export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElement>(
-    triggerElement: T | null,
-    popperElement: P | null,
-    textStyles: SelectableTextStyles[],
-): {
-    state: { isOpen: boolean; toggle: () => void };
+type UseTextStyleDropdownReturn<T, P> = {
+    state: { isOpen: boolean; toggle: () => void; editor: PlateEditor };
     dropdownProps: HTMLAttributes<P>;
-    dropdownOptions: TextStyles[];
-} => {
+    triggerRef: Dispatch<SetStateAction<T | null>>;
+    dropdownRef: Dispatch<SetStateAction<P | null>>;
+};
+
+export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElement>(
+    editorId?: string,
+): UseTextStyleDropdownReturn<T, P> => {
     const [isOpen, setIsOpen] = useState(false);
+    const [triggerElement, setTriggerElement] = useState<T | null>(null);
+    const [popperElement, setPopperElement] = useState<P | null>(null);
+    const editor = usePlateEditorState(editorId);
 
     const toggle = useCallback(() => {
         setIsOpen((open) => !open);
@@ -59,11 +63,12 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
     }, [isOpen, popperElement, setIsOpen, triggerElement]);
 
     return {
-        state: { isOpen, toggle },
+        state: { isOpen, toggle, editor },
         dropdownProps: {
             ...popperInstance.attributes.popper,
             style: popperInstance.styles.popper,
         },
-        dropdownOptions: [...textStyles, TextStyles.ELEMENT_PARAGRAPH],
+        dropdownRef: setPopperElement,
+        triggerRef: setTriggerElement,
     };
 };

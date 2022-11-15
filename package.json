@@ -1,6 +1,6 @@
 {
     "name": "@frontify/fondue",
-    "version": "12.0.0-beta.20",
+    "version": "12.0.0-beta.22",
     "description": "Design system of Frontify",
     "engines": {
         "node": "~16"
@@ -37,15 +37,13 @@
         "generate:icons": "npm run generate:reactIcons && npm run generate:iconsMap",
         "generate:iconsMap": "esno ./scripts/generateIconMap.ts && eslint --fix ./src/foundation/Icon/IconEnum.ts ./src/foundation/Icon/IconsMap.tsx ./src/foundation/Icon/Generated/index.ts",
         "generate:reactIcons": "esno ./scripts/generateReactIcons.ts",
-        "lint": "npm run lint:ts",
-        "lint:fix": "npm run lint:ts:fix",
-        "lint:ts": "eslint 'src/**/*.{ts,tsx}'",
-        "lint:ts:fix": "eslint --fix 'src/**/*.{ts,tsx}'",
-        "lint:prettier": "prettier --check src",
+        "lint": "eslint .",
+        "lint:fix": "eslint --fix .",
+        "lint:prettier": "prettier --check .",
         "test": "cypress run --component",
         "test:browser": "cypress open --component",
         "test:file": "cypress run --component --spec",
-        "typecheck": "tsc",
+        "typecheck": "tsc --noEmit",
         "storybook": "start-storybook -p 6006"
     },
     "keywords": [
@@ -63,7 +61,7 @@
     },
     "devDependencies": {
         "@cypress/vite-dev-server": "^3.1.1",
-        "@frontify/eslint-config-react": "^0.15.2",
+        "@frontify/eslint-config-react": "^0.15.5",
         "@frontify/fondue-icons": "^0.1.17",
         "@storybook/addon-actions": "6.5.13",
         "@storybook/addon-essentials": "6.5.13",
@@ -84,8 +82,9 @@
         "cross-env": "7.0.3",
         "cypress": "^10.11.0",
         "cypress-real-events": "^1.7.1",
-        "eslint": "8.20.0",
+        "eslint": "8.27.0",
         "eslint-plugin-jsx-a11y": "6.6.1",
+        "eslint-plugin-notice": "0.9.10",
         "eslint-plugin-storybook": "^0.6.7",
         "esno": "0.16.3",
         "fast-glob": "3.2.11",

@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { defineConfig } from 'cypress';
 
 export default defineConfig({

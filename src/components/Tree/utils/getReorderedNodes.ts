@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { DraggableItem, DropZonePosition, moveItems } from '@utilities/dnd';
 import { TreeFlatListItem } from '@components/Tree';
 

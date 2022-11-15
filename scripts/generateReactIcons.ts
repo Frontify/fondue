@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import fastGlob from 'fast-glob';
 import { join } from 'path';
 import { readFile, writeFile } from 'fs/promises';
