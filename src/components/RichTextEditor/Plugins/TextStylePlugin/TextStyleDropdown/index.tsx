@@ -12,12 +12,17 @@ import { useTextStyleDropdown } from './useTextStyleDropdown';
 
 export const TextStyleDropdown = ({ editorId, textStyles = defaultTextStyles }: TextStyleDropdownProps) => {
     const { designTokens } = useRichTextEditorContext();
-    const { state, dropdownProps, triggerRef, dropdownRef } = useTextStyleDropdown(editorId);
-    const { editor, toggle, isOpen } = state;
+    const {
+        state: { editor, toggle, isOpen },
+        dropdownProps,
+        triggerRef,
+        dropdownRef,
+        label,
+    } = useTextStyleDropdown(editorId);
 
     return (
         <>
-            <DropdownTrigger editor={editor} open={isOpen} onClick={toggle} ref={triggerRef} />
+            <DropdownTrigger label={label} open={isOpen} onClick={toggle} ref={triggerRef} />
             {isOpen && (
                 <div
                     className="tw-divide-y tw-divide-line tw-bg-base tw-shadow-md tw-border tw-border-line tw-z-[1000] tw-overflow-auto tw-min-h-[40px]"
