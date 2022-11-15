@@ -91,7 +91,7 @@ const process = (chunk: NodeType, options: OptionType) => {
     }
 
     if (children !== BREAK_TAG && isLeafNode(chunk)) {
-        children = applyFormattingToLeafNode(children, chunk);
+        return applyFormattingToLeafNode(children, chunk);
     }
 
     return applyFormattingToBlockNode(options, children, chunk, options.listDepth, type, parentType);
