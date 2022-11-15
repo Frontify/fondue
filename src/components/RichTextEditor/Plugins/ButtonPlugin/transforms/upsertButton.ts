@@ -21,7 +21,7 @@ import {
 } from '@udecode/plate-core';
 import { Path } from 'slate';
 import { ButtonPlugin, ELEMENT_BUTTON } from '../createButtonPlugin';
-import { ButtonStyle, TButtonElement } from '../types';
+import { RichTextButtonStyle, TButtonElement } from '../types';
 import { CreateButtonNodeOptions } from '../utils/index';
 import { insertButton } from './insertButton';
 import { unwrapButton } from './unwrapButton';
@@ -151,7 +151,7 @@ function anchorAndFocusInButton<V extends Value>(
     buttonAbove: undefined,
     editor: PlateEditor<V>,
     url: string,
-    buttonStyle?: ButtonStyle,
+    buttonStyle?: RichTextButtonStyle,
     target?: string,
     text?: string,
 ) {

@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
-
 function IconArrowRoundAntiClockwise20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
@@ -21,5 +20,4 @@ function IconArrowRoundAntiClockwise20(props: GeneratedIconProps): React.ReactEl
         </svg>
     );
 }
-
 export default memo(IconArrowRoundAntiClockwise20);
