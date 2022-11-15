@@ -7,7 +7,7 @@ import { InsertModalDispatchType, InsertModalStateProps } from './types';
 import { floatingButtonActions, floatingButtonSelectors } from '../floatingButtonStore';
 import { ButtonPlugin, ELEMENT_BUTTON } from '../../../createButtonPlugin';
 import { submitFloatingButton } from '../../../transforms/submitFloatingButton';
-import { ButtonStyle } from '../../../types';
+import { RichTextButtonStyle } from '../../../types';
 import { getButtonStyle } from '../../../utils/getButtonStyle';
 
 const initialState: InsertModalStateProps = {
@@ -73,7 +73,7 @@ export const useInsertModal = () => {
         });
     };
 
-    const onButtonStyleChange = (value: ButtonStyle) => {
+    const onButtonStyleChange = (value: RichTextButtonStyle) => {
         dispatch({
             type: 'BUTTON_STYLE',
             payload: { buttonStyle: value },

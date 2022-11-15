@@ -7,5 +7,6 @@ export type TLinkElement = TPlateLinkElement & {
         searchResult?: {
             link?: string;
         };
+        openInNewTab?: boolean;
     };
 };

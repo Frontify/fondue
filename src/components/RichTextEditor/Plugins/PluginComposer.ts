@@ -6,7 +6,7 @@ import { Button, Buttons, InlineData, ObjectType, Plugin, PluginComposerProps, P
 
 export class PluginComposer {
     private platePlugins: Map<string, PlatePlugin<AnyObject>[]> = new Map();
-    private markupElements: ObjectType<PlatePluginComponent<any>> = {};
+    private markupElements: ObjectType<PlatePluginComponent> = {};
     private toolbarButtons: Buttons = [];
     private inlineElements: InlineData[] = [];
 

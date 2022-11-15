@@ -79,7 +79,7 @@ export const useFloatingButtonEdit = ({ floatingOptions, ...props }: FloatingBut
     }, [editor, keyEditor, update]);
 
     useHotkeys(
-        triggerFloatingButtonHotkeys!,
+        triggerFloatingButtonHotkeys,
         (e) => {
             e.preventDefault();
 

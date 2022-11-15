@@ -113,9 +113,13 @@ export type MarkdownAstNode = {
     alt?: string;
     lang?: string;
     // Markdown Ast metadata
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     position?: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     spread?: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     checked?: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     indent?: any;
 };
 
