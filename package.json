@@ -74,7 +74,7 @@
         "@svgr/plugin-svgo": "6.5.1",
         "@types/react": "17.0.52",
         "@types/react-datepicker": "4.3.4",
-        "@types/react-dom": "17.0.16",
+        "@types/react-dom": "17.0.18",
         "@types/tinycolor2": "1.4.3",
         "autoprefixer": "10.4.13",
         "chalk": "5.1.2",
