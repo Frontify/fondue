@@ -18,11 +18,12 @@ export const Heading1MarkupElementNode = ({ element, attributes, children }: Pla
     );
 };
 
-export const createHeading1Plugin = createPluginFactory({
-    key: TextStyles.ELEMENT_HEADING1,
-    isElement: true,
-    component: Heading1MarkupElementNode,
-    deserializeHtml: {
-        rules: [{ validNodeName: ['h1', 'H1'] }],
-    },
-});
+export const createHeading1Plugin = () =>
+    createPluginFactory({
+        key: TextStyles.ELEMENT_HEADING1,
+        isElement: true,
+        component: Heading1MarkupElementNode,
+        deserializeHtml: {
+            rules: [{ validNodeName: ['h1', 'H1'] }],
+        },
+    });

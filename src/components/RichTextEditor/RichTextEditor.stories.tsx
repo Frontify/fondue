@@ -288,7 +288,10 @@ WithChecklist.args = {
 
 const customPlugins = new PluginComposer();
 customPlugins
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([
+        new InitPlugin(),
+        new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH] }),
+    ])
     .setPlugin([new LinkPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
     .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
@@ -304,7 +307,9 @@ WithToolbarTopAndSmallPadding.args = {
     position: Position.TOP,
     padding: PaddingSizes.Medium,
     plugins: topbarPlugins.setPlugin([
-        new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_CUSTOM1, TextStyles.ELEMENT_HEADING1] }),
+        new TextStylePlugin({
+            textStyles: [TextStyles.ELEMENT_CUSTOM1, TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH],
+        }),
     ]),
 };
 

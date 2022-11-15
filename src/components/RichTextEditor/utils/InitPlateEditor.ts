@@ -2,7 +2,7 @@
 
 import { PlateEditor, createPlateEditor } from '@udecode/plate';
 import { generateRandomId } from '@utilities/generateRandomId';
-import { getEditorConfig } from '@components/RichTextEditor/utils/editorConfig';
+import { GeneratePlugins, defaultPlugins } from '../Plugins';
 
 export class InitPlateEditor {
     static editor: PlateEditor;
@@ -17,7 +17,8 @@ export class InitPlateEditor {
     }
 
     static init(editorId: string = generateRandomId()) {
-        this.editor = createPlateEditor({ id: editorId, plugins: getEditorConfig() });
+        const config = GeneratePlugins(editorId, defaultPlugins);
+        this.editor = createPlateEditor({ id: editorId, plugins: config.create() });
         return this;
     }
 }

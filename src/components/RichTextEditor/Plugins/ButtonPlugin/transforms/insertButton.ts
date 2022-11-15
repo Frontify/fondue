@@ -9,5 +9,9 @@ export const insertButton = <V extends Value>(
     createButtonNodeOptions: CreateButtonNodeOptions,
     options?: InsertNodesOptions<V>,
 ) => {
-    insertNodes<TButtonElement | TText>(editor, [createButtonNode(editor, createButtonNodeOptions)], options as any);
+    insertNodes<TButtonElement | TText>(
+        editor,
+        [createButtonNode(editor, createButtonNodeOptions)],
+        options as InsertNodesOptions,
+    );
 };
