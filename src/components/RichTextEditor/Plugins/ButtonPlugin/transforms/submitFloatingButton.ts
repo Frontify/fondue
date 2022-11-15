@@ -33,7 +33,7 @@ export const submitFloatingButton = <V extends Value>(editor: PlateEditor<V>) =>
     });
 
     setTimeout(() => {
-        focusEditor(editor, editor.selection!);
+        focusEditor(editor, editor.selection ?? undefined);
     }, 0);
 
     return true;

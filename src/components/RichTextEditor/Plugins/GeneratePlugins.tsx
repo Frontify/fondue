@@ -16,11 +16,7 @@ export const createPlatePlugins = (pluginComposer: PluginComposer) =>
         components: createPlateUI(pluginComposer.elements),
     });
 
-export const GeneratePlugins = (editorId: string, pluginComposer?: PluginComposer): GeneratePluginsReturn | null => {
-    if (!pluginComposer) {
-        return null;
-    }
-
+export const GeneratePlugins = (editorId: string, pluginComposer: PluginComposer): GeneratePluginsReturn => {
     return {
         create: () => createPlatePlugins(pluginComposer),
         toolbar: () => <Toolbar buttons={pluginComposer.buttons} editorId={editorId} />,

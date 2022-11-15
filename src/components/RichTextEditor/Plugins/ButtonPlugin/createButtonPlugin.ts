@@ -28,13 +28,13 @@ export interface ButtonPlugin {
      * Hotkeys to trigger floating button.
      * @default 'command+k, ctrl+k'
      */
-    triggerFloatingButtonHotkeys?: string;
+    triggerFloatingButtonHotkeys: string;
 
     /**
      * Callback to validate an url.
      * @default isUrl
      */
-    isUrl?: (text: string) => boolean;
+    isUrl: (text: string) => boolean;
 
     /**
      * Callback to optionally get the href for a url
@@ -59,8 +59,6 @@ export const createButtonPlugin = createPluginFactory({
     props: ({ element }) => ({
         nodeProps: { href: element?.url, target: element?.target },
     }),
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
     withOverrides: withButton,
     renderAfterEditable: CustomFloatingButton,
     options: {

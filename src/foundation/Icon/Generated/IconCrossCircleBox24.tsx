@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
-
 function IconCrossCircleBox24(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
@@ -21,5 +20,4 @@ function IconCrossCircleBox24(props: GeneratedIconProps): React.ReactElement<Gen
         </svg>
     );
 }
-
 export default memo(IconCrossCircleBox24);

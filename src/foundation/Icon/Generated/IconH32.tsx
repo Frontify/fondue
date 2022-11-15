@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
-
 function IconH32(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
@@ -23,5 +22,4 @@ function IconH32(props: GeneratedIconProps): React.ReactElement<GeneratedIconPro
         </svg>
     );
 }
-
 export default memo(IconH32);
