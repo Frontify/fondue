@@ -10,6 +10,7 @@ import { createHeading2Plugin } from '../TextStyles/createHeading2Plugin';
 import { createHeading3Plugin } from '../TextStyles/createHeading3Plugin';
 import { createHeading4Plugin } from '../TextStyles/createHeading4Plugin';
 import { createQuotePlugin } from '../TextStyles/createQuotePlugin';
+import { createParagraphPlugin } from '../../ParagraphPlugin/createParagraphPlugin';
 
 export const textStylePluginsRecord: Record<SelectableTextStyles, { plugin: () => PlatePlugin }> = {
     [TextStyles.ELEMENT_HEADING1]: { plugin: createHeading1Plugin() },
@@ -20,4 +21,5 @@ export const textStylePluginsRecord: Record<SelectableTextStyles, { plugin: () =
     [TextStyles.ELEMENT_CUSTOM2]: { plugin: createCustom2Plugin() },
     [TextStyles.ELEMENT_CUSTOM3]: { plugin: createCustom3Plugin() },
     [TextStyles.ELEMENT_QUOTE]: { plugin: createQuotePlugin() },
+    [TextStyles.ELEMENT_PARAGRAPH]: { plugin: createParagraphPlugin() },
 };
