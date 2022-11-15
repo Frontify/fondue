@@ -46,8 +46,7 @@ export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextC
 const ITEM_WRAPPER_CLASSES =
     'tw-cursor-pointer tw-flex tw-items-center tw-justify-between tw-transition-colors tw-gap-2';
 const ITEM_HOVER_CLASSES = 'hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover';
-const ITEM_FOCUS_CLASSES = 'focus:tw-bg-box-neutral-hover focus:tw-text-box-neutral-inverse-hover';
-const ITEM_BASE_CLASSES = merge(['tw-w-full tw-text-left tw-py-2 tw-px-5', ITEM_HOVER_CLASSES, ITEM_FOCUS_CLASSES]);
+const ITEM_BASE_CLASSES = merge(['tw-w-full tw-text-left tw-py-2 tw-px-5', ITEM_HOVER_CLASSES]);
 
 export const MenuItem: FC<MenuItemProps> = ({
     title,

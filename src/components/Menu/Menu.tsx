@@ -67,7 +67,7 @@ export const Menu = ({ triggerRef, children, open = false, onClose }: MenuProps)
     return (
         <nav
             className={merge([
-                'tw-bg-base tw-border tw-border-line tw-rounded tw-absolute tw-left-0 tw-top-7 tw-py-2 tw-shadow tw-w-max',
+                'tw-bg-base tw-border tw-border-line tw-rounded tw-absolute tw-left-0 tw-top-7 tw-py-2 tw-shadow-mid tw-w-max',
                 isMenuOpen ? 'tw-block' : 'tw-hidden',
             ])}
             role={isMenuOpen ? 'dialog' : ''}
