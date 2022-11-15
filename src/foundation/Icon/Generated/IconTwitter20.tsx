@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
-
 function IconTwitter20(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
@@ -19,5 +18,4 @@ function IconTwitter20(props: GeneratedIconProps): React.ReactElement<GeneratedI
         </svg>
     );
 }
-
 export default memo(IconTwitter20);
