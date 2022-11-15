@@ -200,6 +200,11 @@ export const htmlValue = `
         <h2>Heading 2</h2>
         <h3>Heading 3</h3>
         <h4>Heading 4</h4>
+        <p class="custom1">Custom 1</p>
+        <p class="custom2">Custom 2</p>
+        <p class="custom3">Custom 3</p>
+        <blockquote>Quote</blockquote> 
+        <a class="btn btn-primary" contenteditable="false" href="https://smartive.ch/" data-design="primary">﻿<span contenteditable="false">Test</span>﻿</a>
     `;
 
 export const checkboxValue = [
