@@ -253,7 +253,10 @@ WithChecklist.args = {
 
 const customPlugins = new PluginComposer();
 customPlugins
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([
+        new InitPlugin(),
+        new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH] }),
+    ])
     .setPlugin([new LinkPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
     .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
