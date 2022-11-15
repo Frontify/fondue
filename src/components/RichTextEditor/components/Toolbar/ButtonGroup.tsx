@@ -2,6 +2,7 @@
 
 import {
     IconButton,
+    IconEraser,
     IconLink,
     IconListBullet,
     IconListCheck,
@@ -40,7 +41,8 @@ import { TextStyleDropdown } from '../../Plugins/TextStylePlugin/TextStyleDropdo
 import { ButtonGroupProps, IconStylingWrapperProps } from '../../types';
 import { EditorActions } from '../../utils/actions';
 import { ButtonToolbarButton } from '@components/RichTextEditor/Plugins/ButtonPlugin/components/ButtonToolbarButton';
-import { ELEMENT_BUTTON } from '@components/RichTextEditor/Plugins';
+import { ELEMENT_BUTTON, RESET_FORMATTING_PLUGIN } from '@components/RichTextEditor/Plugins';
+import { ResetFormattingToolbarButton } from '@components/RichTextEditor/Plugins/ResetFormattingPlugin/ResetFormattingButton/ResetFormattingToolbarButton';
 const classNames = {
     root: 'tw-text-text-weak tw-ml-0.5 hover:tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded',
     active: 'tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse',
@@ -174,6 +176,14 @@ const ToolbarButtonMap = (editor: PlateEditor, editorId?: string): Record<Editor
         <ListToolbarButton
             type={getPluginType(editor, ELEMENT_UL)}
             icon={<IconStylingWrapper icon={<IconListBullet size={IconSize.Size16} />} />}
+            classNames={classNames}
+            styles={styles}
+        />
+    ),
+    [EditorActions.RESET_FORMATTING]: (
+        <ResetFormattingToolbarButton
+            type={getPluginType(editor, RESET_FORMATTING_PLUGIN)}
+            icon={<IconStylingWrapper icon={<IconEraser size={IconSize.Size16} />} />}
             classNames={classNames}
             styles={styles}
         />

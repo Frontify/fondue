@@ -16,6 +16,7 @@ export enum EditorActions {
     BUTTON = 'button',
     ORDERED_LIST = 'ordered-list',
     UNORDERED_LIST = 'unordered-list',
+    RESET_FORMATTING = 'reset-formatting',
 }
 
 export const defaultActions = [
@@ -37,5 +38,6 @@ export const defaultActions = [
         EditorActions.UNORDERED_LIST,
         EditorActions.CHECK_ITEM,
         EditorActions.ORDERED_LIST,
+        EditorActions.RESET_FORMATTING,
     ],
 ];
