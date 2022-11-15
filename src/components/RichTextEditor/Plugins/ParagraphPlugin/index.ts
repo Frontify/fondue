@@ -14,7 +14,7 @@ export class ParagraphPlugin extends Plugin {
     }
 
     plugins() {
-        return [createParagraphPlugin()];
+        return [createParagraphPlugin()()];
     }
 }
 
