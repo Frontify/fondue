@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createStore } from '@udecode/plate-core';
-import { ButtonStyle } from '../../types';
+import { RichTextButtonStyle } from '../../types';
 
 export type FloatingButtonMode = '' | 'insert' | 'edit';
 
@@ -11,7 +11,7 @@ export const floatingButtonStore = createStore('floatingButton')({
     updated: false,
     url: '',
     text: '',
-    buttonStyle: 'primary' as ButtonStyle,
+    buttonStyle: 'primary' as RichTextButtonStyle,
     newTab: false,
     mode: '' as FloatingButtonMode,
     isEditing: false,

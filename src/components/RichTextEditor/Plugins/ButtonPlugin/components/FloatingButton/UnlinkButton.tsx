@@ -18,7 +18,7 @@ export const useUnlinkButton = (props: HTMLPropsAs<'button'>): HTMLPropsAs<'butt
     return {
         onClick: useCallback(() => {
             unwrapButton(editor);
-            focusEditor(editor, editor.selection!);
+            focusEditor(editor, editor.selection ?? undefined);
         }, [editor]),
         ...props,
     };

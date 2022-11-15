@@ -11,7 +11,7 @@ import { TextStyleDropdownProps } from './types';
 
 export const TextStyleDropdown = ({ editorId, textStyles = defaultTextStyles }: TextStyleDropdownProps) => {
     const [open, setOpen] = useState(false);
-    const editor = usePlateEditorState(editorId)!;
+    const editor = usePlateEditorState(editorId);
     const { designTokens } = useRichTextEditorContext();
 
     const onToggle = useCallback(() => {
