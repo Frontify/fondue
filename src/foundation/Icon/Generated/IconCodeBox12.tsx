@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
-
 function IconCodeBox12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
@@ -30,5 +29,4 @@ function IconCodeBox12(props: GeneratedIconProps): React.ReactElement<GeneratedI
         </svg>
     );
 }
-
 export default memo(IconCodeBox12);

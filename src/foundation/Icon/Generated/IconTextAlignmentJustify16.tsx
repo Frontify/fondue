@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
-
 function IconTextAlignmentJustify16(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
@@ -21,5 +20,4 @@ function IconTextAlignmentJustify16(props: GeneratedIconProps): React.ReactEleme
         </svg>
     );
 }
-
 export default memo(IconTextAlignmentJustify16);
