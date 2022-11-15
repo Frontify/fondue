@@ -1,37 +1,41 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ToolbarDropdown, usePlateEditorState } from '@udecode/plate';
-import React, { useCallback, useState } from 'react';
+import React from 'react';
 import { useRichTextEditorContext } from '../../../context/RichTextEditorContext';
 import { defaultTextStyles } from '../TextStyles/defaultTextStyles';
 import { textStyleTitle } from '../TextStyles';
 import { DropdownItem } from './DropdownItem';
 import { DropdownTrigger } from './DropdownTrigger';
 import { TextStyleDropdownProps } from './types';
+import { DesignTokens } from '@components/RichTextEditor/types';
+import { useTextStyleDropdown } from './useTextStyleDropdown';
 
 export const TextStyleDropdown = ({ editorId, textStyles = defaultTextStyles }: TextStyleDropdownProps) => {
-    const [open, setOpen] = useState(false);
-    const editor = usePlateEditorState(editorId);
     const { designTokens } = useRichTextEditorContext();
-
-    const onToggle = useCallback(() => {
-        setOpen(!open);
-    }, [open, setOpen]);
+    const {
+        state: { editor, toggle, isOpen },
+        dropdownProps,
+        triggerRef,
+        dropdownRef,
+        label,
+    } = useTextStyleDropdown(editorId);
 
     return (
-        <ToolbarDropdown
-            control={<DropdownTrigger editor={editor} open={open} />}
-            open={open}
-            onOpen={onToggle}
-            onClose={onToggle}
-        >
-            <div className="tw-divide-y tw-divide-line">
-                {textStyles.map((style) => (
-                    <DropdownItem editor={editor} type={style} key={style}>
-                        <span style={designTokens[style]}>{textStyleTitle[style]}</span>
-                    </DropdownItem>
-                ))}
-            </div>
-        </ToolbarDropdown>
+        <>
+            <DropdownTrigger label={label} open={isOpen} onClick={toggle} ref={triggerRef} />
+            {isOpen && (
+                <div
+                    className="tw-divide-y tw-divide-line tw-bg-base tw-shadow-md tw-border tw-border-line tw-z-[1000] tw-overflow-auto tw-min-h-[40px]"
+                    ref={dropdownRef}
+                    {...dropdownProps}
+                >
+                    {textStyles.map((style) => (
+                        <DropdownItem editor={editor} type={style} key={style}>
+                            <span style={designTokens[style as keyof DesignTokens]}>{textStyleTitle[style]}</span>
+                        </DropdownItem>
+                    ))}
+                </div>
+            )}
+        </>
     );
 };

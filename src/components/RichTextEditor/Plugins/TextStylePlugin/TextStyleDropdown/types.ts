@@ -11,8 +11,9 @@ export type TextStyleDropdownProps = {
 };
 
 export type DropdownTriggerProps = {
-    editor: PlateEditor;
+    label: string;
     open: boolean;
+    onClick: () => void;
 };
 
 export type DropdownItemProps = {
