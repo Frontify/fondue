@@ -18,12 +18,11 @@ const Heading2MarkupElementNode = ({ element, attributes, children }: PlateRende
     );
 };
 
-export const createHeading2Plugin = () =>
-    createPluginFactory({
-        key: TextStyles.ELEMENT_HEADING2,
-        isElement: true,
-        component: Heading2MarkupElementNode,
-        deserializeHtml: {
-            rules: [{ validNodeName: ['h2', 'H2'] }],
-        },
-    });
+export const createHeading2Plugin = createPluginFactory({
+    key: TextStyles.ELEMENT_HEADING2,
+    isElement: true,
+    component: Heading2MarkupElementNode,
+    deserializeHtml: {
+        rules: [{ validNodeName: ['h2', 'H2'] }],
+    },
+});

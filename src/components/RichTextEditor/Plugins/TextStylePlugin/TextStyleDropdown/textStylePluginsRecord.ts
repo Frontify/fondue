@@ -12,14 +12,14 @@ import { createHeading4Plugin } from '../TextStyles/createHeading4Plugin';
 import { createQuotePlugin } from '../TextStyles/createQuotePlugin';
 import { createParagraphPlugin } from '../../ParagraphPlugin/createParagraphPlugin';
 
-export const textStylePluginsRecord: Record<SelectableTextStyles, { plugin: () => PlatePlugin }> = {
-    [TextStyles.ELEMENT_HEADING1]: { plugin: createHeading1Plugin() },
-    [TextStyles.ELEMENT_HEADING2]: { plugin: createHeading2Plugin() },
-    [TextStyles.ELEMENT_HEADING3]: { plugin: createHeading3Plugin() },
-    [TextStyles.ELEMENT_HEADING4]: { plugin: createHeading4Plugin() },
-    [TextStyles.ELEMENT_CUSTOM1]: { plugin: createCustom1Plugin() },
-    [TextStyles.ELEMENT_CUSTOM2]: { plugin: createCustom2Plugin() },
-    [TextStyles.ELEMENT_CUSTOM3]: { plugin: createCustom3Plugin() },
-    [TextStyles.ELEMENT_QUOTE]: { plugin: createQuotePlugin() },
-    [TextStyles.ELEMENT_PARAGRAPH]: { plugin: createParagraphPlugin() },
+export const textStylePluginsRecord: Record<SelectableTextStyles, () => PlatePlugin> = {
+    [TextStyles.ELEMENT_HEADING1]: createHeading1Plugin,
+    [TextStyles.ELEMENT_HEADING2]: createHeading2Plugin,
+    [TextStyles.ELEMENT_HEADING3]: createHeading3Plugin,
+    [TextStyles.ELEMENT_HEADING4]: createHeading4Plugin,
+    [TextStyles.ELEMENT_CUSTOM1]: createCustom1Plugin,
+    [TextStyles.ELEMENT_CUSTOM2]: createCustom2Plugin,
+    [TextStyles.ELEMENT_CUSTOM3]: createCustom3Plugin,
+    [TextStyles.ELEMENT_QUOTE]: createQuotePlugin,
+    [TextStyles.ELEMENT_PARAGRAPH]: createParagraphPlugin,
 };

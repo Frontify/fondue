@@ -18,9 +18,8 @@ export const Custom1MarkupElementNode = ({ element, attributes, children }: Plat
     );
 };
 
-export const createCustom1Plugin = () =>
-    createPluginFactory({
-        key: TextStyles.ELEMENT_CUSTOM1,
-        isElement: true,
-        component: Custom1MarkupElementNode,
-    });
+export const createCustom1Plugin = createPluginFactory({
+    key: TextStyles.ELEMENT_CUSTOM1,
+    isElement: true,
+    component: Custom1MarkupElementNode,
+});
