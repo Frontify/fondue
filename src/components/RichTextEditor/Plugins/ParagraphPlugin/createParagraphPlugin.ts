@@ -4,10 +4,9 @@ import { createParagraphPlugin as createPlateParagraphPlugin, createPluginFactor
 import { ParagraphMarkupElementNode } from './ParagraphMarkupElement';
 import { TextStyles } from '../TextStylePlugin/TextStyles';
 
-export const createParagraphPlugin = () =>
-    createPluginFactory({
-        ...createPlateParagraphPlugin(),
-        key: TextStyles.ELEMENT_PARAGRAPH,
-        isElement: true,
-        component: ParagraphMarkupElementNode,
-    });
+export const createParagraphPlugin = createPluginFactory({
+    ...createPlateParagraphPlugin(),
+    key: TextStyles.ELEMENT_PARAGRAPH,
+    isElement: true,
+    component: ParagraphMarkupElementNode,
+});

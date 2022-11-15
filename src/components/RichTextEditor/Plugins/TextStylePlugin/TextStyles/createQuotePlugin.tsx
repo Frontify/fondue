@@ -18,9 +18,8 @@ export const QuoteMarkupElementNode = ({ element, attributes, children }: PlateR
     );
 };
 
-export const createQuotePlugin = () =>
-    createPluginFactory({
-        key: TextStyles.ELEMENT_QUOTE,
-        isElement: true,
-        component: QuoteMarkupElementNode,
-    });
+export const createQuotePlugin = createPluginFactory({
+    key: TextStyles.ELEMENT_QUOTE,
+    isElement: true,
+    component: QuoteMarkupElementNode,
+});
