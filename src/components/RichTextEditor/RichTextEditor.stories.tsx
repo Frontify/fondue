@@ -1,10 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
+import React from 'react';
 import { Position } from './EditorPositioningWrapper';
-import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
-import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import {
     IPSUM,
     buttonValues,
@@ -15,6 +13,8 @@ import {
     mentionValue,
     mentionable,
     nodesToSerialize,
+    orderedListValue,
+    unorderedListValue,
     value,
 } from './helpers/exampleValues';
 import {
@@ -31,10 +31,13 @@ import {
     UnderlinePlugin,
     UnorderedListPlugin,
 } from './Plugins';
-import { PaddingSizes } from './types';
-import { MarkdownToSlate, SlateToMarkdown } from './serializer/markdown';
-import { Transform } from './serializer';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
+import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
+import { Transform } from './serializer';
+import { MarkdownToSlate } from './serializer/markdown';
+import { SlateToMarkdown } from './serializer/markdown/SlateToMarkdown';
+import { serializeNodesToHtml } from './serializer/serializeToHtml';
+import { PaddingSizes } from './types';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
 export default {
@@ -75,9 +78,9 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
     <RichTextEditorComponent {...args} />
 );
 
-export const RichTextEditor = RichTextEditorTemplate.bind({});
+export const FullyFledged = RichTextEditorTemplate.bind({});
 
-export const RichTextEditorFlex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <div className="tw-flex tw-gap-x-7 tw-justify-start">
         <div className="tw-min-w-[1rem]">
             <div className="tw-text-left">
@@ -87,7 +90,7 @@ export const RichTextEditorFlex: StoryFn<RichTextEditorProps> = (args: RichTextE
     </div>
 );
 
-export const RichTextEditorSerialized: StoryFn<RichTextEditorProps> = () => {
+export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
     const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
     return (
         <>
@@ -132,7 +135,7 @@ export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () =
     );
 };
 
-export const MultipleRichTextEditors: StoryFn<RichTextEditorProps> = () => (
+export const Multiple: StoryFn<RichTextEditorProps> = () => (
     <div className="tw-grid tw-grid-cols-2 tw-gap-2">
         <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
             <RichTextEditorComponent
@@ -181,40 +184,72 @@ WithCustomTextStyle.args = {
         ...defaultDesignTokens,
         heading1: {
             fontSize: '48px',
+            color: 'rgb(0, 0, 0)',
             fontStyle: 'italic',
             fontWeight: '800',
             textDecoration: 'underline',
             textTransform: 'uppercase',
         },
         heading2: {
-            fontFamily: 'inherit',
             fontSize: '32px',
+            color: 'rgb(0, 0, 0)',
+            fontStyle: 'normal',
             fontWeight: '300',
             textDecoration: 'underline',
+            textTransform: 'none',
         },
         heading3: {
             fontSize: '24px',
+            color: 'rgb(0, 0, 0)',
+            fontStyle: 'normal',
+            fontWeight: 'normal',
+            textDecoration: 'initial',
+            textTransform: 'none',
         },
         heading4: {
             fontSize: '18px',
+            color: 'rgb(0, 0, 0)',
             fontStyle: 'italic',
+            fontWeight: 'normal',
+            textDecoration: 'initial',
+            textTransform: 'none',
         },
         custom1: {
             fontSize: '14px',
             color: 'rgb(255, 0, 0)',
+            fontStyle: 'normal',
             fontWeight: '700',
+            textDecoration: 'initial',
             textTransform: 'uppercase',
         },
         custom2: {
             fontSize: '14px',
+            color: 'rgb(0, 0, 0)',
             letterSpacing: 10,
         },
         custom3: {
             fontSize: '14px',
+            color: 'rgb(0, 0, 0)',
+            fontStyle: 'normal',
+            fontWeight: 'normal',
+            textDecoration: 'initial',
+            textTransform: 'none',
         },
         quote: {
             fontSize: '16px',
+            color: 'rgb(0, 0, 0)',
             fontStyle: 'italic',
+            fontWeight: 'normal',
+            textDecoration: 'initial',
+            textTransform: 'none',
+        },
+        body: {
+            fontSize: '16px',
+            color: 'rgb(0, 0, 0)',
+            fontStyle: 'normal',
+            fontWeight: 'normal',
+            textDecoration: 'none',
+            textTransform: 'none',
         },
     },
 };
@@ -279,6 +314,14 @@ WithCustomButtonStyles.args = {
             backgroundColor: 'rgb(255, 0, 0)',
         },
     },
+};
+
+const listPlugins = new PluginComposer();
+listPlugins.setPlugin([new UnorderedListPlugin(), new OrderedListPlugin(), new TextStylePlugin(), new BoldPlugin()]);
+export const WithList = RichTextEditorTemplate.bind({});
+WithList.args = {
+    plugins: listPlugins,
+    value: JSON.stringify([unorderedListValue, orderedListValue]),
 };
 
 export const WithChecklist = RichTextEditorTemplate.bind({});

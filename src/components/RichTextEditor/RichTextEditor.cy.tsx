@@ -335,7 +335,7 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] > p').should(
                 'have.attr',
                 'style',
-                'font-size: 14px; text-decoration: underline;',
+                'font-size: 14px; font-weight: normal; font-style: normal; text-decoration: underline;',
             );
         });
 

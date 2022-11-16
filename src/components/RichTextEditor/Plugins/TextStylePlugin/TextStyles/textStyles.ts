@@ -6,11 +6,13 @@ export enum ListStyles {
     UL = 'ul',
     OL = 'ol',
     CHECKLIST_ITEM = 'checkbox_item',
+    LIC = 'lic',
 }
 export const listStyleTitle: Record<ListStyles, string> = {
     [ListStyles.UL]: 'Bullet List',
     [ListStyles.OL]: 'List',
     [ListStyles.CHECKLIST_ITEM]: 'Checklist',
+    [ListStyles.LIC]: 'List Item',
 };
 
 export enum ButtonStyles {

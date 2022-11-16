@@ -2,6 +2,7 @@
 
 import {
     ELEMENT_LI,
+    ELEMENT_LIC,
     ELEMENT_LINK,
     ELEMENT_MENTION,
     ELEMENT_OL,
@@ -20,6 +21,7 @@ import { MentionableCategory, MentionableItems } from '../Plugins/MentionPlugin/
 import { TextStyles } from '../Plugins/TextStylePlugin/TextStyles';
 import { DesignTokens } from '../types';
 import { mixedMarkdown } from '../serializer/markdown/__tests__/fixtures';
+import { MARK_TEXT_STYLE } from '../Plugins/ListPlugin/ListPlugin';
 
 type CreateElementProps = {
     text: string;
@@ -43,6 +45,172 @@ const createElement = ({ text, element = ELEMENT_PARAGRAPH, mark }: CreateElemen
 export const IPSUM =
     'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.';
 
+export const unorderedListValue = {
+    type: ELEMENT_UL,
+    children: [
+        {
+            type: ELEMENT_LI,
+            children: [
+                {
+                    type: ELEMENT_LIC,
+                    children: [
+                        { text: 'This is list item number two.', [MARK_TEXT_STYLE]: TextStyles.ELEMENT_CUSTOM1 },
+                    ],
+                },
+            ],
+        },
+        {
+            type: ELEMENT_LI,
+            children: [
+                {
+                    type: ELEMENT_LIC,
+                    children: [
+                        { text: 'This is list item number one.', [MARK_TEXT_STYLE]: TextStyles.ELEMENT_CUSTOM2 },
+                    ],
+                },
+            ],
+        },
+        {
+            type: ELEMENT_LI,
+            children: [
+                {
+                    type: ELEMENT_LIC,
+                    children: [
+                        { text: 'This is list item number three.', [MARK_TEXT_STYLE]: TextStyles.ELEMENT_CUSTOM3 },
+                    ],
+                },
+                {
+                    type: ELEMENT_UL,
+                    children: [
+                        {
+                            type: ELEMENT_LI,
+                            children: [
+                                {
+                                    type: ELEMENT_LIC,
+                                    children: [{ text: 'This is child item number one.' }],
+                                },
+                            ],
+                        },
+                        {
+                            type: ELEMENT_LI,
+                            children: [
+                                {
+                                    type: ELEMENT_LIC,
+                                    children: [
+                                        {
+                                            text: 'This is child item number two, with more children.',
+                                        },
+                                    ],
+                                },
+                                {
+                                    type: ELEMENT_UL,
+                                    children: [
+                                        {
+                                            type: ELEMENT_LI,
+                                            children: [
+                                                {
+                                                    type: ELEMENT_LIC,
+                                                    children: [
+                                                        {
+                                                            text: 'This is child of child item number one.',
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            type: ELEMENT_LI,
+                                            children: [
+                                                {
+                                                    type: ELEMENT_LIC,
+                                                    children: [
+                                                        {
+                                                            text: 'This is child of child item number two.',
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+};
+
+export const orderedListValue = {
+    type: ELEMENT_OL,
+    children: [
+        {
+            type: ELEMENT_LI,
+            children: [{ type: ELEMENT_LIC, children: [{ text: 'This comes first.' }] }],
+        },
+        {
+            type: ELEMENT_LI,
+            children: [{ type: ELEMENT_LIC, children: [{ text: 'This comes second.' }] }],
+        },
+        {
+            type: ELEMENT_LI,
+            children: [
+                {
+                    type: ELEMENT_LIC,
+                    children: [{ text: 'And last but not least, this comes third.' }],
+                },
+                {
+                    type: ELEMENT_OL,
+                    children: [
+                        {
+                            type: ELEMENT_LI,
+                            children: [
+                                {
+                                    type: ELEMENT_LIC,
+                                    children: [{ text: 'This is child item number one.' }],
+                                },
+                            ],
+                        },
+                        {
+                            type: ELEMENT_LI,
+                            children: [
+                                {
+                                    type: ELEMENT_LIC,
+                                    children: [{ text: 'This is child item number two.' }],
+                                },
+                                {
+                                    type: ELEMENT_OL,
+                                    children: [
+                                        {
+                                            type: ELEMENT_LI,
+                                            children: [
+                                                {
+                                                    type: ELEMENT_LIC,
+                                                    children: [{ text: 'Nested child item number one.' }],
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            type: ELEMENT_LI,
+                                            children: [
+                                                {
+                                                    type: ELEMENT_LIC,
+                                                    children: [{ text: 'Nested child item number two.' }],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+};
+
 const defaultValue = [
     createElement({ text: 'This text is bold.', mark: MARK_BOLD }),
     createElement({ text: 'This text is italic.', mark: MARK_ITALIC }),
@@ -52,66 +220,8 @@ const defaultValue = [
     createElement({
         text: IPSUM,
     }),
-    {
-        type: ELEMENT_UL,
-        children: [
-            {
-                type: ELEMENT_LI,
-                children: [{ text: 'This is list item number one.' }],
-            },
-            {
-                type: ELEMENT_LI,
-                children: [{ text: 'This is list item number two.' }],
-            },
-            {
-                type: ELEMENT_LI,
-                children: [{ text: 'This is list item number three.' }],
-            },
-            {
-                type: ELEMENT_UL,
-                children: [
-                    {
-                        type: ELEMENT_LI,
-                        children: [{ text: 'This is child item number one.' }],
-                    },
-                    {
-                        type: ELEMENT_LI,
-                        children: [{ text: 'This is child item number two, with more children.' }],
-                    },
-                    {
-                        type: ELEMENT_UL,
-                        children: [
-                            {
-                                type: ELEMENT_LI,
-                                children: [{ text: 'This is child of child item number one.' }],
-                            },
-                            {
-                                type: ELEMENT_LI,
-                                children: [{ text: 'This is child of child item number two.' }],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        type: ELEMENT_OL,
-        children: [
-            {
-                type: ELEMENT_LI,
-                children: [{ text: 'This comes first.' }],
-            },
-            {
-                type: ELEMENT_LI,
-                children: [{ text: 'This comes second.' }],
-            },
-            {
-                type: ELEMENT_LI,
-                children: [{ text: 'And last but not least, this comes third.' }],
-            },
-        ],
-    },
+    unorderedListValue,
+    orderedListValue,
     {
         type: ELEMENT_PARAGRAPH,
         children: [
@@ -270,10 +380,10 @@ export const checkboxValue = [
 export const nodesToSerialize: TDescendant[] = defaultValue;
 
 export const serializedHtml =
-    '<p style=""><span class="tw-font-bold">This text is bold.</span></p><p style=""><span class="tw-italic">This text is italic.</span></p><p style=""><span class="tw-underline">This text has an underline.</span></p><p style=""><span class="tw-line-through">This text has a strikethrough.</span></p><p style=""><span class="tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5">This text is a code line.</span></p><p style="">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p><ul class="tw-list-disc tw-pl-6"><li>This is list item number one.</li><li>This is list item number two.</li><li>This is list item number three.</li><ul class="tw-list-disc tw-pl-6"><li>This is child item number one.</li><li>This is child item number two, with more children.</li><ul class="tw-list-disc tw-pl-6"><li>This is child of child item number one.</li><li>This is child of child item number two.</li></ul></ul></ul><ol class="tw-list-decimal tw-pl-6"><li>This comes first.</li><li>This comes second.</li><li>And last but not least, this comes third.</li></ol><p style=""><a style="font-size: 14px; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" href="https://frontify.com">This is a Link.</a></p><p style=""><a style="font-size: 14px; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target=_blank href="https://smartive.ch">This is also a Link (Legacy Format).</a></p><h1 style="font-size: 48px; font-weight: 700;">Heading 1</h1><h2 style="font-size: 32px; font-weight: 700;">Heading 2</h2><h3 style="font-size: 24px;">Heading 3</h3><h4 style="font-size: 18px;">Heading 4</h4><p style="font-size: 14px;">Custom 1</p><p style="font-size: 14px; font-weight: 600;">Custom 2</p><p style="font-size: 14px; text-decoration: underline;">Custom 3</p><p style="font-size: 16px; font-style: italic;">Quote</p>';
+    '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-font-bold">This text is bold.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-italic">This text is italic.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-underline">This text has an underline.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-line-through">This text has a strikethrough.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5">This text is a code line.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p><ul class="tw-list-disc tw-pl-[10px] tw-mb-[10px] tw-ml-[25px]"><li style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: none;"><span style="">This is list item number two.</span></li><li style="font-size: 14px; font-weight: 600; font-style: normal; text-decoration: none;"><span style="">This is list item number one.</span></li><li style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: none;"><span style="text-decoration: underline;">This is list item number three.</span><ul class="tw-list-disc tw-pl-[10px] tw-mb-[10px] tw-ml-[25px]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This is child item number one.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This is child item number two, with more children.</span><ul class="tw-list-disc tw-pl-[10px] tw-mb-[10px] tw-ml-[25px]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This is child of child item number one.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This is child of child item number two.</span></li></ul></li></ul></li></ul><ol class="tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] tw-list-[decimal]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This comes first.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This comes second.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">And last but not least, this comes third.</span><ol class="tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] tw-list-[lower-alpha]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This is child item number one.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This is child item number two.</span><ol class="tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] tw-list-[lower-roman]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">Nested child item number one.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">Nested child item number two.</span></li></ol></li></ol></li></ol><p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" href="https://frontify.com">This is a Link.</a></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target=_blank href="https://smartive.ch">This is also a Link (Legacy Format).</a></p><h1 style="font-size: 48px; font-weight: 700; font-style: normal;">Heading 1</h1><h2 style="font-size: 32px; font-weight: 700; font-style: normal;">Heading 2</h2><h3 style="font-size: 24px; font-weight: normal; font-style: normal;">Heading 3</h3><h4 style="font-size: 18px; font-weight: normal; font-style: normal;">Heading 4</h4><p style="font-size: 14px; font-weight: normal; font-style: normal;">Custom 1</p><p style="font-size: 14px; font-weight: 600; font-style: normal;">Custom 2</p><p style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: underline;">Custom 3</p><p style="font-size: 16px; font-weight: normal; font-style: italic;">Quote</p>';
 
 export const serializedHtmlWithCustomDesignTokens =
-    '<p style=""><span class="tw-font-bold">This text is bold.</span></p><p style=""><span class="tw-italic">This text is italic.</span></p><p style=""><span class="tw-underline">This text has an underline.</span></p><p style=""><span class="tw-line-through">This text has a strikethrough.</span></p><p style=""><span class="tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5">This text is a code line.</span></p><p style="">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p><ul class="tw-list-disc tw-pl-6"><li>This is list item number one.</li><li>This is list item number two.</li><li>This is list item number three.</li><ul class="tw-list-disc tw-pl-6"><li>This is child item number one.</li><li>This is child item number two, with more children.</li><ul class="tw-list-disc tw-pl-6"><li>This is child of child item number one.</li><li>This is child of child item number two.</li></ul></ul></ul><ol class="tw-list-decimal tw-pl-6"><li>This comes first.</li><li>This comes second.</li><li>And last but not least, this comes third.</li></ol><p style=""><a style="font-size: 14px; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" href="https://frontify.com">This is a Link.</a></p><p style=""><a style="font-size: 14px; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target=_blank href="https://smartive.ch">This is also a Link (Legacy Format).</a></p><h1 style="font-size: 1.5rem; font-weight: 800;">Heading 1</h1><h2 style="font-size: 1.25rem; font-weight: 500;">Heading 2</h2><h3 style="font-size: 24px;">Heading 3</h3><h4 style="font-size: 18px;">Heading 4</h4><p style="font-size: 14px;">Custom 1</p><p style="font-size: 14px; font-weight: 600;">Custom 2</p><p style="font-size: 14px; text-decoration: underline;">Custom 3</p><p style="font-size: 16px; font-style: italic;">Quote</p>';
+    '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-font-bold">This text is bold.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-italic">This text is italic.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-underline">This text has an underline.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-line-through">This text has a strikethrough.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5">This text is a code line.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p><ul class="tw-list-disc tw-pl-[10px] tw-mb-[10px] tw-ml-[25px]"><li style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: none;"><span style="">This is list item number two.</span></li><li style="font-size: 14px; font-weight: 600; font-style: normal; text-decoration: none;"><span style="">This is list item number one.</span></li><li style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: none;"><span style="text-decoration: underline;">This is list item number three.</span><ul class="tw-list-disc tw-pl-[10px] tw-mb-[10px] tw-ml-[25px]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This is child item number one.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This is child item number two, with more children.</span><ul class="tw-list-disc tw-pl-[10px] tw-mb-[10px] tw-ml-[25px]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This is child of child item number one.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This is child of child item number two.</span></li></ul></li></ul></li></ul><ol class="tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] tw-list-[decimal]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This comes first.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This comes second.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">And last but not least, this comes third.</span><ol class="tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] tw-list-[lower-alpha]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This is child item number one.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This is child item number two.</span><ol class="tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] tw-list-[lower-roman]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">Nested child item number one.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">Nested child item number two.</span></li></ol></li></ol></li></ol><p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" href="https://frontify.com">This is a Link.</a></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target=_blank href="https://smartive.ch">This is also a Link (Legacy Format).</a></p><h1 style="font-size: 1.5rem; font-weight: 800; font-style: normal;">Heading 1</h1><h2 style="font-size: 1.25rem; font-weight: 500; font-style: normal;">Heading 2</h2><h3 style="font-size: 24px; font-weight: normal; font-style: normal;">Heading 3</h3><h4 style="font-size: 18px; font-weight: normal; font-style: normal;">Heading 4</h4><p style="font-size: 14px; font-weight: normal; font-style: normal;">Custom 1</p><p style="font-size: 14px; font-weight: 600; font-style: normal;">Custom 2</p><p style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: underline;">Custom 3</p><p style="font-size: 16px; font-weight: normal; font-style: italic;">Quote</p>';
 
 export const customDesignTokens: DesignTokens = {
     heading1: {
