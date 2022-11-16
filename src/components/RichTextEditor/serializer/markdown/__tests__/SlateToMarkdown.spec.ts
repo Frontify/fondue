@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { SlateToMarkdown } from '..';
+import { SlateToMarkdown } from '../SlateToMarkdown';
 import { Transform } from '../../transform';
 import {
     basicMarksMarkdown,

@@ -73,7 +73,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
         case 'code':
             return {
                 type: types.codeBlock,
-                language: node.lang,
+                language: node.lang ?? undefined,
                 children: [{ text: node.value }],
             } as CodeBlockNode<T>;
 

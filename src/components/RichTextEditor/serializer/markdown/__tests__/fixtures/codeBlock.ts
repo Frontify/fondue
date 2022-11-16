@@ -32,7 +32,7 @@ export const codeBlockMarkdown = [codeBlockMarkdown_0, codeBlockMarkdown_1, code
 export const codeBlockTree_0 = [
     {
         type: 'code_block',
-        language: null,
+        language: undefined,
         children: [
             {
                 text: `tell application "Foo";
@@ -46,7 +46,7 @@ end tell`,
 export const codeBlockTree_1 = [
     {
         type: 'code_block',
-        language: null,
+        language: undefined,
         children: [
             {
                 text: `var add2 = function (number) {
@@ -60,7 +60,7 @@ export const codeBlockTree_1 = [
 export const codeBlockTree_2 = [
     {
         type: 'code_block',
-        language: null,
+        language: undefined,
         children: [
             {
                 text: '<!DOCTYPE html>\n<html>\n<body>\n\n<h1>My First Heading</h1>\n\n<p>My first paragraph.</p>\n\n</body>\n</html>',
