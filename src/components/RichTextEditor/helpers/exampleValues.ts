@@ -19,12 +19,15 @@ import { ELEMENT_CHECK_ITEM } from '../Plugins/CheckboxListPlugin/id';
 import { MentionableCategory, MentionableItems } from '../Plugins/MentionPlugin/types';
 import { TextStyles } from '../Plugins/TextStylePlugin/TextStyles';
 import { DesignTokens } from '../types';
+import { mixedMarkdown } from '../serializer/markdown/__tests__/fixtures';
 
 type CreateElementProps = {
     text: string;
     element?: string;
     mark?: string;
 };
+
+export const markdownText = mixedMarkdown;
 
 const createElement = ({ text, element = ELEMENT_PARAGRAPH, mark }: CreateElementProps) => {
     const leaf: TDescendant = { text };
