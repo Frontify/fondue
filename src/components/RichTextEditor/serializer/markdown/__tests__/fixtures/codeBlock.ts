@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { NodeType } from '../../types';
+
 export const codeBlockMarkdown_0 = `\`\`\`
 tell application "Foo";
     beep
@@ -15,10 +17,10 @@ var add2 = function (number) {
 `;
 export const codeBlockMarkdown = [codeBlockMarkdown_0, codeBlockMarkdown_1];
 
-export const codeBlockTree_0 = [
+export const codeBlockTree_0: NodeType[] = [
     {
         type: 'code_block',
-        language: null,
+        language: undefined,
         children: [
             {
                 text: `tell application "Foo";
@@ -28,10 +30,10 @@ end tell`,
         ],
     },
 ];
-export const codeBlockTree_1 = [
+export const codeBlockTree_1: NodeType[] = [
     {
         type: 'code_block',
-        language: null,
+        language: undefined,
         children: [
             {
                 text: `var add2 = function (number) {
