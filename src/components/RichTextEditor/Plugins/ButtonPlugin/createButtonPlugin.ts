@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { RangeBeforeOptions, createPluginFactory, isUrl as isUrlProtocol } from '@udecode/plate-core';
 import { Plugin, PluginProps } from '../Plugin';
 import { ButtonMarkupElement } from './ButtonMarkupElement';
@@ -26,13 +28,13 @@ export interface ButtonPlugin {
      * Hotkeys to trigger floating button.
      * @default 'command+k, ctrl+k'
      */
-    triggerFloatingButtonHotkeys?: string;
+    triggerFloatingButtonHotkeys: string;
 
     /**
      * Callback to validate an url.
      * @default isUrl
      */
-    isUrl?: (text: string) => boolean;
+    isUrl: (text: string) => boolean;
 
     /**
      * Callback to optionally get the href for a url

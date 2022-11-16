@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { useEffect } from 'react';
 import {
     HTMLPropsAs,
@@ -26,7 +28,7 @@ export const useFloatingButtonInsert = ({ floatingOptions, ...props }: FloatingB
     const { triggerFloatingButtonHotkeys } = getPluginOptions<ButtonPlugin>(editor, ELEMENT_BUTTON);
 
     useHotkeys(
-        triggerFloatingButtonHotkeys!,
+        triggerFloatingButtonHotkeys,
         (e) => {
             e.preventDefault();
 

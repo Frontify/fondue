@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
-
 function IconLightning12Filled(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
@@ -28,5 +27,4 @@ function IconLightning12Filled(props: GeneratedIconProps): React.ReactElement<Ge
         </svg>
     );
 }
-
 export default memo(IconLightning12Filled);

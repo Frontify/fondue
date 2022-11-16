@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createParagraphPlugin } from '@udecode/plate';
 import { PARAGRAPH_PLUGIN } from './id';
 import { ParagraphMarkupElement } from './ParagraphMarkupElement';
 import { Plugin, PluginProps } from '../Plugin';
+import { createParagraphPlugin } from './createParagraphPlugin';
 
 export class ParagraphPlugin extends Plugin {
     constructor(props?: PluginProps) {

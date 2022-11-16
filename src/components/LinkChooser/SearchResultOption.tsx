@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { MenuItemContentSize } from '@components/MenuItem';
 import { MenuItem } from '@components/MenuItem/MenuItem';
 import { getInteractionModality } from '@react-aria/interactions';

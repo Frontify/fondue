@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { MutableRefObject, useEffect, useState } from 'react';
 
 export const DEFAULT_DROPDOWN_MAX_HEIGHT = 'auto';

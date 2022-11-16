@@ -5,12 +5,13 @@ import {
     RichTextEditorContextProps,
     useRichTextEditorContext,
 } from '@components/RichTextEditor/context/RichTextEditorContext';
-import { ButtonRootProps } from '../components/Button';
-import { ButtonStyle, TButtonElement } from '../types';
-import { HTMLPropsAs, useElementProps } from '@udecode/plate';
+import { RichTextButtonStyle, TButtonElement } from '../types';
+import { HTMLPropsAs, PlateRenderElementProps, Value, useElementProps } from '@udecode/plate';
 import { ButtonStyles } from '../../TextStylePlugin/TextStyles';
 
-const useButton = (props: ButtonRootProps): HTMLPropsAs<'a'> & { buttonStyle: ButtonStyle } => {
+export type ButtonRootProps = PlateRenderElementProps<Value, TButtonElement> & HTMLPropsAs<'a'>;
+
+const useButton = (props: ButtonRootProps): HTMLPropsAs<'a'> & { buttonStyle: RichTextButtonStyle } => {
     const _props = useElementProps<TButtonElement, 'a'>({
         ...props,
         elementToAttributes: (element) => ({
@@ -21,9 +22,9 @@ const useButton = (props: ButtonRootProps): HTMLPropsAs<'a'> & { buttonStyle: Bu
     });
 
     return {
-        ..._props,
+        ...(_props as HTMLPropsAs<'a'> & { buttonStyle: RichTextButtonStyle }),
         // quick fix: hovering <a> with href loses the editor focus
-        onMouseOver: (e: MouseEvent) => {
+        onMouseOver: (e) => {
             e.stopPropagation();
         },
     };
@@ -46,7 +47,7 @@ export const ButtonMarkupElementNode = (props: ButtonRootProps) => {
     );
 };
 
-const getButtonStyle = (rteContext: RichTextEditorContextProps | null, buttonStyle: ButtonStyle) => {
+const getButtonStyle = (rteContext: RichTextEditorContextProps | null, buttonStyle: RichTextButtonStyle) => {
     if (rteContext) {
         let styles;
         const design = rteContext.designTokens as Partial<

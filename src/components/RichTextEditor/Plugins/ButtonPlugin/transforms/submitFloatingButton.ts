@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { PlateEditor, Value, focusEditor, getPluginOptions } from '@udecode/plate-core';
 import { floatingButtonActions, floatingButtonSelectors } from '../components/FloatingButton/floatingButtonStore';
 import { ButtonPlugin, ELEMENT_BUTTON } from '../createButtonPlugin';
@@ -31,7 +33,7 @@ export const submitFloatingButton = <V extends Value>(editor: PlateEditor<V>) =>
     });
 
     setTimeout(() => {
-        focusEditor(editor, editor.selection!);
+        focusEditor(editor, editor.selection ?? undefined);
     }, 0);
 
     return true;

@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { useCallback, useEffect, useState } from 'react';
 
 export const useOverflowMenuKeyboardNavigation = (

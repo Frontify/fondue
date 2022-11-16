@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { useCallback, useEffect } from 'react';
 import {
     HTMLPropsAs,
@@ -77,7 +79,7 @@ export const useFloatingButtonEdit = ({ floatingOptions, ...props }: FloatingBut
     }, [editor, keyEditor, update]);
 
     useHotkeys(
-        triggerFloatingButtonHotkeys!,
+        triggerFloatingButtonHotkeys,
         (e) => {
             e.preventDefault();
 

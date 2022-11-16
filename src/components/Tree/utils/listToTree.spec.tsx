@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { TreeFlatListItem, TreeNodeItem } from '@components/Tree';
 import { DraggableItem } from '@utilities/dnd';
 import { listToTree } from '@components/Tree/utils/listToTree';

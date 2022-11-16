@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { convertCamelCaseToKebabCase } from './convertCamelCaseToKebabCase';
 
 describe('convertCamelCaseToKebabCase()', () => {

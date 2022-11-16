@@ -1,7 +1,10 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { AnyObject, EText } from '@udecode/plate';
 import {
     PlateEditor,
     Value,
-    WithPlatePlugin,
+    WithOverride,
     collapseSelection,
     getAboveNode,
     getEditorString,
@@ -21,9 +24,8 @@ import {
 } from '@udecode/plate-core';
 import { withRemoveEmptyNodes } from '@udecode/plate-normalizers';
 import { Path, Point, Range } from 'slate';
+import { ELEMENT_BUTTON } from './createButtonPlugin';
 import { upsertButton } from './transforms/index';
-import { ButtonPlugin, ELEMENT_BUTTON } from './createButtonPlugin';
-import { AnyObject } from '@udecode/plate';
 
 /**
  * Insert space after a url to wrap a button.
@@ -35,15 +37,12 @@ import { AnyObject } from '@udecode/plate';
  *
  */
 
-export const withButton = <V extends Value = Value, E extends PlateEditor<V> = PlateEditor<V>>(
-    editor: E,
-    { type, options: { isUrl, getUrlHref, rangeBeforeOptions } }: WithPlatePlugin<ButtonPlugin, V, E>,
-) => {
+export const withButton: WithOverride = (editor, { type, options: { isUrl, getUrlHref, rangeBeforeOptions } }) => {
     const { insertData, insertText, apply, normalizeNode, insertBreak } = editor;
 
     const wrapButton = () => {
         withoutNormalizing(editor, () => {
-            const selection = editor.selection!;
+            const selection = editor.selection as Range;
 
             // get the range from first space before the cursor
             let beforeWordRange = getRangeBefore(editor, selection, rangeBeforeOptions);
@@ -72,7 +71,7 @@ export const withButton = <V extends Value = Value, E extends PlateEditor<V> = P
             beforeWordText = getUrlHref?.(beforeWordText) ?? beforeWordText;
 
             // if word before is not an url, exit
-            if (!isUrl!(beforeWordText)) {
+            if (!isUrl(beforeWordText)) {
                 return;
             }
 
@@ -176,7 +175,7 @@ export const withButton = <V extends Value = Value, E extends PlateEditor<V> = P
                 } else {
                     // insert text node then select
                     const nextPath = Path.next(path);
-                    insertNodes(editor, { text: '' } as any, { at: nextPath });
+                    insertNodes(editor, { text: '' } as EText<Value>, { at: nextPath });
                     select(editor, nextPath);
                 }
             }
@@ -185,9 +184,9 @@ export const withButton = <V extends Value = Value, E extends PlateEditor<V> = P
         normalizeNode([node, path]);
     };
 
-    return withRemoveEmptyNodes<V, E>(
+    return withRemoveEmptyNodes<Value, PlateEditor<Value>>(
         editor,
-        mockPlugin<AnyObject, V, E>({
+        mockPlugin<AnyObject, Value, PlateEditor<Value>>({
             options: { types: type },
         }),
     );
