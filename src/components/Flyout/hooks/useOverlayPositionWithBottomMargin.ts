@@ -3,7 +3,7 @@
 import { AriaPositionProps, useOverlayPosition } from '@react-aria/overlays';
 import { MutableRefObject, useLayoutEffect, useState } from 'react';
 import { getTotalOverlayHeight } from '../helpers/getTotalOverlayHeight';
-import { shouldDisplayAbove } from '../helpers/shouldDisplayAbove';
+import { getVerticalPositioning } from '../helpers/getVerticalPositioning';
 import { FlyoutPlacement } from '@components/Flyout';
 
 const FLYOUT_OVERLAY_OFFSET = 5;
@@ -63,9 +63,10 @@ export const useOverlayPositionWithBottomMargin = ({
 
         if (isOpen) {
             const overlayHeight = getTotalOverlayHeight(overlayRef, scrollRef);
-            setFlipVerticalPosition(
-                shouldDisplayAbove(triggerRef, overlayHeight, FLYOUT_OVERLAY_OFFSET, INTERCOM_BUTTON_HEIGHT),
-            );
+            const shouldFlip =
+                getVerticalPositioning(triggerRef.current, overlayHeight, FLYOUT_OVERLAY_OFFSET, INTERCOM_BUTTON_HEIGHT)
+                    .position === 'top';
+            setFlipVerticalPosition(shouldFlip);
 
             if (scrollRef.current && updatePositionOnContentChange) {
                 resizeObserver.observe(scrollRef.current);
