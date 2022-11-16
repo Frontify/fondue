@@ -821,8 +821,8 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').should('include.html', '<ol');
 
             cy.get(TOOLBAR_GROUP_2).children().last().click();
-            cy.get('[contenteditable=true]').should('not.include.html', '<ol');
             cy.get('[contenteditable=true]').should('include.html', '<p');
+            cy.get('[contenteditable=true]').should('not.include.html', '<ol');
         });
 
         it('should reset a right aligned text', () => {
@@ -849,9 +849,9 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').should('include.html', '<ol');
 
             cy.get(TOOLBAR_GROUP_2).children().last().click();
+            cy.get('[contenteditable=true]').should('include.html', '<p');
             cy.get('[contenteditable=true]').should('not.include.html', 'tw-font-bold');
             cy.get('[contenteditable=true]').should('not.include.html', '<ol');
-            cy.get('[contenteditable=true]').should('include.html', '<p');
         });
 
         it('should reset a heading', () => {
