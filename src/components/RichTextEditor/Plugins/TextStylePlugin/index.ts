@@ -8,6 +8,8 @@ import { withTextStyles } from './TextStyleDropdown/withTextStyles';
 import { defaultTextStyles } from './TextStyles/defaultTextStyles';
 import { getTextStylePlugins } from './getTextStylePlugins';
 
+export { TextStyles } from './TextStyles';
+
 export class TextStylePlugin extends Plugin<TextStylePluginProps> {
     constructor({ textStyles = defaultTextStyles, ...pluginProps }: Partial<TextStylePluginProps> = {}) {
         super(TEXT_STYLE_PLUGIN, {
