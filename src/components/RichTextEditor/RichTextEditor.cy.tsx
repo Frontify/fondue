@@ -666,6 +666,184 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] a').should('not.exist');
         });
     });
+
+    describe('reset formatting plugin', () => {
+        it('should reset bold', () => {
+            cy.mount(<RichTextEditor />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_1).children().eq(0).click();
+            cy.get('[contenteditable=true]').should('include.html', 'tw-font-bold');
+
+            cy.get(TOOLBAR_GROUP_2).children().last().click();
+            cy.get('[contenteditable=true]').should('not.include.html', 'tw-font-bold');
+        });
+
+        it('should reset italic', () => {
+            cy.mount(<RichTextEditor />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_1).children().eq(1).click();
+            cy.get('[contenteditable=true]').should('include.html', 'tw-italic');
+
+            cy.get(TOOLBAR_GROUP_2).children().last().click();
+            cy.get('[contenteditable=true]').should('not.include.html', 'tw-italic');
+        });
+
+        it('should reset underline', () => {
+            cy.mount(<RichTextEditor />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_1).children().eq(2).click();
+            cy.get('[contenteditable=true]').should('include.html', 'tw-underline');
+
+            cy.get(TOOLBAR_GROUP_2).children().last().click();
+            cy.get('[contenteditable=true]').should('not.include.html', 'tw-underline');
+        });
+
+        it('should reset strikethrough', () => {
+            cy.mount(<RichTextEditor />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_1).children().eq(3).click();
+            cy.get('[contenteditable=true]').should('include.html', 'tw-line-through');
+
+            cy.get(TOOLBAR_GROUP_2).children().last().click();
+            cy.get('[contenteditable=true]').should('not.include.html', 'tw-line-through');
+        });
+
+        it('should reset code', () => {
+            cy.mount(<RichTextEditor />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_1).children().eq(6).click();
+            cy.get('[contenteditable=true]').should(
+                'include.html',
+                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5',
+            );
+
+            cy.get(TOOLBAR_GROUP_2).children().last().click();
+            cy.get('[contenteditable=true]').should(
+                'not.include.html',
+                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5',
+            );
+        });
+
+        it('should reset all marks', () => {
+            cy.mount(<RichTextEditor />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_1).children().eq(0).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(1).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(3).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(6).click();
+            cy.get('[contenteditable=true]').should(
+                'include.html',
+                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5',
+            );
+            cy.get('[contenteditable=true]').should('include.html', 'tw-font-bold');
+            cy.get('[contenteditable=true]').should('include.html', 'tw-italic');
+            cy.get('[contenteditable=true]').should('include.html', 'tw-underline');
+            cy.get('[contenteditable=true]').should('include.html', 'tw-line-through');
+
+            cy.get(TOOLBAR_GROUP_2).children().last().click();
+            cy.get('[contenteditable=true]').should(
+                'not.include.html',
+                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5',
+            );
+            cy.get('[contenteditable=true]').should('not.include.html', 'tw-font-bold');
+            cy.get('[contenteditable=true]').should('not.include.html', 'tw-italic');
+            cy.get('[contenteditable=true]').should('not.include.html', 'tw-underline');
+            cy.get('[contenteditable=true]').should('not.include.html', 'tw-line-through');
+        });
+
+        it('should resets a checkbox', () => {
+            cy.mount(<RichTextEditor />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
+            cy.get(CHECKBOX_INPUT).should('exist');
+
+            cy.get(TOOLBAR_GROUP_2).children().last().click();
+            cy.get(CHECKBOX_INPUT).should('not.exist');
+        });
+
+        it('should unwrap an unordered list', () => {
+            cy.mount(<RichTextEditor />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
+            cy.get('[contenteditable=true]').should('include.html', '<ul');
+
+            cy.get(TOOLBAR_GROUP_2).children().last().click();
+            cy.get('[contenteditable=true]').should('not.include.html', '<ul');
+            cy.get('[contenteditable=true]').should('include.html', '<p');
+        });
+
+        it('should unwrap an ordered list', () => {
+            cy.mount(<RichTextEditor />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_2).children().eq(6).click();
+            cy.get('[contenteditable=true]').should('include.html', '<ol');
+
+            cy.get(TOOLBAR_GROUP_2).children().last().click();
+            cy.get('[contenteditable=true]').should('not.include.html', '<ol');
+            cy.get('[contenteditable=true]').should('include.html', '<p');
+        });
+
+        it('should unwrap an ordered list and remove bold at the same time', () => {
+            cy.mount(<RichTextEditor />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_1).children().eq(0).click();
+            cy.get('[contenteditable=true]').should('include.html', 'tw-font-bold');
+
+            cy.get(TOOLBAR_GROUP_2).children().eq(6).click();
+            cy.get('[contenteditable=true]').should('include.html', '<ol');
+
+            cy.get(TOOLBAR_GROUP_2).children().last().click();
+            cy.get('[contenteditable=true]').should('not.include.html', 'tw-font-bold');
+            cy.get('[contenteditable=true]').should('not.include.html', '<ol');
+            cy.get('[contenteditable=true]').should('include.html', '<p');
+        });
+
+        it('should reset a right aligned text', () => {
+            cy.mount(<RichTextEditor />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
+            cy.get('[contenteditable=true]').should('include.html', 'text-align: right');
+
+            cy.get(TOOLBAR_GROUP_2).children().last().click();
+            cy.get('[contenteditable=true]').should('not.include.html', 'text-align: right');
+        });
+
+        it('should reset a heading', () => {
+            cy.mount(<RichTextEditor />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+            cy.get(TEXTSTYLE_OPTION).first().click();
+            cy.get('[contenteditable=true]').should('include.html', '<h1');
+
+            cy.get(TOOLBAR_GROUP_2).children().last().click();
+            cy.get('[contenteditable=true]').should('not.include.html', '<h1');
+        });
+    });
 });
 
 describe('RichTextEditor Component: Positioning of Toolbar', () => {

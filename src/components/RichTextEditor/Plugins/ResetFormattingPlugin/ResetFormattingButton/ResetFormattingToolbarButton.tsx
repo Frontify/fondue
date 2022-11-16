@@ -1,15 +1,7 @@
+import { resetFormatting } from '@components/RichTextEditor/utils/resetFormatting';
 import {
-    ELEMENT_PARAGRAPH,
-    MARK_BOLD,
-    MARK_CODE,
-    MARK_ITALIC,
-    MARK_STRIKETHROUGH,
-    MARK_UNDERLINE,
     ToolbarButton,
     ToolbarButtonProps,
-    removeMark,
-    setElements,
-    unwrapList,
     useEventPlateId,
     usePlateEditorState,
     withPlateProvider,
@@ -22,20 +14,7 @@ export const ResetFormattingToolbarButton = withPlateProvider(({ id, ...props }:
     return (
         <ToolbarButton
             onMouseDown={() => {
-                if (!editor || !editor.selection) {
-                    return;
-                }
-
-                removeMark(editor, {
-                    key: [MARK_BOLD, MARK_ITALIC, MARK_CODE, MARK_UNDERLINE, MARK_STRIKETHROUGH],
-                });
-
-                unwrapList(editor, {});
-
-                setElements(editor, {
-                    type: ELEMENT_PARAGRAPH,
-                    align: undefined,
-                });
+                resetFormatting(editor);
             }}
             {...props}
         />
