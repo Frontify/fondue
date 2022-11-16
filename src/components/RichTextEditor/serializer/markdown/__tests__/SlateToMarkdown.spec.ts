@@ -46,6 +46,9 @@ describe('Slate To Markdown transformer', () => {
 
         result = transformer.process(codeBlockTree[1]);
         expect(result).to.deep.equal(codeBlockMarkdown[1]);
+
+        result = transformer.process(codeBlockTree[2]);
+        expect(result).to.deep.equal(codeBlockMarkdown[2]);
     });
 
     it('should transform paragraph', () => {

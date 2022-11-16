@@ -81,7 +81,7 @@ export type BlockType = {
     children: NodeType[];
     parentType?: string;
     caption?: string;
-    language?: string;
+    language?: string | null;
     break?: boolean;
     link?: string;
     url?: string;
