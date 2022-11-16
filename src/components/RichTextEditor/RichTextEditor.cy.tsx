@@ -821,7 +821,6 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').should('include.html', '<ol');
 
             cy.get(TOOLBAR_GROUP_2).children().last().click();
-            cy.get('[contenteditable=true]').should('include.html', '<p');
             cy.get('[contenteditable=true]').should('not.include.html', '<ol');
         });
 
