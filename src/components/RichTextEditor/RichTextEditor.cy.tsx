@@ -825,6 +825,18 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').should('include.html', '<p');
         });
 
+        it('should reset a right aligned text', () => {
+            cy.mount(<RichTextEditor />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
+            cy.get('[contenteditable=true]').should('include.html', 'tw-text-right');
+
+            cy.get(TOOLBAR_GROUP_2).children().last().click();
+            cy.get('[contenteditable=true]').should('not.include.html', 'tw-text-right');
+        });
+
         it('should unwrap an ordered list and remove bold at the same time', () => {
             cy.mount(<RichTextEditor />);
 
@@ -840,18 +852,6 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').should('not.include.html', 'tw-font-bold');
             cy.get('[contenteditable=true]').should('not.include.html', '<ol');
             cy.get('[contenteditable=true]').should('include.html', '<p');
-        });
-
-        it('should reset a right aligned text', () => {
-            cy.mount(<RichTextEditor />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
-            cy.get('[contenteditable=true]').should('include.html', 'text-align: right');
-
-            cy.get(TOOLBAR_GROUP_2).children().last().click();
-            cy.get('[contenteditable=true]').should('not.include.html', 'text-align: right');
         });
 
         it('should reset a heading', () => {

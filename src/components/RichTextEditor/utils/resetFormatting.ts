@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import {
     ELEMENT_PARAGRAPH,
     MARK_BOLD,

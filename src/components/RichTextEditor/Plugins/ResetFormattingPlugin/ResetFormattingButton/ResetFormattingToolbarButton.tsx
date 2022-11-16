@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { resetFormatting } from '@components/RichTextEditor/utils/resetFormatting';
 import {
     ToolbarButton,

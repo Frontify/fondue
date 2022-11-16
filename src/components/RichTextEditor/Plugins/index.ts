@@ -29,7 +29,6 @@ defaultPlugins
             new LinkPlugin(),
             new ButtonPlugin(),
             new CodePlugin(),
-            new ResetFormattingPlugin(),
         ],
         [
             new AlignLeftPlugin(),
@@ -39,6 +38,7 @@ defaultPlugins
             new UnorderedListPlugin(),
             new CheckboxListPlugin(),
             new OrderedListPlugin(),
+            new ResetFormattingPlugin(),
         ],
     );
 
