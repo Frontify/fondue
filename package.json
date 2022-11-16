@@ -154,12 +154,15 @@
         "react-is": "18.2.0",
         "react-popper": "2.3.0",
         "react-textarea-autosize": "8.4.0",
+        "remark-gfm": "3.0.1",
+        "remark-parse": "10.0.1",
         "slate": "0.78.0",
         "slate-history": "0.66.0",
         "slate-hyperscript": "0.77.0",
         "slate-react": "0.79.0",
         "styled-components": "5.3.6",
         "tinycolor2": "1.4.2",
+        "unified": "10.1.2",
         "xstate": "4.28.1"
     },
     "peerDependencies": {

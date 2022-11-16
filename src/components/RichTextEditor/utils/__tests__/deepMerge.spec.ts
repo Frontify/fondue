@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AnyObject } from '@udecode/plate';
-import { deepMerge } from './deepMerge';
+import { deepMerge } from '../deepMerge';
 
 const defaultObject: AnyObject = {
     option1: {
