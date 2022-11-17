@@ -23,7 +23,7 @@ export const DatePicker: FC<DatePickerProps> = ({
     isClearable,
     shouldCloseOnSelect,
     onChange,
-    dateFormat = 'MM/dd/yyyy',
+    dateFormat = 'dd MMM yyyy',
     value,
 }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
@@ -32,6 +32,8 @@ export const DatePicker: FC<DatePickerProps> = ({
             onChange(date);
         }
     };
+
+    console.log(value);
 
     return (
         <div data-test-id="date-picker">
