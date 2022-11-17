@@ -42,9 +42,12 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         <div
             {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
             ref={ref}
-            className={merge(['tw-shadow-mid tw-flex tw-outline-none', fitContent ? 'tw-min-w-0' : 'tw-min-w-[400px]'])}
+            className={merge([
+                'tw-shadow-mid tw-rounded tw-flex tw-outline-none',
+                fitContent ? 'tw-min-w-0' : 'tw-min-w-[400px]',
+            ])}
         >
-            <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0 tw-shadow-mid tw-rounded tw-border-t tw-border-line">
+            <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0 tw-rounded tw-border-t tw-border-line">
                 {fixedHeader}
                 <div
                     ref={scrollRef}
