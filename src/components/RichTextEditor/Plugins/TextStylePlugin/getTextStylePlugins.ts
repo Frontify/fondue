@@ -4,4 +4,4 @@ import { textStylePluginsRecord } from './TextStyleDropdown/textStylePluginsReco
 import { SelectableTextStyles } from './TextStyles';
 
 export const getTextStylePlugins = (textStyles: SelectableTextStyles[]) =>
-    textStyles.map((style) => textStylePluginsRecord[style].plugin());
+    textStyles.map((style) => textStylePluginsRecord[style]());
