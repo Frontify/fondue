@@ -33,8 +33,6 @@ export const DatePicker: FC<DatePickerProps> = ({
         }
     };
 
-    console.log(value);
-
     return (
         <div data-test-id="date-picker">
             <DatepickerComponent
