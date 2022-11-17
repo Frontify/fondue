@@ -22,4 +22,7 @@ export const createQuotePlugin = createPluginFactory({
     key: TextStyles.ELEMENT_QUOTE,
     isElement: true,
     component: QuoteMarkupElementNode,
+    deserializeHtml: {
+        rules: [{ validNodeName: ['blockquote', 'BLOCKQUOTE'] }],
+    },
 });
