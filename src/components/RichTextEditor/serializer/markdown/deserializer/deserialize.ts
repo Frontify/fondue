@@ -27,8 +27,8 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
 
     let children: Array<DeserializedNode<T>> = [{ text: '' }];
 
-    if (hasNodeChildren(node)) {
-        children = node.children!.flatMap((c: MarkdownAstNode) =>
+    if (hasNodeChildren(node.children)) {
+        children = node.children.flatMap((c: MarkdownAstNode) =>
             deserialize(
                 {
                     ...c,
@@ -122,8 +122,8 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
     }
 }
 
-const hasNodeChildren = (node: MarkdownAstNode): boolean =>
-    !!node.children && Array.isArray(node.children) && node.children.length > 0;
+const hasNodeChildren = (children: MarkdownAstNode['children']): children is MarkdownAstNode[] =>
+    !!children && Array.isArray(children) && children.length > 0;
 
 const forceLeafNode = (children: Array<TextNode>) => ({
     text: children.map((k) => k?.text).join(''),
