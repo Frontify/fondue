@@ -14,7 +14,7 @@ export const FlyoutFooter: FC<FlyoutFooterProps> = ({ buttons, border = true }) 
     return (
         <div
             className={merge([
-                'tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-bg-white dark:tw-bg-black-95 tw-rounded-b tw-border tw-border-t-0 tw-border-line',
+                'tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-bg-white dark:tw-bg-black-95',
                 border && 'tw-border-t tw-border-t-black-10',
             ])}
         >

@@ -37,22 +37,24 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
     const { overlayProps } = useOverlay({ onClose, isOpen, isDismissable: true }, ref as RefObject<HTMLDivElement>);
     const { modalProps } = useModal();
     const { dialogProps, titleProps } = useDialog({}, ref as RefObject<HTMLDivElement>);
+    const INSET_BORDER =
+        'before:tw-block before:tw-rounded before:tw-top-0 before:tw-left-0 before:tw-bg-transparent before:tw-absolute before:tw-shadow-inner-line before:tw-w-full before:tw-h-full';
 
     return (
         <div
             {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
             ref={ref}
             className={merge([
-                'tw-shadow-mid tw-rounded tw-flex tw-outline-none',
+                'tw-rounded tw-flex tw-outline-none tw-relative',
                 fitContent ? 'tw-min-w-0' : 'tw-min-w-[400px]',
             ])}
         >
-            <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0 tw-rounded tw-border-t tw-border-line">
+            <div className={merge(['tw-flex tw-flex-col tw-flex-auto tw-min-h-0 tw-rounded', INSET_BORDER])}>
                 {fixedHeader}
                 <div
                     ref={scrollRef}
                     className={merge([
-                        'tw-flex tw-overflow-y-auto tw-overflow-x-hidden tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95 tw-border-l tw-border-r tw-border-line',
+                        'tw-flex tw-overflow-y-auto tw-overflow-x-hidden tw-flex-col tw-divide-y tw-divide tw-divide-black-10 tw-bg-white tw-text-black dark:tw-text-white dark:tw-bg-black-95',
                         !fixedHeader && 'tw-rounded-t',
                         !fixedFooter && 'tw-rounded-b',
                     ])}
