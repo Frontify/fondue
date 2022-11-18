@@ -1,33 +1,54 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { orderedListTree } from './orderedList';
+import { unorderedListTree } from './unorderedList';
+
 export const mixedMarkdown = `# Heading 1
 ## Heading 2
 ### Heading 3
 #### Heading 4
-
 This is ~~text that has strikethrough~~ in it
 I am inline basic mark**bold**_italic_~~delete~~\`inline code\`
-
-\`
-This is inline code and not code block
+\`This is inline code and not code block
 tell application "Foo";
     beep
-end tell
-\`
-
+end tell\`
 This is [link to frontify.com](https://www.frontify.com/).
-
 I am normal Paragraph
-
 > Presenting the Quote
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At 
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
 vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
 no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
 Presenting the Paragraph
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+
+- list
+
+  - list
+
+    - list
+
+  - list
+  - list
+
+
+
+1. Ordered list
+1. Ordered list
+
+   1. aaa
+   1. aaa
+
+      1. eeeee
+      1. eeeee
+
+   1. aaa
+
+1. Ordered list
+
 `;
 
 export const mixedTree = [
@@ -92,22 +113,15 @@ export const mixedTree = [
                 code: true,
                 text: 'inline code',
             },
-        ],
-    },
-    {
-        type: 'p',
-        children: [
+            {
+                text: '\n',
+            },
             {
                 code: true,
                 text: 'This is inline code and not code block\ntell application "Foo";\n    beep\nend tell',
             },
-        ],
-    },
-    {
-        type: 'p',
-        children: [
             {
-                text: 'This is ',
+                text: '\nThis is ',
             },
             {
                 type: 'a',
@@ -119,15 +133,7 @@ export const mixedTree = [
                 ],
             },
             {
-                text: '.',
-            },
-        ],
-    },
-    {
-        type: 'p',
-        children: [
-            {
-                text: 'I am normal Paragraph',
+                text: '.\nI am normal Paragraph',
             },
         ],
     },
@@ -152,4 +158,7 @@ export const mixedTree = [
             },
         ],
     },
+
+    ...unorderedListTree,
+    ...orderedListTree,
 ];

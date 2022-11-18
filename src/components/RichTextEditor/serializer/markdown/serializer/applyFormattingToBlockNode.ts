@@ -35,7 +35,7 @@ const shouldEscapeNode = (children: string, nodeTypes: InputNodeTypes, type?: st
     return children;
 };
 
-export const processNodes = (
+export const applyFormattingToBlockNode = (
     options: OptionType,
     children: string,
     chunk: NodeType,
