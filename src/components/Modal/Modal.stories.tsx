@@ -168,9 +168,7 @@ const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps & Mo
                     foregroundColor: args.foregroundColor,
                 }}
                 width={args.width}
-                onClose={state.close}
                 isOpen={state.isOpen}
-                isDismissable
                 compact={args.compact}
             >
                 <Modal.Header
