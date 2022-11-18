@@ -4,7 +4,7 @@ import React, { PropsWithChildren, ReactElement, RefObject, useEffect, useState 
 import { usePopper } from 'react-popper';
 import { merge } from '@utilities/merge';
 import { MenuItemProps } from '@components/MenuItem';
-import { useMenuKeyboardNavigation } from '@components/MenuItem/useMenuKeyboardNavigation';
+import { useMenuKeyboardNavigation } from '@components/Menu/useMenuKeyboardNavigation';
 
 interface Props {
     triggerRef: RefObject<Element>;
@@ -14,6 +14,12 @@ interface Props {
 }
 
 export type MenuProps = PropsWithChildren<Props>;
+
+const CONTAINER_BASE_CLASSES =
+    'tw-relative tw-bg-base tw-rounded tw-absolute tw-left-0 tw-top-7 tw-py-2 tw-shadow-mid tw-w-max';
+const INSET_BORDER =
+    'before:tw-block before:tw-rounded before:tw-top-0 before:tw-left-0 before:tw-bg-transparent before:tw-absolute before:tw-shadow-inner-line before:tw-w-full before:tw-h-full';
+const CONTAINER_CLASSES = merge([CONTAINER_BASE_CLASSES, INSET_BORDER]);
 
 export const Menu = ({ triggerRef, children, open = false, onClose }: MenuProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(open);
@@ -66,10 +72,7 @@ export const Menu = ({ triggerRef, children, open = false, onClose }: MenuProps)
 
     return (
         <nav
-            className={merge([
-                'tw-bg-base tw-border tw-border-line tw-rounded tw-absolute tw-left-0 tw-top-7 tw-py-2 tw-shadow-mid tw-w-max',
-                isMenuOpen ? 'tw-block' : 'tw-hidden',
-            ])}
+            className={merge([CONTAINER_CLASSES, isMenuOpen ? 'tw-block' : 'tw-hidden'])}
             role={isMenuOpen ? 'dialog' : ''}
             ref={setMenuContainerRef}
             style={popperInstance.styles.popper}
