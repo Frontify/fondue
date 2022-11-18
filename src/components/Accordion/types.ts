@@ -5,11 +5,10 @@ import { FC, PropsWithChildren, ReactNode } from 'react';
 import { Node } from '@react-types/shared';
 import { FieldsetHeaderSize, FieldsetHeaderType } from '@components/FieldsetHeader';
 
-export type AccordionProps = {
-    children?: ReactNode;
+export type AccordionProps = PropsWithChildren<{
     divider?: boolean;
     border?: boolean;
-};
+}>;
 
 export type AriaAccordionItemProps = {
     item: Node<AccordionItemProps>;

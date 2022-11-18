@@ -10,7 +10,7 @@ import { toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
 import React, { FC } from 'react';
 import tinycolor from 'tinycolor2';
-import { ColorFormat } from '../../types/colors';
+import { ColorFormat } from '../../types';
 import { ColorInputTitle } from './ColorInputTitle';
 import { ColorPickerFlyoutProps } from './ColorPickerFlyout';
 

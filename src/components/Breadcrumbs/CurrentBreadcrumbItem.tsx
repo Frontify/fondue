@@ -6,11 +6,15 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, RefObject, useRef } from 'react';
+import React, { FC, PropsWithChildren, RefObject, useRef } from 'react';
 import { Breadcrumb } from './Breadcrumbs';
 import { getItemElementType } from '@utilities/elements';
 
-const ItemWithBadges: FC<{ badges?: BadgeProps[] }> = ({ badges, children }) => (
+type ItemWithBadgesProps = PropsWithChildren<{
+    badges?: BadgeProps[];
+}>;
+
+const ItemWithBadges = ({ badges, children }: ItemWithBadgesProps) => (
     <span className="tw-inline-flex tw-gap-x-2 tw-items-center">
         {children}
 

@@ -160,7 +160,8 @@ const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+            /*To fix 'any' in MutableRefObject when refactoring the Flyout*/
+            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<any>) => (
                 <Button
                     style={ButtonStyle.Default}
                     emphasis={ButtonEmphasis.Strong}
@@ -293,7 +294,7 @@ const WithCustomFooterAndHeaderTemplate: Story<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<any>) => (
                 <Button
                     style={ButtonStyle.Default}
                     emphasis={ButtonEmphasis.Strong}
@@ -340,7 +341,7 @@ const WithRenderFunctionTriggerTemplate: Story<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={(props, ref: MutableRefObject<HTMLDivElement>, state) => (
+            trigger={(props, ref: MutableRefObject<any>, state) => (
                 <div
                     {...props}
                     ref={ref}
@@ -385,7 +386,7 @@ const WithPlacementAndOffsetTemplate: Story<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<any>) => (
                 <div className="tw-flex tw-justify-center tw-items-center tw-w-full tw-h-screen">
                     <Button
                         style={ButtonStyle.Default}

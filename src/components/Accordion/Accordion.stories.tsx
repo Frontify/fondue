@@ -19,7 +19,7 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
 import { merge } from '@utilities/merge';
-import React, { FC, ReactNode, useState } from 'react';
+import React, { FC, PropsWithChildren, ReactNode, useState } from 'react';
 import { Color } from '../../types';
 import { EXAMPLE_IMAGES } from '../AssetInput/example-assets';
 import { Accordion as AccordionComponent, AccordionItem } from './Accordion';
@@ -140,7 +140,7 @@ const customHeader: FC<AccordionHeaderProps> = ({ isOpen, children }) => (
     </div>
 );
 
-const Code: FC = ({ children }) => (
+const Code = ({ children }: PropsWithChildren) => (
     <code className="tw-bg-black-5 tw-rounded tw-px-2 tw-text-box-negative-strong tw-text-s">{children}</code>
 );
 

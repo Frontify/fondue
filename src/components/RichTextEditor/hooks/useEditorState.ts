@@ -15,7 +15,7 @@ export const useEditorState = (onTextChange: useEditorStateProps) => {
     }, ON_SAVE_DELAY_IN_MS);
 
     const onChange = useCallback(
-        (value) => {
+        (value: any) => {
             debouncedOnChange(value);
             localValue.current = value;
         },

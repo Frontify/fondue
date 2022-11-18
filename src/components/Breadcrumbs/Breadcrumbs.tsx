@@ -2,8 +2,8 @@
 
 import { BadgeProps } from '@components/Badge';
 import { IconProps } from '@foundation/Icon/IconProps';
-import { useBreadcrumbs } from '@react-aria/breadcrumbs';
-import React, { FC, MouseEvent, ReactElement } from 'react';
+import { AriaBreadcrumbsProps, useBreadcrumbs } from '@react-aria/breadcrumbs';
+import React, { MouseEvent, ReactElement } from 'react';
 import { BreadcrumbItem } from './BreadcrumbItem';
 import { CurrentBreadcrumbItem } from './CurrentBreadcrumbItem';
 
@@ -28,9 +28,9 @@ export type BreadcrumbsProps = {
     items: Breadcrumb[];
 };
 
-export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => {
+export const Breadcrumbs = ({ items }: BreadcrumbsProps) => {
     const props = mapBreadcrumbsToAriaProps(items);
-    const { navProps } = useBreadcrumbs(props);
+    const { navProps } = useBreadcrumbs(props as AriaBreadcrumbsProps);
 
     return (
         <nav {...navProps} className="tw-font-sans" aria-label="Breadcrumb">

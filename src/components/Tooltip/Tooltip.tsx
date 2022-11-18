@@ -205,7 +205,7 @@ export const Tooltip = ({
     }, [enterDelay]);
 
     const checkIfHovered = useCallback(
-        (event) => {
+        (event: any) => {
             const hoveredElement = event.path ?? event.composedPath?.();
             const hoverSources = [triggerRefElement, triggerElementContainerRef, tooltipContainerRef];
 

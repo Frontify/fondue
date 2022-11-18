@@ -21,7 +21,9 @@ describe('Modal Component', () => {
     it('should render an empty modal', () => {
         cy.mount(
             <OverlayProvider>
-                <Modal isOpen={true} />
+                <Modal isOpen={true}>
+                    {/*children are required in new version react-aria overlays -> To Refactor*/}
+                </Modal>
             </OverlayProvider>,
         );
 
@@ -41,7 +43,9 @@ describe('Modal Component', () => {
                         pattern: PatternDesign.DigitalAssets,
                         foregroundColor: PatternTheme.Violet,
                     }}
-                />
+                >
+                    {}
+                </Modal>
             </OverlayProvider>,
         );
 

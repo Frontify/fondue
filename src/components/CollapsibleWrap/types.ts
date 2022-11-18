@@ -1,7 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export type CollapsibleWrapProps = {
+import { PropsWithChildren } from 'react';
+
+export type CollapsibleWrapProps = PropsWithChildren<{
     isOpen: boolean;
     preventInitialAnimation?: boolean;
     animateOpacity?: boolean;
-};
+}>;

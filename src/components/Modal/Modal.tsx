@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, memo, useRef } from 'react';
+import React, { memo, useRef } from 'react';
 import { merge } from '@utilities/merge';
 import { ModalProps, ModalWidth } from './types';
 import { ModalVisual } from './ModalVisual';
@@ -45,7 +45,7 @@ const widthMap: Record<ModalWidth, string> = {
 
 const DEFAULT_ZINDEX = 50;
 
-const ModalComponent: FC<ModalProps> = memo((props) => {
+const ModalComponent = memo((props: ModalProps) => {
     const { visual, children, width = ModalWidth.Default, zIndex = DEFAULT_ZINDEX, compact = false } = props;
     const ref = useRef<HTMLDivElement>(null);
     const {

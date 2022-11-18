@@ -4,7 +4,7 @@ import { OverlayProps } from '@react-aria/overlays';
 import { AriaDialogProps } from '@react-types/dialog';
 import { PatternDesign, PatternTheme } from '@foundation/Pattern';
 import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
-import { ReactElement, ReactNode } from 'react';
+import { PropsWithChildren, ReactElement, ReactNode } from 'react';
 import { ButtonProps } from '..';
 
 export type ModalButton = Omit<ButtonProps, 'size'>;
@@ -58,12 +58,13 @@ export type ModalPadding = {
     [key: string]: { top: string; horizontal: string; bottom: string };
 };
 
-export type ModalProps = {
+export type ModalProps = PropsWithChildren<{
     visual?: ModalVisualProps;
     width?: ModalWidth;
     children?: ModalBodyChildren;
     isOpen: boolean;
     zIndex?: number;
     compact?: boolean;
-} & Omit<OverlayProps, 'isOpen'> &
+}> &
+    Omit<OverlayProps, 'isOpen'> &
     AriaDialogProps;

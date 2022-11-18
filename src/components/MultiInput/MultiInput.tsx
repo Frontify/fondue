@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, FC } from 'react';
+import React, { Children, PropsWithChildren } from 'react';
 
 export enum MultiInputLayout {
     Columns = 'Columns',
     Spider = 'Spider',
 }
 
-export type MultiInputProps = {
+export type MultiInputProps = PropsWithChildren<{
     layout: MultiInputLayout;
     spanLastItem?: boolean;
-};
+}>;
 
-export const MultiInput: FC<MultiInputProps> = ({ layout, spanLastItem, children }) => {
+export const MultiInput = ({ layout, spanLastItem, children }: MultiInputProps) => {
     const childrenArray = Children.toArray(children);
 
     return (
