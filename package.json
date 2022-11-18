@@ -1,6 +1,6 @@
 {
     "name": "@frontify/fondue",
-    "version": "12.0.0-beta.22",
+    "version": "12.0.0-beta.23",
     "description": "Design system of Frontify",
     "engines": {
         "node": "~16"
@@ -105,7 +105,7 @@
         "vite-plugin-eslint": "1.8.1"
     },
     "dependencies": {
-        "@frontify/fondue-tokens": "3.1.0",
+        "@frontify/fondue-tokens": "3.2.0",
         "@popperjs/core": "2.11.6",
         "@react-aria/accordion": "3.0.0-alpha.9",
         "@react-aria/aria-modal-polyfill": "3.6.0",

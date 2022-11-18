@@ -3,7 +3,7 @@
 import { Transformer } from './types';
 
 export class Transform {
-    public static use(transformer: Transformer) {
+    public static use<T = unknown, R = unknown>(transformer: Transformer<T, R>) {
         return transformer;
     }
 }

@@ -22,4 +22,7 @@ export const createCustom1Plugin = createPluginFactory({
     key: TextStyles.ELEMENT_CUSTOM1,
     isElement: true,
     component: Custom1MarkupElementNode,
+    deserializeHtml: {
+        rules: [{ validClassName: 'custom1' }],
+    },
 });

@@ -14,6 +14,7 @@ import { TextStylePlugin } from './TextStylePlugin';
 import { InitPlugin } from './InitPlugin';
 import { ParagraphPlugin } from './ParagraphPlugin';
 import { ButtonPlugin } from './ButtonPlugin';
+import { ResetFormattingPlugin } from './ResetFormattingPlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
@@ -37,6 +38,7 @@ defaultPlugins
             new UnorderedListPlugin(),
             new CheckboxListPlugin(),
             new OrderedListPlugin(),
+            new ResetFormattingPlugin(),
         ],
     );
 
@@ -48,6 +50,7 @@ export * from './BoldPlugin';
 export * from './AlignPlugin';
 export * from './CheckboxListPlugin';
 export * from './CodePlugin';
+export * from './ResetFormattingPlugin';
 export * from './ItalicPlugin';
 export * from './UnderlinePlugin';
 export * from './StrikethroughPlugin';
