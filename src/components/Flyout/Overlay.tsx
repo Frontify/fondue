@@ -38,7 +38,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
     const { modalProps } = useModal();
     const { dialogProps, titleProps } = useDialog({}, ref as RefObject<HTMLDivElement>);
     const INSET_BORDER =
-        'before:tw-block before:tw-rounded before:tw-top-0 before:tw-left-0 before:tw-bg-transparent before:tw-absolute before:tw-shadow-inner-line before:tw-w-full before:tw-h-full';
+        'before:tw-block before:tw-rounded before:tw-top-0 before:tw-left-0 before:tw-bg-transparent before:tw-absolute before:tw-shadow-inner-line before:tw-w-full before:tw-h-full before:tw-pointer-events-none';
 
     return (
         <div
