@@ -4,9 +4,6 @@ import type { UserConfig } from 'vite';
 import eslint from 'vite-plugin-eslint';
 
 export default {
-    core: {
-        builder: '@storybook/builder-vite',
-    },
     framework: '@storybook/react-vite',
     stories: ['../src/**/*.stories.tsx'],
     addons: ['storybook-dark-mode', '@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-a11y'],

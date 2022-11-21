@@ -66,7 +66,6 @@
         "@storybook/addon-actions": "7.0.0-alpha.51",
         "@storybook/addon-essentials": "7.0.0-alpha.51",
         "@storybook/addon-links": "7.0.0-alpha.51",
-        "@storybook/builder-vite": "7.0.0-alpha.51",
         "@storybook/react-vite": "7.0.0-alpha.51",
         "@svgr/core": "6.5.1",
         "@svgr/plugin-jsx": "6.5.1",
