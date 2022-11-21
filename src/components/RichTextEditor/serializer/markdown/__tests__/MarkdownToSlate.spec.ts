@@ -44,8 +44,14 @@ describe('Markdown to slate Transformer', () => {
     });
 
     it('should transform code block', () => {
-        const result = transformer.process(codeBlockMarkdown);
-        expect(result).to.deep.equal(codeBlockTree);
+        let result = transformer.process(codeBlockMarkdown[0]);
+        expect(result).to.deep.equal(codeBlockTree[0]);
+
+        result = transformer.process(codeBlockMarkdown[1]);
+        expect(result).to.deep.equal(codeBlockTree[1]);
+
+        result = transformer.process(codeBlockMarkdown[2]);
+        expect(result).to.deep.equal(codeBlockTree[2]);
     });
 
     it('should transform paragraph', () => {
@@ -79,8 +85,11 @@ describe('Markdown to slate Transformer', () => {
     });
 
     it('should transform block quote', () => {
-        const result = transformer.process(blockQuoteMarkdown);
-        expect(result).to.deep.equal(blockQuoteTree);
+        let result = transformer.process(blockQuoteMarkdown[0]);
+        expect(result).to.deep.equal(blockQuoteTree[0]);
+
+        result = transformer.process(blockQuoteMarkdown[1]);
+        expect(result).to.deep.equal(blockQuoteTree[1]);
     });
 
     it('should transform mixed text', () => {

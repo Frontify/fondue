@@ -12,9 +12,9 @@ export const QuoteMarkupElementNode = ({ element, attributes, children }: PlateR
     const align = element.align as string;
 
     return (
-        <p {...attributes} className={merge([align && alignmentClassnames[align]])} style={designTokens.quote}>
+        <blockquote {...attributes} className={merge([align && alignmentClassnames[align]])} style={designTokens.quote}>
             {children}
-        </p>
+        </blockquote>
     );
 };
 
