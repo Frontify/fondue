@@ -95,6 +95,7 @@ export const MenuItem: FC<MenuItemProps> = ({
         <>
             {children && (
                 <li
+                    data-test-id="menu-item"
                     role="menuitem"
                     className={merge(['tw-text-sm tw-leading-4 tw-text-text-weak', ITEM_WRAPPER_CLASSES])}
                 >
@@ -104,7 +105,7 @@ export const MenuItem: FC<MenuItemProps> = ({
                         </a>
                     )}
                     {mainElementType === 'button' && (
-                        <button onClick={onClick} className={ITEM_BASE_CLASSES}>
+                        <button type="button" disabled={disabled} onClick={onClick} className={ITEM_BASE_CLASSES}>
                             {children}
                         </button>
                     )}
