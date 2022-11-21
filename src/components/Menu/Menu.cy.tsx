@@ -18,6 +18,96 @@ const verifyButtonItem = (value = 1) => {
     cy.get('@onButtonClick').should('have.been.calledWith', value);
 };
 
+/**
+ *
+ * @param keys we must use any here since cypress does not export the KeyOrShortcut type
+ */
+const closeMenuWithKeyboard = (keys: any, hasTrigger = true) => {
+    // Close the menu
+    if (hasTrigger) {
+        cy.focused().realPress(keys);
+        cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-hidden');
+    } else {
+        cy.get('body').trigger('keydown', { key: 'Tab', shiftKey: keys.includes('Shift') });
+        cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
+    }
+};
+
+const openWithKeyboard = (hasTrigger = true) => {
+    if (hasTrigger) {
+        cy.get(MENU_SELECTOR).find('button').eq(0).focus().realPress('Enter');
+    } else {
+        cy.get('body').trigger('keydown', { key: 'Tab' });
+    }
+
+    cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
+};
+
+const linkItemsKeyboardNavigation = (hasTrigger = true) => {
+    openWithKeyboard(hasTrigger);
+
+    cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[0].link);
+    cy.focused().trigger('keydown', { key: 'ArrowDown' });
+    cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[1].link);
+    cy.focused().trigger('keydown', { key: 'ArrowDown' });
+    cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[2].link);
+    cy.focused().trigger('keydown', { key: 'ArrowUp' });
+    cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[1].link);
+    cy.focused().trigger('keydown', { key: 'ArrowUp' });
+    cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[0].link);
+    cy.focused().trigger('keydown', { key: 'Tab' });
+    cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[1].link);
+    cy.focused().trigger('keydown', { key: 'Tab' });
+    cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[2].link);
+    cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
+    cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[1].link);
+    cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
+    cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[0].link);
+
+    closeMenuWithKeyboard(['Shift', 'Tab'], hasTrigger);
+    openWithKeyboard(hasTrigger);
+
+    cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[0].link);
+    cy.focused().trigger('keydown', { key: 'Tab' });
+    cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[1].link);
+    cy.focused().trigger('keydown', { key: 'Tab' });
+    cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[2].link);
+
+    closeMenuWithKeyboard(['Tab'], hasTrigger);
+};
+
+const buttonItemsKeyboardNavigation = (hasTrigger = true) => {
+    openWithKeyboard(hasTrigger);
+    verifyButtonItem(1);
+    cy.focused().trigger('keydown', { key: 'ArrowDown' });
+    verifyButtonItem(2);
+    cy.focused().trigger('keydown', { key: 'ArrowDown' });
+    verifyButtonItem(3);
+    cy.focused().trigger('keydown', { key: 'ArrowUp' });
+    verifyButtonItem(2);
+    cy.focused().trigger('keydown', { key: 'ArrowUp' });
+    verifyButtonItem(1);
+    cy.focused().trigger('keydown', { key: 'Tab' });
+    verifyButtonItem(2);
+    cy.focused().trigger('keydown', { key: 'Tab' });
+    verifyButtonItem(3);
+    cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
+    verifyButtonItem(2);
+    cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
+    verifyButtonItem(1);
+
+    closeMenuWithKeyboard(['Shift', 'Tab'], hasTrigger);
+    openWithKeyboard(hasTrigger);
+
+    verifyButtonItem(1);
+    cy.focused().trigger('keydown', { key: 'Tab' });
+    verifyButtonItem(2);
+    cy.focused().trigger('keydown', { key: 'Tab' });
+    verifyButtonItem(3);
+
+    closeMenuWithKeyboard(['Tab'], hasTrigger);
+};
+
 const COMPONENT_NAME = 'Menu';
 const MENU_SELECTOR = `@${COMPONENT_NAME}`;
 
@@ -41,38 +131,7 @@ describe('Menu component', () => {
         });
 
         it('navigates using the keyboard', () => {
-            cy.get(MENU_SELECTOR).find('button').focus().realPress('Enter');
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[0].link);
-            cy.focused().trigger('keydown', { key: 'ArrowDown' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[1].link);
-            cy.focused().trigger('keydown', { key: 'ArrowDown' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[2].link);
-            cy.focused().trigger('keydown', { key: 'ArrowUp' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[1].link);
-            cy.focused().trigger('keydown', { key: 'ArrowUp' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[0].link);
-            cy.focused().trigger('keydown', { key: 'Tab' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[1].link);
-            cy.focused().trigger('keydown', { key: 'Tab' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[2].link);
-            cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[1].link);
-            cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[0].link);
-            // Close the menu and focus the three dots button and re-open it
-            cy.focused().realPress(['Shift', 'Tab']);
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-hidden');
-            cy.focused().realPress('Enter');
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[0].link);
-            cy.focused().trigger('keydown', { key: 'Tab' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[1].link);
-            cy.focused().trigger('keydown', { key: 'Tab' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[2].link);
-            // Close the menu
-            cy.focused().realPress('Tab');
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-hidden');
+            linkItemsKeyboardNavigation();
         });
     });
     describe('With Buttons and Trigger', () => {
@@ -104,38 +163,7 @@ describe('Menu component', () => {
         });
 
         it('navigates using the keyboard', () => {
-            cy.get(MENU_SELECTOR).find('button').eq(0).focus().realPress('Enter');
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
-            verifyButtonItem(1);
-            cy.focused().trigger('keydown', { key: 'ArrowDown' });
-            verifyButtonItem(2);
-            cy.focused().trigger('keydown', { key: 'ArrowDown' });
-            verifyButtonItem(3);
-            cy.focused().trigger('keydown', { key: 'ArrowUp' });
-            verifyButtonItem(2);
-            cy.focused().trigger('keydown', { key: 'ArrowUp' });
-            verifyButtonItem(1);
-            cy.focused().trigger('keydown', { key: 'Tab' });
-            verifyButtonItem(2);
-            cy.focused().trigger('keydown', { key: 'Tab' });
-            verifyButtonItem(3);
-            cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
-            verifyButtonItem(2);
-            cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
-            verifyButtonItem(1);
-            // Close the menu and focus the three dots button and re-open it
-            cy.focused().realPress(['Shift', 'Tab']);
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-hidden');
-            cy.focused().realPress('Enter');
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
-            verifyButtonItem(1);
-            cy.focused().trigger('keydown', { key: 'Tab' });
-            verifyButtonItem(2);
-            cy.focused().trigger('keydown', { key: 'Tab' });
-            verifyButtonItem(3);
-            // Close the menu
-            cy.focused().realPress('Tab');
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-hidden');
+            buttonItemsKeyboardNavigation();
         });
 
         it('jumps disabled button on keyboard navigation', () => {
@@ -201,28 +229,7 @@ describe('Menu component', () => {
         });
 
         it('navigates using the keyboard', () => {
-            cy.get('body').trigger('keydown', { key: 'Tab' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[0].link);
-            cy.focused().trigger('keydown', { key: 'ArrowDown' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[1].link);
-            cy.focused().trigger('keydown', { key: 'ArrowDown' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[2].link);
-            cy.focused().trigger('keydown', { key: 'ArrowUp' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[1].link);
-            cy.focused().trigger('keydown', { key: 'ArrowUp' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[0].link);
-            cy.focused().trigger('keydown', { key: 'Tab' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[1].link);
-            cy.focused().trigger('keydown', { key: 'Tab' });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[2].link);
-            cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[1].link);
-            cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
-            cy.focused().should('have.attr', 'href', ITEMS_WITH_LINKS[0].link);
-
-            // Keep the menu open
-            cy.focused().realPress(['Shift', 'Tab']);
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
+            linkItemsKeyboardNavigation(false);
         });
     });
     describe('With Buttons without Trigger', () => {
@@ -249,28 +256,7 @@ describe('Menu component', () => {
         });
 
         it('navigates using the keyboard', () => {
-            cy.get('body').trigger('keydown', { key: 'Tab' });
-            verifyButtonItem(1);
-            cy.focused().trigger('keydown', { key: 'ArrowDown' });
-            verifyButtonItem(2);
-            cy.focused().trigger('keydown', { key: 'ArrowDown' });
-            verifyButtonItem(3);
-            cy.focused().trigger('keydown', { key: 'ArrowUp' });
-            verifyButtonItem(2);
-            cy.focused().trigger('keydown', { key: 'ArrowUp' });
-            verifyButtonItem(1);
-            cy.focused().trigger('keydown', { key: 'Tab' });
-            verifyButtonItem(2);
-            cy.focused().trigger('keydown', { key: 'Tab' });
-            verifyButtonItem(3);
-            cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
-            verifyButtonItem(2);
-            cy.focused().trigger('keydown', { key: 'Tab', shiftKey: true });
-            verifyButtonItem(1);
-
-            // Keep the menu open
-            cy.focused().realPress(['Shift', 'Tab']);
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
+            buttonItemsKeyboardNavigation(false);
         });
 
         it('jumps disabled button on keyboard navigation', () => {
