@@ -63,6 +63,8 @@ export type ModalProps = {
     width?: ModalWidth;
     children?: ModalBodyChildren;
     isOpen: boolean;
+    onClose: () => void;
+    isDismissable: boolean;
     zIndex?: number;
     compact?: boolean;
 } & Omit<OverlayProps, 'isOpen'> &
