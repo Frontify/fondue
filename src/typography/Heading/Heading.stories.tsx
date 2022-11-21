@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared';
 import { Heading as HeadingComponent, HeadingProps } from './Heading';
@@ -37,9 +37,9 @@ export default {
     },
 } as Meta<HeadingProps>;
 
-export const DefaultHeading: Story<HeadingProps> = (args) => <HeadingComponent {...args} />;
+export const DefaultHeading: StoryFn<HeadingProps> = (args) => <HeadingComponent {...args} />;
 
-export const LongHeadingWithNewLines: Story<HeadingProps> = (args) => (
+export const LongHeadingWithNewLines: StoryFn<HeadingProps> = (args) => (
     <div className="tw-w-[200px] tw-p-2 tw-rounded tw-border">
         <HeadingComponent {...args}>
             {`Heading with veryveryveryveryveryextremelyhugelymassivelysuperlengthygiganticwords and limited width.\nThis is to display

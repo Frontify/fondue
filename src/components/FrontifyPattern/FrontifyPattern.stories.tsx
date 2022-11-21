@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { PatternDesign, PatternScale, PatternTheme } from '@foundation/Pattern';
 import { FrontifyPattern, FrontifyPatternProps } from './FrontifyPattern';
 
@@ -36,4 +36,4 @@ export default {
     ],
 } as Meta<FrontifyPatternProps>;
 
-export const Default: Story<FrontifyPatternProps> = (args, argTypes) => <FrontifyPattern {...args} {...argTypes} />;
+export const Default: StoryFn<FrontifyPatternProps> = (args, argTypes) => <FrontifyPattern {...args} {...argTypes} />;

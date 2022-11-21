@@ -2,7 +2,7 @@
 
 import { MenuItemStyle } from '@components/MenuItem/MenuItem';
 import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React, { useEffect, useState } from 'react';
 import { Dropdown, DropdownAlignment, DropdownPosition, DropdownProps, DropdownSize } from './Dropdown';
 import { Validation } from '@utilities/validation';
@@ -41,14 +41,14 @@ export default {
     },
 } as Meta;
 
-const DropdownTemplate: Story<DropdownProps> = (args: DropdownProps) => {
+const DropdownTemplate: StoryFn<DropdownProps> = (args: DropdownProps) => {
     const [active, setActive] = useState(args.activeItemId);
     useEffect(() => setActive(args.activeItemId), [args.activeItemId]);
 
     return <Dropdown {...args} activeItemId={active} onChange={(id) => setActive(id)} />;
 };
 
-const DropdownWithLimitedWidthTemplate: Story<DropdownProps> = (args: DropdownProps) => {
+const DropdownWithLimitedWidthTemplate: StoryFn<DropdownProps> = (args: DropdownProps) => {
     const [active, setActive] = useState(args.activeItemId);
     useEffect(() => setActive(args.activeItemId), [args.activeItemId]);
 
@@ -61,7 +61,7 @@ const DropdownWithLimitedWidthTemplate: Story<DropdownProps> = (args: DropdownPr
     );
 };
 
-const DropdownWithinOverflownContainer: Story<DropdownProps> = (args: DropdownProps) => {
+const DropdownWithinOverflownContainer: StoryFn<DropdownProps> = (args: DropdownProps) => {
     const [active, setActive] = useState(args.activeItemId);
     useEffect(() => setActive(args.activeItemId), [args.activeItemId]);
 

@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { IconSize } from './IconSize';
 import { IconProps } from './IconProps';
 import { Icon as IconComponent } from './Icon';
@@ -21,7 +21,7 @@ export default {
     },
 } as Meta<IconProps>;
 
-export const Icon: Story<IconProps> = (args: IconProps) => (
+export const Icon: StoryFn<IconProps> = (args: IconProps) => (
     <ul className="tw-grid tw-grid-cols-4 tw-gap-4">
         {Object.values(IconEnum)
             .filter(

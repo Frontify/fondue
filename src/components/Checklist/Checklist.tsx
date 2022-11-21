@@ -36,7 +36,7 @@ type ChecklistVertical = ChecklistBase & {
 
 type ChecklistHorizontal = ChecklistBase & {
     direction: ChecklistDirection.Horizontal;
-    columns?: null;
+    columns?: undefined;
 };
 
 export type ChecklistProps = ChecklistVertical | ChecklistHorizontal;

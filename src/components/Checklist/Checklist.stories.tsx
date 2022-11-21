@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from '@components/Checkbox/Checkbox';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
 import { Checklist as ChecklistComponent, ChecklistDirection, ChecklistProps } from './Checklist';
 
@@ -12,6 +12,7 @@ export default {
         columns: {
             options: [1, 2, 3, 4],
             control: { type: 'select' },
+            if: { arg: 'direction', eq: ChecklistDirection.Vertical },
         },
         direction: {
             options: [ChecklistDirection.Horizontal, ChecklistDirection.Vertical],
@@ -47,7 +48,7 @@ const COLUMN_CHECKBOXES = Array.from({ length: 8 })
         tooltip: { content: `Random Tooltip ${index}` },
     }));
 
-export const Checklist: Story<ChecklistProps> = (args) => {
+export const Checklist: StoryFn<ChecklistProps> = (args: ChecklistProps) => {
     const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
 
     return (
@@ -60,7 +61,7 @@ export const Checklist: Story<ChecklistProps> = (args) => {
     );
 };
 
-export const MultipleColumns: Story<ChecklistProps> = (args) => {
+export const MultipleColumns = (args: ChecklistProps) => {
     const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
 
     return (
@@ -77,7 +78,7 @@ MultipleColumns.args = {
     columns: 2,
 };
 
-export const MultipleColumnsInContainedSpace: Story<ChecklistProps> = (args) => {
+export const MultipleColumnsInContainedSpace = (args: ChecklistProps) => {
     const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
 
     return (

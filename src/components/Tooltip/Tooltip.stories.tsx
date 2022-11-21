@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { BrightHeaderStyle } from './BrightHeader';
 import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
@@ -82,7 +82,7 @@ export default {
     },
 } as Meta<TooltipProps>;
 
-export const TooltipComponent: Story<TooltipProps> = (args: TooltipProps) => {
+export const TooltipComponent: StoryFn<TooltipProps> = (args: TooltipProps) => {
     return (
         <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
             <Tooltip
@@ -98,7 +98,7 @@ export const TooltipComponent: Story<TooltipProps> = (args: TooltipProps) => {
     );
 };
 
-export const MultipleTooltipsComponent: Story<TooltipProps> = (args: TooltipProps) => {
+export const MultipleTooltipsComponent: StoryFn<TooltipProps> = (args: TooltipProps) => {
     return (
         <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
             <p className="tw-mr-2">Label</p>

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { LoadingCircle, LoadingCircleProps, LoadingCircleSize, LoadingCircleStyle } from './LoadingCircle';
 
 export default {
@@ -23,6 +23,6 @@ export default {
     },
 } as Meta<LoadingCircleProps>;
 
-const LoadingSpinnerTemplate: Story<LoadingCircleProps> = (args: LoadingCircleProps) => <LoadingCircle {...args} />;
+const LoadingSpinnerTemplate: StoryFn<LoadingCircleProps> = (args: LoadingCircleProps) => <LoadingCircle {...args} />;
 
 export const Default = LoadingSpinnerTemplate.bind({});

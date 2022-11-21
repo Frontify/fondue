@@ -8,7 +8,7 @@ export const setup = (componentName: string, componentType: string): ComponentFi
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from "react";
-import { Story, Meta } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { ${componentName}, ${componentName}Props } from "./${componentName}";
 
 export default {
@@ -16,7 +16,7 @@ export default {
     component: ${componentName},
 } as Meta<${componentName}Props>;
 
-const Template: Story<${componentName}Props> = (args) => <${componentName} {...args} />;
+const Template: StoryFn<${componentName}Props> = (args) => <${componentName} {...args} />;
 
 export const Default = Template.bind({});
 
