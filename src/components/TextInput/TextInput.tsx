@@ -128,7 +128,11 @@ export const TextInput: FC<TextInputProps> = ({
                     : merge([
                           'focus-within:tw-border-black-90 hover:tw-border-black-90',
                           validationClassMap[validation],
-                          isFocusVisible && FOCUS_STYLE,
+                          isFocusVisible &&
+                              !clearButtonIsFocusVisible &&
+                              !passwordButtonIsFocusVisible &&
+                              !copyButtonIsFocusVisible &&
+                              FOCUS_STYLE,
                       ]),
             ])}
         >
