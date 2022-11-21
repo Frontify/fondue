@@ -5,7 +5,6 @@ import { MultiSelect } from './MultiSelect';
 
 const TRIGGER_ID = '[data-test-id=trigger]';
 const CHECKBOX_ID = '[data-test-id=checkbox]';
-const CHECKBOX_INPUT_ID = '[data-test-id=checkbox-input]';
 const TAG_ID = '[data-test-id=tag]';
 const CHECKLIST_ID = '[data-test-id=checklist]';
 
