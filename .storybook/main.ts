@@ -15,7 +15,8 @@ export default {
         docs: 'automatic',
     },
     viteFinal(config: UserConfig) {
-        config.plugins ??= [];
+        //@ts-ignore
+        config.plugins = (config.plugins ?? []).filter((plugin) => plugin?.name !== 'vite:dts');
 
         config.plugins.unshift({
             ...eslint({
