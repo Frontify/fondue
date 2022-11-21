@@ -4,8 +4,8 @@ import React from 'react';
 import {
     BasicMenuComponent,
     ITEMS,
-    ITEMS_WITH_LINKS,
     ITEMS_WITHOUT_ITERACTION,
+    ITEMS_WITH_LINKS,
     NoTriggerMenuComponent,
 } from './utils/componentMocks';
 

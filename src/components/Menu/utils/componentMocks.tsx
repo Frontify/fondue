@@ -58,9 +58,7 @@ export const BasicMenuComponent = (props: MenuProps & { items: Item[] }) => {
 export const NoTriggerMenuComponent = (props: MenuProps & { items: Item[] }) => {
     return (
         <div data-test-id="menu">
-            <Menu {...props}>
-                {props.items.map(getMenuItem)}
-            </Menu>
+            <Menu {...props}>{props.items.map(getMenuItem)}</Menu>
         </div>
     );
 };
