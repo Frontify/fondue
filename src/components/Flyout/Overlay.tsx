@@ -37,17 +37,19 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
     const { overlayProps } = useOverlay({ onClose, isOpen, isDismissable: true }, ref as RefObject<HTMLDivElement>);
     const { modalProps } = useModal();
     const { dialogProps, titleProps } = useDialog({}, ref as RefObject<HTMLDivElement>);
+    const INSET_BORDER =
+        'before:tw-block before:tw-rounded before:tw-top-0 before:tw-left-0 before:tw-bg-transparent before:tw-absolute before:tw-shadow-inner-line before:tw-w-full before:tw-h-full before:tw-pointer-events-none';
 
     return (
         <div
             {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
             ref={ref}
             className={merge([
-                'tw-max-h-full tw-flex tw-shadow-mid tw-outline-none',
+                'tw-rounded tw-flex tw-outline-none tw-relative',
                 fitContent ? 'tw-min-w-0' : 'tw-min-w-[400px]',
             ])}
         >
-            <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0">
+            <div className={merge(['tw-flex tw-flex-col tw-flex-auto tw-min-h-0 tw-rounded', INSET_BORDER])}>
                 {fixedHeader}
                 <div
                     ref={scrollRef}

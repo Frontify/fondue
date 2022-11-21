@@ -49,7 +49,7 @@ Default.args = {
     placeHolder: 'Select a date',
     isClearable: true,
     shouldCloseOnSelect: true,
-    dateFormat: 'MM/dd/yyyy',
+    dateFormat: 'dd MMM yyyy',
 };
 
 Default.storyName = 'Date Picker';
@@ -59,5 +59,5 @@ InsideFormControlAndOverSlider.args = {
     placeHolder: 'Select a date',
     isClearable: true,
     shouldCloseOnSelect: true,
-    dateFormat: 'MM/dd/yyyy',
+    dateFormat: 'dd MMM yyyy',
 };
