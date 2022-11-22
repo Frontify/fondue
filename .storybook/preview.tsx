@@ -3,19 +3,19 @@ import { dark, light } from './frontifyTheme';
 import { DecoratorFn } from '@storybook/react';
 import React from 'react';
 
-export const withTheme: DecoratorFn = (StoryFn, context) => {
+export const withTheme: DecoratorFn = (Story, context) => {
     // Get values from story parameter first, else fallback to globals
     const theme = context.parameters.theme || context.globals.theme;
 
     switch (theme) {
         case 'side-by-side': {
             return (
-                <div className={'side-by-side'}>
-                    <div className={'light theme'}>
-                        <StoryFn />
+                <div className="side-by-side">
+                    <div className="light theme">
+                        <Story />
                     </div>
-                    <div className={'tw-dark theme'}>
-                        <StoryFn />
+                    <div className="tw-dark theme">
+                        <Story />
                     </div>
                 </div>
             );
@@ -23,7 +23,7 @@ export const withTheme: DecoratorFn = (StoryFn, context) => {
         default: {
             return (
                 <div className={`${theme} theme`}>
-                    <StoryFn />
+                    <Story />
                 </div>
             );
         }
