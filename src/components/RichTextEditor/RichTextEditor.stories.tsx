@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
 import React from 'react';
+import { Meta, StoryFn } from '@storybook/react';
 import { Position } from './EditorPositioningWrapper';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
@@ -11,6 +11,7 @@ import {
     checkboxValue,
     customDesignTokens,
     htmlValue,
+    markdownText,
     mentionValue,
     mentionable,
     nodesToSerialize,
@@ -31,6 +32,8 @@ import {
     UnorderedListPlugin,
 } from './Plugins';
 import { PaddingSizes } from './types';
+import { MarkdownToSlate, SlateToMarkdown } from './serializer/markdown';
+import { Transform } from './serializer';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
@@ -49,7 +52,14 @@ export default {
         onTextChange: { action: 'onTextChange' },
         onBlur: { action: 'onBlur' },
         value: { type: 'string' },
-        position: { options: Object.values(Position) },
+        position: {
+            options: Object.values(Position),
+            mapping: Position,
+            control: {
+                type: 'radio',
+                labels: Object.entries(Position).map(([key, value]) => [value, key]),
+            },
+        },
         padding: {
             options: Object.keys(PaddingSizes),
             mapping: PaddingSizes,
@@ -61,13 +71,13 @@ export default {
     },
 } as Meta;
 
-const RichTextEditorTemplate: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
 
 export const RichTextEditor = RichTextEditorTemplate.bind({});
 
-export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+export const RichTextEditorFlex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <div className="tw-flex tw-gap-x-7 tw-justify-start">
         <div className="tw-min-w-[1rem]">
             <div className="tw-text-left">
@@ -77,7 +87,7 @@ export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEdi
     </div>
 );
 
-export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
+export const RichTextEditorSerialized: StoryFn<RichTextEditorProps> = () => {
     const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
     return (
         <>
@@ -97,7 +107,32 @@ export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
     );
 };
 
-export const MultipleRichTextEditors: Story<RichTextEditorProps> = () => (
+export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () => {
+    const toSlateTransform = Transform.use(new MarkdownToSlate());
+    const resultSlate = toSlateTransform.process(markdownText);
+
+    const toMarkdownTransform = Transform.use(new SlateToMarkdown());
+    const resultMarkdown = toMarkdownTransform.process(resultSlate);
+
+    return (
+        <>
+            Markdown Text:
+            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                <pre>{resultMarkdown}</pre>
+            </div>
+            Slate JSON Object:
+            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                <pre id="json">{JSON.stringify(resultSlate, undefined, 2)}</pre>
+            </div>
+            Rich Text Editor:
+            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                <RichTextEditorComponent value={JSON.stringify(resultSlate)} />
+            </div>
+        </>
+    );
+};
+
+export const MultipleRichTextEditors: StoryFn<RichTextEditorProps> = () => (
     <div className="tw-grid tw-grid-cols-2 tw-gap-2">
         <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
             <RichTextEditorComponent

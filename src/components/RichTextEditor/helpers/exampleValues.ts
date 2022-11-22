@@ -19,12 +19,15 @@ import { ELEMENT_CHECK_ITEM } from '../Plugins/CheckboxListPlugin/id';
 import { MentionableCategory, MentionableItems } from '../Plugins/MentionPlugin/types';
 import { TextStyles } from '../Plugins/TextStylePlugin/TextStyles';
 import { DesignTokens } from '../types';
+import { mixedMarkdown } from '../serializer/markdown/__tests__/fixtures';
 
 type CreateElementProps = {
     text: string;
     element?: string;
     mark?: string;
 };
+
+export const markdownText = mixedMarkdown;
 
 const createElement = ({ text, element = ELEMENT_PARAGRAPH, mark }: CreateElementProps) => {
     const leaf: TDescendant = { text };
@@ -200,6 +203,11 @@ export const htmlValue = `
         <h2>Heading 2</h2>
         <h3>Heading 3</h3>
         <h4>Heading 4</h4>
+        <p class="custom1">Custom 1</p>
+        <p class="custom2">Custom 2</p>
+        <p class="custom3">Custom 3</p>
+        <blockquote>Quote</blockquote> 
+        <a class="btn btn-primary" contenteditable="false" href="https://smartive.ch/" data-design="primary">﻿<span contenteditable="false">Test</span>﻿</a>
     `;
 
 export const checkboxValue = [

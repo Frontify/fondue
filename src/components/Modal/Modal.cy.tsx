@@ -21,9 +21,7 @@ describe('Modal Component', () => {
     it('should render an empty modal', () => {
         cy.mount(
             <OverlayProvider>
-                <Modal isOpen={true}>
-                    {/*children are required in new version react-aria overlays -> To Refactor*/}
-                </Modal>
+                <Modal isOpen={true}>{}</Modal>
             </OverlayProvider>,
         );
 

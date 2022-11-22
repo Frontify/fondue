@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { TextInput, TextInputProps, TextInputType } from './TextInput';
 import { Validation } from '@utilities/validation';
 import { IconIcon } from '@foundation/Icon';
@@ -42,7 +42,7 @@ export default {
     },
 } as Meta<TextInputProps>;
 
-const TextInputTemplate: Story<TextInputProps> = (args) => {
+const TextInputTemplate: StoryFn<TextInputProps> = (args: TextInputProps) => {
     const [input, setInput] = useState('');
     useEffect(() => setInput(`${args.value || ''}`), [args.value]);
 

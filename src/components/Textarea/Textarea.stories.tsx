@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { useEffect, useState } from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { Textarea as TextareaComponent, TextareaProps } from './Textarea';
 import { Validation } from '@utilities/validation';
 
@@ -31,7 +31,7 @@ export default {
     },
 } as Meta<TextareaProps>;
 
-export const Textarea: Story<TextareaProps> = (args: TextareaProps) => {
+export const Textarea: StoryFn<TextareaProps> = (args: TextareaProps) => {
     const [input, setInput] = useState('');
     useEffect(() => setInput(`${args.value || ''}`), [args.value]);
 

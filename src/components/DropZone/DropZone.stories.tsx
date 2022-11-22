@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
 import { OrderableList as DropZoneComponent, OrderableListProps } from '../OrderableList';
 import { OrderableListItem } from '../OrderableList/types';
@@ -20,7 +20,7 @@ export default {
     },
 } as Meta<OrderableListProps<StoryListItem>>;
 
-export const DropZoneWithOrderableList: Story<OrderableListProps<StoryListItem>> = ({ onMove, dragDisabled }) => {
+export const DropZoneWithOrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({ onMove, dragDisabled }) => {
     const [items, setItems] = useState(storyItems);
 
     const handleMove = (modifiedItems: OrderableListItem<StoryListItem>[]) => {
@@ -58,7 +58,7 @@ export const DropZoneWithOrderableList: Story<OrderableListProps<StoryListItem>>
     );
 };
 
-export const DropZoneWithTree: Story<TreeProps> = (args: TreeProps) => {
+export const DropZoneWithTree: StoryFn<TreeProps> = (args: TreeProps) => {
     const [nodesState, setNodes] = useState(mockNodesFlat);
 
     const handleMove = (sourceItemId: string, parentId: NullableString, positionBeforeId: NullableString): void => {

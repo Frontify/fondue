@@ -3,7 +3,7 @@
 import { Modal } from './Modal';
 import React, { useState } from 'react';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { TextInput } from '@components/TextInput';
 import { action } from '@storybook/addon-actions';
 import { generateRandomId } from '@utilities/generateRandomId';
@@ -156,7 +156,7 @@ const ControlledInput = () => {
     );
 };
 
-const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps & ModalBodyProps> = (args) => {
+const ModalTemplate: StoryFn<ModalProps & ModalVisualProps & ModalHeaderProps & ModalBodyProps> = (args) => {
     const state = useOverlayTriggerState({});
 
     return (
@@ -168,7 +168,9 @@ const ModalTemplate: Story<ModalProps & ModalVisualProps & ModalHeaderProps & Mo
                     foregroundColor: args.foregroundColor,
                 }}
                 width={args.width}
+                onClose={state.close}
                 isOpen={state.isOpen}
+                isDismissable
                 compact={args.compact}
             >
                 <Modal.Header
