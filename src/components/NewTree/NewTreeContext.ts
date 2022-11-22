@@ -4,6 +4,9 @@ import { createContext, useContext } from 'react';
 
 export interface NewTreeContext {
     treeId: string;
+    selectedIds: string[];
+    setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>;
+    multiselectMode: boolean;
 }
 
 export const NewTreeContext = createContext<NewTreeContext>({} as NewTreeContext);
