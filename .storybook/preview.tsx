@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import '../src/styles.css';
 import { dark, light } from './frontifyTheme';
 import { DecoratorFn } from '@storybook/react';
