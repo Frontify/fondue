@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { useState } from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { Card, CardProps } from './Card';
 import { Slider } from '@components/Slider/Slider';
 import { Divider } from '@components/Divider/Divider';
@@ -42,7 +42,7 @@ const data = [
     },
 ];
 
-const Template: Story<CardProps> = (args) => <Card {...args} />;
+const Template: StoryFn<CardProps> = (args) => <Card {...args} />;
 
 export const Default = Template.bind({});
 
@@ -100,7 +100,7 @@ const childItems = data.map((item) => ({
     ),
 }));
 
-export const MultipleCards: Story<CardProps> = () => (
+export const MultipleCards: StoryFn<CardProps> = () => (
     <div className="tw-grid tw-grid-cols-3 tw-gap-4">
         {childItems.map((item, id) => (
             <Card key={id} {...item} />

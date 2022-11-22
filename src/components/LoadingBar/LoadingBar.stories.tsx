@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { LoadingBar as LoadingBarComponent, LoadingBarProps, LoadingBarSize, LoadingBarState } from './LoadingBar';
 
 export default {
@@ -25,4 +25,4 @@ export default {
     },
 } as Meta<LoadingBarProps>;
 
-export const LoadingBar: Story<LoadingBarProps> = (args: LoadingBarProps) => <LoadingBarComponent {...args} />;
+export const LoadingBar: StoryFn<LoadingBarProps> = (args: LoadingBarProps) => <LoadingBarComponent {...args} />;

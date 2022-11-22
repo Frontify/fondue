@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { assetInputActions } from './asset-input-actions';
 import { AssetInput, AssetInputProps, AssetInputSize } from './AssetInput';
@@ -28,7 +28,7 @@ export default {
     },
 } as Meta<AssetInputProps>;
 
-const Template: Story<AssetInputProps & { onItemClick: () => void }> = (args) => {
+const Template: StoryFn<AssetInputProps & { onItemClick: () => void }> = (args) => {
     if (args?.actions) {
         for (const block of args.actions) {
             for (const item of block.menuItems) {

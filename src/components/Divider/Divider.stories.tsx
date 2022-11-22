@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { Divider as DividerComponent, DividerHeight, DividerProps, DividerStyle } from './Divider';
 
@@ -37,4 +37,4 @@ export default {
     },
 } as Meta;
 
-export const Divider: Story<DividerProps> = (args: DividerProps) => <DividerComponent {...args} />;
+export const Divider: StoryFn<DividerProps> = (args: DividerProps) => <DividerComponent {...args} />;

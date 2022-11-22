@@ -9,7 +9,7 @@ import { Textarea } from '@components/Textarea/Textarea';
 import { TextInput } from '@components/TextInput/TextInput';
 import { chain } from '@react-aria/utils';
 import { action } from '@storybook/addon-actions';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import React, { MutableRefObject, useState } from 'react';
@@ -45,7 +45,7 @@ export default {
     },
 } as Meta<FlyoutProps>;
 
-const FlyoutTemplate: (addScrollingContent: boolean, inputFocus: boolean) => Story<FlyoutProps> = (
+const FlyoutTemplate: (addScrollingContent: boolean, inputFocus: boolean) => StoryFn<FlyoutProps> = (
     addScrollingContent = false,
     inputFocus = false,
 ) => {
@@ -153,7 +153,7 @@ WithBadges.args = {
     ],
 };
 
-const WithButtonFlyoutTemplate: Story<FlyoutProps> = (args) => {
+const WithButtonFlyoutTemplate: StoryFn<FlyoutProps> = (args) => {
     const [open, setOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date | null>();
 
@@ -227,7 +227,7 @@ WithButtonTrigger.argTypes = {
     decorator: { table: { disable: true } },
 };
 
-const WithCustomFooterFlyoutTemplate: Story<FlyoutProps> = (args) => {
+const WithCustomFooterFlyoutTemplate: StoryFn<FlyoutProps> = (args) => {
     const [open, setOpen] = useState(false);
 
     return (
@@ -287,7 +287,7 @@ WithCustomFooter.argTypes = {
     decorator: { table: { disable: true } },
 };
 
-const WithCustomFooterAndHeaderTemplate: Story<FlyoutProps> = (args) => {
+const WithCustomFooterAndHeaderTemplate: StoryFn<FlyoutProps> = (args) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -334,7 +334,7 @@ WithCustomFooterAndHeader.args = {
     ),
 };
 
-const WithRenderFunctionTriggerTemplate: Story<FlyoutProps> = (args) => {
+const WithRenderFunctionTriggerTemplate: StoryFn<FlyoutProps> = (args) => {
     const [open, setOpen] = useState(false);
 
     return (
@@ -379,7 +379,7 @@ WithContentMinHeight.args = {
     contentMinHeight: 200,
 };
 
-const WithPlacementAndOffsetTemplate: Story<FlyoutProps> = (args) => {
+const WithPlacementAndOffsetTemplate: StoryFn<FlyoutProps> = (args) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
