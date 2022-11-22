@@ -27,21 +27,21 @@ describe('Checkbox component', () => {
         cy.mount(<CheckboxComponent state={CheckboxState.Checked} />);
 
         cy.get(CHECKBOX_ID).get('svg').invoke('attr', 'name').should('eq', 'IconCheckMark16');
-        cy.get(CHECKBOX_INPUT_ID).invoke('attr', 'aria-checked').should('eq', 'true');
+        cy.get(CHECKBOX_INPUT_ID).invoke('attr', 'checked').should('exist');
     });
 
     it('renders with a minus icon if indeterminate', () => {
         cy.mount(<CheckboxComponent state={CheckboxState.Mixed} />);
 
         cy.get(CHECKBOX_ID).get('svg').invoke('attr', 'name').should('eq', 'IconMinus16');
-        cy.get(CHECKBOX_INPUT_ID).invoke('attr', 'aria-checked').should('eq', 'mixed');
+        cy.get(CHECKBOX_INPUT_ID).invoke('attr', 'checked').should('not.exist');
     });
 
     it('renders without an icon if unchecked', () => {
         cy.mount(<CheckboxComponent state={CheckboxState.Unchecked} />);
 
         cy.get(CHECKBOX_ID).get('svg').should('not.exist');
-        cy.get(CHECKBOX_INPUT_ID).invoke('attr', 'aria-checked').should('eq', 'false');
+        cy.get(CHECKBOX_INPUT_ID).invoke('attr', 'checked').should('not.exist');
     });
 
     it('renders with a label', () => {
@@ -59,7 +59,7 @@ describe('Checkbox component', () => {
     it('renders as disabled', () => {
         cy.mount(<CheckboxComponent label={CHECKBOX_LABEL} disabled state={CheckboxState.Mixed} />);
 
-        cy.get(CHECKBOX_INPUT_ID).invoke('attr', 'aria-checked').should('eq', 'mixed');
+        cy.get(CHECKBOX_INPUT_ID).invoke('attr', 'checked').should('not.exist');
         cy.get(CHECKBOX_INPUT_ID).invoke('attr', 'disabled').should('eq', 'disabled');
     });
 
@@ -70,7 +70,7 @@ describe('Checkbox component', () => {
         cy.get('body').realPress('Tab');
         cy.get(CHECKBOX_INPUT_ID).should('be.focused');
         cy.get(CHECKBOX_ID).realPress('Space');
-        cy.get(CHECKBOX_INPUT_ID).invoke('attr', 'aria-checked').should('eq', 'true');
+        cy.get(CHECKBOX_ID).get('svg').invoke('attr', 'name').should('eq', 'IconCheckMark16');
     });
 
     it('should focus the tooltip using the keyboard', () => {
