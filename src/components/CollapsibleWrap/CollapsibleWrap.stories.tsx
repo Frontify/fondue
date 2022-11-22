@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { CollapsibleWrapProps } from './types';
 import { CollapsibleWrap as CollapsibleWrapComponent } from './CollapsibleWrap';
@@ -14,7 +14,7 @@ export default {
     args: { isOpen: true, animateOpacity: true },
 } as Meta<CollapsibleWrapProps>;
 
-export const CollapsibleWrap: Story<CollapsibleWrapProps> = (args) => (
+export const CollapsibleWrap: StoryFn<CollapsibleWrapProps> = (args) => (
     <Card>
         <div className="tw-divide-y tw-divide-black-10">
             <div className="tw-p-3">
@@ -30,7 +30,7 @@ export const CollapsibleWrap: Story<CollapsibleWrapProps> = (args) => (
     </Card>
 );
 
-export const CollapsibleWrapNoStartingAnimation: Story<CollapsibleWrapProps> = (args) => (
+export const CollapsibleWrapNoStartingAnimation: StoryFn<CollapsibleWrapProps> = (args) => (
     <Card>
         <div className="tw-divide-y tw-divide-black-10">
             <div className="tw-p-3">

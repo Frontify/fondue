@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { action } from '@storybook/addon-actions';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { RadioPill as RadioPillComponent, RadioPillProps } from './RadioPill';
 import { IconIcon } from '@foundation/Icon';
@@ -26,4 +26,4 @@ export default {
     },
 } as Meta<RadioPillProps>;
 
-export const RadioPill: Story<RadioPillProps> = (args) => <RadioPillComponent {...args} />;
+export const RadioPill: StoryFn<RadioPillProps> = (args) => <RadioPillComponent {...args} />;

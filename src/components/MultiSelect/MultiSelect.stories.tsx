@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
 import { FormControl } from '@components/FormControl';
 import { MultiSelect as MultiSelectComponent, MultiSelectProps, MultiSelectSize, MultiSelectType } from './MultiSelect';
@@ -45,7 +45,7 @@ export default {
     },
 } as Meta;
 
-const MultiSelectTemplate: Story<MultiSelectProps> = (args) => {
+const MultiSelectTemplate: StoryFn<MultiSelectProps> = (args) => {
     const [activeItemKeys, setActiveItemKeys] = useState<(string | number)[]>(args.activeItemKeys);
 
     return (
@@ -57,7 +57,7 @@ const MultiSelectTemplate: Story<MultiSelectProps> = (args) => {
     );
 };
 
-const MultiSelectFormControlTemplate: Story<MultiSelectProps> = (args) => {
+const MultiSelectFormControlTemplate: StoryFn<MultiSelectProps> = (args) => {
     const [activeItemKeys, setActiveItemKeys] = useState<(string | number)[]>(args.activeItemKeys);
 
     return (

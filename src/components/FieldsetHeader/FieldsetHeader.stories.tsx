@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { useEffect, useState } from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import {
     FieldsetHeader as FieldsetHeaderComponent,
     FieldsetHeaderProps,
@@ -34,7 +34,7 @@ export default {
     },
 } as Meta<FieldsetHeaderProps>;
 
-export const FieldsetHeader: Story<FieldsetHeaderProps> = (args: FieldsetHeaderProps) => {
+export const FieldsetHeader: StoryFn<FieldsetHeaderProps> = (args: FieldsetHeaderProps) => {
     const [active, setActive] = useState(args.active);
 
     useEffect(() => {

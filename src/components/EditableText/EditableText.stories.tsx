@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { EditableMode, EditableText, EditableTextProps } from '@components/EditableText/EditableText';
-import { Story } from '@storybook/react';
+import { StoryFn } from '@storybook/react';
 import { IconPen, IconSize } from '@foundation/Icon';
 
 export default {
@@ -43,11 +43,11 @@ export default {
     },
 };
 
-const EditableTemplate: Story<EditableTextProps> = (args: EditableTextProps) => (
+const EditableTemplate: StoryFn<EditableTextProps> = (args: EditableTextProps) => (
     <EditableText {...args}>{args.children}</EditableText>
 );
 
-const EditableTemplateIcon: Story<EditableTextProps> = (args: EditableTextProps) => {
+const EditableTemplateIcon: StoryFn<EditableTextProps> = (args: EditableTextProps) => {
     const [label, setLabel] = useState('Im set from the outside');
 
     return (
@@ -81,7 +81,7 @@ Default.args = {
 };
 Default.storyName = 'Editable Text h1 styling';
 
-export const ControlledExample: Story<EditableTextProps> = () => {
+export const ControlledExample: StoryFn<EditableTextProps> = () => {
     const [label, setLabel] = useState('Im set from the outside');
 
     return (
