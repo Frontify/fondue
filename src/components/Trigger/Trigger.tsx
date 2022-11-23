@@ -7,7 +7,7 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import React, { FC, HTMLAttributes } from 'react';
-import { IconCross, IconTrashBin } from '@foundation/Icon';
+import { IconCross, IconExclamationMarkTriangle, IconTrashBin } from '@foundation/Icon';
 
 export enum TriggerSize {
     Small = 'Small',
@@ -107,6 +107,14 @@ export const Trigger: FC<TriggerProps> = ({
                         <IconCaretDown size={IconSize.Size16} />
                     </div>
                 </button>
+                {validation === Validation.Error && (
+                    <span
+                        className="tw-flex tw-items-center tw-justify-center tw-text-red-60"
+                        data-test-id="error-state-exclamation-mark-icon"
+                    >
+                        <IconExclamationMarkTriangle />
+                    </span>
+                )}
             </div>
         </div>
     );
