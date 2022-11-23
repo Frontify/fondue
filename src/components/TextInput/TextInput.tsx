@@ -8,7 +8,15 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import React, { FC, FocusEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from 'react';
-import { IconCheckMark, IconClipboard, IconCross, IconCrossCircle, IconEye, IconEyeOff } from '@foundation/Icon';
+import {
+    IconCheckMark,
+    IconClipboard,
+    IconCross,
+    IconCrossCircle,
+    IconExclamationMarkTriangle,
+    IconEye,
+    IconEyeOff,
+} from '@foundation/Icon';
 
 export enum TextInputType {
     Text = 'text',
@@ -212,6 +220,14 @@ export const TextInput: FC<TextInputProps> = ({
             {validation === Validation.Loading && (
                 <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
+                </span>
+            )}
+            {validation === Validation.Error && (
+                <span
+                    className="tw-flex tw-items-center tw-justify-center tw-text-red-60"
+                    data-test-id="error-state-exclamation-mark-icon"
+                >
+                    <IconExclamationMarkTriangle />
                 </span>
             )}
             {copyable && (
