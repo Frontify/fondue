@@ -41,6 +41,8 @@ export const Trigger: FC<TriggerProps> = ({
     const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
     const { focusProps: onDeleteFocusProps, isFocusVisible: isOnDeleteFocusVisible } = useFocusRing();
 
+    const appropriateTriggerTWBorderClass = isOpen ? 'tw-border-line-xx-strong' : 'tw-border-line';
+
     return (
         <div
             data-test-id="trigger"
@@ -51,7 +53,7 @@ export const Trigger: FC<TriggerProps> = ({
                     ? 'tw-border-black-5 tw-bg-black-5 tw-pointer-events-none'
                     : merge([
                           'tw-bg-base hover:tw-border-line-xx-strong',
-                          isOpen ? 'tw-border-line-xx-strong' : 'tw-border-line',
+                          appropriateTriggerTWBorderClass,
                           validationClassMap[validation],
                       ]),
             ])}
