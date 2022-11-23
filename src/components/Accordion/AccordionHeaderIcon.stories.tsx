@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { AccordionHeaderIcon as AccordionHeaderIconComponent } from './AccordionHeaderIcon';
 import { AccordionHeaderIconProps, AccordionHeaderIconSize } from './types';
 
@@ -18,7 +18,7 @@ export default {
     },
 } as Meta<AccordionHeaderIconProps>;
 
-export const AccordionHeaderIcon: Story<AccordionHeaderIconProps> = (args) => (
+export const AccordionHeaderIcon: StoryFn<AccordionHeaderIconProps> = (args) => (
     <div className="tw-flex tw-items-center">
         <AccordionHeaderIconComponent {...args} />
     </div>

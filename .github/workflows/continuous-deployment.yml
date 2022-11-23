@@ -5,7 +5,7 @@ on:
         types: [published]
 
 env:
-    NODE_VERSION: 16
+    NODE_VERSION: 18
     CI: true
     CYPRESS_CACHE_FOLDER: /tmp/cypress_cache
     NUMBER_OF_RUNNERS: 7

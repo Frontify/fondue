@@ -197,4 +197,49 @@ describe('Text Input component', () => {
         cy.mount(<StatefulInput validation={Validation.Error} />);
         cy.get(EXCLAMATION_MARK_ICON_ID).should('be.visible');
     });
+
+    it('clearable should have a type definition', () => {
+        cy.mount(<StatefulInput clearable={true} />);
+
+        cy.get(TEXT_INPUT_ID).type(INPUT_TEXT).should('have.value', INPUT_TEXT);
+        cy.get(CLEAR_ICON_ID).should('have.attr', 'type', 'button');
+    });
+
+    it('shows an outline around the input field on first tab', () => {
+        cy.mount(<StatefulInput clearable={true} />);
+
+        cy.get('body').realPress('Tab');
+
+        cy.get(TEXT_INPUT_ID).parent().should('have.class', 'tw-ring-blue');
+    });
+
+    it('shows an outline around the clear button after the user has typed text and pressed the tab key', () => {
+        cy.mount(<StatefulInput clearable={true} />);
+
+        cy.get(TEXT_INPUT_ID).type(INPUT_TEXT).focus().realPress('Tab');
+
+        cy.get(TEXT_INPUT_ID).parent().should('not.have.class', 'tw-ring-blue');
+
+        cy.get(CLEAR_ICON_ID).should('have.class', 'tw-ring-blue');
+    });
+
+    it('shows an outline around the copy button after the user has typed text and pressed the tab key', () => {
+        cy.mount(<StatefulInput copyable={true} />);
+
+        cy.get(TEXT_INPUT_ID).type(INPUT_TEXT).focus().realPress('Tab');
+
+        cy.get(TEXT_INPUT_ID).parent().should('not.have.class', 'tw-ring-blue');
+
+        cy.get(COPY_ICON_ID).should('have.class', 'tw-ring-blue');
+    });
+
+    it('shows an outline around the visibility button after the user has typed a password and pressed the tab key', () => {
+        cy.mount(<StatefulInput type={TextInputType.Password} />);
+
+        cy.get(TEXT_INPUT_ID).type(PASSWORD).focus().realPress('Tab');
+
+        cy.get(TEXT_INPUT_ID).parent().should('not.have.class', 'tw-ring-blue');
+
+        cy.get(VISIBILITY_ICON_ID).should('have.class', 'tw-ring-blue');
+    });
 });

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { useState } from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { DatePicker, DatePickerProps } from './DatePicker';
 import { FormControl } from '@components/FormControl';
 import { Slider } from '@components/Slider';
@@ -18,13 +18,13 @@ export default {
     },
 } as Meta<DatePickerProps>;
 
-const Template: Story<DatePickerProps> = (args) => {
+const Template: StoryFn<DatePickerProps> = (args) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>();
 
     return <DatePicker {...args} value={selectedDate as Date} onChange={setSelectedDate} />;
 };
 
-const TemplateWithFormControl: Story<DatePickerProps> = (args) => {
+const TemplateWithFormControl: StoryFn<DatePickerProps> = (args) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>();
 
     return (

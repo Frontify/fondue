@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from '@foundation/Icon/IconSize';
+import React, { FC, ReactElement, cloneElement, isValidElement } from 'react';
+import { IconProps, IconSize } from '@foundation/Icon';
 import { merge } from '@utilities/merge';
-import React, { FC, cloneElement, isValidElement } from 'react';
 import { AccordionHeaderIconSize, AccordionHeaderProps } from './types';
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
 
@@ -30,7 +30,7 @@ export const AccordionHeader: FC<AccordionHeaderProps> = ({
             >
                 {isValidElement(decorator) && (
                     <span className="tw-shrink-0">
-                        {cloneElement(decorator, {
+                        {cloneElement(decorator as ReactElement<IconProps>, {
                             size: IconSize.Size16,
                         })}
                     </span>

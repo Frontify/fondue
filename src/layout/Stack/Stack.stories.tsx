@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { merge } from '@utilities/merge';
 import React, { FC } from 'react';
 import { Stack, StackProps } from './Stack';
@@ -53,7 +53,7 @@ export default {
     },
 } as Meta<StackProps>;
 
-const Template: Story<StackProps> = (args) => (
+const Template: StoryFn<StackProps> = (args) => (
     <div className="tw-bg-box-negative-inverse">
         <Stack {...args} />
     </div>

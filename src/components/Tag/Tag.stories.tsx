@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { action } from '@storybook/addon-actions';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { Tag, TagProps, TagSize, TagType } from './Tag';
 
@@ -24,7 +24,7 @@ export default {
     },
 } as Meta<TagProps>;
 
-const TagTemplate: Story<TagProps> = (args) => <Tag {...args} />;
+const TagTemplate: StoryFn<TagProps> = (args: TagProps) => <Tag {...args} />;
 
 export const Suggested = TagTemplate.bind({});
 Suggested.args = {
