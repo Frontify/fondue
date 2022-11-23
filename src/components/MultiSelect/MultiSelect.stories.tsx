@@ -4,6 +4,7 @@ import { Meta, Story } from '@storybook/react';
 import React, { useState } from 'react';
 import { FormControl } from '@components/FormControl';
 import { MultiSelect as MultiSelectComponent, MultiSelectProps, MultiSelectSize, MultiSelectType } from './MultiSelect';
+import { Validation } from '@utilities/validation';
 
 export default {
     title: 'Components/Multi Select',
@@ -40,6 +41,10 @@ export default {
         },
         size: {
             options: Object.keys(MultiSelectSize),
+            control: { type: 'select' },
+        },
+        validation: {
+            options: Object.values(Validation),
             control: { type: 'select' },
         },
     },
