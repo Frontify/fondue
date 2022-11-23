@@ -47,6 +47,7 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
             carrotOffsetForClearButton + carrotOffsetForValidationErrorIcon,
         );
 
+        /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
         return (
             <div ref={ref} aria-hidden="true">
                 <div
@@ -78,6 +79,7 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
                 />
             </div>
         );
+        /* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
     },
 );
 

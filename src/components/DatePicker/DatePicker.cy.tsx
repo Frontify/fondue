@@ -59,7 +59,7 @@ describe('DatePicker Component', () => {
     });
 
     it('only error validation state should show the triangle warning icon', () => {
-        Object.values(Validation).forEach((validationState: Validation) => {
+        for (const validationState of Object.values(Validation)) {
             if (validationState === Validation.Error) {
                 cy.mount(<DatePicker validation={validationState} />);
                 cy.get(EXCLAMATION_MARK_ICON_ID).should('be.visible');
@@ -67,6 +67,6 @@ describe('DatePicker Component', () => {
             }
             cy.mount(<DatePicker validation={validationState} />);
             cy.get(TEXT_INPUT_ID).find(EXCLAMATION_MARK_ICON_ID).should('have.length', 0);
-        });
+        }
     });
 });
