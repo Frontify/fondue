@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createItalicPlugin } from '@udecode/plate';
+import { createComboboxPlugin, createEmojiPlugin } from '@udecode/plate';
 import { EMOJI_PLUGIN } from './id';
 import { Plugin, PluginProps } from '../Plugin';
 import { EmojiButton } from './EmojiButton';
+import { emojiPlugin } from './config';
 
 export class EmojiPlugin extends Plugin {
     constructor(props?: PluginProps) {
@@ -14,6 +15,6 @@ export class EmojiPlugin extends Plugin {
     }
 
     plugins() {
-        return [createItalicPlugin()];
+        return [createComboboxPlugin(), createEmojiPlugin(emojiPlugin)];
     }
 }
