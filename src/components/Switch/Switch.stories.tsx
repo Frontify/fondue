@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React, { useEffect, useState } from 'react';
 import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
 import { Switch, SwitchProps, SwitchSize } from './Switch';
@@ -33,7 +33,7 @@ export default {
 
 type Props = SwitchProps & { hug?: boolean };
 
-const Default: Story<Props> = (args: Props) => {
+const Default: StoryFn<Props> = (args: Props) => {
     const [on, setOn] = useState(args.on);
     const toggle = () => setOn(!on);
 
@@ -44,22 +44,22 @@ const Default: Story<Props> = (args: Props) => {
     return <Switch {...args} onChange={toggle} on={on} />;
 };
 
-export const Small: Story<Props> = Default.bind({});
+export const Small: StoryFn<Props> = Default.bind({});
 Small.args = { size: SwitchSize.Small };
 
-export const Medium: Story<Props> = Default.bind({});
+export const Medium: StoryFn<Props> = Default.bind({});
 Medium.args = { size: SwitchSize.Medium };
 
-export const Large: Story<Props> = Default.bind({});
+export const Large: StoryFn<Props> = Default.bind({});
 Large.args = { size: SwitchSize.Large };
 
-export const WithLabel: Story<Props> = Default.bind({});
+export const WithLabel: StoryFn<Props> = Default.bind({});
 WithLabel.args = { label: 'Switch label' };
 
-export const WithLabelAndTooltip: Story<Props> = Default.bind({});
+export const WithLabelAndTooltip: StoryFn<Props> = Default.bind({});
 WithLabelAndTooltip.args = { label: 'Switch label', tooltip: { content: 'Switch tooltip' } };
 
-export const WithLabelAndMultipleTooltips: Story<Props> = Default.bind({});
+export const WithLabelAndMultipleTooltips: StoryFn<Props> = Default.bind({});
 WithLabelAndMultipleTooltips.args = {
     label: 'Switch label',
     tooltip: [
@@ -72,5 +72,5 @@ WithLabelAndMultipleTooltips.args = {
     ],
 };
 
-export const HugLabel: Story<Props> = Default.bind({});
+export const HugLabel: StoryFn<Props> = Default.bind({});
 HugLabel.args = { hug: true, label: 'Switch label' };

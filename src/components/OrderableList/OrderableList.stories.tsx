@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
 import { OrderableList as OrderableListComponent } from './OrderableList';
 import { OrderableListItem } from './types';
@@ -23,7 +23,7 @@ type StoryListItem = {
     textContent: JSX.Element;
 };
 
-export const OrderableList: Story<OrderableListProps<StoryListItem>> = ({ onMove, dragDisabled }) => {
+export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({ onMove, dragDisabled }) => {
     const [items, setItems] = useState(storyItems);
 
     const handleMove = (modifiedItems: OrderableListItem<StoryListItem>[]) => {

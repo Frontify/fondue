@@ -21,7 +21,7 @@ describe('Modal Component', () => {
     it('should render an empty modal', () => {
         cy.mount(
             <OverlayProvider>
-                <Modal isOpen={true} />
+                <Modal isOpen={true}>{}</Modal>
             </OverlayProvider>,
         );
 
@@ -41,7 +41,9 @@ describe('Modal Component', () => {
                         pattern: PatternDesign.DigitalAssets,
                         foregroundColor: PatternTheme.Violet,
                     }}
-                />
+                >
+                    {}
+                </Modal>
             </OverlayProvider>,
         );
 

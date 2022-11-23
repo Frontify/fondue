@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, FC, PropsWithChildren, cloneElement, isValidElement } from 'react';
-import { ButtonSize } from '@components/Button';
+import React, { Children, FC, PropsWithChildren, ReactElement, cloneElement, isValidElement } from 'react';
+import { ButtonProps, ButtonSize } from '@components/Button';
 import { merge } from '@utilities/merge';
 
 export type ButtonGroupProps = PropsWithChildren<{ size: ButtonSize }>;
@@ -20,7 +20,7 @@ export const ButtonGroup: FC<ButtonGroupProps> = ({ children, size }) => {
                     return null;
                 }
 
-                return cloneElement(child, { size });
+                return cloneElement(child as ReactElement<ButtonProps>, { size });
             })}
         </div>
     );

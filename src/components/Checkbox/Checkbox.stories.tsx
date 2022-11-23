@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React, { useEffect, useState } from 'react';
 import { IconExclamationMarkCircle, IconInfo, IconQuestionMarkCircle } from '@foundation/Icon/Generated';
 import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState } from './Checkbox';
@@ -31,7 +31,7 @@ export default {
     },
 } as Meta<CheckboxProps>;
 
-export const Checkbox: Story<CheckboxProps> = (args: CheckboxProps) => {
+export const Checkbox: StoryFn<CheckboxProps> = (args: CheckboxProps) => {
     const [checked, setChecked] = useState<CheckboxState>(args.state || CheckboxState.Unchecked);
     useEffect(() => setChecked(args.state || CheckboxState.Unchecked), [args.state]);
 

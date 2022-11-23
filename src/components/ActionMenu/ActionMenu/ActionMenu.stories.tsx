@@ -3,7 +3,7 @@
 import { MenuItemStyle, SelectionIndicatorIcon } from '@components/MenuItem/MenuItem';
 import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
 import { action } from '@storybook/addon-actions';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { ActionMenu as ActionMenuComponent, ActionMenuProps } from './ActionMenu';
 import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
@@ -16,7 +16,9 @@ export default {
     },
 } as Meta;
 
-export const ActionMenu: Story<ActionMenuProps & { onClick: () => void }> = (args) => <ActionMenuComponent {...args} />;
+export const ActionMenu: StoryFn<ActionMenuProps & { onClick: () => void }> = (args) => (
+    <ActionMenuComponent {...args} />
+);
 
 ActionMenu.args = {
     menuBlocks: [

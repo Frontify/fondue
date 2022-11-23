@@ -17,7 +17,7 @@ import IconTextAlignmentLeft from '@foundation/Icon/Generated/IconTextAlignmentL
 import IconTextAlignmentRight from '@foundation/Icon/Generated/IconTextAlignmentRight';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { merge } from '@utilities/merge';
 import React, { FC, ReactNode, useState } from 'react';
 import { Color } from '../../types';
@@ -33,7 +33,7 @@ export default {
     component: AccordionComponent,
 } as Meta<AccordionProps>;
 
-export const WithDifferentAccordionItems: Story<AccordionProps> = () => {
+export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
     const [showContent, setShowContent] = useState(true);
     const [input, setInput] = useState('');
     const [activeItemId, setActiveItemId] = useState<string | number | undefined>();
@@ -167,7 +167,7 @@ const PropsTable: FC<{ rows: [ReactNode, ReactNode, ReactNode][] }> = ({ rows })
     </table>
 );
 
-export const WithCustomAccordionHeaderComponent: Story<AccordionProps> = () => (
+export const WithCustomAccordionHeaderComponent: StoryFn<AccordionProps> = () => (
     <AccordionComponent>
         <AccordionItem
             header={{
@@ -280,7 +280,7 @@ export const WithCustomAccordionHeaderComponent: Story<AccordionProps> = () => (
     </AccordionComponent>
 );
 
-export const WithAccordionItemAddition: Story<
+export const WithAccordionItemAddition: StoryFn<
     AccordionProps & {
         'Accordion Divider': boolean;
         'Accordion Border': boolean;
@@ -394,7 +394,7 @@ export const WithAccordionItemAddition: Story<
     );
 };
 
-export const WithDividers: Story<
+export const WithDividers: StoryFn<
     AccordionProps & {
         'Accordion Divider': boolean;
         'Accordion Border': boolean;
@@ -442,7 +442,7 @@ WithDividers.args = {
     'Item Divider': false,
 };
 
-export const WithAdvancedFormControls: Story<AccordionProps> = () => {
+export const WithAdvancedFormControls: StoryFn<AccordionProps> = () => {
     const [spacing, setSpacing] = useState('1');
     const [showAdvancedSpacing, setShowAdvancedSpacing] = useState(false);
     const [alignment, setAlignmnent] = useState('l');

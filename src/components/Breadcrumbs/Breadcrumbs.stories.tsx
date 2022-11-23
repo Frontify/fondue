@@ -3,7 +3,7 @@
 import { BadgeStatus, BadgeStyle } from '@components/Badge';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { action } from '@storybook/addon-actions';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs';
 
@@ -22,7 +22,7 @@ export default {
     },
 } as Meta<BreadcrumbsProps>;
 
-const Template: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
+const Template: StoryFn<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
 
 export const WithoutLinkOrAction = Template.bind({});
 
@@ -60,7 +60,7 @@ WithBadges.args = {
     ],
 };
 
-export const WithDecoratorAndBadge: Story<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
+export const WithDecoratorAndBadge: StoryFn<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
 
 WithDecoratorAndBadge.args = {
     items: [
