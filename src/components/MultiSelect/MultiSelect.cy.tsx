@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Validation } from '@utilities/validation';
 import React, { FC, useState } from 'react';
 import { MultiSelect } from './MultiSelect';
 
@@ -8,6 +9,7 @@ const CHECKBOX_ID = '[data-test-id=checkbox]';
 const CHECKBOX_INPUT_ID = '[data-test-id=checkbox-input]';
 const TAG_ID = '[data-test-id=tag]';
 const CHECKLIST_ID = '[data-test-id=checklist]';
+const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
 
 const ITEMS = {
     activeItemKeys: ['Short tag', 'Tag 74'],
@@ -33,13 +35,18 @@ const ITEMS = {
     ],
 };
 
-const Component: FC = () => {
+type Props = {
+    validation?: Validation;
+};
+
+const Component: FC<Props> = ({ validation = Validation.Default }: Props) => {
     const [activeItems, setActiveItems] = useState<(string | number)[]>(ITEMS.activeItemKeys);
     return (
         <MultiSelect
             items={ITEMS.items}
             activeItemKeys={activeItems}
             onSelectionChange={(keys) => setActiveItems(keys)}
+            validation={validation}
         />
     );
 };
@@ -74,5 +81,17 @@ describe('MultiSelect Component', () => {
         cy.get(CHECKBOX_ID).eq(2).click();
         cy.get(CHECKBOX_INPUT_ID).eq(2).should('have.attr', 'aria-checked', 'true');
         cy.get(TAG_ID).contains('Checkbox label 2');
+    });
+
+    it('only error validation state should show the triangle warning icon', () => {
+        Object.values(Validation).forEach((validationState: Validation) => {
+            if (validationState === Validation.Error) {
+                cy.mount(<Component validation={validationState} />);
+                cy.get(EXCLAMATION_MARK_ICON_ID).should('be.visible');
+                return;
+            }
+            cy.mount(<Component validation={validationState} />);
+            cy.get(TRIGGER_ID).find(EXCLAMATION_MARK_ICON_ID).should('have.length', 0);
+        });
     });
 });
