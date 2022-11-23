@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { PropsWithChildren, ReactElement, RefObject, useEffect, useState } from 'react';
+import React, { PropsWithChildren, ReactElement, RefObject, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { merge } from '@utilities/merge';
 import { MenuItemProps } from '@components/MenuItem';
 import { useMenuKeyboardNavigation } from '@components/Menu/useMenuKeyboardNavigation';
+import { useClickOutside } from '@hooks/useClickOutside';
+
 interface Props {
     triggerRef?: RefObject<Element>;
     open?: boolean;
@@ -30,6 +32,17 @@ export const Menu = ({ triggerRef, children, open = true, onClose }: MenuProps) 
         menuContainerRef,
         'li > a, li > button:not(:disabled)',
     );
+
+    const handleClickOutside = useCallback(() => {
+        if (menuOpenerRef && isMenuOpen) {
+            setIsMenuOpen(false);
+            if (onClose) {
+                onClose();
+            }
+        }
+    }, [menuOpenerRef, isMenuOpen]);
+
+    useClickOutside(menuContainerRef, handleClickOutside);
 
     const popperInstance = usePopper(menuOpenerRef, menuContainerRef, {
         placement: 'bottom-start',

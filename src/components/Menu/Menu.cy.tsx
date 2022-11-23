@@ -1,21 +1,44 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import React, { ReactElement } from 'react';
 import {
     BasicMenuComponent,
     ITEMS,
     ITEMS_WITHOUT_ITERACTION,
     ITEMS_WITH_LINKS,
+    Item,
     NoTriggerMenuComponent,
 } from './utils/componentMocks';
 
 const COMPONENT_TEST_ID = '[data-test-id=menu]';
 const ITEM_TEST_ID = '[data-test-id=menu-item]';
+const COMPONENT_NAME = 'Menu';
+const MENU_SELECTOR = `@${COMPONENT_NAME}`;
 
-const verifyButtonItem = (value = 1) => {
-    cy.focused().should('have.attr', 'type', 'button');
-    cy.focused().realPress('Enter');
-    cy.get('@onButtonClick').should('have.been.calledWith', value);
+const mountMenu = (Component: typeof BasicMenuComponent, items: Item[]) => {
+    cy.mount(<Component items={items} />);
+    cy.get(COMPONENT_TEST_ID).as(COMPONENT_NAME);
+
+    cy.get(MENU_SELECTOR).should('be.visible', 1);
+};
+
+const openMenuWithMouse = () => {
+    cy.get(MENU_SELECTOR).find('button').eq(0).click();
+    cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
+};
+
+const closeMenuWithMouse = (hasTrigger = true, clickOutside = false) => {
+    if (hasTrigger && !clickOutside) {
+        cy.get(MENU_SELECTOR).find('button').eq(0).click();
+    } else {
+        cy.get('body').click(0, 0);
+    }
+
+    if (hasTrigger) {
+        cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-hidden');
+    } else {
+        cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
+    }
 };
 
 /**
@@ -41,6 +64,12 @@ const openWithKeyboard = (hasTrigger = true) => {
     }
 
     cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
+};
+
+const verifyButtonItem = (value = 1) => {
+    cy.focused().should('have.attr', 'type', 'button');
+    cy.focused().realPress('Enter');
+    cy.get('@onButtonClick').should('have.been.calledWith', value);
 };
 
 const linkItemsKeyboardNavigation = (hasTrigger = true) => {
@@ -108,23 +137,55 @@ const buttonItemsKeyboardNavigation = (hasTrigger = true) => {
     closeMenuWithKeyboard(['Tab'], hasTrigger);
 };
 
-const COMPONENT_NAME = 'Menu';
-const MENU_SELECTOR = `@${COMPONENT_NAME}`;
-
 describe('Menu component', () => {
-    describe('With Links and Trigger', () => {
+    describe('Basic mouse interaction with non interactive items and a Trigger', () => {
         beforeEach(() => {
-            cy.mount(<BasicMenuComponent items={ITEMS_WITH_LINKS} />);
-            cy.get(COMPONENT_TEST_ID).as(COMPONENT_NAME);
+            mountMenu(BasicMenuComponent, ITEMS_WITHOUT_ITERACTION);
+        });
+
+        it('opens the menu and checks if the spans are present', () => {
+            openMenuWithMouse();
+
+            for (const [index] of ITEMS_WITHOUT_ITERACTION.entries()) {
+                cy.get(ITEM_TEST_ID).eq(index).find('> span').should('have.length', 1);
+            }
+        });
+
+        it('opens the menu and close it by clicking on the Trigrer', () => {
+            openMenuWithMouse();
+            closeMenuWithMouse(true, true);
+        });
+
+        it('opens the menu and close it by clicking outside', () => {
+            openMenuWithMouse();
+            closeMenuWithMouse(true, true);
+        });
+    });
+
+    describe('Basic mouse interaction with non interactive items without a Trigger', () => {
+        beforeEach(() => {
+            mountMenu(NoTriggerMenuComponent, ITEMS_WITHOUT_ITERACTION);
         });
 
         it('renders the component with links', () => {
-            cy.get(MENU_SELECTOR).should('be.visible', 1);
+            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
+            for (const [index] of ITEMS_WITHOUT_ITERACTION.entries()) {
+                cy.get(ITEM_TEST_ID).eq(index).find('> span').should('have.length', 1);
+            }
         });
 
-        it('opens the menu and checks if the links are correct', () => {
-            cy.get(MENU_SELECTOR).find('button').click();
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
+        it('keeps the menu open when clicking outside', () => {
+            closeMenuWithMouse(false, true);
+        });
+    });
+
+    describe('With Links and Trigger', () => {
+        beforeEach(() => {
+            mountMenu(BasicMenuComponent, ITEMS_WITH_LINKS);
+        });
+
+        it('checks if the links are correct', () => {
+            openMenuWithMouse();
             for (const [index, item] of ITEMS_WITH_LINKS.entries()) {
                 cy.get(ITEM_TEST_ID).eq(index).find('a').should('have.attr', 'href', item.link);
             }
@@ -134,27 +195,21 @@ describe('Menu component', () => {
             linkItemsKeyboardNavigation();
         });
     });
+
     describe('With Buttons and Trigger', () => {
         beforeEach(() => {
             const onClickSpy = cy.spy().as('onButtonClick');
-            cy.mount(
-                <BasicMenuComponent
-                    items={ITEMS.map((item, index) => ({
-                        ...item,
-                        onClick: () => onClickSpy(index + 1),
-                    }))}
-                />,
+            mountMenu(
+                BasicMenuComponent,
+                ITEMS.map((item, index) => ({
+                    ...item,
+                    onClick: () => onClickSpy(index + 1),
+                })),
             );
-            cy.get(COMPONENT_TEST_ID).as(COMPONENT_NAME);
-        });
-
-        it('renders the component with links', () => {
-            cy.get(MENU_SELECTOR).should('be.visible', 1);
         });
 
         it('opens the menu and checks if the buttons are present and the onClick callback is called', () => {
-            cy.get(MENU_SELECTOR).find('button').eq(0).click();
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
+            openMenuWithMouse();
             for (const [index] of ITEMS.entries()) {
                 cy.get(ITEM_TEST_ID).eq(index).find('> button').should('have.length', 1);
                 cy.get(ITEM_TEST_ID).eq(index).find('> button').click();
@@ -168,18 +223,16 @@ describe('Menu component', () => {
 
         it('jumps disabled button on keyboard navigation', () => {
             const onClickSpy = cy.spy().as('onButtonClick');
-            cy.mount(
-                <BasicMenuComponent
-                    items={ITEMS.map((item, index) => ({
-                        ...item,
-                        onClick: () => onClickSpy(index + 1),
-                        disabled: index === 1,
-                    }))}
-                />,
+            mountMenu(
+                BasicMenuComponent,
+                ITEMS.map((item, index) => ({
+                    ...item,
+                    onClick: () => onClickSpy(index + 1),
+                    disabled: index === 1,
+                })),
             );
-            cy.get(COMPONENT_TEST_ID).as(COMPONENT_NAME);
-            cy.get(MENU_SELECTOR).find('button').eq(0).focus().realPress('Enter');
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
+            openWithKeyboard();
+
             verifyButtonItem(1);
             cy.focused().trigger('keydown', { key: 'ArrowDown' });
             verifyButtonItem(3);
@@ -188,40 +241,20 @@ describe('Menu component', () => {
         });
 
         it('closes the menu when pressing Esc key', () => {
-            cy.get(MENU_SELECTOR).find('button').eq(0).focus().realPress('Enter');
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
+            openWithKeyboard();
+
             verifyButtonItem(1);
             cy.focused().trigger('keydown', { key: 'Escape' });
             cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-hidden');
         });
     });
-    describe('With Spans and Trigger', () => {
-        beforeEach(() => {
-            cy.mount(<BasicMenuComponent items={ITEMS_WITHOUT_ITERACTION} />);
-            cy.get(COMPONENT_TEST_ID).as(COMPONENT_NAME);
-        });
-
-        it('renders the component with links', () => {
-            cy.get(MENU_SELECTOR).should('be.visible', 1);
-        });
-
-        it('opens the menu and checks if the spans are present', () => {
-            cy.get(MENU_SELECTOR).find('button').click();
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
-            for (const [index] of ITEMS_WITHOUT_ITERACTION.entries()) {
-                cy.get(ITEM_TEST_ID).eq(index).find('> span').should('have.length', 1);
-            }
-        });
-    });
 
     describe('With Links without Trigger', () => {
         beforeEach(() => {
-            cy.mount(<NoTriggerMenuComponent items={ITEMS_WITH_LINKS} />);
-            cy.get(COMPONENT_TEST_ID).as(COMPONENT_NAME);
+            mountMenu(NoTriggerMenuComponent, ITEMS_WITH_LINKS);
         });
 
         it('renders the component with links already open', () => {
-            cy.get(MENU_SELECTOR).should('be.visible', 1);
             cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
             for (const [index, item] of ITEMS_WITH_LINKS.entries()) {
                 cy.get(ITEM_TEST_ID).eq(index).find('a').should('have.attr', 'href', item.link);
@@ -232,18 +265,17 @@ describe('Menu component', () => {
             linkItemsKeyboardNavigation(false);
         });
     });
+
     describe('With Buttons without Trigger', () => {
         beforeEach(() => {
             const onClickSpy = cy.spy().as('onButtonClick');
-            cy.mount(
-                <NoTriggerMenuComponent
-                    items={ITEMS.map((item, index) => ({
-                        ...item,
-                        onClick: () => onClickSpy(index + 1),
-                    }))}
-                />,
+            mountMenu(
+                NoTriggerMenuComponent,
+                ITEMS.map((item, index) => ({
+                    ...item,
+                    onClick: () => onClickSpy(index + 1),
+                })),
             );
-            cy.get(COMPONENT_TEST_ID).as(COMPONENT_NAME);
         });
 
         it('renders the component with buttons and the onClick callback is called', () => {
@@ -284,21 +316,6 @@ describe('Menu component', () => {
             verifyButtonItem(1);
             cy.focused().trigger('keydown', { key: 'Escape' });
             cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
-        });
-    });
-
-    describe('With Spans without Trigger', () => {
-        beforeEach(() => {
-            cy.mount(<NoTriggerMenuComponent items={ITEMS_WITHOUT_ITERACTION} />);
-            cy.get(COMPONENT_TEST_ID).as(COMPONENT_NAME);
-        });
-
-        it('renders the component with links', () => {
-            cy.get(MENU_SELECTOR).should('be.visible', 1);
-            cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
-            for (const [index] of ITEMS_WITHOUT_ITERACTION.entries()) {
-                cy.get(ITEM_TEST_ID).eq(index).find('> span').should('have.length', 1);
-            }
         });
     });
 });
