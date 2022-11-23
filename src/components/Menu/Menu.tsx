@@ -6,6 +6,7 @@ import { merge } from '@utilities/merge';
 import { MenuItemProps } from '@components/MenuItem';
 import { useMenuKeyboardNavigation } from '@components/Menu/useMenuKeyboardNavigation';
 import { useClickOutside } from '@hooks/useClickOutside';
+import { INSET_BORDER } from '@utilities/borderStyle';
 
 interface Props {
     triggerRef?: RefObject<Element>;
@@ -18,8 +19,7 @@ export type MenuProps = PropsWithChildren<Props>;
 
 const CONTAINER_BASE_CLASSES = 'tw-relative tw-bg-base tw-rounded tw-py-2 tw-shadow-mid tw-w-max';
 const CONTAINER_POSITION_CLASSES = ' tw-left-0 tw-top-7';
-const INSET_BORDER =
-    'before:tw-pointer-events-none before:tw-block before:tw-rounded before:tw-top-0 before:tw-left-0 before:tw-bg-transparent before:tw-absolute before:tw-shadow-inner-line before:tw-w-full before:tw-h-full';
+
 const CONTAINER_CLASSES = merge([CONTAINER_BASE_CLASSES, INSET_BORDER]);
 
 export const Menu = ({ triggerRef, children, open = true, onClose }: MenuProps) => {
