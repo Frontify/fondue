@@ -11,7 +11,9 @@ export const useClickOutside = (
         function handleClickOutside(event: MouseEvent) {
             if (
                 !reference?.contains(event.target as Node) &&
-                !ignoredElements?.find((element) => event.target === element || element.contains(event.target as Node))
+                !ignoredElements?.find(
+                    (element) => element && (event.target === element || element.contains(event.target as Node)),
+                )
             ) {
                 callback();
             }
