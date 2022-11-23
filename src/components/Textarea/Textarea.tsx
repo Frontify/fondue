@@ -9,6 +9,7 @@ import { Validation, validationClassMap } from '@utilities/validation';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
 import React, { FC, FocusEvent, FormEvent, ReactNode } from 'react';
 import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
+import { IconExclamationMarkTriangle } from '@foundation/Icon';
 
 export type TextareaProps = {
     id?: string;
@@ -79,6 +80,7 @@ export const Textarea: FC<TextareaProps> = ({
                     isFocusVisible && FOCUS_STYLE,
                     validationClassMap[validation],
                     !resizeable && 'tw-resize-none',
+                    validation === Validation.Error && 'tw-pr-8',
                 ])}
                 disabled={disabled}
                 data-test-id="textarea"
@@ -86,6 +88,14 @@ export const Textarea: FC<TextareaProps> = ({
             {validation === Validation.Loading && (
                 <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
+                </span>
+            )}
+            {validation === Validation.Error && (
+                <span
+                    className="tw-absolute tw-top-[0.6rem] tw-right-[0.6rem] tw-text-red-60"
+                    data-test-id="error-state-exclamation-mark-icon"
+                >
+                    <IconExclamationMarkTriangle />
                 </span>
             )}
         </div>
