@@ -4,7 +4,7 @@ import { CSSProperties } from 'react';
 import { ButtonStyles, TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 
 export type DesignTokens = Partial<Record<TextStyles, CSSProperties>> &
-    Partial<Record<ButtonStyles, CSSProperties & { hover: CSSProperties }>>;
+    Partial<Record<ButtonStyles, CSSProperties & { hover?: CSSProperties }>>;
 
 export enum PaddingSizes {
     None = 'tw-p-0',
