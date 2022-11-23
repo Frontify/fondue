@@ -23,12 +23,12 @@ describe('OverflowMenu component', () => {
     });
 
     it('opens the menu and closes the menu', () => {
-        cy.get('@OverflowMenu').find('button').click();
+        cy.get('@OverflowMenu').find('button').eq(0).click();
         cy.get(COMPONENT_TEST_ID).find('nav').should('have.class', 'tw-block');
         for (const [index, item] of LINK_ITEMS.entries()) {
             cy.get(ITEM_TEST_ID).eq(index).find('a').should('have.attr', 'href', item.link);
         }
-        cy.get('@OverflowMenu').find('button').click();
+        cy.get('@OverflowMenu').find('button').eq(0).click();
         cy.get(COMPONENT_TEST_ID).find('nav').should('have.class', 'tw-hidden');
     });
 
