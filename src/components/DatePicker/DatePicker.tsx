@@ -44,6 +44,7 @@ export const DatePicker: FC<DatePickerProps> = ({
                         isCalendarOpen={isCalendarOpen}
                         isClearable={isClearable}
                         placeHolder={placeHolder}
+                        onDateChanged={onDateChanged}
                     />
                 }
                 formatWeekDay={(day) => day.slice(0, 1)}
