@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { Position } from './EditorPositioningWrapper';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import { serializeNodesToHtml } from './serializer/serializeToHtml';
@@ -71,13 +71,13 @@ export default {
     },
 } as Meta;
 
-const RichTextEditorTemplate: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
 
 export const RichTextEditor = RichTextEditorTemplate.bind({});
 
-export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEditorProps) => (
+export const RichTextEditorFlex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <div className="tw-flex tw-gap-x-7 tw-justify-start">
         <div className="tw-min-w-[1rem]">
             <div className="tw-text-left">
@@ -87,7 +87,7 @@ export const RichTextEditorFlex: Story<RichTextEditorProps> = (args: RichTextEdi
     </div>
 );
 
-export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
+export const RichTextEditorSerialized: StoryFn<RichTextEditorProps> = () => {
     const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
     return (
         <>
@@ -107,7 +107,7 @@ export const RichTextEditorSerialized: Story<RichTextEditorProps> = () => {
     );
 };
 
-export const MarkdownSerializerDeserializer: Story<RichTextEditorProps> = () => {
+export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () => {
     const toSlateTransform = Transform.use(new MarkdownToSlate());
     const resultSlate = toSlateTransform.process(markdownText);
 
@@ -132,7 +132,7 @@ export const MarkdownSerializerDeserializer: Story<RichTextEditorProps> = () => 
     );
 };
 
-export const MultipleRichTextEditors: Story<RichTextEditorProps> = () => (
+export const MultipleRichTextEditors: StoryFn<RichTextEditorProps> = () => (
     <div className="tw-grid tw-grid-cols-2 tw-gap-2">
         <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
             <RichTextEditorComponent

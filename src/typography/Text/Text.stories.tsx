@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared';
 import { Text as TextComponent, TextProps } from './Text';
@@ -37,9 +37,9 @@ export default {
     },
 } as Meta<TextProps>;
 
-export const DefaultText: Story<TextProps> = (args) => <TextComponent {...args} />;
+export const DefaultText: StoryFn<TextProps> = (args) => <TextComponent {...args} />;
 
-export const LongTextWithNewLines: Story<TextProps> = (args) => (
+export const LongTextWithNewLines: StoryFn<TextProps> = (args) => (
     <div className="tw-w-[200px] tw-p-2 tw-rounded tw-border">
         <TextComponent {...args}>
             {`Text with veryveryveryveryveryextremelyhugelymassivelysuperlengthygiganticwords and limited width.\nThis is to display

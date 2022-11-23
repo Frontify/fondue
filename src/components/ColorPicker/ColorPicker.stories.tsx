@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
 import { ColorFormat } from '../../types/colors';
 import { ColorPicker, ColorPickerProps } from './ColorPicker';
@@ -17,7 +17,7 @@ export default {
     },
 } as Meta<ColorPickerProps>;
 
-const Template: Story<ColorPickerProps> = (args) => {
+const Template: StoryFn<ColorPickerProps> = (args) => {
     const [selectedColor, setSelectedColor] = useState(args.currentColor);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
 

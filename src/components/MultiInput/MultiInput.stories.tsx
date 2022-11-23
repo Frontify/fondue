@@ -4,7 +4,7 @@ import { Dropdown, DropdownSize } from '@components/Dropdown/Dropdown';
 import { MenuItemContentSize } from '@components/MenuItem';
 import { TextInput } from '@components/TextInput/TextInput';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
 import { MultiInput as MultiInputComponent, MultiInputLayout, MultiInputProps } from './MultiInput';
 import { IconIcon } from '@foundation/Icon';
@@ -24,7 +24,7 @@ export default {
     },
 } as Meta<MultiInputProps>;
 
-export const MultiInputColumns: Story<MultiInputProps> = (args: MultiInputProps) => {
+export const MultiInputColumns: StoryFn<MultiInputProps> = (args: MultiInputProps) => {
     const [input1, setInput1] = useState('Some value');
     const [input2, setInput2] = useState('Some value');
     const [input3, setInput3] = useState('Some value');
@@ -40,7 +40,7 @@ export const MultiInputColumns: Story<MultiInputProps> = (args: MultiInputProps)
     );
 };
 
-export const MultiInputTwoInputs: Story<MultiInputProps> = (args: MultiInputProps) => {
+export const MultiInputTwoInputs: StoryFn<MultiInputProps> = (args: MultiInputProps) => {
     const [input1, setInput1] = useState("Here's a value");
     const [input2, setInput2] = useState("And here's another one");
 
@@ -52,7 +52,7 @@ export const MultiInputTwoInputs: Story<MultiInputProps> = (args: MultiInputProp
     );
 };
 
-export const MultiInputThreeInputs: Story<MultiInputProps> = (args: MultiInputProps) => {
+export const MultiInputThreeInputs: StoryFn<MultiInputProps> = (args: MultiInputProps) => {
     const [input1, setInput1] = useState('Some value');
     const [input2, setInput2] = useState('Some other value');
     const [activeItemId, setActiveItemId] = useState<string | number | undefined>();
@@ -84,7 +84,7 @@ MultiInputThreeInputs.args = {
     spanLastItem: true,
 };
 
-export const MultiInputSpider: Story<MultiInputProps> = (args: MultiInputProps) => {
+export const MultiInputSpider: StoryFn<MultiInputProps> = (args: MultiInputProps) => {
     const [input1, setInput1] = useState('8px');
     const [input2, setInput2] = useState('8px');
     const [input3, setInput3] = useState('8px');
