@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement } from 'react';
+import React from 'react';
 import {
     BasicMenuComponent,
     ITEMS,
