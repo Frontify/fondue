@@ -46,8 +46,7 @@
 }
 
 .react-datepicker__input-container .react-datepicker__close-icon::after {
-    background-color: transparent;
-    color: transparent;
+    display: none;
 }
 
 .react-datepicker-wrap .react-datepicker__day {
