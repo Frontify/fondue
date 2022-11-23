@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Validation } from '@utilities/validation';
 import React, { FC, useEffect, useState } from 'react';
 import { TextInput, TextInputProps, TextInputType } from './TextInput';
 
@@ -13,6 +14,7 @@ const CLEAR_ICON_ID = '[data-test-id=clear-icon]';
 const COPY_ICON_ID = '[data-test-id=copy-icon]';
 const DECORATOR_ID = '[data-test-id=decorator]';
 const VISIBILITY_ICON_ID = '[data-test-id=visibility-icon]';
+const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
 
 const StatefulInput: FC<TextInputProps> = (props) => {
     const [input, setInput] = useState<string>('');
@@ -31,6 +33,7 @@ describe('Text Input component', () => {
         cy.get(TEXT_INPUT_ID).should('not.have.attr', 'placeholder');
         cy.get(TEXT_INPUT_ID).find(CLEAR_ICON_ID).should('have.length', 0);
         cy.get(TEXT_INPUT_ID).find(DECORATOR_ID).should('have.length', 0);
+        cy.get(TEXT_INPUT_ID).find(EXCLAMATION_MARK_ICON_ID).should('have.length', 0);
     });
 
     it('set and get the value', () => {
@@ -188,5 +191,10 @@ describe('Text Input component', () => {
 
         cy.get(TEXT_INPUT_ID).type(INPUT_TEXT).should('have.value', INPUT_TEXT);
         cy.get(CLEAR_ICON_ID).should('have.attr', 'type', 'button');
+    });
+
+    it('only error validation state should show the triangle warning icon', () => {
+        cy.mount(<StatefulInput validation={Validation.Error} />);
+        cy.get(EXCLAMATION_MARK_ICON_ID).should('be.visible');
     });
 });
