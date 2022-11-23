@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, MouseEvent, useEffect, useState } from 'react';
+import React, { MouseEvent, PropsWithChildren, useEffect, useState } from 'react';
 import { merge } from '@utilities/merge';
 import { IconCaretRight, IconCheckMark, IconSize } from '@foundation/Icon';
 import { MenuItemContent, MenuItemContentProps } from '@components/MenuItem/MenuItemContent';
@@ -48,7 +48,7 @@ const ITEM_WRAPPER_CLASSES =
 const ITEM_HOVER_CLASSES = 'hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover';
 const ITEM_BASE_CLASSES = merge(['tw-w-full tw-text-left tw-py-2 tw-px-5', ITEM_HOVER_CLASSES]);
 
-export const MenuItem: FC<MenuItemProps> = ({
+export const MenuItem = ({
     title,
     decorator,
     switchComponent,
@@ -61,7 +61,7 @@ export const MenuItem: FC<MenuItemProps> = ({
     children,
     link,
     onClick,
-}) => {
+}: PropsWithChildren<MenuItemProps>) => {
     const isDangerStyle = style === MenuItemStyle.Danger;
 
     const currentIconSize = size === MenuItemContentSize.XSmall ? IconSize.Size16 : IconSize.Size20;

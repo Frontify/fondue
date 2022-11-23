@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, HTMLAttributes, ReactElement, ReactNode, cloneElement } from 'react';
+import React, { HTMLAttributes, PropsWithChildren, ReactElement, ReactNode, cloneElement } from 'react';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 import { MenuItemContentSize } from './types';
@@ -23,7 +23,7 @@ const paddingRight: Record<MenuItemContentSize, string> = {
     [MenuItemContentSize.Large]: 'tw-pr-2',
 };
 
-export const MenuItemContent: FC<MenuItemContentProps> = ({
+export const MenuItemContent = ({
     title,
     decorator,
     switchComponent,
@@ -31,7 +31,7 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
     ariaProps,
     size = MenuItemContentSize.Small,
     children,
-}) => (
+}: PropsWithChildren<MenuItemContentProps>) => (
     <div
         {...ariaProps}
         data-test-id="menu-item-content"

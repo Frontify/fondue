@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { Menu, MenuProps } from './Menu';
 import { BasicMenuComponent, ITEMS, ITEMS_WITH_LINKS, Item, NoTriggerMenuComponent } from './utils/componentMocks';
 
@@ -10,12 +10,12 @@ export default {
     component: Menu,
 } as Meta<MenuProps>;
 
-const TemplateWithoutTrigger: Story<MenuProps & { items: Item[] }> = (args) => (
+const TemplateWithoutTrigger: StoryFn<MenuProps & { items: Item[] }> = (args) => (
     <div className="tw-p-4">
         <NoTriggerMenuComponent {...args} />
     </div>
 );
-const Template: Story<MenuProps & { items: Item[] }> = (args) => <BasicMenuComponent {...args} />;
+const Template: StoryFn<MenuProps & { items: Item[] }> = (args) => <BasicMenuComponent {...args} />;
 
 export const BasicMenu = Template.bind({});
 BasicMenu.args = {
