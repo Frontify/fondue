@@ -13,6 +13,7 @@ interface Props {
     open?: boolean;
     children?: ReactElement<MenuItemProps> | ReactElement<MenuItemProps>[];
     onClose?: () => void;
+    offset?: [number, number];
 }
 
 export type MenuProps = PropsWithChildren<Props>;
@@ -22,7 +23,7 @@ const CONTAINER_POSITION_CLASSES = ' tw-left-0 tw-top-7';
 
 const CONTAINER_CLASSES = merge([CONTAINER_BASE_CLASSES, INSET_BORDER]);
 
-export const Menu = ({ triggerRef, children, open = true, onClose }: MenuProps) => {
+export const Menu = ({ triggerRef, children, open = true, offset = [0, 8], onClose }: MenuProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(open);
     const [menuContainerRef, setMenuContainerRef] = useState<HTMLElement | null>(null);
     const [menuOpenerRef, setMenuOpenerRef] = useState<Element | null>(null);
@@ -40,7 +41,7 @@ export const Menu = ({ triggerRef, children, open = true, onClose }: MenuProps) 
                 onClose();
             }
         }
-    }, [menuOpenerRef, isMenuOpen]);
+    }, [menuOpenerRef, isMenuOpen, onClose]);
 
     useClickOutside(menuContainerRef, handleClickOutside);
 
@@ -55,7 +56,7 @@ export const Menu = ({ triggerRef, children, open = true, onClose }: MenuProps) 
             {
                 name: 'offset',
                 options: {
-                    offset: [0, 8],
+                    offset,
                 },
             },
         ],
