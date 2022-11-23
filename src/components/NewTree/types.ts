@@ -2,7 +2,8 @@ import { OnDropCallback } from '@components/DropZone';
 import { ReactElement, ReactNode } from 'react';
 
 export type NewTreeProps = {
-    treeId: string;
+    id: string;
+    draggable?: boolean;
     children: ReactElement<NewTreeItemProps> | Array<ReactElement<NewTreeItemProps>>;
 };
 
@@ -13,5 +14,5 @@ export type NewTreeItemProps = {
     onSelect?: (ids: NullableString[]) => void;
     onDrop?: OnDropCallback<{ id: string; sort: number }>;
     component: ReactNode;
-    children?: ReactNode | ReactNode[];
+    children?: ReactNode;
 };

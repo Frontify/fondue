@@ -4,21 +4,33 @@ import { DndWrapper } from '@utilities/dnd';
 import { NewTreeProps } from './types';
 import { NewTreeContext } from './NewTreeContext';
 
-export const NewTree = ({ treeId, children }: NewTreeProps) => {
+export const NewTree = ({ id, draggable = false, children }: NewTreeProps) => {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const [multiselectMode, setMultiselectMode] = useState<boolean>(false);
+    const [multiselect, setMultiselect] = useState<boolean>(false);
 
     const downKeyHandler = (event: KeyboardEvent) => {
         if (event.key === 'Meta' || event.ctrlKey) {
-            setMultiselectMode(true);
+            setMultiselect(true);
         } else {
-            setMultiselectMode(false);
+            setMultiselect(false);
         }
     };
 
     const upKeyHandler = (event: KeyboardEvent) => {
         if (event.key === 'Meta' || event.ctrlKey) {
-            setMultiselectMode(false);
+            setMultiselect(false);
+        }
+    };
+
+    const handleSelect = (id: string) => {
+        if (multiselect) {
+            const modifiedSelectedIds: Nullable<string[]> = selectedIds.includes(id)
+                ? [...selectedIds].filter((i) => i !== id)
+                : [...selectedIds, id];
+
+            setSelectedIds(modifiedSelectedIds);
+        } else {
+            setSelectedIds([id]);
         }
     };
 
@@ -33,13 +45,13 @@ export const NewTree = ({ treeId, children }: NewTreeProps) => {
     }, []);
 
     return (
-        <NewTreeContext.Provider value={{ treeId, selectedIds, setSelectedIds, multiselectMode }}>
+        <NewTreeContext.Provider value={{ treeId: id, selectedIds, onSelect: handleSelect, draggable }}>
             <ul
-                id={treeId}
+                id={id}
                 data-test-id="tree"
                 className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
             >
-                <DndWrapper id={treeId}>{children}</DndWrapper>
+                <DndWrapper id={id}>{children}</DndWrapper>
             </ul>
         </NewTreeContext.Provider>
     );

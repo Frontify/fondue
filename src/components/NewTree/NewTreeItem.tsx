@@ -7,9 +7,8 @@ import { DropZonePosition } from '@utilities/dnd';
 import { useDrag } from 'react-dnd';
 import { useNewTreeContext } from './NewTreeContext';
 
-/* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-export const NewTreeItem = ({ id, sort, onClick, onSelect, component, children }: NewTreeItemProps) => {
-    const { treeId, selectedIds, setSelectedIds, multiselectMode } = useNewTreeContext();
+export const NewTreeItem = ({ id, sort, component, children }: NewTreeItemProps) => {
+    const { treeId, selectedIds, onSelect, draggable } = useNewTreeContext();
 
     const [showNodes, setShowNodes] = useState<boolean>(false);
 
@@ -19,6 +18,7 @@ export const NewTreeItem = ({ id, sort, onClick, onSelect, component, children }
             opacity: monitor.isDragging() ? 0.4 : 1,
         }),
         type: treeId,
+        canDrag: draggable,
     });
 
     const handleDrop = (arg1: unknown, arg2: unknown, arg3: unknown) => {
@@ -27,25 +27,9 @@ export const NewTreeItem = ({ id, sort, onClick, onSelect, component, children }
         console.log('🚀 ~ handleDrop ~ arg3', arg3);
     };
 
-    const handleNodeClick = () => {
-        if (multiselectMode) {
-            const modifiedSelectedIds: Nullable<string[]> = selectedIds.includes(id)
-                ? [...selectedIds].filter((i) => i !== id)
-                : [...selectedIds, id];
-
-            setSelectedIds(modifiedSelectedIds);
-            onSelect?.(modifiedSelectedIds);
-        } else {
-            setSelectedIds([id]);
-            onSelect?.([id]);
-        }
-
-        if (onClick) {
-            onClick(id);
-        }
+    const handleSelect = (event: React.SyntheticEvent<HTMLDivElement, Event>) => {
+        onSelect(event.currentTarget.id);
     };
-
-    const selected = selectedIds && selectedIds.length > 0 && selectedIds.includes(id);
 
     const toggleNodesVisibility = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.stopPropagation();
@@ -60,6 +44,7 @@ export const NewTreeItem = ({ id, sort, onClick, onSelect, component, children }
         }
 
         return (
+            /*  eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
             <div
                 className={merge([
                     'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
@@ -72,6 +57,15 @@ export const NewTreeItem = ({ id, sort, onClick, onSelect, component, children }
 
     return (
         <li data-test-id="node" ref={drag} style={{ opacity }}>
+            {/* <DropZone
+                data={{
+                    targetItem: { id, sort },
+                    position: DropZonePosition.Before,
+                }}
+                onDrop={handleDrop}
+                treeId={treeId}
+            /> */}
+
             <DropZone
                 data={{
                     targetItem: { id, sort },
@@ -83,12 +77,11 @@ export const NewTreeItem = ({ id, sort, onClick, onSelect, component, children }
                 <div
                     className={merge([
                         'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
-                        // TEMP
-                        selected
+                        selectedIds.includes(id)
                             ? 'tw-font-medium tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover'
                             : 'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
                     ])}
-                    onClick={handleNodeClick}
+                    onSelect={handleSelect}
                 >
                     <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-6">
                         <span data-test-id="toggle" className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center">
