@@ -1,15 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import type { UserConfig } from 'vite';
+import type { StorybookConfig } from '@storybook/react-vite';
 import eslint from 'vite-plugin-eslint';
 
-export default {
+export default <StorybookConfig>{
     framework: '@storybook/react-vite',
     stories: ['../src/**/*.stories.tsx'],
     addons: ['storybook-dark-mode', '@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-a11y'],
     staticDirs: ['assets'],
-    docsPage: {
-        docs: 'automatic',
+    docs: {
+        docsPage: 'automatic',
     },
     viteFinal(config: UserConfig) {
         //@ts-ignore
