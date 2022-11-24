@@ -2,15 +2,15 @@
 
 import { createContext, useContext } from 'react';
 
-export interface NewTreeContext {
+export interface TreeContext {
     treeId: string;
     selectedIds: string[];
     onSelect: (id: string) => void;
     draggable: boolean;
 }
 
-export const NewTreeContext = createContext<NewTreeContext>({} as NewTreeContext);
+export const TreeContext = createContext<TreeContext>({} as TreeContext);
 
-export const useNewTreeContext = () => {
-    return useContext(NewTreeContext);
+export const useTreeContext = () => {
+    return useContext(TreeContext);
 };

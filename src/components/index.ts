@@ -46,5 +46,3 @@ export * from './Tree';
 export * from './Trigger';
 export * from './EditableText';
 export * from './OverflowMenu';
-
-export * from './NewTree';

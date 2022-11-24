@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { DndWrapper } from '@utilities/dnd';
 
-import { NewTreeProps } from './types';
-import { NewTreeContext } from './NewTreeContext';
+import { TreeContext } from './TreeContext';
+import { TreeProps } from './types';
 
-export const NewTree = ({ id, draggable = false, children }: NewTreeProps) => {
+export const Tree = ({ id, draggable = false, children }: TreeProps) => {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [multiselect, setMultiselect] = useState<boolean>(false);
 
@@ -45,7 +45,7 @@ export const NewTree = ({ id, draggable = false, children }: NewTreeProps) => {
     }, []);
 
     return (
-        <NewTreeContext.Provider value={{ treeId: id, selectedIds, onSelect: handleSelect, draggable }}>
+        <TreeContext.Provider value={{ treeId: id, selectedIds, onSelect: handleSelect, draggable }}>
             <ul
                 id={id}
                 data-test-id="tree"
@@ -53,6 +53,6 @@ export const NewTree = ({ id, draggable = false, children }: NewTreeProps) => {
             >
                 <DndWrapper id={id}>{children}</DndWrapper>
             </ul>
-        </NewTreeContext.Provider>
+        </TreeContext.Provider>
     );
 };

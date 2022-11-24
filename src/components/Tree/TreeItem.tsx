@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { Fragment, ReactElement, ReactNode, useState } from 'react';
+import { useDrag } from 'react-dnd';
+import { DropZone } from '@components/DropZone';
+import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 import { merge } from '@utilities/merge';
 
-import { NewTreeItemProps } from './types';
-import { DropZone } from '@components/DropZone';
-import { DropZonePosition } from '@utilities/dnd';
-import { useDrag } from 'react-dnd';
-import { useNewTreeContext } from './NewTreeContext';
+import { useTreeContext } from './TreeContext';
+import { TreeItemProps } from './types';
 
-export const NewTreeItem = ({ id, sort, component, children }: NewTreeItemProps) => {
-    const { treeId, selectedIds, onSelect, draggable } = useNewTreeContext();
+export const TreeItem = ({ id, sort, onNodeSelect, onDrop, component, children }: TreeItemProps) => {
+    const { treeId, selectedIds, onSelect, draggable } = useTreeContext();
 
     const [showNodes, setShowNodes] = useState<boolean>(false);
 
@@ -21,14 +21,17 @@ export const NewTreeItem = ({ id, sort, component, children }: NewTreeItemProps)
         canDrag: draggable,
     });
 
-    const handleDrop = (arg1: unknown, arg2: unknown, arg3: unknown) => {
-        console.log('🚀 ~ handleDrop ~ arg1', arg1);
-        console.log('🚀 ~ handleDrop ~ arg2', arg2);
-        console.log('🚀 ~ handleDrop ~ arg3', arg3);
+    const handleDrop = (
+        targetItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
+        sourceItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
+        position: DropZonePosition,
+    ) => {
+        onDrop?.(targetItem, sourceItem, position);
     };
 
-    const handleSelect = (event: React.SyntheticEvent<HTMLDivElement, Event>) => {
-        onSelect(event.currentTarget.id);
+    const handleSelect = () => {
+        onSelect(id);
+        onNodeSelect?.(id);
     };
 
     const toggleNodesVisibility = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -37,6 +40,33 @@ export const NewTreeItem = ({ id, sort, component, children }: NewTreeItemProps)
     };
 
     const childrenArray = React.Children.toArray(children);
+
+    let enhancedChildren: ReactNode = childrenArray;
+
+    if (draggable) {
+        enhancedChildren = React.Children.map(children, (child, index) => {
+            if (!child) {
+                return <></>;
+            }
+
+            return React.cloneElement(
+                <Fragment key={index}>
+                    {index === 0 && (
+                        <DropZone
+                            data={{
+                                targetItem: { id, sort },
+                                position: DropZonePosition.Before,
+                            }}
+                            onDrop={handleDrop}
+                            treeId={treeId}
+                        />
+                    )}
+
+                    {child as ReactElement}
+                </Fragment>,
+            );
+        });
+    }
 
     const insertCaret = () => {
         if (childrenArray.length === 0) {
@@ -57,15 +87,6 @@ export const NewTreeItem = ({ id, sort, component, children }: NewTreeItemProps)
 
     return (
         <li data-test-id="node" ref={drag} style={{ opacity }}>
-            {/* <DropZone
-                data={{
-                    targetItem: { id, sort },
-                    position: DropZonePosition.Before,
-                }}
-                onDrop={handleDrop}
-                treeId={treeId}
-            /> */}
-
             <DropZone
                 data={{
                     targetItem: { id, sort },
@@ -74,6 +95,7 @@ export const NewTreeItem = ({ id, sort, component, children }: NewTreeItemProps)
                 onDrop={handleDrop}
                 treeId={treeId}
             >
+                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                 <div
                     className={merge([
                         'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
@@ -81,7 +103,7 @@ export const NewTreeItem = ({ id, sort, component, children }: NewTreeItemProps)
                             ? 'tw-font-medium tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover'
                             : 'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
                     ])}
-                    onSelect={handleSelect}
+                    onClick={handleSelect}
                 >
                     <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-6">
                         <span data-test-id="toggle" className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center">
@@ -98,7 +120,7 @@ export const NewTreeItem = ({ id, sort, component, children }: NewTreeItemProps)
                     className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left [&>li]:tw-pl-4"
                     data-test-id="sub-tree"
                 >
-                    {childrenArray}
+                    {enhancedChildren}
                 </ul>
             )}
 
