@@ -3,7 +3,7 @@
 import { InputLabel, InputLabelProps } from '@components/InputLabel/InputLabel';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import React, { FC, PropsWithChildren, ReactNode, cloneElement, isValidElement } from 'react';
+import React, { FC, PropsWithChildren, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
 
 export enum FormControlStyle {
     Primary = 'Primary',
@@ -128,7 +128,7 @@ export const FormControl: FC<FormControlProps> = ({
                     }
                 >
                     {isValidElement(children)
-                        ? cloneElement(children, {
+                        ? cloneElement(children as ReactElement, {
                               id: label?.htmlFor ?? children.props.id,
                               disabled,
                               validation: inputValidation[style],

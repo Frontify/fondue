@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { useState } from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { Tree as TreeComponent, TreeProps } from './Tree';
 import { mockNodesFlat } from '@components/Tree/utils/mocks';
 import { getReorderedNodes } from '@components/Tree/utils';
@@ -17,7 +17,7 @@ export default {
     },
 } as Meta<TreeProps>;
 
-export const Tree: Story<TreeProps> = ({ ...args }: TreeProps) => {
+export const Tree: StoryFn<TreeProps> = ({ ...args }: TreeProps) => {
     const [nodesState, setNodesState] = useState(mockNodesFlat);
 
     const handleMove = (sourceItemId: string, parentId: NullableString, positionBeforeId: NullableString): void => {

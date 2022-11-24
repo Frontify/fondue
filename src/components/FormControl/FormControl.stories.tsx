@@ -2,10 +2,10 @@
 
 import { Checklist, ChecklistDirection } from '@components/Checklist/Checklist';
 import { Dropdown, DropdownSize } from '@components/Dropdown/Dropdown';
-import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import { MenuItemContentSize } from '@components/MenuItem';
 import { Slider } from '@components/Slider/Slider';
 import { TextInput } from '@components/TextInput/TextInput';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { generateRandomId } from '@utilities/generateRandomId';
 import React, { useState } from 'react';
 import { FormControl, FormControlDirection, FormControlProps, FormControlStyle, HelperPosition } from './FormControl';
@@ -45,7 +45,7 @@ export default {
     },
 } as Meta<FormControlProps>;
 
-export const WithTextInput: Story<FormControlProps> = (args) => {
+export const WithTextInput: StoryFn<FormControlProps> = (args) => {
     const [input, setInput] = useState('');
 
     return (
@@ -55,7 +55,7 @@ export const WithTextInput: Story<FormControlProps> = (args) => {
     );
 };
 
-export const WithSlider: Story<FormControlProps> = (args) => {
+export const WithSlider: StoryFn<FormControlProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState<string>('a');
     return (
         <FormControl {...args}>
@@ -72,7 +72,7 @@ export const WithSlider: Story<FormControlProps> = (args) => {
     );
 };
 
-export const WithDropdown: Story<FormControlProps> = (args) => {
+export const WithDropdown: StoryFn<FormControlProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState<string | number | undefined>();
     return (
         <FormControl {...args}>
@@ -95,7 +95,7 @@ export const WithDropdown: Story<FormControlProps> = (args) => {
     );
 };
 
-export const WithVerticalChecklist: Story<FormControlProps> = (args) => {
+export const WithVerticalChecklist: StoryFn<FormControlProps> = (args) => {
     const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
     const checkboxes = Array.from({ length: 5 })
         .fill({})

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { Badge } from './Badge';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { BadgeEmphasis, BadgeProps, BadgeStatus, BadgeStyle } from './types';
@@ -34,7 +34,7 @@ export default {
     },
 } as Meta<BadgeProps>;
 
-const BadgeTemplate: Story<BadgeProps> = (args: BadgeProps) => <Badge {...args} />;
+const BadgeTemplate: StoryFn<BadgeProps> = (args: BadgeProps) => <Badge {...args} />;
 
 export const LabelOnly = BadgeTemplate.bind({});
 
@@ -145,7 +145,7 @@ IconOnly.args = {
     children: '',
 };
 
-export const BetweenElements: Story<BadgeProps> = (args: BadgeProps) => (
+export const BetweenElements: StoryFn<BadgeProps> = (args: BadgeProps) => (
     <div className="tw-flex tw-items-center tw-gap-1">
         <span>before </span>
         <Badge {...args} />
@@ -166,7 +166,7 @@ BetweenElements.args = {
     icon: <IconIcon />,
 };
 
-export const MultipleBadgesInRow: Story<BadgeProps> = (args: BadgeProps) => (
+export const MultipleBadgesInRow: StoryFn<BadgeProps> = (args: BadgeProps) => (
     <div className="tw-flex tw-flex-nowrap tw-border tw-border-line tw-rounded tw-p-2 tw-gap-2">
         <Badge {...args} />
         <Badge {...args} />

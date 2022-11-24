@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { IconExclamationMarkCircle, IconInfo, IconQuestionMarkCircle } from '@foundation/Icon/Generated';
 import { InputLabel as InputLabelComponent, InputLabelProps } from './InputLabel';
@@ -19,7 +19,7 @@ export default {
     },
 } as Meta;
 
-export const InputLabel: Story<InputLabelProps> = (args: InputLabelProps) => <InputLabelComponent {...args} />;
+export const InputLabel: StoryFn<InputLabelProps> = (args: InputLabelProps) => <InputLabelComponent {...args} />;
 
 export const InputLabelWithMultipleTooltips = InputLabel.bind({});
 

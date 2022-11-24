@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { Button, ButtonProps } from './Button';
 import { IconEnum, iconsMap } from '@foundation/Icon';
 import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
@@ -55,7 +55,7 @@ export default {
     },
 } as Meta;
 
-const ButtonTemplate: Story<ButtonProps> = (args: ButtonProps) => <Button {...args} />;
+const ButtonTemplate: StoryFn<ButtonProps> = (args: ButtonProps) => <Button {...args} />;
 
 export const Default = ButtonTemplate.bind({});
 Default.args = { ...defaultArgs };

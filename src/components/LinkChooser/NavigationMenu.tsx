@@ -1,9 +1,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MenuItem } from '@components/MenuItem';
-import { SelectionIndicatorIcon } from '@components/MenuItem/MenuItem';
-import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import { MenuItem, MenuItemContentSize, SelectionIndicatorIcon } from '@components/MenuItem';
 import { IconArrowLeft } from '@foundation/Icon';
 import { getInteractionModality } from '@react-aria/interactions';
 import { useOption } from '@react-aria/listbox';

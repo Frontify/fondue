@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { Code as CodeComponent, CodeProps } from './Code';
 
@@ -34,4 +34,4 @@ export default {
     },
 } as Meta<CodeProps>;
 
-export const Code: Story<CodeProps> = (args) => <CodeComponent {...args} />;
+export const Code: StoryFn<CodeProps> = (args) => <CodeComponent {...args} />;

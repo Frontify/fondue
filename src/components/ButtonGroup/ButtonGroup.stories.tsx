@@ -3,7 +3,7 @@
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { IconCheckMark, IconCross, IconPlus } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
-import { Meta } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { ButtonGroup as ButtonGroupComponent, ButtonGroupProps } from './ButtonGroup';
 
@@ -31,7 +31,7 @@ export default {
     },
 } as Meta<ButtonGroupProps>;
 
-export const ButtonGroup = ({ ...args }) => (
+export const ButtonGroup: StoryFn = ({ ...args }) => (
     <ButtonGroupComponent size={args.size}>
         <Button style={args.style} emphasis={args.emphasis} icon={<IconPlus />} onClick={action('onClick')}>
             Button Text

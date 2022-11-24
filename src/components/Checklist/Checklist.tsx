@@ -36,7 +36,6 @@ type ChecklistVertical = ChecklistBase & {
 
 type ChecklistHorizontal = ChecklistBase & {
     direction: ChecklistDirection.Horizontal;
-    columns?: null;
 };
 
 export type ChecklistProps = ChecklistVertical | ChecklistHorizontal;
@@ -71,7 +70,7 @@ export const Checklist = ({
     ariaLabel = 'Checklist',
     activeValues = [],
     direction = ChecklistDirection.Horizontal,
-    columns = 1,
+    ...props
 }: ChecklistProps) => {
     const state = useCheckboxGroupState({
         value: activeValues,
@@ -91,7 +90,9 @@ export const Checklist = ({
             className={merge([
                 direction === ChecklistDirection.Horizontal
                     ? 'tw-flex tw-flex-row tw-gap-12'
-                    : `tw-grid tw-gap-4 ${columns && columnsStyle[columns]}`,
+                    : `tw-grid tw-gap-4 ${
+                          'columns' in props && props.columns !== undefined && columnsStyle[props.columns]
+                      }`,
             ])}
         >
             {checkboxes.map((checkbox) => {
