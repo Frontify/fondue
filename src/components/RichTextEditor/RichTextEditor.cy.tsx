@@ -3,6 +3,7 @@
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
 import React, { CSSProperties, FC, useState } from 'react';
 import { Position } from './EditorPositioningWrapper';
+import { orderedListValue, unorderedListValue } from './helpers/exampleValues';
 import {
     BoldPlugin,
     ELEMENT_BUTTON,
@@ -155,6 +156,10 @@ const RichTextEditorWithValueSetOutside = ({ value }: { value: string }) => {
     return <RichTextEditor onTextChange={(value) => setInitialValue(value)} value={initialValue} />;
 };
 
+const RichTextEditorWithUnorderedListStyles = () => <RichTextEditor value={JSON.stringify([unorderedListValue])} />;
+
+const RichTextEditorWithOrderedListStyles = () => <RichTextEditor value={JSON.stringify([orderedListValue])} />;
+
 describe('RichTextEditor Component', () => {
     describe('Rendering', () => {
         it('should render an empty rich text editor', () => {
@@ -295,6 +300,20 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
             cy.get('[contenteditable=true]').should('include.html', '<ul');
+        });
+
+        it('renders custom styled list items', () => {
+            cy.mount(<RichTextEditorWithUnorderedListStyles />);
+            cy.get('[contenteditable=true] li:first-child').should(
+                'have.attr',
+                'style',
+                'font-size: 14px; font-weight: normal; font-style: normal;',
+            );
+            cy.get('[contenteditable=true] li:nth-child(2)').should(
+                'have.attr',
+                'style',
+                'font-size: 14px; font-weight: 600; font-style: normal;',
+            );
         });
 
         it('renders an ordered list', () => {
