@@ -310,6 +310,12 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] ol ol ol').should('have.class', 'tw-list-[lower-roman]');
         });
 
+        it('renders the list item without text decoration underline', () => {
+            cy.mount(<RichTextEditorWithUnorderedListStyles />);
+
+            cy.get('[contenteditable=true] li').should('have.class', '!tw-no-underline');
+        });
+
         it('renders custom styled list items', () => {
             cy.mount(<RichTextEditorWithUnorderedListStyles />);
             cy.get('[contenteditable=true] li:first-child').should(
