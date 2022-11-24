@@ -38,7 +38,7 @@ type Props = {
     validation?: Validation;
 };
 
-const Component: FC<Props> = ({ validation = Validation.Default }: Props) => {
+const Component = ({ validation = Validation.Default }: Props) => {
     const [activeItems, setActiveItems] = useState<(string | number)[]>(ITEMS.activeItemKeys);
     return (
         <MultiSelect
