@@ -2,3 +2,4 @@
 
 export * from './MenuItem';
 export * from './MenuItemContent';
+export * from './types';

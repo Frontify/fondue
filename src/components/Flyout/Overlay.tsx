@@ -8,6 +8,7 @@ import { mergeProps } from '@react-aria/utils';
 import { merge } from '@utilities/merge';
 import React, { Children, ForwardRefRenderFunction, HTMLAttributes, RefObject, forwardRef } from 'react';
 import { FlyoutProps } from '.';
+import { INSET_BORDER } from '@utilities/borderStyle';
 
 type OverlayProps = Omit<FlyoutProps, 'trigger' | 'onOpenChange' | 'onConfirm' | 'legacyFooter' | 'onCancel'> & {
     positionProps: HTMLAttributes<Element>;
@@ -37,8 +38,6 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
     const { overlayProps } = useOverlay({ onClose, isOpen, isDismissable: true }, ref as RefObject<HTMLDivElement>);
     const { modalProps } = useModal();
     const { dialogProps, titleProps } = useDialog({}, ref as RefObject<HTMLDivElement>);
-    const INSET_BORDER =
-        'before:tw-block before:tw-rounded before:tw-top-0 before:tw-left-0 before:tw-bg-transparent before:tw-absolute before:tw-shadow-inner-line before:tw-w-full before:tw-h-full before:tw-pointer-events-none';
 
     return (
         <div
