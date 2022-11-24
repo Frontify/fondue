@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { OverflowMenu, OverflowMenuProps } from './OverflowMenu';
 import { BreadcrumbItem } from '@components/Breadcrumbs';
 
@@ -38,7 +38,7 @@ export default {
     ],
 } as Meta<OverflowMenuProps>;
 
-const Template: Story<OverflowMenuProps> = (args: OverflowMenuProps) => <OverflowMenu {...args} />;
+const Template: StoryFn<OverflowMenuProps> = (args: OverflowMenuProps) => <OverflowMenu {...args} />;
 
 export const WithLinkItems = Template.bind({});
 WithLinkItems.args = { items: [...ITEMS] };

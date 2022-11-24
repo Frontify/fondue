@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, useState } from 'react';
-import { Color, Palette } from '../../types/colors';
+import type { Color, Palette } from '../../types/colors';
 import { EXAMPLE_PALETTES } from '../ColorPicker/example-palettes';
 import { ColorPickerFlyout } from './ColorPickerFlyout';
 

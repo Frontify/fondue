@@ -1,11 +1,12 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* (c) Copyrkght Frontify Ltd., all rights reserved. */
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import tokens from '@frontify/fondue-tokens';
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 
 export default {
@@ -16,7 +17,7 @@ function getPalette(color: any) {
     return !!color.value ? [color] : [...Object.values(color)];
 }
 
-export const AliasTokens: Story = () => {
+export const AliasTokens: StoryFn = () => {
     const categories = Object.keys(tokens).filter((category) => category !== 'color');
 
     return (
@@ -66,7 +67,7 @@ export const AliasTokens: Story = () => {
     );
 };
 
-export const BrandTokens: Story = () => {
+export const BrandTokens: StoryFn = () => {
     const categories = Object.keys(tokens.color);
 
     return (

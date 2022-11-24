@@ -1,9 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
-import { MenuItem as MenuItemComponent, MenuItemProps, MenuItemStyle, SelectionIndicatorIcon } from './MenuItem';
-import { MenuItemContentSize } from './MenuItemContent';
+import {
+    MenuItem as MenuItemComponent,
+    MenuItemContentSize,
+    MenuItemProps,
+    MenuItemStyle,
+    SelectionIndicatorIcon,
+} from '@components/MenuItem';
 import { Switch, SwitchSize } from '@components/Switch';
 import { IconMusicNote } from '@foundation/Icon';
 
@@ -47,7 +52,7 @@ export default {
     },
 } as Meta;
 
-export const MenuItem: Story<MenuItemProps> = (args) => (
+export const MenuItem: StoryFn<MenuItemProps> = (args) => (
     <MenuItemComponent
         {...args}
         decorator={args.decorator && <IconMusicNote />}

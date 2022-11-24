@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Validation } from '@utilities/validation';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
 import { LinkChooser as LinkChooserComponent } from './LinkChooser';
 import { data } from './mock/data';
@@ -35,7 +35,7 @@ const getGlobalByQueryMock = (query: string): Promise<SearchResult[]> =>
         }, Math.floor(Math.random() * 2000)),
     );
 
-export const LinkChooser: Story<LinkChooserProps> = (args: LinkChooserProps) => {
+export const LinkChooser: StoryFn<LinkChooserProps> = (args: LinkChooserProps) => {
     const [openInNewTab, setOpenInNewTab] = useState<boolean>(false);
 
     return (

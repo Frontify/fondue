@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { TooltipIcon, TooltipIconProps, TooltipIconTriggerStyle } from './TooltipIcon';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
@@ -23,7 +23,7 @@ export default {
     },
 } as Meta<TooltipIconProps>;
 
-const TooltipIconTemplate: Story<TooltipIconProps> = (args: TooltipIconProps) => {
+const TooltipIconTemplate: StoryFn<TooltipIconProps> = (args: TooltipIconProps) => {
     return <TooltipIcon {...args} />;
 };
 

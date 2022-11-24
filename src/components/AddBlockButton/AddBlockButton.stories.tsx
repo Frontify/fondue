@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import {
     AddBlockButton as AddBlockButtonComponent,
     AddBlockButtonDirection,
@@ -26,6 +26,6 @@ export default {
     },
 } as Meta<AddBlockButtonProps>;
 
-export const AddBlockButton: Story<AddBlockButtonProps> = (args: AddBlockButtonProps) => (
+export const AddBlockButton: StoryFn<AddBlockButtonProps> = (args: AddBlockButtonProps) => (
     <AddBlockButtonComponent {...args} />
 );

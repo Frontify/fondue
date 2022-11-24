@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { ActionMenu } from '@components/ActionMenu/ActionMenu/ActionMenu';
 import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
 import { IconSize } from '@foundation/Icon/IconSize';
@@ -46,10 +48,10 @@ export const SelectedAsset: FC<
     const [flyoutWidth, setFlyoutWidth] = useState(0);
 
     useEffect(() => {
-        let timer: NodeJS.Timeout | null = null;
+        let timer: number | null = null;
         const calculateFlyoutWidth = () => {
             const calculatedWidth = buttonRef.current?.getBoundingClientRect().width ?? 0;
-            timer = setTimeout(() => setFlyoutWidth(calculatedWidth), 0);
+            timer = window.setTimeout(() => setFlyoutWidth(calculatedWidth), 0);
         };
         const resizeObserver = new ResizeObserver(calculateFlyoutWidth);
         if (buttonRef.current) {

@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
-
 function IconMediaObjectRatio2To112(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
@@ -30,5 +29,4 @@ function IconMediaObjectRatio2To112(props: GeneratedIconProps): React.ReactEleme
         </svg>
     );
 }
-
 export default memo(IconMediaObjectRatio2To112);

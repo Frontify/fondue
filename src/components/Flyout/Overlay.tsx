@@ -8,6 +8,7 @@ import { mergeProps } from '@react-aria/utils';
 import { merge } from '@utilities/merge';
 import React, { Children, ForwardRefRenderFunction, HTMLAttributes, RefObject, forwardRef } from 'react';
 import { FlyoutProps } from '.';
+import { INSET_BORDER } from '@utilities/borderStyle';
 
 type OverlayProps = Omit<FlyoutProps, 'trigger' | 'onOpenChange' | 'onConfirm' | 'legacyFooter' | 'onCancel'> & {
     positionProps: HTMLAttributes<Element>;
@@ -43,11 +44,11 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
             {...mergeProps(overlayProps, dialogProps, modalProps, positionProps, overlayTriggerProps)}
             ref={ref}
             className={merge([
-                'tw-max-h-full tw-flex tw-shadow-mid tw-outline-none',
+                'tw-rounded tw-flex tw-outline-none tw-relative',
                 fitContent ? 'tw-min-w-0' : 'tw-min-w-[400px]',
             ])}
         >
-            <div className="tw-flex tw-flex-col tw-flex-auto tw-min-h-0">
+            <div className={merge(['tw-flex tw-flex-col tw-flex-auto tw-min-h-0 tw-rounded', INSET_BORDER])}>
                 {fixedHeader}
                 <div
                     ref={scrollRef}

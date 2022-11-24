@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { merge } from '@utilities/merge';
 import React, { FC } from 'react';
 import { AssetInputSize, AssetType, ImageAsset, LibrarySource } from '../AssetInput';
@@ -37,7 +39,7 @@ export const Assets: FC<Pick<MultiAssetPreviewProps, 'assets'>> = ({ assets }) =
                         ])}
                     />
                 ) : (
-                    <div className="tw-h-11 tw-w-11">
+                    <div className="tw-h-11 tw-w-11" key={asset.src}>
                         <AssetThumbnail asset={asset} size={AssetInputSize.Small} isMultiAsset={true} />
                     </div>
                 ),

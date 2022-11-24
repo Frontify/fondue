@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
 import { OrderableList as DropZoneComponent, OrderableListProps } from '../OrderableList';
 import { OrderableListItem } from '../OrderableList/types';
@@ -18,7 +18,7 @@ export default {
     },
 } as Meta<OrderableListProps<StoryListItem>>;
 
-export const DropZoneWithOrderableList: Story<OrderableListProps<StoryListItem>> = ({ onMove, dragDisabled }) => {
+export const DropZoneWithOrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({ onMove, dragDisabled }) => {
     const [items, setItems] = useState(storyItems);
 
     const handleMove = (modifiedItems: OrderableListItem<StoryListItem>[]) => {

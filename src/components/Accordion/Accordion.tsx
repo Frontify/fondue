@@ -87,7 +87,7 @@ const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => {
     return { children: ariaChildren, defaultExpandedKeys };
 };
 
-const filterValidChildren = ({ children }: AccordionProps) =>
+const filterValidChildren = ({ children }: AccordionProps): ReactElement<AccordionItemProps>[] =>
     Children.toArray(children).reduce<ReactElement<AccordionItemProps>[]>((validChildren, child) => {
         if (isValidElement(child) && !child.props.header) {
             console.warn('Use `AccordionItem` as children of `Accordion` and set the `header` prop accordingly.');
@@ -95,7 +95,7 @@ const filterValidChildren = ({ children }: AccordionProps) =>
         }
 
         if (isValidElement(child)) {
-            validChildren.push(child);
+            validChildren.push(child as ReactElement<AccordionItemProps>);
         }
 
         return validChildren;

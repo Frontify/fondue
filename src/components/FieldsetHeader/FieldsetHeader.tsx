@@ -3,8 +3,8 @@
 import { Switch, SwitchSize } from '@components/Switch/Switch';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
-import React, { FC, ReactNode, cloneElement, isValidElement } from 'react';
-import { IconCaretDown, IconMinus, IconPlus, IconSize } from '@foundation/Icon';
+import React, { FC, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
+import { IconCaretDown, IconMinus, IconPlus, IconProps, IconSize } from '@foundation/Icon';
 
 export enum FieldsetHeaderSize {
     Small = 'Small',
@@ -134,7 +134,7 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
         >
             {isValidElement(decorator) && (
                 <span className="tw-shrink-0">
-                    {cloneElement(decorator, {
+                    {cloneElement(decorator as ReactElement<IconProps>, {
                         size: sizeMap[size].icon,
                     })}
                 </span>

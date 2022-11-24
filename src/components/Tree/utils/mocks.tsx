@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { MenuItemContentSize } from '@components/MenuItem';
 import { IconDocument, IconFaceExtraHappy, IconFolder, IconPlus, IconProps, IconSize } from '@foundation/Icon';
 import React, { ReactElement, ReactNode } from 'react';

@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import React, { ReactNode, useRef } from 'react';
 
 type TableHeaderRowProps = {

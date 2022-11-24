@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { useState } from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { DatePicker, DatePickerProps } from './DatePicker';
 import { FormControl } from '@components/FormControl';
 import { Slider } from '@components/Slider';
@@ -11,13 +11,13 @@ export default {
     component: DatePicker,
 } as Meta<DatePickerProps>;
 
-const Template: Story<DatePickerProps> = (args) => {
+const Template: StoryFn<DatePickerProps> = (args) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>();
 
     return <DatePicker {...args} value={selectedDate as Date} onChange={setSelectedDate} />;
 };
 
-const TemplateWithFormControl: Story<DatePickerProps> = (args) => {
+const TemplateWithFormControl: StoryFn<DatePickerProps> = (args) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>();
 
     return (
@@ -49,7 +49,7 @@ Default.args = {
     placeHolder: 'Select a date',
     isClearable: true,
     shouldCloseOnSelect: true,
-    dateFormat: 'MM/dd/yyyy',
+    dateFormat: 'dd MMM yyyy',
 };
 
 Default.storyName = 'Date Picker';
@@ -59,5 +59,5 @@ InsideFormControlAndOverSlider.args = {
     placeHolder: 'Select a date',
     isClearable: true,
     shouldCloseOnSelect: true,
-    dateFormat: 'MM/dd/yyyy',
+    dateFormat: 'dd MMM yyyy',
 };

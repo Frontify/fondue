@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { AccordionHeader as AccordionHeaderComponent } from './AccordionHeader';
 import { AccordionHeaderProps } from './types';
 import { IconExclamationMarkTriangle, IconHome, IconIcon } from '@foundation/Icon';
@@ -39,4 +39,4 @@ export default {
     },
 } as Meta<AccordionHeaderProps>;
 
-export const AccordionHeader: Story<AccordionHeaderProps> = (args) => <AccordionHeaderComponent {...args} />;
+export const AccordionHeader: StoryFn<AccordionHeaderProps> = (args) => <AccordionHeaderComponent {...args} />;

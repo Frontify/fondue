@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { useState } from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { TabSize, Tabs, TabsPaddingX, TabsProps } from './Tabs';
 import { Button } from '@components/Button';
 import { Text } from '@typography/Text';
@@ -87,7 +87,7 @@ export default {
     },
 } as Meta<TabsProps>;
 
-const TabTemplate: Story<TabsProps> = (args) => {
+const TabTemplate: StoryFn<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
         <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
@@ -103,7 +103,7 @@ export const Default = TabTemplate.bind({});
 Default.storyName = 'Label Only';
 
 const dataWithIcon = data.map((item) => Object.assign({}, item, { decorator: <IconIcon size={IconSize.Size16} /> }));
-const TabWithIconTemplate: Story<TabsProps> = (args) => {
+const TabWithIconTemplate: StoryFn<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
         <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
@@ -132,7 +132,7 @@ const dataWithBadge = data.map((item) =>
         },
     }),
 );
-const TabWithBadgeTemplate: Story<TabsProps> = (args) => {
+const TabWithBadgeTemplate: StoryFn<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
         <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
@@ -156,7 +156,7 @@ WithBadge.storyName = 'Label and Badge';
 const dataWithBadgeAndIcon = dataWithBadge.map((item) =>
     Object.assign({}, item, { decorator: <IconIcon size={IconSize.Size16} /> }),
 );
-const TabWithBadgeAndIconTemplate: Story<TabsProps> = (args) => {
+const TabWithBadgeAndIconTemplate: StoryFn<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
         <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>

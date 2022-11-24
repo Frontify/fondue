@@ -2,19 +2,26 @@
 
 import { ReactNode } from 'react';
 import { PlateEditor } from '@udecode/plate';
-import { TextStyles } from '../TextStyles';
+import { SelectableTextStyles, TextStyles } from '../TextStyles';
+import { PluginButtonProps } from '../../types';
 
 export type TextStyleDropdownProps = {
     editorId?: string;
+    textStyles?: SelectableTextStyles[];
 };
 
 export type DropdownTriggerProps = {
-    editor: PlateEditor;
+    label: string;
     open: boolean;
+    onClick: () => void;
 };
 
 export type DropdownItemProps = {
     editor: PlateEditor;
     type: TextStyles;
     children: ReactNode;
+};
+
+export type TextStyleButtonProps = PluginButtonProps & {
+    textStyles?: SelectableTextStyles[];
 };

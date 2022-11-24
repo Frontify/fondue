@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { DropZone, DropZoneProps } from '@components/DropZone/DropZone';
 import { DraggableItem as DraggableItemProp, DropZonePosition } from '@utilities/dnd';
 import React from 'react';
