@@ -14,6 +14,7 @@ import {
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
     TDescendant,
+    TNode,
 } from '@udecode/plate';
 import { ELEMENT_BUTTON } from '../Plugins';
 import { ELEMENT_CHECK_ITEM } from '../Plugins/CheckboxListPlugin/id';
@@ -42,6 +43,23 @@ const createElement = ({ text, element = ELEMENT_PARAGRAPH, mark }: CreateElemen
     };
 };
 
+type CreateLicElementProps = {
+    text: string;
+    textStyle?: TextStyles;
+};
+
+const createLicElement = ({ text, textStyle }: CreateLicElementProps) => {
+    const textNode: TNode = { text };
+    if (textStyle) {
+        textNode[MARK_TEXT_STYLE] = textStyle;
+    }
+
+    return {
+        type: ELEMENT_LIC,
+        children: [{ text, [MARK_TEXT_STYLE]: textStyle }],
+    };
+};
+
 export const IPSUM =
     'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.';
 
@@ -51,84 +69,43 @@ export const unorderedListValue = {
         {
             type: ELEMENT_LI,
             children: [
-                {
-                    type: ELEMENT_LIC,
-                    children: [
-                        { text: 'This is list item number two.', [MARK_TEXT_STYLE]: TextStyles.ELEMENT_CUSTOM1 },
-                    ],
-                },
+                createLicElement({ text: 'This is list item number two.', textStyle: TextStyles.ELEMENT_CUSTOM1 }),
             ],
         },
         {
             type: ELEMENT_LI,
             children: [
-                {
-                    type: ELEMENT_LIC,
-                    children: [
-                        { text: 'This is list item number one.', [MARK_TEXT_STYLE]: TextStyles.ELEMENT_CUSTOM2 },
-                    ],
-                },
+                createLicElement({ text: 'This is list item number one.', textStyle: TextStyles.ELEMENT_CUSTOM2 }),
             ],
         },
         {
             type: ELEMENT_LI,
             children: [
-                {
-                    type: ELEMENT_LIC,
-                    children: [
-                        { text: 'This is list item number three.', [MARK_TEXT_STYLE]: TextStyles.ELEMENT_CUSTOM3 },
-                    ],
-                },
+                createLicElement({ text: 'This is list item number three.', textStyle: TextStyles.ELEMENT_CUSTOM3 }),
                 {
                     type: ELEMENT_UL,
                     children: [
                         {
                             type: ELEMENT_LI,
-                            children: [
-                                {
-                                    type: ELEMENT_LIC,
-                                    children: [{ text: 'This is child item number one.' }],
-                                },
-                            ],
+                            children: [createLicElement({ text: 'This is child item number one.' })],
                         },
                         {
                             type: ELEMENT_LI,
                             children: [
-                                {
-                                    type: ELEMENT_LIC,
-                                    children: [
-                                        {
-                                            text: 'This is child item number two, with more children.',
-                                        },
-                                    ],
-                                },
+                                createLicElement({ text: 'This is child item number two, with more children.' }),
                                 {
                                     type: ELEMENT_UL,
                                     children: [
                                         {
                                             type: ELEMENT_LI,
                                             children: [
-                                                {
-                                                    type: ELEMENT_LIC,
-                                                    children: [
-                                                        {
-                                                            text: 'This is child of child item number one.',
-                                                        },
-                                                    ],
-                                                },
+                                                createLicElement({ text: 'This is child of child item number one.' }),
                                             ],
                                         },
                                         {
                                             type: ELEMENT_LI,
                                             children: [
-                                                {
-                                                    type: ELEMENT_LIC,
-                                                    children: [
-                                                        {
-                                                            text: 'This is child of child item number two.',
-                                                        },
-                                                    ],
-                                                },
+                                                createLicElement({ text: 'This is child of child item number two.' }),
                                             ],
                                         },
                                     ],
@@ -156,68 +133,39 @@ export const orderedListValue = {
         {
             type: ELEMENT_LI,
             children: [
-                {
-                    type: ELEMENT_LIC,
-                    children: [{ text: 'And last but not least, this comes third.' }],
-                },
+                createLicElement({ text: 'And last but not least, this comes third.' }),
                 {
                     type: ELEMENT_OL,
                     children: [
                         {
                             type: ELEMENT_LI,
-                            children: [
-                                {
-                                    type: ELEMENT_LIC,
-                                    children: [{ text: 'This is child item number one.' }],
-                                },
-                            ],
+                            children: [createLicElement({ text: 'This is child item number one.' })],
                         },
                         {
                             type: ELEMENT_LI,
                             children: [
-                                {
-                                    type: ELEMENT_LIC,
-                                    children: [{ text: 'This is child item number two.' }],
-                                },
+                                createLicElement({ text: 'This is child item number two.' }),
                                 {
                                     type: ELEMENT_OL,
                                     children: [
                                         {
                                             type: ELEMENT_LI,
-                                            children: [
-                                                {
-                                                    type: ELEMENT_LIC,
-                                                    children: [{ text: 'Nested child item number one.' }],
-                                                },
-                                            ],
+                                            children: [createLicElement({ text: 'Nested child item number one.' })],
                                         },
                                         {
                                             type: ELEMENT_LI,
                                             children: [
-                                                {
-                                                    type: ELEMENT_LIC,
-                                                    children: [{ text: 'Nested child item number two.' }],
-                                                },
+                                                createLicElement({ text: 'Nested child item number two.' }),
                                                 {
                                                     type: ELEMENT_OL,
                                                     children: [
                                                         {
                                                             type: ELEMENT_LI,
-                                                            children: [
-                                                                {
-                                                                    type: ELEMENT_LIC,
-                                                                    children: [{ text: 'Level 5 item 1' }],
-                                                                },
-                                                            ],
+                                                            children: [createLicElement({ text: 'Level 5 item 1' })],
                                                         },
                                                         {
                                                             type: ELEMENT_LI,
-                                                            children: [
-                                                                {
-                                                                    type: ELEMENT_LIC,
-                                                                    children: [{ text: 'Level 5 item 2' }],
-                                                                },
-                                                            ],
+                                                            children: [createLicElement({ text: 'Level 5 item 2' })],
                                                         },
                                                     ],
                                                 },
