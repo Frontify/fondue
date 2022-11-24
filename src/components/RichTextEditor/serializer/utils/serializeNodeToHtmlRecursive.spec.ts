@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL } from '@udecode/plate';
-import { UL_CLASSES, getOrderedListClasses } from '@components/RichTextEditor/Plugins';
+import { orderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
+import { getOrderedListClasses, UL_CLASSES } from '@components/RichTextEditor/Plugins';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
+import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL } from '@udecode/plate';
 import { serializeNodeToHtmlRecursive } from './serializeNodeToHtmlRecursive';
 
 describe('serializeNodeToHtmlRecursive()', () => {
@@ -38,6 +39,17 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 0,
             )}"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This comes first.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This comes second.</span></li></ol>`,
         );
+    });
+
+    it('serializes unordered list with correct list styles to html', () => {
+        const result = serializeNodeToHtmlRecursive(orderedListValue, defaultDesignTokens);
+
+        const parser = new DOMParser();
+        const htmlDoc = parser.parseFromString(result, 'text/html');
+        const orderedLists = htmlDoc.getElementsByTagName('ol');
+        expect(orderedLists[0]?.className).to.include('tw-list-[decimal]');
+        expect(orderedLists[1]?.className).to.include('tw-list-[lower-alpha]');
+        expect(orderedLists[2]?.className).to.include('tw-list-[lower-roman]');
     });
 
     it('serializes unordered list to html', () => {
