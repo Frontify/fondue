@@ -116,7 +116,7 @@ export const Dropdown: FC<DropdownProps> = ({
         }
 
         state.setSelectedKey(activeItemId as string);
-    }, [activeItemId, state]);
+    }, [activeItemId]);
 
     const { maxHeight } = useDropdownAutoHeight(triggerRef, { isOpen, autoResize });
 
