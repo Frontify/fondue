@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { orderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
+import { orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
 import { getOrderedListClasses, UL_CLASSES } from '@components/RichTextEditor/Plugins';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
@@ -41,7 +41,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         );
     });
 
-    it('serializes unordered list with correct list styles to html', () => {
+    it('serializes ordered list with correct list style types to html', () => {
         const result = serializeNodeToHtmlRecursive(orderedListValue, defaultDesignTokens);
 
         const parser = new DOMParser();
@@ -50,6 +50,24 @@ describe('serializeNodeToHtmlRecursive()', () => {
         expect(orderedLists[0]?.className).to.include('tw-list-[decimal]');
         expect(orderedLists[1]?.className).to.include('tw-list-[lower-alpha]');
         expect(orderedLists[2]?.className).to.include('tw-list-[lower-roman]');
+    });
+
+    it('serializes list item with custom styles to html', () => {
+        const result = serializeNodeToHtmlRecursive(unorderedListValue, defaultDesignTokens);
+
+        const parser = new DOMParser();
+        const htmlDoc = parser.parseFromString(result, 'text/html');
+        const listItems = htmlDoc.getElementsByTagName('li');
+
+        // custom1
+        expect(listItems[0]?.style.fontSize).to.contain('14px');
+        expect(listItems[0]?.style.fontStyle).to.contain('normal');
+        expect(listItems[0]?.style.fontWeight).to.contain('normal');
+
+        // custom2
+        expect(listItems[1]?.style.fontSize).to.contain('14px');
+        expect(listItems[1]?.style.fontStyle).to.contain('normal');
+        expect(listItems[1]?.style.fontWeight).to.contain(600);
     });
 
     it('serializes unordered list to html', () => {
