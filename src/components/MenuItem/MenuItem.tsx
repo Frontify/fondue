@@ -120,7 +120,6 @@ export const MenuItem = ({
                 <div
                     className={merge([
                         ITEM_WRAPPER_CLASSES,
-                        'tw-rounded',
                         isDangerStyle ? 'hover:tw-text-negative' : 'hover:tw-text-text',
                         menuItemSizeClassMap[size],
                         disabled && 'tw-bg-box-disabled tw-pointer-events-none',
