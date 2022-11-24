@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useContext } from 'react';
+import React, { ReactElement, useContext } from 'react';
 import { ModalFooterProps } from './types';
 import { Button, ButtonSize } from '@components/Button';
 import { ModalLayout } from './context/ModalLayout';
 
-export const ModalFooter: FC<ModalFooterProps> = ({ buttons }) => {
+export const ModalFooter = ({ buttons }: ModalFooterProps): ReactElement => {
     const { padding } = useContext(ModalLayout);
 
     return (
