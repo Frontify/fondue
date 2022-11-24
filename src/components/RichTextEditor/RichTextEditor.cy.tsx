@@ -28,6 +28,7 @@ const TOOLBAR_GROUP_0 = '[data-test-id=toolbar-group-0]';
 const TOOLBAR_GROUP_1 = '[data-test-id=toolbar-group-1]';
 const TOOLBAR_GROUP_2 = '[data-test-id=toolbar-group-2]';
 const TOOLBAR_GROUP_3 = '[data-test-id=toolbar-group-3]';
+const TOOLBAR_PLUGIN_OL = '[data-plugin-id=ol]';
 const TEXTSTYLE_DROPDOWN_TRIGGER = '[data-test-id=textstyle-dropdown-trigger]';
 const CHANGE_DESIGN_TOKENS_TRIGGER = '[data-test-id=change-design-tokens-button]';
 const TEXTSTYLE_OPTION = '[data-test-id=textstyle-option]';
@@ -310,26 +311,6 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] ol ol ol').should('have.class', 'tw-list-[lower-roman]');
         });
 
-        it('renders the list item without text decoration underline', () => {
-            cy.mount(<RichTextEditorWithUnorderedListStyles />);
-
-            cy.get('[contenteditable=true] li').should('have.class', '!tw-no-underline');
-        });
-
-        it('renders custom styled list items', () => {
-            cy.mount(<RichTextEditorWithUnorderedListStyles />);
-            cy.get('[contenteditable=true] li:first-child').should(
-                'have.attr',
-                'style',
-                'font-size: 14px; font-weight: normal; font-style: normal;',
-            );
-            cy.get('[contenteditable=true] li:nth-child(2)').should(
-                'have.attr',
-                'style',
-                'font-size: 14px; font-weight: 600; font-style: normal;',
-            );
-        });
-
         it('renders an ordered list', () => {
             cy.mount(<RichTextEditor />);
 
@@ -506,6 +487,46 @@ describe('RichTextEditor Component', () => {
                         JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: content }] }]),
                     );
                 });
+        });
+    });
+
+    describe('list plugin', () => {
+        it('applies the selected text style to the list item', () => {
+            cy.mount(<RichTextEditorWithOrderedListStyles />);
+
+            const firstListItemSelector = '[contenteditable=true] ol:first-child > li:first-child';
+            cy.mount(<RichTextEditor />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_PLUGIN_OL).click();
+            cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+            cy.get(TEXTSTYLE_OPTION).first().click();
+            cy.get(firstListItemSelector).should(
+                'have.attr',
+                'style',
+                'font-size: 48px; font-style: normal; font-weight: 700;',
+            );
+        });
+
+        it('renders the list item without text decoration underline', () => {
+            cy.mount(<RichTextEditorWithUnorderedListStyles />);
+
+            cy.get('[contenteditable=true] li').should('have.class', '!tw-no-underline');
+        });
+
+        it('renders custom styled list items', () => {
+            cy.mount(<RichTextEditorWithUnorderedListStyles />);
+            cy.get('[contenteditable=true] li:first-child').should(
+                'have.attr',
+                'style',
+                'font-size: 14px; font-weight: normal; font-style: normal;',
+            );
+            cy.get('[contenteditable=true] li:nth-child(2)').should(
+                'have.attr',
+                'style',
+                'font-size: 14px; font-weight: 600; font-style: normal;',
+            );
         });
     });
 

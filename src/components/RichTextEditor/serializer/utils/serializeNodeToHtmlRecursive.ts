@@ -79,7 +79,7 @@ export const serializeNodeToHtmlRecursive = (
         case TextStyles.ELEMENT_QUOTE:
             return `<p style="${reactCssPropsToCss(designTokens.quote)}">${children}</p>`;
         case ELEMENT_PARAGRAPH:
-            return `<p style="${reactCssPropsToCss(designTokens.body)}">${children}</p>`;
+            return `<p style="${reactCssPropsToCss(designTokens.p)}">${children}</p>`;
         case ELEMENT_UL:
             return `<ul class="${UL_CLASSES}">${children}</ul>`;
         case ELEMENT_OL:

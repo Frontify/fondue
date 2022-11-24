@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
-import { getOrderedListClasses, UL_CLASSES } from '@components/RichTextEditor/Plugins';
+import { UL_CLASSES, getOrderedListClasses } from '@components/RichTextEditor/Plugins';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
 import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL } from '@udecode/plate';

@@ -51,7 +51,7 @@ export const defaultDesignTokens: DesignTokens = {
         textDecoration: 'underline',
         cursor: 'pointer',
     },
-    body: {
+    p: {
         fontSize: '14px',
         fontStyle: 'normal',
         fontWeight: 'normal',

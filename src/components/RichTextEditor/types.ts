@@ -13,7 +13,7 @@ export const enum DesignTokenNames {
     CUSTOM3 = 'custom3',
     QUOTE = 'quote',
     LINK = 'link',
-    PARAGRAPH = 'body',
+    PARAGRAPH = 'p',
 }
 
 export const TextStylesToDesignTokenMap = {

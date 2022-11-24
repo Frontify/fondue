@@ -243,7 +243,7 @@ WithCustomTextStyle.args = {
             textDecoration: 'initial',
             textTransform: 'none',
         },
-        body: {
+        p: {
             fontSize: '16px',
             color: 'rgb(0, 0, 0)',
             fontStyle: 'normal',
