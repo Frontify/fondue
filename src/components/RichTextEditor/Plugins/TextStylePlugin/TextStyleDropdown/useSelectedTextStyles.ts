@@ -5,20 +5,23 @@ import {
     ENode,
     PlateEditor,
     TElement,
-    TText,
     Value,
     getNodeEntries,
     isElement,
     isNode,
+    isText,
     isType,
 } from '@udecode/plate';
 import { MARK_TEXT_STYLE } from '../../ListPlugin/ListPlugin';
 import { AVAILABLE_STYLE, AvailableStyles, TextStyles } from '../TextStyles';
 
 const getLicStyle = (node: ENode<Value>): AvailableStyles => {
-    const textNode = (node.children as TText[])[0];
-    const textStyle = textNode[MARK_TEXT_STYLE] as AvailableStyles;
-    return textStyle ?? TextStyles.ELEMENT_PARAGRAPH;
+    if (Array.isArray(node.children)) {
+        const textNode = node.children.find((node) => isText(node)) ?? {};
+        return textNode[MARK_TEXT_STYLE] ?? TextStyles.ELEMENT_PARAGRAPH;
+    }
+
+    return TextStyles.ELEMENT_PARAGRAPH;
 };
 
 export const useSelectedTextStyles = (editor: PlateEditor): AvailableStyles[] => {
