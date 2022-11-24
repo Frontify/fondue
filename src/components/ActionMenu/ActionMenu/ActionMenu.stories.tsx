@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MenuItemStyle, SelectionIndicatorIcon } from '@components/MenuItem/MenuItem';
-import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from '@components/MenuItem';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
@@ -32,7 +31,7 @@ ActionMenu.args = {
                     size: MenuItemContentSize.Small,
                     decorator: <IconMusicNote />,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
-                    onClick: (value) => {
+                    onClick: (value: unknown) => {
                         action('switch toggled')(value);
                     },
                     type: 'switch',

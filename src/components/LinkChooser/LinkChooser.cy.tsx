@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { SelectionIndicatorIcon } from '@components/MenuItem/MenuItem';
-import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import { MenuItemContentSize, SelectionIndicatorIcon } from '@components/MenuItem';
 import { Validation, validationClassMap } from '@utilities/validation';
 import React from 'react';
 import { LinkChooser, QUERIES_STORAGE_KEY } from './LinkChooser';
