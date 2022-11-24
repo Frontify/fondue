@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '@frontify/fondue-tokens/styles';
-@import '@frontify/fondue-tokens/themes/theme.dark.css';
+@import "@frontify/fondue-tokens/styles";
+@import "@frontify/fondue-tokens/themes/theme.dark.css";
 
 @tailwind base;
 @tailwind components;
@@ -14,23 +14,24 @@
         margin: 0;
     }
 
-    input[type='number'].tw-hide-input-arrows {
+    input[type="number"].tw-hide-input-arrows {
         -moz-appearance: textfield;
     }
 
-    .tw-popper-container[data-popper-placement^='top'] > .tw-popper-arrow {
+    .tw-popper-container[data-popper-placement^="top"] > .tw-popper-arrow {
         bottom: -4px;
     }
 
-    .tw-popper-container[data-popper-placement^='bottom'] > .tw-popper-arrow {
+    .tw-popper-container[data-popper-placement^="bottom"] > .tw-popper-arrow {
         top: -4px;
     }
 
-    .tw-popper-container[data-popper-placement^='left'] > .tw-popper-arrow {
+    .tw-popper-container[data-popper-placement^="left"] > .tw-popper-arrow {
         right: -4px;
     }
 
-    .tw-popper-container[data-popper-placement^='right'] > .tw-popper-arrow {
+    .tw-popper-container[data-popper-placement^="right"] > .tw-popper-arrow {
         left: -4px;
     }
 }
+
