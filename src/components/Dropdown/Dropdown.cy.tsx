@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MenuBlock } from '@components/Dropdown/SelectMenu/SelectMenu';
-import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import { MenuItemContentSize } from '@components/MenuItem';
 import { IconIcon } from '@foundation/Icon';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { Validation } from '@utilities/validation';

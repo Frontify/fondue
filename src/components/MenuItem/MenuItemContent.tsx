@@ -1,22 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { HTMLAttributes, PropsWithChildren, ReactElement, ReactNode, cloneElement } from 'react';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
-import React, { FC, HTMLAttributes, ReactElement, ReactNode, cloneElement } from 'react';
-
-export enum MenuItemContentSize {
-    XSmall = 'XSmall',
-    Small = 'Small',
-    Large = 'Large',
-}
-
-export enum MenuItemContentStyle {
-    Primary = 'Primary',
-    Danger = 'Danger',
-}
+import { MenuItemContentSize } from './types';
 
 export type MenuItemContentProps = {
-    title: ReactNode;
+    title?: ReactNode;
     decorator?: ReactElement;
     switchComponent?: ReactElement;
     subtitle?: string;
@@ -33,14 +23,15 @@ const paddingRight: Record<MenuItemContentSize, string> = {
     [MenuItemContentSize.Large]: 'tw-pr-2',
 };
 
-export const MenuItemContent: FC<MenuItemContentProps> = ({
+export const MenuItemContent = ({
     title,
     decorator,
     switchComponent,
     subtitle,
     ariaProps,
     size = MenuItemContentSize.Small,
-}) => (
+    children,
+}: PropsWithChildren<MenuItemContentProps>) => (
     <div
         {...ariaProps}
         data-test-id="menu-item-content"
@@ -59,7 +50,7 @@ export const MenuItemContent: FC<MenuItemContentProps> = ({
                 className="tw-select-none tw-text-ellipsis tw-overflow-hidden"
                 title={typeof title === 'string' ? title : ''}
             >
-                {title}
+                {children || title}
             </div>
             {subtitle && size === MenuItemContentSize.Large && (
                 <div data-test-id="menu-item-subtitle" className="tw-select-none tw-text-xxs" title={subtitle}>

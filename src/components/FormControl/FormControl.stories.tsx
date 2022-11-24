@@ -2,7 +2,7 @@
 
 import { Checklist, ChecklistDirection } from '@components/Checklist/Checklist';
 import { Dropdown, DropdownSize } from '@components/Dropdown/Dropdown';
-import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import { MenuItemContentSize } from '@components/MenuItem';
 import { Slider } from '@components/Slider/Slider';
 import { TextInput } from '@components/TextInput/TextInput';
 import { Meta, StoryFn } from '@storybook/react';

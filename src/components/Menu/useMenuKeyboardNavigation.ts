@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-export const useOverflowMenuKeyboardNavigation = (
+export const useMenuKeyboardNavigation = (
     isMenuOpened: boolean,
     menuContainerRef: HTMLElement | null,
     focusableElementsSelector = 'li > button:not(:disabled)',

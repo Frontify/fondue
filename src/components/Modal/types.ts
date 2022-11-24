@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { OverlayProps } from '@react-aria/overlays';
+import { AriaOverlayProps } from '@react-aria/overlays';
 import { AriaDialogProps } from '@react-types/dialog';
 import { PatternDesign, PatternTheme } from '@foundation/Pattern';
 import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
@@ -67,5 +67,5 @@ export type ModalProps = {
     isDismissable?: boolean;
     zIndex?: number;
     compact?: boolean;
-} & Omit<OverlayProps, 'isOpen'> &
+} & Omit<AriaOverlayProps, 'isOpen'> &
     AriaDialogProps;
