@@ -9,7 +9,7 @@ export const EmojiComboboxItem = ({ item }: ComboboxItemProps<EmojiItemData>): J
     } = item;
 
     return (
-        <div>
+        <div className="tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis">
             {emoji} :{id}:
         </div>
     );

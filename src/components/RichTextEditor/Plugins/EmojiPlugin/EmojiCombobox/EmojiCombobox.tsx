@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Combobox, ELEMENT_EMOJI, EmojiItemData, useEmojiCombobox, TEmojiCombobox } from '@udecode/plate';
+import { Combobox, ELEMENT_EMOJI, EmojiItemData, TEmojiCombobox, useEmojiCombobox } from '@udecode/plate';
 import { EmojiComboboxItem, EmojiComboboxStyles } from './';
 
 export const EmojiCombobox = <TData extends EmojiItemData = EmojiItemData>({
