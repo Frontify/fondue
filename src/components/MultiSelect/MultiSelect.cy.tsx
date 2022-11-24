@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Validation } from '@utilities/validation';
-import React, { FC, useState } from 'react';
+import React, { useState } from 'react';
 import { MultiSelect } from './MultiSelect';
 
 const TRIGGER_ID = '[data-test-id=trigger]';
