@@ -20,8 +20,8 @@ const getNestingLevel = (editor: PlateEditor, element: TElement) => {
         return 0;
     }
 
-    const nodeEntries = getNodeAncestors(editor, path);
-    return Array.from(nodeEntries).filter((node) => node[0].type === ELEMENT_OL).length;
+    const nodeAncestors = getNodeAncestors(editor, path);
+    return Array.from(nodeAncestors).filter((node) => node[0].type === ELEMENT_OL).length;
 };
 
 export const getOrderedListClasses = (nestingLevel: number) =>

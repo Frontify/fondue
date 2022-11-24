@@ -309,6 +309,7 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] ol').should('have.class', 'tw-list-[decimal]');
             cy.get('[contenteditable=true] ol ol').should('have.class', 'tw-list-[lower-alpha]');
             cy.get('[contenteditable=true] ol ol ol').should('have.class', 'tw-list-[lower-roman]');
+            cy.get('[contenteditable=true] ol ol ol ol').should('have.class', 'tw-list-[decimal]');
         });
 
         it('renders an ordered list', () => {

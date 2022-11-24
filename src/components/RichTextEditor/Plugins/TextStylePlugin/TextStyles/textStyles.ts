@@ -12,7 +12,7 @@ export const listStyleTitle: Record<ListStyles, string> = {
     [ListStyles.UL]: 'Bullet List',
     [ListStyles.OL]: 'List',
     [ListStyles.CHECKLIST_ITEM]: 'Checklist',
-    [ListStyles.LIC]: 'List Item',
+    [ListStyles.LIC]: 'List Item Content',
 };
 
 export enum ButtonStyles {
