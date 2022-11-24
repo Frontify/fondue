@@ -52,7 +52,7 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
             <div ref={ref} aria-hidden="true">
                 <div
                     className={merge([
-                        'tw-absolute tw-top-2 tw-text-black-60 tw-z-10 tw-bg-white',
+                        'tw-absolute tw-top-2 tw-text-black-60 tw-z-[1]',
                         carrotRightSideTWPositionClass,
                     ])}
                 >
