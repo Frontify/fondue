@@ -1,5 +1,8 @@
-import { OnDropCallback } from '@components/DropZone';
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { ReactElement, ReactNode } from 'react';
+
+import { OnDropCallback } from '@components/DropZone';
 
 export type TreeProps = {
     id: string;

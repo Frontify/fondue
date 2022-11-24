@@ -1,11 +1,13 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import React, { Fragment, ReactElement, ReactNode, useState } from 'react';
 import { useDrag } from 'react-dnd';
+
 import { DropZone } from '@components/DropZone';
+import { TreeItemProps } from '@components/Tree/types';
+import { useTreeContext } from '@components/Tree/TreeContext';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 import { merge } from '@utilities/merge';
-
-import { useTreeContext } from './TreeContext';
-import { TreeItemProps } from './types';
 
 export const TreeItem = ({ id, sort, onNodeSelect, onDrop, component, children }: TreeItemProps) => {
     const { treeId, selectedIds, onSelect, draggable } = useTreeContext();

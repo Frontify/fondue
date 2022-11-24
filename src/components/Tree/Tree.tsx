@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { DndWrapper } from '@utilities/dnd';
+/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TreeContext } from './TreeContext';
-import { TreeProps } from './types';
+import React, { useEffect, useState } from 'react';
+
+import { TreeContext } from '@components/Tree/TreeContext';
+import { TreeProps } from '@components/Tree/types';
+import { DndWrapper } from '@utilities/dnd';
 
 export const Tree = ({ id, draggable = false, children }: TreeProps) => {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);

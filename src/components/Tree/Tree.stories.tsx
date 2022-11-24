@@ -3,10 +3,9 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
 
-import { Tree, Tree as TreeComponent } from './Tree';
-import { TreeProps } from './types';
-import { TreeItem } from './TreeItem';
-import { mockNodesTree } from '@components/Tree/utils/mocks';
+import { Tree, Tree as TreeComponent, TreeItem } from '@components/Tree';
+import { TreeProps } from '@components/Tree/types';
+import { mockNodesTree } from '@components/Tree/utils';
 
 export default {
     title: 'Components/Tree',

@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MenuItemContentSize } from '@components/MenuItem';
-import { IconDocument, IconFaceExtraHappy, IconFolder, IconPlus, IconProps, IconSize } from '@foundation/Icon';
 import React, { ReactElement, ReactNode } from 'react';
+import { IconDocument, IconFaceExtraHappy, IconFolder, IconPlus, IconProps, IconSize } from '@foundation/Icon';
 
-import { DraggableItem } from '@utilities/dnd';
-import { Badge, BadgeProps } from '../../..';
+import { Badge, BadgeProps } from '@components/Badge';
 import { Button, ButtonSize } from '@components/Button';
+import { MenuItemContentSize } from '@components/MenuItem';
+import { DraggableItem } from '@utilities/dnd';
 
 interface TreeFlatListItem {
     name: string;

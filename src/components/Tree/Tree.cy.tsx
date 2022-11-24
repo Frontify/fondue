@@ -3,7 +3,7 @@
 import { mockNodesTree } from '@components/Tree/utils/mocks';
 import React from 'react';
 
-import { Tree, TreeItem } from '..';
+import { Tree, TreeItem } from '@components/Tree';
 
 const TreeComponent = () => {
     return (
