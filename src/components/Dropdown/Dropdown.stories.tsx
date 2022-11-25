@@ -1,18 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MenuItemContentSize, MenuItemStyle } from '@components/MenuItem';
-import { Meta, StoryFn } from '@storybook/react';
-import React, { useEffect, useState } from 'react';
-import {
-    Dropdown,
-    DropdownAlignment,
-    DropdownEmphasis,
-    DropdownPosition,
-    DropdownProps,
-    DropdownSize,
-} from './Dropdown';
-import { Validation } from '@utilities/validation';
+import { InputEmphasis } from '@components/Trigger';
 import { IconMusicNote } from '@foundation/Icon';
+import { Meta, StoryFn } from '@storybook/react';
+import { Validation } from '@utilities/validation';
+import React, { useEffect, useState } from 'react';
+import { Dropdown, DropdownAlignment, DropdownPosition, DropdownProps, DropdownSize } from './Dropdown';
 
 export default {
     title: 'Components/Dropdown',
@@ -89,30 +83,11 @@ const DropdownWithinOverflownContainer: StoryFn<DropdownProps> = (args: Dropdown
 
 const DropdownWithBackgroundTemplate: StoryFn<DropdownProps> = (args: DropdownProps) => {
     const [active, setActive] = useState(args.activeItemId);
-    const [active2, setActive2] = useState(args.activeItemId);
     useEffect(() => setActive(args.activeItemId), [args.activeItemId]);
-    useEffect(() => setActive2(args.activeItemId), [args.activeItemId]);
 
     return (
-        <div className="tw-p-8 tw-bg-black-5 tw-flex tw-gap-2">
-            <div className="tw-max-w-[350px]">
-                <Dropdown
-                    {...args}
-                    placeholder="select default item"
-                    emphasis={DropdownEmphasis.Default}
-                    activeItemId={active}
-                    onChange={(id) => setActive(id)}
-                />
-            </div>
-            <div className="tw-max-w-[350px]">
-                <Dropdown
-                    {...args}
-                    placeholder="select weak item"
-                    emphasis={DropdownEmphasis.Weak}
-                    activeItemId={active2}
-                    onChange={(id) => setActive2(id)}
-                />
-            </div>
+        <div className="tw-p-4 tw-bg-black-5 tw-w-[400px]">
+            <Dropdown {...args} activeItemId={active} onChange={(id) => setActive(id)} />
         </div>
     );
 };
@@ -431,6 +406,7 @@ export const WeakSelect = DropdownWithBackgroundTemplate.bind({});
 
 WeakSelect.args = {
     size: DropdownSize.Small,
+    emphasis: InputEmphasis.Weak,
     menuBlocks: [
         {
             id: 'block1',
