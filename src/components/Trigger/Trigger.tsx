@@ -32,6 +32,26 @@ export type TriggerProps = {
     emphasis?: TriggerEmphasis;
 };
 
+const getTriggerClassNames = (
+    isFocusVisible: boolean,
+    disabled: boolean,
+    isOpen: boolean,
+    emphasis: TriggerEmphasis,
+    validation: Validation,
+) =>
+    merge([
+        'tw-group tw-relative tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-rounded tw-transition-colors tw-min-h-[36px]',
+        isFocusVisible && FOCUS_STYLE,
+        disabled
+            ? 'tw-border-black-5 tw-bg-black-5 tw-pointer-events-none'
+            : merge([
+                  'hover:tw-border-line-xx-strong',
+                  emphasis === TriggerEmphasis.Weak ? '' : 'tw-bg-base',
+                  isOpen ? 'tw-border-line-xx-strong' : 'tw-border-line',
+                  emphasis === TriggerEmphasis.Weak ? 'tw-border-transparent' : validationClassMap[validation],
+              ]),
+    ]);
+
 export const Trigger: FC<TriggerProps> = ({
     buttonProps,
     onClear,
@@ -48,23 +68,10 @@ export const Trigger: FC<TriggerProps> = ({
     const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
     const { focusProps: onDeleteFocusProps, isFocusVisible: isOnDeleteFocusVisible } = useFocusRing();
 
-    const isWeak = emphasis === TriggerEmphasis.Weak;
-
     return (
         <div
             data-test-id="trigger"
-            className={merge([
-                'tw-group tw-relative tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-rounded tw-transition-colors tw-min-h-[36px]',
-                isFocusVisible && FOCUS_STYLE,
-                disabled
-                    ? 'tw-border-black-5 tw-bg-black-5 tw-pointer-events-none'
-                    : merge([
-                          'hover:tw-border-line-xx-strong',
-                          isWeak ? '' : 'tw-bg-base',
-                          isOpen ? 'tw-border-line-xx-strong' : 'tw-border-line',
-                          isWeak ? 'tw-border-transparent' : validationClassMap[validation],
-                      ]),
-            ])}
+            className={getTriggerClassNames(isFocusVisible, disabled, isOpen, emphasis, validation)}
         >
             {children}
             <div
