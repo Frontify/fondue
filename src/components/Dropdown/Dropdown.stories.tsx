@@ -3,7 +3,14 @@
 import { MenuItemContentSize, MenuItemStyle } from '@components/MenuItem';
 import { Meta, StoryFn } from '@storybook/react';
 import React, { useEffect, useState } from 'react';
-import { Dropdown, DropdownAlignment, DropdownPosition, DropdownProps, DropdownSize } from './Dropdown';
+import {
+    Dropdown,
+    DropdownAlignment,
+    DropdownEmphasis,
+    DropdownPosition,
+    DropdownProps,
+    DropdownSize,
+} from './Dropdown';
 import { Validation } from '@utilities/validation';
 import { IconMusicNote } from '@foundation/Icon';
 
@@ -76,6 +83,36 @@ const DropdownWithinOverflownContainer: StoryFn<DropdownProps> = (args: Dropdown
                 Duis orci sapien, gravida pellentesque cursus non, cursus vitae dolor. Etiam luctus aliquam sem, non
                 maximus risus efficitur sit amet. Nulla diam urna
             </p>
+        </div>
+    );
+};
+
+const DropdownWithBackgroundTemplate: StoryFn<DropdownProps> = (args: DropdownProps) => {
+    const [active, setActive] = useState(args.activeItemId);
+    const [active2, setActive2] = useState(args.activeItemId);
+    useEffect(() => setActive(args.activeItemId), [args.activeItemId]);
+    useEffect(() => setActive2(args.activeItemId), [args.activeItemId]);
+
+    return (
+        <div className="tw-p-8 tw-bg-black-5 tw-flex tw-gap-2">
+            <div className="tw-max-w-[300px]">
+                <Dropdown
+                    {...args}
+                    placeholder="select default item"
+                    emphasis={DropdownEmphasis.Default}
+                    activeItemId={active}
+                    onChange={(id) => setActive(id)}
+                />
+            </div>
+            <div className="tw-max-w-[300px]">
+                <Dropdown
+                    {...args}
+                    placeholder="select weak item"
+                    emphasis={DropdownEmphasis.Weak}
+                    activeItemId={active2}
+                    onChange={(id) => setActive2(id)}
+                />
+            </div>
         </div>
     );
 };
@@ -384,6 +421,32 @@ WithinOverflow.args = {
                     size: MenuItemContentSize.Small,
                     style: MenuItemStyle.Danger,
                     disabled: true,
+                },
+            ],
+        },
+    ],
+};
+
+export const WeakSelect = DropdownWithBackgroundTemplate.bind({});
+
+WeakSelect.args = {
+    size: DropdownSize.Small,
+    menuBlocks: [
+        {
+            id: 'block1',
+            ariaLabel: 'First section',
+            menuItems: [
+                {
+                    id: 1,
+                    title: 'Example item A',
+                },
+                {
+                    id: 2,
+                    title: 'Example item B',
+                },
+                {
+                    id: 3,
+                    title: 'Example item C',
                 },
             ],
         },

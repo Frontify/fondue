@@ -9,7 +9,7 @@ import {
     MenuItemTextColorState,
     menuItemTextColorRecord,
 } from '@components/MenuItem';
-import { Trigger, TriggerSize } from '@components/Trigger/Trigger';
+import { Trigger, TriggerEmphasis, TriggerSize } from '@components/Trigger/Trigger';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
@@ -42,6 +42,11 @@ export enum DropdownPosition {
     Bottom = 'Bottom',
 }
 
+export enum DropdownEmphasis {
+    Default = 'Default',
+    Weak = 'Weak',
+}
+
 export type DropdownProps = {
     id?: string;
     menuBlocks: MenuBlock[];
@@ -57,6 +62,7 @@ export type DropdownProps = {
     validation?: Validation;
     alignment?: DropdownAlignment;
     position?: DropdownPosition;
+    emphasis?: DropdownEmphasis;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
@@ -88,6 +94,7 @@ export const Dropdown: FC<DropdownProps> = ({
     validation = Validation.Default,
     alignment = DropdownAlignment.Start,
     position = DropdownPosition.Bottom,
+    emphasis = DropdownEmphasis.Default,
 }) => {
     const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -173,6 +180,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 isFocusVisible={!disabled && isFocusVisible}
                 isOpen={isOpen}
                 size={size === DropdownSize.Large ? TriggerSize.Large : TriggerSize.Small}
+                emphasis={emphasis === DropdownEmphasis.Weak ? TriggerEmphasis.Weak : TriggerEmphasis.Default}
                 onClear={onClear}
                 showClear={showClear}
                 validation={validation}

@@ -14,6 +14,11 @@ export enum TriggerSize {
     Large = 'Large',
 }
 
+export enum TriggerEmphasis {
+    Default = 'Default',
+    Weak = 'Weak',
+}
+
 export type TriggerProps = {
     disabled?: boolean;
     isOpen?: boolean;
@@ -24,6 +29,7 @@ export type TriggerProps = {
     size?: TriggerSize;
     showClear?: boolean;
     validation?: Validation;
+    emphasis?: TriggerEmphasis;
 };
 
 export const Trigger: FC<TriggerProps> = ({
@@ -37,9 +43,14 @@ export const Trigger: FC<TriggerProps> = ({
     size = TriggerSize.Small,
     showClear = false,
     validation = Validation.Default,
+    emphasis = TriggerEmphasis.Default,
 }) => {
     const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
     const { focusProps: onDeleteFocusProps, isFocusVisible: isOnDeleteFocusVisible } = useFocusRing();
+
+    const isWeak = emphasis === TriggerEmphasis.Weak;
+
+    console.log({ emphasis });
 
     return (
         <div
@@ -50,7 +61,8 @@ export const Trigger: FC<TriggerProps> = ({
                 disabled
                     ? 'tw-border-black-5 tw-bg-black-5 tw-pointer-events-none'
                     : merge([
-                          'tw-bg-base hover:tw-border-line-xx-strong',
+                          'hover:tw-border-line-xx-strong',
+                          isWeak ? '' : 'tw-bg-base',
                           isOpen ? 'tw-border-line-xx-strong' : 'tw-border-line',
                           validationClassMap[validation],
                       ]),
