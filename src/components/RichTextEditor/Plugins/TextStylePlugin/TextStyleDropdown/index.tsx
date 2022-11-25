@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { DesignTokens } from '@components/RichTextEditor/types';
 import React from 'react';
 import { useRichTextEditorContext } from '../../../context/RichTextEditorContext';
-import { defaultTextStyles } from '../TextStyles/defaultTextStyles';
 import { textStyleTitle } from '../TextStyles';
+import { defaultTextStyles } from '../TextStyles/defaultTextStyles';
 import { DropdownItem } from './DropdownItem';
 import { DropdownTrigger } from './DropdownTrigger';
 import { TextStyleDropdownProps } from './types';
-import { DesignTokens } from '@components/RichTextEditor/types';
 import { useTextStyleDropdown } from './useTextStyleDropdown';
 
 export const TextStyleDropdown = ({ editorId, textStyles = defaultTextStyles }: TextStyleDropdownProps) => {
@@ -31,7 +31,9 @@ export const TextStyleDropdown = ({ editorId, textStyles = defaultTextStyles }: 
                 >
                     {textStyles.map((style) => (
                         <DropdownItem editor={editor} type={style} key={style}>
-                            <span style={designTokens[style as keyof DesignTokens]}>{textStyleTitle[style]}</span>
+                            <span style={designTokens[style as unknown as keyof DesignTokens]}>
+                                {textStyleTitle[style]}
+                            </span>
                         </DropdownItem>
                     ))}
                 </div>

@@ -2,8 +2,13 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
-import { MenuItem as MenuItemComponent, MenuItemProps, MenuItemStyle, SelectionIndicatorIcon } from './MenuItem';
-import { MenuItemContentSize } from './MenuItemContent';
+import {
+    MenuItem as MenuItemComponent,
+    MenuItemContentSize,
+    MenuItemProps,
+    MenuItemStyle,
+    SelectionIndicatorIcon,
+} from '@components/MenuItem';
 import { Switch, SwitchSize } from '@components/Switch';
 import { IconMusicNote } from '@foundation/Icon';
 

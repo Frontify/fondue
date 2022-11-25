@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Dropdown, DropdownSize } from '@components/Dropdown/Dropdown';
-import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import { MenuItemContentSize } from '@components/MenuItem';
 import { TextInput } from '@components/TextInput/TextInput';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { Meta, StoryFn } from '@storybook/react';
