@@ -6,37 +6,55 @@ export const defaultDesignTokens: DesignTokens = {
     heading1: {
         fontSize: '48px',
         fontWeight: 700,
+        fontStyle: 'normal',
     },
     heading2: {
         fontSize: '32px',
         fontWeight: 700,
+        fontStyle: 'normal',
     },
     heading3: {
         fontSize: '24px',
+        fontWeight: 'normal',
+        fontStyle: 'normal',
     },
     heading4: {
         fontSize: '18px',
+        fontWeight: 'normal',
+        fontStyle: 'normal',
     },
     custom1: {
         fontSize: '14px',
+        fontWeight: 'normal',
+        fontStyle: 'normal',
     },
     custom2: {
         fontSize: '14px',
         fontWeight: 600,
+        fontStyle: 'normal',
     },
     custom3: {
         fontSize: '14px',
+        fontWeight: 'normal',
+        fontStyle: 'normal',
         textDecoration: 'underline',
     },
     quote: {
         fontSize: '16px',
+        fontWeight: 'normal',
         fontStyle: 'italic',
     },
     link: {
         fontSize: '14px',
+        fontStyle: 'normal',
         color: 'rgb(113, 89, 215)',
         textDecoration: 'underline',
         cursor: 'pointer',
+    },
+    p: {
+        fontSize: '14px',
+        fontStyle: 'normal',
+        fontWeight: 'normal',
     },
     button_primary: {
         fontSize: '13px',

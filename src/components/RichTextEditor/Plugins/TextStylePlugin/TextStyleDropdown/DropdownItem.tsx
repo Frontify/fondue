@@ -1,12 +1,31 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
-import { getPreventDefaultHandler, someNode, toggleNodeType, unwrapList } from '@udecode/plate';
+import {
+    ELEMENT_LI,
+    PlateEditor,
+    getAboveNode,
+    getMark,
+    getPreventDefaultHandler,
+    setMarks,
+    someNode,
+    toggleNodeType,
+} from '@udecode/plate';
 import { merge } from '@utilities/merge';
+import React from 'react';
+import { MARK_TEXT_STYLE } from '../../ListPlugin/ListPlugin';
 import { DropdownItemProps } from './types';
 
+const isInList = (editor: PlateEditor) =>
+    getAboveNode(editor, {
+        match: { type: ELEMENT_LI },
+        mode: 'lowest',
+    });
+
 export const DropdownItem = ({ editor, type, children }: DropdownItemProps) => {
-    const isActive = !!editor?.selection && someNode(editor, { match: { type } });
+    const isActive =
+        !!editor?.selection && isInList(editor)
+            ? (getMark(editor, MARK_TEXT_STYLE) as string) === type
+            : someNode(editor, { match: { type } });
 
     return (
         <button
@@ -21,12 +40,19 @@ export const DropdownItem = ({ editor, type, children }: DropdownItemProps) => {
                     return;
                 }
 
-                unwrapList(editor, {});
+                const aboveListItem = getAboveNode(editor, {
+                    match: { type: ELEMENT_LI },
+                    mode: 'lowest',
+                });
 
-                getPreventDefaultHandler(toggleNodeType, editor, {
-                    activeType: type,
-                    inactiveType: type,
-                })(event);
+                if (aboveListItem) {
+                    setMarks(editor, { [MARK_TEXT_STYLE]: type });
+                } else {
+                    getPreventDefaultHandler(toggleNodeType, editor, {
+                        activeType: type,
+                        inactiveType: type,
+                    })(event);
+                }
             }}
         >
             {children}
