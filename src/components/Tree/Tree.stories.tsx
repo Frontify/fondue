@@ -4,8 +4,8 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 
 import { Tree, Tree as TreeComponent, TreeItem } from '@components/Tree';
-import { TreeProps } from '@components/Tree/types';
-import { mockNodesTree } from '@components/Tree/utils';
+import type { TreeProps } from '@components/Tree/types';
+import { treeNodesMock } from '@components/Tree/utils';
 
 export default {
     title: 'Components/Tree',
@@ -33,7 +33,7 @@ export const SimpleTree: Story<TreeProps> = ({ ...args }: TreeProps) => {
     return (
         <div style={{ maxWidth: '800px' }}>
             <Tree {...args}>
-                {mockNodesTree.map((node) => (
+                {treeNodesMock.map((node) => (
                     <TreeItem
                         key={node.id}
                         id={node.id}

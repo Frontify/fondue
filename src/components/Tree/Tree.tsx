@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { TreeContext } from '@components/Tree/TreeContext';
-import { TreeProps } from '@components/Tree/types';
+import type { TreeProps } from '@components/Tree/types';
 import { DndWrapper } from '@utilities/dnd';
 
 export const Tree = ({ id, draggable = false, children }: TreeProps) => {
@@ -11,29 +11,20 @@ export const Tree = ({ id, draggable = false, children }: TreeProps) => {
     const [multiselect, setMultiselect] = useState<boolean>(false);
 
     const downKeyHandler = (event: KeyboardEvent) => {
-        if (event.key === 'Meta' || event.ctrlKey) {
-            setMultiselect(true);
-        } else {
-            setMultiselect(false);
-        }
+        setMultiselect(event.key === 'Meta' || event.ctrlKey);
     };
 
     const upKeyHandler = (event: KeyboardEvent) => {
-        if (event.key === 'Meta' || event.ctrlKey) {
-            setMultiselect(false);
-        }
+        setMultiselect(!(event.key === 'Meta' || event.ctrlKey));
     };
 
     const handleSelect = (id: string) => {
-        if (multiselect) {
-            const modifiedSelectedIds: Nullable<string[]> = selectedIds.includes(id)
-                ? [...selectedIds].filter((i) => i !== id)
-                : [...selectedIds, id];
-
-            setSelectedIds(modifiedSelectedIds);
-        } else {
-            setSelectedIds([id]);
-        }
+        setSelectedIds((prevState) => {
+            if (!multiselect) {
+                return [id];
+            }
+            return prevState.includes(id) ? prevState.filter((selectedId) => selectedId !== id) : [...prevState, id];
+        });
     };
 
     useEffect(() => {

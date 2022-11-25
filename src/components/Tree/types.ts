@@ -13,7 +13,7 @@ export type TreeProps = {
 export type TreeItemProps = {
     id: string;
     sort: Nullable<number>;
-    onNodeSelect?: (id: Nullable<string>) => void;
+    onSelect?: (id: Nullable<string>) => void;
     onDrop?: OnDropCallback<{ id: string; sort: Nullable<number> }>;
     component: ReactNode;
     children?: ReactNode;

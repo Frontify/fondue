@@ -25,7 +25,7 @@ export interface TreeNodeItem extends TreeFlatListItem {
     nodes?: DraggableItem<TreeNodeItem>[];
 }
 
-export const mockActionMenuBlocks = [
+export const actionMenuBlocksMock = [
     {
         id: 'dropdownBlock',
         ariaLabel: 'Dropdown block',
@@ -141,9 +141,9 @@ const testCategoryNodes = [
     },
 ];
 
-type mockNodeType = () => DraggableItem<TreeFlatListItem>[];
+type nodeMockType = () => DraggableItem<TreeFlatListItem>[];
 
-export const mockNodesFlat: mockNodeType = () => [
+export const nodesFlatMock: nodeMockType = () => [
     {
         id: '1',
         name: 'Design System Testing',
@@ -205,7 +205,7 @@ export const mockNodesFlat: mockNodeType = () => [
     },
 ];
 
-export const mockNodesTree: DraggableItem<TreeNodeItem>[] = [
+export const treeNodesMock: DraggableItem<TreeNodeItem>[] = [
     {
         id: '1',
         name: 'Design System Testing',

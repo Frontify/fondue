@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mockNodesTree } from '@components/Tree/utils/mocks';
+import { treeNodesMock } from '@components/Tree/utils/mocks';
 import React from 'react';
 
 import { Tree, TreeItem } from '@components/Tree';
@@ -8,7 +8,7 @@ import { Tree, TreeItem } from '@components/Tree';
 const TreeComponent = () => {
     return (
         <Tree id="treeId">
-            {mockNodesTree.map((node) => (
+            {treeNodesMock.map((node) => (
                 <TreeItem key={node.id} id={node.id} sort={node.sort} component={<span>{node.name}</span>}>
                     {node.nodes &&
                         node.nodes.map((node) => (

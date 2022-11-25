@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Fragment, ReactElement, ReactNode, useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { useDrag } from 'react-dnd';
 
 import { DropZone } from '@components/DropZone';
-import { TreeItemProps } from '@components/Tree/types';
+import type { TreeItemProps } from '@components/Tree/types';
 import { useTreeContext } from '@components/Tree/TreeContext';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 import { merge } from '@utilities/merge';
 
-export const TreeItem = ({ id, sort, onNodeSelect, onDrop, component, children }: TreeItemProps) => {
-    const { treeId, selectedIds, onSelect, draggable } = useTreeContext();
+export const TreeItem = ({ id, sort, onSelect, onDrop, component, children }: TreeItemProps) => {
+    const { treeId, selectedIds, onSelect: onItemSelect, draggable } = useTreeContext();
 
-    const [showNodes, setShowNodes] = useState<boolean>(false);
+    const [expanded, setExpanded] = useState<boolean>(false);
 
     const [{ opacity }, drag] = useDrag({
         item: { id, sort },
@@ -32,13 +32,13 @@ export const TreeItem = ({ id, sort, onNodeSelect, onDrop, component, children }
     };
 
     const handleSelect = () => {
-        onSelect(id);
-        onNodeSelect?.(id);
+        onItemSelect(id);
+        onSelect?.(id);
     };
 
     const toggleNodesVisibility = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.stopPropagation();
-        setShowNodes(!showNodes);
+        setExpanded((previousExpanded) => !previousExpanded);
     };
 
     const childrenArray = React.Children.toArray(children);
@@ -52,7 +52,7 @@ export const TreeItem = ({ id, sort, onNodeSelect, onDrop, component, children }
             }
 
             return React.cloneElement(
-                <Fragment key={index}>
+                <>
                     {index === 0 && (
                         <DropZone
                             data={{
@@ -64,8 +64,8 @@ export const TreeItem = ({ id, sort, onNodeSelect, onDrop, component, children }
                         />
                     )}
 
-                    {child as ReactElement}
-                </Fragment>,
+                    {child as TreeItemProps}
+                </>,
             );
         });
     }
@@ -80,7 +80,7 @@ export const TreeItem = ({ id, sort, onNodeSelect, onDrop, component, children }
             <div
                 className={merge([
                     'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
-                    showNodes ? 'tw-rotate-90' : '',
+                    expanded ? 'tw-rotate-90' : '',
                 ])}
                 onClick={toggleNodesVisibility}
             />
@@ -117,7 +117,7 @@ export const TreeItem = ({ id, sort, onNodeSelect, onDrop, component, children }
                 </div>
             </DropZone>
 
-            {showNodes && (
+            {expanded && (
                 <ul
                     className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left [&>li]:tw-pl-4"
                     data-test-id="sub-tree"

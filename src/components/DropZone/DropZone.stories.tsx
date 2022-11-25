@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
-import { OrderableList as DropZoneComponent, OrderableListProps } from '../OrderableList';
-import { OrderableListItem } from '../OrderableList/types';
 import { chain } from '@react-aria/utils';
+import { Meta, StoryFn } from '@storybook/react';
+
+import { OrderableList as DropZoneComponent, OrderableListProps } from '@components/OrderableList';
 import { StoryListItem, renderContent, storyItems } from '@components/OrderableList/utils';
+import type { OrderableListItem } from '@components/OrderableList/types';
 
 export default {
     title: 'Components/Drop Zone',
