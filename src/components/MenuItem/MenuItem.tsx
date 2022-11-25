@@ -11,6 +11,7 @@ export type MenuItemProps = {
     style?: MenuItemStyle;
     disabled?: boolean;
     active?: boolean;
+    checked?: boolean;
     selectionIndicator?: SelectionIndicatorIcon;
     /** @deprecated this prop is not being used anymore */
     type?: string;
@@ -47,6 +48,7 @@ const ITEM_WRAPPER_CLASSES =
     'tw-cursor-pointer tw-flex tw-items-center tw-justify-between tw-transition-colors tw-gap-2';
 const ITEM_HOVER_CLASSES = 'hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover';
 const ITEM_BASE_CLASSES = merge(['tw-w-full tw-text-left tw-py-2 tw-px-5', ITEM_HOVER_CLASSES]);
+const ITEM_CHECKED_CLASSES = 'tw-bg-box-selected';
 
 export const MenuItem = ({
     title,
@@ -57,6 +59,7 @@ export const MenuItem = ({
     style = MenuItemStyle.Primary,
     disabled = false,
     active = false,
+    checked = false,
     selectionIndicator = SelectionIndicatorIcon.Check,
     children,
     link,
@@ -97,7 +100,11 @@ export const MenuItem = ({
                 <li
                     data-test-id="menu-item"
                     role="menuitem"
-                    className={merge(['tw-text-sm tw-leading-4 tw-text-text-weak', ITEM_WRAPPER_CLASSES])}
+                    className={merge([
+                        'tw-text-sm tw-leading-4 tw-text-text-weak',
+                        ITEM_WRAPPER_CLASSES,
+                        checked ? ITEM_CHECKED_CLASSES : '',
+                    ])}
                 >
                     {mainElementType === 'a' && (
                         <a href={link} className={ITEM_BASE_CLASSES}>

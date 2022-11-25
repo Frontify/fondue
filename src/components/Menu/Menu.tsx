@@ -18,7 +18,7 @@ interface Props {
 
 export type MenuProps = PropsWithChildren<Props>;
 
-const CONTAINER_BASE_CLASSES = 'tw-relative tw-bg-base tw-rounded tw-py-2 tw-shadow-mid tw-w-max';
+const CONTAINER_BASE_CLASSES = 'tw-relative tw-bg-base tw-rounded tw-py-2 tw-shadow-mid tw-min-w-max';
 const CONTAINER_POSITION_CLASSES = ' tw-left-0 tw-top-7';
 
 const CONTAINER_CLASSES = merge([CONTAINER_BASE_CLASSES, INSET_BORDER]);
