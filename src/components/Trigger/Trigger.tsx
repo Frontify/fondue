@@ -50,8 +50,6 @@ export const Trigger: FC<TriggerProps> = ({
 
     const isWeak = emphasis === TriggerEmphasis.Weak;
 
-    console.log({ emphasis });
-
     return (
         <div
             data-test-id="trigger"
@@ -64,7 +62,7 @@ export const Trigger: FC<TriggerProps> = ({
                           'hover:tw-border-line-xx-strong',
                           isWeak ? '' : 'tw-bg-base',
                           isOpen ? 'tw-border-line-xx-strong' : 'tw-border-line',
-                          validationClassMap[validation],
+                          isWeak ? 'tw-border-transparent' : validationClassMap[validation],
                       ]),
             ])}
         >

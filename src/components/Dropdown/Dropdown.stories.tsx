@@ -95,7 +95,7 @@ const DropdownWithBackgroundTemplate: StoryFn<DropdownProps> = (args: DropdownPr
 
     return (
         <div className="tw-p-8 tw-bg-black-5 tw-flex tw-gap-2">
-            <div className="tw-max-w-[300px]">
+            <div className="tw-max-w-[350px]">
                 <Dropdown
                     {...args}
                     placeholder="select default item"
@@ -104,7 +104,7 @@ const DropdownWithBackgroundTemplate: StoryFn<DropdownProps> = (args: DropdownPr
                     onChange={(id) => setActive(id)}
                 />
             </div>
-            <div className="tw-max-w-[300px]">
+            <div className="tw-max-w-[350px]">
                 <Dropdown
                     {...args}
                     placeholder="select weak item"
