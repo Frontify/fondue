@@ -141,7 +141,7 @@
         "@react-stately/toggle": "3.4.2",
         "@react-stately/tooltip": "3.2.2",
         "@react-stately/tree": "3.3.4",
-        "@udecode/plate": "^18.11.2",
+        "@udecode/plate": "18.11.2",
         "@xstate/immer": "0.3.1",
         "@xstate/react": "1.6.3",
         "date-fns": "2.29.3",
