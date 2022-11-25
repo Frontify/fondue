@@ -8,6 +8,7 @@ import DatepickerComponent from 'react-datepicker';
 import './DatePicker.css';
 import { DatePickerTrigger } from './DatePickerTrigger';
 import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@foundation/Icon';
+import { Validation } from '@utilities/validation';
 
 export type DatePickerProps = {
     placeHolder?: string;
@@ -16,6 +17,7 @@ export type DatePickerProps = {
     onChange?: (date: Date | null) => void;
     dateFormat?: string;
     value?: Date;
+    validation?: Validation;
 };
 
 export const DatePicker: FC<DatePickerProps> = ({
@@ -25,6 +27,7 @@ export const DatePicker: FC<DatePickerProps> = ({
     onChange,
     dateFormat = 'dd MMM yyyy',
     value,
+    validation = Validation.Default,
 }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
     const onDateChanged = (date: Date | null) => {
@@ -44,6 +47,8 @@ export const DatePicker: FC<DatePickerProps> = ({
                         isCalendarOpen={isCalendarOpen}
                         isClearable={isClearable}
                         placeHolder={placeHolder}
+                        validation={validation}
+                        onDateChanged={onDateChanged}
                     />
                 }
                 formatWeekDay={(day) => day.slice(0, 1)}

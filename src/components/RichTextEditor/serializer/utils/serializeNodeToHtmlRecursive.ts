@@ -1,28 +1,64 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import escapeHtml from 'escape-html';
+import {
+    ELEMENT_BUTTON,
+    ELEMENT_CHECK_ITEM,
+    UL_CLASSES,
+    getOrderedListClasses,
+} from '@components/RichTextEditor/Plugins';
+import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/types';
+import { getTextStyle } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
+import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
+import { DesignTokens } from '@components/RichTextEditor/types';
 import {
     ELEMENT_LI,
+    ELEMENT_LIC,
     ELEMENT_LINK,
     ELEMENT_OL,
     ELEMENT_PARAGRAPH,
     ELEMENT_UL,
     TDescendant,
+    TElement,
     TText,
+    isText,
 } from '@udecode/plate';
-import { ELEMENT_BUTTON, ELEMENT_CHECK_ITEM, OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/Plugins';
-import { DesignTokens } from '@components/RichTextEditor/types';
-import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
+import escapeHtml from 'escape-html';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
-import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/types';
 
-export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: DesignTokens): string => {
-    if (!node.children) {
+const countNodesOfType = (nodes: TDescendant[], type: string): number => {
+    return nodes.reduce((acc, node) => {
+        if (node.type === type) {
+            acc++;
+        }
+        if (node.children) {
+            return acc + countNodesOfType(node.children as TDescendant[], type);
+        }
+        return acc;
+    }, 0);
+};
+
+type NestingCount = {
+    [type: string]: number;
+};
+
+export const serializeNodeToHtmlRecursive = (
+    node: TDescendant,
+    designTokens: DesignTokens,
+    nestingCount: NestingCount = {},
+): string => {
+    if (isText(node)) {
         return serializeLeafToHtml(node as TText);
     }
+
+    const rootNestingCount = nestingCount[node.type] || countNodesOfType([node], node.type);
     const children = (node.children as TDescendant[])
-        .map((n: TDescendant) => serializeNodeToHtmlRecursive(n, designTokens))
+        .map((n: TDescendant) =>
+            serializeNodeToHtmlRecursive(n, designTokens, {
+                ...nestingCount,
+                [n.type as string]: rootNestingCount,
+            }),
+        )
         .join('');
 
     switch (node.type) {
@@ -47,9 +83,18 @@ export const serializeNodeToHtmlRecursive = (node: TDescendant, designTokens: De
         case ELEMENT_UL:
             return `<ul class="${UL_CLASSES}">${children}</ul>`;
         case ELEMENT_OL:
-            return `<ol class="${OL_CLASSES}">${children}</ol>`;
+            const nestingLevel = Math.max(rootNestingCount - countNodesOfType([node], ELEMENT_OL), 0);
+            return `<ol class="${getOrderedListClasses(nestingLevel)}">${children}</ol>`;
         case ELEMENT_LI:
-            return `<li>${children}</li>`;
+            const liElement = node as TElement;
+            const styledLicElement = (liElement.children[0]?.children as TDescendant[])?.[0];
+            const liStyles = { ...designTokens[getTextStyle(styledLicElement)], textDecoration: 'none' };
+
+            return `<li style="${reactCssPropsToCss(liStyles)}">${children}</li>`;
+        case ELEMENT_LIC:
+            const licElement = node as TElement;
+            const licStyles = { textDecoration: designTokens[getTextStyle(licElement.children[0])]?.textDecoration };
+            return `<span style="${reactCssPropsToCss(licStyles)}">${children}</span>`;
         case ELEMENT_LINK:
             if (node.chosenLink) {
                 const { chosenLink } = node as TLinkElement;

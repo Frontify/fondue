@@ -7,7 +7,7 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import React, { FC, HTMLAttributes } from 'react';
-import { IconCross, IconTrashBin } from '@foundation/Icon';
+import { IconCross, IconExclamationMarkTriangle, IconTrashBin } from '@foundation/Icon';
 
 export enum TriggerSize {
     Small = 'Small',
@@ -41,6 +41,8 @@ export const Trigger: FC<TriggerProps> = ({
     const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
     const { focusProps: onDeleteFocusProps, isFocusVisible: isOnDeleteFocusVisible } = useFocusRing();
 
+    const appropriateTriggerTWBorderClass = isOpen ? 'tw-border-line-xx-strong' : 'tw-border-line';
+
     return (
         <div
             data-test-id="trigger"
@@ -51,7 +53,7 @@ export const Trigger: FC<TriggerProps> = ({
                     ? 'tw-border-black-5 tw-bg-black-5 tw-pointer-events-none'
                     : merge([
                           'tw-bg-base hover:tw-border-line-xx-strong',
-                          isOpen ? 'tw-border-line-xx-strong' : 'tw-border-line',
+                          appropriateTriggerTWBorderClass,
                           validationClassMap[validation],
                       ]),
             ])}
@@ -107,6 +109,14 @@ export const Trigger: FC<TriggerProps> = ({
                         <IconCaretDown size={IconSize.Size16} />
                     </div>
                 </button>
+                {validation === Validation.Error && (
+                    <span
+                        className="tw-flex tw-items-center tw-justify-center tw-text-red-60"
+                        data-test-id="error-state-exclamation-mark-icon"
+                    >
+                        <IconExclamationMarkTriangle />
+                    </span>
+                )}
             </div>
         </div>
     );
