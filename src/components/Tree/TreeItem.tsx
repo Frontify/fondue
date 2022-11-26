@@ -9,10 +9,14 @@ import { useTreeContext } from '@components/Tree/TreeContext';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 import { merge } from '@utilities/merge';
 
-export const TreeItem = ({ id, sort, onSelect, onDrop, component, children }: TreeItemProps) => {
+export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, children }: TreeItemProps) => {
     const { treeId, selectedIds, onSelect: onItemSelect, draggable } = useTreeContext();
 
     const [expanded, setExpanded] = useState<boolean>(false);
+    const [hovered, setHovered] = useState<boolean>(false);
+
+    const handleMouseEnter = () => setHovered(true);
+    const handleMouseLeave = () => setHovered(false);
 
     const [{ opacity }, drag] = useDrag({
         item: { id, sort },
@@ -107,6 +111,8 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, component, children }: Tr
                             : 'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
                     ])}
                     onClick={handleSelect}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                 >
                     <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-6">
                         <span
@@ -116,7 +122,7 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, component, children }: Tr
                             {insertCaret()}
                         </span>
 
-                        {component}
+                        {contentComponent({ selected: selectedIds.includes(id), hovered })}
                     </div>
                 </div>
             </DropZone>

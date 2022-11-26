@@ -138,6 +138,7 @@ const testCategoryNodes = [
         sort: null,
         badge: <Badge>Hello, I am a badge</Badge>,
         tooltipContent: 'Hello, I am tooltip content',
+        actions: [<Button key={'About Us Page Test'} size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />],
     },
 ];
 
@@ -214,6 +215,7 @@ export const treeNodesMock: DraggableItem<TreeNodeItem>[] = [
         icon: <IconFolder size={IconSize.Size16} />,
         parentId: null,
         sort: 1,
+        actions: [<Button key={'Design System Testing'} size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />],
         nodes: [
             {
                 id: '1-1',
@@ -221,6 +223,13 @@ export const treeNodesMock: DraggableItem<TreeNodeItem>[] = [
                 icon: <IconFolder size={IconSize.Size16} />,
                 parentId: '1',
                 sort: 1,
+                actions: [
+                    <Button
+                        key={'Design System Testing Uncategorizes Pages'}
+                        size={ButtonSize.Small}
+                        icon={<IconPlus></IconPlus>}
+                    />,
+                ],
                 nodes: [...uncategorizedPagesNodes],
             },
             {
@@ -231,6 +240,13 @@ export const treeNodesMock: DraggableItem<TreeNodeItem>[] = [
                 icon: <IconFolder size={IconSize.Size16} />,
                 value: 'https://weare.frontify.com/document/923#/test',
                 sort: null,
+                actions: [
+                    <Button
+                        key={'Design System Testing Uncategorizes Pages Test'}
+                        size={ButtonSize.Small}
+                        icon={<IconPlus></IconPlus>}
+                    />,
+                ],
                 nodes: [...testCategoryNodes],
             },
         ],
