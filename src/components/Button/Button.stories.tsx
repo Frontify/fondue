@@ -14,6 +14,7 @@ const defaultArgs = {
     hideLabel: false,
     disabled: false,
     hugWidth: true,
+    hugHeight: true,
     children: 'Button Text',
 };
 

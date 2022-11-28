@@ -42,6 +42,7 @@ export type ButtonProps = {
     children?: ReactNode;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     hugWidth?: boolean;
+    hugHeight?: boolean;
     'aria-label'?: string;
     formId?: string;
     /** @deprecated use emphasis with ButtonEmphasis.Weak */
@@ -63,6 +64,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         children,
         onClick,
         hugWidth = true,
+        hugHeight = true,
         'aria-label': ariaLabel,
         formId,
         solid,
@@ -103,6 +105,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         ButtonRoundingClasses[rounding],
         (icon && !children) || hideLabel ? ButtonSizeClasses[size].iconOnly : ButtonSizeClasses[size].default,
         !hugWidth && 'tw-w-full',
+        !hugHeight && 'tw-h-full',
     ]);
 
     return (
