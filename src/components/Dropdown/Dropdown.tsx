@@ -19,7 +19,7 @@ import { mergeProps } from '@react-aria/utils';
 import { useSelectState } from '@react-stately/select';
 import { merge } from '@utilities/merge';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { FC, ReactElement, useEffect, useRef } from 'react';
+import React, { FC, ReactElement, useRef } from 'react';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from './useDropdownAutoHeight';
 import { Validation } from '@utilities/validation';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
@@ -109,14 +109,6 @@ export const Dropdown: FC<DropdownProps> = ({
         { isOpen, onClose: () => state.close(), shouldCloseOnBlur: true, isDismissable: true },
         overlayRef,
     );
-
-    useEffect(() => {
-        if (state.disabledKeys.has(activeItemId as string)) {
-            return;
-        }
-
-        state.setSelectedKey(activeItemId as string);
-    }, [activeItemId]);
 
     const { maxHeight } = useDropdownAutoHeight(triggerRef, { isOpen, autoResize });
 
