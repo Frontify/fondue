@@ -14,6 +14,11 @@ export enum TriggerSize {
     Large = 'Large',
 }
 
+export enum InputEmphasis {
+    Default = 'Default',
+    Weak = 'Weak',
+}
+
 export type TriggerProps = {
     disabled?: boolean;
     isOpen?: boolean;
@@ -24,7 +29,28 @@ export type TriggerProps = {
     size?: TriggerSize;
     showClear?: boolean;
     validation?: Validation;
+    emphasis?: InputEmphasis;
 };
+
+const getTriggerClassNames = (
+    isFocusVisible: boolean,
+    disabled: boolean,
+    isOpen: boolean,
+    emphasis: InputEmphasis,
+    validation: Validation,
+) =>
+    merge([
+        'tw-group tw-relative tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-rounded tw-transition-colors tw-min-h-[36px]',
+        isFocusVisible && FOCUS_STYLE,
+        disabled
+            ? 'tw-border-black-5 tw-bg-black-5 tw-pointer-events-none'
+            : merge([
+                  'hover:tw-border-line-xx-strong',
+                  emphasis === InputEmphasis.Weak ? '' : 'tw-bg-base',
+                  isOpen ? 'tw-border-line-xx-strong' : 'tw-border-line',
+                  emphasis === InputEmphasis.Weak ? 'tw-border-transparent' : validationClassMap[validation],
+              ]),
+    ]);
 
 export const Trigger: FC<TriggerProps> = ({
     buttonProps,
@@ -37,26 +63,15 @@ export const Trigger: FC<TriggerProps> = ({
     size = TriggerSize.Small,
     showClear = false,
     validation = Validation.Default,
+    emphasis = InputEmphasis.Default,
 }) => {
     const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
     const { focusProps: onDeleteFocusProps, isFocusVisible: isOnDeleteFocusVisible } = useFocusRing();
 
-    const appropriateTriggerTWBorderClass = isOpen ? 'tw-border-line-xx-strong' : 'tw-border-line';
-
     return (
         <div
             data-test-id="trigger"
-            className={merge([
-                'tw-group tw-relative tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-rounded tw-transition-colors tw-min-h-[36px]',
-                isFocusVisible && FOCUS_STYLE,
-                disabled
-                    ? 'tw-border-black-5 tw-bg-black-5 tw-pointer-events-none'
-                    : merge([
-                          'tw-bg-base hover:tw-border-line-xx-strong',
-                          appropriateTriggerTWBorderClass,
-                          validationClassMap[validation],
-                      ]),
-            ])}
+            className={getTriggerClassNames(isFocusVisible, disabled, isOpen, emphasis, validation)}
         >
             {children}
             <div
