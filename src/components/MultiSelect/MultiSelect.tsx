@@ -140,6 +140,26 @@ export const MultiSelect: FC<MultiSelectProps> = ({
         }
     };
 
+    const getDecoratorClasses = () => {
+        if (emphasis === MultiSelectEmphasis.Weak) {
+            return activeItemKeys.length > 0 ? '' : 'tw-text-text-weak';
+        } else {
+            return '';
+        }
+    };
+
+    const getTagType = () => {
+        if (emphasis === MultiSelectEmphasis.Weak) {
+            return TagType.Selected;
+        } else {
+            if (open) {
+                return TagType.SelectedWithFocus;
+            } else {
+                return TagType.Selected;
+            }
+        }
+    };
+
     const summarizedLabel = [activeItemKeys.length, 'selected'].join(' ');
 
     return (
@@ -161,9 +181,9 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                     <div
                         className="tw-flex tw-flex-1 tw-gap-2 focus:tw-outline-0"
                         onClick={(e) => {
-                            console.log('TESTTTTTTTTT');
-
-                            if (e.target === filterInputRef.current && open) return;
+                            if (e.target === filterInputRef.current && open) {
+                                return;
+                            }
                             toggleOpen();
                         }}
                         role="button"
@@ -171,36 +191,14 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                         tabIndex={0}
                         onKeyDown={handleSpacebarToggle}
                     >
-                        <div
-                            className={`tw-flex tw-flex-wrap tw-gap-2 tw-outline-none tw-items-center tw-min-h-[34px] ${
-                                emphasis === MultiSelectEmphasis.Default ? '' : ''
-                            }`}
-                        >
-                            {decorator && (
-                                <div
-                                    className={
-                                        emphasis === MultiSelectEmphasis.Weak
-                                            ? activeItemKeys.length > 0
-                                                ? ''
-                                                : 'tw-text-text-weak'
-                                            : ''
-                                    }
-                                >
-                                    {decorator}
-                                </div>
-                            )}
+                        <div className="tw-flex tw-flex-wrap tw-gap-2 tw-outline-none tw-items-center tw-min-h-[34px]">
+                            {decorator && <div className={getDecoratorClasses()}>{decorator}</div>}
                             {placeholder && label && activeItemKeys.length > 0 && <Text weight="strong">{label}</Text>}
                             {type === MultiSelectType.Default &&
                                 activeItemKeys.map((key) => (
                                     <Tag
                                         key={key}
-                                        type={
-                                            emphasis === MultiSelectEmphasis.Weak
-                                                ? TagType.Selected
-                                                : open
-                                                ? TagType.SelectedWithFocus
-                                                : TagType.Selected
-                                        }
+                                        type={getTagType()}
                                         label={key.toString()}
                                         size={size === MultiSelectSize.Small ? TagSize.Small : TagSize.Medium}
                                         onClick={() => toggleSelection(key)}
@@ -209,13 +207,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
 
                             {type === MultiSelectType.Summarized && activeItemKeys.length > 0 && (
                                 <Tag
-                                    type={
-                                        emphasis === MultiSelectEmphasis.Weak
-                                            ? TagType.Selected
-                                            : open
-                                            ? TagType.SelectedWithFocus
-                                            : TagType.Selected
-                                    }
+                                    type={getTagType()}
                                     label={summarizedLabel}
                                     size={size === MultiSelectSize.Small ? TagSize.Small : TagSize.Medium}
                                     onClick={() => onSelectionChange([])}
@@ -270,19 +262,27 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                 <div ref={menuRef}>
                                     <Menu open={open} onClose={() => setOpen(false)}>
                                         {checkboxes.length > 0 ? (
-                                            checkboxes.map((item) => {
+                                            checkboxes.map((item, index) => {
                                                 const isChecked = activeItemKeys.find((key) => key === item.value);
 
-                                                if (item.isCategory)
+                                                if (item.isCategory) {
                                                     return (
-                                                        <div className="tw-w-full tw-text-left tw-py-2 tw-px-5">
+                                                        <div
+                                                            className="tw-w-full tw-text-left tw-py-2 tw-px-5"
+                                                            key={item.value}
+                                                        >
                                                             <Text weight="strong">{item.label}</Text>
                                                         </div>
                                                     );
-                                                if (item.isDivider)
+                                                }
+                                                if (item.isDivider) {
                                                     return (
-                                                        <div className="tw-border-t tw-w-full tw-border-solid tw-my-2 tw-border-line" />
+                                                        <div
+                                                            className="tw-border-t tw-w-full tw-border-solid tw-my-2 tw-border-line"
+                                                            key={item.value + index}
+                                                        />
                                                     );
+                                                }
 
                                                 return (
                                                     <MenuItem
@@ -290,7 +290,6 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                                         onClick={() => toggleSelection(item.label)}
                                                         key={item.value}
                                                     >
-                                                        {/* TODO: Create these variants in MenuItem */}
                                                         <div
                                                             className={`tw-flex tw-items-center tw-justify-between ${
                                                                 isChecked ? 'tw-text-text-interactive' : ''
@@ -300,6 +299,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                                                 {item.imgSrc && (
                                                                     <img
                                                                         src={item.imgSrc}
+                                                                        alt={item.value}
                                                                         className="tw-w-[1.5rem] tw-h-[1.5rem] tw-rounded-[50%] tw-object-cover tw-z-10"
                                                                     />
                                                                 )}
