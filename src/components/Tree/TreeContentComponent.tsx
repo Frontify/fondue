@@ -14,7 +14,7 @@ export interface TreeContentComponentProps {
     onEditableSave?: (value: string) => void;
     badge?: ReactElement<IconProps> | ReactElement<BadgeProps>;
     tooltipContent?: ReactNode;
-    label: string;
+    label?: string;
     actions?: React.ReactNode[];
     selected: boolean;
     hovered: boolean;
@@ -77,17 +77,19 @@ export const TreeContentComponent = ({
                 </div>
             </div>
 
-            <div className="tw-flex-[0_0_auto]" style={{ flex: '0 0 auto' }}>
-                <span
-                    data-test-id="node-label"
-                    className={merge([
-                        'tw-text-black-100 tw-text-opacity-40 tw-text-xs tw-font-normal',
-                        selected && 'tw-text-box-selected-strong-inverse',
-                    ])}
-                >
-                    {label}
-                </span>
-            </div>
+            {label && (
+                <div className="tw-flex-[0_0_auto]" style={{ flex: '0 0 auto' }}>
+                    <span
+                        data-test-id="node-label"
+                        className={merge([
+                            'tw-text-black-100 tw-text-opacity-40 tw-text-xs tw-font-normal',
+                            selected && 'tw-text-box-selected-strong-inverse',
+                        ])}
+                    >
+                        {label}
+                    </span>
+                </div>
+            )}
 
             {actions && (
                 <div
