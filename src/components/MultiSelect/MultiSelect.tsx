@@ -226,9 +226,15 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                 onChange={(e) => {
                                     setCheckboxes(
                                         items
-                                            .filter((item) =>
-                                                item.value.toLowerCase().includes(e.currentTarget.value.toLowerCase()),
-                                            )
+                                            .filter((item) => {
+                                                if (item.isCategory || item.isDivider) {
+                                                    return true;
+                                                }
+
+                                                return item.value
+                                                    .toLowerCase()
+                                                    .includes(e.currentTarget.value.toLowerCase());
+                                            })
                                             .map((item) => ({ ...item, label: item.value })),
                                     );
                                 }}
@@ -264,9 +270,17 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                         {checkboxes.length > 0 ? (
                                             checkboxes.map((item, index) => {
                                                 const isChecked = activeItemKeys.find((key) => key === item.value);
+                                                const isNextItemDivider =
+                                                    checkboxes[index + 1]?.isCategory ||
+                                                    checkboxes[index + 1]?.isDivider;
+                                                const isPreviousItemDivider =
+                                                    checkboxes[index - 1]?.isCategory ||
+                                                    checkboxes[index - 1]?.isDivider;
 
                                                 if (item.isCategory) {
-                                                    return (
+                                                    return isNextItemDivider ? (
+                                                        <></>
+                                                    ) : (
                                                         <div
                                                             className="tw-w-full tw-text-left tw-py-2 tw-px-5"
                                                             key={item.value}
@@ -276,7 +290,9 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                                     );
                                                 }
                                                 if (item.isDivider) {
-                                                    return (
+                                                    return isNextItemDivider || isPreviousItemDivider ? (
+                                                        <></>
+                                                    ) : (
                                                         <div
                                                             className="tw-border-t tw-w-full tw-border-solid tw-my-2 tw-border-line"
                                                             key={item.value + index}
