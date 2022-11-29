@@ -21,5 +21,5 @@ export type TreeItemProps = {
     onSelect?: (id: Nullable<string>) => void;
     onDrop?: OnDropCallback<{ id: string; sort: Nullable<number> }>;
     contentComponent: ({ selected, hovered }: ContentComponentArguments) => ReactNode;
-    children?: ReactNode;
+    children?: ReactElement<TreeItemProps> | Array<ReactElement<TreeItemProps>>;
 };

@@ -68,7 +68,7 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, childre
                         />
                     )}
 
-                    {child as TreeItemProps}
+                    {child}
                 </>,
             );
         });
