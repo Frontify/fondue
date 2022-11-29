@@ -59,10 +59,9 @@ const closeMenuWithKeyboard = (keys: any, hasTrigger = true) => {
 const openWithKeyboard = (hasTrigger = true) => {
     if (hasTrigger) {
         cy.get(MENU_SELECTOR).find('button').eq(0).focus().realPress('Enter');
+    } else {
+        cy.get('body').focus();
     }
-    // else {
-    // cy.get('body').trigger('keydown', { key: 'Tab' });
-    // }
 
     cy.get(MENU_SELECTOR).find('nav').should('have.class', 'tw-block');
 };

@@ -20,7 +20,7 @@ export default {
         type: MultiSelectType.Default,
         emphasis: MultiSelectEmphasis.Default,
         size: MultiSelectSize.Medium,
-        label: '[Label]',
+        placeholder: '[Label]',
         activeItemKeys: ['Short tag', 'Tag 74'],
         items: [
             {
@@ -117,8 +117,10 @@ export const WithFilter = MultiSelectTemplate.bind({});
 
 WithFilter.args = {
     filterable: true,
+    filterLabel: 'Filter..',
+    noResultsLabel: 'No results match the search',
     decorator: <IconPerson16 />,
-    placeholder: 'Users',
+    placeholder: 'UsersUsersUsersUsers',
     items: [
         {
             value: 'Consumption',

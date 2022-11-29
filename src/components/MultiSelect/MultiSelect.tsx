@@ -11,11 +11,11 @@ import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { FC, KeyboardEvent, useRef, useState } from 'react';
-import { getPaddingClasses } from './helpers';
+import { getInputWidth, getPaddingClasses } from './helpers';
 import { Menu } from '@components/Menu';
 import { MenuItem } from '..';
-import { IconCheckMark16 } from '@foundation/Icon';
 import { useClickOutside } from '@hooks/useClickOutside';
+import { DefaultItem, NoSearchResults, OptionalItems } from './SelectMenuItems';
 
 export enum MultiSelectType {
     Default = 'Default',
@@ -46,7 +46,6 @@ export type MultiSelectProps = {
     disabled?: boolean;
     onSelectionChange: (keys: (string | number)[]) => void;
     ariaLabel?: string;
-    label?: string;
     placeholder?: string;
     type?: MultiSelectType;
     size?: MultiSelectSize;
@@ -54,9 +53,17 @@ export type MultiSelectProps = {
     emphasis?: MultiSelectEmphasis;
     decorator?: React.ReactNode;
     filterable?: boolean;
-    menuItem?: React.ReactNode;
     filterLabel?: string;
     noResultsLabel?: string;
+};
+
+export type Item = {
+    label: string;
+    value: string;
+    isCategory?: boolean;
+    isDivider?: boolean;
+    imgSrc?: string;
+    ariaLabel?: string;
 };
 
 export const MultiSelect: FC<MultiSelectProps> = ({
@@ -64,7 +71,6 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     activeItemKeys,
     onSelectionChange,
     ariaLabel = 'Select list',
-    label,
     disabled = false,
     placeholder,
     filterLabel,
@@ -75,16 +81,20 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     emphasis = MultiSelectEmphasis.Default,
     decorator = null,
     filterable = false,
-    menuItem,
 }) => {
     const [open, setOpen] = useState(false);
-    const [checkboxes, setCheckboxes] = useState(items.map((item) => ({ ...item, label: item.value })));
+    const [checkboxes, setCheckboxes] = useState<Item[]>(items.map((item) => ({ ...item, label: item.value })));
+    const hasResults = !!checkboxes.find((item) => !item.isCategory && !item.isDivider);
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const multiSelectRef = useRef<HTMLDivElement | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
     const filterInputRef = useRef<HTMLInputElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
+
+    const hasSelectedItems = activeItemKeys.length > 0;
+    const summarizedLabel = [activeItemKeys.length, 'selected'].join(' ');
+    const inputWidth = getInputWidth(hasSelectedItems, filterLabel, placeholder);
 
     const handleClickOutside = () => {
         if (emphasis === MultiSelectEmphasis.Weak) {
@@ -142,7 +152,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
 
     const getDecoratorClasses = () => {
         if (emphasis === MultiSelectEmphasis.Weak) {
-            return activeItemKeys.length > 0 ? '' : 'tw-text-text-weak';
+            return hasSelectedItems ? '' : 'tw-text-text-weak';
         } else {
             return '';
         }
@@ -160,8 +170,6 @@ export const MultiSelect: FC<MultiSelectProps> = ({
         }
     };
 
-    const summarizedLabel = [activeItemKeys.length, 'selected'].join(' ');
-
     return (
         <div className="tw-relative" ref={multiSelectRef}>
             <Trigger
@@ -172,12 +180,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                 validation={validation}
                 emphasis={emphasis === MultiSelectEmphasis.Default ? TriggerEmphasis.Default : TriggerEmphasis.Weak}
             >
-                <div
-                    className={merge([
-                        'tw-flex tw-flex-1 tw-gap-2',
-                        getPaddingClasses(size, activeItemKeys.length > 0),
-                    ])}
-                >
+                <div className={merge(['tw-flex tw-flex-1 tw-gap-2', getPaddingClasses(size)])}>
                     <div
                         className="tw-flex tw-flex-1 tw-gap-2 focus:tw-outline-0"
                         onClick={(e) => {
@@ -193,7 +196,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                     >
                         <div className="tw-flex tw-flex-wrap tw-gap-2 tw-outline-none tw-items-center tw-min-h-[34px]">
                             {decorator && <div className={getDecoratorClasses()}>{decorator}</div>}
-                            {placeholder && label && activeItemKeys.length > 0 && <Text weight="strong">{label}</Text>}
+                            {placeholder && hasSelectedItems && <Text weight="strong">{placeholder}</Text>}
                             {type === MultiSelectType.Default &&
                                 activeItemKeys.map((key) => (
                                     <Tag
@@ -205,7 +208,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                     />
                                 ))}
 
-                            {type === MultiSelectType.Summarized && activeItemKeys.length > 0 && (
+                            {type === MultiSelectType.Summarized && hasSelectedItems && (
                                 <Tag
                                     type={getTagType()}
                                     label={summarizedLabel}
@@ -221,8 +224,9 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                         {filterable && (
                             <input
                                 ref={filterInputRef}
-                                className="focus:tw-outline-0 tw-text-s"
-                                placeholder={activeItemKeys.length === 0 ? label : filterLabel}
+                                className="focus:tw-outline-0 tw-text-s tw-bg-transparent"
+                                style={{ maxWidth: inputWidth }}
+                                placeholder={activeItemKeys.length === 0 ? placeholder : filterLabel}
                                 onChange={(e) => {
                                     setCheckboxes(
                                         items
@@ -267,9 +271,10 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             ) : (
                                 <div ref={menuRef}>
                                     <Menu open={open} onClose={() => setOpen(false)}>
-                                        {checkboxes.length > 0 ? (
+                                        {checkboxes.length > 0 && hasResults ? (
                                             checkboxes.map((item, index) => {
-                                                const isChecked = activeItemKeys.find((key) => key === item.value);
+                                                const { label, value, imgSrc } = item;
+                                                const isChecked = !!activeItemKeys.find((key) => key === value);
                                                 const isNextItemDivider =
                                                     checkboxes[index + 1]?.isCategory ||
                                                     checkboxes[index + 1]?.isDivider;
@@ -277,62 +282,32 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                                     checkboxes[index - 1]?.isCategory ||
                                                     checkboxes[index - 1]?.isDivider;
 
-                                                if (item.isCategory) {
-                                                    return isNextItemDivider ? (
-                                                        <></>
-                                                    ) : (
-                                                        <div
-                                                            className="tw-w-full tw-text-left tw-py-2 tw-px-5"
-                                                            key={item.value}
-                                                        >
-                                                            <Text weight="strong">{item.label}</Text>
-                                                        </div>
-                                                    );
-                                                }
-                                                if (item.isDivider) {
-                                                    return isNextItemDivider || isPreviousItemDivider ? (
-                                                        <></>
-                                                    ) : (
-                                                        <div
-                                                            className="tw-border-t tw-w-full tw-border-solid tw-my-2 tw-border-line"
-                                                            key={item.value + index}
+                                                if (item.isCategory || item.isDivider) {
+                                                    return (
+                                                        <OptionalItems
+                                                            key={value + index}
+                                                            {...{
+                                                                item,
+                                                                index,
+                                                                isNextItemDivider,
+                                                                isPreviousItemDivider,
+                                                            }}
                                                         />
                                                     );
                                                 }
 
                                                 return (
                                                     <MenuItem
-                                                        checked={!!isChecked}
-                                                        onClick={() => toggleSelection(item.label)}
-                                                        key={item.value}
+                                                        checked={isChecked}
+                                                        onClick={() => toggleSelection(label)}
+                                                        key={value}
                                                     >
-                                                        <div
-                                                            className={`tw-flex tw-items-center tw-justify-between ${
-                                                                isChecked ? 'tw-text-text-interactive' : ''
-                                                            }`}
-                                                        >
-                                                            <div className="tw-flex tw-gap-3 tw-items-center">
-                                                                {item.imgSrc && (
-                                                                    <img
-                                                                        src={item.imgSrc}
-                                                                        alt={item.value}
-                                                                        className="tw-w-[1.5rem] tw-h-[1.5rem] tw-rounded-[50%] tw-object-cover tw-z-10"
-                                                                    />
-                                                                )}
-                                                                <Text color={isChecked ? 'interactive' : 'weak'}>
-                                                                    {item.label}
-                                                                </Text>
-                                                            </div>
-                                                            {isChecked && <IconCheckMark16 />}
-                                                        </div>
-                                                        {menuItem}
+                                                        <DefaultItem {...{ label, value, imgSrc, isChecked }} />
                                                     </MenuItem>
                                                 );
                                             })
                                         ) : (
-                                            <div className="tw-py-2 tw-px-5">
-                                                <Text color="weak">{noResultsLabel}</Text>
-                                            </div>
+                                            <NoSearchResults label={noResultsLabel} />
                                         )}
                                     </Menu>
                                 </div>
