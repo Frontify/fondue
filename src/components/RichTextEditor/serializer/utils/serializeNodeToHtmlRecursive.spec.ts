@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_LI, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL } from '@udecode/plate';
-import { OL_CLASSES, UL_CLASSES } from '@components/RichTextEditor/Plugins';
+import { orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
+import { UL_CLASSES, getOrderedListClasses } from '@components/RichTextEditor/Plugins';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
+import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL } from '@udecode/plate';
 import { serializeNodeToHtmlRecursive } from './serializeNodeToHtmlRecursive';
 
 describe('serializeNodeToHtmlRecursive()', () => {
@@ -13,17 +14,60 @@ describe('serializeNodeToHtmlRecursive()', () => {
             children: [
                 {
                     type: ELEMENT_LI,
-                    children: [{ text: 'This comes first.' }],
+                    children: [
+                        {
+                            type: ELEMENT_LIC,
+                            children: [{ text: 'This comes first.' }],
+                        },
+                    ],
                 },
                 {
                     type: ELEMENT_LI,
-                    children: [{ text: 'This comes second.' }],
+                    children: [
+                        {
+                            type: ELEMENT_LIC,
+                            children: [{ text: 'This comes second.' }],
+                        },
+                    ],
                 },
             ],
         };
         const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
 
-        expect(result).to.equal(`<ol class="${OL_CLASSES}"><li>This comes first.</li><li>This comes second.</li></ol>`);
+        expect(result).to.equal(
+            `<ol class="${getOrderedListClasses(
+                0,
+            )}"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This comes first.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This comes second.</span></li></ol>`,
+        );
+    });
+
+    it('serializes ordered list with correct list style types to html', () => {
+        const result = serializeNodeToHtmlRecursive(orderedListValue, defaultDesignTokens);
+
+        const parser = new DOMParser();
+        const htmlDoc = parser.parseFromString(result, 'text/html');
+        const orderedLists = htmlDoc.getElementsByTagName('ol');
+        expect(orderedLists[0]?.className).to.include('tw-list-[decimal]');
+        expect(orderedLists[1]?.className).to.include('tw-list-[lower-alpha]');
+        expect(orderedLists[2]?.className).to.include('tw-list-[lower-roman]');
+    });
+
+    it('serializes list item with custom styles to html', () => {
+        const result = serializeNodeToHtmlRecursive(unorderedListValue, defaultDesignTokens);
+
+        const parser = new DOMParser();
+        const htmlDoc = parser.parseFromString(result, 'text/html');
+        const listItems = htmlDoc.getElementsByTagName('li');
+
+        // custom1
+        expect(listItems[0]?.style.fontSize).to.contain('14px');
+        expect(listItems[0]?.style.fontStyle).to.contain('normal');
+        expect(listItems[0]?.style.fontWeight).to.contain('normal');
+
+        // custom2
+        expect(listItems[1]?.style.fontSize).to.contain('14px');
+        expect(listItems[1]?.style.fontStyle).to.contain('normal');
+        expect(listItems[1]?.style.fontWeight).to.contain(600);
     });
 
     it('serializes unordered list to html', () => {
@@ -32,17 +76,29 @@ describe('serializeNodeToHtmlRecursive()', () => {
             children: [
                 {
                     type: ELEMENT_LI,
-                    children: [{ text: 'This comes first.' }],
+                    children: [
+                        {
+                            type: ELEMENT_LIC,
+                            children: [{ text: 'This comes first.' }],
+                        },
+                    ],
                 },
                 {
                     type: ELEMENT_LI,
-                    children: [{ text: 'This comes second.' }],
+                    children: [
+                        {
+                            type: ELEMENT_LIC,
+                            children: [{ text: 'This comes second.' }],
+                        },
+                    ],
                 },
             ],
         };
         const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
 
-        expect(result).to.equal(`<ul class="${UL_CLASSES}"><li>This comes first.</li><li>This comes second.</li></ul>`);
+        expect(result).to.equal(
+            `<ul class="${UL_CLASSES}"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This comes first.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This comes second.</span></li></ul>`,
+        );
     });
 
     it('serializes link to html', () => {
@@ -59,7 +115,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
 
         expect(result).to.equal(
-            '<p style=""><a style="font-size: 14px; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" href="https://frontify.com">This is a Link.</a></p>',
+            '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" href="https://frontify.com">This is a Link.</a></p>',
         );
     });
 
@@ -86,7 +142,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
 
         expect(result).to.equal(
-            '<p style=""><a style="font-size: 14px; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target=_blank href="https://smartive.ch">This is also a Link.</a></p>',
+            '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target=_blank href="https://smartive.ch">This is also a Link.</a></p>',
         );
     });
 
@@ -164,7 +220,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
 
         expect(result).to.equal(
-            '<p style=""><h1 style="font-size: 48px; font-weight: 700;">This is a h1.</h1><h2 style="font-size: 32px; font-weight: 700;">This is a h2.</h2><h3 style="font-size: 24px;">This is a h3.</h3><h4 style="font-size: 18px;">This is a h4.</h4><p style="font-size: 14px;">This is a custom1.</p><p style="font-size: 14px; font-weight: 600;">This is a custom2.</p><p style="font-size: 14px; text-decoration: underline;">This is a custom3.</p><p style="font-size: 16px; font-style: italic;">This is a quote.</p></p>',
+            '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><h1 style="font-size: 48px; font-weight: 700; font-style: normal;">This is a h1.</h1><h2 style="font-size: 32px; font-weight: 700; font-style: normal;">This is a h2.</h2><h3 style="font-size: 24px; font-weight: normal; font-style: normal;">This is a h3.</h3><h4 style="font-size: 18px; font-weight: normal; font-style: normal;">This is a h4.</h4><p style="font-size: 14px; font-weight: normal; font-style: normal;">This is a custom1.</p><p style="font-size: 14px; font-weight: 600; font-style: normal;">This is a custom2.</p><p style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: underline;">This is a custom3.</p><p style="font-size: 16px; font-weight: normal; font-style: italic;">This is a quote.</p></p>',
         );
     });
 });

@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Validation } from '@utilities/validation';
 import React from 'react';
 import { Textarea } from './Textarea';
 
@@ -10,6 +11,7 @@ const DECORATOR = <span>{DECORATOR_TEXT}</span>;
 const INPUT_TEXT = 'some text';
 const ROW_HEIGHT = 16;
 const TEXTAREA_ID = '[data-test-id=textarea]';
+const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
 
 describe('Textarea component', () => {
     it('renders', () => {
@@ -19,6 +21,7 @@ describe('Textarea component', () => {
         cy.get(TEXTAREA_ID).should('not.have.attr', 'placeholder');
         cy.get(TEXTAREA_ID).should('not.have.attr', 'disabled');
         cy.get(TEXTAREA_ID).find('[data-test-id="decorator"]').should('have.length', 0);
+        cy.get(TEXTAREA_ID).find(EXCLAMATION_MARK_ICON_ID).should('have.length', 0);
     });
 
     it('sets and gets the value', () => {
@@ -115,5 +118,10 @@ describe('Textarea component', () => {
     it('removes resize handler', () => {
         cy.mount(<Textarea resizeable={false} />);
         cy.get(TEXTAREA_ID).should('have.css', 'resize', 'none');
+    });
+
+    it('only error validation state should show the triangle warning icon', () => {
+        cy.mount(<Textarea validation={Validation.Error} />);
+        cy.get(EXCLAMATION_MARK_ICON_ID).should('be.visible');
     });
 });

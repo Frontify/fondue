@@ -2,10 +2,17 @@
 
 import { getDisabledItemIds, getMenuItems, mapToAriaProps } from '@components/ActionMenu/Aria/helper';
 import { MenuBlock, MenuItemType, SelectMenu } from '@components/Dropdown/SelectMenu/SelectMenu';
-import { MenuItemStyle, MenuItemTextColorState, menuItemTextColorRecord } from '@components/MenuItem';
-import { MenuItemContent, MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
-import { Trigger, TriggerSize } from '@components/Trigger/Trigger';
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
+import {
+    MenuItemContent,
+    MenuItemContentSize,
+    MenuItemStyle,
+    MenuItemTextColorState,
+    menuItemTextColorRecord,
+} from '@components/MenuItem';
+import { InputEmphasis, Trigger, TriggerSize } from '@components/Trigger/Trigger';
 import { useMemoizedId } from '@hooks/useMemoizedId';
+import { VariationPlacement } from '@popperjs/core';
 import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { DismissButton, useOverlay } from '@react-aria/overlays';
@@ -13,14 +20,12 @@ import { HiddenSelect, useSelect } from '@react-aria/select';
 import { mergeProps } from '@react-aria/utils';
 import { useSelectState } from '@react-stately/select';
 import { merge } from '@utilities/merge';
+import { Validation } from '@utilities/validation';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { FC, ReactElement, useEffect, useRef } from 'react';
-import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from './useDropdownAutoHeight';
-import { Validation } from '@utilities/validation';
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
 import { createPortal } from 'react-dom';
 import { usePopper } from 'react-popper';
-import { VariationPlacement } from '@popperjs/core';
+import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from './useDropdownAutoHeight';
 
 export enum DropdownSize {
     Small = 'Small',
@@ -52,6 +57,7 @@ export type DropdownProps = {
     validation?: Validation;
     alignment?: DropdownAlignment;
     position?: DropdownPosition;
+    emphasis?: InputEmphasis;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
@@ -83,6 +89,7 @@ export const Dropdown: FC<DropdownProps> = ({
     validation = Validation.Default,
     alignment = DropdownAlignment.Start,
     position = DropdownPosition.Bottom,
+    emphasis = InputEmphasis.Default,
 }) => {
     const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -168,6 +175,7 @@ export const Dropdown: FC<DropdownProps> = ({
                 isFocusVisible={!disabled && isFocusVisible}
                 isOpen={isOpen}
                 size={size === DropdownSize.Large ? TriggerSize.Large : TriggerSize.Small}
+                emphasis={emphasis}
                 onClear={onClear}
                 showClear={showClear}
                 validation={validation}

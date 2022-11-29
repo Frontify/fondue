@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MenuBlock } from '@components/Dropdown/SelectMenu/SelectMenu';
-import { MenuItemContentSize } from '@components/MenuItem/MenuItemContent';
+import { MenuItemContentSize } from '@components/MenuItem';
 import { IconIcon } from '@foundation/Icon';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { Validation } from '@utilities/validation';
 import React, { FC, ReactElement, useState } from 'react';
 import { Dropdown } from './Dropdown';
 
@@ -16,6 +17,7 @@ const TRIGGER_ID = '[data-test-id=trigger]';
 const MENU_ITEM_ID = '[data-test-id=menu-item]';
 const MENU_ITEM_ACTIVE_ID = '[data-test-id=menu-item-active]';
 const MENU_ITEM_TITLE_ID = '[data-test-id=menu-item-title]';
+const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
 
 const ITEMS = [
     {
@@ -60,6 +62,7 @@ type Props = {
     disabled?: boolean;
     decorator?: ReactElement;
     autoResize?: boolean;
+    validation?: Validation;
 };
 
 const Component: FC<Props> = ({
@@ -70,6 +73,7 @@ const Component: FC<Props> = ({
     disabled = false,
     decorator,
     autoResize = true,
+    validation = Validation.Default,
 }) => {
     const [activeItemId, setActiveItemId] = useState(initialActiveId);
     return (
@@ -82,6 +86,7 @@ const Component: FC<Props> = ({
             disabled={disabled}
             decorator={decorator}
             autoResize={autoResize}
+            validation={validation}
         />
     );
 };
@@ -201,5 +206,17 @@ describe('Dropdown Component', () => {
             .invoke('css', 'width')
             .then((width) => cy.get(TRIGGER_ID).click(parseInt(width.toString()) - MARGIN_RIGHT, MARGIN_TOP));
         cy.get(MENU_ITEM_LIST_ID).children().should('have.length', 5);
+    });
+
+    it('only error validation state should show the triangle warning icon', () => {
+        for (const validationState of Object.values(Validation)) {
+            if (validationState === Validation.Error) {
+                cy.mount(<Component menuBlocks={ITEMS} validation={validationState} />);
+                cy.get(EXCLAMATION_MARK_ICON_ID).should('be.visible');
+                return;
+            }
+            cy.mount(<Component menuBlocks={ITEMS} validation={validationState} />);
+            cy.get(TRIGGER_ID).find(EXCLAMATION_MARK_ICON_ID).should('have.length', 0);
+        }
     });
 });
