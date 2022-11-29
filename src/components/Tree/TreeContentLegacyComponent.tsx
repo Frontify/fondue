@@ -8,7 +8,7 @@ import { Tooltip, TooltipPosition } from '@components/Tooltip';
 import { IconProps } from '@foundation/Icon';
 import { merge } from '@utilities/merge';
 
-export interface TreeContentComponentProps {
+export interface TreeContentLegacyComponentProps {
     title: string;
     icon: ReactElement<IconProps>;
     onEditableSave?: (value: string) => void;
@@ -20,7 +20,7 @@ export interface TreeContentComponentProps {
     hovered: boolean;
 }
 
-export const TreeContentComponent = ({
+export const TreeContentLegacyComponent = ({
     title,
     icon,
     onEditableSave,
@@ -30,7 +30,7 @@ export const TreeContentComponent = ({
     actions,
     selected,
     hovered,
-}: TreeContentComponentProps) => {
+}: TreeContentLegacyComponentProps) => {
     const insertBadge = () => {
         return (
             <Tooltip
@@ -54,11 +54,22 @@ export const TreeContentComponent = ({
     };
 
     return (
-        <div className="tw-relative tw-flex tw-justify-between tw-items-center tw-space-x-1 tw-w-full">
+        <div
+            data-test-id="tree-content-legacy-component"
+            className="tw-relative tw-flex tw-justify-between tw-items-center tw-space-x-1 tw-w-full"
+        >
             <div className="tw-flex tw-space-x-1.5 tw-w-full">
-                <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{icon}</span>
+                <span
+                    data-test-id="tree-content-legacy-component-icon"
+                    className="tw-flex tw-justify-center tw-items-center tw-w-5"
+                >
+                    {icon}
+                </span>
 
-                <div className="tw-relative tw-flex tw-flex-1 tw-w-full tw-h-6">
+                <div
+                    data-test-id="tree-content-legacy-component-editable-title"
+                    className="tw-relative tw-flex tw-flex-1 tw-w-full tw-h-6"
+                >
                     <div className="tw-relative tw-top-[0.2rem] tw-w-full tw-flex-1 tw-h-full">
                         <EditableText
                             options={{
@@ -73,12 +84,16 @@ export const TreeContentComponent = ({
                         </EditableText>
                     </div>
 
-                    <span>{badge && insertBadge()}</span>
+                    <span data-test-id="tree-content-legacy-component-badge">{badge && insertBadge()}</span>
                 </div>
             </div>
 
             {label && (
-                <div className="tw-flex-[0_0_auto]" style={{ flex: '0 0 auto' }}>
+                <div
+                    data-test-id="tree-content-legacy-component-label"
+                    className="tw-flex-[0_0_auto]"
+                    style={{ flex: '0 0 auto' }}
+                >
                     <span
                         data-test-id="node-label"
                         className={merge([
@@ -93,6 +108,7 @@ export const TreeContentComponent = ({
 
             {actions && (
                 <div
+                    data-test-id="tree-content-legacy-component-actions"
                     className={merge([
                         'tw-flex tw-items-center',
                         hovered || selected ? 'tw-visible tw-space-x-1.5' : 'tw-invisible tw-w-0',
