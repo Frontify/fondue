@@ -93,7 +93,7 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, childre
     };
 
     return (
-        <li data-test-id="node" ref={drag} style={{ opacity }}>
+        <li data-test-id="tree-item" ref={drag} style={{ opacity }}>
             <DropZone
                 data={{
                     targetItem: { id, sort },
@@ -116,7 +116,7 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, childre
                 >
                     <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-6">
                         <span
-                            data-test-id="toggle"
+                            data-test-id="tree-item-toggle"
                             className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center tw-cursor-pointer"
                         >
                             {insertCaret()}
@@ -130,7 +130,7 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, childre
             {expanded && (
                 <ul
                     className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left [&>li]:tw-pl-4"
-                    data-test-id="sub-tree"
+                    data-test-id="sub-tree-items"
                 >
                     {enhancedChildren}
                 </ul>

@@ -1,27 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TreeNodeItem, treeNodesMock } from '@components/Tree/utils/mocks';
 import React from 'react';
 
 import { Tree, TreeItem } from '@components/Tree';
-import { TreeContentComponent } from './TreeContentComponent';
+import { treeNodesMock } from '@components/Tree/utils/mocks';
 
-const TreeComponent = () => {
-    const contentComponent = (node: TreeNodeItem, selected: boolean, hovered: boolean) => {
-        return (
-            <TreeContentComponent
-                title={node.name}
-                icon={node.icon || <></>}
-                label={node.label || ''}
-                badge={node.badge}
-                tooltipContent={node.tooltipContent}
-                actions={node.actions}
-                selected={selected}
-                hovered={hovered}
-            />
-        );
-    };
-
+const TreeComponent = ({ onSelect }: { onSelect?: (id: Nullable<string>) => void }) => {
     return (
         <Tree id="treeId">
             {treeNodesMock.map((node) => (
@@ -29,7 +13,8 @@ const TreeComponent = () => {
                     key={node.id}
                     id={node.id}
                     sort={node.sort}
-                    contentComponent={({ selected, hovered }) => contentComponent(node, selected, hovered)}
+                    contentComponent={() => <span>{node.name}</span>}
+                    onSelect={onSelect}
                 >
                     {node.nodes &&
                         node.nodes.map((node) => (
@@ -37,7 +22,7 @@ const TreeComponent = () => {
                                 key={node.id}
                                 id={node.id}
                                 sort={node.sort}
-                                contentComponent={({ selected, hovered }) => contentComponent(node, selected, hovered)}
+                                contentComponent={() => <span>{node.name}</span>}
                             >
                                 {node.nodes &&
                                     node.nodes.map((node) => (
@@ -45,9 +30,7 @@ const TreeComponent = () => {
                                             key={node.id}
                                             id={node.id}
                                             sort={node.sort}
-                                            contentComponent={({ selected, hovered }) =>
-                                                contentComponent(node, selected, hovered)
-                                            }
+                                            contentComponent={() => <span>{node.name}</span>}
                                         />
                                     ))}
                             </TreeItem>
@@ -59,11 +42,41 @@ const TreeComponent = () => {
 };
 
 const TREE_ID = '[data-test-id=tree]';
+const TREE_ITEM_ID = '[data-test-id=tree-item]';
+const TREE_ITEM_TOGGLE_ID = '[data-test-id=tree-item-toggle';
+const SUB_TREE_ITEMS_ID = '[data-test-id=sub-tree-items]';
 
 describe('Tree Component', () => {
-    it('renders tree', () => {
+    it('renders tree structure with children', () => {
         cy.mount(<TreeComponent />);
 
         cy.get(TREE_ID).should('be.visible');
+    });
+
+    it('expands and shrinks the tree on toggle click', () => {
+        cy.mount(<TreeComponent />);
+
+        cy.get(TREE_ITEM_TOGGLE_ID).click();
+        cy.get(SUB_TREE_ITEMS_ID).should('be.visible');
+        cy.get(TREE_ITEM_TOGGLE_ID).first().click();
+        cy.get(SUB_TREE_ITEMS_ID).should('not.exist');
+    });
+
+    it('renders all tree items', () => {
+        cy.mount(<TreeComponent />);
+
+        cy.get(TREE_ITEM_TOGGLE_ID).eq(0).click();
+        cy.get(TREE_ITEM_TOGGLE_ID).eq(2).click();
+        cy.get(TREE_ITEM_TOGGLE_ID).eq(1).click();
+
+        cy.get(TREE_ITEM_ID).should('have.length', 9);
+    });
+
+    it('calls the onSelect callback', () => {
+        const onSelectStub = cy.stub().as('onSelectStub');
+        cy.mount(<TreeComponent onSelect={onSelectStub} />);
+
+        cy.get(TREE_ITEM_ID).click();
+        cy.get('@onSelectStub').should('have.been.called');
     });
 });
