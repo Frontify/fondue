@@ -5,10 +5,17 @@ import { Meta, StoryFn } from '@storybook/react';
 import { DatePicker, DatePickerProps } from './DatePicker';
 import { FormControl } from '@components/FormControl';
 import { Slider } from '@components/Slider';
+import { Validation } from '@utilities/validation';
 
 export default {
     title: 'Components/DatePicker',
     component: DatePicker,
+    argTypes: {
+        validation: {
+            options: Object.values(Validation),
+            control: { type: 'select' },
+        },
+    },
 } as Meta<DatePickerProps>;
 
 const Template: StoryFn<DatePickerProps> = (args) => {

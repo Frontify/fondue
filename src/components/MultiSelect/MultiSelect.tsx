@@ -8,6 +8,7 @@ import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { useOverlay } from '@react-aria/overlays';
 import { mergeProps } from '@react-aria/utils';
 import { merge } from '@utilities/merge';
+import { Validation } from '@utilities/validation';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { FC, useRef, useState } from 'react';
 import { getPaddingClasses } from './helpers';
@@ -36,6 +37,7 @@ export type MultiSelectProps = {
     placeholder?: string;
     type?: MultiSelectType;
     size?: MultiSelectSize;
+    validation?: Validation;
 };
 
 export const MultiSelect: FC<MultiSelectProps> = ({
@@ -47,6 +49,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     placeholder,
     type = MultiSelectType.Default,
     size = MultiSelectSize.Medium,
+    validation = Validation.Default,
 }) => {
     const [open, setOpen] = useState(false);
     const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -99,7 +102,13 @@ export const MultiSelect: FC<MultiSelectProps> = ({
 
     return (
         <div className="tw-relative">
-            <Trigger disabled={disabled} buttonProps={buttonProps} isFocusVisible={isFocusVisible} isOpen={open}>
+            <Trigger
+                disabled={disabled}
+                buttonProps={buttonProps}
+                isFocusVisible={isFocusVisible}
+                isOpen={open}
+                validation={validation}
+            >
                 <div
                     {...mergeProps(buttonProps, focusProps)}
                     ref={triggerRef}
