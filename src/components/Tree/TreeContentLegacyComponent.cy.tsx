@@ -68,7 +68,7 @@ describe('Tree Content Legacy Component', () => {
             <TreeContentLegacyComponent
                 title="Test"
                 icon={<IconTester />}
-                actions={[<Button size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />]}
+                actions={[<Button key={'Test'} size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />]}
                 selected={false}
                 hovered={false}
             />,
@@ -83,7 +83,7 @@ describe('Tree Content Legacy Component', () => {
             <TreeContentLegacyComponent
                 title="Test"
                 icon={<IconTester />}
-                actions={[<Button size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />]}
+                actions={[<Button key={'Test'} size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />]}
                 selected={true}
                 hovered={true}
             />,
