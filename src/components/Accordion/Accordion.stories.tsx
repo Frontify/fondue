@@ -140,7 +140,7 @@ const customHeader: FC<AccordionHeaderProps> = ({ isOpen, children }) => (
     </div>
 );
 
-const Code: FC = ({ children }) => (
+const Code: FC<{ children: ReactNode }> = ({ children }) => (
     <code className="tw-bg-black-5 tw-rounded tw-px-2 tw-text-box-negative-strong tw-text-s">{children}</code>
 );
 
