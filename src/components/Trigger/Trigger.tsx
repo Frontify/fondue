@@ -7,11 +7,16 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import React, { FC, HTMLAttributes } from 'react';
-import { IconCross, IconTrashBin } from '@foundation/Icon';
+import { IconCross, IconExclamationMarkTriangle, IconTrashBin } from '@foundation/Icon';
 
 export enum TriggerSize {
     Small = 'Small',
     Large = 'Large',
+}
+
+export enum InputEmphasis {
+    Default = 'Default',
+    Weak = 'Weak',
 }
 
 export type TriggerProps = {
@@ -24,7 +29,28 @@ export type TriggerProps = {
     size?: TriggerSize;
     showClear?: boolean;
     validation?: Validation;
+    emphasis?: InputEmphasis;
 };
+
+const getTriggerClassNames = (
+    isFocusVisible: boolean,
+    disabled: boolean,
+    isOpen: boolean,
+    emphasis: InputEmphasis,
+    validation: Validation,
+) =>
+    merge([
+        'tw-group tw-relative tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-rounded tw-transition-colors tw-min-h-[36px]',
+        isFocusVisible && FOCUS_STYLE,
+        disabled
+            ? 'tw-border-black-5 tw-bg-black-5 tw-pointer-events-none'
+            : merge([
+                  'hover:tw-border-line-xx-strong',
+                  emphasis === InputEmphasis.Weak ? '' : 'tw-bg-base',
+                  isOpen ? 'tw-border-line-xx-strong' : 'tw-border-line',
+                  emphasis === InputEmphasis.Weak ? 'tw-border-transparent' : validationClassMap[validation],
+              ]),
+    ]);
 
 export const Trigger: FC<TriggerProps> = ({
     buttonProps,
@@ -37,6 +63,7 @@ export const Trigger: FC<TriggerProps> = ({
     size = TriggerSize.Small,
     showClear = false,
     validation = Validation.Default,
+    emphasis = InputEmphasis.Default,
 }) => {
     const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
     const { focusProps: onDeleteFocusProps, isFocusVisible: isOnDeleteFocusVisible } = useFocusRing();
@@ -44,17 +71,7 @@ export const Trigger: FC<TriggerProps> = ({
     return (
         <div
             data-test-id="trigger"
-            className={merge([
-                'tw-group tw-relative tw-flex tw-w-full tw-items-center tw-justify-between tw-border tw-rounded tw-transition-colors tw-min-h-[36px]',
-                isFocusVisible && FOCUS_STYLE,
-                disabled
-                    ? 'tw-border-black-5 tw-bg-black-5 tw-pointer-events-none'
-                    : merge([
-                          'tw-bg-base hover:tw-border-line-xx-strong',
-                          isOpen ? 'tw-border-line-xx-strong' : 'tw-border-line',
-                          validationClassMap[validation],
-                      ]),
-            ])}
+            className={getTriggerClassNames(isFocusVisible, disabled, isOpen, emphasis, validation)}
         >
             {children}
             <div
@@ -107,6 +124,14 @@ export const Trigger: FC<TriggerProps> = ({
                         <IconCaretDown size={IconSize.Size16} />
                     </div>
                 </button>
+                {validation === Validation.Error && (
+                    <span
+                        className="tw-flex tw-items-center tw-justify-center tw-text-red-60"
+                        data-test-id="error-state-exclamation-mark-icon"
+                    >
+                        <IconExclamationMarkTriangle />
+                    </span>
+                )}
             </div>
         </div>
     );
