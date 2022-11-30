@@ -781,6 +781,18 @@ import IconFaceSad24 from '@foundation/Icon/Generated/IconFaceSad24';
 import IconFaceSad24Filled from '@foundation/Icon/Generated/IconFaceSad24Filled';
 import IconFaceSad32 from '@foundation/Icon/Generated/IconFaceSad32';
 import IconFaceSad32Filled from '@foundation/Icon/Generated/IconFaceSad32Filled';
+import IconFixedHeight from '@foundation/Icon/Generated/IconFixedHeight';
+import IconFixedHeight12 from '@foundation/Icon/Generated/IconFixedHeight12';
+import IconFixedHeight16 from '@foundation/Icon/Generated/IconFixedHeight16';
+import IconFixedHeight20 from '@foundation/Icon/Generated/IconFixedHeight20';
+import IconFixedHeight24 from '@foundation/Icon/Generated/IconFixedHeight24';
+import IconFixedHeight32 from '@foundation/Icon/Generated/IconFixedHeight32';
+import IconFixedWidth from '@foundation/Icon/Generated/IconFixedWidth';
+import IconFixedWidth12 from '@foundation/Icon/Generated/IconFixedWidth12';
+import IconFixedWidth16 from '@foundation/Icon/Generated/IconFixedWidth16';
+import IconFixedWidth20 from '@foundation/Icon/Generated/IconFixedWidth20';
+import IconFixedWidth24 from '@foundation/Icon/Generated/IconFixedWidth24';
+import IconFixedWidth32 from '@foundation/Icon/Generated/IconFixedWidth32';
 import IconFlag from '@foundation/Icon/Generated/IconFlag';
 import IconFlag12 from '@foundation/Icon/Generated/IconFlag12';
 import IconFlag16 from '@foundation/Icon/Generated/IconFlag16';
@@ -2503,6 +2515,18 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.FaceSad24Filled]: <IconFaceSad24Filled />,
     [IconEnum.FaceSad32]: <IconFaceSad32 />,
     [IconEnum.FaceSad32Filled]: <IconFaceSad32Filled />,
+    [IconEnum.FixedHeight]: <IconFixedHeight />,
+    [IconEnum.FixedHeight12]: <IconFixedHeight12 />,
+    [IconEnum.FixedHeight16]: <IconFixedHeight16 />,
+    [IconEnum.FixedHeight20]: <IconFixedHeight20 />,
+    [IconEnum.FixedHeight24]: <IconFixedHeight24 />,
+    [IconEnum.FixedHeight32]: <IconFixedHeight32 />,
+    [IconEnum.FixedWidth]: <IconFixedWidth />,
+    [IconEnum.FixedWidth12]: <IconFixedWidth12 />,
+    [IconEnum.FixedWidth16]: <IconFixedWidth16 />,
+    [IconEnum.FixedWidth20]: <IconFixedWidth20 />,
+    [IconEnum.FixedWidth24]: <IconFixedWidth24 />,
+    [IconEnum.FixedWidth32]: <IconFixedWidth32 />,
     [IconEnum.Flag]: <IconFlag />,
     [IconEnum.Flag12]: <IconFlag12 />,
     [IconEnum.Flag16]: <IconFlag16 />,
