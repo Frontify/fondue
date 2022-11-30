@@ -76,6 +76,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
             <Plate
                 id={editorId}
                 initialValue={parseRawValue({ editorId, raw: initialValue })}
+                normalizeInitialValue
                 onChange={onChange}
                 editableProps={editableProps}
                 plugins={config.create()}
