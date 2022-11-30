@@ -177,7 +177,7 @@ describe('RichTextEditor Component', () => {
         });
 
         it('should render a raw html content state', () => {
-            cy.mount(<RichTextEditor value={'<b>this is bold</b> and <i>this italic</i>'} />);
+            cy.mount(<RichTextEditor value={'<p><b>this is bold</b> and <i>this italic</i></p>'} />);
 
             cy.get(RICH_TEXT_EDITOR).should('contain.text', 'this is bold and this italic');
             cy.get('[contenteditable=true]').should('include.html', 'tw-font-bold');
@@ -568,7 +568,7 @@ describe('RichTextEditor Component', () => {
             cy.get(EDIT_LINK_BUTTON).should('not.exist');
             cy.get(REMOVE_LINK_BUTTON).should('not.exist');
 
-            cy.get('[contenteditable=true] a').click();
+            cy.get('[contenteditable=true] a').realClick();
             cy.get(FLOATING_LINK_EDIT).should('contain', link);
             cy.get(EDIT_LINK_BUTTON).should('exist');
             cy.get(REMOVE_LINK_BUTTON).should('exist');
@@ -585,7 +585,7 @@ describe('RichTextEditor Component', () => {
             const text = 'This is a link';
             const additionalLink = '/team';
             cy.mount(<RichTextWithLink link={link} text={text} />);
-            cy.get('[contenteditable=true] a').click();
+            cy.get('[contenteditable=true] a').realClick();
             cy.get(EDIT_LINK_BUTTON).click();
 
             cy.get('[type=text]').eq(1).click().type(additionalLink);
@@ -600,7 +600,7 @@ describe('RichTextEditor Component', () => {
             const link = 'https://smartive.ch';
             const text = 'This is a link';
             cy.mount(<RichTextWithLink link={link} text={text} />);
-            cy.get('[contenteditable=true] a').click();
+            cy.get('[contenteditable=true] a').realClick();
             cy.get(REMOVE_LINK_BUTTON).click();
 
             cy.get('[contenteditable=true]').should('contain.text', text);
@@ -621,7 +621,7 @@ describe('RichTextEditor Component', () => {
             const text = 'This is a link';
             cy.mount(<RichTextWithLegacyLink url={url} text={text} />);
 
-            cy.get('[contenteditable=true] a').click();
+            cy.get('[contenteditable=true] a').realClick();
             cy.get(REMOVE_LINK_BUTTON).click();
 
             cy.get('[contenteditable=true]').should('contain.text', text);
@@ -633,7 +633,7 @@ describe('RichTextEditor Component', () => {
             const text = 'This is a link';
             const additionalLink = '/team';
             cy.mount(<RichTextWithLegacyLink url={link} text={text} />);
-            cy.get('[contenteditable=true] a').click();
+            cy.get('[contenteditable=true] a').realClick();
             cy.get(EDIT_LINK_BUTTON).click();
 
             cy.get('[type=text]').eq(1).click().type(additionalLink);
@@ -682,7 +682,7 @@ describe('RichTextEditor Component', () => {
             cy.get(EDIT_BUTTON_BUTTON).should('not.exist');
             cy.get(REMOVE_BUTTON_BUTTON).should('not.exist');
 
-            cy.get('[contenteditable=true] a').click();
+            cy.get('[contenteditable=true] a').realClick();
             cy.get(FLOATING_BUTTON_EDIT).should('contain', link);
             cy.get(EDIT_BUTTON_BUTTON).should('exist');
             cy.get(REMOVE_BUTTON_BUTTON).should('exist');
@@ -699,7 +699,7 @@ describe('RichTextEditor Component', () => {
             const text = 'This is a link';
             const additionalLink = '/team';
             cy.mount(<RichTextWithButton link={link} text={text} buttonStyle="primary" />);
-            cy.get('[contenteditable=true] a').click();
+            cy.get('[contenteditable=true] a').realClick();
             cy.get(EDIT_BUTTON_BUTTON).click();
 
             cy.get('[type=text]').eq(1).click().type(additionalLink);
@@ -722,7 +722,7 @@ describe('RichTextEditor Component', () => {
                 .invoke('attr', 'style')
                 .should('contain', `color: ${designTokens.button_primary?.color}`);
 
-            cy.get('[contenteditable=true] a').click();
+            cy.get('[contenteditable=true] a').realClick();
             cy.get(EDIT_BUTTON_BUTTON).click();
 
             cy.get(FLOATING_BUTTON_SECONDARY).click();
@@ -737,7 +737,7 @@ describe('RichTextEditor Component', () => {
             const link = 'https://smartive.ch';
             const text = 'This is a link';
             cy.mount(<RichTextWithButton link={link} text={text} buttonStyle="primary" />);
-            cy.get('[contenteditable=true] a').click();
+            cy.get('[contenteditable=true] a').realClick();
             cy.get(REMOVE_BUTTON_BUTTON).click();
 
             cy.get('[contenteditable=true]').should('contain.text', text);
