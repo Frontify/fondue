@@ -113,6 +113,7 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, childre
                     onMouseLeave={handleMouseLeave}
                 >
                     <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-6">
+                        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                         <span
                             data-test-id="tree-item-toggle"
                             className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center tw-py-3 tw-cursor-pointer"
