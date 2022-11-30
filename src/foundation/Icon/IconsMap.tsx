@@ -80,6 +80,12 @@ import IconArrowBidirectional16 from '@foundation/Icon/Generated/IconArrowBidire
 import IconArrowBidirectional20 from '@foundation/Icon/Generated/IconArrowBidirectional20';
 import IconArrowBidirectional24 from '@foundation/Icon/Generated/IconArrowBidirectional24';
 import IconArrowBidirectional32 from '@foundation/Icon/Generated/IconArrowBidirectional32';
+import IconArrowBottomToTop from '@foundation/Icon/Generated/IconArrowBottomToTop';
+import IconArrowBottomToTop12 from '@foundation/Icon/Generated/IconArrowBottomToTop12';
+import IconArrowBottomToTop16 from '@foundation/Icon/Generated/IconArrowBottomToTop16';
+import IconArrowBottomToTop20 from '@foundation/Icon/Generated/IconArrowBottomToTop20';
+import IconArrowBottomToTop24 from '@foundation/Icon/Generated/IconArrowBottomToTop24';
+import IconArrowBottomToTop32 from '@foundation/Icon/Generated/IconArrowBottomToTop32';
 import IconArrowCircleDown from '@foundation/Icon/Generated/IconArrowCircleDown';
 import IconArrowCircleDown12 from '@foundation/Icon/Generated/IconArrowCircleDown12';
 import IconArrowCircleDown16 from '@foundation/Icon/Generated/IconArrowCircleDown16';
@@ -104,6 +110,30 @@ import IconArrowExpand16 from '@foundation/Icon/Generated/IconArrowExpand16';
 import IconArrowExpand20 from '@foundation/Icon/Generated/IconArrowExpand20';
 import IconArrowExpand24 from '@foundation/Icon/Generated/IconArrowExpand24';
 import IconArrowExpand32 from '@foundation/Icon/Generated/IconArrowExpand32';
+import IconArrowFitBottomLeft from '@foundation/Icon/Generated/IconArrowFitBottomLeft';
+import IconArrowFitBottomLeft12 from '@foundation/Icon/Generated/IconArrowFitBottomLeft12';
+import IconArrowFitBottomLeft16 from '@foundation/Icon/Generated/IconArrowFitBottomLeft16';
+import IconArrowFitBottomLeft20 from '@foundation/Icon/Generated/IconArrowFitBottomLeft20';
+import IconArrowFitBottomLeft24 from '@foundation/Icon/Generated/IconArrowFitBottomLeft24';
+import IconArrowFitBottomLeft32 from '@foundation/Icon/Generated/IconArrowFitBottomLeft32';
+import IconArrowFitBottomRight from '@foundation/Icon/Generated/IconArrowFitBottomRight';
+import IconArrowFitBottomRight12 from '@foundation/Icon/Generated/IconArrowFitBottomRight12';
+import IconArrowFitBottomRight16 from '@foundation/Icon/Generated/IconArrowFitBottomRight16';
+import IconArrowFitBottomRight20 from '@foundation/Icon/Generated/IconArrowFitBottomRight20';
+import IconArrowFitBottomRight24 from '@foundation/Icon/Generated/IconArrowFitBottomRight24';
+import IconArrowFitBottomRight32 from '@foundation/Icon/Generated/IconArrowFitBottomRight32';
+import IconArrowFitTopLeft from '@foundation/Icon/Generated/IconArrowFitTopLeft';
+import IconArrowFitTopLeft12 from '@foundation/Icon/Generated/IconArrowFitTopLeft12';
+import IconArrowFitTopLeft16 from '@foundation/Icon/Generated/IconArrowFitTopLeft16';
+import IconArrowFitTopLeft20 from '@foundation/Icon/Generated/IconArrowFitTopLeft20';
+import IconArrowFitTopLeft24 from '@foundation/Icon/Generated/IconArrowFitTopLeft24';
+import IconArrowFitTopLeft32 from '@foundation/Icon/Generated/IconArrowFitTopLeft32';
+import IconArrowFitTopRight from '@foundation/Icon/Generated/IconArrowFitTopRight';
+import IconArrowFitTopRight12 from '@foundation/Icon/Generated/IconArrowFitTopRight12';
+import IconArrowFitTopRight16 from '@foundation/Icon/Generated/IconArrowFitTopRight16';
+import IconArrowFitTopRight20 from '@foundation/Icon/Generated/IconArrowFitTopRight20';
+import IconArrowFitTopRight24 from '@foundation/Icon/Generated/IconArrowFitTopRight24';
+import IconArrowFitTopRight32 from '@foundation/Icon/Generated/IconArrowFitTopRight32';
 import IconArrowHook from '@foundation/Icon/Generated/IconArrowHook';
 import IconArrowHook12 from '@foundation/Icon/Generated/IconArrowHook12';
 import IconArrowHook16 from '@foundation/Icon/Generated/IconArrowHook16';
@@ -116,6 +146,12 @@ import IconArrowLeft16 from '@foundation/Icon/Generated/IconArrowLeft16';
 import IconArrowLeft20 from '@foundation/Icon/Generated/IconArrowLeft20';
 import IconArrowLeft24 from '@foundation/Icon/Generated/IconArrowLeft24';
 import IconArrowLeft32 from '@foundation/Icon/Generated/IconArrowLeft32';
+import IconArrowLeftToRight from '@foundation/Icon/Generated/IconArrowLeftToRight';
+import IconArrowLeftToRight12 from '@foundation/Icon/Generated/IconArrowLeftToRight12';
+import IconArrowLeftToRight16 from '@foundation/Icon/Generated/IconArrowLeftToRight16';
+import IconArrowLeftToRight20 from '@foundation/Icon/Generated/IconArrowLeftToRight20';
+import IconArrowLeftToRight24 from '@foundation/Icon/Generated/IconArrowLeftToRight24';
+import IconArrowLeftToRight32 from '@foundation/Icon/Generated/IconArrowLeftToRight32';
 import IconArrowMinimize from '@foundation/Icon/Generated/IconArrowMinimize';
 import IconArrowMinimize12 from '@foundation/Icon/Generated/IconArrowMinimize12';
 import IconArrowMinimize16 from '@foundation/Icon/Generated/IconArrowMinimize16';
@@ -152,6 +188,12 @@ import IconArrowRight16 from '@foundation/Icon/Generated/IconArrowRight16';
 import IconArrowRight20 from '@foundation/Icon/Generated/IconArrowRight20';
 import IconArrowRight24 from '@foundation/Icon/Generated/IconArrowRight24';
 import IconArrowRight32 from '@foundation/Icon/Generated/IconArrowRight32';
+import IconArrowRightToLeft from '@foundation/Icon/Generated/IconArrowRightToLeft';
+import IconArrowRightToLeft12 from '@foundation/Icon/Generated/IconArrowRightToLeft12';
+import IconArrowRightToLeft16 from '@foundation/Icon/Generated/IconArrowRightToLeft16';
+import IconArrowRightToLeft20 from '@foundation/Icon/Generated/IconArrowRightToLeft20';
+import IconArrowRightToLeft24 from '@foundation/Icon/Generated/IconArrowRightToLeft24';
+import IconArrowRightToLeft32 from '@foundation/Icon/Generated/IconArrowRightToLeft32';
 import IconArrowRoundAntiClockwise from '@foundation/Icon/Generated/IconArrowRoundAntiClockwise';
 import IconArrowRoundAntiClockwise12 from '@foundation/Icon/Generated/IconArrowRoundAntiClockwise12';
 import IconArrowRoundAntiClockwise16 from '@foundation/Icon/Generated/IconArrowRoundAntiClockwise16';
@@ -164,6 +206,18 @@ import IconArrowRoundClockwise16 from '@foundation/Icon/Generated/IconArrowRound
 import IconArrowRoundClockwise20 from '@foundation/Icon/Generated/IconArrowRoundClockwise20';
 import IconArrowRoundClockwise24 from '@foundation/Icon/Generated/IconArrowRoundClockwise24';
 import IconArrowRoundClockwise32 from '@foundation/Icon/Generated/IconArrowRoundClockwise32';
+import IconArrowScaleHorizontal from '@foundation/Icon/Generated/IconArrowScaleHorizontal';
+import IconArrowScaleHorizontal12 from '@foundation/Icon/Generated/IconArrowScaleHorizontal12';
+import IconArrowScaleHorizontal16 from '@foundation/Icon/Generated/IconArrowScaleHorizontal16';
+import IconArrowScaleHorizontal20 from '@foundation/Icon/Generated/IconArrowScaleHorizontal20';
+import IconArrowScaleHorizontal24 from '@foundation/Icon/Generated/IconArrowScaleHorizontal24';
+import IconArrowScaleHorizontal32 from '@foundation/Icon/Generated/IconArrowScaleHorizontal32';
+import IconArrowScaleVertical from '@foundation/Icon/Generated/IconArrowScaleVertical';
+import IconArrowScaleVertical12 from '@foundation/Icon/Generated/IconArrowScaleVertical12';
+import IconArrowScaleVertical16 from '@foundation/Icon/Generated/IconArrowScaleVertical16';
+import IconArrowScaleVertical20 from '@foundation/Icon/Generated/IconArrowScaleVertical20';
+import IconArrowScaleVertical24 from '@foundation/Icon/Generated/IconArrowScaleVertical24';
+import IconArrowScaleVertical32 from '@foundation/Icon/Generated/IconArrowScaleVertical32';
 import IconArrowStretchBox from '@foundation/Icon/Generated/IconArrowStretchBox';
 import IconArrowStretchBox12 from '@foundation/Icon/Generated/IconArrowStretchBox12';
 import IconArrowStretchBox16 from '@foundation/Icon/Generated/IconArrowStretchBox16';
@@ -182,6 +236,12 @@ import IconArrowSync16 from '@foundation/Icon/Generated/IconArrowSync16';
 import IconArrowSync20 from '@foundation/Icon/Generated/IconArrowSync20';
 import IconArrowSync24 from '@foundation/Icon/Generated/IconArrowSync24';
 import IconArrowSync32 from '@foundation/Icon/Generated/IconArrowSync32';
+import IconArrowTopToBottom from '@foundation/Icon/Generated/IconArrowTopToBottom';
+import IconArrowTopToBottom12 from '@foundation/Icon/Generated/IconArrowTopToBottom12';
+import IconArrowTopToBottom16 from '@foundation/Icon/Generated/IconArrowTopToBottom16';
+import IconArrowTopToBottom20 from '@foundation/Icon/Generated/IconArrowTopToBottom20';
+import IconArrowTopToBottom24 from '@foundation/Icon/Generated/IconArrowTopToBottom24';
+import IconArrowTopToBottom32 from '@foundation/Icon/Generated/IconArrowTopToBottom32';
 import IconArrowUp from '@foundation/Icon/Generated/IconArrowUp';
 import IconArrowUp12 from '@foundation/Icon/Generated/IconArrowUp12';
 import IconArrowUp16 from '@foundation/Icon/Generated/IconArrowUp16';
@@ -1742,6 +1802,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.ArrowBidirectional20]: <IconArrowBidirectional20 />,
     [IconEnum.ArrowBidirectional24]: <IconArrowBidirectional24 />,
     [IconEnum.ArrowBidirectional32]: <IconArrowBidirectional32 />,
+    [IconEnum.ArrowBottomToTop]: <IconArrowBottomToTop />,
+    [IconEnum.ArrowBottomToTop12]: <IconArrowBottomToTop12 />,
+    [IconEnum.ArrowBottomToTop16]: <IconArrowBottomToTop16 />,
+    [IconEnum.ArrowBottomToTop20]: <IconArrowBottomToTop20 />,
+    [IconEnum.ArrowBottomToTop24]: <IconArrowBottomToTop24 />,
+    [IconEnum.ArrowBottomToTop32]: <IconArrowBottomToTop32 />,
     [IconEnum.ArrowCircleDown]: <IconArrowCircleDown />,
     [IconEnum.ArrowCircleDown12]: <IconArrowCircleDown12 />,
     [IconEnum.ArrowCircleDown16]: <IconArrowCircleDown16 />,
@@ -1766,6 +1832,30 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.ArrowExpand20]: <IconArrowExpand20 />,
     [IconEnum.ArrowExpand24]: <IconArrowExpand24 />,
     [IconEnum.ArrowExpand32]: <IconArrowExpand32 />,
+    [IconEnum.ArrowFitBottomLeft]: <IconArrowFitBottomLeft />,
+    [IconEnum.ArrowFitBottomLeft12]: <IconArrowFitBottomLeft12 />,
+    [IconEnum.ArrowFitBottomLeft16]: <IconArrowFitBottomLeft16 />,
+    [IconEnum.ArrowFitBottomLeft20]: <IconArrowFitBottomLeft20 />,
+    [IconEnum.ArrowFitBottomLeft24]: <IconArrowFitBottomLeft24 />,
+    [IconEnum.ArrowFitBottomLeft32]: <IconArrowFitBottomLeft32 />,
+    [IconEnum.ArrowFitBottomRight]: <IconArrowFitBottomRight />,
+    [IconEnum.ArrowFitBottomRight12]: <IconArrowFitBottomRight12 />,
+    [IconEnum.ArrowFitBottomRight16]: <IconArrowFitBottomRight16 />,
+    [IconEnum.ArrowFitBottomRight20]: <IconArrowFitBottomRight20 />,
+    [IconEnum.ArrowFitBottomRight24]: <IconArrowFitBottomRight24 />,
+    [IconEnum.ArrowFitBottomRight32]: <IconArrowFitBottomRight32 />,
+    [IconEnum.ArrowFitTopLeft]: <IconArrowFitTopLeft />,
+    [IconEnum.ArrowFitTopLeft12]: <IconArrowFitTopLeft12 />,
+    [IconEnum.ArrowFitTopLeft16]: <IconArrowFitTopLeft16 />,
+    [IconEnum.ArrowFitTopLeft20]: <IconArrowFitTopLeft20 />,
+    [IconEnum.ArrowFitTopLeft24]: <IconArrowFitTopLeft24 />,
+    [IconEnum.ArrowFitTopLeft32]: <IconArrowFitTopLeft32 />,
+    [IconEnum.ArrowFitTopRight]: <IconArrowFitTopRight />,
+    [IconEnum.ArrowFitTopRight12]: <IconArrowFitTopRight12 />,
+    [IconEnum.ArrowFitTopRight16]: <IconArrowFitTopRight16 />,
+    [IconEnum.ArrowFitTopRight20]: <IconArrowFitTopRight20 />,
+    [IconEnum.ArrowFitTopRight24]: <IconArrowFitTopRight24 />,
+    [IconEnum.ArrowFitTopRight32]: <IconArrowFitTopRight32 />,
     [IconEnum.ArrowHook]: <IconArrowHook />,
     [IconEnum.ArrowHook12]: <IconArrowHook12 />,
     [IconEnum.ArrowHook16]: <IconArrowHook16 />,
@@ -1778,6 +1868,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.ArrowLeft20]: <IconArrowLeft20 />,
     [IconEnum.ArrowLeft24]: <IconArrowLeft24 />,
     [IconEnum.ArrowLeft32]: <IconArrowLeft32 />,
+    [IconEnum.ArrowLeftToRight]: <IconArrowLeftToRight />,
+    [IconEnum.ArrowLeftToRight12]: <IconArrowLeftToRight12 />,
+    [IconEnum.ArrowLeftToRight16]: <IconArrowLeftToRight16 />,
+    [IconEnum.ArrowLeftToRight20]: <IconArrowLeftToRight20 />,
+    [IconEnum.ArrowLeftToRight24]: <IconArrowLeftToRight24 />,
+    [IconEnum.ArrowLeftToRight32]: <IconArrowLeftToRight32 />,
     [IconEnum.ArrowMinimize]: <IconArrowMinimize />,
     [IconEnum.ArrowMinimize12]: <IconArrowMinimize12 />,
     [IconEnum.ArrowMinimize16]: <IconArrowMinimize16 />,
@@ -1814,6 +1910,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.ArrowRight20]: <IconArrowRight20 />,
     [IconEnum.ArrowRight24]: <IconArrowRight24 />,
     [IconEnum.ArrowRight32]: <IconArrowRight32 />,
+    [IconEnum.ArrowRightToLeft]: <IconArrowRightToLeft />,
+    [IconEnum.ArrowRightToLeft12]: <IconArrowRightToLeft12 />,
+    [IconEnum.ArrowRightToLeft16]: <IconArrowRightToLeft16 />,
+    [IconEnum.ArrowRightToLeft20]: <IconArrowRightToLeft20 />,
+    [IconEnum.ArrowRightToLeft24]: <IconArrowRightToLeft24 />,
+    [IconEnum.ArrowRightToLeft32]: <IconArrowRightToLeft32 />,
     [IconEnum.ArrowRoundAntiClockwise]: <IconArrowRoundAntiClockwise />,
     [IconEnum.ArrowRoundAntiClockwise12]: <IconArrowRoundAntiClockwise12 />,
     [IconEnum.ArrowRoundAntiClockwise16]: <IconArrowRoundAntiClockwise16 />,
@@ -1826,6 +1928,18 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.ArrowRoundClockwise20]: <IconArrowRoundClockwise20 />,
     [IconEnum.ArrowRoundClockwise24]: <IconArrowRoundClockwise24 />,
     [IconEnum.ArrowRoundClockwise32]: <IconArrowRoundClockwise32 />,
+    [IconEnum.ArrowScaleHorizontal]: <IconArrowScaleHorizontal />,
+    [IconEnum.ArrowScaleHorizontal12]: <IconArrowScaleHorizontal12 />,
+    [IconEnum.ArrowScaleHorizontal16]: <IconArrowScaleHorizontal16 />,
+    [IconEnum.ArrowScaleHorizontal20]: <IconArrowScaleHorizontal20 />,
+    [IconEnum.ArrowScaleHorizontal24]: <IconArrowScaleHorizontal24 />,
+    [IconEnum.ArrowScaleHorizontal32]: <IconArrowScaleHorizontal32 />,
+    [IconEnum.ArrowScaleVertical]: <IconArrowScaleVertical />,
+    [IconEnum.ArrowScaleVertical12]: <IconArrowScaleVertical12 />,
+    [IconEnum.ArrowScaleVertical16]: <IconArrowScaleVertical16 />,
+    [IconEnum.ArrowScaleVertical20]: <IconArrowScaleVertical20 />,
+    [IconEnum.ArrowScaleVertical24]: <IconArrowScaleVertical24 />,
+    [IconEnum.ArrowScaleVertical32]: <IconArrowScaleVertical32 />,
     [IconEnum.ArrowStretchBox]: <IconArrowStretchBox />,
     [IconEnum.ArrowStretchBox12]: <IconArrowStretchBox12 />,
     [IconEnum.ArrowStretchBox16]: <IconArrowStretchBox16 />,
@@ -1844,6 +1958,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.ArrowSync20]: <IconArrowSync20 />,
     [IconEnum.ArrowSync24]: <IconArrowSync24 />,
     [IconEnum.ArrowSync32]: <IconArrowSync32 />,
+    [IconEnum.ArrowTopToBottom]: <IconArrowTopToBottom />,
+    [IconEnum.ArrowTopToBottom12]: <IconArrowTopToBottom12 />,
+    [IconEnum.ArrowTopToBottom16]: <IconArrowTopToBottom16 />,
+    [IconEnum.ArrowTopToBottom20]: <IconArrowTopToBottom20 />,
+    [IconEnum.ArrowTopToBottom24]: <IconArrowTopToBottom24 />,
+    [IconEnum.ArrowTopToBottom32]: <IconArrowTopToBottom32 />,
     [IconEnum.ArrowUp]: <IconArrowUp />,
     [IconEnum.ArrowUp12]: <IconArrowUp12 />,
     [IconEnum.ArrowUp16]: <IconArrowUp16 />,
