@@ -24,8 +24,29 @@ const TreeWithBasicItemContentComponent = ({ title }: TreeWithBasicItemContentCo
     return (
         <div className="tw-flex tw-space-x-1.5 tw-w-full">
             <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{<IconDocument />}</span>
-
             <span>{title}</span>
+        </div>
+    );
+};
+
+export const TreeWithLabel = ({ ...args }: TreeProps) => {
+    return (
+        <div style={{ maxWidth: '800px' }}>
+            <Tree {...args}>
+                {treeNodesMock.map((node) => (
+                    <TreeItem key={node.id} id={node.id} sort={node.sort} label={node.name}>
+                        {node.nodes &&
+                            node.nodes.map((node) => (
+                                <TreeItem key={node.id} id={node.id} sort={node.sort} label={node.name}>
+                                    {node.nodes &&
+                                        node.nodes.map((node) => (
+                                            <TreeItem key={node.id} id={node.id} sort={node.sort} label={node.name} />
+                                        ))}
+                                </TreeItem>
+                            ))}
+                    </TreeItem>
+                ))}
+            </Tree>
         </div>
     );
 };

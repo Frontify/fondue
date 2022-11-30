@@ -9,7 +9,13 @@ import { useTreeContext } from '@components/Tree/TreeContext';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 import { merge } from '@utilities/merge';
 
-export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, children }: TreeItemProps) => {
+export const TreeItem = ({ id, sort, label, contentComponent, onSelect, onDrop, children }: TreeItemProps) => {
+    React.Children.forEach(children, (child) => {
+        if (child?.type !== TreeItem) {
+            throw new Error('Children should be of type `TreeItem`.');
+        }
+    });
+
     const { treeId, selectedIds, onSelect: onItemSelect, draggable } = useTreeContext();
 
     const [expanded, setExpanded] = useState<boolean>(false);
@@ -118,7 +124,9 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, childre
                             {caretComponent}
                         </span>
 
-                        {contentComponent({ selected: selectedIds.includes(id), hovered })}
+                        {label && <span>{label}</span>}
+
+                        {contentComponent && contentComponent({ selected: selectedIds.includes(id), hovered })}
                     </div>
                 </div>
             </DropZone>

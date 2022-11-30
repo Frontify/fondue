@@ -5,8 +5,15 @@ import React, { useEffect, useState } from 'react';
 import { TreeContext } from '@components/Tree/TreeContext';
 import type { TreeProps } from '@components/Tree/types';
 import { DndWrapper } from '@utilities/dnd';
+import { TreeItem } from './TreeItem';
 
 export const Tree = ({ id, draggable = false, children }: TreeProps) => {
+    React.Children.forEach(children, (child) => {
+        if (child?.type !== TreeItem) {
+            throw new Error('Children should be of type `TreeItem`.');
+        }
+    });
+
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [multiselect, setMultiselect] = useState<boolean>(false);
 

@@ -46,6 +46,8 @@ const TREE_ITEM_ID = '[data-test-id=tree-item]';
 const TREE_ITEM_TOGGLE_ID = '[data-test-id=tree-item-toggle';
 const SUB_TREE_ITEMS_ID = '[data-test-id=sub-tree-items]';
 
+const ERROR_MESSAGE = 'Children should be of type';
+
 describe('Tree Component', () => {
     it('renders tree structure with children', () => {
         cy.mount(<TreeComponent />);
@@ -78,5 +80,33 @@ describe('Tree Component', () => {
 
         cy.get(TREE_ITEM_ID).click();
         cy.get('@onSelectStub').should('have.been.called');
+    });
+
+    it('throws when Tree child is not TreeItem', () => {
+        cy.on('fail', (error) => {
+            if (ERROR_MESSAGE.includes(error.message)) {
+                console.log('Application Error Javascript Token', error.message);
+                return false;
+            }
+
+            return true;
+        });
+
+        cy.mount(
+            <Tree id="Test">
+                <span>Test</span>
+            </Tree>,
+        );
+    });
+
+    it('throws when TreeItem child is not TreeItem', () => {
+        cy.on('fail', (error) => expect(error.message).to.include(ERROR_MESSAGE));
+        cy.mount(
+            <Tree id="Test">
+                <TreeItem id="Test" sort={1} label="Test">
+                    <span>Test</span>
+                </TreeItem>
+            </Tree>,
+        );
     });
 });
