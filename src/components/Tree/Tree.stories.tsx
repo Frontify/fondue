@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Meta } from '@storybook/react';
 
 import { Tree, Tree as TreeComponent, TreeContentLegacyComponent, TreeItem } from '@components/Tree';
-import type { TreeProps } from '@components/Tree/types';
-import { treeNodesMock } from '@components/Tree/utils';
+import { TreeNodeItem, treeNodesMock } from '@components/Tree/utils';
+import type { TreeItemProps, TreeProps } from '@components/Tree/types';
 import { IconDocument } from '@foundation/Icon';
+import { DraggableItem } from '@utilities/dnd';
 
 export default {
     title: 'Components/Tree',
@@ -16,16 +17,58 @@ export default {
     },
 } as Meta<TreeProps>;
 
-type TreeWithBasicItemContentComponentProps = {
-    title: string;
+interface TreeItemComponentProps {
+    node: DraggableItem<TreeNodeItem>;
+    children?: ReactElement<TreeItemProps> | Array<ReactElement<TreeItemProps>>;
+}
+
+const TreeItemBasic = ({ node, children }: TreeItemComponentProps) => {
+    return (
+        <TreeItem
+            key={node.id}
+            id={node.id}
+            sort={node.sort}
+            contentComponent={() => <TreeItemBasicContentComponent title={node.name} />}
+        >
+            {children}
+        </TreeItem>
+    );
 };
 
-const TreeWithBasicItemContentComponent = ({ title }: TreeWithBasicItemContentComponentProps) => {
+interface TreeWithBasicItemContentComponentProps {
+    title: string;
+}
+
+const TreeItemBasicContentComponent = ({ title }: TreeWithBasicItemContentComponentProps) => {
     return (
         <div className="tw-flex tw-space-x-1.5 tw-w-full">
             <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{<IconDocument />}</span>
             <span>{title}</span>
         </div>
+    );
+};
+
+const TreeItemLegacy = ({ node, children }: TreeItemComponentProps) => {
+    return (
+        <TreeItem
+            key={node.id}
+            id={node.id}
+            sort={node.sort}
+            contentComponent={({ selected, hovered }) => (
+                <TreeContentLegacyComponent
+                    title={node.name}
+                    icon={node.icon || <></>}
+                    badge={node.badge}
+                    tooltipContent={node.tooltipContent}
+                    label={node.label}
+                    actions={node.actions}
+                    selected={selected}
+                    hovered={hovered}
+                />
+            )}
+        >
+            {children}
+        </TreeItem>
     );
 };
 
@@ -56,34 +99,14 @@ export const TreeWithBasicItem = ({ ...args }: TreeProps) => {
         <div style={{ maxWidth: '800px' }}>
             <Tree {...args}>
                 {treeNodesMock.map((node) => (
-                    <TreeItem
-                        key={node.id}
-                        id={node.id}
-                        sort={node.sort}
-                        contentComponent={() => <TreeWithBasicItemContentComponent title={node.name} />}
-                    >
+                    <TreeItemBasic node={node}>
                         {node.nodes &&
                             node.nodes.map((node) => (
-                                <TreeItem
-                                    key={node.id}
-                                    id={node.id}
-                                    sort={node.sort}
-                                    contentComponent={() => <TreeWithBasicItemContentComponent title={node.name} />}
-                                >
-                                    {node.nodes &&
-                                        node.nodes.map((node) => (
-                                            <TreeItem
-                                                key={node.id}
-                                                id={node.id}
-                                                sort={node.sort}
-                                                contentComponent={() => (
-                                                    <TreeWithBasicItemContentComponent title={node.name} />
-                                                )}
-                                            />
-                                        ))}
-                                </TreeItem>
+                                <TreeItemBasic node={node}>
+                                    {node.nodes && node.nodes.map((node) => <TreeItemBasic node={node} />)}
+                                </TreeItemBasic>
                             ))}
-                    </TreeItem>
+                    </TreeItemBasic>
                 ))}
             </Tree>
         </div>
@@ -95,65 +118,14 @@ export const TreeWithLegacyItem = ({ ...args }: TreeProps) => {
         <div style={{ maxWidth: '800px' }}>
             <Tree {...args}>
                 {treeNodesMock.map((node) => (
-                    <TreeItem
-                        key={node.id}
-                        id={node.id}
-                        sort={node.sort}
-                        contentComponent={({ selected, hovered }) => (
-                            <TreeContentLegacyComponent
-                                title={node.name}
-                                icon={node.icon || <></>}
-                                badge={node.badge}
-                                tooltipContent={node.tooltipContent}
-                                label={node.label}
-                                actions={node.actions}
-                                selected={selected}
-                                hovered={hovered}
-                            />
-                        )}
-                    >
+                    <TreeItemLegacy node={node}>
                         {node.nodes &&
                             node.nodes.map((node) => (
-                                <TreeItem
-                                    key={node.id}
-                                    id={node.id}
-                                    sort={node.sort}
-                                    contentComponent={({ selected, hovered }) => (
-                                        <TreeContentLegacyComponent
-                                            title={node.name}
-                                            icon={node.icon || <></>}
-                                            badge={node.badge}
-                                            tooltipContent={node.tooltipContent}
-                                            label={node.label}
-                                            actions={node.actions}
-                                            selected={selected}
-                                            hovered={hovered}
-                                        />
-                                    )}
-                                >
-                                    {node.nodes &&
-                                        node.nodes.map((node) => (
-                                            <TreeItem
-                                                key={node.id}
-                                                id={node.id}
-                                                sort={node.sort}
-                                                contentComponent={({ selected, hovered }) => (
-                                                    <TreeContentLegacyComponent
-                                                        title={node.name}
-                                                        icon={node.icon || <></>}
-                                                        badge={node.badge}
-                                                        tooltipContent={node.tooltipContent}
-                                                        label={node.label}
-                                                        actions={node.actions}
-                                                        selected={selected}
-                                                        hovered={hovered}
-                                                    />
-                                                )}
-                                            />
-                                        ))}
-                                </TreeItem>
+                                <TreeItemLegacy node={node}>
+                                    {node.nodes && node.nodes.map((node) => <TreeItemLegacy node={node} />)}
+                                </TreeItemLegacy>
                             ))}
-                    </TreeItem>
+                    </TreeItemLegacy>
                 ))}
             </Tree>
         </div>
