@@ -15,6 +15,7 @@ import { InitPlugin } from './InitPlugin';
 import { ParagraphPlugin } from './ParagraphPlugin';
 import { ButtonPlugin } from './ButtonPlugin';
 import { ResetFormattingPlugin } from './ResetFormattingPlugin';
+import { EmojiPlugin } from './EmojiPlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
@@ -39,6 +40,7 @@ defaultPlugins
             new CheckboxListPlugin(),
             new OrderedListPlugin(),
             new ResetFormattingPlugin(),
+            new EmojiPlugin({ noButton: true }),
         ],
     );
 
@@ -59,3 +61,4 @@ export * from './ButtonPlugin';
 export * from './MentionPlugin';
 export * from './TextStylePlugin';
 export * from './ParagraphPlugin';
+export * from './EmojiPlugin';

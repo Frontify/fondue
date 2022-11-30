@@ -10,7 +10,7 @@ export const ToolbarWrapperPositioningFloating = ({
     editorWidth,
     toolbarButtonGroups = [],
 }: ToolbarWrapperProps) => {
-    const [width, setWidth] = useState<number | null>(null);
+    const [width, setWidth] = useState<number | undefined>();
 
     useEffect(() => {
         const toolbarWidthSum = calculateToolbarWidth(toolbarButtonGroups);
