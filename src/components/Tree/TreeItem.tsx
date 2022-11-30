@@ -80,14 +80,12 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, childre
         }
 
         return (
-            /*  eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
             <div
                 className={merge([
                     'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
                     expanded ? 'tw-rotate-90' : '',
                     selectedIds.includes(id) && 'tw-text-box-selected-strong-inverse',
                 ])}
-                onClick={toggleNodesVisibility}
             />
         );
     };
@@ -117,7 +115,8 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, childre
                     <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-6">
                         <span
                             data-test-id="tree-item-toggle"
-                            className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center tw-cursor-pointer"
+                            className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center tw-py-3 tw-cursor-pointer"
+                            onClick={toggleNodesVisibility}
                         >
                             {insertCaret()}
                         </span>
