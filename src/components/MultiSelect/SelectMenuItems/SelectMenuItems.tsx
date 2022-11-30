@@ -59,25 +59,22 @@ export const NoSearchResults = ({ label = '' }: NoSearchResultsProps) => {
 };
 
 type OptionalItemsProps = {
-    item: Item;
+    checkboxes: Item[];
     index: number;
-    isNextItemDivider?: boolean;
-    isPreviousItemDivider?: boolean;
 };
 
-export const OptionalItems = ({
-    item,
-    index,
-    isNextItemDivider = false,
-    isPreviousItemDivider = false,
-}: OptionalItemsProps) => {
-    const { value, label } = item;
+export const OptionalItems = ({ checkboxes, index }: OptionalItemsProps) => {
+    const { value, label, isCategory, isDivider } = checkboxes[index];
+    const isNextItemDivider = checkboxes[index + 1]?.isCategory || checkboxes[index + 1]?.isDivider;
+    const isPrevItemCategory = checkboxes[index - 1]?.isCategory;
+    const hasItemAfterCategory = !checkboxes[index + 2]?.isCategory && checkboxes[index + 2]?.value;
+    const hasNextValue = checkboxes[index + 1] && !isNextItemDivider;
 
-    if (item.isCategory) {
-        return isNextItemDivider ? <></> : <CategoryItem key={value} label={label} />;
+    if (isCategory) {
+        return !hasNextValue ? <></> : <CategoryItem key={value} label={label} />;
     }
-    if (item.isDivider) {
-        return isNextItemDivider || isPreviousItemDivider ? <></> : <DividerItem key={value + index} />;
+    if (isDivider) {
+        return isPrevItemCategory || !hasItemAfterCategory ? <></> : <DividerItem key={value + index} />;
     }
     return null;
 };

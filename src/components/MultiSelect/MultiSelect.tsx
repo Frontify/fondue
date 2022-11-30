@@ -10,10 +10,10 @@ import { useOverlay } from '@react-aria/overlays';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { FC, KeyboardEvent, useRef, useState } from 'react';
+import React, { ChangeEvent, FC, KeyboardEvent, useRef, useState } from 'react';
 import { getInputWidth, getPaddingClasses } from './helpers';
 import { Menu } from '@components/Menu';
-import { MenuItem } from '..';
+import { MenuItem } from '@components/MenuItem';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { DefaultItem, NoSearchResults, OptionalItems } from './SelectMenuItems';
 
@@ -153,21 +153,30 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     const getDecoratorClasses = () => {
         if (emphasis === MultiSelectEmphasis.Weak) {
             return hasSelectedItems ? '' : 'tw-text-text-weak';
-        } else {
-            return '';
         }
+
+        return '';
     };
 
     const getTagType = () => {
-        if (emphasis === MultiSelectEmphasis.Weak) {
+        if (emphasis === MultiSelectEmphasis.Weak || !open) {
             return TagType.Selected;
-        } else {
-            if (open) {
-                return TagType.SelectedWithFocus;
-            } else {
-                return TagType.Selected;
-            }
         }
+        return TagType.SelectedWithFocus;
+    };
+
+    const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setCheckboxes(
+            items
+                .filter((item) => {
+                    if (item.isCategory || item.isDivider) {
+                        return true;
+                    }
+
+                    return item.value.toLowerCase().includes(e.currentTarget.value.toLowerCase());
+                })
+                .map((item) => ({ ...item, label: item.value })),
+        );
     };
 
     return (
@@ -227,38 +236,24 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                 className="focus:tw-outline-0 tw-text-s tw-bg-transparent"
                                 style={{ maxWidth: inputWidth }}
                                 placeholder={activeItemKeys.length === 0 ? placeholder : filterLabel}
-                                onChange={(e) => {
-                                    setCheckboxes(
-                                        items
-                                            .filter((item) => {
-                                                if (item.isCategory || item.isDivider) {
-                                                    return true;
-                                                }
-
-                                                return item.value
-                                                    .toLowerCase()
-                                                    .includes(e.currentTarget.value.toLowerCase());
-                                            })
-                                            .map((item) => ({ ...item, label: item.value })),
-                                    );
-                                }}
+                                onChange={handleFilterChange}
                             />
                         )}
                     </div>
                 </div>
             </Trigger>
             <AnimatePresence>
-                {open && (
-                    <motion.div
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-30 tw-bg-base tw-min-w-[18rem]"
-                        key="content"
-                        initial={{ height: 0 }}
-                        animate={{ height: 'auto' }}
-                        exit={{ height: 0 }}
-                        transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
-                    >
-                        <FocusScope restoreFocus>
-                            {emphasis === MultiSelectEmphasis.Default ? (
+                {open &&
+                    (emphasis === MultiSelectEmphasis.Default ? (
+                        <motion.div
+                            className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-30 tw-bg-base tw-min-w-[18rem]"
+                            key="content"
+                            initial={{ height: 0 }}
+                            animate={{ height: 'auto' }}
+                            exit={{ height: 0 }}
+                            transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
+                        >
+                            <FocusScope restoreFocus>
                                 <div {...overlayProps} ref={overlayRef} className="tw-p-4">
                                     <Checklist
                                         activeValues={activeItemKeys.map((key) => key.toString())}
@@ -268,53 +263,42 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                         ariaLabel={ariaLabel}
                                     />
                                 </div>
+                            </FocusScope>
+                        </motion.div>
+                    ) : (
+                        <Menu open={open} onClose={() => setOpen(false)} triggerRef={multiSelectRef}>
+                            {checkboxes.length > 0 && hasResults ? (
+                                checkboxes.map((item, index) => {
+                                    const { label, value, imgSrc } = item;
+                                    const isChecked = !!activeItemKeys.find((key) => key === value);
+
+                                    if (item.isCategory || item.isDivider) {
+                                        return (
+                                            <OptionalItems
+                                                key={value + index}
+                                                {...{
+                                                    checkboxes,
+                                                    index,
+                                                }}
+                                            />
+                                        );
+                                    }
+
+                                    return (
+                                        <MenuItem
+                                            checked={isChecked}
+                                            onClick={() => toggleSelection(label)}
+                                            key={value}
+                                        >
+                                            <DefaultItem {...{ label, value, imgSrc, isChecked }} />
+                                        </MenuItem>
+                                    );
+                                })
                             ) : (
-                                <div ref={menuRef}>
-                                    <Menu open={open} onClose={() => setOpen(false)}>
-                                        {checkboxes.length > 0 && hasResults ? (
-                                            checkboxes.map((item, index) => {
-                                                const { label, value, imgSrc } = item;
-                                                const isChecked = !!activeItemKeys.find((key) => key === value);
-                                                const isNextItemDivider =
-                                                    checkboxes[index + 1]?.isCategory ||
-                                                    checkboxes[index + 1]?.isDivider;
-                                                const isPreviousItemDivider =
-                                                    checkboxes[index - 1]?.isCategory ||
-                                                    checkboxes[index - 1]?.isDivider;
-
-                                                if (item.isCategory || item.isDivider) {
-                                                    return (
-                                                        <OptionalItems
-                                                            key={value + index}
-                                                            {...{
-                                                                item,
-                                                                index,
-                                                                isNextItemDivider,
-                                                                isPreviousItemDivider,
-                                                            }}
-                                                        />
-                                                    );
-                                                }
-
-                                                return (
-                                                    <MenuItem
-                                                        checked={isChecked}
-                                                        onClick={() => toggleSelection(label)}
-                                                        key={value}
-                                                    >
-                                                        <DefaultItem {...{ label, value, imgSrc, isChecked }} />
-                                                    </MenuItem>
-                                                );
-                                            })
-                                        ) : (
-                                            <NoSearchResults label={noResultsLabel} />
-                                        )}
-                                    </Menu>
-                                </div>
+                                <NoSearchResults label={noResultsLabel} />
                             )}
-                        </FocusScope>
-                    </motion.div>
-                )}
+                        </Menu>
+                    ))}
             </AnimatePresence>
         </div>
     );
