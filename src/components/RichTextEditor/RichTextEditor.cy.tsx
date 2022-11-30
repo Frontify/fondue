@@ -921,6 +921,30 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').should('not.include.html', '<h1');
         });
     });
+
+    describe('initial value', () => {
+        it('it should normalize the initial html value', () => {
+            const onBlur = cy.spy();
+            cy.mount(<RichTextEditor value="<ul><li>foo</li><li>bar</li></ul>" onBlur={onBlur} />);
+
+            cy.get('[contenteditable=true]')
+                .click()
+                .blur()
+                .then(() => {
+                    expect(onBlur).to.be.calledWith(
+                        JSON.stringify([
+                            {
+                                type: 'ul',
+                                children: [
+                                    { type: 'li', children: [{ type: 'lic', children: [{ text: 'foo' }] }] },
+                                    { type: 'li', children: [{ type: 'lic', children: [{ text: 'bar' }] }] },
+                                ],
+                            },
+                        ]),
+                    );
+                });
+        });
+    });
 });
 
 describe('RichTextEditor Component: Positioning of Toolbar', () => {
