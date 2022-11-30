@@ -46,8 +46,6 @@ const TREE_ITEM_ID = '[data-test-id=tree-item]';
 const TREE_ITEM_TOGGLE_ID = '[data-test-id=tree-item-toggle';
 const SUB_TREE_ITEMS_ID = '[data-test-id=sub-tree-items]';
 
-const ERROR_MESSAGE = 'Children should be of type';
-
 describe('Tree Component', () => {
     it('renders tree structure with children', () => {
         cy.mount(<TreeComponent />);
