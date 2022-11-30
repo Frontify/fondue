@@ -22,7 +22,7 @@ import { useSelectState } from '@react-stately/select';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { FC, ReactElement, useRef } from 'react';
+import React, { FC, ReactElement, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { usePopper } from 'react-popper';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from './useDropdownAutoHeight';
@@ -111,6 +111,16 @@ export const Dropdown: FC<DropdownProps> = ({
         { isOpen, onClose: () => state.close(), shouldCloseOnBlur: true, isDismissable: true },
         overlayRef,
     );
+
+    useEffect(() => {
+        if (state.disabledKeys.has(activeItemId as string)) {
+            return;
+        }
+
+        if (activeItemId !== state.selectedKey) {
+            state.setSelectedKey(activeItemId as string);
+        }
+    }, [activeItemId]);
 
     const { maxHeight } = useDropdownAutoHeight(triggerRef, { isOpen, autoResize });
 
