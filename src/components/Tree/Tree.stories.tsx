@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { Meta } from '@storybook/react';
 
 import { Tree, Tree as TreeComponent, TreeContentLegacyComponent, TreeItem } from '@components/Tree';
 import type { TreeProps } from '@components/Tree/types';
@@ -30,7 +30,7 @@ const TreeWithBasicItemContentComponent = ({ title }: TreeWithBasicItemContentCo
     );
 };
 
-export const TreeWithBasicItem: Story<TreeProps> = ({ ...args }: TreeProps) => {
+export const TreeWithBasicItem = ({ ...args }: TreeProps) => {
     return (
         <div style={{ maxWidth: '800px' }}>
             <Tree {...args}>
@@ -69,7 +69,7 @@ export const TreeWithBasicItem: Story<TreeProps> = ({ ...args }: TreeProps) => {
     );
 };
 
-export const TreeWithLegacyItem: Story<TreeProps> = ({ ...args }: TreeProps) => {
+export const TreeWithLegacyItem = ({ ...args }: TreeProps) => {
     return (
         <div style={{ maxWidth: '800px' }}>
             <Tree {...args}>

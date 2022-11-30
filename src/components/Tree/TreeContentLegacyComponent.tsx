@@ -31,8 +31,8 @@ export const TreeContentLegacyComponent = ({
     selected,
     hovered,
 }: TreeContentLegacyComponentProps) => {
-    const insertBadge = () => {
-        return (
+    const badgeComponent = badge ? (
+        <span>
             <Tooltip
                 disabled={!tooltipContent}
                 content={tooltipContent}
@@ -40,7 +40,7 @@ export const TreeContentLegacyComponent = ({
                 withArrow
                 triggerElement={
                     <div
-                        data-test-id="node-badge"
+                        data-test-id="tree-content-legacy-component-badge"
                         className={merge([
                             'tw-flex tw-justify-center tw-items-center tw-ml-2 tw-text-text-weak',
                             badge?.props.size && 'tw-w-8 tw-h-5 tw-bg-box-neutral tw-rounded-full',
@@ -50,8 +50,10 @@ export const TreeContentLegacyComponent = ({
                     </div>
                 }
             />
-        );
-    };
+        </span>
+    ) : (
+        <></>
+    );
 
     return (
         <div
@@ -84,7 +86,7 @@ export const TreeContentLegacyComponent = ({
                         </EditableText>
                     </div>
 
-                    <span data-test-id="tree-content-legacy-component-badge">{badge && insertBadge()}</span>
+                    {badgeComponent}
                 </div>
             </div>
 

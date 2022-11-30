@@ -40,7 +40,7 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, childre
         onSelect?.(id);
     };
 
-    const toggleNodesVisibility = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const toggleExpand = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.stopPropagation();
         setExpanded((previousExpanded) => !previousExpanded);
     };
@@ -74,12 +74,8 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, childre
         });
     }
 
-    const insertCaret = () => {
-        if (childrenArray.length === 0) {
-            return null;
-        }
-
-        return (
+    const caretComponent =
+        childrenArray.length > 0 ? (
             <div
                 className={merge([
                     'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
@@ -87,8 +83,9 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, childre
                     selectedIds.includes(id) && 'tw-text-box-selected-strong-inverse',
                 ])}
             />
+        ) : (
+            <></>
         );
-    };
 
     return (
         <li data-test-id="tree-item" ref={drag} style={{ opacity }}>
@@ -97,7 +94,6 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, childre
                     targetItem: { id, sort },
                     position: DropZonePosition.Within,
                 }}
-                onDrop={handleDrop}
                 treeId={treeId}
             >
                 {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
@@ -117,9 +113,9 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, childre
                         <span
                             data-test-id="tree-item-toggle"
                             className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center tw-py-3 tw-cursor-pointer"
-                            onClick={toggleNodesVisibility}
+                            onClick={toggleExpand}
                         >
-                            {insertCaret()}
+                            {caretComponent}
                         </span>
 
                         {contentComponent({ selected: selectedIds.includes(id), hovered })}
@@ -129,7 +125,7 @@ export const TreeItem = ({ id, sort, onSelect, onDrop, contentComponent, childre
 
             {expanded && (
                 <ul
-                    className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left [&>li]:tw-pl-4"
+                    className="tw-p-0 tw-m-0 tw-list-none tw-font-sans tw-font-normal tw-text-left [&>li]:tw-pl-4"
                     data-test-id="sub-tree-items"
                 >
                     {enhancedChildren}
