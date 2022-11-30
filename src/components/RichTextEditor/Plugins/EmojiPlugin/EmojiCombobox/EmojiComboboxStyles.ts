@@ -2,11 +2,10 @@
 
 const item = [
     `
-        font-size: 16px;
-        min-height: 36px;
+        font-size: var(--body-size-medium);
+        min-height: 32px;
         user-select: none;
-        color: rgba(108, 112, 112, 1);
-        color: rgba(45, 50, 50, 1);
+        color: var(--text-color);
     `,
 ];
 
@@ -15,10 +14,10 @@ export const EmojiComboboxStyles = {
         `
             max-width: 250px;
             max-height: 288px;
-            border-radius: 4px;
-            border: 1px solid rgba(8, 8, 8, 0.15);
-            box-shadow: 0px 3px 10px 0px rgba(8, 8, 8, 0.15);
-            background: rgb(255, 255, 255);
+            border-radius: var(--radius);
+            border: 1px solid var(--line-color-strong);
+            box-shadow: var(--shadow-matrix);
+            background: var(--base-color);
             z-index: 500;
         `,
     ],
@@ -26,19 +25,17 @@ export const EmojiComboboxStyles = {
         ...item,
         `
             background: transparent;
-
             :hover {
-                background: rgb(234, 235, 235, 1);
+                background: var(--box-neutral-color-hover);
             }
         `,
     ],
     highlightedItem: [
         ...item,
         `
-            background: rgba(241, 241, 241, 1);
-
+            background: var(--box-neutral-color);
             :hover {
-                background: rgb(234, 235, 235, 1);
+                background: var(--box-neutral-color-hover);
             }
         `,
     ],
