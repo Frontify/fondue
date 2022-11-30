@@ -725,7 +725,7 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] a').realClick();
             cy.get(EDIT_BUTTON_BUTTON).click();
 
-            cy.get(FLOATING_BUTTON_SECONDARY).click();
+            cy.get(FLOATING_BUTTON_SECONDARY).realClick();
             cy.get(BUTTON).eq(1).click();
 
             cy.get('[contenteditable=true] a')
