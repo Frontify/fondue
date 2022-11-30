@@ -99,11 +99,12 @@ export const TreeWithBasicItem = ({ ...args }: TreeProps) => {
         <div style={{ maxWidth: '800px' }}>
             <Tree {...args}>
                 {treeNodesMock.map((node) => (
-                    <TreeItemBasic node={node}>
+                    <TreeItemBasic key={node.id} node={node}>
                         {node.nodes &&
                             node.nodes.map((node) => (
-                                <TreeItemBasic node={node}>
-                                    {node.nodes && node.nodes.map((node) => <TreeItemBasic node={node} />)}
+                                <TreeItemBasic key={node.id} node={node}>
+                                    {node.nodes &&
+                                        node.nodes.map((node) => <TreeItemBasic key={node.id} node={node} />)}
                                 </TreeItemBasic>
                             ))}
                     </TreeItemBasic>
@@ -118,11 +119,12 @@ export const TreeWithLegacyItem = ({ ...args }: TreeProps) => {
         <div style={{ maxWidth: '800px' }}>
             <Tree {...args}>
                 {treeNodesMock.map((node) => (
-                    <TreeItemLegacy node={node}>
+                    <TreeItemLegacy key={node.id} node={node}>
                         {node.nodes &&
                             node.nodes.map((node) => (
-                                <TreeItemLegacy node={node}>
-                                    {node.nodes && node.nodes.map((node) => <TreeItemLegacy node={node} />)}
+                                <TreeItemLegacy key={node.id} node={node}>
+                                    {node.nodes &&
+                                        node.nodes.map((node) => <TreeItemLegacy key={node.id} node={node} />)}
                                 </TreeItemLegacy>
                             ))}
                     </TreeItemLegacy>
