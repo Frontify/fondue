@@ -80,7 +80,7 @@ export const TreeContentLegacyComponent = ({
                                 removeBoxPadding: true,
                             }}
                             onAdditionalValueSave={onEditableSave}
-                            isOverflowing={true}
+                            isOverflowing
                         >
                             <span className="tw-max-w-full tw-absolute tw-top-[-0.08rem] tw-truncate">{title}</span>
                         </EditableText>
@@ -91,11 +91,7 @@ export const TreeContentLegacyComponent = ({
             </div>
 
             {label && (
-                <div
-                    data-test-id="tree-content-legacy-component-label"
-                    className="tw-flex-[0_0_auto]"
-                    style={{ flex: '0 0 auto' }}
-                >
+                <div data-test-id="tree-content-legacy-component-label" className="tw-flex-[0_0_auto]">
                     <span
                         data-test-id="node-label"
                         className={merge([

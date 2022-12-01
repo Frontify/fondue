@@ -16,7 +16,7 @@ interface TreeFlatListItem {
     actions?: React.ReactNode[];
     badge?: ReactElement<IconProps> | ReactElement<BadgeProps>;
     tooltipContent?: ReactNode;
-    parentId: NullableString;
+    parentId: Nullable<string>;
     editable?: boolean;
     forceCaret?: boolean;
 }

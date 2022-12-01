@@ -2,12 +2,12 @@
 
 import { createContext, useContext } from 'react';
 
-export interface TreeContextProps {
+export type TreeContextProps = {
     treeId: string;
     selectedIds: string[];
     onSelect: (id: string) => void;
     draggable: boolean;
-}
+};
 
 export const TreeContext = createContext<TreeContextProps>({} as TreeContextProps);
 

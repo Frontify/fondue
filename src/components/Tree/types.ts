@@ -15,7 +15,7 @@ type ContentComponentArguments = {
     hovered: boolean;
 };
 
-type TreeItemWIthLabelProps = {
+type TreeItemWithLabelProps = {
     label?: string;
     contentComponent?: never;
 };
@@ -30,5 +30,5 @@ export type TreeItemProps = {
     sort: Nullable<number>;
     onSelect?: (id: Nullable<string>) => void;
     onDrop?: OnDropCallback<{ id: string; sort: Nullable<number> }>;
-    children?: ReactElement<TreeItemProps> | Array<ReactElement<TreeItemProps>>;
-} & (TreeItemWIthLabelProps | TreeItemWIthContentComponentProps);
+    children?: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
+} & (TreeItemWithLabelProps | TreeItemWIthContentComponentProps);

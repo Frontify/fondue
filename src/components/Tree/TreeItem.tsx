@@ -18,10 +18,12 @@ export const TreeItem = ({ id, sort, label, contentComponent, onSelect, onDrop, 
     const handleMouseEnter = () => setHovered(true);
     const handleMouseLeave = () => setHovered(false);
 
+    const draggingOpacity = 0.4;
+    const defaultOpacity = 1;
     const [{ opacity }, drag] = useDrag({
         item: { id, sort },
         collect: (monitor) => ({
-            opacity: monitor.isDragging() ? 0.4 : 1,
+            opacity: monitor.isDragging() ? draggingOpacity : defaultOpacity,
         }),
         type: treeId,
         canDrag: draggable,
