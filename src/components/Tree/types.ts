@@ -7,7 +7,7 @@ import { OnDropCallback } from '@components/DropZone';
 export type TreeProps = {
     id: string;
     draggable?: boolean;
-    children: ReactElement<TreeItemProps> | Array<ReactElement<TreeItemProps>>;
+    children: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
 };
 
 type ContentComponentArguments = {
