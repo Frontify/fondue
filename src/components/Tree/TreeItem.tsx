@@ -9,6 +9,9 @@ import { useTreeContext } from '@components/Tree/TreeContext';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 import { merge } from '@utilities/merge';
 
+const DRAGGING_OPACITY = 0.4;
+const DEFAULT_OPACITY = 1;
+
 export const TreeItem = ({ id, sort, label, contentComponent, onSelect, onDrop, children }: TreeItemProps) => {
     const { treeId, selectedIds, onSelect: onItemSelect, draggable } = useTreeContext();
 
@@ -18,12 +21,10 @@ export const TreeItem = ({ id, sort, label, contentComponent, onSelect, onDrop, 
     const handleMouseEnter = () => setHovered(true);
     const handleMouseLeave = () => setHovered(false);
 
-    const draggingOpacity = 0.4;
-    const defaultOpacity = 1;
     const [{ opacity }, drag] = useDrag({
         item: { id, sort },
         collect: (monitor) => ({
-            opacity: monitor.isDragging() ? draggingOpacity : defaultOpacity,
+            opacity: monitor.isDragging() ? DRAGGING_OPACITY : DEFAULT_OPACITY,
         }),
         type: treeId,
         canDrag: draggable,
