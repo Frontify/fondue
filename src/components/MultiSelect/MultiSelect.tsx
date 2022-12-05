@@ -250,38 +250,58 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             </FocusScope>
                         </motion.div>
                     ) : (
-                        <Menu open={open} onClose={() => setOpen(false)} triggerRef={multiSelectRef} type="multiselect">
-                            {checkboxes.length > 0 && hasResults ? (
-                                checkboxes.map((item, index) => {
-                                    const { label, value, imgSrc } = item;
-                                    const isChecked = !!activeItemKeys.find((key) => key === value);
+                        <motion.div
+                            initial={{
+                                opacity: 0,
+                            }}
+                            animate={{
+                                opacity: 1,
+                                transition: { duration: 0.15 },
+                            }}
+                            exit={{
+                                opacity: 0,
+                                transition: { duration: 0.15 },
+                            }}
+                            transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
+                        >
+                            <Menu
+                                open={open}
+                                onClose={() => setOpen(false)}
+                                triggerRef={multiSelectRef}
+                                type="multiselect"
+                            >
+                                {checkboxes.length > 0 && hasResults ? (
+                                    checkboxes.map((item, index) => {
+                                        const { label, value, imgSrc } = item;
+                                        const isChecked = !!activeItemKeys.find((key) => key === value);
 
-                                    if (item.isCategory || item.isDivider) {
+                                        if (item.isCategory || item.isDivider) {
+                                            return (
+                                                <OptionalItems
+                                                    key={value + index}
+                                                    {...{
+                                                        checkboxes,
+                                                        index,
+                                                    }}
+                                                />
+                                            );
+                                        }
+
                                         return (
-                                            <OptionalItems
-                                                key={value + index}
-                                                {...{
-                                                    checkboxes,
-                                                    index,
-                                                }}
-                                            />
+                                            <MenuItem
+                                                checked={isChecked}
+                                                onClick={() => toggleSelection(label)}
+                                                key={value}
+                                            >
+                                                <DefaultItem {...{ label, value, imgSrc, isChecked }} />
+                                            </MenuItem>
                                         );
-                                    }
-
-                                    return (
-                                        <MenuItem
-                                            checked={isChecked}
-                                            onClick={() => toggleSelection(label)}
-                                            key={value}
-                                        >
-                                            <DefaultItem {...{ label, value, imgSrc, isChecked }} />
-                                        </MenuItem>
-                                    );
-                                })
-                            ) : (
-                                <NoSearchResults label={noResultsLabel} />
-                            )}
-                        </Menu>
+                                    })
+                                ) : (
+                                    <NoSearchResults label={noResultsLabel} />
+                                )}
+                            </Menu>
+                        </motion.div>
                     ))}
             </AnimatePresence>
         </div>
