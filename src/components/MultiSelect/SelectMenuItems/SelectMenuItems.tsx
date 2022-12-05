@@ -41,7 +41,11 @@ export const DefaultItem = ({ label, value, imgSrc, isChecked = false }: Default
                 )}
                 <Text color={isChecked ? 'interactive' : 'weak'}>{label}</Text>
             </div>
-            {isChecked && <IconCheckMark16 />}
+            {isChecked && (
+                <div className="tw-ml-2">
+                    <IconCheckMark16 />
+                </div>
+            )}
         </div>
     );
 };

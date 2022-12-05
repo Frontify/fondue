@@ -20,7 +20,8 @@ export default {
         type: MultiSelectType.Default,
         emphasis: MultiSelectEmphasis.Default,
         size: MultiSelectSize.Medium,
-        placeholder: '[Label]',
+        placeholder: 'Labels',
+        label: 'Labels',
         activeItemKeys: ['Short tag', 'Tag 74'],
         items: [
             {
@@ -120,7 +121,8 @@ WithFilter.args = {
     filterLabel: 'Filter..',
     noResultsLabel: 'No results match the search',
     decorator: <IconPerson16 />,
-    placeholder: 'UsersUsersUsersUsers',
+    placeholder: 'Users',
+    label: 'Users',
     items: [
         {
             value: 'Consumption',

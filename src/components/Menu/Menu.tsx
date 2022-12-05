@@ -14,19 +14,21 @@ interface Props {
     children?: ReactElement<MenuItemProps> | ReactElement<MenuItemProps>[];
     onClose?: () => void;
     offset?: [number, number];
+    type?: 'default' | 'multiselect';
 }
 
 export type MenuProps = PropsWithChildren<Props>;
 
-const CONTAINER_BASE_CLASSES = 'tw-relative tw-bg-base tw-rounded tw-py-2 tw-shadow-mid tw-min-w-max tw-z-[120000]';
-const CONTAINER_POSITION_CLASSES = ' tw-left-0 tw-top-7';
+const CONTAINER_BASE_CLASSES = 'tw-relative tw-bg-base tw-rounded tw-py-2 tw-shadow-mid tw-z-[120000]';
+const CONTAINER_POSITION_CLASSES = 'tw-left-0 tw-top-7';
 
 const CONTAINER_CLASSES = merge([CONTAINER_BASE_CLASSES, INSET_BORDER]);
 
-export const Menu = ({ triggerRef, children, open = true, offset = [0, 8], onClose }: MenuProps) => {
+export const Menu = ({ triggerRef, children, open = true, offset = [0, 8], onClose, type = 'default' }: MenuProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(open);
     const [menuContainerRef, setMenuContainerRef] = useState<HTMLElement | null>(null);
     const [menuOpenerRef, setMenuOpenerRef] = useState<HTMLElement | null>(null);
+    const MIN_WIDTH_CLASS = type === 'default' ? 'tw-min-w-max' : 'tw-min-w-[18rem]';
 
     const menuKeyboardNavigationAction = useMenuKeyboardNavigation(
         isMenuOpen,
@@ -87,6 +89,7 @@ export const Menu = ({ triggerRef, children, open = true, offset = [0, 8], onClo
         <nav
             className={merge([
                 CONTAINER_CLASSES,
+                MIN_WIDTH_CLASS,
                 menuOpenerRef ? CONTAINER_POSITION_CLASSES : '',
                 isMenuOpen ? 'tw-block' : 'tw-hidden',
             ])}

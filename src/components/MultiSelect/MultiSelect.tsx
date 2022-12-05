@@ -6,7 +6,6 @@ import { Trigger, TriggerEmphasis } from '@components/Trigger/Trigger';
 import { Text } from '@typography/Text';
 import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
-import { useOverlay } from '@react-aria/overlays';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -46,6 +45,7 @@ export type MultiSelectProps = {
     disabled?: boolean;
     onSelectionChange: (keys: (string | number)[]) => void;
     ariaLabel?: string;
+    label?: string;
     placeholder?: string;
     type?: MultiSelectType;
     size?: MultiSelectSize;
@@ -73,6 +73,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     ariaLabel = 'Select list',
     disabled = false,
     placeholder,
+    label,
     filterLabel,
     noResultsLabel,
     type = MultiSelectType.Default,
@@ -85,10 +86,8 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     const [open, setOpen] = useState(false);
     const [checkboxes, setCheckboxes] = useState<Item[]>(items.map((item) => ({ ...item, label: item.value })));
     const hasResults = !!checkboxes.find((item) => !item.isCategory && !item.isDivider);
-    const overlayRef = useRef<HTMLDivElement | null>(null);
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const multiSelectRef = useRef<HTMLDivElement | null>(null);
-    const menuRef = useRef<HTMLDivElement | null>(null);
     const filterInputRef = useRef<HTMLInputElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
 
@@ -97,27 +96,12 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     const inputWidth = getInputWidth(hasSelectedItems, filterLabel, placeholder);
 
     const handleClickOutside = () => {
-        if (emphasis === MultiSelectEmphasis.Weak) {
-            setOpen(false);
-        }
+        setOpen(false);
     };
 
-    useClickOutside(menuRef?.current, handleClickOutside, [multiSelectRef?.current as HTMLElement]);
+    useClickOutside(null, handleClickOutside, [multiSelectRef?.current as HTMLElement]);
 
     const toggleOpen = () => setOpen((open) => !open);
-
-    const { overlayProps } = useOverlay(
-        {
-            isOpen: open,
-            onClose: () => setOpen(false),
-            shouldCloseOnBlur: true,
-            isDismissable: true,
-            shouldCloseOnInteractOutside: (element) => {
-                return element && element.tagName !== 'BUTTON' && element.tagName !== 'svg';
-            },
-        },
-        overlayRef,
-    );
 
     const { buttonProps } = useButton(
         {
@@ -205,7 +189,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                     >
                         <div className="tw-flex tw-flex-wrap tw-gap-2 tw-outline-none tw-items-center tw-min-h-[34px]">
                             {decorator && <div className={getDecoratorClasses()}>{decorator}</div>}
-                            {placeholder && hasSelectedItems && <Text weight="strong">{placeholder}</Text>}
+                            {label && hasSelectedItems && <Text weight="strong">{label}</Text>}
                             {type === MultiSelectType.Default &&
                                 activeItemKeys.map((key) => (
                                     <Tag
@@ -254,7 +238,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                         >
                             <FocusScope restoreFocus>
-                                <div {...overlayProps} ref={overlayRef} className="tw-p-4">
+                                <div className="tw-p-4">
                                     <Checklist
                                         activeValues={activeItemKeys.map((key) => key.toString())}
                                         setActiveValues={onSelectionChange}
@@ -266,7 +250,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             </FocusScope>
                         </motion.div>
                     ) : (
-                        <Menu open={open} onClose={() => setOpen(false)} triggerRef={multiSelectRef}>
+                        <Menu open={open} onClose={() => setOpen(false)} triggerRef={multiSelectRef} type="multiselect">
                             {checkboxes.length > 0 && hasResults ? (
                                 checkboxes.map((item, index) => {
                                     const { label, value, imgSrc } = item;
