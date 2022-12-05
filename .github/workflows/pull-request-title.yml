@@ -1,0 +1,31 @@
+name: Pull Request Title
+
+on:
+    pull_request:
+        types: 
+            - opened
+            - edited
+            - reopened
+            - synchronize
+        branches:
+            - 'main'
+            - 'beta'
+
+jobs:
+    pr-title-validation:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: amannn/action-semantic-pull-request@v5
+                with: 
+                    types: |
+                        feat
+                        fix
+                        chore
+                        docs
+                        style
+                        refactor
+                        perf
+                        test
+                        automation
+                env: 
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
