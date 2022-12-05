@@ -59,12 +59,6 @@ describe('Divider component', () => {
         cy.get(DIVIDER_HR_SELECTOR).should('exist').and('have.class', 'tw-border-solid');
     });
 
-    it('allows the divider border style to be solid', () => {
-        cy.mount(<Divider style={DividerStyle.Solid} />);
-
-        cy.get(DIVIDER_HR_SELECTOR).should('exist').and('have.class', 'tw-border-solid');
-    });
-
     it('allows the divider border style to be dotted', () => {
         cy.mount(<Divider style={DividerStyle.Dotted} />);
 
