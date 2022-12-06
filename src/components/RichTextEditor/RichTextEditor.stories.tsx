@@ -259,7 +259,7 @@ WithCustomButtonStyles.args = {
     value: JSON.stringify(buttonValues),
     designTokens: {
         ...defaultDesignTokens,
-        button_primary: {
+        buttonPrimary: {
             hover: {
                 color: 'rgba(76, 76, 76, 1)',
                 backgroundColor: 'rgba(0, 230, 0, 1)',
@@ -275,7 +275,7 @@ WithCustomButtonStyles.args = {
             color: 'rgba(102,102,102,1)',
             borderColor: 'rgba(207, 207, 207, 1)',
         },
-        button_secondary: {
+        buttonSecondary: {
             hover: {
                 color: 'rgba(76, 76, 76, 1)',
                 backgroundColor: 'rgba(172, 172, 172, 1)',
@@ -291,7 +291,7 @@ WithCustomButtonStyles.args = {
             color: 'rgba(102,102,102,1)',
             borderColor: 'rgba(207, 207, 207, 1)',
         },
-        button_tertiary: {
+        buttonTertiary: {
             hover: {
                 color: 'rgb(194, 185, 223)',
                 borderColor: 'rgb(255, 7, 212)',
