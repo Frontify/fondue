@@ -264,12 +264,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             }}
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                         >
-                            <Menu
-                                open={open}
-                                onClose={() => setOpen(false)}
-                                triggerRef={multiSelectRef}
-                                type="multiselect"
-                            >
+                            <Menu open={open} onClose={() => setOpen(false)} triggerRef={multiSelectRef}>
                                 {checkboxes.length > 0 && hasResults ? (
                                     checkboxes.map((item, index) => {
                                         const { label, value, imgSrc } = item;

@@ -65,7 +65,7 @@ export const useMenuKeyboardNavigation = (
         }
 
         if (itemsElements[currentItemIndex]) {
-            (itemsElements[currentItemIndex] as HTMLButtonElement).focus();
+            (itemsElements[currentItemIndex] as HTMLButtonElement | HTMLAnchorElement).focus();
         }
     }, [currentItemIndex, itemsElements]);
 

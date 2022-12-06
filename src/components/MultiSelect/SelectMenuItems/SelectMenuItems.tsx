@@ -30,7 +30,11 @@ type DefaultItemProps = {
 
 export const DefaultItem = ({ label, value, imgSrc, isChecked = false }: DefaultItemProps) => {
     return (
-        <div className={`tw-flex tw-items-center tw-justify-between ${isChecked ? 'tw-text-text-interactive' : ''}`}>
+        <div
+            className={`tw-flex tw-items-center tw-justify-between tw-min-w-[18rem] ${
+                isChecked ? 'tw-text-text-interactive' : ''
+            }`}
+        >
             <div className="tw-flex tw-gap-3 tw-items-center">
                 {imgSrc && (
                     <img
@@ -56,7 +60,7 @@ type NoSearchResultsProps = {
 
 export const NoSearchResults = ({ label = '' }: NoSearchResultsProps) => {
     return (
-        <div className="tw-py-2 tw-px-5">
+        <div className="tw-py-2 tw-px-5 tw-min-w-[18rem]">
             <Text color="weak">{label}</Text>
         </div>
     );
