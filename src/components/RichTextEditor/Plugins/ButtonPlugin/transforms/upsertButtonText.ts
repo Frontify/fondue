@@ -8,7 +8,7 @@ import {
     getEditorString,
     getPluginType,
     replaceNodeChildren,
-} from '@udecode/plate-core';
+} from '@udecode/plate';
 import { ELEMENT_BUTTON } from '../createButtonPlugin';
 import { TButtonElement } from '../types';
 import { UpsertButtonOptions } from './upsertButton';

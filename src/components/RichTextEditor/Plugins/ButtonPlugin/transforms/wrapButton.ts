@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor, Value, WrapNodesOptions, getPluginType, wrapNodes } from '@udecode/plate-core';
+import { PlateEditor, Value, WrapNodesOptions, getPluginType, wrapNodes } from '@udecode/plate';
 import { ELEMENT_BUTTON } from '../createButtonPlugin';
 import { RichTextButtonStyle, TButtonElement } from '../types';
 

@@ -4,17 +4,18 @@ import { useCallback, useEffect } from 'react';
 import {
     HTMLPropsAs,
     getAboveNode,
+    getDefaultBoundingClientRect,
     getEndPoint,
     getPluginOptions,
     getPluginType,
+    getRangeBoundingClientRect,
     getStartPoint,
     someNode,
     useComposedRef,
     useEditorRef,
     useHotkeys,
     usePlateSelectors,
-} from '@udecode/plate-core';
-import { getDefaultBoundingClientRect, getRangeBoundingClientRect } from '@udecode/plate-floating';
+} from '@udecode/plate';
 import { ButtonPlugin, ELEMENT_BUTTON } from '../../createButtonPlugin';
 import { triggerFloatingButtonEdit } from '../../utils/triggerFloatingButtonEdit';
 import { FloatingButtonProps } from './FloatingButton';
