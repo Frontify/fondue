@@ -2,7 +2,7 @@
 
 import { Checklist, ChecklistDirection } from '@components/Checklist/Checklist';
 import { Tag, TagSize, TagType } from '@components/Tag';
-import { Trigger, TriggerEmphasis } from '@components/Trigger/Trigger';
+import { Trigger, TriggerEmphasis } from '@components/Trigger';
 import { Text } from '@typography/Text';
 import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
