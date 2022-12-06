@@ -71,8 +71,6 @@ const HoverableButton: FC<Props> = ({ id, styles, isActive, onClick, children })
     const [hovered, setHovered] = useState(false);
     const getStyles = () => (styles && styles.hover && hovered ? { ...styles, ...styles.hover } : styles);
 
-    console.log('getStyles():', getStyles());
-
     return (
         <button
             data-test-id={`floating-button-insert-${id}`}
