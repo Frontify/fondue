@@ -13,9 +13,12 @@ type CategoryItemProps = {
     label: string;
 };
 
+// Min width for the MenuItem content should be 18rem
+// CategoryItem and NoSearchResults will add the MenuItem internal padding of 2.5rem since they are not being
+// rendered inside a MenuItem component due to hover state
 export const CategoryItem = ({ label }: CategoryItemProps) => {
     return (
-        <div className="tw-w-full tw-text-left tw-py-2 tw-px-5">
+        <div className="tw-w-full tw-text-left tw-py-2 tw-px-5 tw-min-w-[20.5rem]">
             <Text weight="strong">{label}</Text>
         </div>
     );
@@ -60,7 +63,7 @@ type NoSearchResultsProps = {
 
 export const NoSearchResults = ({ label = '' }: NoSearchResultsProps) => {
     return (
-        <div className="tw-py-2 tw-px-5 tw-min-w-[18rem]">
+        <div className="tw-py-2 tw-px-5 tw-min-w-[20.5rem]">
             <Text color="weak">{label}</Text>
         </div>
     );
