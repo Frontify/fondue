@@ -15,8 +15,11 @@ export const useEditorResize = () => {
         setEditorWidth(node.clientWidth);
 
         const observer = new ResizeObserver((entries) => {
+            if (entries.length === 0) {
+                return;
+            }
             const width = entries[0].target.clientWidth;
-            if (entries.length > 0 && width > 0) {
+            if (width > 0) {
                 debounceRef.current(width);
             }
         });
