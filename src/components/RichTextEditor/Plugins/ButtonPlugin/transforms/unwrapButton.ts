@@ -10,7 +10,7 @@ import {
     splitNodes,
     unwrapNodes,
     withoutNormalizing,
-} from '@udecode/plate-core';
+} from '@udecode/plate';
 import { ELEMENT_BUTTON } from '../createButtonPlugin';
 
 /**

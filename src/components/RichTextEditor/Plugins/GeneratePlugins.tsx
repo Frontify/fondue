@@ -19,7 +19,8 @@ export const createPlatePlugins = (pluginComposer: PluginComposer) =>
 export const GeneratePlugins = (editorId: string, pluginComposer: PluginComposer): GeneratePluginsReturn => {
     return {
         create: () => createPlatePlugins(pluginComposer),
-        toolbar: () => <Toolbar buttons={pluginComposer.buttons} editorId={editorId} />,
+        toolbar: () =>
+            pluginComposer.hasToolbar ? <Toolbar buttons={pluginComposer.buttons} editorId={editorId} /> : null,
         inline: () => (
             <>
                 {pluginComposer.inline.map((Inline, index) => (
