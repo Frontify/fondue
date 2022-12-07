@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useCallback } from 'react';
-import { Button } from '@udecode/plate-button';
 import {
     AsProps,
+    Button,
     HTMLPropsAs,
     createComponentAs,
     createElementAs,
     focusEditor,
     useEditorRef,
-} from '@udecode/plate-core';
+} from '@udecode/plate';
 import { unwrapButton } from '../../transforms/index';
 
 export const useUnlinkButton = (props: HTMLPropsAs<'button'>): HTMLPropsAs<'button'> => {

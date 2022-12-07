@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { RangeBeforeOptions, createPluginFactory, isUrl as isUrlProtocol } from '@udecode/plate-core';
+import { RangeBeforeOptions, createPluginFactory, isUrl as isUrlProtocol } from '@udecode/plate';
 import { Plugin, PluginProps } from '../Plugin';
 import { ButtonMarkupElement } from './ButtonMarkupElement';
 import { ButtonButton } from './components/ButtonButton';

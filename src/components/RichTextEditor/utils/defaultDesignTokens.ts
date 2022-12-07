@@ -56,7 +56,7 @@ export const defaultDesignTokens: DesignTokens = {
         fontStyle: 'normal',
         fontWeight: 'normal',
     },
-    button_primary: {
+    buttonPrimary: {
         fontSize: '13px',
         color: 'rgb(255, 255, 255)',
         paddingTop: 10,
@@ -78,7 +78,7 @@ export const defaultDesignTokens: DesignTokens = {
         borderRadius: '5px',
         backgroundColor: 'rgb(130, 95, 255)',
     },
-    button_secondary: {
+    buttonSecondary: {
         fontSize: '13px',
         color: 'rgb(102, 102, 102)',
         paddingTop: 10,
@@ -100,7 +100,7 @@ export const defaultDesignTokens: DesignTokens = {
         borderRadius: '5px',
         backgroundColor: 'rgb(230, 230, 230)',
     },
-    button_tertiary: {
+    buttonTertiary: {
         fontSize: '13px',
         color: 'rgb(102, 60, 255)',
         paddingTop: 10,

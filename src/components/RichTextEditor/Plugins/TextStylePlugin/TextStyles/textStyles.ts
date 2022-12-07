@@ -16,9 +16,9 @@ export const listStyleTitle: Record<ListStyles, string> = {
 };
 
 export enum ButtonStyles {
-    ELEMENT_BUTTON_PRIMARY = 'button_primary',
-    ELEMENT_BUTTON_SECONDARY = 'button_secondary',
-    ELEMENT_BUTTON_TERTIARY = 'button_tertiary',
+    ELEMENT_BUTTON_PRIMARY = 'buttonPrimary',
+    ELEMENT_BUTTON_SECONDARY = 'buttonSecondary',
+    ELEMENT_BUTTON_TERTIARY = 'buttonTertiary',
 }
 
 export enum TextStyles {

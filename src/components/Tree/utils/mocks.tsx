@@ -1,14 +1,31 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MenuItemContentSize } from '@components/MenuItem';
-import { IconDocument, IconFaceExtraHappy, IconFolder, IconPlus, IconSize } from '@foundation/Icon';
-import React from 'react';
-import { TreeFlatListItem, TreeNodeItem } from '@components/Tree';
-import { DraggableItem } from '@utilities/dnd';
-import { Badge } from '../../..';
-import { Button, ButtonSize } from '@components/Button';
+import React, { ReactElement, ReactNode } from 'react';
+import { IconDocument, IconFaceExtraHappy, IconFolder, IconPlus, IconProps, IconSize } from '@foundation/Icon';
 
-export const mockActionMenuBlocks = [
+import { Badge, BadgeProps } from '@components/Badge';
+import { Button, ButtonSize } from '@components/Button';
+import { MenuItemContentSize } from '@components/MenuItem';
+import { DraggableItem } from '@utilities/dnd';
+
+interface TreeFlatListItem {
+    name: string;
+    icon?: ReactElement<IconProps>;
+    label?: string;
+    value?: string;
+    actions?: React.ReactNode[];
+    badge?: ReactElement<IconProps> | ReactElement<BadgeProps>;
+    tooltipContent?: ReactNode;
+    parentId: Nullable<string>;
+    editable?: boolean;
+    forceCaret?: boolean;
+}
+
+export interface TreeNodeItem extends TreeFlatListItem {
+    nodes?: DraggableItem<TreeNodeItem>[];
+}
+
+export const actionMenuBlocksMock = [
     {
         id: 'dropdownBlock',
         ariaLabel: 'Dropdown block',
@@ -121,12 +138,13 @@ const testCategoryNodes = [
         sort: null,
         badge: <Badge>Hello, I am a badge</Badge>,
         tooltipContent: 'Hello, I am tooltip content',
+        actions: [<Button key={'About Us Page Test'} size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />],
     },
 ];
 
-type mockNodeType = () => DraggableItem<TreeFlatListItem>[];
+type nodeMockType = () => DraggableItem<TreeFlatListItem>[];
 
-export const mockNodesFlat: mockNodeType = () => [
+export const nodesFlatMock: nodeMockType = () => [
     {
         id: '1',
         name: 'Design System Testing',
@@ -188,7 +206,7 @@ export const mockNodesFlat: mockNodeType = () => [
     },
 ];
 
-export const mockNodesTree: DraggableItem<TreeNodeItem>[] = [
+export const treeNodesMock: DraggableItem<TreeNodeItem>[] = [
     {
         id: '1',
         name: 'Design System Testing',
@@ -197,6 +215,7 @@ export const mockNodesTree: DraggableItem<TreeNodeItem>[] = [
         icon: <IconFolder size={IconSize.Size16} />,
         parentId: null,
         sort: 1,
+        actions: [<Button key={'Design System Testing'} size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />],
         nodes: [
             {
                 id: '1-1',
@@ -204,6 +223,13 @@ export const mockNodesTree: DraggableItem<TreeNodeItem>[] = [
                 icon: <IconFolder size={IconSize.Size16} />,
                 parentId: '1',
                 sort: 1,
+                actions: [
+                    <Button
+                        key={'Design System Testing Uncategorizes Pages'}
+                        size={ButtonSize.Small}
+                        icon={<IconPlus></IconPlus>}
+                    />,
+                ],
                 nodes: [...uncategorizedPagesNodes],
             },
             {
@@ -214,6 +240,13 @@ export const mockNodesTree: DraggableItem<TreeNodeItem>[] = [
                 icon: <IconFolder size={IconSize.Size16} />,
                 value: 'https://weare.frontify.com/document/923#/test',
                 sort: null,
+                actions: [
+                    <Button
+                        key={'Design System Testing Uncategorizes Pages Test'}
+                        size={ButtonSize.Small}
+                        icon={<IconPlus></IconPlus>}
+                    />,
+                ],
                 nodes: [...testCategoryNodes],
             },
         ],

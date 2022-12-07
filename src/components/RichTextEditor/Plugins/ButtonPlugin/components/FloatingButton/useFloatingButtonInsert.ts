@@ -5,12 +5,12 @@ import {
     HTMLPropsAs,
     focusEditor,
     getPluginOptions,
+    getSelectionBoundingClientRect,
     useComposedRef,
     useEditorRef,
     useHotkeys,
     useOnClickOutside,
-} from '@udecode/plate-core';
-import { getSelectionBoundingClientRect } from '@udecode/plate-floating';
+} from '@udecode/plate';
 import { useFocused } from 'slate-react';
 import { ButtonPlugin, ELEMENT_BUTTON } from '../../createButtonPlugin';
 import { triggerFloatingButtonInsert } from '../../utils/triggerFloatingButtonInsert';
