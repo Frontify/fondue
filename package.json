@@ -1,6 +1,6 @@
 {
     "name": "@frontify/fondue",
-    "version": "12.0.0-beta.30",
+    "version": "12.0.0-beta.31",
     "description": "Design system of Frontify",
     "engines": {
         "node": ">=16"
