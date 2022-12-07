@@ -720,7 +720,7 @@ describe('RichTextEditor Component', () => {
             cy.mount(<RichTextWithButton link={link} text={text} buttonStyle="primary" />);
             cy.get('[contenteditable=true] a')
                 .invoke('attr', 'style')
-                .should('contain', `color: ${designTokens.button_primary?.color}`);
+                .should('contain', `color: ${designTokens.buttonPrimary?.color}`);
 
             cy.get('[contenteditable=true] a').realClick();
             cy.get(EDIT_BUTTON_BUTTON).click();
@@ -730,7 +730,7 @@ describe('RichTextEditor Component', () => {
 
             cy.get('[contenteditable=true] a')
                 .invoke('attr', 'style')
-                .should('contain', `color: ${designTokens.button_secondary?.color}`);
+                .should('contain', `color: ${designTokens.buttonSecondary?.color}`);
         });
 
         it('should remove button', () => {

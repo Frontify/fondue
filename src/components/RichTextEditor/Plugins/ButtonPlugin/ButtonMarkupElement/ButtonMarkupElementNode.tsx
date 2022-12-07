@@ -55,13 +55,13 @@ const getButtonStyle = (rteContext: RichTextEditorContextProps | null, buttonSty
         >;
         switch (buttonStyle) {
             case 'primary':
-                styles = design.button_primary;
+                styles = design.buttonPrimary;
                 break;
             case 'secondary':
-                styles = design.button_secondary;
+                styles = design.buttonSecondary;
                 break;
             case 'tertiary':
-                styles = design.button_tertiary;
+                styles = design.buttonTertiary;
                 break;
         }
         return { ...styles, cursor: 'pointer', display: 'inline-block', margin: '10px 0' };
