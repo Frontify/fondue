@@ -95,11 +95,9 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     const summarizedLabel = [activeItemKeys.length, 'selected'].join(' ');
     const inputWidth = getInputWidth(hasSelectedItems, filterLabel, placeholder);
 
-    const handleClickOutside = () => {
-        setOpen(false);
-    };
+    const handleClose = () => setOpen(false);
 
-    useClickOutside(null, handleClickOutside, [multiSelectRef?.current as HTMLElement]);
+    useClickOutside(null, handleClose, [multiSelectRef?.current as HTMLElement]);
 
     const toggleOpen = () => setOpen((open) => !open);
 
@@ -264,16 +262,17 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             }}
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
                         >
-                            <Menu open={open} onClose={() => setOpen(false)} triggerRef={multiSelectRef}>
+                            <Menu open={open} onClose={handleClose} triggerRef={multiSelectRef}>
                                 {checkboxes.length > 0 && hasResults ? (
                                     checkboxes.map((item, index) => {
                                         const { label, value, imgSrc } = item;
                                         const isChecked = !!activeItemKeys.find((key) => key === value);
+                                        const handleMenuItemClick = () => toggleSelection(label);
 
                                         if (item.isCategory || item.isDivider) {
                                             return (
                                                 <OptionalItems
-                                                    key={value + index}
+                                                    key={value + item}
                                                     {...{
                                                         checkboxes,
                                                         index,
@@ -283,11 +282,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                         }
 
                                         return (
-                                            <MenuItem
-                                                checked={isChecked}
-                                                onClick={() => toggleSelection(label)}
-                                                key={value}
-                                            >
+                                            <MenuItem checked={isChecked} onClick={handleMenuItemClick} key={value}>
                                                 <DefaultItem {...{ label, value, imgSrc, isChecked }} />
                                             </MenuItem>
                                         );
