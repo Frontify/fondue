@@ -3,10 +3,10 @@
 import React from 'react';
 import { AccordionHeader } from './AccordionHeader';
 import {
-    FieldsetHeaderSize,
-    FieldsetHeaderType,
     ACCORDION_ICON_CONTAINER_ID,
     ADDREMOVE_ICON_CONTAINER_ID,
+    FieldsetHeaderSize,
+    FieldsetHeaderType,
 } from '@components/FieldsetHeader';
 import { SWITCH_ID } from '../Switch/Switch';
 import { IconIcon12 } from '@foundation/Icon';
