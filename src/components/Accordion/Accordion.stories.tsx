@@ -50,6 +50,7 @@ export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
                     type: FieldsetHeaderType.Accordion,
                     active: true,
                 }}
+                divider
             >
                 <FormControl
                     label={{ children: 'Width', htmlFor: 'width', tooltip: { content: 'Width of the future' } }}
