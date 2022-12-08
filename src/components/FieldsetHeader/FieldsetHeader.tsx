@@ -81,10 +81,9 @@ export const renderFieldsetHeaderIconType = (
                         className={merge([
                             'tw-transition-transform',
                             active && 'tw-rotate-180 tw-duration-300',
-                            disabled && !active && 'tw-text-black-40',
                             !disabled && active && 'tw-text-black',
                             !disabled && !active && 'tw-text-black-80',
-                            active && disabled && 'tw-text-black-40',
+                            disabled && 'tw-text-black-40',
                         ])}
                     >
                         <IconCaretDown {...props} />
@@ -99,7 +98,7 @@ export const renderFieldsetHeaderIconType = (
                         className={merge([
                             active && !disabled && 'tw-text-black',
                             !active && !disabled && 'tw-text-black-80',
-                            active && disabled && 'tw-text-black-40',
+                            disabled && 'tw-text-black-40',
                         ])}
                     >
                         {active ? <IconMinus {...props} /> : <IconPlus {...props} />}

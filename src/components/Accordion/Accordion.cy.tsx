@@ -136,7 +136,7 @@ describe('Accordion Component', () => {
         });
     });
 
-    it('it does not show dividers between items when divider prop is set to false', () => {
+    it('does not show dividers between items when divider prop is set to false', () => {
         cy.mount(
             <Accordion divider={false}>
                 <AccordionItem header={{ children: '1' }}>1</AccordionItem>
@@ -148,7 +148,7 @@ describe('Accordion Component', () => {
         });
     });
 
-    it('it shows borders when border prop is set to true', () => {
+    it('shows borders when border prop is set to true', () => {
         cy.mount(
             <Accordion border>
                 <AccordionItem header={{ children: '1' }}>1</AccordionItem>
@@ -160,7 +160,7 @@ describe('Accordion Component', () => {
         });
     });
 
-    it('it does not show borders when border prop is set to false', () => {
+    it('does not show borders when border prop is set to false', () => {
         cy.mount(
             <Accordion border={false}>
                 <AccordionItem header={{ children: '1' }}>1</AccordionItem>
