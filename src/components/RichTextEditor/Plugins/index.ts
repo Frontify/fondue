@@ -77,6 +77,7 @@ export * from './InitPlugin';
 export * from './ListPlugin';
 export * from './BoldPlugin';
 export * from './AlignPlugin';
+export * from './BreakAfterPlugin';
 export * from './CheckboxListPlugin';
 export * from './CodePlugin';
 export * from './ResetFormattingPlugin';

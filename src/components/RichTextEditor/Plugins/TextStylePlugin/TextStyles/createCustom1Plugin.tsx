@@ -11,7 +11,7 @@ import { breakAfterClassNames } from '../../../utils/constants';
 export const Custom1MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
     const align = element.align as string;
-    const hasColumn = element?.hasColumn as boolean;
+    const hasColumn = element?.breakAfterColumn as boolean;
 
     return (
         <p
