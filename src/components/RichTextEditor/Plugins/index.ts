@@ -15,6 +15,8 @@ import { InitPlugin } from './InitPlugin';
 import { ParagraphPlugin } from './ParagraphPlugin';
 import { ButtonPlugin } from './ButtonPlugin';
 import { ResetFormattingPlugin } from './ResetFormattingPlugin';
+import { EmojiPlugin } from './EmojiPlugin';
+import { ColumnBreakPlugin } from './ColumnBreakPlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
@@ -39,9 +41,36 @@ defaultPlugins
             new CheckboxListPlugin(),
             new OrderedListPlugin(),
             new ResetFormattingPlugin(),
+            new EmojiPlugin({ noButton: true }),
         ],
     );
 
+export const defaultPluginsWithColumns = new PluginComposer();
+defaultPluginsWithColumns.setPlugin(
+    [new InitPlugin(), new ParagraphPlugin()],
+    [new TextStylePlugin()],
+    [
+        new BoldPlugin(),
+        new ItalicPlugin(),
+        new UnderlinePlugin(),
+        new StrikethroughPlugin(),
+        new LinkPlugin(),
+        new ButtonPlugin(),
+        new CodePlugin(),
+    ],
+    [
+        new AlignLeftPlugin(),
+        new AlignCenterPlugin(),
+        new AlignRightPlugin(),
+        new AlignJustifyPlugin(),
+        new UnorderedListPlugin(),
+        new CheckboxListPlugin(),
+        new OrderedListPlugin(),
+        new ColumnBreakPlugin(),
+        new ResetFormattingPlugin(),
+        new EmojiPlugin({ noButton: true }),
+    ],
+);
 export * from './GeneratePlugins';
 export * from './PluginComposer';
 export * from './InitPlugin';
@@ -59,3 +88,4 @@ export * from './ButtonPlugin';
 export * from './MentionPlugin';
 export * from './TextStylePlugin';
 export * from './ParagraphPlugin';
+export * from './EmojiPlugin';

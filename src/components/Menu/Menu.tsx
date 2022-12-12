@@ -18,9 +18,7 @@ interface Props {
 
 export type MenuProps = PropsWithChildren<Props>;
 
-const CONTAINER_BASE_CLASSES = 'tw-relative tw-bg-base tw-rounded tw-py-2 tw-shadow-mid tw-w-max';
-const CONTAINER_POSITION_CLASSES = ' tw-left-0 tw-top-7';
-
+const CONTAINER_BASE_CLASSES = 'tw-relative tw-bg-base tw-rounded tw-py-2 tw-shadow-mid tw-z-[120000]';
 const CONTAINER_CLASSES = merge([CONTAINER_BASE_CLASSES, INSET_BORDER]);
 
 export const Menu = ({ triggerRef, children, open = true, offset = [0, 8], onClose }: MenuProps) => {
@@ -85,11 +83,7 @@ export const Menu = ({ triggerRef, children, open = true, offset = [0, 8], onClo
 
     return (
         <nav
-            className={merge([
-                CONTAINER_CLASSES,
-                menuOpenerRef ? CONTAINER_POSITION_CLASSES : '',
-                isMenuOpen ? 'tw-block' : 'tw-hidden',
-            ])}
+            className={merge([CONTAINER_CLASSES, isMenuOpen ? 'tw-block' : 'tw-hidden'])}
             role={isMenuOpen ? 'dialog' : ''}
             ref={setMenuContainerRef}
             style={menuOpenerRef ? popperInstance.styles.popper : {}}

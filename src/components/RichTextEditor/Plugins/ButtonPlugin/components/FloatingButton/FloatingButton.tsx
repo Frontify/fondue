@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { HTMLPropsAs, createComponentAs, createElementAs } from '@udecode/plate-core';
-import { UseVirtualFloatingOptions } from '@udecode/plate-floating';
+import { HTMLPropsAs, UseVirtualFloatingOptions, createComponentAs, createElementAs } from '@udecode/plate';
 import { FloatingButtonEditButton } from './FloatingButtonEditButton';
 import { UnlinkButton } from './UnlinkButton';
 import { useFloatingButtonEdit } from './useFloatingButtonEdit';

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { InsertNodesOptions, PlateEditor, TText, Value, insertNodes } from '@udecode/plate-core';
+import { InsertNodesOptions, PlateEditor, TText, Value, insertNodes } from '@udecode/plate';
 import { TButtonElement } from '../types';
 import { CreateButtonNodeOptions, createButtonNode } from '../utils/index';
 

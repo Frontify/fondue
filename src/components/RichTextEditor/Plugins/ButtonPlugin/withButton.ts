@@ -20,9 +20,9 @@ import {
     mockPlugin,
     select,
     someNode,
+    withRemoveEmptyNodes,
     withoutNormalizing,
-} from '@udecode/plate-core';
-import { withRemoveEmptyNodes } from '@udecode/plate-normalizers';
+} from '@udecode/plate';
 import { Path, Point, Range } from 'slate';
 import { ELEMENT_BUTTON } from './createButtonPlugin';
 import { upsertButton } from './transforms/index';

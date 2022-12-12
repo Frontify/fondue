@@ -18,7 +18,7 @@ import {
     isExpanded,
     removeNodes,
     setNodes,
-} from '@udecode/plate-core';
+} from '@udecode/plate';
 import { Path } from 'slate';
 import { ButtonPlugin, ELEMENT_BUTTON } from '../createButtonPlugin';
 import { RichTextButtonStyle, TButtonElement } from '../types';

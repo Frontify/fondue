@@ -8,6 +8,7 @@ import {
     buttonValues,
     checkboxValue,
     customDesignTokens,
+    defaultValue,
     htmlValue,
     markdownText,
     mentionValue,
@@ -30,6 +31,7 @@ import {
     TextStylePlugin,
     UnderlinePlugin,
     UnorderedListPlugin,
+    defaultPluginsWithColumns,
 } from './Plugins';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
@@ -259,7 +261,7 @@ WithCustomButtonStyles.args = {
     value: JSON.stringify(buttonValues),
     designTokens: {
         ...defaultDesignTokens,
-        button_primary: {
+        buttonPrimary: {
             hover: {
                 color: 'rgba(76, 76, 76, 1)',
                 backgroundColor: 'rgba(0, 230, 0, 1)',
@@ -275,7 +277,7 @@ WithCustomButtonStyles.args = {
             color: 'rgba(102,102,102,1)',
             borderColor: 'rgba(207, 207, 207, 1)',
         },
-        button_secondary: {
+        buttonSecondary: {
             hover: {
                 color: 'rgba(76, 76, 76, 1)',
                 backgroundColor: 'rgba(172, 172, 172, 1)',
@@ -291,7 +293,7 @@ WithCustomButtonStyles.args = {
             color: 'rgba(102,102,102,1)',
             borderColor: 'rgba(207, 207, 207, 1)',
         },
-        button_tertiary: {
+        buttonTertiary: {
             hover: {
                 color: 'rgb(194, 185, 223)',
                 borderColor: 'rgb(255, 7, 212)',
@@ -382,4 +384,14 @@ export const WithoutToolbar = RichTextEditorTemplate.bind({});
 WithoutToolbar.args = {
     position: Position.TOP,
     plugins: withoutToolbarPlugins,
+};
+
+export const ColumnBreakTextBlock: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <div className="tw-block tw-column tw-columns-2">
+        <RichTextEditorComponent {...args} />
+    </div>
+);
+ColumnBreakTextBlock.args = {
+    value: JSON.stringify(defaultValue),
+    plugins: defaultPluginsWithColumns,
 };
