@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createUnderlinePlugin } from '@udecode/plate';
 import { UNDERLINE_PLUGIN } from './id';
 import { UnderlineMarkupElement } from './UnderlineMarkupElement';
 import { UnderlineButton } from './UnderlineButton';
 import { Plugin, PluginProps } from '../Plugin';
+import { createUnderlinePlugin } from './createUnderlinePlugin';
 
 export class UnderlinePlugin extends Plugin {
     constructor(props?: PluginProps) {

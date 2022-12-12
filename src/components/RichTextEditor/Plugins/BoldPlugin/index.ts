@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createBoldPlugin } from '@udecode/plate';
 import { BOLD_PLUGIN } from './id';
 import { BoldMarkupElement } from './BoldMarkupElement';
 import { BoldButton } from './BoldButton';
 import { Plugin, PluginProps } from '../Plugin';
+import { createBoldPlugin } from './createBoldPlugin';
 
 export class BoldPlugin extends Plugin {
     constructor(props?: PluginProps) {
