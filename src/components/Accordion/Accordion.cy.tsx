@@ -13,7 +13,8 @@ const TEST_HEADER_ID = '[data-test-id="test-header"]';
 const ACCORDION_ID = '[data-test-id=accordion]';
 
 const itemClasses = ['tw-divide-y tw-divide-black-10'];
-const accordionClasses = ['tw-border-b', 'tw-border-t', 'tw-border-black-10', ...itemClasses];
+const accordionWithBorderClasses = ['tw-border-b', 'tw-border-t', 'tw-border-black-10'];
+const accordionWithDividerClasses = ['tw-divide-y tw-divide-black-10'];
 
 const TestHeader: FC<AccordionHeaderProps> = ({ isOpen, disabled, children }) => (
     <div data-test-id="test-header" data-state={isOpen ? 'open' : 'closed'} data-disabled={disabled}>
@@ -123,7 +124,55 @@ describe('Accordion Component', () => {
         cy.get(TEST_HEADER_ID).eq(2).invoke('data', 'state').should('equal', 'open');
     });
 
-    it('shows border and divider on the Accordion', () => {
+    it('shows dividers when divider prop is set to true', () => {
+        cy.mount(
+            <Accordion divider>
+                <AccordionItem header={{ children: '1' }}>1</AccordionItem>
+            </Accordion>,
+        );
+
+        cy.wrap(accordionWithDividerClasses).each(($class) => {
+            cy.get(ACCORDION_ID).should('have.class', $class);
+        });
+    });
+
+    it('does not show dividers between items when divider prop is set to false', () => {
+        cy.mount(
+            <Accordion divider={false}>
+                <AccordionItem header={{ children: '1' }}>1</AccordionItem>
+            </Accordion>,
+        );
+
+        cy.wrap(accordionWithDividerClasses).each(($class) => {
+            cy.get(ACCORDION_ID).should('not.have.class', $class);
+        });
+    });
+
+    it('shows borders when border prop is set to true', () => {
+        cy.mount(
+            <Accordion border>
+                <AccordionItem header={{ children: '1' }}>1</AccordionItem>
+            </Accordion>,
+        );
+
+        cy.wrap(accordionWithBorderClasses).each(($class) => {
+            cy.get(ACCORDION_ID).should('have.class', $class);
+        });
+    });
+
+    it('does not show borders when border prop is set to false', () => {
+        cy.mount(
+            <Accordion border={false}>
+                <AccordionItem header={{ children: '1' }}>1</AccordionItem>
+            </Accordion>,
+        );
+
+        cy.wrap(accordionWithBorderClasses).each(($class) => {
+            cy.get(ACCORDION_ID).should('not.have.class', $class);
+        });
+    });
+
+    it('shows divider on AccordionItem', () => {
         cy.mount(
             <Accordion>
                 <AccordionItem header={{ children: '1' }} divider={true}>
@@ -132,28 +181,22 @@ describe('Accordion Component', () => {
             </Accordion>,
         );
 
-        cy.get(ACCORDION_ID).should('have.length', 1);
-        cy.wrap(accordionClasses).each(($class) => {
-            cy.get(ACCORDION_ID).should('have.class', $class);
-        });
         cy.wrap(itemClasses).each(($class) => {
             cy.get(ACCORDION_ITEM_ID).parent().should('have.class', $class);
         });
     });
 
-    it('hides border and divider', () => {
+    it('hides divider on AccordionItem', () => {
         cy.mount(
-            <Accordion border={false} divider={false}>
-                <AccordionItem header={{ children: '1' }}>1</AccordionItem>
+            <Accordion>
+                <AccordionItem header={{ children: '1' }} divider={false}>
+                    1
+                </AccordionItem>
             </Accordion>,
         );
 
-        cy.get(ACCORDION_ID).should('have.length', 1);
         cy.wrap(itemClasses).each(($class) => {
             cy.get(ACCORDION_ITEM_ID).parent().should('not.have.class', $class);
-        });
-        cy.wrap(accordionClasses).each(($class) => {
-            cy.get(ACCORDION_ID).should('not.have.class', $class);
         });
     });
 

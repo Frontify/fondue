@@ -10,7 +10,7 @@ import {
     MenuItemTextColorState,
     menuItemTextColorRecord,
 } from '@components/MenuItem';
-import { InputEmphasis, Trigger, TriggerSize } from '@components/Trigger/Trigger';
+import { Trigger, TriggerEmphasis, TriggerSize } from '@components/Trigger/Trigger';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { VariationPlacement } from '@popperjs/core';
 import { useButton } from '@react-aria/button';
@@ -57,7 +57,7 @@ export type DropdownProps = {
     validation?: Validation;
     alignment?: DropdownAlignment;
     position?: DropdownPosition;
-    emphasis?: InputEmphasis;
+    emphasis?: TriggerEmphasis;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
@@ -89,7 +89,7 @@ export const Dropdown: FC<DropdownProps> = ({
     validation = Validation.Default,
     alignment = DropdownAlignment.Start,
     position = DropdownPosition.Bottom,
-    emphasis = InputEmphasis.Default,
+    emphasis = TriggerEmphasis.Default,
 }) => {
     const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
