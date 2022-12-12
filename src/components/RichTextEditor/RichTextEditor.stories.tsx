@@ -178,7 +178,6 @@ WithReadonlyState.args = {
 export const WithHtmlAsValue = RichTextEditorTemplate.bind({});
 WithHtmlAsValue.args = {
     value: htmlValue,
-    plugins: defaultPluginsWithColumns,
 };
 
 export const WithCustomTextStyle = RichTextEditorTemplate.bind({});
