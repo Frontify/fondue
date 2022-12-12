@@ -18,7 +18,7 @@ import {
 import { ButtonStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor } from './RichTextEditor';
 import { DesignTokens } from './types';
-import { ON_SAVE_DELAY_IN_MS, columnBreakClassNames } from './utils';
+import { ON_SAVE_DELAY_IN_MS, breakAfterClassNames } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
@@ -965,9 +965,9 @@ describe('RichTextEditor Component', () => {
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
             cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
-            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
         it('it should add column break on unordered list', () => {
@@ -976,9 +976,9 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
-            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
             cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
-            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
         it('it should add column break on ordered list', () => {
@@ -987,9 +987,9 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(6).click();
-            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
             cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
-            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
         it('it should add column break on heading', () => {
@@ -999,10 +999,10 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
             cy.get(TEXTSTYLE_OPTION).first().click();
-            cy.get('[contenteditable=true]').click('topLeft').should('not.include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').click('topLeft').should('not.include.html', breakAfterClassNames);
             selectTextValue('hello');
             cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
-            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
         it('it should add column break on custom textstyle', () => {
@@ -1012,10 +1012,10 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
             cy.get(TEXTSTYLE_OPTION).eq(2).click();
-            cy.get('[contenteditable=true]').click().should('not.include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').click().should('not.include.html', breakAfterClassNames);
             selectTextValue('hello');
             cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
-            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
         it('it should add column break on right aligned text', () => {
@@ -1024,9 +1024,9 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
-            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
             cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
-            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
         it('it should add column break on when bold is applied', () => {
@@ -1034,9 +1034,9 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_1).children().eq(0).click();
-            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
             cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
-            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
         it('it should move the text after the column break to the second column', () => {
@@ -1045,7 +1045,7 @@ describe('RichTextEditor Component', () => {
             selectTextValue('first');
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
-            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
 
             checkPosition('be.lessThan', 100, 'first');
             checkPosition('be.gt', 100, 'second');

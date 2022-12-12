@@ -16,7 +16,7 @@ import { ParagraphPlugin } from './ParagraphPlugin';
 import { ButtonPlugin } from './ButtonPlugin';
 import { ResetFormattingPlugin } from './ResetFormattingPlugin';
 import { EmojiPlugin } from './EmojiPlugin';
-import { ColumnBreakPlugin } from './ColumnBreakPlugin';
+import { BreakAfterPlugin } from './BreakAfterPlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
@@ -66,7 +66,7 @@ defaultPluginsWithColumns.setPlugin(
         new UnorderedListPlugin(),
         new CheckboxListPlugin(),
         new OrderedListPlugin(),
-        new ColumnBreakPlugin(),
+        new BreakAfterPlugin(),
         new ResetFormattingPlugin(),
         new EmojiPlugin({ noButton: true }),
     ],

@@ -2,6 +2,7 @@
 
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { TextStylesToDesignTokenMap } from '@components/RichTextEditor/types';
+import { breakAfterClassNames } from '@components/RichTextEditor/utils/constants';
 import { ELEMENT_LIC, PlateRenderElementProps, TNode } from '@udecode/plate';
 import React from 'react';
 import { MarkupElement } from '../MarkupElement';
@@ -18,13 +19,16 @@ export const getTextStyle = (styledNode: TNode) => {
 
 export const ListItemContentMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
+    const hasColumn = element?.breakAfterColumn as boolean;
+
     return (
-        <span
+        <p
             style={{ textDecoration: designTokens[getTextStyle(element.children[0])]?.textDecoration }}
+            className={hasColumn ? breakAfterClassNames : ''}
             {...attributes}
         >
             {children}
-        </span>
+        </p>
     );
 };
 

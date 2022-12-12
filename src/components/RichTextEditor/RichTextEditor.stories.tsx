@@ -178,6 +178,7 @@ WithReadonlyState.args = {
 export const WithHtmlAsValue = RichTextEditorTemplate.bind({});
 WithHtmlAsValue.args = {
     value: htmlValue,
+    plugins: defaultPluginsWithColumns,
 };
 
 export const WithCustomTextStyle = RichTextEditorTemplate.bind({});
@@ -386,12 +387,12 @@ WithoutToolbar.args = {
     plugins: withoutToolbarPlugins,
 };
 
-export const ColumnBreakTextBlock: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+export const BreakAfterColumn: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <div className="tw-block tw-column tw-columns-2">
         <RichTextEditorComponent {...args} />
     </div>
 );
-ColumnBreakTextBlock.args = {
+BreakAfterColumn.args = {
     value: JSON.stringify(defaultValue),
     plugins: defaultPluginsWithColumns,
 };
