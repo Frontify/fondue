@@ -8,6 +8,7 @@ import {
     buttonValues,
     checkboxValue,
     customDesignTokens,
+    defaultValue,
     htmlValue,
     markdownText,
     mentionValue,
@@ -30,6 +31,7 @@ import {
     TextStylePlugin,
     UnderlinePlugin,
     UnorderedListPlugin,
+    defaultPluginsWithColumns,
 } from './Plugins';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
@@ -382,4 +384,14 @@ export const WithoutToolbar = RichTextEditorTemplate.bind({});
 WithoutToolbar.args = {
     position: Position.TOP,
     plugins: withoutToolbarPlugins,
+};
+
+export const ColumnBreakTextBlock: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <div className="tw-block tw-column tw-columns-2">
+        <RichTextEditorComponent {...args} />
+    </div>
+);
+ColumnBreakTextBlock.args = {
+    value: JSON.stringify(defaultValue),
+    plugins: defaultPluginsWithColumns,
 };

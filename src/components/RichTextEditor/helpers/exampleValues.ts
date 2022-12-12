@@ -182,7 +182,7 @@ export const orderedListValue = {
     ],
 };
 
-const defaultValue = [
+export const defaultValue = [
     createElement({ text: 'This text is bold.', mark: MARK_BOLD }),
     createElement({ text: 'This text is italic.', mark: MARK_ITALIC }),
     createElement({ text: 'This text has an underline.', mark: MARK_UNDERLINE }),
