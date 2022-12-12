@@ -1,26 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_PARAGRAPH, createPluginFactory } from '@udecode/plate';
-import { ELEMENT_COLUMN_BREAK } from './id';
-import { ColumnBreakButton } from './ColumnBreakButton';
+import { ELEMENT_BREAK_AFTER } from './id';
+import { BreakAfterButton } from './BreakAfterButton';
 import { Plugin, PluginProps } from '../Plugin';
 import { TextStyles } from '../TextStylePlugin';
 
-export class ColumnBreakPlugin extends Plugin {
+export class BreakAfterPlugin extends Plugin {
     constructor(props?: PluginProps) {
-        super('column-break', {
-            button: ColumnBreakButton,
+        super('break-after', {
+            button: BreakAfterButton,
             ...props,
         });
     }
 
     plugins() {
-        return [createColumnBreakPlugin()];
+        return [createBreakAfterPlugin()];
     }
 }
 
-const createColumnBreakPlugin = createPluginFactory({
-    key: ELEMENT_COLUMN_BREAK,
+const createBreakAfterPlugin = createPluginFactory({
+    key: ELEMENT_BREAK_AFTER,
     then: () => ({
         inject: {
             props: {

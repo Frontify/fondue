@@ -4,11 +4,11 @@ import React from 'react';
 import { IconSize, IconTextColumnBreak } from '@foundation/Icon';
 import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
 import { PluginButtonProps } from '../../types';
-import { ColumnBreakToolbarButton } from './ColumnBreakToolbarButton';
+import { BreakAfterToolbarButton } from './BreakAfterToolbarButton';
 
-export const ColumnBreakButton = ({ id }: PluginButtonProps) => (
+export const BreakAfterButton = ({ id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
-        <ColumnBreakToolbarButton
+        <BreakAfterToolbarButton
             icon={<IconStylingWrapper icon={<IconTextColumnBreak size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}

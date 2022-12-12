@@ -9,26 +9,28 @@ import {
     usePlateEditorState,
 } from '@udecode/plate';
 import React, { useState } from 'react';
-import { ELEMENT_COLUMN_BREAK } from '../id';
-import { setColumnBreak } from '../setColumnBreak';
+import { ELEMENT_BREAK_AFTER } from '../id';
+import { setBreakAfter } from '../setBreakAfter';
 
-export interface ColumnBreakToolbarButtonProps extends ToolbarButtonProps {
+export interface BreakAfterToolbarButtonProps extends ToolbarButtonProps {
     pluginKey?: string;
 }
 
-export const ColumnBreakToolbarButton = ({
+export const BreakAfterToolbarButton = ({
     id,
-    pluginKey = ELEMENT_COLUMN_BREAK,
+    pluginKey = ELEMENT_BREAK_AFTER,
     ...props
-}: ColumnBreakToolbarButtonProps) => {
+}: BreakAfterToolbarButtonProps) => {
     const editor = usePlateEditorState(useEventPlateId(id));
-    const [isActive, setIsActive] = useState(!!editor?.selection && someNode(editor, { match: { columnBreak: true } }));
+    const [isActive, setIsActive] = useState(
+        !!editor?.selection && someNode(editor, { match: { breakAfterColumn: true } }),
+    );
 
     return (
         <ToolbarButton
             active={isActive}
             onMouseDown={(event) => {
-                getPreventDefaultHandler(setColumnBreak, editor, {
+                getPreventDefaultHandler(setBreakAfter, editor, {
                     value: !isActive,
                     key: pluginKey,
                 })(event);

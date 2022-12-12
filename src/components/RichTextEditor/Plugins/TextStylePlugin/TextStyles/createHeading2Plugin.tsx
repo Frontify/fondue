@@ -6,17 +6,17 @@ import { merge } from '@utilities/merge';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { TextStyles } from './textStyles';
 import { alignmentClassnames } from './alignment';
-import { columnBreakClassNames } from '../../../utils/constants';
+import { breakAfterClassNames } from '../../../utils/constants';
 
 const Heading2MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
     const align = element.align as string;
-    const hasColumn = element.columnBreak as boolean;
+    const hasColumn = element.breakAfterColumn as boolean;
 
     return (
         <h2
             {...attributes}
-            className={merge([align && alignmentClassnames[align], hasColumn && columnBreakClassNames])}
+            className={merge([align && alignmentClassnames[align], hasColumn && breakAfterClassNames])}
             style={designTokens.heading2}
         >
             {children}

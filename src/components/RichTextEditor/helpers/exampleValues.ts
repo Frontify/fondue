@@ -188,6 +188,11 @@ export const defaultValue = [
     createElement({ text: 'This text has an underline.', mark: MARK_UNDERLINE }),
     createElement({ text: 'This text has a strikethrough.', mark: MARK_STRIKETHROUGH }),
     createElement({ text: 'This text is a code line.', mark: MARK_CODE }),
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is followed by a break.' }],
+        breakAfterColumn: true,
+    },
     createElement({
         text: IPSUM,
     }),
@@ -260,6 +265,7 @@ export const htmlValue = `
         <p><u>This text has an underline.</u></p>
         <p><s>This text has a strikethrough.</s></p>
         <p><code>This text is a code line.</code></p>
+        <p style="text-align: center;"><code>This text is center aligned.</code></p>
         <p>${IPSUM}</p>
         <ul>
             <li>This is list item number one.</li>

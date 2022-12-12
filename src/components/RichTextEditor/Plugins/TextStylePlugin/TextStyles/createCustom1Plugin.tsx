@@ -6,7 +6,7 @@ import { merge } from '@utilities/merge';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { TextStyles } from './textStyles';
 import { alignmentClassnames } from './alignment';
-import { columnBreakClassNames } from '../../../utils/constants';
+import { breakAfterClassNames } from '../../../utils/constants';
 
 export const Custom1MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
@@ -16,7 +16,7 @@ export const Custom1MarkupElementNode = ({ element, attributes, children }: Plat
     return (
         <p
             {...attributes}
-            className={merge([align && alignmentClassnames[align], hasColumn && columnBreakClassNames])}
+            className={merge([align && alignmentClassnames[align], hasColumn && breakAfterClassNames])}
             style={designTokens.custom1}
         >
             {children}
@@ -29,6 +29,6 @@ export const createCustom1Plugin = createPluginFactory({
     isElement: true,
     component: Custom1MarkupElementNode,
     deserializeHtml: {
-        rules: [{ validClassName: 'breakColumn' }],
+        rules: [{ validClassName: 'custom1' }],
     },
 });

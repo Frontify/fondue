@@ -3,6 +3,7 @@
 import { orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
 import { UL_CLASSES, getOrderedListClasses } from '@components/RichTextEditor/Plugins';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
+import { breakAfterClassNames } from '@components/RichTextEditor/utils/constants';
 import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
 import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL } from '@udecode/plate';
 import { serializeNodeToHtmlRecursive } from './serializeNodeToHtmlRecursive';
@@ -37,7 +38,24 @@ describe('serializeNodeToHtmlRecursive()', () => {
         expect(result).to.equal(
             `<ol class="${getOrderedListClasses(
                 0,
-            )}"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This comes first.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This comes second.</span></li></ol>`,
+            )}"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes first.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes second.</p></li></ol>`,
+        );
+    });
+
+    it('serializes break after column element to html', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            breakAfterColumn: true,
+            children: [
+                {
+                    text: 'This is a paragraph.',
+                },
+            ],
+        };
+        const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
+
+        expect(result).to.equal(
+            `<p class="${breakAfterClassNames}" style="font-size: 14px; font-style: normal; font-weight: normal;">This is a paragraph.</p>`,
         );
     });
 
@@ -97,7 +115,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
 
         expect(result).to.equal(
-            `<ul class="${UL_CLASSES}"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This comes first.</span></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><span style="">This comes second.</span></li></ul>`,
+            `<ul class="${UL_CLASSES}"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes first.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes second.</p></li></ul>`,
         );
     });
 
