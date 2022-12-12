@@ -6,14 +6,12 @@ import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } fro
 import { PluginButtonProps } from '../../types';
 import { ColumnBreakToolbarButton } from './ColumnBreakToolbarButton';
 
-export const ColumnBreakButton = ({ id }: PluginButtonProps) => {
-    return (
-        <ButtonWrapper id={id}>
-            <ColumnBreakToolbarButton
-                icon={<IconStylingWrapper icon={<IconTextColumnBreak size={IconSize.Size16} />} />}
-                classNames={buttonClassNames}
-                styles={buttonStyles}
-            />
-        </ButtonWrapper>
-    );
-};
+export const ColumnBreakButton = ({ id }: PluginButtonProps) => (
+    <ButtonWrapper id={id}>
+        <ColumnBreakToolbarButton
+            icon={<IconStylingWrapper icon={<IconTextColumnBreak size={IconSize.Size16} />} />}
+            classNames={buttonClassNames}
+            styles={buttonStyles}
+        />
+    </ButtonWrapper>
+);

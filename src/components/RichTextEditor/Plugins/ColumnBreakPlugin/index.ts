@@ -35,7 +35,6 @@ const createColumnBreakPlugin = createPluginFactory({
                     TextStyles.ELEMENT_CUSTOM3,
                     TextStyles.ELEMENT_QUOTE,
                 ],
-                nodeKey: ELEMENT_COLUMN_BREAK,
                 defaultNodeValue: false,
                 validNodeValues: [true, false],
             },

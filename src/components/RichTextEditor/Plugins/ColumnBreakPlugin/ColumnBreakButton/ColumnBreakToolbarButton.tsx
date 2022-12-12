@@ -22,19 +22,17 @@ export const ColumnBreakToolbarButton = ({
     ...props
 }: ColumnBreakToolbarButtonProps) => {
     const editor = usePlateEditorState(useEventPlateId(id));
-    const active = !!editor?.selection && someNode(editor, { match: { columnBreak: true } });
-    const [isActive, setIsActive] = useState(active ? true : false);
+    const [isActive, setIsActive] = useState(!!editor?.selection && someNode(editor, { match: { columnBreak: true } }));
 
     return (
         <ToolbarButton
             active={isActive}
             onMouseDown={(event) => {
-                const setActive = getPreventDefaultHandler(setColumnBreak, editor, {
-                    value: isActive ? false : true,
+                getPreventDefaultHandler(setColumnBreak, editor, {
+                    value: !isActive,
                     key: pluginKey,
-                });
-                setActive(event);
-                setIsActive(isActive ? false : true);
+                })(event);
+                setIsActive(!isActive);
             }}
             {...props}
         />

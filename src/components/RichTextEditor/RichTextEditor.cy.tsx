@@ -13,7 +13,7 @@ import {
     PluginComposer,
     RichTextButtonStyle,
     UnorderedListPlugin,
-    columnBreakPlugins,
+    defaultPluginsWithColumns,
 } from './Plugins';
 import { ButtonStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor } from './RichTextEditor';
@@ -48,7 +48,7 @@ const LINK_CHOOSER_CHECKBOX = '.tw-group > .tw-inline-flex > .tw-flex-1 > .tw-se
 
 const insertTextAndOpenToolbar = () => cy.get('[contenteditable=true]').click().type('hello{selectall}');
 
-function checkPosition(chainers: string, value: number, text: string) {
+const checkPosition = (chainers: string, value: number, text: string) => {
     cy.window().then(() => {
         cy.get('[contenteditable=true]')
             .contains(text)
@@ -57,9 +57,9 @@ function checkPosition(chainers: string, value: number, text: string) {
                 cy.wrap(position).its('left').should(chainers, value);
             });
     });
-}
+};
 
-function selectTextValue(value: string) {
+const selectTextValue = (value: string) => {
     cy.window().then((win) => {
         cy.get('[contenteditable=true]')
             .focus()
@@ -68,7 +68,7 @@ function selectTextValue(value: string) {
                 win.getSelection()?.selectAllChildren(el[0]);
             });
     });
-}
+};
 
 const RichTextWithLink: FC<{ text: string; link: string }> = ({ text, link }) => {
     return (
@@ -951,7 +951,7 @@ describe('RichTextEditor Component', () => {
         return (
             <div className="tw-block tw-column tw-columns-2">
                 <RichTextEditor
-                    plugins={columnBreakPlugins}
+                    plugins={defaultPluginsWithColumns}
                     value={initialValue}
                     onTextChange={(value) => setInitialValue(value)}
                 />

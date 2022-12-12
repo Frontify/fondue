@@ -45,8 +45,8 @@ defaultPlugins
         ],
     );
 
-export const columnBreakPlugins = new PluginComposer();
-columnBreakPlugins.setPlugin(
+export const defaultPluginsWithColumns = new PluginComposer();
+defaultPluginsWithColumns.setPlugin(
     [new InitPlugin(), new ParagraphPlugin()],
     [new TextStylePlugin()],
     [

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
@@ -20,21 +19,19 @@ export const setColumnBreak = <V extends Value>(
     editor: PlateEditor<V>,
     { key = ELEMENT_COLUMN_BREAK, value }: { value: boolean; setNodesOptions?: SetNodesOptions<V> } & PlatePluginKey,
 ) => {
-    const { defaultNodeValue, nodeKey } = getPluginInjectProps(editor, key);
+    const { defaultNodeValue } = getPluginInjectProps(editor, key);
     const match: TNodeMatch<ENode<Value>> = (n) => isBlock(editor, n);
 
     if (value === defaultNodeValue) {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        unsetNodes(editor, nodeKey!, {
+        unsetNodes(editor, key, {
             match,
         });
     } else {
         setElements(
             editor,
-            { [nodeKey!]: value },
+            { [key]: value },
             {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                match: match as any,
+                match,
             },
         );
     }

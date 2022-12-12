@@ -31,7 +31,7 @@ import {
     TextStylePlugin,
     UnderlinePlugin,
     UnorderedListPlugin,
-    columnBreakPlugins,
+    defaultPluginsWithColumns,
 } from './Plugins';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
@@ -393,5 +393,5 @@ export const ColumnBreakTextBlock: StoryFn<RichTextEditorProps> = (args: RichTex
 );
 ColumnBreakTextBlock.args = {
     value: JSON.stringify(defaultValue),
-    plugins: columnBreakPlugins,
+    plugins: defaultPluginsWithColumns,
 };
