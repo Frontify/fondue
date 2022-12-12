@@ -392,6 +392,7 @@ export const BreakAfterColumn: StoryFn<RichTextEditorProps> = (args: RichTextEdi
         <RichTextEditorComponent {...args} />
     </div>
 );
+
 BreakAfterColumn.args = {
     value: JSON.stringify(defaultValue),
     plugins: defaultPluginsWithColumns,
