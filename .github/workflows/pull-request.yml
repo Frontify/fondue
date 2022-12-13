@@ -4,6 +4,7 @@ on:
     pull_request:
         branches:
             - 'main'
+            - 'beta'
 
 env:
     NODE_VERSION: 18
