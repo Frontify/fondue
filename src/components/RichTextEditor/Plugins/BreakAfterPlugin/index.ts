@@ -2,5 +2,5 @@
 
 export * from './BreakAfterPlugin';
 export * from './BreakAfterButton';
-export * from './setBreakAfter';
+export * from './utils/setBreakAfter';
 export * from './id';

@@ -12,7 +12,7 @@ import {
     setElements,
     unsetNodes,
 } from '@udecode/plate-core';
-import { ELEMENT_BREAK_AFTER } from './id';
+import { ELEMENT_BREAK_AFTER } from '../id';
 
 // This is adapted from src/components/RichTextEditor/Plugins/AlignPlugin/AlignPlugin.ts
 export const setBreakAfter = <V extends Value>(

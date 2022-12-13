@@ -8,34 +8,31 @@ import {
     useEventPlateId,
     usePlateEditorState,
 } from '@udecode/plate';
-import React, { useState } from 'react';
+import React from 'react';
 import { ELEMENT_BREAK_AFTER } from '../id';
-import { setBreakAfter } from '../setBreakAfter';
+import { setBreakAfter } from '../utils/setBreakAfter';
 
-export interface BreakAfterToolbarButtonProps extends ToolbarButtonProps {
-    pluginKey?: string;
-}
-
-export const BreakAfterToolbarButton = ({
-    id,
-    pluginKey = ELEMENT_BREAK_AFTER,
-    ...props
-}: BreakAfterToolbarButtonProps) => {
+export const BreakAfterToolbarButton = ({ id, pluginKey = ELEMENT_BREAK_AFTER, ...props }: ToolbarButtonProps) => {
     const editor = usePlateEditorState(useEventPlateId(id));
-    const [isActive, setIsActive] = useState(
-        !!editor?.selection && someNode(editor, { match: { breakAfterColumn: true } }),
-    );
+    const isActive = !!editor?.selection && someNode(editor, { match: { breakAfterColumn: true } });
 
     return (
         <ToolbarButton
             active={isActive}
-            onMouseDown={(event) => {
-                getPreventDefaultHandler(setBreakAfter, editor, {
-                    value: !isActive,
-                    key: pluginKey,
-                })(event);
-                setIsActive(!isActive);
+            tooltip={{
+                className: 'tw-bg-black tw-text-white tw-p-2 tw-rounded tw-shadow-lg', // todo: use correct tooltip styling (https://app.clickup.com/t/39qrpev)
+                content: (
+                    <span>
+                        Add column break.
+                        <br />
+                        [shift+ctrl+return]
+                    </span>
+                ),
             }}
+            onMouseDown={getPreventDefaultHandler(setBreakAfter, editor, {
+                value: !isActive,
+                key: pluginKey,
+            })}
             {...props}
         />
     );
