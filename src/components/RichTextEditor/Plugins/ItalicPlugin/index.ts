@@ -2,9 +2,18 @@
 
 import { createItalicPlugin } from '@udecode/plate';
 import { ITALIC_PLUGIN } from './id';
-import { ItalicMarkupElement } from './ItalicMarkupElement';
+import { ITALIC_CLASSES, ItalicMarkupElement } from './ItalicMarkupElement';
 import { Plugin, PluginProps } from '../Plugin';
 import { ItalicButton } from './ItalicButton';
+
+const PLATE_ITALIC_RULES = [
+    { validNodeName: ['EM', 'I'] },
+    {
+        validStyle: {
+            fontStyle: 'italic',
+        },
+    },
+];
 
 export class ItalicPlugin extends Plugin {
     constructor(props?: PluginProps) {
@@ -16,7 +25,13 @@ export class ItalicPlugin extends Plugin {
     }
 
     plugins() {
-        return [createItalicPlugin()];
+        return [
+            createItalicPlugin({
+                deserializeHtml: {
+                    rules: [...PLATE_ITALIC_RULES, { validNodeName: ['SPAN'], validClassName: ITALIC_CLASSES }],
+                },
+            }),
+        ];
     }
 }
 
