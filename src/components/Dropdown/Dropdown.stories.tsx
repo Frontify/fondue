@@ -38,6 +38,10 @@ export default {
             control: { type: 'select' },
             defaultValue: DropdownPosition.Bottom,
         },
+        flip: {
+            control: { type: 'boolean' },
+            defaultValue: false,
+        },
     },
 } as Meta;
 
