@@ -279,7 +279,7 @@ export const htmlValue = `
             <li>This comes second.</li>
             <li>And last but not least, this comes third.</li>
         </ol>
-        <p><a href="https://frontify.com">This is a link.</a></p>
+        <p><a href="javascript:alert(5)" target="_self">This is a link.</a></p>
         <h1>Heading 1</h1>
         <h2>Heading 2</h2>
         <h3>Heading 3</h3>
@@ -288,7 +288,7 @@ export const htmlValue = `
         <p class="custom2">Custom 2</p>
         <p class="custom3">Custom 3</p>
         <blockquote>Quote</blockquote> 
-        <a class="btn btn-primary" contenteditable="false" href="https://smartive.ch/" data-design="primary">﻿<span contenteditable="false">Test</span>﻿</a>
+        <a class="btn btn-primary" contenteditable="false" href="javascript:alert(5)" data-design="primary">﻿<span contenteditable="false">Test</span>﻿</a>
     `;
 
 export const checkboxValue = [
