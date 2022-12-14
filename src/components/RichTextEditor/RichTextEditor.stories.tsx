@@ -7,13 +7,11 @@ import {
     IPSUM,
     buttonValues,
     checkboxValue,
-    customDesignTokens,
     defaultValue,
     htmlValue,
     markdownText,
     mentionValue,
     mentionable,
-    nodesToSerialize,
     orderedListValue,
     unorderedListValue,
     value,
@@ -38,8 +36,8 @@ import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from '
 import { Transform } from './serializer';
 import { MarkdownToSlate } from './serializer/markdown';
 import { SlateToMarkdown } from './serializer/markdown/SlateToMarkdown';
-import { serializeNodesToHtml } from './serializer/serializeToHtml';
 import { PaddingSizes } from './types';
+import { parseRawValue } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
 export default {
@@ -92,10 +90,15 @@ export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) =>
     </div>
 );
 
-export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
-    const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
+export const SerializedToHTML: StoryFn<RichTextEditorProps> = ({ onTextChange }) => {
+    const serialized =
+        '<h1 style="font-size: 16px; font-weight: 700; font-style: normal; line-height: 20px; padding-bottom: 5px;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" href="https://www.google.com">padding</a></h1>';
+
+    const plate = parseRawValue({ raw: serialized });
+    console.log(plate);
     return (
         <>
+            {JSON.stringify(plate)}
             {serialized ? (
                 <>
                     Serialized:
@@ -106,6 +109,7 @@ export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
                     <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
                         <div dangerouslySetInnerHTML={{ __html: serialized }} />
                     </div>
+                    <RichTextEditorComponent value={serialized} onTextChange={onTextChange} />
                 </>
             ) : null}
         </>
