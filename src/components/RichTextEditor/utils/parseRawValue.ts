@@ -18,6 +18,7 @@ type ParseRawValueOptions = {
 };
 
 export const parseRawValue = ({ editorId = 'parseRawValue', raw }: ParseRawValueOptions): Value => {
+    const editor = InitPlateEditor.init(`${editorId}_parseRawValue`).getInstance();
     let parsedValue = EMPTY_RICH_TEXT_VALUE;
 
     if (!raw) {
@@ -27,7 +28,6 @@ export const parseRawValue = ({ editorId = 'parseRawValue', raw }: ParseRawValue
     try {
         parsedValue = JSON.parse(raw);
     } catch {
-        const editor = InitPlateEditor.init(`${editorId}_parseRawValue`).getInstance();
         const trimmed = raw.trim().replace(/>\s+</g, '><');
         const htmlDocumentString = wrapTextInHtml(trimmed);
         const parsedHtml = deserializeHtml(editor, {
@@ -35,11 +35,12 @@ export const parseRawValue = ({ editorId = 'parseRawValue', raw }: ParseRawValue
             stripWhitespace: true,
         }) as Value;
         if (parsedHtml) {
-            editor.children = parsedHtml;
-            normalizeEditor(editor, { force: true });
-            parsedValue = editor.children;
+            parsedValue = parsedHtml;
         }
     }
 
-    return parsedValue;
+    editor.children = parsedValue;
+    normalizeEditor(editor, { force: true });
+
+    return editor.children;
 };

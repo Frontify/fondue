@@ -8,7 +8,6 @@ import { useEditorState } from './hooks';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { DesignTokens, PaddingSizes } from './types';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
-import { parseRawValue } from './utils/parseRawValue';
 import { Position } from './EditorPositioningWrapper';
 import { GeneratePlugins, PluginComposer, defaultPlugins } from './Plugins';
 import { forceTabOutOfActiveElement } from './helpers';
@@ -44,7 +43,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     plugins = defaultPlugins,
 }) => {
     const editorId = useMemoizedId(id);
-    const { localValue, onChange } = useEditorState(onTextChange);
+    const { localValue, onChange, memoizedValue } = useEditorState({ editorId, initialValue, onTextChange });
 
     const editableProps: EditableProps = {
         placeholder,
@@ -75,8 +74,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         <RichTextEditorProvider value={{ designTokens, position }}>
             <Plate
                 id={editorId}
-                initialValue={parseRawValue({ editorId, raw: initialValue })}
-                normalizeInitialValue
+                initialValue={memoizedValue}
                 onChange={onChange}
                 editableProps={editableProps}
                 plugins={config.create()}
