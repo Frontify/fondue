@@ -9,10 +9,10 @@ import {
     usePlateEditorState,
 } from '@udecode/plate';
 import React from 'react';
-import { ELEMENT_BREAK_AFTER } from '../id';
+import { KEY_ELEMENT_BREAK_AFTER } from '../BreakAfterPlugin';
 import { setBreakAfter } from '../utils/setBreakAfter';
 
-export const BreakAfterToolbarButton = ({ id, pluginKey = ELEMENT_BREAK_AFTER, ...props }: ToolbarButtonProps) => {
+export const BreakAfterToolbarButton = ({ id, pluginKey = KEY_ELEMENT_BREAK_AFTER, ...props }: ToolbarButtonProps) => {
     const editor = usePlateEditorState(useEventPlateId(id));
     const isActive = !!editor?.selection && someNode(editor, { match: { breakAfterColumn: true } });
 

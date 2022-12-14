@@ -2,7 +2,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createPluginFactory } from '@udecode/plate';
-import { ELEMENT_BREAK_AFTER } from './id';
 import { BreakAfterButton } from './BreakAfterButton';
 import { Plugin, PluginProps } from '../Plugin';
 import {
@@ -15,9 +14,11 @@ import {
 import isHotkey from 'is-hotkey';
 import { setBreakAfter } from './utils/setBreakAfter';
 
+export const KEY_ELEMENT_BREAK_AFTER = 'breakAfterColumn';
+
 export class BreakAfterPlugin extends Plugin {
     constructor(props?: PluginProps) {
-        super('break-after', {
+        super('break-after-plugin', {
             button: BreakAfterButton,
             ...props,
         });
@@ -28,6 +29,7 @@ export class BreakAfterPlugin extends Plugin {
     }
 }
 
+// This is adapted from packages/editor/break/src/soft-break/onKeyDownSoftBreak.ts
 const onKeyDownBreakAfter =
     (editor: any, { options: { rules = [] } }): KeyboardHandlerReturnType =>
     (event) => {
@@ -42,27 +44,17 @@ const onKeyDownBreakAfter =
             if (isHotkey(hotkey, event as any) && queryNode(entry, query)) {
                 getPreventDefaultHandler(setBreakAfter, editor, {
                     value: !isActive,
-                    key: ELEMENT_BREAK_AFTER,
+                    key: KEY_ELEMENT_BREAK_AFTER,
                 })(event);
             }
         }
     };
 export const createBreakAfterPlugin = createPluginFactory({
-    key: ELEMENT_BREAK_AFTER,
-    isElement: true,
+    key: KEY_ELEMENT_BREAK_AFTER,
     options: {
         rules: [{ hotkey: 'command+shift+enter' }, { hotkey: 'crtl+shift+enter' }],
     },
     handlers: {
         onKeyDown: onKeyDownBreakAfter,
     },
-
-    then: () => ({
-        inject: {
-            props: {
-                defaultNodeValue: false,
-                validNodeValues: [true, false],
-            },
-        },
-    }),
 });

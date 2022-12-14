@@ -12,12 +12,12 @@ import {
     setElements,
     unsetNodes,
 } from '@udecode/plate-core';
-import { ELEMENT_BREAK_AFTER } from '../id';
+import { KEY_ELEMENT_BREAK_AFTER } from '../BreakAfterPlugin';
 
 // This is adapted from src/components/RichTextEditor/Plugins/AlignPlugin/AlignPlugin.ts
 export const setBreakAfter = <V extends Value>(
     editor: PlateEditor<V>,
-    { key = ELEMENT_BREAK_AFTER, value }: { value: boolean; setNodesOptions?: SetNodesOptions<V> } & PlatePluginKey,
+    { key = KEY_ELEMENT_BREAK_AFTER, value }: { value: boolean; setNodesOptions?: SetNodesOptions<V> } & PlatePluginKey,
 ) => {
     const { defaultNodeValue } = getPluginInjectProps(editor, key);
     const match: TNodeMatch<ENode<Value>> = (n) => isBlock(editor, n);
