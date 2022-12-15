@@ -31,9 +31,9 @@ export const BreakAfterToolbarButton = ({ id, pluginKey = KEY_ELEMENT_BREAK_AFTE
 
 const getTooltip = (content: string) => ({
     className: 'tw-bg-black tw-text-white tw-py-2 tw-px-3 -tw-mb-1 tw-rounded tw-shadow-lg tw-text-xs',
-    content: content.split('\n').map((item, idx) => {
+    content: content.split('\n').map((item) => {
         return (
-            <span key={idx}>
+            <span key={item}>
                 {item}
                 <br />
             </span>
