@@ -19,16 +19,7 @@ export const BreakAfterToolbarButton = ({ id, pluginKey = KEY_ELEMENT_BREAK_AFTE
     return (
         <ToolbarButton
             active={isActive}
-            tooltip={{
-                className: 'tw-bg-black tw-text-white tw-p-2 tw-rounded tw-shadow-lg', // todo: use correct tooltip styling (https://app.clickup.com/t/39qrpev)
-                content: (
-                    <span>
-                        Add column break.
-                        <br />
-                        [shift+ctrl+return]
-                    </span>
-                ),
-            }}
+            tooltip={getTooltip('Add column break.\n[shift+ctrl+return]')}
             onMouseDown={getPreventDefaultHandler(setBreakAfter, editor, {
                 value: !isActive,
                 key: pluginKey,
@@ -37,3 +28,15 @@ export const BreakAfterToolbarButton = ({ id, pluginKey = KEY_ELEMENT_BREAK_AFTE
         />
     );
 };
+
+const getTooltip = (content: string) => ({
+    className: 'tw-bg-black tw-text-white tw-py-2 tw-px-3 -tw-mb-1 tw-rounded tw-shadow-lg tw-text-xs',
+    content: content.split('\n').map((item, idx) => {
+        return (
+            <span key={idx}>
+                {item}
+                <br />
+            </span>
+        );
+    }),
+});

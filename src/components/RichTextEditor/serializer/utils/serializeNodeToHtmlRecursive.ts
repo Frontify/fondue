@@ -62,7 +62,6 @@ export const serializeNodeToHtmlRecursive = (
         )
         .join('');
 
-    console.log(node, 'node');
     const breakAfterColumn = node.breakAfterColumn ? `class="${breakAfterClassNames}" ` : '';
 
     switch (node.type) {
