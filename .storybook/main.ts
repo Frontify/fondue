@@ -12,6 +12,9 @@ export default <StorybookConfig>{
     docs: {
         docsPage: 'automatic',
     },
+    core: {
+        disableTelemetry: true,
+    },
     viteFinal(config: UserConfig) {
         //@ts-ignore
         config.plugins = (config.plugins ?? []).filter((plugin) => plugin?.name !== 'vite:dts');
