@@ -27,6 +27,8 @@ import { createPortal } from 'react-dom';
 import { usePopper } from 'react-popper';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from './useDropdownAutoHeight';
 
+export const DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT = 36; //Small Input height as default
+
 export enum DropdownSize {
     Small = 'Small',
     Large = 'Large',
@@ -223,7 +225,7 @@ export const Dropdown: FC<DropdownProps> = ({
                             {...popperInstance.attributes.popper}
                             className="tw-absolute tw-p-0 tw-shadow tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
                             key="content"
-                            initial={{ height: 40 }}
+                            initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
                             animate={{ height: 'auto' }}
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         >
