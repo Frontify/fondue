@@ -27,6 +27,8 @@ import { createPortal } from 'react-dom';
 import { usePopper } from 'react-popper';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from './useDropdownAutoHeight';
 
+export const DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT = 36; //Small Input height as default
+
 export enum DropdownSize {
     Small = 'Small',
     Large = 'Large',
@@ -58,6 +60,7 @@ export type DropdownProps = {
     alignment?: DropdownAlignment;
     position?: DropdownPosition;
     emphasis?: TriggerEmphasis;
+    flip?: boolean;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
@@ -90,6 +93,7 @@ export const Dropdown: FC<DropdownProps> = ({
     alignment = DropdownAlignment.Start,
     position = DropdownPosition.Bottom,
     emphasis = TriggerEmphasis.Default,
+    flip = false,
 }) => {
     const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -164,7 +168,7 @@ export const Dropdown: FC<DropdownProps> = ({
             },
             {
                 name: 'flip',
-                enabled: false,
+                enabled: flip,
             },
         ],
     });
@@ -206,9 +210,11 @@ export const Dropdown: FC<DropdownProps> = ({
                     />
                 </button>
             </Trigger>
-            {createPortal(
-                <AnimatePresence>
-                    {!disabled && isOpen && heightIsReady && (
+            {!disabled &&
+                isOpen &&
+                heightIsReady &&
+                createPortal(
+                    <AnimatePresence>
                         <motion.div
                             ref={dropdownRef}
                             style={{
@@ -219,7 +225,7 @@ export const Dropdown: FC<DropdownProps> = ({
                             {...popperInstance.attributes.popper}
                             className="tw-absolute tw-p-0 tw-shadow tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
                             key="content"
-                            initial={{ height: 0 }}
+                            initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
                             animate={{ height: 'auto' }}
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         >
@@ -243,10 +249,9 @@ export const Dropdown: FC<DropdownProps> = ({
                                 </div>
                             </FocusScope>
                         </motion.div>
-                    )}
-                </AnimatePresence>,
-                document.body,
-            )}
+                    </AnimatePresence>,
+                    document.body,
+                )}
             {validation === Validation.Loading && (
                 <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-base tw-rounded-full tw-p-[2px] tw-border tw-border-line-weak">
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
