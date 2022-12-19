@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { BasePlacement } from '@popperjs/core';
 import {
     ToolbarButton,
     ToolbarButtonProps,
@@ -19,7 +20,7 @@ export const BreakAfterToolbarButton = ({ id, pluginKey = KEY_ELEMENT_BREAK_AFTE
     return (
         <ToolbarButton
             active={isActive}
-            tooltip={getTooltip('Add column break.\n[shift+ctrl+return]')}
+            tooltip={getTooltip('Add column break.\n[shift+ctrl+return]', 'bottom')}
             onMouseDown={getPreventDefaultHandler(setBreakAfter, editor, {
                 value: !isActive,
                 key: pluginKey,
@@ -29,7 +30,7 @@ export const BreakAfterToolbarButton = ({ id, pluginKey = KEY_ELEMENT_BREAK_AFTE
     );
 };
 
-const getTooltip = (content: string) => ({
+const getTooltip = (content: string, placement?: BasePlacement) => ({
     className:
         'tw-bg-text tw-border tw-border-line-strong tw-text-box-neutral-strong-inverse tw-py-2 tw-px-3 -tw-mb-1 tw-rounded tw-shadow-lg tw-text-xs',
     content: content.split('\n').map((item) => {
@@ -40,4 +41,5 @@ const getTooltip = (content: string) => ({
             </span>
         );
     }),
+    placement,
 });
