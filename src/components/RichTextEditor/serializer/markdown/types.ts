@@ -22,6 +22,7 @@ export type InputNodeTypes = {
     inlineCodeMark: string;
     thematicBreak: string;
     image: string;
+    mentions: string;
 };
 
 export type MarkdownAstNodeType =
@@ -63,6 +64,7 @@ export const defaultNodeTypes: InputNodeTypes = {
     inlineCodeMark: 'code',
     thematicBreak: 'thematic_break',
     image: 'image',
+    mentions: 'mentions',
 };
 
 export type NodeType = BlockType | LeafType;
