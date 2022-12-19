@@ -87,6 +87,8 @@ export type BlockType = {
     break?: boolean;
     link?: string;
     url?: string;
+    key?: string;
+    category?: string;
 };
 
 export type RecursivePartial<T> = {
