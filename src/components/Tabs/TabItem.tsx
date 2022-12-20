@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactElement, ReactNode } from 'react';
+import React, { FC, ReactElement, ReactNode, useRef } from 'react';
 import { BadgeProps } from '@components/Badge';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
@@ -18,14 +18,19 @@ export type TabItemProps = {
 
 export const TabItem: FC<TabItemProps & { active?: boolean }> = ({ active, disabled, children, id }) => {
     const { isFocusVisible, focusProps } = useFocusRing();
+    const ref = useRef<HTMLDivElement | null>(null);
+    const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const focusableChildren = ref.current?.querySelectorAll(focusableElements) ?? [];
+    const hasInteractiveElements = focusableChildren.length > 0;
 
     return (
         <div
             role="tabpanel"
+            ref={ref}
             id={`${id}-content`}
             aria-labelledby={id}
             className={merge([!active || disabled ? 'tw-hidden' : '', isFocusVisible && FOCUS_STYLE])}
-            tabIndex={0}
+            tabIndex={hasInteractiveElements ? -1 : 0}
             {...focusProps}
         >
             {children}
