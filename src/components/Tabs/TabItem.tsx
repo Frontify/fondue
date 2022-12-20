@@ -5,6 +5,7 @@ import { BadgeProps } from '@components/Badge';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
+import { checkIfContainInteractiveElements } from '@utilities/elements';
 
 export type TabItemProps = {
     id: string;
@@ -19,9 +20,7 @@ export type TabItemProps = {
 export const TabItem: FC<TabItemProps & { active?: boolean }> = ({ active, disabled, children, id }) => {
     const { isFocusVisible, focusProps } = useFocusRing();
     const ref = useRef<HTMLDivElement | null>(null);
-    const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-    const focusableChildren = ref.current?.querySelectorAll(focusableElements) ?? [];
-    const hasInteractiveElements = focusableChildren.length > 0;
+    const hasInteractiveElements = checkIfContainInteractiveElements(ref.current);
 
     return (
         <div
