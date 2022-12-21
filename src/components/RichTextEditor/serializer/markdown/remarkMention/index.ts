@@ -3,11 +3,7 @@
 import { VisitorResult, visit } from 'unist-util-visit';
 import { NodeChild, ParagraphNode, RegExpMatchArray, Transformer } from './types';
 
-function is(node: NodeChild, type: string): boolean {
-    return node[type] !== '' && !!node.value;
-}
-
-function transformer(tree: ParagraphNode) {
+const transformer = (tree: ParagraphNode) => {
     visit(tree, 'paragraph', visitor);
 
     function visitor(node: ParagraphNode): VisitorResult {
@@ -27,40 +23,48 @@ function transformer(tree: ParagraphNode) {
                 continue;
             }
 
-            if (matches[0].index > 0) {
-                node.children.push({
-                    type: 'text',
-                    value: child.value.slice(0, matches[0].index),
-                });
-            }
-
-            for (const [index, match] of matches.entries()) {
-                node.children.push({
-                    type: 'mention',
-                    children: [{ type: 'text', value: match[0] }],
-                });
-
-                if (matches.length > index + 1 && child.value) {
-                    const startAt = match.index + match[0].length;
-                    node.children.push({
-                        type: 'text',
-                        value: child.value.slice(startAt, matches[index + 1].index),
-                    });
-                }
-            }
-
-            const lastMatch = matches[matches.length - 1];
-
-            if (lastMatch.index + lastMatch[0].length < child.value.length) {
-                node.children.push({
-                    type: 'text',
-                    value: child.value.slice(lastMatch.index + lastMatch[0].length),
-                });
-            }
+            createNodes(matches, node, child.value);
         }
     }
-}
+};
 
-export default function plugin(): Transformer {
+const is = (node: NodeChild, type: string): boolean => node[type] !== '' && !!node.value;
+
+const createNodes = (matches: RegExpMatchArray[], node: ParagraphNode, value: string) => {
+    if (matches[0].index > 0) {
+        node.children.push({
+            type: 'text',
+            value: value.slice(0, matches[0].index),
+        });
+    }
+
+    for (const [index, match] of matches.entries()) {
+        node.children.push({
+            type: 'mention',
+            children: [{ type: 'text', value: match[0] }],
+        });
+
+        if (matches.length > index + 1 && value) {
+            const startAt = match.index + match[0].length;
+            node.children.push({
+                type: 'text',
+                value: value.slice(startAt, matches[index + 1].index),
+            });
+        }
+    }
+
+    const lastMatch = matches[matches.length - 1];
+
+    if (lastMatch.index + lastMatch[0].length < value.length) {
+        node.children.push({
+            type: 'text',
+            value: value.slice(lastMatch.index + lastMatch[0].length),
+        });
+    }
+};
+
+const plugin = (): Transformer => {
     return transformer;
-}
+};
+
+export default plugin;
