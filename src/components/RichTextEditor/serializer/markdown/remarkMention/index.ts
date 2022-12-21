@@ -4,7 +4,7 @@ import { VisitorResult, visit } from 'unist-util-visit';
 import { NodeChild, ParagraphNode, RegExpMatchArray, Transformer } from './types';
 
 function is(node: NodeChild, type: string): boolean {
-    return !!node[type] && node[type].length > 0 && !!node.value;
+    return node[type] !== '' && !!node.value;
 }
 
 function transformer(tree: ParagraphNode) {
@@ -21,7 +21,6 @@ function transformer(tree: ParagraphNode) {
             }
 
             const matches = [...child.value.matchAll(/@\[[a-z]+:\s\d+]/gi)] as RegExpMatchArray[];
-            console.log('matches', matches);
 
             if (matches === null || matches.length === 0) {
                 node.children.push(child);
@@ -31,7 +30,7 @@ function transformer(tree: ParagraphNode) {
             if (matches[0].index > 0) {
                 node.children.push({
                     type: 'text',
-                    value: child.value.substr(0, matches[0].index),
+                    value: child.value.slice(0, matches[0].index),
                 });
             }
 
@@ -45,7 +44,7 @@ function transformer(tree: ParagraphNode) {
                     const startAt = match.index + match[0].length;
                     node.children.push({
                         type: 'text',
-                        value: child.value.slice(startAt, matches[index + 1].index - startAt),
+                        value: child.value.slice(startAt, matches[index + 1].index),
                     });
                 }
             }
