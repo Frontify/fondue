@@ -4,7 +4,7 @@ import { VisitorResult, visit } from 'unist-util-visit';
 import { NodeChild, ParagraphNode, RegExpMatchArray, Transformer } from './types';
 
 function is<T extends NodeChild, K extends keyof T>(node: T, type: K): boolean {
-    return node[type] !== '' && !!node.value;
+    return !node[type] && !!node.value;
 }
 
 function transformer(tree: ParagraphNode) {
