@@ -8,7 +8,6 @@ import { merge } from '@utilities/merge';
 import React, {
     HTMLAttributes,
     PropsWithChildren,
-    ReactChild,
     ReactElement,
     ReactNode,
     cloneElement,
@@ -38,7 +37,6 @@ export type TooltipProps = PropsWithChildren<{
     linkLabel?: string;
     brightHeader?: BrightHeaderStyle;
     buttons?: [TooltipButton, TooltipButton] | [TooltipButton];
-    children?: ReactChild;
     position?: TooltipPosition;
     alignment?: TooltipAlignment;
     flip?: boolean;
@@ -205,11 +203,11 @@ export const Tooltip = ({
     }, [enterDelay]);
 
     const checkIfHovered = useCallback(
-        (event: any) => {
-            const hoveredElement = event.path ?? event.composedPath?.();
+        (event: MouseEvent) => {
+            const hoveredElement = event.composedPath?.();
             const hoverSources = [triggerRefElement, triggerElementContainerRef, tooltipContainerRef];
 
-            if (hoveredElement && hoverSources.some((el) => hoveredElement.includes(el?.current))) {
+            if (hoveredElement && hoverSources.some((el) => el.current && hoveredElement.includes(el.current))) {
                 handleShowTooltipOnHover();
             }
         },
