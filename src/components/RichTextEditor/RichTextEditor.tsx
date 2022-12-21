@@ -78,6 +78,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 onChange={onChange}
                 editableProps={editableProps}
                 plugins={config.create()}
+                normalizeInitialValue
             >
                 {config.toolbar()}
                 {config.inline()}

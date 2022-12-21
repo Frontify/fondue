@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_PARAGRAPH, Value, deserializeHtml, normalizeEditor } from '@udecode/plate';
+import { ELEMENT_PARAGRAPH, Value, deserializeHtml } from '@udecode/plate';
 import { InitPlateEditor } from './InitPlateEditor';
 
 const isHtmlString = (string: string): boolean => {
@@ -39,8 +39,5 @@ export const parseRawValue = ({ editorId = 'parseRawValue', raw }: ParseRawValue
         }
     }
 
-    editor.children = parsedValue;
-    normalizeEditor(editor, { force: true });
-
-    return editor.children;
+    return parsedValue;
 };
