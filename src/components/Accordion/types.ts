@@ -48,11 +48,11 @@ export type AccordionHeaderProps = {
     as?: keyof JSX.IntrinsicElements;
 };
 
-export type AccordionHeaderIconProps = {
+export type AccordionHeaderIconProps = PropsWithChildren<{
     isOpen: boolean;
     size?: AccordionHeaderIconSize | FieldsetHeaderSize;
     disabled?: boolean;
     /** @deprecated Icon type will be fixed to FieldsetHeaderType.Accordion.
      Use headerComponent prop for custom header styles */
     type?: FieldsetHeaderType;
-};
+}>;
