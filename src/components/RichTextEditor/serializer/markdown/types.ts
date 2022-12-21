@@ -22,7 +22,7 @@ export type InputNodeTypes = {
     inlineCodeMark: string;
     thematicBreak: string;
     image: string;
-    mentions: string;
+    mention: string;
 };
 
 export type MarkdownAstNodeType =
@@ -40,7 +40,8 @@ export type MarkdownAstNodeType =
     | 'delete'
     | 'inlineCode'
     | 'thematicBreak'
-    | 'text';
+    | 'text'
+    | 'mention';
 
 export const defaultNodeTypes: InputNodeTypes = {
     paragraph: 'paragraph',
@@ -64,7 +65,7 @@ export const defaultNodeTypes: InputNodeTypes = {
     inlineCodeMark: 'code',
     thematicBreak: 'thematic_break',
     image: 'image',
-    mentions: 'mentions',
+    mention: 'mention',
 };
 
 export type NodeType = BlockType | LeafType;
