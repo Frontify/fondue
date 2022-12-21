@@ -6,7 +6,7 @@ import { isLeafNode } from './isLeafNode';
 import { applyFormattingToBlockNode } from './applyFormattingToBlockNode';
 import { BREAK_TAG, getSelectedOptions } from '../utils';
 
-const IGNORE_ELEMENTS: Array<keyof InputNodeTypes> = ['thematicBreak', 'image', 'mentions'];
+const IGNORE_ELEMENTS: Array<keyof InputNodeTypes> = ['thematicBreak', 'image', 'mention'];
 
 const isChildAList = (chunk: NodeType, LIST_TYPES: string[]) =>
     !isLeafNode(chunk) ? LIST_TYPES.includes(chunk.type || '') : false;
@@ -18,7 +18,7 @@ const doesChildHasALink = (chunk: NodeType, nodeTypes: InputNodeTypes) =>
           )
         : false;
 
-const isMentionsType = (type: string, nodeTypes: InputNodeTypes) => type === nodeTypes.mentions;
+const isMentionType = (type: string, nodeTypes: InputNodeTypes) => type === nodeTypes.mention;
 
 const shouldIgnoreParagraphNewline = (
     ignoreParagraphNewline: boolean,
@@ -29,7 +29,7 @@ const shouldIgnoreParagraphNewline = (
     !ignoreParagraphNewline &&
     (text === '' || text === '\n') &&
     chunk.parentType === nodeTypes.paragraph &&
-    !isMentionsType((chunk as BlockType).type, nodeTypes);
+    !isMentionType((chunk as BlockType).type, nodeTypes);
 
 const getDepthOfNestedLists = (listTypes: string[], children: NodeType, listDepth: number) =>
     listTypes.includes((children as BlockType).type || '') ? listDepth + 1 : listDepth;

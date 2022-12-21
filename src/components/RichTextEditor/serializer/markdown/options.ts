@@ -45,7 +45,7 @@ export const options = (editor: PlateEditor): PartialOptionType => ({
             5: getPluginType(editor, ELEMENT_H5),
             6: getPluginType(editor, ELEMENT_H6),
         },
-        mentions: getPluginType(editor, ELEMENT_MENTION),
+        mention: getPluginType(editor, ELEMENT_MENTION),
     },
     linkDestinationKey: 'url',
 });
