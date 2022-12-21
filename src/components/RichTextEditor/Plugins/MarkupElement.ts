@@ -3,5 +3,5 @@
 import { PlatePluginComponent } from '@udecode/plate';
 
 export class MarkupElement {
-    constructor(readonly id: string, readonly node?: PlatePluginComponent) {}
+    constructor(protected id: string, protected node?: PlatePluginComponent) {}
 }

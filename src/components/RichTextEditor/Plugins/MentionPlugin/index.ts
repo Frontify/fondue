@@ -11,7 +11,7 @@ import { MentionPluginProps } from './types';
 export class MentionPlugin extends Plugin<MentionPluginProps> {
     constructor(props: MentionPluginProps) {
         super(MENTION_PLUGIN, {
-            markupElement: new MentionMarkupElement(),
+            markupElement: new MentionMarkupElement().setNodeWithMentionable(props?.mentionableItems),
             ...props,
         });
     }

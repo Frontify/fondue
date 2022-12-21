@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Data, TComboboxItemBase } from '@udecode/plate';
+import { CreateMentionNode, Data, TComboboxItemBase } from '@udecode/plate';
 import { PluginProps } from '../Plugin';
 
 export enum MentionableCategory {
@@ -17,3 +17,11 @@ export type MentionableItems = MentionComboboxItem[];
 export type MentionPluginProps = PluginProps & {
     mentionableItems: MentionableItems;
 };
+
+export type MentionNodeItem = {
+    text: string;
+    key: string;
+    category: string;
+};
+
+export type CreateMentionNodeWithItem = CreateMentionNode<MentionNodeItem>;
