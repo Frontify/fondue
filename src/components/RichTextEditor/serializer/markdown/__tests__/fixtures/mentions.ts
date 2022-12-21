@@ -16,11 +16,7 @@ export const mentionsTree_0 = [
                 // value: 'Aayla Secura',
                 key: '0',
                 category: 'all',
-                children: [
-                    {
-                        text: '',
-                    },
-                ],
+                children: [{ text: '' }],
             },
         ],
     },
@@ -36,33 +32,21 @@ export const mentionsTree_1 = [
                 type: 'mention',
                 key: '0',
                 category: 'all',
-                children: [
-                    {
-                        text: '',
-                    },
-                ],
+                children: [{ text: '' }],
             },
             { text: ', ' },
             {
                 type: 'mention',
                 key: '10',
                 category: 'group',
-                children: [
-                    {
-                        text: '',
-                    },
-                ],
+                children: [{ text: '' }],
             },
             { text: ' and ' },
             {
                 type: 'mention',
                 key: '20',
                 category: 'user',
-                children: [
-                    {
-                        text: '',
-                    },
-                ],
+                children: [{ text: '' }],
             },
         ],
     },
