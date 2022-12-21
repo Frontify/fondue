@@ -25,7 +25,6 @@ function transformer(tree: ParagraphNode) {
 
             if (matches === null || matches.length === 0) {
                 node.children.push(child);
-                true;
                 continue;
             }
 
