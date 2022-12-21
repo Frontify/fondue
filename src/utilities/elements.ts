@@ -11,3 +11,12 @@ export const getItemElementType = (link?: string, onClick?: (event: MouseEvent<H
 
     return 'span';
 };
+
+export const checkIfContainInteractiveElements = (node: HTMLElement | null) => {
+    if (node) {
+        const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+        const focusableChildren = node.querySelectorAll(focusableElements) ?? [];
+        return focusableChildren.length > 0;
+    }
+    return false;
+};
