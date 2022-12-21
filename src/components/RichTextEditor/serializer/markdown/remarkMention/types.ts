@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export type NodeChild = {
+export type NodeChild = Record<string, string | [] | NodeChild[]> & {
     type: string;
     value?: string;
     text?: string;

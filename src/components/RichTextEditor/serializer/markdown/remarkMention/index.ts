@@ -3,8 +3,8 @@
 import { VisitorResult, visit } from 'unist-util-visit';
 import { NodeChild, ParagraphNode, RegExpMatchArray, Transformer } from './types';
 
-function is<T extends NodeChild, K extends keyof T>(node: T, type: K): boolean {
-    return !node[type] && !!node.value;
+function is(node: NodeChild, type: string): boolean {
+    return node[type].length > 0 && !!node.value;
 }
 
 function transformer(tree: ParagraphNode) {
