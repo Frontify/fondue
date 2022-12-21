@@ -9,7 +9,7 @@ import {
     TableStateProps,
     useTableState,
 } from '@react-stately/table';
-import React, { Key, PropsWithChildren, ReactNode, useRef, useState } from 'react';
+import React, { Key, PropsWithChildren, ReactElement, ReactNode, useRef, useState } from 'react';
 import { TableCell, TableCellType } from './TableCell';
 import { TableColumnHeader, TableColumnHeaderType } from './TableColumnHeader';
 import { TableHeaderRow } from './TableHeaderRow';
@@ -101,7 +101,7 @@ export const Table = ({
     onSortChange: onSort,
     selectedRowIds = [],
     ariaLabel = 'Table',
-}: TableProps) => {
+}: TableProps): ReactElement => {
     const isSelectTable = selectionMode === SelectionMode.SingleSelect || selectionMode === SelectionMode.MultiSelect;
     const [{ sortedColumnKey, sortOrder }, setSortedColumn] = useState<SortType>({
         sortedColumnKey: undefined,

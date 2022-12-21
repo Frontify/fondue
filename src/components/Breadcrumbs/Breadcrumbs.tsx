@@ -28,7 +28,7 @@ export type BreadcrumbsProps = {
     items: Breadcrumb[];
 };
 
-export const Breadcrumbs = ({ items }: BreadcrumbsProps) => {
+export const Breadcrumbs = ({ items }: BreadcrumbsProps): ReactElement => {
     const props = mapBreadcrumbsToAriaProps(items);
     const { navProps } = useBreadcrumbs(props as AriaBreadcrumbsProps);
 

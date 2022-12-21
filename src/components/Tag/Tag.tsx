@@ -6,7 +6,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { MouseEvent, useRef } from 'react';
+import React, { MouseEvent, ReactElement, useRef } from 'react';
 import { IconCross } from '@foundation/Icon';
 
 export enum TagType {
@@ -48,7 +48,7 @@ type TagPropsUnselected = {
     size?: TagSize;
 };
 
-export const Tag = ({ type, label, onClick, size = TagSize.Medium }: TagProps) => {
+export const Tag = ({ type, label, onClick, size = TagSize.Medium }: TagProps): ReactElement => {
     const ref = useRef<HTMLButtonElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
     const isClickable = (type === TagType.Selected || type === TagType.SelectedWithFocus) && onClick;

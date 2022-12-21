@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { MouseEvent, PropsWithChildren, useEffect, useState } from 'react';
+import React, { MouseEvent, PropsWithChildren, ReactElement, useEffect, useState } from 'react';
 import { merge } from '@utilities/merge';
 import { IconCaretRight, IconCheckMark, IconSize } from '@foundation/Icon';
 import { MenuItemContent, MenuItemContentProps } from '@components/MenuItem/MenuItemContent';
@@ -64,7 +64,7 @@ export const MenuItem = ({
     children,
     link,
     onClick,
-}: PropsWithChildren<MenuItemProps>) => {
+}: PropsWithChildren<MenuItemProps>): ReactElement => {
     const isDangerStyle = style === MenuItemStyle.Danger;
 
     const currentIconSize = size === MenuItemContentSize.XSmall ? IconSize.Size16 : IconSize.Size20;

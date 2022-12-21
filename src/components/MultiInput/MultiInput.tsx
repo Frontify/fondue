@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, PropsWithChildren } from 'react';
+import React, { Children, PropsWithChildren, ReactElement } from 'react';
 
 export enum MultiInputLayout {
     Columns = 'Columns',
@@ -12,7 +12,7 @@ export type MultiInputProps = PropsWithChildren<{
     spanLastItem?: boolean;
 }>;
 
-export const MultiInput = ({ layout, spanLastItem, children }: MultiInputProps) => {
+export const MultiInput = ({ layout, spanLastItem, children }: MultiInputProps): ReactElement => {
     const childrenArray = Children.toArray(children);
 
     return (

@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 
 import { TreeContext } from '@components/Tree/TreeContext';
 import type { TreeProps } from '@components/Tree/types';
 import { DndWrapper } from '@utilities/dnd';
 
-export const Tree = ({ id, activeIds, draggable = false, children }: TreeProps) => {
+export const Tree = ({ id, activeIds, draggable = false, children }: TreeProps): ReactElement => {
     const [selectedIds, setSelectedIds] = useState<string[]>(activeIds || []);
     const [multiselect, setMultiselect] = useState<boolean>(false);
 

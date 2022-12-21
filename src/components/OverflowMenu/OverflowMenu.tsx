@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { MouseEvent, useRef, useState } from 'react';
+import React, { MouseEvent, ReactElement, useRef, useState } from 'react';
 import { IconDotsHorizontal } from '@foundation/Icon';
 import { merge } from '@utilities/merge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
@@ -19,7 +19,7 @@ export interface OverflowMenuProps {
     items: OverflowMenuItemProps[];
 }
 
-export const OverflowMenu = ({ items }: OverflowMenuProps) => {
+export const OverflowMenu = ({ items }: OverflowMenuProps): ReactElement => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuOpenerRef = useRef<HTMLButtonElement>(null);
 

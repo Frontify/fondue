@@ -83,7 +83,7 @@ export const EditableText = ({
     children,
     options,
     isOverflowing = false,
-}: EditableTextProps) => {
+}: EditableTextProps): ReactElement => {
     // Read initial text strings from children
     const childrenLabel = EditableTextHelper.getLabel(children);
 

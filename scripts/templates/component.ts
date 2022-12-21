@@ -10,7 +10,7 @@ import React, { PropsWithChildren } from "react";
 
 export type ${componentName}Props = PropsWithChildren<{ foo: string }>;
 
-export const ${componentName} = ({ foo, children }: ${componentName}Props) => {
+export const ${componentName} = ({ foo, children }: ${componentName}Props): ReactElement => {
     return (
         <div data-test-id="${toKebabCase(componentName)}">
             <div>{foo}</div>

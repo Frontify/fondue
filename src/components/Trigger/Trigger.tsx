@@ -6,7 +6,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import React, { HTMLAttributes, PropsWithChildren } from 'react';
+import React, { HTMLAttributes, PropsWithChildren, ReactElement } from 'react';
 import { IconCross, IconExclamationMarkTriangle, IconTrashBin } from '@foundation/Icon';
 
 export enum TriggerSize {
@@ -66,7 +66,7 @@ export const Trigger = ({
     showClear = false,
     validation = Validation.Default,
     emphasis = TriggerEmphasis.Default,
-}: TriggerProps) => {
+}: TriggerProps): ReactElement => {
     const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
     const { focusProps: onDeleteFocusProps, isFocusVisible: isOnDeleteFocusVisible } = useFocusRing();
 

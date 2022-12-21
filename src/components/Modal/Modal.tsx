@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { memo, useRef } from 'react';
+import React, { ReactElement, memo, useRef } from 'react';
 import { merge } from '@utilities/merge';
 import { ModalProps, ModalWidth } from './types';
 import { ModalVisual } from './ModalVisual';
@@ -110,7 +110,7 @@ const ModalComponent = memo((props: ModalProps) => {
 
 ModalComponent.displayName = 'Modal';
 
-export const Modal = ({ isOpen, ...modalProps }: ModalProps) => (
+export const Modal = ({ isOpen, ...modalProps }: ModalProps): ReactElement => (
     <OverlayContainer>
         <AnimatePresence>{isOpen && <ModalComponent {...modalProps} isOpen />}</AnimatePresence>
     </OverlayContainer>

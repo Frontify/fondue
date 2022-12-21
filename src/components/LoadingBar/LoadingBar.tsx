@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { merge } from '@utilities/merge';
 
 export enum LoadingBarSize {
@@ -50,7 +50,7 @@ export const LoadingBar = ({
     size = LoadingBarSize.Medium,
     state = LoadingBarState.Progress,
     rounded = false,
-}: LoadingBarProps) => (
+}: LoadingBarProps): ReactElement => (
     <div
         className={merge([
             'tw-overflow-hidden tw-w-full tw-relative',
