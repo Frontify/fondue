@@ -48,11 +48,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
                     type: types.mention,
                     category: matches[1],
                     key: matches[2],
-                    children: [
-                        {
-                            text: '',
-                        },
-                    ],
+                    children: [{ text: '' }],
                 };
             }
         case 'heading':
