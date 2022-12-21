@@ -10,6 +10,7 @@ import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/type
 import { getTextStyle } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { DesignTokens } from '@components/RichTextEditor/types';
+import { breakAfterClassNames } from '@components/RichTextEditor/utils';
 import {
     ELEMENT_LI,
     ELEMENT_LIC,
@@ -61,25 +62,27 @@ export const serializeNodeToHtmlRecursive = (
         )
         .join('');
 
+    const breakAfterColumn = node.breakAfterColumn ? `class="${breakAfterClassNames}" ` : '';
+
     switch (node.type) {
         case TextStyles.ELEMENT_HEADING1:
-            return `<h1 style="${reactCssPropsToCss(designTokens.heading1)}">${children}</h1>`;
+            return `<h1 ${breakAfterColumn}style="${reactCssPropsToCss(designTokens.heading1)}">${children}</h1>`;
         case TextStyles.ELEMENT_HEADING2:
-            return `<h2 style="${reactCssPropsToCss(designTokens.heading2)}">${children}</h2>`;
+            return `<h2 ${breakAfterColumn}style="${reactCssPropsToCss(designTokens.heading2)}">${children}</h2>`;
         case TextStyles.ELEMENT_HEADING3:
-            return `<h3 style="${reactCssPropsToCss(designTokens.heading3)}">${children}</h3>`;
+            return `<h3 ${breakAfterColumn}style="${reactCssPropsToCss(designTokens.heading3)}">${children}</h3>`;
         case TextStyles.ELEMENT_HEADING4:
-            return `<h4 style="${reactCssPropsToCss(designTokens.heading4)}">${children}</h4>`;
+            return `<h4 ${breakAfterColumn}style="${reactCssPropsToCss(designTokens.heading4)}">${children}</h4>`;
         case TextStyles.ELEMENT_CUSTOM1:
-            return `<p style="${reactCssPropsToCss(designTokens.custom1)}">${children}</p>`;
+            return `<p ${breakAfterColumn}style="${reactCssPropsToCss(designTokens.custom1)}">${children}</p>`;
         case TextStyles.ELEMENT_CUSTOM2:
-            return `<p style="${reactCssPropsToCss(designTokens.custom2)}">${children}</p>`;
+            return `<p ${breakAfterColumn}style="${reactCssPropsToCss(designTokens.custom2)}">${children}</p>`;
         case TextStyles.ELEMENT_CUSTOM3:
-            return `<p style="${reactCssPropsToCss(designTokens.custom3)}">${children}</p>`;
+            return `<p ${breakAfterColumn}style="${reactCssPropsToCss(designTokens.custom3)}">${children}</p>`;
         case TextStyles.ELEMENT_QUOTE:
-            return `<p style="${reactCssPropsToCss(designTokens.quote)}">${children}</p>`;
+            return `<p ${breakAfterColumn}style="${reactCssPropsToCss(designTokens.quote)}">${children}</p>`;
         case ELEMENT_PARAGRAPH:
-            return `<p style="${reactCssPropsToCss(designTokens.p)}">${children}</p>`;
+            return `<p ${breakAfterColumn}style="${reactCssPropsToCss(designTokens.p)}">${children}</p>`;
         case ELEMENT_UL:
             return `<ul class="${UL_CLASSES}">${children}</ul>`;
         case ELEMENT_OL:
@@ -94,15 +97,15 @@ export const serializeNodeToHtmlRecursive = (
         case ELEMENT_LIC:
             const licElement = node as TElement;
             const licStyles = { textDecoration: designTokens[getTextStyle(licElement.children[0])]?.textDecoration };
-            return `<span style="${reactCssPropsToCss(licStyles)}">${children}</span>`;
+            return `<p ${breakAfterColumn}style="${reactCssPropsToCss(licStyles)}">${children}</p>`;
         case ELEMENT_LINK:
             if (node.chosenLink) {
                 const { chosenLink } = node as TLinkElement;
-                return `<a style="${reactCssPropsToCss(designTokens.link)}" target=${
+                return `<a ${breakAfterColumn}style="${reactCssPropsToCss(designTokens.link)}" target=${
                     chosenLink?.openInNewTab ? '_blank' : '_self'
                 } href="${escapeHtml(chosenLink?.searchResult?.link)}">${children}</a>`;
             }
-            return `<a style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(
+            return `<a ${breakAfterColumn}style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(
                 node.url as string,
             )}">${children}</a>`;
         case ELEMENT_BUTTON:
