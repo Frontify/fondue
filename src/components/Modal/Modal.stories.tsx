@@ -53,7 +53,7 @@ export default {
                 category: 'Layout',
             },
             name: 'Width',
-            options: [ModalWidth.Default, ModalWidth.Large],
+            options: [ModalWidth.Default, ModalWidth.Small, ModalWidth.Large],
             control: { type: 'select' },
         },
         title: {
