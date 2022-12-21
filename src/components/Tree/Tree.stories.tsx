@@ -1,48 +1,135 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from 'react';
-import { Meta, StoryFn } from '@storybook/react';
-import { Tree as TreeComponent, TreeProps } from './Tree';
-import { mockNodesFlat } from '@components/Tree/utils/mocks';
-import { getReorderedNodes } from '@components/Tree/utils';
+import React, { ReactElement } from 'react';
+import { Meta } from '@storybook/react';
+
+import { Tree, Tree as TreeComponent, TreeContentLegacyComponent, TreeItem } from '@components/Tree';
+import { TreeNodeItem, treeNodesMock } from '@components/Tree/utils';
+import type { TreeItemProps, TreeProps } from '@components/Tree/types';
+import { IconDocument } from '@foundation/Icon';
+import { DraggableItem } from '@utilities/dnd';
 
 export default {
     title: 'Components/Tree',
     component: TreeComponent,
     args: {
-        onEditableSave: (targetItemId: string, value: string) => console.log(targetItemId, value),
-    },
-    argTypes: {
-        onSelect: { action: 'onSelect' },
+        id: 'treeId',
     },
 } as Meta<TreeProps>;
 
-export const Tree: StoryFn<TreeProps> = ({ ...args }: TreeProps) => {
-    const [nodesState, setNodesState] = useState(mockNodesFlat);
+interface TreeItemComponentProps {
+    node: DraggableItem<TreeNodeItem>;
+    children?: ReactElement<TreeItemProps> | Array<ReactElement<TreeItemProps>>;
+}
 
-    const handleMove = (sourceItemId: string, parentId: NullableString, positionBeforeId: NullableString): void => {
-        const modifiedItems = getReorderedNodes(sourceItemId, parentId, positionBeforeId, nodesState);
-
-        const modifiedArray = nodesState.map((item) => {
-            const matchingModifiedItem = modifiedItems.find((modifiedItem) => modifiedItem.id === item.id);
-            if (matchingModifiedItem) {
-                return { ...matchingModifiedItem };
-            }
-
-            return { ...item };
-        });
-
-        setNodesState(modifiedArray);
-    };
-
+const TreeItemBasic = ({ node, children }: TreeItemComponentProps) => {
     return (
-        <div style={{ maxWidth: '800px' }}>
-            <TreeComponent {...args} nodes={nodesState} onDragAndDrop={handleMove} />
+        <TreeItem
+            key={node.id}
+            id={node.id}
+            sort={node.sort}
+            contentComponent={() => <TreeItemBasicContentComponent title={node.name} />}
+        >
+            {children}
+        </TreeItem>
+    );
+};
+
+interface TreeWithBasicItemContentComponentProps {
+    title: string;
+}
+
+const TreeItemBasicContentComponent = ({ title }: TreeWithBasicItemContentComponentProps) => {
+    return (
+        <div className="tw-flex tw-space-x-1.5 tw-w-full">
+            <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{<IconDocument />}</span>
+            <span>{title}</span>
         </div>
     );
 };
 
-export const TreeWithActiveNode = Tree.bind({});
-TreeWithActiveNode.args = {
-    activeNodeIds: ['1-1-3'],
+const TreeItemLegacy = ({ node, children }: TreeItemComponentProps) => {
+    return (
+        <TreeItem
+            key={node.id}
+            id={node.id}
+            sort={node.sort}
+            contentComponent={({ selected, hovered }) => (
+                <TreeContentLegacyComponent
+                    title={node.name}
+                    icon={node.icon || <></>}
+                    badge={node.badge}
+                    tooltipContent={node.tooltipContent}
+                    label={node.label}
+                    actions={node.actions}
+                    selected={selected}
+                    hovered={hovered}
+                />
+            )}
+        >
+            {children}
+        </TreeItem>
+    );
+};
+
+export const TreeWithLabel = ({ ...args }: TreeProps) => {
+    return (
+        <div style={{ maxWidth: '800px' }}>
+            <Tree {...args}>
+                {treeNodesMock.map((node) => (
+                    <TreeItem key={node.id} id={node.id} sort={node.sort} label={node.name}>
+                        {node.nodes &&
+                            node.nodes.map((node) => (
+                                <TreeItem key={node.id} id={node.id} sort={node.sort} label={node.name}>
+                                    {node.nodes &&
+                                        node.nodes.map((node) => (
+                                            <TreeItem key={node.id} id={node.id} sort={node.sort} label={node.name} />
+                                        ))}
+                                </TreeItem>
+                            ))}
+                    </TreeItem>
+                ))}
+            </Tree>
+        </div>
+    );
+};
+
+export const TreeWithBasicItem = ({ ...args }: TreeProps) => {
+    return (
+        <div style={{ maxWidth: '800px' }}>
+            <Tree {...args}>
+                {treeNodesMock.map((node) => (
+                    <TreeItemBasic key={node.id} node={node}>
+                        {node.nodes &&
+                            node.nodes.map((node) => (
+                                <TreeItemBasic key={node.id} node={node}>
+                                    {node.nodes &&
+                                        node.nodes.map((node) => <TreeItemBasic key={node.id} node={node} />)}
+                                </TreeItemBasic>
+                            ))}
+                    </TreeItemBasic>
+                ))}
+            </Tree>
+        </div>
+    );
+};
+
+export const TreeWithLegacyItem = ({ ...args }: TreeProps) => {
+    return (
+        <div style={{ maxWidth: '800px' }}>
+            <Tree {...args}>
+                {treeNodesMock.map((node) => (
+                    <TreeItemLegacy key={node.id} node={node}>
+                        {node.nodes &&
+                            node.nodes.map((node) => (
+                                <TreeItemLegacy key={node.id} node={node}>
+                                    {node.nodes &&
+                                        node.nodes.map((node) => <TreeItemLegacy key={node.id} node={node} />)}
+                                </TreeItemLegacy>
+                            ))}
+                    </TreeItemLegacy>
+                ))}
+            </Tree>
+        </div>
+    );
 };

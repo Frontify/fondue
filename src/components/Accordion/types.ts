@@ -50,7 +50,7 @@ export type AccordionHeaderProps = {
 
 export type AccordionHeaderIconProps = {
     isOpen: boolean;
-    size?: AccordionHeaderIconSize;
+    size?: AccordionHeaderIconSize | FieldsetHeaderSize;
     disabled?: boolean;
     /** @deprecated Icon type will be fixed to FieldsetHeaderType.Accordion.
      Use headerComponent prop for custom header styles */

@@ -29,7 +29,7 @@ export const InsertButtonModal = () => {
                 >
                     <HoverableButton
                         id="primary"
-                        styles={designTokens.button_primary}
+                        styles={designTokens.buttonPrimary}
                         isActive={state.buttonStyle === 'primary'}
                         onClick={() => onButtonStyleChange('primary')}
                     >
@@ -38,7 +38,7 @@ export const InsertButtonModal = () => {
 
                     <HoverableButton
                         id="secondary"
-                        styles={designTokens.button_secondary}
+                        styles={designTokens.buttonSecondary}
                         isActive={state.buttonStyle === 'secondary'}
                         onClick={() => onButtonStyleChange('secondary')}
                     >
@@ -47,7 +47,7 @@ export const InsertButtonModal = () => {
 
                     <HoverableButton
                         id="tertiary"
-                        styles={designTokens.button_tertiary}
+                        styles={designTokens.buttonTertiary}
                         isActive={state.buttonStyle === 'tertiary'}
                         onClick={() => onButtonStyleChange('tertiary')}
                     >

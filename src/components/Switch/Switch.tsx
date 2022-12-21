@@ -7,6 +7,8 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
 
+export const SWITCH_ID = 'switch-container';
+
 export enum SwitchSize {
     Small = 'Small',
     Medium = 'Medium',
@@ -105,7 +107,7 @@ export const Switch: FC<SwitchProps> = ({
     }, [hug]);
 
     return (
-        <div className={containerClasses} data-test-id="switch-container">
+        <div className={containerClasses} data-test-id={SWITCH_ID}>
             {label && (
                 <InputLabel clickable={true} htmlFor={id} disabled={disabled} tooltip={tooltip}>
                     {label}

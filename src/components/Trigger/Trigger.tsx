@@ -14,7 +14,7 @@ export enum TriggerSize {
     Large = 'Large',
 }
 
-export enum InputEmphasis {
+export enum TriggerEmphasis {
     Default = 'Default',
     Weak = 'Weak',
 }
@@ -29,14 +29,14 @@ export type TriggerProps = PropsWithChildren<{
     size?: TriggerSize;
     showClear?: boolean;
     validation?: Validation;
-    emphasis?: InputEmphasis;
+    emphasis?: TriggerEmphasis;
 }>;
 
 const getTriggerClassNames = (
     isFocusVisible: boolean,
     disabled: boolean,
     isOpen: boolean,
-    emphasis: InputEmphasis,
+    emphasis: TriggerEmphasis,
     validation: Validation,
 ) =>
     merge([
@@ -46,9 +46,11 @@ const getTriggerClassNames = (
             ? 'tw-border-black-5 tw-bg-black-5 tw-pointer-events-none'
             : merge([
                   'hover:tw-border-line-xx-strong',
-                  emphasis === InputEmphasis.Weak ? '' : 'tw-bg-base',
+                  emphasis === TriggerEmphasis.Weak ? '' : 'tw-bg-base',
                   isOpen ? 'tw-border-line-xx-strong' : 'tw-border-line',
-                  emphasis === InputEmphasis.Weak ? 'tw-border-transparent' : validationClassMap[validation],
+                  emphasis === TriggerEmphasis.Weak
+                      ? 'tw-border-0 hover:tw-outline hover:tw-outline-1'
+                      : validationClassMap[validation],
               ]),
     ]);
 
@@ -63,7 +65,7 @@ export const Trigger = ({
     size = TriggerSize.Small,
     showClear = false,
     validation = Validation.Default,
-    emphasis = InputEmphasis.Default,
+    emphasis = TriggerEmphasis.Default,
 }: TriggerProps) => {
     const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
     const { focusProps: onDeleteFocusProps, isFocusVisible: isOnDeleteFocusVisible } = useFocusRing();

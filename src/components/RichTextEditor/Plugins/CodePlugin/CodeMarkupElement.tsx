@@ -5,7 +5,7 @@ import { MARK_CODE, PlateRenderLeafProps } from '@udecode/plate';
 import { MarkupElement } from '../MarkupElement';
 
 export const CODE_CLASSES =
-    'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5';
+    'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]';
 
 export const CodeMarkupElementNode = ({ attributes, children }: PlateRenderLeafProps) => (
     <span {...attributes} className={CODE_CLASSES}>

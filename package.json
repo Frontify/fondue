@@ -1,6 +1,6 @@
 {
     "name": "@frontify/fondue",
-    "version": "12.0.0-beta.27",
+    "version": "12.0.0-beta.35",
     "description": "Design system of Frontify",
     "engines": {
         "node": ">=16"
@@ -62,7 +62,7 @@
     "devDependencies": {
         "@cypress/vite-dev-server": "4.0.1",
         "@frontify/eslint-config-react": "0.15.5",
-        "@frontify/fondue-icons": "0.1.19",
+        "@frontify/fondue-icons": "^0.1.22",
         "@storybook/addon-a11y": "7.0.0-alpha.52",
         "@storybook/addon-actions": "7.0.0-alpha.52",
         "@storybook/addon-essentials": "7.0.0-alpha.52",

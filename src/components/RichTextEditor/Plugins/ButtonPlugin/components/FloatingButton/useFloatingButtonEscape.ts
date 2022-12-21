@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { focusEditor, useEditorRef, useHotkeys } from '@udecode/plate-core';
+import { focusEditor, useEditorRef, useHotkeys } from '@udecode/plate';
 import { floatingButtonActions, floatingButtonSelectors } from './floatingButtonStore';
 
 export const useFloatingButtonEscape = () => {

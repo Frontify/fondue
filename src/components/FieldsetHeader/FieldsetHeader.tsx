@@ -6,6 +6,10 @@ import { merge } from '@utilities/merge';
 import React, { FC, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
 import { IconCaretDown, IconMinus, IconPlus, IconProps, IconSize } from '@foundation/Icon';
 
+export const ACCORDION_ICON_CONTAINER_ID = 'accordion-icon-container';
+
+export const ADDREMOVE_ICON_CONTAINER_ID = 'addremove-icon-container';
+
 export enum FieldsetHeaderSize {
     Small = 'Small',
     Medium = 'Medium',
@@ -64,31 +68,41 @@ export const renderFieldsetHeaderIconType = (
 
     switch (type) {
         case FieldsetHeaderType.Switch:
-            return <Switch {...props} size={sizeMap[size].switch} on={active} disabled={disabled} />;
+            return (
+                <div data-test-id="fieldset-icon-wrapper">
+                    <Switch {...props} size={sizeMap[size].switch} on={active} disabled={disabled} />
+                </div>
+            );
         case FieldsetHeaderType.Accordion:
             return (
-                <div
-                    className={merge([
-                        'tw-transition-transform',
-                        active && 'tw-rotate-180 tw-duration-300',
-                        disabled && !active && 'tw-text-black-40',
-                        !disabled && active && 'tw-text-black',
-                        !disabled && !active && 'tw-text-black-80',
-                    ])}
-                >
-                    <IconCaretDown {...props} />
+                <div data-test-id="fieldset-icon-wrapper">
+                    <div
+                        data-test-id={ACCORDION_ICON_CONTAINER_ID}
+                        className={merge([
+                            'tw-transition-transform',
+                            active && 'tw-rotate-180 tw-duration-300',
+                            !disabled && active && 'tw-text-black',
+                            !disabled && !active && 'tw-text-black-80',
+                            disabled && 'tw-text-black-40',
+                        ])}
+                    >
+                        <IconCaretDown {...props} />
+                    </div>
                 </div>
             );
         case FieldsetHeaderType.AddRemove:
             return (
-                <div
-                    className={merge([
-                        active && disabled && 'tw-text-black-40',
-                        active && !disabled && 'tw-text-black',
-                        !active && !disabled && 'tw-text-black-80',
-                    ])}
-                >
-                    {active ? <IconMinus {...props} /> : <IconPlus {...props} />}
+                <div data-test-id="fieldset-icon-wrapper">
+                    <div
+                        data-test-id={ADDREMOVE_ICON_CONTAINER_ID}
+                        className={merge([
+                            active && !disabled && 'tw-text-black',
+                            !active && !disabled && 'tw-text-black-80',
+                            disabled && 'tw-text-black-40',
+                        ])}
+                    >
+                        {active ? <IconMinus {...props} /> : <IconPlus {...props} />}
+                    </div>
                 </div>
             );
     }
@@ -151,7 +165,7 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
                 {children}
             </Heading>
             {type !== FieldsetHeaderType.Default && (
-                <span className="tw-ml-auto tw-shrink-0">
+                <span data-test-id="fieldset-icon-container" className="tw-ml-auto tw-shrink-0">
                     {renderFieldsetHeaderIconType(type, id, size, active, disabled)}
                 </span>
             )}

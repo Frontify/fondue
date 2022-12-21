@@ -10,7 +10,7 @@ import {
     MenuItemTextColorState,
     menuItemTextColorRecord,
 } from '@components/MenuItem';
-import { InputEmphasis, Trigger, TriggerSize } from '@components/Trigger/Trigger';
+import { Trigger, TriggerEmphasis, TriggerSize } from '@components/Trigger/Trigger';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { VariationPlacement } from '@popperjs/core';
 import { useButton } from '@react-aria/button';
@@ -26,6 +26,8 @@ import React, { FC, ReactElement, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { usePopper } from 'react-popper';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from './useDropdownAutoHeight';
+
+export const DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT = 36; //Small Input height as default
 
 export enum DropdownSize {
     Small = 'Small',
@@ -57,7 +59,8 @@ export type DropdownProps = {
     validation?: Validation;
     alignment?: DropdownAlignment;
     position?: DropdownPosition;
-    emphasis?: InputEmphasis;
+    emphasis?: TriggerEmphasis;
+    flip?: boolean;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
@@ -89,7 +92,8 @@ export const Dropdown: FC<DropdownProps> = ({
     validation = Validation.Default,
     alignment = DropdownAlignment.Start,
     position = DropdownPosition.Bottom,
-    emphasis = InputEmphasis.Default,
+    emphasis = TriggerEmphasis.Default,
+    flip = false,
 }) => {
     const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -117,8 +121,10 @@ export const Dropdown: FC<DropdownProps> = ({
             return;
         }
 
-        state.setSelectedKey(activeItemId as string);
-    }, [activeItemId, state]);
+        if (activeItemId !== state.selectedKey) {
+            state.setSelectedKey(activeItemId as string);
+        }
+    }, [activeItemId]);
 
     const { maxHeight } = useDropdownAutoHeight(triggerRef, { isOpen, autoResize });
 
@@ -162,7 +168,7 @@ export const Dropdown: FC<DropdownProps> = ({
             },
             {
                 name: 'flip',
-                enabled: false,
+                enabled: flip,
             },
         ],
     });
@@ -204,9 +210,11 @@ export const Dropdown: FC<DropdownProps> = ({
                     />
                 </button>
             </Trigger>
-            {createPortal(
-                <AnimatePresence>
-                    {!disabled && isOpen && heightIsReady && (
+            {!disabled &&
+                isOpen &&
+                heightIsReady &&
+                createPortal(
+                    <AnimatePresence>
                         <motion.div
                             ref={dropdownRef}
                             style={{
@@ -217,7 +225,7 @@ export const Dropdown: FC<DropdownProps> = ({
                             {...popperInstance.attributes.popper}
                             className="tw-absolute tw-p-0 tw-shadow tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
                             key="content"
-                            initial={{ height: 0 }}
+                            initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
                             animate={{ height: 'auto' }}
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         >
@@ -241,10 +249,9 @@ export const Dropdown: FC<DropdownProps> = ({
                                 </div>
                             </FocusScope>
                         </motion.div>
-                    )}
-                </AnimatePresence>,
-                document.body,
-            )}
+                    </AnimatePresence>,
+                    document.body,
+                )}
             {validation === Validation.Loading && (
                 <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-base tw-rounded-full tw-p-[2px] tw-border tw-border-line-weak">
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />

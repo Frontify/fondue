@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MenuItemContentSize, MenuItemStyle } from '@components/MenuItem';
-import { InputEmphasis } from '@components/Trigger';
+import { TriggerEmphasis } from '@components/Trigger';
 import { IconMusicNote } from '@foundation/Icon';
 import { Meta, StoryFn } from '@storybook/react';
 import { Validation } from '@utilities/validation';
@@ -37,6 +37,10 @@ export default {
             options: Object.values(DropdownPosition),
             control: { type: 'select' },
             defaultValue: DropdownPosition.Bottom,
+        },
+        flip: {
+            control: { type: 'boolean' },
+            defaultValue: false,
         },
     },
 } as Meta;
@@ -406,7 +410,7 @@ export const WeakSelect = DropdownWithBackgroundTemplate.bind({});
 
 WeakSelect.args = {
     size: DropdownSize.Small,
-    emphasis: InputEmphasis.Weak,
+    emphasis: TriggerEmphasis.Weak,
     menuBlocks: [
         {
             id: 'block1',
