@@ -20,10 +20,7 @@ import {
 
 export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstNode, options: OptionType) {
     const types = options?.nodeTypes as InputNodeTypes;
-
-    const linkDestinationKey = options?.linkDestinationKey ?? 'link';
-    const imageSourceKey = options?.imageSourceKey ?? 'link';
-    const imageCaptionKey = options?.imageCaptionKey ?? 'caption';
+    const { linkDestinationKey, imageSourceKey, imageCaptionKey } = getOptions(options);
 
     let children: Array<DeserializedNode<T>> = [{ text: '' }];
 
@@ -153,4 +150,12 @@ const persistLeafFormats = (children: Array<MarkdownAstNode>): Omit<MarkdownAstN
 
         return acc;
     }, {});
+};
+
+const getOptions = (options: OptionType) => {
+    const linkDestinationKey = options?.linkDestinationKey ?? 'link';
+    const imageSourceKey = options?.imageSourceKey ?? 'link';
+    const imageCaptionKey = options?.imageCaptionKey ?? 'caption';
+
+    return { linkDestinationKey, imageSourceKey, imageCaptionKey };
 };
