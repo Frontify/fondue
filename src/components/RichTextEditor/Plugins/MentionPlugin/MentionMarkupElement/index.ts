@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// import { mentionable } from '@components/RichTextEditor/helpers/exampleValues';
 import { ELEMENT_MENTION } from '@udecode/plate';
 import { MarkupElement } from '../../MarkupElement';
 import { MentionableItems } from '../types';
