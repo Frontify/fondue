@@ -115,7 +115,10 @@ export const TreeItem = ({ id, sort, label, contentComponent, onSelect, onDrop, 
                         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                         <span
                             data-test-id="tree-item-toggle"
-                            className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center tw-py-3 tw-cursor-pointer"
+                            className={merge([
+                                'tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center tw-py-3',
+                                childrenArray.length > 0 && 'tw-cursor-pointer',
+                            ])}
                             onClick={toggleExpand}
                         >
                             {caretComponent}
