@@ -450,6 +450,12 @@ import IconClipboard16 from '@foundation/Icon/Generated/IconClipboard16';
 import IconClipboard20 from '@foundation/Icon/Generated/IconClipboard20';
 import IconClipboard24 from '@foundation/Icon/Generated/IconClipboard24';
 import IconClipboard32 from '@foundation/Icon/Generated/IconClipboard32';
+import IconClipboardAt from '@foundation/Icon/Generated/IconClipboardAt';
+import IconClipboardAt12 from '@foundation/Icon/Generated/IconClipboardAt12';
+import IconClipboardAt16 from '@foundation/Icon/Generated/IconClipboardAt16';
+import IconClipboardAt20 from '@foundation/Icon/Generated/IconClipboardAt20';
+import IconClipboardAt24 from '@foundation/Icon/Generated/IconClipboardAt24';
+import IconClipboardAt32 from '@foundation/Icon/Generated/IconClipboardAt32';
 import IconClock from '@foundation/Icon/Generated/IconClock';
 import IconClock12 from '@foundation/Icon/Generated/IconClock12';
 import IconClock16 from '@foundation/Icon/Generated/IconClock16';
@@ -1263,6 +1269,18 @@ import IconPerson16 from '@foundation/Icon/Generated/IconPerson16';
 import IconPerson20 from '@foundation/Icon/Generated/IconPerson20';
 import IconPerson24 from '@foundation/Icon/Generated/IconPerson24';
 import IconPerson32 from '@foundation/Icon/Generated/IconPerson32';
+import IconPersonAnonymous from '@foundation/Icon/Generated/IconPersonAnonymous';
+import IconPersonAnonymous12 from '@foundation/Icon/Generated/IconPersonAnonymous12';
+import IconPersonAnonymous16 from '@foundation/Icon/Generated/IconPersonAnonymous16';
+import IconPersonAnonymous20 from '@foundation/Icon/Generated/IconPersonAnonymous20';
+import IconPersonAnonymous24 from '@foundation/Icon/Generated/IconPersonAnonymous24';
+import IconPersonAnonymous32 from '@foundation/Icon/Generated/IconPersonAnonymous32';
+import IconPersonSlash from '@foundation/Icon/Generated/IconPersonSlash';
+import IconPersonSlash12 from '@foundation/Icon/Generated/IconPersonSlash12';
+import IconPersonSlash16 from '@foundation/Icon/Generated/IconPersonSlash16';
+import IconPersonSlash20 from '@foundation/Icon/Generated/IconPersonSlash20';
+import IconPersonSlash24 from '@foundation/Icon/Generated/IconPersonSlash24';
+import IconPersonSlash32 from '@foundation/Icon/Generated/IconPersonSlash32';
 import IconPills from '@foundation/Icon/Generated/IconPills';
 import IconPills12 from '@foundation/Icon/Generated/IconPills12';
 import IconPills16 from '@foundation/Icon/Generated/IconPills16';
@@ -2184,6 +2202,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Clipboard20]: <IconClipboard20 />,
     [IconEnum.Clipboard24]: <IconClipboard24 />,
     [IconEnum.Clipboard32]: <IconClipboard32 />,
+    [IconEnum.ClipboardAt]: <IconClipboardAt />,
+    [IconEnum.ClipboardAt12]: <IconClipboardAt12 />,
+    [IconEnum.ClipboardAt16]: <IconClipboardAt16 />,
+    [IconEnum.ClipboardAt20]: <IconClipboardAt20 />,
+    [IconEnum.ClipboardAt24]: <IconClipboardAt24 />,
+    [IconEnum.ClipboardAt32]: <IconClipboardAt32 />,
     [IconEnum.Clock]: <IconClock />,
     [IconEnum.Clock12]: <IconClock12 />,
     [IconEnum.Clock16]: <IconClock16 />,
@@ -2997,6 +3021,18 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Person20]: <IconPerson20 />,
     [IconEnum.Person24]: <IconPerson24 />,
     [IconEnum.Person32]: <IconPerson32 />,
+    [IconEnum.PersonAnonymous]: <IconPersonAnonymous />,
+    [IconEnum.PersonAnonymous12]: <IconPersonAnonymous12 />,
+    [IconEnum.PersonAnonymous16]: <IconPersonAnonymous16 />,
+    [IconEnum.PersonAnonymous20]: <IconPersonAnonymous20 />,
+    [IconEnum.PersonAnonymous24]: <IconPersonAnonymous24 />,
+    [IconEnum.PersonAnonymous32]: <IconPersonAnonymous32 />,
+    [IconEnum.PersonSlash]: <IconPersonSlash />,
+    [IconEnum.PersonSlash12]: <IconPersonSlash12 />,
+    [IconEnum.PersonSlash16]: <IconPersonSlash16 />,
+    [IconEnum.PersonSlash20]: <IconPersonSlash20 />,
+    [IconEnum.PersonSlash24]: <IconPersonSlash24 />,
+    [IconEnum.PersonSlash32]: <IconPersonSlash32 />,
     [IconEnum.Pills]: <IconPills />,
     [IconEnum.Pills12]: <IconPills12 />,
     [IconEnum.Pills16]: <IconPills16 />,
