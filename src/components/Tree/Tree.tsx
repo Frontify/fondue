@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TreeContext } from '@components/Tree/TreeContext';
 import type { TreeProps } from '@components/Tree/types';
@@ -30,22 +30,30 @@ export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: Tre
         };
     }, []);
 
-    const handleSelect = (id: string) => {
-        setSelectedIds((prevState) => {
-            if (!multiselect) {
-                return [id];
-            }
-            return prevState.includes(id) ? prevState.filter((selectedId) => selectedId !== id) : [...prevState, id];
-        });
-    };
+    const handleSelect = useCallback(
+        (id: string) => {
+            setSelectedIds((prevState) => {
+                if (!multiselect) {
+                    return [id];
+                }
+                return prevState.includes(id)
+                    ? prevState.filter((selectedId) => selectedId !== id)
+                    : [...prevState, id];
+            });
+        },
+        [multiselect],
+    );
 
-    const handleDrop = (
-        targetItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
-        sourceItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
-        position: DropZonePosition,
-    ) => {
-        onDrop?.(targetItem, sourceItem, position);
-    };
+    const handleDrop = useCallback(
+        (
+            targetItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
+            sourceItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
+            position: DropZonePosition,
+        ) => {
+            onDrop?.(targetItem, sourceItem, position);
+        },
+        [onDrop],
+    );
 
     const childrenArray = React.Children.toArray(children);
 
@@ -56,7 +64,10 @@ export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: Tre
 
     return (
         <TreeContext.Provider
-            value={{ treeId: id, selectedIds, onSelect: handleSelect, draggable, onDrop: handleDrop }}
+            value={useMemo(
+                () => ({ treeId: id, selectedIds, onSelect: handleSelect, draggable, onDrop: handleDrop }),
+                [id, selectedIds, handleSelect, draggable, handleDrop],
+            )}
         >
             <ul
                 id={id}
