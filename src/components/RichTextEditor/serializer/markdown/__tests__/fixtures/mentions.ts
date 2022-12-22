@@ -13,7 +13,6 @@ export const mentionsTree_0 = [
             },
             {
                 type: 'mention',
-                // value: 'Aayla Secura',
                 key: '0',
                 category: 'all',
                 children: [{ text: '' }],
