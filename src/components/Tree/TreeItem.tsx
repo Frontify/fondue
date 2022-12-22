@@ -12,8 +12,8 @@ import { merge } from '@utilities/merge';
 const DRAGGING_OPACITY = 0.4;
 const DEFAULT_OPACITY = 1;
 
-export const TreeItem = ({ id, sort, label, contentComponent, onSelect, onDrop, children }: TreeItemProps) => {
-    const { treeId, selectedIds, onSelect: onItemSelect, draggable } = useTreeContext();
+export const TreeItem = ({ id, sort, label, contentComponent, onSelect, children }: TreeItemProps) => {
+    const { treeId, selectedIds, onSelect: onItemSelect, draggable, onDrop } = useTreeContext();
 
     const [expanded, setExpanded] = useState<boolean>(false);
     const [hovered, setHovered] = useState<boolean>(false);
@@ -63,7 +63,7 @@ export const TreeItem = ({ id, sort, label, contentComponent, onSelect, onDrop, 
                     {index === 0 && (
                         <DropZone
                             data={{
-                                targetItem: { id, sort },
+                                targetItem: { id: child.props.id, sort: child.props.sort },
                                 position: DropZonePosition.Before,
                             }}
                             onDrop={handleDrop}

@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 
+import { DropZone } from '@components/DropZone';
 import { TreeContext } from '@components/Tree/TreeContext';
 import type { TreeProps } from '@components/Tree/types';
-import { DndWrapper } from '@utilities/dnd';
+import { DndWrapper, DraggableItem, DropZonePosition } from '@utilities/dnd';
 
-export const Tree = ({ id, activeIds, draggable = false, children }: TreeProps) => {
+export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: TreeProps) => {
     const [selectedIds, setSelectedIds] = useState<string[]>(activeIds || []);
     const [multiselect, setMultiselect] = useState<boolean>(false);
 
@@ -16,15 +17,6 @@ export const Tree = ({ id, activeIds, draggable = false, children }: TreeProps) 
 
     const upKeyHandler = (event: KeyboardEvent) => {
         setMultiselect(!(event.key === 'Meta' || event.ctrlKey));
-    };
-
-    const handleSelect = (id: string) => {
-        setSelectedIds((prevState) => {
-            if (!multiselect) {
-                return [id];
-            }
-            return prevState.includes(id) ? prevState.filter((selectedId) => selectedId !== id) : [...prevState, id];
-        });
     };
 
     useEffect(() => {
@@ -37,14 +29,61 @@ export const Tree = ({ id, activeIds, draggable = false, children }: TreeProps) 
         };
     }, []);
 
+    const handleSelect = (id: string) => {
+        setSelectedIds((prevState) => {
+            if (!multiselect) {
+                return [id];
+            }
+            return prevState.includes(id) ? prevState.filter((selectedId) => selectedId !== id) : [...prevState, id];
+        });
+    };
+
+    const handleDrop = (
+        targetItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
+        sourceItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
+        position: DropZonePosition,
+    ) => {
+        onDrop?.(targetItem, sourceItem, position);
+    };
+
+    const childrenArray = React.Children.toArray(children);
+
+    let enhancedChildren: ReactNode = childrenArray;
+    if (draggable) {
+        enhancedChildren = React.Children.map(children, (child, index) => {
+            if (!child) {
+                return <></>;
+            }
+
+            return React.cloneElement(
+                <>
+                    {index === 0 && (
+                        <DropZone
+                            data={{
+                                targetItem: { id: child.props.id, sort: child.props.sort },
+                                position: DropZonePosition.Before,
+                            }}
+                            onDrop={handleDrop}
+                            treeId={id}
+                        />
+                    )}
+
+                    {child}
+                </>,
+            );
+        });
+    }
+
     return (
-        <TreeContext.Provider value={{ treeId: id, selectedIds, onSelect: handleSelect, draggable }}>
+        <TreeContext.Provider
+            value={{ treeId: id, selectedIds, onSelect: handleSelect, draggable, onDrop: handleDrop }}
+        >
             <ul
                 id={id}
                 data-test-id="tree"
                 className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
             >
-                <DndWrapper id={id}>{children}</DndWrapper>
+                <DndWrapper id={id}>{enhancedChildren}</DndWrapper>
             </ul>
         </TreeContext.Provider>
     );
