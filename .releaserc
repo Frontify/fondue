@@ -44,6 +44,11 @@
             "hidden": true
           },
           {
+            "type": "chore",
+            "scope": "release",
+            "hidden": true
+          },
+          {
             "type": "feat",
             "section": "Features"
           },
