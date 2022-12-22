@@ -9,6 +9,8 @@ import { useTreeContext } from '@components/Tree/TreeContext';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 import { merge } from '@utilities/merge';
 
+import { enhanceChildren } from './helpers';
+
 const DRAGGING_OPACITY = 0.4;
 const DEFAULT_OPACITY = 1;
 
@@ -53,28 +55,7 @@ export const TreeItem = ({ id, sort, label, contentComponent, onSelect, children
     let enhancedChildren: ReactNode = childrenArray;
 
     if (draggable) {
-        enhancedChildren = React.Children.map(children, (child, index) => {
-            if (!child) {
-                return <></>;
-            }
-
-            return React.cloneElement(
-                <>
-                    {index === 0 && (
-                        <DropZone
-                            data={{
-                                targetItem: { id: child.props.id, sort: child.props.sort },
-                                position: DropZonePosition.Before,
-                            }}
-                            onDrop={handleDrop}
-                            treeId={treeId}
-                        />
-                    )}
-
-                    {child}
-                </>,
-            );
-        });
+        enhancedChildren = enhanceChildren(treeId, handleDrop, children);
     }
 
     const caretComponent =

@@ -2,10 +2,11 @@
 
 import React, { ReactNode, useEffect, useState } from 'react';
 
-import { DropZone } from '@components/DropZone';
 import { TreeContext } from '@components/Tree/TreeContext';
 import type { TreeProps } from '@components/Tree/types';
 import { DndWrapper, DraggableItem, DropZonePosition } from '@utilities/dnd';
+
+import { enhanceChildren } from './helpers';
 
 export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: TreeProps) => {
     const [selectedIds, setSelectedIds] = useState<string[]>(activeIds || []);
@@ -50,28 +51,7 @@ export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: Tre
 
     let enhancedChildren: ReactNode = childrenArray;
     if (draggable) {
-        enhancedChildren = React.Children.map(children, (child, index) => {
-            if (!child) {
-                return <></>;
-            }
-
-            return React.cloneElement(
-                <>
-                    {index === 0 && (
-                        <DropZone
-                            data={{
-                                targetItem: { id: child.props.id, sort: child.props.sort },
-                                position: DropZonePosition.Before,
-                            }}
-                            onDrop={handleDrop}
-                            treeId={id}
-                        />
-                    )}
-
-                    {child}
-                </>,
-            );
-        });
+        enhancedChildren = enhanceChildren(id, handleDrop, children);
     }
 
     return (
