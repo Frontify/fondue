@@ -14,8 +14,7 @@ export type ParagraphNode = Record<string, string | [] | undefined> & {
 
 export type Transformer = (tree: ParagraphNode) => void;
 
-export type RegExpMatchArray = [string] &
-    string[] & {
-        index: number;
-        input: string;
-    };
+export type RegExpMatchArray = string[] & {
+    index: number;
+    input: string;
+};
