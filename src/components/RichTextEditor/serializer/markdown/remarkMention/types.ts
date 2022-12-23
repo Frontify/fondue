@@ -9,7 +9,7 @@ export type NodeChild = {
 
 export type NodeChildKey = keyof NodeChild;
 
-export type ParagraphNode = Record<string, string | [] | undefined> & {
+export type ParagraphNode = {
     type: string;
     children: NodeChild[];
 };
