@@ -153,9 +153,9 @@ const persistLeafFormats = (children: Array<MarkdownAstNode>): Omit<MarkdownAstN
 };
 
 const getOptions = (options: OptionType) => {
-    const linkDestinationKey = options?.linkDestinationKey ?? 'link';
-    const imageSourceKey = options?.imageSourceKey ?? 'link';
-    const imageCaptionKey = options?.imageCaptionKey ?? 'caption';
+    const linkDestinationKey = options.linkDestinationKey ?? 'link';
+    const imageSourceKey = options.imageSourceKey ?? 'link';
+    const imageCaptionKey = options.imageCaptionKey ?? 'caption';
 
     return { linkDestinationKey, imageSourceKey, imageCaptionKey };
 };

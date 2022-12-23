@@ -4,9 +4,7 @@ import escapeHtml from 'escape-html';
 import { BlockType, InputNodeTypes, NodeType, OptionType } from '../types';
 import { isLeafNode } from './isLeafNode';
 
-const processMentionNode = (chunk: BlockType) => {
-    return `@[${chunk.category}: ${chunk.key}]`;
-};
+const processMentionNode = (chunk: BlockType) => `@[${chunk.category}: ${chunk.key}]`;
 
 const processListItemNode = (
     nodeTypes: InputNodeTypes,
