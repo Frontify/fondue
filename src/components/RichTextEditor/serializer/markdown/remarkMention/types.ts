@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export type NodeChild = Record<string, string | [] | NodeChild[]> & {
+export type NodeChild = {
     type: string;
     value?: string;
     text?: string;
     children?: NodeChild[];
 };
+
+export type NodeChildKey = keyof NodeChild;
 
 export type ParagraphNode = Record<string, string | [] | undefined> & {
     type: string;

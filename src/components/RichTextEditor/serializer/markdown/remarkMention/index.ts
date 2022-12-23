@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { VisitorResult, visit } from 'unist-util-visit';
-import { NodeChild, ParagraphNode, RegExpMatchArray, Transformer } from './types';
+import { NodeChild, NodeChildKey, ParagraphNode, RegExpMatchArray, Transformer } from './types';
 
 const transformer = (tree: ParagraphNode) => {
     visit(tree, 'paragraph', visitor);
@@ -28,7 +28,7 @@ const transformer = (tree: ParagraphNode) => {
     }
 };
 
-const is = (node: NodeChild, type: string): boolean => node[type] !== '' && !!node.value;
+const is = (node: NodeChild, key: NodeChildKey): boolean => node[key] !== '' && !!node.value;
 
 const createNodes = (matches: RegExpMatchArray[], node: ParagraphNode, value: string) => {
     if (matches[0].index > 0) {
