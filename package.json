@@ -91,7 +91,7 @@
         "fast-glob": "3.2.12",
         "postcss": "8.4.20",
         "postcss-cli": "10.0.0",
-        "postcss-import": "15.0.0",
+        "postcss-import": "15.1.0",
         "postcss-nested": "6.0.0",
         "prettier": "2.7.1",
         "react": "17.0.2",
