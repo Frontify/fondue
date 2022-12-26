@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MentionPlugin, createMentionPlugin as createMentionPluginPlate } from '@udecode/plate';
-import { CreateMentionNodeWithItem, MentionComboboxItem, MentionNodeItem } from './types';
+import { MentionItemData } from './types';
 
 export const createMentionPlugin = () =>
-    createMentionPluginPlate<MentionPlugin<MentionComboboxItem>>({
+    createMentionPluginPlate<MentionPlugin<MentionItemData>>({
         options: {
             trigger: '@',
-            createMentionNode: ((item: MentionNodeItem) => ({
+            createMentionNode: (item) => ({
                 value: item.text,
                 key: item.key,
-                category: item.category,
-            })) as unknown as CreateMentionNodeWithItem,
+                category: item.data.category,
+            }),
         },
     });

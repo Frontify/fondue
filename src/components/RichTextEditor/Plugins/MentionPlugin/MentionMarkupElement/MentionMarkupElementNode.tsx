@@ -3,10 +3,10 @@
 
 import React from 'react';
 import { MentionElementProps, Value } from '@udecode/plate';
-import { MentionComboboxItem, MentionableCategory, MentionableItems } from '../types';
+import { MentionableCategory, MentionableItem, MentionableItems } from '../types';
 
 const renderLabel = (mentionable: MentionableItems, key: string) =>
-    mentionable.find((mention: MentionComboboxItem) => mention.key === key)?.text ?? key;
+    mentionable.find((mention: MentionableItem) => mention.key === key)?.text ?? key;
 
 export const MentionMarkupElementNode = (mentionable: MentionableItems) => (props: MentionElementProps<Value>) => {
     const { attributes, children, element, nodeProps, prefix } = props;
