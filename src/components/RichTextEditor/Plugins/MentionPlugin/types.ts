@@ -9,9 +9,9 @@ export enum MentionableCategory {
     USER = 'user',
 }
 
-export interface MentionItemData {
+export type MentionItemData = {
     category: MentionableCategory;
-}
+};
 
 export type MentionableItem = TComboboxItemWithData<MentionItemData>;
 
