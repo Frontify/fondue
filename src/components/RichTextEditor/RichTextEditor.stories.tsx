@@ -158,11 +158,11 @@ export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () =
     return (
         <>
             Markdown Text:
-            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6 tw-h-[400px] tw-overflow-auto">
                 <pre>{resultMarkdown}</pre>
             </div>
             Slate JSON Object:
-            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6 tw-h-[400px] tw-overflow-auto">
                 <pre id="json">{JSON.stringify(resultSlate, undefined, 2)}</pre>
             </div>
             Rich Text Editor:
