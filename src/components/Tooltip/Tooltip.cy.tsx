@@ -3,7 +3,7 @@
 import { IconExclamationMarkCircle, IconIcon, IconSize } from '@foundation/Icon';
 import React from 'react';
 import { BrightHeaderStyle, brightHeaderBackgroundColors } from './BrightHeader';
-import { Tooltip, TooltipProps } from './Tooltip';
+import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
 
 const TOOLTIP_TEXT = 'This is a tooltip';
 const TOOLTIP_ID = '[data-test-id=tooltip]';
@@ -17,9 +17,13 @@ const ENTER_DELAY = 1000;
 const DEFAULT_HOVER_DELAY = 200;
 const CUSTOM_HOVER_DELAY = 1000;
 
-export const TooltipComponent = (args: TooltipProps) => {
+type TooltipTestProps = TooltipProps & { testFlip?: boolean };
+
+export const TooltipComponent = (args: TooltipTestProps) => {
     return (
-        <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
+        <div
+            className={`tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-${args.testFlip ? 'end' : 'center'}`}
+        >
             <Tooltip
                 {...args}
                 triggerElement={
@@ -33,13 +37,16 @@ export const TooltipComponent = (args: TooltipProps) => {
     );
 };
 
-const initTooltip = (args: TooltipProps, triggerOpen = true) => {
+const initTooltip = (args: TooltipTestProps, triggerOpen = true) => {
     cy.mount(<TooltipComponent {...args} />);
     cy.get('[data-test-id=tooltip-trigger]').as('Trigger');
     if (triggerOpen) {
         cy.get('@Trigger').trigger('mouseover');
     }
 };
+
+const getByTooltipPlacement = (placement: string) => cy.get(`[data-popper-placement=${placement}]`);
+const getTooltipArrow = () => cy.get('[data-test-id=popover-arrow]');
 
 describe('Tooltip Component', () => {
     it('should render a tooltip', () => {
@@ -190,5 +197,112 @@ describe('Tooltip Component', () => {
 
         cy.get(TOOLTIP_ID).should('exist');
         cy.get(TOOLTIP_ID).should('have.class', 'tw-hidden');
+    });
+
+    it('should render the tooltip with Start alignment', () => {
+        initTooltip({ content: TOOLTIP_TEXT, alignment: TooltipAlignment.Start });
+
+        getByTooltipPlacement('bottom-start').should('exist');
+    });
+
+    it('should render the tooltip with Middle alignment', () => {
+        initTooltip({ content: TOOLTIP_TEXT, alignment: TooltipAlignment.Middle });
+
+        getByTooltipPlacement('bottom').should('exist');
+    });
+
+    it('should render the tooltip with End alignment', () => {
+        initTooltip({ content: TOOLTIP_TEXT, alignment: TooltipAlignment.End });
+
+        getByTooltipPlacement('bottom-end').should('exist');
+    });
+
+    it('should flip the tooltip', () => {
+        initTooltip({ content: TOOLTIP_TEXT, flip: true, testFlip: true });
+
+        getByTooltipPlacement('top').should('exist');
+    });
+
+    it('should NOT flip the tooltip', () => {
+        initTooltip({ content: TOOLTIP_TEXT, flip: false, testFlip: true });
+
+        getByTooltipPlacement('bottom').should('exist');
+    });
+
+    it('should render the tooltip with arrow', () => {
+        initTooltip({ content: TOOLTIP_TEXT, withArrow: true });
+
+        getTooltipArrow().should('be.visible');
+    });
+
+    it('should render the tooltip without arrow', () => {
+        initTooltip({ content: TOOLTIP_TEXT, withArrow: false });
+
+        getTooltipArrow().should('not.be.visible');
+    });
+
+    it('should render the arrow for Top Tooltip placement', () => {
+        initTooltip({ content: TOOLTIP_TEXT, withArrow: true, position: TooltipPosition.Top });
+
+        getTooltipArrow().should('have.class', 'tw-bottom-[-6px]');
+    });
+
+    it('should render the arrow for Right Tooltip placement', () => {
+        initTooltip({ content: TOOLTIP_TEXT, withArrow: true, position: TooltipPosition.Right });
+
+        getTooltipArrow().should('have.class', 'tw-left-[-6px]').and('have.class', 'before:tw-bg-black-100');
+    });
+
+    it('should render the arrow for Right Tooltip placement with Bright Header and alignment Start', () => {
+        initTooltip({
+            content: TOOLTIP_TEXT,
+            withArrow: true,
+            position: TooltipPosition.Right,
+            alignment: TooltipAlignment.Start,
+            brightHeader: BrightHeaderStyle.Warning,
+        });
+
+        getTooltipArrow().should('have.class', 'tw-left-[-6px]').and('have.class', 'before:tw-bg-red-60');
+    });
+
+    it('should render the arrow for Left Tooltip placement', () => {
+        initTooltip({ content: TOOLTIP_TEXT, withArrow: true, position: TooltipPosition.Left });
+
+        getTooltipArrow().should('have.class', 'tw-right-[-6px]');
+    });
+
+    it('should render the arrow for Left Tooltip placement with Bright Header and alignment Start', () => {
+        initTooltip({
+            content: TOOLTIP_TEXT,
+            withArrow: true,
+            position: TooltipPosition.Left,
+            alignment: TooltipAlignment.Start,
+            brightHeader: BrightHeaderStyle.Information,
+        });
+
+        getTooltipArrow().should('have.class', 'tw-right-[-6px]').and('have.class', 'before:tw-bg-violet-60');
+    });
+
+    it('should render the arrow for Bottom Tooltip placement', () => {
+        initTooltip({ content: TOOLTIP_TEXT, withArrow: true, position: TooltipPosition.Bottom });
+
+        getTooltipArrow().should('have.class', 'tw-top-[-6px]');
+    });
+
+    it('should render the arrow for Bottom Tooltip placement with Bright Header', () => {
+        initTooltip({
+            content: TOOLTIP_TEXT,
+            withArrow: true,
+            position: TooltipPosition.Bottom,
+            brightHeader: BrightHeaderStyle.Note,
+        });
+
+        getTooltipArrow().should('have.class', 'tw-top-[-6px]').and('have.class', 'before:tw-bg-yellow-60');
+    });
+
+    it('should render the arrow when no Tooltip placement is provided (Bottom by default)', () => {
+        initTooltip({ content: TOOLTIP_TEXT, withArrow: true });
+
+        getTooltipArrow().should('have.class', 'tw-top-[-6px]');
     });
 });
