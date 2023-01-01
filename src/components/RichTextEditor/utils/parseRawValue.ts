@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_PARAGRAPH, Value, deserializeHtml, normalizeEditor } from '@udecode/plate';
+import { PluginComposer } from '../Plugins';
 import { InitPlateEditor } from './InitPlateEditor';
 
 const isHtmlString = (string: string): boolean => {
@@ -15,10 +16,11 @@ export const EMPTY_RICH_TEXT_VALUE: Value = [{ type: ELEMENT_PARAGRAPH, children
 type ParseRawValueOptions = {
     editorId?: string;
     raw?: string;
+    plugins?: PluginComposer;
 };
 
-export const parseRawValue = ({ editorId = 'parseRawValue', raw }: ParseRawValueOptions): Value => {
-    const editor = InitPlateEditor.init(`${editorId}_parseRawValue`).getInstance();
+export const parseRawValue = ({ editorId = 'parseRawValue', raw, plugins }: ParseRawValueOptions): Value => {
+    const editor = InitPlateEditor.init(`${editorId}_parseRawValue`, plugins).getInstance();
     let parsedValue = EMPTY_RICH_TEXT_VALUE;
 
     if (!raw) {

@@ -16,14 +16,10 @@ end tell\`
 This is [link to frontify.com](https://www.frontify.com/).
 I am normal Paragraph
 > Presenting the Quote
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna @[user: 10] aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
 Presenting the Paragraph
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+Lorem ipsum dolor sit amet, consetetur @[group: 2] sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
 
 - list
 
@@ -144,7 +140,16 @@ export const mixedTree = [
                 type: 'p',
                 children: [
                     {
-                        text: 'Presenting the Quote\nLorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod\ntempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At\nvero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,\nno sea takimata sanctus est Lorem ipsum dolor sit amet.',
+                        text: 'Presenting the Quote\nLorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna ',
+                    },
+                    {
+                        type: 'mention',
+                        category: 'user',
+                        key: '10',
+                        children: [{ text: '' }],
+                    },
+                    {
+                        text: ' aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
                     },
                 ],
             },
@@ -154,7 +159,16 @@ export const mixedTree = [
         type: 'p',
         children: [
             {
-                text: 'Presenting the Paragraph\nLorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod\ntempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.',
+                text: 'Presenting the Paragraph\nLorem ipsum dolor sit amet, consetetur ',
+            },
+            {
+                type: 'mention',
+                category: 'group',
+                key: '2',
+                children: [{ text: '' }],
+            },
+            {
+                text: ' sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.',
             },
         ],
     },
