@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Data, TComboboxItemBase } from '@udecode/plate';
+import { TComboboxItemWithData } from '@udecode/plate';
 import { PluginProps } from '../Plugin';
 
 export enum MentionableCategory {
@@ -9,11 +9,14 @@ export enum MentionableCategory {
     USER = 'user',
 }
 
-export interface MentionComboboxItem<T extends Data = MentionableCategory> extends TComboboxItemBase {
-    category: T;
-}
+export type MentionItemData = {
+    category: MentionableCategory;
+};
 
-export type MentionableItems = MentionComboboxItem[];
+export type MentionableItem = TComboboxItemWithData<MentionItemData>;
+
+export type MentionableItems = MentionableItem[];
+
 export type MentionPluginProps = PluginProps & {
     mentionableItems: MentionableItems;
 };

@@ -19,8 +19,15 @@ import {
     value,
 } from './helpers/exampleValues';
 import {
+    AlignCenterPlugin,
+    AlignJustifyPlugin,
+    AlignLeftPlugin,
+    AlignRightPlugin,
     BoldPlugin,
+    ButtonPlugin,
     CheckboxListPlugin,
+    CodePlugin,
+    EmojiPlugin,
     InitPlugin,
     ItalicPlugin,
     LinkPlugin,
@@ -28,6 +35,8 @@ import {
     OrderedListPlugin,
     ParagraphPlugin,
     PluginComposer,
+    ResetFormattingPlugin,
+    StrikethroughPlugin,
     TextStylePlugin,
     UnderlinePlugin,
     UnorderedListPlugin,
@@ -113,6 +122,33 @@ export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
 };
 
 export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () => {
+    const allPlugins = new PluginComposer();
+    allPlugins
+        .setPlugin([new InitPlugin(), new ParagraphPlugin(), new TextStylePlugin()])
+        .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
+        .setPlugin(
+            [
+                new BoldPlugin(),
+                new ItalicPlugin(),
+                new UnderlinePlugin(),
+                new StrikethroughPlugin(),
+                new LinkPlugin(),
+                new ButtonPlugin(),
+                new CodePlugin(),
+            ],
+            [
+                new AlignLeftPlugin(),
+                new AlignCenterPlugin(),
+                new AlignRightPlugin(),
+                new AlignJustifyPlugin(),
+                new UnorderedListPlugin(),
+                new CheckboxListPlugin(),
+                new OrderedListPlugin(),
+                new EmojiPlugin(),
+                new ResetFormattingPlugin(),
+            ],
+        );
+
     const toSlateTransform = Transform.use(new MarkdownToSlate());
     const resultSlate = toSlateTransform.process(markdownText);
 
@@ -122,16 +158,16 @@ export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () =
     return (
         <>
             Markdown Text:
-            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6 tw-h-[400px] tw-overflow-auto">
                 <pre>{resultMarkdown}</pre>
             </div>
             Slate JSON Object:
-            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6 tw-h-[400px] tw-overflow-auto">
                 <pre id="json">{JSON.stringify(resultSlate, undefined, 2)}</pre>
             </div>
             Rich Text Editor:
             <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                <RichTextEditorComponent value={JSON.stringify(resultSlate)} />
+                <RichTextEditorComponent value={JSON.stringify(resultSlate)} plugins={allPlugins} />
             </div>
         </>
     );
