@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconExclamationMarkCircle, IconIcon, IconSize } from '@foundation/Icon';
+import { mount } from 'cypress/react';
 import React from 'react';
 import { BrightHeaderStyle, brightHeaderBackgroundColors } from './BrightHeader';
 import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
@@ -36,6 +37,16 @@ export const TooltipComponent = (args: TooltipTestProps) => {
         </div>
     );
 };
+export const TooltipComponentWithoutTrigger = (args: TooltipTestProps) => {
+    return (
+        <div
+            className={`tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-${args.testFlip ? 'end' : 'center'}`}
+            data-test-id="tooltip-wrapper"
+        >
+            <Tooltip {...args} />
+        </div>
+    );
+};
 
 const initTooltip = (args: TooltipTestProps, triggerOpen = true) => {
     cy.mount(<TooltipComponent {...args} />);
@@ -49,7 +60,7 @@ const getByTooltipPlacement = (placement: string) => cy.get(`[data-popper-placem
 const getTooltipArrow = () => cy.get('[data-test-id=popover-arrow]');
 
 describe('Tooltip Component', () => {
-    it('should render a tooltip', () => {
+    it('should render a tooltip with content', () => {
         initTooltip({ content: TOOLTIP_TEXT });
         cy.get(TOOLTIP_ID).should('contain', TOOLTIP_TEXT);
         cy.get(BRIGHT_HEADER_ID).should('not.exist');
@@ -57,6 +68,23 @@ describe('Tooltip Component', () => {
 
     it('should render a tooltip open by default via component prop', () => {
         initTooltip({ content: TOOLTIP_TEXT, open: true }, false);
+        cy.get(TOOLTIP_ID).should('contain', TOOLTIP_TEXT);
+    });
+
+    it('should render the triggerElement properly', () => {
+        initTooltip({ content: TOOLTIP_TEXT });
+        cy.get('@Trigger').should('exist');
+    });
+
+    it('should render an empty div if no triggerElement', () => {
+        mount(<TooltipComponentWithoutTrigger content={TOOLTIP_TEXT} />);
+        cy.get('[data-test-id=tooltip-trigger]').should('not.exist');
+        cy.get('[data-test-id=tooltip-wrapper] div').eq(0).should('have.text', '');
+    });
+
+    it('should render only the content if no triggerElement and tootlipt is open', () => {
+        mount(<TooltipComponentWithoutTrigger content={TOOLTIP_TEXT} open={true} />);
+        cy.get('[data-test-id=tooltip-trigger]').should('not.exist');
         cy.get(TOOLTIP_ID).should('contain', TOOLTIP_TEXT);
     });
 
