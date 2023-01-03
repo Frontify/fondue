@@ -51,6 +51,7 @@ export type ModalFooterProps = {
 
 export enum ModalWidth {
     Default = 'Default',
+    Small = 'Small',
     Large = 'Large',
 }
 

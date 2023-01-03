@@ -1,13 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { TNode } from '@udecode/plate';
 import { debounce } from '@utilities/debounce';
-import { ON_SAVE_DELAY_IN_MS } from '../utils';
+import { ON_SAVE_DELAY_IN_MS, parseRawValue } from '../utils';
+import { PluginComposer } from '../Plugins';
 
-type useEditorStateProps = ((value: string) => void) | undefined;
+type useEditorStateProps = {
+    editorId: string;
+    onTextChange: ((value: string) => void) | undefined;
+    plugins?: PluginComposer;
+    initialValue?: string;
+};
 
-export const useEditorState = (onTextChange: useEditorStateProps) => {
+export const useEditorState = ({ editorId, onTextChange, initialValue, plugins }: useEditorStateProps) => {
     const localValue = useRef<TNode[] | null>(null);
 
     const debouncedOnChange = debounce((value: TNode[]) => {
@@ -22,5 +28,11 @@ export const useEditorState = (onTextChange: useEditorStateProps) => {
         [debouncedOnChange, localValue],
     );
 
-    return { localValue, onChange };
+    const memoizedValue = useMemo(
+        () => parseRawValue({ editorId, raw: initialValue, plugins }),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [editorId],
+    );
+
+    return { localValue, onChange, memoizedValue };
 };

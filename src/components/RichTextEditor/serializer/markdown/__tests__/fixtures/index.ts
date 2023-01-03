@@ -11,3 +11,4 @@ export * from './link';
 export * from './image';
 export * from './blockQuote';
 export * from './mixed';
+export * from './mentions';

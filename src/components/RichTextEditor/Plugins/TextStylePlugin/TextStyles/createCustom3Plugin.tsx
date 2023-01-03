@@ -6,13 +6,19 @@ import { merge } from '@utilities/merge';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { TextStyles } from './textStyles';
 import { alignmentClassnames } from './alignment';
+import { breakAfterClassNames } from '../../../utils/constants';
 
 export const Custom3MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
     const align = element.align as string;
+    const hasColumn = element.breakAfterColumn as boolean;
 
     return (
-        <p {...attributes} className={merge([align && alignmentClassnames[align]])} style={designTokens.custom3}>
+        <p
+            {...attributes}
+            className={merge([align && alignmentClassnames[align], hasColumn && breakAfterClassNames])}
+            style={designTokens.custom3}
+        >
             {children}
         </p>
     );
