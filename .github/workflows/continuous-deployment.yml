@@ -115,7 +115,7 @@ jobs:
 
         permissions:
             packages: write
-            contents: read
+            contents: write
             pull-requests: write
 
         steps:
