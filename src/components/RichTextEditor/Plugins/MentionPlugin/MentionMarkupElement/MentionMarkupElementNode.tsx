@@ -1,15 +1,15 @@
+/* eslint-disable react/display-name */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { useFocused, useSelected } from 'slate-react';
 import { MentionElementProps, Value } from '@udecode/plate';
-import { MentionableCategory } from '../types';
+import { MentionableCategory, MentionableItem, MentionableItems } from '../types';
 
-export const MentionMarkupElementNode = (props: MentionElementProps<Value>) => {
-    const { attributes, children, element, nodeProps, prefix, renderLabel } = props;
+const renderLabel = (mentionable: MentionableItems, key: string) =>
+    mentionable.find((mention: MentionableItem) => mention.key === key)?.text ?? key;
 
-    const selected = useSelected();
-    const focused = useFocused();
+export const MentionMarkupElementNode = (mentionable: MentionableItems) => (props: MentionElementProps<Value>) => {
+    const { attributes, children, element, nodeProps, prefix } = props;
 
     const backgroundColor: Record<MentionableCategory, string> = {
         [MentionableCategory.GROUP]: '#00FF00',
@@ -33,12 +33,11 @@ export const MentionMarkupElementNode = (props: MentionElementProps<Value>) => {
                 borderRadius: '4px',
                 backgroundColor: backgroundColor[element.category as MentionableCategory],
                 fontSize: '0.9em',
-                boxShadow: selected && focused ? '0 0 0 2px #B4D5FF' : 'none',
             }}
             {...nodeProps}
         >
             {prefix}
-            {renderLabel ? renderLabel(element) : element.value}
+            {renderLabel(mentionable, element.key as string)}
             {children}
         </span>
     );
