@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC } from 'react';
+import React, { FC, KeyboardEvent } from 'react';
 import { Plate } from '@udecode/plate';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
@@ -10,7 +10,7 @@ import { DesignTokens, PaddingSizes } from './types';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { Position } from './EditorPositioningWrapper';
 import { GeneratePlugins, PluginComposer, defaultPlugins } from './Plugins';
-import { forceTabOutOfActiveElement } from './helpers';
+import { forceToBlurActiveElement } from './helpers';
 
 const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
     position: 'relative',
@@ -28,6 +28,7 @@ export type RichTextEditorProps = {
     padding?: PaddingSizes;
     position?: Position;
     plugins?: PluginComposer;
+    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
 };
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
@@ -41,6 +42,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     padding = PaddingSizes.None,
     position = Position.FLOATING,
     plugins = defaultPlugins,
+    onKeyDown,
 }) => {
     const editorId = useMemoizedId(id);
     const { localValue, onChange, memoizedValue } = useEditorState({ editorId, initialValue, onTextChange, plugins });
@@ -60,12 +62,14 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
         className: padding,
-        onKeyDown: (event) => {
-            if (event.code === 'Tab') {
-                // Forcing a blur event because of accessibility
-                forceTabOutOfActiveElement();
-            }
-        },
+        onKeyDown:
+            onKeyDown ??
+            ((event) => {
+                if (event.code === 'Tab') {
+                    // Forcing a blur event because of accessibility
+                    forceToBlurActiveElement();
+                }
+            }),
     };
 
     const config = GeneratePlugins(editorId, plugins);
