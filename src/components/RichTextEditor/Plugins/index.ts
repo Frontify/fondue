@@ -41,7 +41,7 @@ defaultPlugins
             new CheckboxListPlugin(),
             new OrderedListPlugin(),
             new ResetFormattingPlugin(),
-            new EmojiPlugin({ noButton: true }),
+            new EmojiPlugin(),
         ],
     );
 
