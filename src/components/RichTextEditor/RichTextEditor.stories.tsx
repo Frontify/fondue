@@ -394,16 +394,17 @@ WithToolbarTopAndSmallPadding.args = {
     ]),
 };
 
-const mentionPlugins = new PluginComposer();
-mentionPlugins
+const mentionAndEmojisPlugins = new PluginComposer();
+mentionAndEmojisPlugins
     .setPlugin([new InitPlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
-    .setPlugin([new BoldPlugin(), new LinkPlugin()]);
-export const WithMentions = RichTextEditorTemplate.bind({});
-WithMentions.args = {
+    .setPlugin([new BoldPlugin(), new ItalicPlugin()])
+    .setPlugin([new EmojiPlugin(), new LinkPlugin()]);
+export const WithMentionsAndEmojis = RichTextEditorTemplate.bind({});
+WithMentionsAndEmojis.args = {
     value: JSON.stringify(mentionValue),
-    plugins: mentionPlugins,
+    plugins: mentionAndEmojisPlugins,
 };
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
