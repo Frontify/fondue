@@ -9,6 +9,7 @@ import {
     EmojiPickerSearchBar,
     UseEmojiPickerType,
 } from '@udecode/plate';
+import { EmojiPickerSearchBarStyle, EmojiPickerSearchAndClearStyle } from './EmojiPickerStyles';
 
 export const EmojiPicker = ({
     i18n,
@@ -38,8 +39,18 @@ export const EmojiPicker = ({
                 focusedCategory={focusedCategory}
                 onClick={handleCategoryClick}
             />
-            <EmojiPickerSearchBar i18n={i18n} setSearch={setSearch} searchValue={searchValue}>
-                <EmojiPickerSearchAndClear i18n={i18n} clearSearch={clearSearch} searchValue={searchValue} />
+            <EmojiPickerSearchBar
+                i18n={i18n}
+                setSearch={setSearch}
+                searchValue={searchValue}
+                styles={EmojiPickerSearchBarStyle}
+            >
+                <EmojiPickerSearchAndClear
+                    i18n={i18n}
+                    clearSearch={clearSearch}
+                    searchValue={searchValue}
+                    styles={EmojiPickerSearchAndClearStyle}
+                />
             </EmojiPickerSearchBar>
             <EmojiPickerContent
                 i18n={i18n}

@@ -3,16 +3,13 @@
 export const EmojiPickerSearchBarStyle = {
     root: [
         `
-            line-height: 20px
+            line-height: 16px
         `,
     ],
-    loupeIcon: [
-        `
-            width: 20px;
-            height: 20px;
-        `,
-    ],
-    button: [
+};
+
+export const EmojiPickerSearchAndClearStyle = {
+    clearIcon: [
         `
             padding: 6px;
         `,
