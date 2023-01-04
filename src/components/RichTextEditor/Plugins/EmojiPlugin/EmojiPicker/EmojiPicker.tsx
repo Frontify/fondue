@@ -9,7 +9,7 @@ import {
     EmojiPickerSearchBar,
     UseEmojiPickerType,
 } from '@udecode/plate';
-import { EmojiPickerSearchBarStyle, EmojiPickerSearchAndClearStyle } from './EmojiPickerStyles';
+import { EmojiPickerSearchAndClearStyle, EmojiPickerSearchBarStyle } from './EmojiPickerStyles';
 
 export const EmojiPicker = ({
     i18n,
