@@ -68,7 +68,7 @@ defaultPluginsWithColumns.setPlugin(
         new OrderedListPlugin(),
         new BreakAfterPlugin(),
         new ResetFormattingPlugin(),
-        new EmojiPlugin({ noButton: true }),
+        new EmojiPlugin(),
     ],
 );
 export * from './GeneratePlugins';
