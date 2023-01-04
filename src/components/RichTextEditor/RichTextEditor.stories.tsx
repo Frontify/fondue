@@ -44,10 +44,7 @@ import {
 } from './Plugins';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
-import { Transform } from './serializer';
-import { MarkdownToSlate } from './serializer/markdown';
-import { SlateToMarkdown } from './serializer/markdown/SlateToMarkdown';
-import { serializeNodesToHtml } from './serializer/serializeToHtml';
+import { MarkdownToSlate, SlateToMarkdown, Transform, serializeNodesToHtml } from './serializer';
 import { PaddingSizes } from './types';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
