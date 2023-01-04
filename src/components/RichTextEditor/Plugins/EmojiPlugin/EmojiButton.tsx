@@ -5,6 +5,7 @@ import { EmojiToolbarDropdown, KEY_EMOJI } from '@udecode/plate';
 import { IconFaceHappy, IconSize } from '@foundation/Icon';
 import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../helper';
 import { PluginButtonProps } from '../types';
+import { EmojiPicker } from './EmojiPicker';
 
 export const EmojiButton = ({ id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
@@ -13,6 +14,7 @@ export const EmojiButton = ({ id }: PluginButtonProps) => (
             icon={<IconStylingWrapper icon={<IconFaceHappy size={IconSize.Size16} />} />}
             styles={buttonStyles}
             classNames={buttonClassNames}
+            EmojiPickerComponent={EmojiPicker}
         />
     </ButtonWrapper>
 );
