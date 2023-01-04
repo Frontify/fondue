@@ -6,4 +6,4 @@ export { EMPTY_RICH_TEXT_VALUE } from './utils/parseRawValue';
 export * from './RichTextEditor';
 export * from './utils';
 export * from './Plugins';
-export * from './serializer/serializeToHtml';
+export * from './serializer';
