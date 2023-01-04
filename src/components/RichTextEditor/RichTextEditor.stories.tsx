@@ -396,10 +396,10 @@ WithToolbarTopAndSmallPadding.args = {
 
 const mentionAndEmojisPlugins = new PluginComposer();
 mentionAndEmojisPlugins
-    .setPlugin([new InitPlugin()])
+    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
-    .setPlugin([new BoldPlugin(), new ItalicPlugin()])
+    .setPlugin([new BoldPlugin(), new ItalicPlugin(), new UnderlinePlugin(), new StrikethroughPlugin()])
     .setPlugin([new EmojiPlugin(), new LinkPlugin()]);
 export const WithMentionsAndEmojis = RichTextEditorTemplate.bind({});
 WithMentionsAndEmojis.args = {
