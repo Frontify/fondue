@@ -62,14 +62,14 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
         className: padding,
-        onKeyDown:
-            onKeyDown ??
-            ((event) => {
-                if (event.code === 'Tab') {
-                    // Forcing a blur event because of accessibility
-                    forceToBlurActiveElement();
-                }
-            }),
+        onKeyDown: (event) => {
+            if (event.code === 'Tab') {
+                // Forcing a blur event because of accessibility
+                forceToBlurActiveElement();
+            }
+
+            onKeyDown && onKeyDown(event);
+        },
     };
 
     const config = GeneratePlugins(editorId, plugins);
