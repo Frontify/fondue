@@ -2,6 +2,7 @@
 
 import RejectIcon from '@foundation/Icon/Generated/IconCross';
 import { IconSize } from '@foundation/Icon/IconSize';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import React, { FC, ReactNode, cloneElement } from 'react';
 import { BadgeStatusIcon } from './BadgeStatusIcon';
@@ -73,7 +74,7 @@ export const Badge: FC<BadgeProps> = ({
                 <button
                     type="button"
                     data-test-id="badge-dismiss"
-                    className="tw--mx-0.5"
+                    className={merge(['tw--mx-0.5 tw-rounded', FOCUS_VISIBLE_STYLE])}
                     onClick={(event) => {
                         event.stopPropagation();
                         onDismiss();
