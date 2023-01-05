@@ -44,10 +44,7 @@ import {
 } from './Plugins';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
-import { Transform } from './serializer';
-import { MarkdownToSlate } from './serializer/markdown';
-import { SlateToMarkdown } from './serializer/markdown/SlateToMarkdown';
-import { serializeNodesToHtml } from './serializer/serializeToHtml';
+import { MarkdownToSlate, SlateToMarkdown, Transform, serializeNodesToHtml } from './serializer';
 import { PaddingSizes } from './types';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
@@ -396,10 +393,10 @@ WithToolbarTopAndSmallPadding.args = {
 
 const mentionAndEmojisPlugins = new PluginComposer();
 mentionAndEmojisPlugins
-    .setPlugin([new InitPlugin()])
+    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
-    .setPlugin([new BoldPlugin(), new ItalicPlugin()])
+    .setPlugin([new BoldPlugin(), new ItalicPlugin(), new UnderlinePlugin(), new StrikethroughPlugin()])
     .setPlugin([new EmojiPlugin(), new LinkPlugin()]);
 export const WithMentionsAndEmojis = RichTextEditorTemplate.bind({});
 WithMentionsAndEmojis.args = {
