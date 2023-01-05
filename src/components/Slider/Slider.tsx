@@ -86,7 +86,7 @@ const SliderItem = (props: SliderItemProps) => {
                 onClick={handleMockLabelClick}
                 data-test-id={getSliderItemTestId()}
                 className={merge([
-                    'tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
+                    'tw-relative tw-w-full tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
                     isActive && !disabled ? 'tw-text-black' : 'tw-text-black-80',
                     !disabled ? 'hover:tw-text-black hover:tw-cursor-pointer' : '',
                 ])}
