@@ -2,6 +2,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
+import { IconPeople, IconSize } from '@foundation/Icon';
 import { MentionableCategory } from '../types';
 import { MarkupElementNodeComponentType, MarkupElementNodeType, MarkupElementProps } from './types';
 
@@ -15,7 +16,7 @@ const MarkupElementNode = ({ attributes, element, nodeProps, children }: MarkupE
         data-cy={`mention-${element.value?.replaceAll(' ', '-')}`}
         style={{
             lineHeight: '10px',
-            padding: '1px 0px',
+            padding: '1px',
             margin: '0 1px',
             fontWeight: 'bold',
             verticalAlign: 'baseline',
@@ -31,7 +32,18 @@ const MarkupElementNode = ({ attributes, element, nodeProps, children }: MarkupE
 );
 
 const MarkupElementNodeGroup: MarkupElementNodeType = ({ children, ...props }) => (
-    <MarkupElementNode {...props}>G:{children}</MarkupElementNode>
+    <MarkupElementNode {...props}>
+        <span
+            style={{
+                paddingRight: '3px',
+                display: 'inline-block',
+                margin: '-1px 0',
+            }}
+        >
+            <IconPeople size={IconSize.Size12} />
+        </span>
+        {children}
+    </MarkupElementNode>
 );
 
 const MarkupElementNodeAll: MarkupElementNodeType = ({ children, ...props }) => (
@@ -39,7 +51,7 @@ const MarkupElementNodeAll: MarkupElementNodeType = ({ children, ...props }) => 
 );
 
 const MarkupElementNodeUser: MarkupElementNodeType = ({ children, ...props }) => (
-    <MarkupElementNode {...props}>@{children}</MarkupElementNode>
+    <MarkupElementNode {...props}>{children}</MarkupElementNode>
 );
 
 export const MarkupElementNodeComponent: MarkupElementNodeComponentType = ({ category, children, ...props }) => {
