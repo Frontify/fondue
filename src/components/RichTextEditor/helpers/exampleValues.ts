@@ -406,7 +406,7 @@ export const mentionValue = [
 ];
 
 export const mentionable: MentionableItems = [
-    { data: { category: MentionableCategory.ALL }, key: '0', text: 'Aayla Secura' },
+    { data: { category: MentionableCategory.ALL }, key: '0', text: 'All' },
     { data: { category: MentionableCategory.GROUP }, key: '1', text: 'Adi Gallia' },
     { data: { category: MentionableCategory.GROUP }, key: '2', text: 'Admiral Dodd Rancit' },
     { data: { category: MentionableCategory.USER }, key: '3', text: 'Admiral Firmus Piett' },
