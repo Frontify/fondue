@@ -27,7 +27,7 @@ export type TextOrNumberItem = {
 export type SliderProps = {
     id?: string;
     items: (TextOrNumberItem | IconItem)[];
-    activeItemId: string;
+    activeItemId?: string;
     onChange: (id: string) => void;
     ariaLabel?: string;
     disabled?: boolean;
@@ -143,6 +143,7 @@ export const Slider: FC<SliderProps> = ({
                 style={{
                     width: `${100 / items.length}%`,
                 }}
+                hidden={!activeItemId}
                 className={merge([
                     'tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
                     disabled
