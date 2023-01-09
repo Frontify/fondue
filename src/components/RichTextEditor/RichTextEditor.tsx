@@ -29,6 +29,10 @@ export type RichTextEditorProps = {
     position?: Position;
     plugins?: PluginComposer;
     onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
+    /**
+     * @type {boolean} border - Optional border if position equals Position.Floating.
+     * If position is equal to Position.Top or Position.Bottom, a border will be always be shown.
+     */
     border?: boolean;
 };
 

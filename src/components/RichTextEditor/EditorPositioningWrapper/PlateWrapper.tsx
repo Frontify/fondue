@@ -10,7 +10,7 @@ export const PlateWrapper = forwardRef<HTMLDivElement, WrapperProps>(({ children
     const { position, border } = useRichTextEditorContext();
 
     const toolbarPositioningClasses = EditorPositioningWrapper[position].PlateWrapperClassNames;
-    const borderClasses = (border || position !== Position.FLOATING) && 'tw-border tw-border-line';
+    const borderClasses = (border || position !== Position.FLOATING) && 'tw-border tw-border-line tw-rounded';
 
     return (
         <div data-test-id="rich-text-editor" className={merge([toolbarPositioningClasses, borderClasses])} ref={ref}>

@@ -58,6 +58,7 @@ export default {
         clear: false,
         position: Position.FLOATING,
         padding: PaddingSizes.None,
+        border: false,
     },
     argTypes: {
         onTextChange: { action: 'onTextChange' },
