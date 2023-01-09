@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createComboboxPlugin } from '@udecode/plate';
+import { MentionPlugin as MentionPluginPlate, createComboboxPlugin, createMentionPlugin } from '@udecode/plate';
 import { MENTION_PLUGIN } from './id';
 import { MentionMarkupElement } from './MentionMarkupElement';
 import { Plugin } from '../Plugin';
 import { MentionInline } from './MentionInline';
-import { createMentionPlugin } from './createMentionPlugin';
-import { MentionPluginProps } from './types';
+import { MentionItemData, MentionPluginProps } from './types';
+import { mentionPlugin } from './config';
 
 export class MentionPlugin extends Plugin<MentionPluginProps> {
     constructor(props: MentionPluginProps) {
@@ -21,7 +21,7 @@ export class MentionPlugin extends Plugin<MentionPluginProps> {
     }
 
     plugins() {
-        return [createComboboxPlugin(), createMentionPlugin()];
+        return [createComboboxPlugin(), createMentionPlugin<MentionPluginPlate<MentionItemData>>(mentionPlugin)];
     }
 }
 
