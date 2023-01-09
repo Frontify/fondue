@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, KeyboardEvent } from 'react';
+import React, { KeyboardEvent } from 'react';
 import { Plate } from '@udecode/plate';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
@@ -29,9 +29,10 @@ export type RichTextEditorProps = {
     position?: Position;
     plugins?: PluginComposer;
     onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
+    border?: boolean;
 };
 
-export const RichTextEditor: FC<RichTextEditorProps> = ({
+export const RichTextEditor = ({
     id,
     value: initialValue,
     placeholder = '',
@@ -43,7 +44,8 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     position = Position.FLOATING,
     plugins = defaultPlugins,
     onKeyDown,
-}) => {
+    border = false,
+}: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
     const { localValue, onChange, memoizedValue } = useEditorState({ editorId, initialValue, onTextChange, plugins });
 
@@ -75,7 +77,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     const config = GeneratePlugins(editorId, plugins);
 
     return (
-        <RichTextEditorProvider value={{ designTokens, position }}>
+        <RichTextEditorProvider value={{ designTokens, position, border }}>
             <Plate
                 id={editorId}
                 initialValue={memoizedValue}

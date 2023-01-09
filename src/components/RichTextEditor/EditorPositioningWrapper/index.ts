@@ -10,7 +10,7 @@ import {
 export { Position } from './types';
 export const EditorPositioningWrapper: EditorPositioningWrapperProps = {
     [Position.BOTTOM]: {
-        PlateWrapperClassNames: 'tw-relative tw-rounded tw-border tw-border-line tw-w-full tw-flex tw-flex-col',
+        PlateWrapperClassNames: 'tw-relative tw-rounded tw-w-full tw-flex tw-flex-col',
         ToolbarWrapper: ToolbarWrapperPositioningBottom,
     },
     [Position.FLOATING]: {
@@ -18,7 +18,7 @@ export const EditorPositioningWrapper: EditorPositioningWrapperProps = {
         ToolbarWrapper: ToolbarWrapperPositioningFloating,
     },
     [Position.TOP]: {
-        PlateWrapperClassNames: 'tw-relative tw-rounded tw-border tw-border-line tw-w-full tw-flex tw-flex-col-reverse',
+        PlateWrapperClassNames: 'tw-relative tw-rounded tw-w-full tw-flex tw-flex-col-reverse',
         ToolbarWrapper: ToolbarWrapperPositioningTop,
     },
 };
