@@ -5,8 +5,22 @@ import { MentionableCategory, MentionableItems } from '@components/RichTextEdito
 export const mentionable: MentionableItems = [
     { data: { category: MentionableCategory.ALL }, key: '0', text: 'All' },
     { data: { category: MentionableCategory.GROUP }, key: '1', text: 'Adi Gallia' },
-    { data: { category: MentionableCategory.GROUP }, key: '2', text: 'Admiral Dodd Rancit' },
-    { data: { category: MentionableCategory.USER }, key: '3', text: 'Admiral Firmus Piett' },
+    {
+        data: {
+            category: MentionableCategory.GROUP,
+            image: 'https://secure.gravatar.com/avatar/306bfbd0fba40f51c12bb08fa2e8bddb?d=mm&s=22',
+        },
+        key: '2',
+        text: 'Admiral Dodd Rancit',
+    },
+    {
+        data: {
+            category: MentionableCategory.USER,
+            image: 'https://secure.gravatar.com/avatar/306bfbd0fba40f51c12bb08fa2e8bddb?d=mm&s=22',
+        },
+        key: '3',
+        text: 'Admiral Firmus Piett',
+    },
     { data: { category: MentionableCategory.USER }, key: '4', text: 'Admiral Gial Ackbar' },
     { data: { category: MentionableCategory.USER }, key: '5', text: 'Admiral Ozzel' },
     { data: { category: MentionableCategory.USER }, key: '6', text: 'Admiral Raddus' },

@@ -2,7 +2,32 @@
 
 import React from 'react';
 import { ComboboxItemProps } from '@udecode/plate';
-import { MentionItemData } from '../types';
+import { MentionableCategory, MentionItemData } from '../types';
+import { IconPerson, IconPaperclip, IconPeople, IconSize } from '@foundation/Icon';
+
+type RenderAvatarProps = {
+    image: string | undefined;
+    category: MentionableCategory;
+    text: string;
+    key: string;
+};
+
+const RenderImage = ({ image, category, text, key }: RenderAvatarProps) => {
+    let avatar;
+    switch (category) {
+        case MentionableCategory.GROUP:
+            avatar = <IconPeople size={IconSize.Size12} />;
+            break;
+        case MentionableCategory.ALL:
+            avatar = <IconPaperclip size={IconSize.Size12} />;
+            break;
+        default:
+            avatar = <IconPerson size={IconSize.Size12} />;
+            break;
+    }
+
+    return image ? <img src={image} alt={`${key}-${category}-${text}`} /> : avatar;
+};
 
 export const MentionComboboxItem = ({ item }: ComboboxItemProps<MentionItemData>): JSX.Element => {
     const {
@@ -12,15 +37,11 @@ export const MentionComboboxItem = ({ item }: ComboboxItemProps<MentionItemData>
     } = item;
 
     return (
-        <div className="tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis">
-            {image && (
-                <span>
-                    <img src={image} alt={`${category}-${text}`} />
-                </span>
-            )}
-            <span>
-                {key}={text}
+        <div className="tw-flex tw-items-center tw-w-full tw-min-h-[inherit]">
+            <span className="tw-flex tw-items-center tw-justify-center tw-rounded-full tw-mr-2.5 tw-bg-base-alt tw-border tw-border-line-weak tw-w-[22px] tw-h-[22px] tw-shrink-0 group-hover:tw-border-base tw-overflow-hidden">
+                <RenderImage image={image} category={category} text={text} key={key} />
             </span>
+            <span className="tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis">{text}</span>
         </div>
     );
 };
