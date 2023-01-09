@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { ComboboxItemProps } from '@udecode/plate';
-import { MentionableCategory, MentionItemData } from '../types';
-import { IconPerson, IconPaperclip, IconPeople, IconSize } from '@foundation/Icon';
+import { MentionItemData, MentionableCategory } from '../types';
+import { IconPaperclip, IconPeople, IconPerson, IconSize } from '@foundation/Icon';
 
 type RenderAvatarProps = {
     image: string | undefined;
