@@ -20,8 +20,8 @@ export const EmojiPicker = ({
     hasFound,
     searchResult,
     emoji,
-    setEmoji,
-    selectEmoji,
+    onSelectEmoji,
+    onMouseOver,
     emojiLibrary,
     icons,
     handleCategoryClick,
@@ -54,13 +54,13 @@ export const EmojiPicker = ({
             </EmojiPickerSearchBar>
             <EmojiPickerContent
                 i18n={i18n}
-                setEmoji={setEmoji}
                 emojiLibrary={emojiLibrary}
                 isSearching={isSearching}
                 searchResult={searchResult}
                 visibleCategories={visibleCategories}
-                selectEmoji={selectEmoji}
                 settings={settings}
+                onSelectEmoji={onSelectEmoji}
+                onMouseOver={onMouseOver}
                 refs={refs}
             />
             <EmojiPickerPreview i18n={i18n} emoji={emoji} hasFound={hasFound} isSearching={isSearching} />
