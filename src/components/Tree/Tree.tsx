@@ -69,8 +69,6 @@ export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: Tre
         enhancedChildren = draggableEnhancedChildren;
     }
 
-    console.log('🚀 ~ Tree ~ enhancedChildren', enhancedChildren);
-
     return (
         <TreeContext.Provider value={memoizedTreeContextValue}>
             <ul

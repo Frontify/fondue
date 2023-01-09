@@ -25,7 +25,6 @@ export type DropZoneProps<T> = {
 };
 
 export const DropZone = <T extends object>({ data, onDrop, children, treeId }: DropZoneProps<T>) => {
-    console.log('🚀 ~ DropZone ~ treeId', treeId);
     const [{ isOver, canDrop }, drop] = useDrop({
         accept: treeId,
         drop: (item: OrderableListItem<T>) => {
