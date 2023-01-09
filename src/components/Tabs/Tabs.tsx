@@ -192,7 +192,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     ref={tabNavRef}
                     role="tablist"
                     className={merge([
-                        'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start tw-pr-8 tw-py-2 tw--my-2',
+                        'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start tw-pr-8',
                         paddingMap[paddingX ?? TabsPaddingX.Small],
                         size === TabSize.Small ? 'tw-gap-xxs' : 'tw-gap-xs ',
                     ])}
