@@ -7,12 +7,12 @@ import { DropZonePosition } from '@utilities/dnd';
 
 import { TreeItemProps } from '../types';
 
-export const enhanceChildren = (
+export const useDraggableEnhancedChildren = (
     id: string,
     onDrop: OnDropCallback<{ id: string; sort: Nullable<number> }>,
     children?: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[],
 ) => {
-    return React.Children.map(children, (child, index) => {
+    const draggableEnhancedChildren = React.Children.map(children, (child, index) => {
         if (!child) {
             return <></>;
         }
@@ -34,4 +34,6 @@ export const enhanceChildren = (
             </>,
         );
     });
+
+    return { draggableEnhancedChildren };
 };
