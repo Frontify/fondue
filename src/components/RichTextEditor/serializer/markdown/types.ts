@@ -22,6 +22,7 @@ export type InputNodeTypes = {
     inlineCodeMark: string;
     thematicBreak: string;
     image: string;
+    mention: string;
 };
 
 export type MarkdownAstNodeType =
@@ -39,7 +40,8 @@ export type MarkdownAstNodeType =
     | 'delete'
     | 'inlineCode'
     | 'thematicBreak'
-    | 'text';
+    | 'text'
+    | 'mention';
 
 export const defaultNodeTypes: InputNodeTypes = {
     paragraph: 'paragraph',
@@ -63,6 +65,7 @@ export const defaultNodeTypes: InputNodeTypes = {
     inlineCodeMark: 'code',
     thematicBreak: 'thematic_break',
     image: 'image',
+    mention: 'mention',
 };
 
 export type NodeType = BlockType | LeafType;
@@ -85,6 +88,8 @@ export type BlockType = {
     break?: boolean;
     link?: string;
     url?: string;
+    key?: string;
+    category?: string;
 };
 
 export type RecursivePartial<T> = {

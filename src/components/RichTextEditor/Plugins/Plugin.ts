@@ -2,6 +2,7 @@
 
 import { AnyObject, PlatePlugin } from '@udecode/plate';
 import { InlineData, PluginButton } from './types';
+import { Position } from '../EditorPositioningWrapper';
 import type { MarkupElement } from './MarkupElement';
 
 export type PluginProps = {
@@ -9,7 +10,7 @@ export type PluginProps = {
     button?: PluginButton;
     markupElement?: MarkupElement;
     leafMarkupElements?: MarkupElement | MarkupElement[];
-    noButton?: boolean;
+    showIn?: Position[];
 };
 
 export abstract class Plugin<P extends PluginProps = PluginProps> {
@@ -17,14 +18,16 @@ export abstract class Plugin<P extends PluginProps = PluginProps> {
     readonly button?: PluginButton;
     readonly markupElement?: MarkupElement;
     readonly leafMarkupElements?: MarkupElement | MarkupElement[];
+    readonly showIn: Position[];
     readonly props?: P;
 
-    constructor(id: string, protected rest: P) {
-        this.id = this.rest.id || id;
-        this.button = this.rest?.button;
-        this.markupElement = this.rest?.markupElement;
-        this.leafMarkupElements = this.rest?.leafMarkupElements;
-        this.props = this.rest;
+    constructor(id: string, rest?: P) {
+        this.id = rest?.id || id;
+        this.button = rest?.button;
+        this.markupElement = rest?.markupElement;
+        this.leafMarkupElements = rest?.leafMarkupElements;
+        this.showIn = rest?.showIn ?? [Position.BOTTOM, Position.TOP, Position.FLOATING];
+        this.props = rest;
     }
 
     inline(): InlineData | undefined {

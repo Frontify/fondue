@@ -18,7 +18,7 @@ import { IconDotsHorizontal } from '@foundation/Icon';
 import { Badge } from '@components/Badge';
 import { motion } from 'framer-motion';
 import { useFocusRing } from '@react-aria/focus';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 
 export enum TabsPaddingX {
@@ -210,6 +210,8 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                 id={`${tab.id}-btn`}
                                 className={merge([
                                     'tw-group tw-relative tw-mx-0 tw-py-4 tw-px-2 tw-w-max tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap',
+                                    FOCUS_VISIBLE_STYLE,
+                                    'tw-ring-inset',
                                     tab.disabled && 'tw-text-text-disabled',
                                     tab.id === activeItemId ? 'tw-font-medium tw-text-text' : 'tw-text-text-weak',
                                     size === TabSize.Small ? 'tw-text-sm' : 'tw-text-md',

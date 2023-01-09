@@ -1,8 +1,12 @@
 name: Continuous Deployment
 
 on:
-    release:
-        types: [published]
+    workflow_dispatch:
+        branches:
+            - 'main'
+    push:
+        branches:
+            - 'beta'
 
 env:
     NODE_VERSION: 18
@@ -111,7 +115,8 @@ jobs:
 
         permissions:
             packages: write
-            contents: read
+            contents: write
+            pull-requests: write
 
         steps:
             - name: Checkout default branch
@@ -141,18 +146,25 @@ jobs:
             - name: Build Fondue
               run: npm run build
 
-            - name: Publish to npm
-              run: npm publish --access public
+            - name: Release Fondue
+              if: ${{ !contains(github.event.head_commit.message, format('chore(release-skip){0}', ':')) }}
+              run: |
+                  npx semantic-release
               env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-            - name: Use Node.js ${{ env.NODE_VERSION }} (GitHub repository)
-              uses: actions/setup-node@v3
+            - name: Update package.json (Create PR)
+              if: ${{ !contains(github.event.head_commit.message, format('chore(release-skip){0}', ':')) }}
+              id: cpr
+              uses: peter-evans/create-pull-request@v4
               with:
-                  registry-url: 'https://npm.pkg.github.com'
-                  node-version: ${{ env.NODE_VERSION }}
-
-            - name: Publish to GitHub Packages
-              run: npm publish --access public
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  title: 'chore(release-skip): update package.json'
+                  commit-message: 'chore(release-skip): update package.json'
+                  branch: chore/auto_update_package_json_version
+                  delete-branch: true
+                  add-paths: |
+                      package.json
+                      package-lock.json
