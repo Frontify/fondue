@@ -192,7 +192,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                     ref={tabNavRef}
                     role="tablist"
                     className={merge([
-                        'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start tw-pr-8 tw-py-2 tw--my-2',
+                        'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start tw-pr-8',
                         paddingMap[paddingX ?? TabsPaddingX.Small],
                         size === TabSize.Small ? 'tw-gap-xxs' : 'tw-gap-xs ',
                     ])}
@@ -211,6 +211,7 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
                                 className={merge([
                                     'tw-group tw-relative tw-mx-0 tw-py-4 tw-px-2 tw-w-max tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap',
                                     FOCUS_VISIBLE_STYLE,
+                                    'tw-ring-inset',
                                     tab.disabled && 'tw-text-text-disabled',
                                     tab.id === activeItemId ? 'tw-font-medium tw-text-text' : 'tw-text-text-weak',
                                     size === TabSize.Small ? 'tw-text-sm' : 'tw-text-md',
