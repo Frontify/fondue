@@ -11,6 +11,7 @@ export enum MentionableCategory {
 
 export type MentionItemData = {
     category: MentionableCategory;
+    image?: string;
 };
 
 export type MentionableItem = TComboboxItemWithData<MentionItemData>;
