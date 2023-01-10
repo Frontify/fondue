@@ -41,10 +41,12 @@ export type TextInputBaseProps = {
     onChange?: (value: string) => void;
     onEnterPressed?: (event: KeyboardEvent<HTMLInputElement>) => void;
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+    onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
     onClear?: () => void;
     size?: number;
     spellcheck?: boolean;
     focusOnMount?: boolean;
+    selectable?: boolean;
 };
 
 export type TextInputProps =
@@ -81,10 +83,12 @@ export const TextInput: FC<TextInputProps> = ({
     onEnterPressed,
     onBlur,
     onClear,
+    onFocus,
     size,
     spellcheck,
     readonly,
     focusOnMount,
+    selectable = false,
 }) => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
@@ -174,6 +178,14 @@ export const TextInput: FC<TextInputProps> = ({
                 required={required}
                 readOnly={readonly}
                 disabled={disabled}
+                onFocus={(e) => {
+                    if (selectable) {
+                        e.target.select();
+                    }
+                    if (onFocus) {
+                        onFocus(e);
+                    }
+                }}
                 autoComplete={autocomplete ? 'on' : 'off'}
                 size={size}
                 data-test-id="text-input"
