@@ -11,14 +11,12 @@ export type RichTextEditorContextProps = {
     designTokens: DesignTokens;
     position: Position;
     border: boolean;
-    readonly: boolean;
 };
 
 const RichTextEditorContext = createContext<RichTextEditorContextProps>({
     designTokens: defaultDesignTokens,
     position: Position.FLOATING,
     border: false,
-    readonly: false,
 });
 export const useRichTextEditorContext = () => useContext(RichTextEditorContext);
 
@@ -28,13 +26,12 @@ type RichTextEditorProviderProps = {
 };
 
 export const RichTextEditorProvider = ({ children, value }: RichTextEditorProviderProps) => {
-    const { designTokens, position, border, readonly } = value;
+    const { designTokens, position, border } = value;
 
     const state = {
         designTokens: designTokens ?? defaultDesignTokens,
         position: position ?? Position.FLOATING,
         border,
-        readonly,
     };
 
     return (

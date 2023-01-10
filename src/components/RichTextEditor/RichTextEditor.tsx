@@ -81,7 +81,7 @@ export const RichTextEditor = ({
     const config = GeneratePlugins(editorId, plugins);
 
     return (
-        <RichTextEditorProvider value={{ designTokens, position, border, readonly }}>
+        <RichTextEditorProvider value={{ designTokens, position, border }}>
             <Plate
                 id={editorId}
                 initialValue={memoizedValue}
