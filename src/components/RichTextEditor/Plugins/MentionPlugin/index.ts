@@ -7,11 +7,13 @@ import { Plugin } from '../Plugin';
 import { MentionInline } from './MentionInline';
 import { MentionItemData, MentionPluginProps } from './types';
 import { mentionPlugin } from './config';
+import { MentionInputMarkupElement } from './MentionInputMarkupElement';
 
 export class MentionPlugin extends Plugin<MentionPluginProps> {
     constructor(props: MentionPluginProps) {
         super(MENTION_PLUGIN, {
             markupElement: new MentionMarkupElement().setNodeWithMentionable(props.mentionableItems),
+            markupInputElement: new MentionInputMarkupElement(),
             ...props,
         });
     }
