@@ -9,10 +9,10 @@ type RenderAvatarProps = {
     image: string | undefined;
     category: MentionableCategory;
     text: string;
-    key: string;
+    id: string;
 };
 
-const RenderImage = ({ image, category, text, key }: RenderAvatarProps) => {
+const RenderImage = ({ image, category, text, id }: RenderAvatarProps) => {
     let avatar;
     switch (category) {
         case MentionableCategory.GROUP:
@@ -26,7 +26,7 @@ const RenderImage = ({ image, category, text, key }: RenderAvatarProps) => {
             break;
     }
 
-    return image ? <img src={image} alt={`${key}-${category}-${text}`} /> : avatar;
+    return image ? <img src={image} alt={`${id}-${category}-${text}`} /> : avatar;
 };
 
 export const MentionComboboxItem = ({ item }: ComboboxItemProps<MentionItemData>): JSX.Element => {
@@ -39,7 +39,7 @@ export const MentionComboboxItem = ({ item }: ComboboxItemProps<MentionItemData>
     return (
         <div className="tw-flex tw-items-center tw-w-full tw-min-h-[inherit]">
             <span className="tw-flex tw-items-center tw-justify-center tw-rounded-full tw-mr-2.5 tw-bg-base-alt tw-border tw-border-line-weak tw-w-[22px] tw-h-[22px] tw-shrink-0 group-hover:tw-border-base tw-overflow-hidden">
-                <RenderImage image={image} category={category} text={text} key={key} />
+                <RenderImage image={image} category={category} text={text} id={key} />
             </span>
             <span className="tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis">{text}</span>
         </div>
