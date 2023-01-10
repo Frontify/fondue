@@ -16,7 +16,7 @@ export const MentionInline = (items: MentionableItems) => () => {
             styles={MentionComboboxStyles}
             classNames={{
                 item: 'tw-group',
-                highlightedItem: 'tw-group/highlighted',
+                highlightedItem: 'tw-group',
             }}
         />
     );
