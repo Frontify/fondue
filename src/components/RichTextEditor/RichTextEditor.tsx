@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, KeyboardEvent } from 'react';
-import { Plate } from '@udecode/plate';
+import { Plate, TNode } from '@udecode/plate';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
 import { useEditorState } from './hooks';
@@ -28,7 +28,7 @@ export type RichTextEditorProps = {
     padding?: PaddingSizes;
     position?: Position;
     plugins?: PluginComposer;
-    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
+    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>, value: TNode[] | null) => void;
 };
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
@@ -68,7 +68,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 forceToBlurActiveElement();
             }
 
-            onKeyDown && onKeyDown(event);
+            onKeyDown && onKeyDown(event, localValue.current);
         },
     };
 
