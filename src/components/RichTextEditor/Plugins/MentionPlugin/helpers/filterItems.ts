@@ -3,4 +3,4 @@
 import { TComboboxItemBase } from '@udecode/plate';
 
 export const filterItems = (value: string) => (item: TComboboxItemBase) =>
-    item.text.search(new RegExp(`${value}`, 'i')) > -1;
+    item.text.toLowerCase().includes(value.toLowerCase());
