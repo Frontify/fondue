@@ -1,4 +1,3 @@
-/* eslint-disable react/display-name */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
@@ -13,7 +12,6 @@ const MarkupElementNode = ({ attributes, element, nodeProps, children }: MarkupE
         data-slate-key={element.key}
         data-slate-category={element.category}
         contentEditable={false}
-        data-cy={`mention-${element.value?.replaceAll(' ', '-')}`}
         style={{
             lineHeight: '10px',
             padding: '1px',
