@@ -25,7 +25,7 @@ export const MentionComboboxStyles = {
             background: var(--base-color);
         `,
     ],
-    item: [...item],
+    item,
     highlightedItem: [
         ...item,
         `

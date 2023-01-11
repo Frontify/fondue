@@ -1,35 +1,33 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { ComboboxItemProps } from '@udecode/plate';
 import { MentionItemData, MentionableCategory } from '../types';
 import { IconPeople, IconPerson, IconSize, IconTarget } from '@foundation/Icon';
 
 type RenderAvatarProps = {
-    image: string | undefined;
     category: MentionableCategory;
     text: string;
     id: string;
+    image?: string;
 };
 
 const RenderImage = ({ image, category, text, id }: RenderAvatarProps) => {
-    let avatar;
-    switch (category) {
-        case MentionableCategory.GROUP:
-            avatar = <IconPeople size={IconSize.Size12} />;
-            break;
-        case MentionableCategory.ALL:
-            avatar = <IconTarget size={IconSize.Size12} />;
-            break;
-        default:
-            avatar = <IconPerson size={IconSize.Size12} />;
-            break;
+    if (image) {
+        return <img src={image} alt={`${id}-${category}-${text}`} />;
     }
 
-    return image ? <img src={image} alt={`${id}-${category}-${text}`} /> : avatar;
+    switch (category) {
+        case MentionableCategory.GROUP:
+            return <IconPeople size={IconSize.Size12} />;
+        case MentionableCategory.ALL:
+            return <IconTarget size={IconSize.Size12} />;
+        default:
+            return <IconPerson size={IconSize.Size12} />;
+    }
 };
 
-export const MentionComboboxItem = ({ item }: ComboboxItemProps<MentionItemData>): JSX.Element => {
+export const MentionComboboxItem = ({ item }: ComboboxItemProps<MentionItemData>): ReactElement => {
     const {
         data: { image, category },
         key,
