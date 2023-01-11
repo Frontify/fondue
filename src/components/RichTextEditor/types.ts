@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { TNode } from '@udecode/plate';
 import { CSSProperties } from 'react';
 import { ButtonStyles, TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 
@@ -39,3 +40,5 @@ export enum PaddingSizes {
     Large = 'tw-p-6',
     XLarge = 'tw-p-8',
 }
+
+export type TreeOfNodes = TNode[];

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { PaddingSizes } from './types';
+export { PaddingSizes, TreeOfNodes } from './types';
 export { Position } from './EditorPositioningWrapper';
 export { EMPTY_RICH_TEXT_VALUE } from './utils/parseRawValue';
 export * from './helpers';
