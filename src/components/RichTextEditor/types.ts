@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TNode } from '@udecode/plate';
 import { CSSProperties } from 'react';
+import { TNode } from '@udecode/plate';
 import { ButtonStyles, TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 
 export const enum DesignTokenNames {
