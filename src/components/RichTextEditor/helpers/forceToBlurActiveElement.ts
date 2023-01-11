@@ -1,5 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const forceTabOutOfActiveElement = () => {
+export const forceToBlurActiveElement = () => {
     (document.activeElement as HTMLElement)?.blur();
 };

@@ -185,7 +185,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                         tabIndex={0}
                         onKeyDown={handleSpacebarToggle}
                     >
-                        <div className="tw-flex tw-flex-wrap tw-gap-2 tw-outline-none tw-items-center tw-min-h-[34px]">
+                        <div className="tw-flex tw-flex-wrap tw-gap-2 tw-outline-none tw-items-center tw-min-h-[28px]">
                             {decorator && <div className={getDecoratorClasses()}>{decorator}</div>}
                             {label && hasSelectedItems && <Text weight="strong">{label}</Text>}
                             {type === MultiSelectType.Default &&

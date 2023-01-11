@@ -5,6 +5,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { getItemElementType } from '@utilities/elements';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
 import React, { FC, RefObject, useRef } from 'react';
 import { Breadcrumb } from './Breadcrumbs';
 
@@ -52,7 +53,7 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
                     ref={ref as RefObject<HTMLAnchorElement>}
                     {...props}
                     href={link}
-                    className={isFocusVisible ? FOCUS_STYLE : ''}
+                    className={merge(['tw-outline-none', isFocusVisible && FOCUS_STYLE])}
                 >
                     {label}
                 </a>
@@ -63,13 +64,17 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
                     type="button"
                     {...props}
                     onClick={onClick}
-                    className={isFocusVisible ? FOCUS_STYLE : ''}
+                    className={merge(['tw-outline-none', isFocusVisible && FOCUS_STYLE])}
                 >
                     {label}
                 </button>
             )}
             {contentElementType === 'span' && (
-                <span ref={ref as RefObject<HTMLSpanElement>} {...props} className={isFocusVisible ? FOCUS_STYLE : ''}>
+                <span
+                    ref={ref as RefObject<HTMLSpanElement>}
+                    {...props}
+                    className={merge(['tw-outline-none', isFocusVisible && FOCUS_STYLE])}
+                >
                     {label}
                 </span>
             )}

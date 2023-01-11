@@ -39,6 +39,7 @@ export default {
         onInput: { table: { disable: true }, action: 'onInput' },
         onBlur: { table: { disable: true }, action: 'onBlur' },
         onClear: { table: { disable: true }, action: 'onClear' },
+        onFocus: { table: { disable: true }, action: 'onFocus' },
     },
 } as Meta<TextInputProps>;
 
@@ -138,4 +139,11 @@ export const FocusOnMount = TextInputTemplate.bind({});
 FocusOnMount.args = {
     value: 'Value text',
     focusOnMount: true,
+};
+
+export const SelectableInput = TextInputTemplate.bind({});
+
+SelectableInput.args = {
+    value: 'Value text',
+    selectable: true,
 };
