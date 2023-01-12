@@ -58,7 +58,17 @@ describe('Badge component', () => {
         cy.get(BADGE_ICON_ID).should('have.css', 'opacity', '0.3');
     });
 
-    it('should have emphasised style', () => {
+    it('should have positive style', () => {
+        cy.mount(
+            <Badge icon={<IconDocumentText />} style={BadgeStyle.Positive}>
+                {BADGE_TEXT}
+            </Badge>,
+        );
+
+        cy.get(BADGE_ID).should('have.class', 'tw-bg-box-positive');
+    });
+
+    it('should have emphasized positive style', () => {
         cy.mount(
             <Badge icon={<IconDocumentText />} style={BadgeStyle.Positive} emphasis={BadgeEmphasis.Strong}>
                 {BADGE_TEXT}
@@ -66,6 +76,98 @@ describe('Badge component', () => {
         );
 
         cy.get(BADGE_ID).should('have.class', 'tw-bg-box-positive-strong');
+    });
+
+    it('should have progress style', () => {
+        cy.mount(
+            <Badge icon={<IconDocumentText />} style={BadgeStyle.Progress}>
+                {BADGE_TEXT}
+            </Badge>,
+        );
+
+        cy.get(BADGE_ID)
+            .should('have.class', 'tw-bg-box-selected')
+            .should('have.class', 'tw-text-box-selected-inverse');
+    });
+
+    it('should have emphasized progress style', () => {
+        cy.mount(
+            <Badge icon={<IconDocumentText />} style={BadgeStyle.Progress} emphasis={BadgeEmphasis.Strong}>
+                {BADGE_TEXT}
+            </Badge>,
+        );
+
+        cy.get(BADGE_ID)
+            .should('have.class', 'tw-bg-box-selected-strong')
+            .should('have.class', 'tw-text-box-selected-strong-inverse');
+    });
+
+    it('should have primary style', () => {
+        cy.mount(
+            <Badge icon={<IconDocumentText />} style={BadgeStyle.Primary}>
+                {BADGE_TEXT}
+            </Badge>,
+        );
+
+        cy.get(BADGE_ID).should('have.class', 'tw-bg-box-neutral');
+    });
+
+    it('should have emphasized primary style', () => {
+        cy.mount(
+            <Badge icon={<IconDocumentText />} style={BadgeStyle.Primary} emphasis={BadgeEmphasis.Strong}>
+                {BADGE_TEXT}
+            </Badge>,
+        );
+
+        cy.get(BADGE_ID)
+            .should('have.class', 'tw-bg-box-neutral-strong')
+            .should('have.class', 'tw-text-box-neutral-strong-inverse');
+    });
+
+    it('should have warning style', () => {
+        cy.mount(
+            <Badge icon={<IconDocumentText />} style={BadgeStyle.Warning}>
+                {BADGE_TEXT}
+            </Badge>,
+        );
+
+        cy.get(BADGE_ID).should('have.class', 'tw-bg-box-warning').should('have.class', 'tw-text-box-warning-inverse');
+    });
+
+    it('should have emphasized warning style', () => {
+        cy.mount(
+            <Badge icon={<IconDocumentText />} style={BadgeStyle.Warning} emphasis={BadgeEmphasis.Strong}>
+                {BADGE_TEXT}
+            </Badge>,
+        );
+
+        cy.get(BADGE_ID)
+            .should('have.class', 'tw-bg-box-warning-strong')
+            .should('have.class', 'tw-text-box-warning-strong-inverse');
+    });
+
+    it('should have danger style', () => {
+        cy.mount(
+            <Badge icon={<IconDocumentText />} style={BadgeStyle.Danger}>
+                {BADGE_TEXT}
+            </Badge>,
+        );
+
+        cy.get(BADGE_ID)
+            .should('have.class', 'tw-bg-box-negative')
+            .should('have.class', 'tw-text-box-negative-inverse');
+    });
+
+    it('should have emphasized danger style', () => {
+        cy.mount(
+            <Badge icon={<IconDocumentText />} style={BadgeStyle.Danger} emphasis={BadgeEmphasis.Strong}>
+                {BADGE_TEXT}
+            </Badge>,
+        );
+
+        cy.get(BADGE_ID)
+            .should('have.class', 'tw-bg-box-negative-strong')
+            .should('have.class', 'tw-text-box-negative-strong-inverse');
     });
 
     it('should have hover styles if onClick prop is a function', () => {
