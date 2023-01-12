@@ -49,7 +49,7 @@ export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextC
     },
 };
 
-export const menuItemHoverColorRecord: Record<MenuItemStyle, string> = {
+const menuItemHoverColorRecord: Record<MenuItemStyle, string> = {
     [MenuItemStyle.Primary]: 'hover:tw-text-text',
     [MenuItemStyle.Danger]: 'hover:tw-text-text-negative',
     [MenuItemStyle.Warning]: 'hover:tw-text-text-warning',
