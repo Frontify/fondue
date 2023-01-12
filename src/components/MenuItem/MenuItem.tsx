@@ -45,7 +45,7 @@ export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextC
     [MenuItemStyle.Warning]: {
         [MenuItemTextColorState.Default]: 'tw-text-text-warning',
         [MenuItemTextColorState.Active]: 'tw-text-yellow-90',
-        [MenuItemTextColorState.Disabled]: 'tw-text-yellow-50',
+        [MenuItemTextColorState.Disabled]: 'tw-text-yellow-40',
     },
 };
 
