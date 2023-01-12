@@ -16,13 +16,12 @@ import {
     TDescendant,
     TNode,
 } from '@udecode/plate';
-import { ELEMENT_BUTTON } from '../Plugins';
-import { ELEMENT_CHECK_ITEM } from '../Plugins/CheckboxListPlugin/id';
-import { MentionableCategory, MentionableItems } from '../Plugins/MentionPlugin/types';
-import { TextStyles } from '../Plugins/TextStylePlugin/TextStyles';
-import { DesignTokens } from '../types';
-import { mixedMarkdown } from '../serializer/markdown/__tests__/fixtures';
-import { MARK_TEXT_STYLE } from '../Plugins/ListPlugin/ListPlugin';
+import { ELEMENT_BUTTON } from '../../Plugins';
+import { ELEMENT_CHECK_ITEM } from '../../Plugins/CheckboxListPlugin/id';
+import { TextStyles } from '../../Plugins/TextStylePlugin/TextStyles';
+import { DesignTokens } from '../../types';
+import { mixedMarkdown } from '../../serializer/markdown/__tests__/fixtures';
+import { MARK_TEXT_STYLE } from '../../Plugins/ListPlugin/ListPlugin';
 
 type CreateElementProps = {
     text: string;
@@ -403,60 +402,6 @@ export const mentionValue = [
         type: ELEMENT_PARAGRAPH,
         children: [{ text: 'Continue ...' }, { text: ' ' }],
     },
-];
-
-export const mentionable: MentionableItems = [
-    { data: { category: MentionableCategory.ALL }, key: '0', text: 'Aayla Secura' },
-    { data: { category: MentionableCategory.GROUP }, key: '1', text: 'Adi Gallia' },
-    { data: { category: MentionableCategory.GROUP }, key: '2', text: 'Admiral Dodd Rancit' },
-    { data: { category: MentionableCategory.USER }, key: '3', text: 'Admiral Firmus Piett' },
-    { data: { category: MentionableCategory.USER }, key: '4', text: 'Admiral Gial Ackbar' },
-    { data: { category: MentionableCategory.USER }, key: '5', text: 'Admiral Ozzel' },
-    { data: { category: MentionableCategory.USER }, key: '6', text: 'Admiral Raddus' },
-    { data: { category: MentionableCategory.USER }, key: '7', text: 'Admiral Terrinald Screed' },
-    { data: { category: MentionableCategory.USER }, key: '8', text: 'Admiral Trench' },
-    { data: { category: MentionableCategory.USER }, key: '9', text: 'Admiral U.O. Statura' },
-    { data: { category: MentionableCategory.USER }, key: '10', text: 'Agen Kolar' },
-    { data: { category: MentionableCategory.USER }, key: '11', text: 'Agent Kallus' },
-    { data: { category: MentionableCategory.USER }, key: '12', text: 'Aiolin and Morit Astarte' },
-    { data: { category: MentionableCategory.USER }, key: '13', text: 'Aks Moe' },
-    { data: { category: MentionableCategory.USER }, key: '14', text: 'Almec' },
-    { data: { category: MentionableCategory.USER }, key: '15', text: 'Alton Kastle' },
-    { data: { category: MentionableCategory.USER }, key: '16', text: 'Amee' },
-    { data: { category: MentionableCategory.USER }, key: '17', text: 'AP-5' },
-    { data: { category: MentionableCategory.USER }, key: '18', text: 'Armitage Hux' },
-    { data: { category: MentionableCategory.USER }, key: '19', text: 'Artoo' },
-    { data: { category: MentionableCategory.USER }, key: '20', text: 'Arvel Crynyd' },
-    { data: { category: MentionableCategory.USER }, key: '21', text: 'Asajj Ventress' },
-    { data: { category: MentionableCategory.USER }, key: '22', text: 'Aurra Sing' },
-    { data: { category: MentionableCategory.USER }, key: '23', text: 'AZI-3' },
-    { data: { category: MentionableCategory.USER }, key: '24', text: 'Bala-Tik' },
-    { data: { category: MentionableCategory.USER }, key: '25', text: 'Barada' },
-    { data: { category: MentionableCategory.USER }, key: '26', text: 'Bargwill Tomder' },
-    { data: { category: MentionableCategory.USER }, key: '27', text: 'Baron Papanoida' },
-    { data: { category: MentionableCategory.USER }, key: '28', text: 'Admiral Dodd Rancit II' },
-    { data: { category: MentionableCategory.USER }, key: '29', text: 'Baze Malbus' },
-    { data: { category: MentionableCategory.USER }, key: '30', text: 'Bazine Netal' },
-    { data: { category: MentionableCategory.USER }, key: '31', text: 'BB-8' },
-    { data: { category: MentionableCategory.USER }, key: '32', text: 'BB-9E' },
-    { data: { category: MentionableCategory.USER }, key: '33', text: 'Ben Quadinaros' },
-    { data: { category: MentionableCategory.USER }, key: '34', text: 'Berch Teller' },
-    { data: { category: MentionableCategory.USER }, key: '35', text: 'Beru Lars' },
-    { data: { category: MentionableCategory.USER }, key: '36', text: 'Bib Fortuna' },
-    { data: { category: MentionableCategory.USER }, key: '37', text: 'Biggs Darklighter' },
-    { data: { category: MentionableCategory.USER }, key: '38', text: 'Black Krrsantan' },
-    { data: { category: MentionableCategory.USER }, key: '39', text: 'Bo-Katan Kryze' },
-    { data: { category: MentionableCategory.USER }, key: '40', text: 'Boba Fett' },
-    { data: { category: MentionableCategory.USER }, key: '41', text: 'Bobbajo' },
-    { data: { category: MentionableCategory.USER }, key: '42', text: 'Bodhi Rook' },
-    { data: { category: MentionableCategory.USER }, key: '43', text: 'Borvo the Hutt' },
-    { data: { category: MentionableCategory.USER }, key: '44', text: 'Boss Nass' },
-    { data: { category: MentionableCategory.USER }, key: '45', text: 'Bossk' },
-    { data: { category: MentionableCategory.USER }, key: '46', text: 'Breha Antilles-Organa' },
-    { data: { category: MentionableCategory.USER }, key: '47', text: 'Bren Derlin' },
-    { data: { category: MentionableCategory.USER }, key: '48', text: 'Brendol Hux' },
-    { data: { category: MentionableCategory.USER }, key: '49', text: 'BT-1' },
-    { data: { category: MentionableCategory.USER }, key: '50', text: 'C-3PO' },
 ];
 
 export const buttonValues = [

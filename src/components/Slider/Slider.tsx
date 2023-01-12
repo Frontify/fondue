@@ -27,7 +27,7 @@ export type TextOrNumberItem = {
 export type SliderProps = {
     id?: string;
     items: (TextOrNumberItem | IconItem)[];
-    activeItemId: string;
+    activeItemId?: string;
     onChange: (id: string) => void;
     ariaLabel?: string;
     disabled?: boolean;
@@ -86,7 +86,7 @@ const SliderItem = (props: SliderItemProps) => {
                 onClick={handleMockLabelClick}
                 data-test-id={getSliderItemTestId()}
                 className={merge([
-                    'tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
+                    'tw-relative tw-w-full tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
                     isActive && !disabled ? 'tw-text-black' : 'tw-text-black-80',
                     !disabled ? 'hover:tw-text-black hover:tw-cursor-pointer' : '',
                 ])}
@@ -143,6 +143,7 @@ export const Slider: FC<SliderProps> = ({
                 style={{
                     width: `${100 / items.length}%`,
                 }}
+                hidden={!activeItemId}
                 className={merge([
                     'tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
                     disabled
