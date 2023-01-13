@@ -264,7 +264,7 @@ const WithCustomFooterFlyoutTemplate: StoryFn<FlyoutProps> = (args) => {
             <div>
                 Deserunt voluptate deserunt laborum dolor excepteur. Reprehenderit amet cillum ad ut. Magna labore
                 consequat enim tempor amet in qui. In esse proident officia aliquip ea in in nulla aliqua in laborum
-                anim ipsum est.
+                anim.
             </div>
         </div>
     );
