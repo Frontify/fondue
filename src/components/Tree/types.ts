@@ -8,6 +8,7 @@ export type TreeProps = {
     id: string;
     activeIds?: string[];
     draggable?: boolean;
+    onDrop?: OnDropCallback<{ id: string; sort: Nullable<number> }>;
     children: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
 };
 
@@ -30,6 +31,5 @@ export type TreeItemProps = {
     id: string;
     sort: Nullable<number>;
     onSelect?: (id: Nullable<string>) => void;
-    onDrop?: OnDropCallback<{ id: string; sort: Nullable<number> }>;
     children?: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
 } & (TreeItemWithLabelProps | TreeItemWIthContentComponentProps);
