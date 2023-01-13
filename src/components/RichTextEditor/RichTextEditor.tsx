@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, KeyboardEvent } from 'react';
+import React, { KeyboardEvent, useRef } from 'react';
 import { Plate } from '@udecode/plate';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
@@ -9,7 +9,7 @@ import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { DesignTokens, PaddingSizes, TreeOfNodes } from './types';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { Position } from './EditorPositioningWrapper';
-import { GeneratePlugins, PluginComposer, defaultPlugins } from './Plugins';
+import { PluginComposer, defaultPlugins } from './Plugins';
 import { forceToBlurActiveElement } from './helpers';
 
 const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
@@ -28,10 +28,11 @@ export type RichTextEditorProps = {
     padding?: PaddingSizes;
     position?: Position;
     plugins?: PluginComposer;
-    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>, value: TreeOfNodes | null) => void;
+    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
+    onValueChanged?: (value: TreeOfNodes | null) => void;
 };
 
-export const RichTextEditor: FC<RichTextEditorProps> = ({
+export const RichTextEditor = ({
     id,
     value: initialValue,
     placeholder = '',
@@ -43,11 +44,18 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     position = Position.FLOATING,
     plugins = defaultPlugins,
     onKeyDown,
-}) => {
+    onValueChanged,
+}: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
-    const { localValue, onChange, memoizedValue } = useEditorState({ editorId, initialValue, onTextChange, plugins });
+    const { localValue, onChange, memoizedValue, config } = useEditorState({
+        editorId,
+        initialValue,
+        onTextChange,
+        plugins,
+        onValueChanged,
+    });
 
-    const editableProps: EditableProps = {
+    const editableProps = useRef<EditableProps>({
         placeholder,
         renderPlaceholder: ({ children, attributes }) => {
             const mergedAttributes = {
@@ -68,11 +76,9 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 forceToBlurActiveElement();
             }
 
-            onKeyDown && onKeyDown(event, localValue.current);
+            onKeyDown && onKeyDown(event);
         },
-    };
-
-    const config = GeneratePlugins(editorId, plugins);
+    });
 
     return (
         <RichTextEditorProvider value={{ designTokens, position }}>
@@ -80,7 +86,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
                 id={editorId}
                 initialValue={memoizedValue}
                 onChange={onChange}
-                editableProps={editableProps}
+                editableProps={editableProps.current}
                 plugins={config.create()}
             >
                 {config.toolbar()}
