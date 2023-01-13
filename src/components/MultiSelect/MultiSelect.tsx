@@ -15,6 +15,7 @@ import { Menu } from '@components/Menu';
 import { MenuItem } from '@components/MenuItem';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { DefaultItem, NoSearchResults, OptionalItems } from './SelectMenuItems';
+import { CheckboxState } from '@components/Checkbox/Checkbox';
 
 export enum MultiSelectType {
     Default = 'Default',
@@ -55,6 +56,8 @@ export type MultiSelectProps = {
     filterable?: boolean;
     filterLabel?: string;
     noResultsLabel?: string;
+    summarizedLabel?: string;
+    indeterminateItemKeys?: (string | number)[];
 };
 
 export type Item = {
@@ -82,9 +85,18 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     emphasis = MultiSelectEmphasis.Default,
     decorator = null,
     filterable = false,
+    summarizedLabel: summarizedLabelFromProps,
+    indeterminateItemKeys,
 }) => {
     const [open, setOpen] = useState(false);
-    const [checkboxes, setCheckboxes] = useState<Item[]>(items.map((item) => ({ ...item, label: item.value })));
+    const [checkboxes, setCheckboxes] = useState<Item[]>(
+        items.map((item) => {
+            if (indeterminateItemKeys?.includes(item.value)) {
+                return { ...item, label: item.value, state: CheckboxState.Mixed };
+            }
+            return { ...item, label: item.value };
+        }),
+    );
     const hasResults = !!checkboxes.find((item) => !item.isCategory && !item.isDivider);
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const multiSelectRef = useRef<HTMLDivElement | null>(null);
@@ -92,7 +104,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     const { isFocusVisible, focusProps } = useFocusRing();
 
     const hasSelectedItems = activeItemKeys.length > 0;
-    const summarizedLabel = [activeItemKeys.length, 'selected'].join(' ');
+    const summarizedLabel = summarizedLabelFromProps ?? [activeItemKeys.length, 'selected'].join(' ');
     const inputWidth = getInputWidth(hasSelectedItems, filterLabel, placeholder);
 
     const handleClose = () => setOpen(false);
