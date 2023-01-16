@@ -47,7 +47,9 @@ export class PluginComposer {
             return;
         }
 
-        const { id, node } = markupElement;
+        const id = markupElement.getId();
+        const node = markupElement.getNode();
+
         if (node && !this.markupElements[id]) {
             this.markupElements[id] = node;
         }
@@ -82,7 +84,7 @@ export class PluginComposer {
             }
 
             groupOfButtons.push({
-                id: markupElement?.id || id,
+                id: markupElement?.getId() || id,
                 button,
             });
         }

@@ -40,6 +40,7 @@ const MODAL_VARIANTS = {
 
 const widthMap: Record<ModalWidth, string> = {
     [ModalWidth.Default]: 'tw-max-w-[800px]',
+    [ModalWidth.Small]: 'tw-max-w-[600px]',
     [ModalWidth.Large]: 'tw-max-w-[1200px]',
 };
 

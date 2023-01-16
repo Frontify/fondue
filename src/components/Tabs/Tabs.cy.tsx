@@ -176,6 +176,18 @@ describe('Tabs Component', () => {
         cy.get('button#tab-3-btn').should('be.focused');
     });
 
+    it('should not focus on tab content if it contains interactive elements', () => {
+        cy.get('[data-test-id=tab-item]').first().click();
+        cy.get('body').realPress('Tab');
+        cy.get('body').realPress('Tab');
+        cy.get('#tab-1-content').should('be.focused');
+        cy.get('[data-test-id=tab-item]').eq(5).click();
+        cy.get('body').realPress('Tab');
+        cy.get('body').realPress('Tab');
+        cy.get('#tab-6-content').children().first().should('be.focused');
+        cy.get('#tab-6-content').should('not.be.focused');
+    });
+
     it('should not pass on disabled tab with keyboard', () => {
         cy.get('[data-test-id=tab-item]').first().trigger('keydown', { key: 'ArrowRight' });
         cy.get('[data-test-id=tab-item]').eq(1).should('not.have.class', 'tw-font-medium');

@@ -45,7 +45,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     columns = 1,
 }) => {
     const editorId = useMemoizedId(id);
-    const { localValue, onChange, memoizedValue } = useEditorState({ editorId, initialValue, onTextChange });
+    const { localValue, onChange, memoizedValue } = useEditorState({ editorId, initialValue, onTextChange, plugins });
 
     const editableProps: EditableProps = {
         placeholder,

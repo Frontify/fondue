@@ -4,6 +4,8 @@ import escapeHtml from 'escape-html';
 import { BlockType, InputNodeTypes, NodeType, OptionType } from '../types';
 import { isLeafNode } from './isLeafNode';
 
+const processMentionNode = (chunk: BlockType) => `@[${chunk.category}: ${chunk.key}]`;
+
 const processListItemNode = (
     nodeTypes: InputNodeTypes,
     children: string,
@@ -90,6 +92,9 @@ export const applyFormattingToBlockNode = (
 
         case nodeTypes.thematicBreak:
             return `\n---${children}\n\n`;
+
+        case nodeTypes.mention:
+            return processMentionNode(chunk as BlockType);
 
         default:
             return shouldEscapeNode(children, nodeTypes, type, parentType);
