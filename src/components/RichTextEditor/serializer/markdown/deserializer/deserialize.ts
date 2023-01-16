@@ -39,7 +39,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
     switch (node.type) {
         case 'mention':
             const value = node.children ? node.children[0].value : undefined;
-            const matches = value?.match(/@\[([a-z]+):\s(\d+)]/i) as RegExpMatchArray;
+            const matches = value?.match(/@\[([a-z]+):(\d+)]/i) as RegExpMatchArray;
             return {
                 type: types.mention,
                 category: matches[1],
