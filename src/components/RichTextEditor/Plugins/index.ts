@@ -41,7 +41,7 @@ defaultPlugins
             new CheckboxListPlugin(),
             new OrderedListPlugin(),
             new ResetFormattingPlugin(),
-            new EmojiPlugin({ noButton: true }),
+            new EmojiPlugin(),
         ],
     );
 
@@ -68,7 +68,7 @@ defaultPluginsWithColumns.setPlugin(
         new OrderedListPlugin(),
         new BreakAfterPlugin(),
         new ResetFormattingPlugin(),
-        new EmojiPlugin({ noButton: true }),
+        new EmojiPlugin(),
     ],
 );
 export * from './GeneratePlugins';

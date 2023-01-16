@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC } from 'react';
+import React, { FC, KeyboardEvent } from 'react';
 import { Plate } from '@udecode/plate';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
 import { useEditorState } from './hooks';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
-import { DesignTokens, PaddingSizes } from './types';
+import { DesignTokens, PaddingSizes, TreeOfNodes } from './types';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { Position } from './EditorPositioningWrapper';
 import { GeneratePlugins, PluginComposer, defaultPlugins } from './Plugins';
-import { forceTabOutOfActiveElement } from './helpers';
+import { forceToBlurActiveElement } from './helpers';
 
 const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
     position: 'relative',
@@ -29,6 +29,7 @@ export type RichTextEditorProps = {
     position?: Position;
     plugins?: PluginComposer;
     columns?: number;
+    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>, value: TreeOfNodes | null) => void;
 };
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
@@ -42,6 +43,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     padding = PaddingSizes.None,
     position = Position.FLOATING,
     plugins = defaultPlugins,
+    onKeyDown,
     columns = 1,
 }) => {
     const editorId = useMemoizedId(id);
@@ -65,8 +67,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
         onKeyDown: (event) => {
             if (event.code === 'Tab') {
                 // Forcing a blur event because of accessibility
-                forceTabOutOfActiveElement();
+                forceToBlurActiveElement();
             }
+
+            onKeyDown && onKeyDown(event, localValue.current);
         },
     };
 
