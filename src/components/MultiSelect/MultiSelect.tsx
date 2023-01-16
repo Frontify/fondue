@@ -91,10 +91,11 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     const [open, setOpen] = useState(false);
     const [checkboxes, setCheckboxes] = useState<Item[]>(
         items.map((item) => {
+            const checkboxBaseItem = { ...item, label: item.value };
             if (indeterminateItemKeys?.includes(item.value)) {
-                return { ...item, label: item.value, state: CheckboxState.Mixed };
+                return { ...checkboxBaseItem, state: CheckboxState.Mixed };
             }
-            return { ...item, label: item.value };
+            return checkboxBaseItem;
         }),
     );
     const hasResults = !!checkboxes.find((item) => !item.isCategory && !item.isDivider);
