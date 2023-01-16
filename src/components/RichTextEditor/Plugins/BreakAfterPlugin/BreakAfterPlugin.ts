@@ -13,6 +13,8 @@ import {
 } from '@udecode/plate-core';
 import isHotkey from 'is-hotkey';
 import { setBreakAfter } from './utils/setBreakAfter';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
+import { enableColumnBreak } from './BreakAfterButton/BreakAfterToolbarButton';
 
 export const KEY_ELEMENT_BREAK_AFTER = 'breakAfterColumn';
 
@@ -30,9 +32,11 @@ export class BreakAfterPlugin extends Plugin {
 }
 
 // This is adapted from packages/editor/break/src/soft-break/onKeyDownSoftBreak.ts
-const onKeyDownBreakAfter =
-    (editor: any, { options: { rules = [] } }): KeyboardHandlerReturnType =>
-    (event) => {
+const OnKeyDownBreakAfter = (editor: any, { options: { rules = [] } }): KeyboardHandlerReturnType => {
+    const { style } = useRichTextEditorContext(); // not allowed to use hooks here
+    const columns = Number(style?.columns) ?? 1;
+
+    return (event) => {
         const isActive = someNode(editor, { match: { breakAfterColumn: true } });
         const entry = getBlockAbove(editor);
 
@@ -41,7 +45,7 @@ const onKeyDownBreakAfter =
         }
 
         for (const { hotkey, query } of rules) {
-            if (isHotkey(hotkey, event as any) && queryNode(entry, query)) {
+            if (isHotkey(hotkey, event as any) && queryNode(entry, query) && enableColumnBreak(editor, columns)) {
                 getPreventDefaultHandler(setBreakAfter, editor, {
                     value: !isActive,
                     key: KEY_ELEMENT_BREAK_AFTER,
@@ -49,12 +53,13 @@ const onKeyDownBreakAfter =
             }
         }
     };
+};
 export const createBreakAfterPlugin = createPluginFactory({
     key: KEY_ELEMENT_BREAK_AFTER,
     options: {
-        rules: [{ hotkey: 'command+shift+enter' }, { hotkey: 'crtl+shift+enter' }],
+        rules: [{ hotkey: 'command+shift+enter' }, { hotkey: 'ctrl+shift+enter' }],
     },
     handlers: {
-        onKeyDown: onKeyDownBreakAfter,
+        onKeyDown: OnKeyDownBreakAfter,
     },
 });

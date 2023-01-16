@@ -28,6 +28,7 @@ export type RichTextEditorProps = {
     padding?: PaddingSizes;
     position?: Position;
     plugins?: PluginComposer;
+    columns?: number;
 };
 
 export const RichTextEditor: FC<RichTextEditorProps> = ({
@@ -41,6 +42,7 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     padding = PaddingSizes.None,
     position = Position.FLOATING,
     plugins = defaultPlugins,
+    columns = 1,
 }) => {
     const editorId = useMemoizedId(id);
     const { localValue, onChange, memoizedValue } = useEditorState({ editorId, initialValue, onTextChange });
@@ -69,9 +71,10 @@ export const RichTextEditor: FC<RichTextEditorProps> = ({
     };
 
     const config = GeneratePlugins(editorId, plugins);
+    const style = columns > 1 ? ({ display: 'block', columns } as React.CSSProperties) : {};
 
     return (
-        <RichTextEditorProvider value={{ designTokens, position }}>
+        <RichTextEditorProvider value={{ designTokens, position, style }}>
             <Plate
                 id={editorId}
                 initialValue={memoizedValue}
