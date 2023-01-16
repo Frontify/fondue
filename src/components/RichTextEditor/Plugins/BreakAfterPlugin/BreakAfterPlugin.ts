@@ -14,7 +14,7 @@ import {
 import isHotkey from 'is-hotkey';
 import { setBreakAfter } from './utils/setBreakAfter';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
-import { enableColumnBreak } from './BreakAfterButton/BreakAfterToolbarButton';
+import { isBreakAfterEnabled } from './BreakAfterButton/BreakAfterToolbarButton';
 
 export const KEY_ELEMENT_BREAK_AFTER = 'breakAfterColumn';
 
@@ -45,7 +45,11 @@ const OnKeyDownBreakAfter = (editor: any, { options: { rules = [] } }): Keyboard
         }
 
         for (const { hotkey, query } of rules) {
-            if (isHotkey(hotkey, event as any) && queryNode(entry, query) && enableColumnBreak(editor, columns)) {
+            if (
+                isHotkey(hotkey, event as any) &&
+                queryNode(entry, query) &&
+                isBreakAfterEnabled(editor, columns, isActive)
+            ) {
                 getPreventDefaultHandler(setBreakAfter, editor, {
                     value: !isActive,
                     key: KEY_ELEMENT_BREAK_AFTER,
