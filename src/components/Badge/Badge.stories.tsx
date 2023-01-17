@@ -5,7 +5,6 @@ import { Meta, StoryFn } from '@storybook/react';
 import { Badge } from './Badge';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { BadgeEmphasis, BadgeProps, BadgeStatus, BadgeStyle } from './types';
-import { IconDocumentText } from '@foundation/Icon';
 
 export default {
     title: 'Components/Badge',
@@ -27,8 +26,8 @@ export default {
         onDismiss: { table: { disable: true } },
     },
     args: {
+        style: BadgeStyle.Primary,
         children: 'Text',
-        icon: <IconDocumentText />,
         size: 'medium',
         emphasis: BadgeEmphasis.Strong,
         disabled: false,
