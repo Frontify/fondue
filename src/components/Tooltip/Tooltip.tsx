@@ -247,108 +247,106 @@ export const Tooltip = ({
                         ref: triggerRefElement,
                     })}
             </div>
-            {!disabled && (
+            <div
+                ref={tooltipContainerRef}
+                className={merge([
+                    'tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-[120000]',
+                    (hidden || disabled) && 'tw-hidden',
+                    !isOpen && 'tw-opacity-0 tw-h-0 tw-w-0 tw-overflow-hidden',
+                ])}
+                data-test-id="tooltip"
+                role="tooltip"
+                style={popperInstance.styles.popper}
+                {...popperInstance.attributes.popper}
+                onFocus={() => setIsOpen(true)}
+                onMouseOver={(event) => checkIfHovered(event.nativeEvent)}
+                onMouseLeave={handleHideTooltipOnHover}
+            >
+                {brightHeader && <BrightHeader headerStyle={brightHeader} />}
                 <div
-                    ref={tooltipContainerRef}
                     className={merge([
-                        'tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-[120000]',
-                        hidden && 'tw-hidden',
-                        !isOpen && 'tw-opacity-0 tw-h-0 tw-w-0 tw-overflow-hidden',
+                        'tw-px-4',
+                        hasLargePaddingTop ? paddingsTop.small : paddingsTop.large,
+                        linkUrl ? paddingsBottom.small : paddingsBottom.large,
                     ])}
-                    data-test-id="tooltip"
-                    role="tooltip"
-                    style={popperInstance.styles.popper}
-                    {...popperInstance.attributes.popper}
-                    onFocus={() => setIsOpen(true)}
-                    onMouseOver={(event) => checkIfHovered(event.nativeEvent)}
-                    onMouseLeave={handleHideTooltipOnHover}
                 >
-                    {brightHeader && <BrightHeader headerStyle={brightHeader} />}
-                    <div
-                        className={merge([
-                            'tw-px-4',
-                            hasLargePaddingTop ? paddingsTop.small : paddingsTop.large,
-                            linkUrl ? paddingsBottom.small : paddingsBottom.large,
-                        ])}
-                    >
-                        {heading && (
-                            <h4 className="tw-flex tw-text-m tw-font-bold tw-mb-1">
-                                {headingIcon && (
-                                    <span className="tw-mr-1.5">
-                                        {cloneElement(headingIcon, { size: IconSize.Size20 })}
-                                    </span>
-                                )}
-                                {heading}
-                            </h4>
-                        )}
-                        <div className="tw-flex">
-                            {tooltipIcon && (
-                                <span className="tw-shrink-0 tw-mr-1">
-                                    {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
+                    {heading && (
+                        <h4 className="tw-flex tw-text-m tw-font-bold tw-mb-1">
+                            {headingIcon && (
+                                <span className="tw-mr-1.5">
+                                    {cloneElement(headingIcon, { size: IconSize.Size20 })}
                                 </span>
                             )}
-                            <p className="tw-text-s tw-min-w-0 tw-break-words">{content}</p>
-                        </div>
-                        {linkUrl && (
-                            <a
-                                {...linkProps}
-                                data-test-id="tooltip-link"
-                                ref={linkRef}
-                                href={linkUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={merge([
-                                    'tw-text-xs tw-text-black-40 dark:tw-text-black-80 tw-underline tw-mt-1',
-                                    FOCUS_VISIBLE_STYLE,
-                                ])}
-                                onBlur={() => (buttons && buttons.length > 0 ? null : setIsOpen(false))}
-                            >
-                                {linkLabel ?? 'Click here to learn more.'}
-                            </a>
+                            {heading}
+                        </h4>
+                    )}
+                    <div className="tw-flex">
+                        {tooltipIcon && (
+                            <span className="tw-shrink-0 tw-mr-1">
+                                {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
+                            </span>
                         )}
-                        {buttons && (
-                            <div className="tw-flex tw-flex-row-reverse tw-gap-x-1 tw-mt-4">
-                                {buttons.length > 0 && (
-                                    <div onBlur={() => (buttons && buttons.length < 2 ? setIsOpen(false) : null)}>
-                                        <Button
-                                            style={ButtonStyle.Default}
-                                            emphasis={ButtonEmphasis.Strong}
-                                            size={ButtonSize.Small}
-                                            onClick={buttons[0].action}
-                                        >
-                                            {buttons[0].label}
-                                        </Button>
-                                    </div>
-                                )}
-                                {buttons.length === 2 && (
-                                    <div onBlur={() => setIsOpen(false)}>
-                                        <Button
-                                            style={ButtonStyle.Default}
-                                            emphasis={ButtonEmphasis.Default}
-                                            size={ButtonSize.Small}
-                                            onClick={buttons[1].action}
-                                        >
-                                            {buttons[1].label}
-                                        </Button>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                        <div
-                            data-test-id="popover-arrow"
-                            data-popper-arrow={withArrow}
-                            ref={setArrowElement}
-                            style={popperInstance.styles.arrow}
-                            className={merge([
-                                withArrow &&
-                                    'tw-popper-arrow tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line',
-                                withArrow && arrowStyling,
-                            ])}
-                        />
+                        <p className="tw-text-s tw-min-w-0 tw-break-words">{content}</p>
                     </div>
-                    {children}
+                    {linkUrl && (
+                        <a
+                            {...linkProps}
+                            data-test-id="tooltip-link"
+                            ref={linkRef}
+                            href={linkUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={merge([
+                                'tw-text-xs tw-text-black-40 dark:tw-text-black-80 tw-underline tw-mt-1',
+                                FOCUS_VISIBLE_STYLE,
+                            ])}
+                            onBlur={() => (buttons && buttons.length > 0 ? null : setIsOpen(false))}
+                        >
+                            {linkLabel ?? 'Click here to learn more.'}
+                        </a>
+                    )}
+                    {buttons && (
+                        <div className="tw-flex tw-flex-row-reverse tw-gap-x-1 tw-mt-4">
+                            {buttons.length > 0 && (
+                                <div onBlur={() => (buttons && buttons.length < 2 ? setIsOpen(false) : null)}>
+                                    <Button
+                                        style={ButtonStyle.Default}
+                                        emphasis={ButtonEmphasis.Strong}
+                                        size={ButtonSize.Small}
+                                        onClick={buttons[0].action}
+                                    >
+                                        {buttons[0].label}
+                                    </Button>
+                                </div>
+                            )}
+                            {buttons.length === 2 && (
+                                <div onBlur={() => setIsOpen(false)}>
+                                    <Button
+                                        style={ButtonStyle.Default}
+                                        emphasis={ButtonEmphasis.Default}
+                                        size={ButtonSize.Small}
+                                        onClick={buttons[1].action}
+                                    >
+                                        {buttons[1].label}
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    <div
+                        data-test-id="popover-arrow"
+                        data-popper-arrow={withArrow}
+                        ref={setArrowElement}
+                        style={popperInstance.styles.arrow}
+                        className={merge([
+                            withArrow &&
+                                'tw-popper-arrow tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line',
+                            withArrow && arrowStyling,
+                        ])}
+                    />
                 </div>
-            )}
+                {children}
+            </div>
         </>
     );
 };
