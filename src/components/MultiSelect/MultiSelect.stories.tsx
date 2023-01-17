@@ -194,3 +194,17 @@ WithMixedValues.args = {
     summarizedLabel: 'Mixed values',
     indeterminateItemKeys: ['This is a long tag'],
 };
+
+export const WithAvatar = MultiSelectTemplate.bind({});
+
+WithAvatar.args = {
+    emphasis: MultiSelectEmphasis.Weak,
+    items: WithFilter.args.items,
+};
+
+WithAvatar.argTypes = {
+    emphasis: {
+        options: [],
+        control: { type: 'none' },
+    },
+};
