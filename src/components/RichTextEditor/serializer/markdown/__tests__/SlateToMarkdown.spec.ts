@@ -102,5 +102,11 @@ describe('Slate To Markdown transformer', () => {
 
         result = transformer.process(mentionsTree[1]);
         expect(result).to.deep.equal(mentionsMarkdown[1]);
+
+        result = transformer.process(mentionsTree[2]);
+        expect(result).to.deep.equal(mentionsMarkdown[2]);
+
+        result = transformer.process(mentionsTree[3]);
+        expect(result).to.deep.equal(mentionsMarkdown[3]);
     });
 });
