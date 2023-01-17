@@ -148,7 +148,7 @@ IconOnly.args = {
 export const BetweenElements: StoryFn<BadgeProps> = (args: BadgeProps) => (
     <div className="tw-flex tw-items-center tw-gap-1">
         <span>before </span>
-        <Badge {...args} onDismiss={() => ({})} onClick={() => ({})} />
+        <Badge {...args} />
         <span> after</span>
     </div>
 );
