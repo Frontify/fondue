@@ -9,11 +9,13 @@ import { EditorResizeContextProvider } from './EditorResizeContext';
 
 export type RichTextEditorContextProps = {
     designTokens: DesignTokens;
+    position: Position;
     wrapperClassNames: string;
 };
 
 const RichTextEditorContext = createContext<RichTextEditorContextProps>({
     designTokens: defaultDesignTokens,
+    position: Position.FLOATING,
     wrapperClassNames: '',
 });
 export const useRichTextEditorContext = () => useContext(RichTextEditorContext);
@@ -32,6 +34,7 @@ export const RichTextEditorProvider = ({ children, value }: RichTextEditorProvid
 
     const state = {
         designTokens: designTokens ?? defaultDesignTokens,
+        position,
         wrapperClassNames: getEditorWrapperClassNames(position, border),
     };
 
