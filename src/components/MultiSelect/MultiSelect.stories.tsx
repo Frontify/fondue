@@ -178,3 +178,11 @@ WithFilter.args = {
 export const WithCustomMenu = MultiSelectTemplate.bind({});
 
 WithCustomMenu.args = WithFilter.args;
+
+export const WithMixedValues = MultiSelectTemplate.bind({});
+
+WithMixedValues.args = {
+    type: MultiSelectType.Summarized,
+    summarizedLabel: 'Mixed values',
+    indeterminateItemKeys: ['This is a long tag'],
+};

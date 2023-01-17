@@ -3,6 +3,7 @@
 export enum MenuItemStyle {
     Primary = 'Primary',
     Danger = 'Danger',
+    Warning = 'Warning',
 }
 
 export enum SelectionIndicatorIcon {

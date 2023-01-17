@@ -19,6 +19,7 @@ export class PluginComposer {
 
             for (const plugin of groupOfPlugins) {
                 this.addElement(plugin.markupElement);
+                this.addElement(plugin.markupInputElement);
                 this.addLeafElements(plugin.leafMarkupElements);
                 this.addPlugin(plugin);
                 this.addInline(plugin.inline());
