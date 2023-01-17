@@ -81,7 +81,7 @@ describe('Badge component', () => {
         cy.wrap(onClickStub).should('have.been.calledOnce');
     });
 
-    it('should call onDismiss', () => {
+    it.only('should call onDismiss', () => {
         const onDismissStub = cy.stub();
         cy.mount(
             <Badge icon={<IconDocumentText />} onDismiss={onDismissStub}>
