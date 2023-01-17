@@ -12,6 +12,7 @@ const BADGE_ID = '[data-test-id=badge]';
 const BADGE_STATUS_ID = '[data-test-id=badge-status]';
 const BADGE_ICON_ID = '[data-test-id=badge-icon]';
 const BADGE_DISMISS = '[data-test-id=badge-dismiss]';
+const BADGE_BUTTON = '[data-test-id=badge-button]';
 
 describe('Badge component', () => {
     it('renders', () => {
@@ -81,7 +82,7 @@ describe('Badge component', () => {
         cy.wrap(onClickStub).should('have.been.calledOnce');
     });
 
-    it.only('should call onDismiss', () => {
+    it('should call onDismiss', () => {
         const onDismissStub = cy.stub();
         cy.mount(
             <Badge icon={<IconDocumentText />} onDismiss={onDismissStub}>
@@ -135,6 +136,6 @@ describe('Badge component', () => {
             </Badge>,
         );
 
-        cy.get(BADGE_ID).invoke('attr', 'title').should('equal', `${BADGE_TEXT}_1_${BADGE_TEXT}_2_${BADGE_TEXT}`);
+        cy.get(BADGE_BUTTON).invoke('attr', 'title').should('equal', `${BADGE_TEXT}_1_${BADGE_TEXT}_2_${BADGE_TEXT}`);
     });
 });
