@@ -64,7 +64,6 @@ export const Badge: FC<BadgeProps> = ({
                 ])}
                 data-test-id="badge-button"
                 title={badgeTitle}
-                aria-label={onClick ? `Select ${badgeTitle}` : undefined}
             >
                 {status && <BadgeStatusIcon status={status} disabled={disabled} />}
                 {icon && (
