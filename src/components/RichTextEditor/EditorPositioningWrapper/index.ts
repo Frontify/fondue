@@ -6,6 +6,7 @@ import {
     ToolbarWrapperPositioningFloating,
     ToolbarWrapperPositioningTop,
 } from './ToolbarWrapper';
+import { merge } from '@utilities/merge';
 
 export { Position } from './types';
 export const EditorPositioningWrapper: EditorPositioningWrapperProps = {
@@ -21,4 +22,11 @@ export const EditorPositioningWrapper: EditorPositioningWrapperProps = {
         PlateWrapperClassNames: 'tw-relative tw-w-full tw-flex tw-flex-col-reverse',
         ToolbarWrapper: ToolbarWrapperPositioningTop,
     },
+};
+
+export const getEditorWrapperClassNames = (position: Position, border: boolean) => {
+    const toolbarPositioningClasses = EditorPositioningWrapper[position].PlateWrapperClassNames;
+    const showBorder = border || position !== Position.FLOATING;
+
+    return merge([toolbarPositioningClasses, showBorder && 'tw-border tw-border-line tw-rounded']);
 };

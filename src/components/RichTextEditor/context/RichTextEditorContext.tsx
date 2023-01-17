@@ -4,9 +4,8 @@ import React from 'react';
 import { createContext, useContext } from 'react';
 import { DesignTokens } from '../types';
 import { defaultDesignTokens } from '../utils/defaultDesignTokens';
-import { EditorPositioningWrapper, Position } from '../EditorPositioningWrapper';
+import { Position, getEditorWrapperClassNames } from '../EditorPositioningWrapper';
 import { EditorResizeContextProvider } from './EditorResizeContext';
-import { merge } from '@utilities/merge';
 
 export type RichTextEditorContextProps = {
     designTokens: DesignTokens;
@@ -31,12 +30,9 @@ type RichTextEditorProviderProps = {
 export const RichTextEditorProvider = ({ children, value }: RichTextEditorProviderProps) => {
     const { designTokens, position, border } = value;
 
-    const toolbarPositioningClasses = EditorPositioningWrapper[position].PlateWrapperClassNames;
-    const showBorder = border || position !== Position.FLOATING;
-
     const state = {
         designTokens: designTokens ?? defaultDesignTokens,
-        wrapperClassNames: merge([toolbarPositioningClasses, showBorder && 'tw-border tw-border-line tw-rounded']),
+        wrapperClassNames: getEditorWrapperClassNames(position, border),
     };
 
     return (
