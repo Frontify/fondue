@@ -13,6 +13,20 @@ const BADGE_STATUS_ID = '[data-test-id=badge-status]';
 const BADGE_ICON_ID = '[data-test-id=badge-icon]';
 const BADGE_DISMISS = '[data-test-id=badge-dismiss]';
 
+const checkMediumSize = () => {
+    cy.get(BADGE_ID)
+        .invoke('css', 'width')
+        .then((str) => {
+            expect(parseInt(String(str))).to.be.closeTo(66, 1);
+        });
+
+    cy.get(BADGE_ID)
+        .invoke('css', 'height')
+        .then((str) => {
+            expect(parseInt(String(str))).to.be.closeTo(24, 1);
+        });
+};
+
 describe('Badge component', () => {
     it('renders', () => {
         cy.mount(<Badge>{BADGE_TEXT}</Badge>);
@@ -66,33 +80,13 @@ describe('Badge component', () => {
     it('should render medium size', () => {
         cy.mount(<Badge size="medium">{BADGE_TEXT}</Badge>);
 
-        cy.get(BADGE_ID)
-            .invoke('css', 'width')
-            .then((str) => {
-                expect(parseInt(String(str))).to.be.closeTo(66, 1);
-            });
-
-        cy.get(BADGE_ID)
-            .invoke('css', 'height')
-            .then((str) => {
-                expect(parseInt(String(str))).to.be.closeTo(24, 1);
-            });
+        checkMediumSize();
     });
 
     it('should render medium size by default', () => {
         cy.mount(<Badge>{BADGE_TEXT}</Badge>);
 
-        cy.get(BADGE_ID)
-            .invoke('css', 'width')
-            .then((str) => {
-                expect(parseInt(String(str))).to.be.closeTo(66, 1);
-            });
-
-        cy.get(BADGE_ID)
-            .invoke('css', 'height')
-            .then((str) => {
-                expect(parseInt(String(str))).to.be.closeTo(24, 1);
-            });
+        checkMediumSize();
     });
 
     it('can be disabled', () => {

@@ -29,6 +29,8 @@ export default {
     args: {
         children: 'Text',
         icon: <IconDocumentText />,
+        size: 'medium',
+        emphasis: BadgeEmphasis.Strong,
         disabled: false,
     },
 } as Meta<BadgeProps>;
