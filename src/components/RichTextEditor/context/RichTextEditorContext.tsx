@@ -4,34 +4,39 @@ import React from 'react';
 import { createContext, useContext } from 'react';
 import { DesignTokens } from '../types';
 import { defaultDesignTokens } from '../utils/defaultDesignTokens';
-import { Position } from '../EditorPositioningWrapper';
+import { EditorPositioningWrapper, Position } from '../EditorPositioningWrapper';
 import { EditorResizeContextProvider } from './EditorResizeContext';
+import { merge } from '@utilities/merge';
 
 export type RichTextEditorContextProps = {
     designTokens: DesignTokens;
-    position: Position;
-    border: boolean;
+    wrapperClassNames: string;
 };
 
 const RichTextEditorContext = createContext<RichTextEditorContextProps>({
     designTokens: defaultDesignTokens,
-    position: Position.FLOATING,
-    border: false,
+    wrapperClassNames: '',
 });
 export const useRichTextEditorContext = () => useContext(RichTextEditorContext);
 
 type RichTextEditorProviderProps = {
     children: React.ReactNode;
-    value: RichTextEditorContextProps;
+    value: {
+        designTokens: DesignTokens;
+        position: Position;
+        border: boolean;
+    };
 };
 
 export const RichTextEditorProvider = ({ children, value }: RichTextEditorProviderProps) => {
     const { designTokens, position, border } = value;
 
+    const toolbarPositioningClasses = EditorPositioningWrapper[position].PlateWrapperClassNames;
+    const showBorder = border || position !== Position.FLOATING;
+
     const state = {
         designTokens: designTokens ?? defaultDesignTokens,
-        position: position ?? Position.FLOATING,
-        border,
+        wrapperClassNames: merge([toolbarPositioningClasses, showBorder && 'tw-border tw-border-line tw-rounded']),
     };
 
     return (
