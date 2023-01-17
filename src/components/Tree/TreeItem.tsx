@@ -9,11 +9,15 @@ import { useTreeContext } from '@components/Tree/TreeContext';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 import { merge } from '@utilities/merge';
 
+import { useDraggableEnhancedChildren } from './hooks/useDraggableEnhancedChildren';
+
 const DRAGGING_OPACITY = 0.4;
 const DEFAULT_OPACITY = 1;
 
-export const TreeItem = ({ id, sort, label, contentComponent, onSelect, onDrop, children }: TreeItemProps) => {
-    const { treeId, selectedIds, onSelect: onItemSelect, draggable } = useTreeContext();
+export const TreeItem = ({ id, sort, label, contentComponent, onSelect, children }: TreeItemProps) => {
+    const { treeId, selectedIds, onSelect: onItemSelect, draggable, onDrop } = useTreeContext();
+
+    const { draggableEnhancedChildren } = useDraggableEnhancedChildren(treeId, onDrop, children);
 
     const [expanded, setExpanded] = useState<boolean>(false);
     const [hovered, setHovered] = useState<boolean>(false);
@@ -53,28 +57,7 @@ export const TreeItem = ({ id, sort, label, contentComponent, onSelect, onDrop, 
     let enhancedChildren: ReactNode = childrenArray;
 
     if (draggable) {
-        enhancedChildren = React.Children.map(children, (child, index) => {
-            if (!child) {
-                return <></>;
-            }
-
-            return React.cloneElement(
-                <>
-                    {index === 0 && (
-                        <DropZone
-                            data={{
-                                targetItem: { id, sort },
-                                position: DropZonePosition.Before,
-                            }}
-                            onDrop={handleDrop}
-                            treeId={treeId}
-                        />
-                    )}
-
-                    {child}
-                </>,
-            );
-        });
+        enhancedChildren = draggableEnhancedChildren;
     }
 
     const caretComponent =
@@ -115,7 +98,10 @@ export const TreeItem = ({ id, sort, label, contentComponent, onSelect, onDrop, 
                         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                         <span
                             data-test-id="tree-item-toggle"
-                            className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center tw-py-3 tw-cursor-pointer"
+                            className={merge([
+                                'tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center tw-py-3',
+                                childrenArray.length > 0 && 'tw-cursor-pointer',
+                            ])}
                             onClick={toggleExpand}
                         >
                             {caretComponent}

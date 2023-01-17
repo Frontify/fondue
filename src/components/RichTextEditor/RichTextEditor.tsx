@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { KeyboardEvent } from 'react';
-import { Plate, TNode } from '@udecode/plate';
+import { Plate } from '@udecode/plate';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
 import { useEditorState } from './hooks';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
-import { DesignTokens, PaddingSizes } from './types';
+import { DesignTokens, PaddingSizes, TreeOfNodes } from './types';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { Position } from './EditorPositioningWrapper';
 import { GeneratePlugins, PluginComposer, defaultPlugins } from './Plugins';
@@ -28,7 +28,7 @@ export type RichTextEditorProps = {
     padding?: PaddingSizes;
     position?: Position;
     plugins?: PluginComposer;
-    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>, value: TNode[] | null) => void;
+    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>, value: TreeOfNodes | null) => void;
     /**
      * @type {boolean} border - Optional border if position equals Position.Floating.
      * If position is equal to Position.Top or Position.Bottom, a border will be always be shown.

@@ -2,11 +2,14 @@
 
 import { createContext, useContext } from 'react';
 
+import { OnDropCallback } from '@components/DropZone';
+
 export type TreeContextProps = {
     treeId: string;
     selectedIds: string[];
     onSelect: (id: string) => void;
     draggable: boolean;
+    onDrop: OnDropCallback<{ id: string; sort: Nullable<number> }>;
 };
 
 export const TreeContext = createContext<TreeContextProps>({} as TreeContextProps);
