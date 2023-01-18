@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { BasePlacement } from '@popperjs/core';
 import {
     PlateEditor,
@@ -14,7 +15,6 @@ import {
 import React from 'react';
 import { KEY_ELEMENT_BREAK_AFTER } from '../BreakAfterPlugin';
 import { setBreakAfter } from '../utils/setBreakAfter';
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 
 export const BreakAfterToolbarButton = ({ id, pluginKey = KEY_ELEMENT_BREAK_AFTER, ...props }: ToolbarButtonProps) => {
     const editor = usePlateEditorState(useEventPlateId(id));
@@ -22,17 +22,18 @@ export const BreakAfterToolbarButton = ({ id, pluginKey = KEY_ELEMENT_BREAK_AFTE
     const { style } = useRichTextEditorContext();
     const columnCount = Number(style?.columns);
 
+    if (!isBreakAfterEnabled(editor, columnCount, isActive)) {
+        return <></>;
+    }
     return (
         <ToolbarButton
             active={isActive}
             tooltip={getTooltip('Break After Column.\n[shift+ctrl+return]')}
             onMouseDown={(event) =>
-                isBreakAfterEnabled(editor, columnCount, isActive)
-                    ? getPreventDefaultHandler(setBreakAfter, editor, {
-                          value: !isActive,
-                          key: pluginKey,
-                      })(event)
-                    : undefined
+                getPreventDefaultHandler(setBreakAfter, editor, {
+                    value: !isActive,
+                    key: pluginKey,
+                })(event)
             }
             {...props}
         />
