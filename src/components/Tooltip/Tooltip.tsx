@@ -48,6 +48,7 @@ export type TooltipProps = PropsWithChildren<{
     enterDelay?: number;
     open?: boolean;
     disabled?: boolean;
+    /** @deprecated use disabled */
     hidden?: boolean;
 }>;
 
