@@ -11,7 +11,7 @@ export default {
     component: Tooltip,
     args: {
         content:
-            'Cupcake ipsum dolor sit amet ice cream. (https://Cupcakeipsumdolorsitameticecream.com), just testing here',
+            'Cupcake ipsum dolor sit amet ice cream. (https://Cupcakeipsumdolorsitameticecream.com), just testing here testing there',
         heading: '',
     },
     argTypes: {
