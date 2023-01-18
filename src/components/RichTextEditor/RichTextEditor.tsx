@@ -29,10 +29,6 @@ export type RichTextEditorProps = {
     position?: Position;
     plugins?: PluginComposer;
     onKeyDown?: (event: KeyboardEvent<HTMLDivElement>, value: TreeOfNodes | null) => void;
-    /**
-     * @type {boolean} border - Optional border if position equals Position.Floating.
-     * If position is equal to Position.Top or Position.Bottom, a border will be always be shown.
-     */
     border?: boolean;
 };
 
@@ -48,7 +44,7 @@ export const RichTextEditor = ({
     position = Position.FLOATING,
     plugins = defaultPlugins,
     onKeyDown,
-    border = false,
+    border = true,
 }: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
     const { localValue, onChange, memoizedValue } = useEditorState({ editorId, initialValue, onTextChange, plugins });
