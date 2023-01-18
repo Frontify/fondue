@@ -7,7 +7,7 @@ import { MarkupElementNodeComponent } from './MarkupElementNode';
 import { MarkupElementNodeType } from './types';
 
 const renderLabel = (mentionable: MentionableItems, key: string) =>
-    mentionable.find((mention: MentionableItem) => mention.key === key)?.text ?? key;
+    mentionable.find((mention: MentionableItem) => String(mention.key) === String(key))?.text ?? key;
 
 export const MentionMarkupElementNode =
     (mentionable: MentionableItems): MarkupElementNodeType =>
@@ -19,7 +19,7 @@ export const MentionMarkupElementNode =
 
         return (
             <MarkupElementNodeComponent category={category as MentionableCategory} {...props}>
-                {renderLabel(mentionable, key as string)}
+                {renderLabel(mentionable, String(key))}
                 {children}
             </MarkupElementNodeComponent>
         );
