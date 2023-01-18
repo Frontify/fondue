@@ -11,7 +11,7 @@ import {
     MultiSelectSize,
     MultiSelectType,
 } from './MultiSelect';
-import { IconPerson16 } from '@foundation/Icon';
+import { IconNook16, IconPerson16 } from '@foundation/Icon';
 
 export default {
     title: 'Components/Multi Select',
@@ -172,9 +172,39 @@ WithFilter.args = {
             imgSrc: 'https://images.unsplash.com/photo-1669255034440-7d293acdd207?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=927&q=80',
             value: 'This is a long tag 74',
         },
+        {
+            avatar: (
+                <div className="tw-w-[1.5rem] tw-h-[1.5rem] tw-z-20 tw-flex tw-items-center tw-justify-center tw-rounded-[50%] tw-bg-box-disabled-strong tw-text-text-weak tw-p-0.5">
+                    <IconNook16 />
+                </div>
+            ),
+            value: 'System',
+        },
     ],
 };
 
 export const WithCustomMenu = MultiSelectTemplate.bind({});
 
 WithCustomMenu.args = WithFilter.args;
+
+export const WithMixedValues = MultiSelectTemplate.bind({});
+
+WithMixedValues.args = {
+    type: MultiSelectType.Summarized,
+    summarizedLabel: 'Mixed values',
+    indeterminateItemKeys: ['This is a long tag'],
+};
+
+export const WithAvatar = MultiSelectTemplate.bind({});
+
+WithAvatar.args = {
+    emphasis: MultiSelectEmphasis.Weak,
+    items: WithFilter.args.items,
+};
+
+WithAvatar.argTypes = {
+    emphasis: {
+        options: [],
+        control: { type: 'none' },
+    },
+};

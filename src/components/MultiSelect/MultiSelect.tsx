@@ -15,6 +15,7 @@ import { Menu } from '@components/Menu';
 import { MenuItem } from '@components/MenuItem';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { DefaultItem, NoSearchResults, OptionalItems } from './SelectMenuItems';
+import { CheckboxState } from '@components/Checkbox/Checkbox';
 
 export enum MultiSelectType {
     Default = 'Default',
@@ -35,6 +36,7 @@ export type MultiSelectItem = {
     value: string;
     isCategory?: boolean;
     isDivider?: boolean;
+    avatar?: React.ReactNode;
     imgSrc?: string;
     ariaLabel?: string;
 };
@@ -55,11 +57,14 @@ export type MultiSelectProps = {
     filterable?: boolean;
     filterLabel?: string;
     noResultsLabel?: string;
+    summarizedLabel?: string;
+    indeterminateItemKeys?: (string | number)[];
 };
 
 export type Item = {
     label: string;
     value: string;
+    avatar?: React.ReactNode;
     isCategory?: boolean;
     isDivider?: boolean;
     imgSrc?: string;
@@ -82,9 +87,19 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     emphasis = MultiSelectEmphasis.Default,
     decorator = null,
     filterable = false,
+    summarizedLabel: summarizedLabelFromProps,
+    indeterminateItemKeys,
 }) => {
     const [open, setOpen] = useState(false);
-    const [checkboxes, setCheckboxes] = useState<Item[]>(items.map((item) => ({ ...item, label: item.value })));
+    const [checkboxes, setCheckboxes] = useState<Item[]>(
+        items.map((item) => {
+            const checkboxBaseItem = { ...item, label: item.value };
+            if (indeterminateItemKeys?.includes(item.value)) {
+                return { ...checkboxBaseItem, state: CheckboxState.Mixed };
+            }
+            return checkboxBaseItem;
+        }),
+    );
     const hasResults = !!checkboxes.find((item) => !item.isCategory && !item.isDivider);
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const multiSelectRef = useRef<HTMLDivElement | null>(null);
@@ -92,7 +107,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     const { isFocusVisible, focusProps } = useFocusRing();
 
     const hasSelectedItems = activeItemKeys.length > 0;
-    const summarizedLabel = [activeItemKeys.length, 'selected'].join(' ');
+    const summarizedLabel = summarizedLabelFromProps ?? [activeItemKeys.length, 'selected'].join(' ');
     const inputWidth = getInputWidth(hasSelectedItems, filterLabel, placeholder);
 
     const handleClose = () => setOpen(false);
@@ -265,7 +280,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             <Menu open={open} onClose={handleClose} triggerRef={multiSelectRef}>
                                 {checkboxes.length > 0 && hasResults ? (
                                     checkboxes.map((item, index) => {
-                                        const { label, value, imgSrc } = item;
+                                        const { label, value, avatar, imgSrc } = item;
                                         const isChecked = !!activeItemKeys.find((key) => key === value);
                                         const handleMenuItemClick = () => toggleSelection(label);
 
@@ -283,7 +298,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
 
                                         return (
                                             <MenuItem checked={isChecked} onClick={handleMenuItemClick} key={value}>
-                                                <DefaultItem {...{ label, value, imgSrc, isChecked }} />
+                                                <DefaultItem {...{ label, value, avatar, imgSrc, isChecked }} />
                                             </MenuItem>
                                         );
                                     })
