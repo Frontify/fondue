@@ -13,6 +13,7 @@ import {
     usePlateEditorState,
 } from '@udecode/plate';
 import React from 'react';
+import { buttonClassNames } from '../../helper';
 import { KEY_ELEMENT_BREAK_AFTER } from '../BreakAfterPlugin';
 import { setBreakAfter } from '../utils/setBreakAfter';
 
@@ -20,22 +21,28 @@ export const BreakAfterToolbarButton = ({ id, pluginKey = KEY_ELEMENT_BREAK_AFTE
     const editor = usePlateEditorState(useEventPlateId(id));
     const isActive = !!editor?.selection && someNode(editor, { match: { breakAfterColumn: true } });
     const { style } = useRichTextEditorContext();
-    const columnCount = Number(style?.columns);
+    const columnCount = Number(style?.columns) || 1;
+    const canBreakAfter = isBreakAfterEnabled(editor, columnCount, isActive);
 
-    if (!isBreakAfterEnabled(editor, columnCount, isActive)) {
-        return <></>;
-    }
     return (
         <ToolbarButton
             active={isActive}
-            tooltip={getTooltip('Break After Column.\n[shift+ctrl+return]')}
+            tooltip={getTooltip(
+                canBreakAfter ? 'Break After Column.\n[shift+ctrl+return]' : 'Already at maximum number of columns',
+            )}
             onMouseDown={(event) =>
-                getPreventDefaultHandler(setBreakAfter, editor, {
-                    value: !isActive,
-                    key: pluginKey,
-                })(event)
+                canBreakAfter
+                    ? getPreventDefaultHandler(setBreakAfter, editor, {
+                          value: !isActive,
+                          key: pluginKey,
+                      })(event)
+                    : undefined
             }
             {...props}
+            classNames={{
+                root: `${buttonClassNames.root} ${canBreakAfter ? '' : '!tw-cursor-not-allowed !tw-opacity-50'}`,
+                active: buttonClassNames.active,
+            }}
         />
     );
 };

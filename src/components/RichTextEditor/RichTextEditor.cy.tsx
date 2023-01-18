@@ -949,17 +949,16 @@ describe('RichTextEditor Component', () => {
         const [initialValue, setInitialValue] = useState(value);
 
         return (
-            <div className="tw-block tw-column tw-columns-2">
-                <RichTextEditor
-                    plugins={defaultPluginsWithColumns}
-                    value={initialValue}
-                    onTextChange={(value) => setInitialValue(value)}
-                />
-            </div>
+            <RichTextEditor
+                plugins={defaultPluginsWithColumns}
+                value={initialValue}
+                columns={2}
+                onTextChange={(value) => setInitialValue(value)}
+            />
         );
     };
 
-    describe.only('column break plugin', () => {
+    describe('column break plugin', () => {
         it('it should add column break on paragraph', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
 
@@ -1011,7 +1010,7 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-            cy.get(TEXTSTYLE_OPTION).eq(2).click();
+            cy.get(TEXTSTYLE_OPTION).eq(4).click();
             cy.get('[contenteditable=true]').click().should('not.include.html', breakAfterClassNames);
             selectTextValue('hello');
             cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
