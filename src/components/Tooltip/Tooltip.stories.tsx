@@ -10,7 +10,8 @@ export default {
     title: 'Components/Tooltip',
     component: Tooltip,
     args: {
-        content: 'Cupcake ipsum dolor sit amet ice cream. (https://Cupcakeipsumdolorsitameticecream.com)',
+        content:
+            'Cupcake ipsum dolor sit amet ice cream. (https://Cupcakeipsumdolorsitameticecream.com), just testing here',
         heading: '',
     },
     argTypes: {
