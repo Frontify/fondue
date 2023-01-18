@@ -169,7 +169,6 @@ export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () =
                     value={JSON.stringify(resultSlate)}
                     plugins={allPlugins}
                     padding={PaddingSizes.Medium}
-                    border={false}
                 />
             </div>
         </>
