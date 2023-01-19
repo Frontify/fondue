@@ -37,7 +37,7 @@ export const RichTextEditorProvider = ({ children, value }: RichTextEditorProvid
 
     const state = {
         designTokens: designTokens ?? defaultDesignTokens,
-        position,,
+        position,
         style: style ?? {},
         wrapperClassNames: getEditorWrapperClassNames(position, border),
     };
