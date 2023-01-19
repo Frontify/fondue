@@ -57,7 +57,7 @@ export default {
         readonly: false,
         clear: false,
         position: Position.FLOATING,
-        padding: PaddingSizes.Medium,
+        padding: Object.keys(PaddingSizes)[2],
         border: true,
     },
     argTypes: {
