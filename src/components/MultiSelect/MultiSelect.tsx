@@ -214,7 +214,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                     />
                                 ))}
 
-                            {type === MultiSelectType.Summarized && hasSelectedItems && (
+                            {type === MultiSelectType.Summarized && (hasSelectedItems || summarizedLabelFromProps) && (
                                 <Tag
                                     type={getTagType()}
                                     label={summarizedLabel}
