@@ -2,16 +2,13 @@
 
 import React, { forwardRef } from 'react';
 import { WrapperProps } from './types';
-import { EditorPositioningWrapper } from '.';
 import { useRichTextEditorContext } from '../context/RichTextEditorContext';
 
 export const PlateWrapper = forwardRef<HTMLDivElement, WrapperProps>(({ children }, ref) => {
-    const { position, style } = useRichTextEditorContext();
-
-    const classNames = EditorPositioningWrapper[position].PlateWrapperClassNames;
+    const { wrapperClassNames, style } = useRichTextEditorContext();
 
     return (
-        <div data-test-id="rich-text-editor" className={classNames} style={style} ref={ref}>
+        <div data-test-id="rich-text-editor" className={wrapperClassNames} style={style} ref={ref}>
             {children}
         </div>
     );
