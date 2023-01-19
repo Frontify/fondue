@@ -55,11 +55,34 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
 ) => {
     const id = useMemoizedId(propId);
     const inputRef = useForwardedRef<HTMLInputElement | null>(ref);
-    const { isFocusVisible, focusProps } = useFocusRing();
+    const { focusProps } = useFocusRing();
     const toggleState = useToggleState({
         onChange: disabled ? undefined : onChange,
         isSelected: state === CheckboxState.Checked,
     });
+    const [showFocus, setShowFocus] = React.useState<Nullable<boolean>>();
+    const [listeningForKeyboardEvents, setListeningForKeyboardEvents] = React.useState<Nullable<boolean>>();
+
+    const tabFocusListener = (event: KeyboardEvent) => {
+        if (event.key === 'Tab') {
+            setShowFocus(true);
+        }
+    };
+
+    const blurListener = () => {
+        setShowFocus(false);
+    };
+
+    React.useEffect(() => {
+        if (!listeningForKeyboardEvents) {
+            inputRef?.current?.removeEventListener('keyup', tabFocusListener);
+            inputRef?.current?.addEventListener('keyup', tabFocusListener);
+            inputRef?.current?.removeEventListener('blur', blurListener);
+            inputRef?.current?.addEventListener('blur', blurListener);
+
+            setListeningForKeyboardEvents(true);
+        }
+    }, [listeningForKeyboardEvents, inputRef]);
 
     const { inputProps } = useCheckbox(
         {
@@ -92,7 +115,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                     aria-hidden="true"
                     className={merge([
                         'tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
-                        isFocusVisible && FOCUS_STYLE,
+                        showFocus ? FOCUS_STYLE : '',
                         disabled
                             ? merge([
                                   'tw-text-white tw-pointer-events-none',
