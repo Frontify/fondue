@@ -30,6 +30,7 @@ export type RichTextEditorProps = {
     plugins?: PluginComposer;
     onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
     onValueChanged?: (value: TreeOfNodes | null) => void;
+    border?: boolean;
 };
 
 export const RichTextEditor = ({
@@ -45,6 +46,7 @@ export const RichTextEditor = ({
     plugins = defaultPlugins,
     onKeyDown,
     onValueChanged,
+    border = true,
 }: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
     const { localValue, onChange, memoizedValue, config } = useEditorState({
@@ -81,7 +83,7 @@ export const RichTextEditor = ({
     });
 
     return (
-        <RichTextEditorProvider value={{ designTokens, position }}>
+        <RichTextEditorProvider value={{ designTokens, position, border }}>
             <Plate
                 id={editorId}
                 initialValue={memoizedValue}
