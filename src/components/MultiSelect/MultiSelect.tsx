@@ -36,6 +36,7 @@ export type MultiSelectItem = {
     value: string;
     isCategory?: boolean;
     isDivider?: boolean;
+    avatar?: React.ReactNode;
     imgSrc?: string;
     ariaLabel?: string;
 };
@@ -63,6 +64,7 @@ export type MultiSelectProps = {
 export type Item = {
     label: string;
     value: string;
+    avatar?: React.ReactNode;
     isCategory?: boolean;
     isDivider?: boolean;
     imgSrc?: string;
@@ -278,7 +280,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             <Menu open={open} onClose={handleClose} triggerRef={multiSelectRef}>
                                 {checkboxes.length > 0 && hasResults ? (
                                     checkboxes.map((item, index) => {
-                                        const { label, value, imgSrc } = item;
+                                        const { label, value, avatar, imgSrc } = item;
                                         const isChecked = !!activeItemKeys.find((key) => key === value);
                                         const handleMenuItemClick = () => toggleSelection(label);
 
@@ -296,7 +298,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
 
                                         return (
                                             <MenuItem checked={isChecked} onClick={handleMenuItemClick} key={value}>
-                                                <DefaultItem {...{ label, value, imgSrc, isChecked }} />
+                                                <DefaultItem {...{ label, value, avatar, imgSrc, isChecked }} />
                                             </MenuItem>
                                         );
                                     })
