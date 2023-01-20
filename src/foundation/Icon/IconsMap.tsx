@@ -80,6 +80,12 @@ import IconArrowBidirectional16 from '@foundation/Icon/Generated/IconArrowBidire
 import IconArrowBidirectional20 from '@foundation/Icon/Generated/IconArrowBidirectional20';
 import IconArrowBidirectional24 from '@foundation/Icon/Generated/IconArrowBidirectional24';
 import IconArrowBidirectional32 from '@foundation/Icon/Generated/IconArrowBidirectional32';
+import IconArrowBidirectionalHorizontal from '@foundation/Icon/Generated/IconArrowBidirectionalHorizontal';
+import IconArrowBidirectionalHorizontal12 from '@foundation/Icon/Generated/IconArrowBidirectionalHorizontal12';
+import IconArrowBidirectionalHorizontal16 from '@foundation/Icon/Generated/IconArrowBidirectionalHorizontal16';
+import IconArrowBidirectionalHorizontal20 from '@foundation/Icon/Generated/IconArrowBidirectionalHorizontal20';
+import IconArrowBidirectionalHorizontal24 from '@foundation/Icon/Generated/IconArrowBidirectionalHorizontal24';
+import IconArrowBidirectionalHorizontal32 from '@foundation/Icon/Generated/IconArrowBidirectionalHorizontal32';
 import IconArrowBottomToTop from '@foundation/Icon/Generated/IconArrowBottomToTop';
 import IconArrowBottomToTop12 from '@foundation/Icon/Generated/IconArrowBottomToTop12';
 import IconArrowBottomToTop16 from '@foundation/Icon/Generated/IconArrowBottomToTop16';
@@ -474,6 +480,12 @@ import IconClockAlternative16 from '@foundation/Icon/Generated/IconClockAlternat
 import IconClockAlternative20 from '@foundation/Icon/Generated/IconClockAlternative20';
 import IconClockAlternative24 from '@foundation/Icon/Generated/IconClockAlternative24';
 import IconClockAlternative32 from '@foundation/Icon/Generated/IconClockAlternative32';
+import IconClockList from '@foundation/Icon/Generated/IconClockList';
+import IconClockList12 from '@foundation/Icon/Generated/IconClockList12';
+import IconClockList16 from '@foundation/Icon/Generated/IconClockList16';
+import IconClockList20 from '@foundation/Icon/Generated/IconClockList20';
+import IconClockList24 from '@foundation/Icon/Generated/IconClockList24';
+import IconClockList32 from '@foundation/Icon/Generated/IconClockList32';
 import IconCloudArrowDown from '@foundation/Icon/Generated/IconCloudArrowDown';
 import IconCloudArrowDown12 from '@foundation/Icon/Generated/IconCloudArrowDown12';
 import IconCloudArrowDown16 from '@foundation/Icon/Generated/IconCloudArrowDown16';
@@ -841,6 +853,12 @@ import IconGrabHandle16 from '@foundation/Icon/Generated/IconGrabHandle16';
 import IconGrabHandle20 from '@foundation/Icon/Generated/IconGrabHandle20';
 import IconGrabHandle24 from '@foundation/Icon/Generated/IconGrabHandle24';
 import IconGrabHandle32 from '@foundation/Icon/Generated/IconGrabHandle32';
+import IconGradient from '@foundation/Icon/Generated/IconGradient';
+import IconGradient12 from '@foundation/Icon/Generated/IconGradient12';
+import IconGradient16 from '@foundation/Icon/Generated/IconGradient16';
+import IconGradient20 from '@foundation/Icon/Generated/IconGradient20';
+import IconGradient24 from '@foundation/Icon/Generated/IconGradient24';
+import IconGradient32 from '@foundation/Icon/Generated/IconGradient32';
 import IconGridRegular from '@foundation/Icon/Generated/IconGridRegular';
 import IconGridRegular12 from '@foundation/Icon/Generated/IconGridRegular12';
 import IconGridRegular12Filled from '@foundation/Icon/Generated/IconGridRegular12Filled';
@@ -1832,6 +1850,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.ArrowBidirectional20]: <IconArrowBidirectional20 />,
     [IconEnum.ArrowBidirectional24]: <IconArrowBidirectional24 />,
     [IconEnum.ArrowBidirectional32]: <IconArrowBidirectional32 />,
+    [IconEnum.ArrowBidirectionalHorizontal]: <IconArrowBidirectionalHorizontal />,
+    [IconEnum.ArrowBidirectionalHorizontal12]: <IconArrowBidirectionalHorizontal12 />,
+    [IconEnum.ArrowBidirectionalHorizontal16]: <IconArrowBidirectionalHorizontal16 />,
+    [IconEnum.ArrowBidirectionalHorizontal20]: <IconArrowBidirectionalHorizontal20 />,
+    [IconEnum.ArrowBidirectionalHorizontal24]: <IconArrowBidirectionalHorizontal24 />,
+    [IconEnum.ArrowBidirectionalHorizontal32]: <IconArrowBidirectionalHorizontal32 />,
     [IconEnum.ArrowBottomToTop]: <IconArrowBottomToTop />,
     [IconEnum.ArrowBottomToTop12]: <IconArrowBottomToTop12 />,
     [IconEnum.ArrowBottomToTop16]: <IconArrowBottomToTop16 />,
@@ -2226,6 +2250,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.ClockAlternative20]: <IconClockAlternative20 />,
     [IconEnum.ClockAlternative24]: <IconClockAlternative24 />,
     [IconEnum.ClockAlternative32]: <IconClockAlternative32 />,
+    [IconEnum.ClockList]: <IconClockList />,
+    [IconEnum.ClockList12]: <IconClockList12 />,
+    [IconEnum.ClockList16]: <IconClockList16 />,
+    [IconEnum.ClockList20]: <IconClockList20 />,
+    [IconEnum.ClockList24]: <IconClockList24 />,
+    [IconEnum.ClockList32]: <IconClockList32 />,
     [IconEnum.CloudArrowDown]: <IconCloudArrowDown />,
     [IconEnum.CloudArrowDown12]: <IconCloudArrowDown12 />,
     [IconEnum.CloudArrowDown16]: <IconCloudArrowDown16 />,
@@ -2593,6 +2623,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.GrabHandle20]: <IconGrabHandle20 />,
     [IconEnum.GrabHandle24]: <IconGrabHandle24 />,
     [IconEnum.GrabHandle32]: <IconGrabHandle32 />,
+    [IconEnum.Gradient]: <IconGradient />,
+    [IconEnum.Gradient12]: <IconGradient12 />,
+    [IconEnum.Gradient16]: <IconGradient16 />,
+    [IconEnum.Gradient20]: <IconGradient20 />,
+    [IconEnum.Gradient24]: <IconGradient24 />,
+    [IconEnum.Gradient32]: <IconGradient32 />,
     [IconEnum.GridRegular]: <IconGridRegular />,
     [IconEnum.GridRegular12]: <IconGridRegular12 />,
     [IconEnum.GridRegular12Filled]: <IconGridRegular12Filled />,
