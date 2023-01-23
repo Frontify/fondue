@@ -98,6 +98,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     const hasResults = !!checkboxes.find((item) => !item.isCategory && !item.isDivider);
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const multiSelectRef = useRef<HTMLDivElement | null>(null);
+    const multiSelectMenuRef = useRef<HTMLDivElement | null>(null);
     const filterInputRef = useRef<HTMLInputElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
 
@@ -183,7 +184,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
         );
     }, [items, indeterminateItemKeys]);
 
-    const popperInstance = usePopper(triggerRef?.current, multiSelectRef.current, {
+    const popperInstance = usePopper(triggerRef?.current, multiSelectMenuRef.current, {
         placement: 'bottom-start',
         strategy: 'fixed',
         modifiers: [
@@ -269,6 +270,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                     ? createPortal(
                           <AnimatePresence>
                               <motion.div
+                                  ref={multiSelectMenuRef}
                                   className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-30 tw-bg-base tw-min-w-[18rem]"
                                   key="content"
                                   initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
