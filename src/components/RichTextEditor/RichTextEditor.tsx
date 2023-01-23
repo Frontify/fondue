@@ -32,8 +32,7 @@ export type RichTextEditorProps = {
     plugins?: PluginComposer;
     onKeyDown?: (event: KeyboardEvent<HTMLDivElement>, value: TreeOfNodes | null) => void;
     border?: boolean;
-    /** Only set to true when you are sure that performance isn't an issue */
-    updateValueOnChange?: boolean;
+    updateValueOnChange?: boolean; // Only set to true when you are sure that performance isn't an issue
 };
 
 export const RichTextEditor = ({
