@@ -85,8 +85,6 @@ export const RichTextEditor = ({
     };
 
     const config = GeneratePlugins(editorId, plugins);
-    const hasValueChanged =
-        updateValueOnChange && memoizedValue.toString() !== parseRawValue({ editorId, raw: value }).toString();
 
     return (
         <RichTextEditorProvider value={{ designTokens, position, border }}>
@@ -99,7 +97,7 @@ export const RichTextEditor = ({
             >
                 {config.toolbar()}
                 {config.inline()}
-                {hasValueChanged && <ContentReplacement value={parseRawValue({ editorId, raw: value })} />}
+                {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value })} />}
             </Plate>
         </RichTextEditorProvider>
     );
