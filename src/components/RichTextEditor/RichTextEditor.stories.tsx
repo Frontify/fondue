@@ -53,6 +53,7 @@ export default {
     component: RichTextEditorComponent,
     args: {
         value: JSON.stringify(value),
+        updateValueOnChange: true,
         placeholder: 'Some placeholder',
         readonly: false,
         clear: false,
@@ -64,6 +65,7 @@ export default {
         onTextChange: { action: 'onTextChange' },
         onBlur: { action: 'onBlur' },
         value: { type: 'string' },
+        updateValueOnChange: { type: 'boolean' },
         position: {
             options: Object.values(Position),
             mapping: Position,
