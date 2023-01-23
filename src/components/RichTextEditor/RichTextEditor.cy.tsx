@@ -220,6 +220,45 @@ describe('RichTextEditor Component', () => {
             cy.mount(<RichTextEditorWithValueSetOutside value={TEXT} />);
             cy.get(RICH_TEXT_EDITOR).should('contain.text', TEXT);
         });
+
+        it('should render the updated value when updateValueOnChange enabled', () => {
+            const INITIAL_TEXT = 'This is the initial text';
+
+            cy.mount(
+                <RichTextEditor
+                    updateValueOnChange
+                    value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: INITIAL_TEXT }] }])}
+                />,
+            ).then(({ rerender }) => {
+                const UPDATED_TEXT = 'This is the updated text';
+                rerender(
+                    <RichTextEditor
+                        updateValueOnChange
+                        value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: UPDATED_TEXT }] }])}
+                    />,
+                );
+                cy.get(RICH_TEXT_EDITOR).should('contain.text', UPDATED_TEXT);
+            });
+        });
+
+        it('should render the same value when updateValueOnChange disabled', () => {
+            const INITIAL_TEXT = 'This is the initial text';
+
+            cy.mount(
+                <RichTextEditor
+                    value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: INITIAL_TEXT }] }])}
+                />,
+            ).then(({ rerender }) => {
+                rerender(
+                    <RichTextEditor
+                        value={JSON.stringify([
+                            { type: ELEMENT_PARAGRAPH, children: [{ text: 'This is the updated text' }] },
+                        ])}
+                    />,
+                );
+                cy.get(RICH_TEXT_EDITOR).should('contain.text', INITIAL_TEXT);
+            });
+        });
     });
 
     describe('Editable', () => {
@@ -959,7 +998,7 @@ describe('RichTextEditor Component', () => {
         );
     };
 
-    describe.only('column break plugin', () => {
+    describe('column break plugin', () => {
         it('it should add column break on paragraph', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
 
