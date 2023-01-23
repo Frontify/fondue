@@ -11,6 +11,8 @@ import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { Position } from './EditorPositioningWrapper';
 import { GeneratePlugins, PluginComposer, defaultPlugins } from './Plugins';
 import { forceToBlurActiveElement } from './helpers';
+import { parseRawValue } from './utils';
+import { ContentReplacement } from './ContentReplacement';
 
 const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
     position: 'relative',
@@ -30,11 +32,12 @@ export type RichTextEditorProps = {
     plugins?: PluginComposer;
     onKeyDown?: (event: KeyboardEvent<HTMLDivElement>, value: TreeOfNodes | null) => void;
     border?: boolean;
+    updateValueOnChange?: boolean; // Only set to true when you are sure that performance isn't an issue
 };
 
 export const RichTextEditor = ({
     id,
-    value: initialValue,
+    value,
     placeholder = '',
     readonly = false,
     designTokens = defaultDesignTokens,
@@ -43,11 +46,17 @@ export const RichTextEditor = ({
     padding = PaddingSizes.None,
     position = Position.FLOATING,
     plugins = defaultPlugins,
+    updateValueOnChange = false,
     onKeyDown,
     border = true,
 }: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
-    const { localValue, onChange, memoizedValue } = useEditorState({ editorId, initialValue, onTextChange, plugins });
+    const { localValue, onChange, memoizedValue } = useEditorState({
+        editorId,
+        initialValue: value,
+        onTextChange,
+        plugins,
+    });
 
     const editableProps: EditableProps = {
         placeholder,
@@ -80,13 +89,14 @@ export const RichTextEditor = ({
         <RichTextEditorProvider value={{ designTokens, position, border }}>
             <Plate
                 id={editorId}
-                initialValue={memoizedValue}
                 onChange={onChange}
                 editableProps={editableProps}
                 plugins={config.create()}
+                initialValue={memoizedValue}
             >
                 {config.toolbar()}
                 {config.inline()}
+                {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value })} />}
             </Plate>
         </RichTextEditorProvider>
     );
