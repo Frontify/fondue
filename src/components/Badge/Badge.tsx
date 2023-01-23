@@ -74,7 +74,7 @@ export const Badge: FC<BadgeProps> = ({
                 <button
                     type="button"
                     data-test-id="badge-dismiss"
-                    className={merge(['tw--mx-0.5 tw-rounded', FOCUS_VISIBLE_STYLE])}
+                    className={merge(['tw-leading-4', 'tw-mx-0.5 tw-rounded', FOCUS_VISIBLE_STYLE])}
                     onClick={(event) => {
                         event.stopPropagation();
                         onDismiss();
