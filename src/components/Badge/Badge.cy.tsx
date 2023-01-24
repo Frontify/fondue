@@ -15,9 +15,9 @@ const BADGE_DISMISS = '[data-test-id=badge-dismiss]';
 const BADGE_BUTTON = '[data-test-id=badge-button]';
 
 const checkMediumSize = () => {
-    cy.get(BADGE_ID).should('have.class', 'tw-px-2');
-    cy.get(BADGE_ID).should('have.class', 'tw-h-6');
-    cy.get(BADGE_ID).should('have.class', 'tw-gap-x-0.5');
+    cy.get(BADGE_BUTTON).should('have.class', 'tw-px-2');
+    cy.get(BADGE_BUTTON).should('have.class', 'tw-h-6');
+    cy.get(BADGE_BUTTON).should('have.class', 'tw-gap-x-0.5');
 };
 
 describe('Badge component', () => {
@@ -57,8 +57,8 @@ describe('Badge component', () => {
     it('should render with small size', () => {
         cy.mount(<Badge size="small">{BADGE_TEXT}</Badge>);
 
-        cy.get(BADGE_ID).should('have.class', 'tw-px-1.5');
-        cy.get(BADGE_ID).should('have.class', 'tw-h-5');
+        cy.get(BADGE_BUTTON).should('have.class', 'tw-px-1.5');
+        cy.get(BADGE_BUTTON).should('have.class', 'tw-h-5');
     });
 
     it('should render medium size', () => {
