@@ -62,6 +62,7 @@ export type MultiSelectProps = {
     noResultsLabel?: string;
     summarizedLabel?: string;
     indeterminateItemKeys?: (string | number)[];
+    flip?: boolean;
 };
 
 export type Item = {
@@ -92,6 +93,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     filterable = false,
     summarizedLabel: summarizedLabelFromProps,
     indeterminateItemKeys,
+    flip = false,
 }) => {
     const [open, setOpen] = useState(false);
     const [checkboxes, setCheckboxes] = useState<Item[]>([]);
@@ -108,7 +110,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
 
     const handleClose = () => setOpen(false);
 
-    useClickOutside(null, handleClose, [multiSelectMenuRef?.current as HTMLElement]);
+    useClickOutside(multiSelectRef?.current, handleClose, [multiSelectMenuRef?.current as HTMLElement]);
 
     const toggleOpen = () => setOpen((open) => !open);
 
@@ -196,11 +198,11 @@ export const MultiSelect: FC<MultiSelectProps> = ({
             },
             {
                 name: 'flip',
-                enabled: true,
+                enabled: flip,
             },
         ],
     });
-    console.log(open);
+
     return (
         <div className="tw-relative" ref={multiSelectRef}>
             <Trigger
@@ -301,6 +303,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                 : createPortal(
                       <AnimatePresence>
                           <motion.div
+                              ref={multiSelectMenuRef}
                               initial={{
                                   opacity: 0,
                                   height: 0,
