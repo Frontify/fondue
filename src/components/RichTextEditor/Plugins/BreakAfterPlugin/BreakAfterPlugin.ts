@@ -60,6 +60,9 @@ const OnKeyDownBreakAfter = (editor: any, { options: { rules = [] } }): Keyboard
                 return;
             }
         }
+        if (event.key === 'Enter' && event.shiftKey) {
+            return;
+        }
 
         if (event.key === 'Backspace' && editor.selection.anchor.offset === 0) {
             const location = getPointBefore(editor, editor.selection);
