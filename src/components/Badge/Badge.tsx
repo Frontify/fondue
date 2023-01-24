@@ -85,7 +85,7 @@ export const Badge: FC<BadgeProps> = ({
                     type="button"
                     data-test-id="badge-dismiss"
                     className={merge([
-                        'tw-absolute tw-rounded',
+                        'tw-absolute tw-rounded tw-leading-4',
                         FOCUS_VISIBLE_STYLE,
                         size === 'medium' ? 'tw-right-1.5' : 'tw-right-1',
                     ])}
