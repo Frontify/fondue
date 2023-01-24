@@ -54,52 +54,63 @@ const OnKeyDownBreakAfter = (editor: any, { options: { rules = [] } }): Keyboard
                 queryNode(entry, query) &&
                 isBreakAfterEnabled(editor, columns, isActive)
             ) {
-                getPreventDefaultHandler(setBreakAfter, editor, {
+                return getPreventDefaultHandler(setBreakAfter, editor, {
                     value: !isActive,
                 })(event);
-                return;
             }
         }
-        if (event.key === 'Enter' && event.shiftKey) {
-            return;
-        }
 
-        if (event.key === 'Backspace' && editor.selection.anchor.offset === 0) {
-            const location = getPointBefore(editor, editor.selection);
-            const isElementBeforeIsActive = someNode(editor, { match: { breakAfterColumn: true }, at: location }); // && not list element?
-            if (isElementBeforeIsActive) {
-                return getPreventDefaultHandler(setBreakAfter, editor, {
-                    value: false,
+        switch (event.key) {
+            case 'Enter':
+                if (event.shiftKey) {
+                    break;
+                }
+                if (isActive) {
+                    getHandler(setBreakAfter, editor, {
+                        value: false,
+                    })();
+                    debounce(() => {
+                        getHandler(setBreakAfter, editor, {
+                            value: true,
+                        })();
+                    }, 1)();
+                }
+                break;
+
+            case 'Backspace':
+                if (editor.selection.anchor.offset !== 0) {
+                    break;
+                }
+                const location = getPointBefore(editor, editor.selection);
+                const isListElement = someNode(editor, { match: { type: 'li' }, at: editor.selection });
+                const isElementBeforeIsActive = someNode(editor, {
+                    match: { breakAfterColumn: true },
                     at: location,
-                })(event);
-            }
-            if (isActive) {
-                return debounce(() => {
-                    getHandler(setBreakAfter, editor, {
-                        value: true,
-                    })();
-                }, 1)();
-            }
-            return;
-        }
+                });
+                if (isElementBeforeIsActive && !isListElement) {
+                    getPreventDefaultHandler(setBreakAfter, editor, {
+                        value: false,
+                        at: location,
+                    })(event);
+                    break;
+                }
+                if (isActive) {
+                    debounce(() => {
+                        getHandler(setBreakAfter, editor, {
+                            value: true,
+                        })();
+                    }, 1)();
+                }
+                break;
 
-        if (isActive) {
-            const node = getNode(editor, editor.selection.anchor.path);
-            if (event.key === 'Delete' && editor.selection.anchor.offset === node.text.length) {
-                getPreventDefaultHandler(setBreakAfter, editor, {
-                    value: false,
-                })(event);
-            }
-            if (event.key === 'Enter') {
-                getHandler(setBreakAfter, editor, {
-                    value: false,
-                })();
-                debounce(() => {
-                    getHandler(setBreakAfter, editor, {
-                        value: true,
-                    })();
-                }, 1)();
-            }
+            case 'Delete':
+                const anchor = editor.selection.anchor;
+                if (anchor.offset === getNode(editor, anchor.path).text.length) {
+                    getPreventDefaultHandler(setBreakAfter, editor, {
+                        value: false,
+                    })(event);
+                }
+                break;
         }
     };
 };
