@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useEffect, useState } from 'react';
 import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import IconMinus from '@foundation/Icon/Generated/IconMinus';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
@@ -60,8 +61,8 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         onChange: disabled ? undefined : onChange,
         isSelected: state === CheckboxState.Checked,
     });
-    const [showFocus, setShowFocus] = React.useState<Nullable<boolean>>();
-    const [listeningForKeyboardEvents, setListeningForKeyboardEvents] = React.useState<Nullable<boolean>>();
+    const [showFocus, setShowFocus] = useState<Nullable<boolean>>();
+    const [listeningForKeyboardEvents, setListeningForKeyboardEvents] = useState<Nullable<boolean>>();
 
     const tabFocusListener = (event: KeyboardEvent) => {
         if (event.key === 'Tab') {
@@ -73,7 +74,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         setShowFocus(false);
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!listeningForKeyboardEvents) {
             inputRef?.current?.removeEventListener('keyup', tabFocusListener);
             inputRef?.current?.addEventListener('keyup', tabFocusListener);
