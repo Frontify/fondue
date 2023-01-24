@@ -28,4 +28,4 @@ export class MentionPlugin extends Plugin<MentionPluginProps> {
 }
 
 export { MentionableCategory } from './types';
-export type { MentionableItems } from './types';
+export type { MentionableItems, MentionableItem } from './types';

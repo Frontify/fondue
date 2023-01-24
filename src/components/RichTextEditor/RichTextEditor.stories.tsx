@@ -53,16 +53,19 @@ export default {
     component: RichTextEditorComponent,
     args: {
         value: JSON.stringify(value),
+        updateValueOnChange: true,
         placeholder: 'Some placeholder',
         readonly: false,
         clear: false,
         position: Position.FLOATING,
-        padding: PaddingSizes.None,
+        padding: Object.keys(PaddingSizes)[2],
+        border: true,
     },
     argTypes: {
         onTextChange: { action: 'onTextChange' },
         onBlur: { action: 'onBlur' },
         value: { type: 'string' },
+        updateValueOnChange: { type: 'boolean' },
         position: {
             options: Object.values(Position),
             mapping: Position,
@@ -163,8 +166,12 @@ export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () =
                 <pre id="json">{JSON.stringify(resultSlate, undefined, 2)}</pre>
             </div>
             Rich Text Editor:
-            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                <RichTextEditorComponent value={JSON.stringify(resultSlate)} plugins={allPlugins} />
+            <div className="tw-m-6">
+                <RichTextEditorComponent
+                    value={JSON.stringify(resultSlate)}
+                    plugins={allPlugins}
+                    padding={PaddingSizes.Medium}
+                />
             </div>
         </>
     );
@@ -177,6 +184,7 @@ export const Multiple: StoryFn<RichTextEditorProps> = () => (
                 placeholder="I'm placeholder one"
                 id="editor-one"
                 value="<p>I'm editor <strong>one</strong>.</p>"
+                border={false}
             />
         </div>
         <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
@@ -184,6 +192,7 @@ export const Multiple: StoryFn<RichTextEditorProps> = () => (
                 placeholder="I'm placeholder two"
                 id="editor-two"
                 value="<p>I'm editor <strong>two</strong>.</p>"
+                border={false}
             />
         </div>
         <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
@@ -191,6 +200,7 @@ export const Multiple: StoryFn<RichTextEditorProps> = () => (
                 placeholder="I'm placeholder three"
                 id="editor-three"
                 value="<p>I'm editor <strong>three</strong>.</p>"
+                border={false}
             />
         </div>
         <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
@@ -198,6 +208,7 @@ export const Multiple: StoryFn<RichTextEditorProps> = () => (
                 placeholder="I'm placeholder four"
                 id="editor-four"
                 value="<p>I'm editor <strong>four</strong>.</p>"
+                border={false}
             />
         </div>
     </div>
@@ -428,4 +439,8 @@ export const BreakAfterColumn: StoryFn<RichTextEditorProps> = (args: RichTextEdi
 BreakAfterColumn.args = {
     value: JSON.stringify(defaultValue),
     plugins: defaultPluginsWithColumns,
+    border: false,
+};
+BreakAfterColumn.argTypes = {
+    border: { table: { disable: true } },
 };
