@@ -392,7 +392,7 @@ export const mentionValue = [
             {
                 type: ELEMENT_MENTION,
                 category: 'group',
-                key: '1',
+                key: '11',
                 children: [{ text: '' }],
             },
             { text: '.' },
