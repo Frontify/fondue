@@ -48,7 +48,7 @@ export type TooltipProps = PropsWithChildren<{
     enterDelay?: number;
     open?: boolean;
     disabled?: boolean;
-    /** @deprecated use disabled */
+    /** @deprecated use disabled since the tooltip is always present in the DOM now so hidden has no effect anymore */
     hidden?: boolean;
 }>;
 
