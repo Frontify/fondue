@@ -16,7 +16,6 @@ import { MenuItem } from '@components/MenuItem';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { DefaultItem, NoSearchResults, OptionalItems } from './SelectMenuItems';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
-import { DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT } from '@components/Dropdown';
 import { createPortal } from 'react-dom';
 import { usePopper } from 'react-popper';
 
