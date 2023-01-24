@@ -66,14 +66,15 @@ export const getSizeClasses = (
     status: BadgeProps['status'],
     icon: BadgeProps['icon'],
     size: BadgeSize,
+    isDismissable: boolean,
 ) => {
     const isSmall = size === 'small';
 
     if (isSmall) {
-        return 'tw-h-5 tw-px-1.5';
+        return merge(['tw-h-5 tw-px-1.5', isDismissable && 'tw-pr-5']);
     } else {
         const hasMaximumTwoComponents = !Boolean(children && status && icon);
-        return merge(['tw-h-6', 'tw-px-2', hasMaximumTwoComponents && 'tw-gap-x-0.5']);
+        return merge(['tw-h-6', 'tw-px-2', hasMaximumTwoComponents && 'tw-gap-x-0.5', isDismissable && 'tw-pr-6']);
     }
 };
 
