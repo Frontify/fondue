@@ -101,7 +101,7 @@ jobs:
               run: npm ci
 
             - name: Component Tests
-              run: npm run test
+              run: npm run tests
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
