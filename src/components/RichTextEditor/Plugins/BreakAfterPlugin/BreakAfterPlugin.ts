@@ -7,6 +7,9 @@ import { Plugin, PluginProps } from '../Plugin';
 import {
     KeyboardHandlerReturnType,
     getBlockAbove,
+    getHandler,
+    getNode,
+    getPointBefore,
     getPreventDefaultHandler,
     queryNode,
     someNode,
@@ -15,6 +18,7 @@ import isHotkey from 'is-hotkey';
 import { setBreakAfter } from './utils/setBreakAfter';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { isBreakAfterEnabled } from './BreakAfterButton/BreakAfterToolbarButton';
+import { debounce } from '@utilities/debounce';
 
 export const KEY_ELEMENT_BREAK_AFTER = 'breakAfterColumn';
 
@@ -33,7 +37,7 @@ export class BreakAfterPlugin extends Plugin {
 
 // This is adapted from packages/editor/break/src/soft-break/onKeyDownSoftBreak.ts
 const OnKeyDownBreakAfter = (editor: any, { options: { rules = [] } }): KeyboardHandlerReturnType => {
-    const { style } = useRichTextEditorContext(); // not allowed to use hooks here
+    const { style } = useRichTextEditorContext();
     const columns = Number(style?.columns) ?? 1;
 
     return (event) => {
@@ -52,8 +56,46 @@ const OnKeyDownBreakAfter = (editor: any, { options: { rules = [] } }): Keyboard
             ) {
                 getPreventDefaultHandler(setBreakAfter, editor, {
                     value: !isActive,
-                    key: KEY_ELEMENT_BREAK_AFTER,
                 })(event);
+                return;
+            }
+        }
+
+        if (event.key === 'Backspace' && editor.selection.anchor.offset === 0) {
+            const location = getPointBefore(editor, editor.selection);
+            const isElementBeforeIsActive = someNode(editor, { match: { breakAfterColumn: true }, at: location }); // && not list element?
+            if (isElementBeforeIsActive) {
+                return getPreventDefaultHandler(setBreakAfter, editor, {
+                    value: false,
+                    at: location,
+                })(event);
+            }
+            if (isActive) {
+                return debounce(() => {
+                    getHandler(setBreakAfter, editor, {
+                        value: true,
+                    })();
+                }, 1)();
+            }
+            return;
+        }
+
+        if (isActive) {
+            const node = getNode(editor, editor.selection.anchor.path);
+            if (event.key === 'Delete' && editor.selection.anchor.offset === node.text.length) {
+                getPreventDefaultHandler(setBreakAfter, editor, {
+                    value: false,
+                })(event);
+            }
+            if (event.key === 'Enter') {
+                getHandler(setBreakAfter, editor, {
+                    value: false,
+                })();
+                debounce(() => {
+                    getHandler(setBreakAfter, editor, {
+                        value: true,
+                    })();
+                }, 1)();
             }
         }
     };
