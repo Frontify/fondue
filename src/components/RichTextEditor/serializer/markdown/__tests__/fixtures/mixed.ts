@@ -19,7 +19,7 @@ I am normal Paragraph
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna @[user:10] aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
 Presenting the Paragraph
-Lorem ipsum dolor sit amet, consetetur @[group:2] sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. @[user:11]
+Lorem ipsum dolor sit amet, consetetur @[group:31] sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. @[user:11]
 
 - list
 
@@ -164,7 +164,7 @@ export const mixedTree = [
             {
                 type: 'mention',
                 category: 'group',
-                key: '2',
+                key: '31',
                 children: [{ text: '' }],
             },
             {
