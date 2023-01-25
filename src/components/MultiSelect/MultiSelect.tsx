@@ -9,7 +9,7 @@ import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { ChangeEvent, FC, KeyboardEvent, useRef, useState } from 'react';
+import React, { ChangeEvent, FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { getInputWidth, getPaddingClasses } from './helpers';
 import { Menu } from '@components/Menu';
 import { MenuItem } from '@components/MenuItem';
@@ -36,6 +36,7 @@ export type MultiSelectItem = {
     value: string;
     isCategory?: boolean;
     isDivider?: boolean;
+    avatar?: React.ReactNode;
     imgSrc?: string;
     ariaLabel?: string;
 };
@@ -63,6 +64,7 @@ export type MultiSelectProps = {
 export type Item = {
     label: string;
     value: string;
+    avatar?: React.ReactNode;
     isCategory?: boolean;
     isDivider?: boolean;
     imgSrc?: string;
@@ -89,15 +91,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     indeterminateItemKeys,
 }) => {
     const [open, setOpen] = useState(false);
-    const [checkboxes, setCheckboxes] = useState<Item[]>(
-        items.map((item) => {
-            const checkboxBaseItem = { ...item, label: item.value };
-            if (indeterminateItemKeys?.includes(item.value)) {
-                return { ...checkboxBaseItem, state: CheckboxState.Mixed };
-            }
-            return checkboxBaseItem;
-        }),
-    );
+    const [checkboxes, setCheckboxes] = useState<Item[]>([]);
     const hasResults = !!checkboxes.find((item) => !item.isCategory && !item.isDivider);
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const multiSelectRef = useRef<HTMLDivElement | null>(null);
@@ -174,6 +168,18 @@ export const MultiSelect: FC<MultiSelectProps> = ({
         );
     };
 
+    useEffect(() => {
+        setCheckboxes(
+            items.map((item) => {
+                const checkboxBaseItem = { ...item, label: item.value };
+                if (indeterminateItemKeys?.includes(item.value)) {
+                    return { ...checkboxBaseItem, state: CheckboxState.Mixed };
+                }
+                return checkboxBaseItem;
+            }),
+        );
+    }, [items, indeterminateItemKeys]);
+
     return (
         <div className="tw-relative" ref={multiSelectRef}>
             <Trigger
@@ -212,12 +218,14 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                     />
                                 ))}
 
-                            {type === MultiSelectType.Summarized && hasSelectedItems && (
+                            {type === MultiSelectType.Summarized && (hasSelectedItems || summarizedLabelFromProps) && (
                                 <Tag
                                     type={getTagType()}
                                     label={summarizedLabel}
                                     size={size === MultiSelectSize.Small ? TagSize.Small : TagSize.Medium}
-                                    onClick={() => onSelectionChange([])}
+                                    onClick={
+                                        indeterminateItemKeys?.length === 0 ? () => onSelectionChange([]) : undefined
+                                    }
                                 />
                             )}
 
@@ -278,7 +286,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             <Menu open={open} onClose={handleClose} triggerRef={multiSelectRef}>
                                 {checkboxes.length > 0 && hasResults ? (
                                     checkboxes.map((item, index) => {
-                                        const { label, value, imgSrc } = item;
+                                        const { label, value, avatar, imgSrc } = item;
                                         const isChecked = !!activeItemKeys.find((key) => key === value);
                                         const handleMenuItemClick = () => toggleSelection(label);
 
@@ -296,7 +304,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
 
                                         return (
                                             <MenuItem checked={isChecked} onClick={handleMenuItemClick} key={value}>
-                                                <DefaultItem {...{ label, value, imgSrc, isChecked }} />
+                                                <DefaultItem {...{ label, value, avatar, imgSrc, isChecked }} />
                                             </MenuItem>
                                         );
                                     })
