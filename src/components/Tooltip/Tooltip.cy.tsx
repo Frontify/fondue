@@ -56,11 +56,11 @@ describe('Tooltip Component', () => {
     it('should render a tooltip after a timeout if enterDelay is set to a number greater than 0', () => {
         initTooltip({ content: TOOLTIP_TEXT, enterDelay: ENTER_DELAY });
 
-        cy.get(TOOLTIP_ID).should('not.exist');
+        cy.get(TOOLTIP_ID).should('not.be.visible');
 
         cy.wait(ENTER_DELAY);
 
-        cy.get(TOOLTIP_ID).should('exist');
+        cy.get(TOOLTIP_ID).should('be.visible');
     });
 
     it(`should close the tooltip after ${DEFAULT_HOVER_DELAY} milliseconds by default`, () => {
@@ -68,11 +68,11 @@ describe('Tooltip Component', () => {
 
         cy.get('@Trigger').trigger('mouseout');
 
-        cy.get(TOOLTIP_ID).should('exist');
+        cy.get(TOOLTIP_ID).should('be.visible');
 
         cy.wait(DEFAULT_HOVER_DELAY);
 
-        cy.get(TOOLTIP_ID).should('not.exist');
+        cy.get(TOOLTIP_ID).should('not.be.visible');
     });
 
     it('should close the tooltip after a specified time if hoverDelay is defined', () => {
@@ -80,11 +80,11 @@ describe('Tooltip Component', () => {
 
         cy.get('@Trigger').trigger('mouseout');
 
-        cy.get(TOOLTIP_ID).should('exist');
+        cy.get(TOOLTIP_ID).should('be.visible');
 
         cy.wait(CUSTOM_HOVER_DELAY);
 
-        cy.get(TOOLTIP_ID).should('not.exist');
+        cy.get(TOOLTIP_ID).should('not.be.visible');
     });
 
     it('should render an icon next to the tooltip', () => {
@@ -176,7 +176,7 @@ describe('Tooltip Component', () => {
             true,
         );
 
-        cy.get(TOOLTIP_ID).should('not.exist');
+        cy.get(TOOLTIP_ID).should('not.be.visible');
     });
 
     it('should render but not display the tooltip content when hidden', () => {
@@ -188,7 +188,7 @@ describe('Tooltip Component', () => {
             true,
         );
 
-        cy.get(TOOLTIP_ID).should('exist');
+        cy.get(TOOLTIP_ID).should('not.be.visible');
         cy.get(TOOLTIP_ID).should('have.class', 'tw-hidden');
     });
 });
