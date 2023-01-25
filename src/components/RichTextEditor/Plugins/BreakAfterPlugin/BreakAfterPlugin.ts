@@ -18,7 +18,6 @@ import {
 import { setBreakAfter } from './utils/setBreakAfter';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { isBreakAfterEnabled } from './BreakAfterButton/BreakAfterToolbarButton';
-import { debounce } from '@utilities/debounce';
 
 export const KEY_ELEMENT_BREAK_AFTER = 'breakAfterColumn';
 
@@ -126,13 +125,11 @@ const handleEnterKeyEvent = (
         return;
     }
     if (isActive) {
-        getHandler(setBreakAfter, editor, {
-            value: false,
-        })();
-        debounce(() => {
-            getHandler(setBreakAfter, editor, {
-                value: true,
-            })();
-        }, 1)();
+        getPreventDefaultHandler(() => {
+            editor.insertBreak();
+            setBreakAfter(editor, {
+                value: false,
+            });
+        })(event);
     }
 };
