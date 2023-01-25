@@ -246,12 +246,14 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                     />
                                 ))}
 
-                            {type === MultiSelectType.Summarized && hasSelectedItems && (
+                            {type === MultiSelectType.Summarized && (hasSelectedItems || summarizedLabelFromProps) && (
                                 <Tag
                                     type={getTagType()}
                                     label={summarizedLabel}
                                     size={size === MultiSelectSize.Small ? TagSize.Small : TagSize.Medium}
-                                    onClick={() => onSelectionChange([])}
+                                    onClick={
+                                        indeterminateItemKeys?.length === 0 ? () => onSelectionChange([]) : undefined
+                                    }
                                 />
                             )}
 
