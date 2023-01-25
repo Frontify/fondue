@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { merge } from '@utilities/merge';
 import { IconCross } from '@foundation/Icon';
+import { Badge, BadgeProps } from '@components/Badge';
 
 export type DialogHeaderProps = {
     title: string;
@@ -10,6 +11,8 @@ export type DialogHeaderProps = {
     collapseBottom?: boolean;
     close?: boolean;
     onClose?: () => void;
+    icon?: ReactElement;
+    badge?: BadgeProps;
 };
 
 export enum DialogHeaderSize {
@@ -23,6 +26,8 @@ export const DialogHeader = ({
     size = DialogHeaderSize.Null,
     close = false,
     onClose,
+    icon,
+    badge,
 }: DialogHeaderProps) => {
     return (
         <div
@@ -33,9 +38,18 @@ export const DialogHeader = ({
                 !collapseBottom && 'tw-border-b tw-border-b-line',
             ])}
         >
-            <p className={merge(['tw-font-bold', size === DialogHeaderSize.Large ? 'tw-text-md' : 'tw-text-sm'])}>
-                {title}
-            </p>
+            <div className="tw-flex tw-items-center">
+                {icon && <span className="tw-mr-1.5">{icon}</span>}
+                <p
+                    className={merge([
+                        'tw-mr-1.5 tw-font-bold',
+                        size === DialogHeaderSize.Large ? 'tw-text-md' : 'tw-text-sm',
+                    ])}
+                >
+                    {title}
+                </p>
+                {badge && <Badge {...badge} />}
+            </div>
             {close && (
                 <button onClick={onClose} className="tw-absolute tw-right-12">
                     <IconCross />

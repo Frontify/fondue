@@ -2,11 +2,13 @@
 
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { DialogHeader, DialogHeaderProps, DialogHeaderSize } from './DialogHeader';
+import { DialogHeader as DialogHeaderComponent, DialogHeaderProps, DialogHeaderSize } from './DialogHeader';
+import { BadgeStyle } from '@components/Badge';
+import { IconIcon } from '@foundation/Icon';
 
 export default {
     title: 'Components/DialogHeader',
-    component: DialogHeader,
+    component: DialogHeaderComponent,
     args: {
         title: 'Collaborator Settings',
         size: DialogHeaderSize.Large,
@@ -16,8 +18,14 @@ export default {
     },
 } as Meta<DialogHeaderProps>;
 
-const Template: StoryFn<DialogHeaderProps> = (args) => <DialogHeader {...args} />;
+export const DialogHeader: StoryFn<DialogHeaderProps> = (args) => <DialogHeaderComponent {...args} />;
 
-export const Default = Template.bind({});
+export const WithIconAndBadge: StoryFn<DialogHeaderProps> = (args) => <DialogHeaderComponent {...args} />;
 
-Default.args = {};
+WithIconAndBadge.args = {
+    badge: {
+        style: BadgeStyle.Positive,
+        children: 'Badge',
+    },
+    icon: <IconIcon />,
+};

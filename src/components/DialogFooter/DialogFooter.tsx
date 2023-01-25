@@ -1,15 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactElement } from 'react';
-import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
-
-export type DialogButton = {
-    label: string;
-    action: () => void;
-};
+import { Button, ButtonProps, ButtonSize } from '@components/Button';
 
 export type DialogFooterProps = {
-    buttons: [DialogButton] | [DialogButton, DialogButton];
+    buttons: [ButtonProps] | [ButtonProps, ButtonProps];
 };
 
 export const DialogFooter = ({ buttons }: DialogFooterProps): ReactElement => {
@@ -18,26 +13,9 @@ export const DialogFooter = ({ buttons }: DialogFooterProps): ReactElement => {
             data-test-id="dialog-footer"
             className="tw-p-4 tw-border-t tw-border-t-line tw-flex tw-items-center tw-justify-end tw-gap-x-3"
         >
-            {buttons && buttons.length > 0 && (
-                <Button
-                    style={ButtonStyle.Default}
-                    emphasis={ButtonEmphasis.Default}
-                    size={ButtonSize.Medium}
-                    onClick={buttons[0].action}
-                >
-                    {buttons[0].label}
-                </Button>
-            )}
-            {buttons && buttons.length === 2 && (
-                <Button
-                    style={ButtonStyle.Default}
-                    emphasis={ButtonEmphasis.Strong}
-                    size={ButtonSize.Medium}
-                    onClick={buttons[1].action}
-                >
-                    {buttons[1].label}
-                </Button>
-            )}
+            {buttons.map((button, index) => (
+                <Button key={`dialog-footer-button-${index}`} {...button} size={ButtonSize.Medium} />
+            ))}
         </div>
     );
 };

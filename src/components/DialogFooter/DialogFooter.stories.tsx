@@ -2,25 +2,33 @@
 
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { DialogFooter, DialogFooterProps } from './DialogFooter';
+import { DialogFooter as DialogFooterComponent, DialogFooterProps } from './DialogFooter';
+import { ButtonEmphasis, ButtonStyle } from '@components/Button';
+import { IconCheckMark } from '@foundation/Icon';
 
 export default {
     title: 'Components/DialogFooter',
-    component: DialogFooter,
+    component: DialogFooterComponent,
 } as Meta<DialogFooterProps>;
 
-const Template: StoryFn<DialogFooterProps> = () => {
+export const DialogFooter: StoryFn<DialogFooterProps> = () => {
     return (
-        <DialogFooter
+        <DialogFooterComponent
             buttons={[
-                { label: 'Cancel', action: () => console.log('Cancel') },
                 {
-                    label: 'Confirm',
-                    action: () => console.log('Confirm'),
+                    children: 'Cancel',
+                    onClick: () => console.log('Cancel'),
+                    style: ButtonStyle.Default,
+                    emphasis: ButtonEmphasis.Default,
+                },
+                {
+                    children: 'Confirm',
+                    onClick: () => console.log('Confirm'),
+                    style: ButtonStyle.Default,
+                    emphasis: ButtonEmphasis.Strong,
+                    icon: <IconCheckMark />,
                 },
             ]}
         />
     );
 };
-
-export const Default = Template.bind({});
