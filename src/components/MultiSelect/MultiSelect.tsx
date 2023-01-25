@@ -18,6 +18,8 @@ import { DefaultItem, NoSearchResults, OptionalItems } from './SelectMenuItems';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
 import { createPortal } from 'react-dom';
 import { usePopper } from 'react-popper';
+import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@components/Dropdown/useDropdownAutoHeight';
+import { DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT } from '@components/Dropdown/Dropdown';
 
 export enum MultiSelectType {
     Default = 'Default',
@@ -103,6 +105,8 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     const filterInputRef = useRef<HTMLInputElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
 
+    const { maxHeight } = useDropdownAutoHeight(triggerRef, { isOpen: open, autoResize: true });
+
     const hasSelectedItems = activeItemKeys.length > 0;
     const summarizedLabel = summarizedLabelFromProps ?? [activeItemKeys.length, 'selected'].join(' ');
     const inputWidth = getInputWidth(hasSelectedItems, filterLabel, placeholder);
@@ -110,6 +114,8 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     const handleClose = () => setOpen(false);
 
     useClickOutside(multiSelectRef?.current, handleClose, [multiSelectMenuRef?.current as HTMLElement]);
+
+    const heightIsReady = maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
 
     const toggleOpen = () => setOpen((open) => !open);
 
@@ -266,17 +272,17 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                 </div>
             </Trigger>
 
-            {emphasis === MultiSelectEmphasis.Default
+            {open && heightIsReady && emphasis === MultiSelectEmphasis.Default
                 ? createPortal(
                       <AnimatePresence>
                           <motion.div
                               ref={multiSelectMenuRef}
                               className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-30 tw-bg-base tw-min-w-[18rem]"
                               key="content"
-                              initial={{ height: 0 }}
-                              animate={{ height: open ? 'auto' : 0 }}
-                              exit={{ height: open ? 0 : 'auto' }}
+                              initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
+                              animate={{ height: 'auto' }}
                               transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
+                              exit={{ height: 0 }}
                               style={{
                                   ...popperInstance.styles.popper,
                                   width: triggerRef.current?.getBoundingClientRect().width,
@@ -285,7 +291,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                               {...popperInstance.attributes.popper}
                           >
                               <FocusScope restoreFocus>
-                                  <div className="tw-p-4">
+                                  <div className="tw-p-4 tw-overflow-auto" style={{ maxHeight }}>
                                       <Checklist
                                           activeValues={activeItemKeys.map((key) => key.toString())}
                                           setActiveValues={onSelectionChange}
