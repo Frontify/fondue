@@ -61,7 +61,7 @@ export const OrderableList = <T extends object>({
                                 position: DropZonePosition.Before,
                             }}
                             onDrop={handleDrop}
-                            treeId={listId}
+                            acceptType={listId}
                         />
                         <CollectionItem
                             key={item.id}
@@ -78,7 +78,7 @@ export const OrderableList = <T extends object>({
                                     position: DropZonePosition.After,
                                 }}
                                 onDrop={handleDrop}
-                                treeId={listId}
+                                acceptType={listId}
                             />
                         )}
                     </React.Fragment>

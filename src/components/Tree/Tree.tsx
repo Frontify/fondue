@@ -7,6 +7,8 @@ import type { TreeProps } from '@components/Tree/types';
 import { DndWrapper, DraggableItem, DropZonePosition } from '@utilities/dnd';
 import { useDraggableEnhancedChildren } from './hooks/useDraggableEnhancedChildren';
 
+const noop = () => undefined;
+
 export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: TreeProps) => {
     const [selectedIds, setSelectedIds] = useState<string[]>(activeIds || []);
     const [multiselect, setMultiselect] = useState<boolean>(false);
@@ -49,7 +51,11 @@ export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: Tre
             sourceItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
             position: DropZonePosition,
         ) => {
-            onDrop?.(targetItem, sourceItem, position);
+            if (onDrop) {
+                onDrop(targetItem, sourceItem, position);
+            } else {
+                return null;
+            }
         },
         [onDrop],
     );
@@ -57,7 +63,13 @@ export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: Tre
     const { draggableEnhancedChildren } = useDraggableEnhancedChildren(id, handleDrop, children);
 
     const memoizedTreeContextValue = useMemo(
-        () => ({ treeId: id, selectedIds, onSelect: handleSelect, draggable, onDrop: handleDrop }),
+        () => ({
+            treeId: id,
+            selectedIds,
+            onSelect: handleSelect,
+            draggable,
+            onDrop: handleDrop ?? noop,
+        }),
         [id, selectedIds, handleSelect, draggable, handleDrop],
     );
 

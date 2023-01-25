@@ -19,14 +19,18 @@ type DropZoneData<T> = {
 
 export type DropZoneProps<T> = {
     data: DropZoneData<T>;
-    onDrop?: OnDropCallback<T>;
-    treeId: string;
+    // onDrop?: OnDropCallback<T> | (() => void);
+    onDrop?: any;
+    acceptType: string | string[];
+    // isDragging?: boolean;
     children?: JSX.Element;
 };
 
-export const DropZone = <T extends object>({ data, onDrop, children, treeId }: DropZoneProps<T>) => {
+export const DropZone = <T extends object>({ data, onDrop, acceptType, children }: DropZoneProps<T>) => {
+    // console.log('acceptType iz DROPZONE-a: ', acceptType);
+
     const [{ isOver, canDrop }, drop] = useDrop({
-        accept: treeId,
+        accept: acceptType || '',
         drop: (item: OrderableListItem<T>) => {
             onDrop?.(data.targetItem, item, data.position);
         },
