@@ -8,7 +8,7 @@ import { MarkupElement } from '../MarkupElement';
 import { alignmentClassnames } from '../TextStylePlugin/TextStyles';
 import { breakAfterClassNames } from '@components/RichTextEditor/utils/constants';
 
-export const PARAGRAPH_CLASSES = 'tw-m-0 tw-px-0 tw-py-0 tw-mb-2';
+export const PARAGRAPH_CLASSES = 'tw-m-0 tw-px-0 tw-py-0';
 
 export const ParagraphMarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
