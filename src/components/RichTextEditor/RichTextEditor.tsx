@@ -31,7 +31,7 @@ export type RichTextEditorProps = {
     position?: Position;
     plugins?: PluginComposer;
     columns?: number;
-    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
+    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>, value: TreeOfNodes | null) => void;
     onValueChanged?: (value: TreeOfNodes | null) => void;
     border?: boolean;
     updateValueOnChange?: boolean; // Only set to true when you are sure that performance isn't an issue
