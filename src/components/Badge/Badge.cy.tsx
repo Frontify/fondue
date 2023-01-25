@@ -12,11 +12,12 @@ const BADGE_ID = '[data-test-id=badge]';
 const BADGE_STATUS_ID = '[data-test-id=badge-status]';
 const BADGE_ICON_ID = '[data-test-id=badge-icon]';
 const BADGE_DISMISS = '[data-test-id=badge-dismiss]';
+const BADGE_BUTTON = '[data-test-id=badge-button]';
 
 const checkMediumSize = () => {
-    cy.get(BADGE_ID).should('have.class', 'tw-px-2');
-    cy.get(BADGE_ID).should('have.class', 'tw-h-6');
-    cy.get(BADGE_ID).should('have.class', 'tw-gap-x-0.5');
+    cy.get(BADGE_BUTTON).should('have.class', 'tw-px-2');
+    cy.get(BADGE_BUTTON).should('have.class', 'tw-h-6');
+    cy.get(BADGE_BUTTON).should('have.class', 'tw-gap-x-0.5');
 };
 
 describe('Badge component', () => {
@@ -50,14 +51,14 @@ describe('Badge component', () => {
     it('should render badge with icon and overwrite size', () => {
         cy.mount(<Badge icon={<IconDocumentText size={IconSize.Size8} />}>{BADGE_TEXT}</Badge>);
 
-        cy.get(BADGE_ICON_ID).should('exist').and('have.css', 'width', '16px');
+        cy.get(BADGE_ICON_ID).should('exist').and('have.css', 'width', '20px');
     });
 
     it('should render with small size', () => {
         cy.mount(<Badge size="small">{BADGE_TEXT}</Badge>);
 
-        cy.get(BADGE_ID).should('have.class', 'tw-px-1.5');
-        cy.get(BADGE_ID).should('have.class', 'tw-h-5');
+        cy.get(BADGE_BUTTON).should('have.class', 'tw-px-1.5');
+        cy.get(BADGE_BUTTON).should('have.class', 'tw-h-5');
     });
 
     it('should render medium size', () => {
@@ -245,6 +246,6 @@ describe('Badge component', () => {
             </Badge>,
         );
 
-        cy.get(BADGE_ID).invoke('attr', 'title').should('equal', `${BADGE_TEXT}_1_${BADGE_TEXT}_2_${BADGE_TEXT}`);
+        cy.get(BADGE_BUTTON).invoke('attr', 'title').should('equal', `${BADGE_TEXT}_1_${BADGE_TEXT}_2_${BADGE_TEXT}`);
     });
 });
