@@ -69,7 +69,7 @@ export const Badge: FC<BadgeProps> = ({
                 {icon && (
                     <span
                         data-test-id="badge-icon"
-                        className={merge([disabled && 'tw-opacity-30', 'tw-flex-none tw-leading-none'])}
+                        className={merge([disabled && 'tw-opacity-30', 'tw-flex-none tw-leading-none', 'tw-pr-1'])}
                     >
                         {cloneElement(icon, { size: IconSize.Size16 })}
                     </span>
