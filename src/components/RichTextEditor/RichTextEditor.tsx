@@ -84,7 +84,7 @@ export const RichTextEditor = ({
                 forceToBlurActiveElement();
             }
 
-            onKeyDown && onKeyDown(event);
+            onKeyDown && onKeyDown(event, localValue.current);
         },
     });
     const style = columns > 1 ? ({ display: 'block', columns } as React.CSSProperties) : {};
