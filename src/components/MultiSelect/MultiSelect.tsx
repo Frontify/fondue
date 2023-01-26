@@ -99,13 +99,15 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     const [open, setOpen] = useState(false);
     const [checkboxes, setCheckboxes] = useState<Item[]>([]);
     const hasResults = !!checkboxes.find((item) => !item.isCategory && !item.isDivider);
-    const triggerRef = useRef<HTMLDivElement | null>(null);
     const multiSelectRef = useRef<HTMLDivElement | null>(null);
-    const multiSelectMenuRef = useRef<HTMLDivElement | null>(null);
+
+    const [multiSelectMenuRef, setMultiSelectMenuRef] = useState<null | HTMLDivElement>(null);
+    const [triggerRef, setTriggerRef] = useState<HTMLDivElement | null>(null);
+
     const filterInputRef = useRef<HTMLInputElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
 
-    const { maxHeight } = useDropdownAutoHeight(triggerRef, { isOpen: open, autoResize: true });
+    const { maxHeight } = useDropdownAutoHeight({ current: triggerRef }, { isOpen: open, autoResize: true });
 
     const hasSelectedItems = activeItemKeys.length > 0;
     const summarizedLabel = summarizedLabelFromProps ?? [activeItemKeys.length, 'selected'].join(' ');
@@ -113,7 +115,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
 
     const handleClose = () => setOpen(false);
 
-    useClickOutside(multiSelectRef?.current, handleClose, [multiSelectMenuRef?.current as HTMLElement]);
+    useClickOutside(null, handleClose, [multiSelectRef?.current as HTMLElement, multiSelectMenuRef as HTMLElement]);
 
     const heightIsReady = maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
 
@@ -129,7 +131,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
             },
             elementType: 'div',
         },
-        triggerRef,
+        { current: triggerRef },
     );
 
     const toggleSelection = (key: string | number) => {
@@ -191,7 +193,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
         );
     }, [items, indeterminateItemKeys]);
 
-    const popperInstance = usePopper(triggerRef?.current, multiSelectMenuRef.current, {
+    const popperInstance = usePopper(triggerRef, multiSelectMenuRef, {
         placement: 'bottom-start',
         strategy: 'fixed',
         modifiers: [
@@ -218,7 +220,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                 validation={validation}
                 emphasis={emphasis === MultiSelectEmphasis.Default ? TriggerEmphasis.Default : TriggerEmphasis.Weak}
             >
-                <div className={merge(['tw-flex tw-flex-1 tw-gap-2', getPaddingClasses(size)])} ref={triggerRef}>
+                <div className={merge(['tw-flex tw-flex-1 tw-gap-2', getPaddingClasses(size)])} ref={setTriggerRef}>
                     <div
                         className="tw-flex tw-flex-1 tw-gap-2 focus:tw-outline-0"
                         onClick={(e) => {
@@ -280,12 +282,12 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                 createPortal(
                     <AnimatePresence>
                         <motion.div
-                            ref={multiSelectMenuRef}
+                            ref={setMultiSelectMenuRef}
                             className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-30 tw-bg-base tw-min-w-[18rem]"
                             key="content"
                             style={{
                                 ...popperInstance.styles.popper,
-                                width: triggerRef.current?.getBoundingClientRect().width,
+                                width: triggerRef?.getBoundingClientRect().width,
                                 minWidth: 'fit-content',
                             }}
                             {...popperInstance.attributes.popper}
@@ -314,10 +316,10 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                 createPortal(
                     <AnimatePresence>
                         <motion.div
-                            ref={multiSelectMenuRef}
+                            ref={setMultiSelectMenuRef}
                             style={{
                                 ...popperInstance.styles.popper,
-                                width: triggerRef.current?.getBoundingClientRect().width,
+                                width: triggerRef?.getBoundingClientRect().width,
                                 minWidth: 'fit-content',
                             }}
                             {...popperInstance.attributes.popper}
