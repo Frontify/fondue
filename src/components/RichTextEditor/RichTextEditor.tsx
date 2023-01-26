@@ -31,6 +31,7 @@ export type RichTextEditorProps = {
     position?: Position;
     plugins?: PluginComposer;
     columns?: number;
+    gap?: string;
     onKeyDown?: (event: KeyboardEvent<HTMLDivElement>, value: TreeOfNodes | null) => void;
     onValueChanged?: (value: TreeOfNodes | null) => void;
     border?: boolean;
@@ -52,6 +53,7 @@ export const RichTextEditor = ({
     onKeyDown,
     onValueChanged,
     columns = 1,
+    gap = '0px',
     border = true,
 }: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
@@ -87,7 +89,7 @@ export const RichTextEditor = ({
             onKeyDown && onKeyDown(event, localValue.current);
         },
     });
-    const style = columns > 1 ? ({ display: 'block', columns } as React.CSSProperties) : {};
+    const style = columns > 1 ? ({ display: 'block', columns, gap } as React.CSSProperties) : {};
 
     return (
         <RichTextEditorProvider value={{ designTokens, position, style, border }}>
