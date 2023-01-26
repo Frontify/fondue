@@ -1459,12 +1459,56 @@ import IconSidebarLeft16 from '@foundation/Icon/Generated/IconSidebarLeft16';
 import IconSidebarLeft20 from '@foundation/Icon/Generated/IconSidebarLeft20';
 import IconSidebarLeft24 from '@foundation/Icon/Generated/IconSidebarLeft24';
 import IconSidebarLeft32 from '@foundation/Icon/Generated/IconSidebarLeft32';
+import IconSidebarLeftHide from '@foundation/Icon/Generated/IconSidebarLeftHide';
+import IconSidebarLeftHide12 from '@foundation/Icon/Generated/IconSidebarLeftHide12';
+import IconSidebarLeftHide12Filled from '@foundation/Icon/Generated/IconSidebarLeftHide12Filled';
+import IconSidebarLeftHide16 from '@foundation/Icon/Generated/IconSidebarLeftHide16';
+import IconSidebarLeftHide16Filled from '@foundation/Icon/Generated/IconSidebarLeftHide16Filled';
+import IconSidebarLeftHide20 from '@foundation/Icon/Generated/IconSidebarLeftHide20';
+import IconSidebarLeftHide20Filled from '@foundation/Icon/Generated/IconSidebarLeftHide20Filled';
+import IconSidebarLeftHide24 from '@foundation/Icon/Generated/IconSidebarLeftHide24';
+import IconSidebarLeftHide24Filled from '@foundation/Icon/Generated/IconSidebarLeftHide24Filled';
+import IconSidebarLeftHide32 from '@foundation/Icon/Generated/IconSidebarLeftHide32';
+import IconSidebarLeftHide32Filled from '@foundation/Icon/Generated/IconSidebarLeftHide32Filled';
+import IconSidebarLeftShow from '@foundation/Icon/Generated/IconSidebarLeftShow';
+import IconSidebarLeftShow12 from '@foundation/Icon/Generated/IconSidebarLeftShow12';
+import IconSidebarLeftShow12Filled from '@foundation/Icon/Generated/IconSidebarLeftShow12Filled';
+import IconSidebarLeftShow16 from '@foundation/Icon/Generated/IconSidebarLeftShow16';
+import IconSidebarLeftShow16Filled from '@foundation/Icon/Generated/IconSidebarLeftShow16Filled';
+import IconSidebarLeftShow20 from '@foundation/Icon/Generated/IconSidebarLeftShow20';
+import IconSidebarLeftShow20Filled from '@foundation/Icon/Generated/IconSidebarLeftShow20Filled';
+import IconSidebarLeftShow24 from '@foundation/Icon/Generated/IconSidebarLeftShow24';
+import IconSidebarLeftShow24Filled from '@foundation/Icon/Generated/IconSidebarLeftShow24Filled';
+import IconSidebarLeftShow32 from '@foundation/Icon/Generated/IconSidebarLeftShow32';
+import IconSidebarLeftShow32Filled from '@foundation/Icon/Generated/IconSidebarLeftShow32Filled';
 import IconSidebarRight from '@foundation/Icon/Generated/IconSidebarRight';
 import IconSidebarRight12 from '@foundation/Icon/Generated/IconSidebarRight12';
 import IconSidebarRight16 from '@foundation/Icon/Generated/IconSidebarRight16';
 import IconSidebarRight20 from '@foundation/Icon/Generated/IconSidebarRight20';
 import IconSidebarRight24 from '@foundation/Icon/Generated/IconSidebarRight24';
 import IconSidebarRight32 from '@foundation/Icon/Generated/IconSidebarRight32';
+import IconSidebarRightHide from '@foundation/Icon/Generated/IconSidebarRightHide';
+import IconSidebarRightHide12 from '@foundation/Icon/Generated/IconSidebarRightHide12';
+import IconSidebarRightHide12Filled from '@foundation/Icon/Generated/IconSidebarRightHide12Filled';
+import IconSidebarRightHide16 from '@foundation/Icon/Generated/IconSidebarRightHide16';
+import IconSidebarRightHide16Filled from '@foundation/Icon/Generated/IconSidebarRightHide16Filled';
+import IconSidebarRightHide20 from '@foundation/Icon/Generated/IconSidebarRightHide20';
+import IconSidebarRightHide20Filled from '@foundation/Icon/Generated/IconSidebarRightHide20Filled';
+import IconSidebarRightHide24 from '@foundation/Icon/Generated/IconSidebarRightHide24';
+import IconSidebarRightHide24Filled from '@foundation/Icon/Generated/IconSidebarRightHide24Filled';
+import IconSidebarRightHide32 from '@foundation/Icon/Generated/IconSidebarRightHide32';
+import IconSidebarRightHide32Filled from '@foundation/Icon/Generated/IconSidebarRightHide32Filled';
+import IconSidebarRightShow from '@foundation/Icon/Generated/IconSidebarRightShow';
+import IconSidebarRightShow12 from '@foundation/Icon/Generated/IconSidebarRightShow12';
+import IconSidebarRightShow12Filled from '@foundation/Icon/Generated/IconSidebarRightShow12Filled';
+import IconSidebarRightShow16 from '@foundation/Icon/Generated/IconSidebarRightShow16';
+import IconSidebarRightShow16Filled from '@foundation/Icon/Generated/IconSidebarRightShow16Filled';
+import IconSidebarRightShow20 from '@foundation/Icon/Generated/IconSidebarRightShow20';
+import IconSidebarRightShow20Filled from '@foundation/Icon/Generated/IconSidebarRightShow20Filled';
+import IconSidebarRightShow24 from '@foundation/Icon/Generated/IconSidebarRightShow24';
+import IconSidebarRightShow24Filled from '@foundation/Icon/Generated/IconSidebarRightShow24Filled';
+import IconSidebarRightShow32 from '@foundation/Icon/Generated/IconSidebarRightShow32';
+import IconSidebarRightShow32Filled from '@foundation/Icon/Generated/IconSidebarRightShow32Filled';
 import IconSketch from '@foundation/Icon/Generated/IconSketch';
 import IconSketch12 from '@foundation/Icon/Generated/IconSketch12';
 import IconSketch16 from '@foundation/Icon/Generated/IconSketch16';
@@ -3229,12 +3273,56 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.SidebarLeft20]: <IconSidebarLeft20 />,
     [IconEnum.SidebarLeft24]: <IconSidebarLeft24 />,
     [IconEnum.SidebarLeft32]: <IconSidebarLeft32 />,
+    [IconEnum.SidebarLeftHide]: <IconSidebarLeftHide />,
+    [IconEnum.SidebarLeftHide12]: <IconSidebarLeftHide12 />,
+    [IconEnum.SidebarLeftHide12Filled]: <IconSidebarLeftHide12Filled />,
+    [IconEnum.SidebarLeftHide16]: <IconSidebarLeftHide16 />,
+    [IconEnum.SidebarLeftHide16Filled]: <IconSidebarLeftHide16Filled />,
+    [IconEnum.SidebarLeftHide20]: <IconSidebarLeftHide20 />,
+    [IconEnum.SidebarLeftHide20Filled]: <IconSidebarLeftHide20Filled />,
+    [IconEnum.SidebarLeftHide24]: <IconSidebarLeftHide24 />,
+    [IconEnum.SidebarLeftHide24Filled]: <IconSidebarLeftHide24Filled />,
+    [IconEnum.SidebarLeftHide32]: <IconSidebarLeftHide32 />,
+    [IconEnum.SidebarLeftHide32Filled]: <IconSidebarLeftHide32Filled />,
+    [IconEnum.SidebarLeftShow]: <IconSidebarLeftShow />,
+    [IconEnum.SidebarLeftShow12]: <IconSidebarLeftShow12 />,
+    [IconEnum.SidebarLeftShow12Filled]: <IconSidebarLeftShow12Filled />,
+    [IconEnum.SidebarLeftShow16]: <IconSidebarLeftShow16 />,
+    [IconEnum.SidebarLeftShow16Filled]: <IconSidebarLeftShow16Filled />,
+    [IconEnum.SidebarLeftShow20]: <IconSidebarLeftShow20 />,
+    [IconEnum.SidebarLeftShow20Filled]: <IconSidebarLeftShow20Filled />,
+    [IconEnum.SidebarLeftShow24]: <IconSidebarLeftShow24 />,
+    [IconEnum.SidebarLeftShow24Filled]: <IconSidebarLeftShow24Filled />,
+    [IconEnum.SidebarLeftShow32]: <IconSidebarLeftShow32 />,
+    [IconEnum.SidebarLeftShow32Filled]: <IconSidebarLeftShow32Filled />,
     [IconEnum.SidebarRight]: <IconSidebarRight />,
     [IconEnum.SidebarRight12]: <IconSidebarRight12 />,
     [IconEnum.SidebarRight16]: <IconSidebarRight16 />,
     [IconEnum.SidebarRight20]: <IconSidebarRight20 />,
     [IconEnum.SidebarRight24]: <IconSidebarRight24 />,
     [IconEnum.SidebarRight32]: <IconSidebarRight32 />,
+    [IconEnum.SidebarRightHide]: <IconSidebarRightHide />,
+    [IconEnum.SidebarRightHide12]: <IconSidebarRightHide12 />,
+    [IconEnum.SidebarRightHide12Filled]: <IconSidebarRightHide12Filled />,
+    [IconEnum.SidebarRightHide16]: <IconSidebarRightHide16 />,
+    [IconEnum.SidebarRightHide16Filled]: <IconSidebarRightHide16Filled />,
+    [IconEnum.SidebarRightHide20]: <IconSidebarRightHide20 />,
+    [IconEnum.SidebarRightHide20Filled]: <IconSidebarRightHide20Filled />,
+    [IconEnum.SidebarRightHide24]: <IconSidebarRightHide24 />,
+    [IconEnum.SidebarRightHide24Filled]: <IconSidebarRightHide24Filled />,
+    [IconEnum.SidebarRightHide32]: <IconSidebarRightHide32 />,
+    [IconEnum.SidebarRightHide32Filled]: <IconSidebarRightHide32Filled />,
+    [IconEnum.SidebarRightShow]: <IconSidebarRightShow />,
+    [IconEnum.SidebarRightShow12]: <IconSidebarRightShow12 />,
+    [IconEnum.SidebarRightShow12Filled]: <IconSidebarRightShow12Filled />,
+    [IconEnum.SidebarRightShow16]: <IconSidebarRightShow16 />,
+    [IconEnum.SidebarRightShow16Filled]: <IconSidebarRightShow16Filled />,
+    [IconEnum.SidebarRightShow20]: <IconSidebarRightShow20 />,
+    [IconEnum.SidebarRightShow20Filled]: <IconSidebarRightShow20Filled />,
+    [IconEnum.SidebarRightShow24]: <IconSidebarRightShow24 />,
+    [IconEnum.SidebarRightShow24Filled]: <IconSidebarRightShow24Filled />,
+    [IconEnum.SidebarRightShow32]: <IconSidebarRightShow32 />,
+    [IconEnum.SidebarRightShow32Filled]: <IconSidebarRightShow32Filled />,
     [IconEnum.Sketch]: <IconSketch />,
     [IconEnum.Sketch12]: <IconSketch12 />,
     [IconEnum.Sketch16]: <IconSketch16 />,
