@@ -28,7 +28,7 @@ export const BreakAfterToolbarButton = ({ id, pluginKey = KEY_ELEMENT_BREAK_AFTE
         <ToolbarButton
             active={isActive}
             tooltip={getTooltip(
-                canBreakAfter ? 'Break After Column.\n[shift+ctrl+return]' : 'Already at maximum numbers of columns',
+                canBreakAfter ? 'Column Break\nShift+Ctrl+Return' : 'Already at maximum numbers of columns',
             )}
             onMouseDown={(event) =>
                 canBreakAfter

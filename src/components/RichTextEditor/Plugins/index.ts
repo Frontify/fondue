@@ -57,6 +57,7 @@ defaultPluginsWithColumns.setPlugin(
         new LinkPlugin(),
         new ButtonPlugin(),
         new CodePlugin(),
+        new BreakAfterPlugin(),
     ],
     [
         new AlignLeftPlugin(),
@@ -66,7 +67,6 @@ defaultPluginsWithColumns.setPlugin(
         new UnorderedListPlugin(),
         new CheckboxListPlugin(),
         new OrderedListPlugin(),
-        new BreakAfterPlugin(),
         new ResetFormattingPlugin(),
         new EmojiPlugin(),
     ],
