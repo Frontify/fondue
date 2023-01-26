@@ -274,96 +274,90 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                 </div>
             </Trigger>
 
-            {open && heightIsReady && emphasis === MultiSelectEmphasis.Default
-                ? createPortal(
-                      <AnimatePresence>
-                          <motion.div
-                              ref={multiSelectMenuRef}
-                              className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-30 tw-bg-base tw-min-w-[18rem]"
-                              key="content"
-                              initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
-                              animate={{ height: 'auto' }}
-                              transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
-                              exit={{ height: 0 }}
-                              style={{
-                                  ...popperInstance.styles.popper,
-                                  width: triggerRef.current?.getBoundingClientRect().width,
-                                  minWidth: 'fit-content',
-                              }}
-                              {...popperInstance.attributes.popper}
-                          >
-                              <FocusScope restoreFocus>
-                                  <div className="tw-p-4 tw-overflow-auto" style={{ maxHeight }}>
-                                      <Checklist
-                                          activeValues={activeItemKeys.map((key) => key.toString())}
-                                          setActiveValues={onSelectionChange}
-                                          checkboxes={checkboxes.filter((item) => !item.isDivider && !item.isCategory)}
-                                          direction={ChecklistDirection.Vertical}
-                                          ariaLabel={ariaLabel}
-                                      />
-                                  </div>
-                              </FocusScope>
-                          </motion.div>
-                      </AnimatePresence>,
-                      document.body,
-                  )
-                : createPortal(
-                      <AnimatePresence>
-                          <motion.div
-                              ref={multiSelectMenuRef}
-                              initial={{
-                                  opacity: 0,
-                                  height: 0,
-                              }}
-                              animate={{
-                                  opacity: 1,
-                                  transition: { duration: 0.15 },
-                              }}
-                              exit={{
-                                  opacity: 0,
-                                  transition: { duration: 0.15 },
-                              }}
-                              transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
-                              style={{
-                                  ...popperInstance.styles.popper,
-                                  width: triggerRef.current?.getBoundingClientRect().width,
-                                  minWidth: 'fit-content',
-                              }}
-                              {...popperInstance.attributes.popper}
-                          >
-                              <Menu open={open} onClose={handleClose} triggerRef={multiSelectRef}>
-                                  {checkboxes.length > 0 && hasResults ? (
-                                      checkboxes.map((item, index) => {
-                                          const { label, value, avatar, imgSrc } = item;
-                                          const isChecked = !!activeItemKeys.find((key) => key === value);
-                                          const handleMenuItemClick = () => toggleSelection(label);
+            {open &&
+                heightIsReady &&
+                emphasis === MultiSelectEmphasis.Default &&
+                createPortal(
+                    <AnimatePresence>
+                        <motion.div
+                            ref={multiSelectMenuRef}
+                            className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-30 tw-bg-base tw-min-w-[18rem]"
+                            key="content"
+                            style={{
+                                ...popperInstance.styles.popper,
+                                width: triggerRef.current?.getBoundingClientRect().width,
+                                minWidth: 'fit-content',
+                            }}
+                            {...popperInstance.attributes.popper}
+                            initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
+                            animate={{ height: 'auto' }}
+                            transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
+                        >
+                            <FocusScope restoreFocus>
+                                <div className="tw-p-4 tw-overflow-auto" style={{ maxHeight }}>
+                                    <Checklist
+                                        activeValues={activeItemKeys.map((key) => key.toString())}
+                                        setActiveValues={onSelectionChange}
+                                        checkboxes={checkboxes.filter((item) => !item.isDivider && !item.isCategory)}
+                                        direction={ChecklistDirection.Vertical}
+                                        ariaLabel={ariaLabel}
+                                    />
+                                </div>
+                            </FocusScope>
+                        </motion.div>
+                    </AnimatePresence>,
+                    document.body,
+                )}
+            {open &&
+                heightIsReady &&
+                emphasis === MultiSelectEmphasis.Weak &&
+                createPortal(
+                    <AnimatePresence>
+                        <motion.div
+                            ref={multiSelectMenuRef}
+                            style={{
+                                ...popperInstance.styles.popper,
+                                width: triggerRef.current?.getBoundingClientRect().width,
+                                minWidth: 'fit-content',
+                            }}
+                            {...popperInstance.attributes.popper}
+                            initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
+                            animate={{ height: 'auto' }}
+                            transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
+                        >
+                            <Menu open={open} onClose={handleClose} triggerRef={multiSelectRef}>
+                                {checkboxes.length > 0 && hasResults ? (
+                                    checkboxes.map((item, index) => {
+                                        const { label, value, avatar, imgSrc } = item;
+                                        const isChecked = !!activeItemKeys.find((key) => key === value);
+                                        const handleMenuItemClick = () => toggleSelection(label);
 
-                                          if (item.isCategory || item.isDivider) {
-                                              return (
-                                                  <OptionalItems
-                                                      key={value + item}
-                                                      {...{
-                                                          checkboxes,
-                                                          index,
-                                                      }}
-                                                  />
-                                              );
-                                          }
+                                        if (item.isCategory || item.isDivider) {
+                                            return (
+                                                <OptionalItems
+                                                    key={value + item}
+                                                    {...{
+                                                        checkboxes,
+                                                        index,
+                                                    }}
+                                                />
+                                            );
+                                        }
 
-                                          return (
-                                              <MenuItem checked={isChecked} onClick={handleMenuItemClick} key={value}>
-                                                  <DefaultItem {...{ label, value, avatar, imgSrc, isChecked }} />
-                                              </MenuItem>
-                                          );
-                                      })
-                                  ) : (
-                                      <NoSearchResults label={noResultsLabel} />
-                                  )}
-                              </Menu>
-                          </motion.div>
-                      </AnimatePresence>,
-                      document.body,
-                  )}
+                                        return (
+                                            <MenuItem checked={isChecked} onClick={handleMenuItemClick} key={value}>
+                                                <DefaultItem {...{ label, value, avatar, imgSrc, isChecked }} />
+                                            </MenuItem>
+                                        );
+                                    })
+                                ) : (
+                                    <NoSearchResults label={noResultsLabel} />
+                                )}
+                            </Menu>
+                        </motion.div>
+                    </AnimatePresence>,
+                    document.body,
+                )}
         </div>
     );
 };
