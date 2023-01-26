@@ -3,11 +3,12 @@
 import React, { ReactNode, useState } from 'react';
 import { useDrag } from 'react-dnd';
 
+import { merge } from '@utilities/merge';
+import { DraggableItem, DropZonePosition } from '@utilities/dnd';
+
 import { DropZone } from '@components/DropZone';
 import type { TreeItemProps } from '@components/Tree/types';
 import { useTreeContext } from '@components/Tree/TreeContext';
-import { DraggableItem, DropZonePosition } from '@utilities/dnd';
-import { merge } from '@utilities/merge';
 
 import { useDraggableEnhancedChildren } from './hooks/useDraggableEnhancedChildren';
 
@@ -21,8 +22,8 @@ export const TreeItem = ({
     contentComponent,
     onSelect,
     onDrop,
-    dragType,
-    dropType,
+    type,
+    accepts,
     children,
 }: TreeItemProps) => {
     const { treeId, selectedIds, onSelect: onItemSelect, draggable, onDrop: onTreeDrop } = useTreeContext();
@@ -39,16 +40,15 @@ export const TreeItem = ({
             opacity: monitor.isDragging() ? DRAGGING_OPACITY : DEFAULT_OPACITY,
             isDragging: monitor.isDragging(),
         }),
-        type: dragType ?? treeId,
+        type: type ?? treeId,
         canDrag: draggable,
     });
 
-    const { draggableEnhancedChildren } = useDraggableEnhancedChildren(
-        dropType ?? treeId,
-        onDrop ?? onTreeDrop,
-        // isDragging,
+    const { draggableEnhancedChildren } = useDraggableEnhancedChildren({
+        accept: getAcceptTypes(accepts ?? treeId, 'surrounded'),
+        onDrop,
         children,
-    );
+    });
 
     const handleDrop = (
         targetItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
@@ -89,8 +89,6 @@ export const TreeItem = ({
             <></>
         );
 
-    // console.log('PROBLEM2: ', dropType ?? treeId);
-
     return (
         <li data-test-id="tree-item" ref={drag} style={{ opacity }}>
             <DropZone
@@ -98,7 +96,7 @@ export const TreeItem = ({
                     targetItem: { id, sort },
                     position: DropZonePosition.Within,
                 }}
-                acceptType={dropType ?? treeId}
+                accept={getAcceptTypes(accepts ?? treeId, 'within')}
                 // isDragging={isDragging}
             >
                 {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
@@ -128,7 +126,7 @@ export const TreeItem = ({
 
                         {label && <span>{label}</span>}
 
-                        {contentComponent && contentComponent({ selected: selectedIds.includes(id), hovered })}
+                        {contentComponent?.({ selected: selectedIds.includes(id), hovered })}
                     </div>
                 </div>
             </DropZone>
@@ -148,9 +146,20 @@ export const TreeItem = ({
                     position: DropZonePosition.After,
                 }}
                 onDrop={handleDrop}
-                acceptType={dropType ?? treeId}
+                accept={getAcceptTypes(accepts ?? treeId, 'surrounded')}
                 // isDragging={isDragging}
             />
         </li>
     );
 };
+
+function getAcceptTypes<T extends { within: string | string[]; surrounded: string | string[] } | string | string[]>(
+    accepts: T,
+    position: 'within' | 'surrounded',
+) {
+    if (typeof accepts === 'object' && !(accepts instanceof Array)) {
+        return accepts[position];
+    } else {
+        return accepts as string | string[];
+    }
+}

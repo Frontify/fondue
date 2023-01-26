@@ -7,16 +7,14 @@ import { DropZonePosition } from '@utilities/dnd';
 
 import { TreeItemProps } from '../types';
 
-export const useDraggableEnhancedChildren = (
-    id: string | string[],
-    // onDrop: OnDropCallback<{ id: string; sort: Nullable<number> }> | (() => void),
-    onDrop: any,
-    // isDragging: boolean,
-    children?: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[],
-) => {
-    const draggableEnhancedChildren = React.Children.map(children, (child, index) => {
-        // console.log('PROBLEM: ', id);
+type Configuration = {
+    onDrop: any;
+    accept: string | string[];
+    children?: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
+};
 
+export const useDraggableEnhancedChildren = (config: Configuration) => {
+    const draggableEnhancedChildren = React.Children.map(config.children, (child, index) => {
         if (!child) {
             return <></>;
         }
@@ -29,8 +27,8 @@ export const useDraggableEnhancedChildren = (
                             targetItem: { id: child.props.id, sort: child.props.sort },
                             position: DropZonePosition.Before,
                         }}
-                        onDrop={onDrop}
-                        acceptType={id}
+                        onDrop={config.onDrop}
+                        accept={config.accept}
                         // isDragging={isDragging}
                     />
                 )}

@@ -2,9 +2,10 @@
 
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { TreeContext } from '@components/Tree/TreeContext';
 import type { TreeProps } from '@components/Tree/types';
+import { TreeContext } from '@components/Tree/TreeContext';
 import { DndWrapper, DraggableItem, DropZonePosition } from '@utilities/dnd';
+
 import { useDraggableEnhancedChildren } from './hooks/useDraggableEnhancedChildren';
 
 const noop = () => undefined;
@@ -60,7 +61,7 @@ export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: Tre
         [onDrop],
     );
 
-    const { draggableEnhancedChildren } = useDraggableEnhancedChildren(id, handleDrop, children);
+    const { draggableEnhancedChildren } = useDraggableEnhancedChildren({ accept: id, onDrop: handleDrop, children });
 
     const memoizedTreeContextValue = useMemo(
         () => ({
