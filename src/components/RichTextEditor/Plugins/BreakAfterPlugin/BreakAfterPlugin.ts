@@ -58,7 +58,7 @@ const OnKeyDownBreakAfter = (editor: any): KeyboardHandlerReturnType => {
 
             case 'Delete':
                 const anchor = editor.selection.anchor;
-                if (anchor.offset === getNode(editor, anchor.path).text.length && isActive) {
+                if (anchor.offset === getNode(editor, anchor.path)?.text?.length && isActive) {
                     getPreventDefaultHandler(setBreakAfter, editor, {
                         value: false,
                     })(event);

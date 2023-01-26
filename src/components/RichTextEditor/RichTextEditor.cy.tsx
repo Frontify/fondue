@@ -1004,7 +1004,7 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-2).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
@@ -1015,7 +1015,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
             cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
@@ -1026,7 +1026,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(6).click();
             cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
@@ -1039,7 +1039,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TEXTSTYLE_OPTION).first().click();
             cy.get('[contenteditable=true]').click('topLeft').should('not.include.html', breakAfterClassNames);
             selectTextValue('hello');
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
@@ -1052,7 +1052,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TEXTSTYLE_OPTION).eq(4).click();
             cy.get('[contenteditable=true]').click().should('not.include.html', breakAfterClassNames);
             selectTextValue('hello');
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
@@ -1063,7 +1063,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
             cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
@@ -1073,7 +1073,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_1).children().eq(0).click();
             cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
@@ -1082,9 +1082,8 @@ describe('RichTextEditor Component', () => {
 
             selectTextValue('first');
             cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
-
             checkPosition('be.lessThan', 100, 'first');
             checkPosition('be.gt', 100, 'second');
             checkPosition('be.gt', 100, 'Level 5');
