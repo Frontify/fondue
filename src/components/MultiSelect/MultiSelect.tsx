@@ -210,6 +210,12 @@ export const MultiSelect: FC<MultiSelectProps> = ({
         ],
     });
 
+    useEffect(() => {
+        if (popperInstance.update) {
+            popperInstance.update();
+        }
+    }, [activeItemKeys]);
+
     return (
         <div className="tw-relative" ref={multiSelectRef}>
             <Trigger
