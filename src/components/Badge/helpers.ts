@@ -32,22 +32,22 @@ export const getStyleClasses = (style: BadgeStyle, hasHover: boolean, strong: bo
         : {
               [BadgeStyle.Primary]: merge([
                   'tw-bg-box-neutral tw-text-text-weak',
-                  hasHover && 'hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
+                  hasHover && 'hover:tw-bg-box-neutral-hover hover:tw-text-text',
               ]),
               [BadgeStyle.Positive]: merge([
                   'tw-bg-box-positive tw-text-box-positive-inverse',
                   hasHover && 'hover:tw-bg-box-positive-hover hover:tw-text-box-positive-inverse-hover',
               ]),
               [BadgeStyle.Progress]: merge([
-                  'tw-bg-box-selected tw-text-box-selected-inverse',
+                  'tw-bg-box-selected tw-text-text-interactive',
                   hasHover && 'hover:tw-bg-box-selected-hover hover:tw-text-box-selected-inverse-hover',
               ]),
               [BadgeStyle.Warning]: merge([
-                  'tw-bg-box-warning tw-text-box-warning-inverse',
+                  'tw-bg-box-warning tw-text-text-warning',
                   hasHover && 'hover:tw-bg-box-warning-hover hover:tw-text-box-warning-inverse-hover',
               ]),
               [BadgeStyle.Danger]: merge([
-                  'tw-bg-box-negative tw-text-box-negative-inverse',
+                  'tw-bg-box-negative tw-text-text-negative',
                   hasHover && 'hover:tw-bg-box-negative-hover hover:tw-text-box-negative-inverse-hover',
               ]),
           })[style] ?? '';
