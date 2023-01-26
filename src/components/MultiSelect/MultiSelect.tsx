@@ -288,7 +288,6 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             style={{
                                 ...popperInstance.styles.popper,
                                 width: triggerRef?.getBoundingClientRect().width,
-                                minWidth: 'fit-content',
                             }}
                             {...popperInstance.attributes.popper}
                             initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
@@ -296,7 +295,10 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         >
                             <FocusScope restoreFocus>
-                                <div className="tw-p-4 tw-overflow-auto" style={{ maxHeight }}>
+                                <div
+                                    className="tw-p-4 tw-overflow-y-auto tw-overflow-x-hidden tw-w-full"
+                                    style={{ maxHeight }}
+                                >
                                     <Checklist
                                         activeValues={activeItemKeys.map((key) => key.toString())}
                                         setActiveValues={onSelectionChange}
