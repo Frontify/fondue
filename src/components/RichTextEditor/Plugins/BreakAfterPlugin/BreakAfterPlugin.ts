@@ -10,7 +10,6 @@ import {
     getBlockAbove,
     getHandler,
     getNode,
-    getPointAfter,
     getPointBefore,
     getPreventDefaultHandler,
     someNode,
@@ -62,17 +61,6 @@ const OnKeyDownBreakAfter = (editor: any): KeyboardHandlerReturnType => {
                     getPreventDefaultHandler(setBreakAfter, editor, {
                         value: false,
                     })(event);
-                }
-                const pointAfter = getPointAfter(editor, editor.selection);
-                const elementAfterIsActive = someNode(editor, {
-                    match: { breakAfterColumn: true },
-                    at: pointAfter,
-                });
-
-                if (elementAfterIsActive) {
-                    getHandler(setBreakAfter, editor, {
-                        value: true,
-                    })();
                 }
                 break;
         }
