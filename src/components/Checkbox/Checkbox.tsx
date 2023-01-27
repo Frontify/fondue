@@ -111,6 +111,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                     ref={inputRef}
                     className="tw-sr-only"
                     data-test-id="checkbox-input"
+                    required={required}
                 />
                 <span
                     aria-hidden="true"
@@ -149,7 +150,11 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                     </InputLabel>
                 )}
             </label>
-            {note && <span className="tw-text-black-60 tw-font-sans tw-text-xs tw-font-normal">{note}</span>}
+            {note && (
+                <span data-test-id="checkbox-note" className="tw-text-black-60 tw-font-sans tw-text-xs tw-font-normal">
+                    {note}
+                </span>
+            )}
         </div>
     );
 };
