@@ -90,6 +90,20 @@ const MultiSelectFormControlTemplate: StoryFn<MultiSelectProps> = (args) => {
     );
 };
 
+const MultiSelectRightAlignedContainerTemplate: StoryFn<MultiSelectProps> = (args) => {
+    const [activeItemKeys, setActiveItemKeys] = useState<(string | number)[]>(args.activeItemKeys);
+
+    return (
+        <div className="tw-absolute tw-right-0 tw-p-6 tw-w-96">
+            <MultiSelectComponent
+                {...args}
+                activeItemKeys={activeItemKeys}
+                onSelectionChange={(keys) => setActiveItemKeys(keys)}
+            />
+        </div>
+    );
+};
+
 export const MultiSelect = MultiSelectTemplate.bind({});
 
 export const WithPlaceholder = MultiSelectTemplate.bind({});
@@ -207,4 +221,30 @@ WithAvatar.argTypes = {
         options: [],
         control: { type: 'none' },
     },
+};
+
+export const WithRightAlignedContainer = MultiSelectRightAlignedContainerTemplate.bind({});
+
+WithRightAlignedContainer.args = {
+    items: [
+        {
+            value: 'Bacon ipsum dolor amet beef tri-tip rump, porchetta meatball andouille bacon shankle pancetta',
+        },
+        {
+            value: 'Short tag',
+        },
+        {
+            value: 'Checkbox label 2',
+        },
+        {
+            value: 'Checkbox label 3',
+        },
+        {
+            value: 'Tag 74',
+        },
+        {
+            value: 'This is a long tag',
+        },
+    ],
+    flip: true,
 };
