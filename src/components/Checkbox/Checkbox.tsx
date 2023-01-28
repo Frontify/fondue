@@ -99,7 +99,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
 
     return (
         <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">
-            <label
+            <div
                 className={merge([
                     'tw-group tw-flex tw-items-center tw-gap-2 tw-select-none tw-outline-none',
                     !disabled && 'hover:tw-cursor-pointer',
@@ -149,9 +149,9 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                         {label}
                     </InputLabel>
                 )}
-            </label>
+            </div>
             {note && (
-                <span data-test-id="checkbox-note" className="tw-text-black-60 tw-font-sans tw-text-xs tw-font-normal">
+                <span data-test-id="checkbox-note" className="tw-text-black-80 tw-font-sans tw-text-xs tw-font-normal">
                     {note}
                 </span>
             )}
