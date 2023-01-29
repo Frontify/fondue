@@ -39,7 +39,7 @@ export type TreeItemProps = {
     /**
      * The kinds of dragItems this dropTarget accepts
      */
-    accepts?: { within: string | string[]; surrounded: string | string[] } | string | string[];
+    accepts?: { within: string | string[]; after: string | string[]; before: string | string[] } | string | string[];
 
     children?: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
 } & (TreeItemWithLabelProps | TreeItemWIthContentComponentProps);

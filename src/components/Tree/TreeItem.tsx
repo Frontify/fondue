@@ -35,7 +35,7 @@ export const TreeItem = ({
     const handleMouseLeave = () => setHovered(false);
 
     const [{ opacity }, drag] = useDrag({
-        item: { id, sort },
+        item: { id, sort, type },
         collect: (monitor) => ({
             opacity: monitor.isDragging() ? DRAGGING_OPACITY : DEFAULT_OPACITY,
             isDragging: monitor.isDragging(),
@@ -45,7 +45,7 @@ export const TreeItem = ({
     });
 
     const { draggableEnhancedChildren } = useDraggableEnhancedChildren({
-        accept: getAcceptTypes(accepts ?? treeId, 'surrounded'),
+        accept: getAcceptTypes(accepts ?? treeId, 'before'),
         onDrop,
         children,
     });
@@ -93,9 +93,10 @@ export const TreeItem = ({
         <li data-test-id="tree-item" ref={drag} style={{ opacity }}>
             <DropZone
                 data={{
-                    targetItem: { id, sort },
+                    targetItem: { id, sort, type },
                     position: DropZonePosition.Within,
                 }}
+                onDrop={handleDrop}
                 accept={getAcceptTypes(accepts ?? treeId, 'within')}
                 // isDragging={isDragging}
             >
@@ -142,21 +143,20 @@ export const TreeItem = ({
 
             <DropZone
                 data={{
-                    targetItem: { id, sort },
+                    targetItem: { id, sort, type },
                     position: DropZonePosition.After,
                 }}
                 onDrop={handleDrop}
-                accept={getAcceptTypes(accepts ?? treeId, 'surrounded')}
+                accept={getAcceptTypes(accepts ?? treeId, 'after')}
                 // isDragging={isDragging}
             />
         </li>
     );
 };
 
-function getAcceptTypes<T extends { within: string | string[]; surrounded: string | string[] } | string | string[]>(
-    accepts: T,
-    position: 'within' | 'surrounded',
-) {
+function getAcceptTypes<
+    T extends { within: string | string[]; after: string | string[]; before: string | string[] } | string | string[],
+>(accepts: T, position: 'within' | 'after' | 'before') {
     if (typeof accepts === 'object' && !(accepts instanceof Array)) {
         return accepts[position];
     } else {

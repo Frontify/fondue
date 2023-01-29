@@ -26,9 +26,9 @@ export type DropZoneProps<T> = {
     children?: JSX.Element;
 };
 
-export const DropZone = <T extends object>({ data, onDrop, accept: acceptType, children }: DropZoneProps<T>) => {
+export const DropZone = <T extends object>({ data, onDrop, accept, children }: DropZoneProps<T>) => {
     const [{ isOver, canDrop }, drop] = useDrop({
-        accept: acceptType || '',
+        accept: accept || '',
         drop: (item: OrderableListItem<T>) => {
             onDrop?.(data.targetItem, item, data.position);
         },
@@ -47,9 +47,9 @@ export const DropZone = <T extends object>({ data, onDrop, accept: acceptType, c
     });
 
     const isActive = isOver && canDrop;
+    const bgColorClassName = 'tw-bg-violet-20';
     const outerDropZoneClassNames = 'tw-my-[-4px] tw-h-[10px] tw-py-1 tw-outline-none tw-relative tw-z-20';
     const activeOuterDropZoneClassNames = 'tw-border-violet-60 tw-border-2 tw-h-7 tw-bg-clip-content';
-    const bgColorClassName = 'tw-bg-violet-20';
 
     return (
         <div
