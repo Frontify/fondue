@@ -137,24 +137,31 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                     {state === CheckboxState.Checked && <IconCheckMark />}
                     {state === CheckboxState.Mixed && <IconMinus />}
                 </span>
-                {label && (
-                    <InputLabel
-                        disabled={disabled}
-                        clickable
-                        htmlFor={id}
-                        tooltip={tooltip ?? undefined}
-                        required={required}
-                        bold={isCheckedOrMixed(state)}
-                    >
-                        {label}
-                    </InputLabel>
-                )}
-            </label>
-            {note && (
-                <span data-test-id="checkbox-note" className="tw-text-black-60 tw-font-sans tw-text-xs tw-font-normal">
-                    {note}
+                <span className="tw-inline-flex tw-flex-col">
+                    <span className="tw-inline-flex tw-flex-row">
+                        {label && (
+                            <InputLabel
+                                disabled={disabled}
+                                clickable
+                                htmlFor={id}
+                                tooltip={tooltip ?? undefined}
+                                required={required}
+                                bold={isCheckedOrMixed(state)}
+                            >
+                                <span className="tw-text-xs">{label}</span>
+                            </InputLabel>
+                        )}
+                    </span>
+                    {note && (
+                        <span
+                            data-test-id="checkbox-note"
+                            className="tw-text-black-60 tw-font-sans tw-text-xs tw-font-normal"
+                        >
+                            {note}
+                        </span>
+                    )}
                 </span>
-            )}
+            </label>
         </div>
     );
 };
