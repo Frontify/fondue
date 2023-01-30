@@ -8,6 +8,7 @@ import { Validation } from '@utilities/validation';
 export default {
     title: 'Components/Textarea',
     component: TextareaComponent,
+    tags: ['autodocs'],
     args: {
         disabled: false,
         required: false,

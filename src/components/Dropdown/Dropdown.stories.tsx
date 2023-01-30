@@ -11,6 +11,7 @@ import { Dropdown, DropdownAlignment, DropdownPosition, DropdownProps, DropdownS
 export default {
     title: 'Components/Dropdown',
     component: Dropdown,
+    tags: ['autodocs'],
     args: {
         placeholder: 'select item',
         disabled: false,
