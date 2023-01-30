@@ -51,6 +51,7 @@ import { defaultDesignTokens } from './utils/defaultDesignTokens';
 export default {
     title: 'Components/Rich Text Editor',
     component: RichTextEditorComponent,
+    tags: ['autodocs'],
     args: {
         value: JSON.stringify(value),
         updateValueOnChange: true,

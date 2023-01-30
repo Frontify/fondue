@@ -27,6 +27,7 @@ import { MODAL_PADDING } from './context/ModalLayout';
 export default {
     title: 'Components/Modal',
     component: Modal,
+    tags: ['autodocs'],
     argTypes: {
         pattern: {
             table: {

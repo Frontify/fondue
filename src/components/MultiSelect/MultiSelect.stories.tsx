@@ -16,6 +16,7 @@ import { IconNook16, IconPerson16 } from '@foundation/Icon';
 export default {
     title: 'Components/Multi Select',
     component: MultiSelectComponent,
+    tags: ['autodocs'],
     args: {
         type: MultiSelectType.Default,
         emphasis: MultiSelectEmphasis.Default,
