@@ -991,7 +991,7 @@ describe('RichTextEditor Component', () => {
             <RichTextEditor
                 plugins={defaultPluginsWithColumns}
                 value={initialValue}
-                columns={2}
+                layout={{ columns: 2 }}
                 onTextChange={(value) => setInitialValue(value)}
             />
         );
