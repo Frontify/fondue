@@ -22,8 +22,8 @@ export default {
             options: ['small', 'medium'],
             control: { type: 'select' },
         },
-        onClick: { table: { disable: true } },
-        onDismiss: { table: { disable: true } },
+        onClick: { table: { disable: false } },
+        onDismiss: { table: { disable: false } },
     },
     args: {
         style: BadgeStyle.Primary,

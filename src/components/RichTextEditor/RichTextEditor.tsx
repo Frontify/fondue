@@ -30,7 +30,11 @@ export type RichTextEditorProps = {
     padding?: PaddingSizes;
     position?: Position;
     plugins?: PluginComposer;
-    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
+    layout?: {
+        columns?: React.CSSProperties['columns'];
+        gap?: React.CSSProperties['gap'];
+    };
+    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>, value: TreeOfNodes | null) => void;
     onValueChanged?: (value: TreeOfNodes | null) => void;
     border?: boolean;
     updateValueOnChange?: boolean; // Only set to true when you are sure that performance isn't an issue
@@ -50,6 +54,7 @@ export const RichTextEditor = ({
     updateValueOnChange = false,
     onKeyDown,
     onValueChanged,
+    layout,
     border = true,
 }: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
@@ -82,12 +87,23 @@ export const RichTextEditor = ({
                 forceToBlurActiveElement();
             }
 
-            onKeyDown && onKeyDown(event);
+            onKeyDown && onKeyDown(event, localValue.current);
         },
     });
 
     return (
-        <RichTextEditorProvider value={{ designTokens, position, border }}>
+        <RichTextEditorProvider
+            value={{
+                designTokens,
+                position,
+                style: {
+                    display: 'block',
+                    columns: layout?.columns,
+                    gap: layout?.gap,
+                },
+                border,
+            }}
+        >
             <Plate
                 id={editorId}
                 onChange={onChange}
