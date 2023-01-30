@@ -3,17 +3,24 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { debounce } from '@utilities/debounce';
 import { ON_SAVE_DELAY_IN_MS, parseRawValue } from '../utils';
-import { PluginComposer } from '../Plugins';
+import { GeneratePlugins, PluginComposer } from '../Plugins';
 import { TreeOfNodes } from '../types';
 
 type useEditorStateProps = {
     editorId: string;
-    onTextChange: ((value: string) => void) | undefined;
-    plugins?: PluginComposer;
+    plugins: PluginComposer;
     initialValue?: string;
+    onTextChange?: (value: string) => void;
+    onValueChanged?: (value: TreeOfNodes | null) => void;
 };
 
-export const useEditorState = ({ editorId, onTextChange, initialValue, plugins }: useEditorStateProps) => {
+export const useEditorState = ({
+    editorId,
+    initialValue,
+    plugins,
+    onTextChange,
+    onValueChanged,
+}: useEditorStateProps) => {
     const localValue = useRef<TreeOfNodes | null>(null);
 
     const debouncedOnChange = debounce((value: TreeOfNodes) => {
@@ -24,8 +31,9 @@ export const useEditorState = ({ editorId, onTextChange, initialValue, plugins }
         (value: any) => {
             debouncedOnChange(value);
             localValue.current = value;
+            onValueChanged && onValueChanged(value);
         },
-        [debouncedOnChange, localValue],
+        [debouncedOnChange, localValue, onValueChanged],
     );
 
     const memoizedValue = useMemo(
@@ -34,5 +42,7 @@ export const useEditorState = ({ editorId, onTextChange, initialValue, plugins }
         [editorId],
     );
 
-    return { localValue, onChange, memoizedValue };
+    const config = GeneratePlugins(editorId, plugins);
+
+    return { localValue, onChange, memoizedValue, config };
 };
