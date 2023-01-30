@@ -16,6 +16,7 @@ const decorators = {
 export default {
     title: 'Components/Accordion/Accordion Header',
     component: AccordionHeaderComponent,
+    tags: ['autodocs'],
     argTypes: {
         decorator: {
             options: Object.keys(decorators),

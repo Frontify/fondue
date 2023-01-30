@@ -11,6 +11,7 @@ import type { OrderableListItem } from '@components/OrderableList/types';
 export default {
     title: 'Components/Drop Zone',
     component: DropZoneComponent,
+    tags: ['autodocs'],
     args: {
         dragDisabled: false,
     },

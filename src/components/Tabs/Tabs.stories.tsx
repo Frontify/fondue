@@ -106,6 +106,7 @@ const data: TabItemProps[] = [
 export default {
     title: 'Components/Tabs',
     component: Tabs,
+    tags: ['autodocs'],
     argTypes: {
         paddingX: {
             options: Object.values(TabsPaddingX),

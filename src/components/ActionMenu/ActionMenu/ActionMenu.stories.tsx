@@ -10,6 +10,7 @@ import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
 export default {
     title: 'Components/Action Menu',
     component: ActionMenuComponent,
+    tags: ['autodocs'],
     argTypes: {
         onClick: { action: 'onClick' },
     },

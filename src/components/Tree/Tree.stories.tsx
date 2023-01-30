@@ -12,6 +12,7 @@ import { DraggableItem } from '@utilities/dnd';
 export default {
     title: 'Components/Tree',
     component: TreeComponent,
+    tags: ['autodocs'],
     args: {
         id: 'treeId',
     },
