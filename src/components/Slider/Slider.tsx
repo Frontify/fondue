@@ -78,7 +78,7 @@ const SliderItem = (props: SliderItemProps) => {
     };
 
     return (
-        <li key={item.id} className={merge(['tw-relative', isFocusVisible && FOCUS_STYLE])}>
+        <div key={item.id} className={merge(['tw-relative', isFocusVisible && FOCUS_STYLE])}>
             <div
                 // TODO: Change element back to label when bug #2380 from @react-aria is fixed
                 // https://github.com/adobe/react-spectrum/issues/2380
@@ -99,7 +99,7 @@ const SliderItem = (props: SliderItemProps) => {
                     {item.value && <span className={isIconItem(item) ? 'tw-ml-2' : ''}>{item.value.toString()}</span>}
                 </span>
             </div>
-        </li>
+        </div>
     );
 };
 
@@ -129,10 +129,10 @@ export const Slider: FC<SliderProps> = ({
     const selectedIndex = items.findIndex((item) => item.id === radioGroupState.selectedValue);
 
     return (
-        <ul
+        <fieldset
             {...radioGroupProps}
             data-test-id="slider"
-            className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none tw-select-none"
+            className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-select-none"
         >
             <motion.div
                 aria-hidden="true"
@@ -152,6 +152,6 @@ export const Slider: FC<SliderProps> = ({
                 ])}
             />
             {itemElements}
-        </ul>
+        </fieldset>
     );
 };

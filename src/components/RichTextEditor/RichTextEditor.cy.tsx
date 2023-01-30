@@ -220,6 +220,45 @@ describe('RichTextEditor Component', () => {
             cy.mount(<RichTextEditorWithValueSetOutside value={TEXT} />);
             cy.get(RICH_TEXT_EDITOR).should('contain.text', TEXT);
         });
+
+        it('should render the updated value when updateValueOnChange enabled', () => {
+            const INITIAL_TEXT = 'This is the initial text';
+
+            cy.mount(
+                <RichTextEditor
+                    updateValueOnChange
+                    value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: INITIAL_TEXT }] }])}
+                />,
+            ).then(({ rerender }) => {
+                const UPDATED_TEXT = 'This is the updated text';
+                rerender(
+                    <RichTextEditor
+                        updateValueOnChange
+                        value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: UPDATED_TEXT }] }])}
+                    />,
+                );
+                cy.get(RICH_TEXT_EDITOR).should('contain.text', UPDATED_TEXT);
+            });
+        });
+
+        it('should render the same value when updateValueOnChange disabled', () => {
+            const INITIAL_TEXT = 'This is the initial text';
+
+            cy.mount(
+                <RichTextEditor
+                    value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: INITIAL_TEXT }] }])}
+                />,
+            ).then(({ rerender }) => {
+                rerender(
+                    <RichTextEditor
+                        value={JSON.stringify([
+                            { type: ELEMENT_PARAGRAPH, children: [{ text: 'This is the updated text' }] },
+                        ])}
+                    />,
+                );
+                cy.get(RICH_TEXT_EDITOR).should('contain.text', INITIAL_TEXT);
+            });
+        });
     });
 
     describe('Editable', () => {
@@ -313,7 +352,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_1).children().eq(6).click();
             cy.get('[contenteditable=true]').should(
                 'include.html',
-                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5 tw-font-mono',
+                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
             );
         });
 
@@ -825,13 +864,13 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_1).children().eq(6).click();
             cy.get('[contenteditable=true]').should(
                 'include.html',
-                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5',
+                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
             );
 
             cy.get(TOOLBAR_GROUP_2).children().last().click();
             cy.get('[contenteditable=true]').should(
                 'not.include.html',
-                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5',
+                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
             );
         });
 
@@ -847,7 +886,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_1).children().eq(6).click();
             cy.get('[contenteditable=true]').should(
                 'include.html',
-                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5',
+                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
             );
             cy.get('[contenteditable=true]').should('include.html', 'tw-font-bold');
             cy.get('[contenteditable=true]').should('include.html', 'tw-italic');
@@ -857,7 +896,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_2).children().last().click();
             cy.get('[contenteditable=true]').should(
                 'not.include.html',
-                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-2 tw-py-0.5',
+                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
             );
             cy.get('[contenteditable=true]').should('not.include.html', 'tw-font-bold');
             cy.get('[contenteditable=true]').should('not.include.html', 'tw-italic');
@@ -949,24 +988,23 @@ describe('RichTextEditor Component', () => {
         const [initialValue, setInitialValue] = useState(value);
 
         return (
-            <div className="tw-block tw-column tw-columns-2">
-                <RichTextEditor
-                    plugins={defaultPluginsWithColumns}
-                    value={initialValue}
-                    onTextChange={(value) => setInitialValue(value)}
-                />
-            </div>
+            <RichTextEditor
+                plugins={defaultPluginsWithColumns}
+                value={initialValue}
+                columns={2}
+                onTextChange={(value) => setInitialValue(value)}
+            />
         );
     };
 
-    describe.only('column break plugin', () => {
+    describe('column break plugin', () => {
         it('it should add column break on paragraph', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
@@ -977,7 +1015,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
             cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
@@ -988,7 +1026,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(6).click();
             cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
@@ -1001,7 +1039,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TEXTSTYLE_OPTION).first().click();
             cy.get('[contenteditable=true]').click('topLeft').should('not.include.html', breakAfterClassNames);
             selectTextValue('hello');
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
@@ -1011,10 +1049,10 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-            cy.get(TEXTSTYLE_OPTION).eq(2).click();
+            cy.get(TEXTSTYLE_OPTION).eq(4).click();
             cy.get('[contenteditable=true]').click().should('not.include.html', breakAfterClassNames);
             selectTextValue('hello');
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
@@ -1025,7 +1063,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
             cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
@@ -1035,7 +1073,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_1).children().eq(0).click();
             cy.get('[contenteditable=true]').should('not.include.html', breakAfterClassNames);
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
         });
 
@@ -1044,9 +1082,8 @@ describe('RichTextEditor Component', () => {
 
             selectTextValue('first');
             cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_2).children().eq(-2).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', breakAfterClassNames);
-
             checkPosition('be.lessThan', 100, 'first');
             checkPosition('be.gt', 100, 'second');
             checkPosition('be.gt', 100, 'Level 5');

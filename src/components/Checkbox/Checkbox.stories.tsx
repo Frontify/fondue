@@ -14,7 +14,7 @@ export default {
             control: { type: 'radio' },
         },
         onChange: {
-            table: { disable: true },
+            table: { disable: false },
             action: 'Change',
         },
     },
