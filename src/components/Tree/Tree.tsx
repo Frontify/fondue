@@ -2,10 +2,13 @@
 
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { TreeContext } from '@components/Tree/TreeContext';
 import type { TreeProps } from '@components/Tree/types';
+import { TreeContext } from '@components/Tree/TreeContext';
 import { DndWrapper, DraggableItem, DropZonePosition } from '@utilities/dnd';
+
 import { useDraggableEnhancedChildren } from './hooks/useDraggableEnhancedChildren';
+
+const noop = () => undefined;
 
 export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: TreeProps) => {
     const [selectedIds, setSelectedIds] = useState<string[]>(activeIds || []);
@@ -49,15 +52,25 @@ export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: Tre
             sourceItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
             position: DropZonePosition,
         ) => {
-            onDrop?.(targetItem, sourceItem, position);
+            if (onDrop) {
+                onDrop(targetItem, sourceItem, position);
+            } else {
+                return null;
+            }
         },
         [onDrop],
     );
 
-    const { draggableEnhancedChildren } = useDraggableEnhancedChildren(id, handleDrop, children);
+    const { draggableEnhancedChildren } = useDraggableEnhancedChildren({ accept: id, onDrop: handleDrop, children });
 
     const memoizedTreeContextValue = useMemo(
-        () => ({ treeId: id, selectedIds, onSelect: handleSelect, draggable, onDrop: handleDrop }),
+        () => ({
+            treeId: id,
+            selectedIds,
+            onSelect: handleSelect,
+            draggable,
+            onDrop: handleDrop ?? noop,
+        }),
         [id, selectedIds, handleSelect, draggable, handleDrop],
     );
 
