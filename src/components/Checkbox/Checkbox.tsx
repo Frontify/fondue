@@ -20,9 +20,15 @@ export enum CheckboxState {
     Mixed = 'Mixed',
 }
 
+export enum CheckboxEmphasis {
+    Default = 'Default',
+    Weak = 'Weak',
+}
+
 export type CheckboxProps = {
     id?: string;
     state?: CheckboxState;
+    emphasis?: CheckboxEmphasis;
     disabled?: boolean;
     required?: boolean;
     value?: string;
@@ -41,6 +47,7 @@ const isCheckedOrMixed = (checked: CheckboxState): boolean => {
 const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProps> = (
     {
         id: propId,
+        emphasis = 'Default',
         disabled,
         required,
         label,
@@ -130,6 +137,11 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                   !isCheckedOrMixed(state) &&
                                       'tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90 group-hover:tw-bg-white group-hover:tw-border-black dark:group-hover:tw-border-black-20 dark:group-hover:tw-bg-black-90',
                                   isCheckedOrMixed(state) &&
+                                      emphasis === CheckboxEmphasis.Weak &&
+                                      'tw-bg-box-neutral-strong tw-text-white hover:tw-bg-box-neutral-inverse dark:tw-text-black group-hover:tw-text-white group-hover:tw-bg-box-neutral-strong dark:group-hover:tw-text-black',
+
+                                  isCheckedOrMixed(state) &&
+                                      emphasis === CheckboxEmphasis.Default &&
                                       'tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60 group-hover:tw-text-white group-hover:tw-border-violet-70 group-hover:tw-bg-violet-70 dark:group-hover:tw-border-violet-60 dark:group-hover:tw-bg-violet-60',
                               ]),
                     ])}

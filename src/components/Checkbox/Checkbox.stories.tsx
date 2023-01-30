@@ -3,7 +3,7 @@
 import { Meta, StoryFn } from '@storybook/react';
 import React, { useEffect, useState } from 'react';
 import { IconExclamationMarkCircle, IconInfo, IconQuestionMarkCircle } from '@foundation/Icon/Generated';
-import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState } from './Checkbox';
+import { Checkbox as CheckboxComponent, CheckboxEmphasis, CheckboxProps, CheckboxState } from './Checkbox';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
 export default {
@@ -11,6 +11,10 @@ export default {
     argTypes: {
         state: {
             options: Object.values(CheckboxState),
+            control: { type: 'radio' },
+        },
+        emphasis: {
+            options: Object.values(CheckboxEmphasis),
             control: { type: 'radio' },
         },
         onChange: {
@@ -22,6 +26,7 @@ export default {
         state: CheckboxState.Unchecked,
         disabled: false,
         required: false,
+        emphasis: 'Default',
         value: "whatever-you'd-like",
         label: 'Checkbox label',
         note: 'Note about this input',
