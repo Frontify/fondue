@@ -432,7 +432,7 @@ WithoutToolbar.args = {
 };
 
 export const BreakAfterColumn: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
-    <RichTextEditorComponent {...args} columns={3} />
+    <RichTextEditorComponent {...args} layout={{ columns: 3 }} />
 );
 BreakAfterColumn.args = {
     value: JSON.stringify(defaultValue),
