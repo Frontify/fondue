@@ -9,6 +9,7 @@ import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 export default {
     title: 'Components/Input Label',
     component: InputLabelComponent,
+    tags: ['autodocs'],
     args: {
         children: 'Input Label',
         disabled: false,
