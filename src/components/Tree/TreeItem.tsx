@@ -44,12 +44,6 @@ export const TreeItem = ({
         canDrag: draggable,
     });
 
-    const { draggableEnhancedChildren } = useDraggableEnhancedChildren({
-        accept: getAcceptTypes(accepts ?? treeId, 'before'),
-        onDrop,
-        children,
-    });
-
     const handleDrop = (
         targetItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
         sourceItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
@@ -57,6 +51,12 @@ export const TreeItem = ({
     ) => {
         (onDrop ?? onTreeDrop)?.(targetItem, sourceItem, position);
     };
+
+    const { draggableEnhancedChildren } = useDraggableEnhancedChildren({
+        accept: getAcceptTypes(accepts ?? treeId, 'before'),
+        onDrop: handleDrop,
+        children,
+    });
 
     const handleSelect = () => {
         onItemSelect(id);
@@ -92,13 +92,13 @@ export const TreeItem = ({
     return (
         <li data-test-id="tree-item" ref={drag} style={{ opacity }}>
             <DropZone
+                data-position={DropZonePosition.Within}
                 data={{
                     targetItem: { id, sort, type },
                     position: DropZonePosition.Within,
                 }}
                 onDrop={handleDrop}
                 accept={getAcceptTypes(accepts ?? treeId, 'within')}
-                // isDragging={isDragging}
             >
                 {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                 <div
@@ -142,13 +142,13 @@ export const TreeItem = ({
             )}
 
             <DropZone
+                data-position={DropZonePosition.After}
                 data={{
                     targetItem: { id, sort, type },
                     position: DropZonePosition.After,
                 }}
                 onDrop={handleDrop}
                 accept={getAcceptTypes(accepts ?? treeId, 'after')}
-                // isDragging={isDragging}
             />
         </li>
     );

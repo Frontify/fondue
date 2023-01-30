@@ -19,10 +19,8 @@ type DropZoneData<T> = {
 
 export type DropZoneProps<T> = {
     data: DropZoneData<T>;
-    // onDrop?: OnDropCallback<T> | (() => void);
-    onDrop?: any;
+    onDrop?: OnDropCallback<T>;
     accept: string | string[];
-    // isDragging?: boolean;
     children?: JSX.Element;
 };
 

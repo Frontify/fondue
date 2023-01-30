@@ -2,18 +2,18 @@
 
 import React, { ReactElement } from 'react';
 
-import { DropZone } from '@components/DropZone';
-import { DropZonePosition } from '@utilities/dnd';
+import { DropZone, OnDropCallback } from '@components/DropZone';
+import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 
 import { TreeItemProps } from '../types';
 
-type Configuration = {
-    onDrop: any;
+type Configuration<T> = {
+    onDrop?: OnDropCallback<T>;
     accept: string | string[];
     children?: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
 };
 
-export const useDraggableEnhancedChildren = (config: Configuration) => {
+export const useDraggableEnhancedChildren = <T extends object>(config: Configuration<T>) => {
     const draggableEnhancedChildren = React.Children.map(config.children, (child, index) => {
         if (!child) {
             return <></>;
@@ -23,13 +23,17 @@ export const useDraggableEnhancedChildren = (config: Configuration) => {
             <>
                 {index === 0 && (
                     <DropZone
+                        data-position={DropZonePosition.Before}
                         data={{
-                            targetItem: { id: child.props.id, sort: child.props.sort },
+                            targetItem: {
+                                id: child.props.id,
+                                sort: child.props.sort,
+                                type: child.props.type,
+                            } as DraggableItem<T>,
                             position: DropZonePosition.Before,
                         }}
                         onDrop={config.onDrop}
                         accept={config.accept}
-                        // isDragging={isDragging}
                     />
                 )}
 
