@@ -14,7 +14,6 @@ export default {
     component: TreeComponent,
     args: {
         id: 'treeId',
-        draggable: true,
     },
 } as Meta<TreeProps>;
 
@@ -130,63 +129,6 @@ export const TreeWithLegacyItem = ({ ...args }: TreeProps) => {
                             ))}
                     </TreeItemLegacy>
                 ))}
-            </Tree>
-        </div>
-    );
-};
-
-export const TreeTest = ({ ...args }: TreeProps) => {
-    return (
-        <div style={{ maxWidth: '800px' }}>
-            <Tree {...args}>
-                <TreeItem key={1} id={'1'} sort={1} label={'Redni broj 1'} type="document" accepts="document" />
-                <TreeItem key={2} id={'2'} sort={2} label={'Redni broj 2'} type="document" accepts="document" />
-                <TreeItem key={3} id={'3'} sort={3} label={'Redni broj 3'} type="document" accepts="document" />
-                <TreeItem key={4} id={'4'} sort={4} label={'Redni broj 4'} type="document" accepts="document">
-                    <TreeItem
-                        key={41}
-                        id={'4-1'}
-                        sort={1}
-                        label={'Redni broj 4-1'}
-                        type="document"
-                        accepts="document"
-                    />
-                    <TreeItem
-                        key={42}
-                        id={'4-2'}
-                        sort={2}
-                        label={'Redni broj 4-2'}
-                        type="document"
-                        accepts="document"
-                    />
-                </TreeItem>
-                <TreeItem key={5} id={'5'} sort={5} label={'Redni broj 5'} type="document" accepts="document" />
-                <TreeItem key={6} id={'6'} sort={6} label={'Redni broj 6'} type="document" accepts="document">
-                    <TreeItem
-                        key={'6-1'}
-                        id={'6-1'}
-                        sort={61}
-                        label={'Redni broj 6-1'}
-                        type="document-page"
-                        accepts="document-page"
-                    />
-                    <TreeItem
-                        key={'6-2'}
-                        id={'6-2'}
-                        sort={62}
-                        label={'Redni broj 6-2'}
-                        type="document"
-                        accepts="document"
-                    />
-                </TreeItem>
-                <TreeItem
-                    key={7}
-                    id={'7'}
-                    sort={7}
-                    label={'Redni broj 7'}
-                    type="document-page"
-                    accepts="document-page"
-                />
             </Tree>
         </div>
     );
