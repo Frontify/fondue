@@ -9,6 +9,7 @@ import { IconExclamationMarkCircle, IconExclamationMarkTriangle, IconIcon, IconS
 export default {
     title: 'Components/Tooltip',
     component: Tooltip,
+    tags: ['autodocs'],
     args: {
         content: 'Cupcake ipsum dolor sit amet ice cream. (https://Cupcakeipsumdolorsitameticecream.com)',
         heading: '',

@@ -51,6 +51,7 @@ import { defaultDesignTokens } from './utils/defaultDesignTokens';
 export default {
     title: 'Components/Rich Text Editor',
     component: RichTextEditorComponent,
+    tags: ['autodocs'],
     args: {
         value: JSON.stringify(value),
         updateValueOnChange: true,
@@ -81,6 +82,10 @@ export default {
                 type: 'radio',
                 labels: Object.entries(PaddingSizes).map(([key, value]) => [value, key]),
             },
+        },
+        layout: {
+            columns: { type: 'string' },
+            gap: { type: 'string' },
         },
     },
 } as Meta;
@@ -432,12 +437,15 @@ WithoutToolbar.args = {
 };
 
 export const BreakAfterColumn: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
-    <RichTextEditorComponent {...args} columns={3} />
+    <RichTextEditorComponent {...args} />
 );
 BreakAfterColumn.args = {
     value: JSON.stringify(defaultValue),
     plugins: defaultPluginsWithColumns,
     border: false,
+    layout: {
+        columns: 3,
+    },
 };
 BreakAfterColumn.argTypes = {
     border: { table: { disable: true } },

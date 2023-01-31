@@ -9,6 +9,7 @@ import { BadgeEmphasis, BadgeProps, BadgeStatus, BadgeStyle } from './types';
 export default {
     title: 'Components/Badge',
     component: Badge,
+    tags: ['autodocs'],
     argTypes: {
         style: {
             options: Object.values(BadgeStyle),

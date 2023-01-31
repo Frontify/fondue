@@ -12,6 +12,7 @@ import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 export default {
     title: 'Components/Card',
     component: Card,
+    tags: ['autodocs'],
     args: {
         hoverable: false,
     },

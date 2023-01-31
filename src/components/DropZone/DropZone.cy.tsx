@@ -30,7 +30,7 @@ const DraggableItem = ({ id, sort }: DraggableItemProp<unknown>) => {
 };
 
 const DropZoneWithDefaultProps = ({ onDrop }: Partial<DropZoneProps<unknown>>) => {
-    return <DropZone data={DROP_ZONE_DATA} treeId={LIST_ID} onDrop={onDrop} />;
+    return <DropZone data={DROP_ZONE_DATA} accept={LIST_ID} onDrop={onDrop} />;
 };
 describe('DropZone', () => {
     it('can receive item', () => {

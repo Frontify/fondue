@@ -8,6 +8,7 @@ import { Checklist as ChecklistComponent, ChecklistDirection, ChecklistProps } f
 export default {
     title: 'Components/Checklist',
     component: ChecklistComponent,
+    tags: ['autodocs'],
     argTypes: {
         columns: {
             options: [1, 2, 3, 4],
