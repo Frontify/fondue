@@ -99,8 +99,10 @@ const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderSty
             return 'before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px] before:tw-bg-black-100 before:dark:tw-bg-white';
         case currentPlacement.toString().includes(TooltipPosition.Right.toLowerCase()):
             return merge([
-                'before:tw-border-t-0 before:tw-border-r-0 tw-left-[-6px]',
-                brightHeader && alignment === TooltipAlignment.Start
+                'before:tw-border-t-0 before:tw-border-r-0 tw-left-[-5px]',
+                brightHeader &&
+                alignment === TooltipAlignment.Start &&
+                currentPlacement.toString().includes(TooltipAlignment.Start.toLowerCase())
                     ? brightHeaderArrowBackgroundColors[brightHeader]
                     : 'before:tw-bg-black-100 before:dark:tw-bg-white',
             ]);
@@ -113,8 +115,10 @@ const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderSty
             ]);
         case currentPlacement.toString().includes(TooltipPosition.Left.toLowerCase()):
             return merge([
-                'before:tw-border-b-0 before:tw-border-l-0 tw-right-[-6px]',
-                brightHeader && alignment === TooltipAlignment.Start
+                'before:tw-border-b-0 before:tw-border-l-0 tw-right-[-5px]',
+                brightHeader &&
+                alignment === TooltipAlignment.Start &&
+                currentPlacement.toString().includes(TooltipAlignment.Start.toLowerCase())
                     ? brightHeaderArrowBackgroundColors[brightHeader]
                     : 'before:tw-bg-black-100 before:dark:tw-bg-white',
             ]);
@@ -144,7 +148,9 @@ export const Tooltip = ({
     disabled = false,
     hidden = false,
 }: TooltipProps) => {
-    const triggerRefElement = useRef<HTMLElement | HTMLDivElement | HTMLButtonElement | null>(null);
+    const [triggerElementRef, setTriggerElementRef] = useState<HTMLElement | HTMLDivElement | HTMLButtonElement | null>(
+        null,
+    );
     const linkRef = useRef<HTMLAnchorElement | null>(null);
     const { linkProps } = useLink({}, linkRef);
     const hasLargePaddingTop = useMemo(
@@ -153,12 +159,12 @@ export const Tooltip = ({
     );
 
     const placement = placementMap[`${position}-${alignment}`];
-    const tooltipContainerRef = useRef<HTMLDivElement | null>(null);
-    const triggerElementContainerRef = useRef<HTMLDivElement | null>(null);
+    const [tooltipContainerRef, setTooltipContainerRef] = useState<HTMLDivElement | null>(null);
+    const [triggerElementContainerRef, setTriggerElementContainerRef] = useState<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
     const tooltipOffset = withArrow ? 10 : 5;
-    const popperInstance = usePopper(triggerRefElement?.current, tooltipContainerRef.current, {
+    const popperInstance = usePopper(triggerElementRef, tooltipContainerRef, {
         placement,
         strategy: 'fixed',
         modifiers: [
@@ -209,13 +215,13 @@ export const Tooltip = ({
     const checkIfHovered = useCallback(
         (event) => {
             const hoveredElement = event.path ?? event.composedPath?.();
-            const hoverSources = [triggerRefElement, triggerElementContainerRef, tooltipContainerRef];
+            const hoverSources = [triggerElementRef, triggerElementContainerRef, tooltipContainerRef];
 
-            if (hoveredElement && hoverSources.some((el) => hoveredElement.includes(el?.current))) {
+            if (hoveredElement && hoverSources.some((el) => hoveredElement.includes(el))) {
                 handleShowTooltipOnHover();
             }
         },
-        [handleShowTooltipOnHover],
+        [handleShowTooltipOnHover, triggerElementRef, triggerElementContainerRef, tooltipContainerRef],
     );
 
     const triggerProps: HTMLAttributes<HTMLElement> = {
@@ -223,7 +229,7 @@ export const Tooltip = ({
         onMouseLeave: handleHideTooltipOnHover,
         onFocus: () => setIsOpen(true),
         onBlur: (event: FocusEvent) => {
-            if (!tooltipContainerRef.current?.contains(event.relatedTarget)) {
+            if (!tooltipContainerRef?.contains(event.relatedTarget)) {
                 setIsOpen(false);
             }
         },
@@ -242,14 +248,14 @@ export const Tooltip = ({
 
     return (
         <>
-            <div {...triggerProps} ref={triggerElementContainerRef}>
+            <div {...triggerProps} ref={setTriggerElementContainerRef}>
                 {triggerElement &&
                     cloneElement(triggerElement, {
-                        ref: triggerRefElement,
+                        ref: setTriggerElementRef,
                     })}
             </div>
             <div
-                ref={tooltipContainerRef}
+                ref={setTooltipContainerRef}
                 className={merge([
                     'tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-[120000]',
                     (hidden || disabled) && 'tw-hidden',
@@ -266,7 +272,7 @@ export const Tooltip = ({
                 {brightHeader && <BrightHeader headerStyle={brightHeader} />}
                 <div
                     className={merge([
-                        'tw-px-4',
+                        'tw-px-4 tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-relative tw-z-[120000]',
                         hasLargePaddingTop ? paddingsTop.small : paddingsTop.large,
                         linkUrl ? paddingsBottom.small : paddingsBottom.large,
                     ])}
@@ -334,6 +340,12 @@ export const Tooltip = ({
                             )}
                         </div>
                     )}
+                </div>
+                {/**
+                 * This container is needed for the arrow element to not be styled by popperJS
+                 * selectors for its immediate children .tw-popper-container > .tw-popper-arrow
+                 * */}
+                <div aria-hidden="true">
                     <div
                         data-test-id="popover-arrow"
                         data-popper-arrow={withArrow}
@@ -341,7 +353,7 @@ export const Tooltip = ({
                         style={popperInstance.styles.arrow}
                         className={merge([
                             withArrow &&
-                                'tw-popper-arrow tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line',
+                                'tw-popper-arrow tw-z-[110000] tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line',
                             withArrow && arrowStyling,
                         ])}
                     />

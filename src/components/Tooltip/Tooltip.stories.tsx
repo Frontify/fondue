@@ -89,7 +89,9 @@ export const TooltipComponent: StoryFn<TooltipProps> = (args: TooltipProps) => {
                 {...args}
                 triggerElement={
                     <button className="tw-flex tw-justify-center tw-items-center">
-                        <IconExclamationMarkCircle size={IconSize.Size16} filled />
+                        <span className="tw-flex tw-leading-3">
+                            <IconExclamationMarkCircle size={IconSize.Size16} filled />
+                        </span>
                         <span>Tooltip trigger</span>
                     </button>
                 }
