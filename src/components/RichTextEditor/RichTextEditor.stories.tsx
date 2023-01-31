@@ -447,6 +447,22 @@ BreakAfterColumn.args = {
         columns: 3,
     },
 };
+
+export const SimpleContentColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <div className="tw-border tw-border-red-60">
+        <RichTextEditorComponent {...args} />
+    </div>
+);
+SimpleContentColumns.args = {
+    value: `<p>${IPSUM}</p>`,
+    plugins: defaultPluginsWithColumns,
+    border: false,
+    layout: {
+        columns: 2,
+        gap: 20,
+    },
+};
+
 BreakAfterColumn.argTypes = {
     border: { table: { disable: true } },
 };

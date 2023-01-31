@@ -66,6 +66,12 @@ export const RichTextEditor = ({
         onValueChanged,
     });
 
+    console.log({ localValue });
+    console.log({ layout });
+
+    const columnClassnames = layout?.columns ? `tw-columns-${layout?.columns}` : '';
+    const gapClassnames = layout?.gap ? `tw-gap-${layout?.gap}` : '';
+
     const editableProps = useRef<EditableProps>({
         placeholder,
         renderPlaceholder: ({ children, attributes }) => {
@@ -80,7 +86,7 @@ export const RichTextEditor = ({
         },
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
-        className: padding,
+        className: `${padding} ${columnClassnames} ${gapClassnames}`,
         onKeyDown: (event) => {
             if (event.code === 'Tab') {
                 // Forcing a blur event because of accessibility
@@ -97,7 +103,6 @@ export const RichTextEditor = ({
                 designTokens,
                 position,
                 style: {
-                    display: 'block',
                     columns: layout?.columns,
                     gap: layout?.gap,
                 },

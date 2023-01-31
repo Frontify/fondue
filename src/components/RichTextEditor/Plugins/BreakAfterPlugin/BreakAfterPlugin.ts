@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createPluginFactory } from '@udecode/plate';
-import { BreakAfterButton } from './BreakAfterButton';
-import { Plugin, PluginProps } from '../Plugin';
 import {
     KeyboardHandlerReturnType,
     PlateEditor,
@@ -14,9 +11,10 @@ import {
     getPreventDefaultHandler,
     someNode,
 } from '@udecode/plate-core';
-import { setBreakAfter } from './utils/setBreakAfter';
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
+import { Plugin, PluginProps } from '../Plugin';
+import { BreakAfterButton } from './BreakAfterButton';
 import { isBreakAfterEnabled } from './BreakAfterButton/BreakAfterToolbarButton';
+import { setBreakAfter } from './utils/setBreakAfter';
 
 export const KEY_ELEMENT_BREAK_AFTER = 'breakAfterColumn';
 
@@ -34,9 +32,8 @@ export class BreakAfterPlugin extends Plugin {
 }
 
 // This is adapted from packages/editor/break/src/soft-break/onKeyDownSoftBreak.ts
-const OnKeyDownBreakAfter = (editor: any): KeyboardHandlerReturnType => {
-    const { style } = useRichTextEditorContext();
-    const columns = Number(style?.columns) ?? 1;
+const OnKeyDownBreakAfter = (editor: PlateEditor): KeyboardHandlerReturnType => {
+    const columns = 2;
 
     return (event) => {
         const isActive = someNode(editor, { match: { breakAfterColumn: true } });
@@ -56,18 +53,27 @@ const OnKeyDownBreakAfter = (editor: any): KeyboardHandlerReturnType => {
                 break;
 
             case 'Delete':
-                const anchor = editor.selection.anchor;
-                if (anchor.offset === getNode(editor, anchor.path)?.text?.length && isActive) {
-                    getPreventDefaultHandler(setBreakAfter, editor, {
-                        value: false,
-                    })(event);
+                const anchor = editor.selection?.anchor;
+                if (anchor) {
+                    const nodeText = getNode(editor, anchor?.path)?.text as string;
+                    const textLength = nodeText?.length ?? 0;
+                    if (anchor.offset === textLength && isActive) {
+                        getPreventDefaultHandler(setBreakAfter, editor, {
+                            value: false,
+                        })(event);
+                    }
                 }
+
                 break;
         }
     };
 };
+
 export const createBreakAfterPlugin = createPluginFactory({
     key: KEY_ELEMENT_BREAK_AFTER,
+    options: {
+        columns: 2,
+    },
     handlers: {
         onKeyDown: OnKeyDownBreakAfter,
     },
@@ -105,6 +111,8 @@ const handleEnterKeyEvent = (
     event: React.KeyboardEvent<Element>,
 ) => {
     if (event.shiftKey && event.ctrlKey && isBreakAfterEnabled(editor, columns, isActive)) {
+        console.log(isBreakAfterEnabled(editor, columns, isActive));
+        console.log('handle enter key event', columns);
         return getPreventDefaultHandler(setBreakAfter, editor, {
             value: !isActive,
         })(event);
