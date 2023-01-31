@@ -14,6 +14,7 @@ import { ${componentName}, ${componentName}Props } from "./${componentName}";
 export default {
     title: "${componentType[0].toUpperCase()}${componentType.slice(1)}/${componentName}",
     component: ${componentName},
+    tags: ['autodocs'],
 } as Meta<${componentName}Props>;
 
 const Template: StoryFn<${componentName}Props> = (args) => <${componentName} {...args} />;
