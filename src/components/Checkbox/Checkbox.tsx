@@ -100,12 +100,6 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     return (
         <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">
             <div className="tw-inline-flex tw-flex-row">
-                {/* <label
-                    className={merge([
-                        'tw-group tw-flex tw-items-center tw-gap-2 tw-select-none tw-outline-none',
-                        !disabled && 'hover:tw-cursor-pointer',
-                    ])}
-                > */}
                 <InputLabel
                     disabled={disabled}
                     clickable
