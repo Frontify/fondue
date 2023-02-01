@@ -18,4 +18,5 @@ export class UnderlineMarkupElement extends MarkupElement {
     }
 }
 
-export { MARK_UNDERLINE, PlateRenderLeafProps };
+export { MARK_UNDERLINE };
+export type { PlateRenderLeafProps };
