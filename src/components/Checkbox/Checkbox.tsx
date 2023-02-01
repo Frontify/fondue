@@ -157,7 +157,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                     {note && (
                         <span
                             data-test-id="checkbox-note"
-                            className="tw-text-black-80 tw-font-sans tw-text-xs tw-font-normal"
+                            className="tw-text-text-x-weak tw-font-sans tw-text-xs tw-font-normal"
                         >
                             {note}
                         </span>
