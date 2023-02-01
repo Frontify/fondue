@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { createPluginFactory } from '@udecode/plate';
 import {
     KeyboardHandlerReturnType,
@@ -33,7 +34,8 @@ export class BreakAfterPlugin extends Plugin {
 
 // This is adapted from packages/editor/break/src/soft-break/onKeyDownSoftBreak.ts
 const OnKeyDownBreakAfter = (editor: PlateEditor): KeyboardHandlerReturnType => {
-    const columns = 2;
+    const { style } = useRichTextEditorContext();
+    const columns = Number(style?.columns) ?? 1;
 
     return (event) => {
         const isActive = someNode(editor, { match: { breakAfterColumn: true } });

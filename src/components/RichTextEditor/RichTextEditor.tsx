@@ -66,9 +66,6 @@ export const RichTextEditor = ({
         onValueChanged,
     });
 
-    console.log({ localValue });
-    console.log({ layout });
-
     const columnClassnames = layout?.columns ? `tw-columns-${layout?.columns}` : '';
     const gapClassnames = layout?.gap ? `tw-gap-${layout?.gap}` : '';
 
