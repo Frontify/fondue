@@ -22,6 +22,7 @@ const SwitchComponent = () => {
 export default {
     title: 'Components/Menu Item',
     component: MenuItemComponent,
+    tags: ['autodocs'],
     args: {
         id: 'abc',
         title: 'Item Title',

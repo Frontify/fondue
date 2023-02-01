@@ -20,6 +20,7 @@ const defaultArgs = {
 export default {
     title: 'Components/Button',
     component: Button,
+    tags: ['autodocs'],
     argTypes: {
         size: {
             options: Object.values(ButtonSize),

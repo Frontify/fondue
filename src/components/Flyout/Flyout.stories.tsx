@@ -23,6 +23,7 @@ import { IconDotsVertical, IconExclamationMarkCircle, IconIcon } from '@foundati
 export default {
     title: 'Components/Flyout',
     component: Flyout,
+    tags: ['autodocs'],
     argTypes: {
         onCancel: { action: 'onCancel', table: { disable: true } },
         onOpenChange: { action: 'onOpenChange', table: { disable: true } },

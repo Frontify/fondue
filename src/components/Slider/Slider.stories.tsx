@@ -9,6 +9,7 @@ import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight 
 export default {
     title: 'Components/Slider',
     component: Slider,
+    tags: ['autodocs'],
     argTypes: {
         id: { type: 'string' },
     },
