@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createLinkPlugin as createPlateLinkPlugin, createPluginFactory } from '@udecode/plate';
+import { createLinkPlugin, createPluginFactory } from '@udecode/plate';
 import { LINK_PLUGIN } from './id';
 import { LinkMarkupElement } from './LinkMarkupElement';
 import { LinkButton } from './LinkButton';
@@ -8,8 +8,8 @@ import { CustomFloatingLink } from './FloatingLink/CustomFloatingLink';
 import { Plugin, PluginProps } from '../Plugin';
 import { isUrlOrPath } from './utils';
 
-export const createLinkPlugin = createPluginFactory({
-    ...createPlateLinkPlugin(),
+export const createLinkPluginFactory = createPluginFactory({
+    ...createLinkPlugin(),
     renderAfterEditable: CustomFloatingLink,
     options: {
         isUrl: isUrlOrPath,
@@ -32,6 +32,6 @@ export class LinkPlugin extends Plugin {
     }
 
     plugins() {
-        return [createLinkPlugin()];
+        return [createLinkPluginFactory()];
     }
 }

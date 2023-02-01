@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Position } from '../EditorPositioningWrapper';
-import { Button, Buttons, Plugin, ToolbarButtons } from '../Plugins/types';
+import { ButtonType, ButtonsType, Plugin, ToolbarButtons } from '../Plugins/types';
 import { ToolbarButtonsPosition } from './types';
 
 export class ToolbarPositionWithButtons implements ToolbarButtons {
@@ -12,9 +12,9 @@ export class ToolbarPositionWithButtons implements ToolbarButtons {
     };
 
     public createGroupOfButtons(plugins: Plugin[]): void {
-        const groupOfButtonsBottom: Button[] = [];
-        const groupOfButtonsTop: Button[] = [];
-        const groupOfButtonsFloating: Button[] = [];
+        const groupOfButtonsBottom: ButtonType[] = [];
+        const groupOfButtonsTop: ButtonType[] = [];
+        const groupOfButtonsFloating: ButtonType[] = [];
 
         for (const { markupElement, button, id, showIn } of plugins) {
             if (!button) {
@@ -50,7 +50,7 @@ export class ToolbarPositionWithButtons implements ToolbarButtons {
         }
     }
 
-    at(position: Position): Buttons {
+    at(position: Position): ButtonsType {
         return this.toolbarButtons[position];
     }
 }
