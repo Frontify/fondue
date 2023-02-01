@@ -9,14 +9,14 @@ import { CodePlugin } from './CodePlugin';
 import { ItalicPlugin } from './ItalicPlugin';
 import { UnderlinePlugin } from './UnderlinePlugin';
 import { StrikethroughPlugin } from './StrikethroughPlugin';
-import { LinkPlugin } from './LinkPlugin';
 import { TextStylePlugin } from './TextStylePlugin';
 import { InitPlugin } from './InitPlugin';
 import { ParagraphPlugin } from './ParagraphPlugin';
 import { ButtonPlugin } from './ButtonPlugin';
 import { ResetFormattingPlugin } from './ResetFormattingPlugin';
-import { EmojiPlugin } from './EmojiPlugin';
 import { BreakAfterPlugin } from './BreakAfterPlugin';
+import { LinkPlugin } from './LinkPlugin';
+import { EmojiPlugin } from './EmojiPlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
@@ -83,9 +83,9 @@ export * from './ResetFormattingPlugin';
 export * from './ItalicPlugin';
 export * from './UnderlinePlugin';
 export * from './StrikethroughPlugin';
-export * from './LinkPlugin';
 export * from './ButtonPlugin';
-export * from './MentionPlugin';
 export * from './TextStylePlugin';
 export * from './ParagraphPlugin';
 export * from './EmojiPlugin';
+export * from './LinkPlugin';
+export * from './MentionPlugin';
