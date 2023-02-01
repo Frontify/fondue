@@ -16,3 +16,5 @@ export const UnderlineButton = ({ editor, id }: PluginButtonProps) => (
         />
     </ButtonWrapper>
 );
+
+export { MarkToolbarButton, getPluginType };
