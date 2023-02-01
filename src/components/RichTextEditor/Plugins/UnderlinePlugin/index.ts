@@ -40,3 +40,4 @@ export class UnderlinePlugin extends Plugin {
 export * from './UnderlineMarkupElement';
 export * from './UnderlineButton';
 export * from './id';
+export { createUnderlinePlugin };
