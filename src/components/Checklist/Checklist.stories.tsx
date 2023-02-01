@@ -95,9 +95,32 @@ export const MultipleColumnsInContainedSpace = (args: ChecklistProps) => {
 };
 MultipleColumnsInContainedSpace.args = {
     direction: ChecklistDirection.Vertical,
-    columns: 2,
+    columns: 4,
 };
 
 MultipleColumnsInContainedSpace.argTypes = {
+    direction: { table: { disable: true } },
+};
+
+export const MultipleColumnsInContainedSpaceAndSpannedColumn = (args: ChecklistProps) => {
+    const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
+
+    return (
+        <div className="tw-w-[300px] tw-p-2 tw-border- tw-border tw-rounded tw-border-line">
+            <ChecklistComponent
+                {...args}
+                checkboxes={COLUMN_CHECKBOXES}
+                activeValues={activeBoxes}
+                setActiveValues={setActiveBoxes}
+            />
+        </div>
+    );
+};
+MultipleColumnsInContainedSpaceAndSpannedColumn.args = {
+    direction: ChecklistDirection.Vertical,
+    columns: 3,
+};
+
+MultipleColumnsInContainedSpaceAndSpannedColumn.argTypes = {
     direction: { table: { disable: true } },
 };
