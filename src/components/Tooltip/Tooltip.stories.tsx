@@ -4,7 +4,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { BrightHeaderStyle } from './BrightHeader';
 import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
-import { IconExclamationMarkCircle, IconExclamationMarkTriangle, IconIcon, IconSize } from '@foundation/Icon';
+import { IconExclamationMarkCircle16Filled, IconExclamationMarkTriangle16, IconIcon } from '@foundation/Icon';
 
 export default {
     title: 'Components/Tooltip',
@@ -90,7 +90,9 @@ export const TooltipComponent: StoryFn<TooltipProps> = (args: TooltipProps) => {
                 {...args}
                 triggerElement={
                     <button className="tw-flex tw-justify-center tw-items-center">
-                        <IconExclamationMarkCircle size={IconSize.Size16} filled />
+                        <span className="tw-flex tw-leading-3">
+                            <IconExclamationMarkCircle16Filled />
+                        </span>
                         <span>Tooltip trigger</span>
                     </button>
                 }
@@ -107,7 +109,7 @@ export const MultipleTooltipsComponent: StoryFn<TooltipProps> = (args: TooltipPr
                 {...args}
                 triggerElement={
                     <button className="tw-mr-1">
-                        <IconExclamationMarkCircle size={IconSize.Size16} filled />
+                        <IconExclamationMarkCircle16Filled />
                     </button>
                 }
             />
@@ -116,7 +118,7 @@ export const MultipleTooltipsComponent: StoryFn<TooltipProps> = (args: TooltipPr
                 content="Second tooltip"
                 triggerElement={
                     <button>
-                        <IconExclamationMarkTriangle size={IconSize.Size16} />
+                        <IconExclamationMarkTriangle16 />
                     </button>
                 }
                 brightHeader={BrightHeaderStyle.Warning}
