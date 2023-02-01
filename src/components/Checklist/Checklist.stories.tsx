@@ -95,7 +95,7 @@ export const MultipleColumnsInContainedSpace = (args: ChecklistProps) => {
 };
 MultipleColumnsInContainedSpace.args = {
     direction: ChecklistDirection.Vertical,
-    columns: 4,
+    columns: 2,
 };
 
 MultipleColumnsInContainedSpace.argTypes = {
