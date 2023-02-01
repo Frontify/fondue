@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactNode } from 'react';
-import { ButtonGroupProps, IconStylingWrapperProps } from './types';
+import { ButtonGroupWrapperProps, IconStylingWrapperProps } from './types';
 
 export const IconStylingWrapper = ({ icon }: IconStylingWrapperProps) => (
     <span className="tw-p-2 tw-h-8 tw-justify-center tw-items-center tw-flex">{icon}</span>
@@ -13,7 +13,7 @@ export const buttonClassNames = {
 };
 export const buttonStyles = { root: { width: '24px', height: '24px' } };
 
-export const ButtonGroupWrapper = ({ index, children }: ButtonGroupProps) => (
+export const ButtonGroupWrapper = ({ index, children }: ButtonGroupWrapperProps) => (
     <div data-test-id={`toolbar-group-${index}`} className="tw-flex tw-items-center tw-h-9 tw-p-2">
         {children}
     </div>

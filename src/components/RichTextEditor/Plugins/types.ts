@@ -7,7 +7,7 @@ import { Position } from '../EditorPositioningWrapper';
 
 export type ObjectType<T extends Unknown> = Record<string, T>;
 
-export type ButtonGroupProps = {
+export type ButtonGroupWrapperProps = {
     index: number;
     children?: ReactNode;
 };
@@ -18,11 +18,11 @@ export type PluginButtonProps = {
     editorId: string;
 };
 export type PluginButton = ({ editor, editorId, id }: PluginButtonProps) => ReactElement;
-export type ButtonType = {
+export type PluginButtonType = {
     id: string;
     button: PluginButton;
 };
-export type ButtonsType = ButtonType[][];
+export type PluginButtonsType = PluginButtonType[][];
 
 export type Plugins = (Plugin[] | Plugin)[];
 export type { Plugin } from './Plugin';
@@ -41,5 +41,5 @@ export type PlatePluginList = Map<string, PlatePlugin<AnyObject>[]>;
 
 export interface ToolbarButtons {
     createGroupOfButtons: (plugins: Plugin[]) => void;
-    at(position: Position): ButtonsType;
+    at(position: Position): PluginButtonsType;
 }

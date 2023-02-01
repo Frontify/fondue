@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TEXT_STYLE_PLUGIN } from '../Plugins/TextStylePlugin/id';
-import { ButtonType, ButtonsType } from '../Plugins/types';
+import { PluginButtonType, PluginButtonsType } from '../Plugins/types';
 import { ButtonGroupWidths, ButtonGroupsPerRow } from './types';
 
 const BUTTON_GROUP_PADDING_PX = 12;
 const BUTTON_GROUP_SIZE_PX = 26;
 const BUTTON_GROUP_DROPDOWN_PX = 124;
 
-export const getButtonGroupWidths = (buttons: ButtonsType) =>
+export const getButtonGroupWidths = (buttons: PluginButtonsType) =>
     buttons.map((group, index) => ({
         group,
         buttonGroupWidth: group.reduce(
-            (prev, button: ButtonType) =>
+            (prev, button: PluginButtonType) =>
                 button.id === TEXT_STYLE_PLUGIN ? BUTTON_GROUP_DROPDOWN_PX : BUTTON_GROUP_SIZE_PX + prev,
             BUTTON_GROUP_PADDING_PX,
         ),
