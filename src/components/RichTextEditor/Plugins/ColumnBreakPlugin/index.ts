@@ -1,5 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './BreakAfterPlugin';
-export * from './BreakAfterButton';
+export * from './createColumnBreakPlugin';
+export * from './ColumnBreakButton';
 export * from './utils/setBreakAfter';

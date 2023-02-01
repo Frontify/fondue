@@ -24,6 +24,7 @@ import {
     AlignLeftPlugin,
     AlignRightPlugin,
     BoldPlugin,
+    BreakAfterPlugin,
     ButtonPlugin,
     CheckboxListPlugin,
     CodePlugin,
@@ -40,7 +41,6 @@ import {
     TextStylePlugin,
     UnderlinePlugin,
     UnorderedListPlugin,
-    defaultPluginsWithColumns,
 } from './Plugins';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
@@ -436,33 +436,35 @@ WithoutToolbar.args = {
     plugins: withoutToolbarPlugins,
 };
 
-export const BreakAfterColumn: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+const defaultPluginsWithColumns = new PluginComposer();
+defaultPluginsWithColumns
+    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin(new TextStylePlugin())
+    .setPlugin([
+        new BoldPlugin(),
+        new ItalicPlugin(),
+        new UnderlinePlugin(),
+        new StrikethroughPlugin(),
+        new LinkPlugin(),
+        new ButtonPlugin(),
+        new CodePlugin(),
+        new BreakAfterPlugin({ columns: 2, gap: 20 }),
+    ]);
+
+export const TwoColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
-BreakAfterColumn.args = {
+TwoColumns.args = {
     value: JSON.stringify(defaultValue),
     plugins: defaultPluginsWithColumns,
     border: false,
-    layout: {
-        columns: 3,
-    },
 };
 
-export const SimpleContentColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
-    <div className="tw-border tw-border-red-60">
-        <RichTextEditorComponent {...args} />
-    </div>
+export const SimpleTwoColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <RichTextEditorComponent {...args} />
 );
-SimpleContentColumns.args = {
+SimpleTwoColumns.args = {
     value: `<p>${IPSUM}</p>`,
     plugins: defaultPluginsWithColumns,
     border: false,
-    layout: {
-        columns: 2,
-        gap: 20,
-    },
-};
-
-BreakAfterColumn.argTypes = {
-    border: { table: { disable: true } },
 };

@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { createPluginFactory } from '@udecode/plate';
 import {
     KeyboardHandlerReturnType,
@@ -13,30 +12,30 @@ import {
     someNode,
 } from '@udecode/plate-core';
 import { Plugin, PluginProps } from '../Plugin';
-import { BreakAfterButton } from './BreakAfterButton';
-import { isBreakAfterEnabled } from './BreakAfterButton/BreakAfterToolbarButton';
+import { ColumnBreakButton } from './ColumnBreakButton';
+import { isColumnBreakEnabled } from './ColumnBreakButton/ColumnBreakoolbarButton';
 import { setBreakAfter } from './utils/setBreakAfter';
 
 export const KEY_ELEMENT_BREAK_AFTER = 'breakAfterColumn';
 
 export class BreakAfterPlugin extends Plugin {
+    private columns: number;
+    private gap: number;
     constructor(props?: PluginProps) {
         super('break-after-plugin', {
-            button: BreakAfterButton,
+            button: ColumnBreakButton,
             ...props,
         });
+        this.columns = props?.columns ?? 1;
+        this.gap = props?.gap ?? 10;
     }
 
     plugins() {
-        return [createBreakAfterPlugin()];
+        return [createColumnBreakPlugin(this.columns, this.gap)];
     }
 }
 
-// This is adapted from packages/editor/break/src/soft-break/onKeyDownSoftBreak.ts
-const OnKeyDownBreakAfter = (editor: PlateEditor): KeyboardHandlerReturnType => {
-    const { style } = useRichTextEditorContext();
-    const columns = Number(style?.columns) ?? 1;
-
+const onKeyDownBreakAfter = (editor: PlateEditor, columns: number): KeyboardHandlerReturnType => {
     return (event) => {
         const isActive = someNode(editor, { match: { breakAfterColumn: true } });
         const entry = getBlockAbove(editor);
@@ -71,15 +70,20 @@ const OnKeyDownBreakAfter = (editor: PlateEditor): KeyboardHandlerReturnType => 
     };
 };
 
-export const createBreakAfterPlugin = createPluginFactory({
-    key: KEY_ELEMENT_BREAK_AFTER,
-    options: {
-        columns: 2,
-    },
-    handlers: {
-        onKeyDown: OnKeyDownBreakAfter,
-    },
-});
+export const createColumnBreakPlugin = (columns: number, gap: number) => {
+    return createPluginFactory({
+        key: KEY_ELEMENT_BREAK_AFTER,
+        handlers: {
+            onKeyDown: (editor) => () => {
+                onKeyDownBreakAfter(editor, columns);
+            },
+        },
+        options: {
+            columns,
+            gap,
+        },
+    })();
+};
 
 const handleBackSpaceKeyEvent = (editor: PlateEditor, isActive: boolean, event: React.KeyboardEvent<Element>) => {
     if (editor?.selection?.anchor.offset !== 0) {
@@ -112,8 +116,8 @@ const handleEnterKeyEvent = (
     isActive: boolean,
     event: React.KeyboardEvent<Element>,
 ) => {
-    if (event.shiftKey && event.ctrlKey && isBreakAfterEnabled(editor, columns, isActive)) {
-        console.log(isBreakAfterEnabled(editor, columns, isActive));
+    if (event.shiftKey && event.ctrlKey && isColumnBreakEnabled(editor, columns, isActive)) {
+        console.log(isColumnBreakEnabled(editor, columns, isActive));
         console.log('handle enter key event', columns);
         return getPreventDefaultHandler(setBreakAfter, editor, {
             value: !isActive,

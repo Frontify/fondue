@@ -12,6 +12,8 @@ export type PluginProps = {
     markupInputElement?: MarkupElement;
     leafMarkupElements?: MarkupElement | MarkupElement[];
     showIn?: Position[];
+    columns?: number;
+    gap?: number;
 };
 
 export abstract class Plugin<P extends PluginProps = PluginProps> {

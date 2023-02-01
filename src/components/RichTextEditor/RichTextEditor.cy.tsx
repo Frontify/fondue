@@ -13,7 +13,7 @@ import {
     PluginComposer,
     RichTextButtonStyle,
     UnorderedListPlugin,
-    defaultPluginsWithColumns,
+    defaultPlugins,
 } from './Plugins';
 import { ButtonStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor } from './RichTextEditor';
@@ -989,9 +989,8 @@ describe('RichTextEditor Component', () => {
 
         return (
             <RichTextEditor
-                plugins={defaultPluginsWithColumns}
+                plugins={defaultPlugins}
                 value={initialValue}
-                layout={{ columns: 2 }}
                 onTextChange={(value) => setInitialValue(value)}
             />
         );

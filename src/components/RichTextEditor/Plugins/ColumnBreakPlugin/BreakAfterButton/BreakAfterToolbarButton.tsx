@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { BasePlacement } from '@popperjs/core';
 import {
     PlateEditor,
@@ -14,15 +13,19 @@ import {
 } from '@udecode/plate';
 import React from 'react';
 import { buttonClassNames } from '../../helper';
-import { KEY_ELEMENT_BREAK_AFTER } from '../BreakAfterPlugin';
+import { KEY_ELEMENT_BREAK_AFTER } from '../createColumnBreakPlugin';
 import { setBreakAfter } from '../utils/setBreakAfter';
 
-export const BreakAfterToolbarButton = ({ id, pluginKey = KEY_ELEMENT_BREAK_AFTER, ...props }: ToolbarButtonProps) => {
+export const ColumnBreakToolbarButton = ({ id, pluginKey = KEY_ELEMENT_BREAK_AFTER, ...props }: ToolbarButtonProps) => {
     const editor = usePlateEditorState(useEventPlateId(id));
     const isActive = !!editor?.selection && someNode(editor, { match: { breakAfterColumn: true } });
-    const { style } = useRichTextEditorContext();
-    const columnCount = Number(style?.columns) || 1;
-    const canBreakAfter = isBreakAfterEnabled(editor, columnCount, isActive);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const breakAfterPlugin = editor.pluginsByKey['breakAfterColumn'] as any;
+    const columns = breakAfterPlugin?.options?.columns;
+
+    const columnCount = Number(columns) || 1;
+    const canBreakAfter = isColumnBreakEnabled(editor, columnCount, isActive);
 
     return (
         <ToolbarButton
@@ -66,5 +69,5 @@ const getBreakAfterCount = (editor: PlateEditor): number => {
     return Array.from(nodeEntries).length;
 };
 
-export const isBreakAfterEnabled = (editor: PlateEditor, columnCount: number, isButtonActive: boolean): boolean =>
+export const isColumnBreakEnabled = (editor: PlateEditor, columnCount: number, isButtonActive: boolean): boolean =>
     getBreakAfterCount(editor) + 1 < columnCount || isButtonActive;
