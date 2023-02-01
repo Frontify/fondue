@@ -23,6 +23,7 @@ import React, {
 import { BrightHeader, BrightHeaderStyle, brightHeaderArrowBackgroundColors } from './BrightHeader';
 import { usePopper } from 'react-popper';
 import { Placement } from '@popperjs/core';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 
 export type TooltipButton = {
     label: string;
@@ -156,6 +157,7 @@ export const Tooltip = ({
     const tooltipContainerRef = useRef<HTMLDivElement | null>(null);
     const triggerElementContainerRef = useRef<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+    const id = useMemoizedId();
 
     const tooltipOffset = withArrow ? 10 : 5;
     const popperInstance = usePopper(triggerRefElement?.current, tooltipContainerRef.current, {
@@ -246,6 +248,7 @@ export const Tooltip = ({
                 {triggerElement &&
                     cloneElement(triggerElement, {
                         ref: triggerRefElement,
+                        'aria-describedby': id,
                     })}
             </div>
             <div
@@ -257,6 +260,7 @@ export const Tooltip = ({
                 ])}
                 data-test-id="tooltip"
                 role="tooltip"
+                id={id}
                 style={popperInstance.styles.popper}
                 {...popperInstance.attributes.popper}
                 onFocus={() => setIsOpen(true)}
